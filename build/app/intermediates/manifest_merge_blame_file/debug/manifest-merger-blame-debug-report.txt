@@ -1,0 +1,390 @@
+1<?xml version="1.0" encoding="utf-8"?>
+2<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+3    package="com.contusdemo.mirror_fly_demo"
+4    android:versionCode="1"
+5    android:versionName="1.0.0" >
+6
+7    <uses-sdk
+8        android:minSdkVersion="21"
+9        android:targetSdkVersion="31" />
+10    <!--
+11         The INTERNET permission is required for development. Specifically,
+12         the Flutter tool needs it to communicate with the running application
+13         to allow setting breakpoints, to provide hot reload, etc.
+14    -->
+15    <uses-permission android:name="android.permission.INTERNET" />
+15-->/home/user/Documents/ManiVendhan/FlutterProject/new/ui-demo/android/app/src/main/AndroidManifest.xml:4:5-67
+15-->/home/user/Documents/ManiVendhan/FlutterProject/new/ui-demo/android/app/src/main/AndroidManifest.xml:4:22-64
+16    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+16-->[appbase.aar] /home/user/.gradle/caches/transforms-3/5c4071a054897c2f707a02c5ce956bb3/transformed/jetified-appbase/AndroidManifest.xml:13:5-80
+16-->[appbase.aar] /home/user/.gradle/caches/transforms-3/5c4071a054897c2f707a02c5ce956bb3/transformed/jetified-appbase/AndroidManifest.xml:13:22-77
+17    <uses-permission android:name="android.permission.READ_INTERNAL_STORAGE" />
+17-->[appbase.aar] /home/user/.gradle/caches/transforms-3/5c4071a054897c2f707a02c5ce956bb3/transformed/jetified-appbase/AndroidManifest.xml:14:5-80
+17-->[appbase.aar] /home/user/.gradle/caches/transforms-3/5c4071a054897c2f707a02c5ce956bb3/transformed/jetified-appbase/AndroidManifest.xml:14:22-77
+18    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+18-->[appbase.aar] /home/user/.gradle/caches/transforms-3/5c4071a054897c2f707a02c5ce956bb3/transformed/jetified-appbase/AndroidManifest.xml:15:5-81
+18-->[appbase.aar] /home/user/.gradle/caches/transforms-3/5c4071a054897c2f707a02c5ce956bb3/transformed/jetified-appbase/AndroidManifest.xml:15:22-78
+19    <uses-permission android:name="android.permission.WRITE_INTERNAL_STORAGE" />
+19-->[appbase.aar] /home/user/.gradle/caches/transforms-3/5c4071a054897c2f707a02c5ce956bb3/transformed/jetified-appbase/AndroidManifest.xml:16:5-81
+19-->[appbase.aar] /home/user/.gradle/caches/transforms-3/5c4071a054897c2f707a02c5ce956bb3/transformed/jetified-appbase/AndroidManifest.xml:16:22-78
+20    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
+20-->[appbase.aar] /home/user/.gradle/caches/transforms-3/5c4071a054897c2f707a02c5ce956bb3/transformed/jetified-appbase/AndroidManifest.xml:17:5-71
+20-->[appbase.aar] /home/user/.gradle/caches/transforms-3/5c4071a054897c2f707a02c5ce956bb3/transformed/jetified-appbase/AndroidManifest.xml:17:22-68
+21    <uses-permission android:name="android.permission.WAKE_LOCK" />
+21-->[appbase.aar] /home/user/.gradle/caches/transforms-3/5c4071a054897c2f707a02c5ce956bb3/transformed/jetified-appbase/AndroidManifest.xml:18:5-68
+21-->[appbase.aar] /home/user/.gradle/caches/transforms-3/5c4071a054897c2f707a02c5ce956bb3/transformed/jetified-appbase/AndroidManifest.xml:18:22-65
+22    <uses-permission android:name="android.permission.READ_CONTACTS" />
+22-->[appbase.aar] /home/user/.gradle/caches/transforms-3/5c4071a054897c2f707a02c5ce956bb3/transformed/jetified-appbase/AndroidManifest.xml:19:5-72
+22-->[appbase.aar] /home/user/.gradle/caches/transforms-3/5c4071a054897c2f707a02c5ce956bb3/transformed/jetified-appbase/AndroidManifest.xml:19:22-69
+23    <uses-permission android:name="android.permission.BROADCAST_STICKY" />
+23-->[appbase.aar] /home/user/.gradle/caches/transforms-3/5c4071a054897c2f707a02c5ce956bb3/transformed/jetified-appbase/AndroidManifest.xml:20:5-75
+23-->[appbase.aar] /home/user/.gradle/caches/transforms-3/5c4071a054897c2f707a02c5ce956bb3/transformed/jetified-appbase/AndroidManifest.xml:20:22-72
+24    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
+24-->[appbase.aar] /home/user/.gradle/caches/transforms-3/5c4071a054897c2f707a02c5ce956bb3/transformed/jetified-appbase/AndroidManifest.xml:21:5-80
+24-->[appbase.aar] /home/user/.gradle/caches/transforms-3/5c4071a054897c2f707a02c5ce956bb3/transformed/jetified-appbase/AndroidManifest.xml:21:22-77
+25    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+25-->[appbase.aar] /home/user/.gradle/caches/transforms-3/5c4071a054897c2f707a02c5ce956bb3/transformed/jetified-appbase/AndroidManifest.xml:22:5-71
+25-->[appbase.aar] /home/user/.gradle/caches/transforms-3/5c4071a054897c2f707a02c5ce956bb3/transformed/jetified-appbase/AndroidManifest.xml:22:22-68
+26    <uses-permission android:name="android.permission.VIBRATE" />
+26-->[appbase.aar] /home/user/.gradle/caches/transforms-3/5c4071a054897c2f707a02c5ce956bb3/transformed/jetified-appbase/AndroidManifest.xml:23:5-66
+26-->[appbase.aar] /home/user/.gradle/caches/transforms-3/5c4071a054897c2f707a02c5ce956bb3/transformed/jetified-appbase/AndroidManifest.xml:23:22-63
+27    <uses-permission android:name="android.permission.DISABLE_KEYGUARD" />
+27-->[appbase.aar] /home/user/.gradle/caches/transforms-3/5c4071a054897c2f707a02c5ce956bb3/transformed/jetified-appbase/AndroidManifest.xml:24:5-75
+27-->[appbase.aar] /home/user/.gradle/caches/transforms-3/5c4071a054897c2f707a02c5ce956bb3/transformed/jetified-appbase/AndroidManifest.xml:24:22-72
+28    <!--
+29    Allows Glide to monitor connectivity status and restart failed requests if users go from a
+30    a disconnected to a connected network state.
+31    -->
+32    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+32-->[appbase.aar] /home/user/.gradle/caches/transforms-3/5c4071a054897c2f707a02c5ce956bb3/transformed/jetified-appbase/AndroidManifest.xml:29:5-79
+32-->[appbase.aar] /home/user/.gradle/caches/transforms-3/5c4071a054897c2f707a02c5ce956bb3/transformed/jetified-appbase/AndroidManifest.xml:29:22-76
+33    <uses-permission android:name="android.permission.WRITE_SYNC_SETTINGS" />
+33-->[appbase.aar] /home/user/.gradle/caches/transforms-3/5c4071a054897c2f707a02c5ce956bb3/transformed/jetified-appbase/AndroidManifest.xml:30:5-78
+33-->[appbase.aar] /home/user/.gradle/caches/transforms-3/5c4071a054897c2f707a02c5ce956bb3/transformed/jetified-appbase/AndroidManifest.xml:30:22-75
+34    <uses-permission android:name="android.permission.USE_CREDENTIALS" />
+34-->[appbase.aar] /home/user/.gradle/caches/transforms-3/5c4071a054897c2f707a02c5ce956bb3/transformed/jetified-appbase/AndroidManifest.xml:31:5-74
+34-->[appbase.aar] /home/user/.gradle/caches/transforms-3/5c4071a054897c2f707a02c5ce956bb3/transformed/jetified-appbase/AndroidManifest.xml:31:22-71
+35    <uses-permission android:name="android.permission.CAMERA" />
+35-->[appbase.aar] /home/user/.gradle/caches/transforms-3/5c4071a054897c2f707a02c5ce956bb3/transformed/jetified-appbase/AndroidManifest.xml:32:5-65
+35-->[appbase.aar] /home/user/.gradle/caches/transforms-3/5c4071a054897c2f707a02c5ce956bb3/transformed/jetified-appbase/AndroidManifest.xml:32:22-62
+36    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+36-->[appbase.aar] /home/user/.gradle/caches/transforms-3/5c4071a054897c2f707a02c5ce956bb3/transformed/jetified-appbase/AndroidManifest.xml:33:5-79
+36-->[appbase.aar] /home/user/.gradle/caches/transforms-3/5c4071a054897c2f707a02c5ce956bb3/transformed/jetified-appbase/AndroidManifest.xml:33:22-76
+37    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+37-->[appbase.aar] /home/user/.gradle/caches/transforms-3/5c4071a054897c2f707a02c5ce956bb3/transformed/jetified-appbase/AndroidManifest.xml:34:5-81
+37-->[appbase.aar] /home/user/.gradle/caches/transforms-3/5c4071a054897c2f707a02c5ce956bb3/transformed/jetified-appbase/AndroidManifest.xml:34:22-78
+38    <uses-permission android:name="android.permission.CALL_PHONE" />
+38-->[appbase.aar] /home/user/.gradle/caches/transforms-3/5c4071a054897c2f707a02c5ce956bb3/transformed/jetified-appbase/AndroidManifest.xml:35:5-69
+38-->[appbase.aar] /home/user/.gradle/caches/transforms-3/5c4071a054897c2f707a02c5ce956bb3/transformed/jetified-appbase/AndroidManifest.xml:35:22-66
+39    <!--
+40    Apps that target Android 9 (API level 28) or higher and use foreground services
+41          must request the FOREGROUND_SERVICE permission.
+42    -->
+43    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+43-->[appbase.aar] /home/user/.gradle/caches/transforms-3/5c4071a054897c2f707a02c5ce956bb3/transformed/jetified-appbase/AndroidManifest.xml:41:5-77
+43-->[appbase.aar] /home/user/.gradle/caches/transforms-3/5c4071a054897c2f707a02c5ce956bb3/transformed/jetified-appbase/AndroidManifest.xml:41:22-74
+44
+45    <uses-feature
+45-->[appbase.aar] /home/user/.gradle/caches/transforms-3/5c4071a054897c2f707a02c5ce956bb3/transformed/jetified-appbase/AndroidManifest.xml:43:5-45:35
+46        android:glEsVersion="0x00020000"
+46-->[appbase.aar] /home/user/.gradle/caches/transforms-3/5c4071a054897c2f707a02c5ce956bb3/transformed/jetified-appbase/AndroidManifest.xml:44:9-41
+47        android:required="true" />
+47-->[appbase.aar] /home/user/.gradle/caches/transforms-3/5c4071a054897c2f707a02c5ce956bb3/transformed/jetified-appbase/AndroidManifest.xml:45:9-32
+48    <uses-feature android:name="android.hardware.camera" />
+48-->[appbase.aar] /home/user/.gradle/caches/transforms-3/5c4071a054897c2f707a02c5ce956bb3/transformed/jetified-appbase/AndroidManifest.xml:46:5-60
+48-->[appbase.aar] /home/user/.gradle/caches/transforms-3/5c4071a054897c2f707a02c5ce956bb3/transformed/jetified-appbase/AndroidManifest.xml:46:19-57
+49    <uses-feature android:name="android.hardware.camera.autofocus" />
+49-->[flywebrtc.aar] /home/user/.gradle/caches/transforms-3/53443de19e4e769e1835cd7dbda180b1/transformed/jetified-flywebrtc/AndroidManifest.xml:12:5-70
+49-->[flywebrtc.aar] /home/user/.gradle/caches/transforms-3/53443de19e4e769e1835cd7dbda180b1/transformed/jetified-flywebrtc/AndroidManifest.xml:12:19-67
+50
+51    <uses-permission android:name="android.permission.BLUETOOTH" />
+51-->[flywebrtc.aar] /home/user/.gradle/caches/transforms-3/53443de19e4e769e1835cd7dbda180b1/transformed/jetified-flywebrtc/AndroidManifest.xml:15:5-68
+51-->[flywebrtc.aar] /home/user/.gradle/caches/transforms-3/53443de19e4e769e1835cd7dbda180b1/transformed/jetified-flywebrtc/AndroidManifest.xml:15:22-65
+52    <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
+52-->[flywebrtc.aar] /home/user/.gradle/caches/transforms-3/53443de19e4e769e1835cd7dbda180b1/transformed/jetified-flywebrtc/AndroidManifest.xml:16:5-76
+52-->[flywebrtc.aar] /home/user/.gradle/caches/transforms-3/53443de19e4e769e1835cd7dbda180b1/transformed/jetified-flywebrtc/AndroidManifest.xml:16:22-73
+53    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+53-->[flywebrtc.aar] /home/user/.gradle/caches/transforms-3/53443de19e4e769e1835cd7dbda180b1/transformed/jetified-flywebrtc/AndroidManifest.xml:19:5-75
+53-->[flywebrtc.aar] /home/user/.gradle/caches/transforms-3/53443de19e4e769e1835cd7dbda180b1/transformed/jetified-flywebrtc/AndroidManifest.xml:19:22-72
+54    <uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT" />
+54-->[flywebrtc.aar] /home/user/.gradle/caches/transforms-3/53443de19e4e769e1835cd7dbda180b1/transformed/jetified-flywebrtc/AndroidManifest.xml:23:5-81
+54-->[flywebrtc.aar] /home/user/.gradle/caches/transforms-3/53443de19e4e769e1835cd7dbda180b1/transformed/jetified-flywebrtc/AndroidManifest.xml:23:22-78
+55
+56    <queries>
+56-->[:file_picker] /home/user/Documents/ManiVendhan/FlutterProject/new/ui-demo/build/file_picker/intermediates/merged_manifest/debug/AndroidManifest.xml:11:5-17:15
+57        <intent>
+57-->[:file_picker] /home/user/Documents/ManiVendhan/FlutterProject/new/ui-demo/build/file_picker/intermediates/merged_manifest/debug/AndroidManifest.xml:12:9-16:18
+58            <action android:name="android.intent.action.GET_CONTENT" />
+58-->[:file_picker] /home/user/Documents/ManiVendhan/FlutterProject/new/ui-demo/build/file_picker/intermediates/merged_manifest/debug/AndroidManifest.xml:13:13-72
+58-->[:file_picker] /home/user/Documents/ManiVendhan/FlutterProject/new/ui-demo/build/file_picker/intermediates/merged_manifest/debug/AndroidManifest.xml:13:21-69
+59
+60            <data android:mimeType="*/*" />
+60-->[:file_picker] /home/user/Documents/ManiVendhan/FlutterProject/new/ui-demo/build/file_picker/intermediates/merged_manifest/debug/AndroidManifest.xml:15:13-44
+60-->[:file_picker] /home/user/Documents/ManiVendhan/FlutterProject/new/ui-demo/build/file_picker/intermediates/merged_manifest/debug/AndroidManifest.xml:15:19-41
+61        </intent>
+62    </queries>
+63
+64    <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
+64-->[:open_file] /home/user/Documents/ManiVendhan/FlutterProject/new/ui-demo/build/open_file/intermediates/merged_manifest/debug/AndroidManifest.xml:10:5-83
+64-->[:open_file] /home/user/Documents/ManiVendhan/FlutterProject/new/ui-demo/build/open_file/intermediates/merged_manifest/debug/AndroidManifest.xml:10:22-80
+65
+66    <application
+66-->/home/user/Documents/ManiVendhan/FlutterProject/new/ui-demo/android/app/src/main/AndroidManifest.xml:5:4-35:19
+67        android:name="com.contusdemo.mirror_fly_demo.MirrorFlyApplication"
+67-->/home/user/Documents/ManiVendhan/FlutterProject/new/ui-demo/android/app/src/main/AndroidManifest.xml:7:9-45
+68        android:allowBackup="true"
+68-->[flydatabase.aar] /home/user/.gradle/caches/transforms-3/a68ff15c387db79ebabb6ca361ca9956/transformed/jetified-flydatabase/AndroidManifest.xml:17:9-35
+69        android:appComponentFactory="androidx.core.app.CoreComponentFactory"
+69-->[androidx.core:core:1.8.0] /home/user/.gradle/caches/transforms-3/d363e3b5616f580c766e3e2b3c05f27d/transformed/core-1.8.0/AndroidManifest.xml:24:18-86
+70        android:debuggable="true"
+71        android:icon="@mipmap/ic_launcher"
+71-->/home/user/Documents/ManiVendhan/FlutterProject/new/ui-demo/android/app/src/main/AndroidManifest.xml:8:9-43
+72        android:label="mirror_fly_demo"
+72-->/home/user/Documents/ManiVendhan/FlutterProject/new/ui-demo/android/app/src/main/AndroidManifest.xml:6:9-40
+73        android:largeHeap="true"
+73-->[appbase.aar] /home/user/.gradle/caches/transforms-3/5c4071a054897c2f707a02c5ce956bb3/transformed/jetified-appbase/AndroidManifest.xml:48:18-42
+74        android:supportsRtl="true" >
+74-->[flydatabase.aar] /home/user/.gradle/caches/transforms-3/a68ff15c387db79ebabb6ca361ca9956/transformed/jetified-flydatabase/AndroidManifest.xml:18:9-35
+75        <activity
+75-->/home/user/Documents/ManiVendhan/FlutterProject/new/ui-demo/android/app/src/main/AndroidManifest.xml:9:9-29:20
+76            android:name="com.contusdemo.mirror_fly_demo.MainActivity"
+76-->/home/user/Documents/ManiVendhan/FlutterProject/new/ui-demo/android/app/src/main/AndroidManifest.xml:10:13-41
+77            android:configChanges="orientation|keyboardHidden|keyboard|screenSize|smallestScreenSize|locale|layoutDirection|fontScale|screenLayout|density|uiMode"
+77-->/home/user/Documents/ManiVendhan/FlutterProject/new/ui-demo/android/app/src/main/AndroidManifest.xml:14:13-163
+78            android:exported="true"
+78-->/home/user/Documents/ManiVendhan/FlutterProject/new/ui-demo/android/app/src/main/AndroidManifest.xml:11:13-36
+79            android:hardwareAccelerated="true"
+79-->/home/user/Documents/ManiVendhan/FlutterProject/new/ui-demo/android/app/src/main/AndroidManifest.xml:15:13-47
+80            android:launchMode="singleTop"
+80-->/home/user/Documents/ManiVendhan/FlutterProject/new/ui-demo/android/app/src/main/AndroidManifest.xml:12:13-43
+81            android:theme="@style/LaunchTheme"
+81-->/home/user/Documents/ManiVendhan/FlutterProject/new/ui-demo/android/app/src/main/AndroidManifest.xml:13:13-47
+82            android:windowSoftInputMode="adjustResize" >
+82-->/home/user/Documents/ManiVendhan/FlutterProject/new/ui-demo/android/app/src/main/AndroidManifest.xml:16:13-55
+83
+84            <!--
+85                 Specifies an Android theme to apply to this Activity as soon as
+86                 the Android process has started. This theme is visible to the user
+87                 while the Flutter UI initializes. After that, this theme continues
+88                 to determine the Window background behind the Flutter UI.
+89            -->
+90            <meta-data
+90-->/home/user/Documents/ManiVendhan/FlutterProject/new/ui-demo/android/app/src/main/AndroidManifest.xml:21:13-24:17
+91                android:name="io.flutter.embedding.android.NormalTheme"
+91-->/home/user/Documents/ManiVendhan/FlutterProject/new/ui-demo/android/app/src/main/AndroidManifest.xml:22:15-70
+92                android:resource="@style/NormalTheme" />
+92-->/home/user/Documents/ManiVendhan/FlutterProject/new/ui-demo/android/app/src/main/AndroidManifest.xml:23:15-52
+93
+94            <intent-filter>
+94-->/home/user/Documents/ManiVendhan/FlutterProject/new/ui-demo/android/app/src/main/AndroidManifest.xml:25:13-28:29
+95                <action android:name="android.intent.action.MAIN" />
+95-->/home/user/Documents/ManiVendhan/FlutterProject/new/ui-demo/android/app/src/main/AndroidManifest.xml:26:17-68
+95-->/home/user/Documents/ManiVendhan/FlutterProject/new/ui-demo/android/app/src/main/AndroidManifest.xml:26:25-66
+96
+97                <category android:name="android.intent.category.LAUNCHER" />
+97-->/home/user/Documents/ManiVendhan/FlutterProject/new/ui-demo/android/app/src/main/AndroidManifest.xml:27:17-76
+97-->/home/user/Documents/ManiVendhan/FlutterProject/new/ui-demo/android/app/src/main/AndroidManifest.xml:27:27-74
+98            </intent-filter>
+99        </activity>
+100        <!--
+101             Don't delete the meta-data below.
+102             This is used by the Flutter tool to generate GeneratedPluginRegistrant.java
+103        -->
+104        <meta-data
+104-->/home/user/Documents/ManiVendhan/FlutterProject/new/ui-demo/android/app/src/main/AndroidManifest.xml:32:9-34:33
+105            android:name="flutterEmbedding"
+105-->/home/user/Documents/ManiVendhan/FlutterProject/new/ui-demo/android/app/src/main/AndroidManifest.xml:33:13-44
+106            android:value="2" />
+106-->/home/user/Documents/ManiVendhan/FlutterProject/new/ui-demo/android/app/src/main/AndroidManifest.xml:34:13-30
+107
+108        <provider
+108-->[appbase.aar] /home/user/.gradle/caches/transforms-3/5c4071a054897c2f707a02c5ce956bb3/transformed/jetified-appbase/AndroidManifest.xml:49:9-59:20
+109            android:name="com.contusflysdk.utils.ChatFileProvider"
+109-->[appbase.aar] /home/user/.gradle/caches/transforms-3/5c4071a054897c2f707a02c5ce956bb3/transformed/jetified-appbase/AndroidManifest.xml:50:13-67
+110            android:authorities="com.contusdemo.mirror_fly_demo.chat.file.provider"
+110-->[appbase.aar] /home/user/.gradle/caches/transforms-3/5c4071a054897c2f707a02c5ce956bb3/transformed/jetified-appbase/AndroidManifest.xml:51:13-70
+111            android:exported="false"
+111-->[appbase.aar] /home/user/.gradle/caches/transforms-3/5c4071a054897c2f707a02c5ce956bb3/transformed/jetified-appbase/AndroidManifest.xml:52:13-37
+112            android:grantUriPermissions="true" >
+112-->[appbase.aar] /home/user/.gradle/caches/transforms-3/5c4071a054897c2f707a02c5ce956bb3/transformed/jetified-appbase/AndroidManifest.xml:53:13-47
+113            <meta-data
+113-->[appbase.aar] /home/user/.gradle/caches/transforms-3/5c4071a054897c2f707a02c5ce956bb3/transformed/jetified-appbase/AndroidManifest.xml:55:13-58:38
+114                android:name="android.support.FILE_PROVIDER_PATHS"
+114-->[appbase.aar] /home/user/.gradle/caches/transforms-3/5c4071a054897c2f707a02c5ce956bb3/transformed/jetified-appbase/AndroidManifest.xml:56:17-67
+115                android:resource="@xml/provider_paths" />
+115-->[appbase.aar] /home/user/.gradle/caches/transforms-3/5c4071a054897c2f707a02c5ce956bb3/transformed/jetified-appbase/AndroidManifest.xml:57:17-55
+116        </provider>
+117
+118        <receiver
+118-->[appbase.aar] /home/user/.gradle/caches/transforms-3/5c4071a054897c2f707a02c5ce956bb3/transformed/jetified-appbase/AndroidManifest.xml:61:9-67:20
+119            android:name="com.contusflysdk.ApplicationStateReceiver"
+119-->[appbase.aar] /home/user/.gradle/caches/transforms-3/5c4071a054897c2f707a02c5ce956bb3/transformed/jetified-appbase/AndroidManifest.xml:62:13-69
+120            android:exported="false" >
+120-->[appbase.aar] /home/user/.gradle/caches/transforms-3/5c4071a054897c2f707a02c5ce956bb3/transformed/jetified-appbase/AndroidManifest.xml:63:13-37
+121            <intent-filter>
+121-->[appbase.aar] /home/user/.gradle/caches/transforms-3/5c4071a054897c2f707a02c5ce956bb3/transformed/jetified-appbase/AndroidManifest.xml:64:13-66:29
+122                <action android:name="com.time.action.APPLICATION_STATE_CHANGE" />
+122-->[appbase.aar] /home/user/.gradle/caches/transforms-3/5c4071a054897c2f707a02c5ce956bb3/transformed/jetified-appbase/AndroidManifest.xml:65:17-83
+122-->[appbase.aar] /home/user/.gradle/caches/transforms-3/5c4071a054897c2f707a02c5ce956bb3/transformed/jetified-appbase/AndroidManifest.xml:65:25-80
+123            </intent-filter>
+124        </receiver>
+125
+126        <meta-data
+126-->[appbase.aar] /home/user/.gradle/caches/transforms-3/5c4071a054897c2f707a02c5ce956bb3/transformed/jetified-appbase/AndroidManifest.xml:69:9-72:45
+127            android:name="android.support.VERSION"
+127-->[appbase.aar] /home/user/.gradle/caches/transforms-3/5c4071a054897c2f707a02c5ce956bb3/transformed/jetified-appbase/AndroidManifest.xml:70:13-51
+128            android:value="25.4.0" />
+128-->[appbase.aar] /home/user/.gradle/caches/transforms-3/5c4071a054897c2f707a02c5ce956bb3/transformed/jetified-appbase/AndroidManifest.xml:71:13-35
+129
+130        <service
+130-->[appbase.aar] /home/user/.gradle/caches/transforms-3/5c4071a054897c2f707a02c5ce956bb3/transformed/jetified-appbase/AndroidManifest.xml:74:9-76:40
+131            android:name="com.contusflysdk.media.MediaUploadService"
+131-->[appbase.aar] /home/user/.gradle/caches/transforms-3/5c4071a054897c2f707a02c5ce956bb3/transformed/jetified-appbase/AndroidManifest.xml:75:13-69
+132            android:exported="false" />
+132-->[appbase.aar] /home/user/.gradle/caches/transforms-3/5c4071a054897c2f707a02c5ce956bb3/transformed/jetified-appbase/AndroidManifest.xml:76:13-37
+133        <service
+133-->[appbase.aar] /home/user/.gradle/caches/transforms-3/5c4071a054897c2f707a02c5ce956bb3/transformed/jetified-appbase/AndroidManifest.xml:77:9-79:40
+134            android:name="com.contusflysdk.media.MediaDownloadService"
+134-->[appbase.aar] /home/user/.gradle/caches/transforms-3/5c4071a054897c2f707a02c5ce956bb3/transformed/jetified-appbase/AndroidManifest.xml:78:13-71
+135            android:exported="false" />
+135-->[appbase.aar] /home/user/.gradle/caches/transforms-3/5c4071a054897c2f707a02c5ce956bb3/transformed/jetified-appbase/AndroidManifest.xml:79:13-37
+136        <service
+136-->[appbase.aar] /home/user/.gradle/caches/transforms-3/5c4071a054897c2f707a02c5ce956bb3/transformed/jetified-appbase/AndroidManifest.xml:80:9-83:40
+137            android:name="com.contusflysdk.service.ContactSyncService"
+137-->[appbase.aar] /home/user/.gradle/caches/transforms-3/5c4071a054897c2f707a02c5ce956bb3/transformed/jetified-appbase/AndroidManifest.xml:81:13-71
+138            android:enabled="true"
+138-->[appbase.aar] /home/user/.gradle/caches/transforms-3/5c4071a054897c2f707a02c5ce956bb3/transformed/jetified-appbase/AndroidManifest.xml:82:13-35
+139            android:exported="false" />
+139-->[appbase.aar] /home/user/.gradle/caches/transforms-3/5c4071a054897c2f707a02c5ce956bb3/transformed/jetified-appbase/AndroidManifest.xml:83:13-37
+140        <service
+140-->[appbase.aar] /home/user/.gradle/caches/transforms-3/5c4071a054897c2f707a02c5ce956bb3/transformed/jetified-appbase/AndroidManifest.xml:84:9-86:40
+141            android:name="com.contusflysdk.api.MarkReadService"
+141-->[appbase.aar] /home/user/.gradle/caches/transforms-3/5c4071a054897c2f707a02c5ce956bb3/transformed/jetified-appbase/AndroidManifest.xml:85:13-64
+142            android:exported="false" />
+142-->[appbase.aar] /home/user/.gradle/caches/transforms-3/5c4071a054897c2f707a02c5ce956bb3/transformed/jetified-appbase/AndroidManifest.xml:86:13-37
+143
+144        <provider
+144-->[appbase.aar] /home/user/.gradle/caches/transforms-3/5c4071a054897c2f707a02c5ce956bb3/transformed/jetified-appbase/AndroidManifest.xml:88:9-91:40
+145            android:name="com.contusflysdk.api.ChatSdkInitProvider"
+145-->[appbase.aar] /home/user/.gradle/caches/transforms-3/5c4071a054897c2f707a02c5ce956bb3/transformed/jetified-appbase/AndroidManifest.xml:89:13-68
+146            android:authorities="com.contusdemo.mirror_fly_demo.chat.sdk.initializationProvider"
+146-->[appbase.aar] /home/user/.gradle/caches/transforms-3/5c4071a054897c2f707a02c5ce956bb3/transformed/jetified-appbase/AndroidManifest.xml:90:13-83
+147            android:exported="false" />
+147-->[appbase.aar] /home/user/.gradle/caches/transforms-3/5c4071a054897c2f707a02c5ce956bb3/transformed/jetified-appbase/AndroidManifest.xml:91:13-37
+148
+149        <service
+149-->[flywebrtc.aar] /home/user/.gradle/caches/transforms-3/53443de19e4e769e1835cd7dbda180b1/transformed/jetified-flywebrtc/AndroidManifest.xml:27:9-29:65
+150            android:name="com.contus.webrtc.WebRtcCallService"
+150-->[flywebrtc.aar] /home/user/.gradle/caches/transforms-3/53443de19e4e769e1835cd7dbda180b1/transformed/jetified-flywebrtc/AndroidManifest.xml:28:13-63
+151            android:foregroundServiceType="microphone|camera" /> <!-- To receive call end action from headset -->
+151-->[flywebrtc.aar] /home/user/.gradle/caches/transforms-3/53443de19e4e769e1835cd7dbda180b1/transformed/jetified-flywebrtc/AndroidManifest.xml:29:13-62
+152        <receiver
+152-->[flywebrtc.aar] /home/user/.gradle/caches/transforms-3/53443de19e4e769e1835cd7dbda180b1/transformed/jetified-flywebrtc/AndroidManifest.xml:31:9-37:20
+153            android:name="com.contus.webrtc.MediaButtonIntentReceiver"
+153-->[flywebrtc.aar] /home/user/.gradle/caches/transforms-3/53443de19e4e769e1835cd7dbda180b1/transformed/jetified-flywebrtc/AndroidManifest.xml:32:13-71
+154            android:exported="false" >
+154-->[flywebrtc.aar] /home/user/.gradle/caches/transforms-3/53443de19e4e769e1835cd7dbda180b1/transformed/jetified-flywebrtc/AndroidManifest.xml:33:13-37
+155            <intent-filter>
+155-->[flywebrtc.aar] /home/user/.gradle/caches/transforms-3/53443de19e4e769e1835cd7dbda180b1/transformed/jetified-flywebrtc/AndroidManifest.xml:34:13-36:29
+156                <action android:name="android.intent.action.MEDIA_BUTTON" />
+156-->[flywebrtc.aar] /home/user/.gradle/caches/transforms-3/53443de19e4e769e1835cd7dbda180b1/transformed/jetified-flywebrtc/AndroidManifest.xml:35:17-77
+156-->[flywebrtc.aar] /home/user/.gradle/caches/transforms-3/53443de19e4e769e1835cd7dbda180b1/transformed/jetified-flywebrtc/AndroidManifest.xml:35:25-74
+157            </intent-filter>
+158        </receiver>
+159
+160        <provider
+160-->[:image_picker_android] /home/user/Documents/ManiVendhan/FlutterProject/new/ui-demo/build/image_picker_android/intermediates/merged_manifest/debug/AndroidManifest.xml:10:9-18:20
+161            android:name="io.flutter.plugins.imagepicker.ImagePickerFileProvider"
+161-->[:image_picker_android] /home/user/Documents/ManiVendhan/FlutterProject/new/ui-demo/build/image_picker_android/intermediates/merged_manifest/debug/AndroidManifest.xml:11:13-82
+162            android:authorities="com.contusdemo.mirror_fly_demo.flutter.image_provider"
+162-->[:image_picker_android] /home/user/Documents/ManiVendhan/FlutterProject/new/ui-demo/build/image_picker_android/intermediates/merged_manifest/debug/AndroidManifest.xml:12:13-74
+163            android:exported="false"
+163-->[:image_picker_android] /home/user/Documents/ManiVendhan/FlutterProject/new/ui-demo/build/image_picker_android/intermediates/merged_manifest/debug/AndroidManifest.xml:13:13-37
+164            android:grantUriPermissions="true" >
+164-->[:image_picker_android] /home/user/Documents/ManiVendhan/FlutterProject/new/ui-demo/build/image_picker_android/intermediates/merged_manifest/debug/AndroidManifest.xml:14:13-47
+165            <meta-data
+165-->[appbase.aar] /home/user/.gradle/caches/transforms-3/5c4071a054897c2f707a02c5ce956bb3/transformed/jetified-appbase/AndroidManifest.xml:55:13-58:38
+166                android:name="android.support.FILE_PROVIDER_PATHS"
+166-->[appbase.aar] /home/user/.gradle/caches/transforms-3/5c4071a054897c2f707a02c5ce956bb3/transformed/jetified-appbase/AndroidManifest.xml:56:17-67
+167                android:resource="@xml/flutter_image_picker_file_paths" />
+167-->[appbase.aar] /home/user/.gradle/caches/transforms-3/5c4071a054897c2f707a02c5ce956bb3/transformed/jetified-appbase/AndroidManifest.xml:57:17-55
+168        </provider>
+169
+170        <activity
+170-->[:url_launcher_android] /home/user/Documents/ManiVendhan/FlutterProject/new/ui-demo/build/url_launcher_android/intermediates/merged_manifest/debug/AndroidManifest.xml:10:9-13:74
+171            android:name="io.flutter.plugins.urllauncher.WebViewActivity"
+171-->[:url_launcher_android] /home/user/Documents/ManiVendhan/FlutterProject/new/ui-demo/build/url_launcher_android/intermediates/merged_manifest/debug/AndroidManifest.xml:11:13-74
+172            android:exported="false"
+172-->[:url_launcher_android] /home/user/Documents/ManiVendhan/FlutterProject/new/ui-demo/build/url_launcher_android/intermediates/merged_manifest/debug/AndroidManifest.xml:12:13-37
+173            android:theme="@android:style/Theme.NoTitleBar.Fullscreen" />
+173-->[:url_launcher_android] /home/user/Documents/ManiVendhan/FlutterProject/new/ui-demo/build/url_launcher_android/intermediates/merged_manifest/debug/AndroidManifest.xml:13:13-71
+174
+175        <provider
+175-->[:open_file] /home/user/Documents/ManiVendhan/FlutterProject/new/ui-demo/build/open_file/intermediates/merged_manifest/debug/AndroidManifest.xml:14:9-23:20
+176            android:name="androidx.core.content.FileProvider"
+176-->[:open_file] /home/user/Documents/ManiVendhan/FlutterProject/new/ui-demo/build/open_file/intermediates/merged_manifest/debug/AndroidManifest.xml:15:13-62
+177            android:authorities="com.contusdemo.mirror_fly_demo.fileProvider"
+177-->[:open_file] /home/user/Documents/ManiVendhan/FlutterProject/new/ui-demo/build/open_file/intermediates/merged_manifest/debug/AndroidManifest.xml:16:13-64
+178            android:exported="false"
+178-->[:open_file] /home/user/Documents/ManiVendhan/FlutterProject/new/ui-demo/build/open_file/intermediates/merged_manifest/debug/AndroidManifest.xml:17:13-37
+179            android:grantUriPermissions="true" >
+179-->[:open_file] /home/user/Documents/ManiVendhan/FlutterProject/new/ui-demo/build/open_file/intermediates/merged_manifest/debug/AndroidManifest.xml:18:13-47
+180            <meta-data
+180-->[appbase.aar] /home/user/.gradle/caches/transforms-3/5c4071a054897c2f707a02c5ce956bb3/transformed/jetified-appbase/AndroidManifest.xml:55:13-58:38
+181                android:name="android.support.FILE_PROVIDER_PATHS"
+181-->[appbase.aar] /home/user/.gradle/caches/transforms-3/5c4071a054897c2f707a02c5ce956bb3/transformed/jetified-appbase/AndroidManifest.xml:56:17-67
+182                android:resource="@xml/filepaths" />
+182-->[appbase.aar] /home/user/.gradle/caches/transforms-3/5c4071a054897c2f707a02c5ce956bb3/transformed/jetified-appbase/AndroidManifest.xml:57:17-55
+183        </provider>
+184
+185        <uses-library
+185-->[androidx.window:window:1.0.0-beta04] /home/user/.gradle/caches/transforms-3/49bc944d29f70d45aa5add8e43e3247e/transformed/jetified-window-1.0.0-beta04/AndroidManifest.xml:25:9-27:40
+186            android:name="androidx.window.extensions"
+186-->[androidx.window:window:1.0.0-beta04] /home/user/.gradle/caches/transforms-3/49bc944d29f70d45aa5add8e43e3247e/transformed/jetified-window-1.0.0-beta04/AndroidManifest.xml:26:13-54
+187            android:required="false" />
+187-->[androidx.window:window:1.0.0-beta04] /home/user/.gradle/caches/transforms-3/49bc944d29f70d45aa5add8e43e3247e/transformed/jetified-window-1.0.0-beta04/AndroidManifest.xml:27:13-37
+188        <uses-library
+188-->[androidx.window:window:1.0.0-beta04] /home/user/.gradle/caches/transforms-3/49bc944d29f70d45aa5add8e43e3247e/transformed/jetified-window-1.0.0-beta04/AndroidManifest.xml:28:9-30:40
+189            android:name="androidx.window.sidecar"
+189-->[androidx.window:window:1.0.0-beta04] /home/user/.gradle/caches/transforms-3/49bc944d29f70d45aa5add8e43e3247e/transformed/jetified-window-1.0.0-beta04/AndroidManifest.xml:29:13-51
+190            android:required="false" />
+190-->[androidx.window:window:1.0.0-beta04] /home/user/.gradle/caches/transforms-3/49bc944d29f70d45aa5add8e43e3247e/transformed/jetified-window-1.0.0-beta04/AndroidManifest.xml:30:13-37
+191
+192        <service
+192-->[androidx.room:room-runtime:2.2.5] /home/user/.gradle/caches/transforms-3/155e0ac8599c055a84c5726d00973d3b/transformed/room-runtime-2.2.5/AndroidManifest.xml:25:9-28:40
+193            android:name="androidx.room.MultiInstanceInvalidationService"
+193-->[androidx.room:room-runtime:2.2.5] /home/user/.gradle/caches/transforms-3/155e0ac8599c055a84c5726d00973d3b/transformed/room-runtime-2.2.5/AndroidManifest.xml:26:13-74
+194            android:directBootAware="true"
+194-->[androidx.room:room-runtime:2.2.5] /home/user/.gradle/caches/transforms-3/155e0ac8599c055a84c5726d00973d3b/transformed/room-runtime-2.2.5/AndroidManifest.xml:27:13-43
+195            android:exported="false" />
+195-->[androidx.room:room-runtime:2.2.5] /home/user/.gradle/caches/transforms-3/155e0ac8599c055a84c5726d00973d3b/transformed/room-runtime-2.2.5/AndroidManifest.xml:28:13-37
+196
+197        <activity
+197-->[com.google.android.gms:play-services-base:17.0.0] /home/user/.gradle/caches/transforms-3/1ea967b797818d9badf6aaa0240ca184/transformed/jetified-play-services-base-17.0.0/AndroidManifest.xml:23:9-26:75
+198            android:name="com.google.android.gms.common.api.GoogleApiActivity"
+198-->[com.google.android.gms:play-services-base:17.0.0] /home/user/.gradle/caches/transforms-3/1ea967b797818d9badf6aaa0240ca184/transformed/jetified-play-services-base-17.0.0/AndroidManifest.xml:24:13-79
+199            android:exported="false"
+199-->[com.google.android.gms:play-services-base:17.0.0] /home/user/.gradle/caches/transforms-3/1ea967b797818d9badf6aaa0240ca184/transformed/jetified-play-services-base-17.0.0/AndroidManifest.xml:25:13-37
+200            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
+200-->[com.google.android.gms:play-services-base:17.0.0] /home/user/.gradle/caches/transforms-3/1ea967b797818d9badf6aaa0240ca184/transformed/jetified-play-services-base-17.0.0/AndroidManifest.xml:26:13-72
+201
+202        <meta-data
+202-->[com.google.android.gms:play-services-basement:17.0.0] /home/user/.gradle/caches/transforms-3/4ef803ba34d31dcf48df123a27eb5d76/transformed/jetified-play-services-basement-17.0.0/AndroidManifest.xml:23:9-25:69
+203            android:name="com.google.android.gms.version"
+203-->[com.google.android.gms:play-services-basement:17.0.0] /home/user/.gradle/caches/transforms-3/4ef803ba34d31dcf48df123a27eb5d76/transformed/jetified-play-services-basement-17.0.0/AndroidManifest.xml:24:13-58
+204            android:value="@integer/google_play_services_version" />
+204-->[com.google.android.gms:play-services-basement:17.0.0] /home/user/.gradle/caches/transforms-3/4ef803ba34d31dcf48df123a27eb5d76/transformed/jetified-play-services-basement-17.0.0/AndroidManifest.xml:25:13-66
+205
+206        <provider
+206-->[androidx.lifecycle:lifecycle-process:2.0.0] /home/user/.gradle/caches/transforms-3/f357fd7ade46c1af84604485431b9dd6/transformed/jetified-lifecycle-process-2.0.0/AndroidManifest.xml:23:9-27:43
+207            android:name="androidx.lifecycle.ProcessLifecycleOwnerInitializer"
+207-->[androidx.lifecycle:lifecycle-process:2.0.0] /home/user/.gradle/caches/transforms-3/f357fd7ade46c1af84604485431b9dd6/transformed/jetified-lifecycle-process-2.0.0/AndroidManifest.xml:24:13-79
+208            android:authorities="com.contusdemo.mirror_fly_demo.lifecycle-process"
+208-->[androidx.lifecycle:lifecycle-process:2.0.0] /home/user/.gradle/caches/transforms-3/f357fd7ade46c1af84604485431b9dd6/transformed/jetified-lifecycle-process-2.0.0/AndroidManifest.xml:25:13-69
+209            android:exported="false"
+209-->[androidx.lifecycle:lifecycle-process:2.0.0] /home/user/.gradle/caches/transforms-3/f357fd7ade46c1af84604485431b9dd6/transformed/jetified-lifecycle-process-2.0.0/AndroidManifest.xml:26:13-37
+210            android:multiprocess="true" />
+210-->[androidx.lifecycle:lifecycle-process:2.0.0] /home/user/.gradle/caches/transforms-3/f357fd7ade46c1af84604485431b9dd6/transformed/jetified-lifecycle-process-2.0.0/AndroidManifest.xml:27:13-40
+211    </application>
+212
+213</manifest>
