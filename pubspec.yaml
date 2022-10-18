@@ -1,0 +1,66 @@
+name: mirror_fly_demo
+version: 1.0.0+1
+publish_to: none
+description: A new Flutter project.
+environment: 
+  sdk: '>=2.18.0 <3.0.0'
+
+dependencies: 
+  cupertino_icons: ^1.0.2
+  get: 4.6.5
+  flutter: 
+    sdk: flutter
+  shared_preferences: ^2.0.15
+  flutter_svg: ^1.1.5
+  cached_network_image: ^3.2.2
+  file_picker: ^5.2.0+1 #file picker
+  fluttertoast: ^8.0.7 #toast
+  intl: ^0.17.0 #datetime
+  package_info_plus: ^2.0.0 #package info
+  image_picker: ^0.8.6
+  flutter_profile_picture: ^2.0.0
+  permission_handler: ^10.1.0
+  emoji_picker_flutter: ^1.4.0
+  image_cropping: ^0.0.13 #crop image
+  flutter_easyloading: ^3.0.5 #loading
+  path_provider: ^2.0.11 #path provider
+  video_player: ^2.4.7
+  lottie: ^1.4.3
+  url_launcher: ^6.1.6 #url Launcher
+  custom_image_crop: ^0.0.4 #crop image
+  photo_view: ^0.14.0
+  fluttercontactpicker: ^4.7.0
+  open_file: ^2.1.1
+#  future_progress_dialog: ^0.2.0
+
+dev_dependencies: 
+  flutter_lints: 2.0.1
+  flutter_test: 
+    sdk: flutter
+
+flutter: 
+  uses-material-design: true
+
+  assets:
+    - assets/countries.txt
+    - assets/logos/
+
+  fonts:
+    - family: sf_ui
+      fonts:
+        - asset: fonts/sf_ui_display_regular.otf
+          weight: 400
+        - asset: fonts/sf_ui_display_bold.otf
+          weight: 700
+        - asset: fonts/sf_ui_display_light.otf
+          weight: 100
+        - asset: fonts/sf_ui_display_medium.otf
+          weight: 500
+        - asset: fonts/sf_ui_display_semi_bold.otf
+          weight: 600
+        - asset: fonts/sf_ui_display_thin.otf
+          weight: 200
+
+
+
+
