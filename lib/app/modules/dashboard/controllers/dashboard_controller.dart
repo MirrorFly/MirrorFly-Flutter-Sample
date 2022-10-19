@@ -144,7 +144,8 @@ class DashboardController extends GetxController with WidgetsBindingObserver{
     print("recent chats");
     PlatformRepo().getRecentChats().then((value) {
       var data = recentChatFromJson(value);
-      recentchats.value = (data.data!);
+      recentchats.value.clear();
+      recentchats.addAll(data.data!.where((element) => element.isGroup==false));
     }).catchError((error) {
       debugPrint("issue===> $error");
       Fluttertoast.showToast(

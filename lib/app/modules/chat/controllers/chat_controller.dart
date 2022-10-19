@@ -15,7 +15,8 @@ import '../../../model/checkModel.dart';
 import '../../../model/userlistModel.dart';
 import '../../../routes/app_pages.dart';
 
-class ChatController extends GetxController with GetSingleTickerProviderStateMixin{
+class ChatController extends GetxController
+    with GetSingleTickerProviderStateMixin {
   //TODO: Implement DashboardController
 
   var chatList = List<ChatMessageModel>.empty(growable: true).obs;
@@ -36,6 +37,7 @@ class ChatController extends GetxController with GetSingleTickerProviderStateMix
   var showEmoji = false.obs;
 
   var isLive = false;
+
   @override
   void onInit() {
     super.onInit();
@@ -63,12 +65,10 @@ class ChatController extends GetxController with GetSingleTickerProviderStateMix
     debugPrint("==================");
     debugPrint(profile.image);
     sendReadReceipt();
-
   }
 
   @override
   void onClose() {
-
     scrollController.dispose();
     PlatformRepo().ongoingChat("");
     isLive = false;
@@ -93,13 +93,13 @@ class ChatController extends GetxController with GetSingleTickerProviderStateMix
       if (index >= 0) {
         debugPrint("already Value Exists ===> $index");
         chatList[index] = chatMessageModel;
-      } else if(index == -1){
+      } else if (index == -1) {
         debugPrint("value not found");
         chatList.add(chatMessageModel);
-        if(isLive) {
+        if (isLive) {
           sendReadReceipt();
         }
-      }else{
+      } else {
         debugPrint("Issue updating Message ==>$index");
       }
 
@@ -131,6 +131,16 @@ class ChatController extends GetxController with GetSingleTickerProviderStateMix
     }
   }
 
+  sendLocationMessage(Profile profile, double latitude, double longitude) {
+    PlatformRepo()
+        .sentLocationMessage(null, profile.jid.toString(), latitude, longitude)
+        .then((value) {
+      Log("Location_msg", value.toString());
+      ChatMessageModel chatMessageModel = sendMessageModelFromJson(value);
+      chatList.add(chatMessageModel);
+    });
+  }
+
   String gettime(int? timestamp) {
     DateTime now = DateTime.now();
     final DateTime date1 = timestamp == null
@@ -140,27 +150,38 @@ class ChatController extends GetxController with GetSingleTickerProviderStateMix
     // var fm1 = DateFormat('hh:mm a').parse(formattedDate, true);
     return formattedDate;
   }
-  String getChatTime(BuildContext context,int? epochTime)  {
-    if(epochTime==null) return "";
+
+  String getChatTime(BuildContext context, int? epochTime) {
+    if (epochTime == null) return "";
     if (epochTime == 0) return "";
-    var convertedTime = epochTime;// / 1000;
+    var convertedTime = epochTime; // / 1000;
     //messageDate.time = convertedTime
-    var hourTime = manipulateMessageTime(context, DateTime.fromMicrosecondsSinceEpoch(convertedTime));
+    var hourTime = manipulateMessageTime(
+        context, DateTime.fromMicrosecondsSinceEpoch(convertedTime));
     var currentYear = DateTime.now().year;
     calendar = DateTime.fromMicrosecondsSinceEpoch(convertedTime);
-    var time = (currentYear == calendar.year) ? DateFormat("dd-MMM").format(calendar) : DateFormat("yyyy/MM/dd").format(calendar);
+    var time = (currentYear == calendar.year)
+        ? DateFormat("dd-MMM").format(calendar)
+        : DateFormat("yyyy/MM/dd").format(calendar);
     return hourTime;
   }
 
-  String manipulateMessageTime(BuildContext context,DateTime messageDate) {
+  String manipulateMessageTime(BuildContext context, DateTime messageDate) {
     var format = MediaQuery.of(context).alwaysUse24HourFormat ? 24 : 12;
-    var hours = calendar.hour;//calendar[Calendar.HOUR]
+    var hours = calendar.hour; //calendar[Calendar.HOUR]
     calendar = messageDate;
     var dateHourFormat = setDateHourFormat(format, hours);
     return DateFormat(dateHourFormat).format(messageDate);
   }
+
   String setDateHourFormat(int format, int hours) {
-    var dateHourFormat = (format == 12) ? (hours < 10) ? "hh:mm aa" : "h:mm aa" : (hours < 10) ? "HH:mm" : "H:mm";
+    var dateHourFormat = (format == 12)
+        ? (hours < 10)
+            ? "hh:mm aa"
+            : "h:mm aa"
+        : (hours < 10)
+            ? "HH:mm"
+            : "H:mm";
     return dateHourFormat;
   }
 
@@ -179,7 +200,6 @@ class ChatController extends GetxController with GetSingleTickerProviderStateMix
   }
 
   getMedia(String mid) {
-
     return PlatformRepo().getMedia(mid).then((value) {
       // debugPrint("Media==> $value");
       CheckModel chatMessageModel = checkModelFromJson(value);
@@ -194,35 +214,47 @@ class ChatController extends GetxController with GetSingleTickerProviderStateMix
     // return base64Decode(chatMessageModel.mediaChatMessage.mediaThumbImage);
   }
 
-
   Image imageFromBase64String(String base64String, BuildContext context) {
     var decodedBase64 = base64String.replaceAll("\n", "");
     Uint8List image = const Base64Decoder().convert(decodedBase64);
-    return Image.memory(image, width: MediaQuery.of(context).size.width * 0.60, height: MediaQuery.of(context).size.height * 0.4, fit: BoxFit.cover,);
+    return Image.memory(
+      image,
+      width: MediaQuery.of(context).size.width * 0.60,
+      height: MediaQuery.of(context).size.height * 0.4,
+      fit: BoxFit.cover,
+    );
   }
 
   sendImageMessage(String? path, String? caption, String? replyMessageID) {
-    return PlatformRepo().sendImageMessage(profile.jid!, path!, caption, replyMessageID).then((value){
+    return PlatformRepo()
+        .sendImageMessage(profile.jid!, path!, caption, replyMessageID)
+        .then((value) {
       ChatMessageModel chatMessageModel = sendMessageModelFromJson(value);
       chatList.add(chatMessageModel);
 
       return chatMessageModel;
     });
-
   }
 
   Future imagePicker() async {
-    FilePickerResult? result = await FilePicker.platform.pickFiles(allowMultiple: false,type: FileType.custom, allowedExtensions: ['jpg', 'png', 'mp4', 'mov', 'wmv', 'mkv'],);
+    FilePickerResult? result = await FilePicker.platform.pickFiles(
+      allowMultiple: false,
+      type: FileType.custom,
+      allowedExtensions: ['jpg', 'png', 'mp4', 'mov', 'wmv', 'mkv'],
+    );
     if (result != null && File(result.files.single.path!).existsSync()) {
       debugPrint(result.files.first.extension);
-      if(result.files.first.extension == 'jpg' || result.files.first.extension == 'png') {
+      if (result.files.first.extension == 'jpg' ||
+          result.files.first.extension == 'png') {
         debugPrint("Picked Image File");
         imagePath.value = (result.files.single.path!);
         Get.toNamed(Routes.IMAGEPREVIEW, arguments: {
           "filePath": imagePath.value,
           "userName": profile.name!
         });
-      }else if(result.files.first.extension == 'mp4' || result.files.first.extension == 'mov' || result.files.first.extension == 'mkv'){
+      } else if (result.files.first.extension == 'mp4' ||
+          result.files.first.extension == 'mov' ||
+          result.files.first.extension == 'mkv') {
         debugPrint("Picked Video File");
         imagePath.value = (result.files.single.path!);
         Get.toNamed(Routes.VIDEO_PREVIEW, arguments: {
@@ -230,7 +262,6 @@ class ChatController extends GetxController with GetSingleTickerProviderStateMix
           "userName": profile.name!
         });
       }
-
     } else {
       // User canceled the picker
     }
@@ -243,20 +274,21 @@ class ChatController extends GetxController with GetSingleTickerProviderStateMix
   }
 
   sendVideoMessage(String videoPath, String caption, String replyMessageID) {
-    return PlatformRepo().sendMediaMessage(profile.jid!, videoPath, caption, replyMessageID).then((value){
+    return PlatformRepo()
+        .sendMediaMessage(profile.jid!, videoPath, caption, replyMessageID)
+        .then((value) {
       ChatMessageModel chatMessageModel = sendMessageModelFromJson(value);
       chatList.add(chatMessageModel);
       return chatMessageModel;
     });
   }
 
-  checkFile(String mediaLocalStoragePath){
-    return mediaLocalStoragePath.isNotEmpty && File(mediaLocalStoragePath).existsSync();
+  checkFile(String mediaLocalStoragePath) {
+    return mediaLocalStoragePath.isNotEmpty &&
+        File(mediaLocalStoragePath).existsSync();
   }
 
   downloadMedia(String messageId) {
     PlatformRepo().mediaDownload(messageId);
   }
-
-
 }

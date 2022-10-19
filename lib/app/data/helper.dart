@@ -3,6 +3,8 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:mirror_fly_demo/app/common/constants.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 
 class Helper{
   static void showLoading([String? message]) {
@@ -35,6 +37,21 @@ class Helper{
     return ((bytes / pow(1024, i)).toStringAsFixed(decimals)) +
         ' ' +
         suffixes[i];
+  }
+
+  static String getMapImageUri(double latitude, double longitude) {
+    var key = Constants.GOOGLE_MAP_KEY;
+    return ("https://maps.googleapis.com/maps/api/staticmap?center=" + latitude.toString() + "," + longitude.toString()
+    + "&zoom=13&size=300x200&markers=color:red|" + latitude.toString() + "," + longitude.toString() + "&key="
+    + key);
+  }
+
+  static int getColourCode(String name) {
+    if (name != null && name == Constants.YOU) return 0Xff000000;
+    var colorsArray = Constants.defaultColorList;
+    var hashcode = name.hashCode;
+    var rand =  hashcode % colorsArray.length;
+    return colorsArray[(rand).abs()];
   }
 
 }

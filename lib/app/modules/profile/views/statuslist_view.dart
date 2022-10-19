@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_svg/svg.dart';
@@ -32,7 +34,7 @@ class StatusListView extends GetView<StatusListController> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
+              const Text(
                 'Your current status',
                 style: TextStyle(fontSize: 14, fontWeight: FontWeight.w700),
               ),
@@ -51,16 +53,24 @@ class StatusListView extends GetView<StatusListController> {
                   onTap: () {
                     Get.to(AddStatusView())?.then((value){
                       if(value!=null){
-                        controller.selectedStatus.value=value;
-                        controller.getStatusList();
+                        PlatformRepo().updateProfileStatus(controller.addstatuscontroller.text.trim().toString()).then((value){
+                          controller.selectedStatus.value=value;
+                          var data = json.decode(value.toString());
+                          toToast(data['message'].toString());
+                          if(data['status']) {
+                            controller.getStatusList();
+                          }
+                        }).catchError((er){
+                          toToast(er);
+                        });
                       }
                     });
                   },
                 ),
               ),
-              AppDivider(padding: 0.0,),
-              SizedBox(height: 10,),
-              Text(
+              const AppDivider(padding: 0.0,),
+              const SizedBox(height: 10,),
+              const Text(
                 'Select Your new status',
                 style: TextStyle(fontSize: 14, fontWeight: FontWeight.w700),
               ),
@@ -75,10 +85,10 @@ class StatusListView extends GetView<StatusListController> {
                         contentPadding: EdgeInsets.zero,
                         title: Text(item.status,
                             style: TextStyle(
-                                color: item.isCurrentStatus ? textblack1color : textcolor,
+                                color: item.status==controller.selectedStatus.value ? textblack1color : textcolor,
                                 fontSize: 14,
                                 fontWeight: FontWeight.w500)),
-                        trailing: item.isCurrentStatus
+                        trailing: item.status==controller.selectedStatus.value
                             ? SvgPicture.asset(
                           tickicon,
                           fit: BoxFit.contain,
@@ -87,7 +97,11 @@ class StatusListView extends GetView<StatusListController> {
                         onTap: (){
                           PlatformRepo().updateProfileStatus(controller.addstatuscontroller.text.trim().toString()).then((value){
                             controller.selectedStatus.value=item.status;
-                            controller.getStatusList();
+                            var data = json.decode(value.toString());
+                            toToast(data['message'].toString());
+                            if(data['status']) {
+                              controller.getStatusList();
+                            }
                           }).catchError((er){
                             toToast(er);
                           });

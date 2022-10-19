@@ -4,6 +4,8 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.media.ThumbnailUtils
 import android.net.Uri
+import android.os.Bundle
+import android.os.PersistableBundle
 import android.util.Base64
 import android.widget.Toast
 import androidx.annotation.NonNull
@@ -246,6 +248,7 @@ class MainActivity: FlutterActivity(), MethodChannel.MethodCallHandler, EventCha
                 registerUser(call, result)
             }
             call.method.equals("authtoken")->{
+                Log.d(TAG,"authtoken : "+FlyUtils.decodedToken().trim())
                 result.success(FlyUtils.decodedToken().trim());
             }
 //            call.method.equals("connect_chat_manager") -> {
@@ -256,6 +259,9 @@ class MainActivity: FlutterActivity(), MethodChannel.MethodCallHandler, EventCha
             }
             call.method.equals("send_text_msg") -> {
                 sendTxtMessage(call, result)
+            }
+            call.method.equals("sentLocationMessage") -> {
+                sentLocationMessage(call, result)
             }
             call.method.equals("get_user_list") -> {
                 getUsers(call, result)
@@ -664,7 +670,7 @@ class MainActivity: FlutterActivity(), MethodChannel.MethodCallHandler, EventCha
             FlyMessenger.sendLocationMessage(userJid, latitude, longitude, reply, object : SendMessageListener {
                 override fun onResponse(isSuccess: Boolean, message: ChatMessage?) {
                     if (message != null) {
-                        result.success(Gson().toJson(message))
+                        result.success(Gson().toJson(message).toString())
                     }else{
                         result.error("400", "Message Not Sent", null)
                     }
