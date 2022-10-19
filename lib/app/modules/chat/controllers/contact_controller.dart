@@ -11,18 +11,20 @@ class ContactController extends GetxController {
   var pageNum = 1;
   var isPageLoading = true.obs;
   var scrollable = true.obs;
-  var userslist = List<Profile>.empty(growable: true).obs;
+  var userslist = <Profile>[].obs;
+  var mainuserslist = List<Profile>.empty(growable: true).obs;
   final TextEditingController searchQuery = TextEditingController();
   var search=false.obs;
   var _IsSearching = false;
   var _searchText = "";
+  var _first = true;
 
   @override
   void onInit() {
     super.onInit();
     scrollcontroller.addListener(_scrollListener);
     //searchQuery.addListener(_searchListener);
-    fetchUsers();
+    fetchUsers(false);
   }
 
   _scrollListener() {
@@ -31,45 +33,53 @@ class ContactController extends GetxController {
           isPageLoading.value == false) {
         if (scrollable.value) {
           //isPageLoading.value = true;
-          fetchUsers();
+          fetchUsers(false);
         }
       }
     }
   }
-  searchListener(){
+  searchListener(String text)async{
     debugPrint("searching .. ");
-    userslist.clear();
-    if (searchQuery.text.isEmpty) {
+    if (text.isEmpty) {
       _IsSearching = false;
       _searchText = "";
       pageNum=1;
     }
     else {
+      isPageLoading(true);
       _IsSearching = true;
-      _searchText = searchQuery.text;
+      _searchText = text;
       pageNum=1;
     }
-    isPageLoading.value=true;
-    fetchUsers();
+    fetchUsers(true);
+
   }
 
   backfromSearch(){
     search.value=false;
-    if(!_IsSearching){
-      isPageLoading.value=true;
+    searchQuery.text="";
+    _searchText ="";
+    //if(!_IsSearching){
+      //isPageLoading.value=true;
       pageNum=1;
-      fetchUsers();
-    }
+      //fetchUsers(true);
+    //}
+    userslist(mainuserslist);
 
   }
 
-  fetchUsers() {
+  fetchUsers(bool frmsearch) {
     PlatformRepo().getUsers(pageNum,_searchText).then((data) {
       var item = userListFromJson(data);
-      userslist.addAll(item.data!);
+      frmsearch ? userslist(item.data) : userslist.addAll(item.data!);
       pageNum=pageNum+1;
       isPageLoading.value = false;
       scrollable.value = item.data!.length == 20;
+      userslist.refresh();
+      if(_first){
+        _first=false;
+        mainuserslist(item.data!);
+      }
     })
     .catchError((error){
       Fluttertoast.showToast(
@@ -81,7 +91,7 @@ class ContactController extends GetxController {
     });
   }
   
-  get users => userslist;
+  get users => userslist.value;
 
   String imagepath(String? imgurl){
 

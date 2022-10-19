@@ -30,7 +30,7 @@ class ContactListView extends GetView<ContactController> {
           ),
           title: controller.search.value
               ? TextField(
-                  onChanged: (text) => controller.searchListener(),
+                  onChanged: (text) => controller.searchListener(text),
                   controller: controller.searchQuery,
                   autofocus: true,
                   decoration: const InputDecoration(
