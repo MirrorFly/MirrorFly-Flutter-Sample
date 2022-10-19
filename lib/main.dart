@@ -12,9 +12,16 @@ import 'package:mirror_fly_demo/app/modules/login/bindings/login_binding.dart';
 import 'app/data/SessionManagement.dart';
 import 'app/routes/app_pages.dart';
 
+import 'package:google_maps_flutter_android/google_maps_flutter_android.dart';
+import 'package:google_maps_flutter_platform_interface/google_maps_flutter_platform_interface.dart';
 
 void main() async {
-
+// Require Hybrid Composition mode on Android.
+  final GoogleMapsFlutterPlatform mapsImplementation =
+      GoogleMapsFlutterPlatform.instance;
+  if (mapsImplementation is GoogleMapsFlutterAndroid) {
+    mapsImplementation.useAndroidViewSurface = true;
+  }
   WidgetsFlutterBinding.ensureInitialized();
   await SessionManagement.onInit();
   Get.put<MainController>(MainController());

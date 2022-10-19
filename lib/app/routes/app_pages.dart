@@ -1,10 +1,12 @@
 import 'package:get/get.dart';
+import 'package:mirror_fly_demo/app/modules/chat/views/locationsent_view.dart';
 
 import '../model/userlistModel.dart';
 import '../modules/chat/bindings/chat_binding.dart';
 import '../modules/chat/bindings/chat_binding.dart';
 import '../modules/chat/bindings/contact_binding.dart';
 import '../modules/chat/bindings/image_preview_binding.dart';
+import '../modules/chat/bindings/location_binding.dart';
 import '../modules/chat/views/chat_view.dart';
 import '../modules/chat/views/chat_view.dart';
 import '../modules/chat/views/contactlist_view.dart';
@@ -74,6 +76,11 @@ class AppPages {
       page: () => ChatView(),
       arguments: Profile(),
       binding: ChatBinding(),
+    ),
+    GetPage(
+      name: _Paths.LOCATIONSENT,
+      page: () => LocationSentView(),
+      binding: LocationBinding(),
     ),
     GetPage(
       name: _Paths.CONTACTS,

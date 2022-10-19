@@ -7,14 +7,18 @@ import 'package:flutter_profile_picture/flutter_profile_picture.dart';
 import 'package:flutter_svg/svg.dart';
 
 import 'package:get/get.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:mirror_fly_demo/app/common/widgets.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
+import 'package:mirror_fly_demo/app/data/permissions.dart';
 import 'package:mirror_fly_demo/app/model/chatMessageModel.dart';
+import 'package:mirror_fly_demo/app/modules/chat/views/locationsent_view.dart';
 
 // import 'package:image_picker/image_picker.dart';
 import 'package:mirror_fly_demo/app/routes/app_pages.dart';
 import 'package:mirror_fly_demo/app/widgets/record_button.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../../common/constants.dart';
 import '../../../data/helper.dart';
@@ -40,7 +44,9 @@ class ChatView extends GetView<ChatController> {
                 height: 48,
                 clipoval: true,
                 errorWidget: ProfileTextImage(
-                  text: controller.profile.name.checkNull().isEmpty ? controller.profile.mobileNumber.checkNull() : controller.profile.name.checkNull(),
+                  text: controller.profile.name.checkNull().isEmpty
+                      ? controller.profile.mobileNumber.checkNull()
+                      : controller.profile.name.checkNull(),
                 ),
               ),
               const SizedBox(
@@ -445,7 +451,9 @@ class ChatView extends GetView<ChatController> {
                   // SvgPicture.asset(audio_mic,
                   //   fit: BoxFit.contain,),
 
-                  SizedBox(width: 5,),
+                  SizedBox(
+                    width: 5,
+                  ),
                   Text("data"),
                 ],
               ),
@@ -473,7 +481,85 @@ class ChatView extends GetView<ChatController> {
           ),
         ),
       );
-    } else if (chatList[index].messageType == 'LOCATION') {}
+    } else if (chatList[index].messageType.toUpperCase() ==
+        Constants.MLOCATION) {
+      return Padding(
+        padding: const EdgeInsets.all(2.0),
+        child: Stack(
+          children: [
+            ClipRRect(
+              borderRadius: BorderRadius.circular(15),
+              child: getLocationImage(chatList[index]),
+            ),
+            Positioned(
+              bottom: 8,
+              right: 10,
+              child:Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  getMessageIndicator(
+                      chatList[index].messageStatus.status,
+                      chatList[index].isMessageSentByMe,
+                      chatList[index].messageType),
+                  const SizedBox(
+                    width: 4,
+                  ),
+                  Text(
+                    controller.getChatTime(
+                        context, chatList[index].messageSentTime),
+                    style:
+                    const TextStyle(fontSize: 12, color: Colors.black),
+                  ),
+                ],
+              ),
+
+            ),
+            /*Positioned(
+              bottom: 8,
+              right: 10,
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  getMessageIndicator(
+                      chatList[index].messageStatus.status,
+                      chatList[index].isMessageSentByMe,
+                      chatList[index].messageType),
+                  const SizedBox(
+                    width: 4,
+                  ),
+                  Text(
+                    controller.getChatTime(
+                        context, chatList[index].messageSentTime),
+                    style: const TextStyle(fontSize: 12, color: Colors.white),
+                  ),
+                ],
+              ),
+            ),*/
+          ],
+        ),
+      );
+    }
+  }
+
+  Widget getLocationImage(ChatMessageModel item) {
+    return InkWell(
+        onTap: () async {
+          //Redirect to Google maps App
+          String googleUrl =
+              'https://www.google.com/maps/search/?api=1&query=${item.locationChatMessage!.latitude}, ${item.locationChatMessage!.longitude}';
+          if (await canLaunchUrl(Uri.parse(googleUrl))) {
+            await launchUrl(Uri.parse(googleUrl));
+          } else {
+            throw 'Could not open the map.';
+          }
+        },
+        child: Image.network(
+          Helper.getMapImageUri(item.locationChatMessage!.latitude,
+              item.locationChatMessage!.longitude),
+          fit: BoxFit.fill,
+          width: 200,
+          height: 171,
+        ));
   }
 
   Widget bottomSheet(BuildContext context) {
@@ -539,7 +625,21 @@ class ChatView extends GetView<ChatController> {
                   const SizedBox(
                     width: 50,
                   ),
-                  iconCreation(locationImg, "Location", () {}),
+                  iconCreation(locationImg, "Location", () {
+                    Permission().getLocationPermission().then((bool value) {
+                      Log("Location permission", value.toString());
+                      if (value) {
+                        Get.back();
+                        Get.toNamed(Routes.LOCATIONSENT)?.then((value) {
+                          if (value != null) {
+                            value as LatLng;
+                            controller.sendLocationMessage(controller.profile,
+                                value.latitude, value.longitude);
+                          }
+                        });
+                      }
+                    });
+                  }),
                 ],
               ),
             ],

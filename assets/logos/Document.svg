@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 14 14">
+  <g id="Document" transform="translate(-92 -143)">
+    <g id="folded-document-icon" transform="translate(90.014 144)">
+      <g id="Group_7326" data-name="Group 7326" transform="translate(3.986)">
+        <g id="Group_7325" data-name="Group 7325">
+          <rect id="Rectangle_3728" data-name="Rectangle 3728" width="5.039" height="0.733" transform="translate(2.37 2.941)" fill="#767676"/>
+          <rect id="Rectangle_3729" data-name="Rectangle 3729" width="5.039" height="0.733" transform="translate(2.37 4.698)" fill="#767676"/>
+          <path id="Path_9748" data-name="Path 9748" d="M13.524,0H4.237a.244.244,0,0,0-.244.244V8.388a.605.605,0,0,0-.007.071A2.367,2.367,0,0,0,6.046,10.8l-.007.005,7.241.923a.489.489,0,0,0,.489-.489v-11A.245.245,0,0,0,13.524,0Zm-.977,10.314L7.7,7.471c-.114-.073-.206-.022-.206.113v.833c0,.014,0,.027,0,.042A1.142,1.142,0,0,1,6.351,9.6,1.1,1.1,0,0,1,5.215,8.5c0-.022,0-.054,0-.076v-7.2h7.331v9.092Z" transform="translate(-3.986)" fill="#767676"/>
+        </g>
+      </g>
+    </g>
+    <rect id="Rectangle_4651" data-name="Rectangle 4651" width="14" height="14" transform="translate(92 143)" fill="none"/>
+  </g>
+</svg>

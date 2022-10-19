@@ -53,6 +53,13 @@ const String video_play = 'assets/logos/video_play.svg';
 const String audio_play = 'assets/logos/audio_play.svg';
 const String audio_mic_bg = 'assets/logos/audio_mic_bg.svg';
 const String audio_mic = 'assets/logos/mic.svg';
+const String Mcontacticon = 'assets/logos/Contact.svg';
+const String Mdocumenticon = 'assets/logos/Document.svg';
+const String Mimageicon = 'assets/logos/image.svg';
+const String Mlocationicon = 'assets/logos/Location.svg';
+const String Mvideoicon = 'assets/logos/Video.svg';
+const String Maudioicon = 'assets/logos/noun_Audio_3408360.svg';
+const String cornershadow = 'assets/logos/ic_baloon.png';
 
 
 //Strings
@@ -74,6 +81,7 @@ Log(String tag,String msg){
 }
 class Constants {
   static const String TAG = 'Contus Fly';
+  static const String GOOGLE_MAP_KEY = "AIzaSyBaKkrQnLT4nacpKblIE5d4QK6GpaX5luQ";
   static const String GOOGLE_MAP_PACKAGE_NAME = "com.google.android.apps.maps";
   static const String PACKAGE_NAME = "com.contus.flycommons.";
   static const String ROSTER_JID = "roster_jid";
@@ -404,7 +412,52 @@ class Constants {
   static const String Terms_Conditions = "https://www.mirrorfly.com/terms-and-conditions.php";
   static const String Privacy_Policy = "https://www.mirrorfly.com/privacy-policy.php";
 
-  static const List<String> defaultStatuslist = ["Available","Sleeping&#8230;","Urgent calls only","At the movies","I am in Mirror Fly"];
+  static const List<String> defaultStatuslist = ["Available","Sleeping...","Urgent calls only","At the movies","I am in Mirror Fly"];
+  static const List<int> defaultColorList = [
+    0Xff9068BE,
+    0XffE62739,
+    0Xff845007,
+    0Xff3A4660,
+    0Xff1D1E22,
+    0XffBE7D6A,
+    0Xff005995,
+    0Xff600473,
+    0XffCD5554,
+    0Xff00303F,
+    0XffBE4F0C,
+    0Xff4ABDAC,
+    0XffFC4A1A,
+    0Xff368CBF,
+    0Xff7EBC59,
+    0Xff201D3A,
+    0Xff269CCC,
+    0Xff737272,
+    0Xff237107,
+    0Xff52028E,
+    0XffAF0D74,
+    0Xff6CB883,
+    0Xff0DAFA4,
+    0XffA71515,
+    0Xff157FA7,
+    0Xff7E52B1,
+    0Xff27956A,
+    0Xff9A4B70,
+    0XffFBBE30,
+    0XffED3533,
+    0Xff571C8D,
+    0Xff54181C,
+    0Xff9B6700,
+    0Xff6E8E14,
+    0Xff0752A1,
+    0XffBF6421,
+    0Xff00A59C,
+    0Xff9F0190,
+    0XffAE3A3A,
+    0Xff858102,
+    0Xff027E02,
+    0XffF66E54
+  ];
+  static const String defaultstatus = "I am in Mirror Fly";
 
   static const int MEDIA_DOWNLOADING = 3;
   static const int MEDIA_DOWNLOADED = 4;
@@ -414,6 +467,15 @@ class Constants {
   static const int MEDIA_UPLOADING = 1;
   static const int MEDIA_UPLOADED = 2;
   static const int MEDIA_UPLOADED_NOT_AVAILABLE = 7;
+
+  //Message Types
+  static const String MTEXT = "TEXT";
+  static const String MIMAGE = "IMAGE";
+  static const String MAUDIO = "AUDIO";
+  static const String MVIDEO = "VIDEO";
+  static const String MCONTACT = "CONTACT";
+  static const String MLOCATION = "LOCATION";
+  static const String MDOCUMENT = "DOCUMENT";
 }
 
 Future<void> launchWeb(String url) async{

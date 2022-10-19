@@ -5,6 +5,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
+import 'package:mirror_fly_demo/app/enums/message_enum.dart';
 import 'package:mirror_fly_demo/app/model/recentchat.dart';
 import 'package:mirror_fly_demo/app/modules/chat/views/contactlist_view.dart';
 
@@ -92,42 +93,42 @@ class DashboardView extends GetView<DashboardController> {
         child: const Icon(Icons.chat_rounded),
       ),
       body: Stack(
-          children: [
-            Obx(
-              ()=> controller.recentchats.isNotEmpty
-                  ? ListView.builder(
-                      itemCount: controller.recentchats.length,
-                      physics: AlwaysScrollableScrollPhysics(),
-                      itemBuilder: (BuildContext context, int index) {
-                        var item = controller.recentchats[index];
-                        //var image = controller.imagepath(item.profileImage);
-                        return RecentChatItem(item, context);
-                      })
-                  : Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Image.asset(nocontactsicon),
-                          Text(
-                            'No new messages',
-                            textAlign: TextAlign.center,
-                            style: Theme.of(context).textTheme.titleMedium,
-                          ),
-                          SizedBox(
-                            height: 8,
-                          ),
-                          Text(
-                            'Any new messages will appear here',
-                            textAlign: TextAlign.center,
-                            style: Theme.of(context).textTheme.titleSmall,
-                          ),
-                        ],
-                      ),
+        children: [
+          Obx(
+            () => controller.recentchats.isNotEmpty
+                ? ListView.builder(
+                    itemCount: controller.recentchats.length,
+                    physics: AlwaysScrollableScrollPhysics(),
+                    itemBuilder: (BuildContext context, int index) {
+                      var item = controller.recentchats[index];
+                      //var image = controller.imagepath(item.profileImage);
+                      return RecentChatItem(item, context);
+                    })
+                : Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Image.asset(nocontactsicon),
+                        Text(
+                          'No new messages',
+                          textAlign: TextAlign.center,
+                          style: Theme.of(context).textTheme.titleMedium,
+                        ),
+                        SizedBox(
+                          height: 8,
+                        ),
+                        Text(
+                          'Any new messages will appear here',
+                          textAlign: TextAlign.center,
+                          style: Theme.of(context).textTheme.titleSmall,
+                        ),
+                      ],
                     ),
-            )
-          ],
-        ),
+                  ),
+          )
+        ],
+      ),
     );
   }
 
@@ -139,41 +140,35 @@ class DashboardView extends GetView<DashboardController> {
             Container(
                 margin:
                     EdgeInsets.only(left: 19.0, top: 10, bottom: 10, right: 10),
-                /*width: 50,
-                height: 50,*/
-                /*decoration: BoxDecoration(
-                    color: item.profileImage == null || item.profileImage == ""
-                        ? iconbgcolor
-                        : buttonbgcolor,
-                    shape: BoxShape.circle),*/
                 child: Stack(
                   children: [
                     ImageNetwork(
-                            url: item.profileImage.toString(),
-                            width: 48,
-                            height: 48,
+                      url: item.profileImage.toString(),
+                      width: 48,
+                      height: 48,
                       clipoval: true,
-                            errorWidget: ProfileTextImage(
-                              text: item.profileName.checkNull().isEmpty ? item.nickName.checkNull() : item.profileName.checkNull(),
-                            ),
-                          ),
-                    item.unreadMessageCount.toString()!="0" ? Positioned(right: 0,child: CircleAvatar(radius:8,child: Text(item.unreadMessageCount.toString(),style: TextStyle(fontSize: 9,color: Colors.white,fontFamily: 'sf_ui'),),)) : SizedBox(),
+                      errorWidget: ProfileTextImage(
+                        text: item.profileName.checkNull().isEmpty
+                            ? item.nickName.checkNull()
+                            : item.profileName.checkNull(),
+                      ),
+                    ),
+                    item.unreadMessageCount.toString() != "0"
+                        ? Positioned(
+                            right: 0,
+                            child: CircleAvatar(
+                              radius: 8,
+                              child: Text(
+                                item.unreadMessageCount.toString(),
+                                style: TextStyle(
+                                    fontSize: 9,
+                                    color: Colors.white,
+                                    fontFamily: 'sf_ui'),
+                              ),
+                            ))
+                        : SizedBox(),
                   ],
-                ) /*CachedNetworkImage(
-                        imageUrl: imagedomin + item.profileImage.toString(),
-                        progressIndicatorBuilder:
-                            (context, url, downloadProgress) =>
-                                CircularProgressIndicator(
-                                    value: downloadProgress.progress),
-                        errorWidget: (context, url, error) {
-                          debugPrint("url : " + url);
-                          return Icon(
-                            Icons.person,
-                            color: Colors.black,
-                          );
-                        },
-                      )*/
-                ),
+                )),
             Flexible(
               child: Container(
                 padding: EdgeInsets.only(top: 16),
@@ -203,21 +198,36 @@ class DashboardView extends GetView<DashboardController> {
                                 fontSize: 12.0,
                                 fontWeight: FontWeight.w600,
                                 fontFamily: 'sf_ui',
-                                color: item.unreadMessageCount.toString()!="0" ? buttonbgcolor : textcolor),
+                                color: item.unreadMessageCount.toString() != "0"
+                                    ? buttonbgcolor
+                                    : textcolor),
                           ),
                         ),
                       ],
                     ),
                     Row(
                       children: [
-                        item.unreadMessageCount.toString()!="0" ? Padding(
-                          padding: const EdgeInsets.only(right: 8.0),
-                          child: CircleAvatar(radius: 4,backgroundColor: Colors.green,),
-                        ) : SizedBox(),
+                        item.unreadMessageCount.toString() != "0"
+                            ? Padding(
+                                padding: const EdgeInsets.only(right: 8.0),
+                                child: CircleAvatar(
+                                  radius: 4,
+                                  backgroundColor: Colors.green,
+                                ),
+                              )
+                            : SizedBox(),
                         Expanded(
-                          child: Text(
-                            item.lastMessageContent.toString(),
-                            style: Theme.of(context).textTheme.titleSmall,
+                          child: Row(
+                            children: [
+                              forMessageTypeIcon(item.lastMessageType!),
+                              SizedBox(width: forMessageTypeString(item.lastMessageType!)!=null ? 3.0 : 0.0,),
+                              Expanded(
+                                child: Text(
+                                  forMessageTypeString(item.lastMessageType!) ?? item.lastMessageContent.toString(),
+                                  style: Theme.of(context).textTheme.titleSmall,
+                                ),
+                              ),
+                            ],
                           ),
                         ),
                       ],
@@ -238,5 +248,61 @@ class DashboardView extends GetView<DashboardController> {
             ?.then((value) => controller.getRecentChatlist());
       },
     );
+  }
+
+  Widget forMessageTypeIcon(String MessageType) {
+    switch (MessageType.toUpperCase()) {
+      case Constants.MIMAGE:
+        return SvgPicture.asset(
+          Mimageicon,
+          fit: BoxFit.contain,
+        );
+       case Constants.MAUDIO:
+        return SvgPicture.asset(
+          Maudioicon,
+          fit: BoxFit.contain,
+        );
+      case Constants.MVIDEO:
+        return SvgPicture.asset(
+          Mvideoicon,
+          fit: BoxFit.contain,
+        );
+      case Constants.MDOCUMENT:
+        return SvgPicture.asset(
+          Mdocumenticon,
+          fit: BoxFit.contain,
+        );
+      case Constants.MCONTACT:
+        return SvgPicture.asset(
+          Mcontacticon,
+          fit: BoxFit.contain,
+        );
+      case Constants.MLOCATION:
+        return SvgPicture.asset(
+          Mlocationicon,
+          fit: BoxFit.contain,
+        );
+      default:
+        return const SizedBox();
+    }
+  }
+
+  String? forMessageTypeString(String MessageType) {
+    switch (MessageType.toUpperCase()) {
+      case Constants.MIMAGE:
+        return "Image";
+      case Constants.MAUDIO:
+        return "Audio";
+      case Constants.MVIDEO:
+        return "Video";
+      case Constants.MDOCUMENT:
+        return "Document";
+      case Constants.MCONTACT:
+        return "Contact";
+      case Constants.MLOCATION:
+        return "Location";
+      default:
+        return null;
+    }
   }
 }

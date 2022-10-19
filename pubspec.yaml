@@ -32,6 +32,9 @@ dependencies:
   fluttercontactpicker: ^4.7.0
   open_file: ^2.1.1
 #  future_progress_dialog: ^0.2.0
+  google_maps_flutter: ^2.2.1 #google map
+  geolocator: ^9.0.2 #geolocator
+  geocoding: ^2.0.5 #geocoder for address
 
 dev_dependencies: 
   flutter_lints: 2.0.1
