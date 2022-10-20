@@ -117,11 +117,6 @@ class AppPages {
       binding: LocalContactBinding(),
     ),
     GetPage(
-      name: _Paths.FILE_VIEWER,
-      page: () => const FileViewerView(),
-      binding: FileViewerBinding(),
-    ),
-    GetPage(
       name: _Paths.PREVIEW_CONTACT,
       page: () => const PreviewContactView(),
       binding: PreviewContactBinding(),
