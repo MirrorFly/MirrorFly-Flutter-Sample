@@ -231,6 +231,8 @@ class DashboardView extends GetView<DashboardController> {
                                 child: Text(
                                   forMessageTypeString(item.lastMessageType!) ?? item.lastMessageContent.toString(),
                                   style: Theme.of(context).textTheme.titleSmall,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
                                 ),
                               ),
                             ],

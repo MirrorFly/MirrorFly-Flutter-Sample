@@ -30,7 +30,7 @@ class DashboardController extends GetxController {
   registerMsgListener() {
     PlatformRepo().listenMessageEvents();
     // var onMessageReceived = PlatformRepo().onMessageReceived;
-    var onMessageStatusUpdated = PlatformRepo().onMediaStatusUpdated;
+    var onMessageStatusUpdated = PlatformRepo().onMessageReceived;
     // onMessageReceived.listen((event) async {
     //   debugPrint("myreceived" + event.toString());
     //   Log("onMessageReceived", event.toString());
@@ -119,8 +119,8 @@ class DashboardController extends GetxController {
         recent.lastMessageType = recentMsg.messageType;
         recent.unreadMessageCount = recentMsg.isMessageSentByMe
             ? recentchats.value[index].unreadMessageCount
-            : recentchats.value[index].unreadMessageCount ??
-                recentchats.value[index].unreadMessageCount! + 1;
+            : recentchats.value[index].unreadMessageCount!=null ?
+                recentchats.value[index].unreadMessageCount! + 1 : recentchats.value[index].unreadMessageCount;
         recentchats.removeAt(index);
         recentchats.insert(0, recent);
       }

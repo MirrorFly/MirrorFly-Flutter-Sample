@@ -13,8 +13,6 @@ import '../modules/chat/views/contactlist_view.dart';
 import '../modules/chat/views/image_preview_view.dart';
 import '../modules/dashboard/bindings/dashboard_binding.dart';
 import '../modules/dashboard/views/dashboard_view.dart';
-import '../modules/file_viewer/bindings/file_viewer_binding.dart';
-import '../modules/file_viewer/views/file_viewer_view.dart';
 import '../modules/home/bindings/home_binding.dart';
 import '../modules/home/views/home_view.dart';
 import '../modules/image_view/bindings/image_view_binding.dart';

@@ -295,9 +295,11 @@ class ChatView extends GetView<ChatController> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
-            Text(
-              chatList[index].messageTextContent,
-              style: const TextStyle(fontSize: 17),
+            Flexible(
+              child: Text(
+                chatList[index].messageTextContent,
+                style: const TextStyle(fontSize: 17),
+              ),
             ),
             const SizedBox(
               width: 10,
@@ -731,8 +733,7 @@ class ChatView extends GetView<ChatController> {
             ),
             ],
           ),
-        ),
-      );
+        );
     } else if (chatList[index].messageType.toUpperCase() ==
         Constants.MLOCATION) {
       return Padding(
