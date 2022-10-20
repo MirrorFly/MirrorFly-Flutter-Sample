@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 
+import '../common/constants.dart';
 import 'flow_shader.dart';
 import 'globals.dart';
 import 'lottie_animation.dart';
@@ -88,10 +89,10 @@ class _RecordButtonState extends State<RecordButton> {
     return Stack(
       clipBehavior: Clip.none,
       children: [
-        lockSlider(),
+        // lockSlider(),
         cancelSlider(),
         audioButton(),
-        if (isLocked) timerLocked(),
+        // if (isLocked) timerLocked(),
       ],
     );
   }
@@ -136,7 +137,10 @@ class _RecordButtonState extends State<RecordButton> {
         width: timerWidth,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(Globals.borderRadius),
-          color: Colors.black,
+          border: Border.all(
+            color: textcolor,
+          ),
+          color: Colors.white,
         ),
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 15),
@@ -224,7 +228,7 @@ class _RecordButtonState extends State<RecordButton> {
       child: Transform.scale(
         scale: buttonScaleAnimation.value,
         child: Container(
-          child: const Icon(Icons.mic),
+          child: const Icon(Icons.mic, color: Colors.white,),
           height: size,
           width: size,
           clipBehavior: Clip.hardEdge,

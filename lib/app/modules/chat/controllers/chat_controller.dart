@@ -38,6 +38,8 @@ class ChatController extends GetxController
   var currentpos = 0.obs;
   var isplaying = false.obs;
   var audioplayed = false.obs;
+
+  var isUserTyping = false.obs;
   // late Uint8List audiobytes;
 
   AudioPlayer player = AudioPlayer();
@@ -525,6 +527,10 @@ class ChatController extends GetxController
       chatList.add(chatMessageModel);
       return chatMessageModel;
     });
+  }
+
+  void isTyping(String typingText) {
+    typingText.isNotEmpty ? isUserTyping(true) : isUserTyping(false);
   }
 
 
