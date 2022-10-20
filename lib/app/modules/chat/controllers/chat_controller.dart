@@ -282,14 +282,19 @@ class ChatController extends GetxController
   }
 
   sendImageMessage(String? path, String? caption, String? replyMessageID) {
-    return PlatformRepo()
-        .sendImageMessage(profile.jid!, path!, caption, replyMessageID)
-        .then((value) {
-      ChatMessageModel chatMessageModel = sendMessageModelFromJson(value);
-      chatList.add(chatMessageModel);
+    debugPrint("Path ==> $path");
+    if(File(path!).existsSync()) {
+      return PlatformRepo()
+          .sendImageMessage(profile.jid!, path, caption, replyMessageID)
+          .then((value) {
+        ChatMessageModel chatMessageModel = sendMessageModelFromJson(value);
+        chatList.add(chatMessageModel);
 
-      return chatMessageModel;
-    });
+        return chatMessageModel;
+      });
+    }else{
+      debugPrint("file not found for upload");
+    }
 
   }
 

@@ -91,11 +91,10 @@ class ChatView extends GetView<ChatController> {
                     children: [
                       Row(
                         children: [
-                          Expanded(
+                          Flexible(
                             child: Container(
                               padding: const EdgeInsets.only(left: 10),
                               margin: const EdgeInsets.all(10),
-                              height: 50,
                               width: double.infinity,
                               decoration: BoxDecoration(
                                 border: Border.all(
@@ -132,6 +131,9 @@ class ChatView extends GetView<ChatController> {
                                       onTap: () {
                                         controller.focusNode.requestFocus();
                                       },
+                                      keyboardType: TextInputType.multiline,
+                                      minLines: 1,
+                                      maxLines: 4,
                                       controller: controller.messageController,
                                       focusNode: controller.focusNode,
                                       decoration: const InputDecoration(
@@ -142,24 +144,26 @@ class ChatView extends GetView<ChatController> {
                                   const SizedBox(
                                     width: 15,
                                   ),
-                                  InkWell(
-                                      onTap: () {
-                                        showModalBottomSheet(
-                                            backgroundColor: Colors.transparent,
-                                            context: context,
-                                            builder: (builder) =>
-                                                bottomSheet(context));
-                                      },
-                                      child: SvgPicture.asset(
-                                          'assets/logos/attach.svg')),
+                                  IconButton(
+                                    color: Colors.blue,
+                                    onPressed: () {
+                                      showModalBottomSheet(
+                                          backgroundColor: Colors.transparent,
+                                          context: context,
+                                          builder: (builder) =>
+                                              bottomSheet(context));
+                                    },
+                                    icon: SvgPicture.asset(
+                                        'assets/logos/attach.svg'),
+                                  ),
                                   const SizedBox(
                                     width: 15,
                                   ),
-                                  SvgPicture.asset('assets/logos/mic.svg'),
+                                  // SvgPicture.asset('assets/logos/mic.svg'),
                                   // RecordButton(controller: controller.controller,),
-                                  const SizedBox(
-                                    width: 20,
-                                  ),
+                                  // const SizedBox(
+                                  //   width: 20,
+                                  // ),
                                 ],
                               ),
                             ),
@@ -289,7 +293,8 @@ class ChatView extends GetView<ChatController> {
       List<ChatMessageModel> chatList) {
     debugPrint(json.encode(chatList[index]));
     if (chatList[index].messageType == 'TEXT') {
-      return Padding(
+      return Container(
+        constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.7),
         padding: const EdgeInsets.all(16.0),
         child: Row(
           mainAxisSize: MainAxisSize.min,
@@ -1061,7 +1066,7 @@ class ChatView extends GetView<ChatController> {
               'imagePath': mediaLocalStoragePath
             });
           },
-          child: Image.file(
+          child:  Image.file(
             File(mediaLocalStoragePath),
             width: MediaQuery
                 .of(context)
@@ -1072,7 +1077,7 @@ class ChatView extends GetView<ChatController> {
                 .size
                 .height * 0.4,
             fit: BoxFit.cover,
-          ));
+          ) );
     } else {
       return controller.imageFromBase64String(mediaThumbImage, context);
     }

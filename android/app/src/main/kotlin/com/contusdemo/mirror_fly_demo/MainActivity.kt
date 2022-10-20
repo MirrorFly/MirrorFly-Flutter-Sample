@@ -773,6 +773,7 @@ override fun onCreate(savedInstanceState: Bundle?) {
 
         val thumbnailBase64 = getImageThumbImage(filePath)
 
+        Log.e("FILEPATH", filePath)
         Log.i(TAG, filePath);
         Log.i(TAG, thumbnailBase64);
 

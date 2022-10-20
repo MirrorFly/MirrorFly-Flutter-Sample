@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/modules/chat/controllers/image_preview_controller.dart';
+import 'package:photo_view/photo_view.dart';
 
 import '../../../common/constants.dart';
 
@@ -73,9 +74,23 @@ class ImagePreviewView extends GetView<ImagePreviewController> {
                     .of(context)
                     .size
                     .height - 150,
-                child: Image.file(
-                  File(controller.filePath.value),
-                  fit: BoxFit.cover,
+                child: PhotoView(
+                  imageProvider: FileImage(File(controller.filePath.value)),
+                  // Contained = the smallest possible size to fit one dimension of the screen
+                  minScale: PhotoViewComputedScale.contained * 0.8,
+                  // Covered = the smallest possible size to fit the whole screen
+                  maxScale: PhotoViewComputedScale.covered * 2,
+                  enableRotation: true,
+                  // Set the background color to the "classic white"
+                  backgroundDecoration: BoxDecoration(
+                    color: Theme
+                        .of(context)
+                        .canvasColor,
+                  ),
+                  loadingBuilder: (context, event) =>
+                      Center(
+                        child: CircularProgressIndicator(),
+                      ),
                 ),
               ) : const Center(child: CircularProgressIndicator());
             }),

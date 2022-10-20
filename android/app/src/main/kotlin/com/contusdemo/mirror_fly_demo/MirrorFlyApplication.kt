@@ -2,15 +2,16 @@ package com.contusdemo.mirror_fly_demo
 
 import android.app.Application
 import com.contus.flycommons.LogMessage
-import com.contus.flycommons.SharedPreferenceManager
 import com.contus.webrtc.GroupCallDetails
 import com.contus.webrtc.WebRtcCallService
 import com.contus.webrtc.api.CallHelper
-import com.contusflysdk.ChatSDK
-import com.contusflysdk.api.ChatManager
 import com.contus.webrtc.api.CallManager
 import com.contus.webrtc.api.MissedCallListener
+import com.contusflysdk.ChatSDK
+import com.contusflysdk.GroupConfig
 import com.contusflysdk.api.CallMessenger
+import com.contusflysdk.api.ChatManager
+
 
 class MirrorFlyApplication : Application() {
 
@@ -19,10 +20,18 @@ class MirrorFlyApplication : Application() {
         super.onCreate()
 
         LogMessage.enableDebugLogging(BuildConfig.DEBUG)
+
+        val groupConfiguration = GroupConfig.Builder()
+            .enableGroupCreation(true)
+            .setMaximumMembersInAGroup(250)
+            .onlyAdminCanAddOrRemoveMembers(true)
+            .build()
+
         ChatSDK.Builder()
             .setDomainBaseUrl(BuildConfig.SDK_BASE_URL)
             .setLicenseKey(BuildConfig.LICENSE)
             .setIsTrialLicenceKey(true)
+            .setGroupConfiguration(groupConfiguration)
             .build()
 
         //initialize call sdk
