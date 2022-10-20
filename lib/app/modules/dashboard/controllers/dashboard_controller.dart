@@ -12,40 +12,27 @@ import '../../../common/lifecycleEventHandler.dart';
 import '../../../model/chatMessageModel.dart';
 import '../../../routes/app_pages.dart';
 
-class DashboardController extends GetxController with WidgetsBindingObserver{
+class DashboardController extends GetxController {
   var recentchats = List<RecentChatData>.empty(growable: true).obs;
   var calendar = DateTime.now();
 
   @override
   void onInit() {
     super.onInit();
-    WidgetsBinding.instance.addObserver(this);
-    getRecentChatlist();
     registerMsgListener();
-    WidgetsBinding.instance.addObserver(
-        LifecycleEventHandler(resumeCallBack: () async { debugPrint("ONRESUME"); }, suspendingCallBack: () async { debugPrint("ONSUSPEND"); }, pauseCallBack: () async { debugPrint("ONRESUME"); })
-    );
   }
-
-
 
   @override
   void onClose() {
     super.onClose();
-    WidgetsBinding.instance.removeObserver(this);
   }
 
-  @override
-  void didChangeAppLifecycleState(AppLifecycleState state) {
-    super.didChangeAppLifecycleState(state);
-    print('state = $state');
-  }
   registerMsgListener() {
     PlatformRepo().listenMessageEvents();
-    var onMessageReceived = PlatformRepo().chatEvents(
-        Constants.MESSAGE_RECEIVED);
-    var onMessageStatusUpdated = PlatformRepo().chatEvents(
-        Constants.MESSAGE_UPDATED);
+    var onMessageReceived =
+        PlatformRepo().chatEvents(Constants.MESSAGE_RECEIVED);
+    var onMessageStatusUpdated =
+        PlatformRepo().chatEvents(Constants.MESSAGE_UPDATED);
     onMessageReceived.listen((event) async {
       debugPrint("myreceived" + event.toString());
       Log("onMessageReceived", event.toString());
@@ -83,10 +70,10 @@ class DashboardController extends GetxController with WidgetsBindingObserver{
       debugPrint("myupdate" + event.toString());
       Log("onMessageStatusUpdated", event.toString());
       ChatMessageModel recentMsg = sendMessageModelFromJson(event);
-      final index = recentchats.indexWhere((chat) =>
-      chat.jid == recentMsg.chatUserJid);
+      final index =
+          recentchats.indexWhere((chat) => chat.jid == recentMsg.chatUserJid);
       debugPrint("myupdate index " + index.toString());
-      if(index.isNegative){
+      if (index.isNegative) {
         var recent = RecentChatData();
         recent.contactType = recentMsg.contactType;
         recent.isLastMessageSentByMe = recentMsg.isMessageSentByMe;
@@ -100,9 +87,9 @@ class DashboardController extends GetxController with WidgetsBindingObserver{
         recent.lastMessageStatus = recentMsg.messageStatus.status;
         recent.lastMessageTime = recentMsg.messageSentTime;
         recent.lastMessageType = recentMsg.messageType;
-        recent.unreadMessageCount=0;
+        recent.unreadMessageCount = 0;
         recentchats.add(recent);
-      }else {
+      } else {
         var recent = recentchats.value[index];
         //var recent = RecentChatData();
         recent.contactType = recentMsg.contactType;
@@ -132,7 +119,10 @@ class DashboardController extends GetxController with WidgetsBindingObserver{
         recent.lastMessageStatus = recentMsg.messageStatus.status;
         recent.lastMessageTime = recentMsg.messageSentTime;
         recent.lastMessageType = recentMsg.messageType;
-        recent.unreadMessageCount = recentMsg.isMessageSentByMe ? recentchats.value[index].unreadMessageCount :  recentchats.value[index].unreadMessageCount ?? recentchats.value[index].unreadMessageCount!+1 ;
+        recent.unreadMessageCount = recentMsg.isMessageSentByMe
+            ? recentchats.value[index].unreadMessageCount
+            : recentchats.value[index].unreadMessageCount ??
+                recentchats.value[index].unreadMessageCount! + 1;
         recentchats.removeAt(index);
         recentchats.insert(0, recent);
       }
@@ -145,7 +135,8 @@ class DashboardController extends GetxController with WidgetsBindingObserver{
     PlatformRepo().getRecentChats().then((value) {
       var data = recentChatFromJson(value);
       recentchats.value.clear();
-      recentchats.addAll(data.data!.where((element) => element.isGroup==false));
+      recentchats
+          .addAll(data.data!.where((element) => element.isGroup == false));
     }).catchError((error) {
       debugPrint("issue===> $error");
       Fluttertoast.showToast(
@@ -185,8 +176,9 @@ class DashboardController extends GetxController with WidgetsBindingObserver{
 
   String gettime(int? timestamp) {
     DateTime now = DateTime.now();
-    final DateTime date1 = timestamp == null ? now : DateTime
-        .fromMillisecondsSinceEpoch(timestamp);
+    final DateTime date1 = timestamp == null
+        ? now
+        : DateTime.fromMillisecondsSinceEpoch(timestamp);
     String formattedDate = DateFormat('hh:mm a').format(date1); //yyyy-MM-dd –
     return formattedDate;
   }
@@ -203,22 +195,20 @@ class DashboardController extends GetxController with WidgetsBindingObserver{
     //messageDate.time = convertedTime
     var hourTime = manipulateMessageTime(
         context, DateTime.fromMicrosecondsSinceEpoch(convertedTime));
-    var currentYear = DateTime
-        .now()
-        .year;
+    var currentYear = DateTime.now().year;
     calendar = DateTime.fromMicrosecondsSinceEpoch(convertedTime);
-    var time = (currentYear == calendar.year) ? DateFormat("dd-MMM").format(
-        calendar) : DateFormat("yyyy/MM/dd").format(calendar);
+    var time = (currentYear == calendar.year)
+        ? DateFormat("dd-MMM").format(calendar)
+        : DateFormat("yyyy/MM/dd").format(calendar);
     return (equalsWithYesterday(calendar, Constants.TODAY))
         ? hourTime
-        : (equalsWithYesterday(calendar, Constants.YESTERDAY)) ? Constants
-        .YESTERDAY_UPPER : time;
+        : (equalsWithYesterday(calendar, Constants.YESTERDAY))
+            ? Constants.YESTERDAY_UPPER
+            : time;
   }
 
   String manipulateMessageTime(BuildContext context, DateTime messageDate) {
-    var format = MediaQuery
-        .of(context)
-        .alwaysUse24HourFormat ? 24 : 12;
+    var format = MediaQuery.of(context).alwaysUse24HourFormat ? 24 : 12;
     var hours = calendar.hour; //calendar[Calendar.HOUR]
     calendar = messageDate;
     var dateHourFormat = setDateHourFormat(format, hours);
@@ -227,19 +217,21 @@ class DashboardController extends GetxController with WidgetsBindingObserver{
 
   String setDateHourFormat(int format, int hours) {
     var dateHourFormat = (format == 12)
-        ? (hours < 10) ? "hh:mm aa" : "h:mm aa"
-        : (hours < 10) ? "HH:mm" : "H:mm";
+        ? (hours < 10)
+            ? "hh:mm aa"
+            : "h:mm aa"
+        : (hours < 10)
+            ? "HH:mm"
+            : "H:mm";
     return dateHourFormat;
   }
 
   bool equalsWithYesterday(DateTime srcDate, String day) {
     // Time part has
     // discarded
-    var yesterday = (day == Constants.YESTERDAY) ? calendar.subtract(
-        Duration(days: 1)) : DateTime.now();
-    return yesterday
-        .difference(calendar)
-        .inDays == 0;
+    var yesterday = (day == Constants.YESTERDAY)
+        ? calendar.subtract(Duration(days: 1))
+        : DateTime.now();
+    return yesterday.difference(calendar).inDays == 0;
   }
-
 }

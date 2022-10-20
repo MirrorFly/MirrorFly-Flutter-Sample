@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_profile_picture/flutter_profile_picture.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:focus_detector/focus_detector.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
@@ -39,95 +40,100 @@ class DashboardView extends GetView<DashboardController> {
   }
 
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Chats'),
-        automaticallyImplyLeading: false,
-        actions: [
-          Container(
-            margin: EdgeInsets.all(16),
-            child: SvgPicture.asset(
-              searchicon,
-              width: 18,
-              height: 18,
-              fit: BoxFit.contain,
-            ),
-          ),
-          PopupMenuButton<int>(
-            icon: SvgPicture.asset(moreicon, width: 3.66, height: 16.31),
-            color: Colors.white,
-            itemBuilder: (context) => [
-              // PopupMenuItem 1
-              PopupMenuItem(
-                value: 2,
-                // row with 2 children
-                child: Text(
-                  "Settings",
-                  style: Theme.of(context).textTheme.titleMedium,
-                ),
+    return FocusDetector(
+      onFocusGained: () {
+        controller.getRecentChatlist();
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text('Chats'),
+          automaticallyImplyLeading: false,
+          actions: [
+            Container(
+              margin: EdgeInsets.all(16),
+              child: SvgPicture.asset(
+                searchicon,
+                width: 18,
+                height: 18,
+                fit: BoxFit.contain,
               ),
-            ],
-            offset: Offset(0, 20),
-            elevation: 2,
-            // on selected we show the dialog box
-            onSelected: (value) {
-              // if value 1 show dialog
-              if (value == 1) {
-                //_showDialog(context);
-                controller.logout();
-              } else if (value == 2) {
-                Get.toNamed(Routes.SETTINGS);
-              }
-            },
-          ),
-        ],
-      ),
-      floatingActionButton: FloatingActionButton(
-        tooltip: "New Chat",
-        onPressed: () {
-          // select user page
-          Get.toNamed(Routes.CONTACTS)
-              ?.then((value) => controller.getRecentChatlist());
-        },
-        backgroundColor: buttonbgcolor,
-        child: const Icon(Icons.chat_rounded),
-      ),
-      body: Stack(
-        children: [
-          Obx(
-            () => controller.recentchats.isNotEmpty
-                ? ListView.builder(
-                    itemCount: controller.recentchats.length,
-                    physics: AlwaysScrollableScrollPhysics(),
-                    itemBuilder: (BuildContext context, int index) {
-                      var item = controller.recentchats[index];
-                      //var image = controller.imagepath(item.profileImage);
-                      return RecentChatItem(item, context);
-                    })
-                : Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Image.asset(nocontactsicon),
-                        Text(
-                          'No new messages',
-                          textAlign: TextAlign.center,
-                          style: Theme.of(context).textTheme.titleMedium,
-                        ),
-                        SizedBox(
-                          height: 8,
-                        ),
-                        Text(
-                          'Any new messages will appear here',
-                          textAlign: TextAlign.center,
-                          style: Theme.of(context).textTheme.titleSmall,
-                        ),
-                      ],
-                    ),
+            ),
+            PopupMenuButton<int>(
+              icon: SvgPicture.asset(moreicon, width: 3.66, height: 16.31),
+              color: Colors.white,
+              itemBuilder: (context) => [
+                // PopupMenuItem 1
+                PopupMenuItem(
+                  value: 2,
+                  // row with 2 children
+                  child: Text(
+                    "Settings",
+                    style: Theme.of(context).textTheme.titleMedium,
                   ),
-          )
-        ],
+                ),
+              ],
+              offset: Offset(0, 20),
+              elevation: 2,
+              // on selected we show the dialog box
+              onSelected: (value) {
+                // if value 1 show dialog
+                if (value == 1) {
+                  //_showDialog(context);
+                  controller.logout();
+                } else if (value == 2) {
+                  Get.toNamed(Routes.SETTINGS);
+                }
+              },
+            ),
+          ],
+        ),
+        floatingActionButton: FloatingActionButton(
+          tooltip: "New Chat",
+          onPressed: () {
+            // select user page
+            Get.toNamed(Routes.CONTACTS);
+                //?.then((value) => controller.getRecentChatlist());
+          },
+          backgroundColor: buttonbgcolor,
+          child: const Icon(Icons.chat_rounded),
+        ),
+        body: Stack(
+          children: [
+            Obx(
+              () => controller.recentchats.isNotEmpty
+                  ? ListView.builder(
+                      itemCount: controller.recentchats.length,
+                      physics: AlwaysScrollableScrollPhysics(),
+                      itemBuilder: (BuildContext context, int index) {
+                        var item = controller.recentchats[index];
+                        //var image = controller.imagepath(item.profileImage);
+                        return RecentChatItem(item, context);
+                      })
+                  : Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Image.asset(nocontactsicon),
+                          Text(
+                            'No new messages',
+                            textAlign: TextAlign.center,
+                            style: Theme.of(context).textTheme.titleMedium,
+                          ),
+                          SizedBox(
+                            height: 8,
+                          ),
+                          Text(
+                            'Any new messages will appear here',
+                            textAlign: TextAlign.center,
+                            style: Theme.of(context).textTheme.titleSmall,
+                          ),
+                        ],
+                      ),
+                    ),
+            )
+          ],
+        ),
       ),
     );
   }
@@ -244,8 +250,8 @@ class DashboardView extends GetView<DashboardController> {
       ),
       onTap: () {
         //GetAmamed(Routes.CHAT, arguments: controller.recentchats.value[index]);
-        Get.toNamed(Routes.CHAT, arguments: controller.toChatPage(item))
-            ?.then((value) => controller.getRecentChatlist());
+        Get.toNamed(Routes.CHAT, arguments: controller.toChatPage(item));
+           // ?.then((value) => controller.getRecentChatlist());
       },
     );
   }
