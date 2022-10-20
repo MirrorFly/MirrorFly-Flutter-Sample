@@ -42,14 +42,12 @@ class DashboardController extends GetxController with WidgetsBindingObserver{
   }
   registerMsgListener() {
     PlatformRepo().listenMessageEvents();
-    var onMessageReceived = PlatformRepo().chatEvents(
-        Constants.MESSAGE_RECEIVED);
-    var onMessageStatusUpdated = PlatformRepo().chatEvents(
-        Constants.MESSAGE_UPDATED);
-    onMessageReceived.listen((event) async {
-      debugPrint("myreceived" + event.toString());
-      Log("onMessageReceived", event.toString());
-      ChatMessageModel recentMsg = sendMessageModelFromJson(event);
+    // var onMessageReceived = PlatformRepo().onMessageReceived;
+    var onMessageStatusUpdated = PlatformRepo().onMediaStatusUpdated;
+    // onMessageReceived.listen((event) async {
+    //   debugPrint("myreceived" + event.toString());
+    //   Log("onMessageReceived", event.toString());
+    //   ChatMessageModel recentMsg = sendMessageModelFromJson(event);
       /*final index = recentchats.indexWhere((chat) => chat.jid == recentMsg.chatUserJid);
       var recent = RecentChatData();
       recent.contactType = recentMsg.contactType;
@@ -78,7 +76,7 @@ class DashboardController extends GetxController with WidgetsBindingObserver{
       recent.profileName = recentchats.value[index].profileName;
       recent.unreadMessageCount = recentchats.value[index].unreadMessageCount;
       recentchats.value[index]=recent;*/
-    });
+    // });
     onMessageStatusUpdated.listen((event) {
       debugPrint("myupdate" + event.toString());
       Log("onMessageStatusUpdated", event.toString());

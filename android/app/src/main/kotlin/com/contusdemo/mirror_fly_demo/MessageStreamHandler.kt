@@ -5,24 +5,68 @@ import com.contusflysdk.activities.FlyBaseActivity
 import com.contusflysdk.api.models.ChatMessage
 import io.flutter.plugin.common.EventChannel
 
-class MessageStreamHandler : FlyBaseActivity(), EventChannel.StreamHandler {
+object MessageReceivedStreamHandler : EventChannel.StreamHandler {
 
-    private var chatEventSink: EventChannel.EventSink? = null
+    var onMessageReceived: EventChannel.EventSink? = null
 
     //Event Handler Methods
     override fun onListen(arguments: Any?, events: EventChannel.EventSink?) {
-        chatEventSink = events
+        onMessageReceived = events
     }
 
     override fun onCancel(arguments: Any?) {
-        chatEventSink = null
+        onMessageReceived = null
+    }
+}
+object MessageStatusUpdatedStreamHandler : EventChannel.StreamHandler {
+
+    var onMessageStatusUpdated: EventChannel.EventSink? = null
+
+    //Event Handler Methods
+    override fun onListen(arguments: Any?, events: EventChannel.EventSink?) {
+        onMessageStatusUpdated = events
     }
 
-    override fun onMessageReceived(message: ChatMessage) {
-        super.onMessageReceived(message)
-        // received message object
-        Log.e("Message Received", message.messageTextContent)
-        chatEventSink?.success(message)
+    override fun onCancel(arguments: Any?) {
+        onMessageStatusUpdated = null
+    }
+}
+object MediaStatusUpdatedStreamHandler : EventChannel.StreamHandler {
+
+    var onMediaStatusUpdated: EventChannel.EventSink? = null
+
+    //Event Handler Methods
+    override fun onListen(arguments: Any?, events: EventChannel.EventSink?) {
+        onMediaStatusUpdated = events
     }
 
+    override fun onCancel(arguments: Any?) {
+        onMediaStatusUpdated = null
+    }
+}
+object UploadDownloadProgressChangedStreamHandler : EventChannel.StreamHandler {
+
+    var onUploadDownloadProgressChanged: EventChannel.EventSink? = null
+
+    //Event Handler Methods
+    override fun onListen(arguments: Any?, events: EventChannel.EventSink?) {
+        onUploadDownloadProgressChanged = events
+    }
+
+    override fun onCancel(arguments: Any?) {
+        onUploadDownloadProgressChanged = null
+    }
+}
+object ShowOrUpdateOrCancelNotificationStreamHandler : EventChannel.StreamHandler {
+
+    var showOrUpdateOrCancelNotification: EventChannel.EventSink? = null
+
+    //Event Handler Methods
+    override fun onListen(arguments: Any?, events: EventChannel.EventSink?) {
+        showOrUpdateOrCancelNotification = events
+    }
+
+    override fun onCancel(arguments: Any?) {
+        showOrUpdateOrCancelNotification = null
+    }
 }

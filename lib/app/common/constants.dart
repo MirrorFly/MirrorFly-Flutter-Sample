@@ -17,6 +17,9 @@ const Color textbuttoncolor = Color(0xffFFFFFF);
 const Color buttonbgcolor = Color(0xff3276E2);
 const Color chatsentbgcolor = Color(0xffe3e9f7);
 const Color dividercolor = Color(0XffE2E2E2);
+const Color audiocolor = Color(0XffB9C1D6);
+const Color audiocolordark = Color(0Xff848FAD);
+const Color audiobgcolor = Color(0Xff848FAD);
 
 //Assets
 const String registericon = 'assets/logos/register_logo.svg';
@@ -51,8 +54,17 @@ const String rightArrow = 'assets/logos/right_arrow.svg';
 const String downloading = 'assets/logos/downloading.svg';
 const String video_play = 'assets/logos/video_play.svg';
 const String audio_play = 'assets/logos/audio_play.svg';
-const String audio_mic_bg = 'assets/logos/audio_mic_bg.svg';
+const String audio_mic_bg = 'assets/logos/audio_mic.svg';
 const String audio_mic = 'assets/logos/mic.svg';
+const String audio_mic_1 = 'assets/logos/mic1.svg';
+const String profile_img = 'assets/logos/profile_img.png';
+
+const String pdf_image = 'assets/logos/pdf.svg';
+const String ppt_image = 'assets/logos/ppt.svg';
+const String xls_image = 'assets/logos/xls.svg';
+const String xlsx_image = 'assets/logos/xlsx.svg';
+const String doc_image = 'assets/logos/doc.svg';
+const String apk_image = 'assets/logos/apk.svg';
 
 
 //Strings
@@ -398,6 +410,8 @@ class Constants {
   static const String ARCHIVE_EVENT = "archive_events";
   static const String MESSAGE_RECEIVED = "message_received";
   static const String MESSAGE_UPDATED = "message_updated";
+  static const String MEDIA_STATUS_UPDATED = "media_status_updated";
+  static const String MEDIA_UPLOAD_DOWNLOAD_PROGRESS = "media_upload_download_progress";
   static const String MUTE_EVENT = "mute_event";
   static const String PIN_EVENT = "pin_event";
 
@@ -414,6 +428,14 @@ class Constants {
   static const int MEDIA_UPLOADING = 1;
   static const int MEDIA_UPLOADED = 2;
   static const int MEDIA_UPLOADED_NOT_AVAILABLE = 7;
+
+  static const String PDF = "pdf";
+  static const String PPT = "ppt";
+  static const String DOC = "doc";
+  static const String DOCX = "docx";
+  static const String APK = "apk";
+  static const String XLS = "xls";
+  static const String XLXS = "xlsx";
 }
 
 Future<void> launchWeb(String url) async{

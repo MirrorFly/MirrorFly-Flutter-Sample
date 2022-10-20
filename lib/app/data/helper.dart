@@ -37,6 +37,7 @@ class Helper{
         suffixes[i];
   }
 
+
 }
 
 extension StringParsing on String?{

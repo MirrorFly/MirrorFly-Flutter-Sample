@@ -11,14 +11,20 @@ import '../modules/chat/views/contactlist_view.dart';
 import '../modules/chat/views/image_preview_view.dart';
 import '../modules/dashboard/bindings/dashboard_binding.dart';
 import '../modules/dashboard/views/dashboard_view.dart';
+import '../modules/file_viewer/bindings/file_viewer_binding.dart';
+import '../modules/file_viewer/views/file_viewer_view.dart';
 import '../modules/home/bindings/home_binding.dart';
 import '../modules/home/views/home_view.dart';
 import '../modules/image_view/bindings/image_view_binding.dart';
 import '../modules/image_view/views/image_view_view.dart';
+import '../modules/local_contact/bindings/local_contact_binding.dart';
+import '../modules/local_contact/views/local_contact_view.dart';
 import '../modules/login/bindings/country_binding.dart';
 import '../modules/login/bindings/login_binding.dart';
 import '../modules/login/views/countrylist_view.dart';
 import '../modules/login/views/login_view.dart';
+import '../modules/preview_contact/bindings/preview_contact_binding.dart';
+import '../modules/preview_contact/views/preview_contact_view.dart';
 import '../modules/profile/bindings/profile_binding.dart';
 import '../modules/profile/bindings/statuslist_binding.dart';
 import '../modules/profile/views/profile_view.dart';
@@ -104,6 +110,21 @@ class AppPages {
       name: _Paths.IMAGE_VIEW,
       page: () => const ImageViewView(),
       binding: ImageViewBinding(),
+    ),
+    GetPage(
+      name: _Paths.LOCAL_CONTACT,
+      page: () => const LocalContactView(),
+      binding: LocalContactBinding(),
+    ),
+    GetPage(
+      name: _Paths.FILE_VIEWER,
+      page: () => const FileViewerView(),
+      binding: FileViewerBinding(),
+    ),
+    GetPage(
+      name: _Paths.PREVIEW_CONTACT,
+      page: () => const PreviewContactView(),
+      binding: PreviewContactBinding(),
     ),
   ];
 }

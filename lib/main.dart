@@ -8,7 +8,6 @@ import 'package:mirror_fly_demo/app/common/apptheme.dart';
 import 'package:mirror_fly_demo/app/common/main_controller.dart';
 import 'package:mirror_fly_demo/app/modules/dashboard/bindings/dashboard_binding.dart';
 import 'package:mirror_fly_demo/app/modules/login/bindings/login_binding.dart';
-
 import 'app/data/SessionManagement.dart';
 import 'app/routes/app_pages.dart';
 
@@ -17,6 +16,7 @@ void main() async {
 
   WidgetsFlutterBinding.ensureInitialized();
   await SessionManagement.onInit();
+  // await FlutterLibphonenumber().init();
   Get.put<MainController>(MainController());
   runApp(const MyApp());
   configLoading();

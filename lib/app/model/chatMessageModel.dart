@@ -35,6 +35,7 @@ class ChatMessageModel {
     required this.senderNickName,
     required this.senderUserJid,
     required this.senderUserName,
+    required this.contactChatMessage,
     required this.mediaChatMessage,
     required this.locationChatMessage,
   });
@@ -59,6 +60,7 @@ class ChatMessageModel {
   String senderNickName;
   String senderUserJid;
   String senderUserName;
+  ContactChatMessage? contactChatMessage;
   MediaChatMessage? mediaChatMessage;
   LocationChatMessage? locationChatMessage;
 
@@ -83,6 +85,7 @@ class ChatMessageModel {
     senderNickName: json["senderNickName"],
     senderUserJid: json["senderUserJid"],
     senderUserName: json["senderUserName"],
+    contactChatMessage: json["contactChatMessage"] == null ? null : ContactChatMessage.fromJson(json["contactChatMessage"]),
     mediaChatMessage: json["mediaChatMessage"] == null ? null : MediaChatMessage.fromJson(json["mediaChatMessage"]),
     locationChatMessage: json["locationChatMessage"] == null ? null : LocationChatMessage.fromJson(json["locationChatMessage"]),
   );
@@ -108,8 +111,38 @@ class ChatMessageModel {
     "senderNickName": senderNickName,
     "senderUserJid": senderUserJid,
     "senderUserName": senderUserName,
+    "contactChatMessage": contactChatMessage == null ? null : contactChatMessage!.toJson(),
     "mediaChatMessage": mediaChatMessage == null ? null : mediaChatMessage!.toJson(),
     "locationChatMessage": locationChatMessage == null ? null : locationChatMessage!.toJson(),
+  };
+}
+
+
+class ContactChatMessage {
+  ContactChatMessage({
+    required this.contactName,
+    required this.contactPhoneNumbers,
+    required this.isChatAppUser,
+    required this.messageId,
+  });
+
+  String contactName;
+  List<String> contactPhoneNumbers;
+  List<bool> isChatAppUser;
+  String messageId;
+
+  factory ContactChatMessage.fromJson(Map<String, dynamic> json) => ContactChatMessage(
+    contactName: json["contactName"],
+    contactPhoneNumbers: List<String>.from(json["contactPhoneNumbers"].map((x) => x)),
+    isChatAppUser: List<bool>.from(json["isChatAppUser"].map((x) => x)),
+    messageId: json["messageId"],
+  );
+
+  Map<String, dynamic> toJson() => {
+    "contactName": contactName,
+    "contactPhoneNumbers": List<dynamic>.from(contactPhoneNumbers.map((x) => x)),
+    "isChatAppUser": List<dynamic>.from(isChatAppUser.map((x) => x)),
+    "messageId": messageId,
   };
 }
 
@@ -158,6 +191,7 @@ class MediaChatMessage {
     required this.mediaUploadStatus,
     required this.messageId,
     required this.messageType,
+    required this.isPlaying,
   });
 
   bool isAudioRecorded;
@@ -175,6 +209,7 @@ class MediaChatMessage {
   int mediaUploadStatus;
   String messageId;
   String messageType;
+  bool isPlaying;
 
   factory MediaChatMessage.fromJson(Map<String, dynamic> json) => MediaChatMessage(
     isAudioRecorded: json["isAudioRecorded"],
@@ -192,6 +227,7 @@ class MediaChatMessage {
     mediaUploadStatus: json["mediaUploadStatus"],
     messageId: json["messageId"],
     messageType: json["messageType"],
+    isPlaying: false,
   );
 
   Map<String, dynamic> toJson() => {
@@ -210,6 +246,7 @@ class MediaChatMessage {
     "mediaUploadStatus": mediaUploadStatus,
     "messageId": messageId,
     "messageType": messageType,
+    "isPlaying": isPlaying,
   };
 }
 

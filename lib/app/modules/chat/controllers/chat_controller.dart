@@ -3,15 +3,20 @@ import 'dart:io';
 import 'dart:typed_data';
 import 'dart:io' as Io;
 
+import 'package:audioplayers/audioplayers.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:mirror_fly_demo/app/model/chatMessageModel.dart';
 import 'package:mirror_fly_demo/app/nativecall/platformRepo.dart';
+import 'package:permission_handler/permission_handler.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../../common/constants.dart';
-import '../../../model/checkModel.dart';
+import '../../../data/contact_utils.dart';
+import '../../../model/checkModel.dart' as checkModel;
 import '../../../model/userlistModel.dart';
 import '../../../routes/app_pages.dart';
 
@@ -24,6 +29,18 @@ class ChatController extends GetxController with GetSingleTickerProviderStateMix
     initialScrollOffset: 0.0,
     keepScrollOffset: true,
   );
+
+
+  String currentpostlabel = "00:00";
+
+  var maxduration = 100.obs;
+  var currentpos = 0.obs;
+  var isplaying = false.obs;
+  var audioplayed = false.obs;
+  // late Uint8List audiobytes;
+
+  AudioPlayer player = AudioPlayer();
+
   TextEditingController messageController = TextEditingController();
 
   FocusNode focusNode = FocusNode();
@@ -32,10 +49,13 @@ class ChatController extends GetxController with GetSingleTickerProviderStateMix
   Profile profile = Get.arguments as Profile;
   var base64img = ''.obs;
   var imagePath = ''.obs;
+  var filePath = ''.obs;
 
   var showEmoji = false.obs;
 
   var isLive = false;
+
+  // var isPlaying = false.obs;
   @override
   void onInit() {
     super.onInit();
@@ -64,6 +84,33 @@ class ChatController extends GetxController with GetSingleTickerProviderStateMix
     debugPrint(profile.image);
     sendReadReceipt();
 
+    player.onDurationChanged.listen((Duration d) { //get the duration of audio
+      maxduration(d.inMilliseconds);
+
+    });
+
+    player.onPlayerCompletion.listen((event) {
+      isplaying(false);
+      audioplayed(false);
+    });
+
+    player.onAudioPositionChanged.listen((Duration  p){
+      currentpos(p.inMilliseconds); //get the current position of playing audio
+
+      int milliseconds = currentpos.value;
+      //generating the duration label
+      int shours = Duration(milliseconds:milliseconds).inHours;
+      int sminutes = Duration(milliseconds:milliseconds).inMinutes;
+      int sseconds = Duration(milliseconds:milliseconds).inSeconds;
+
+      int rhours = shours;
+      int rminutes = sminutes - (shours * 60);
+      int rseconds = sseconds - (sminutes * 60 + shours * 60 * 60);
+
+      currentpostlabel = "$rhours:$rminutes:$rseconds";
+
+    });
+
   }
 
   @override
@@ -83,36 +130,53 @@ class ChatController extends GetxController with GetSingleTickerProviderStateMix
   }
 
   registerChatSync() {
-    var messageEvent = PlatformRepo().userChats;
+    var messageEvent = PlatformRepo().onMessageReceived;
     messageEvent.listen((msgData) {
       ChatMessageModel chatMessageModel = sendMessageModelFromJson(msgData);
-      final index = chatList.indexWhere(
-          (message) => message.messageId == chatMessageModel.messageId);
 
-      debugPrint("index of search $index");
-      if (index >= 0) {
-        debugPrint("already Value Exists ===> $index");
-        chatList[index] = chatMessageModel;
-      } else if(index == -1){
-        debugPrint("value not found");
-        chatList.add(chatMessageModel);
+      chatList.add(chatMessageModel);
         if(isLive) {
           sendReadReceipt();
         }
-      }else{
-        debugPrint("Issue updating Message ==>$index");
-      }
+      // if (index >= 0) {
+      //   debugPrint("already Value Exists ===> $index");
+      //   chatList[index] = chatMessageModel;
+      // } else if(index == -1){
+      //   debugPrint("value not found");
+      //   chatList.add(chatMessageModel);
+      //   if(isLive) {
+      //     sendReadReceipt();
+      //   }
+      // }else{
+      //   debugPrint("Issue updating Message ==>$index");
+      // }
 
       // ChatMessageModel chatMessageModel = sendMessageModelFromJson(msgData);
       // chatList.add(chatMessageModel);
     });
+
+
+    PlatformRepo().onMessageStatusUpdated.listen((msgData) {
+      ChatMessageModel chatMessageModel = sendMessageModelFromJson(msgData);
+      final index = chatList.indexWhere(
+              (message) => message.messageId == chatMessageModel.messageId);
+      debugPrint("Message Status Update index of search $index");
+      if(index != -1){
+        chatList[index] = chatMessageModel;
+      }
+    });
+    PlatformRepo().onMediaStatusUpdated.listen((msgData) {
+      ChatMessageModel chatMessageModel = sendMessageModelFromJson(msgData);
+      final index = chatList.indexWhere(
+              (message) => message.messageId == chatMessageModel.messageId);
+      debugPrint("Media Status Update index of search $index");
+      if(index != -1){
+        chatList[index] = chatMessageModel;
+      }
+    });
   }
 
   sendMessage(Profile profile) {
-    // z7qsc3p1lt@xmpp-preprod-sandbox.mirrorfly.com => phone
-    // 1v6v8mdc0v@xmpp-preprod-sandbox.mirrorfly.com => simulator
-    //7010279986@xmpp-uikit-qa.contus.us => 7010279986 // Device QA
-    //9566752183@xmpp-uikit-qa.contus.us => 7010279986 // Device QA
     if (messageController.text.trim().isNotEmpty) {
       PlatformRepo()
           .sendTextMessage(messageController.text, profile.jid.toString())
@@ -120,13 +184,6 @@ class ChatController extends GetxController with GetSingleTickerProviderStateMix
         messageController.text = "";
         ChatMessageModel chatMessageModel = sendMessageModelFromJson(value);
         chatList.add(chatMessageModel);
-        // if (scrollController.hasClients) {
-        //   scrollController.animateTo(
-        //     0.0,
-        //     curve: Curves.easeOut,
-        //     duration: const Duration(milliseconds: 300),
-        //   );
-        // }
       });
     }
   }
@@ -178,11 +235,13 @@ class ChatController extends GetxController with GetSingleTickerProviderStateMix
     });
   }
 
+
+
   getMedia(String mid) {
 
     return PlatformRepo().getMedia(mid).then((value) {
       // debugPrint("Media==> $value");
-      CheckModel chatMessageModel = checkModelFromJson(value);
+      checkModel.CheckModel chatMessageModel = checkModel.checkModelFromJson(value);
       String thumbImage = chatMessageModel.mediaChatMessage.mediaThumbImage;
       thumbImage = thumbImage.replaceAll("\n", "");
       // debugPrint("Thumbnail ==> $thumbImage");
@@ -235,6 +294,17 @@ class ChatController extends GetxController with GetSingleTickerProviderStateMix
       // User canceled the picker
     }
   }
+  Future documetPickUpload() async {
+    FilePickerResult? result = await FilePicker.platform.pickFiles(allowMultiple: false,type: FileType.custom, allowedExtensions: ['pdf', 'ppt', 'xls', 'doc', 'docx', 'xlsx'],);
+    if (result != null && File(result.files.single.path!).existsSync()) {
+      debugPrint(result.files.first.extension);
+      filePath.value = (result.files.single.path!);
+      sendDocumentMessage(filePath.value, "");
+
+    } else {
+      // User canceled the picker
+    }
+  }
 
   sendReadReceipt() {
     PlatformRepo().sendReadReceipts(profile.jid!).then((value) {
@@ -256,6 +326,167 @@ class ChatController extends GetxController with GetSingleTickerProviderStateMix
 
   downloadMedia(String messageId) {
     PlatformRepo().mediaDownload(messageId);
+  }
+
+  playAudio(String filePath) async{
+
+
+    if(!isplaying.value && !audioplayed.value){
+      int result = await player.play(filePath, isLocal: true);
+      if(result == 1){ //play success
+
+          isplaying(true);
+          audioplayed(true);
+
+      }else{
+        print("Error while playing audio.");
+      }
+    }else if(audioplayed.value && !isplaying.value){
+      int result = await player.resume();
+      if(result == 1){ //resume success
+
+          isplaying(true);
+          audioplayed(true);
+
+      }else{
+        print("Error on resume audio.");
+      }
+    }else{
+      int result = await player.pause();
+      if(result == 1){ //pause success
+
+          isplaying(false);
+
+      }else{
+        print("Error on pause audio.");
+      }
+    }
+
+
+    // if(isPlaying.value){
+    //   debugPrint("pause audio");
+    //   // audioplayed(false);
+    //
+    //   isPlaying(false);
+    //   // mediaChatMessage.isPlaying = false;
+    //   int result = await player.pause();
+    //   if (result == 1) {
+    //     // success
+    //     // isplaying(false);
+    //   }
+    // }else {
+    //   debugPrint("play audio");
+    //   // audioplayed(true);
+    //
+    //   isPlaying(true);
+    //   // mediaChatMessage.isPlaying = true;
+    //   int result = await player.play(filePath, isLocal: true);
+    //   if (result == 1) {
+    //     // success
+    //     // isplaying(true);
+    //   }
+    // }
+    // chatList.refresh();
+  }
+
+  Future<bool> askContactsPermission() async {
+    final permission = await ContactUtils.getContactPermission();
+    switch (permission) {
+      case PermissionStatus.granted:
+        return true;
+      case PermissionStatus.permanentlyDenied:
+        return false;
+      default:
+        debugPrint("Contact Permission default");
+        return false;
+    }
+  }
+  Future<bool> askStoragePermission() async {
+    final permission = await ContactUtils.getStoragePermission();
+    switch (permission) {
+      case PermissionStatus.granted:
+        return true;
+      case PermissionStatus.permanentlyDenied:
+        return false;
+      default:
+        debugPrint("Contact Permission default");
+        return false;
+    }
+  }
+
+  sendContactMessage(List<String> contactList, String contactName) {
+    return PlatformRepo().sendContacts(contactList, profile.jid!, contactName).then((value){
+      ChatMessageModel chatMessageModel = sendMessageModelFromJson(value);
+      chatList.add(chatMessageModel);
+      return chatMessageModel;
+    });
+  }
+
+  sendDocumentMessage(String documentPath, String replyMessageId) {
+    PlatformRepo().sendDocument(profile.jid!, documentPath, replyMessageId).then((value){
+      ChatMessageModel chatMessageModel = sendMessageModelFromJson(value);
+      chatList.add(chatMessageModel);
+      return chatMessageModel;
+    });
+  }
+
+  openDocument(String mediaLocalStoragePath, BuildContext context) async {
+    // if (await askStoragePermission()) {
+      if(mediaLocalStoragePath.isNotEmpty) {
+        // final _result = await OpenFile.open(mediaLocalStoragePath);
+        // debugPrint(_result.message);
+        // FileView(
+        //   controller: FileViewController.file(File(mediaLocalStoragePath)),
+        // );
+        // Get.toNamed(Routes.FILE_VIEWER, arguments: { "filePath": mediaLocalStoragePath});
+        // final String filePath = testFile.absolute.path;
+        // final Uri uri = Uri.file(mediaLocalStoragePath);
+        //
+        // if (!File(uri.toFilePath()).existsSync()) {
+        //   throw '$uri does not exist!';
+        // }
+        // if (!await launchUrl(uri)) {
+        //   throw 'Could not launch $uri';
+        // }
+
+        PlatformRepo().openFile(mediaLocalStoragePath).catchError((onError){
+          final scaffold = ScaffoldMessenger.of(context);
+          scaffold.showSnackBar(
+            SnackBar(
+              content: const Text('No supported application available to open this file format'),
+              action: SnackBarAction(label: 'Ok', onPressed: scaffold.hideCurrentSnackBar),
+            ),
+          );
+        });
+      }else{
+        debugPrint("media doesnot exist");
+      }
+    // }
+
+  }
+
+  pickAudio() async {
+    FilePickerResult? result = await FilePicker.platform.pickFiles(allowMultiple: false,type: FileType.audio);
+    if (result != null && File(result.files.single.path!).existsSync()) {
+      debugPrint(result.files.first.extension);
+      AudioPlayer player = AudioPlayer();
+      player.setUrl(result.files.single.path!);
+      player.onDurationChanged.listen((Duration duration) {
+        print('max duration: ${duration.inMilliseconds}');
+        filePath.value = (result.files.single.path!);
+        sendAudioMessage(filePath.value, "",false, duration.inMilliseconds.toString());
+      });
+    } else {
+      // User canceled the picker
+    }
+  }
+
+  sendAudioMessage(String filePath, String messageid, bool isRecorded, String duration) {
+    PlatformRepo().sendAudio(profile.jid!, filePath, messageid,isRecorded,duration).then((value){
+      ChatMessageModel chatMessageModel = sendMessageModelFromJson(value);
+      chatList.add(chatMessageModel);
+      return chatMessageModel;
+    });
   }
 
 

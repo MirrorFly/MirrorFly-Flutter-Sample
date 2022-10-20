@@ -33,7 +33,7 @@ class ProfileTextImage extends StatelessWidget {
   final double radius;
   final Color fontcolor;
 
-  ProfileTextImage({Key? key, required this.text, this.fontsize=15, this.bgcolor=buttonbgcolor,  this.radius=25, this.fontcolor=Colors.white}) : super(key: key);
+  ProfileTextImage({Key? key, required this.text, this.fontsize=15, this.bgcolor=buttonbgcolor,  this.radius=22, this.fontcolor=Colors.white}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
