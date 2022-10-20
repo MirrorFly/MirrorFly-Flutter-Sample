@@ -100,15 +100,8 @@ class AddStatusView extends GetView<StatusListController> {
                 child: ElevatedButton(
                   onPressed: () {
                     if(controller.addstatuscontroller.text.trim().isNotEmpty) {
-                      /*Get.back(result: controller.addstatuscontroller.text
-                          .trim().toString());*/
-                      PlatformRepo().updateProfileStatus(controller.addstatuscontroller.text.trim().toString()).then((value){
-                        Get.back(result: controller.addstatuscontroller.text
-                            .trim().toString());
-                      }).catchError((er){
-                        toToast(er);
-                      });
-
+                      Get.back(result: controller.addstatuscontroller.text
+                          .trim().toString());
                     }else{
                       toToast("Status cannot be empty");
                     }

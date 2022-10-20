@@ -25,8 +25,11 @@ import com.contusflysdk.api.*
 import com.contusflysdk.api.ChatManager.fileProviderAuthority
 import com.contusflysdk.api.chat.MessageEventsListener
 import com.contusflysdk.api.contacts.ContactManager
+import com.contusflysdk.api.contacts.ProfileDetails
 import com.contusflysdk.api.models.ChatMessage
+import com.contusflysdk.api.models.RecentChat
 import com.contusflysdk.media.MediaUploadHelper
+import com.contusflysdk.model.Message
 import com.contusflysdk.utils.ThumbSize
 import com.google.gson.Gson
 import io.flutter.Log
@@ -35,6 +38,7 @@ import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.plugin.common.EventChannel
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
+import kotlinx.coroutines.Dispatchers
 import org.json.JSONObject
 import java.io.ByteArrayOutputStream
 import java.io.File
@@ -266,6 +270,7 @@ override fun onCreate(savedInstanceState: Bundle?) {
                 registerUser(call, result)
             }
             call.method.equals("authtoken")->{
+                Log.d(TAG,"authtoken : "+FlyUtils.decodedToken().trim())
                 result.success(FlyUtils.decodedToken().trim());
             }
             call.method.equals("get_user_jid") -> {
@@ -273,6 +278,9 @@ override fun onCreate(savedInstanceState: Bundle?) {
             }
             call.method.equals("send_text_msg") -> {
                 sendTxtMessage(call, result)
+            }
+            call.method.equals("sentLocationMessage") -> {
+                sentLocationMessage(call, result)
             }
             call.method.equals("get_user_list") -> {
                 getUsers(call, result)
@@ -736,7 +744,7 @@ override fun onCreate(savedInstanceState: Bundle?) {
             FlyMessenger.sendLocationMessage(userJid, latitude, longitude, reply, object : SendMessageListener {
                 override fun onResponse(isSuccess: Boolean, message: ChatMessage?) {
                     if (message != null) {
-                        result.success(Gson().toJson(message))
+                        result.success(Gson().toJson(message).toString())
                     }else{
                         result.error("400", "Message Not Sent", null)
                     }

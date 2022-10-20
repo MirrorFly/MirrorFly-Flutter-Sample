@@ -10,11 +10,10 @@ import '../nativecall/platformRepo.dart';
 class MainController extends GetxController{
   var AUTHTOKEN = "";
   @override
-  void onInit() {
+  void onInit() async{
     super.onInit();
-    PlatformRepo().authtoken().then((value) {
-      AUTHTOKEN=value;
-      SessionManagement.setAuthtoken(value);
-    });
+    var value = await PlatformRepo().authtoken();
+    AUTHTOKEN=value;
+    SessionManagement.setAuthtoken(value);
   }
 }

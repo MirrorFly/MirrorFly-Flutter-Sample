@@ -84,6 +84,22 @@ class PlatformRepo {
     }
   }
 
+ Future<dynamic> sentLocationMessage(String? reply, String JID,double latitude,double longitude) async {
+    dynamic messageResp;
+    try {
+      messageResp = await mirrorFlyMethodChannel
+          .invokeMethod('sentLocationMessage', {"reply": reply??"", "jid": JID,"latitude":latitude,"longitude":longitude});
+      debugPrint("Message Result ==> $messageResp");
+      return messageResp;
+    } on PlatformException catch (e) {
+      debugPrint("Flutter Exception ===> $e");
+      rethrow;
+    } on Exception catch (error) {
+      debugPrint("Flutter Exception ==> $error");
+      rethrow;
+    }
+  }
+
   Future<dynamic> sendImageMessage(
       String jid,
       String filePath,

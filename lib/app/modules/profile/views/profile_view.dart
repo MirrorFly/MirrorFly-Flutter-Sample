@@ -122,7 +122,7 @@ class ProfileView extends GetView<ProfileController> {
                   style: const TextStyle(fontWeight: FontWeight.bold),
                 ),*/
                 Obx(()=> ListTile(
-                  contentPadding:EdgeInsets.zero,title: Text(controller.profileStatus.value),leading: SvgPicture.asset('assets/logos/status.svg'),
+                  contentPadding:EdgeInsets.zero,title: Text(controller.profileStatus.value.isNotEmpty ? controller.profileStatus.value : Constants.defaultstatus,style: TextStyle(color: controller.profileStatus.value.isNotEmpty ? Colors.black :Colors.black38),),leading: SvgPicture.asset('assets/logos/status.svg'),
                 onTap: (){
                   Get.toNamed(Routes.STATUSLIST,arguments: {'status':controller.profileStatus.value})?.then((value){
                     if(value!=null){

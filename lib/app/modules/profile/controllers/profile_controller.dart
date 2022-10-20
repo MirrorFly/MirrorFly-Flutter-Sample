@@ -39,7 +39,7 @@ class ProfileController extends GetxController {
     print("auth : "+SessionManagement().getauthToken().toString());
     profileMobile.text = Get.arguments!=null ? Get.arguments['mobile'] ?? "" : "";
     getProfile();
-    profileStatus.value="I'm Mirrorfly user";
+    //profileStatus.value="I'm Mirrorfly user";
   }
 
   void save(){

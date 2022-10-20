@@ -40,6 +40,10 @@ dependencies:
 
 #  flutter_libphonenumber: ^1.2.4
 #  future_progress_dialog: ^0.2.0
+  google_maps_flutter: ^2.2.1 #google map
+  geolocator: ^9.0.2 #geolocator
+  geocoding: ^2.0.5 #geocoder for address
+  focus_detector: ^2.0.1 #focus detector
 
 dev_dependencies: 
   flutter_lints: 2.0.1

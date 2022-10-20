@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:mirror_fly_demo/app/data/SessionManagement.dart';
+import 'package:mirror_fly_demo/app/data/helper.dart';
 
 import 'constants.dart';
 import 'main_controller.dart';
@@ -39,7 +40,7 @@ class ProfileTextImage extends StatelessWidget {
   Widget build(BuildContext context) {
     return CircleAvatar(
       radius: radius,
-      backgroundColor: bgcolor,
+      backgroundColor: Color(Helper.getColourCode(text)),//bgcolor,
       child: Center(child: Text(getString(text),style: TextStyle(fontSize: fontsize,color: fontcolor),)),
     );
   }
@@ -81,7 +82,7 @@ class ImageNetwork extends StatelessWidget {
       headers: {"Authorization": AUTHTOKEN},
       loadingBuilder: (context, widget, chunkevent) {
         if(chunkevent==null) return clipoval ? ClipOval(child: widget) : widget;
-        return SizedBox(child: Center(child: const CircularProgressIndicator()),height: height,width: width,);
+        return errorWidget ?? SizedBox(child: Center(child: const CircularProgressIndicator()),height: height,width: width,);
       },
       errorBuilder: (context, object, trace) {
         return errorWidget ??
