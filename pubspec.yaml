@@ -30,7 +30,15 @@ dependencies:
   custom_image_crop: ^0.0.4 #crop image
   photo_view: ^0.14.0
   fluttercontactpicker: ^4.7.0
-  open_file: ^2.1.1
+#  open_file: ^2.1.1
+  open_file:
+    git:
+      url: https://github.com/crazecoder/open_file
+#  audioplayers: ^1.1.1
+  audioplayers: ^0.20.1
+  contacts_service: ^0.6.3
+
+#  flutter_libphonenumber: ^1.2.4
 #  future_progress_dialog: ^0.2.0
   google_maps_flutter: ^2.2.1 #google map
   geolocator: ^9.0.2 #geolocator

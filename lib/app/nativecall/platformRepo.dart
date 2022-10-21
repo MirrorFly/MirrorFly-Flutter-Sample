@@ -11,9 +11,13 @@ class PlatformRepo {
   static const mirrorFlyMethodChannel =
       MethodChannel('contus.mirrorfly/sdkCall');
 
-  //Event Channel
-  static const EventChannel chatEventChannel =
-      EventChannel('contus.mirrorfly/chatEvent');
+  //Event Channels
+  static const EventChannel MESSAGE_ONRECEIVED_CHANNEL = EventChannel('contus.mirrorfly/onMessageReceived');
+  static const EventChannel MESSAGE_STATUS_UPDATED_CHANNEL = EventChannel('contus.mirrorfly/onMessageStatusUpdated');
+  static const EventChannel MEDIA_STATUS_UPDATED_CHANNEL = EventChannel('contus.mirrorfly/onMediaStatusUpdated');
+  static const EventChannel UPLOAD_DOWNLOAD_PROGRESS_CHANGED_CHANNEL = EventChannel('contus.mirrorfly/onUploadDownloadProgressChanged');
+  static const EventChannel SHOW_UPDATE_CANCEL_NOTIFICTION_CHANNEL = EventChannel('contus.mirrorfly/showOrUpdateOrCancelNotification');
+
 
   Future<String> authtoken() async {
     String? registerResponse = "";
@@ -191,15 +195,19 @@ class PlatformRepo {
   //   }
   // }
 
-  Stream<dynamic> get userChats {
-    return chatEventChannel.receiveBroadcastStream().cast();
-  }
   Stream<dynamic> get onMessageReceived {
-    return chatEventChannel.receiveBroadcastStream(Constants.MESSAGE_RECEIVED).cast();
+    return MESSAGE_ONRECEIVED_CHANNEL.receiveBroadcastStream().cast();
   }
-  Stream<dynamic> chatEvents(String event) {
-    return chatEventChannel.receiveBroadcastStream(event).cast();
+  Stream<dynamic> get onMessageStatusUpdated {
+    return MESSAGE_STATUS_UPDATED_CHANNEL.receiveBroadcastStream().cast();
   }
+  Stream<dynamic> get onMediaStatusUpdated {
+    return MEDIA_STATUS_UPDATED_CHANNEL.receiveBroadcastStream().cast();
+  }
+
+  // Stream<dynamic> chatEvents(String event) {
+  //   return chatEventChannel.receiveBroadcastStream(event).cast();
+  // }
   Future<String?> imagePath(String imgurl) async {
     var re = "";
     try {
@@ -435,6 +443,21 @@ class PlatformRepo {
     }
   }
 
+  Future<dynamic> sendContacts(List<String> contactList, String jid, String contactName) async {
+    dynamic contactResponse;
+    try {
+      contactResponse = await mirrorFlyMethodChannel.invokeMethod('send_contact',{ "contact_list" : contactList , "jid" : jid, "contact_name" : contactName});
+      // debugPrint("mediaResponse ==> $readReceiptResponse");
+      return contactResponse;
+    }on PlatformException catch (e){
+      debugPrint("Platform Exception ===> $e");
+      rethrow;
+    } on Exception catch(error){
+      debugPrint("Exception ==> $error");
+      rethrow;
+    }
+  }
+
   Future<dynamic> logout() async {
     dynamic logoutResponse;
     try {
@@ -464,6 +487,50 @@ class PlatformRepo {
   mediaDownload(String mid) async {
     try {
       await mirrorFlyMethodChannel.invokeMethod('download_media', {"media_id" : mid });
+    }on PlatformException catch (e){
+      debugPrint("Platform Exception ===> $e");
+      rethrow;
+    } on Exception catch(error){
+      debugPrint("Exception ==> $error");
+      rethrow;
+    }
+  }
+
+  Future<dynamic> sendDocument(String jid, String documentPath, String replyMessageId) async {
+    dynamic documentResponse;
+    try {
+      documentResponse = await mirrorFlyMethodChannel.invokeMethod('send_document',{ "file" : documentPath , "jid" : jid, "replyMessageId" : replyMessageId});
+      debugPrint("documentResponse ==> $documentResponse");
+      return documentResponse;
+    }on PlatformException catch (e){
+      debugPrint("Platform Exception ===> $e");
+      rethrow;
+    } on Exception catch(error){
+      debugPrint("Exception ==> $error");
+      rethrow;
+    }
+  }
+  Future<dynamic> openFile(String filePath) async {
+    dynamic documentResponse;
+    try {
+      documentResponse = await mirrorFlyMethodChannel.invokeMethod('open_file',{ "filePath" : filePath });
+      debugPrint("documentResponse ==> $documentResponse");
+      return documentResponse;
+    }on PlatformException catch (e){
+      debugPrint("Platform Exception ===> $e");
+      rethrow;
+    } on Exception catch(error){
+      debugPrint("Exception ==> $error");
+      rethrow;
+    }
+  }
+
+  sendAudio(String jid, String filePath, String messageid, bool isRecorded, String duration) async {
+    dynamic audioResponse;
+    try {
+      audioResponse = await mirrorFlyMethodChannel.invokeMethod('send_audio',{ "filePath" : filePath , "jid" : jid, "replyMessageId" : messageid, "isRecorded" : isRecorded, "duration" : duration});
+      debugPrint("audioResponse ==> $audioResponse");
+      return audioResponse;
     }on PlatformException catch (e){
       debugPrint("Platform Exception ===> $e");
       rethrow;

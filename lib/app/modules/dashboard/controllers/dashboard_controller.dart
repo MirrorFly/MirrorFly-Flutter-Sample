@@ -29,14 +29,12 @@ class DashboardController extends GetxController {
 
   registerMsgListener() {
     PlatformRepo().listenMessageEvents();
-    var onMessageReceived =
-        PlatformRepo().chatEvents(Constants.MESSAGE_RECEIVED);
-    var onMessageStatusUpdated =
-        PlatformRepo().chatEvents(Constants.MESSAGE_UPDATED);
-    onMessageReceived.listen((event) async {
-      debugPrint("myreceived" + event.toString());
-      Log("onMessageReceived", event.toString());
-      ChatMessageModel recentMsg = sendMessageModelFromJson(event);
+    // var onMessageReceived = PlatformRepo().onMessageReceived;
+    var onMessageStatusUpdated = PlatformRepo().onMessageReceived;
+    // onMessageReceived.listen((event) async {
+    //   debugPrint("myreceived" + event.toString());
+    //   Log("onMessageReceived", event.toString());
+    //   ChatMessageModel recentMsg = sendMessageModelFromJson(event);
       /*final index = recentchats.indexWhere((chat) => chat.jid == recentMsg.chatUserJid);
       var recent = RecentChatData();
       recent.contactType = recentMsg.contactType;
@@ -65,7 +63,7 @@ class DashboardController extends GetxController {
       recent.profileName = recentchats.value[index].profileName;
       recent.unreadMessageCount = recentchats.value[index].unreadMessageCount;
       recentchats.value[index]=recent;*/
-    });
+    // });
     onMessageStatusUpdated.listen((event) {
       debugPrint("myupdate" + event.toString());
       Log("onMessageStatusUpdated", event.toString());
@@ -121,8 +119,8 @@ class DashboardController extends GetxController {
         recent.lastMessageType = recentMsg.messageType;
         recent.unreadMessageCount = recentMsg.isMessageSentByMe
             ? recentchats.value[index].unreadMessageCount
-            : recentchats.value[index].unreadMessageCount ??
-                recentchats.value[index].unreadMessageCount! + 1;
+            : recentchats.value[index].unreadMessageCount!=null ?
+                recentchats.value[index].unreadMessageCount! + 1 : recentchats.value[index].unreadMessageCount;
         recentchats.removeAt(index);
         recentchats.insert(0, recent);
       }
@@ -234,4 +232,5 @@ class DashboardController extends GetxController {
         : DateTime.now();
     return yesterday.difference(calendar).inDays == 0;
   }
+
 }

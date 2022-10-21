@@ -54,6 +54,7 @@ class Helper{
     return colorsArray[(rand).abs()];
   }
 
+
 }
 
 extension StringParsing on String?{

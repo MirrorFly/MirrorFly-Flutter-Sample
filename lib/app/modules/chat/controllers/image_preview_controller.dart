@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:get/get.dart';
@@ -20,13 +22,17 @@ class ImagePreviewController extends GetxController {
     SchedulerBinding.instance.addPostFrameCallback((_) => filePath(Get.arguments['filePath']));
   }
 
-  sendImageMessage() async{
-
-     var response = await Get.find<ChatController>().sendImageMessage(filePath.value, caption.text , "");
-     debugPrint("Preview View ==> $response");
-     if(response != null){
-       Get.back();
-     }
-   }
+  sendImageMessage() async {
+    if (File(filePath.value).existsSync()) {
+      var response = await Get.find<ChatController>().sendImageMessage(
+          filePath.value, caption.text, "");
+      debugPrint("Preview View ==> $response");
+      if (response != null) {
+        Get.back();
+      }
+    } else {
+      debugPrint("File Not Found For Image Uplaod");
+    }
+  }
 
 }

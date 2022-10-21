@@ -17,6 +17,8 @@ abstract class Routes {
   static const VIDEO_PREVIEW = _Paths.VIDEO_PREVIEW;
   static const VIDEO_PLAY = _Paths.VIDEO_PLAY;
   static const IMAGE_VIEW = _Paths.IMAGE_VIEW;
+  static const LOCAL_CONTACT = _Paths.LOCAL_CONTACT;
+  static const PREVIEW_CONTACT = _Paths.PREVIEW_CONTACT;
 }
 
 abstract class _Paths {
@@ -35,4 +37,6 @@ abstract class _Paths {
   static const VIDEO_PREVIEW = '/video-preview';
   static const VIDEO_PLAY = '/video-play';
   static const IMAGE_VIEW = '/image-view';
+  static const LOCAL_CONTACT = '/local-contact';
+  static const PREVIEW_CONTACT = '/preview-contact';
 }

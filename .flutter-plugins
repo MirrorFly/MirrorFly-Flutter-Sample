@@ -1,5 +1,7 @@
 # This is a generated file; do not edit or check into version control.
+audioplayers=/home/user/snap/flutter/common/flutter/.pub-cache/hosted/pub.dartlang.org/audioplayers-0.20.1/
 contact_picker_web=/home/user/snap/flutter/common/flutter/.pub-cache/hosted/pub.dartlang.org/contact_picker_web-4.7.0/
+contacts_service=/home/user/snap/flutter/common/flutter/.pub-cache/hosted/pub.dartlang.org/contacts_service-0.6.3/
 emoji_picker_flutter=/home/user/snap/flutter/common/flutter/.pub-cache/hosted/pub.dartlang.org/emoji_picker_flutter-1.4.0/
 file_picker=/home/user/snap/flutter/common/flutter/.pub-cache/hosted/pub.dartlang.org/file_picker-5.2.1/
 flutter_plugin_android_lifecycle=/home/user/snap/flutter/common/flutter/.pub-cache/hosted/pub.dartlang.org/flutter_plugin_android_lifecycle-2.0.7/
@@ -9,7 +11,7 @@ image_picker=/home/user/snap/flutter/common/flutter/.pub-cache/hosted/pub.dartla
 image_picker_android=/home/user/snap/flutter/common/flutter/.pub-cache/hosted/pub.dartlang.org/image_picker_android-0.8.5+3/
 image_picker_for_web=/home/user/snap/flutter/common/flutter/.pub-cache/hosted/pub.dartlang.org/image_picker_for_web-2.1.10/
 image_picker_ios=/home/user/snap/flutter/common/flutter/.pub-cache/hosted/pub.dartlang.org/image_picker_ios-0.8.6+1/
-open_file=/home/user/snap/flutter/common/flutter/.pub-cache/hosted/pub.dartlang.org/open_file-2.1.1/
+open_file=/home/user/snap/flutter/common/flutter/.pub-cache/git/open_file-fbf68e4bb5cb3e262d8f8ebe10b2f8449ff8e030/
 package_info_plus=/home/user/snap/flutter/common/flutter/.pub-cache/hosted/pub.dartlang.org/package_info_plus-2.0.0/
 package_info_plus_linux=/home/user/snap/flutter/common/flutter/.pub-cache/hosted/pub.dartlang.org/package_info_plus_linux-2.0.0/
 package_info_plus_macos=/home/user/snap/flutter/common/flutter/.pub-cache/hosted/pub.dartlang.org/package_info_plus_macos-2.0.0/

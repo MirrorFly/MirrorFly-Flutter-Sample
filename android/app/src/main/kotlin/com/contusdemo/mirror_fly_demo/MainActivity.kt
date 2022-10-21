@@ -1,14 +1,19 @@
 package com.contusdemo.mirror_fly_demo
 
+import android.content.Intent
+import android.content.pm.ResolveInfo
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.media.ThumbnailUtils
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
-import android.os.PersistableBundle
 import android.util.Base64
+import android.webkit.MimeTypeMap
 import android.widget.Toast
 import androidx.annotation.NonNull
+import androidx.core.content.FileProvider
+import androidx.core.view.WindowCompat
 import com.contus.flycommons.FlyCallback
 import com.contus.flycommons.FlyUtils
 import com.contus.flycommons.LogMessage
@@ -17,6 +22,7 @@ import com.contus.flycommons.models.MessageType
 import com.contus.xmpp.chat.models.Profile
 import com.contusflysdk.AppUtils
 import com.contusflysdk.api.*
+import com.contusflysdk.api.ChatManager.fileProviderAuthority
 import com.contusflysdk.api.chat.MessageEventsListener
 import com.contusflysdk.api.contacts.ContactManager
 import com.contusflysdk.api.contacts.ProfileDetails
@@ -41,14 +47,19 @@ import java.io.File
 class MainActivity: FlutterActivity(), MethodChannel.MethodCallHandler, EventChannel.StreamHandler{
 
     private val MIRRORFLY_METHOD_CHANNEL = "contus.mirrorfly/sdkCall"
-    private val MIRRORFLY_EVENT_CHANNEL = "contus.mirrorfly/chatEvent"
-//    private val MIRRORFLY_STATUS_EVENT_CHANNEL = "contus.mirrorfly/chatStatusEvent"
+    private val MESSAGE_ONRECEIVED_CHANNEL = "contus.mirrorfly/onMessageReceived"
+    private val MESSAGE_STATUS_UPDATED_CHANNEL = "contus.mirrorfly/onMessageStatusUpdated"
+    private val MEDIA_STATUS_UPDATED_CHANNEL = "contus.mirrorfly/onMediaStatusUpdated"
+    private val UPLOAD_DOWNLOAD_PROGRESS_CHANGED_CHANNEL = "contus.mirrorfly/onUploadDownloadProgressChanged"
+    private val SHOW_UPDATE_CANCEL_NOTIFICTION_CHANNEL = "contus.mirrorfly/showOrUpdateOrCancelNotification"
 
     companion object{
         const val GROUP_EVENT = "group_events"
         const val ARCHIVE_EVENT = "archive_events"
         const val MESSAGE_RECEIVED = "message_received"
         const val MESSAGE_UPDATED = "message_updated"
+        const val MEDIA_STATUS_UPDATED = "media_status_updated"
+        const val MEDIA_UPLOAD_DOWNLOAD_PROGRESS = "media_upload_download_progress"
         const val MUTE_EVENT = "mute_event"
         const val PIN_EVENT = "pin_event"
     }
@@ -59,67 +70,72 @@ class MainActivity: FlutterActivity(), MethodChannel.MethodCallHandler, EventCha
     private val ENGINE_ID = "1"
 
     private var chatEventSink: EventChannel.EventSink? = null
-    private var onMessageReceived: EventChannel.EventSink? = null
-    private var onMessageStatusUpdated: EventChannel.EventSink? = null
-    private var onMediaStatusUpdated: EventChannel.EventSink? = null
-    private var onUploadDownloadProgressChanged: EventChannel.EventSink? = null
-    private var showOrUpdateOrCancelNotification: EventChannel.EventSink? = null
-    private var onMessagesClearedOrDeleted: EventChannel.EventSink? = null
+
+//    private var onMessageReceived: EventChannel.EventSink? = null
+//    private var onMessageStatusUpdated: EventChannel.EventSink? = null
+//    private var onMediaStatusUpdated: EventChannel.EventSink? = null
+//    private var onUploadDownloadProgressChanged: EventChannel.EventSink? = null
+//    private var showOrUpdateOrCancelNotification: EventChannel.EventSink? = null
+//    private var onMessagesClearedOrDeleted: EventChannel.EventSink? = null
 //    private var chatStatusEventSink: EventChannel.EventSink? = null
+override fun onCreate(savedInstanceState: Bundle?) {
+    // Aligns the Flutter view vertically with the window.
+    WindowCompat.setDecorFitsSystemWindows(getWindow(), false)
+
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+        // Disable the Android splash screen fade out animation to avoid
+        // a flicker before the similar frame is drawn in Flutter.
+        splashScreen.setOnExitAnimationListener { splashScreenView -> splashScreenView.remove() }
+    }
+
+    super.onCreate(savedInstanceState)
+}
     @Override
     override fun configureFlutterEngine(@NonNull flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)
 
         MethodChannel(flutterEngine.dartExecutor.binaryMessenger, MIRRORFLY_METHOD_CHANNEL).setMethodCallHandler(this)
-        EventChannel(flutterEngine.dartExecutor.binaryMessenger, MIRRORFLY_EVENT_CHANNEL).setStreamHandler(this)
-//        EventChannel(flutterEngine.dartExecutor.binaryMessenger, MIRRORFLY_STATUS_EVENT_CHANNEL).setStreamHandler(this)
+        EventChannel(flutterEngine.dartExecutor.binaryMessenger, MESSAGE_ONRECEIVED_CHANNEL).setStreamHandler(MessageReceivedStreamHandler)
+        EventChannel(flutterEngine.dartExecutor.binaryMessenger, MESSAGE_STATUS_UPDATED_CHANNEL).setStreamHandler(MessageStatusUpdatedStreamHandler)
+        EventChannel(flutterEngine.dartExecutor.binaryMessenger, MEDIA_STATUS_UPDATED_CHANNEL).setStreamHandler(MediaStatusUpdatedStreamHandler)
+        EventChannel(flutterEngine.dartExecutor.binaryMessenger, UPLOAD_DOWNLOAD_PROGRESS_CHANGED_CHANNEL).setStreamHandler(UploadDownloadProgressChangedStreamHandler)
+        EventChannel(flutterEngine.dartExecutor.binaryMessenger, SHOW_UPDATE_CANCEL_NOTIFICTION_CHANNEL).setStreamHandler(ShowOrUpdateOrCancelNotificationStreamHandler)
     }
-
-//    @Override
-//    override fun onCreate(savedInstanceState: Bundle?, persistentState: PersistableBundle?) {
-//        super.onCreate(savedInstanceState, persistentState)
-//        val flutterEngine = FlutterEngine(this)
-//        flutterEngine.getDartExecutor().executeDartEntrypoint(DartExecutor.DartEntrypoint.createDefault());
-//
-//        FlutterEngineCache.getInstance().put(ENGINE_ID, flutterEngine);
-//        MethodChannel(flutterEngine.dartExecutor.binaryMessenger, MIRRORFLY_METHOD_CHANNEL).setMethodCallHandler(this)
-////
-//        EventChannel(flutterEngine.dartExecutor.binaryMessenger, MIRRORFLY_EVENT_CHANNEL).setStreamHandler(this)
-//    }
-
 
     override fun onListen(arguments: Any?, events: EventChannel.EventSink?) {
         arguments as? String
         Log.d("unique",arguments.toString())
-        if (arguments.toString()== MESSAGE_RECEIVED){
-            Log.d("unique2",arguments.toString())
-            onMessageReceived=events
-        }
+//        if (arguments.toString()== MESSAGE_RECEIVED){
+//            Log.d("unique2",arguments.toString())
+//            onMessageReceived=events
+//        }
         chatEventSink = events
-        if (arguments!=null) {
-            when {
-                arguments.toString().equals(MESSAGE_RECEIVED)->onMessageReceived=events
-                arguments.toString().equals(MESSAGE_UPDATED)->onMessageStatusUpdated=events
-                /*arguments.equals(MESSAGE_RECEIVED)->onMediaStatusUpdated=events
-                arguments.equals(MESSAGE_RECEIVED)->onUploadDownloadProgressChanged=events
-                arguments.equals(MESSAGE_RECEIVED)->showOrUpdateOrCancelNotification=events
-                arguments.equals(MESSAGE_RECEIVED)->onMessagesClearedOrDeleted=events*/
-            }
-        }
+
+//        if (arguments!=null) {
+//            when {
+//                arguments.toString().equals(MESSAGE_RECEIVED)->onMessageReceived=events
+//                arguments.toString().equals(MESSAGE_UPDATED)->onMessageStatusUpdated=events
+////                arguments.equals(MEDIA_STATUS_UPDATED)->onMediaStatusUpdated=events
+////                arguments.equals(MEDIA_UPLOAD_DOWNLOAD_PROGRESS)->onUploadDownloadProgressChanged=events
+//
+////                arguments.equals(MESSAGE_RECEIVED)->showOrUpdateOrCancelNotification=events
+////                arguments.equals(MESSAGE_RECEIVED)->onMessagesClearedOrDeleted=events
+//            }
+//        }
     }
 
     override fun onCancel(arguments: Any?) {
         chatEventSink = null
-        if (arguments!=null) {
-            when {
-                arguments.equals(MESSAGE_RECEIVED)->onMessageReceived=null
-                arguments.equals(MESSAGE_UPDATED)->onMessageStatusUpdated=null
-                arguments.equals(MESSAGE_RECEIVED)->onMediaStatusUpdated=null
-                arguments.equals(MESSAGE_RECEIVED)->onUploadDownloadProgressChanged=null
-                arguments.equals(MESSAGE_RECEIVED)->showOrUpdateOrCancelNotification=null
-                arguments.equals(MESSAGE_RECEIVED)->onMessagesClearedOrDeleted=null
-            }
-        }
+//        if (arguments!=null) {
+//            when {
+//                arguments.equals(MESSAGE_RECEIVED)->onMessageReceived=null
+//                arguments.equals(MESSAGE_UPDATED)->onMessageStatusUpdated=null
+//                /*arguments.equals(MESSAGE_RECEIVED)->onMediaStatusUpdated=null
+//                arguments.equals(MESSAGE_RECEIVED)->onUploadDownloadProgressChanged=null
+//                arguments.equals(MESSAGE_RECEIVED)->showOrUpdateOrCancelNotification=null
+//                arguments.equals(MESSAGE_RECEIVED)->onMessagesClearedOrDeleted=null*/
+//            }
+//        }
     }
 
 //    override fun onMessageReceived(message: ChatMessage) {
@@ -188,8 +204,11 @@ class MainActivity: FlutterActivity(), MethodChannel.MethodCallHandler, EventCha
                 Log.e("MirrorFly", "message Received")
                 Log.e("Message Received", message.messageTextContent.toString())
                 Log.e("Message Received", Gson().toJson(message))
-                onMessageReceived?.success(Gson().toJson(message).toString())
-                chatEventSink?.success(Gson().toJson(message).toString())
+//                onMessageReceived?.success(Gson().toJson(message).toString())
+
+                MessageReceivedStreamHandler.onMessageReceived?.success(Gson().toJson(message).toString())
+
+//                chatEventSink?.success(Gson().toJson(message).toString())
             }
 
             override fun onMessageStatusUpdated(messageId: String) {
@@ -198,19 +217,22 @@ class MainActivity: FlutterActivity(), MethodChannel.MethodCallHandler, EventCha
                 //then fetch message object from db using `FlyCore.getMessageForId(messageId)` and notify the item in list
                 Log.e("Message Ack", "Received");
 
-                Log.e("MirrorFly", "Message Status Updated")
+                Log.e(TAG, "Message Status Updated ==> $messageId")
                 val message = FlyMessenger.getMessageOfId(messageId);
                 if (message != null && message.messageType == MessageType.IMAGE) {
                     DebugUtilis.v("STAT", message.mediaChatMessage.mediaThumbImage)
                 }
-                chatEventSink?.success(Gson().toJson(message).toString())
-                onMessageStatusUpdated?.success(Gson().toJson(messageId).toString())
+//                chatEventSink?.success(Gson().toJson(message).toString())
+                MessageStatusUpdatedStreamHandler.onMessageStatusUpdated?.success(Gson().toJson(message).toString())
             }
 
             override fun onMediaStatusUpdated(message: ChatMessage) {
-                Log.e("MirrorFly", "media Status Updated")
-                onMediaStatusUpdated?.success(Gson().toJson(message).toString())
-                chatEventSink?.success(Gson().toJson(message).toString())
+                Log.e(TAG, "media Status Updated ==> $message.messageId");
+                MediaStatusUpdatedStreamHandler.onMediaStatusUpdated?.success(Gson().toJson(message).toString())
+
+//                Handler().postDelayed({
+//                    chatEventSink?.success(Gson().toJson(message).toString())
+//                }, 1000)
                 //called when the media message status is updated like downloaded,uploaded,failed
                 //find the index of message object in list using messageId
                 //then fetch message object from db using `FlyCore.getMessageForId(messageId)` and notify the item in list
@@ -222,13 +244,13 @@ class MainActivity: FlutterActivity(), MethodChannel.MethodCallHandler, EventCha
                 val js = JSONObject()
                 js.put("message_id",messageId)
                 js.put("progress_percentage",progressPercentage)
-                onUploadDownloadProgressChanged?.success(js.toString())
+                UploadDownloadProgressChangedStreamHandler.onUploadDownloadProgressChanged?.success(js.toString())
             }
 
             override fun showOrUpdateOrCancelNotification(jid: String) {
                 Log.e("showOrUpdateOrCancelNotification", jid)
                 Log.e("MirrorFly", "showOrUpdateOrCancelNotification Status Updated")
-                showOrUpdateOrCancelNotification?.success(jid)
+                ShowOrUpdateOrCancelNotificationStreamHandler.showOrUpdateOrCancelNotification?.success(jid)
             }
 
 
@@ -251,9 +273,6 @@ class MainActivity: FlutterActivity(), MethodChannel.MethodCallHandler, EventCha
                 Log.d(TAG,"authtoken : "+FlyUtils.decodedToken().trim())
                 result.success(FlyUtils.decodedToken().trim());
             }
-//            call.method.equals("connect_chat_manager") -> {
-//                connectChatManager(call, result)
-//            }
             call.method.equals("get_user_jid") -> {
                 getUserJID(call, result)
             }
@@ -334,11 +353,66 @@ class MainActivity: FlutterActivity(), MethodChannel.MethodCallHandler, EventCha
                 val recent  = FlyMessenger.downloadMedia(media_id)
                 result.success(Gson().toJson(recent))
             }
+            call.method.equals("send_contact") -> {
+               sendContact(call, result);
+            }
+            call.method.equals("send_document") -> {
+                sendFileMessage(call, result);
+            }
+            call.method.equals("open_file") -> {
+                openMediaFile(call, result);
+            }
+            call.method.equals("send_audio") -> {
+                sendaudioMessage(call, result);
+            }
 
             else -> {
                 result.notImplemented()
             }
 
+        }
+    }
+
+    private fun sendaudioMessage(call: MethodCall, result: MethodChannel.Result) {
+        val userJID = call.argument<String>("jid")
+        val filePath = call.argument<String>("filePath") ?: ""
+        val audioFile = File(filePath)
+        val replyMessageID = call.argument<String>("replyMessageID") ?: ""
+        val isRecorded = call.argument<Boolean>("isRecorded")
+        val duration = call.argument<String>("duration")?.toLong()
+
+        Log.i("isRecorded", isRecorded.toString())
+
+        if (userJID != null && duration != null && isRecorded != null) {
+            FlyMessenger.sendAudioMessage(userJID, audioFile, duration, isRecorded, replyMessageID, object : SendMessageListener {
+                override fun onResponse(isSuccess: Boolean, chatMessage: ChatMessage?) {
+                    if (chatMessage != null) {
+                        Log.i(TAG, "Audio message sent")
+                        result.success(Gson().toJson(chatMessage))
+                    }else{
+                        result.error("500", "Unable to Send Audio Message", null)
+                    }
+                }
+            })
+        }
+    }
+
+    private fun sendContact(call: MethodCall, result: MethodChannel.Result) {
+        val contact_list = call.argument<List<String>>("contact_list")
+        val userJID = call.argument<String>("jid")
+        val contactName = call.argument<String>("contact_name")
+
+        if (userJID != null && contact_list != null && contactName != null) {
+            FlyMessenger.sendContactMessage(userJID, contactName, contact_list, "", object : SendMessageListener {
+                override fun onResponse(isSuccess: Boolean, chatMessage: ChatMessage?) {
+                    if (chatMessage != null) {
+                        result.success(Gson().toJson(chatMessage))
+                    }else{
+                        result.error("500", "Unable to Send Contact Message", null)
+                    }
+                }
+
+            })
         }
     }
 
@@ -630,14 +704,14 @@ class MainActivity: FlutterActivity(), MethodChannel.MethodCallHandler, EventCha
         if (!call.hasArgument("message") && !call.hasArgument("jid")) {
             result.error("404", "Message/JID Required", null)
         } else {
-            val txtMessage: String? = call.argument("message")
+            val replyMessageId: String? = call.argument("replyMessageId")
             val receiverJID: String? = call.argument("jid")
             val file: String? = call.argument("file")
-            if (txtMessage != null && receiverJID != null) {
+            if (replyMessageId != null && receiverJID != null) {
                 FlyMessenger.sendDocumentMessage(
                     receiverJID,
                     File(file!!),
-                    txtMessage,
+                    replyMessageId,
                     listener = object : SendMessageListener {
                         override fun onResponse(isSuccess: Boolean, chatMessage: ChatMessage?) {
                             // you will get the message sent success response
@@ -699,6 +773,7 @@ class MainActivity: FlutterActivity(), MethodChannel.MethodCallHandler, EventCha
 
         val thumbnailBase64 = getImageThumbImage(filePath)
 
+        Log.e("FILEPATH", filePath)
         Log.i(TAG, filePath);
         Log.i(TAG, thumbnailBase64);
 
@@ -805,4 +880,42 @@ class MainActivity: FlutterActivity(), MethodChannel.MethodCallHandler, EventCha
             if (result!=null) result.error("500", "Please Check Your Internet connection", null)
         }
     }
+
+    fun openMediaFile(call: MethodCall, result: MethodChannel.Result) {
+
+        val filePath = call.argument<String>("filePath")
+//        try{
+//            MediaUtils.openMediaFile(this, filePath)
+//            result.success(true)
+//        } catch (e: Exception){
+//            result.error("500", "File Not Found", null)
+////                Toast.makeText(context, R.string.content_not_found, Toast.LENGTH_LONG).show()
+//        }
+
+        try{
+            val file = File(filePath)
+            val extension = MimeTypeMap.getFileExtensionFromUrl(filePath)
+            val mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension)
+            val intent = Intent(Intent.ACTION_VIEW)
+            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+            val fileUri = FileProvider.getUriForFile(context, fileProviderAuthority, file)
+            intent.setDataAndType(fileUri, mimeType)
+            val mediaListIntent = Intent(Intent.ACTION_VIEW, fileUri)
+            mediaListIntent.type = mimeType
+            val mediaViewerApps: List<ResolveInfo> = context.packageManager.queryIntentActivities(mediaListIntent, 0)
+            try {
+                when {
+                    intent.resolveActivity(context.packageManager) != null -> context.startActivity(intent)
+                    mediaViewerApps.isNotEmpty() -> context.startActivity(intent)
+                    else -> result.error("500", "Unable to Open the File", null)
+//                Toast.makeText(context, R.string.content_not_found, Toast.LENGTH_LONG).show()
+                }
+            } catch (e: Exception) {
+                result.error("500", "Unable to Open the File", null)
+            }
+        } catch (e: Exception){
+            result.error("500", "File Not Found", null)
+        }
+    }
+
 }
