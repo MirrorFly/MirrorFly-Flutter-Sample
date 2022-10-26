@@ -11,6 +11,7 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:mirror_fly_demo/app/model/chatMessageModel.dart';
 import 'package:mirror_fly_demo/app/nativecall/platformRepo.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -49,7 +50,7 @@ class ChatController extends GetxController
   FocusNode focusNode = FocusNode();
 
   var calendar = DateTime.now();
-  Profile profile = Get.arguments as Profile;
+  late Profile profile;// = Get.arguments as Profile;
   var base64img = ''.obs;
   var imagePath = ''.obs;
   var filePath = ''.obs;
@@ -57,13 +58,16 @@ class ChatController extends GetxController
   var showEmoji = false.obs;
 
   var isLive = false;
+
   @override
   void onInit() {
     super.onInit();
+    profile = Get.arguments as Profile;
     controller = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 600),
     );
+
 
     isLive = true;
     focusNode.addListener(() {
@@ -84,6 +88,7 @@ class ChatController extends GetxController
     debugPrint("==================");
     debugPrint(profile.image);
     sendReadReceipt();
+
 
     player.onDurationChanged.listen((Duration d) { //get the duration of audio
       maxduration(d.inMilliseconds);
@@ -118,6 +123,7 @@ class ChatController extends GetxController
   void onClose() {
     scrollController.dispose();
     PlatformRepo().ongoingChat("");
+    // Get.delete<ChatController>();
     isLive = false;
     super.onClose();
   }
@@ -125,7 +131,7 @@ class ChatController extends GetxController
   @override
   void dispose() {
     controller.dispose();
-    Get.delete<ChatController>();
+    // Get.delete<ChatController>();
     super.dispose();
   }
 
@@ -532,6 +538,8 @@ class ChatController extends GetxController
   void isTyping(String typingText) {
     typingText.isNotEmpty ? isUserTyping(true) : isUserTyping(false);
   }
+
+
 
 
 }

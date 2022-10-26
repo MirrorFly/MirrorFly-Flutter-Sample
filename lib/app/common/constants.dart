@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 //Colors
@@ -92,6 +93,7 @@ Log(String tag,String msg){
   }
 }
 class Constants {
+
   static const String TAG = 'Contus Fly';
   static const String GOOGLE_MAP_KEY = "AIzaSyBaKkrQnLT4nacpKblIE5d4QK6GpaX5luQ";
   static const String GOOGLE_MAP_PACKAGE_NAME = "com.google.android.apps.maps";
@@ -481,6 +483,13 @@ class Constants {
   static const int MEDIA_UPLOADING = 1;
   static const int MEDIA_UPLOADED = 2;
   static const int MEDIA_UPLOADED_NOT_AVAILABLE = 7;
+
+
+  static const double borderRadius = 27;
+  static const double defaultPadding = 8;
+
+  // static GlobalKey<AnimatedListState> audioListKey =
+  // GlobalKey<AnimatedListState>();
 
   static const String PDF = "pdf";
   static const String PPT = "ppt";

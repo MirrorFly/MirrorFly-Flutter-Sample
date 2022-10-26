@@ -884,6 +884,7 @@ class ChatView extends GetView<ChatController> {
                   ),
                   iconCreation(cameraImg, "Camera", () async {
                     Get.back();
+
                     final XFile? photo =
                     await _picker.pickImage(source: ImageSource.camera);
                     Get.toNamed(Routes.IMAGEPREVIEW, arguments: {
@@ -1025,7 +1026,7 @@ class ChatView extends GetView<ChatController> {
         return SizedBox.shrink();
       }
     } else {
-      switch (chatMessage.mediaChatMessage!.mediaDownloadStatus) {
+      switch (chatMessage.isMessageSentByMe ? chatMessage.mediaChatMessage!.mediaUploadStatus : chatMessage.mediaChatMessage!.mediaDownloadStatus) {
         case Constants.MEDIA_DOWNLOADED:
         case Constants.MEDIA_UPLOADED:
           return SizedBox.shrink();
@@ -1166,9 +1167,10 @@ class ChatView extends GetView<ChatController> {
   handleMediaUploadDownload(int mediaDownloadStatus,
       ChatMessageModel chatList) {
     debugPrint(mediaDownloadStatus.toString());
+    debugPrint(chatList.mediaChatMessage?.mediaUploadStatus.toString());
     debugPrint(chatList.messageType.toString());
     debugPrint(chatList.isMessageSentByMe.toString());
-    switch (mediaDownloadStatus) {
+    switch (chatList.isMessageSentByMe ? chatList.mediaChatMessage?.mediaUploadStatus : mediaDownloadStatus) {
       case Constants.MEDIA_DOWNLOADED:
       case Constants.MEDIA_UPLOADED:
       // return SizedBox.shrink();
@@ -1186,7 +1188,7 @@ class ChatView extends GetView<ChatController> {
         }
         if (chatList.messageType == 'AUDIO') {
           debugPrint(controller.checkFile(
-              chatList.mediaChatMessage!.mediaLocalStoragePath));
+              chatList.mediaChatMessage!.mediaLocalStoragePath).toString());
           debugPrint(chatList.mediaChatMessage!.mediaDownloadStatus.toString());
           if (controller.checkFile(
               chatList.mediaChatMessage!.mediaLocalStoragePath) &&
@@ -1220,8 +1222,8 @@ class ChatView extends GetView<ChatController> {
       case Constants.MEDIA_NOT_UPLOADED:
       case Constants.MEDIA_DOWNLOADING:
       case Constants.MEDIA_UPLOADING:
-      // return uploadingView();
-        break;
+      return uploadingView();
+        // break;
     }
   }
 

@@ -14,10 +14,7 @@ import android.widget.Toast
 import androidx.annotation.NonNull
 import androidx.core.content.FileProvider
 import androidx.core.view.WindowCompat
-import com.contus.flycommons.FlyCallback
-import com.contus.flycommons.FlyUtils
-import com.contus.flycommons.LogMessage
-import com.contus.flycommons.SharedPreferenceManager
+import com.contus.flycommons.*
 import com.contus.flycommons.models.MessageType
 import com.contus.xmpp.chat.models.Profile
 import com.contusflysdk.AppUtils
@@ -30,7 +27,9 @@ import com.contusflysdk.api.models.ChatMessage
 import com.contusflysdk.api.models.RecentChat
 import com.contusflysdk.media.MediaUploadHelper
 import com.contusflysdk.model.Message
+import com.contusflysdk.utils.FilePathUtils
 import com.contusflysdk.utils.ThumbSize
+import com.contusflysdk.utils.VideoRecUtils
 import com.google.gson.Gson
 import io.flutter.Log
 import io.flutter.embedding.android.FlutterActivity
@@ -42,6 +41,8 @@ import kotlinx.coroutines.Dispatchers
 import org.json.JSONObject
 import java.io.ByteArrayOutputStream
 import java.io.File
+import java.io.FileWriter
+import java.io.IOException
 
 
 class MainActivity: FlutterActivity(), MethodChannel.MethodCallHandler, EventChannel.StreamHandler{
@@ -759,10 +760,13 @@ override fun onCreate(savedInstanceState: Bundle?) {
     }
 
     private fun sendImageMessage(call: MethodCall, result: MethodChannel.Result) {
+
+
         val userJid = call.argument<String>("jid") ?: ""
 //        val filename = call.argument<String>("fileName") ?: "image"
 //        val fileSize = call.argument<String>("fileSize") ?: "0"
         val filePath = call.argument<String>("filePath") ?: ""
+        createDotNoMediaFile()
 
         val imageFile = File(filePath)
 
@@ -917,5 +921,35 @@ override fun onCreate(savedInstanceState: Bundle?) {
             result.error("500", "File Not Found", null)
         }
     }
+
+    fun createDotNoMediaFile() {
+//        FilePathUtils.getExternalStorage()
+
+        val mediaPath = VideoRecUtils.getSentParentPath(Constants.MSG_TYPE_IMAGE)
+
+        Log.e("FIle Upload root path", mediaPath)
+
+        val sentMedia = File(mediaPath)
+        if (!sentMedia.exists()) {
+            Log.e("File Upload", "sent Media Not exists")
+            sentMedia.mkdirs()
+        }else{
+            Log.e("File Upload", "Sent Media Already Exists")
+        }
+        val noMediaFile = File(sentMedia, ".nomedia")
+        if (!noMediaFile.exists()) {
+            Log.e("File Upload", "NoMediaFile not exists")
+            try {
+                FileWriter(noMediaFile).use { writer -> LogMessage.d(TAG, "createNoMedia: $writer") }
+            } catch (e: IOException) {
+                Log.e("File Upload Exception", e.message.toString())
+                LogMessage.e(e)
+            }
+        }else{
+            Log.e("File Upload", "No Media Already Exists")
+        }
+    }
+
+
 
 }

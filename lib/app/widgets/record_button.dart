@@ -2,12 +2,15 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:intl/intl.dart';
+import 'package:path_provider/path_provider.dart';
 
 import '../common/constants.dart';
+import '../modules/chat/controllers/chat_controller.dart';
 import 'flow_shader.dart';
-import 'globals.dart';
 import 'lottie_animation.dart';
-// import 'package:record/record.dart';
+import 'package:record/record.dart';
 
 class RecordButton extends StatefulWidget {
   const RecordButton({
@@ -34,10 +37,12 @@ class _RecordButtonState extends State<RecordButton> {
   DateTime? startTime;
   Timer? timer;
   String recordDuration = "00:00";
-  // late Record record;
+  late Record record;
+  var recordTime;
 
   bool isLocked = false;
   bool showLottie = false;
+  var documentPath;
 
   @override
   void initState() {
@@ -51,15 +56,17 @@ class _RecordButtonState extends State<RecordButton> {
     widget.controller.addListener(() {
       setState(() {});
     });
+    setAudioPath();
+    record = Record();
   }
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
     timerWidth =
-        MediaQuery.of(context).size.width - 2 * Globals.defaultPadding - 4;
+        MediaQuery.of(context).size.width - 2 * Constants.defaultPadding - 4;
     timerAnimation =
-        Tween<double>(begin: timerWidth + Globals.defaultPadding, end: 0)
+        Tween<double>(begin: timerWidth + Constants.defaultPadding, end: 0)
             .animate(
       CurvedAnimation(
         parent: widget.controller,
@@ -67,7 +74,7 @@ class _RecordButtonState extends State<RecordButton> {
       ),
     );
     lockerAnimation =
-        Tween<double>(begin: lockerHeight + Globals.defaultPadding, end: 0)
+        Tween<double>(begin: lockerHeight + Constants.defaultPadding, end: 0)
             .animate(
       CurvedAnimation(
         parent: widget.controller,
@@ -78,7 +85,7 @@ class _RecordButtonState extends State<RecordButton> {
 
   @override
   void dispose() {
-    // record.dispose();
+    record.dispose();
     timer?.cancel();
     timer = null;
     super.dispose();
@@ -104,7 +111,7 @@ class _RecordButtonState extends State<RecordButton> {
         height: lockerHeight,
         width: size,
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(Globals.borderRadius),
+          borderRadius: BorderRadius.circular(Constants.borderRadius),
           color: Colors.black,
         ),
         padding: const EdgeInsets.symmetric(vertical: 15),
@@ -136,7 +143,7 @@ class _RecordButtonState extends State<RecordButton> {
         height: size,
         width: timerWidth,
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(Globals.borderRadius),
+          borderRadius: BorderRadius.circular(Constants.borderRadius),
           border: Border.all(
             color: textcolor,
           ),
@@ -175,7 +182,7 @@ class _RecordButtonState extends State<RecordButton> {
         height: size,
         width: timerWidth,
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(Globals.borderRadius),
+          borderRadius: BorderRadius.circular(Constants.borderRadius),
           color: Colors.black,
         ),
         child: Padding(
@@ -189,11 +196,13 @@ class _RecordButtonState extends State<RecordButton> {
               startTime = null;
               recordDuration = "00:00";
 
-              // var filePath = await Record().stop();
+              var filePath = await Record().stop();
               // AudioState.files.add(filePath!);
               // Globals.audioListKey.currentState!
               //     .insertItem(AudioState.files.length - 1);
-              // debugPrint(filePath);
+
+              debugPrint(filePath);
+              debugPrint(filePath);
               setState(() {
                 isLocked = false;
               });
@@ -228,7 +237,10 @@ class _RecordButtonState extends State<RecordButton> {
       child: Transform.scale(
         scale: buttonScaleAnimation.value,
         child: Container(
-          child: const Icon(Icons.mic, color: Colors.white,),
+          child: const Icon(
+            Icons.mic,
+            color: Colors.white,
+          ),
           height: size,
           width: size,
           clipBehavior: Clip.hardEdge,
@@ -260,10 +272,10 @@ class _RecordButtonState extends State<RecordButton> {
           Timer(const Duration(milliseconds: 1440), () async {
             widget.controller.reverse();
             debugPrint("Cancelled recording");
-            // var filePath = await record.stop();
-            // debugPrint(filePath);
-            // File(filePath!).delete();
-            // debugPrint("Deleted $filePath");
+            var filePath = await record.stop();
+            debugPrint(filePath);
+            File(filePath!).delete();
+            debugPrint("Deleted $filePath");
             showLottie = false;
           });
         } else if (checkIsLocked(details.localPosition)) {
@@ -280,16 +292,36 @@ class _RecordButtonState extends State<RecordButton> {
 
           // Vibrate.feedback(FeedbackType.success);
 
+          final format = DateFormat('mm:ss');
+          final dt = format.parse(recordDuration, true);
+          final millisec = dt.millisecondsSinceEpoch;
+          debugPrint("Audio duration $millisec");
+
+          // recordTime = timer.
           timer?.cancel();
           timer = null;
           startTime = null;
           recordDuration = "00:00";
 
-          // var filePath = await Record().stop();
+          await Record().stop().then((filePath) async {
+            if (File(filePath!).existsSync()) {
+              var response = await Get.find<ChatController>()
+                  .sendAudioMessage(filePath, "", true,millisec.toString() );
+              debugPrint("Preview View ==> $response");
+              if (response != null) {
+                Get.back();
+              }
+            } else {
+              debugPrint("File Not Found For Image Uplaod");
+            }
+
+            debugPrint(filePath);
+          });
+
           // AudioState.files.add(filePath!);
           // Globals.audioListKey.currentState!
           //     .insertItem(AudioState.files.length - 1);
-          // debugPrint(filePath);
+
         }
       },
       onLongPressCancel: () {
@@ -299,15 +331,15 @@ class _RecordButtonState extends State<RecordButton> {
       onLongPress: () async {
         debugPrint("onLongPress");
         // Vibrate.feedback(FeedbackType.success);
-        // if (await Record().hasPermission()) {
-          // record = Record();
-          // await record.start(
-          //   path: Globals.documentPath +
-          //       "audio_${DateTime.now().millisecondsSinceEpoch}.m4a",
-          //   encoder: AudioEncoder.AAC,
-          //   bitRate: 128000,
-          //   samplingRate: 44100,
-          // );
+        if (await Record().hasPermission()) {
+
+          await record.start(
+            path: documentPath + "/" +
+                "audio_${DateTime.now().millisecondsSinceEpoch}.m4a",
+            encoder: AudioEncoder.AAC,
+            bitRate: 128000,
+            samplingRate: 44100,
+          );
           startTime = DateTime.now();
           timer = Timer.periodic(const Duration(seconds: 1), (_) {
             final minDur = DateTime.now().difference(startTime!).inMinutes;
@@ -318,7 +350,7 @@ class _RecordButtonState extends State<RecordButton> {
               recordDuration = "$min:$sec";
             });
           });
-        // }
+        }
       },
     );
   }
@@ -329,5 +361,11 @@ class _RecordButtonState extends State<RecordButton> {
 
   bool isCancelled(Offset offset, BuildContext context) {
     return (offset.dx < -(MediaQuery.of(context).size.width * 0.2));
+  }
+
+  Future<void> setAudioPath() async {
+
+    documentPath = (await getExternalStorageDirectory())!.path;
+    debugPrint(documentPath);
   }
 }
