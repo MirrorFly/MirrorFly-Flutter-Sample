@@ -13,7 +13,7 @@ import '../../../model/chatMessageModel.dart';
 import '../../../routes/app_pages.dart';
 
 class DashboardController extends GetxController {
-  var recentchats = List<RecentChatData>.empty(growable: true).obs;
+  var recentchats = <RecentChatData>[].obs;
   var calendar = DateTime.now();
 
   @override
@@ -28,42 +28,7 @@ class DashboardController extends GetxController {
   }
 
   registerMsgListener() {
-    PlatformRepo().listenMessageEvents();
-    // var onMessageReceived = PlatformRepo().onMessageReceived;
     var onMessageStatusUpdated = PlatformRepo().onMessageReceived;
-    // onMessageReceived.listen((event) async {
-    //   debugPrint("myreceived" + event.toString());
-    //   Log("onMessageReceived", event.toString());
-    //   ChatMessageModel recentMsg = sendMessageModelFromJson(event);
-      /*final index = recentchats.indexWhere((chat) => chat.jid == recentMsg.chatUserJid);
-      var recent = RecentChatData();
-      recent.contactType = recentMsg.contactType;
-      recent.isAdminBlocked = recentchats.value[index].isAdminBlocked;
-      recent.isBlocked = recentchats.value[index].isBlocked;
-      recent.isBlockedMe = recentchats.value[index].isBlockedMe;
-      recent.isBroadCast = recentchats.value[index].isBroadCast;
-      recent.isChatArchived = recentchats.value[index].isChatArchived;
-      recent.isChatPinned = recentchats.value[index].isChatPinned;
-      recent.isConversationUnRead = recentchats.value[index].isConversationUnRead;
-      recent.isGroup = recentchats.value[index].isGroup;
-      recent.isGroupInOfflineMode = recentchats.value[index].isGroupInOfflineMode;
-      recent.isItSavedContact = recentMsg.isItSavedContact;
-      recent.isLastMessageRecalledByUser = recentchats.value[index].isLastMessageRecalledByUser;
-      recent.isLastMessageSentByMe = recentchats.value[index].isLastMessageSentByMe;
-      recent.isMuted = recentchats.value[index].isMuted;
-      recent.isSelected = recentchats.value[index].isSelected;
-      recent.jid = recentchats.value[index].jid;
-      recent.lastMessageContent = recentMsg.messageTextContent;
-      recent.lastMessageId = recentMsg.messageId;
-      recent.lastMessageStatus = recentMsg.messageStatus.status;
-      recent.lastMessageTime = recentMsg.messageSentTime;
-      recent.lastMessageType = recentMsg.messageType;
-      recent.nickName = recentchats.value[index].nickName;
-      recent.profileImage = recentchats.value[index].profileImage;
-      recent.profileName = recentchats.value[index].profileName;
-      recent.unreadMessageCount = recentchats.value[index].unreadMessageCount;
-      recentchats.value[index]=recent;*/
-    // });
     onMessageStatusUpdated.listen((event) {
       debugPrint("myupdate" + event.toString());
       Log("onMessageStatusUpdated", event.toString());

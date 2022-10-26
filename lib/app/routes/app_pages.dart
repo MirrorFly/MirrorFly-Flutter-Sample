@@ -1,5 +1,6 @@
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/modules/chat/views/locationsent_view.dart';
+import 'package:mirror_fly_demo/app/modules/dashboard/views/recent_search_view.dart';
 
 import '../model/userlistModel.dart';
 import '../modules/chat/bindings/chat_binding.dart';
@@ -12,6 +13,7 @@ import '../modules/chat/views/chat_view.dart';
 import '../modules/chat/views/contactlist_view.dart';
 import '../modules/chat/views/image_preview_view.dart';
 import '../modules/dashboard/bindings/dashboard_binding.dart';
+import '../modules/dashboard/bindings/recentssearch_binding.dart';
 import '../modules/dashboard/views/dashboard_view.dart';
 import '../modules/home/bindings/home_binding.dart';
 import '../modules/home/views/home_view.dart';
@@ -42,6 +44,7 @@ class AppPages {
   AppPages._();
 
   static const INITIAL = Routes.LOGIN;
+  static const PROFILE = Routes.PROFILE;
   static const DASHBOARD = Routes.DASHBOARD;
 
   static final routes = [
@@ -54,6 +57,11 @@ class AppPages {
       name: _Paths.DASHBOARD,
       page: () => DashboardView(),
       binding: DashboardBinding(),
+    ),
+    GetPage(
+      name: _Paths.RECENTSEARCH,
+      page: () => RecentSearchView(),
+      binding: RecentSearchBinding(),
     ),
     GetPage(
       name: _Paths.LOGIN,

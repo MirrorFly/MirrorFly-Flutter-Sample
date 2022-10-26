@@ -49,14 +49,16 @@ class DashboardView extends GetView<DashboardController> {
           title: const Text('Chats'),
           automaticallyImplyLeading: false,
           actions: [
-            Container(
-              margin: EdgeInsets.all(16),
-              child: SvgPicture.asset(
+            IconButton(
+              icon: SvgPicture.asset(
                 searchicon,
                 width: 18,
                 height: 18,
                 fit: BoxFit.contain,
               ),
+              onPressed: (){
+                Get.toNamed(Routes.RECENTSEARCH,arguments: {"recents":controller.recentchats});
+              },
             ),
             PopupMenuButton<int>(
               icon: SvgPicture.asset(moreicon, width: 3.66, height: 16.31),
@@ -256,61 +258,5 @@ class DashboardView extends GetView<DashboardController> {
            // ?.then((value) => controller.getRecentChatlist());
       },
     );
-  }
-
-  Widget forMessageTypeIcon(String MessageType) {
-    switch (MessageType.toUpperCase()) {
-      case Constants.MIMAGE:
-        return SvgPicture.asset(
-          Mimageicon,
-          fit: BoxFit.contain,
-        );
-       case Constants.MAUDIO:
-        return SvgPicture.asset(
-          Maudioicon,
-          fit: BoxFit.contain,
-        );
-      case Constants.MVIDEO:
-        return SvgPicture.asset(
-          Mvideoicon,
-          fit: BoxFit.contain,
-        );
-      case Constants.MDOCUMENT:
-        return SvgPicture.asset(
-          Mdocumenticon,
-          fit: BoxFit.contain,
-        );
-      case Constants.MCONTACT:
-        return SvgPicture.asset(
-          Mcontacticon,
-          fit: BoxFit.contain,
-        );
-      case Constants.MLOCATION:
-        return SvgPicture.asset(
-          Mlocationicon,
-          fit: BoxFit.contain,
-        );
-      default:
-        return const SizedBox();
-    }
-  }
-
-  String? forMessageTypeString(String MessageType) {
-    switch (MessageType.toUpperCase()) {
-      case Constants.MIMAGE:
-        return "Image";
-      case Constants.MAUDIO:
-        return "Audio";
-      case Constants.MVIDEO:
-        return "Video";
-      case Constants.MDOCUMENT:
-        return "Document";
-      case Constants.MCONTACT:
-        return "Contact";
-      case Constants.MLOCATION:
-        return "Location";
-      default:
-        return null;
-    }
   }
 }
