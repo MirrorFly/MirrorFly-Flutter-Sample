@@ -366,6 +366,28 @@ override fun onCreate(savedInstanceState: Bundle?) {
             call.method.equals("send_audio") -> {
                 sendaudioMessage(call, result);
             }
+            call.method.equals("filteredRecentChatList") -> {
+                filterRecentChatList(call, result);
+            }
+            call.method.equals("filteredMessageList") -> {
+                filterMessageList(call, result);
+            }
+            call.method.equals("filteredContactList") -> {
+                filterContactsList(call, result);
+            }
+            call.method.equals("getRecentChatOf") -> {
+                val userJID = call.argument<String>("jid") ?: ""
+                val recent = FlyCore.getRecentChatOf(userJID)
+                if (recent != null) {
+                    result.success(Gson().toJson(recent))
+                }
+            }
+            call.method.equals("getMessageOfId") -> {
+                val mid = call.argument<String>("mid") ?: ""
+                val data = FlyMessenger.getMessageOfId(mid)
+                if (data!=null)
+                    result.success(data.tojsonString())
+            }
             call.method.equals("clear_chat") -> {
                 clearChats(call, result);
             }
@@ -677,6 +699,7 @@ override fun onCreate(savedInstanceState: Bundle?) {
             ) {
 
                 data["status"] = isSuccess
+                Log.i(TAG,"getProfile => "+data.toString());
                 result.success(Gson().toJson(data))
             }
         })
@@ -711,6 +734,7 @@ override fun onCreate(savedInstanceState: Bundle?) {
                 result.error("500", "User Name is Empty", null)
             }
         }
+
     }
 
     private fun readReceipt(call: MethodCall, result: MethodChannel.Result) {
@@ -790,8 +814,6 @@ override fun onCreate(savedInstanceState: Bundle?) {
     }
 
     private fun sendImageMessage(call: MethodCall, result: MethodChannel.Result) {
-
-
         val userJid = call.argument<String>("jid") ?: ""
 //        val filename = call.argument<String>("fileName") ?: "image"
 //        val fileSize = call.argument<String>("fileSize") ?: "0"
@@ -982,5 +1004,54 @@ override fun onCreate(savedInstanceState: Bundle?) {
 
 
 
+
+    fun filterRecentChatList(call: MethodCall, result: MethodChannel.Result) {
+        val searchKey = call.argument<String>("searchKey") ?: ""
+        //val recentChatList = mutableListOf<RecentChat>()
+        val recentChatListWithArchived = FlyCore.getRecentChatListIncludingArchived()
+        Log.d("getRecentChatListIncludingArchived",recentChatListWithArchived.toString());
+        result.success(recentChatListWithArchived.tojsonString());
+        /*for (recentChat in recentChatListWithArchived)
+            if (recentChat.profileName != null && recentChat.profileName.contains(searchKey, true))
+                recentChatList.add(recentChat)
+        filterRecentChatList.value = recentChatList*/
+    }
+
+    fun filterMessageList(call: MethodCall, result: MethodChannel.Result) {
+        val searchKey = call.argument<String>("searchKey") ?: ""
+        FlyCore.searchConversation(
+            searchKey,
+            Constants.EMPTY_STRING,
+            true
+        ) { isSuccess, throwable, data ->
+            if (isSuccess) {
+                val datas = data["data"] as MutableList<ChatMessage>
+               Log.d("searchConversation",datas.tojsonString());
+                result.success(datas.tojsonString());
+            }
+        }
+    }
+
+    fun filterContactsList(call: MethodCall, result: MethodChannel.Result) {
+        val searchKey = call.argument<String>("searchKey") ?: ""
+        val jidList = call.argument<String>("jidList") ?: ""
+        FlyCore.getRegisteredUsers(false) { isSuccess, _, data ->
+            if (isSuccess) {
+                Log.d("getRegisteredUsers",data.toString());
+                val profileDetails = data["data"] as MutableList<ProfileDetails>
+                /*filterProfileList.value = profileDetails.filter {
+                    !jidList.contains(it.jid) && it.name.contains(
+                        searchKey,
+                        true
+                    )
+                }.sortedBy { it.name }*/
+                result.success(data.tojsonString())
+            }
+        }
+    }
+
+    fun Any.tojsonString():String{
+        return Gson().toJson(this).toString()
+    }
 
 }

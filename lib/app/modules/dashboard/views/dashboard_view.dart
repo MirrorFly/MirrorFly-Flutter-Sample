@@ -49,14 +49,16 @@ class DashboardView extends GetView<DashboardController> {
           title: const Text('Chats'),
           automaticallyImplyLeading: false,
           actions: [
-            Container(
-              margin: EdgeInsets.all(16),
-              child: SvgPicture.asset(
+            IconButton(
+              icon: SvgPicture.asset(
                 searchicon,
                 width: 18,
                 height: 18,
                 fit: BoxFit.contain,
               ),
+              onPressed: (){
+                Get.toNamed(Routes.RECENTSEARCH,arguments: {"recents":controller.recentchats});
+              },
             ),
             PopupMenuButton<int>(
               icon: SvgPicture.asset(moreicon, width: 3.66, height: 16.31),

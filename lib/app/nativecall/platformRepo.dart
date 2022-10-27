@@ -291,23 +291,30 @@ class PlatformRepo {
       rethrow;
     }
   }
-  void insertDefaultStatusToUser() {
-    PlatformRepo().getStatusList().then((value){
-      var profileStatus = statusDataFromJson(value);
-      if (profileStatus.isNotEmpty) {
-        var defaultStatus = Constants.defaultStatuslist;
-        defaultStatus.forEach((statusValue) {
-          var isStatusNotExist = true;
-          profileStatus.forEach((flyStatus) {
-            if (flyStatus==(statusValue))
-              isStatusNotExist = false;
-          });
-          if (isStatusNotExist) {
-            PlatformRepo().insertStatus(statusValue);
+  void insertDefaultStatusToUser() async{
+    try {
+      await mirrorFlyMethodChannel.invokeMethod('getStatusList').then((value) {
+        Log("statuslist", "$value");
+        if (value != null) {
+          var profileStatus = statusDataFromJson(value);
+          if (profileStatus.isNotEmpty) {
+            var defaultStatus = Constants.defaultStatuslist;
+            defaultStatus.forEach((statusValue) {
+              var isStatusNotExist = true;
+              profileStatus.forEach((flyStatus) {
+                if (flyStatus == (statusValue))
+                  isStatusNotExist = false;
+              });
+              if (isStatusNotExist) {
+                PlatformRepo().insertStatus(statusValue);
+              }
+            });
           }
-        });
-      }
-    });
+        }
+      });
+    } on Exception catch(er){
+      debugPrint("Exception ==> $er");
+    }
   }
   Future<dynamic> updateProfile(String name, String email,String mobile, String status,String? image) async {
     dynamic profileResponse;
@@ -328,6 +335,22 @@ class PlatformRepo {
     dynamic profileResponse;
     try {
       profileResponse = await mirrorFlyMethodChannel.invokeMethod('getProfile',{"jid":jid});
+      debugPrint("profile Result ==> $profileResponse");
+      insertDefaultStatusToUser();
+      return profileResponse;
+    }on PlatformException catch (e){
+      debugPrint("Platform Exception ===> $e");
+      rethrow;
+    } on Exception catch(error){
+      debugPrint("Exception ==> $error");
+      rethrow;
+    }
+  }
+
+  Future<dynamic> getProfileLocal(String jid,bool server) async {
+    dynamic profileResponse;
+    try {
+      profileResponse = await mirrorFlyMethodChannel.invokeMethod('getProfile',{"jid":jid,"server":server});
       debugPrint("profile Result ==> $profileResponse");
       insertDefaultStatusToUser();
       return profileResponse;
@@ -531,6 +554,81 @@ class PlatformRepo {
       audioResponse = await mirrorFlyMethodChannel.invokeMethod('send_audio',{ "filePath" : filePath , "jid" : jid, "replyMessageId" : messageid, "isRecorded" : isRecorded, "duration" : duration});
       debugPrint("audioResponse ==> $audioResponse");
       return audioResponse;
+    }on PlatformException catch (e){
+      debugPrint("Platform Exception ===> $e");
+      rethrow;
+    } on Exception catch(error){
+      debugPrint("Exception ==> $error");
+      rethrow;
+    }
+  }
+  
+  //Recent Chat Search
+
+  Future<dynamic> filteredRecentChatList() async {
+    dynamic response;
+    try {
+      response = await mirrorFlyMethodChannel.invokeMethod('filteredRecentChatList');
+      debugPrint("filteredRecentChatList ==> $response");
+      return response;
+    }on PlatformException catch (e){
+      debugPrint("Platform Exception ===> $e");
+      rethrow;
+    } on Exception catch(error){
+      debugPrint("Exception ==> $error");
+      rethrow;
+    }
+  }
+
+  Future<dynamic> filteredMessageList(String searchKey) async {
+    dynamic response;
+    try {
+      response = await mirrorFlyMethodChannel.invokeMethod('filteredMessageList',{"searchKey":searchKey});
+      debugPrint("filteredMessageList ==> $response");
+      return response;
+    }on PlatformException catch (e){
+      debugPrint("Platform Exception ===> $e");
+      rethrow;
+    } on Exception catch(error){
+      debugPrint("Exception ==> $error");
+      rethrow;
+    }
+  }
+
+  Future<dynamic> filteredContactList() async {
+    dynamic response;
+    try {
+      response = await mirrorFlyMethodChannel.invokeMethod('filteredContactList');
+      debugPrint("filteredContactList ==> $response");
+      return response;
+    }on PlatformException catch (e){
+      debugPrint("Platform Exception ===> $e");
+      rethrow;
+    } on Exception catch(error){
+      debugPrint("Exception ==> $error");
+      rethrow;
+    }
+  }
+  Future<dynamic> getMessageOfId(String mid) async {
+    dynamic response;
+    try {
+      response = await mirrorFlyMethodChannel.invokeMethod('getMessageOfId',{"mid":mid});
+      debugPrint("response ==> $response");
+      return response;
+    }on PlatformException catch (e){
+      debugPrint("Platform Exception ===> $e");
+      rethrow;
+    } on Exception catch(error){
+      debugPrint("Exception ==> $error");
+      rethrow;
+    }
+  }
+  Future<dynamic> getRecentChatOf(String jid) async {
+    dynamic response;
+    try {
+      response = await mirrorFlyMethodChannel.invokeMethod('getRecentChatOf',{"jid":jid});
+      debugPrint("response ==> $response");
+      return response;
     }on PlatformException catch (e){
       debugPrint("Platform Exception ===> $e");
       rethrow;
