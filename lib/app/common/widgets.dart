@@ -2,11 +2,14 @@ import 'dart:io';
 
 import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:flutter_svg/parser.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:mirror_fly_demo/app/data/SessionManagement.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
 
+import '../nativecall/platformRepo.dart';
 import 'constants.dart';
 import 'main_controller.dart';
 
@@ -59,7 +62,7 @@ class ProfileTextImage extends StatelessWidget {
   }
 }
 
-class ImageNetwork extends StatelessWidget {
+class ImageNetwork extends GetView<MainController> {
   final double? width;
   final double? height;
   final String url;
@@ -72,26 +75,33 @@ class ImageNetwork extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var AUTHTOKEN = Get.find<MainController>().AUTHTOKEN;
-    Log("Mirrorfly", AUTHTOKEN);
-    return Image.network(
-      imagedomin + url,
-      fit: BoxFit.fill,
-      width: width,
-      height: height,
-      headers: {"Authorization": AUTHTOKEN},
-      loadingBuilder: (context, widget, chunkevent) {
-        if(chunkevent==null) return clipoval ? ClipOval(child: widget) : widget;
-        return errorWidget ?? SizedBox(child: Center(child: const CircularProgressIndicator()),height: height,width: width,);
-      },
-      errorBuilder: (context, object, trace) {
-        return errorWidget ??
-            Image.asset(
-              'assets/logos/profile_img.png',
-              height: width,
-              width: height,
-            );
-      },
+    var AUTHTOKEN = controller.AUTHTOKEN;
+    Log("Mirrorfly", AUTHTOKEN.value);
+    return Obx(
+      ()=> Image.network(
+        imagedomin + url,
+        fit: BoxFit.fill,
+        width: width,
+        height: height,
+        headers: {"Authorization": AUTHTOKEN.value},
+        loadingBuilder: (context, widget, chunkevent) {
+          if(chunkevent==null) return clipoval ? ClipOval(child: widget) : widget;
+          return errorWidget ?? SizedBox(child: Center(child: const CircularProgressIndicator()),height: height,width: width,);
+        },
+        errorBuilder: (context,Object object, trace) {
+          Log("image", imagedomin + url);
+          Log("imageError", object.toString());
+          if(object.toString().contains("401")){
+            Get.find<MainController>().getAuthToken();
+          }
+          return errorWidget ??
+              Image.asset(
+                'assets/logos/profile_img.png',
+                height: width,
+                width: height,
+              );
+        },
+      ),
     );
   }
 }

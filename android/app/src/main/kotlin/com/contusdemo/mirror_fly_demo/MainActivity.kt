@@ -14,10 +14,7 @@ import android.widget.Toast
 import androidx.annotation.NonNull
 import androidx.core.content.FileProvider
 import androidx.core.view.WindowCompat
-import com.contus.flycommons.FlyCallback
-import com.contus.flycommons.FlyUtils
-import com.contus.flycommons.LogMessage
-import com.contus.flycommons.SharedPreferenceManager
+import com.contus.flycommons.*
 import com.contus.flycommons.models.MessageType
 import com.contus.xmpp.chat.models.Profile
 import com.contusflysdk.AppUtils
@@ -27,9 +24,7 @@ import com.contusflysdk.api.chat.MessageEventsListener
 import com.contusflysdk.api.contacts.ContactManager
 import com.contusflysdk.api.contacts.ProfileDetails
 import com.contusflysdk.api.models.ChatMessage
-import com.contusflysdk.api.models.RecentChat
 import com.contusflysdk.media.MediaUploadHelper
-import com.contusflysdk.model.Message
 import com.contusflysdk.utils.ThumbSize
 import com.google.gson.Gson
 import io.flutter.Log
@@ -38,22 +33,24 @@ import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.plugin.common.EventChannel
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
-import kotlinx.coroutines.Dispatchers
 import org.json.JSONObject
 import java.io.ByteArrayOutputStream
 import java.io.File
 
 
-class MainActivity: FlutterActivity(), MethodChannel.MethodCallHandler, EventChannel.StreamHandler{
+class MainActivity : FlutterActivity(), MethodChannel.MethodCallHandler,
+    EventChannel.StreamHandler {
 
     private val MIRRORFLY_METHOD_CHANNEL = "contus.mirrorfly/sdkCall"
     private val MESSAGE_ONRECEIVED_CHANNEL = "contus.mirrorfly/onMessageReceived"
     private val MESSAGE_STATUS_UPDATED_CHANNEL = "contus.mirrorfly/onMessageStatusUpdated"
     private val MEDIA_STATUS_UPDATED_CHANNEL = "contus.mirrorfly/onMediaStatusUpdated"
-    private val UPLOAD_DOWNLOAD_PROGRESS_CHANGED_CHANNEL = "contus.mirrorfly/onUploadDownloadProgressChanged"
-    private val SHOW_UPDATE_CANCEL_NOTIFICTION_CHANNEL = "contus.mirrorfly/showOrUpdateOrCancelNotification"
+    private val UPLOAD_DOWNLOAD_PROGRESS_CHANGED_CHANNEL =
+        "contus.mirrorfly/onUploadDownloadProgressChanged"
+    private val SHOW_UPDATE_CANCEL_NOTIFICTION_CHANNEL =
+        "contus.mirrorfly/showOrUpdateOrCancelNotification"
 
-    companion object{
+    companion object {
         const val GROUP_EVENT = "group_events"
         const val ARCHIVE_EVENT = "archive_events"
         const val MESSAGE_RECEIVED = "message_received"
@@ -63,6 +60,7 @@ class MainActivity: FlutterActivity(), MethodChannel.MethodCallHandler, EventCha
         const val MUTE_EVENT = "mute_event"
         const val PIN_EVENT = "pin_event"
     }
+
     val TAG = "MirrorFly"
 
     private var userName = ""
@@ -71,40 +69,70 @@ class MainActivity: FlutterActivity(), MethodChannel.MethodCallHandler, EventCha
 
     private var chatEventSink: EventChannel.EventSink? = null
 
-//    private var onMessageReceived: EventChannel.EventSink? = null
+    //    private var onMessageReceived: EventChannel.EventSink? = null
 //    private var onMessageStatusUpdated: EventChannel.EventSink? = null
 //    private var onMediaStatusUpdated: EventChannel.EventSink? = null
 //    private var onUploadDownloadProgressChanged: EventChannel.EventSink? = null
 //    private var showOrUpdateOrCancelNotification: EventChannel.EventSink? = null
 //    private var onMessagesClearedOrDeleted: EventChannel.EventSink? = null
 //    private var chatStatusEventSink: EventChannel.EventSink? = null
-override fun onCreate(savedInstanceState: Bundle?) {
-    // Aligns the Flutter view vertically with the window.
-    WindowCompat.setDecorFitsSystemWindows(getWindow(), false)
+    override fun onCreate(savedInstanceState: Bundle?) {
+        // Aligns the Flutter view vertically with the window.
+        WindowCompat.setDecorFitsSystemWindows(getWindow(), false)
 
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-        // Disable the Android splash screen fade out animation to avoid
-        // a flicker before the similar frame is drawn in Flutter.
-        splashScreen.setOnExitAnimationListener { splashScreenView -> splashScreenView.remove() }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            // Disable the Android splash screen fade out animation to avoid
+            // a flicker before the similar frame is drawn in Flutter.
+            splashScreen.setOnExitAnimationListener { splashScreenView -> splashScreenView.remove() }
+        }
+
+        super.onCreate(savedInstanceState)
     }
 
-    super.onCreate(savedInstanceState)
-}
     @Override
     override fun configureFlutterEngine(@NonNull flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)
 
-        MethodChannel(flutterEngine.dartExecutor.binaryMessenger, MIRRORFLY_METHOD_CHANNEL).setMethodCallHandler(this)
-        EventChannel(flutterEngine.dartExecutor.binaryMessenger, MESSAGE_ONRECEIVED_CHANNEL).setStreamHandler(MessageReceivedStreamHandler)
-        EventChannel(flutterEngine.dartExecutor.binaryMessenger, MESSAGE_STATUS_UPDATED_CHANNEL).setStreamHandler(MessageStatusUpdatedStreamHandler)
-        EventChannel(flutterEngine.dartExecutor.binaryMessenger, MEDIA_STATUS_UPDATED_CHANNEL).setStreamHandler(MediaStatusUpdatedStreamHandler)
-        EventChannel(flutterEngine.dartExecutor.binaryMessenger, UPLOAD_DOWNLOAD_PROGRESS_CHANGED_CHANNEL).setStreamHandler(UploadDownloadProgressChangedStreamHandler)
-        EventChannel(flutterEngine.dartExecutor.binaryMessenger, SHOW_UPDATE_CANCEL_NOTIFICTION_CHANNEL).setStreamHandler(ShowOrUpdateOrCancelNotificationStreamHandler)
+        MethodChannel(
+            flutterEngine.dartExecutor.binaryMessenger,
+            MIRRORFLY_METHOD_CHANNEL
+        ).setMethodCallHandler(this)
+        EventChannel(
+            flutterEngine.dartExecutor.binaryMessenger,
+            MESSAGE_ONRECEIVED_CHANNEL
+        ).setStreamHandler(MessageReceivedStreamHandler)
+        EventChannel(
+            flutterEngine.dartExecutor.binaryMessenger,
+            MESSAGE_STATUS_UPDATED_CHANNEL
+        ).setStreamHandler(MessageStatusUpdatedStreamHandler)
+        EventChannel(
+            flutterEngine.dartExecutor.binaryMessenger,
+            MEDIA_STATUS_UPDATED_CHANNEL
+        ).setStreamHandler(MediaStatusUpdatedStreamHandler)
+        EventChannel(
+            flutterEngine.dartExecutor.binaryMessenger,
+            UPLOAD_DOWNLOAD_PROGRESS_CHANGED_CHANNEL
+        ).setStreamHandler(UploadDownloadProgressChangedStreamHandler)
+        EventChannel(
+            flutterEngine.dartExecutor.binaryMessenger,
+            SHOW_UPDATE_CANCEL_NOTIFICTION_CHANNEL
+        ).setStreamHandler(ShowOrUpdateOrCancelNotificationStreamHandler)
+
+        /*FlyCore.searchConversation(
+            "hi",
+            Constants.EMPTY_STRING,
+            true
+        ) { isSuccess, throwable, data ->
+            if (isSuccess) {
+                Log.d("searchConversation",data["data"]!!.tojsonString());
+                //result.success(data.tojsonString())
+            }
+        }*/
     }
 
     override fun onListen(arguments: Any?, events: EventChannel.EventSink?) {
         arguments as? String
-        Log.d("unique",arguments.toString())
+        Log.d("unique", arguments.toString())
 //        if (arguments.toString()== MESSAGE_RECEIVED){
 //            Log.d("unique2",arguments.toString())
 //            onMessageReceived=events
@@ -146,9 +174,9 @@ override fun onCreate(savedInstanceState: Bundle?) {
 //    }
 
     private fun registerUser(call: MethodCall, result: MethodChannel.Result) {
-        if (!call.hasArgument("userIdentifier")){
+        if (!call.hasArgument("userIdentifier")) {
             result.error("404", "User Mobile Number Required", null)
-        }else {
+        } else {
             val userIdentifier: String? = call.argument("userIdentifier")
             if (userIdentifier != null) {
                 Log.e(TAG, userIdentifier.toString())
@@ -163,7 +191,7 @@ override fun onCreate(savedInstanceState: Bundle?) {
                             val response = JSONObject(data).toString()
                             Log.e("RESPONSE", response)
                             ChatManager.disconnect()
-                            ChatManager.connect(object :ChatConnectionListener {
+                            ChatManager.connect(object : ChatConnectionListener {
                                 override fun onConnected() {
                                     result.success(response)
                                 }
@@ -173,7 +201,11 @@ override fun onCreate(savedInstanceState: Bundle?) {
                                 }
 
                                 override fun onConnectionNotAuthorized() {
-                                    result.error("500", "Chat Manager Connection Not Authorized", null)
+                                    result.error(
+                                        "500",
+                                        "Chat Manager Connection Not Authorized",
+                                        null
+                                    )
                                 }
                             })
 
@@ -182,14 +214,14 @@ override fun onCreate(savedInstanceState: Bundle?) {
                             result.error("500", throwable?.message.toString(), null)
                         }
                     }
-                }catch (e: Exception){
+                } catch (e: Exception) {
 
                     Log.e("Exception", e.toString())
 
                     result.error("404", "User Name Required", null)
                 }
 
-            }else{
+            } else {
                 Log.e("MIRROR_FLY", "useridentifier is null")
                 Log.e("MIRROR_FLY", call.arguments.toString());
             }
@@ -206,7 +238,9 @@ override fun onCreate(savedInstanceState: Bundle?) {
                 Log.e("Message Received", Gson().toJson(message))
 //                onMessageReceived?.success(Gson().toJson(message).toString())
 
-                MessageReceivedStreamHandler.onMessageReceived?.success(Gson().toJson(message).toString())
+                MessageReceivedStreamHandler.onMessageReceived?.success(
+                    Gson().toJson(message).toString()
+                )
 
 //                chatEventSink?.success(Gson().toJson(message).toString())
             }
@@ -223,12 +257,18 @@ override fun onCreate(savedInstanceState: Bundle?) {
                     DebugUtilis.v("STAT", message.mediaChatMessage.mediaThumbImage)
                 }
 //                chatEventSink?.success(Gson().toJson(message).toString())
-                MessageStatusUpdatedStreamHandler.onMessageStatusUpdated?.success(Gson().toJson(message).toString())
+                MessageStatusUpdatedStreamHandler.onMessageStatusUpdated?.success(
+                    Gson().toJson(
+                        message
+                    ).toString()
+                )
             }
 
             override fun onMediaStatusUpdated(message: ChatMessage) {
                 Log.e(TAG, "media Status Updated ==> $message.messageId");
-                MediaStatusUpdatedStreamHandler.onMediaStatusUpdated?.success(Gson().toJson(message).toString())
+                MediaStatusUpdatedStreamHandler.onMediaStatusUpdated?.success(
+                    Gson().toJson(message).toString()
+                )
 
 //                Handler().postDelayed({
 //                    chatEventSink?.success(Gson().toJson(message).toString())
@@ -238,19 +278,26 @@ override fun onCreate(savedInstanceState: Bundle?) {
                 //then fetch message object from db using `FlyCore.getMessageForId(messageId)` and notify the item in list
             }
 
-            override fun onUploadDownloadProgressChanged(messageId: String, progressPercentage: Int) {
+            override fun onUploadDownloadProgressChanged(
+                messageId: String,
+                progressPercentage: Int
+            ) {
                 //called when the media message progress is updated
                 Log.e("MirrorFly", "Upload/Download Status Updated")
                 val js = JSONObject()
-                js.put("message_id",messageId)
-                js.put("progress_percentage",progressPercentage)
-                UploadDownloadProgressChangedStreamHandler.onUploadDownloadProgressChanged?.success(js.toString())
+                js.put("message_id", messageId)
+                js.put("progress_percentage", progressPercentage)
+                UploadDownloadProgressChangedStreamHandler.onUploadDownloadProgressChanged?.success(
+                    js.toString()
+                )
             }
 
             override fun showOrUpdateOrCancelNotification(jid: String) {
                 Log.e("showOrUpdateOrCancelNotification", jid)
                 Log.e("MirrorFly", "showOrUpdateOrCancelNotification Status Updated")
-                ShowOrUpdateOrCancelNotificationStreamHandler.showOrUpdateOrCancelNotification?.success(jid)
+                ShowOrUpdateOrCancelNotificationStreamHandler.showOrUpdateOrCancelNotification?.success(
+                    jid
+                )
             }
 
 
@@ -269,8 +316,8 @@ override fun onCreate(savedInstanceState: Bundle?) {
             call.method.equals("register_user") -> {
                 registerUser(call, result)
             }
-            call.method.equals("authtoken")->{
-                Log.d(TAG,"authtoken : "+FlyUtils.decodedToken().trim())
+            call.method.equals("authtoken") -> {
+                Log.d(TAG, "authtoken : " + FlyUtils.decodedToken().trim())
                 result.success(FlyUtils.decodedToken().trim());
             }
             call.method.equals("get_user_jid") -> {
@@ -289,16 +336,16 @@ override fun onCreate(savedInstanceState: Bundle?) {
                 imagepath(call, result)
             }
             call.method.equals("getProfile") -> {
-                getUserProfile(call,result)
+                getUserProfile(call, result)
             }
             call.method.equals("getStatusList") -> {
                 getStatusList(result)
             }
             call.method.equals("insertStatus") -> {
-                insertStatus(call,result)
+                insertStatus(call, result)
             }
             call.method.equals("updateProfile") -> {
-                updateProfile(call,result)
+                updateProfile(call, result)
             }
             call.method.equals("updateProfileImage") -> {
                 updateProfileImage(call, result)
@@ -334,27 +381,26 @@ override fun onCreate(savedInstanceState: Bundle?) {
                 logoutChatSDK(call, result)
             }
             call.method.equals("ongoing_chat") -> {
-                val userJID = if(call.argument<String>("jid")==null) "" else call.argument<String?>("jid").toString()
+                val userJID =
+                    if (call.argument<String>("jid") == null) "" else call.argument<String?>("jid")
+                        .toString()
                 ChatManager.setOnGoingChatUser(userJID)
             }
             call.method.equals("unread_count") -> {
-                val userJID = if(call.argument<String>("jid")==null) "" else call.argument<String?>("jid").toString()
+                val userJID =
+                    if (call.argument<String>("jid") == null) "" else call.argument<String?>("jid")
+                        .toString()
                 result.success(FlyMessenger.getUnreadMessagesCount());
             }
-            call.method.equals("get_recent_chat_of") -> {
-                val userJID = if(call.argument<String>("jid")==null) "" else call.argument<String?>("jid").toString()
-                val recent  = FlyCore.getRecentChatOf(userJID)
-                if (recent!=null){
-                    result.success(Gson().toJson(recent))
-                }
-            }
             call.method.equals("download_media") -> {
-                val media_id = if(call.argument<String>("media_id")==null) "" else call.argument<String?>("media_id").toString()
-                val recent  = FlyMessenger.downloadMedia(media_id)
+                val media_id =
+                    if (call.argument<String>("media_id") == null) "" else call.argument<String?>("media_id")
+                        .toString()
+                val recent = FlyMessenger.downloadMedia(media_id)
                 result.success(Gson().toJson(recent))
             }
             call.method.equals("send_contact") -> {
-               sendContact(call, result);
+                sendContact(call, result);
             }
             call.method.equals("send_document") -> {
                 sendFileMessage(call, result);
@@ -365,7 +411,28 @@ override fun onCreate(savedInstanceState: Bundle?) {
             call.method.equals("send_audio") -> {
                 sendaudioMessage(call, result);
             }
-
+            call.method.equals("filteredRecentChatList") -> {
+                filterRecentChatList(call, result);
+            }
+            call.method.equals("filteredMessageList") -> {
+                filterMessageList(call, result);
+            }
+            call.method.equals("filteredContactList") -> {
+                filterContactsList(call, result);
+            }
+            call.method.equals("getRecentChatOf") -> {
+                val userJID = call.argument<String>("jid") ?: ""
+                val recent = FlyCore.getRecentChatOf(userJID)
+                if (recent != null) {
+                    result.success(Gson().toJson(recent))
+                }
+            }
+            call.method.equals("getMessageOfId") -> {
+                val mid = call.argument<String>("mid") ?: ""
+                val data = FlyMessenger.getMessageOfId(mid)
+                if (data!=null)
+                    result.success(data.tojsonString())
+            }
             else -> {
                 result.notImplemented()
             }
@@ -384,16 +451,22 @@ override fun onCreate(savedInstanceState: Bundle?) {
         Log.i("isRecorded", isRecorded.toString())
 
         if (userJID != null && duration != null && isRecorded != null) {
-            FlyMessenger.sendAudioMessage(userJID, audioFile, duration, isRecorded, replyMessageID, object : SendMessageListener {
-                override fun onResponse(isSuccess: Boolean, chatMessage: ChatMessage?) {
-                    if (chatMessage != null) {
-                        Log.i(TAG, "Audio message sent")
-                        result.success(Gson().toJson(chatMessage))
-                    }else{
-                        result.error("500", "Unable to Send Audio Message", null)
+            FlyMessenger.sendAudioMessage(
+                userJID,
+                audioFile,
+                duration,
+                isRecorded,
+                replyMessageID,
+                object : SendMessageListener {
+                    override fun onResponse(isSuccess: Boolean, chatMessage: ChatMessage?) {
+                        if (chatMessage != null) {
+                            Log.i(TAG, "Audio message sent")
+                            result.success(Gson().toJson(chatMessage))
+                        } else {
+                            result.error("500", "Unable to Send Audio Message", null)
+                        }
                     }
-                }
-            })
+                })
         }
     }
 
@@ -403,16 +476,21 @@ override fun onCreate(savedInstanceState: Bundle?) {
         val contactName = call.argument<String>("contact_name")
 
         if (userJID != null && contact_list != null && contactName != null) {
-            FlyMessenger.sendContactMessage(userJID, contactName, contact_list, "", object : SendMessageListener {
-                override fun onResponse(isSuccess: Boolean, chatMessage: ChatMessage?) {
-                    if (chatMessage != null) {
-                        result.success(Gson().toJson(chatMessage))
-                    }else{
-                        result.error("500", "Unable to Send Contact Message", null)
+            FlyMessenger.sendContactMessage(
+                userJID,
+                contactName,
+                contact_list,
+                "",
+                object : SendMessageListener {
+                    override fun onResponse(isSuccess: Boolean, chatMessage: ChatMessage?) {
+                        if (chatMessage != null) {
+                            result.success(Gson().toJson(chatMessage))
+                        } else {
+                            result.error("500", "Unable to Send Contact Message", null)
+                        }
                     }
-                }
 
-            })
+                })
         }
     }
 
@@ -425,17 +503,22 @@ override fun onCreate(savedInstanceState: Bundle?) {
         val caption = call.argument<String>("caption") ?: ""
         val replyMessageID = call.argument<String>("replyMessageID") ?: ""
 
-        FlyMessenger.sendVideoMessage(userJid, videoFile, caption, replyMessageID, object : SendMessageListener {
+        FlyMessenger.sendVideoMessage(
+            userJid,
+            videoFile,
+            caption,
+            replyMessageID,
+            object : SendMessageListener {
 
-            override fun onResponse(isSuccess: Boolean, chatMessage: ChatMessage?) {
-                if (chatMessage != null){
-                    DebugUtilis.v(TAG, Gson().toJson(chatMessage));
-                    result.success(Gson().toJson(chatMessage))
-                }else{
-                    result.error("500", "Unable to Send Video Message", null)
+                override fun onResponse(isSuccess: Boolean, chatMessage: ChatMessage?) {
+                    if (chatMessage != null) {
+                        DebugUtilis.v(TAG, Gson().toJson(chatMessage));
+                        result.success(Gson().toJson(chatMessage))
+                    } else {
+                        result.error("500", "Unable to Send Video Message", null)
+                    }
                 }
-            }
-        })
+            })
     }
 
     private fun logoutChatSDK(call: MethodCall, result: MethodChannel.Result) {
@@ -449,7 +532,7 @@ override fun onCreate(savedInstanceState: Bundle?) {
                     result.error("400", throwable!!.message.toString(), "")
                 }
             }
-        }catch (e : Exception){
+        } catch (e: Exception) {
             Log.e(TAG, e.message.toString())
             result.error("400", e.message.toString(), "")
         }
@@ -457,7 +540,7 @@ override fun onCreate(savedInstanceState: Bundle?) {
     }
 
     private fun getUserMedia(call: MethodCall, result: MethodChannel.Result) {
-        val messageID : String? = call.argument("message_id")
+        val messageID: String? = call.argument("message_id")
         val message = FlyMessenger.getMessageOfId(messageID!!)
         if (message != null) {
             val messageTime = message.getMessageSentTime()
@@ -472,7 +555,7 @@ override fun onCreate(savedInstanceState: Bundle?) {
 
 //            Log.i(TAG, Gson().toJson(message).toString())
             result.success(Gson().toJson(message).toString())
-        }else{
+        } else {
             result.error("500", "Media Details Not Found", null)
         }
 
@@ -482,18 +565,18 @@ override fun onCreate(savedInstanceState: Bundle?) {
     }
 
     private fun getUserChat(call: MethodCall, result: MethodChannel.Result) {
-        if (AppUtils.isNetConnected(this)){
-            if (!call.hasArgument("JID")){
+        if (AppUtils.isNetConnected(this)) {
+            if (!call.hasArgument("JID")) {
                 result.error("404", "User JID Required", null)
-            }else {
+            } else {
                 val userJID: String? = call.argument("JID")
                 if (userJID != null) {
-                    val messages : List<ChatMessage> = FlyMessenger.getMessagesOfJid(userJID)
+                    val messages: List<ChatMessage> = FlyMessenger.getMessagesOfJid(userJID)
 
                     DebugUtilis.v("MESSAGE_HISTORY", Gson().toJson(messages).toString())
 
                     result.success(Gson().toJson(messages))
-                }else{
+                } else {
                     result.error("500", "User JID is Empty", null)
                 }
             }
@@ -506,14 +589,14 @@ override fun onCreate(savedInstanceState: Bundle?) {
             //progress.show()
             val page = call.argument("page") ?: 1
             val search = call.argument("search") ?: ""
-            FlyCore.getUserList(page,20,search) { isSuccess, throwable, data ->
-                data["status"]=isSuccess
-                Log.d("registered",""+isSuccess+" : "+data+" : "+throwable)
+            FlyCore.getUserList(page, 20, search) { isSuccess, throwable, data ->
+                data["status"] = isSuccess
+                Log.d("registered", "" + isSuccess + " : " + data + " : " + throwable)
                 if (isSuccess) {
                     result.success(Gson().toJson(data))
                 } else {
                     println("friends error : " + throwable.toString())
-                    result.error("400",throwable!!.message.toString(),"")
+                    result.error("400", throwable!!.message.toString(), "")
                 }
 
             }
@@ -523,23 +606,24 @@ override fun onCreate(savedInstanceState: Bundle?) {
     }
 
     private fun getUserJID(call: MethodCall, result: MethodChannel.Result) {
-        if (!call.hasArgument("username")){
+        if (!call.hasArgument("username")) {
             result.error("404", "User Name Required", null)
-        }else {
+        } else {
             val userName: String? = call.argument("username")
             if (userName != null) {
                 result.success(FlyUtils.getJid(userName))
-            }else{
+            } else {
                 result.error("500", "User Name is Empty", null)
             }
         }
 
     }
 
-    fun imagepath(call: MethodCall,result: MethodChannel.Result) {
+    fun imagepath(call: MethodCall, result: MethodChannel.Result) {
         val imageUrl = call.argument<String>("image")
-        val path = Uri.parse(MediaUploadHelper.UPLOAD_ENDPOINT).buildUpon().appendPath(Uri.parse(imageUrl).lastPathSegment).build().toString()
-        Log.d("path : ",path)
+        val path = Uri.parse(MediaUploadHelper.UPLOAD_ENDPOINT).buildUpon()
+            .appendPath(Uri.parse(imageUrl).lastPathSegment).build().toString()
+        Log.d("path : ", path)
         result.success(path)
     }
 
@@ -548,7 +632,7 @@ override fun onCreate(savedInstanceState: Bundle?) {
         val mobile = call.argument("mobile") ?: ""
         val email = call.argument("email") ?: ""
         val status = call.argument("status") ?: "I'm Mirrorfly user"
-        if (name.isNotEmpty() && mobile.isNotEmpty()&& email.isNotEmpty()) {
+        if (name.isNotEmpty() && mobile.isNotEmpty() && email.isNotEmpty()) {
             val profileObj = Profile()
             profileObj.name = name
             profileObj.nickName = name
@@ -631,16 +715,16 @@ override fun onCreate(savedInstanceState: Bundle?) {
                     result.success(Gson().toJson(data))
                 }
             }
-        }else{
+        } else {
             result.error("500", "Please Check Your Internet connection", null)
         }
     }
 
     private fun getUserProfile(call: MethodCall, result: MethodChannel.Result) {
         val jid = call.argument("jid") ?: ""
-
+        val server = call.argument<Boolean>("server") ?: false
         Log.i(TAG, "JID==> $jid")
-        ContactManager.getUserProfile(jid,true,false,object : FlyCallback{
+        ContactManager.getUserProfile(jid, server, false, object : FlyCallback {
             override fun flyResponse(
                 isSuccess: Boolean,
                 throwable: Throwable?,
@@ -648,6 +732,7 @@ override fun onCreate(savedInstanceState: Bundle?) {
             ) {
 
                 data["status"] = isSuccess
+                Log.i(TAG,"getProfile => "+data.toString());
                 result.success(Gson().toJson(data))
             }
         })
@@ -740,20 +825,25 @@ override fun onCreate(savedInstanceState: Bundle?) {
         val latitude = call.argument<Double>("latitude") ?: 00.0
         val longitude = call.argument<Double>("longitude") ?: 00.0
         val reply = call.argument<String>("reply") ?: ""
-        if (userJid.isNotEmpty()&&latitude!=00.0&&longitude!=00.0) {
-            FlyMessenger.sendLocationMessage(userJid, latitude, longitude, reply, object : SendMessageListener {
-                override fun onResponse(isSuccess: Boolean, message: ChatMessage?) {
-                    if (message != null) {
-                        result.success(Gson().toJson(message).toString())
-                    }else{
-                        result.error("400", "Message Not Sent", null)
+        if (userJid.isNotEmpty() && latitude != 00.0 && longitude != 00.0) {
+            FlyMessenger.sendLocationMessage(
+                userJid,
+                latitude,
+                longitude,
+                reply,
+                object : SendMessageListener {
+                    override fun onResponse(isSuccess: Boolean, message: ChatMessage?) {
+                        if (message != null) {
+                            result.success(Gson().toJson(message).toString())
+                        } else {
+                            result.error("400", "Message Not Sent", null)
+                        }
                     }
-                }
-            })
+                })
         } else {
             if (userJid.isEmpty())
                 result.error("400", "User Jid is Empty", null)
-            else if (latitude!=00.0||longitude!=00.0)
+            else if (latitude != 00.0 || longitude != 00.0)
                 result.error("400", "Location is Empty", null)
         }
     }
@@ -793,11 +883,11 @@ override fun onCreate(savedInstanceState: Bundle?) {
                             }
                         }
                     })
-            }catch (e : Exception){
+            } catch (e: Exception) {
                 Log.e("Image Send Exception", e.message.toString());
             }
         } else {
-                result.error("400", "Parameters Missing", null)
+            result.error("400", "Parameters Missing", null)
         }
     }
 
@@ -809,10 +899,10 @@ override fun onCreate(savedInstanceState: Bundle?) {
                 //progress.dismiss()
                 if (isSuccess) {
                     result.success(Gson().toJson(data).toString())
-                }else{
+                } else {
                     result.error("500", throwable!!.message, null)
                 }
-                Log.d( "Recent ==>",data.toString())
+                Log.d("Recent ==>", data.toString())
             }
         } else {
             //Toast.makeText(this, "Please Check Your Internet connection", Toast.LENGTH_SHORT).show()
@@ -822,22 +912,34 @@ override fun onCreate(savedInstanceState: Bundle?) {
 
     private fun getImageThumbImage(imagePath: String?): String {
         return if (imagePath != null) {
-            val thumb = ThumbnailUtils.extractThumbnail(BitmapFactory.decodeFile(imagePath), ThumbSize.THUMB_100, ThumbSize.THUMB_100)
+            val thumb = ThumbnailUtils.extractThumbnail(
+                BitmapFactory.decodeFile(imagePath),
+                ThumbSize.THUMB_100,
+                ThumbSize.THUMB_100
+            )
             if (thumb != null) {
                 val byteArray = getCompressedBitmapData(thumb, 2048, 48)
-                LogMessage.v("getVideoThumbImage", "final video thumbnail size: " + byteArray!!.size)
+                LogMessage.v(
+                    "getVideoThumbImage",
+                    "final video thumbnail size: " + byteArray!!.size
+                )
                 thumb.recycle()
                 Base64.encodeToString(byteArray, 0)
             } else ""
         } else ""
     }
 
-    private fun getCompressedBitmapData(bitmap: Bitmap, maxFileSize: Int, maxDimensions: Int): ByteArray? {
-        val resizedBitmap: Bitmap = if (bitmap.width > maxDimensions || bitmap.height > maxDimensions) {
-            getResizedBitmap(bitmap, maxDimensions)
-        } else {
-            bitmap
-        }
+    private fun getCompressedBitmapData(
+        bitmap: Bitmap,
+        maxFileSize: Int,
+        maxDimensions: Int
+    ): ByteArray? {
+        val resizedBitmap: Bitmap =
+            if (bitmap.width > maxDimensions || bitmap.height > maxDimensions) {
+                getResizedBitmap(bitmap, maxDimensions)
+            } else {
+                bitmap
+            }
         var bitmapData = getByteArray(resizedBitmap)
         while (bitmapData.size > maxFileSize) {
             bitmapData = getByteArray(resizedBitmap)
@@ -865,19 +967,20 @@ override fun onCreate(savedInstanceState: Bundle?) {
         return bos.toByteArray()
     }
 
-    private fun getStatusList(result: MethodChannel.Result){
+    private fun getStatusList(result: MethodChannel.Result) {
         val status = FlyCore.getProfileStatusList()
         result.success(Gson().toJson(status).toString())
     }
-    private fun insertStatus(call: MethodCall,result: MethodChannel.Result?){
+
+    private fun insertStatus(call: MethodCall, result: MethodChannel.Result?) {
         if (AppUtils.isNetConnected(this)) {
             val status = call.argument<String>("status") ?: ""
             if (status.isNotEmpty()) {
                 FlyCore.insertDefaultStatus(status)
             }
-            if (result!=null) result.success(true);
-        }else{
-            if (result!=null) result.error("500", "Please Check Your Internet connection", null)
+            if (result != null) result.success(true);
+        } else {
+            if (result != null) result.error("500", "Please Check Your Internet connection", null)
         }
     }
 
@@ -892,7 +995,7 @@ override fun onCreate(savedInstanceState: Bundle?) {
 ////                Toast.makeText(context, R.string.content_not_found, Toast.LENGTH_LONG).show()
 //        }
 
-        try{
+        try {
             val file = File(filePath)
             val extension = MimeTypeMap.getFileExtensionFromUrl(filePath)
             val mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension)
@@ -902,10 +1005,13 @@ override fun onCreate(savedInstanceState: Bundle?) {
             intent.setDataAndType(fileUri, mimeType)
             val mediaListIntent = Intent(Intent.ACTION_VIEW, fileUri)
             mediaListIntent.type = mimeType
-            val mediaViewerApps: List<ResolveInfo> = context.packageManager.queryIntentActivities(mediaListIntent, 0)
+            val mediaViewerApps: List<ResolveInfo> =
+                context.packageManager.queryIntentActivities(mediaListIntent, 0)
             try {
                 when {
-                    intent.resolveActivity(context.packageManager) != null -> context.startActivity(intent)
+                    intent.resolveActivity(context.packageManager) != null -> context.startActivity(
+                        intent
+                    )
                     mediaViewerApps.isNotEmpty() -> context.startActivity(intent)
                     else -> result.error("500", "Unable to Open the File", null)
 //                Toast.makeText(context, R.string.content_not_found, Toast.LENGTH_LONG).show()
@@ -913,9 +1019,58 @@ override fun onCreate(savedInstanceState: Bundle?) {
             } catch (e: Exception) {
                 result.error("500", "Unable to Open the File", null)
             }
-        } catch (e: Exception){
+        } catch (e: Exception) {
             result.error("500", "File Not Found", null)
         }
+    }
+
+    fun filterRecentChatList(call: MethodCall, result: MethodChannel.Result) {
+        val searchKey = call.argument<String>("searchKey") ?: ""
+        //val recentChatList = mutableListOf<RecentChat>()
+        val recentChatListWithArchived = FlyCore.getRecentChatListIncludingArchived()
+        Log.d("getRecentChatListIncludingArchived",recentChatListWithArchived.toString());
+        result.success(recentChatListWithArchived.tojsonString());
+        /*for (recentChat in recentChatListWithArchived)
+            if (recentChat.profileName != null && recentChat.profileName.contains(searchKey, true))
+                recentChatList.add(recentChat)
+        filterRecentChatList.value = recentChatList*/
+    }
+
+    fun filterMessageList(call: MethodCall, result: MethodChannel.Result) {
+        val searchKey = call.argument<String>("searchKey") ?: ""
+        FlyCore.searchConversation(
+            searchKey,
+            Constants.EMPTY_STRING,
+            true
+        ) { isSuccess, throwable, data ->
+            if (isSuccess) {
+                val datas = data["data"] as MutableList<ChatMessage>
+               Log.d("searchConversation",datas.tojsonString());
+                result.success(datas.tojsonString());
+            }
+        }
+    }
+
+    fun filterContactsList(call: MethodCall, result: MethodChannel.Result) {
+        val searchKey = call.argument<String>("searchKey") ?: ""
+        val jidList = call.argument<String>("jidList") ?: ""
+        FlyCore.getRegisteredUsers(false) { isSuccess, _, data ->
+            if (isSuccess) {
+                Log.d("getRegisteredUsers",data.toString());
+                val profileDetails = data["data"] as MutableList<ProfileDetails>
+                /*filterProfileList.value = profileDetails.filter {
+                    !jidList.contains(it.jid) && it.name.contains(
+                        searchKey,
+                        true
+                    )
+                }.sortedBy { it.name }*/
+                result.success(data.tojsonString())
+            }
+        }
+    }
+
+    fun Any.tojsonString():String{
+        return Gson().toJson(this).toString()
     }
 
 }
