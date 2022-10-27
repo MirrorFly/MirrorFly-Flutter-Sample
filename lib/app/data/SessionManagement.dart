@@ -61,8 +61,8 @@ class SessionManagement {
 
   String? getName() => _preferences.getString("name");
   String? getMobileNumber() => _preferences.getString("mobileNumber");
-  String? getUsername() => _preferences.getString("username").toString();
-  String? getPassword() => _preferences.getString("password").toString();
+  String? getUsername() => _preferences.getString("username");
+  String? getPassword() => _preferences.getString("password");
   String? getUserJID() => _preferences.getString("user_jid").toString();
   String? getUserImage() => _preferences.getString("image");
   String? getauthToken() => _preferences.getString("token");
