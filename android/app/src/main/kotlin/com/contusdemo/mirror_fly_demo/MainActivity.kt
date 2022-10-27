@@ -292,7 +292,7 @@ class MainActivity : FlutterActivity(), MethodChannel.MethodCallHandler,
                 )
             }
 
-            override fun showOrUpdateOrCancelNotification(jid: String) {
+            override fun showOrUpdateOrCancelNotification(jid: String,chatMessage: ChatMessage?) {
                 Log.e("showOrUpdateOrCancelNotification", jid)
                 Log.e("MirrorFly", "showOrUpdateOrCancelNotification Status Updated")
                 ShowOrUpdateOrCancelNotificationStreamHandler.showOrUpdateOrCancelNotification?.success(
@@ -432,6 +432,9 @@ class MainActivity : FlutterActivity(), MethodChannel.MethodCallHandler,
                 val data = FlyMessenger.getMessageOfId(mid)
                 if (data!=null)
                     result.success(data.tojsonString())
+            }
+            call.method.equals("refreshAuthToken") -> {
+                refreshAuthToken(result)
             }
             else -> {
                 result.notImplemented()
@@ -699,7 +702,7 @@ class MainActivity : FlutterActivity(), MethodChannel.MethodCallHandler,
     private fun removeProfileImage(call: MethodCall, result: MethodChannel.Result) {
         ContactManager.removeProfileImage { isSuccess, throwable, data ->
             data["status"] = isSuccess
-            result.success(Gson().toJson(data))
+            result.success(isSuccess)
         }
     }
 
@@ -732,8 +735,8 @@ class MainActivity : FlutterActivity(), MethodChannel.MethodCallHandler,
             ) {
 
                 data["status"] = isSuccess
-                Log.i(TAG,"getProfile => "+data.toString());
-                result.success(Gson().toJson(data))
+                Log.i(TAG,"getProfile => "+data.tojsonString());
+                result.success(data.tojsonString())
             }
         })
     }
@@ -1065,6 +1068,16 @@ class MainActivity : FlutterActivity(), MethodChannel.MethodCallHandler,
                     )
                 }.sortedBy { it.name }*/
                 result.success(data.tojsonString())
+            }
+        }
+    }
+
+    fun refreshAuthToken(result: MethodChannel.Result){
+        FlyCore.refreshAuthToken { isSuccess, _, _ ->
+            if (isSuccess) {
+                LogMessage.d(TAG, "Token Refresh success")
+            } else {
+                LogMessage.d(TAG, "Token Refresh failure")
             }
         }
     }
