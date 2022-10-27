@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -37,26 +38,40 @@ class ProfileTextImage extends StatelessWidget {
   final double radius;
   final Color fontcolor;
 
-  ProfileTextImage({Key? key, required this.text, this.fontsize=15, this.bgcolor=buttonbgcolor,  this.radius=22, this.fontcolor=Colors.white}) : super(key: key);
+  ProfileTextImage(
+      {Key? key,
+      required this.text,
+      this.fontsize = 15,
+      this.bgcolor = buttonbgcolor,
+      this.radius = 22,
+      this.fontcolor = Colors.white})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return CircleAvatar(
       radius: radius,
-      backgroundColor: Color(Helper.getColourCode(text)),//bgcolor,
-      child: Center(child: Text(getString(text),style: TextStyle(fontSize: fontsize,color: fontcolor),)),
+      backgroundColor: Color(Helper.getColourCode(text)), //bgcolor,
+      child: Center(
+          child: Text(
+        getString(text),
+        style: TextStyle(fontSize: fontsize, color: fontcolor),
+      )),
     );
   }
 
-  String getString(String str){
-    String string="";
-    if(str.characters.length>=2) {
-      if(str.trim().contains(" ")){
+  String getString(String str) {
+    String string = "";
+    if (str.characters.length >= 2) {
+      if (str.trim().contains(" ")) {
         var st = str.trim().split(" ");
-        string = st[0].characters.first.toUpperCase() +st[1].characters.first.toUpperCase();
-      }else {
-        string = str.substring(0,2).toUpperCase().toString();
+        string = st[0].characters.first.toUpperCase() +
+            st[1].characters.first.toUpperCase();
+      } else {
+        string = str.substring(0, 2).toUpperCase().toString();
       }
+    } else {
+      string = str;
     }
     return string;
   }
@@ -70,20 +85,66 @@ class ImageNetwork extends GetView<MainController> {
   final bool clipoval;
 
   const ImageNetwork(
-      {Key? key, required this.url, required this.width, required this.height, this.errorWidget, required this.clipoval})
+      {Key? key,
+      required this.url,
+      required this.width,
+      required this.height,
+      this.errorWidget,
+      required this.clipoval})
       : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     var AUTHTOKEN = controller.AUTHTOKEN;
-    Log("Mirrorfly", AUTHTOKEN.value);
+    Log("Mirrorfly Auth", AUTHTOKEN.value);
     return Obx(
-      ()=> Image.network(
+      () => CachedNetworkImage(
+        imageUrl: imagedomin + url,
+        fit: BoxFit.fill,
+        width: width,
+        height: height,
+        httpHeaders: {"Authorization": controller.AUTHTOKEN.value},
+        /*placeholder: (context, url) {
+          //Log("placeholder", url);
+          return errorWidget ??
+              Image.asset(
+                'assets/logos/profile_img.png',
+                height: width,
+                width: height,
+              );
+        },*/
+        progressIndicatorBuilder: (context, str, progress) {
+          Log("progress", str);
+          return SizedBox(
+            height: height,
+            width: width,
+            child: const Center(child: CircularProgressIndicator()),
+          );
+        },
+        errorWidget: (context, error, dynamic) {
+          Log("image", imagedomin + url);
+          Log("imageError", error.toString());
+          Log("imageDynamic", dynamic.toString());
+          if(dynamic.toString().contains("401")){
+            controller.getAuthToken();
+          }
+          return errorWidget ??
+              Image.asset(
+                'assets/logos/profile_img.png',
+                height: width,
+                width: height,
+              );
+        },
+        imageBuilder: (context,provider){
+          return clipoval ? ClipOval(child: Image(image: provider,fit: BoxFit.fill,)) : Image(image: provider,fit: BoxFit.fill,);
+        },
+      ),
+      /*Image.network(
         imagedomin + url,
         fit: BoxFit.fill,
         width: width,
         height: height,
-        headers: {"Authorization": AUTHTOKEN.value},
+        headers: {"Authorization": controller.AUTHTOKEN.value},
         loadingBuilder: (context, widget, chunkevent) {
           if(chunkevent==null) return clipoval ? ClipOval(child: widget) : widget;
           return errorWidget ?? SizedBox(child: Center(child: const CircularProgressIndicator()),height: height,width: width,);
@@ -101,15 +162,18 @@ class ImageNetwork extends GetView<MainController> {
                 width: height,
               );
         },
-      ),
+      ),*/
     );
   }
 }
 
 class EmojiLayout extends StatelessWidget {
-  const EmojiLayout({Key? key, required this.textcontroller, this.onEmojiSelected}) : super(key: key);
+  const EmojiLayout(
+      {Key? key, required this.textcontroller, this.onEmojiSelected})
+      : super(key: key);
   final TextEditingController textcontroller;
-  final Function(Category?,Emoji)? onEmojiSelected;
+  final Function(Category?, Emoji)? onEmojiSelected;
+
   @override
   Widget build(BuildContext context) {
     return SizedBox(
@@ -145,7 +209,6 @@ class EmojiLayout extends StatelessWidget {
     );
   }
 }
-
 
 /*
 Image NetImage (String url,double width,double height){
