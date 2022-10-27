@@ -225,11 +225,11 @@ class DashboardView extends GetView<DashboardController> {
                         Expanded(
                           child: Row(
                             children: [
-                              forMessageTypeIcon(item.lastMessageType!),
-                              SizedBox(width: forMessageTypeString(item.lastMessageType!)!=null ? 3.0 : 0.0,),
+                              forMessageTypeIcon(item.lastMessageType),
+                              SizedBox(width: forMessageTypeString(item.lastMessageType)!=null ? 3.0 : 0.0,),
                               Expanded(
                                 child: Text(
-                                  forMessageTypeString(item.lastMessageType!) ?? item.lastMessageContent.toString(),
+                                  forMessageTypeString(item.lastMessageType) ?? item.lastMessageContent.toString(),
                                   style: Theme.of(context).textTheme.titleSmall,
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
@@ -258,8 +258,8 @@ class DashboardView extends GetView<DashboardController> {
     );
   }
 
-  Widget forMessageTypeIcon(String MessageType) {
-    switch (MessageType.toUpperCase()) {
+  Widget forMessageTypeIcon(String? MessageType) {
+    switch (MessageType?.toUpperCase()) {
       case Constants.MIMAGE:
         return SvgPicture.asset(
           Mimageicon,
@@ -295,8 +295,8 @@ class DashboardView extends GetView<DashboardController> {
     }
   }
 
-  String? forMessageTypeString(String MessageType) {
-    switch (MessageType.toUpperCase()) {
+  String? forMessageTypeString(String? MessageType) {
+    switch (MessageType?.toUpperCase()) {
       case Constants.MIMAGE:
         return "Image";
       case Constants.MAUDIO:
@@ -310,7 +310,7 @@ class DashboardView extends GetView<DashboardController> {
       case Constants.MLOCATION:
         return "Location";
       default:
-        return null;
+        return "";
     }
   }
 }

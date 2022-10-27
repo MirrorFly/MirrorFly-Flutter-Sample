@@ -69,6 +69,7 @@ class ChatController extends GetxController
     );
 
 
+    askStoragePermission();
     isLive = true;
     focusNode.addListener(() {
       if (focusNode.hasFocus) {
@@ -370,12 +371,13 @@ class ChatController extends GetxController
         File(mediaLocalStoragePath).existsSync();
   }
 
-  downloadMedia(String messageId) {
+  downloadMedia(String messageId) async {
+    if (await askStoragePermission()) {
     PlatformRepo().mediaDownload(messageId);
+    }
   }
 
   playAudio(String filePath) async{
-
 
     if(!isplaying.value && !audioplayed.value){
       int result = await player.play(filePath, isLocal: true);
@@ -537,6 +539,14 @@ class ChatController extends GetxController
 
   void isTyping(String typingText) {
     typingText.isNotEmpty ? isUserTyping(true) : isUserTyping(false);
+  }
+
+  clearChatHistory() {
+    PlatformRepo().clearChatHistory(profile.jid!, "chat", false).then((value) {
+      if(value) {
+        chatList.clear();
+      }
+    });
   }
 
 

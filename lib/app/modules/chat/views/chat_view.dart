@@ -58,6 +58,53 @@ class ChatView extends GetView<ChatController> {
               Text(controller.profile.name.toString()),
             ],
           ),
+          actions: [
+            PopupMenuButton<int>(
+              icon: SvgPicture.asset(moreicon, width: 3.66, height: 16.31),
+              color: Colors.white,
+              itemBuilder: (context) => [
+                PopupMenuItem(
+                  value: 1,
+                  child: Text(
+                    "Clear Chat",
+                  ),
+                ),
+                PopupMenuItem(
+                  value: 2,
+                  child: Text(
+                    "Report",
+                  ),
+                ),
+                PopupMenuItem(
+                  value: 3,
+                  child: Text(
+                    "Block",
+                  ),
+                ),
+                PopupMenuItem(
+                  value: 4,
+                  child: Text(
+                    "Search",
+                  ),
+                ),
+                PopupMenuItem(
+                  value: 5,
+                  child: Text(
+                    "Add Chat Shortcut",
+                  ),
+                ),
+              ],
+              offset: Offset(0, 20),
+              elevation: 2,
+              onSelected: (value) {
+                if (value == 1) {
+                  controller.clearChatHistory();
+                } else if (value == 2) {
+
+                }
+              },
+            ),
+          ],
         ),
         body: SafeArea(
           child: Container(
@@ -1166,10 +1213,6 @@ class ChatView extends GetView<ChatController> {
 
   handleMediaUploadDownload(int mediaDownloadStatus,
       ChatMessageModel chatList) {
-    debugPrint(mediaDownloadStatus.toString());
-    debugPrint(chatList.mediaChatMessage?.mediaUploadStatus.toString());
-    debugPrint(chatList.messageType.toString());
-    debugPrint(chatList.isMessageSentByMe.toString());
     switch (chatList.isMessageSentByMe ? chatList.mediaChatMessage?.mediaUploadStatus : mediaDownloadStatus) {
       case Constants.MEDIA_DOWNLOADED:
       case Constants.MEDIA_UPLOADED:
@@ -1187,16 +1230,16 @@ class ChatView extends GetView<ChatController> {
           }
         }
         if (chatList.messageType == 'AUDIO') {
-          debugPrint(controller.checkFile(
-              chatList.mediaChatMessage!.mediaLocalStoragePath).toString());
-          debugPrint(chatList.mediaChatMessage!.mediaDownloadStatus.toString());
+          // debugPrint(controller.checkFile(
+          //     chatList.mediaChatMessage!.mediaLocalStoragePath).toString());
+          // debugPrint(chatList.mediaChatMessage!.mediaDownloadStatus.toString());
           if (controller.checkFile(
               chatList.mediaChatMessage!.mediaLocalStoragePath) &&
               (chatList.mediaChatMessage!.mediaDownloadStatus ==
                   Constants.MEDIA_DOWNLOADED ||
                   chatList.mediaChatMessage!.mediaDownloadStatus ==
                       Constants.MEDIA_UPLOADED || chatList.isMessageSentByMe)) {
-            debugPrint("audio click1");
+            // debugPrint("audio click1");
             chatList.mediaChatMessage!.isPlaying = controller.isplaying.value;
             // controller.playAudio(chatList.mediaChatMessage!);
             playAudio(chatList.mediaChatMessage!.mediaLocalStoragePath,

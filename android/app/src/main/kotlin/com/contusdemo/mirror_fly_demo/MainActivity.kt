@@ -366,11 +366,39 @@ override fun onCreate(savedInstanceState: Bundle?) {
             call.method.equals("send_audio") -> {
                 sendaudioMessage(call, result);
             }
+            call.method.equals("clear_chat") -> {
+                clearChats(call, result);
+            }
 
             else -> {
                 result.notImplemented()
             }
 
+        }
+    }
+
+    private fun clearChats(call: MethodCall, result: MethodChannel.Result) {
+        val userJID = call.argument<String>("jid")
+        val chatType = call.argument<String>("chat_type")
+        val clearExceptStarred = call.argument<Boolean>("clear_except_starred")
+        if (userJID != null && chatType != null && clearExceptStarred != null) {
+            ChatManager.clearChat(userJID, getChatEnum(chatType), clearExceptStarred, object : ChatActionListener {
+                override fun onResponse(isSuccess: Boolean, message: String) {
+
+                    result.success(isSuccess);
+
+                }
+            })
+        }else{
+            result.error("500", "Parameters Missing", null)
+        }
+    }
+
+    private fun getChatEnum(chatType: String): ChatTypeEnum {
+        return when (chatType) {
+            ChatType.TYPE_CHAT -> ChatTypeEnum.chat
+            ChatType.TYPE_GROUP_CHAT -> ChatTypeEnum.groupchat
+            else -> ChatTypeEnum.broadcast
         }
     }
 
@@ -683,7 +711,6 @@ override fun onCreate(savedInstanceState: Bundle?) {
                 result.error("500", "User Name is Empty", null)
             }
         }
-
     }
 
     private fun readReceipt(call: MethodCall, result: MethodChannel.Result) {
@@ -693,7 +720,10 @@ override fun onCreate(savedInstanceState: Bundle?) {
             val receiverJID: String? = call.argument("jid")
             if (receiverJID != null) {
                 Log.i(TAG, "Read Receipt of JID $receiverJID")
+                //Notify the message is read by user
                 ChatManager.markAsRead(receiverJID)
+                //To Remove the Unread Notification Separator in Chat List
+                FlyMessenger.deleteUnreadMessageSeparatorOfAConversation(receiverJID);
             } else {
                 result.error("500", "JID is Empty", null)
             }
@@ -949,6 +979,7 @@ override fun onCreate(savedInstanceState: Bundle?) {
             Log.e("File Upload", "No Media Already Exists")
         }
     }
+
 
 
 

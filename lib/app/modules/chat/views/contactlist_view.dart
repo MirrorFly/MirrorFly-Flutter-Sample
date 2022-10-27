@@ -8,6 +8,7 @@ import 'package:mirror_fly_demo/app/common/constants.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
 import 'package:mirror_fly_demo/app/modules/chat/controllers/contact_controller.dart';
 
+import '../../../common/debouncer.dart';
 import '../../../common/widgets.dart';
 import '../../../routes/app_pages.dart';
 
@@ -15,6 +16,7 @@ class ContactListView extends GetView<ContactController> {
   const ContactListView({Key? key}) : super(key: key);
 
   Widget build(BuildContext context) {
+    final _debouncer = Debouncer(milliseconds: 700);
     return Obx(
       () => Scaffold(
         appBar: AppBar(
@@ -30,7 +32,11 @@ class ContactListView extends GetView<ContactController> {
           ),
           title: controller.search.value
               ? TextField(
-                  onChanged: (text) => controller.searchListener(text),
+                  onChanged: (text) {
+                    _debouncer.run(() {
+                      controller.searchListener(text);
+                    });
+                  },
                   controller: controller.searchQuery,
                   autofocus: true,
                   decoration: const InputDecoration(
