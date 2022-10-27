@@ -5,6 +5,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:custom_image_crop/custom_image_crop.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:mirror_fly_demo/app/data/helper.dart';
 class CropImage extends StatefulWidget {
   CropImage({Key? key, required this.imageFile}) : super(key: key);
   final File imageFile;
@@ -75,8 +76,12 @@ class _CropImageState extends State<CropImage> {
                 Expanded(
                   child: ElevatedButton(
                     onPressed: () async {
-                      final image = await controller.onCropImage();
-                      Get.back(result: image);
+                      Helper.showLoading("Image Cropping...");
+                      await controller.onCropImage().then((image){
+                        Helper.hideLoading();
+                        Get.back(result: image);
+                      });
+
                     },
                     style: ElevatedButton.styleFrom(backgroundColor: MaterialStateColor.resolveWith((states) => Colors.white),shape: RoundedRectangleBorder(borderRadius: BorderRadius.zero)),
                     child: Text("SAVE",style: TextStyle(color: Colors.black,fontSize:16.0),),
