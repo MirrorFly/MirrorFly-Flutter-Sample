@@ -6,9 +6,11 @@ import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
 import 'package:mirror_fly_demo/app/common/apptheme.dart';
 import 'package:mirror_fly_demo/app/common/main_controller.dart';
+import 'package:mirror_fly_demo/app/data/helper.dart';
 import 'package:mirror_fly_demo/app/modules/dashboard/bindings/dashboard_binding.dart';
 import 'package:mirror_fly_demo/app/modules/login/bindings/login_binding.dart';
 import 'app/data/SessionManagement.dart';
+import 'app/modules/profile/bindings/profile_binding.dart';
 import 'app/routes/app_pages.dart';
 
 import 'package:google_maps_flutter_android/google_maps_flutter_android.dart';
@@ -55,11 +57,34 @@ class MyApp extends StatelessWidget{
       theme: apptheme.theme,
       builder: EasyLoading.init(),
       debugShowCheckedModeBanner: false,
-      initialBinding: SessionManagement().getLogin() ? DashboardBinding() : LoginBinding(),
-      initialRoute: SessionManagement().getLogin() ? AppPages.DASHBOARD : AppPages.INITIAL,
+      initialBinding: getBinding(),
+      initialRoute: getIntialRoute(),
       //initialRoute: AppPages.INITIAL,
       getPages: AppPages.routes,
     );
+  }
+}
+Bindings? getBinding(){
+  if(SessionManagement().getLogin()){
+    if(SessionManagement().getName().checkNull().isNotEmpty && SessionManagement().getMobileNumber().checkNull().isNotEmpty){
+      return DashboardBinding();
+    }else{
+      return ProfileBinding();
+    }
+  }else{
+    return LoginBinding();
+  }
+}
+
+String getIntialRoute(){
+  if(SessionManagement().getLogin()){
+    if(SessionManagement().getName().checkNull().isNotEmpty && SessionManagement().getMobileNumber().checkNull().isNotEmpty){
+      return AppPages.DASHBOARD;
+    }else{
+      return AppPages.PROFILE;
+    }
+  }else{
+    return AppPages.INITIAL;
   }
 }
 
