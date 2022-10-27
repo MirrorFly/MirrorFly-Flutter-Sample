@@ -1,7 +1,10 @@
 import 'dart:convert';
 
-import 'package:mirror_fly_demo/app/model/registerModel.dart';
+import 'package:mirror_fly_demo/app/data/helper.dart';
+import 'package:mirror_fly_demo/app/model/registerModel.dart' as register;
 import 'package:shared_preferences/shared_preferences.dart';
+
+import '../model/profileupdate.dart';
 
 
 class SessionManagement {
@@ -20,7 +23,7 @@ class SessionManagement {
   }
 
   static Future setAuthtoken(String authtoken) async {
-    await _preferences.setString("authtoken", authtoken);
+    await _preferences.setString("token", authtoken);
   }
   static Future setMobile(String mobile) async {
     await _preferences.setString("mobile", mobile);
@@ -29,28 +32,39 @@ class SessionManagement {
     await _preferences.setString("user_jid", jid);
   }
   static Future setUserImage(String image) async {
-    await _preferences.setString("user_image", image);
+    await _preferences.setString("image", image);
   }
   static Future clear()async{
     await _preferences.clear();
   }
 
-  static Future setUser(Data data) async {
-    // register.toMap().forEach((key, value) async {
-    //   await _preferences.setString(key, value.toString());
-    // });
+  static Future setUser(register.Data data) async {
+    await _preferences.setString('token', data.token.checkNull());
+    await _preferences.setString('username', data.username.checkNull());
+    await _preferences.setString('password', data.password.checkNull());
+    /*data.toJson().forEach((key, value) async {
+      await _preferences.setString(key, value.toString());
+    });
     var userData = jsonEncode(data);
-    await _preferences.setString('userData', userData);
+    await _preferences.setString('userData', userData);*/
+  }
+
+  static Future setCurrentUser(Data data) async {
+    data.toJson().forEach((key, value) async {
+      await _preferences.setString(key, value.toString());
+    });
   }
 
   bool getLogin() => _preferences.getBool("login") == null
       ? false
       : _preferences.getBool("login")!;
 
+  String? getName() => _preferences.getString("name");
+  String? getMobileNumber() => _preferences.getString("mobileNumber");
   String? getUsername() => _preferences.getString("username").toString();
   String? getPassword() => _preferences.getString("password").toString();
   String? getUserJID() => _preferences.getString("user_jid").toString();
-  String? getUserImage() => _preferences.getString("user_image");
-  String? getauthToken() => _preferences.getString("authtoken");
+  String? getUserImage() => _preferences.getString("image");
+  String? getauthToken() => _preferences.getString("token");
   bool? synced() => _preferences.getBool("synced");
 }
