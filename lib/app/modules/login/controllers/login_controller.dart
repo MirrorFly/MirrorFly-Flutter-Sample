@@ -58,7 +58,7 @@ class LoginController extends GetxController {
       if(value != null){
         SessionManagement.setUserJID(value);
         Helper.hideLoading();
-        Get.offAllNamed(Routes.PROFILE,arguments: {"mobile":mobileNumber.text.toString()});
+        Get.offAllNamed(Routes.PROFILE,arguments: {"mobile":mobileNumber.text.toString(),"from":Routes.LOGIN});
       }
     }).catchError((error) {
       debugPrint(error.message);

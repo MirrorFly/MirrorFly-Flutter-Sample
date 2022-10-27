@@ -20,7 +20,7 @@ class SettingsView extends GetView<SettingsController> {
         child: Column(
           children: [
             SettingListItem("Profile", profileicon, rightarrowicon,
-                () => Get.toNamed(Routes.PROFILE)),
+                () => Get.toNamed(Routes.PROFILE,arguments: {"from":Routes.SETTINGS})),
             SettingListItem("Chats", chaticon, rightarrowicon, () {}),
             SettingListItem(
                 "Starred Messages", staredmsgicon, rightarrowicon, () {}),
