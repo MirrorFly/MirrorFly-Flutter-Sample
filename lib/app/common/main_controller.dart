@@ -21,18 +21,22 @@ class MainController extends GetxController {
   }
 
   getAuthToken() async {
-    await PlatformRepo().getUsers(1, "").then((value) async {
-      await PlatformRepo().authtoken().then((value) {
-        Log("RetryAuth", value);
-        if (value.isNotEmpty) {
-          AUTHTOKEN(value);
-          SessionManagement.setAuthtoken(value);
-        } else {
-          AUTHTOKEN(SessionManagement().getauthToken().checkNull());
+    if(SessionManagement().getUsername().checkNull().isNotEmpty&& SessionManagement().getPassword().checkNull().isNotEmpty) {
+      await PlatformRepo().refreshAuthToken().then((value) async {
+        if (value != null && value) {
+          await PlatformRepo().authtoken().then((value) {
+            Log("RetryAuth", value);
+            if (value.isNotEmpty) {
+              AUTHTOKEN(value);
+              SessionManagement.setAuthtoken(value);
+            } else {
+              AUTHTOKEN(SessionManagement().getauthToken().checkNull());
+            }
+            update();
+          });
         }
-        update();
       });
-    });
+    }
   }
 
   String getRecentChatTime(BuildContext context, int? epochTime) {
