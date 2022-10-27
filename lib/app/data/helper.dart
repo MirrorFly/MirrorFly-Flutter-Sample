@@ -7,21 +7,22 @@ import 'package:mirror_fly_demo/app/common/constants.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
 class Helper{
-  static void showLoading([String? message]) {
+  static void showLoading([String? message,bool? dismissable]) {
     Get.dialog(
       Dialog(
         child: Padding(
           padding: const EdgeInsets.all(16.0),
-          child: Column(
+          child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
               const CircularProgressIndicator(),
-              const SizedBox(height: 8),
+              const SizedBox(width: 16),
               Text(message ?? 'Loading...'),
             ],
           ),
         ),
       ),
+      barrierDismissible: dismissable ?? false
     );
   }
 
