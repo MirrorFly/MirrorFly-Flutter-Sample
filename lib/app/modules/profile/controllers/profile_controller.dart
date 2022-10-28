@@ -33,7 +33,7 @@ class ProfileController extends GetxController {
   var changed = false.obs;
 
   dynamic imageBytes;
-  var from=Routes.LOGIN;
+  var from=Routes.LOGIN.obs;
 
   var name = "".obs;
 
@@ -44,8 +44,8 @@ class ProfileController extends GetxController {
     userImgUrl.value  = SessionManagement().getUserImage() ?? "";
     print("auth : "+SessionManagement().getauthToken().toString());
     if (Get.arguments!=null) {
-      from=Get.arguments["from"];
-      if(from==Routes.LOGIN) {
+      from(Get.arguments["from"]);
+      if(from.value==Routes.LOGIN) {
         profileMobile.text = Get.arguments['mobile'] ?? "";
       }
     } else {
@@ -79,7 +79,7 @@ class ProfileController extends GetxController {
               toToast(data.message.toString());
               if (data.status!) {
                 SessionManagement.setCurrentUser(data.data!);
-                from == Routes.SETTINGS ? Get.back() : Get.offNamed(
+                from.value == Routes.SETTINGS ? Get.back() : Get.offNamed(
                     Routes.DASHBOARD);
               }
             }
@@ -142,7 +142,7 @@ class ProfileController extends GetxController {
             profileStatus.value = data.data!.status ?? "";
             userImgUrl.value =
                 data.data!.image ?? SessionManagement().getUserImage() ?? "";
-            changed((from==Routes.LOGIN));
+            changed((from.value==Routes.LOGIN));
             name(data.data!.name.toString());
             update();
           }

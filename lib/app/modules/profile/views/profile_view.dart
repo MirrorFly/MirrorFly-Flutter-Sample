@@ -242,7 +242,7 @@ class ProfileView extends GetView<ProfileController> {
                                     }
                                   : null,
                               child: Text(
-                                controller.changed.value
+                                controller.from.value == Routes.LOGIN ? 'Save' : controller.changed.value
                                     ? 'Update & Continue'
                                     : 'Save',
                                 style: TextStyle(fontWeight: FontWeight.w600),
