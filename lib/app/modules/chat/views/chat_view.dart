@@ -58,141 +58,214 @@ class ChatView extends GetView<ChatController> {
               Text(controller.profile.name.toString()),
             ],
           ),
-        ),
-        body: Container(
-          width: MediaQuery.of(context).size.width,
-          height: MediaQuery.of(context).size.height,
-          decoration: const BoxDecoration(
-            image: DecorationImage(
-              image: AssetImage("assets/logos/chat_bg.png"),
-              fit: BoxFit.cover,
-            ),
-          ),
-          child: WillPopScope(
-            onWillPop: () {
-              if (controller.showEmoji.value) {
-                controller.showEmoji(false);
-              } else {
-                Get.back();
-              }
-              return Future.value(false);
-            },
-            child: Column(
-              children: [
-                Expanded(
-                  child: Obx(() => controller.chatList.isEmpty
-                      ? const SizedBox.shrink()
-                      : chatListView(controller.chatList.reversed.toList())),
+          actions: [
+            PopupMenuButton<int>(
+              icon: SvgPicture.asset(moreicon, width: 3.66, height: 16.31),
+              color: Colors.white,
+              itemBuilder: (context) => [
+                PopupMenuItem(
+                  value: 1,
+                  child: Text(
+                    "Clear Chat",
+                  ),
                 ),
-                Align(
-                  alignment: Alignment.bottomCenter,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      Row(
-                        children: [
-                          Flexible(
-                            child: Container(
-                              padding: const EdgeInsets.only(left: 10),
-                              margin: const EdgeInsets.all(10),
-                              width: double.infinity,
-                              decoration: BoxDecoration(
-                                border: Border.all(
-                                  color: textcolor,
-                                ),
-                                borderRadius:
-                                    const BorderRadius.all(Radius.circular(40)),
-                                color: Colors.white,
-                              ),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.end,
-                                children: <Widget>[
-                                  InkWell(
-                                      onTap: () {
-                                        if (!controller.showEmoji.value) {
-                                          FocusScope.of(context).unfocus();
-                                          controller.focusNode.canRequestFocus =
-                                              false;
-                                        }
-                                        Future.delayed(
-                                            const Duration(milliseconds: 500),
-                                            () {
-                                          controller.showEmoji(
-                                              !controller.showEmoji.value);
-                                        });
-                                      },
-                                      child: SvgPicture.asset(
-                                          'assets/logos/smile.svg')),
-                                  const SizedBox(
-                                    width: 10,
-                                  ),
-                                  Expanded(
-                                    child: TextField(
-                                      onTap: () {
-                                        controller.focusNode.requestFocus();
-                                      },
-                                      keyboardType: TextInputType.multiline,
-                                      minLines: 1,
-                                      maxLines: 4,
-                                      controller: controller.messageController,
-                                      focusNode: controller.focusNode,
-                                      decoration: const InputDecoration(
-                                          hintText: "Start Typing...",
-                                          border: InputBorder.none),
-                                    ),
-                                  ),
-                                  const SizedBox(
-                                    width: 15,
-                                  ),
-                                  IconButton(
-                                    color: Colors.blue,
-                                    onPressed: () {
-                                      showModalBottomSheet(
-                                          backgroundColor: Colors.transparent,
-                                          context: context,
-                                          builder: (builder) =>
-                                              bottomSheet(context));
-                                    },
-                                    icon: SvgPicture.asset(
-                                        'assets/logos/attach.svg'),
-                                  ),
-                                  const SizedBox(
-                                    width: 15,
-                                  ),
-                                  // SvgPicture.asset('assets/logos/mic.svg'),
-                                  // RecordButton(controller: controller.controller,),
-                                  // const SizedBox(
-                                  //   width: 20,
-                                  // ),
-                                ],
-                              ),
-                            ),
-                          ),
-                          const SizedBox(
-                            width: 5,
-                          ),
-                          InkWell(
-                              onTap: () {
-                                // if (scrollController.hasClients) {
-                                // scrollController.animateTo(
-                                //   scrollController.position.maxScrollExtent,
-                                //   curve: Curves.easeOut,
-                                //   duration: const Duration(milliseconds: 300),
-                                // );
-                                // }
-                                controller.sendMessage(controller.profile);
-                              },
-                              child: SvgPicture.asset('assets/logos/send.svg')),
-                          const SizedBox(
-                            width: 15,
-                          ),
-                        ],
-                      ),
-                      emojiLayout(),
-                    ],
+                PopupMenuItem(
+                  value: 2,
+                  child: Text(
+                    "Report",
+                  ),
+                ),
+                PopupMenuItem(
+                  value: 3,
+                  child: Text(
+                    "Block",
+                  ),
+                ),
+                PopupMenuItem(
+                  value: 4,
+                  child: Text(
+                    "Search",
+                  ),
+                ),
+                PopupMenuItem(
+                  value: 5,
+                  child: Text(
+                    "Add Chat Shortcut",
                   ),
                 ),
               ],
+              offset: Offset(0, 20),
+              elevation: 2,
+              onSelected: (value) {
+                if (value == 1) {
+                  controller.clearChatHistory();
+                } else if (value == 2) {
+
+                }
+              },
+            ),
+          ],
+        ),
+        body: SafeArea(
+          child: Container(
+            width: MediaQuery
+                .of(context)
+                .size
+                .width,
+            height: MediaQuery
+                .of(context)
+                .size
+                .height,
+            decoration: const BoxDecoration(
+              image: DecorationImage(
+                image: AssetImage("assets/logos/chat_bg.png"),
+                fit: BoxFit.cover,
+              ),
+            ),
+            child: WillPopScope(
+              onWillPop: () {
+                if (controller.showEmoji.value) {
+                  controller.showEmoji(false);
+                } else {
+                  Get.back();
+                }
+                return Future.value(false);
+              },
+              child: Column(
+                children: [
+                  Expanded(
+                    child: Obx(() =>
+                    controller.chatList.isEmpty
+                        ? const SizedBox.shrink()
+                        : chatListView(controller.chatList.reversed.toList())),
+                  ),
+                  Align(
+                    alignment: Alignment.bottomCenter,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        Row(
+                          children: [
+                            Flexible(
+                              child: Container(
+                                padding: const EdgeInsets.only(left: 10),
+                                margin: const EdgeInsets.all(10),
+                                width: double.infinity,
+                                decoration: BoxDecoration(
+                                  border: Border.all(
+                                    color: textcolor,
+                                  ),
+                                  borderRadius:
+                                  const BorderRadius.all(Radius.circular(40)),
+                                  color: Colors.white,
+                                ),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  children: <Widget>[
+                                    InkWell(
+                                        onTap: () {
+                                          if (!controller.showEmoji.value) {
+                                            FocusScope.of(context).unfocus();
+                                            controller.focusNode
+                                                .canRequestFocus =
+                                            false;
+                                          }
+                                          Future.delayed(
+                                              const Duration(milliseconds: 500),
+                                                  () {
+                                                controller.showEmoji(
+                                                    !controller.showEmoji
+                                                        .value);
+                                              });
+                                        },
+                                        child: SvgPicture.asset(
+                                            'assets/logos/smile.svg')),
+                                    const SizedBox(
+                                      width: 10,
+                                    ),
+                                    Expanded(
+                                      child: TextField(
+                                        onTap: () {
+                                          controller.focusNode.requestFocus();
+                                        },
+                                        onChanged: (text) {
+                                          controller.isTyping(text);
+                                        },
+                                        keyboardType: TextInputType.multiline,
+                                        minLines: 1,
+                                        maxLines: 4,
+                                        controller: controller
+                                            .messageController,
+                                        focusNode: controller.focusNode,
+                                        decoration: const InputDecoration(
+                                            hintText: "Start Typing...",
+                                            border: InputBorder.none),
+                                      ),
+                                    ),
+                                    const SizedBox(
+                                      width: 15,
+                                    ),
+                                    IconButton(
+                                      color: Colors.blue,
+                                      onPressed: () {
+                                        showModalBottomSheet(
+                                            backgroundColor: Colors.transparent,
+                                            context: context,
+                                            builder: (builder) =>
+                                                bottomSheet(context));
+                                      },
+                                      icon: SvgPicture.asset(
+                                          'assets/logos/attach.svg'),
+                                    ),
+                                    const SizedBox(
+                                      width: 5,
+                                    ),
+                                    // SvgPicture.asset('assets/logos/mic.svg'),
+                                    // RecordButton(controller: controller.controller,),
+                                    // const SizedBox(
+                                    //   width: 20,
+                                    // ),
+                                  ],
+                                ),
+                              ),
+                            ),
+
+                            // InkWell(
+                            //     onTap: () {
+                            //       // if (scrollController.hasClients) {
+                            //       // scrollController.animateTo(
+                            //       //   scrollController.position.maxScrollExtent,
+                            //       //   curve: Curves.easeOut,
+                            //       //   duration: const Duration(milliseconds: 300),
+                            //       // );
+                            //       // }
+                            //       controller.sendMessage(controller.profile);
+                            //     },
+                            //     child: SvgPicture.asset('assets/logos/send.svg')),
+
+                            Obx(() {
+                              return controller.isUserTyping.value ? InkWell(
+                                    onTap: () {
+
+                                      controller.sendMessage(controller.profile);
+                                    },
+                                    child: Padding(
+                                      padding: const EdgeInsets.only(left: 8.0, right: 8.0),
+                                      child: SvgPicture.asset('assets/logos/send.svg'),
+                                    )) : RecordButton(
+                                controller: controller.controller,);
+                            }),
+                            const SizedBox(
+                              width: 10,
+                            ),
+                          ],
+                        ),
+                        emojiLayout(),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         ));
@@ -247,7 +320,7 @@ class ChatView extends GetView<ChatController> {
         // int reversedIndex = chatList.length - 1 - index;
         return Container(
           padding:
-              const EdgeInsets.only(left: 14, right: 14, top: 10, bottom: 10),
+          const EdgeInsets.only(left: 14, right: 14, top: 10, bottom: 10),
           child: Align(
             alignment: (chatList[index].isMessageSentByMe
                 ? Alignment.bottomRight
@@ -294,7 +367,10 @@ class ChatView extends GetView<ChatController> {
     debugPrint(json.encode(chatList[index]));
     if (chatList[index].messageType == 'TEXT') {
       return Container(
-        constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.7),
+        constraints: BoxConstraints(maxWidth: MediaQuery
+            .of(context)
+            .size
+            .width * 0.7),
         padding: const EdgeInsets.all(16.0),
         child: Row(
           mainAxisSize: MainAxisSize.min,
@@ -334,7 +410,7 @@ class ChatView extends GetView<ChatController> {
           padding: const EdgeInsets.all(15.0),
           child: Text(chatList[index].messageTextContent,
               style:
-                  const TextStyle(fontSize: 13, fontWeight: FontWeight.bold)),
+              const TextStyle(fontSize: 13, fontWeight: FontWeight.bold)),
         ),
       );
     } else if (chatList[index].messageType == 'IMAGE') {
@@ -405,7 +481,7 @@ class ChatView extends GetView<ChatController> {
                 // debugPrint(chatMessage.mediaDownloadStatus == Constants.MEDIA_UPLOADED);
                 if (controller.checkFile(chatMessage.mediaLocalStoragePath) &&
                     (chatMessage.mediaDownloadStatus ==
-                            Constants.MEDIA_DOWNLOADED ||
+                        Constants.MEDIA_DOWNLOADED ||
                         chatMessage.mediaDownloadStatus ==
                             Constants.MEDIA_UPLOADED)) {
                   Get.toNamed(Routes.VIDEO_PLAY, arguments: {
@@ -542,8 +618,13 @@ class ChatView extends GetView<ChatController> {
       );
     } else if (chatList[index].messageType == 'CONTACT') {
       return InkWell(
-        onTap: (){
-          Get.toNamed(Routes.PREVIEW_CONTACT, arguments: {"contactList" : chatList[index].contactChatMessage!.contactPhoneNumbers, "contactName": chatList[index].contactChatMessage!.contactName, "from": "chat"});
+        onTap: () {
+          Get.toNamed(Routes.PREVIEW_CONTACT, arguments: {
+            "contactList": chatList[index].contactChatMessage!
+                .contactPhoneNumbers,
+            "contactName": chatList[index].contactChatMessage!.contactName,
+            "from": "chat"
+          });
         },
         child: Container(
           decoration: BoxDecoration(
@@ -682,12 +763,14 @@ class ChatView extends GetView<ChatController> {
                           ),
                           child: Slider(
                             value:
-                            double.parse(controller.currentpos.value.toString()),
+                            double.parse(
+                                controller.currentpos.value.toString()),
                             min: 0,
                             activeColor: audiocolordark,
                             inactiveColor: audiocolor,
                             max:
-                            double.parse(controller.maxduration.value.toString()),
+                            double.parse(
+                                controller.maxduration.value.toString()),
                             divisions: controller.maxduration.value,
                             // label: controller.currentpostlabel,
                             onChanged: (double value) async {
@@ -736,9 +819,9 @@ class ChatView extends GetView<ChatController> {
             SizedBox(
               height: 5,
             ),
-            ],
-          ),
-        );
+          ],
+        ),
+      );
     } else if (chatList[index].messageType.toUpperCase() ==
         Constants.MLOCATION) {
       return Padding(
@@ -752,7 +835,7 @@ class ChatView extends GetView<ChatController> {
             Positioned(
               bottom: 8,
               right: 10,
-              child:Row(
+              child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   getMessageIndicator(
@@ -804,7 +887,9 @@ class ChatView extends GetView<ChatController> {
         onTap: () async {
           //Redirect to Google maps App
           String googleUrl =
-              'https://www.google.com/maps/search/?api=1&query=${item.locationChatMessage!.latitude}, ${item.locationChatMessage!.longitude}';
+              'https://www.google.com/maps/search/?api=1&query=${item
+              .locationChatMessage!.latitude}, ${item.locationChatMessage!
+              .longitude}';
           if (await canLaunchUrl(Uri.parse(googleUrl))) {
             await launchUrl(Uri.parse(googleUrl));
           } else {
@@ -846,6 +931,7 @@ class ChatView extends GetView<ChatController> {
                   ),
                   iconCreation(cameraImg, "Camera", () async {
                     Get.back();
+
                     final XFile? photo =
                     await _picker.pickImage(source: ImageSource.camera);
                     Get.toNamed(Routes.IMAGEPREVIEW, arguments: {
@@ -968,10 +1054,10 @@ class ChatView extends GetView<ChatController> {
           width: 80,
           height: 50,
           child: Center(
-            child: SvgPicture.asset(
-              video_play,
-              fit: BoxFit.contain,
-            )
+              child: SvgPicture.asset(
+                video_play,
+                fit: BoxFit.contain,
+              )
           ),
         );
       } else if (chatMessage.messageType == 'AUDIO') {
@@ -987,7 +1073,7 @@ class ChatView extends GetView<ChatController> {
         return SizedBox.shrink();
       }
     } else {
-      switch (chatMessage.mediaChatMessage!.mediaDownloadStatus) {
+      switch (chatMessage.isMessageSentByMe ? chatMessage.mediaChatMessage!.mediaUploadStatus : chatMessage.mediaChatMessage!.mediaDownloadStatus) {
         case Constants.MEDIA_DOWNLOADED:
         case Constants.MEDIA_UPLOADED:
           return SizedBox.shrink();
@@ -1011,7 +1097,12 @@ class ChatView extends GetView<ChatController> {
         case Constants.MEDIA_UPLOADING:
           if (chatMessage.messageType == 'AUDIO' ||
               chatMessage.messageType == 'DOCUMENT') {
-            return Container(width: 30, height: 30, child: uploadingView());
+            return InkWell(
+                onTap: () {
+                  debugPrint(chatMessage.messageId);
+                },
+                child: Container(
+                    width: 30, height: 30, child: uploadingView()));
           } else {
             return SizedBox(
               height: 40,
@@ -1066,7 +1157,7 @@ class ChatView extends GetView<ChatController> {
               'imagePath': mediaLocalStoragePath
             });
           },
-          child:  Image.file(
+          child: Image.file(
             File(mediaLocalStoragePath),
             width: MediaQuery
                 .of(context)
@@ -1077,7 +1168,7 @@ class ChatView extends GetView<ChatController> {
                 .size
                 .height * 0.4,
             fit: BoxFit.cover,
-          ) );
+          ));
     } else {
       return controller.imageFromBase64String(mediaThumbImage, context);
     }
@@ -1096,37 +1187,33 @@ class ChatView extends GetView<ChatController> {
         ),
         // padding: EdgeInsets.symmetric(vertical: 5),
         child: Stack(
-          alignment: Alignment.center,
-          // mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            SvgPicture.asset(
-              downloading,
-              fit: BoxFit.contain,
-            ),
-            Align(
-              alignment: Alignment.bottomCenter,
-              child: SizedBox(
-                height: 2,
-                child: LinearProgressIndicator(
-                  valueColor: AlwaysStoppedAnimation<Color>(
-                    Colors.white,
+            alignment: Alignment.center,
+            // mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              SvgPicture.asset(
+                downloading,
+                fit: BoxFit.contain,
+              ),
+              Align(
+                alignment: Alignment.bottomCenter,
+                child: SizedBox(
+                  height: 2,
+                  child: LinearProgressIndicator(
+                    valueColor: AlwaysStoppedAnimation<Color>(
+                      Colors.white,
+                    ),
+                    backgroundColor: audiobgcolor,
+                    // minHeight: 1,
                   ),
-                  backgroundColor: audiobgcolor,
-                  // minHeight: 1,
                 ),
               ),
-            ),
-          ]
+            ]
         ));
   }
 
   handleMediaUploadDownload(int mediaDownloadStatus,
       ChatMessageModel chatList) {
-    debugPrint(mediaDownloadStatus.toString());
-    debugPrint(chatList.messageType.toString());
-    debugPrint(chatList.isMessageSentByMe.toString());
-    switch (mediaDownloadStatus) {
-
+    switch (chatList.isMessageSentByMe ? chatList.mediaChatMessage?.mediaUploadStatus : mediaDownloadStatus) {
       case Constants.MEDIA_DOWNLOADED:
       case Constants.MEDIA_UPLOADED:
       // return SizedBox.shrink();
@@ -1143,20 +1230,21 @@ class ChatView extends GetView<ChatController> {
           }
         }
         if (chatList.messageType == 'AUDIO') {
-          debugPrint(controller.checkFile(chatList.mediaChatMessage!.mediaLocalStoragePath));
-          debugPrint(chatList.mediaChatMessage!.mediaDownloadStatus.toString());
+          // debugPrint(controller.checkFile(
+          //     chatList.mediaChatMessage!.mediaLocalStoragePath).toString());
+          // debugPrint(chatList.mediaChatMessage!.mediaDownloadStatus.toString());
           if (controller.checkFile(
               chatList.mediaChatMessage!.mediaLocalStoragePath) &&
               (chatList.mediaChatMessage!.mediaDownloadStatus ==
                   Constants.MEDIA_DOWNLOADED ||
                   chatList.mediaChatMessage!.mediaDownloadStatus ==
                       Constants.MEDIA_UPLOADED || chatList.isMessageSentByMe)) {
-            debugPrint("audio click1");
+            // debugPrint("audio click1");
             chatList.mediaChatMessage!.isPlaying = controller.isplaying.value;
             // controller.playAudio(chatList.mediaChatMessage!);
             playAudio(chatList.mediaChatMessage!.mediaLocalStoragePath,
                 chatList.mediaChatMessage!.mediaFileName);
-          }else{
+          } else {
             debugPrint("condition failed");
           }
         }
@@ -1164,7 +1252,7 @@ class ChatView extends GetView<ChatController> {
 
       case Constants.MEDIA_DOWNLOADED_NOT_AVAILABLE:
       case Constants.MEDIA_NOT_DOWNLOADED:
-        //download
+      //download
         debugPrint("Download");
         debugPrint(chatList.messageId);
         chatList.mediaChatMessage!.mediaDownloadStatus =
@@ -1172,13 +1260,13 @@ class ChatView extends GetView<ChatController> {
         controller.downloadMedia(chatList.messageId);
         break;
       case Constants.MEDIA_UPLOADED_NOT_AVAILABLE:
-        //upload
+      //upload
         break;
       case Constants.MEDIA_NOT_UPLOADED:
       case Constants.MEDIA_DOWNLOADING:
       case Constants.MEDIA_UPLOADING:
-        // return uploadingView();
-        break;
+      return uploadingView();
+        // break;
     }
   }
 
@@ -1261,7 +1349,8 @@ class ChatView extends GetView<ChatController> {
                             activeColor: audiocolordark,
                             inactiveColor: audiocolor,
                             max:
-                            double.parse(controller.maxduration.value.toString()),
+                            double.parse(
+                                controller.maxduration.value.toString()),
                             divisions: controller.maxduration.value,
                             label: controller.currentpostlabel,
                             onChanged: (double value) async {

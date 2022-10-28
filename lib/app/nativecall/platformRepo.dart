@@ -9,7 +9,7 @@ import '../model/statusModel.dart';
 
 class PlatformRepo {
   static const mirrorFlyMethodChannel =
-      MethodChannel('contus.mirrorfly/sdkCall');
+  MethodChannel('contus.mirrorfly/sdkCall');
 
   //Event Channels
   static const EventChannel MESSAGE_ONRECEIVED_CHANNEL = EventChannel('contus.mirrorfly/onMessageReceived');
@@ -84,7 +84,7 @@ class PlatformRepo {
     }
   }
 
- Future<dynamic> sentLocationMessage(String? reply, String JID,double latitude,double longitude) async {
+  Future<dynamic> sentLocationMessage(String? reply, String JID,double latitude,double longitude) async {
     dynamic messageResp;
     try {
       messageResp = await mirrorFlyMethodChannel
@@ -108,7 +108,7 @@ class PlatformRepo {
     dynamic messageResp;
     try {
       messageResp =
-          await mirrorFlyMethodChannel.invokeMethod('send_image_message', {
+      await mirrorFlyMethodChannel.invokeMethod('send_image_message', {
         "jid": jid,
         "filePath": filePath,
         "caption": caption,
@@ -133,7 +133,7 @@ class PlatformRepo {
     dynamic messageResp;
     try {
       messageResp =
-          await mirrorFlyMethodChannel.invokeMethod('send_video_message', {
+      await mirrorFlyMethodChannel.invokeMethod('send_video_message', {
         "jid": jid,
         "filePath": filePath,
         "caption": caption,
@@ -225,7 +225,7 @@ class PlatformRepo {
     var re;
     try {
       final result =
-          await mirrorFlyMethodChannel.invokeMethod("updateProfile", {
+      await mirrorFlyMethodChannel.invokeMethod("updateProfile", {
         "name": name,
         "email": email,
       });
@@ -254,7 +254,7 @@ class PlatformRepo {
     dynamic recentResponse;
     try {
       recentResponse =
-          await mirrorFlyMethodChannel.invokeMethod('get_recent_chats');
+      await mirrorFlyMethodChannel.invokeMethod('get_recent_chats');
       debugPrint("recent Result ==> $recentResponse");
       return recentResponse;
     } on PlatformException catch (e) {
@@ -269,7 +269,7 @@ class PlatformRepo {
     dynamic statusResponse;
     try {
       statusResponse =
-          await mirrorFlyMethodChannel.invokeMethod('getStatusList');
+      await mirrorFlyMethodChannel.invokeMethod('getStatusList');
       Log("statuslist","$statusResponse");
       return statusResponse;
     } on PlatformException catch (e) {
@@ -548,7 +548,7 @@ class PlatformRepo {
     }
   }
 
-  sendAudio(String jid, String filePath, String messageid, bool isRecorded, String duration) async {
+  Future<dynamic> sendAudio(String jid, String filePath, String messageid, bool isRecorded, String duration) async {
     dynamic audioResponse;
     try {
       audioResponse = await mirrorFlyMethodChannel.invokeMethod('send_audio',{ "filePath" : filePath , "jid" : jid, "replyMessageId" : messageid, "isRecorded" : isRecorded, "duration" : duration});
@@ -629,6 +629,21 @@ class PlatformRepo {
       response = await mirrorFlyMethodChannel.invokeMethod('getRecentChatOf',{"jid":jid});
       debugPrint("response ==> $response");
       return response;
+    }on PlatformException catch (e){
+      debugPrint("Platform Exception ===> $e");
+      rethrow;
+    } on Exception catch(error){
+      debugPrint("Exception ==> $error");
+      rethrow;
+    }
+  }
+
+  Future<dynamic> clearChatHistory(String jid, String chatType, bool clearExceptStarred) async {
+    dynamic audioResponse;
+    try {
+      audioResponse = await mirrorFlyMethodChannel.invokeMethod('clear_chat',{ "jid" : jid, "chat_type" : chatType, "clear_except_starred" : clearExceptStarred});
+      debugPrint("clear chat Response ==> $audioResponse");
+      return audioResponse;
     }on PlatformException catch (e){
       debugPrint("Platform Exception ===> $e");
       rethrow;
