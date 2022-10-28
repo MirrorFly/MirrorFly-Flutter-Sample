@@ -76,7 +76,13 @@ class ProfileView extends GetView<ProfileController> {
                                             : null,
                                       ),
                                 onTap: () {
-                                  if (controller.userImgUrl.value
+                                  if(controller.imagepath.value.checkNull().isNotEmpty){
+                                    Get.toNamed(Routes.IMAGE_VIEW, arguments: {
+                                      'imageName': controller.profileName.text,
+                                      'imagePath': controller.imagepath.value.checkNull()
+                                    });
+
+                                  }else if (controller.userImgUrl.value
                                       .checkNull()
                                       .isNotEmpty) {
                                     Get.toNamed(Routes.IMAGE_VIEW, arguments: {
