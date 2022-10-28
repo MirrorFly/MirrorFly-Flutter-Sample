@@ -215,7 +215,7 @@ class MainActivity : FlutterActivity(), MethodChannel.MethodCallHandler,
                 //called when the new message is received
 
                 Log.e("MirrorFly", "message Received")
-                Log.e("Message Received", message.messageTextContent.toString())
+                //Log.e("Message Received", message.messageTextContent.toString())
                 Log.e("Message Received", Gson().toJson(message))
 //                onMessageReceived?.success(Gson().toJson(message).toString())
 
