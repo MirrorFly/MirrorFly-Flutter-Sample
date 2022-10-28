@@ -298,8 +298,7 @@ class MainActivity : FlutterActivity(), MethodChannel.MethodCallHandler,
                 registerUser(call, result)
             }
             call.method.equals("authtoken") -> {
-                Log.d(TAG, "authtoken : " + FlyUtils.decodedToken().trim())
-                result.success(FlyUtils.decodedToken().trim());
+                refreshAuthToken(result)
             }
             call.method.equals("get_user_jid") -> {
                 getUserJID(call, result)
@@ -1113,11 +1112,13 @@ class MainActivity : FlutterActivity(), MethodChannel.MethodCallHandler,
     }
 
     fun refreshAuthToken(result: MethodChannel.Result){
-        FlyCore.refreshAuthToken { isSuccess, _, _ ->
+        FlyCore.refreshAndGetAuthToken { isSuccess, _, data ->
             if (isSuccess) {
-                LogMessage.d(TAG, "Token Refresh success")
+                LogMessage.d(TAG, "Token Refresh success: ${data["data"]}")
+                result.success(data["data"].toString())
             } else {
                 LogMessage.d(TAG, "Token Refresh failure")
+                result.success(FlyUtils.decodedToken().trim())
             }
         }
     }
