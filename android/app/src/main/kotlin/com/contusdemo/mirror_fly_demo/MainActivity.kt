@@ -8,6 +8,7 @@ import android.media.ThumbnailUtils
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.os.Handler
 import android.util.Base64
 import android.webkit.MimeTypeMap
 import android.widget.Toast
@@ -190,10 +191,12 @@ class MainActivity : FlutterActivity(), MethodChannel.MethodCallHandler,
 
                             val response = JSONObject(data).toString()
                             Log.e("RESPONSE", response)
-                            ChatManager.disconnect()
+                            //ChatManager.disconnect()
                             ChatManager.connect(object : ChatConnectionListener {
                                 override fun onConnected() {
-                                    result.success(response)
+                                    Handler().postDelayed(Runnable {
+                                        result.success(response)
+                                    },500)
                                 }
 
                                 override fun onDisconnected() {
