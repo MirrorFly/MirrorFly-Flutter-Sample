@@ -12,6 +12,7 @@ import '../controllers/location_controller.dart';
 class LocationSentView extends GetView<LocationController>{
   LocationSentView({Key? key}) : super(key: key);
   var controller = Get.put<LocationController>(LocationController());
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -23,23 +24,24 @@ class LocationSentView extends GetView<LocationController>{
         ()=> Column(
           children: [
             Expanded(
-              child: GoogleMap(
-                // on below line setting camera position
-                initialCameraPosition: controller.kGoogle.value,
-                // on below line we are setting markers on the map
-                //markers: Set<Marker>.of(controller.marker),
-                // on below line specifying map type.
-                mapType: MapType.normal,
-                // on below line setting user location enabled.
-                //myLocationEnabled: true,
-                // on below line setting compass enabled.
-                //compassEnabled: true,
-                // on below line specifying controller on map complete.
-                zoomControlsEnabled: false,
-                onMapCreated: (GoogleMapController cntrl){
-                  controller.mapcontroller.complete(cntrl);
-                },
-              ),
+              child:GoogleMap(
+                markers: {controller.marker.value},
+                  // on below line setting camera position
+                  initialCameraPosition: controller.kGoogle.value,
+                  // on below line we are setting markers on the map
+                  //markers: Set<Marker>.of(controller.marker),
+                  // on below line specifying map type.
+                  mapType: MapType.normal,
+                  // on below line setting user location enabled.
+                  //myLocationEnabled: true,
+                  // on below line setting compass enabled.
+                  //compassEnabled: true,
+                  // on below line specifying controller on map complete.
+                  zoomControlsEnabled: false,
+                  onMapCreated: (GoogleMapController cntrl)=>controller.onMapCreated(cntrl),
+                  onCameraMove: (CameraPosition position)=>controller.onCameraMove(position),
+                onTap: (latlng)=>controller.onTap(latlng),
+                ),
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,

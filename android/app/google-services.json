@@ -14,11 +14,27 @@
       },
       "oauth_client": [
         {
+          "client_id": "1045831384770-aa561p9dbh0467tsg3395ufeleu162k4.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.mirrorfly.uikit.dev",
+            "certificate_hash": "5b7680dba9f17499d23141415c13745fd4f07e49"
+          }
+        },
+        {
           "client_id": "1045831384770-cn9q7gvgbpkn84rhcii70dai65kloovn.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.mirrorfly.uikit.dev",
             "certificate_hash": "f2e6cce5db55425b8fb5e6da0db05cd82bd76a48"
+          }
+        },
+        {
+          "client_id": "1045831384770-poaavfuqpdujcp8a660do0slg6a92big.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.mirrorfly.uikit.dev",
+            "certificate_hash": "9cc3a748151b891ffdc9ca776601ba020f25ca20"
           }
         },
         {

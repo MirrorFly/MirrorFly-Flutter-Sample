@@ -1,5 +1,7 @@
 import 'dart:async';
 
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:flutter_svg/parser.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
@@ -7,7 +9,8 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
 
 class LocationController extends GetxController{
-  Completer<GoogleMapController> mapcontroller = Completer();
+  Completer<GoogleMapController> completer = Completer();
+  late GoogleMapController controller;
   var address1="".obs;
   var address2="".obs;
   var location = LatLng(0, 0).obs;
@@ -16,34 +19,67 @@ class LocationController extends GetxController{
     zoom: 14.4746,
   ).obs;
   // on below line we have created the list of markers
-  List<Marker> marker = <Marker>[
-    Marker(
+
+  Rx<Marker> marker = Marker(
         markerId: MarkerId('1'),
         position: LatLng(20.42796133580664, 75.885749655962),
-        infoWindow: InfoWindow(
-          title: 'My Position',
-        )
-    ),
-  ];
+    ).obs;
 
   @override
   void onInit() async{
     super.onInit();
+
+  }
+  onMapCreated(GoogleMapController googleMapController){
+    completer.complete(googleMapController);
+    controller = googleMapController;
+    getLocation();
+  }
+
+  onCameraMove(CameraPosition position){
+
+  }
+  onTap(LatLng latLng){
+      setLocation(latLng);
+  }
+  getLocation(){
     Geolocator.getLastKnownPosition().then((value){
       Log("Location", value.toString());
       if(value!=null) {
-        location.value = LatLng(value.latitude, value.longitude);
-        kGoogle.value =
-            CameraPosition(target: LatLng(value.latitude, value.longitude));
-        getAddress(value.latitude, value.longitude);
+        setLocation(LatLng(value.latitude, value.longitude));
       }else{
         throw "lastknownlocation null";
       }
     }).catchError((er){
       Log("Location", er.toString());
+      Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.best).then((value) {
+        if (value != null) {
+          setLocation(LatLng(value.latitude, value.longitude));
+        } else {
+          throw "current location null";
+        }
+      }).catchError((er){
+
+      });
     });
   }
 
+  setLocation(LatLng position){
+    //var position = LatLng(value.latitude, value.longitude);
+    Marker updatedMarker = marker.value.copyWith(
+      positionParam: position,
+    );
+    marker(updatedMarker);
+    location(position);
+    kGoogle(CameraPosition(target: position,zoom: 17.0));
+    getAddress(position.latitude, position.longitude);
+    controller.animateCamera(
+      CameraUpdate.newCameraPosition(
+        kGoogle.value,
+      ),
+    );
+    update();
+  }
   // created method for getting user current location
   Future<Position> getUserCurrentLocation() async {
     await Geolocator.requestPermission().then((value){
