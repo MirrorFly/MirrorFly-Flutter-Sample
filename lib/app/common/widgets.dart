@@ -113,19 +113,16 @@ class ImageNetwork extends GetView<MainController> {
                 width: height,
               );
         },*/
-        progressIndicatorBuilder: (context, str, progress) {
-          Log("progress", str);
+        progressIndicatorBuilder: (context, link, progress) {
           return SizedBox(
             height: height,
             width: width,
             child: const Center(child: CircularProgressIndicator()),
           );
         },
-        errorWidget: (context, error, dynamic) {
-          Log("image", imagedomin + url);
-          Log("imageError", error.toString());
-          Log("imageDynamic", dynamic.toString());
-          if(dynamic.toString().contains("401")){
+        errorWidget: (context, link, error) {
+          Log("imageerror", error.toString());
+          if(error.toString().contains("401")&&url.isNotEmpty){
             controller.getAuthToken();
           }
           return errorWidget ??
