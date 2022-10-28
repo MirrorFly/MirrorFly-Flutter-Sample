@@ -55,7 +55,7 @@ class ChatMessageModel {
   String messageId;
   int messageSentTime;
   MessageStatus messageStatus;
-  String messageTextContent;
+  String? messageTextContent;
   String messageType;
   String senderNickName;
   String senderUserJid;
