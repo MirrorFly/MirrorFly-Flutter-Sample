@@ -28,10 +28,10 @@ class ImageViewView extends GetView<ImageViewController> {
                   minScale: PhotoViewComputedScale.contained * 0.8,
                   // Covered = the smallest possible size to fit the whole screen
                   maxScale: PhotoViewComputedScale.covered * 2,
-                  enableRotation: true,
+                  enableRotation: false,
                   // Set the background color to the "classic white"
                   backgroundDecoration: BoxDecoration(
-                    color: Theme.of(context).canvasColor,
+                    color: Colors.black,
                   ),
                   loadingBuilder: (context, event) => Center(
                     child: CircularProgressIndicator(),
@@ -46,10 +46,10 @@ class ImageViewView extends GetView<ImageViewController> {
                       minScale: PhotoViewComputedScale.contained * 0.8,
                       // Covered = the smallest possible size to fit the whole screen
                       maxScale: PhotoViewComputedScale.covered * 2,
-                      enableRotation: true,
+                      enableRotation: false,
                       // Set the background color to the "classic white"
                       backgroundDecoration: BoxDecoration(
-                        color: Theme.of(context).canvasColor,
+                        color: Colors.black,
                       ),
                       loadingBuilder: (context, event) => Center(
                         child: CircularProgressIndicator(),
