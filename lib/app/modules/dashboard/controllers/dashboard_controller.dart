@@ -28,6 +28,8 @@ class DashboardController extends GetxController {
   }
 
   registerMsgListener() {
+
+    PlatformRepo().listenMessageEvents();
     var onMessageStatusUpdated = PlatformRepo().onMessageReceived;
     onMessageStatusUpdated.listen((event) {
       debugPrint("myupdate" + event.toString());

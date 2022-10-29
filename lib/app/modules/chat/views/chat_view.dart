@@ -19,6 +19,7 @@ import 'package:mirror_fly_demo/app/modules/chat/views/locationsent_view.dart';
 // import 'package:image_picker/image_picker.dart';
 import 'package:mirror_fly_demo/app/routes/app_pages.dart';
 import 'package:mirror_fly_demo/app/widgets/record_button.dart';
+import 'package:swipe_to/swipe_to.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../../common/constants.dart';
@@ -32,8 +33,11 @@ class ChatView extends GetView<ChatController> {
 
   dynamic _pickImageError;
 
+  var screenWidth, screenHeight;
   @override
   Widget build(BuildContext context) {
+    screenHeight = MediaQuery.of(context).size.height;
+    screenWidth = MediaQuery.of(context).size.width;
     return Scaffold(
         appBar: AppBar(
           leadingWidth: 25,
@@ -45,11 +49,10 @@ class ChatView extends GetView<ChatController> {
                 height: 45,
                 clipoval: true,
                 errorWidget: ProfileTextImage(
-                  text: controller.profile.name
-                      .checkNull()
-                      .isEmpty
+                  text: controller.profile.name.checkNull().isEmpty
                       ? controller.profile.mobileNumber.checkNull()
-                      : controller.profile.name.checkNull(), radius: 20,
+                      : controller.profile.name.checkNull(),
+                  radius: 20,
                 ),
               ),
               const SizedBox(
@@ -99,23 +102,15 @@ class ChatView extends GetView<ChatController> {
               onSelected: (value) {
                 if (value == 1) {
                   controller.clearChatHistory();
-                } else if (value == 2) {
-
-                }
+                } else if (value == 2) {}
               },
             ),
           ],
         ),
         body: SafeArea(
           child: Container(
-            width: MediaQuery
-                .of(context)
-                .size
-                .width,
-            height: MediaQuery
-                .of(context)
-                .size
-                .height,
+            width: screenWidth,
+            height: screenHeight,
             decoration: const BoxDecoration(
               image: DecorationImage(
                 image: AssetImage("assets/logos/chat_bg.png"),
@@ -134,8 +129,7 @@ class ChatView extends GetView<ChatController> {
               child: Column(
                 children: [
                   Expanded(
-                    child: Obx(() =>
-                    controller.chatList.isEmpty
+                    child: Obx(() => controller.chatList.isEmpty
                         ? const SizedBox.shrink()
                         : chatListView(controller.chatList.reversed.toList())),
                   ),
@@ -144,19 +138,29 @@ class ChatView extends GetView<ChatController> {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
+                        replyMessageHeader(context),
+                        const Divider(
+                          height: 1,
+                          thickness: 0.29,
+                          color: textblackcolor,
+                        ),
+                        const SizedBox(
+                          height: 10,
+                        ),
                         Row(
                           children: [
                             Flexible(
                               child: Container(
                                 padding: const EdgeInsets.only(left: 10),
-                                margin: const EdgeInsets.all(10),
+                                margin: const EdgeInsets.only(
+                                    left: 10, right: 10, bottom: 10),
                                 width: double.infinity,
                                 decoration: BoxDecoration(
                                   border: Border.all(
                                     color: textcolor,
                                   ),
-                                  borderRadius:
-                                  const BorderRadius.all(Radius.circular(40)),
+                                  borderRadius: const BorderRadius.all(
+                                      Radius.circular(40)),
                                   color: Colors.white,
                                 ),
                                 child: Row(
@@ -167,16 +171,14 @@ class ChatView extends GetView<ChatController> {
                                           if (!controller.showEmoji.value) {
                                             FocusScope.of(context).unfocus();
                                             controller.focusNode
-                                                .canRequestFocus =
-                                            false;
+                                                .canRequestFocus = false;
                                           }
                                           Future.delayed(
                                               const Duration(milliseconds: 500),
-                                                  () {
-                                                controller.showEmoji(
-                                                    !controller.showEmoji
-                                                        .value);
-                                              });
+                                              () {
+                                            controller.showEmoji(
+                                                !controller.showEmoji.value);
+                                          });
                                         },
                                         child: SvgPicture.asset(
                                             'assets/logos/smile.svg')),
@@ -194,8 +196,8 @@ class ChatView extends GetView<ChatController> {
                                         keyboardType: TextInputType.multiline,
                                         minLines: 1,
                                         maxLines: 4,
-                                        controller: controller
-                                            .messageController,
+                                        controller:
+                                            controller.messageController,
                                         focusNode: controller.focusNode,
                                         decoration: const InputDecoration(
                                             hintText: "Start Typing...",
@@ -244,16 +246,21 @@ class ChatView extends GetView<ChatController> {
                             //     child: SvgPicture.asset('assets/logos/send.svg')),
 
                             Obx(() {
-                              return controller.isUserTyping.value ? InkWell(
-                                    onTap: () {
-
-                                      controller.sendMessage(controller.profile);
-                                    },
-                                    child: Padding(
-                                      padding: const EdgeInsets.only(left: 8.0, right: 8.0),
-                                      child: SvgPicture.asset('assets/logos/send.svg'),
-                                    )) : RecordButton(
-                                controller: controller.controller,);
+                              return controller.isUserTyping.value
+                                  ? InkWell(
+                                      onTap: () {
+                                        controller
+                                            .sendMessage(controller.profile);
+                                      },
+                                      child: Padding(
+                                        padding: const EdgeInsets.only(
+                                            left: 8.0, right: 8.0),
+                                        child: SvgPicture.asset(
+                                            'assets/logos/send.svg'),
+                                      ))
+                                  : RecordButton(
+                                      controller: controller.controller,
+                                    );
                             }),
                             const SizedBox(
                               width: 10,
@@ -318,21 +325,38 @@ class ChatView extends GetView<ChatController> {
       controller: controller.scrollController,
       itemBuilder: (context, index) {
         // int reversedIndex = chatList.length - 1 - index;
-        return Container(
-          padding:
-          const EdgeInsets.only(left: 14, right: 14, top: 10, bottom: 10),
-          child: Align(
-            alignment: (chatList[index].isMessageSentByMe
-                ? Alignment.bottomRight
-                : Alignment.bottomLeft),
-            child: Container(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(15),
-                color: (chatList[index].isMessageSentByMe
-                    ? chatsentbgcolor
-                    : Colors.white),
+        return SwipeTo(
+          onRightSwipe: () {
+            var swipeList = controller.chatList.reversed.toList();
+            controller.handleReplyChatMessage(swipeList[index]);
+          },
+          animationDuration: const Duration(milliseconds: 300),
+          offsetDx: 0.2,
+          child: Container(
+            margin:
+                const EdgeInsets.only(left: 14, right: 14, top: 5, bottom: 10),
+            child: Align(
+              alignment: (chatList[index].isMessageSentByMe
+                  ? Alignment.bottomRight
+                  : Alignment.bottomLeft),
+              child: Container(
+                constraints:
+                BoxConstraints(maxWidth: screenWidth * 0.6),
+                decoration: BoxDecoration(
+                  borderRadius: chatList[index].isMessageSentByMe ? BorderRadius.only(topLeft: Radius.circular(10), topRight: Radius.circular(10), bottomLeft: Radius.circular(10)) : BorderRadius.only(topLeft: Radius.circular(10), topRight: Radius.circular(10), bottomRight: Radius.circular(10)),
+                  color: (chatList[index].isMessageSentByMe
+                      ? chatsentbgcolor
+                      : Colors.white),
+                  border: chatList[index].isMessageSentByMe ? Border.all(color: chatsentbgcolor) : Border.all(color: Colors.grey)
+                ),
+                child: Column(
+                  children: [
+                    getMessageHeader(chatList[index], context),
+                    getMessageContent(index, context, chatList),
+                  ],
+                ),
+
               ),
-              child: getMessageContent(index, context, chatList),
             ),
           ),
         );
@@ -340,8 +364,8 @@ class ChatView extends GetView<ChatController> {
     );
   }
 
-  getMessageIndicator(String? messageStatus, bool isSender,
-      String messageType) {
+  getMessageIndicator(
+      String? messageStatus, bool isSender, String messageType) {
     // debugPrint("Message Type ==> $messageType");
     if (isSender) {
       if (messageStatus == 'A') {
@@ -362,28 +386,21 @@ class ChatView extends GetView<ChatController> {
     }
   }
 
-  getMessageContent(int index, BuildContext context,
-      List<ChatMessageModel> chatList) {
+  getMessageContent(
+      int index, BuildContext context, List<ChatMessageModel> chatList) {
     debugPrint(json.encode(chatList[index]));
-    if (chatList[index].messageType == 'TEXT') {
-      return Container(
-        constraints: BoxConstraints(maxWidth: MediaQuery
-            .of(context)
-            .size
-            .width * 0.7),
-        padding: const EdgeInsets.all(16.0),
+    if (chatList[index].messageType == Constants.MTEXT) {
+      return Padding(
+        padding: const EdgeInsets.all(10.0),
         child: Row(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
-            Flexible(
+            Expanded(
               child: Text(
-                chatList[index].messageTextContent,
+                chatList[index].messageTextContent!,
                 style: const TextStyle(fontSize: 17),
               ),
-            ),
-            const SizedBox(
-              width: 10,
             ),
             Row(
               children: [
@@ -404,16 +421,16 @@ class ChatView extends GetView<ChatController> {
           ],
         ),
       );
-    } else if (chatList[index].messageType == 'NOTIFICATION') {
+    } else if (chatList[index].messageType == Constants.MNOTIFICATION) {
       return Center(
         child: Padding(
           padding: const EdgeInsets.all(15.0),
-          child: Text(chatList[index].messageTextContent,
+          child: Text(chatList[index].messageTextContent!,
               style:
-              const TextStyle(fontSize: 13, fontWeight: FontWeight.bold)),
+                  const TextStyle(fontSize: 13, fontWeight: FontWeight.bold)),
         ),
       );
-    } else if (chatList[index].messageType == 'IMAGE') {
+    } else if (chatList[index].messageType == Constants.MIMAGE) {
       var chatMessage = chatList[index].mediaChatMessage!;
       //mediaLocalStoragePath
       //mediaThumbImage
@@ -430,14 +447,8 @@ class ChatView extends GetView<ChatController> {
                   chatMessage.mediaFileName),
             ),
             Positioned(
-                top: (MediaQuery
-                    .of(context)
-                    .size
-                    .height * 0.4) / 2.5,
-                left: (MediaQuery
-                    .of(context)
-                    .size
-                    .width * 0.6) / 3,
+                top: (screenHeight * 0.4) / 2.5,
+                left: (screenWidth * 0.6) / 3,
                 child: InkWell(
                     onTap: () {
                       handleMediaUploadDownload(
@@ -468,7 +479,7 @@ class ChatView extends GetView<ChatController> {
           ],
         ),
       );
-    } else if (chatList[index].messageType == 'VIDEO') {
+    } else if (chatList[index].messageType == Constants.MVIDEO) {
       var chatMessage = chatList[index].mediaChatMessage!;
       return Padding(
         padding: const EdgeInsets.all(8.0),
@@ -481,7 +492,7 @@ class ChatView extends GetView<ChatController> {
                 // debugPrint(chatMessage.mediaDownloadStatus == Constants.MEDIA_UPLOADED);
                 if (controller.checkFile(chatMessage.mediaLocalStoragePath) &&
                     (chatMessage.mediaDownloadStatus ==
-                        Constants.MEDIA_DOWNLOADED ||
+                            Constants.MEDIA_DOWNLOADED ||
                         chatMessage.mediaDownloadStatus ==
                             Constants.MEDIA_UPLOADED)) {
                   Get.toNamed(Routes.VIDEO_PLAY, arguments: {
@@ -492,18 +503,12 @@ class ChatView extends GetView<ChatController> {
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(15),
                 child: controller.imageFromBase64String(
-                    chatMessage.mediaThumbImage, context),
+                    chatMessage.mediaThumbImage, context, null, null),
               ),
             ),
             Positioned(
-                top: (MediaQuery
-                    .of(context)
-                    .size
-                    .height * 0.4) / 2.6,
-                left: (MediaQuery
-                    .of(context)
-                    .size
-                    .width * 0.6) / 2.9,
+                top: (screenHeight * 0.4) / 2.6,
+                left: (screenWidth * 0.6) / 2.9,
                 child: InkWell(
                     onTap: () {
                       handleMediaUploadDownload(
@@ -534,7 +539,7 @@ class ChatView extends GetView<ChatController> {
           ],
         ),
       );
-    } else if (chatList[index].messageType == 'DOCUMENT') {
+    } else if (chatList[index].messageType == Constants.MDOCUMENT) {
       return InkWell(
         onTap: () {
           controller.openDocument(
@@ -543,20 +548,17 @@ class ChatView extends GetView<ChatController> {
         child: Container(
           decoration: BoxDecoration(
             border: Border.all(
-              color: Colors.black12,
+              color: chatreplysendercolor,
             ),
             borderRadius: const BorderRadius.all(Radius.circular(10)),
             color: Colors.white,
           ),
-          width: MediaQuery
-              .of(context)
-              .size
-              .width * 0.60,
+          width: screenWidth * 0.60,
           child: Column(
             children: [
               Padding(
                 padding:
-                const EdgeInsets.only(left: 15.0, right: 15.0, top: 10.0),
+                    const EdgeInsets.only(left: 15.0, right: 15.0, top: 10.0),
                 child: Row(
                   children: [
                     getImageHolder(
@@ -566,20 +568,20 @@ class ChatView extends GetView<ChatController> {
                     ),
                     Expanded(
                         child: Text(
-                          chatList[index].mediaChatMessage!.mediaFileName,
-                          maxLines: 2,
-                        )),
+                      chatList[index].mediaChatMessage!.mediaFileName,
+                      maxLines: 2,
+                    )),
                     Spacer(),
                     InkWell(
                       onTap: () {
                         handleMediaUploadDownload(
-                            chatList[index].mediaChatMessage!
+                            chatList[index]
+                                .mediaChatMessage!
                                 .mediaDownloadStatus,
                             chatList[index]);
                       },
                       child: getImageOverlay(chatList, index, context),
                     ),
-
                   ],
                 ),
               ),
@@ -616,12 +618,12 @@ class ChatView extends GetView<ChatController> {
           ),
         ),
       );
-    } else if (chatList[index].messageType == 'CONTACT') {
+    } else if (chatList[index].messageType == Constants.MCONTACT) {
       return InkWell(
         onTap: () {
           Get.toNamed(Routes.PREVIEW_CONTACT, arguments: {
-            "contactList": chatList[index].contactChatMessage!
-                .contactPhoneNumbers,
+            "contactList":
+                chatList[index].contactChatMessage!.contactPhoneNumbers,
             "contactName": chatList[index].contactChatMessage!.contactName,
             "from": "chat"
           });
@@ -629,20 +631,17 @@ class ChatView extends GetView<ChatController> {
         child: Container(
           decoration: BoxDecoration(
             border: Border.all(
-              color: Colors.black12,
+              color: chatreplysendercolor,
             ),
             borderRadius: const BorderRadius.all(Radius.circular(10)),
             color: Colors.white,
           ),
-          width: MediaQuery
-              .of(context)
-              .size
-              .width * 0.60,
+          width: screenWidth * 0.60,
           child: Column(
             children: [
               Padding(
                 padding:
-                const EdgeInsets.only(left: 15.0, right: 15.0, top: 15.0),
+                    const EdgeInsets.only(left: 15.0, right: 15.0, top: 15.0),
                 child: Row(
                   children: [
                     Image.asset(
@@ -655,9 +654,9 @@ class ChatView extends GetView<ChatController> {
                     ),
                     Expanded(
                         child: Text(
-                          chatList[index].contactChatMessage!.contactName,
-                          maxLines: 2,
-                        )),
+                      chatList[index].contactChatMessage!.contactName,
+                      maxLines: 2,
+                    )),
                   ],
                 ),
               ),
@@ -691,20 +690,17 @@ class ChatView extends GetView<ChatController> {
           ),
         ),
       );
-    } else if (chatList[index].messageType == 'AUDIO') {
+    } else if (chatList[index].messageType == Constants.MAUDIO) {
       var chatMessage = chatList[index];
       return Container(
         decoration: BoxDecoration(
           border: Border.all(
-            color: Colors.black12,
+            color: chatreplysendercolor,
           ),
           borderRadius: const BorderRadius.all(Radius.circular(10)),
           color: Colors.white,
         ),
-        width: MediaQuery
-            .of(context)
-            .size
-            .width * 0.60,
+        width: screenWidth * 0.60,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -713,7 +709,7 @@ class ChatView extends GetView<ChatController> {
                 borderRadius: const BorderRadius.only(
                     topLeft: Radius.circular(10),
                     topRight: Radius.circular(10)),
-                color: Colors.black12,
+                color: chatreplysendercolor,
               ),
               child: Padding(
                 padding: const EdgeInsets.all(15),
@@ -759,17 +755,15 @@ class ChatView extends GetView<ChatController> {
                             thumbColor: audiocolordark,
                             overlayShape: SliderComponentShape.noOverlay,
                             thumbShape:
-                            RoundSliderThumbShape(enabledThumbRadius: 5),
+                                RoundSliderThumbShape(enabledThumbRadius: 5),
                           ),
                           child: Slider(
-                            value:
-                            double.parse(
+                            value: double.parse(
                                 controller.currentpos.value.toString()),
                             min: 0,
                             activeColor: audiocolordark,
                             inactiveColor: audiocolor,
-                            max:
-                            double.parse(
+                            max: double.parse(
                                 controller.maxduration.value.toString()),
                             divisions: controller.maxduration.value,
                             // label: controller.currentpostlabel,
@@ -830,7 +824,7 @@ class ChatView extends GetView<ChatController> {
           children: [
             ClipRRect(
               borderRadius: BorderRadius.circular(15),
-              child: getLocationImage(chatList[index]),
+              child: getLocationImage(chatList[index].locationChatMessage, 200, 171),
             ),
             Positioned(
               bottom: 8,
@@ -848,12 +842,10 @@ class ChatView extends GetView<ChatController> {
                   Text(
                     controller.getChatTime(
                         context, chatList[index].messageSentTime),
-                    style:
-                    const TextStyle(fontSize: 12, color: Colors.black),
+                    style: const TextStyle(fontSize: 12, color: Colors.black),
                   ),
                 ],
               ),
-
             ),
             /*Positioned(
               bottom: 8,
@@ -882,14 +874,12 @@ class ChatView extends GetView<ChatController> {
     }
   }
 
-  Widget getLocationImage(ChatMessageModel item) {
+  Widget getLocationImage(LocationChatMessage? locationChatMessage, double width, double height) {
     return InkWell(
         onTap: () async {
           //Redirect to Google maps App
           String googleUrl =
-              'https://www.google.com/maps/search/?api=1&query=${item
-              .locationChatMessage!.latitude}, ${item.locationChatMessage!
-              .longitude}';
+              'https://www.google.com/maps/search/?api=1&query=${locationChatMessage.latitude}, ${locationChatMessage.longitude}';
           if (await canLaunchUrl(Uri.parse(googleUrl))) {
             await launchUrl(Uri.parse(googleUrl));
           } else {
@@ -897,22 +887,20 @@ class ChatView extends GetView<ChatController> {
           }
         },
         child: Image.network(
-          Helper.getMapImageUri(item.locationChatMessage!.latitude,
-              item.locationChatMessage!.longitude),
+          Helper.getMapImageUri(locationChatMessage!.latitude,
+              locationChatMessage.longitude),
           fit: BoxFit.fill,
-          width: 200,
-          height: 171,
+          width: width,
+          height: height,
         ));
   }
 
   Widget bottomSheet(BuildContext context) {
     return SizedBox(
       height: 270,
-      width: MediaQuery
-          .of(context)
-          .size
-          .width,
+      width: screenWidth,
       child: Card(
+        color: bottomsheetcolor,
         margin: const EdgeInsets.all(18.0),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
         child: Padding(
@@ -933,7 +921,7 @@ class ChatView extends GetView<ChatController> {
                     Get.back();
 
                     final XFile? photo =
-                    await _picker.pickImage(source: ImageSource.camera);
+                        await _picker.pickImage(source: ImageSource.camera);
                     Get.toNamed(Routes.IMAGEPREVIEW, arguments: {
                       "filePath": photo?.path,
                       "userName": controller.profile.name!
@@ -967,7 +955,7 @@ class ChatView extends GetView<ChatController> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  iconCreation(documentImg, "Audio", () {
+                  iconCreation(audioImg, "Audio", () {
                     Get.back();
                     controller.pickAudio();
                   }),
@@ -987,8 +975,7 @@ class ChatView extends GetView<ChatController> {
                         content: const Text('Permission Denied'),
                         action: SnackBarAction(
                             label: 'Ok',
-                            onPressed: ScaffoldMessenger
-                                .of(context)
+                            onPressed: ScaffoldMessenger.of(context)
                                 .hideCurrentSnackBar),
                       ));
                     }
@@ -1025,29 +1012,25 @@ class ChatView extends GetView<ChatController> {
       onTap: onTap,
       child: Column(
         children: [
-          text == "Audio"
-              ? CircleAvatar(radius: 25, child: Icon(Icons.headphones))
-              : SvgPicture.asset(iconPath),
+          SvgPicture.asset(iconPath),
           const SizedBox(
             height: 5,
           ),
           Text(
             text,
-            style: const TextStyle(
-              fontSize: 12,
-            ),
+            style: const TextStyle(fontSize: 12, color: Colors.white),
           )
         ],
       ),
     );
   }
 
-  getImageOverlay(List<ChatMessageModel> chatList, int index,
-      BuildContext context) {
+  getImageOverlay(
+      List<ChatMessageModel> chatList, int index, BuildContext context) {
     var chatMessage = chatList[index];
 
     if (controller
-        .checkFile(chatMessage.mediaChatMessage!.mediaLocalStoragePath) &&
+            .checkFile(chatMessage.mediaChatMessage!.mediaLocalStoragePath) &&
         chatMessage.messageStatus.status != 'N') {
       if (chatMessage.messageType == 'VIDEO') {
         return SizedBox(
@@ -1055,10 +1038,9 @@ class ChatView extends GetView<ChatController> {
           height: 50,
           child: Center(
               child: SvgPicture.asset(
-                video_play,
-                fit: BoxFit.contain,
-              )
-          ),
+            video_play,
+            fit: BoxFit.contain,
+          )),
         );
       } else if (chatMessage.messageType == 'AUDIO') {
         debugPrint("===============================");
@@ -1073,7 +1055,9 @@ class ChatView extends GetView<ChatController> {
         return SizedBox.shrink();
       }
     } else {
-      switch (chatMessage.isMessageSentByMe ? chatMessage.mediaChatMessage!.mediaUploadStatus : chatMessage.mediaChatMessage!.mediaDownloadStatus) {
+      switch (chatMessage.isMessageSentByMe
+          ? chatMessage.mediaChatMessage!.mediaUploadStatus
+          : chatMessage.mediaChatMessage!.mediaDownloadStatus) {
         case Constants.MEDIA_DOWNLOADED:
         case Constants.MEDIA_UPLOADED:
           return SizedBox.shrink();
@@ -1101,8 +1085,8 @@ class ChatView extends GetView<ChatController> {
                 onTap: () {
                   debugPrint(chatMessage.messageId);
                 },
-                child: Container(
-                    width: 30, height: 30, child: uploadingView()));
+                child:
+                    Container(width: 30, height: 30, child: uploadingView()));
           } else {
             return SizedBox(
               height: 40,
@@ -1118,33 +1102,33 @@ class ChatView extends GetView<ChatController> {
       String messageType) {
     return messageType == 'AUDIO' || messageType == 'DOCUMENT'
         ? Icon(
-      iconData,
-      color: audiocolordark,
-    )
+            iconData,
+            color: audiocolordark,
+          )
         : Container(
-        decoration: BoxDecoration(
-          border: Border.all(
-            color: textcolor,
-          ),
-          borderRadius: const BorderRadius.all(Radius.circular(5)),
-          color: Colors.black38,
-        ),
-        padding: EdgeInsets.symmetric(vertical: 5, horizontal: 10),
-        child: Row(
-          children: [
-            Icon(
-              iconData,
-              color: Colors.white,
+            decoration: BoxDecoration(
+              border: Border.all(
+                color: textcolor,
+              ),
+              borderRadius: const BorderRadius.all(Radius.circular(5)),
+              color: Colors.black38,
             ),
-            SizedBox(
-              width: 5,
-            ),
-            Text(
-              Helper.formatBytes(mediaFileSize, 0),
-              style: TextStyle(color: Colors.white),
-            ),
-          ],
-        ));
+            padding: EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+            child: Row(
+              children: [
+                Icon(
+                  iconData,
+                  color: Colors.white,
+                ),
+                SizedBox(
+                  width: 5,
+                ),
+                Text(
+                  Helper.formatBytes(mediaFileSize, 0),
+                  style: TextStyle(color: Colors.white),
+                ),
+              ],
+            ));
   }
 
   getImage(String mediaLocalStoragePath, String mediaThumbImage,
@@ -1159,25 +1143,20 @@ class ChatView extends GetView<ChatController> {
           },
           child: Image.file(
             File(mediaLocalStoragePath),
-            width: MediaQuery
-                .of(context)
-                .size
-                .width * 0.60,
-            height: MediaQuery
-                .of(context)
-                .size
-                .height * 0.4,
+            width: screenWidth * 0.60,
+            height: screenHeight * 0.4,
             fit: BoxFit.cover,
           ));
     } else {
-      return controller.imageFromBase64String(mediaThumbImage, context);
+      return controller.imageFromBase64String(
+          mediaThumbImage, context, null, null);
     }
   }
 
   uploadingView() {
     return Container(
-      // height: 40,
-      // width: 80,
+        // height: 40,
+        // width: 80,
         decoration: BoxDecoration(
           border: Border.all(
             color: textcolor,
@@ -1186,8 +1165,7 @@ class ChatView extends GetView<ChatController> {
           color: audiobgcolor,
         ),
         // padding: EdgeInsets.symmetric(vertical: 5),
-        child: Stack(
-            alignment: Alignment.center,
+        child: Stack(alignment: Alignment.center,
             // mainAxisAlignment: MainAxisAlignment.center,
             children: [
               SvgPicture.asset(
@@ -1207,38 +1185,37 @@ class ChatView extends GetView<ChatController> {
                   ),
                 ),
               ),
-            ]
-        ));
+            ]));
   }
 
-  handleMediaUploadDownload(int mediaDownloadStatus,
-      ChatMessageModel chatList) {
-    switch (chatList.isMessageSentByMe ? chatList.mediaChatMessage?.mediaUploadStatus : mediaDownloadStatus) {
+  handleMediaUploadDownload(
+      int mediaDownloadStatus, ChatMessageModel chatList) {
+    switch (chatList.isMessageSentByMe
+        ? chatList.mediaChatMessage?.mediaUploadStatus
+        : mediaDownloadStatus) {
       case Constants.MEDIA_DOWNLOADED:
       case Constants.MEDIA_UPLOADED:
-      // return SizedBox.shrink();
         if (chatList.messageType == 'VIDEO') {
           if (controller.checkFile(
-              chatList.mediaChatMessage!.mediaLocalStoragePath) &&
+                  chatList.mediaChatMessage!.mediaLocalStoragePath) &&
               (chatList.mediaChatMessage!.mediaDownloadStatus ==
-                  Constants.MEDIA_DOWNLOADED ||
+                      Constants.MEDIA_DOWNLOADED ||
                   chatList.mediaChatMessage!.mediaDownloadStatus ==
-                      Constants.MEDIA_UPLOADED || chatList.isMessageSentByMe)) {
+                      Constants.MEDIA_UPLOADED ||
+                  chatList.isMessageSentByMe)) {
             Get.toNamed(Routes.VIDEO_PLAY, arguments: {
               "filePath": chatList.mediaChatMessage!.mediaLocalStoragePath,
             });
           }
         }
         if (chatList.messageType == 'AUDIO') {
-          // debugPrint(controller.checkFile(
-          //     chatList.mediaChatMessage!.mediaLocalStoragePath).toString());
-          // debugPrint(chatList.mediaChatMessage!.mediaDownloadStatus.toString());
           if (controller.checkFile(
-              chatList.mediaChatMessage!.mediaLocalStoragePath) &&
+                  chatList.mediaChatMessage!.mediaLocalStoragePath) &&
               (chatList.mediaChatMessage!.mediaDownloadStatus ==
-                  Constants.MEDIA_DOWNLOADED ||
+                      Constants.MEDIA_DOWNLOADED ||
                   chatList.mediaChatMessage!.mediaDownloadStatus ==
-                      Constants.MEDIA_UPLOADED || chatList.isMessageSentByMe)) {
+                      Constants.MEDIA_UPLOADED ||
+                  chatList.isMessageSentByMe)) {
             // debugPrint("audio click1");
             chatList.mediaChatMessage!.isPlaying = controller.isplaying.value;
             // controller.playAudio(chatList.mediaChatMessage!);
@@ -1252,7 +1229,7 @@ class ChatView extends GetView<ChatController> {
 
       case Constants.MEDIA_DOWNLOADED_NOT_AVAILABLE:
       case Constants.MEDIA_NOT_DOWNLOADED:
-      //download
+        //download
         debugPrint("Download");
         debugPrint(chatList.messageId);
         chatList.mediaChatMessage!.mediaDownloadStatus =
@@ -1260,39 +1237,65 @@ class ChatView extends GetView<ChatController> {
         controller.downloadMedia(chatList.messageId);
         break;
       case Constants.MEDIA_UPLOADED_NOT_AVAILABLE:
-      //upload
+        //upload
         break;
       case Constants.MEDIA_NOT_UPLOADED:
       case Constants.MEDIA_DOWNLOADING:
       case Constants.MEDIA_UPLOADING:
-      return uploadingView();
-        // break;
+        return uploadingView();
+      // break;
     }
   }
 
   getAudioFeedButton(ChatMessageModel chatMessage) {}
 
   getImageHolder(String mediaFileName) {
-    String result = mediaFileName
-        .split('.')
-        .last;
+    String result = mediaFileName.split('.').last;
     debugPrint("File Type ==> $result");
     switch (result) {
       case Constants.PDF:
-        return SvgPicture.asset(pdf_image, width: 30, height: 30,);
+        return SvgPicture.asset(
+          pdf_image,
+          width: 30,
+          height: 30,
+        );
       case Constants.PPT:
-        return SvgPicture.asset(ppt_image, width: 30, height: 30,);
+        return SvgPicture.asset(
+          ppt_image,
+          width: 30,
+          height: 30,
+        );
       case Constants.XLS:
-        return SvgPicture.asset(xls_image, width: 30, height: 30,);
+        return SvgPicture.asset(
+          xls_image,
+          width: 30,
+          height: 30,
+        );
       case Constants.XLXS:
-        return SvgPicture.asset(xlsx_image, width: 30, height: 30,);
+        return SvgPicture.asset(
+          xlsx_image,
+          width: 30,
+          height: 30,
+        );
       case Constants.DOC:
       case Constants.DOCX:
-        return SvgPicture.asset(doc_image, width: 30, height: 30,);
+        return SvgPicture.asset(
+          doc_image,
+          width: 30,
+          height: 30,
+        );
       case Constants.APK:
-        return SvgPicture.asset(apk_image, width: 30, height: 30,);
+        return SvgPicture.asset(
+          apk_image,
+          width: 30,
+          height: 30,
+        );
       default:
-        return SvgPicture.asset(doc_image, width: 30, height: 30,);
+        return SvgPicture.asset(
+          doc_image,
+          width: 30,
+          height: 30,
+        );
     }
   }
 
@@ -1317,21 +1320,28 @@ class ChatView extends GetView<ChatController> {
                       height: 50,
                       fit: BoxFit.contain,
                     ),
-
                     Obx(() {
-                      return controller.isplaying.value ? Icon(Icons.pause) :
-                      Icon(Icons.play_arrow);
+                      return controller.isplaying.value
+                          ? Icon(Icons.pause)
+                          : Icon(Icons.play_arrow);
                     }),
                   ],
                 ),
               ),
-              SizedBox(width: 20,),
+              SizedBox(
+                width: 20,
+              ),
               Expanded(
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Text(mediaFileName, maxLines: 2,),
-                    SizedBox(height: 15,),
+                    Text(
+                      mediaFileName,
+                      maxLines: 2,
+                    ),
+                    SizedBox(
+                      height: 15,
+                    ),
                     SizedBox(
                       // width: 168,
                       child: SliderTheme(
@@ -1339,17 +1349,16 @@ class ChatView extends GetView<ChatController> {
                           thumbColor: audiocolordark,
                           overlayShape: SliderComponentShape.noOverlay,
                           thumbShape:
-                          RoundSliderThumbShape(enabledThumbRadius: 5),
+                              RoundSliderThumbShape(enabledThumbRadius: 5),
                         ),
                         child: Obx(() {
                           return Slider(
                             value:
-                            double.parse(controller.currentpos.toString()),
+                                double.parse(controller.currentpos.toString()),
                             min: 0,
                             activeColor: audiocolordark,
                             inactiveColor: audiocolor,
-                            max:
-                            double.parse(
+                            max: double.parse(
                                 controller.maxduration.value.toString()),
                             divisions: controller.maxduration.value,
                             label: controller.currentpostlabel,
@@ -1369,12 +1378,235 @@ class ChatView extends GetView<ChatController> {
                   ],
                 ),
               ),
-
             ],
           ),
-
         ),
       ),
     );
   }
+
+  Widget replyMessageHeader(BuildContext context) {
+    return Obx(() {
+      if (controller.isReplying.value) {
+        return Container(
+          width: double.infinity,
+          padding: const EdgeInsets.all(6),
+          decoration: BoxDecoration(
+            color: chatsentbgcolor,
+          ),
+          child: Container(
+            decoration: BoxDecoration(
+              color: chatreplycontainercolor,
+              borderRadius: BorderRadius.all(Radius.circular(5)),
+            ),
+            child: Row(
+              children: [
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(top: 15.0, left: 15.0),
+                        child: getReplyTitle(controller.replyChatMessage.isMessageSentByMe, controller.replyChatMessage.senderNickName),
+                      ),
+                      const SizedBox(height: 8),
+                      Padding(
+                        padding:
+                            const EdgeInsets.only(bottom: 15.0, left: 15.0),
+                        child: getReplyMessage(controller.replyChatMessage.messageType, controller.replyChatMessage.messageTextContent, controller.replyChatMessage.contactChatMessage?.contactName, controller.replyChatMessage.mediaChatMessage?.mediaFileName),
+                      ),
+                    ],
+                  ),
+                ),
+                Stack(
+                  alignment: Alignment.topRight,
+                  children: [
+                    getReplyImageHolder(context, controller.replyChatMessage.messageType, controller.replyChatMessage.mediaChatMessage?.mediaThumbImage, controller.replyChatMessage.locationChatMessage, 70),
+                    GestureDetector(
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: CircleAvatar(
+                            backgroundColor: Colors.white,
+                            radius: 10,
+                            child: Icon(Icons.close,
+                                size: 15, color: Colors.black)),
+                      ),
+                      onTap: () => controller.cancelReplyMessage(),
+                    ),
+                  ],
+                )
+              ],
+            ),
+          ),
+        );
+        ;
+      } else {
+        return SizedBox.shrink();
+      }
+    });
+  }
+
+  getReplyTitle(bool isMessageSentByMe, String senderNickName) {
+    return isMessageSentByMe
+        ? const Text(
+            'You',
+            style: TextStyle(fontWeight: FontWeight.bold),
+          )
+        : Text(senderNickName,
+            style: const TextStyle(fontWeight: FontWeight.bold));
+  }
+
+  getReplyMessage(String messageType, String? messageTextContent, String? contactName, String? mediaFileName) {
+    debugPrint(messageType);
+    switch (messageType) {
+      case Constants.MTEXT:
+        return Row(
+          children: [
+            Helper.forMessageTypeIcon(Constants.MTEXT),
+            Text(messageTextContent!),
+          ],
+        );
+      case Constants.MIMAGE:
+        return Row(
+          children: [
+            Helper.forMessageTypeIcon(Constants.MIMAGE),
+            SizedBox(
+              width: 10,
+            ),
+            Text(Helper.capitalize(Constants.MIMAGE)),
+          ],
+        );
+      case Constants.MVIDEO:
+        return Row(
+          children: [
+            Helper.forMessageTypeIcon(Constants.MVIDEO),
+            SizedBox(
+              width: 10,
+            ),
+            Text(Helper.capitalize(Constants.MVIDEO)),
+          ],
+        );
+      case Constants.MAUDIO:
+        return Row(
+          children: [
+            Helper.forMessageTypeIcon(Constants.MAUDIO),
+            SizedBox(
+              width: 10,
+            ),
+            // Text(controller.replyChatMessage.mediaChatMessage!.mediaDuration),
+            // SizedBox(
+            //   width: 10,
+            // ),
+            Text(Helper.capitalize(Constants.MAUDIO)),
+          ],
+        );
+      case Constants.MCONTACT:
+        return Row(
+          children: [
+            Helper.forMessageTypeIcon(Constants.MCONTACT),
+            SizedBox(
+              width: 10,
+            ),
+            Text(Helper.capitalize(Constants.MCONTACT) + " :"),
+            SizedBox(
+              width: 5,
+            ),
+            Container(
+              width: 120,
+                child: Text(contactName!, maxLines: 1, softWrap: false, overflow: TextOverflow.ellipsis,)),
+          ],
+        );
+      case Constants.MLOCATION:
+        return Row(
+          children: [
+            Helper.forMessageTypeIcon(Constants.MLOCATION),
+            SizedBox(
+              width: 10,
+            ),
+            Text(Helper.capitalize(Constants.MLOCATION)),
+          ],
+        );
+      case Constants.MDOCUMENT:
+        return Row(
+          children: [
+            Helper.forMessageTypeIcon(Constants.MDOCUMENT),
+            SizedBox(
+              width: 10,
+            ),
+            Text(mediaFileName!),
+          ],
+        );
+      default:
+        return SizedBox.shrink();
+    }
+  }
+
+  getReplyImageHolder(BuildContext context, String messageType, String? mediaThumbImage, LocationChatMessage? locationChatMessage, double size) {
+    switch (messageType) {
+      case Constants.MIMAGE:
+        return ClipRRect(
+          borderRadius: BorderRadius.circular(5),
+          child: controller.imageFromBase64String(
+              mediaThumbImage!,
+              context,
+              size,
+              size),
+        );
+      case Constants.MLOCATION:
+        return getLocationImage(locationChatMessage, size, size);
+      case Constants.MVIDEO:
+        return ClipRRect(
+          borderRadius: BorderRadius.circular(5),
+          child: controller.imageFromBase64String(
+              mediaThumbImage!,
+              context,
+              size,
+              size),
+        );
+      default:
+        return SizedBox(height: size,);
+    }
+  }
+
+  getMessageHeader(ChatMessageModel chatList, BuildContext context) {
+    if (chatList.replyParentChatMessage == null) {
+      return SizedBox.shrink();
+    } else {
+      return Container(
+        padding: EdgeInsets.fromLTRB(12, 0, 0, 0),
+        margin: EdgeInsets.all(2),
+        decoration: BoxDecoration(
+        borderRadius: BorderRadius.all(Radius.circular(10)),
+          color: chatList.isMessageSentByMe ? chatreplycontainercolor : chatreplysendercolor,
+        ),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  getReplyTitle(chatList.replyParentChatMessage!.isMessageSentByMe, chatList.replyParentChatMessage!.senderUserName),
+                  SizedBox(height: 5),
+                  getReplyMessage(chatList.replyParentChatMessage!.messageType, chatList.replyParentChatMessage?.messageTextContent, chatList.replyParentChatMessage?.contactChatMessage?.contactName, chatList.replyParentChatMessage?.mediaChatMessage?.mediaFileName),
+                ],
+              ),
+            ),
+            getReplyImageHolder(context, chatList.replyParentChatMessage!.messageType, chatList.replyParentChatMessage?.mediaChatMessage?.mediaThumbImage, chatList.replyParentChatMessage?.locationChatMessage, 55),
+          ],
+        ),
+      );
+    }
+  }
+
+  // getHeaderContent(ChatMessageModel chatList) {
+  //   switch (chatList.replyParentChatMessage!.messageType){
+  //     case Constants.MTEXT:
+  //       return Text(chatList.replyParentChatMessage!.messageTextContent);
+  //     case Constants.MLOCATION:
+  //
+  //     default:
+  //       return SizedBox.shrink();
+  //   }
+  // }
 }

@@ -18,10 +18,13 @@ const Color textcolor = Color(0xff767676);
 const Color textbuttoncolor = Color(0xffFFFFFF);
 const Color buttonbgcolor = Color(0xff3276E2);
 const Color chatsentbgcolor = Color(0xffe3e9f7);
+const Color chatreplycontainercolor = Color(0xffD0D8EB);
+const Color chatreplysendercolor = Color(0xffEFEFEF);
 const Color dividercolor = Color(0XffE2E2E2);
 const Color audiocolor = Color(0XffB9C1D6);
 const Color audiocolordark = Color(0Xff848FAD);
 const Color audiobgcolor = Color(0Xff848FAD);
+const Color bottomsheetcolor = Color(0Xff242A3F);
 
 //Assets
 const String registericon = 'assets/logos/register_logo.svg';
@@ -46,6 +49,7 @@ const String pencilediticon = 'assets/logos/pencil.svg';
 const String tickicon = 'assets/logos/tick.svg';
 const String smileicon = 'assets/logos/smile.svg';
 
+const String audioImg = 'assets/logos/audio.svg';
 const String documentImg = 'assets/logos/document.svg';
 const String cameraImg = 'assets/logos/camera.svg';
 const String contactImg = 'assets/logos/contact.svg';
@@ -508,6 +512,7 @@ class Constants {
   static const String MCONTACT = "CONTACT";
   static const String MLOCATION = "LOCATION";
   static const String MDOCUMENT = "DOCUMENT";
+  static const String MNOTIFICATION = "NOTIFICATION";
 }
 
 Future<void> launchWeb(String url) async{

@@ -10,6 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:mirror_fly_demo/app/model/chatMessageModel.dart';
+import 'package:mirror_fly_demo/app/model/chatmessage_model.dart';
 import 'package:mirror_fly_demo/app/nativecall/platformRepo.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -32,6 +33,10 @@ class ChatController extends GetxController
     keepScrollOffset: true,
   );
 
+
+  late ChatMessageModel replyChatMessage;
+
+  var isReplying = false.obs;
 
   String currentpostlabel = "00:00";
 
@@ -184,9 +189,15 @@ class ChatController extends GetxController
   }
 
   sendMessage(Profile profile) {
+    var replyMessageId = "";
+
+    if(isReplying.value){
+      replyMessageId = replyChatMessage.messageId;
+    }
+    isReplying(false);
     if (messageController.text.trim().isNotEmpty) {
       PlatformRepo()
-          .sendTextMessage(messageController.text, profile.jid.toString())
+          .sendTextMessage(messageController.text, profile.jid.toString(), replyMessageId)
           .then((value) {
         messageController.text = "";
         ChatMessageModel chatMessageModel = sendMessageModelFromJson(value);
@@ -279,13 +290,13 @@ class ChatController extends GetxController
   }
 
 
-  Image imageFromBase64String(String base64String, BuildContext context) {
+  Image imageFromBase64String(String base64String, BuildContext context, double? width, double? height) {
     var decodedBase64 = base64String.replaceAll("\n", "");
     Uint8List image = const Base64Decoder().convert(decodedBase64);
     return Image.memory(
       image,
-      width: MediaQuery.of(context).size.width * 0.60,
-      height: MediaQuery.of(context).size.height * 0.4,
+      width: width ?? MediaQuery.of(context).size.width * 0.60,
+      height: height ?? MediaQuery.of(context).size.height * 0.4,
       fit: BoxFit.cover,
     );
   }
@@ -547,6 +558,20 @@ class ChatController extends GetxController
         chatList.clear();
       }
     });
+  }
+
+  void handleReplyChatMessage(ChatMessageModel chatListItem) {
+    debugPrint(chatListItem.messageType);
+    if(isReplying.value){
+      isReplying(false);
+    }
+    replyChatMessage = chatListItem;
+    isReplying(true);
+
+  }
+
+  cancelReplyMessage() {
+    isReplying(false);
   }
 
 

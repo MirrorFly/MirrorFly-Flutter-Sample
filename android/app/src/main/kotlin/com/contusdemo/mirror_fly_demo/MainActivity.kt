@@ -203,7 +203,7 @@ override fun onCreate(savedInstanceState: Bundle?) {
                 //called when the new message is received
 
                 Log.e("MirrorFly", "message Received")
-                Log.e("Message Received", message.messageTextContent.toString())
+                DebugUtilis.v("Message Received", message.messageTextContent)
                 Log.e("Message Received", Gson().toJson(message))
 //                onMessageReceived?.success(Gson().toJson(message).toString())
 
@@ -711,10 +711,12 @@ override fun onCreate(savedInstanceState: Bundle?) {
         } else {
             val txtMessage: String? = call.argument("message")
             val receiverJID: String? = call.argument("JID")
-            if (txtMessage != null && receiverJID != null) {
+            val replyMessageID: String? = call.argument("replyMessageId")
+            if (txtMessage != null && receiverJID != null && replyMessageID != null) {
                 FlyMessenger.sendTextMessage(
                     receiverJID,
                     txtMessage,
+                    replyMessageID,
                     listener = object : SendMessageListener {
                         override fun onResponse(isSuccess: Boolean, chatMessage: ChatMessage?) {
                             // you will get the message sent success response

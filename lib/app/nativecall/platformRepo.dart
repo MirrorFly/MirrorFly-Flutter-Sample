@@ -68,11 +68,11 @@ class PlatformRepo {
     }
   }
 
-  Future<dynamic> sendTextMessage(String message, String JID) async {
+  Future<dynamic> sendTextMessage(String message, String JID, String replyMessageId) async {
     dynamic messageResp;
     try {
       messageResp = await mirrorFlyMethodChannel
-          .invokeMethod('send_text_msg', {"message": message, "JID": JID});
+          .invokeMethod('send_text_msg', {"message": message, "JID": JID, "replyMessageId" : replyMessageId});
       debugPrint("Message Result ==> $messageResp");
       return messageResp;
     } on PlatformException catch (e) {
