@@ -20,17 +20,17 @@ class ProfileView extends GetView<ProfileController> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-          appBar: AppBar(
-            title: Text(
-              'Profile',
-              style: TextStyle(color: appbartextcolor),
-            ),
-            centerTitle: true,
-            automaticallyImplyLeading: false,
+    return Scaffold(
+        appBar: AppBar(
+          title: Text(
+            'Profile',
+            style: TextStyle(color: appbartextcolor),
           ),
-          body: SingleChildScrollView(
+          centerTitle: true,
+          automaticallyImplyLeading: false,
+        ),
+        body: SafeArea(
+          child: SingleChildScrollView(
             child: Padding(
               padding: const EdgeInsets.all(15.0),
               child: Column(
@@ -104,16 +104,18 @@ class ProfileView extends GetView<ProfileController> {
                             ),
                           ),
                         ),
-                        Positioned(
-                          right: 10,
-                          bottom: 10,
-                          child: InkWell(
-                            onTap: () {
-                              BottomSheetView(context);
-                            },
-                            child: Image.asset(
-                              'assets/logos/camera_profile_change.png',
-                              height: 40,
+                        Obx(
+                          ()=> Positioned(
+                            right: 10,
+                            bottom: 10,
+                            child: InkWell(
+                              onTap:  controller.loading.value ? null : () {
+                                BottomSheetView(context);
+                              },
+                              child: Image.asset(
+                                'assets/logos/camera_profile_change.png',
+                                height: 40,
+                              ),
                             ),
                           ),
                         )
@@ -232,16 +234,15 @@ class ProfileView extends GetView<ProfileController> {
                   ),
                   Center(
                     child: Obx(
-                      () => controller.loading.value
-                          ? CircularProgressIndicator()
-                          : ElevatedButton(
+                      () => ElevatedButton(
                               style: ElevatedButton.styleFrom(
                                   padding: const EdgeInsets.symmetric(
                                       horizontal: 40, vertical: 15),
                                   textStyle: const TextStyle(fontSize: 14),
                                   shape: const StadiumBorder()),
-                              onPressed: controller.changed.value
+                              onPressed: controller.loading.value ? null : controller.changed.value
                                   ? () {
+                                FocusScope.of(context).unfocus();
                                       if (!controller.loading.value) {
                                         controller.save();
                                       }
@@ -259,8 +260,8 @@ class ProfileView extends GetView<ProfileController> {
                 ],
               ),
             ),
-          )),
-    );
+          ),
+        ));
   }
 
   BottomSheetView(BuildContext context) {
@@ -271,7 +272,7 @@ class ProfileView extends GetView<ProfileController> {
           return SizedBox(
             child: Card(
               shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(15)),
+                  borderRadius: BorderRadius.only(topLeft: Radius.circular(30),topRight: Radius.circular(30))),
               child: Padding(
                 padding:
                     const EdgeInsets.symmetric(horizontal: 10, vertical: 20),

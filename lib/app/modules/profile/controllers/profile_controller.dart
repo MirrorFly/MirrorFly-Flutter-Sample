@@ -33,19 +33,18 @@ class ProfileController extends GetxController {
   var changed = false.obs;
 
   dynamic imageBytes;
-  var from=Routes.LOGIN.obs;
+  var from = Routes.LOGIN.obs;
 
   var name = "".obs;
-
 
   @override
   void onInit() {
     super.onInit();
-    userImgUrl.value  = SessionManagement().getUserImage() ?? "";
-    print("auth : "+SessionManagement().getauthToken().toString());
-    if (Get.arguments!=null) {
+    userImgUrl.value = SessionManagement().getUserImage() ?? "";
+    print("auth : " + SessionManagement().getauthToken().toString());
+    if (Get.arguments != null) {
       from(Get.arguments["from"]);
-      if(from.value==Routes.LOGIN) {
+      if (from.value == Routes.LOGIN) {
         profileMobile.text = Get.arguments['mobile'] ?? "";
       }
     } else {
@@ -55,62 +54,77 @@ class ProfileController extends GetxController {
     //profileStatus.value="I'm Mirrorfly user";
   }
 
-  void save(){
-    if(profileName.text.isEmpty){
+  void save() {
+    if (profileName.text.isEmpty) {
       toToast("Enter Profile Name");
-    }else if(profileEmail.text.isEmpty) {
+    } else if (profileEmail.text.isEmpty) {
       toToast("Enter Profile Email");
-    }else if(profileStatus.value.isEmpty) {
-     toToast("Enter Profile Status");
-    }else{
-      loading.value=true;
-      if(imagepath.value.isNotEmpty){
-        updateProfileImage(imagepath.value,update: true);
-      }else {
-        PlatformRepo().updateProfile(profileName.text.toString(),
-            profileEmail.text.toString(),
-            profileMobile.text.toString(),
-            profileStatus.value.toString(),
-            userImgUrl.value.isEmpty ? null : userImgUrl.value).then((value) {
+    } else if (profileStatus.value.isEmpty) {
+      toToast("Enter Profile Status");
+    } else {
+      loading.value = true;
+      showLoader();
+      if (imagepath.value.isNotEmpty) {
+        updateProfileImage(imagepath.value, update: true);
+      } else {
+        PlatformRepo()
+            .updateProfile(
+                profileName.text.toString(),
+                profileEmail.text.toString(),
+                profileMobile.text.toString(),
+                profileStatus.value.toString(),
+                userImgUrl.value.isEmpty ? null : userImgUrl.value)
+            .then((value) {
           loading.value = false;
+          hideLoader();
           if (value != null) {
             var data = profileUpdateFromJson(value);
             if (data.status != null) {
               toToast(data.message.toString());
               if (data.status!) {
+                changed(false);
                 SessionManagement.setCurrentUser(data.data!);
-                from.value == Routes.SETTINGS ? Get.back() : Get.offNamed(
-                    Routes.DASHBOARD);
+                if (from.value == Routes.LOGIN) {
+                  Get.offNamed(Routes.DASHBOARD);
+                }
               }
             }
           }
         }).catchError((error) {
           loading.value = false;
+          hideLoader();
           debugPrint("issue===> $error");
           toToast(error.toString());
         });
       }
     }
   }
-  updateProfileImage(String path, {bool update = false}){
-    loading.value=true;
-    PlatformRepo().updateProfileImage(path).then((value){
-      loading.value=false;
+
+  updateProfileImage(String path, {bool update = false}) {
+    loading.value = true;
+    showLoader();
+    PlatformRepo().updateProfileImage(path).then((value) {
+      loading.value = false;
       var data = json.decode(value);
       imagepath.value = Constants.EMPTY_STRING;
       userImgUrl.value = data['data']['image'];
       SessionManagement.setUserImage(data['data']['image'].toString());
-      if(update){
+      hideLoader();
+      if (update) {
         save();
       }
-    }).catchError((onError){
-      loading.value=false;
+    }).catchError((onError) {
+      loading.value = false;
+      hideLoader();
     });
   }
+
   remomveProfileImage() {
+    showLoader();
     loading.value = true;
     PlatformRepo().removeProfileImage().then((value) {
       loading.value = false;
+      hideLoader();
       if (value != null) {
         SessionManagement.setUserImage(Constants.EMPTY_STRING);
         isImageSelected.value = false;
@@ -121,16 +135,16 @@ class ProfileController extends GetxController {
       }
     }).catchError((onError) {
       loading.value = false;
+      hideLoader();
     });
   }
 
-
-  getProfile(){
+  getProfile() {
     var jid = SessionManagement().getUserJID().checkNull();
     Log("jid", jid);
-    if(jid.isNotEmpty) {
+    if (jid.isNotEmpty) {
       Log("jid.isNotEmpty", jid.isNotEmpty.toString());
-      loading.value=true;
+      loading.value = true;
       PlatformRepo().getProfile(jid).then((value) {
         loading.value = false;
         var data = profileDataFromJson(value);
@@ -142,7 +156,7 @@ class ProfileController extends GetxController {
             profileStatus.value = data.data!.status ?? "";
             userImgUrl.value =
                 data.data!.image ?? SessionManagement().getUserImage() ?? "";
-            changed((from.value==Routes.LOGIN));
+            changed((from.value == Routes.LOGIN));
             name(data.data!.name.toString());
             update();
           }
@@ -156,123 +170,85 @@ class ProfileController extends GetxController {
   }
 
   Future ImagePicker(BuildContext context) async {
-    FilePickerResult? result = await FilePicker.platform.pickFiles(allowMultiple: false,type: FileType.image);
+    FilePickerResult? result = await FilePicker.platform
+        .pickFiles(allowMultiple: false, type: FileType.image);
     if (result != null) {
       isImageSelected.value = true;
-      Get.to(CropImage(imageFile: File(result.files.single.path!),))?.then((value){
+      Get.to(CropImage(
+        imageFile: File(result.files.single.path!),
+      ))?.then((value) {
         value as MemoryImage;
         imageBytes = value.bytes;
-        writeImageTemp(value.bytes,"profile.jpg").then((value){
-          imagepath(value.path);
-          changed(true);
-          updateProfileImage(value.path);
+        var name ="${DateTime.now().millisecondsSinceEpoch}.jpg";
+        writeImageTemp(value.bytes, name).then((value) {
+          if (from.value == Routes.LOGIN) {
+            imagepath(value.path);
+            changed(true);
+            update();
+          } else {
+            imagepath(value.path);
+            changed(true);
+            updateProfileImage(value.path,update: true);
+          }
         });
       });
-      /*var imgBytes = await File(result.files.single.path!).readAsBytes();
-      ImageCropping.cropImage(
-          context: context,
-          imageBytes: imgBytes,
-          onImageDoneListener: (data) {
-            imageBytes = data;
-            writeImageTemp(data,"temp.jpg").then((value){
-              updateProfileImage(value.path);
-            });
-          },
-          selectedImageRatio: const CropAspectRatio(
-            ratioX: 5,
-            ratioY: 5,
-          ),
-          onImageStartLoading: showLoader,
-          onImageEndLoading: hideLoader,
-          visibleOtherAspectRatios: false,
-          squareBorderWidth: 2,
-          isConstrain: false,
-          squareCircleColor: Colors.orange,
-          defaultTextColor: Colors.black,
-          selectedTextColor: Colors.orange,
-          colorForWhiteSpace: Colors.white,
-          makeDarkerOutside: true,
-          outputImageFormat: OutputImageFormat.jpg,
-          encodingQuality: 10);*/
     } else {
       // User canceled the picker
       isImageSelected.value = false;
     }
   }
 
-  Camera(XFile? result){
+  Camera(XFile? result) {
     if (result != null) {
       isImageSelected.value = true;
-      Get.to(CropImage(imageFile: File(result.path),))?.then((value){
+      Get.to(CropImage(
+        imageFile: File(result.path),
+      ))?.then((value) {
         value as MemoryImage;
         imageBytes = value.bytes;
-        writeImageTemp(value.bytes,"profile.jpg").then((value){
-          imagepath(result.path);
-          changed(true);
-          //updateProfileImage(value.path);
+        var name ="${DateTime.now().millisecondsSinceEpoch}.jpg";
+        writeImageTemp(value.bytes, name).then((value) {
+          if (from.value == Routes.LOGIN) {
+            imagepath(value.path);
+            changed(true);
+          } else {
+            imagepath(value.path);
+            changed(true);
+            updateProfileImage(value.path,update: true);
+          }
         });
       });
-      /*var imgBytes = await File(result.files.single.path!).readAsBytes();
-      ImageCropping.cropImage(
-          context: context,
-          imageBytes: imgBytes,
-          onImageDoneListener: (data) {
-            imageBytes = data;
-            writeImageTemp(data,"temp.jpg").then((value){
-              updateProfileImage(value.path);
-            });
-          },
-          selectedImageRatio: const CropAspectRatio(
-            ratioX: 5,
-            ratioY: 5,
-          ),
-          onImageStartLoading: showLoader,
-          onImageEndLoading: hideLoader,
-          visibleOtherAspectRatios: false,
-          squareBorderWidth: 2,
-          isConstrain: false,
-          squareCircleColor: Colors.orange,
-          defaultTextColor: Colors.black,
-          selectedTextColor: Colors.orange,
-          colorForWhiteSpace: Colors.white,
-          makeDarkerOutside: true,
-          outputImageFormat: OutputImageFormat.jpg,
-          encodingQuality: 10);*/
     } else {
       // User canceled the Camera
       isImageSelected.value = false;
     }
   }
+
   void showLoader() {
-    loading.value=true;
-    if (EasyLoading.isShow) {
-      return;
-    }
-    EasyLoading.show();
+    Helper.progressLoading();
   }
 
   /// To hide loader
   void hideLoader() {
-    loading.value=false;
-    EasyLoading.dismiss();
+    Helper.hideLoading();
   }
 
   Future<File> writeImageTemp(dynamic bytes, String imageName) async {
     final dir = await getTemporaryDirectory();
     await dir.create(recursive: true);
-    final tempFile = File((dir.path)+"/"+imageName);
+    final tempFile = File((dir.path) + "/" + imageName);
     await tempFile.writeAsBytes(bytes);
     return tempFile;
   }
 
-  nameChanges(String text){
+  nameChanges(String text) {
     changed(true);
     name(profileName.text.toString());
     update();
   }
-  onEmailChange(String text){
+
+  onEmailChange(String text) {
     changed(true);
     update();
   }
-
 }

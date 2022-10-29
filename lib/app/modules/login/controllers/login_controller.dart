@@ -33,7 +33,7 @@ class LoginController extends GetxController {
         ),
       );
     }else{
-      Helper.showLoading("Logging In...");
+      Helper.showLoading(message: "Logging In...");
       RegisterModel userData;
       PlatformRepo().registerUser(mobileNumber.text).then((value) {
         if (value.contains("data")) {
