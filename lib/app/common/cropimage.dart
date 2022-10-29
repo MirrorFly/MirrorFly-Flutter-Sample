@@ -43,7 +43,7 @@ class _CropImageState extends State<CropImage> {
               padding: const EdgeInsets.all(20.0),
               child: CustomImageCrop(
                 cropController: controller,
-                shape: CustomCropShape.Circle,
+                shape: CustomCropShape.Square,
                 image: FileImage(widget.imageFile),
               ),
               /*child: Crop.file(
@@ -76,7 +76,7 @@ class _CropImageState extends State<CropImage> {
                 Expanded(
                   child: ElevatedButton(
                     onPressed: () async {
-                      Helper.showLoading("Image Cropping...");
+                      Helper.showLoading(message: "Image Cropping...");
                       await controller.onCropImage().then((image){
                         Helper.hideLoading();
                         Get.back(result: image);
