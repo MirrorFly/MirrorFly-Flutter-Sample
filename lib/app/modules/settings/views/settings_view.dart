@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
+import 'package:mirror_fly_demo/app/data/helper.dart';
 import 'package:mirror_fly_demo/app/modules/settings/controllers/settings_controller.dart';
 import 'package:mirror_fly_demo/app/routes/app_pages.dart';
 
@@ -36,7 +37,22 @@ class SettingsView extends GetView<SettingsController> {
                 "Connection Label", connectionicon, toggleofficon, () {}),
             SettingListItem("Report Log", reporticon, rightarrowicon, () {}),
             SettingListItem("Logout", logouticon, rightarrowicon, () {
-              controller.logout();
+              Helper.showAlert(
+                  message:
+                  "Are you sure want to logout from the app?",
+                  actions: [
+                    TextButton(
+                        onPressed: () {
+                          Get.back();
+                        },
+                        child: const Text("NO")),
+                    TextButton(
+                        onPressed: () {
+                          Get.back();
+                          controller.logout();
+                        },
+                        child: const Text("YES"))
+                  ]);
             }),
         Padding(
               padding: const EdgeInsets.all(20.0),
