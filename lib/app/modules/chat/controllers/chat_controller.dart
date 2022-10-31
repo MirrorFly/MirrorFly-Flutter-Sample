@@ -586,7 +586,6 @@ class ChatController extends GetxController
     }
     replyChatMessage = chatListItem;
     isReplying(true);
-
   }
 
   cancelReplyMessage() {
