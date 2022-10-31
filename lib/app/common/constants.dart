@@ -79,6 +79,15 @@ const String Mvideoicon = 'assets/logos/Video.svg';
 const String Maudioicon = 'assets/logos/noun_Audio_3408360.svg';
 const String cornershadow = 'assets/logos/ic_baloon.png';
 
+const String replyIcon = 'assets/logos/reply.png';
+const String forwardIcon = 'assets/logos/forward.png';
+const String deleteIcon = 'assets/logos/delete.png';
+const String cancelIcon = 'assets/logos/close.png';
+const String favouriteIcon = 'assets/logos/star.png';
+const String unfavouriteIcon = 'assets/logos/star.png';
+const String copyIcon = 'assets/logos/copy.png';
+const String infoIcon = 'assets/logos/info.png';
+
 
 //Strings
 const imagedomin = 'https://api-uikit-qa.contus.us/api/v1/media/';

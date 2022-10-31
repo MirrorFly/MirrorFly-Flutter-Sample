@@ -204,12 +204,10 @@ override fun onCreate(savedInstanceState: Bundle?) {
 
                 Log.e("MirrorFly", "message Received")
                 DebugUtilis.v("Message Received", message.messageTextContent)
-                Log.e("Message Received", Gson().toJson(message))
-//                onMessageReceived?.success(Gson().toJson(message).toString())
+                Log.e("Message Received", message.tojsonString())
 
-                MessageReceivedStreamHandler.onMessageReceived?.success(Gson().toJson(message).toString())
+                MessageReceivedStreamHandler.onMessageReceived?.success(message.tojsonString())
 
-//                chatEventSink?.success(Gson().toJson(message).toString())
             }
 
             override fun onMessageStatusUpdated(messageId: String) {
@@ -220,16 +218,17 @@ override fun onCreate(savedInstanceState: Bundle?) {
 
                 Log.e(TAG, "Message Status Updated ==> $messageId")
                 val message = FlyMessenger.getMessageOfId(messageId);
-                if (message != null && message.messageType == MessageType.IMAGE) {
-                    DebugUtilis.v("STAT", message.mediaChatMessage.mediaThumbImage)
+//                if (message != null && message.messageType == MessageType.IMAGE) {
+//                    DebugUtilis.v("STAT", message.mediaChatMessage.mediaThumbImage)
+//                }
+                if (message != null) {
+                    MessageStatusUpdatedStreamHandler.onMessageStatusUpdated?.success(message.tojsonString())
                 }
-//                chatEventSink?.success(Gson().toJson(message).toString())
-                MessageStatusUpdatedStreamHandler.onMessageStatusUpdated?.success(Gson().toJson(message).toString())
             }
 
             override fun onMediaStatusUpdated(message: ChatMessage) {
                 Log.e(TAG, "media Status Updated ==> $message.messageId");
-                MediaStatusUpdatedStreamHandler.onMediaStatusUpdated?.success(Gson().toJson(message).toString())
+                MediaStatusUpdatedStreamHandler.onMediaStatusUpdated?.success(message.tojsonString())
 
 //                Handler().postDelayed({
 //                    chatEventSink?.success(Gson().toJson(message).toString())
@@ -346,13 +345,13 @@ override fun onCreate(savedInstanceState: Bundle?) {
                 val userJID = if(call.argument<String>("jid")==null) "" else call.argument<String?>("jid").toString()
                 val recent  = FlyCore.getRecentChatOf(userJID)
                 if (recent!=null){
-                    result.success(Gson().toJson(recent))
+                    result.success(recent.tojsonString())
                 }
             }
             call.method.equals("download_media") -> {
                 val media_id = if(call.argument<String>("media_id")==null) "" else call.argument<String?>("media_id").toString()
                 val recent  = FlyMessenger.downloadMedia(media_id)
-                result.success(Gson().toJson(recent))
+                result.success(recent.tojsonString())
             }
             call.method.equals("send_contact") -> {
                sendContact(call, result);
@@ -379,7 +378,7 @@ override fun onCreate(savedInstanceState: Bundle?) {
                 val userJID = call.argument<String>("jid") ?: ""
                 val recent = FlyCore.getRecentChatOf(userJID)
                 if (recent != null) {
-                    result.success(Gson().toJson(recent))
+                    result.success(recent.tojsonString())
                 }
             }
             call.method.equals("getMessageOfId") -> {
@@ -391,11 +390,32 @@ override fun onCreate(savedInstanceState: Bundle?) {
             call.method.equals("clear_chat") -> {
                 clearChats(call, result);
             }
+            call.method.equals("report_chat") -> {
+                reportChat(call, result);
+            }
 
             else -> {
                 result.notImplemented()
             }
 
+        }
+    }
+
+    private fun reportChat(call: MethodCall, result: MethodChannel.Result) {
+        val userJID = call.argument<String>("jid")
+        val chatType = call.argument<String>("chat_type")
+        val selectedMessageID = call.argument<String>("selectedMessageID") ?: ""
+        if (chatType != null && userJID != null) {
+            FlyCore.reportUserOrMessages(userJID, chatType, selectedMessageID) {isSuccess, throwable, data ->
+                if (isSuccess) {
+                    DebugUtilis.v(TAG, data.tojsonString())
+                    result.success(data)
+                } else {
+                    result.error("500", "Unable to report the User/Chat", null)
+                }
+            }
+        }else{
+            result.error("500", "Parameters Missing", null)
         }
     }
 
@@ -428,7 +448,7 @@ override fun onCreate(savedInstanceState: Bundle?) {
         val userJID = call.argument<String>("jid")
         val filePath = call.argument<String>("filePath") ?: ""
         val audioFile = File(filePath)
-        val replyMessageID = call.argument<String>("replyMessageID") ?: ""
+        val replyMessageID = call.argument<String>("replyMessageId") ?: ""
         val isRecorded = call.argument<Boolean>("isRecorded")
         val duration = call.argument<String>("duration")?.toLong()
 
@@ -439,7 +459,7 @@ override fun onCreate(savedInstanceState: Bundle?) {
                 override fun onResponse(isSuccess: Boolean, chatMessage: ChatMessage?) {
                     if (chatMessage != null) {
                         Log.i(TAG, "Audio message sent")
-                        result.success(Gson().toJson(chatMessage))
+                        result.success(chatMessage.tojsonString())
                     }else{
                         result.error("500", "Unable to Send Audio Message", null)
                     }
@@ -452,12 +472,13 @@ override fun onCreate(savedInstanceState: Bundle?) {
         val contact_list = call.argument<List<String>>("contact_list")
         val userJID = call.argument<String>("jid")
         val contactName = call.argument<String>("contact_name")
+        val replyMessageID = call.argument<String>("replyMessageId") ?: ""
 
         if (userJID != null && contact_list != null && contactName != null) {
-            FlyMessenger.sendContactMessage(userJID, contactName, contact_list, "", object : SendMessageListener {
+            FlyMessenger.sendContactMessage(userJID, contactName, contact_list, replyMessageID, object : SendMessageListener {
                 override fun onResponse(isSuccess: Boolean, chatMessage: ChatMessage?) {
                     if (chatMessage != null) {
-                        result.success(Gson().toJson(chatMessage))
+                        result.success(chatMessage.tojsonString())
                     }else{
                         result.error("500", "Unable to Send Contact Message", null)
                     }
@@ -474,14 +495,14 @@ override fun onCreate(savedInstanceState: Bundle?) {
         val videoFile = File(filePath)
 
         val caption = call.argument<String>("caption") ?: ""
-        val replyMessageID = call.argument<String>("replyMessageID") ?: ""
+        val replyMessageID = call.argument<String>("replyMessageId") ?: ""
 
         FlyMessenger.sendVideoMessage(userJid, videoFile, caption, replyMessageID, object : SendMessageListener {
 
             override fun onResponse(isSuccess: Boolean, chatMessage: ChatMessage?) {
                 if (chatMessage != null){
-                    DebugUtilis.v(TAG, Gson().toJson(chatMessage));
-                    result.success(Gson().toJson(chatMessage))
+                    DebugUtilis.v(TAG, chatMessage.tojsonString());
+                    result.success(chatMessage.tojsonString())
                 }else{
                     result.error("500", "Unable to Send Video Message", null)
                 }
@@ -519,10 +540,10 @@ override fun onCreate(savedInstanceState: Bundle?) {
             val array = Base64.decode(base64Img, Base64.DEFAULT);
 
             DebugUtilis.v("MEDIA_DETAIL1", array.toString())
-            DebugUtilis.v("MEDIA_DETAIL", Gson().toJson(message).toString())
+            DebugUtilis.v("MEDIA_DETAIL", message.tojsonString())
 
-//            Log.i(TAG, Gson().toJson(message).toString())
-            result.success(Gson().toJson(message).toString())
+//            Log.i(TAG, (message).toString())
+            result.success(message.tojsonString())
         }else{
             result.error("500", "Media Details Not Found", null)
         }
@@ -541,9 +562,9 @@ override fun onCreate(savedInstanceState: Bundle?) {
                 if (userJID != null) {
                     val messages : List<ChatMessage> = FlyMessenger.getMessagesOfJid(userJID)
 
-                    DebugUtilis.v("MESSAGE_HISTORY", Gson().toJson(messages).toString())
+                    DebugUtilis.v("MESSAGE_HISTORY", messages.tojsonString())
 
-                    result.success(Gson().toJson(messages))
+                    result.success(messages.tojsonString())
                 }else{
                     result.error("500", "User JID is Empty", null)
                 }
@@ -561,7 +582,7 @@ override fun onCreate(savedInstanceState: Bundle?) {
                 data["status"]=isSuccess
                 Log.d("registered",""+isSuccess+" : "+data+" : "+throwable)
                 if (isSuccess) {
-                    result.success(Gson().toJson(data))
+                    result.success(data.tojsonString())
                 } else {
                     println("friends error : " + throwable.toString())
                     result.error("400",throwable!!.message.toString(),"")
@@ -628,7 +649,7 @@ override fun onCreate(savedInstanceState: Bundle?) {
             }*/
             ContactManager.updateMyProfile(profileObj) { isSuccess, throwable, data ->
                 data["status"] = isSuccess
-                result.success(Gson().toJson(data))
+                result.success(data.tojsonString())
             }
         } else {
             result.error(
@@ -647,7 +668,7 @@ override fun onCreate(savedInstanceState: Bundle?) {
                 if (imagefile.exists()) {
                     ContactManager.updateMyProfileImage(imagefile) { isSuccess, throwable, data ->
                         data["status"] = isSuccess
-                        result.success(Gson().toJson(data))
+                        result.success(data.tojsonString())
                     }
                 } else {
                     result.error("400", "Image File Not Exist", null)
@@ -666,7 +687,7 @@ override fun onCreate(savedInstanceState: Bundle?) {
     private fun removeProfileImage(call: MethodCall, result: MethodChannel.Result) {
         ContactManager.removeProfileImage { isSuccess, throwable, data ->
             data["status"] = isSuccess
-            result.success(Gson().toJson(data))
+            result.success(data.tojsonString())
         }
     }
 
@@ -679,7 +700,7 @@ override fun onCreate(savedInstanceState: Bundle?) {
                     if (isSuccess) {
                         insertStatus(call, null);
                     }
-                    result.success(Gson().toJson(data))
+                    result.success(data.tojsonString())
                 }
             }
         }else{
@@ -700,7 +721,7 @@ override fun onCreate(savedInstanceState: Bundle?) {
 
                 data["status"] = isSuccess
                 Log.i(TAG,"getProfile => "+data.toString());
-                result.success(Gson().toJson(data))
+                result.success(data.tojsonString())
             }
         })
     }
@@ -723,9 +744,10 @@ override fun onCreate(savedInstanceState: Bundle?) {
                             if (isSuccess) {
                                 android.util.Log.i(TAG, "Message Sent Successfully")
                                 android.util.Log.i(TAG, "chat Message==> $chatMessage")
-                                android.util.Log.i(TAG, Gson().toJson(chatMessage).toString())
-//                                chatEventSink?.success(Gson().toJson(chatMessage).toString())
-                                result.success(Gson().toJson(chatMessage).toString())
+                                if (chatMessage != null) {
+                                    android.util.Log.i(TAG, chatMessage.tojsonString())
+                                    result.success(chatMessage.tojsonString())
+                                }
                             } else {
                                 android.util.Log.e(TAG, "Message sent Failed")
                             }
@@ -775,9 +797,11 @@ override fun onCreate(savedInstanceState: Bundle?) {
                             if (isSuccess) {
                                 android.util.Log.i(TAG, "Message Sent Successfully")
                                 android.util.Log.i(TAG, "chat Message==> $chatMessage")
-                                android.util.Log.i(TAG, Gson().toJson(chatMessage).toString())
-                                chatEventSink?.success(Gson().toJson(chatMessage).toString())
-                                result.success(Gson().toJson(chatMessage).toString())
+                                if (chatMessage != null) {
+                                    android.util.Log.i(TAG, chatMessage.tojsonString())
+                                    chatEventSink?.success(chatMessage.tojsonString())
+                                    result.success(chatMessage.tojsonString())
+                                }
                             } else {
                                 android.util.Log.e(TAG, "Message sent Failed")
                                 result.error("500", "Message sent Failed", null)
@@ -796,12 +820,13 @@ override fun onCreate(savedInstanceState: Bundle?) {
         val userJid = call.argument<String>("jid") ?: ""
         val latitude = call.argument<Double>("latitude") ?: 00.0
         val longitude = call.argument<Double>("longitude") ?: 00.0
-        val reply = call.argument<String>("reply") ?: ""
-        if (userJid.isNotEmpty()&&latitude!=00.0&&longitude!=00.0) {
-            FlyMessenger.sendLocationMessage(userJid, latitude, longitude, reply, object : SendMessageListener {
+        val replyMessageId: String? = call.argument("replyMessageId")
+
+        if (userJid.isNotEmpty()&&latitude!=00.0&&longitude!=00.0 && replyMessageId != null) {
+            FlyMessenger.sendLocationMessage(userJid, latitude, longitude, replyMessageId, object : SendMessageListener {
                 override fun onResponse(isSuccess: Boolean, message: ChatMessage?) {
                     if (message != null) {
-                        result.success(Gson().toJson(message).toString())
+                        result.success(message.tojsonString())
                     }else{
                         result.error("400", "Message Not Sent", null)
                     }
@@ -826,7 +851,7 @@ override fun onCreate(savedInstanceState: Bundle?) {
 
 //        val fileLocalPath = call.argument<String>("localPath") ?: ""
         val caption = call.argument<String>("caption") ?: ""
-        val replyMessageID = call.argument<String>("replyMessageID") ?: ""
+        val replyMessageID = call.argument<String>("replyMessageId") ?: ""
 
 
         val thumbnailBase64 = getImageThumbImage(filePath)
@@ -925,7 +950,7 @@ override fun onCreate(savedInstanceState: Bundle?) {
 
     private fun getStatusList(result: MethodChannel.Result){
         val status = FlyCore.getProfileStatusList()
-        result.success(Gson().toJson(status).toString())
+        result.success(status.tojsonString())
     }
     private fun insertStatus(call: MethodCall,result: MethodChannel.Result?){
         if (AppUtils.isNetConnected(this)) {

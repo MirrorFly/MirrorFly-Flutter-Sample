@@ -64,6 +64,10 @@ class ChatController extends GetxController
 
   var isLive = false;
 
+  var isSelected = false.obs;
+
+  var selectedChatList = List<ChatMessageModel>.empty(growable: true).obs;
+
   @override
   void onInit() {
     super.onInit();
@@ -150,21 +154,6 @@ class ChatController extends GetxController
         if(isLive) {
           sendReadReceipt();
         }
-      // if (index >= 0) {
-      //   debugPrint("already Value Exists ===> $index");
-      //   chatList[index] = chatMessageModel;
-      // } else if(index == -1){
-      //   debugPrint("value not found");
-      //   chatList.add(chatMessageModel);
-      //   if(isLive) {
-      //     sendReadReceipt();
-      //   }
-      // }else{
-      //   debugPrint("Issue updating Message ==>$index");
-      // }
-
-      // ChatMessageModel chatMessageModel = sendMessageModelFromJson(msgData);
-      // chatList.add(chatMessageModel);
     });
 
 
@@ -207,8 +196,14 @@ class ChatController extends GetxController
   }
 
   sendLocationMessage(Profile profile, double latitude, double longitude) {
+    var replyMessageId = "";
+    if(isReplying.value){
+      replyMessageId = replyChatMessage.messageId;
+    }
+    isReplying(false);
+
     PlatformRepo()
-        .sentLocationMessage(null, profile.jid.toString(), latitude, longitude)
+        .sentLocationMessage(profile.jid.toString(), latitude, longitude, replyMessageId)
         .then((value) {
       Log("Location_msg", value.toString());
       ChatMessageModel chatMessageModel = sendMessageModelFromJson(value);
@@ -303,6 +298,10 @@ class ChatController extends GetxController
 
   sendImageMessage(String? path, String? caption, String? replyMessageID) {
     debugPrint("Path ==> $path");
+    if(isReplying.value){
+      replyMessageID = replyChatMessage.messageId;
+    }
+    isReplying(false);
     if(File(path!).existsSync()) {
       return PlatformRepo()
           .sendImageMessage(profile.jid!, path, caption, replyMessageID)
@@ -349,7 +348,7 @@ class ChatController extends GetxController
       // User canceled the picker
     }
   }
-  Future documetPickUpload() async {
+  Future documentPickUpload() async {
     FilePickerResult? result = await FilePicker.platform.pickFiles(allowMultiple: false,type: FileType.custom, allowedExtensions: ['pdf', 'ppt', 'xls', 'doc', 'docx', 'xlsx'],);
     if (result != null && File(result.files.single.path!).existsSync()) {
       debugPrint(result.files.first.extension);
@@ -368,6 +367,10 @@ class ChatController extends GetxController
   }
 
   sendVideoMessage(String videoPath, String caption, String replyMessageID) {
+    if(isReplying.value){
+      replyMessageID = replyChatMessage.messageId;
+    }
+    isReplying(false);
     return PlatformRepo()
         .sendMediaMessage(profile.jid!, videoPath, caption, replyMessageID)
         .then((value) {
@@ -474,7 +477,13 @@ class ChatController extends GetxController
   }
 
   sendContactMessage(List<String> contactList, String contactName) {
-    return PlatformRepo().sendContacts(contactList, profile.jid!, contactName).then((value){
+    var replyMessageId = "";
+
+    if(isReplying.value){
+      replyMessageId = replyChatMessage.messageId;
+    }
+    isReplying(false);
+    return PlatformRepo().sendContacts(contactList, profile.jid!, contactName, replyMessageId).then((value){
       ChatMessageModel chatMessageModel = sendMessageModelFromJson(value);
       chatList.add(chatMessageModel);
       return chatMessageModel;
@@ -482,6 +491,10 @@ class ChatController extends GetxController
   }
 
   sendDocumentMessage(String documentPath, String replyMessageId) {
+    if(isReplying.value){
+      replyMessageId = replyChatMessage.messageId;
+    }
+    isReplying(false);
     PlatformRepo().sendDocument(profile.jid!, documentPath, replyMessageId).then((value){
       ChatMessageModel chatMessageModel = sendMessageModelFromJson(value);
       chatList.add(chatMessageModel);
@@ -533,15 +546,21 @@ class ChatController extends GetxController
       player.onDurationChanged.listen((Duration duration) {
         print('max duration: ${duration.inMilliseconds}');
         filePath.value = (result.files.single.path!);
-        sendAudioMessage(filePath.value, "",false, duration.inMilliseconds.toString());
+        sendAudioMessage(filePath.value,false, duration.inMilliseconds.toString());
       });
     } else {
       // User canceled the picker
     }
   }
 
-  sendAudioMessage(String filePath, String messageid, bool isRecorded, String duration) {
-    PlatformRepo().sendAudio(profile.jid!, filePath, messageid,isRecorded,duration).then((value){
+  sendAudioMessage(String filePath, bool isRecorded, String duration) {
+    var replyMessageId = "";
+
+    if(isReplying.value){
+      replyMessageId = replyChatMessage.messageId;
+    }
+    isReplying(false);
+    PlatformRepo().sendAudio(profile.jid!, filePath,isRecorded,duration,replyMessageId).then((value){
       ChatMessageModel chatMessageModel = sendMessageModelFromJson(value);
       chatList.add(chatMessageModel);
       return chatMessageModel;
@@ -574,7 +593,23 @@ class ChatController extends GetxController
     isReplying(false);
   }
 
+  reportChatOrUser(){
+    var chatMessage = selectedChatList.isNotEmpty ? selectedChatList[0] : null;
+    PlatformRepo().reportChatOrUser(profile.jid!, chatMessage?.messageChatType ?? "chat", chatMessage?.messageId ?? "").then((value) {
+      //report success
+      debugPrint(value);
 
+    }).catchError((onError){
+      //report failed
+      debugPrint(onError.toString());
+    });
+  }
+
+  copyTextMessages(){
+
+    PlatformRepo().copyTextMessages();
+
+  }
 
 
 }
