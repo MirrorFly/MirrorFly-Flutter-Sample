@@ -76,19 +76,22 @@ class ProfileView extends GetView<ProfileController> {
                                             : null,
                                       ),
                                 onTap: () {
-                                  if(controller.imagepath.value.checkNull().isNotEmpty){
-                                    Get.toNamed(Routes.IMAGE_VIEW, arguments: {
-                                      'imageName': controller.profileName.text,
-                                      'imagePath': controller.imagepath.value.checkNull()
-                                    });
-
-                                  }else if (controller.userImgUrl.value
+                                  if (controller.imagepath.value
                                       .checkNull()
                                       .isNotEmpty) {
                                     Get.toNamed(Routes.IMAGE_VIEW, arguments: {
                                       'imageName': controller.profileName.text,
-                                      'imageurl': imagedomin + controller.userImgUrl.value
-                                          .checkNull()
+                                      'imagePath':
+                                          controller.imagepath.value.checkNull()
+                                    });
+                                  } else if (controller.userImgUrl.value
+                                      .checkNull()
+                                      .isNotEmpty) {
+                                    Get.toNamed(Routes.IMAGE_VIEW, arguments: {
+                                      'imageName': controller.profileName.text,
+                                      'imageurl': imagedomin +
+                                          controller.userImgUrl.value
+                                              .checkNull()
                                     });
                                   }
                                 },
@@ -105,13 +108,15 @@ class ProfileView extends GetView<ProfileController> {
                           ),
                         ),
                         Obx(
-                          ()=> Positioned(
+                          () => Positioned(
                             right: 10,
                             bottom: 10,
                             child: InkWell(
-                              onTap:  controller.loading.value ? null : () {
-                                BottomSheetView(context);
-                              },
+                              onTap: controller.loading.value
+                                  ? null
+                                  : () {
+                                      BottomSheetView(context);
+                                    },
                               child: Image.asset(
                                 'assets/logos/camera_profile_change.png',
                                 height: 40,
@@ -235,26 +240,30 @@ class ProfileView extends GetView<ProfileController> {
                   Center(
                     child: Obx(
                       () => ElevatedButton(
-                              style: ElevatedButton.styleFrom(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 40, vertical: 15),
-                                  textStyle: const TextStyle(fontSize: 14),
-                                  shape: const StadiumBorder()),
-                              onPressed: controller.loading.value ? null : controller.changed.value
-                                  ? () {
-                                FocusScope.of(context).unfocus();
-                                      if (!controller.loading.value) {
-                                        controller.save();
-                                      }
+                        style: ElevatedButton.styleFrom(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 40, vertical: 15),
+                            textStyle: const TextStyle(fontSize: 14),
+                            shape: const StadiumBorder()),
+                        onPressed: controller.loading.value
+                            ? null
+                            : controller.changed.value
+                                ? () {
+                                    FocusScope.of(context).unfocus();
+                                    if (!controller.loading.value) {
+                                      controller.save();
                                     }
-                                  : null,
-                              child: Text(
-                                controller.from.value == Routes.LOGIN ? 'Save' : controller.changed.value
-                                    ? 'Update & Continue'
-                                    : 'Save',
-                                style: TextStyle(fontWeight: FontWeight.w600),
-                              ),
-                            ),
+                                  }
+                                : null,
+                        child: Text(
+                          controller.from.value == Routes.LOGIN
+                              ? 'Save'
+                              : controller.changed.value
+                                  ? 'Update & Continue'
+                                  : 'Save',
+                          style: TextStyle(fontWeight: FontWeight.w600),
+                        ),
+                      ),
                     ),
                   ),
                 ],
@@ -272,7 +281,9 @@ class ProfileView extends GetView<ProfileController> {
           return SizedBox(
             child: Card(
               shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.only(topLeft: Radius.circular(30),topRight: Radius.circular(30))),
+                  borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(30),
+                      topRight: Radius.circular(30))),
               child: Padding(
                 padding:
                     const EdgeInsets.symmetric(horizontal: 10, vertical: 20),
@@ -301,7 +312,22 @@ class ProfileView extends GetView<ProfileController> {
                         ? TextButton(
                             onPressed: () {
                               Get.back();
-                              controller.remomveProfileImage();
+                              Helper.showAlert(
+                                  message:
+                                      "Are you sure want to remove the photo?",
+                                  actions: [
+                                    TextButton(
+                                        onPressed: () {
+                                          Get.back();
+                                        },
+                                        child: const Text("CANCEL")),
+                                    TextButton(
+                                        onPressed: () {
+                                          Get.back();
+                                          controller.remomveProfileImage();
+                                        },
+                                        child: const Text("REMOVE"))
+                                  ]);
                             },
                             child: const Text(
                               "Remove Profile Image",

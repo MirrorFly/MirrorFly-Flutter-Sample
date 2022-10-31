@@ -50,6 +50,18 @@ class Helper {
         barrierColor: Colors.transparent);
   }
 
+  static void showAlert({String? title,required String message,List<Widget>? actions}) {
+    Get.dialog(
+      AlertDialog(
+        title: title!=null ? Text(title) : null,
+        contentPadding: EdgeInsets.only(top: 20,right: 20,left: 20),
+        content: Text(message),
+        contentTextStyle: TextStyle(color: texthintcolor,fontWeight: FontWeight.w500),
+        actions: actions,
+      ),
+    );
+  }
+
 //hide loading
   static void hideLoading() {
     if (Get.isDialogOpen!) {

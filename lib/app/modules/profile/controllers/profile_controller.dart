@@ -130,7 +130,11 @@ class ProfileController extends GetxController {
         isImageSelected.value = false;
         isUserProfileRemoved.value = true;
         userImgUrl(Constants.EMPTY_STRING);
-        changed(true);
+        if (from.value == Routes.LOGIN) {
+          changed(true);
+        } else {
+          save();
+        }
         update();
       }
     }).catchError((onError) {
