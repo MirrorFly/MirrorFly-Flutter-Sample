@@ -79,14 +79,14 @@ const String Mvideoicon = 'assets/logos/Video.svg';
 const String Maudioicon = 'assets/logos/noun_Audio_3408360.svg';
 const String cornershadow = 'assets/logos/ic_baloon.png';
 
-const String replyIcon = 'assets/logos/reply.png';
-const String forwardIcon = 'assets/logos/forward.png';
-const String deleteIcon = 'assets/logos/delete.png';
-const String cancelIcon = 'assets/logos/close.png';
-const String favouriteIcon = 'assets/logos/star.png';
-const String unfavouriteIcon = 'assets/logos/star.png';
-const String copyIcon = 'assets/logos/copy.png';
-const String infoIcon = 'assets/logos/info.png';
+const String replyIcon = 'assets/logos/reply.svg';
+const String forwardIcon = 'assets/logos/forward.svg';
+const String deleteIcon = 'assets/logos/delete.svg';
+const String cancelIcon = 'assets/logos/close.svg';
+const String favouriteIcon = 'assets/logos/star.svg';
+const String unfavouriteIcon = 'assets/logos/star.svg';
+const String copyIcon = 'assets/logos/copy.svg';
+const String infoIcon = 'assets/logos/info.svg';
 
 
 //Strings

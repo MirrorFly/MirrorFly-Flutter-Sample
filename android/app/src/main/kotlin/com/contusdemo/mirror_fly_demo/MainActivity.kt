@@ -15,6 +15,7 @@ import androidx.annotation.NonNull
 import androidx.core.content.FileProvider
 import androidx.core.view.WindowCompat
 import com.contus.flycommons.*
+import com.contus.flycommons.Constants.TO_JID
 import com.contus.flycommons.models.MessageType
 import com.contus.xmpp.chat.models.Profile
 import com.contusflysdk.AppUtils
@@ -24,6 +25,7 @@ import com.contusflysdk.api.chat.MessageEventsListener
 import com.contusflysdk.api.contacts.ContactManager
 import com.contusflysdk.api.contacts.ProfileDetails
 import com.contusflysdk.api.models.ChatMessage
+import com.contusflysdk.api.models.ChatMessageStatusDetail
 import com.contusflysdk.api.models.RecentChat
 import com.contusflysdk.media.MediaUploadHelper
 import com.contusflysdk.model.Message
@@ -393,12 +395,94 @@ override fun onCreate(savedInstanceState: Bundle?) {
             call.method.equals("report_chat") -> {
                 reportChat(call, result);
             }
+            call.method.equals("delete_messages") -> {
+                deleteMessages(call, result);
+            }
+            call.method.equals("get_message_info") -> {
+                getMessageInfo(call, result);
+            }
+
+
+            //not implemneted
+            call.method.equals("get_message_using_ids") -> {
+                getMessageUsingIds(call, result);
+            }
 
             else -> {
                 result.notImplemented()
             }
 
         }
+    }
+
+    private fun getMessageInfo(call: MethodCall, result: MethodChannel.Result) {
+        val messageID = call.argument<String>("messageID")
+        val messageStatus: ChatMessageStatusDetail? = messageID?.let {
+            FlyMessenger.getMessageStatusOfASingleChatMessage(
+                it
+            )
+        }
+        if (messageStatus != null) {
+            DebugUtilis.v(TAG, messageStatus.tojsonString())
+            result.success(messageStatus.tojsonString())
+        }else{
+            Log.e(TAG, "Message Info Error")
+        }
+    }
+
+    private fun deleteMessages(call: MethodCall, result: MethodChannel.Result) {
+
+        val isDeleteForEveryOne = call.argument<Boolean>("is_delete_for_everyone")
+        val userJID = call.argument<String>("jid")
+        val chatType = call.argument<String>("chat_type")
+        val messageIDList = call.argument<List<String>>("message_ids")
+        if (userJID != null && messageIDList != null && chatType != null) {
+            if (isDeleteForEveryOne!!) {
+
+                Log.e(TAG, "Delete For EveryOne")
+                ChatManager.deleteMessagesForEveryone(
+                    userJID,
+                    messageIDList,
+                    getDeleteChatEnum(chatType),
+                    false,
+                    object : ChatActionListener {
+                        override fun onResponse(isSuccess: Boolean, message: String) {
+                            if (isSuccess){
+                                result.success(message)
+                            }else{
+                                result.error("500", "Unable to Delete the Chat", message)
+                            }
+                        }
+
+                    })
+            } else {
+
+                Log.e(TAG, "Delete For Me")
+                ChatManager.deleteMessagesForMe(
+                    userJID,
+                    messageIDList,
+                    getDeleteChatEnum(chatType),
+                    false,
+                    object : ChatActionListener {
+                        override fun onResponse(isSuccess: Boolean, message: String) {
+                            if (isSuccess){
+                                result.success(message)
+                            }else{
+                                result.error("500", "Unable to Delete the Chat", message)
+                            }
+                        }
+
+                    })
+            }
+        }
+
+
+
+    }
+
+    private fun getMessageUsingIds(call: MethodCall, result: MethodChannel.Result) {
+//        val messageIDList = call.argument<List<String>>("get_message_using_ids")
+//        FlyMessenger.getMessagesUsingIds(messageIDList)
     }
 
     private fun reportChat(call: MethodCall, result: MethodChannel.Result) {
@@ -443,6 +527,13 @@ override fun onCreate(savedInstanceState: Bundle?) {
             else -> ChatTypeEnum.broadcast
         }
     }
+    private fun getDeleteChatEnum(chatType: String): DeleteChatType {
+        return when (chatType) {
+            ChatType.TYPE_CHAT -> DeleteChatType.chat
+            ChatType.TYPE_GROUP_CHAT -> DeleteChatType.groupchat
+            else -> DeleteChatType.chat
+        }
+    }
 
     private fun sendaudioMessage(call: MethodCall, result: MethodChannel.Result) {
         val userJID = call.argument<String>("jid")
@@ -469,13 +560,13 @@ override fun onCreate(savedInstanceState: Bundle?) {
     }
 
     private fun sendContact(call: MethodCall, result: MethodChannel.Result) {
-        val contact_list = call.argument<List<String>>("contact_list")
+        val contactList = call.argument<List<String>>("contact_list")
         val userJID = call.argument<String>("jid")
         val contactName = call.argument<String>("contact_name")
         val replyMessageID = call.argument<String>("replyMessageId") ?: ""
 
-        if (userJID != null && contact_list != null && contactName != null) {
-            FlyMessenger.sendContactMessage(userJID, contactName, contact_list, replyMessageID, object : SendMessageListener {
+        if (userJID != null && contactList != null && contactName != null) {
+            FlyMessenger.sendContactMessage(userJID, contactName, contactList, replyMessageID, object : SendMessageListener {
                 override fun onResponse(isSuccess: Boolean, chatMessage: ChatMessage?) {
                     if (chatMessage != null) {
                         result.success(chatMessage.tojsonString())

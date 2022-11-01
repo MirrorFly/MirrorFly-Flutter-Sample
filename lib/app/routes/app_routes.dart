@@ -20,6 +20,7 @@ abstract class Routes {
   static const IMAGE_VIEW = _Paths.IMAGE_VIEW;
   static const LOCAL_CONTACT = _Paths.LOCAL_CONTACT;
   static const PREVIEW_CONTACT = _Paths.PREVIEW_CONTACT;
+  static const MESSAGE_INFO = _Paths.MESSAGE_INFO;
 }
 
 abstract class _Paths {
@@ -41,4 +42,5 @@ abstract class _Paths {
   static const IMAGE_VIEW = '/image-view';
   static const LOCAL_CONTACT = '/local-contact';
   static const PREVIEW_CONTACT = '/preview-contact';
+  static const MESSAGE_INFO = '/message-info';
 }

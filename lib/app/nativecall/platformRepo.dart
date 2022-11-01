@@ -668,6 +668,50 @@ class PlatformRepo {
     }
   }
 
+  Future<dynamic> getMessagesUsingIds(List<String> messageIds) async {
+    dynamic messageListResponse;
+    try {
+      messageListResponse = await mirrorFlyMethodChannel.invokeMethod('get_message_using_ids',{ "MessageIds" : messageIds});
+      debugPrint("Message List Response ==> $messageListResponse");
+      return messageListResponse;
+    }on PlatformException catch (e){
+      debugPrint("Platform Exception ===> $e");
+      rethrow;
+    } on Exception catch(error){
+      debugPrint("Exception ==> $error");
+      rethrow;
+    }
+  }
+
+  Future<dynamic> deleteMessages(String jid, List<String> messageIds, bool isDeleteForEveryOne) async {
+    dynamic messageDeleteResponse;
+    try {
+      messageDeleteResponse = await mirrorFlyMethodChannel.invokeMethod('delete_messages', { "jid" : jid, "chat_type" : "chat", "message_ids": messageIds, "is_delete_for_everyone" : isDeleteForEveryOne});
+      debugPrint("Message Delete Response ==> $messageDeleteResponse");
+      return messageDeleteResponse;
+    }on PlatformException catch (e){
+      debugPrint("Platform Exception ===> $e");
+      rethrow;
+    } on Exception catch(error){
+      debugPrint("Exception ==> $error");
+      rethrow;
+    }
+  }
+  Future<dynamic> getMessageInfo(String jid) async {
+    dynamic messageInfoResponse;
+    try {
+      messageInfoResponse = await mirrorFlyMethodChannel.invokeMethod('get_message_info', { "jid" : jid});
+      debugPrint("Message Info Response ==> $messageInfoResponse");
+      return messageInfoResponse;
+    }on PlatformException catch (e){
+      debugPrint("Platform Exception ===> $e");
+      rethrow;
+    } on Exception catch(error){
+      debugPrint("Exception ==> $error");
+      rethrow;
+    }
+  }
+
 
   copyTextMessages() async {
     try {

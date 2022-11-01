@@ -31,6 +31,18 @@ class Helper{
     if (Get.isDialogOpen!) Get.back();
   }
 
+  static void showAlert({String? title,required String message,List<Widget>? actions}) {
+    Get.dialog(
+      AlertDialog(
+        title: title!=null ? Text(title, style: TextStyle(fontSize: 15),) : null,
+        contentPadding: EdgeInsets.only(top: 20,right: 20,left: 20),
+        content: Text(message),
+        contentTextStyle: TextStyle(color: texthintcolor,fontWeight: FontWeight.w500),
+        actions: actions,
+      ),
+    );
+  }
+
   static String formatBytes(int bytes, int decimals) {
     if (bytes <= 0) return "0 B";
     const suffixes = ["B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"];
