@@ -7,6 +7,7 @@ import 'package:audioplayers/audioplayers.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:mirror_fly_demo/app/model/chatMessageModel.dart';
@@ -158,6 +159,7 @@ class ChatController extends GetxController
           (message) => message.messageId == chatMessageModel.messageId);
       debugPrint("Message Status Update index of search $index");
       if (index != -1) {
+        // Helper.hideLoading();
         chatList[index] = chatMessageModel;
       }
     });
@@ -652,12 +654,14 @@ class ChatController extends GetxController
         return true;
 
       case 'Favourite':
-        for (var chatList in selectedChatList) {
-          if (chatList.isMessageStarred) {
-            return true;
-          }
-        }
-        return false;
+
+        // for (var chatList in selectedChatList) {
+        //   if (chatList.isMessageStarred) {
+        //     return true;
+        //   }
+        // }
+        // return false;
+        return selectedChatList.length > 1 ? false: true;
 
       default:
         return false;
@@ -697,7 +701,12 @@ class ChatController extends GetxController
   }
 
   copyTextMessages() {
-    PlatformRepo().copyTextMessages();
+    // PlatformRepo().copyTextMessages(selectedChatList[0].messageId);
+    debugPrint('Copy text ==> ${selectedChatList[0].messageTextContent}');
+    Clipboard.setData(ClipboardData(text: selectedChatList[0].messageTextContent));
+    // selectedChatList.clear();
+    // isSelected(false);
+    clearChatSelection(selectedChatList[0]);
   }
 
   void deleteMessages() {
@@ -769,6 +778,44 @@ class ChatController extends GetxController
   }
 
   messageInfo() {
-    Get.toNamed(Routes.MESSAGE_INFO, arguments: {"mid": selectedChatList[0].messageId});
+    debugPrint("sending mid ===> ${selectedChatList[0].messageId}");
+    Get.toNamed(Routes.MESSAGE_INFO, arguments: {"messageID": selectedChatList[0].messageId, "chatMessage" : selectedChatList[0]});
+    clearChatSelection(selectedChatList[0]);
+  }
+
+  favouriteMessage() {
+
+    Helper.showLoading(message: selectedChatList[0].isMessageStarred ? 'Unfavoriting Message' : 'Favoriting Message');
+
+    // for(var chatList in selectedChatList){
+      PlatformRepo().favouriteMessage(selectedChatList[0].messageId, profile.jid!, !selectedChatList[0].isMessageStarred).then((value) {
+        final chatIndex = chatList.indexWhere((message) => message.messageId == selectedChatList[0].messageId);
+        // chatList[chatIndex].isMessageStarred = !chatList[chatIndex].isMessageStarred;
+        clearChatSelection(selectedChatList[0]);
+        Helper.hideLoading();
+      });
+    // }
+  }
+
+  Widget getLocationImage(
+      LocationChatMessage? locationChatMessage, double width, double height) {
+    return InkWell(
+        onTap: () async {
+          //Redirect to Google maps App
+          String googleUrl =
+              'https://www.google.com/maps/search/?api=1&query=${locationChatMessage.latitude}, ${locationChatMessage.longitude}';
+          if (await canLaunchUrl(Uri.parse(googleUrl))) {
+            await launchUrl(Uri.parse(googleUrl));
+          } else {
+            throw 'Could not open the map.';
+          }
+        },
+        child: Image.network(
+          Helper.getMapImageUri(
+              locationChatMessage!.latitude, locationChatMessage.longitude),
+          fit: BoxFit.fill,
+          width: width,
+          height: height,
+        ));
   }
 }

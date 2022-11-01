@@ -716,10 +716,10 @@ class PlatformRepo {
       rethrow;
     }
   }
-  Future<dynamic> getMessageInfo(String jid) async {
+  Future<dynamic> getMessageInfo(String messageID) async {
     dynamic messageInfoResponse;
     try {
-      messageInfoResponse = await mirrorFlyMethodChannel.invokeMethod('get_message_info', { "jid" : jid});
+      messageInfoResponse = await mirrorFlyMethodChannel.invokeMethod('get_message_info', { "messageID" : messageID});
       debugPrint("Message Info Response ==> $messageInfoResponse");
       return messageInfoResponse;
     }on PlatformException catch (e){
@@ -732,9 +732,26 @@ class PlatformRepo {
   }
 
 
-  copyTextMessages() async {
+  Future<dynamic> favouriteMessage(String messageID, String chatUserJID, bool isFavourite) async {
+    dynamic favResponse;
     try {
-      await mirrorFlyMethodChannel.invokeMethod('copy_text_messages', {"message_id_list" : "" });
+      favResponse = await mirrorFlyMethodChannel.invokeMethod('favourite_message', { "messageID" : messageID, "chatUserJID": chatUserJID, "isFavourite": isFavourite});
+      debugPrint("Favourite Msg Response ==> $favResponse");
+      return favResponse;
+    }on PlatformException catch (e){
+      debugPrint("Platform Exception ===> $e");
+      rethrow;
+    } on Exception catch(error){
+      debugPrint("Exception ==> $error");
+      rethrow;
+    }
+  }
+
+
+  copyTextMessages(String messageId) async {
+    List<String> messageIds = [messageId];
+    try {
+      await mirrorFlyMethodChannel.invokeMethod('copy_text_messages', {"message_id_list" : messageIds });
     }on PlatformException catch (e){
       debugPrint("Platform Exception ===> $e");
       rethrow;

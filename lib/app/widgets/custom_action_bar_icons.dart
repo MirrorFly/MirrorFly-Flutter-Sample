@@ -5,7 +5,7 @@ class CustomActionBarIcons extends StatelessWidget {
   final double actionWidth;
   final List<CustomAction> actions;
 
-  CustomActionBarIcons({
+  const CustomActionBarIcons({super.key,
     required this.availableWidth,
     required this.actionWidth,
     required this.actions,
