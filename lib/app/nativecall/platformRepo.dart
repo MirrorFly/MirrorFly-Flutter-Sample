@@ -309,6 +309,11 @@ class PlatformRepo {
                 PlatformRepo().insertStatus(statusValue);
               }
             });
+          }else{
+            var defaultStatus = Constants.defaultStatuslist;
+            defaultStatus.forEach((statusValue) {
+              PlatformRepo().insertStatus(statusValue);
+            });
           }
         }
       });
@@ -352,7 +357,6 @@ class PlatformRepo {
     try {
       profileResponse = await mirrorFlyMethodChannel.invokeMethod('getProfile',{"jid":jid,"server":server});
       debugPrint("profile Result ==> $profileResponse");
-      insertDefaultStatusToUser();
       return profileResponse;
     }on PlatformException catch (e){
       debugPrint("Platform Exception ===> $e");
@@ -399,6 +403,21 @@ class PlatformRepo {
       profileResponse = await mirrorFlyMethodChannel.invokeMethod<bool>('removeProfileImage');
       debugPrint("profile Result ==> $profileResponse");
       return profileResponse;
+    }on PlatformException catch (e){
+      debugPrint("Platform Exception ===> $e");
+      return false;
+    } on Exception catch(error){
+      debugPrint("Exception ==> $error");
+      return false;
+    }
+  }
+
+  Future<bool?> refreshAuthToken() async {
+    bool? tokenResponse;
+    try {
+      tokenResponse = await mirrorFlyMethodChannel.invokeMethod<bool>('refreshAuthToken');
+      debugPrint("refreshAuthToken Result ==> $tokenResponse");
+      return tokenResponse;
     }on PlatformException catch (e){
       debugPrint("Platform Exception ===> $e");
       return false;

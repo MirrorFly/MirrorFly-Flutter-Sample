@@ -33,7 +33,7 @@ class LoginController extends GetxController {
         ),
       );
     }else{
-      Helper.showLoading("Logging In...");
+      Helper.showLoading(message: "Logging In...");
       RegisterModel userData;
       PlatformRepo().registerUser(mobileNumber.text).then((value) {
         if (value.contains("data")) {
@@ -58,7 +58,7 @@ class LoginController extends GetxController {
       if(value != null){
         SessionManagement.setUserJID(value);
         Helper.hideLoading();
-        Get.offAllNamed(Routes.PROFILE,arguments: {"mobile":mobileNumber.text.toString()});
+        Get.offNamed(Routes.PROFILE,arguments: {"mobile":mobileNumber.text.toString(),"from":Routes.LOGIN});
       }
     }).catchError((error) {
       debugPrint(error.message);

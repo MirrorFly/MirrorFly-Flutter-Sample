@@ -194,6 +194,8 @@ class DashboardView extends GetView<DashboardController> {
                                 fontWeight: FontWeight.w700,
                                 fontFamily: 'sf_ui',
                                 color: texthintcolor),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
                           ),
                         ),
                         Padding(
@@ -231,7 +233,7 @@ class DashboardView extends GetView<DashboardController> {
                               SizedBox(width: forMessageTypeString(item.lastMessageType)!=null ? 3.0 : 0.0,),
                               Expanded(
                                 child: Text(
-                                  forMessageTypeString(item.lastMessageType) ?? item.lastMessageContent.toString(),
+                                  forMessageTypeString(item.lastMessageType) == "" ? item.lastMessageContent.toString() : forMessageTypeString(item.lastMessageType),
                                   style: Theme.of(context).textTheme.titleSmall,
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
@@ -297,7 +299,7 @@ class DashboardView extends GetView<DashboardController> {
     }
   }
 
-  String? forMessageTypeString(String? MessageType) {
+  String forMessageTypeString(String? MessageType) {
     switch (MessageType?.toUpperCase()) {
       case Constants.MIMAGE:
         return "Image";

@@ -44,6 +44,7 @@ dependencies:
   geolocator: ^9.0.2 #geolocator
   geocoding: ^2.0.5 #geocoder for address
   focus_detector: ^2.0.1 #focus detector
+  record: ^3.0.0 #audio recording
 
 dev_dependencies: 
   flutter_lints: 2.0.1

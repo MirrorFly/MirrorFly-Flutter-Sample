@@ -378,7 +378,7 @@ class ChatView extends GetView<ChatController> {
           children: [
             Flexible(
               child: Text(
-                chatList[index].messageTextContent,
+                chatList[index].messageTextContent ?? "",
                 style: const TextStyle(fontSize: 17),
               ),
             ),
@@ -408,7 +408,7 @@ class ChatView extends GetView<ChatController> {
       return Center(
         child: Padding(
           padding: const EdgeInsets.all(15.0),
-          child: Text(chatList[index].messageTextContent,
+          child: Text(chatList[index].messageTextContent ?? "",
               style:
               const TextStyle(fontSize: 13, fontWeight: FontWeight.bold)),
         ),

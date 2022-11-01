@@ -5,11 +5,13 @@ class ImageViewController extends GetxController {
 
   var image_name = ''.obs;
   var imagepath = ''.obs;
+  var imageurl = ''.obs;
   @override
   void onInit() {
     super.onInit();
     image_name(Get.arguments['imageName']);
     imagepath(Get.arguments['imagePath']);
+    imageurl(Get.arguments['imageurl']);
   }
 
   @override

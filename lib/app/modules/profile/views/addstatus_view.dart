@@ -44,9 +44,10 @@ class AddStatusView extends GetView<StatusListController> {
                     Expanded(
                       child: TextField(
                         style:
-                            TextStyle(fontSize: 20, fontWeight: FontWeight.normal),
+                            TextStyle(fontSize: 20, fontWeight: FontWeight.normal,overflow: TextOverflow.visible),
                         onChanged: (_) => controller.onChanged(),
                         maxLength: 121,
+                        maxLines: 1,
                         controller: controller.addstatuscontroller,
                         decoration: InputDecoration(border: InputBorder.none,counterText:"" ),
                       ),

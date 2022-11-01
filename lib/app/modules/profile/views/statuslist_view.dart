@@ -5,6 +5,7 @@ import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/common/widgets.dart';
+import 'package:mirror_fly_demo/app/data/helper.dart';
 import 'package:mirror_fly_demo/app/modules/profile/controllers/status_controller.dart';
 
 import '../../../common/constants.dart';
@@ -51,18 +52,9 @@ class StatusListView extends GetView<StatusListController> {
                     fit: BoxFit.contain,
                   ),
                   onTap: () {
-                    Get.to(AddStatusView())?.then((value){
+                    Get.to(AddStatusView(),arguments: {"status":controller.selectedStatus.value})?.then((value){
                       if(value!=null){
-                        PlatformRepo().updateProfileStatus(controller.addstatuscontroller.text.trim().toString()).then((value){
-                          controller.selectedStatus.value=value;
-                          var data = json.decode(value.toString());
-                          toToast(data['message'].toString());
-                          if(data['status']) {
-                            controller.getStatusList();
-                          }
-                        }).catchError((er){
-                          toToast(er);
-                        });
+                        controller.updateStatus();
                       }
                     });
                   },
@@ -83,7 +75,7 @@ class StatusListView extends GetView<StatusListController> {
                       var item = controller.statuslist[index];
                       return ListTile(
                         contentPadding: EdgeInsets.zero,
-                        title: Text(item.status,
+                        title: Text(item.status.checkNull(),
                             style: TextStyle(
                                 color: item.status==controller.selectedStatus.value ? textblack1color : textcolor,
                                 fontSize: 14,
@@ -95,16 +87,19 @@ class StatusListView extends GetView<StatusListController> {
                         )
                             : const SizedBox(),
                         onTap: (){
+                          controller.updateStatus(item.status.checkNull());
+                          /*Helper.showLoading();
                           PlatformRepo().updateProfileStatus(controller.addstatuscontroller.text.trim().toString()).then((value){
-                            controller.selectedStatus.value=item.status;
+                            controller.selectedStatus.value=item.status.checkNull();
                             var data = json.decode(value.toString());
                             toToast(data['message'].toString());
+                            Helper.hideLoading();
                             if(data['status']) {
                               controller.getStatusList();
                             }
                           }).catchError((er){
                             toToast(er);
-                          });
+                          });*/
                         },
                       );
                     }),
