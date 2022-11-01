@@ -39,8 +39,14 @@ class ChatView extends GetView<ChatController> {
 
   @override
   Widget build(BuildContext context) {
-    screenHeight = MediaQuery.of(context).size.height;
-    screenWidth = MediaQuery.of(context).size.width;
+    screenHeight = MediaQuery
+        .of(context)
+        .size
+        .height;
+    screenWidth = MediaQuery
+        .of(context)
+        .size
+        .width;
     return Scaffold(
         appBar: getAppBar(),
         body: SafeArea(
@@ -65,125 +71,164 @@ class ChatView extends GetView<ChatController> {
               child: Column(
                 children: [
                   Expanded(
-                    child: Obx(() => controller.chatList.isEmpty
+                    child: Obx(() =>
+                    controller.chatList.isEmpty
                         ? const SizedBox.shrink()
                         : chatListView(controller.chatList.reversed.toList())),
                   ),
                   Align(
                     alignment: Alignment.bottomCenter,
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        replyMessageHeader(context),
-                        const Divider(
-                          height: 1,
-                          thickness: 0.29,
-                          color: textblackcolor,
-                        ),
-                        const SizedBox(
-                          height: 10,
-                        ),
-                        Row(
+                    child: Obx(() {
+                      return Container(
+                        color: Colors.white,
+                        child: controller.isBlocked.value ? Column(
                           children: [
-                            Flexible(
-                              child: Container(
-                                padding: const EdgeInsets.only(left: 10),
-                                margin: const EdgeInsets.only(
-                                    left: 10, right: 10, bottom: 10),
-                                width: double.infinity,
-                                decoration: BoxDecoration(
-                                  border: Border.all(
-                                    color: textcolor,
-                                  ),
-                                  borderRadius: const BorderRadius.all(
-                                      Radius.circular(40)),
-                                  color: Colors.white,
-                                ),
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.end,
-                                  children: <Widget>[
-                                    InkWell(
-                                        onTap: () {
-                                          if (!controller.showEmoji.value) {
-                                            FocusScope.of(context).unfocus();
-                                            controller.focusNode
-                                                .canRequestFocus = false;
-                                          }
-                                          Future.delayed(
-                                              const Duration(milliseconds: 500),
-                                              () {
-                                            controller.showEmoji(
-                                                !controller.showEmoji.value);
-                                          });
-                                        },
-                                        child: SvgPicture.asset(
-                                            'assets/logos/smile.svg')),
-                                    const SizedBox(
-                                      width: 10,
-                                    ),
-                                    Expanded(
-                                      child: TextField(
-                                        onTap: () {
-                                          controller.focusNode.requestFocus();
-                                        },
-                                        onChanged: (text) {
-                                          controller.isTyping(text);
-                                        },
-                                        keyboardType: TextInputType.multiline,
-                                        minLines: 1,
-                                        maxLines: 4,
-                                        controller:
-                                            controller.messageController,
-                                        focusNode: controller.focusNode,
-                                        decoration: const InputDecoration(
-                                            hintText: "Start Typing...",
-                                            border: InputBorder.none),
-                                      ),
-                                    ),
-                                    const SizedBox(
-                                      width: 15,
-                                    ),
-                                    IconButton(
-                                      color: Colors.blue,
-                                      onPressed: () {
-                                        showModalBottomSheet(
-                                            backgroundColor: Colors.transparent,
-                                            context: context,
-                                            builder: (builder) =>
-                                                bottomSheet(context));
-                                      },
-                                      icon: SvgPicture.asset(
-                                          'assets/logos/attach.svg'),
-                                    ),
-                                    const SizedBox(
-                                      width: 5,
-                                    ),
-                                    // SvgPicture.asset('assets/logos/mic.svg'),
-                                    // RecordButton(controller: controller.controller,),
-                                    // const SizedBox(
-                                    //   width: 20,
-                                    // ),
-                                  ],
-                                ),
-                              ),
+                            const Divider(
+                              height: 1,
+                              thickness: 0.29,
+                              color: textblackcolor,
                             ),
 
-                            // InkWell(
-                            //     onTap: () {
-                            //       // if (scrollController.hasClients) {
-                            //       // scrollController.animateTo(
-                            //       //   scrollController.position.maxScrollExtent,
-                            //       //   curve: Curves.easeOut,
-                            //       //   duration: const Duration(milliseconds: 300),
-                            //       // );
-                            //       // }
-                            //       controller.sendMessage(controller.profile);
-                            //     },
-                            //     child: SvgPicture.asset('assets/logos/send.svg')),
+                            Padding(
+                              padding: const EdgeInsets.only(top: 15.0, bottom: 15.0),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text("You have blocked ${controller.profile.name}.", style: const TextStyle(fontSize: 15),),
+                                  const SizedBox(width: 10,),
+                                  InkWell(
+                                    child: const Text(
+                                      'UNBLOCK',
+                                      style: TextStyle(
+                                          decoration: TextDecoration.underline,
+                                          color: Colors.blue),
+                                    ),
+                                    onTap: () => controller.unBlockUser(),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ) :
+                        Column(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            replyMessageHeader(context),
+                            const Divider(
+                              height: 1,
+                              thickness: 0.29,
+                              color: textblackcolor,
+                            ),
+                            const SizedBox(
+                              height: 10,
+                            ),
+                            Row(
+                              children: [
+                                Flexible(
+                                  child: Container(
+                                    padding: const EdgeInsets.only(left: 10),
+                                    margin: const EdgeInsets.only(
+                                        left: 10, right: 10, bottom: 10),
+                                    width: double.infinity,
+                                    decoration: BoxDecoration(
+                                      border: Border.all(
+                                        color: textcolor,
+                                      ),
+                                      borderRadius: const BorderRadius.all(
+                                          Radius.circular(40)),
+                                      color: Colors.white,
+                                    ),
+                                    child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.end,
+                                      children: <Widget>[
+                                        InkWell(
+                                            onTap: () {
+                                              if (!controller.showEmoji.value) {
+                                                FocusScope.of(context)
+                                                    .unfocus();
+                                                controller.focusNode
+                                                    .canRequestFocus = false;
+                                              }
+                                              Future.delayed(
+                                                  const Duration(
+                                                      milliseconds: 500),
+                                                      () {
+                                                    controller.showEmoji(
+                                                        !controller.showEmoji
+                                                            .value);
+                                                  });
+                                            },
+                                            child: SvgPicture.asset(
+                                                'assets/logos/smile.svg')),
+                                        const SizedBox(
+                                          width: 10,
+                                        ),
+                                        Expanded(
+                                          child: TextField(
+                                            onTap: () {
+                                              controller.focusNode
+                                                  .requestFocus();
+                                            },
+                                            onChanged: (text) {
+                                              controller.isTyping(text);
+                                            },
+                                            keyboardType: TextInputType
+                                                .multiline,
+                                            minLines: 1,
+                                            maxLines: 4,
+                                            controller:
+                                            controller.messageController,
+                                            focusNode: controller.focusNode,
+                                            decoration: const InputDecoration(
+                                                hintText: "Start Typing...",
+                                                border: InputBorder.none),
+                                          ),
+                                        ),
+                                        const SizedBox(
+                                          width: 15,
+                                        ),
+                                        IconButton(
+                                          color: Colors.blue,
+                                          onPressed: () {
+                                            showModalBottomSheet(
+                                                backgroundColor: Colors
+                                                    .transparent,
+                                                context: context,
+                                                builder: (builder) =>
+                                                    bottomSheet(context));
+                                          },
+                                          icon: SvgPicture.asset(
+                                              'assets/logos/attach.svg'),
+                                        ),
+                                        const SizedBox(
+                                          width: 5,
+                                        ),
+                                        // SvgPicture.asset('assets/logos/mic.svg'),
+                                        // RecordButton(controller: controller.controller,),
+                                        // const SizedBox(
+                                        //   width: 20,
+                                        // ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
 
-                            Obx(() {
-                              return controller.isUserTyping.value
-                                  ? InkWell(
+                                // InkWell(
+                                //     onTap: () {
+                                //       // if (scrollController.hasClients) {
+                                //       // scrollController.animateTo(
+                                //       //   scrollController.position.maxScrollExtent,
+                                //       //   curve: Curves.easeOut,
+                                //       //   duration: const Duration(milliseconds: 300),
+                                //       // );
+                                //       // }
+                                //       controller.sendMessage(controller.profile);
+                                //     },
+                                //     child: SvgPicture.asset('assets/logos/send.svg')),
+
+                                Obx(() {
+                                  return controller.isUserTyping.value
+                                      ? InkWell(
                                       onTap: () {
                                         controller
                                             .sendMessage(controller.profile);
@@ -194,18 +239,20 @@ class ChatView extends GetView<ChatController> {
                                         child: SvgPicture.asset(
                                             'assets/logos/send.svg'),
                                       ))
-                                  : RecordButton(
-                                      controller: controller.controller,
-                                    );
-                            }),
-                            const SizedBox(
-                              width: 10,
+                                      : RecordButton(
+                                    controller: controller.controller,
+                                  );
+                                }),
+                                const SizedBox(
+                                  width: 10,
+                                ),
+                              ],
                             ),
+                            emojiLayout(),
                           ],
                         ),
-                        emojiLayout(),
-                      ],
-                    ),
+                      );
+                    }),
                   ),
                 ],
               ),
@@ -281,16 +328,16 @@ class ChatView extends GetView<ChatController> {
               debugPrint("On Tap");
               controller.isSelected.value
                   ? controller.selectedChatList.contains(chatList[index])
-                      ? controller.clearChatSelection(chatList[index])
-                      : controller.addChatSelection(chatList[index])
+                  ? controller.clearChatSelection(chatList[index])
+                  : controller.addChatSelection(chatList[index])
                   : null;
             },
             child: Obx(() {
               return Container(
                 key: Key(chatList[index].messageId),
                 color: controller.isSelected.value &&
-                        chatList[index].isSelected &&
-                        controller.selectedChatList.isNotEmpty
+                    chatList[index].isSelected &&
+                    controller.selectedChatList.isNotEmpty
                     ? chatreplycontainercolor
                     : Colors.transparent,
                 margin: const EdgeInsets.only(
@@ -304,13 +351,13 @@ class ChatView extends GetView<ChatController> {
                     decoration: BoxDecoration(
                         borderRadius: chatList[index].isMessageSentByMe
                             ? const BorderRadius.only(
-                                topLeft: Radius.circular(10),
-                                topRight: Radius.circular(10),
-                                bottomLeft: Radius.circular(10))
+                            topLeft: Radius.circular(10),
+                            topRight: Radius.circular(10),
+                            bottomLeft: Radius.circular(10))
                             : const BorderRadius.only(
-                                topLeft: Radius.circular(10),
-                                topRight: Radius.circular(10),
-                                bottomRight: Radius.circular(10)),
+                            topLeft: Radius.circular(10),
+                            topRight: Radius.circular(10),
+                            bottomRight: Radius.circular(10)),
                         color: (chatList[index].isMessageSentByMe
                             ? chatsentbgcolor
                             : Colors.white),
@@ -334,8 +381,8 @@ class ChatView extends GetView<ChatController> {
     );
   }
 
-  getMessageIndicator(
-      String? messageStatus, bool isSender, String messageType) {
+  getMessageIndicator(String? messageStatus, bool isSender,
+      String messageType) {
     // debugPrint("Message Type ==> $messageType");
     if (isSender) {
       if (messageStatus == 'A') {
@@ -356,8 +403,8 @@ class ChatView extends GetView<ChatController> {
     }
   }
 
-  getMessageContent(
-      int index, BuildContext context, List<ChatMessageModel> chatList) {
+  getMessageContent(int index, BuildContext context,
+      List<ChatMessageModel> chatList) {
     // debugPrint(json.encode(chatList[index]));
     if (chatList[index].messageType == Constants.MTEXT) {
       return Padding(
@@ -380,9 +427,9 @@ class ChatView extends GetView<ChatController> {
               children: [
                 chatList[index].isMessageStarred
                     ? const Icon(
-                        Icons.star,
-                        size: 13,
-                      )
+                  Icons.star,
+                  size: 13,
+                )
                     : const SizedBox.shrink(),
                 const SizedBox(
                   width: 5,
@@ -411,7 +458,7 @@ class ChatView extends GetView<ChatController> {
           // child: Text(chatList[index].messageTextContent!,
           child: Text(chatList[index].messageTextContent ?? "",
               style:
-                  const TextStyle(fontSize: 13, fontWeight: FontWeight.bold)),
+              const TextStyle(fontSize: 13, fontWeight: FontWeight.bold)),
         ),
       );
     } else if (chatList[index].messageType == Constants.MIMAGE) {
@@ -447,9 +494,9 @@ class ChatView extends GetView<ChatController> {
                 children: [
                   chatList[index].isMessageStarred
                       ? const Icon(
-                          Icons.star,
-                          size: 13,
-                        )
+                    Icons.star,
+                    size: 13,
+                  )
                       : SizedBox.shrink(),
                   const SizedBox(
                     width: 5,
@@ -482,7 +529,7 @@ class ChatView extends GetView<ChatController> {
               onTap: () {
                 if (controller.checkFile(chatMessage.mediaLocalStoragePath) &&
                     (chatMessage.mediaDownloadStatus ==
-                            Constants.MEDIA_DOWNLOADED ||
+                        Constants.MEDIA_DOWNLOADED ||
                         chatMessage.mediaDownloadStatus ==
                             Constants.MEDIA_UPLOADED)) {
                   Get.toNamed(Routes.VIDEO_PLAY, arguments: {
@@ -513,9 +560,9 @@ class ChatView extends GetView<ChatController> {
                 children: [
                   chatList[index].isMessageStarred
                       ? const Icon(
-                          Icons.star,
-                          size: 13,
-                        )
+                    Icons.star,
+                    size: 13,
+                  )
                       : const SizedBox.shrink(),
                   const SizedBox(
                     width: 5,
@@ -557,7 +604,7 @@ class ChatView extends GetView<ChatController> {
             children: [
               Padding(
                 padding:
-                    const EdgeInsets.only(left: 15.0, right: 15.0, top: 10.0),
+                const EdgeInsets.only(left: 15.0, right: 15.0, top: 10.0),
                 child: Row(
                   children: [
                     getImageHolder(
@@ -567,9 +614,9 @@ class ChatView extends GetView<ChatController> {
                     ),
                     Expanded(
                         child: Text(
-                      chatList[index].mediaChatMessage!.mediaFileName,
-                      maxLines: 2,
-                    )),
+                          chatList[index].mediaChatMessage!.mediaFileName,
+                          maxLines: 2,
+                        )),
                     const Spacer(),
                     InkWell(
                       onTap: () {
@@ -594,9 +641,9 @@ class ChatView extends GetView<ChatController> {
                   children: [
                     chatList[index].isMessageStarred
                         ? const Icon(
-                            Icons.star,
-                            size: 13,
-                          )
+                      Icons.star,
+                      size: 13,
+                    )
                         : SizedBox.shrink(),
                     const SizedBox(
                       width: 5,
@@ -631,7 +678,7 @@ class ChatView extends GetView<ChatController> {
         onTap: () {
           Get.toNamed(Routes.PREVIEW_CONTACT, arguments: {
             "contactList":
-                chatList[index].contactChatMessage!.contactPhoneNumbers,
+            chatList[index].contactChatMessage!.contactPhoneNumbers,
             "contactName": chatList[index].contactChatMessage!.contactName,
             "from": "chat"
           });
@@ -649,7 +696,7 @@ class ChatView extends GetView<ChatController> {
             children: [
               Padding(
                 padding:
-                    const EdgeInsets.only(left: 15.0, right: 15.0, top: 15.0),
+                const EdgeInsets.only(left: 15.0, right: 15.0, top: 15.0),
                 child: Row(
                   children: [
                     Image.asset(
@@ -662,9 +709,9 @@ class ChatView extends GetView<ChatController> {
                     ),
                     Expanded(
                         child: Text(
-                      chatList[index].contactChatMessage!.contactName,
-                      maxLines: 2,
-                    )),
+                          chatList[index].contactChatMessage!.contactName,
+                          maxLines: 2,
+                        )),
                   ],
                 ),
               ),
@@ -675,9 +722,9 @@ class ChatView extends GetView<ChatController> {
                   children: [
                     chatList[index].isMessageStarred
                         ? const Icon(
-                            Icons.star,
-                            size: 13,
-                          )
+                      Icons.star,
+                      size: 13,
+                    )
                         : const SizedBox.shrink(),
                     const SizedBox(
                       width: 5,
@@ -772,7 +819,7 @@ class ChatView extends GetView<ChatController> {
                             thumbColor: audiocolordark,
                             overlayShape: SliderComponentShape.noOverlay,
                             thumbShape:
-                                const RoundSliderThumbShape(enabledThumbRadius: 5),
+                            const RoundSliderThumbShape(enabledThumbRadius: 5),
                           ),
                           child: Slider(
                             value: double.parse(
@@ -811,9 +858,9 @@ class ChatView extends GetView<ChatController> {
                 children: [
                   chatList[index].isMessageStarred
                       ? const Icon(
-                          Icons.star,
-                          size: 13,
-                        )
+                    Icons.star,
+                    size: 13,
+                  )
                       : const SizedBox.shrink(),
                   const SizedBox(
                     width: 5,
@@ -861,9 +908,9 @@ class ChatView extends GetView<ChatController> {
                 children: [
                   chatList[index].isMessageStarred
                       ? const Icon(
-                          Icons.star,
-                          size: 13,
-                        )
+                    Icons.star,
+                    size: 13,
+                  )
                       : const SizedBox.shrink(),
                   const SizedBox(
                     width: 5,
@@ -910,13 +957,14 @@ class ChatView extends GetView<ChatController> {
     }
   }
 
-  Widget getLocationImage(
-      LocationChatMessage? locationChatMessage, double width, double height) {
+  Widget getLocationImage(LocationChatMessage? locationChatMessage,
+      double width, double height) {
     return InkWell(
         onTap: () async {
           //Redirect to Google maps App
           String googleUrl =
-              'https://www.google.com/maps/search/?api=1&query=${locationChatMessage.latitude}, ${locationChatMessage.longitude}';
+              'https://www.google.com/maps/search/?api=1&query=${locationChatMessage
+              .latitude}, ${locationChatMessage.longitude}';
           if (await canLaunchUrl(Uri.parse(googleUrl))) {
             await launchUrl(Uri.parse(googleUrl));
           } else {
@@ -959,7 +1007,7 @@ class ChatView extends GetView<ChatController> {
                     Get.back();
 
                     final XFile? photo =
-                        await _picker.pickImage(source: ImageSource.camera);
+                    await _picker.pickImage(source: ImageSource.camera);
                     Get.toNamed(Routes.IMAGEPREVIEW, arguments: {
                       "filePath": photo?.path,
                       "userName": controller.profile.name!
@@ -1013,7 +1061,8 @@ class ChatView extends GetView<ChatController> {
                         content: const Text('Permission Denied'),
                         action: SnackBarAction(
                             label: 'Ok',
-                            onPressed: ScaffoldMessenger.of(context)
+                            onPressed: ScaffoldMessenger
+                                .of(context)
                                 .hideCurrentSnackBar),
                       ));
                     }
@@ -1063,12 +1112,12 @@ class ChatView extends GetView<ChatController> {
     );
   }
 
-  getImageOverlay(
-      List<ChatMessageModel> chatList, int index, BuildContext context) {
+  getImageOverlay(List<ChatMessageModel> chatList, int index,
+      BuildContext context) {
     var chatMessage = chatList[index];
 
     if (controller
-            .checkFile(chatMessage.mediaChatMessage!.mediaLocalStoragePath) &&
+        .checkFile(chatMessage.mediaChatMessage!.mediaLocalStoragePath) &&
         chatMessage.messageStatus.status != 'N') {
       if (chatMessage.messageType == 'VIDEO') {
         return SizedBox(
@@ -1076,9 +1125,9 @@ class ChatView extends GetView<ChatController> {
           height: 50,
           child: Center(
               child: SvgPicture.asset(
-            video_play,
-            fit: BoxFit.contain,
-          )),
+                video_play,
+                fit: BoxFit.contain,
+              )),
         );
       } else if (chatMessage.messageType == 'AUDIO') {
         debugPrint("===============================");
@@ -1124,7 +1173,7 @@ class ChatView extends GetView<ChatController> {
                   debugPrint(chatMessage.messageId);
                 },
                 child:
-                    Container(width: 30, height: 30, child: uploadingView()));
+                Container(width: 30, height: 30, child: uploadingView()));
           } else {
             return SizedBox(
               height: 40,
@@ -1140,33 +1189,33 @@ class ChatView extends GetView<ChatController> {
       String messageType) {
     return messageType == 'AUDIO' || messageType == 'DOCUMENT'
         ? Icon(
-            iconData,
-            color: audiocolordark,
-          )
+      iconData,
+      color: audiocolordark,
+    )
         : Container(
-            decoration: BoxDecoration(
-              border: Border.all(
-                color: textcolor,
-              ),
-              borderRadius: const BorderRadius.all(Radius.circular(5)),
-              color: Colors.black38,
+        decoration: BoxDecoration(
+          border: Border.all(
+            color: textcolor,
+          ),
+          borderRadius: const BorderRadius.all(Radius.circular(5)),
+          color: Colors.black38,
+        ),
+        padding: EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+        child: Row(
+          children: [
+            Icon(
+              iconData,
+              color: Colors.white,
             ),
-            padding: EdgeInsets.symmetric(vertical: 5, horizontal: 10),
-            child: Row(
-              children: [
-                Icon(
-                  iconData,
-                  color: Colors.white,
-                ),
-                SizedBox(
-                  width: 5,
-                ),
-                Text(
-                  Helper.formatBytes(mediaFileSize, 0),
-                  style: TextStyle(color: Colors.white),
-                ),
-              ],
-            ));
+            SizedBox(
+              width: 5,
+            ),
+            Text(
+              Helper.formatBytes(mediaFileSize, 0),
+              style: TextStyle(color: Colors.white),
+            ),
+          ],
+        ));
   }
 
   getImage(String mediaLocalStoragePath, String mediaThumbImage,
@@ -1193,8 +1242,8 @@ class ChatView extends GetView<ChatController> {
 
   uploadingView() {
     return Container(
-        // height: 40,
-        // width: 80,
+      // height: 40,
+      // width: 80,
         decoration: BoxDecoration(
           border: Border.all(
             color: textcolor,
@@ -1226,8 +1275,8 @@ class ChatView extends GetView<ChatController> {
             ]));
   }
 
-  handleMediaUploadDownload(
-      int mediaDownloadStatus, ChatMessageModel chatList) {
+  handleMediaUploadDownload(int mediaDownloadStatus,
+      ChatMessageModel chatList) {
     switch (chatList.isMessageSentByMe
         ? chatList.mediaChatMessage?.mediaUploadStatus
         : mediaDownloadStatus) {
@@ -1235,9 +1284,9 @@ class ChatView extends GetView<ChatController> {
       case Constants.MEDIA_UPLOADED:
         if (chatList.messageType == 'VIDEO') {
           if (controller.checkFile(
-                  chatList.mediaChatMessage!.mediaLocalStoragePath) &&
+              chatList.mediaChatMessage!.mediaLocalStoragePath) &&
               (chatList.mediaChatMessage!.mediaDownloadStatus ==
-                      Constants.MEDIA_DOWNLOADED ||
+                  Constants.MEDIA_DOWNLOADED ||
                   chatList.mediaChatMessage!.mediaDownloadStatus ==
                       Constants.MEDIA_UPLOADED ||
                   chatList.isMessageSentByMe)) {
@@ -1248,9 +1297,9 @@ class ChatView extends GetView<ChatController> {
         }
         if (chatList.messageType == 'AUDIO') {
           if (controller.checkFile(
-                  chatList.mediaChatMessage!.mediaLocalStoragePath) &&
+              chatList.mediaChatMessage!.mediaLocalStoragePath) &&
               (chatList.mediaChatMessage!.mediaDownloadStatus ==
-                      Constants.MEDIA_DOWNLOADED ||
+                  Constants.MEDIA_DOWNLOADED ||
                   chatList.mediaChatMessage!.mediaDownloadStatus ==
                       Constants.MEDIA_UPLOADED ||
                   chatList.isMessageSentByMe)) {
@@ -1267,7 +1316,7 @@ class ChatView extends GetView<ChatController> {
 
       case Constants.MEDIA_DOWNLOADED_NOT_AVAILABLE:
       case Constants.MEDIA_NOT_DOWNLOADED:
-        //download
+      //download
         debugPrint("Download");
         debugPrint(chatList.messageId);
         chatList.mediaChatMessage!.mediaDownloadStatus =
@@ -1275,20 +1324,22 @@ class ChatView extends GetView<ChatController> {
         controller.downloadMedia(chatList.messageId);
         break;
       case Constants.MEDIA_UPLOADED_NOT_AVAILABLE:
-        //upload
+      //upload
         break;
       case Constants.MEDIA_NOT_UPLOADED:
       case Constants.MEDIA_DOWNLOADING:
       case Constants.MEDIA_UPLOADING:
         return uploadingView();
-      // break;
+    // break;
     }
   }
 
   getAudioFeedButton(ChatMessageModel chatMessage) {}
 
   getImageHolder(String mediaFileName) {
-    String result = mediaFileName.split('.').last;
+    String result = mediaFileName
+        .split('.')
+        .last;
     debugPrint("File Type ==> $result");
     switch (result) {
       case Constants.PDF:
@@ -1387,12 +1438,12 @@ class ChatView extends GetView<ChatController> {
                           thumbColor: audiocolordark,
                           overlayShape: SliderComponentShape.noOverlay,
                           thumbShape:
-                              RoundSliderThumbShape(enabledThumbRadius: 5),
+                          RoundSliderThumbShape(enabledThumbRadius: 5),
                         ),
                         child: Obx(() {
                           return Slider(
                             value:
-                                double.parse(controller.currentpos.toString()),
+                            double.parse(controller.currentpos.toString()),
                             min: 0,
                             activeColor: audiocolordark,
                             inactiveColor: audiocolor,
@@ -1452,7 +1503,7 @@ class ChatView extends GetView<ChatController> {
                       const SizedBox(height: 8),
                       Padding(
                         padding:
-                            const EdgeInsets.only(bottom: 15.0, left: 15.0),
+                        const EdgeInsets.only(bottom: 15.0, left: 15.0),
                         child: getReplyMessage(
                             controller.replyChatMessage.messageType,
                             controller.replyChatMessage.messageTextContent,
@@ -1501,11 +1552,11 @@ class ChatView extends GetView<ChatController> {
   getReplyTitle(bool isMessageSentByMe, String senderNickName) {
     return isMessageSentByMe
         ? const Text(
-            'You',
-            style: TextStyle(fontWeight: FontWeight.bold),
-          )
+      'You',
+      style: TextStyle(fontWeight: FontWeight.bold),
+    )
         : Text(senderNickName,
-            style: const TextStyle(fontWeight: FontWeight.bold));
+        style: const TextStyle(fontWeight: FontWeight.bold));
   }
 
   getReplyMessage(String messageType, String? messageTextContent,
@@ -1599,8 +1650,7 @@ class ChatView extends GetView<ChatController> {
     }
   }
 
-  getReplyImageHolder(
-      BuildContext context,
+  getReplyImageHolder(BuildContext context,
       String messageType,
       String? mediaThumbImage,
       LocationChatMessage? locationChatMessage,
@@ -1679,7 +1729,7 @@ class ChatView extends GetView<ChatController> {
       // leadingWidth: 25,
       backgroundColor: Colors.white,
       leading: IconButton(
-        icon: Icon(Icons.clear),
+        icon: const Icon(Icons.clear),
         onPressed: () {
           controller.isSelected(false);
           controller.selectedChatList.clear();
@@ -1693,20 +1743,20 @@ class ChatView extends GetView<ChatController> {
             actions: [
               controller.getOptionStatus('Reply')
                   ? CustomAction(
-                      visibleWidget: IconButton(
-                          onPressed: () {
-                            controller.handleReplyChatMessage(
-                                controller.selectedChatList[0]);
-                            controller.clearChatSelection(
-                                controller.selectedChatList[0]);
-                          },
-                          icon: const Icon(Icons.reply_outlined)),
-                      overflowWidget: GestureDetector(
-                        onTap: () {},
-                        child: const Text("Reply"),
-                      ),
-                      showAsAction: ShowAsAction.ALWAYS,
-                    )
+                visibleWidget: IconButton(
+                    onPressed: () {
+                      controller.handleReplyChatMessage(
+                          controller.selectedChatList[0]);
+                      controller.clearChatSelection(
+                          controller.selectedChatList[0]);
+                    },
+                    icon: const Icon(Icons.reply_outlined)),
+                overflowWidget: GestureDetector(
+                  onTap: () {},
+                  child: const Text("Reply"),
+                ),
+                showAsAction: ShowAsAction.ALWAYS,
+              )
                   : customEmptyAction(),
               CustomAction(
                 visibleWidget: Transform(
@@ -1753,74 +1803,75 @@ class ChatView extends GetView<ChatController> {
               ),
               controller.getOptionStatus('Report')
                   ? CustomAction(
-                      visibleWidget: IconButton(
-                          onPressed: () {
-                            controller.reportChatOrUser();
-                          },
-                          icon: const Icon(Icons.report_problem_rounded)),
-                      overflowWidget: GestureDetector(
-                        onTap: () {
-                          controller.reportChatOrUser();
-                        },
-                        child: const Text("Report"),
-                      ),
-                      showAsAction: ShowAsAction.NEVER,
-                    )
+                visibleWidget: IconButton(
+                    onPressed: () {
+                      controller.reportChatOrUser();
+                    },
+                    icon: const Icon(Icons.report_problem_rounded)),
+                overflowWidget: GestureDetector(
+                  onTap: () {
+                    controller.reportChatOrUser();
+                  },
+                  child: const Text("Report"),
+                ),
+                showAsAction: ShowAsAction.NEVER,
+              )
                   : customEmptyAction(),
-              controller.selectedChatList.length > 1 || controller.selectedChatList[0].messageType != Constants.MTEXT
+              controller.selectedChatList.length > 1 ||
+                  controller.selectedChatList[0].messageType != Constants.MTEXT
                   ? customEmptyAction()
                   : CustomAction(
-                      visibleWidget: IconButton(
-                        onPressed: () {
-                          controller.copyTextMessages();
-                        },
-                        icon: SvgPicture.asset(
-                          copyIcon,
-                          fit: BoxFit.contain,
-                        ),
-                      ),
-                      overflowWidget: InkWell(
-                        onTap: () {
-                          Get.back();
-                          debugPrint('ON TAP');
-                          controller.copyTextMessages();
-                        },
-                        child: const Text("Copy"),
-                      ),
-                      showAsAction: ShowAsAction.NEVER,
-                    ),
+                visibleWidget: IconButton(
+                  onPressed: () {
+                    controller.copyTextMessages();
+                  },
+                  icon: SvgPicture.asset(
+                    copyIcon,
+                    fit: BoxFit.contain,
+                  ),
+                ),
+                overflowWidget: InkWell(
+                  onTap: () {
+                    Get.back();
+                    debugPrint('ON TAP');
+                    controller.copyTextMessages();
+                  },
+                  child: const Text("Copy"),
+                ),
+                showAsAction: ShowAsAction.NEVER,
+              ),
               controller.getOptionStatus('Message Info')
                   ? CustomAction(
-                      visibleWidget: IconButton(
-                        onPressed: () {
-                          Get.back();
-                          controller.messageInfo();
-                        },
-                        icon: SvgPicture.asset(
-                          infoIcon,
-                          fit: BoxFit.contain,
-                        ),
-                      ),
-                      overflowWidget: GestureDetector(
-                        onTap: () {
-                          Get.back();
-                          controller.messageInfo();
-                        },
-                        child: const Text("Message Info"),
-                      ),
-                      showAsAction: ShowAsAction.NEVER,
-                    )
+                visibleWidget: IconButton(
+                  onPressed: () {
+                    Get.back();
+                    controller.messageInfo();
+                  },
+                  icon: SvgPicture.asset(
+                    infoIcon,
+                    fit: BoxFit.contain,
+                  ),
+                ),
+                overflowWidget: GestureDetector(
+                  onTap: () {
+                    Get.back();
+                    controller.messageInfo();
+                  },
+                  child: const Text("Message Info"),
+                ),
+                showAsAction: ShowAsAction.NEVER,
+              )
                   : customEmptyAction(),
               controller.getOptionStatus('Share')
                   ? CustomAction(
-                      visibleWidget:
-                          IconButton(onPressed: () {}, icon: Icon(Icons.share)),
-                      overflowWidget: GestureDetector(
-                        onTap: () {},
-                        child: const Text("Share"),
-                      ),
-                      showAsAction: ShowAsAction.NEVER,
-                    )
+                visibleWidget:
+                IconButton(onPressed: () {}, icon: Icon(Icons.share)),
+                overflowWidget: GestureDetector(
+                  onTap: () {},
+                  child: const Text("Share"),
+                ),
+                showAsAction: ShowAsAction.NEVER,
+              )
                   : customEmptyAction(),
             ]),
       ],
@@ -1838,7 +1889,9 @@ class ChatView extends GetView<ChatController> {
             height: 45,
             clipoval: true,
             errorWidget: ProfileTextImage(
-              text: controller.profile.name.checkNull().isEmpty
+              text: controller.profile.name
+                  .checkNull()
+                  .isEmpty
                   ? controller.profile.mobileNumber.checkNull()
                   : controller.profile.name.checkNull(),
               radius: 20,
@@ -1857,32 +1910,14 @@ class ChatView extends GetView<ChatController> {
           actions: [
             CustomAction(
               visibleWidget: IconButton(
-                onPressed: () {},
+                onPressed: () {
+                  controller.clearUserChatHistory();
+                },
                 icon: const Icon(Icons.cancel),
               ),
               overflowWidget: GestureDetector(
                 onTap: () {
-                  Helper.showAlert(
-                      message: "Are you sure you want to clear the chat?",
-                      actions: [
-                        TextButton(
-                            onPressed: () {
-                              Get.back();
-                              controller.clearChatHistory(false);
-                            },
-                            child: const Text("CLEAR ALL")),
-                        TextButton(
-                            onPressed: () {
-                              Get.back();
-                            },
-                            child: const Text("CANCEL")),
-                        TextButton(
-                            onPressed: () {
-                              Get.back();
-                              controller.clearChatHistory(true);
-                            },
-                            child: const Text("CLEAR EXCEPT STARRED")),
-                      ]);
+                  controller.clearUserChatHistory();
                 },
                 child: const Text("Clear Chat"),
               ),
@@ -1893,7 +1928,7 @@ class ChatView extends GetView<ChatController> {
                 onPressed: () {
                   controller.reportChatOrUser();
                 },
-                icon: Icon(Icons.report_problem_rounded),
+                icon: const Icon(Icons.report_problem_rounded),
               ),
               overflowWidget: GestureDetector(
                 onTap: () {
@@ -1903,13 +1938,35 @@ class ChatView extends GetView<ChatController> {
               ),
               showAsAction: ShowAsAction.NEVER,
             ),
-            CustomAction(
+            controller.isBlocked.value ? CustomAction(
               visibleWidget: IconButton(
-                onPressed: () {},
-                icon: Icon(Icons.block),
+                onPressed: () {
+                  Get.back();
+                  controller.unBlockUser();
+                },
+                icon: const Icon(Icons.block),
               ),
               overflowWidget: GestureDetector(
-                onTap: () {},
+                onTap: () {
+                  Get.back();
+                  controller.unBlockUser();
+                },
+                child: const Text("Unblock"),
+              ),
+              showAsAction: ShowAsAction.NEVER,
+            ): CustomAction(
+              visibleWidget: IconButton(
+                onPressed: () {
+                  Get.back();
+                  controller.blockUser();
+                },
+                icon: const Icon(Icons.block),
+              ),
+              overflowWidget: GestureDetector(
+                onTap: () {
+                  Get.back();
+                  controller.blockUser();
+                },
                 child: const Text("Block"),
               ),
               showAsAction: ShowAsAction.NEVER,
@@ -1917,7 +1974,7 @@ class ChatView extends GetView<ChatController> {
             CustomAction(
               visibleWidget: IconButton(
                 onPressed: () {},
-                icon: Icon(Icons.search),
+                icon: const Icon(Icons.search),
               ),
               overflowWidget: GestureDetector(
                 onTap: () {},
@@ -1928,7 +1985,7 @@ class ChatView extends GetView<ChatController> {
             CustomAction(
               visibleWidget: IconButton(
                 onPressed: () {},
-                icon: Icon(Icons.search),
+                icon: const Icon(Icons.shortcut),
               ),
               overflowWidget: GestureDetector(
                 onTap: () {},

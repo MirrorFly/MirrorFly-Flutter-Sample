@@ -67,12 +67,16 @@ class ChatController extends GetxController
 
   var isSelected = false.obs;
 
+  var isBlocked = false.obs;
+
   var selectedChatList = List<ChatMessageModel>.empty(growable: true).obs;
 
   @override
   void onInit() {
     super.onInit();
     profile = Get.arguments as Profile;
+    debugPrint("isBlocked===> ${profile.isBlocked}");
+    isBlocked(profile.isBlocked);
     controller = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 600),
@@ -817,5 +821,83 @@ class ChatController extends GetxController
           width: width,
           height: height,
         ));
+  }
+
+  blockUser() {
+    Helper.showAlert(
+        message: "Are you sure you want to Block ${profile.name}?",
+        actions: [
+          TextButton(
+              onPressed: () {
+                Get.back();
+              },
+              child: const Text("CANCEL")),
+          TextButton(
+              onPressed: () {
+                Get.back();
+                Helper.showLoading(message: "Blocking User");
+                PlatformRepo().blockUser(profile.jid!).then((value){
+                  debugPrint(value);
+                  isBlocked(true);
+                  Helper.hideLoading();
+                }).catchError((error){
+                  Helper.hideLoading();
+                  debugPrint(error);
+                });
+              },
+              child: const Text("BLOCK")),
+        ]);
+
+  }
+
+  clearUserChatHistory() {
+    Helper.showAlert(
+        message: "Are you sure you want to clear the chat?",
+        actions: [
+          TextButton(
+              onPressed: () {
+                Get.back();
+                clearChatHistory(false);
+              },
+              child: const Text("CLEAR ALL")),
+          TextButton(
+              onPressed: () {
+                Get.back();
+              },
+              child: const Text("CANCEL")),
+          TextButton(
+              onPressed: () {
+                Get.back();
+                clearChatHistory(true);
+              },
+              child: const Text("CLEAR EXCEPT STARRED")),
+        ]);
+  }
+
+  unBlockUser() {
+    Helper.showAlert(
+        message: "Unblock ${profile.name}?",
+        actions: [
+          TextButton(
+              onPressed: () {
+                Get.back();
+              },
+              child: const Text("CANCEL")),
+          TextButton(
+              onPressed: () {
+                Get.back();
+                Helper.showLoading(message: "Unblocking User");
+                PlatformRepo().unBlockUser(profile.jid!).then((value){
+                  debugPrint(value);
+                  isBlocked(false);
+                  Helper.hideLoading();
+                }).catchError((error){
+                  Helper.hideLoading();
+                  debugPrint(error);
+                });
+              },
+              child: const Text("UNBLOCK")),
+
+        ]);
   }
 }

@@ -430,6 +430,12 @@ class MainActivity : FlutterActivity(), MethodChannel.MethodCallHandler,
             call.method.equals("favourite_message") -> {
                 favouriteMessage(call, result)
             }
+            call.method.equals("block_user") -> {
+                blockUser(call, result)
+            }
+            call.method.equals("un_block_user") -> {
+                unBlockUser(call, result)
+            }
 
 
             //not implemneted
@@ -1244,6 +1250,33 @@ class MainActivity : FlutterActivity(), MethodChannel.MethodCallHandler,
                 LogMessage.d(TAG, "Token Refresh failure")
                 result.success(FlyUtils.decodedToken().trim())
             }
+        }
+    }
+    private fun blockUser(call: MethodCall, result: MethodChannel.Result){
+        val userJid = call.argument<String>("userJID") ?: ""
+        FlyCore.blockUser(userJid) { isSuccess, throwable, data ->
+            if (isSuccess) {
+                //User is blocked update the UI
+                result.success(data.tojsonString())
+            } else {
+                result.error("500", "Unable to Block User", throwable?.tojsonString())
+                //User blocking failed print throwable to find the exception details
+            }
+
+        }
+    }
+    private fun unBlockUser(call: MethodCall, result: MethodChannel.Result){
+        val userJid = call.argument<String>("userJID") ?: ""
+
+        FlyCore.unblockUser(userJid) { isSuccess, throwable, data ->
+            if (isSuccess) {
+                //User is blocked update the UI
+                result.success(data.tojsonString())
+            } else {
+                result.error("500", "Unable to Unblock User", throwable?.tojsonString())
+                //User blocking failed print throwable to find the exception details
+            }
+
         }
     }
 

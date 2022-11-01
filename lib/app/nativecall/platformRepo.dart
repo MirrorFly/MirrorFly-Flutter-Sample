@@ -730,6 +730,34 @@ class PlatformRepo {
       rethrow;
     }
   }
+  Future<dynamic> blockUser(String userJID) async {
+    dynamic userBlockResponse;
+    try {
+      userBlockResponse = await mirrorFlyMethodChannel.invokeMethod('block_user', { "userJID" : userJID});
+      debugPrint("Blocked Response ==> $userBlockResponse");
+      return userBlockResponse;
+    }on PlatformException catch (e){
+      debugPrint("Platform Exception ===> $e");
+      rethrow;
+    } on Exception catch(error){
+      debugPrint("Exception ==> $error");
+      rethrow;
+    }
+  }
+  Future<dynamic> unBlockUser(String userJID) async {
+    dynamic userBlockResponse;
+    try {
+      userBlockResponse = await mirrorFlyMethodChannel.invokeMethod('un_block_user', { "userJID" : userJID});
+      debugPrint("Un-Blocked Response ==> $userBlockResponse");
+      return userBlockResponse;
+    }on PlatformException catch (e){
+      debugPrint("Platform Exception ===> $e");
+      rethrow;
+    } on Exception catch(error){
+      debugPrint("Exception ==> $error");
+      rethrow;
+    }
+  }
 
 
   Future<dynamic> favouriteMessage(String messageID, String chatUserJID, bool isFavourite) async {
@@ -760,4 +788,5 @@ class PlatformRepo {
       rethrow;
     }
   }
+
 }
