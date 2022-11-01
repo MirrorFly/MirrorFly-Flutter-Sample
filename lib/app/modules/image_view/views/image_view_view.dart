@@ -1,8 +1,10 @@
 import 'dart:io';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
 import 'package:get/get.dart';
+import 'package:mirror_fly_demo/app/common/main_controller.dart';
 import 'package:photo_view/photo_view.dart';
 
 import '../controllers/image_view_controller.dart';
@@ -12,31 +14,50 @@ class ImageViewView extends GetView<ImageViewController> {
 
   @override
   Widget build(BuildContext context) {
+    var main = Get.find<MainController>();
     return Scaffold(
       appBar: AppBar(
         title: Text(controller.image_name.value),
       ),
       body: SafeArea(
         child: Obx(() {
-          return controller.imagepath.value.isNotEmpty ?
-          PhotoView(
-            imageProvider: FileImage(File(controller.imagepath.value)),
-            // Contained = the smallest possible size to fit one dimension of the screen
-            minScale: PhotoViewComputedScale.contained * 0.8,
-            // Covered = the smallest possible size to fit the whole screen
-            maxScale: PhotoViewComputedScale.covered * 2,
-            enableRotation: true,
-            // Set the background color to the "classic white"
-            backgroundDecoration: BoxDecoration(
-              color: Theme
-                  .of(context)
-                  .canvasColor,
-            ),
-            loadingBuilder: (context, event) =>
-                Center(
-                  child: CircularProgressIndicator(),
-                ),
-          ) : Center(child: Text('Unable to Load Image'),);
+          return controller.imagepath.value.isNotEmpty
+              ? PhotoView(
+                  imageProvider: FileImage(File(controller.imagepath.value)),
+                  // Contained = the smallest possible size to fit one dimension of the screen
+                  minScale: PhotoViewComputedScale.contained * 0.8,
+                  // Covered = the smallest possible size to fit the whole screen
+                  maxScale: PhotoViewComputedScale.covered * 2,
+                  enableRotation: false,
+                  // Set the background color to the "classic white"
+                  backgroundDecoration: BoxDecoration(
+                    color: Colors.black,
+                  ),
+                  loadingBuilder: (context, event) => Center(
+                    child: CircularProgressIndicator(),
+                  ),
+                )
+              : controller.imageurl.value.isNotEmpty
+                  ? PhotoView(
+                      imageProvider: CachedNetworkImageProvider(
+                          controller.imageurl.value,
+                          headers: {"Authorization": main.AUTHTOKEN.value}),
+                      // Contained = the smallest possible size to fit one dimension of the screen
+                      minScale: PhotoViewComputedScale.contained * 0.8,
+                      // Covered = the smallest possible size to fit the whole screen
+                      maxScale: PhotoViewComputedScale.covered * 2,
+                      enableRotation: false,
+                      // Set the background color to the "classic white"
+                      backgroundDecoration: BoxDecoration(
+                        color: Colors.black,
+                      ),
+                      loadingBuilder: (context, event) => Center(
+                        child: CircularProgressIndicator(),
+                      ),
+                    )
+                  : Center(
+                      child: Text('Unable to Load Image'),
+                    );
         }),
       ),
     );

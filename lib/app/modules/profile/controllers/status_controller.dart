@@ -1,7 +1,11 @@
+import 'dart:convert';
+
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/model/statusModel.dart';
 
+import '../../../common/constants.dart';
+import '../../../data/helper.dart';
 import '../../../nativecall/platformRepo.dart';
 
 class StatusListController extends GetxController{
@@ -17,7 +21,7 @@ class StatusListController extends GetxController{
 
   onChanged(){
     count.value = (121 - addstatuscontroller.text.length);
-    addstatuscontroller.selection = TextSelection.collapsed(offset: addstatuscontroller.text.length);
+    //addstatuscontroller.selection = TextSelection.collapsed(offset: addstatuscontroller.text.length);
   }
 
   @override
@@ -43,6 +47,22 @@ class StatusListController extends GetxController{
       }
     }).catchError((onError){
       loading.value=false;
+    });
+  }
+
+  updateStatus([String? text]){
+    Helper.showLoading();
+    PlatformRepo().updateProfileStatus(text ?? addstatuscontroller.text.trim().toString()).then((value){
+      selectedStatus.value=text ?? addstatuscontroller.text.trim().toString();
+      addstatuscontroller.text=text ?? addstatuscontroller.text.trim().toString();
+      var data = json.decode(value.toString());
+      toToast(data['message'].toString());
+      Helper.hideLoading();
+      if(data['status']) {
+        getStatusList();
+      }
+    }).catchError((er){
+      toToast(er);
     });
   }
 }

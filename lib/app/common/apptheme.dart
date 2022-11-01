@@ -9,8 +9,9 @@ class apptheme {
         titleTextStyle: TextStyle(
             color: appbartextcolor,
             fontSize: 20,
-            fontWeight: FontWeight.bold,
+            fontWeight: FontWeight.normal,
             fontFamily: 'sf_ui')),
+    hintColor: Colors.black26,
     fontFamily: 'sf_ui',
     textTheme: const TextTheme(
       titleLarge: TextStyle(

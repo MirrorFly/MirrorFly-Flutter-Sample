@@ -15,27 +15,35 @@ class LoginView extends GetView<LoginController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
+      /*appBar: AppBar(
         title: const Text('Register'),
         centerTitle: true,
         automaticallyImplyLeading: false,
-      ),
+      ),*/
       body: SafeArea(
         child: SingleChildScrollView(
           child: Padding(
-            padding: const EdgeInsets.all(30.0),
+            padding: const EdgeInsets.all(12.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                SvgPicture.asset(registericon),
-                const SizedBox(
-                  height: 50,
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 40),
+                  child: SvgPicture.asset(registericon),
                 ),
                 const Text(
-                  'Please choose your country code and enter your mobile number to get the verification code.',
+                  'Register Your Number',
                   textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 14),
+                  style: TextStyle(fontSize: 20,fontWeight: FontWeight.w600),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: const Text(
+                    'Please choose your country code and enter your mobile number to get the verification code.',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(fontSize: 13,fontWeight: FontWeight.w300),
+                  ),
                 ),
                 const SizedBox(
                   height: 50,
@@ -43,7 +51,7 @@ class LoginView extends GetView<LoginController> {
                 Obx(() => ListTile(
                       contentPadding: EdgeInsets.zero,
                       title: Text(controller.selectedCountry.value.name,
-                          style: TextStyle(color: Colors.black,fontSize: 18,fontWeight: FontWeight.w500)),
+                          style: TextStyle(color: Colors.black,fontSize: 16,fontWeight: FontWeight.w500)),
                       trailing: Icon(Icons.keyboard_arrow_down_outlined),
                   onTap: (){
                         Get.toNamed(Routes.COUNTRIES)?.then((value) => value!=null ? controller.selectedCountry.value = value : controller.india);
@@ -73,6 +81,7 @@ class LoginView extends GetView<LoginController> {
                           decoration: const InputDecoration(
                             border: InputBorder.none,
                             hintText: 'Enter Mobile Number',
+                            //hintStyle: TextStyle(color: Colors.black26)
                           ),
                         ),
                       ),

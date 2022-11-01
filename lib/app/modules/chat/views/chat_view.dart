@@ -114,7 +114,8 @@ class ChatView extends GetView<ChatController> {
                                           if (!controller.showEmoji.value) {
                                             FocusScope.of(context).unfocus();
                                             controller.focusNode
-                                                .canRequestFocus = false;
+                                                .canRequestFocus =
+                                            false;
                                           }
                                           Future.delayed(
                                               const Duration(milliseconds: 500),
@@ -376,7 +377,7 @@ class ChatView extends GetView<ChatController> {
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
             Text(
-              chatList[index].messageTextContent!,
+              chatList[index].messageTextContent ?? "",
               style: const TextStyle(fontSize: 17),
             ),
             const SizedBox(width: 10,),
@@ -403,7 +404,8 @@ class ChatView extends GetView<ChatController> {
       return Center(
         child: Padding(
           padding: const EdgeInsets.all(15.0),
-          child: Text(chatList[index].messageTextContent!,
+          // child: Text(chatList[index].messageTextContent!,
+          child: Text(chatList[index].messageTextContent ?? "",
               style:
               const TextStyle(fontSize: 13, fontWeight: FontWeight.bold)),
         ),
@@ -560,6 +562,7 @@ class ChatView extends GetView<ChatController> {
                       },
                       child: getImageOverlay(chatList, index, context),
                     ),
+
                   ],
                 ),
               ),

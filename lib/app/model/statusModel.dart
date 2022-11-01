@@ -10,14 +10,14 @@ String statusDataToJson(List<StatusData> data) => json.encode(List<dynamic>.from
 
 class StatusData {
   StatusData({
-    required this.id,
-    required this.isCurrentStatus,
-    required this.status,
+    this.id,
+    this.isCurrentStatus,
+    this.status,
   });
 
-  int id;
-  bool isCurrentStatus;
-  String status;
+  int? id;
+  bool? isCurrentStatus;
+  String? status;
 
   factory StatusData.fromJson(Map<String, dynamic> json) => StatusData(
     id: json["id"] == null ? null : json["id"],

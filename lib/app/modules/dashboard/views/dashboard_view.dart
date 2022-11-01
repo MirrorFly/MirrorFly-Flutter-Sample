@@ -194,6 +194,8 @@ class DashboardView extends GetView<DashboardController> {
                                 fontWeight: FontWeight.w700,
                                 fontFamily: 'sf_ui',
                                 color: texthintcolor),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
                           ),
                         ),
                         Padding(

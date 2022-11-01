@@ -21,7 +21,7 @@ class MainController extends GetxController {
   }
 
   getAuthToken() async {
-    await PlatformRepo().getUsers(1, "").then((value) async {
+    if(SessionManagement().getUsername().checkNull().isNotEmpty&& SessionManagement().getPassword().checkNull().isNotEmpty) {
       await PlatformRepo().authtoken().then((value) {
         Log("RetryAuth", value);
         if (value.isNotEmpty) {
@@ -32,7 +32,7 @@ class MainController extends GetxController {
         }
         update();
       });
-    });
+    }
   }
 
   String getRecentChatTime(BuildContext context, int? epochTime) {
