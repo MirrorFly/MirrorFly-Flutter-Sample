@@ -25,8 +25,8 @@ import '../modules/login/bindings/country_binding.dart';
 import '../modules/login/bindings/login_binding.dart';
 import '../modules/login/views/countrylist_view.dart';
 import '../modules/login/views/login_view.dart';
-import '../modules/message_info/bindings/message_info_binding.dart';
-import '../modules/message_info/views/message_info_view.dart';
+// import '../modules/message_info/bindings/message_info_binding.dart';
+// import '../modules/message_info/views/message_info_view.dart';
 import '../modules/preview_contact/bindings/preview_contact_binding.dart';
 import '../modules/preview_contact/views/preview_contact_view.dart';
 import '../modules/profile/bindings/profile_binding.dart';
@@ -136,10 +136,10 @@ class AppPages {
       page: () => const PreviewContactView(),
       binding: PreviewContactBinding(),
     ),
-    GetPage(
-      name: _Paths.MESSAGE_INFO,
-      page: () => const MessageInfoView(),
-      binding: MessageInfoBinding(),
-    ),
+    // GetPage(
+    //   name: _Paths.MESSAGE_INFO,
+    //   page: () => const MessageInfoView(),
+    //   binding: MessageInfoBinding(),
+    // ),
   ];
 }

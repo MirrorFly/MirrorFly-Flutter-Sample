@@ -727,7 +727,7 @@ class ChatController extends GetxController
           TextButton(
               onPressed: () {
                 Get.back();
-                Helper.showLoading('Deleting Message');
+                Helper.showLoading(message: 'Deleting Message');
                 PlatformRepo().deleteMessages(profile.jid!, deleteChatListID, false).then((value){
                   debugPrint(value);
                   Helper.hideLoading();
@@ -747,7 +747,7 @@ class ChatController extends GetxController
           isRecallAvailable ? TextButton(
               onPressed: () {
                 Get.back();
-                Helper.showLoading('Deleting Message for Everyone');
+                Helper.showLoading(message: 'Deleting Message for Everyone');
                 PlatformRepo().deleteMessages(profile.jid!, deleteChatListID, true).then((value){
                   debugPrint(value);
                   Helper.hideLoading();
