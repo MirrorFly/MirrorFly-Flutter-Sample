@@ -74,9 +74,7 @@ class DashboardView extends GetView<DashboardController> {
         floatingActionButton: FloatingActionButton(
           tooltip: "New Chat",
           onPressed: () {
-            // select user page
-            Get.toNamed(Routes.CONTACTS);
-                //?.then((value) => controller.getRecentChatlist());
+            Get.toNamed(Routes.CONTACTS, arguments: {"forward" : false });
           },
           backgroundColor: buttonbgcolor,
           child: SvgPicture.asset(

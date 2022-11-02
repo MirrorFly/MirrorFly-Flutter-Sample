@@ -935,10 +935,18 @@ class ChatController extends GetxController
   }
 
   forwardMessage() {
+    var messageIds = List<String>.empty(growable: true);
+    for(var chatItem in selectedChatList){
+      messageIds.add(chatItem.messageId);
+      debugPrint(messageIds.length.toString());
+      debugPrint(selectedChatList.length.toString());
 
-    // PlatformRepo().forwardMessage(messageIds, userList).then((value){
-    //
-    // });
+    }
+    if(messageIds.length == selectedChatList.length){
+      isSelected(false);
+      selectedChatList.clear();
+      Get.toNamed(Routes.CONTACTS, arguments: {"forward" : true, "messageIds": messageIds });
+    }
   }
 
   void closeKeyBoard() {
