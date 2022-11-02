@@ -10,6 +10,7 @@ import 'package:get/get_core/src/get_main.dart';
 import 'package:mirror_fly_demo/app/data/SessionManagement.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
 
+import 'package:flutter_cache_manager/flutter_cache_manager.dart' as cache;
 import '../nativecall/platformRepo.dart';
 import 'constants.dart';
 import 'main_controller.dart';
@@ -97,6 +98,7 @@ class ImageNetwork extends GetView<MainController> {
   Widget build(BuildContext context) {
     var AUTHTOKEN = controller.AUTHTOKEN;
     Log("Mirrorfly Auth", AUTHTOKEN.value);
+    Log("Image URL", url);
     return Obx(
       () => CachedNetworkImage(
         imageUrl: imagedomin + url,
@@ -113,6 +115,7 @@ class ImageNetwork extends GetView<MainController> {
                 width: height,
               );
         },*/
+
         progressIndicatorBuilder: (context, link, progress) {
           return SizedBox(
             height: height,
@@ -123,7 +126,8 @@ class ImageNetwork extends GetView<MainController> {
         errorWidget: (context, link, error) {
           Log("imageerror", error.toString());
           if(error.toString().contains("401")&&url.isNotEmpty){
-            controller.getAuthToken();
+            // controller.getAuthToken();
+            _deleteImageFromCache(url);
           }
           return errorWidget ??
               Image.asset(
@@ -161,6 +165,19 @@ class ImageNetwork extends GetView<MainController> {
         },
       ),*/
     );
+  }
+  void _deleteImageFromCache(String url) {
+    // cache.DefaultCacheManager manager = cache.DefaultCacheManager();
+    // manager.emptyCache();
+    cache.DefaultCacheManager().removeFile(url).then((value) {
+      //ignore: avoid_print
+      print('File removed');
+      controller.getAuthToken();
+    }).onError((error, stackTrace) {
+      //ignore: avoid_print
+      print(error);
+    });
+    //await CachedNetworkImage.evictFromCache(url);
   }
 }
 

@@ -1,17 +1,16 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
-import 'dart:typed_data';
 import 'dart:io' as Io;
 
 import 'package:audioplayers/audioplayers.dart';
 import 'package:file_picker/file_picker.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:mirror_fly_demo/app/model/chatMessageModel.dart';
-import 'package:mirror_fly_demo/app/model/chatmessage_model.dart';
 import 'package:mirror_fly_demo/app/nativecall/platformRepo.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -23,6 +22,7 @@ import '../../../data/helper.dart';
 import '../../../model/checkModel.dart' as checkModel;
 import '../../../model/userlistModel.dart';
 import '../../../routes/app_pages.dart';
+
 
 class ChatController extends GetxController
     with GetSingleTickerProviderStateMixin {
@@ -71,6 +71,11 @@ class ChatController extends GetxController
 
   var selectedChatList = List<ChatMessageModel>.empty(growable: true).obs;
 
+
+  var keyboardVisibilityController = KeyboardVisibilityController();
+
+  late StreamSubscription<bool> keyboardSubscription;
+
   @override
   void onInit() {
     super.onInit();
@@ -82,11 +87,16 @@ class ChatController extends GetxController
       duration: const Duration(milliseconds: 600),
     );
 
-    askStoragePermission();
+    // askStoragePermission();
     isLive = true;
     focusNode.addListener(() {
       if (focusNode.hasFocus) {
         showEmoji(false);
+      }
+    });
+    keyboardSubscription = keyboardVisibilityController.onChange.listen((bool visible) {
+      if(!visible) {
+        focusNode.canRequestFocus = false;
       }
     });
     scrollController.addListener(() {
@@ -147,6 +157,7 @@ class ChatController extends GetxController
   }
 
   registerChatSync() {
+    debugPrint("Registering Event");
     var messageEvent = PlatformRepo().onMessageReceived;
     messageEvent.listen((msgData) {
       ChatMessageModel chatMessageModel = sendMessageModelFromJson(msgData);
@@ -618,6 +629,15 @@ class ChatController extends GetxController
     this.chatList.refresh();
   }
 
+  clearAllChatSelection() {
+    isSelected(false);
+    for (var chatItem in selectedChatList){
+      chatItem.isSelected = false;
+    }
+    selectedChatList.clear();
+
+  }
+
   void addChatSelection(ChatMessageModel chatList) {
     if (chatList.messageType != Constants.MNOTIFICATION) {
       selectedChatList.add(chatList);
@@ -851,27 +871,30 @@ class ChatController extends GetxController
   }
 
   clearUserChatHistory() {
-    Helper.showAlert(
-        message: "Are you sure you want to clear the chat?",
-        actions: [
-          TextButton(
-              onPressed: () {
-                Get.back();
-                clearChatHistory(false);
-              },
-              child: const Text("CLEAR ALL")),
-          TextButton(
-              onPressed: () {
-                Get.back();
-              },
-              child: const Text("CANCEL")),
-          TextButton(
-              onPressed: () {
-                Get.back();
-                clearChatHistory(true);
-              },
-              child: const Text("CLEAR EXCEPT STARRED")),
-        ]);
+    Future.delayed(const Duration(milliseconds: 100), () {
+      Helper.showAlert(
+          message: "Are you sure you want to clear the chat?",
+          actions: [
+            TextButton(
+                onPressed: () {
+                  Get.back();
+                  clearChatHistory(false);
+                },
+                child: const Text("CLEAR ALL")),
+            TextButton(
+                onPressed: () {
+                  Get.back();
+                },
+                child: const Text("CANCEL")),
+            TextButton(
+                onPressed: () {
+                  Get.back();
+                  clearChatHistory(true);
+                },
+                child: const Text("CLEAR EXCEPT STARRED")),
+          ]);
+    });
+
   }
 
   unBlockUser() {
@@ -899,5 +922,27 @@ class ChatController extends GetxController
               child: const Text("UNBLOCK")),
 
         ]);
+  }
+
+  exportChat() async {
+    if(chatList.isNotEmpty) {
+      if (await askStoragePermission()) {
+        PlatformRepo().exportChat(profile.jid.checkNull());
+      }
+    }else{
+      toToast("There is no conversation.");
+    }
+  }
+
+  forwardMessage() {
+
+    // PlatformRepo().forwardMessage(messageIds, userList).then((value){
+    //
+    // });
+  }
+
+  void closeKeyBoard() {
+    // keyboardVisibilityController.isVisible ? FocusManager.instance.primaryFocus?.unfocus() : null;
+    FocusManager.instance.primaryFocus!.unfocus();
   }
 }

@@ -15,33 +15,15 @@ import '../../../routes/app_pages.dart';
 import '../../dashboard/controllers/dashboard_controller.dart';
 
 class DashboardView extends GetView<DashboardController> {
-  DashboardView({Key? key}) : super(key: key);
+  const DashboardView({Key? key}) : super(key: key);
 
   //final themeController = Get.put(DashboardController());
 
-  void _showDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text("Alert!!"),
-          content: Text("You are awesome!"),
-          actions: [
-            MaterialButton(
-              child: Text("OK"),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
-        );
-      },
-    );
-  }
-
+  @override
   Widget build(BuildContext context) {
     return FocusDetector(
       onFocusGained: () {
+        controller.registerMsgListener();
         controller.getRecentChatlist();
       },
       child: Scaffold(
@@ -74,7 +56,7 @@ class DashboardView extends GetView<DashboardController> {
                   ),
                 ),
               ],
-              offset: Offset(0, 20),
+              offset: const Offset(0, 20),
               elevation: 2,
               // on selected we show the dialog box
               onSelected: (value) {
@@ -97,7 +79,12 @@ class DashboardView extends GetView<DashboardController> {
                 //?.then((value) => controller.getRecentChatlist());
           },
           backgroundColor: buttonbgcolor,
-          child: const Icon(Icons.chat_rounded),
+          child: SvgPicture.asset(
+            chatfabicon,
+            width: 18,
+            height: 18,
+            fit: BoxFit.contain,
+          ),
         ),
         body: Stack(
           children: [
@@ -116,13 +103,13 @@ class DashboardView extends GetView<DashboardController> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          Image.asset(nocontactsicon),
+                          Image.asset(nochaticon, width: 200,),
                           Text(
                             'No new messages',
                             textAlign: TextAlign.center,
                             style: Theme.of(context).textTheme.titleMedium,
                           ),
-                          SizedBox(
+                          const SizedBox(
                             height: 8,
                           ),
                           Text(
@@ -147,7 +134,7 @@ class DashboardView extends GetView<DashboardController> {
           children: [
             Container(
                 margin:
-                    EdgeInsets.only(left: 19.0, top: 10, bottom: 10, right: 10),
+                    const EdgeInsets.only(left: 19.0, top: 10, bottom: 10, right: 10),
                 child: Stack(
                   children: [
                     ImageNetwork(
@@ -168,18 +155,18 @@ class DashboardView extends GetView<DashboardController> {
                               radius: 8,
                               child: Text(
                                 item.unreadMessageCount.toString(),
-                                style: TextStyle(
+                                style: const TextStyle(
                                     fontSize: 9,
                                     color: Colors.white,
                                     fontFamily: 'sf_ui'),
                               ),
                             ))
-                        : SizedBox(),
+                        : const SizedBox(),
                   ],
                 )),
             Flexible(
               child: Container(
-                padding: EdgeInsets.only(top: 16),
+                padding: const EdgeInsets.only(top: 16),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -189,7 +176,7 @@ class DashboardView extends GetView<DashboardController> {
                         Expanded(
                           child: Text(
                             item.profileName.toString(),
-                            style: TextStyle(
+                            style: const TextStyle(
                                 fontSize: 16.0,
                                 fontWeight: FontWeight.w700,
                                 fontFamily: 'sf_ui',
@@ -218,14 +205,14 @@ class DashboardView extends GetView<DashboardController> {
                     Row(
                       children: [
                         item.unreadMessageCount.toString() != "0"
-                            ? Padding(
-                                padding: const EdgeInsets.only(right: 8.0),
+                            ? const Padding(
+                                padding: EdgeInsets.only(right: 8.0),
                                 child: CircleAvatar(
                                   radius: 4,
                                   backgroundColor: Colors.green,
                                 ),
                               )
-                            : SizedBox(),
+                            : const SizedBox(),
                         Expanded(
                           child: Row(
                             children: [
