@@ -1,6 +1,8 @@
+
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
 import 'package:package_info_plus/package_info_plus.dart';
@@ -99,6 +101,66 @@ class Helper {
     var rand = hashcode % colorsArray.length;
     return colorsArray[(rand).abs()];
   }
+
+  static Widget forMessageTypeIcon(String? MessageType) {
+    switch (MessageType?.toUpperCase()) {
+      case Constants.MIMAGE:
+        return SvgPicture.asset(
+          Mimageicon,
+          fit: BoxFit.contain,
+        );
+      case Constants.MAUDIO:
+        return SvgPicture.asset(
+          Maudioicon,
+          fit: BoxFit.contain,
+        );
+      case Constants.MVIDEO:
+        return SvgPicture.asset(
+          Mvideoicon,
+          fit: BoxFit.contain,
+        );
+      case Constants.MDOCUMENT:
+        return SvgPicture.asset(
+          Mdocumenticon,
+          fit: BoxFit.contain,
+        );
+      case Constants.MCONTACT:
+        return SvgPicture.asset(
+          Mcontacticon,
+          fit: BoxFit.contain,
+        );
+      case Constants.MLOCATION:
+        return SvgPicture.asset(
+          Mlocationicon,
+          fit: BoxFit.contain,
+        );
+      default:
+        return const SizedBox.shrink();
+    }
+  }
+
+  static String forMessageTypeString(String? MessageType) {
+    switch (MessageType?.toUpperCase()) {
+      case Constants.MIMAGE:
+        return "Image";
+      case Constants.MAUDIO:
+        return "Audio";
+      case Constants.MVIDEO:
+        return "Video";
+      case Constants.MDOCUMENT:
+        return "Document";
+      case Constants.MCONTACT:
+        return "Contact";
+      case Constants.MLOCATION:
+        return "Location";
+      default:
+        return "";
+    }
+  }
+  static String capitalize(String str) {
+    return "${str[0].toUpperCase()}${str.substring(1).toLowerCase()}";
+  }
+
 }
 
 extension StringParsing on String? {

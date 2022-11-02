@@ -16,7 +16,6 @@ import androidx.annotation.NonNull
 import androidx.core.content.FileProvider
 import androidx.core.view.WindowCompat
 import com.contus.flycommons.*
-import com.contus.flycommons.models.MessageType
 import com.contus.xmpp.chat.models.Profile
 import com.contusflysdk.AppUtils
 import com.contusflysdk.api.*
@@ -25,10 +24,8 @@ import com.contusflysdk.api.chat.MessageEventsListener
 import com.contusflysdk.api.contacts.ContactManager
 import com.contusflysdk.api.contacts.ProfileDetails
 import com.contusflysdk.api.models.ChatMessage
-import com.contusflysdk.api.models.RecentChat
+import com.contusflysdk.api.models.ChatMessageStatusDetail
 import com.contusflysdk.media.MediaUploadHelper
-import com.contusflysdk.model.Message
-import com.contusflysdk.utils.FilePathUtils
 import com.contusflysdk.utils.ThumbSize
 import com.contusflysdk.utils.VideoRecUtils
 import com.google.gson.Gson
@@ -38,7 +35,6 @@ import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.plugin.common.EventChannel
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
-import kotlinx.coroutines.Dispatchers
 import org.json.JSONObject
 import java.io.ByteArrayOutputStream
 import java.io.File
@@ -68,7 +64,6 @@ class MainActivity : FlutterActivity(), MethodChannel.MethodCallHandler,
         const val MUTE_EVENT = "mute_event"
         const val PIN_EVENT = "pin_event"
     }
-
     val TAG = "MirrorFly"
 
     private var userName = ""
@@ -86,7 +81,7 @@ class MainActivity : FlutterActivity(), MethodChannel.MethodCallHandler,
 //    private var chatStatusEventSink: EventChannel.EventSink? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         // Aligns the Flutter view vertically with the window.
-        WindowCompat.setDecorFitsSystemWindows(getWindow(), false)
+        WindowCompat.setDecorFitsSystemWindows(window, false)
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             // Disable the Android splash screen fade out animation to avoid
@@ -98,7 +93,7 @@ class MainActivity : FlutterActivity(), MethodChannel.MethodCallHandler,
     }
 
     @Override
-    override fun configureFlutterEngine(@NonNull flutterEngine: FlutterEngine) {
+    override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)
 
         MethodChannel(flutterEngine.dartExecutor.binaryMessenger, MIRRORFLY_METHOD_CHANNEL).setMethodCallHandler(this)
@@ -165,20 +160,20 @@ class MainActivity : FlutterActivity(), MethodChannel.MethodCallHandler,
                         if (isSuccess) {
                             val responseObject = data.get("data") as JSONObject
 
-                            userName = responseObject.get("username") as String;
+                            userName = responseObject.get("username") as String
 
                             val response = JSONObject(data).toString()
                             Log.e("RESPONSE", response)
                             //ChatManager.disconnect()
                             ChatManager.connect(object : ChatConnectionListener {
                                 override fun onConnected() {
-                                    Handler().postDelayed(Runnable {
+                                    Handler().postDelayed({
                                         result.success(response)
                                     },500)
                                 }
 
                                 override fun onDisconnected() {
-                                    Log.i(TAG, "Chat Manager Disconnected");
+                                    Log.i(TAG, "Chat Manager Disconnected")
                                 }
 
                                 override fun onConnectionNotAuthorized() {
@@ -204,7 +199,7 @@ class MainActivity : FlutterActivity(), MethodChannel.MethodCallHandler,
 
             } else {
                 Log.e("MIRROR_FLY", "useridentifier is null")
-                Log.e("MIRROR_FLY", call.arguments.toString());
+                Log.e("MIRROR_FLY", call.arguments.toString())
             }
         }
     }
@@ -215,27 +210,26 @@ class MainActivity : FlutterActivity(), MethodChannel.MethodCallHandler,
                 //called when the new message is received
 
                 Log.e("MirrorFly", "message Received")
-                //Log.e("Message Received", message.messageTextContent.toString())
-                Log.e("Message Received", Gson().toJson(message))
-//                onMessageReceived?.success(Gson().toJson(message).toString())
+//                DebugUtilis.v("Message Received", message.messageTextContent)
+                Log.e("Message Received", message.tojsonString())
 
-                MessageReceivedStreamHandler.onMessageReceived?.success(
-                    Gson().toJson(message).toString()
-                )
+                MessageReceivedStreamHandler.onMessageReceived?.success(message.tojsonString())
 
-//                chatEventSink?.success(Gson().toJson(message).toString())
             }
 
             override fun onMessageStatusUpdated(messageId: String) {
                 //called when the message status is updated
                 //find the index of message object in list using messageId
                 //then fetch message object from db using `FlyCore.getMessageForId(messageId)` and notify the item in list
-                Log.e("Message Ack", "Received");
+                Log.e("Message Ack", "Received")
 
                 Log.e(TAG, "Message Status Updated ==> $messageId")
-                val message = FlyMessenger.getMessageOfId(messageId);
-                if (message != null && message.messageType == MessageType.IMAGE) {
-                    DebugUtilis.v("STAT", message.mediaChatMessage.mediaThumbImage)
+                val message = FlyMessenger.getMessageOfId(messageId)
+//                if (message != null && message.messageType == MessageType.IMAGE) {
+//                    DebugUtilis.v("STAT", message.mediaChatMessage.mediaThumbImage)
+//                }
+                if (message != null) {
+                    MessageStatusUpdatedStreamHandler.onMessageStatusUpdated?.success(message.tojsonString())
                 }
 //                chatEventSink?.success(Gson().toJson(message).toString())
                 MessageStatusUpdatedStreamHandler.onMessageStatusUpdated?.success(
@@ -246,10 +240,8 @@ class MainActivity : FlutterActivity(), MethodChannel.MethodCallHandler,
             }
 
             override fun onMediaStatusUpdated(message: ChatMessage) {
-                Log.e(TAG, "media Status Updated ==> $message.messageId");
-                MediaStatusUpdatedStreamHandler.onMediaStatusUpdated?.success(
-                    Gson().toJson(message).toString()
-                )
+                Log.e(TAG, "media Status Updated ==> $message.messageId")
+                MediaStatusUpdatedStreamHandler.onMediaStatusUpdated?.success(message.tojsonString())
 
 //                Handler().postDelayed({
 //                    chatEventSink?.success(Gson().toJson(message).toString())
@@ -370,13 +362,13 @@ class MainActivity : FlutterActivity(), MethodChannel.MethodCallHandler,
                 val userJID =
                     if (call.argument<String>("jid") == null) "" else call.argument<String?>("jid")
                         .toString()
-                result.success(FlyMessenger.getUnreadMessagesCount());
+                result.success(FlyMessenger.getUnreadMessagesCount())
             }
             call.method.equals("get_recent_chat_of") -> {
                 val userJID = if(call.argument<String>("jid")==null) "" else call.argument<String?>("jid").toString()
                 val recent  = FlyCore.getRecentChatOf(userJID)
                 if (recent!=null){
-                    result.success(Gson().toJson(recent))
+                    result.success(recent.tojsonString())
                 }
             }
             call.method.equals("download_media") -> {
@@ -384,34 +376,34 @@ class MainActivity : FlutterActivity(), MethodChannel.MethodCallHandler,
                     if (call.argument<String>("media_id") == null) "" else call.argument<String?>("media_id")
                         .toString()
                 val recent = FlyMessenger.downloadMedia(media_id)
-                result.success(Gson().toJson(recent))
+                result.success(recent.tojsonString())
             }
             call.method.equals("send_contact") -> {
-                sendContact(call, result);
+                sendContact(call, result)
             }
             call.method.equals("send_document") -> {
-                sendFileMessage(call, result);
+                sendFileMessage(call, result)
             }
             call.method.equals("open_file") -> {
-                openMediaFile(call, result);
+                openMediaFile(call, result)
             }
             call.method.equals("send_audio") -> {
-                sendaudioMessage(call, result);
+                sendaudioMessage(call, result)
             }
             call.method.equals("filteredRecentChatList") -> {
-                filterRecentChatList(call, result);
+                filterRecentChatList(call, result)
             }
             call.method.equals("filteredMessageList") -> {
-                filterMessageList(call, result);
+                filterMessageList(call, result)
             }
             call.method.equals("filteredContactList") -> {
-                filterContactsList(call, result);
+                filterContactsList(call, result)
             }
             call.method.equals("getRecentChatOf") -> {
                 val userJID = call.argument<String>("jid") ?: ""
                 val recent = FlyCore.getRecentChatOf(userJID)
                 if (recent != null) {
-                    result.success(Gson().toJson(recent))
+                    result.success(recent.tojsonString())
                 }
             }
             call.method.equals("getMessageOfId") -> {
@@ -424,12 +416,140 @@ class MainActivity : FlutterActivity(), MethodChannel.MethodCallHandler,
                 refreshAuthToken(result)
             }
             call.method.equals("clear_chat") -> {
-                clearChats(call, result);
+                clearChats(call, result)
             }
+            call.method.equals("report_chat") -> {
+                reportChat(call, result)
+            }
+            call.method.equals("delete_messages") -> {
+                deleteMessages(call, result)
+            }
+            call.method.equals("get_message_info") -> {
+                getMessageInfo(call, result)
+            }
+            call.method.equals("favourite_message") -> {
+                favouriteMessage(call, result)
+            }
+            call.method.equals("block_user") -> {
+                blockUser(call, result)
+            }
+            call.method.equals("un_block_user") -> {
+                unBlockUser(call, result)
+            }
+
+
+            //not implemneted
+            call.method.equals("get_message_using_ids") -> {
+                getMessageUsingIds(call, result)
+            }
+
             else -> {
                 result.notImplemented()
             }
 
+        }
+    }
+
+    private fun favouriteMessage(call: MethodCall, result: MethodChannel.Result) {
+        val messageID = call.argument<String>("messageID")
+        val chatUserJID = call.argument<String>("chatUserJID")
+        val isFavourite = call.argument<Boolean>("isFavourite")
+
+        if (messageID != null && chatUserJID != null && isFavourite != null) {
+            ChatManager.updateFavouriteStatus(messageID, chatUserJID, isFavourite,  object : ChatActionListener {
+                override fun onResponse(isSuccess: Boolean, message: String) {
+                    if (isSuccess){
+                        result.success(message)
+                    }else{
+                        result.error("500", "Unable to Favourite the Message", message)
+                    }
+                }
+            })
+        };
+    }
+
+    private fun getMessageInfo(call: MethodCall, result: MethodChannel.Result) {
+        val messageID = call.argument<String>("messageID")
+        val messageStatus: ChatMessageStatusDetail? = messageID?.let {
+            FlyMessenger.getMessageStatusOfASingleChatMessage(
+                it
+            )
+        }
+        if (messageStatus != null) {
+            DebugUtilis.v(TAG, messageStatus.tojsonString())
+            result.success(messageStatus.tojsonString())
+        }else{
+            Log.e(TAG, "Message Info Error")
+        }
+    }
+
+    private fun deleteMessages(call: MethodCall, result: MethodChannel.Result) {
+
+        val isDeleteForEveryOne = call.argument<Boolean>("is_delete_for_everyone")
+        val userJID = call.argument<String>("jid")
+        val chatType = call.argument<String>("chat_type")
+        val messageIDList = call.argument<List<String>>("message_ids")
+        if (userJID != null && messageIDList != null && chatType != null) {
+            if (isDeleteForEveryOne!!) {
+
+                Log.e(TAG, "Delete For EveryOne")
+                ChatManager.deleteMessagesForEveryone(
+                    userJID,
+                    messageIDList,
+                    getDeleteChatEnum(chatType),
+                    false,
+                    object : ChatActionListener {
+                        override fun onResponse(isSuccess: Boolean, message: String) {
+                            if (isSuccess){
+                                result.success(message)
+                            }else{
+                                result.error("500", "Unable to Delete the Chat", message)
+                            }
+                        }
+
+                    })
+            } else {
+
+                Log.e(TAG, "Delete For Me")
+                ChatManager.deleteMessagesForMe(
+                    userJID,
+                    messageIDList,
+                    getDeleteChatEnum(chatType),
+                    false,
+                    object : ChatActionListener {
+                        override fun onResponse(isSuccess: Boolean, message: String) {
+                            if (isSuccess){
+                                result.success(message)
+                            }else{
+                                result.error("500", "Unable to Delete the Chat", message)
+                            }
+                        }
+
+                    })
+            }
+        }
+    }
+
+    private fun getMessageUsingIds(call: MethodCall, result: MethodChannel.Result) {
+//        val messageIDList = call.argument<List<String>>("get_message_using_ids")
+//        ChatManager.getMessagesUsingIds(messageIDList)
+    }
+
+    private fun reportChat(call: MethodCall, result: MethodChannel.Result) {
+        val userJID = call.argument<String>("jid")
+        val chatType = call.argument<String>("chat_type")
+        val selectedMessageID = call.argument<String>("selectedMessageID") ?: ""
+        if (chatType != null && userJID != null) {
+            FlyCore.reportUserOrMessages(userJID, chatType, selectedMessageID) {isSuccess, throwable, data ->
+                if (isSuccess) {
+                    DebugUtilis.v(TAG, data.tojsonString())
+                    result.success(data)
+                } else {
+                    result.error("500", "Unable to report the User/Chat", null)
+                }
+            }
+        }else{
+            result.error("500", "Parameters Missing", null)
         }
     }
 
@@ -441,7 +561,7 @@ class MainActivity : FlutterActivity(), MethodChannel.MethodCallHandler,
             ChatManager.clearChat(userJID, getChatEnum(chatType), clearExceptStarred, object : ChatActionListener {
                 override fun onResponse(isSuccess: Boolean, message: String) {
 
-                    result.success(isSuccess);
+                    result.success(isSuccess)
 
                 }
             })
@@ -457,12 +577,19 @@ class MainActivity : FlutterActivity(), MethodChannel.MethodCallHandler,
             else -> ChatTypeEnum.broadcast
         }
     }
+    private fun getDeleteChatEnum(chatType: String): DeleteChatType {
+        return when (chatType) {
+            ChatType.TYPE_CHAT -> DeleteChatType.chat
+            ChatType.TYPE_GROUP_CHAT -> DeleteChatType.groupchat
+            else -> DeleteChatType.chat
+        }
+    }
 
     private fun sendaudioMessage(call: MethodCall, result: MethodChannel.Result) {
         val userJID = call.argument<String>("jid")
         val filePath = call.argument<String>("filePath") ?: ""
         val audioFile = File(filePath)
-        val replyMessageID = call.argument<String>("replyMessageID") ?: ""
+        val replyMessageID = call.argument<String>("replyMessageId") ?: ""
         val isRecorded = call.argument<Boolean>("isRecorded")
         val duration = call.argument<String>("duration")?.toLong()
 
@@ -473,7 +600,7 @@ class MainActivity : FlutterActivity(), MethodChannel.MethodCallHandler,
                 override fun onResponse(isSuccess: Boolean, chatMessage: ChatMessage?) {
                     if (chatMessage != null) {
                         Log.i(TAG, "Audio message sent")
-                        result.success(Gson().toJson(chatMessage))
+                        result.success(chatMessage.tojsonString())
                     }else{
                         result.error("500", "Unable to Send Audio Message", null)
                     }
@@ -483,15 +610,16 @@ class MainActivity : FlutterActivity(), MethodChannel.MethodCallHandler,
     }
 
     private fun sendContact(call: MethodCall, result: MethodChannel.Result) {
-        val contact_list = call.argument<List<String>>("contact_list")
+        val contactList = call.argument<List<String>>("contact_list")
         val userJID = call.argument<String>("jid")
         val contactName = call.argument<String>("contact_name")
+        val replyMessageID = call.argument<String>("replyMessageId") ?: ""
 
-        if (userJID != null && contact_list != null && contactName != null) {
-            FlyMessenger.sendContactMessage(userJID, contactName, contact_list, "", object : SendMessageListener {
+        if (userJID != null && contactList != null && contactName != null) {
+            FlyMessenger.sendContactMessage(userJID, contactName, contactList, replyMessageID, object : SendMessageListener {
                 override fun onResponse(isSuccess: Boolean, chatMessage: ChatMessage?) {
                     if (chatMessage != null) {
-                        result.success(Gson().toJson(chatMessage))
+                        result.success(chatMessage.tojsonString())
                     }else{
                         result.error("500", "Unable to Send Contact Message", null)
                     }
@@ -508,7 +636,7 @@ class MainActivity : FlutterActivity(), MethodChannel.MethodCallHandler,
         val videoFile = File(filePath)
 
         val caption = call.argument<String>("caption") ?: ""
-        val replyMessageID = call.argument<String>("replyMessageID") ?: ""
+        val replyMessageID = call.argument<String>("replyMessageId") ?: ""
 
         FlyMessenger.sendVideoMessage(
             userJid,
@@ -519,8 +647,8 @@ class MainActivity : FlutterActivity(), MethodChannel.MethodCallHandler,
 
                 override fun onResponse(isSuccess: Boolean, chatMessage: ChatMessage?) {
                     if (chatMessage != null) {
-                        DebugUtilis.v(TAG, Gson().toJson(chatMessage));
-                        result.success(Gson().toJson(chatMessage))
+                    DebugUtilis.v(TAG, chatMessage.tojsonString())
+                    result.success(chatMessage.tojsonString())
                     } else {
                         result.error("500", "Unable to Send Video Message", null)
                     }
@@ -555,13 +683,13 @@ class MainActivity : FlutterActivity(), MethodChannel.MethodCallHandler,
             val filePath = message.getMediaChatMessage()?.getMediaLocalStoragePath()
             val mediaCaptionText = message.getMediaChatMessage()?.getMediaCaptionText()
 
-            val array = Base64.decode(base64Img, Base64.DEFAULT);
+            val array = Base64.decode(base64Img, Base64.DEFAULT)
 
             DebugUtilis.v("MEDIA_DETAIL1", array.toString())
-            DebugUtilis.v("MEDIA_DETAIL", Gson().toJson(message).toString())
+            DebugUtilis.v("MEDIA_DETAIL", message.tojsonString())
 
-//            Log.i(TAG, Gson().toJson(message).toString())
-            result.success(Gson().toJson(message).toString())
+//            Log.i(TAG, (message).toString())
+            result.success(message.tojsonString())
         } else {
             result.error("500", "Media Details Not Found", null)
         }
@@ -580,9 +708,9 @@ class MainActivity : FlutterActivity(), MethodChannel.MethodCallHandler,
                 if (userJID != null) {
                     val messages: List<ChatMessage> = FlyMessenger.getMessagesOfJid(userJID)
 
-                    DebugUtilis.v("MESSAGE_HISTORY", Gson().toJson(messages).toString())
+                    DebugUtilis.v("MESSAGE_HISTORY", messages.tojsonString())
 
-                    result.success(Gson().toJson(messages))
+                    result.success(messages.tojsonString())
                 } else {
                     result.error("500", "User JID is Empty", null)
                 }
@@ -598,9 +726,9 @@ class MainActivity : FlutterActivity(), MethodChannel.MethodCallHandler,
             val search = call.argument("search") ?: ""
             FlyCore.getUserList(page, 20, search) { isSuccess, throwable, data ->
                 data["status"] = isSuccess
-                Log.d("registered", "" + isSuccess + " : " + data + " : " + throwable)
+                Log.d("registered", "$isSuccess : $data : $throwable")
                 if (isSuccess) {
-                    result.success(Gson().toJson(data))
+                    result.success(data.tojsonString())
                 } else {
                     println("friends error : " + throwable.toString())
                     result.error("400", throwable!!.message.toString(), "")
@@ -626,7 +754,7 @@ class MainActivity : FlutterActivity(), MethodChannel.MethodCallHandler,
 
     }
 
-    fun imagepath(call: MethodCall, result: MethodChannel.Result) {
+    private fun imagepath(call: MethodCall, result: MethodChannel.Result) {
         val imageUrl = call.argument<String>("image")
         val path = Uri.parse(MediaUploadHelper.UPLOAD_ENDPOINT).buildUpon()
             .appendPath(Uri.parse(imageUrl).lastPathSegment).build().toString()
@@ -634,7 +762,7 @@ class MainActivity : FlutterActivity(), MethodChannel.MethodCallHandler,
         result.success(path)
     }
 
-    fun updateProfile(call: MethodCall, result: MethodChannel.Result) {
+    private fun updateProfile(call: MethodCall, result: MethodChannel.Result) {
         val name = call.argument("name") ?: ""
         val mobile = call.argument("mobile") ?: ""
         val email = call.argument("email") ?: ""
@@ -668,7 +796,7 @@ class MainActivity : FlutterActivity(), MethodChannel.MethodCallHandler,
             }*/
             ContactManager.updateMyProfile(profileObj) { isSuccess, throwable, data ->
                 data["status"] = isSuccess
-                result.success(Gson().toJson(data))
+                result.success(data.tojsonString())
             }
         } else {
             result.error(
@@ -687,7 +815,7 @@ class MainActivity : FlutterActivity(), MethodChannel.MethodCallHandler,
                 if (imagefile.exists()) {
                     ContactManager.updateMyProfileImage(imagefile) { isSuccess, throwable, data ->
                         data["status"] = isSuccess
-                        result.success(Gson().toJson(data))
+                        result.success(data.tojsonString())
                     }
                 } else {
                     result.error("400", "Image File Not Exist", null)
@@ -706,6 +834,7 @@ class MainActivity : FlutterActivity(), MethodChannel.MethodCallHandler,
     private fun removeProfileImage(call: MethodCall, result: MethodChannel.Result) {
         ContactManager.removeProfileImage { isSuccess, throwable, data ->
             data["status"] = isSuccess
+//            result.success(data.tojsonString())
             result.success(isSuccess)
         }
     }
@@ -717,9 +846,9 @@ class MainActivity : FlutterActivity(), MethodChannel.MethodCallHandler,
                 FlyCore.setMyProfileStatus(status) { isSuccess, throwable, data ->
                     data["status"] = isSuccess
                     if (isSuccess) {
-                        insertStatus(call, null);
+                        insertStatus(call, null)
                     }
-                    result.success(Gson().toJson(data))
+                    result.success(data.tojsonString())
                 }
             }
         } else {
@@ -739,7 +868,7 @@ class MainActivity : FlutterActivity(), MethodChannel.MethodCallHandler,
             ) {
 
                 data["status"] = isSuccess
-                Log.i(TAG,"getProfile => "+data.tojsonString());
+                Log.i(TAG,"getProfile => "+data.tojsonString())
                 result.success(data.tojsonString())
             }
         })
@@ -751,19 +880,22 @@ class MainActivity : FlutterActivity(), MethodChannel.MethodCallHandler,
         } else {
             val txtMessage: String? = call.argument("message")
             val receiverJID: String? = call.argument("JID")
-            if (txtMessage != null && receiverJID != null) {
+            val replyMessageID: String? = call.argument("replyMessageId")
+            if (txtMessage != null && receiverJID != null && replyMessageID != null) {
                 FlyMessenger.sendTextMessage(
                     receiverJID,
                     txtMessage,
+                    replyMessageID,
                     listener = object : SendMessageListener {
                         override fun onResponse(isSuccess: Boolean, chatMessage: ChatMessage?) {
                             // you will get the message sent success response
                             if (isSuccess) {
                                 android.util.Log.i(TAG, "Message Sent Successfully")
                                 android.util.Log.i(TAG, "chat Message==> $chatMessage")
-                                android.util.Log.i(TAG, Gson().toJson(chatMessage).toString())
-//                                chatEventSink?.success(Gson().toJson(chatMessage).toString())
-                                result.success(Gson().toJson(chatMessage).toString())
+                                if (chatMessage != null) {
+                                    android.util.Log.i(TAG, chatMessage.tojsonString())
+                                    result.success(chatMessage.tojsonString())
+                                }
                             } else {
                                 android.util.Log.e(TAG, "Message sent Failed")
                             }
@@ -787,7 +919,7 @@ class MainActivity : FlutterActivity(), MethodChannel.MethodCallHandler,
                 //Notify the message is read by user
                 ChatManager.markAsRead(receiverJID)
                 //To Remove the Unread Notification Separator in Chat List
-                FlyMessenger.deleteUnreadMessageSeparatorOfAConversation(receiverJID);
+                FlyMessenger.deleteUnreadMessageSeparatorOfAConversation(receiverJID)
             } else {
                 result.error("500", "JID is Empty", null)
             }
@@ -813,9 +945,11 @@ class MainActivity : FlutterActivity(), MethodChannel.MethodCallHandler,
                             if (isSuccess) {
                                 android.util.Log.i(TAG, "Message Sent Successfully")
                                 android.util.Log.i(TAG, "chat Message==> $chatMessage")
-                                android.util.Log.i(TAG, Gson().toJson(chatMessage).toString())
-                                chatEventSink?.success(Gson().toJson(chatMessage).toString())
-                                result.success(Gson().toJson(chatMessage).toString())
+                                if (chatMessage != null) {
+                                    android.util.Log.i(TAG, chatMessage.tojsonString())
+                                    chatEventSink?.success(chatMessage.tojsonString())
+                                    result.success(chatMessage.tojsonString())
+                                }
                             } else {
                                 android.util.Log.e(TAG, "Message sent Failed")
                                 result.error("500", "Message sent Failed", null)
@@ -834,26 +968,22 @@ class MainActivity : FlutterActivity(), MethodChannel.MethodCallHandler,
         val userJid = call.argument<String>("jid") ?: ""
         val latitude = call.argument<Double>("latitude") ?: 00.0
         val longitude = call.argument<Double>("longitude") ?: 00.0
-        val reply = call.argument<String>("reply") ?: ""
-        if (userJid.isNotEmpty() && latitude != 00.0 && longitude != 00.0) {
-            FlyMessenger.sendLocationMessage(
-                userJid,
-                latitude,
-                longitude,
-                reply,
-                object : SendMessageListener {
-                    override fun onResponse(isSuccess: Boolean, message: ChatMessage?) {
-                        if (message != null) {
-                            result.success(Gson().toJson(message).toString())
-                        } else {
-                            result.error("400", "Message Not Sent", null)
-                        }
+        val replyMessageId: String? = call.argument("replyMessageId")
+
+        if (userJid.isNotEmpty()&&latitude!=00.0&&longitude!=00.0 && replyMessageId != null) {
+            FlyMessenger.sendLocationMessage(userJid, latitude, longitude, replyMessageId, object : SendMessageListener {
+                override fun onResponse(isSuccess: Boolean, chatMessage: ChatMessage?) {
+                    if (chatMessage != null) {
+                        result.success(chatMessage.tojsonString())
+                    }else{
+                        result.error("400", "Message Not Sent", null)
                     }
-                })
+                }
+            })
         } else {
             if (userJid.isEmpty())
                 result.error("400", "User Jid is Empty", null)
-            else if (latitude != 00.0 || longitude != 00.0)
+            else if (latitude!=00.0||longitude!=00.0)
                 result.error("400", "Location is Empty", null)
         }
     }
@@ -869,14 +999,14 @@ class MainActivity : FlutterActivity(), MethodChannel.MethodCallHandler,
 
 //        val fileLocalPath = call.argument<String>("localPath") ?: ""
         val caption = call.argument<String>("caption") ?: ""
-        val replyMessageID = call.argument<String>("replyMessageID") ?: ""
+        val replyMessageID = call.argument<String>("replyMessageId") ?: ""
 
 
         val thumbnailBase64 = getImageThumbImage(filePath)
 
         Log.e("FILEPATH", filePath)
-        Log.i(TAG, filePath);
-        Log.i(TAG, thumbnailBase64);
+        Log.i(TAG, filePath)
+        Log.i(TAG, thumbnailBase64)
 
         if (userJid.isNotEmpty() && filePath.isNotEmpty()) {
             try {
@@ -895,14 +1025,14 @@ class MainActivity : FlutterActivity(), MethodChannel.MethodCallHandler,
                         }
                     })
             } catch (e: Exception) {
-                Log.e("Image Send Exception", e.message.toString());
+                Log.e("Image Send Exception", e.message.toString())
             }
         } else {
             result.error("400", "Parameters Missing", null)
         }
     }
 
-    fun getRecentChat(result: MethodChannel.Result) {
+    private fun getRecentChat(result: MethodChannel.Result) {
         println("recent here")
         if (AppUtils.isNetConnected(this)) {
             //progress.show()
@@ -980,7 +1110,7 @@ class MainActivity : FlutterActivity(), MethodChannel.MethodCallHandler,
 
     private fun getStatusList(result: MethodChannel.Result) {
         val status = FlyCore.getProfileStatusList()
-        result.success(Gson().toJson(status).toString())
+        result.success(status.tojsonString())
     }
 
     private fun insertStatus(call: MethodCall, result: MethodChannel.Result?) {
@@ -989,13 +1119,13 @@ class MainActivity : FlutterActivity(), MethodChannel.MethodCallHandler,
             if (status.isNotEmpty()) {
                 FlyCore.insertDefaultStatus(status)
             }
-            if (result != null) result.success(true);
+            result?.success(true)
         } else {
-            if (result != null) result.error("500", "Please Check Your Internet connection", null)
+            result?.error("500", "Please Check Your Internet connection", null)
         }
     }
 
-    fun openMediaFile(call: MethodCall, result: MethodChannel.Result) {
+    private fun openMediaFile(call: MethodCall, result: MethodChannel.Result) {
 
         val filePath = call.argument<String>("filePath")
 //        try{
@@ -1035,7 +1165,7 @@ class MainActivity : FlutterActivity(), MethodChannel.MethodCallHandler,
         }
     }
 
-    fun createDotNoMediaFile() {
+    private fun createDotNoMediaFile() {
 //        FilePathUtils.getExternalStorage()
 
         val mediaPath = VideoRecUtils.getSentParentPath(Constants.MSG_TYPE_IMAGE)
@@ -1066,29 +1196,29 @@ class MainActivity : FlutterActivity(), MethodChannel.MethodCallHandler,
 
 
 
-    fun filterRecentChatList(call: MethodCall, result: MethodChannel.Result) {
+    private fun filterRecentChatList(call: MethodCall, result: MethodChannel.Result) {
         val searchKey = call.argument<String>("searchKey") ?: ""
         //val recentChatList = mutableListOf<RecentChat>()
         val recentChatListWithArchived = FlyCore.getRecentChatListIncludingArchived()
-        Log.d("getRecentChatListIncludingArchived", recentChatListWithArchived.toString());
-        result.success(recentChatListWithArchived.tojsonString());
+        Log.d("getRecentChatListIncludingArchived", recentChatListWithArchived.toString())
+        result.success(recentChatListWithArchived.tojsonString())
         /*for (recentChat in recentChatListWithArchived)
             if (recentChat.profileName != null && recentChat.profileName.contains(searchKey, true))
                 recentChatList.add(recentChat)
         filterRecentChatList.value = recentChatList*/
     }
 
-    fun filterMessageList(call: MethodCall, result: MethodChannel.Result) {
+    private fun filterMessageList(call: MethodCall, result: MethodChannel.Result) {
         val searchKey = call.argument<String>("searchKey") ?: ""
         FlyCore.searchConversation(
             searchKey,
             Constants.EMPTY_STRING,
             true
-        ) { isSuccess, throwable, data ->
+        ) { isSuccess, _, data ->
             if (isSuccess) {
                 val datas = data["data"] as MutableList<ChatMessage>
-                Log.d("searchConversation", datas.tojsonString());
-                result.success(datas.tojsonString());
+                Log.d("searchConversation", datas.tojsonString())
+                result.success(datas.tojsonString())
             }
         }
     }
@@ -1098,7 +1228,7 @@ class MainActivity : FlutterActivity(), MethodChannel.MethodCallHandler,
         val jidList = call.argument<String>("jidList") ?: ""
         FlyCore.getRegisteredUsers(false) { isSuccess, _, data ->
             if (isSuccess) {
-                Log.d("getRegisteredUsers", data.toString());
+                Log.d("getRegisteredUsers", data.toString())
                 val profileDetails = data["data"] as MutableList<ProfileDetails>
                 /*filterProfileList.value = profileDetails.filter {
                     !jidList.contains(it.jid) && it.name.contains(
@@ -1111,7 +1241,7 @@ class MainActivity : FlutterActivity(), MethodChannel.MethodCallHandler,
         }
     }
 
-    fun refreshAuthToken(result: MethodChannel.Result){
+    private fun refreshAuthToken(result: MethodChannel.Result){
         FlyCore.refreshAndGetAuthToken { isSuccess, _, data ->
             if (isSuccess) {
                 LogMessage.d(TAG, "Token Refresh success: ${data["data"]}")
@@ -1120,6 +1250,33 @@ class MainActivity : FlutterActivity(), MethodChannel.MethodCallHandler,
                 LogMessage.d(TAG, "Token Refresh failure")
                 result.success(FlyUtils.decodedToken().trim())
             }
+        }
+    }
+    private fun blockUser(call: MethodCall, result: MethodChannel.Result){
+        val userJid = call.argument<String>("userJID") ?: ""
+        FlyCore.blockUser(userJid) { isSuccess, throwable, data ->
+            if (isSuccess) {
+                //User is blocked update the UI
+                result.success(data.tojsonString())
+            } else {
+                result.error("500", "Unable to Block User", throwable?.tojsonString())
+                //User blocking failed print throwable to find the exception details
+            }
+
+        }
+    }
+    private fun unBlockUser(call: MethodCall, result: MethodChannel.Result){
+        val userJid = call.argument<String>("userJID") ?: ""
+
+        FlyCore.unblockUser(userJid) { isSuccess, throwable, data ->
+            if (isSuccess) {
+                //User is blocked update the UI
+                result.success(data.tojsonString())
+            } else {
+                result.error("500", "Unable to Unblock User", throwable?.tojsonString())
+                //User blocking failed print throwable to find the exception details
+            }
+
         }
     }
 

@@ -306,7 +306,7 @@ class _RecordButtonState extends State<RecordButton> {
           await Record().stop().then((filePath) async {
             if (File(filePath!).existsSync()) {
               var response = await Get.find<ChatController>()
-                  .sendAudioMessage(filePath, "", true,millisec.toString() );
+                  .sendAudioMessage(filePath, true,millisec.toString() );
               debugPrint("Preview View ==> $response");
               if (response != null) {
                 Get.back();

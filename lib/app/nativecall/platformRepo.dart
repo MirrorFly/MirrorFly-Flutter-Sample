@@ -68,11 +68,11 @@ class PlatformRepo {
     }
   }
 
-  Future<dynamic> sendTextMessage(String message, String JID) async {
+  Future<dynamic> sendTextMessage(String message, String JID, String replyMessageId) async {
     dynamic messageResp;
     try {
       messageResp = await mirrorFlyMethodChannel
-          .invokeMethod('send_text_msg', {"message": message, "JID": JID});
+          .invokeMethod('send_text_msg', {"message": message, "JID": JID, "replyMessageId" : replyMessageId});
       debugPrint("Message Result ==> $messageResp");
       return messageResp;
     } on PlatformException catch (e) {
@@ -84,11 +84,11 @@ class PlatformRepo {
     }
   }
 
-  Future<dynamic> sentLocationMessage(String? reply, String JID,double latitude,double longitude) async {
+  Future<dynamic> sentLocationMessage(String JID,double latitude,double longitude, String replyMessageId) async {
     dynamic messageResp;
     try {
       messageResp = await mirrorFlyMethodChannel
-          .invokeMethod('sentLocationMessage', {"reply": reply??"", "jid": JID,"latitude":latitude,"longitude":longitude});
+          .invokeMethod('sentLocationMessage', {"jid": JID,"latitude":latitude,"longitude":longitude, "replyMessageId" : replyMessageId});
       debugPrint("Message Result ==> $messageResp");
       return messageResp;
     } on PlatformException catch (e) {
@@ -112,7 +112,7 @@ class PlatformRepo {
         "jid": jid,
         "filePath": filePath,
         "caption": caption,
-        "replyMessageID": replyMessageID
+        "replyMessageId": replyMessageID
       });
       debugPrint("Image Message Result ==> $messageResp");
       return messageResp;
@@ -137,7 +137,7 @@ class PlatformRepo {
         "jid": jid,
         "filePath": filePath,
         "caption": caption,
-        "replyMessageID": replyMessageID
+        "replyMessageId": replyMessageID
       });
       debugPrint("Video Message Result ==> $messageResp");
       return messageResp;
@@ -485,10 +485,10 @@ class PlatformRepo {
     }
   }
 
-  Future<dynamic> sendContacts(List<String> contactList, String jid, String contactName) async {
+  Future<dynamic> sendContacts(List<String> contactList, String jid, String contactName, String replyMessageId) async {
     dynamic contactResponse;
     try {
-      contactResponse = await mirrorFlyMethodChannel.invokeMethod('send_contact',{ "contact_list" : contactList , "jid" : jid, "contact_name" : contactName});
+      contactResponse = await mirrorFlyMethodChannel.invokeMethod('send_contact',{ "contact_list" : contactList , "jid" : jid, "contact_name" : contactName, "replyMessageId" : replyMessageId});
       // debugPrint("mediaResponse ==> $readReceiptResponse");
       return contactResponse;
     }on PlatformException catch (e){
@@ -567,10 +567,10 @@ class PlatformRepo {
     }
   }
 
-  Future<dynamic> sendAudio(String jid, String filePath, String messageid, bool isRecorded, String duration) async {
+  Future<dynamic> sendAudio(String jid, String filePath, bool isRecorded, String duration, String replyMessageId) async {
     dynamic audioResponse;
     try {
-      audioResponse = await mirrorFlyMethodChannel.invokeMethod('send_audio',{ "filePath" : filePath , "jid" : jid, "replyMessageId" : messageid, "isRecorded" : isRecorded, "duration" : duration});
+      audioResponse = await mirrorFlyMethodChannel.invokeMethod('send_audio',{ "filePath" : filePath , "jid" : jid, "isRecorded" : isRecorded, "duration" : duration, "replyMessageId" : replyMessageId});
       debugPrint("audioResponse ==> $audioResponse");
       return audioResponse;
     }on PlatformException catch (e){
@@ -658,11 +658,128 @@ class PlatformRepo {
   }
 
   Future<dynamic> clearChatHistory(String jid, String chatType, bool clearExceptStarred) async {
-    dynamic audioResponse;
+    dynamic clearChatResponse;
     try {
-      audioResponse = await mirrorFlyMethodChannel.invokeMethod('clear_chat',{ "jid" : jid, "chat_type" : chatType, "clear_except_starred" : clearExceptStarred});
-      debugPrint("clear chat Response ==> $audioResponse");
-      return audioResponse;
+      clearChatResponse = await mirrorFlyMethodChannel.invokeMethod('clear_chat',{ "jid" : jid, "chat_type" : chatType, "clear_except_starred" : clearExceptStarred});
+      debugPrint("clear chat Response ==> $clearChatResponse");
+      return clearChatResponse;
+    }on PlatformException catch (e){
+      debugPrint("Platform Exception ===> $e");
+      rethrow;
+    } on Exception catch(error){
+      debugPrint("Exception ==> $error");
+      rethrow;
+    }
+  }
+
+  Future<dynamic> reportChatOrUser(String jid, String chatType, String? MessageId) async {
+    dynamic reportResponse;
+    try {
+      reportResponse = await mirrorFlyMethodChannel.invokeMethod('report_chat',{ "jid" : jid, "chat_type" : chatType, "selectedMessageID" : MessageId});
+      debugPrint("clear chat Response ==> $reportResponse");
+      return reportResponse;
+    }on PlatformException catch (e){
+      debugPrint("Platform Exception ===> $e");
+      rethrow;
+    } on Exception catch(error){
+      debugPrint("Exception ==> $error");
+      rethrow;
+    }
+  }
+
+  Future<dynamic> getMessagesUsingIds(List<String> messageIds) async {
+    dynamic messageListResponse;
+    try {
+      messageListResponse = await mirrorFlyMethodChannel.invokeMethod('get_message_using_ids',{ "MessageIds" : messageIds});
+      debugPrint("Message List Response ==> $messageListResponse");
+      return messageListResponse;
+    }on PlatformException catch (e){
+      debugPrint("Platform Exception ===> $e");
+      rethrow;
+    } on Exception catch(error){
+      debugPrint("Exception ==> $error");
+      rethrow;
+    }
+  }
+
+  Future<dynamic> deleteMessages(String jid, List<String> messageIds, bool isDeleteForEveryOne) async {
+    dynamic messageDeleteResponse;
+    try {
+      messageDeleteResponse = await mirrorFlyMethodChannel.invokeMethod('delete_messages', { "jid" : jid, "chat_type" : "chat", "message_ids": messageIds, "is_delete_for_everyone" : isDeleteForEveryOne});
+      debugPrint("Message Delete Response ==> $messageDeleteResponse");
+      return messageDeleteResponse;
+    }on PlatformException catch (e){
+      debugPrint("Platform Exception ===> $e");
+      rethrow;
+    } on Exception catch(error){
+      debugPrint("Exception ==> $error");
+      rethrow;
+    }
+  }
+  Future<dynamic> getMessageInfo(String messageID) async {
+    dynamic messageInfoResponse;
+    try {
+      messageInfoResponse = await mirrorFlyMethodChannel.invokeMethod('get_message_info', { "messageID" : messageID});
+      debugPrint("Message Info Response ==> $messageInfoResponse");
+      return messageInfoResponse;
+    }on PlatformException catch (e){
+      debugPrint("Platform Exception ===> $e");
+      rethrow;
+    } on Exception catch(error){
+      debugPrint("Exception ==> $error");
+      rethrow;
+    }
+  }
+  Future<dynamic> blockUser(String userJID) async {
+    dynamic userBlockResponse;
+    try {
+      userBlockResponse = await mirrorFlyMethodChannel.invokeMethod('block_user', { "userJID" : userJID});
+      debugPrint("Blocked Response ==> $userBlockResponse");
+      return userBlockResponse;
+    }on PlatformException catch (e){
+      debugPrint("Platform Exception ===> $e");
+      rethrow;
+    } on Exception catch(error){
+      debugPrint("Exception ==> $error");
+      rethrow;
+    }
+  }
+  Future<dynamic> unBlockUser(String userJID) async {
+    dynamic userBlockResponse;
+    try {
+      userBlockResponse = await mirrorFlyMethodChannel.invokeMethod('un_block_user', { "userJID" : userJID});
+      debugPrint("Un-Blocked Response ==> $userBlockResponse");
+      return userBlockResponse;
+    }on PlatformException catch (e){
+      debugPrint("Platform Exception ===> $e");
+      rethrow;
+    } on Exception catch(error){
+      debugPrint("Exception ==> $error");
+      rethrow;
+    }
+  }
+
+
+  Future<dynamic> favouriteMessage(String messageID, String chatUserJID, bool isFavourite) async {
+    dynamic favResponse;
+    try {
+      favResponse = await mirrorFlyMethodChannel.invokeMethod('favourite_message', { "messageID" : messageID, "chatUserJID": chatUserJID, "isFavourite": isFavourite});
+      debugPrint("Favourite Msg Response ==> $favResponse");
+      return favResponse;
+    }on PlatformException catch (e){
+      debugPrint("Platform Exception ===> $e");
+      rethrow;
+    } on Exception catch(error){
+      debugPrint("Exception ==> $error");
+      rethrow;
+    }
+  }
+
+
+  copyTextMessages(String messageId) async {
+    List<String> messageIds = [messageId];
+    try {
+      await mirrorFlyMethodChannel.invokeMethod('copy_text_messages', {"message_id_list" : messageIds });
     }on PlatformException catch (e){
       debugPrint("Platform Exception ===> $e");
       rethrow;

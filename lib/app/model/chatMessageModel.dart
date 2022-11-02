@@ -32,6 +32,7 @@ class ChatMessageModel {
     required this.messageStatus,
     required this.messageTextContent,
     required this.messageType,
+    required this.replyParentChatMessage,
     required this.senderNickName,
     required this.senderUserJid,
     required this.senderUserName,
@@ -57,6 +58,7 @@ class ChatMessageModel {
   MessageStatus messageStatus;
   String? messageTextContent;
   String messageType;
+  ReplyParentChatMessage? replyParentChatMessage;
   String senderNickName;
   String senderUserJid;
   String senderUserName;
@@ -80,8 +82,9 @@ class ChatMessageModel {
     messageId: json["messageId"],
     messageSentTime: json["messageSentTime"],
     messageStatus: MessageStatus.fromJson(json["messageStatus"]),
-    messageTextContent: json["messageTextContent"],
+    messageTextContent: json["messageTextContent"] == null ? null : json["messageTextContent"],
     messageType: json["messageType"],
+    replyParentChatMessage: json["replyParentChatMessage"] == null ? null : ReplyParentChatMessage.fromJson(json["replyParentChatMessage"]),
     senderNickName: json["senderNickName"],
     senderUserJid: json["senderUserJid"],
     senderUserName: json["senderUserName"],
@@ -106,8 +109,9 @@ class ChatMessageModel {
     "messageId": messageId,
     "messageSentTime": messageSentTime,
     "messageStatus": messageStatus.toJson(),
-    "messageTextContent": messageTextContent,
+    "messageTextContent": messageTextContent == null ? null : messageTextContent,
     "messageType": messageType,
+    "replyParentChatMessage": replyParentChatMessage == null ? null : replyParentChatMessage?.toJson(),
     "senderNickName": senderNickName,
     "senderUserJid": senderUserJid,
     "senderUserName": senderUserName,
@@ -273,5 +277,72 @@ class MessageStatus {
 
   Map<String, dynamic> toJson() => {
     "status": status,
+  };
+}
+class ReplyParentChatMessage {
+  ReplyParentChatMessage({
+    required this.chatUserJid,
+    required this.isMessageDeleted,
+    required this.isMessageRecalled,
+    required this.isMessageSentByMe,
+    required this.isMessageStarred,
+    required this.messageId,
+    required this.messageSentTime,
+    required this.messageTextContent,
+    required this.messageType,
+    required this.senderNickName,
+    required this.senderUserName,
+    required this.locationChatMessage,
+    required this.contactChatMessage,
+    required this.mediaChatMessage,
+  });
+
+  String chatUserJid;
+  bool isMessageDeleted;
+  bool isMessageRecalled;
+  bool isMessageSentByMe;
+  bool isMessageStarred;
+  String messageId;
+  int messageSentTime;
+  String? messageTextContent;
+  String messageType;
+  String senderNickName;
+  String senderUserName;
+  LocationChatMessage? locationChatMessage;
+  ContactChatMessage? contactChatMessage;
+  MediaChatMessage? mediaChatMessage;
+
+  factory ReplyParentChatMessage.fromJson(Map<String, dynamic> json) => ReplyParentChatMessage(
+    chatUserJid: json["chatUserJid"],
+    isMessageDeleted: json["isMessageDeleted"],
+    isMessageRecalled: json["isMessageRecalled"],
+    isMessageSentByMe: json["isMessageSentByMe"],
+    isMessageStarred: json["isMessageStarred"],
+    messageId: json["messageId"],
+    messageSentTime: json["messageSentTime"],
+    messageTextContent: json["messageTextContent"] == null ? null : json["messageTextContent"],
+    messageType: json["messageType"],
+    senderNickName: json["senderNickName"],
+    senderUserName: json["senderUserName"],
+    locationChatMessage: json["locationChatMessage"] == null ? null : LocationChatMessage.fromJson(json["locationChatMessage"]),
+    contactChatMessage: json["contactChatMessage"] == null ? null : ContactChatMessage.fromJson(json["contactChatMessage"]),
+    mediaChatMessage: json["mediaChatMessage"] == null ? null : MediaChatMessage.fromJson(json["mediaChatMessage"]),
+  );
+
+  Map<String, dynamic> toJson() => {
+    "chatUserJid": chatUserJid,
+    "isMessageDeleted": isMessageDeleted,
+    "isMessageRecalled": isMessageRecalled,
+    "isMessageSentByMe": isMessageSentByMe,
+    "isMessageStarred": isMessageStarred,
+    "messageId": messageId,
+    "messageSentTime": messageSentTime,
+    "messageTextContent": messageTextContent == null ? null : messageTextContent,
+    "messageType": messageType,
+    "senderNickName": senderNickName,
+    "senderUserName": senderUserName,
+    "locationChatMessage": locationChatMessage == null ? null : locationChatMessage?.toJson(),
+    "contactChatMessage": contactChatMessage == null ? null : contactChatMessage?.toJson(),
+    "mediaChatMessage": mediaChatMessage == null ? null : mediaChatMessage?.toJson(),
   };
 }

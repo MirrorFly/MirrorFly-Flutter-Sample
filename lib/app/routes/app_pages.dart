@@ -1,6 +1,4 @@
 import 'package:get/get.dart';
-import 'package:mirror_fly_demo/app/modules/chat/views/locationsent_view.dart';
-import 'package:mirror_fly_demo/app/modules/dashboard/views/recent_search_view.dart';
 
 import '../model/userlistModel.dart';
 import '../modules/chat/bindings/chat_binding.dart';
@@ -12,9 +10,11 @@ import '../modules/chat/views/chat_view.dart';
 import '../modules/chat/views/chat_view.dart';
 import '../modules/chat/views/contactlist_view.dart';
 import '../modules/chat/views/image_preview_view.dart';
+import '../modules/chat/views/locationsent_view.dart';
 import '../modules/dashboard/bindings/dashboard_binding.dart';
 import '../modules/dashboard/bindings/recentssearch_binding.dart';
 import '../modules/dashboard/views/dashboard_view.dart';
+import '../modules/dashboard/views/recent_search_view.dart';
 import '../modules/home/bindings/home_binding.dart';
 import '../modules/home/views/home_view.dart';
 import '../modules/image_view/bindings/image_view_binding.dart';
@@ -25,6 +25,8 @@ import '../modules/login/bindings/country_binding.dart';
 import '../modules/login/bindings/login_binding.dart';
 import '../modules/login/views/countrylist_view.dart';
 import '../modules/login/views/login_view.dart';
+import '../modules/message_info/bindings/message_info_binding.dart';
+import '../modules/message_info/views/message_info_view.dart';
 import '../modules/preview_contact/bindings/preview_contact_binding.dart';
 import '../modules/preview_contact/views/preview_contact_view.dart';
 import '../modules/profile/bindings/profile_binding.dart';
@@ -37,6 +39,9 @@ import '../modules/video_preview/bindings/VideoPlayBinding.dart';
 import '../modules/video_preview/bindings/video_preview_binding.dart';
 import '../modules/video_preview/views/video_player_view.dart';
 import '../modules/video_preview/views/video_preview_view.dart';
+
+// import '../modules/message_info/bindings/message_info_binding.dart';
+// import '../modules/message_info/views/message_info_view.dart';
 
 part 'app_routes.dart';
 
@@ -60,7 +65,7 @@ class AppPages {
     ),
     GetPage(
       name: _Paths.RECENTSEARCH,
-      page: () => RecentSearchView(),
+      page: () => const RecentSearchView(),
       binding: RecentSearchBinding(),
     ),
     GetPage(
@@ -133,6 +138,11 @@ class AppPages {
       name: _Paths.PREVIEW_CONTACT,
       page: () => const PreviewContactView(),
       binding: PreviewContactBinding(),
+    ),
+    GetPage(
+      name: _Paths.MESSAGE_INFO,
+      page: () => const MessageInfoView(),
+      binding: MessageInfoBinding(),
     ),
   ];
 }
