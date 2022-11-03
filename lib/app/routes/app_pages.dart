@@ -6,7 +6,7 @@ import '../modules/chat/bindings/chat_binding.dart';
 import '../modules/chat/bindings/contact_binding.dart';
 import '../modules/chat/bindings/image_preview_binding.dart';
 import '../modules/chat/bindings/location_binding.dart';
-import '../modules/chat/views/chat_view.dart';
+import '../modules/chat/views/chat_search_view.dart';
 import '../modules/chat/views/chat_view.dart';
 import '../modules/chat/views/contactlist_view.dart';
 import '../modules/chat/views/image_preview_view.dart';
@@ -93,6 +93,10 @@ class AppPages {
       page: () => ChatView(),
       arguments: Profile(),
       binding: ChatBinding(),
+    ),
+    GetPage(
+      name: _Paths.CHATSEARCH,
+      page: () => ChatSearchView(),
     ),
     GetPage(
       name: _Paths.LOCATIONSENT,

@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
@@ -15,6 +16,7 @@ import 'package:mirror_fly_demo/app/model/chatmessage_model.dart';
 import 'package:mirror_fly_demo/app/nativecall/platformRepo.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../../common/constants.dart';
@@ -35,6 +37,8 @@ class ChatController extends GetxController
     keepScrollOffset: true,
   );
 
+  ItemScrollController searchscrollController = ItemScrollController();
+
   late ChatMessageModel replyChatMessage;
 
   var isReplying = false.obs;
@@ -47,6 +51,7 @@ class ChatController extends GetxController
   var audioplayed = false.obs;
 
   var isUserTyping = false.obs;
+
   // late Uint8List audiobytes;
 
   AudioPlayer player = AudioPlayer();
@@ -127,6 +132,12 @@ class ChatController extends GetxController
       int rseconds = sseconds - (sminutes * 60 + shours * 60 * 60);
 
       currentpostlabel = "$rhours:$rminutes:$rseconds";
+    });
+
+    filteredPosition.bindStream(filteredPosition.stream);
+    ever(filteredPosition, (callback) {
+      Log("fillterdPosition", callback.toString());
+      chatList.refresh();
     });
   }
 
@@ -658,14 +669,13 @@ class ChatController extends GetxController
         return true;
 
       case 'Favourite':
-
         // for (var chatList in selectedChatList) {
         //   if (chatList.isMessageStarred) {
         //     return true;
         //   }
         // }
         // return false;
-        return selectedChatList.length > 1 ? false: true;
+        return selectedChatList.length > 1 ? false : true;
 
       default:
         return false;
@@ -707,7 +717,8 @@ class ChatController extends GetxController
   copyTextMessages() {
     // PlatformRepo().copyTextMessages(selectedChatList[0].messageId);
     debugPrint('Copy text ==> ${selectedChatList[0].messageTextContent}');
-    Clipboard.setData(ClipboardData(text: selectedChatList[0].messageTextContent));
+    Clipboard.setData(
+        ClipboardData(text: selectedChatList[0].messageTextContent));
     // selectedChatList.clear();
     // isSelected(false);
     clearChatSelection(selectedChatList[0]);
@@ -716,35 +727,38 @@ class ChatController extends GetxController
   void deleteMessages() {
     var isRecallAvailable = true;
     for (var chatList in selectedChatList) {
-      if (chatList.messageSentTime > (DateTime.now().millisecondsSinceEpoch - 30000) * 1000) {
+      if (chatList.messageSentTime >
+          (DateTime.now().millisecondsSinceEpoch - 30000) * 1000) {
         isRecallAvailable = true;
-      }else{
+      } else {
         isRecallAvailable = false;
         break;
       }
     }
 
     var deleteChatListID = List<String>.empty(growable: true);
-    for(var chatList in selectedChatList){
+    for (var chatList in selectedChatList) {
       deleteChatListID.add(chatList.messageId);
     }
 
-    if(deleteChatListID.isEmpty){
+    if (deleteChatListID.isEmpty) {
       return;
     }
 
     Helper.showAlert(
         message:
-        "Are you sure you want to delete selected Message${selectedChatList.length > 1 ? "s" : ""}",
+            "Are you sure you want to delete selected Message${selectedChatList.length > 1 ? "s" : ""}",
         actions: [
           TextButton(
               onPressed: () {
                 Get.back();
                 Helper.showLoading(message: 'Deleting Message');
-                PlatformRepo().deleteMessages(profile.jid!, deleteChatListID, false).then((value){
+                PlatformRepo()
+                    .deleteMessages(profile.jid!, deleteChatListID, false)
+                    .then((value) {
                   debugPrint(value);
                   Helper.hideLoading();
-                  if(value == "deleteMessagesForMe success"){
+                  if (value == "deleteMessagesForMe success") {
                     removeChatList(selectedChatList);
                   }
                   isSelected(false);
@@ -757,47 +771,61 @@ class ChatController extends GetxController
                 Get.back();
               },
               child: const Text("CANCEL")),
-          isRecallAvailable ? TextButton(
-              onPressed: () {
-                Get.back();
-                Helper.showLoading(message: 'Deleting Message for Everyone');
-                PlatformRepo().deleteMessages(profile.jid!, deleteChatListID, true).then((value){
-                  debugPrint(value);
-                  Helper.hideLoading();
-                  if(value == "success"){
-                    removeChatList(selectedChatList);
-                  }
-                  isSelected(false);
-                  selectedChatList.clear();
-                });
-              },
-              child: const Text("DELETE FOR EVERYONE")) : const SizedBox.shrink(),
+          isRecallAvailable
+              ? TextButton(
+                  onPressed: () {
+                    Get.back();
+                    Helper.showLoading(
+                        message: 'Deleting Message for Everyone');
+                    PlatformRepo()
+                        .deleteMessages(profile.jid!, deleteChatListID, true)
+                        .then((value) {
+                      debugPrint(value);
+                      Helper.hideLoading();
+                      if (value == "success") {
+                        removeChatList(selectedChatList);
+                      }
+                      isSelected(false);
+                      selectedChatList.clear();
+                    });
+                  },
+                  child: const Text("DELETE FOR EVERYONE"))
+              : const SizedBox.shrink(),
         ]);
   }
 
   removeChatList(RxList<ChatMessageModel> selectedChatList) {
-    for(var chatList in selectedChatList){
+    for (var chatList in selectedChatList) {
       this.chatList.remove(chatList);
     }
   }
 
   messageInfo() {
     debugPrint("sending mid ===> ${selectedChatList[0].messageId}");
-    Get.toNamed(Routes.MESSAGE_INFO, arguments: {"messageID": selectedChatList[0].messageId, "chatMessage" : selectedChatList[0]});
+    Get.toNamed(Routes.MESSAGE_INFO, arguments: {
+      "messageID": selectedChatList[0].messageId,
+      "chatMessage": selectedChatList[0]
+    });
     clearChatSelection(selectedChatList[0]);
   }
 
   favouriteMessage() {
-
-    Helper.showLoading(message: selectedChatList[0].isMessageStarred ? 'Unfavoriting Message' : 'Favoriting Message');
+    Helper.showLoading(
+        message: selectedChatList[0].isMessageStarred
+            ? 'Unfavoriting Message'
+            : 'Favoriting Message');
 
     // for(var chatList in selectedChatList){
-      PlatformRepo().favouriteMessage(selectedChatList[0].messageId, profile.jid!, !selectedChatList[0].isMessageStarred).then((value) {
-        final chatIndex = chatList.indexWhere((message) => message.messageId == selectedChatList[0].messageId);
-        // chatList[chatIndex].isMessageStarred = !chatList[chatIndex].isMessageStarred;
-        clearChatSelection(selectedChatList[0]);
-        Helper.hideLoading();
-      });
+    PlatformRepo()
+        .favouriteMessage(selectedChatList[0].messageId, profile.jid!,
+            !selectedChatList[0].isMessageStarred)
+        .then((value) {
+      final chatIndex = chatList.indexWhere(
+          (message) => message.messageId == selectedChatList[0].messageId);
+      // chatList[chatIndex].isMessageStarred = !chatList[chatIndex].isMessageStarred;
+      clearChatSelection(selectedChatList[0]);
+      Helper.hideLoading();
+    });
     // }
   }
 
@@ -836,18 +864,17 @@ class ChatController extends GetxController
               onPressed: () {
                 Get.back();
                 Helper.showLoading(message: "Blocking User");
-                PlatformRepo().blockUser(profile.jid!).then((value){
+                PlatformRepo().blockUser(profile.jid!).then((value) {
                   debugPrint(value);
                   isBlocked(true);
                   Helper.hideLoading();
-                }).catchError((error){
+                }).catchError((error) {
                   Helper.hideLoading();
                   debugPrint(error);
                 });
               },
               child: const Text("BLOCK")),
         ]);
-
   }
 
   clearUserChatHistory() {
@@ -875,29 +902,105 @@ class ChatController extends GetxController
   }
 
   unBlockUser() {
-    Helper.showAlert(
-        message: "Unblock ${profile.name}?",
-        actions: [
-          TextButton(
-              onPressed: () {
-                Get.back();
-              },
-              child: const Text("CANCEL")),
-          TextButton(
-              onPressed: () {
-                Get.back();
-                Helper.showLoading(message: "Unblocking User");
-                PlatformRepo().unBlockUser(profile.jid!).then((value){
-                  debugPrint(value);
-                  isBlocked(false);
-                  Helper.hideLoading();
-                }).catchError((error){
-                  Helper.hideLoading();
-                  debugPrint(error);
-                });
-              },
-              child: const Text("UNBLOCK")),
+    Helper.showAlert(message: "Unblock ${profile.name}?", actions: [
+      TextButton(
+          onPressed: () {
+            Get.back();
+          },
+          child: const Text("CANCEL")),
+      TextButton(
+          onPressed: () {
+            Get.back();
+            Helper.showLoading(message: "Unblocking User");
+            PlatformRepo().unBlockUser(profile.jid!).then((value) {
+              debugPrint(value);
+              isBlocked(false);
+              Helper.hideLoading();
+            }).catchError((error) {
+              Helper.hideLoading();
+              debugPrint(error);
+            });
+          },
+          child: const Text("UNBLOCK")),
+    ]);
+  }
 
-        ]);
+  var filteredPosition = <int>[].obs;
+  var searchedText = TextEditingController();
+
+  setSearch(String text) {
+    filteredPosition.clear();
+    if (searchedText.text.isNotEmpty) {
+      for (var i = 0; i < chatList.value.length; i++) {
+        if (chatList.value[i].messageType == Constants.MTEXT &&
+            chatList.value[i].messageTextContent
+                .startsWithTextInWords(searchedText.text)) {
+          filteredPosition.add(i);
+        } else if (chatList.value[i].messageType == Constants.MIMAGE &&
+            chatList.value[i].mediaChatMessage!.mediaCaptionText.isNotEmpty &&
+            chatList.value[i].mediaChatMessage!.mediaCaptionText
+                .startsWithTextInWords(searchedText.text)) {
+          filteredPosition.add(i);
+        } else if (chatList.value[i].messageType == Constants.MVIDEO &&
+            chatList.value[i].mediaChatMessage!.mediaCaptionText.isNotEmpty &&
+            chatList.value[i].mediaChatMessage!.mediaCaptionText
+                .startsWithTextInWords(searchedText.text)) {
+          filteredPosition.add(i);
+        } else if (chatList.value[i].messageType == Constants.MDOCUMENT &&
+            chatList.value[i].mediaChatMessage!.mediaFileName.isNotEmpty &&
+            chatList.value[i].mediaChatMessage!.mediaFileName
+                .startsWithTextInWords(searchedText.text)) {
+          filteredPosition.add(i);
+        } else if (chatList.value[i].messageType == Constants.MCONTACT &&
+            chatList.value[i].contactChatMessage!.contactName.isNotEmpty &&
+            chatList.value[i].contactChatMessage!.contactName
+                .startsWithTextInWords(searchedText.text)) {
+          filteredPosition.add(i);
+        }
+      }
+    }
+  }
+  Rx<int>? lastposition = null;
+  scrollUp(){
+    Log("Up lastposition", lastposition.toString());
+    Log("Up filterlastposition", filteredPosition[lastposition!.value].toString());
+    lastposition==null ? lastposition=(0).obs : lastposition!(lastposition!.value);
+    if(lastposition!<filteredPosition.value.length) {
+      if(lastposition!=0) {
+        lastposition!(lastposition!.value + 1);
+      }
+      _scrollToPosition(filteredPosition[lastposition!.value]+1);
+    }else{
+      toToast("No Item");
+    }
+  }
+
+  scrollDown(){
+    Log("Down lastposition", lastposition.toString());
+    lastposition==null ? lastposition=(0).obs  : lastposition!(lastposition!.value);
+    if(lastposition!=0 && lastposition!<filteredPosition.value.length) {
+      lastposition!(lastposition!.value - 1);
+      _scrollToPosition(filteredPosition[lastposition!.value]+1);
+    }else{
+      toToast("No Item");
+    }
+  }
+
+  var currentposition = 0;
+  var color = Colors.transparent.obs;
+  _scrollToPosition(int position){
+    Log("scroll_position", position.toString());
+    //color(chatreplycontainercolor);
+    currentposition=(chatList.value.length-(position));
+    chatList[chatList.value.length-position].isSelected=true;
+    searchscrollController.jumpTo(index: currentposition);
+    Future.delayed(Duration(milliseconds: 500), () {
+      Log("future delay", "delay");
+      currentposition=(chatList.value.length-position);
+      chatList[chatList.value.length-position].isSelected=false;
+      //color(Colors.transparent);
+      chatList.refresh();
+      update();
+    });
   }
 }
