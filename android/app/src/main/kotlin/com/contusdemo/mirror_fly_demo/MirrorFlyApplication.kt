@@ -1,6 +1,7 @@
 package com.contusdemo.mirror_fly_demo
 
 import android.app.Application
+import com.contus.flycommons.Constants
 import com.contus.flycommons.LogMessage
 import com.contus.webrtc.GroupCallDetails
 import com.contus.webrtc.WebRtcCallService
@@ -11,6 +12,9 @@ import com.contusflysdk.ChatSDK
 import com.contusflysdk.GroupConfig
 import com.contusflysdk.api.CallMessenger
 import com.contusflysdk.api.ChatManager
+import com.contusflysdk.api.GroupManager
+import com.contusflysdk.api.contacts.ContactManager
+import com.contusflysdk.api.utils.NameHelper
 
 
 class MirrorFlyApplication : Application() {
@@ -20,6 +24,12 @@ class MirrorFlyApplication : Application() {
         super.onCreate()
 
         LogMessage.enableDebugLogging(BuildConfig.DEBUG)
+
+        GroupManager.setNameHelper(object  : NameHelper {
+            override fun getDisplayName(jid: String): String {
+                return if (ContactManager.getProfileDetails(jid) != null) ContactManager.getProfileDetails(jid)!!.name else Constants.EMPTY_STRING
+            }
+        })
 
         val groupConfiguration = GroupConfig.Builder()
             .enableGroupCreation(true)

@@ -775,6 +775,32 @@ class PlatformRepo {
     }
   }
 
+  Future<dynamic> forwardMessage(List<String> messageIds, List<String> userList) async {
+    dynamic forwardMessageResponse;
+    try {
+      forwardMessageResponse = await mirrorFlyMethodChannel.invokeMethod('forward_messages', { "message_ids" : messageIds, "userList": userList});
+      debugPrint("Forward Msg Response ==> $forwardMessageResponse");
+      return forwardMessageResponse;
+    }on PlatformException catch (e){
+      debugPrint("Platform Exception ===> $e");
+      rethrow;
+    } on Exception catch(error){
+      debugPrint("Exception ==> $error");
+      rethrow;
+    }
+  }
+
+  exportChat(String jid) async {
+    try {
+      await mirrorFlyMethodChannel.invokeMethod('exportChat', {"jid" : jid });
+    }on PlatformException catch (e){
+      debugPrint("Platform Exception ===> $e");
+      rethrow;
+    } on Exception catch(error){
+      debugPrint("Exception ==> $error");
+      rethrow;
+    }
+  }
 
   copyTextMessages(String messageId) async {
     List<String> messageIds = [messageId];

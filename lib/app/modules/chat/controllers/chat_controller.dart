@@ -1,17 +1,16 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
-import 'dart:typed_data';
 import 'dart:io' as Io;
 
 import 'package:audioplayers/audioplayers.dart';
 import 'package:file_picker/file_picker.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:mirror_fly_demo/app/model/chatMessageModel.dart';
-import 'package:mirror_fly_demo/app/model/chatmessage_model.dart';
 import 'package:mirror_fly_demo/app/nativecall/platformRepo.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -23,6 +22,7 @@ import '../../../data/helper.dart';
 import '../../../model/checkModel.dart' as checkModel;
 import '../../../model/userlistModel.dart';
 import '../../../routes/app_pages.dart';
+
 
 class ChatController extends GetxController
     with GetSingleTickerProviderStateMixin {
@@ -71,22 +71,33 @@ class ChatController extends GetxController
 
   var selectedChatList = List<ChatMessageModel>.empty(growable: true).obs;
 
+
+  var keyboardVisibilityController = KeyboardVisibilityController();
+
+  late StreamSubscription<bool> keyboardSubscription;
+
   @override
   void onInit() {
     super.onInit();
     profile = Get.arguments as Profile;
     debugPrint("isBlocked===> ${profile.isBlocked}");
+    debugPrint("profile detail===> ${profile.toJson().toString()}");
     isBlocked(profile.isBlocked);
     controller = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 600),
     );
 
-    askStoragePermission();
+    // askStoragePermission();
     isLive = true;
     focusNode.addListener(() {
       if (focusNode.hasFocus) {
         showEmoji(false);
+      }
+    });
+    keyboardSubscription = keyboardVisibilityController.onChange.listen((bool visible) {
+      if(!visible) {
+        focusNode.canRequestFocus = false;
       }
     });
     scrollController.addListener(() {
@@ -147,6 +158,7 @@ class ChatController extends GetxController
   }
 
   registerChatSync() {
+    debugPrint("Registering Event");
     var messageEvent = PlatformRepo().onMessageReceived;
     messageEvent.listen((msgData) {
       ChatMessageModel chatMessageModel = sendMessageModelFromJson(msgData);
@@ -191,6 +203,7 @@ class ChatController extends GetxController
               messageController.text, profile.jid.toString(), replyMessageId)
           .then((value) {
         messageController.text = "";
+        isUserTyping(false);
         ChatMessageModel chatMessageModel = sendMessageModelFromJson(value);
         chatList.add(chatMessageModel);
       });
@@ -618,6 +631,15 @@ class ChatController extends GetxController
     this.chatList.refresh();
   }
 
+  clearAllChatSelection() {
+    isSelected(false);
+    for (var chatItem in selectedChatList){
+      chatItem.isSelected = false;
+    }
+    selectedChatList.clear();
+
+  }
+
   void addChatSelection(ChatMessageModel chatList) {
     if (chatList.messageType != Constants.MNOTIFICATION) {
       selectedChatList.add(chatList);
@@ -673,35 +695,42 @@ class ChatController extends GetxController
   }
 
   reportChatOrUser() {
-    var chatMessage = selectedChatList.isNotEmpty ? selectedChatList[0] : null;
-    Helper.showAlert(
-        title: "Report ${profile.name}?",
-        message:
-            "${selectedChatList.isNotEmpty ? "This message will be forwarded to admin." : "The last 5 messages from this contact will be forwarded to admin."} This Contact will not be notified.",
-        actions: [
-          TextButton(
-              onPressed: () {
-                Get.back();
-                PlatformRepo()
-                    .reportChatOrUser(
-                        profile.jid!,
-                        chatMessage?.messageChatType ?? "chat",
-                        chatMessage?.messageId ?? "")
-                    .then((value) {
-                  //report success
-                  debugPrint(value);
-                }).catchError((onError) {
-                  //report failed
-                  debugPrint(onError.toString());
-                });
-              },
-              child: const Text("REPORT")),
-          TextButton(
-              onPressed: () {
-                Get.back();
-              },
-              child: const Text("CANCEL")),
-        ]);
+    Future.delayed(const Duration(milliseconds: 100), ()
+    {
+      var chatMessage = selectedChatList.isNotEmpty
+          ? selectedChatList[0]
+          : null;
+      Helper.showAlert(
+          title: "Report ${profile.name}?",
+          message:
+          "${selectedChatList.isNotEmpty
+              ? "This message will be forwarded to admin."
+              : "The last 5 messages from this contact will be forwarded to admin."} This Contact will not be notified.",
+          actions: [
+            TextButton(
+                onPressed: () {
+                  Get.back();
+                  PlatformRepo()
+                      .reportChatOrUser(
+                      profile.jid!,
+                      chatMessage?.messageChatType ?? "chat",
+                      chatMessage?.messageId ?? "")
+                      .then((value) {
+                    //report success
+                    debugPrint(value);
+                  }).catchError((onError) {
+                    //report failed
+                    debugPrint(onError.toString());
+                  });
+                },
+                child: const Text("REPORT")),
+            TextButton(
+                onPressed: () {
+                  Get.back();
+                },
+                child: const Text("CANCEL")),
+          ]);
+    });
   }
 
   copyTextMessages() {
@@ -782,9 +811,15 @@ class ChatController extends GetxController
   }
 
   messageInfo() {
-    debugPrint("sending mid ===> ${selectedChatList[0].messageId}");
-    Get.toNamed(Routes.MESSAGE_INFO, arguments: {"messageID": selectedChatList[0].messageId, "chatMessage" : selectedChatList[0]});
-    clearChatSelection(selectedChatList[0]);
+    Future.delayed(const Duration(milliseconds: 100), ()
+    {
+      debugPrint("sending mid ===> ${selectedChatList[0].messageId}");
+      Get.toNamed(Routes.MESSAGE_INFO, arguments: {
+        "messageID": selectedChatList[0].messageId,
+        "chatMessage": selectedChatList[0]
+      });
+      clearChatSelection(selectedChatList[0]);
+    });
   }
 
   favouriteMessage() {
@@ -824,54 +859,58 @@ class ChatController extends GetxController
   }
 
   blockUser() {
-    Helper.showAlert(
-        message: "Are you sure you want to Block ${profile.name}?",
-        actions: [
-          TextButton(
-              onPressed: () {
-                Get.back();
-              },
-              child: const Text("CANCEL")),
-          TextButton(
-              onPressed: () {
-                Get.back();
-                Helper.showLoading(message: "Blocking User");
-                PlatformRepo().blockUser(profile.jid!).then((value){
-                  debugPrint(value);
-                  isBlocked(true);
-                  Helper.hideLoading();
-                }).catchError((error){
-                  Helper.hideLoading();
-                  debugPrint(error);
-                });
-              },
-              child: const Text("BLOCK")),
-        ]);
-
+    Future.delayed(const Duration(milliseconds: 100), () {
+      Helper.showAlert(
+          message: "Are you sure you want to Block ${profile.name}?",
+          actions: [
+            TextButton(
+                onPressed: () {
+                  Get.back();
+                },
+                child: const Text("CANCEL")),
+            TextButton(
+                onPressed: () {
+                  Get.back();
+                  Helper.showLoading(message: "Blocking User");
+                  PlatformRepo().blockUser(profile.jid!).then((value) {
+                    debugPrint(value);
+                    isBlocked(true);
+                    Helper.hideLoading();
+                  }).catchError((error) {
+                    Helper.hideLoading();
+                    debugPrint(error);
+                  });
+                },
+                child: const Text("BLOCK")),
+          ]);
+    });
   }
 
   clearUserChatHistory() {
-    Helper.showAlert(
-        message: "Are you sure you want to clear the chat?",
-        actions: [
-          TextButton(
-              onPressed: () {
-                Get.back();
-                clearChatHistory(false);
-              },
-              child: const Text("CLEAR ALL")),
-          TextButton(
-              onPressed: () {
-                Get.back();
-              },
-              child: const Text("CANCEL")),
-          TextButton(
-              onPressed: () {
-                Get.back();
-                clearChatHistory(true);
-              },
-              child: const Text("CLEAR EXCEPT STARRED")),
-        ]);
+    Future.delayed(const Duration(milliseconds: 100), () {
+      Helper.showAlert(
+          message: "Are you sure you want to clear the chat?",
+          actions: [
+            TextButton(
+                onPressed: () {
+                  Get.back();
+                  clearChatHistory(false);
+                },
+                child: const Text("CLEAR ALL")),
+            TextButton(
+                onPressed: () {
+                  Get.back();
+                },
+                child: const Text("CANCEL")),
+            TextButton(
+                onPressed: () {
+                  Get.back();
+                  clearChatHistory(true);
+                },
+                child: const Text("CLEAR EXCEPT STARRED")),
+          ]);
+    });
+
   }
 
   unBlockUser() {
@@ -899,5 +938,42 @@ class ChatController extends GetxController
               child: const Text("UNBLOCK")),
 
         ]);
+  }
+
+  exportChat() async {
+    if(chatList.isNotEmpty) {
+      if (await askStoragePermission()) {
+        PlatformRepo().exportChat(profile.jid.checkNull());
+      }
+    }else{
+      toToast("There is no conversation.");
+    }
+  }
+
+  forwardMessage() {
+    var messageIds = List<String>.empty(growable: true);
+    for(var chatItem in selectedChatList){
+      messageIds.add(chatItem.messageId);
+      debugPrint(messageIds.length.toString());
+      debugPrint(selectedChatList.length.toString());
+
+    }
+    if(messageIds.length == selectedChatList.length){
+      isSelected(false);
+      selectedChatList.clear();
+      Get.toNamed(Routes.CONTACTS, arguments: {"forward" : true, "messageIds": messageIds })?.then((value){
+        debugPrint("result of forward ==> ${value.toString()}");
+        profile = value as Profile;
+        isBlocked(profile.isBlocked);
+        PlatformRepo().ongoingChat(profile.jid!);
+        getChatHistory(profile.jid!);
+        sendReadReceipt();
+      });
+    }
+  }
+
+  void closeKeyBoard() {
+    // keyboardVisibilityController.isVisible ? FocusManager.instance.primaryFocus?.unfocus() : null;
+    FocusManager.instance.primaryFocus!.unfocus();
   }
 }
