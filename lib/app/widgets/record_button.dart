@@ -158,14 +158,14 @@ class _RecordButtonState extends State<RecordButton> {
               showLottie ? const LottieAnimation() : Text(recordDuration),
               const SizedBox(width: size),
               FlowShader(
+                duration: const Duration(seconds: 3),
+                flowColors: const [Colors.white, Colors.grey],
                 child: Row(
                   children: const [
                     Icon(Icons.keyboard_arrow_left),
                     Text("Slide to cancel")
                   ],
                 ),
-                duration: const Duration(seconds: 3),
-                flowColors: const [Colors.white, Colors.grey],
               ),
               const SizedBox(width: size),
             ],
@@ -237,16 +237,16 @@ class _RecordButtonState extends State<RecordButton> {
       child: Transform.scale(
         scale: buttonScaleAnimation.value,
         child: Container(
-          child: const Icon(
-            Icons.mic,
-            color: Colors.white,
-          ),
           height: size,
           width: size,
           clipBehavior: Clip.hardEdge,
           decoration: BoxDecoration(
             shape: BoxShape.circle,
             color: Theme.of(context).primaryColor,
+          ),
+          child: const Icon(
+            Icons.mic,
+            color: Colors.white,
           ),
         ),
       ),

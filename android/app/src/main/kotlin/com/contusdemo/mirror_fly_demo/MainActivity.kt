@@ -25,6 +25,7 @@ import com.contusflysdk.api.contacts.ContactManager
 import com.contusflysdk.api.contacts.ProfileDetails
 import com.contusflysdk.api.models.ChatMessage
 import com.contusflysdk.api.models.ChatMessageStatusDetail
+import com.contusflysdk.api.utils.NameHelper
 import com.contusflysdk.media.MediaUploadHelper
 import com.contusflysdk.utils.ThumbSize
 import com.contusflysdk.utils.VideoRecUtils
@@ -436,7 +437,14 @@ class MainActivity : FlutterActivity(), MethodChannel.MethodCallHandler,
             call.method.equals("un_block_user") -> {
                 unBlockUser(call, result)
             }
+            call.method.equals("forward_messages") -> {
+                forwardMessages(call, result)
+            }
 
+            call.method.equals("exportChat") -> {
+                val jid =call.argument<String?>("jid") ?: ""
+                FlyCore.exportChatConversationToEmail(jid, emptyList());
+            }
 
             //not implemneted
             call.method.equals("get_message_using_ids") -> {
@@ -447,6 +455,25 @@ class MainActivity : FlutterActivity(), MethodChannel.MethodCallHandler,
                 result.notImplemented()
             }
 
+        }
+    }
+
+    private fun forwardMessages(call: MethodCall, result: MethodChannel.Result) {
+
+        val messageIDList = call.argument<List<String>>("message_ids")
+        val userList = call.argument<List<String>>("userList")
+
+        if (messageIDList != null && userList != null) {
+            ChatManager.forwardMessagesToMultipleUsers(messageIDList, userList, object : ChatActionListener {
+                override fun onResponse(isSuccess: Boolean, message: String) {
+                    if (isSuccess){
+                        result.success(message)
+                    }else{
+                        result.error("500", "Unable to Favourite the Message", message)
+                    }
+
+                }
+            })
         }
     }
 
@@ -532,7 +559,7 @@ class MainActivity : FlutterActivity(), MethodChannel.MethodCallHandler,
 
     private fun getMessageUsingIds(call: MethodCall, result: MethodChannel.Result) {
 //        val messageIDList = call.argument<List<String>>("get_message_using_ids")
-//        ChatManager.getMessagesUsingIds(messageIDList)
+//        ChatManager.getMessagesUsingIds("messageIDList")//replace flymessenger
     }
 
     private fun reportChat(call: MethodCall, result: MethodChannel.Result) {

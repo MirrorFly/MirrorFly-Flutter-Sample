@@ -39,7 +39,7 @@ class Helper {
           backgroundColor: Colors.transparent,
           content: WillPopScope(
             onWillPop: () async => Future.value(dismissable),
-            child: Container(
+            child: const SizedBox(
               width: 60,
               height: 60,
               child: Center(
@@ -56,9 +56,9 @@ class Helper {
     Get.dialog(
       AlertDialog(
         title: title!=null ? Text(title) : null,
-        contentPadding: EdgeInsets.only(top: 20,right: 20,left: 20),
+        contentPadding: const EdgeInsets.only(top: 20,right: 20,left: 20),
         content: Text(message),
-        contentTextStyle: TextStyle(color: texthintcolor,fontWeight: FontWeight.w500),
+        contentTextStyle: const TextStyle(color: texthintcolor,fontWeight: FontWeight.w500),
         actions: actions,
       ),
     );

@@ -5,31 +5,38 @@ import 'package:mirror_fly_demo/app/model/chatMessageModel.dart';
 import 'package:mirror_fly_demo/app/nativecall/platformRepo.dart';
 
 import '../../../model/userlistModel.dart';
+import '../../../routes/app_pages.dart';
 
 class ContactController extends GetxController {
-  ScrollController scrollcontroller = ScrollController();
+  ScrollController scrollController = ScrollController();
   var pageNum = 1;
   var isPageLoading = true.obs;
   var scrollable = true.obs;
-  var userslist = <Profile>[].obs;
-  var mainuserslist = List<Profile>.empty(growable: true).obs;
+  var usersList = <Profile>[].obs;
+  var mainUsersList = List<Profile>.empty(growable: true).obs;
+  var selectedUsersList = List<Profile>.empty(growable: true).obs;
+  var selectedUsersJIDList = List<String>.empty(growable: true).obs;
+  var forwardMessageIds = List<String>.empty(growable: true).obs;
   final TextEditingController searchQuery = TextEditingController();
   var search=false.obs;
-  var _IsSearching = false;
   var _searchText = "";
   var _first = true;
+  
+  var isForward = false.obs;
 
   @override
   void onInit() {
     super.onInit();
-    scrollcontroller.addListener(_scrollListener);
+    isForward(Get.arguments["forward"]);
+    forwardMessageIds.addAll(Get.arguments["messageIds"]);
+    scrollController.addListener(_scrollListener);
     //searchQuery.addListener(_searchListener);
     fetchUsers(false);
   }
 
   _scrollListener() {
-    if(scrollcontroller.hasClients) {
-      if (scrollcontroller.position.extentAfter <= 0 &&
+    if(scrollController.hasClients) {
+      if (scrollController.position.extentAfter <= 0 &&
           isPageLoading.value == false) {
         if (scrollable.value) {
           //isPageLoading.value = true;
@@ -41,13 +48,11 @@ class ContactController extends GetxController {
   searchListener(String text)async{
     debugPrint("searching .. ");
     if (text.isEmpty) {
-      _IsSearching = false;
       _searchText = "";
       pageNum=1;
     }
     else {
       isPageLoading(true);
-      _IsSearching = true;
       _searchText = text;
       pageNum=1;
     }
@@ -55,7 +60,7 @@ class ContactController extends GetxController {
 
   }
 
-  backfromSearch(){
+  backFromSearch(){
     search.value=false;
     searchQuery.text="";
     _searchText ="";
@@ -64,21 +69,21 @@ class ContactController extends GetxController {
       pageNum=1;
       //fetchUsers(true);
     //}
-    userslist(mainuserslist);
+    usersList(mainUsersList);
 
   }
 
-  fetchUsers(bool frmsearch) {
+  fetchUsers(bool fromSearch) {
     PlatformRepo().getUsers(pageNum,_searchText).then((data) {
       var item = userListFromJson(data);
-      frmsearch ? userslist(item.data) : userslist.addAll(item.data!);
+      fromSearch ? usersList(item.data) : usersList.addAll(item.data!);
       pageNum=pageNum+1;
       isPageLoading.value = false;
       scrollable.value = item.data!.length == 20;
-      userslist.refresh();
+      usersList.refresh();
       if(_first){
         _first=false;
-        mainuserslist(item.data!);
+        mainUsersList(item.data!);
       }
     })
     .catchError((error){
@@ -91,16 +96,39 @@ class ContactController extends GetxController {
     });
   }
   
-  get users => userslist.value;
+  get users => usersList;
 
-  String imagepath(String? imgurl){
+  String imagePath(String? imgUrl){
 
-    if(imgurl==null || imgurl==""){
+    if(imgUrl==null || imgUrl==""){
      return "";
     }
-    PlatformRepo().imagePath(imgurl).then((value){
+    PlatformRepo().imagePath(imgUrl).then((value){
       return value ?? "";
     });
     return "";
+  }
+
+  contactSelected(Profile item) {
+    if(selectedUsersList.contains(item)){
+      selectedUsersList.remove(item);
+      selectedUsersJIDList.remove(item.jid);
+      item.isSelected = false;
+    }else {
+      selectedUsersList.add(item);
+      selectedUsersJIDList.add(item.jid!);
+      item.isSelected = true;
+    }
+    usersList.refresh();
+  }
+
+  forwardMessages() {
+
+    PlatformRepo().forwardMessage(forwardMessageIds, selectedUsersJIDList).then((value){
+
+      Get.back();
+      // Get.offNamed(Routes.CHAT,
+      //     arguments: selectedUsersList[selectedUsersList.length-1]);
+    });
   }
 }

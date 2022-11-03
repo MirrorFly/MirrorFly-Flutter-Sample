@@ -9,6 +9,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:mirror_fly_demo/app/model/chatMessageModel.dart';
@@ -51,7 +52,6 @@ class ChatController extends GetxController
   var audioplayed = false.obs;
 
   var isUserTyping = false.obs;
-
   // late Uint8List audiobytes;
 
   AudioPlayer player = AudioPlayer();
@@ -76,6 +76,11 @@ class ChatController extends GetxController
 
   var selectedChatList = List<ChatMessageModel>.empty(growable: true).obs;
 
+
+  var keyboardVisibilityController = KeyboardVisibilityController();
+
+  late StreamSubscription<bool> keyboardSubscription;
+
   @override
   void onInit() {
     super.onInit();
@@ -92,6 +97,11 @@ class ChatController extends GetxController
     focusNode.addListener(() {
       if (focusNode.hasFocus) {
         showEmoji(false);
+      }
+    });
+    keyboardSubscription = keyboardVisibilityController.onChange.listen((bool visible) {
+      if(!visible) {
+        focusNode.canRequestFocus = false;
       }
     });
     scrollController.addListener(() {
@@ -158,6 +168,7 @@ class ChatController extends GetxController
   }
 
   registerChatSync() {
+    debugPrint("Registering Event");
     var messageEvent = PlatformRepo().onMessageReceived;
     messageEvent.listen((msgData) {
       ChatMessageModel chatMessageModel = sendMessageModelFromJson(msgData);
@@ -629,6 +640,15 @@ class ChatController extends GetxController
     this.chatList.refresh();
   }
 
+  clearAllChatSelection() {
+    isSelected(false);
+    for (var chatItem in selectedChatList){
+      chatItem.isSelected = false;
+    }
+    selectedChatList.clear();
+
+  }
+
   void addChatSelection(ChatMessageModel chatList) {
     if (chatList.messageType != Constants.MNOTIFICATION) {
       selectedChatList.add(chatList);
@@ -669,13 +689,14 @@ class ChatController extends GetxController
         return true;
 
       case 'Favourite':
+
         // for (var chatList in selectedChatList) {
         //   if (chatList.isMessageStarred) {
         //     return true;
         //   }
         // }
         // return false;
-        return selectedChatList.length > 1 ? false : true;
+        return selectedChatList.length > 1 ? false: true;
 
       default:
         return false;
@@ -683,7 +704,11 @@ class ChatController extends GetxController
   }
 
   reportChatOrUser() {
-    var chatMessage = selectedChatList.isNotEmpty ? selectedChatList[0] : null;
+    Future.delayed(const Duration(milliseconds: 100), ()
+    {
+      var chatMessage = selectedChatList.isNotEmpty
+          ? selectedChatList[0]
+          : null;
     Helper.showAlert(
         title: "Report ${profile.name}?",
         message:
@@ -712,13 +737,13 @@ class ChatController extends GetxController
               },
               child: const Text("CANCEL")),
         ]);
+    });
   }
 
   copyTextMessages() {
     // PlatformRepo().copyTextMessages(selectedChatList[0].messageId);
     debugPrint('Copy text ==> ${selectedChatList[0].messageTextContent}');
-    Clipboard.setData(
-        ClipboardData(text: selectedChatList[0].messageTextContent));
+    Clipboard.setData(ClipboardData(text: selectedChatList[0].messageTextContent));
     // selectedChatList.clear();
     // isSelected(false);
     clearChatSelection(selectedChatList[0]);
@@ -727,38 +752,35 @@ class ChatController extends GetxController
   void deleteMessages() {
     var isRecallAvailable = true;
     for (var chatList in selectedChatList) {
-      if (chatList.messageSentTime >
-          (DateTime.now().millisecondsSinceEpoch - 30000) * 1000) {
+      if (chatList.messageSentTime > (DateTime.now().millisecondsSinceEpoch - 30000) * 1000) {
         isRecallAvailable = true;
-      } else {
+      }else{
         isRecallAvailable = false;
         break;
       }
     }
 
     var deleteChatListID = List<String>.empty(growable: true);
-    for (var chatList in selectedChatList) {
+    for(var chatList in selectedChatList){
       deleteChatListID.add(chatList.messageId);
     }
 
-    if (deleteChatListID.isEmpty) {
+    if(deleteChatListID.isEmpty){
       return;
     }
 
     Helper.showAlert(
         message:
-            "Are you sure you want to delete selected Message${selectedChatList.length > 1 ? "s" : ""}",
+        "Are you sure you want to delete selected Message${selectedChatList.length > 1 ? "s" : ""}",
         actions: [
           TextButton(
               onPressed: () {
                 Get.back();
                 Helper.showLoading(message: 'Deleting Message');
-                PlatformRepo()
-                    .deleteMessages(profile.jid!, deleteChatListID, false)
-                    .then((value) {
+                PlatformRepo().deleteMessages(profile.jid!, deleteChatListID, false).then((value){
                   debugPrint(value);
                   Helper.hideLoading();
-                  if (value == "deleteMessagesForMe success") {
+                  if(value == "deleteMessagesForMe success"){
                     removeChatList(selectedChatList);
                   }
                   isSelected(false);
@@ -771,61 +793,53 @@ class ChatController extends GetxController
                 Get.back();
               },
               child: const Text("CANCEL")),
-          isRecallAvailable
-              ? TextButton(
-                  onPressed: () {
-                    Get.back();
-                    Helper.showLoading(
-                        message: 'Deleting Message for Everyone');
-                    PlatformRepo()
-                        .deleteMessages(profile.jid!, deleteChatListID, true)
-                        .then((value) {
-                      debugPrint(value);
-                      Helper.hideLoading();
-                      if (value == "success") {
-                        removeChatList(selectedChatList);
-                      }
-                      isSelected(false);
-                      selectedChatList.clear();
-                    });
-                  },
-                  child: const Text("DELETE FOR EVERYONE"))
-              : const SizedBox.shrink(),
+          isRecallAvailable ? TextButton(
+              onPressed: () {
+                Get.back();
+                Helper.showLoading(message: 'Deleting Message for Everyone');
+                PlatformRepo().deleteMessages(profile.jid!, deleteChatListID, true).then((value){
+                  debugPrint(value);
+                  Helper.hideLoading();
+                  if(value == "success"){
+                    removeChatList(selectedChatList);
+                  }
+                  isSelected(false);
+                  selectedChatList.clear();
+                });
+              },
+              child: const Text("DELETE FOR EVERYONE")) : const SizedBox.shrink(),
         ]);
   }
 
   removeChatList(RxList<ChatMessageModel> selectedChatList) {
-    for (var chatList in selectedChatList) {
+    for(var chatList in selectedChatList){
       this.chatList.remove(chatList);
     }
   }
 
   messageInfo() {
-    debugPrint("sending mid ===> ${selectedChatList[0].messageId}");
-    Get.toNamed(Routes.MESSAGE_INFO, arguments: {
-      "messageID": selectedChatList[0].messageId,
-      "chatMessage": selectedChatList[0]
+    Future.delayed(const Duration(milliseconds: 100), ()
+    {
+      debugPrint("sending mid ===> ${selectedChatList[0].messageId}");
+      Get.toNamed(Routes.MESSAGE_INFO, arguments: {
+        "messageID": selectedChatList[0].messageId,
+        "chatMessage": selectedChatList[0]
+      });
+      clearChatSelection(selectedChatList[0]);
     });
-    clearChatSelection(selectedChatList[0]);
   }
 
   favouriteMessage() {
-    Helper.showLoading(
-        message: selectedChatList[0].isMessageStarred
-            ? 'Unfavoriting Message'
-            : 'Favoriting Message');
+
+    Helper.showLoading(message: selectedChatList[0].isMessageStarred ? 'Unfavoriting Message' : 'Favoriting Message');
 
     // for(var chatList in selectedChatList){
-    PlatformRepo()
-        .favouriteMessage(selectedChatList[0].messageId, profile.jid!,
-            !selectedChatList[0].isMessageStarred)
-        .then((value) {
-      final chatIndex = chatList.indexWhere(
-          (message) => message.messageId == selectedChatList[0].messageId);
-      // chatList[chatIndex].isMessageStarred = !chatList[chatIndex].isMessageStarred;
-      clearChatSelection(selectedChatList[0]);
-      Helper.hideLoading();
-    });
+      PlatformRepo().favouriteMessage(selectedChatList[0].messageId, profile.jid!, !selectedChatList[0].isMessageStarred).then((value) {
+        final chatIndex = chatList.indexWhere((message) => message.messageId == selectedChatList[0].messageId);
+        // chatList[chatIndex].isMessageStarred = !chatList[chatIndex].isMessageStarred;
+        clearChatSelection(selectedChatList[0]);
+        Helper.hideLoading();
+      });
     // }
   }
 
@@ -852,53 +866,58 @@ class ChatController extends GetxController
   }
 
   blockUser() {
-    Helper.showAlert(
-        message: "Are you sure you want to Block ${profile.name}?",
-        actions: [
-          TextButton(
-              onPressed: () {
-                Get.back();
-              },
-              child: const Text("CANCEL")),
-          TextButton(
-              onPressed: () {
-                Get.back();
-                Helper.showLoading(message: "Blocking User");
-                PlatformRepo().blockUser(profile.jid!).then((value) {
-                  debugPrint(value);
-                  isBlocked(true);
-                  Helper.hideLoading();
-                }).catchError((error) {
-                  Helper.hideLoading();
-                  debugPrint(error);
-                });
-              },
-              child: const Text("BLOCK")),
-        ]);
+    Future.delayed(const Duration(milliseconds: 100), () {
+      Helper.showAlert(
+          message: "Are you sure you want to Block ${profile.name}?",
+          actions: [
+            TextButton(
+                onPressed: () {
+                  Get.back();
+                },
+                child: const Text("CANCEL")),
+            TextButton(
+                onPressed: () {
+                  Get.back();
+                  Helper.showLoading(message: "Blocking User");
+                  PlatformRepo().blockUser(profile.jid!).then((value) {
+                    debugPrint(value);
+                    isBlocked(true);
+                    Helper.hideLoading();
+                  }).catchError((error) {
+                    Helper.hideLoading();
+                    debugPrint(error);
+                  });
+                },
+                child: const Text("BLOCK")),
+          ]);
+    });
   }
 
   clearUserChatHistory() {
-    Helper.showAlert(
-        message: "Are you sure you want to clear the chat?",
-        actions: [
-          TextButton(
-              onPressed: () {
-                Get.back();
-                clearChatHistory(false);
-              },
-              child: const Text("CLEAR ALL")),
-          TextButton(
-              onPressed: () {
-                Get.back();
-              },
-              child: const Text("CANCEL")),
-          TextButton(
-              onPressed: () {
-                Get.back();
-                clearChatHistory(true);
-              },
-              child: const Text("CLEAR EXCEPT STARRED")),
-        ]);
+    Future.delayed(const Duration(milliseconds: 100), () {
+      Helper.showAlert(
+          message: "Are you sure you want to clear the chat?",
+          actions: [
+            TextButton(
+                onPressed: () {
+                  Get.back();
+                  clearChatHistory(false);
+                },
+                child: const Text("CLEAR ALL")),
+            TextButton(
+                onPressed: () {
+                  Get.back();
+                },
+                child: const Text("CANCEL")),
+            TextButton(
+                onPressed: () {
+                  Get.back();
+                  clearChatHistory(true);
+                },
+                child: const Text("CLEAR EXCEPT STARRED")),
+          ]);
+    });
+
   }
 
   unBlockUser() {
@@ -1002,5 +1021,35 @@ class ChatController extends GetxController
       chatList.refresh();
       update();
     });
+  }
+
+  exportChat() async {
+    if(chatList.isNotEmpty) {
+      if (await askStoragePermission()) {
+        PlatformRepo().exportChat(profile.jid.checkNull());
+      }
+    }else{
+      toToast("There is no conversation.");
+    }
+  }
+
+  forwardMessage() {
+    var messageIds = List<String>.empty(growable: true);
+    for(var chatItem in selectedChatList){
+      messageIds.add(chatItem.messageId);
+      debugPrint(messageIds.length.toString());
+      debugPrint(selectedChatList.length.toString());
+
+    }
+    if(messageIds.length == selectedChatList.length){
+      isSelected(false);
+      selectedChatList.clear();
+      Get.toNamed(Routes.CONTACTS, arguments: {"forward" : true, "messageIds": messageIds });
+    }
+  }
+
+  void closeKeyBoard() {
+    // keyboardVisibilityController.isVisible ? FocusManager.instance.primaryFocus?.unfocus() : null;
+    FocusManager.instance.primaryFocus!.unfocus();
   }
 }
