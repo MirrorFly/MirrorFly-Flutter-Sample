@@ -167,16 +167,16 @@ class ImageNetwork extends GetView<MainController> {
     );
   }
   void _deleteImageFromCache(String url) {
-    // cache.DefaultCacheManager manager = cache.DefaultCacheManager();
-    // manager.emptyCache();
-    cache.DefaultCacheManager().removeFile(url).then((value) {
+    cache.DefaultCacheManager manager = cache.DefaultCacheManager();
+    manager.emptyCache();
+    // cache.DefaultCacheManager().removeFile(url).then((value) {
       //ignore: avoid_print
       print('File removed');
       controller.getAuthToken();
-    }).onError((error, stackTrace) {
-      //ignore: avoid_print
-      print(error);
-    });
+    // }).onError((error, stackTrace) {
+    //   ignore: avoid_print
+      // print(error);
+    // });
     //await CachedNetworkImage.evictFromCache(url);
   }
 }
