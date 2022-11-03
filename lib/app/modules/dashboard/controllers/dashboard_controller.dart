@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
@@ -35,10 +37,10 @@ class DashboardController extends GetxController {
       Log("onMessageStatusUpdated", event.toString());
       ChatMessageModel recentMsg = sendMessageModelFromJson(event);
       final index =
-          recentchats.indexWhere((chat) => chat.jid == recentMsg.chatUserJid);
+      recentchats.indexWhere((chat) => chat.jid == recentMsg.chatUserJid);
       debugPrint("myupdate index " + index.toString());
       if (index.isNegative) {
-        var recent = RecentChatData();
+        /*var recent = RecentChatData();
         recent.contactType = recentMsg.contactType;
         recent.isLastMessageSentByMe = recentMsg.isMessageSentByMe;
         recent.isItSavedContact = recentMsg.isItSavedContact;
@@ -51,8 +53,12 @@ class DashboardController extends GetxController {
         recent.lastMessageStatus = recentMsg.messageStatus.status;
         recent.lastMessageTime = recentMsg.messageSentTime;
         recent.lastMessageType = recentMsg.messageType;
-        recent.unreadMessageCount = 0;
-        recentchats.add(recent);
+        recent.unreadMessageCount = 0;*/
+        getRecentChatofJid(recentMsg.chatUserJid).then((recent){
+          if(recent!=null){
+            recentchats.add(recent);
+          }
+        });
       } else {
         var recent = recentchats.value[index];
         //var recent = RecentChatData();
@@ -86,12 +92,23 @@ class DashboardController extends GetxController {
         recent.unreadMessageCount = recentMsg.isMessageSentByMe
             ? recentchats.value[index].unreadMessageCount
             : recentchats.value[index].unreadMessageCount!=null ?
-                recentchats.value[index].unreadMessageCount! + 1 : recentchats.value[index].unreadMessageCount;
+        recentchats.value[index].unreadMessageCount! + 1 : recentchats.value[index].unreadMessageCount;
         recentchats.removeAt(index);
         recentchats.insert(0, recent);
       }
       recentchats.refresh();
     });
+  }
+
+  Future<RecentChatData?> getRecentChatofJid(String jid) async{
+    var value = await PlatformRepo().getRecentChatOf(jid);
+    Log("rchat", value.toString());
+    if (value != null) {
+      var data = RecentChatData.fromJson(json.decode(value));
+      return data;
+    }else {
+      return null;
+    }
   }
 
   getRecentChatlist() {

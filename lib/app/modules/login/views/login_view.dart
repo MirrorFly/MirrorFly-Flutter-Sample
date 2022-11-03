@@ -29,7 +29,7 @@ class LoginView extends GetView<LoginController> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 40),
+                  padding: const EdgeInsets.symmetric(vertical: 20),
                   child: SvgPicture.asset(registericon),
                 ),
                 const Text(
@@ -37,55 +37,61 @@ class LoginView extends GetView<LoginController> {
                   textAlign: TextAlign.center,
                   style: TextStyle(fontSize: 20,fontWeight: FontWeight.w600),
                 ),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: const Text(
+                const Padding(
+                  padding: EdgeInsets.all(8.0),
+                  child: Text(
                     'Please choose your country code and enter your mobile number to get the verification code.',
                     textAlign: TextAlign.center,
                     style: TextStyle(fontSize: 13,fontWeight: FontWeight.w300),
                   ),
                 ),
                 const SizedBox(
-                  height: 50,
+                  height: 30,
                 ),
-                Obx(() => ListTile(
-                      contentPadding: EdgeInsets.zero,
-                      title: Text(controller.selectedCountry.value.name,
-                          style: TextStyle(color: Colors.black,fontSize: 16,fontWeight: FontWeight.w500)),
-                      trailing: Icon(Icons.keyboard_arrow_down_outlined),
-                  onTap: (){
-                        Get.toNamed(Routes.COUNTRIES)?.then((value) => value!=null ? controller.selectedCountry.value = value : controller.india);
-                  },
-                    )),
-                AppDivider(padding: 0,),
-                IntrinsicHeight(
-                  child: Row(
-                    children: [
-                      Obx(
-                        ()=> Text(
-                          controller.selectedCountry.value.dialCode,
-                          style: TextStyle(fontSize: 15),
-                        ),
+                Obx(() => Padding(
+                  padding: const EdgeInsets.only(left : 10.0 , right: 10.0),
+                  child: ListTile(
+                        contentPadding: EdgeInsets.zero,
+                        title: Text(controller.selectedCountry.value.name,
+                            style: const TextStyle(color: Colors.black,fontSize: 16,fontWeight: FontWeight.w500)),
+                        trailing: const Icon(Icons.keyboard_arrow_down_outlined),
+                    onTap: (){
+                          Get.toNamed(Routes.COUNTRIES)?.then((value) => value!=null ? controller.selectedCountry.value = value : controller.india);
+                    },
                       ),
-                      const VerticalDivider(
-                        color: Colors.grey,
-                        thickness: 0.3,
-                      ),
-                      Flexible(
-                        child: TextField(
-                          controller: controller.mobileNumber,
-                          keyboardType: TextInputType.phone,
-                          inputFormatters: <TextInputFormatter>[
-                            FilteringTextInputFormatter.digitsOnly
-                          ],
-                          decoration: const InputDecoration(
-                            border: InputBorder.none,
-                            hintText: 'Enter Mobile Number',
-                            //hintStyle: TextStyle(color: Colors.black26)
+                )),
+                const AppDivider(padding: 0,),
+                Padding(
+                  padding: const EdgeInsets.only(left: 10.0, right: 10.0),
+                  child: IntrinsicHeight(
+                    child: Row(
+                      children: [
+                        Obx(
+                          ()=> Text(
+                            controller.selectedCountry.value.dialCode,
+                            style: const TextStyle(fontSize: 15),
                           ),
                         ),
-                      ),
-                    ],
+                        const VerticalDivider(
+                          color: Colors.grey,
+                          thickness: 0.3,
+                        ),
+                        Flexible(
+                          child: TextField(
+                            controller: controller.mobileNumber,
+                            keyboardType: TextInputType.phone,
+                            inputFormatters: <TextInputFormatter>[
+                              FilteringTextInputFormatter.digitsOnly
+                            ],
+                            decoration: const InputDecoration(
+                              border: InputBorder.none,
+                              hintText: 'Enter Mobile Number',
+                              //hintStyle: TextStyle(color: Colors.black26)
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
                 const SizedBox(
@@ -106,9 +112,9 @@ class LoginView extends GetView<LoginController> {
                   ),
                 ),
                 const SizedBox(
-                  height: 50,
+                  height: 40,
                 ),
-                const Text('By clicking continue you agree to MirroFly'),
+                const Text('By clicking continue you agree to MirrorFly'),
                 const SizedBox(
                   height: 10,
                 ),
@@ -116,7 +122,7 @@ class LoginView extends GetView<LoginController> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     InkWell(
-                      child: Text(
+                      child: const Text(
                         'Terms and Condition,',
                         style: TextStyle(
                             decoration: TextDecoration.underline,
@@ -124,11 +130,11 @@ class LoginView extends GetView<LoginController> {
                       ),
                       onTap:()=>launchWeb(Constants.Terms_Conditions),
                     ),
-                    SizedBox(
+                    const SizedBox(
                       width: 5,
                     ),
                     InkWell(
-                      child: Text(
+                      child: const Text(
                         'Privacy Policy.',
                         style: TextStyle(
                             decoration: TextDecoration.underline,

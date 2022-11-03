@@ -17,18 +17,23 @@ const Color texthintcolor = Color(0xff181818);
 const Color textcolor = Color(0xff767676);
 const Color textbuttoncolor = Color(0xffFFFFFF);
 const Color buttonbgcolor = Color(0xff3276E2);
-const Color chatsentbgcolor = Color(0xffe3e9f7);
+const Color chatsentbgcolor = Color(0xffe2eafc);
+const Color chatreplycontainercolor = Color(0xffD0D8EB);
+const Color chatreplysendercolor = Color(0xffEFEFEF);
 const Color dividercolor = Color(0XffE2E2E2);
 const Color audiocolor = Color(0XffB9C1D6);
 const Color audiocolordark = Color(0Xff848FAD);
 const Color audiobgcolor = Color(0Xff848FAD);
+const Color bottomsheetcolor = Color(0Xff242A3F);
 
 //Assets
 const String registericon = 'assets/logos/register_logo.svg';
 const String statusicon = 'assets/logos/status.svg';
 const String searchicon = 'assets/logos/magnifying_glass.svg';
+const String chatfabicon = 'assets/logos/chat_fab.svg';
 const String moreicon = 'assets/logos/shape.svg';
 const String nocontactsicon = 'assets/logos/no_contacts.png';
+const String nochaticon = 'assets/logos/no_messages.png';
 const String profileicon = 'assets/logos/avatar.svg';
 const String rightarrowicon = 'assets/logos/forward_arrow.svg';
 const String chaticon = 'assets/logos/chat.svg';
@@ -46,6 +51,7 @@ const String pencilediticon = 'assets/logos/pencil.svg';
 const String tickicon = 'assets/logos/tick.svg';
 const String smileicon = 'assets/logos/smile.svg';
 
+const String audioImg = 'assets/logos/audio.svg';
 const String documentImg = 'assets/logos/document.svg';
 const String cameraImg = 'assets/logos/camera.svg';
 const String contactImg = 'assets/logos/contact.svg';
@@ -74,6 +80,15 @@ const String Mlocationicon = 'assets/logos/Location.svg';
 const String Mvideoicon = 'assets/logos/Video.svg';
 const String Maudioicon = 'assets/logos/noun_Audio_3408360.svg';
 const String cornershadow = 'assets/logos/ic_baloon.png';
+
+const String replyIcon = 'assets/logos/reply.svg';
+const String forwardIcon = 'assets/logos/forward.svg';
+const String deleteIcon = 'assets/logos/delete.svg';
+const String cancelIcon = 'assets/logos/close.svg';
+const String favouriteIcon = 'assets/logos/star.svg';
+const String unfavouriteIcon = 'assets/logos/star.svg';
+const String copyIcon = 'assets/logos/copy.svg';
+const String infoIcon = 'assets/logos/info.svg';
 
 
 //Strings
@@ -508,6 +523,7 @@ class Constants {
   static const String MCONTACT = "CONTACT";
   static const String MLOCATION = "LOCATION";
   static const String MDOCUMENT = "DOCUMENT";
+  static const String MNOTIFICATION = "NOTIFICATION";
 }
 
 Future<void> launchWeb(String url) async{

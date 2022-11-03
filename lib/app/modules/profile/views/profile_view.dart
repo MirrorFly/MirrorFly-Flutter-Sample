@@ -22,7 +22,7 @@ class ProfileView extends GetView<ProfileController> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: Text(
+          title: const Text(
             'Profile',
             style: TextStyle(color: appbartextcolor),
           ),
@@ -280,7 +280,7 @@ class ProfileView extends GetView<ProfileController> {
         builder: (builder) {
           return SizedBox(
             child: Card(
-              shape: RoundedRectangleBorder(
+              shape: const RoundedRectangleBorder(
                   borderRadius: BorderRadius.only(
                       topLeft: Radius.circular(30),
                       topRight: Radius.circular(30))),
@@ -291,7 +291,7 @@ class ProfileView extends GetView<ProfileController> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    const Text("Options"),
+                    // const Text("Options"),
                     TextButton(
                         onPressed: () async {
                           Get.back();
