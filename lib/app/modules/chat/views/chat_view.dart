@@ -65,7 +65,8 @@ class ChatView extends GetView<ChatController> {
                   } else if (MediaQuery.of(context).viewInsets.bottom > 0) {
                     FocusManager.instance.primaryFocus?.unfocus();
                   } else {
-                    Get.back();
+                    // Get.back();
+                    Get.offNamed(Routes.DASHBOARD);
                   }
                   return Future.value(false);
                 },

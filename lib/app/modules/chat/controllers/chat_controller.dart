@@ -81,6 +81,7 @@ class ChatController extends GetxController
     super.onInit();
     profile = Get.arguments as Profile;
     debugPrint("isBlocked===> ${profile.isBlocked}");
+    debugPrint("profile detail===> ${profile.toJson().toString()}");
     isBlocked(profile.isBlocked);
     controller = AnimationController(
       vsync: this,
@@ -202,6 +203,7 @@ class ChatController extends GetxController
               messageController.text, profile.jid.toString(), replyMessageId)
           .then((value) {
         messageController.text = "";
+        isUserTyping(false);
         ChatMessageModel chatMessageModel = sendMessageModelFromJson(value);
         chatList.add(chatMessageModel);
       });
@@ -959,7 +961,14 @@ class ChatController extends GetxController
     if(messageIds.length == selectedChatList.length){
       isSelected(false);
       selectedChatList.clear();
-      Get.toNamed(Routes.CONTACTS, arguments: {"forward" : true, "messageIds": messageIds });
+      Get.toNamed(Routes.CONTACTS, arguments: {"forward" : true, "messageIds": messageIds })?.then((value){
+        debugPrint("result of forward ==> ${value.toString()}");
+        profile = value as Profile;
+        isBlocked(profile.isBlocked);
+        PlatformRepo().ongoingChat(profile.jid!);
+        getChatHistory(profile.jid!);
+        sendReadReceipt();
+      });
     }
   }
 
