@@ -693,35 +693,42 @@ class ChatController extends GetxController
   }
 
   reportChatOrUser() {
-    var chatMessage = selectedChatList.isNotEmpty ? selectedChatList[0] : null;
-    Helper.showAlert(
-        title: "Report ${profile.name}?",
-        message:
-            "${selectedChatList.isNotEmpty ? "This message will be forwarded to admin." : "The last 5 messages from this contact will be forwarded to admin."} This Contact will not be notified.",
-        actions: [
-          TextButton(
-              onPressed: () {
-                Get.back();
-                PlatformRepo()
-                    .reportChatOrUser(
-                        profile.jid!,
-                        chatMessage?.messageChatType ?? "chat",
-                        chatMessage?.messageId ?? "")
-                    .then((value) {
-                  //report success
-                  debugPrint(value);
-                }).catchError((onError) {
-                  //report failed
-                  debugPrint(onError.toString());
-                });
-              },
-              child: const Text("REPORT")),
-          TextButton(
-              onPressed: () {
-                Get.back();
-              },
-              child: const Text("CANCEL")),
-        ]);
+    Future.delayed(const Duration(milliseconds: 100), ()
+    {
+      var chatMessage = selectedChatList.isNotEmpty
+          ? selectedChatList[0]
+          : null;
+      Helper.showAlert(
+          title: "Report ${profile.name}?",
+          message:
+          "${selectedChatList.isNotEmpty
+              ? "This message will be forwarded to admin."
+              : "The last 5 messages from this contact will be forwarded to admin."} This Contact will not be notified.",
+          actions: [
+            TextButton(
+                onPressed: () {
+                  Get.back();
+                  PlatformRepo()
+                      .reportChatOrUser(
+                      profile.jid!,
+                      chatMessage?.messageChatType ?? "chat",
+                      chatMessage?.messageId ?? "")
+                      .then((value) {
+                    //report success
+                    debugPrint(value);
+                  }).catchError((onError) {
+                    //report failed
+                    debugPrint(onError.toString());
+                  });
+                },
+                child: const Text("REPORT")),
+            TextButton(
+                onPressed: () {
+                  Get.back();
+                },
+                child: const Text("CANCEL")),
+          ]);
+    });
   }
 
   copyTextMessages() {
@@ -802,9 +809,15 @@ class ChatController extends GetxController
   }
 
   messageInfo() {
-    debugPrint("sending mid ===> ${selectedChatList[0].messageId}");
-    Get.toNamed(Routes.MESSAGE_INFO, arguments: {"messageID": selectedChatList[0].messageId, "chatMessage" : selectedChatList[0]});
-    clearChatSelection(selectedChatList[0]);
+    Future.delayed(const Duration(milliseconds: 100), ()
+    {
+      debugPrint("sending mid ===> ${selectedChatList[0].messageId}");
+      Get.toNamed(Routes.MESSAGE_INFO, arguments: {
+        "messageID": selectedChatList[0].messageId,
+        "chatMessage": selectedChatList[0]
+      });
+      clearChatSelection(selectedChatList[0]);
+    });
   }
 
   favouriteMessage() {
@@ -844,30 +857,31 @@ class ChatController extends GetxController
   }
 
   blockUser() {
-    Helper.showAlert(
-        message: "Are you sure you want to Block ${profile.name}?",
-        actions: [
-          TextButton(
-              onPressed: () {
-                Get.back();
-              },
-              child: const Text("CANCEL")),
-          TextButton(
-              onPressed: () {
-                Get.back();
-                Helper.showLoading(message: "Blocking User");
-                PlatformRepo().blockUser(profile.jid!).then((value){
-                  debugPrint(value);
-                  isBlocked(true);
-                  Helper.hideLoading();
-                }).catchError((error){
-                  Helper.hideLoading();
-                  debugPrint(error);
-                });
-              },
-              child: const Text("BLOCK")),
-        ]);
-
+    Future.delayed(const Duration(milliseconds: 100), () {
+      Helper.showAlert(
+          message: "Are you sure you want to Block ${profile.name}?",
+          actions: [
+            TextButton(
+                onPressed: () {
+                  Get.back();
+                },
+                child: const Text("CANCEL")),
+            TextButton(
+                onPressed: () {
+                  Get.back();
+                  Helper.showLoading(message: "Blocking User");
+                  PlatformRepo().blockUser(profile.jid!).then((value) {
+                    debugPrint(value);
+                    isBlocked(true);
+                    Helper.hideLoading();
+                  }).catchError((error) {
+                    Helper.hideLoading();
+                    debugPrint(error);
+                  });
+                },
+                child: const Text("BLOCK")),
+          ]);
+    });
   }
 
   clearUserChatHistory() {

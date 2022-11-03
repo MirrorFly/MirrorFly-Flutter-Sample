@@ -218,7 +218,7 @@ class DashboardView extends GetView<DashboardController> {
                               SizedBox(width: Helper.forMessageTypeString(item.lastMessageType)!= "" ? 3.0 : 0.0,),
                               Expanded(
                                 child: Text(
-                                  Helper.forMessageTypeString(item.lastMessageType) == "" ? item.lastMessageContent.toString() : Helper.forMessageTypeString(item.lastMessageType),
+                                  Helper.forMessageTypeString(item.lastMessageType) == "" ? item.lastMessageContent.checkNull() : Helper.forMessageTypeString(item.lastMessageType),
                                   style: Theme.of(context).textTheme.titleSmall,
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
