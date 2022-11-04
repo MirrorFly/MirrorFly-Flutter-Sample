@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+import 'dart:math';
 import 'dart:typed_data';
 import 'dart:io' as Io;
 
@@ -146,9 +147,12 @@ class ChatController extends GetxController
 
     filteredPosition.bindStream(filteredPosition.stream);
     ever(filteredPosition, (callback) {
-      Log("fillterdPosition", callback.toString());
+      Log("fillterdPosition", callback.reversed.toString());
+      lastposition(callback.length);
       chatList.refresh();
     });
+
+
   }
 
   @override
@@ -979,48 +983,94 @@ class ChatController extends GetxController
       }
     }
   }
-  Rx<int>? lastposition = null;
+  var lastposition = (-1).obs;
+  var searchedPrev ="";
+  var searchedNxt ="";
+  searchInit(){
+    lastposition = (-1).obs;
+    searchedPrev ="";
+    searchedNxt ="";
+    filteredPosition.clear();
+    searchedText.clear();
+  }
   scrollUp(){
-    Log("Up lastposition", lastposition.toString());
-    Log("Up filterlastposition", filteredPosition[lastposition!.value].toString());
-    lastposition==null ? lastposition=(0).obs : lastposition!(lastposition!.value);
-    if(lastposition!<filteredPosition.value.length) {
-      if(lastposition!=0) {
-        lastposition!(lastposition!.value + 1);
-      }
-      _scrollToPosition(filteredPosition[lastposition!.value]+1);
+    if (searchedPrev!=(searchedText.text.toString())) {
+      var pre = getPreviousPosition(findLastVisibleItemPosition());
+      lastposition.value = pre;
+      searchedPrev = searchedText.text;
+    } else if (filteredPosition.value.isNotEmpty) {
+      lastposition.value = max(lastposition.value - 1, (-1));
+    }
+    else {
+      lastposition.value = -1;
+    }
+    if (lastposition.value > -1 && lastposition.value <=filteredPosition.value.length) {
+      var po = filteredPosition.value;
+      _scrollToPosition(po[lastposition.value]+1);
     }else{
-      toToast("No Item");
+      toToast("No Results Found");
+      searchedNxt = "";
     }
   }
 
   scrollDown(){
-    Log("Down lastposition", lastposition.toString());
-    lastposition==null ? lastposition=(0).obs  : lastposition!(lastposition!.value);
-    if(lastposition!=0 && lastposition!<filteredPosition.value.length) {
-      lastposition!(lastposition!.value - 1);
-      _scrollToPosition(filteredPosition[lastposition!.value]+1);
+    if (searchedNxt!=searchedText.text.toString()) {
+      var nex = getNextPosition(findLastVisibleItemPosition());
+      lastposition.value=nex;
+      searchedNxt = searchedText.text;
+    } else if (filteredPosition.value.isNotEmpty) {
+      lastposition.value = min(lastposition.value - 1, filteredPosition.value.length);
+    } else {
+      lastposition.value = -1;
+    }
+    if (lastposition.value > -1 && lastposition.value <= filteredPosition.value.length) {
+      var po = filteredPosition.value.reversed.toList();
+      _scrollToPosition(po[lastposition.value]+1);
     }else{
-      toToast("No Item");
+      toToast("No Results Found");
+      searchedPrev = "";
     }
   }
-
-  var currentposition = 0;
   var color = Colors.transparent.obs;
   _scrollToPosition(int position){
-    Log("scroll_position", position.toString());
-    //color(chatreplycontainercolor);
-    currentposition=(chatList.value.length-(position));
+    var currentposition =(chatList.value.length-(position));
     chatList[chatList.value.length-position].isSelected=true;
     searchscrollController.jumpTo(index: currentposition);
-    Future.delayed(Duration(milliseconds: 500), () {
-      Log("future delay", "delay");
+    Future.delayed(Duration(milliseconds: 800), () {
       currentposition=(chatList.value.length-position);
       chatList[chatList.value.length-position].isSelected=false;
-      //color(Colors.transparent);
       chatList.refresh();
-      update();
     });
+  }
+
+  int getPreviousPosition(int visiblePos) {
+    for (var i=0; i<filteredPosition.value.length;i++) {
+      var po = filteredPosition.value.reversed.toList();
+      if (visiblePos > po[i]) {
+        return filteredPosition.value.indexOf(po[i]);
+      }
+    }
+    return -1;
+  }
+
+  int getNextPosition(int visiblePos) {
+    for (var i=0;i<filteredPosition.value.length;i++) {
+      if (visiblePos <= filteredPosition.value[i]) {
+        return i;
+      }
+    }
+    return -1;
+  }
+  final ItemPositionsListener itemPositionsListener = ItemPositionsListener.create();
+
+  int findLastVisibleItemPosition(){
+    var r= itemPositionsListener.itemPositions.value.where((ItemPosition position) => position.itemTrailingEdge < 1)
+        .reduce((ItemPosition min, ItemPosition position) =>
+    position.itemTrailingEdge < min.itemTrailingEdge
+        ? position
+        : min)
+        .index;
+    return chatList.value.length-r;
   }
 
   exportChat() async {

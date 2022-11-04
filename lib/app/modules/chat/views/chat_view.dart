@@ -47,7 +47,7 @@ class ChatView extends GetView<ChatController> {
       //   FocusManager.instance.primaryFocus?.unfocus();
       // },
       child: Scaffold(
-          appBar: getAppBar(context),
+          appBar: getAppBar(),
           body: SafeArea(
             child: Container(
               width: screenWidth,
@@ -90,7 +90,6 @@ class ChatView extends GetView<ChatController> {
                                       thickness: 0.29,
                                       color: textblackcolor,
                                     ),
-                            ),
                                     Padding(
                                       padding: const EdgeInsets.only(
                                           top: 15.0, bottom: 15.0),
@@ -1761,7 +1760,7 @@ class ChatView extends GetView<ChatController> {
     }
   }
 
-  selectedAppBar(BuildContext context) {
+  selectedAppBar() {
     return AppBar(
       // leadingWidth: 25,
       backgroundColor: Colors.white,
@@ -1927,7 +1926,7 @@ class ChatView extends GetView<ChatController> {
     );
   }
 
-  chatAppBar(BuildContext context) {
+  chatAppBar() {
     return AppBar(
       leadingWidth: 25,
       title: Row(
@@ -2029,20 +2028,19 @@ class ChatView extends GetView<ChatController> {
               keyValue: 'Search',
               onItemClick: () {
                 controller.closeKeyBoard();
+                Future.delayed(Duration(milliseconds: 100),()=>Get.toNamed(Routes.CHATSEARCH));
               },
             ),
             CustomAction(
               visibleWidget: IconButton(
                 onPressed: () {},
-                icon: const Icon(Icons.search),
+                icon: const Icon(Icons.email_outlined),
               ),
               overflowWidget: GestureDetector(
                 onTap: () {
                   controller.closeKeyBoard();
-                  Get.back();
-                  Get.toNamed(Routes.CHATSEARCH);
                 },
-                child: const Text("Search"),
+                child: const Text("Email Chat"),
               ),
               showAsAction: ShowAsAction.NEVER,
               keyValue: 'EmailChat',
@@ -2069,7 +2067,7 @@ class ChatView extends GetView<ChatController> {
     );
   }
 
-  getAppBar(BuildContext context) {
+  getAppBar() {
     return PreferredSize(
       preferredSize: const Size.fromHeight(55.0),
       child: Obx(() {
