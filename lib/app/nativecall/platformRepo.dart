@@ -779,7 +779,7 @@ class PlatformRepo {
     dynamic forwardMessageResponse;
     try {
       forwardMessageResponse = await mirrorFlyMethodChannel.invokeMethod('forward_messages', { "message_ids" : messageIds, "userList": userList});
-      debugPrint("Favourite Msg Response ==> $forwardMessageResponse");
+      debugPrint("Forward Msg Response ==> $forwardMessageResponse");
       return forwardMessageResponse;
     }on PlatformException catch (e){
       debugPrint("Platform Exception ===> $e");

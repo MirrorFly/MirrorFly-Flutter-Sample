@@ -11,6 +11,8 @@ import '../modules/chat/views/chat_view.dart';
 import '../modules/chat/views/contactlist_view.dart';
 import '../modules/chat/views/image_preview_view.dart';
 import '../modules/chat/views/locationsent_view.dart';
+import '../modules/chat_info/bindings/chat_info_binding.dart';
+import '../modules/chat_info/views/chat_info_view.dart';
 import '../modules/dashboard/bindings/dashboard_binding.dart';
 import '../modules/dashboard/bindings/recentssearch_binding.dart';
 import '../modules/dashboard/views/dashboard_view.dart';
@@ -147,6 +149,11 @@ class AppPages {
       name: _Paths.MESSAGE_INFO,
       page: () => const MessageInfoView(),
       binding: MessageInfoBinding(),
+    ),
+    GetPage(
+      name: _Paths.CHAT_INFO,
+      page: () => const ChatInfoView(),
+      binding: ChatInfoBinding(),
     ),
   ];
 }
