@@ -1,19 +1,24 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+import 'dart:math';
+import 'dart:typed_data';
 import 'dart:io' as Io;
 
 import 'package:audioplayers/audioplayers.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:mirror_fly_demo/app/model/chatMessageModel.dart';
+import 'package:mirror_fly_demo/app/model/chatmessage_model.dart';
 import 'package:mirror_fly_demo/app/nativecall/platformRepo.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../../common/constants.dart';
@@ -22,7 +27,6 @@ import '../../../data/helper.dart';
 import '../../../model/checkModel.dart' as checkModel;
 import '../../../model/userlistModel.dart';
 import '../../../routes/app_pages.dart';
-
 
 class ChatController extends GetxController
     with GetSingleTickerProviderStateMixin {
@@ -34,6 +38,8 @@ class ChatController extends GetxController
     initialScrollOffset: 0.0,
     keepScrollOffset: true,
   );
+
+  ItemScrollController searchscrollController = ItemScrollController();
 
   late ChatMessageModel replyChatMessage;
 
@@ -88,7 +94,7 @@ class ChatController extends GetxController
       duration: const Duration(milliseconds: 600),
     );
 
-    // askStoragePermission();
+    askStoragePermission();
     isLive = true;
     focusNode.addListener(() {
       if (focusNode.hasFocus) {
@@ -139,6 +145,15 @@ class ChatController extends GetxController
 
       currentpostlabel = "$rhours:$rminutes:$rseconds";
     });
+
+    filteredPosition.bindStream(filteredPosition.stream);
+    ever(filteredPosition, (callback) {
+      Log("fillterdPosition", callback.reversed.toString());
+      lastposition(callback.length);
+      chatList.refresh();
+    });
+
+
   }
 
   @override
@@ -700,36 +715,34 @@ class ChatController extends GetxController
       var chatMessage = selectedChatList.isNotEmpty
           ? selectedChatList[0]
           : null;
-      Helper.showAlert(
-          title: "Report ${profile.name}?",
-          message:
-          "${selectedChatList.isNotEmpty
-              ? "This message will be forwarded to admin."
-              : "The last 5 messages from this contact will be forwarded to admin."} This Contact will not be notified.",
-          actions: [
-            TextButton(
-                onPressed: () {
-                  Get.back();
-                  PlatformRepo()
-                      .reportChatOrUser(
-                      profile.jid!,
-                      chatMessage?.messageChatType ?? "chat",
-                      chatMessage?.messageId ?? "")
-                      .then((value) {
-                    //report success
-                    debugPrint(value);
-                  }).catchError((onError) {
-                    //report failed
-                    debugPrint(onError.toString());
-                  });
-                },
-                child: const Text("REPORT")),
-            TextButton(
-                onPressed: () {
-                  Get.back();
-                },
-                child: const Text("CANCEL")),
-          ]);
+    Helper.showAlert(
+        title: "Report ${profile.name}?",
+        message:
+            "${selectedChatList.isNotEmpty ? "This message will be forwarded to admin." : "The last 5 messages from this contact will be forwarded to admin."} This Contact will not be notified.",
+        actions: [
+          TextButton(
+              onPressed: () {
+                Get.back();
+                PlatformRepo()
+                    .reportChatOrUser(
+                        profile.jid!,
+                        chatMessage?.messageChatType ?? "chat",
+                        chatMessage?.messageId ?? "")
+                    .then((value) {
+                  //report success
+                  debugPrint(value);
+                }).catchError((onError) {
+                  //report failed
+                  debugPrint(onError.toString());
+                });
+              },
+              child: const Text("REPORT")),
+          TextButton(
+              onPressed: () {
+                Get.back();
+              },
+              child: const Text("CANCEL")),
+        ]);
     });
   }
 
@@ -914,30 +927,152 @@ class ChatController extends GetxController
   }
 
   unBlockUser() {
-    Helper.showAlert(
-        message: "Unblock ${profile.name}?",
-        actions: [
-          TextButton(
-              onPressed: () {
-                Get.back();
-              },
-              child: const Text("CANCEL")),
-          TextButton(
-              onPressed: () {
-                Get.back();
-                Helper.showLoading(message: "Unblocking User");
-                PlatformRepo().unBlockUser(profile.jid!).then((value){
-                  debugPrint(value);
-                  isBlocked(false);
-                  Helper.hideLoading();
-                }).catchError((error){
-                  Helper.hideLoading();
-                  debugPrint(error);
-                });
-              },
-              child: const Text("UNBLOCK")),
+    Helper.showAlert(message: "Unblock ${profile.name}?", actions: [
+      TextButton(
+          onPressed: () {
+            Get.back();
+          },
+          child: const Text("CANCEL")),
+      TextButton(
+          onPressed: () {
+            Get.back();
+            Helper.showLoading(message: "Unblocking User");
+            PlatformRepo().unBlockUser(profile.jid!).then((value) {
+              debugPrint(value);
+              isBlocked(false);
+              Helper.hideLoading();
+            }).catchError((error) {
+              Helper.hideLoading();
+              debugPrint(error);
+            });
+          },
+          child: const Text("UNBLOCK")),
+    ]);
+  }
 
-        ]);
+  var filteredPosition = <int>[].obs;
+  var searchedText = TextEditingController();
+
+  setSearch(String text) {
+    filteredPosition.clear();
+    if (searchedText.text.isNotEmpty) {
+      for (var i = 0; i < chatList.value.length; i++) {
+        if (chatList.value[i].messageType == Constants.MTEXT &&
+            chatList.value[i].messageTextContent
+                .startsWithTextInWords(searchedText.text)) {
+          filteredPosition.add(i);
+        } else if (chatList.value[i].messageType == Constants.MIMAGE &&
+            chatList.value[i].mediaChatMessage!.mediaCaptionText.isNotEmpty &&
+            chatList.value[i].mediaChatMessage!.mediaCaptionText
+                .startsWithTextInWords(searchedText.text)) {
+          filteredPosition.add(i);
+        } else if (chatList.value[i].messageType == Constants.MVIDEO &&
+            chatList.value[i].mediaChatMessage!.mediaCaptionText.isNotEmpty &&
+            chatList.value[i].mediaChatMessage!.mediaCaptionText
+                .startsWithTextInWords(searchedText.text)) {
+          filteredPosition.add(i);
+        } else if (chatList.value[i].messageType == Constants.MDOCUMENT &&
+            chatList.value[i].mediaChatMessage!.mediaFileName.isNotEmpty &&
+            chatList.value[i].mediaChatMessage!.mediaFileName
+                .startsWithTextInWords(searchedText.text)) {
+          filteredPosition.add(i);
+        } else if (chatList.value[i].messageType == Constants.MCONTACT &&
+            chatList.value[i].contactChatMessage!.contactName.isNotEmpty &&
+            chatList.value[i].contactChatMessage!.contactName
+                .startsWithTextInWords(searchedText.text)) {
+          filteredPosition.add(i);
+        }
+      }
+    }
+  }
+  var lastposition = (-1).obs;
+  var searchedPrev ="";
+  var searchedNxt ="";
+  searchInit(){
+    lastposition = (-1).obs;
+    searchedPrev ="";
+    searchedNxt ="";
+    filteredPosition.clear();
+    searchedText.clear();
+  }
+  scrollUp(){
+    if (searchedPrev!=(searchedText.text.toString())) {
+      var pre = getPreviousPosition(findLastVisibleItemPosition());
+      lastposition.value = pre;
+      searchedPrev = searchedText.text;
+    } else if (filteredPosition.value.isNotEmpty) {
+      lastposition.value = max(lastposition.value - 1, (-1));
+    }
+    else {
+      lastposition.value = -1;
+    }
+    if (lastposition.value > -1 && lastposition.value <=filteredPosition.value.length) {
+      var po = filteredPosition.value;
+      _scrollToPosition(po[lastposition.value]+1);
+    }else{
+      toToast("No Results Found");
+      searchedNxt = "";
+    }
+  }
+
+  scrollDown(){
+    if (searchedNxt!=searchedText.text.toString()) {
+      var nex = getNextPosition(findLastVisibleItemPosition());
+      lastposition.value=nex;
+      searchedNxt = searchedText.text;
+    } else if (filteredPosition.value.isNotEmpty) {
+      lastposition.value = min(lastposition.value - 1, filteredPosition.value.length);
+    } else {
+      lastposition.value = -1;
+    }
+    if (lastposition.value > -1 && lastposition.value <= filteredPosition.value.length) {
+      var po = filteredPosition.value.reversed.toList();
+      _scrollToPosition(po[lastposition.value]+1);
+    }else{
+      toToast("No Results Found");
+      searchedPrev = "";
+    }
+  }
+  var color = Colors.transparent.obs;
+  _scrollToPosition(int position){
+    var currentposition =(chatList.value.length-(position));
+    chatList[chatList.value.length-position].isSelected=true;
+    searchscrollController.jumpTo(index: currentposition);
+    Future.delayed(Duration(milliseconds: 800), () {
+      currentposition=(chatList.value.length-position);
+      chatList[chatList.value.length-position].isSelected=false;
+      chatList.refresh();
+    });
+  }
+
+  int getPreviousPosition(int visiblePos) {
+    for (var i=0; i<filteredPosition.value.length;i++) {
+      var po = filteredPosition.value.reversed.toList();
+      if (visiblePos > po[i]) {
+        return filteredPosition.value.indexOf(po[i]);
+      }
+    }
+    return -1;
+  }
+
+  int getNextPosition(int visiblePos) {
+    for (var i=0;i<filteredPosition.value.length;i++) {
+      if (visiblePos <= filteredPosition.value[i]) {
+        return i;
+      }
+    }
+    return -1;
+  }
+  final ItemPositionsListener itemPositionsListener = ItemPositionsListener.create();
+
+  int findLastVisibleItemPosition(){
+    var r= itemPositionsListener.itemPositions.value.where((ItemPosition position) => position.itemTrailingEdge < 1)
+        .reduce((ItemPosition min, ItemPosition position) =>
+    position.itemTrailingEdge < min.itemTrailingEdge
+        ? position
+        : min)
+        .index;
+    return chatList.value.length-r;
   }
 
   exportChat() async {

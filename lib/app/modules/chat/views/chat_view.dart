@@ -47,7 +47,7 @@ class ChatView extends GetView<ChatController> {
       //   FocusManager.instance.primaryFocus?.unfocus();
       // },
       child: Scaffold(
-          appBar: getAppBar(context),
+          appBar: getAppBar(),
           body: SafeArea(
             child: Container(
               width: screenWidth,
@@ -1761,7 +1761,7 @@ class ChatView extends GetView<ChatController> {
     }
   }
 
-  selectedAppBar(BuildContext context) {
+  selectedAppBar() {
     return AppBar(
       // leadingWidth: 25,
       backgroundColor: Colors.white,
@@ -1927,7 +1927,7 @@ class ChatView extends GetView<ChatController> {
     );
   }
 
-  chatAppBar(BuildContext context) {
+  chatAppBar() {
     return AppBar(
       leadingWidth: 25,
       title: Row(
@@ -2029,14 +2029,20 @@ class ChatView extends GetView<ChatController> {
               keyValue: 'Search',
               onItemClick: () {
                 controller.closeKeyBoard();
+                Future.delayed(Duration(milliseconds: 100),()=>Get.toNamed(Routes.CHATSEARCH));
               },
             ),
             CustomAction(
               visibleWidget: IconButton(
                 onPressed: () {},
-                icon: const Icon(Icons.search),
+                icon: const Icon(Icons.email_outlined),
               ),
-              overflowWidget: const Text("Email Chat"),
+              overflowWidget: GestureDetector(
+                onTap: () {
+                  controller.closeKeyBoard();
+                },
+                child: const Text("Email Chat"),
+              ),
               showAsAction: ShowAsAction.NEVER,
               keyValue: 'EmailChat',
               onItemClick: () {
@@ -2062,14 +2068,12 @@ class ChatView extends GetView<ChatController> {
     );
   }
 
-  getAppBar(BuildContext context) {
+  getAppBar() {
     return PreferredSize(
       preferredSize: const Size.fromHeight(55.0),
       child: Obx(() {
         return Container(
-          child: controller.isSelected.value
-              ? selectedAppBar(context)
-              : chatAppBar(context),
+          child: controller.isSelected.value ? selectedAppBar() : chatAppBar(),
         );
       }),
     );
