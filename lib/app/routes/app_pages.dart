@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+import 'package:mirror_fly_demo/app/modules/group/bindings/groupcreation_binding.dart';
 
 import '../model/userlistModel.dart';
 import '../modules/chat/bindings/chat_binding.dart';
@@ -17,6 +18,7 @@ import '../modules/dashboard/bindings/dashboard_binding.dart';
 import '../modules/dashboard/bindings/recentssearch_binding.dart';
 import '../modules/dashboard/views/dashboard_view.dart';
 import '../modules/dashboard/views/recent_search_view.dart';
+import '../modules/group/views/groupcreation_view.dart';
 import '../modules/home/bindings/home_binding.dart';
 import '../modules/home/views/home_view.dart';
 import '../modules/image_view/bindings/image_view_binding.dart';
@@ -64,6 +66,11 @@ class AppPages {
       name: _Paths.DASHBOARD,
       page: () => DashboardView(),
       binding: DashboardBinding(),
+    ),
+    GetPage(
+      name: _Paths.CREATE_GROUP,
+      page: () => GroupCreationView(),
+      binding: GroupCreationBinding(),
     ),
     GetPage(
       name: _Paths.RECENTSEARCH,

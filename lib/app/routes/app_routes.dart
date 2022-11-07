@@ -5,6 +5,7 @@ abstract class Routes {
   Routes._();
   static const HOME = _Paths.HOME;
   static const DASHBOARD = _Paths.DASHBOARD;
+  static const CREATE_GROUP = _Paths.CREATE_GROUP;
   static const RECENTSEARCH = _Paths.RECENTSEARCH;
   static const LOGIN = _Paths.LOGIN;
   static const COUNTRIES = _Paths.COUNTRIES;
@@ -29,6 +30,7 @@ abstract class _Paths {
   _Paths._();
   static const HOME = '/home';
   static const DASHBOARD = '/dashboard';
+  static const CREATE_GROUP = '/create_group';
   static const RECENTSEARCH = '/recent_search';
   static const LOGIN = '/login';
   static const COUNTRIES = '/Countries';
