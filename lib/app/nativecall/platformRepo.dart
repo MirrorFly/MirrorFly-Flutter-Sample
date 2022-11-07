@@ -36,13 +36,28 @@ class PlatformRepo {
     }
   }
 
-  Future<dynamic> registerUser(String userIdentifier) async {
+  Future<dynamic> registerUser(String userIdentifier,String token) async {
     dynamic registerResponse;
     try {
       registerResponse = await mirrorFlyMethodChannel
-          .invokeMethod('register_user', {"userIdentifier": userIdentifier});
+          .invokeMethod('register_user', {"userIdentifier": userIdentifier,"token":token});
       debugPrint("Register Result ==> $registerResponse");
       return registerResponse;
+    } on PlatformException catch (e) {
+      debugPrint("Platform Exception ===> $e");
+      rethrow;
+    } on Exception catch (error) {
+      debugPrint("Exception ==> $error");
+      rethrow;
+    }
+  }
+
+  Future<String> verifyToken(String userName,String token) async {
+    String? response = "";
+    try {
+      response = await mirrorFlyMethodChannel.invokeMethod<String>('verifyToken', {"userName": userName,"googleToken":token});
+      debugPrint("verifyToken Result ==> $response");
+      return response.checkNull();
     } on PlatformException catch (e) {
       debugPrint("Platform Exception ===> $e");
       rethrow;

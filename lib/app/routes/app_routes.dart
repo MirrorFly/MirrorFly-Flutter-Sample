@@ -7,6 +7,7 @@ abstract class Routes {
   static const DASHBOARD = _Paths.DASHBOARD;
   static const RECENTSEARCH = _Paths.RECENTSEARCH;
   static const LOGIN = _Paths.LOGIN;
+  static const OTP = _Paths.OTP;
   static const COUNTRIES = _Paths.COUNTRIES;
   static const PROFILE = _Paths.PROFILE;
   static const STATUSLIST = _Paths.STATUSLIST;
@@ -31,6 +32,7 @@ abstract class _Paths {
   static const DASHBOARD = '/dashboard';
   static const RECENTSEARCH = '/recent_search';
   static const LOGIN = '/login';
+  static const OTP = '/otp';
   static const COUNTRIES = '/Countries';
   static const PROFILE = '/profile';
   static const STATUSLIST = '/statuslist';

@@ -17,7 +17,7 @@ class HomeController extends GetxController {
 
   registerUser() {
     RegisterModel userData;
-    PlatformRepo().registerUser(userIdentifier.text).then((value) {
+    PlatformRepo().registerUser(userIdentifier.text,"").then((value) {
       if (value.contains("data")) {
         userData = registerModelFromJson(value);//message
         SessionManagement.setLogin(userData.data!.username!.isNotEmpty);

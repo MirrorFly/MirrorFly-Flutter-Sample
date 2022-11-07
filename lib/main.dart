@@ -1,4 +1,7 @@
 
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 
@@ -16,7 +19,8 @@ import 'app/routes/app_pages.dart';
 import 'package:google_maps_flutter_android/google_maps_flutter_android.dart';
 import 'package:google_maps_flutter_platform_interface/google_maps_flutter_platform_interface.dart';
 
-void main() async {
+bool shouldUseFirebaseEmulator = false;
+Future<void> main() async {
 // Require Hybrid Composition mode on Android.
   final GoogleMapsFlutterPlatform mapsImplementation =
       GoogleMapsFlutterPlatform.instance;
@@ -24,26 +28,16 @@ void main() async {
     mapsImplementation.useAndroidViewSurface = true;
   }
   WidgetsFlutterBinding.ensureInitialized();
+  if (!kIsWeb) {
+    await Firebase.initializeApp();
+  }
+
+  if (shouldUseFirebaseEmulator) {
+    await FirebaseAuth.instance.useAuthEmulator('localhost', 5050);
+  }
   await SessionManagement.onInit();
-  // await FlutterLibphonenumber().init();
   Get.put<MainController>(MainController());
   runApp(const MyApp());
-  configLoading();
-}
-void configLoading() {
-  EasyLoading.instance
-    ..displayDuration = const Duration(milliseconds: 2000)
-    ..indicatorType = EasyLoadingIndicatorType.rotatingCircle
-    ..loadingStyle = EasyLoadingStyle.light
-    ..indicatorSize = 45.0
-    ..radius = 10.0
-    ..progressColor = Colors.blue
-    ..backgroundColor = Colors.white
-    ..indicatorColor = Colors.yellow
-    ..textColor = Colors.black
-    ..maskColor = Colors.blue.withOpacity(0.5)
-    ..userInteractions = true
-    ..dismissOnTap = false;
 }
 
 class MyApp extends StatelessWidget{
