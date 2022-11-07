@@ -1,0 +1,19 @@
+default_platform(:android)
+
+platform :android do
+ desc "Deploy to Firebase"
+ lane :deploy_dev do
+  begin
+   # (start) Add this
+   firebase_app_distribution(
+    groups: " mirrorflydev---flutter ",
+    release_notes: "CICD Integration using fastlane",
+    apk_path: "../build/app/outputs/flutter-apk/app.apk",
+    firebase_cli_path: "/usr/local/bin/firebase",
+    firebase_cli_token: "1//0gca4tG-kR13uCgYIARAAGBASNwF-L9Irt1O8cK62NJe-EO1eh4Vvibu-ThnUDK2jZnz0B-6RZkHC-u34Zvg_E1hnXhgmh2C3KzY",
+    app: "1:1045831384770:android:cfdf83b6e0ada96911455b", # Updated
+   )
+   # (end)
+  end
+ end 
+end
