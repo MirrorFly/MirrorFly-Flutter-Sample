@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
 import 'package:mirror_fly_demo/app/modules/group/controllers/groupcreation_controller.dart';
 
@@ -11,7 +12,8 @@ import '../../../common/widgets.dart';
 import '../../../routes/app_pages.dart';
 
 class GroupCreationView extends GetView<GroupCreationController> {
-  const GroupCreationView({Key? key}) : super(key: key);
+  GroupCreationView({Key? key}) : super(key: key);
+  final ImagePicker _picker = ImagePicker();
 
   @override
   Widget build(BuildContext context) {
@@ -22,8 +24,7 @@ class GroupCreationView extends GetView<GroupCreationController> {
         ),
         actions: [
           TextButton(
-              onPressed: () {
-              },
+              onPressed: ()=>controller.goToAddParticipantsPage(),
               child: const Text("NEXT",style: TextStyle(color: Colors.black),)),
         ],
       ),
@@ -102,7 +103,22 @@ class GroupCreationView extends GetView<GroupCreationController> {
                         onTap: controller.loading.value
                             ? null
                             : () {
-                          //BottomSheetView(context);
+                          Helper.showAlert(message: "",actions:[
+                            TextButton(
+                                onPressed: () {
+                                  Get.back();
+                                  controller.ImagePicker(context);
+                                },
+                                child: const Text("Choose from Gallery")),
+                            TextButton(
+                                onPressed: () async{
+                                  Get.back();
+                                  final XFile? photo = await _picker.pickImage(
+                                      source: ImageSource.camera);
+                                  controller.Camera(photo);
+                                },
+                                child: const Text("Take Photo")),
+                          ] );
                         },
                         child: Image.asset(
                           'assets/logos/camera_profile_change.png',
@@ -128,10 +144,10 @@ class GroupCreationView extends GetView<GroupCreationController> {
                       child: TextField(
                         style:
                         TextStyle(fontSize: 14, fontWeight: FontWeight.normal,overflow: TextOverflow.visible),
-                        //onChanged: (_) => controller.onChanged(),
+                        onChanged: (_) => controller.onGroupNameChanged(),
                         maxLength: 25,
                         maxLines: 1,
-                        //controller: controller.addstatuscontroller,
+                        controller: controller.groupName,
                         decoration: InputDecoration(border: InputBorder.none,counterText:"",hintText: "Type group name here..." ),
                       ),
                     ),
@@ -149,20 +165,24 @@ class GroupCreationView extends GetView<GroupCreationController> {
                       )),
                   IconButton(
                       onPressed: () {
-                        /*if (!controller.showEmoji.value) {
-                                FocusScope.of(context).unfocus();
-                                controller.focusNode.canRequestFocus = false;
-                              }
-                              Future.delayed(const Duration(milliseconds: 500), () {
-                                controller.showEmoji(!controller.showEmoji.value);
-                              });*/
+                        controller.showHideEmoji(context);
                       },
                       icon: SvgPicture.asset(smileicon,width: 18,height: 18,))
                 ],
               ),
             ),
             AppDivider(padding: 0,),
-            Text("Provide a Group Name and Icon",style: TextStyle(fontWeight: FontWeight.w500,fontSize: 15),)
+            Text("Provide a Group Name and Icon",style: TextStyle(fontWeight: FontWeight.w500,fontSize: 15),),
+            Obx(() {
+              if (controller.showEmoji.value) {
+                return EmojiLayout(
+                    textcontroller: controller.groupName,
+                    onEmojiSelected : (cat, emoji)=>controller.onGroupNameChanged()
+                );
+              } else {
+                return const SizedBox.shrink();
+              }
+            })
           ],
         ),
       ),

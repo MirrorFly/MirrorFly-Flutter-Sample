@@ -8,7 +8,7 @@ class apptheme {
         iconTheme: IconThemeData(color: iconcolor),
         titleTextStyle: TextStyle(
             color: appbartextcolor,
-            fontSize: 20,
+            fontSize: 18,
             fontWeight: FontWeight.w500,
             fontFamily: 'sf_ui')),
     hintColor: Colors.black26,

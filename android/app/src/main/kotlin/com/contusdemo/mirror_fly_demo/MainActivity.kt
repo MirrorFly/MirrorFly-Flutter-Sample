@@ -16,6 +16,7 @@ import androidx.annotation.NonNull
 import androidx.core.content.FileProvider
 import androidx.core.view.WindowCompat
 import com.contus.flycommons.*
+import com.contus.xmpp.chat.models.CreateGroupModel
 import com.contus.xmpp.chat.models.Profile
 import com.contusflysdk.AppUtils
 import com.contusflysdk.api.*
@@ -440,17 +441,16 @@ class MainActivity : FlutterActivity(), MethodChannel.MethodCallHandler,
             call.method.equals("forward_messages") -> {
                 forwardMessages(call, result)
             }
-
             call.method.equals("exportChat") -> {
                 val jid =call.argument<String?>("jid") ?: ""
                 FlyCore.exportChatConversationToEmail(jid, emptyList());
             }
-
-            //not implemneted
             call.method.equals("get_message_using_ids") -> {
                 getMessageUsingIds(call, result)
             }
-
+            call.method.equals("createGroup") -> {
+                createGroup(call, result)
+            }
             else -> {
                 result.notImplemented()
             }
@@ -1305,6 +1305,23 @@ class MainActivity : FlutterActivity(), MethodChannel.MethodCallHandler,
             }
 
         }
+    }
+
+    private fun createGroup(call: MethodCall,result: MethodChannel.Result){
+        val groupName = call.argument<String>("group_name") ?: ""
+        val members = call.argument<List<String>>("members") ?: arrayListOf()
+        val fileTemp = call.argument<String>("file") ?: ""
+        GroupManager.createGroup(groupName, members,
+            fileTemp, { isSuccess, throwable, hashmap ->
+                if (isSuccess) {
+                    val groupData = hashmap.getData() as CreateGroupModel
+                    result.success(groupData.tojsonString())
+                    //showToast(hashmap.getMessage())
+                } else {
+                    //showToast(throwable.toString() + "***")
+                    result.error("500", "Unable to Create Group", throwable.toString())
+                }
+            })
     }
 
     fun Any.tojsonString(): String {

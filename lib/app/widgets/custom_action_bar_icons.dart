@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:keyboard_dismisser/keyboard_dismisser.dart';
+
+import '../common/constants.dart';
 
 class CustomActionBarIcons extends StatelessWidget {
   final double availableWidth;
@@ -63,6 +66,7 @@ class CustomActionBarIcons extends StatelessWidget {
               .map((CustomAction customAction) => customAction.visibleWidget),
           if (overflow.isNotEmpty)
             PopupMenuButton(
+              icon: SvgPicture.asset(moreicon, width: 3.66, height: 16.31),
               onSelected: (value) async { },
               onCanceled: (){ FocusManager.instance.primaryFocus!.unfocus(); },
               itemBuilder: (BuildContext context) => [

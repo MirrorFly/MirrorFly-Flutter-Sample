@@ -117,7 +117,7 @@ class DashboardController extends GetxController {
       var data = recentChatFromJson(value);
       recentchats.value.clear();
       recentchats
-          .addAll(data.data!.where((element) => element.isGroup == false));
+          .addAll(data.data!);
     }).catchError((error) {
       debugPrint("issue===> $error");
       Fluttertoast.showToast(

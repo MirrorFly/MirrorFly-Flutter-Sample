@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
+import 'package:mirror_fly_demo/app/common/constants.dart';
 import 'package:mirror_fly_demo/app/model/chatMessageModel.dart';
 import 'package:mirror_fly_demo/app/nativecall/platformRepo.dart';
 
@@ -18,23 +19,45 @@ class ContactController extends GetxController {
   var selectedUsersJIDList = List<String>.empty(growable: true).obs;
   var forwardMessageIds = List<String>.empty(growable: true).obs;
   final TextEditingController searchQuery = TextEditingController();
-  var search = false.obs;
   var _searchText = "";
   var _first = true;
 
   var isForward = false.obs;
+  var isCreateGroup = false.obs;
 
   @override
   void onInit() {
     super.onInit();
     isForward(Get.arguments["forward"]);
     if (isForward.value) {
+      isCreateGroup(false);
       forwardMessageIds.addAll(Get.arguments["messageIds"]);
+    }else {
+      isCreateGroup(Get.arguments["group"]);
     }
     scrollController.addListener(_scrollListener);
     //searchQuery.addListener(_searchListener);
     fetchUsers(false);
   }
+
+  //Add participants
+  final _search = false.obs;
+  set search(bool value) => _search.value=value;
+  bool get search => _search.value;
+
+  void onSearchPressed(){
+    if (_search.value) {
+      _search(false);
+    } else {
+      _search(true);
+    }
+  }
+
+  bool get isCreateVisible => isCreateGroup.value;
+  bool get isSearchVisible => !_search.value;
+  bool get isClearVisible => _search.value && !isForward.value && isCreateGroup.value;
+  bool get isMenuVisible => !_search.value && !isForward.value;
+  bool get isCheckBoxVisible => isCreateGroup.value || isForward.value;
 
   _scrollListener() {
     if (scrollController.hasClients) {
@@ -63,8 +86,8 @@ class ContactController extends GetxController {
   }
 
   backFromSearch() {
-    search.value = false;
-    searchQuery.text = "";
+    _search.value = false;
+    searchQuery.clear();
     _searchText = "";
     //if(!_IsSearching){
     //isPageLoading.value=true;
@@ -129,11 +152,22 @@ class ContactController extends GetxController {
       debugPrint(
           "to chat profile ==> ${selectedUsersList[0].toJson().toString()}");
       Get.back(result: selectedUsersList[0]);
-      // Future.delayed(const Duration(milliseconds: 100), (){
-      // Get.off(Routes.CHAT,
-      //     arguments: selectedUsersList[0]);
-      // });
-      // });
     });
+  }
+
+  onListItemPressed(Profile item){
+    if (isForward.value|| isCreateGroup.value) {
+      contactSelected(item);
+    }else{
+      Get.offNamed(Routes.CHAT, arguments: item);
+    }
+  }
+
+  backtoCreateGroup(){
+    if(selectedUsersJIDList.value.length>=Constants.MIN_GROUP_MEMBERS) {
+      Get.back(result: selectedUsersJIDList.value);
+    }else{
+      toToast("Add at least two contacts");
+    }
   }
 }

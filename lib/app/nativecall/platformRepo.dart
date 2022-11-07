@@ -790,6 +790,21 @@ class PlatformRepo {
     }
   }
 
+  Future<dynamic> createGroup(String groupname, List<String> userList,String image) async {
+    dynamic response;
+    try {
+      response = await mirrorFlyMethodChannel.invokeMethod('createGroup', { "group_name" : groupname, "members": userList,"file":image,});
+      debugPrint("create group Response ==> $response");
+      return response;
+    }on PlatformException catch (e){
+      debugPrint("Platform Exception ===> $e");
+      rethrow;
+    } on Exception catch(error){
+      debugPrint("Exception ==> $error");
+      rethrow;
+    }
+  }
+
   exportChat(String jid) async {
     try {
       await mirrorFlyMethodChannel.invokeMethod('exportChat', {"jid" : jid });

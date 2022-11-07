@@ -12,6 +12,7 @@ import 'package:mirror_fly_demo/app/modules/chat/views/contactlist_view.dart';
 
 import '../../../common/widgets.dart';
 import '../../../routes/app_pages.dart';
+import '../../../widgets/custom_action_bar_icons.dart';
 import '../../dashboard/controllers/dashboard_controller.dart';
 
 class DashboardView extends GetView<DashboardController> {
@@ -42,39 +43,36 @@ class DashboardView extends GetView<DashboardController> {
                 Get.toNamed(Routes.RECENTSEARCH,arguments: {"recents":controller.recentchats});
               },
             ),
-            PopupMenuButton<int>(
-              icon: SvgPicture.asset(moreicon, width: 3.66, height: 16.31),
-              color: Colors.white,
-              itemBuilder: (context) => [
-                // PopupMenuItem 1
-                PopupMenuItem(
-                  value: 2,
-                  // row with 2 children
-                  child: Text(
-                    "Settings",
-                    style: Theme.of(context).textTheme.titleMedium,
-                  ),
+            CustomActionBarIcons(
+              availableWidth: MediaQuery.of(context).size.width / 2, // half the screen width
+              actionWidth: 48,
+              actions: [
+                CustomAction(
+                  visibleWidget: const Icon(Icons.group_add),
+                  overflowWidget: const Text("New Group"),
+                  showAsAction: ShowAsAction.NEVER,
+                  keyValue: 'New Group',
+                  onItemClick: () {
+                    Future.delayed(const Duration(milliseconds: 100), ()=>Get.toNamed(Routes.CREATE_GROUP));
+                  },
                 ),
+                CustomAction(
+                  visibleWidget: const Icon(Icons.settings),
+                  overflowWidget: const Text("Settings"),
+                  showAsAction: ShowAsAction.NEVER,
+                  keyValue: 'Settings',
+                  onItemClick: () {
+                    Future.delayed(const Duration(milliseconds: 100), ()=>Get.toNamed(Routes.SETTINGS));
+                  },
+                )
               ],
-              offset: const Offset(0, 20),
-              elevation: 2,
-              // on selected we show the dialog box
-              onSelected: (value) {
-                // if value 1 show dialog
-                if (value == 1) {
-                  //_showDialog(context);
-                  controller.logout();
-                } else if (value == 2) {
-                  Get.toNamed(Routes.SETTINGS);
-                }
-              },
             ),
           ],
         ),
         floatingActionButton: FloatingActionButton(
           tooltip: "New Chat",
           onPressed: () {
-            Get.toNamed(Routes.CONTACTS, arguments: {"forward" : false });
+            Get.toNamed(Routes.CONTACTS, arguments: {"forward" : false,"group":false });
           },
           backgroundColor: buttonbgcolor,
           child: SvgPicture.asset(
@@ -140,7 +138,14 @@ class DashboardView extends GetView<DashboardController> {
                       width: 48,
                       height: 48,
                       clipoval: true,
-                      errorWidget: ProfileTextImage(
+                      errorWidget: item.isGroup! ? ClipOval(
+                        child: Image.asset(
+                          groupImg,
+                          height: 48,
+                          width: 48,
+                          fit: BoxFit.cover,
+                        ),
+                      ) : ProfileTextImage(
                         text: item.profileName.checkNull().isEmpty
                             ? item.nickName.checkNull()
                             : item.profileName.checkNull(),

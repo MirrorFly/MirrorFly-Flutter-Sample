@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
@@ -90,6 +92,9 @@ const String unfavouriteIcon = 'assets/logos/star.svg';
 const String copyIcon = 'assets/logos/copy.svg';
 const String infoIcon = 'assets/logos/info.svg';
 
+const String profileImg = 'assets/logos/profile_img.png';
+const String groupImg = 'assets/logos/ic_grp_bg.png';
+
 
 //Strings
 const imagedomin = 'https://api-uikit-qa.contus.us/api/v1/media/';
@@ -125,8 +130,8 @@ class Constants {
   static const String TITLE_MESSAGE = "Messages";
   static const String PROFILE = "profile";
   static const String SELECTED_IMAGE = "selected_image";
-  static final int COUNT_ONE = 1;
-  static final int COUNT_ZERO = 0;
+  static const int COUNT_ONE = 1;
+  static const int COUNT_ZERO = 0;
   static const String TOTAL_PAGES = "total_pages";
   static const String IS_NEW_USER = "is_new_user";
   static const String MEDIA_URL = "url";
@@ -154,7 +159,7 @@ class Constants {
   static const String QUICK_SHARE = "QUICK_SHARE";
   static const String SEEN_UPDATED = "Seenupdated";
   static const String IS_ARCHIVED_SETTINGS_ENABLED = "com.contus.flycommons.is_archived_settings_enabled";
-  static final int MAX_REPORT_MESSAGES_COUNT = 5;
+  static const int MAX_REPORT_MESSAGES_COUNT = 5;
   static const String CHATTYPE = "chatType";
   static const String FROM_USER = "from";
   static const String TO_USER = "to";
@@ -237,30 +242,30 @@ class Constants {
   static const String SELECTED_IMAGES = "selected_images";
   static const String SELECTED_VIDEO = "selected_video";
   static const String SELECTED_VIDEO_CAPTION = "selected_video_caption";
-  static final int ACTIVITY_REQ_CODE = 111;
-  static final int EDIT_REQ_CODE = 112;
-  static final int PICK_CONTACT_REQ_CODE = 123;
-  static final int SELECT_CONTACT_REQ_CODE = 124;
-  static final int SELECT_IMAGE_REQ_CODE = 125;
-  static final int SELECT_MAP_REQ_CODE = 118;
-  static final int COUNTRY_REQUEST_CODE = 118;
-  static final int TAKE_VIDEO = 3;
-  static final int PICK_FILE = 4;
-  static final int COUNT_TWO = 2;
-  static final int GROUP_NAME_UPDATE = 2;
-  static final int STORAGE_PERMISSION_CODE = 233;
-  static final int LOCATION_PERMISSION_CODE = 234;
-  static final int VIDEO_CALL_PERMISSION_CODE = 235;
-  static final int CAMERA_PERMISSION_CODE = 236;
-  static final int CALL_PHONE_PERMISSION_CODE = 2;
-  static final int GALLERY_PERMISSION_CODE = 222;
-  static final int RECORD_AUDIO_CODE = 237;
-  static final int READ_CONTACTS_PERMISSION_CODE = 238;
-  static final int ALL_PERMISSIONS_CODE = 239;
-  static final int AUDIO_SELECTION_PERMISSIONS_CODE = 240;
-  static final int ONE_SECOND = 1000;
-  static final int SHORT_VIBRATE = 250;
-  static final int ONE_KB = 1024;
+  static const int ACTIVITY_REQ_CODE = 111;
+  static const int EDIT_REQ_CODE = 112;
+  static const int PICK_CONTACT_REQ_CODE = 123;
+  static const int SELECT_CONTACT_REQ_CODE = 124;
+  static const int SELECT_IMAGE_REQ_CODE = 125;
+  static const int SELECT_MAP_REQ_CODE = 118;
+  static const int COUNTRY_REQUEST_CODE = 118;
+  static const int TAKE_VIDEO = 3;
+  static const int PICK_FILE = 4;
+  static const int COUNT_TWO = 2;
+  static const int GROUP_NAME_UPDATE = 2;
+  static const int STORAGE_PERMISSION_CODE = 233;
+  static const int LOCATION_PERMISSION_CODE = 234;
+  static const int VIDEO_CALL_PERMISSION_CODE = 235;
+  static const int CAMERA_PERMISSION_CODE = 236;
+  static const int CALL_PHONE_PERMISSION_CODE = 2;
+  static const int GALLERY_PERMISSION_CODE = 222;
+  static const int RECORD_AUDIO_CODE = 237;
+  static const int READ_CONTACTS_PERMISSION_CODE = 238;
+  static const int ALL_PERMISSIONS_CODE = 239;
+  static const int AUDIO_SELECTION_PERMISSIONS_CODE = 240;
+  static const int ONE_SECOND = 1000;
+  static const int SHORT_VIBRATE = 250;
+  static const int ONE_KB = 1024;
   static const String MSG_TYPE_TEXT = "text";
   static const String MSG_TYPE_CONTACT = "contact";
   static const String MSG_TYPE_NOTIFICATION = "notification";
@@ -292,11 +297,11 @@ class Constants {
   static const String MSG_ACK = "A";
   static const String MSG_DELIVERED = "D";
   static const String MSG_SEEN = "S";
-  static final bool CHAT_FROM_SENDER = true;
-  static final int TYPE_ABOUT_US = 2;
-  static final int TYPE_NOTIFICATION = 3;
-  static final int TYPE_USER_BUSY_STATUS = 4;
-  static final int NOTIFICATION_ID = 123;
+  static const bool CHAT_FROM_SENDER = true;
+  static const int TYPE_ABOUT_US = 2;
+  static const int TYPE_NOTIFICATION = 3;
+  static const int TYPE_USER_BUSY_STATUS = 4;
+  static const int NOTIFICATION_ID = 123;
   static const String MIME_TYPE_IMAGE = "image/*";
   static const String TEMP_PHOTO_FILE_NAME = "temp_photo";
   static const String ERROR_SERVER = "Server error, kindly try again later";
@@ -332,7 +337,7 @@ class Constants {
   static const String TYPE_SEARCH_RECENT = "Chats";
   static const String TYPE_SEARCH_CONTACT = "Contact";
   static const String TYPE_SEARCH_MESSAGE = "Message";
-  static final int ROSTER = 1;
+  static const int ROSTER = 1;
   static const String YOU = "You";
   static const String HINT = "hint";
   static const String MAX_UPLOAD_SIZE = "2";
@@ -346,11 +351,12 @@ class Constants {
   static const String NOTIFY_ID = "notify_id";
   static const String MSG_TYPE_FILE = "file";
   static const String TEXT_COUNT = "text_count";
-  static final int MAX_TEXT_COUNT = 139;
-  static final int MAX_NAME_COUNT = 30;
+  static const int MIN_GROUP_MEMBERS = 2;
+  static const int MAX_TEXT_COUNT = 139;
+  static const int MAX_NAME_COUNT = 30;
   static const String FRAGMENT_TYPE = "fragment_type";
   static const String WEB_USER_TOKEN = "web_user_token";
-  static final int MAX_GROUP_NAME_COUNT = 25;
+  static const int MAX_GROUP_NAME_COUNT = 25;
   static const String ACTION_REMOVE = "admin_remove_action";
   static const String ACTION_EXIT = "admin_exit_group";
   static const String MIME_TYPE_VIDEO = "video/*";
@@ -365,7 +371,7 @@ class Constants {
   static const String YESTERDAY = "yesterday";
   static const String TODAY = "today";
   static const String YESTERDAY_UPPER = "YESTERDAY";
-  static final bool IS_MOBILE_LOGIN = true;
+  static const bool IS_MOBILE_LOGIN = true;
   static const String DIAL_CODE = "dialCode";
   static const String NOTIFICATION_ACTIVITY = "";
   static const String IS_BLOCKED = "is_blocked";
@@ -399,14 +405,14 @@ class Constants {
   static const String SKIP_PROFILE = "skip_profile";
   static const String CREATE_CONFERENCE = "create_conference";
   static const String RESPONSE_PARAMETER_URL = "fileToken";
-  static final int DEFAULT_VIBRATE = 500;
+  static const int DEFAULT_VIBRATE = 500;
   static const String DEFAULT_IV = "ddc0f15cc2c90fca";
   static const String DEFAULT_COUNTRY_CODE = "IN";
   static const String MIME_TYPE_AUDIO = "audio/*";
   static const String MAIL_SUBJECT = "Invite to Connect ContusFly";
   static const String YOU_ARE = "You are";
   static const String RESOURCE_NME = "Mobile";
-  static  final int CONTACT_REQ_CODE = 114;
+  static  const int CONTACT_REQ_CODE = 114;
   static const String IS_FROM_NOTIFICATION = "is_from_notification";
   static const String UTF = "UTF-8";
   static const String NOTIFICATION_CHANNEL_ID = "com.contus.flycommons.notification";
@@ -430,7 +436,7 @@ class Constants {
   static const String BASE_URL = "com.contus.flycommons.base_url";
   static const String STORAGE_FOLDER_NAME = "folder_name";
   static const String API_KEY = "com.contus.flycommons.api_key";
-  static final String MIX = "@mix.";
+  static const String MIX = "@mix.";
 
   static const String GROUP_EVENT = "group_events";
   static const String ARCHIVE_EVENT = "archive_events";
@@ -588,4 +594,12 @@ String? forMessageTypeString(String MessageType) {
     default:
       return null;
   }
+}
+
+Future<File> writeImageTemp(dynamic bytes, String imageName) async {
+  final dir = await getTemporaryDirectory();
+  await dir.create(recursive: true);
+  final tempFile = File((dir.path) + "/" + imageName);
+  await tempFile.writeAsBytes(bytes);
+  return tempFile;
 }

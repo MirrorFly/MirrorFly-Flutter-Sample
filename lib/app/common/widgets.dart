@@ -131,7 +131,7 @@ class ImageNetwork extends GetView<MainController> {
           }
           return errorWidget ??
               Image.asset(
-                'assets/logos/profile_img.png',
+                profileImg,
                 height: width,
                 width: height,
               );

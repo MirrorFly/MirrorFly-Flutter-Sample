@@ -237,14 +237,6 @@ class ProfileController extends GetxController {
     Helper.hideLoading();
   }
 
-  Future<File> writeImageTemp(dynamic bytes, String imageName) async {
-    final dir = await getTemporaryDirectory();
-    await dir.create(recursive: true);
-    final tempFile = File((dir.path) + "/" + imageName);
-    await tempFile.writeAsBytes(bytes);
-    return tempFile;
-  }
-
   nameChanges(String text) {
     changed(true);
     name(profileName.text.toString());
