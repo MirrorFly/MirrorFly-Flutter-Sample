@@ -1,6 +1,7 @@
 
 import 'package:firebase_app_installations/firebase_app_installations.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -64,7 +65,7 @@ class LoginController extends GetxController {
       if(value != null){
         SessionManagement.setUserJID(value);
         Helper.hideLoading();
-        Get.offNamed(Routes.PROFILE,arguments: {"mobile":mobileNumber.text.toString(),"from":Routes.LOGIN});
+        Get.offAllNamed(Routes.PROFILE,arguments: {"mobile":mobileNumber.text.toString(),"from":Routes.LOGIN});
       }
     }).catchError((error) {
       debugPrint(error.message);
@@ -195,10 +196,15 @@ class LoginController extends GetxController {
   validateDeviceToken(String deviceToken) {
     var firebaseToken = SessionManagement().getToken().checkNull();
     if (firebaseToken.isEmpty) {
-      FirebaseInstallations.instance.getToken(true).then((value) {
-        firebaseToken = value;
-        SessionManagement.setToken(firebaseToken);
-        navigateToUserRegisterMethod(deviceToken, firebaseToken);
+      FirebaseMessaging.instance.getToken().then((value) {
+        if(value!=null) {
+          firebaseToken = value;
+          Log("firebase_token", firebaseToken);
+          SessionManagement.setToken(firebaseToken);
+          navigateToUserRegisterMethod(deviceToken, firebaseToken);
+        }else{
+
+        }
       }).catchError((er){
         Log("FirebaseInstallations", er.toString());
         hideLoading();
