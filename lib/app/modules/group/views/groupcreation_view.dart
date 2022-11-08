@@ -60,16 +60,12 @@ class GroupCreationView extends GetView<GroupCreationController> {
                             width: 150,
                             height: 150,
                             clipoval: true,
-                            errorWidget: controller.name.value
-                                .checkNull()
-                                .isNotEmpty
-                                ? ProfileTextImage(
-                              fontsize: 40,
-                              text: controller.name.value
-                                  .checkNull(),
-                              radius: 75,
-                            )
-                                : null,
+                            errorWidget: Image.asset(
+                              groupImg,
+                              height: 48,
+                              width: 48,
+                              fit: BoxFit.cover,
+                            ),
                           ),
                           onTap: () {
                             if (controller.imagepath.value

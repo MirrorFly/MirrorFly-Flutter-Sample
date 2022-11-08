@@ -1311,8 +1311,9 @@ class MainActivity : FlutterActivity(), MethodChannel.MethodCallHandler,
         val groupName = call.argument<String>("group_name") ?: ""
         val members = call.argument<List<String>>("members") ?: arrayListOf()
         val fileTemp = call.argument<String>("file") ?: ""
+        val file = if (fileTemp.isNotEmpty()) File(fileTemp) else null
         GroupManager.createGroup(groupName, members,
-            fileTemp, { isSuccess, throwable, hashmap ->
+            file, { isSuccess, throwable, hashmap ->
                 if (isSuccess) {
                     val groupData = hashmap.getData() as CreateGroupModel
                     result.success(groupData.tojsonString())
