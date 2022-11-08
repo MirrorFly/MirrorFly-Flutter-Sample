@@ -15,7 +15,7 @@
 
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
    <application
-        android:label="MirrorFly Flutter"
+        android:label="@string/app_name"
         android:name=".MirrorFlyApplication"
         android:requestLegacyExternalStorage="true"
         android:icon="@mipmap/ic_launcher">
