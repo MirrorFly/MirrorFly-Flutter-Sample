@@ -52,12 +52,12 @@ class Helper {
         barrierColor: Colors.transparent);
   }
 
-  static void showAlert({String? title,required String message,List<Widget>? actions}) {
+  static void showAlert({String? title,required String message,List<Widget>? actions,Widget? content}) {
     Get.dialog(
       AlertDialog(
         title: title!=null ? Text(title) : null,
-        contentPadding: const EdgeInsets.only(top: 20,right: 20,left: 20),
-        content: Text(message),
+        contentPadding: const EdgeInsets.only(top: 20,right: 20,left: 20,bottom: 20),
+        content: content ?? Text(message),
         contentTextStyle: const TextStyle(color: texthintcolor,fontWeight: FontWeight.w500),
         actions: actions,
       ),

@@ -27,6 +27,16 @@ class GroupCreationController extends GetxController {
   FocusNode focusNode = FocusNode();
   var showEmoji = false.obs;
 
+  @override
+  void onInit(){
+    super.onInit();
+    focusNode.addListener(() {
+      if (focusNode.hasFocus) {
+        showEmoji(false);
+      }
+    });
+  }
+
   onGroupNameChanged(){
     _count((25 - groupName.text.length));
   }

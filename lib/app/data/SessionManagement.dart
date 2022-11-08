@@ -22,6 +22,9 @@ class SessionManagement {
     await _preferences.setBool("synced", val);
   }
 
+  static Future setMediaEndPoint(String media_endpoint) async {
+    await _preferences.setString("media_endpoint", media_endpoint);
+  }
   static Future setAuthtoken(String authtoken) async {
     await _preferences.setString("token", authtoken);
   }
@@ -70,5 +73,6 @@ class SessionManagement {
   String? getUserImage() => _preferences.getString("image");
   String? getToken() => _preferences.getString("firebase_token");
   String? getauthToken() => _preferences.getString("token");
+  String? getMediaEndPoint() => _preferences.getString("media_endpoint");
   bool? synced() => _preferences.getBool("synced");
 }

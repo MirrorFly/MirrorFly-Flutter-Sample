@@ -19,6 +19,22 @@ class PlatformRepo {
   static const EventChannel SHOW_UPDATE_CANCEL_NOTIFICTION_CHANNEL = EventChannel('contus.mirrorfly/showOrUpdateOrCancelNotification');
 
 
+  Future<String> media_endpoint() async {
+    String? response = "";
+    try {
+      response = await mirrorFlyMethodChannel
+          .invokeMethod<String>('media_endpoint');
+      debugPrint("media_endpoint Result ==> $response");
+      return response.checkNull();
+    } on PlatformException catch (e) {
+      debugPrint("Platform Exception ===> $e");
+      rethrow;
+    } on Exception catch (error) {
+      debugPrint("Exception ==> $error");
+      rethrow;
+    }
+  }
+
   Future<String> authtoken() async {
     String? registerResponse = "";
     try {

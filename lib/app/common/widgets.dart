@@ -101,7 +101,7 @@ class ImageNetwork extends GetView<MainController> {
     Log("Image URL", url);
     return Obx(
       () => CachedNetworkImage(
-        imageUrl: imagedomin + url,
+        imageUrl: controller.UPLOAD_ENDPOINT + url,
         fit: BoxFit.fill,
         width: width,
         height: height,

@@ -11,17 +11,35 @@ import '../nativecall/platformRepo.dart';
 
 class MainController extends GetxController {
   var AUTHTOKEN = "".obs;
+  Rx<String> UPLOAD_ENDPOINT = "".obs;
   var calendar = DateTime.now();
 
   @override
   void onInit() {
     super.onInit();
+    getMedia_endpoint();
+    UPLOAD_ENDPOINT(SessionManagement().getMediaEndPoint().checkNull());
     AUTHTOKEN(SessionManagement().getauthToken().checkNull());
     getAuthToken();
   }
 
+  getMedia_endpoint() async {
+    if(SessionManagement().getMediaEndPoint().checkNull().isEmpty) {
+      PlatformRepo().media_endpoint().then((value) {
+        Log("media_endpoint", value);
+        if (value.isNotEmpty) {
+          UPLOAD_ENDPOINT(value);
+          SessionManagement.setMediaEndPoint(value);
+        } else {
+          UPLOAD_ENDPOINT(SessionManagement().getMediaEndPoint().checkNull());
+        }
+      });
+    }
+  }
+
   getAuthToken() async {
-    if(SessionManagement().getUsername().checkNull().isNotEmpty&& SessionManagement().getPassword().checkNull().isNotEmpty) {
+    if (SessionManagement().getUsername().checkNull().isNotEmpty &&
+        SessionManagement().getPassword().checkNull().isNotEmpty) {
       await PlatformRepo().authtoken().then((value) {
         Log("RetryAuth", value);
         if (value.isNotEmpty) {

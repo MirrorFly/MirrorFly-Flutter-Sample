@@ -1,8 +1,8 @@
 import 'package:get/get.dart';
+import 'package:mirror_fly_demo/app/data/SessionManagement.dart';
+import 'package:mirror_fly_demo/app/data/helper.dart';
 
 class ImageViewController extends GetxController {
-  //TODO: Implement ImageViewController
-
   var image_name = ''.obs;
   var imagepath = ''.obs;
   var imageurl = ''.obs;
@@ -11,7 +11,12 @@ class ImageViewController extends GetxController {
     super.onInit();
     image_name(Get.arguments['imageName']);
     imagepath(Get.arguments['imagePath']);
-    imageurl(Get.arguments['imageurl']);
+    if(Get.arguments['imageurl'].toString().startsWith("http")) {
+      imageurl(Get.arguments['imageurl']);
+    }else {
+      imageurl(SessionManagement().getMediaEndPoint().checkNull() +
+          Get.arguments['imageurl'].toString());
+    }
   }
 
   @override

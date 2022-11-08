@@ -89,8 +89,7 @@ class ProfileView extends GetView<ProfileController> {
                                       .isNotEmpty) {
                                     Get.toNamed(Routes.IMAGE_VIEW, arguments: {
                                       'imageName': controller.profileName.text,
-                                      'imageurl': imagedomin +
-                                          controller.userImgUrl.value
+                                      'imageurl': controller.userImgUrl.value
                                               .checkNull()
                                     });
                                   }
