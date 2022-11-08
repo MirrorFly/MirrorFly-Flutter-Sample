@@ -22,6 +22,8 @@ class DashboardController extends GetxController {
   void onInit() {
     super.onInit();
     registerMsgListener();
+
+    ever(recentchats, (callback) => _unreadcount());
   }
 
   @override
@@ -214,6 +216,19 @@ class DashboardController extends GetxController {
         ? calendar.subtract(Duration(days: 1))
         : DateTime.now();
     return yesterday.difference(calendar).inDays == 0;
+  }
+  
+  final _unreadcount = 0.obs;
+  int get unreadcount => _unreadcount.value;
+  set unreadcount(int val) => _unreadcount.value = val;
+  
+  unReadCount(){
+    _unreadcount(0);
+    recentchats.forEach((p0){
+      if(p0.unreadMessageCount!=null){
+        _unreadcount((p0.unreadMessageCount!+unreadcount));
+      }
+    });
   }
 
 }
