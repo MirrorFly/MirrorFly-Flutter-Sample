@@ -12,11 +12,12 @@ import android.os.Handler
 import android.util.Base64
 import android.webkit.MimeTypeMap
 import android.widget.Toast
-import androidx.annotation.NonNull
 import androidx.core.content.FileProvider
 import androidx.core.view.WindowCompat
 import com.contus.flycommons.*
 import com.contus.xmpp.chat.models.CreateGroupModel
+import com.contus.flynetwork.ApiCalls
+import com.contus.flynetwork.model.verifyfcm.VerifyFcmResponse
 import com.contus.xmpp.chat.models.Profile
 import com.contusflysdk.AppUtils
 import com.contusflysdk.api.*
@@ -26,7 +27,8 @@ import com.contusflysdk.api.contacts.ContactManager
 import com.contusflysdk.api.contacts.ProfileDetails
 import com.contusflysdk.api.models.ChatMessage
 import com.contusflysdk.api.models.ChatMessageStatusDetail
-import com.contusflysdk.api.utils.NameHelper
+import com.contusflysdk.api.network.FlyNetwork
+import com.contusflysdk.api.notification.PushNotificationManager
 import com.contusflysdk.media.MediaUploadHelper
 import com.contusflysdk.utils.ThumbSize
 import com.contusflysdk.utils.VideoRecUtils
@@ -154,11 +156,12 @@ class MainActivity : FlutterActivity(), MethodChannel.MethodCallHandler,
             result.error("404", "User Mobile Number Required", null)
         } else {
             val userIdentifier: String? = call.argument("userIdentifier")
+            val token: String = call.argument("token") ?: ""
             if (userIdentifier != null) {
                 Log.e(TAG, userIdentifier.toString())
 
                 try {
-                    FlyCore.registerUser(userIdentifier) { isSuccess: Boolean, throwable: Throwable?, data: HashMap<String?, Any?> ->
+                    FlyCore.registerUser(userIdentifier,token) { isSuccess: Boolean, throwable: Throwable?, data: HashMap<String?, Any?> ->
                         if (isSuccess) {
                             val responseObject = data.get("data") as JSONObject
 
@@ -166,6 +169,20 @@ class MainActivity : FlutterActivity(), MethodChannel.MethodCallHandler,
 
                             val response = JSONObject(data).toString()
                             Log.e("RESPONSE", response)
+                            if(token.isNotEmpty()) {
+                                PushNotificationManager.updateFcmToken(
+                                    token,
+                                    object : ChatActionListener {
+                                        override fun onResponse(
+                                            isSuccess: Boolean,
+                                            message: String
+                                        ) {
+                                            if (isSuccess) {
+                                                LogMessage.e(TAG, "Token updated successfully")
+                                            }
+                                        }
+                                    })
+                            }
                             //ChatManager.disconnect()
                             ChatManager.connect(object : ChatConnectionListener {
                                 override fun onConnected() {
@@ -447,6 +464,9 @@ class MainActivity : FlutterActivity(), MethodChannel.MethodCallHandler,
             }
             call.method.equals("get_message_using_ids") -> {
                 getMessageUsingIds(call, result)
+            }
+            call.method.equals("verifyToken") -> {
+                verifyToken(call, result)
             }
             call.method.equals("createGroup") -> {
                 createGroup(call, result)
@@ -1325,8 +1345,27 @@ class MainActivity : FlutterActivity(), MethodChannel.MethodCallHandler,
             })
     }
 
+    fun verifyToken(call: MethodCall, results: MethodChannel.Result){
+        try {
+            val userName = call.argument<String>("userName") ?: ""
+            val googleToken = call.argument<String>("googleToken") ?: ""
+            FlyNetwork.verifyToken(userName,googleToken) { isSuccess, throwable, data ->
+                LogMessage.d(TAG, data["data"].toString());
+                if (isSuccess) {
+                    val datas = data["data"] as VerifyFcmResponse
+                    results.success(datas.data!!.deviceToken.toString())
+                } else {
+                    results.error("400", "${throwable}", "")
+                }
+            }
+            /*{data=VerifyFcmResponse(data=Data(message=null, deviceToken=cA4S-VM3S5mvgA7xGjh0TD:APA91bFazQ91xEnLI9fa_3gZnZFPJ-ZzrSNIljDhS1J9mq47fH7MWb6cz2Gauc35B6EDCY4hnARJxNNXTKiOcy6rodTmdROze9qnIzCX6_UY6mUgKooLU6GcYhoFaFU_eWOCdZOWo9e0, status=null, username=null), error=null, message=Data Retrieved Successfully, status=200), http_status_code=200, message=Data Retrieved Successfully, params={mobileNumber=919894940560, googleToken=eyJhbGciOiJSUzI1NiIsImtpZCI6ImRjMzdkNTkzNjVjNjIyOGI4Y2NkYWNhNTM2MGFjMjRkMDQxNWMxZWEiLCJ0eXAiOiJKV1QifQ.eyJpc3MiOiJodHRwczovL3NlY3VyZXRva2VuLmdvb2dsZS5jb20vbWlycm9yZmx5LXVpa2l0LWRldiIsImF1ZCI6Im1pcnJvcmZseS11aWtpdC1kZXYiLCJhdXRoX3RpbWUiOjE2Njc1ODAyOTMsInVzZXJfaWQiOiIyMlQwNjhubVozWDVOakczc1p2c1JLam1abWsxIiwic3ViIjoiMjJUMDY4bm1aM1g1TmpHM3NadnNSS2ptWm1rMSIsImlhdCI6MTY2NzU4MDI5NSwiZXhwIjoxNjY3NTgzODk1LCJwaG9uZV9udW1iZXIiOiIrOTE5ODk0OTQwNTYwIiwiZmlyZWJhc2UiOnsiaWRlbnRpdGllcyI6eyJwaG9uZSI6WyIrOTE5ODk0OTQwNTYwIl19LCJzaWduX2luX3Byb3ZpZGVyIjoicGhvbmUifX0.LU3My7usVoHRlxkYpdYcMaRz_4J-g33-aEsui0Agv3BpUgQLypamovwrIr_Noik6olijonh57Z7Fy400JstzDT-ATv4dUT-pU0hVgsgobRVbsDYCv7ehI6IAuM4z7Y4eKXLSibx3x_pHgflPSnXrp20nMH3gK0Ud1olE5NV6FXQtq7aInYsi7qo10XDXyQ8n9jeG12rnB-JYmvMxQL03Wz7N0bv0wcnFpXKotQfO_xiAHztds7w-zDICiHqT6i6WnN8OQ3o3xSssKGUkqsr0FRNhRhzQFqZ-af8o3scmV8kH4CyJf5ITlYC0D8wcmA8-oXgMk8EGg3Ju6RFQC5bIjQ}}*/
+        }catch (e:Exception){
+            LogMessage.d("verifyToken", e.toString())
+            results.error("400","Server Error, Please try After sometime","")
+        }
+    }
+
     fun Any.tojsonString(): String {
         return Gson().toJson(this).toString()
     }
-
 }

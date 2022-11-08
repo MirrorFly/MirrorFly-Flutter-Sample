@@ -25,6 +25,7 @@ apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply from: "$flutterRoot/packages/flutter_tools/gradle/flutter.gradle"
 apply plugin: 'kotlin-kapt'
+apply plugin: 'com.google.gms.google-services'
 
 android {
     compileSdkVersion flutter.compileSdkVersion
@@ -56,20 +57,16 @@ android {
 
     buildTypes {
         debug {
-            buildConfigField 'String', 'SDK_BASE_URL', '"https://api-uikit-qa.contus.us/api/v1/"'//qa
-//            buildConfigField 'String', 'SDK_BASE_URL', '"https://api-preprod-sandbox.mirrorfly.com/api/v1/"'
-            buildConfigField 'String', 'LICENSE', '"ckIjaccWBoMNvxdbql8LJ2dmKqT5bp"'//qa
-//            buildConfigField 'String', 'LICENSE', '"MZTquZ16EP3GfNQIrU6oq3N663Cu50"'
+            buildConfigField 'String', 'SDK_BASE_URL', '"https://api-uikit-qa.contus.us/api/v1/"'
+            buildConfigField 'String', 'LICENSE', '"ckIjaccWBoMNvxdbql8LJ2dmKqT5bp"'
             buildConfigField 'String', 'WEB_CHAT_LOGIN', '"https://webchat-preprod-sandbox.mirrorfly.com/"'
             buildConfigField "String", "SUPPORT_MAIL", '"contussupport@gmail.com"'
         }
         release {
             // Signing with the debug keys for now, so `flutter run --release` works.
             signingConfig signingConfigs.debug
-//            buildConfigField 'String', 'SDK_BASE_URL', '"https://api-preprod-sandbox.mirrorfly.com/api/v1/"'
-            buildConfigField 'String', 'SDK_BASE_URL', '"https://api-uikit-qa.contus.us/api/v1/"'//qa
+            buildConfigField 'String', 'SDK_BASE_URL', '"https://api-uikit-qa.contus.us/api/v1/"'
             buildConfigField 'String', 'LICENSE', '"ckIjaccWBoMNvxdbql8LJ2dmKqT5bp"'
-//            buildConfigField 'String', 'LICENSE', '"MZTquZ16EP3GfNQIrU6oq3N663Cu50"'
             buildConfigField 'String', 'WEB_CHAT_LOGIN', '"https://webchat-preprod-sandbox.mirrorfly.com/"'
             buildConfigField "String", "SUPPORT_MAIL", '"contussupport@gmail.com"'
             minifyEnabled false
@@ -127,15 +124,11 @@ dependencies {
     implementation 'com.google.code.gson:gson:2.8.1'
 
     //for smack implementation
-    implementation ('org.igniterealtime.smack:smack-android:4.4.4'){
-        exclude  group:'de.measite.minidns'
-    }
-    implementation ('org.igniterealtime.smack:smack-tcp:4.4.4'){
-        exclude  group:'de.measite.minidns'
-    }
-    implementation 'org.igniterealtime.smack:smack-im:4.4.4'
-    implementation 'org.igniterealtime.smack:smack-extensions:4.4.4'
-    implementation 'org.igniterealtime.smack:smack-sasl-provided:4.4.4'
+    implementation ('org.igniterealtime.smack:smack-android:4.4.6')
+    implementation ('org.igniterealtime.smack:smack-tcp:4.4.6')
+    implementation 'org.igniterealtime.smack:smack-im:4.4.6'
+    implementation 'org.igniterealtime.smack:smack-extensions:4.4.6'
+    implementation 'org.igniterealtime.smack:smack-sasl-provided:4.4.6'
 
     implementation 'org.jxmpp:jxmpp-util-cache:1.0.3'
     implementation 'org.jxmpp:jxmpp-jid:1.0.3'
@@ -180,5 +173,19 @@ dependencies {
     implementation "androidx.room:room-ktx:2.2.5"
     //for mobile number formatting
     implementation 'io.michaelrocks:libphonenumber-android:8.10.1'
+
+    // Import the Firebase BoM
+    implementation platform('com.google.firebase:firebase-bom:30.2.0')
+
+    // Add the dependency for the Firebase SDK for Google Analytics
+    // When using the BoM, don't specify versions in Firebase dependencies
+    implementation 'com.google.firebase:firebase-analytics'
+
+    //Dagger Dependencies
+    api 'com.google.dagger:dagger:2.40.5'
+    kapt 'com.google.dagger:dagger-compiler:2.40.5'
+    api 'com.google.dagger:dagger-android:2.40.5'
+    api 'com.google.dagger:dagger-android-support:2.40.5'
+    kapt 'com.google.dagger:dagger-android-processor:2.40.5'
 }
 

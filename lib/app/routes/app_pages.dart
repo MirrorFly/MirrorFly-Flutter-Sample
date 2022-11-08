@@ -29,6 +29,7 @@ import '../modules/login/bindings/country_binding.dart';
 import '../modules/login/bindings/login_binding.dart';
 import '../modules/login/views/countrylist_view.dart';
 import '../modules/login/views/login_view.dart';
+import '../modules/login/views/otp_view.dart';
 import '../modules/message_info/bindings/message_info_binding.dart';
 import '../modules/message_info/views/message_info_view.dart';
 import '../modules/preview_contact/bindings/preview_contact_binding.dart';
@@ -61,6 +62,11 @@ class AppPages {
       name: _Paths.HOME,
       page: () => const HomeView(),
       binding: HomeBinding(),
+    ),
+    GetPage(
+        name: _Paths.OTP,
+        page: () => OtpView(),
+        binding: LoginBinding()
     ),
     GetPage(
       name: _Paths.DASHBOARD,

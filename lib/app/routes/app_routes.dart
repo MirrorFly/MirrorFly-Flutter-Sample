@@ -8,6 +8,7 @@ abstract class Routes {
   static const CREATE_GROUP = _Paths.CREATE_GROUP;
   static const RECENTSEARCH = _Paths.RECENTSEARCH;
   static const LOGIN = _Paths.LOGIN;
+  static const OTP = _Paths.OTP;
   static const COUNTRIES = _Paths.COUNTRIES;
   static const PROFILE = _Paths.PROFILE;
   static const STATUSLIST = _Paths.STATUSLIST;
@@ -33,6 +34,7 @@ abstract class _Paths {
   static const CREATE_GROUP = '/create_group';
   static const RECENTSEARCH = '/recent_search';
   static const LOGIN = '/login';
+  static const OTP = '/otp';
   static const COUNTRIES = '/Countries';
   static const PROFILE = '/profile';
   static const STATUSLIST = '/statuslist';

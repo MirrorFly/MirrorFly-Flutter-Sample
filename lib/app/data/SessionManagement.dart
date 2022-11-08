@@ -25,6 +25,9 @@ class SessionManagement {
   static Future setAuthtoken(String authtoken) async {
     await _preferences.setString("token", authtoken);
   }
+  static Future setToken(String firebase_token) async {
+    await _preferences.setString("firebase_token", firebase_token);
+  }
   static Future setMobile(String mobile) async {
     await _preferences.setString("mobile", mobile);
   }
@@ -65,6 +68,7 @@ class SessionManagement {
   String? getPassword() => _preferences.getString("password");
   String? getUserJID() => _preferences.getString("user_jid").toString();
   String? getUserImage() => _preferences.getString("image");
+  String? getToken() => _preferences.getString("firebase_token");
   String? getauthToken() => _preferences.getString("token");
   bool? synced() => _preferences.getBool("synced");
 }
