@@ -24,8 +24,8 @@ class DashboardView extends GetView<DashboardController> {
   Widget build(BuildContext context) {
     return FocusDetector(
       onFocusGained: () {
-        controller.registerMsgListener();
         controller.getRecentChatlist();
+        controller.initListeners();
       },
       child: DefaultTabController(
         length: 2,
@@ -102,7 +102,7 @@ class DashboardView extends GetView<DashboardController> {
             tooltip: "New Chat",
             onPressed: () {
               Get.toNamed(Routes.CONTACTS,
-                  arguments: {"forward": false, "group": false});
+                  arguments: {"forward": false, "group": false,"groupJid":""});
             },
             backgroundColor: buttonbgcolor,
             child: SvgPicture.asset(
@@ -327,8 +327,8 @@ class DashboardView extends GetView<DashboardController> {
                         ),
                       ],
                     ),
-                    const AppDivider(
-                      padding: 0.0,
+                    AppDivider(
+                      padding: EdgeInsets.only(top: 8),
                     )
                   ],
                 ),
@@ -338,9 +338,7 @@ class DashboardView extends GetView<DashboardController> {
         ),
       ),
       onTap: () {
-        //GetAmamed(Routes.CHAT, arguments: controller.recentchats.value[index]);
-        Get.toNamed(Routes.CHAT, arguments: controller.toChatPage(item));
-        // ?.then((value) => controller.getRecentChatlist());
+        controller.toChatPage(item.jid.checkNull());
       },
     );
   }

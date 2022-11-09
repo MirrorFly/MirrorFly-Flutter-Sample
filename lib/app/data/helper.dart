@@ -197,3 +197,10 @@ it = 2*/
     }*/
   }
 }
+
+extension BooleanParsing on bool? {
+  //check null
+  bool checkNull() {
+    return this ?? false;
+  }
+}

@@ -217,9 +217,7 @@ class RecentSearchView extends GetView<RecentChatSearchController> {
                                         ),
                                       ],
                                     ),
-                                    const AppDivider(
-                                      padding: 0.0,
-                                    )
+                                    AppDivider()
                                   ],
                                 ),
                               ),
@@ -391,9 +389,7 @@ class RecentSearchView extends GetView<RecentChatSearchController> {
                                           ),
                                         ],
                                       ),
-                                      const AppDivider(
-                                        padding: 0.0,
-                                      )
+                                      AppDivider()
                                     ],
                                   ),
                                 ),
@@ -663,9 +659,7 @@ class RecentSearchView extends GetView<RecentChatSearchController> {
                         ),
                       ],
                     ),
-                    const AppDivider(
-                      padding: 0.0,
-                    )
+                    AppDivider(padding: EdgeInsets.only(top: 8),)
                   ],
                 ),
               ),

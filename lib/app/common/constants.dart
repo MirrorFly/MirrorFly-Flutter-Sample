@@ -27,6 +27,10 @@ const Color audiocolor = Color(0XffB9C1D6);
 const Color audiocolordark = Color(0Xff848FAD);
 const Color audiobgcolor = Color(0Xff848FAD);
 const Color bottomsheetcolor = Color(0Xff242A3F);
+const Color notificationtextcolor = Color(0Xff565656);
+const Color notificationtextbgcolor = Color(0XffDADADA);
+const Color chatbordercolor = Color(0XffDDE3E5);
+const Color chattimecolor = Color(0Xff959595);
 
 //Assets
 const String registericon = 'assets/logos/register_logo.svg';
@@ -94,10 +98,14 @@ const String infoIcon = 'assets/logos/info.svg';
 
 const String profileImg = 'assets/logos/profile_img.png';
 const String groupImg = 'assets/logos/ic_grp_bg.png';
+const String imageEdit = 'assets/logos/ic_image_edit.svg';
+const String edit = 'assets/logos/ic_edit.svg';
+const String image_outline = 'assets/logos/image_outline.svg';
+const String add_user = 'assets/logos/add_user.svg';
+const String report_user = 'assets/logos/report_user.svg';
+const String report_group = 'assets/logos/report_group.svg';
+const String leave_group = 'assets/logos/leave_group.svg';
 
-
-//Strings
-const imagedomin = 'https://api-uikit-qa.contus.us/api/v1/media/';
 
 
 toToast(String text) {
@@ -446,6 +454,10 @@ class Constants {
   static const String MEDIA_UPLOAD_DOWNLOAD_PROGRESS = "media_upload_download_progress";
   static const String MUTE_EVENT = "mute_event";
   static const String PIN_EVENT = "pin_event";
+
+  static const String TYPE_CHAT = "chat";
+  static const String TYPE_GROUP_CHAT = "groupchat";
+  static const String TYPE_BROADCAST_CHAT = "broadcast";
 
   static const String Terms_Conditions = "https://www.mirrorfly.com/terms-and-conditions.php";
   static const String Privacy_Policy = "https://www.mirrorfly.com/privacy-policy.php";

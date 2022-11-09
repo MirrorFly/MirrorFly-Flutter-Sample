@@ -76,7 +76,7 @@ class LoginView extends GetView<LoginController> {
                         },
                       ),
                     )),
-                    const AppDivider(padding: 0,),
+                    AppDivider(),
                     Padding(
                       padding: const EdgeInsets.only(left: 10.0, right: 10.0),
                       child: IntrinsicHeight(

@@ -17,6 +17,20 @@ class PlatformRepo {
   static const EventChannel MEDIA_STATUS_UPDATED_CHANNEL = EventChannel('contus.mirrorfly/onMediaStatusUpdated');
   static const EventChannel UPLOAD_DOWNLOAD_PROGRESS_CHANGED_CHANNEL = EventChannel('contus.mirrorfly/onUploadDownloadProgressChanged');
   static const EventChannel SHOW_UPDATE_CANCEL_NOTIFICTION_CHANNEL = EventChannel('contus.mirrorfly/showOrUpdateOrCancelNotification');
+  
+  static const EventChannel onGroupProfileFetched_channel = EventChannel('contus.mirrorfly/onGroupProfileFetched');
+  static const EventChannel onNewGroupCreated_channel = EventChannel('contus.mirrorfly/onNewGroupCreated');
+  static const EventChannel onGroupProfileUpdated_channel = EventChannel('contus.mirrorfly/onGroupProfileUpdated');
+  static const EventChannel onNewMemberAddedToGroup_channel = EventChannel('contus.mirrorfly/onNewMemberAddedToGroup');
+  static const EventChannel onMemberRemovedFromGroup_channel = EventChannel('contus.mirrorfly/onMemberRemovedFromGroup');
+  static const EventChannel onFetchingGroupMembersCompleted_channel = EventChannel('contus.mirrorfly/onFetchingGroupMembersCompleted');
+  static const EventChannel onDeleteGroup_channel = EventChannel('contus.mirrorfly/onDeleteGroup');
+  static const EventChannel onFetchingGroupListCompleted_channel = EventChannel('contus.mirrorfly/onFetchingGroupListCompleted');
+  static const EventChannel onMemberMadeAsAdmin_channel = EventChannel('contus.mirrorfly/onMemberMadeAsAdmin');
+  static const EventChannel onMemberRemovedAsAdmin_channel = EventChannel('contus.mirrorfly/onMemberRemovedAsAdmin');
+  static const EventChannel onLeftFromGroup_channel = EventChannel('contus.mirrorfly/onLeftFromGroup');
+  static const EventChannel onGroupNotificationMessage_channel = EventChannel('contus.mirrorfly/onGroupNotificationMessage');
+  static const EventChannel onGroupDeletedLocally_channel = EventChannel('contus.mirrorfly/onGroupDeletedLocally');
 
 
   Future<String> media_endpoint() async {
@@ -209,36 +223,25 @@ class PlatformRepo {
       return re;
     }
   }
+  
+  Stream<dynamic> get onMessageReceived => MESSAGE_ONRECEIVED_CHANNEL.receiveBroadcastStream().cast();
+  Stream<dynamic> get onMessageStatusUpdated => MESSAGE_STATUS_UPDATED_CHANNEL.receiveBroadcastStream().cast();
+  Stream<dynamic> get onMediaStatusUpdated => MEDIA_STATUS_UPDATED_CHANNEL.receiveBroadcastStream().cast();
 
+  Stream<dynamic> get onGroupProfileFetched => onGroupProfileFetched_channel.receiveBroadcastStream().cast();
+  Stream<dynamic> get onNewGroupCreated => onNewGroupCreated_channel.receiveBroadcastStream().cast();
+  Stream<dynamic> get onGroupProfileUpdated => onGroupProfileUpdated_channel.receiveBroadcastStream().cast();
+  Stream<dynamic> get onNewMemberAddedToGroup => onNewMemberAddedToGroup_channel.receiveBroadcastStream().cast();
+  Stream<dynamic> get onMemberRemovedFromGroup => onMemberRemovedFromGroup_channel.receiveBroadcastStream().cast();
+  Stream<dynamic> get onFetchingGroupMembersCompleted => onFetchingGroupMembersCompleted_channel.receiveBroadcastStream().cast();
+  Stream<dynamic> get onDeleteGroup => onDeleteGroup_channel.receiveBroadcastStream().cast();
+  Stream<dynamic> get onFetchingGroupListCompleted => onFetchingGroupListCompleted_channel.receiveBroadcastStream().cast();
+  Stream<dynamic> get onMemberMadeAsAdmin => onMemberMadeAsAdmin_channel.receiveBroadcastStream().cast();
+  Stream<dynamic> get onMemberRemovedAsAdmin => onMemberRemovedAsAdmin_channel.receiveBroadcastStream().cast();
+  Stream<dynamic> get onLeftFromGroup => onLeftFromGroup_channel.receiveBroadcastStream().cast();
+  Stream<dynamic> get onGroupNotificationMessage => onGroupNotificationMessage_channel.receiveBroadcastStream().cast();
+  Stream<dynamic> get onGroupDeletedLocally => onGroupDeletedLocally_channel.receiveBroadcastStream().cast();
 
-  // connectChatManager(String username) async{
-  //   String chatManagerResponse;
-  //   try {
-  //     chatManagerResponse = await mirrorFlyMethodChannel.invokeMethod('connect_chat_manager', { "userIdentifier":username });
-  //     debugPrint("Chat Manager Response ==> $chatManagerResponse");
-  //     return chatManagerResponse;
-  //   }on PlatformException catch (e){
-  //     debugPrint("Chat Manager Exception ===> $e");
-  //     rethrow;
-  //   } on Exception catch(error){
-  //     debugPrint("Chat Manager Exception ==> $error");
-  //     rethrow;
-  //   }
-  // }
-
-  Stream<dynamic> get onMessageReceived {
-    return MESSAGE_ONRECEIVED_CHANNEL.receiveBroadcastStream().cast();
-  }
-  Stream<dynamic> get onMessageStatusUpdated {
-    return MESSAGE_STATUS_UPDATED_CHANNEL.receiveBroadcastStream().cast();
-  }
-  Stream<dynamic> get onMediaStatusUpdated {
-    return MEDIA_STATUS_UPDATED_CHANNEL.receiveBroadcastStream().cast();
-  }
-
-  // Stream<dynamic> chatEvents(String event) {
-  //   return chatEventChannel.receiveBroadcastStream(event).cast();
-  // }
   Future<String?> imagePath(String imgurl) async {
     var re = "";
     try {
@@ -383,6 +386,22 @@ class PlatformRepo {
     }
   }
 
+  Future<dynamic> getProfileDetails(String jid) async {
+    dynamic profileResponse;
+    try {
+      profileResponse = await mirrorFlyMethodChannel.invokeMethod('getProfileDetails',{"jid":jid});
+      debugPrint("profile Result ==> $profileResponse");
+      insertDefaultStatusToUser();
+      return profileResponse;
+    }on PlatformException catch (e){
+      debugPrint("Platform Exception ===> $e");
+      rethrow;
+    } on Exception catch(error){
+      debugPrint("Exception ==> $error");
+      rethrow;
+    }
+  }
+
   Future<dynamic> getProfileLocal(String jid,bool server) async {
     dynamic profileResponse;
     try {
@@ -443,6 +462,21 @@ class PlatformRepo {
     }
   }
 
+  Future<bool?> removeGroupProfileImage(String jid) async {
+    bool? response;
+    try {
+      response = await mirrorFlyMethodChannel.invokeMethod<bool>('removeGroupProfileImage',{"jid":jid});
+      debugPrint("grp_image Result ==> $response");
+      return response;
+    }on PlatformException catch (e){
+      debugPrint("Platform Exception ===> $e");
+      return false;
+    } on Exception catch(error){
+      debugPrint("Exception ==> $error");
+      return false;
+    }
+  }
+
   Future<bool?> refreshAuthToken() async {
     bool? tokenResponse;
     try {
@@ -477,6 +511,20 @@ class PlatformRepo {
     try {
       chatListenerResponse = await mirrorFlyMethodChannel.invokeMethod('chat_listener');
       debugPrint("chatListenerResponse ==> $chatListenerResponse");
+      return chatListenerResponse;
+    }on PlatformException catch (e){
+      debugPrint("Platform Exception ===> $e");
+      rethrow;
+    } on Exception catch(error){
+      debugPrint("Exception ==> $error");
+      rethrow;
+    }
+  }
+  Future<dynamic> listenGroupChatEvents() async {
+    dynamic chatListenerResponse;
+    try {
+      chatListenerResponse = await mirrorFlyMethodChannel.invokeMethod('groupchat_listener');
+      debugPrint("groupchatListenerResponse ==> $chatListenerResponse");
       return chatListenerResponse;
     }on PlatformException catch (e){
       debugPrint("Platform Exception ===> $e");
@@ -836,9 +884,181 @@ class PlatformRepo {
     }
   }
 
+  Future<dynamic> addUsersToGroup(String jid, List<String> userList) async {
+    dynamic response;
+    try {
+      response = await mirrorFlyMethodChannel.invokeMethod('addUsersToGroup', { "jid" : jid, "members": userList});
+      debugPrint("addUsersToGroup Response ==> $response");
+      return response;
+    }on PlatformException catch (e){
+      debugPrint("Platform Exception ===> $e");
+      rethrow;
+    } on Exception catch(error){
+      debugPrint("Exception ==> $error");
+      rethrow;
+    }
+  }
+
+  Future<dynamic> getGroupMembers(String jid, bool? server) async {
+    dynamic response;
+    try {
+      response = await mirrorFlyMethodChannel.invokeMethod('getGroupMembers', { "jid" : jid, "server": server,});
+      debugPrint("getGroupMembers Response ==> $response");
+      return response;
+    }on PlatformException catch (e){
+      debugPrint("Platform Exception ===> $e");
+      rethrow;
+    } on Exception catch(error){
+      debugPrint("Exception ==> $error");
+      rethrow;
+    }
+  }
+
   exportChat(String jid) async {
     try {
       await mirrorFlyMethodChannel.invokeMethod('exportChat', {"jid" : jid });
+    }on PlatformException catch (e){
+      debugPrint("Platform Exception ===> $e");
+      rethrow;
+    } on Exception catch(error){
+      debugPrint("Exception ==> $error");
+      rethrow;
+    }
+  }
+  Future<bool?> reportUserOrGroup(String jid,String type) async {
+    bool? response;
+    try {
+      response = await mirrorFlyMethodChannel.invokeMethod<bool>('reportUserOrGroup',{"jid" : jid,"type":type });
+      debugPrint("report Result ==> $response");
+      return response;
+    }on PlatformException catch (e){
+      debugPrint("Platform Exception ===> $e");
+      return false;
+    } on Exception catch(error){
+      debugPrint("Exception ==> $error");
+      return false;
+    }
+  }
+  Future<bool?> makeAdmin(String groupjid,String userjid) async {
+    bool? response;
+    try {
+      response = await mirrorFlyMethodChannel.invokeMethod<bool>('makeAdmin',{"jid" : groupjid,"userjid":userjid });
+      debugPrint("report Result ==> $response");
+      return response;
+    }on PlatformException catch (e){
+      debugPrint("Platform Exception ===> $e");
+      return false;
+    } on Exception catch(error){
+      debugPrint("Exception ==> $error");
+      return false;
+    }
+  }
+  Future<bool?> removeMemberFromGroup(String groupjid,String userjid) async {
+    bool? response;
+    try {
+      response = await mirrorFlyMethodChannel.invokeMethod<bool>('removeMemberFromGroup',{"jid" : groupjid,"userjid":userjid });
+      debugPrint("report Result ==> $response");
+      return response;
+    }on PlatformException catch (e){
+      debugPrint("Platform Exception ===> $e");
+      return false;
+    } on Exception catch(error){
+      debugPrint("Exception ==> $error");
+      return false;
+    }
+  }
+  Future<bool?> leaveFromGroup(String jid) async {
+    bool? response;
+    try {
+      response = await mirrorFlyMethodChannel.invokeMethod<bool>('leaveFromGroup',{"jid" : jid });
+      debugPrint("leaveFromGroup Result ==> $response");
+      return response;
+    }on PlatformException catch (e){
+      debugPrint("Platform Exception ===> $e");
+      return false;
+    } on Exception catch(error){
+      debugPrint("Exception ==> $error");
+      return false;
+    }
+  }
+  Future<bool?> deleteGroup(String jid) async {
+    bool? response;
+    try {
+      response = await mirrorFlyMethodChannel.invokeMethod<bool>('deleteGroup',{"jid" : jid });
+      debugPrint("leaveFromGroup Result ==> $response");
+      return response;
+    }on PlatformException catch (e){
+      debugPrint("Platform Exception ===> $e");
+      return false;
+    } on Exception catch(error){
+      debugPrint("Exception ==> $error");
+      return false;
+    }
+  }
+
+  Future<bool?> isAdmin(String jid) async {
+    bool? response;
+    try {
+      response = await mirrorFlyMethodChannel.invokeMethod<bool>('isAdmin',{"jid" : jid });
+      debugPrint("isAdmin Result ==> $response");
+      return response;
+    }on PlatformException catch (e){
+      debugPrint("Platform Exception ===> $e");
+      return false;
+    } on Exception catch(error){
+      debugPrint("Exception ==> $error");
+      return false;
+    }
+  }
+
+  Future<bool?> updateGroupProfileImage(String jid,String file) async {
+    bool? response;
+    try {
+      response = await mirrorFlyMethodChannel.invokeMethod<bool>('updateGroupProfileImage',{"jid" : jid,"file":file });
+      debugPrint("updateGroupProfileImage Result ==> $response");
+      return response;
+    }on PlatformException catch (e){
+      debugPrint("Platform Exception ===> $e");
+      return false;
+    } on Exception catch(error){
+      debugPrint("Exception ==> $error");
+      return false;
+    }
+  }
+
+  Future<bool?> updateGroupName(String jid,String name) async {
+    bool? response;
+    try {
+      response = await mirrorFlyMethodChannel.invokeMethod<bool>('updateGroupName',{"jid" : jid,"name":name });
+      debugPrint("updateGroupName Result ==> $response");
+      return response;
+    }on PlatformException catch (e){
+      debugPrint("Platform Exception ===> $e");
+      return false;
+    } on Exception catch(error){
+      debugPrint("Exception ==> $error");
+      return false;
+    }
+  }
+
+  Future<bool?> isMemberOfGroup(String jid,String? userjid) async {
+    bool? response;
+    try {
+      response = await mirrorFlyMethodChannel.invokeMethod<bool>('isMemberOfGroup',{"jid" : jid,"userjid":userjid });
+      debugPrint("isMemberOfGroup Result ==> $response");
+      return response;
+    }on PlatformException catch (e){
+      debugPrint("Platform Exception ===> $e");
+      return false;
+    } on Exception catch(error){
+      debugPrint("Exception ==> $error");
+      return false;
+    }
+  }
+
+  groupMute(String jid,bool checked) async {
+    try {
+      await mirrorFlyMethodChannel.invokeMethod('groupMute', {"jid" : jid,"checked":checked });
     }on PlatformException catch (e){
       debugPrint("Platform Exception ===> $e");
       rethrow;

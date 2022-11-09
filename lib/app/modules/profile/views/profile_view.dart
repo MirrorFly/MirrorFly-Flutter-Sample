@@ -159,9 +159,7 @@ class ProfileView extends GetView<ProfileController> {
                     ),
                     style: const TextStyle(fontWeight: FontWeight.bold),
                   ),
-                  const AppDivider(
-                    padding: 0.0,
-                  ),
+                  AppDivider(),
                   const SizedBox(
                     height: 20,
                   ),
@@ -182,9 +180,7 @@ class ProfileView extends GetView<ProfileController> {
                     ),
                     style: const TextStyle(fontWeight: FontWeight.bold),
                   ),
-                  const AppDivider(
-                    padding: 0.0,
-                  ),
+                  AppDivider(),
                   const SizedBox(
                     height: 20,
                   ),
@@ -233,9 +229,7 @@ class ProfileView extends GetView<ProfileController> {
                           });
                         },
                       )),
-                  const AppDivider(
-                    padding: 0.0,
-                  ),
+                  AppDivider(padding: EdgeInsets.only(bottom: 16),),
                   Center(
                     child: Obx(
                       () => ElevatedButton(

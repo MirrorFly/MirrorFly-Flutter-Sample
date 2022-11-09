@@ -13,8 +13,10 @@ import 'package:flutter/services.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:mirror_fly_demo/app/basecontroller.dart';
 import 'package:mirror_fly_demo/app/model/chatMessageModel.dart';
 import 'package:mirror_fly_demo/app/model/chatmessage_model.dart';
+import 'package:mirror_fly_demo/app/model/groupmembers_model.dart';
 import 'package:mirror_fly_demo/app/nativecall/platformRepo.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -28,9 +30,8 @@ import '../../../model/checkModel.dart' as checkModel;
 import '../../../model/userlistModel.dart';
 import '../../../routes/app_pages.dart';
 
-class ChatController extends GetxController
+class ChatController extends BaseController
     with GetSingleTickerProviderStateMixin {
-  //TODO: Implement DashboardController
 
   var chatList = List<ChatMessageModel>.empty(growable: true).obs;
   late AnimationController controller;
@@ -62,7 +63,8 @@ class ChatController extends GetxController
   FocusNode focusNode = FocusNode();
 
   var calendar = DateTime.now();
-  late Profile profile; // = Get.arguments as Profile;
+  var profile_ = Profile().obs; // = Get.arguments as Profile;
+  Profile get profile => profile_.value;
   var base64img = ''.obs;
   var imagePath = ''.obs;
   var filePath = ''.obs;
@@ -85,7 +87,7 @@ class ChatController extends GetxController
   @override
   void onInit() {
     super.onInit();
-    profile = Get.arguments as Profile;
+    profile_.value = Get.arguments as Profile;
     debugPrint("isBlocked===> ${profile.isBlocked}");
     debugPrint("profile detail===> ${profile.toJson().toString()}");
     isBlocked(profile.isBlocked);
@@ -173,7 +175,7 @@ class ChatController extends GetxController
   }
 
   registerChatSync() {
-    debugPrint("Registering Event");
+    /*debugPrint("Registering Event");
     var messageEvent = PlatformRepo().onMessageReceived;
     messageEvent.listen((msgData) {
       ChatMessageModel chatMessageModel = sendMessageModelFromJson(msgData);
@@ -202,7 +204,7 @@ class ChatController extends GetxController
       if (index != -1) {
         chatList[index] = chatMessageModel;
       }
-    });
+    });*/
   }
 
   sendMessage(Profile profile) {
@@ -1096,9 +1098,9 @@ class ChatController extends GetxController
     if(messageIds.length == selectedChatList.length){
       isSelected(false);
       selectedChatList.clear();
-      Get.toNamed(Routes.CONTACTS, arguments: {"forward" : true, "messageIds": messageIds })?.then((value){
+      Get.toNamed(Routes.CONTACTS, arguments: {"forward" : true,"group":false,"groupJid":"", "messageIds": messageIds })?.then((value){
         debugPrint("result of forward ==> ${value.toString()}");
-        profile = value as Profile;
+        profile_.value = value as Profile;
         isBlocked(profile.isBlocked);
         PlatformRepo().ongoingChat(profile.jid!);
         getChatHistory(profile.jid!);
@@ -1110,5 +1112,110 @@ class ChatController extends GetxController
   void closeKeyBoard() {
     // keyboardVisibilityController.isVisible ? FocusManager.instance.primaryFocus?.unfocus() : null;
     FocusManager.instance.primaryFocus!.unfocus();
+  }
+
+  infoPage(){
+    if(profile.isGroupProfile!){
+      Get.toNamed(Routes.GROUP_INFO,arguments: profile)?.then((value){
+        if(value!=null) {
+          profile_.value = value as Profile;
+        }
+      });
+    }
+  }
+
+  @override
+  void onMessageReceived(event){
+    super.onMessageReceived(event);
+    ChatMessageModel chatMessageModel = sendMessageModelFromJson(event);
+    chatList.add(chatMessageModel);
+    if (isLive) {
+      sendReadReceipt();
+    }
+  }
+  @override
+  void onMessageStatusUpdated(event){
+    super.onMessageStatusUpdated(event);
+    ChatMessageModel chatMessageModel = sendMessageModelFromJson(event);
+    final index = chatList.indexWhere(
+            (message) => message.messageId == chatMessageModel.messageId);
+    debugPrint("Message Status Update index of search $index");
+    if (index != -1) {
+      // Helper.hideLoading();
+      chatList[index] = chatMessageModel;
+    }
+  }
+  @override
+  void onMediaStatusUpdated(event){
+    super.onMediaStatusUpdated(event);
+    ChatMessageModel chatMessageModel = sendMessageModelFromJson(event);
+    final index = chatList.indexWhere(
+            (message) => message.messageId == chatMessageModel.messageId);
+    debugPrint("Media Status Update index of search $index");
+    if (index != -1) {
+      chatList[index] = chatMessageModel;
+    }
+  }
+
+  @override
+  void onGroupProfileFetched(groupJid){
+    super.onGroupProfileFetched(groupJid);
+  }
+  @override
+  void onNewGroupCreated(groupJid){
+    super.onNewGroupCreated(groupJid);
+  }
+  @override
+  void onGroupProfileUpdated(groupJid){
+    super.onGroupProfileUpdated(groupJid);
+    if(profile.jid.checkNull()==groupJid.toString()){
+      PlatformRepo().getProfileDetails(profile.jid.checkNull()).then((value){
+        if(value!=null){
+         var member = Profile.fromJson(json.decode(value.toString()));
+         profile_.value=member;
+         profile_.refresh();
+        }
+      });
+    }
+  }
+  @override
+  void onNewMemberAddedToGroup(event){
+    super.onNewMemberAddedToGroup(event);
+  }
+  @override
+  void onMemberRemovedFromGroup(event){
+    super.onMemberRemovedFromGroup(event);
+  }
+  @override
+  void onFetchingGroupMembersCompleted(event){
+    super.onFetchingGroupMembersCompleted(event);
+  }
+  @override
+  void onDeleteGroup(event){
+    super.onDeleteGroup(event);
+  }
+  @override
+  void onFetchingGroupListCompleted(event){
+    super.onFetchingGroupListCompleted(event);
+  }
+  @override
+  void onMemberMadeAsAdmin(event){
+    super.onMemberMadeAsAdmin(event);
+  }
+  @override
+  void onMemberRemovedAsAdmin(event){
+    super.onMemberRemovedAsAdmin(event);
+  }
+  @override
+  void onLeftFromGroup(event){
+    super.onLeftFromGroup(event);
+  }
+  @override
+  void onGroupNotificationMessage(event){
+    super.onGroupNotificationMessage(event);
+  }
+  @override
+  void onGroupDeletedLocally(groupJid){
+    super.onGroupDeletedLocally(groupJid);
   }
 }

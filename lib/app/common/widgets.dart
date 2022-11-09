@@ -16,18 +16,16 @@ import 'constants.dart';
 import 'main_controller.dart';
 
 class AppDivider extends StatelessWidget {
-  final double padding;
+  EdgeInsetsGeometry? padding;
 
-  const AppDivider({Key? key, this.padding = 18.0}) : super(key: key);
+  AppDivider({Key? key, this.padding}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.symmetric(horizontal: padding),
-      child: const Divider(
-        thickness: 0.29,
-        color: dividercolor,
-      ),
+    return Container(
+      margin: padding,
+      height: 0.29,
+      color: dividercolor,
     );
   }
 }
@@ -132,8 +130,8 @@ class ImageNetwork extends GetView<MainController> {
           return errorWidget ??
               Image.asset(
                 profileImg,
-                height: width,
-                width: height,
+                height: height,
+                width: width,
               );
         },
         imageBuilder: (context,provider){

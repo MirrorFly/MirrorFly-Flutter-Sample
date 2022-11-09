@@ -18,7 +18,9 @@ import '../modules/dashboard/bindings/dashboard_binding.dart';
 import '../modules/dashboard/bindings/recentssearch_binding.dart';
 import '../modules/dashboard/views/dashboard_view.dart';
 import '../modules/dashboard/views/recent_search_view.dart';
+import '../modules/group/bindings/groupinfo_binding.dart';
 import '../modules/group/views/groupcreation_view.dart';
+import '../modules/group/views/groupinfo_view.dart';
 import '../modules/home/bindings/home_binding.dart';
 import '../modules/home/views/home_view.dart';
 import '../modules/image_view/bindings/image_view_binding.dart';
@@ -77,6 +79,11 @@ class AppPages {
       name: _Paths.CREATE_GROUP,
       page: () => GroupCreationView(),
       binding: GroupCreationBinding(),
+    ),
+    GetPage(
+      name: _Paths.GROUP_INFO,
+      page: () => GroupInfoView(),
+      binding: GroupInfoBinding(),
     ),
     GetPage(
       name: _Paths.RECENTSEARCH,

@@ -67,8 +67,8 @@ class ContactListView extends GetView<ContactController> {
               visible: controller.isCreateVisible,
               child: TextButton(
                   onPressed: () =>controller.backtoCreateGroup(),
-                  child: const Text(
-                    "CREATE", style: TextStyle(color: Colors.black),)),
+                  child: Text(
+                    controller.groupJid.value.isNotEmpty ? "NEXT" : "CREATE", style: TextStyle(color: Colors.black),)),
             ),
             Visibility(
               visible: controller.isSearchVisible,

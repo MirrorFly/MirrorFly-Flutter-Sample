@@ -60,7 +60,7 @@ class StatusListView extends GetView<StatusListController> {
                   },
                 ),
               ),
-              const AppDivider(padding: 0.0,),
+              AppDivider(),
               const SizedBox(height: 10,),
               const Text(
                 'Select Your new status',

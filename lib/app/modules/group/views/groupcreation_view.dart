@@ -181,7 +181,7 @@ class GroupCreationView extends GetView<GroupCreationController> {
                   ],
                 ),
               ),
-              AppDivider(padding: 0,),
+              AppDivider(),
               Text("Provide a Group Name and Icon",style: TextStyle(fontWeight: FontWeight.w500,fontSize: 15),),
               Expanded(
                 child: Obx(() {

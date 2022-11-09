@@ -43,7 +43,7 @@ class GroupCreationController extends GetxController {
   goToAddParticipantsPage(){
     if(groupName.text.trim().isNotEmpty) {
       //Get.toNamed(Routes.ADD_PARTICIPANTS);
-      Get.toNamed(Routes.CONTACTS, arguments: {"forward" : false,"group":true })?.then((value){
+      Get.toNamed(Routes.CONTACTS, arguments: {"forward" : false,"group":true,"groupJid":"" })?.then((value){
         if(value!=null){
           createGroup(value as List<String>);
         }

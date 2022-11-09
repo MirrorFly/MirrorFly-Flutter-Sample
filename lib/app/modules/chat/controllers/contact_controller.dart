@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
+import 'package:mirror_fly_demo/app/data/helper.dart';
 import 'package:mirror_fly_demo/app/model/chatMessageModel.dart';
 import 'package:mirror_fly_demo/app/nativecall/platformRepo.dart';
 
@@ -24,6 +25,7 @@ class ContactController extends GetxController {
 
   var isForward = false.obs;
   var isCreateGroup = false.obs;
+  var groupJid = "".obs;
 
   @override
   void onInit() {
@@ -34,6 +36,7 @@ class ContactController extends GetxController {
       forwardMessageIds.addAll(Get.arguments["messageIds"]);
     }else {
       isCreateGroup(Get.arguments["group"]);
+      groupJid(Get.arguments["groupJid"]);
     }
     scrollController.addListener(_scrollListener);
     //searchQuery.addListener(_searchListener);
@@ -98,26 +101,56 @@ class ContactController extends GetxController {
   }
 
   fetchUsers(bool fromSearch) {
-    PlatformRepo().getUsers(pageNum, _searchText).then((data) {
+    PlatformRepo().getUsers(pageNum, _searchText).then((data) async {
       var item = userListFromJson(data);
-      fromSearch ? usersList(item.data) : usersList.addAll(item.data!);
-      pageNum = pageNum + 1;
-      isPageLoading.value = false;
-      scrollable.value = item.data!.length == 20;
-      usersList.refresh();
-      if (_first) {
-        _first = false;
-        mainUsersList(item.data!);
+      var list = <Profile>[];
+
+      if(groupJid.value.checkNull().isNotEmpty){
+        await Future.forEach(item.data!, (it) async {
+          await PlatformRepo().isMemberOfGroup(groupJid.value.checkNull(), it.jid.checkNull()).then((value){
+            Log("item", value.toString());
+            if(value==null || !value){
+              list.add(it);
+            }
+          });
+        });
+        fromSearch ? usersList(list) : usersList.addAll(list);
+        pageNum = pageNum + 1;
+        isPageLoading.value = false;
+        scrollable.value = list.length == 20;
+        usersList.refresh();
+        if (_first) {
+          _first = false;
+          mainUsersList(list);
+        }
+      }else{
+        list.addAll(item.data!);
+        fromSearch ? usersList(list) : usersList.addAll(list);
+        pageNum = pageNum + 1;
+        isPageLoading.value = false;
+        scrollable.value = list.length == 20;
+        usersList.refresh();
+        if (_first) {
+          _first = false;
+          mainUsersList(list);
+        }
       }
-    })
-        .catchError((error) {
-      Fluttertoast.showToast(
-          msg: error.toString(),
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.CENTER,
-          timeInSecForIosWeb: 1,
-          fontSize: 16.0);
+
+    }).catchError((error) {
+      toToast(error.toString());
     });
+  }
+
+  Future<List<Profile>> removeGroupMembers(List<Profile> items) async {
+    var list = <Profile>[];
+    for (var it in items) {
+      var value = await PlatformRepo().isMemberOfGroup(groupJid.value.checkNull(), it.jid.checkNull());
+      Log("item", value.toString());
+      if(value==null || !value){
+        list.add(it);
+      }
+    }
+    return list;
   }
 
   get users => usersList;
@@ -164,10 +197,16 @@ class ContactController extends GetxController {
   }
 
   backtoCreateGroup(){
-    if(selectedUsersJIDList.value.length>=Constants.MIN_GROUP_MEMBERS) {
-      Get.back(result: selectedUsersJIDList.value);
+    if(groupJid.value.isEmpty) {
+      if (selectedUsersJIDList.value.length >= Constants.MIN_GROUP_MEMBERS) {
+        Get.back(result: selectedUsersJIDList.value);
+      } else {
+        toToast("Add at least two contacts");
+      }
     }else{
-      toToast("Add at least two contacts");
+      if(selectedUsersJIDList.value.length>0){
+        Get.back(result: selectedUsersJIDList.value);
+      }
     }
   }
 }
