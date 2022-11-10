@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:contacts_service/contacts_service.dart';
 import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_profile_picture/flutter_profile_picture.dart';
 import 'package:flutter_svg/svg.dart';
@@ -11,6 +12,7 @@ import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:keyboard_dismisser/keyboard_dismisser.dart';
+import 'package:marquee/marquee.dart';
 import 'package:mirror_fly_demo/app/common/widgets.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
 import 'package:mirror_fly_demo/app/data/permissions.dart';
@@ -76,7 +78,7 @@ class ChatView extends GetView<ChatController> {
                       child: Obx(() => controller.chatList.isEmpty
                           ? const SizedBox.shrink()
                           : chatListView(
-                              controller.chatList.reversed.toList())),
+                              controller.chatList.toList())),
                     ),
                     Align(
                       alignment: Alignment.bottomCenter,
@@ -84,45 +86,9 @@ class ChatView extends GetView<ChatController> {
                         return Container(
                           color: Colors.white,
                           child: controller.isBlocked.value
-                              ? Column(
-                                  children: [
-                                    const Divider(
-                                      height: 1,
-                                      thickness: 0.29,
-                                      color: textblackcolor,
-                                    ),
-                                    Padding(
-                                      padding: const EdgeInsets.only(
-                                          top: 15.0, bottom: 15.0),
-                                      child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        children: [
-                                          Text(
-                                            "You have blocked ${controller.profile.name}.",
-                                            style:
-                                                const TextStyle(fontSize: 15),
-                                          ),
-                                          const SizedBox(
-                                            width: 10,
-                                          ),
-                                          InkWell(
-                                            child: const Text(
-                                              'UNBLOCK',
-                                              style: TextStyle(
-                                                  decoration:
-                                                      TextDecoration.underline,
-                                                  color: Colors.blue),
-                                            ),
-                                            onTap: () =>
-                                                controller.unBlockUser(),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ],
-                                )
-                              : Column(
+                              ? userblocked()
+                              : !controller.isMemberOfGroup ? userNoLonger()
+                          : Column(
                                   mainAxisAlignment: MainAxisAlignment.end,
                                   children: [
                                     replyMessageHeader(context),
@@ -300,6 +266,61 @@ class ChatView extends GetView<ChatController> {
     );
   }
 
+  Widget userblocked() {
+    return Column(
+      children: [
+        const Divider(
+          height: 1,
+          thickness: 0.29,
+          color: textblackcolor,
+        ),
+        Padding(
+          padding: const EdgeInsets.only(top: 15.0, bottom: 15.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                "You have blocked ${controller.profile.name}.",
+                style: const TextStyle(fontSize: 15),
+              ),
+              const SizedBox(
+                width: 10,
+              ),
+              InkWell(
+                child: const Text(
+                  'UNBLOCK',
+                  style: TextStyle(
+                      decoration: TextDecoration.underline, color: Colors.blue),
+                ),
+                onTap: () => controller.unBlockUser(),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+   Widget userNoLonger() {
+    return Column(
+      children: [
+        const Divider(
+          height: 1,
+          thickness: 0.29,
+          color: textblackcolor,
+        ),
+        Padding(
+          padding: const EdgeInsets.only(top: 15.0, bottom: 15.0),
+          child: Text(
+            "You can't send messages to this group because you're no longer a participant.",
+            style: const TextStyle(fontSize: 15,),
+            textAlign: TextAlign.center,
+          ),
+        ),
+      ],
+    );
+  }
+
   Widget emojiLayout() {
     return Obx(() {
       if (controller.showEmoji.value) {
@@ -340,125 +361,137 @@ class ChatView extends GetView<ChatController> {
   }
 
   Widget chatListView(List<ChatMessageModel> chatList) {
-    return ListView.builder(
-      itemCount: chatList.length,
-      shrinkWrap: true,
-      reverse: true,
-      controller: controller.scrollController,
-      itemBuilder: (context, index) {
-        // int reversedIndex = chatList.length - 1 - index;
-        if (chatList[index].messageType != Constants.MNOTIFICATION) {
-          return SwipeTo(
-            key: ValueKey(chatList[index].messageId),
-            onRightSwipe: () {
-              var swipeList = controller.chatList.reversed.toList();
-              controller.handleReplyChatMessage(swipeList[index]);
-            },
-            animationDuration: const Duration(milliseconds: 300),
-            offsetDx: 0.2,
-            child: GestureDetector(
-              onLongPress: () {
-                debugPrint("LongPressed");
-                FocusManager.instance.primaryFocus?.unfocus();
-                if (!controller.isSelected.value) {
-                  controller.isSelected(true);
-                  controller.addChatSelection(chatList[index]);
-                }
+    return Align(
+      alignment: Alignment.bottomCenter,
+      child: ListView.builder(
+        itemCount: chatList.length,
+        shrinkWrap: true,
+        reverse: false,
+        controller: controller.scrollController,
+        itemBuilder: (context, index) {
+          // int reversedIndex = chatList.length - 1 - index;
+          if (chatList[index].messageType != Constants.MNOTIFICATION) {
+            return SwipeTo(
+              key: ValueKey(chatList[index].messageId),
+              onRightSwipe: () {
+                var swipeList = controller.chatList.reversed.toList();
+                controller.handleReplyChatMessage(swipeList[index]);
               },
-              onTap: () {
-                debugPrint("On Tap");
-                controller.isSelected.value
-                    ? controller.selectedChatList.contains(chatList[index])
-                        ? controller.clearChatSelection(chatList[index])
-                        : controller.addChatSelection(chatList[index])
-                    : null;
-              },
-              child: Obx(() {
-                return Container(
-                  key: Key(chatList[index].messageId),
-                  color: controller.isSelected.value &&
-                          chatList[index].isSelected &&
-                          controller.selectedChatList.isNotEmpty
-                      ? chatreplycontainercolor
-                      : Colors.transparent,
-                  margin: const EdgeInsets.only(
-                      left: 14, right: 14, top: 5, bottom: 10),
-                  child: Align(
-                    alignment: (chatList[index].isMessageSentByMe
-                        ? Alignment.bottomRight
-                        : Alignment.bottomLeft),
-                    child: Container(
-                      constraints: BoxConstraints(maxWidth: screenWidth * 0.6),
-                      decoration: BoxDecoration(
-                          borderRadius: chatList[index].isMessageSentByMe
-                              ? const BorderRadius.only(
-                                  topLeft: Radius.circular(10),
-                                  topRight: Radius.circular(10),
-                                  bottomLeft: Radius.circular(10))
-                              : const BorderRadius.only(
-                                  topLeft: Radius.circular(10),
-                                  topRight: Radius.circular(10),
-                                  bottomRight: Radius.circular(10)),
-                          color: (chatList[index].isMessageSentByMe
-                              ? chatsentbgcolor
-                              : Colors.white),
-                          border: chatList[index].isMessageSentByMe
-                              ? Border.all(color: chatsentbgcolor)
-                              : Border.all(color: chatbordercolor)),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          getMessageHeader(chatList[index], context),
-                          sender(chatList,index),
-                          getMessageContent(index, context, chatList),
-                        ],
+              animationDuration: const Duration(milliseconds: 300),
+              offsetDx: 0.2,
+              child: GestureDetector(
+                onLongPress: () {
+                  debugPrint("LongPressed");
+                  FocusManager.instance.primaryFocus?.unfocus();
+                  if (!controller.isSelected.value) {
+                    controller.isSelected(true);
+                    controller.addChatSelection(chatList[index]);
+                  }
+                },
+                onTap: () {
+                  debugPrint("On Tap");
+                  controller.isSelected.value
+                      ? controller.selectedChatList.contains(chatList[index])
+                          ? controller.clearChatSelection(chatList[index])
+                          : controller.addChatSelection(chatList[index])
+                      : null;
+                },
+                child: Obx(() {
+                  return Container(
+                    key: Key(chatList[index].messageId),
+                    color: controller.isSelected.value &&
+                            chatList[index].isSelected &&
+                            controller.selectedChatList.isNotEmpty
+                        ? chatreplycontainercolor
+                        : Colors.transparent,
+                    margin: const EdgeInsets.only(
+                        left: 14, right: 14, top: 5, bottom: 10),
+                    child: Align(
+                      alignment: (chatList[index].isMessageSentByMe
+                          ? Alignment.bottomRight
+                          : Alignment.bottomLeft),
+                      child: Container(
+                        constraints: BoxConstraints(maxWidth: screenWidth * 0.6),
+                        decoration: BoxDecoration(
+                            borderRadius: chatList[index].isMessageSentByMe
+                                ? const BorderRadius.only(
+                                    topLeft: Radius.circular(10),
+                                    topRight: Radius.circular(10),
+                                    bottomLeft: Radius.circular(10))
+                                : const BorderRadius.only(
+                                    topLeft: Radius.circular(10),
+                                    topRight: Radius.circular(10),
+                                    bottomRight: Radius.circular(10)),
+                            color: (chatList[index].isMessageSentByMe
+                                ? chatsentbgcolor
+                                : Colors.white),
+                            border: chatList[index].isMessageSentByMe
+                                ? Border.all(color: chatsentbgcolor)
+                                : Border.all(color: chatbordercolor)),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            getMessageHeader(chatList[index], context),
+                            sender(chatList, index),
+                            getMessageContent(index, context, chatList),
+                          ],
+                        ),
                       ),
                     ),
-                  ),
-                );
-              }),
-            ),
-          );
-        } else {
-          return Center(
-            child: Container(
-              margin: const EdgeInsets.all(4),
-              padding: const EdgeInsets.symmetric(vertical: 2, horizontal: 20),
-              decoration: const BoxDecoration(
-                color:notificationtextbgcolor,
-                borderRadius: BorderRadius.all(Radius.circular(15))
+                  );
+                }),
               ),
-              child: Text(chatList[index].messageTextContent ?? "",
-                  style: const TextStyle(
-                      fontSize: 13,
-                      fontWeight: FontWeight.w400,
-                      color: notificationtextcolor)),
-            ),
-          );
-        }
-      },
+            );
+          } else {
+            return Center(
+              child: Container(
+                margin: const EdgeInsets.all(4),
+                padding: const EdgeInsets.symmetric(vertical: 2, horizontal: 20),
+                decoration: const BoxDecoration(
+                    color: notificationtextbgcolor,
+                    borderRadius: BorderRadius.all(Radius.circular(15))),
+                child: Text(chatList[index].messageTextContent ?? "",
+                    style: const TextStyle(
+                        fontSize: 13,
+                        fontWeight: FontWeight.w400,
+                        color: notificationtextcolor)),
+              ),
+            );
+          }
+        },
+      ),
     );
   }
 
-  Widget sender( List<ChatMessageModel> chatList,int index){
+  Widget sender(List<ChatMessageModel> chatList, int index) {
     return Visibility(
-      visible: controller.profile.isGroupProfile! ? (index == 0 || isSenderChanged(chatList, index)  || !isMessageDateEqual(chatList, index) )&& !chatList[index].isMessageSentByMe : false,
+      visible: controller.profile.isGroupProfile!
+          ? (index == 0 ||
+                  isSenderChanged(chatList, index) ||
+                  !isMessageDateEqual(chatList, index)) &&
+              !chatList[index].isMessageSentByMe
+          : false,
       child: Padding(
-        padding: const EdgeInsets.only(top: 8.0,right: 8.0,left: 8.0),
+        padding: const EdgeInsets.only(top: 8.0, right: 8.0, left: 8.0),
         child: Text(
           chatList[index].senderNickName.checkNull(),
-          style: TextStyle(fontSize: 12,fontWeight: FontWeight.w400,color: Color(Helper.getColourCode(chatList[index].senderNickName.checkNull()))),
+          style: TextStyle(
+              fontSize: 12,
+              fontWeight: FontWeight.w400,
+              color: Color(Helper.getColourCode(
+                  chatList[index].senderNickName.checkNull()))),
         ),
       ),
     );
   }
+
   bool isSenderChanged(List<ChatMessageModel> messageList, int position) {
-    var preposition = position-1;
-    if(!preposition.isNegative) {
-      var currentMessage = messageList.reversed.toList()[position];
-      var previousMessage = messageList.reversed.toList()[position - 1];
+    var preposition = position - 1;
+    if (!preposition.isNegative) {
+      var currentMessage = messageList[position];
+      var previousMessage = messageList[position - 1];
       if (currentMessage.isMessageSentByMe !=
-          previousMessage.isMessageSentByMe ||
+              previousMessage.isMessageSentByMe ||
           previousMessage.messageType == Constants.MSG_TYPE_NOTIFICATION ||
           (currentMessage.messageChatType == Constants.TYPE_GROUP_CHAT &&
               currentMessage.isThisAReplyMessage)) {
@@ -467,7 +500,7 @@ class ChatView extends GetView<ChatController> {
       var currentSenderJid = currentMessage.senderUserJid.checkNull();
       var previousSenderJid = previousMessage.senderUserJid.checkNull();
       return previousSenderJid != currentSenderJid;
-    }else{
+    } else {
       return false;
     }
   }
@@ -476,6 +509,7 @@ class ChatView extends GetView<ChatController> {
     var previousMessage = getPreviousMessage(messageList, position);
     return previousMessage != null && checkIsNotNotification(previousMessage);
   }
+
   bool checkIsNotNotification(ChatMessageModel messageItem) {
     if (messageItem != null) {
       var msgType = messageItem.messageType;
@@ -483,7 +517,9 @@ class ChatView extends GetView<ChatController> {
     }
     return true;
   }
-  ChatMessageModel? getPreviousMessage(List<ChatMessageModel> messageList, int position) {
+
+  ChatMessageModel? getPreviousMessage(
+      List<ChatMessageModel> messageList, int position) {
     return (position > 0) ? messageList[position - 1] : null;
   }
 
@@ -550,14 +586,14 @@ class ChatView extends GetView<ChatController> {
                 Text(
                   controller.getChatTime(
                       context, chatList[index].messageSentTime),
-                  style: const TextStyle(fontSize: 11,color: chattimecolor),
+                  style: const TextStyle(fontSize: 11, color: chattimecolor),
                 ),
               ],
             ),
           ],
         ),
       );
-    }else if (chatList[index].messageType == Constants.MIMAGE) {
+    } else if (chatList[index].messageType == Constants.MIMAGE) {
       var chatMessage = chatList[index].mediaChatMessage!;
       //mediaLocalStoragePath
       //mediaThumbImage
@@ -754,7 +790,8 @@ class ChatView extends GetView<ChatController> {
                     Text(
                       controller.getChatTime(
                           context, chatList[index].messageSentTime),
-                      style: const TextStyle(fontSize: 11, color: chattimecolor),
+                      style:
+                          const TextStyle(fontSize: 11, color: chattimecolor),
                     ),
                     const SizedBox(
                       width: 10,
@@ -835,7 +872,8 @@ class ChatView extends GetView<ChatController> {
                     Text(
                       controller.getChatTime(
                           context, chatList[index].messageSentTime),
-                      style: const TextStyle(fontSize: 11, color: chattimecolor),
+                      style:
+                          const TextStyle(fontSize: 11, color: chattimecolor),
                     ),
                     const SizedBox(
                       width: 10,
@@ -1634,7 +1672,6 @@ class ChatView extends GetView<ChatController> {
             ),
           ),
         );
-        ;
       } else {
         return SizedBox.shrink();
       }
@@ -1986,36 +2023,57 @@ class ChatView extends GetView<ChatController> {
   chatAppBar() {
     return Obx(() {
       return AppBar(
-        leadingWidth: 25,
+        leadingWidth: 20,
         title: Row(
+          mainAxisSize: MainAxisSize.max,
           children: [
             ImageNetwork(
               url: controller.profile.image.checkNull(),
               width: 45,
               height: 45,
               clipoval: true,
-              errorWidget: controller.profile.isGroupProfile! ? Image.asset(
-                groupImg,
-                height: 45,
-                width: 45,
-                fit: BoxFit.fill,
-              ):ProfileTextImage(
-                text: controller.profile.name.checkNull().isEmpty
-                    ? controller.profile.mobileNumber.checkNull()
-                    : controller.profile.name.checkNull(),
-                radius: 20,
-              ),
+              errorWidget: controller.profile.isGroupProfile!
+                  ? ClipOval(
+                    child: Image.asset(
+                        groupImg,
+                        height: 45,
+                        width: 45,
+                        fit: BoxFit.cover,
+                      ),
+                  )
+                  : ProfileTextImage(
+                      text: controller.profile.name.checkNull().isEmpty
+                          ? controller.profile.mobileNumber.checkNull()
+                          : controller.profile.name.checkNull(),
+                      radius: 20,
+                    ),
             ),
             const SizedBox(
               width: 8,
             ),
-            InkWell(
-              child: Text(controller.profile.name.checkNull()),
-              onTap: () {
-                Log("title clicked",
-                    controller.profile.isGroupProfile.toString());
-                controller.infoPage();
-              },
+            SizedBox(
+              width: (screenWidth) / 1.7,
+              child: InkWell(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.max,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(controller.profile.name.checkNull()),
+                    controller.subtitle.isNotEmpty ? !controller.profile.isGroupProfile! ? Text(controller.subtitle,style: TextStyle(fontSize: 12)) : SizedBox(
+                        width: (screenWidth) / 1.7,
+                        height: 15,
+                        child: Marquee(
+                            text: controller.subtitle+",",
+                            style: TextStyle(fontSize: 12))) : SizedBox()
+                  ],
+                ),
+                onTap: () {
+                  Log("title clicked",
+                      controller.profile.isGroupProfile.toString());
+                  controller.infoPage();
+                },
+              ),
             ),
           ],
         ),
@@ -2081,7 +2139,7 @@ class ChatView extends GetView<ChatController> {
                         icon: const Icon(Icons.block),
                       ),
                       overflowWidget: const Text("Block"),
-                      showAsAction: ShowAsAction.NEVER,
+                      showAsAction: controller.profile.isGroupProfile! ? ShowAsAction.GONE : ShowAsAction.NEVER,
                       keyValue: 'Block',
                       onItemClick: () {
                         controller.closeKeyBoard();
@@ -2094,7 +2152,7 @@ class ChatView extends GetView<ChatController> {
                   icon: const Icon(Icons.search),
                 ),
                 overflowWidget: const Text("Search"),
-                showAsAction: ShowAsAction.NEVER,
+                showAsAction: controller.profile.isGroupProfile! ? ShowAsAction.GONE : ShowAsAction.NEVER,
                 keyValue: 'Search',
                 onItemClick: () {
                   controller.closeKeyBoard();

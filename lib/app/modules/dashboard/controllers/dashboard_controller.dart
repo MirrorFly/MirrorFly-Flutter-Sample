@@ -40,7 +40,7 @@ class DashboardController extends BaseController {
   }
 
   getRecentChatlist() {
-    print("recent chats");
+    Log("","recent chats");
     PlatformRepo().getRecentChats().then((value) {
       var data = recentChatFromJson(value);
       recentchats.value.clear();
@@ -271,8 +271,8 @@ class DashboardController extends BaseController {
     super.onMemberRemovedAsAdmin(event);
   }
   @override
-  void onLeftFromGroup(event){
-    super.onLeftFromGroup(event);
+  void onLeftFromGroup({required String groupJid,required String userJid}){
+    super.onLeftFromGroup(groupJid: groupJid, userJid: userJid);
   }
   @override
   void onGroupNotificationMessage(event){

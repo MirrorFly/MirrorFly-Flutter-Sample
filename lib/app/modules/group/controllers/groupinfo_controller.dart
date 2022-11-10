@@ -98,9 +98,16 @@ class GroupInfoController extends GetxController {
       TextButton(
           onPressed: () {
             Get.back();
-            Helper.showLoading(message: "Reporting group");
-            PlatformRepo().reportUserOrGroup(profile.jid.checkNull(),Constants.TYPE_GROUP_CHAT).then((value) {
+            Helper.progressLoading();
+            PlatformRepo().reportUserOrMessages(profile.jid.checkNull(),Constants.TYPE_GROUP_CHAT).then((value) {
               Helper.hideLoading();
+              if(value!=null){
+                if(value){
+                  toToast("Report sent");
+                }else{
+                  toToast("There are no messages available");
+                }
+              }
             }).catchError((error) {
               Helper.hideLoading();
             });
@@ -127,9 +134,14 @@ class GroupInfoController extends GetxController {
       TextButton(
           onPressed: () {
             Get.back();
-            Helper.showLoading(message: "Reporting group");
+            Helper.progressLoading();
             PlatformRepo().leaveFromGroup(profile.jid.checkNull()).then((value) {
               Helper.hideLoading();
+              if(value!=null){
+                if(value){
+                  _isMemberOfGroup(!value);
+                }
+              }
             }).catchError((error) {
               Helper.hideLoading();
             });
@@ -147,9 +159,14 @@ class GroupInfoController extends GetxController {
       TextButton(
           onPressed: () {
             Get.back();
-            Helper.showLoading(message: "Reporting group");
+            Helper.progressLoading();
             PlatformRepo().deleteGroup(profile.jid.checkNull()).then((value) {
               Helper.hideLoading();
+              if(value!=null){
+                if(value){
+                  Get.offAllNamed(Routes.DASHBOARD);
+                }
+              }
             }).catchError((error) {
               Helper.hideLoading();
             });
@@ -203,7 +220,7 @@ class GroupInfoController extends GetxController {
         if(value){
           profile_.value.image=path;
           profile_.refresh();
-        };
+        }
       }
     });
   }
@@ -217,7 +234,7 @@ class GroupInfoController extends GetxController {
           profile_.value.name=name;
           profile_.value.nickName=name;
           profile_.refresh();
-        };
+        }
       }
     });
   }

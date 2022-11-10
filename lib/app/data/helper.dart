@@ -1,11 +1,17 @@
 
+import 'dart:convert';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
+import 'package:mirror_fly_demo/app/model/chatMessageModel.dart';
+import 'package:mirror_fly_demo/app/model/groupmembers_model.dart';
+import 'package:mirror_fly_demo/app/nativecall/platformRepo.dart';
 import 'package:package_info_plus/package_info_plus.dart';
+
+import '../model/userlistModel.dart';
 
 class Helper {
   static void showLoading({String? message, bool dismissable = false}) {
@@ -202,5 +208,26 @@ extension BooleanParsing on bool? {
   //check null
   bool checkNull() {
     return this ?? false;
+  }
+}
+
+extension MemberParsing on Member{
+
+  String getUsername(){
+    var value = PlatformRepo().getProfileDetails(this.jid.checkNull());
+    var str = Profile.fromJson(json.decode(value.toString()));
+    return str.name.checkNull();
+  }
+  Future<Profile> getProfileDetails() async {
+    var value = await PlatformRepo().getProfileDetails(this.jid.checkNull());
+    var str = Profile.fromJson(json.decode(value.toString()));
+    return str;
+  }
+}
+
+extension ProfileParesing on Profile{
+
+  bool isDeletedContact(){
+    return this.contactType =="deleted_contact";
   }
 }

@@ -41,7 +41,7 @@ class ProfileController extends GetxController {
   void onInit() {
     super.onInit();
     userImgUrl.value = SessionManagement().getUserImage() ?? "";
-    print("auth : " + SessionManagement().getauthToken().toString());
+    Log("auth : ", SessionManagement().getauthToken().toString());
     if (Get.arguments != null) {
       from(Get.arguments["from"]);
       if (from.value == Routes.LOGIN) {

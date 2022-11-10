@@ -118,4 +118,5 @@ enum ShowAsAction {
   ALWAYS,
   IF_ROOM,
   NEVER,
+  GONE,
 }

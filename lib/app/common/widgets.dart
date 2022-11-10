@@ -169,7 +169,7 @@ class ImageNetwork extends GetView<MainController> {
     manager.emptyCache();
     // cache.DefaultCacheManager().removeFile(url).then((value) {
       //ignore: avoid_print
-      print('File removed');
+      Log("",'File removed');
       controller.getAuthToken();
     // }).onError((error, stackTrace) {
     //   ignore: avoid_print
@@ -221,18 +221,3 @@ class EmojiLayout extends StatelessWidget {
     );
   }
 }
-
-/*
-Image NetImage (String url,double width,double height){
-  return Image.network(imagedomin+url,
-      width: width,
-      height: height,
-      headers: {"Authorization":SessionManagement().getauthToken().toString()},
-  errorBuilder:(context,object,trace){
-    return Image.asset(
-      'assets/logos/profile_img.png',
-      height: width,
-      width: height,
-    );
-  },);
-}*/

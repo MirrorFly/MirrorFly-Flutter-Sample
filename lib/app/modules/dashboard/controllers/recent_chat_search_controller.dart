@@ -225,7 +225,7 @@ class RecentChatSearchController extends GetxController {
   Future<ProfileData?> getProfile(String jid) async{
     await PlatformRepo().getProfileLocal(jid,false).then((value)async{
       if (value != null) {
-        var data = profileDataFromJson(value);;
+        var data = profileDataFromJson(value);
         return data.data;
       }else {
         return null;

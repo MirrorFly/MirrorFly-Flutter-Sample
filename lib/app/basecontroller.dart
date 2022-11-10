@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:get/get.dart';
 import 'package:meta/meta.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
@@ -30,7 +32,14 @@ class BaseController extends GetxController {
     PlatformRepo().onFetchingGroupListCompleted.listen(onFetchingGroupListCompleted);
     PlatformRepo().onMemberMadeAsAdmin.listen(onMemberMadeAsAdmin);
     PlatformRepo().onMemberRemovedAsAdmin.listen(onMemberRemovedAsAdmin);
-    PlatformRepo().onLeftFromGroup.listen(onLeftFromGroup);
+    PlatformRepo().onLeftFromGroup.listen((event){
+      if(event!=null) {
+        var data = json.decode(event.toString());
+        var groupJid = data["groupJid"] ?? "";
+        var leftUserJid = data["leftUserJid"] ?? "";
+        onLeftFromGroup(groupJid: groupJid,userJid: leftUserJid);
+      }
+    });
     PlatformRepo().onGroupNotificationMessage.listen(onGroupNotificationMessage);
     PlatformRepo().onGroupDeletedLocally.listen(onGroupDeletedLocally);
   }
@@ -74,7 +83,7 @@ class BaseController extends GetxController {
   void onMemberRemovedAsAdmin(event){
 
   }
-  void onLeftFromGroup(event){
+  void onLeftFromGroup({required String groupJid,required String userJid}){
 
   }
   void onGroupNotificationMessage(event){

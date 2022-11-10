@@ -8,8 +8,7 @@ import '../common/constants.dart';
 import '../model/statusModel.dart';
 
 class PlatformRepo {
-  static const mirrorFlyMethodChannel =
-  MethodChannel('contus.mirrorfly/sdkCall');
+  static const mirrorFlyMethodChannel = MethodChannel('contus.mirrorfly/sdkCall');
 
   //Event Channels
   static const EventChannel MESSAGE_ONRECEIVED_CHANNEL = EventChannel('contus.mirrorfly/onMessageReceived');
@@ -39,6 +38,22 @@ class PlatformRepo {
       response = await mirrorFlyMethodChannel
           .invokeMethod<String>('media_endpoint');
       debugPrint("media_endpoint Result ==> $response");
+      return response.checkNull();
+    } on PlatformException catch (e) {
+      debugPrint("Platform Exception ===> $e");
+      rethrow;
+    } on Exception catch (error) {
+      debugPrint("Exception ==> $error");
+      rethrow;
+    }
+  }
+
+  Future<String> getUserLastSeenTime(String jid) async {
+    String? response = "";
+    try {
+      response = await mirrorFlyMethodChannel
+          .invokeMethod<String>('getUserLastSeenTime',{"jid":jid});
+      debugPrint("getUserLastSeenTime Result ==> $response");
       return response.checkNull();
     } on PlatformException catch (e) {
       debugPrint("Platform Exception ===> $e");
@@ -219,7 +234,7 @@ class PlatformRepo {
       debugPrint('RESULT ==> $result');
       return result;
     } on PlatformException catch (e) {
-      print(e);
+      Log("er",e.toString());
       return re;
     }
   }
@@ -250,7 +265,7 @@ class PlatformRepo {
       debugPrint('RESULT ==> $result');
       return result;
     } on PlatformException catch (e) {
-      print(e);
+      Log("er",e.toString());
       return re;
     }
   }
@@ -263,10 +278,10 @@ class PlatformRepo {
         "name": name,
         "email": email,
       });
-      print('RESULT -> $result');
+      Log('RESULT', '$result');
       return result;
     } on PlatformException catch (e) {
-      print(e);
+      Log("er",e.toString());
       return re;
     }
   }
@@ -276,10 +291,10 @@ class PlatformRepo {
     try {
       final result = await mirrorFlyMethodChannel
           .invokeMethod("sentfile", {"file": file, "jid": jid, "message": ""});
-      print('RESULT -> $result');
+      Log('RESULT', '$result');
       return result;
     } on PlatformException catch (e) {
-      print(e);
+      Log("er",e.toString());
       return re;
     }
   }
@@ -336,8 +351,9 @@ class PlatformRepo {
             defaultStatus.forEach((statusValue) {
               var isStatusNotExist = true;
               profileStatus.forEach((flyStatus) {
-                if (flyStatus == (statusValue))
+                if (flyStatus.status == (statusValue)) {
                   isStatusNotExist = false;
+                }
               });
               if (isStatusNotExist) {
                 PlatformRepo().insertStatus(statusValue);
@@ -925,10 +941,10 @@ class PlatformRepo {
       rethrow;
     }
   }
-  Future<bool?> reportUserOrGroup(String jid,String type) async {
+  Future<bool?> reportUserOrMessages(String jid,String type) async {
     bool? response;
     try {
-      response = await mirrorFlyMethodChannel.invokeMethod<bool>('reportUserOrGroup',{"jid" : jid,"type":type });
+      response = await mirrorFlyMethodChannel.invokeMethod<bool>('reportUserOrMessages',{"jid" : jid,"type":type });
       debugPrint("report Result ==> $response");
       return response;
     }on PlatformException catch (e){

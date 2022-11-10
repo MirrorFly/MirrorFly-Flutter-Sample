@@ -48,7 +48,7 @@ class MyApp extends StatelessWidget{
   Widget build(BuildContext context) {
     return GetMaterialApp(
       title: "MirrorFly",
-      theme: apptheme.theme,
+      theme: Apptheme.theme,
       builder: EasyLoading.init(),
       debugShowCheckedModeBanner: false,
       initialBinding: getBinding(),

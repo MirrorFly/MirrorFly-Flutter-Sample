@@ -648,8 +648,8 @@ class MainActivity : FlutterActivity(), MethodChannel.MethodCallHandler,
                     )
                 )
             }
-            call.method.equals("reportUserOrGroup") -> {
-                reportUserOrGroup(call, result)
+            call.method.equals("reportUserOrMessages") -> {
+                reportUserOrMessages(call, result)
             }
             call.method.equals("leaveFromGroup") -> {
                 leaveFromGroup(call, result)
@@ -684,6 +684,9 @@ class MainActivity : FlutterActivity(), MethodChannel.MethodCallHandler,
                 if (profileDetails != null) {
                     result.success(profileDetails.tojsonString())
                 }
+            }
+            call.method.equals("getUserLastSeenTime") -> {
+                getUserLastSeenTime(call, result)
             }
             else -> {
                 result.notImplemented()
@@ -1683,7 +1686,7 @@ class MainActivity : FlutterActivity(), MethodChannel.MethodCallHandler,
         }
     }
 
-    private fun reportUserOrGroup(call: MethodCall, result: MethodChannel.Result) {
+    private fun reportUserOrMessages(call: MethodCall, result: MethodChannel.Result) {
         val jid = call.argument<String>("jid") ?: ""
         val type = call.argument<String>("type") ?: ChatType.TYPE_CHAT
         FlyCore.reportUserOrMessages(jid, type) { isSuccess, _, data ->
@@ -1742,6 +1745,19 @@ class MainActivity : FlutterActivity(), MethodChannel.MethodCallHandler,
                 }
             }
         })
+    }
+
+    fun getUserLastSeenTime(call: MethodCall, result: MethodChannel.Result) {
+        val jid = call.argument<String>("jid") ?: ""
+        ContactManager.getUserLastSeenTime(jid, object : ContactManager.LastSeenListener {
+                override fun onFailure(message: String) {
+                    /* No Implementation Needed */
+                }
+
+                override fun onSuccess(lastSeenTime: String) {
+                    result.success(lastSeenTime)
+                }
+            })
     }
 
     /*private fun getGroupedMediaList(mediaMessages: List<ChatMessage>, isMedia:Boolean, isLinkMedia:Boolean = false) : List<GroupedMedia> {

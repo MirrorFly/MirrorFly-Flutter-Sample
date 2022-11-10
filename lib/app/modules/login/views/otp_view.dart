@@ -10,6 +10,7 @@ import 'package:otp_text_field/style.dart';
 import '../../../common/constants.dart';
 
 class OtpView extends GetView<LoginController> {
+  const OtpView({Key? key}) : super(key: key);
   @override
   Widget build(BuildContext context) {
     return Scaffold(

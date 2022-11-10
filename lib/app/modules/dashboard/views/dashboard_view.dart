@@ -248,7 +248,7 @@ class DashboardView extends GetView<DashboardController> {
                 )),
             Flexible(
               child: Container(
-                padding: const EdgeInsets.only(top: 16),
+                padding: const EdgeInsets.only(top: 8),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.start,

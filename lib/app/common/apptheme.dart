@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'constants.dart';
 
-class apptheme {
+class Apptheme {
   static ThemeData theme = ThemeData(
     appBarTheme: const AppBarTheme(
         color: appbarcolor,

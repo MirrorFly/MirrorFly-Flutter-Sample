@@ -35,7 +35,7 @@ class GroupInfoView extends GetView<GroupInfoController> {
                             ? Colors.white
                             : Colors.black),
                     onPressed: () {
-                      Get.back(result: controller.profile);
+                      Get.back();
                     },
                   ),
                   title: Visibility(
@@ -53,35 +53,42 @@ class GroupInfoView extends GetView<GroupInfoController> {
                         child: Row(
                           children: [
                             Expanded(
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Text(controller.profile.nickName.checkNull(),
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 12.0,
-                                      ) //TextStyle
-                                  ),
-                                  Text(controller.groupMembers.length.toString() +" members",
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 8.0,
-                                      ) //TextStyle
-                                  ),
-                                ],
+                              child: Padding(
+                                padding: const EdgeInsets.all(4.0),
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Text(controller.profile.nickName.checkNull(),
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 12.0,
+                                        ) //TextStyle
+                                    ),
+                                    Text(controller.groupMembers.length
+                                        .toString() + " members",
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 8.0,
+                                        ) //TextStyle
+                                    ),
+                                  ],
+                                ),
                               ),
                             ),
-                            IconButton(
-                              icon: SvgPicture.asset(
-                                edit,
-                                color: Colors.white,
-                                width: 16.0,
-                                height: 16.0,
+                            Visibility(
+                              visible: controller.isMemberOfGroup,
+                              child: IconButton(
+                                icon: SvgPicture.asset(
+                                  edit,
+                                  color: Colors.white,
+                                  width: 16.0,
+                                  height: 16.0,
+                                ),
+                                tooltip: 'edit',
+                                onPressed: () => controller.gotoNameEdit(),
                               ),
-                              tooltip: 'edit',
-                              onPressed: ()=>controller.gotoNameEdit(),
                             ),
                           ],
                         ),
@@ -92,7 +99,7 @@ class GroupInfoView extends GetView<GroupInfoController> {
                               .of(context)
                               .size
                               .width,
-                          height: 250,
+                          height: 300,
                           child: Image.file(
                             File(controller.imagepath.value),
                             fit: BoxFit.fill,
@@ -103,11 +110,11 @@ class GroupInfoView extends GetView<GroupInfoController> {
                             .of(context)
                             .size
                             .width,
-                        height: 250,
+                        height: 300,
                         clipoval: false,
-                        errorWidget:  Image.asset(
+                        errorWidget: Image.asset(
                           groupImg,
-                          height: 250,
+                          height: 300,
                           width: MediaQuery
                               .of(context)
                               .size
@@ -117,22 +124,27 @@ class GroupInfoView extends GetView<GroupInfoController> {
                       ) //Images.network
                   ),
                   //FlexibleSpaceBar
-                  expandedHeight: 250,
+                  expandedHeight: 300,
                   //IconButton
                   actions: <Widget>[
-                    IconButton(
-                      icon: SvgPicture.asset(
-                        imageEdit,
-                        color: controller.isSliverAppBarExpanded
-                            ? Colors.white
-                            : Colors.black,
+                    Visibility(
+                      visible: controller.isMemberOfGroup,
+                      child: IconButton(
+                        icon: SvgPicture.asset(
+                          imageEdit,
+                          color: controller.isSliverAppBarExpanded
+                              ? Colors.white
+                              : Colors.black,
+                        ),
+                        tooltip: 'Image edit',
+                        onPressed: () {
+                          if (controller.isMemberOfGroup) {
+                            BottomSheetView(context);
+                          }else{
+                            toToast("You're no longer a participant in this group");
+                          }
+                        },
                       ),
-                      tooltip: 'Image edit',
-                      onPressed: () {
-                        if(controller.isMemberOfGroup) {
-                          BottomSheetView(context);
-                        }
-                      },
                     ),
                   ],
                 );
@@ -160,17 +172,20 @@ class GroupInfoView extends GetView<GroupInfoController> {
                       width: 1
                   ),
                   value: controller.mute,
-                  onToggle: (value) => controller.onToggleChange(value),
-                ), onTap: () => controller.onToggleChange(!controller.mute));
+                  onToggle:  (value) => controller.isMemberOfGroup ? controller.onToggleChange(value) : null,
+                ), onTap: () => controller.isMemberOfGroup ? controller.onToggleChange(!controller.mute) : null);
               }),
-              Obx(() => Visibility(
-                visible: controller.isAdmin,
-                child: ListItem(leading: SvgPicture.asset(add_user),title: Text("Add Participants",
-                    style: const TextStyle(
-                        color: Colors.black,
-                        fontSize: 14,
-                        fontWeight: FontWeight.w500)), onTap: ()=>controller.gotoAddParticipants()),
-              )),
+              Obx(() =>
+                  Visibility(
+                    visible: controller.isAdmin,
+                    child: ListItem(leading: SvgPicture.asset(add_user),
+                        title: Text("Add Participants",
+                            style: const TextStyle(
+                                color: Colors.black,
+                                fontSize: 14,
+                                fontWeight: FontWeight.w500)),
+                        onTap: () => controller.gotoAddParticipants()),
+                  )),
               Obx(() {
                 return ListView.builder(
                     physics: NeverScrollableScrollPhysics(),
@@ -199,17 +214,19 @@ class GroupInfoView extends GetView<GroupInfoController> {
                         fontWeight: FontWeight.w500)),
                 onTap: () => controller.reportGroup(),
               ),
-              ListItem(
-                leading: SvgPicture.asset(leave_group, width: 18,),
-                title: Text(!controller.isMemberOfGroup
-                    ? "Delete Group"
-                    : "Leave Group",
-                    style: const TextStyle(
-                        color: Colors.red,
-                        fontSize: 14,
-                        fontWeight: FontWeight.w500)),
-                onTap: () => controller.exitOrDeleteGroup(),
-              ),
+              Obx(() {
+                return ListItem(
+                  leading: SvgPicture.asset(leave_group, width: 18,),
+                  title: Text(!controller.isMemberOfGroup
+                      ? "Delete Group"
+                      : "Leave Group",
+                      style: const TextStyle(
+                          color: Colors.red,
+                          fontSize: 14,
+                          fontWeight: FontWeight.w500)),
+                  onTap: () => controller.exitOrDeleteGroup(),
+                );
+              }),
             ],
           ),
         ) //CustonScrollView
@@ -236,17 +253,23 @@ class GroupInfoView extends GetView<GroupInfoController> {
       onTap: onTap,
     );
   }
-  Widget MemberItem(Member item){
+
+  Widget MemberItem(Member item) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4.0),
       child: InkWell(
         child: Column(
           children: [
             Padding(
-              padding: const EdgeInsets.only(right: 16.0,left: 16.0,top: 4,bottom: 4),
+              padding: const EdgeInsets.only(
+                  right: 16.0, left: 16.0, top: 4, bottom: 4),
               child: Row(
                 children: [
-                  ImageNetwork(url: item.image.checkNull(), width: 48, height: 48, clipoval: true,
+                  ImageNetwork(
+                    url: item.image.checkNull(),
+                    width: 48,
+                    height: 48,
+                    clipoval: true,
                     errorWidget: item.name
                         .checkNull()
                         .isNotEmpty
@@ -265,21 +288,21 @@ class GroupInfoView extends GetView<GroupInfoController> {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         Text(item.name.checkNull(),
-                            style: TextStyle(
+                          style: TextStyle(
                               color: Colors.black,
                               fontSize: 14.0,
                               fontWeight: FontWeight.w700
-                            ),
+                          ),
                           maxLines: 1,
-                          overflow: TextOverflow.ellipsis,//TextStyle
+                          overflow: TextOverflow.ellipsis, //TextStyle
                         ),
                         Text(item.status.checkNull(),
-                            style: TextStyle(
-                              color: Colors.black,
-                              fontSize: 12.0,
-                            ),
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 12.0,
+                          ),
                           maxLines: 1,
-                          overflow: TextOverflow.ellipsis,//T
+                          overflow: TextOverflow.ellipsis, //T
                         ),
                       ],
                     ),
@@ -294,11 +317,12 @@ class GroupInfoView extends GetView<GroupInfoController> {
                 ],
               ),
             ),
-            AppDivider(padding: EdgeInsets.only(right: 16,left: 16,top: 4))
+            AppDivider(padding: EdgeInsets.only(right: 16, left: 16, top: 4))
           ],
         ),
-        onTap: (){
-          if(item.jid.checkNull()!=SessionManagement().getUserJID().checkNull()) {
+        onTap: () {
+          if (item.jid.checkNull() !=
+              SessionManagement().getUserJID().checkNull()) {
             showOptions(item);
           }
         },
@@ -306,46 +330,54 @@ class GroupInfoView extends GetView<GroupInfoController> {
     );
   }
 
-  showOptions(Member item){
-    Helper.showAlert(message: "",content: Column(
+  showOptions(Member item) {
+    Helper.showAlert(message: "", content: Column(
       mainAxisSize: MainAxisSize.min,
-        children: [
-          ListTile(title: const Text("Start Chat"),onTap: (){Get.back();},),
-          ListTile(title: const Text("View Info"),onTap: (){Get.back();},),
-          Visibility(visible:controller.isAdmin,child: ListTile(title: const Text("Remove from Group"),onTap: (){
-            Get.back();
-            Helper.showAlert(message: "Are you sure you want to remove ${item.name}?",actions: [
-              TextButton(
-                  onPressed: () {
-                    Get.back();
-                  },
-                  child: const Text("NO")),
-              TextButton(
-                  onPressed: () {
-                    Get.back();
-                    controller.removeUser(item.jid.checkNull());
-                  },
-                  child: const Text("YES")),
-            ]);
-          },)),
-          Visibility(
+      children: [
+        ListTile(title: const Text("Start Chat"), onTap: () {
+          Get.back();
+        },),
+        ListTile(title: const Text("View Info"), onTap: () {
+          Get.back();
+        },),
+        Visibility(visible: controller.isAdmin,
+            child: ListTile(title: const Text("Remove from Group"), onTap: () {
+              Get.back();
+              Helper.showAlert(
+                  message: "Are you sure you want to remove ${item.name}?",
+                  actions: [
+                    TextButton(
+                        onPressed: () {
+                          Get.back();
+                        },
+                        child: const Text("NO")),
+                    TextButton(
+                        onPressed: () {
+                          Get.back();
+                          controller.removeUser(item.jid.checkNull());
+                        },
+                        child: const Text("YES")),
+                  ]);
+            },)),
+        Visibility(
             visible: (!item.isGroupAdmin! && controller.isAdmin),
-              child: ListTile(title: const Text("Make Admin"),onTap: (){
-                Get.back();
-                Helper.showAlert(message: "Are you sure you want to make ${item.name} the admin?",actions: [
-                  TextButton(
-                      onPressed: () {
-                        Get.back();
-                      },
-                      child: const Text("NO")),
-                  TextButton(
-                      onPressed: () {
-                        Get.back();
-                        controller.makeAdmin(item.jid.checkNull());
-                      },
-                      child: const Text("YES")),
-                ]);
-              },)),
+            child: ListTile(title: const Text("Make Admin"), onTap: () {
+              Get.back();
+              Helper.showAlert(message: "Are you sure you want to make ${item
+                  .name} the admin?", actions: [
+                TextButton(
+                    onPressed: () {
+                      Get.back();
+                    },
+                    child: const Text("NO")),
+                TextButton(
+                    onPressed: () {
+                      Get.back();
+                      controller.makeAdmin(item.jid.checkNull());
+                    },
+                    child: const Text("YES")),
+              ]);
+            },)),
       ],
     ));
   }
@@ -385,7 +417,9 @@ class GroupInfoView extends GetView<GroupInfoController> {
                         },
                         child: const Text("Choose from Gallery",
                             style: TextStyle(color: texthintcolor))),
-                    controller.profile.image.checkNull().isNotEmpty
+                    controller.profile.image
+                        .checkNull()
+                        .isNotEmpty
                         ? TextButton(
                         onPressed: () {
                           Get.back();
