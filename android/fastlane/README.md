@@ -15,7 +15,7 @@ For _fastlane_ installation instructions, see [Installing _fastlane_](https://do
 
 ## Android
 
-### android deploy_dev
+### android deploy_dev_debug
 
 ```sh
 [bundle exec] fastlane android deploy_dev
@@ -23,7 +23,7 @@ For _fastlane_ installation instructions, see [Installing _fastlane_](https://do
 
 Upload dev version to distributes in firebase
 
-### android deploy_qa
+### android deploy_qa_debug
 
 ```sh
 [bundle exec] fastlane android deploy_qa
