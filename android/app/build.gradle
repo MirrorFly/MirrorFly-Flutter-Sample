@@ -25,7 +25,6 @@ apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply from: "$flutterRoot/packages/flutter_tools/gradle/flutter.gradle"
 apply plugin: 'kotlin-kapt'
-apply plugin: 'com.google.gms.google-services'
 
 android {
     compileSdkVersion flutter.compileSdkVersion
@@ -46,7 +45,7 @@ android {
 
     defaultConfig {
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
-        applicationId "com.mirrorfly.uikit.dev"
+        applicationId "com.mirrorfly.uikit_flutter.dev"
         // You can update the following values to match your application needs.
         // For more information, see: https://docs.flutter.dev/deployment/android#reviewing-the-build-configuration.
         minSdkVersion flutter.minSdkVersion
@@ -61,18 +60,59 @@ android {
             buildConfigField 'String', 'LICENSE', '"ckIjaccWBoMNvxdbql8LJ2dmKqT5bp"'
             buildConfigField 'String', 'WEB_CHAT_LOGIN', '"https://webchat-preprod-sandbox.mirrorfly.com/"'
             buildConfigField "String", "SUPPORT_MAIL", '"contussupport@gmail.com"'
+            shrinkResources false
+            debuggable true
+            minifyEnabled false
+            signingConfig signingConfigs.debug
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
         release {
-            // Signing with the debug keys for now, so `flutter run --release` works.
-            signingConfig signingConfigs.debug
+            buildConfigField 'Boolean', 'IS_QA_BUILD', 'true'
             buildConfigField 'String', 'SDK_BASE_URL', '"https://api-uikit-qa.contus.us/api/v1/"'
             buildConfigField 'String', 'LICENSE', '"ckIjaccWBoMNvxdbql8LJ2dmKqT5bp"'
             buildConfigField 'String', 'WEB_CHAT_LOGIN', '"https://webchat-preprod-sandbox.mirrorfly.com/"'
+            buildConfigField 'Boolean', 'IS_TRIAL_LICENSE', 'true'
             buildConfigField "String", "SUPPORT_MAIL", '"contussupport@gmail.com"'
-            minifyEnabled false
+            resValue("string", "app_name", "MF-Flutter")
             shrinkResources false
+            debuggable true
+            minifyEnabled false
+            signingConfig signingConfigs.debug
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+
+    // Specifies one flavor dimension.
+    flavorDimensions "version"
+    productFlavors {
+        dev {
+            dimension "version"
+            applicationId "com.mirrorfly.uikit_flutter.dev"
+            buildConfigField 'Boolean', 'IS_QA_BUILD', 'true'
+            buildConfigField 'String', 'SDK_BASE_URL', '"https://api-uikit-qa.contus.us/api/v1/"'
+            buildConfigField 'String', 'LICENSE', '"ckIjaccWBoMNvxdbql8LJ2dmKqT5bp"'
+            buildConfigField 'String', 'WEB_CHAT_LOGIN', '"https://webchat-preprod-sandbox.mirrorfly.com/"'
+            buildConfigField 'Boolean', 'IS_TRIAL_LICENSE', 'true'
+            buildConfigField "String", "SUPPORT_MAIL", '"contussupport@gmail.com"'
+            resValue("string", "app_name", "MF-Flutter-Dev")
+        }
+        qa {
+            dimension "version"
+            applicationId "com.mirrorfly.uikit_flutter.qa"
+            buildConfigField 'Boolean', 'IS_QA_BUILD', 'true'
+            buildConfigField 'String', 'SDK_BASE_URL', '"https://api-uikit-qa.contus.us/api/v1/"'
+            buildConfigField 'String', 'LICENSE', '"ckIjaccWBoMNvxdbql8LJ2dmKqT5bp"'
+            buildConfigField 'String', 'WEB_CHAT_LOGIN', '"https://webchat-preprod-sandbox.mirrorfly.com/"'
+            buildConfigField 'Boolean', 'IS_TRIAL_LICENSE', 'true'
+            buildConfigField "String", "SUPPORT_MAIL", '"contussupport@gmail.com"'
+            resValue("string", "app_name", "MF-Flutter-QA")
+        }
+        prod {
+            dimension "version"
+            applicationId "com.mirrorfly.uikit_flutter.qa"
+        }
+    }
+
 
     packagingOptions {
         exclude 'META-INF/AL2.0'

@@ -67,6 +67,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "1045831384770-acrljslm6312d4gepbbd5qifop5gj2dl.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.mirrorfly.uikit_flutter.dev",
+            "certificate_hash": "2f49f60104e620b96e545f8ec71b59e22db50fc8"
+          }
+        },
+        {
           "client_id": "1045831384770-dja80m0ncgornapu8gc5pl42p1a3mtn5.apps.googleusercontent.com",
           "client_type": 3
         }
