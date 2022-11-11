@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="50" height="50" viewBox="0 0 50 50">
+  <defs>
+    <filter id="Path_13765" x="0" y="0" width="50" height="50" filterUnits="userSpaceOnUse">
+      <feOffset dy="3" input="SourceAlpha"/>
+      <feGaussianBlur stdDeviation="4.5" result="blur"/>
+      <feFlood flood-opacity="0.4"/>
+      <feComposite operator="in" in2="blur"/>
+      <feComposite in="SourceGraphic"/>
+    </filter>
+  </defs>
+  <g id="Group_16114" data-name="Group 16114" transform="translate(-110.624 -289.542)">
+    <g transform="matrix(1, 0, 0, 1, 110.62, 289.54)" filter="url(#Path_13765)">
+      <path id="Path_13765-2" data-name="Path 13765" d="M11.5,0A11.5,11.5,0,1,1,0,11.5,11.5,11.5,0,0,1,11.5,0Z" transform="translate(13.5 10.5)" fill="#fff"/>
+    </g>
+    <g id="media-play-symbol" transform="translate(133.099 307.108)">
+      <g id="Layer_8_16_" transform="translate(0)">
+        <path id="Path_1" data-name="Path 1" d="M52.372.063a.469.469,0,0,1,.469,0l5.593,4.064a.469.469,0,0,1,0,.813L52.841,9a.469.469,0,0,1-.7-.407V.469A.469.469,0,0,1,52.372.063Z" transform="translate(-52.137 0)" fill="#3276e2"/>
+      </g>
+    </g>
+  </g>
+</svg>

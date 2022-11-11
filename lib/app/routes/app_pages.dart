@@ -1,5 +1,6 @@
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/modules/group/bindings/groupcreation_binding.dart';
+import 'package:mirror_fly_demo/app/modules/viewall_media/views/viewallmedia_view.dart';
 
 import '../model/userlistModel.dart';
 import '../modules/chat/bindings/chat_binding.dart';
@@ -46,6 +47,7 @@ import '../modules/video_preview/bindings/VideoPlayBinding.dart';
 import '../modules/video_preview/bindings/video_preview_binding.dart';
 import '../modules/video_preview/views/video_player_view.dart';
 import '../modules/video_preview/views/video_preview_view.dart';
+import '../modules/viewall_media/bindings/viewallmedia_binding.dart';
 
 // import '../modules/message_info/bindings/message_info_binding.dart';
 // import '../modules/message_info/views/message_info_view.dart';
@@ -84,6 +86,11 @@ class AppPages {
       name: _Paths.GROUP_INFO,
       page: () => GroupInfoView(),
       binding: GroupInfoBinding(),
+    ),
+    GetPage(
+      name: _Paths.VIEW_MEDIA,
+      page: () => ViewAllMediaView(),
+      binding: ViewAllMediaBinding(),
     ),
     GetPage(
       name: _Paths.RECENTSEARCH,

@@ -73,18 +73,27 @@ const String audio_mic = 'assets/logos/mic.svg';
 const String audio_mic_1 = 'assets/logos/mic1.svg';
 const String profile_img = 'assets/logos/profile_img.png';
 
+const String link_image = 'assets/logos/link.svg';
+const String txt_image = 'assets/logos/txt.svg';
+const String csv_image = 'assets/logos/csv.svg';
 const String pdf_image = 'assets/logos/pdf.svg';
 const String ppt_image = 'assets/logos/ppt.svg';
+const String pptx_image = 'assets/logos/pptx.svg';
 const String xls_image = 'assets/logos/xls.svg';
 const String xlsx_image = 'assets/logos/xlsx.svg';
 const String doc_image = 'assets/logos/doc.svg';
+const String docx_image = 'assets/logos/docx.svg';
 const String apk_image = 'assets/logos/apk.svg';
+const String zip_image = 'assets/logos/zip.svg';
+const String rar_image = 'assets/logos/rar.svg';
 const String Mcontacticon = 'assets/logos/Contact.svg';
 const String Mdocumenticon = 'assets/logos/Document.svg';
 const String Mimageicon = 'assets/logos/image.svg';
 const String Mlocationicon = 'assets/logos/Location.svg';
 const String Mvideoicon = 'assets/logos/Video.svg';
 const String Maudioicon = 'assets/logos/noun_Audio_3408360.svg';
+const String audio_white = 'assets/logos/audio_white.svg';
+const String video_white = 'assets/logos/video_icon.svg';
 const String cornershadow = 'assets/logos/ic_baloon.png';
 
 const String replyIcon = 'assets/logos/reply.svg';
