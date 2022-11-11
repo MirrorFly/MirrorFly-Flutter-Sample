@@ -2,11 +2,9 @@ import 'package:get/get.dart';
 
 import '../model/userlistModel.dart';
 import '../modules/chat/bindings/chat_binding.dart';
-import '../modules/chat/bindings/chat_binding.dart';
 import '../modules/chat/bindings/contact_binding.dart';
 import '../modules/chat/bindings/image_preview_binding.dart';
 import '../modules/chat/bindings/location_binding.dart';
-import '../modules/chat/views/chat_view.dart';
 import '../modules/chat/views/chat_view.dart';
 import '../modules/chat/views/contactlist_view.dart';
 import '../modules/chat/views/image_preview_view.dart';
@@ -17,8 +15,6 @@ import '../modules/dashboard/bindings/dashboard_binding.dart';
 import '../modules/dashboard/bindings/recentssearch_binding.dart';
 import '../modules/dashboard/views/dashboard_view.dart';
 import '../modules/dashboard/views/recent_search_view.dart';
-import '../modules/home/bindings/home_binding.dart';
-import '../modules/home/views/home_view.dart';
 import '../modules/image_view/bindings/image_view_binding.dart';
 import '../modules/image_view/views/image_view_view.dart';
 import '../modules/local_contact/bindings/local_contact_binding.dart';
@@ -55,11 +51,7 @@ class AppPages {
   static const DASHBOARD = Routes.DASHBOARD;
 
   static final routes = [
-    GetPage(
-      name: _Paths.HOME,
-      page: () => const HomeView(),
-      binding: HomeBinding(),
-    ),
+
     GetPage(
       name: _Paths.DASHBOARD,
       page: () => DashboardView(),
@@ -103,7 +95,7 @@ class AppPages {
     ),
     GetPage(
       name: _Paths.CONTACTS,
-      page: () => ContactListView(),
+      page: () => const ContactListView(),
       binding: ContactListBinding(),
     ),
     GetPage(

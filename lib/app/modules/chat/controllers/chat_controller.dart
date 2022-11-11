@@ -14,6 +14,7 @@ import 'package:mirror_fly_demo/app/model/chatMessageModel.dart';
 import 'package:mirror_fly_demo/app/nativecall/platformRepo.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:record/record.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../../common/constants.dart';
@@ -47,9 +48,17 @@ class ChatController extends GetxController
   var audioplayed = false.obs;
 
   var isUserTyping = false.obs;
+  var isAudioRecording = Constants.audioRecordInitial.obs;
+  late Timer? _audioTimer;
+  var timerInit = "00.00".obs;
+  DateTime? startTime;
   // late Uint8List audiobytes;
 
   AudioPlayer player = AudioPlayer();
+
+  late String audioSavePath;
+  late String recordedAudioPath;
+  late Record record;
 
   TextEditingController messageController = TextEditingController();
 
@@ -139,6 +148,8 @@ class ChatController extends GetxController
 
       currentpostlabel = "$rhours:$rminutes:$rseconds";
     });
+
+    setAudioPath();
   }
 
   @override
@@ -584,6 +595,7 @@ class ChatController extends GetxController
     if (isReplying.value) {
       replyMessageId = replyChatMessage.messageId;
     }
+    isTyping("");
     isReplying(false);
     PlatformRepo()
         .sendAudio(profile.jid!, filePath, isRecorded, duration, replyMessageId)
@@ -744,7 +756,10 @@ class ChatController extends GetxController
 
   void deleteMessages() {
     var isRecallAvailable = true;
+    var deleteChatListID = List<String>.empty(growable: true);
+
     for (var chatList in selectedChatList) {
+      deleteChatListID.add(chatList.messageId);
       if (chatList.messageSentTime > (DateTime.now().millisecondsSinceEpoch - 30000) * 1000) {
         isRecallAvailable = true;
       }else{
@@ -753,10 +768,9 @@ class ChatController extends GetxController
       }
     }
 
-    var deleteChatListID = List<String>.empty(growable: true);
-    for(var chatList in selectedChatList){
-      deleteChatListID.add(chatList.messageId);
-    }
+    // for(var chatList in selectedChatList){
+    //   deleteChatListID.add(chatList.messageId);
+    // }
 
     if(deleteChatListID.isEmpty){
       return;
@@ -794,7 +808,11 @@ class ChatController extends GetxController
                   debugPrint(value);
                   Helper.hideLoading();
                   if(value == "success"){
-                    removeChatList(selectedChatList);
+                    // removeChatList(selectedChatList);//
+                    for (var chatList in selectedChatList) {
+                      chatList.isMessageRecalled = true;
+                      this.chatList.refresh();
+                    }
                   }
                   isSelected(false);
                   selectedChatList.clear();
@@ -975,5 +993,86 @@ class ChatController extends GetxController
   void closeKeyBoard() {
     // keyboardVisibilityController.isVisible ? FocusManager.instance.primaryFocus?.unfocus() : null;
     FocusManager.instance.primaryFocus!.unfocus();
+  }
+  void startTimer() {
+    const oneSec = Duration(seconds: 1);
+    startTime = DateTime.now();
+    _audioTimer = Timer.periodic(
+      oneSec, (Timer timer) {
+      final minDur = DateTime.now().difference(startTime!).inMinutes;
+          final secDur = DateTime.now().difference(startTime!).inSeconds % 60;
+          String min = minDur < 10 ? "0$minDur" : minDur.toString();
+          String sec = secDur < 10 ? "0$secDur" : secDur.toString();
+          timerInit("$min:$sec");
+      },
+    );
+  }
+
+  Future<void> cancelRecording() async {
+
+    var filePath = await record.stop();
+    File(filePath!).delete();
+    _audioTimer?.cancel();
+    record.dispose();
+    _audioTimer = null;
+    isAudioRecording(Constants.audioRecordDelete);
+
+    Future.delayed(const Duration(milliseconds: 1500), () => isAudioRecording(Constants.audioRecordInitial));
+  }
+
+  Future<void> startRecording() async {
+    if (await Record().hasPermission()) {
+      record = Record();
+      timerInit("00.00");
+      isAudioRecording(Constants.audioRecording);
+      startTimer();
+      await record.start(
+        path: "$audioSavePath/audio_${DateTime.now().millisecondsSinceEpoch}.m4a",
+        encoder: AudioEncoder.AAC,
+        bitRate: 128000,
+        samplingRate: 44100,
+      );
+    }
+  }
+
+  Future<void> stopRecording() async {
+    isAudioRecording(Constants.audioRecordDone);
+    isUserTyping(true);
+    _audioTimer?.cancel();
+    _audioTimer = null;
+    await Record().stop().then((filePath) async {
+        if (File(filePath!).existsSync()) {
+          recordedAudioPath = filePath;
+        } else {
+          debugPrint("File Not Found For Image Upload");
+        }
+        debugPrint(filePath);
+      });
+  }
+
+  Future<void> deleteRecording() async {
+    var filePath = await record.stop();
+    File(filePath!).delete();
+    isUserTyping(false);
+    isAudioRecording(Constants.audioRecordInitial);
+    timerInit("00.00");
+    record.dispose();
+  }
+
+  Future<void> setAudioPath() async {
+    audioSavePath = (await getExternalStorageDirectory())!.path;
+    debugPrint(audioSavePath);
+  }
+
+  sendRecordedAudioMessage() {
+    final format = DateFormat('mm:ss');
+    final dt = format.parse(timerInit.value, true);
+    final recordDuration = dt.millisecondsSinceEpoch;
+    sendAudioMessage(
+        recordedAudioPath, true, recordDuration.toString());
+    isUserTyping(false);
+    isAudioRecording(Constants.audioRecordInitial);
+    timerInit("00.00");
+    record.dispose();
   }
 }

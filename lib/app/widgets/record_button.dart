@@ -10,7 +10,7 @@ import '../common/constants.dart';
 import '../modules/chat/controllers/chat_controller.dart';
 import 'flow_shader.dart';
 import 'lottie_animation.dart';
-import 'package:record/record.dart';
+// import 'package:record/record.dart';
 
 class RecordButton extends StatefulWidget {
   const RecordButton({
@@ -37,7 +37,7 @@ class _RecordButtonState extends State<RecordButton> {
   DateTime? startTime;
   Timer? timer;
   String recordDuration = "00:00";
-  late Record record;
+  // late Record record;
   var recordTime;
 
   bool isLocked = false;
@@ -57,7 +57,7 @@ class _RecordButtonState extends State<RecordButton> {
       setState(() {});
     });
     setAudioPath();
-    record = Record();
+    // record = Record();
   }
 
   @override
@@ -85,7 +85,7 @@ class _RecordButtonState extends State<RecordButton> {
 
   @override
   void dispose() {
-    record.dispose();
+    // record.dispose();
     timer?.cancel();
     timer = null;
     super.dispose();
@@ -155,7 +155,7 @@ class _RecordButtonState extends State<RecordButton> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             mainAxisSize: MainAxisSize.max,
             children: [
-              showLottie ? const LottieAnimation() : Text(recordDuration),
+              // showLottie ? const LottieAnimation(lottieJson: deleteDustbin) : Text(recordDuration),
               const SizedBox(width: size),
               FlowShader(
                 duration: const Duration(seconds: 3),
@@ -196,13 +196,13 @@ class _RecordButtonState extends State<RecordButton> {
               startTime = null;
               recordDuration = "00:00";
 
-              var filePath = await Record().stop();
+              // var filePath = await Record().stop();
               // AudioState.files.add(filePath!);
               // Globals.audioListKey.currentState!
               //     .insertItem(AudioState.files.length - 1);
 
-              debugPrint(filePath);
-              debugPrint(filePath);
+              // debugPrint(filePath);
+              // debugPrint(filePath);
               setState(() {
                 isLocked = false;
               });
@@ -272,10 +272,10 @@ class _RecordButtonState extends State<RecordButton> {
           Timer(const Duration(milliseconds: 1440), () async {
             widget.controller.reverse();
             debugPrint("Cancelled recording");
-            var filePath = await record.stop();
-            debugPrint(filePath);
-            File(filePath!).delete();
-            debugPrint("Deleted $filePath");
+            // var filePath = await record.stop();
+            // debugPrint(filePath);
+            // File(filePath!).delete();
+            // debugPrint("Deleted $filePath");
             showLottie = false;
           });
         } else if (checkIsLocked(details.localPosition)) {
@@ -303,20 +303,20 @@ class _RecordButtonState extends State<RecordButton> {
           startTime = null;
           recordDuration = "00:00";
 
-          await Record().stop().then((filePath) async {
-            if (File(filePath!).existsSync()) {
-              var response = await Get.find<ChatController>()
-                  .sendAudioMessage(filePath, true,millisec.toString() );
-              debugPrint("Preview View ==> $response");
-              if (response != null) {
-                Get.back();
-              }
-            } else {
-              debugPrint("File Not Found For Image Uplaod");
-            }
-
-            debugPrint(filePath);
-          });
+          // await Record().stop().then((filePath) async {
+          //   if (File(filePath!).existsSync()) {
+          //     var response = await Get.find<ChatController>()
+          //         .sendAudioMessage(filePath, true,millisec.toString() );
+          //     debugPrint("Preview View ==> $response");
+          //     if (response != null) {
+          //       Get.back();
+          //     }
+          //   } else {
+          //     debugPrint("File Not Found For Image Uplaod");
+          //   }
+          //
+          //   debugPrint(filePath);
+          // });
 
           // AudioState.files.add(filePath!);
           // Globals.audioListKey.currentState!
@@ -331,26 +331,26 @@ class _RecordButtonState extends State<RecordButton> {
       onLongPress: () async {
         debugPrint("onLongPress");
         // Vibrate.feedback(FeedbackType.success);
-        if (await Record().hasPermission()) {
-
-          await record.start(
-            path: documentPath + "/" +
-                "audio_${DateTime.now().millisecondsSinceEpoch}.m4a",
-            encoder: AudioEncoder.AAC,
-            bitRate: 128000,
-            samplingRate: 44100,
-          );
-          startTime = DateTime.now();
-          timer = Timer.periodic(const Duration(seconds: 1), (_) {
-            final minDur = DateTime.now().difference(startTime!).inMinutes;
-            final secDur = DateTime.now().difference(startTime!).inSeconds % 60;
-            String min = minDur < 10 ? "0$minDur" : minDur.toString();
-            String sec = secDur < 10 ? "0$secDur" : secDur.toString();
-            setState(() {
-              recordDuration = "$min:$sec";
-            });
-          });
-        }
+        // if (await Record().hasPermission()) {
+        //
+        //   await record.start(
+        //     path: documentPath + "/" +
+        //         "audio_${DateTime.now().millisecondsSinceEpoch}.m4a",
+        //     encoder: AudioEncoder.AAC,
+        //     bitRate: 128000,
+        //     samplingRate: 44100,
+        //   );
+        //   startTime = DateTime.now();
+        //   timer = Timer.periodic(const Duration(seconds: 1), (_) {
+        //     final minDur = DateTime.now().difference(startTime!).inMinutes;
+        //     final secDur = DateTime.now().difference(startTime!).inSeconds % 60;
+        //     String min = minDur < 10 ? "0$minDur" : minDur.toString();
+        //     String sec = secDur < 10 ? "0$secDur" : secDur.toString();
+        //     setState(() {
+        //       recordDuration = "$min:$sec";
+        //     });
+        //   });
+        // }
       },
     );
   }

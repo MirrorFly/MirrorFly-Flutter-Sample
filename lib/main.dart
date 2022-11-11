@@ -1,9 +1,7 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 
 import 'package:get/get.dart';
-import 'package:mirror_fly_demo/app/common/constants.dart';
 import 'package:mirror_fly_demo/app/common/apptheme.dart';
 import 'package:mirror_fly_demo/app/common/main_controller.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
@@ -30,6 +28,7 @@ void main() async {
   runApp(const MyApp());
   configLoading();
 }
+
 void configLoading() {
   EasyLoading.instance
     ..displayDuration = const Duration(milliseconds: 2000)
@@ -46,7 +45,7 @@ void configLoading() {
     ..dismissOnTap = false;
 }
 
-class MyApp extends StatelessWidget{
+class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
   // This widget is the root of your application.
@@ -64,26 +63,29 @@ class MyApp extends StatelessWidget{
     );
   }
 }
-Bindings? getBinding(){
-  if(SessionManagement().getLogin()){
-    if(SessionManagement().getName().checkNull().isNotEmpty && SessionManagement().getMobileNumber().checkNull().isNotEmpty){
+
+Bindings? getBinding() {
+  if (SessionManagement().getLogin()) {
+    if (SessionManagement().getName().checkNull().isNotEmpty &&
+        SessionManagement().getMobileNumber().checkNull().isNotEmpty) {
       return DashboardBinding();
-    }else{
+    } else {
       return ProfileBinding();
     }
-  }else{
+  } else {
     return LoginBinding();
   }
 }
 
-String getIntialRoute(){
-  if(SessionManagement().getLogin()){
-    if(SessionManagement().getName().checkNull().isNotEmpty && SessionManagement().getMobileNumber().checkNull().isNotEmpty){
+String getIntialRoute() {
+  if (SessionManagement().getLogin()) {
+    if (SessionManagement().getName().checkNull().isNotEmpty &&
+        SessionManagement().getMobileNumber().checkNull().isNotEmpty) {
       return AppPages.DASHBOARD;
-    }else{
+    } else {
       return AppPages.PROFILE;
     }
-  }else{
+  } else {
     return AppPages.INITIAL;
   }
 }

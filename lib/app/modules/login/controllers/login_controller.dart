@@ -1,11 +1,8 @@
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:mirror_fly_demo/app/common/constants.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
 import 'package:mirror_fly_demo/app/model/countryModel.dart';
-import 'package:mirror_fly_demo/app/model/statusModel.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 import '../../../data/SessionManagement.dart';
 import '../../../model/registerModel.dart';
@@ -17,10 +14,6 @@ class LoginController extends GetxController {
   var selectedCountry = CountryData(name: "India", dialCode: "+91", code: "IN").obs;
   TextEditingController mobileNumber = TextEditingController();
 
-  @override
-  void onInit() {
-    super.onInit();
-  }
 
   void registerUser(BuildContext context) {
 
@@ -49,7 +42,6 @@ class LoginController extends GetxController {
       });
     }
 
-    //Get.toNamed(Routes.PROFILE);
 
   }
 

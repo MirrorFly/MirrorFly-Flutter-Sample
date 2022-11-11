@@ -84,12 +84,15 @@ class _MessageContentState extends State<MessageContent> {
       );
     } else if (chatList.messageType == Constants.MNOTIFICATION) {
       return Center(
-        child: Padding(
-          padding: const EdgeInsets.all(15.0),
-          // child: Text(chatList.messageTextContent!,
+        child: Container(
+          decoration: const BoxDecoration(
+              borderRadius: BorderRadius.all(Radius.circular(40)),
+              color: chatreplycontainercolor),
+          padding: const EdgeInsets.only(left: 15.0, right: 15.0, top: 8.0, bottom: 8.0),
+          // child: Text(chatList[index].messageTextContent!,
           child: Text(chatList.messageTextContent ?? "",
               style:
-              const TextStyle(fontSize: 13, fontWeight: FontWeight.bold)),
+              const TextStyle(fontSize: 12)),
         ),
       );
     } else if (chatList.messageType == Constants.MIMAGE) {

@@ -180,7 +180,7 @@ class Config {
     "pinTimeOut": pinTimeOut,
     "fileSizeLimit": fileSizeLimit,
     "stuns": List<dynamic>.from(stuns.map((x) => x)),
-    "turns": List<dynamic>.from(turns.map((x) => x?.toJson())),
+    "turns": List<dynamic>.from(turns.map((x) => x.toJson())),
     "liveStreamingSignalServer": liveStreamingSignalServer,
     "isLiveStreamingEnabled": isLiveStreamingEnabled,
     "sipcallEnabled": sipcallEnabled,

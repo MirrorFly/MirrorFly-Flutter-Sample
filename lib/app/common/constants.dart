@@ -73,13 +73,14 @@ const String xls_image = 'assets/logos/xls.svg';
 const String xlsx_image = 'assets/logos/xlsx.svg';
 const String doc_image = 'assets/logos/doc.svg';
 const String apk_image = 'assets/logos/apk.svg';
-const String Mcontacticon = 'assets/logos/Contact.svg';
-const String Mdocumenticon = 'assets/logos/Document.svg';
+const String Mcontacticon = 'assets/logos/contact_chat.svg';
+const String Mdocumenticon = 'assets/logos/document_chat.svg';
 const String Mimageicon = 'assets/logos/image.svg';
-const String Mlocationicon = 'assets/logos/Location.svg';
+const String Mlocationicon = 'assets/logos/location_chat.svg';
 const String Mvideoicon = 'assets/logos/Video.svg';
 const String Maudioicon = 'assets/logos/noun_Audio_3408360.svg';
 const String cornershadow = 'assets/logos/ic_baloon.png';
+const String disabledIcon = 'assets/logos/disabled.png';
 
 const String replyIcon = 'assets/logos/reply.svg';
 const String forwardIcon = 'assets/logos/forward.svg';
@@ -89,6 +90,11 @@ const String favouriteIcon = 'assets/logos/star.svg';
 const String unfavouriteIcon = 'assets/logos/star.svg';
 const String copyIcon = 'assets/logos/copy.svg';
 const String infoIcon = 'assets/logos/info.svg';
+
+//Animation
+ const String deleteDustbin = 'assets/animation/delete_dustbin.json';
+ const String audioJson = 'assets/animation/enable_mic.json';
+ const String audioJson1 = 'assets/animation/enable_mic1.json';
 
 
 //Strings
@@ -524,6 +530,12 @@ class Constants {
   static const String MLOCATION = "LOCATION";
   static const String MDOCUMENT = "DOCUMENT";
   static const String MNOTIFICATION = "NOTIFICATION";
+
+  //Audio Recording Types
+  static const String audioRecording = "AUDIO_RECORDING";
+  static const String audioRecordDone = "AUDIO_RECORDING_COMPLETED";
+  static const String audioRecordDelete = "AUDIO_RECORDING_DELETE";
+  static const String audioRecordInitial = "AUDIO_RECORDING_NOT_INITIALIZED";
 }
 
 Future<void> launchWeb(String url) async{

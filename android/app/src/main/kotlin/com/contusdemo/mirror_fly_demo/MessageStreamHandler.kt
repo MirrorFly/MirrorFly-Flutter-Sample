@@ -1,8 +1,5 @@
 package com.contusdemo.mirror_fly_demo
 
-import android.util.Log
-import com.contusflysdk.activities.FlyBaseActivity
-import com.contusflysdk.api.models.ChatMessage
 import io.flutter.plugin.common.EventChannel
 
 object MessageReceivedStreamHandler : EventChannel.StreamHandler {
@@ -21,6 +18,7 @@ object MessageReceivedStreamHandler : EventChannel.StreamHandler {
 object MessageStatusUpdatedStreamHandler : EventChannel.StreamHandler {
 
     var onMessageStatusUpdated: EventChannel.EventSink? = null
+
 
     //Event Handler Methods
     override fun onListen(arguments: Any?, events: EventChannel.EventSink?) {

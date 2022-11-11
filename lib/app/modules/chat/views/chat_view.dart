@@ -1,10 +1,7 @@
-import 'dart:convert';
 import 'dart:io';
 
-import 'package:contacts_service/contacts_service.dart';
 import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_profile_picture/flutter_profile_picture.dart';
 import 'package:flutter_svg/svg.dart';
 
 import 'package:get/get.dart';
@@ -15,17 +12,14 @@ import 'package:mirror_fly_demo/app/common/widgets.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
 import 'package:mirror_fly_demo/app/data/permissions.dart';
 import 'package:mirror_fly_demo/app/model/chatMessageModel.dart';
-import 'package:mirror_fly_demo/app/modules/chat/views/locationsent_view.dart';
 
-// import 'package:image_picker/image_picker.dart';
 import 'package:mirror_fly_demo/app/routes/app_pages.dart';
-import 'package:mirror_fly_demo/app/widgets/record_button.dart';
 import 'package:swipe_to/swipe_to.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../../common/constants.dart';
-import '../../../data/helper.dart';
 import '../../../widgets/custom_action_bar_icons.dart';
+import '../../../widgets/lottie_animation.dart';
 import '../controllers/chat_controller.dart';
 import 'dart:math' as math;
 
@@ -34,18 +28,15 @@ class ChatView extends GetView<ChatController> {
 
   final ImagePicker _picker = ImagePicker();
 
-  dynamic _pickImageError;
+  late final dynamic _pickImageError;
 
-  var screenWidth, screenHeight;
+  double screenWidth = 0.0, screenHeight = 0.0;
 
   @override
   Widget build(BuildContext context) {
-    screenHeight = MediaQuery.of(context).size.height;
-    screenWidth = MediaQuery.of(context).size.width;
+     screenHeight = MediaQuery.of(context).size.height;
+     screenWidth = MediaQuery.of(context).size.width;
     return KeyboardDismisser(
-      // onTap: (){
-      //   FocusManager.instance.primaryFocus?.unfocus();
-      // },
       child: Scaffold(
           appBar: getAppBar(context),
           body: SafeArea(
@@ -65,8 +56,7 @@ class ChatView extends GetView<ChatController> {
                   } else if (MediaQuery.of(context).viewInsets.bottom > 0) {
                     FocusManager.instance.primaryFocus?.unfocus();
                   } else {
-                    // Get.back();
-                    Get.offNamed(Routes.DASHBOARD);
+                    Get.offAllNamed(Routes.DASHBOARD);
                   }
                   return Future.value(false);
                 },
@@ -134,157 +124,212 @@ class ChatView extends GetView<ChatController> {
                                     const SizedBox(
                                       height: 10,
                                     ),
-                                    Row(
-                                      children: [
-                                        Flexible(
-                                          child: Container(
-                                            padding:
-                                                const EdgeInsets.only(left: 10),
-                                            margin: const EdgeInsets.only(
-                                                left: 10,
-                                                right: 10,
-                                                bottom: 10),
-                                            width: double.infinity,
-                                            decoration: BoxDecoration(
-                                              border: Border.all(
-                                                color: textcolor,
+                                    IntrinsicHeight(
+                                      child: Row(
+                                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                                        children: [
+                                          Flexible(
+                                            child: Container(
+                                              padding:
+                                                  const EdgeInsets.only(left: 10),
+                                              margin: const EdgeInsets.only(
+                                                  left: 10,
+                                                  right: 10,
+                                                  bottom: 10),
+                                              width: double.infinity,
+                                              decoration: BoxDecoration(
+                                                border: Border.all(
+                                                  color: textcolor,
+                                                ),
+                                                borderRadius:
+                                                    const BorderRadius.all(
+                                                        Radius.circular(40)),
+                                                color: Colors.white,
                                               ),
-                                              borderRadius:
-                                                  const BorderRadius.all(
-                                                      Radius.circular(40)),
-                                              color: Colors.white,
-                                            ),
-                                            child: Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.end,
-                                              children: <Widget>[
-                                                InkWell(
-                                                    onTap: () {
-                                                      if (!controller
-                                                          .showEmoji.value) {
-                                                        FocusScope.of(context)
-                                                            .unfocus();
-                                                        controller.focusNode
-                                                                .canRequestFocus =
-                                                            false;
-                                                      }
-                                                      Future.delayed(
-                                                          const Duration(
-                                                              milliseconds:
-                                                                  500), () {
-                                                        controller.showEmoji(
-                                                            !controller
-                                                                .showEmoji
-                                                                .value);
-                                                      });
-                                                    },
-                                                    child: SvgPicture.asset(
-                                                        'assets/logos/smile.svg')),
-                                                const SizedBox(
-                                                  width: 10,
-                                                ),
-                                                Expanded(
-                                                  child: TextField(
-                                                    onTap: () {
-                                                      controller.focusNode
-                                                          .requestFocus();
-                                                    },
-                                                    onChanged: (text) {
-                                                      controller.isTyping(text);
-                                                    },
-                                                    keyboardType:
-                                                        TextInputType.multiline,
-                                                    minLines: 1,
-                                                    maxLines: 4,
-                                                    controller: controller
-                                                        .messageController,
-                                                    focusNode:
-                                                        controller.focusNode,
-                                                    decoration:
-                                                        const InputDecoration(
-                                                            hintText:
-                                                                "Start Typing...",
-                                                            border: InputBorder
-                                                                .none),
-                                                  ),
-                                                ),
-                                                const SizedBox(
-                                                  width: 15,
-                                                ),
-                                                IconButton(
-                                                  color: Colors.blue,
-                                                  onPressed: () async {
-                                                    if (await controller
-                                                        .askStoragePermission()) {
-                                                      showModalBottomSheet(
-                                                          backgroundColor:
-                                                              Colors
-                                                                  .transparent,
-                                                          context: context,
-                                                          builder: (builder) =>
-                                                              bottomSheet(
-                                                                  context));
-                                                    }
-                                                  },
-                                                  icon: SvgPicture.asset(
-                                                      'assets/logos/attach.svg'),
-                                                ),
-                                                const SizedBox(
-                                                  width: 5,
-                                                ),
-                                                // SvgPicture.asset('assets/logos/mic.svg'),
-                                                // RecordButton(controller: controller.controller,),
-                                                // const SizedBox(
-                                                //   width: 20,
-                                                // ),
-                                              ],
+                                              child: Obx(() {
+                                                return Row(
+                                                  children: <Widget>[
+                                                    controller.isAudioRecording.value == Constants.audioRecording || controller.isAudioRecording.value == Constants.audioRecordDone ? Text(controller.timerInit.value,
+                                                        style: const TextStyle(
+                                                            color:
+                                                            buttonbgcolor)) : const SizedBox.shrink(),
+                                                    controller.isAudioRecording.value == Constants.audioRecordInitial ? InkWell(
+                                                        onTap: () {
+                                                          if (!controller
+                                                              .showEmoji
+                                                              .value) {
+                                                            FocusScope.of(
+                                                                    context)
+                                                                .unfocus();
+                                                            controller
+                                                                    .focusNode
+                                                                    .canRequestFocus =
+                                                                false;
+                                                          }
+                                                          Future.delayed(
+                                                              const Duration(
+                                                                  milliseconds:
+                                                                      500),
+                                                              () {
+                                                            controller.showEmoji(
+                                                                !controller
+                                                                    .showEmoji
+                                                                    .value);
+                                                          });
+                                                        },
+                                                        child: SvgPicture.asset(
+                                                                'assets/logos/smile.svg')) : const SizedBox.shrink(),
+                                                    controller.isAudioRecording.value == Constants.audioRecordDelete ? const Padding(
+                                                      padding: EdgeInsets.all(13.0),
+                                                      child: LottieAnimation(
+                                                          lottieJson: deleteDustbin, showRepeat: false, width: 25, height: 25,),
+                                                    ): const SizedBox.shrink(),
+                                                    const SizedBox(
+                                                      width: 10,
+                                                    ),
+                                                    controller.isAudioRecording.value == Constants.audioRecording
+                                                        ? Expanded(
+                                                            child: Dismissible(
+                                                              key: UniqueKey(),
+                                                              confirmDismiss: (DismissDirection direction) async{
+                                                                if (direction == DismissDirection.endToStart) {
+                                                                  controller.cancelRecording();
+                                                                  return true;
+                                                                }
+                                                                return false;
+                                                              },
+                                                              direction: DismissDirection.endToStart,
+                                                              child:  const Padding(
+                                                                padding: EdgeInsets.only(right: 15.0),
+                                                                child: Text('< Slide to Cancel', textAlign: TextAlign.end),
+                                                              ),
+                                                            ),
+                                                          )
+                                                        : const SizedBox.shrink(),
+                                                    controller.isAudioRecording.value == Constants.audioRecordDone
+                                                        ? Expanded(
+                                                            child: InkWell(
+                                                              onTap: () {
+                                                                controller.deleteRecording();
+                                                              },
+                                                              child: const Padding(
+                                                                padding: EdgeInsets.all(17.0),
+                                                                child: Text('Cancel', textAlign: TextAlign.end, style: TextStyle(color: Colors.red),),
+                                                              ),
+                                                            ),
+                                                          )
+                                                        : const SizedBox.shrink(),
+                                                    controller.isAudioRecording.value == Constants.audioRecordInitial ? Expanded(
+                                                            child: SizedBox(
+                                                              height: 50,
+                                                              child: TextField(
+                                                                onTap: () {
+                                                                  controller
+                                                                      .focusNode
+                                                                      .requestFocus();
+                                                                },
+                                                                onChanged: (text) {
+                                                                  controller
+                                                                      .isTyping(
+                                                                          text);
+                                                                },
+                                                                keyboardType:
+                                                                    TextInputType
+                                                                        .multiline,
+                                                                minLines: 1,
+                                                                maxLines: 4,
+                                                                enabled: controller
+                                                                            .isAudioRecording
+                                                                            .value ==
+                                                                        Constants
+                                                                            .audioRecordInitial
+                                                                    ? true
+                                                                    : false,
+                                                                controller: controller
+                                                                    .messageController,
+                                                                focusNode:
+                                                                    controller
+                                                                        .focusNode,
+                                                                decoration: const InputDecoration(
+                                                                    hintText: "Start Typing...",
+                                                                    border:
+                                                                        InputBorder
+                                                                            .none),
+                                                              ),
+                                                            ),
+                                                          ) : const SizedBox.shrink(),
+                                                    controller.isAudioRecording.value == Constants.audioRecordInitial ? IconButton(
+                                                      onPressed: () async {
+                                                        if (await controller
+                                                            .askStoragePermission()) {
+                                                          showModalBottomSheet(
+                                                              backgroundColor:
+                                                                  Colors
+                                                                      .transparent,
+                                                              context: context,
+                                                              builder: (builder) =>
+                                                                  bottomSheet(
+                                                                      context));
+                                                        }
+                                                      },
+                                                      icon: SvgPicture.asset(
+                                                              'assets/logos/attach.svg'),
+                                                    ) : const SizedBox.shrink(),
+                                                    controller.isAudioRecording.value == Constants.audioRecordInitial ? IconButton(
+                                                      onPressed: () async {
+                                                        if (await controller
+                                                            .askStoragePermission()) {
+                                                          controller.startRecording();
+                                                        }
+                                                      },
+                                                      icon: SvgPicture.asset(
+                                                              'assets/logos/mic.svg'),
+                                                    ): const SizedBox.shrink(),
+                                                    const SizedBox(
+                                                      width: 5,
+                                                    ),
+                                                  ],
+                                                );
+                                              }),
                                             ),
                                           ),
-                                        ),
-
-                                        // InkWell(
-                                        //     onTap: () {
-                                        //       // if (scrollController.hasClients) {
-                                        //       // scrollController.animateTo(
-                                        //       //   scrollController.position.maxScrollExtent,
-                                        //       //   curve: Curves.easeOut,
-                                        //       //   duration: const Duration(milliseconds: 300),
-                                        //       // );
-                                        //       // }
-                                        //       controller.sendMessage(controller.profile);
-                                        //     },
-                                        //     child: SvgPicture.asset('assets/logos/send.svg')),
-
-                                        Obx(() {
-                                          return controller.isUserTyping.value
-                                              ? InkWell(
-                                                  onTap: () {
-                                                    controller.sendMessage(
-                                                        controller.profile);
-                                                  },
-                                                  child: Padding(
-                                                    padding:
-                                                        const EdgeInsets.only(
-                                                            left: 8.0,
-                                                            right: 8.0,
-                                                            bottom: 8),
-                                                    child: SvgPicture.asset(
-                                                        'assets/logos/send.svg'),
-                                                  ))
-                                              : Padding(
-                                                  padding:
-                                                      const EdgeInsets.only(
+                                          Obx(() {
+                                            return controller.isUserTyping.value
+                                                ? InkWell(
+                                                    onTap: () {
+                                                      controller.isAudioRecording.value == Constants.audioRecordDone ? controller.sendRecordedAudioMessage() : controller.sendMessage(
+                                                          controller.profile);
+                                                    },
+                                                    child: Padding(
+                                                      padding:
+                                                          const EdgeInsets.only(
+                                                              left: 8.0,
+                                                              right: 8.0,
+                                                              bottom: 8),
+                                                      child: SvgPicture.asset(
+                                                          'assets/logos/send.svg'),
+                                                    ))
+                                                : const SizedBox.shrink();
+                                          }),
+                                          Obx(() {
+                                            return controller.isAudioRecording.value == Constants.audioRecording
+                                                ? InkWell(
+                                                    onTap: () {
+                                                      controller.stopRecording();
+                                                    },
+                                                    child: const Padding(
+                                                      padding: EdgeInsets.only(
                                                           bottom: 8.0),
-                                                  child: RecordButton(
-                                                    controller:
-                                                        controller.controller,
-                                                  ),
-                                                );
-                                        }),
-                                        const SizedBox(
-                                          width: 10,
-                                        ),
-                                      ],
+                                                      child: LottieAnimation(
+                                                          lottieJson: audioJson1, showRepeat: true, width: 54, height: 54,),
+                                                    ))
+                                                : const SizedBox.shrink();
+                                          }),
+                                          const SizedBox(
+                                            width: 5,
+                                          ),
+                                        ],
+                                      ),
                                     ),
                                     emojiLayout(),
                                   ],
@@ -346,7 +391,6 @@ class ChatView extends GetView<ChatController> {
       reverse: true,
       controller: controller.scrollController,
       itemBuilder: (context, index) {
-        // int reversedIndex = chatList.length - 1 - index;
         return SwipeTo(
           key: ValueKey(chatList[index].messageId),
           onRightSwipe: () {
@@ -387,7 +431,10 @@ class ChatView extends GetView<ChatController> {
                       ? Alignment.bottomRight
                       : Alignment.bottomLeft),
                   child: Container(
-                    constraints: BoxConstraints(maxWidth: screenWidth * 0.6),
+                    constraints:
+                        chatList[index].messageType == Constants.MNOTIFICATION
+                            ? const BoxConstraints(maxWidth: double.infinity)
+                            : BoxConstraints(maxWidth: screenWidth * 0.75),
                     decoration: BoxDecoration(
                         borderRadius: chatList[index].isMessageSentByMe
                             ? const BorderRadius.only(
@@ -400,10 +447,16 @@ class ChatView extends GetView<ChatController> {
                                 bottomRight: Radius.circular(10)),
                         color: (chatList[index].isMessageSentByMe
                             ? chatsentbgcolor
-                            : Colors.white),
+                            : chatList[index].messageType ==
+                                    Constants.MNOTIFICATION
+                                ? Colors.transparent
+                                : Colors.white),
                         border: chatList[index].isMessageSentByMe
                             ? Border.all(color: chatsentbgcolor)
-                            : Border.all(color: Colors.grey)),
+                            : chatList[index].messageType ==
+                                    Constants.MNOTIFICATION
+                                ? null
+                                : Border.all(color: Colors.grey)),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -446,7 +499,7 @@ class ChatView extends GetView<ChatController> {
   getMessageContent(
       int index, BuildContext context, List<ChatMessageModel> chatList) {
     // debugPrint(json.encode(chatList[index]));
-    if (chatList[index].messageType == Constants.MTEXT) {
+    if(chatList[index].isMessageRecalled){
       return Padding(
         padding: const EdgeInsets.all(10.0),
         child: Row(
@@ -456,31 +509,22 @@ class ChatView extends GetView<ChatController> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
-            Text(
-              chatList[index].messageTextContent ?? "",
-              style: const TextStyle(fontSize: 17),
+            Row(
+              children: [
+                Image.asset(disabledIcon, width: 15, height: 15,),
+                const SizedBox(width: 10),
+                Text(
+                  chatList[index].isMessageSentByMe ? "You deleted this message" : "This message was deleted",
+                  style: const TextStyle(fontSize: 16),
+                ),
+              ],
             ),
+
             const SizedBox(
               width: 10,
             ),
             Row(
               children: [
-                chatList[index].isMessageStarred
-                    ? const Icon(
-                        Icons.star,
-                        size: 13,
-                      )
-                    : const SizedBox.shrink(),
-                const SizedBox(
-                  width: 5,
-                ),
-                getMessageIndicator(
-                    chatList[index].messageStatus.status,
-                    chatList[index].isMessageSentByMe,
-                    chatList[index].messageType),
-                const SizedBox(
-                  width: 5,
-                ),
                 Text(
                   controller.getChatTime(
                       context, chatList[index].messageSentTime),
@@ -491,200 +535,102 @@ class ChatView extends GetView<ChatController> {
           ],
         ),
       );
-    } else if (chatList[index].messageType == Constants.MNOTIFICATION) {
-      return Center(
-        child: Padding(
-          padding: const EdgeInsets.all(15.0),
-          // child: Text(chatList[index].messageTextContent!,
-          child: Text(chatList[index].messageTextContent ?? "",
-              style:
-                  const TextStyle(fontSize: 13, fontWeight: FontWeight.bold)),
-        ),
-      );
-    } else if (chatList[index].messageType == Constants.MIMAGE) {
-      var chatMessage = chatList[index].mediaChatMessage!;
-      //mediaLocalStoragePath
-      //mediaThumbImage
-      return Padding(
-        padding: const EdgeInsets.all(2.0),
-        child: Stack(
-          children: [
-            ClipRRect(
-              borderRadius: BorderRadius.circular(15),
-              child: getImage(
-                  chatMessage.mediaLocalStoragePath,
-                  chatMessage.mediaThumbImage,
-                  context,
-                  chatMessage.mediaFileName),
-            ),
-            Positioned(
-                top: (screenHeight * 0.4) / 2.5,
-                left: (screenWidth * 0.6) / 3,
-                child: InkWell(
-                    onTap: () {
-                      handleMediaUploadDownload(
-                          chatMessage.mediaDownloadStatus, chatList[index]);
-                    },
-                    child: getImageOverlay(chatList, index, context))),
-            Positioned(
-              bottom: 8,
-              right: 10,
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  chatList[index].isMessageStarred
-                      ? const Icon(
-                          Icons.star,
-                          size: 13,
-                        )
-                      : const SizedBox.shrink(),
-                  const SizedBox(
-                    width: 5,
-                  ),
-                  getMessageIndicator(
-                      chatList[index].messageStatus.status,
-                      chatList[index].isMessageSentByMe,
-                      chatList[index].messageType),
-                  const SizedBox(
-                    width: 4,
-                  ),
-                  Text(
-                    controller.getChatTime(
-                        context, chatList[index].messageSentTime),
-                    style: const TextStyle(fontSize: 12, color: Colors.white),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      );
-    } else if (chatList[index].messageType == Constants.MVIDEO) {
-      var chatMessage = chatList[index].mediaChatMessage!;
-      return Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Stack(
-          children: [
-            InkWell(
-              onTap: () {
-                if (controller.checkFile(chatMessage.mediaLocalStoragePath) &&
-                    (chatMessage.mediaDownloadStatus ==
-                            Constants.MEDIA_DOWNLOADED ||
-                        chatMessage.mediaDownloadStatus ==
-                            Constants.MEDIA_UPLOADED)) {
-                  Get.toNamed(Routes.VIDEO_PLAY, arguments: {
-                    "filePath": chatMessage.mediaLocalStoragePath,
-                  });
-                }
-              },
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(15),
-                child: controller.imageFromBase64String(
-                    chatMessage.mediaThumbImage, context, null, null),
-              ),
-            ),
-            Positioned(
-                top: (screenHeight * 0.4) / 2.6,
-                left: (screenWidth * 0.6) / 2.9,
-                child: InkWell(
-                    onTap: () {
-                      handleMediaUploadDownload(
-                          chatMessage.mediaDownloadStatus, chatList[index]);
-                    },
-                    child: getImageOverlay(chatList, index, context))),
-            Positioned(
-              bottom: 8,
-              right: 10,
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  chatList[index].isMessageStarred
-                      ? const Icon(
-                          Icons.star,
-                          size: 13,
-                        )
-                      : const SizedBox.shrink(),
-                  const SizedBox(
-                    width: 5,
-                  ),
-                  getMessageIndicator(
-                      chatList[index].messageStatus.status,
-                      chatList[index].isMessageSentByMe,
-                      chatList[index].messageType),
-                  const SizedBox(
-                    width: 4,
-                  ),
-                  Text(
-                    controller.getChatTime(
-                        context, chatList[index].messageSentTime),
-                    style: const TextStyle(fontSize: 12, color: Colors.white),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      );
-    } else if (chatList[index].messageType == Constants.MDOCUMENT) {
-      return InkWell(
-        onTap: () {
-          controller.openDocument(
-              chatList[index].mediaChatMessage!.mediaLocalStoragePath, context);
-        },
-        child: Container(
-          decoration: BoxDecoration(
-            border: Border.all(
-              color: chatreplysendercolor,
-            ),
-            borderRadius: const BorderRadius.all(Radius.circular(10)),
-            color: Colors.white,
-          ),
-          width: screenWidth * 0.60,
-          child: Column(
+    }else {
+      if (chatList[index].messageType == Constants.MTEXT) {
+        return Padding(
+          padding: const EdgeInsets.all(10.0),
+          child: Row(
+            mainAxisSize: chatList[index].replyParentChatMessage == null
+                ? MainAxisSize.min
+                : MainAxisSize.max,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.end,
             children: [
-              Padding(
-                padding:
-                    const EdgeInsets.only(left: 15.0, right: 15.0, top: 10.0),
-                child: Row(
-                  children: [
-                    getImageHolder(
-                        chatList[index].mediaChatMessage!.mediaFileName),
-                    const SizedBox(
-                      width: 12,
-                    ),
-                    Expanded(
-                        child: Text(
-                      chatList[index].mediaChatMessage!.mediaFileName,
-                      maxLines: 2,
-                    )),
-                    const Spacer(),
-                    InkWell(
-                      onTap: () {
-                        handleMediaUploadDownload(
-                            chatList[index]
-                                .mediaChatMessage!
-                                .mediaDownloadStatus,
-                            chatList[index]);
-                      },
-                      child: getImageOverlay(chatList, index, context),
-                    ),
-                  ],
+              Flexible(
+                child: Text(
+                  chatList[index].messageTextContent ?? "",
+                  style: const TextStyle(fontSize: 17),
                 ),
               ),
               const SizedBox(
-                height: 5,
+                width: 10,
               ),
-              Align(
-                alignment: Alignment.bottomRight,
+              Row(
+                children: [
+                  chatList[index].isMessageStarred
+                      ? const Icon(
+                    Icons.star,
+                    size: 13,
+                  )
+                      : const SizedBox.shrink(),
+                  const SizedBox(
+                    width: 5,
+                  ),
+                  getMessageIndicator(
+                      chatList[index].messageStatus.status,
+                      chatList[index].isMessageSentByMe,
+                      chatList[index].messageType),
+                  const SizedBox(
+                    width: 5,
+                  ),
+                  Text(
+                    controller.getChatTime(
+                        context, chatList[index].messageSentTime),
+                    style: const TextStyle(fontSize: 12),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        );
+      } else if (chatList[index].messageType == Constants.MNOTIFICATION) {
+        return Center(
+          child: Container(
+            decoration: const BoxDecoration(
+                borderRadius: BorderRadius.all(Radius.circular(40)),
+                color: chatreplycontainercolor),
+            padding: const EdgeInsets.only(
+                left: 15.0, right: 15.0, top: 8.0, bottom: 8.0),
+            // child: Text(chatList[index].messageTextContent!,
+            child: Text(chatList[index].messageTextContent ?? "",
+                style: const TextStyle(fontSize: 12)),
+          ),
+        );
+      } else if (chatList[index].messageType == Constants.MIMAGE) {
+        var chatMessage = chatList[index].mediaChatMessage!;
+        return Padding(
+          padding: const EdgeInsets.all(2.0),
+          child: Stack(
+            children: [
+              ClipRRect(
+                borderRadius: BorderRadius.circular(15),
+                child: getImage(
+                    chatMessage.mediaLocalStoragePath,
+                    chatMessage.mediaThumbImage,
+                    context,
+                    chatMessage.mediaFileName),
+              ),
+              Positioned(
+                  top: (screenHeight * 0.4) / 2.5,
+                  left: (screenWidth * 0.6) / 3,
+                  child: InkWell(
+                      onTap: () {
+                        handleMediaUploadDownload(
+                            chatMessage.mediaDownloadStatus, chatList[index]);
+                      },
+                      child: getImageOverlay(chatList, index, context))),
+              Positioned(
+                bottom: 8,
+                right: 10,
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     chatList[index].isMessageStarred
                         ? const Icon(
-                            Icons.star,
-                            size: 13,
-                          )
-                        : SizedBox.shrink(),
+                      Icons.star,
+                      size: 13,
+                    )
+                        : const SizedBox.shrink(),
                     const SizedBox(
                       width: 5,
                     ),
@@ -698,32 +644,255 @@ class ChatView extends GetView<ChatController> {
                     Text(
                       controller.getChatTime(
                           context, chatList[index].messageSentTime),
-                      style: const TextStyle(fontSize: 12, color: Colors.black),
-                    ),
-                    const SizedBox(
-                      width: 10,
+                      style: const TextStyle(fontSize: 12, color: Colors.white),
                     ),
                   ],
                 ),
               ),
-              const SizedBox(
-                height: 5,
+            ],
+          ),
+        );
+      } else if (chatList[index].messageType == Constants.MVIDEO) {
+        var chatMessage = chatList[index].mediaChatMessage!;
+        return Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Stack(
+            children: [
+              InkWell(
+                onTap: () {
+                  if (controller.checkFile(chatMessage.mediaLocalStoragePath) &&
+                      (chatMessage.mediaDownloadStatus ==
+                          Constants.MEDIA_DOWNLOADED ||
+                          chatMessage.mediaDownloadStatus ==
+                              Constants.MEDIA_UPLOADED)) {
+                    Get.toNamed(Routes.VIDEO_PLAY, arguments: {
+                      "filePath": chatMessage.mediaLocalStoragePath,
+                    });
+                  }
+                },
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(15),
+                  child: controller.imageFromBase64String(
+                      chatMessage.mediaThumbImage, context, null, null),
+                ),
+              ),
+              Positioned(
+                  top: (screenHeight * 0.4) / 2.6,
+                  left: (screenWidth * 0.6) / 2.9,
+                  child: InkWell(
+                      onTap: () {
+                        handleMediaUploadDownload(
+                            chatMessage.mediaDownloadStatus, chatList[index]);
+                      },
+                      child: getImageOverlay(chatList, index, context))),
+              Positioned(
+                bottom: 8,
+                right: 10,
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    chatList[index].isMessageStarred
+                        ? const Icon(
+                      Icons.star,
+                      size: 13,
+                    )
+                        : const SizedBox.shrink(),
+                    const SizedBox(
+                      width: 5,
+                    ),
+                    getMessageIndicator(
+                        chatList[index].messageStatus.status,
+                        chatList[index].isMessageSentByMe,
+                        chatList[index].messageType),
+                    const SizedBox(
+                      width: 4,
+                    ),
+                    Text(
+                      controller.getChatTime(
+                          context, chatList[index].messageSentTime),
+                      style: const TextStyle(fontSize: 12, color: Colors.white),
+                    ),
+                  ],
+                ),
               ),
             ],
           ),
-        ),
-      );
-    } else if (chatList[index].messageType == Constants.MCONTACT) {
-      return InkWell(
-        onTap: () {
-          Get.toNamed(Routes.PREVIEW_CONTACT, arguments: {
-            "contactList":
-                chatList[index].contactChatMessage!.contactPhoneNumbers,
-            "contactName": chatList[index].contactChatMessage!.contactName,
-            "from": "chat"
-          });
-        },
-        child: Container(
+        );
+      } else if (chatList[index].messageType == Constants.MDOCUMENT) {
+        return InkWell(
+          onTap: () {
+            controller.openDocument(
+                chatList[index].mediaChatMessage!.mediaLocalStoragePath,
+                context);
+          },
+          child: Container(
+            decoration: BoxDecoration(
+              border: Border.all(
+                color: chatreplysendercolor,
+              ),
+              borderRadius: const BorderRadius.all(Radius.circular(10)),
+              color: Colors.white,
+            ),
+            width: screenWidth * 0.60,
+            child: Column(
+              children: [
+                Padding(
+                  padding:
+                  const EdgeInsets.only(left: 15.0, right: 15.0, top: 10.0),
+                  child: Row(
+                    children: [
+                      getImageHolder(
+                          chatList[index].mediaChatMessage!.mediaFileName),
+                      const SizedBox(
+                        width: 12,
+                      ),
+                      Expanded(
+                          child: Text(
+                            chatList[index].mediaChatMessage!.mediaFileName,
+                            maxLines: 2,
+                          )),
+                      const Spacer(),
+                      InkWell(
+                        onTap: () {
+                          handleMediaUploadDownload(
+                              chatList[index]
+                                  .mediaChatMessage!
+                                  .mediaDownloadStatus,
+                              chatList[index]);
+                        },
+                        child: getImageOverlay(chatList, index, context),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(
+                  height: 5,
+                ),
+                Align(
+                  alignment: Alignment.bottomRight,
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      chatList[index].isMessageStarred
+                          ? const Icon(
+                        Icons.star,
+                        size: 13,
+                      )
+                          : const SizedBox.shrink(),
+                      const SizedBox(
+                        width: 5,
+                      ),
+                      getMessageIndicator(
+                          chatList[index].messageStatus.status,
+                          chatList[index].isMessageSentByMe,
+                          chatList[index].messageType),
+                      const SizedBox(
+                        width: 4,
+                      ),
+                      Text(
+                        controller.getChatTime(
+                            context, chatList[index].messageSentTime),
+                        style: const TextStyle(fontSize: 12, color: Colors
+                            .black),
+                      ),
+                      const SizedBox(
+                        width: 10,
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(
+                  height: 5,
+                ),
+              ],
+            ),
+          ),
+        );
+      } else if (chatList[index].messageType == Constants.MCONTACT) {
+        return InkWell(
+          onTap: () {
+            Get.toNamed(Routes.PREVIEW_CONTACT, arguments: {
+              "contactList":
+              chatList[index].contactChatMessage!.contactPhoneNumbers,
+              "contactName": chatList[index].contactChatMessage!.contactName,
+              "from": "chat"
+            });
+          },
+          child: Container(
+            decoration: BoxDecoration(
+              border: Border.all(
+                color: chatreplysendercolor,
+              ),
+              borderRadius: const BorderRadius.all(Radius.circular(10)),
+              color: Colors.white,
+            ),
+            width: screenWidth * 0.60,
+            child: Column(
+              children: [
+                Padding(
+                  padding:
+                  const EdgeInsets.only(left: 15.0, right: 15.0, top: 15.0),
+                  child: Row(
+                    children: [
+                      Image.asset(
+                        profile_img,
+                        width: 35,
+                        height: 35,
+                      ),
+                      const SizedBox(
+                        width: 12,
+                      ),
+                      Expanded(
+                          child: Text(
+                            chatList[index].contactChatMessage!.contactName,
+                            maxLines: 2,
+                          )),
+                    ],
+                  ),
+                ),
+                Align(
+                  alignment: Alignment.bottomRight,
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      chatList[index].isMessageStarred
+                          ? const Icon(
+                        Icons.star,
+                        size: 13,
+                      )
+                          : const SizedBox.shrink(),
+                      const SizedBox(
+                        width: 5,
+                      ),
+                      getMessageIndicator(
+                          chatList[index].messageStatus.status,
+                          chatList[index].isMessageSentByMe,
+                          chatList[index].messageType),
+                      const SizedBox(
+                        width: 4,
+                      ),
+                      Text(
+                        controller.getChatTime(
+                            context, chatList[index].messageSentTime),
+                        style: const TextStyle(fontSize: 12, color: Colors
+                            .black),
+                      ),
+                      const SizedBox(
+                        width: 10,
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(
+                  height: 5,
+                ),
+              ],
+            ),
+          ),
+        );
+      } else if (chatList[index].messageType == Constants.MAUDIO) {
+        var chatMessage = chatList[index];
+        return Container(
           decoration: BoxDecoration(
             border: Border.all(
               color: chatreplysendercolor,
@@ -733,27 +902,90 @@ class ChatView extends GetView<ChatController> {
           ),
           width: screenWidth * 0.60,
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Padding(
-                padding:
-                    const EdgeInsets.only(left: 15.0, right: 15.0, top: 15.0),
-                child: Row(
-                  children: [
-                    Image.asset(
-                      profile_img,
-                      width: 35,
-                      height: 35,
-                    ),
-                    const SizedBox(
-                      width: 12,
-                    ),
-                    Expanded(
-                        child: Text(
-                      chatList[index].contactChatMessage!.contactName,
-                      maxLines: 2,
-                    )),
-                  ],
+              Container(
+                decoration: const BoxDecoration(
+                  borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(10),
+                      topRight: Radius.circular(10)),
+                  color: chatreplysendercolor,
                 ),
+                child: Padding(
+                  padding: const EdgeInsets.all(15),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Stack(
+                        alignment: Alignment.center,
+                        children: [
+                          SvgPicture.asset(
+                            audio_mic_bg,
+                            width: 28,
+                            height: 28,
+                            fit: BoxFit.contain,
+                          ),
+                          SvgPicture.asset(
+                            audio_mic_1,
+                            fit: BoxFit.contain,
+                          ),
+                        ],
+                      ),
+                      // getAudioFeedButton(chatMessage),
+                      const SizedBox(
+                        width: 10,
+                      ),
+                      InkWell(
+                        onTap: () {
+                          handleMediaUploadDownload(
+                              chatMessage.mediaChatMessage!.mediaDownloadStatus,
+                              chatList[index]);
+                        },
+                        child: getImageOverlay(chatList, index, context),
+                      ),
+
+                      const SizedBox(
+                        width: 10,
+                      ),
+                      Expanded(
+                        child: SizedBox(
+                          // width: 168,
+                          child: SliderTheme(
+                            data: SliderThemeData(
+                              thumbColor: audiocolordark,
+                              overlayShape: SliderComponentShape.noOverlay,
+                              thumbShape: const RoundSliderThumbShape(
+                                  enabledThumbRadius: 5),
+                            ),
+                            child: Slider(
+                              value: double.parse(
+                                  controller.currentpos.value.toString()),
+                              min: 0,
+                              activeColor: audiocolordark,
+                              inactiveColor: audiocolor,
+                              max: double.parse(
+                                  controller.maxduration.value.toString()),
+                              divisions: controller.maxduration.value,
+                              // label: controller.currentpostlabel,
+                              onChanged: (double value) async {
+                                // int seekval = value.round();
+                                // int result = await player.seek(Duration(milliseconds: seekval));
+                                // if(result == 1){ //seek successful
+                                //   currentpos = seekval;
+                                // }else{
+                                //   print("Seek unsuccessful.");
+                                // }
+                              },
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              const SizedBox(
+                height: 5,
               ),
               Align(
                 alignment: Alignment.bottomRight,
@@ -762,9 +994,9 @@ class ChatView extends GetView<ChatController> {
                   children: [
                     chatList[index].isMessageStarred
                         ? const Icon(
-                            Icons.star,
-                            size: 13,
-                          )
+                      Icons.star,
+                      size: 13,
+                    )
                         : const SizedBox.shrink(),
                     const SizedBox(
                       width: 5,
@@ -792,185 +1024,49 @@ class ChatView extends GetView<ChatController> {
               ),
             ],
           ),
-        ),
-      );
-    } else if (chatList[index].messageType == Constants.MAUDIO) {
-      var chatMessage = chatList[index];
-      return Container(
-        decoration: BoxDecoration(
-          border: Border.all(
-            color: chatreplysendercolor,
-          ),
-          borderRadius: const BorderRadius.all(Radius.circular(10)),
-          color: Colors.white,
-        ),
-        width: screenWidth * 0.60,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Container(
-              decoration: const BoxDecoration(
-                borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(10),
-                    topRight: Radius.circular(10)),
-                color: chatreplysendercolor,
+        );
+      } else if (chatList[index].messageType.toUpperCase() ==
+          Constants.MLOCATION) {
+        return Padding(
+          padding: const EdgeInsets.all(2.0),
+          child: Stack(
+            children: [
+              ClipRRect(
+                borderRadius: BorderRadius.circular(15),
+                child: getLocationImage(
+                    chatList[index].locationChatMessage, 200, 171),
               ),
-              child: Padding(
-                padding: const EdgeInsets.all(15),
+              Positioned(
+                bottom: 8,
+                right: 10,
                 child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisSize: MainAxisSize.min,
                   children: [
-                    Stack(
-                      alignment: Alignment.center,
-                      children: [
-                        SvgPicture.asset(
-                          audio_mic_bg,
-                          width: 28,
-                          height: 28,
-                          fit: BoxFit.contain,
-                        ),
-                        SvgPicture.asset(
-                          audio_mic_1,
-                          fit: BoxFit.contain,
-                        ),
-                      ],
-                    ),
-                    // getAudioFeedButton(chatMessage),
+                    chatList[index].isMessageStarred
+                        ? const Icon(
+                      Icons.star,
+                      size: 13,
+                    )
+                        : const SizedBox.shrink(),
                     const SizedBox(
-                      width: 10,
+                      width: 5,
                     ),
-                    InkWell(
-                      onTap: () {
-                        handleMediaUploadDownload(
-                            chatMessage.mediaChatMessage!.mediaDownloadStatus,
-                            chatList[index]);
-                      },
-                      child: getImageOverlay(chatList, index, context),
-                    ),
-
+                    getMessageIndicator(
+                        chatList[index].messageStatus.status,
+                        chatList[index].isMessageSentByMe,
+                        chatList[index].messageType),
                     const SizedBox(
-                      width: 10,
+                      width: 4,
                     ),
-                    Expanded(
-                      child: SizedBox(
-                        // width: 168,
-                        child: SliderTheme(
-                          data: SliderThemeData(
-                            thumbColor: audiocolordark,
-                            overlayShape: SliderComponentShape.noOverlay,
-                            thumbShape: const RoundSliderThumbShape(
-                                enabledThumbRadius: 5),
-                          ),
-                          child: Slider(
-                            value: double.parse(
-                                controller.currentpos.value.toString()),
-                            min: 0,
-                            activeColor: audiocolordark,
-                            inactiveColor: audiocolor,
-                            max: double.parse(
-                                controller.maxduration.value.toString()),
-                            divisions: controller.maxduration.value,
-                            // label: controller.currentpostlabel,
-                            onChanged: (double value) async {
-                              // int seekval = value.round();
-                              // int result = await player.seek(Duration(milliseconds: seekval));
-                              // if(result == 1){ //seek successful
-                              //   currentpos = seekval;
-                              // }else{
-                              //   print("Seek unsuccessful.");
-                              // }
-                            },
-                          ),
-                        ),
-                      ),
+                    Text(
+                      controller.getChatTime(
+                          context, chatList[index].messageSentTime),
+                      style: const TextStyle(fontSize: 12, color: Colors.black),
                     ),
                   ],
                 ),
               ),
-            ),
-            const SizedBox(
-              height: 5,
-            ),
-            Align(
-              alignment: Alignment.bottomRight,
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  chatList[index].isMessageStarred
-                      ? const Icon(
-                          Icons.star,
-                          size: 13,
-                        )
-                      : const SizedBox.shrink(),
-                  const SizedBox(
-                    width: 5,
-                  ),
-                  getMessageIndicator(
-                      chatList[index].messageStatus.status,
-                      chatList[index].isMessageSentByMe,
-                      chatList[index].messageType),
-                  const SizedBox(
-                    width: 4,
-                  ),
-                  Text(
-                    controller.getChatTime(
-                        context, chatList[index].messageSentTime),
-                    style: const TextStyle(fontSize: 12, color: Colors.black),
-                  ),
-                  const SizedBox(
-                    width: 10,
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(
-              height: 5,
-            ),
-          ],
-        ),
-      );
-    } else if (chatList[index].messageType.toUpperCase() ==
-        Constants.MLOCATION) {
-      return Padding(
-        padding: const EdgeInsets.all(2.0),
-        child: Stack(
-          children: [
-            ClipRRect(
-              borderRadius: BorderRadius.circular(15),
-              child: getLocationImage(
-                  chatList[index].locationChatMessage, 200, 171),
-            ),
-            Positioned(
-              bottom: 8,
-              right: 10,
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  chatList[index].isMessageStarred
-                      ? const Icon(
-                          Icons.star,
-                          size: 13,
-                        )
-                      : const SizedBox.shrink(),
-                  const SizedBox(
-                    width: 5,
-                  ),
-                  getMessageIndicator(
-                      chatList[index].messageStatus.status,
-                      chatList[index].isMessageSentByMe,
-                      chatList[index].messageType),
-                  const SizedBox(
-                    width: 4,
-                  ),
-                  Text(
-                    controller.getChatTime(
-                        context, chatList[index].messageSentTime),
-                    style: const TextStyle(fontSize: 12, color: Colors.black),
-                  ),
-                ],
-              ),
-            ),
-            /*Positioned(
+              /*Positioned(
               bottom: 8,
               right: 10,
               child: Row(
@@ -991,9 +1087,10 @@ class ChatView extends GetView<ChatController> {
                 ],
               ),
             ),*/
-          ],
-        ),
-      );
+            ],
+          ),
+        );
+      }
     }
   }
 
@@ -1051,8 +1148,6 @@ class ChatView extends GetView<ChatController> {
                       "filePath": photo?.path,
                       "userName": controller.profile.name!
                     });
-
-                    // controller.sendImageMessage(photo?.path, "", "");
                   }),
                   const SizedBox(
                     width: 50,
@@ -1060,16 +1155,10 @@ class ChatView extends GetView<ChatController> {
                   iconCreation(galleryImg, "Gallery", () async {
                     try {
                       Get.back();
-                      // final XFile? pickedFile =
-                      //     await _picker.pickImage(source: ImageSource.gallery);
-                      // controller.sendImageMessage(pickedFile?.path, "", "");
                       controller.imagePicker();
-                      // Get.toNamed(Routes.IMAGEPREVIEW, arguments: {
-                      //   "filePath": pickedFile?.path,
-                      //   "userName": controller.profile.name!
-                      // });
                     } catch (e) {
                       _pickImageError = e;
+                      debugPrint(_pickImageError);
                     }
                   }),
                 ],
@@ -1091,9 +1180,6 @@ class ChatView extends GetView<ChatController> {
                     if (await controller.askContactsPermission()) {
                       Get.back();
                       Get.toNamed(Routes.LOCAL_CONTACT);
-                      // Contact? c = contacts.elementAt(1);
-                      // Item? contactItem = c.phones?.elementAt(0);
-                      // debugPrint(contactItem?.value);
                     } else {
                       debugPrint("Permission Denied");
                       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
@@ -1170,14 +1256,11 @@ class ChatView extends GetView<ChatController> {
       } else if (chatMessage.messageType == 'AUDIO') {
         debugPrint("===============================");
         debugPrint(chatMessage.mediaChatMessage!.isPlaying.toString());
-        // return Obx(() {
-        // chatMessage.mediaChatMessage!.isPlaying = controller.audioplayed.value;
         return chatMessage.mediaChatMessage!.isPlaying
-            ? Icon(Icons.pause)
-            : Icon(Icons.play_arrow_sharp);
-        // });
+            ? const Icon(Icons.pause)
+            : const Icon(Icons.play_arrow_sharp);
       } else {
-        return SizedBox.shrink();
+        return const SizedBox.shrink();
       }
     } else {
       switch (chatMessage.isMessageSentByMe
@@ -1185,7 +1268,7 @@ class ChatView extends GetView<ChatController> {
           : chatMessage.mediaChatMessage!.mediaDownloadStatus) {
         case Constants.MEDIA_DOWNLOADED:
         case Constants.MEDIA_UPLOADED:
-          return SizedBox.shrink();
+          return const SizedBox.shrink();
 
         case Constants.MEDIA_DOWNLOADED_NOT_AVAILABLE:
         case Constants.MEDIA_NOT_DOWNLOADED:
@@ -1211,7 +1294,7 @@ class ChatView extends GetView<ChatController> {
                   debugPrint(chatMessage.messageId);
                 },
                 child:
-                    Container(width: 30, height: 30, child: uploadingView()));
+                    SizedBox(width: 30, height: 30, child: uploadingView()));
           } else {
             return SizedBox(
               height: 40,
@@ -1238,19 +1321,19 @@ class ChatView extends GetView<ChatController> {
               borderRadius: const BorderRadius.all(Radius.circular(5)),
               color: Colors.black38,
             ),
-            padding: EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+            padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
             child: Row(
               children: [
                 Icon(
                   iconData,
                   color: Colors.white,
                 ),
-                SizedBox(
+                const SizedBox(
                   width: 5,
                 ),
                 Text(
                   Helper.formatBytes(mediaFileSize, 0),
-                  style: TextStyle(color: Colors.white),
+                  style: const TextStyle(color: Colors.white),
                 ),
               ],
             ));
@@ -1280,8 +1363,6 @@ class ChatView extends GetView<ChatController> {
 
   uploadingView() {
     return Container(
-        // height: 40,
-        // width: 80,
         decoration: BoxDecoration(
           border: Border.all(
             color: textcolor,
@@ -1289,7 +1370,6 @@ class ChatView extends GetView<ChatController> {
           borderRadius: const BorderRadius.all(Radius.circular(2)),
           color: audiobgcolor,
         ),
-        // padding: EdgeInsets.symmetric(vertical: 5),
         child: Stack(alignment: Alignment.center,
             // mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -1306,7 +1386,6 @@ class ChatView extends GetView<ChatController> {
                       Colors.white,
                     ),
                     backgroundColor: audiobgcolor,
-                    // minHeight: 1,
                   ),
                 ),
               ),
@@ -1343,9 +1422,10 @@ class ChatView extends GetView<ChatController> {
                   chatList.isMessageSentByMe)) {
             // debugPrint("audio click1");
             chatList.mediaChatMessage!.isPlaying = controller.isplaying.value;
-            // controller.playAudio(chatList.mediaChatMessage!);
-            playAudio(chatList.mediaChatMessage!.mediaLocalStoragePath,
-                chatList.mediaChatMessage!.mediaFileName);
+            controller
+                .playAudio(chatList.mediaChatMessage!.mediaLocalStoragePath);
+            // playAudio(chatList.mediaChatMessage!.mediaLocalStoragePath,
+            //     chatList.mediaChatMessage!.mediaFileName);
           } else {
             debugPrint("condition failed");
           }
@@ -1474,7 +1554,7 @@ class ChatView extends GetView<ChatController> {
                           thumbColor: audiocolordark,
                           overlayShape: SliderComponentShape.noOverlay,
                           thumbShape:
-                              RoundSliderThumbShape(enabledThumbRadius: 5),
+                              const RoundSliderThumbShape(enabledThumbRadius: 5),
                         ),
                         child: Obx(() {
                           return Slider(
@@ -1578,9 +1658,8 @@ class ChatView extends GetView<ChatController> {
             ),
           ),
         );
-        ;
       } else {
-        return SizedBox.shrink();
+        return const SizedBox.shrink();
       }
     });
   }
