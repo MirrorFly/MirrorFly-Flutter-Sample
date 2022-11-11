@@ -4,13 +4,17 @@ part of 'app_pages.dart';
 abstract class Routes {
   Routes._();
   static const DASHBOARD = _Paths.DASHBOARD;
+  static const CREATE_GROUP = _Paths.CREATE_GROUP;
+  static const GROUP_INFO = _Paths.GROUP_INFO;
   static const RECENTSEARCH = _Paths.RECENTSEARCH;
   static const LOGIN = _Paths.LOGIN;
+  static const OTP = _Paths.OTP;
   static const COUNTRIES = _Paths.COUNTRIES;
   static const PROFILE = _Paths.PROFILE;
   static const STATUSLIST = _Paths.STATUSLIST;
   static const CONTACTS = _Paths.CONTACTS;
   static const CHAT = _Paths.CHAT;
+  static const CHATSEARCH = _Paths.CHATSEARCH;
   static const LOCATIONSENT = _Paths.LOCATIONSENT;
   static const IMAGEPREVIEW = _Paths.IMAGEPREVIEW;
   static const SETTINGS = _Paths.SETTINGS;
@@ -26,12 +30,16 @@ abstract class Routes {
 abstract class _Paths {
   _Paths._();
   static const DASHBOARD = '/dashboard';
+  static const CREATE_GROUP = '/create_group';
+  static const GROUP_INFO = '/group_info';
   static const RECENTSEARCH = '/recent_search';
   static const LOGIN = '/login';
+  static const OTP = '/otp';
   static const COUNTRIES = '/Countries';
   static const PROFILE = '/profile';
   static const STATUSLIST = '/statuslist';
   static const CHAT = '/chat';
+  static const CHATSEARCH = '/chat_search';
   static const LOCATIONSENT = '/location_sent';
   static const CONTACTS = '/contacts';
   static const IMAGEPREVIEW = '/imagepreview';

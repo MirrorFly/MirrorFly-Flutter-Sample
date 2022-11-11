@@ -1,19 +1,27 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+import 'dart:math';
+import 'dart:typed_data';
 import 'dart:io' as Io;
 
 import 'package:audioplayers/audioplayers.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:mirror_fly_demo/app/basecontroller.dart';
+import 'package:mirror_fly_demo/app/data/SessionManagement.dart';
 import 'package:mirror_fly_demo/app/model/chatMessageModel.dart';
+import 'package:mirror_fly_demo/app/model/chatmessage_model.dart';
+import 'package:mirror_fly_demo/app/model/groupmembers_model.dart';
 import 'package:mirror_fly_demo/app/nativecall/platformRepo.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:record/record.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -24,17 +32,13 @@ import '../../../model/checkModel.dart' as checkModel;
 import '../../../model/userlistModel.dart';
 import '../../../routes/app_pages.dart';
 
-
-class ChatController extends GetxController
-    with GetSingleTickerProviderStateMixin {
-  //TODO: Implement DashboardController
-
+class ChatController extends BaseController
+    with GetTickerProviderStateMixin {
   var chatList = List<ChatMessageModel>.empty(growable: true).obs;
   late AnimationController controller;
-  ScrollController scrollController = ScrollController(
-    initialScrollOffset: 0.0,
-    keepScrollOffset: true,
-  );
+  ScrollController scrollController = ScrollController();
+
+  ItemScrollController searchscrollController = ItemScrollController();
 
   late ChatMessageModel replyChatMessage;
 
@@ -52,6 +56,7 @@ class ChatController extends GetxController
   late Timer? _audioTimer;
   var timerInit = "00.00".obs;
   DateTime? startTime;
+
   // late Uint8List audiobytes;
 
   AudioPlayer player = AudioPlayer();
@@ -65,7 +70,8 @@ class ChatController extends GetxController
   FocusNode focusNode = FocusNode();
 
   var calendar = DateTime.now();
-  late Profile profile; // = Get.arguments as Profile;
+  var profile_ = Profile().obs; // = Get.arguments as Profile;
+  Profile get profile => profile_.value;
   var base64img = ''.obs;
   var imagePath = ''.obs;
   var filePath = ''.obs;
@@ -80,15 +86,22 @@ class ChatController extends GetxController
 
   var selectedChatList = List<ChatMessageModel>.empty(growable: true).obs;
 
-
   var keyboardVisibilityController = KeyboardVisibilityController();
 
   late StreamSubscription<bool> keyboardSubscription;
 
+  var _isMemberOfGroup = false.obs;
+  set isMemberOfGroup(value) => _isMemberOfGroup.value=value;
+  bool get isMemberOfGroup => profile.isGroupProfile! ? _isMemberOfGroup.value : true;
+
+  var profileDetail = Profile();
   @override
   void onInit() {
     super.onInit();
-    profile = Get.arguments as Profile;
+    /*WidgetsBinding.instance.addPostFrameCallback((_){
+      Log("scroll", scrollController.hasClients.toString());
+    });*/
+    profile_.value = Get.arguments as Profile;
     debugPrint("isBlocked===> ${profile.isBlocked}");
     debugPrint("profile detail===> ${profile.toJson().toString()}");
     isBlocked(profile.isBlocked);
@@ -96,26 +109,24 @@ class ChatController extends GetxController
       vsync: this,
       duration: const Duration(milliseconds: 600),
     );
-
-    // askStoragePermission();
+    Member(jid: profile.jid.checkNull()).getProfileDetails().then((value) => profileDetail=value);
+    MemberOfGroup();
+    setChatStatus();
+    askStoragePermission();
     isLive = true;
     focusNode.addListener(() {
       if (focusNode.hasFocus) {
         showEmoji(false);
       }
     });
-    keyboardSubscription = keyboardVisibilityController.onChange.listen((bool visible) {
-      if(!visible) {
+    keyboardSubscription =
+        keyboardVisibilityController.onChange.listen((bool visible) {
+      if (!visible) {
         focusNode.canRequestFocus = false;
       }
     });
-    scrollController.addListener(() {
-      double offset = 0.9 * scrollController.position.maxScrollExtent;
+    //scrollController.addListener(_scrollController);
 
-      if (scrollController.position.pixels > offset) {
-        debugPrint('scrollController offset > load more');
-      }
-    });
     registerChatSync();
     PlatformRepo().ongoingChat(profile.jid!);
     getChatHistory(profile.jid!);
@@ -150,6 +161,32 @@ class ChatController extends GetxController
     });
 
     setAudioPath();
+
+    filteredPosition.bindStream(filteredPosition.stream);
+    ever(filteredPosition, (callback) {
+      Log("fillterdPosition", callback.reversed.toString());
+      lastposition(callback.length);
+      chatList.refresh();
+    });
+
+    chatList.bindStream(chatList.stream);
+    ever(chatList, (callback){
+      Future.delayed(const Duration(milliseconds: 500),(){
+        if(scrollController.hasClients) {
+          scrollController.animateTo(
+            scrollController.position.maxScrollExtent,
+            duration: const Duration(milliseconds: 500),
+            curve: Curves.fastOutSlowIn,);
+        }
+      });
+    });
+  }
+
+  _scrollController() {
+    double offset = 0.9 * scrollController.position.maxScrollExtent;
+    if (scrollController.position.pixels > offset) {
+      debugPrint('scrollController offset > load more');
+    }
   }
 
   @override
@@ -169,7 +206,7 @@ class ChatController extends GetxController
   }
 
   registerChatSync() {
-    debugPrint("Registering Event");
+    /*debugPrint("Registering Event");
     var messageEvent = PlatformRepo().onMessageReceived;
     messageEvent.listen((msgData) {
       ChatMessageModel chatMessageModel = sendMessageModelFromJson(msgData);
@@ -198,7 +235,7 @@ class ChatController extends GetxController
       if (index != -1) {
         chatList[index] = chatMessageModel;
       }
-    });
+    });*/
   }
 
   sendMessage(Profile profile) {
@@ -430,7 +467,7 @@ class ChatController extends GetxController
         isplaying(true);
         audioplayed(true);
       } else {
-        print("Error while playing audio.");
+        Log("","Error while playing audio.");
       }
     } else if (audioplayed.value && !isplaying.value) {
       int result = await player.resume();
@@ -440,7 +477,7 @@ class ChatController extends GetxController
         isplaying(true);
         audioplayed(true);
       } else {
-        print("Error on resume audio.");
+        Log("","Error on resume audio.");
       }
     } else {
       int result = await player.pause();
@@ -449,7 +486,7 @@ class ChatController extends GetxController
 
         isplaying(false);
       } else {
-        print("Error on pause audio.");
+        Log("","Error on pause audio.");
       }
     }
 
@@ -579,7 +616,7 @@ class ChatController extends GetxController
       AudioPlayer player = AudioPlayer();
       player.setUrl(result.files.single.path!);
       player.onDurationChanged.listen((Duration duration) {
-        print('max duration: ${duration.inMilliseconds}');
+        Log("",'max duration: ${duration.inMilliseconds}');
         filePath.value = (result.files.single.path!);
         sendAudioMessage(
             filePath.value, false, duration.inMilliseconds.toString());
@@ -645,11 +682,10 @@ class ChatController extends GetxController
 
   clearAllChatSelection() {
     isSelected(false);
-    for (var chatItem in selectedChatList){
+    for (var chatItem in selectedChatList) {
       chatItem.isSelected = false;
     }
     selectedChatList.clear();
-
   }
 
   void addChatSelection(ChatMessageModel chatList) {
@@ -692,14 +728,13 @@ class ChatController extends GetxController
         return true;
 
       case 'Favourite':
-
         // for (var chatList in selectedChatList) {
         //   if (chatList.isMessageStarred) {
         //     return true;
         //   }
         // }
         // return false;
-        return selectedChatList.length > 1 ? false: true;
+        return selectedChatList.length > 1 ? false : true;
 
       default:
         return false;
@@ -707,26 +742,22 @@ class ChatController extends GetxController
   }
 
   reportChatOrUser() {
-    Future.delayed(const Duration(milliseconds: 100), ()
-    {
-      var chatMessage = selectedChatList.isNotEmpty
-          ? selectedChatList[0]
-          : null;
+    Future.delayed(const Duration(milliseconds: 100), () {
+      var chatMessage =
+          selectedChatList.isNotEmpty ? selectedChatList[0] : null;
       Helper.showAlert(
           title: "Report ${profile.name}?",
           message:
-          "${selectedChatList.isNotEmpty
-              ? "This message will be forwarded to admin."
-              : "The last 5 messages from this contact will be forwarded to admin."} This Contact will not be notified.",
+              "${selectedChatList.isNotEmpty ? "This message will be forwarded to admin." : "The last 5 messages from this contact will be forwarded to admin."} This Contact will not be notified.",
           actions: [
             TextButton(
                 onPressed: () {
                   Get.back();
                   PlatformRepo()
                       .reportChatOrUser(
-                      profile.jid!,
-                      chatMessage?.messageChatType ?? "chat",
-                      chatMessage?.messageId ?? "")
+                          profile.jid!,
+                          chatMessage?.messageChatType ?? "chat",
+                          chatMessage?.messageId ?? "")
                       .then((value) {
                     //report success
                     debugPrint(value);
@@ -748,7 +779,8 @@ class ChatController extends GetxController
   copyTextMessages() {
     // PlatformRepo().copyTextMessages(selectedChatList[0].messageId);
     debugPrint('Copy text ==> ${selectedChatList[0].messageTextContent}');
-    Clipboard.setData(ClipboardData(text: selectedChatList[0].messageTextContent));
+    Clipboard.setData(
+        ClipboardData(text: selectedChatList[0].messageTextContent));
     // selectedChatList.clear();
     // isSelected(false);
     clearChatSelection(selectedChatList[0]);
@@ -760,9 +792,10 @@ class ChatController extends GetxController
 
     for (var chatList in selectedChatList) {
       deleteChatListID.add(chatList.messageId);
-      if (chatList.messageSentTime > (DateTime.now().millisecondsSinceEpoch - 30000) * 1000) {
+      if (chatList.messageSentTime >
+          (DateTime.now().millisecondsSinceEpoch - 30000) * 1000) {
         isRecallAvailable = true;
-      }else{
+      } else {
         isRecallAvailable = false;
         break;
       }
@@ -772,22 +805,24 @@ class ChatController extends GetxController
     //   deleteChatListID.add(chatList.messageId);
     // }
 
-    if(deleteChatListID.isEmpty){
+    if (deleteChatListID.isEmpty) {
       return;
     }
 
     Helper.showAlert(
         message:
-        "Are you sure you want to delete selected Message${selectedChatList.length > 1 ? "s" : ""}",
+            "Are you sure you want to delete selected Message${selectedChatList.length > 1 ? "s" : ""}",
         actions: [
           TextButton(
               onPressed: () {
                 Get.back();
                 Helper.showLoading(message: 'Deleting Message');
-                PlatformRepo().deleteMessages(profile.jid!, deleteChatListID, false).then((value){
+                PlatformRepo()
+                    .deleteMessages(profile.jid!, deleteChatListID, false)
+                    .then((value) {
                   debugPrint(value);
                   Helper.hideLoading();
-                  if(value == "deleteMessagesForMe success"){
+                  if (value == "deleteMessagesForMe success") {
                     removeChatList(selectedChatList);
                   }
                   isSelected(false);
@@ -823,14 +858,13 @@ class ChatController extends GetxController
   }
 
   removeChatList(RxList<ChatMessageModel> selectedChatList) {
-    for(var chatList in selectedChatList){
+    for (var chatList in selectedChatList) {
       this.chatList.remove(chatList);
     }
   }
 
   messageInfo() {
-    Future.delayed(const Duration(milliseconds: 100), ()
-    {
+    Future.delayed(const Duration(milliseconds: 100), () {
       debugPrint("sending mid ===> ${selectedChatList[0].messageId}");
       Get.toNamed(Routes.MESSAGE_INFO, arguments: {
         "messageID": selectedChatList[0].messageId,
@@ -841,16 +875,22 @@ class ChatController extends GetxController
   }
 
   favouriteMessage() {
-
-    Helper.showLoading(message: selectedChatList[0].isMessageStarred ? 'Unfavoriting Message' : 'Favoriting Message');
+    Helper.showLoading(
+        message: selectedChatList[0].isMessageStarred
+            ? 'Unfavoriting Message'
+            : 'Favoriting Message');
 
     // for(var chatList in selectedChatList){
-      PlatformRepo().favouriteMessage(selectedChatList[0].messageId, profile.jid!, !selectedChatList[0].isMessageStarred).then((value) {
-        final chatIndex = chatList.indexWhere((message) => message.messageId == selectedChatList[0].messageId);
-        // chatList[chatIndex].isMessageStarred = !chatList[chatIndex].isMessageStarred;
-        clearChatSelection(selectedChatList[0]);
-        Helper.hideLoading();
-      });
+    PlatformRepo()
+        .favouriteMessage(selectedChatList[0].messageId, profile.jid!,
+            !selectedChatList[0].isMessageStarred)
+        .then((value) {
+      final chatIndex = chatList.indexWhere(
+          (message) => message.messageId == selectedChatList[0].messageId);
+      // chatList[chatIndex].isMessageStarred = !chatList[chatIndex].isMessageStarred;
+      clearChatSelection(selectedChatList[0]);
+      Helper.hideLoading();
+    });
     // }
   }
 
@@ -928,60 +968,193 @@ class ChatController extends GetxController
                 child: const Text("CLEAR EXCEPT STARRED")),
           ]);
     });
-
   }
 
   unBlockUser() {
-    Helper.showAlert(
-        message: "Unblock ${profile.name}?",
-        actions: [
-          TextButton(
-              onPressed: () {
-                Get.back();
-              },
-              child: const Text("CANCEL")),
-          TextButton(
-              onPressed: () {
-                Get.back();
-                Helper.showLoading(message: "Unblocking User");
-                PlatformRepo().unBlockUser(profile.jid!).then((value){
-                  debugPrint(value);
-                  isBlocked(false);
-                  Helper.hideLoading();
-                }).catchError((error){
-                  Helper.hideLoading();
-                  debugPrint(error);
-                });
-              },
-              child: const Text("UNBLOCK")),
+    Helper.showAlert(message: "Unblock ${profile.name}?", actions: [
+      TextButton(
+          onPressed: () {
+            Get.back();
+          },
+          child: const Text("CANCEL")),
+      TextButton(
+          onPressed: () {
+            Get.back();
+            Helper.showLoading(message: "Unblocking User");
+            PlatformRepo().unBlockUser(profile.jid!).then((value) {
+              debugPrint(value);
+              isBlocked(false);
+              Helper.hideLoading();
+            }).catchError((error) {
+              Helper.hideLoading();
+              debugPrint(error);
+            });
+          },
+          child: const Text("UNBLOCK")),
+    ]);
+  }
 
-        ]);
+  var filteredPosition = <int>[].obs;
+  var searchedText = TextEditingController();
+
+  setSearch(String text) {
+    filteredPosition.clear();
+    if (searchedText.text.isNotEmpty) {
+      for (var i = 0; i < chatList.value.length; i++) {
+        if (chatList.value[i].messageType == Constants.MTEXT &&
+            chatList.value[i].messageTextContent
+                .startsWithTextInWords(searchedText.text)) {
+          filteredPosition.add(i);
+        } else if (chatList.value[i].messageType == Constants.MIMAGE &&
+            chatList.value[i].mediaChatMessage!.mediaCaptionText.isNotEmpty &&
+            chatList.value[i].mediaChatMessage!.mediaCaptionText
+                .startsWithTextInWords(searchedText.text)) {
+          filteredPosition.add(i);
+        } else if (chatList.value[i].messageType == Constants.MVIDEO &&
+            chatList.value[i].mediaChatMessage!.mediaCaptionText.isNotEmpty &&
+            chatList.value[i].mediaChatMessage!.mediaCaptionText
+                .startsWithTextInWords(searchedText.text)) {
+          filteredPosition.add(i);
+        } else if (chatList.value[i].messageType == Constants.MDOCUMENT &&
+            chatList.value[i].mediaChatMessage!.mediaFileName.isNotEmpty &&
+            chatList.value[i].mediaChatMessage!.mediaFileName
+                .startsWithTextInWords(searchedText.text)) {
+          filteredPosition.add(i);
+        } else if (chatList.value[i].messageType == Constants.MCONTACT &&
+            chatList.value[i].contactChatMessage!.contactName.isNotEmpty &&
+            chatList.value[i].contactChatMessage!.contactName
+                .startsWithTextInWords(searchedText.text)) {
+          filteredPosition.add(i);
+        }
+      }
+    }
+  }
+
+  var lastposition = (-1).obs;
+  var searchedPrev = "";
+  var searchedNxt = "";
+
+  searchInit() {
+    lastposition = (-1).obs;
+    searchedPrev = "";
+    searchedNxt = "";
+    filteredPosition.clear();
+    searchedText.clear();
+  }
+
+  scrollUp() {
+    if (searchedPrev != (searchedText.text.toString())) {
+      var pre = getPreviousPosition(findLastVisibleItemPosition());
+      lastposition.value = pre;
+      searchedPrev = searchedText.text;
+    } else if (filteredPosition.value.isNotEmpty) {
+      lastposition.value = max(lastposition.value - 1, (-1));
+    } else {
+      lastposition.value = -1;
+    }
+    if (lastposition.value > -1 &&
+        lastposition.value <= filteredPosition.value.length) {
+      var po = filteredPosition.value;
+      _scrollToPosition(po[lastposition.value] + 1);
+    } else {
+      toToast("No Results Found");
+      searchedNxt = "";
+    }
+  }
+
+  scrollDown() {
+    if (searchedNxt != searchedText.text.toString()) {
+      var nex = getNextPosition(findLastVisibleItemPosition());
+      lastposition.value = nex;
+      searchedNxt = searchedText.text;
+    } else if (filteredPosition.value.isNotEmpty) {
+      lastposition.value =
+          min(lastposition.value - 1, filteredPosition.value.length);
+    } else {
+      lastposition.value = -1;
+    }
+    if (lastposition.value > -1 &&
+        lastposition.value <= filteredPosition.value.length) {
+      var po = filteredPosition.value.reversed.toList();
+      _scrollToPosition(po[lastposition.value] + 1);
+    } else {
+      toToast("No Results Found");
+      searchedPrev = "";
+    }
+  }
+
+  var color = Colors.transparent.obs;
+
+  _scrollToPosition(int position) {
+    var currentposition = (chatList.value.length - (position));
+    chatList[chatList.value.length - position].isSelected = true;
+    searchscrollController.jumpTo(index: currentposition);
+    Future.delayed(Duration(milliseconds: 800), () {
+      currentposition = (chatList.value.length - position);
+      chatList[chatList.value.length - position].isSelected = false;
+      chatList.refresh();
+    });
+  }
+
+  int getPreviousPosition(int visiblePos) {
+    for (var i = 0; i < filteredPosition.value.length; i++) {
+      var po = filteredPosition.value.reversed.toList();
+      if (visiblePos > po[i]) {
+        return filteredPosition.value.indexOf(po[i]);
+      }
+    }
+    return -1;
+  }
+
+  int getNextPosition(int visiblePos) {
+    for (var i = 0; i < filteredPosition.value.length; i++) {
+      if (visiblePos <= filteredPosition.value[i]) {
+        return i;
+      }
+    }
+    return -1;
+  }
+
+  final ItemPositionsListener itemPositionsListener =
+      ItemPositionsListener.create();
+
+  int findLastVisibleItemPosition() {
+    var r = itemPositionsListener.itemPositions.value
+        .where((ItemPosition position) => position.itemTrailingEdge < 1)
+        .reduce((ItemPosition min, ItemPosition position) =>
+            position.itemTrailingEdge < min.itemTrailingEdge ? position : min)
+        .index;
+    return chatList.value.length - r;
   }
 
   exportChat() async {
-    if(chatList.isNotEmpty) {
+    if (chatList.isNotEmpty) {
       if (await askStoragePermission()) {
         PlatformRepo().exportChat(profile.jid.checkNull());
       }
-    }else{
+    } else {
       toToast("There is no conversation.");
     }
   }
 
   forwardMessage() {
     var messageIds = List<String>.empty(growable: true);
-    for(var chatItem in selectedChatList){
+    for (var chatItem in selectedChatList) {
       messageIds.add(chatItem.messageId);
       debugPrint(messageIds.length.toString());
       debugPrint(selectedChatList.length.toString());
-
     }
-    if(messageIds.length == selectedChatList.length){
+    if (messageIds.length == selectedChatList.length) {
       isSelected(false);
       selectedChatList.clear();
-      Get.toNamed(Routes.CONTACTS, arguments: {"forward" : true, "messageIds": messageIds })?.then((value){
+      Get.toNamed(Routes.CONTACTS, arguments: {
+        "forward": true,
+        "group": false,
+        "groupJid": "",
+        "messageIds": messageIds
+      })?.then((value) {
         debugPrint("result of forward ==> ${value.toString()}");
-        profile = value as Profile;
+        profile_.value = value as Profile;
         isBlocked(profile.isBlocked);
         PlatformRepo().ongoingChat(profile.jid!);
         getChatHistory(profile.jid!);
@@ -1075,4 +1248,182 @@ class ChatController extends GetxController
     timerInit("00.00");
     record.dispose();
   }
+
+  infoPage() {
+    if (profile.isGroupProfile!) {
+      Get.toNamed(Routes.GROUP_INFO, arguments: profile)?.then((value) {
+        if (value != null) {
+          profile_.value = value as Profile;
+        }
+      });
+    }
+  }
+
+  @override
+  void onMessageReceived(event) {
+    super.onMessageReceived(event);
+    ChatMessageModel chatMessageModel = sendMessageModelFromJson(event);
+    chatList.add(chatMessageModel);
+    if (isLive) {
+      sendReadReceipt();
+    }
+  }
+
+  @override
+  void onMessageStatusUpdated(event) {
+    super.onMessageStatusUpdated(event);
+    ChatMessageModel chatMessageModel = sendMessageModelFromJson(event);
+    final index = chatList.indexWhere(
+        (message) => message.messageId == chatMessageModel.messageId);
+    debugPrint("Message Status Update index of search $index");
+    if (index != -1) {
+      // Helper.hideLoading();
+      chatList[index] = chatMessageModel;
+    }
+  }
+
+  @override
+  void onMediaStatusUpdated(event) {
+    super.onMediaStatusUpdated(event);
+    ChatMessageModel chatMessageModel = sendMessageModelFromJson(event);
+    final index = chatList.indexWhere(
+        (message) => message.messageId == chatMessageModel.messageId);
+    debugPrint("Media Status Update index of search $index");
+    if (index != -1) {
+      chatList[index] = chatMessageModel;
+    }
+  }
+
+  @override
+  void onGroupProfileFetched(groupJid) {
+    super.onGroupProfileFetched(groupJid);
+  }
+
+  @override
+  void onNewGroupCreated(groupJid) {
+    super.onNewGroupCreated(groupJid);
+  }
+
+  @override
+  void onGroupProfileUpdated(groupJid) {
+    super.onGroupProfileUpdated(groupJid);
+    if (profile.jid.checkNull() == groupJid.toString()) {
+      PlatformRepo().getProfileDetails(profile.jid.checkNull()).then((value) {
+        if (value != null) {
+          var member = Profile.fromJson(json.decode(value.toString()));
+          profile_.value = member;
+          profile_.refresh();
+        }
+      });
+    }
+  }
+
+  @override
+  void onNewMemberAddedToGroup(event) {
+    super.onNewMemberAddedToGroup(event);
+  }
+
+  @override
+  void onMemberRemovedFromGroup(event) {
+    super.onMemberRemovedFromGroup(event);
+  }
+
+  @override
+  void onFetchingGroupMembersCompleted(event) {
+    super.onFetchingGroupMembersCompleted(event);
+  }
+
+  @override
+  void onDeleteGroup(event) {
+    super.onDeleteGroup(event);
+  }
+
+  @override
+  void onFetchingGroupListCompleted(event) {
+    super.onFetchingGroupListCompleted(event);
+  }
+
+  @override
+  void onMemberMadeAsAdmin(event) {
+    super.onMemberMadeAsAdmin(event);
+  }
+
+  @override
+  void onMemberRemovedAsAdmin(event) {
+    super.onMemberRemovedAsAdmin(event);
+  }
+
+  @override
+  void onLeftFromGroup({required String groupJid, required String userJid}) {
+    super.onLeftFromGroup(groupJid: groupJid, userJid: userJid);
+    if(profile.isGroupProfile!){
+      if(groupJid==profile.jid && userJid==SessionManagement().getUserJID()){
+        //current user leave from the group
+        _isMemberOfGroup(false);
+      }else if(groupJid==profile.jid){
+        setChatStatus();
+      }
+    }
+  }
+
+  MemberOfGroup(){
+    if(profile.isGroupProfile!) {
+      PlatformRepo().isMemberOfGroup(profile.jid.checkNull(), null).then((
+          bool? value) {
+        if (value != null) {
+          _isMemberOfGroup(value);
+        }
+      });
+    }
+  }
+
+  @override
+  void onGroupNotificationMessage(event) {
+    super.onGroupNotificationMessage(event);
+  }
+
+  @override
+  void onGroupDeletedLocally(groupJid) {
+    super.onGroupDeletedLocally(groupJid);
+  }
+
+  var userPresenceStatus = ''.obs;
+  var typingList = <String>[].obs;
+
+  setChatStatus() {
+    if (profile.isGroupProfile!) {
+      if (typingList.length > 0) {
+        userPresenceStatus(
+            "${Member(jid: typingList[typingList.length - 1]).getUsername()} typing");
+      } else {
+        getParticipantsNameAsCsv(profile.jid.checkNull());
+      }
+    } else {
+      /*if (profileDetail.isDeletedContact()) {
+        userPresenceStatus(Constants.EMPTY_STRING);
+        return;
+      }*/
+      PlatformRepo().getUserLastSeenTime(profile.jid.toString()).then((value) {
+        userPresenceStatus(value.toString());
+      });
+    }
+  }
+
+  var groupParticipantsName = ''.obs;
+
+  getParticipantsNameAsCsv(String jid) {
+    PlatformRepo().getGroupMembers(jid, false).then((value) {
+      if (value != null) {
+        var str = <String>[];
+        var groupsMembersProfileList = memberFromJson(value);
+        groupsMembersProfileList.forEach((it) {
+          if (it.jid.checkNull != (SessionManagement().getUserJID())) {
+            str.add(it.name.checkNull());
+          }
+        });
+        groupParticipantsName(str.join(","));
+      }
+    });
+  }
+  String get subtitle => userPresenceStatus.value.isEmpty ? groupParticipantsName.value.isNotEmpty ?groupParticipantsName.value.toString() : Constants.EMPTY_STRING : userPresenceStatus.value.toString();
 }

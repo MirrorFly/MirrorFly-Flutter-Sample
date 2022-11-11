@@ -89,8 +89,7 @@ class ProfileView extends GetView<ProfileController> {
                                       .isNotEmpty) {
                                     Get.toNamed(Routes.IMAGE_VIEW, arguments: {
                                       'imageName': controller.profileName.text,
-                                      'imageurl': imagedomin +
-                                          controller.userImgUrl.value
+                                      'imageurl': controller.userImgUrl.value
                                               .checkNull()
                                     });
                                   }
@@ -160,9 +159,7 @@ class ProfileView extends GetView<ProfileController> {
                     ),
                     style: const TextStyle(fontWeight: FontWeight.bold),
                   ),
-                  const AppDivider(
-                    padding: 0.0,
-                  ),
+                  AppDivider(),
                   const SizedBox(
                     height: 20,
                   ),
@@ -183,9 +180,7 @@ class ProfileView extends GetView<ProfileController> {
                     ),
                     style: const TextStyle(fontWeight: FontWeight.bold),
                   ),
-                  const AppDivider(
-                    padding: 0.0,
-                  ),
+                  AppDivider(),
                   const SizedBox(
                     height: 20,
                   ),
@@ -234,9 +229,7 @@ class ProfileView extends GetView<ProfileController> {
                           });
                         },
                       )),
-                  const AppDivider(
-                    padding: 0.0,
-                  ),
+                  AppDivider(padding: EdgeInsets.only(bottom: 16),),
                   Center(
                     child: Obx(
                       () => ElevatedButton(

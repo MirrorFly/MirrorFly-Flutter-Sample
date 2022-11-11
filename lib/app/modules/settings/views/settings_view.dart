@@ -10,6 +10,7 @@ import '../../../common/constants.dart';
 import '../../../common/widgets.dart';
 
 class SettingsView extends GetView<SettingsController> {
+  const SettingsView({Key? key}) : super(key: key);
   @override
   Widget build(BuildContext context) {
     return Scaffold(

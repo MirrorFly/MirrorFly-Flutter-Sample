@@ -41,7 +41,7 @@ class ProfileController extends GetxController {
   void onInit() {
     super.onInit();
     userImgUrl.value = SessionManagement().getUserImage() ?? "";
-    print("auth : " + SessionManagement().getauthToken().toString());
+    Log("auth : ", SessionManagement().getauthToken().toString());
     if (Get.arguments != null) {
       from(Get.arguments["from"]);
       if (from.value == Routes.LOGIN) {
@@ -83,7 +83,14 @@ class ProfileController extends GetxController {
               toToast(data.message.toString());
               if (data.status!) {
                 changed(false);
-                SessionManagement.setCurrentUser(data.data!);
+                var datas = Data(
+                    email: profileEmail.text.toString(),
+                    image: userImgUrl.value,
+                    mobileNumber: profileMobile.text,
+                    nickName: profileName.text,
+                    name: profileName.text,
+                    status: profileStatus.value);
+                SessionManagement.setCurrentUser(datas);
                 if (from.value == Routes.LOGIN) {
                   Get.offNamed(Routes.DASHBOARD);
                 }
@@ -183,7 +190,7 @@ class ProfileController extends GetxController {
       ))?.then((value) {
         value as MemoryImage;
         imageBytes = value.bytes;
-        var name ="${DateTime.now().millisecondsSinceEpoch}.jpg";
+        var name = "${DateTime.now().millisecondsSinceEpoch}.jpg";
         writeImageTemp(value.bytes, name).then((value) {
           if (from.value == Routes.LOGIN) {
             imagepath(value.path);
@@ -192,7 +199,7 @@ class ProfileController extends GetxController {
           } else {
             imagepath(value.path);
             changed(true);
-            updateProfileImage(value.path,update: true);
+            updateProfileImage(value.path, update: true);
           }
         });
       });
@@ -210,7 +217,7 @@ class ProfileController extends GetxController {
       ))?.then((value) {
         value as MemoryImage;
         imageBytes = value.bytes;
-        var name ="${DateTime.now().millisecondsSinceEpoch}.jpg";
+        var name = "${DateTime.now().millisecondsSinceEpoch}.jpg";
         writeImageTemp(value.bytes, name).then((value) {
           if (from.value == Routes.LOGIN) {
             imagepath(value.path);
@@ -218,7 +225,7 @@ class ProfileController extends GetxController {
           } else {
             imagepath(value.path);
             changed(true);
-            updateProfileImage(value.path,update: true);
+            updateProfileImage(value.path, update: true);
           }
         });
       });
@@ -235,14 +242,6 @@ class ProfileController extends GetxController {
   /// To hide loader
   void hideLoader() {
     Helper.hideLoading();
-  }
-
-  Future<File> writeImageTemp(dynamic bytes, String imageName) async {
-    final dir = await getTemporaryDirectory();
-    await dir.create(recursive: true);
-    final tempFile = File((dir.path) + "/" + imageName);
-    await tempFile.writeAsBytes(bytes);
-    return tempFile;
   }
 
   nameChanges(String text) {

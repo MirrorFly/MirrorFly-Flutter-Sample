@@ -1,11 +1,17 @@
 
+import 'dart:convert';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
+import 'package:mirror_fly_demo/app/model/chatMessageModel.dart';
+import 'package:mirror_fly_demo/app/model/groupmembers_model.dart';
+import 'package:mirror_fly_demo/app/nativecall/platformRepo.dart';
 import 'package:package_info_plus/package_info_plus.dart';
+
+import '../model/userlistModel.dart';
 
 class Helper {
   static void showLoading({String? message, bool dismissable = false}) {
@@ -52,12 +58,12 @@ class Helper {
         barrierColor: Colors.transparent);
   }
 
-  static void showAlert({String? title,required String message,List<Widget>? actions}) {
+  static void showAlert({String? title,required String message,List<Widget>? actions,Widget? content}) {
     Get.dialog(
       AlertDialog(
         title: title!=null ? Text(title) : null,
-        contentPadding: const EdgeInsets.only(top: 20,right: 20,left: 20),
-        content: Text(message),
+        contentPadding: const EdgeInsets.only(top: 20,right: 20,left: 20,bottom: 20),
+        content: content ?? Text(message),
         contentTextStyle: const TextStyle(color: texthintcolor,fontWeight: FontWeight.w500),
         actions: actions,
       ),
@@ -168,4 +174,75 @@ extension StringParsing on String? {
   String checkNull() {
     return this ?? "";
   }
+  int checkIndexes(String searchedKey) {
+    var i = -1;
+    if(i==-1 || i<searchedKey.length) {
+      while (this!.indexOf(searchedKey, i + 1) != -1) {
+        i = this!.indexOf(searchedKey, i + 1);
+
+        if (i == 0 ||
+            (i > 0 && (RegExp("[^A-Za-z0-9 ]").hasMatch(this!.split("")[i])
+                || this!.split("")[i] == " "))) {
+          return i;
+        }
+        i++;
+      }
+    }
+    return -1;
+  }
+  /*this = "Gghu"
+searchedKey = "h"
+i = -1
+it = 2*/
+
+  bool startsWithTextInWords(String text) {
+    return this!.toLowerCase().indexOf(text.toLowerCase())<=-1 ? false : this!.toLowerCase().startsWith(text.toLowerCase());checkIndexes(text)>-1;
+    /*return when {
+      this.indexOf(text, ignoreCase = true) <= -1 -> false
+      else -> return this.checkIndexes(text) > -1
+    }*/
+  }
+}
+
+extension BooleanParsing on bool? {
+  //check null
+  bool checkNull() {
+    return this ?? false;
+  }
+}
+
+extension MemberParsing on Member{
+
+  String getUsername(){
+    var value = PlatformRepo().getProfileDetails(this.jid.checkNull());
+    var str = Profile.fromJson(json.decode(value.toString()));
+    return str.name.checkNull();
+  }
+  Future<Profile> getProfileDetails() async {
+    var value = await PlatformRepo().getProfileDetails(this.jid.checkNull());
+    var str = Profile.fromJson(json.decode(value.toString()));
+    return str;
+  }
+}
+
+extension ProfileParesing on Profile{
+  bool isDeletedContact(){
+    return this.contactType =="deleted_contact";
+  }
+}
+
+extension ChatmessageParsing on ChatMessageModel{
+  bool isMediaDownloaded() {
+      return isMediaMessage() && (mediaChatMessage?.mediaDownloadStatus == Constants.MEDIA_DOWNLOADED);
+  }
+  bool isMediaUploaded() {
+    return isMediaMessage() && (mediaChatMessage?.mediaUploadStatus == Constants.MEDIA_UPLOADED);
+  }
+  bool isMediaMessage() => (isAudioMessage() || isVideoMessage() || isImageMessage() || isFileMessage());
+  bool isTextMessage() => messageType == Constants.MTEXT;
+  bool isAudioMessage() => messageType == Constants.MAUDIO;
+  bool isImageMessage() => messageType == Constants.MIMAGE;
+  bool isVideoMessage() => messageType == Constants.MVIDEO;
+  bool isFileMessage() => messageType == Constants.MDOCUMENT;
+  bool isNotificationMessage() => messageType == Constants.MNOTIFICATION;
 }

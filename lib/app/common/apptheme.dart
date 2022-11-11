@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 import 'constants.dart';
 
-class apptheme {
+class Apptheme {
   static ThemeData theme = ThemeData(
     appBarTheme: const AppBarTheme(
         color: appbarcolor,
         iconTheme: IconThemeData(color: iconcolor),
         titleTextStyle: TextStyle(
             color: appbartextcolor,
-            fontSize: 20,
-            fontWeight: FontWeight.normal,
+            fontSize: 18,
+            fontWeight: FontWeight.w500,
             fontFamily: 'sf_ui')),
     hintColor: Colors.black26,
     fontFamily: 'sf_ui',

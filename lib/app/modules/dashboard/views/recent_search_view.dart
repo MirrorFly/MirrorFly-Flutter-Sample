@@ -217,9 +217,7 @@ class RecentSearchView extends GetView<RecentChatSearchController> {
                                         ),
                                       ],
                                     ),
-                                    const AppDivider(
-                                      padding: 0.0,
-                                    )
+                                    AppDivider()
                                   ],
                                 ),
                               ),
@@ -391,9 +389,7 @@ class RecentSearchView extends GetView<RecentChatSearchController> {
                                           ),
                                         ],
                                       ),
-                                      const AppDivider(
-                                        padding: 0.0,
-                                      )
+                                      AppDivider()
                                     ],
                                   ),
                                 ),
@@ -600,7 +596,7 @@ class RecentSearchView extends GetView<RecentChatSearchController> {
                 )),
             Flexible(
               child: Container(
-                padding: EdgeInsets.only(top: 16),
+                padding: EdgeInsets.only(top: 8),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -663,9 +659,7 @@ class RecentSearchView extends GetView<RecentChatSearchController> {
                         ),
                       ],
                     ),
-                    const AppDivider(
-                      padding: 0.0,
-                    )
+                    AppDivider(padding: EdgeInsets.only(top: 8),)
                   ],
                 ),
               ),

@@ -16,18 +16,16 @@ import 'constants.dart';
 import 'main_controller.dart';
 
 class AppDivider extends StatelessWidget {
-  final double padding;
+  EdgeInsetsGeometry? padding;
 
-  const AppDivider({Key? key, this.padding = 18.0}) : super(key: key);
+  AppDivider({Key? key, this.padding}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.symmetric(horizontal: padding),
-      child: const Divider(
-        thickness: 0.29,
-        color: dividercolor,
-      ),
+    return Container(
+      margin: padding,
+      height: 0.29,
+      color: dividercolor,
     );
   }
 }
@@ -39,13 +37,12 @@ class ProfileTextImage extends StatelessWidget {
   final double radius;
   final Color fontcolor;
 
-  ProfileTextImage(
-      {Key? key,
-      required this.text,
-      this.fontsize = 15,
-      this.bgcolor = buttonbgcolor,
-      this.radius = 22,
-      this.fontcolor = Colors.white})
+  ProfileTextImage({Key? key,
+    required this.text,
+    this.fontsize = 15,
+    this.bgcolor = buttonbgcolor,
+    this.radius = 25,
+    this.fontcolor = Colors.white})
       : super(key: key);
 
   @override
@@ -55,9 +52,9 @@ class ProfileTextImage extends StatelessWidget {
       backgroundColor: Color(Helper.getColourCode(text)), //bgcolor,
       child: Center(
           child: Text(
-        getString(text),
-        style: TextStyle(fontSize: fontsize, color: fontcolor),
-      )),
+            getString(text),
+            style: TextStyle(fontSize: fontsize, color: fontcolor),
+          )),
     );
   }
 
@@ -85,13 +82,12 @@ class ImageNetwork extends GetView<MainController> {
   final Widget? errorWidget;
   final bool clipoval;
 
-  const ImageNetwork(
-      {Key? key,
-      required this.url,
-      required this.width,
-      required this.height,
-      this.errorWidget,
-      required this.clipoval})
+  const ImageNetwork({Key? key,
+    required this.url,
+    required this.width,
+    required this.height,
+    this.errorWidget,
+    required this.clipoval})
       : super(key: key);
 
   @override
@@ -99,14 +95,28 @@ class ImageNetwork extends GetView<MainController> {
     var AUTHTOKEN = controller.AUTHTOKEN;
     Log("Mirrorfly Auth", AUTHTOKEN.value);
     Log("Image URL", url);
-    return Obx(
-      () => CachedNetworkImage(
-        imageUrl: imagedomin + url,
-        fit: BoxFit.fill,
-        width: width,
+    if (url.isEmpty) {
+      return errorWidget!=null ? errorWidget! : clipoval ? ClipOval(
+        child: Image.asset(
+          profileImg,
+          height: height,
+          width: width,
+        ),
+      ) : Image.asset(
+        profileImg,
         height: height,
-        httpHeaders: {"Authorization": controller.AUTHTOKEN.value},
-        /*placeholder: (context, url) {
+        width: width,
+      );
+    }else {
+      return Obx(
+            () =>
+            CachedNetworkImage(
+              imageUrl: controller.UPLOAD_ENDPOINT + url,
+              fit: BoxFit.fill,
+              width: width,
+              height: height,
+              httpHeaders: {"Authorization": controller.AUTHTOKEN.value},
+              /*placeholder: (context, url) {
           //Log("placeholder", url);
           return errorWidget ??
               Image.asset(
@@ -116,31 +126,33 @@ class ImageNetwork extends GetView<MainController> {
               );
         },*/
 
-        progressIndicatorBuilder: (context, link, progress) {
-          return SizedBox(
-            height: height,
-            width: width,
-            child: const Center(child: CircularProgressIndicator()),
-          );
-        },
-        errorWidget: (context, link, error) {
-          Log("imageerror", error.toString());
-          if(error.toString().contains("401")&&url.isNotEmpty){
-            // controller.getAuthToken();
-            _deleteImageFromCache(url);
-          }
-          return errorWidget ??
-              Image.asset(
-                'assets/logos/profile_img.png',
-                height: width,
-                width: height,
-              );
-        },
-        imageBuilder: (context,provider){
-          return clipoval ? ClipOval(child: Image(image: provider,fit: BoxFit.fill,)) : Image(image: provider,fit: BoxFit.fill,);
-        },
-      ),
-      /*Image.network(
+              progressIndicatorBuilder: (context, link, progress) {
+                return SizedBox(
+                  height: height,
+                  width: width,
+                  child: const Center(child: CircularProgressIndicator()),
+                );
+              },
+              errorWidget: (context, link, error) {
+                Log("imageerror", error.toString());
+                if (error.toString().contains("401") && url.isNotEmpty) {
+                  // controller.getAuthToken();
+                  _deleteImageFromCache(url);
+                }
+                return errorWidget ??
+                    Image.asset(
+                      profileImg,
+                      height: height,
+                      width: width,
+                    );
+              },
+              imageBuilder: (context, provider) {
+                return clipoval ? ClipOval(
+                    child: Image(image: provider, fit: BoxFit.fill,)) : Image(
+                  image: provider, fit: BoxFit.fill,);
+              },
+            ),
+        /*Image.network(
         imagedomin + url,
         fit: BoxFit.fill,
         width: width,
@@ -164,19 +176,19 @@ class ImageNetwork extends GetView<MainController> {
               );
         },
       ),*/
-    );
+      );
+    }
   }
+
   void _deleteImageFromCache(String url) {
-    cache.DefaultCacheManager manager = cache.DefaultCacheManager();
-    manager.emptyCache();
-    // cache.DefaultCacheManager().removeFile(url).then((value) {
-      //ignore: avoid_print
-      print('File removed');
+    /*cache.DefaultCacheManager manager = cache.DefaultCacheManager();
+    manager.emptyCache();*/
+    cache.DefaultCacheManager().removeFile(url).then((value) {
+      Log('File removed', "");
       controller.getAuthToken();
-    // }).onError((error, stackTrace) {
-    //   ignore: avoid_print
-      // print(error);
-    // });
+    }).onError((error, stackTrace) {
+      Log("", error.toString());
+    });
     //await CachedNetworkImage.evictFromCache(url);
   }
 }
@@ -223,18 +235,3 @@ class EmojiLayout extends StatelessWidget {
     );
   }
 }
-
-/*
-Image NetImage (String url,double width,double height){
-  return Image.network(imagedomin+url,
-      width: width,
-      height: height,
-      headers: {"Authorization":SessionManagement().getauthToken().toString()},
-  errorBuilder:(context,object,trace){
-    return Image.asset(
-      'assets/logos/profile_img.png',
-      height: width,
-      width: height,
-    );
-  },);
-}*/

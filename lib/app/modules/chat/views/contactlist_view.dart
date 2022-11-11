@@ -11,6 +11,7 @@ import 'package:mirror_fly_demo/app/modules/chat/controllers/contact_controller.
 import '../../../common/debouncer.dart';
 import '../../../common/widgets.dart';
 import '../../../routes/app_pages.dart';
+import '../../../widgets/custom_action_bar_icons.dart';
 
 class ContactListView extends GetView<ContactController> {
   const ContactListView({Key? key}) : super(key: key);
@@ -23,62 +24,79 @@ class ContactListView extends GetView<ContactController> {
         appBar: AppBar(
           leading: IconButton(
             icon: controller.isForward.value
-                ? const Icon(Icons.close, color: iconcolor)
-                : const Icon(Icons.arrow_back, color: iconcolor),
+                ? const Icon(Icons.close)
+                : const Icon(Icons.arrow_back),
             onPressed: () {
               controller.isForward.value
                   ? Get.back()
-                  : controller.search.value
-                      ? controller.backFromSearch()
-                      : Get.back();
-              // if (controller.search.value) {
-              //   controller.backFromSearch();
-              // } else {
-              //   Get.back();
-              // }
+                  : controller.search
+                  ? controller.backFromSearch()
+                  : Get.back();
             },
           ),
-          title: controller.search.value
+          title: controller.search
               ? TextField(
-                  onChanged: (text) {
-                    debouncer.run(() {
-                      controller.searchListener(text);
-                    });
-                  },
-                  controller: controller.searchQuery,
-                  autofocus: true,
-                  decoration: const InputDecoration(
-                      hintText: "Search", border: InputBorder.none),
-                )
-              : controller.isForward.value
-                  ? const Text("Forward to...")
-                  : const Text('Contact'),
-          iconTheme: const IconThemeData(color: iconcolor),
+            onChanged: (text) {
+              debouncer.run(() {
+                controller.searchListener(text);
+              });
+            },
+            style: const TextStyle(fontSize: 16),
+            controller: controller.searchQuery,
+            autofocus: true,
+            decoration: const InputDecoration(
+                hintText: "Search", border: InputBorder.none),
+          ): controller.isForward.value
+              ? const Text("Forward to...") : controller.isCreateGroup.value
+              ? const Text("Add Participants")
+              : const Text('Contacts'),
           actions: [
-            controller.search.value
-                ? const SizedBox()
-                : IconButton(
-                    icon: SvgPicture.asset(
-                      searchicon,
-                      width: 18,
-                      height: 18,
-                      fit: BoxFit.contain,
-                    ),
-                    onPressed: () {
-                      if (controller.search.value) {
-                        controller.search.value = false;
-                      } else {
-                        controller.search.value = true;
-                      }
-                    },
-                  ),
-            const SizedBox(width: 10,),
-            // Container(
-            //   margin: const EdgeInsets.all(16),
-            //   child: SvgPicture.asset(moreicon, width: 3.66, height: 16.31),
-            // ),
-          ],
+            Visibility(
+              visible: controller.isSearchVisible,
+              child: IconButton(
+                  onPressed: ()=> controller.onSearchPressed(),
+                  icon: SvgPicture.asset(searchicon)),
+            ),
+            Visibility(
+              visible: controller.isClearVisible,
+              child: IconButton(
+                  onPressed: () => controller.backFromSearch(),
+                  icon: const Icon(Icons.clear)),
+            ),
+            Visibility(
+              visible: controller.isCreateVisible,
+              child: TextButton(
+                  onPressed: () =>controller.backtoCreateGroup(),
+                  child: Text(
+                    controller.groupJid.value.isNotEmpty ? "NEXT" : "CREATE", style: TextStyle(color: Colors.black),)),
+            ),
+            Visibility(
+              visible: controller.isSearchVisible,
+              child: CustomActionBarIcons(
+                availableWidth: MediaQuery
+                    .of(context)
+                    .size
+                    .width / 2, // half the screen width
+                actionWidth: 48,
+                actions: [
+                  CustomAction(
+                    visibleWidget: IconButton(
+                        onPressed: () {
 
+                        },
+                        icon: const Icon(Icons.settings)),
+                    overflowWidget: InkWell(child: const Text("Settings"),
+                      onTap: () => Get.toNamed(Routes.SETTINGS),),
+                    showAsAction: ShowAsAction.NEVER,
+                    keyValue: 'Settings',
+                    onItemClick: () {
+
+                    },
+                  )
+                ],
+              ),
+            ),
+          ],
         ),
         floatingActionButton: controller.isForward.value && controller.selectedUsersList.isNotEmpty ? FloatingActionButton(
           tooltip: "Forward",
@@ -103,7 +121,6 @@ class ContactListView extends GetView<ContactController> {
                       return const Center(child: CircularProgressIndicator());
                     } else {
                       var item = controller.usersList[index];
-                      var image = controller.imagePath(item.image);
                       return InkWell(
                         child: Row(
                           children: [
@@ -153,19 +170,19 @@ class ContactListView extends GetView<ContactController> {
                               ),
                             ),
                             const Spacer(),
-                            controller.isForward.value
-                                ? Checkbox(
-                                    value: item.isSelected,
-                                    onChanged: (value) {},
-                                  )
-                                : const SizedBox.shrink(),
+                            Visibility(
+                              visible: controller.isCheckBoxVisible,
+                                  child: Checkbox(
+                                      value: item.isSelected,
+                                      onChanged: (value){
+
+                                      },
+                                    ),
+                                ),
                           ],
                         ),
                         onTap: () {
-                          controller.isForward.value
-                              ? controller.contactSelected(item)
-                              : Get.offNamed(Routes.CHAT,
-                                  arguments: controller.usersList[index]);
+                          controller.onListItemPressed(item);
                         },
                       );
                     }

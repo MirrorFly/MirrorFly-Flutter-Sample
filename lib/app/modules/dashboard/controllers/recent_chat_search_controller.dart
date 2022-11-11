@@ -225,7 +225,7 @@ class RecentChatSearchController extends GetxController {
   Future<ProfileData?> getProfile(String jid) async{
     await PlatformRepo().getProfileLocal(jid,false).then((value)async{
       if (value != null) {
-        var data = profileDataFromJson(value);;
+        var data = profileDataFromJson(value);
         return data.data;
       }else {
         return null;
@@ -259,9 +259,9 @@ class RecentChatSearchController extends GetxController {
           profile.isAdminBlocked = data.isAdminBlocked;
           profile.isBlocked = data.isBlocked;
           profile.isBlockedMe = data.isBlockedMe;
-          profile.isGroupAdmin = false;
+          profile.isGroupAdmin = data.isGroupAdmin;
           profile.isGroupInOfflineMode = data.isGroupInOfflineMode;
-          profile.isGroupProfile = false;
+          profile.isGroupProfile = data.isGroupProfile;
           profile.isItSavedContact = data.isItSavedContact;
           profile.isMuted = data.isMuted;
           profile.isSelected = data.isSelected;
