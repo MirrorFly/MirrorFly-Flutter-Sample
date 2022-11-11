@@ -289,6 +289,10 @@ class GroupInfoController extends GetxController {
     });
   }
 
+  gotoViewAllMedia(){
+    Get.toNamed(Routes.VIEW_MEDIA,arguments: {"name":profile.name,"jid":profile.jid,"isgroup":profile.isGroupProfile});
+  }
+
   removeUser(String userjid){
     if(isMemberOfGroup){
       showLoader();

@@ -203,7 +203,7 @@ class GroupInfoView extends GetView<GroupInfoController> {
                         fontSize: 14,
                         fontWeight: FontWeight.w500)),
                 trailing: Icon(Icons.keyboard_arrow_right),
-                onTap: () {},
+                onTap: ()=>controller.gotoViewAllMedia(),
               ),
               ListItem(
                 leading: SvgPicture.asset(report_group),
@@ -275,9 +275,7 @@ class GroupInfoView extends GetView<GroupInfoController> {
                         .isNotEmpty
                         ? ProfileTextImage(
                       fontsize: 20,
-                      text: item.name
-                          .checkNull(),
-                      radius: 40,
+                      text: item.name.checkNull(),
                     )
                         : null,),
                   Expanded(child: Padding(

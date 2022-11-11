@@ -226,8 +226,23 @@ extension MemberParsing on Member{
 }
 
 extension ProfileParesing on Profile{
-
   bool isDeletedContact(){
     return this.contactType =="deleted_contact";
   }
+}
+
+extension ChatmessageParsing on ChatMessageModel{
+  bool isMediaDownloaded() {
+      return isMediaMessage() && (mediaChatMessage?.mediaDownloadStatus == Constants.MEDIA_DOWNLOADED);
+  }
+  bool isMediaUploaded() {
+    return isMediaMessage() && (mediaChatMessage?.mediaUploadStatus == Constants.MEDIA_UPLOADED);
+  }
+  bool isMediaMessage() => (isAudioMessage() || isVideoMessage() || isImageMessage() || isFileMessage());
+  bool isTextMessage() => messageType == Constants.MTEXT;
+  bool isAudioMessage() => messageType == Constants.MAUDIO;
+  bool isImageMessage() => messageType == Constants.MIMAGE;
+  bool isVideoMessage() => messageType == Constants.MVIDEO;
+  bool isFileMessage() => messageType == Constants.MDOCUMENT;
+  bool isNotificationMessage() => messageType == Constants.MNOTIFICATION;
 }

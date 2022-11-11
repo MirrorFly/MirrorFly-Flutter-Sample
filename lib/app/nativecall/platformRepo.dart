@@ -930,6 +930,51 @@ class PlatformRepo {
     }
   }
 
+  Future<dynamic> getMediaMessages(String jid) async {
+    dynamic response;
+    try {
+      response = await mirrorFlyMethodChannel.invokeMethod('getMediaMessages', { "jid" : jid,});
+      debugPrint("getMediaMessages Response ==> $response");
+      return response;
+    }on PlatformException catch (e){
+      debugPrint("Platform Exception ===> $e");
+      rethrow;
+    } on Exception catch(error){
+      debugPrint("Exception ==> $error");
+      rethrow;
+    }
+  }
+
+  Future<dynamic> getDocsMessages(String jid) async {
+    dynamic response;
+    try {
+      response = await mirrorFlyMethodChannel.invokeMethod('getDocsMessages', { "jid" : jid,});
+      debugPrint("getDocsMessages Response ==> $response");
+      return response;
+    }on PlatformException catch (e){
+      debugPrint("Platform Exception ===> $e");
+      rethrow;
+    } on Exception catch(error){
+      debugPrint("Exception ==> $error");
+      rethrow;
+    }
+  }
+
+  Future<dynamic> getLinkMessages(String jid) async {
+    dynamic response;
+    try {
+      response = await mirrorFlyMethodChannel.invokeMethod('getLinkMessages', { "jid" : jid,});
+      debugPrint("getLinkMessages Response ==> $response");
+      return response;
+    }on PlatformException catch (e){
+      debugPrint("Platform Exception ===> $e");
+      rethrow;
+    } on Exception catch(error){
+      debugPrint("Exception ==> $error");
+      rethrow;
+    }
+  }
+
   exportChat(String jid) async {
     try {
       await mirrorFlyMethodChannel.invokeMethod('exportChat', {"jid" : jid });

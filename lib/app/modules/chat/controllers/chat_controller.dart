@@ -35,10 +35,7 @@ class ChatController extends BaseController
     with GetTickerProviderStateMixin {
   var chatList = List<ChatMessageModel>.empty(growable: true).obs;
   late AnimationController controller;
-  ScrollController scrollController = ScrollController(
-    initialScrollOffset: 0.0,
-    keepScrollOffset: true,
-  );
+  ScrollController scrollController = ScrollController();
 
   ItemScrollController searchscrollController = ItemScrollController();
 
@@ -92,6 +89,9 @@ class ChatController extends BaseController
   @override
   void onInit() {
     super.onInit();
+    /*WidgetsBinding.instance.addPostFrameCallback((_){
+      Log("scroll", scrollController.hasClients.toString());
+    });*/
     profile_.value = Get.arguments as Profile;
     debugPrint("isBlocked===> ${profile.isBlocked}");
     debugPrint("profile detail===> ${profile.toJson().toString()}");
@@ -116,13 +116,8 @@ class ChatController extends BaseController
         focusNode.canRequestFocus = false;
       }
     });
-    scrollController.addListener(() {
-      double offset = 0.9 * scrollController.position.maxScrollExtent;
+    //scrollController.addListener(_scrollController);
 
-      if (scrollController.position.pixels > offset) {
-        debugPrint('scrollController offset > load more');
-      }
-    });
     registerChatSync();
     PlatformRepo().ongoingChat(profile.jid!);
     getChatHistory(profile.jid!);
@@ -162,6 +157,25 @@ class ChatController extends BaseController
       lastposition(callback.length);
       chatList.refresh();
     });
+
+    chatList.bindStream(chatList.stream);
+    ever(chatList, (callback){
+      Future.delayed(const Duration(milliseconds: 500),(){
+        if(scrollController.hasClients) {
+          scrollController.animateTo(
+            scrollController.position.maxScrollExtent,
+            duration: const Duration(milliseconds: 500),
+            curve: Curves.fastOutSlowIn,);
+        }
+      });
+    });
+  }
+
+  _scrollController() {
+    double offset = 0.9 * scrollController.position.maxScrollExtent;
+    if (scrollController.position.pixels > offset) {
+      debugPrint('scrollController offset > load more');
+    }
   }
 
   @override

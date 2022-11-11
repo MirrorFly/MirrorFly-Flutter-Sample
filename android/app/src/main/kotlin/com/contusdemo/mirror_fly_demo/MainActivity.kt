@@ -48,6 +48,7 @@ import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.FileWriter
 import java.io.IOException
+import java.net.URL
 import java.text.DateFormatSymbols
 import java.util.*
 import kotlin.collections.ArrayList
@@ -668,14 +669,17 @@ class MainActivity : FlutterActivity(), MethodChannel.MethodCallHandler,
             }
             call.method.equals("getMediaMessages") -> {
                 val jid = call.argument<String>("jid") ?: ""
+                Log.d("getMedia",ChatManager.getMediaMessages(jid).tojsonString())
                 result.success(ChatManager.getMediaMessages(jid).tojsonString())
             }
             call.method.equals("getDocsMessages") -> {
                 val jid = call.argument<String>("jid") ?: ""
+                Log.d("getDocs",ChatManager.getDocsMessages(jid).tojsonString())
                 result.success(ChatManager.getDocsMessages(jid).tojsonString())
             }
             call.method.equals("getLinkMessages") -> {
                 val jid = call.argument<String>("jid") ?: ""
+                Log.d("getLinks",ChatManager.getLinkMessages(jid).tojsonString())
                 result.success(ChatManager.getLinkMessages(jid).tojsonString())
             }
             call.method.equals("getProfileDetails") -> {
@@ -1798,6 +1802,64 @@ class MainActivity : FlutterActivity(), MethodChannel.MethodCallHandler,
         }
         return viewAllMediaList
     }
+    fun ChatMessage.isMediaDownloaded(): Boolean {
+        return isMediaMessage() && (mediaChatMessage.mediaDownloadStatus == MediaDownloadStatus.MEDIA_DOWNLOADED)
+    }
+    fun ChatMessage.isMediaUploaded(): Boolean {
+        return isMediaMessage() && (mediaChatMessage.mediaUploadStatus == MediaUploadStatus.MEDIA_UPLOADED)
+    }
+    fun ChatMessage.isMediaMessage() = (isAudioMessage() || isVideoMessage() || isImageMessage() || isFileMessage())
+    fun ChatMessage.isTextMessage() = messageType == com.contus.flycommons.models.MessageType.TEXT
+    fun ChatMessage.isAudioMessage() = messageType == com.contus.flycommons.models.MessageType.AUDIO
+    fun ChatMessage.isImageMessage() = messageType == com.contus.flycommons.models.MessageType.IMAGE
+    fun ChatMessage.isVideoMessage() = messageType == com.contus.flycommons.models.MessageType.VIDEO
+    fun ChatMessage.isFileMessage() = messageType == com.contus.flycommons.models.MessageType.DOCUMENT
+    fun ChatMessage.isNotificationMessage() = messageType == com.contus.flycommons.models.MessageType.NOTIFICATION
+
+    private fun getMessageWithURLList(message: ChatMessage): MutableList<GroupedMedia> {
+        val messageList = mutableListOf<GroupedMedia>()
+        val textContent = when {
+            message.isTextMessage() -> {
+                message.getMessageTextContent()
+            }
+            message.isImageMessage() || message.isVideoMessage() -> {
+                message.getMediaChatMessage().getMediaCaptionText()
+            }
+            else -> Constants.EMPTY_STRING
+        }
+        if (textContent.isNotBlank()) {
+            getUrlAndHostList(textContent).forEach {
+                val map = hashMapOf<String, String>()
+                map["host"] = it.first
+                map["url"] = it.second
+                messageList.add(GroupedMedia.MessageItem(message, map))
+            }
+        }
+        return messageList
+    }
+    private fun getUrlAndHostList(text: String): java.util.ArrayList<Pair<String, String>> {
+        val urls = java.util.ArrayList<Pair<String, String>>()
+        val splitString = text.split("\\s+".toRegex())
+        for (string in splitString) {
+            try {
+                val item = URL(string)
+                urls.add(Pair(item.host, item.toString()))
+            } catch (ignored: Exception) {
+                //No Implementation needed
+            }
+        }
+        return urls
+    }
+    private fun isMediaAvailable(chatMessage: ChatMessage, isMedia: Boolean): Boolean {
+        return (!isMedia || isMediaExists(chatMessage.getMediaChatMessage().getMediaLocalStoragePath()))
+    }
+    fun isMediaExists(filePath: String?): Boolean {
+        return if (filePath != null) {
+            val file = File(filePath)
+            file.exists()
+        } else false
+    }
+
     private fun getCategoryName(dateSymbols: Array<String>, currentDay: Int, currentMonth: Int, currentYear: Int,
                                 day: Int, month: Int, year: Int): Pair<Int, String> {
         return when {
