@@ -27,6 +27,7 @@ import com.contusflysdk.api.ChatManager.fileProviderAuthority
 import com.contusflysdk.api.chat.GroupEventsListener
 import com.contusflysdk.api.chat.MessageEventsListener
 import com.contusflysdk.api.contacts.ContactManager
+import com.contusflysdk.api.contacts.ProfileDetails
 import com.contusflysdk.api.models.ChatMessage
 import com.contusflysdk.api.models.ChatMessageStatusDetail
 import com.contusflysdk.api.network.FlyNetwork

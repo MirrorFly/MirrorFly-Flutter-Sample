@@ -11,6 +11,7 @@ import 'package:mirror_fly_demo/app/model/statusModel.dart';
 import 'package:otp_text_field/otp_field.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../../../common/constants.dart';
 import '../../../data/SessionManagement.dart';
 import '../../../model/registerModel.dart';
 import '../../../nativecall/platformRepo.dart';
@@ -33,7 +34,7 @@ class LoginController extends GetxController {
   set smsCode(String val) => _smsCode.value = val;
 
 
-  void registerUser(BuildContext context) {
+  // void registerUser(BuildContext context) {
 
   showLoading(){
     Helper.showLoading(message: "Please Wait...");

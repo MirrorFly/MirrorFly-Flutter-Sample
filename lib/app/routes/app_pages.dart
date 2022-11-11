@@ -20,8 +20,6 @@ import '../modules/dashboard/views/recent_search_view.dart';
 import '../modules/group/bindings/groupinfo_binding.dart';
 import '../modules/group/views/groupcreation_view.dart';
 import '../modules/group/views/groupinfo_view.dart';
-import '../modules/home/bindings/home_binding.dart';
-import '../modules/home/views/home_view.dart';
 import '../modules/image_view/bindings/image_view_binding.dart';
 import '../modules/image_view/views/image_view_view.dart';
 import '../modules/local_contact/bindings/local_contact_binding.dart';

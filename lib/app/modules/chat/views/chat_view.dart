@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
@@ -36,16 +35,10 @@ class ChatView extends GetView<ChatController> {
 
   @override
   Widget build(BuildContext context) {
-     screenHeight = MediaQuery.of(context).size.height;
-     screenWidth = MediaQuery.of(context).size.width;
-    screenHeight = MediaQuery
-        .of(context)
-        .size
-        .height;
-    screenWidth = MediaQuery
-        .of(context)
-        .size
-        .width;
+    screenHeight = MediaQuery.of(context).size.height;
+    screenWidth = MediaQuery.of(context).size.width;
+    screenHeight = MediaQuery.of(context).size.height;
+    screenWidth = MediaQuery.of(context).size.width;
     return KeyboardDismisser(
       child: Scaffold(
           appBar: getAppBar(),
@@ -63,10 +56,7 @@ class ChatView extends GetView<ChatController> {
                 onWillPop: () {
                   if (controller.showEmoji.value) {
                     controller.showEmoji(false);
-                  } else if (MediaQuery
-                      .of(context)
-                      .viewInsets
-                      .bottom > 0) {
+                  } else if (MediaQuery.of(context).viewInsets.bottom > 0) {
                     FocusManager.instance.primaryFocus?.unfocus();
                   } else {
                     Get.offAllNamed(Routes.DASHBOARD);
@@ -77,8 +67,7 @@ class ChatView extends GetView<ChatController> {
                   children: [
                     Expanded(
                       child: Obx(() {
-                        return chatListView(
-                            controller.chatList);
+                        return chatListView(controller.chatList);
                       }),
                     ),
                     Align(
@@ -88,222 +77,332 @@ class ChatView extends GetView<ChatController> {
                           color: Colors.white,
                           child: controller.isBlocked.value
                               ? userblocked()
-                              : !controller.isMemberOfGroup ? userNoLonger()
-                              : Column(
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            children: [
-                              replyMessageHeader(context),
-                              const Divider(
-                                height: 1,
-                                thickness: 0.29,
-                                color: textblackcolor,
-                              ),
-                              const SizedBox(
-                                height: 10,
-                              ),
-                          IntrinsicHeight(
-                            child: Row(
-                                crossAxisAlignment: CrossAxisAlignment.stretch,
-                                children: [
-                                  Flexible(
-                                    child: Container(
-                                      padding:
-                                      const EdgeInsets.only(left: 10),
-                                      margin: const EdgeInsets.only(
-                                          left: 10,
-                                          right: 10,
-                                          bottom: 10),
-                                      width: double.infinity,
-                                      decoration: BoxDecoration(
-                                        border: Border.all(
-                                          color: textcolor,
+                              : !controller.isMemberOfGroup
+                                  ? userNoLonger()
+                                  : Column(
+                                      mainAxisAlignment: MainAxisAlignment.end,
+                                      children: [
+                                        replyMessageHeader(context),
+                                        const Divider(
+                                          height: 1,
+                                          thickness: 0.29,
+                                          color: textblackcolor,
                                         ),
-                                        borderRadius:
-                                        const BorderRadius.all(
-                                            Radius.circular(40)),
-                                        color: Colors.white,
-                                      ),
-                                      child: Obx(() {
-                                        return Row(
-                                        // mainAxisAlignment: MainAxisAlignment.end,
-                                        children: <Widget>[
-                                          controller.isAudioRecording.value == Constants.audioRecording || controller.isAudioRecording.value == Constants.audioRecordDone ? Text(controller.timerInit.value,
-                                              style: const TextStyle(
-                                                  color:
-                                                  buttonbgcolor)) : const SizedBox.shrink(),
-                                          controller.isAudioRecording.value == Constants.audioRecordInitial ? InkWell(
-                                              onTap: () {
-                                                if (!controller
-                                                    .showEmoji.value) {
-                                                  FocusScope.of(context)
-                                                      .unfocus();
-                                                  controller.focusNode
-                                                      .canRequestFocus =
-                                                  false;
-                                                }
-                                                Future.delayed(
-                                                    const Duration(
-                                                        milliseconds:
-                                                        500), () {
-                                                  controller.showEmoji(
-                                                      !controller
-                                                          .showEmoji
-                                                          .value);
-                                                });
-                                              },
-                                              child: SvgPicture.asset(
-                                                  'assets/logos/smile.svg')),
-                                          controller.isAudioRecording.value == Constants.audioRecordDelete ? const Padding(
-                                            padding: EdgeInsets.all(13.0),
-                                            child: LottieAnimation(
-                                              lottieJson: deleteDustbin, showRepeat: false, width: 25, height: 25,),
-                                          ): const SizedBox.shrink(),
-                                          const SizedBox(
-                                            width: 10,
+                                        const SizedBox(
+                                          height: 10,
+                                        ),
+                                        IntrinsicHeight(
+                                          child: Row(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.stretch,
+                                            children: [
+                                              Flexible(
+                                                child: Container(
+                                                  padding:
+                                                      const EdgeInsets.only(
+                                                          left: 10),
+                                                  margin: const EdgeInsets.only(
+                                                      left: 10,
+                                                      right: 10,
+                                                      bottom: 10),
+                                                  width: double.infinity,
+                                                  decoration: BoxDecoration(
+                                                    border: Border.all(
+                                                      color: textcolor,
+                                                    ),
+                                                    borderRadius:
+                                                        const BorderRadius.all(
+                                                            Radius.circular(
+                                                                40)),
+                                                    color: Colors.white,
+                                                  ),
+                                                  child: Obx(() {
+                                                    return Row(
+                                                      // mainAxisAlignment: MainAxisAlignment.end,
+                                                      children: <Widget>[
+                                                        controller.isAudioRecording
+                                                                        .value ==
+                                                                    Constants
+                                                                        .audioRecording ||
+                                                                controller
+                                                                        .isAudioRecording
+                                                                        .value ==
+                                                                    Constants
+                                                                        .audioRecordDone
+                                                            ? Text(
+                                                                controller
+                                                                    .timerInit
+                                                                    .value,
+                                                                style: const TextStyle(
+                                                                    color:
+                                                                        buttonbgcolor))
+                                                            : const SizedBox
+                                                                .shrink(),
+                                                        controller.isAudioRecording
+                                                                    .value ==
+                                                                Constants
+                                                                    .audioRecordInitial
+                                                            ? InkWell(
+                                                                onTap: () {
+                                                                  if (!controller
+                                                                      .showEmoji
+                                                                      .value) {
+                                                                    FocusScope.of(
+                                                                            context)
+                                                                        .unfocus();
+                                                                    controller
+                                                                        .focusNode
+                                                                        .canRequestFocus = false;
+                                                                  }
+                                                                  Future.delayed(
+                                                                      const Duration(
+                                                                          milliseconds:
+                                                                              500),
+                                                                      () {
+                                                                    controller.showEmoji(!controller
+                                                                        .showEmoji
+                                                                        .value);
+                                                                  });
+                                                                },
+                                                                child: SvgPicture
+                                                                    .asset(
+                                                                        'assets/logos/smile.svg'))
+                                                            : const SizedBox
+                                                                .shrink(),
+                                                        controller.isAudioRecording
+                                                                    .value ==
+                                                                Constants
+                                                                    .audioRecordDelete
+                                                            ? const Padding(
+                                                                padding:
+                                                                    EdgeInsets
+                                                                        .all(
+                                                                            13.0),
+                                                                child:
+                                                                    LottieAnimation(
+                                                                  lottieJson:
+                                                                      deleteDustbin,
+                                                                  showRepeat:
+                                                                      false,
+                                                                  width: 25,
+                                                                  height: 25,
+                                                                ),
+                                                              )
+                                                            : const SizedBox
+                                                                .shrink(),
+                                                        const SizedBox(
+                                                          width: 10,
+                                                        ),
+                                                        controller.isAudioRecording
+                                                                    .value ==
+                                                                Constants
+                                                                    .audioRecording
+                                                            ? Expanded(
+                                                                child:
+                                                                    Dismissible(
+                                                                  key:
+                                                                      UniqueKey(),
+                                                                  confirmDismiss:
+                                                                      (DismissDirection
+                                                                          direction) async {
+                                                                    if (direction ==
+                                                                        DismissDirection
+                                                                            .endToStart) {
+                                                                      controller
+                                                                          .cancelRecording();
+                                                                      return true;
+                                                                    }
+                                                                    return false;
+                                                                  },
+                                                                  direction:
+                                                                      DismissDirection
+                                                                          .endToStart,
+                                                                      child: const Padding(padding: EdgeInsets.only(right: 15.0),
+                                                                      child: Text('< Slide to Cancel', textAlign: TextAlign.end),
+                                                                  ),
+                                                                ),
+                                                              )
+                                                            : const SizedBox
+                                                                .shrink(),
+                                                        controller.isAudioRecording
+                                                                    .value ==
+                                                                Constants
+                                                                    .audioRecordDone
+                                                            ? Expanded(
+                                                                child: InkWell(
+                                                                  onTap: () {
+                                                                    controller
+                                                                        .deleteRecording();
+                                                                  },
+                                                                  child:
+                                                                      const Padding(padding: EdgeInsets.all(17.0),
+                                                                        child: Text('Cancel', textAlign: TextAlign.end, style: TextStyle(color: Colors.red),
+                                                                    ),
+                                                                  ),
+                                                                ),
+                                                              )
+                                                            : const SizedBox
+                                                                .shrink(),
+                                                        controller.isAudioRecording
+                                                                    .value ==
+                                                                Constants
+                                                                    .audioRecordInitial
+                                                            ? Expanded(
+                                                                child: SizedBox(
+                                                                  height: 50,
+                                                                  child:
+                                                                      TextField(
+                                                                    onTap: () {
+                                                                      controller
+                                                                          .focusNode
+                                                                          .requestFocus();
+                                                                    },
+                                                                    onChanged:
+                                                                        (text) {
+                                                                      controller
+                                                                          .isTyping(
+                                                                              text);
+                                                                    },
+                                                                    keyboardType:
+                                                                        TextInputType
+                                                                            .multiline,
+                                                                    minLines: 1,
+                                                                    maxLines: 4,
+                                                                    enabled: controller.isAudioRecording.value ==
+                                                                            Constants.audioRecordInitial
+                                                                        ? true
+                                                                        : false,
+                                                                    controller:
+                                                                        controller
+                                                                            .messageController,
+                                                                    focusNode:
+                                                                        controller
+                                                                            .focusNode,
+                                                                    decoration: const InputDecoration(
+                                                                        hintText:
+                                                                            "Start Typing...",
+                                                                        border:
+                                                                            InputBorder.none),
+                                                                  ),
+                                                                ),
+                                                              )
+                                                            : const SizedBox
+                                                                .shrink(),
+                                                        controller.isAudioRecording
+                                                                    .value ==
+                                                                Constants
+                                                                    .audioRecordInitial
+                                                            ? IconButton(
+                                                                onPressed:
+                                                                    () async {
+                                                                  if (await controller
+                                                                      .askStoragePermission()) {
+                                                                    showModalBottomSheet(
+                                                                        backgroundColor:
+                                                                            Colors
+                                                                                .transparent,
+                                                                        context:
+                                                                            context,
+                                                                        builder:
+                                                                            (builder) =>
+                                                                                bottomSheet(context));
+                                                                  }
+                                                                },
+                                                                icon: SvgPicture
+                                                                    .asset(
+                                                                        'assets/logos/attach.svg'),
+                                                              )
+                                                            : const SizedBox
+                                                                .shrink(),
+                                                        controller.isAudioRecording
+                                                                    .value ==
+                                                                Constants
+                                                                    .audioRecordInitial
+                                                            ? IconButton(
+                                                                onPressed:
+                                                                    () async {
+                                                                  if (await controller
+                                                                      .askStoragePermission()) {
+                                                                    controller
+                                                                        .startRecording();
+                                                                  }
+                                                                },
+                                                                icon: SvgPicture
+                                                                    .asset(
+                                                                        'assets/logos/mic.svg'),
+                                                              )
+                                                            : const SizedBox
+                                                                .shrink(),
+                                                        const SizedBox(
+                                                          width: 5,
+                                                        ),
+                                                      ],
+                                                    );
+                                                  }),
+                                                ),
+                                              ),
+                                              Obx(() {
+                                                return controller
+                                                        .isUserTyping.value
+                                                    ? InkWell(
+                                                        onTap: () {
+                                                          controller.isAudioRecording
+                                                                      .value ==
+                                                                  Constants
+                                                                      .audioRecordDone
+                                                              ? controller
+                                                                  .sendRecordedAudioMessage()
+                                                              : controller
+                                                                  .sendMessage(
+                                                                      controller
+                                                                          .profile);
+                                                        },
+                                                        child: Padding(
+                                                          padding:
+                                                              const EdgeInsets
+                                                                      .only(
+                                                                  left: 8.0,
+                                                                  right: 8.0,
+                                                                  bottom: 8),
+                                                          child: SvgPicture.asset(
+                                                              'assets/logos/send.svg'),
+                                                        ))
+                                                    : const SizedBox.shrink();
+                                              }),
+                                              Obx(() {
+                                                return controller
+                                                            .isAudioRecording
+                                                            .value ==
+                                                        Constants.audioRecording
+                                                    ? InkWell(
+                                                        onTap: () {
+                                                          controller
+                                                              .stopRecording();
+                                                        },
+                                                        child: const Padding(
+                                                          padding:
+                                                              EdgeInsets.only(
+                                                                  bottom: 8.0),
+                                                          child:
+                                                              LottieAnimation(
+                                                            lottieJson:
+                                                                audioJson1,
+                                                            showRepeat: true,
+                                                            width: 54,
+                                                            height: 54,
+                                                          ),
+                                                        ))
+                                                    : const SizedBox.shrink();
+                                              }),
+                                              const SizedBox(
+                                                width: 5,
+                                              ),
+                                            ],
                                           ),
-                                        controller.isAudioRecording.value == Constants.audioRecording
-                                        ? Expanded(
-                                        child: Dismissible(
-                                        key: UniqueKey(),
-                                        confirmDismiss: (DismissDirection direction) async{
-                                        if (direction == DismissDirection.endToStart) {
-                                        controller.cancelRecording();
-                                        return true;
-                                        }
-                                        return false;
-                                        },
-                                        direction: DismissDirection.endToStart,
-                                        child:  const Padding(
-                                        padding: EdgeInsets.only(right: 15.0),
-                                        child: Text('< Slide to Cancel', textAlign: TextAlign.end),
                                         ),
-                                        ),
-                                        )
-                                            : const SizedBox.shrink(),
-                                        controller.isAudioRecording.value == Constants.audioRecordDone
-                                        ? Expanded(
-                                        child: InkWell(
-                                        onTap: () {
-                                        controller.deleteRecording();
-                                        },
-                                        child: const Padding(
-                                        padding: EdgeInsets.all(17.0),
-                                        child: Text('Cancel', textAlign: TextAlign.end, style: TextStyle(color: Colors.red),),
-                                        ),
-                                        ),
-                                        )
-                                            : const SizedBox.shrink(),
-                                        controller.isAudioRecording.value == Constants.audioRecordInitial ? Expanded(
-                                        child: SizedBox(
-                                        height: 50,
-                                            child: TextField(
-                                              onTap: () {
-                                                controller.focusNode
-                                                    .requestFocus();
-                                              },
-                                              onChanged: (text) {
-                                                controller.isTyping(text);
-                                              },
-                                              keyboardType:
-                                              TextInputType.multiline,
-                                              minLines: 1,
-                                              maxLines: 4,
-                                        enabled: controller
-                                            .isAudioRecording
-                                            .value ==
-                                        Constants
-                                            .audioRecordInitial
-                                        ? true
-                                            : false,
-                                              controller: controller
-                                                  .messageController,
-                                              focusNode:
-                                              controller.focusNode,
-                                              decoration:
-                                              const InputDecoration(
-                                                  hintText:
-                                                  "Start Typing...",
-                                                  border: InputBorder
-                                                      .none),
-                                            ),
-                                          ),
-                                        ) : const SizedBox.shrink(),
-                                          controller.isAudioRecording.value == Constants.audioRecordInitial ? IconButton(
-                                            onPressed: () async {
-                                              if (await controller
-                                                  .askStoragePermission()) {
-                                                showModalBottomSheet(
-                                                    backgroundColor:
-                                                    Colors
-                                                        .transparent,
-                                                    context: context,
-                                                    builder: (builder) =>
-                                                        bottomSheet(
-                                                            context));
-                                              }
-                                            },
-                                            icon: SvgPicture.asset(
-                                                'assets/logos/attach.svg'),
-                                          ) : const SizedBox.shrink(),
-                                          controller.isAudioRecording.value == Constants.audioRecordInitial ? IconButton(
-                                            onPressed: () async {
-                                              if (await controller
-                                                  .askStoragePermission()) {
-                                                controller.startRecording();
-                                              }
-                                            },
-                                            icon: SvgPicture.asset(
-                                                'assets/logos/mic.svg'),
-                                          ): const SizedBox.shrink(),
-                                          const SizedBox(
-                                            width: 5,
-                                          ),
-                                        ],
-                                        );
-                                      }),
+                                        emojiLayout(),
+                                      ],
                                     ),
-                                  ),
-                                  Obx(() {
-                                    return controller.isUserTyping.value
-                                        ? InkWell(
-                                        onTap: () {
-                                          controller.isAudioRecording.value == Constants.audioRecordDone ? controller.sendRecordedAudioMessage() : controller.sendMessage(
-                                              controller.profile);
-                                        },
-                                        child: Padding(
-                                          padding:
-                                          const EdgeInsets.only(
-                                              left: 8.0,
-                                              right: 8.0,
-                                              bottom: 8),
-                                          child: SvgPicture.asset(
-                                              'assets/logos/send.svg'),
-                                        ))
-                                        : const SizedBox.shrink();
-                                  }),
-                                  Obx(() {
-                                    return controller.isAudioRecording.value == Constants.audioRecording
-                                        ? InkWell(
-                                        onTap: () {
-                                          controller.stopRecording();
-                                        },
-                                        child: const Padding(
-                                          padding: EdgeInsets.only(
-                                              bottom: 8.0),
-                                          child: LottieAnimation(
-                                            lottieJson: audioJson1, showRepeat: true, width: 54, height: 54,),
-                                        ))
-                                        : const SizedBox.shrink();
-                                  }),
-                                  const SizedBox(
-                                    width: 5,
-                                  ),
-                                ],
-                            ),
-                          ),
-                              emojiLayout(),
-                            ],
-                          ),
                         );
                       }),
                     ),
@@ -362,7 +461,9 @@ class ChatView extends GetView<ChatController> {
           padding: const EdgeInsets.only(top: 15.0, bottom: 15.0),
           child: Text(
             "You can't send messages to this group because you're no longer a participant.",
-            style: const TextStyle(fontSize: 15,),
+            style: const TextStyle(
+              fontSize: 15,
+            ),
             textAlign: TextAlign.center,
           ),
         ),
@@ -441,16 +542,16 @@ class ChatView extends GetView<ChatController> {
                   debugPrint("On Tap");
                   controller.isSelected.value
                       ? controller.selectedChatList.contains(chatList[index])
-                      ? controller.clearChatSelection(chatList[index])
-                      : controller.addChatSelection(chatList[index])
+                          ? controller.clearChatSelection(chatList[index])
+                          : controller.addChatSelection(chatList[index])
                       : null;
                 },
                 child: Obx(() {
                   return Container(
                     key: Key(chatList[index].messageId),
                     color: controller.isSelected.value &&
-                        chatList[index].isSelected &&
-                        controller.selectedChatList.isNotEmpty
+                            chatList[index].isSelected &&
+                            controller.selectedChatList.isNotEmpty
                         ? chatreplycontainercolor
                         : Colors.transparent,
                     margin: const EdgeInsets.only(
@@ -460,18 +561,18 @@ class ChatView extends GetView<ChatController> {
                           ? Alignment.bottomRight
                           : Alignment.bottomLeft),
                       child: Container(
-                        constraints: BoxConstraints(
-                            maxWidth: screenWidth * 0.6),
+                        constraints:
+                            BoxConstraints(maxWidth: screenWidth * 0.75),
                         decoration: BoxDecoration(
                             borderRadius: chatList[index].isMessageSentByMe
                                 ? const BorderRadius.only(
-                                topLeft: Radius.circular(10),
-                                topRight: Radius.circular(10),
-                                bottomLeft: Radius.circular(10))
+                                    topLeft: Radius.circular(10),
+                                    topRight: Radius.circular(10),
+                                    bottomLeft: Radius.circular(10))
                                 : const BorderRadius.only(
-                                topLeft: Radius.circular(10),
-                                topRight: Radius.circular(10),
-                                bottomRight: Radius.circular(10)),
+                                    topLeft: Radius.circular(10),
+                                    topRight: Radius.circular(10),
+                                    bottomRight: Radius.circular(10)),
                             color: (chatList[index].isMessageSentByMe
                                 ? chatsentbgcolor
                                 : Colors.white),
@@ -496,8 +597,8 @@ class ChatView extends GetView<ChatController> {
             return Center(
               child: Container(
                 margin: const EdgeInsets.all(4),
-                padding: const EdgeInsets.symmetric(
-                    vertical: 2, horizontal: 20),
+                padding:
+                    const EdgeInsets.symmetric(vertical: 2, horizontal: 20),
                 decoration: const BoxDecoration(
                     color: notificationtextbgcolor,
                     borderRadius: BorderRadius.all(Radius.circular(15))),
@@ -518,9 +619,9 @@ class ChatView extends GetView<ChatController> {
     return Visibility(
       visible: controller.profile.isGroupProfile!
           ? (index == 0 ||
-          isSenderChanged(chatList, index) ||
-          !isMessageDateEqual(chatList, index)) &&
-          !chatList[index].isMessageSentByMe
+                  isSenderChanged(chatList, index) ||
+                  !isMessageDateEqual(chatList, index)) &&
+              !chatList[index].isMessageSentByMe
           : false,
       child: Padding(
         padding: const EdgeInsets.only(top: 8.0, right: 8.0, left: 8.0),
@@ -542,7 +643,7 @@ class ChatView extends GetView<ChatController> {
       var currentMessage = messageList[position];
       var previousMessage = messageList[position - 1];
       if (currentMessage.isMessageSentByMe !=
-          previousMessage.isMessageSentByMe ||
+              previousMessage.isMessageSentByMe ||
           previousMessage.messageType == Constants.MSG_TYPE_NOTIFICATION ||
           (currentMessage.messageChatType == Constants.TYPE_GROUP_CHAT &&
               currentMessage.isThisAReplyMessage)) {
@@ -569,13 +670,13 @@ class ChatView extends GetView<ChatController> {
     return true;
   }
 
-  ChatMessageModel? getPreviousMessage(List<ChatMessageModel> messageList,
-      int position) {
+  ChatMessageModel? getPreviousMessage(
+      List<ChatMessageModel> messageList, int position) {
     return (position > 0) ? messageList[position - 1] : null;
   }
 
-  getMessageIndicator(String? messageStatus, bool isSender,
-      String messageType) {
+  getMessageIndicator(
+      String? messageStatus, bool isSender, String messageType) {
     // debugPrint("Message Type ==> $messageType");
     if (isSender) {
       if (messageStatus == 'A') {
@@ -596,10 +697,10 @@ class ChatView extends GetView<ChatController> {
     }
   }
 
-  getMessageContent(int index, BuildContext context,
-      List<ChatMessageModel> chatList) {
+  getMessageContent(
+      int index, BuildContext context, List<ChatMessageModel> chatList) {
     // debugPrint(json.encode(chatList[index]));
-    if(chatList[index].isMessageRecalled){
+    if (chatList[index].isMessageRecalled) {
       return Padding(
         padding: const EdgeInsets.all(10.0),
         child: Row(
@@ -611,15 +712,20 @@ class ChatView extends GetView<ChatController> {
           children: [
             Row(
               children: [
-                Image.asset(disabledIcon, width: 15, height: 15,),
+                Image.asset(
+                  disabledIcon,
+                  width: 15,
+                  height: 15,
+                ),
                 const SizedBox(width: 10),
                 Text(
-                  chatList[index].isMessageSentByMe ? "You deleted this message" : "This message was deleted",
+                  chatList[index].isMessageSentByMe
+                      ? "You deleted this message"
+                      : "This message was deleted",
                   style: const TextStyle(fontSize: 16),
                 ),
               ],
             ),
-
             const SizedBox(
               width: 10,
             ),
@@ -635,332 +741,103 @@ class ChatView extends GetView<ChatController> {
           ],
         ),
       );
-    }else {
-    if (chatList[index].messageType == Constants.MTEXT) {
-      return Padding(
-        padding: const EdgeInsets.all(10.0),
-        child: Row(
-          mainAxisSize: chatList[index].replyParentChatMessage == null
-              ? MainAxisSize.min
-              : MainAxisSize.max,
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          crossAxisAlignment: CrossAxisAlignment.end,
-          children: [
-        Flexible(
-        child: Text(
-              chatList[index].messageTextContent ?? "",
-              style: const TextStyle(fontSize: 14),
-            ),
-        ),
-            const SizedBox(
-              width: 10,
-            ),
-            Row(
-              children: [
-                chatList[index].isMessageStarred
-                    ? const Icon(
-                  Icons.star,
-                  size: 13,
-                )
-                    : const SizedBox.shrink(),
-                const SizedBox(
-                  width: 5,
-                ),
-                getMessageIndicator(
-                    chatList[index].messageStatus.status,
-                    chatList[index].isMessageSentByMe,
-                    chatList[index].messageType),
-                const SizedBox(
-                  width: 5,
-                ),
-                Text(
-                  controller.getChatTime(
-                      context, chatList[index].messageSentTime),
-                  style: const TextStyle(fontSize: 11, color: chattimecolor),
-                ),
-              ],
-            ),
-          ],
-        ),
-      );
-    } else if (chatList[index].messageType == Constants.MNOTIFICATION) {
-      return Center(
-        child: Container(
-          decoration: const BoxDecoration(
-              borderRadius: BorderRadius.all(Radius.circular(40)),
-              color: chatreplycontainercolor),
-          padding: const EdgeInsets.only(
-              left: 15.0, right: 15.0, top: 8.0, bottom: 8.0),
-          // child: Text(chatList[index].messageTextContent!,
-          child: Text(chatList[index].messageTextContent ?? "",
-              style: const TextStyle(fontSize: 12)),
-        ),
-      );
-    } else if (chatList[index].messageType == Constants.MIMAGE) {
-      var chatMessage = chatList[index].mediaChatMessage!;
-      //mediaLocalStoragePath
-      //mediaThumbImage
-      return Padding(
-        padding: const EdgeInsets.all(2.0),
-        child: Stack(
-          children: [
-            ClipRRect(
-              borderRadius: BorderRadius.circular(15),
-              child: getImage(
-                  chatMessage.mediaLocalStoragePath,
-                  chatMessage.mediaThumbImage,
-                  context,
-                  chatMessage.mediaFileName),
-            ),
-            Positioned(
-                top: (screenHeight * 0.4) / 2.5,
-                left: (screenWidth * 0.6) / 3,
-                child: InkWell(
-                    onTap: () {
-                      handleMediaUploadDownload(
-                          chatMessage.mediaDownloadStatus, chatList[index]);
-                    },
-                    child: getImageOverlay(chatList, index, context))),
-            Positioned(
-              bottom: 8,
-              right: 10,
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  chatList[index].isMessageStarred
-                      ? const Icon(
-                    Icons.star,
-                    size: 13,
-                  )
-                      : const SizedBox.shrink(),
-                  const SizedBox(
-                    width: 5,
-                  ),
-                  getMessageIndicator(
-                      chatList[index].messageStatus.status,
-                      chatList[index].isMessageSentByMe,
-                      chatList[index].messageType),
-                  const SizedBox(
-                    width: 4,
-                  ),
-                  Text(
-                    controller.getChatTime(
-                        context, chatList[index].messageSentTime),
-                    style: const TextStyle(fontSize: 11, color: Colors.white),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      );
-    } else if (chatList[index].messageType == Constants.MVIDEO) {
-      var chatMessage = chatList[index].mediaChatMessage!;
-      return Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Stack(
-          children: [
-            InkWell(
-              onTap: () {
-                if (controller.checkFile(chatMessage.mediaLocalStoragePath) &&
-                    (chatMessage.mediaDownloadStatus ==
-                        Constants.MEDIA_DOWNLOADED ||
-                        chatMessage.mediaDownloadStatus ==
-                            Constants.MEDIA_UPLOADED)) {
-                  Get.toNamed(Routes.VIDEO_PLAY, arguments: {
-                    "filePath": chatMessage.mediaLocalStoragePath,
-                  });
-                }
-              },
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(15),
-                child: controller.imageFromBase64String(
-                    chatMessage.mediaThumbImage, context, null, null),
-              ),
-            ),
-            Positioned(
-                top: (screenHeight * 0.4) / 2.6,
-                left: (screenWidth * 0.6) / 2.9,
-                child: InkWell(
-                    onTap: () {
-                      handleMediaUploadDownload(
-                          chatMessage.mediaDownloadStatus, chatList[index]);
-                    },
-                    child: getImageOverlay(chatList, index, context))),
-            Positioned(
-              bottom: 8,
-              right: 10,
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  chatList[index].isMessageStarred
-                      ? const Icon(
-                    Icons.star,
-                    size: 13,
-                  )
-                      : const SizedBox.shrink(),
-                  const SizedBox(
-                    width: 5,
-                  ),
-                  getMessageIndicator(
-                      chatList[index].messageStatus.status,
-                      chatList[index].isMessageSentByMe,
-                      chatList[index].messageType),
-                  const SizedBox(
-                    width: 4,
-                  ),
-                  Text(
-                    controller.getChatTime(
-                        context, chatList[index].messageSentTime),
-                    style: const TextStyle(fontSize: 11, color: Colors.white),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      );
-    } else if (chatList[index].messageType == Constants.MDOCUMENT) {
-      return InkWell(
-        onTap: () {
-          controller.openDocument(
-              chatList[index].mediaChatMessage!.mediaLocalStoragePath, context);
-        },
-        child: Container(
-          decoration: BoxDecoration(
-            border: Border.all(
-              color: chatreplysendercolor,
-            ),
-            borderRadius: const BorderRadius.all(Radius.circular(10)),
-            color: Colors.white,
-          ),
-          width: screenWidth * 0.60,
-          child: Column(
+    } else {
+      if (chatList[index].messageType == Constants.MTEXT) {
+        return Padding(
+          padding: const EdgeInsets.all(10.0),
+          child: Row(
+            mainAxisSize: chatList[index].replyParentChatMessage == null
+                ? MainAxisSize.min
+                : MainAxisSize.max,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.end,
             children: [
-              Padding(
-                padding:
-                const EdgeInsets.only(left: 15.0, right: 15.0, top: 10.0),
-                child: Row(
-                  children: [
-                    getImageHolder(
-                        chatList[index].mediaChatMessage!.mediaFileName),
-                    const SizedBox(
-                      width: 12,
-                    ),
-                    Expanded(
-                        child: Text(
-                          chatList[index].mediaChatMessage!.mediaFileName,
-                          maxLines: 2,
-                        )),
-                    const Spacer(),
-                    InkWell(
-                      onTap: () {
-                        handleMediaUploadDownload(
-                            chatList[index]
-                                .mediaChatMessage!
-                                .mediaDownloadStatus,
-                            chatList[index]);
-                      },
-                      child: getImageOverlay(chatList, index, context),
-                    ),
-                  ],
+              Flexible(
+                child: Text(
+                  chatList[index].messageTextContent ?? "",
+                  style: const TextStyle(fontSize: 14),
                 ),
               ),
               const SizedBox(
-                height: 5,
+                width: 10,
               ),
-              Align(
-                alignment: Alignment.bottomRight,
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    chatList[index].isMessageStarred
-                        ? const Icon(
-                      Icons.star,
-                      size: 13,
-                    )
-                        : SizedBox.shrink(),
-                    const SizedBox(
-                      width: 5,
-                    ),
-                    getMessageIndicator(
-                        chatList[index].messageStatus.status,
-                        chatList[index].isMessageSentByMe,
-                        chatList[index].messageType),
-                    const SizedBox(
-                      width: 4,
-                    ),
-                    Text(
-                      controller.getChatTime(
-                          context, chatList[index].messageSentTime),
-                      style:
-                      const TextStyle(fontSize: 11, color: chattimecolor),
-                    ),
-                    const SizedBox(
-                      width: 10,
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(
-                height: 5,
+              Row(
+                children: [
+                  chatList[index].isMessageStarred
+                      ? const Icon(
+                          Icons.star,
+                          size: 13,
+                        )
+                      : const SizedBox.shrink(),
+                  const SizedBox(
+                    width: 5,
+                  ),
+                  getMessageIndicator(
+                      chatList[index].messageStatus.status,
+                      chatList[index].isMessageSentByMe,
+                      chatList[index].messageType),
+                  const SizedBox(
+                    width: 5,
+                  ),
+                  Text(
+                    controller.getChatTime(
+                        context, chatList[index].messageSentTime),
+                    style: const TextStyle(fontSize: 11, color: chattimecolor),
+                  ),
+                ],
               ),
             ],
           ),
-        ),
-      );
-    } else if (chatList[index].messageType == Constants.MCONTACT) {
-      return InkWell(
-        onTap: () {
-          Get.toNamed(Routes.PREVIEW_CONTACT, arguments: {
-            "contactList":
-            chatList[index].contactChatMessage!.contactPhoneNumbers,
-            "contactName": chatList[index].contactChatMessage!.contactName,
-            "from": "chat"
-          });
-        },
-        child: Container(
-          decoration: BoxDecoration(
-            border: Border.all(
-              color: chatreplysendercolor,
-            ),
-            borderRadius: const BorderRadius.all(Radius.circular(10)),
-            color: Colors.white,
+        );
+      } else if (chatList[index].messageType == Constants.MNOTIFICATION) {
+        return Center(
+          child: Container(
+            decoration: const BoxDecoration(
+                borderRadius: BorderRadius.all(Radius.circular(40)),
+                color: chatreplycontainercolor),
+            padding: const EdgeInsets.only(
+                left: 15.0, right: 15.0, top: 8.0, bottom: 8.0),
+            // child: Text(chatList[index].messageTextContent!,
+            child: Text(chatList[index].messageTextContent ?? "",
+                style: const TextStyle(fontSize: 12)),
           ),
-          width: screenWidth * 0.60,
-          child: Column(
+        );
+      } else if (chatList[index].messageType == Constants.MIMAGE) {
+        var chatMessage = chatList[index].mediaChatMessage!;
+        //mediaLocalStoragePath
+        //mediaThumbImage
+        return Padding(
+          padding: const EdgeInsets.all(2.0),
+          child: Stack(
             children: [
-              Padding(
-                padding:
-                const EdgeInsets.only(left: 15.0, right: 15.0, top: 15.0),
-                child: Row(
-                  children: [
-                    Image.asset(
-                      profile_img,
-                      width: 35,
-                      height: 35,
-                    ),
-                    const SizedBox(
-                      width: 12,
-                    ),
-                    Expanded(
-                        child: Text(
-                          chatList[index].contactChatMessage!.contactName,
-                          maxLines: 2,
-                        )),
-                  ],
-                ),
+              ClipRRect(
+                borderRadius: BorderRadius.circular(15),
+                child: getImage(
+                    chatMessage.mediaLocalStoragePath,
+                    chatMessage.mediaThumbImage,
+                    context,
+                    chatMessage.mediaFileName),
               ),
-              Align(
-                alignment: Alignment.bottomRight,
+              Positioned(
+                  top: (screenHeight * 0.4) / 2.5,
+                  left: (screenWidth * 0.6) / 3,
+                  child: InkWell(
+                      onTap: () {
+                        handleMediaUploadDownload(
+                            chatMessage.mediaDownloadStatus, chatList[index]);
+                      },
+                      child: getImageOverlay(chatList, index, context))),
+              Positioned(
+                bottom: 8,
+                right: 10,
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     chatList[index].isMessageStarred
                         ? const Icon(
-                      Icons.star,
-                      size: 13,
-                    )
+                            Icons.star,
+                            size: 13,
+                          )
                         : const SizedBox.shrink(),
                     const SizedBox(
                       width: 5,
@@ -975,8 +852,374 @@ class ChatView extends GetView<ChatController> {
                     Text(
                       controller.getChatTime(
                           context, chatList[index].messageSentTime),
-                      style:
-                      const TextStyle(fontSize: 11, color: chattimecolor),
+                      style: const TextStyle(fontSize: 11, color: Colors.white),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        );
+      } else if (chatList[index].messageType == Constants.MVIDEO) {
+        var chatMessage = chatList[index].mediaChatMessage!;
+        return Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Stack(
+            children: [
+              InkWell(
+                onTap: () {
+                  if (controller.checkFile(chatMessage.mediaLocalStoragePath) &&
+                      (chatMessage.mediaDownloadStatus ==
+                              Constants.MEDIA_DOWNLOADED ||
+                          chatMessage.mediaDownloadStatus ==
+                              Constants.MEDIA_UPLOADED)) {
+                    Get.toNamed(Routes.VIDEO_PLAY, arguments: {
+                      "filePath": chatMessage.mediaLocalStoragePath,
+                    });
+                  }
+                },
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(15),
+                  child: controller.imageFromBase64String(
+                      chatMessage.mediaThumbImage, context, null, null),
+                ),
+              ),
+              Positioned(
+                  top: (screenHeight * 0.4) / 2.6,
+                  left: (screenWidth * 0.6) / 2.9,
+                  child: InkWell(
+                      onTap: () {
+                        handleMediaUploadDownload(
+                            chatMessage.mediaDownloadStatus, chatList[index]);
+                      },
+                      child: getImageOverlay(chatList, index, context))),
+              Positioned(
+                bottom: 8,
+                right: 10,
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    chatList[index].isMessageStarred
+                        ? const Icon(
+                            Icons.star,
+                            size: 13,
+                          )
+                        : const SizedBox.shrink(),
+                    const SizedBox(
+                      width: 5,
+                    ),
+                    getMessageIndicator(
+                        chatList[index].messageStatus.status,
+                        chatList[index].isMessageSentByMe,
+                        chatList[index].messageType),
+                    const SizedBox(
+                      width: 4,
+                    ),
+                    Text(
+                      controller.getChatTime(
+                          context, chatList[index].messageSentTime),
+                      style: const TextStyle(fontSize: 11, color: Colors.white),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        );
+      } else if (chatList[index].messageType == Constants.MDOCUMENT) {
+        return InkWell(
+          onTap: () {
+            controller.openDocument(
+                chatList[index].mediaChatMessage!.mediaLocalStoragePath,
+                context);
+          },
+          child: Container(
+            decoration: BoxDecoration(
+              border: Border.all(
+                color: chatreplysendercolor,
+              ),
+              borderRadius: const BorderRadius.all(Radius.circular(10)),
+              color: Colors.white,
+            ),
+            width: screenWidth * 0.60,
+            child: Column(
+              children: [
+                Padding(
+                  padding:
+                      const EdgeInsets.only(left: 15.0, right: 15.0, top: 10.0),
+                  child: Row(
+                    children: [
+                      getImageHolder(
+                          chatList[index].mediaChatMessage!.mediaFileName),
+                      const SizedBox(
+                        width: 12,
+                      ),
+                      Expanded(
+                          child: Text(
+                        chatList[index].mediaChatMessage!.mediaFileName,
+                        maxLines: 2,
+                      )),
+                      const Spacer(),
+                      InkWell(
+                        onTap: () {
+                          handleMediaUploadDownload(
+                              chatList[index]
+                                  .mediaChatMessage!
+                                  .mediaDownloadStatus,
+                              chatList[index]);
+                        },
+                        child: getImageOverlay(chatList, index, context),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(
+                  height: 5,
+                ),
+                Align(
+                  alignment: Alignment.bottomRight,
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      chatList[index].isMessageStarred
+                          ? const Icon(
+                              Icons.star,
+                              size: 13,
+                            )
+                          : SizedBox.shrink(),
+                      const SizedBox(
+                        width: 5,
+                      ),
+                      getMessageIndicator(
+                          chatList[index].messageStatus.status,
+                          chatList[index].isMessageSentByMe,
+                          chatList[index].messageType),
+                      const SizedBox(
+                        width: 4,
+                      ),
+                      Text(
+                        controller.getChatTime(
+                            context, chatList[index].messageSentTime),
+                        style:
+                            const TextStyle(fontSize: 11, color: chattimecolor),
+                      ),
+                      const SizedBox(
+                        width: 10,
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(
+                  height: 5,
+                ),
+              ],
+            ),
+          ),
+        );
+      } else if (chatList[index].messageType == Constants.MCONTACT) {
+        return InkWell(
+          onTap: () {
+            Get.toNamed(Routes.PREVIEW_CONTACT, arguments: {
+              "contactList":
+                  chatList[index].contactChatMessage!.contactPhoneNumbers,
+              "contactName": chatList[index].contactChatMessage!.contactName,
+              "from": "chat"
+            });
+          },
+          child: Container(
+            decoration: BoxDecoration(
+              border: Border.all(
+                color: chatreplysendercolor,
+              ),
+              borderRadius: const BorderRadius.all(Radius.circular(10)),
+              color: Colors.white,
+            ),
+            width: screenWidth * 0.60,
+            child: Column(
+              children: [
+                Padding(
+                  padding:
+                      const EdgeInsets.only(left: 15.0, right: 15.0, top: 15.0),
+                  child: Row(
+                    children: [
+                      Image.asset(
+                        profile_img,
+                        width: 35,
+                        height: 35,
+                      ),
+                      const SizedBox(
+                        width: 12,
+                      ),
+                      Expanded(
+                          child: Text(
+                        chatList[index].contactChatMessage!.contactName,
+                        maxLines: 2,
+                      )),
+                    ],
+                  ),
+                ),
+                Align(
+                  alignment: Alignment.bottomRight,
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      chatList[index].isMessageStarred
+                          ? const Icon(
+                              Icons.star,
+                              size: 13,
+                            )
+                          : const SizedBox.shrink(),
+                      const SizedBox(
+                        width: 5,
+                      ),
+                      getMessageIndicator(
+                          chatList[index].messageStatus.status,
+                          chatList[index].isMessageSentByMe,
+                          chatList[index].messageType),
+                      const SizedBox(
+                        width: 4,
+                      ),
+                      Text(
+                        controller.getChatTime(
+                            context, chatList[index].messageSentTime),
+                        style:
+                            const TextStyle(fontSize: 11, color: chattimecolor),
+                      ),
+                      const SizedBox(
+                        width: 10,
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(
+                  height: 5,
+                ),
+              ],
+            ),
+          ),
+        );
+      } else if (chatList[index].messageType == Constants.MAUDIO) {
+        var chatMessage = chatList[index];
+        return Container(
+          decoration: BoxDecoration(
+            border: Border.all(
+              color: chatreplysendercolor,
+            ),
+            borderRadius: const BorderRadius.all(Radius.circular(10)),
+            color: Colors.white,
+          ),
+          width: screenWidth * 0.60,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                decoration: const BoxDecoration(
+                  borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(10),
+                      topRight: Radius.circular(10)),
+                  color: chatreplysendercolor,
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(15),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Stack(
+                        alignment: Alignment.center,
+                        children: [
+                          SvgPicture.asset(
+                            audio_mic_bg,
+                            width: 28,
+                            height: 28,
+                            fit: BoxFit.contain,
+                          ),
+                          SvgPicture.asset(
+                            audio_mic_1,
+                            fit: BoxFit.contain,
+                          ),
+                        ],
+                      ),
+                      // getAudioFeedButton(chatMessage),
+                      const SizedBox(
+                        width: 10,
+                      ),
+                      InkWell(
+                        onTap: () {
+                          handleMediaUploadDownload(
+                              chatMessage.mediaChatMessage!.mediaDownloadStatus,
+                              chatList[index]);
+                        },
+                        child: getImageOverlay(chatList, index, context),
+                      ),
+
+                      const SizedBox(
+                        width: 10,
+                      ),
+                      Expanded(
+                        child: SizedBox(
+                          // width: 168,
+                          child: SliderTheme(
+                            data: SliderThemeData(
+                              thumbColor: audiocolordark,
+                              overlayShape: SliderComponentShape.noOverlay,
+                              thumbShape: const RoundSliderThumbShape(
+                                  enabledThumbRadius: 5),
+                            ),
+                            child: Slider(
+                              value: double.parse(
+                                  controller.currentpos.value.toString()),
+                              min: 0,
+                              activeColor: audiocolordark,
+                              inactiveColor: audiocolor,
+                              max: double.parse(
+                                  controller.maxduration.value.toString()),
+                              divisions: controller.maxduration.value,
+                              // label: controller.currentpostlabel,
+                              onChanged: (double value) async {
+                                // int seekval = value.round();
+                                // int result = await player.seek(Duration(milliseconds: seekval));
+                                // if(result == 1){ //seek successful
+                                //   currentpos = seekval;
+                                // }else{
+                                //   print("Seek unsuccessful.");
+                                // }
+                              },
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              const SizedBox(
+                height: 5,
+              ),
+              Align(
+                alignment: Alignment.bottomRight,
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    chatList[index].isMessageStarred
+                        ? const Icon(
+                            Icons.star,
+                            size: 13,
+                          )
+                        : const SizedBox.shrink(),
+                    const SizedBox(
+                      width: 5,
+                    ),
+                    getMessageIndicator(
+                        chatList[index].messageStatus.status,
+                        chatList[index].isMessageSentByMe,
+                        chatList[index].messageType),
+                    const SizedBox(
+                      width: 4,
+                    ),
+                    Text(
+                      controller.getChatTime(
+                          context, chatList[index].messageSentTime),
+                      style: const TextStyle(fontSize: 12, color: Colors.black),
                     ),
                     const SizedBox(
                       width: 10,
@@ -989,185 +1232,49 @@ class ChatView extends GetView<ChatController> {
               ),
             ],
           ),
-        ),
-      );
-    } else if (chatList[index].messageType == Constants.MAUDIO) {
-      var chatMessage = chatList[index];
-      return Container(
-        decoration: BoxDecoration(
-          border: Border.all(
-            color: chatreplysendercolor,
-          ),
-          borderRadius: const BorderRadius.all(Radius.circular(10)),
-          color: Colors.white,
-        ),
-        width: screenWidth * 0.60,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Container(
-              decoration: const BoxDecoration(
-                borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(10),
-                    topRight: Radius.circular(10)),
-                color: chatreplysendercolor,
+        );
+      } else if (chatList[index].messageType.toUpperCase() ==
+          Constants.MLOCATION) {
+        return Padding(
+          padding: const EdgeInsets.all(2.0),
+          child: Stack(
+            children: [
+              ClipRRect(
+                borderRadius: BorderRadius.circular(15),
+                child: getLocationImage(
+                    chatList[index].locationChatMessage, 200, 171),
               ),
-              child: Padding(
-                padding: const EdgeInsets.all(15),
+              Positioned(
+                bottom: 8,
+                right: 10,
                 child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisSize: MainAxisSize.min,
                   children: [
-                    Stack(
-                      alignment: Alignment.center,
-                      children: [
-                        SvgPicture.asset(
-                          audio_mic_bg,
-                          width: 28,
-                          height: 28,
-                          fit: BoxFit.contain,
-                        ),
-                        SvgPicture.asset(
-                          audio_mic_1,
-                          fit: BoxFit.contain,
-                        ),
-                      ],
-                    ),
-                    // getAudioFeedButton(chatMessage),
+                    chatList[index].isMessageStarred
+                        ? const Icon(
+                            Icons.star,
+                            size: 13,
+                          )
+                        : const SizedBox.shrink(),
                     const SizedBox(
-                      width: 10,
+                      width: 5,
                     ),
-                    InkWell(
-                      onTap: () {
-                        handleMediaUploadDownload(
-                            chatMessage.mediaChatMessage!.mediaDownloadStatus,
-                            chatList[index]);
-                      },
-                      child: getImageOverlay(chatList, index, context),
-                    ),
-
+                    getMessageIndicator(
+                        chatList[index].messageStatus.status,
+                        chatList[index].isMessageSentByMe,
+                        chatList[index].messageType),
                     const SizedBox(
-                      width: 10,
+                      width: 4,
                     ),
-                    Expanded(
-                      child: SizedBox(
-                        // width: 168,
-                        child: SliderTheme(
-                          data: SliderThemeData(
-                            thumbColor: audiocolordark,
-                            overlayShape: SliderComponentShape.noOverlay,
-                            thumbShape: const RoundSliderThumbShape(
-                                enabledThumbRadius: 5),
-                          ),
-                          child: Slider(
-                            value: double.parse(
-                                controller.currentpos.value.toString()),
-                            min: 0,
-                            activeColor: audiocolordark,
-                            inactiveColor: audiocolor,
-                            max: double.parse(
-                                controller.maxduration.value.toString()),
-                            divisions: controller.maxduration.value,
-                            // label: controller.currentpostlabel,
-                            onChanged: (double value) async {
-                              // int seekval = value.round();
-                              // int result = await player.seek(Duration(milliseconds: seekval));
-                              // if(result == 1){ //seek successful
-                              //   currentpos = seekval;
-                              // }else{
-                              //   print("Seek unsuccessful.");
-                              // }
-                            },
-                          ),
-                        ),
-                      ),
+                    Text(
+                      controller.getChatTime(
+                          context, chatList[index].messageSentTime),
+                      style: const TextStyle(fontSize: 12, color: Colors.black),
                     ),
                   ],
                 ),
               ),
-            ),
-            const SizedBox(
-              height: 5,
-            ),
-            Align(
-              alignment: Alignment.bottomRight,
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  chatList[index].isMessageStarred
-                      ? const Icon(
-                          Icons.star,
-                          size: 13,
-                        )
-                      : const SizedBox.shrink(),
-                  const SizedBox(
-                    width: 5,
-                  ),
-                  getMessageIndicator(
-                      chatList[index].messageStatus.status,
-                      chatList[index].isMessageSentByMe,
-                      chatList[index].messageType),
-                  const SizedBox(
-                    width: 4,
-                  ),
-                  Text(
-                    controller.getChatTime(
-                        context, chatList[index].messageSentTime),
-                    style: const TextStyle(fontSize: 12, color: Colors.black),
-                  ),
-                  const SizedBox(
-                    width: 10,
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(
-              height: 5,
-            ),
-          ],
-        ),
-      );
-    } else if (chatList[index].messageType.toUpperCase() ==
-        Constants.MLOCATION) {
-      return Padding(
-        padding: const EdgeInsets.all(2.0),
-        child: Stack(
-          children: [
-            ClipRRect(
-              borderRadius: BorderRadius.circular(15),
-              child: getLocationImage(
-                  chatList[index].locationChatMessage, 200, 171),
-            ),
-            Positioned(
-              bottom: 8,
-              right: 10,
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  chatList[index].isMessageStarred
-                      ? const Icon(
-                          Icons.star,
-                          size: 13,
-                        )
-                      : const SizedBox.shrink(),
-                  const SizedBox(
-                    width: 5,
-                  ),
-                  getMessageIndicator(
-                      chatList[index].messageStatus.status,
-                      chatList[index].isMessageSentByMe,
-                      chatList[index].messageType),
-                  const SizedBox(
-                    width: 4,
-                  ),
-                  Text(
-                    controller.getChatTime(
-                        context, chatList[index].messageSentTime),
-                    style: const TextStyle(fontSize: 12, color: Colors.black),
-                  ),
-                ],
-              ),
-            ),
-            /*Positioned(
+              /*Positioned(
               bottom: 8,
               right: 10,
               child: Row(
@@ -1195,14 +1302,13 @@ class ChatView extends GetView<ChatController> {
     }
   }
 
-  Widget getLocationImage(LocationChatMessage? locationChatMessage,
-      double width, double height) {
+  Widget getLocationImage(
+      LocationChatMessage? locationChatMessage, double width, double height) {
     return InkWell(
         onTap: () async {
           //Redirect to Google maps App
           String googleUrl =
-              'https://www.google.com/maps/search/?api=1&query=${locationChatMessage
-              .latitude}, ${locationChatMessage.longitude}';
+              'https://www.google.com/maps/search/?api=1&query=${locationChatMessage.latitude}, ${locationChatMessage.longitude}';
           if (await canLaunchUrl(Uri.parse(googleUrl))) {
             await launchUrl(Uri.parse(googleUrl));
           } else {
@@ -1245,7 +1351,7 @@ class ChatView extends GetView<ChatController> {
                     Get.back();
 
                     final XFile? photo =
-                    await _picker.pickImage(source: ImageSource.camera);
+                        await _picker.pickImage(source: ImageSource.camera);
                     Get.toNamed(Routes.IMAGEPREVIEW, arguments: {
                       "filePath": photo?.path,
                       "userName": controller.profile.name!
@@ -1288,8 +1394,7 @@ class ChatView extends GetView<ChatController> {
                         content: const Text('Permission Denied'),
                         action: SnackBarAction(
                             label: 'Ok',
-                            onPressed: ScaffoldMessenger
-                                .of(context)
+                            onPressed: ScaffoldMessenger.of(context)
                                 .hideCurrentSnackBar),
                       ));
                     }
@@ -1339,12 +1444,12 @@ class ChatView extends GetView<ChatController> {
     );
   }
 
-  getImageOverlay(List<ChatMessageModel> chatList, int index,
-      BuildContext context) {
+  getImageOverlay(
+      List<ChatMessageModel> chatList, int index, BuildContext context) {
     var chatMessage = chatList[index];
 
     if (controller
-        .checkFile(chatMessage.mediaChatMessage!.mediaLocalStoragePath) &&
+            .checkFile(chatMessage.mediaChatMessage!.mediaLocalStoragePath) &&
         chatMessage.messageStatus.status != 'N') {
       if (chatMessage.messageType == 'VIDEO') {
         return SizedBox(
@@ -1352,9 +1457,9 @@ class ChatView extends GetView<ChatController> {
           height: 50,
           child: Center(
               child: SvgPicture.asset(
-                video_play,
-                fit: BoxFit.contain,
-              )),
+            video_play,
+            fit: BoxFit.contain,
+          )),
         );
       } else if (chatMessage.messageType == 'AUDIO') {
         debugPrint("===============================");
@@ -1396,8 +1501,7 @@ class ChatView extends GetView<ChatController> {
                 onTap: () {
                   debugPrint(chatMessage.messageId);
                 },
-                child:
-                    SizedBox(width: 30, height: 30, child: uploadingView()));
+                child: SizedBox(width: 30, height: 30, child: uploadingView()));
           } else {
             return SizedBox(
               height: 40,
@@ -1413,9 +1517,9 @@ class ChatView extends GetView<ChatController> {
       String messageType) {
     return messageType == 'AUDIO' || messageType == 'DOCUMENT'
         ? Icon(
-      iconData,
-      color: audiocolordark,
-    )
+            iconData,
+            color: audiocolordark,
+          )
         : Container(
             decoration: BoxDecoration(
               border: Border.all(
@@ -1496,8 +1600,8 @@ class ChatView extends GetView<ChatController> {
             ]));
   }
 
-  handleMediaUploadDownload(int mediaDownloadStatus,
-      ChatMessageModel chatList) {
+  handleMediaUploadDownload(
+      int mediaDownloadStatus, ChatMessageModel chatList) {
     switch (chatList.isMessageSentByMe
         ? chatList.mediaChatMessage?.mediaUploadStatus
         : mediaDownloadStatus) {
@@ -1505,9 +1609,9 @@ class ChatView extends GetView<ChatController> {
       case Constants.MEDIA_UPLOADED:
         if (chatList.messageType == 'VIDEO') {
           if (controller.checkFile(
-              chatList.mediaChatMessage!.mediaLocalStoragePath) &&
+                  chatList.mediaChatMessage!.mediaLocalStoragePath) &&
               (chatList.mediaChatMessage!.mediaDownloadStatus ==
-                  Constants.MEDIA_DOWNLOADED ||
+                      Constants.MEDIA_DOWNLOADED ||
                   chatList.mediaChatMessage!.mediaDownloadStatus ==
                       Constants.MEDIA_UPLOADED ||
                   chatList.isMessageSentByMe)) {
@@ -1518,9 +1622,9 @@ class ChatView extends GetView<ChatController> {
         }
         if (chatList.messageType == 'AUDIO') {
           if (controller.checkFile(
-              chatList.mediaChatMessage!.mediaLocalStoragePath) &&
+                  chatList.mediaChatMessage!.mediaLocalStoragePath) &&
               (chatList.mediaChatMessage!.mediaDownloadStatus ==
-                  Constants.MEDIA_DOWNLOADED ||
+                      Constants.MEDIA_DOWNLOADED ||
                   chatList.mediaChatMessage!.mediaDownloadStatus ==
                       Constants.MEDIA_UPLOADED ||
                   chatList.isMessageSentByMe)) {
@@ -1558,9 +1662,7 @@ class ChatView extends GetView<ChatController> {
   getAudioFeedButton(ChatMessageModel chatMessage) {}
 
   getImageHolder(String mediaFileName) {
-    String result = mediaFileName
-        .split('.')
-        .last;
+    String result = mediaFileName.split('.').last;
     debugPrint("File Type ==> $result");
     switch (result) {
       case Constants.PDF:
@@ -1658,13 +1760,13 @@ class ChatView extends GetView<ChatController> {
                         data: SliderThemeData(
                           thumbColor: audiocolordark,
                           overlayShape: SliderComponentShape.noOverlay,
-                          thumbShape:
-                              const RoundSliderThumbShape(enabledThumbRadius: 5),
+                          thumbShape: const RoundSliderThumbShape(
+                              enabledThumbRadius: 5),
                         ),
                         child: Obx(() {
                           return Slider(
                             value:
-                            double.parse(controller.currentpos.toString()),
+                                double.parse(controller.currentpos.toString()),
                             min: 0,
                             activeColor: audiocolordark,
                             inactiveColor: audiocolor,
@@ -1724,7 +1826,7 @@ class ChatView extends GetView<ChatController> {
                       const SizedBox(height: 8),
                       Padding(
                         padding:
-                        const EdgeInsets.only(bottom: 15.0, left: 15.0),
+                            const EdgeInsets.only(bottom: 15.0, left: 15.0),
                         child: getReplyMessage(
                             controller.replyChatMessage.messageType,
                             controller.replyChatMessage.messageTextContent,
@@ -1772,11 +1874,11 @@ class ChatView extends GetView<ChatController> {
   getReplyTitle(bool isMessageSentByMe, String senderNickName) {
     return isMessageSentByMe
         ? const Text(
-      'You',
-      style: TextStyle(fontWeight: FontWeight.bold),
-    )
+            'You',
+            style: TextStyle(fontWeight: FontWeight.bold),
+          )
         : Text(senderNickName,
-        style: const TextStyle(fontWeight: FontWeight.bold));
+            style: const TextStyle(fontWeight: FontWeight.bold));
   }
 
   getReplyMessage(String messageType, String? messageTextContent,
@@ -1870,7 +1972,8 @@ class ChatView extends GetView<ChatController> {
     }
   }
 
-  getReplyImageHolder(BuildContext context,
+  getReplyImageHolder(
+      BuildContext context,
       String messageType,
       String? mediaThumbImage,
       LocationChatMessage? locationChatMessage,
@@ -1962,25 +2065,25 @@ class ChatView extends GetView<ChatController> {
             actions: [
               controller.getOptionStatus('Reply')
                   ? CustomAction(
-                visibleWidget: IconButton(
-                    onPressed: () {
-                      controller.handleReplyChatMessage(
-                          controller.selectedChatList[0]);
-                      controller.clearChatSelection(
-                          controller.selectedChatList[0]);
-                    },
-                    icon: const Icon(Icons.reply_outlined)),
-                overflowWidget: const Text("Reply"),
-                showAsAction: ShowAsAction.ALWAYS,
-                keyValue: 'Reply',
-                onItemClick: () {
-                  controller.closeKeyBoard();
-                  controller.handleReplyChatMessage(
-                      controller.selectedChatList[0]);
-                  controller
-                      .clearChatSelection(controller.selectedChatList[0]);
-                },
-              )
+                      visibleWidget: IconButton(
+                          onPressed: () {
+                            controller.handleReplyChatMessage(
+                                controller.selectedChatList[0]);
+                            controller.clearChatSelection(
+                                controller.selectedChatList[0]);
+                          },
+                          icon: const Icon(Icons.reply_outlined)),
+                      overflowWidget: const Text("Reply"),
+                      showAsAction: ShowAsAction.ALWAYS,
+                      keyValue: 'Reply',
+                      onItemClick: () {
+                        controller.closeKeyBoard();
+                        controller.handleReplyChatMessage(
+                            controller.selectedChatList[0]);
+                        controller
+                            .clearChatSelection(controller.selectedChatList[0]);
+                      },
+                    )
                   : customEmptyAction(),
               CustomAction(
                 visibleWidget: Transform(
@@ -2003,22 +2106,22 @@ class ChatView extends GetView<ChatController> {
               ),
               controller.getOptionStatus('Favourite')
                   ? CustomAction(
-                visibleWidget: IconButton(
-                    onPressed: () {
-                      controller.favouriteMessage();
-                    },
-                    // icon: controller.getOptionStatus('Favourite') ? const Icon(Icons.star_border_outlined)
-                    icon: controller.selectedChatList[0].isMessageStarred
-                        ? const Icon(Icons.star_border_outlined)
-                        : const Icon(Icons.star)),
-                overflowWidget: const Text("Favourite"),
-                showAsAction: ShowAsAction.ALWAYS,
-                keyValue: 'favourite',
-                onItemClick: () {
-                  controller.closeKeyBoard();
-                  controller.favouriteMessage();
-                },
-              )
+                      visibleWidget: IconButton(
+                          onPressed: () {
+                            controller.favouriteMessage();
+                          },
+                          // icon: controller.getOptionStatus('Favourite') ? const Icon(Icons.star_border_outlined)
+                          icon: controller.selectedChatList[0].isMessageStarred
+                              ? const Icon(Icons.star_border_outlined)
+                              : const Icon(Icons.star)),
+                      overflowWidget: const Text("Favourite"),
+                      showAsAction: ShowAsAction.ALWAYS,
+                      keyValue: 'favourite',
+                      onItemClick: () {
+                        controller.closeKeyBoard();
+                        controller.favouriteMessage();
+                      },
+                    )
                   : customEmptyAction(),
               CustomAction(
                 visibleWidget: IconButton(
@@ -2036,74 +2139,74 @@ class ChatView extends GetView<ChatController> {
               ),
               controller.getOptionStatus('Report')
                   ? CustomAction(
-                visibleWidget: IconButton(
-                    onPressed: () {
-                      controller.reportChatOrUser();
-                    },
-                    icon: const Icon(Icons.report_problem_rounded)),
-                overflowWidget: const Text("Report"),
-                showAsAction: ShowAsAction.NEVER,
-                keyValue: 'Report',
-                onItemClick: () {
-                  controller.closeKeyBoard();
-                  controller.reportChatOrUser();
-                },
-              )
+                      visibleWidget: IconButton(
+                          onPressed: () {
+                            controller.reportChatOrUser();
+                          },
+                          icon: const Icon(Icons.report_problem_rounded)),
+                      overflowWidget: const Text("Report"),
+                      showAsAction: ShowAsAction.NEVER,
+                      keyValue: 'Report',
+                      onItemClick: () {
+                        controller.closeKeyBoard();
+                        controller.reportChatOrUser();
+                      },
+                    )
                   : customEmptyAction(),
               controller.selectedChatList.length > 1 ||
-                  controller.selectedChatList[0].messageType !=
-                      Constants.MTEXT
+                      controller.selectedChatList[0].messageType !=
+                          Constants.MTEXT
                   ? customEmptyAction()
                   : CustomAction(
-                visibleWidget: IconButton(
-                  onPressed: () {
-                    // controller.copyTextMessages();
-                  },
-                  icon: SvgPicture.asset(
-                    copyIcon,
-                    fit: BoxFit.contain,
-                  ),
-                ),
-                overflowWidget: const Text("Copy"),
-                showAsAction: ShowAsAction.NEVER,
-                keyValue: 'Copy',
-                onItemClick: () {
-                  controller.closeKeyBoard();
-                  controller.copyTextMessages();
-                },
-              ),
+                      visibleWidget: IconButton(
+                        onPressed: () {
+                          // controller.copyTextMessages();
+                        },
+                        icon: SvgPicture.asset(
+                          copyIcon,
+                          fit: BoxFit.contain,
+                        ),
+                      ),
+                      overflowWidget: const Text("Copy"),
+                      showAsAction: ShowAsAction.NEVER,
+                      keyValue: 'Copy',
+                      onItemClick: () {
+                        controller.closeKeyBoard();
+                        controller.copyTextMessages();
+                      },
+                    ),
               controller.getOptionStatus('Message Info')
                   ? CustomAction(
-                visibleWidget: IconButton(
-                  onPressed: () {
-                    // Get.back();
-                    controller.messageInfo();
-                  },
-                  icon: SvgPicture.asset(
-                    infoIcon,
-                    fit: BoxFit.contain,
-                  ),
-                ),
-                overflowWidget: const Text("Message Info"),
-                showAsAction: ShowAsAction.NEVER,
-                keyValue: 'MessageInfo',
-                onItemClick: () {
-                  controller.closeKeyBoard();
-                  controller.messageInfo();
-                },
-              )
+                      visibleWidget: IconButton(
+                        onPressed: () {
+                          // Get.back();
+                          controller.messageInfo();
+                        },
+                        icon: SvgPicture.asset(
+                          infoIcon,
+                          fit: BoxFit.contain,
+                        ),
+                      ),
+                      overflowWidget: const Text("Message Info"),
+                      showAsAction: ShowAsAction.NEVER,
+                      keyValue: 'MessageInfo',
+                      onItemClick: () {
+                        controller.closeKeyBoard();
+                        controller.messageInfo();
+                      },
+                    )
                   : customEmptyAction(),
               controller.getOptionStatus('Share')
                   ? CustomAction(
-                visibleWidget: IconButton(
-                    onPressed: () {}, icon: const Icon(Icons.share)),
-                overflowWidget: const Text("Share"),
-                showAsAction: ShowAsAction.NEVER,
-                keyValue: 'Share',
-                onItemClick: () {
-                  controller.closeKeyBoard();
-                },
-              )
+                      visibleWidget: IconButton(
+                          onPressed: () {}, icon: const Icon(Icons.share)),
+                      overflowWidget: const Text("Share"),
+                      showAsAction: ShowAsAction.NEVER,
+                      keyValue: 'Share',
+                      onItemClick: () {
+                        controller.closeKeyBoard();
+                      },
+                    )
                   : customEmptyAction(),
             ]),
       ],
@@ -2124,21 +2227,19 @@ class ChatView extends GetView<ChatController> {
               clipoval: true,
               errorWidget: controller.profile.isGroupProfile!
                   ? ClipOval(
-                child: Image.asset(
-                  groupImg,
-                  height: 45,
-                  width: 45,
-                  fit: BoxFit.cover,
-                ),
-              )
+                      child: Image.asset(
+                        groupImg,
+                        height: 45,
+                        width: 45,
+                        fit: BoxFit.cover,
+                      ),
+                    )
                   : ProfileTextImage(
-                text: controller.profile.name
-                    .checkNull()
-                    .isEmpty
-                    ? controller.profile.mobileNumber.checkNull()
-                    : controller.profile.name.checkNull(),
-                radius: 20,
-              ),
+                      text: controller.profile.name.checkNull().isEmpty
+                          ? controller.profile.mobileNumber.checkNull()
+                          : controller.profile.name.checkNull(),
+                      radius: 20,
+                    ),
             ),
             const SizedBox(
               width: 8,
@@ -2152,15 +2253,20 @@ class ChatView extends GetView<ChatController> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(controller.profile.name.checkNull()),
-                    controller.subtitle.isNotEmpty ? !controller.profile
-                        .isGroupProfile! ? Text(
-                      controller.subtitle, style: TextStyle(fontSize: 12),
-                      overflow: TextOverflow.fade,) : SizedBox(
-                        width: (screenWidth) / 1.9,
-                        height: 15,
-                        child: Marquee(
-                            text: controller.subtitle + ",",
-                            style: TextStyle(fontSize: 12))) : SizedBox()
+                    controller.subtitle.isNotEmpty
+                        ? !controller.profile.isGroupProfile!
+                            ? Text(
+                                controller.subtitle,
+                                style: TextStyle(fontSize: 12),
+                                overflow: TextOverflow.fade,
+                              )
+                            : SizedBox(
+                                width: (screenWidth) / 1.9,
+                                height: 15,
+                                child: Marquee(
+                                    text: controller.subtitle + ",",
+                                    style: TextStyle(fontSize: 12)))
+                        : SizedBox()
                   ],
                 ),
                 onTap: () {
@@ -2210,51 +2316,53 @@ class ChatView extends GetView<ChatController> {
               ),
               controller.isBlocked.value
                   ? CustomAction(
-                visibleWidget: IconButton(
-                  onPressed: () {
-                    // Get.back();
-                    controller.unBlockUser();
-                  },
-                  icon: const Icon(Icons.block),
-                ),
-                overflowWidget: const Text("Unblock"),
-                showAsAction: ShowAsAction.NEVER,
-                keyValue: 'Unblock',
-                onItemClick: () {
-                  controller.closeKeyBoard();
-                  controller.unBlockUser();
-                },
-              )
+                      visibleWidget: IconButton(
+                        onPressed: () {
+                          // Get.back();
+                          controller.unBlockUser();
+                        },
+                        icon: const Icon(Icons.block),
+                      ),
+                      overflowWidget: const Text("Unblock"),
+                      showAsAction: ShowAsAction.NEVER,
+                      keyValue: 'Unblock',
+                      onItemClick: () {
+                        controller.closeKeyBoard();
+                        controller.unBlockUser();
+                      },
+                    )
                   : CustomAction(
-                visibleWidget: IconButton(
-                  onPressed: () {
-                    // Get.back();
-                    controller.blockUser();
-                  },
-                  icon: const Icon(Icons.block),
-                ),
-                overflowWidget: const Text("Block"),
-                showAsAction: controller.profile.isGroupProfile! ? ShowAsAction
-                    .GONE : ShowAsAction.NEVER,
-                keyValue: 'Block',
-                onItemClick: () {
-                  controller.closeKeyBoard();
-                  controller.blockUser();
-                },
-              ),
+                      visibleWidget: IconButton(
+                        onPressed: () {
+                          // Get.back();
+                          controller.blockUser();
+                        },
+                        icon: const Icon(Icons.block),
+                      ),
+                      overflowWidget: const Text("Block"),
+                      showAsAction: controller.profile.isGroupProfile!
+                          ? ShowAsAction.GONE
+                          : ShowAsAction.NEVER,
+                      keyValue: 'Block',
+                      onItemClick: () {
+                        controller.closeKeyBoard();
+                        controller.blockUser();
+                      },
+                    ),
               CustomAction(
                 visibleWidget: IconButton(
                   onPressed: () {},
                   icon: const Icon(Icons.search),
                 ),
                 overflowWidget: const Text("Search"),
-                showAsAction: controller.profile.isGroupProfile! ? ShowAsAction
-                    .GONE : ShowAsAction.NEVER,
+                showAsAction: controller.profile.isGroupProfile!
+                    ? ShowAsAction.GONE
+                    : ShowAsAction.NEVER,
                 keyValue: 'Search',
                 onItemClick: () {
                   controller.closeKeyBoard();
                   Future.delayed(Duration(milliseconds: 100),
-                          () => Get.toNamed(Routes.CHATSEARCH));
+                      () => Get.toNamed(Routes.CHATSEARCH));
                 },
               ),
               CustomAction(

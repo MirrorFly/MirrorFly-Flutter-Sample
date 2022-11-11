@@ -214,12 +214,12 @@ extension BooleanParsing on bool? {
 extension MemberParsing on Member{
 
   String getUsername(){
-    var value = PlatformRepo().getProfileDetails(this.jid.checkNull());
+    var value = PlatformRepo().getProfileDetails(jid.checkNull());
     var str = Profile.fromJson(json.decode(value.toString()));
     return str.name.checkNull();
   }
   Future<Profile> getProfileDetails() async {
-    var value = await PlatformRepo().getProfileDetails(this.jid.checkNull());
+    var value = await PlatformRepo().getProfileDetails(jid.checkNull());
     var str = Profile.fromJson(json.decode(value.toString()));
     return str;
   }
@@ -227,7 +227,7 @@ extension MemberParsing on Member{
 
 extension ProfileParesing on Profile{
   bool isDeletedContact(){
-    return this.contactType =="deleted_contact";
+    return contactType =="deleted_contact";
   }
 }
 
