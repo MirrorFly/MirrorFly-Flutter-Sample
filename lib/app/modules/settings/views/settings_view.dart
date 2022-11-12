@@ -8,6 +8,9 @@ import 'package:mirror_fly_demo/app/routes/app_pages.dart';
 
 import '../../../common/constants.dart';
 import '../../../common/widgets.dart';
+import 'about/aboutandhelp_view.dart';
+import 'blocked/blockedlist_view.dart';
+import 'notification/notificationsettings_view.dart';
 
 class SettingsView extends GetView<SettingsController> {
   const SettingsView({Key? key}) : super(key: key);
@@ -27,16 +30,16 @@ class SettingsView extends GetView<SettingsController> {
             SettingListItem(
                 "Starred Messages", staredmsgicon, rightarrowicon, () {}),
             SettingListItem(
-                "Notifications", notificationicon, rightarrowicon, () {}),
+                "Notifications", notificationicon, rightarrowicon, ()=>Get.toNamed(Routes.NOTIFICATION)),
             SettingListItem(
-                "Blocked Contacts", blockedicon, rightarrowicon, () {}),
-            SettingListItem(
-                "Archived Chats", archiveicon, rightarrowicon, () {}),
+                "Blocked Contacts", blockedicon, rightarrowicon, ()=>Get.toNamed(Routes.BLOCKEDLIST)),
+            //SettingListItem("Archived Chats", archiveicon, rightarrowicon, () {}),
             SettingListItem("App Lock", lockicon, rightarrowicon, () {}),
-            SettingListItem("About and Help", abouticon, rightarrowicon, () {}),
+            SettingListItem("About and Help", abouticon, rightarrowicon, () =>Get.to(AboutAndHelpView())),
             SettingListItem(
                 "Connection Label", connectionicon, toggleofficon, () {}),
-            SettingListItem("Report Log", reporticon, rightarrowicon, () {}),
+           // SettingListItem("Report Log", reporticon, rightarrowicon, () {}),
+            SettingListItem("Delete My Account", delete, rightarrowicon, () {}),
             SettingListItem("Logout", logouticon, rightarrowicon, () {
               Helper.showAlert(
                   message:
@@ -92,35 +95,33 @@ class SettingsView extends GetView<SettingsController> {
 
   Widget SettingListItem(
       String title, String leading, String trailing, Function() ontap) {
-    return Container(
-      child: Column(
-        children: [
-          InkWell(
-            onTap: ontap,
-            child: Row(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.all(18.0),
-                  child: SvgPicture.asset(leading),
-                ),
-                Expanded(
-                    child: Text(
-                  title,
-                  style: const TextStyle(
-                      fontSize: 15.0,
-                      fontFamily: 'sf_ui',
-                      fontWeight: FontWeight.w700),
-                )),
-                Padding(
-                  padding: const EdgeInsets.all(18.0),
-                  child: SvgPicture.asset(trailing),
-                ),
-              ],
-            ),
+    return Column(
+      children: [
+        InkWell(
+          onTap: ontap,
+          child: Row(
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(18.0),
+                child: SvgPicture.asset(leading),
+              ),
+              Expanded(
+                  child: Text(
+                title,
+                style: const TextStyle(
+                    fontSize: 15.0,
+                    fontFamily: 'sf_ui',
+                    fontWeight: FontWeight.w400),
+              )),
+              Padding(
+                padding: const EdgeInsets.all(18.0),
+                child: SvgPicture.asset(trailing),
+              ),
+            ],
           ),
-          AppDivider(),
-        ],
-      ),
+        ),
+        AppDivider(),
+      ],
     );
   }
 }

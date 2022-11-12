@@ -11,6 +11,7 @@ import 'package:mirror_fly_demo/app/data/SessionManagement.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
 
 import 'package:flutter_cache_manager/flutter_cache_manager.dart' as cache;
+import '../model/groupmembers_model.dart';
 import '../nativecall/platformRepo.dart';
 import 'constants.dart';
 import 'main_controller.dart';
@@ -37,12 +38,13 @@ class ProfileTextImage extends StatelessWidget {
   final double radius;
   final Color fontcolor;
 
-  ProfileTextImage({Key? key,
-    required this.text,
-    this.fontsize = 15,
-    this.bgcolor = buttonbgcolor,
-    this.radius = 25,
-    this.fontcolor = Colors.white})
+  ProfileTextImage(
+      {Key? key,
+      required this.text,
+      this.fontsize = 15,
+      this.bgcolor = buttonbgcolor,
+      this.radius = 25,
+      this.fontcolor = Colors.white})
       : super(key: key);
 
   @override
@@ -52,9 +54,9 @@ class ProfileTextImage extends StatelessWidget {
       backgroundColor: Color(Helper.getColourCode(text)), //bgcolor,
       child: Center(
           child: Text(
-            getString(text),
-            style: TextStyle(fontSize: fontsize, color: fontcolor),
-          )),
+        getString(text),
+        style: TextStyle(fontSize: fontsize, color: fontcolor),
+      )),
     );
   }
 
@@ -82,12 +84,13 @@ class ImageNetwork extends GetView<MainController> {
   final Widget? errorWidget;
   final bool clipoval;
 
-  const ImageNetwork({Key? key,
-    required this.url,
-    required this.width,
-    required this.height,
-    this.errorWidget,
-    required this.clipoval})
+  const ImageNetwork(
+      {Key? key,
+      required this.url,
+      required this.width,
+      required this.height,
+      this.errorWidget,
+      required this.clipoval})
       : super(key: key);
 
   @override
@@ -96,27 +99,34 @@ class ImageNetwork extends GetView<MainController> {
     Log("Mirrorfly Auth", AUTHTOKEN.value);
     Log("Image URL", url);
     if (url.isEmpty) {
-      return errorWidget!=null ? errorWidget! : clipoval ? ClipOval(
-        child: Image.asset(
-          profileImg,
-          height: height,
-          width: width,
-        ),
-      ) : Image.asset(
-        profileImg,
-        height: height,
-        width: width,
-      );
-    }else {
-      return Obx(
-            () =>
-            CachedNetworkImage(
-              imageUrl: controller.UPLOAD_ENDPOINT + url,
-              fit: BoxFit.fill,
-              width: width,
+      if (errorWidget != null) {
+        return errorWidget!;
+      } else {
+        if (clipoval) {
+          return ClipOval(
+            child: Image.asset(
+              profileImg,
               height: height,
-              httpHeaders: {"Authorization": controller.AUTHTOKEN.value},
-              /*placeholder: (context, url) {
+              width: width,
+            ),
+          );
+        } else {
+          return Image.asset(
+            profileImg,
+            height: height,
+            width: width,
+          );
+        }
+      }
+    } else {
+      return Obx(
+        () => CachedNetworkImage(
+          imageUrl: controller.UPLOAD_ENDPOINT + url,
+          fit: BoxFit.fill,
+          width: width,
+          height: height,
+          httpHeaders: {"Authorization": controller.AUTHTOKEN.value},
+          /*placeholder: (context, url) {
           //Log("placeholder", url);
           return errorWidget ??
               Image.asset(
@@ -126,32 +136,39 @@ class ImageNetwork extends GetView<MainController> {
               );
         },*/
 
-              progressIndicatorBuilder: (context, link, progress) {
-                return SizedBox(
+          progressIndicatorBuilder: (context, link, progress) {
+            return SizedBox(
+              height: height,
+              width: width,
+              child: const Center(child: CircularProgressIndicator()),
+            );
+          },
+          errorWidget: (context, link, error) {
+            Log("imageerror", error.toString());
+            if (error.toString().contains("401") && url.isNotEmpty) {
+              // controller.getAuthToken();
+              _deleteImageFromCache(url);
+            }
+            return errorWidget ??
+                Image.asset(
+                  profileImg,
                   height: height,
                   width: width,
-                  child: const Center(child: CircularProgressIndicator()),
                 );
-              },
-              errorWidget: (context, link, error) {
-                Log("imageerror", error.toString());
-                if (error.toString().contains("401") && url.isNotEmpty) {
-                  // controller.getAuthToken();
-                  _deleteImageFromCache(url);
-                }
-                return errorWidget ??
-                    Image.asset(
-                      profileImg,
-                      height: height,
-                      width: width,
-                    );
-              },
-              imageBuilder: (context, provider) {
-                return clipoval ? ClipOval(
-                    child: Image(image: provider, fit: BoxFit.fill,)) : Image(
-                  image: provider, fit: BoxFit.fill,);
-              },
-            ),
+          },
+          imageBuilder: (context, provider) {
+            return clipoval
+                ? ClipOval(
+                    child: Image(
+                    image: provider,
+                    fit: BoxFit.fill,
+                  ))
+                : Image(
+                    image: provider,
+                    fit: BoxFit.fill,
+                  );
+          },
+        ),
         /*Image.network(
         imagedomin + url,
         fit: BoxFit.fill,
@@ -191,6 +208,112 @@ class ImageNetwork extends GetView<MainController> {
     });
     //await CachedNetworkImage.evictFromCache(url);
   }
+}
+class ListItem extends StatelessWidget {
+  final Widget? leading;
+  final Widget title;
+  final Widget? trailing;
+  final Function() onTap;
+  final EdgeInsetsGeometry? dividerpadding;
+
+  const ListItem({Key? key, this.leading, required this.title, this.trailing, required this.onTap, this.dividerpadding }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: onTap,
+      child: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Row(
+
+              children: [
+                leading != null ? Padding(
+                    padding: const EdgeInsets.only(right: 16.0),
+                    child: leading) : const SizedBox(),
+                Expanded(
+                  child: title,
+                ),
+                trailing ?? const SizedBox()
+              ],
+            ),
+          ),
+          dividerpadding != null ? AppDivider(padding: dividerpadding) : SizedBox()
+        ],
+      ),
+    );
+  }
+}
+
+
+Widget MemberItem({required String name,required String image,required String status,bool? isAdmin, required Function() onTap}) {
+  return Padding(
+    padding: const EdgeInsets.symmetric(vertical: 4.0),
+    child: InkWell(
+      child: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(
+                right: 16.0, left: 16.0, top: 4, bottom: 4),
+            child: Row(
+              children: [
+                ImageNetwork(
+                  url: image.checkNull(),
+                  width: 48,
+                  height: 48,
+                  clipoval: true,
+                  errorWidget: name
+                      .checkNull()
+                      .isNotEmpty
+                      ? ProfileTextImage(
+                    fontsize: 20,
+                    text: name.checkNull(),
+                  )
+                      : null,),
+                Expanded(child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(name.checkNull(),
+                        style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 14.0,
+                            fontWeight: FontWeight.w700
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis, //TextStyle
+                      ),
+                      Text(status.checkNull(),
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontSize: 12.0,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis, //T
+                      ),
+                    ],
+                  ),
+                ),
+                ),
+                (isAdmin!=null&& isAdmin) ? Text("Admin",
+                    style: TextStyle(
+                      color: Colors.blue,
+                      fontSize: 12.0,
+                    ) //TextStyle
+                ) : SizedBox(),
+              ],
+            ),
+          ),
+          AppDivider(padding: EdgeInsets.only(right: 16, left: 16, top: 4))
+        ],
+      ),
+      onTap: onTap,
+    ),
+  );
 }
 
 class EmojiLayout extends StatelessWidget {

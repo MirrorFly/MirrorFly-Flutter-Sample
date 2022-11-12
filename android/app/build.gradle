@@ -25,6 +25,7 @@ apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply from: "$flutterRoot/packages/flutter_tools/gradle/flutter.gradle"
 apply plugin: 'kotlin-kapt'
+apply plugin: 'com.google.gms.google-services'
 
 android {
     compileSdkVersion flutter.compileSdkVersion
@@ -82,7 +83,7 @@ android {
         }
     }
 
-    // Specifies one flavor dimension.
+    /*// Specifies one flavor dimension.
     flavorDimensions "version"
     productFlavors {
         dev {
@@ -111,7 +112,7 @@ android {
             dimension "version"
             applicationId "com.mirrorfly.uikit_flutter.qa"
         }
-    }
+    }*/
 
 
     packagingOptions {
@@ -149,9 +150,9 @@ dependencies {
     implementation files("libs/flydatabase.aar")
     implementation files("libs/flynetwork.aar")
     implementation files("libs/videocompression.aar")
-    implementation files("libs/flywebrtc.aar")
+    //implementation files("libs/flywebrtc.aar")
     implementation files("libs/xmpp.aar")
-    implementation files("libs/flywebrtc.aar")
+    //implementation files("libs/flywebrtc.aar")
 
     //For lifecycle listener
     implementation 'android.arch.lifecycle:extensions:1.1.1'

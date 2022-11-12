@@ -192,7 +192,13 @@ class GroupInfoView extends GetView<GroupInfoController> {
                     itemCount: controller.groupMembers.length,
                     shrinkWrap: true,
                     itemBuilder: (context, index) {
-                      return MemberItem(controller.groupMembers[index]);
+                      var item = controller.groupMembers[index];
+                      return MemberItem(name: item.name.checkNull(),image: item.image.checkNull(),status: item.status.checkNull(),onTap: (){
+                        if (item.jid.checkNull() !=
+                            SessionManagement().getUserJID().checkNull()) {
+                          showOptions(item);
+                        }
+                      });
                     });
               }),
               ListItem(
@@ -230,101 +236,6 @@ class GroupInfoView extends GetView<GroupInfoController> {
             ],
           ),
         ) //CustonScrollView
-    );
-  }
-
-  InkWell ListItem(
-      {Widget? leading, required Widget title, Widget? trailing, required Function() onTap}) {
-    return InkWell(
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Row(
-          children: [
-            leading != null ? Padding(
-                padding: const EdgeInsets.only(right: 16.0),
-                child: leading) : SizedBox(),
-            Expanded(
-              child: title,
-            ),
-            trailing ?? SizedBox()
-          ],
-        ),
-      ),
-      onTap: onTap,
-    );
-  }
-
-  Widget MemberItem(Member item) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4.0),
-      child: InkWell(
-        child: Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.only(
-                  right: 16.0, left: 16.0, top: 4, bottom: 4),
-              child: Row(
-                children: [
-                  ImageNetwork(
-                    url: item.image.checkNull(),
-                    width: 48,
-                    height: 48,
-                    clipoval: true,
-                    errorWidget: item.name
-                        .checkNull()
-                        .isNotEmpty
-                        ? ProfileTextImage(
-                      fontsize: 20,
-                      text: item.name.checkNull(),
-                    )
-                        : null,),
-                  Expanded(child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Text(item.name.checkNull(),
-                          style: TextStyle(
-                              color: Colors.black,
-                              fontSize: 14.0,
-                              fontWeight: FontWeight.w700
-                          ),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis, //TextStyle
-                        ),
-                        Text(item.status.checkNull(),
-                          style: TextStyle(
-                            color: Colors.black,
-                            fontSize: 12.0,
-                          ),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis, //T
-                        ),
-                      ],
-                    ),
-                  ),
-                  ),
-                  item.isGroupAdmin! ? Text("Admin",
-                      style: TextStyle(
-                        color: Colors.blue,
-                        fontSize: 12.0,
-                      ) //TextStyle
-                  ) : SizedBox(),
-                ],
-              ),
-            ),
-            AppDivider(padding: EdgeInsets.only(right: 16, left: 16, top: 4))
-          ],
-        ),
-        onTap: () {
-          if (item.jid.checkNull() !=
-              SessionManagement().getUserJID().checkNull()) {
-            showOptions(item);
-          }
-        },
-      ),
     );
   }
 

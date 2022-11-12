@@ -45,9 +45,12 @@ const String rightarrowicon = 'assets/logos/forward_arrow.svg';
 const String chaticon = 'assets/logos/chat.svg';
 const String staredmsgicon = 'assets/logos/stared message.svg';
 const String notificationicon = 'assets/logos/Notifications.svg';
+const String tick_round = 'assets/logos/tick_round.svg';
+const String tick_round_blue = 'assets/logos/tick_round_blue.svg';
 const String blockedicon = 'assets/logos/blocked_contacts.svg';
 const String archiveicon = 'assets/logos/Archive_ic_settings.svg';
 const String lockicon = 'assets/logos/lock.svg';
+const String delete = 'assets/logos/delete_black.svg';
 const String abouticon = 'assets/logos/About and Help.svg';
 const String connectionicon = 'assets/logos/antenna.svg';
 const String toggleofficon = 'assets/logos/toggle OFF.svg';
@@ -116,6 +119,16 @@ const String report_group = 'assets/logos/report_group.svg';
 const String leave_group = 'assets/logos/leave_group.svg';
 
 
+//About us
+const String title_contact_msg = "Mirror Fly is a ready-to-go messaging solution for building enterprise-grade real-time chat IM applications that meet various degrees of requirements like team discussion, data sharing, task delegation and information handling on the go.";
+const String title_contact_us = "Contact Us";
+const String title_contact_msg_time = "To have a detailed interaction with our experts";
+const String title_faq = "FAQ";
+const String title_faq_msg = "Kindly checkout FAQ section for doubts regarding Mirror fly. We might have already answered your question.";
+const String title_contus_fly ="Mirror Fly";
+const String website_mirrorfly ="https://www.mirrorfly.com/";
+const String notification_not_working_URL ="https://app.mirrorfly.com/notifications/";
+
 
 toToast(String text) {
   Fluttertoast.showToast(
@@ -131,7 +144,8 @@ Log(String tag,String msg){
   }
 }
 class Constants {
-
+  static const String PACKAGE = 'com.mirrorfly.uikit_flutter';
+  static const String WEB_CHAT_LOGIN = 'https://webchat-uikit-qa.contus.us/';
   static const String TAG = 'Contus Fly';
   static const String GOOGLE_MAP_KEY = "AIzaSyBaKkrQnLT4nacpKblIE5d4QK6GpaX5luQ";
   static const String GOOGLE_MAP_PACKAGE_NAME = "com.google.android.apps.maps";

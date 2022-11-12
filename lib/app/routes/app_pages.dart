@@ -1,5 +1,9 @@
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/modules/group/bindings/groupcreation_binding.dart';
+import 'package:mirror_fly_demo/app/modules/scanner/scanner_view.dart';
+import 'package:mirror_fly_demo/app/modules/settings/views/blocked/blockedlist_binding.dart';
+import 'package:mirror_fly_demo/app/modules/settings/views/blocked/blockedlist_view.dart';
+import 'package:mirror_fly_demo/app/modules/settings/views/notification/notificationsettings_view.dart';
 import 'package:mirror_fly_demo/app/modules/viewall_media/views/viewallmedia_view.dart';
 
 import '../model/userlistModel.dart';
@@ -41,7 +45,9 @@ import '../modules/profile/bindings/profile_binding.dart';
 import '../modules/profile/bindings/statuslist_binding.dart';
 import '../modules/profile/views/profile_view.dart';
 import '../modules/profile/views/statuslist_view.dart';
+import '../modules/scanner/scanner_binding.dart';
 import '../modules/settings/bindings/settings_binding.dart';
+import '../modules/settings/views/notification/notification_binding.dart';
 import '../modules/settings/views/settings_view.dart';
 import '../modules/video_preview/bindings/VideoPlayBinding.dart';
 import '../modules/video_preview/bindings/video_preview_binding.dart';
@@ -146,6 +152,16 @@ class AppPages {
       name: _Paths.SETTINGS,
       page: () => SettingsView(),
       binding: SettingsBinding(),
+    ),
+    GetPage(
+      name: _Paths.BLOCKEDLIST,
+      page: () => BlockedListView(),
+      binding: BlockedListBinding(),
+    ),
+    GetPage(
+      name: _Paths.NOTIFICATION,
+      page: () => NotificationSettingsView(),
+      binding: NotificationBinding(),
     ),
     GetPage(
       name: _Paths.VIDEO_PREVIEW,

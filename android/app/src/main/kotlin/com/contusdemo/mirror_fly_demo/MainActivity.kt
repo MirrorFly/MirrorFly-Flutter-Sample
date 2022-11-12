@@ -1,14 +1,15 @@
 package com.contusdemo.mirror_fly_demo
 
+import android.app.Activity
 import android.content.Intent
 import android.content.pm.ResolveInfo
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.media.RingtoneManager
 import android.media.ThumbnailUtils
 import android.net.Uri
-import android.os.Build
-import android.os.Bundle
-import android.os.Handler
+import android.os.*
+import android.os.Build.VERSION.SDK_INT
 import android.util.Base64
 import android.webkit.MimeTypeMap
 import android.widget.Toast
@@ -16,6 +17,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.core.view.WindowCompat
 import com.contus.flycommons.*
+import com.contus.flycommons.SharedPreferenceManager.Companion.NOTIFICATION_URI
 import com.contus.xmpp.chat.models.CreateGroupModel
 import com.contus.flynetwork.ApiCalls
 import com.contus.flynetwork.model.verifyfcm.VerifyFcmResponse
@@ -34,6 +36,7 @@ import com.contusflysdk.api.notification.PushNotificationManager
 import com.contusflysdk.media.MediaUploadHelper
 import com.contusflysdk.utils.MediaUtils
 import com.contusflysdk.utils.ThumbSize
+import com.contusflysdk.utils.UpDateWebPassword
 import com.contusflysdk.utils.VideoRecUtils
 import com.contusflysdk.views.CustomToast
 import com.google.gson.Gson
@@ -641,7 +644,8 @@ class MainActivity : FlutterActivity(), MethodChannel.MethodCallHandler,
             }
             call.method.equals("isMemberOfGroup") -> {
                 val jid = call.argument<String>("jid") ?: ""
-                val userjid = call.argument<String>("userjid") ?: SharedPreferenceManager.instance.currentUserJid
+                val userjid = call.argument<String>("userjid")
+                    ?: SharedPreferenceManager.instance.currentUserJid
                 result.success(
                     GroupManager.isMemberOfGroup(
                         jid,
@@ -669,17 +673,17 @@ class MainActivity : FlutterActivity(), MethodChannel.MethodCallHandler,
             }
             call.method.equals("getMediaMessages") -> {
                 val jid = call.argument<String>("jid") ?: ""
-                Log.d("getMedia",ChatManager.getMediaMessages(jid).tojsonString())
+                Log.d("getMedia", ChatManager.getMediaMessages(jid).tojsonString())
                 result.success(ChatManager.getMediaMessages(jid).tojsonString())
             }
             call.method.equals("getDocsMessages") -> {
                 val jid = call.argument<String>("jid") ?: ""
-                Log.d("getDocs",ChatManager.getDocsMessages(jid).tojsonString())
+                Log.d("getDocs", ChatManager.getDocsMessages(jid).tojsonString())
                 result.success(ChatManager.getDocsMessages(jid).tojsonString())
             }
             call.method.equals("getLinkMessages") -> {
                 val jid = call.argument<String>("jid") ?: ""
-                Log.d("getLinks",ChatManager.getLinkMessages(jid).tojsonString())
+                Log.d("getLinks", ChatManager.getLinkMessages(jid).tojsonString())
                 result.success(ChatManager.getLinkMessages(jid).tojsonString())
             }
             call.method.equals("getProfileDetails") -> {
@@ -691,6 +695,41 @@ class MainActivity : FlutterActivity(), MethodChannel.MethodCallHandler,
             }
             call.method.equals("getUserLastSeenTime") -> {
                 getUserLastSeenTime(call, result)
+            }
+            call.method.equals("sendContactUsInfo") -> {
+                sendContactUsInfo(call, result)
+            }
+            call.method.equals("getUsersIBlocked") -> {
+                getUsersIBlocked(call, result)
+            }
+            call.method.equals("loginWebChatViaQRCode") -> {
+                loginWebChatViaQRCode(call, result)
+            }
+            call.method.equals("showCustomTones") -> {
+                showCustomTones(call, result)
+            }
+            call.method.equals("getWebLoginDetails") -> {
+                val details = WebLoginDataManager.getWebLoginDetails();
+                result.success(details.tojsonString());
+            }
+            call.method.equals("webLoginDetailsCleared") -> {
+                WebLoginDataManager.webLoginDetailsCleared();
+                result.success(true);
+            }
+            call.method.equals("logoutWebUser") -> {
+                val listWebLogin = call.argument<List<String>>("listWebLogin")//qrUniqeToken list
+                if(listWebLogin!=null) {
+                    if (listWebLogin.isNotEmpty()) {
+                        for (i in listWebLogin.indices) {
+                            ChatManager.logoutWebUser(listWebLogin[i])
+                        }
+                    }
+                }
+                result.success(true);
+            }
+            call.method.equals("getRingtoneName") -> {
+                val uri = call.argument<String>("ringtone_uri")
+                result.success(getRingtoneName(uri))
             }
             else -> {
                 result.notImplemented()
@@ -1576,7 +1615,8 @@ class MainActivity : FlutterActivity(), MethodChannel.MethodCallHandler,
         FlyCore.unblockUser(userJid) { isSuccess, throwable, data ->
             if (isSuccess) {
                 //User is blocked update the UI
-                result.success(data.tojsonString())
+                //result.success(data.tojsonString())
+                result.success(isSuccess)
             } else {
                 result.error("500", "Unable to Unblock User", throwable?.tojsonString())
                 //User blocking failed print throwable to find the exception details
@@ -1754,141 +1794,107 @@ class MainActivity : FlutterActivity(), MethodChannel.MethodCallHandler,
     fun getUserLastSeenTime(call: MethodCall, result: MethodChannel.Result) {
         val jid = call.argument<String>("jid") ?: ""
         ContactManager.getUserLastSeenTime(jid, object : ContactManager.LastSeenListener {
-                override fun onFailure(message: String) {
-                    /* No Implementation Needed */
-                }
+            override fun onFailure(message: String) {
+                /* No Implementation Needed */
+            }
 
-                override fun onSuccess(lastSeenTime: String) {
-                    result.success(lastSeenTime)
-                }
-            })
+            override fun onSuccess(lastSeenTime: String) {
+                result.success(lastSeenTime)
+            }
+        })
     }
 
-    /*private fun getGroupedMediaList(mediaMessages: List<ChatMessage>, isMedia:Boolean, isLinkMedia:Boolean = false) : List<GroupedMedia> {
-        val calendarInstance = Calendar.getInstance()
-        val currentYear = calendarInstance[Calendar.YEAR]
-        val currentMonth = calendarInstance[Calendar.MONTH]
-        val currentDay = calendarInstance[Calendar.DAY_OF_MONTH]
-        val calendar: Calendar = GregorianCalendar()
-        val dateSymbols = DateFormatSymbols().months
-        var year: Int
-        var month: Int
-        var day: Int
-        val viewAllMediaList = mutableListOf<GroupedMedia>()
-        var previousCategoryType = 10
-        mediaMessages.forEach { chatMessage ->
-            val date = Date(chatMessage.getMessageSentTime()/1000)
-            calendar.time = date
-            year = calendar[Calendar.YEAR]
-            month = calendar[Calendar.MONTH]
-            day = calendar[Calendar.DAY_OF_MONTH]
+    fun sendContactUsInfo(call: MethodCall, result: MethodChannel.Result) {
+        val title = call.argument<String>("title") ?: ""
+        val description = call.argument<String>("description") ?: ""
+        ContactManager.sendContactUsInfo(title, description) { isSuccess, throwable, _ ->
+            result.success(isSuccess)
+        }
+    }
 
-            val category = getCategoryName(dateSymbols, currentDay, currentMonth, currentYear, day, month, year)
+    fun getUsersIBlocked(call: MethodCall, result: MethodChannel.Result) {
+        val serverCall = call.argument<Boolean>("serverCall") ?: false
+        FlyCore.getUsersIBlocked(serverCall) { isSuccess: Boolean, _: Throwable?, data: java.util.HashMap<String, Any> ->
+            if (isSuccess) {
+                val profilesList = data.getData() as ArrayList<ProfileDetails>
+                result.success(profilesList.tojsonString())
+            }
+        }
+    }
 
-            if (isLinkMedia) {
-                if (previousCategoryType != category.first)
-                    viewAllMediaList.add(GroupedMedia.Header(category.second))
-                previousCategoryType = category.first
-                getMessageWithURLList(chatMessage).forEach { viewAllMediaList.add(it) }
-            } else {
-                if (!chatMessage.isMessageRecalled() && (chatMessage.isMediaDownloaded() || chatMessage.isMediaUploaded())
-                    && isMediaAvailable(chatMessage, isMedia)) {
-                    if (previousCategoryType != category.first)
-                        viewAllMediaList.add(GroupedMedia.Header(category.second))
-                    previousCategoryType = category.first
-                    viewAllMediaList.add(GroupedMedia.MessageItem(chatMessage))
+    fun loginWebChatViaQRCode(call: MethodCall, result: MethodChannel.Result) {
+        val barcode = call.argument<String>("barcode") ?: ""
+        FlyCore.loginWebChatViaQRCode(barcode) { isSuccess, _, data ->
+            result.success(isSuccess);
+            if (isSuccess) {
+                val vibrator = getSystemService(VIBRATOR_SERVICE) as Vibrator
+                if (vibrator.hasVibrator()) {
+                    vibrator.vibrate(50)
                 }
             }
         }
-        return viewAllMediaList
-    }
-    fun ChatMessage.isMediaDownloaded(): Boolean {
-        return isMediaMessage() && (mediaChatMessage.mediaDownloadStatus == MediaDownloadStatus.MEDIA_DOWNLOADED)
-    }
-    fun ChatMessage.isMediaUploaded(): Boolean {
-        return isMediaMessage() && (mediaChatMessage.mediaUploadStatus == MediaUploadStatus.MEDIA_UPLOADED)
-    }
-    fun ChatMessage.isMediaMessage() = (isAudioMessage() || isVideoMessage() || isImageMessage() || isFileMessage())
-    fun ChatMessage.isTextMessage() = messageType == com.contus.flycommons.models.MessageType.TEXT
-    fun ChatMessage.isAudioMessage() = messageType == com.contus.flycommons.models.MessageType.AUDIO
-    fun ChatMessage.isImageMessage() = messageType == com.contus.flycommons.models.MessageType.IMAGE
-    fun ChatMessage.isVideoMessage() = messageType == com.contus.flycommons.models.MessageType.VIDEO
-    fun ChatMessage.isFileMessage() = messageType == com.contus.flycommons.models.MessageType.DOCUMENT
-    fun ChatMessage.isNotificationMessage() = messageType == com.contus.flycommons.models.MessageType.NOTIFICATION
-
-    private fun getMessageWithURLList(message: ChatMessage): MutableList<GroupedMedia> {
-        val messageList = mutableListOf<GroupedMedia>()
-        val textContent = when {
-            message.isTextMessage() -> {
-                message.getMessageTextContent()
-            }
-            message.isImageMessage() || message.isVideoMessage() -> {
-                message.getMediaChatMessage().getMediaCaptionText()
-            }
-            else -> Constants.EMPTY_STRING
-        }
-        if (textContent.isNotBlank()) {
-            getUrlAndHostList(textContent).forEach {
-                val map = hashMapOf<String, String>()
-                map["host"] = it.first
-                map["url"] = it.second
-                messageList.add(GroupedMedia.MessageItem(message, map))
-            }
-        }
-        return messageList
-    }
-    private fun getUrlAndHostList(text: String): java.util.ArrayList<Pair<String, String>> {
-        val urls = java.util.ArrayList<Pair<String, String>>()
-        val splitString = text.split("\\s+".toRegex())
-        for (string in splitString) {
-            try {
-                val item = URL(string)
-                urls.add(Pair(item.host, item.toString()))
-            } catch (ignored: Exception) {
-                //No Implementation needed
-            }
-        }
-        return urls
-    }
-    private fun isMediaAvailable(chatMessage: ChatMessage, isMedia: Boolean): Boolean {
-        return (!isMedia || isMediaExists(chatMessage.getMediaChatMessage().getMediaLocalStoragePath()))
-    }
-    fun isMediaExists(filePath: String?): Boolean {
-        return if (filePath != null) {
-            val file = File(filePath)
-            file.exists()
-        } else false
     }
 
-    private fun getCategoryName(dateSymbols: Array<String>, currentDay: Int, currentMonth: Int, currentYear: Int,
-                                day: Int, month: Int, year: Int): Pair<Int, String> {
-        return when {
-            (currentYear - year) == 1 -> {
-                if (currentMonth < month) {
-                    Pair(4, dateSymbols[month])
-                } else {
-                    Pair(5, year.toString())
-                }
+    lateinit var ringToneResult: MethodChannel.Result
+    var existingCustomTone = "None"
+    private fun showCustomTones(call: MethodCall, result: MethodChannel.Result) {
+        ringToneResult = result
+        existingCustomTone = call.argument<String>("ringtone_uri") ?: "None"
+        //val existingCustomTone = Uri.parse(SharedPreferenceManager.getString(Constants.NOTIFICATION_URI))
+        val customToneUri = Uri.parse(existingCustomTone).toString()
+        val intent = Intent(RingtoneManager.ACTION_RINGTONE_PICKER)
+        intent.putExtra(RingtoneManager.EXTRA_RINGTONE_TYPE, RingtoneManager.TYPE_NOTIFICATION)
+        intent.putExtra(RingtoneManager.EXTRA_RINGTONE_TITLE, "Notification")
+        if (customToneUri != "None")
+            intent.putExtra(RingtoneManager.EXTRA_RINGTONE_EXISTING_URI, customToneUri)
+        startActivityForResult(intent, Constants.ACTIVITY_REQ_CODE)
+        /* setting isActivityStartedForResult to true to avoid xmpp disconnection */
+        ChatManager.isActivityStartedForResult = true
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        /* setting isActivityStartedForResult to false for xmpp disconnection */
+        ChatManager.isActivityStartedForResult = false
+        try {
+            if (resultCode == Activity.RESULT_OK && requestCode == Constants.ACTIVITY_REQ_CODE &&
+                data?.parcelable<Parcelable>(RingtoneManager.EXTRA_RINGTONE_PICKED_URI) != null
+            ) {
+                val selectedToneUri =
+                    (data.parcelable<Parcelable>(RingtoneManager.EXTRA_RINGTONE_PICKED_URI)
+                        .toString())
+                //SharedPreferenceManager.setString(com.contusfly.utils.Constants.NOTIFICATION_URI, data.getParcelableExtra<Parcelable>(RingtoneManager.EXTRA_RINGTONE_PICKED_URI).toString())
+                //binding.notificationToneLabel.setText(getRingtoneName(SharedPreferenceManager.getString(com.contusfly.utils.Constants.NOTIFICATION_URI)))
+                ringToneResult.success(selectedToneUri)
             }
-            currentYear > year -> {
-                Pair(5, year.toString())
+
+            if (data == null) {
+                ringToneResult.success(existingCustomTone)
+                //SharedPreferenceManager.setString(com.contusfly.utils.Constants.NOTIFICATION_URI, SharedPreferenceManager.getString(com.contusfly.utils.Constants.NOTIFICATION_URI))
+                //binding.notificationToneLabel.setText(getRingtoneName(SharedPreferenceManager.getString(com.contusfly.utils.Constants.NOTIFICATION_URI)))
+            } else if (data.parcelable<Parcelable>(RingtoneManager.EXTRA_RINGTONE_PICKED_URI) == null) {
+                ringToneResult.success("None")
+                //SharedPreferenceManager.setString(com.contusfly.utils.Constants.NOTIFICATION_URI, "None")
+                //binding.notificationToneLabel.setText(getRingtoneName(SharedPreferenceManager.getString(com.contusfly.utils.Constants.NOTIFICATION_URI)))
             }
-            (currentMonth - month) == 1 -> {
-                if (day > currentDay)
-                    Pair(3, "Last Month")
-                else
-                    Pair(4, dateSymbols[month])
-            }
-            currentMonth > month -> Pair(4, dateSymbols[month])
-            (currentDay - day) > 7 -> {
-                Pair(2, "Last Month")
-            }
-            (currentDay - day) > 2 -> {
-                Pair(1, "Last Week")
-            }
-            else -> Pair(0, "Recent")
+        } catch (exception: Exception) {
+            LogMessage.e(exception)
         }
-    }*/
+
+    }
+
+    private fun getRingtoneName(uri: String?): String? {
+        val default = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION).toString();
+        val ringtone = RingtoneManager.getRingtone(this, Uri.parse(uri ?: default))
+        return ringtone.getTitle(this)
+
+    }
+
+    inline fun <reified T : Parcelable> Intent.parcelable(key: String): T? = when {
+        SDK_INT >= 33 -> getParcelableExtra(key, T::class.java)
+        else -> @Suppress("DEPRECATION") getParcelableExtra(key) as? T
+    }
+
 
     fun Any.tojsonString(): String {
         return Gson().toJson(this).toString()

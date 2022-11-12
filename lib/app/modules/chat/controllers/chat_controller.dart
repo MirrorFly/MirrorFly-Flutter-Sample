@@ -969,7 +969,7 @@ class ChatController extends BaseController
             Get.back();
             Helper.showLoading(message: "Unblocking User");
             PlatformRepo().unBlockUser(profile.jid!).then((value) {
-              debugPrint(value);
+              debugPrint(value.toString());
               isBlocked(false);
               Helper.hideLoading();
             }).catchError((error) {

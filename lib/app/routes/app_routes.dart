@@ -20,6 +20,8 @@ abstract class Routes {
   static const LOCATIONSENT = _Paths.LOCATIONSENT;
   static const IMAGEPREVIEW = _Paths.IMAGEPREVIEW;
   static const SETTINGS = _Paths.SETTINGS;
+  static const BLOCKEDLIST = _Paths.BLOCKEDLIST;
+  static const NOTIFICATION = _Paths.NOTIFICATION;
   static const VIDEO_PREVIEW = _Paths.VIDEO_PREVIEW;
   static const VIDEO_PLAY = _Paths.VIDEO_PLAY;
   static const IMAGE_VIEW = _Paths.IMAGE_VIEW;
@@ -48,6 +50,8 @@ abstract class _Paths {
   static const CONTACTS = '/contacts';
   static const IMAGEPREVIEW = '/imagepreview';
   static const SETTINGS = '/settings';
+  static const BLOCKEDLIST = '/blocked_list';
+  static const NOTIFICATION = '/notification_setting';
   static const VIDEO_PREVIEW = '/video-preview';
   static const VIDEO_PLAY = '/video-play';
   static const IMAGE_VIEW = '/image-view';

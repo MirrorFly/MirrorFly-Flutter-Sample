@@ -5,6 +5,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
 
 import '../common/constants.dart';
+import '../data/SessionManagement.dart';
 import '../model/statusModel.dart';
 
 class PlatformRepo {
@@ -359,10 +360,23 @@ class PlatformRepo {
                 PlatformRepo().insertStatus(statusValue);
               }
             });
+            SessionManagement.vibration_type("0");
+            PlatformRepo().getRingtoneName(null).then((value) {
+              if (value != null) {
+                SessionManagement.setNotification_uri(value);
+              }
+            });
+            SessionManagement.conv_sound(true);
+            SessionManagement.mute_all( false);
           }else{
             var defaultStatus = Constants.defaultStatuslist;
             defaultStatus.forEach((statusValue) {
               PlatformRepo().insertStatus(statusValue);
+            });
+            PlatformRepo().getRingtoneName(null).then((value) {
+              if (value != null) {
+                SessionManagement.setNotification_uri(value);
+              }
             });
           }
         }
@@ -839,10 +853,10 @@ class PlatformRepo {
       rethrow;
     }
   }
-  Future<dynamic> unBlockUser(String userJID) async {
-    dynamic userBlockResponse;
+  Future<bool?> unBlockUser(String userJID) async {
+    bool? userBlockResponse;
     try {
-      userBlockResponse = await mirrorFlyMethodChannel.invokeMethod('un_block_user', { "userJID" : userJID});
+      userBlockResponse = await mirrorFlyMethodChannel.invokeMethod<bool>('un_block_user', { "userJID" : userJID});
       debugPrint("Un-Blocked Response ==> $userBlockResponse");
       return userBlockResponse;
     }on PlatformException catch (e){
@@ -854,6 +868,98 @@ class PlatformRepo {
     }
   }
 
+
+  Future<String?> showCustomTones(String? uri) async {
+    String? response;
+    try {
+      response = await mirrorFlyMethodChannel.invokeMethod<String>('showCustomTones', { "ringtone_uri" : uri});
+      debugPrint("showCustomTones Response ==> $response");
+      return response;
+    }on PlatformException catch (e){
+      debugPrint("Platform Exception ===> $e");
+      rethrow;
+    } on Exception catch(error){
+      debugPrint("Exception ==> $error");
+      rethrow;
+    }
+  }
+
+
+  Future<String?> getRingtoneName(String? uri) async {
+    String? response;
+    try {
+      response = await mirrorFlyMethodChannel.invokeMethod<String>('getRingtoneName', { "ringtone_uri" : uri});
+      debugPrint("getRingtoneName Response ==> $response");
+      return response;
+    }on PlatformException catch (e){
+      debugPrint("Platform Exception ===> $e");
+      rethrow;
+    } on Exception catch(error){
+      debugPrint("Exception ==> $error");
+      rethrow;
+    }
+  }
+
+
+  Future<bool?> loginWebChatViaQRCode(String barcode) async {
+    bool? response;
+    try {
+      response = await mirrorFlyMethodChannel.invokeMethod<bool>('loginWebChatViaQRCode', { "barcode" : barcode});
+      debugPrint("loginWebChatViaQRCode Response ==> $response");
+      return response;
+    }on PlatformException catch (e){
+      debugPrint("Platform Exception ===> $e");
+      rethrow;
+    } on Exception catch(error){
+      debugPrint("Exception ==> $error");
+      rethrow;
+    }
+  }
+
+  Future<bool?> webLoginDetailsCleared() async {
+    bool? response;
+    try {
+      response = await mirrorFlyMethodChannel.invokeMethod<bool>('webLoginDetailsCleared');
+      debugPrint("webLoginDetailsCleared Response ==> $response");
+      return response;
+    }on PlatformException catch (e){
+      debugPrint("Platform Exception ===> $e");
+      rethrow;
+    } on Exception catch(error){
+      debugPrint("Exception ==> $error");
+      rethrow;
+    }
+  }
+
+  Future<bool?> logoutWebUser(List<String> logins) async {
+    bool? response;
+    try {
+      response = await mirrorFlyMethodChannel.invokeMethod<bool>('logoutWebUser',{"listWebLogin"});
+      debugPrint("logoutWebUser Response ==> $response");
+      return response;
+    }on PlatformException catch (e){
+      debugPrint("Platform Exception ===> $e");
+      rethrow;
+    } on Exception catch(error){
+      debugPrint("Exception ==> $error");
+      rethrow;
+    }
+  }
+
+  Future<dynamic> getWebLoginDetails() async {
+    dynamic response;
+    try {
+      response = await mirrorFlyMethodChannel.invokeMethod('getWebLoginDetails');
+      debugPrint("getWebLoginDetails Response ==> $response");
+      return response;
+    }on PlatformException catch (e){
+      debugPrint("Platform Exception ===> $e");
+      rethrow;
+    } on Exception catch(error){
+      debugPrint("Exception ==> $error");
+      rethrow;
+    }
+  }
 
   Future<dynamic> favouriteMessage(String messageID, String chatUserJID, bool isFavourite) async {
     dynamic favResponse;
@@ -920,6 +1026,21 @@ class PlatformRepo {
     try {
       response = await mirrorFlyMethodChannel.invokeMethod('getGroupMembers', { "jid" : jid, "server": server,});
       debugPrint("getGroupMembers Response ==> $response");
+      return response;
+    }on PlatformException catch (e){
+      debugPrint("Platform Exception ===> $e");
+      rethrow;
+    } on Exception catch(error){
+      debugPrint("Exception ==> $error");
+      rethrow;
+    }
+  }
+
+  Future<dynamic> getUsersIBlocked( bool? server) async {
+    dynamic response;
+    try {
+      response = await mirrorFlyMethodChannel.invokeMethod('getUsersIBlocked', { "serverCall": server,});
+      debugPrint("getUsersIBlocked Response ==> $response");
       return response;
     }on PlatformException catch (e){
       debugPrint("Platform Exception ===> $e");
@@ -1107,6 +1228,21 @@ class PlatformRepo {
     try {
       response = await mirrorFlyMethodChannel.invokeMethod<bool>('isMemberOfGroup',{"jid" : jid,"userjid":userjid });
       debugPrint("isMemberOfGroup Result ==> $response");
+      return response;
+    }on PlatformException catch (e){
+      debugPrint("Platform Exception ===> $e");
+      return false;
+    } on Exception catch(error){
+      debugPrint("Exception ==> $error");
+      return false;
+    }
+  }
+
+  Future<bool?> sendContactUsInfo(String title,String description) async {
+    bool? response;
+    try {
+      response = await mirrorFlyMethodChannel.invokeMethod<bool>('sendContactUsInfo',{"title" : title,"description":description });
+      debugPrint("sendContactUsInfo Result ==> $response");
       return response;
     }on PlatformException catch (e){
       debugPrint("Platform Exception ===> $e");
