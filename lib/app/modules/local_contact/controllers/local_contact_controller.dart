@@ -33,8 +33,9 @@ class LocalContactController extends GetxController {
     }
 
     contactList.forEach((userDetail) {
-      if (userDetail.displayName!.contains(text))
+      if (name(userDetail).toString().toLowerCase().contains(text.toLowerCase())) {
         searchList.add(userDetail);
+      }
     });
 
   }
@@ -49,5 +50,9 @@ class LocalContactController extends GetxController {
 
     Get.toNamed(Routes.PREVIEW_CONTACT, arguments: {"contactList" : contactList, "contactName": contactName, "from": "contact_pick"});
 
+  }
+
+  name(Contact item) {
+    return item.displayName ?? item.givenName ?? item.middleName ?? item.androidAccountName ?? item.familyName ?? "";
   }
 }
