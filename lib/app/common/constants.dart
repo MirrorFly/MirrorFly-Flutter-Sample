@@ -104,8 +104,6 @@ const String Mcontacticon = 'assets/logos/contact_chat.svg';
 const String Mdocumenticon = 'assets/logos/document_chat.svg';
 const String zip_image = 'assets/logos/zip.svg';
 const String rar_image = 'assets/logos/rar.svg';
-const String Mcontacticon = 'assets/logos/Contact.svg';
-const String Mdocumenticon = 'assets/logos/Document.svg';
 const String Mimageicon = 'assets/logos/image.svg';
 const String Mlocationicon = 'assets/logos/location_chat.svg';
 const String Mvideoicon = 'assets/logos/Video.svg';
@@ -469,7 +467,7 @@ class Constants {
   static const String MAIL_SUBJECT = "Invite to Connect ContusFly";
   static const String YOU_ARE = "You are";
   static const String RESOURCE_NME = "Mobile";
-  static  const int CONTACT_REQ_CODE = 114;
+  static const int CONTACT_REQ_CODE = 114;
   static const String IS_FROM_NOTIFICATION = "is_from_notification";
   static const String UTF = "UTF-8";
   static const String NOTIFICATION_CHANNEL_ID = "com.contus.flycommons.notification";
@@ -494,6 +492,8 @@ class Constants {
   static const String STORAGE_FOLDER_NAME = "folder_name";
   static const String API_KEY = "com.contus.flycommons.api_key";
   static const String MIX = "@mix.";
+
+  static const String bulletPoint = "\u2022 ";
 
   static const String GROUP_EVENT = "group_events";
   static const String ARCHIVE_EVENT = "archive_events";
@@ -591,6 +591,12 @@ class Constants {
   static const String MLOCATION = "LOCATION";
   static const String MDOCUMENT = "DOCUMENT";
   static const String MNOTIFICATION = "NOTIFICATION";
+
+  //Audio Recording Types
+  static const String audioRecording = "AUDIO_RECORDING";
+  static const String audioRecordDone = "AUDIO_RECORDING_COMPLETED";
+  static const String audioRecordDelete = "AUDIO_RECORDING_DELETE";
+  static const String audioRecordInitial = "AUDIO_RECORDING_NOT_INITIALIZED";
 }
 
 Future<void> launchWeb(String url) async{

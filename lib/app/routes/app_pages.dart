@@ -29,12 +29,9 @@ import '../modules/delete_account/bindings/delete_account_binding.dart';
 import '../modules/delete_account/views/delete_account_view.dart';
 import '../modules/delete_account_reason/bindings/delete_account_reason_binding.dart';
 import '../modules/delete_account_reason/views/delete_account_reason_view.dart';
-import '../modules/group/bindings/groupcreation_binding.dart';
 import '../modules/group/bindings/groupinfo_binding.dart';
 import '../modules/group/views/groupcreation_view.dart';
 import '../modules/group/views/groupinfo_view.dart';
-import '../modules/home/bindings/home_binding.dart';
-import '../modules/home/views/home_view.dart';
 import '../modules/image_view/bindings/image_view_binding.dart';
 import '../modules/image_view/views/image_view_view.dart';
 import '../modules/local_contact/bindings/local_contact_binding.dart';
@@ -76,11 +73,7 @@ class AppPages {
   static const DASHBOARD = Routes.DASHBOARD;
 
   static final routes = [
-    GetPage(
-      name: _Paths.HOME,
-      page: () => const HomeView(),
-      binding: HomeBinding(),
-    ),
+
     GetPage(
         name: _Paths.OTP,
         page: () => OtpView(),

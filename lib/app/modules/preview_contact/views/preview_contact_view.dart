@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../common/constants.dart';
+import '../../../common/widgets.dart';
 import '../controllers/preview_contact_controller.dart';
 
 class PreviewContactView extends GetView<PreviewContactController> {
@@ -23,7 +24,7 @@ class PreviewContactView extends GetView<PreviewContactController> {
                       const EdgeInsets.only(left: 18.0, top: 18.0, bottom: 5),
                   child: Row(
                     children: [
-                      SizedBox(child: ProfileTextImage(text: controller.contactName,),width: 50,height: 50,),
+                      SizedBox(width: 50,height: 50,child: ProfileTextImage(text: controller.contactName,),),
                       /*Image.asset(
                         profile_img,
                         width: 50,
