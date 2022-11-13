@@ -1,4 +1,13 @@
 import 'package:get/get.dart';
+import 'package:mirror_fly_demo/app/modules/group/bindings/groupcreation_binding.dart';
+import 'package:mirror_fly_demo/app/modules/scanner/scanner_view.dart';
+import 'package:mirror_fly_demo/app/modules/scanner/webloginresult_view.dart';
+import 'package:mirror_fly_demo/app/modules/settings/views/applock/applocksettings_view.dart';
+import 'package:mirror_fly_demo/app/modules/settings/views/applock/pin_view.dart';
+import 'package:mirror_fly_demo/app/modules/settings/views/blocked/blockedlist_binding.dart';
+import 'package:mirror_fly_demo/app/modules/settings/views/blocked/blockedlist_view.dart';
+import 'package:mirror_fly_demo/app/modules/settings/views/notification/notificationsettings_view.dart';
+import 'package:mirror_fly_demo/app/modules/viewall_media/views/viewallmedia_view.dart';
 
 import '../model/userlistModel.dart';
 import '../modules/chat/bindings/chat_binding.dart';
@@ -24,6 +33,8 @@ import '../modules/group/bindings/groupcreation_binding.dart';
 import '../modules/group/bindings/groupinfo_binding.dart';
 import '../modules/group/views/groupcreation_view.dart';
 import '../modules/group/views/groupinfo_view.dart';
+import '../modules/home/bindings/home_binding.dart';
+import '../modules/home/views/home_view.dart';
 import '../modules/image_view/bindings/image_view_binding.dart';
 import '../modules/image_view/views/image_view_view.dart';
 import '../modules/local_contact/bindings/local_contact_binding.dart';
@@ -41,7 +52,11 @@ import '../modules/profile/bindings/profile_binding.dart';
 import '../modules/profile/bindings/statuslist_binding.dart';
 import '../modules/profile/views/profile_view.dart';
 import '../modules/profile/views/statuslist_view.dart';
+import '../modules/scanner/scanner_binding.dart';
 import '../modules/settings/bindings/settings_binding.dart';
+import '../modules/settings/views/applock/applock_binding.dart';
+import '../modules/settings/views/applock/setpin_view.dart';
+import '../modules/settings/views/notification/notification_binding.dart';
 import '../modules/settings/views/settings_view.dart';
 import '../modules/starred_messages/bindings/starred_messages_binding.dart';
 import '../modules/starred_messages/views/starred_messages_view.dart';
@@ -49,6 +64,7 @@ import '../modules/video_preview/bindings/VideoPlayBinding.dart';
 import '../modules/video_preview/bindings/video_preview_binding.dart';
 import '../modules/video_preview/views/video_player_view.dart';
 import '../modules/video_preview/views/video_preview_view.dart';
+import '../modules/viewall_media/bindings/viewallmedia_binding.dart';
 
 part 'app_routes.dart';
 
@@ -60,11 +76,30 @@ class AppPages {
   static const DASHBOARD = Routes.DASHBOARD;
 
   static final routes = [
-    GetPage(name: _Paths.OTP, page: () => OtpView(), binding: LoginBinding()),
+    GetPage(
+      name: _Paths.HOME,
+      page: () => const HomeView(),
+      binding: HomeBinding(),
+    ),
+    GetPage(
+        name: _Paths.OTP,
+        page: () => OtpView(),
+        binding: LoginBinding()
+    ),
     GetPage(
       name: _Paths.DASHBOARD,
       page: () => const DashboardView(),
       binding: DashboardBinding(),
+    ),
+    GetPage(
+      name: _Paths.SCANNER,
+      page: () => ScannerView(),
+      binding: ScannerBinding(),
+    ),
+    GetPage(
+      name: _Paths.WEBLOGINRESULT,
+      page: () => WebLoginResultView(),
+      binding: ScannerBinding(),
     ),
     GetPage(
       name: _Paths.CREATE_GROUP,
@@ -75,6 +110,11 @@ class AppPages {
       name: _Paths.GROUP_INFO,
       page: () => GroupInfoView(),
       binding: GroupInfoBinding(),
+    ),
+    GetPage(
+      name: _Paths.VIEW_MEDIA,
+      page: () => ViewAllMediaView(),
+      binding: ViewAllMediaBinding(),
     ),
     GetPage(
       name: _Paths.RECENTSEARCH,
@@ -130,6 +170,31 @@ class AppPages {
       name: _Paths.SETTINGS,
       page: () => SettingsView(),
       binding: SettingsBinding(),
+    ),
+    GetPage(
+      name: _Paths.BLOCKEDLIST,
+      page: () => BlockedListView(),
+      binding: BlockedListBinding(),
+    ),
+    GetPage(
+      name: _Paths.NOTIFICATION,
+      page: () => NotificationSettingsView(),
+      binding: NotificationBinding(),
+    ),
+    GetPage(
+      name: _Paths.APPLOCK,
+      page: () => AppLockSettingsView(),
+      binding: AppLockBinding(),
+    ),
+    GetPage(
+      name: _Paths.PIN,
+      page: () => PinView(),
+      binding: AppLockBinding(),
+    ),
+    GetPage(
+      name: _Paths.SET_PIN,
+      page: () => SetPinView(),
+      binding: AppLockBinding(),
     ),
     GetPage(
       name: _Paths.VIDEO_PREVIEW,

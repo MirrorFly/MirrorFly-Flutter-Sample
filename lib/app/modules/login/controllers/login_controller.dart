@@ -241,7 +241,7 @@ class LoginController extends GetxController {
     hideLoading();
     verify_visible(false);
     Log("showUserAccountDeviceStatus", "Already Login");
-    PlatformRepo().logout();
+    //PlatformRepo().logout();
     Helper.showAlert(message: "You have logged-in another device. Do you want to continue here?",actions: [
       TextButton(
           onPressed: () {

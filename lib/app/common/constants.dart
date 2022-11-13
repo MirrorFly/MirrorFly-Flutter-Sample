@@ -45,9 +45,12 @@ const String rightarrowicon = 'assets/logos/forward_arrow.svg';
 const String chaticon = 'assets/logos/chat.svg';
 const String staredmsgicon = 'assets/logos/stared message.svg';
 const String notificationicon = 'assets/logos/Notifications.svg';
+const String tick_round = 'assets/logos/tick_round.svg';
+const String tick_round_blue = 'assets/logos/tick_round_blue.svg';
 const String blockedicon = 'assets/logos/blocked_contacts.svg';
 const String archiveicon = 'assets/logos/Archive_ic_settings.svg';
 const String lockicon = 'assets/logos/lock.svg';
+const String delete = 'assets/logos/delete_black.svg';
 const String abouticon = 'assets/logos/About and Help.svg';
 const String connectionicon = 'assets/logos/antenna.svg';
 const String toggleofficon = 'assets/logos/toggle OFF.svg';
@@ -56,6 +59,19 @@ const String logouticon = 'assets/logos/logout.svg';
 const String pencilediticon = 'assets/logos/pencil.svg';
 const String tickicon = 'assets/logos/tick.svg';
 const String smileicon = 'assets/logos/smile.svg';
+const String ic_qr_scanner_web_login = 'assets/logos/ic_qr_scanner_web_login.png';
+
+const String ic_logo = 'assets/logos/ic_logo.png';
+const String ic_chrome = 'assets/logos/ic_chrome.png';
+const String ic_edge_browser = 'assets/logos/ic_edge_browser.png';
+const String ic_mozilla = 'assets/logos/ic_mozilla.png';
+const String ic_safari = 'assets/logos/ic_safari.png';
+const String ic_ie = 'assets/logos/ic_ie.png';
+const String ic_opera = 'assets/logos/ic_opera.png';
+const String ic_uc = 'assets/logos/ic_uc.png';
+const String ic_default_browser = 'assets/logos/ic_default_browser.png';
+const String eye_on = 'assets/logos/eye_on.png';
+const String eye_off = 'assets/logos/eye_off.png';
 
 const String audioImg = 'assets/logos/audio.svg';
 const String documentImg = 'assets/logos/document.svg';
@@ -73,18 +89,29 @@ const String audio_mic = 'assets/logos/mic.svg';
 const String audio_mic_1 = 'assets/logos/mic1.svg';
 const String profile_img = 'assets/logos/profile_img.png';
 
+const String link_image = 'assets/logos/link.svg';
+const String txt_image = 'assets/logos/txt.svg';
+const String csv_image = 'assets/logos/csv.svg';
 const String pdf_image = 'assets/logos/pdf.svg';
 const String ppt_image = 'assets/logos/ppt.svg';
+const String pptx_image = 'assets/logos/pptx.svg';
 const String xls_image = 'assets/logos/xls.svg';
 const String xlsx_image = 'assets/logos/xlsx.svg';
 const String doc_image = 'assets/logos/doc.svg';
+const String docx_image = 'assets/logos/docx.svg';
 const String apk_image = 'assets/logos/apk.svg';
 const String Mcontacticon = 'assets/logos/contact_chat.svg';
 const String Mdocumenticon = 'assets/logos/document_chat.svg';
+const String zip_image = 'assets/logos/zip.svg';
+const String rar_image = 'assets/logos/rar.svg';
+const String Mcontacticon = 'assets/logos/Contact.svg';
+const String Mdocumenticon = 'assets/logos/Document.svg';
 const String Mimageicon = 'assets/logos/image.svg';
 const String Mlocationicon = 'assets/logos/location_chat.svg';
 const String Mvideoicon = 'assets/logos/Video.svg';
 const String Maudioicon = 'assets/logos/noun_Audio_3408360.svg';
+const String audio_white = 'assets/logos/audio_white.svg';
+const String video_white = 'assets/logos/video_icon.svg';
 const String cornershadow = 'assets/logos/ic_baloon.png';
 const String disabledIcon = 'assets/logos/disabled.png';
 
@@ -118,6 +145,16 @@ const String deleteBin = 'assets/logos/delete_bin.svg';
 const String warningIcon = 'assets/logos/warning.svg';
 
 
+//About us
+const String title_contact_msg = "Mirror Fly is a ready-to-go messaging solution for building enterprise-grade real-time chat IM applications that meet various degrees of requirements like team discussion, data sharing, task delegation and information handling on the go.";
+const String title_contact_us = "Contact Us";
+const String title_contact_msg_time = "To have a detailed interaction with our experts";
+const String title_faq = "FAQ";
+const String title_faq_msg = "Kindly checkout FAQ section for doubts regarding Mirror fly. We might have already answered your question.";
+const String title_contus_fly ="Mirror Fly";
+const String website_mirrorfly ="https://www.mirrorfly.com/";
+const String notification_not_working_URL ="https://app.mirrorfly.com/notifications/";
+
 
 toToast(String text) {
   Fluttertoast.showToast(
@@ -133,7 +170,8 @@ Log(String tag,String msg){
   }
 }
 class Constants {
-
+  static const String PACKAGE = 'com.mirrorfly.uikit_flutter';
+  static const String WEB_CHAT_LOGIN = 'https://webchat-uikit-qa.contus.us/';
   static const String TAG = 'Contus Fly';
   static const String GOOGLE_MAP_KEY = "AIzaSyBaKkrQnLT4nacpKblIE5d4QK6GpaX5luQ";
   static const String GOOGLE_MAP_PACKAGE_NAME = "com.google.android.apps.maps";
@@ -431,7 +469,7 @@ class Constants {
   static const String MAIL_SUBJECT = "Invite to Connect ContusFly";
   static const String YOU_ARE = "You are";
   static const String RESOURCE_NME = "Mobile";
-  static const int CONTACT_REQ_CODE = 114;
+  static  const int CONTACT_REQ_CODE = 114;
   static const String IS_FROM_NOTIFICATION = "is_from_notification";
   static const String UTF = "UTF-8";
   static const String NOTIFICATION_CHANNEL_ID = "com.contus.flycommons.notification";
@@ -456,8 +494,6 @@ class Constants {
   static const String STORAGE_FOLDER_NAME = "folder_name";
   static const String API_KEY = "com.contus.flycommons.api_key";
   static const String MIX = "@mix.";
-
-  static const String bulletPoint = "\u2022 ";
 
   static const String GROUP_EVENT = "group_events";
   static const String ARCHIVE_EVENT = "archive_events";
@@ -555,12 +591,6 @@ class Constants {
   static const String MLOCATION = "LOCATION";
   static const String MDOCUMENT = "DOCUMENT";
   static const String MNOTIFICATION = "NOTIFICATION";
-
-  //Audio Recording Types
-  static const String audioRecording = "AUDIO_RECORDING";
-  static const String audioRecordDone = "AUDIO_RECORDING_COMPLETED";
-  static const String audioRecordDelete = "AUDIO_RECORDING_DELETE";
-  static const String audioRecordInitial = "AUDIO_RECORDING_NOT_INITIALIZED";
 }
 
 Future<void> launchWeb(String url) async{

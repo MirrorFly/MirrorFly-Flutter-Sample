@@ -14,6 +14,7 @@ import '../../../common/widgets.dart';
 import '../../../routes/app_pages.dart';
 import '../../../widgets/custom_action_bar_icons.dart';
 import '../../dashboard/controllers/dashboard_controller.dart';
+import '../../scanner/webloginresult_view.dart';
 
 class DashboardView extends GetView<DashboardController> {
   const DashboardView({Key? key}) : super(key: key);
@@ -89,10 +90,7 @@ class DashboardView extends GetView<DashboardController> {
                     overflowWidget: const Text("Web"),
                     showAsAction: ShowAsAction.NEVER,
                     keyValue: 'Web',
-                    onItemClick: () {
-                      Future.delayed(const Duration(milliseconds: 100),
-                              () => Get.toNamed(Routes.SETTINGS));
-                    },
+                    onItemClick: ()=>controller.webLogin(),
                   )
                 ],
               ),

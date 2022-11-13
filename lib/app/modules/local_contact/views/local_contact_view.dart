@@ -93,23 +93,20 @@ class LocalContactView extends GetView<LocalContactController> {
           // controller: controller.scrollController,
           itemBuilder: (context, index) {
             // int reversedIndex = chatList.length - 1 - index;
+            var item = controller.contactList.elementAt(index);
             return InkWell(
               onTap: (){
-                controller.shareContact(controller.contactList.elementAt(index).phones, controller.contactList.elementAt(index).displayName!);
+                controller.shareContact(controller.contactList.elementAt(index).phones, controller.name(controller.contactList.elementAt(index)));
               },
               child: Container(
                 padding: const EdgeInsets.all(20),
                 child: Row(
                   children: [
                     ProfileTextImage(
-                      text: controller.contactList
-                          .elementAt(index)
-                          .displayName!,
+                      text: controller.name(item),
                     ),
                     SizedBox(width: 10,),
-                    Text(controller.contactList
-                        .elementAt(index)
-                        .displayName!),
+                    Text(controller.name(item)),
                   ],
                 ),
               ),

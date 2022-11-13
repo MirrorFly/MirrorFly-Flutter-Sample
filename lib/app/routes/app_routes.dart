@@ -4,8 +4,11 @@ part of 'app_pages.dart';
 abstract class Routes {
   Routes._();
   static const DASHBOARD = _Paths.DASHBOARD;
+  static const SCANNER = _Paths.SCANNER;
+  static const WEBLOGINRESULT = _Paths.WEBLOGINRESULT;
   static const CREATE_GROUP = _Paths.CREATE_GROUP;
   static const GROUP_INFO = _Paths.GROUP_INFO;
+  static const VIEW_MEDIA = _Paths.VIEW_MEDIA;
   static const RECENTSEARCH = _Paths.RECENTSEARCH;
   static const LOGIN = _Paths.LOGIN;
   static const OTP = _Paths.OTP;
@@ -18,6 +21,11 @@ abstract class Routes {
   static const LOCATIONSENT = _Paths.LOCATIONSENT;
   static const IMAGEPREVIEW = _Paths.IMAGEPREVIEW;
   static const SETTINGS = _Paths.SETTINGS;
+  static const BLOCKEDLIST = _Paths.BLOCKEDLIST;
+  static const NOTIFICATION = _Paths.NOTIFICATION;
+  static const APPLOCK = _Paths.APPLOCK;
+  static const PIN = _Paths.PIN;
+  static const SET_PIN = _Paths.SET_PIN;
   static const VIDEO_PREVIEW = _Paths.VIDEO_PREVIEW;
   static const VIDEO_PLAY = _Paths.VIDEO_PLAY;
   static const IMAGE_VIEW = _Paths.IMAGE_VIEW;
@@ -33,8 +41,11 @@ abstract class Routes {
 abstract class _Paths {
   _Paths._();
   static const DASHBOARD = '/dashboard';
+  static const SCANNER = '/scanner';
+  static const WEBLOGINRESULT = '/web_logins';
   static const CREATE_GROUP = '/create_group';
   static const GROUP_INFO = '/group_info';
+  static const VIEW_MEDIA = '/view_all_media';
   static const RECENTSEARCH = '/recent_search';
   static const LOGIN = '/login';
   static const OTP = '/otp';
@@ -47,6 +58,11 @@ abstract class _Paths {
   static const CONTACTS = '/contacts';
   static const IMAGEPREVIEW = '/imagepreview';
   static const SETTINGS = '/settings';
+  static const BLOCKEDLIST = '/blocked_list';
+  static const NOTIFICATION = '/notification_setting';
+  static const APPLOCK = '/applock_settings';
+  static const PIN = '/pin';
+  static const SET_PIN = '/set_pin';
   static const VIDEO_PREVIEW = '/video-preview';
   static const VIDEO_PLAY = '/video-play';
   static const IMAGE_VIEW = '/image-view';

@@ -4,12 +4,18 @@ import 'package:mirror_fly_demo/app/data/helper.dart';
 import 'package:mirror_fly_demo/app/model/registerModel.dart' as register;
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../common/constants.dart';
 import '../model/profileupdate.dart';
 
 
 class SessionManagement {
   static late SharedPreferences _preferences;
 
+  setDefaultValues(){
+    if(_preferences.containsKey(Constants.PACKAGE+"notification_sound")){
+
+    }
+  }
   static Future onInit() async {
     _preferences = await SharedPreferences.getInstance();
   }
@@ -39,6 +45,45 @@ class SessionManagement {
   }
   static Future setUserImage(String image) async {
     await _preferences.setString("image", image);
+  }
+  static Future setPIN(String pin) async {
+    await _preferences.setString("pin", pin);
+  }
+  static Future setEnablePIN(bool pin) async {
+    await _preferences.setBool("enable_pin", pin);
+  }
+  static Future setEnableBio(bool bio) async {
+    await _preferences.setBool("enable_bio", bio);
+  }
+  static Future conv_sound(bool conv_sound) async {
+    await _preferences.setBool("conv_sound", conv_sound);
+  }
+  static Future vibration_type(String vibration_type) async {
+    await _preferences.setString("vibration_type", vibration_type);
+  }
+  static Future mute_all(bool mute_all) async {
+    await _preferences.setBool("mute_all", mute_all);
+  }
+  static Future setNotification_uri(String notification_uri) async {
+    await _preferences.setString("notification_uri", notification_uri);
+  }
+  static Future setNotificationSound(bool sound) async {
+    await _preferences.setBool(Constants.PACKAGE+"notification_sound", sound);
+  }
+  static Future setKeyChangeFlag(bool change) async {
+    await _preferences.setBool(Constants.PACKAGE+"change.flag", change);
+  }
+  static Future setNotificationPopup(bool popup) async {
+    await _preferences.setBool(Constants.PACKAGE+"notification_popup", popup);
+  }
+  static Future setNotificationVibration(bool vibration) async {
+    await _preferences.setBool(Constants.PACKAGE+"vibration", vibration);
+  }
+  static Future setMuteNotification(bool mute) async {
+    await _preferences.setBool("mute_notification", mute);
+  }
+  static Future setWebChatLogin(bool web_chat_login) async {
+    await _preferences.setBool("web_chat_login", web_chat_login);
   }
   static Future clear()async{
     await _preferences.clear();
@@ -74,5 +119,14 @@ class SessionManagement {
   String? getToken() => _preferences.getString("firebase_token");
   String? getauthToken() => _preferences.getString("token");
   String? getMediaEndPoint() => _preferences.getString("media_endpoint");
+  String? getNotification_uri() => _preferences.getString("notification_uri");
+  bool getWebLogin() => _preferences.getBool("web_chat_login") ?? false;
+  bool getNotificationSound() => _preferences.getBool(Constants.PACKAGE+"notification_sound") ?? true;
+  bool getNotificationPopup() => _preferences.getBool(Constants.PACKAGE+"notification_popup") ?? false;
+  bool getVibration() => _preferences.getBool(Constants.PACKAGE+"vibration") ?? false;
+  bool getMuteNotification() => _preferences.getBool("mute_notification") ?? false;
+  String getPin() => _preferences.getString("pin") ?? "";
+  bool getEnablePin() => _preferences.getBool("enable_pin") ?? false;
+  bool getEnableBio() => _preferences.getBool("enable_bio") ?? false;
   bool? synced() => _preferences.getBool("synced");
 }

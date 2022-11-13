@@ -5,6 +5,8 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
+import 'package:image_cropping/constant/strings.dart';
+import 'package:intl/intl.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
 import 'package:mirror_fly_demo/app/model/chatMessageModel.dart';
 import 'package:mirror_fly_demo/app/model/groupmembers_model.dart';
@@ -170,6 +172,43 @@ class Helper {
 
 }
 
+
+String getFileSizeText(String fileSizeInBytes) {
+  var fileSizeBuilder ="";
+  var fileSize = int.parse(fileSizeInBytes);
+  if (fileSize > 1073741824) {
+    fileSizeBuilder = (getRoundedFileSize(fileSize / 1073741824)).toString()+(" ")+("GB");
+  } else if (fileSize > 1048576) {
+    fileSizeBuilder = (getRoundedFileSize(fileSize / 1048576)).toString()+(" ")+("MB");
+  } else if (fileSize > 1024) {
+    fileSizeBuilder = (getRoundedFileSize(fileSize / 1024)).toString()+(" ")+("KB");
+  } else {
+    fileSizeBuilder = (fileSizeInBytes).toString()+(" ")+("bytes");
+  }
+  return fileSizeBuilder.toString();
+}
+double getRoundedFileSize(double unscaledValue) {
+  //return BigDecimal.valueOf(unscaledValue).setScale(2, RoundingMode.HALF_UP).toDouble()
+  return  unscaledValue.roundToDouble();
+}
+
+extension FileFormatter on num {
+  String readableFileSize({bool base1024 = true}) {
+    final base = base1024 ? 1024 : 1000;
+    if (this <= 0) return "0";
+    final units = ["bytes", "KB", "MB", "GB", "TB"];
+    int digitGroups = (log(this) / log(base)).round();
+    return NumberFormat("#,##0.#").format(this / pow(base, digitGroups)) +
+        " " +
+        units[digitGroups];
+  }
+}
+
+String getDateFromTimestamp(int convertedTime,String format){
+  var calendar = DateTime.fromMicrosecondsSinceEpoch(convertedTime);
+  return DateFormat(format).format(calendar);
+}
+
 extension StringParsing on String? {
   //check null
   String checkNull() {
@@ -191,10 +230,7 @@ extension StringParsing on String? {
     }
     return -1;
   }
-  /*this = "Gghu"
-searchedKey = "h"
-i = -1
-it = 2*/
+
 
   bool startsWithTextInWords(String text) {
     return this!.toLowerCase().indexOf(text.toLowerCase())<=-1 ? false : this!.toLowerCase().startsWith(text.toLowerCase());checkIndexes(text)>-1;

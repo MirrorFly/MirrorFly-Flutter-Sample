@@ -48,56 +48,53 @@ class GroupCreationView extends GetView<GroupCreationController> {
                 child: Stack(
                   children: [
                     Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 18.0,horizontal: 18.0,),
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(8.0),
-                        child: Obx(
-                              () => InkWell(
-                            child: controller.imagepath.value.isNotEmpty
-                                ? SizedBox(
-                                width: 150,
-                                height: 150,
-                                child: ClipOval(
-                                  child: Image.file(
-                                    File(controller.imagepath.value),
-                                    fit: BoxFit.fill,
-                                  ),
-                                ))
-                                : ImageNetwork(
-                              url: controller.userImgUrl.value
-                                  .checkNull(),
-                              width: 150,
-                              height: 150,
-                              clipoval: true,
-                              errorWidget: ClipOval(
-                                child: Image.asset(
-                                  groupImg,
-                                  height: 150,
+                      padding: const EdgeInsets.symmetric(
+                        vertical: 18.0,
+                        horizontal: 18.0,
+                      ),
+                      child: Obx(
+                        () => InkWell(
+                          child: controller.imagepath.value.isNotEmpty
+                              ? SizedBox(
                                   width: 150,
-                                  fit: BoxFit.cover,
+                                  height: 150,
+                                  child: ClipOval(
+                                    child: Image.file(
+                                      File(controller.imagepath.value),
+                                      fit: BoxFit.fill,
+                                    ),
+                                  ))
+                              : ImageNetwork(
+                                  url: controller.userImgUrl.value.checkNull(),
+                                  width: 150,
+                                  height: 150,
+                                  clipoval: true,
+                                  errorWidget: ClipOval(
+                                    child: Image.asset(groupImg,
+                                        width: 150,
+                                        height: 150,
+                                        fit: BoxFit.cover),
+                                  ),
                                 ),
-                              ),
-                            ),
-                            onTap: () {
-                              if (controller.imagepath.value
-                                  .checkNull()
-                                  .isNotEmpty) {
-                                Get.toNamed(Routes.IMAGE_VIEW, arguments: {
-                                  'imageName': controller.groupName.text,
-                                  'imagePath':
-                                  controller.imagepath.value.checkNull()
-                                });
-                              } else if (controller.userImgUrl.value
-                                  .checkNull()
-                                  .isNotEmpty) {
-                                Get.toNamed(Routes.IMAGE_VIEW, arguments: {
-                                  'imageName': controller.groupName.text,
-                                  'imageurl': controller.userImgUrl.value
-                                          .checkNull()
-                                });
-                              }
-                            },
-                          ),
+                          onTap: () {
+                            if (controller.imagepath.value
+                                .checkNull()
+                                .isNotEmpty) {
+                              Get.toNamed(Routes.IMAGE_VIEW, arguments: {
+                                'imageName': controller.groupName.text,
+                                'imagePath':
+                                    controller.imagepath.value.checkNull()
+                              });
+                            } else if (controller.userImgUrl.value
+                                .checkNull()
+                                .isNotEmpty) {
+                              Get.toNamed(Routes.IMAGE_VIEW, arguments: {
+                                'imageName': controller.groupName.text,
+                                'imageurl':
+                                    controller.userImgUrl.value.checkNull()
+                              });
+                            }
+                          },
                         ),
                       ),
                     ),
