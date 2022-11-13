@@ -1,6 +1,7 @@
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/modules/group/bindings/groupcreation_binding.dart';
 import 'package:mirror_fly_demo/app/modules/scanner/scanner_view.dart';
+import 'package:mirror_fly_demo/app/modules/scanner/webloginresult_view.dart';
 import 'package:mirror_fly_demo/app/modules/settings/views/blocked/blockedlist_binding.dart';
 import 'package:mirror_fly_demo/app/modules/settings/views/blocked/blockedlist_view.dart';
 import 'package:mirror_fly_demo/app/modules/settings/views/notification/notificationsettings_view.dart';
@@ -82,6 +83,16 @@ class AppPages {
       name: _Paths.DASHBOARD,
       page: () => DashboardView(),
       binding: DashboardBinding(),
+    ),
+    GetPage(
+      name: _Paths.SCANNER,
+      page: () => ScannerView(),
+      binding: ScannerBinding(),
+    ),
+    GetPage(
+      name: _Paths.WEBLOGINRESULT,
+      page: () => WebLoginResultView(),
+      binding: ScannerBinding(),
     ),
     GetPage(
       name: _Paths.CREATE_GROUP,

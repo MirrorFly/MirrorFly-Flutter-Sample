@@ -111,6 +111,7 @@ class SessionManagement {
   String? getauthToken() => _preferences.getString("token");
   String? getMediaEndPoint() => _preferences.getString("media_endpoint");
   String? getNotification_uri() => _preferences.getString("notification_uri");
+  bool getWebLogin() => _preferences.getBool("web_chat_login") ?? false;
   bool getNotificationSound() => _preferences.getBool(Constants.PACKAGE+"notification_sound") ?? true;
   bool getNotificationPopup() => _preferences.getBool(Constants.PACKAGE+"notification_popup") ?? false;
   bool getVibration() => _preferences.getBool(Constants.PACKAGE+"vibration") ?? false;

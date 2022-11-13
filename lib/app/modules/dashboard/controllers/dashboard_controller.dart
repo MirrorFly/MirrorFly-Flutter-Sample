@@ -219,6 +219,16 @@ class DashboardController extends BaseController {
 
   }
 
+  webLogin(){
+    if(SessionManagement().getWebLogin()){
+      Future.delayed(const Duration(milliseconds: 100),
+              () => Get.toNamed(Routes.WEBLOGINRESULT));
+    }else{
+      Future.delayed(const Duration(milliseconds: 100),
+              () => Get.toNamed(Routes.SCANNER));
+    }
+  }
+
   @override
   void onMessageReceived(event){
     super.onMessageReceived(event);

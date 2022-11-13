@@ -1824,14 +1824,18 @@ class MainActivity : FlutterActivity(), MethodChannel.MethodCallHandler,
 
     fun loginWebChatViaQRCode(call: MethodCall, result: MethodChannel.Result) {
         val barcode = call.argument<String>("barcode") ?: ""
-        FlyCore.loginWebChatViaQRCode(barcode) { isSuccess, _, data ->
-            result.success(isSuccess);
-            if (isSuccess) {
-                val vibrator = getSystemService(VIBRATOR_SERVICE) as Vibrator
-                if (vibrator.hasVibrator()) {
-                    vibrator.vibrate(50)
+        try {
+            FlyCore.loginWebChatViaQRCode(barcode) { isSuccess, _, data ->
+                result.success(isSuccess);
+                if (isSuccess) {
+                    val vibrator = getSystemService(VIBRATOR_SERVICE) as Vibrator
+                    if (vibrator.hasVibrator()) {
+                        vibrator.vibrate(50)
+                    }
                 }
             }
+        }catch (e:java.lang.Exception){
+            android.util.Log.e("qr",e.toString())
         }
     }
 

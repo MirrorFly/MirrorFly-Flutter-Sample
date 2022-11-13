@@ -59,6 +59,16 @@ const String logouticon = 'assets/logos/logout.svg';
 const String pencilediticon = 'assets/logos/pencil.svg';
 const String tickicon = 'assets/logos/tick.svg';
 const String smileicon = 'assets/logos/smile.svg';
+const String ic_qr_scanner_web_login = 'assets/logos/ic_qr_scanner_web_login.png';
+
+const String ic_chrome = 'assets/logos/ic_chrome.png';
+const String ic_edge_browser = 'assets/logos/ic_edge_browser.png';
+const String ic_mozilla = 'assets/logos/ic_mozilla.png';
+const String ic_safari = 'assets/logos/ic_safari.png';
+const String ic_ie = 'assets/logos/ic_ie.png';
+const String ic_opera = 'assets/logos/ic_opera.png';
+const String ic_uc = 'assets/logos/ic_uc.png';
+const String ic_default_browser = 'assets/logos/ic_default_browser.png';
 
 const String audioImg = 'assets/logos/audio.svg';
 const String documentImg = 'assets/logos/document.svg';
