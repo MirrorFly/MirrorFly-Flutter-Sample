@@ -37,25 +37,36 @@ class ProfileTextImage extends StatelessWidget {
   final double radius;
   final Color fontcolor;
 
-  ProfileTextImage({Key? key,
-    required this.text,
-    this.fontsize = 15,
-    this.bgcolor = buttonbgcolor,
-    this.radius = 25,
-    this.fontcolor = Colors.white})
+  ProfileTextImage(
+      {Key? key,
+      required this.text,
+      this.fontsize = 15,
+      this.bgcolor = buttonbgcolor,
+      this.radius = 25,
+      this.fontcolor = Colors.white})
       : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return CircleAvatar(
-      radius: radius,
-      backgroundColor: Color(Helper.getColourCode(text)), //bgcolor,
-      child: Center(
-          child: Text(
+    return radius == 0
+        ? Container(
+        decoration: BoxDecoration(color: Color(Helper.getColourCode(text))),
+          child: Center(
+            child: Text(
             getString(text),
-            style: TextStyle(fontSize: fontsize, color: fontcolor),
-          )),
-    );
+            style: TextStyle(fontSize: fontsize, color: fontcolor, fontWeight: FontWeight.w800),
+              ),
+          ),
+        )
+        : CircleAvatar(
+            radius: radius,
+            backgroundColor: Color(Helper.getColourCode(text)), //bgcolor,
+            child: Center(
+                child: Text(
+              getString(text),
+              style: TextStyle(fontSize: fontsize, color: fontcolor),
+            )),
+          );
   }
 
   String getString(String str) {
@@ -82,12 +93,13 @@ class ImageNetwork extends GetView<MainController> {
   final Widget? errorWidget;
   final bool clipoval;
 
-  const ImageNetwork({Key? key,
-    required this.url,
-    required this.width,
-    required this.height,
-    this.errorWidget,
-    required this.clipoval})
+  const ImageNetwork(
+      {Key? key,
+      required this.url,
+      required this.width,
+      required this.height,
+      this.errorWidget,
+      required this.clipoval})
       : super(key: key);
 
   @override
@@ -96,27 +108,30 @@ class ImageNetwork extends GetView<MainController> {
     Log("Mirrorfly Auth", AUTHTOKEN.value);
     Log("Image URL", url);
     if (url.isEmpty) {
-      return errorWidget!=null ? errorWidget! : clipoval ? ClipOval(
-        child: Image.asset(
-          profileImg,
-          height: height,
-          width: width,
-        ),
-      ) : Image.asset(
-        profileImg,
-        height: height,
-        width: width,
-      );
-    }else {
+      return errorWidget != null
+          ? errorWidget!
+          : clipoval
+              ? ClipOval(
+                  child: Image.asset(
+                    profileImg,
+                    height: height,
+                    width: width,
+                  ),
+                )
+              : Image.asset(
+                  profileImg,
+                  height: height,
+                  width: width,
+                );
+    } else {
       return Obx(
-            () =>
-            CachedNetworkImage(
-              imageUrl: controller.UPLOAD_ENDPOINT + url,
-              fit: BoxFit.fill,
-              width: width,
-              height: height,
-              httpHeaders: {"Authorization": controller.AUTHTOKEN.value},
-              /*placeholder: (context, url) {
+        () => CachedNetworkImage(
+          imageUrl: controller.UPLOAD_ENDPOINT + url,
+          fit: BoxFit.fill,
+          width: width,
+          height: height,
+          httpHeaders: {"Authorization": controller.AUTHTOKEN.value},
+          /*placeholder: (context, url) {
           //Log("placeholder", url);
           return errorWidget ??
               Image.asset(
@@ -126,32 +141,39 @@ class ImageNetwork extends GetView<MainController> {
               );
         },*/
 
-              progressIndicatorBuilder: (context, link, progress) {
-                return SizedBox(
+          progressIndicatorBuilder: (context, link, progress) {
+            return SizedBox(
+              height: height,
+              width: width,
+              child: const Center(child: CircularProgressIndicator()),
+            );
+          },
+          errorWidget: (context, link, error) {
+            Log("imageerror", error.toString());
+            if (error.toString().contains("401") && url.isNotEmpty) {
+              // controller.getAuthToken();
+              _deleteImageFromCache(url);
+            }
+            return errorWidget ??
+                Image.asset(
+                  profileImg,
                   height: height,
                   width: width,
-                  child: const Center(child: CircularProgressIndicator()),
                 );
-              },
-              errorWidget: (context, link, error) {
-                Log("imageerror", error.toString());
-                if (error.toString().contains("401") && url.isNotEmpty) {
-                  // controller.getAuthToken();
-                  _deleteImageFromCache(url);
-                }
-                return errorWidget ??
-                    Image.asset(
-                      profileImg,
-                      height: height,
-                      width: width,
-                    );
-              },
-              imageBuilder: (context, provider) {
-                return clipoval ? ClipOval(
-                    child: Image(image: provider, fit: BoxFit.fill,)) : Image(
-                  image: provider, fit: BoxFit.fill,);
-              },
-            ),
+          },
+          imageBuilder: (context, provider) {
+            return clipoval
+                ? ClipOval(
+                    child: Image(
+                    image: provider,
+                    fit: BoxFit.fill,
+                  ))
+                : Image(
+                    image: provider,
+                    fit: BoxFit.fill,
+                  );
+          },
+        ),
         /*Image.network(
         imagedomin + url,
         fit: BoxFit.fill,
@@ -234,4 +256,5 @@ class EmojiLayout extends StatelessWidget {
       ),
     );
   }
+
 }

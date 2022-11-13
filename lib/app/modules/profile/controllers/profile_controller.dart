@@ -83,14 +83,14 @@ class ProfileController extends GetxController {
               toToast(data.message.toString());
               if (data.status!) {
                 changed(false);
-                var datas = Data(
+                var userProfileData = Data(
                     email: profileEmail.text.toString(),
                     image: userImgUrl.value,
                     mobileNumber: profileMobile.text,
                     nickName: profileName.text,
                     name: profileName.text,
                     status: profileStatus.value);
-                SessionManagement.setCurrentUser(datas);
+                SessionManagement.setCurrentUser(userProfileData);
                 if (from.value == Routes.LOGIN) {
                   Get.offNamed(Routes.DASHBOARD);
                 }

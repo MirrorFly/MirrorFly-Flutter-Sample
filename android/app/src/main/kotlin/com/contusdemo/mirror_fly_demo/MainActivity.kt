@@ -688,8 +688,34 @@ class MainActivity : FlutterActivity(), MethodChannel.MethodCallHandler,
             call.method.equals("getUserLastSeenTime") -> {
                 getUserLastSeenTime(call, result)
             }
+            call.method.equals("delete_account") -> {
+                deleteAccount(call, result)
+            }
+            call.method.equals("get_favourite_messages") -> {
+                getFavouriteMessages(result)
+            }
             else -> {
                 result.notImplemented()
+            }
+
+        }
+    }
+
+    private fun getFavouriteMessages(result: MethodChannel.Result) {
+        val favouriteMessages : List<ChatMessage> =   FlyMessenger.getFavouriteMessages();
+        DebugUtilis.v("Favourite Messages", favouriteMessages.tojsonString())
+        result.success(favouriteMessages.tojsonString());
+    }
+
+
+    private fun deleteAccount(call: MethodCall, result: MethodChannel.Result) {
+        val deleteReason = call.argument("delete_reason") ?: ""
+        val deleteFeedback = call.argument("delete_feedback") ?: ""
+        FlyCore.deleteAccount(deleteReason, deleteFeedback) { isSuccess, throwable, data ->
+            if (isSuccess) {
+                result.success(data.tojsonString())
+            } else {
+                result.error("500", "Unable to Delete the Account", throwable)
             }
 
         }

@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
@@ -35,8 +36,6 @@ class ChatView extends GetView<ChatController> {
 
   @override
   Widget build(BuildContext context) {
-    screenHeight = MediaQuery.of(context).size.height;
-    screenWidth = MediaQuery.of(context).size.width;
     screenHeight = MediaQuery.of(context).size.height;
     screenWidth = MediaQuery.of(context).size.width;
     return KeyboardDismisser(
@@ -76,7 +75,7 @@ class ChatView extends GetView<ChatController> {
                         return Container(
                           color: Colors.white,
                           child: controller.isBlocked.value
-                              ? userblocked()
+                              ? userBlocked()
                               : !controller.isMemberOfGroup
                                   ? userNoLonger()
                                   : Column(
@@ -202,6 +201,13 @@ class ChatView extends GetView<ChatController> {
                                                                     Dismissible(
                                                                   key:
                                                                       UniqueKey(),
+                                                                      dismissThresholds: const {
+                                                                        DismissDirection.endToStart: 0.1,
+                                                                      },
+                                                                  // movementDuration: const Duration(milliseconds: 150),
+                                                    // dragStartBehavior: DragStartBehavior.down,
+                                                    // crossAxisEndOffset: 0.5,
+                                                    //                   behavior: HitTestBehavior.,
                                                                   confirmDismiss:
                                                                       (DismissDirection
                                                                           direction) async {
@@ -218,7 +224,10 @@ class ChatView extends GetView<ChatController> {
                                                                       DismissDirection
                                                                           .endToStart,
                                                                       child: const Padding(padding: EdgeInsets.only(right: 15.0),
-                                                                      child: Text('< Slide to Cancel', textAlign: TextAlign.end),
+                                                                      child: SizedBox(
+                                                                        height: 50,
+                                                                          child: Align(alignment: Alignment.centerRight,
+                                                                              child: Text('< Slide to Cancel', textAlign: TextAlign.end))),
                                                                   ),
                                                                 ),
                                                               )
@@ -414,7 +423,7 @@ class ChatView extends GetView<ChatController> {
     );
   }
 
-  Widget userblocked() {
+  Widget userBlocked() {
     return Column(
       children: [
         const Divider(
@@ -1167,13 +1176,13 @@ class ChatView extends GetView<ChatController> {
                             ),
                             child: Slider(
                               value: double.parse(
-                                  controller.currentpos.value.toString()),
+                                  controller.currentPos.value.toString()),
                               min: 0,
                               activeColor: audiocolordark,
                               inactiveColor: audiocolor,
                               max: double.parse(
-                                  controller.maxduration.value.toString()),
-                              divisions: controller.maxduration.value,
+                                  controller.maxDuration.value.toString()),
+                              divisions: controller.maxDuration.value,
                               // label: controller.currentpostlabel,
                               onChanged: (double value) async {
                                 // int seekval = value.round();
@@ -1349,7 +1358,6 @@ class ChatView extends GetView<ChatController> {
                   ),
                   iconCreation(cameraImg, "Camera", () async {
                     Get.back();
-
                     final XFile? photo =
                         await _picker.pickImage(source: ImageSource.camera);
                     Get.toNamed(Routes.IMAGEPREVIEW, arguments: {
@@ -1629,7 +1637,7 @@ class ChatView extends GetView<ChatController> {
                       Constants.MEDIA_UPLOADED ||
                   chatList.isMessageSentByMe)) {
             // debugPrint("audio click1");
-            chatList.mediaChatMessage!.isPlaying = controller.isplaying.value;
+            chatList.mediaChatMessage!.isPlaying = controller.isPlaying.value;
             // controller.playAudio(chatList.mediaChatMessage!);
             playAudio(chatList.mediaChatMessage!.mediaLocalStoragePath,
                 chatList.mediaChatMessage!.mediaFileName);
@@ -1733,7 +1741,7 @@ class ChatView extends GetView<ChatController> {
                       fit: BoxFit.contain,
                     ),
                     Obx(() {
-                      return controller.isplaying.value
+                      return controller.isPlaying.value
                           ? const Icon(Icons.pause)
                           : const Icon(Icons.play_arrow);
                     }),
@@ -1766,14 +1774,14 @@ class ChatView extends GetView<ChatController> {
                         child: Obx(() {
                           return Slider(
                             value:
-                                double.parse(controller.currentpos.toString()),
+                                double.parse(controller.currentPos.toString()),
                             min: 0,
                             activeColor: audiocolordark,
                             inactiveColor: audiocolor,
                             max: double.parse(
-                                controller.maxduration.value.toString()),
-                            divisions: controller.maxduration.value,
-                            label: controller.currentpostlabel,
+                                controller.maxDuration.value.toString()),
+                            divisions: controller.maxDuration.value,
+                            label: controller.currentPostLabel,
                             onChanged: (double value) async {
                               // int seekval = value.round();
                               // int result = await player.seek(Duration(milliseconds: seekval));
@@ -2257,16 +2265,16 @@ class ChatView extends GetView<ChatController> {
                         ? !controller.profile.isGroupProfile!
                             ? Text(
                                 controller.subtitle,
-                                style: TextStyle(fontSize: 12),
+                                style: const TextStyle(fontSize: 12),
                                 overflow: TextOverflow.fade,
                               )
                             : SizedBox(
                                 width: (screenWidth) / 1.9,
                                 height: 15,
                                 child: Marquee(
-                                    text: controller.subtitle + ",",
-                                    style: TextStyle(fontSize: 12)))
-                        : SizedBox()
+                                    text: "${controller.subtitle},",
+                                    style: const TextStyle(fontSize: 12)))
+                        : const SizedBox()
                   ],
                 ),
                 onTap: () {

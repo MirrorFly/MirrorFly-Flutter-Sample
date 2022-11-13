@@ -2,12 +2,9 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
-import 'dart:typed_data';
-import 'dart:io' as Io;
 
 import 'package:audioplayers/audioplayers.dart';
 import 'package:file_picker/file_picker.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
@@ -16,7 +13,6 @@ import 'package:intl/intl.dart';
 import 'package:mirror_fly_demo/app/basecontroller.dart';
 import 'package:mirror_fly_demo/app/data/SessionManagement.dart';
 import 'package:mirror_fly_demo/app/model/chatMessageModel.dart';
-import 'package:mirror_fly_demo/app/model/chatmessage_model.dart';
 import 'package:mirror_fly_demo/app/model/groupmembers_model.dart';
 import 'package:mirror_fly_demo/app/nativecall/platformRepo.dart';
 import 'package:path_provider/path_provider.dart';
@@ -28,7 +24,7 @@ import 'package:url_launcher/url_launcher.dart';
 import '../../../common/constants.dart';
 import '../../../data/contact_utils.dart';
 import '../../../data/helper.dart';
-import '../../../model/checkModel.dart' as checkModel;
+import '../../../model/checkModel.dart' as check_model;
 import '../../../model/userlistModel.dart';
 import '../../../routes/app_pages.dart';
 
@@ -38,18 +34,18 @@ class ChatController extends BaseController
   late AnimationController controller;
   ScrollController scrollController = ScrollController();
 
-  ItemScrollController searchscrollController = ItemScrollController();
+  ItemScrollController searchScrollController = ItemScrollController();
 
   late ChatMessageModel replyChatMessage;
 
   var isReplying = false.obs;
 
-  String currentpostlabel = "00:00";
+  String currentPostLabel = "00:00";
 
-  var maxduration = 100.obs;
-  var currentpos = 0.obs;
-  var isplaying = false.obs;
-  var audioplayed = false.obs;
+  var maxDuration = 100.obs;
+  var currentPos = 0.obs;
+  var isPlaying = false.obs;
+  var audioPlayed = false.obs;
 
   var isUserTyping = false.obs;
   var isAudioRecording = Constants.audioRecordInitial.obs;
@@ -57,7 +53,6 @@ class ChatController extends BaseController
   var timerInit = "00.00".obs;
   DateTime? startTime;
 
-  // late Uint8List audiobytes;
 
   AudioPlayer player = AudioPlayer();
 
@@ -70,7 +65,7 @@ class ChatController extends BaseController
   FocusNode focusNode = FocusNode();
 
   var calendar = DateTime.now();
-  var profile_ = Profile().obs; // = Get.arguments as Profile;
+  var profile_ = Profile().obs;
   Profile get profile => profile_.value;
   var base64img = ''.obs;
   var imagePath = ''.obs;
@@ -98,9 +93,6 @@ class ChatController extends BaseController
   @override
   void onInit() {
     super.onInit();
-    /*WidgetsBinding.instance.addPostFrameCallback((_){
-      Log("scroll", scrollController.hasClients.toString());
-    });*/
     profile_.value = Get.arguments as Profile;
     debugPrint("isBlocked===> ${profile.isBlocked}");
     debugPrint("profile detail===> ${profile.toJson().toString()}");
@@ -110,9 +102,9 @@ class ChatController extends BaseController
       duration: const Duration(milliseconds: 600),
     );
     Member(jid: profile.jid.checkNull()).getProfileDetails().then((value) => profileDetail=value);
-    MemberOfGroup();
+    memberOfGroup();
     setChatStatus();
-    askStoragePermission();
+    // askStoragePermission();
     isLive = true;
     focusNode.addListener(() {
       if (focusNode.hasFocus) {
@@ -136,18 +128,18 @@ class ChatController extends BaseController
 
     player.onDurationChanged.listen((Duration d) {
       //get the duration of audio
-      maxduration(d.inMilliseconds);
+      maxDuration(d.inMilliseconds);
     });
 
     player.onPlayerCompletion.listen((event) {
-      isplaying(false);
-      audioplayed(false);
+      isPlaying(false);
+      audioPlayed(false);
     });
 
     player.onAudioPositionChanged.listen((Duration p) {
-      currentpos(p.inMilliseconds); //get the current position of playing audio
+      currentPos(p.inMilliseconds); //get the current position of playing audio
 
-      int milliseconds = currentpos.value;
+      int milliseconds = currentPos.value;
       //generating the duration label
       int shours = Duration(milliseconds: milliseconds).inHours;
       int sminutes = Duration(milliseconds: milliseconds).inMinutes;
@@ -157,7 +149,7 @@ class ChatController extends BaseController
       int rminutes = sminutes - (shours * 60);
       int rseconds = sseconds - (sminutes * 60 + shours * 60 * 60);
 
-      currentpostlabel = "$rhours:$rminutes:$rseconds";
+      currentPostLabel = "$rhours:$rminutes:$rseconds";
     });
 
     setAudioPath();
@@ -165,7 +157,7 @@ class ChatController extends BaseController
     filteredPosition.bindStream(filteredPosition.stream);
     ever(filteredPosition, (callback) {
       Log("fillterdPosition", callback.reversed.toString());
-      lastposition(callback.length);
+      lastPosition(callback.length);
       chatList.refresh();
     });
 
@@ -180,13 +172,6 @@ class ChatController extends BaseController
         }
       });
     });
-  }
-
-  _scrollController() {
-    double offset = 0.9 * scrollController.position.maxScrollExtent;
-    if (scrollController.position.pixels > offset) {
-      debugPrint('scrollController offset > load more');
-    }
   }
 
   @override
@@ -288,15 +273,10 @@ class ChatController extends BaseController
   String getChatTime(BuildContext context, int? epochTime) {
     if (epochTime == null) return "";
     if (epochTime == 0) return "";
-    var convertedTime = epochTime; // / 1000;
-    //messageDate.time = convertedTime
+    var convertedTime = epochTime;
     var hourTime = manipulateMessageTime(
         context, DateTime.fromMicrosecondsSinceEpoch(convertedTime));
-    var currentYear = DateTime.now().year;
     calendar = DateTime.fromMicrosecondsSinceEpoch(convertedTime);
-    var time = (currentYear == calendar.year)
-        ? DateFormat("dd-MMM").format(calendar)
-        : DateFormat("yyyy/MM/dd").format(calendar);
     return hourTime;
   }
 
@@ -335,12 +315,9 @@ class ChatController extends BaseController
 
   getMedia(String mid) {
     return PlatformRepo().getMedia(mid).then((value) {
-      // debugPrint("Media==> $value");
-      checkModel.CheckModel chatMessageModel =
-          checkModel.checkModelFromJson(value);
+      check_model.CheckModel chatMessageModel = check_model.checkModelFromJson(value);
       String thumbImage = chatMessageModel.mediaChatMessage.mediaThumbImage;
       thumbImage = thumbImage.replaceAll("\n", "");
-      // debugPrint("Thumbnail ==> $thumbImage");
       return thumbImage;
     });
 
@@ -459,23 +436,23 @@ class ChatController extends BaseController
   }
 
   playAudio(String filePath) async {
-    if (!isplaying.value && !audioplayed.value) {
+    if (!isPlaying.value && !audioPlayed.value) {
       int result = await player.play(filePath, isLocal: true);
       if (result == 1) {
         //play success
 
-        isplaying(true);
-        audioplayed(true);
+        isPlaying(true);
+        audioPlayed(true);
       } else {
         Log("","Error while playing audio.");
       }
-    } else if (audioplayed.value && !isplaying.value) {
+    } else if (audioPlayed.value && !isPlaying.value) {
       int result = await player.resume();
       if (result == 1) {
         //resume success
 
-        isplaying(true);
-        audioplayed(true);
+        isPlaying(true);
+        audioPlayed(true);
       } else {
         Log("","Error on resume audio.");
       }
@@ -484,7 +461,7 @@ class ChatController extends BaseController
       if (result == 1) {
         //pause success
 
-        isplaying(false);
+        isPlaying(false);
       } else {
         Log("","Error on pause audio.");
       }
@@ -880,25 +857,19 @@ class ChatController extends BaseController
             ? 'Unfavoriting Message'
             : 'Favoriting Message');
 
-    // for(var chatList in selectedChatList){
     PlatformRepo()
         .favouriteMessage(selectedChatList[0].messageId, profile.jid!,
             !selectedChatList[0].isMessageStarred)
         .then((value) {
-      final chatIndex = chatList.indexWhere(
-          (message) => message.messageId == selectedChatList[0].messageId);
-      // chatList[chatIndex].isMessageStarred = !chatList[chatIndex].isMessageStarred;
       clearChatSelection(selectedChatList[0]);
       Helper.hideLoading();
     });
-    // }
   }
 
   Widget getLocationImage(
       LocationChatMessage? locationChatMessage, double width, double height) {
     return InkWell(
         onTap: () async {
-          //Redirect to Google maps App
           String googleUrl =
               'https://www.google.com/maps/search/?api=1&query=${locationChatMessage.latitude}, ${locationChatMessage.longitude}';
           if (await canLaunchUrl(Uri.parse(googleUrl))) {
@@ -1000,29 +971,29 @@ class ChatController extends BaseController
   setSearch(String text) {
     filteredPosition.clear();
     if (searchedText.text.isNotEmpty) {
-      for (var i = 0; i < chatList.value.length; i++) {
-        if (chatList.value[i].messageType == Constants.MTEXT &&
-            chatList.value[i].messageTextContent
+      for (var i = 0; i < chatList.length; i++) {
+        if (chatList[i].messageType == Constants.MTEXT &&
+            chatList[i].messageTextContent
                 .startsWithTextInWords(searchedText.text)) {
           filteredPosition.add(i);
-        } else if (chatList.value[i].messageType == Constants.MIMAGE &&
-            chatList.value[i].mediaChatMessage!.mediaCaptionText.isNotEmpty &&
-            chatList.value[i].mediaChatMessage!.mediaCaptionText
+        } else if (chatList[i].messageType == Constants.MIMAGE &&
+            chatList[i].mediaChatMessage!.mediaCaptionText.isNotEmpty &&
+            chatList[i].mediaChatMessage!.mediaCaptionText
                 .startsWithTextInWords(searchedText.text)) {
           filteredPosition.add(i);
-        } else if (chatList.value[i].messageType == Constants.MVIDEO &&
-            chatList.value[i].mediaChatMessage!.mediaCaptionText.isNotEmpty &&
-            chatList.value[i].mediaChatMessage!.mediaCaptionText
+        } else if (chatList[i].messageType == Constants.MVIDEO &&
+            chatList[i].mediaChatMessage!.mediaCaptionText.isNotEmpty &&
+            chatList[i].mediaChatMessage!.mediaCaptionText
                 .startsWithTextInWords(searchedText.text)) {
           filteredPosition.add(i);
-        } else if (chatList.value[i].messageType == Constants.MDOCUMENT &&
-            chatList.value[i].mediaChatMessage!.mediaFileName.isNotEmpty &&
-            chatList.value[i].mediaChatMessage!.mediaFileName
+        } else if (chatList[i].messageType == Constants.MDOCUMENT &&
+            chatList[i].mediaChatMessage!.mediaFileName.isNotEmpty &&
+            chatList[i].mediaChatMessage!.mediaFileName
                 .startsWithTextInWords(searchedText.text)) {
           filteredPosition.add(i);
-        } else if (chatList.value[i].messageType == Constants.MCONTACT &&
-            chatList.value[i].contactChatMessage!.contactName.isNotEmpty &&
-            chatList.value[i].contactChatMessage!.contactName
+        } else if (chatList[i].messageType == Constants.MCONTACT &&
+            chatList[i].contactChatMessage!.contactName.isNotEmpty &&
+            chatList[i].contactChatMessage!.contactName
                 .startsWithTextInWords(searchedText.text)) {
           filteredPosition.add(i);
         }
@@ -1030,12 +1001,12 @@ class ChatController extends BaseController
     }
   }
 
-  var lastposition = (-1).obs;
+  var lastPosition = (-1).obs;
   var searchedPrev = "";
   var searchedNxt = "";
 
   searchInit() {
-    lastposition = (-1).obs;
+    lastPosition = (-1).obs;
     searchedPrev = "";
     searchedNxt = "";
     filteredPosition.clear();
@@ -1045,17 +1016,17 @@ class ChatController extends BaseController
   scrollUp() {
     if (searchedPrev != (searchedText.text.toString())) {
       var pre = getPreviousPosition(findLastVisibleItemPosition());
-      lastposition.value = pre;
+      lastPosition.value = pre;
       searchedPrev = searchedText.text;
-    } else if (filteredPosition.value.isNotEmpty) {
-      lastposition.value = max(lastposition.value - 1, (-1));
+    } else if (filteredPosition.isNotEmpty) {
+      lastPosition.value = max(lastPosition.value - 1, (-1));
     } else {
-      lastposition.value = -1;
+      lastPosition.value = -1;
     }
-    if (lastposition.value > -1 &&
-        lastposition.value <= filteredPosition.value.length) {
-      var po = filteredPosition.value;
-      _scrollToPosition(po[lastposition.value] + 1);
+    if (lastPosition.value > -1 &&
+        lastPosition.value <= filteredPosition.length) {
+      var po = filteredPosition;
+      _scrollToPosition(po[lastPosition.value] + 1);
     } else {
       toToast("No Results Found");
       searchedNxt = "";
@@ -1065,18 +1036,18 @@ class ChatController extends BaseController
   scrollDown() {
     if (searchedNxt != searchedText.text.toString()) {
       var nex = getNextPosition(findLastVisibleItemPosition());
-      lastposition.value = nex;
+      lastPosition.value = nex;
       searchedNxt = searchedText.text;
-    } else if (filteredPosition.value.isNotEmpty) {
-      lastposition.value =
-          min(lastposition.value - 1, filteredPosition.value.length);
+    } else if (filteredPosition.isNotEmpty) {
+      lastPosition.value =
+          min(lastPosition.value - 1, filteredPosition.length);
     } else {
-      lastposition.value = -1;
+      lastPosition.value = -1;
     }
-    if (lastposition.value > -1 &&
-        lastposition.value <= filteredPosition.value.length) {
-      var po = filteredPosition.value.reversed.toList();
-      _scrollToPosition(po[lastposition.value] + 1);
+    if (lastPosition.value > -1 &&
+        lastPosition.value <= filteredPosition.length) {
+      var po = filteredPosition.reversed.toList();
+      _scrollToPosition(po[lastPosition.value] + 1);
     } else {
       toToast("No Results Found");
       searchedPrev = "";
@@ -1086,29 +1057,29 @@ class ChatController extends BaseController
   var color = Colors.transparent.obs;
 
   _scrollToPosition(int position) {
-    var currentposition = (chatList.value.length - (position));
-    chatList[chatList.value.length - position].isSelected = true;
-    searchscrollController.jumpTo(index: currentposition);
-    Future.delayed(Duration(milliseconds: 800), () {
-      currentposition = (chatList.value.length - position);
-      chatList[chatList.value.length - position].isSelected = false;
+    var currentPosition = (chatList.length - (position));
+    chatList[chatList.length - position].isSelected = true;
+    searchScrollController.jumpTo(index: currentPosition);
+    Future.delayed(const Duration(milliseconds: 800), () {
+      currentPosition = (chatList.length - position);
+      chatList[chatList.length - position].isSelected = false;
       chatList.refresh();
     });
   }
 
   int getPreviousPosition(int visiblePos) {
-    for (var i = 0; i < filteredPosition.value.length; i++) {
-      var po = filteredPosition.value.reversed.toList();
+    for (var i = 0; i < filteredPosition.length; i++) {
+      var po = filteredPosition.reversed.toList();
       if (visiblePos > po[i]) {
-        return filteredPosition.value.indexOf(po[i]);
+        return filteredPosition.indexOf(po[i]);
       }
     }
     return -1;
   }
 
   int getNextPosition(int visiblePos) {
-    for (var i = 0; i < filteredPosition.value.length; i++) {
-      if (visiblePos <= filteredPosition.value[i]) {
+    for (var i = 0; i < filteredPosition.length; i++) {
+      if (visiblePos <= filteredPosition[i]) {
         return i;
       }
     }
@@ -1124,7 +1095,7 @@ class ChatController extends BaseController
         .reduce((ItemPosition min, ItemPosition position) =>
             position.itemTrailingEdge < min.itemTrailingEdge ? position : min)
         .index;
-    return chatList.value.length - r;
+    return chatList.length - r;
   }
 
   exportChat() async {
@@ -1164,7 +1135,6 @@ class ChatController extends BaseController
   }
 
   void closeKeyBoard() {
-    // keyboardVisibilityController.isVisible ? FocusManager.instance.primaryFocus?.unfocus() : null;
     FocusManager.instance.primaryFocus!.unfocus();
   }
   void startTimer() {
@@ -1256,7 +1226,13 @@ class ChatController extends BaseController
           profile_.value = value as Profile;
         }
       });
+    }else{
+      Get.toNamed(Routes.CHAT_INFO, arguments: profile)?.then((value){
+
+      });
     }
+
+
   }
 
   @override
@@ -1308,7 +1284,7 @@ class ChatController extends BaseController
   void onGroupProfileUpdated(groupJid) {
     super.onGroupProfileUpdated(groupJid);
     if (profile.jid.checkNull() == groupJid.toString()) {
-      PlatformRepo().getProfileDetails(profile.jid.checkNull()).then((value) {
+      PlatformRepo().getProfileDetails(profile.jid.checkNull(), false).then((value) {
         if (value != null) {
           var member = Profile.fromJson(json.decode(value.toString()));
           profile_.value = member;
@@ -1329,18 +1305,18 @@ class ChatController extends BaseController
   }
 
   @override
-  void onFetchingGroupMembersCompleted(event) {
-    super.onFetchingGroupMembersCompleted(event);
+  void onFetchingGroupMembersCompleted(groupJid) {
+    super.onFetchingGroupMembersCompleted(groupJid);
   }
 
   @override
-  void onDeleteGroup(event) {
-    super.onDeleteGroup(event);
+  void onDeleteGroup(groupJid) {
+    super.onDeleteGroup(groupJid);
   }
 
   @override
-  void onFetchingGroupListCompleted(event) {
-    super.onFetchingGroupListCompleted(event);
+  void onFetchingGroupListCompleted(noOfGroups) {
+    super.onFetchingGroupListCompleted(noOfGroups);
   }
 
   @override
@@ -1366,7 +1342,7 @@ class ChatController extends BaseController
     }
   }
 
-  MemberOfGroup(){
+  memberOfGroup(){
     if(profile.isGroupProfile!) {
       PlatformRepo().isMemberOfGroup(profile.jid.checkNull(), null).then((
           bool? value) {
@@ -1392,17 +1368,13 @@ class ChatController extends BaseController
 
   setChatStatus() {
     if (profile.isGroupProfile!) {
-      if (typingList.length > 0) {
+      if (typingList.isNotEmpty) {
         userPresenceStatus(
             "${Member(jid: typingList[typingList.length - 1]).getUsername()} typing");
       } else {
         getParticipantsNameAsCsv(profile.jid.checkNull());
       }
     } else {
-      /*if (profileDetail.isDeletedContact()) {
-        userPresenceStatus(Constants.EMPTY_STRING);
-        return;
-      }*/
       PlatformRepo().getUserLastSeenTime(profile.jid.toString()).then((value) {
         userPresenceStatus(value.toString());
       });
@@ -1416,11 +1388,11 @@ class ChatController extends BaseController
       if (value != null) {
         var str = <String>[];
         var groupsMembersProfileList = memberFromJson(value);
-        groupsMembersProfileList.forEach((it) {
-          if (it.jid.checkNull != (SessionManagement().getUserJID())) {
+        for (var it in groupsMembersProfileList) {
+          if (it.jid != SessionManagement().getUserJID()) {
             str.add(it.name.checkNull());
           }
-        });
+        }
         groupParticipantsName(str.join(","));
       }
     });

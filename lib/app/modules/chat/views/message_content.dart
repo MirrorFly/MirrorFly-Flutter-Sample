@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
+import 'package:mirror_fly_demo/app/common/main_controller.dart';
 import 'package:mirror_fly_demo/app/modules/chat/controllers/chat_controller.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -22,7 +23,7 @@ class MessageContent extends StatefulWidget {
 }
 
 class _MessageContentState extends State<MessageContent> {
-  var controller = Get.find<ChatController>();
+  var controller = Get.find<MainController>();
   var screenWidth, screenHeight;
   @override
   Widget build(BuildContext context) {
@@ -457,13 +458,13 @@ class _MessageContentState extends State<MessageContent> {
                           ),
                           child: Slider(
                             value: double.parse(
-                                controller.currentpos.value.toString()),
+                                controller.currentPos.value.toString()),
                             min: 0,
                             activeColor: audiocolordark,
                             inactiveColor: audiocolor,
                             max: double.parse(
-                                controller.maxduration.value.toString()),
-                            divisions: controller.maxduration.value,
+                                controller.maxDuration.value.toString()),
+                            divisions: controller.maxDuration.value,
                             // label: controller.currentpostlabel,
                             onChanged: (double value) async {
                               // int seekval = value.round();
@@ -781,7 +782,7 @@ class _MessageContentState extends State<MessageContent> {
                       Constants.MEDIA_UPLOADED ||
                   chatList.isMessageSentByMe)) {
             // debugPrint("audio click1");
-            chatList.mediaChatMessage!.isPlaying = controller.isplaying.value;
+            chatList.mediaChatMessage!.isPlaying = controller.isPlaying.value;
             // controller.playAudio(chatList.mediaChatMessage!);
             playAudio(chatList.mediaChatMessage!.mediaLocalStoragePath,
                 chatList.mediaChatMessage!.mediaFileName);
@@ -832,7 +833,7 @@ class _MessageContentState extends State<MessageContent> {
                       fit: BoxFit.contain,
                     ),
                     Obx(() {
-                      return controller.isplaying.value
+                      return controller.isPlaying.value
                           ? Icon(Icons.pause)
                           : Icon(Icons.play_arrow);
                     }),
@@ -865,14 +866,14 @@ class _MessageContentState extends State<MessageContent> {
                         child: Obx(() {
                           return Slider(
                             value:
-                            double.parse(controller.currentpos.toString()),
+                            double.parse(controller.currentPos.toString()),
                             min: 0,
                             activeColor: audiocolordark,
                             inactiveColor: audiocolor,
                             max: double.parse(
-                                controller.maxduration.value.toString()),
-                            divisions: controller.maxduration.value,
-                            label: controller.currentpostlabel,
+                                controller.maxDuration.value.toString()),
+                            divisions: controller.maxDuration.value,
+                            label: controller.currentPostLabel,
                             onChanged: (double value) async {
                               // int seekval = value.round();
                               // int result = await player.seek(Duration(milliseconds: seekval));

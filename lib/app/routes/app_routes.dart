@@ -25,6 +25,9 @@ abstract class Routes {
   static const PREVIEW_CONTACT = _Paths.PREVIEW_CONTACT;
   static const MESSAGE_INFO = _Paths.MESSAGE_INFO;
   static const CHAT_INFO = _Paths.CHAT_INFO;
+  static const DELETE_ACCOUNT = _Paths.DELETE_ACCOUNT;
+  static const DELETE_ACCOUNT_REASON = _Paths.DELETE_ACCOUNT_REASON;
+  static const STARRED_MESSAGES = _Paths.STARRED_MESSAGES;
 }
 
 abstract class _Paths {
@@ -51,4 +54,7 @@ abstract class _Paths {
   static const PREVIEW_CONTACT = '/preview-contact';
   static const MESSAGE_INFO = '/message-info';
   static const CHAT_INFO = '/chat-info';
+  static const DELETE_ACCOUNT = '/delete-account';
+  static const DELETE_ACCOUNT_REASON = '/delete-account-reason';
+  static const STARRED_MESSAGES = '/starred-messages';
 }

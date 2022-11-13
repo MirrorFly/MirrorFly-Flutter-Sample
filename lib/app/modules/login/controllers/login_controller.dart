@@ -85,11 +85,11 @@ class LoginController extends GetxController {
           toToast("Please Enter Valid Mobile Number");
           hideLoading();
         },
-        codeSent: (String _verificationId, int? resendToken) {
-          Log("codeSent", _verificationId+" "+resendToken.toString());
-          verificationId = _verificationId;
+        codeSent: (String verificationId, int? resendToken) {
+          Log("codeSent", verificationId);
+          this.verificationId = verificationId;
           resendingToken = resendToken;
-          if(_verificationId.isNotEmpty){
+          if(verificationId.isNotEmpty){
             hideLoading();
             Get.toNamed(Routes.OTP)?.then((value) {
               //Change Number
@@ -120,6 +120,8 @@ class LoginController extends GetxController {
       PhoneAuthCredential credential = PhoneAuthProvider.credential(
           verificationId: verificationId, smsCode: smsCode);
       // Sign the user in (or link) with the credential
+      debugPrint("Verification ID $verificationId");
+      debugPrint("smsCode $smsCode");
       signIn(credential);
     }else{
       toToast("InValid OTP");
@@ -145,7 +147,8 @@ class LoginController extends GetxController {
       await _auth.signInWithCredential(credential).then((value){
         sendTokenToServer();
         Log("sigin ", value.toString());
-      }).catchError((){
+      }).catchError((error){
+        debugPrint("Firebase Verify Error $error");
         hideLoading();
       });
     } on FirebaseAuthException catch (e) {
@@ -222,6 +225,7 @@ class LoginController extends GetxController {
         var userData = registerModelFromJson(value);//message
         SessionManagement.setLogin(userData.data!.username!.isNotEmpty);
         SessionManagement.setUser(userData.data!);
+        // userData.data.
         setUserJID(userData.data!.username!);
       }
     }).catchError((error) {

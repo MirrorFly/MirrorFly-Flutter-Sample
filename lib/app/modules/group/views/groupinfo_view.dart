@@ -41,13 +41,13 @@ class GroupInfoView extends GetView<GroupInfoController> {
                   title: Visibility(
                     visible: !controller.isSliverAppBarExpanded,
                     child: Text(controller.profile.nickName.checkNull(),
-                        style: TextStyle(
+                        style: const TextStyle(
                           color: Colors.black,
                           fontSize: 18.0,
                         )),
                   ),
                   flexibleSpace: FlexibleSpaceBar(
-                      titlePadding: EdgeInsets.only(left: 16),
+                      titlePadding: const EdgeInsets.only(left: 16),
                       title: Visibility(
                         visible: controller.isSliverAppBarExpanded,
                         child: Row(
@@ -61,14 +61,13 @@ class GroupInfoView extends GetView<GroupInfoController> {
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
                                     Text(controller.profile.nickName.checkNull(),
-                                        style: TextStyle(
+                                        style: const TextStyle(
                                           color: Colors.white,
                                           fontSize: 12.0,
                                         ) //TextStyle
                                     ),
-                                    Text(controller.groupMembers.length
-                                        .toString() + " members",
-                                        style: TextStyle(
+                                    Text("${controller.groupMembers.length} members",
+                                        style: const TextStyle(
                                           color: Colors.white,
                                           fontSize: 8.0,
                                         ) //TextStyle
@@ -154,8 +153,8 @@ class GroupInfoView extends GetView<GroupInfoController> {
           body: ListView(
             children: <Widget>[
               Obx(() {
-                return ListItem(title: Text("Mute Notification",
-                    style: const TextStyle(
+                return ListItem(title: const Text("Mute Notification",
+                    style: TextStyle(
                         color: Colors.black,
                         fontSize: 14,
                         fontWeight: FontWeight.w500)), trailing: FlutterSwitch(
@@ -179,8 +178,8 @@ class GroupInfoView extends GetView<GroupInfoController> {
                   Visibility(
                     visible: controller.isAdmin,
                     child: ListItem(leading: SvgPicture.asset(add_user),
-                        title: Text("Add Participants",
-                            style: const TextStyle(
+                        title: const Text("Add Participants",
+                            style: TextStyle(
                                 color: Colors.black,
                                 fontSize: 14,
                                 fontWeight: FontWeight.w500)),

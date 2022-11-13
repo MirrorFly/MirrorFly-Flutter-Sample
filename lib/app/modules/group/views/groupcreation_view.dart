@@ -72,8 +72,8 @@ class GroupCreationView extends GetView<GroupCreationController> {
                               errorWidget: ClipOval(
                                 child: Image.asset(
                                   groupImg,
-                                  height: 48,
-                                  width: 48,
+                                  height: 150,
+                                  width: 150,
                                   fit: BoxFit.cover,
                                 ),
                               ),

@@ -112,13 +112,18 @@ const String report_user = 'assets/logos/report_user.svg';
 const String report_group = 'assets/logos/report_group.svg';
 const String leave_group = 'assets/logos/leave_group.svg';
 
+const String emailIcon = 'assets/logos/email.svg';
+const String phoneIcon = 'assets/logos/phone.svg';
+const String deleteBin = 'assets/logos/delete_bin.svg';
+const String warningIcon = 'assets/logos/warning.svg';
+
 
 
 toToast(String text) {
   Fluttertoast.showToast(
       msg: text,
       toastLength: Toast.LENGTH_SHORT,
-      gravity: ToastGravity.CENTER,
+      gravity: ToastGravity.BOTTOM,
       timeInSecForIosWeb: 1,
       fontSize: 16.0);
 }
@@ -451,6 +456,8 @@ class Constants {
   static const String STORAGE_FOLDER_NAME = "folder_name";
   static const String API_KEY = "com.contus.flycommons.api_key";
   static const String MIX = "@mix.";
+
+  static const String bulletPoint = "\u2022 ";
 
   static const String GROUP_EVENT = "group_events";
   static const String ARCHIVE_EVENT = "archive_events";

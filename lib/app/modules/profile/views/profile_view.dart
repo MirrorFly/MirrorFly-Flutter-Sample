@@ -254,7 +254,7 @@ class ProfileView extends GetView<ProfileController> {
                               : controller.changed.value
                                   ? 'Update & Continue'
                                   : 'Save',
-                          style: TextStyle(fontWeight: FontWeight.w600),
+                          style: const TextStyle(fontWeight: FontWeight.w600),
                         ),
                       ),
                     ),
@@ -268,66 +268,69 @@ class ProfileView extends GetView<ProfileController> {
 
   BottomSheetView(BuildContext context) {
     showModalBottomSheet(
+        useRootNavigator: true,
         backgroundColor: Colors.transparent,
         context: context,
         builder: (builder) {
-          return SizedBox(
-            child: Card(
-              shape: const RoundedRectangleBorder(
-                  borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(30),
-                      topRight: Radius.circular(30))),
-              child: Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 10, vertical: 20),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    // const Text("Options"),
-                    TextButton(
-                        onPressed: () async {
-                          Get.back();
-                          final XFile? photo = await _picker.pickImage(
-                              source: ImageSource.camera);
-                          controller.Camera(photo);
-                        },
-                        child: const Text("Take Photo",
-                            style: TextStyle(color: texthintcolor))),
-                    TextButton(
-                        onPressed: () {
-                          Get.back();
-                          controller.ImagePicker(context);
-                        },
-                        child: const Text("Choose from Gallery",
-                            style: TextStyle(color: texthintcolor))),
-                    controller.userImgUrl.value.isNotEmpty
-                        ? TextButton(
-                            onPressed: () {
-                              Get.back();
-                              Helper.showAlert(
-                                  message:
-                                      "Are you sure want to remove the photo?",
-                                  actions: [
-                                    TextButton(
-                                        onPressed: () {
-                                          Get.back();
-                                        },
-                                        child: const Text("CANCEL")),
-                                    TextButton(
-                                        onPressed: () {
-                                          Get.back();
-                                          controller.remomveProfileImage();
-                                        },
-                                        child: const Text("REMOVE"))
-                                  ]);
-                            },
-                            child: const Text(
-                              "Remove Profile Image",
-                              style: TextStyle(color: texthintcolor),
-                            ))
-                        : const SizedBox(),
-                  ],
+          return SafeArea(
+            child: SizedBox(
+              child: Card(
+                shape: const RoundedRectangleBorder(
+                    borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(30),
+                        topRight: Radius.circular(30))),
+                child: Padding(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 10, vertical: 20),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      // const Text("Options"),
+                      TextButton(
+                          onPressed: () async {
+                            Get.back();
+                            final XFile? photo = await _picker.pickImage(
+                                source: ImageSource.camera);
+                            controller.Camera(photo);
+                          },
+                          child: const Text("Take Photo",
+                              style: TextStyle(color: texthintcolor))),
+                      TextButton(
+                          onPressed: () {
+                            Get.back();
+                            controller.ImagePicker(context);
+                          },
+                          child: const Text("Choose from Gallery",
+                              style: TextStyle(color: texthintcolor))),
+                      controller.userImgUrl.value.isNotEmpty
+                          ? TextButton(
+                              onPressed: () {
+                                Get.back();
+                                Helper.showAlert(
+                                    message:
+                                        "Are you sure want to remove the photo?",
+                                    actions: [
+                                      TextButton(
+                                          onPressed: () {
+                                            Get.back();
+                                          },
+                                          child: const Text("CANCEL")),
+                                      TextButton(
+                                          onPressed: () {
+                                            Get.back();
+                                            controller.remomveProfileImage();
+                                          },
+                                          child: const Text("REMOVE"))
+                                    ]);
+                              },
+                              child: const Text(
+                                "Remove Profile Image",
+                                style: TextStyle(color: texthintcolor),
+                              ))
+                          : const SizedBox(),
+                    ],
+                  ),
                 ),
               ),
             ),

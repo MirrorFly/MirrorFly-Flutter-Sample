@@ -402,12 +402,14 @@ class PlatformRepo {
     }
   }
 
-  Future<dynamic> getProfileDetails(String jid) async {
+  Future<dynamic> getProfileDetails(String jid, bool fromServer) async {
     dynamic profileResponse;
     try {
-      profileResponse = await mirrorFlyMethodChannel.invokeMethod('getProfileDetails',{"jid":jid});
+      profileResponse = await mirrorFlyMethodChannel.invokeMethod('getProfileDetails',{"jid":jid, "server" : fromServer});
       debugPrint("profile Result ==> $profileResponse");
-      insertDefaultStatusToUser();
+      if(!fromServer) {
+        insertDefaultStatusToUser();
+      }
       return profileResponse;
     }on PlatformException catch (e){
       debugPrint("Platform Exception ===> $e");
@@ -1141,5 +1143,34 @@ class PlatformRepo {
       rethrow;
     }
   }
+
+  Future<dynamic> deleteAccount(String reason, String? feedback) async {
+    dynamic response;
+    try {
+      response = await mirrorFlyMethodChannel.invokeMethod('delete_account', {"delete_reason" : reason, "delete_feedback" : feedback });
+      return response;
+    }on PlatformException catch (e){
+      debugPrint("Platform Exception ===> $e");
+      rethrow;
+    } on Exception catch(error){
+      debugPrint("Exception ==> $error");
+      rethrow;
+    }
+  }
+  Future<dynamic> getFavouriteMessages() async {
+    dynamic favResponse;
+    try {
+      favResponse = await mirrorFlyMethodChannel.invokeMethod('get_favourite_messages');
+      debugPrint("fav response ==> $favResponse");
+      return favResponse;
+    }on PlatformException catch (e){
+      debugPrint("Platform Exception ===> $e");
+      rethrow;
+    } on Exception catch(error){
+      debugPrint("Exception ==> $error");
+      rethrow;
+    }
+  }
+
 
 }

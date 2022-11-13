@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../common/constants.dart';
+import '../../../common/main_controller.dart';
 import '../../../data/helper.dart';
 import '../../../model/chatMessageModel.dart';
 import '../controllers/chat_controller.dart';
@@ -17,18 +18,9 @@ class MessageHeader extends StatefulWidget {
 }
 
 class _MessageHeaderState extends State<MessageHeader> {
-  var controller = Get.find<ChatController>();
-  var screenWidth, screenHeight;
+  var controller = Get.find<MainController>();
   @override
   Widget build(BuildContext context) {
-    screenHeight = MediaQuery
-        .of(context)
-        .size
-        .height;
-    screenWidth = MediaQuery
-        .of(context)
-        .size
-        .width;
 
     return Container(
         child: getMessageHeader(widget.chatList)

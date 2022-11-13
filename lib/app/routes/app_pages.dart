@@ -1,5 +1,4 @@
 import 'package:get/get.dart';
-import 'package:mirror_fly_demo/app/modules/group/bindings/groupcreation_binding.dart';
 
 import '../model/userlistModel.dart';
 import '../modules/chat/bindings/chat_binding.dart';
@@ -11,12 +10,17 @@ import '../modules/chat/views/chat_view.dart';
 import '../modules/chat/views/contactlist_view.dart';
 import '../modules/chat/views/image_preview_view.dart';
 import '../modules/chat/views/locationsent_view.dart';
-import '../modules/chat_info/bindings/chat_info_binding.dart';
-import '../modules/chat_info/views/chat_info_view.dart';
+import '../modules/chatInfo/bindings/chat_info_binding.dart';
+import '../modules/chatInfo/views/chat_info_view.dart';
 import '../modules/dashboard/bindings/dashboard_binding.dart';
 import '../modules/dashboard/bindings/recentssearch_binding.dart';
 import '../modules/dashboard/views/dashboard_view.dart';
 import '../modules/dashboard/views/recent_search_view.dart';
+import '../modules/delete_account/bindings/delete_account_binding.dart';
+import '../modules/delete_account/views/delete_account_view.dart';
+import '../modules/delete_account_reason/bindings/delete_account_reason_binding.dart';
+import '../modules/delete_account_reason/views/delete_account_reason_view.dart';
+import '../modules/group/bindings/groupcreation_binding.dart';
 import '../modules/group/bindings/groupinfo_binding.dart';
 import '../modules/group/views/groupcreation_view.dart';
 import '../modules/group/views/groupinfo_view.dart';
@@ -39,13 +43,12 @@ import '../modules/profile/views/profile_view.dart';
 import '../modules/profile/views/statuslist_view.dart';
 import '../modules/settings/bindings/settings_binding.dart';
 import '../modules/settings/views/settings_view.dart';
+import '../modules/starred_messages/bindings/starred_messages_binding.dart';
+import '../modules/starred_messages/views/starred_messages_view.dart';
 import '../modules/video_preview/bindings/VideoPlayBinding.dart';
 import '../modules/video_preview/bindings/video_preview_binding.dart';
 import '../modules/video_preview/views/video_player_view.dart';
 import '../modules/video_preview/views/video_preview_view.dart';
-
-// import '../modules/message_info/bindings/message_info_binding.dart';
-// import '../modules/message_info/views/message_info_view.dart';
 
 part 'app_routes.dart';
 
@@ -57,14 +60,10 @@ class AppPages {
   static const DASHBOARD = Routes.DASHBOARD;
 
   static final routes = [
-    GetPage(
-        name: _Paths.OTP,
-        page: () => OtpView(),
-        binding: LoginBinding()
-    ),
+    GetPage(name: _Paths.OTP, page: () => OtpView(), binding: LoginBinding()),
     GetPage(
       name: _Paths.DASHBOARD,
-      page: () => DashboardView(),
+      page: () => const DashboardView(),
       binding: DashboardBinding(),
     ),
     GetPage(
@@ -166,6 +165,21 @@ class AppPages {
       name: _Paths.CHAT_INFO,
       page: () => const ChatInfoView(),
       binding: ChatInfoBinding(),
+    ),
+    GetPage(
+      name: _Paths.DELETE_ACCOUNT,
+      page: () => const DeleteAccountView(),
+      binding: DeleteAccountBinding(),
+    ),
+    GetPage(
+      name: _Paths.DELETE_ACCOUNT_REASON,
+      page: () => const DeleteAccountReasonView(),
+      binding: DeleteAccountReasonBinding(),
+    ),
+    GetPage(
+      name: _Paths.STARRED_MESSAGES,
+      page: () => const StarredMessagesView(),
+      binding: StarredMessagesBinding(),
     ),
   ];
 }

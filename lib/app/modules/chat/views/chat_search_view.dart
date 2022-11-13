@@ -1,31 +1,20 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import 'package:image_picker/image_picker.dart';
-import 'package:mirror_fly_demo/app/common/main_controller.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
-import 'package:mirror_fly_demo/app/model/recentchat.dart';
 import 'package:mirror_fly_demo/app/modules/chat/controllers/chat_controller.dart';
-import 'package:mirror_fly_demo/app/modules/dashboard/controllers/recent_chat_search_controller.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
-import 'package:swipe_to/swipe_to.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'dart:math' as math;
 
 import '../../../common/constants.dart';
-import '../../../common/widgets.dart';
 import '../../../model/chatMessageModel.dart';
-import '../../../model/chatmessage_model.dart';
-import '../../../model/recentSearchModel.dart';
 import '../../../routes/app_pages.dart';
-import '../../../widgets/custom_action_bar_icons.dart';
 
 class ChatSearchView extends GetView<ChatController> {
   ChatSearchView({super.key});
-  var screenWidth, screenHeight;
+  var screenWidth = 0.0, screenHeight = 0.0;
   @override
   Widget build(BuildContext context) {
     screenHeight = MediaQuery
@@ -44,7 +33,7 @@ class ChatSearchView extends GetView<ChatController> {
       child: Scaffold(
         appBar: AppBar(
           leading: IconButton(
-            icon: Icon(Icons.arrow_back, color: iconcolor),
+            icon: const Icon(Icons.arrow_back, color: iconcolor),
             onPressed: () {
               controller.searchInit();
               Get.back();
@@ -57,14 +46,14 @@ class ChatSearchView extends GetView<ChatController> {
             decoration: const InputDecoration(
                 hintText: "Search", border: InputBorder.none),
           ),
-          iconTheme: IconThemeData(color: iconcolor),
+          iconTheme: const IconThemeData(color: iconcolor),
           actions: [
             IconButton(onPressed: (){
               controller.scrollUp();
-            }, icon: Icon(Icons.keyboard_arrow_up)),
+            }, icon: const Icon(Icons.keyboard_arrow_up)),
             IconButton(onPressed: (){
               controller.scrollDown();
-            }, icon: Icon(Icons.keyboard_arrow_down)),
+            }, icon: const Icon(Icons.keyboard_arrow_down)),
           ],
         ),
         body:  Obx(() =>
@@ -79,7 +68,7 @@ class ChatSearchView extends GetView<ChatController> {
     return ScrollablePositionedList.builder(
       itemCount: chatList.length,
       reverse: true,
-      itemScrollController: controller.searchscrollController,
+      itemScrollController: controller.searchScrollController,
       itemPositionsListener: controller.itemPositionsListener,
       itemBuilder: (context, index) {
         // int reversedIndex = chatList.length - 1 - index;
@@ -199,7 +188,7 @@ class ChatSearchView extends GetView<ChatController> {
         child: Padding(
           padding: const EdgeInsets.all(15.0),
           child: spannableText(chatList[index].messageTextContent ?? "",
-              controller.searchedText.text,TextStyle(fontSize: 13, fontWeight: FontWeight.bold)),
+              controller.searchedText.text,const TextStyle(fontSize: 13, fontWeight: FontWeight.bold)),
         ),
       );
     } else if (chatList[index].messageType == Constants.MIMAGE) {
@@ -238,7 +227,7 @@ class ChatSearchView extends GetView<ChatController> {
                     Icons.star,
                     size: 13,
                   )
-                      : SizedBox.shrink(),
+                      : const SizedBox.shrink(),
                   const SizedBox(
                     width: 5,
                   ),
@@ -355,7 +344,7 @@ class ChatSearchView extends GetView<ChatController> {
                     ),
                     Expanded(
                         child: spannableText(
-                          chatList[index].mediaChatMessage!.mediaFileName,controller.searchedText.text,null//maxline 2
+                          chatList[index].mediaChatMessage!.mediaFileName,controller.searchedText.text,null
                         )),
                     const Spacer(),
                     InkWell(
@@ -384,7 +373,7 @@ class ChatSearchView extends GetView<ChatController> {
                       Icons.star,
                       size: 13,
                     )
-                        : SizedBox.shrink(),
+                        : const SizedBox.shrink(),
                     const SizedBox(
                       width: 5,
                     ),
@@ -564,14 +553,13 @@ class ChatSearchView extends GetView<ChatController> {
                           ),
                           child: Slider(
                             value: double.parse(
-                                controller.currentpos.value.toString()),
+                                controller.currentPos.value.toString()),
                             min: 0,
                             activeColor: audiocolordark,
                             inactiveColor: audiocolor,
                             max: double.parse(
-                                controller.maxduration.value.toString()),
-                            divisions: controller.maxduration.value,
-                            // label: controller.currentpostlabel,
+                                controller.maxDuration.value.toString()),
+                            divisions: controller.maxDuration.value,
                             onChanged: (double value) async {
                               // int seekval = value.round();
                               // int result = await player.seek(Duration(milliseconds: seekval));
@@ -762,11 +750,11 @@ class ChatSearchView extends GetView<ChatController> {
         // return Obx(() {
         // chatMessage.mediaChatMessage!.isPlaying = controller.audioplayed.value;
         return chatMessage.mediaChatMessage!.isPlaying
-            ? Icon(Icons.pause)
-            : Icon(Icons.play_arrow_sharp);
+            ? const Icon(Icons.pause)
+            : const Icon(Icons.play_arrow_sharp);
         // });
       } else {
-        return SizedBox.shrink();
+        return const SizedBox.shrink();
       }
     } else {
       switch (chatMessage.isMessageSentByMe
@@ -774,7 +762,7 @@ class ChatSearchView extends GetView<ChatController> {
           : chatMessage.mediaChatMessage!.mediaDownloadStatus) {
         case Constants.MEDIA_DOWNLOADED:
         case Constants.MEDIA_UPLOADED:
-          return SizedBox.shrink();
+          return const SizedBox.shrink();
 
         case Constants.MEDIA_DOWNLOADED_NOT_AVAILABLE:
         case Constants.MEDIA_NOT_DOWNLOADED:
@@ -799,8 +787,7 @@ class ChatSearchView extends GetView<ChatController> {
                 onTap: () {
                   debugPrint(chatMessage.messageId);
                 },
-                child:
-                Container(width: 30, height: 30, child: uploadingView()));
+                child: SizedBox(width: 30, height: 30, child: uploadingView()));
           } else {
             return SizedBox(
               height: 40,
@@ -827,19 +814,19 @@ class ChatSearchView extends GetView<ChatController> {
           borderRadius: const BorderRadius.all(Radius.circular(5)),
           color: Colors.black38,
         ),
-        padding: EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+        padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
         child: Row(
           children: [
             Icon(
               iconData,
               color: Colors.white,
             ),
-            SizedBox(
+            const SizedBox(
               width: 5,
             ),
             Text(
               Helper.formatBytes(mediaFileSize, 0),
-              style: TextStyle(color: Colors.white),
+              style: const TextStyle(color: Colors.white),
             ),
           ],
         ));
@@ -931,7 +918,7 @@ class ChatSearchView extends GetView<ChatController> {
                       Constants.MEDIA_UPLOADED ||
                   chatList.isMessageSentByMe)) {
             // debugPrint("audio click1");
-            chatList.mediaChatMessage!.isPlaying = controller.isplaying.value;
+            chatList.mediaChatMessage!.isPlaying = controller.isPlaying.value;
             // controller.playAudio(chatList.mediaChatMessage!);
             playAudio(chatList.mediaChatMessage!.mediaLocalStoragePath,
                 chatList.mediaChatMessage!.mediaFileName);
@@ -1037,14 +1024,14 @@ class ChatSearchView extends GetView<ChatController> {
                       fit: BoxFit.contain,
                     ),
                     Obx(() {
-                      return controller.isplaying.value
-                          ? Icon(Icons.pause)
-                          : Icon(Icons.play_arrow);
+                      return controller.isPlaying.value
+                          ? const Icon(Icons.pause)
+                          : const Icon(Icons.play_arrow);
                     }),
                   ],
                 ),
               ),
-              SizedBox(
+              const SizedBox(
                 width: 20,
               ),
               Expanded(
@@ -1055,7 +1042,7 @@ class ChatSearchView extends GetView<ChatController> {
                       mediaFileName,controller.searchedText.text,null
                       //maxLines: 2,
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 15,
                     ),
                     SizedBox(
@@ -1065,19 +1052,19 @@ class ChatSearchView extends GetView<ChatController> {
                           thumbColor: audiocolordark,
                           overlayShape: SliderComponentShape.noOverlay,
                           thumbShape:
-                          RoundSliderThumbShape(enabledThumbRadius: 5),
+                          const RoundSliderThumbShape(enabledThumbRadius: 5),
                         ),
                         child: Obx(() {
                           return Slider(
                             value:
-                            double.parse(controller.currentpos.toString()),
+                            double.parse(controller.currentPos.toString()),
                             min: 0,
                             activeColor: audiocolordark,
                             inactiveColor: audiocolor,
                             max: double.parse(
-                                controller.maxduration.value.toString()),
-                            divisions: controller.maxduration.value,
-                            label: controller.currentpostlabel,
+                                controller.maxDuration.value.toString()),
+                            divisions: controller.maxDuration.value,
+                            label: controller.currentPostLabel,
                             onChanged: (double value) async {
                               // int seekval = value.round();
                               // int result = await player.seek(Duration(milliseconds: seekval));
@@ -1169,9 +1156,8 @@ class ChatSearchView extends GetView<ChatController> {
             ),
           ),
         );
-        ;
       } else {
-        return SizedBox.shrink();
+        return const SizedBox.shrink();
       }
     });
   }
@@ -1224,7 +1210,7 @@ class ChatSearchView extends GetView<ChatController> {
         return Row(
           children: [
             Helper.forMessageTypeIcon(Constants.MAUDIO),
-            SizedBox(
+            const SizedBox(
               width: 10,
             ),
             // Text(controller.replyChatMessage.mediaChatMessage!.mediaDuration),
@@ -1365,7 +1351,7 @@ class ChatSearchView extends GetView<ChatController> {
       return Text.rich(TextSpan(
           text: startText,
           children: [
-            TextSpan(text: colorText, style: TextStyle(color: Colors.orange)),
+            TextSpan(text: colorText, style: const TextStyle(color: Colors.orange)),
             TextSpan(
                 text: endText,
                 style: style)

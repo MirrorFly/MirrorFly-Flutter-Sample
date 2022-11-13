@@ -61,8 +61,9 @@ class Helper {
   static void showAlert({String? title,required String message,List<Widget>? actions,Widget? content}) {
     Get.dialog(
       AlertDialog(
-        title: title!=null ? Text(title) : null,
-        contentPadding: const EdgeInsets.only(top: 20,right: 20,left: 20,bottom: 20),
+        title: title!=null ? Text(title) : const Text(""),
+        contentPadding: title!=null ? const EdgeInsets.only(top: 15,right: 25,left: 25,bottom: 15) :
+        const EdgeInsets.only(top: 0,right: 25,left: 25,bottom: 15),
         content: content ?? Text(message),
         contentTextStyle: const TextStyle(color: texthintcolor,fontWeight: FontWeight.w500),
         actions: actions,
@@ -214,12 +215,12 @@ extension BooleanParsing on bool? {
 extension MemberParsing on Member{
 
   String getUsername(){
-    var value = PlatformRepo().getProfileDetails(jid.checkNull());
+    var value = PlatformRepo().getProfileDetails(jid.checkNull(), false);
     var str = Profile.fromJson(json.decode(value.toString()));
     return str.name.checkNull();
   }
   Future<Profile> getProfileDetails() async {
-    var value = await PlatformRepo().getProfileDetails(jid.checkNull());
+    var value = await PlatformRepo().getProfileDetails(jid.checkNull(), false);
     var str = Profile.fromJson(json.decode(value.toString()));
     return str;
   }
@@ -245,4 +246,25 @@ extension ChatmessageParsing on ChatMessageModel{
   bool isVideoMessage() => messageType == Constants.MVIDEO;
   bool isFileMessage() => messageType == Constants.MDOCUMENT;
   bool isNotificationMessage() => messageType == Constants.MNOTIFICATION;
+}
+
+InkWell listItem(
+    {Widget? leading, required Widget title, Widget? trailing, required Function() onTap}) {
+  return InkWell(
+    onTap: onTap,
+    child: Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: Row(
+        children: [
+          leading != null ? Padding(
+              padding: const EdgeInsets.only(right: 16.0),
+              child: leading) : const SizedBox(),
+          Expanded(
+            child: title,
+          ),
+          trailing ?? const SizedBox()
+        ],
+      ),
+    ),
+  );
 }

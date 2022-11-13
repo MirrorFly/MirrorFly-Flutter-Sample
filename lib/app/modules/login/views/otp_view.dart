@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/modules/login/controllers/login_controller.dart';
@@ -114,9 +113,12 @@ class OtpView extends GetView<LoginController> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             InkWell(
-                              child: Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: const Text(
+                              onTap: controller.timeout.value ? () {
+                                controller.gotoLogin();
+                              } : null,
+                              child: const Padding(
+                                padding: EdgeInsets.all(8.0),
+                                child: Text(
                                   'Change Number',
                                   style: TextStyle(
                                       color: Colors.red,
@@ -124,9 +126,6 @@ class OtpView extends GetView<LoginController> {
                                       fontWeight: FontWeight.w500),
                                 ),
                               ),
-                              onTap: controller.timeout.value ? () {
-                                controller.gotoLogin();
-                              } : null,
                             ),
                             Container(
                               color: dividercolor,
@@ -135,9 +134,12 @@ class OtpView extends GetView<LoginController> {
                             ),
                             Obx(() {
                               return InkWell(
-                                child: Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: const Text(
+                                onTap: controller.timeout.value ? () {
+                                  controller.resend();
+                                } : null,
+                                child: const Padding(
+                                  padding: EdgeInsets.all(8.0),
+                                  child: Text(
                                     'Resend OTP',
                                     style: TextStyle(
                                         color: texthintcolor,
@@ -145,9 +147,6 @@ class OtpView extends GetView<LoginController> {
                                         fontWeight: FontWeight.w500),
                                   ),
                                 ),
-                                onTap: controller.timeout.value ? () {
-                                  controller.resend();
-                                } : null,
                               );
                             }),
                           ],

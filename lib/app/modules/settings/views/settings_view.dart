@@ -25,7 +25,9 @@ class SettingsView extends GetView<SettingsController> {
                 () => Get.toNamed(Routes.PROFILE,arguments: {"from":Routes.SETTINGS})),
             SettingListItem("Chats", chaticon, rightarrowicon, () {}),
             SettingListItem(
-                "Starred Messages", staredmsgicon, rightarrowicon, () {}),
+                "Starred Messages", staredmsgicon, rightarrowicon, () {
+                  Get.toNamed(Routes.STARRED_MESSAGES);
+            }),
             SettingListItem(
                 "Notifications", notificationicon, rightarrowicon, () {}),
             SettingListItem(
@@ -37,6 +39,9 @@ class SettingsView extends GetView<SettingsController> {
             SettingListItem(
                 "Connection Label", connectionicon, toggleofficon, () {}),
             SettingListItem("Report Log", reporticon, rightarrowicon, () {}),
+            SettingListItem("Delete My Account", deleteBin, rightarrowicon, () {
+              Get.toNamed(Routes.DELETE_ACCOUNT);
+            }),
             SettingListItem("Logout", logouticon, rightarrowicon, () {
               Helper.showAlert(
                   message:
@@ -101,7 +106,7 @@ class SettingsView extends GetView<SettingsController> {
               children: [
                 Padding(
                   padding: const EdgeInsets.all(18.0),
-                  child: SvgPicture.asset(leading),
+                  child: SvgPicture.asset(leading, width: 22, height: 22,),
                 ),
                 Expanded(
                     child: Text(
