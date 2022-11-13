@@ -49,6 +49,7 @@ dependencies:
   firebase_messaging: ^14.0.4 #firebase messaging
   flutter_switch: ^0.3.2 #switchbox
   marquee: ^2.2.0 # marquee text
+  qr_code_scanner: ^1.0.1 #qr scanner
 
 dev_dependencies: 
   flutter_lints: 2.0.1

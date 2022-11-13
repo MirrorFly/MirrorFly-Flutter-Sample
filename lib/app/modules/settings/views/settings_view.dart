@@ -34,7 +34,7 @@ class SettingsView extends GetView<SettingsController> {
             SettingListItem(
                 "Blocked Contacts", blockedicon, rightarrowicon, ()=>Get.toNamed(Routes.BLOCKEDLIST)),
             //SettingListItem("Archived Chats", archiveicon, rightarrowicon, () {}),
-            SettingListItem("App Lock", lockicon, rightarrowicon, () {}),
+            SettingListItem("App Lock", lockicon, rightarrowicon, ()=>Get.toNamed(Routes.APPLOCK)),
             SettingListItem("About and Help", abouticon, rightarrowicon, () =>Get.to(AboutAndHelpView())),
             SettingListItem(
                 "Connection Label", connectionicon, toggleofficon, () {}),

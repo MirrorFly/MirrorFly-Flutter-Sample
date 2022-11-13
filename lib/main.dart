@@ -52,7 +52,7 @@ class MyApp extends StatelessWidget{
       builder: EasyLoading.init(),
       debugShowCheckedModeBanner: false,
       initialBinding: getBinding(),
-      initialRoute: getIntialRoute(),
+      initialRoute: SessionManagement().getEnablePin() ? Routes.PIN : getIntialRoute(),
       //initialRoute: AppPages.INITIAL,
       getPages: AppPages.routes,
     );

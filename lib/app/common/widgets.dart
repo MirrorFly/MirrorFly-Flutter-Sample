@@ -213,10 +213,10 @@ class ListItem extends StatelessWidget {
   final Widget? leading;
   final Widget title;
   final Widget? trailing;
-  final Function() onTap;
+  final Function()? onTap;
   final EdgeInsetsGeometry? dividerpadding;
 
-  const ListItem({Key? key, this.leading, required this.title, this.trailing, required this.onTap, this.dividerpadding }) : super(key: key);
+  const ListItem({Key? key, this.leading, required this.title, this.trailing, this.onTap, this.dividerpadding }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

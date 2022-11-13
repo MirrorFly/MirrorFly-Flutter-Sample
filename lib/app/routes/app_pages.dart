@@ -2,6 +2,8 @@ import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/modules/group/bindings/groupcreation_binding.dart';
 import 'package:mirror_fly_demo/app/modules/scanner/scanner_view.dart';
 import 'package:mirror_fly_demo/app/modules/scanner/webloginresult_view.dart';
+import 'package:mirror_fly_demo/app/modules/settings/views/applock/applocksettings_view.dart';
+import 'package:mirror_fly_demo/app/modules/settings/views/applock/pin_view.dart';
 import 'package:mirror_fly_demo/app/modules/settings/views/blocked/blockedlist_binding.dart';
 import 'package:mirror_fly_demo/app/modules/settings/views/blocked/blockedlist_view.dart';
 import 'package:mirror_fly_demo/app/modules/settings/views/notification/notificationsettings_view.dart';
@@ -48,6 +50,8 @@ import '../modules/profile/views/profile_view.dart';
 import '../modules/profile/views/statuslist_view.dart';
 import '../modules/scanner/scanner_binding.dart';
 import '../modules/settings/bindings/settings_binding.dart';
+import '../modules/settings/views/applock/applock_binding.dart';
+import '../modules/settings/views/applock/setpin_view.dart';
 import '../modules/settings/views/notification/notification_binding.dart';
 import '../modules/settings/views/settings_view.dart';
 import '../modules/video_preview/bindings/VideoPlayBinding.dart';
@@ -173,6 +177,21 @@ class AppPages {
       name: _Paths.NOTIFICATION,
       page: () => NotificationSettingsView(),
       binding: NotificationBinding(),
+    ),
+    GetPage(
+      name: _Paths.APPLOCK,
+      page: () => AppLockSettingsView(),
+      binding: AppLockBinding(),
+    ),
+    GetPage(
+      name: _Paths.PIN,
+      page: () => PinView(),
+      binding: AppLockBinding(),
+    ),
+    GetPage(
+      name: _Paths.SET_PIN,
+      page: () => SetPinView(),
+      binding: AppLockBinding(),
     ),
     GetPage(
       name: _Paths.VIDEO_PREVIEW,

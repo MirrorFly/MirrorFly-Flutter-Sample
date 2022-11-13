@@ -46,6 +46,15 @@ class SessionManagement {
   static Future setUserImage(String image) async {
     await _preferences.setString("image", image);
   }
+  static Future setPIN(String pin) async {
+    await _preferences.setString("pin", pin);
+  }
+  static Future setEnablePIN(bool pin) async {
+    await _preferences.setBool("enable_pin", pin);
+  }
+  static Future setEnableBio(bool bio) async {
+    await _preferences.setBool("enable_bio", bio);
+  }
   static Future conv_sound(bool conv_sound) async {
     await _preferences.setBool("conv_sound", conv_sound);
   }
@@ -116,5 +125,8 @@ class SessionManagement {
   bool getNotificationPopup() => _preferences.getBool(Constants.PACKAGE+"notification_popup") ?? false;
   bool getVibration() => _preferences.getBool(Constants.PACKAGE+"vibration") ?? false;
   bool getMuteNotification() => _preferences.getBool("mute_notification") ?? false;
+  String getPin() => _preferences.getString("pin") ?? "";
+  bool getEnablePin() => _preferences.getBool("enable_pin") ?? false;
+  bool getEnableBio() => _preferences.getBool("enable_bio") ?? false;
   bool? synced() => _preferences.getBool("synced");
 }

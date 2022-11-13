@@ -24,6 +24,9 @@ abstract class Routes {
   static const SETTINGS = _Paths.SETTINGS;
   static const BLOCKEDLIST = _Paths.BLOCKEDLIST;
   static const NOTIFICATION = _Paths.NOTIFICATION;
+  static const APPLOCK = _Paths.APPLOCK;
+  static const PIN = _Paths.PIN;
+  static const SET_PIN = _Paths.SET_PIN;
   static const VIDEO_PREVIEW = _Paths.VIDEO_PREVIEW;
   static const VIDEO_PLAY = _Paths.VIDEO_PLAY;
   static const IMAGE_VIEW = _Paths.IMAGE_VIEW;
@@ -56,6 +59,9 @@ abstract class _Paths {
   static const SETTINGS = '/settings';
   static const BLOCKEDLIST = '/blocked_list';
   static const NOTIFICATION = '/notification_setting';
+  static const APPLOCK = '/applock_settings';
+  static const PIN = '/pin';
+  static const SET_PIN = '/set_pin';
   static const VIDEO_PREVIEW = '/video-preview';
   static const VIDEO_PLAY = '/video-play';
   static const IMAGE_VIEW = '/image-view';
