@@ -43,7 +43,7 @@ class LocalContactView extends GetView<LocalContactController> {
             ),
           ],
         ),
-        body: Container(
+        body: SafeArea(
           child: Obx(() =>
           controller.contactList.isEmpty
               ? const Center(child: CircularProgressIndicator())
@@ -55,13 +55,9 @@ class LocalContactView extends GetView<LocalContactController> {
 
   contactListView() {
     return Obx(() {
-      return controller.searchList.length > 0 ? ListView.builder(
+      return controller.searchList.isNotEmpty ? ListView.builder(
           itemCount: controller.searchList.length,
-          shrinkWrap: true,
-          // reverse: true,
-          // controller: controller.scrollController,
           itemBuilder: (context, index) {
-            // int reversedIndex = chatList.length - 1 - index;
             return InkWell(
               onTap: (){
                 controller.shareContact(controller.searchList.elementAt(index).phones,controller.searchList
@@ -88,11 +84,7 @@ class LocalContactView extends GetView<LocalContactController> {
           }
       ) :  ListView.builder(
           itemCount: controller.contactList.length,
-          shrinkWrap: true,
-          // reverse: true,
-          // controller: controller.scrollController,
           itemBuilder: (context, index) {
-            // int reversedIndex = chatList.length - 1 - index;
             var item = controller.contactList.elementAt(index);
             return InkWell(
               onTap: (){

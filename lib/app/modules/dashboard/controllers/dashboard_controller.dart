@@ -49,12 +49,6 @@ class DashboardController extends BaseController {
           .addAll(data.data!);
     }).catchError((error) {
       debugPrint("issue===> $error");
-      Fluttertoast.showToast(
-          msg: error.toString(),
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.CENTER,
-          timeInSecForIosWeb: 1,
-          fontSize: 16.0);
     });
   }
 
