@@ -349,17 +349,17 @@ class PlatformRepo {
           var profileStatus = statusDataFromJson(value);
           if (profileStatus.isNotEmpty) {
             var defaultStatus = Constants.defaultStatuslist;
-            defaultStatus.forEach((statusValue) {
+            for (var statusValue in defaultStatus) {
               var isStatusNotExist = true;
-              profileStatus.forEach((flyStatus) {
+              for (var flyStatus in profileStatus) {
                 if (flyStatus.status == (statusValue)) {
                   isStatusNotExist = false;
                 }
-              });
+              }
               if (isStatusNotExist) {
                 PlatformRepo().insertStatus(statusValue);
               }
-            });
+            }
             SessionManagement.vibration_type("0");
             PlatformRepo().getRingtoneName(null).then((value) {
               if (value != null) {
@@ -936,7 +936,7 @@ class PlatformRepo {
   Future<bool?> logoutWebUser(List<String> logins) async {
     bool? response;
     try {
-      response = await mirrorFlyMethodChannel.invokeMethod<bool>('logoutWebUser',{"listWebLogin"});
+      response = await mirrorFlyMethodChannel.invokeMethod<bool>('logoutWebUser',{"listWebLogin":logins});
       debugPrint("logoutWebUser Response ==> $response");
       return response;
     }on PlatformException catch (e){

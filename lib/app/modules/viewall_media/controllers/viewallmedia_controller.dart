@@ -46,24 +46,10 @@ class ViewAllMediaController extends GetxController {
     _docslist.bindStream(_docslist.stream);
     ever(_docslist, (callback) {
       Log("docslist", docslistdata.length.toString());
-      for(var i=0;i<callback.length;i++) {
-        var key = callback.keys.toList()[i];
-        Log("key", key);
-        callback[key]?.forEach((element) {
-          Log("item", element.chatMessage.mediaChatMessage!.mediaFileName);
-        });
-      }
     });
     _linklist.bindStream(_linklist.stream);
     ever(_linklist, (callback) {
       Log("linklist", linklistdata.length.toString());
-      for(var i=0;i<callback.length;i++) {
-        var key = callback.keys.toList()[i];
-        Log("key", key);
-        callback[key]?.forEach((element) {
-          Log("item", element.linkMap!.toString());
-        });
-      }
     });
   }
 
