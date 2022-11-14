@@ -19,14 +19,17 @@ class UserList {
 
   factory UserList.fromJson(Map<String, dynamic> json) => UserList(
     data: json["data"] == null ? null : List<Profile>.from(json["data"].map((x) => Profile.fromJson(x))),
-    status: json["status"] == null ? null : json["status"],
+    status: json["status"],
   );
 
   Map<String, dynamic> toJson() => {
     "data": data == null ? null : List<dynamic>.from(data!.map((x) => x.toJson())),
-    "status": status == null ? null : status,
+    "status": status,
   };
 }
+
+
+List<Profile> profileFromJson(String str) => List<Profile>.from(json.decode(str).map((x) => Profile.fromJson(x)));
 
 class Profile {
   Profile({

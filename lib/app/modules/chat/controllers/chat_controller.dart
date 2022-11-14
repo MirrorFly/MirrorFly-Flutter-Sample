@@ -13,7 +13,7 @@ import 'package:intl/intl.dart';
 import 'package:mirror_fly_demo/app/basecontroller.dart';
 import 'package:mirror_fly_demo/app/data/SessionManagement.dart';
 import 'package:mirror_fly_demo/app/model/chatMessageModel.dart';
-import 'package:mirror_fly_demo/app/model/groupmembers_model.dart';
+import 'package:mirror_fly_demo/app/model/group_members_model.dart';
 import 'package:mirror_fly_demo/app/nativecall/platformRepo.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -53,6 +53,8 @@ class ChatController extends BaseController
   var timerInit = "00.00".obs;
   DateTime? startTime;
 
+  double screenHeight = 0.0;
+  double screenWidth = 0.0;
 
   AudioPlayer player = AudioPlayer();
 
@@ -104,7 +106,6 @@ class ChatController extends BaseController
     Member(jid: profile.jid.checkNull()).getProfileDetails().then((value) => profileDetail=value);
     memberOfGroup();
     setChatStatus();
-    // askStoragePermission();
     isLive = true;
     focusNode.addListener(() {
       if (focusNode.hasFocus) {

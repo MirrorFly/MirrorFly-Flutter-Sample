@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
 import 'package:mirror_fly_demo/app/modules/settings/controllers/settings_controller.dart';
 import 'package:mirror_fly_demo/app/routes/app_pages.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 
 import '../../../common/constants.dart';
 import '../../../common/widgets.dart';
@@ -16,6 +17,7 @@ class SettingsView extends GetView<SettingsController> {
   const SettingsView({Key? key}) : super(key: key);
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Settings'),
@@ -73,7 +75,7 @@ class SettingsView extends GetView<SettingsController> {
                           style: TextStyle(color: textcolor),
                           children: [
                             TextSpan(
-                                text: "August 28, 2022",
+                                text: "Nov 2022",
                                 style: TextStyle(color: texthintcolor))
                           ]),
                     ),

@@ -71,7 +71,7 @@ class NotificationAlertView extends GetView<NotificationAlertController> {
         ),
         dividerpadding: const EdgeInsets.symmetric(horizontal: 16),
         trailing: SvgPicture.asset(
-          on ? tick_round_blue : tick_round,
+          on ? tick_round_blue : tickRound,
         ),
         onTap: onTap);
   }

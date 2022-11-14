@@ -1,7 +1,6 @@
 import 'dart:convert';
 
 import 'package:get/get.dart';
-import 'package:meta/meta.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
 
 import 'nativecall/platformRepo.dart';

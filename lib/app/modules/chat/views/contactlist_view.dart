@@ -1,7 +1,4 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:flutter_profile_picture/flutter_profile_picture.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
@@ -18,7 +15,7 @@ class ContactListView extends GetView<ContactController> {
 
   @override
   Widget build(BuildContext context) {
-    final debouncer = Debouncer(milliseconds: 700);
+    final deBouncer = Debouncer(milliseconds: 700);
     return Obx(
       () => Scaffold(
         appBar: AppBar(
@@ -37,7 +34,7 @@ class ContactListView extends GetView<ContactController> {
           title: controller.search
               ? TextField(
             onChanged: (text) {
-              debouncer.run(() {
+              deBouncer.run(() {
                 controller.searchListener(text);
               });
             },
@@ -68,7 +65,7 @@ class ContactListView extends GetView<ContactController> {
               child: TextButton(
                   onPressed: () =>controller.backtoCreateGroup(),
                   child: Text(
-                    controller.groupJid.value.isNotEmpty ? "NEXT" : "CREATE", style: TextStyle(color: Colors.black),)),
+                    controller.groupJid.value.isNotEmpty ? "NEXT" : "CREATE", style: const TextStyle(color: Colors.black),)),
             ),
             Visibility(
               visible: controller.isSearchVisible,
@@ -90,7 +87,7 @@ class ContactListView extends GetView<ContactController> {
                     showAsAction: ShowAsAction.NEVER,
                     keyValue: 'Settings',
                     onItemClick: () {
-
+                      Get.toNamed(Routes.SETTINGS);
                     },
                   )
                 ],

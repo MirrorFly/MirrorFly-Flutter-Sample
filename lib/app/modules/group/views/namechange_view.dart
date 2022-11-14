@@ -6,7 +6,7 @@ import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/common/widgets.dart';
-import 'package:mirror_fly_demo/app/modules/group/controllers/groupinfo_controller.dart';
+import 'package:mirror_fly_demo/app/modules/group/controllers/group_info_controller.dart';
 import 'package:mirror_fly_demo/app/modules/profile/controllers/status_controller.dart';
 import 'package:mirror_fly_demo/app/nativecall/platformRepo.dart';
 

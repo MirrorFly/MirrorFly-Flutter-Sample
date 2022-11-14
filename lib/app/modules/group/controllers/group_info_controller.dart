@@ -5,20 +5,19 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:meta/meta.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
 import 'package:mirror_fly_demo/app/nativecall/platformRepo.dart';
 
 import '../../../common/cropimage.dart';
-import '../../../model/groupmembers_model.dart';
+import '../../../model/group_members_model.dart';
 import '../../../model/userlistModel.dart';
 import '../../../routes/app_pages.dart';
 import '../views/namechange_view.dart';
 
 class GroupInfoController extends GetxController {
   ScrollController scrollController = ScrollController();
-  var groupMembers = <Member>[].obs;
+  var groupMembers = <Profile>[].obs;
   var _mute = false.obs;
   set mute(value) => _mute.value=value;
   bool get mute => _mute.value;
@@ -81,7 +80,7 @@ class GroupInfoController extends GetxController {
   getGroupMembers(bool? server){
     PlatformRepo().getGroupMembers(profile.jid.checkNull(),server).then((value) {
       if(value!=null){
-        var list = memberFromJson(value);
+        var list = profileFromJson(value);
         groupMembers.value=(list);
         groupMembers.refresh();
       }

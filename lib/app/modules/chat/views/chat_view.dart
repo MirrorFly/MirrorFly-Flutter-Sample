@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
@@ -25,6 +24,7 @@ import '../../../widgets/lottie_animation.dart';
 import '../controllers/chat_controller.dart';
 import 'dart:math' as math;
 
+
 class ChatView extends GetView<ChatController> {
   ChatView({Key? key}) : super(key: key);
 
@@ -32,19 +32,17 @@ class ChatView extends GetView<ChatController> {
 
   late final dynamic _pickImageError;
 
-  double screenWidth = 0.0, screenHeight = 0.0;
-
   @override
   Widget build(BuildContext context) {
-    screenHeight = MediaQuery.of(context).size.height;
-    screenWidth = MediaQuery.of(context).size.width;
+    controller.screenHeight = MediaQuery.of(context).size.height;
+    controller.screenWidth = MediaQuery.of(context).size.width;
     return KeyboardDismisser(
       child: Scaffold(
           appBar: getAppBar(),
           body: SafeArea(
             child: Container(
-              width: screenWidth,
-              height: screenHeight,
+              width: controller.screenWidth,
+              height: controller.screenHeight,
               decoration: const BoxDecoration(
                 image: DecorationImage(
                   image: AssetImage("assets/logos/chat_bg.png"),
@@ -571,7 +569,7 @@ class ChatView extends GetView<ChatController> {
                           : Alignment.bottomLeft),
                       child: Container(
                         constraints:
-                            BoxConstraints(maxWidth: screenWidth * 0.75),
+                            BoxConstraints(maxWidth: controller.screenWidth * 0.75),
                         decoration: BoxDecoration(
                             borderRadius: chatList[index].isMessageSentByMe
                                 ? const BorderRadius.only(
@@ -828,8 +826,8 @@ class ChatView extends GetView<ChatController> {
                     chatMessage.mediaFileName),
               ),
               Positioned(
-                  top: (screenHeight * 0.4) / 2.5,
-                  left: (screenWidth * 0.6) / 3,
+                  top: (controller.screenHeight * 0.4) / 2.5,
+                  left: (controller.screenWidth * 0.6) / 3,
                   child: InkWell(
                       onTap: () {
                         handleMediaUploadDownload(
@@ -894,8 +892,8 @@ class ChatView extends GetView<ChatController> {
                 ),
               ),
               Positioned(
-                  top: (screenHeight * 0.4) / 2.6,
-                  left: (screenWidth * 0.6) / 2.9,
+                  top: (controller.screenHeight * 0.4) / 2.6,
+                  left: (controller.screenWidth * 0.6) / 2.9,
                   child: InkWell(
                       onTap: () {
                         handleMediaUploadDownload(
@@ -950,7 +948,7 @@ class ChatView extends GetView<ChatController> {
               borderRadius: const BorderRadius.all(Radius.circular(10)),
               color: Colors.white,
             ),
-            width: screenWidth * 0.60,
+            width: controller.screenWidth * 0.60,
             child: Column(
               children: [
                 Padding(
@@ -1043,7 +1041,7 @@ class ChatView extends GetView<ChatController> {
               borderRadius: const BorderRadius.all(Radius.circular(10)),
               color: Colors.white,
             ),
-            width: screenWidth * 0.60,
+            width: controller.screenWidth * 0.60,
             child: Column(
               children: [
                 Padding(
@@ -1117,7 +1115,7 @@ class ChatView extends GetView<ChatController> {
             borderRadius: const BorderRadius.all(Radius.circular(10)),
             color: Colors.white,
           ),
-          width: screenWidth * 0.60,
+          width: controller.screenWidth * 0.60,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -1336,7 +1334,7 @@ class ChatView extends GetView<ChatController> {
   Widget bottomSheet(BuildContext context) {
     return Container(
       height: 270,
-      width: screenWidth,
+      width: controller.screenWidth,
       margin: const EdgeInsets.only(bottom: 40),
       child: Card(
         color: bottomsheetcolor,
@@ -1566,8 +1564,8 @@ class ChatView extends GetView<ChatController> {
           },
           child: Image.file(
             File(mediaLocalStoragePath),
-            width: screenWidth * 0.60,
-            height: screenHeight * 0.4,
+            width: controller.screenWidth * 0.60,
+            height: controller.screenHeight * 0.4,
             fit: BoxFit.cover,
           ));
     } else {
@@ -2068,7 +2066,7 @@ class ChatView extends GetView<ChatController> {
       title: Text(controller.selectedChatList.length.toString()),
       actions: [
         CustomActionBarIcons(
-            availableWidth: screenWidth / 2, // half the screen width
+            availableWidth: controller.screenWidth / 2, // half the screen width
             actionWidth: 48, // default for IconButtons
             actions: [
               controller.getOptionStatus('Reply')
@@ -2253,7 +2251,7 @@ class ChatView extends GetView<ChatController> {
               width: 8,
             ),
             SizedBox(
-              width: (screenWidth) / 1.9,
+              width: (controller.screenWidth) / 1.9,
               child: InkWell(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -2269,7 +2267,7 @@ class ChatView extends GetView<ChatController> {
                                 overflow: TextOverflow.fade,
                               )
                             : SizedBox(
-                                width: (screenWidth) / 1.9,
+                                width: (controller.screenWidth) / 1.9,
                                 height: 15,
                                 child: Marquee(
                                     text: "${controller.subtitle},",
@@ -2288,7 +2286,7 @@ class ChatView extends GetView<ChatController> {
         ),
         actions: [
           CustomActionBarIcons(
-            availableWidth: screenWidth / 2, // half the screen width
+            availableWidth: controller.screenWidth / 2, // half the screen width
             actionWidth: 48, // default for IconButtons
             actions: [
               CustomAction(

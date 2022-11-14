@@ -11,7 +11,7 @@ import 'package:mirror_fly_demo/app/data/SessionManagement.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
 
 import 'package:flutter_cache_manager/flutter_cache_manager.dart' as cache;
-import '../model/groupmembers_model.dart';
+import '../model/group_members_model.dart';
 import '../nativecall/platformRepo.dart';
 import 'constants.dart';
 import 'main_controller.dart';

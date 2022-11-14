@@ -8,10 +8,12 @@ import 'package:image_picker/image_picker.dart';
 import 'package:mirror_fly_demo/app/common/widgets.dart';
 import 'package:mirror_fly_demo/app/data/SessionManagement.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
-import 'package:mirror_fly_demo/app/modules/group/controllers/groupinfo_controller.dart';
+import 'package:mirror_fly_demo/app/model/userlistModel.dart';
+import 'package:mirror_fly_demo/app/modules/group/controllers/group_info_controller.dart';
 
 import '../../../common/constants.dart';
-import '../../../model/groupmembers_model.dart';
+import '../../../model/group_members_model.dart';
+import '../../../routes/app_pages.dart';
 
 class GroupInfoView extends GetView<GroupInfoController> {
   GroupInfoView({Key? key}) : super(key: key);
@@ -138,7 +140,7 @@ class GroupInfoView extends GetView<GroupInfoController> {
                         tooltip: 'Image edit',
                         onPressed: () {
                           if (controller.isMemberOfGroup) {
-                            BottomSheetView(context);
+                            bottomSheetView(context);
                           }else{
                             toToast("You're no longer a participant in this group");
                           }
@@ -187,7 +189,7 @@ class GroupInfoView extends GetView<GroupInfoController> {
                   )),
               Obx(() {
                 return ListView.builder(
-                    physics: NeverScrollableScrollPhysics(),
+                    physics: const NeverScrollableScrollPhysics(),
                     itemCount: controller.groupMembers.length,
                     shrinkWrap: true,
                     itemBuilder: (context, index) {
@@ -234,20 +236,21 @@ class GroupInfoView extends GetView<GroupInfoController> {
               }),
             ],
           ),
-        ) //CustonScrollView
+        ),
     );
   }
 
-  showOptions(Member item) {
+  showOptions(Profile item) {
     Helper.showAlert(message: "", content: Column(
       mainAxisSize: MainAxisSize.min,
       children: [
         ListTile(title: const Text("Start Chat"), onTap: () {
+          // Get.toNamed(Routes.CHAT, arguments: item);
           Get.back();
+          Get.back(result: item);
         },),
         ListTile(title: const Text("View Info"), onTap: () {
-          Get.back();
-
+          Get.toNamed(Routes.CHAT_INFO, arguments: item);
         },),
         Visibility(visible: controller.isAdmin,
             child: ListTile(title: const Text("Remove from Group"), onTap: () {
@@ -291,7 +294,7 @@ class GroupInfoView extends GetView<GroupInfoController> {
     ));
   }
 
-  BottomSheetView(BuildContext context) {
+  bottomSheetView(BuildContext context) {
     showModalBottomSheet(
         backgroundColor: Colors.transparent,
         context: context,

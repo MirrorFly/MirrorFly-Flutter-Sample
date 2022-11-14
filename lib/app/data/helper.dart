@@ -9,7 +9,7 @@ import 'package:image_cropping/constant/strings.dart';
 import 'package:intl/intl.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
 import 'package:mirror_fly_demo/app/model/chatMessageModel.dart';
-import 'package:mirror_fly_demo/app/model/groupmembers_model.dart';
+import 'package:mirror_fly_demo/app/model/group_members_model.dart';
 import 'package:mirror_fly_demo/app/nativecall/platformRepo.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 

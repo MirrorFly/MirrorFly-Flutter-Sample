@@ -1,5 +1,6 @@
 name: mirror_fly_demo
 version: 1.0.0+1
+build_release_date: Nov 14
 publish_to: none
 description: A new Flutter project.
 environment: 
@@ -50,6 +51,9 @@ dependencies:
   flutter_switch: ^0.3.2 #switchbox
   marquee: ^2.2.0 # marquee text
   qr_code_scanner: ^1.0.1 #qr scanner
+  yaml: ^3.1.1
+  path: ^1.8.2
+  camera: ^0.10.0+4
 
 dev_dependencies: 
   flutter_lints: 2.0.1
@@ -63,6 +67,7 @@ flutter:
     - assets/countries.txt
     - assets/logos/
     - assets/animation/
+    - pubspec.yaml
 
   fonts:
     - family: sf_ui

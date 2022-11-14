@@ -71,9 +71,7 @@ class LoginController extends GetxController {
       await _auth.signInWithPhoneNumber(mobileNumber.text);
       final smsCode = otpController.toString();//await getSmsCodeFromUser(context);
 
-      if (smsCode != null) {
-        await confirmationResult.confirm(smsCode);
-      }
+      await confirmationResult.confirm(smsCode);
     } else {
       await _auth.verifyPhoneNumber(
         phoneNumber: countryCode+mobileNumber.text,
@@ -176,11 +174,11 @@ class LoginController extends GetxController {
     var userName = (countryCode+mobileNumber.text.toString()).replaceAll("+", "");
     //make api call
     PlatformRepo().verifyToken(userName,token).then((value) {
-      if (value!=null) {
+      // if (value != null) {
         validateDeviceToken(value);
-      }else{
-        hideLoading();
-      }
+      // }else{
+      //   hideLoading();
+      // }
     }).catchError((error) {
       debugPrint("issue===> $error");
       debugPrint(error.message);
@@ -235,11 +233,11 @@ class LoginController extends GetxController {
     });
   }
 
-  var verify_visible = true.obs;
+  var verifyVisible = true.obs;
   showUserAccountDeviceStatus() {
     //Already Logged Popup
     hideLoading();
-    verify_visible(false);
+    verifyVisible(false);
     Log("showUserAccountDeviceStatus", "Already Login");
     //PlatformRepo().logout();
     Helper.showAlert(message: "You have logged-in another device. Do you want to continue here?",actions: [

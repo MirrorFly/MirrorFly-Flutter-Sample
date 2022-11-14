@@ -87,7 +87,7 @@ class OtpView extends GetView<LoginController> {
                         ),
                         Obx(() {
                           return Visibility(
-                            visible: controller.verify_visible.value,
+                            visible: controller.verifyVisible.value,
                             child: ElevatedButton(
                               style: ElevatedButton.styleFrom(
                                   backgroundColor: buttonbgcolor,

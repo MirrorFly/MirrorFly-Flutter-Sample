@@ -1,15 +1,8 @@
 import 'package:get/get.dart';
-import 'package:mirror_fly_demo/app/modules/group/bindings/groupcreation_binding.dart';
-import 'package:mirror_fly_demo/app/modules/scanner/scanner_view.dart';
-import 'package:mirror_fly_demo/app/modules/scanner/webloginresult_view.dart';
-import 'package:mirror_fly_demo/app/modules/settings/views/applock/applocksettings_view.dart';
-import 'package:mirror_fly_demo/app/modules/settings/views/applock/pin_view.dart';
-import 'package:mirror_fly_demo/app/modules/settings/views/blocked/blockedlist_binding.dart';
-import 'package:mirror_fly_demo/app/modules/settings/views/blocked/blockedlist_view.dart';
-import 'package:mirror_fly_demo/app/modules/settings/views/notification/notificationsettings_view.dart';
-import 'package:mirror_fly_demo/app/modules/viewall_media/views/viewallmedia_view.dart';
 
 import '../model/userlistModel.dart';
+import '../modules/camera_pick/bindings/camera_pick_binding.dart';
+import '../modules/camera_pick/views/camera_pick_view.dart';
 import '../modules/chat/bindings/chat_binding.dart';
 import '../modules/chat/bindings/contact_binding.dart';
 import '../modules/chat/bindings/image_preview_binding.dart';
@@ -29,6 +22,7 @@ import '../modules/delete_account/bindings/delete_account_binding.dart';
 import '../modules/delete_account/views/delete_account_view.dart';
 import '../modules/delete_account_reason/bindings/delete_account_reason_binding.dart';
 import '../modules/delete_account_reason/views/delete_account_reason_view.dart';
+import '../modules/group/bindings/groupcreation_binding.dart';
 import '../modules/group/bindings/groupinfo_binding.dart';
 import '../modules/group/views/groupcreation_view.dart';
 import '../modules/group/views/groupinfo_view.dart';
@@ -50,10 +44,17 @@ import '../modules/profile/bindings/statuslist_binding.dart';
 import '../modules/profile/views/profile_view.dart';
 import '../modules/profile/views/statuslist_view.dart';
 import '../modules/scanner/scanner_binding.dart';
+import '../modules/scanner/scanner_view.dart';
+import '../modules/scanner/webloginresult_view.dart';
 import '../modules/settings/bindings/settings_binding.dart';
 import '../modules/settings/views/applock/applock_binding.dart';
+import '../modules/settings/views/applock/applocksettings_view.dart';
+import '../modules/settings/views/applock/pin_view.dart';
 import '../modules/settings/views/applock/setpin_view.dart';
+import '../modules/settings/views/blocked/blockedlist_binding.dart';
+import '../modules/settings/views/blocked/blockedlist_view.dart';
 import '../modules/settings/views/notification/notification_binding.dart';
+import '../modules/settings/views/notification/notificationsettings_view.dart';
 import '../modules/settings/views/settings_view.dart';
 import '../modules/starred_messages/bindings/starred_messages_binding.dart';
 import '../modules/starred_messages/views/starred_messages_view.dart';
@@ -62,6 +63,7 @@ import '../modules/video_preview/bindings/video_preview_binding.dart';
 import '../modules/video_preview/views/video_player_view.dart';
 import '../modules/video_preview/views/video_preview_view.dart';
 import '../modules/viewall_media/bindings/viewallmedia_binding.dart';
+import '../modules/viewall_media/views/viewallmedia_view.dart';
 
 part 'app_routes.dart';
 
@@ -73,12 +75,7 @@ class AppPages {
   static const DASHBOARD = Routes.DASHBOARD;
 
   static final routes = [
-
-    GetPage(
-        name: _Paths.OTP,
-        page: () => OtpView(),
-        binding: LoginBinding()
-    ),
+    GetPage(name: _Paths.OTP, page: () => OtpView(), binding: LoginBinding()),
     GetPage(
       name: _Paths.DASHBOARD,
       page: () => const DashboardView(),
@@ -161,7 +158,7 @@ class AppPages {
     ),
     GetPage(
       name: _Paths.SETTINGS,
-      page: () => SettingsView(),
+      page: () => const SettingsView(),
       binding: SettingsBinding(),
     ),
     GetPage(
@@ -238,6 +235,11 @@ class AppPages {
       name: _Paths.STARRED_MESSAGES,
       page: () => const StarredMessagesView(),
       binding: StarredMessagesBinding(),
+    ),
+    GetPage(
+      name: _Paths.CAMERA_PICK,
+      page: () => const CameraPickView(),
+      binding: CameraPickBinding(),
     ),
   ];
 }
