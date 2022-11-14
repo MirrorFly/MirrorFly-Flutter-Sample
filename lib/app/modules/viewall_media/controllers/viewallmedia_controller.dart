@@ -52,7 +52,7 @@ class ViewAllMediaController extends GetxController {
         callback[key]?.forEach((element) {
           Log("item", element.chatMessage.mediaChatMessage!.mediaFileName);
         });
-      };
+      }
     });
     _linklist.bindStream(_linklist.stream);
     ever(_linklist, (callback) {
@@ -63,11 +63,10 @@ class ViewAllMediaController extends GetxController {
         callback[key]?.forEach((element) {
           Log("item", element.linkMap!.toString());
         });
-      };
+      }
     });
   }
 
-  //getMediaMessages
   getMediaMessages() {
     PlatformRepo().getMediaMessages(jid).then((value) async {
       if (value != null) {
@@ -247,9 +246,9 @@ class ViewAllMediaController extends GetxController {
   }
 
   openImage(String path){
-    Get.toNamed(Routes.IMAGEPREVIEW, arguments: {
-      "filePath": path,
-      "userName": "Sent Media"
+    Get.toNamed(Routes.IMAGE_VIEW, arguments: {
+      "imagePath": path,
+      "imageName": "Sent Media"
     });
   }
 

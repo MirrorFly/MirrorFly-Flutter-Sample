@@ -202,18 +202,18 @@ class GroupInfoView extends GetView<GroupInfoController> {
               }),
               ListItem(
                 leading: SvgPicture.asset(image_outline),
-                title: Text("View All Media",
-                    style: const TextStyle(
+                title: const Text("View All Media",
+                    style: TextStyle(
                         color: Colors.black,
                         fontSize: 14,
                         fontWeight: FontWeight.w500)),
-                trailing: Icon(Icons.keyboard_arrow_right),
+                trailing: const Icon(Icons.keyboard_arrow_right),
                 onTap: ()=>controller.gotoViewAllMedia(),
               ),
               ListItem(
                 leading: SvgPicture.asset(report_group),
-                title: Text("Report Group",
-                    style: const TextStyle(
+                title: const Text("Report Group",
+                    style: TextStyle(
                         color: Colors.red,
                         fontSize: 14,
                         fontWeight: FontWeight.w500)),
@@ -247,6 +247,7 @@ class GroupInfoView extends GetView<GroupInfoController> {
         },),
         ListTile(title: const Text("View Info"), onTap: () {
           Get.back();
+
         },),
         Visibility(visible: controller.isAdmin,
             child: ListTile(title: const Text("Remove from Group"), onTap: () {

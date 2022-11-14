@@ -150,9 +150,8 @@ dependencies {
     implementation files("libs/flydatabase.aar")
     implementation files("libs/flynetwork.aar")
     implementation files("libs/videocompression.aar")
-    //implementation files("libs/flywebrtc.aar")
+    implementation files("libs/flywebrtc.aar")
     implementation files("libs/xmpp.aar")
-    //implementation files("libs/flywebrtc.aar")
 
     //For lifecycle listener
     implementation 'android.arch.lifecycle:extensions:1.1.1'

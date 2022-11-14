@@ -2,7 +2,13 @@ package com.contusdemo.mirror_fly_demo
 
 import android.app.Application
 import com.contus.flycommons.Constants
+import com.contus.flycommons.ContactType
 import com.contus.flycommons.LogMessage
+import com.contus.webrtc.GroupCallDetails
+import com.contus.webrtc.WebRtcCallService
+import com.contus.webrtc.api.CallHelper
+import com.contus.webrtc.api.CallManager
+import com.contus.webrtc.api.MissedCallListener
 /*import com.contus.webrtc.GroupCallDetails
 import com.contus.webrtc.WebRtcCallService
 import com.contus.webrtc.api.CallHelper
@@ -44,7 +50,7 @@ class MirrorFlyApplication : Application() {
             .setGroupConfiguration(groupConfiguration)
             .build()
 
-        /*//initialize call sdk
+        //initialize call sdk
         CallManager.init(this)
 //        CallManager.setCurrentUserId(SharedPreferenceManager.instance.currentUserJid)
 //        CallManager.setSignalServerUrl(BuildConfig.SIGNAL_SERVER)
@@ -64,13 +70,13 @@ class MirrorFlyApplication : Application() {
         })
 
         CallManager.setCallHelper(object : CallHelper {
-            *//*override fun getDisplayName(jid: String): String {
-                return ContactManager.getDisplayName(jid)
-            }
-
-            override fun isDeletedUser(jid: String): Boolean {
-                return ContactManager.getProfileDetails(jid)?.contactType == ContactType.DELETED_CONTACT
-            }*//*
+//            override fun getDisplayName(jid: String): String {
+//                return ContactManager.getDisplayName(jid)
+//            }
+//
+//            override fun isDeletedUser(jid: String): Boolean {
+//                return ContactManager.getProfileDetails(jid)?.contactType == ContactType.DELETED_CONTACT
+//            }
 
             override fun getNotificationContent(callDirection: String): String {
                 return callDirection
@@ -83,13 +89,13 @@ class MirrorFlyApplication : Application() {
             ) {
                 CallMessenger.sendCallMessage(details, users, invitedUsers)
             }
-
-            *//*override fun sendCallMessage(details: GroupCallDetails, users: List<String>, invitedUsers: List<String>) {
-                CallMessenger.sendCallMessage(details, users, invitedUsers)
-            }*//*
+//
+//            override fun sendCallMessage(details: GroupCallDetails, users: List<String>, invitedUsers: List<String>) {
+//                CallMessenger.sendCallMessage(details, users, invitedUsers)
+//            }
         })
 
-        ChatManager.callService = WebRtcCallService::class.java*/
+        ChatManager.callService = WebRtcCallService::class.java
 
     }
 }

@@ -995,7 +995,7 @@ class ChatView extends GetView<ChatController> {
                               Icons.star,
                               size: 13,
                             )
-                          : SizedBox.shrink(),
+                          : const SizedBox.shrink(),
                       const SizedBox(
                         width: 5,
                       ),

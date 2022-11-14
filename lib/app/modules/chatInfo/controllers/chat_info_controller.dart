@@ -5,6 +5,7 @@ import 'package:mirror_fly_demo/app/data/helper.dart';
 import '../../../common/constants.dart';
 import '../../../model/userlistModel.dart';
 import '../../../nativecall/platformRepo.dart';
+import '../../../routes/app_pages.dart';
 
 class ChatInfoController extends GetxController {
   //TODO: Implement ChatInfoController
@@ -74,5 +75,9 @@ class ChatInfoController extends GetxController {
                 child: const Text("CANCEL")),
           ]);
     });
+  }
+
+  gotoViewAllMedia(){
+    Get.toNamed(Routes.VIEW_MEDIA,arguments: {"name":profile.name,"jid":profile.jid,"isgroup":profile.isGroupProfile});
   }
 }

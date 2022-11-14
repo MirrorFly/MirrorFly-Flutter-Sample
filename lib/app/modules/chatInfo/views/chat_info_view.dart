@@ -206,7 +206,9 @@ class ChatInfoView extends GetView<ChatInfoController> {
                         fontSize: 14,
                         fontWeight: FontWeight.w500)),
                 trailing: const Icon(Icons.keyboard_arrow_right),
-                onTap: () => {} //controller.gotoViewAllMedia(),
+                onTap: () => {
+                  controller.gotoViewAllMedia()
+                } //controller.gotoViewAllMedia(),
             ),
             listItem(
                 leading: SvgPicture.asset(report_user),
