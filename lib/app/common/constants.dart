@@ -74,11 +74,11 @@ const String eye_on = 'assets/logos/eye_on.png';
 const String eye_off = 'assets/logos/eye_off.png';
 
 const String audioImg = 'assets/logos/audio.svg';
-const String documentImg = 'assets/logos/document.svg';
+const String documentImg = 'assets/logos/document_icon.svg';
 const String cameraImg = 'assets/logos/camera.svg';
-const String contactImg = 'assets/logos/contact.svg';
+const String contactImg = 'assets/logos/contact_icon.svg';
 const String galleryImg = 'assets/logos/gallery.svg';
-const String locationImg = 'assets/logos/location.svg';
+const String locationImg = 'assets/logos/location_icon.svg';
 const String rightArrow = 'assets/logos/right_arrow.svg';
 
 const String downloading = 'assets/logos/downloading.svg';
