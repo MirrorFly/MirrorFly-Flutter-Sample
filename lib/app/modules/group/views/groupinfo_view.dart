@@ -12,7 +12,6 @@ import 'package:mirror_fly_demo/app/model/userlistModel.dart';
 import 'package:mirror_fly_demo/app/modules/group/controllers/group_info_controller.dart';
 
 import '../../../common/constants.dart';
-import '../../../model/group_members_model.dart';
 import '../../../routes/app_pages.dart';
 
 class GroupInfoView extends GetView<GroupInfoController> {

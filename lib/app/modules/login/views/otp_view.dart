@@ -21,7 +21,7 @@ class OtpView extends GetView<LoginController> {
       body: SafeArea(
         child: SingleChildScrollView(
           child: Container(
-            padding: const EdgeInsets.all(12.0),
+            padding: const EdgeInsets.all(10.0),
             height: MediaQuery
                 .of(context)
                 .size
@@ -37,7 +37,7 @@ class OtpView extends GetView<LoginController> {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 30),
+                        padding: const EdgeInsets.symmetric(vertical: 20),
                         child: SvgPicture.asset(registericon),
                       ),
                       const Text(
@@ -47,7 +47,7 @@ class OtpView extends GetView<LoginController> {
                             fontSize: 20, fontWeight: FontWeight.w600),
                       ),
                       const Padding(
-                        padding: EdgeInsets.only(top: 10.0, right: 8, left: 8),
+                        padding: EdgeInsets.only(top: 8.0, right: 8, left: 8),
                         child: Text(
                           'We have sent you the SMS. To complete the registration enter the 6 digit verification code below',
                           textAlign: TextAlign.center,
@@ -83,7 +83,7 @@ class OtpView extends GetView<LoginController> {
                               controller.smsCode = (pin);
                             }),
                         const SizedBox(
-                          height: 30,
+                          height: 25,
                         ),
                         Obx(() {
                           return Visibility(
@@ -94,7 +94,7 @@ class OtpView extends GetView<LoginController> {
                                   padding: const EdgeInsets.symmetric(
                                       horizontal: 40, vertical: 10),
                                   textStyle: const TextStyle(
-                                      fontSize: 14,
+                                      fontSize: 13,
                                       fontWeight: FontWeight.w500),
                                   shape: const StadiumBorder()),
                               onPressed: () {
@@ -107,7 +107,7 @@ class OtpView extends GetView<LoginController> {
                           );
                         }),
                         const SizedBox(
-                          height: 20,
+                          height: 15,
                         ),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
