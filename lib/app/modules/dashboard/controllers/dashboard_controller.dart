@@ -13,6 +13,7 @@ import 'package:intl/intl.dart';
 
 import '../../../common/lifecycleEventHandler.dart';
 import '../../../model/chatMessageModel.dart';
+import '../../../model/checkModel.dart';
 import '../../../model/profileModel.dart';
 import '../../../routes/app_pages.dart';
 
@@ -23,7 +24,7 @@ class DashboardController extends BaseController {
   @override
   void onInit() {
     super.onInit();
-    getRecentChatlist();
+    //getRecentChatlist();
     recentchats.bindStream(recentchats.stream);
     ever(recentchats, (callback) => unReadCount());
   }
@@ -173,39 +174,6 @@ class DashboardController extends BaseController {
         if (index.isNegative) {
           recentchats.add(recent);
         } else {
-          /*var recent = recentchats.value[index];
-        //var recent = RecentChatData();
-        recent.contactType = recentMsg.contactType;
-        // recent.isAdminBlocked = recentchats.value[index].isAdminBlocked;
-        // recent.isBlocked = recentchats.value[index].isBlocked;
-        // recent.isBlockedMe = recentchats.value[index].isBlockedMe;
-        // recent.isBroadCast = recentchats.value[index].isBroadCast;
-        // recent.isChatArchived = recentchats.value[index].isChatArchived;
-        // recent.isChatPinned = recentchats.value[index].isChatPinned;
-        // recent.nickName = recentchats.value[index].nickName;
-        // recent.profileImage = recentchats.value[index].profileImage;
-        // recent.profileName = recentchats.value[index].profileName;
-        // recent.isConversationUnRead =
-        //     recentchats.value[index].isConversationUnRead;
-        // recent.isGroup = recentchats.value[index].isGroup;
-        // recent.isGroupInOfflineMode =
-        //     recentchats.value[index].isGroupInOfflineMode;
-        // recent.isLastMessageRecalledByUser =
-        //     recentchats.value[index].isLastMessageRecalledByUser;
-        // recent.isMuted = recentchats.value[index].isMuted;
-        // recent.isSelected = recentchats.value[index].isSelected;
-        recent.isItSavedContact = recentMsg.isItSavedContact;
-        recent.isLastMessageSentByMe = recentMsg.isMessageSentByMe;
-        recent.jid = recentMsg.senderUserJid;
-        recent.lastMessageContent = recentMsg.messageTextContent;
-        recent.lastMessageId = recentMsg.messageId;
-        recent.lastMessageStatus = recentMsg.messageStatus.status;
-        recent.lastMessageTime = recentMsg.messageSentTime;
-        recent.lastMessageType = recentMsg.messageType;
-        recent.unreadMessageCount = recentMsg.isMessageSentByMe
-            ? recentchats.value[index].unreadMessageCount
-            : recentchats.value[index].unreadMessageCount!=null ?
-        recentchats.value[index].unreadMessageCount! + 1 : recentchats.value[index].unreadMessageCount;*/
           recentchats.removeAt(index);
           recentchats.insert(0, recent);
         }
@@ -216,7 +184,17 @@ class DashboardController extends BaseController {
       }
       recentchats.refresh();
     });
+  }
 
+  Future<ChatMessageModel?> getMessageOfId(String mid) async{
+    var value = await PlatformRepo().getMessageOfId(mid);
+    Log("getMessageOfId recent", value.toString());
+    if(value!=null) {
+      var data = ChatMessageModel.fromJson(json.decode(value.toString()));
+      return data;
+    }else{
+      return null;
+    }
   }
 
   webLogin(){
