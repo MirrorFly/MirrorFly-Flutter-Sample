@@ -23,7 +23,7 @@ class ProfileController extends GetxController {
   TextEditingController profileName = TextEditingController();
   TextEditingController profileEmail = TextEditingController();
   TextEditingController profileMobile = TextEditingController();
-  var profileStatus = "".obs;
+  var profileStatus = "I am in Mirror Fly".obs;
   var isImageSelected = false.obs;
   var isUserProfileRemoved = false.obs;
   var imagepath = "".obs;
@@ -164,7 +164,7 @@ class ProfileController extends GetxController {
             profileName.text = data.data!.name ?? "";
             profileMobile.text = data.data!.mobileNumber ?? "";
             profileEmail.text = data.data!.email ?? "";
-            profileStatus.value = data.data!.status ?? "";
+            profileStatus.value = data.data!.status.checkNull().isNotEmpty ? data.data!.status.checkNull() : "I am in Mirror Fly";
             userImgUrl.value =
                 data.data!.image ?? SessionManagement().getUserImage() ?? "";
             changed((from.value == Routes.LOGIN));

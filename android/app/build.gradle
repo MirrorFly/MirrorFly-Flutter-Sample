@@ -227,5 +227,7 @@ dependencies {
     api 'com.google.dagger:dagger-android:2.40.5'
     api 'com.google.dagger:dagger-android-support:2.40.5'
     kapt 'com.google.dagger:dagger-android-processor:2.40.5'
+
+    implementation 'com.github.nkzawa:socket.io-client:0.6.0' // Need to add for Web qr code login
 }
 

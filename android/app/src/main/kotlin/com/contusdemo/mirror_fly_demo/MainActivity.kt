@@ -713,11 +713,12 @@ class MainActivity : FlutterActivity(), MethodChannel.MethodCallHandler,
                 result.success(true);
             }
             call.method.equals("logoutWebUser") -> {
+                UpDateWebPassword().upDatePassword();
                 val listWebLogin = call.argument<List<String>>("listWebLogin")//qrUniqeToken list
                 if(listWebLogin!=null) {
                     if (listWebLogin.isNotEmpty()) {
-                        for (i in listWebLogin.indices) {
-                            ChatManager.logoutWebUser(listWebLogin[i])
+                        for (it in listWebLogin) {
+                            ChatManager.logoutWebUser(it)
                         }
                     }
                 }
