@@ -65,9 +65,13 @@ class ChatView extends GetView<ChatController> {
                 child: Column(
                   children: [
                     Expanded(
-                      child: Obx(() {
-                        return chatListView(controller.chatList);
-                      }),
+                      child: FutureBuilder(
+                        future: controller.getChatHistory(controller.profile.jid.checkNull()),
+                          builder: (c,d){
+                        return Obx(() {
+                          return chatListView(controller.chatList);
+                        });
+                      })
                     ),
                     Align(
                       alignment: Alignment.bottomCenter,

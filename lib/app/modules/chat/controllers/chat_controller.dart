@@ -32,7 +32,8 @@ class ChatController extends BaseController
     with GetTickerProviderStateMixin {
   var chatList = List<ChatMessageModel>.empty(growable: true).obs;
   late AnimationController controller;
-  ScrollController scrollController = ScrollController();
+  ScrollController scrollController = ScrollController( initialScrollOffset: 0.0,
+    keepScrollOffset: true, );
 
   ItemScrollController searchScrollController = ItemScrollController();
 
@@ -121,7 +122,7 @@ class ChatController extends BaseController
 
     registerChatSync();
     PlatformRepo().ongoingChat(profile.jid!);
-    getChatHistory(profile.jid!);
+    //getChatHistory(profile.jid!);
     debugPrint("==================");
     debugPrint(profile.image);
     sendReadReceipt();
@@ -163,14 +164,18 @@ class ChatController extends BaseController
 
     chatList.bindStream(chatList.stream);
     ever(chatList, (callback){
-      Future.delayed(const Duration(milliseconds: 500),(){
-        if(scrollController.hasClients) {
-          scrollController.animateTo(
-            scrollController.position.maxScrollExtent,
-            duration: const Duration(milliseconds: 500),
-            curve: Curves.fastOutSlowIn,);
-        }
-      });
+
+    });
+  }
+
+  scrollToBottom(){
+    Future.delayed(const Duration(milliseconds: 500),(){
+      if(scrollController.hasClients) {
+        scrollController.animateTo(
+          scrollController.position.maxScrollExtent,
+          duration: const Duration(milliseconds: 500),
+          curve: Curves.linear,);
+      }
     });
   }
 
@@ -239,6 +244,7 @@ class ChatController extends BaseController
         isUserTyping(false);
         ChatMessageModel chatMessageModel = sendMessageModelFromJson(value);
         chatList.add(chatMessageModel);
+        scrollToBottom();
       });
     }
   }
@@ -257,6 +263,7 @@ class ChatController extends BaseController
       Log("Location_msg", value.toString());
       ChatMessageModel chatMessageModel = sendMessageModelFromJson(value);
       chatList.add(chatMessageModel);
+      scrollToBottom();
     });
   }
 
@@ -303,13 +310,16 @@ class ChatController extends BaseController
     PlatformRepo().getChatHistory(jid).then((value) {
       List<ChatMessageModel> chatMessageModel = chatMessageModelFromJson(value);
       chatList(chatMessageModel);
-      // if (scrollController.hasClients) {
-      //   scrollController.animateTo(
-      //     0.0,
-      //     curve: Curves.easeOut,
-      //     duration: const Duration(milliseconds: 300),
-      //   );
-      // }
+      Future.delayed(const Duration(milliseconds: 500),(){
+        Future.doWhile(() {
+          if (scrollController.position.extentAfter == 0)
+            return Future.value(false);
+          return scrollController
+              .animateTo(scrollController.position.maxScrollExtent,
+              duration: Duration(milliseconds: 100), curve: Curves.linear)
+              .then((value) => true);
+        });
+      });
     });
   }
 
@@ -350,7 +360,7 @@ class ChatController extends BaseController
           .then((value) {
         ChatMessageModel chatMessageModel = sendMessageModelFromJson(value);
         chatList.add(chatMessageModel);
-
+        scrollToBottom();
         return chatMessageModel;
       });
     } else {
@@ -420,6 +430,7 @@ class ChatController extends BaseController
         .then((value) {
       ChatMessageModel chatMessageModel = sendMessageModelFromJson(value);
       chatList.add(chatMessageModel);
+      scrollToBottom();
       return chatMessageModel;
     });
   }
@@ -531,6 +542,7 @@ class ChatController extends BaseController
         .then((value) {
       ChatMessageModel chatMessageModel = sendMessageModelFromJson(value);
       chatList.add(chatMessageModel);
+      scrollToBottom();
       return chatMessageModel;
     });
   }
@@ -545,6 +557,7 @@ class ChatController extends BaseController
         .then((value) {
       ChatMessageModel chatMessageModel = sendMessageModelFromJson(value);
       chatList.add(chatMessageModel);
+      scrollToBottom();
       return chatMessageModel;
     });
   }
@@ -616,6 +629,7 @@ class ChatController extends BaseController
         .then((value) {
       ChatMessageModel chatMessageModel = sendMessageModelFromJson(value);
       chatList.add(chatMessageModel);
+      scrollToBottom();
       return chatMessageModel;
     });
   }
@@ -1240,6 +1254,7 @@ class ChatController extends BaseController
     super.onMessageReceived(event);
     ChatMessageModel chatMessageModel = sendMessageModelFromJson(event);
     chatList.add(chatMessageModel);
+    scrollToBottom();
     if (isLive) {
       sendReadReceipt();
     }
@@ -1389,7 +1404,7 @@ class ChatController extends BaseController
         var str = <String>[];
         var groupsMembersProfileList = memberFromJson(value);
         for (var it in groupsMembersProfileList) {
-          if (it.jid != SessionManagement().getUserJID()) {
+          if (it.jid.checkNull() != SessionManagement().getUserJID().checkNull()) {
             str.add(it.name.checkNull());
           }
         }
