@@ -20,14 +20,14 @@ class StatusData {
   String? status;
 
   factory StatusData.fromJson(Map<String, dynamic> json) => StatusData(
-    id: json["id"] == null ? null : json["id"],
-    isCurrentStatus: json["isCurrentStatus"] == null ? null : json["isCurrentStatus"],
-    status: json["status"] == null ? null : json["status"],
+    id: json["id"],
+    isCurrentStatus: json["isCurrentStatus"],
+    status: json["status"],
   );
 
   Map<String, dynamic> toJson() => {
-    "id": id == null ? null : id,
-    "isCurrentStatus": isCurrentStatus == null ? null : isCurrentStatus,
-    "status": status == null ? null : status,
+    "id": id,
+    "isCurrentStatus": isCurrentStatus,
+    "status": status,
   };
 }

@@ -9,17 +9,16 @@ import 'package:intl/intl.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
 import 'package:mirror_fly_demo/app/data/SessionManagement.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
-import 'package:mirror_fly_demo/app/model/countryModel.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import '../data/contact_utils.dart';
+import '../data/permissions.dart';
 import '../model/chatMessageModel.dart';
 import '../nativecall/platformRepo.dart';
 
 class MainController extends GetxController {
-  var AUTHTOKEN = "".obs;
-  Rx<String> UPLOAD_ENDPOINT = "".obs;
+  var authToken = "".obs;
+  Rx<String> uploadEndpoint = "".obs;
   var calendar = DateTime.now();
   var maxDuration = 100.obs;
   var currentPos = 0.obs;
@@ -31,24 +30,24 @@ class MainController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    getMedia_endpoint();
-    UPLOAD_ENDPOINT(SessionManagement().getMediaEndPoint().checkNull());
-    AUTHTOKEN(SessionManagement().getauthToken().checkNull());
+    getMediaEndpoint();
+    uploadEndpoint(SessionManagement().getMediaEndPoint().checkNull());
+    authToken(SessionManagement().getAuthToken().checkNull());
     getAuthToken();
   }
 
-  getMedia_endpoint() async {
+  getMediaEndpoint() async {
     if (SessionManagement()
         .getMediaEndPoint()
         .checkNull()
         .isEmpty) {
-      PlatformRepo().media_endpoint().then((value) {
+      PlatformRepo().mediaEndPoint().then((value) {
         Log("media_endpoint", value);
         if (value.isNotEmpty) {
-          UPLOAD_ENDPOINT(value);
+          uploadEndpoint(value);
           SessionManagement.setMediaEndPoint(value);
         } else {
-          UPLOAD_ENDPOINT(SessionManagement().getMediaEndPoint().checkNull());
+          uploadEndpoint(SessionManagement().getMediaEndPoint().checkNull());
         }
       });
     }
@@ -63,13 +62,13 @@ class MainController extends GetxController {
             .getPassword()
             .checkNull()
             .isNotEmpty) {
-      await PlatformRepo().authtoken().then((value) {
+      await PlatformRepo().authToken().then((value) {
         Log("RetryAuth", value);
         if (value.isNotEmpty) {
-          AUTHTOKEN(value);
-          SessionManagement.setAuthtoken(value);
+          authToken(value);
+          SessionManagement.setAuthToken(value);
         } else {
-          AUTHTOKEN(SessionManagement().getauthToken().checkNull());
+          authToken(SessionManagement().getAuthToken().checkNull());
         }
         update();
       });
@@ -122,7 +121,7 @@ class MainController extends GetxController {
     // Time part has
     // discarded
     var yesterday = (day == Constants.YESTERDAY)
-        ? calendar.subtract(Duration(days: 1))
+        ? calendar.subtract(const Duration(days: 1))
         : DateTime.now();
     return yesterday
         .difference(calendar)
@@ -199,7 +198,7 @@ class MainController extends GetxController {
         );
       });
     } else {
-      debugPrint("media doesnot exist");
+      debugPrint("media does not exist");
     }
     // }
   }
@@ -211,7 +210,7 @@ class MainController extends GetxController {
   }
 
   Future<bool> askStoragePermission() async {
-    final permission = await ContactUtils.getStoragePermission();
+    final permission = await AppPermission.getStoragePermission();
     switch (permission) {
       case PermissionStatus.granted:
         return true;
@@ -227,7 +226,6 @@ class MainController extends GetxController {
     if (!isPlaying.value && !audioPlayed.value) {
       int result = await player.play(filePath, isLocal: true);
       if (result == 1) {
-        //play success
 
         isPlaying(true);
         audioPlayed(true);
@@ -237,7 +235,6 @@ class MainController extends GetxController {
     } else if (audioPlayed.value && !isPlaying.value) {
       int result = await player.resume();
       if (result == 1) {
-        //resume success
 
         isPlaying(true);
         audioPlayed(true);
@@ -247,7 +244,6 @@ class MainController extends GetxController {
     } else {
       int result = await player.pause();
       if (result == 1) {
-        //pause success
 
         isPlaying(false);
       } else {

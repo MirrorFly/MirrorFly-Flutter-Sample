@@ -1,12 +1,12 @@
 import 'dart:math';
 
 import 'package:camera/camera.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 
 class CameraPickController extends GetxController {
 
   late CameraController cameraController;
-  // late Future<void> cameraValue;
   var cameraInitialized = false.obs;
   var isRecording = false.obs;
   var flash = false.obs;
@@ -39,6 +39,7 @@ class CameraPickController extends GetxController {
 
   Future<void> takePhoto(context) async {
     XFile file = await cameraController.takePicture();
+    debugPrint(file.mimeType);
   }
 
   void toggleCamera() {

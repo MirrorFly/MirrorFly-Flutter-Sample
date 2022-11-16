@@ -1,7 +1,6 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
 
 import '../common/constants.dart';
@@ -33,7 +32,7 @@ class PlatformRepo {
   static const EventChannel onGroupDeletedLocally_channel = EventChannel('contus.mirrorfly/onGroupDeletedLocally');
 
 
-  Future<String> media_endpoint() async {
+  Future<String> mediaEndPoint() async {
     String? response = "";
     try {
       response = await mirrorFlyMethodChannel
@@ -65,12 +64,12 @@ class PlatformRepo {
     }
   }
 
-  Future<String> authtoken() async {
+  Future<String> authToken() async {
     String? registerResponse = "";
     try {
       registerResponse = await mirrorFlyMethodChannel
           .invokeMethod<String>('authtoken');
-      debugPrint("authtoken Result ==> $registerResponse");
+      debugPrint("authToken Result ==> $registerResponse");
 
       return registerResponse.checkNull();
     } on PlatformException catch (e) {
@@ -129,11 +128,11 @@ class PlatformRepo {
     }
   }
 
-  Future<dynamic> sendTextMessage(String message, String JID, String replyMessageId) async {
+  Future<dynamic> sendTextMessage(String message, String jid, String replyMessageId) async {
     dynamic messageResp;
     try {
       messageResp = await mirrorFlyMethodChannel
-          .invokeMethod('send_text_msg', {"message": message, "JID": JID, "replyMessageId" : replyMessageId});
+          .invokeMethod('send_text_msg', {"message": message, "JID": jid, "replyMessageId" : replyMessageId});
       debugPrint("Message Result ==> $messageResp");
       return messageResp;
     } on PlatformException catch (e) {
@@ -145,11 +144,11 @@ class PlatformRepo {
     }
   }
 
-  Future<dynamic> sentLocationMessage(String JID,double latitude,double longitude, String replyMessageId) async {
+  Future<dynamic> sentLocationMessage(String jid,double latitude,double longitude, String replyMessageId) async {
     dynamic messageResp;
     try {
       messageResp = await mirrorFlyMethodChannel
-          .invokeMethod('sentLocationMessage', {"jid": JID,"latitude":latitude,"longitude":longitude, "replyMessageId" : replyMessageId});
+          .invokeMethod('sentLocationMessage', {"jid": jid,"latitude":latitude,"longitude":longitude, "replyMessageId" : replyMessageId});
       debugPrint("Message Result ==> $messageResp");
       return messageResp;
     } on PlatformException catch (e) {
@@ -215,13 +214,13 @@ class PlatformRepo {
     dynamic messageResp;
     try {
       messageResp = await mirrorFlyMethodChannel.invokeMethod('get_user_list');
-      debugPrint("Userlist Result ==> $messageResp");
+      debugPrint("User list Result ==> $messageResp");
       return messageResp;
     } on PlatformException catch (e) {
-      debugPrint("Userlist Exception ===> $e");
+      debugPrint("User list Exception ===> $e");
       rethrow;
     } on Exception catch (error) {
-      debugPrint("Userlist Exception ==> $error");
+      debugPrint("User list Exception ==> $error");
       rethrow;
     }
   }
@@ -272,9 +271,9 @@ class PlatformRepo {
   }
 
   Future<dynamic> saveProfile(String name, String email) async {
-    var re;
+    dynamic result;
     try {
-      final result =
+      result =
       await mirrorFlyMethodChannel.invokeMethod("updateProfile", {
         "name": name,
         "email": email,
@@ -283,7 +282,7 @@ class PlatformRepo {
       return result;
     } on PlatformException catch (e) {
       Log("er",e.toString());
-      return re;
+      return result;
     }
   }
 
@@ -291,7 +290,7 @@ class PlatformRepo {
     var re = "";
     try {
       final result = await mirrorFlyMethodChannel
-          .invokeMethod("sentfile", {"file": file, "jid": jid, "message": ""});
+          .invokeMethod("sent file", {"file": file, "jid": jid, "message": ""});
       Log('RESULT', '$result');
       return result;
     } on PlatformException catch (e) {
@@ -344,11 +343,11 @@ class PlatformRepo {
   void insertDefaultStatusToUser() async{
     try {
       await mirrorFlyMethodChannel.invokeMethod('getStatusList').then((value) {
-        Log("statuslist", "$value");
+        Log("status list", "$value");
         if (value != null) {
           var profileStatus = statusDataFromJson(value);
           if (profileStatus.isNotEmpty) {
-            var defaultStatus = Constants.defaultStatuslist;
+            var defaultStatus = Constants.defaultStatusList;
             for (var statusValue in defaultStatus) {
               var isStatusNotExist = true;
               for (var flyStatus in profileStatus) {
@@ -360,22 +359,22 @@ class PlatformRepo {
                 PlatformRepo().insertStatus(statusValue);
               }
             }
-            SessionManagement.vibration_type("0");
+            SessionManagement.vibrationType("0");
             PlatformRepo().getRingtoneName(null).then((value) {
               if (value != null) {
-                SessionManagement.setNotification_uri(value);
+                SessionManagement.setNotificationUri(value);
               }
             });
-            SessionManagement.conv_sound(true);
-            SessionManagement.mute_all( false);
+            SessionManagement.convSound(true);
+            SessionManagement.muteAll( false);
           }else{
-            var defaultStatus = Constants.defaultStatuslist;
-            defaultStatus.forEach((statusValue) {
+            var defaultStatus = Constants.defaultStatusList;
+            for (var statusValue in defaultStatus) {
               PlatformRepo().insertStatus(statusValue);
-            });
+            }
             PlatformRepo().getRingtoneName(null).then((value) {
               if (value != null) {
-                SessionManagement.setNotification_uri(value);
+                SessionManagement.setNotificationUri(value);
               }
             });
           }
@@ -783,10 +782,10 @@ class PlatformRepo {
     }
   }
 
-  Future<dynamic> reportChatOrUser(String jid, String chatType, String? MessageId) async {
+  Future<dynamic> reportChatOrUser(String jid, String chatType, String? messageId) async {
     dynamic reportResponse;
     try {
-      reportResponse = await mirrorFlyMethodChannel.invokeMethod('report_chat',{ "jid" : jid, "chat_type" : chatType, "selectedMessageID" : MessageId});
+      reportResponse = await mirrorFlyMethodChannel.invokeMethod('report_chat',{ "jid" : jid, "chat_type" : chatType, "selectedMessageID" : messageId});
       debugPrint("clear chat Response ==> $reportResponse");
       return reportResponse;
     }on PlatformException catch (e){

@@ -1,21 +1,15 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_profile_picture/flutter_profile_picture.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:focus_detector/focus_detector.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
-import 'package:mirror_fly_demo/app/enums/message_enum.dart';
-import 'package:mirror_fly_demo/app/model/recentchat.dart';
-import 'package:mirror_fly_demo/app/modules/chat/views/contactlist_view.dart';
+import 'package:mirror_fly_demo/app/model/recent_chat.dart';
 
 import '../../../common/widgets.dart';
-import '../../../model/checkModel.dart';
 import '../../../routes/app_pages.dart';
 import '../../../widgets/custom_action_bar_icons.dart';
 import '../../dashboard/controllers/dashboard_controller.dart';
-import '../../scanner/webloginresult_view.dart';
 
 class DashboardView extends GetView<DashboardController> {
   const DashboardView({Key? key}) : super(key: key);
@@ -26,7 +20,7 @@ class DashboardView extends GetView<DashboardController> {
   Widget build(BuildContext context) {
     return FocusDetector(
       onFocusGained: () {
-        controller.getRecentChatlist();
+        controller.getRecentChatList();
         controller.initListeners();
       },
       child: DefaultTabController(
@@ -40,11 +34,11 @@ class DashboardView extends GetView<DashboardController> {
                 unselectedLabelColor: appbartextcolor,
                 tabs: [
                   Obx(() {
-                    return TabItem(
+                    return tabItem(
                         title: "CHATS",
-                        count: controller.unreadcount.toString());
+                        count: controller.unreadCount.toString());
                   }),
-                  TabItem(title: "CALLS", count: "0")
+                  tabItem(title: "CALLS", count: "0")
                 ]),
             actions: [
               IconButton(
@@ -56,7 +50,7 @@ class DashboardView extends GetView<DashboardController> {
                 ),
                 onPressed: () {
                   Get.toNamed(Routes.RECENTSEARCH,
-                      arguments: {"recents": controller.recentchats});
+                      arguments: {"recents": controller.recentChats});
                 },
               ),
               CustomActionBarIcons(
@@ -67,7 +61,7 @@ class DashboardView extends GetView<DashboardController> {
                   CustomAction(
                     visibleWidget: const Icon(Icons.group_add),
                     overflowWidget: const Text("New Group     "),
-                    showAsAction: ShowAsAction.NEVER,
+                    showAsAction: ShowAsAction.never,
                     keyValue: 'New Group',
                     onItemClick: () {
                       Future.delayed(const Duration(milliseconds: 100),
@@ -77,7 +71,7 @@ class DashboardView extends GetView<DashboardController> {
                   CustomAction(
                     visibleWidget: const Icon(Icons.settings),
                     overflowWidget: const Text("Settings"),
-                    showAsAction: ShowAsAction.NEVER,
+                    showAsAction: ShowAsAction.never,
                     keyValue: 'Settings',
                     onItemClick: () {
                       Future.delayed(const Duration(milliseconds: 100),
@@ -87,7 +81,7 @@ class DashboardView extends GetView<DashboardController> {
                   CustomAction(
                     visibleWidget: const Icon(Icons.web),
                     overflowWidget: const Text("Web"),
-                    showAsAction: ShowAsAction.NEVER,
+                    showAsAction: ShowAsAction.never,
                     keyValue: 'Web',
                     onItemClick: () => controller.webLogin(),
                   )
@@ -112,13 +106,13 @@ class DashboardView extends GetView<DashboardController> {
               fit: BoxFit.contain,
             ),
           ),
-          body: TabBarView(children: [ChatView(context), SizedBox()]),
+          body: TabBarView(children: [chatView(context), const SizedBox()]),
         ),
       ),
     );
   }
 
-  Widget TabItem({required String title, required String count}) {
+  Widget tabItem({required String title, required String count}) {
     return Padding(
       padding: const EdgeInsets.all(12.0),
       child: Row(
@@ -126,7 +120,7 @@ class DashboardView extends GetView<DashboardController> {
         children: [
           Text(
             title,
-            style: TextStyle(fontWeight: FontWeight.w700, fontSize: 15),
+            style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 15),
           ),
           count != "0"
               ? Padding(
@@ -142,27 +136,26 @@ class DashboardView extends GetView<DashboardController> {
                     ),
                   ),
                 )
-              : SizedBox.shrink()
+              : const SizedBox.shrink()
         ],
       ),
     );
   }
 
-  Stack ChatView(BuildContext context) {
+  Stack chatView(BuildContext context) {
     return Stack(
       children: [
         FutureBuilder(
-            future: controller.getRecentChatlist(),
+            future: controller.getRecentChatList(),
             builder: (c, d) {
               return Obx(
-                () => controller.recentchats.isNotEmpty
+                () => controller.recentChats.isNotEmpty
                     ? ListView.builder(
-                        itemCount: controller.recentchats.length,
-                        physics: AlwaysScrollableScrollPhysics(),
+                        itemCount: controller.recentChats.length,
+                        physics: const AlwaysScrollableScrollPhysics(),
                         itemBuilder: (BuildContext context, int index) {
-                          var item = controller.recentchats[index];
-                          //var image = controller.imagepath(item.profileImage);
-                          return RecentChatItem(item, context);
+                          var item = controller.recentChats[index];
+                          return recentChatItem(item, context);
                         })
                     : Center(
                         child: Column(
@@ -195,7 +188,7 @@ class DashboardView extends GetView<DashboardController> {
     );
   }
 
-  Widget RecentChatItem(RecentChatData item, BuildContext context) {
+  Widget recentChatItem(RecentChatData item, BuildContext context) {
     return InkWell(
       child: Row(
         children: [
@@ -208,7 +201,7 @@ class DashboardView extends GetView<DashboardController> {
                     url: item.profileImage.toString(),
                     width: 48,
                     height: 48,
-                    clipoval: true,
+                    clipOval: true,
                     errorWidget: item.isGroup!
                         ? ClipOval(
                             child: Image.asset(
@@ -341,7 +334,7 @@ class DashboardView extends GetView<DashboardController> {
                       ),
                     ],
                   ),
-                  AppDivider(
+                  const AppDivider(
                     padding: EdgeInsets.only(top: 8),
                   )
                 ],

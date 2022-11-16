@@ -1,6 +1,6 @@
 import 'package:get/get.dart';
 
-import '../model/userlistModel.dart';
+import '../model/userListModel.dart';
 import '../modules/camera_pick/bindings/camera_pick_binding.dart';
 import '../modules/camera_pick/views/camera_pick_view.dart';
 import '../modules/chat/bindings/chat_binding.dart';
@@ -9,30 +9,30 @@ import '../modules/chat/bindings/image_preview_binding.dart';
 import '../modules/chat/bindings/location_binding.dart';
 import '../modules/chat/views/chat_search_view.dart';
 import '../modules/chat/views/chat_view.dart';
-import '../modules/chat/views/contactlist_view.dart';
+import '../modules/chat/views/contact_list_view.dart';
 import '../modules/chat/views/image_preview_view.dart';
-import '../modules/chat/views/locationsent_view.dart';
+import '../modules/chat/views/location_sent_view.dart';
 import '../modules/chatInfo/bindings/chat_info_binding.dart';
 import '../modules/chatInfo/views/chat_info_view.dart';
 import '../modules/dashboard/bindings/dashboard_binding.dart';
-import '../modules/dashboard/bindings/recentssearch_binding.dart';
+import '../modules/dashboard/bindings/recent_search_binding.dart';
 import '../modules/dashboard/views/dashboard_view.dart';
 import '../modules/dashboard/views/recent_search_view.dart';
 import '../modules/delete_account/bindings/delete_account_binding.dart';
 import '../modules/delete_account/views/delete_account_view.dart';
 import '../modules/delete_account_reason/bindings/delete_account_reason_binding.dart';
 import '../modules/delete_account_reason/views/delete_account_reason_view.dart';
-import '../modules/group/bindings/groupcreation_binding.dart';
-import '../modules/group/bindings/groupinfo_binding.dart';
-import '../modules/group/views/groupcreation_view.dart';
-import '../modules/group/views/groupinfo_view.dart';
+import '../modules/group/bindings/group_creation_binding.dart';
+import '../modules/group/bindings/group_info_binding.dart';
+import '../modules/group/views/group_creation_view.dart';
+import '../modules/group/views/group_info_view.dart';
 import '../modules/image_view/bindings/image_view_binding.dart';
 import '../modules/image_view/views/image_view_view.dart';
 import '../modules/local_contact/bindings/local_contact_binding.dart';
 import '../modules/local_contact/views/local_contact_view.dart';
 import '../modules/login/bindings/country_binding.dart';
 import '../modules/login/bindings/login_binding.dart';
-import '../modules/login/views/countrylist_view.dart';
+import '../modules/login/views/country_list_view.dart';
 import '../modules/login/views/login_view.dart';
 import '../modules/login/views/otp_view.dart';
 import '../modules/message_info/bindings/message_info_binding.dart';
@@ -40,30 +40,30 @@ import '../modules/message_info/views/message_info_view.dart';
 import '../modules/preview_contact/bindings/preview_contact_binding.dart';
 import '../modules/preview_contact/views/preview_contact_view.dart';
 import '../modules/profile/bindings/profile_binding.dart';
-import '../modules/profile/bindings/statuslist_binding.dart';
+import '../modules/profile/bindings/status_list_binding.dart';
 import '../modules/profile/views/profile_view.dart';
-import '../modules/profile/views/statuslist_view.dart';
+import '../modules/profile/views/status_list_view.dart';
 import '../modules/scanner/scanner_binding.dart';
 import '../modules/scanner/scanner_view.dart';
-import '../modules/scanner/webloginresult_view.dart';
+import '../modules/scanner/web_login_result_view.dart';
 import '../modules/settings/bindings/settings_binding.dart';
-import '../modules/settings/views/applock/applock_binding.dart';
-import '../modules/settings/views/applock/applocksettings_view.dart';
-import '../modules/settings/views/applock/pin_view.dart';
-import '../modules/settings/views/applock/setpin_view.dart';
-import '../modules/settings/views/blocked/blockedlist_binding.dart';
-import '../modules/settings/views/blocked/blockedlist_view.dart';
+import '../modules/settings/views/app_lock/app_lock_binding.dart';
+import '../modules/settings/views/app_lock/app_lock_settings_view.dart';
+import '../modules/settings/views/app_lock/pin_view.dart';
+import '../modules/settings/views/app_lock/set_pin_view.dart';
+import '../modules/settings/views/blocked/blocked_list_binding.dart';
+import '../modules/settings/views/blocked/blocked_list_view.dart';
 import '../modules/settings/views/notification/notification_binding.dart';
-import '../modules/settings/views/notification/notificationsettings_view.dart';
+import '../modules/settings/views/notification/notification_settings_view.dart';
 import '../modules/settings/views/settings_view.dart';
 import '../modules/starred_messages/bindings/starred_messages_binding.dart';
 import '../modules/starred_messages/views/starred_messages_view.dart';
-import '../modules/video_preview/bindings/VideoPlayBinding.dart';
+import '../modules/video_preview/bindings/video_play_binding.dart';
 import '../modules/video_preview/bindings/video_preview_binding.dart';
 import '../modules/video_preview/views/video_player_view.dart';
 import '../modules/video_preview/views/video_preview_view.dart';
-import '../modules/viewall_media/bindings/viewallmedia_binding.dart';
-import '../modules/viewall_media/views/viewallmedia_view.dart';
+import '../modules/view_all_media/bindings/view_all_media_binding.dart';
+import '../modules/view_all_media/views/view_all_media_view.dart';
 
 part 'app_routes.dart';
 
@@ -75,7 +75,7 @@ class AppPages {
   static const DASHBOARD = Routes.DASHBOARD;
 
   static final routes = [
-    GetPage(name: _Paths.OTP, page: () => OtpView(), binding: LoginBinding()),
+    GetPage(name: _Paths.OTP, page: () => const OtpView(), binding: LoginBinding()),
     GetPage(
       name: _Paths.DASHBOARD,
       page: () => const DashboardView(),
@@ -83,12 +83,12 @@ class AppPages {
     ),
     GetPage(
       name: _Paths.SCANNER,
-      page: () => ScannerView(),
+      page: () => const ScannerView(),
       binding: ScannerBinding(),
     ),
     GetPage(
       name: _Paths.WEBLOGINRESULT,
-      page: () => WebLoginResultView(),
+      page: () => const WebLoginResultView(),
       binding: ScannerBinding(),
     ),
     GetPage(
@@ -103,7 +103,7 @@ class AppPages {
     ),
     GetPage(
       name: _Paths.VIEW_MEDIA,
-      page: () => ViewAllMediaView(),
+      page: () => const ViewAllMediaView(),
       binding: ViewAllMediaBinding(),
     ),
     GetPage(
@@ -139,7 +139,7 @@ class AppPages {
     ),
     GetPage(
       name: _Paths.CHATSEARCH,
-      page: () => ChatSearchView(),
+      page: () => const ChatSearchView(),
     ),
     GetPage(
       name: _Paths.LOCATIONSENT,
@@ -163,37 +163,37 @@ class AppPages {
     ),
     GetPage(
       name: _Paths.BLOCKEDLIST,
-      page: () => BlockedListView(),
+      page: () => const BlockedListView(),
       binding: BlockedListBinding(),
     ),
     GetPage(
       name: _Paths.NOTIFICATION,
-      page: () => NotificationSettingsView(),
+      page: () => const NotificationSettingsView(),
       binding: NotificationBinding(),
     ),
     GetPage(
       name: _Paths.APPLOCK,
-      page: () => AppLockSettingsView(),
+      page: () => const AppLockSettingsView(),
       binding: AppLockBinding(),
     ),
     GetPage(
       name: _Paths.PIN,
-      page: () => PinView(),
+      page: () => const PinView(),
       binding: AppLockBinding(),
     ),
     GetPage(
       name: _Paths.SET_PIN,
-      page: () => SetPinView(),
+      page: () => const SetPinView(),
       binding: AppLockBinding(),
     ),
     GetPage(
       name: _Paths.VIDEO_PREVIEW,
-      page: () => VideoPreviewView(),
+      page: () => const VideoPreviewView(),
       binding: VideoPreviewBinding(),
     ),
     GetPage(
       name: _Paths.VIDEO_PLAY,
-      page: () => VideoPlayerView(),
+      page: () => const VideoPlayerView(),
       binding: VideoPlayBinding(),
     ),
     GetPage(

@@ -14,14 +14,11 @@ import android.os.Build.VERSION.SDK_INT
 import android.util.Base64
 import android.webkit.MimeTypeMap
 import android.widget.Toast
-import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.core.view.WindowCompat
 import com.contus.flycommons.*
-import com.contus.flycommons.SharedPreferenceManager.Companion.NOTIFICATION_URI
-import com.contus.xmpp.chat.models.CreateGroupModel
-import com.contus.flynetwork.ApiCalls
 import com.contus.flynetwork.model.verifyfcm.VerifyFcmResponse
+import com.contus.xmpp.chat.models.CreateGroupModel
 import com.contus.xmpp.chat.models.Profile
 import com.contusflysdk.AppUtils
 import com.contusflysdk.api.*
@@ -35,11 +32,9 @@ import com.contusflysdk.api.models.ChatMessageStatusDetail
 import com.contusflysdk.api.network.FlyNetwork
 import com.contusflysdk.api.notification.PushNotificationManager
 import com.contusflysdk.media.MediaUploadHelper
-import com.contusflysdk.utils.MediaUtils
 import com.contusflysdk.utils.ThumbSize
 import com.contusflysdk.utils.UpDateWebPassword
 import com.contusflysdk.utils.VideoRecUtils
-import com.contusflysdk.views.CustomToast
 import com.google.gson.Gson
 import io.flutter.Log
 import io.flutter.embedding.android.FlutterActivity
@@ -52,11 +47,7 @@ import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.FileWriter
 import java.io.IOException
-import java.net.URL
-import java.text.DateFormatSymbols
 import java.util.*
-import kotlin.collections.ArrayList
-import kotlin.collections.HashMap
 
 
 class MainActivity : FlutterActivity(), MethodChannel.MethodCallHandler,
@@ -96,7 +87,7 @@ class MainActivity : FlutterActivity(), MethodChannel.MethodCallHandler,
     override fun onCreate(savedInstanceState: Bundle?) {
         WindowCompat.setDecorFitsSystemWindows(window, false)
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+        if (SDK_INT >= Build.VERSION_CODES.S) {
             splashScreen.setOnExitAnimationListener { splashScreenView -> splashScreenView.remove() }
         }
 
@@ -339,16 +330,16 @@ class MainActivity : FlutterActivity(), MethodChannel.MethodCallHandler,
         ChatEventsManager.attachGroupEventsListener(object : GroupEventsListener {
 
             override fun onGroupProfileFetched(groupJid: String) {
-                onGroupProfileFetchedStreamHandler.onGroupProfileFetched?.success(groupJid);
+                onGroupProfileFetchedStreamHandler.onGroupProfileFetched?.success(groupJid)
             }
 
             override fun onNewGroupCreated(groupJid: String) {
-                onNewGroupCreatedStreamHandler.onNewGroupCreated?.success(groupJid);
+                onNewGroupCreatedStreamHandler.onNewGroupCreated?.success(groupJid)
             }
 
             override fun onGroupProfileUpdated(groupJid: String) {
-                Log.e("our GroupProfileUpdated", groupJid);
-                onGroupProfileUpdatedStreamHandler.onGroupProfileUpdated?.success(groupJid);
+                Log.e("our GroupProfileUpdated", groupJid)
+                onGroupProfileUpdatedStreamHandler.onGroupProfileUpdated?.success(groupJid)
             }
 
             override fun onNewMemberAddedToGroup(
@@ -360,7 +351,7 @@ class MainActivity : FlutterActivity(), MethodChannel.MethodCallHandler,
                 map.put("groupJid", groupJid)
                 map.put("newMemberJid", newMemberJid)
                 map.put("addedByMemberJid", addedByMemberJid)
-                onNewMemberAddedToGroupStreamHandler.onNewMemberAddedToGroup?.success(map.toString());
+                onNewMemberAddedToGroupStreamHandler.onNewMemberAddedToGroup?.success(map.toString())
             }
 
             override fun onMemberRemovedFromGroup(
@@ -372,23 +363,23 @@ class MainActivity : FlutterActivity(), MethodChannel.MethodCallHandler,
                 map.put("groupJid", groupJid)
                 map.put("removedMemberJid", removedMemberJid)
                 map.put("removedByMemberJid", removedByMemberJid)
-                onMemberRemovedFromGroupStreamHandler.onMemberRemovedFromGroup?.success(map.toString());
+                onMemberRemovedFromGroupStreamHandler.onMemberRemovedFromGroup?.success(map.toString())
             }
 
             override fun onFetchingGroupMembersCompleted(groupJid: String) {
                 onFetchingGroupMembersCompletedStreamHandler.onFetchingGroupMembersCompleted?.success(
                     groupJid
-                );
+                )
             }
 
             override fun onDeleteGroup(groupJid: String) {
-                onDeleteGroupStreamHandler.onDeleteGroup?.success(groupJid);
+                onDeleteGroupStreamHandler.onDeleteGroup?.success(groupJid)
             }
 
             override fun onFetchingGroupListCompleted(noOfGroups: Int) {
                 onFetchingGroupListCompletedStreamHandler.onFetchingGroupListCompleted?.success(
                     noOfGroups
-                );
+                )
             }
 
             override fun onMemberMadeAsAdmin(
@@ -400,7 +391,7 @@ class MainActivity : FlutterActivity(), MethodChannel.MethodCallHandler,
                 map.put("groupJid", groupJid)
                 map.put("newAdminMemberJid", newAdminMemberJid)
                 map.put("madeByMemberJid", madeByMemberJid)
-                onMemberMadeAsAdminStreamHandler.onMemberMadeAsAdmin?.success(map.toString());
+                onMemberMadeAsAdminStreamHandler.onMemberMadeAsAdmin?.success(map.toString())
             }
 
             override fun onMemberRemovedAsAdmin(
@@ -412,22 +403,22 @@ class MainActivity : FlutterActivity(), MethodChannel.MethodCallHandler,
                 map.put("groupJid", groupJid)
                 map.put("removedAdminMemberJid", removedAdminMemberJid)
                 map.put("removedByMemberJid", removedByMemberJid)
-                onMemberRemovedAsAdminStreamHandler.onMemberRemovedAsAdmin?.success(map.toString());
+                onMemberRemovedAsAdminStreamHandler.onMemberRemovedAsAdmin?.success(map.toString())
             }
 
             override fun onLeftFromGroup(groupJid: String, leftUserJid: String) {
                 val map = JSONObject()
                 map.put("groupJid", groupJid)
                 map.put("leftUserJid", leftUserJid)
-                onLeftFromGroupStreamHandler.onLeftFromGroup?.success(map.toString());
+                onLeftFromGroupStreamHandler.onLeftFromGroup?.success(map.toString())
             }
 
             override fun onGroupNotificationMessage(message: ChatMessage) {
-                onGroupNotificationMessageStreamHandler.onGroupNotificationMessage?.success(message.tojsonString());
+                onGroupNotificationMessageStreamHandler.onGroupNotificationMessage?.success(message.tojsonString())
             }
 
             override fun onGroupDeletedLocally(groupJid: String) {
-                onGroupDeletedLocallyStreamHandler.onGroupDeletedLocally?.success(groupJid);
+                onGroupDeletedLocallyStreamHandler.onGroupDeletedLocally?.success(groupJid)
             }
 
         })
@@ -476,7 +467,7 @@ class MainActivity : FlutterActivity(), MethodChannel.MethodCallHandler,
                 updateProfileImage(call, result)
             }
             call.method.equals("removeProfileImage") -> {
-                removeProfileImage(call, result)
+                removeProfileImage(result)
             }
             call.method.equals("updateProfileStatus") -> {
                 updateProfileStatus(call, result)
@@ -506,7 +497,7 @@ class MainActivity : FlutterActivity(), MethodChannel.MethodCallHandler,
                 sendMediaMessage(call, result)
             }
             call.method.equals("logout") -> {
-                logoutChatSDK(call, result)
+                logoutChatSDK(result)
             }
             call.method.equals("ongoing_chat") -> {
                 val userJID =
@@ -551,7 +542,7 @@ class MainActivity : FlutterActivity(), MethodChannel.MethodCallHandler,
                 sendaudioMessage(call, result)
             }
             call.method.equals("filteredRecentChatList") -> {
-                filterRecentChatList(call, result)
+                filterRecentChatList(result)
             }
             call.method.equals("filteredMessageList") -> {
                 filterMessageList(call, result)
@@ -601,10 +592,10 @@ class MainActivity : FlutterActivity(), MethodChannel.MethodCallHandler,
             }
             call.method.equals("exportChat") -> {
                 val jid = call.argument<String?>("jid") ?: ""
-                FlyCore.exportChatConversationToEmail(jid, emptyList());
+                FlyCore.exportChatConversationToEmail(jid, emptyList())
             }
             call.method.equals("get_message_using_ids") -> {
-                getMessageUsingIds(call, result)
+//                getMessageUsingIds(call, result)
             }
             call.method.equals("verifyToken") -> {
                 verifyToken(call, result)
@@ -705,24 +696,22 @@ class MainActivity : FlutterActivity(), MethodChannel.MethodCallHandler,
                 showCustomTones(call, result)
             }
             call.method.equals("getWebLoginDetails") -> {
-                val details = WebLoginDataManager.getWebLoginDetails();
-                result.success(details.tojsonString());
+                val details = WebLoginDataManager.getWebLoginDetails()
+                result.success(details.tojsonString())
             }
             call.method.equals("webLoginDetailsCleared") -> {
-                WebLoginDataManager.webLoginDetailsCleared();
-                result.success(true);
+                WebLoginDataManager.webLoginDetailsCleared()
+                result.success(true)
             }
             call.method.equals("logoutWebUser") -> {
-                UpDateWebPassword().upDatePassword();
+                UpDateWebPassword().upDatePassword()
                 val listWebLogin = call.argument<List<String>>("listWebLogin")//qrUniqeToken list
-                if(listWebLogin!=null) {
-                    if (listWebLogin.isNotEmpty()) {
-                        for (it in listWebLogin) {
-                            ChatManager.logoutWebUser(it)
-                        }
+                if(listWebLogin!=null && listWebLogin.isNotEmpty()) {
+                    for (it in listWebLogin) {
+                        ChatManager.logoutWebUser(it)
                     }
                 }
-                result.success(true);
+                result.success(true)
             }
             call.method.equals("getRingtoneName") -> {
                 val uri = call.argument<String>("ringtone_uri")
@@ -742,9 +731,9 @@ class MainActivity : FlutterActivity(), MethodChannel.MethodCallHandler,
     }
 
     private fun getFavouriteMessages(result: MethodChannel.Result) {
-        val favouriteMessages : List<ChatMessage> =   FlyMessenger.getFavouriteMessages();
+        val favouriteMessages : List<ChatMessage> =   FlyMessenger.getFavouriteMessages()
         DebugUtilis.v("Favourite Messages", favouriteMessages.tojsonString())
-        result.success(favouriteMessages.tojsonString());
+        result.success(favouriteMessages.tojsonString())
     }
 
 
@@ -802,7 +791,7 @@ class MainActivity : FlutterActivity(), MethodChannel.MethodCallHandler,
                         }
                     }
                 })
-        };
+        }
     }
 
     private fun getMessageInfo(call: MethodCall, result: MethodChannel.Result) {
@@ -867,10 +856,10 @@ class MainActivity : FlutterActivity(), MethodChannel.MethodCallHandler,
         }
     }
 
-    private fun getMessageUsingIds(call: MethodCall, result: MethodChannel.Result) {
+//    private fun getMessageUsingIds(call: MethodCall, result: MethodChannel.Result) {
 //        val messageIDList = call.argument<List<String>>("get_message_using_ids")
 //        ChatManager.getMessagesUsingIds("messageIDList")//replace flymessenger
-    }
+//    }
 
     private fun reportChat(call: MethodCall, result: MethodChannel.Result) {
         val userJID = call.argument<String>("jid")
@@ -886,7 +875,7 @@ class MainActivity : FlutterActivity(), MethodChannel.MethodCallHandler,
                     DebugUtilis.v(TAG, data.tojsonString())
                     result.success(data)
                 } else {
-                    result.error("500", "Unable to report the User/Chat", null)
+                    result.error("500", "Unable to report the User/Chat", throwable?.message)
                 }
             }
         } else {
@@ -1013,7 +1002,7 @@ class MainActivity : FlutterActivity(), MethodChannel.MethodCallHandler,
             })
     }
 
-    private fun logoutChatSDK(call: MethodCall, result: MethodChannel.Result) {
+    private fun logoutChatSDK(result: MethodChannel.Result) {
 
         try {
             FlyCore.logoutOfChatSDK() { isSuccess, throwable, _ ->
@@ -1116,10 +1105,10 @@ class MainActivity : FlutterActivity(), MethodChannel.MethodCallHandler,
             profileObj.mobileNumber = mobile
             profileObj.email = email
             profileObj.status = status
-            if (call.hasArgument("image")) {
-                if (call.argument<String>("image") != null) {
+            if (call.hasArgument("image") && call.argument<String>("image") != null) {
+//                if (call.argument<String>("image") != null) {
                     profileObj.image = call.argument("image")
-                }
+//                }
             }
 
             ContactManager.updateMyProfile(profileObj) { isSuccess, _, data ->
@@ -1159,8 +1148,8 @@ class MainActivity : FlutterActivity(), MethodChannel.MethodCallHandler,
         }
     }
 
-    private fun removeProfileImage(call: MethodCall, result: MethodChannel.Result) {
-        ContactManager.removeProfileImage { isSuccess, throwable, data ->
+    private fun removeProfileImage(result: MethodChannel.Result) {
+        ContactManager.removeProfileImage { isSuccess, _, data ->
             data["status"] = isSuccess
             result.success(isSuccess)
         }
@@ -1224,7 +1213,7 @@ class MainActivity : FlutterActivity(), MethodChannel.MethodCallHandler,
                                     result.success(chatMessage.tojsonString())
                                 }
                             } else {
-                                android.util.Log.e(TAG, "Message sent Failed")
+                                Log.e(TAG, "Message sent Failed")
                             }
                         }
                     })
@@ -1278,8 +1267,8 @@ class MainActivity : FlutterActivity(), MethodChannel.MethodCallHandler,
                                     result.success(chatMessage.tojsonString())
                                 }
                             } else {
-                                android.util.Log.e(TAG, "Message sent Failed")
-                                result.error("500", "Message sent Failed", null)
+                                Log.e(TAG, "File Message sent Failed")
+                                result.error("500", "File Message sent Failed", null)
                             }
                         }
                     })
@@ -1501,14 +1490,14 @@ class MainActivity : FlutterActivity(), MethodChannel.MethodCallHandler,
 
         val sentMedia = File(mediaPath)
         if (!sentMedia.exists()) {
-            Log.e("File Upload", "sent Media Not exists")
+            Log.e(TAG, "sent Media Not exists")
             sentMedia.mkdirs()
         } else {
-            Log.e("File Upload", "Sent Media Already Exists")
+            Log.e(TAG, "Sent Media Already Exists")
         }
         val noMediaFile = File(sentMedia, ".nomedia")
         if (!noMediaFile.exists()) {
-            Log.e("File Upload", "NoMediaFile not exists")
+            Log.e(TAG, "NoMediaFile not exists")
             try {
                 FileWriter(noMediaFile).use { writer ->
                     LogMessage.d(
@@ -1526,7 +1515,7 @@ class MainActivity : FlutterActivity(), MethodChannel.MethodCallHandler,
     }
 
 
-    private fun filterRecentChatList(call: MethodCall, result: MethodChannel.Result) {
+    private fun filterRecentChatList(result: MethodChannel.Result) {
 
         val recentChatListWithArchived = FlyCore.getRecentChatListIncludingArchived()
         Log.d("getRecentChatListIncludingArchived", recentChatListWithArchived.toString())
@@ -1590,11 +1579,11 @@ class MainActivity : FlutterActivity(), MethodChannel.MethodCallHandler,
     private fun unBlockUser(call: MethodCall, result: MethodChannel.Result) {
         val userJid = call.argument<String>("userJID") ?: ""
 
-        FlyCore.unblockUser(userJid) { isSuccess, throwable, data ->
+        FlyCore.unblockUser(userJid) { isSuccess, throwable, _ ->
             if (isSuccess) {
                 //User is blocked update the UI
                 //result.success(data.tojsonString())
-                result.success(isSuccess)
+                result.success(true)
             } else {
                 result.error("500", "Unable to Unblock User", throwable?.tojsonString())
                 //User blocking failed print throwable to find the exception details
@@ -1638,7 +1627,7 @@ class MainActivity : FlutterActivity(), MethodChannel.MethodCallHandler,
     private fun addUsersToGroup(call: MethodCall, result: MethodChannel.Result) {
         val jid = call.argument<String>("jid") ?: ""
         val members = call.argument<List<String>>("members") ?: arrayListOf()
-        GroupManager.addUsersToGroup(jid, members) { isSuccess, _, data ->
+        GroupManager.addUsersToGroup(jid, members) { isSuccess, _, _ ->
             result.success(isSuccess)
         }
     }
@@ -1667,7 +1656,7 @@ class MainActivity : FlutterActivity(), MethodChannel.MethodCallHandler,
             val userName = call.argument<String>("userName") ?: ""
             val googleToken = call.argument<String>("googleToken") ?: ""
             FlyNetwork.verifyToken(userName, googleToken) { isSuccess, throwable, data ->
-                LogMessage.d(TAG, data["data"].toString());
+                LogMessage.d(TAG, data["data"].toString())
                 if (isSuccess) {
                     val datas = data["data"] as VerifyFcmResponse
                     results.success(datas.data!!.deviceToken.toString())
@@ -1711,7 +1700,7 @@ class MainActivity : FlutterActivity(), MethodChannel.MethodCallHandler,
     private fun reportUserOrMessages(call: MethodCall, result: MethodChannel.Result) {
         val jid = call.argument<String>("jid") ?: ""
         val type = call.argument<String>("type") ?: ChatType.TYPE_CHAT
-        FlyCore.reportUserOrMessages(jid, type) { isSuccess, _, data ->
+        FlyCore.reportUserOrMessages(jid, type) { isSuccess, _, _ ->
             if (isSuccess) {
                 result.success(true)
             } else {
@@ -1722,7 +1711,7 @@ class MainActivity : FlutterActivity(), MethodChannel.MethodCallHandler,
 
     private fun leaveFromGroup(call: MethodCall, result: MethodChannel.Result) {
         val jid = call.argument<String>("jid") ?: ""
-        GroupManager.leaveFromGroup(jid) { isSuccess, _, data ->
+        GroupManager.leaveFromGroup(jid) { isSuccess, _, _ ->
             if (isSuccess) {
                 result.success(true)
             } else {
@@ -1733,7 +1722,7 @@ class MainActivity : FlutterActivity(), MethodChannel.MethodCallHandler,
 
     private fun deleteGroup(call: MethodCall, result: MethodChannel.Result) {
         val jid = call.argument<String>("jid") ?: ""
-        GroupManager.deleteGroup(jid) { isSuccess, _, data ->
+        GroupManager.deleteGroup(jid) { isSuccess, _, _ ->
             if (isSuccess) {
                 result.success(true)
             } else {
@@ -1782,10 +1771,10 @@ class MainActivity : FlutterActivity(), MethodChannel.MethodCallHandler,
         })
     }
 
-    fun sendContactUsInfo(call: MethodCall, result: MethodChannel.Result) {
+    private fun sendContactUsInfo(call: MethodCall, result: MethodChannel.Result) {
         val title = call.argument<String>("title") ?: ""
         val description = call.argument<String>("description") ?: ""
-        ContactManager.sendContactUsInfo(title, description) { isSuccess, throwable, _ ->
+        ContactManager.sendContactUsInfo(title, description) { isSuccess, _, _ ->
             result.success(isSuccess)
         }
     }
@@ -1800,11 +1789,11 @@ class MainActivity : FlutterActivity(), MethodChannel.MethodCallHandler,
         }
     }
 
-    fun loginWebChatViaQRCode(call: MethodCall, result: MethodChannel.Result) {
+    private fun loginWebChatViaQRCode(call: MethodCall, result: MethodChannel.Result) {
         val barcode = call.argument<String>("barcode") ?: ""
         try {
-            FlyCore.loginWebChatViaQRCode(barcode) { isSuccess, _, data ->
-                result.success(isSuccess);
+            FlyCore.loginWebChatViaQRCode(barcode) { isSuccess, _, _ ->
+                result.success(isSuccess)
                 if (isSuccess) {
                     val vibrator = getSystemService(VIBRATOR_SERVICE) as Vibrator
                     if (vibrator.hasVibrator()) {
@@ -1866,7 +1855,7 @@ class MainActivity : FlutterActivity(), MethodChannel.MethodCallHandler,
     }
 
     private fun getRingtoneName(uri: String?): String? {
-        val default = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION).toString();
+        val default = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION).toString()
         val ringtone = RingtoneManager.getRingtone(this, Uri.parse(uri ?: default))
         return ringtone.getTitle(this)
 

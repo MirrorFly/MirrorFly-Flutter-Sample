@@ -4,19 +4,16 @@ import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:get/get.dart';
-import 'package:image_cropping/image_cropping.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
 import 'package:mirror_fly_demo/app/data/SessionManagement.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
-import 'package:mirror_fly_demo/app/model/profileupdate.dart';
+import 'package:mirror_fly_demo/app/model/profile_update.dart';
 import 'package:mirror_fly_demo/app/routes/app_pages.dart';
-import 'package:path_provider/path_provider.dart';
 
-import '../../../common/cropimage.dart';
-import '../../../model/profileModel.dart';
+import '../../../common/crop_image.dart';
+import '../../../model/profile_model.dart';
 import '../../../nativecall/platformRepo.dart';
 
 class ProfileController extends GetxController {
@@ -26,7 +23,7 @@ class ProfileController extends GetxController {
   var profileStatus = "I am in Mirror Fly".obs;
   var isImageSelected = false.obs;
   var isUserProfileRemoved = false.obs;
-  var imagepath = "".obs;
+  var imagePath = "".obs;
   var userImgUrl = "".obs;
 
   var loading = false.obs;
@@ -41,7 +38,7 @@ class ProfileController extends GetxController {
   void onInit() {
     super.onInit();
     userImgUrl.value = SessionManagement().getUserImage() ?? "";
-    Log("auth : ", SessionManagement().getauthToken().toString());
+    Log("auth : ", SessionManagement().getAuthToken().toString());
     if (Get.arguments != null) {
       from(Get.arguments["from"]);
       if (from.value == Routes.LOGIN) {
@@ -51,7 +48,7 @@ class ProfileController extends GetxController {
       profileMobile.text = "";
     }
     getProfile();
-    //profileStatus.value="I'm Mirrorfly user";
+    //profileStatus.value="I'm Mirror fly user";
   }
 
   void save() {
@@ -64,8 +61,8 @@ class ProfileController extends GetxController {
     } else {
       loading.value = true;
       showLoader();
-      if (imagepath.value.isNotEmpty) {
-        updateProfileImage(imagepath.value, update: true);
+      if (imagePath.value.isNotEmpty) {
+        updateProfileImage(imagePath.value, update: true);
       } else {
         PlatformRepo()
             .updateProfile(
@@ -113,7 +110,7 @@ class ProfileController extends GetxController {
     PlatformRepo().updateProfileImage(path).then((value) {
       loading.value = false;
       var data = json.decode(value);
-      imagepath.value = Constants.EMPTY_STRING;
+      imagePath.value = Constants.EMPTY_STRING;
       userImgUrl.value = data['data']['image'];
       SessionManagement.setUserImage(data['data']['image'].toString());
       hideLoader();
@@ -126,7 +123,7 @@ class ProfileController extends GetxController {
     });
   }
 
-  remomveProfileImage() {
+  removeProfileImage() {
     showLoader();
     loading.value = true;
     PlatformRepo().removeProfileImage().then((value) {
@@ -180,7 +177,7 @@ class ProfileController extends GetxController {
     }
   }
 
-  Future ImagePicker(BuildContext context) async {
+  Future imagePicker(BuildContext context) async {
     FilePickerResult? result = await FilePicker.platform
         .pickFiles(allowMultiple: false, type: FileType.image);
     if (result != null) {
@@ -193,11 +190,11 @@ class ProfileController extends GetxController {
         var name = "${DateTime.now().millisecondsSinceEpoch}.jpg";
         writeImageTemp(value.bytes, name).then((value) {
           if (from.value == Routes.LOGIN) {
-            imagepath(value.path);
+            imagePath(value.path);
             changed(true);
             update();
           } else {
-            imagepath(value.path);
+            imagePath(value.path);
             changed(true);
             updateProfileImage(value.path, update: true);
           }
@@ -209,7 +206,7 @@ class ProfileController extends GetxController {
     }
   }
 
-  Camera(XFile? result) {
+  camera(XFile? result) {
     if (result != null) {
       isImageSelected.value = true;
       Get.to(CropImage(
@@ -220,10 +217,10 @@ class ProfileController extends GetxController {
         var name = "${DateTime.now().millisecondsSinceEpoch}.jpg";
         writeImageTemp(value.bytes, name).then((value) {
           if (from.value == Routes.LOGIN) {
-            imagepath(value.path);
+            imagePath(value.path);
             changed(true);
           } else {
-            imagepath(value.path);
+            imagePath(value.path);
             changed(true);
             updateProfileImage(value.path, update: true);
           }

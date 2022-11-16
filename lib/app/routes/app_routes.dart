@@ -1,5 +1,4 @@
 part of 'app_pages.dart';
-// DO NOT EDIT. This is code generated via package:get_cli/get_cli.dart
 
 abstract class Routes {
   Routes._();
@@ -52,16 +51,16 @@ abstract class _Paths {
   static const OTP = '/otp';
   static const COUNTRIES = '/Countries';
   static const PROFILE = '/profile';
-  static const STATUSLIST = '/statuslist';
+  static const STATUSLIST = '/status_list';
   static const CHAT = '/chat';
   static const CHATSEARCH = '/chat_search';
   static const LOCATIONSENT = '/location_sent';
   static const CONTACTS = '/contacts';
-  static const IMAGEPREVIEW = '/imagepreview';
+  static const IMAGEPREVIEW = '/image_preview';
   static const SETTINGS = '/settings';
   static const BLOCKEDLIST = '/blocked_list';
   static const NOTIFICATION = '/notification_setting';
-  static const APPLOCK = '/applock_settings';
+  static const APPLOCK = '/app_lock_settings';
   static const PIN = '/pin';
   static const SET_PIN = '/set_pin';
   static const VIDEO_PREVIEW = '/video-preview';

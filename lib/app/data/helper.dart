@@ -5,23 +5,21 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import 'package:image_cropping/constant/strings.dart';
 import 'package:intl/intl.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
 import 'package:mirror_fly_demo/app/model/chatMessageModel.dart';
 import 'package:mirror_fly_demo/app/model/group_members_model.dart';
 import 'package:mirror_fly_demo/app/nativecall/platformRepo.dart';
-import 'package:package_info_plus/package_info_plus.dart';
 
-import '../model/userlistModel.dart';
+import '../model/userListModel.dart';
 
 class Helper {
-  static void showLoading({String? message, bool dismissable = false}) {
+  static void showLoading({String? message, bool dismiss = false}) {
     Get.dialog(
       Dialog(
         child: WillPopScope(
           onWillPop: () async {
-            return Future.value(dismissable);
+            return Future.value(dismiss);
           },
           child: Padding(
             padding: const EdgeInsets.all(16.0),
@@ -40,13 +38,13 @@ class Helper {
     );
   }
 
-  static void progressLoading({bool dismissable = false}) {
+  static void progressLoading({bool dismiss = false}) {
     Get.dialog(
         AlertDialog(
           elevation: 0,
           backgroundColor: Colors.transparent,
           content: WillPopScope(
-            onWillPop: () async => Future.value(dismissable),
+            onWillPop: () async => Future.value(dismiss),
             child: const SizedBox(
               width: 60,
               height: 60,
@@ -56,7 +54,7 @@ class Helper {
             ),
           ),
         ),
-        barrierDismissible: dismissable,
+        barrierDismissible: dismiss,
         barrierColor: Colors.transparent);
   }
 
@@ -84,35 +82,24 @@ class Helper {
     if (bytes <= 0) return "0 B";
     const suffixes = ["B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"];
     var i = (log(bytes) / log(1024)).floor();
-    return ((bytes / pow(1024, i)).toStringAsFixed(decimals)) +
-        ' ' +
-        suffixes[i];
+    return '${(bytes / pow(1024, i)).toStringAsFixed(decimals)} ${suffixes[i]}';
   }
 
   static String getMapImageUri(double latitude, double longitude) {
     var key = Constants.GOOGLE_MAP_KEY;
-    return ("https://maps.googleapis.com/maps/api/staticmap?center=" +
-        latitude.toString() +
-        "," +
-        longitude.toString() +
-        "&zoom=13&size=300x200&markers=color:red|" +
-        latitude.toString() +
-        "," +
-        longitude.toString() +
-        "&key=" +
-        key);
+    return ("https://maps.googleapis.com/maps/api/staticmap?center=$latitude,$longitude&zoom=13&size=300x200&markers=color:red|$latitude,$longitude&key=$key");
   }
 
   static int getColourCode(String name) {
-    if (name != null && name == Constants.YOU) return 0Xff000000;
+    if (name == Constants.YOU) return 0Xff000000;
     var colorsArray = Constants.defaultColorList;
     var hashcode = name.hashCode;
     var rand = hashcode % colorsArray.length;
     return colorsArray[(rand).abs()];
   }
 
-  static Widget forMessageTypeIcon(String? MessageType) {
-    switch (MessageType?.toUpperCase()) {
+  static Widget forMessageTypeIcon(String? messageType) {
+    switch (messageType?.toUpperCase()) {
       case Constants.MIMAGE:
         return SvgPicture.asset(
           Mimageicon,
@@ -148,8 +135,8 @@ class Helper {
     }
   }
 
-  static String forMessageTypeString(String? MessageType) {
-    switch (MessageType?.toUpperCase()) {
+  static String forMessageTypeString(String? messageType) {
+    switch (messageType?.toUpperCase()) {
       case Constants.MIMAGE:
         return "Image";
       case Constants.MAUDIO:
@@ -198,9 +185,7 @@ extension FileFormatter on num {
     if (this <= 0) return "0";
     final units = ["bytes", "KB", "MB", "GB", "TB"];
     int digitGroups = (log(this) / log(base)).round();
-    return NumberFormat("#,##0.#").format(this / pow(base, digitGroups)) +
-        " " +
-        units[digitGroups];
+    return "${NumberFormat("#,##0.#").format(this / pow(base, digitGroups))} ${units[digitGroups]}";
   }
 }
 
@@ -217,7 +202,7 @@ extension StringParsing on String? {
   int checkIndexes(String searchedKey) {
     var i = -1;
     if(i==-1 || i<searchedKey.length) {
-      while (this!.indexOf(searchedKey, i + 1) != -1) {
+      while (this!.contains(searchedKey, i + 1)) {
         i = this!.indexOf(searchedKey, i + 1);
 
         if (i == 0 ||
@@ -233,7 +218,8 @@ extension StringParsing on String? {
 
 
   bool startsWithTextInWords(String text) {
-    return this!.toLowerCase().indexOf(text.toLowerCase())<=-1 ? false : this!.toLowerCase().startsWith(text.toLowerCase());checkIndexes(text)>-1;
+    return !this!.toLowerCase().contains(text.toLowerCase()) ? false : this!.toLowerCase().startsWith(text.toLowerCase());
+    //checkIndexes(text)>-1;
     /*return when {
       this.indexOf(text, ignoreCase = true) <= -1 -> false
       else -> return this.checkIndexes(text) > -1

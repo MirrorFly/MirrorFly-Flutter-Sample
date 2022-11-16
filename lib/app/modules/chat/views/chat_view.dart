@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
@@ -306,17 +307,11 @@ class ChatView extends GetView<ChatController> {
                                                             ? IconButton(
                                                                 onPressed:
                                                                     () async {
-                                                                  if (await controller
-                                                                      .askStoragePermission()) {
+                                                                  if (await controller.askStoragePermission()) {
                                                                     showModalBottomSheet(
-                                                                        backgroundColor:
-                                                                            Colors
-                                                                                .transparent,
-                                                                        context:
-                                                                            context,
-                                                                        builder:
-                                                                            (builder) =>
-                                                                                bottomSheet(context));
+                                                                        backgroundColor: Colors.transparent,
+                                                                        context: context,
+                                                                        builder: (builder) => bottomSheet(context));
                                                                   }
                                                                 },
                                                                 icon: SvgPicture
@@ -462,17 +457,17 @@ class ChatView extends GetView<ChatController> {
 
   Widget userNoLonger() {
     return Column(
-      children: [
-        const Divider(
+      children: const [
+        Divider(
           height: 1,
           thickness: 0.29,
           color: textblackcolor,
         ),
         Padding(
-          padding: const EdgeInsets.only(top: 15.0, bottom: 15.0),
+          padding: EdgeInsets.only(top: 15.0, bottom: 15.0),
           child: Text(
             "You can't send messages to this group because you're no longer a participant.",
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 15,
             ),
             textAlign: TextAlign.center,
@@ -674,11 +669,8 @@ class ChatView extends GetView<ChatController> {
   }
 
   bool checkIsNotNotification(ChatMessageModel messageItem) {
-    if (messageItem != null) {
-      var msgType = messageItem.messageType;
-      return msgType != Constants.MNOTIFICATION;
-    }
-    return true;
+    var msgType = messageItem.messageType;
+    return msgType != Constants.MNOTIFICATION;
   }
 
   ChatMessageModel? getPreviousMessage(
@@ -710,7 +702,7 @@ class ChatView extends GetView<ChatController> {
 
   getMessageContent(
       int index, BuildContext context, List<ChatMessageModel> chatList) {
-    // debugPrint(json.encode(chatList[index]));
+    debugPrint(json.encode(chatList[index]));
     if (chatList[index].isMessageRecalled) {
       return Padding(
         padding: const EdgeInsets.all(10.0),
@@ -814,6 +806,9 @@ class ChatView extends GetView<ChatController> {
           ),
         );
       } else if (chatList[index].messageType == Constants.MIMAGE) {
+        if(chatList[index].mediaChatMessage == null){
+          return const SizedBox.shrink();
+        }
         var chatMessage = chatList[index].mediaChatMessage!;
         //mediaLocalStoragePath
         //mediaThumbImage
@@ -872,6 +867,9 @@ class ChatView extends GetView<ChatController> {
           ),
         );
       } else if (chatList[index].messageType == Constants.MVIDEO) {
+        if(chatList[index].mediaChatMessage == null){
+          return const SizedBox.shrink();
+        }
         var chatMessage = chatList[index].mediaChatMessage!;
         return Padding(
           padding: const EdgeInsets.all(8.0),
@@ -938,6 +936,9 @@ class ChatView extends GetView<ChatController> {
           ),
         );
       } else if (chatList[index].messageType == Constants.MDOCUMENT) {
+        if(chatList[index].mediaChatMessage == null){
+          return const SizedBox.shrink();
+        }
         return InkWell(
           onTap: () {
             controller.openDocument(
@@ -1028,6 +1029,9 @@ class ChatView extends GetView<ChatController> {
           ),
         );
       } else if (chatList[index].messageType == Constants.MCONTACT) {
+        if(chatList[index].contactChatMessage == null){
+          return const SizedBox.shrink();
+        }
         return InkWell(
           onTap: () {
             Get.toNamed(Routes.PREVIEW_CONTACT, arguments: {
@@ -1110,6 +1114,9 @@ class ChatView extends GetView<ChatController> {
           ),
         );
       } else if (chatList[index].messageType == Constants.MAUDIO) {
+        if(chatList[index].mediaChatMessage == null){
+          return const SizedBox.shrink();
+        }
         var chatMessage = chatList[index];
         return Container(
           decoration: BoxDecoration(
@@ -1185,15 +1192,8 @@ class ChatView extends GetView<ChatController> {
                               max: double.parse(
                                   controller.maxDuration.value.toString()),
                               divisions: controller.maxDuration.value,
-                              // label: controller.currentpostlabel,
                               onChanged: (double value) async {
-                                // int seekval = value.round();
-                                // int result = await player.seek(Duration(milliseconds: seekval));
-                                // if(result == 1){ //seek successful
-                                //   currentpos = seekval;
-                                // }else{
-                                //   print("Seek unsuccessful.");
-                                // }
+
                               },
                             ),
                           ),
@@ -1246,6 +1246,9 @@ class ChatView extends GetView<ChatController> {
         );
       } else if (chatList[index].messageType.toUpperCase() ==
           Constants.MLOCATION) {
+        if(chatList[index].locationChatMessage == null){
+          return const SizedBox.shrink();
+        }
         return Padding(
           padding: const EdgeInsets.all(2.0),
           child: Stack(
@@ -1285,27 +1288,6 @@ class ChatView extends GetView<ChatController> {
                   ],
                 ),
               ),
-              /*Positioned(
-              bottom: 8,
-              right: 10,
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  getMessageIndicator(
-                      chatList[index].messageStatus.status,
-                      chatList[index].isMessageSentByMe,
-                      chatList[index].messageType),
-                  const SizedBox(
-                    width: 4,
-                  ),
-                  Text(
-                    controller.getChatTime(
-                        context, chatList[index].messageSentTime),
-                    style: const TextStyle(fontSize: 12, color: Colors.white),
-                  ),
-                ],
-              ),
-            ),*/
             ],
           ),
         );
@@ -1360,6 +1342,7 @@ class ChatView extends GetView<ChatController> {
                   ),
                   iconCreation(cameraImg, "Camera", () async {
                     Get.back();
+
                     final XFile? photo =
                         await _picker.pickImage(source: ImageSource.camera);
                     Get.toNamed(Routes.IMAGEPREVIEW, arguments: {
@@ -1413,7 +1396,7 @@ class ChatView extends GetView<ChatController> {
                     width: 50,
                   ),
                   iconCreation(locationImg, "Location", () {
-                    Permission().getLocationPermission().then((bool value) {
+                    AppPermission().getLocationPermission().then((bool value) {
                       Log("Location permission", value.toString());
                       if (value) {
                         Get.back();
@@ -1785,13 +1768,7 @@ class ChatView extends GetView<ChatController> {
                             divisions: controller.maxDuration.value,
                             label: controller.currentPostLabel,
                             onChanged: (double value) async {
-                              // int seekval = value.round();
-                              // int result = await player.seek(Duration(milliseconds: seekval));
-                              // if(result == 1){ //seek successful
-                              //   currentpos = seekval;
-                              // }else{
-                              //   print("Seek unsuccessful.");
-                              // }
+
                             },
                           );
                         }),
@@ -2084,7 +2061,7 @@ class ChatView extends GetView<ChatController> {
                           },
                           icon: const Icon(Icons.reply_outlined)),
                       overflowWidget: const Text("Reply"),
-                      showAsAction: ShowAsAction.ALWAYS,
+                      showAsAction: ShowAsAction.always,
                       keyValue: 'Reply',
                       onItemClick: () {
                         controller.closeKeyBoard();
@@ -2107,7 +2084,7 @@ class ChatView extends GetView<ChatController> {
                       icon: const Icon(Icons.reply_outlined)),
                 ),
                 overflowWidget: const Text("Forward"),
-                showAsAction: ShowAsAction.ALWAYS,
+                showAsAction: ShowAsAction.always,
                 keyValue: 'Forward',
                 onItemClick: () {
                   controller.closeKeyBoard();
@@ -2125,7 +2102,7 @@ class ChatView extends GetView<ChatController> {
                               ? const Icon(Icons.star_border_outlined)
                               : const Icon(Icons.star)),
                       overflowWidget: const Text("Favourite"),
-                      showAsAction: ShowAsAction.ALWAYS,
+                      showAsAction: ShowAsAction.always,
                       keyValue: 'favourite',
                       onItemClick: () {
                         controller.closeKeyBoard();
@@ -2140,7 +2117,7 @@ class ChatView extends GetView<ChatController> {
                     },
                     icon: const Icon(Icons.delete_outline_outlined)),
                 overflowWidget: const Text("Delete"),
-                showAsAction: ShowAsAction.ALWAYS,
+                showAsAction: ShowAsAction.always,
                 keyValue: 'Delete',
                 onItemClick: () {
                   controller.closeKeyBoard();
@@ -2155,7 +2132,7 @@ class ChatView extends GetView<ChatController> {
                           },
                           icon: const Icon(Icons.report_problem_rounded)),
                       overflowWidget: const Text("Report"),
-                      showAsAction: ShowAsAction.NEVER,
+                      showAsAction: ShowAsAction.never,
                       keyValue: 'Report',
                       onItemClick: () {
                         controller.closeKeyBoard();
@@ -2178,7 +2155,7 @@ class ChatView extends GetView<ChatController> {
                         ),
                       ),
                       overflowWidget: const Text("Copy"),
-                      showAsAction: ShowAsAction.NEVER,
+                      showAsAction: ShowAsAction.never,
                       keyValue: 'Copy',
                       onItemClick: () {
                         controller.closeKeyBoard();
@@ -2198,7 +2175,7 @@ class ChatView extends GetView<ChatController> {
                         ),
                       ),
                       overflowWidget: const Text("Message Info"),
-                      showAsAction: ShowAsAction.NEVER,
+                      showAsAction: ShowAsAction.never,
                       keyValue: 'MessageInfo',
                       onItemClick: () {
                         controller.closeKeyBoard();
@@ -2211,7 +2188,7 @@ class ChatView extends GetView<ChatController> {
                       visibleWidget: IconButton(
                           onPressed: () {}, icon: const Icon(Icons.share)),
                       overflowWidget: const Text("Share"),
-                      showAsAction: ShowAsAction.NEVER,
+                      showAsAction: ShowAsAction.never,
                       keyValue: 'Share',
                       onItemClick: () {
                         controller.closeKeyBoard();
@@ -2234,7 +2211,7 @@ class ChatView extends GetView<ChatController> {
               url: controller.profile.image.checkNull(),
               width: 45,
               height: 45,
-              clipoval: true,
+              clipOval: true,
               errorWidget: controller.profile.isGroupProfile!
                   ? ClipOval(
                       child: Image.asset(
@@ -2301,7 +2278,7 @@ class ChatView extends GetView<ChatController> {
                   icon: const Icon(Icons.cancel),
                 ),
                 overflowWidget: const Text("Clear Chat"),
-                showAsAction: ShowAsAction.NEVER,
+                showAsAction: ShowAsAction.never,
                 keyValue: 'Clear Chat',
                 onItemClick: () {
                   controller.closeKeyBoard();
@@ -2317,7 +2294,7 @@ class ChatView extends GetView<ChatController> {
                   icon: const Icon(Icons.report_problem_rounded),
                 ),
                 overflowWidget: const Text("Report"),
-                showAsAction: ShowAsAction.NEVER,
+                showAsAction: ShowAsAction.never,
                 keyValue: 'Report',
                 onItemClick: () {
                   controller.closeKeyBoard();
@@ -2334,7 +2311,7 @@ class ChatView extends GetView<ChatController> {
                         icon: const Icon(Icons.block),
                       ),
                       overflowWidget: const Text("Unblock"),
-                      showAsAction: ShowAsAction.NEVER,
+                      showAsAction: ShowAsAction.never,
                       keyValue: 'Unblock',
                       onItemClick: () {
                         controller.closeKeyBoard();
@@ -2351,8 +2328,8 @@ class ChatView extends GetView<ChatController> {
                       ),
                       overflowWidget: const Text("Block"),
                       showAsAction: controller.profile.isGroupProfile!
-                          ? ShowAsAction.GONE
-                          : ShowAsAction.NEVER,
+                          ? ShowAsAction.gone
+                          : ShowAsAction.never,
                       keyValue: 'Block',
                       onItemClick: () {
                         controller.closeKeyBoard();
@@ -2366,12 +2343,12 @@ class ChatView extends GetView<ChatController> {
                 ),
                 overflowWidget: const Text("Search"),
                 showAsAction: controller.profile.isGroupProfile!
-                    ? ShowAsAction.GONE
-                    : ShowAsAction.NEVER,
+                    ? ShowAsAction.gone
+                    : ShowAsAction.never,
                 keyValue: 'Search',
                 onItemClick: () {
                   controller.closeKeyBoard();
-                  Future.delayed(Duration(milliseconds: 100),
+                  Future.delayed(const Duration(milliseconds: 100),
                       () => Get.toNamed(Routes.CHATSEARCH));
                 },
               ),
@@ -2386,7 +2363,7 @@ class ChatView extends GetView<ChatController> {
                   },
                   child: const Text("Email Chat"),
                 ),
-                showAsAction: ShowAsAction.NEVER,
+                showAsAction: ShowAsAction.never,
                 keyValue: 'EmailChat',
                 onItemClick: () {
                   controller.closeKeyBoard();
@@ -2399,7 +2376,7 @@ class ChatView extends GetView<ChatController> {
                   icon: const Icon(Icons.shortcut),
                 ),
                 overflowWidget: const Text("Add Chat Shortcut"),
-                showAsAction: ShowAsAction.NEVER,
+                showAsAction: ShowAsAction.never,
                 keyValue: 'Shortcut',
                 onItemClick: () {
                   controller.closeKeyBoard();
@@ -2427,7 +2404,7 @@ class ChatView extends GetView<ChatController> {
     return CustomAction(
         visibleWidget: const SizedBox.shrink(),
         overflowWidget: const SizedBox.shrink(),
-        showAsAction: ShowAsAction.ALWAYS,
+        showAsAction: ShowAsAction.always,
         keyValue: 'Empty',
         onItemClick: () {});
   }

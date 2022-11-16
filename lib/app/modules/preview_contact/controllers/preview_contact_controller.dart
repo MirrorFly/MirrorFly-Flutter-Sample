@@ -8,7 +8,7 @@ class PreviewContactController extends GetxController {
 
 
   late List<String> contactList;
-  var contactName, from;
+  var contactName = "", from = "";
 
   @override
   void onInit() {
@@ -19,15 +19,6 @@ class PreviewContactController extends GetxController {
     from = Get.arguments['from'];
   }
 
-  @override
-  void onReady() {
-    super.onReady();
-  }
-
-  @override
-  void onClose() {
-    super.onClose();
-  }
 
   shareContact() async {
     var response = await Get.find<ChatController>().sendContactMessage(contactList, contactName);

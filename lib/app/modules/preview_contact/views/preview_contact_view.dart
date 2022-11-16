@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 
 import 'package:get/get.dart';
 
-import '../../../common/constants.dart';
 import '../../../common/widgets.dart';
 import '../controllers/preview_contact_controller.dart';
 
@@ -44,14 +43,14 @@ class PreviewContactView extends GetView<PreviewContactController> {
                 Expanded(
                   child: ListView.builder(
                       itemCount: controller.contactList.length,
-                      physics: AlwaysScrollableScrollPhysics(),
+                      physics: const AlwaysScrollableScrollPhysics(),
                       itemBuilder: (BuildContext context, int index) {
                           return Column(
                             children: [
                               Row(
                                 children: [
                                   const Padding(
-                                    padding: const EdgeInsets.fromLTRB(18.0,10,18,10),
+                                    padding: EdgeInsets.fromLTRB(18.0,10,18,10),
                                     child: Icon(Icons.phone, color: Colors.blue,),
                                   ),
                                   Text(

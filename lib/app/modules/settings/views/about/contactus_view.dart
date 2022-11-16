@@ -3,20 +3,19 @@ import 'package:mirror_fly_demo/app/data/helper.dart';
 import 'package:mirror_fly_demo/app/nativecall/platformRepo.dart';
 
 import '../../../../common/constants.dart';
-import '../../../../common/widgets.dart';
 
 class ContactusView extends StatelessWidget {
   ContactusView({Key? key}) : super(key: key);
-  static const TextStyle textStyle = const TextStyle(
+  static const TextStyle textStyle = TextStyle(
       color: Colors.black,
       fontSize: 17,
       fontWeight: FontWeight.w400);
-  static const TextStyle textmsgStyle = const TextStyle(
+  static const TextStyle textMsgStyle = TextStyle(
       color: Colors.black,
       fontSize: 16,
       fontWeight: FontWeight.w400);
-  TextEditingController title =TextEditingController();
-  TextEditingController description =TextEditingController();
+  TextEditingController title = TextEditingController();
+  TextEditingController description = TextEditingController();
   @override
   Widget build(BuildContext context) {
     return Scaffold(

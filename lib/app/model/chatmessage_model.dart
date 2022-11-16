@@ -56,49 +56,49 @@ class ChatMessage {
   String? senderUserName;
 
   factory ChatMessage.fromJson(Map<String, dynamic> json) => ChatMessage(
-    chatUserJid: json["chatUserJid"] == null ? null : json["chatUserJid"],
-    contactType: json["contactType"] == null ? null : json["contactType"],
-    isItCarbonMessage: json["isItCarbonMessage"] == null ? null : json["isItCarbonMessage"],
-    isItSavedContact: json["isItSavedContact"] == null ? null : json["isItSavedContact"],
-    isMessageDeleted: json["isMessageDeleted"] == null ? null : json["isMessageDeleted"],
-    isMessageRecalled: json["isMessageRecalled"] == null ? null : json["isMessageRecalled"],
-    isMessageSentByMe: json["isMessageSentByMe"] == null ? null : json["isMessageSentByMe"],
-    isMessageStarred: json["isMessageStarred"] == null ? null : json["isMessageStarred"],
-    isSelected: json["isSelected"] == null ? null : json["isSelected"],
-    isThisAReplyMessage: json["isThisAReplyMessage"] == null ? null : json["isThisAReplyMessage"],
-    messageChatType: json["messageChatType"] == null ? null : json["messageChatType"],
+    chatUserJid: json["chatUserJid"],
+    contactType: json["contactType"],
+    isItCarbonMessage: json["isItCarbonMessage"],
+    isItSavedContact: json["isItSavedContact"],
+    isMessageDeleted: json["isMessageDeleted"],
+    isMessageRecalled: json["isMessageRecalled"],
+    isMessageSentByMe: json["isMessageSentByMe"],
+    isMessageStarred: json["isMessageStarred"],
+    isSelected: json["isSelected"],
+    isThisAReplyMessage: json["isThisAReplyMessage"],
+    messageChatType: json["messageChatType"],
     messageCustomField: json["messageCustomField"] == null ? null : MessageCustomField.fromJson(json["messageCustomField"]),
-    messageId: json["messageId"] == null ? null : json["messageId"],
-    messageSentTime: json["messageSentTime"] == null ? null : json["messageSentTime"],
+    messageId: json["messageId"],
+    messageSentTime: json["messageSentTime"],
     messageStatus: json["messageStatus"] == null ? null : MessageStatus.fromJson(json["messageStatus"]),
-    messageTextContent: json["messageTextContent"] == null ? null : json["messageTextContent"],
-    messageType: json["messageType"] == null ? null : json["messageType"],
-    senderNickName: json["senderNickName"] == null ? null : json["senderNickName"],
-    senderUserJid: json["senderUserJid"] == null ? null : json["senderUserJid"],
-    senderUserName: json["senderUserName"] == null ? null : json["senderUserName"],
+    messageTextContent: json["messageTextContent"],
+    messageType: json["messageType"],
+    senderNickName: json["senderNickName"],
+    senderUserJid: json["senderUserJid"],
+    senderUserName: json["senderUserName"],
   );
 
   Map<String, dynamic> toJson() => {
-    "chatUserJid": chatUserJid == null ? null : chatUserJid,
-    "contactType": contactType == null ? null : contactType,
-    "isItCarbonMessage": isItCarbonMessage == null ? null : isItCarbonMessage,
-    "isItSavedContact": isItSavedContact == null ? null : isItSavedContact,
-    "isMessageDeleted": isMessageDeleted == null ? null : isMessageDeleted,
-    "isMessageRecalled": isMessageRecalled == null ? null : isMessageRecalled,
-    "isMessageSentByMe": isMessageSentByMe == null ? null : isMessageSentByMe,
-    "isMessageStarred": isMessageStarred == null ? null : isMessageStarred,
-    "isSelected": isSelected == null ? null : isSelected,
-    "isThisAReplyMessage": isThisAReplyMessage == null ? null : isThisAReplyMessage,
-    "messageChatType": messageChatType == null ? null : messageChatType,
+    "chatUserJid": chatUserJid,
+    "contactType": contactType,
+    "isItCarbonMessage": isItCarbonMessage,
+    "isItSavedContact": isItSavedContact,
+    "isMessageDeleted": isMessageDeleted,
+    "isMessageRecalled": isMessageRecalled,
+    "isMessageSentByMe": isMessageSentByMe,
+    "isMessageStarred": isMessageStarred,
+    "isSelected": isSelected,
+    "isThisAReplyMessage": isThisAReplyMessage,
+    "messageChatType": messageChatType,
     "messageCustomField": messageCustomField == null ? null : messageCustomField!.toJson(),
-    "messageId": messageId == null ? null : messageId,
-    "messageSentTime": messageSentTime == null ? null : messageSentTime,
+    "messageId": messageId,
+    "messageSentTime": messageSentTime,
     "messageStatus": messageStatus == null ? null : messageStatus!.toJson(),
-    "messageTextContent": messageTextContent == null ? null : messageTextContent,
-    "messageType": messageType == null ? null : messageType,
-    "senderNickName": senderNickName == null ? null : senderNickName,
-    "senderUserJid": senderUserJid == null ? null : senderUserJid,
-    "senderUserName": senderUserName == null ? null : senderUserName,
+    "messageTextContent": messageTextContent,
+    "messageType": messageType,
+    "senderNickName": senderNickName,
+    "senderUserJid": senderUserJid,
+    "senderUserName": senderUserName,
   };
 }
 
@@ -120,10 +120,10 @@ class MessageStatus {
   String? status;
 
   factory MessageStatus.fromJson(Map<String, dynamic> json) => MessageStatus(
-    status: json["status"] == null ? null : json["status"],
+    status: json["status"],
   );
 
   Map<String, dynamic> toJson() => {
-    "status": status == null ? null : status,
+    "status": status,
   };
 }

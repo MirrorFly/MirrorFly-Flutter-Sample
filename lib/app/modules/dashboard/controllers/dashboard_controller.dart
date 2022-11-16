@@ -1,37 +1,33 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
-import 'package:mirror_fly_demo/app/basecontroller.dart';
+import 'package:mirror_fly_demo/app/base_controller.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
 import 'package:mirror_fly_demo/app/data/SessionManagement.dart';
-import 'package:mirror_fly_demo/app/model/recentchat.dart';
-import 'package:mirror_fly_demo/app/model/userlistModel.dart';
+import 'package:mirror_fly_demo/app/model/recent_chat.dart';
+import 'package:mirror_fly_demo/app/model/userListModel.dart';
 import 'package:mirror_fly_demo/app/nativecall/platformRepo.dart';
 import 'package:intl/intl.dart';
 
-import '../../../common/lifecycleEventHandler.dart';
 import '../../../model/chatMessageModel.dart';
-import '../../../model/checkModel.dart';
-import '../../../model/profileModel.dart';
+import '../../../model/profile_model.dart';
 import '../../../routes/app_pages.dart';
 
 class DashboardController extends BaseController {
-  var recentchats = <RecentChatData>[].obs;
+  var recentChats = <RecentChatData>[].obs;
   var calendar = DateTime.now();
 
   @override
   void onInit() {
     super.onInit();
-    //getRecentChatlist();
-    recentchats.bindStream(recentchats.stream);
-    ever(recentchats, (callback) => unReadCount());
+    recentChats.bindStream(recentChats.stream);
+    ever(recentChats, (callback) => unReadCount());
   }
 
-  Future<RecentChatData?> getRecentChatofJid(String jid) async{
+  Future<RecentChatData?> getRecentChatOfJid(String jid) async{
     var value = await PlatformRepo().getRecentChatOf(jid);
-    Log("rchat", value.toString());
+    Log("chat", value.toString());
     if (value != null) {
       var data = RecentChatData.fromJson(json.decode(value));
       return data;
@@ -40,12 +36,12 @@ class DashboardController extends BaseController {
     }
   }
 
-  getRecentChatlist() {
+  getRecentChatList() {
     Log("","recent chats");
     PlatformRepo().getRecentChats().then((value) {
       var data = recentChatFromJson(value);
-      recentchats.value.clear();
-      recentchats
+      recentChats.clear();
+      recentChats
           .addAll(data.data!);
     }).catchError((error) {
       debugPrint("issue===> $error");
@@ -56,8 +52,8 @@ class DashboardController extends BaseController {
     if(jid.isNotEmpty) {
       PlatformRepo().getProfileLocal(jid, false).then((value) {
         if(value!=null){
-          var datas = profileDataFromJson(value);
-          var data = datas.data!;
+          var profileData = profileDataFromJson(value);
+          var data = profileData.data!;
           var profile = Profile();
           profile.contactType = "";
           profile.email = data.email;
@@ -86,7 +82,7 @@ class DashboardController extends BaseController {
     }
   }
 
-  String gettime(int? timestamp) {
+  String getTime(int? timestamp) {
     DateTime now = DateTime.now();
     final DateTime date1 = timestamp == null
         ? now
@@ -121,7 +117,7 @@ class DashboardController extends BaseController {
 
   String manipulateMessageTime(BuildContext context, DateTime messageDate) {
     var format = MediaQuery.of(context).alwaysUse24HourFormat ? 24 : 12;
-    var hours = calendar.hour; //calendar[Calendar.HOUR]
+    var hours = calendar.hour;
     calendar = messageDate;
     var dateHourFormat = setDateHourFormat(format, hours);
     return DateFormat(dateHourFormat).format(messageDate);
@@ -139,44 +135,42 @@ class DashboardController extends BaseController {
   }
 
   bool equalsWithYesterday(DateTime srcDate, String day) {
-    // Time part has
-    // discarded
     var yesterday = (day == Constants.YESTERDAY)
-        ? calendar.subtract(Duration(days: 1))
+        ? calendar.subtract(const Duration(days: 1))
         : DateTime.now();
     return yesterday.difference(calendar).inDays == 0;
   }
   
-  final _unreadcount = 0.obs;
-  int get unreadcount => _unreadcount.value;
-  set unreadcount(int val) => _unreadcount.value = val;
+  final _unreadCount = 0.obs;
+  int get unreadCount => _unreadCount.value;
+  set unreadCount(int val) => _unreadCount.value = val;
   
   unReadCount(){
-    _unreadcount(0);
-    recentchats.forEach((p0){
+    _unreadCount(0);
+    for (var p0 in recentChats) {
       if(p0.unreadMessageCount!=null){
-        _unreadcount(((p0.unreadMessageCount!>0) ? 1+unreadcount : 0 +unreadcount));
+        _unreadCount(((p0.unreadMessageCount!>0) ? 1+unreadCount : 0 +unreadCount));
       }
-    });
+    }
   }
 
   updateRecentChat(String jid){
-    final index = recentchats.indexWhere((chat) => chat.jid == jid);
-    debugPrint("myupdate index " + index.toString());
-    getRecentChatofJid(jid).then((recent){
+    final index = recentChats.indexWhere((chat) => chat.jid == jid);
+    debugPrint("my update index $index");
+    getRecentChatOfJid(jid).then((recent){
       if(recent!=null){
         if (index.isNegative) {
-          recentchats.add(recent);
+          recentChats.add(recent);
         } else {
-          recentchats.removeAt(index);
-          recentchats.insert(0, recent);
+          recentChats.removeAt(index);
+          recentChats.insert(0, recent);
         }
       }else{
         if (!index.isNegative) {
-          recentchats.removeAt(index);
+          recentChats.removeAt(index);
         }
       }
-      recentchats.refresh();
+      recentChats.refresh();
     });
   }
 
@@ -207,15 +201,8 @@ class DashboardController extends BaseController {
     updateRecentChat(event);
   }
 
-  @override
-  void onGroupProfileFetched(groupJid){
-    super.onGroupProfileFetched(groupJid);
-  }
-  @override
-  void onNewGroupCreated(groupJid){
-    super.onNewGroupCreated(groupJid);
-  }
 
+  @override
   void onGroupProfileUpdated(groupJid){
     super.onGroupProfileUpdated(groupJid);
     Log("super", groupJid.toString());
@@ -223,42 +210,9 @@ class DashboardController extends BaseController {
   }
 
   @override
-  void onNewMemberAddedToGroup(event){
-    super.onNewMemberAddedToGroup(event);
-
-  }
-  @override
-  void onMemberRemovedFromGroup(event){
-    super.onMemberRemovedFromGroup(event);
-  }
-  @override
-  void onFetchingGroupMembersCompleted(event){
-    super.onFetchingGroupMembersCompleted(event);
-  }
-  @override
   void onDeleteGroup(groupJid){
     super.onDeleteGroup(groupJid);
     updateRecentChat(groupJid);
-  }
-  @override
-  void onFetchingGroupListCompleted(event){
-    super.onFetchingGroupListCompleted(event);
-  }
-  @override
-  void onMemberMadeAsAdmin(event){
-    super.onMemberMadeAsAdmin(event);
-  }
-  @override
-  void onMemberRemovedAsAdmin(event){
-    super.onMemberRemovedAsAdmin(event);
-  }
-  @override
-  void onLeftFromGroup({required String groupJid,required String userJid}){
-    super.onLeftFromGroup(groupJid: groupJid, userJid: userJid);
-  }
-  @override
-  void onGroupNotificationMessage(event){
-    super.onGroupNotificationMessage(event);
   }
   @override
   void onGroupDeletedLocally(groupJid){

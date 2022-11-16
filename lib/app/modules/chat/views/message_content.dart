@@ -4,8 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/common/main_controller.dart';
-import 'package:mirror_fly_demo/app/modules/chat/controllers/chat_controller.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 import '../../../common/constants.dart';
 import '../../../data/helper.dart';
@@ -24,19 +22,19 @@ class MessageContent extends StatefulWidget {
 
 class _MessageContentState extends State<MessageContent> {
   var controller = Get.find<MainController>();
-  var screenWidth, screenHeight;
+  // var screenWidth, screenHeight;
   @override
   Widget build(BuildContext context) {
 
-    screenHeight = MediaQuery.of(context).size.height;
-    screenWidth = MediaQuery.of(context).size.width;
+    double screenHeight = MediaQuery.of(context).size.height;
+    double screenWidth = MediaQuery.of(context).size.width;
 
     return Container(
-      child: getMessageContent(widget.chatList)
+      child: getMessageContent(widget.chatList, screenHeight, screenWidth)
     );
 }
 
-  getMessageContent(ChatMessageModel chatList) {
+  getMessageContent(ChatMessageModel chatList, double screenHeight, double screenWidth) {
 
     if (chatList.messageType == Constants.MTEXT) {
       return Padding(
@@ -132,7 +130,7 @@ class _MessageContentState extends State<MessageContent> {
                     Icons.star,
                     size: 13,
                   )
-                      : SizedBox.shrink(),
+                      : const SizedBox.shrink(),
                   const SizedBox(
                     width: 5,
                   ),
@@ -279,7 +277,7 @@ class _MessageContentState extends State<MessageContent> {
                       Icons.star,
                       size: 13,
                     )
-                        : SizedBox.shrink(),
+                        : const SizedBox.shrink(),
                     const SizedBox(
                       width: 5,
                     ),
@@ -465,15 +463,8 @@ class _MessageContentState extends State<MessageContent> {
                             max: double.parse(
                                 controller.maxDuration.value.toString()),
                             divisions: controller.maxDuration.value,
-                            // label: controller.currentpostlabel,
                             onChanged: (double value) async {
-                              // int seekval = value.round();
-                              // int result = await player.seek(Duration(milliseconds: seekval));
-                              // if(result == 1){ //seek successful
-                              //   currentpos = seekval;
-                              // }else{
-                              //   print("Seek unsuccessful.");
-                              // }
+
                             },
                           ),
                         ),
@@ -635,13 +626,12 @@ class _MessageContentState extends State<MessageContent> {
         debugPrint("===============================");
         debugPrint(chatMessage.mediaChatMessage!.isPlaying.toString());
         // return Obx(() {
-        // chatMessage.mediaChatMessage!.isPlaying = controller.audioplayed.value;
         return chatMessage.mediaChatMessage!.isPlaying
             ? const Icon(Icons.pause)
             : const Icon(Icons.play_arrow_sharp);
         // });
       } else {
-        return SizedBox.shrink();
+        return const SizedBox.shrink();
       }
     } else {
       switch (chatMessage.isMessageSentByMe
@@ -649,7 +639,7 @@ class _MessageContentState extends State<MessageContent> {
           : chatMessage.mediaChatMessage!.mediaDownloadStatus) {
         case Constants.MEDIA_DOWNLOADED:
         case Constants.MEDIA_UPLOADED:
-          return SizedBox.shrink();
+          return const SizedBox.shrink();
 
         case Constants.MEDIA_DOWNLOADED_NOT_AVAILABLE:
         case Constants.MEDIA_NOT_DOWNLOADED:
@@ -675,7 +665,7 @@ class _MessageContentState extends State<MessageContent> {
                   debugPrint(chatMessage.messageId);
                 },
                 child:
-                Container(width: 30, height: 30, child: uploadingView()));
+                SizedBox(width: 30, height: 30, child: uploadingView()));
           } else {
             return SizedBox(
               height: 40,
@@ -834,13 +824,13 @@ class _MessageContentState extends State<MessageContent> {
                     ),
                     Obx(() {
                       return controller.isPlaying.value
-                          ? Icon(Icons.pause)
-                          : Icon(Icons.play_arrow);
+                          ? const Icon(Icons.pause)
+                          : const Icon(Icons.play_arrow);
                     }),
                   ],
                 ),
               ),
-              SizedBox(
+              const SizedBox(
                 width: 20,
               ),
               Expanded(
@@ -875,13 +865,7 @@ class _MessageContentState extends State<MessageContent> {
                             divisions: controller.maxDuration.value,
                             label: controller.currentPostLabel,
                             onChanged: (double value) async {
-                              // int seekval = value.round();
-                              // int result = await player.seek(Duration(milliseconds: seekval));
-                              // if(result == 1){ //seek successful
-                              //   currentpos = seekval;
-                              // }else{
-                              //   print("Seek unsuccessful.");
-                              // }
+
                             },
                           );
                         }),
@@ -908,8 +892,8 @@ class _MessageContentState extends State<MessageContent> {
           },
           child: Image.file(
             File(mediaLocalStoragePath),
-            width: screenWidth * 0.60,
-            height: screenHeight * 0.4,
+            width: MediaQuery.of(context).size.width * 0.60,
+            height: MediaQuery.of(context).size.height * 0.4,
             fit: BoxFit.cover,
           ));
     } else {

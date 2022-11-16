@@ -2,15 +2,15 @@ import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
-import 'package:mirror_fly_demo/app/model/recentchat.dart';
-import 'package:mirror_fly_demo/app/model/userlistModel.dart';
+import 'package:mirror_fly_demo/app/model/recent_chat.dart';
+import 'package:mirror_fly_demo/app/model/userListModel.dart';
 import 'package:mirror_fly_demo/app/nativecall/platformRepo.dart';
 
 import '../../../common/constants.dart';
 import '../../../model/chatmessage_model.dart';
-import '../../../model/checkModel.dart';
-import '../../../model/profileModel.dart';
-import '../../../model/recentSearchModel.dart';
+import '../../../model/check_model.dart';
+import '../../../model/profile_model.dart';
+import '../../../model/recent_search_model.dart';
 import '../../../routes/app_pages.dart';
 
 class RecentChatSearchController extends GetxController {

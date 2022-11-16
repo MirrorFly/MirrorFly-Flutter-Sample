@@ -1,12 +1,10 @@
 import 'package:flutter/cupertino.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
-import 'package:mirror_fly_demo/app/model/chatMessageModel.dart';
 import 'package:mirror_fly_demo/app/nativecall/platformRepo.dart';
 
-import '../../../model/userlistModel.dart';
+import '../../../model/userListModel.dart';
 import '../../../routes/app_pages.dart';
 
 class ContactController extends GetxController {
@@ -196,16 +194,16 @@ class ContactController extends GetxController {
     }
   }
 
-  backtoCreateGroup(){
+  backToCreateGroup(){
     if(groupJid.value.isEmpty) {
-      if (selectedUsersJIDList.value.length >= Constants.MIN_GROUP_MEMBERS) {
-        Get.back(result: selectedUsersJIDList.value);
+      if (selectedUsersJIDList.length >= Constants.MIN_GROUP_MEMBERS) {
+        Get.back(result: selectedUsersJIDList);
       } else {
         toToast("Add at least two contacts");
       }
     }else{
-      if(selectedUsersJIDList.value.length>0){
-        Get.back(result: selectedUsersJIDList.value);
+      if(selectedUsersJIDList.isNotEmpty){
+        Get.back(result: selectedUsersJIDList);
       }
     }
   }

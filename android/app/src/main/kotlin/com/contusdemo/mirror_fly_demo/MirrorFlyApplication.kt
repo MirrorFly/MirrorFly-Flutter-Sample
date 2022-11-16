@@ -2,7 +2,6 @@ package com.contusdemo.mirror_fly_demo
 
 import android.app.Application
 import com.contus.flycommons.Constants
-import com.contus.flycommons.ContactType
 import com.contus.flycommons.LogMessage
 import com.contus.webrtc.GroupCallDetails
 import com.contus.webrtc.WebRtcCallService

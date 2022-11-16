@@ -5,7 +5,6 @@ import '../../../common/constants.dart';
 import '../../../common/main_controller.dart';
 import '../../../data/helper.dart';
 import '../../../model/chatMessageModel.dart';
-import '../controllers/chat_controller.dart';
 
 class MessageHeader extends StatefulWidget {
   const MessageHeader({Key? key, required this.chatList, required this.isTapEnabled}) : super(key: key);
@@ -145,7 +144,7 @@ class _MessageHeaderState extends State<MessageHeader> {
         return Row(
           children: [
             Helper.forMessageTypeIcon(Constants.MAUDIO),
-            SizedBox(
+            const SizedBox(
               width: 10,
             ),
             // Text(controller.replyChatMessage.mediaChatMessage!.mediaDuration),

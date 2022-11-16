@@ -10,8 +10,9 @@ import 'package:flutter/services.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
-import 'package:mirror_fly_demo/app/basecontroller.dart';
+import 'package:mirror_fly_demo/app/base_controller.dart';
 import 'package:mirror_fly_demo/app/data/SessionManagement.dart';
+import 'package:mirror_fly_demo/app/data/permissions.dart';
 import 'package:mirror_fly_demo/app/model/chatMessageModel.dart';
 import 'package:mirror_fly_demo/app/model/group_members_model.dart';
 import 'package:mirror_fly_demo/app/nativecall/platformRepo.dart';
@@ -22,10 +23,9 @@ import 'package:record/record.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../../common/constants.dart';
-import '../../../data/contact_utils.dart';
 import '../../../data/helper.dart';
-import '../../../model/checkModel.dart' as check_model;
-import '../../../model/userlistModel.dart';
+import '../../../model/check_model.dart' as check_model;
+import '../../../model/userListModel.dart';
 import '../../../routes/app_pages.dart';
 
 class ChatController extends BaseController
@@ -143,22 +143,22 @@ class ChatController extends BaseController
 
       int milliseconds = currentPos.value;
       //generating the duration label
-      int shours = Duration(milliseconds: milliseconds).inHours;
-      int sminutes = Duration(milliseconds: milliseconds).inMinutes;
-      int sseconds = Duration(milliseconds: milliseconds).inSeconds;
+      int sHours = Duration(milliseconds: milliseconds).inHours;
+      int sMinutes = Duration(milliseconds: milliseconds).inMinutes;
+      int sSeconds = Duration(milliseconds: milliseconds).inSeconds;
 
-      int rhours = shours;
-      int rminutes = sminutes - (shours * 60);
-      int rseconds = sseconds - (sminutes * 60 + shours * 60 * 60);
+      int rHours = sHours;
+      int rMinutes = sMinutes - (sHours * 60);
+      int rSeconds = sSeconds - (sMinutes * 60 + sHours * 60 * 60);
 
-      currentPostLabel = "$rhours:$rminutes:$rseconds";
+      currentPostLabel = "$rHours:$rMinutes:$rSeconds";
     });
 
     setAudioPath();
 
     filteredPosition.bindStream(filteredPosition.stream);
     ever(filteredPosition, (callback) {
-      Log("fillterdPosition", callback.reversed.toString());
+      Log("filtered Position", callback.reversed.toString());
       lastPosition(callback.length);
       chatList.refresh();
     });
@@ -268,7 +268,7 @@ class ChatController extends BaseController
     });
   }
 
-  String gettime(int? timestamp) {
+  String getTime(int? timestamp) {
     DateTime now = DateTime.now();
     final DateTime date1 = timestamp == null
         ? now
@@ -313,11 +313,12 @@ class ChatController extends BaseController
       chatList(chatMessageModel);
       Future.delayed(const Duration(milliseconds: 500),(){
         Future.doWhile(() {
-          if (scrollController.position.extentAfter == 0)
+          if (scrollController.position.extentAfter == 0) {
             return Future.value(false);
+          }
           return scrollController
               .animateTo(scrollController.position.maxScrollExtent,
-              duration: Duration(milliseconds: 100), curve: Curves.linear)
+              duration: const Duration(milliseconds: 100), curve: Curves.linear)
               .then((value) => true);
         });
       });
@@ -479,34 +480,10 @@ class ChatController extends BaseController
       }
     }
 
-    // if(isPlaying.value){
-    //   debugPrint("pause audio");
-    //   // audioplayed(false);
-    //
-    //   isPlaying(false);
-    //   // mediaChatMessage.isPlaying = false;
-    //   int result = await player.pause();
-    //   if (result == 1) {
-    //     // success
-    //     // isplaying(false);
-    //   }
-    // }else {
-    //   debugPrint("play audio");
-    //   // audioplayed(true);
-    //
-    //   isPlaying(true);
-    //   // mediaChatMessage.isPlaying = true;
-    //   int result = await player.play(filePath, isLocal: true);
-    //   if (result == 1) {
-    //     // success
-    //     // isplaying(true);
-    //   }
-    // }
-    // chatList.refresh();
   }
 
   Future<bool> askContactsPermission() async {
-    final permission = await ContactUtils.getContactPermission();
+    final permission = await AppPermission.getContactPermission();
     switch (permission) {
       case PermissionStatus.granted:
         return true;
@@ -519,14 +496,26 @@ class ChatController extends BaseController
   }
 
   Future<bool> askStoragePermission() async {
-    final permission = await ContactUtils.getStoragePermission();
+    final permission = await AppPermission.getStoragePermission();
     switch (permission) {
       case PermissionStatus.granted:
         return true;
       case PermissionStatus.permanentlyDenied:
         return false;
       default:
-        debugPrint("Contact Permission default");
+        debugPrint("Permission default");
+        return false;
+    }
+  }
+  Future<bool> askManageStoragePermission() async {
+    final permission = await AppPermission.getManageStoragePermission();
+    switch (permission) {
+      case PermissionStatus.granted:
+        return true;
+      case PermissionStatus.permanentlyDenied:
+        return false;
+      default:
+        debugPrint("Permission default");
         return false;
     }
   }
@@ -594,7 +583,7 @@ class ChatController extends BaseController
         );
       });
     } else {
-      debugPrint("media doesnot exist");
+      debugPrint("media does not exist");
     }
     // }
   }
@@ -1286,15 +1275,7 @@ class ChatController extends BaseController
     }
   }
 
-  @override
-  void onGroupProfileFetched(groupJid) {
-    super.onGroupProfileFetched(groupJid);
-  }
 
-  @override
-  void onNewGroupCreated(groupJid) {
-    super.onNewGroupCreated(groupJid);
-  }
 
   @override
   void onGroupProfileUpdated(groupJid) {
@@ -1308,41 +1289,6 @@ class ChatController extends BaseController
         }
       });
     }
-  }
-
-  @override
-  void onNewMemberAddedToGroup(event) {
-    super.onNewMemberAddedToGroup(event);
-  }
-
-  @override
-  void onMemberRemovedFromGroup(event) {
-    super.onMemberRemovedFromGroup(event);
-  }
-
-  @override
-  void onFetchingGroupMembersCompleted(groupJid) {
-    super.onFetchingGroupMembersCompleted(groupJid);
-  }
-
-  @override
-  void onDeleteGroup(groupJid) {
-    super.onDeleteGroup(groupJid);
-  }
-
-  @override
-  void onFetchingGroupListCompleted(noOfGroups) {
-    super.onFetchingGroupListCompleted(noOfGroups);
-  }
-
-  @override
-  void onMemberMadeAsAdmin(event) {
-    super.onMemberMadeAsAdmin(event);
-  }
-
-  @override
-  void onMemberRemovedAsAdmin(event) {
-    super.onMemberRemovedAsAdmin(event);
   }
 
   @override
@@ -1369,15 +1315,7 @@ class ChatController extends BaseController
     }
   }
 
-  @override
-  void onGroupNotificationMessage(event) {
-    super.onGroupNotificationMessage(event);
-  }
 
-  @override
-  void onGroupDeletedLocally(groupJid) {
-    super.onGroupDeletedLocally(groupJid);
-  }
 
   var userPresenceStatus = ''.obs;
   var typingList = <String>[].obs;

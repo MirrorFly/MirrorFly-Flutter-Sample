@@ -15,11 +15,6 @@ class LoginView extends GetView<LoginController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      /*appBar: AppBar(
-        title: const Text('Register'),
-        centerTitle: true,
-        automaticallyImplyLeading: false,
-      ),*/
       body: SafeArea(
         child: SingleChildScrollView(
           child: Container(
@@ -68,7 +63,7 @@ class LoginView extends GetView<LoginController> {
                       padding: const EdgeInsets.only(left : 10.0 , right: 10.0,top: 10.0),
                       child: ListTile(
                         contentPadding: EdgeInsets.zero,
-                        title: Text(controller.selectedCountry.value.name,
+                        title: Text(controller.selectedCountry.value.name ?? "",
                             style: const TextStyle(color: Colors.black,fontSize: 16,fontWeight: FontWeight.w500)),
                         trailing: const Icon(Icons.keyboard_arrow_down_outlined),
                         onTap: (){
@@ -76,7 +71,7 @@ class LoginView extends GetView<LoginController> {
                         },
                       ),
                     )),
-                    AppDivider(),
+                    const AppDivider(),
                     Padding(
                       padding: const EdgeInsets.only(left: 10.0, right: 10.0),
                       child: IntrinsicHeight(
@@ -84,7 +79,7 @@ class LoginView extends GetView<LoginController> {
                           children: [
                             Obx(
                                   ()=> Text(
-                                controller.selectedCountry.value.dialCode,
+                                controller.selectedCountry.value.dialCode ?? "",
                                 style: const TextStyle(fontSize: 15),
                               ),
                             ),

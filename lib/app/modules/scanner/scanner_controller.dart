@@ -1,12 +1,10 @@
-import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:meta/meta.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
 import 'package:mirror_fly_demo/app/data/SessionManagement.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
-import 'package:mirror_fly_demo/app/model/weblogin_model.dart';
+import 'package:mirror_fly_demo/app/model/web_login_model.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 
 import '../../nativecall/platformRepo.dart';
@@ -16,12 +14,12 @@ class ScannerController extends GetxController {
   final GlobalKey qrKey = GlobalKey(debugLabel: 'QR');
   QRViewController? controller;
 
-  final loginqr = <String>[];
-  final _weblogins = <WebLogin>[].obs;
+  final loginQr = <String>[];
+  final _webLogins = <WebLogin>[].obs;
 
-  set weblogins(value) => _weblogins.value = value;
+  set webLogins(value) => _webLogins.value = value;
 
-  List<WebLogin> get weblogins => _weblogins.value;
+  List<WebLogin> get webLogins => _webLogins;
 
   void onQRViewCreated(QRViewController controller) {
     this.controller = controller;
@@ -71,7 +69,7 @@ class ScannerController extends GetxController {
   logoutWebUser() {
     Helper.progressLoading();
     PlatformRepo().webLoginDetailsCleared();
-    PlatformRepo().logoutWebUser(loginqr).then((value) {
+    PlatformRepo().logoutWebUser(loginQr).then((value) {
       Helper.hideLoading();
       if (value != null && value) {
         SessionManagement.setWebChatLogin(false);
@@ -89,12 +87,14 @@ class ScannerController extends GetxController {
   }
 
   getWebLoginDetails() {
-    loginqr.clear();
+    loginQr.clear();
     PlatformRepo().getWebLoginDetails().then((value) {
       if (value != null) {
         var list = webLoginFromJson(value);
-        _weblogins(list);
-        list.forEach((element)=>loginqr.add(element.qrUniqeToken));
+        _webLogins(list);
+        for (var element in list) {
+          loginQr.add(element.qrUniqeToken);
+        }
       }
     });
   }

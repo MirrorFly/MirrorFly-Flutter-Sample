@@ -12,7 +12,7 @@ import 'package:yaml/yaml.dart';
 import '../../../data/SessionManagement.dart';
 
 class SettingsController extends GetxController{
-   PackageInfo? packageInfo = null ;
+   PackageInfo? packageInfo ;
   @override
   void onInit() {
     super.onInit();
@@ -37,6 +37,10 @@ class SettingsController extends GetxController{
       }
     }).catchError((er){
       Helper.hideLoading();
+      SessionManagement.clear().then((value){
+        // SessionManagement.setToken(token);
+        Get.offAllNamed(Routes.LOGIN);
+      });
     });
   }
 

@@ -1,15 +1,12 @@
 
-import 'package:firebase_app_installations/firebase_app_installations.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
-import 'package:mirror_fly_demo/app/model/countryModel.dart';
-import 'package:mirror_fly_demo/app/model/statusModel.dart';
+import 'package:mirror_fly_demo/app/model/country_model.dart';
 import 'package:otp_text_field/otp_field.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 import '../../../common/constants.dart';
 import '../../../data/SessionManagement.dart';
@@ -24,7 +21,7 @@ class LoginController extends GetxController {
   TextEditingController mobileNumber = TextEditingController();
   OtpFieldController otpController = OtpFieldController();
 
-  String get countryCode => selectedCountry.value.dialCode;
+  String? get countryCode => selectedCountry.value.dialCode;
   var verificationId = "";
   int? resendingToken;
   Rx<bool> timeout=false.obs;
@@ -74,7 +71,7 @@ class LoginController extends GetxController {
       await confirmationResult.confirm(smsCode);
     } else {
       await _auth.verifyPhoneNumber(
-        phoneNumber: countryCode+mobileNumber.text,
+        phoneNumber: countryCode! + mobileNumber.text,
         timeout: const Duration(seconds: 60),
         verificationCompleted: _onVerificationCompleted,
         verificationFailed: (FirebaseAuthException e) {
@@ -133,7 +130,7 @@ class LoginController extends GetxController {
     Log("verificationCompleted verificationId", credential.verificationId.toString());
     Log("verificationCompleted smsCode", credential.smsCode.toString());
     Log("verificationCompleted token", credential.token.toString());
-    // need otp so i can autofill in a textbox
+    // need otp so i can autofill in a text box
     if (credential.smsCode != null) {
       otpController.set(credential.smsCode!.split(""));
     }
@@ -144,13 +141,13 @@ class LoginController extends GetxController {
     try {
       await _auth.signInWithCredential(credential).then((value){
         sendTokenToServer();
-        Log("sigin ", value.toString());
+        Log("sign in ", value.toString());
       }).catchError((error){
         debugPrint("Firebase Verify Error $error");
         hideLoading();
       });
     } on FirebaseAuthException catch (e) {
-      Log("sigin error", e.toString());
+      Log("sign in error", e.toString());
       toToast("Enter Valid Otp");
       hideLoading();
     }
@@ -171,7 +168,7 @@ class LoginController extends GetxController {
   }
 
   verifyTokenWithServer(String token){
-    var userName = (countryCode+mobileNumber.text.toString()).replaceAll("+", "");
+    var userName = (countryCode! + mobileNumber.text.toString()).replaceAll("+", "");
     //make api call
     PlatformRepo().verifyToken(userName,token).then((value) {
       // if (value != null) {

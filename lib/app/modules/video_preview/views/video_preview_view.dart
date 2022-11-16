@@ -139,10 +139,10 @@ class VideoPreviewView extends GetView<VideoPreviewController> {
                   backgroundColor: Colors.black38,
                   child: Obx(() {
                     return controller.isPlaying.value ?
-                    Icon(Icons.pause,
+                    const Icon(Icons.pause,
                       color: Colors.white,
                       size: 50,
-                    ) : Icon(Icons.play_arrow,
+                    ) : const Icon(Icons.play_arrow,
                       color: Colors.white,
                       size: 50,
                     );

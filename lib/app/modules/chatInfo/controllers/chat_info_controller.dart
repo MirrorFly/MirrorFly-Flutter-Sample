@@ -3,7 +3,7 @@ import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
 
 import '../../../common/constants.dart';
-import '../../../model/userlistModel.dart';
+import '../../../model/userListModel.dart';
 import '../../../nativecall/platformRepo.dart';
 import '../../../routes/app_pages.dart';
 

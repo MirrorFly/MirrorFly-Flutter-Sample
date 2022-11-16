@@ -13,15 +13,15 @@ import '../../../model/chatMessageModel.dart';
 import '../../../routes/app_pages.dart';
 
 class ChatSearchView extends GetView<ChatController> {
-  ChatSearchView({super.key});
-  var screenWidth = 0.0, screenHeight = 0.0;
+  const ChatSearchView({super.key});
+
   @override
   Widget build(BuildContext context) {
-    screenHeight = MediaQuery
+    controller.screenHeight = MediaQuery
         .of(context)
         .size
         .height;
-    screenWidth = MediaQuery
+    controller.screenWidth = MediaQuery
         .of(context)
         .size
         .width;
@@ -81,7 +81,7 @@ class ChatSearchView extends GetView<ChatController> {
                   ? Alignment.bottomRight
                   : Alignment.bottomLeft),
               child: Container(
-                constraints: BoxConstraints(maxWidth: screenWidth * 0.6),
+                constraints: BoxConstraints(maxWidth: controller.screenWidth * 0.6),
                 decoration: BoxDecoration(
                     borderRadius: chatList[index].isMessageSentByMe
                         ? const BorderRadius.only(
@@ -208,8 +208,8 @@ class ChatSearchView extends GetView<ChatController> {
                   chatMessage.mediaFileName),
             ),
             Positioned(
-                top: (screenHeight * 0.4) / 2.5,
-                left: (screenWidth * 0.6) / 3,
+                top: (controller.screenHeight * 0.4) / 2.5,
+                left: (controller.screenWidth * 0.6) / 3,
                 child: InkWell(
                     onTap: () {
                       handleMediaUploadDownload(
@@ -274,8 +274,8 @@ class ChatSearchView extends GetView<ChatController> {
               ),
             ),
             Positioned(
-                top: (screenHeight * 0.4) / 2.6,
-                left: (screenWidth * 0.6) / 2.9,
+                top: (controller.screenHeight * 0.4) / 2.6,
+                left: (controller.screenWidth * 0.6) / 2.9,
                 child: InkWell(
                     onTap: () {
                       handleMediaUploadDownload(
@@ -329,7 +329,7 @@ class ChatSearchView extends GetView<ChatController> {
             borderRadius: const BorderRadius.all(Radius.circular(10)),
             color: Colors.white,
           ),
-          width: screenWidth * 0.60,
+          width: controller.screenWidth * 0.60,
           child: Column(
             children: [
               Padding(
@@ -420,7 +420,7 @@ class ChatSearchView extends GetView<ChatController> {
             borderRadius: const BorderRadius.all(Radius.circular(10)),
             color: Colors.white,
           ),
-          width: screenWidth * 0.60,
+          width: controller.screenWidth * 0.60,
           child: Column(
             children: [
               Padding(
@@ -494,7 +494,7 @@ class ChatSearchView extends GetView<ChatController> {
           borderRadius: const BorderRadius.all(Radius.circular(10)),
           color: Colors.white,
         ),
-        width: screenWidth * 0.60,
+        width: controller.screenWidth * 0.60,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -561,13 +561,7 @@ class ChatSearchView extends GetView<ChatController> {
                                 controller.maxDuration.value.toString()),
                             divisions: controller.maxDuration.value,
                             onChanged: (double value) async {
-                              // int seekval = value.round();
-                              // int result = await player.seek(Duration(milliseconds: seekval));
-                              // if(result == 1){ //seek successful
-                              //   currentpos = seekval;
-                              // }else{
-                              //   print("Seek unsuccessful.");
-                              // }
+
                             },
                           ),
                         ),
@@ -747,12 +741,9 @@ class ChatSearchView extends GetView<ChatController> {
       } else if (chatMessage.messageType == 'AUDIO') {
         debugPrint("===============================");
         debugPrint(chatMessage.mediaChatMessage!.isPlaying.toString());
-        // return Obx(() {
-        // chatMessage.mediaChatMessage!.isPlaying = controller.audioplayed.value;
         return chatMessage.mediaChatMessage!.isPlaying
             ? const Icon(Icons.pause)
             : const Icon(Icons.play_arrow_sharp);
-        // });
       } else {
         return const SizedBox.shrink();
       }
@@ -844,8 +835,8 @@ class ChatSearchView extends GetView<ChatController> {
           },
           child: Image.file(
             File(mediaLocalStoragePath),
-            width: screenWidth * 0.60,
-            height: screenHeight * 0.4,
+            width: controller.screenWidth * 0.60,
+            height: controller.screenHeight * 0.4,
             fit: BoxFit.cover,
           ));
     } else {
@@ -1066,13 +1057,7 @@ class ChatSearchView extends GetView<ChatController> {
                             divisions: controller.maxDuration.value,
                             label: controller.currentPostLabel,
                             onChanged: (double value) async {
-                              // int seekval = value.round();
-                              // int result = await player.seek(Duration(milliseconds: seekval));
-                              // if(result == 1){ //seek successful
-                              //   currentpos = seekval;
-                              // }else{
-                              //   print("Seek unsuccessful.");
-                              // }
+
                             },
                           );
                         }),
@@ -1341,9 +1326,9 @@ class ChatSearchView extends GetView<ChatController> {
     }
   }
 
-  Widget spannableText(String text, String spannabletext,TextStyle? style) {
-    var startIndex = text.toLowerCase().startsWith(spannabletext.toLowerCase()) ? text.toLowerCase().indexOf(spannabletext.toLowerCase()) : -1;
-    var endIndex = startIndex + spannabletext.length;
+  Widget spannableText(String text, String spannableText,TextStyle? style) {
+    var startIndex = text.toLowerCase().startsWith(spannableText.toLowerCase()) ? text.toLowerCase().indexOf(spannableText.toLowerCase()) : -1;
+    var endIndex = startIndex + spannableText.length;
     if (startIndex != -1 && endIndex != -1) {
       var startText = text.substring(0, startIndex);
       var colorText = text.substring(startIndex, endIndex);

@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
@@ -9,11 +8,10 @@ import 'package:mirror_fly_demo/app/common/constants.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
 import 'package:mirror_fly_demo/app/nativecall/platformRepo.dart';
 
-import '../../../common/cropimage.dart';
-import '../../../model/group_members_model.dart';
-import '../../../model/userlistModel.dart';
+import '../../../common/crop_image.dart';
+import '../../../model/userListModel.dart';
 import '../../../routes/app_pages.dart';
-import '../views/namechange_view.dart';
+import '../views/name_change_view.dart';
 
 class GroupInfoController extends GetxController {
   ScrollController scrollController = ScrollController();
@@ -47,9 +45,9 @@ class GroupInfoController extends GetxController {
     getGroupMembers(false);
     getGroupMembers(null);
     groupAdmin();
-    MemberOfGroup();
+    memberOfGroup();
 
-    namecontroller.text=profile.nickName.checkNull();
+    nameController.text=profile.nickName.checkNull();
   }
   _scrollListener() {
     if (scrollController.hasClients) {
@@ -64,7 +62,7 @@ class GroupInfoController extends GetxController {
       }
     });
   }
-  MemberOfGroup(){
+  memberOfGroup(){
     PlatformRepo().isMemberOfGroup(profile.jid.checkNull(),null).then((bool? value){
       if(value!=null){
         _isMemberOfGroup(value);
@@ -174,8 +172,8 @@ class GroupInfoController extends GetxController {
     ]);
   }
 
-  var imagepath = "".obs;
-  Future ImagePicker(BuildContext context) async {
+  var imagePath = "".obs;
+  Future imagePicker(BuildContext context) async {
     FilePickerResult? result = await FilePicker.platform
         .pickFiles(allowMultiple: false, type: FileType.image);
     if (result != null) {
@@ -185,7 +183,7 @@ class GroupInfoController extends GetxController {
         value as MemoryImage;
         var name = "${DateTime.now().millisecondsSinceEpoch}.jpg";
         writeImageTemp(value.bytes, name).then((value) {
-            imagepath(value.path);
+            imagePath(value.path);
             updateGroupProfileImage(value.path);
         });
       });
@@ -194,7 +192,7 @@ class GroupInfoController extends GetxController {
     }
   }
 
-  Camera(XFile? result) {
+  camera(XFile? result) {
     if (result != null) {
       Get.to(CropImage(
         imageFile: File(result.path),
@@ -202,7 +200,7 @@ class GroupInfoController extends GetxController {
         value as MemoryImage;
         var name = "${DateTime.now().millisecondsSinceEpoch}.jpg";
         writeImageTemp(value.bytes, name).then((value) {
-            imagepath(value.path);
+            imagePath(value.path);
             updateGroupProfileImage(value.path);
         });
       });
@@ -238,7 +236,7 @@ class GroupInfoController extends GetxController {
     });
   }
 
-  remomveProfileImage() {
+  removeProfileImage() {
     Helper.showAlert(message: "Are you sure you want to remove the group photo?.",actions: [
       TextButton(
           onPressed: () {
@@ -292,10 +290,10 @@ class GroupInfoController extends GetxController {
     Get.toNamed(Routes.VIEW_MEDIA,arguments: {"name":profile.name,"jid":profile.jid,"isgroup":profile.isGroupProfile});
   }
 
-  removeUser(String userjid){
+  removeUser(String userJid){
     if(isMemberOfGroup){
       showLoader();
-      PlatformRepo().removeMemberFromGroup(profile.jid.checkNull(), userjid).then((value){
+      PlatformRepo().removeMemberFromGroup(profile.jid.checkNull(), userJid).then((value){
         hideLoader();
         if(value!=null && value){
           getGroupMembers(false);
@@ -306,10 +304,10 @@ class GroupInfoController extends GetxController {
     }
   }
 
-  makeAdmin(String userjid){
+  makeAdmin(String userJid){
     if(isMemberOfGroup){
       showLoader();
-      PlatformRepo().makeAdmin(profile.jid.checkNull(), userjid).then((value){
+      PlatformRepo().makeAdmin(profile.jid.checkNull(), userJid).then((value){
         hideLoader();
         if(value!=null && value){
           getGroupMembers(false);
@@ -323,21 +321,21 @@ class GroupInfoController extends GetxController {
   //New Name Change
   gotoNameEdit(){
     if(isMemberOfGroup) {
-      Get.to(NameChangeView())?.then((value) {
+      Get.to(const NameChangeView())?.then((value) {
         if (value != null) {
-          updateGroupName(namecontroller.text);
+          updateGroupName(nameController.text);
         }
       });
     }else{
       toToast("You're no longer a participant in this group");
     }
   }
-  var namecontroller = TextEditingController();
+  var nameController = TextEditingController();
   FocusNode focusNode = FocusNode();
   var showEmoji = false.obs;
   var count= 25.obs;
 
   onChanged(){
-    count.value = (25 - namecontroller.text.length);
+    count.value = (25 - nameController.text.length);
   }
 }

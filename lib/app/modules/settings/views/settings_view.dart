@@ -1,17 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
 import 'package:mirror_fly_demo/app/modules/settings/controllers/settings_controller.dart';
 import 'package:mirror_fly_demo/app/routes/app_pages.dart';
-import 'package:package_info_plus/package_info_plus.dart';
 
 import '../../../common/constants.dart';
 import '../../../common/widgets.dart';
-import 'about/aboutandhelp_view.dart';
-import 'blocked/blockedlist_view.dart';
-import 'notification/notificationsettings_view.dart';
+import 'about/about_and_help_view.dart';
 
 class SettingsView extends GetView<SettingsController> {
   const SettingsView({Key? key}) : super(key: key);
@@ -26,27 +22,25 @@ class SettingsView extends GetView<SettingsController> {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            SettingListItem("Profile", profileicon, rightarrowicon,
+            settingListItem("Profile", profileicon, rightarrowicon,
                 () => Get.toNamed(Routes.PROFILE,arguments: {"from":Routes.SETTINGS})),
-            SettingListItem("Chats", chaticon, rightarrowicon, () {}),
-            SettingListItem(
+            settingListItem("Chats", chaticon, rightarrowicon, () {}),
+            settingListItem(
                 "Starred Messages", staredmsgicon, rightarrowicon, () {
                   Get.toNamed(Routes.STARRED_MESSAGES);
             }),
-            SettingListItem(
+            settingListItem(
                 "Notifications", notificationicon, rightarrowicon, ()=>Get.toNamed(Routes.NOTIFICATION)),
-            SettingListItem(
+            settingListItem(
                 "Blocked Contacts", blockedicon, rightarrowicon, ()=>Get.toNamed(Routes.BLOCKEDLIST)),
-            //SettingListItem("Archived Chats", archiveicon, rightarrowicon, () {}),
-            SettingListItem("App Lock", lockicon, rightarrowicon, ()=>Get.toNamed(Routes.APPLOCK)),
-            SettingListItem("About and Help", abouticon, rightarrowicon, () =>Get.to(AboutAndHelpView())),
-            SettingListItem(
+            settingListItem("App Lock", lockicon, rightarrowicon, ()=>Get.toNamed(Routes.APPLOCK)),
+            settingListItem("About and Help", abouticon, rightarrowicon, () =>Get.to(const AboutAndHelpView())),
+            settingListItem(
                 "Connection Label", connectionicon, toggleofficon, () {}),
-            // SettingListItem("Report Log", reporticon, rightarrowicon, () {}),
-            SettingListItem("Delete My Account", delete, rightarrowicon, () {
+            settingListItem("Delete My Account", delete, rightarrowicon, () {
               Get.toNamed(Routes.DELETE_ACCOUNT);
             }),
-            SettingListItem("Logout", logouticon, rightarrowicon, () {
+            settingListItem("Logout", logouticon, rightarrowicon, () {
               Helper.showAlert(
                   message:
                   "Are you sure want to logout from the app?",
@@ -82,13 +76,13 @@ class SettingsView extends GetView<SettingsController> {
                     RichText(
                         text: TextSpan(
                             text: "Version ",
-                            style: TextStyle(color: textcolor),
+                            style: const TextStyle(color: textcolor),
                             children: [
                               TextSpan(
                                   text: controller.packageInfo != null
                                       ? controller.packageInfo!.version
                                       : "",
-                                  style: TextStyle(color: texthintcolor))
+                                  style: const TextStyle(color: texthintcolor))
                             ]),
                       ),
                   ]),
@@ -99,12 +93,12 @@ class SettingsView extends GetView<SettingsController> {
     );
   }
 
-  Widget SettingListItem(
-      String title, String leading, String trailing, Function() ontap) {
+  Widget settingListItem(
+      String title, String leading, String trailing, Function() onTap) {
     return Column(
       children: [
         InkWell(
-          onTap: ontap,
+          onTap: onTap,
           child: Row(
             children: [
               Padding(
@@ -126,7 +120,7 @@ class SettingsView extends GetView<SettingsController> {
             ],
           ),
         ),
-        AppDivider(),
+        const AppDivider(),
       ],
     );
   }

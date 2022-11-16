@@ -1,4 +1,3 @@
-import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -6,7 +5,6 @@ import 'package:intl/intl.dart';
 import 'package:mirror_fly_demo/app/nativecall/platformRepo.dart';
 
 import '../../../model/chatMessageModel.dart';
-import '../../../model/userlistModel.dart';
 
 class StarredMessagesController extends GetxController {
 
@@ -35,8 +33,8 @@ class StarredMessagesController extends GetxController {
     if (epochTime == 0) return "";
     var convertedTime = epochTime; // / 1000;
     //messageDate.time = convertedTime
-    var hourTime = manipulateMessageTime(
-        context, DateTime.fromMicrosecondsSinceEpoch(convertedTime));
+    // var hourTime = manipulateMessageTime(
+    //     context, DateTime.fromMicrosecondsSinceEpoch(convertedTime));
     var currentYear = DateTime.now().year;
     calendar = DateTime.fromMicrosecondsSinceEpoch(convertedTime);
     var time = (currentYear == calendar.year)

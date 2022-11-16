@@ -4,7 +4,7 @@ import 'package:get/get.dart';
 import '../../../common/constants.dart';
 import '../../../data/SessionManagement.dart';
 import '../../../data/helper.dart';
-import '../../../model/countryModel.dart';
+import '../../../model/country_model.dart';
 import '../../../routes/app_pages.dart';
 
 class DeleteAccountController extends GetxController {
@@ -12,7 +12,7 @@ class DeleteAccountController extends GetxController {
   var india = CountryData(name: "India", dialCode: "+91", code: "IN");
   var selectedCountry = CountryData(name: "India", dialCode: "+91", code: "IN").obs;
 
-  String get countryCode => selectedCountry.value.dialCode;
+  String? get countryCode => selectedCountry.value.dialCode;
   TextEditingController mobileNumber = TextEditingController();
 
 

@@ -6,8 +6,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 
 import 'package:get/get.dart';
-import 'package:mirror_fly_demo/app/common/constants.dart';
-import 'package:mirror_fly_demo/app/common/apptheme.dart';
+import 'package:mirror_fly_demo/app/common/app_theme.dart';
 import 'package:mirror_fly_demo/app/common/main_controller.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
 import 'package:mirror_fly_demo/app/modules/dashboard/bindings/dashboard_binding.dart';
@@ -48,7 +47,7 @@ class MyApp extends StatelessWidget{
   Widget build(BuildContext context) {
     return GetMaterialApp(
       title: "MirrorFly",
-      theme: Apptheme.theme,
+      theme: MirrorFlyAppTheme.theme,
       builder: EasyLoading.init(),
       debugShowCheckedModeBanner: false,
       initialBinding: getBinding(),

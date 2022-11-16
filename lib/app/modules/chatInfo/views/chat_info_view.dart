@@ -54,7 +54,7 @@ class ChatInfoView extends GetView<ChatInfoController> {
                           .of(context)
                           .size
                           .height * 0.45,
-                      clipoval: false,
+                      clipOval: false,
                       errorWidget: ProfileTextImage(
                         text: controller.profile.nickName
                             .checkNull()
@@ -62,7 +62,7 @@ class ChatInfoView extends GetView<ChatInfoController> {
                             ? controller.profile.nickName.checkNull()
                             : controller.profile.name.checkNull(),
                         radius: 0,
-                        fontsize: 120,
+                        fontSize: 120,
                       )),
                   titlePadding: controller.isSliverAppBarExpanded
                       ? const EdgeInsets.symmetric(vertical: 16, horizontal: 20)

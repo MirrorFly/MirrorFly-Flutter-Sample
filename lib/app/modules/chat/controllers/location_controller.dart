@@ -1,7 +1,5 @@
 import 'dart:async';
 
-import 'package:flutter_svg/flutter_svg.dart';
-import 'package:flutter_svg/parser.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
@@ -13,23 +11,18 @@ class LocationController extends GetxController{
   late GoogleMapController controller;
   var address1="".obs;
   var address2="".obs;
-  var location = LatLng(0, 0).obs;
-  var kGoogle = CameraPosition(
+  var location = const LatLng(0, 0).obs;
+  var kGoogle = const CameraPosition(
     target: LatLng(20.42796133580664, 80.885749655962),
     zoom: 14.4746,
   ).obs;
   // on below line we have created the list of markers
 
-  Rx<Marker> marker = Marker(
+  Rx<Marker> marker = const Marker(
         markerId: MarkerId('1'),
         position: LatLng(20.42796133580664, 75.885749655962),
     ).obs;
 
-  @override
-  void onInit() async{
-    super.onInit();
-
-  }
   onMapCreated(GoogleMapController googleMapController){
     completer.complete(googleMapController);
     controller = googleMapController;
@@ -48,16 +41,16 @@ class LocationController extends GetxController{
       if(value!=null) {
         setLocation(LatLng(value.latitude, value.longitude));
       }else{
-        throw "lastknownlocation null";
+        throw "last known location null";
       }
     }).catchError((er){
       Log("Location", er.toString());
       Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.best).then((value) {
-        if (value != null) {
+        // if (value != null) {
           setLocation(LatLng(value.latitude, value.longitude));
-        } else {
-          throw "current location null";
-        }
+        // } else {
+        //   throw "current location null";
+        // }
       }).catchError((er){
 
       });
@@ -93,12 +86,12 @@ class LocationController extends GetxController{
   Future<Placemark> getAddress(double lat,double lng)async{
     var addresses = await placemarkFromCoordinates(lat,lng);
     var first = addresses.first;
-    addresses.forEach((element) {
-      Log("addresslist ", element.toJson().toString());
-    });
+    for (var element in addresses) {
+      Log("address-list ", element.toJson().toString());
+    }
     Log("address", first.toJson().toString());
-    address1.value=first.street.toString()+","+first.subLocality.toString();
-    address2.value=first.subAdministrativeArea.toString()+","+first.administrativeArea.toString()+","+first.postalCode.toString();
+    address1.value="${first.street},${first.subLocality}";
+    address2.value="${first.subAdministrativeArea},${first.administrativeArea},${first.postalCode}";
     //print(' ${first.locality}, ${first.administrativeArea},${first.subLocality}, ${first.subAdministrativeArea},${first.street}, ${first.name},${first.thoroughfare}, ${first.subThoroughfare}');
     return first;
   }

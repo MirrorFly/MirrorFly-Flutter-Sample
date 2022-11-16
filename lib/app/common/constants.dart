@@ -164,7 +164,7 @@ toToast(String text) {
 }
 Log(String tag,String msg){
   if (kDebugMode) {
-    print("Mirrorfly : "+tag+" ==> "+msg);
+    print("MirrorFly : $tag ==> $msg");
   }
 }
 class Constants {
@@ -511,7 +511,7 @@ class Constants {
   static const String Terms_Conditions = "https://www.mirrorfly.com/terms-and-conditions.php";
   static const String Privacy_Policy = "https://www.mirrorfly.com/privacy-policy.php";
 
-  static const List<String> defaultStatuslist = ["Available","Sleeping...","Urgent calls only","At the movies","I am in Mirror Fly"];
+  static const List<String> defaultStatusList = ["Available","Sleeping...","Urgent calls only","At the movies","I am in Mirror Fly"];
   static const List<int> defaultColorList = [
     0Xff9068BE,
     0XffE62739,
@@ -556,7 +556,7 @@ class Constants {
     0Xff027E02,
     0XffF66E54
   ];
-  static const String defaultstatus = "I am in Mirror Fly";
+  static const String defaultStatus = "I am in Mirror Fly";
 
   static const int MEDIA_DOWNLOADING = 3;
   static const int MEDIA_DOWNLOADED = 4;
@@ -600,11 +600,11 @@ class Constants {
 }
 
 Future<void> launchWeb(String url) async{
-  if (await canLaunchUrl(Uri.parse(url)))
+  if (await canLaunchUrl(Uri.parse(url))) {
     await launchUrl(Uri.parse(url));
-  else
-    // can't launch url, there is some error
+  } else {
     throw "Could not launch $url";
+  }
 }
 
 Widget forMessageTypeIcon(String MessageType) {
@@ -666,7 +666,7 @@ String? forMessageTypeString(String MessageType) {
 Future<File> writeImageTemp(dynamic bytes, String imageName) async {
   final dir = await getTemporaryDirectory();
   await dir.create(recursive: true);
-  final tempFile = File((dir.path) + "/" + imageName);
+  final tempFile = File("${dir.path}/$imageName");
   await tempFile.writeAsBytes(bytes);
   return tempFile;
 }

@@ -5,10 +5,9 @@ import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
 import 'package:mirror_fly_demo/app/nativecall/platformRepo.dart';
 
-import '../../../common/constants.dart';
 import '../../../common/widgets.dart';
 import '../../../model/chatMessageModel.dart';
-import '../../../model/userlistModel.dart';
+import '../../../model/userListModel.dart';
 import '../../starred_messages/controllers/starred_messages_controller.dart';
 
 class StarredMessageHeader extends StatefulWidget {
@@ -86,7 +85,7 @@ class _StarredMessageHeaderState extends State<StarredMessageHeader> {
       url: userProfile.value.image.checkNull(),
       width: 55,
       height: 55,
-      clipoval: true,
+      clipOval: true,
       errorWidget: ProfileTextImage(
         text: userProfile.value.name.checkNull().isEmpty
             ? userProfile.value.mobileNumber.checkNull()

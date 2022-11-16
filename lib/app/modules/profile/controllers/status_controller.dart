@@ -9,26 +9,25 @@ import '../../../data/helper.dart';
 import '../../../nativecall/platformRepo.dart';
 
 class StatusListController extends GetxController{
-  var statuslist = List<StatusData>.empty(growable: true).obs;
+  var statusList = List<StatusData>.empty(growable: true).obs;
   var selectedStatus = "".obs;
   var loading =false.obs;
 
   //add new status
-  var addstatuscontroller = TextEditingController();
+  var addStatusController = TextEditingController();
   FocusNode focusNode = FocusNode();
   var showEmoji = false.obs;
   var count= 121.obs;
 
   onChanged(){
-    count.value = (121 - addstatuscontroller.text.length);
-    //addstatuscontroller.selection = TextSelection.collapsed(offset: addstatuscontroller.text.length);
+    count.value = (121 - addStatusController.text.length);
   }
 
   @override
   void onInit() {
     super.onInit();
     selectedStatus.value = Get.arguments['status'];
-    addstatuscontroller.text=selectedStatus.value;
+    addStatusController.text=selectedStatus.value;
     getStatusList();
     onChanged();
   }
@@ -37,13 +36,9 @@ class StatusListController extends GetxController{
     PlatformRepo().getStatusList().then((value){
       loading.value=false;
       if(value!=null){
-        statuslist.value = statusDataFromJson(value);
-        statuslist.refresh();
-        /*statuslist.forEach((element) {
-          if (element.status==addstatuscontroller.text.toString()) {
-            selectedStatus.value = element.status;
-          }
-        });*/
+        statusList.value = statusDataFromJson(value);
+        statusList.refresh();
+
       }
     }).catchError((onError){
       loading.value=false;
@@ -52,9 +47,9 @@ class StatusListController extends GetxController{
 
   updateStatus([String? text]){
     Helper.showLoading();
-    PlatformRepo().updateProfileStatus(text ?? addstatuscontroller.text.trim().toString()).then((value){
-      selectedStatus.value=text ?? addstatuscontroller.text.trim().toString();
-      addstatuscontroller.text=text ?? addstatuscontroller.text.trim().toString();
+    PlatformRepo().updateProfileStatus(text ?? addStatusController.text.trim().toString()).then((value){
+      selectedStatus.value=text ?? addStatusController.text.trim().toString();
+      addStatusController.text=text ?? addStatusController.text.trim().toString();
       var data = json.decode(value.toString());
       toToast(data['message'].toString());
       Helper.hideLoading();

@@ -1,6 +1,5 @@
 import 'dart:io';
 
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
@@ -10,7 +9,6 @@ import 'package:mirror_fly_demo/app/common/constants.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
 import 'package:mirror_fly_demo/app/routes/app_pages.dart';
 
-import '../../../common/cropimage.dart';
 import '../../../common/widgets.dart';
 import '../controllers/profile_controller.dart';
 
@@ -48,13 +46,13 @@ class ProfileView extends GetView<ProfileController> {
                             borderRadius: BorderRadius.circular(8.0),
                             child: Obx(
                               () => InkWell(
-                                child: controller.imagepath.value.isNotEmpty
+                                child: controller.imagePath.value.isNotEmpty
                                     ? SizedBox(
                                         width: 150,
                                         height: 150,
                                         child: ClipOval(
                                           child: Image.file(
-                                            File(controller.imagepath.value),
+                                            File(controller.imagePath.value),
                                             fit: BoxFit.fill,
                                           ),
                                         ))
@@ -63,12 +61,12 @@ class ProfileView extends GetView<ProfileController> {
                                             .checkNull(),
                                         width: 150,
                                         height: 150,
-                                        clipoval: true,
+                                        clipOval: true,
                                         errorWidget: controller.name.value
                                                 .checkNull()
                                                 .isNotEmpty
                                             ? ProfileTextImage(
-                                                fontsize: 40,
+                                                fontSize: 40,
                                                 text: controller.name.value
                                                     .checkNull(),
                                                 radius: 75,
@@ -76,33 +74,26 @@ class ProfileView extends GetView<ProfileController> {
                                             : null,
                                       ),
                                 onTap: () {
-                                  if (controller.imagepath.value
+                                  if (controller.imagePath.value
                                       .checkNull()
                                       .isNotEmpty) {
                                     Get.toNamed(Routes.IMAGE_VIEW, arguments: {
                                       'imageName': controller.profileName.text,
                                       'imagePath':
-                                          controller.imagepath.value.checkNull()
+                                          controller.imagePath.value.checkNull()
                                     });
                                   } else if (controller.userImgUrl.value
                                       .checkNull()
                                       .isNotEmpty) {
                                     Get.toNamed(Routes.IMAGE_VIEW, arguments: {
                                       'imageName': controller.profileName.text,
-                                      'imageurl': controller.userImgUrl.value
+                                      'imageUrl': controller.userImgUrl.value
                                               .checkNull()
                                     });
                                   }
                                 },
                               ),
-                              /*controller.userImgUrl.value.isEmpty ? Image.asset(
-                                'assets/logos/profile_img.png',
-                                height: 150,
-                                width: 150,
-                              ) : ImageNetwork(url: controller.userImgUrl.value,
-                                width: 150,
-                                height: 150,
-                                clipoval: true,),*/
+
                             ),
                           ),
                         ),
@@ -114,7 +105,7 @@ class ProfileView extends GetView<ProfileController> {
                               onTap: controller.loading.value
                                   ? null
                                   : () {
-                                      BottomSheetView(context);
+                                      bottomSheetView(context);
                                     },
                               child: Image.asset(
                                 'assets/logos/camera_profile_change.png',
@@ -159,7 +150,7 @@ class ProfileView extends GetView<ProfileController> {
                     ),
                     style: const TextStyle(fontWeight: FontWeight.bold),
                   ),
-                  AppDivider(),
+                  const AppDivider(),
                   const SizedBox(
                     height: 20,
                   ),
@@ -180,7 +171,7 @@ class ProfileView extends GetView<ProfileController> {
                     ),
                     style: const TextStyle(fontWeight: FontWeight.bold),
                   ),
-                  AppDivider(),
+                  const AppDivider(),
                   const SizedBox(
                     height: 20,
                   ),
@@ -191,28 +182,13 @@ class ProfileView extends GetView<ProfileController> {
                   const SizedBox(
                     height: 10,
                   ),
-                  /*TextField(
-                    onChanged: (value) => controller.changed.value =true,
-                    controller: controller.profileStatus,
-                    decoration: InputDecoration(
-                      border: InputBorder.none,
-                      hintText: 'I’m in Mirrorfly',
-                      icon: InkWell(child: SvgPicture.asset('assets/logos/status.svg'),onTap: (){
-                        Get.toNamed(Routes.STATUSLIST)?.then((value){
-                          if(value!=null){
-                            controller.profileStatus.text = value;
-                          }
-                        });
-                      },),
-                    ),
-                    style: const TextStyle(fontWeight: FontWeight.bold),
-                  ),*/
+
                   Obx(() => ListTile(
                         contentPadding: EdgeInsets.zero,
                         title: Text(
                           controller.profileStatus.value.isNotEmpty
                               ? controller.profileStatus.value
-                              : Constants.defaultstatus,
+                              : Constants.defaultStatus,
                           style: TextStyle(
                               color: controller.profileStatus.value.isNotEmpty
                                   ? Colors.black
@@ -229,7 +205,7 @@ class ProfileView extends GetView<ProfileController> {
                           });
                         },
                       )),
-                  AppDivider(padding: EdgeInsets.only(bottom: 16),),
+                  const AppDivider(padding: EdgeInsets.only(bottom: 16),),
                   Center(
                     child: Obx(
                       () => ElevatedButton(
@@ -266,7 +242,7 @@ class ProfileView extends GetView<ProfileController> {
         ));
   }
 
-  BottomSheetView(BuildContext context) {
+  bottomSheetView(BuildContext context) {
     showModalBottomSheet(
         useRootNavigator: true,
         backgroundColor: Colors.transparent,
@@ -292,14 +268,14 @@ class ProfileView extends GetView<ProfileController> {
                             Get.back();
                             final XFile? photo = await _picker.pickImage(
                                 source: ImageSource.camera);
-                            controller.Camera(photo);
+                            controller.camera(photo);
                           },
                           child: const Text("Take Photo",
                               style: TextStyle(color: texthintcolor))),
                       TextButton(
                           onPressed: () {
                             Get.back();
-                            controller.ImagePicker(context);
+                            controller.imagePicker(context);
                           },
                           child: const Text("Choose from Gallery",
                               style: TextStyle(color: texthintcolor))),
@@ -319,7 +295,7 @@ class ProfileView extends GetView<ProfileController> {
                                       TextButton(
                                           onPressed: () {
                                             Get.back();
-                                            controller.remomveProfileImage();
+                                            controller.removeProfileImage();
                                           },
                                           child: const Text("REMOVE"))
                                     ]);
