@@ -193,7 +193,7 @@ class GroupInfoView extends GetView<GroupInfoController> {
                     shrinkWrap: true,
                     itemBuilder: (context, index) {
                       var item = controller.groupMembers[index];
-                      return memberItem(name: item.name.checkNull(),image: item.image.checkNull(),status: item.status.checkNull(),onTap: (){
+                      return memberItem(name: item.name.checkNull(),image: item.image.checkNull(),isAdmin: item.isGroupAdmin,status: item.status.checkNull(),onTap: (){
                         if (item.jid.checkNull() !=
                             SessionManagement().getUserJID().checkNull()) {
                           showOptions(item);

@@ -14,7 +14,7 @@ import '../../../model/chatMessageModel.dart';
 import '../../../model/profile_model.dart';
 import '../../../routes/app_pages.dart';
 
-class DashboardController extends BaseController {
+class DashboardController extends BaseController with GetTickerProviderStateMixin {
   var recentChats = <RecentChatData>[].obs;
   var calendar = DateTime.now();
 
@@ -196,9 +196,11 @@ class DashboardController extends BaseController {
   }
 
   @override
-  void onMessageReceived(event){
-    super.onMessageReceived(event);
-    updateRecentChat(event);
+  void onMessageReceived(ChatMessage){
+    Log("dashboard controller", "onMessageReceived");
+    super.onMessageReceived(ChatMessage);
+    ChatMessageModel chatMessageModel = sendMessageModelFromJson(ChatMessage);
+    updateRecentChat(chatMessageModel.senderUserJid);
   }
 
 

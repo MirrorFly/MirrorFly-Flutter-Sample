@@ -420,9 +420,6 @@ class PlatformRepo {
     try {
       profileResponse = await mirrorFlyMethodChannel.invokeMethod('getProfileDetails',{"jid":jid, "server" : fromServer});
       debugPrint("profile Result ==> $profileResponse");
-      if(!fromServer) {
-        insertDefaultStatusToUser();
-      }
       return profileResponse;
     }on PlatformException catch (e){
       debugPrint("Platform Exception ===> $e");

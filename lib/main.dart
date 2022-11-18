@@ -18,6 +18,10 @@ import 'app/routes/app_pages.dart';
 import 'package:google_maps_flutter_android/google_maps_flutter_android.dart';
 import 'package:google_maps_flutter_platform_interface/google_maps_flutter_platform_interface.dart';
 
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:local_auth/local_auth.dart';
+
 bool shouldUseFirebaseEmulator = false;
 Future<void> main() async {
 // Require Hybrid Composition mode on Android.
@@ -35,11 +39,11 @@ Future<void> main() async {
     await FirebaseAuth.instance.useAuthEmulator('localhost', 5050);
   }
   await SessionManagement.onInit();
-  Get.put<MainController>(MainController());
+  Get.lazyPut(() => MainController());
   runApp(const MyApp());
 }
 
-class MyApp extends StatelessWidget{
+class MyApp extends GetView<MainController>{
   const MyApp({super.key});
 
   // This widget is the root of your application.
@@ -81,48 +85,222 @@ String getIntialRoute(){
   }
 }
 
-// class MyApp extends StatefulWidget {
-//   const MyApp({super.key});
-//
-//   @override
-//   State<MyApp> createState() => _MyAppState();
-// }
-//
-// class _MyAppState extends State<MyApp> {
-//
-//   static const mirrorfly_method_channel = MethodChannel('contus.mirrorfly/mirrorfly_sdk');
-//
-//   @override
-//   void initState() {
-//     super.initState();
-//     initSDKState();
-//   }
-//
-//   // Platform messages are asynchronous, so we initialize in an async method.
-//   Future<void> initSDKState() async {
-//     String? sdkInit;
-//     try {
-//       debugPrint("MethodChannel call===> SDK INIT");
-//       sdkInit = await mirrorfly_method_channel.invokeMethod('sdk_init');
-//       debugPrint("Result ==> $sdkInit");
-//     }on PlatformException {
-//       sdkInit = "Failed to Initialize SDK";
-//       debugPrint("Result ===> Platform Exception");
-//     } on Exception catch(error){
-//       sdkInit = 'Failed to Initialize SDK';
-//       debugPrint("Result ==> $error");
-//     }
-//
-//   }
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     return GetMaterialApp(
-//       title: "MirrorFly",
-//       debugShowCheckedModeBanner: false,
-//       initialRoute: AppPages.INITIAL,
-//       getPages: AppPages.routes,
-//     );
-//   }
-// }
+/*class MyApp extends StatefulWidget {
+  const MyApp({Key? key}) : super(key: key);
+
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  final LocalAuthentication auth = LocalAuthentication();
+  _SupportState _supportState = _SupportState.unknown;
+  bool? _canCheckBiometrics;
+  List<BiometricType>? _availableBiometrics;
+  String _authorized = 'Not Authorized';
+  bool _isAuthenticating = false;
+
+  @override
+  void initState() {
+    super.initState();
+    auth.isDeviceSupported().then(
+          (bool isSupported) => setState(() => _supportState = isSupported
+          ? _SupportState.supported
+          : _SupportState.unsupported),
+    );
+  }
+
+  Future<void> _checkBiometrics() async {
+    late bool canCheckBiometrics;
+    try {
+      canCheckBiometrics = await auth.canCheckBiometrics;
+    } on PlatformException catch (e) {
+      canCheckBiometrics = false;
+      print(e);
+    }
+    if (!mounted) {
+      return;
+    }
+
+    setState(() {
+      _canCheckBiometrics = canCheckBiometrics;
+    });
+  }
+
+  Future<void> _getAvailableBiometrics() async {
+    late List<BiometricType> availableBiometrics;
+    try {
+      availableBiometrics = await auth.getAvailableBiometrics();
+    } on PlatformException catch (e) {
+      availableBiometrics = <BiometricType>[];
+      print(e);
+    }
+    if (!mounted) {
+      return;
+    }
+
+    setState(() {
+      _availableBiometrics = availableBiometrics;
+    });
+  }
+
+  Future<void> _authenticate() async {
+    bool authenticated = false;
+    try {
+      setState(() {
+        _isAuthenticating = true;
+        _authorized = 'Authenticating';
+      });
+      authenticated = await auth.authenticate(
+        localizedReason: 'Let OS determine authentication method',
+        options: const AuthenticationOptions(
+          stickyAuth: true,
+        ),
+      );
+      setState(() {
+        _isAuthenticating = false;
+      });
+    } on PlatformException catch (e) {
+      print(e);
+      setState(() {
+        _isAuthenticating = false;
+        _authorized = 'Error - ${e.message}';
+      });
+      return;
+    }
+    if (!mounted) {
+      return;
+    }
+
+    setState(
+            () => _authorized = authenticated ? 'Authorized' : 'Not Authorized');
+  }
+
+  Future<void> _authenticateWithBiometrics() async {
+    bool authenticated = false;
+    try {
+      setState(() {
+        _isAuthenticating = true;
+        _authorized = 'Authenticating';
+      });
+      authenticated = await auth.authenticate(
+        localizedReason:
+        'Scan your fingerprint (or face or whatever) to authenticate',
+        options: const AuthenticationOptions(
+          stickyAuth: true,
+          biometricOnly: true,
+        ),
+      );
+      setState(() {
+        _isAuthenticating = false;
+        _authorized = 'Authenticating';
+      });
+    } on PlatformException catch (e) {
+      print(e);
+      setState(() {
+        _isAuthenticating = false;
+        _authorized = 'Error - ${e.message}';
+      });
+      return;
+    }
+    if (!mounted) {
+      return;
+    }
+
+    final String message = authenticated ? 'Authorized' : 'Not Authorized';
+    setState(() {
+      _authorized = message;
+    });
+  }
+
+  Future<void> _cancelAuthentication() async {
+    await auth.stopAuthentication();
+    setState(() => _isAuthenticating = false);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(
+          title: const Text('Plugin example app'),
+        ),
+        body: ListView(
+          padding: const EdgeInsets.only(top: 30),
+          children: <Widget>[
+            Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                if (_supportState == _SupportState.unknown)
+                  const CircularProgressIndicator()
+                else if (_supportState == _SupportState.supported)
+                  const Text('This device is supported')
+                else
+                  const Text('This device is not supported'),
+                const Divider(height: 100),
+                Text('Can check biometrics: $_canCheckBiometrics\n'),
+                ElevatedButton(
+                  onPressed: _checkBiometrics,
+                  child: const Text('Check biometrics'),
+                ),
+                const Divider(height: 100),
+                Text('Available biometrics: $_availableBiometrics\n'),
+                ElevatedButton(
+                  onPressed: _getAvailableBiometrics,
+                  child: const Text('Get available biometrics'),
+                ),
+                const Divider(height: 100),
+                Text('Current State: $_authorized\n'),
+                if (_isAuthenticating)
+                  ElevatedButton(
+                    onPressed: _cancelAuthentication,
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: const <Widget>[
+                        Text('Cancel Authentication'),
+                        Icon(Icons.cancel),
+                      ],
+                    ),
+                  )
+                else
+                  Column(
+                    children: <Widget>[
+                      ElevatedButton(
+                        onPressed: _authenticate,
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: const <Widget>[
+                            Text('Authenticate'),
+                            Icon(Icons.perm_device_information),
+                          ],
+                        ),
+                      ),
+                      ElevatedButton(
+                        onPressed: _authenticateWithBiometrics,
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: <Widget>[
+                            Text(_isAuthenticating
+                                ? 'Cancel'
+                                : 'Authenticate: biometrics only'),
+                            const Icon(Icons.fingerprint),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+enum _SupportState {
+  unknown,
+  supported,
+  unsupported,
+}*/
 

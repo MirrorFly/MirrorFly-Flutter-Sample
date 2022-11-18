@@ -99,6 +99,7 @@ class Helper {
   }
 
   static Widget forMessageTypeIcon(String? messageType) {
+    Log("iconfor", messageType.toString());
     switch (messageType?.toUpperCase()) {
       case Constants.MIMAGE:
         return SvgPicture.asset(
@@ -116,6 +117,11 @@ class Helper {
           fit: BoxFit.contain,
         );
       case Constants.MDOCUMENT:
+        return SvgPicture.asset(
+          Mdocumenticon,
+          fit: BoxFit.contain,
+        );
+      case Constants.MFILE:
         return SvgPicture.asset(
           Mdocumenticon,
           fit: BoxFit.contain,
@@ -144,6 +150,8 @@ class Helper {
       case Constants.MVIDEO:
         return "Video";
       case Constants.MDOCUMENT:
+        return "Document";
+      case Constants.MFILE:
         return "Document";
       case Constants.MCONTACT:
         return "Contact";

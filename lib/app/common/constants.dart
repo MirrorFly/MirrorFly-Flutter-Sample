@@ -73,6 +73,13 @@ const String ic_default_browser = 'assets/logos/ic_default_browser.png';
 const String eye_on = 'assets/logos/eye_on.png';
 const String eye_off = 'assets/logos/eye_off.png';
 
+//Dashboard Recent Chats
+const String archive = 'assets/logos/archive.svg';
+const String unarchive = 'assets/logos/unarchive.svg';
+const String mute = 'assets/logos/mute.svg';
+const String unmute = 'assets/logos/unmute.svg';
+const String pushpin = 'assets/logos/pushpin.svg';
+
 const String audioImg = 'assets/logos/audio.svg';
 const String documentImg = 'assets/logos/document_icon.svg';
 const String cameraImg = 'assets/logos/camera.svg';
@@ -113,6 +120,8 @@ const String video_white = 'assets/logos/video_icon.svg';
 const String cornershadow = 'assets/logos/ic_baloon.png';
 const String disabledIcon = 'assets/logos/disabled.png';
 
+const String phonecall = 'assets/logos/phonecall.svg';
+const String videocall = 'assets/logos/videocall.svg';
 const String replyIcon = 'assets/logos/reply.svg';
 const String forwardIcon = 'assets/logos/forward.svg';
 const String deleteIcon = 'assets/logos/delete.svg';
@@ -590,6 +599,7 @@ class Constants {
   static const String MCONTACT = "CONTACT";
   static const String MLOCATION = "LOCATION";
   static const String MDOCUMENT = "DOCUMENT";
+  static const String MFILE = "FILE";
   static const String MNOTIFICATION = "NOTIFICATION";
 
   //Audio Recording Types

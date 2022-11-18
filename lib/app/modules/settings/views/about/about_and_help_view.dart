@@ -55,7 +55,7 @@ class AboutAndHelpView extends StatelessWidget {
                 ],
               )
             ],
-          ),dividerPadding: const EdgeInsets.all(15), onTap: (){}),
+          ),dividerPadding: const EdgeInsets.all(15)),
         ],
       ),
     );

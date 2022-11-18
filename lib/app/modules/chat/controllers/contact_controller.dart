@@ -96,6 +96,7 @@ class ContactController extends GetxController {
     //fetchUsers(true);
     //}
     usersList(mainUsersList);
+    scrollable(true);
   }
 
   fetchUsers(bool fromSearch) {
@@ -204,6 +205,8 @@ class ContactController extends GetxController {
     }else{
       if(selectedUsersJIDList.isNotEmpty){
         Get.back(result: selectedUsersJIDList);
+      }else{
+        Get.back();
       }
     }
   }

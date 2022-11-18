@@ -172,7 +172,7 @@ class ContactListView extends GetView<ContactController> {
                                   child: Checkbox(
                                       value: item.isSelected,
                                       onChanged: (value){
-
+                                        controller.onListItemPressed(item);
                                       },
                                     ),
                                 ),

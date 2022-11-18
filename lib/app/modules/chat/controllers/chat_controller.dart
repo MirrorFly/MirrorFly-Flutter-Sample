@@ -184,7 +184,7 @@ class ChatController extends BaseController
   void onClose() {
     scrollController.dispose();
     PlatformRepo().ongoingChat("");
-    // Get.delete<ChatController>();
+    Get.delete<ChatController>();
     isLive = false;
     super.onClose();
   }
@@ -192,7 +192,7 @@ class ChatController extends BaseController
   @override
   void dispose() {
     controller.dispose();
-    // Get.delete<ChatController>();
+    Get.delete<ChatController>();
     super.dispose();
   }
 
@@ -624,8 +624,8 @@ class ChatController extends BaseController
     });
   }
 
-  void isTyping(String typingText) {
-    typingText.isNotEmpty ? isUserTyping(true) : isUserTyping(false);
+  void isTyping([String? typingText]) {
+    messageController.text.isNotEmpty ? isUserTyping(true) : isUserTyping(false);
   }
 
   clearChatHistory(bool isStarredExcluded) {
@@ -1242,6 +1242,7 @@ class ChatController extends BaseController
   @override
   void onMessageReceived(event) {
     super.onMessageReceived(event);
+    Log("chatController", "onMessageReceived");
     ChatMessageModel chatMessageModel = sendMessageModelFromJson(event);
     chatList.add(chatMessageModel);
     scrollToBottom();

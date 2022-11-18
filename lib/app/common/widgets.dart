@@ -136,7 +136,7 @@ class ImageNetwork extends GetView<MainController> {
             );
           },
           errorWidget: (context, link, error) {
-            Log("image error", error.toString());
+            Log("image error", error.toString() +" link : "+link);
             if (error.toString().contains("401") && url.isNotEmpty) {
               // controller.getAuthToken();
               _deleteImageFromCache(url);
@@ -216,6 +216,7 @@ class ListItem extends StatelessWidget {
 
 
 Widget memberItem({required String name,required String image,required String status,bool? isAdmin, required Function() onTap}) {
+  Log("admin", isAdmin.toString());
   return Padding(
     padding: const EdgeInsets.symmetric(vertical: 4.0),
     child: InkWell(

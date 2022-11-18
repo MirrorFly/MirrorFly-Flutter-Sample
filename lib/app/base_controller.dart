@@ -5,7 +5,7 @@ import 'package:mirror_fly_demo/app/common/constants.dart';
 
 import 'nativecall/platformRepo.dart';
 
-class BaseController extends GetxController {
+abstract class BaseController extends GetxController {
 
   final _obj = ''.obs;
   set obj(value) => _obj.value = value;
@@ -15,6 +15,15 @@ class BaseController extends GetxController {
   void onInit() {
     super.onInit();
     initListeners();
+  }
+  @override
+  void dispose(){
+    super.dispose();
+  }
+
+  @override
+  void onClose(){
+    super.onClose();
   }
 
   initListeners(){
@@ -43,11 +52,11 @@ class BaseController extends GetxController {
     PlatformRepo().onGroupDeletedLocally.listen(onGroupDeletedLocally);
   }
 
-  void onMessageReceived(event){
-    Log("flutter onMessageReceived", event.toString());
+  void onMessageReceived(ChatMessage){
+    //Log("flutter onMessageReceived", ChatMessage.toString());
   }
   void onMessageStatusUpdated(event){
-    Log("flutter onMessageStatusUpdated", event.toString());
+    //Log("flutter onMessageStatusUpdated", event.toString());
   }
   void onMediaStatusUpdated(event){
 

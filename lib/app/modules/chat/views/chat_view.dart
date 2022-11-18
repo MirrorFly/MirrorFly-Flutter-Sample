@@ -57,7 +57,9 @@ class ChatView extends GetView<ChatController> {
                   } else if (MediaQuery.of(context).viewInsets.bottom > 0) {
                     FocusManager.instance.primaryFocus?.unfocus();
                   } else {
-                    Get.offAllNamed(Routes.DASHBOARD);
+                    //Get.offAllNamed(Routes.DASHBOARD);
+                    //Get.back();
+                    return Future.value(true);
                   }
                   return Future.value(false);
                 },
@@ -484,7 +486,11 @@ class ChatView extends GetView<ChatController> {
           height: 250,
           child: EmojiPicker(
             onBackspacePressed: () {
+              controller.isTyping();
               // Do something when the user taps the backspace button (optional)
+            },
+            onEmojiSelected: (cat,emoji){
+              controller.isTyping();
             },
             textEditingController: controller.messageController,
             config: Config(
@@ -1345,10 +1351,12 @@ class ChatView extends GetView<ChatController> {
 
                     final XFile? photo =
                         await _picker.pickImage(source: ImageSource.camera);
-                    Get.toNamed(Routes.IMAGEPREVIEW, arguments: {
-                      "filePath": photo?.path,
-                      "userName": controller.profile.name!
-                    });
+                    if(photo!=null) {
+                      Get.toNamed(Routes.IMAGEPREVIEW, arguments: {
+                        "filePath": photo?.path,
+                        "userName": controller.profile.name!
+                      });
+                    }
                   }),
                   const SizedBox(
                     width: 50,
@@ -1549,12 +1557,25 @@ class ChatView extends GetView<ChatController> {
               'imagePath': mediaLocalStoragePath
             });
           },
-          child: Image.file(
+          child: Image(image: FileImage(File(mediaLocalStoragePath)),loadingBuilder:(context, child, loadingProgress) {
+            if (loadingProgress == null) {
+              return FutureBuilder(
+                builder: (context,d) {
+                  return child;
+                }
+              );
+            }
+            return const Center(
+                child: CircularProgressIndicator());
+          },
+            width: controller.screenWidth * 0.60,
+            height: controller.screenHeight * 0.4,
+            fit: BoxFit.cover,) /*Image.file(
             File(mediaLocalStoragePath),
             width: controller.screenWidth * 0.60,
             height: controller.screenHeight * 0.4,
             fit: BoxFit.cover,
-          ));
+          )*/);
     } else {
       return controller.imageFromBase64String(
           mediaThumbImage, context, null, null);

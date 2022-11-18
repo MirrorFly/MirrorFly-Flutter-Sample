@@ -59,7 +59,7 @@ class ChatSearchView extends GetView<ChatController> {
         body:  Obx(() =>
         controller.chatList.isEmpty
             ? const SizedBox.shrink()
-            : chatListView(controller.chatList.reversed.toList())),
+            : chatListView(controller.chatList.toList())),
       ),
     );
   }
@@ -67,11 +67,9 @@ class ChatSearchView extends GetView<ChatController> {
   Widget chatListView(List<ChatMessageModel> chatList) {
     return ScrollablePositionedList.builder(
       itemCount: chatList.length,
-      reverse: true,
       itemScrollController: controller.searchScrollController,
       itemPositionsListener: controller.itemPositionsListener,
       itemBuilder: (context, index) {
-        // int reversedIndex = chatList.length - 1 - index;
         return Container(
           color: controller.chatList[index].isSelected ? chatreplycontainercolor : Colors.transparent,
           margin: const EdgeInsets.only(
@@ -147,10 +145,12 @@ class ChatSearchView extends GetView<ChatController> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
-            spannableText(
-              chatList[index].messageTextContent ?? "",
-              controller.searchedText.text,
-              const TextStyle(fontSize: 17),
+            Flexible(
+              child: spannableText(
+                chatList[index].messageTextContent ?? "",
+                controller.searchedText.text,
+                const TextStyle(fontSize: 14),
+              ),
             ),
             const SizedBox(
               width: 10,

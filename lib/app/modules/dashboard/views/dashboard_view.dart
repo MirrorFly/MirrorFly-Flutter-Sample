@@ -20,94 +20,103 @@ class DashboardView extends GetView<DashboardController> {
   Widget build(BuildContext context) {
     return FocusDetector(
       onFocusGained: () {
-        controller.getRecentChatList();
         controller.initListeners();
+        controller.getRecentChatList();
       },
       child: DefaultTabController(
         length: 2,
         child: Scaffold(
-          appBar: AppBar(
-            automaticallyImplyLeading: false,
-            bottom: TabBar(
-                indicatorColor: buttonbgcolor,
-                labelColor: buttonbgcolor,
-                unselectedLabelColor: appbartextcolor,
-                tabs: [
-                  Obx(() {
-                    return tabItem(
-                        title: "CHATS",
-                        count: controller.unreadCount.toString());
-                  }),
-                  tabItem(title: "CALLS", count: "0")
-                ]),
-            actions: [
-              IconButton(
-                icon: SvgPicture.asset(
-                  searchicon,
-                  width: 18,
-                  height: 18,
-                  fit: BoxFit.contain,
-                ),
-                onPressed: () {
-                  Get.toNamed(Routes.RECENTSEARCH,
-                      arguments: {"recents": controller.recentChats});
-                },
+            floatingActionButton: FloatingActionButton(
+              tooltip: "New Chat",
+              onPressed: () {
+                Get.toNamed(Routes.CONTACTS, arguments: {
+                  "forward": false,
+                  "group": false,
+                  "groupJid": ""
+                });
+              },
+              backgroundColor: buttonbgcolor,
+              child: SvgPicture.asset(
+                chatfabicon,
+                width: 18,
+                height: 18,
+                fit: BoxFit.contain,
               ),
-              CustomActionBarIcons(
-                availableWidth: MediaQuery.of(context).size.width /
-                    2, // half the screen width
-                actionWidth: 48,
-                actions: [
-                  CustomAction(
-                    visibleWidget: const Icon(Icons.group_add),
-                    overflowWidget: const Text("New Group     "),
-                    showAsAction: ShowAsAction.never,
-                    keyValue: 'New Group',
-                    onItemClick: () {
-                      Future.delayed(const Duration(milliseconds: 100),
-                          () => Get.toNamed(Routes.CREATE_GROUP));
-                    },
-                  ),
-                  CustomAction(
-                    visibleWidget: const Icon(Icons.settings),
-                    overflowWidget: const Text("Settings"),
-                    showAsAction: ShowAsAction.never,
-                    keyValue: 'Settings',
-                    onItemClick: () {
-                      Future.delayed(const Duration(milliseconds: 100),
-                          () => Get.toNamed(Routes.SETTINGS));
-                    },
-                  ),
-                  CustomAction(
-                    visibleWidget: const Icon(Icons.web),
-                    overflowWidget: const Text("Web"),
-                    showAsAction: ShowAsAction.never,
-                    keyValue: 'Web',
-                    onItemClick: () => controller.webLogin(),
-                  )
-                ],
-              ),
-            ],
-          ),
-          floatingActionButton: FloatingActionButton(
-            tooltip: "New Chat",
-            onPressed: () {
-              Get.toNamed(Routes.CONTACTS, arguments: {
-                "forward": false,
-                "group": false,
-                "groupJid": ""
-              });
-            },
-            backgroundColor: buttonbgcolor,
-            child: SvgPicture.asset(
-              chatfabicon,
-              width: 18,
-              height: 18,
-              fit: BoxFit.contain,
             ),
-          ),
-          body: TabBarView(children: [chatView(context), const SizedBox()]),
-        ),
+            body: NestedScrollView(
+              headerSliverBuilder:
+                  (BuildContext context, bool innerBoxIsScrolled) {
+                return [
+                  SliverAppBar(
+                    snap: false,
+                    pinned: true,
+                    floating: true,
+                    automaticallyImplyLeading: false,
+                    bottom: TabBar(
+                        indicatorColor: buttonbgcolor,
+                        labelColor: buttonbgcolor,
+                        unselectedLabelColor: appbartextcolor,
+                        tabs: [
+                          Obx(() {
+                            return tabItem(
+                                title: "CHATS",
+                                count: controller.unreadCount.toString());
+                          }),
+                          tabItem(title: "CALLS", count: "0")
+                        ]),
+                    actions: [
+                      IconButton(
+                        icon: SvgPicture.asset(
+                          searchicon,
+                          width: 18,
+                          height: 18,
+                          fit: BoxFit.contain,
+                        ),
+                        onPressed: () {
+                          Get.toNamed(Routes.RECENTSEARCH,
+                              arguments: {"recents": controller.recentChats});
+                        },
+                      ),
+                      CustomActionBarIcons(
+                        availableWidth: MediaQuery.of(context).size.width /
+                            2, // half the screen width
+                        actionWidth: 48,
+                        actions: [
+                          CustomAction(
+                            visibleWidget: const Icon(Icons.group_add),
+                            overflowWidget: const Text("New Group     "),
+                            showAsAction: ShowAsAction.never,
+                            keyValue: 'New Group',
+                            onItemClick: () {
+                              Future.delayed(const Duration(milliseconds: 100),
+                                  () => Get.toNamed(Routes.CREATE_GROUP));
+                            },
+                          ),
+                          CustomAction(
+                            visibleWidget: const Icon(Icons.settings),
+                            overflowWidget: const Text("Settings"),
+                            showAsAction: ShowAsAction.never,
+                            keyValue: 'Settings',
+                            onItemClick: () {
+                              Future.delayed(const Duration(milliseconds: 100),
+                                  () => Get.toNamed(Routes.SETTINGS));
+                            },
+                          ),
+                          CustomAction(
+                            visibleWidget: const Icon(Icons.web),
+                            overflowWidget: const Text("Web"),
+                            showAsAction: ShowAsAction.never,
+                            keyValue: 'Web',
+                            onItemClick: () => controller.webLogin(),
+                          )
+                        ],
+                      ),
+                    ],
+                  ),
+                ];
+              },
+              body: TabBarView(children: [chatView(context), const SizedBox()]),
+            )),
       ),
     );
   }
@@ -145,46 +154,76 @@ class DashboardView extends GetView<DashboardController> {
   Stack chatView(BuildContext context) {
     return Stack(
       children: [
-        FutureBuilder(
-            future: controller.getRecentChatList(),
-            builder: (c, d) {
-              return Obx(
-                () => controller.recentChats.isNotEmpty
-                    ? ListView.builder(
-                        itemCount: controller.recentChats.length,
-                        physics: const AlwaysScrollableScrollPhysics(),
-                        itemBuilder: (BuildContext context, int index) {
-                          var item = controller.recentChats[index];
-                          return recentChatItem(item, context);
-                        })
-                    : Center(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Image.asset(
-                              nochaticon,
-                              width: 200,
-                            ),
-                            Text(
-                              'No new messages',
-                              textAlign: TextAlign.center,
-                              style: Theme.of(context).textTheme.titleMedium,
-                            ),
-                            const SizedBox(
-                              height: 8,
-                            ),
-                            Text(
-                              'Any new messages will appear here',
-                              textAlign: TextAlign.center,
-                              style: Theme.of(context).textTheme.titleSmall,
-                            ),
-                          ],
-                        ),
-                      ),
-              );
-            }),
+        Obx(() {
+          return Visibility(
+              visible: controller.recentChats.isEmpty,
+              child: emptyChat(context));
+        }),
+        Column(
+          children: [
+            /*ListItem(
+              leading: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                child: SvgPicture.asset(archive),
+              ),
+              title: const Text(
+                "Archived",
+                style: TextStyle(fontWeight: FontWeight.w500),
+              ),
+              trailing: Text(
+                "2",
+                style: TextStyle(color: buttonbgcolor),
+              ),
+              dividerPadding: EdgeInsets.zero,
+            ),*/
+            Expanded(
+              child: FutureBuilder(
+                  future: controller.getRecentChatList(),
+                  builder: (c, d) {
+                    return Obx(() {
+                      return ListView.builder(
+                        padding: EdgeInsets.zero,
+                          physics: const NeverScrollableScrollPhysics(),
+                          itemCount: controller.recentChats.length,
+                          shrinkWrap: true,
+                          itemBuilder: (BuildContext context, int index) {
+                            var item = controller.recentChats[index];
+                            return recentChatItem(item, context);
+                          });
+                    });
+                  }),
+            ),
+          ],
+        )
       ],
+    );
+  }
+
+  Widget emptyChat(BuildContext context) {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Image.asset(
+            nochaticon,
+            width: 200,
+          ),
+          Text(
+            'No new messages',
+            textAlign: TextAlign.center,
+            style: Theme.of(context).textTheme.titleMedium,
+          ),
+          const SizedBox(
+            height: 8,
+          ),
+          Text(
+            'Any new messages will appear here',
+            textAlign: TextAlign.center,
+            style: Theme.of(context).textTheme.titleSmall,
+          ),
+        ],
+      ),
     );
   }
 
@@ -285,24 +324,26 @@ class DashboardView extends GetView<DashboardController> {
                       Expanded(
                         child: Row(
                           children: [
-                            (item.isGroup! && item.lastMessageType.checkNull().toUpperCase()!=Constants.MNOTIFICATION)
+                            (item.isGroup! &&
+                                    item.lastMessageType
+                                            .checkNull()
+                                            .toUpperCase() !=
+                                        Constants.MNOTIFICATION)
                                 ? FutureBuilder(
                                     future: controller.getMessageOfId(
                                         item.lastMessageId.checkNull()),
                                     builder: (c, d) {
-                                      if(d.hasData) {
+                                      if (d.hasData) {
                                         var item2 = d.data;
                                         return item2 != null
                                             ? Text(
-                                          "${item2.senderUserName
-                                              .checkNull()} : ",
-                                          style: Theme
-                                              .of(context)
-                                              .textTheme
-                                              .titleSmall,
-                                          maxLines: 1,
-                                          overflow: TextOverflow.ellipsis,
-                                        )
+                                                "${item2.senderUserName.checkNull()} : ",
+                                                style: Theme.of(context)
+                                                    .textTheme
+                                                    .titleSmall,
+                                                maxLines: 1,
+                                                overflow: TextOverflow.ellipsis,
+                                              )
                                             : const SizedBox.shrink();
                                       }
                                       return const SizedBox.shrink();
