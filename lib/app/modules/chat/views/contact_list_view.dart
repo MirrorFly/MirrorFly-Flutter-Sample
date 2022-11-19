@@ -170,7 +170,7 @@ class ContactListView extends GetView<ContactController> {
                             Visibility(
                               visible: controller.isCheckBoxVisible,
                                   child: Checkbox(
-                                      value: item.isSelected,
+                                      value: controller.selectedUsersJIDList.contains(item.jid),
                                       onChanged: (value){
                                         controller.onListItemPressed(item);
                                       },

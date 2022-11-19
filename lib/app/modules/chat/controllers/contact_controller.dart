@@ -168,11 +168,11 @@ class ContactController extends GetxController {
     if (selectedUsersList.contains(item)) {
       selectedUsersList.remove(item);
       selectedUsersJIDList.remove(item.jid);
-      item.isSelected = false;
+      //item.isSelected = false;
     } else {
       selectedUsersList.add(item);
       selectedUsersJIDList.add(item.jid!);
-      item.isSelected = true;
+      //item.isSelected = true;
     }
     usersList.refresh();
   }

@@ -246,7 +246,9 @@ class GroupInfoView extends GetView<GroupInfoController> {
         ListTile(title: const Text("Start Chat"), onTap: () {
           // Get.toNamed(Routes.CHAT, arguments: item);
           Get.back();
-          Get.back(result: item);
+          Future.delayed(Duration(milliseconds: 300),(){
+            Get.back(result: item);
+          });
         },),
         ListTile(title: const Text("View Info"), onTap: () {
           Get.toNamed(Routes.CHAT_INFO, arguments: item);

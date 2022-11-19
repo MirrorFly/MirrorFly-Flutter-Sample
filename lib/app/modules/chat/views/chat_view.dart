@@ -67,7 +67,7 @@ class ChatView extends GetView<ChatController> {
                   children: [
                     Expanded(
                       child: FutureBuilder(
-                        future: controller.getChatHistory(controller.profile.jid.checkNull()),
+                        future: controller.getChatHistory(),
                           builder: (c,d){
                         return Obx(() {
                           return chatListView(controller.chatList);
@@ -2369,8 +2369,7 @@ class ChatView extends GetView<ChatController> {
                 keyValue: 'Search',
                 onItemClick: () {
                   controller.closeKeyBoard();
-                  Future.delayed(const Duration(milliseconds: 100),
-                      () => Get.toNamed(Routes.CHATSEARCH));
+                  controller.gotoSearch();
                 },
               ),
               CustomAction(

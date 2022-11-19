@@ -20,7 +20,7 @@ import 'package:google_maps_flutter_platform_interface/google_maps_flutter_platf
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:local_auth/local_auth.dart';
+/*import 'package:local_auth/local_auth.dart';*/
 
 bool shouldUseFirebaseEmulator = false;
 Future<void> main() async {

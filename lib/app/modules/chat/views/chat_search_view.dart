@@ -67,6 +67,7 @@ class ChatSearchView extends GetView<ChatController> {
   Widget chatListView(List<ChatMessageModel> chatList) {
     return ScrollablePositionedList.builder(
       itemCount: chatList.length,
+      initialScrollIndex: chatList.length,
       itemScrollController: controller.searchScrollController,
       itemPositionsListener: controller.itemPositionsListener,
       itemBuilder: (context, index) {

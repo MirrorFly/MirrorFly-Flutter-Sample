@@ -28,12 +28,13 @@ import '../../../model/check_model.dart' as check_model;
 import '../../../model/userListModel.dart';
 import '../../../routes/app_pages.dart';
 
-class ChatController extends BaseController
-    with GetTickerProviderStateMixin {
+class ChatController extends BaseController with GetTickerProviderStateMixin {
   var chatList = List<ChatMessageModel>.empty(growable: true).obs;
   late AnimationController controller;
-  ScrollController scrollController = ScrollController( initialScrollOffset: 0.0,
-    keepScrollOffset: true, );
+  ScrollController scrollController = ScrollController(
+    initialScrollOffset: 0.0,
+    keepScrollOffset: true,
+  );
 
   ItemScrollController searchScrollController = ItemScrollController();
 
@@ -69,6 +70,7 @@ class ChatController extends BaseController
 
   var calendar = DateTime.now();
   var profile_ = Profile().obs;
+
   Profile get profile => profile_.value;
   var base64img = ''.obs;
   var imagePath = ''.obs;
@@ -89,44 +91,19 @@ class ChatController extends BaseController
   late StreamSubscription<bool> keyboardSubscription;
 
   var _isMemberOfGroup = false.obs;
-  set isMemberOfGroup(value) => _isMemberOfGroup.value=value;
-  bool get isMemberOfGroup => profile.isGroupProfile! ? _isMemberOfGroup.value : true;
+
+  set isMemberOfGroup(value) => _isMemberOfGroup.value = value;
+
+  bool get isMemberOfGroup =>
+      profile.isGroupProfile! ? _isMemberOfGroup.value : true;
 
   var profileDetail = Profile();
+
   @override
   void onInit() {
     super.onInit();
     profile_.value = Get.arguments as Profile;
-    debugPrint("isBlocked===> ${profile.isBlocked}");
-    debugPrint("profile detail===> ${profile.toJson().toString()}");
-    isBlocked(profile.isBlocked);
-    controller = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 600),
-    );
-    Member(jid: profile.jid.checkNull()).getProfileDetails().then((value) => profileDetail=value);
-    memberOfGroup();
-    setChatStatus();
-    isLive = true;
-    focusNode.addListener(() {
-      if (focusNode.hasFocus) {
-        showEmoji(false);
-      }
-    });
-    keyboardSubscription =
-        keyboardVisibilityController.onChange.listen((bool visible) {
-      if (!visible) {
-        focusNode.canRequestFocus = false;
-      }
-    });
-    //scrollController.addListener(_scrollController);
-
-    registerChatSync();
-    PlatformRepo().ongoingChat(profile.jid!);
-    //getChatHistory(profile.jid!);
-    debugPrint("==================");
-    debugPrint(profile.image);
-    sendReadReceipt();
+    onReady();
 
     player.onDurationChanged.listen((Duration d) {
       //get the duration of audio
@@ -164,18 +141,52 @@ class ChatController extends BaseController
     });
 
     chatList.bindStream(chatList.stream);
-    ever(chatList, (callback){
-
-    });
+    ever(chatList, (callback) {});
   }
 
-  scrollToBottom(){
-    Future.delayed(const Duration(milliseconds: 500),(){
-      if(scrollController.hasClients) {
+  onReady() {
+    debugPrint("isBlocked===> ${profile.isBlocked}");
+    debugPrint("profile detail===> ${profile.toJson().toString()}");
+    isBlocked(profile.isBlocked);
+    controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 600),
+    );
+    Member(jid: profile.jid.checkNull())
+        .getProfileDetails()
+        .then((value) => profileDetail = value);
+    memberOfGroup();
+    setChatStatus();
+    isLive = true;
+    focusNode.addListener(() {
+      if (focusNode.hasFocus) {
+        showEmoji(false);
+      }
+    });
+    keyboardSubscription =
+        keyboardVisibilityController.onChange.listen((bool visible) {
+      if (!visible) {
+        focusNode.canRequestFocus = false;
+      }
+    });
+    //scrollController.addListener(_scrollController);
+
+    registerChatSync();
+    PlatformRepo().ongoingChat(profile.jid!);
+    //getChatHistory(profile.jid!);
+    debugPrint("==================");
+    debugPrint(profile.image);
+    sendReadReceipt();
+  }
+
+  scrollToBottom() {
+    Future.delayed(const Duration(milliseconds: 500), () {
+      if (scrollController.hasClients) {
         scrollController.animateTo(
           scrollController.position.maxScrollExtent,
           duration: const Duration(milliseconds: 500),
-          curve: Curves.linear,);
+          curve: Curves.linear,
+        );
       }
     });
   }
@@ -184,7 +195,7 @@ class ChatController extends BaseController
   void onClose() {
     scrollController.dispose();
     PlatformRepo().ongoingChat("");
-    Get.delete<ChatController>();
+    //Get.delete<ChatController>();
     isLive = false;
     super.onClose();
   }
@@ -192,7 +203,7 @@ class ChatController extends BaseController
   @override
   void dispose() {
     controller.dispose();
-    Get.delete<ChatController>();
+    //Get.delete<ChatController>();
     super.dispose();
   }
 
@@ -307,19 +318,23 @@ class ChatController extends BaseController
     return dateHourFormat;
   }
 
-  getChatHistory(String jid) {
-    PlatformRepo().getChatHistory(jid).then((value) {
+  getChatHistory() {
+    PlatformRepo().getChatHistory(profile.jid.checkNull()).then((value) {
       List<ChatMessageModel> chatMessageModel = chatMessageModelFromJson(value);
       chatList(chatMessageModel);
-      Future.delayed(const Duration(milliseconds: 500),(){
+      Future.delayed(const Duration(milliseconds: 500), () {
         Future.doWhile(() {
-          if (scrollController.position.extentAfter == 0) {
-            return Future.value(false);
+          if (scrollController.positions.isNotEmpty) {
+            if (scrollController.position.extentAfter == 0) {
+              return Future.value(false);
+            }
+            return scrollController
+                .animateTo(scrollController.position.maxScrollExtent,
+                    duration: const Duration(milliseconds: 100),
+                    curve: Curves.linear)
+                .then((value) => true);
           }
-          return scrollController
-              .animateTo(scrollController.position.maxScrollExtent,
-              duration: const Duration(milliseconds: 100), curve: Curves.linear)
-              .then((value) => true);
+          return true;
         });
       });
     });
@@ -327,7 +342,8 @@ class ChatController extends BaseController
 
   getMedia(String mid) {
     return PlatformRepo().getMedia(mid).then((value) {
-      check_model.CheckModel chatMessageModel = check_model.checkModelFromJson(value);
+      check_model.CheckModel chatMessageModel =
+          check_model.checkModelFromJson(value);
       String thumbImage = chatMessageModel.mediaChatMessage.mediaThumbImage;
       thumbImage = thumbImage.replaceAll("\n", "");
       return thumbImage;
@@ -457,7 +473,7 @@ class ChatController extends BaseController
         isPlaying(true);
         audioPlayed(true);
       } else {
-        Log("","Error while playing audio.");
+        Log("", "Error while playing audio.");
       }
     } else if (audioPlayed.value && !isPlaying.value) {
       int result = await player.resume();
@@ -467,7 +483,7 @@ class ChatController extends BaseController
         isPlaying(true);
         audioPlayed(true);
       } else {
-        Log("","Error on resume audio.");
+        Log("", "Error on resume audio.");
       }
     } else {
       int result = await player.pause();
@@ -476,10 +492,9 @@ class ChatController extends BaseController
 
         isPlaying(false);
       } else {
-        Log("","Error on pause audio.");
+        Log("", "Error on pause audio.");
       }
     }
-
   }
 
   Future<bool> askContactsPermission() async {
@@ -507,6 +522,7 @@ class ChatController extends BaseController
         return false;
     }
   }
+
   Future<bool> askManageStoragePermission() async {
     final permission = await AppPermission.getManageStoragePermission();
     switch (permission) {
@@ -596,7 +612,7 @@ class ChatController extends BaseController
       AudioPlayer player = AudioPlayer();
       player.setUrl(result.files.single.path!);
       player.onDurationChanged.listen((Duration duration) {
-        Log("",'max duration: ${duration.inMilliseconds}');
+        Log("", 'max duration: ${duration.inMilliseconds}');
         filePath.value = (result.files.single.path!);
         sendAudioMessage(
             filePath.value, false, duration.inMilliseconds.toString());
@@ -625,7 +641,9 @@ class ChatController extends BaseController
   }
 
   void isTyping([String? typingText]) {
-    messageController.text.isNotEmpty ? isUserTyping(true) : isUserTyping(false);
+    messageController.text.isNotEmpty
+        ? isUserTyping(true)
+        : isUserTyping(false);
   }
 
   clearChatHistory(bool isStarredExcluded) {
@@ -816,25 +834,30 @@ class ChatController extends BaseController
                 Get.back();
               },
               child: const Text("CANCEL")),
-          isRecallAvailable ? TextButton(
-              onPressed: () {
-                Get.back();
-                Helper.showLoading(message: 'Deleting Message for Everyone');
-                PlatformRepo().deleteMessages(profile.jid!, deleteChatListID, true).then((value){
-                  debugPrint(value);
-                  Helper.hideLoading();
-                  if(value == "success"){
-                    // removeChatList(selectedChatList);//
-                    for (var chatList in selectedChatList) {
-                      chatList.isMessageRecalled = true;
-                      this.chatList.refresh();
-                    }
-                  }
-                  isSelected(false);
-                  selectedChatList.clear();
-                });
-              },
-              child: const Text("DELETE FOR EVERYONE")) : const SizedBox.shrink(),
+          isRecallAvailable
+              ? TextButton(
+                  onPressed: () {
+                    Get.back();
+                    Helper.showLoading(
+                        message: 'Deleting Message for Everyone');
+                    PlatformRepo()
+                        .deleteMessages(profile.jid!, deleteChatListID, true)
+                        .then((value) {
+                      debugPrint(value);
+                      Helper.hideLoading();
+                      if (value == "success") {
+                        // removeChatList(selectedChatList);//
+                        for (var chatList in selectedChatList) {
+                          chatList.isMessageRecalled = true;
+                          this.chatList.refresh();
+                        }
+                      }
+                      isSelected(false);
+                      selectedChatList.clear();
+                    });
+                  },
+                  child: const Text("DELETE FOR EVERYONE"))
+              : const SizedBox.shrink(),
         ]);
   }
 
@@ -977,27 +1000,36 @@ class ChatController extends BaseController
     if (searchedText.text.isNotEmpty) {
       for (var i = 0; i < chatList.length; i++) {
         if (chatList[i].messageType == Constants.MTEXT &&
-            chatList[i].messageTextContent
+            chatList[i]
+                .messageTextContent
                 .startsWithTextInWords(searchedText.text)) {
           filteredPosition.add(i);
         } else if (chatList[i].messageType == Constants.MIMAGE &&
             chatList[i].mediaChatMessage!.mediaCaptionText.isNotEmpty &&
-            chatList[i].mediaChatMessage!.mediaCaptionText
+            chatList[i]
+                .mediaChatMessage!
+                .mediaCaptionText
                 .startsWithTextInWords(searchedText.text)) {
           filteredPosition.add(i);
         } else if (chatList[i].messageType == Constants.MVIDEO &&
             chatList[i].mediaChatMessage!.mediaCaptionText.isNotEmpty &&
-            chatList[i].mediaChatMessage!.mediaCaptionText
+            chatList[i]
+                .mediaChatMessage!
+                .mediaCaptionText
                 .startsWithTextInWords(searchedText.text)) {
           filteredPosition.add(i);
         } else if (chatList[i].messageType == Constants.MDOCUMENT &&
             chatList[i].mediaChatMessage!.mediaFileName.isNotEmpty &&
-            chatList[i].mediaChatMessage!.mediaFileName
+            chatList[i]
+                .mediaChatMessage!
+                .mediaFileName
                 .startsWithTextInWords(searchedText.text)) {
           filteredPosition.add(i);
         } else if (chatList[i].messageType == Constants.MCONTACT &&
             chatList[i].contactChatMessage!.contactName.isNotEmpty &&
-            chatList[i].contactChatMessage!.contactName
+            chatList[i]
+                .contactChatMessage!
+                .contactName
                 .startsWithTextInWords(searchedText.text)) {
           filteredPosition.add(i);
         }
@@ -1043,8 +1075,7 @@ class ChatController extends BaseController
       lastPosition.value = nex;
       searchedNxt = searchedText.text;
     } else if (filteredPosition.isNotEmpty) {
-      lastPosition.value =
-          min(lastPosition.value - 1, filteredPosition.length);
+      lastPosition.value = min(lastPosition.value - 1, filteredPosition.length);
     } else {
       lastPosition.value = -1;
     }
@@ -1132,7 +1163,7 @@ class ChatController extends BaseController
         profile_.value = value as Profile;
         isBlocked(profile.isBlocked);
         PlatformRepo().ongoingChat(profile.jid!);
-        getChatHistory(profile.jid!);
+        getChatHistory();
         sendReadReceipt();
       });
     }
@@ -1141,22 +1172,23 @@ class ChatController extends BaseController
   void closeKeyBoard() {
     FocusManager.instance.primaryFocus!.unfocus();
   }
+
   void startTimer() {
     const oneSec = Duration(seconds: 1);
     startTime = DateTime.now();
     _audioTimer = Timer.periodic(
-      oneSec, (Timer timer) {
-      final minDur = DateTime.now().difference(startTime!).inMinutes;
-          final secDur = DateTime.now().difference(startTime!).inSeconds % 60;
-          String min = minDur < 10 ? "0$minDur" : minDur.toString();
-          String sec = secDur < 10 ? "0$secDur" : secDur.toString();
-          timerInit("$min:$sec");
+      oneSec,
+      (Timer timer) {
+        final minDur = DateTime.now().difference(startTime!).inMinutes;
+        final secDur = DateTime.now().difference(startTime!).inSeconds % 60;
+        String min = minDur < 10 ? "0$minDur" : minDur.toString();
+        String sec = secDur < 10 ? "0$secDur" : secDur.toString();
+        timerInit("$min:$sec");
       },
     );
   }
 
   Future<void> cancelRecording() async {
-
     var filePath = await record.stop();
     File(filePath!).delete();
     _audioTimer?.cancel();
@@ -1164,7 +1196,8 @@ class ChatController extends BaseController
     _audioTimer = null;
     isAudioRecording(Constants.audioRecordDelete);
 
-    Future.delayed(const Duration(milliseconds: 1500), () => isAudioRecording(Constants.audioRecordInitial));
+    Future.delayed(const Duration(milliseconds: 1500),
+        () => isAudioRecording(Constants.audioRecordInitial));
   }
 
   Future<void> startRecording() async {
@@ -1174,7 +1207,8 @@ class ChatController extends BaseController
       isAudioRecording(Constants.audioRecording);
       startTimer();
       await record.start(
-        path: "$audioSavePath/audio_${DateTime.now().millisecondsSinceEpoch}.m4a",
+        path:
+            "$audioSavePath/audio_${DateTime.now().millisecondsSinceEpoch}.m4a",
         encoder: AudioEncoder.AAC,
         bitRate: 128000,
         samplingRate: 44100,
@@ -1188,13 +1222,13 @@ class ChatController extends BaseController
     _audioTimer?.cancel();
     _audioTimer = null;
     await Record().stop().then((filePath) async {
-        if (File(filePath!).existsSync()) {
-          recordedAudioPath = filePath;
-        } else {
-          debugPrint("File Not Found For Image Upload");
-        }
-        debugPrint(filePath);
-      });
+      if (File(filePath!).existsSync()) {
+        recordedAudioPath = filePath;
+      } else {
+        debugPrint("File Not Found For Image Upload");
+      }
+      debugPrint(filePath);
+    });
   }
 
   Future<void> deleteRecording() async {
@@ -1215,8 +1249,7 @@ class ChatController extends BaseController
     final format = DateFormat('mm:ss');
     final dt = format.parse(timerInit.value, true);
     final recordDuration = dt.millisecondsSinceEpoch;
-    sendAudioMessage(
-        recordedAudioPath, true, recordDuration.toString());
+    sendAudioMessage(recordedAudioPath, true, recordDuration.toString());
     isUserTyping(false);
     isAudioRecording(Constants.audioRecordInitial);
     timerInit("00.00");
@@ -1227,16 +1260,25 @@ class ChatController extends BaseController
     if (profile.isGroupProfile!) {
       Get.toNamed(Routes.GROUP_INFO, arguments: profile)?.then((value) {
         if (value != null) {
-          profile_.value = value as Profile;
+          profile_(value as Profile);
+          isBlocked(profile.isBlocked);
+          PlatformRepo().ongoingChat(profile.jid!);
+          getChatHistory();
+          sendReadReceipt();
         }
       });
-    }else{
-      Get.toNamed(Routes.CHAT_INFO, arguments: profile)?.then((value){
-
-      });
+    } else {
+      Get.toNamed(Routes.CHAT_INFO, arguments: profile)?.then((value) {});
     }
+  }
 
-
+  gotoSearch() {
+    Future.delayed(const Duration(milliseconds: 100), () {
+      Get.toNamed(Routes.CHATSEARCH);
+      /*if (searchScrollController.isAttached) {
+        searchScrollController.jumpTo(index: chatList.value.length - 1);
+      }*/
+    });
   }
 
   @override
@@ -1276,13 +1318,13 @@ class ChatController extends BaseController
     }
   }
 
-
-
   @override
   void onGroupProfileUpdated(groupJid) {
     super.onGroupProfileUpdated(groupJid);
     if (profile.jid.checkNull() == groupJid.toString()) {
-      PlatformRepo().getProfileDetails(profile.jid.checkNull(), false).then((value) {
+      PlatformRepo()
+          .getProfileDetails(profile.jid.checkNull(), false)
+          .then((value) {
         if (value != null) {
           var member = Profile.fromJson(json.decode(value.toString()));
           profile_.value = member;
@@ -1295,28 +1337,28 @@ class ChatController extends BaseController
   @override
   void onLeftFromGroup({required String groupJid, required String userJid}) {
     super.onLeftFromGroup(groupJid: groupJid, userJid: userJid);
-    if(profile.isGroupProfile!){
-      if(groupJid==profile.jid && userJid==SessionManagement().getUserJID()){
+    if (profile.isGroupProfile!) {
+      if (groupJid == profile.jid &&
+          userJid == SessionManagement().getUserJID()) {
         //current user leave from the group
         _isMemberOfGroup(false);
-      }else if(groupJid==profile.jid){
+      } else if (groupJid == profile.jid) {
         setChatStatus();
       }
     }
   }
 
-  memberOfGroup(){
-    if(profile.isGroupProfile!) {
-      PlatformRepo().isMemberOfGroup(profile.jid.checkNull(), null).then((
-          bool? value) {
+  memberOfGroup() {
+    if (profile.isGroupProfile!) {
+      PlatformRepo()
+          .isMemberOfGroup(profile.jid.checkNull(), null)
+          .then((bool? value) {
         if (value != null) {
           _isMemberOfGroup(value);
         }
       });
     }
   }
-
-
 
   var userPresenceStatus = ''.obs;
   var typingList = <String>[].obs;
@@ -1344,7 +1386,8 @@ class ChatController extends BaseController
         var str = <String>[];
         var groupsMembersProfileList = memberFromJson(value);
         for (var it in groupsMembersProfileList) {
-          if (it.jid.checkNull() != SessionManagement().getUserJID().checkNull()) {
+          if (it.jid.checkNull() !=
+              SessionManagement().getUserJID().checkNull()) {
             str.add(it.name.checkNull());
           }
         }
@@ -1352,5 +1395,10 @@ class ChatController extends BaseController
       }
     });
   }
-  String get subtitle => userPresenceStatus.value.isEmpty ? groupParticipantsName.value.isNotEmpty ?groupParticipantsName.value.toString() : Constants.EMPTY_STRING : userPresenceStatus.value.toString();
+
+  String get subtitle => userPresenceStatus.value.isEmpty
+      ? groupParticipantsName.value.isNotEmpty
+          ? groupParticipantsName.value.toString()
+          : Constants.EMPTY_STRING
+      : userPresenceStatus.value.toString();
 }
