@@ -4,7 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/model/recent_chat.dart';
 import 'package:mirror_fly_demo/app/model/userListModel.dart';
-import 'package:mirror_fly_demo/app/nativecall/platformRepo.dart';
+import 'package:mirror_fly_demo/app/nativecall/fly_chat.dart';
 
 import '../../../common/constants.dart';
 import '../../../model/chatmessage_model.dart';
@@ -15,7 +15,7 @@ import '../../../routes/app_pages.dart';
 
 class RecentChatSearchController extends GetxController {
   var filteredRecentChatList = <RecentChatData>[].obs;
-  var filteredMessageList = Map<Rx<int>, RxList<Rx<RecentSearch>>>().obs;
+  var filteredMessageList = <Rx<int>, RxList<Rx<RecentSearch>>>{}.obs;
   var filteredContactList = <Profile>[].obs;
   var recentSearchList = <Rx<RecentSearch>>[].obs;
   var chatCount = 0.obs;
@@ -32,10 +32,10 @@ class RecentChatSearchController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    data.forEach((element) {
+    for (var element in data) {
       mainRecentChatList.add(element.obs);
       frmRecentChatList.add(element.obs);
-    });
+    }
     filteredRecentChatList.bindStream(filteredRecentChatList.stream);
     filteredMessageList.bindStream(filteredMessageList.stream);
     filteredContactList.bindStream(filteredContactList.stream);
@@ -52,7 +52,7 @@ class RecentChatSearchController extends GetxController {
                 searchType: Constants.TYPE_SEARCH_RECENT,
                 chatType: getChatType(recent),
                 isSearch: true).obs;
-            recentSearchList.value.add(recentSearchItem);
+            recentSearchList.add(recentSearchItem);
             update();
             jidList.add(recent.jid.toString());
           }
@@ -62,12 +62,12 @@ class RecentChatSearchController extends GetxController {
       //});
     });
     ever(filteredMessageList, (callback){
-      Log("sfilteredMessageList", callback.entries.first.value.value.length.toString());
+      Log("sfilteredMessageList", callback.entries.first.value.length.toString());
       for (var item in callback.entries){
-        Log("msgs", item.value.value.first.value.jid.toString());
+        Log("msgs", item.value.first.value.jid.toString());
       }
       messageCount(callback.entries.first.key.value);
-      recentSearchList.addAll(callback.entries.first.value.value);
+      recentSearchList.addAll(callback.entries.first.value);
       update(recentSearchList);
     });
 
@@ -81,7 +81,7 @@ class RecentChatSearchController extends GetxController {
               searchType: Constants.TYPE_SEARCH_CONTACT,
               chatType: getProfileChatType(profile),
               isSearch: true).obs;
-          recentSearchList.value.add(searchContactItem);
+          recentSearchList.add(searchContactItem);
           update();
         }
       }
@@ -123,7 +123,7 @@ class RecentChatSearchController extends GetxController {
       fetchRecentChatList();
     }else{
       Log("empty", "empty");
-      frmRecentChatList.addAll(mainRecentChatList.value);
+      frmRecentChatList.addAll(mainRecentChatList);
     }
     update();
   }
@@ -141,17 +141,15 @@ class RecentChatSearchController extends GetxController {
   }
 
   fetchRecentChatList() async{
-    await PlatformRepo().filteredRecentChatList().then((value) {
+    await FlyChat.getRecentChatListIncludingArchived().then((value) {
       var recentChatList = <RecentChatData>[];
       var js = json.decode(value);
       var recentChatListWithArchived = List<RecentChatData>.from(js.map((x) => RecentChatData.fromJson(x)));
-      if (recentChatListWithArchived != null) {
-        for (var recentChat in recentChatListWithArchived) {
-          if (recentChat.profileName != null &&
-              recentChat.profileName!.toLowerCase().contains(search.text.trim().toString().toLowerCase()) ==
-                  true) {
-            recentChatList.add(recentChat);
-          }
+      for (var recentChat in recentChatListWithArchived) {
+        if (recentChat.profileName != null &&
+            recentChat.profileName!.toLowerCase().contains(search.text.trim().toString().toLowerCase()) ==
+                true) {
+          recentChatList.add(recentChat);
         }
       }
       filteredRecentChatList(recentChatList);
@@ -161,8 +159,8 @@ class RecentChatSearchController extends GetxController {
   }
 
   fetchMessageList() async{
-    await PlatformRepo()
-        .filteredMessageList(search.text.trim().toString())
+    await FlyChat
+        .searchConversation(search.text.trim().toString())
         .then((value) {
       var result = chatMessageFromJson(value);
       chatMessages(result);
@@ -175,7 +173,7 @@ class RecentChatSearchController extends GetxController {
             searchType: Constants.TYPE_SEARCH_MESSAGE,
             chatType: message.messageChatType.toString(),
             isSearch: true).obs;
-        mRecentSearchList.value.insert(0, searchMessageItem);
+        mRecentSearchList.insert(0, searchMessageItem);
         i++;
       }
       var map = <Rx<int>, RxList<Rx<RecentSearch>>>{}; //{0,searchMessageItem};
@@ -186,7 +184,7 @@ class RecentChatSearchController extends GetxController {
   }
 
   fetchContactList(List<String> jidList) {
-    PlatformRepo().filteredContactList().then((value) {
+    FlyChat.getRegisteredUsers().then((value) {
       var profileDetails = userListFromJson(value).data;
       if (profileDetails != null) {
         var filterProfileList = profileDetails.where((it) =>
@@ -202,7 +200,7 @@ class RecentChatSearchController extends GetxController {
   }
 
   Future<RecentChatData?> getRecentChatofJid(String jid) async{
-    var value = await PlatformRepo().getRecentChatOf(jid);
+    var value = await FlyChat.getRecentChatOf(jid);
     Log("rchat", value.toString());
     if (value != null) {
       var data = RecentChatData.fromJson(json.decode(value));
@@ -213,7 +211,7 @@ class RecentChatSearchController extends GetxController {
   }
 
   Future<CheckModel?> getMessageOfId(String mid) async{
-    var value = await PlatformRepo().getMessageOfId(mid);
+    var value = await FlyChat.getMessageOfId(mid);
     if (value != null) {
       var data = checkModelFromJson(value);
       return data;
@@ -223,7 +221,7 @@ class RecentChatSearchController extends GetxController {
   }
 
   Future<ProfileData?> getProfile(String jid) async{
-    await PlatformRepo().getProfileLocal(jid,false).then((value)async{
+    await FlyChat.getProfileLocal(jid,false).then((value)async{
       if (value != null) {
         var data = profileDataFromJson(value);
         return data.data;
@@ -231,10 +229,11 @@ class RecentChatSearchController extends GetxController {
         return null;
       }
     });
+    return null;
   }
-  Future<Map<ProfileData?,ChatMessage?>?> getProfileandMessage(String jid , String mid) async{
-    var value = await PlatformRepo().getProfileLocal(jid,false);
-    var value2 = await PlatformRepo().getMessageOfId(mid);
+  Future<Map<ProfileData?,ChatMessage?>?> getProfileAndMessage(String jid , String mid) async{
+    var value = await FlyChat.getProfileLocal(jid,false);
+    var value2 = await FlyChat.getMessageOfId(mid);
     if (value != null && value2 !=null) {
       var data = profileDataFromJson(value);
       var data2 = chatMessageFrmJson(value2);
@@ -242,11 +241,12 @@ class RecentChatSearchController extends GetxController {
       map.putIfAbsent(data.data, () => data2);
       return map;
     }
+    return null;
   }
 
   toChatPage(String jid){
     if(jid.isNotEmpty) {
-      PlatformRepo().getProfileLocal(jid, false).then((value) {
+      FlyChat.getProfileLocal(jid, false).then((value) {
         if(value!=null){
           var datas = profileDataFromJson(value);
           var data = datas.data!;

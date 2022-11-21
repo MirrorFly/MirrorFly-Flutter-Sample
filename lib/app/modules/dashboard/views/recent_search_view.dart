@@ -241,7 +241,7 @@ class RecentSearchView extends GetView<RecentChatSearchController> {
             ? searchHeaderByType(data, context)
             : const SizedBox(),
         FutureBuilder(
-            future: controller.getProfileandMessage(
+            future: controller.getProfileAndMessage(
                 data.jid.checkNull(), data.mid.checkNull()),
             builder: (context, snap) {
               if (snap.hasData) {

@@ -1,5 +1,5 @@
 import 'package:get/get.dart';
-import 'package:mirror_fly_demo/app/data/SessionManagement.dart';
+import 'package:mirror_fly_demo/app/data/session_management.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
 
 class ImageViewController extends GetxController {
@@ -14,7 +14,7 @@ class ImageViewController extends GetxController {
     if(Get.arguments['imageUrl'].toString().startsWith("http")) {
       imageUrl(Get.arguments['imageUrl']);
     }else {
-      imageUrl(SessionManagement().getMediaEndPoint().checkNull() +
+      imageUrl(SessionManagement.getMediaEndPoint().checkNull() +
           Get.arguments['imageUrl'].toString());
     }
   }

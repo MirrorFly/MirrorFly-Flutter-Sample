@@ -1,9 +1,7 @@
 import 'package:contacts_service/contacts_service.dart';
-import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/routes/app_pages.dart';
 
-import '../../chat/controllers/chat_controller.dart';
 
 class LocalContactController extends GetxController {
   //TODO: Implement LocalContactController
@@ -18,10 +16,7 @@ class LocalContactController extends GetxController {
     getContacts();
   }
 
-  @override
-  void onReady() {
-    super.onReady();
-  }
+
   getContacts() async{
     contactList.addAll(await ContactsService.getContacts());
 
@@ -32,11 +27,11 @@ class LocalContactController extends GetxController {
       return;
     }
 
-    contactList.forEach((userDetail) {
+    for (var userDetail in contactList) {
       if (name(userDetail).toString().toLowerCase().contains(text.toLowerCase())) {
         searchList.add(userDetail);
       }
-    });
+    }
 
   }
 

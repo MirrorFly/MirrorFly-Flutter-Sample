@@ -5,7 +5,7 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
 import '../../../model/chatMessageModel.dart';
-import '../../../nativecall/platformRepo.dart';
+import '../../../nativecall/fly_chat.dart';
 
 class MessageInfoController extends GetxController {
   //TODO: Implement MessageInfoController
@@ -22,7 +22,7 @@ class MessageInfoController extends GetxController {
   void onInit() {
     super.onInit();
     debugPrint("Message Info $messageID");
-    PlatformRepo().getMessageInfo(messageID).then((value) {
+    FlyChat.getMessageStatusOfASingleChatMessage(messageID).then((value) {
       var response = json.decode(value);
       readTime(response["seenTime"]);
       deliveredTime(response["deliveredTime"]);

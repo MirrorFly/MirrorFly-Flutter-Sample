@@ -113,7 +113,7 @@ const String zip_image = 'assets/logos/zip.svg';
 const String rar_image = 'assets/logos/rar.svg';
 const String Mimageicon = 'assets/logos/image.svg';
 const String Mlocationicon = 'assets/logos/location_chat.svg';
-const String Mvideoicon = 'assets/logos/Video.svg';
+const String Mvideoicon = 'assets/logos/video.svg';
 const String Maudioicon = 'assets/logos/noun_Audio_3408360.svg';
 const String audio_white = 'assets/logos/audio_white.svg';
 const String video_white = 'assets/logos/video_icon.svg';
@@ -617,8 +617,8 @@ Future<void> launchWeb(String url) async{
   }
 }
 
-Widget forMessageTypeIcon(String MessageType) {
-  switch (MessageType.toUpperCase()) {
+Widget forMessageTypeIcon(String messageType) {
+  switch (messageType.toUpperCase()) {
     case Constants.MIMAGE:
       return SvgPicture.asset(
         Mimageicon,
@@ -654,8 +654,8 @@ Widget forMessageTypeIcon(String MessageType) {
   }
 }
 
-String? forMessageTypeString(String MessageType) {
-  switch (MessageType.toUpperCase()) {
+String? forMessageTypeString(String messageType) {
+  switch (messageType.toUpperCase()) {
     case Constants.MIMAGE:
       return "Image";
     case Constants.MAUDIO:

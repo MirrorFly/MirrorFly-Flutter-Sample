@@ -22,7 +22,7 @@ class LocalContactView extends GetView<LocalContactController> {
             decoration: const InputDecoration(
                 hintText: "Search", border: InputBorder.none),
           )
-              : Text('Contacts'),
+              : const Text('Contacts'),
           actions: [
             controller.search.value
                 ? const SizedBox()
@@ -73,7 +73,7 @@ class LocalContactView extends GetView<LocalContactController> {
                           .elementAt(index)
                           .displayName!,
                     ),
-                    SizedBox(width: 10,),
+                    const SizedBox(width: 10,),
                     Text(controller.searchList
                         .elementAt(index)
                         .displayName!),
@@ -97,7 +97,7 @@ class LocalContactView extends GetView<LocalContactController> {
                     ProfileTextImage(
                       text: controller.name(item),
                     ),
-                    SizedBox(width: 10,),
+                    const SizedBox(width: 10,),
                     Text(controller.name(item)),
                   ],
                 ),

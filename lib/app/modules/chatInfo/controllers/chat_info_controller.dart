@@ -4,7 +4,7 @@ import 'package:mirror_fly_demo/app/data/helper.dart';
 
 import '../../../common/constants.dart';
 import '../../../model/userListModel.dart';
-import '../../../nativecall/platformRepo.dart';
+import '../../../nativecall/fly_chat.dart';
 import '../../../routes/app_pages.dart';
 
 class ChatInfoController extends GetxController {
@@ -40,7 +40,7 @@ class ChatInfoController extends GetxController {
   onToggleChange(bool value) {
     Log("change", value.toString());
     mute(value);
-    PlatformRepo().groupMute(profile.jid.checkNull(), value);
+    FlyChat.updateChatMuteStatus(profile.jid.checkNull(), value);
   }
 
   reportChatOrUser() {
@@ -54,15 +54,15 @@ class ChatInfoController extends GetxController {
                 onPressed: () {
                   Get.back();
                   Helper.showLoading(message: "Reporting User");
-                  PlatformRepo()
-                      .reportChatOrUser(profile.jid!, "chat", "")
+                  FlyChat
+                      .reportUserOrMessages(profile.jid!, "chat", "")
                       .then((value) {
                     Helper.hideLoading();
                     Future.delayed(const Duration(milliseconds: 500), () {
                       toToast("Report Success");
                     });
 
-                    debugPrint(value);
+                    // debugPrint(value.toString());
                   }).catchError((onError) {
                     debugPrint(onError.toString());
                   });

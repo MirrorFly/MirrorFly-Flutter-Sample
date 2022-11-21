@@ -4,10 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/base_controller.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
-import 'package:mirror_fly_demo/app/data/SessionManagement.dart';
+import 'package:mirror_fly_demo/app/data/session_management.dart';
 import 'package:mirror_fly_demo/app/model/recent_chat.dart';
 import 'package:mirror_fly_demo/app/model/userListModel.dart';
-import 'package:mirror_fly_demo/app/nativecall/platformRepo.dart';
+import 'package:mirror_fly_demo/app/nativecall/fly_chat.dart';
 import 'package:intl/intl.dart';
 
 import '../../../model/chatMessageModel.dart';
@@ -26,7 +26,7 @@ class DashboardController extends BaseController with GetTickerProviderStateMixi
   }
 
   Future<RecentChatData?> getRecentChatOfJid(String jid) async{
-    var value = await PlatformRepo().getRecentChatOf(jid);
+    var value = await FlyChat.getRecentChatOf(jid);
     Log("chat", value.toString());
     if (value != null) {
       var data = RecentChatData.fromJson(json.decode(value));
@@ -38,7 +38,7 @@ class DashboardController extends BaseController with GetTickerProviderStateMixi
 
   getRecentChatList() {
     Log("","recent chats");
-    PlatformRepo().getRecentChats().then((value) {
+    FlyChat.getRecentChatList().then((value) {
       var data = recentChatFromJson(value);
       recentChats.clear();
       recentChats
@@ -50,7 +50,7 @@ class DashboardController extends BaseController with GetTickerProviderStateMixi
 
   toChatPage(String jid) {
     if(jid.isNotEmpty) {
-      PlatformRepo().getProfileLocal(jid, false).then((value) {
+      FlyChat.getProfileLocal(jid, false).then((value) {
         if(value!=null){
           var profileData = profileDataFromJson(value);
           var data = profileData.data!;
@@ -175,7 +175,7 @@ class DashboardController extends BaseController with GetTickerProviderStateMixi
   }
 
   Future<ChatMessageModel?> getMessageOfId(String mid) async{
-    var value = await PlatformRepo().getMessageOfId(mid);
+    var value = await FlyChat.getMessageOfId(mid);
     Log("getMessageOfId recent", value.toString());
     if(value!=null) {
       var data = ChatMessageModel.fromJson(json.decode(value.toString()));
@@ -186,7 +186,7 @@ class DashboardController extends BaseController with GetTickerProviderStateMixi
   }
 
   webLogin(){
-    if(SessionManagement().getWebLogin()){
+    if(SessionManagement.getWebLogin()){
       Future.delayed(const Duration(milliseconds: 100),
               () => Get.toNamed(Routes.WEBLOGINRESULT));
     }else{
@@ -196,10 +196,10 @@ class DashboardController extends BaseController with GetTickerProviderStateMixi
   }
 
   @override
-  void onMessageReceived(ChatMessage){
+  void onMessageReceived(chatMessage){
     Log("dashboard controller", "onMessageReceived");
-    super.onMessageReceived(ChatMessage);
-    ChatMessageModel chatMessageModel = sendMessageModelFromJson(ChatMessage);
+    super.onMessageReceived(chatMessage);
+    ChatMessageModel chatMessageModel = sendMessageModelFromJson(chatMessage);
     updateRecentChat(chatMessageModel.senderUserJid);
   }
 

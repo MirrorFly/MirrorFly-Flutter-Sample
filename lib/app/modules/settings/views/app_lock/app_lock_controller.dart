@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
-import 'package:mirror_fly_demo/app/data/SessionManagement.dart';
+import 'package:mirror_fly_demo/app/data/session_management.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
 
 import '../../../../routes/app_pages.dart';
@@ -22,8 +22,8 @@ class AppLockController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    _pinenabled(SessionManagement().getEnablePin());
-    _bioenabled(SessionManagement().getEnableBio());
+    _pinenabled(SessionManagement.getEnablePin());
+    _bioenabled(SessionManagement.getEnableBio());
   }
 
   final modifyPin = false.obs;
@@ -34,7 +34,7 @@ class AppLockController extends GetxController {
   var offPin = false;
 
   enablePin() {
-    if (SessionManagement().getEnablePin()) {
+    if (SessionManagement.getEnablePin()) {
       //to confirm pin to off pin
       offPin = true;
       Get.toNamed(Routes.PIN);
@@ -44,8 +44,8 @@ class AppLockController extends GetxController {
   }
 
   enableBio() {
-    if (SessionManagement().getEnablePin()) {
-      if (SessionManagement().getEnableBio()) {
+    if (SessionManagement.getEnablePin()) {
+      if (SessionManagement.getEnableBio()) {
         //to confirm pin to off bio
         SessionManagement.setEnableBio(false);
         _bioenabled(false);
@@ -77,7 +77,7 @@ class AppLockController extends GetxController {
   savePin() {
     if (modifyPin.value) {
       if (oldPin.text.isNotEmpty) {
-        if (oldPin.text == SessionManagement().getPin()) {
+        if (oldPin.text == SessionManagement.getPin()) {
           setPin();
         } else {
           toToast("Old PIN not Matched");
@@ -109,7 +109,7 @@ class AppLockController extends GetxController {
   }
 
   disablePIN() {
-    if (SessionManagement().getEnablePin()) {
+    if (SessionManagement.getEnablePin()) {
       //to confirm pin to off pin
       SessionManagement.setPIN("");
       SessionManagement.setEnablePIN(false);
@@ -176,7 +176,7 @@ class AppLockController extends GetxController {
 
   validateAndUnlock() {
     if (text.isNotEmpty && text.length == 4) {
-      if (SessionManagement().getPin() == text.join()) {
+      if (SessionManagement.getPin() == text.join()) {
         if (offPin) {
           offPin = false;
           disablePIN();
@@ -193,9 +193,9 @@ class AppLockController extends GetxController {
   }
 
   String getIntialRoute() {
-    if (SessionManagement().getLogin()) {
-      if (SessionManagement().getName().checkNull().isNotEmpty &&
-          SessionManagement().getMobileNumber().checkNull().isNotEmpty) {
+    if (SessionManagement.getLogin()) {
+      if (SessionManagement.getName().checkNull().isNotEmpty &&
+          SessionManagement.getMobileNumber().checkNull().isNotEmpty) {
         return AppPages.DASHBOARD;
       } else {
         return AppPages.PROFILE;

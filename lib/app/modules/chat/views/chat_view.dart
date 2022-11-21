@@ -1353,7 +1353,7 @@ class ChatView extends GetView<ChatController> {
                         await _picker.pickImage(source: ImageSource.camera);
                     if(photo!=null) {
                       Get.toNamed(Routes.IMAGEPREVIEW, arguments: {
-                        "filePath": photo?.path,
+                        "filePath": photo.path,
                         "userName": controller.profile.name!
                       });
                     }

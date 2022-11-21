@@ -11,11 +11,11 @@ import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:mirror_fly_demo/app/base_controller.dart';
-import 'package:mirror_fly_demo/app/data/SessionManagement.dart';
+import 'package:mirror_fly_demo/app/data/session_management.dart';
 import 'package:mirror_fly_demo/app/data/permissions.dart';
 import 'package:mirror_fly_demo/app/model/chatMessageModel.dart';
 import 'package:mirror_fly_demo/app/model/group_members_model.dart';
-import 'package:mirror_fly_demo/app/nativecall/platformRepo.dart';
+import 'package:mirror_fly_demo/app/nativecall/fly_chat.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
@@ -144,7 +144,8 @@ class ChatController extends BaseController with GetTickerProviderStateMixin {
     ever(chatList, (callback) {});
   }
 
-  onReady() {
+  @override
+  void onReady() {
     debugPrint("isBlocked===> ${profile.isBlocked}");
     debugPrint("profile detail===> ${profile.toJson().toString()}");
     isBlocked(profile.isBlocked);
@@ -172,7 +173,7 @@ class ChatController extends BaseController with GetTickerProviderStateMixin {
     //scrollController.addListener(_scrollController);
 
     registerChatSync();
-    PlatformRepo().ongoingChat(profile.jid!);
+    FlyChat.setOnGoingChatUser(profile.jid!);
     //getChatHistory(profile.jid!);
     debugPrint("==================");
     debugPrint(profile.image);
@@ -194,7 +195,7 @@ class ChatController extends BaseController with GetTickerProviderStateMixin {
   @override
   void onClose() {
     scrollController.dispose();
-    PlatformRepo().ongoingChat("");
+    FlyChat.setOnGoingChatUser("");
     //Get.delete<ChatController>();
     isLive = false;
     super.onClose();
@@ -209,7 +210,7 @@ class ChatController extends BaseController with GetTickerProviderStateMixin {
 
   registerChatSync() {
     /*debugPrint("Registering Event");
-    var messageEvent = PlatformRepo().onMessageReceived;
+    var messageEvent = PlatformRepo.onMessageReceived;
     messageEvent.listen((msgData) {
       ChatMessageModel chatMessageModel = sendMessageModelFromJson(msgData);
 
@@ -219,7 +220,7 @@ class ChatController extends BaseController with GetTickerProviderStateMixin {
       }
     });
 
-    PlatformRepo().onMessageStatusUpdated.listen((msgData) {
+    PlatformRepo.onMessageStatusUpdated.listen((msgData) {
       ChatMessageModel chatMessageModel = sendMessageModelFromJson(msgData);
       final index = chatList.indexWhere(
           (message) => message.messageId == chatMessageModel.messageId);
@@ -229,7 +230,7 @@ class ChatController extends BaseController with GetTickerProviderStateMixin {
         chatList[index] = chatMessageModel;
       }
     });
-    PlatformRepo().onMediaStatusUpdated.listen((msgData) {
+    PlatformRepo.onMediaStatusUpdated.listen((msgData) {
       ChatMessageModel chatMessageModel = sendMessageModelFromJson(msgData);
       final index = chatList.indexWhere(
           (message) => message.messageId == chatMessageModel.messageId);
@@ -248,7 +249,7 @@ class ChatController extends BaseController with GetTickerProviderStateMixin {
     }
     isReplying(false);
     if (messageController.text.trim().isNotEmpty) {
-      PlatformRepo()
+      FlyChat
           .sendTextMessage(
               messageController.text, profile.jid.toString(), replyMessageId)
           .then((value) {
@@ -268,8 +269,8 @@ class ChatController extends BaseController with GetTickerProviderStateMixin {
     }
     isReplying(false);
 
-    PlatformRepo()
-        .sentLocationMessage(
+    FlyChat
+        .sendLocationMessage(
             profile.jid.toString(), latitude, longitude, replyMessageId)
         .then((value) {
       Log("Location_msg", value.toString());
@@ -319,7 +320,7 @@ class ChatController extends BaseController with GetTickerProviderStateMixin {
   }
 
   getChatHistory() {
-    PlatformRepo().getChatHistory(profile.jid.checkNull()).then((value) {
+    FlyChat.getMessagesOfJid(profile.jid.checkNull()).then((value) {
       List<ChatMessageModel> chatMessageModel = chatMessageModelFromJson(value);
       chatList(chatMessageModel);
       Future.delayed(const Duration(milliseconds: 500), () {
@@ -341,7 +342,7 @@ class ChatController extends BaseController with GetTickerProviderStateMixin {
   }
 
   getMedia(String mid) {
-    return PlatformRepo().getMedia(mid).then((value) {
+    return FlyChat.getMessageOfId(mid).then((value) {
       check_model.CheckModel chatMessageModel =
           check_model.checkModelFromJson(value);
       String thumbImage = chatMessageModel.mediaChatMessage.mediaThumbImage;
@@ -373,7 +374,7 @@ class ChatController extends BaseController with GetTickerProviderStateMixin {
     }
     isReplying(false);
     if (File(path!).existsSync()) {
-      return PlatformRepo()
+      return FlyChat
           .sendImageMessage(profile.jid!, path, caption, replyMessageID)
           .then((value) {
         ChatMessageModel chatMessageModel = sendMessageModelFromJson(value);
@@ -433,7 +434,7 @@ class ChatController extends BaseController with GetTickerProviderStateMixin {
   }
 
   sendReadReceipt() {
-    PlatformRepo().sendReadReceipts(profile.jid!).then((value) {
+    FlyChat.markAsReadDeleteUnreadSeparator(profile.jid!).then((value) {
       debugPrint("Chat Read Receipt Response ==> $value");
     });
   }
@@ -443,8 +444,8 @@ class ChatController extends BaseController with GetTickerProviderStateMixin {
       replyMessageID = replyChatMessage.messageId;
     }
     isReplying(false);
-    return PlatformRepo()
-        .sendMediaMessage(profile.jid!, videoPath, caption, replyMessageID)
+    return FlyChat
+        .sendVideoMessage(profile.jid!, videoPath, caption, replyMessageID)
         .then((value) {
       ChatMessageModel chatMessageModel = sendMessageModelFromJson(value);
       chatList.add(chatMessageModel);
@@ -460,7 +461,7 @@ class ChatController extends BaseController with GetTickerProviderStateMixin {
 
   downloadMedia(String messageId) async {
     if (await askStoragePermission()) {
-      PlatformRepo().mediaDownload(messageId);
+      FlyChat.downloadMedia(messageId);
     }
   }
 
@@ -543,8 +544,8 @@ class ChatController extends BaseController with GetTickerProviderStateMixin {
       replyMessageId = replyChatMessage.messageId;
     }
     isReplying(false);
-    return PlatformRepo()
-        .sendContacts(contactList, profile.jid!, contactName, replyMessageId)
+    return FlyChat
+        .sendContactMessage(contactList, profile.jid!, contactName, replyMessageId)
         .then((value) {
       ChatMessageModel chatMessageModel = sendMessageModelFromJson(value);
       chatList.add(chatMessageModel);
@@ -558,8 +559,8 @@ class ChatController extends BaseController with GetTickerProviderStateMixin {
       replyMessageId = replyChatMessage.messageId;
     }
     isReplying(false);
-    PlatformRepo()
-        .sendDocument(profile.jid!, documentPath, replyMessageId)
+    FlyChat
+        .sendDocumentMessage(profile.jid!, documentPath, replyMessageId)
         .then((value) {
       ChatMessageModel chatMessageModel = sendMessageModelFromJson(value);
       chatList.add(chatMessageModel);
@@ -587,7 +588,7 @@ class ChatController extends BaseController with GetTickerProviderStateMixin {
       //   throw 'Could not launch $uri';
       // }
 
-      PlatformRepo().openFile(mediaLocalStoragePath).catchError((onError) {
+      FlyChat.openFile(mediaLocalStoragePath).catchError((onError) {
         final scaffold = ScaffoldMessenger.of(context);
         scaffold.showSnackBar(
           SnackBar(
@@ -630,8 +631,8 @@ class ChatController extends BaseController with GetTickerProviderStateMixin {
     }
     isTyping("");
     isReplying(false);
-    PlatformRepo()
-        .sendAudio(profile.jid!, filePath, isRecorded, duration, replyMessageId)
+    FlyChat
+        .sendAudioMessage(profile.jid!, filePath, isRecorded, duration, replyMessageId)
         .then((value) {
       ChatMessageModel chatMessageModel = sendMessageModelFromJson(value);
       chatList.add(chatMessageModel);
@@ -647,8 +648,8 @@ class ChatController extends BaseController with GetTickerProviderStateMixin {
   }
 
   clearChatHistory(bool isStarredExcluded) {
-    PlatformRepo()
-        .clearChatHistory(profile.jid!, "chat", isStarredExcluded)
+    FlyChat
+        .clearChat(profile.jid!, "chat", isStarredExcluded)
         .then((value) {
       if (value) {
         chatList.clear();
@@ -752,14 +753,14 @@ class ChatController extends BaseController with GetTickerProviderStateMixin {
             TextButton(
                 onPressed: () {
                   Get.back();
-                  PlatformRepo()
-                      .reportChatOrUser(
+                  FlyChat
+                      .reportUserOrMessages(
                           profile.jid!,
                           chatMessage?.messageChatType ?? "chat",
                           chatMessage?.messageId ?? "")
                       .then((value) {
                     //report success
-                    debugPrint(value);
+                    debugPrint(value.toString());
                   }).catchError((onError) {
                     //report failed
                     debugPrint(onError.toString());
@@ -776,7 +777,7 @@ class ChatController extends BaseController with GetTickerProviderStateMixin {
   }
 
   copyTextMessages() {
-    // PlatformRepo().copyTextMessages(selectedChatList[0].messageId);
+    // PlatformRepo.copyTextMessages(selectedChatList[0].messageId);
     debugPrint('Copy text ==> ${selectedChatList[0].messageTextContent}');
     Clipboard.setData(
         ClipboardData(text: selectedChatList[0].messageTextContent));
@@ -816,7 +817,7 @@ class ChatController extends BaseController with GetTickerProviderStateMixin {
               onPressed: () {
                 Get.back();
                 Helper.showLoading(message: 'Deleting Message');
-                PlatformRepo()
+                FlyChat
                     .deleteMessages(profile.jid!, deleteChatListID, false)
                     .then((value) {
                   debugPrint(value);
@@ -840,7 +841,7 @@ class ChatController extends BaseController with GetTickerProviderStateMixin {
                     Get.back();
                     Helper.showLoading(
                         message: 'Deleting Message for Everyone');
-                    PlatformRepo()
+                    FlyChat
                         .deleteMessages(profile.jid!, deleteChatListID, true)
                         .then((value) {
                       debugPrint(value);
@@ -884,8 +885,8 @@ class ChatController extends BaseController with GetTickerProviderStateMixin {
             ? 'Unfavoriting Message'
             : 'Favoriting Message');
 
-    PlatformRepo()
-        .favouriteMessage(selectedChatList[0].messageId, profile.jid!,
+    FlyChat
+        .updateFavouriteStatus(selectedChatList[0].messageId, profile.jid!,
             !selectedChatList[0].isMessageStarred)
         .then((value) {
       clearChatSelection(selectedChatList[0]);
@@ -928,7 +929,7 @@ class ChatController extends BaseController with GetTickerProviderStateMixin {
                 onPressed: () {
                   Get.back();
                   Helper.showLoading(message: "Blocking User");
-                  PlatformRepo().blockUser(profile.jid!).then((value) {
+                  FlyChat.blockUser(profile.jid!).then((value) {
                     debugPrint(value);
                     isBlocked(true);
                     Helper.hideLoading();
@@ -979,7 +980,7 @@ class ChatController extends BaseController with GetTickerProviderStateMixin {
           onPressed: () {
             Get.back();
             Helper.showLoading(message: "Unblocking User");
-            PlatformRepo().unBlockUser(profile.jid!).then((value) {
+            FlyChat.unblockUser(profile.jid!).then((value) {
               debugPrint(value.toString());
               isBlocked(false);
               Helper.hideLoading();
@@ -1136,7 +1137,7 @@ class ChatController extends BaseController with GetTickerProviderStateMixin {
   exportChat() async {
     if (chatList.isNotEmpty) {
       if (await askStoragePermission()) {
-        PlatformRepo().exportChat(profile.jid.checkNull());
+        FlyChat.exportChatConversationToEmail(profile.jid.checkNull());
       }
     } else {
       toToast("There is no conversation.");
@@ -1162,7 +1163,7 @@ class ChatController extends BaseController with GetTickerProviderStateMixin {
         debugPrint("result of forward ==> ${value.toString()}");
         profile_.value = value as Profile;
         isBlocked(profile.isBlocked);
-        PlatformRepo().ongoingChat(profile.jid!);
+        FlyChat.setOnGoingChatUser(profile.jid!);
         getChatHistory();
         sendReadReceipt();
       });
@@ -1262,7 +1263,7 @@ class ChatController extends BaseController with GetTickerProviderStateMixin {
         if (value != null) {
           profile_(value as Profile);
           isBlocked(profile.isBlocked);
-          PlatformRepo().ongoingChat(profile.jid!);
+          FlyChat.setOnGoingChatUser(profile.jid!);
           getChatHistory();
           sendReadReceipt();
         }
@@ -1282,10 +1283,10 @@ class ChatController extends BaseController with GetTickerProviderStateMixin {
   }
 
   @override
-  void onMessageReceived(event) {
-    super.onMessageReceived(event);
+  void onMessageReceived(chatMessage) {
+    super.onMessageReceived(chatMessage);
     Log("chatController", "onMessageReceived");
-    ChatMessageModel chatMessageModel = sendMessageModelFromJson(event);
+    ChatMessageModel chatMessageModel = sendMessageModelFromJson(chatMessage);
     chatList.add(chatMessageModel);
     scrollToBottom();
     if (isLive) {
@@ -1322,7 +1323,7 @@ class ChatController extends BaseController with GetTickerProviderStateMixin {
   void onGroupProfileUpdated(groupJid) {
     super.onGroupProfileUpdated(groupJid);
     if (profile.jid.checkNull() == groupJid.toString()) {
-      PlatformRepo()
+      FlyChat
           .getProfileDetails(profile.jid.checkNull(), false)
           .then((value) {
         if (value != null) {
@@ -1339,7 +1340,7 @@ class ChatController extends BaseController with GetTickerProviderStateMixin {
     super.onLeftFromGroup(groupJid: groupJid, userJid: userJid);
     if (profile.isGroupProfile!) {
       if (groupJid == profile.jid &&
-          userJid == SessionManagement().getUserJID()) {
+          userJid == SessionManagement.getUserJID()) {
         //current user leave from the group
         _isMemberOfGroup(false);
       } else if (groupJid == profile.jid) {
@@ -1350,7 +1351,7 @@ class ChatController extends BaseController with GetTickerProviderStateMixin {
 
   memberOfGroup() {
     if (profile.isGroupProfile!) {
-      PlatformRepo()
+      FlyChat
           .isMemberOfGroup(profile.jid.checkNull(), null)
           .then((bool? value) {
         if (value != null) {
@@ -1372,7 +1373,7 @@ class ChatController extends BaseController with GetTickerProviderStateMixin {
         getParticipantsNameAsCsv(profile.jid.checkNull());
       }
     } else {
-      PlatformRepo().getUserLastSeenTime(profile.jid.toString()).then((value) {
+      FlyChat.getUserLastSeenTime(profile.jid.toString()).then((value) {
         userPresenceStatus(value.toString());
       });
     }
@@ -1381,13 +1382,13 @@ class ChatController extends BaseController with GetTickerProviderStateMixin {
   var groupParticipantsName = ''.obs;
 
   getParticipantsNameAsCsv(String jid) {
-    PlatformRepo().getGroupMembers(jid, false).then((value) {
+    FlyChat.getGroupMembersList(jid, false).then((value) {
       if (value != null) {
         var str = <String>[];
         var groupsMembersProfileList = memberFromJson(value);
         for (var it in groupsMembersProfileList) {
           if (it.jid.checkNull() !=
-              SessionManagement().getUserJID().checkNull()) {
+              SessionManagement.getUserJID().checkNull()) {
             str.add(it.name.checkNull());
           }
         }

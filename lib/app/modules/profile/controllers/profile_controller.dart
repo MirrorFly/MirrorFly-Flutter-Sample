@@ -7,14 +7,14 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
-import 'package:mirror_fly_demo/app/data/SessionManagement.dart';
+import 'package:mirror_fly_demo/app/data/session_management.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
 import 'package:mirror_fly_demo/app/model/profile_update.dart';
 import 'package:mirror_fly_demo/app/routes/app_pages.dart';
 
 import '../../../common/crop_image.dart';
 import '../../../model/profile_model.dart';
-import '../../../nativecall/platformRepo.dart';
+import '../../../nativecall/fly_chat.dart';
 
 class ProfileController extends GetxController {
   TextEditingController profileName = TextEditingController();
@@ -37,8 +37,8 @@ class ProfileController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    userImgUrl.value = SessionManagement().getUserImage() ?? "";
-    Log("auth : ", SessionManagement().getAuthToken().toString());
+    userImgUrl.value = SessionManagement.getUserImage() ?? "";
+    Log("auth : ", SessionManagement.getAuthToken().toString());
     if (Get.arguments != null) {
       from(Get.arguments["from"]);
       if (from.value == Routes.LOGIN) {
@@ -64,8 +64,8 @@ class ProfileController extends GetxController {
       if (imagePath.value.isNotEmpty) {
         updateProfileImage(imagePath.value, update: true);
       } else {
-        PlatformRepo()
-            .updateProfile(
+        FlyChat
+            .updateMyProfile(
                 profileName.text.toString(),
                 profileEmail.text.toString(),
                 profileMobile.text.toString(),
@@ -107,7 +107,7 @@ class ProfileController extends GetxController {
   updateProfileImage(String path, {bool update = false}) {
     loading.value = true;
     showLoader();
-    PlatformRepo().updateProfileImage(path).then((value) {
+    FlyChat.updateMyProfileImage(path).then((value) {
       loading.value = false;
       var data = json.decode(value);
       imagePath.value = Constants.EMPTY_STRING;
@@ -126,7 +126,7 @@ class ProfileController extends GetxController {
   removeProfileImage() {
     showLoader();
     loading.value = true;
-    PlatformRepo().removeProfileImage().then((value) {
+    FlyChat.removeProfileImage().then((value) {
       loading.value = false;
       hideLoader();
       if (value != null) {
@@ -148,12 +148,12 @@ class ProfileController extends GetxController {
   }
 
   getProfile() {
-    var jid = SessionManagement().getUserJID().checkNull();
+    var jid = SessionManagement.getUserJID().checkNull();
     Log("jid", jid);
     if (jid.isNotEmpty) {
       Log("jid.isNotEmpty", jid.isNotEmpty.toString());
       loading.value = true;
-      PlatformRepo().getProfile(jid).then((value) {
+      FlyChat.getUserProfile(jid).then((value) {
         loading.value = false;
         var data = profileDataFromJson(value);
         if (data.status != null && data.status!) {
@@ -163,7 +163,7 @@ class ProfileController extends GetxController {
             profileEmail.text = data.data!.email ?? "";
             profileStatus.value = data.data!.status.checkNull().isNotEmpty ? data.data!.status.checkNull() : "I am in Mirror Fly";
             userImgUrl.value =
-                data.data!.image ?? SessionManagement().getUserImage() ?? "";
+                data.data!.image ?? SessionManagement.getUserImage() ?? "";
             changed((from.value == Routes.LOGIN));
             name(data.data!.name.toString());
             update();

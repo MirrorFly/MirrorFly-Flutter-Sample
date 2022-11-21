@@ -1,10 +1,9 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
-import 'package:mirror_fly_demo/app/nativecall/platformRepo.dart';
+import 'package:mirror_fly_demo/app/nativecall/fly_chat.dart';
 
-import '../../../data/SessionManagement.dart';
+import '../../../data/session_management.dart';
 import '../../../data/helper.dart';
 import '../../../routes/app_pages.dart';
 
@@ -35,7 +34,7 @@ class DeleteAccountReasonController extends GetxController {
             Future.delayed(const Duration(milliseconds: 100), ()
             {
               Helper.showLoading(message: "Deleting Account");
-              PlatformRepo()
+              FlyChat
                   .deleteAccount(reasonValue.value, feedback.text)
                   .then((value) {
                 Helper.hideLoading();

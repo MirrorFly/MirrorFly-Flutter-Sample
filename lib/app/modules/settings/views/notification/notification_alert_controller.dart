@@ -1,6 +1,6 @@
 import 'package:get/get.dart';
-import 'package:mirror_fly_demo/app/data/SessionManagement.dart';
-import 'package:mirror_fly_demo/app/nativecall/platformRepo.dart';
+import 'package:mirror_fly_demo/app/data/session_management.dart';
+import 'package:mirror_fly_demo/app/nativecall/fly_chat.dart';
 
 class NotificationAlertController extends GetxController {
   final _defaultTone = ''.obs;
@@ -45,16 +45,16 @@ class NotificationAlertController extends GetxController {
     super.onInit();
     getRingtoneName();
     _displayNotificationSoundPreference(
-        SessionManagement().getNotificationSound());
+        SessionManagement.getNotificationSound());
     _displayNotificationPopupPreference(
-        SessionManagement().getNotificationPopup());
-    _displayVibrationPreference(SessionManagement().getNotificationPopup());
+        SessionManagement.getNotificationPopup());
+    _displayVibrationPreference(SessionManagement.getNotificationPopup());
     displayMutePreference();
   }
 
   showCustomTones() {
-    var uri = SessionManagement().getNotificationUri();
-    PlatformRepo().showCustomTones(uri).then((value) {
+    var uri = SessionManagement.getNotificationUri();
+    FlyChat.showCustomTones(uri).then((value) {
       if (value != null) {
         SessionManagement.setNotificationUri(value)
             .then((value) => getRingtoneName());
@@ -63,8 +63,8 @@ class NotificationAlertController extends GetxController {
   }
 
   getRingtoneName() {
-    var uri = SessionManagement().getNotificationUri();
-    PlatformRepo().getRingtoneName(uri).then((value) {
+    var uri = SessionManagement.getNotificationUri();
+    FlyChat.getRingtoneName(uri).then((value) {
       if (value != null) {
         _defaultTone(value);
       }
@@ -72,8 +72,8 @@ class NotificationAlertController extends GetxController {
   }
 
   displayMutePreference() {
-    _displayMuteNotificationPreference(SessionManagement().getMuteNotification());
-    if (SessionManagement().getMuteNotification()) {
+    _displayMuteNotificationPreference(SessionManagement.getMuteNotification());
+    if (SessionManagement.getMuteNotification()) {
       _displayVibrationPreference(false);
       _displayNotificationPopupPreference(false);
       _displayNotificationSoundPreference(false);
@@ -98,7 +98,7 @@ class NotificationAlertController extends GetxController {
     _displayVibrationPreference(!displayVibrationPreference);
   }
   mute(){
-    if(!SessionManagement().getMuteNotification()){
+    if(!SessionManagement.getMuteNotification()){
       unSetAlerts();
     }else{
       enableNotification();
@@ -123,7 +123,7 @@ class NotificationAlertController extends GetxController {
   }
 
   checkWhetherMuteEnabled() {
-    if (SessionManagement().getMuteNotification()) {
+    if (SessionManagement.getMuteNotification()) {
       SessionManagement.setNotificationSound(true);
       SessionManagement.setMuteNotification(false);
       _displayMuteNotificationPreference(false);

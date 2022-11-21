@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
 
-import 'nativecall/platformRepo.dart';
+import 'nativecall/fly_chat.dart';
 
 abstract class BaseController extends GetxController {
 
@@ -16,31 +16,23 @@ abstract class BaseController extends GetxController {
     super.onInit();
     initListeners();
   }
-  @override
-  void dispose(){
-    super.dispose();
-  }
 
-  @override
-  void onClose(){
-    super.onClose();
-  }
 
   initListeners(){
-    PlatformRepo().onMessageReceived.listen(onMessageReceived);
-    PlatformRepo().onMessageStatusUpdated.listen(onMessageStatusUpdated);
-    PlatformRepo().onMediaStatusUpdated.listen(onMediaStatusUpdated);
-    PlatformRepo().onGroupProfileFetched.listen(onGroupProfileFetched);
-    PlatformRepo().onNewGroupCreated.listen(onNewGroupCreated);
-    PlatformRepo().onGroupProfileUpdated.listen(onGroupProfileUpdated);
-    PlatformRepo().onNewMemberAddedToGroup.listen(onNewMemberAddedToGroup);
-    PlatformRepo().onMemberRemovedFromGroup.listen(onMemberRemovedFromGroup);
-    PlatformRepo().onFetchingGroupMembersCompleted.listen(onFetchingGroupMembersCompleted);
-    PlatformRepo().onDeleteGroup.listen(onDeleteGroup);
-    PlatformRepo().onFetchingGroupListCompleted.listen(onFetchingGroupListCompleted);
-    PlatformRepo().onMemberMadeAsAdmin.listen(onMemberMadeAsAdmin);
-    PlatformRepo().onMemberRemovedAsAdmin.listen(onMemberRemovedAsAdmin);
-    PlatformRepo().onLeftFromGroup.listen((event){
+    FlyChat.onMessageReceived.listen(onMessageReceived);
+    FlyChat.onMessageStatusUpdated.listen(onMessageStatusUpdated);
+    FlyChat.onMediaStatusUpdated.listen(onMediaStatusUpdated);
+    FlyChat.onGroupProfileFetched.listen(onGroupProfileFetched);
+    FlyChat.onNewGroupCreated.listen(onNewGroupCreated);
+    FlyChat.onGroupProfileUpdated.listen(onGroupProfileUpdated);
+    FlyChat.onNewMemberAddedToGroup.listen(onNewMemberAddedToGroup);
+    FlyChat.onMemberRemovedFromGroup.listen(onMemberRemovedFromGroup);
+    FlyChat.onFetchingGroupMembersCompleted.listen(onFetchingGroupMembersCompleted);
+    FlyChat.onDeleteGroup.listen(onDeleteGroup);
+    FlyChat.onFetchingGroupListCompleted.listen(onFetchingGroupListCompleted);
+    FlyChat.onMemberMadeAsAdmin.listen(onMemberMadeAsAdmin);
+    FlyChat.onMemberRemovedAsAdmin.listen(onMemberRemovedAsAdmin);
+    FlyChat.onLeftFromGroup.listen((event){
       if(event!=null) {
         var data = json.decode(event.toString());
         var groupJid = data["groupJid"] ?? "";
@@ -48,11 +40,11 @@ abstract class BaseController extends GetxController {
         onLeftFromGroup(groupJid: groupJid,userJid: leftUserJid);
       }
     });
-    PlatformRepo().onGroupNotificationMessage.listen(onGroupNotificationMessage);
-    PlatformRepo().onGroupDeletedLocally.listen(onGroupDeletedLocally);
+    FlyChat.onGroupNotificationMessage.listen(onGroupNotificationMessage);
+    FlyChat.onGroupDeletedLocally.listen(onGroupDeletedLocally);
   }
 
-  void onMessageReceived(ChatMessage){
+  void onMessageReceived(chatMessage){
     //Log("flutter onMessageReceived", ChatMessage.toString());
   }
   void onMessageStatusUpdated(event){

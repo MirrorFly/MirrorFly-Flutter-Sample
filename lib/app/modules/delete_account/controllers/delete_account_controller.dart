@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../common/constants.dart';
-import '../../../data/SessionManagement.dart';
+import '../../../data/session_management.dart';
 import '../../../data/helper.dart';
 import '../../../model/country_model.dart';
 import '../../../routes/app_pages.dart';
@@ -21,7 +21,7 @@ class DeleteAccountController extends GetxController {
       toToast("Please Enter Mobile Number");
       return;
     }
-    if(mobileNumber.text != SessionManagement().getMobileNumber()){
+    if(mobileNumber.text != SessionManagement.getMobileNumber()){
       Helper.showAlert(message: "The mobile number you entered doesn't match your account", actions: [
         TextButton(
             onPressed: () {

@@ -5,7 +5,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
-import 'package:mirror_fly_demo/app/nativecall/platformRepo.dart';
+import 'package:mirror_fly_demo/app/nativecall/fly_chat.dart';
 import 'package:mirror_fly_demo/app/routes/app_pages.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
 
@@ -108,7 +108,7 @@ class GroupCreationController extends GetxController {
     Log("users", users.toString());
     Log("group image", imagePath.value);
     Helper.showLoading();
-    PlatformRepo().createGroup(groupName.text.toString(),users,imagePath.value).then((value){
+    FlyChat.createGroup(groupName.text.toString(),users,imagePath.value).then((value){
       Helper.hideLoading();
       if(value!=null) {
         Get.back();

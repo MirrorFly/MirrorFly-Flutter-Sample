@@ -136,7 +136,7 @@ class ImageNetwork extends GetView<MainController> {
             );
           },
           errorWidget: (context, link, error) {
-            Log("image error", error.toString() +" link : "+link);
+            Log("image error", "$error link : $link");
             if (error.toString().contains("401") && url.isNotEmpty) {
               // controller.getAuthToken();
               _deleteImageFromCache(url);

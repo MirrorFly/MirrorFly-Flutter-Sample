@@ -30,10 +30,10 @@ class ImageViewView extends GetView<ImageViewController> {
                   maxScale: PhotoViewComputedScale.covered * 2,
                   enableRotation: false,
                   // Set the background color to the "classic white"
-                  backgroundDecoration: BoxDecoration(
+                  backgroundDecoration: const BoxDecoration(
                     color: Colors.black,
                   ),
-                  loadingBuilder: (context, event) => Center(
+                  loadingBuilder: (context, event) => const Center(
                     child: CircularProgressIndicator(),
                   ),
                 )
@@ -48,14 +48,14 @@ class ImageViewView extends GetView<ImageViewController> {
                       maxScale: PhotoViewComputedScale.covered * 2,
                       enableRotation: false,
                       // Set the background color to the "classic white"
-                      backgroundDecoration: BoxDecoration(
+                      backgroundDecoration: const BoxDecoration(
                         color: Colors.black,
                       ),
-                      loadingBuilder: (context, event) => Center(
+                      loadingBuilder: (context, event) => const Center(
                         child: CircularProgressIndicator(),
                       ),
                     )
-                  : Center(
+                  : const Center(
                       child: Text('Unable to Load Image'),
                     );
         }),

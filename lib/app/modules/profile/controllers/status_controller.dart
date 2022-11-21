@@ -6,7 +6,7 @@ import 'package:mirror_fly_demo/app/model/statusModel.dart';
 
 import '../../../common/constants.dart';
 import '../../../data/helper.dart';
-import '../../../nativecall/platformRepo.dart';
+import '../../../nativecall/fly_chat.dart';
 
 class StatusListController extends GetxController{
   var statusList = List<StatusData>.empty(growable: true).obs;
@@ -33,7 +33,7 @@ class StatusListController extends GetxController{
   }
   getStatusList(){
     loading.value=true;
-    PlatformRepo().getStatusList().then((value){
+    FlyChat.getProfileStatusList().then((value){
       loading.value=false;
       if(value!=null){
         statusList.value = statusDataFromJson(value);
@@ -47,7 +47,7 @@ class StatusListController extends GetxController{
 
   updateStatus([String? text]){
     Helper.showLoading();
-    PlatformRepo().updateProfileStatus(text ?? addStatusController.text.trim().toString()).then((value){
+    FlyChat.setMyProfileStatus(text ?? addStatusController.text.trim().toString()).then((value){
       selectedStatus.value=text ?? addStatusController.text.trim().toString();
       addStatusController.text=text ?? addStatusController.text.trim().toString();
       var data = json.decode(value.toString());

@@ -6,7 +6,7 @@ import 'package:flutter_switch/flutter_switch.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:mirror_fly_demo/app/common/widgets.dart';
-import 'package:mirror_fly_demo/app/data/SessionManagement.dart';
+import 'package:mirror_fly_demo/app/data/session_management.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
 import 'package:mirror_fly_demo/app/model/userListModel.dart';
 import 'package:mirror_fly_demo/app/modules/group/controllers/group_info_controller.dart';
@@ -195,7 +195,7 @@ class GroupInfoView extends GetView<GroupInfoController> {
                       var item = controller.groupMembers[index];
                       return memberItem(name: item.name.checkNull(),image: item.image.checkNull(),isAdmin: item.isGroupAdmin,status: item.status.checkNull(),onTap: (){
                         if (item.jid.checkNull() !=
-                            SessionManagement().getUserJID().checkNull()) {
+                            SessionManagement.getUserJID().checkNull()) {
                           showOptions(item);
                         }
                       });
@@ -246,7 +246,7 @@ class GroupInfoView extends GetView<GroupInfoController> {
         ListTile(title: const Text("Start Chat"), onTap: () {
           // Get.toNamed(Routes.CHAT, arguments: item);
           Get.back();
-          Future.delayed(Duration(milliseconds: 300),(){
+          Future.delayed(const Duration(milliseconds: 300),(){
             Get.back(result: item);
           });
         },),

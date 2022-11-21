@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
-import 'package:mirror_fly_demo/app/nativecall/platformRepo.dart';
+import 'package:mirror_fly_demo/app/nativecall/fly_chat.dart';
 
 import '../../../common/constants.dart';
 import '../../../model/chatMessageModel.dart';
@@ -52,7 +52,7 @@ class ViewAllMediaController extends GetxController {
   }
 
   getMediaMessages() {
-    PlatformRepo().getMediaMessages(jid).then((value) async {
+    FlyChat.getMediaMessages(jid).then((value) async {
       if (value != null) {
         var data = chatMessageModelFromJson(value);
         if (data.isNotEmpty) {
@@ -64,7 +64,7 @@ class ViewAllMediaController extends GetxController {
 
   //getDocsMessages
   getDocsMessages() {
-    PlatformRepo().getDocsMessages(jid).then((value) async {
+    FlyChat.getDocsMessages(jid).then((value) async {
       if (value != null) {
         var data = chatMessageModelFromJson(value);
         if (data.isNotEmpty) {
@@ -76,7 +76,7 @@ class ViewAllMediaController extends GetxController {
 
   //getLinkMessages
   getLinkMessages() {
-    PlatformRepo().getLinkMessages(jid).then((value) async {
+    FlyChat.getLinkMessages(jid).then((value) async {
       if (value != null) {
         var data = chatMessageModelFromJson(value);
         if (data.isNotEmpty) {
@@ -224,7 +224,7 @@ class ViewAllMediaController extends GetxController {
   }
 
   openFile(String path){
-    PlatformRepo().openFile(path).catchError((onError) {
+    FlyChat.openFile(path).catchError((onError) {
       Get.snackbar("","No supported application available to open this file format").show();
     });
   }

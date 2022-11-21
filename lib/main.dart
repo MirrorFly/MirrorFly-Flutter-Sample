@@ -11,15 +11,13 @@ import 'package:mirror_fly_demo/app/common/main_controller.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
 import 'package:mirror_fly_demo/app/modules/dashboard/bindings/dashboard_binding.dart';
 import 'package:mirror_fly_demo/app/modules/login/bindings/login_binding.dart';
-import 'app/data/SessionManagement.dart';
+import 'app/data/session_management.dart';
 import 'app/modules/profile/bindings/profile_binding.dart';
 import 'app/routes/app_pages.dart';
 
 import 'package:google_maps_flutter_android/google_maps_flutter_android.dart';
 import 'package:google_maps_flutter_platform_interface/google_maps_flutter_platform_interface.dart';
 
-import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 /*import 'package:local_auth/local_auth.dart';*/
 
 bool shouldUseFirebaseEmulator = false;
@@ -43,7 +41,7 @@ Future<void> main() async {
   runApp(const MyApp());
 }
 
-class MyApp extends GetView<MainController>{
+class MyApp extends StatelessWidget{
   const MyApp({super.key});
 
   // This widget is the root of your application.
@@ -55,15 +53,15 @@ class MyApp extends GetView<MainController>{
       builder: EasyLoading.init(),
       debugShowCheckedModeBanner: false,
       initialBinding: getBinding(),
-      initialRoute: SessionManagement().getEnablePin() ? Routes.PIN : getIntialRoute(),
+      initialRoute: SessionManagement.getEnablePin() ? Routes.PIN : getInitialRoute(),
       //initialRoute: AppPages.INITIAL,
       getPages: AppPages.routes,
     );
   }
 }
 Bindings? getBinding(){
-  if(SessionManagement().getLogin()){
-    if(SessionManagement().getName().checkNull().isNotEmpty && SessionManagement().getMobileNumber().checkNull().isNotEmpty){
+  if(SessionManagement.getLogin()){
+    if(SessionManagement.getName().checkNull().isNotEmpty && SessionManagement.getMobileNumber().checkNull().isNotEmpty){
       return DashboardBinding();
     }else{
       return ProfileBinding();
@@ -73,9 +71,9 @@ Bindings? getBinding(){
   }
 }
 
-String getIntialRoute(){
-  if(SessionManagement().getLogin()){
-    if(SessionManagement().getName().checkNull().isNotEmpty && SessionManagement().getMobileNumber().checkNull().isNotEmpty){
+String getInitialRoute(){
+  if(SessionManagement.getLogin()){
+    if(SessionManagement.getName().checkNull().isNotEmpty && SessionManagement.getMobileNumber().checkNull().isNotEmpty){
       return AppPages.DASHBOARD;
     }else{
       return AppPages.PROFILE;

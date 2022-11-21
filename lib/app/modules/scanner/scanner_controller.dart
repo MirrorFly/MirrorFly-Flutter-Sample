@@ -2,12 +2,12 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
-import 'package:mirror_fly_demo/app/data/SessionManagement.dart';
+import 'package:mirror_fly_demo/app/data/session_management.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
 import 'package:mirror_fly_demo/app/model/web_login_model.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 
-import '../../nativecall/platformRepo.dart';
+import '../../nativecall/fly_chat.dart';
 import '../../routes/app_pages.dart';
 
 class ScannerController extends GetxController {
@@ -53,7 +53,7 @@ class ScannerController extends GetxController {
     Log("barcode", barcode.toString());
     if (barcode != null) {
       controller!.pauseCamera();
-      PlatformRepo().loginWebChatViaQRCode(barcode).then((value) {
+      FlyChat.loginWebChatViaQRCode(barcode).then((value) {
         if (value != null) {
           SessionManagement.setWebChatLogin(value);
           Get.back();
@@ -68,8 +68,8 @@ class ScannerController extends GetxController {
 
   logoutWebUser() {
     Helper.progressLoading();
-    PlatformRepo().webLoginDetailsCleared();
-    PlatformRepo().logoutWebUser(loginQr).then((value) {
+    FlyChat.webLoginDetailsCleared();
+    FlyChat.logoutWebUser(loginQr).then((value) {
       Helper.hideLoading();
       if (value != null && value) {
         SessionManagement.setWebChatLogin(false);
@@ -79,7 +79,7 @@ class ScannerController extends GetxController {
   }
 
   webLoginDetailsCleared() {
-    PlatformRepo().webLoginDetailsCleared().then((value) {
+    FlyChat.webLoginDetailsCleared().then((value) {
       if (value != null && value) {
         //SessionManagement.setWebChatLogin(false);
       }
@@ -88,7 +88,7 @@ class ScannerController extends GetxController {
 
   getWebLoginDetails() {
     loginQr.clear();
-    PlatformRepo().getWebLoginDetails().then((value) {
+    FlyChat.getWebLoginDetails().then((value) {
       if (value != null) {
         var list = webLoginFromJson(value);
         _webLogins(list);
@@ -121,7 +121,7 @@ class ScannerController extends GetxController {
   }
 
   addLogin() {
-    PlatformRepo().webLoginDetailsCleared();
+    FlyChat.webLoginDetailsCleared();
     Get.toNamed(Routes.SCANNER)?.then((value) {
       getWebLoginDetails();
     });

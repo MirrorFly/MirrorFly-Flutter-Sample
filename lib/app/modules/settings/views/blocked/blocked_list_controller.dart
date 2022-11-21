@@ -3,14 +3,14 @@ import 'package:get/get.dart';
 
 import 'package:mirror_fly_demo/app/common/constants.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
-import 'package:mirror_fly_demo/app/nativecall/platformRepo.dart';
+import 'package:mirror_fly_demo/app/nativecall/fly_chat.dart';
 
 import '../../../../model/group_members_model.dart';
 
 class BlockedListController extends GetxController {
   final _blockedUsers = <Member>[].obs;
   set blockedUsers(value) => _blockedUsers.value = value;
-  List<Member> get blockedUsers => _blockedUsers.value;
+  List<Member> get blockedUsers => _blockedUsers;
 
   @override
   void onInit(){
@@ -19,7 +19,7 @@ class BlockedListController extends GetxController {
   }
 
   getUsersIBlocked(bool server){
-    PlatformRepo().getUsersIBlocked(server).then((value){
+    FlyChat.getUsersIBlocked(server).then((value){
       if(value!=null){
         var list = memberFromJson(value);
         _blockedUsers(list);
@@ -37,7 +37,7 @@ class BlockedListController extends GetxController {
           onPressed: () {
             Get.back();
             Helper.progressLoading();
-            PlatformRepo().unBlockUser(item.jid.checkNull()).then((value) {
+            FlyChat.unblockUser(item.jid.checkNull()).then((value) {
               Helper.hideLoading();
               if(value!=null && value) {
                 toToast("${item.name} Unblocked");

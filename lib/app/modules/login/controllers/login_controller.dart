@@ -9,9 +9,9 @@ import 'package:mirror_fly_demo/app/model/country_model.dart';
 import 'package:otp_text_field/otp_field.dart';
 
 import '../../../common/constants.dart';
-import '../../../data/SessionManagement.dart';
+import '../../../data/session_management.dart';
 import '../../../model/registerModel.dart';
-import '../../../nativecall/platformRepo.dart';
+import '../../../nativecall/fly_chat.dart';
 import '../../../routes/app_pages.dart';
 
 class LoginController extends GetxController {
@@ -50,7 +50,7 @@ class LoginController extends GetxController {
   }
 
   setUserJID(String username) {
-    PlatformRepo().getUserJID(username).then((value) {
+    FlyChat.getJid(username).then((value) {
       if(value != null){
         SessionManagement.setUserJID(value);
         Helper.hideLoading();
@@ -170,7 +170,7 @@ class LoginController extends GetxController {
   verifyTokenWithServer(String token){
     var userName = (countryCode! + mobileNumber.text.toString()).replaceAll("+", "");
     //make api call
-    PlatformRepo().verifyToken(userName,token).then((value) {
+    FlyChat.verifyToken(userName,token).then((value) {
       // if (value != null) {
         validateDeviceToken(value);
       // }else{
@@ -184,7 +184,7 @@ class LoginController extends GetxController {
   }
 
   validateDeviceToken(String deviceToken) {
-    var firebaseToken = SessionManagement().getToken().checkNull();
+    var firebaseToken = SessionManagement.getToken().checkNull();
     if (firebaseToken.isEmpty) {
       FirebaseMessaging.instance.getToken().then((value) {
         if(value!=null) {
@@ -215,7 +215,7 @@ class LoginController extends GetxController {
 
   registerAccount(){
     showLoading();
-    PlatformRepo().registerUser(mobileNumber.text,SessionManagement().getToken().checkNull()).then((value) {
+    FlyChat.registerUser(mobileNumber.text,SessionManagement.getToken().checkNull()).then((value) {
       if (value.contains("data")) {
         var userData = registerModelFromJson(value);//message
         SessionManagement.setLogin(userData.data!.username!.isNotEmpty);
@@ -236,7 +236,7 @@ class LoginController extends GetxController {
     hideLoading();
     verifyVisible(false);
     Log("showUserAccountDeviceStatus", "Already Login");
-    //PlatformRepo().logout();
+    //PlatformRepo.logout();
     Helper.showAlert(message: "You have logged-in another device. Do you want to continue here?",actions: [
       TextButton(
           onPressed: () {

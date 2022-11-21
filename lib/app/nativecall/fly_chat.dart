@@ -4,10 +4,11 @@ import 'package:flutter/services.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
 
 import '../common/constants.dart';
-import '../data/SessionManagement.dart';
+import '../data/session_management.dart';
 import '../model/statusModel.dart';
 
-class PlatformRepo {
+class FlyChat {
+  FlyChat._();
   static const mirrorFlyMethodChannel = MethodChannel('contus.mirrorfly/sdkCall');
 
   //Event Channels
@@ -32,7 +33,7 @@ class PlatformRepo {
   static const EventChannel onGroupDeletedLocally_channel = EventChannel('contus.mirrorfly/onGroupDeletedLocally');
 
 
-  Future<String> mediaEndPoint() async {
+  static Future<String> mediaEndPoint() async {
     String? response = "";
     try {
       response = await mirrorFlyMethodChannel
@@ -48,7 +49,7 @@ class PlatformRepo {
     }
   }
 
-  Future<String> getUserLastSeenTime(String jid) async {
+  static Future<String> getUserLastSeenTime(String jid) async {
     String? response = "";
     try {
       response = await mirrorFlyMethodChannel
@@ -64,7 +65,7 @@ class PlatformRepo {
     }
   }
 
-  Future<String> authToken() async {
+  static Future<String> authToken() async {
     String? registerResponse = "";
     try {
       registerResponse = await mirrorFlyMethodChannel
@@ -81,7 +82,7 @@ class PlatformRepo {
     }
   }
 
-  Future<dynamic> registerUser(String userIdentifier,String token) async {
+  static Future<dynamic> registerUser(String userIdentifier,String token) async {
     dynamic registerResponse;
     try {
       registerResponse = await mirrorFlyMethodChannel
@@ -97,7 +98,7 @@ class PlatformRepo {
     }
   }
 
-  Future<String> verifyToken(String userName,String token) async {
+  static Future<String> verifyToken(String userName,String token) async {
     String? response = "";
     try {
       response = await mirrorFlyMethodChannel.invokeMethod<String>('verifyToken', {"userName": userName,"googleToken":token});
@@ -112,11 +113,11 @@ class PlatformRepo {
     }
   }
 
-  Future<dynamic> getUserJID(String username) async {
+  static Future<dynamic> getJid(String username) async {//getuserjid
     dynamic userJID;
     try {
       userJID = await mirrorFlyMethodChannel
-          .invokeMethod('get_user_jid', {"username": username});
+          .invokeMethod('get_jid', {"username": username});
       debugPrint("User JID Result ==> $userJID");
       return userJID;
     } on PlatformException catch (e) {
@@ -128,7 +129,7 @@ class PlatformRepo {
     }
   }
 
-  Future<dynamic> sendTextMessage(String message, String jid, String replyMessageId) async {
+  static Future<dynamic> sendTextMessage(String message, String jid, String replyMessageId) async {
     dynamic messageResp;
     try {
       messageResp = await mirrorFlyMethodChannel
@@ -144,7 +145,7 @@ class PlatformRepo {
     }
   }
 
-  Future<dynamic> sentLocationMessage(String jid,double latitude,double longitude, String replyMessageId) async {
+  static Future<dynamic> sendLocationMessage(String jid,double latitude,double longitude, String replyMessageId) async {//sentLocationMessage
     dynamic messageResp;
     try {
       messageResp = await mirrorFlyMethodChannel
@@ -160,7 +161,7 @@ class PlatformRepo {
     }
   }
 
-  Future<dynamic> sendImageMessage(
+  static Future<dynamic> sendImageMessage(
       String jid,
       String filePath,
       String? caption,
@@ -185,7 +186,7 @@ class PlatformRepo {
     }
   }
 
-  Future<dynamic> sendMediaMessage(
+  static Future<dynamic> sendVideoMessage(//sendMediaMessage
       String jid,
       String filePath,
       String? caption,
@@ -210,7 +211,7 @@ class PlatformRepo {
     }
   }
 
-  Future<dynamic> getRegisteredUserList() async {
+  static Future<dynamic> getUserList() async {//getRegisteredUserList
     dynamic messageResp;
     try {
       messageResp = await mirrorFlyMethodChannel.invokeMethod('get_user_list');
@@ -225,7 +226,7 @@ class PlatformRepo {
     }
   }
 
-  Future<dynamic> getUsers(int page,String search) async {
+  static Future<dynamic> getUsers(int page,String search) async {
     var re = "";
     try {
       // final result = await mirrorFlyMethodChannel
@@ -239,25 +240,25 @@ class PlatformRepo {
     }
   }
   
-  Stream<dynamic> get onMessageReceived => MESSAGE_ONRECEIVED_CHANNEL.receiveBroadcastStream().cast();
-  Stream<dynamic> get onMessageStatusUpdated => MESSAGE_STATUS_UPDATED_CHANNEL.receiveBroadcastStream().cast();
-  Stream<dynamic> get onMediaStatusUpdated => MEDIA_STATUS_UPDATED_CHANNEL.receiveBroadcastStream().cast();
+  static Stream<dynamic> get onMessageReceived => MESSAGE_ONRECEIVED_CHANNEL.receiveBroadcastStream().cast();
+  static Stream<dynamic> get onMessageStatusUpdated => MESSAGE_STATUS_UPDATED_CHANNEL.receiveBroadcastStream().cast();
+  static Stream<dynamic> get onMediaStatusUpdated => MEDIA_STATUS_UPDATED_CHANNEL.receiveBroadcastStream().cast();
 
-  Stream<dynamic> get onGroupProfileFetched => onGroupProfileFetched_channel.receiveBroadcastStream().cast();
-  Stream<dynamic> get onNewGroupCreated => onNewGroupCreated_channel.receiveBroadcastStream().cast();
-  Stream<dynamic> get onGroupProfileUpdated => onGroupProfileUpdated_channel.receiveBroadcastStream().cast();
-  Stream<dynamic> get onNewMemberAddedToGroup => onNewMemberAddedToGroup_channel.receiveBroadcastStream().cast();
-  Stream<dynamic> get onMemberRemovedFromGroup => onMemberRemovedFromGroup_channel.receiveBroadcastStream().cast();
-  Stream<dynamic> get onFetchingGroupMembersCompleted => onFetchingGroupMembersCompleted_channel.receiveBroadcastStream().cast();
-  Stream<dynamic> get onDeleteGroup => onDeleteGroup_channel.receiveBroadcastStream().cast();
-  Stream<dynamic> get onFetchingGroupListCompleted => onFetchingGroupListCompleted_channel.receiveBroadcastStream().cast();
-  Stream<dynamic> get onMemberMadeAsAdmin => onMemberMadeAsAdmin_channel.receiveBroadcastStream().cast();
-  Stream<dynamic> get onMemberRemovedAsAdmin => onMemberRemovedAsAdmin_channel.receiveBroadcastStream().cast();
-  Stream<dynamic> get onLeftFromGroup => onLeftFromGroup_channel.receiveBroadcastStream().cast();
-  Stream<dynamic> get onGroupNotificationMessage => onGroupNotificationMessage_channel.receiveBroadcastStream().cast();
-  Stream<dynamic> get onGroupDeletedLocally => onGroupDeletedLocally_channel.receiveBroadcastStream().cast();
+  static Stream<dynamic> get onGroupProfileFetched => onGroupProfileFetched_channel.receiveBroadcastStream().cast();
+  static Stream<dynamic> get onNewGroupCreated => onNewGroupCreated_channel.receiveBroadcastStream().cast();
+  static Stream<dynamic> get onGroupProfileUpdated => onGroupProfileUpdated_channel.receiveBroadcastStream().cast();
+  static Stream<dynamic> get onNewMemberAddedToGroup => onNewMemberAddedToGroup_channel.receiveBroadcastStream().cast();
+  static Stream<dynamic> get onMemberRemovedFromGroup => onMemberRemovedFromGroup_channel.receiveBroadcastStream().cast();
+  static Stream<dynamic> get onFetchingGroupMembersCompleted => onFetchingGroupMembersCompleted_channel.receiveBroadcastStream().cast();
+  static Stream<dynamic> get onDeleteGroup => onDeleteGroup_channel.receiveBroadcastStream().cast();
+  static Stream<dynamic> get onFetchingGroupListCompleted => onFetchingGroupListCompleted_channel.receiveBroadcastStream().cast();
+  static Stream<dynamic> get onMemberMadeAsAdmin => onMemberMadeAsAdmin_channel.receiveBroadcastStream().cast();
+  static Stream<dynamic> get onMemberRemovedAsAdmin => onMemberRemovedAsAdmin_channel.receiveBroadcastStream().cast();
+  static Stream<dynamic> get onLeftFromGroup => onLeftFromGroup_channel.receiveBroadcastStream().cast();
+  static Stream<dynamic> get onGroupNotificationMessage => onGroupNotificationMessage_channel.receiveBroadcastStream().cast();
+  static Stream<dynamic> get onGroupDeletedLocally => onGroupDeletedLocally_channel.receiveBroadcastStream().cast();
 
-  Future<String?> imagePath(String imgurl) async {
+  static Future<String?> imagePath(String imgurl) async {
     var re = "";
     try {
       final result = await mirrorFlyMethodChannel
@@ -270,7 +271,7 @@ class PlatformRepo {
     }
   }
 
-  Future<dynamic> saveProfile(String name, String email) async {
+  static Future<dynamic> saveProfile(String name, String email) async {
     dynamic result;
     try {
       result =
@@ -286,7 +287,7 @@ class PlatformRepo {
     }
   }
 
-  Future<dynamic> sentFileMessage(String? file, String jid) async {
+  static Future<dynamic> sentFileMessage(String? file, String jid) async {
     var re = "";
     try {
       final result = await mirrorFlyMethodChannel
@@ -299,11 +300,11 @@ class PlatformRepo {
     }
   }
 
-  Future<dynamic> getRecentChats() async {
+  static Future<dynamic> getRecentChatList() async {//getRecentChats
     dynamic recentResponse;
     try {
       recentResponse =
-      await mirrorFlyMethodChannel.invokeMethod('get_recent_chats');
+      await mirrorFlyMethodChannel.invokeMethod('getRecentChatList');
       debugPrint("recent Result ==> $recentResponse");
       return recentResponse;
     } on PlatformException catch (e) {
@@ -314,11 +315,11 @@ class PlatformRepo {
       rethrow;
     }
   }
-  Future<dynamic> getStatusList() async {
+  static Future<dynamic> getProfileStatusList() async {//getStatusList
     dynamic statusResponse;
     try {
       statusResponse =
-      await mirrorFlyMethodChannel.invokeMethod('getStatusList');
+      await mirrorFlyMethodChannel.invokeMethod('getProfileStatusList');
       Log("statuslist","$statusResponse");
       return statusResponse;
     } on PlatformException catch (e) {
@@ -329,9 +330,9 @@ class PlatformRepo {
       rethrow;
     }
   }
-  Future<dynamic> insertStatus(String status) async {
+  static Future<dynamic> insertDefaultStatus(String status) async {//insertStatus
     try {
-      await mirrorFlyMethodChannel.invokeMethod('insertStatus', {"status" : status });
+      await mirrorFlyMethodChannel.invokeMethod('insertDefaultStatus', {"status" : status });
     }on PlatformException catch (e){
       debugPrint("Platform Exception ===> $e");
       rethrow;
@@ -340,7 +341,7 @@ class PlatformRepo {
       rethrow;
     }
   }
-  void insertDefaultStatusToUser() async{
+  static void insertDefaultStatusToUser() async{
     try {
       await mirrorFlyMethodChannel.invokeMethod('getStatusList').then((value) {
         Log("status list", "$value");
@@ -356,11 +357,11 @@ class PlatformRepo {
                 }
               }
               if (isStatusNotExist) {
-                PlatformRepo().insertStatus(statusValue);
+                FlyChat.insertDefaultStatus(statusValue);
               }
             }
             SessionManagement.vibrationType("0");
-            PlatformRepo().getRingtoneName(null).then((value) {
+            FlyChat.getRingtoneName(null).then((value) {
               if (value != null) {
                 SessionManagement.setNotificationUri(value);
               }
@@ -370,9 +371,9 @@ class PlatformRepo {
           }else{
             var defaultStatus = Constants.defaultStatusList;
             for (var statusValue in defaultStatus) {
-              PlatformRepo().insertStatus(statusValue);
+              FlyChat.insertDefaultStatus(statusValue);
             }
-            PlatformRepo().getRingtoneName(null).then((value) {
+            FlyChat.getRingtoneName(null).then((value) {
               if (value != null) {
                 SessionManagement.setNotificationUri(value);
               }
@@ -384,10 +385,10 @@ class PlatformRepo {
       debugPrint("Exception ==> $er");
     }
   }
-  Future<dynamic> updateProfile(String name, String email,String mobile, String status,String? image) async {
+  static Future<dynamic> updateMyProfile(String name, String email,String mobile, String status,String? image) async {//updateProfile
     dynamic profileResponse;
     try {
-      profileResponse = await mirrorFlyMethodChannel.invokeMethod('updateProfile',{"name":name,"email":email,"mobile":mobile,"status":status,"image":image});
+      profileResponse = await mirrorFlyMethodChannel.invokeMethod('updateMyProfile',{"name":name,"email":email,"mobile":mobile,"status":status,"image":image});
       debugPrint("recent Result ==> $profileResponse");
       return profileResponse;
     }on PlatformException catch (e){
@@ -399,10 +400,10 @@ class PlatformRepo {
     }
   }
 
-  Future<dynamic> getProfile(String jid) async {
+  static Future<dynamic> getUserProfile(String jid) async {//getProfile
     dynamic profileResponse;
     try {
-      profileResponse = await mirrorFlyMethodChannel.invokeMethod('getProfile',{"jid":jid});
+      profileResponse = await mirrorFlyMethodChannel.invokeMethod('getUserProfile',{"jid":jid});
       debugPrint("profile Result ==> $profileResponse");
       insertDefaultStatusToUser();
       return profileResponse;
@@ -415,7 +416,7 @@ class PlatformRepo {
     }
   }
 
-  Future<dynamic> getProfileDetails(String jid, bool fromServer) async {
+  static Future<dynamic> getProfileDetails(String jid, bool fromServer) async {
     dynamic profileResponse;
     try {
       profileResponse = await mirrorFlyMethodChannel.invokeMethod('getProfileDetails',{"jid":jid, "server" : fromServer});
@@ -430,7 +431,7 @@ class PlatformRepo {
     }
   }
 
-  Future<dynamic> getProfileLocal(String jid,bool server) async {
+  static Future<dynamic> getProfileLocal(String jid,bool server) async {
     dynamic profileResponse;
     try {
       profileResponse = await mirrorFlyMethodChannel.invokeMethod('getProfile',{"jid":jid,"server":server});
@@ -445,10 +446,10 @@ class PlatformRepo {
     }
   }
 
-  Future<dynamic> updateProfileStatus(String status) async {
+  static Future<dynamic> setMyProfileStatus(String status) async {//updateProfileStatus
     dynamic profileResponse;
     try {
-      profileResponse = await mirrorFlyMethodChannel.invokeMethod('updateProfileStatus',{"status":status});
+      profileResponse = await mirrorFlyMethodChannel.invokeMethod('setMyProfileStatus',{"status":status});
       debugPrint("profile Result ==> $profileResponse");
       return profileResponse;
     }on PlatformException catch (e){
@@ -460,10 +461,10 @@ class PlatformRepo {
     }
   }
 
-  Future<dynamic> updateProfileImage(String image) async {
+  static Future<dynamic> updateMyProfileImage(String image) async {//updateProfileImage
     dynamic profileResponse;
     try {
-      profileResponse = await mirrorFlyMethodChannel.invokeMethod('updateProfileImage',{"image":image});
+      profileResponse = await mirrorFlyMethodChannel.invokeMethod('updateMyProfileImage',{"image":image});
       debugPrint("profile Result ==> $profileResponse");
       return profileResponse;
     }on PlatformException catch (e){
@@ -475,7 +476,7 @@ class PlatformRepo {
     }
   }
 
-  Future<bool?> removeProfileImage() async {
+  static Future<bool?> removeProfileImage() async {
     bool? profileResponse;
     try {
       profileResponse = await mirrorFlyMethodChannel.invokeMethod<bool>('removeProfileImage');
@@ -490,7 +491,7 @@ class PlatformRepo {
     }
   }
 
-  Future<bool?> removeGroupProfileImage(String jid) async {
+  static Future<bool?> removeGroupProfileImage(String jid) async {
     bool? response;
     try {
       response = await mirrorFlyMethodChannel.invokeMethod<bool>('removeGroupProfileImage',{"jid":jid});
@@ -505,7 +506,7 @@ class PlatformRepo {
     }
   }
 
-  Future<bool?> refreshAuthToken() async {
+  static Future<bool?> refreshAndGetAuthToken() async {
     bool? tokenResponse;
     try {
       tokenResponse = await mirrorFlyMethodChannel.invokeMethod<bool>('refreshAuthToken');
@@ -520,10 +521,10 @@ class PlatformRepo {
     }
   }
 
-  Future<dynamic> getChatHistory(String jid) async {
+  static Future<dynamic> getMessagesOfJid(String jid) async {//getChatHistory
     dynamic chatResponse;
     try {
-      chatResponse = await mirrorFlyMethodChannel.invokeMethod('get_user_chat_history',{ "JID" : jid });
+      chatResponse = await mirrorFlyMethodChannel.invokeMethod('getMessagesOfJid',{ "JID" : jid });
       debugPrint("user Chat Result ==> $chatResponse");
       return chatResponse;
     }on PlatformException catch (e){
@@ -534,7 +535,9 @@ class PlatformRepo {
       rethrow;
     }
   }
-  Future<dynamic> listenMessageEvents() async {
+  //Removed and added in MainActivity.kt during configuration. User just need to listen the event after initialization
+
+  /*static Future<dynamic> listenMessageEvents() async {
     dynamic chatListenerResponse;
     try {
       chatListenerResponse = await mirrorFlyMethodChannel.invokeMethod('chat_listener');
@@ -548,7 +551,7 @@ class PlatformRepo {
       rethrow;
     }
   }
-  Future<dynamic> listenGroupChatEvents() async {
+  static Future<dynamic> listenGroupChatEvents() async {
     dynamic chatListenerResponse;
     try {
       chatListenerResponse = await mirrorFlyMethodChannel.invokeMethod('groupchat_listener');
@@ -561,26 +564,29 @@ class PlatformRepo {
       debugPrint("Exception ==> $error");
       rethrow;
     }
-  }
-  Future<dynamic> getMedia(String mid) async {
-    dynamic media;
-    try {
-      media = await mirrorFlyMethodChannel.invokeMethod('get_media',{ "message_id" : mid });
-      // debugPrint("mediaResponse ==> $media");
-      return media;
-    }on PlatformException catch (e){
-      debugPrint("Platform Exception ===> $e");
-      rethrow;
-    } on Exception catch(error){
-      debugPrint("Exception ==> $error");
-      rethrow;
-    }
-  }
+  }*/
 
-  Future<dynamic> sendReadReceipts(String jid) async {
+  //Duplicate method call of getMessageOfId
+  // static Future<dynamic> getMedia(String mid) async {
+  //   dynamic media;
+  //   try {//
+  //     media = await mirrorFlyMethodChannel.invokeMethod('get_media',{ "message_id" : mid });
+  //     // debugPrint("mediaResponse ==> $media");
+  //     return media;
+  //   }on PlatformException catch (e){
+  //     debugPrint("Platform Exception ===> $e");
+  //     rethrow;
+  //   } on Exception catch(error){
+  //     debugPrint("Exception ==> $error");
+  //     rethrow;
+  //   }
+  // }
+
+  static Future<dynamic> markAsReadDeleteUnreadSeparator(String jid) async {//sendReadReceipts
+    //Handled Both Functions ChatManager.markAsRead and FlyMessenger.deleteUnreadMessageSeparatorOfAConversation in this same Function
     dynamic readReceiptResponse;
     try {
-      readReceiptResponse = await mirrorFlyMethodChannel.invokeMethod('send_read_receipts',{ "jid" : jid });
+      readReceiptResponse = await mirrorFlyMethodChannel.invokeMethod('markAsReadDeleteUnreadSeparator',{ "jid" : jid });
       // debugPrint("mediaResponse ==> $readReceiptResponse");
       return readReceiptResponse;
     }on PlatformException catch (e){
@@ -592,10 +598,10 @@ class PlatformRepo {
     }
   }
 
-  Future<dynamic> sendContacts(List<String> contactList, String jid, String contactName, String replyMessageId) async {
+  static Future<dynamic> sendContactMessage(List<String> contactList, String jid, String contactName, String replyMessageId) async {
     dynamic contactResponse;
     try {
-      contactResponse = await mirrorFlyMethodChannel.invokeMethod('send_contact',{ "contact_list" : contactList , "jid" : jid, "contact_name" : contactName, "replyMessageId" : replyMessageId});
+      contactResponse = await mirrorFlyMethodChannel.invokeMethod('sendContactMessage',{ "contact_list" : contactList , "jid" : jid, "contact_name" : contactName, "replyMessageId" : replyMessageId});
       // debugPrint("mediaResponse ==> $readReceiptResponse");
       return contactResponse;
     }on PlatformException catch (e){
@@ -607,10 +613,10 @@ class PlatformRepo {
     }
   }
 
-  Future<dynamic> logout() async {
+  static Future<dynamic> logoutOfChatSDK() async {//logout
     dynamic logoutResponse;
     try {
-      logoutResponse = await mirrorFlyMethodChannel.invokeMethod('logout');
+      logoutResponse = await mirrorFlyMethodChannel.invokeMethod('logoutOfChatSDK');
       debugPrint("logoutResponse ==> $logoutResponse");
       return logoutResponse;
     }on PlatformException catch (e){
@@ -622,9 +628,9 @@ class PlatformRepo {
     }
   }
 
-  ongoingChat(String jid) async {
+  static setOnGoingChatUser(String jid) async {//ongoingChat
     try {
-      await mirrorFlyMethodChannel.invokeMethod('ongoing_chat', {"jid" : jid });
+      await mirrorFlyMethodChannel.invokeMethod('setOnGoingChatUser', {"jid" : jid });
     }on PlatformException catch (e){
       debugPrint("Platform Exception ===> $e");
       rethrow;
@@ -633,7 +639,7 @@ class PlatformRepo {
       rethrow;
     }
   }
-  mediaDownload(String mid) async {
+  static downloadMedia(String mid) async {//mediaDownload
     try {
       await mirrorFlyMethodChannel.invokeMethod('download_media', {"media_id" : mid });
     }on PlatformException catch (e){
@@ -645,10 +651,10 @@ class PlatformRepo {
     }
   }
 
-  Future<dynamic> sendDocument(String jid, String documentPath, String replyMessageId) async {
+  static Future<dynamic> sendDocumentMessage(String jid, String documentPath, String replyMessageId) async {
     dynamic documentResponse;
     try {
-      documentResponse = await mirrorFlyMethodChannel.invokeMethod('send_document',{ "file" : documentPath , "jid" : jid, "replyMessageId" : replyMessageId});
+      documentResponse = await mirrorFlyMethodChannel.invokeMethod('sendDocumentMessage',{ "file" : documentPath , "jid" : jid, "replyMessageId" : replyMessageId});
       debugPrint("documentResponse ==> $documentResponse");
       return documentResponse;
     }on PlatformException catch (e){
@@ -659,7 +665,7 @@ class PlatformRepo {
       rethrow;
     }
   }
-  Future<dynamic> openFile(String filePath) async {
+  static Future<dynamic> openFile(String filePath) async {
     dynamic documentResponse;
     try {
       documentResponse = await mirrorFlyMethodChannel.invokeMethod('open_file',{ "filePath" : filePath });
@@ -674,10 +680,10 @@ class PlatformRepo {
     }
   }
 
-  Future<dynamic> sendAudio(String jid, String filePath, bool isRecorded, String duration, String replyMessageId) async {
+  static Future<dynamic> sendAudioMessage(String jid, String filePath, bool isRecorded, String duration, String replyMessageId) async {//sendAudio
     dynamic audioResponse;
     try {
-      audioResponse = await mirrorFlyMethodChannel.invokeMethod('send_audio',{ "filePath" : filePath , "jid" : jid, "isRecorded" : isRecorded, "duration" : duration, "replyMessageId" : replyMessageId});
+      audioResponse = await mirrorFlyMethodChannel.invokeMethod('sendAudioMessage',{ "filePath" : filePath , "jid" : jid, "isRecorded" : isRecorded, "duration" : duration, "replyMessageId" : replyMessageId});
       debugPrint("audioResponse ==> $audioResponse");
       return audioResponse;
     }on PlatformException catch (e){
@@ -691,11 +697,11 @@ class PlatformRepo {
   
   //Recent Chat Search
 
-  Future<dynamic> filteredRecentChatList() async {
+  static Future<dynamic> getRecentChatListIncludingArchived() async {//filteredRecentChatList
     dynamic response;
     try {
-      response = await mirrorFlyMethodChannel.invokeMethod('filteredRecentChatList');
-      debugPrint("filteredRecentChatList ==> $response");
+      response = await mirrorFlyMethodChannel.invokeMethod('getRecentChatListIncludingArchived');
+      debugPrint("getRecentChatListIncludingArchived ==> $response");
       return response;
     }on PlatformException catch (e){
       debugPrint("Platform Exception ===> $e");
@@ -706,11 +712,11 @@ class PlatformRepo {
     }
   }
 
-  Future<dynamic> filteredMessageList(String searchKey) async {
+  static Future<dynamic> searchConversation(String searchKey) async {//filteredMessageList
     dynamic response;
     try {
-      response = await mirrorFlyMethodChannel.invokeMethod('filteredMessageList',{"searchKey":searchKey});
-      debugPrint("filteredMessageList ==> $response");
+      response = await mirrorFlyMethodChannel.invokeMethod('searchConversation',{"searchKey":searchKey});
+      debugPrint("searchConversation ==> $response");
       return response;
     }on PlatformException catch (e){
       debugPrint("Platform Exception ===> $e");
@@ -721,11 +727,11 @@ class PlatformRepo {
     }
   }
 
-  Future<dynamic> filteredContactList() async {
+  static Future<dynamic> getRegisteredUsers() async {//filteredContactList
     dynamic response;
     try {
-      response = await mirrorFlyMethodChannel.invokeMethod('filteredContactList');
-      debugPrint("filteredContactList ==> $response");
+      response = await mirrorFlyMethodChannel.invokeMethod('getRegisteredUsers');
+      debugPrint("getRegisteredUsers ==> $response");
       return response;
     }on PlatformException catch (e){
       debugPrint("Platform Exception ===> $e");
@@ -735,7 +741,7 @@ class PlatformRepo {
       rethrow;
     }
   }
-  Future<dynamic> getMessageOfId(String mid) async {
+  static Future<dynamic> getMessageOfId(String mid) async {
     dynamic response;
     try {
       response = await mirrorFlyMethodChannel.invokeMethod('getMessageOfId',{"mid":mid});
@@ -749,7 +755,7 @@ class PlatformRepo {
       rethrow;
     }
   }
-  Future<dynamic> getRecentChatOf(String jid) async {
+  static Future<dynamic> getRecentChatOf(String jid) async {
     dynamic response;
     try {
       response = await mirrorFlyMethodChannel.invokeMethod('getRecentChatOf',{"jid":jid});
@@ -764,7 +770,7 @@ class PlatformRepo {
     }
   }
 
-  Future<dynamic> clearChatHistory(String jid, String chatType, bool clearExceptStarred) async {
+  static Future<dynamic> clearChat(String jid, String chatType, bool clearExceptStarred) async {
     dynamic clearChatResponse;
     try {
       clearChatResponse = await mirrorFlyMethodChannel.invokeMethod('clear_chat',{ "jid" : jid, "chat_type" : chatType, "clear_except_starred" : clearExceptStarred});
@@ -779,7 +785,8 @@ class PlatformRepo {
     }
   }
 
-  Future<dynamic> reportChatOrUser(String jid, String chatType, String? messageId) async {
+  //Duplicate of reportUserOrMessages
+  /*static Future<dynamic> reportChatOrUser(String jid, String chatType, String? messageId) async {
     dynamic reportResponse;
     try {
       reportResponse = await mirrorFlyMethodChannel.invokeMethod('report_chat',{ "jid" : jid, "chat_type" : chatType, "selectedMessageID" : messageId});
@@ -792,9 +799,9 @@ class PlatformRepo {
       debugPrint("Exception ==> $error");
       rethrow;
     }
-  }
+  }*/
 
-  Future<dynamic> getMessagesUsingIds(List<String> messageIds) async {
+  static Future<dynamic> getMessagesUsingIds(List<String> messageIds) async {
     dynamic messageListResponse;
     try {
       messageListResponse = await mirrorFlyMethodChannel.invokeMethod('get_message_using_ids',{ "MessageIds" : messageIds});
@@ -809,7 +816,8 @@ class PlatformRepo {
     }
   }
 
-  Future<dynamic> deleteMessages(String jid, List<String> messageIds, bool isDeleteForEveryOne) async {
+  //Handled deleteMessagesForEveryone and deleteMessagesForMe in same function. so Named Commonly
+  static Future<dynamic> deleteMessages(String jid, List<String> messageIds, bool isDeleteForEveryOne) async {
     dynamic messageDeleteResponse;
     try {
       messageDeleteResponse = await mirrorFlyMethodChannel.invokeMethod('delete_messages', { "jid" : jid, "chat_type" : "chat", "message_ids": messageIds, "is_delete_for_everyone" : isDeleteForEveryOne});
@@ -823,10 +831,10 @@ class PlatformRepo {
       rethrow;
     }
   }
-  Future<dynamic> getMessageInfo(String messageID) async {
+  static Future<dynamic> getMessageStatusOfASingleChatMessage(String messageID) async {//getMessageInfo
     dynamic messageInfoResponse;
     try {
-      messageInfoResponse = await mirrorFlyMethodChannel.invokeMethod('get_message_info', { "messageID" : messageID});
+      messageInfoResponse = await mirrorFlyMethodChannel.invokeMethod('getMessageStatusOfASingleChatMessage', { "messageID" : messageID});
       debugPrint("Message Info Response ==> $messageInfoResponse");
       return messageInfoResponse;
     }on PlatformException catch (e){
@@ -837,7 +845,7 @@ class PlatformRepo {
       rethrow;
     }
   }
-  Future<dynamic> blockUser(String userJID) async {
+  static Future<dynamic> blockUser(String userJID) async {
     dynamic userBlockResponse;
     try {
       userBlockResponse = await mirrorFlyMethodChannel.invokeMethod('block_user', { "userJID" : userJID});
@@ -851,7 +859,7 @@ class PlatformRepo {
       rethrow;
     }
   }
-  Future<bool?> unBlockUser(String userJID) async {
+  static Future<bool?> unblockUser(String userJID) async {//unBlockUser
     bool? userBlockResponse;
     try {
       userBlockResponse = await mirrorFlyMethodChannel.invokeMethod<bool>('un_block_user', { "userJID" : userJID});
@@ -867,7 +875,7 @@ class PlatformRepo {
   }
 
 
-  Future<String?> showCustomTones(String? uri) async {
+  static Future<String?> showCustomTones(String? uri) async {
     String? response;
     try {
       response = await mirrorFlyMethodChannel.invokeMethod<String>('showCustomTones', { "ringtone_uri" : uri});
@@ -883,7 +891,7 @@ class PlatformRepo {
   }
 
 
-  Future<String?> getRingtoneName(String? uri) async {
+  static Future<String?> getRingtoneName(String? uri) async {
     String? response;
     try {
       response = await mirrorFlyMethodChannel.invokeMethod<String>('getRingtoneName', { "ringtone_uri" : uri});
@@ -899,7 +907,7 @@ class PlatformRepo {
   }
 
 
-  Future<bool?> loginWebChatViaQRCode(String barcode) async {
+  static Future<bool?> loginWebChatViaQRCode(String barcode) async {
     bool? response;
     try {
       response = await mirrorFlyMethodChannel.invokeMethod<bool>('loginWebChatViaQRCode', { "barcode" : barcode});
@@ -914,7 +922,7 @@ class PlatformRepo {
     }
   }
 
-  Future<bool?> webLoginDetailsCleared() async {
+  static Future<bool?> webLoginDetailsCleared() async {
     bool? response;
     try {
       response = await mirrorFlyMethodChannel.invokeMethod<bool>('webLoginDetailsCleared');
@@ -929,7 +937,7 @@ class PlatformRepo {
     }
   }
 
-  Future<bool?> logoutWebUser(List<String> logins) async {
+  static Future<bool?> logoutWebUser(List<String> logins) async {
     bool? response;
     try {
       response = await mirrorFlyMethodChannel.invokeMethod<bool>('logoutWebUser',{"listWebLogin":logins});
@@ -944,7 +952,7 @@ class PlatformRepo {
     }
   }
 
-  Future<dynamic> getWebLoginDetails() async {
+  static Future<dynamic> getWebLoginDetails() async {
     dynamic response;
     try {
       response = await mirrorFlyMethodChannel.invokeMethod('getWebLoginDetails');
@@ -959,10 +967,10 @@ class PlatformRepo {
     }
   }
 
-  Future<dynamic> favouriteMessage(String messageID, String chatUserJID, bool isFavourite) async {
+  static Future<dynamic> updateFavouriteStatus(String messageID, String chatUserJID, bool isFavourite) async {//favouriteMessage
     dynamic favResponse;
     try {
-      favResponse = await mirrorFlyMethodChannel.invokeMethod('favourite_message', { "messageID" : messageID, "chatUserJID": chatUserJID, "isFavourite": isFavourite});
+      favResponse = await mirrorFlyMethodChannel.invokeMethod('updateFavouriteStatus', { "messageID" : messageID, "chatUserJID": chatUserJID, "isFavourite": isFavourite});
       debugPrint("Favourite Msg Response ==> $favResponse");
       return favResponse;
     }on PlatformException catch (e){
@@ -974,10 +982,10 @@ class PlatformRepo {
     }
   }
 
-  Future<dynamic> forwardMessage(List<String> messageIds, List<String> userList) async {
+  static Future<dynamic> forwardMessagesToMultipleUsers(List<String> messageIds, List<String> userList) async {//forwardMessage
     dynamic forwardMessageResponse;
     try {
-      forwardMessageResponse = await mirrorFlyMethodChannel.invokeMethod('forward_messages', { "message_ids" : messageIds, "userList": userList});
+      forwardMessageResponse = await mirrorFlyMethodChannel.invokeMethod('forwardMessagesToMultipleUsers', { "message_ids" : messageIds, "userList": userList});
       debugPrint("Forward Msg Response ==> $forwardMessageResponse");
       return forwardMessageResponse;
     }on PlatformException catch (e){
@@ -989,7 +997,7 @@ class PlatformRepo {
     }
   }
 
-  Future<dynamic> createGroup(String groupname, List<String> userList,String image) async {
+  static Future<dynamic> createGroup(String groupname, List<String> userList,String image) async {
     dynamic response;
     try {
       response = await mirrorFlyMethodChannel.invokeMethod('createGroup', { "group_name" : groupname, "members": userList,"file":image,});
@@ -1004,7 +1012,7 @@ class PlatformRepo {
     }
   }
 
-  Future<dynamic> addUsersToGroup(String jid, List<String> userList) async {
+  static Future<dynamic> addUsersToGroup(String jid, List<String> userList) async {
     dynamic response;
     try {
       response = await mirrorFlyMethodChannel.invokeMethod('addUsersToGroup', { "jid" : jid, "members": userList});
@@ -1019,11 +1027,11 @@ class PlatformRepo {
     }
   }
 
-  Future<dynamic> getGroupMembers(String jid, bool? server) async {
+  static Future<dynamic> getGroupMembersList(String jid, bool? server) async {//getGroupMembers
     dynamic response;
     try {
-      response = await mirrorFlyMethodChannel.invokeMethod('getGroupMembers', { "jid" : jid, "server": server,});
-      debugPrint("getGroupMembers Response ==> $response");
+      response = await mirrorFlyMethodChannel.invokeMethod('getGroupMembersList', { "jid" : jid, "server": server,});
+      debugPrint("getGroupMembersList Response ==> $response");
       return response;
     }on PlatformException catch (e){
       debugPrint("Platform Exception ===> $e");
@@ -1034,7 +1042,7 @@ class PlatformRepo {
     }
   }
 
-  Future<dynamic> getUsersIBlocked( bool? server) async {
+  static Future<dynamic> getUsersIBlocked( bool? server) async {
     dynamic response;
     try {
       response = await mirrorFlyMethodChannel.invokeMethod('getUsersIBlocked', { "serverCall": server,});
@@ -1049,7 +1057,7 @@ class PlatformRepo {
     }
   }
 
-  Future<dynamic> getMediaMessages(String jid) async {
+  static Future<dynamic> getMediaMessages(String jid) async {
     dynamic response;
     try {
       response = await mirrorFlyMethodChannel.invokeMethod('getMediaMessages', { "jid" : jid,});
@@ -1064,7 +1072,7 @@ class PlatformRepo {
     }
   }
 
-  Future<dynamic> getDocsMessages(String jid) async {
+  static Future<dynamic> getDocsMessages(String jid) async {
     dynamic response;
     try {
       response = await mirrorFlyMethodChannel.invokeMethod('getDocsMessages', { "jid" : jid,});
@@ -1079,7 +1087,7 @@ class PlatformRepo {
     }
   }
 
-  Future<dynamic> getLinkMessages(String jid) async {
+  static Future<dynamic> getLinkMessages(String jid) async {
     dynamic response;
     try {
       response = await mirrorFlyMethodChannel.invokeMethod('getLinkMessages', { "jid" : jid,});
@@ -1094,7 +1102,7 @@ class PlatformRepo {
     }
   }
 
-  exportChat(String jid) async {
+  static exportChatConversationToEmail(String jid) async {
     try {
       await mirrorFlyMethodChannel.invokeMethod('exportChat', {"jid" : jid });
     }on PlatformException catch (e){
@@ -1105,10 +1113,10 @@ class PlatformRepo {
       rethrow;
     }
   }
-  Future<bool?> reportUserOrMessages(String jid,String type) async {
+  static Future<bool?> reportUserOrMessages(String jid,String type, String? messageId) async {
     bool? response;
     try {
-      response = await mirrorFlyMethodChannel.invokeMethod<bool>('reportUserOrMessages',{"jid" : jid,"type":type });
+      response = await mirrorFlyMethodChannel.invokeMethod<bool>('reportUserOrMessages',{"jid" : jid,"chat_type":type, "selectedMessageID" : messageId });
       debugPrint("report Result ==> $response");
       return response;
     }on PlatformException catch (e){
@@ -1119,7 +1127,7 @@ class PlatformRepo {
       return false;
     }
   }
-  Future<bool?> makeAdmin(String groupjid,String userjid) async {
+  static Future<bool?> makeAdmin(String groupjid,String userjid) async {
     bool? response;
     try {
       response = await mirrorFlyMethodChannel.invokeMethod<bool>('makeAdmin',{"jid" : groupjid,"userjid":userjid });
@@ -1133,7 +1141,7 @@ class PlatformRepo {
       return false;
     }
   }
-  Future<bool?> removeMemberFromGroup(String groupjid,String userjid) async {
+  static Future<bool?> removeMemberFromGroup(String groupjid,String userjid) async {
     bool? response;
     try {
       response = await mirrorFlyMethodChannel.invokeMethod<bool>('removeMemberFromGroup',{"jid" : groupjid,"userjid":userjid });
@@ -1147,7 +1155,7 @@ class PlatformRepo {
       return false;
     }
   }
-  Future<bool?> leaveFromGroup(String jid) async {
+  static Future<bool?> leaveFromGroup(String jid) async {
     bool? response;
     try {
       response = await mirrorFlyMethodChannel.invokeMethod<bool>('leaveFromGroup',{"jid" : jid });
@@ -1161,7 +1169,7 @@ class PlatformRepo {
       return false;
     }
   }
-  Future<bool?> deleteGroup(String jid) async {
+  static Future<bool?> deleteGroup(String jid) async {
     bool? response;
     try {
       response = await mirrorFlyMethodChannel.invokeMethod<bool>('deleteGroup',{"jid" : jid });
@@ -1176,7 +1184,7 @@ class PlatformRepo {
     }
   }
 
-  Future<bool?> isAdmin(String jid) async {
+  static Future<bool?> isAdmin(String jid) async {
     bool? response;
     try {
       response = await mirrorFlyMethodChannel.invokeMethod<bool>('isAdmin',{"jid" : jid });
@@ -1191,7 +1199,7 @@ class PlatformRepo {
     }
   }
 
-  Future<bool?> updateGroupProfileImage(String jid,String file) async {
+  static Future<bool?> updateGroupProfileImage(String jid,String file) async {
     bool? response;
     try {
       response = await mirrorFlyMethodChannel.invokeMethod<bool>('updateGroupProfileImage',{"jid" : jid,"file":file });
@@ -1206,7 +1214,7 @@ class PlatformRepo {
     }
   }
 
-  Future<bool?> updateGroupName(String jid,String name) async {
+  static Future<bool?> updateGroupName(String jid,String name) async {
     bool? response;
     try {
       response = await mirrorFlyMethodChannel.invokeMethod<bool>('updateGroupName',{"jid" : jid,"name":name });
@@ -1221,7 +1229,7 @@ class PlatformRepo {
     }
   }
 
-  Future<bool?> isMemberOfGroup(String jid,String? userjid) async {
+  static Future<bool?> isMemberOfGroup(String jid,String? userjid) async {
     bool? response;
     try {
       response = await mirrorFlyMethodChannel.invokeMethod<bool>('isMemberOfGroup',{"jid" : jid,"userjid":userjid });
@@ -1236,7 +1244,7 @@ class PlatformRepo {
     }
   }
 
-  Future<bool?> sendContactUsInfo(String title,String description) async {
+  static Future<bool?> sendContactUsInfo(String title,String description) async {
     bool? response;
     try {
       response = await mirrorFlyMethodChannel.invokeMethod<bool>('sendContactUsInfo',{"title" : title,"description":description });
@@ -1251,9 +1259,9 @@ class PlatformRepo {
     }
   }
 
-  groupMute(String jid,bool checked) async {
+  static updateChatMuteStatus(String jid,bool checked) async {//groupMute
     try {
-      await mirrorFlyMethodChannel.invokeMethod('groupMute', {"jid" : jid,"checked":checked });
+      await mirrorFlyMethodChannel.invokeMethod('updateChatMuteStatus', {"jid" : jid,"checked":checked });
     }on PlatformException catch (e){
       debugPrint("Platform Exception ===> $e");
       rethrow;
@@ -1263,7 +1271,7 @@ class PlatformRepo {
     }
   }
 
-  copyTextMessages(String messageId) async {
+  static copyTextMessages(String messageId) async {
     List<String> messageIds = [messageId];
     try {
       await mirrorFlyMethodChannel.invokeMethod('copy_text_messages', {"message_id_list" : messageIds });
@@ -1276,7 +1284,7 @@ class PlatformRepo {
     }
   }
 
-  Future<dynamic> deleteAccount(String reason, String? feedback) async {
+  static Future<dynamic> deleteAccount(String reason, String? feedback) async {
     dynamic response;
     try {
       response = await mirrorFlyMethodChannel.invokeMethod('delete_account', {"delete_reason" : reason, "delete_feedback" : feedback });
@@ -1289,7 +1297,7 @@ class PlatformRepo {
       rethrow;
     }
   }
-  Future<dynamic> getFavouriteMessages() async {
+  static Future<dynamic> getFavouriteMessages() async {
     dynamic favResponse;
     try {
       favResponse = await mirrorFlyMethodChannel.invokeMethod('get_favourite_messages');

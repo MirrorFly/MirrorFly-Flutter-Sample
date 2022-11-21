@@ -105,27 +105,27 @@ class SessionManagement {
     });
   }
 
-  bool getLogin() => _preferences.getBool("login") == null
+  static bool getLogin() => _preferences.getBool("login") == null
       ? false
       : _preferences.getBool("login")!;
 
-  String? getName() => _preferences.getString("name");
-  String? getMobileNumber() => _preferences.getString("mobileNumber");
-  String? getUsername() => _preferences.getString("username");
-  String? getPassword() => _preferences.getString("password");
-  String? getUserJID() => _preferences.getString("user_jid").toString();
-  String? getUserImage() => _preferences.getString("image");
-  String? getToken() => _preferences.getString("firebase_token");
-  String? getAuthToken() => _preferences.getString("token");
-  String? getMediaEndPoint() => _preferences.getString("media_endpoint");
-  String? getNotificationUri() => _preferences.getString("notification_uri");
-  bool getWebLogin() => _preferences.getBool("web_chat_login") ?? false;
-  bool getNotificationSound() => _preferences.getBool("${Constants.PACKAGE}notification_sound") ?? true;
-  bool getNotificationPopup() => _preferences.getBool("${Constants.PACKAGE}notification_popup") ?? false;
-  bool getVibration() => _preferences.getBool("${Constants.PACKAGE}vibration") ?? false;
-  bool getMuteNotification() => _preferences.getBool("mute_notification") ?? false;
-  String getPin() => _preferences.getString("pin") ?? "";
-  bool getEnablePin() => _preferences.getBool("enable_pin") ?? false;
-  bool getEnableBio() => _preferences.getBool("enable_bio") ?? false;
-  bool? synced() => _preferences.getBool("synced");
+  static String? getName() => _preferences.getString("name");
+  static String? getMobileNumber() => _preferences.getString("mobileNumber");
+  static String? getUsername() => _preferences.getString("username");
+  static String? getPassword() => _preferences.getString("password");
+  static String? getUserJID() => _preferences.getString("user_jid").toString();
+  static String? getUserImage() => _preferences.getString("image");
+  static String? getToken() => _preferences.getString("firebase_token");
+  static String? getAuthToken() => _preferences.getString("token");
+  static String? getMediaEndPoint() => _preferences.getString("media_endpoint");
+  static String? getNotificationUri() => _preferences.getString("notification_uri");
+  static bool getWebLogin() => _preferences.getBool("web_chat_login") ?? false;
+  static bool getNotificationSound() => _preferences.getBool("${Constants.PACKAGE}notification_sound") ?? true;
+  static bool getNotificationPopup() => _preferences.getBool("${Constants.PACKAGE}notification_popup") ?? false;
+  static bool getVibration() => _preferences.getBool("${Constants.PACKAGE}vibration") ?? false;
+  static bool getMuteNotification() => _preferences.getBool("mute_notification") ?? false;
+  static String getPin() => _preferences.getString("pin") ?? "";
+  static bool getEnablePin() => _preferences.getBool("enable_pin") ?? false;
+  static bool getEnableBio() => _preferences.getBool("enable_bio") ?? false;
+  static bool? synced() => _preferences.getBool("synced");
 }

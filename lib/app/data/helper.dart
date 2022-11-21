@@ -9,7 +9,7 @@ import 'package:intl/intl.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
 import 'package:mirror_fly_demo/app/model/chatMessageModel.dart';
 import 'package:mirror_fly_demo/app/model/group_members_model.dart';
-import 'package:mirror_fly_demo/app/nativecall/platformRepo.dart';
+import 'package:mirror_fly_demo/app/nativecall/fly_chat.dart';
 
 import '../model/userListModel.dart';
 
@@ -245,12 +245,12 @@ extension BooleanParsing on bool? {
 extension MemberParsing on Member{
 
   String getUsername(){
-    var value = PlatformRepo().getProfileDetails(jid.checkNull(), false);
+    var value = FlyChat.getProfileDetails(jid.checkNull(), false);
     var str = Profile.fromJson(json.decode(value.toString()));
     return str.name.checkNull();
   }
   Future<Profile> getProfileDetails() async {
-    var value = await PlatformRepo().getProfileDetails(jid.checkNull(), false);
+    var value = await FlyChat.getProfileDetails(jid.checkNull(), false);
     var str = Profile.fromJson(json.decode(value.toString()));
     return str;
   }

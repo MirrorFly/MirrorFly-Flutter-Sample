@@ -6,7 +6,7 @@ import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
-import 'package:mirror_fly_demo/app/nativecall/platformRepo.dart';
+import 'package:mirror_fly_demo/app/nativecall/fly_chat.dart';
 
 import '../../../common/crop_image.dart';
 import '../../../model/userListModel.dart';
@@ -56,14 +56,14 @@ class GroupInfoController extends GetxController {
     }
   }
   groupAdmin(){
-    PlatformRepo().isAdmin(profile.jid.checkNull()).then((bool? value){
+    FlyChat.isAdmin(profile.jid.checkNull()).then((bool? value){
       if(value!=null){
         _isAdmin(value);
       }
     });
   }
   memberOfGroup(){
-    PlatformRepo().isMemberOfGroup(profile.jid.checkNull(),null).then((bool? value){
+    FlyChat.isMemberOfGroup(profile.jid.checkNull(),null).then((bool? value){
       if(value!=null){
         _isMemberOfGroup(value);
       }
@@ -72,11 +72,11 @@ class GroupInfoController extends GetxController {
   onToggleChange(bool value){
     Log("change", value.toString());
     _mute(value);
-    PlatformRepo().groupMute(profile.jid.checkNull(),value);
+    FlyChat.updateChatMuteStatus(profile.jid.checkNull(),value);
   }
 
   getGroupMembers(bool? server){
-    PlatformRepo().getGroupMembers(profile.jid.checkNull(),server).then((value) {
+    FlyChat.getGroupMembersList(profile.jid.checkNull(),server).then((value) {
       if(value!=null){
         var list = profileFromJson(value);
         groupMembers.value=(list);
@@ -96,7 +96,7 @@ class GroupInfoController extends GetxController {
           onPressed: () {
             Get.back();
             Helper.progressLoading();
-            PlatformRepo().reportUserOrMessages(profile.jid.checkNull(),Constants.TYPE_GROUP_CHAT).then((value) {
+            FlyChat.reportUserOrMessages(profile.jid.checkNull(),Constants.TYPE_GROUP_CHAT, "").then((value) {
               Helper.hideLoading();
               if(value!=null){
                 if(value){
@@ -132,7 +132,7 @@ class GroupInfoController extends GetxController {
           onPressed: () {
             Get.back();
             Helper.progressLoading();
-            PlatformRepo().leaveFromGroup(profile.jid.checkNull()).then((value) {
+            FlyChat.leaveFromGroup(profile.jid.checkNull()).then((value) {
               Helper.hideLoading();
               if(value!=null){
                 if(value){
@@ -157,7 +157,7 @@ class GroupInfoController extends GetxController {
           onPressed: () {
             Get.back();
             Helper.progressLoading();
-            PlatformRepo().deleteGroup(profile.jid.checkNull()).then((value) {
+            FlyChat.deleteGroup(profile.jid.checkNull()).then((value) {
               Helper.hideLoading();
               if(value!=null){
                 if(value){
@@ -211,7 +211,7 @@ class GroupInfoController extends GetxController {
 
   updateGroupProfileImage(String path){
     showLoader();
-    PlatformRepo().updateGroupProfileImage(profile.jid.checkNull(),path).then((bool? value){
+    FlyChat.updateGroupProfileImage(profile.jid.checkNull(),path).then((bool? value){
       hideLoader();
       if(value!=null){
         if(value){
@@ -224,7 +224,7 @@ class GroupInfoController extends GetxController {
 
   updateGroupName(String name){
     showLoader();
-    PlatformRepo().updateGroupName(profile.jid.checkNull(),name).then((bool? value){
+    FlyChat.updateGroupName(profile.jid.checkNull(),name).then((bool? value){
       hideLoader();
       if(value!=null){
         if(value){
@@ -247,7 +247,7 @@ class GroupInfoController extends GetxController {
           onPressed: () {
             Get.back();
             showLoader();
-            PlatformRepo().removeGroupProfileImage(profile.jid.checkNull()).then((bool? value) {
+            FlyChat.removeGroupProfileImage(profile.jid.checkNull()).then((bool? value) {
               hideLoader();
               if (value != null) {
                 if(value){
@@ -274,7 +274,7 @@ class GroupInfoController extends GetxController {
     Get.toNamed(Routes.CONTACTS, arguments: {"forward" : false,"group":true,"groupJid":profile.jid })?.then((value){
       if(value!=null){
         showLoader();
-        PlatformRepo().addUsersToGroup(profile.jid.checkNull(),value as List<String>).then((value){
+        FlyChat.addUsersToGroup(profile.jid.checkNull(),value as List<String>).then((value){
           hideLoader();
           if(value!=null && value){
             getGroupMembers(false);
@@ -293,7 +293,7 @@ class GroupInfoController extends GetxController {
   removeUser(String userJid){
     if(isMemberOfGroup){
       showLoader();
-      PlatformRepo().removeMemberFromGroup(profile.jid.checkNull(), userJid).then((value){
+      FlyChat.removeMemberFromGroup(profile.jid.checkNull(), userJid).then((value){
         hideLoader();
         if(value!=null && value){
           getGroupMembers(false);
@@ -307,7 +307,7 @@ class GroupInfoController extends GetxController {
   makeAdmin(String userJid){
     if(isMemberOfGroup){
       showLoader();
-      PlatformRepo().makeAdmin(profile.jid.checkNull(), userJid).then((value){
+      FlyChat.makeAdmin(profile.jid.checkNull(), userJid).then((value){
         hideLoader();
         if(value!=null && value){
           getGroupMembers(false);

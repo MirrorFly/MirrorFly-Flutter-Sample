@@ -7,14 +7,14 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
-import 'package:mirror_fly_demo/app/data/SessionManagement.dart';
+import 'package:mirror_fly_demo/app/data/session_management.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../data/permissions.dart';
 import '../model/chatMessageModel.dart';
-import '../nativecall/platformRepo.dart';
+import '../nativecall/fly_chat.dart';
 
 class MainController extends GetxController {
   var authToken = "".obs;
@@ -31,44 +31,44 @@ class MainController extends GetxController {
   void onInit() {
     super.onInit();
     getMediaEndpoint();
-    uploadEndpoint(SessionManagement().getMediaEndPoint().checkNull());
-    authToken(SessionManagement().getAuthToken().checkNull());
+    uploadEndpoint(SessionManagement.getMediaEndPoint().checkNull());
+    authToken(SessionManagement.getAuthToken().checkNull());
     getAuthToken();
   }
 
   getMediaEndpoint() async {
-    if (SessionManagement()
+    if (SessionManagement
         .getMediaEndPoint()
         .checkNull()
         .isEmpty) {
-      PlatformRepo().mediaEndPoint().then((value) {
+      FlyChat.mediaEndPoint().then((value) {
         Log("media_endpoint", value);
         if (value.isNotEmpty) {
           uploadEndpoint(value);
           SessionManagement.setMediaEndPoint(value);
         } else {
-          uploadEndpoint(SessionManagement().getMediaEndPoint().checkNull());
+          uploadEndpoint(SessionManagement.getMediaEndPoint().checkNull());
         }
       });
     }
   }
 
   getAuthToken() async {
-    if (SessionManagement()
+    if (SessionManagement
         .getUsername()
         .checkNull()
         .isNotEmpty &&
-        SessionManagement()
+        SessionManagement
             .getPassword()
             .checkNull()
             .isNotEmpty) {
-      await PlatformRepo().authToken().then((value) {
+      await FlyChat.authToken().then((value) {
         Log("RetryAuth", value);
         if (value.isNotEmpty) {
           authToken(value);
           SessionManagement.setAuthToken(value);
         } else {
-          authToken(SessionManagement().getAuthToken().checkNull());
+          authToken(SessionManagement.getAuthToken().checkNull());
         }
         update();
       });
@@ -186,7 +186,7 @@ class MainController extends GetxController {
   openDocument(String mediaLocalStoragePath, BuildContext context) async {
     // if (await askStoragePermission()) {
     if (mediaLocalStoragePath.isNotEmpty) {
-      PlatformRepo().openFile(mediaLocalStoragePath).catchError((onError) {
+      FlyChat.openFile(mediaLocalStoragePath).catchError((onError) {
         final scaffold = ScaffoldMessenger.of(context);
         scaffold.showSnackBar(
           SnackBar(
@@ -205,7 +205,7 @@ class MainController extends GetxController {
 
   downloadMedia(String messageId) async {
     if (await askStoragePermission()) {
-      PlatformRepo().mediaDownload(messageId);
+      FlyChat.downloadMedia(messageId);
     }
   }
 

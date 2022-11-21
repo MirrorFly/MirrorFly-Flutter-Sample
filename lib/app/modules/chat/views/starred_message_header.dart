@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
-import 'package:mirror_fly_demo/app/nativecall/platformRepo.dart';
+import 'package:mirror_fly_demo/app/nativecall/fly_chat.dart';
 
 import '../../../common/widgets.dart';
 import '../../../model/chatMessageModel.dart';
@@ -44,7 +44,7 @@ class _StarredMessageHeaderState extends State<StarredMessageHeader> {
 
   getHeader(ChatMessageModel chatList, BuildContext context) {
     var userProfile = Profile().obs;
-    PlatformRepo().getProfileDetails(chatList.senderUserJid, true).then((value) {
+    FlyChat.getProfileDetails(chatList.senderUserJid, true).then((value) {
       userProfile.value = Profile.fromJson(json.decode(value.toString()));
       debugPrint("Image==>${userProfile.value.image}");
     });

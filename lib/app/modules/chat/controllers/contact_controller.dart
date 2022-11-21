@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
-import 'package:mirror_fly_demo/app/nativecall/platformRepo.dart';
+import 'package:mirror_fly_demo/app/nativecall/fly_chat.dart';
 
 import '../../../model/userListModel.dart';
 import '../../../routes/app_pages.dart';
@@ -100,13 +100,13 @@ class ContactController extends GetxController {
   }
 
   fetchUsers(bool fromSearch) {
-    PlatformRepo().getUsers(pageNum, _searchText).then((data) async {
+    FlyChat.getUsers(pageNum, _searchText).then((data) async {
       var item = userListFromJson(data);
       var list = <Profile>[];
 
       if(groupJid.value.checkNull().isNotEmpty){
         await Future.forEach(item.data!, (it) async {
-          await PlatformRepo().isMemberOfGroup(groupJid.value.checkNull(), it.jid.checkNull()).then((value){
+          await FlyChat.isMemberOfGroup(groupJid.value.checkNull(), it.jid.checkNull()).then((value){
             Log("item", value.toString());
             if(value==null || !value){
               list.add(it);
@@ -143,7 +143,7 @@ class ContactController extends GetxController {
   Future<List<Profile>> removeGroupMembers(List<Profile> items) async {
     var list = <Profile>[];
     for (var it in items) {
-      var value = await PlatformRepo().isMemberOfGroup(groupJid.value.checkNull(), it.jid.checkNull());
+      var value = await FlyChat.isMemberOfGroup(groupJid.value.checkNull(), it.jid.checkNull());
       Log("item", value.toString());
       if(value==null || !value){
         list.add(it);
@@ -158,7 +158,7 @@ class ContactController extends GetxController {
     if (imgUrl == null || imgUrl == "") {
       return "";
     }
-    PlatformRepo().imagePath(imgUrl).then((value) {
+    FlyChat.imagePath(imgUrl).then((value) {
       return value ?? "";
     });
     return "";
@@ -178,8 +178,8 @@ class ContactController extends GetxController {
   }
 
   forwardMessages() {
-    PlatformRepo()
-        .forwardMessage(forwardMessageIds, selectedUsersJIDList)
+    FlyChat
+        .forwardMessagesToMultipleUsers(forwardMessageIds, selectedUsersJIDList)
         .then((value) {
       debugPrint(
           "to chat profile ==> ${selectedUsersList[0].toJson().toString()}");

@@ -2,7 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
-import 'package:mirror_fly_demo/app/nativecall/platformRepo.dart';
+import 'package:mirror_fly_demo/app/nativecall/fly_chat.dart';
 
 import '../../../model/chatMessageModel.dart';
 
@@ -22,7 +22,7 @@ class StarredMessagesController extends GetxController {
   }
 
   getFavouriteMessages() {
-    PlatformRepo().getFavouriteMessages().then((value){
+    FlyChat.getFavouriteMessages().then((value){
       List<ChatMessageModel> chatMessageModel = chatMessageModelFromJson(value);
       starredChatList(chatMessageModel);
     });

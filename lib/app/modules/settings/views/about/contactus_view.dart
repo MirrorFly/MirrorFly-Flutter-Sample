@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
-import 'package:mirror_fly_demo/app/nativecall/platformRepo.dart';
+import 'package:mirror_fly_demo/app/nativecall/fly_chat.dart';
 
 import '../../../../common/constants.dart';
 
@@ -74,7 +74,7 @@ class ContactusView extends StatelessWidget {
                 onPressed: () {
                   if(title.text.trim().isNotEmpty&&description.text.trim().isNotEmpty) {
                     Helper.progressLoading();
-                    PlatformRepo().sendContactUsInfo(title.text.trim(),description.text.trim()).then((value){
+                    FlyChat.sendContactUsInfo(title.text.trim(),description.text.trim()).then((value){
                       Helper.hideLoading();
                       if(value!=null){
                         if(value){

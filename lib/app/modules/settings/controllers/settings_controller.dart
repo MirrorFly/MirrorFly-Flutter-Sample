@@ -3,13 +3,13 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
-import 'package:mirror_fly_demo/app/nativecall/platformRepo.dart';
+import 'package:mirror_fly_demo/app/nativecall/fly_chat.dart';
 import 'package:mirror_fly_demo/app/routes/app_pages.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:path/path.dart';
 import 'package:yaml/yaml.dart';
 
-import '../../../data/SessionManagement.dart';
+import '../../../data/session_management.dart';
 
 class SettingsController extends GetxController{
    PackageInfo? packageInfo ;
@@ -24,10 +24,10 @@ class SettingsController extends GetxController{
 
   logout() {
     Helper.progressLoading();
-    PlatformRepo().logout().then((value) {
+    FlyChat.logoutOfChatSDK().then((value) {
       Helper.hideLoading();
       if(value) {
-        var token = SessionManagement().getToken().checkNull();
+        var token = SessionManagement.getToken().checkNull();
         SessionManagement.clear().then((value){
           SessionManagement.setToken(token);
           Get.offAllNamed(Routes.LOGIN);
