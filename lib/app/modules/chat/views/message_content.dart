@@ -72,7 +72,7 @@ class _MessageContentState extends State<MessageContent> {
                   width: 5,
                 ),
                 Text(
-                  controller.getChatTime(
+                  getChatTime(
                       context, chatList.messageSentTime),
                   style: const TextStyle(fontSize: 12),
                 ),
@@ -142,7 +142,7 @@ class _MessageContentState extends State<MessageContent> {
                     width: 4,
                   ),
                   Text(
-                    controller.getChatTime(
+                    getChatTime(
                         context, chatList.messageSentTime),
                     style: const TextStyle(fontSize: 12, color: Colors.white),
                   ),
@@ -208,7 +208,7 @@ class _MessageContentState extends State<MessageContent> {
                     width: 4,
                   ),
                   Text(
-                    controller.getChatTime(
+                    getChatTime(
                         context, chatList.messageSentTime),
                     style: const TextStyle(fontSize: 12, color: Colors.white),
                   ),
@@ -289,7 +289,7 @@ class _MessageContentState extends State<MessageContent> {
                       width: 4,
                     ),
                     Text(
-                      controller.getChatTime(
+                      getChatTime(
                           context, chatList.messageSentTime),
                       style: const TextStyle(fontSize: 12, color: Colors.black),
                     ),
@@ -370,7 +370,7 @@ class _MessageContentState extends State<MessageContent> {
                       width: 4,
                     ),
                     Text(
-                      controller.getChatTime(
+                      getChatTime(
                           context, chatList.messageSentTime),
                       style: const TextStyle(fontSize: 12, color: Colors.black),
                     ),
@@ -499,7 +499,7 @@ class _MessageContentState extends State<MessageContent> {
                     width: 4,
                   ),
                   Text(
-                    controller.getChatTime(
+                    getChatTime(
                         context, chatList.messageSentTime),
                     style: const TextStyle(fontSize: 12, color: Colors.black),
                   ),
@@ -549,7 +549,7 @@ class _MessageContentState extends State<MessageContent> {
                     width: 4,
                   ),
                   Text(
-                    controller.getChatTime(
+                    getChatTime(
                         context, chatList.messageSentTime),
                     style: const TextStyle(fontSize: 12, color: Colors.black),
                   ),

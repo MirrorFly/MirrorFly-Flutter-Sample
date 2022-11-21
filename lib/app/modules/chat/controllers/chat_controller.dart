@@ -1154,7 +1154,7 @@ class ChatController extends BaseController with GetTickerProviderStateMixin {
     if (messageIds.length == selectedChatList.length) {
       isSelected(false);
       selectedChatList.clear();
-      Get.toNamed(Routes.CONTACTS, arguments: {
+      Get.toNamed(Routes.FORWARD_CHAT, arguments: {
         "forward": true,
         "group": false,
         "groupJid": "",

@@ -16,6 +16,7 @@ abstract class Routes {
   static const STATUSLIST = _Paths.STATUSLIST;
   static const CONTACTS = _Paths.CONTACTS;
   static const CHAT = _Paths.CHAT;
+  static const FORWARD_CHAT = _Paths.FORWARD_CHAT;
   static const CHATSEARCH = _Paths.CHATSEARCH;
   static const LOCATIONSENT = _Paths.LOCATIONSENT;
   static const IMAGEPREVIEW = _Paths.IMAGEPREVIEW;
@@ -53,6 +54,7 @@ abstract class _Paths {
   static const PROFILE = '/profile';
   static const STATUSLIST = '/status_list';
   static const CHAT = '/chat';
+  static const FORWARD_CHAT = '/forward_chat';
   static const CHATSEARCH = '/chat_search';
   static const LOCATIONSENT = '/location_sent';
   static const CONTACTS = '/contacts';

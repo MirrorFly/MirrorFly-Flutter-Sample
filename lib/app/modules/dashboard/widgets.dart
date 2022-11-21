@@ -1,0 +1,144 @@
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:mirror_fly_demo/app/data/helper.dart';
+
+import '../../common/constants.dart';
+import '../../common/main_controller.dart';
+import '../../common/widgets.dart';
+import '../../model/recent_chat.dart';
+
+Widget searchHeader(String? type, String count, BuildContext context) {
+  return Container(
+    width: MediaQuery.of(context).size.width,
+    padding: const EdgeInsets.all(8),
+    color: dividercolor,
+    child: Text.rich(TextSpan(text: type, children: [
+      TextSpan(text: " ($count)", style: const TextStyle(fontWeight: FontWeight.bold))
+    ])),
+  );
+}
+
+
+Widget recentChatItem(RecentChatData item, BuildContext context,Function() onTap,{bool isCheckBoxVisible = false,bool isChecked = false,Function(bool? value)? onchange}) {
+  return InkWell(
+    onTap:onTap,
+    child: Row(
+      children: [
+        Container(
+            margin:
+            const EdgeInsets.only(left: 19.0, top: 10, bottom: 10, right: 10),
+            child: Stack(
+              children: [
+                ImageNetwork(
+                  url: item.profileImage.toString(),
+                  width: 48,
+                  height: 48,
+                  clipOval: true,
+                  errorWidget: ProfileTextImage(
+                    text: item.profileName.checkNull().isEmpty
+                        ? item.nickName.checkNull()
+                        : item.profileName.checkNull(),
+                  ),
+                ),
+                item.unreadMessageCount.toString() != "0"
+                    ? Positioned(
+                    right: 0,
+                    child: CircleAvatar(
+                      radius: 8,
+                      child: Text(
+                        item.unreadMessageCount.toString(),
+                        style: const TextStyle(
+                            fontSize: 9,
+                            color: Colors.white,
+                            fontFamily: 'sf_ui'),
+                      ),
+                    ))
+                    : const SizedBox(),
+              ],
+            )),
+        Flexible(
+          child: Container(
+            padding: const EdgeInsets.only(top: 8),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            item.profileName.toString(),
+                            style: const TextStyle(
+                                fontSize: 16.0,
+                                fontWeight: FontWeight.w700,
+                                fontFamily: 'sf_ui',
+                                color: texthintcolor),
+                          ),
+                          Row(
+                            children: [
+                              item.unreadMessageCount.toString() != "0"
+                                  ? const Padding(
+                                padding: EdgeInsets.only(right: 8.0),
+                                child: CircleAvatar(
+                                  radius: 4,
+                                  backgroundColor: Colors.green,
+                                ),
+                              )
+                                  : const SizedBox(),
+                              Expanded(
+                                child: Row(
+                                  children: [
+                                    forMessageTypeIcon(item.lastMessageType!),
+                                    SizedBox(width: forMessageTypeString(item.lastMessageType!)!=null ? 3.0 : 0.0,),
+                                    Expanded(
+                                      child: Text(
+                                        forMessageTypeString(item.lastMessageType!) ?? item.lastMessageContent.toString(),
+                                        style: Theme.of(context).textTheme.titleSmall,
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(right: 16.0, left: 8),
+                      child: !isCheckBoxVisible ? Text(
+                        getRecentChatTime(
+                            context, item.lastMessageTime),
+                        textAlign: TextAlign.end,
+                        style: TextStyle(
+                            fontSize: 12.0,
+                            fontWeight: FontWeight.w600,
+                            fontFamily: 'sf_ui',
+                            color: item.unreadMessageCount.toString() != "0"
+                                ? buttonbgcolor
+                                : textcolor),
+                      ) :
+                      Visibility(
+                        visible: isCheckBoxVisible,
+                        child: Checkbox(
+                          value: isChecked,
+                          onChanged: onchange,
+                        ),
+                      ),
+                    )
+                  ],
+                ),
+                const AppDivider(padding: EdgeInsets.only(top: 8),)
+              ],
+            ),
+          ),
+        )
+      ],
+    ),
+  );
+}

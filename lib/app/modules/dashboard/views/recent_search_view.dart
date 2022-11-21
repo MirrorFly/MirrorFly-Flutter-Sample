@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:mirror_fly_demo/app/common/main_controller.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
-import 'package:mirror_fly_demo/app/model/recent_chat.dart';
 import 'package:mirror_fly_demo/app/modules/dashboard/controllers/recent_chat_search_controller.dart';
 
 import '../../../common/constants.dart';
 import '../../../common/widgets.dart';
 import '../../../model/recent_search_model.dart';
+import '../widgets.dart';
 
 class RecentSearchView extends GetView<RecentChatSearchController> {
   const RecentSearchView({super.key});
@@ -39,7 +38,9 @@ class RecentSearchView extends GetView<RecentChatSearchController> {
             if(controller.frmRecentChatList.isNotEmpty){
               var item = controller.frmRecentChatList[position];
               //var image = controller.image path(item.profileImage);
-              return recentChatItem(item.value, context);
+              return recentChatItem(item.value, context, () {
+                controller.toChatPage(item.value.jid.checkNull());
+              });
             }else {
               Log("RecentSearch",
                   controller.recentSearchList[position].toJson().toString());
@@ -71,7 +72,6 @@ class RecentSearchView extends GetView<RecentChatSearchController> {
 
   Widget? viewRecentChatItem(
       Rx<RecentSearch> data, BuildContext context, int position) {
-    var mainController = Get.find<MainController>();
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -152,7 +152,7 @@ class RecentSearchView extends GetView<RecentChatSearchController> {
                                         padding: const EdgeInsets.only(
                                             right: 16.0, left: 8),
                                         child: Text(
-                                          mainController.getRecentChatTime(
+                                          getRecentChatTime(
                                               context, item.lastMessageTime),
                                           textAlign: TextAlign.end,
                                           style: TextStyle(
@@ -230,7 +230,6 @@ class RecentSearchView extends GetView<RecentChatSearchController> {
   }
 
   Widget? viewMessageItem(BuildContext context, int position) {
-    var mainController = Get.find<MainController>();
     var data = controller.recentSearchList[position].value;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -310,7 +309,7 @@ class RecentSearchView extends GetView<RecentChatSearchController> {
                                           padding: const EdgeInsets.only(
                                               right: 16.0, left: 8),
                                           child: Text(
-                                            mainController.getRecentChatTime(
+                                            getRecentChatTime(
                                                 context,
                                                 item.messageSentTime),
                                             textAlign: TextAlign.end,
@@ -506,17 +505,6 @@ class RecentSearchView extends GetView<RecentChatSearchController> {
     }
   }
 
-  Widget searchHeader(String? type, String count, BuildContext context) {
-    return Container(
-      width: MediaQuery.of(context).size.width,
-      padding: const EdgeInsets.all(8),
-      color: dividercolor,
-      child: Text.rich(TextSpan(text: type, children: [
-        TextSpan(text: count, style: const TextStyle(fontWeight: FontWeight.bold))
-      ])),
-    );
-  }
-
   Widget spannableText(String text, String spannableText,TextStyle? style) {
     var startIndex = text.toLowerCase().indexOf(spannableText.toLowerCase());
     var endIndex = startIndex + spannableText.length;
@@ -542,120 +530,5 @@ class RecentSearchView extends GetView<RecentChatSearchController> {
         style: style, maxLines: 1,overflow: TextOverflow.ellipsis
       );
     }
-  }
-
-  InkWell recentChatItem(RecentChatData item, BuildContext context) {
-    var mainController = Get.find<MainController>();
-    return InkWell(
-      child: Row(
-        children: [
-          Container(
-              margin:
-              const EdgeInsets.only(left: 19.0, top: 10, bottom: 10, right: 10),
-              child: Stack(
-                children: [
-                  ImageNetwork(
-                    url: item.profileImage.toString(),
-                    width: 48,
-                    height: 48,
-                    clipOval: true,
-                    errorWidget: ProfileTextImage(
-                      text: item.profileName.checkNull().isEmpty
-                          ? item.nickName.checkNull()
-                          : item.profileName.checkNull(),
-                    ),
-                  ),
-                  item.unreadMessageCount.toString() != "0"
-                      ? Positioned(
-                      right: 0,
-                      child: CircleAvatar(
-                        radius: 8,
-                        child: Text(
-                          item.unreadMessageCount.toString(),
-                          style: const TextStyle(
-                              fontSize: 9,
-                              color: Colors.white,
-                              fontFamily: 'sf_ui'),
-                        ),
-                      ))
-                      : const SizedBox(),
-                ],
-              )),
-          Flexible(
-            child: Container(
-              padding: const EdgeInsets.only(top: 8),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      Expanded(
-                        child: Text(
-                          item.profileName.toString(),
-                          style: const TextStyle(
-                              fontSize: 16.0,
-                              fontWeight: FontWeight.w700,
-                              fontFamily: 'sf_ui',
-                              color: texthintcolor),
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(right: 16.0, left: 8),
-                        child: Text(
-                          mainController.getRecentChatTime(
-                              context, item.lastMessageTime),
-                          textAlign: TextAlign.end,
-                          style: TextStyle(
-                              fontSize: 12.0,
-                              fontWeight: FontWeight.w600,
-                              fontFamily: 'sf_ui',
-                              color: item.unreadMessageCount.toString() != "0"
-                                  ? buttonbgcolor
-                                  : textcolor),
-                        ),
-                      ),
-                    ],
-                  ),
-                  Row(
-                    children: [
-                      item.unreadMessageCount.toString() != "0"
-                          ? const Padding(
-                        padding: EdgeInsets.only(right: 8.0),
-                        child: CircleAvatar(
-                          radius: 4,
-                          backgroundColor: Colors.green,
-                        ),
-                      )
-                          : const SizedBox(),
-                      Expanded(
-                        child: Row(
-                          children: [
-                            forMessageTypeIcon(item.lastMessageType!),
-                            SizedBox(width: forMessageTypeString(item.lastMessageType!)!=null ? 3.0 : 0.0,),
-                            Expanded(
-                              child: Text(
-                                forMessageTypeString(item.lastMessageType!) ?? item.lastMessageContent.toString(),
-                                style: Theme.of(context).textTheme.titleSmall,
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                  const AppDivider(padding: EdgeInsets.only(top: 8),)
-                ],
-              ),
-            ),
-          )
-        ],
-      ),
-      onTap: () {
-        controller.toChatPage(item.jid.checkNull());
-      },
-    );
   }
 }

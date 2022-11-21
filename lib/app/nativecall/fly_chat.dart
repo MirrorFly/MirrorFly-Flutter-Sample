@@ -227,13 +227,11 @@ class FlyChat {
   }
 
   static Future<dynamic> getUsers(int page,String search) async {
-    var re = "";
+    dynamic re;
     try {
-      // final result = await mirrorFlyMethodChannel
-      //     .invokeMethod("get_user_list", {"page": page});
-      final result = await mirrorFlyMethodChannel.invokeMethod("get_user_list",{"page":page,"search":search});
-      debugPrint('RESULT ==> $result');
-      return result;
+      re = await mirrorFlyMethodChannel.invokeMethod("get_user_list",{"page":page,"search":search});
+      debugPrint('RESULT ==> $re');
+      return re;
     } on PlatformException catch (e) {
       Log("er",e.toString());
       return re;
@@ -434,7 +432,7 @@ class FlyChat {
   static Future<dynamic> getProfileLocal(String jid,bool server) async {
     dynamic profileResponse;
     try {
-      profileResponse = await mirrorFlyMethodChannel.invokeMethod('getProfile',{"jid":jid,"server":server});
+      profileResponse = await mirrorFlyMethodChannel.invokeMethod('getUserProfile',{"jid":jid,"server":server});
       debugPrint("profile Result ==> $profileResponse");
       return profileResponse;
     }on PlatformException catch (e){
@@ -1303,6 +1301,20 @@ class FlyChat {
       favResponse = await mirrorFlyMethodChannel.invokeMethod('get_favourite_messages');
       debugPrint("fav response ==> $favResponse");
       return favResponse;
+    }on PlatformException catch (e){
+      debugPrint("Platform Exception ===> $e");
+      rethrow;
+    } on Exception catch(error){
+      debugPrint("Exception ==> $error");
+      rethrow;
+    }
+  }
+  static Future<dynamic> getAllGroups([bool? server]) async {
+    dynamic response;
+    try {
+      response = await mirrorFlyMethodChannel.invokeMethod('getAllGroups',{"server":server});
+      debugPrint("getAllGroups response ==> $response");
+      return response;
     }on PlatformException catch (e){
       debugPrint("Platform Exception ===> $e");
       rethrow;

@@ -215,7 +215,7 @@ class ListItem extends StatelessWidget {
 }
 
 
-Widget memberItem({required String name,required String image,required String status,bool? isAdmin, required Function() onTap}) {
+Widget memberItem({required String name,required String image,required String status,bool? isAdmin, required Function() onTap,bool isCheckBoxVisible = false,bool isChecked = false,Function(bool? value)? onchange}) {
   Log("admin", isAdmin.toString());
   return Padding(
     padding: const EdgeInsets.symmetric(vertical: 4.0),
@@ -275,6 +275,13 @@ Widget memberItem({required String name,required String image,required String st
                       fontSize: 12.0,
                     )
                 ) : const SizedBox(),
+                Visibility(
+                  visible: isCheckBoxVisible,
+                  child: Checkbox(
+                    value: isChecked,
+                    onChanged: onchange,
+                  ),
+                ),
               ],
             ),
           ),

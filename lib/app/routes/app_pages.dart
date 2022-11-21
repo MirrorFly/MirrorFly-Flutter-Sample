@@ -1,10 +1,12 @@
 import 'package:get/get.dart';
+import 'package:mirror_fly_demo/app/modules/chat/views/forwardchat_view.dart';
 
 import '../model/userListModel.dart';
 import '../modules/camera_pick/bindings/camera_pick_binding.dart';
 import '../modules/camera_pick/views/camera_pick_view.dart';
 import '../modules/chat/bindings/chat_binding.dart';
 import '../modules/chat/bindings/contact_binding.dart';
+import '../modules/chat/bindings/forwardchat_binding.dart';
 import '../modules/chat/bindings/image_preview_binding.dart';
 import '../modules/chat/bindings/location_binding.dart';
 import '../modules/chat/views/chat_search_view.dart';
@@ -136,6 +138,11 @@ class AppPages {
       page: () => ChatView(),
       arguments: Profile(),
       binding: ChatBinding(),
+    ),
+    GetPage(
+      name: _Paths.FORWARD_CHAT,
+      page: () => const ForwardChatView(),
+      binding: ForwardChatBinding(),
     ),
     GetPage(
       name: _Paths.CHATSEARCH,
