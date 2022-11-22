@@ -40,6 +40,7 @@ const String chatfabicon = 'assets/logos/chat_fab.svg';
 const String moreicon = 'assets/logos/shape.svg';
 const String nocontactsicon = 'assets/logos/no_contacts.png';
 const String nochaticon = 'assets/logos/no_messages.png';
+const String nocallimage = 'assets/logos/ic_no_call_history.webp';
 const String profileicon = 'assets/logos/avatar.svg';
 const String rightarrowicon = 'assets/logos/forward_arrow.svg';
 const String chaticon = 'assets/logos/chat.svg';

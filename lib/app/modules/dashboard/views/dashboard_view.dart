@@ -116,7 +116,7 @@ class DashboardView extends GetView<DashboardController> {
                   ),
                 ];
               },
-              body: TabBarView(children: [chatView(context), const SizedBox()]),
+              body: TabBarView(children: [chatView(context), callsView(context)]),
             )),
       ),
     );
@@ -222,6 +222,42 @@ class DashboardView extends GetView<DashboardController> {
           ),
           Text(
             'Any new messages will appear here',
+            textAlign: TextAlign.center,
+            style: Theme.of(context).textTheme.titleSmall,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Stack callsView(BuildContext context){
+    return Stack(
+      children: [
+        emptyCalls(context)
+      ],
+    );
+  }
+
+   Widget emptyCalls(BuildContext context) {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Image.asset(
+            nocallimage,
+            width: 200,
+          ),
+          Text(
+            'No call log history found',
+            textAlign: TextAlign.center,
+            style: Theme.of(context).textTheme.titleMedium,
+          ),
+          const SizedBox(
+            height: 8,
+          ),
+          Text(
+            'Any new calls will appear here',
             textAlign: TextAlign.center,
             style: Theme.of(context).textTheme.titleSmall,
           ),
