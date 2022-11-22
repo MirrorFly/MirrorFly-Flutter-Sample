@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
 import 'package:mirror_fly_demo/app/model/recent_chat.dart';
+import 'package:mirror_fly_demo/app/modules/dashboard/widgets.dart';
 
 import '../../../common/widgets.dart';
 import '../../../routes/app_pages.dart';
@@ -188,7 +189,9 @@ class DashboardView extends GetView<DashboardController> {
                           shrinkWrap: true,
                           itemBuilder: (BuildContext context, int index) {
                             var item = controller.recentChats[index];
-                            return recentChatItem(item, context);
+                            return recentChatItem(item: item, context: context,onTap: () {
+                              controller.toChatPage(item.jid.checkNull());
+                            },);
                           });
                     });
                   }),
@@ -227,7 +230,7 @@ class DashboardView extends GetView<DashboardController> {
     );
   }
 
-  Widget recentChatItem(RecentChatData item, BuildContext context) {
+  /*Widget recentChatItem(RecentChatData item, BuildContext context) {
     return InkWell(
       child: Row(
         children: [
@@ -388,5 +391,5 @@ class DashboardView extends GetView<DashboardController> {
         controller.toChatPage(item.jid.checkNull());
       },
     );
-  }
+  }*/
 }

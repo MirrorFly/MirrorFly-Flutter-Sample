@@ -2080,7 +2080,7 @@ class ChatView extends GetView<ChatController> {
                             controller.clearChatSelection(
                                 controller.selectedChatList[0]);
                           },
-                          icon: const Icon(Icons.reply_outlined)),
+                          icon: SvgPicture.asset(replyIcon)),
                       overflowWidget: const Text("Reply"),
                       showAsAction: ShowAsAction.always,
                       keyValue: 'Reply',
@@ -2094,16 +2094,11 @@ class ChatView extends GetView<ChatController> {
                     )
                   : customEmptyAction(),
               CustomAction(
-                visibleWidget: Transform(
-                  // angle: 180 * math.pi / 180,
-                  alignment: Alignment.center,
-                  transform: Matrix4.rotationY(math.pi),
-                  child: IconButton(
-                      onPressed: () {
-                        controller.forwardMessage();
-                      },
-                      icon: const Icon(Icons.reply_outlined)),
-                ),
+                visibleWidget: IconButton(
+                    onPressed: () {
+                      controller.forwardMessage();
+                    },
+                    icon: SvgPicture.asset(forwardIcon)),
                 overflowWidget: const Text("Forward"),
                 showAsAction: ShowAsAction.always,
                 keyValue: 'Forward',
@@ -2120,8 +2115,8 @@ class ChatView extends GetView<ChatController> {
                           },
                           // icon: controller.getOptionStatus('Favourite') ? const Icon(Icons.star_border_outlined)
                           icon: controller.selectedChatList[0].isMessageStarred
-                              ? const Icon(Icons.star_border_outlined)
-                              : const Icon(Icons.star)),
+                              ? SvgPicture.asset(unfavouriteIcon)
+                              : SvgPicture.asset(favouriteIcon)),
                       overflowWidget: const Text("Favourite"),
                       showAsAction: ShowAsAction.always,
                       keyValue: 'favourite',
@@ -2136,7 +2131,7 @@ class ChatView extends GetView<ChatController> {
                     onPressed: () {
                       controller.deleteMessages();
                     },
-                    icon: const Icon(Icons.delete_outline_outlined)),
+                    icon: SvgPicture.asset(deleteIcon)),
                 overflowWidget: const Text("Delete"),
                 showAsAction: ShowAsAction.always,
                 keyValue: 'Delete',

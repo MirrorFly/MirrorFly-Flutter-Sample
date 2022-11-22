@@ -38,7 +38,7 @@ class RecentSearchView extends GetView<RecentChatSearchController> {
             if(controller.frmRecentChatList.isNotEmpty){
               var item = controller.frmRecentChatList[position];
               //var image = controller.image path(item.profileImage);
-              return recentChatItem(item.value, context, () {
+              return recentChatItem(item: item.value, context: context,onTap: () {
                 controller.toChatPage(item.value.jid.checkNull());
               });
             }else {
@@ -505,30 +505,4 @@ class RecentSearchView extends GetView<RecentChatSearchController> {
     }
   }
 
-  Widget spannableText(String text, String spannableText,TextStyle? style) {
-    var startIndex = text.toLowerCase().indexOf(spannableText.toLowerCase());
-    var endIndex = startIndex + spannableText.length;
-    if (startIndex != -1 && endIndex != -1) {
-      var startText = text.substring(0, startIndex);
-      var colorText = text.substring(startIndex, endIndex);
-      var endText = text.substring(endIndex, text.length);
-      Log("startText", startText);
-      Log("endText", endText);
-      Log("colorText", colorText);
-      return Text.rich(TextSpan(
-          text: startText,
-          children: [
-            TextSpan(text: colorText, style: const TextStyle(color: Colors.blue)),
-            TextSpan(
-                text: endText,
-                style: style)
-          ],
-          style: style),maxLines: 1,overflow: TextOverflow.ellipsis,);
-    } else {
-      return Text(
-        text,
-        style: style, maxLines: 1,overflow: TextOverflow.ellipsis
-      );
-    }
-  }
 }

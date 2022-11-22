@@ -1160,12 +1160,15 @@ class ChatController extends BaseController with GetTickerProviderStateMixin {
         "groupJid": "",
         "messageIds": messageIds
       })?.then((value) {
-        debugPrint("result of forward ==> ${value.toString()}");
-        profile_.value = value as Profile;
-        isBlocked(profile.isBlocked);
-        FlyChat.setOnGoingChatUser(profile.jid!);
-        getChatHistory();
-        sendReadReceipt();
+        if(value!=null) {
+          debugPrint("result of forward ==> ${(value as Profile).toJson().toString()}");
+          profile_.value = value as Profile;
+          isBlocked(profile.isBlocked);
+          memberOfGroup();
+          FlyChat.setOnGoingChatUser(profile.jid!);
+          getChatHistory();
+          sendReadReceipt();
+        }
       });
     }
   }
@@ -1263,6 +1266,7 @@ class ChatController extends BaseController with GetTickerProviderStateMixin {
         if (value != null) {
           profile_(value as Profile);
           isBlocked(profile.isBlocked);
+          memberOfGroup();
           FlyChat.setOnGoingChatUser(profile.jid!);
           getChatHistory();
           sendReadReceipt();
@@ -1298,12 +1302,16 @@ class ChatController extends BaseController with GetTickerProviderStateMixin {
   void onMessageStatusUpdated(event) {
     super.onMessageStatusUpdated(event);
     ChatMessageModel chatMessageModel = sendMessageModelFromJson(event);
-    final index = chatList.indexWhere(
-        (message) => message.messageId == chatMessageModel.messageId);
-    debugPrint("Message Status Update index of search $index");
-    if (index != -1) {
-      // Helper.hideLoading();
-      chatList[index] = chatMessageModel;
+    if(chatMessageModel.chatUserJid==profile.jid) {
+      final index = chatList.value.indexWhere(
+              (message) => message.messageId == chatMessageModel.messageId);
+      debugPrint("Message Status Update index of search $index");
+      if (index != -1) {
+        // Helper.hideLoading();
+        chatList[index] = chatMessageModel;
+      } else {
+        chatList.add(chatMessageModel);
+      }
     }
   }
 
@@ -1311,11 +1319,13 @@ class ChatController extends BaseController with GetTickerProviderStateMixin {
   void onMediaStatusUpdated(event) {
     super.onMediaStatusUpdated(event);
     ChatMessageModel chatMessageModel = sendMessageModelFromJson(event);
-    final index = chatList.indexWhere(
-        (message) => message.messageId == chatMessageModel.messageId);
-    debugPrint("Media Status Update index of search $index");
-    if (index != -1) {
-      chatList[index] = chatMessageModel;
+    if(chatMessageModel.chatUserJid==profile.jid) {
+      final index = chatList.value.indexWhere(
+              (message) => message.messageId == chatMessageModel.messageId);
+      debugPrint("Media Status Update index of search $index");
+      if (index != -1) {
+        chatList[index] = chatMessageModel;
+      }
     }
   }
 

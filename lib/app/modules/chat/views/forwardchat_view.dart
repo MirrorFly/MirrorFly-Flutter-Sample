@@ -19,11 +19,12 @@ class ForwardChatView extends GetView<ForwardChatController> {
           leading: IconButton(
             icon: const Icon(Icons.close),
             onPressed: () {
-              controller.search ? controller.backFromSearch() : Get.back();
+              !controller.isSearchVisible ? controller.backFromSearch() : Get.back();
             },
           ),
-          title: controller.search
+          title: !controller.isSearchVisible
               ? TextField(
+            focusNode: controller.focusnode,
                   onChanged: (text) {
                     controller.onSearch(text);
                   },
@@ -45,113 +46,155 @@ class ForwardChatView extends GetView<ForwardChatController> {
         ),
         body: Column(
           children: [
-            Expanded(
+            Flexible(
               child: ListView(
+                controller: controller.userlistScrollController,
                 physics: const AlwaysScrollableScrollPhysics(),
                 children: [
-                  Visibility(
-                    visible: controller.recentChats.isNotEmpty,
-                    child: searchHeader("Recent Chat",
-                        controller.recentChats.length.toString(), context),
-                  ),
-                  ListView.builder(
-                      itemCount: controller.recentChats.length,
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      itemBuilder: (context, index) {
-                        var item = controller.recentChats[index];
-                        return recentChatItem(
-                            item,
-                            context,
-                            () {
-                              //chat page
-                              controller.onItemClicked(item.jid.checkNull(),
-                                  item.profileName.checkNull());
-                            },
-                            isCheckBoxVisible: true,
-                            isChecked: controller.isChecked(item.jid.checkNull()),
-                            onchange: (value) {
-                              controller.onItemClicked(item.jid.checkNull(),
-                                  item.profileName.checkNull());
-                            });
-                      }),
-                  Visibility(
-                    visible: controller.groupList.isNotEmpty,
-                    child: searchHeader("Groups",
-                        controller.groupList.length.toString(), context),
-                  ),
-                  ListView.builder(
-                      itemCount: controller.groupList.length,
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      itemBuilder: (context, index) {
-                        var item = controller.groupList[index];
-                        return memberItem(
-                            name: item.name.checkNull(),
-                            image: item.image.checkNull(),
-                            status: item.status.checkNull(),
-                            onTap: () {
-                              controller.onItemClicked(item.jid.checkNull(),
-                                  item.name.checkNull());
-                            },
-                            isCheckBoxVisible: true,
-                            isChecked: controller.isChecked(item.jid.checkNull()),
-                            onchange: (value) {
-                              controller.onItemClicked(item.jid.checkNull(),
-                                  item.name.checkNull());
-                            });
-                      }),
-                  Visibility(
-                    visible: controller.userList.isNotEmpty,
-                    child: searchHeader("Contacts",
-                        controller.userList.length.toString(), context),
-                  ),
-                  Visibility(
-                    visible: controller.userList.isNotEmpty,
-                    child: ListView.builder(
-                        controller: controller.userlistScrollController,
-                        itemCount: controller.scrollable.value
-                            ? controller.userList.length + 1
-                            : controller.userList.length,
-                        shrinkWrap: true,
-                        physics: const NeverScrollableScrollPhysics(),
-                        itemBuilder: (context, index) {
-                          if (index >= controller.userList.length) {
-                            return const Center(
-                                child: CircularProgressIndicator());
-                          } else {
-                            var item = controller.userList[index];
-                            return memberItem(
-                                name: item.name.checkNull(),
-                                image: item.image.checkNull(),
-                                status: item.status.checkNull(),
-                                onTap: () {
+                  Column(
+                    children: [
+                      Visibility(
+                        visible: controller.recentChats.isNotEmpty,
+                        child: searchHeader("Recent Chat",
+                            controller.recentChats.length.toString(), context),
+                      ),
+                      ListView.builder(
+                          itemCount: controller.recentChats.length,
+                          shrinkWrap: true,
+                          physics: const NeverScrollableScrollPhysics(),
+                          itemBuilder: (context, index) {
+                            var item = controller.recentChats[index];
+                            return recentChatItem(
+                                item: item, context: context,onTap:() {
+                                  //chat page
                                   controller.onItemClicked(item.jid.checkNull(),
-                                      item.name.checkNull());
+                                      item.profileName.checkNull());
                                 },
+                                spanTxt: controller.searchQuery.text.toString(),
                                 isCheckBoxVisible: true,
                                 isChecked: controller.isChecked(item.jid.checkNull()),
                                 onchange: (value) {
                                   controller.onItemClicked(item.jid.checkNull(),
-                                      item.name.checkNull());
+                                      item.profileName.checkNull());
                                 });
-                          }
-                        }),
-                  ),
+                          }),
+                      Visibility(
+                        visible: controller.groupList.isNotEmpty,
+                        child: searchHeader("Groups",
+                            controller.groupList.length.toString(), context),
+                      ),
+                      ListView.builder(
+                          itemCount: controller.groupList.length,
+                          shrinkWrap: true,
+                          physics: const NeverScrollableScrollPhysics(),
+                          itemBuilder: (context, index) {
+                            var item = controller.groupList[index];
+                            return FutureBuilder(
+                              future: controller.getParticipantsNameAsCsv(item.jid.checkNull()),
+                                builder: (cxt,data){
+                                if(data.hasError){
+                                  return const SizedBox();
+                                }else {
+                                  if (data.data != null) {
+                                    return memberItem(
+                                        name: item.name.checkNull(),
+                                        image: item.image.checkNull(),
+                                        status: data.data.checkNull(),
+                                        spantext: controller.searchQuery.text.toString(),
+                                        onTap: () {
+                                          controller.onItemClicked(
+                                              item.jid.checkNull(),
+                                              item.name.checkNull());
+                                        },
+                                        isCheckBoxVisible: true,
+                                        isChecked: controller.isChecked(
+                                            item.jid.checkNull()),
+                                        onchange: (value) {
+                                          controller.onItemClicked(
+                                              item.jid.checkNull(),
+                                              item.name.checkNull());
+                                        });
+                                  }else{
+                                    return const SizedBox();
+                                  }
+                                }
+                            });
+                          }),
+                      Visibility(
+                        visible: controller.userList.isNotEmpty,
+                        child: searchHeader("Contacts",
+                            controller.userList.length.toString(), context),
+                      ),
+                      Visibility(
+                        visible: controller.userList.isNotEmpty,
+                        child: controller.searchLoading.value ? const Center(child: CircularProgressIndicator(),) : ListView.builder(
+                            itemCount: controller.scrollable.value
+                                ? controller.userList.length + 1
+                                : controller.userList.length,
+                            shrinkWrap: true,
+                            physics: const NeverScrollableScrollPhysics(),
+                            itemBuilder: (context, index) {
+                              if (index >= controller.userList.length) {
+                                return const Center(
+                                    child: CircularProgressIndicator());
+                              } else {
+                                var item = controller.userList[index];
+                                return memberItem(
+                                    name: item.name.checkNull(),
+                                    image: item.image.checkNull(),
+                                    status: item.status.checkNull(),
+                                    spantext: controller.searchQuery.text.toString(),
+                                    onTap: () {
+                                      controller.onItemClicked(item.jid.checkNull(),
+                                          item.name.checkNull());
+                                    },
+                                    isCheckBoxVisible: true,
+                                    isChecked: controller.isChecked(item.jid.checkNull()),
+                                    onchange: (value) {
+                                      controller.onItemClicked(item.jid.checkNull(),
+                                          item.name.checkNull());
+                                    });
+                              }
+                            }),
+                      ),
+                    ],
+                  )
                 ],
               ),
             ),
-            ListTile(
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Row(
+                children: [
+                  Expanded(child: controller.selectedNames.value.isEmpty ? const Text("No Users Selected",style: TextStyle(color: textcolor)) : Text(controller.selectedNames.value.join(","),maxLines: 2,overflow: TextOverflow.ellipsis,style: const TextStyle(color: textcolor),),),
+                  Visibility(
+                    visible: controller.selectedNames.value.isNotEmpty,
+                    child: InkWell(
+                      onTap: () {
+                        controller.forwardMessages();
+                      },
+                      child: const Padding(
+                        padding: EdgeInsets.all(8.0),
+                        child: Text("NEXT",style: TextStyle(fontSize: 18,fontWeight: FontWeight.w500),),
+                      ),
+                    ),
+                  )
+                ],
+              ),
+            ),
+            /*ListTile(
               leading:
                   Flexible(child: Padding(
                     padding: const EdgeInsets.only(right: 30.0),
-                    child: Text(controller.selectedNames.join(",")),
+                    child: Text(controller.selectedNames.value.join(",")),
                   )),
               trailing: InkWell(
-                onTap: () {},
-                child: Text("NEXT"),
+                onTap: () {
+                  controller.forwardMessages();
+                },
+                child: Text("NEXT",style: TextStyle(fontSize: 18,fontWeight: FontWeight.w500),),
               ),
-            )
+            )*/
           ],
         ),
       );

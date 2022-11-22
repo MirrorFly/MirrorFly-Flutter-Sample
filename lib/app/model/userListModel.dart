@@ -30,6 +30,7 @@ class UserList {
 
 
 List<Profile> profileFromJson(String str) => List<Profile>.from(json.decode(str).map((x) => Profile.fromJson(x)));
+Profile profiledata(String str) => Profile.fromJson(json.decode(str.toString()));
 
 class Profile {
   Profile({

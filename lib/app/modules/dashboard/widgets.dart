@@ -19,7 +19,12 @@ Widget searchHeader(String? type, String count, BuildContext context) {
 }
 
 
-Widget recentChatItem(RecentChatData item, BuildContext context,Function() onTap,{bool isCheckBoxVisible = false,bool isChecked = false,Function(bool? value)? onchange}) {
+Widget recentChatItem({required RecentChatData item, required BuildContext context,required Function() onTap,String spanTxt = "",bool isCheckBoxVisible = false,bool isChecked = false,Function(bool? value)? onchange}) {
+  var titlestyle = const TextStyle(
+    fontSize: 16.0,
+    fontWeight: FontWeight.w700,
+    fontFamily: 'sf_ui',
+    color: texthintcolor);
   return InkWell(
     onTap:onTap,
     child: Row(
@@ -56,7 +61,7 @@ Widget recentChatItem(RecentChatData item, BuildContext context,Function() onTap
                     : const SizedBox(),
               ],
             )),
-        Flexible(
+        Expanded(
           child: Container(
             padding: const EdgeInsets.only(top: 8),
             child: Column(
@@ -69,14 +74,10 @@ Widget recentChatItem(RecentChatData item, BuildContext context,Function() onTap
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(
+                          spanTxt.isEmpty ? Text(
                             item.profileName.toString(),
-                            style: const TextStyle(
-                                fontSize: 16.0,
-                                fontWeight: FontWeight.w700,
-                                fontFamily: 'sf_ui',
-                                color: texthintcolor),
-                          ),
+                            style: titlestyle,
+                          ) : spannableText(item.profileName.checkNull(), spanTxt, titlestyle),
                           Row(
                             children: [
                               item.unreadMessageCount.toString() != "0"
@@ -141,4 +142,31 @@ Widget recentChatItem(RecentChatData item, BuildContext context,Function() onTap
       ],
     ),
   );
+}
+
+Widget spannableText(String text, String spannableText,TextStyle? style) {
+  var startIndex = text.toLowerCase().indexOf(spannableText.toLowerCase());
+  var endIndex = startIndex + spannableText.length;
+  if (startIndex != -1 && endIndex != -1) {
+    var startText = text.substring(0, startIndex);
+    var colorText = text.substring(startIndex, endIndex);
+    var endText = text.substring(endIndex, text.length);
+    Log("startText", startText);
+    Log("endText", endText);
+    Log("colorText", colorText);
+    return Text.rich(TextSpan(
+        text: startText,
+        children: [
+          TextSpan(text: colorText, style: const TextStyle(color: Colors.blue)),
+          TextSpan(
+              text: endText,
+              style: style)
+        ],
+        style: style),maxLines: 1,overflow: TextOverflow.ellipsis,);
+  } else {
+    return Text(
+        text,
+        style: style, maxLines: 1,overflow: TextOverflow.ellipsis
+    );
+  }
 }

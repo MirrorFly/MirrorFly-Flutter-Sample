@@ -124,10 +124,10 @@ const String phonecall = 'assets/logos/phonecall.svg';
 const String videocall = 'assets/logos/videocall.svg';
 const String replyIcon = 'assets/logos/reply.svg';
 const String forwardIcon = 'assets/logos/forward.svg';
-const String deleteIcon = 'assets/logos/delete.svg';
+const String deleteIcon = 'assets/logos/delete_black.svg';
 const String cancelIcon = 'assets/logos/close.svg';
 const String favouriteIcon = 'assets/logos/star.svg';
-const String unfavouriteIcon = 'assets/logos/star.svg';
+const String unfavouriteIcon = 'assets/logos/unstar.svg';
 const String copyIcon = 'assets/logos/copy.svg';
 const String infoIcon = 'assets/logos/info.svg';
 

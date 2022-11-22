@@ -7,6 +7,7 @@ import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
 
 import 'package:flutter_cache_manager/flutter_cache_manager.dart' as cache;
+import 'package:mirror_fly_demo/app/modules/dashboard/widgets.dart';
 import 'constants.dart';
 import 'main_controller.dart';
 
@@ -101,8 +102,8 @@ class ImageNetwork extends GetView<MainController> {
   @override
   Widget build(BuildContext context) {
     var authToken = controller.authToken;
-    Log("MirrorFly Auth", authToken.value);
-    Log("Image URL", url);
+    // Log("MirrorFly Auth", authToken.value);
+    // Log("Image URL", url);
     if (url.isEmpty) {
       return errorWidget != null
           ? errorWidget!
@@ -136,7 +137,7 @@ class ImageNetwork extends GetView<MainController> {
             );
           },
           errorWidget: (context, link, error) {
-            Log("image error", "$error link : $link");
+            // Log("image error", "$error link : $link");
             if (error.toString().contains("401") && url.isNotEmpty) {
               // controller.getAuthToken();
               _deleteImageFromCache(url);
@@ -215,9 +216,13 @@ class ListItem extends StatelessWidget {
 }
 
 
-Widget memberItem({required String name,required String image,required String status,bool? isAdmin, required Function() onTap,bool isCheckBoxVisible = false,bool isChecked = false,Function(bool? value)? onchange}) {
-  Log("admin", isAdmin.toString());
-  return Padding(
+Widget memberItem({required String name,required String image,required String status,bool? isAdmin, required Function() onTap,String spantext = "",bool isCheckBoxVisible = false,bool isChecked = false,Function(bool? value)? onchange}) {
+  var titlestyle =  const TextStyle(
+      color: Colors.black,
+      fontSize: 14.0,
+      fontWeight: FontWeight.w700
+  );
+  return Container(
     padding: const EdgeInsets.symmetric(vertical: 4.0),
     child: InkWell(
       onTap: onTap,
@@ -248,15 +253,11 @@ Widget memberItem({required String name,required String image,required String st
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Text(name.checkNull(),
-                        style: const TextStyle(
-                            color: Colors.black,
-                            fontSize: 14.0,
-                            fontWeight: FontWeight.w700
-                        ),
+                      spantext.isEmpty ? Text(name.checkNull(),
+                        style: titlestyle,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis, //TextStyle
-                      ),
+                      ) : spannableText(name.checkNull(), spantext, titlestyle,),
                       Text(status.checkNull(),
                         style: const TextStyle(
                           color: Colors.black,
