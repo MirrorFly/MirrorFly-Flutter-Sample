@@ -434,7 +434,7 @@ class FlyChat {
   static Future<dynamic> getProfileLocal(String jid,bool server) async {
     dynamic profileResponse;
     try {
-      profileResponse = await mirrorFlyMethodChannel.invokeMethod('getProfile',{"jid":jid,"server":server});
+      profileResponse = await mirrorFlyMethodChannel.invokeMethod('getUserProfile',{"jid":jid,"server":server});
       debugPrint("profile Result ==> $profileResponse");
       return profileResponse;
     }on PlatformException catch (e){
