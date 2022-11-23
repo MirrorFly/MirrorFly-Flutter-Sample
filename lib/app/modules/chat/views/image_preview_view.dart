@@ -19,7 +19,7 @@ class ImagePreviewView extends GetView<ImagePreviewController> {
         iconTheme: const IconThemeData(
             color: Colors.white
         ),
-        actions: [
+        /*actions: [
           IconButton(
               icon: const Icon(
                 Icons.delete_outline_outlined,
@@ -50,7 +50,7 @@ class ImagePreviewView extends GetView<ImagePreviewController> {
                 size: 27,
               ),
               onPressed: () {}),
-        ],
+        ],*/
       ),
       body: SafeArea(
         child: SizedBox(

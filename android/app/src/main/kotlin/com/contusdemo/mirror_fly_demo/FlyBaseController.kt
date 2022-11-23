@@ -709,10 +709,29 @@ class FlyBaseController(applicationContext: Context) : MethodChannel.MethodCallH
             call.method.equals("get_favourite_messages") -> {
                 getFavouriteMessages(result)
             }
+            call.method.equals("getAllGroups") -> {
+                getAllGroups(call,result)
+            }
             else -> {
                 result.notImplemented()
             }
 
+        }
+    }
+
+    private fun getAllGroups(call: MethodCall,result: MethodChannel.Result){
+        val server = call.argument<Boolean>("server") ?: false
+        GroupManager.getAllGroups(server) { isSuccess, throwable, data ->
+            if (isSuccess) {
+                val profilesList = data["data"] as ArrayList<ProfileDetails>
+                profilesList.let {
+                    it.sortedBy { profileDetails -> profileDetails.name?.toLowerCase() }
+                }
+                DebugUtilis.v("GroupManager.getAllGroups", data.tojsonString())
+                result.success(profilesList.tojsonString())
+            } else {
+                result.error("500", "Unable to get all groups", throwable)
+            }
         }
     }
 
