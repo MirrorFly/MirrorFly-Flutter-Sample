@@ -2115,7 +2115,7 @@ class ChatView extends GetView<ChatController> {
                           },
                           // icon: controller.getOptionStatus('Favourite') ? const Icon(Icons.star_border_outlined)
                           icon: controller.selectedChatList[0].isMessageStarred
-                              ? SvgPicture.asset(unfavouriteIcon)
+                              ? SvgPicture.asset(unFavouriteIcon)
                               : SvgPicture.asset(favouriteIcon)),
                       overflowWidget: const Text("Favourite"),
                       showAsAction: ShowAsAction.always,

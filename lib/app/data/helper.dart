@@ -313,10 +313,10 @@ String getRecentChatTime(BuildContext context, int? epochTime) {
   var time = (currentYear == calendar.year)
       ? DateFormat("dd-MMM").format(calendar)
       : DateFormat("yyyy/MM/dd").format(calendar);
-  return (equalsWithYesterday(calendar, Constants.TODAY))
+  return (equalsWithYesterday(calendar, Constants.today))
       ? hourTime
-      : (equalsWithYesterday(calendar, Constants.YESTERDAY))
-      ? Constants.YESTERDAY_UPPER
+      : (equalsWithYesterday(calendar, Constants.yesterday))
+      ? Constants.yesterdayUpper
       : time;
 }
 
@@ -344,7 +344,7 @@ String setDateHourFormat(int format, int hours) {
 bool equalsWithYesterday(DateTime srcDate, String day) {
   // Time part has
   // discarded
-  var yesterday = (day == Constants.YESTERDAY)
+  var yesterday = (day == Constants.yesterday)
       ? calendar.subtract(const Duration(days: 1))
       : DateTime.now();
   return yesterday

@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
 
 import '../../common/constants.dart';
-import '../../common/main_controller.dart';
 import '../../common/widgets.dart';
 import '../../model/recent_chat.dart';
 
@@ -11,7 +9,7 @@ Widget searchHeader(String? type, String count, BuildContext context) {
   return Container(
     width: MediaQuery.of(context).size.width,
     padding: const EdgeInsets.all(8),
-    color: dividercolor,
+    color: dividerColor,
     child: Text.rich(TextSpan(text: type, children: [
       TextSpan(text: " ($count)", style: const TextStyle(fontWeight: FontWeight.bold))
     ])),
@@ -24,7 +22,7 @@ Widget recentChatItem({required RecentChatData item, required BuildContext conte
     fontSize: 16.0,
     fontWeight: FontWeight.w700,
     fontFamily: 'sf_ui',
-    color: texthintcolor);
+    color: textHintColor);
   return InkWell(
     onTap:onTap,
     child: Row(
@@ -130,8 +128,8 @@ Widget recentChatItem({required RecentChatData item, required BuildContext conte
                             fontWeight: FontWeight.w600,
                             fontFamily: 'sf_ui',
                             color: item.unreadMessageCount.toString() != "0"
-                                ? buttonbgcolor
-                                : textcolor),
+                                ? buttonBgColor
+                                : textColor),
                       ) :
                       Visibility(
                         visible: isCheckBoxVisible,
@@ -160,9 +158,9 @@ Widget spannableText(String text, String spannableText,TextStyle? style) {
     var startText = text.substring(0, startIndex);
     var colorText = text.substring(startIndex, endIndex);
     var endText = text.substring(endIndex, text.length);
-    Log("startText", startText);
-    Log("endText", endText);
-    Log("colorText", colorText);
+    mirrorFlyLog("startText", startText);
+    mirrorFlyLog("endText", endText);
+    mirrorFlyLog("colorText", colorText);
     return Text.rich(TextSpan(
         text: startText,
         children: [

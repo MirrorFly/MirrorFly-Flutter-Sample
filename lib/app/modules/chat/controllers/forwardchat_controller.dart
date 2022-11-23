@@ -103,7 +103,7 @@ class ForwardChatController extends GetxController {
           isPageLoading.value == false) {
         if (scrollable.value && !searching) {
           //isPageLoading.value = true;
-          Log("scroll", "end");
+          mirrorFlyLog("scroll", "end");
           pageNum++;
           getUsers();
         }

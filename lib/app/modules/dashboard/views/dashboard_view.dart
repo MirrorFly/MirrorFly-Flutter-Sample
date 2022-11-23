@@ -245,7 +245,7 @@ class DashboardView extends GetView<DashboardController> {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Image.asset(
-            nocallimage,
+            noCallImage,
             width: 200,
           ),
           Text(

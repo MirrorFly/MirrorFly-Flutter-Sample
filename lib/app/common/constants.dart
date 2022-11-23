@@ -344,18 +344,14 @@ class Constants {
 
   static const String bulletPoint = "\u2022 ";
 
-  static const String GROUP_EVENT = "group_events";
-  static const String ARCHIVE_EVENT = "archive_events";
-  static const String MESSAGE_RECEIVED = "message_received";
-  static const String MESSAGE_UPDATED = "message_updated";
-  static const String MEDIA_STATUS_UPDATED = "media_status_updated";
-  static const String MEDIA_UPLOAD_DOWNLOAD_PROGRESS = "media_upload_download_progress";
-  static const String MUTE_EVENT = "mute_event";
-  static const String PIN_EVENT = "pin_event";
-
-  static const String TYPE_CHAT = "chat";
-  static const String TYPE_GROUP_CHAT = "groupchat";
-  static const String TYPE_BROADCAST_CHAT = "broadcast";
+  static const String groupEvent = "group_events";
+  static const String archiveEvent = "archive_events";
+  static const String messageReceived = "message_received";
+  static const String messageUpdated = "message_updated";
+  static const String mediaStatusUpdated = "media_status_updated";
+  static const String mediaUploadDownloadProgress = "media_upload_download_progress";
+  static const String muteEvent = "mute_event";
+  static const String pinEvent = "pin_event";
 
   static const String typeChat = "chat";
   static const String typeGroupChat = "groupchat";

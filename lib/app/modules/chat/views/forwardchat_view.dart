@@ -40,7 +40,7 @@ class ForwardChatView extends GetView<ForwardChatController> {
               visible: controller.isSearchVisible,
               child: IconButton(
                   onPressed: () => controller.onSearchPressed(),
-                  icon: SvgPicture.asset(searchicon)),
+                  icon: SvgPicture.asset(searchIcon)),
             )
           ],
         ),
@@ -166,7 +166,7 @@ class ForwardChatView extends GetView<ForwardChatController> {
               padding: const EdgeInsets.all(8.0),
               child: Row(
                 children: [
-                  Expanded(child: controller.selectedNames.value.isEmpty ? const Text("No Users Selected",style: TextStyle(color: textcolor)) : Text(controller.selectedNames.value.join(","),maxLines: 2,overflow: TextOverflow.ellipsis,style: const TextStyle(color: textcolor),),),
+                  Expanded(child: controller.selectedNames.value.isEmpty ? const Text("No Users Selected",style: TextStyle(color: textColor)) : Text(controller.selectedNames.value.join(","),maxLines: 2,overflow: TextOverflow.ellipsis,style: const TextStyle(color: textColor),),),
                   Visibility(
                     visible: controller.selectedNames.value.isNotEmpty,
                     child: InkWell(
