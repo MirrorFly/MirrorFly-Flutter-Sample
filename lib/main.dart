@@ -37,7 +37,7 @@ Future<void> main() async {
     await FirebaseAuth.instance.useAuthEmulator('localhost', 5050);
   }
   await SessionManagement.onInit();
-  Get.lazyPut(() => MainController());
+  Get.put<MainController>(MainController());
   runApp(const MyApp());
 }
 

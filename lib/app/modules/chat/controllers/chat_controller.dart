@@ -415,6 +415,7 @@ class ChatController extends BaseController with GetTickerProviderStateMixin {
       }
     } else {
       // User canceled the picker
+      debugPrint("======User Cancelled=====");
     }
   }
 

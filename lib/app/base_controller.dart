@@ -22,6 +22,7 @@ abstract class BaseController extends GetxController {
     FlyChat.onMessageReceived.listen(onMessageReceived);
     FlyChat.onMessageStatusUpdated.listen(onMessageStatusUpdated);
     FlyChat.onMediaStatusUpdated.listen(onMediaStatusUpdated);
+
     FlyChat.onGroupProfileFetched.listen(onGroupProfileFetched);
     FlyChat.onNewGroupCreated.listen(onNewGroupCreated);
     FlyChat.onGroupProfileUpdated.listen(onGroupProfileUpdated);

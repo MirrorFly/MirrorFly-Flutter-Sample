@@ -6,7 +6,7 @@ object MessageReceivedStreamHandler : EventChannel.StreamHandler {
 
     var onMessageReceived: EventChannel.EventSink? = null
 
-    //Event Handler Methods
+    
     override fun onListen(arguments: Any?, events: EventChannel.EventSink?) {
         onMessageReceived = events
     }
@@ -19,8 +19,7 @@ object MessageStatusUpdatedStreamHandler : EventChannel.StreamHandler {
 
     var onMessageStatusUpdated: EventChannel.EventSink? = null
 
-
-    //Event Handler Methods
+    
     override fun onListen(arguments: Any?, events: EventChannel.EventSink?) {
         onMessageStatusUpdated = events
     }
@@ -33,7 +32,7 @@ object MediaStatusUpdatedStreamHandler : EventChannel.StreamHandler {
 
     var onMediaStatusUpdated: EventChannel.EventSink? = null
 
-    //Event Handler Methods
+    
     override fun onListen(arguments: Any?, events: EventChannel.EventSink?) {
         onMediaStatusUpdated = events
     }
@@ -46,7 +45,7 @@ object UploadDownloadProgressChangedStreamHandler : EventChannel.StreamHandler {
 
     var onUploadDownloadProgressChanged: EventChannel.EventSink? = null
 
-    //Event Handler Methods
+    
     override fun onListen(arguments: Any?, events: EventChannel.EventSink?) {
         onUploadDownloadProgressChanged = events
     }
@@ -59,7 +58,7 @@ object ShowOrUpdateOrCancelNotificationStreamHandler : EventChannel.StreamHandle
 
     var showOrUpdateOrCancelNotification: EventChannel.EventSink? = null
 
-    //Event Handler Methods
+    
     override fun onListen(arguments: Any?, events: EventChannel.EventSink?) {
         showOrUpdateOrCancelNotification = events
     }
@@ -72,7 +71,7 @@ object onGroupProfileFetchedStreamHandler : EventChannel.StreamHandler {
 
     var onGroupProfileFetched: EventChannel.EventSink? = null
 
-    //Event Handler Methods
+    
     override fun onListen(arguments: Any?, events: EventChannel.EventSink?) {
         onGroupProfileFetched = events
     }
@@ -85,7 +84,7 @@ object onNewGroupCreatedStreamHandler : EventChannel.StreamHandler {
 
     var onNewGroupCreated: EventChannel.EventSink? = null
 
-    //Event Handler Methods
+    
     override fun onListen(arguments: Any?, events: EventChannel.EventSink?) {
         onNewGroupCreated = events
     }
@@ -98,7 +97,7 @@ object onGroupProfileUpdatedStreamHandler : EventChannel.StreamHandler {
 
     var onGroupProfileUpdated: EventChannel.EventSink? = null
 
-    //Event Handler Methods
+    
     override fun onListen(arguments: Any?, events: EventChannel.EventSink?) {
         onGroupProfileUpdated = events
     }
@@ -111,7 +110,7 @@ object onNewMemberAddedToGroupStreamHandler : EventChannel.StreamHandler {
 
     var onNewMemberAddedToGroup: EventChannel.EventSink? = null
 
-    //Event Handler Methods
+    
     override fun onListen(arguments: Any?, events: EventChannel.EventSink?) {
         onNewMemberAddedToGroup = events
     }
@@ -124,7 +123,7 @@ object onMemberRemovedFromGroupStreamHandler : EventChannel.StreamHandler {
 
     var onMemberRemovedFromGroup: EventChannel.EventSink? = null
 
-    //Event Handler Methods
+    
     override fun onListen(arguments: Any?, events: EventChannel.EventSink?) {
         onMemberRemovedFromGroup = events
     }
@@ -137,7 +136,7 @@ object onFetchingGroupMembersCompletedStreamHandler : EventChannel.StreamHandler
 
     var onFetchingGroupMembersCompleted: EventChannel.EventSink? = null
 
-    //Event Handler Methods
+    
     override fun onListen(arguments: Any?, events: EventChannel.EventSink?) {
         onFetchingGroupMembersCompleted = events
     }
@@ -150,7 +149,7 @@ object onDeleteGroupStreamHandler : EventChannel.StreamHandler {
 
     var onDeleteGroup: EventChannel.EventSink? = null
 
-    //Event Handler Methods
+    
     override fun onListen(arguments: Any?, events: EventChannel.EventSink?) {
         onDeleteGroup = events
     }
@@ -163,7 +162,7 @@ object onFetchingGroupListCompletedStreamHandler : EventChannel.StreamHandler {
 
     var onFetchingGroupListCompleted: EventChannel.EventSink? = null
 
-    //Event Handler Methods
+    
     override fun onListen(arguments: Any?, events: EventChannel.EventSink?) {
         onFetchingGroupListCompleted = events
     }
@@ -176,7 +175,7 @@ object onMemberMadeAsAdminStreamHandler : EventChannel.StreamHandler {
 
     var onMemberMadeAsAdmin: EventChannel.EventSink? = null
 
-    //Event Handler Methods
+    
     override fun onListen(arguments: Any?, events: EventChannel.EventSink?) {
         onMemberMadeAsAdmin = events
     }
@@ -189,7 +188,7 @@ object onMemberRemovedAsAdminStreamHandler : EventChannel.StreamHandler {
 
     var onMemberRemovedAsAdmin: EventChannel.EventSink? = null
 
-    //Event Handler Methods
+    
     override fun onListen(arguments: Any?, events: EventChannel.EventSink?) {
         onMemberRemovedAsAdmin = events
     }
@@ -202,7 +201,7 @@ object onLeftFromGroupStreamHandler : EventChannel.StreamHandler {
 
     var onLeftFromGroup: EventChannel.EventSink? = null
 
-    //Event Handler Methods
+    
     override fun onListen(arguments: Any?, events: EventChannel.EventSink?) {
         onLeftFromGroup = events
     }
@@ -215,7 +214,7 @@ object onGroupNotificationMessageStreamHandler : EventChannel.StreamHandler {
 
     var onGroupNotificationMessage: EventChannel.EventSink? = null
 
-    //Event Handler Methods
+    
     override fun onListen(arguments: Any?, events: EventChannel.EventSink?) {
         onGroupNotificationMessage = events
     }
@@ -228,7 +227,7 @@ object onGroupDeletedLocallyStreamHandler : EventChannel.StreamHandler {
 
     var onGroupDeletedLocally: EventChannel.EventSink? = null
 
-    //Event Handler Methods
+    
     override fun onListen(arguments: Any?, events: EventChannel.EventSink?) {
         onGroupDeletedLocally = events
     }
