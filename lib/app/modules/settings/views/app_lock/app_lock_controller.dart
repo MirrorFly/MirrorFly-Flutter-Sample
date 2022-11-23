@@ -154,7 +154,7 @@ class AppLockController extends GetxController {
     } else {
       removeClick();
     }
-    Log("add text", text.join().toString());
+    mirrorFlyLog("add text", text.join().toString());
   }
 
   removeClick() {
@@ -171,7 +171,7 @@ class AppLockController extends GetxController {
       _pin1(false);
       text.removeLast();
     } else {}
-    Log("rem text", text.join().toString());
+    mirrorFlyLog("rem text", text.join().toString());
   }
 
   validateAndUnlock() {

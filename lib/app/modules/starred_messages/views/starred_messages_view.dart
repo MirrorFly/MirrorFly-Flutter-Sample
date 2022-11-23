@@ -70,7 +70,7 @@ class StarredMessagesView extends GetView<StarredMessagesController> {
                       color: controller.isSelected.value &&
                           starredChatList[index].isSelected &&
                           controller.starredChatList.isNotEmpty
-                          ? chatreplycontainercolor
+                          ? chatReplyContainerColor
                           : Colors.transparent,
                       margin: const EdgeInsets.only(
                           left: 14, right: 14, top: 5, bottom: 10),
@@ -92,11 +92,11 @@ class StarredMessagesView extends GetView<StarredMessagesController> {
                                   topRight: Radius.circular(10),
                                   bottomRight: Radius.circular(10)),
                               color: (starredChatList[index].isMessageSentByMe
-                                  ? chatsentbgcolor
+                                  ? chatSentBgColor
                                   : Colors.white),
                               border: starredChatList[index].isMessageSentByMe
-                                  ? Border.all(color: chatsentbgcolor)
-                                  : Border.all(color: chatbordercolor)),
+                                  ? Border.all(color: chatSentBgColor)
+                                  : Border.all(color: chatBorderColor)),
                           child: MessageContent(chatList: starredChatList[index], isTapEnabled: false,),
                         ),
                       ),

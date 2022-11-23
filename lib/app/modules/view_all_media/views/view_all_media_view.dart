@@ -23,9 +23,9 @@ class ViewAllMediaView extends GetView<ViewAllMediaController> {
           automaticallyImplyLeading: true,
           title: Text(controller.name),
           bottom: TabBar(
-              indicatorColor: buttonbgcolor,
-              labelColor: buttonbgcolor,
-              unselectedLabelColor: appbartextcolor,
+              indicatorColor: buttonBgColor,
+              labelColor: buttonBgColor,
+              unselectedLabelColor: appbarTextColor,
               indicatorWeight: 2,
               indicatorSize: TabBarIndicatorSize.tab,
               indicatorPadding: const EdgeInsets.symmetric(horizontal: 16),
@@ -140,7 +140,7 @@ class ViewAllMediaView extends GetView<ViewAllMediaController> {
           fit: BoxFit.cover,
         ),*/
         Center(
-          child: SvgPicture.asset(video_white),
+          child: SvgPicture.asset(videoWhite),
         )
       ],
     );
@@ -149,7 +149,7 @@ class ViewAllMediaView extends GetView<ViewAllMediaController> {
   Widget audioItem(ChatMessageModel item) {
     return Center(
       child: SvgPicture.asset(
-          item.mediaChatMessage!.isAudioRecorded ? audio_mic_1 : audio_white),
+          item.mediaChatMessage!.isAudioRecorded ? audioMic1 : audioWhite),
     );
   }
 
@@ -292,7 +292,7 @@ class ViewAllMediaView extends GetView<ViewAllMediaController> {
                                       topLeft: Radius.circular(8),
                                       bottomLeft: Radius.circular(8))),
                               child: Center(
-                                child: SvgPicture.asset(link_image),
+                                child: SvgPicture.asset(linkImage),
                               ),
                             ),
                       Expanded(
@@ -328,7 +328,7 @@ class ViewAllMediaView extends GetView<ViewAllMediaController> {
                                       item.chatMessage.isVideoMessage())
                                   ? item.chatMessage.mediaChatMessage!
                                       .mediaCaptionText
-                                  : Constants.EMPTY_STRING,
+                                  : Constants.emptyString,
                           style: const TextStyle(
                               fontSize: 13, color: Color(0xff7889B3)),
                           overflow: TextOverflow.ellipsis,
@@ -360,29 +360,29 @@ class ViewAllMediaView extends GetView<ViewAllMediaController> {
     }
     switch (filename.toLowerCase().substring(filename.lastIndexOf(".") + 1)) {
       case "csv":
-        return csv_image;
+        return csvImage;
       case "pdf":
-        return pdf_image;
+        return pdfImage;
       case "doc":
-        return doc_image;
+        return docImage;
       case "docx":
-        return docx_image;
+        return docxImage;
       case "txt":
-        return txt_image;
+        return txtImage;
       case "xls":
-        return xls_image;
+        return xlsImage;
       case "xlsx":
-        return xlsx_image;
+        return xlsxImage;
       case "ppt":
-        return ppt_image;
+        return pptImage;
       case "pptx":
-        return pptx_image;
+        return pptxImage;
       case "zip":
-        return zip_image;
+        return zipImage;
       case "rar":
-        return rar_image;
+        return rarImage;
       case "apk":
-        return apk_image;
+        return apkImage;
       default:
         return "";
     }

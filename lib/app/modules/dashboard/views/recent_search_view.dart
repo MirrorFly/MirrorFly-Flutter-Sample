@@ -17,7 +17,7 @@ class RecentSearchView extends GetView<RecentChatSearchController> {
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: iconcolor),
+          icon: const Icon(Icons.arrow_back, color: iconColor),
           onPressed: () {
             Get.back();
           },
@@ -29,7 +29,7 @@ class RecentSearchView extends GetView<RecentChatSearchController> {
           decoration: const InputDecoration(
               hintText: "Search", border: InputBorder.none),
         ),
-        iconTheme: const IconThemeData(color: iconcolor),
+        iconTheme: const IconThemeData(color: iconColor),
       ),
       body: Obx(() =>
           ListView.builder(
@@ -41,7 +41,7 @@ class RecentSearchView extends GetView<RecentChatSearchController> {
               //var image = controller.image path(item.profileImage);
               return recentChatItem(item.value, context);
             }else {
-              Log("RecentSearch",
+              mirrorFlyLog("RecentSearch",
                   controller.recentSearchList[position].toJson().toString());
               return getViewByType(
                   controller.recentSearchList[position], context, position) ??
@@ -53,15 +53,15 @@ class RecentSearchView extends GetView<RecentChatSearchController> {
 
   Widget? getViewByType(
       Rx<RecentSearch> item, BuildContext context, int position) {
-    Log("search type", item.value.searchType.reactive.value.toString());
+    mirrorFlyLog("search type", item.value.searchType.reactive.value.toString());
     switch (item.value.searchType.reactive.value.toString()) {
-      case Constants.TYPE_SEARCH_RECENT:
+      case Constants.typeSearchRecent:
         //viewRecentChatItem
         return viewRecentChatItem(item, context, position);
-      case Constants.TYPE_SEARCH_CONTACT:
+      case Constants.typeSearchContact:
         //viewContactItem
         return viewContactItem(context,position);
-      case Constants.TYPE_SEARCH_MESSAGE:
+      case Constants.typeSearchMessage:
         //viewMessageItem
         return viewMessageItem(context, position);
       default:
@@ -138,7 +138,7 @@ class RecentSearchView extends GetView<RecentChatSearchController> {
                                             fontSize: 16.0,
                                             fontWeight: FontWeight.w700,
                                             fontFamily: 'sf_ui',
-                                            color: texthintcolor)),
+                                            color: textHintColor)),
                                         /*Text(
                                           item.profileName.toString(),
                                           style: TextStyle(
@@ -162,8 +162,8 @@ class RecentSearchView extends GetView<RecentChatSearchController> {
                                               color: item.unreadMessageCount
                                                           .toString() !=
                                                       "0"
-                                                  ? buttonbgcolor
-                                                  : textcolor),
+                                                  ? buttonBgColor
+                                                  : textColor),
                                         ),
                                       ),
                                     ],
@@ -303,7 +303,7 @@ class RecentSearchView extends GetView<RecentChatSearchController> {
                                                 fontSize: 16.0,
                                                 fontWeight: FontWeight.w700,
                                                 fontFamily: 'sf_ui',
-                                                color: texthintcolor),
+                                                color: textHintColor),
                                           ),
                                         ),
                                         Padding(
@@ -321,8 +321,8 @@ class RecentSearchView extends GetView<RecentChatSearchController> {
                                                 color: unreadMessageCount
                                                             .toString() !=
                                                         "0"
-                                                    ? buttonbgcolor
-                                                    : textcolor),
+                                                    ? buttonBgColor
+                                                    : textColor),
                                           ),
                                         ),
                                       ],
@@ -393,7 +393,7 @@ class RecentSearchView extends GetView<RecentChatSearchController> {
                         },
                       );
               } else if (snap.hasError) {
-                Log("snap error", snap.error.toString());
+                mirrorFlyLog("snap error", snap.error.toString());
               }
               return const SizedBox();
             }),
@@ -432,8 +432,8 @@ class RecentSearchView extends GetView<RecentChatSearchController> {
                         item.image
                             .checkNull()
                             .isEmpty
-                            ? iconbgcolor
-                            : buttonbgcolor,
+                            ? iconBgColor
+                            : buttonBgColor,
                         shape: BoxShape.circle,),
                       child: item.image
                           .checkNull()
@@ -497,9 +497,9 @@ class RecentSearchView extends GetView<RecentChatSearchController> {
     var messageCount = " (${controller.messageCount.value})";
     var chatCount = " (${controller.chatCount.value})";
     switch (searchItem.searchType.toString()) {
-      case Constants.TYPE_SEARCH_CONTACT:
+      case Constants.typeSearchContact:
         return searchHeader(searchType, contactCount, context);
-      case Constants.TYPE_SEARCH_MESSAGE:
+      case Constants.typeSearchMessage:
         return searchHeader(searchType, messageCount, context);
       default:
         return searchHeader(searchType, chatCount, context);
@@ -510,7 +510,7 @@ class RecentSearchView extends GetView<RecentChatSearchController> {
     return Container(
       width: MediaQuery.of(context).size.width,
       padding: const EdgeInsets.all(8),
-      color: dividercolor,
+      color: dividerColor,
       child: Text.rich(TextSpan(text: type, children: [
         TextSpan(text: count, style: const TextStyle(fontWeight: FontWeight.bold))
       ])),
@@ -524,9 +524,9 @@ class RecentSearchView extends GetView<RecentChatSearchController> {
       var startText = text.substring(0, startIndex);
       var colorText = text.substring(startIndex, endIndex);
       var endText = text.substring(endIndex, text.length);
-      Log("startText", startText);
-      Log("endText", endText);
-      Log("colorText", colorText);
+      mirrorFlyLog("startText", startText);
+      mirrorFlyLog("endText", endText);
+      mirrorFlyLog("colorText", colorText);
       return Text.rich(TextSpan(
           text: startText,
           children: [
@@ -597,7 +597,7 @@ class RecentSearchView extends GetView<RecentChatSearchController> {
                               fontSize: 16.0,
                               fontWeight: FontWeight.w700,
                               fontFamily: 'sf_ui',
-                              color: texthintcolor),
+                              color: textHintColor),
                         ),
                       ),
                       Padding(
@@ -611,8 +611,8 @@ class RecentSearchView extends GetView<RecentChatSearchController> {
                               fontWeight: FontWeight.w600,
                               fontFamily: 'sf_ui',
                               color: item.unreadMessageCount.toString() != "0"
-                                  ? buttonbgcolor
-                                  : textcolor),
+                                  ? buttonBgColor
+                                  : textColor),
                         ),
                       ),
                     ],

@@ -1,22 +1,10 @@
 import 'dart:convert';
 
-import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
 
 import 'nativecall/fly_chat.dart';
 
-abstract class BaseController extends GetxController {
-
-  final _obj = ''.obs;
-  set obj(value) => _obj.value = value;
-  get obj => _obj.value;
-
-  @override
-  void onInit() {
-    super.onInit();
-    initListeners();
-  }
-
+abstract class BaseController {
 
   initListeners(){
     FlyChat.onMessageReceived.listen(onMessageReceived);
@@ -46,7 +34,7 @@ abstract class BaseController extends GetxController {
   }
 
   void onMessageReceived(chatMessage){
-    //Log("flutter onMessageReceived", ChatMessage.toString());
+    mirrorFlyLog("flutter onMessageReceived", chatMessage.toString());
   }
   void onMessageStatusUpdated(event){
     //Log("flutter onMessageStatusUpdated", event.toString());
@@ -61,7 +49,7 @@ abstract class BaseController extends GetxController {
 
   }
   void onGroupProfileUpdated(groupJid){
-    Log("flutter GroupProfileUpdated", groupJid.toString());
+    mirrorFlyLog("flutter GroupProfileUpdated", groupJid.toString());
   }
   void onNewMemberAddedToGroup(event){
 

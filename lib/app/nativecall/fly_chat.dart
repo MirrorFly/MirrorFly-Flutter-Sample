@@ -149,7 +149,7 @@ class FlyChat {
     dynamic messageResp;
     try {
       messageResp = await mirrorFlyMethodChannel
-          .invokeMethod('sentLocationMessage', {"jid": jid,"latitude":latitude,"longitude":longitude, "replyMessageId" : replyMessageId});
+          .invokeMethod('sendLocationMessage', {"jid": jid,"latitude":latitude,"longitude":longitude, "replyMessageId" : replyMessageId});
       debugPrint("Message Result ==> $messageResp");
       return messageResp;
     } on PlatformException catch (e) {
@@ -235,7 +235,7 @@ class FlyChat {
       debugPrint('RESULT ==> $result');
       return result;
     } on PlatformException catch (e) {
-      Log("er",e.toString());
+      mirrorFlyLog("er",e.toString());
       return re;
     }
   }
@@ -266,7 +266,7 @@ class FlyChat {
       debugPrint('RESULT ==> $result');
       return result;
     } on PlatformException catch (e) {
-      Log("er",e.toString());
+      mirrorFlyLog("er",e.toString());
       return re;
     }
   }
@@ -279,10 +279,10 @@ class FlyChat {
         "name": name,
         "email": email,
       });
-      Log('RESULT', '$result');
+      mirrorFlyLog('RESULT', '$result');
       return result;
     } on PlatformException catch (e) {
-      Log("er",e.toString());
+      mirrorFlyLog("er",e.toString());
       return result;
     }
   }
@@ -292,10 +292,10 @@ class FlyChat {
     try {
       final result = await mirrorFlyMethodChannel
           .invokeMethod("sent file", {"file": file, "jid": jid, "message": ""});
-      Log('RESULT', '$result');
+      mirrorFlyLog('RESULT', '$result');
       return result;
     } on PlatformException catch (e) {
-      Log("er",e.toString());
+      mirrorFlyLog("er",e.toString());
       return re;
     }
   }
@@ -320,7 +320,7 @@ class FlyChat {
     try {
       statusResponse =
       await mirrorFlyMethodChannel.invokeMethod('getProfileStatusList');
-      Log("statuslist","$statusResponse");
+      mirrorFlyLog("statuslist","$statusResponse");
       return statusResponse;
     } on PlatformException catch (e) {
       debugPrint("Platform Exception ===> $e");
@@ -344,7 +344,7 @@ class FlyChat {
   static void insertDefaultStatusToUser() async{
     try {
       await mirrorFlyMethodChannel.invokeMethod('getStatusList').then((value) {
-        Log("status list", "$value");
+        mirrorFlyLog("status list", "$value");
         if (value != null) {
           var profileStatus = statusDataFromJson(value);
           if (profileStatus.isNotEmpty) {

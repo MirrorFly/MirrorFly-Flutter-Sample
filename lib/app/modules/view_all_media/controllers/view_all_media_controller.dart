@@ -39,15 +39,15 @@ class ViewAllMediaController extends GetxController {
 
     _medialist.bindStream(_medialist.stream);
     ever(_medialist, (callback) {
-      Log("media list", medialistdata.length.toString());
+      mirrorFlyLog("media list", medialistdata.length.toString());
     });
     _docslist.bindStream(_docslist.stream);
     ever(_docslist, (callback) {
-      Log("docs list", docslistdata.length.toString());
+      mirrorFlyLog("docs list", docslistdata.length.toString());
     });
     _linklist.bindStream(_linklist.stream);
     ever(_linklist, (callback) {
-      Log("link list", linklistdata.length.toString());
+      mirrorFlyLog("link list", linklistdata.length.toString());
     });
   }
 
@@ -141,7 +141,7 @@ class ViewAllMediaController extends GetxController {
     } else if (message.isImageMessage()) {
       textContent = message.mediaChatMessage!.mediaCaptionText;
     } else {
-      textContent = Constants.EMPTY_STRING;
+      textContent = Constants.emptyString;
     }
     if (textContent.isNotEmpty) {
       getUrlAndHostList(textContent).forEach((it) {
@@ -149,7 +149,7 @@ class ViewAllMediaController extends GetxController {
         map["host"] = it.key;
         map["url"] = it.value;
         messageList.add(MessageItem(message, map));
-        Log("link msg", map.toString());
+        mirrorFlyLog("link msg", map.toString());
       });
     }
     return messageList;
@@ -166,7 +166,7 @@ class ViewAllMediaController extends GetxController {
         //No Implementation needed
       }
     }
-    Log("urls", urls.toString());
+    mirrorFlyLog("urls", urls.toString());
     return urls;
   }
 

@@ -65,7 +65,7 @@ class Helper {
         contentPadding: title!=null ? const EdgeInsets.only(top: 15,right: 25,left: 25,bottom: 15) :
         const EdgeInsets.only(top: 0,right: 25,left: 25,bottom: 15),
         content: content ?? Text(message),
-        contentTextStyle: const TextStyle(color: texthintcolor,fontWeight: FontWeight.w500),
+        contentTextStyle: const TextStyle(color: textHintColor,fontWeight: FontWeight.w500),
         actions: actions,
       ),
     );
@@ -86,12 +86,12 @@ class Helper {
   }
 
   static String getMapImageUri(double latitude, double longitude) {
-    var key = Constants.GOOGLE_MAP_KEY;
+    var key = Constants.googleMapKey;
     return ("https://maps.googleapis.com/maps/api/staticmap?center=$latitude,$longitude&zoom=13&size=300x200&markers=color:red|$latitude,$longitude&key=$key");
   }
 
   static int getColourCode(String name) {
-    if (name == Constants.YOU) return 0Xff000000;
+    if (name == Constants.you) return 0Xff000000;
     var colorsArray = Constants.defaultColorList;
     var hashcode = name.hashCode;
     var rand = hashcode % colorsArray.length;
@@ -99,41 +99,41 @@ class Helper {
   }
 
   static Widget forMessageTypeIcon(String? messageType) {
-    Log("iconfor", messageType.toString());
+    mirrorFlyLog("iconfor", messageType.toString());
     switch (messageType?.toUpperCase()) {
-      case Constants.MIMAGE:
+      case Constants.mImage:
         return SvgPicture.asset(
-          Mimageicon,
+          mImageIcon,
           fit: BoxFit.contain,
         );
-      case Constants.MAUDIO:
+      case Constants.mAudio:
         return SvgPicture.asset(
-          Maudioicon,
+          mAudioIcon,
           fit: BoxFit.contain,
         );
-      case Constants.MVIDEO:
+      case Constants.mVideo:
         return SvgPicture.asset(
-          Mvideoicon,
+          mVideoIcon,
           fit: BoxFit.contain,
         );
-      case Constants.MDOCUMENT:
+      case Constants.mDocument:
         return SvgPicture.asset(
-          Mdocumenticon,
+          mDocumentIcon,
           fit: BoxFit.contain,
         );
-      case Constants.MFILE:
+      case Constants.mFile:
         return SvgPicture.asset(
-          Mdocumenticon,
+          mDocumentIcon,
           fit: BoxFit.contain,
         );
-      case Constants.MCONTACT:
+      case Constants.mContact:
         return SvgPicture.asset(
-          Mcontacticon,
+          mContactIcon,
           fit: BoxFit.contain,
         );
-      case Constants.MLOCATION:
+      case Constants.mLocation:
         return SvgPicture.asset(
-          Mlocationicon,
+          mLocationIcon,
           fit: BoxFit.contain,
         );
       default:
@@ -143,19 +143,19 @@ class Helper {
 
   static String forMessageTypeString(String? messageType) {
     switch (messageType?.toUpperCase()) {
-      case Constants.MIMAGE:
+      case Constants.mImage:
         return "Image";
-      case Constants.MAUDIO:
+      case Constants.mAudio:
         return "Audio";
-      case Constants.MVIDEO:
+      case Constants.mVideo:
         return "Video";
-      case Constants.MDOCUMENT:
+      case Constants.mDocument:
         return "Document";
-      case Constants.MFILE:
+      case Constants.mFile:
         return "Document";
-      case Constants.MCONTACT:
+      case Constants.mContact:
         return "Contact";
-      case Constants.MLOCATION:
+      case Constants.mLocation:
         return "Location";
       default:
         return "";
@@ -264,18 +264,18 @@ extension ProfileParesing on Profile{
 
 extension ChatmessageParsing on ChatMessageModel{
   bool isMediaDownloaded() {
-      return isMediaMessage() && (mediaChatMessage?.mediaDownloadStatus == Constants.MEDIA_DOWNLOADED);
+      return isMediaMessage() && (mediaChatMessage?.mediaDownloadStatus == Constants.mediaDownloaded);
   }
   bool isMediaUploaded() {
-    return isMediaMessage() && (mediaChatMessage?.mediaUploadStatus == Constants.MEDIA_UPLOADED);
+    return isMediaMessage() && (mediaChatMessage?.mediaUploadStatus == Constants.mediaUploaded);
   }
   bool isMediaMessage() => (isAudioMessage() || isVideoMessage() || isImageMessage() || isFileMessage());
-  bool isTextMessage() => messageType == Constants.MTEXT;
-  bool isAudioMessage() => messageType == Constants.MAUDIO;
-  bool isImageMessage() => messageType == Constants.MIMAGE;
-  bool isVideoMessage() => messageType == Constants.MVIDEO;
-  bool isFileMessage() => messageType == Constants.MDOCUMENT;
-  bool isNotificationMessage() => messageType == Constants.MNOTIFICATION;
+  bool isTextMessage() => messageType == Constants.mText;
+  bool isAudioMessage() => messageType == Constants.mAudio;
+  bool isImageMessage() => messageType == Constants.mImage;
+  bool isVideoMessage() => messageType == Constants.mVideo;
+  bool isFileMessage() => messageType == Constants.mDocument;
+  bool isNotificationMessage() => messageType == Constants.mNotification;
 }
 
 InkWell listItem(

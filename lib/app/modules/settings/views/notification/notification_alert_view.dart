@@ -65,13 +65,13 @@ class NotificationAlertView extends GetView<NotificationAlertController> {
             ),
             Text(
               subtitle,
-              style: const TextStyle(fontSize: 13, color: textcolor),
+              style: const TextStyle(fontSize: 13, color: textColor),
             ),
           ],
         ),
         dividerPadding: const EdgeInsets.symmetric(horizontal: 16),
         trailing: SvgPicture.asset(
-          on ? tick_round_blue : tickRound,
+          on ? tickRoundBlue : tickRound,
         ),
         onTap: onTap);
   }

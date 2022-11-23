@@ -23,7 +23,7 @@ class ScannerView extends GetView<ScannerController> {
           Container(
             padding: const EdgeInsets.all(16),
             color: Colors.white,
-            child: const Center(child: Text("Visit ${Constants.WEB_CHAT_LOGIN} on your computer and scan the QR code",style: TextStyle(fontSize: 17),),),
+            child: const Center(child: Text("Visit ${Constants.webChatLogin} on your computer and scan the QR code",style: TextStyle(fontSize: 17),),),
           ),
           Expanded(
             child: QRView(

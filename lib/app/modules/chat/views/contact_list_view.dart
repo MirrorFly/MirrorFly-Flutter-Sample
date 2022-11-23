@@ -52,7 +52,7 @@ class ContactListView extends GetView<ContactController> {
               visible: controller.isSearchVisible,
               child: IconButton(
                   onPressed: ()=> controller.onSearchPressed(),
-                  icon: SvgPicture.asset(searchicon)),
+                  icon: SvgPicture.asset(searchIcon)),
             ),
             Visibility(
               visible: controller.isClearVisible,
@@ -101,7 +101,7 @@ class ContactListView extends GetView<ContactController> {
             FocusManager.instance.primaryFocus!.unfocus();
             controller.forwardMessages();
           },
-          backgroundColor: buttonbgcolor,
+          backgroundColor: buttonBgColor,
           child: const Icon(Icons.check)
         ) : const SizedBox.shrink(),
         body: Obx(() {
@@ -128,8 +128,8 @@ class ContactListView extends GetView<ContactController> {
                               height: 50,
                               decoration: BoxDecoration(
                                 color: item.image.checkNull().isEmpty
-                                    ? iconbgcolor
-                                    : buttonbgcolor,
+                                    ? iconBgColor
+                                    : buttonBgColor,
                                 shape: BoxShape.circle,
                               ),
                               child: item.image.checkNull().isEmpty

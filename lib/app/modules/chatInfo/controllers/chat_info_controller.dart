@@ -38,7 +38,7 @@ class ChatInfoController extends GetxController {
   }
 
   onToggleChange(bool value) {
-    Log("change", value.toString());
+    mirrorFlyLog("change", value.toString());
     mute(value);
     FlyChat.updateChatMuteStatus(profile.jid.checkNull(), value);
   }

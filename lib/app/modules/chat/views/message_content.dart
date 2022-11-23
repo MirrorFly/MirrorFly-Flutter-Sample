@@ -36,7 +36,7 @@ class _MessageContentState extends State<MessageContent> {
 
   getMessageContent(ChatMessageModel chatList, double screenHeight, double screenWidth) {
 
-    if (chatList.messageType == Constants.MTEXT) {
+    if (chatList.messageType == Constants.mText) {
       return Padding(
         padding: const EdgeInsets.all(10.0),
         child: Row(
@@ -81,12 +81,12 @@ class _MessageContentState extends State<MessageContent> {
           ],
         ),
       );
-    } else if (chatList.messageType == Constants.MNOTIFICATION) {
+    } else if (chatList.messageType == Constants.mNotification) {
       return Center(
         child: Container(
           decoration: const BoxDecoration(
               borderRadius: BorderRadius.all(Radius.circular(40)),
-              color: chatreplycontainercolor),
+              color: chatReplyContainerColor),
           padding: const EdgeInsets.only(left: 15.0, right: 15.0, top: 8.0, bottom: 8.0),
           // child: Text(chatList[index].messageTextContent!,
           child: Text(chatList.messageTextContent ?? "",
@@ -94,7 +94,7 @@ class _MessageContentState extends State<MessageContent> {
               const TextStyle(fontSize: 12)),
         ),
       );
-    } else if (chatList.messageType == Constants.MIMAGE) {
+    } else if (chatList.messageType == Constants.mImage) {
       var chatMessage = chatList.mediaChatMessage!;
       //mediaLocalStoragePath
       //mediaThumbImage
@@ -152,7 +152,7 @@ class _MessageContentState extends State<MessageContent> {
           ],
         ),
       );
-    } else if (chatList.messageType == Constants.MVIDEO) {
+    } else if (chatList.messageType == Constants.mVideo) {
       var chatMessage = chatList.mediaChatMessage!;
       return Padding(
         padding: const EdgeInsets.all(8.0),
@@ -162,9 +162,9 @@ class _MessageContentState extends State<MessageContent> {
               onTap: () {
                 if (controller.checkFile(chatMessage.mediaLocalStoragePath) &&
                     (chatMessage.mediaDownloadStatus ==
-                        Constants.MEDIA_DOWNLOADED ||
+                        Constants.mediaDownloaded ||
                         chatMessage.mediaDownloadStatus ==
-                            Constants.MEDIA_UPLOADED)) {
+                            Constants.mediaUploaded)) {
                   Get.toNamed(Routes.VIDEO_PLAY, arguments: {
                     "filePath": chatMessage.mediaLocalStoragePath,
                   });
@@ -218,7 +218,7 @@ class _MessageContentState extends State<MessageContent> {
           ],
         ),
       );
-    } else if (chatList.messageType == Constants.MDOCUMENT) {
+    } else if (chatList.messageType == Constants.mDocument) {
       return InkWell(
         onTap: () {
           controller.openDocument(
@@ -227,7 +227,7 @@ class _MessageContentState extends State<MessageContent> {
         child: Container(
           decoration: BoxDecoration(
             border: Border.all(
-              color: chatreplysendercolor,
+              color: chatReplySenderColor,
             ),
             borderRadius: const BorderRadius.all(Radius.circular(10)),
             color: Colors.white,
@@ -306,7 +306,7 @@ class _MessageContentState extends State<MessageContent> {
           ),
         ),
       );
-    } else if (chatList.messageType == Constants.MCONTACT) {
+    } else if (chatList.messageType == Constants.mContact) {
       return InkWell(
         onTap: () {
           Get.toNamed(Routes.PREVIEW_CONTACT, arguments: {
@@ -319,7 +319,7 @@ class _MessageContentState extends State<MessageContent> {
         child: Container(
           decoration: BoxDecoration(
             border: Border.all(
-              color: chatreplysendercolor,
+              color: chatReplySenderColor,
             ),
             borderRadius: const BorderRadius.all(Radius.circular(10)),
             color: Colors.white,
@@ -333,7 +333,7 @@ class _MessageContentState extends State<MessageContent> {
                 child: Row(
                   children: [
                     Image.asset(
-                      profile_img,
+                      profileImage,
                       width: 35,
                       height: 35,
                     ),
@@ -387,12 +387,12 @@ class _MessageContentState extends State<MessageContent> {
           ),
         ),
       );
-    } else if (chatList.messageType == Constants.MAUDIO) {
+    } else if (chatList.messageType == Constants.mAudio) {
       var chatMessage = chatList;
       return Container(
         decoration: BoxDecoration(
           border: Border.all(
-            color: chatreplysendercolor,
+            color: chatReplySenderColor,
           ),
           borderRadius: const BorderRadius.all(Radius.circular(10)),
           color: Colors.white,
@@ -406,7 +406,7 @@ class _MessageContentState extends State<MessageContent> {
                 borderRadius: BorderRadius.only(
                     topLeft: Radius.circular(10),
                     topRight: Radius.circular(10)),
-                color: chatreplysendercolor,
+                color: chatReplySenderColor,
               ),
               child: Padding(
                 padding: const EdgeInsets.all(15),
@@ -417,13 +417,13 @@ class _MessageContentState extends State<MessageContent> {
                       alignment: Alignment.center,
                       children: [
                         SvgPicture.asset(
-                          audio_mic_bg,
+                          audioMicBg,
                           width: 28,
                           height: 28,
                           fit: BoxFit.contain,
                         ),
                         SvgPicture.asset(
-                          audio_mic_1,
+                          audioMic1,
                           fit: BoxFit.contain,
                         ),
                       ],
@@ -449,7 +449,7 @@ class _MessageContentState extends State<MessageContent> {
                         // width: 168,
                         child: SliderTheme(
                           data: SliderThemeData(
-                            thumbColor: audiocolordark,
+                            thumbColor: audioColorDark,
                             overlayShape: SliderComponentShape.noOverlay,
                             thumbShape:
                             const RoundSliderThumbShape(enabledThumbRadius: 5),
@@ -458,8 +458,8 @@ class _MessageContentState extends State<MessageContent> {
                             value: double.parse(
                                 controller.currentPos.value.toString()),
                             min: 0,
-                            activeColor: audiocolordark,
-                            inactiveColor: audiocolor,
+                            activeColor: audioColorDark,
+                            inactiveColor: audioColor,
                             max: double.parse(
                                 controller.maxDuration.value.toString()),
                             divisions: controller.maxDuration.value,
@@ -516,7 +516,7 @@ class _MessageContentState extends State<MessageContent> {
         ),
       );
     } else if (chatList.messageType.toUpperCase() ==
-        Constants.MLOCATION) {
+        Constants.mLocation) {
       return Padding(
         padding: const EdgeInsets.all(2.0),
         child: Stack(
@@ -618,7 +618,7 @@ class _MessageContentState extends State<MessageContent> {
           height: 50,
           child: Center(
               child: SvgPicture.asset(
-                video_play,
+                videoPlay,
                 fit: BoxFit.contain,
               )),
         );
@@ -637,27 +637,27 @@ class _MessageContentState extends State<MessageContent> {
       switch (chatMessage.isMessageSentByMe
           ? chatMessage.mediaChatMessage!.mediaUploadStatus
           : chatMessage.mediaChatMessage!.mediaDownloadStatus) {
-        case Constants.MEDIA_DOWNLOADED:
-        case Constants.MEDIA_UPLOADED:
+        case Constants.mediaDownloaded:
+        case Constants.mediaUploaded:
           return const SizedBox.shrink();
 
-        case Constants.MEDIA_DOWNLOADED_NOT_AVAILABLE:
-        case Constants.MEDIA_NOT_DOWNLOADED:
+        case Constants.mediaDownloadedNotAvailable:
+        case Constants.mediaNotDownloaded:
           return getFileInfo(
               chatMessage.mediaChatMessage!.mediaDownloadStatus,
               chatMessage.mediaChatMessage!.mediaFileSize,
               Icons.download_sharp,
               chatMessage.messageType);
-        case Constants.MEDIA_UPLOADED_NOT_AVAILABLE:
+        case Constants.mediaUploadedNotAvailable:
           return getFileInfo(
               chatMessage.mediaChatMessage!.mediaDownloadStatus,
               chatMessage.mediaChatMessage!.mediaFileSize,
               Icons.upload_sharp,
               chatMessage.messageType);
 
-        case Constants.MEDIA_NOT_UPLOADED:
-        case Constants.MEDIA_DOWNLOADING:
-        case Constants.MEDIA_UPLOADING:
+        case Constants.mediaNotUploaded:
+        case Constants.mediaDownloading:
+        case Constants.mediaUploading:
           if (chatMessage.messageType == 'AUDIO' ||
               chatMessage.messageType == 'DOCUMENT') {
             return InkWell(
@@ -681,12 +681,12 @@ class _MessageContentState extends State<MessageContent> {
     return messageType == 'AUDIO' || messageType == 'DOCUMENT'
         ? Icon(
       iconData,
-      color: audiocolordark,
+      color: audioColorDark,
     )
         : Container(
         decoration: BoxDecoration(
           border: Border.all(
-            color: textcolor,
+            color: textColor,
           ),
           borderRadius: const BorderRadius.all(Radius.circular(5)),
           color: Colors.black38,
@@ -714,10 +714,10 @@ class _MessageContentState extends State<MessageContent> {
       // width: 80,
         decoration: BoxDecoration(
           border: Border.all(
-            color: textcolor,
+            color: textColor,
           ),
           borderRadius: const BorderRadius.all(Radius.circular(2)),
-          color: audiobgcolor,
+          color: audioBgColor,
         ),
         // padding: EdgeInsets.symmetric(vertical: 5),
         child: Stack(alignment: Alignment.center,
@@ -735,7 +735,7 @@ class _MessageContentState extends State<MessageContent> {
                     valueColor: AlwaysStoppedAnimation<Color>(
                       Colors.white,
                     ),
-                    backgroundColor: audiobgcolor,
+                    backgroundColor: audioBgColor,
                     // minHeight: 1,
                   ),
                 ),
@@ -748,15 +748,15 @@ class _MessageContentState extends State<MessageContent> {
     switch (chatList.isMessageSentByMe
         ? chatList.mediaChatMessage?.mediaUploadStatus
         : mediaDownloadStatus) {
-      case Constants.MEDIA_DOWNLOADED:
-      case Constants.MEDIA_UPLOADED:
+      case Constants.mediaDownloaded:
+      case Constants.mediaUploaded:
         if (chatList.messageType == 'VIDEO') {
           if (controller.checkFile(
               chatList.mediaChatMessage!.mediaLocalStoragePath) &&
               (chatList.mediaChatMessage!.mediaDownloadStatus ==
-                  Constants.MEDIA_DOWNLOADED ||
+                  Constants.mediaDownloaded ||
                   chatList.mediaChatMessage!.mediaDownloadStatus ==
-                      Constants.MEDIA_UPLOADED ||
+                      Constants.mediaUploaded ||
                   chatList.isMessageSentByMe)) {
             Get.toNamed(Routes.VIDEO_PLAY, arguments: {
               "filePath": chatList.mediaChatMessage!.mediaLocalStoragePath,
@@ -767,9 +767,9 @@ class _MessageContentState extends State<MessageContent> {
           if (controller.checkFile(
               chatList.mediaChatMessage!.mediaLocalStoragePath) &&
               (chatList.mediaChatMessage!.mediaDownloadStatus ==
-                  Constants.MEDIA_DOWNLOADED ||
+                  Constants.mediaDownloaded ||
                   chatList.mediaChatMessage!.mediaDownloadStatus ==
-                      Constants.MEDIA_UPLOADED ||
+                      Constants.mediaUploaded ||
                   chatList.isMessageSentByMe)) {
             // debugPrint("audio click1");
             chatList.mediaChatMessage!.isPlaying = controller.isPlaying.value;
@@ -782,21 +782,21 @@ class _MessageContentState extends State<MessageContent> {
         }
         break;
 
-      case Constants.MEDIA_DOWNLOADED_NOT_AVAILABLE:
-      case Constants.MEDIA_NOT_DOWNLOADED:
+      case Constants.mediaDownloadedNotAvailable:
+      case Constants.mediaNotDownloaded:
       //download
         debugPrint("Download");
         debugPrint(chatList.messageId);
         chatList.mediaChatMessage!.mediaDownloadStatus =
-            Constants.MEDIA_DOWNLOADING;
+            Constants.mediaDownloading;
         controller.downloadMedia(chatList.messageId);
         break;
-      case Constants.MEDIA_UPLOADED_NOT_AVAILABLE:
+      case Constants.mediaUploadedNotAvailable:
       //upload
         break;
-      case Constants.MEDIA_NOT_UPLOADED:
-      case Constants.MEDIA_DOWNLOADING:
-      case Constants.MEDIA_UPLOADING:
+      case Constants.mediaNotUploaded:
+      case Constants.mediaDownloading:
+      case Constants.mediaUploading:
         return uploadingView();
     // break;
     }
@@ -817,7 +817,7 @@ class _MessageContentState extends State<MessageContent> {
                   alignment: Alignment.center,
                   children: [
                     SvgPicture.asset(
-                      audio_mic_bg,
+                      audioMicBg,
                       width: 50,
                       height: 50,
                       fit: BoxFit.contain,
@@ -848,7 +848,7 @@ class _MessageContentState extends State<MessageContent> {
                       // width: 168,
                       child: SliderTheme(
                         data: SliderThemeData(
-                          thumbColor: audiocolordark,
+                          thumbColor: audioColorDark,
                           overlayShape: SliderComponentShape.noOverlay,
                           thumbShape:
                           const RoundSliderThumbShape(enabledThumbRadius: 5),
@@ -858,8 +858,8 @@ class _MessageContentState extends State<MessageContent> {
                             value:
                             double.parse(controller.currentPos.toString()),
                             min: 0,
-                            activeColor: audiocolordark,
-                            inactiveColor: audiocolor,
+                            activeColor: audioColorDark,
+                            inactiveColor: audioColor,
                             max: double.parse(
                                 controller.maxDuration.value.toString()),
                             divisions: controller.maxDuration.value,
@@ -906,46 +906,46 @@ class _MessageContentState extends State<MessageContent> {
     String result = mediaFileName.split('.').last;
     debugPrint("File Type ==> $result");
     switch (result) {
-      case Constants.PDF:
+      case Constants.pdf:
         return SvgPicture.asset(
-          pdf_image,
+          pdfImage,
           width: 30,
           height: 30,
         );
-      case Constants.PPT:
+      case Constants.ppt:
         return SvgPicture.asset(
-          ppt_image,
+          pptImage,
           width: 30,
           height: 30,
         );
-      case Constants.XLS:
+      case Constants.xls:
         return SvgPicture.asset(
-          xls_image,
+          xlsImage,
           width: 30,
           height: 30,
         );
-      case Constants.XLXS:
+      case Constants.xlsx:
         return SvgPicture.asset(
-          xlsx_image,
+          xlsxImage,
           width: 30,
           height: 30,
         );
-      case Constants.DOC:
-      case Constants.DOCX:
+      case Constants.doc:
+      case Constants.docx:
         return SvgPicture.asset(
-          doc_image,
+          docImage,
           width: 30,
           height: 30,
         );
-      case Constants.APK:
+      case Constants.apk:
         return SvgPicture.asset(
-          apk_image,
+          apkImage,
           width: 30,
           height: 30,
         );
       default:
         return SvgPicture.asset(
-          doc_image,
+          docImage,
           width: 30,
           height: 30,
         );

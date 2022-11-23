@@ -50,7 +50,7 @@ class ScannerController extends GetxController {
   }
 
   loginWebChatViaQRCode(String? barcode) {
-    Log("barcode", barcode.toString());
+    mirrorFlyLog("barcode", barcode.toString());
     if (barcode != null) {
       controller!.pauseCamera();
       FlyChat.loginWebChatViaQRCode(barcode).then((value) {
@@ -102,21 +102,21 @@ class ScannerController extends GetxController {
   getImageForBrowser(WebLogin item) {
     var name = item.webBrowserName.toLowerCase();
     if (name.contains("chrome")) {
-      return ic_chrome;
+      return icChrome;
     } else if (name.contains("edge")) {
-      return ic_edge_browser;
+      return icEdgeBrowser;
     } else if (name.contains("firefox")) {
-      return ic_mozilla;
+      return icMozilla;
     } else if (name.contains("safari")) {
-      return ic_safari;
+      return icSafari;
     } else if (name.contains("ie")) {
-      return ic_ie;
+      return icIe;
     } else if (name.contains("opera")) {
-      return ic_opera;
+      return icOpera;
     } else if (name.contains("uc")) {
-      return ic_uc;
+      return icUc;
     } else {
-      return ic_default_browser;
+      return icDefaultBrowser;
     }
   }
 

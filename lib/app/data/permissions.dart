@@ -6,7 +6,7 @@ class AppPermission {
 
   Future<bool> getLocationPermission() async{
     var permission = await Geolocator.requestPermission();
-    Log(permission.name, permission.index.toString());
+    mirrorFlyLog(permission.name, permission.index.toString());
     return permission.index==2 || permission.index==3;
   }
   static Future<PermissionStatus> getContactPermission() async {

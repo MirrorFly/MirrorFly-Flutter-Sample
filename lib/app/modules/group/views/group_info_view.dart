@@ -178,7 +178,7 @@ class GroupInfoView extends GetView<GroupInfoController> {
               Obx(() =>
                   Visibility(
                     visible: controller.isAdmin,
-                    child: ListItem(leading: SvgPicture.asset(add_user),
+                    child: ListItem(leading: SvgPicture.asset(addUser),
                         title: const Text("Add Participants",
                             style: TextStyle(
                                 color: Colors.black,
@@ -202,7 +202,7 @@ class GroupInfoView extends GetView<GroupInfoController> {
                     });
               }),
               ListItem(
-                leading: SvgPicture.asset(image_outline),
+                leading: SvgPicture.asset(imageOutline),
                 title: const Text("View All Media",
                     style: TextStyle(
                         color: Colors.black,
@@ -212,7 +212,7 @@ class GroupInfoView extends GetView<GroupInfoController> {
                 onTap: ()=>controller.gotoViewAllMedia(),
               ),
               ListItem(
-                leading: SvgPicture.asset(report_group),
+                leading: SvgPicture.asset(reportGroup),
                 title: const Text("Report Group",
                     style: TextStyle(
                         color: Colors.red,
@@ -222,7 +222,7 @@ class GroupInfoView extends GetView<GroupInfoController> {
               ),
               Obx(() {
                 return ListItem(
-                  leading: SvgPicture.asset(leave_group, width: 18,),
+                  leading: SvgPicture.asset(leaveGroup, width: 18,),
                   title: Text(!controller.isMemberOfGroup
                       ? "Delete Group"
                       : "Leave Group",
@@ -322,14 +322,14 @@ class GroupInfoView extends GetView<GroupInfoController> {
                           controller.camera(photo);
                         },
                         child: const Text("Take Photo",
-                            style: TextStyle(color: texthintcolor))),
+                            style: TextStyle(color: textHintColor))),
                     TextButton(
                         onPressed: () {
                           Get.back();
                           controller.imagePicker(context);
                         },
                         child: const Text("Choose from Gallery",
-                            style: TextStyle(color: texthintcolor))),
+                            style: TextStyle(color: textHintColor))),
                     controller.profile.image
                         .checkNull()
                         .isNotEmpty
@@ -355,7 +355,7 @@ class GroupInfoView extends GetView<GroupInfoController> {
                         },
                         child: const Text(
                           "Remove Photo",
-                          style: TextStyle(color: texthintcolor),
+                          style: TextStyle(color: textHintColor),
                         ))
                         : const SizedBox(),
                   ],

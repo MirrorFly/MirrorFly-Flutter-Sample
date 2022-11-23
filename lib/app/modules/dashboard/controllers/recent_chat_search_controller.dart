@@ -41,7 +41,7 @@ class RecentChatSearchController extends GetxController {
     filteredContactList.bindStream(filteredContactList.stream);
     recentSearchList.bindStream(recentSearchList.stream);
     ever(filteredRecentChatList, (callback) {
-      Log("sfilteredRecentChatList", callback.toString());
+      mirrorFlyLog("sfilteredRecentChatList", callback.toString());
       //filteredRecentChatList.stream.listen((list) {
         var jidList = <String>[];
         for (var recent in callback) {
@@ -49,7 +49,7 @@ class RecentChatSearchController extends GetxController {
             var recentSearchItem = RecentSearch(
                 jid: recent.jid,
                 mid: recent.lastMessageId,
-                searchType: Constants.TYPE_SEARCH_RECENT,
+                searchType: Constants.typeSearchRecent,
                 chatType: getChatType(recent),
                 isSearch: true).obs;
             recentSearchList.add(recentSearchItem);
@@ -62,9 +62,9 @@ class RecentChatSearchController extends GetxController {
       //});
     });
     ever(filteredMessageList, (callback){
-      Log("sfilteredMessageList", callback.entries.first.value.length.toString());
+      mirrorFlyLog("sfilteredMessageList", callback.entries.first.value.length.toString());
       for (var item in callback.entries){
-        Log("msgs", item.value.first.value.jid.toString());
+        mirrorFlyLog("msgs", item.value.first.value.jid.toString());
       }
       messageCount(callback.entries.first.key.value);
       recentSearchList.addAll(callback.entries.first.value);
@@ -72,13 +72,13 @@ class RecentChatSearchController extends GetxController {
     });
 
     ever(filteredContactList, (callback){
-      Log("sfilteredContactList", callback.toString());
+      mirrorFlyLog("sfilteredContactList", callback.toString());
       for (var profile in callback) {
         if (!profile.isAdminBlocked!) {
           var searchContactItem = RecentSearch(
               jid: profile.jid,
               mid: null,
-              searchType: Constants.TYPE_SEARCH_CONTACT,
+              searchType: Constants.typeSearchContact,
               chatType: getProfileChatType(profile),
               isSearch: true).obs;
           recentSearchList.add(searchContactItem);
@@ -88,7 +88,7 @@ class RecentChatSearchController extends GetxController {
     });
 
     ever(recentSearchList,(callback){
-      Log("searched", callback.toString());
+      mirrorFlyLog("searched", callback.toString());
       update(recentSearchList);
     });
 
@@ -122,7 +122,7 @@ class RecentChatSearchController extends GetxController {
     if(search.text.isNotEmpty) {
       fetchRecentChatList();
     }else{
-      Log("empty", "empty");
+      mirrorFlyLog("empty", "empty");
       frmRecentChatList.addAll(mainRecentChatList);
     }
     update();
@@ -170,7 +170,7 @@ class RecentChatSearchController extends GetxController {
         var searchMessageItem = RecentSearch(
             jid: message.chatUserJid,
             mid: message.messageId,
-            searchType: Constants.TYPE_SEARCH_MESSAGE,
+            searchType: Constants.typeSearchMessage,
             chatType: message.messageChatType.toString(),
             isSearch: true).obs;
         mRecentSearchList.insert(0, searchMessageItem);
@@ -201,7 +201,7 @@ class RecentChatSearchController extends GetxController {
 
   Future<RecentChatData?> getRecentChatofJid(String jid) async{
     var value = await FlyChat.getRecentChatOf(jid);
-    Log("rchat", value.toString());
+    mirrorFlyLog("rchat", value.toString());
     if (value != null) {
       var data = RecentChatData.fromJson(json.decode(value));
       return data;

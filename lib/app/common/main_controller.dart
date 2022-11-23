@@ -42,7 +42,7 @@ class MainController extends GetxController {
         .checkNull()
         .isEmpty) {
       FlyChat.mediaEndPoint().then((value) {
-        Log("media_endpoint", value);
+        mirrorFlyLog("media_endpoint", value);
         if (value.isNotEmpty) {
           uploadEndpoint(value);
           SessionManagement.setMediaEndPoint(value);
@@ -63,7 +63,7 @@ class MainController extends GetxController {
             .checkNull()
             .isNotEmpty) {
       await FlyChat.authToken().then((value) {
-        Log("RetryAuth", value);
+        mirrorFlyLog("RetryAuth", value);
         if (value.isNotEmpty) {
           authToken(value);
           SessionManagement.setAuthToken(value);
@@ -89,10 +89,10 @@ class MainController extends GetxController {
     var time = (currentYear == calendar.year)
         ? DateFormat("dd-MMM").format(calendar)
         : DateFormat("yyyy/MM/dd").format(calendar);
-    return (equalsWithYesterday(calendar, Constants.TODAY))
+    return (equalsWithYesterday(calendar, Constants.today))
         ? hourTime
-        : (equalsWithYesterday(calendar, Constants.YESTERDAY))
-        ? Constants.YESTERDAY_UPPER
+        : (equalsWithYesterday(calendar, Constants.yesterday))
+        ? Constants.yesterdayUpper
         : time;
   }
 
@@ -120,7 +120,7 @@ class MainController extends GetxController {
   bool equalsWithYesterday(DateTime srcDate, String day) {
     // Time part has
     // discarded
-    var yesterday = (day == Constants.YESTERDAY)
+    var yesterday = (day == Constants.yesterday)
         ? calendar.subtract(const Duration(days: 1))
         : DateTime.now();
     return yesterday
@@ -230,7 +230,7 @@ class MainController extends GetxController {
         isPlaying(true);
         audioPlayed(true);
       } else {
-        Log("", "Error while playing audio.");
+        mirrorFlyLog("", "Error while playing audio.");
       }
     } else if (audioPlayed.value && !isPlaying.value) {
       int result = await player.resume();
@@ -239,7 +239,7 @@ class MainController extends GetxController {
         isPlaying(true);
         audioPlayed(true);
       } else {
-        Log("", "Error on resume audio.");
+        mirrorFlyLog("", "Error on resume audio.");
       }
     } else {
       int result = await player.pause();
@@ -247,7 +247,7 @@ class MainController extends GetxController {
 
         isPlaying(false);
       } else {
-        Log("", "Error on pause audio.");
+        mirrorFlyLog("", "Error on pause audio.");
       }
     }
   }

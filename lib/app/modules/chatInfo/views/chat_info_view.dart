@@ -186,7 +186,7 @@ class ChatInfoView extends GetView<ChatInfoController> {
                   padding: const EdgeInsets.only(left: 15.0, bottom: 16),
                   child: Row(
                     children: [
-                      SvgPicture.asset(statusicon),
+                      SvgPicture.asset(statusIcon),
                       const SizedBox(width: 10,),
                       Text(controller.profile.status.checkNull(),
                           style: const TextStyle(
@@ -198,7 +198,7 @@ class ChatInfoView extends GetView<ChatInfoController> {
               ],
             ),
             listItem(
-                leading: SvgPicture.asset(image_outline),
+                leading: SvgPicture.asset(imageOutline),
                 title: const Text("View All Media",
                     style: TextStyle(
                         color: Colors.black,
@@ -210,7 +210,7 @@ class ChatInfoView extends GetView<ChatInfoController> {
                 } //controller.gotoViewAllMedia(),
             ),
             listItem(
-                leading: SvgPicture.asset(report_user),
+                leading: SvgPicture.asset(reportUser),
                 title: const Text("Report",
                     style: TextStyle(
                         color: Colors.red,

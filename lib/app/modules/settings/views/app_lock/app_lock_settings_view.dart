@@ -43,10 +43,10 @@ class AppLockSettingsView extends GetView<AppLockController> {
                 children: const [
                   Text(
                     "If App Lock enabled, the app will be locked automatically after 32 sec when it is not in use.",
-                    style: TextStyle(color: textcolor),),
+                    style: TextStyle(color: textColor),),
                   Text(
                     "Note: Once a PIN is set, it will be expired in 31 days and has to be renewed.",
-                    style: TextStyle(color: textcolor),)
+                    style: TextStyle(color: textColor),)
                 ],
               ),
             ),
@@ -72,7 +72,7 @@ class AppLockSettingsView extends GetView<AppLockController> {
             ),
             Text(
               subtitle,
-              style: const TextStyle(fontSize: 13, color: textcolor),
+              style: const TextStyle(fontSize: 13, color: textColor),
             ),
           ],
         ),

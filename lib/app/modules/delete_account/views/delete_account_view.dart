@@ -118,7 +118,7 @@ class DeleteAccountView extends GetView<DeleteAccountController> {
                                 borderSide: BorderSide(color: Colors.grey),
                               ),
                               focusedBorder: UnderlineInputBorder(
-                                borderSide: BorderSide(color: buttonbgcolor),
+                                borderSide: BorderSide(color: buttonBgColor),
                               ),
                               hintText: "Mobile Number"
                             ),

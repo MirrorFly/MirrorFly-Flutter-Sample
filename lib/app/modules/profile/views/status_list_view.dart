@@ -41,11 +41,11 @@ class StatusListView extends GetView<StatusListController> {
                   contentPadding: EdgeInsets.zero,
                   title: Text(controller.selectedStatus.value,
                       style: const TextStyle(
-                          color: textcolor,
+                          color: textColor,
                           fontSize: 14,
                           fontWeight: FontWeight.normal)),
                   trailing: SvgPicture.asset(
-                    pencilediticon,
+                    pencilEditIcon,
                     fit: BoxFit.contain,
                   ),
                   onTap: () {
@@ -74,12 +74,12 @@ class StatusListView extends GetView<StatusListController> {
                         contentPadding: EdgeInsets.zero,
                         title: Text(item.status.checkNull(),
                             style: TextStyle(
-                                color: item.status==controller.selectedStatus.value ? textblack1color : textcolor,
+                                color: item.status==controller.selectedStatus.value ? textBlack1color : textColor,
                                 fontSize: 14,
                                 fontWeight: FontWeight.w500)),
                         trailing: item.status==controller.selectedStatus.value
                             ? SvgPicture.asset(
-                          tickicon,
+                          tickIcon,
                           fit: BoxFit.contain,
                         )
                             : const SizedBox(),

@@ -22,7 +22,7 @@ class ProfileView extends GetView<ProfileController> {
         appBar: AppBar(
           title: const Text(
             'Profile',
-            style: TextStyle(color: appbartextcolor),
+            style: TextStyle(color: appbarTextColor),
           ),
           centerTitle: true,
           automaticallyImplyLeading: false,
@@ -271,14 +271,14 @@ class ProfileView extends GetView<ProfileController> {
                             controller.camera(photo);
                           },
                           child: const Text("Take Photo",
-                              style: TextStyle(color: texthintcolor))),
+                              style: TextStyle(color: textHintColor))),
                       TextButton(
                           onPressed: () {
                             Get.back();
                             controller.imagePicker(context);
                           },
                           child: const Text("Choose from Gallery",
-                              style: TextStyle(color: texthintcolor))),
+                              style: TextStyle(color: textHintColor))),
                       controller.userImgUrl.value.isNotEmpty
                           ? TextButton(
                               onPressed: () {
@@ -302,7 +302,7 @@ class ProfileView extends GetView<ProfileController> {
                               },
                               child: const Text(
                                 "Remove Profile Image",
-                                style: TextStyle(color: texthintcolor),
+                                style: TextStyle(color: textHintColor),
                               ))
                           : const SizedBox(),
                     ],

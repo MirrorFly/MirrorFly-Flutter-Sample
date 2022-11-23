@@ -21,7 +21,7 @@ class AppDivider extends StatelessWidget {
     return Container(
       margin: padding,
       height: 0.29,
-      color: dividercolor,
+      color: dividerColor,
     );
   }
 }
@@ -37,7 +37,7 @@ class ProfileTextImage extends StatelessWidget {
       {Key? key,
       required this.text,
       this.fontSize = 15,
-      this.bgColor = buttonbgcolor,
+      this.bgColor = buttonBgColor,
       this.radius = 25,
       this.fontColor = Colors.white})
       : super(key: key);
@@ -101,8 +101,8 @@ class ImageNetwork extends GetView<MainController> {
   @override
   Widget build(BuildContext context) {
     var authToken = controller.authToken;
-    Log("MirrorFly Auth", authToken.value);
-    Log("Image URL", url);
+    mirrorFlyLog("MirrorFly Auth", authToken.value);
+    mirrorFlyLog("Image URL", url);
     if (url.isEmpty) {
       return errorWidget != null
           ? errorWidget!
@@ -136,7 +136,7 @@ class ImageNetwork extends GetView<MainController> {
             );
           },
           errorWidget: (context, link, error) {
-            Log("image error", "$error link : $link");
+            mirrorFlyLog("image error", "$error link : $link");
             if (error.toString().contains("401") && url.isNotEmpty) {
               // controller.getAuthToken();
               _deleteImageFromCache(url);
@@ -169,10 +169,10 @@ class ImageNetwork extends GetView<MainController> {
     /*cache.DefaultCacheManager manager = cache.DefaultCacheManager();
     manager.emptyCache();*/
     cache.DefaultCacheManager().removeFile(url).then((value) {
-      Log('File removed', "");
+      mirrorFlyLog('File removed', "");
       controller.getAuthToken();
     }).onError((error, stackTrace) {
-      Log("", error.toString());
+      mirrorFlyLog("", error.toString());
     });
     //await CachedNetworkImage.evictFromCache(url);
   }
@@ -216,7 +216,7 @@ class ListItem extends StatelessWidget {
 
 
 Widget memberItem({required String name,required String image,required String status,bool? isAdmin, required Function() onTap}) {
-  Log("admin", isAdmin.toString());
+  mirrorFlyLog("admin", isAdmin.toString());
   return Padding(
     padding: const EdgeInsets.symmetric(vertical: 4.0),
     child: InkWell(

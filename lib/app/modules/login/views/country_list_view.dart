@@ -14,7 +14,7 @@ class CountryListView extends GetView<CountryController> {
       () => Scaffold(
         appBar: AppBar(
           leading: IconButton(
-            icon: const Icon(Icons.arrow_back, color: iconcolor),
+            icon: const Icon(Icons.arrow_back, color: iconColor),
             onPressed: () {
               controller.backFromSearch();
             },
@@ -34,7 +34,7 @@ class CountryListView extends GetView<CountryController> {
                 ? const SizedBox()
                 : IconButton(
                     icon: SvgPicture.asset(
-                      searchicon,
+                      searchIcon,
                       width: 18,
                       height: 18,
                       fit: BoxFit.contain,
@@ -59,7 +59,7 @@ class CountryListView extends GetView<CountryController> {
                           fontWeight: FontWeight.w500)),
                   trailing: Text(
                     item.dialCode ?? "",
-                    style: const TextStyle(color: texthintcolor),
+                    style: const TextStyle(color: textHintColor),
                   ),
                   onTap: () {
                     Get.back(result: item);

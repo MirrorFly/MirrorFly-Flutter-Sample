@@ -508,7 +508,7 @@ class FlyBaseController(applicationContext: Context) : MethodChannel.MethodCallH
                 DebugUtilis.v("FlyMessenger.downloadMedia", recent.tojsonString())
                 result.success(recent.tojsonString())
             }
-            call.method.equals("send_contact") -> {
+            call.method.equals("sendContactMessage") -> {
                 sendContactMessage(call, result)
             }
             call.method.equals("sendDocumentMessage") -> {

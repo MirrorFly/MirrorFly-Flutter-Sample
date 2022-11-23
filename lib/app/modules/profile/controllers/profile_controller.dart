@@ -38,7 +38,7 @@ class ProfileController extends GetxController {
   void onInit() {
     super.onInit();
     userImgUrl.value = SessionManagement.getUserImage() ?? "";
-    Log("auth : ", SessionManagement.getAuthToken().toString());
+    mirrorFlyLog("auth : ", SessionManagement.getAuthToken().toString());
     if (Get.arguments != null) {
       from(Get.arguments["from"]);
       if (from.value == Routes.LOGIN) {
@@ -110,7 +110,7 @@ class ProfileController extends GetxController {
     FlyChat.updateMyProfileImage(path).then((value) {
       loading.value = false;
       var data = json.decode(value);
-      imagePath.value = Constants.EMPTY_STRING;
+      imagePath.value = Constants.emptyString;
       userImgUrl.value = data['data']['image'];
       SessionManagement.setUserImage(data['data']['image'].toString());
       hideLoader();
@@ -130,10 +130,10 @@ class ProfileController extends GetxController {
       loading.value = false;
       hideLoader();
       if (value != null) {
-        SessionManagement.setUserImage(Constants.EMPTY_STRING);
+        SessionManagement.setUserImage(Constants.emptyString);
         isImageSelected.value = false;
         isUserProfileRemoved.value = true;
-        userImgUrl(Constants.EMPTY_STRING);
+        userImgUrl(Constants.emptyString);
         if (from.value == Routes.LOGIN) {
           changed(true);
         } else {
@@ -149,9 +149,9 @@ class ProfileController extends GetxController {
 
   getProfile() {
     var jid = SessionManagement.getUserJID().checkNull();
-    Log("jid", jid);
+    mirrorFlyLog("jid", jid);
     if (jid.isNotEmpty) {
-      Log("jid.isNotEmpty", jid.isNotEmpty.toString());
+      mirrorFlyLog("jid.isNotEmpty", jid.isNotEmpty.toString());
       loading.value = true;
       FlyChat.getUserProfile(jid).then((value) {
         loading.value = false;

@@ -90,7 +90,7 @@ class ChatView extends GetView<ChatController> {
                                         const Divider(
                                           height: 1,
                                           thickness: 0.29,
-                                          color: textblackcolor,
+                                          color: textBlackColor,
                                         ),
                                         const SizedBox(
                                           height: 10,
@@ -112,7 +112,7 @@ class ChatView extends GetView<ChatController> {
                                                   width: double.infinity,
                                                   decoration: BoxDecoration(
                                                     border: Border.all(
-                                                      color: textcolor,
+                                                      color: textColor,
                                                     ),
                                                     borderRadius:
                                                         const BorderRadius.all(
@@ -139,7 +139,7 @@ class ChatView extends GetView<ChatController> {
                                                                     .value,
                                                                 style: const TextStyle(
                                                                     color:
-                                                                        buttonbgcolor))
+                                                                        buttonBgColor))
                                                             : const SizedBox
                                                                 .shrink(),
                                                         controller.isAudioRecording
@@ -428,7 +428,7 @@ class ChatView extends GetView<ChatController> {
         const Divider(
           height: 1,
           thickness: 0.29,
-          color: textblackcolor,
+          color: textBlackColor,
         ),
         Padding(
           padding: const EdgeInsets.only(top: 15.0, bottom: 15.0),
@@ -463,7 +463,7 @@ class ChatView extends GetView<ChatController> {
         Divider(
           height: 1,
           thickness: 0.29,
-          color: textblackcolor,
+          color: textBlackColor,
         ),
         Padding(
           padding: EdgeInsets.only(top: 15.0, bottom: 15.0),
@@ -532,7 +532,7 @@ class ChatView extends GetView<ChatController> {
         reverse: false,
         itemBuilder: (context, index) {
           // int reversedIndex = chatList.length - 1 - index;
-          if (chatList[index].messageType != Constants.MNOTIFICATION) {
+          if (chatList[index].messageType != Constants.mNotification) {
             return SwipeTo(
               key: ValueKey(chatList[index].messageId),
               onRightSwipe: () {
@@ -564,7 +564,7 @@ class ChatView extends GetView<ChatController> {
                     color: controller.isSelected.value &&
                             chatList[index].isSelected &&
                             controller.selectedChatList.isNotEmpty
-                        ? chatreplycontainercolor
+                        ? chatReplyContainerColor
                         : Colors.transparent,
                     margin: const EdgeInsets.only(
                         left: 14, right: 14, top: 5, bottom: 10),
@@ -586,11 +586,11 @@ class ChatView extends GetView<ChatController> {
                                     topRight: Radius.circular(10),
                                     bottomRight: Radius.circular(10)),
                             color: (chatList[index].isMessageSentByMe
-                                ? chatsentbgcolor
+                                ? chatSentBgColor
                                 : Colors.white),
                             border: chatList[index].isMessageSentByMe
-                                ? Border.all(color: chatsentbgcolor)
-                                : Border.all(color: chatbordercolor)),
+                                ? Border.all(color: chatSentBgColor)
+                                : Border.all(color: chatBorderColor)),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -612,13 +612,13 @@ class ChatView extends GetView<ChatController> {
                 padding:
                     const EdgeInsets.symmetric(vertical: 2, horizontal: 20),
                 decoration: const BoxDecoration(
-                    color: notificationtextbgcolor,
+                    color: notificationTextBgColor,
                     borderRadius: BorderRadius.all(Radius.circular(15))),
                 child: Text(chatList[index].messageTextContent ?? "",
                     style: const TextStyle(
                         fontSize: 13,
                         fontWeight: FontWeight.w400,
-                        color: notificationtextcolor)),
+                        color: notificationTextColor)),
               ),
             );
           }
@@ -656,8 +656,8 @@ class ChatView extends GetView<ChatController> {
       var previousMessage = messageList[position - 1];
       if (currentMessage.isMessageSentByMe !=
               previousMessage.isMessageSentByMe ||
-          previousMessage.messageType == Constants.MSG_TYPE_NOTIFICATION ||
-          (currentMessage.messageChatType == Constants.TYPE_GROUP_CHAT &&
+          previousMessage.messageType == Constants.msgTypeNotification ||
+          (currentMessage.messageChatType == Constants.typeGroupChat &&
               currentMessage.isThisAReplyMessage)) {
         return true;
       }
@@ -676,7 +676,7 @@ class ChatView extends GetView<ChatController> {
 
   bool checkIsNotNotification(ChatMessageModel messageItem) {
     var msgType = messageItem.messageType;
-    return msgType != Constants.MNOTIFICATION;
+    return msgType != Constants.mNotification;
   }
 
   ChatMessageModel? getPreviousMessage(
@@ -751,7 +751,7 @@ class ChatView extends GetView<ChatController> {
         ),
       );
     } else {
-      if (chatList[index].messageType == Constants.MTEXT) {
+      if (chatList[index].messageType == Constants.mText) {
         return Padding(
           padding: const EdgeInsets.all(10.0),
           child: Row(
@@ -791,19 +791,19 @@ class ChatView extends GetView<ChatController> {
                   Text(
                     controller.getChatTime(
                         context, chatList[index].messageSentTime),
-                    style: const TextStyle(fontSize: 11, color: chattimecolor),
+                    style: const TextStyle(fontSize: 11, color: chatTimeColor),
                   ),
                 ],
               ),
             ],
           ),
         );
-      } else if (chatList[index].messageType == Constants.MNOTIFICATION) {
+      } else if (chatList[index].messageType == Constants.mNotification) {
         return Center(
           child: Container(
             decoration: const BoxDecoration(
                 borderRadius: BorderRadius.all(Radius.circular(40)),
-                color: chatreplycontainercolor),
+                color: chatReplyContainerColor),
             padding: const EdgeInsets.only(
                 left: 15.0, right: 15.0, top: 8.0, bottom: 8.0),
             // child: Text(chatList[index].messageTextContent!,
@@ -811,7 +811,7 @@ class ChatView extends GetView<ChatController> {
                 style: const TextStyle(fontSize: 12)),
           ),
         );
-      } else if (chatList[index].messageType == Constants.MIMAGE) {
+      } else if (chatList[index].messageType == Constants.mImage) {
         if(chatList[index].mediaChatMessage == null){
           return const SizedBox.shrink();
         }
@@ -872,7 +872,7 @@ class ChatView extends GetView<ChatController> {
             ],
           ),
         );
-      } else if (chatList[index].messageType == Constants.MVIDEO) {
+      } else if (chatList[index].messageType == Constants.mVideo) {
         if(chatList[index].mediaChatMessage == null){
           return const SizedBox.shrink();
         }
@@ -885,9 +885,9 @@ class ChatView extends GetView<ChatController> {
                 onTap: () {
                   if (controller.checkFile(chatMessage.mediaLocalStoragePath) &&
                       (chatMessage.mediaDownloadStatus ==
-                              Constants.MEDIA_DOWNLOADED ||
+                              Constants.mediaDownloaded ||
                           chatMessage.mediaDownloadStatus ==
-                              Constants.MEDIA_UPLOADED)) {
+                              Constants.mediaUploaded)) {
                     Get.toNamed(Routes.VIDEO_PLAY, arguments: {
                       "filePath": chatMessage.mediaLocalStoragePath,
                     });
@@ -941,7 +941,7 @@ class ChatView extends GetView<ChatController> {
             ],
           ),
         );
-      } else if (chatList[index].messageType == Constants.MDOCUMENT) {
+      } else if (chatList[index].messageType == Constants.mDocument) {
         if(chatList[index].mediaChatMessage == null){
           return const SizedBox.shrink();
         }
@@ -954,7 +954,7 @@ class ChatView extends GetView<ChatController> {
           child: Container(
             decoration: BoxDecoration(
               border: Border.all(
-                color: chatreplysendercolor,
+                color: chatReplySenderColor,
               ),
               borderRadius: const BorderRadius.all(Radius.circular(10)),
               color: Colors.white,
@@ -1019,7 +1019,7 @@ class ChatView extends GetView<ChatController> {
                         controller.getChatTime(
                             context, chatList[index].messageSentTime),
                         style:
-                            const TextStyle(fontSize: 11, color: chattimecolor),
+                            const TextStyle(fontSize: 11, color: chatTimeColor),
                       ),
                       const SizedBox(
                         width: 10,
@@ -1034,7 +1034,7 @@ class ChatView extends GetView<ChatController> {
             ),
           ),
         );
-      } else if (chatList[index].messageType == Constants.MCONTACT) {
+      } else if (chatList[index].messageType == Constants.mContact) {
         if(chatList[index].contactChatMessage == null){
           return const SizedBox.shrink();
         }
@@ -1050,7 +1050,7 @@ class ChatView extends GetView<ChatController> {
           child: Container(
             decoration: BoxDecoration(
               border: Border.all(
-                color: chatreplysendercolor,
+                color: chatReplySenderColor,
               ),
               borderRadius: const BorderRadius.all(Radius.circular(10)),
               color: Colors.white,
@@ -1064,7 +1064,7 @@ class ChatView extends GetView<ChatController> {
                   child: Row(
                     children: [
                       Image.asset(
-                        profile_img,
+                        profileImage,
                         width: 35,
                         height: 35,
                       ),
@@ -1104,7 +1104,7 @@ class ChatView extends GetView<ChatController> {
                         controller.getChatTime(
                             context, chatList[index].messageSentTime),
                         style:
-                            const TextStyle(fontSize: 11, color: chattimecolor),
+                            const TextStyle(fontSize: 11, color: chatTimeColor),
                       ),
                       const SizedBox(
                         width: 10,
@@ -1119,7 +1119,7 @@ class ChatView extends GetView<ChatController> {
             ),
           ),
         );
-      } else if (chatList[index].messageType == Constants.MAUDIO) {
+      } else if (chatList[index].messageType == Constants.mAudio) {
         if(chatList[index].mediaChatMessage == null){
           return const SizedBox.shrink();
         }
@@ -1127,7 +1127,7 @@ class ChatView extends GetView<ChatController> {
         return Container(
           decoration: BoxDecoration(
             border: Border.all(
-              color: chatreplysendercolor,
+              color: chatReplySenderColor,
             ),
             borderRadius: const BorderRadius.all(Radius.circular(10)),
             color: Colors.white,
@@ -1141,7 +1141,7 @@ class ChatView extends GetView<ChatController> {
                   borderRadius: BorderRadius.only(
                       topLeft: Radius.circular(10),
                       topRight: Radius.circular(10)),
-                  color: chatreplysendercolor,
+                  color: chatReplySenderColor,
                 ),
                 child: Padding(
                   padding: const EdgeInsets.all(15),
@@ -1152,13 +1152,13 @@ class ChatView extends GetView<ChatController> {
                         alignment: Alignment.center,
                         children: [
                           SvgPicture.asset(
-                            audio_mic_bg,
+                            audioMicBg,
                             width: 28,
                             height: 28,
                             fit: BoxFit.contain,
                           ),
                           SvgPicture.asset(
-                            audio_mic_1,
+                            audioMic1,
                             fit: BoxFit.contain,
                           ),
                         ],
@@ -1184,7 +1184,7 @@ class ChatView extends GetView<ChatController> {
                           // width: 168,
                           child: SliderTheme(
                             data: SliderThemeData(
-                              thumbColor: audiocolordark,
+                              thumbColor: audioColorDark,
                               overlayShape: SliderComponentShape.noOverlay,
                               thumbShape: const RoundSliderThumbShape(
                                   enabledThumbRadius: 5),
@@ -1193,8 +1193,8 @@ class ChatView extends GetView<ChatController> {
                               value: double.parse(
                                   controller.currentPos.value.toString()),
                               min: 0,
-                              activeColor: audiocolordark,
-                              inactiveColor: audiocolor,
+                              activeColor: audioColorDark,
+                              inactiveColor: audioColor,
                               max: double.parse(
                                   controller.maxDuration.value.toString()),
                               divisions: controller.maxDuration.value,
@@ -1251,7 +1251,7 @@ class ChatView extends GetView<ChatController> {
           ),
         );
       } else if (chatList[index].messageType.toUpperCase() ==
-          Constants.MLOCATION) {
+          Constants.mLocation) {
         if(chatList[index].locationChatMessage == null){
           return const SizedBox.shrink();
         }
@@ -1329,7 +1329,7 @@ class ChatView extends GetView<ChatController> {
       width: controller.screenWidth,
       margin: const EdgeInsets.only(bottom: 40),
       child: Card(
-        color: bottomsheetcolor,
+        color: bottomSheetColor,
         margin: const EdgeInsets.all(18.0),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
         child: Padding(
@@ -1405,7 +1405,7 @@ class ChatView extends GetView<ChatController> {
                   ),
                   iconCreation(locationImg, "Location", () {
                     AppPermission().getLocationPermission().then((bool value) {
-                      Log("Location permission", value.toString());
+                      mirrorFlyLog("Location permission", value.toString());
                       if (value) {
                         Get.back();
                         Get.toNamed(Routes.LOCATIONSENT)?.then((value) {
@@ -1458,7 +1458,7 @@ class ChatView extends GetView<ChatController> {
           height: 50,
           child: Center(
               child: SvgPicture.asset(
-            video_play,
+            videoPlay,
             fit: BoxFit.contain,
           )),
         );
@@ -1475,27 +1475,27 @@ class ChatView extends GetView<ChatController> {
       switch (chatMessage.isMessageSentByMe
           ? chatMessage.mediaChatMessage!.mediaUploadStatus
           : chatMessage.mediaChatMessage!.mediaDownloadStatus) {
-        case Constants.MEDIA_DOWNLOADED:
-        case Constants.MEDIA_UPLOADED:
+        case Constants.mediaDownloaded:
+        case Constants.mediaUploaded:
           return const SizedBox.shrink();
 
-        case Constants.MEDIA_DOWNLOADED_NOT_AVAILABLE:
-        case Constants.MEDIA_NOT_DOWNLOADED:
+        case Constants.mediaDownloadedNotAvailable:
+        case Constants.mediaNotDownloaded:
           return getFileInfo(
               chatMessage.mediaChatMessage!.mediaDownloadStatus,
               chatMessage.mediaChatMessage!.mediaFileSize,
               Icons.download_sharp,
               chatMessage.messageType);
-        case Constants.MEDIA_UPLOADED_NOT_AVAILABLE:
+        case Constants.mediaUploadedNotAvailable:
           return getFileInfo(
               chatMessage.mediaChatMessage!.mediaDownloadStatus,
               chatMessage.mediaChatMessage!.mediaFileSize,
               Icons.upload_sharp,
               chatMessage.messageType);
 
-        case Constants.MEDIA_NOT_UPLOADED:
-        case Constants.MEDIA_DOWNLOADING:
-        case Constants.MEDIA_UPLOADING:
+        case Constants.mediaNotUploaded:
+        case Constants.mediaDownloading:
+        case Constants.mediaUploading:
           if (chatMessage.messageType == 'AUDIO' ||
               chatMessage.messageType == 'DOCUMENT') {
             return InkWell(
@@ -1519,12 +1519,12 @@ class ChatView extends GetView<ChatController> {
     return messageType == 'AUDIO' || messageType == 'DOCUMENT'
         ? Icon(
             iconData,
-            color: audiocolordark,
+            color: audioColorDark,
           )
         : Container(
             decoration: BoxDecoration(
               border: Border.all(
-                color: textcolor,
+                color: textColor,
               ),
               borderRadius: const BorderRadius.all(Radius.circular(5)),
               color: Colors.black38,
@@ -1586,10 +1586,10 @@ class ChatView extends GetView<ChatController> {
     return Container(
         decoration: BoxDecoration(
           border: Border.all(
-            color: textcolor,
+            color: textColor,
           ),
           borderRadius: const BorderRadius.all(Radius.circular(2)),
-          color: audiobgcolor,
+          color: audioBgColor,
         ),
         child: Stack(alignment: Alignment.center,
             // mainAxisAlignment: MainAxisAlignment.center,
@@ -1606,7 +1606,7 @@ class ChatView extends GetView<ChatController> {
                     valueColor: AlwaysStoppedAnimation<Color>(
                       Colors.white,
                     ),
-                    backgroundColor: audiobgcolor,
+                    backgroundColor: audioBgColor,
                     // minHeight: 1,
                   ),
                 ),
@@ -1619,15 +1619,15 @@ class ChatView extends GetView<ChatController> {
     switch (chatList.isMessageSentByMe
         ? chatList.mediaChatMessage?.mediaUploadStatus
         : mediaDownloadStatus) {
-      case Constants.MEDIA_DOWNLOADED:
-      case Constants.MEDIA_UPLOADED:
+      case Constants.mediaDownloaded:
+      case Constants.mediaUploaded:
         if (chatList.messageType == 'VIDEO') {
           if (controller.checkFile(
                   chatList.mediaChatMessage!.mediaLocalStoragePath) &&
               (chatList.mediaChatMessage!.mediaDownloadStatus ==
-                      Constants.MEDIA_DOWNLOADED ||
+                      Constants.mediaDownloaded ||
                   chatList.mediaChatMessage!.mediaDownloadStatus ==
-                      Constants.MEDIA_UPLOADED ||
+                      Constants.mediaUploaded ||
                   chatList.isMessageSentByMe)) {
             Get.toNamed(Routes.VIDEO_PLAY, arguments: {
               "filePath": chatList.mediaChatMessage!.mediaLocalStoragePath,
@@ -1638,9 +1638,9 @@ class ChatView extends GetView<ChatController> {
           if (controller.checkFile(
                   chatList.mediaChatMessage!.mediaLocalStoragePath) &&
               (chatList.mediaChatMessage!.mediaDownloadStatus ==
-                      Constants.MEDIA_DOWNLOADED ||
+                      Constants.mediaDownloaded ||
                   chatList.mediaChatMessage!.mediaDownloadStatus ==
-                      Constants.MEDIA_UPLOADED ||
+                      Constants.mediaUploaded ||
                   chatList.isMessageSentByMe)) {
             // debugPrint("audio click1");
             chatList.mediaChatMessage!.isPlaying = controller.isPlaying.value;
@@ -1653,21 +1653,21 @@ class ChatView extends GetView<ChatController> {
         }
         break;
 
-      case Constants.MEDIA_DOWNLOADED_NOT_AVAILABLE:
-      case Constants.MEDIA_NOT_DOWNLOADED:
+      case Constants.mediaDownloadedNotAvailable:
+      case Constants.mediaNotDownloaded:
         //download
         debugPrint("Download");
         debugPrint(chatList.messageId);
         chatList.mediaChatMessage!.mediaDownloadStatus =
-            Constants.MEDIA_DOWNLOADING;
+            Constants.mediaDownloading;
         controller.downloadMedia(chatList.messageId);
         break;
-      case Constants.MEDIA_UPLOADED_NOT_AVAILABLE:
+      case Constants.mediaUploadedNotAvailable:
         //upload
         break;
-      case Constants.MEDIA_NOT_UPLOADED:
-      case Constants.MEDIA_DOWNLOADING:
-      case Constants.MEDIA_UPLOADING:
+      case Constants.mediaNotUploaded:
+      case Constants.mediaDownloading:
+      case Constants.mediaUploading:
         return uploadingView();
       // break;
     }
@@ -1679,46 +1679,46 @@ class ChatView extends GetView<ChatController> {
     String result = mediaFileName.split('.').last;
     debugPrint("File Type ==> $result");
     switch (result) {
-      case Constants.PDF:
+      case Constants.pdf:
         return SvgPicture.asset(
-          pdf_image,
+          pdfImage,
           width: 30,
           height: 30,
         );
-      case Constants.PPT:
+      case Constants.ppt:
         return SvgPicture.asset(
-          ppt_image,
+          pptImage,
           width: 30,
           height: 30,
         );
-      case Constants.XLS:
+      case Constants.xls:
         return SvgPicture.asset(
-          xls_image,
+          xlsImage,
           width: 30,
           height: 30,
         );
-      case Constants.XLXS:
+      case Constants.xlsx:
         return SvgPicture.asset(
-          xlsx_image,
+          xlsxImage,
           width: 30,
           height: 30,
         );
-      case Constants.DOC:
-      case Constants.DOCX:
+      case Constants.doc:
+      case Constants.docx:
         return SvgPicture.asset(
-          doc_image,
+          docImage,
           width: 30,
           height: 30,
         );
-      case Constants.APK:
+      case Constants.apk:
         return SvgPicture.asset(
-          apk_image,
+          apkImage,
           width: 30,
           height: 30,
         );
       default:
         return SvgPicture.asset(
-          doc_image,
+          docImage,
           width: 30,
           height: 30,
         );
@@ -1741,7 +1741,7 @@ class ChatView extends GetView<ChatController> {
                   alignment: Alignment.center,
                   children: [
                     SvgPicture.asset(
-                      audio_mic_bg,
+                      audioMicBg,
                       width: 50,
                       height: 50,
                       fit: BoxFit.contain,
@@ -1772,7 +1772,7 @@ class ChatView extends GetView<ChatController> {
                       // width: 168,
                       child: SliderTheme(
                         data: SliderThemeData(
-                          thumbColor: audiocolordark,
+                          thumbColor: audioColorDark,
                           overlayShape: SliderComponentShape.noOverlay,
                           thumbShape: const RoundSliderThumbShape(
                               enabledThumbRadius: 5),
@@ -1782,8 +1782,8 @@ class ChatView extends GetView<ChatController> {
                             value:
                                 double.parse(controller.currentPos.toString()),
                             min: 0,
-                            activeColor: audiocolordark,
-                            inactiveColor: audiocolor,
+                            activeColor: audioColorDark,
+                            inactiveColor: audioColor,
                             max: double.parse(
                                 controller.maxDuration.value.toString()),
                             divisions: controller.maxDuration.value,
@@ -1812,11 +1812,11 @@ class ChatView extends GetView<ChatController> {
           width: double.infinity,
           padding: const EdgeInsets.all(6),
           decoration: const BoxDecoration(
-            color: chatsentbgcolor,
+            color: chatSentBgColor,
           ),
           child: Container(
             decoration: const BoxDecoration(
-              color: chatreplycontainercolor,
+              color: chatReplyContainerColor,
               borderRadius: BorderRadius.all(Radius.circular(5)),
             ),
             child: Row(
@@ -1893,37 +1893,37 @@ class ChatView extends GetView<ChatController> {
       String? contactName, String? mediaFileName) {
     debugPrint(messageType);
     switch (messageType) {
-      case Constants.MTEXT:
+      case Constants.mText:
         return Row(
           children: [
-            Helper.forMessageTypeIcon(Constants.MTEXT),
+            Helper.forMessageTypeIcon(Constants.mText),
             Text(messageTextContent!),
           ],
         );
-      case Constants.MIMAGE:
+      case Constants.mImage:
         return Row(
           children: [
-            Helper.forMessageTypeIcon(Constants.MIMAGE),
+            Helper.forMessageTypeIcon(Constants.mImage),
             const SizedBox(
               width: 10,
             ),
-            Text(Helper.capitalize(Constants.MIMAGE)),
+            Text(Helper.capitalize(Constants.mImage)),
           ],
         );
-      case Constants.MVIDEO:
+      case Constants.mVideo:
         return Row(
           children: [
-            Helper.forMessageTypeIcon(Constants.MVIDEO),
+            Helper.forMessageTypeIcon(Constants.mVideo),
             const SizedBox(
               width: 10,
             ),
-            Text(Helper.capitalize(Constants.MVIDEO)),
+            Text(Helper.capitalize(Constants.mVideo)),
           ],
         );
-      case Constants.MAUDIO:
+      case Constants.mAudio:
         return Row(
           children: [
-            Helper.forMessageTypeIcon(Constants.MAUDIO),
+            Helper.forMessageTypeIcon(Constants.mAudio),
             const SizedBox(
               width: 10,
             ),
@@ -1931,17 +1931,17 @@ class ChatView extends GetView<ChatController> {
             // SizedBox(
             //   width: 10,
             // ),
-            Text(Helper.capitalize(Constants.MAUDIO)),
+            Text(Helper.capitalize(Constants.mAudio)),
           ],
         );
-      case Constants.MCONTACT:
+      case Constants.mContact:
         return Row(
           children: [
-            Helper.forMessageTypeIcon(Constants.MCONTACT),
+            Helper.forMessageTypeIcon(Constants.mContact),
             const SizedBox(
               width: 10,
             ),
-            Text("${Helper.capitalize(Constants.MCONTACT)} :"),
+            Text("${Helper.capitalize(Constants.mContact)} :"),
             const SizedBox(
               width: 5,
             ),
@@ -1955,20 +1955,20 @@ class ChatView extends GetView<ChatController> {
                 )),
           ],
         );
-      case Constants.MLOCATION:
+      case Constants.mLocation:
         return Row(
           children: [
-            Helper.forMessageTypeIcon(Constants.MLOCATION),
+            Helper.forMessageTypeIcon(Constants.mLocation),
             const SizedBox(
               width: 10,
             ),
-            Text(Helper.capitalize(Constants.MLOCATION)),
+            Text(Helper.capitalize(Constants.mLocation)),
           ],
         );
-      case Constants.MDOCUMENT:
+      case Constants.mDocument:
         return Row(
           children: [
-            Helper.forMessageTypeIcon(Constants.MDOCUMENT),
+            Helper.forMessageTypeIcon(Constants.mDocument),
             const SizedBox(
               width: 10,
             ),
@@ -1987,15 +1987,15 @@ class ChatView extends GetView<ChatController> {
       LocationChatMessage? locationChatMessage,
       double size) {
     switch (messageType) {
-      case Constants.MIMAGE:
+      case Constants.mImage:
         return ClipRRect(
           borderRadius: BorderRadius.circular(5),
           child: controller.imageFromBase64String(
               mediaThumbImage!, context, size, size),
         );
-      case Constants.MLOCATION:
+      case Constants.mLocation:
         return getLocationImage(locationChatMessage, size, size);
-      case Constants.MVIDEO:
+      case Constants.mVideo:
         return ClipRRect(
           borderRadius: BorderRadius.circular(5),
           child: controller.imageFromBase64String(
@@ -2018,8 +2018,8 @@ class ChatView extends GetView<ChatController> {
         decoration: BoxDecoration(
           borderRadius: const BorderRadius.all(Radius.circular(10)),
           color: chatList.isMessageSentByMe
-              ? chatreplycontainercolor
-              : chatreplysendercolor,
+              ? chatReplyContainerColor
+              : chatReplySenderColor,
         ),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.center,
@@ -2163,7 +2163,7 @@ class ChatView extends GetView<ChatController> {
                   : customEmptyAction(),
               controller.selectedChatList.length > 1 ||
                       controller.selectedChatList[0].messageType !=
-                          Constants.MTEXT
+                          Constants.mText
                   ? customEmptyAction()
                   : CustomAction(
                       visibleWidget: IconButton(
@@ -2278,7 +2278,7 @@ class ChatView extends GetView<ChatController> {
                   ],
                 ),
                 onTap: () {
-                  Log("title clicked",
+                  mirrorFlyLog("title clicked",
                       controller.profile.isGroupProfile.toString());
                   controller.infoPage();
                 },
