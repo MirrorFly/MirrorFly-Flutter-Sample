@@ -28,7 +28,7 @@ import '../../../model/check_model.dart' as check_model;
 import '../../../model/userListModel.dart';
 import '../../../routes/app_pages.dart';
 
-class ChatController extends BaseController with GetTickerProviderStateMixin {
+class ChatController extends GetxController with GetTickerProviderStateMixin, BaseController {
   var chatList = List<ChatMessageModel>.empty(growable: true).obs;
   late AnimationController controller;
   ScrollController scrollController = ScrollController(
@@ -104,7 +104,7 @@ class ChatController extends BaseController with GetTickerProviderStateMixin {
     super.onInit();
     profile_.value = Get.arguments as Profile;
     onReady();
-
+    initListeners();
     player.onDurationChanged.listen((Duration d) {
       //get the duration of audio
       maxDuration(d.inMilliseconds);
@@ -135,7 +135,7 @@ class ChatController extends BaseController with GetTickerProviderStateMixin {
 
     filteredPosition.bindStream(filteredPosition.stream);
     ever(filteredPosition, (callback) {
-      Log("filtered Position", callback.reversed.toString());
+      mirrorFlyLog("filtered Position", callback.reversed.toString());
       lastPosition(callback.length);
       chatList.refresh();
     });
@@ -172,7 +172,6 @@ class ChatController extends BaseController with GetTickerProviderStateMixin {
     });
     //scrollController.addListener(_scrollController);
 
-    registerChatSync();
     FlyChat.setOnGoingChatUser(profile.jid!);
     //getChatHistory(profile.jid!);
     debugPrint("==================");
@@ -196,7 +195,6 @@ class ChatController extends BaseController with GetTickerProviderStateMixin {
   void onClose() {
     scrollController.dispose();
     FlyChat.setOnGoingChatUser("");
-    //Get.delete<ChatController>();
     isLive = false;
     super.onClose();
   }
@@ -204,42 +202,9 @@ class ChatController extends BaseController with GetTickerProviderStateMixin {
   @override
   void dispose() {
     controller.dispose();
-    //Get.delete<ChatController>();
     super.dispose();
   }
 
-  registerChatSync() {
-    /*debugPrint("Registering Event");
-    var messageEvent = PlatformRepo.onMessageReceived;
-    messageEvent.listen((msgData) {
-      ChatMessageModel chatMessageModel = sendMessageModelFromJson(msgData);
-
-      chatList.add(chatMessageModel);
-      if (isLive) {
-        sendReadReceipt();
-      }
-    });
-
-    PlatformRepo.onMessageStatusUpdated.listen((msgData) {
-      ChatMessageModel chatMessageModel = sendMessageModelFromJson(msgData);
-      final index = chatList.indexWhere(
-          (message) => message.messageId == chatMessageModel.messageId);
-      debugPrint("Message Status Update index of search $index");
-      if (index != -1) {
-        // Helper.hideLoading();
-        chatList[index] = chatMessageModel;
-      }
-    });
-    PlatformRepo.onMediaStatusUpdated.listen((msgData) {
-      ChatMessageModel chatMessageModel = sendMessageModelFromJson(msgData);
-      final index = chatList.indexWhere(
-          (message) => message.messageId == chatMessageModel.messageId);
-      debugPrint("Media Status Update index of search $index");
-      if (index != -1) {
-        chatList[index] = chatMessageModel;
-      }
-    });*/
-  }
 
   sendMessage(Profile profile) {
     var replyMessageId = "";
@@ -273,7 +238,7 @@ class ChatController extends BaseController with GetTickerProviderStateMixin {
         .sendLocationMessage(
             profile.jid.toString(), latitude, longitude, replyMessageId)
         .then((value) {
-      Log("Location_msg", value.toString());
+      mirrorFlyLog("Location_msg", value.toString());
       ChatMessageModel chatMessageModel = sendMessageModelFromJson(value);
       chatList.add(chatMessageModel);
       scrollToBottom();
@@ -475,7 +440,7 @@ class ChatController extends BaseController with GetTickerProviderStateMixin {
         isPlaying(true);
         audioPlayed(true);
       } else {
-        Log("", "Error while playing audio.");
+        mirrorFlyLog("", "Error while playing audio.");
       }
     } else if (audioPlayed.value && !isPlaying.value) {
       int result = await player.resume();
@@ -485,7 +450,7 @@ class ChatController extends BaseController with GetTickerProviderStateMixin {
         isPlaying(true);
         audioPlayed(true);
       } else {
-        Log("", "Error on resume audio.");
+        mirrorFlyLog("", "Error on resume audio.");
       }
     } else {
       int result = await player.pause();
@@ -494,7 +459,7 @@ class ChatController extends BaseController with GetTickerProviderStateMixin {
 
         isPlaying(false);
       } else {
-        Log("", "Error on pause audio.");
+        mirrorFlyLog("", "Error on pause audio.");
       }
     }
   }
@@ -614,7 +579,7 @@ class ChatController extends BaseController with GetTickerProviderStateMixin {
       AudioPlayer player = AudioPlayer();
       player.setUrl(result.files.single.path!);
       player.onDurationChanged.listen((Duration duration) {
-        Log("", 'max duration: ${duration.inMilliseconds}');
+        mirrorFlyLog("", 'max duration: ${duration.inMilliseconds}');
         filePath.value = (result.files.single.path!);
         sendAudioMessage(
             filePath.value, false, duration.inMilliseconds.toString());
@@ -690,7 +655,7 @@ class ChatController extends BaseController with GetTickerProviderStateMixin {
   }
 
   void addChatSelection(ChatMessageModel chatList) {
-    if (chatList.messageType != Constants.MNOTIFICATION) {
+    if (chatList.messageType != Constants.mNotification) {
       selectedChatList.add(chatList);
       chatList.isSelected = true;
       this.chatList.refresh();
@@ -720,9 +685,9 @@ class ChatController extends BaseController with GetTickerProviderStateMixin {
 
       case 'Share':
         for (var chatList in selectedChatList) {
-          if (chatList.messageType == Constants.MTEXT ||
-              chatList.messageType == Constants.MLOCATION ||
-              chatList.messageType == Constants.MCONTACT) {
+          if (chatList.messageType == Constants.mText ||
+              chatList.messageType == Constants.mLocation ||
+              chatList.messageType == Constants.mContact) {
             return false;
           }
         }
@@ -1001,33 +966,33 @@ class ChatController extends BaseController with GetTickerProviderStateMixin {
     filteredPosition.clear();
     if (searchedText.text.isNotEmpty) {
       for (var i = 0; i < chatList.length; i++) {
-        if (chatList[i].messageType == Constants.MTEXT &&
+        if (chatList[i].messageType == Constants.mText &&
             chatList[i]
                 .messageTextContent
                 .startsWithTextInWords(searchedText.text)) {
           filteredPosition.add(i);
-        } else if (chatList[i].messageType == Constants.MIMAGE &&
+        } else if (chatList[i].messageType == Constants.mImage &&
             chatList[i].mediaChatMessage!.mediaCaptionText.isNotEmpty &&
             chatList[i]
                 .mediaChatMessage!
                 .mediaCaptionText
                 .startsWithTextInWords(searchedText.text)) {
           filteredPosition.add(i);
-        } else if (chatList[i].messageType == Constants.MVIDEO &&
+        } else if (chatList[i].messageType == Constants.mVideo &&
             chatList[i].mediaChatMessage!.mediaCaptionText.isNotEmpty &&
             chatList[i]
                 .mediaChatMessage!
                 .mediaCaptionText
                 .startsWithTextInWords(searchedText.text)) {
           filteredPosition.add(i);
-        } else if (chatList[i].messageType == Constants.MDOCUMENT &&
+        } else if (chatList[i].messageType == Constants.mDocument &&
             chatList[i].mediaChatMessage!.mediaFileName.isNotEmpty &&
             chatList[i]
                 .mediaChatMessage!
                 .mediaFileName
                 .startsWithTextInWords(searchedText.text)) {
           filteredPosition.add(i);
-        } else if (chatList[i].messageType == Constants.MCONTACT &&
+        } else if (chatList[i].messageType == Constants.mContact &&
             chatList[i].contactChatMessage!.contactName.isNotEmpty &&
             chatList[i]
                 .contactChatMessage!
@@ -1290,7 +1255,7 @@ class ChatController extends BaseController with GetTickerProviderStateMixin {
   @override
   void onMessageReceived(chatMessage) {
     super.onMessageReceived(chatMessage);
-    Log("chatController", "onMessageReceived");
+    mirrorFlyLog("chatController", "onMessageReceived");
     ChatMessageModel chatMessageModel = sendMessageModelFromJson(chatMessage);
     chatList.add(chatMessageModel);
     scrollToBottom();
@@ -1412,6 +1377,6 @@ class ChatController extends BaseController with GetTickerProviderStateMixin {
   String get subtitle => userPresenceStatus.value.isEmpty
       ? groupParticipantsName.value.isNotEmpty
           ? groupParticipantsName.value.toString()
-          : Constants.EMPTY_STRING
+          : Constants.emptyString
       : userPresenceStatus.value.toString();
 }

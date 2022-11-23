@@ -19,7 +19,7 @@ class PinView extends GetView<AppLockController> {
               Padding(
                 padding:
                 const EdgeInsets.symmetric(horizontal: 30.0, vertical: 50),
-                child: Image.asset(ic_logo),
+                child: Image.asset(icLogo),
               ),
               const Padding(
                 padding: EdgeInsets.all(8.0),
@@ -76,7 +76,7 @@ class PinView extends GetView<AppLockController> {
           radius: 30,
           backgroundColor: (item == 10 || item.isNegative)
               ? Colors.transparent
-              : textcolor, //bg color,
+              : textColor, //bg color,
           child: Visibility(
             visible: !item.isNegative,
             child: Center(

@@ -28,7 +28,7 @@ class LocalContactView extends GetView<LocalContactController> {
                 ? const SizedBox()
                 : IconButton(
               icon: SvgPicture.asset(
-                searchicon,
+                searchIcon,
                 width: 18,
                 height: 18,
                 fit: BoxFit.contain,

@@ -68,7 +68,7 @@ class NameChangeView extends GetView<GroupInfoController> {
                             controller.showEmoji(!controller.showEmoji.value);
                           });
                         },
-                        icon: SvgPicture.asset(smileicon))
+                        icon: SvgPicture.asset(smileIcon))
                   ],
                 ),
               ),

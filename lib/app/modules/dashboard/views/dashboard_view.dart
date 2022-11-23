@@ -36,9 +36,9 @@ class DashboardView extends GetView<DashboardController> {
                   "groupJid": ""
                 });
               },
-              backgroundColor: buttonbgcolor,
+              backgroundColor: buttonBgColor,
               child: SvgPicture.asset(
-                chatfabicon,
+                chatFabIcon,
                 width: 18,
                 height: 18,
                 fit: BoxFit.contain,
@@ -54,9 +54,9 @@ class DashboardView extends GetView<DashboardController> {
                     floating: true,
                     automaticallyImplyLeading: false,
                     bottom: TabBar(
-                        indicatorColor: buttonbgcolor,
-                        labelColor: buttonbgcolor,
-                        unselectedLabelColor: appbartextcolor,
+                        indicatorColor: buttonBgColor,
+                        labelColor: buttonBgColor,
+                        unselectedLabelColor: appbarTextColor,
                         tabs: [
                           Obx(() {
                             return tabItem(
@@ -68,7 +68,7 @@ class DashboardView extends GetView<DashboardController> {
                     actions: [
                       IconButton(
                         icon: SvgPicture.asset(
-                          searchicon,
+                          searchIcon,
                           width: 18,
                           height: 18,
                           fit: BoxFit.contain,
@@ -209,7 +209,7 @@ class DashboardView extends GetView<DashboardController> {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Image.asset(
-            nochaticon,
+            noChatIcon,
             width: 200,
           ),
           Text(
@@ -327,7 +327,7 @@ class DashboardView extends GetView<DashboardController> {
                               fontSize: 16.0,
                               fontWeight: FontWeight.w700,
                               fontFamily: 'sf_ui',
-                              color: texthintcolor),
+                              color: textHintColor),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                         ),
@@ -343,8 +343,8 @@ class DashboardView extends GetView<DashboardController> {
                               fontWeight: FontWeight.w600,
                               fontFamily: 'sf_ui',
                               color: item.unreadMessageCount.toString() != "0"
-                                  ? buttonbgcolor
-                                  : textcolor),
+                                  ? buttonBgColor
+                                  : textColor),
                         ),
                       ),
                     ],
@@ -367,7 +367,7 @@ class DashboardView extends GetView<DashboardController> {
                                     item.lastMessageType
                                             .checkNull()
                                             .toUpperCase() !=
-                                        Constants.MNOTIFICATION)
+                                        Constants.mNotification)
                                 ? FutureBuilder(
                                     future: controller.getMessageOfId(
                                         item.lastMessageId.checkNull()),

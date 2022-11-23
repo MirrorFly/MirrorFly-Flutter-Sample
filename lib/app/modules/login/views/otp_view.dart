@@ -38,7 +38,7 @@ class OtpView extends GetView<LoginController> {
                     children: [
                       Padding(
                         padding: const EdgeInsets.symmetric(vertical: 20),
-                        child: SvgPicture.asset(registericon),
+                        child: SvgPicture.asset(registerIcon),
                       ),
                       const Text(
                         'Verify OTP',
@@ -54,7 +54,7 @@ class OtpView extends GetView<LoginController> {
                           style: TextStyle(
                               fontSize: 13,
                               fontWeight: FontWeight.w300,
-                              color: textcolor),
+                              color: textColor),
                         ),
                       ),
                     ],
@@ -90,7 +90,7 @@ class OtpView extends GetView<LoginController> {
                             visible: controller.verifyVisible.value,
                             child: ElevatedButton(
                               style: ElevatedButton.styleFrom(
-                                  backgroundColor: buttonbgcolor,
+                                  backgroundColor: buttonBgColor,
                                   padding: const EdgeInsets.symmetric(
                                       horizontal: 40, vertical: 10),
                                   textStyle: const TextStyle(
@@ -128,7 +128,7 @@ class OtpView extends GetView<LoginController> {
                               ),
                             ),
                             Container(
-                              color: dividercolor,
+                              color: dividerColor,
                               width: 1,
                               height: 15,
                             ),
@@ -142,7 +142,7 @@ class OtpView extends GetView<LoginController> {
                                   child: Text(
                                     'Resend OTP',
                                     style: TextStyle(
-                                        color: texthintcolor,
+                                        color: textHintColor,
                                         fontSize: 14,
                                         fontWeight: FontWeight.w500),
                                   ),

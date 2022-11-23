@@ -4,10 +4,10 @@ import 'constants.dart';
 class MirrorFlyAppTheme {
   static ThemeData theme = ThemeData(
     appBarTheme: const AppBarTheme(
-        color: appbarcolor,
-        iconTheme: IconThemeData(color: iconcolor),
+        color: appBarColor,
+        iconTheme: IconThemeData(color: iconColor),
         titleTextStyle: TextStyle(
-            color: appbartextcolor,
+            color: appbarTextColor,
             fontSize: 18,
             fontWeight: FontWeight.w500,
             fontFamily: 'sf_ui')),
@@ -20,12 +20,12 @@ class MirrorFlyAppTheme {
           fontSize: 14.0,
           fontWeight: FontWeight.w700,
           fontFamily: 'sf_ui',
-          color: texthintcolor),
+          color: textHintColor),
       titleSmall: TextStyle(
           fontSize: 14.0,
           fontWeight: FontWeight.w600,
           fontFamily: 'sf_ui',
-          color: textcolor),
+          color: textColor),
     ),
   );
 }

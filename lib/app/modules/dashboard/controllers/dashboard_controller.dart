@@ -14,7 +14,7 @@ import '../../../model/chatMessageModel.dart';
 import '../../../model/profile_model.dart';
 import '../../../routes/app_pages.dart';
 
-class DashboardController extends BaseController with GetTickerProviderStateMixin {
+class DashboardController extends GetxController with GetTickerProviderStateMixin, BaseController {
   var recentChats = <RecentChatData>[].obs;
   var calendar = DateTime.now();
 
@@ -27,7 +27,7 @@ class DashboardController extends BaseController with GetTickerProviderStateMixi
 
   Future<RecentChatData?> getRecentChatOfJid(String jid) async{
     var value = await FlyChat.getRecentChatOf(jid);
-    Log("chat", value.toString());
+    mirrorFlyLog("chat", value.toString());
     if (value != null) {
       var data = RecentChatData.fromJson(json.decode(value));
       return data;
@@ -37,7 +37,7 @@ class DashboardController extends BaseController with GetTickerProviderStateMixi
   }
 
   getRecentChatList() {
-    Log("","recent chats");
+    mirrorFlyLog("","recent chats");
     FlyChat.getRecentChatList().then((value) {
       var data = recentChatFromJson(value);
       recentChats.clear();
@@ -108,10 +108,10 @@ class DashboardController extends BaseController with GetTickerProviderStateMixi
     var time = (currentYear == calendar.year)
         ? DateFormat("dd-MMM").format(calendar)
         : DateFormat("yyyy/MM/dd").format(calendar);
-    return (equalsWithYesterday(calendar, Constants.TODAY))
+    return (equalsWithYesterday(calendar, Constants.today))
         ? hourTime
-        : (equalsWithYesterday(calendar, Constants.YESTERDAY))
-            ? Constants.YESTERDAY_UPPER
+        : (equalsWithYesterday(calendar, Constants.yesterday))
+            ? Constants.yesterdayUpper
             : time;
   }
 
@@ -135,7 +135,7 @@ class DashboardController extends BaseController with GetTickerProviderStateMixi
   }
 
   bool equalsWithYesterday(DateTime srcDate, String day) {
-    var yesterday = (day == Constants.YESTERDAY)
+    var yesterday = (day == Constants.yesterday)
         ? calendar.subtract(const Duration(days: 1))
         : DateTime.now();
     return yesterday.difference(calendar).inDays == 0;
@@ -176,7 +176,7 @@ class DashboardController extends BaseController with GetTickerProviderStateMixi
 
   Future<ChatMessageModel?> getMessageOfId(String mid) async{
     var value = await FlyChat.getMessageOfId(mid);
-    Log("getMessageOfId recent", value.toString());
+    mirrorFlyLog("getMessageOfId recent", value.toString());
     if(value!=null) {
       var data = ChatMessageModel.fromJson(json.decode(value.toString()));
       return data;
@@ -197,7 +197,7 @@ class DashboardController extends BaseController with GetTickerProviderStateMixi
 
   @override
   void onMessageReceived(chatMessage){
-    Log("dashboard controller", "onMessageReceived");
+    mirrorFlyLog("dashboard controller", "onMessageReceived");
     super.onMessageReceived(chatMessage);
     ChatMessageModel chatMessageModel = sendMessageModelFromJson(chatMessage);
     updateRecentChat(chatMessageModel.senderUserJid);
@@ -207,7 +207,7 @@ class DashboardController extends BaseController with GetTickerProviderStateMixi
   @override
   void onGroupProfileUpdated(groupJid){
     super.onGroupProfileUpdated(groupJid);
-    Log("super", groupJid.toString());
+    mirrorFlyLog("super", groupJid.toString());
     updateRecentChat(groupJid);
   }
 

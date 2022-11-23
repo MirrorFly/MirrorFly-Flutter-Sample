@@ -107,7 +107,7 @@ class ContactController extends GetxController {
       if(groupJid.value.checkNull().isNotEmpty){
         await Future.forEach(item.data!, (it) async {
           await FlyChat.isMemberOfGroup(groupJid.value.checkNull(), it.jid.checkNull()).then((value){
-            Log("item", value.toString());
+            mirrorFlyLog("item", value.toString());
             if(value==null || !value){
               list.add(it);
             }
@@ -144,7 +144,7 @@ class ContactController extends GetxController {
     var list = <Profile>[];
     for (var it in items) {
       var value = await FlyChat.isMemberOfGroup(groupJid.value.checkNull(), it.jid.checkNull());
-      Log("item", value.toString());
+      mirrorFlyLog("item", value.toString());
       if(value==null || !value){
         list.add(it);
       }
@@ -197,7 +197,7 @@ class ContactController extends GetxController {
 
   backToCreateGroup(){
     if(groupJid.value.isEmpty) {
-      if (selectedUsersJIDList.length >= Constants.MIN_GROUP_MEMBERS) {
+      if (selectedUsersJIDList.length >= Constants.minGroupMembers) {
         Get.back(result: selectedUsersJIDList);
       } else {
         toToast("Add at least two contacts");

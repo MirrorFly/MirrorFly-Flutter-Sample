@@ -22,25 +22,25 @@ class SettingsView extends GetView<SettingsController> {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            settingListItem("Profile", profileicon, rightarrowicon,
+            settingListItem("Profile", profileIcon, rightArrowIcon,
                 () => Get.toNamed(Routes.PROFILE,arguments: {"from":Routes.SETTINGS})),
-            settingListItem("Chats", chaticon, rightarrowicon, () {}),
+            settingListItem("Chats", chatIcon, rightArrowIcon, () {}),
             settingListItem(
-                "Starred Messages", staredmsgicon, rightarrowicon, () {
+                "Starred Messages", staredMsgIcon, rightArrowIcon, () {
                   Get.toNamed(Routes.STARRED_MESSAGES);
             }),
             settingListItem(
-                "Notifications", notificationicon, rightarrowicon, ()=>Get.toNamed(Routes.NOTIFICATION)),
+                "Notifications", notificationIcon, rightArrowIcon, ()=>Get.toNamed(Routes.NOTIFICATION)),
             settingListItem(
-                "Blocked Contacts", blockedicon, rightarrowicon, ()=>Get.toNamed(Routes.BLOCKEDLIST)),
-            settingListItem("App Lock", lockicon, rightarrowicon, ()=>Get.toNamed(Routes.APPLOCK)),
-            settingListItem("About and Help", abouticon, rightarrowicon, () =>Get.to(const AboutAndHelpView())),
+                "Blocked Contacts", blockedIcon, rightArrowIcon, ()=>Get.toNamed(Routes.BLOCKEDLIST)),
+            settingListItem("App Lock", lockIcon, rightArrowIcon, ()=>Get.toNamed(Routes.APPLOCK)),
+            settingListItem("About and Help", aboutIcon, rightArrowIcon, () =>Get.to(const AboutAndHelpView())),
             settingListItem(
-                "Connection Label", connectionicon, toggleofficon, () {}),
-            settingListItem("Delete My Account", delete, rightarrowicon, () {
+                "Connection Label", connectionIcon, toggleOffIcon, () {}),
+            settingListItem("Delete My Account", delete, rightArrowIcon, () {
               Get.toNamed(Routes.DELETE_ACCOUNT);
             }),
-            settingListItem("Logout", logouticon, rightarrowicon, () {
+            settingListItem("Logout", logoutIcon, rightArrowIcon, () {
               Helper.showAlert(
                   message:
                   "Are you sure want to logout from the app?",
@@ -66,23 +66,23 @@ class SettingsView extends GetView<SettingsController> {
                     RichText(
                       text: const TextSpan(
                           text: "Released On: ",
-                          style: TextStyle(color: textcolor),
+                          style: TextStyle(color: textColor),
                           children: [
                             TextSpan(
                                 text: "Nov 2022",
-                                style: TextStyle(color: texthintcolor))
+                                style: TextStyle(color: textHintColor))
                           ]),
                     ),
                     RichText(
                         text: TextSpan(
                             text: "Version ",
-                            style: const TextStyle(color: textcolor),
+                            style: const TextStyle(color: textColor),
                             children: [
                               TextSpan(
                                   text: controller.packageInfo != null
                                       ? controller.packageInfo!.version
                                       : "",
-                                  style: const TextStyle(color: texthintcolor))
+                                  style: const TextStyle(color: textHintColor))
                             ]),
                       ),
                   ]),

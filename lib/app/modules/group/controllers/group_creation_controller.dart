@@ -104,9 +104,9 @@ class GroupCreationController extends GetxController {
   }
 
   createGroup(List<String> users,){
-    Log("group name", groupName.text);
-    Log("users", users.toString());
-    Log("group image", imagePath.value);
+    mirrorFlyLog("group name", groupName.text);
+    mirrorFlyLog("users", users.toString());
+    mirrorFlyLog("group image", imagePath.value);
     Helper.showLoading();
     FlyChat.createGroup(groupName.text.toString(),users,imagePath.value).then((value){
       Helper.hideLoading();

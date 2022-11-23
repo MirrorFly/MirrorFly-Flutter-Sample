@@ -37,14 +37,14 @@ class LocationController extends GetxController{
   }
   getLocation(){
     Geolocator.getLastKnownPosition().then((value){
-      Log("Location", value.toString());
+      mirrorFlyLog("Location", value.toString());
       if(value!=null) {
         setLocation(LatLng(value.latitude, value.longitude));
       }else{
         throw "last known location null";
       }
     }).catchError((er){
-      Log("Location", er.toString());
+      mirrorFlyLog("Location", er.toString());
       Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.best).then((value) {
         // if (value != null) {
           setLocation(LatLng(value.latitude, value.longitude));
@@ -78,7 +78,7 @@ class LocationController extends GetxController{
     await Geolocator.requestPermission().then((value){
     }).onError((error, stackTrace) async {
       await Geolocator.requestPermission();
-      Log("ERROR",error.toString());
+      mirrorFlyLog("ERROR",error.toString());
     });
     return await Geolocator.getCurrentPosition();
   }
@@ -87,9 +87,9 @@ class LocationController extends GetxController{
     var addresses = await placemarkFromCoordinates(lat,lng);
     var first = addresses.first;
     for (var element in addresses) {
-      Log("address-list ", element.toJson().toString());
+      mirrorFlyLog("address-list ", element.toJson().toString());
     }
-    Log("address", first.toJson().toString());
+    mirrorFlyLog("address", first.toJson().toString());
     address1.value="${first.street},${first.subLocality}";
     address2.value="${first.subAdministrativeArea},${first.administrativeArea},${first.postalCode}";
     //print(' ${first.locality}, ${first.administrativeArea},${first.subLocality}, ${first.subAdministrativeArea},${first.street}, ${first.name},${first.thoroughfare}, ${first.subThoroughfare}');

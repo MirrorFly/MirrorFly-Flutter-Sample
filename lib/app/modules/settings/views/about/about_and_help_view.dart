@@ -36,9 +36,9 @@ class AboutAndHelpView extends StatelessWidget {
                       'Terms and Condition,',
                       style: TextStyle(
                           decoration: TextDecoration.underline,
-                          color: buttonbgcolor),
+                          color: buttonBgColor),
                     ),
-                    onTap:()=>launchWeb(Constants.Terms_Conditions),
+                    onTap:()=>launchWeb(Constants.termsConditions),
                   ),
                   const SizedBox(
                     width: 5,
@@ -48,9 +48,9 @@ class AboutAndHelpView extends StatelessWidget {
                       'Privacy Policy.',
                       style: TextStyle(
                           decoration: TextDecoration.underline,
-                          color: buttonbgcolor),
+                          color: buttonBgColor),
                     ),
-                    onTap: ()=>launchWeb(Constants.Privacy_Policy),
+                    onTap: ()=>launchWeb(Constants.privacyPolicy),
                   ),
                 ],
               )

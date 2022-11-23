@@ -34,7 +34,7 @@ class LoginView extends GetView<LoginController> {
                   children: [
                     Padding(
                       padding: const EdgeInsets.symmetric(vertical: 30),
-                      child: SvgPicture.asset(registericon),
+                      child: SvgPicture.asset(registerIcon),
                     ),
                     const Text(
                       'Register Your Number',
@@ -50,7 +50,7 @@ class LoginView extends GetView<LoginController> {
                         style: TextStyle(
                             fontSize: 13,
                             fontWeight: FontWeight.w300,
-                            color: textcolor),
+                            color: textColor),
                       ),
                     ),
                   ],
@@ -110,7 +110,7 @@ class LoginView extends GetView<LoginController> {
                     ),
                     ElevatedButton(
                       style: ElevatedButton.styleFrom(
-                          backgroundColor: buttonbgcolor,
+                          backgroundColor: buttonBgColor,
                           padding: const EdgeInsets.symmetric(
                               horizontal: 40, vertical: 10),
                           textStyle: const TextStyle(
@@ -128,7 +128,7 @@ class LoginView extends GetView<LoginController> {
                     const SizedBox(
                       height: 20,
                     ),
-                    const Text('By clicking continue you agree to MirrorFly',style: TextStyle(color: textcolor,fontSize: 13,fontWeight: FontWeight.w300),),
+                    const Text('By clicking continue you agree to MirrorFly',style: TextStyle(color: textColor,fontSize: 13,fontWeight: FontWeight.w300),),
                     const SizedBox(
                       height: 10,
                     ),
@@ -140,9 +140,9 @@ class LoginView extends GetView<LoginController> {
                             'Terms and Condition,',
                             style: TextStyle(
                                 decoration: TextDecoration.underline,
-                                color: buttonbgcolor),
+                                color: buttonBgColor),
                           ),
-                          onTap:()=>launchWeb(Constants.Terms_Conditions),
+                          onTap:()=>launchWeb(Constants.termsConditions),
                         ),
                         const SizedBox(
                           width: 5,
@@ -152,9 +152,9 @@ class LoginView extends GetView<LoginController> {
                             'Privacy Policy.',
                             style: TextStyle(
                                 decoration: TextDecoration.underline,
-                                color: buttonbgcolor),
+                                color: buttonBgColor),
                           ),
-                          onTap: ()=>launchWeb(Constants.Privacy_Policy),
+                          onTap: ()=>launchWeb(Constants.privacyPolicy),
                         ),
                       ],
                     )

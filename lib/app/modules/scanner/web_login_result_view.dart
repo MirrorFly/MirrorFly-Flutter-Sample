@@ -22,7 +22,7 @@ class WebLoginResultView extends GetView<ScannerController> {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            Image.asset(ic_qr_scanner_web_login, fit: BoxFit.cover,),
+            Image.asset(icQrScannerWebLogin, fit: BoxFit.cover,),
             FutureBuilder(
                 future: controller.getWebLoginDetails(),
                 builder: (c, data) {
@@ -40,10 +40,10 @@ class WebLoginResultView extends GetView<ScannerController> {
                               children: [
                                 Text(item.webBrowserName.checkNull()),
                                 const Text("Last Login", style: TextStyle(
-                                    color: textcolor, fontSize: 14),),
+                                    color: textColor, fontSize: 14),),
                                 Text(item.lastLoginTime.checkNull(),
                                   style: const TextStyle(
-                                      color: textcolor, fontSize: 14),),
+                                      color: textColor, fontSize: 14),),
                               ],
                             ),
                             dividerPadding: EdgeInsets.zero,
@@ -59,8 +59,8 @@ class WebLoginResultView extends GetView<ScannerController> {
                 Text("LOGOUT FROM ALL COMPUTERS"),
               ],
             ), onTap: () =>controller.logoutWeb()),
-            const Text("Visit ${Constants.WEB_CHAT_LOGIN}",
-              style: TextStyle(color: textcolor, fontSize: 14),),
+            const Text("Visit ${Constants.webChatLogin}",
+              style: TextStyle(color: textColor, fontSize: 14),),
           ],
         ),
       ),

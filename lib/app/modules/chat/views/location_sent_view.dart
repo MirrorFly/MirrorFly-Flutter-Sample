@@ -50,12 +50,12 @@ class LocationSentView extends GetView<LocationController>{
                         ()=>controller.address1.value.isNotEmpty ? Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            const Text('Send this Location',style: TextStyle(color: buttonbgcolor,fontSize: 14,fontWeight: FontWeight.normal),),
+                            const Text('Send this Location',style: TextStyle(color: buttonBgColor,fontSize: 14,fontWeight: FontWeight.normal),),
                             Padding(
                               padding: const EdgeInsets.only(top: 8.0),
-                              child: Text(controller.address1.value,style: const TextStyle(color: texthintcolor,fontSize: 16,fontWeight: FontWeight.w700),),
+                              child: Text(controller.address1.value,style: const TextStyle(color: textHintColor,fontSize: 16,fontWeight: FontWeight.w700),),
                             ),
-                            Text(controller.address2.value,style: const TextStyle(color: textcolor,fontSize: 14,fontWeight: FontWeight.normal),),
+                            Text(controller.address2.value,style: const TextStyle(color: textColor,fontSize: 14,fontWeight: FontWeight.normal),),
                           ],
                         ) : const Center(child: CircularProgressIndicator()),
                       ),
@@ -69,7 +69,7 @@ class LocationSentView extends GetView<LocationController>{
                         Get.back(result: controller.location.value);
                       }
                     },
-                      backgroundColor: buttonbgcolor,
+                      backgroundColor: buttonBgColor,
                     child: const Icon(Icons.arrow_forward_rounded,color: Colors.white,size: 18,),),
                   )
                 ],

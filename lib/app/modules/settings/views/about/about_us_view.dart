@@ -24,17 +24,17 @@ class AboutUsView extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(title_contact_msg,style: textMsgStyle,),
+            const Text(titleContactMsg,style: textMsgStyle,),
             const SizedBox(height: 16,),
-            const Text(title_contact_us,style: textStyle,),
+            const Text(titleContactUs,style: textStyle,),
             const SizedBox(height: 16,),
-            const Text(title_contact_msg,style: textMsgStyle,),
+            const Text(titleContactMsg,style: textMsgStyle,),
             const SizedBox(height: 16,),
-            const Text(title_faq,style: textStyle,),
+            const Text(titleFaq,style: textStyle,),
             const SizedBox(height: 16,),
-            const Text(title_faq_msg,style: textMsgStyle,),
+            const Text(titleFaqMsg,style: textMsgStyle,),
             const SizedBox(height: 16,),
-            InkWell(child: const Text.rich(TextSpan(text: title_contus_fly,style: TextStyle(fontSize: 17, decoration: TextDecoration.underline,))),onTap: ()=>launchWeb(website_mirrorfly),)
+            InkWell(child: const Text.rich(TextSpan(text: mirrorFly,style: TextStyle(fontSize: 17, decoration: TextDecoration.underline,))),onTap: ()=>launchWeb(websiteMirrorFly),)
           ],
         ),
       ),

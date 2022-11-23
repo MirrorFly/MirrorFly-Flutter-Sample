@@ -11,7 +11,7 @@ class SessionManagement {
   static late SharedPreferences _preferences;
 
   setDefaultValues(){
-    if(_preferences.containsKey("${Constants.PACKAGE}notification_sound")){
+    if(_preferences.containsKey("${Constants.package}notification_sound")){
 
     }
   }
@@ -67,16 +67,16 @@ class SessionManagement {
     await _preferences.setString("notification_uri", notificationUri);
   }
   static Future setNotificationSound(bool sound) async {
-    await _preferences.setBool("${Constants.PACKAGE}notification_sound", sound);
+    await _preferences.setBool("${Constants.package}notification_sound", sound);
   }
   static Future setKeyChangeFlag(bool change) async {
-    await _preferences.setBool("${Constants.PACKAGE}change.flag", change);
+    await _preferences.setBool("${Constants.package}change.flag", change);
   }
   static Future setNotificationPopup(bool popup) async {
-    await _preferences.setBool("${Constants.PACKAGE}notification_popup", popup);
+    await _preferences.setBool("${Constants.package}notification_popup", popup);
   }
   static Future setNotificationVibration(bool vibration) async {
-    await _preferences.setBool("${Constants.PACKAGE}vibration", vibration);
+    await _preferences.setBool("${Constants.package}vibration", vibration);
   }
   static Future setMuteNotification(bool mute) async {
     await _preferences.setBool("mute_notification", mute);
@@ -120,9 +120,9 @@ class SessionManagement {
   static String? getMediaEndPoint() => _preferences.getString("media_endpoint");
   static String? getNotificationUri() => _preferences.getString("notification_uri");
   static bool getWebLogin() => _preferences.getBool("web_chat_login") ?? false;
-  static bool getNotificationSound() => _preferences.getBool("${Constants.PACKAGE}notification_sound") ?? true;
-  static bool getNotificationPopup() => _preferences.getBool("${Constants.PACKAGE}notification_popup") ?? false;
-  static bool getVibration() => _preferences.getBool("${Constants.PACKAGE}vibration") ?? false;
+  static bool getNotificationSound() => _preferences.getBool("${Constants.package}notification_sound") ?? true;
+  static bool getNotificationPopup() => _preferences.getBool("${Constants.package}notification_popup") ?? false;
+  static bool getVibration() => _preferences.getBool("${Constants.package}vibration") ?? false;
   static bool getMuteNotification() => _preferences.getBool("mute_notification") ?? false;
   static String getPin() => _preferences.getString("pin") ?? "";
   static bool getEnablePin() => _preferences.getBool("enable_pin") ?? false;

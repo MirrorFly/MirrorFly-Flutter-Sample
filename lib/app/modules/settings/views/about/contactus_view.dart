@@ -36,8 +36,8 @@ class ContactusView extends StatelessWidget {
               controller: title,
               onChanged: (value) {},
               decoration: const InputDecoration(
-                focusedBorder: UnderlineInputBorder(borderSide: BorderSide(color: dividercolor)),
-                border: UnderlineInputBorder(borderSide: BorderSide(color: dividercolor,width: 0)),
+                focusedBorder: UnderlineInputBorder(borderSide: BorderSide(color: dividerColor)),
+                border: UnderlineInputBorder(borderSide: BorderSide(color: dividerColor,width: 0)),
               ),
               style: const TextStyle(fontWeight: FontWeight.bold),
             ),
@@ -52,9 +52,9 @@ class ContactusView extends StatelessWidget {
               controller: description,
               onChanged: (value) {},
               decoration: const InputDecoration(
-                focusedBorder: UnderlineInputBorder(borderSide: BorderSide(color: dividercolor)),
-                disabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: dividercolor)),
-                border: UnderlineInputBorder(borderSide: BorderSide(color: dividercolor,width: 0)),
+                focusedBorder: UnderlineInputBorder(borderSide: BorderSide(color: dividerColor)),
+                disabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: dividerColor)),
+                border: UnderlineInputBorder(borderSide: BorderSide(color: dividerColor,width: 0)),
               ),
               style: const TextStyle(fontWeight: FontWeight.bold),
             ),
@@ -64,7 +64,7 @@ class ContactusView extends StatelessWidget {
             Center(
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                    backgroundColor: buttonbgcolor,
+                    backgroundColor: buttonBgColor,
                     padding: const EdgeInsets.symmetric(
                         horizontal: 40, vertical: 10),
                     textStyle: const TextStyle(

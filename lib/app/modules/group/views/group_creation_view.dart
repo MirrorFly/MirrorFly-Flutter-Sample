@@ -173,7 +173,7 @@ class GroupCreationView extends GetView<GroupCreationController> {
                       onPressed: () {
                         controller.showHideEmoji(context);
                       },
-                      icon: SvgPicture.asset(smileicon,width: 18,height: 18,))
+                      icon: SvgPicture.asset(smileIcon,width: 18,height: 18,))
                 ],
               ),
               const AppDivider(),

@@ -69,7 +69,7 @@ class AddStatusView extends GetView<StatusListController> {
                             controller.showEmoji(!controller.showEmoji.value);
                           });
                         },
-                        icon: SvgPicture.asset(smileicon))
+                        icon: SvgPicture.asset(smileIcon))
                   ],
                 ),
               ),

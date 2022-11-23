@@ -8,77 +8,77 @@ import 'package:path_provider/path_provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 //Colors
-const Color appbarcolor = Color(0xffF2F2F2);
-const Color iconcolor = Color(0xff181818);
-const Color iconbgcolor = Color(0xff9D9D9D);
-const Color appbartextcolor = Color(0xff181818);
-const Color statusbarcolor = Color(0xffE5E5E5);
-const Color textblackcolor = Color(0xff000000);
-const Color textblack1color = Color(0xff313131);
-const Color texthintcolor = Color(0xff181818);
-const Color textcolor = Color(0xff767676);
-const Color textbuttoncolor = Color(0xffFFFFFF);
-const Color buttonbgcolor = Color(0xff3276E2);
-const Color chatsentbgcolor = Color(0xffe2eafc);
-const Color chatreplycontainercolor = Color(0xffD0D8EB);
-const Color chatreplysendercolor = Color(0xffEFEFEF);
-const Color dividercolor = Color(0XffE2E2E2);
-const Color audiocolor = Color(0XffB9C1D6);
-const Color audiocolordark = Color(0Xff848FAD);
-const Color audiobgcolor = Color(0Xff848FAD);
-const Color bottomsheetcolor = Color(0Xff242A3F);
-const Color notificationtextcolor = Color(0Xff565656);
-const Color notificationtextbgcolor = Color(0XffDADADA);
-const Color chatbordercolor = Color(0XffDDE3E5);
-const Color chattimecolor = Color(0Xff959595);
+const Color appBarColor = Color(0xffF2F2F2);
+const Color iconColor = Color(0xff181818);
+const Color iconBgColor = Color(0xff9D9D9D);
+const Color appbarTextColor = Color(0xff181818);
+const Color statusBarColor = Color(0xffE5E5E5);
+const Color textBlackColor = Color(0xff000000);
+const Color textBlack1color = Color(0xff313131);
+const Color textHintColor = Color(0xff181818);
+const Color textColor = Color(0xff767676);
+const Color textButtonColor = Color(0xffFFFFFF);
+const Color buttonBgColor = Color(0xff3276E2);
+const Color chatSentBgColor = Color(0xffe2eafc);
+const Color chatReplyContainerColor = Color(0xffD0D8EB);
+const Color chatReplySenderColor = Color(0xffEFEFEF);
+const Color dividerColor = Color(0XffE2E2E2);
+const Color audioColor = Color(0XffB9C1D6);
+const Color audioColorDark = Color(0Xff848FAD);
+const Color audioBgColor = Color(0Xff848FAD);
+const Color bottomSheetColor = Color(0Xff242A3F);
+const Color notificationTextColor = Color(0Xff565656);
+const Color notificationTextBgColor = Color(0XffDADADA);
+const Color chatBorderColor = Color(0XffDDE3E5);
+const Color chatTimeColor = Color(0Xff959595);
 
 //Assets
-const String registericon = 'assets/logos/register_logo.svg';
-const String statusicon = 'assets/logos/status.svg';
-const String searchicon = 'assets/logos/magnifying_glass.svg';
-const String chatfabicon = 'assets/logos/chat_fab.svg';
-const String moreicon = 'assets/logos/shape.svg';
-const String nocontactsicon = 'assets/logos/no_contacts.png';
-const String nochaticon = 'assets/logos/no_messages.png';
-const String nocallimage = 'assets/logos/ic_no_call_history.webp';
-const String profileicon = 'assets/logos/avatar.svg';
-const String rightarrowicon = 'assets/logos/forward_arrow.svg';
-const String chaticon = 'assets/logos/chat.svg';
-const String staredmsgicon = 'assets/logos/stared message.svg';
-const String notificationicon = 'assets/logos/Notifications.svg';
+const String registerIcon = 'assets/logos/register_logo.svg';
+const String statusIcon = 'assets/logos/status.svg';
+const String searchIcon = 'assets/logos/magnifying_glass.svg';
+const String chatFabIcon = 'assets/logos/chat_fab.svg';
+const String moreIcon = 'assets/logos/shape.svg';
+const String noContactsIcon = 'assets/logos/no_contacts.png';
+const String noChatIcon = 'assets/logos/no_messages.png';
+const String noCallImage = 'assets/logos/ic_no_call_history.webp';
+const String profileIcon = 'assets/logos/avatar.svg';
+const String rightArrowIcon = 'assets/logos/forward_arrow.svg';
+const String chatIcon = 'assets/logos/chat.svg';
+const String staredMsgIcon = 'assets/logos/stared message.svg';
+const String notificationIcon = 'assets/logos/Notifications.svg';
 const String tickRound = 'assets/logos/tick_round.svg';
-const String tick_round_blue = 'assets/logos/tick_round_blue.svg';
-const String blockedicon = 'assets/logos/blocked_contacts.svg';
-const String archiveicon = 'assets/logos/Archive_ic_settings.svg';
-const String lockicon = 'assets/logos/lock.svg';
+const String tickRoundBlue = 'assets/logos/tick_round_blue.svg';
+const String blockedIcon = 'assets/logos/blocked_contacts.svg';
+const String archiveIcon = 'assets/logos/Archive_ic_settings.svg';
+const String lockIcon = 'assets/logos/lock.svg';
 const String delete = 'assets/logos/delete_black.svg';
-const String abouticon = 'assets/logos/About and Help.svg';
-const String connectionicon = 'assets/logos/antenna.svg';
-const String toggleofficon = 'assets/logos/toggle OFF.svg';
-const String reporticon = 'assets/logos/stared message-1.svg';
-const String logouticon = 'assets/logos/logout.svg';
-const String pencilediticon = 'assets/logos/pencil.svg';
-const String tickicon = 'assets/logos/tick.svg';
-const String smileicon = 'assets/logos/smile.svg';
-const String ic_qr_scanner_web_login = 'assets/logos/ic_qr_scanner_web_login.png';
+const String aboutIcon = 'assets/logos/About and Help.svg';
+const String connectionIcon = 'assets/logos/antenna.svg';
+const String toggleOffIcon = 'assets/logos/toggle OFF.svg';
+const String reportIcon = 'assets/logos/stared message-1.svg';
+const String logoutIcon = 'assets/logos/logout.svg';
+const String pencilEditIcon = 'assets/logos/pencil.svg';
+const String tickIcon = 'assets/logos/tick.svg';
+const String smileIcon = 'assets/logos/smile.svg';
+const String icQrScannerWebLogin = 'assets/logos/ic_qr_scanner_web_login.png';
 
-const String ic_logo = 'assets/logos/ic_logo.png';
-const String ic_chrome = 'assets/logos/ic_chrome.png';
-const String ic_edge_browser = 'assets/logos/ic_edge_browser.png';
-const String ic_mozilla = 'assets/logos/ic_mozilla.png';
-const String ic_safari = 'assets/logos/ic_safari.png';
-const String ic_ie = 'assets/logos/ic_ie.png';
-const String ic_opera = 'assets/logos/ic_opera.png';
-const String ic_uc = 'assets/logos/ic_uc.png';
-const String ic_default_browser = 'assets/logos/ic_default_browser.png';
-const String eye_on = 'assets/logos/eye_on.png';
-const String eye_off = 'assets/logos/eye_off.png';
+const String icLogo = 'assets/logos/ic_logo.png';
+const String icChrome = 'assets/logos/ic_chrome.png';
+const String icEdgeBrowser = 'assets/logos/ic_edge_browser.png';
+const String icMozilla = 'assets/logos/ic_mozilla.png';
+const String icSafari = 'assets/logos/ic_safari.png';
+const String icIe = 'assets/logos/ic_ie.png';
+const String icOpera = 'assets/logos/ic_opera.png';
+const String icUc = 'assets/logos/ic_uc.png';
+const String icDefaultBrowser = 'assets/logos/ic_default_browser.png';
+const String eyeOn = 'assets/logos/eye_on.png';
+const String eyeOff = 'assets/logos/eye_off.png';
 
 //Dashboard Recent Chats
 const String archive = 'assets/logos/archive.svg';
 const String unarchive = 'assets/logos/unarchive.svg';
 const String mute = 'assets/logos/mute.svg';
-const String unmute = 'assets/logos/unmute.svg';
+const String unMute = 'assets/logos/unmute.svg';
 const String pushpin = 'assets/logos/pushpin.svg';
 
 const String audioImg = 'assets/logos/audio.svg';
@@ -90,45 +90,45 @@ const String locationImg = 'assets/logos/location_icon.svg';
 const String rightArrow = 'assets/logos/right_arrow.svg';
 
 const String downloading = 'assets/logos/downloading.svg';
-const String video_play = 'assets/logos/video_play.svg';
-const String audio_play = 'assets/logos/audio_play.svg';
-const String audio_mic_bg = 'assets/logos/audio_mic.svg';
-const String audio_mic = 'assets/logos/mic.svg';
-const String audio_mic_1 = 'assets/logos/mic1.svg';
-const String profile_img = 'assets/logos/profile_img.png';
+const String videoPlay = 'assets/logos/video_play.svg';
+const String audioPlay = 'assets/logos/audio_play.svg';
+const String audioMicBg = 'assets/logos/audio_mic.svg';
+const String audioMic = 'assets/logos/mic.svg';
+const String audioMic1 = 'assets/logos/mic1.svg';
+const String profileImage = 'assets/logos/profile_img.png';
 
-const String link_image = 'assets/logos/link.svg';
-const String txt_image = 'assets/logos/txt.svg';
-const String csv_image = 'assets/logos/csv.svg';
-const String pdf_image = 'assets/logos/pdf.svg';
-const String ppt_image = 'assets/logos/ppt.svg';
-const String pptx_image = 'assets/logos/pptx.svg';
-const String xls_image = 'assets/logos/xls.svg';
-const String xlsx_image = 'assets/logos/xlsx.svg';
-const String doc_image = 'assets/logos/doc.svg';
-const String docx_image = 'assets/logos/docx.svg';
-const String apk_image = 'assets/logos/apk.svg';
-const String Mcontacticon = 'assets/logos/contact_chat.svg';
-const String Mdocumenticon = 'assets/logos/document_chat.svg';
-const String zip_image = 'assets/logos/zip.svg';
-const String rar_image = 'assets/logos/rar.svg';
-const String Mimageicon = 'assets/logos/image.svg';
-const String Mlocationicon = 'assets/logos/location_chat.svg';
-const String Mvideoicon = 'assets/logos/video.svg';
-const String Maudioicon = 'assets/logos/noun_Audio_3408360.svg';
-const String audio_white = 'assets/logos/audio_white.svg';
-const String video_white = 'assets/logos/video_icon.svg';
-const String cornershadow = 'assets/logos/ic_baloon.png';
+const String linkImage = 'assets/logos/link.svg';
+const String txtImage = 'assets/logos/txt.svg';
+const String csvImage = 'assets/logos/csv.svg';
+const String pdfImage = 'assets/logos/pdf.svg';
+const String pptImage = 'assets/logos/ppt.svg';
+const String pptxImage = 'assets/logos/pptx.svg';
+const String xlsImage = 'assets/logos/xls.svg';
+const String xlsxImage = 'assets/logos/xlsx.svg';
+const String docImage = 'assets/logos/doc.svg';
+const String docxImage = 'assets/logos/docx.svg';
+const String apkImage = 'assets/logos/apk.svg';
+const String mContactIcon = 'assets/logos/contact_chat.svg';
+const String mDocumentIcon = 'assets/logos/document_chat.svg';
+const String zipImage = 'assets/logos/zip.svg';
+const String rarImage = 'assets/logos/rar.svg';
+const String mImageIcon = 'assets/logos/image.svg';
+const String mLocationIcon = 'assets/logos/location_chat.svg';
+const String mVideoIcon = 'assets/logos/video.svg';
+const String mAudioIcon = 'assets/logos/noun_Audio_3408360.svg';
+const String audioWhite = 'assets/logos/audio_white.svg';
+const String videoWhite = 'assets/logos/video_icon.svg';
+const String cornerShadow = 'assets/logos/ic_baloon.png';
 const String disabledIcon = 'assets/logos/disabled.png';
 
-const String phonecall = 'assets/logos/phonecall.svg';
-const String videocall = 'assets/logos/videocall.svg';
+const String phoneCall = 'assets/logos/phonecall.svg';
+const String videoCall = 'assets/logos/videocall.svg';
 const String replyIcon = 'assets/logos/reply.svg';
 const String forwardIcon = 'assets/logos/forward.svg';
 const String deleteIcon = 'assets/logos/delete_black.svg';
 const String cancelIcon = 'assets/logos/close.svg';
 const String favouriteIcon = 'assets/logos/star.svg';
-const String unfavouriteIcon = 'assets/logos/unstar.svg';
+const String unFavouriteIcon = 'assets/logos/unstar.svg';
 const String copyIcon = 'assets/logos/copy.svg';
 const String infoIcon = 'assets/logos/info.svg';
 
@@ -141,11 +141,11 @@ const String profileImg = 'assets/logos/profile_img.png';
 const String groupImg = 'assets/logos/ic_grp_bg.png';
 const String imageEdit = 'assets/logos/ic_image_edit.svg';
 const String edit = 'assets/logos/ic_edit.svg';
-const String image_outline = 'assets/logos/image_outline.svg';
-const String add_user = 'assets/logos/add_user.svg';
-const String report_user = 'assets/logos/report_user.svg';
-const String report_group = 'assets/logos/report_group.svg';
-const String leave_group = 'assets/logos/leave_group.svg';
+const String imageOutline = 'assets/logos/image_outline.svg';
+const String addUser = 'assets/logos/add_user.svg';
+const String reportUser = 'assets/logos/report_user.svg';
+const String reportGroup = 'assets/logos/report_group.svg';
+const String leaveGroup = 'assets/logos/leave_group.svg';
 
 const String emailIcon = 'assets/logos/email.svg';
 const String phoneIcon = 'assets/logos/phone.svg';
@@ -154,14 +154,14 @@ const String warningIcon = 'assets/logos/warning.svg';
 
 
 //About us
-const String title_contact_msg = "Mirror Fly is a ready-to-go messaging solution for building enterprise-grade real-time chat IM applications that meet various degrees of requirements like team discussion, data sharing, task delegation and information handling on the go.";
-const String title_contact_us = "Contact Us";
-const String title_contact_msg_time = "To have a detailed interaction with our experts";
-const String title_faq = "FAQ";
-const String title_faq_msg = "Kindly checkout FAQ section for doubts regarding Mirror fly. We might have already answered your question.";
-const String title_contus_fly ="Mirror Fly";
-const String website_mirrorfly ="https://www.mirrorfly.com/";
-const String notification_not_working_URL ="https://app.mirrorfly.com/notifications/";
+const String titleContactMsg = "Mirror Fly is a ready-to-go messaging solution for building enterprise-grade real-time chat IM applications that meet various degrees of requirements like team discussion, data sharing, task delegation and information handling on the go.";
+const String titleContactUs = "Contact Us";
+const String titleContactMsgTime = "To have a detailed interaction with our experts";
+const String titleFaq = "FAQ";
+const String titleFaqMsg = "Kindly checkout FAQ section for doubts regarding Mirror fly. We might have already answered your question.";
+const String mirrorFly ="Mirror Fly";
+const String websiteMirrorFly ="https://www.mirrorfly.com/";
+const String notificationNotWorkingURL ="https://app.mirrorfly.com/notifications/";
 
 
 toToast(String text) {
@@ -172,336 +172,175 @@ toToast(String text) {
       timeInSecForIosWeb: 1,
       fontSize: 16.0);
 }
-Log(String tag,String msg){
+mirrorFlyLog(String tag,String msg){
   if (kDebugMode) {
     print("MirrorFly : $tag ==> $msg");
   }
 }
 class Constants {
-  static const String PACKAGE = 'com.mirrorfly.uikit_flutter';
-  static const String WEB_CHAT_LOGIN = 'https://webchat-uikit-qa.contus.us/';
-  static const String TAG = 'Contus Fly';
-  static const String GOOGLE_MAP_KEY = "AIzaSyBaKkrQnLT4nacpKblIE5d4QK6GpaX5luQ";
-  static const String GOOGLE_MAP_PACKAGE_NAME = "com.google.android.apps.maps";
-  static const String PACKAGE_NAME = "com.contus.flycommons.";
-  static const String ROSTER_JID = "roster_jid";
-  static const String IS_LIVE_USER = "is_live_user";
-  static const String IF_BLOCKED_ME = "ifBlockedMe";
-  static const String BLOCKED_ME = "BlockedMe";
-  static const String IS_MUTE = "is_mute";
-  static const String MOBILE_NO = "mobileNumber";
-  static const String EMAIL = "email";
-  static const String TITLE = "title";
-  static const String TITLE_MESSAGE = "Messages";
-  static const String PROFILE = "profile";
-  static const String SELECTED_IMAGE = "selected_image";
-  static const int COUNT_ONE = 1;
-  static const int COUNT_ZERO = 0;
-  static const String TOTAL_PAGES = "total_pages";
-  static const String IS_NEW_USER = "is_new_user";
-  static const String MEDIA_URL = "url";
-  static const String RESPONSE = "response";
-  static const String MESSAGE = "message";
-  static const String ERROR = "error";
-  static const String USER_STATUS = "user_status";
-  static const String USER_BUSY_STATUS = "user_busy_status";
-  static const String ANDROID = "android";
-  static const String IMAGE = "image";
-  static const String EMPTY_STRING = "";
-  static const String ENCRYPT_STRING = " Encrypted";
-  static const String COMPOSING = "Composing";
-  static const String GONE = "Gone";
-  static const String LAST_SEEN = "lastseen";
-  static const String ONLINE = "Online";
-  static const String PRESENCE_AVAILABLE = "presence_available";
-  static const String PRESENCE_CHANGED = "presence_changed";
-  static const String FROM_SPLASH = "from_splash";
-  static const String INVITE_LIST = "invite_list";
-  static const String DATA = "data";
-  static const String USER_LIST = "user_list";
-  static const String IS_BROADCAST = "is_broadcast";
-  static const String IS_UPLOAD_SUCCESS = "is_upload_success";
-  static const String QUICK_SHARE = "QUICK_SHARE";
-  static const String SEEN_UPDATED = "Seenupdated";
-  static const String IS_ARCHIVED_SETTINGS_ENABLED = "com.contus.flycommons.is_archived_settings_enabled";
-  static const int MAX_REPORT_MESSAGES_COUNT = 5;
-  static const String CHATTYPE = "chatType";
-  static const String FROM_USER = "from";
-  static const String TO_USER = "to";
-  static const String DATA_ARRAY = "data";
-  static const String MESSAGE_TXT = "message";
-  static const String MSG_ID = "msgId";
-  static const String FILE_NAME = "filename";
-  static const String MESSAGE_TYPE = "msgType";
-  static const String TIME_STAMP = "timestamp";
-  static const String PUBLISHER_ID = "publisherId";
-  static const String NAME = "name";
-  static const String PAGE = "page";
-  static const String SIZE = "size";
-  static const String IS_BUSY_STATUS_ENABLED = "com.contus.flycommons.is_busy_status_enabled";
-  static const String XMPP_DOMAIN = "xmppDomain";
-  static const String XMPP_PORT = "xmppPort";
-  static const String XMPP_HOST = "xmppHost";
-  static const String SIGNAL_SERVER_DOMAIN = "signalServerDomain";
-  static const String CALL_ROUTING_SERVER = "callRoutingServer";
-  static const String STUNS = "stuns";
-  static const String TURNS = "turns";
-  static const String MESSAGE_IV = "iv";
-  static const String PROFILE_IV = "ivProfile";
-  static const String RESPONSE_PARAMETER_STATUS = "status";
-  static const String RESPONSE_PARAMETER_DATA = "data";
-  static const String STATUS_CODE_SUCCESS = "200";
-  static const String STATUS_CODE_SECURITY_TOKEN_ERROR = "401";
-  static const String STATUS_INTERNAL_SERVER_ERROR = "500";
-  static const String DEVICE_TYPE = "deviceType";
-  static const String DEVICE_OS = "deviceOs";
-  static const String DEVICE_OS_VERSION = "deviceOsVersion";
-  static const String MODE = "mode";
-  static const String USER_IDENTIFIER = "userIdentifier";
-  static const String VOIP_DEVICE_TOKEN = "voipDeviceToken";
-  static const String DEVICE_MODEL = "deviceModel";
-  static const String APP_VERSION = "appVersion";
-  static const String DESCRIPTION = "description";
-  static const String FILETOKEN = "fileToken";
-  static const String STATUS_CODE_NOTFOUND = "204";
-  static const String BACKUP_TYPE = "chatBackupType";
-  static const String BACKUP_FREQUENCY = "chatBackupFrequency";
-  static const String SAME_USER = "same_user";
-  static const String NOTIFICATION_NOT_WORKING_URL = "notificationHelpUrl";
-  static const String LATITUDE = "latitude";
-  static const String LONGITUDE = "longitude";
-  static const String CHAT_MESSAGE = "chatmessage";
-  static const String MESSAGE_ID = "messageId";
-  static const String NETWORK_FAILURE = "network_failure";
-  static const String MESSAGE_IDS = "messageIds";
-  static const String OTP = "otp";
-  static const String GOOGLE_TOKEN = "google_token";
-  static const String MESSAGE_FROM = "messageFrom";
-  static const String MESSAGE_TO = "messageTo";
-  static const String TYPE = "type";
-  static const String MESSAGE_TIME = "message_time";
-  static const String MESSAGE_TITLE = "title";
-  static const String CHAT_TYPE = "chat_type";
-  static const String GROUP_VCARD = "group_vcard";
-  static const String PUBLISHER_PROFILE = "publisher_profile";
-  static const String ADD_FROM_INFO = "add_info_info";
-  static const String DELETE_TYPE = "delete_type";
-  static const String MESSAGE_FAVOURITE = "message_favourite";
-  static const String MESSAGE_CONTENT = "message_content";
-  static const String IS_FIRST_LOGIN = "is_first";
-  static const String DOMAIN = "domain";
-  static const String VIDEO_LIMIT = "videoLimit";
-  static const String AUDIO_LIMIT = "audioLimit";
-  static const String PROFILE_NAME = "profile_name";
-  static const String CREATE_GROUP = "create_group";
-  static const String CREATE_BROADCAST = "create_broadcast";
-  static const String PROFILE_IMAGE = "profile_image";
-  static const String USERNAME = "username";
-  static const String SECRET_KEY = "password";
-  static const String CURRENET_TIME_STAMP = "currentTimestamp";
-  static const String LOGIN_DATA = "loginData";
-  static const String STRING_DATA = "string";
-  static const String CONFIG = "config";
-  static const String DEVICE_TOKEN = "deviceToken";
-  static const String USER_BUSY = "user_busy";
-  static const String SELECTED_IMAGES = "selected_images";
-  static const String SELECTED_VIDEO = "selected_video";
-  static const String SELECTED_VIDEO_CAPTION = "selected_video_caption";
-  static const int ACTIVITY_REQ_CODE = 111;
-  static const int EDIT_REQ_CODE = 112;
-  static const int PICK_CONTACT_REQ_CODE = 123;
-  static const int SELECT_CONTACT_REQ_CODE = 124;
-  static const int SELECT_IMAGE_REQ_CODE = 125;
-  static const int SELECT_MAP_REQ_CODE = 118;
-  static const int COUNTRY_REQUEST_CODE = 118;
-  static const int TAKE_VIDEO = 3;
-  static const int PICK_FILE = 4;
-  static const int COUNT_TWO = 2;
-  static const int GROUP_NAME_UPDATE = 2;
-  static const int STORAGE_PERMISSION_CODE = 233;
-  static const int LOCATION_PERMISSION_CODE = 234;
-  static const int VIDEO_CALL_PERMISSION_CODE = 235;
-  static const int CAMERA_PERMISSION_CODE = 236;
-  static const int CALL_PHONE_PERMISSION_CODE = 2;
-  static const int GALLERY_PERMISSION_CODE = 222;
-  static const int RECORD_AUDIO_CODE = 237;
-  static const int READ_CONTACTS_PERMISSION_CODE = 238;
-  static const int ALL_PERMISSIONS_CODE = 239;
-  static const int AUDIO_SELECTION_PERMISSIONS_CODE = 240;
-  static const int ONE_SECOND = 1000;
-  static const int SHORT_VIBRATE = 250;
-  static const int ONE_KB = 1024;
-  static const String MSG_TYPE_TEXT = "text";
-  static const String MSG_TYPE_CONTACT = "contact";
-  static const String MSG_TYPE_NOTIFICATION = "notification";
-  static const String EXPORT_PATH = "Export files";
-  static const String VIDEO_LOCAL_PATH = "Video";
-  static const String VIDEO_PREFIX = "VID_";
-  static const String IMAGE_PREFIX = "IMG_";
-  static const String IMAGE_LOCAL_PATH = "Image";
-  static const String AUDIO_LOCAL_PATH = "Audio";
-  static const String FILE_LOCAL_PATH = "File";
-  static const String FILE_PATH = "file_path";
-  static const String COUNTRY_CODE = "countryCode";
-  static const String MEDIA_ENCRYPTION = "media_encryption";
-  static const String HIPAA_COMPLAINCE = "hipaa_complaince";
-  static const String COUNTRY_NAME = "countryName";
-  static const String POSITION = "Position";
-  static const String CHAT_NAME = "text_chat_name";
-  static const String MESSAGES_TO_DELETE = "messages_to_delete";
-  static const String REPLY_MESSAGE_ID = "reply_message_id";
-  static const String REPLY_MESSAGE_USER = "reply_message_user";
-  static const String MSG_TYPE_LOCATION = "location";
-  static const String MSG_TYPE_VIDEO = "video";
-  static const String MSG_TYPE_AUDIO = "audio";
-  static const String AUDIO_TYPE_RECORDING = "recording";
-  static const String AUDIO_TYPE_FILE = "file";
-  static const String MSG_TYPE_IMAGE = "image";
-  static const String MSG_TYPE_AUTO_TEXT = "auto_text";
-  static const String MSG_SENT = "N";
-  static const String MSG_ACK = "A";
-  static const String MSG_DELIVERED = "D";
-  static const String MSG_SEEN = "S";
-  static const bool CHAT_FROM_SENDER = true;
-  static const int TYPE_ABOUT_US = 2;
-  static const int TYPE_NOTIFICATION = 3;
-  static const int TYPE_USER_BUSY_STATUS = 4;
-  static const int NOTIFICATION_ID = 123;
-  static const String MIME_TYPE_IMAGE = "image/*";
-  static const String TEMP_PHOTO_FILE_NAME = "temp_photo";
-  static const String ERROR_SERVER = "Server error, kindly try again later";
-  static const String ERR_SELECT_CONTACT = "You are not able to select any contact";
-  static const String GROUP_ID = "group_id";
-  static const String GROUP_NAME = "group_name";
-  static const String GROUP_PROFILE_IMAGE = "group_profile_image";
-  static const String GROUP_PROFILE = "group_profile";
+  static const String package = 'com.mirrorfly.uikit_flutter';
+  static const String webChatLogin = 'https://webchat-uikit-qa.contus.us/';
+  static const String tag = 'Contus Fly';
+  static const String googleMapKey = "AIzaSyBaKkrQnLT4nacpKblIE5d4QK6GpaX5luQ";
+  static const String googleMapPackageName = "com.google.android.apps.maps";
+  static const String packageName = "com.contus.flycommons.";
+  static const String rosterJid = "roster_jid";
+  static const String isLiveUser = "is_live_user";
+  static const String ifBlockedMe = "ifBlockedMe";
+  static const String blockedMe = "BlockedMe";
+  static const String isMute = "is_mute";
+  static const String mobileNo = "mobileNumber";
+  static const String email = "email";
+  static const String title = "title";
+  static const String titleMessage = "Messages";
+  static const String profile = "profile";
+  static const String selectedImage = "selected_image";
+  static const int countOne = 1;
+  static const int countZero = 0;
+  static const String totalPages = "total_pages";
+  static const String isNewUser = "is_new_user";
+  static const String mediaUrl = "url";
+  static const String response = "response";
+  static const String message = "message";
+  static const String error = "error";
+  static const String userStatus = "user_status";
+  static const String userBusyStatus = "user_busy_status";
+  static const String android = "android";
+  static const String image = "image";
+  static const String emptyString = "";
+  static const String encryptString = " Encrypted";
+  static const String composing = "Composing";
+  static const String gone = "Gone";
+  static const String lastSeen = "lastseen";
+  static const String online = "Online";
+  static const String presenceAvailable = "presence_available";
+  static const String presenceChanged = "presence_changed";
+  static const String fromSplash = "from_splash";
+  static const String inviteList = "invite_list";
+  static const String data = "data";
+  static const String userList = "user_list";
+  static const String isBroadCast = "is_broadcast";
+  static const String isUploadSuccess = "is_upload_success";
+  static const String quickShare = "QUICK_SHARE";
+  static const String seenUpdated = "Seenupdated";
+  static const String isArchivedSettingsEnabled = "com.contus.flycommons.is_archived_settings_enabled";
+  static const int maxReportMessagesCount = 5;
+  static const String chatType = "chatType";
+  static const String fromUser = "from";
+  static const String toUser = "to";
+  static const String dataArray = "data";
+  static const String messageTxt = "message";
+  static const String msgID = "msgId";
+  static const String fileName = "filename";
+  static const String messageType = "msgType";
+  static const String timeStamp = "timestamp";
+  static const String publisherID = "publisherId";
+  static const String name = "name";
+  static const String page = "page";
+  static const String size = "size";
+  static const String isBusyStatusEnabled = "com.contus.flycommons.is_busy_status_enabled";
+  static const String xmppDomain = "xmppDomain";
+  static const String xmppPort = "xmppPort";
+  static const String xmppHost = "xmppHost";
+  static const String signalServerDomain = "signalServerDomain";
+  static const String callRoutingServer = "callRoutingServer";
+  static const String stuns = "stuns";
+  static const String turns = "turns";
+  static const String messageIV = "iv";
+  static const String profileIV = "ivProfile";
+  static const String responseParameterStatus = "status";
+  static const String responseParameterData = "data";
+  static const String statusCodeSuccess = "200";
+  static const String statusCodeSecurityTokenError = "401";
+  static const String statusInternalServerError = "500";
+  static const String deviceType = "deviceType";
+  static const String deviceOS = "deviceOs";
+  static const String deviceOSVersion = "deviceOsVersion";
+  static const String mode = "mode";
+  static const String userIdentifier = "userIdentifier";
+  static const String voipDeviceToken = "voipDeviceToken";
+  static const String deviceModel = "deviceModel";
+  static const String appVersion = "appVersion";
+  static const String description = "description";
+  static const String fileToken = "fileToken";
+  static const String statusCodeNotFound = "204";
+  static const String backType = "chatBackupType";
+  static const String backupFrequency = "chatBackupFrequency";
+  static const String sameUser = "same_user";
+  static const String notificationNotWorkingURL = "notificationHelpUrl";
+  static const String latitude = "latitude";
+  static const String longitude = "longitude";
+  static const String chatMessage = "chatmessage";
+  static const String messageID = "messageId";
+  static const String networkFailure = "network_failure";
+  static const String messageIDS = "messageIds";
+  static const String otp = "otp";
+  static const String googleToken = "google_token";
+  static const String messageFrom = "messageFrom";
+  static const String messageTo = "messageTo";
+  static const String type = "type";
+  static const String messageTime = "message_time";
+  static const String messageTitle = "title";
+  static const String chaTType = "chat_type";
+  static const String groupVCard = "group_vcard";
+  static const String publisherProfile = "publisher_profile";
+  static const String addFromInfo = "add_info_info";
+  static const String deleteType = "delete_type";
+  static const String messageFavourite = "message_favourite";
+  static const String messageContent = "message_content";
+  static const String isFirstLogin = "is_first";
+  static const String domain = "domain";
+  static const String videoLimit = "videoLimit";
+  static const String audioLimit = "audioLimit";
+  static const String profileName = "profile_name";
+  static const String createGroup = "create_group";
+  static const String createBroadCast = "create_broadcast";
+  static const String profileImage = "profile_image";
+  static const String username = "username";
+  static const String secretKey = "password";
+  static const String currentTimeStamp = "currentTimestamp";
+  static const String loginData = "loginData";
+  static const String stringData = "string";
+  static const String config = "config";
+  static const String deviceToken = "deviceToken";
+  static const String userBusy = "user_busy";
+  static const String selectedImages = "selected_images";
+  static const String selectedVideo = "selected_video";
+  static const String selectedVideoCaption = "selected_video_caption";
+  static const int activityReqCode = 111;
+  static const int editReqCode = 112;
+  static const int pickContactReqCode = 123;
+  static const int selectContactReqCode = 124;
+  static const int selectImageReqCode = 125;
+  static const int selectMapReqCode = 118;
+  static const int countryReqCode = 118;
+
+  static const String msgTypeText = "text";
+  static const String msgTypeContact = "contact";
+  static const String msgTypeNotification = "notification";
+
+
+
   static const String O = "o";
   static const String N = "n";
-  static const String INFO_END_POINT = "register/info";
-  static const String SETTINGS_END_POINT = "users/config";
-  static const String GET_OTP_END_POINT = "requestotp";
-  static const String VERIFY_TOKEN_END_POINT = "verifyuser";
-  static const String REGISTER_END_POINT = "register";
-  static const String REFRESH_TOKEN_ENDPOINT = "login";
-  static const String MESSAGE_DELIVERY_ENDPOINT = "users/delivered";
-  static const String CONTACT_SYNC_ENDPOINT = "contacts/";
-  static const String NEW_CONTACT_SYNC_ENDPOINT = "contacts/syncContactsNew";
-  static const String LOGOUT_ENDPOINT = "logout";
-  static const String FIREBASE_TOKEN_ENDPOINT = "users/device";
-  static const String CALLS_ENDPOINT = "users/calls";
-  static const String USER = "user/getpassword";
-  static const String BACKUP_DOWNLOAD = "backup/restore";
-  static const String BACKUP_UPLOAD = "backup/";
-  static const String BACKUP_CHECK = "backup/details";
-  static const String IS_BACKUP_AVAILABLE = "is_backup_available";
-  static const String BACKUP_FILE_SIZE = "backup_file_size";
-  static const String BACKUP_FILE_DATE = "backup_file_date";
-  static const String FROM_CONTACT_SYNC = "from_contact_sync";
-  static const String AUTH_TOKEN = "authToken";
-  static const String CONNECTING = "Connecting";
-  static const String TYPE_SEARCH_RECENT = "Chats";
-  static const String TYPE_SEARCH_CONTACT = "Contact";
-  static const String TYPE_SEARCH_MESSAGE = "Message";
-  static const int ROSTER = 1;
-  static const String YOU = "You";
-  static const String HINT = "hint";
-  static const String MAX_UPLOAD_SIZE = "2";
-  static const String MAX_FILE_UPLOAD_COUNT = "5";
-  static const String TYPE_NORMAL = "normal";
-  static const String TYPE_SEEN = "seen";
-  static const String USER_JID = "user_jid";
-  static const String IS_IMAGE = "is_image";
-  static const String SENT_FROM = "sent_from";
-  static const String SENT_FROM_USERNAME = "sent_from";
-  static const String NOTIFY_ID = "notify_id";
-  static const String MSG_TYPE_FILE = "file";
-  static const String TEXT_COUNT = "text_count";
-  static const int MIN_GROUP_MEMBERS = 2;
-  static const int MAX_TEXT_COUNT = 139;
-  static const int MAX_NAME_COUNT = 30;
-  static const String FRAGMENT_TYPE = "fragment_type";
-  static const String WEB_USER_TOKEN = "web_user_token";
-  static const int MAX_GROUP_NAME_COUNT = 25;
-  static const String ACTION_REMOVE = "admin_remove_action";
-  static const String ACTION_EXIT = "admin_exit_group";
-  static const String MIME_TYPE_VIDEO = "video/*";
-  static const String MIME_TYPE_FILE = "application/*";
-  static const String MSG_SENT_PATH = "Sent";
-  static const String MSG_RECEIVED_PATH = "Received";
-  static const String MSG_RECEIVED_IMAGE = "Images";
-  static const String MSG_RECEIVED_VIDEO = "Videos";
-  static const String MSG_RECEIVED_AUDIO = "Audio";
-  static const String MSG_RECEIVED_FILE = "Files";
-  static const String BACKUP_FOLDER = "Backups";
-  static const String YESTERDAY = "yesterday";
-  static const String TODAY = "today";
-  static const String YESTERDAY_UPPER = "YESTERDAY";
-  static const bool IS_MOBILE_LOGIN = true;
-  static const String DIAL_CODE = "dialCode";
-  static const String NOTIFICATION_ACTIVITY = "";
-  static const String IS_BLOCKED = "is_blocked";
-  static const String RECALL_TIME = "recallTime";
-  static const String PRIVATE_TIME = "privateTime";
-  static const String RECALL = "recall";
-  static const String TYPE_CALL = "call";
-  static const String MEDIA_CALL = "mediacall";
-  static const String MISSED_CALL_COUNT = "missed_call_count";
-  static const String IS_CARBON_DELIVERY_RECEIPT = "carbon";
-  static const String TO_JID = "to_jid";
-  static const String AUTHORIZATION_HEADER_KEY = "Authorization";
-  static const String AUTHORIZATION_HEADER_PREFIX = "Bearer %s";
-  static const String MUTE_NOTIFY = "mute_notification";
-  static const String UN_MUTE_NOTIFY = "unmute_notification";
-  static const String LOGOUT_PIN = "logOutPin";
-  static const String PIN_EXPIRE_BIOMETRIC = "pin_expired_biometric";
-  static const String STAR = "star";
-  static const String UNSTAR = "unstar";
-  static const String SHARE = "share";
-  static const String FORWARD = "forward";
-  static const String DELETE = "delete";
-  static const String REPLY = "reply";
-  static const String COPY = "copy";
-  static const String INFO = "info";
-  static const String FROM_FORWARD = "from_forward";
-  static const String PROGRESS_PERCENTAGE = "progress_percentage";
-  static const String FILE_UPLOAD_ENDPOINT = "media/";
-  static const String DRIVE_BACKUP = "personal";
-  static const String SERVER_BACKUP = "on-prem";
-  static const String SKIP_PROFILE = "skip_profile";
-  static const String CREATE_CONFERENCE = "create_conference";
-  static const String RESPONSE_PARAMETER_URL = "fileToken";
-  static const int DEFAULT_VIBRATE = 500;
-  static const String DEFAULT_IV = "ddc0f15cc2c90fca";
-  static const String DEFAULT_COUNTRY_CODE = "IN";
-  static const String MIME_TYPE_AUDIO = "audio/*";
-  static const String MAIL_SUBJECT = "Invite to Connect ContusFly";
-  static const String YOU_ARE = "You are";
-  static const String RESOURCE_NME = "Mobile";
-  static const int CONTACT_REQ_CODE = 114;
-  static const String IS_FROM_NOTIFICATION = "is_from_notification";
-  static const String UTF = "UTF-8";
-  static const String NOTIFICATION_CHANNEL_ID = "com.contus.flycommons.notification";
-  static const String INFO_COPY_TEXT_SUCCESS = "Text copied successfully to the clipboard";
-  static const String DAILY = "daily";
-  static const String WEEKLY = "weekly";
-  static const String MONTHLY = "monthly";
-  static const String LIVE_STREAM_URL = "liveStreamingSignalServer";
-  static const String IS_LIVE_STREAM_ENABLED = "isLiveStreamingEnabled";
-  static const String GOOGLE_TRANSLATE = "googleTranslate";
-  static const String REFRESH_CALL_LOGS = "call_logs_refresh";
-  static const String UNSYNCED_CALL_LOGS = "unSyncedCallLogs";
-  static const String DELETE_ALL = "delete_all";
-  static const String CALL_IDS = "call_ids";
-  static const String TIMESTAMP = "timestamp";
-  static const String INTENT_PHONE_NUMBERS = "INTENT_PHONE_NUMBERS";
-  static const String USE_PROFILE_NAME = "use_profile_name";
-  static const String ENABLE_MOBILE_NUMBER_LOGIN = "enable_mobile_number_login";
-  static const String IS_TRIAL_LICENCE_KEY = "is_trial_licence_key";
-  static const String LICENSE_KEY = "licenseKey";
-  static const String BASE_URL = "com.contus.flycommons.base_url";
-  static const String STORAGE_FOLDER_NAME = "folder_name";
-  static const String API_KEY = "com.contus.flycommons.api_key";
-  static const String MIX = "@mix.";
+
+
+  static const String typeSearchRecent = "Chats";
+  static const String typeSearchContact = "Contact";
+  static const String typeSearchMessage = "Message";
+
+  static const String you = "You";
+
+  static const int minGroupMembers = 2;
+
+
+  static const String yesterday = "yesterday";
+  static const String today = "today";
+  static const String yesterdayUpper = "YESTERDAY";
+  static const bool isMobileLogin = true;
+  static const String baseUrl = "com.contus.flycommons.base_url";
+  static const String apiKey = "com.contus.flycommons.api_key";
+  static const String mix = "@mix.";
 
   static const String bulletPoint = "\u2022 ";
 
@@ -518,8 +357,12 @@ class Constants {
   static const String TYPE_GROUP_CHAT = "groupchat";
   static const String TYPE_BROADCAST_CHAT = "broadcast";
 
-  static const String Terms_Conditions = "https://www.mirrorfly.com/terms-and-conditions.php";
-  static const String Privacy_Policy = "https://www.mirrorfly.com/privacy-policy.php";
+  static const String typeChat = "chat";
+  static const String typeGroupChat = "groupchat";
+  static const String typeBroadcastChat = "broadcast";
+
+  static const String termsConditions = "https://www.mirrorfly.com/terms-and-conditions.php";
+  static const String privacyPolicy = "https://www.mirrorfly.com/privacy-policy.php";
 
   static const List<String> defaultStatusList = ["Available","Sleeping...","Urgent calls only","At the movies","I am in Mirror Fly"];
   static const List<int> defaultColorList = [
@@ -568,14 +411,14 @@ class Constants {
   ];
   static const String defaultStatus = "I am in Mirror Fly";
 
-  static const int MEDIA_DOWNLOADING = 3;
-  static const int MEDIA_DOWNLOADED = 4;
-  static const int MEDIA_NOT_DOWNLOADED = 5;
-  static const int MEDIA_DOWNLOADED_NOT_AVAILABLE = 6;
-  static const int MEDIA_NOT_UPLOADED = 0;
-  static const int MEDIA_UPLOADING = 1;
-  static const int MEDIA_UPLOADED = 2;
-  static const int MEDIA_UPLOADED_NOT_AVAILABLE = 7;
+  static const int mediaDownloading = 3;
+  static const int mediaDownloaded = 4;
+  static const int mediaNotDownloaded = 5;
+  static const int mediaDownloadedNotAvailable = 6;
+  static const int mediaNotUploaded = 0;
+  static const int mediaUploading = 1;
+  static const int mediaUploaded = 2;
+  static const int mediaUploadedNotAvailable = 7;
 
 
   static const double borderRadius = 27;
@@ -584,24 +427,24 @@ class Constants {
   // static GlobalKey<AnimatedListState> audioListKey =
   // GlobalKey<AnimatedListState>();
 
-  static const String PDF = "pdf";
-  static const String PPT = "ppt";
-  static const String DOC = "doc";
-  static const String DOCX = "docx";
-  static const String APK = "apk";
-  static const String XLS = "xls";
-  static const String XLXS = "xlsx";
+  static const String pdf = "pdf";
+  static const String ppt = "ppt";
+  static const String doc = "doc";
+  static const String docx = "docx";
+  static const String apk = "apk";
+  static const String xls = "xls";
+  static const String xlsx = "xlsx";
 
   //Message Types
-  static const String MTEXT = "TEXT";
-  static const String MIMAGE = "IMAGE";
-  static const String MAUDIO = "AUDIO";
-  static const String MVIDEO = "VIDEO";
-  static const String MCONTACT = "CONTACT";
-  static const String MLOCATION = "LOCATION";
-  static const String MDOCUMENT = "DOCUMENT";
-  static const String MFILE = "FILE";
-  static const String MNOTIFICATION = "NOTIFICATION";
+  static const String mText = "TEXT";
+  static const String mImage = "IMAGE";
+  static const String mAudio = "AUDIO";
+  static const String mVideo = "VIDEO";
+  static const String mContact = "CONTACT";
+  static const String mLocation = "LOCATION";
+  static const String mDocument = "DOCUMENT";
+  static const String mFile = "FILE";
+  static const String mNotification = "NOTIFICATION";
 
   //Audio Recording Types
   static const String audioRecording = "AUDIO_RECORDING";
@@ -620,34 +463,34 @@ Future<void> launchWeb(String url) async{
 
 Widget forMessageTypeIcon(String messageType) {
   switch (messageType.toUpperCase()) {
-    case Constants.MIMAGE:
+    case Constants.mImage:
       return SvgPicture.asset(
-        Mimageicon,
+        mImageIcon,
         fit: BoxFit.contain,
       );
-    case Constants.MAUDIO:
+    case Constants.mAudio:
       return SvgPicture.asset(
-        Maudioicon,
+        mAudioIcon,
         fit: BoxFit.contain,
       );
-    case Constants.MVIDEO:
+    case Constants.mVideo:
       return SvgPicture.asset(
-        Mvideoicon,
+        mVideoIcon,
         fit: BoxFit.contain,
       );
-    case Constants.MDOCUMENT:
+    case Constants.mDocument:
       return SvgPicture.asset(
-        Mdocumenticon,
+        mDocumentIcon,
         fit: BoxFit.contain,
       );
-    case Constants.MCONTACT:
+    case Constants.mContact:
       return SvgPicture.asset(
-        Mcontacticon,
+        mContactIcon,
         fit: BoxFit.contain,
       );
-    case Constants.MLOCATION:
+    case Constants.mLocation:
       return SvgPicture.asset(
-        Mlocationicon,
+        mLocationIcon,
         fit: BoxFit.contain,
       );
     default:
@@ -657,17 +500,17 @@ Widget forMessageTypeIcon(String messageType) {
 
 String? forMessageTypeString(String messageType) {
   switch (messageType.toUpperCase()) {
-    case Constants.MIMAGE:
+    case Constants.mImage:
       return "Image";
-    case Constants.MAUDIO:
+    case Constants.mAudio:
       return "Audio";
-    case Constants.MVIDEO:
+    case Constants.mVideo:
       return "Video";
-    case Constants.MDOCUMENT:
+    case Constants.mDocument:
       return "Document";
-    case Constants.MCONTACT:
+    case Constants.mContact:
       return "Contact";
-    case Constants.MLOCATION:
+    case Constants.mLocation:
       return "Location";
     default:
       return null;

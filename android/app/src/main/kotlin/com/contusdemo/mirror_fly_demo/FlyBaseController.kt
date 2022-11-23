@@ -687,7 +687,7 @@ open class FlyBaseController(activity: FlutterActivity) : MethodChannel.MethodCa
                         .toString()
                 FlyMessenger.downloadMedia(mediaId)
             }
-            call.method.equals("send_contact") -> {
+            call.method.equals("sendContactMessage") -> {
                 sendContactMessage(call, result)
             }
             call.method.equals("sendDocumentMessage") -> {

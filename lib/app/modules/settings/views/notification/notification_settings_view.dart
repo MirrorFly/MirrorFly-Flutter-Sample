@@ -36,7 +36,7 @@ class NotificationSettingsView extends GetView<NotificationAlertController> {
           notificationSettingsItem(
               title: "Notification Not Working?",
               subtitle: 'Learn more in our Help Center',
-              onTap: () => launchWeb(notification_not_working_URL)),
+              onTap: () => launchWeb(notificationNotWorkingURL)),
         ],
       ),
     );
@@ -60,12 +60,12 @@ class NotificationSettingsView extends GetView<NotificationAlertController> {
             ),
             Text(
               subtitle,
-              style: const TextStyle(fontSize: 13, color: textcolor),
+              style: const TextStyle(fontSize: 13, color: textColor),
             ),
           ],
         ),
         dividerPadding: const EdgeInsets.symmetric(horizontal: 16),
-        trailing: SvgPicture.asset(rightarrowicon),
+        trailing: SvgPicture.asset(rightArrowIcon),
         onTap: onTap);
   }
 }

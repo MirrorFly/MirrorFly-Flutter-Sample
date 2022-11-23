@@ -70,7 +70,7 @@ class GroupInfoController extends GetxController {
     });
   }
   onToggleChange(bool value){
-    Log("change", value.toString());
+    mirrorFlyLog("change", value.toString());
     _mute(value);
     FlyChat.updateChatMuteStatus(profile.jid.checkNull(),value);
   }
@@ -96,7 +96,7 @@ class GroupInfoController extends GetxController {
           onPressed: () {
             Get.back();
             Helper.progressLoading();
-            FlyChat.reportUserOrMessages(profile.jid.checkNull(),Constants.TYPE_GROUP_CHAT, "").then((value) {
+            FlyChat.reportUserOrMessages(profile.jid.checkNull(),Constants.typeGroupChat, "").then((value) {
               Helper.hideLoading();
               if(value!=null){
                 if(value){
@@ -251,7 +251,7 @@ class GroupInfoController extends GetxController {
               hideLoader();
               if (value != null) {
                 if(value){
-                  profile_.value.image=Constants.EMPTY_STRING;
+                  profile_.value.image=Constants.emptyString;
                   profile_.refresh();
                 }
               }

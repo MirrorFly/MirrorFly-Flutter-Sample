@@ -37,7 +37,7 @@ class SetPinView extends GetView<AppLockController> {
           Center(
             child: ElevatedButton(
               style: ElevatedButton.styleFrom(
-                  backgroundColor: buttonbgcolor,
+                  backgroundColor: buttonBgColor,
                   padding: const EdgeInsets.symmetric(
                       horizontal: 40, vertical: 10),
                   textStyle: const TextStyle(
@@ -70,7 +70,7 @@ class SetPinView extends GetView<AppLockController> {
             style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 17),
           ),
         ),
-        ListItem(leading:SvgPicture.asset(lockicon,width: 24,height: 24,),
+        ListItem(leading:SvgPicture.asset(lockIcon,width: 24,height: 24,),
             title: TextField(
               controller: controller,
               onChanged: (value) {},
@@ -85,7 +85,7 @@ class SetPinView extends GetView<AppLockController> {
                   counterText: ""
               ),
               style: const TextStyle(fontWeight: FontWeight.normal,fontSize: 16),
-        ),dividerPadding: EdgeInsets.zero,trailing: IconButton(icon: Image.asset(secure ? eye_off : eye_on,width: 24,height: 24,), onPressed: eyeTap,))
+        ),dividerPadding: EdgeInsets.zero,trailing: IconButton(icon: Image.asset(secure ? eyeOff : eyeOn,width: 24,height: 24,), onPressed: eyeTap,))
 
       ],
     );
