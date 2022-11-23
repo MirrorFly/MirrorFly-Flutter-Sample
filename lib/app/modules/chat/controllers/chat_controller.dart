@@ -1308,9 +1308,10 @@ class ChatController extends BaseController with GetTickerProviderStateMixin {
       debugPrint("Message Status Update index of search $index");
       if (index != -1) {
         // Helper.hideLoading();
-        chatList[index] = chatMessageModel;
+        chatList.value[index] = chatMessageModel;
       } else {
-        chatList.add(chatMessageModel);
+        chatList.value.add(chatMessageModel);
+        scrollToBottom();
       }
     }
   }
@@ -1324,7 +1325,7 @@ class ChatController extends BaseController with GetTickerProviderStateMixin {
               (message) => message.messageId == chatMessageModel.messageId);
       debugPrint("Media Status Update index of search $index");
       if (index != -1) {
-        chatList[index] = chatMessageModel;
+        chatList.value[index] = chatMessageModel;
       }
     }
   }

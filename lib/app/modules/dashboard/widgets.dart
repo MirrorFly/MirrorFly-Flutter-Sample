@@ -39,7 +39,16 @@ Widget recentChatItem({required RecentChatData item, required BuildContext conte
                   width: 48,
                   height: 48,
                   clipOval: true,
-                  errorWidget: ProfileTextImage(
+                  errorWidget: item.isGroup!
+                      ? ClipOval(
+                    child: Image.asset(
+                      groupImg,
+                      height: 48,
+                      width: 48,
+                      fit: BoxFit.cover,
+                    ),
+                  )
+                      : ProfileTextImage(
                     text: item.profileName.checkNull().isEmpty
                         ? item.nickName.checkNull()
                         : item.profileName.checkNull(),
