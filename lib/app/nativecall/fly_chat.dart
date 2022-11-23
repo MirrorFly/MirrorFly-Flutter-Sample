@@ -33,12 +33,474 @@ class FlyChat {
   static const EventChannel onGroupDeletedLocally_channel = EventChannel('contus.mirrorfly/onGroupDeletedLocally');
 
 
+  static Future<bool?> syncContacts() async {
+    bool? res;
+    try {
+      res = await mirrorFlyMethodChannel
+          .invokeMethod<bool>('syncContacts');
+      return res;
+    } on PlatformException catch (e) {
+      debugPrint("Platform Exception ===> $e");
+      rethrow;
+    } on Exception catch (error) {
+      debugPrint("Exception ==> $error");
+      rethrow;
+    }
+  }
+
+  static Future<String> contactSyncStateValue() async {
+    String? response = "";
+    try {
+      response = await mirrorFlyMethodChannel
+          .invokeMethod<String>('contactSyncStateValue');
+      debugPrint("contactSyncState Result ==> $response");
+      return response.checkNull();
+    } on PlatformException catch (e) {
+      debugPrint("Platform Exception ===> $e");
+      rethrow;
+    } on Exception catch (error) {
+      debugPrint("Exception ==> $error");
+      rethrow;
+    }
+  }
+
+  static Future<dynamic> contactSyncState() async {
+    dynamic response = "";
+    try {
+      response = await mirrorFlyMethodChannel
+          .invokeMethod('contactSyncState');
+      debugPrint("contactSyncState Result ==> $response");
+      return response;
+    } on PlatformException catch (e) {
+      debugPrint("Platform Exception ===> $e");
+      rethrow;
+    } on Exception catch (error) {
+      debugPrint("Exception ==> $error");
+      rethrow;
+    }
+  }
+
+  static Future<dynamic> revokeContactSync() async {
+    dynamic response = "";
+    try {
+      response = await mirrorFlyMethodChannel
+          .invokeMethod('revokeContactSync');
+      debugPrint("revokeContactSync Result ==> $response");
+      return response;
+    } on PlatformException catch (e) {
+      debugPrint("Platform Exception ===> $e");
+      rethrow;
+    } on Exception catch (error) {
+      debugPrint("Exception ==> $error");
+      rethrow;
+    }
+  }
+
+  static Future<dynamic> getUsersWhoBlockedMe([bool server =false]) async {
+    dynamic response = "";
+    try {
+      response = await mirrorFlyMethodChannel
+          .invokeMethod('getUsersWhoBlockedMe',{"server":server});
+      debugPrint("getUsersWhoBlockedMe Result ==> $response");
+      return response;
+    } on PlatformException catch (e) {
+      debugPrint("Platform Exception ===> $e");
+      rethrow;
+    } on Exception catch (error) {
+      debugPrint("Exception ==> $error");
+      rethrow;
+    }
+  }
+
+  static Future<dynamic> getUnKnownUserProfiles() async {
+    dynamic response = "";
+    try {
+      response = await mirrorFlyMethodChannel
+          .invokeMethod('getUnKnownUserProfiles');
+      debugPrint("getUnKnownUserProfiles Result ==> $response");
+      return response;
+    } on PlatformException catch (e) {
+      debugPrint("Platform Exception ===> $e");
+      rethrow;
+    } on Exception catch (error) {
+      debugPrint("Exception ==> $error");
+      rethrow;
+    }
+  }
+
+  static Future<dynamic> getMyProfileStatus() async {
+    dynamic response = "";
+    try {
+      response = await mirrorFlyMethodChannel
+          .invokeMethod('getMyProfileStatus');
+      debugPrint("getMyProfileStatus Result ==> $response");
+      return response;
+    } on PlatformException catch (e) {
+      debugPrint("Platform Exception ===> $e");
+      rethrow;
+    } on Exception catch (error) {
+      debugPrint("Exception ==> $error");
+      rethrow;
+    }
+  }
+
+  static Future<dynamic> getMyBusyStatus() async {
+    dynamic response = "";
+    try {
+      response = await mirrorFlyMethodChannel
+          .invokeMethod('getMyBusyStatus');
+      debugPrint("getMyBusyStatus Result ==> $response");
+      return response;
+    } on PlatformException catch (e) {
+      debugPrint("Platform Exception ===> $e");
+      rethrow;
+    } on Exception catch (error) {
+      debugPrint("Exception ==> $error");
+      rethrow;
+    }
+  }
+
+   static Future<dynamic> getRecalledMessagesOfAConversation(String jid) async {
+    dynamic response = "";
+    try {
+      response = await mirrorFlyMethodChannel
+          .invokeMethod('getRecalledMessagesOfAConversation',{"jid":jid});
+      debugPrint("getRecalledMessagesOfAConversation Result ==> $response");
+      return response;
+    } on PlatformException catch (e) {
+      debugPrint("Platform Exception ===> $e");
+      rethrow;
+    } on Exception catch (error) {
+      debugPrint("Exception ==> $error");
+      rethrow;
+    }
+  }
+
+  static Future<bool?> setMyBusyStatus(String busystatus) async {
+    bool? res;
+    try {
+      res = await mirrorFlyMethodChannel
+          .invokeMethod<bool>('setMyBusyStatus',{"status":busystatus});
+      return res;
+    } on PlatformException catch (e) {
+      debugPrint("Platform Exception ===> $e");
+      rethrow;
+    } on Exception catch (error) {
+      debugPrint("Exception ==> $error");
+      rethrow;
+    }
+  }
+
+  static Future<bool?> enableDisableBusyStatus(bool enable) async {
+    bool? res;
+    try {
+      res = await mirrorFlyMethodChannel
+          .invokeMethod<bool>('enableDisableBusyStatus',{"enable":enable});
+      return res;
+    } on PlatformException catch (e) {
+      debugPrint("Platform Exception ===> $e");
+      rethrow;
+    } on Exception catch (error) {
+      debugPrint("Exception ==> $error");
+      rethrow;
+    }
+  }
+
+  static Future<bool?> isBusyStatusEnabled() async {
+    bool? res;
+    try {
+      res = await mirrorFlyMethodChannel
+          .invokeMethod<bool>('isBusyStatusEnabled');
+      return res;
+    } on PlatformException catch (e) {
+      debugPrint("Platform Exception ===> $e");
+      rethrow;
+    } on Exception catch (error) {
+      debugPrint("Exception ==> $error");
+      rethrow;
+    }
+  }
+
+  static Future<bool?> deleteProfileStatus(num id, String status,bool isCurrentStatus) async {
+    bool? res;
+    try {
+      res = await mirrorFlyMethodChannel
+          .invokeMethod<bool>('deleteProfileStatus',{"id":id,"status":status,"isCurrentStatus":isCurrentStatus,});
+      return res;
+    } on PlatformException catch (e) {
+      debugPrint("Platform Exception ===> $e");
+      rethrow;
+    } on Exception catch (error) {
+      debugPrint("Exception ==> $error");
+      rethrow;
+    }
+  }
+
   static Future<String> mediaEndPoint() async {
     String? response = "";
     try {
       response = await mirrorFlyMethodChannel
           .invokeMethod<String>('media_endpoint');
       debugPrint("media_endpoint Result ==> $response");
+      return response.checkNull();
+    } on PlatformException catch (e) {
+      debugPrint("Platform Exception ===> $e");
+      rethrow;
+    } on Exception catch (error) {
+      debugPrint("Exception ==> $error");
+      rethrow;
+    }
+  }
+
+  static Future<bool?> unFavouriteAllFavouriteMessages() async {
+    bool? res;
+    try {
+      res = await mirrorFlyMethodChannel
+          .invokeMethod<bool>('unFavouriteAllFavouriteMessages');
+      return res;
+    } on PlatformException catch (e) {
+      debugPrint("Platform Exception ===> $e");
+      rethrow;
+    } on Exception catch (error) {
+      debugPrint("Exception ==> $error");
+      rethrow;
+    }
+  }
+
+  static Future<bool?> markAsRead(String jid) async {
+    bool? res;
+    try {
+      res = await mirrorFlyMethodChannel
+          .invokeMethod<bool>('markAsRead',{"jid":jid});
+      return res;
+    } on PlatformException catch (e) {
+      debugPrint("Platform Exception ===> $e");
+      rethrow;
+    } on Exception catch (error) {
+      debugPrint("Exception ==> $error");
+      rethrow;
+    }
+  }
+
+  static Future<bool?> uploadMedia(String messageid) async {
+    bool? res;
+    try {
+      res = await mirrorFlyMethodChannel
+          .invokeMethod<bool>('uploadMedia',{"messageid":messageid});
+      return res;
+    } on PlatformException catch (e) {
+      debugPrint("Platform Exception ===> $e");
+      rethrow;
+    } on Exception catch (error) {
+      debugPrint("Exception ==> $error");
+      rethrow;
+    }
+  }
+
+  static Future<bool?> deleteUnreadMessageSeparatorOfAConversation(String jid) async {
+    bool? res;
+    try {
+      res = await mirrorFlyMethodChannel
+          .invokeMethod<bool>('deleteUnreadMessageSeparatorOfAConversation',{"jid":jid});
+      return res;
+    } on PlatformException catch (e) {
+      debugPrint("Platform Exception ===> $e");
+      rethrow;
+    } on Exception catch (error) {
+      debugPrint("Exception ==> $error");
+      rethrow;
+    }
+  }
+
+  static Future<bool?> doesFetchingMembersListFromServedRequired(String groupJid) async {
+    bool? res;
+    try {
+      res = await mirrorFlyMethodChannel
+          .invokeMethod<bool>('doesFetchingMembersListFromServedRequired',{"groupJid":groupJid});
+      return res;
+    } on PlatformException catch (e) {
+      debugPrint("Platform Exception ===> $e");
+      rethrow;
+    } on Exception catch (error) {
+      debugPrint("Exception ==> $error");
+      rethrow;
+    }
+  }
+
+  static Future<int?> getMembersCountOfGroup(String groupJid) async {
+    int? res;
+    try {
+      res = await mirrorFlyMethodChannel
+          .invokeMethod<int>('getMembersCountOfGroup',{"groupJid":groupJid});
+      return res;
+    } on PlatformException catch (e) {
+      debugPrint("Platform Exception ===> $e");
+      rethrow;
+    } on Exception catch (error) {
+      debugPrint("Exception ==> $error");
+      rethrow;
+    }
+  }
+
+  static deleteOfflineGroup(String groupJid) async {
+    try {
+      await mirrorFlyMethodChannel
+          .invokeMethod('deleteOfflineGroup',{"groupJid":groupJid});
+    } on PlatformException catch (e) {
+      debugPrint("Platform Exception ===> $e");
+      rethrow;
+    } on Exception catch (error) {
+      debugPrint("Exception ==> $error");
+      rethrow;
+    }
+  }
+
+  static Future<int?> getGroupMessageStatusCount(String messageid) async {
+    int? res;
+    try {
+      res = await mirrorFlyMethodChannel
+          .invokeMethod<int>('getGroupMessageStatusCount',{"messageid":messageid});
+      return res;
+    } on PlatformException catch (e) {
+      debugPrint("Platform Exception ===> $e");
+      rethrow;
+    } on Exception catch (error) {
+      debugPrint("Exception ==> $error");
+      rethrow;
+    }
+  }
+
+  static Future<dynamic> getUsersListToAddMembersInOldGroup(String groupJid) async {
+    dynamic res;
+    try {
+      res = await mirrorFlyMethodChannel
+          .invokeMethod('getUsersListToAddMembersInOldGroup',{"groupJid":groupJid});
+      return res;
+    } on PlatformException catch (e) {
+      debugPrint("Platform Exception ===> $e");
+      rethrow;
+    } on Exception catch (error) {
+      debugPrint("Exception ==> $error");
+      rethrow;
+    }
+  }
+
+  static Future<dynamic> getUsersListToAddMembersInNewGroup() async {
+    dynamic res;
+    try {
+      res = await mirrorFlyMethodChannel
+          .invokeMethod('getUsersListToAddMembersInNewGroup');
+      return res;
+    } on PlatformException catch (e) {
+      debugPrint("Platform Exception ===> $e");
+      rethrow;
+    } on Exception catch (error) {
+      debugPrint("Exception ==> $error");
+      rethrow;
+    }
+  }
+
+  static Future<bool?> createOfflineGroupInOnline(String groupId) async {
+    bool? res;
+    try {
+      res = await mirrorFlyMethodChannel
+          .invokeMethod<bool>('createOfflineGroupInOnline',{"groupId":groupId});
+      return res;
+    } on PlatformException catch (e) {
+      debugPrint("Platform Exception ===> $e");
+      rethrow;
+    } on Exception catch (error) {
+      debugPrint("Exception ==> $error");
+      rethrow;
+    }
+  }
+
+  static Future<dynamic> getGroupProfile(String groupJid,bool server) async {
+    dynamic res;
+    try {
+      res = await mirrorFlyMethodChannel
+          .invokeMethod('getGroupProfile',{"groupJid":groupJid,"server":server});
+      return res;
+    } on PlatformException catch (e) {
+      debugPrint("Platform Exception ===> $e");
+      rethrow;
+    } on Exception catch (error) {
+      debugPrint("Exception ==> $error");
+      rethrow;
+    }
+  }
+
+  static updateMediaDownloadStatus(String mediaMessageId, int progress, int downloadStatus, num dataTransferred) async {
+    try {
+      await mirrorFlyMethodChannel
+          .invokeMethod('updateMediaDownloadStatus',{"mediaMessageId":mediaMessageId, "progress":progress, "downloadStatus":downloadStatus, "dataTransferred":dataTransferred});
+    } on PlatformException catch (e) {
+      debugPrint("Platform Exception ===> $e");
+      rethrow;
+    } on Exception catch (error) {
+      debugPrint("Exception ==> $error");
+      rethrow;
+    }
+  }
+
+  static updateMediaUploadStatus(String mediaMessageId, int progress, int uploadStatus, num dataTransferred) async {
+    try {
+      await mirrorFlyMethodChannel
+          .invokeMethod('updateMediaUploadStatus',{"mediaMessageId":mediaMessageId, "progress":progress, "downloadStatus":uploadStatus, "dataTransferred":dataTransferred});
+    } on PlatformException catch (e) {
+      debugPrint("Platform Exception ===> $e");
+      rethrow;
+    } on Exception catch (error) {
+      debugPrint("Exception ==> $error");
+      rethrow;
+    }
+  }
+
+  static cancelMediaUploadOrDownload(String messageId) async {
+    try {
+      await mirrorFlyMethodChannel
+          .invokeMethod('cancelMediaUploadOrDownload',{"messageId":messageId});
+    } on PlatformException catch (e) {
+      debugPrint("Platform Exception ===> $e");
+      rethrow;
+    } on Exception catch (error) {
+      debugPrint("Exception ==> $error");
+      rethrow;
+    }
+  }
+
+  static setMediaEncryption(String encryption) async {
+    try {
+      await mirrorFlyMethodChannel
+          .invokeMethod('setMediaEncryption',{"encryption":encryption});
+    } on PlatformException catch (e) {
+      debugPrint("Platform Exception ===> $e");
+      rethrow;
+    } on Exception catch (error) {
+      debugPrint("Exception ==> $error");
+      rethrow;
+    }
+  }
+
+  static deleteAllMessages() async {
+    try {
+      await mirrorFlyMethodChannel
+          .invokeMethod('deleteAllMessages');
+    } on PlatformException catch (e) {
+      debugPrint("Platform Exception ===> $e");
+      rethrow;
+    } on Exception catch (error) {
+      debugPrint("Exception ==> $error");
+      rethrow;
+    }
+  }
+
+  static Future<String> getGroupJid(String jid) async {
+    String? response = "";
+    try {
+      response = await mirrorFlyMethodChannel
+          .invokeMethod<String>('getGroupJid',{"jid":jid});
+      debugPrint("getGroupJid Result ==> $response");
       return response.checkNull();
     } on PlatformException catch (e) {
       debugPrint("Platform Exception ===> $e");
@@ -165,7 +627,7 @@ class FlyChat {
       String jid,
       String filePath,
       String? caption,
-      String? replyMessageID) async {
+      String? replyMessageID,[String? imageFileUrl]) async {
     dynamic messageResp;
     try {
       messageResp =
@@ -173,7 +635,7 @@ class FlyChat {
         "jid": jid,
         "filePath": filePath,
         "caption": caption,
-        "replyMessageId": replyMessageID
+        "replyMessageId": replyMessageID,"imageFileUrl":imageFileUrl
       });
       debugPrint("Image Message Result ==> $messageResp");
       return messageResp;
@@ -190,7 +652,7 @@ class FlyChat {
       String jid,
       String filePath,
       String? caption,
-      String? replyMessageID) async {
+      String? replyMessageID,[String? videoFileUrl, num? videoDuration, String? thumbImageBase64]) async {
     dynamic messageResp;
     try {
       messageResp =
@@ -198,7 +660,10 @@ class FlyChat {
         "jid": jid,
         "filePath": filePath,
         "caption": caption,
-        "replyMessageId": replyMessageID
+        "replyMessageId": replyMessageID,
+        "videoFileUrl":videoFileUrl,
+        "videoDuration":videoDuration,
+        "thumbImageBase64":thumbImageBase64
       });
       debugPrint("Video Message Result ==> $messageResp");
       return messageResp;
@@ -211,10 +676,10 @@ class FlyChat {
     }
   }
 
-  static Future<dynamic> getUserList() async {//getRegisteredUserList
+  static Future<dynamic> getRegisteredUserList({required bool server}) async {//getRegisteredUserList
     dynamic messageResp;
     try {
-      messageResp = await mirrorFlyMethodChannel.invokeMethod('get_user_list');
+      messageResp = await mirrorFlyMethodChannel.invokeMethod('getRegisteredUsers',{'server':server});
       debugPrint("User list Result ==> $messageResp");
       return messageResp;
     } on PlatformException catch (e) {
@@ -226,7 +691,7 @@ class FlyChat {
     }
   }
 
-  static Future<dynamic> getUsers(int page,String search) async {
+  static Future<dynamic> getUserList(int page,String search) async {
     dynamic re;
     try {
       re = await mirrorFlyMethodChannel.invokeMethod("get_user_list",{"page":page,"search":search});
@@ -398,10 +863,10 @@ class FlyChat {
     }
   }
 
-  static Future<dynamic> getUserProfile(String jid) async {//getProfile
+  static Future<dynamic> getUserProfile(String jid,[bool fromserver=false,bool saveasfriend = false]) async {//getProfile
     dynamic profileResponse;
     try {
-      profileResponse = await mirrorFlyMethodChannel.invokeMethod('getUserProfile',{"jid":jid});
+      profileResponse = await mirrorFlyMethodChannel.invokeMethod('getUserProfile',{"jid":jid,"server":fromserver,"saveasfriend":saveasfriend});
       debugPrint("profile Result ==> $profileResponse");
       insertDefaultStatusToUser();
       return profileResponse;
@@ -639,7 +1104,7 @@ class FlyChat {
   }
   static downloadMedia(String mid) async {//mediaDownload
     try {
-      await mirrorFlyMethodChannel.invokeMethod('download_media', {"media_id" : mid });
+      await mirrorFlyMethodChannel.invokeMethod('downloadMedia', {"mediaMessage_id" : mid });
     }on PlatformException catch (e){
       debugPrint("Platform Exception ===> $e");
       rethrow;
@@ -649,10 +1114,10 @@ class FlyChat {
     }
   }
 
-  static Future<dynamic> sendDocumentMessage(String jid, String documentPath, String replyMessageId) async {
+  static Future<dynamic> sendDocumentMessage(String jid, String documentPath, String replyMessageId,[String? file_url]) async {
     dynamic documentResponse;
     try {
-      documentResponse = await mirrorFlyMethodChannel.invokeMethod('sendDocumentMessage',{ "file" : documentPath , "jid" : jid, "replyMessageId" : replyMessageId});
+      documentResponse = await mirrorFlyMethodChannel.invokeMethod('sendDocumentMessage',{ "file" : documentPath , "jid" : jid, "replyMessageId" : replyMessageId,"file_url":file_url});
       debugPrint("documentResponse ==> $documentResponse");
       return documentResponse;
     }on PlatformException catch (e){
@@ -678,10 +1143,10 @@ class FlyChat {
     }
   }
 
-  static Future<dynamic> sendAudioMessage(String jid, String filePath, bool isRecorded, String duration, String replyMessageId) async {//sendAudio
+  static Future<dynamic> sendAudioMessage(String jid, String filePath, bool isRecorded, String duration, String replyMessageId,[String? audiofileUrl]) async {//sendAudio
     dynamic audioResponse;
     try {
-      audioResponse = await mirrorFlyMethodChannel.invokeMethod('sendAudioMessage',{ "filePath" : filePath , "jid" : jid, "isRecorded" : isRecorded, "duration" : duration, "replyMessageId" : replyMessageId});
+      audioResponse = await mirrorFlyMethodChannel.invokeMethod('sendAudioMessage',{ "filePath" : filePath , "jid" : jid, "isRecorded" : isRecorded, "duration" : duration, "replyMessageId" : replyMessageId,"audiofileUrl":audiofileUrl});
       debugPrint("audioResponse ==> $audioResponse");
       return audioResponse;
     }on PlatformException catch (e){
@@ -802,8 +1267,8 @@ class FlyChat {
   static Future<dynamic> getMessagesUsingIds(List<String> messageIds) async {
     dynamic messageListResponse;
     try {
-      messageListResponse = await mirrorFlyMethodChannel.invokeMethod('get_message_using_ids',{ "MessageIds" : messageIds});
-      debugPrint("Message List Response ==> $messageListResponse");
+      messageListResponse = await mirrorFlyMethodChannel.invokeMethod('getMessagesUsingIds',{ "MessageIds" : messageIds});
+      debugPrint("getMessagesUsingIds Response ==> $messageListResponse");
       return messageListResponse;
     }on PlatformException catch (e){
       debugPrint("Platform Exception ===> $e");
@@ -815,6 +1280,34 @@ class FlyChat {
   }
 
   //Handled deleteMessagesForEveryone and deleteMessagesForMe in same function. so Named Commonly
+  static Future<dynamic> deleteMessagesForMe(String jid,String chatType, List<String> messageIds,bool? isMediaDelete) async {
+    dynamic messageDeleteResponse;
+    try {
+      messageDeleteResponse = await mirrorFlyMethodChannel.invokeMethod('deleteMessagesForMe', { "jid" : jid, "chat_type" : chatType,"isMediaDelete":isMediaDelete, "message_ids": messageIds});
+      debugPrint("deleteMessagesForMe Response ==> $messageDeleteResponse");
+      return messageDeleteResponse;
+    }on PlatformException catch (e){
+      debugPrint("Platform Exception ===> $e");
+      rethrow;
+    } on Exception catch(error){
+      debugPrint("Exception ==> $error");
+      rethrow;
+    }
+  }
+  static Future<dynamic> deleteMessagesForEveryone(String jid,String chatType, List<String> messageIds,bool? isMediaDelete) async {
+    dynamic messageDeleteResponse;
+    try {
+      messageDeleteResponse = await mirrorFlyMethodChannel.invokeMethod('deleteMessagesForEveryone', { "jid" : jid, "chat_type" : chatType,"isMediaDelete":isMediaDelete, "message_ids": messageIds});
+      debugPrint("deleteMessagesForEveryone Response ==> $messageDeleteResponse");
+      return messageDeleteResponse;
+    }on PlatformException catch (e){
+      debugPrint("Platform Exception ===> $e");
+      rethrow;
+    } on Exception catch(error){
+      debugPrint("Exception ==> $error");
+      rethrow;
+    }
+  }
   static Future<dynamic> deleteMessages(String jid, List<String> messageIds, bool isDeleteForEveryOne) async {
     dynamic messageDeleteResponse;
     try {
@@ -829,6 +1322,37 @@ class FlyChat {
       rethrow;
     }
   }
+
+  static Future<dynamic> getGroupMessageDeliveredToList(String messageId) async {
+    dynamic messageDeleteResponse;
+    try {
+      messageDeleteResponse = await mirrorFlyMethodChannel.invokeMethod('getGroupMessageDeliveredToList', { "messageId" : messageId});
+      debugPrint("getGroupMessageDeliveredToList Response ==> $messageDeleteResponse");
+      return messageDeleteResponse;
+    }on PlatformException catch (e){
+      debugPrint("Platform Exception ===> $e");
+      rethrow;
+    } on Exception catch(error){
+      debugPrint("Exception ==> $error");
+      rethrow;
+    }
+  }
+
+  static Future<dynamic> getGroupMessageReadByList(String messageId) async {
+    dynamic messageDeleteResponse;
+    try {
+      messageDeleteResponse = await mirrorFlyMethodChannel.invokeMethod('getGroupMessageReadByList', { "messageId" : messageId});
+      debugPrint("getGroupMessageReadByList Response ==> $messageDeleteResponse");
+      return messageDeleteResponse;
+    }on PlatformException catch (e){
+      debugPrint("Platform Exception ===> $e");
+      rethrow;
+    } on Exception catch(error){
+      debugPrint("Exception ==> $error");
+      rethrow;
+    }
+  }
+
   static Future<dynamic> getMessageStatusOfASingleChatMessage(String messageID) async {//getMessageInfo
     dynamic messageInfoResponse;
     try {
@@ -1010,10 +1534,10 @@ class FlyChat {
     }
   }
 
-  static Future<dynamic> addUsersToGroup(String jid, List<String> userList) async {
-    dynamic response;
+  static Future<bool?> addUsersToGroup(String jid, List<String> userList) async {
+    bool? response;
     try {
-      response = await mirrorFlyMethodChannel.invokeMethod('addUsersToGroup', { "jid" : jid, "members": userList});
+      response = await mirrorFlyMethodChannel.invokeMethod<bool>('addUsersToGroup', { "jid" : jid, "members": userList});
       debugPrint("addUsersToGroup Response ==> $response");
       return response;
     }on PlatformException catch (e){

@@ -23,7 +23,8 @@ class MainActivity : FlutterActivity() {
     @Override
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)
-        FlyBaseController(this).configureMethodChannels(flutterEngine);
+        FlyBaseController(this).init(flutterEngine);
+
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -31,5 +32,13 @@ class MainActivity : FlutterActivity() {
         FlyBaseController(this).onActivityResult(requestCode, resultCode, data)
     }
 
+    override fun onResume() {
+        super.onResume()
+        FlyBaseController(this).onResume()
+    }
+    override fun onDestroy() {
+        super.onDestroy()
+        FlyBaseController(this).onDestroy()
+    }
 
 }

@@ -100,7 +100,7 @@ class ContactController extends GetxController {
   }
 
   fetchUsers(bool fromSearch) {
-    FlyChat.getUsers(pageNum, _searchText).then((data) async {
+    FlyChat.getUserList(pageNum, _searchText).then((data) async {
       var item = userListFromJson(data);
       var list = <Profile>[];
 

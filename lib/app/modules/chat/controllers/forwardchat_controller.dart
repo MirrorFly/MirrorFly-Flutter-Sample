@@ -143,7 +143,7 @@ class ForwardChatController extends GetxController {
   var searchLoading = false.obs;
   void getUsers() {
     searching=true;
-    FlyChat.getUsers(pageNum, searchQuery.text.toString()).then((value){
+    FlyChat.getUserList(pageNum, searchQuery.text.toString()).then((value){
       if(value!=null){
         var list = userListFromJson(value);
         if(list.data !=null) {
@@ -193,7 +193,7 @@ class ForwardChatController extends GetxController {
     _userList.clear();
     searching=true;
     searchLoading(true);
-    FlyChat.getUsers(pageNum, searchQuery.text.toString()).then((value){
+    FlyChat.getUserList(pageNum, searchQuery.text.toString()).then((value){
       if(value!=null){
         var list = userListFromJson(value);
         if(list.data !=null) {
