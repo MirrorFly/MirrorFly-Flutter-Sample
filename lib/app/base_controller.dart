@@ -31,6 +31,34 @@ abstract class BaseController {
     });
     FlyChat.onGroupNotificationMessage.listen(onGroupNotificationMessage);
     FlyChat.onGroupDeletedLocally.listen(onGroupDeletedLocally);
+    
+    FlyChat.blockedThisUser.listen(blockedThisUser);
+    FlyChat.myProfileUpdated.listen(myProfileUpdated);
+    FlyChat.onAdminBlockedUser.listen(onAdminBlockedUser);
+    FlyChat.onContactSyncComplete.listen(onContactSyncComplete);
+    FlyChat.onLoggedOut.listen(onLoggedOut);
+    FlyChat.unblockedThisUser.listen(unblockedThisUser);
+    FlyChat.userBlockedMe.listen(userBlockedMe);
+    FlyChat.userCameOnline.listen(userCameOnline);
+    FlyChat.userDeletedHisProfile.listen(userDeletedHisProfile);
+    FlyChat.userProfileFetched.listen(userProfileFetched);
+    FlyChat.userUnBlockedMe.listen(userUnBlockedMe);
+    FlyChat.userUpdatedHisProfile.listen(userUpdatedHisProfile);
+    FlyChat.userWentOffline.listen(userWentOffline);
+    FlyChat.usersIBlockedListFetched.listen(usersIBlockedListFetched);
+    FlyChat.usersWhoBlockedMeListFetched.listen(usersWhoBlockedMeListFetched);
+    FlyChat.onConnected.listen(onConnected);
+    FlyChat.onDisconnected.listen(onDisconnected);
+    FlyChat.onConnectionNotAuthorized.listen(onConnectionNotAuthorized);
+    FlyChat.connectionFailed.listen(connectionFailed);
+    FlyChat.connectionSuccess.listen(connectionSuccess);
+    FlyChat.onWebChatPasswordChanged.listen(onWebChatPasswordChanged);
+    FlyChat.setTypingStatus.listen(setTypingStatus);
+    FlyChat.onChatTypingStatus.listen(onChatTypingStatus);
+    FlyChat.onGroupTypingStatus.listen(onGroupTypingStatus);
+    FlyChat.onFailure.listen(onFailure);
+    FlyChat.onProgressChanged.listen(onProgressChanged);
+    FlyChat.onSuccess.listen(onSuccess);
   }
 
   void onMessageReceived(chatMessage){
@@ -79,6 +107,88 @@ abstract class BaseController {
 
   }
   void onGroupDeletedLocally(groupJid){
+
+  }
+
+  void blockedThisUser(result){
+
+  }
+  void myProfileUpdated(result){
+
+  }
+  void onAdminBlockedUser(result){
+
+  }
+  void onContactSyncComplete(result){
+
+  }
+  void onLoggedOut(result){
+
+  }
+  void unblockedThisUser(result){
+
+  }
+  void userBlockedMe(result){
+
+  }
+  void userCameOnline(result){
+
+  }
+  void userDeletedHisProfile(result){
+
+  }
+  void userProfileFetched(result){
+
+  }
+  void userUnBlockedMe(result){
+
+  }
+  void userUpdatedHisProfile(result){
+
+  }
+  void userWentOffline(result){
+
+  }
+  void usersIBlockedListFetched(result){
+
+  }
+  void usersWhoBlockedMeListFetched(result){
+
+  }
+  void onConnected(result){
+
+  }
+  void onDisconnected(result){
+
+  }
+  void onConnectionNotAuthorized(result){
+
+  }
+  void connectionFailed(result){
+
+  }
+  void connectionSuccess(result){
+
+  }
+  void onWebChatPasswordChanged(result){
+
+  }
+  void setTypingStatus(result){
+
+  }
+  void onChatTypingStatus(result){
+
+  }
+  void onGroupTypingStatus(result){
+
+  }
+  void onFailure(result){
+
+  }
+  void onProgressChanged(result){
+
+  }
+  void onSuccess(result){
 
   }
 }

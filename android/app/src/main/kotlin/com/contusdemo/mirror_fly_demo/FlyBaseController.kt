@@ -17,6 +17,7 @@ import android.widget.Toast
 import androidx.core.content.FileProvider
 import com.contus.flycommons.*
 import com.contus.flynetwork.model.verifyfcm.VerifyFcmResponse
+import com.contus.xmpp.chat.listener.TypingStatusListener
 import com.contus.xmpp.chat.models.CreateGroupModel
 import com.contus.xmpp.chat.models.Profile
 import com.contusflysdk.AppUtils
@@ -26,7 +27,12 @@ import com.contusflysdk.api.contacts.ContactManager
 import com.contusflysdk.api.contacts.ProfileDetails
 import com.contusflysdk.api.models.*
 import com.contusflysdk.api.network.FlyNetwork
+import com.contusflysdk.api.notification.NotificationEventListener
 import com.contusflysdk.api.notification.PushNotificationManager
+import com.contusflysdk.backup.BackupListener
+import com.contusflysdk.backup.BackupManager
+import com.contusflysdk.backup.RestoreListener
+import com.contusflysdk.backup.RestoreManager
 import com.contusflysdk.media.MediaUploadHelper
 import com.contusflysdk.model.Message
 import com.contusflysdk.utils.NetworkConnection
@@ -46,8 +52,10 @@ import java.io.File
 import java.io.FileWriter
 import java.io.IOException
 
-open class FlyBaseController(activity: FlutterActivity) : MethodChannel.MethodCallHandler, ChatEvents, GroupEventsListener,
-    ProfileEventsListener, ChatConnectionListener, MessageEventsListener, LoginEventsListener, TypingEventListener {
+open class FlyBaseController(activity: FlutterActivity) : MethodChannel.MethodCallHandler,
+    ChatEvents, GroupEventsListener,
+    ProfileEventsListener, ChatConnectionListener, MessageEventsListener, LoginEventsListener,
+    TypingEventListener, TypingStatusListener {
 
     private val MIRRORFLY_METHOD_CHANNEL = "contus.mirrorfly/sdkCall"
     private val MESSAGE_ONRECEIVED_CHANNEL = "contus.mirrorfly/onMessageReceived"
@@ -74,11 +82,40 @@ open class FlyBaseController(activity: FlutterActivity) : MethodChannel.MethodCa
     private val onGroupNotificationMessage_channel = "contus.mirrorfly/onGroupNotificationMessage"
     private val onGroupDeletedLocally_channel = "contus.mirrorfly/onGroupDeletedLocally"
 
+    private val blockedThisUser_channel = "contus.mirrorfly/blockedThisUser"
+    private val myProfileUpdated_channel = "contus.mirrorfly/myProfileUpdated"
+    private val onAdminBlockedOtherUser_channel = "contus.mirrorfly/onAdminBlockedOtherUser"
+    private val onAdminBlockedUser_channel = "contus.mirrorfly/onAdminBlockedUser"
+    private val onContactSyncComplete_channel = "contus.mirrorfly/onContactSyncComplete"
+    private val onLoggedOut_channel = "contus.mirrorfly/onLoggedOut"
+    private val unblockedThisUser_channel = "contus.mirrorfly/unblockedThisUser"
+    private val userBlockedMe_channel = "contus.mirrorfly/userBlockedMe"
+    private val userCameOnline_channel = "contus.mirrorfly/userCameOnline"
+    private val userDeletedHisProfile_channel = "contus.mirrorfly/userDeletedHisProfile"
+    private val userProfileFetched_channel = "contus.mirrorfly/userProfileFetched"
+    private val userUnBlockedMe_channel = "contus.mirrorfly/userUnBlockedMe"
+    private val userUpdatedHisProfile_channel = "contus.mirrorfly/userUpdatedHisProfile"
+    private val userWentOffline_channel = "contus.mirrorfly/userWentOffline"
+    private val usersIBlockedListFetched_channel = "contus.mirrorfly/usersIBlockedListFetched"
+    private val usersProfilesFetched_channel = "contus.mirrorfly/usersProfilesFetched"
+    private val usersWhoBlockedMeListFetched_channel = "contus.mirrorfly/usersWhoBlockedMeListFetched"
+    private val onConnected_channel = "contus.mirrorfly/onConnected"
+    private val onDisconnected_channel = "contus.mirrorfly/onDisconnected"
+    private val onConnectionNotAuthorized_channel = "contus.mirrorfly/onConnectionNotAuthorized"
+    private val connectionFailed_channel = "contus.mirrorfly/connectionFailed"
+    private val connectionSuccess_channel = "contus.mirrorfly/connectionSuccess"
+    private val onWebChatPasswordChanged_channel = "contus.mirrorfly/onWebChatPasswordChanged"
+    private val setTypingStatus_channel = "contus.mirrorfly/setTypingStatus"
+    private val onChatTypingStatus_channel = "contus.mirrorfly/onChatTypingStatus"
+    private val onGroupTypingStatus_channel = "contus.mirrorfly/onGroupTypingStatus"
+    private val onFailure_channel = "contus.mirrorfly/onFailure"
+    private val onProgressChanged_channel = "contus.mirrorfly/onProgressChanged"
+    private val onSuccess_channel = "contus.mirrorfly/onSuccess"
     private val TAG = "MirrorFly"
 
     private val mContext: FlutterActivity = activity
 
-    fun init (flutterEngine: FlutterEngine){
+    fun init(flutterEngine: FlutterEngine) {
         MethodChannel(
             flutterEngine.dartExecutor.binaryMessenger,
             MIRRORFLY_METHOD_CHANNEL
@@ -157,6 +194,109 @@ open class FlyBaseController(activity: FlutterActivity) : MethodChannel.MethodCa
             onGroupDeletedLocally_channel
         ).setStreamHandler(onGroupDeletedLocallyStreamHandler)
 
+        EventChannel(
+            flutterEngine.dartExecutor.binaryMessenger,
+            blockedThisUser_channel
+        ).setStreamHandler(blockedThisUserStreamHandler)
+        EventChannel(
+            flutterEngine.dartExecutor.binaryMessenger,
+            myProfileUpdated_channel
+        ).setStreamHandler(myProfileUpdatedStreamHandler)
+        EventChannel(
+            flutterEngine.dartExecutor.binaryMessenger,
+            onAdminBlockedOtherUser_channel
+        ).setStreamHandler(onAdminBlockedOtherUserStreamHandler)
+        EventChannel(
+            flutterEngine.dartExecutor.binaryMessenger,
+            onAdminBlockedUser_channel
+        ).setStreamHandler(onAdminBlockedUserStreamHandler)
+        EventChannel(
+            flutterEngine.dartExecutor.binaryMessenger,
+            onContactSyncComplete_channel
+        ).setStreamHandler(onContactSyncCompleteStreamHandler)
+        EventChannel(
+            flutterEngine.dartExecutor.binaryMessenger,
+            onLoggedOut_channel
+        ).setStreamHandler(onLoggedOutStreamHandler)
+        EventChannel(
+            flutterEngine.dartExecutor.binaryMessenger,
+            unblockedThisUser_channel
+        ).setStreamHandler(unblockedThisUserStreamHandler)
+        EventChannel(
+            flutterEngine.dartExecutor.binaryMessenger,
+            userBlockedMe_channel
+        ).setStreamHandler(userBlockedMeStreamHandler)
+        EventChannel(
+            flutterEngine.dartExecutor.binaryMessenger,
+            userCameOnline_channel
+        ).setStreamHandler(userCameOnlineStreamHandler)
+        EventChannel(
+            flutterEngine.dartExecutor.binaryMessenger,
+            userDeletedHisProfile_channel
+        ).setStreamHandler(userDeletedHisProfileStreamHandler)
+        EventChannel(
+            flutterEngine.dartExecutor.binaryMessenger,
+            userProfileFetched_channel
+        ).setStreamHandler(userProfileFetchedStreamHandler)
+        EventChannel(
+            flutterEngine.dartExecutor.binaryMessenger,
+            userUnBlockedMe_channel
+        ).setStreamHandler(userUnBlockedMeStreamHandler)
+        EventChannel(
+            flutterEngine.dartExecutor.binaryMessenger,
+            userUpdatedHisProfile_channel
+        ).setStreamHandler(userUpdatedHisProfileStreamHandler)
+        EventChannel(
+            flutterEngine.dartExecutor.binaryMessenger,
+            userWentOffline_channel
+        ).setStreamHandler(userWentOfflineStreamHandler)
+        EventChannel(
+            flutterEngine.dartExecutor.binaryMessenger,
+            usersIBlockedListFetched_channel
+        ).setStreamHandler(usersIBlockedListFetchedStreamHandler)
+        EventChannel(
+            flutterEngine.dartExecutor.binaryMessenger,
+            usersProfilesFetched_channel
+        ).setStreamHandler(usersProfilesFetchedStreamHandler)
+        EventChannel(
+            flutterEngine.dartExecutor.binaryMessenger,
+            usersWhoBlockedMeListFetched_channel
+        ).setStreamHandler(usersWhoBlockedMeListFetchedStreamHandler)
+        EventChannel(
+            flutterEngine.dartExecutor.binaryMessenger,
+            onConnected_channel
+        ).setStreamHandler(onConnectedStreamHandler)
+        EventChannel(
+            flutterEngine.dartExecutor.binaryMessenger,
+            onDisconnected_channel
+        ).setStreamHandler(onDisconnectedStreamHandler)
+        EventChannel(
+            flutterEngine.dartExecutor.binaryMessenger,
+            onConnectionNotAuthorized_channel
+        ).setStreamHandler(onConnectionNotAuthorizedStreamHandler)
+        EventChannel(
+            flutterEngine.dartExecutor.binaryMessenger,
+            connectionFailed_channel
+        ).setStreamHandler(connectionFailedStreamHandler)
+        EventChannel(
+            flutterEngine.dartExecutor.binaryMessenger,
+            connectionSuccess_channel
+        ).setStreamHandler(connectionSuccessStreamHandler)
+        EventChannel(
+            flutterEngine.dartExecutor.binaryMessenger,
+            onWebChatPasswordChanged_channel
+        ).setStreamHandler(onWebChatPasswordChangedStreamHandler)
+        EventChannel(
+            flutterEngine.dartExecutor.binaryMessenger,
+            setTypingStatus_channel
+        ).setStreamHandler(setTypingStatusStreamHandler)
+
+        EventChannel(flutterEngine.dartExecutor.binaryMessenger, onChatTypingStatus_channel).setStreamHandler(onChatTypingStatusStreamHandler)
+        EventChannel(flutterEngine.dartExecutor.binaryMessenger, onGroupTypingStatus_channel).setStreamHandler(onGroupTypingStatusStreamHandler)
+        EventChannel(flutterEngine.dartExecutor.binaryMessenger, onFailure_channel).setStreamHandler(onFailureStreamHandler)
+        EventChannel(flutterEngine.dartExecutor.binaryMessenger, onProgressChanged_channel).setStreamHandler(onProgressChangedStreamHandler)
+        EventChannel(flutterEngine.dartExecutor.binaryMessenger, onSuccess_channel).setStreamHandler(onSuccessStreamHandler)
+
         //listenChatMessage()
         //listenGroupChatMessage()
         ChatConnectionManager.addChatConnectionListener(this)
@@ -172,6 +312,7 @@ open class FlyBaseController(activity: FlutterActivity) : MethodChannel.MethodCa
             FlyMessenger.isNetworkDisconnected(!connected)
         }
     }
+
     private fun updateNetworkStateChange(isConnected: Boolean) {
         if (isConnected) ChatManager.connect()
         else ChatManager.disconnect()
@@ -221,7 +362,10 @@ open class FlyBaseController(activity: FlutterActivity) : MethodChannel.MethodCa
                                             message: String
                                         ) {
                                             if (isSuccess) {
-                                                Log.e("RESPONSE_CAPTURE", "===========================")
+                                                Log.e(
+                                                    "RESPONSE_CAPTURE",
+                                                    "==========================="
+                                                )
                                                 DebugUtilis.v("updateFcmToken", message)
                                                 LogMessage.e(TAG, "Token updated successfully")
                                             }
@@ -436,12 +580,12 @@ open class FlyBaseController(activity: FlutterActivity) : MethodChannel.MethodCa
     override fun onMethodCall(call: MethodCall, result: MethodChannel.Result) {
         when {
             call.method.equals("syncContacts") -> {
-                val isFirsttime = call.argument<Boolean>("isfirsttime") ?: false
+                val isFirsttime = call.argument<Boolean>("is_first_time") ?: false
                 FlyCore.syncContacts(isFirsttime)
                 result.success(true)
             }
             call.method.equals("contactSyncStateValue") -> {
-                val contactSyncStateResult : Result<Boolean> = FlyCore.contactSyncState.value!!
+                val contactSyncStateResult: Result<Boolean> = FlyCore.contactSyncState.value!!
                 result.success(contactSyncStateResult.toString())
             }
             call.method.equals("contactSyncState") -> {
@@ -451,18 +595,18 @@ open class FlyBaseController(activity: FlutterActivity) : MethodChannel.MethodCa
                 revokeContactSync(result)
             }
             call.method.equals("getUsersWhoBlockedMe") -> {
-                getUsersWhoBlockedMe(call,result)
+                getUsersWhoBlockedMe(call, result)
             }
             call.method.equals("getUnKnownUserProfiles") -> {
-                val unknownProfilesList : List<ProfileDetails> = FlyCore.getUnKnownUserProfiles()
+                val unknownProfilesList: List<ProfileDetails> = FlyCore.getUnKnownUserProfiles()
                 result.success(unknownProfilesList.tojsonString());
             }
             call.method.equals("getMyProfileStatus") -> {
-                val myUserStatus : ProfileStatus = FlyCore.getMyProfileStatus()!!
+                val myUserStatus: ProfileStatus = FlyCore.getMyProfileStatus()!!
                 result.success(myUserStatus.tojsonString())
             }
             call.method.equals("getMyBusyStatus") -> {
-                val myBusyStatus : BusyStatus = FlyCore.getMyBusyStatus()!!
+                val myBusyStatus: BusyStatus = FlyCore.getMyBusyStatus()!!
                 result.success(myBusyStatus.tojsonString())
             }
             call.method.equals("setMyBusyStatus") -> {
@@ -476,7 +620,7 @@ open class FlyBaseController(activity: FlutterActivity) : MethodChannel.MethodCa
                 result.success(true)
             }
             call.method.equals("getBusyStatusList") -> {
-                val myBusyStatusList : List<BusyStatus> = FlyCore.getBusyStatusList()
+                val myBusyStatusList: List<BusyStatus> = FlyCore.getBusyStatusList()
                 result.success(myBusyStatusList.tojsonString())
             }
             call.method.equals("deleteProfileStatus") -> {
@@ -496,16 +640,16 @@ open class FlyBaseController(activity: FlutterActivity) : MethodChannel.MethodCa
                 result.success(true)
             }
             call.method.equals("enableDisableHideLastSeen") -> {
-                enableDisableHideLastSeen(call,result)
+                enableDisableHideLastSeen(call, result)
             }
             call.method.equals("isHideLastSeenEnabled") -> {
                 result.success(FlyCore.isHideLastSeenEnabled())
             }
             call.method.equals("deleteMessagesForMe") -> {
-                deleteMessagesForMe(call,result)
+                deleteMessagesForMe(call, result)
             }
             call.method.equals("deleteMessagesForEveryone") -> {
-                deleteMessagesForEveryone(call,result)
+                deleteMessagesForEveryone(call, result)
             }
             call.method.equals("markAsRead") -> {
                 val JID: String = call.argument("jid") ?: ""
@@ -519,7 +663,8 @@ open class FlyBaseController(activity: FlutterActivity) : MethodChannel.MethodCa
             }
             call.method.equals("getRecalledMessagesOfAConversation") -> {
                 val JID: String = call.argument("jid") ?: ""
-                val recalledMessages : List<ChatMessage> = FlyMessenger.getRecalledMessagesOfAConversation(JID)
+                val recalledMessages: List<ChatMessage> =
+                    FlyMessenger.getRecalledMessagesOfAConversation(JID)
                 result.success(recalledMessages.tojsonString());
             }
             call.method.equals("uploadMedia") -> {
@@ -551,10 +696,10 @@ open class FlyBaseController(activity: FlutterActivity) : MethodChannel.MethodCa
                 result.success(FlyUtils.getGroupJid(groupID))
             }
             call.method.equals("createOfflineGroupInOnline") -> {
-                createOfflineGroupInOnline(call,result)
+                createOfflineGroupInOnline(call, result)
             }
             call.method.equals("getGroupProfile") -> {
-                getGroupProfile(call,result)
+                getGroupProfile(call, result)
             }
             call.method.equals("doesFetchingMembersListFromServedRequired") -> {
                 val groupJid = call.argument<String>("groupJid") ?: ""
@@ -576,14 +721,188 @@ open class FlyBaseController(activity: FlutterActivity) : MethodChannel.MethodCa
                 result.success(FlyMessenger.getGroupMessageStatusCount(messageid))
             }
             call.method.equals("getGroupMessageDeliveredToList") -> {
-                getGroupMessageDeliveredToList(call,result)
+                getGroupMessageDeliveredToList(call, result)
             }
             call.method.equals("getGroupMessageReadByList") -> {
-                getGroupMessageReadByList(call,result)
+                getGroupMessageReadByList(call, result)
             }
             call.method.equals("deleteOfflineGroup") -> {
                 val groupJid = call.argument<String>("groupJid") ?: ""
                 GroupManager.deleteOfflineGroup(groupJid)
+            }
+            call.method.equals("sendTypingStatus") -> {
+                val tojid = call.argument<String>("to_jid") ?: ""
+                val type = call.argument<String>("chattype") ?: ""
+                val chattype = getChatEnum(type)
+                ChatManager.sendTypingStatus(tojid, chattype)
+            }
+            call.method.equals("sendTypingGoneStatus") -> {
+                val tojid = call.argument<String>("to_jid") ?: ""
+                val type = call.argument<String>("chattype") ?: ""
+                val chattype = getChatEnum(type)
+                ChatManager.sendTypingGoneStatus(tojid, chattype)
+            }
+            call.method.equals("updateChatMuteStatus") -> {
+                val jid = call.argument<String>("jid") ?: ""
+                val mute_status = call.argument<Boolean>("mute_status") ?: false
+                FlyCore.updateChatMuteStatus(jid , mute_status)
+            }
+            call.method.equals("updateRecentChatPinStatus") -> {
+                val jid = call.argument<String>("jid") ?: ""
+                val pin_status = call.argument<Boolean>("pin_recent_chat") ?: false
+                FlyCore.updateRecentChatPinStatus(jid , pin_status)
+            }
+            call.method.equals("deleteRecentChat") -> {
+                val jid = call.argument<String>("jid") ?: ""
+                FlyCore.deleteRecentChat(jid)
+            }
+            call.method.equals("getIsProfileBlockedByAdmin") -> {
+                result.success(FlyCore.getIsProfileBlockedByAdmin())
+            }
+            call.method.equals("recentChatPinnedCount") -> {
+                result.success(FlyCore.recentChatPinnedCount())
+            }
+            call.method.equals("deleteRecentChats") -> {
+                deleteRecentChats(call,result)
+            }
+            call.method.equals("markConversationAsRead") -> {
+                markConversationAsRead(call,result)
+            }
+            call.method.equals("markConversationAsUnread") -> {
+                markConversationAsUnread(call,result)
+            }
+            call.method.equals("clearAllConversation") -> {
+                clearAllConversation(result)
+            }
+            call.method.equals("enableDisableArchivedSettings") -> {
+                enableDisableArchivedSettings(call,result)
+            }
+            call.method.equals("updateArchiveUnArchiveChat") -> {
+                updateArchiveUnArchiveChat(call,result)
+            }
+            call.method.equals("getArchivedChatsFromServer") -> {
+                FlyCore.getArchivedChatsFromServer()
+            }
+            call.method.equals("getArchivedChatsFromServer") -> {
+                getArchivedChatList(result)
+            }
+            call.method.equals("prepareChatConversationToExport") -> {
+                prepareChatConversationToExport(call,result)
+            }
+            call.method.equals("isArchivedSettingsEnabled") -> {
+                result.success(FlyCore.isArchivedSettingsEnabled())
+            }
+            call.method.equals("isBusyStatusEnabled") -> {
+                result.success(FlyCore.isBusyStatusEnabled())
+            }
+            call.method.equals("getMessageActions") -> {
+                val messageIdlist = call.argument<List<String>>("messageidlist") ?: arrayListOf()
+                result.success(ChatManager.getMessageActions(messageIdlist).tojsonString())
+            }
+            call.method.equals("copyTextMessages") -> {
+                val messageIdlist = call.argument<List<String>>("messageidlist") ?: arrayListOf()
+                ChatManager.copyTextMessages(messageIdlist).tojsonString()
+            }
+            call.method.equals("saveUnsentMessage") -> {
+                val jid = call.argument<String>("jid") ?: ""
+                val message = call.argument<String>("message") ?: ""
+                FlyMessenger.saveUnsentMessage(jid,message)
+            }
+            call.method.equals("setCustomValue") -> {
+                val mid = call.argument<String>("message_id") ?: ""
+                val key = call.argument<String>("key") ?: ""
+                val value = call.argument<String>("value") ?: ""
+                FlyMessenger.setCustomValue(mid,key,value)
+            }
+            call.method.equals("getCustomValue") -> {
+                val mid = call.argument<String>("message_id") ?: ""
+                val key = call.argument<String>("key") ?: ""
+                result.success(FlyMessenger.getCustomValue(mid,key))
+            }
+            call.method.equals("removeCustomValue") -> {
+                val mid = call.argument<String>("message_id") ?: ""
+                val key = call.argument<String>("key") ?: ""
+                FlyMessenger.removeCustomValue(mid,key)
+            }
+             call.method.equals("inviteUserViaSMS") -> {
+                val mobile_no = call.argument<String>("mobile_no") ?: ""
+                val message = call.argument<String>("message") ?: ""
+                ContactManager.inviteUserViaSMS(mobile_no,message)
+            }
+            call.method.equals("getUnsentMessageOfAJid") -> {
+                val jid = call.argument<String>("jid") ?: ""
+                result.success(FlyMessenger.getUnsentMessageOfAJid(jid))
+            }
+            call.method.equals("cancelBackup") -> {
+                BackupManager.cancelBackup()
+            }
+            call.method.equals("startBackup") -> {
+                BackupManager.startBackup(object : BackupListener{
+                    override fun onFailure(reason: String) {
+                        onFailureStreamHandler.onFailure?.success(reason)
+                    }
+
+                    override fun onProgressChanged(percentage: Int) {
+                        onProgressChangedStreamHandler.onProgressChanged?.success(percentage)
+                    }
+
+                    override fun onSuccess(backUpFilePath: String) {
+                        onSuccessStreamHandler.onSuccess?.success(backUpFilePath)
+                    }
+                })
+            }
+            call.method.equals("cancelRestore") -> {
+                RestoreManager.cancelRestore()
+            }
+            call.method.equals("cancelRestore") -> {
+                val filepath = call.argument<String>("file") ?: ""
+                val file = File(filepath)
+                if (file.exists()) {
+                    RestoreManager.restoreData(file,object : RestoreListener{
+                        override fun onFailure(reason: String) {
+                            onFailureStreamHandler.onFailure?.success(reason)
+                        }
+
+                        override fun onProgressChanged(percentage: Int) {
+                            onProgressChangedStreamHandler.onProgressChanged?.success(percentage)
+                        }
+
+                        override fun onSuccess() {
+                            onSuccessStreamHandler.onSuccess?.success("")
+                        }
+                    })
+                }
+            }
+            call.method.equals("clearAllSDKData") -> {
+                FlyCore.clearAllSDKData()
+            }
+            call.method.equals("updateFcmToken") -> {
+                updateFcmToken(call, result)
+            }
+            call.method.equals("handleReceivedMessage") -> {
+                handleReceivedMessage(call, result)
+            }
+            call.method.equals("getLastNUnreadMessages") -> {
+                val messagescount = call.argument<Int>("messagesCount") ?: 0
+                result.success(FlyMessenger.getLastNUnreadMessages(messagescount).tojsonString())
+            }
+            call.method.equals("getNUnreadMessagesOfEachUsers") -> {
+                val messagescount = call.argument<Int>("messagesCount") ?: 0
+                val usersWithMessage : Map<String, List<ChatMessage>>  = FlyMessenger.getNUnreadMessagesOfEachUsers(messagescount)
+                result.success(usersWithMessage.tojsonString())
+            }
+            call.method.equals("getRoster") -> {
+                ContactManager.getRoster()
+            }
+            call.method.equals("setTypingStatusListener") -> {
+                ChatManager.setTypingStatusListener(this)
+            }
+            call.method.equals("getUnreadMessageCountExceptMutedChat") -> {
+                result.success(FlyMessenger.getUnreadMessageCountExceptMutedChat())
+            }
+            call.method.equals("isMuted") -> {
+                val jid = call.argument<String>("jid") ?: ""
+                result.success(ChatManager.isMuted(jid))
             }
             call.method.equals("media_endpoint") -> {
                 result.success(MediaUploadHelper.UPLOAD_ENDPOINT)
@@ -683,7 +1002,9 @@ open class FlyBaseController(activity: FlutterActivity) : MethodChannel.MethodCa
             }
             call.method.equals("downloadMedia") -> {
                 val mediaId =
-                    if (call.argument<String>("mediaMessage_id") == null) "" else call.argument<String?>("mediaMessage_id")
+                    if (call.argument<String>("mediaMessage_id") == null) "" else call.argument<String?>(
+                        "mediaMessage_id"
+                    )
                         .toString()
                 FlyMessenger.downloadMedia(mediaId)
             }
@@ -753,7 +1074,10 @@ open class FlyBaseController(activity: FlutterActivity) : MethodChannel.MethodCa
             call.method.equals("forwardMessagesToMultipleUsers") -> {
                 forwardMessagesToMultipleUsers(call, result)
             }
-            call.method.equals("exportChat") -> {
+             call.method.equals("forwardMessages") -> {
+                 forwardMessages(call, result)
+            }
+            call.method.equals("exportChatConversationToEmail") -> {
                 val jid = call.argument<String?>("jid") ?: ""
                 FlyCore.exportChatConversationToEmail(jid, emptyList())
             }
@@ -778,21 +1102,17 @@ open class FlyBaseController(activity: FlutterActivity) : MethodChannel.MethodCa
             call.method.equals("getGroupMembersList") -> {
                 getGroupMembersList(call, result)
             }
-            call.method.equals("updateChatMuteStatus") -> {
-                val jid = call.argument<String>("jid") ?: ""
-                val isChecked = call.argument<Boolean>("checked") ?: false
-                val groupMuteResponse = FlyCore.updateChatMuteStatus(jid, isChecked)
-                DebugUtilis.v("FlyCore.updateChatMuteStatus", groupMuteResponse.toString())
-            }
             call.method.equals("isAdmin") -> {
                 val jid = call.argument<String>("jid") ?: ""
-                val isAdmin = GroupManager.isAdmin(jid, SharedPreferenceManager.instance.currentUserJid)
+                val isAdmin =
+                    GroupManager.isAdmin(jid, SharedPreferenceManager.instance.currentUserJid)
                 DebugUtilis.v("GroupManager.isAdmin", isAdmin.toString())
                 result.success(isAdmin)
             }
             call.method.equals("isMemberOfGroup") -> {
                 val jid = call.argument<String>("jid") ?: ""
-                val userjid = call.argument<String>("userjid") ?: SharedPreferenceManager.instance.currentUserJid
+                val userjid = call.argument<String>("userjid")
+                    ?: SharedPreferenceManager.instance.currentUserJid
                 val isMemberGroup = GroupManager.isMemberOfGroup(jid, userjid)
                 DebugUtilis.v("GroupManager.isMemberOfGroup", isMemberGroup.toString())
                 result.success(isMemberGroup)
@@ -871,7 +1191,7 @@ open class FlyBaseController(activity: FlutterActivity) : MethodChannel.MethodCa
             call.method.equals("logoutWebUser") -> {
                 UpDateWebPassword().upDatePassword()
                 val listWebLogin = call.argument<List<String>>("listWebLogin")//qrUniqeToken list
-                if(listWebLogin!=null && listWebLogin.isNotEmpty()) {
+                if (listWebLogin != null && listWebLogin.isNotEmpty()) {
                     for (it in listWebLogin) {
                         ChatManager.logoutWebUser(it)
                     }
@@ -892,7 +1212,7 @@ open class FlyBaseController(activity: FlutterActivity) : MethodChannel.MethodCa
                 unFavouriteAllFavouriteMessages(result)
             }
             call.method.equals("getAllGroups") -> {
-                getAllGroups(call,result)
+                getAllGroups(call, result)
             }
             else -> {
                 result.notImplemented()
@@ -901,28 +1221,38 @@ open class FlyBaseController(activity: FlutterActivity) : MethodChannel.MethodCa
         }
     }
 
-    private fun updateMediaDownloadStatus(call: MethodCall,result: MethodChannel.Result){
+    private fun updateMediaDownloadStatus(call: MethodCall, result: MethodChannel.Result) {
         val mediaMessageId = call.argument<String>("mediaMessageId") ?: ""
         val progress = call.argument<Int>("progress") ?: 0
         val downloadStatus = call.argument<Int>("downloadStatus") ?: 0
         val dataTransferred = call.argument<Long>("dataTransferred") ?: 0L
-        FlyMessenger.updateMediaDownloadStatus(mediaMessageId,progress,dataTransferred,downloadStatus)
+        FlyMessenger.updateMediaDownloadStatus(
+            mediaMessageId,
+            progress,
+            dataTransferred,
+            downloadStatus
+        )
     }
 
-    private fun updateMediaUploadStatus(call: MethodCall,result: MethodChannel.Result){
+    private fun updateMediaUploadStatus(call: MethodCall, result: MethodChannel.Result) {
         val mediaMessageId = call.argument<String>("mediaMessageId") ?: ""
         val progress = call.argument<Int>("progress") ?: 0
         val uploadStatus = call.argument<Int>("uploadStatus") ?: 0
         val dataTransferred = call.argument<Long>("dataTransferred") ?: 0L
-        FlyMessenger.updateMediaUploadStatus(mediaMessageId,progress,dataTransferred,uploadStatus)
+        FlyMessenger.updateMediaUploadStatus(
+            mediaMessageId,
+            progress,
+            dataTransferred,
+            uploadStatus
+        )
     }
 
-    private fun cancelMediaUploadOrDownload(call: MethodCall,result: MethodChannel.Result){
+    private fun cancelMediaUploadOrDownload(call: MethodCall, result: MethodChannel.Result) {
         val messageId = call.argument<String>("messageId") ?: ""
         FlyMessenger.cancelMediaUploadOrDownload(messageId)
     }
 
-    private fun createOfflineGroupInOnline(call: MethodCall,result: MethodChannel.Result){
+    private fun createOfflineGroupInOnline(call: MethodCall, result: MethodChannel.Result) {
         val groupId = call.argument<String>("groupId") ?: ""
         GroupManager.createOfflineGroupInOnline(groupId) { isSuccess, throwable, data ->
             result.success(isSuccess)
@@ -935,12 +1265,124 @@ open class FlyBaseController(activity: FlutterActivity) : MethodChannel.MethodCa
         }
     }
 
-    private fun getGroupProfile(call: MethodCall,result: MethodChannel.Result){
+     private fun updateFcmToken(call: MethodCall,result: MethodChannel.Result) {
+         val token = call.argument<String>("token") ?: ""
+         PushNotificationManager.updateFcmToken(token, object : ChatActionListener {
+             override fun onResponse(isSuccess: Boolean, message: String) {
+                     result.success(isSuccess)
+             }
+         })
+    }
+
+     private fun handleReceivedMessage(call: MethodCall,result: MethodChannel.Result) {
+         val notificationData = call.argument<Map<String,String>>("notificationData") ?: mapOf()
+         PushNotificationManager.handleReceivedMessage(notificationData, object :
+             NotificationEventListener {
+             override fun onMessageReceived(chatMessage: ChatMessage) {
+                 //Here you need to fetch recent unread messages to build up notification content
+                 val jsonObject = JSONObject()
+                 jsonObject.put("groupJid","")
+                 jsonObject.put("titleContent","")
+                 jsonObject.put("chatMessage",chatMessage.tojsonString())
+                 jsonObject.put("cancel",false)
+                 result.success(jsonObject.toString())
+             }
+
+             override fun onGroupNotification(groupJid: String, titleContent: String,  chatMessage: ChatMessage) {
+                 /* Create the notification for group creation with paramter values */
+                 val jsonObject = JSONObject()
+                 jsonObject.put("groupJid",groupJid)
+                 jsonObject.put("titleContent",titleContent)
+                 jsonObject.put("chatMessage",chatMessage.tojsonString())
+                 jsonObject.put("cancel",false)
+                 result.success(jsonObject.toString())
+             }
+
+             override fun onCancelNotification() {
+                 // here you have to cancel notification
+                 val jsonObject = JSONObject()
+                 jsonObject.put("groupJid","")
+                 jsonObject.put("titleContent","")
+                 jsonObject.put("chatMessage","")
+                 jsonObject.put("cancel",true)
+                 result.success(jsonObject.toString())
+             }
+
+         })
+     }
+
+    private fun prepareChatConversationToExport(call: MethodCall,result: MethodChannel.Result) {
+         val jid = call.argument<String>("jid") ?: ""
+         FlyCore.prepareChatConversationToExport(jid)  { isSuccess, throwable, data ->
+             if (isSuccess) {
+                 val res : ChatDataModel = data["data"] as ChatDataModel
+                 result.success(res.tojsonString())
+                 // ChatDataModel has the every data to export the chat
+             } else {
+                 //Exporting chat data failed print throwable to find the exception details.
+                 result.error("500",throwable!!.message,throwable)
+             }
+         }
+    }
+
+    private fun getArchivedChatList(result: MethodChannel.Result) {
+         FlyCore.getArchivedChatList { isSuccess, throwable, data ->
+             if (isSuccess) {
+                 val res : ArrayList<RecentChat> = data["data"] as ArrayList<RecentChat>
+                 result.success(res.tojsonString())
+             } else {
+                 //Getting users blocked me list failed print throwable to find the exception details.
+                 result.error("500",throwable!!.message,throwable)
+             }
+         }
+    }
+
+    private fun enableDisableArchivedSettings(call: MethodCall, result: MethodChannel.Result) {
+        val enable = call.argument<Boolean>("enable") ?: false
+        FlyCore.enableDisableArchivedSettings(enable, FlyCallback { isSuccess, throwable, data -> result.success(isSuccess)})
+    }
+
+    private fun updateArchiveUnArchiveChat(call: MethodCall, result: MethodChannel.Result) {
+        val jid = call.argument<String>("jid") ?: ""
+        val enabled = call.argument<Boolean>("isArchived") ?: false
+        FlyCore.updateArchiveUnArchiveChat(jid,enabled, FlyCallback { isSuccess, throwable, data -> result.success(isSuccess)})
+    }
+
+    private fun deleteRecentChats(call: MethodCall, result: MethodChannel.Result) {
+        val jidlist = call.argument<List<String>>("jidlist") ?: arrayListOf()
+        ChatManager.deleteRecentChats(jidlist, object : ChatActionListener {
+            override fun onResponse(isSuccess: Boolean, message: String) {
+                result.success(isSuccess)
+            }
+
+        })
+    }
+
+    private fun markConversationAsRead(call: MethodCall, result: MethodChannel.Result) {
+        val jidlist = call.argument<List<String>>("jidlist") ?: arrayListOf()
+        FlyCore.markConversationAsRead(jidlist)
+    }
+
+    private fun markConversationAsUnread(call: MethodCall, result: MethodChannel.Result) {
+        val jidlist = call.argument<List<String>>("jidlist") ?: arrayListOf()
+        FlyCore.markConversationAsUnread(jidlist)
+    }
+
+    private fun clearAllConversation(result: MethodChannel.Result) {
+        ChatManager.clearAllConversation(object : ChatActionListener {
+            override fun onResponse(isSuccess: Boolean, message: String) {
+                result.success(isSuccess)
+            }
+
+        })
+    }
+
+    private fun getGroupProfile(call: MethodCall, result: MethodChannel.Result) {
         val groupJid = call.argument<String>("groupJid") ?: ""
         val server = call.argument<Boolean>("server") ?: false
-        GroupManager.getGroupProfile(groupJid,server) { isSuccess, throwable, data ->
+        GroupManager.getGroupProfile(groupJid, server) { isSuccess, throwable, data ->
             if (isSuccess) {
-                val groupProfileDetails : ProfileDetails = data["data"] as ProfileDetails
+                val groupProfileDetails: ProfileDetails = data["data"] as ProfileDetails
                 result.success(groupProfileDetails.tojsonString())
             } else {
                 // Group creation failed print throwable to find the exception details.
@@ -949,11 +1391,12 @@ open class FlyBaseController(activity: FlutterActivity) : MethodChannel.MethodCa
         }
     }
 
-    private fun getGroupMessageDeliveredToList(call: MethodCall,result: MethodChannel.Result){
+    private fun getGroupMessageDeliveredToList(call: MethodCall, result: MethodChannel.Result) {
         val messageId = call.argument<String>("messageId") ?: ""
         GroupManager.getGroupMessageDeliveredToList(messageId) { isSuccess, throwable, data ->
             if (isSuccess) {
-                val  messageStatusList : List<MessageStatusDetail> = data["data"] as  List<MessageStatusDetail>
+                val messageStatusList: List<MessageStatusDetail> =
+                    data["data"] as List<MessageStatusDetail>
                 result.success(messageStatusList.tojsonString())
             } else {
                 result.error("500", throwable!!.message, throwable)
@@ -961,11 +1404,12 @@ open class FlyBaseController(activity: FlutterActivity) : MethodChannel.MethodCa
         }
     }
 
-     private fun getGroupMessageReadByList(call: MethodCall,result: MethodChannel.Result){
+    private fun getGroupMessageReadByList(call: MethodCall, result: MethodChannel.Result) {
         val messageId = call.argument<String>("messageId") ?: ""
         GroupManager.getGroupMessageReadByList(messageId) { isSuccess, throwable, data ->
             if (isSuccess) {
-                val  messageStatusList : List<MessageStatusDetail> = data["data"] as  List<MessageStatusDetail>
+                val messageStatusList: List<MessageStatusDetail> =
+                    data["data"] as List<MessageStatusDetail>
                 result.success(messageStatusList.tojsonString())
             } else {
                 result.error("500", throwable!!.message, throwable)
@@ -973,7 +1417,7 @@ open class FlyBaseController(activity: FlutterActivity) : MethodChannel.MethodCa
         }
     }
 
-    private fun contactSyncState(result: MethodChannel.Result){
+    private fun contactSyncState(result: MethodChannel.Result) {
         FlyCore.contactSyncState.observe(mContext) {
             when (it) {
                 is Result.Error -> {
@@ -990,39 +1434,39 @@ open class FlyBaseController(activity: FlutterActivity) : MethodChannel.MethodCa
         };
     }
 
-    private fun revokeContactSync(result: MethodChannel.Result){
+    private fun revokeContactSync(result: MethodChannel.Result) {
         FlyCore.revokeContactSync { isSuccess, throwable, data ->
             if (isSuccess) {
                 result.success(data.tojsonString())
             } else {
-                result.error("500",throwable!!.message,throwable)
+                result.error("500", throwable!!.message, throwable)
             }
         }
     }
 
-    private fun getUsersWhoBlockedMe(call: MethodCall,result: MethodChannel.Result){
+    private fun getUsersWhoBlockedMe(call: MethodCall, result: MethodChannel.Result) {
         val server = call.argument<Boolean>("server") ?: false
         FlyCore.getUsersWhoBlockedMe(server) { isSuccess, throwable, data ->
             if (isSuccess) {
                 result.success(data.tojsonString())
             } else {
-                result.error("500",throwable!!.message,throwable)
+                result.error("500", throwable!!.message, throwable)
             }
         }
     }
 
-    private fun enableDisableHideLastSeen(call: MethodCall,result: MethodChannel.Result){
+    private fun enableDisableHideLastSeen(call: MethodCall, result: MethodChannel.Result) {
         val enable = call.argument<Boolean>("enable") ?: false
         FlyCore.enableDisableHideLastSeen(enable) { isSuccess, throwable, data ->
-            if (isSuccess) {
-                result.success(data.tojsonString())
+            result.success(isSuccess)
+            /*if (isSuccess) {
             } else {
-                result.error("500",throwable!!.message,throwable)
-            }
+                result.error("500", throwable!!.message, throwable)
+            }*/
         }
     }
 
-    private fun deleteMessagesForMe(call: MethodCall,result: MethodChannel.Result){
+    private fun deleteMessagesForMe(call: MethodCall, result: MethodChannel.Result) {
         val userJID = call.argument<String>("jid")
         val chatType = call.argument<String>("chat_type")
         val isMediaDelete = call.argument<Boolean>("isMediaDelete") ?: false
@@ -1037,7 +1481,7 @@ open class FlyBaseController(activity: FlutterActivity) : MethodChannel.MethodCa
                     override fun onResponse(isSuccess: Boolean, message: String) {
                         if (isSuccess) {
                             Log.e("RESPONSE_CAPTURE", "===========================")
-                            DebugUtilis.v("ChatManager.deleteMessagesForMe",message)
+                            DebugUtilis.v("ChatManager.deleteMessagesForMe", message)
                             result.success(message)
                         } else {
                             result.error("500", "Unable to Delete the Chat", message)
@@ -1048,7 +1492,7 @@ open class FlyBaseController(activity: FlutterActivity) : MethodChannel.MethodCa
         }
     }
 
-    private fun deleteMessagesForEveryone(call: MethodCall,result: MethodChannel.Result){
+    private fun deleteMessagesForEveryone(call: MethodCall, result: MethodChannel.Result) {
         val userJID = call.argument<String>("jid")
         val chatType = call.argument<String>("chat_type")
         val isMediaDelete = call.argument<Boolean>("isMediaDelete") ?: false
@@ -1063,7 +1507,7 @@ open class FlyBaseController(activity: FlutterActivity) : MethodChannel.MethodCa
                     override fun onResponse(isSuccess: Boolean, message: String) {
                         if (isSuccess) {
                             Log.e("RESPONSE_CAPTURE", "===========================")
-                            DebugUtilis.v("ChatManager.deleteMessagesForMe",message)
+                            DebugUtilis.v("ChatManager.deleteMessagesForMe", message)
                             result.success(message)
                         } else {
                             result.error("500", "Unable to Delete the Chat", message)
@@ -1074,7 +1518,7 @@ open class FlyBaseController(activity: FlutterActivity) : MethodChannel.MethodCa
         }
     }
 
-    private fun getAllGroups(call: MethodCall,result: MethodChannel.Result){
+    private fun getAllGroups(call: MethodCall, result: MethodChannel.Result) {
         val server = call.argument<Boolean>("server") ?: false
         GroupManager.getAllGroups(server) { isSuccess, throwable, data ->
             if (isSuccess) {
@@ -1091,7 +1535,7 @@ open class FlyBaseController(activity: FlutterActivity) : MethodChannel.MethodCa
     }
 
     private fun getFavouriteMessages(result: MethodChannel.Result) {
-        val favouriteMessages : List<ChatMessage> = FlyMessenger.getFavouriteMessages()
+        val favouriteMessages: List<ChatMessage> = FlyMessenger.getFavouriteMessages()
         Log.e("RESPONSE_CAPTURE", "===========================")
         DebugUtilis.v("FlyMessenger.getFavouriteMessages", favouriteMessages.tojsonString())
         result.success(favouriteMessages.tojsonString())
@@ -1146,6 +1590,25 @@ open class FlyBaseController(activity: FlutterActivity) : MethodChannel.MethodCa
         }
     }
 
+    private fun forwardMessages(call: MethodCall, result: MethodChannel.Result) {
+        val messageIDList = call.argument<List<String>>("message_ids")
+        val tojid = call.argument<String>("to_jid")
+        val type = call.argument<String>("chat_type")
+
+        if (messageIDList != null && tojid != null && type != null) {
+            val chatType = getChatEnum(type)
+            ChatManager.forwardMessages(
+                messageIDList,
+                tojid,
+                chatType,
+                object : ChatActionListener {
+                    override fun onResponse(isSuccess: Boolean, message: String) {
+                        result.success(isSuccess)
+                    }
+                })
+        }
+    }
+
     private fun updateFavouriteStatus(call: MethodCall, result: MethodChannel.Result) {
         val messageID = call.argument<String>("messageID")
         val chatUserJID = call.argument<String>("chatUserJID")
@@ -1169,7 +1632,10 @@ open class FlyBaseController(activity: FlutterActivity) : MethodChannel.MethodCa
         }
     }
 
-    private fun getMessageStatusOfASingleChatMessage(call: MethodCall, result: MethodChannel.Result) {
+    private fun getMessageStatusOfASingleChatMessage(
+        call: MethodCall,
+        result: MethodChannel.Result
+    ) {
         val messageID = call.argument<String>("messageID")
         val messageStatus: ChatMessageStatusDetail? = messageID?.let {
             FlyMessenger.getMessageStatusOfASingleChatMessage(
@@ -1178,7 +1644,10 @@ open class FlyBaseController(activity: FlutterActivity) : MethodChannel.MethodCa
         }
         if (messageStatus != null) {
             Log.e("RESPONSE_CAPTURE", "===========================")
-            DebugUtilis.v("FlyMessenger.getMessageStatusOfASingleChatMessage", messageStatus.tojsonString())
+            DebugUtilis.v(
+                "FlyMessenger.getMessageStatusOfASingleChatMessage",
+                messageStatus.tojsonString()
+            )
             result.success(messageStatus.tojsonString())
         } else {
             Log.e(TAG, "Message Info Error")
@@ -1205,7 +1674,7 @@ open class FlyBaseController(activity: FlutterActivity) : MethodChannel.MethodCa
                             if (isSuccess) {
 
                                 Log.e("RESPONSE_CAPTURE", "===========================")
-                                DebugUtilis.v("ChatManager.deleteMessagesForEveryone",message)
+                                DebugUtilis.v("ChatManager.deleteMessagesForEveryone", message)
                                 result.success(message)
                             } else {
                                 result.error("500", "Unable to Delete the Chat", message)
@@ -1225,7 +1694,7 @@ open class FlyBaseController(activity: FlutterActivity) : MethodChannel.MethodCa
                         override fun onResponse(isSuccess: Boolean, message: String) {
                             if (isSuccess) {
                                 Log.e("RESPONSE_CAPTURE", "===========================")
-                                DebugUtilis.v("ChatManager.deleteMessagesForMe",message)
+                                DebugUtilis.v("ChatManager.deleteMessagesForMe", message)
                                 result.success(message)
                             } else {
                                 result.error("500", "Unable to Delete the Chat", message)
@@ -1331,7 +1800,7 @@ open class FlyBaseController(activity: FlutterActivity) : MethodChannel.MethodCa
                         userJID, audioFile.length(), audiofileUrl, filePath, duration, isRecorded,
                         replyMessageID, listener
                     )
-                }else {
+                } else {
                     FlyMessenger.sendAudioMessage(
                         userJID,
                         audioFile,
@@ -1342,8 +1811,8 @@ open class FlyBaseController(activity: FlutterActivity) : MethodChannel.MethodCa
                     )
                 }
             }
-        }else{
-            result.error("500","File Not Exists","")
+        } else {
+            result.error("500", "File Not Exists", "")
         }
     }
 
@@ -1363,7 +1832,10 @@ open class FlyBaseController(activity: FlutterActivity) : MethodChannel.MethodCa
                     override fun onResponse(isSuccess: Boolean, chatMessage: ChatMessage?) {
                         if (chatMessage != null) {
                             Log.e("RESPONSE_CAPTURE", "===========================")
-                            DebugUtilis.v("FlyMessenger.sendContactMessage", chatMessage.tojsonString())
+                            DebugUtilis.v(
+                                "FlyMessenger.sendContactMessage",
+                                chatMessage.tojsonString()
+                            )
                             result.success(chatMessage.tojsonString())
                         } else {
                             result.error("500", "Unable to Send Contact Message", null)
@@ -1397,7 +1869,7 @@ open class FlyBaseController(activity: FlutterActivity) : MethodChannel.MethodCa
                 }
             }
         }
-        if(videoFile.exists()) {
+        if (videoFile.exists()) {
             if (videoFileUrl.isNotEmpty() && thumbImageBase64.isNotEmpty() && videoDuration != 0L) {
                 FlyMessenger.sendVideoMessage(
                     toJid = userJid,
@@ -1420,8 +1892,8 @@ open class FlyBaseController(activity: FlutterActivity) : MethodChannel.MethodCa
                     listener = listener
                 )
             }
-        }else{
-            result.error("500","File Not Exists","")
+        } else {
+            result.error("500", "File Not Exists", "")
         }
     }
 
@@ -1494,7 +1966,8 @@ open class FlyBaseController(activity: FlutterActivity) : MethodChannel.MethodCa
 
             }
         } else {
-            Toast.makeText(mContext, "Please Check Your Internet connection", Toast.LENGTH_SHORT).show()
+            Toast.makeText(mContext, "Please Check Your Internet connection", Toast.LENGTH_SHORT)
+                .show()
         }
     }
 
@@ -1689,7 +2162,7 @@ open class FlyBaseController(activity: FlutterActivity) : MethodChannel.MethodCa
             val receiverJID: String = call.argument("jid") ?: ""
             val file: String = call.argument("file") ?: ""
             val fileUrl: String = call.argument("file_url") ?: ""
-            val listener  = object : SendMessageListener {
+            val listener = object : SendMessageListener {
                 override fun onResponse(isSuccess: Boolean, chatMessage: ChatMessage?) {
                     // you will get the message sent success response
                     if (isSuccess) {
@@ -1729,8 +2202,8 @@ open class FlyBaseController(activity: FlutterActivity) : MethodChannel.MethodCa
                         listener
                     )
                 }
-            }else{
-                result.error("500","File not Exists","");
+            } else {
+                result.error("500", "File not Exists", "");
             }
         }
 
@@ -1805,7 +2278,7 @@ open class FlyBaseController(activity: FlutterActivity) : MethodChannel.MethodCa
                 replyMessageID,
                 listener
             )
-        }else {
+        } else {
             FlyMessenger.sendImageMessage(
                 userJid,
                 imageFile,
@@ -1922,7 +2395,8 @@ open class FlyBaseController(activity: FlutterActivity) : MethodChannel.MethodCa
             val intent = Intent(Intent.ACTION_VIEW)
             intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
             val fileUri = file?.let {
-                FileProvider.getUriForFile(mContext, ChatManager.fileProviderAuthority,
+                FileProvider.getUriForFile(
+                    mContext, ChatManager.fileProviderAuthority,
                     it
                 )
             }
@@ -1986,7 +2460,10 @@ open class FlyBaseController(activity: FlutterActivity) : MethodChannel.MethodCa
 
         val recentChatListWithArchived = FlyCore.getRecentChatListIncludingArchived()
         Log.e("RESPONSE_CAPTURE", "===========================")
-        DebugUtilis.v("FlyCore.getRecentChatListIncludingArchived", recentChatListWithArchived.tojsonString())
+        DebugUtilis.v(
+            "FlyCore.getRecentChatListIncludingArchived",
+            recentChatListWithArchived.tojsonString()
+        )
         result.success(recentChatListWithArchived.tojsonString())
 
     }
@@ -2271,14 +2748,15 @@ open class FlyBaseController(activity: FlutterActivity) : MethodChannel.MethodCa
             FlyCore.loginWebChatViaQRCode(barcode) { isSuccess, _, _ ->
                 result.success(isSuccess)
                 if (isSuccess) {
-                    val vibrator = mContext.getSystemService(FlutterActivity.VIBRATOR_SERVICE) as Vibrator
+                    val vibrator =
+                        mContext.getSystemService(FlutterActivity.VIBRATOR_SERVICE) as Vibrator
                     if (vibrator.hasVibrator()) {
                         vibrator.vibrate(50)
                     }
                 }
             }
-        }catch (e:java.lang.Exception){
-            android.util.Log.e("qr",e.toString())
+        } catch (e: java.lang.Exception) {
+            android.util.Log.e("qr", e.toString())
         }
     }
 
@@ -2348,7 +2826,7 @@ open class FlyBaseController(activity: FlutterActivity) : MethodChannel.MethodCa
 
     override fun onMessageReceived(message: ChatMessage) {
         //called when the new message is received
-        Log.e(TAG,"Message Received ${message.tojsonString()}")
+        Log.e(TAG, "Message Received ${message.tojsonString()}")
         MessageReceivedStreamHandler.onMessageReceived?.success(message.tojsonString())
 
     }
@@ -2487,10 +2965,11 @@ open class FlyBaseController(activity: FlutterActivity) : MethodChannel.MethodCa
     override fun blockedThisUser(jid: String) {
         val map = JSONObject()
         map.put("jid", jid)
+        blockedThisUserStreamHandler.blockedThisUser?.success(map.toString())
     }
 
     override fun myProfileUpdated(isSuccess: Boolean) {
-
+        myProfileUpdatedStreamHandler.myProfileUpdated?.success(isSuccess)
     }
 
     override fun onAdminBlockedOtherUser(jid: String, type: String, status: Boolean) {
@@ -2498,96 +2977,118 @@ open class FlyBaseController(activity: FlutterActivity) : MethodChannel.MethodCa
         map.put("jid", jid)
         map.put("type", type)
         map.put("status", status)
+        onAdminBlockedOtherUserStreamHandler.onAdminBlockedOtherUser?.success(map.toString())
     }
 
     override fun onAdminBlockedUser(jid: String, status: Boolean) {
         val map = JSONObject()
         map.put("jid", jid)
         map.put("status", status)
+        onAdminBlockedUserStreamHandler.onAdminBlockedUser?.success(map.toString())
     }
 
     override fun onContactSyncComplete(isSuccess: Boolean) {
+        onContactSyncCompleteStreamHandler.onContactSyncComplete?.success(isSuccess)
     }
 
     override fun onLoggedOut() {
-        Log.d(TAG,"onLoggedOut")
+        Log.d(TAG, "onLoggedOut")
+        onLoggedOutStreamHandler.onLoggedOut?.success(true)
     }
 
     override fun unblockedThisUser(jid: String) {
         val map = JSONObject()
         map.put("jid", jid)
+        unblockedThisUserStreamHandler.unblockedThisUser?.success(map.toString())
     }
 
     override fun userBlockedMe(jid: String) {
         val map = JSONObject()
         map.put("jid", jid)
+        userBlockedMeStreamHandler.userBlockedMe?.success(map.toString())
     }
 
     override fun userCameOnline(jid: String) {
         val map = JSONObject()
         map.put("jid", jid)
+        userCameOnlineStreamHandler.userCameOnline?.success(map.toString())
     }
 
     override fun userDeletedHisProfile(jid: String) {
         val map = JSONObject()
         map.put("jid", jid)
+        userDeletedHisProfileStreamHandler.userDeletedHisProfile?.success(map.toString())
     }
 
     override fun userProfileFetched(jid: String, profileDetails: ProfileDetails) {
         val map = JSONObject()
         map.put("jid", jid)
         map.put("profileDetails", profileDetails.tojsonString())
+        userProfileFetchedStreamHandler.userProfileFetched?.success(map.toString())
     }
 
     override fun userUnBlockedMe(jid: String) {
         val map = JSONObject()
         map.put("jid", jid)
+        userUnBlockedMeStreamHandler.userUnBlockedMe?.success(map.toString())
     }
 
     override fun userUpdatedHisProfile(jid: String) {
         val map = JSONObject()
         map.put("jid", jid)
+        userUpdatedHisProfileStreamHandler.userUpdatedHisProfile?.success(map.toString())
     }
 
     override fun userWentOffline(jid: String) {
         val map = JSONObject()
         map.put("jid", jid)
+        userWentOfflineStreamHandler.userWentOffline?.success(map.toString())
     }
 
     override fun usersIBlockedListFetched(jidList: List<String>) {
         val map = JSONObject()
         map.put("jidlist", jidList)
+        usersIBlockedListFetchedStreamHandler.usersIBlockedListFetched?.success(map.toString())
     }
 
-    override fun usersProfilesFetched() {}
+    override fun usersProfilesFetched() {
+        usersProfilesFetchedStreamHandler.usersProfilesFetched?.success(true)
+    }
 
     override fun usersWhoBlockedMeListFetched(jidList: List<String>) {
         val map = JSONObject()
         map.put("jidlist", jidList)
+        usersWhoBlockedMeListFetchedStreamHandler.usersWhoBlockedMeListFetched?.success(map.toString())
     }
 
     override fun onConnected() {
         Log.i(TAG, "Chat Manager connected")
+        onConnectedStreamHandler.onConnected?.success(true)
     }
 
     override fun onDisconnected() {
         Log.i(TAG, "Chat Manager Disconnected")
+        onDisconnectedStreamHandler.onDisconnected?.success(true)
     }
 
     override fun onConnectionNotAuthorized() {
         Log.i(TAG, "Chat Manager Not Authorized")
+        onConnectionNotAuthorizedStreamHandler.onConnectionNotAuthorized?.success(true)
     }
 
     override fun connectionFailed(message: String) {
         Log.d(TAG, "connectionFailed : $message")
+        connectionFailedStreamHandler.connectionFailed?.success(message)
     }
 
     override fun connectionSuccess() {
-        Log.d(TAG,"connection Success")
+        Log.d(TAG, "connection Success")
+        connectionSuccessStreamHandler.connectionSuccess?.success(true)
     }
 
     override fun onWebChatPasswordChanged(isError: Boolean) {
-        Log.d(TAG,"web chat password changed error $isError")
+        Log.d(TAG, "web chat password changed error $isError")
+        onWebChatPasswordChangedStreamHandler.onWebChatPasswordChanged?.success(isError)
     }
 
     override fun setTypingStatus(singleOrGroupJid: String, userId: String, composing: String) {
@@ -2595,7 +3096,21 @@ open class FlyBaseController(activity: FlutterActivity) : MethodChannel.MethodCa
         map.put("singleOrgroupJid", singleOrGroupJid)
         map.put("userId", userId)
         map.put("composing", composing)
+        setTypingStatusStreamHandler.setTypingStatus?.success(map.toString())
+    }
+    override fun onChatTypingStatus(fromUserJid: String, status: TypingStatus) {
+        val map = JSONObject()
+        map.put("fromUserJid", fromUserJid)
+        map.put("status", status)
+        onChatTypingStatusStreamHandler.onChatTypingStatus?.success(map.toString())
     }
 
+    override fun onGroupTypingStatus(groupJid: String, groupUserJid: String, status: TypingStatus) {
+        val map = JSONObject()
+        map.put("groupJid", groupJid)
+        map.put("groupUserJid", groupUserJid)
+        map.put("status", status)
+        onGroupTypingStatusStreamHandler.onGroupTypingStatus?.success(map.toString())
+    }
 
 }

@@ -171,11 +171,11 @@ class LoginController extends GetxController {
     var userName = (countryCode! + mobileNumber.text.toString()).replaceAll("+", "");
     //make api call
     FlyChat.verifyToken(userName,token).then((value) {
-      // if (value != null) {
+      if (value != null) {
         validateDeviceToken(value);
-      // }else{
-      //   hideLoading();
-      // }
+      }else{
+        hideLoading();
+      }
     }).catchError((error) {
       debugPrint("issue===> $error");
       debugPrint(error.message);

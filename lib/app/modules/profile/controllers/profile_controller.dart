@@ -14,6 +14,7 @@ import 'package:mirror_fly_demo/app/routes/app_pages.dart';
 
 import '../../../common/crop_image.dart';
 import '../../../model/profile_model.dart';
+import '../../../model/statusModel.dart';
 import '../../../nativecall/fly_chat.dart';
 
 class ProfileController extends GetxController {
@@ -153,7 +154,8 @@ class ProfileController extends GetxController {
     if (jid.isNotEmpty) {
       mirrorFlyLog("jid.isNotEmpty", jid.isNotEmpty.toString());
       loading.value = true;
-      FlyChat.getUserProfile(jid).then((value) {
+      FlyChat.getUserProfile(jid,true).then((value) {
+        insertDefaultStatusToUser();
         loading.value = false;
         var data = profileDataFromJson(value);
         if (data.status != null && data.status!) {
@@ -174,6 +176,51 @@ class ProfileController extends GetxController {
       }).catchError((onError) {
         loading.value = false;
       });
+    }
+  }
+
+  static void insertDefaultStatusToUser() async{
+    try {
+      await FlyChat.mirrorFlyMethodChannel.invokeMethod('getStatusList').then((value) {
+        mirrorFlyLog("status list", "$value");
+        if (value != null) {
+          var profileStatus = statusDataFromJson(value);
+          if (profileStatus.isNotEmpty) {
+            var defaultStatus = Constants.defaultStatusList;
+            for (var statusValue in defaultStatus) {
+              var isStatusNotExist = true;
+              for (var flyStatus in profileStatus) {
+                if (flyStatus.status == (statusValue)) {
+                  isStatusNotExist = false;
+                }
+              }
+              if (isStatusNotExist) {
+                FlyChat.insertDefaultStatus(statusValue);
+              }
+            }
+            SessionManagement.vibrationType("0");
+            FlyChat.getRingtoneName(null).then((value) {
+              if (value != null) {
+                SessionManagement.setNotificationUri(value);
+              }
+            });
+            SessionManagement.convSound(true);
+            SessionManagement.muteAll( false);
+          }else{
+            var defaultStatus = Constants.defaultStatusList;
+            for (var statusValue in defaultStatus) {
+              FlyChat.insertDefaultStatus(statusValue);
+            }
+            FlyChat.getRingtoneName(null).then((value) {
+              if (value != null) {
+                SessionManagement.setNotificationUri(value);
+              }
+            });
+          }
+        }
+      });
+    } on Exception catch(er){
+      debugPrint("Exception ==> $er");
     }
   }
 
