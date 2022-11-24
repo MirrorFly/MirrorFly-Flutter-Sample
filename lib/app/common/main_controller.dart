@@ -5,7 +5,6 @@ import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
-import 'package:intl/intl.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
 import 'package:mirror_fly_demo/app/data/session_management.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
@@ -41,12 +40,14 @@ class MainController extends GetxController {
         .checkNull()
         .isEmpty) {
       FlyChat.mediaEndPoint().then((value) {
-        mirrorFlyLog("media_endpoint", value);
-        if (value.isNotEmpty) {
-          uploadEndpoint(value);
-          SessionManagement.setMediaEndPoint(value);
-        } else {
-          uploadEndpoint(SessionManagement.getMediaEndPoint().checkNull());
+        mirrorFlyLog("media_endpoint", value.toString());
+        if(value!=null) {
+          if (value.isNotEmpty) {
+            uploadEndpoint(value);
+            SessionManagement.setMediaEndPoint(value);
+          } else {
+            uploadEndpoint(SessionManagement.getMediaEndPoint().checkNull());
+          }
         }
       });
     }
@@ -62,14 +63,16 @@ class MainController extends GetxController {
             .checkNull()
             .isNotEmpty) {
       await FlyChat.authToken().then((value) {
-        mirrorFlyLog("RetryAuth", value);
-        if (value.isNotEmpty) {
-          authToken(value);
-          SessionManagement.setAuthToken(value);
-        } else {
-          authToken(SessionManagement.getAuthToken().checkNull());
+        mirrorFlyLog("RetryAuth", value.toString());
+        if(value!=null) {
+          if (value.isNotEmpty) {
+            authToken(value);
+            SessionManagement.setAuthToken(value);
+          } else {
+            authToken(SessionManagement.getAuthToken().checkNull());
+          }
+          update();
         }
-        update();
       });
     }
   }

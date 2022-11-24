@@ -1,11 +1,5 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:mirror_fly_demo/app/data/helper.dart';
-
-import '../common/constants.dart';
-import '../data/session_management.dart';
-import '../model/statusModel.dart';
 
 class FlyChat {
   FlyChat._();
@@ -32,12 +26,42 @@ class FlyChat {
   static const EventChannel onGroupNotificationMessage_channel = EventChannel('contus.mirrorfly/onGroupNotificationMessage');
   static const EventChannel onGroupDeletedLocally_channel = EventChannel('contus.mirrorfly/onGroupDeletedLocally');
 
+  static const EventChannel blockedThisUser_channel = EventChannel('contus.mirrorfly/blockedThisUser');
+  static const EventChannel myProfileUpdated_channel = EventChannel('contus.mirrorfly/myProfileUpdated');
+  static const EventChannel onAdminBlockedOtherUser_channel = EventChannel('contus.mirrorfly/onAdminBlockedOtherUser');
+  static const EventChannel onAdminBlockedUser_channel = EventChannel('contus.mirrorfly/onAdminBlockedUser');
+  static const EventChannel onContactSyncComplete_channel = EventChannel('contus.mirrorfly/onContactSyncComplete');
+  static const EventChannel onLoggedOut_channel = EventChannel('contus.mirrorfly/onLoggedOut');
+  static const EventChannel unblockedThisUser_channel = EventChannel('contus.mirrorfly/unblockedThisUser');
+  static const EventChannel userBlockedMe_channel = EventChannel('contus.mirrorfly/userBlockedMe');
+  static const EventChannel userCameOnline_channel = EventChannel('contus.mirrorfly/userCameOnline');
+  static const EventChannel userDeletedHisProfile_channel = EventChannel('contus.mirrorfly/userDeletedHisProfile');
+  static const EventChannel userProfileFetched_channel = EventChannel('contus.mirrorfly/userProfileFetched');
+  static const EventChannel userUnBlockedMe_channel = EventChannel('contus.mirrorfly/userUnBlockedMe');
+  static const EventChannel userUpdatedHisProfile_channel = EventChannel('contus.mirrorfly/userUpdatedHisProfile');
+  static const EventChannel userWentOffline_channel = EventChannel('contus.mirrorfly/userWentOffline');
+  static const EventChannel usersIBlockedListFetched_channel = EventChannel('contus.mirrorfly/usersIBlockedListFetched');
+  static const EventChannel usersProfilesFetched_channel = EventChannel('contus.mirrorfly/usersProfilesFetched');
+  static const EventChannel usersWhoBlockedMeListFetched_channel = EventChannel('contus.mirrorfly/usersWhoBlockedMeListFetched');
+  static const EventChannel onConnected_channel = EventChannel('contus.mirrorfly/onConnected');
+  static const EventChannel onDisconnected_channel = EventChannel('contus.mirrorfly/onDisconnected');
+  static const EventChannel onConnectionNotAuthorized_channel = EventChannel('contus.mirrorfly/onConnectionNotAuthorized');
+  static const EventChannel connectionFailed_channel = EventChannel('contus.mirrorfly/connectionFailed');
+  static const EventChannel connectionSuccess_channel = EventChannel('contus.mirrorfly/connectionSuccess');
+  static const EventChannel onWebChatPasswordChanged_channel = EventChannel('contus.mirrorfly/onWebChatPasswordChanged');
+  static const EventChannel setTypingStatus_channel = EventChannel('contus.mirrorfly/setTypingStatus');
+  static const EventChannel onChatTypingStatus_channel = EventChannel('contus.mirrorfly/onChatTypingStatus');
+  static const EventChannel onGroupTypingStatus_channel = EventChannel('contus.mirrorfly/onGroupTypingStatus');
+  static const EventChannel onFailure_channel = EventChannel('contus.mirrorfly/onFailure');
+  static const EventChannel onProgressChanged_channel = EventChannel('contus.mirrorfly/onProgressChanged');
+  static const EventChannel onSuccess_channel = EventChannel('contus.mirrorfly/onSuccess');
 
-  static Future<bool?> syncContacts() async {
+
+  static Future<bool?> syncContacts(bool isfirsttime) async {
     bool? res;
     try {
       res = await mirrorFlyMethodChannel
-          .invokeMethod<bool>('syncContacts');
+          .invokeMethod<bool>('syncContacts',{"is_first_time":isfirsttime});
       return res;
     } on PlatformException catch (e) {
       debugPrint("Platform Exception ===> $e");
@@ -48,13 +72,13 @@ class FlyChat {
     }
   }
 
-  static Future<String> contactSyncStateValue() async {
-    String? response = "";
+  static Future<String?> contactSyncStateValue() async {
+    String? response;
     try {
       response = await mirrorFlyMethodChannel
           .invokeMethod<String>('contactSyncStateValue');
       debugPrint("contactSyncState Result ==> $response");
-      return response.checkNull();
+      return response;
     } on PlatformException catch (e) {
       debugPrint("Platform Exception ===> $e");
       rethrow;
@@ -160,7 +184,23 @@ class FlyChat {
     }
   }
 
-   static Future<dynamic> getRecalledMessagesOfAConversation(String jid) async {
+  static Future<dynamic> getBusyStatusList() async {
+    dynamic response = "";
+    try {
+      response = await mirrorFlyMethodChannel
+          .invokeMethod('getBusyStatusList');
+      debugPrint("getBusyStatusList Result ==> $response");
+      return response;
+    } on PlatformException catch (e) {
+      debugPrint("Platform Exception ===> $e");
+      rethrow;
+    } on Exception catch (error) {
+      debugPrint("Exception ==> $error");
+      rethrow;
+    }
+  }
+
+  static Future<dynamic> getRecalledMessagesOfAConversation(String jid) async {
     dynamic response = "";
     try {
       response = await mirrorFlyMethodChannel
@@ -206,6 +246,21 @@ class FlyChat {
     }
   }
 
+  static Future<bool?> enableDisableHideLastSeen(bool enable) async {
+    bool? res;
+    try {
+      res = await mirrorFlyMethodChannel
+          .invokeMethod<bool>('enableDisableHideLastSeen',{"enable":enable});
+      return res;
+    } on PlatformException catch (e) {
+      debugPrint("Platform Exception ===> $e");
+      rethrow;
+    } on Exception catch (error) {
+      debugPrint("Exception ==> $error");
+      rethrow;
+    }
+  }
+
   static Future<bool?> isBusyStatusEnabled() async {
     bool? res;
     try {
@@ -236,13 +291,13 @@ class FlyChat {
     }
   }
 
-  static Future<String> mediaEndPoint() async {
-    String? response = "";
+  static Future<String?> mediaEndPoint() async {
+    String? response;
     try {
       response = await mirrorFlyMethodChannel
           .invokeMethod<String>('media_endpoint');
       debugPrint("media_endpoint Result ==> $response");
-      return response.checkNull();
+      return response;
     } on PlatformException catch (e) {
       debugPrint("Platform Exception ===> $e");
       rethrow;
@@ -312,21 +367,6 @@ class FlyChat {
     }
   }
 
-  static Future<bool?> doesFetchingMembersListFromServedRequired(String groupJid) async {
-    bool? res;
-    try {
-      res = await mirrorFlyMethodChannel
-          .invokeMethod<bool>('doesFetchingMembersListFromServedRequired',{"groupJid":groupJid});
-      return res;
-    } on PlatformException catch (e) {
-      debugPrint("Platform Exception ===> $e");
-      rethrow;
-    } on Exception catch (error) {
-      debugPrint("Exception ==> $error");
-      rethrow;
-    }
-  }
-
   static Future<int?> getMembersCountOfGroup(String groupJid) async {
     int? res;
     try {
@@ -355,6 +395,407 @@ class FlyChat {
     }
   }
 
+  static sendTypingStatus(String toJid,String chattype) async {
+    try {
+      await mirrorFlyMethodChannel
+          .invokeMethod('sendTypingStatus',{"to_jid":toJid,"chattype":chattype});
+    } on PlatformException catch (e) {
+      debugPrint("Platform Exception ===> $e");
+      rethrow;
+    } on Exception catch (error) {
+      debugPrint("Exception ==> $error");
+      rethrow;
+    }
+  }
+
+  static sendTypingGoneStatus(String toJid,String chattype) async {
+    try {
+      await mirrorFlyMethodChannel
+          .invokeMethod('sendTypingGoneStatus',{"to_jid":toJid,"chattype":chattype});
+    } on PlatformException catch (e) {
+      debugPrint("Platform Exception ===> $e");
+      rethrow;
+    } on Exception catch (error) {
+      debugPrint("Exception ==> $error");
+      rethrow;
+    }
+  }
+
+  static updateChatMuteStatus(String Jid,bool mute_status) async {
+    try {
+      await mirrorFlyMethodChannel
+          .invokeMethod('updateChatMuteStatus',{"jid":Jid,"mute_status":mute_status});
+    } on PlatformException catch (e) {
+      debugPrint("Platform Exception ===> $e");
+      rethrow;
+    } on Exception catch (error) {
+      debugPrint("Exception ==> $error");
+      rethrow;
+    }
+  }
+
+  static updateRecentChatPinStatus(String Jid,bool pin_status) async {
+    try {
+      await mirrorFlyMethodChannel
+          .invokeMethod('updateRecentChatPinStatus',{"jid":Jid,"pin_recent_chat":pin_status});
+    } on PlatformException catch (e) {
+      debugPrint("Platform Exception ===> $e");
+      rethrow;
+    } on Exception catch (error) {
+      debugPrint("Exception ==> $error");
+      rethrow;
+    }
+  }
+
+  static deleteRecentChat(String Jid) async {
+    try {
+      await mirrorFlyMethodChannel
+          .invokeMethod('deleteRecentChat',{"jid":Jid});
+    } on PlatformException catch (e) {
+      debugPrint("Platform Exception ===> $e");
+      rethrow;
+    } on Exception catch (error) {
+      debugPrint("Exception ==> $error");
+      rethrow;
+    }
+  }
+
+  static setTypingStatusListener() async {
+    try {
+      await mirrorFlyMethodChannel
+          .invokeMethod('setTypingStatusListener');
+    } on PlatformException catch (e) {
+      debugPrint("Platform Exception ===> $e");
+      rethrow;
+    } on Exception catch (error) {
+      debugPrint("Exception ==> $error");
+      rethrow;
+    }
+  }
+
+  static Future<bool?> getIsProfileBlockedByAdmin() async {
+    bool? res;
+    try {
+      res = await mirrorFlyMethodChannel
+          .invokeMethod<bool>('getIsProfileBlockedByAdmin');
+      return res;
+    } on PlatformException catch (e) {
+      debugPrint("Platform Exception ===> $e");
+      rethrow;
+    } on Exception catch (error) {
+      debugPrint("Exception ==> $error");
+      rethrow;
+    }
+  }
+
+  static Future<bool?> deleteRecentChats(List<String> jidlist) async {
+    bool? res;
+    try {
+      res = await mirrorFlyMethodChannel
+          .invokeMethod<bool>('deleteRecentChats',{"jidlist":jidlist});
+      return res;
+    } on PlatformException catch (e) {
+      debugPrint("Platform Exception ===> $e");
+      rethrow;
+    } on Exception catch (error) {
+      debugPrint("Exception ==> $error");
+      rethrow;
+    }
+  }
+
+  static markConversationAsRead(List<String> jidlist) async {
+    try {
+      await mirrorFlyMethodChannel
+          .invokeMethod('markConversationAsRead',{"jidlist":jidlist});
+    } on PlatformException catch (e) {
+      debugPrint("Platform Exception ===> $e");
+      rethrow;
+    } on Exception catch (error) {
+      debugPrint("Exception ==> $error");
+      rethrow;
+    }
+  }
+
+  static markConversationAsUnread(List<String> jidlist) async {
+    try {
+      await mirrorFlyMethodChannel
+          .invokeMethod('markConversationAsUnread',{"jidlist":jidlist});
+    } on PlatformException catch (e) {
+      debugPrint("Platform Exception ===> $e");
+      rethrow;
+    } on Exception catch (error) {
+      debugPrint("Exception ==> $error");
+      rethrow;
+    }
+  }
+
+  static getArchivedChatsFromServer() async {
+    try {
+      await mirrorFlyMethodChannel
+          .invokeMethod('getArchivedChatsFromServer');
+    } on PlatformException catch (e) {
+      debugPrint("Platform Exception ===> $e");
+      rethrow;
+    } on Exception catch (error) {
+      debugPrint("Exception ==> $error");
+      rethrow;
+    }
+  }
+
+  static setCustomValue(String message_id,String key,String value) async {
+    try {
+      await mirrorFlyMethodChannel
+          .invokeMethod('setCustomValue',{"message_id":message_id,"key":key,"value":value});
+    } on PlatformException catch (e) {
+      debugPrint("Platform Exception ===> $e");
+      rethrow;
+    } on Exception catch (error) {
+      debugPrint("Exception ==> $error");
+      rethrow;
+    }
+  }
+
+  static removeCustomValue(String message_id,String key) async {
+    try {
+      await mirrorFlyMethodChannel
+          .invokeMethod('removeCustomValue',{"message_id":message_id,"key":key});
+    } on PlatformException catch (e) {
+      debugPrint("Platform Exception ===> $e");
+      rethrow;
+    } on Exception catch (error) {
+      debugPrint("Exception ==> $error");
+      rethrow;
+    }
+  }
+
+  static inviteUserViaSMS(String mobile_no,String message) async {
+    try {
+      await mirrorFlyMethodChannel
+          .invokeMethod('inviteUserViaSMS',{"mobile_no":mobile_no,"message":message});
+    } on PlatformException catch (e) {
+      debugPrint("Platform Exception ===> $e");
+      rethrow;
+    } on Exception catch (error) {
+      debugPrint("Exception ==> $error");
+      rethrow;
+    }
+  }
+
+  static cancelBackup() async {
+    try {
+      await mirrorFlyMethodChannel
+          .invokeMethod('cancelBackup');
+    } on PlatformException catch (e) {
+      debugPrint("Platform Exception ===> $e");
+      rethrow;
+    } on Exception catch (error) {
+      debugPrint("Exception ==> $error");
+      rethrow;
+    }
+  }
+
+  static startBackup() async {
+    try {
+      await mirrorFlyMethodChannel
+          .invokeMethod('startBackup');
+    } on PlatformException catch (e) {
+      debugPrint("Platform Exception ===> $e");
+      rethrow;
+    } on Exception catch (error) {
+      debugPrint("Exception ==> $error");
+      rethrow;
+    }
+  }
+
+  static cancelRestore() async {
+    try {
+      await mirrorFlyMethodChannel
+          .invokeMethod('cancelRestore');
+    } on PlatformException catch (e) {
+      debugPrint("Platform Exception ===> $e");
+      rethrow;
+    } on Exception catch (error) {
+      debugPrint("Exception ==> $error");
+      rethrow;
+    }
+  }
+
+  static clearAllSDKData() async {
+    try {
+      await mirrorFlyMethodChannel
+          .invokeMethod('clearAllSDKData');
+    } on PlatformException catch (e) {
+      debugPrint("Platform Exception ===> $e");
+      rethrow;
+    } on Exception catch (error) {
+      debugPrint("Exception ==> $error");
+      rethrow;
+    }
+  }
+
+  static getRoster() async {
+    try {
+      await mirrorFlyMethodChannel
+          .invokeMethod('getRoster');
+    } on PlatformException catch (e) {
+      debugPrint("Platform Exception ===> $e");
+      rethrow;
+    } on Exception catch (error) {
+      debugPrint("Exception ==> $error");
+      rethrow;
+    }
+  }
+
+  static Future<String?> getCustomValue(String message_id,String key) async {
+    String? res;
+    try {
+      res = await mirrorFlyMethodChannel
+          .invokeMethod<String>('getCustomValue',{"message_id":message_id,"key":key});
+      return res;
+    } on PlatformException catch (e) {
+      debugPrint("Platform Exception ===> $e");
+      rethrow;
+    } on Exception catch (error) {
+      debugPrint("Exception ==> $error");
+      rethrow;
+    }
+  }
+
+  static Future<bool?> clearAllConversation() async {
+    bool? res;
+    try {
+      res = await mirrorFlyMethodChannel
+          .invokeMethod<bool>('clearAllConversation');
+      return res;
+    } on PlatformException catch (e) {
+      debugPrint("Platform Exception ===> $e");
+      rethrow;
+    } on Exception catch (error) {
+      debugPrint("Exception ==> $error");
+      rethrow;
+    }
+  }
+
+  static Future<bool?> updateFcmToken(String firebasetoken) async {
+    bool? res;
+    try {
+      res = await mirrorFlyMethodChannel
+          .invokeMethod<bool>('updateFcmToken',{"token":firebasetoken});
+      return res;
+    } on PlatformException catch (e) {
+      debugPrint("Platform Exception ===> $e");
+      rethrow;
+    } on Exception catch (error) {
+      debugPrint("Exception ==> $error");
+      rethrow;
+    }
+  }
+
+  static Future<bool?> isMuted(String jid) async {
+    bool? res;
+    try {
+      res = await mirrorFlyMethodChannel
+          .invokeMethod<bool>('isMuted',{"jid":jid});
+      return res;
+    } on PlatformException catch (e) {
+      debugPrint("Platform Exception ===> $e");
+      rethrow;
+    } on Exception catch (error) {
+      debugPrint("Exception ==> $error");
+      rethrow;
+    }
+  }
+
+  static Future<dynamic> handleReceivedMessage(Map notificationdata) async {
+    dynamic res;
+    try {
+      res = await mirrorFlyMethodChannel
+          .invokeMethod('handleReceivedMessage',{"notificationdata":notificationdata});
+      return res;
+    } on PlatformException catch (e) {
+      debugPrint("Platform Exception ===> $e");
+      rethrow;
+    } on Exception catch (error) {
+      debugPrint("Exception ==> $error");
+      rethrow;
+    }
+  }
+
+  static Future<dynamic> getLastNUnreadMessages(int messagesCount) async {
+    dynamic res;
+    try {
+      res = await mirrorFlyMethodChannel
+          .invokeMethod('getLastNUnreadMessages',{"messagecount":messagesCount});
+      return res;
+    } on PlatformException catch (e) {
+      debugPrint("Platform Exception ===> $e");
+      rethrow;
+    } on Exception catch (error) {
+      debugPrint("Exception ==> $error");
+      rethrow;
+    }
+  }
+
+  static Future<dynamic> getNUnreadMessagesOfEachUsers(int messagesCount) async {
+    dynamic res;
+    try {
+      res = await mirrorFlyMethodChannel
+          .invokeMethod('getNUnreadMessagesOfEachUsers',{"messagecount":messagesCount});
+      return res;
+    } on PlatformException catch (e) {
+      debugPrint("Platform Exception ===> $e");
+      rethrow;
+    } on Exception catch (error) {
+      debugPrint("Exception ==> $error");
+      rethrow;
+    }
+  }
+
+  static Future<bool?> isArchivedSettingsEnabled() async {
+    bool? res;
+    try {
+      res = await mirrorFlyMethodChannel
+          .invokeMethod<bool>('isArchivedSettingsEnabled');
+      return res;
+    } on PlatformException catch (e) {
+      debugPrint("Platform Exception ===> $e");
+      rethrow;
+    } on Exception catch (error) {
+      debugPrint("Exception ==> $error");
+      rethrow;
+    }
+  }
+
+  static Future<bool?> enableDisableArchivedSettings(bool enable) async {
+    bool? res;
+    try {
+      res = await mirrorFlyMethodChannel
+          .invokeMethod<bool>('enableDisableArchivedSettings',{"enable":enable});
+      return res;
+    } on PlatformException catch (e) {
+      debugPrint("Platform Exception ===> $e");
+      rethrow;
+    } on Exception catch (error) {
+      debugPrint("Exception ==> $error");
+      rethrow;
+    }
+  }
+
+  static Future<bool?> updateArchiveUnArchiveChat(String jid,bool isArchived) async {
+    bool? res;
+    try {
+      res = await mirrorFlyMethodChannel
+          .invokeMethod<bool>('updateArchiveUnArchiveChat',{"jid":jid,"isArchived":isArchived});
+      return res;
+    } on PlatformException catch (e) {
+      debugPrint("Platform Exception ===> $e");
+      rethrow;
+    } on Exception catch (error) {
+      debugPrint("Exception ==> $error");
+      rethrow;
+    }
+  }
+
   static Future<int?> getGroupMessageStatusCount(String messageid) async {
     int? res;
     try {
@@ -370,11 +811,116 @@ class FlyChat {
     }
   }
 
+  static Future<int?> getUnreadMessageCountExceptMutedChat() async {
+    int? res;
+    try {
+      res = await mirrorFlyMethodChannel
+          .invokeMethod<int>('getUnreadMessageCountExceptMutedChat');
+      return res;
+    } on PlatformException catch (e) {
+      debugPrint("Platform Exception ===> $e");
+      rethrow;
+    } on Exception catch (error) {
+      debugPrint("Exception ==> $error");
+      rethrow;
+    }
+  }
+
+  static Future<int?> recentChatPinnedCount() async {
+    int? res;
+    try {
+      res = await mirrorFlyMethodChannel
+          .invokeMethod<int>('getGroupMessageStatusCount');
+      return res;
+    } on PlatformException catch (e) {
+      debugPrint("Platform Exception ===> $e");
+      rethrow;
+    } on Exception catch (error) {
+      debugPrint("Exception ==> $error");
+      rethrow;
+    }
+  }
+
+  static Future<int?> getUnreadMessagesCount() async {
+    int? res;
+    try {
+      res = await mirrorFlyMethodChannel
+          .invokeMethod<int>('getUnreadMessagesCount');
+      return res;
+    } on PlatformException catch (e) {
+      debugPrint("Platform Exception ===> $e");
+      rethrow;
+    } on Exception catch (error) {
+      debugPrint("Exception ==> $error");
+      rethrow;
+    }
+  }
+
+  static Future<String?> getUnsentMessageOfAJid(String jid) async {
+    String? res;
+    try {
+      res = await mirrorFlyMethodChannel
+          .invokeMethod<String>('getUnsentMessageOfAJid',{"jid":jid});
+      return res;
+    } on PlatformException catch (e) {
+      debugPrint("Platform Exception ===> $e");
+      rethrow;
+    } on Exception catch (error) {
+      debugPrint("Exception ==> $error");
+      rethrow;
+    }
+  }
+
   static Future<dynamic> getUsersListToAddMembersInOldGroup(String groupJid) async {
     dynamic res;
     try {
       res = await mirrorFlyMethodChannel
           .invokeMethod('getUsersListToAddMembersInOldGroup',{"groupJid":groupJid});
+      return res;
+    } on PlatformException catch (e) {
+      debugPrint("Platform Exception ===> $e");
+      rethrow;
+    } on Exception catch (error) {
+      debugPrint("Exception ==> $error");
+      rethrow;
+    }
+  }
+
+  static Future<dynamic> prepareChatConversationToExport(String jid) async {
+    dynamic res;
+    try {
+      res = await mirrorFlyMethodChannel
+          .invokeMethod('prepareChatConversationToExport',{"jid":jid});
+      return res;
+    } on PlatformException catch (e) {
+      debugPrint("Platform Exception ===> $e");
+      rethrow;
+    } on Exception catch (error) {
+      debugPrint("Exception ==> $error");
+      rethrow;
+    }
+  }
+
+  static Future<dynamic> getArchivedChatList() async {
+    dynamic res;
+    try {
+      res = await mirrorFlyMethodChannel
+          .invokeMethod('getArchivedChatList');
+      return res;
+    } on PlatformException catch (e) {
+      debugPrint("Platform Exception ===> $e");
+      rethrow;
+    } on Exception catch (error) {
+      debugPrint("Exception ==> $error");
+      rethrow;
+    }
+  }
+
+  static Future<dynamic> getMessageActions(List<String> messageidlist) async {
+    dynamic res;
+    try {
+      res = await mirrorFlyMethodChannel
+          .invokeMethod('getMessageActions',{"messageidlist":messageidlist});
       return res;
     } on PlatformException catch (e) {
       debugPrint("Platform Exception ===> $e");
@@ -495,13 +1041,13 @@ class FlyChat {
     }
   }
 
-  static Future<String> getGroupJid(String jid) async {
-    String? response = "";
+  static Future<String?> getGroupJid(String jid) async {
+    String? response;
     try {
       response = await mirrorFlyMethodChannel
           .invokeMethod<String>('getGroupJid',{"jid":jid});
       debugPrint("getGroupJid Result ==> $response");
-      return response.checkNull();
+      return response;
     } on PlatformException catch (e) {
       debugPrint("Platform Exception ===> $e");
       rethrow;
@@ -511,13 +1057,13 @@ class FlyChat {
     }
   }
 
-  static Future<String> getUserLastSeenTime(String jid) async {
-    String? response = "";
+  static Future<String?> getUserLastSeenTime(String jid) async {
+    String? response;
     try {
       response = await mirrorFlyMethodChannel
           .invokeMethod<String>('getUserLastSeenTime',{"jid":jid});
       debugPrint("getUserLastSeenTime Result ==> $response");
-      return response.checkNull();
+      return response;
     } on PlatformException catch (e) {
       debugPrint("Platform Exception ===> $e");
       rethrow;
@@ -527,14 +1073,14 @@ class FlyChat {
     }
   }
 
-  static Future<String> authToken() async {
+  static Future<String?> authToken() async {
     String? registerResponse = "";
     try {
       registerResponse = await mirrorFlyMethodChannel
           .invokeMethod<String>('authtoken');
       debugPrint("authToken Result ==> $registerResponse");
 
-      return registerResponse.checkNull();
+      return registerResponse;
     } on PlatformException catch (e) {
       debugPrint("Platform Exception ===> $e");
       rethrow;
@@ -560,12 +1106,12 @@ class FlyChat {
     }
   }
 
-  static Future<String> verifyToken(String userName,String token) async {
+  static Future<String?> verifyToken(String userName,String token) async {
     String? response = "";
     try {
       response = await mirrorFlyMethodChannel.invokeMethod<String>('verifyToken', {"userName": userName,"googleToken":token});
       debugPrint("verifyToken Result ==> $response");
-      return response.checkNull();
+      return response;
     } on PlatformException catch (e) {
       debugPrint("Platform Exception ===> $e");
       rethrow;
@@ -698,7 +1244,7 @@ class FlyChat {
       debugPrint('RESULT ==> $re');
       return re;
     } on PlatformException catch (e) {
-      mirrorFlyLog("er",e.toString());
+      debugPrint("er"+e.toString());
       return re;
     }
   }
@@ -720,6 +1266,35 @@ class FlyChat {
   static Stream<dynamic> get onLeftFromGroup => onLeftFromGroup_channel.receiveBroadcastStream().cast();
   static Stream<dynamic> get onGroupNotificationMessage => onGroupNotificationMessage_channel.receiveBroadcastStream().cast();
   static Stream<dynamic> get onGroupDeletedLocally => onGroupDeletedLocally_channel.receiveBroadcastStream().cast();
+  
+  static Stream<dynamic> get blockedThisUser => blockedThisUser_channel.receiveBroadcastStream().cast();
+  static Stream<dynamic> get myProfileUpdated => myProfileUpdated_channel.receiveBroadcastStream().cast();
+  static Stream<dynamic> get onAdminBlockedOtherUser => onAdminBlockedOtherUser_channel.receiveBroadcastStream().cast();
+  static Stream<dynamic> get onAdminBlockedUser => onAdminBlockedUser_channel.receiveBroadcastStream().cast();
+  static Stream<dynamic> get onContactSyncComplete => onContactSyncComplete_channel.receiveBroadcastStream().cast();
+  static Stream<dynamic> get onLoggedOut => onLoggedOut_channel.receiveBroadcastStream().cast();
+  static Stream<dynamic> get unblockedThisUser => unblockedThisUser_channel.receiveBroadcastStream().cast();
+  static Stream<dynamic> get userBlockedMe => userBlockedMe_channel.receiveBroadcastStream().cast();
+  static Stream<dynamic> get userCameOnline => userCameOnline_channel.receiveBroadcastStream().cast();
+  static Stream<dynamic> get userDeletedHisProfile => userDeletedHisProfile_channel.receiveBroadcastStream().cast();
+  static Stream<dynamic> get userProfileFetched => userProfileFetched_channel.receiveBroadcastStream().cast();
+  static Stream<dynamic> get userUnBlockedMe => userUnBlockedMe_channel.receiveBroadcastStream().cast();
+  static Stream<dynamic> get userUpdatedHisProfile => userUpdatedHisProfile_channel.receiveBroadcastStream().cast();
+  static Stream<dynamic> get userWentOffline => userWentOffline_channel.receiveBroadcastStream().cast();
+  static Stream<dynamic> get usersIBlockedListFetched => usersIBlockedListFetched_channel.receiveBroadcastStream().cast();
+  static Stream<dynamic> get usersWhoBlockedMeListFetched => usersWhoBlockedMeListFetched_channel.receiveBroadcastStream().cast();
+  static Stream<dynamic> get onConnected => onConnected_channel.receiveBroadcastStream().cast();
+  static Stream<dynamic> get onDisconnected => onDisconnected_channel.receiveBroadcastStream().cast();
+  static Stream<dynamic> get onConnectionNotAuthorized => onConnectionNotAuthorized_channel.receiveBroadcastStream().cast();
+  static Stream<dynamic> get connectionFailed => connectionFailed_channel.receiveBroadcastStream().cast();
+  static Stream<dynamic> get connectionSuccess => connectionSuccess_channel.receiveBroadcastStream().cast();
+  static Stream<dynamic> get onWebChatPasswordChanged => onWebChatPasswordChanged_channel.receiveBroadcastStream().cast();
+  static Stream<dynamic> get setTypingStatus => setTypingStatus_channel.receiveBroadcastStream().cast();
+  static Stream<dynamic> get onChatTypingStatus => onChatTypingStatus_channel.receiveBroadcastStream().cast();
+  static Stream<dynamic> get onGroupTypingStatus => onGroupTypingStatus_channel.receiveBroadcastStream().cast();
+  static Stream<dynamic> get onFailure => onFailure_channel.receiveBroadcastStream().cast();
+  static Stream<dynamic> get onProgressChanged => onProgressChanged_channel.receiveBroadcastStream().cast();
+  static Stream<dynamic> get onSuccess => onSuccess_channel.receiveBroadcastStream().cast();
 
   static Future<String?> imagePath(String imgurl) async {
     var re = "";
@@ -729,7 +1304,7 @@ class FlyChat {
       debugPrint('RESULT ==> $result');
       return result;
     } on PlatformException catch (e) {
-      mirrorFlyLog("er",e.toString());
+      debugPrint("er"+e.toString());
       return re;
     }
   }
@@ -742,10 +1317,10 @@ class FlyChat {
         "name": name,
         "email": email,
       });
-      mirrorFlyLog('RESULT', '$result');
+      debugPrint('RESULT $result');
       return result;
     } on PlatformException catch (e) {
-      mirrorFlyLog("er",e.toString());
+      debugPrint("er"+e.toString());
       return result;
     }
   }
@@ -755,10 +1330,10 @@ class FlyChat {
     try {
       final result = await mirrorFlyMethodChannel
           .invokeMethod("sent file", {"file": file, "jid": jid, "message": ""});
-      mirrorFlyLog('RESULT', '$result');
+      debugPrint('RESULT $result');
       return result;
     } on PlatformException catch (e) {
-      mirrorFlyLog("er",e.toString());
+      debugPrint("er"+e.toString());
       return re;
     }
   }
@@ -783,7 +1358,7 @@ class FlyChat {
     try {
       statusResponse =
       await mirrorFlyMethodChannel.invokeMethod('getProfileStatusList');
-      mirrorFlyLog("statuslist","$statusResponse");
+      debugPrint("statuslist "+"$statusResponse");
       return statusResponse;
     } on PlatformException catch (e) {
       debugPrint("Platform Exception ===> $e");
@@ -804,7 +1379,7 @@ class FlyChat {
       rethrow;
     }
   }
-  static void insertDefaultStatusToUser() async{
+  /*static void insertDefaultStatusToUser() async{
     try {
       await mirrorFlyMethodChannel.invokeMethod('getStatusList').then((value) {
         mirrorFlyLog("status list", "$value");
@@ -847,7 +1422,7 @@ class FlyChat {
     } on Exception catch(er){
       debugPrint("Exception ==> $er");
     }
-  }
+  }*/
   static Future<dynamic> updateMyProfile(String name, String email,String mobile, String status,String? image) async {//updateProfile
     dynamic profileResponse;
     try {
@@ -868,7 +1443,7 @@ class FlyChat {
     try {
       profileResponse = await mirrorFlyMethodChannel.invokeMethod('getUserProfile',{"jid":jid,"server":fromserver,"saveasfriend":saveasfriend});
       debugPrint("profile Result ==> $profileResponse");
-      insertDefaultStatusToUser();
+      //insertDefaultStatusToUser();
       return profileResponse;
     }on PlatformException catch (e){
       debugPrint("Platform Exception ===> $e");
@@ -1519,6 +2094,21 @@ class FlyChat {
     }
   }
 
+  static Future<dynamic> forwardMessages(List<String> messageIds, String tojid,String chattype) async {//forwardMessage
+    dynamic forwardMessageResponse;
+    try {
+      forwardMessageResponse = await mirrorFlyMethodChannel.invokeMethod('forwardMessages', { "message_ids" : messageIds, "to_jid": tojid,"chat_type":chattype});
+      debugPrint("forwardMessages Response ==> $forwardMessageResponse");
+      return forwardMessageResponse;
+    }on PlatformException catch (e){
+      debugPrint("Platform Exception ===> $e");
+      rethrow;
+    } on Exception catch(error){
+      debugPrint("Exception ==> $error");
+      rethrow;
+    }
+  }
+
   static Future<dynamic> createGroup(String groupname, List<String> userList,String image) async {
     dynamic response;
     try {
@@ -1626,7 +2216,7 @@ class FlyChat {
 
   static exportChatConversationToEmail(String jid) async {
     try {
-      await mirrorFlyMethodChannel.invokeMethod('exportChat', {"jid" : jid });
+      await mirrorFlyMethodChannel.invokeMethod('exportChatConversationToEmail', {"jid" : jid });
     }on PlatformException catch (e){
       debugPrint("Platform Exception ===> $e");
       rethrow;
@@ -1781,9 +2371,9 @@ class FlyChat {
     }
   }
 
-  static updateChatMuteStatus(String jid,bool checked) async {//groupMute
+  static copyTextMessages(List<String> messageIds) async {
     try {
-      await mirrorFlyMethodChannel.invokeMethod('updateChatMuteStatus', {"jid" : jid,"checked":checked });
+      await mirrorFlyMethodChannel.invokeMethod('copyTextMessages', {"messageidlist" : messageIds });
     }on PlatformException catch (e){
       debugPrint("Platform Exception ===> $e");
       rethrow;
@@ -1793,10 +2383,9 @@ class FlyChat {
     }
   }
 
-  static copyTextMessages(String messageId) async {
-    List<String> messageIds = [messageId];
+  static saveUnsentMessage(String jid, String message) async {
     try {
-      await mirrorFlyMethodChannel.invokeMethod('copy_text_messages', {"message_id_list" : messageIds });
+      await mirrorFlyMethodChannel.invokeMethod('saveUnsentMessage', {"jid" : jid,"message":message });
     }on PlatformException catch (e){
       debugPrint("Platform Exception ===> $e");
       rethrow;

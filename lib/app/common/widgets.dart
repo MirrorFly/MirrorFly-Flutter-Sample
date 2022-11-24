@@ -101,7 +101,7 @@ class ImageNetwork extends GetView<MainController> {
 
   @override
   Widget build(BuildContext context) {
-    var authToken = controller.authToken;
+    //var authToken = controller.authToken;
     // mirrorFlyLog("MirrorFly Auth", authToken.value);
     // mirrorFlyLog("Image URL", url);
     if (url.isEmpty) {
