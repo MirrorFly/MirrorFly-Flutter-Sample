@@ -3,7 +3,6 @@ import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
 
 import '../../../common/constants.dart';
-import '../../../model/userListModel.dart';
 import 'package:flysdk/flysdk.dart';
 import '../../../routes/app_pages.dart';
 

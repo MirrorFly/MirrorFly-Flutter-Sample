@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
-import '../../../model/chatMessageModel.dart';
 import 'package:flysdk/flysdk.dart';
 
 class MessageInfoController extends GetxController {

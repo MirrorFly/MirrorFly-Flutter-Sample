@@ -4,7 +4,6 @@ import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
 import 'package:mirror_fly_demo/app/data/session_management.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
-import 'package:mirror_fly_demo/app/model/web_login_model.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 
 import 'package:flysdk/flysdk.dart';

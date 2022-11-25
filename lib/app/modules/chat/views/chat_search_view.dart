@@ -9,8 +9,8 @@ import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../../common/constants.dart';
-import '../../../model/chatMessageModel.dart';
 import '../../../routes/app_pages.dart';
+import 'package:flysdk/flysdk.dart';
 
 class ChatSearchView extends GetView<ChatController> {
   const ChatSearchView({super.key});

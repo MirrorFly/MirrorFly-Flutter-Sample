@@ -6,9 +6,6 @@ import 'package:mirror_fly_demo/app/data/helper.dart';
 import 'package:flysdk/flysdk.dart';
 
 import '../../../common/de_bouncer.dart';
-import '../../../model/group_members_model.dart';
-import '../../../model/recent_chat.dart';
-import '../../../model/userListModel.dart';
 
 class ForwardChatController extends GetxController {
 

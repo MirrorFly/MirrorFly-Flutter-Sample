@@ -3,7 +3,8 @@ import 'package:mirror_fly_demo/app/data/helper.dart';
 
 import '../../common/constants.dart';
 import '../../common/widgets.dart';
-import '../../model/recent_chat.dart';
+import 'package:flysdk/flysdk.dart';
+
 
 Widget searchHeader(String? type, String count, BuildContext context) {
   return Container(

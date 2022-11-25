@@ -4,7 +4,6 @@ import 'package:focus_detector/focus_detector.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
-import 'package:mirror_fly_demo/app/model/recent_chat.dart';
 import 'package:mirror_fly_demo/app/modules/dashboard/widgets.dart';
 
 import '../../../common/widgets.dart';

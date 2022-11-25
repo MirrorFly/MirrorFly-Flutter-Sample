@@ -4,7 +4,7 @@ import 'package:get/get.dart';
 import '../../../common/constants.dart';
 import '../../../common/main_controller.dart';
 import '../../../data/helper.dart';
-import '../../../model/chatMessageModel.dart';
+import 'package:flysdk/flysdk.dart';
 
 class MessageHeader extends StatefulWidget {
   const MessageHeader({Key? key, required this.chatList, required this.isTapEnabled}) : super(key: key);

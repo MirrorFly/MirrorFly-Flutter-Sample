@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 
 import 'package:get/get.dart';
-import 'package:mirror_fly_demo/app/model/chatMessageModel.dart';
 
 import '../../../common/constants.dart';
 import '../../chat/views/message_content.dart';
 import '../../chat/views/starred_message_header.dart';
 import '../controllers/starred_messages_controller.dart';
+import 'package:flysdk/flysdk.dart';
 
 class StarredMessagesView extends GetView<StarredMessagesController> {
   const StarredMessagesView({Key? key}) : super(key: key);

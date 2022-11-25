@@ -4,7 +4,6 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:flysdk/flysdk.dart';
 
-import '../../../model/chatMessageModel.dart';
 
 class StarredMessagesController extends GetxController {
 

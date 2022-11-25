@@ -9,7 +9,7 @@ import 'package:mirror_fly_demo/app/data/helper.dart';
 import 'package:flysdk/flysdk.dart';
 
 import '../../../common/crop_image.dart';
-import '../../../model/userListModel.dart';
+import 'package:flysdk/flysdk.dart';
 import '../../../routes/app_pages.dart';
 import '../views/name_change_view.dart';
 

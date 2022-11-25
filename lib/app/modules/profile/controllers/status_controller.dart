@@ -2,7 +2,6 @@ import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
-import 'package:mirror_fly_demo/app/model/statusModel.dart';
 
 import '../../../common/constants.dart';
 import '../../../data/helper.dart';

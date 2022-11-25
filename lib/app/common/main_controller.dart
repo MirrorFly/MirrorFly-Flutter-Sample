@@ -12,7 +12,6 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../data/permissions.dart';
-import '../model/chatMessageModel.dart';
 import 'package:flysdk/flysdk.dart';
 
 class MainController extends GetxController {
