@@ -2,7 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
-import 'package:mirror_fly_demo/app/nativecall/fly_chat.dart';
+import 'package:flysdk/flysdk.dart';
 
 import '../../../model/chatMessageModel.dart';
 

@@ -7,7 +7,7 @@ import 'package:mirror_fly_demo/app/common/constants.dart';
 import 'package:mirror_fly_demo/app/data/session_management.dart';
 import 'package:mirror_fly_demo/app/model/recent_chat.dart';
 import 'package:mirror_fly_demo/app/model/userListModel.dart';
-import 'package:mirror_fly_demo/app/nativecall/fly_chat.dart';
+import 'package:flysdk/flysdk.dart';
 import 'package:intl/intl.dart';
 
 import '../../../model/chatMessageModel.dart';

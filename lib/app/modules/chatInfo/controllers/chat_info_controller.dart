@@ -4,7 +4,7 @@ import 'package:mirror_fly_demo/app/data/helper.dart';
 
 import '../../../common/constants.dart';
 import '../../../model/userListModel.dart';
-import '../../../nativecall/fly_chat.dart';
+import 'package:flysdk/flysdk.dart';
 import '../../../routes/app_pages.dart';
 
 class ChatInfoController extends GetxController {

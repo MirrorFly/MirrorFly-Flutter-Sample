@@ -15,7 +15,7 @@ import 'package:mirror_fly_demo/app/routes/app_pages.dart';
 import '../../../common/crop_image.dart';
 import '../../../model/profile_model.dart';
 import '../../../model/statusModel.dart';
-import '../../../nativecall/fly_chat.dart';
+import 'package:flysdk/flysdk.dart';
 
 class ProfileController extends GetxController {
   TextEditingController profileName = TextEditingController();

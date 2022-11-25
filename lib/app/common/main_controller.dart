@@ -13,7 +13,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../data/permissions.dart';
 import '../model/chatMessageModel.dart';
-import '../nativecall/fly_chat.dart';
+import 'package:flysdk/flysdk.dart';
 
 class MainController extends GetxController {
   var authToken = "".obs;

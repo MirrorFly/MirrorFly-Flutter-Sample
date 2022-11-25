@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
-import 'package:mirror_fly_demo/app/nativecall/fly_chat.dart';
+import 'package:flysdk/flysdk.dart';
 
 import '../../../../common/constants.dart';
 
