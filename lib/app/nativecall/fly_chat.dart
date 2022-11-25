@@ -11,7 +11,7 @@ class FlyChat {
   static const EventChannel MEDIA_STATUS_UPDATED_CHANNEL = EventChannel('contus.mirrorfly/onMediaStatusUpdated');
   static const EventChannel UPLOAD_DOWNLOAD_PROGRESS_CHANGED_CHANNEL = EventChannel('contus.mirrorfly/onUploadDownloadProgressChanged');
   static const EventChannel SHOW_UPDATE_CANCEL_NOTIFICTION_CHANNEL = EventChannel('contus.mirrorfly/showOrUpdateOrCancelNotification');
-  
+
   static const EventChannel onGroupProfileFetched_channel = EventChannel('contus.mirrorfly/onGroupProfileFetched');
   static const EventChannel onNewGroupCreated_channel = EventChannel('contus.mirrorfly/onNewGroupCreated');
   static const EventChannel onGroupProfileUpdated_channel = EventChannel('contus.mirrorfly/onGroupProfileUpdated');
@@ -291,6 +291,21 @@ class FlyChat {
     }
   }
 
+  static Future<bool?> deleteBusyStatus(num id, String status,bool isCurrentStatus) async {
+    bool? res;
+    try {
+      res = await mirrorFlyMethodChannel
+          .invokeMethod<bool>('deleteBusyStatus',{"id":id,"status":status,"isCurrentStatus":isCurrentStatus,});
+      return res;
+    } on PlatformException catch (e) {
+      debugPrint("Platform Exception ===> $e");
+      rethrow;
+    } on Exception catch (error) {
+      debugPrint("Exception ==> $error");
+      rethrow;
+    }
+  }
+
   static Future<String?> mediaEndPoint() async {
     String? response;
     try {
@@ -372,6 +387,36 @@ class FlyChat {
     try {
       res = await mirrorFlyMethodChannel
           .invokeMethod<int>('getMembersCountOfGroup',{"groupJid":groupJid});
+      return res;
+    } on PlatformException catch (e) {
+      debugPrint("Platform Exception ===> $e");
+      rethrow;
+    } on Exception catch (error) {
+      debugPrint("Exception ==> $error");
+      rethrow;
+    }
+  }
+
+  static Future<bool?> doesFetchingMembersListFromServedRequired(String groupJid) async {
+    bool? res;
+    try {
+      res = await mirrorFlyMethodChannel
+          .invokeMethod<bool>('doesFetchingMembersListFromServedRequired',{"groupJid":groupJid});
+      return res;
+    } on PlatformException catch (e) {
+      debugPrint("Platform Exception ===> $e");
+      rethrow;
+    } on Exception catch (error) {
+      debugPrint("Exception ==> $error");
+      rethrow;
+    }
+  }
+
+  static Future<bool?> isHideLastSeenEnabled() async {
+    bool? res;
+    try {
+      res = await mirrorFlyMethodChannel
+          .invokeMethod<bool>('isHideLastSeenEnabled');
       return res;
     } on PlatformException catch (e) {
       debugPrint("Platform Exception ===> $e");
@@ -1121,11 +1166,11 @@ class FlyChat {
     }
   }
 
-  static Future<dynamic> getJid(String username) async {//getuserjid
-    dynamic userJID;
+  static Future<String?> getJid(String username) async {//getuserjid
+    String? userJID;
     try {
       userJID = await mirrorFlyMethodChannel
-          .invokeMethod('get_jid', {"username": username});
+          .invokeMethod<String>('get_jid', {"username": username});
       debugPrint("User JID Result ==> $userJID");
       return userJID;
     } on PlatformException catch (e) {
@@ -1808,8 +1853,8 @@ class FlyChat {
     }
   }
 
-  static Future<dynamic> clearChat(String jid, String chatType, bool clearExceptStarred) async {
-    dynamic clearChatResponse;
+  static Future<bool> clearChat(String jid, String chatType, bool clearExceptStarred) async {
+    bool clearChatResponse;
     try {
       clearChatResponse = await mirrorFlyMethodChannel.invokeMethod('clear_chat',{ "jid" : jid, "chat_type" : chatType, "clear_except_starred" : clearExceptStarred});
       debugPrint("clear chat Response ==> $clearChatResponse");
@@ -1855,10 +1900,10 @@ class FlyChat {
   }
 
   //Handled deleteMessagesForEveryone and deleteMessagesForMe in same function. so Named Commonly
-  static Future<dynamic> deleteMessagesForMe(String jid,String chatType, List<String> messageIds,bool? isMediaDelete) async {
-    dynamic messageDeleteResponse;
+  static Future<bool?> deleteMessagesForMe(String jid,String chatType, List<String> messageIds,bool? isMediaDelete) async {
+    bool? messageDeleteResponse;
     try {
-      messageDeleteResponse = await mirrorFlyMethodChannel.invokeMethod('deleteMessagesForMe', { "jid" : jid, "chat_type" : chatType,"isMediaDelete":isMediaDelete, "message_ids": messageIds});
+      messageDeleteResponse = await mirrorFlyMethodChannel.invokeMethod<bool>('deleteMessagesForMe', { "jid" : jid, "chat_type" : chatType,"isMediaDelete":isMediaDelete, "message_ids": messageIds});
       debugPrint("deleteMessagesForMe Response ==> $messageDeleteResponse");
       return messageDeleteResponse;
     }on PlatformException catch (e){
@@ -1869,10 +1914,10 @@ class FlyChat {
       rethrow;
     }
   }
-  static Future<dynamic> deleteMessagesForEveryone(String jid,String chatType, List<String> messageIds,bool? isMediaDelete) async {
-    dynamic messageDeleteResponse;
+  static Future<bool?> deleteMessagesForEveryone(String jid,String chatType, List<String> messageIds,bool? isMediaDelete) async {
+    bool? messageDeleteResponse;
     try {
-      messageDeleteResponse = await mirrorFlyMethodChannel.invokeMethod('deleteMessagesForEveryone', { "jid" : jid, "chat_type" : chatType,"isMediaDelete":isMediaDelete, "message_ids": messageIds});
+      messageDeleteResponse = await mirrorFlyMethodChannel.invokeMethod<bool>('deleteMessagesForEveryone', { "jid" : jid, "chat_type" : chatType,"isMediaDelete":isMediaDelete, "message_ids": messageIds});
       debugPrint("deleteMessagesForEveryone Response ==> $messageDeleteResponse");
       return messageDeleteResponse;
     }on PlatformException catch (e){
