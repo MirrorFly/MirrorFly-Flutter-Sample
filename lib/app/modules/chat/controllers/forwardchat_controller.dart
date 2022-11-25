@@ -261,7 +261,7 @@ class ForwardChatController extends GetxController {
   forwardMessages() {
     if(forwardMessageIds.isNotEmpty && selectedJids.value.isNotEmpty) {
       FlyChat.forwardMessagesToMultipleUsers(forwardMessageIds, selectedJids.value)
-          .then((value) {
+          .then((values) {
         // debugPrint("to chat profile ==> ${selectedUsersList[0].toJson().toString()}");
         FlyChat.getProfileDetails(selectedJids.value.last, false).then((value) {
           if (value != null) {
