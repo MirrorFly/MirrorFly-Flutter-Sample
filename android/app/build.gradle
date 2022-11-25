@@ -220,6 +220,7 @@ dependencies {
     // Add the dependency for the Firebase SDK for Google Analytics
     // When using the BoM, don't specify versions in Firebase dependencies
     implementation 'com.google.firebase:firebase-analytics'
+    implementation 'com.google.firebase:firebase-messaging:23.1.0'
 
     //Dagger Dependencies
     api 'com.google.dagger:dagger:2.40.5'

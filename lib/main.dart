@@ -9,6 +9,7 @@ import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/common/app_theme.dart';
 import 'package:mirror_fly_demo/app/common/main_controller.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
+import 'package:mirror_fly_demo/app/data/pushnotification.dart';
 import 'package:mirror_fly_demo/app/modules/dashboard/bindings/dashboard_binding.dart';
 import 'package:mirror_fly_demo/app/modules/login/bindings/login_binding.dart';
 import 'app/data/session_management.dart';
@@ -22,6 +23,7 @@ import 'package:google_maps_flutter_platform_interface/google_maps_flutter_platf
 
 bool shouldUseFirebaseEmulator = false;
 Future<void> main() async {
+  PushNotifications.initBackground();
 // Require Hybrid Composition mode on Android.
   final GoogleMapsFlutterPlatform mapsImplementation =
       GoogleMapsFlutterPlatform.instance;

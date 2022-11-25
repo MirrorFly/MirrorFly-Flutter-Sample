@@ -15,9 +15,10 @@ import com.contusflysdk.api.ChatManager
 import com.contusflysdk.api.GroupManager
 import com.contusflysdk.api.contacts.ContactManager
 import com.contusflysdk.api.utils.NameHelper
+import io.flutter.app.FlutterApplication
 
 
-class MirrorFlyApplication : Application() {
+class MirrorFlyApplication : FlutterApplication() {
 
 
     override fun onCreate() {
