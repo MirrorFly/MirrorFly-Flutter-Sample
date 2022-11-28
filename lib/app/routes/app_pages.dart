@@ -1,7 +1,6 @@
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/modules/chat/views/forwardchat_view.dart';
 
-import '../model/userListModel.dart';
 import '../modules/camera_pick/bindings/camera_pick_binding.dart';
 import '../modules/camera_pick/views/camera_pick_view.dart';
 import '../modules/chat/bindings/chat_binding.dart';
@@ -66,6 +65,8 @@ import '../modules/video_preview/views/video_player_view.dart';
 import '../modules/video_preview/views/video_preview_view.dart';
 import '../modules/view_all_media/bindings/view_all_media_binding.dart';
 import '../modules/view_all_media/views/view_all_media_view.dart';
+
+import 'package:flysdk/flysdk.dart';
 
 part 'app_routes.dart';
 

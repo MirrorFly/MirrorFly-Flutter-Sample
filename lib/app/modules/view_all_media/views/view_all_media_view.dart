@@ -7,9 +7,9 @@ import 'package:mirror_fly_demo/app/common/widgets.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
 
 import '../../../common/constants.dart';
-import '../../../model/chatMessageModel.dart';
-import '../../../model/group_media_model.dart';
 import '../controllers/view_all_media_controller.dart';
+import 'package:flysdk/flysdk.dart';
+
 
 class ViewAllMediaView extends GetView<ViewAllMediaController> {
   const ViewAllMediaView({Key? key}) : super(key: key);

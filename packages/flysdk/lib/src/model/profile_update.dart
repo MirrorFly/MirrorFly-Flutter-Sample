@@ -13,12 +13,12 @@ class ProfileUpdate {
     this.status,
   });
 
-  Data? data;
+  ProData? data;
   String? message;
   bool? status;
 
   factory ProfileUpdate.fromJson(Map<String, dynamic> json) => ProfileUpdate(
-    data: json["data"] == null ? null : Data.fromJson(json["data"]),
+    data: json["data"] == null ? null : ProData.fromJson(json["data"]),
     message: json["message"],
     status: json["status"],
   );
@@ -30,8 +30,8 @@ class ProfileUpdate {
   };
 }
 
-class Data {
-  Data({
+class ProData {
+  ProData({
     this.email,
     this.image,
     this.mobileNumber,
@@ -47,7 +47,7 @@ class Data {
   String? nickName;
   String? status;
 
-  factory Data.fromJson(Map<String, dynamic> json) => Data(
+  factory ProData.fromJson(Map<String, dynamic> json) => ProData(
     email: json["email"],
     image: json["image"],
     mobileNumber: json["mobileNumber"],

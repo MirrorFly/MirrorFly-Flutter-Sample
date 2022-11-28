@@ -3,6 +3,7 @@
 //     final chatMessageModel = chatMessageModelFromJson(jsonString);
 
 import 'dart:convert';
+import 'package:flysdk/flysdk.dart';
 
 List<ChatMessageModel> chatMessageModelFromJson(String str) => List<ChatMessageModel>.from(json.decode(str).map((x) => ChatMessageModel.fromJson(x)));
 
@@ -12,6 +13,7 @@ String chatMessageModelToJson(List<ChatMessageModel> data) => json.encode(List<d
 ChatMessageModel sendMessageModelFromJson(String str) => ChatMessageModel.fromJson(json.decode(str));
 
 String sendMessageModelToJson(ChatMessageModel data) => json.encode(data.toJson());
+
 
 class ChatMessageModel {
   ChatMessageModel({
@@ -254,7 +256,7 @@ class MediaChatMessage {
   };
 }
 
-class MessageCustomField {
+/*class MessageCustomField {
   MessageCustomField();
 
   factory MessageCustomField.fromJson(Map<String, dynamic> json) => MessageCustomField(
@@ -262,9 +264,9 @@ class MessageCustomField {
 
   Map<String, dynamic> toJson() => {
   };
-}
+}*/
 
-class MessageStatus {
+/*class MessageStatus {
   MessageStatus({
     required this.status,
   });
@@ -278,7 +280,7 @@ class MessageStatus {
   Map<String, dynamic> toJson() => {
     "status": status,
   };
-}
+}*/
 class ReplyParentChatMessage {
   ReplyParentChatMessage({
     required this.chatUserJid,

@@ -7,8 +7,8 @@ import 'package:mirror_fly_demo/app/common/main_controller.dart';
 
 import '../../../common/constants.dart';
 import '../../../data/helper.dart';
-import '../../../model/chatMessageModel.dart';
 import '../../../routes/app_pages.dart';
+import 'package:flysdk/flysdk.dart';
 
 class MessageContent extends StatefulWidget {
    const MessageContent({Key? key, required this.chatList, required this.isTapEnabled}) : super(key: key);

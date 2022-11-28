@@ -1293,7 +1293,7 @@ class FlyChat {
       return re;
     }
   }
-  
+
   static Stream<dynamic> get onMessageReceived => MESSAGE_ONRECEIVED_CHANNEL.receiveBroadcastStream().cast();
   static Stream<dynamic> get onMessageStatusUpdated => MESSAGE_STATUS_UPDATED_CHANNEL.receiveBroadcastStream().cast();
   static Stream<dynamic> get onMediaStatusUpdated => MEDIA_STATUS_UPDATED_CHANNEL.receiveBroadcastStream().cast();
@@ -1311,7 +1311,7 @@ class FlyChat {
   static Stream<dynamic> get onLeftFromGroup => onLeftFromGroup_channel.receiveBroadcastStream().cast();
   static Stream<dynamic> get onGroupNotificationMessage => onGroupNotificationMessage_channel.receiveBroadcastStream().cast();
   static Stream<dynamic> get onGroupDeletedLocally => onGroupDeletedLocally_channel.receiveBroadcastStream().cast();
-  
+
   static Stream<dynamic> get blockedThisUser => blockedThisUser_channel.receiveBroadcastStream().cast();
   static Stream<dynamic> get myProfileUpdated => myProfileUpdated_channel.receiveBroadcastStream().cast();
   static Stream<dynamic> get onAdminBlockedOtherUser => onAdminBlockedOtherUser_channel.receiveBroadcastStream().cast();
@@ -1777,7 +1777,7 @@ class FlyChat {
       rethrow;
     }
   }
-  
+
   //Recent Chat Search
 
   static Future<dynamic> getRecentChatListIncludingArchived() async {//filteredRecentChatList

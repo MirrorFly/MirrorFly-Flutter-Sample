@@ -9,13 +9,10 @@ import 'package:image_picker/image_picker.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
 import 'package:mirror_fly_demo/app/data/session_management.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
-import 'package:mirror_fly_demo/app/model/profile_update.dart';
 import 'package:mirror_fly_demo/app/routes/app_pages.dart';
 
 import '../../../common/crop_image.dart';
-import '../../../model/profile_model.dart';
-import '../../../model/statusModel.dart';
-import '../../../nativecall/fly_chat.dart';
+import 'package:flysdk/flysdk.dart';
 
 class ProfileController extends GetxController {
   TextEditingController profileName = TextEditingController();
@@ -81,7 +78,7 @@ class ProfileController extends GetxController {
               toToast(data.message.toString());
               if (data.status!) {
                 changed(false);
-                var userProfileData = Data(
+                var userProfileData = ProData(
                     email: profileEmail.text.toString(),
                     image: userImgUrl.value,
                     mobileNumber: profileMobile.text,

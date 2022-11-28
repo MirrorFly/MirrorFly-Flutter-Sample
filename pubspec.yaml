@@ -55,6 +55,10 @@ dependencies:
   path: ^1.8.2
   camera: ^0.10.0+4
 
+  flysdk:
+    path: packages/flysdk
+
+
 dev_dependencies: 
   flutter_lints: 2.0.1
   flutter_test: 

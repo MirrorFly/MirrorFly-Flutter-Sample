@@ -4,6 +4,8 @@
 
 import 'dart:convert';
 
+import '../../flysdk.dart';
+
 CheckModel checkModelFromJson(String str) => CheckModel.fromJson(json.decode(str));
 
 String checkModelToJson(CheckModel data) => json.encode(data.toJson());
@@ -110,6 +112,7 @@ class CheckModel {
   };
 }
 
+/*
 class MediaChatMessage {
   MediaChatMessage({
     required this.isAudioRecorded,
@@ -181,8 +184,9 @@ class MediaChatMessage {
     "messageType": messageType,
   };
 }
+*/
 
-class MessageCustomField {
+/*class MessageCustomField {
   MessageCustomField();
 
   factory MessageCustomField.fromJson(Map<String, dynamic> json) => MessageCustomField(
@@ -190,9 +194,9 @@ class MessageCustomField {
 
   Map<String, dynamic> toJson() => {
   };
-}
+}*/
 
-class MessageStatus {
+/*class MessageStatus {
   MessageStatus({
     required this.status,
   });
@@ -206,4 +210,4 @@ class MessageStatus {
   Map<String, dynamic> toJson() => {
     "status": status,
   };
-}
+}*/

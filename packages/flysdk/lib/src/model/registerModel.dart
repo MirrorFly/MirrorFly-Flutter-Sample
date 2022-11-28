@@ -49,7 +49,7 @@ class Data {
   String? password;
   bool? isExisting;
   bool? isProfileUpdated;
-  Config? config;
+  RegConfig? config;
 
   factory Data.fromJson(Map<String, dynamic> json) => Data(
     token: json["token"],
@@ -57,7 +57,7 @@ class Data {
     password: json["password"],
     isExisting: json["isExisting"],
     isProfileUpdated: json["isProfileUpdated"],
-    config: Config.fromJson(json["config"]),
+    config: RegConfig.fromJson(json["config"]),
   );
 
   Map<String, dynamic> toJson() => {
@@ -70,8 +70,8 @@ class Data {
   };
 }
 
-class Config {
-  Config({
+class RegConfig {
+  RegConfig({
      this.domain,
      this.videoLimit,
      this.audioLimit,
@@ -131,7 +131,7 @@ class Config {
   String? iv;
   String? ivProfile;
 
-  factory Config.fromJson(Map<String, dynamic> json) => Config(
+  factory RegConfig.fromJson(Map<String, dynamic> json) => RegConfig(
     domain: json["domain"],
     videoLimit: json["videoLimit"],
     audioLimit: json["audioLimit"],

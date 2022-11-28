@@ -2,11 +2,10 @@ import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
-import 'package:mirror_fly_demo/app/model/statusModel.dart';
 
 import '../../../common/constants.dart';
 import '../../../data/helper.dart';
-import '../../../nativecall/fly_chat.dart';
+import 'package:flysdk/flysdk.dart';
 
 class StatusListController extends GetxController{
   var statusList = List<StatusData>.empty(growable: true).obs;
