@@ -18,7 +18,9 @@ class FlyMethodChannel{
                 FlySdkMethodCalls.registerUser(call: call, result: result)
             case "authtoken":
                 FlySdkMethodCalls.refreshAndGetAuthToken(call: call, result: result)
-            case "get_user_jid":
+            case "verifyToken":
+                FlySdkMethodCalls.verifyToken(call: call, result: result)
+            case "get_jid":
                 FlySdkMethodCalls.getJid(call: call, result: result)
             case "send_text_msg":
                 FlySdkMethodCalls.sendTextMessage(call: call, result: result)

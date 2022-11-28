@@ -13,6 +13,8 @@
 		97C146FC1CF9000F007C117D /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FA1CF9000F007C117D /* Main.storyboard */; };
 		97C146FE1CF9000F007C117D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FD1CF9000F007C117D /* Assets.xcassets */; };
 		97C147011CF9000F007C117D /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FF1CF9000F007C117D /* LaunchScreen.storyboard */; };
+		CE27092F2934A7B200F08803 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = CE27092E2934A7B200F08803 /* GoogleService-Info.plist */; };
+		CE2709312934BB9D00F08803 /* JsonSerializer.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE2709302934BB9C00F08803 /* JsonSerializer.swift */; };
 		CE3DE568291BD29600AC7AAA /* Commons.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE3DE567291BD29600AC7AAA /* Commons.swift */; };
 		CE5E9932291D0F9500BC0C14 /* FlyMethodChannel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE5E9931291D0F9500BC0C14 /* FlyMethodChannel.swift */; };
 		CE5E9934291D101500BC0C14 /* FlySdkMethodCalls.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE5E9933291D101500BC0C14 /* FlySdkMethodCalls.swift */; };
@@ -67,6 +69,8 @@
 		ABC62C3F5A4E0B80B03E4D7E /* Pods-Runner.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.debug.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.debug.xcconfig"; sourceTree = "<group>"; };
 		B117FE32A47E14CD067BA053 /* Pods-Runner.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.release.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.release.xcconfig"; sourceTree = "<group>"; };
 		C24F05AD5FAAF48F8A741070 /* Pods_Runner.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Runner.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		CE27092E2934A7B200F08803 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		CE2709302934BB9C00F08803 /* JsonSerializer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JsonSerializer.swift; sourceTree = "<group>"; };
 		CE3C3A112916677200545868 /* FlyNetwork.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = FlyNetwork.xcframework; path = ../../../../../Downloads/iOS_SDK/FlyNetwork.xcframework; sourceTree = "<group>"; };
 		CE3C3A122916677200545868 /* FlyCall.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = FlyCall.xcframework; path = ../../../../../Downloads/iOS_SDK/FlyCall.xcframework; sourceTree = "<group>"; };
 		CE3C3A132916677300545868 /* FlyXmpp.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = FlyXmpp.xcframework; path = ../../../../../Downloads/iOS_SDK/FlyXmpp.xcframework; sourceTree = "<group>"; };
@@ -123,6 +127,7 @@
 		97C146E51CF9000F007C117D = {
 			isa = PBXGroup;
 			children = (
+				CE27092E2934A7B200F08803 /* GoogleService-Info.plist */,
 				9740EEB11CF90186004384FC /* Flutter */,
 				97C146F01CF9000F007C117D /* Runner */,
 				97C146EF1CF9000F007C117D /* Products */,
@@ -142,6 +147,7 @@
 		97C146F01CF9000F007C117D /* Runner */ = {
 			isa = PBXGroup;
 			children = (
+				CE2709302934BB9C00F08803 /* JsonSerializer.swift */,
 				CE78BAF6291A2F1B00D23AFD /* Runner.entitlements */,
 				97C146FA1CF9000F007C117D /* Main.storyboard */,
 				97C146FD1CF9000F007C117D /* Assets.xcassets */,
@@ -239,6 +245,7 @@
 			files = (
 				97C147011CF9000F007C117D /* LaunchScreen.storyboard in Resources */,
 				3B3967161E833CAA004F5970 /* AppFrameworkInfo.plist in Resources */,
+				CE27092F2934A7B200F08803 /* GoogleService-Info.plist in Resources */,
 				97C146FE1CF9000F007C117D /* Assets.xcassets in Resources */,
 				97C146FC1CF9000F007C117D /* Main.storyboard in Resources */,
 			);
@@ -343,6 +350,7 @@
 				CE3DE568291BD29600AC7AAA /* Commons.swift in Sources */,
 				CE5E9932291D0F9500BC0C14 /* FlyMethodChannel.swift in Sources */,
 				1498D2341E8E89220040F4C2 /* GeneratedPluginRegistrant.m in Sources */,
+				CE2709312934BB9D00F08803 /* JsonSerializer.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -434,7 +442,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.mirrorfly.uikit.dev;
+				PRODUCT_BUNDLE_IDENTIFIER = com.mirrorfly.uikitflutter.dev;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;
@@ -569,7 +577,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.mirrorfly.uikit.dev;
+				PRODUCT_BUNDLE_IDENTIFIER = com.mirrorfly.uikitflutter.dev;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;
@@ -598,7 +606,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.mirrorfly.uikit.dev;
+				PRODUCT_BUNDLE_IDENTIFIER = com.mirrorfly.uikitflutter.dev;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;

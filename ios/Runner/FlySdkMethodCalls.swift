@@ -30,9 +30,14 @@ class FlySdkMethodCalls{
                 if isSuccess {
 
                     print("Register Response")
-                    print(Commons.json(from: data as Any)!)
+                
+                    let firstCategory = [
+                        "data": data,
+                        "is_new_user": data["newLogin"],
+                        "message" : "Register Trial API Success"
+                    ] as [String : Any]
                     
-                    result(Commons.json(from: data as Any))
+                    result(Commons.json(from: firstCategory))
                     
                 }else{
                     let error = data.getMessage()
@@ -50,7 +55,12 @@ class FlySdkMethodCalls{
     static func getJid(call: FlutterMethodCall, result: @escaping FlutterResult){
         let args = call.arguments as! Dictionary<String, Any>
         let userName = args["username"] as! String
-        
+        if(userName == nil){
+            result(FlutterError(code: "500",
+                                message: "User Name is Empty",
+                                    details: nil))
+            return
+        }
         do{
             try result(FlyUtils.getJid(from: userName))
         }catch let jidError{
@@ -121,6 +131,17 @@ class FlySdkMethodCalls{
         }
         
     }
+    
+    static func verifyToken(call: FlutterMethodCall, result: @escaping FlutterResult){
+        let args = call.arguments as! Dictionary<String, Any>
+        
+        let userName = args["userName"] as? String
+        let token = args["googleToken"] as? String ?? ""
+        
+        result("")
+        
+    }
+    
     static func getUserProfile(call: FlutterMethodCall, result: @escaping FlutterResult){
         let args = call.arguments as! Dictionary<String, Any>
         

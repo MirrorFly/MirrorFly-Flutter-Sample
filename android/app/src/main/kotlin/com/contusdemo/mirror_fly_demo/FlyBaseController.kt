@@ -2071,7 +2071,7 @@ open class FlyBaseController(activity: FlutterActivity) : MethodChannel.MethodCa
         val server = call.argument<Boolean>("server") ?: false
         val saveasfriend = call.argument<Boolean>("saveasfriend") ?: false
         Log.i(TAG, "JID==> $jid")
-        ContactManager.getUserProfile(jid, server, saveasfriend, object : FlyCallback {
+        ContactManager.getUserProfile(jid, server, saveasfriend, object : FlyCallback {//ContactManager.shared.getUserProfileDetails
             override fun flyResponse(
                 isSuccess: Boolean,
                 throwable: Throwable?,
