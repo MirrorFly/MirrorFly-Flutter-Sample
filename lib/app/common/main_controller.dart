@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
+import 'package:mirror_fly_demo/app/data/pushnotification.dart';
 import 'package:mirror_fly_demo/app/data/session_management.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -27,6 +28,7 @@ class MainController extends GetxController {
   @override
   void onInit() {
     super.onInit();
+    PushNotifications.init();
     getMediaEndpoint();
     uploadEndpoint(SessionManagement.getMediaEndPoint().checkNull());
     authToken(SessionManagement.getAuthToken().checkNull());
