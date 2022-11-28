@@ -13,9 +13,6 @@ import 'package:intl/intl.dart';
 import 'package:mirror_fly_demo/app/base_controller.dart';
 import 'package:mirror_fly_demo/app/data/session_management.dart';
 import 'package:mirror_fly_demo/app/data/permissions.dart';
-import 'package:mirror_fly_demo/app/model/chatMessageModel.dart';
-import 'package:mirror_fly_demo/app/model/group_members_model.dart';
-import 'package:mirror_fly_demo/app/nativecall/fly_chat.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
@@ -24,9 +21,9 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../../../common/constants.dart';
 import '../../../data/helper.dart';
-import '../../../model/check_model.dart' as check_model;
-import '../../../model/userListModel.dart';
 import '../../../routes/app_pages.dart';
+
+import 'package:flysdk/flysdk.dart' ;
 
 class ChatController extends GetxController with GetTickerProviderStateMixin, BaseController {
   var chatList = List<ChatMessageModel>.empty(growable: true).obs;
@@ -308,8 +305,8 @@ class ChatController extends GetxController with GetTickerProviderStateMixin, Ba
 
   getMedia(String mid) {
     return FlyChat.getMessageOfId(mid).then((value) {
-      check_model.CheckModel chatMessageModel =
-          check_model.checkModelFromJson(value);
+      CheckModel chatMessageModel =
+          checkModelFromJson(value);
       String thumbImage = chatMessageModel.mediaChatMessage.mediaThumbImage;
       thumbImage = thumbImage.replaceAll("\n", "");
       return thumbImage;

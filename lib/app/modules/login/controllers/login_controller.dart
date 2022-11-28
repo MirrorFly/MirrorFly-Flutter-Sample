@@ -5,13 +5,11 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
-import 'package:mirror_fly_demo/app/model/country_model.dart';
 import 'package:otp_text_field/otp_field.dart';
 
 import '../../../common/constants.dart';
 import '../../../data/session_management.dart';
-import '../../../model/registerModel.dart';
-import '../../../nativecall/fly_chat.dart';
+import 'package:flysdk/flysdk.dart';
 import '../../../routes/app_pages.dart';
 
 class LoginController extends GetxController {

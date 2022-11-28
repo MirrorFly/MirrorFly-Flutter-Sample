@@ -3,12 +3,9 @@ import 'package:get/get.dart';
 import 'package:meta/meta.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
-import 'package:mirror_fly_demo/app/nativecall/fly_chat.dart';
+import 'package:flysdk/flysdk.dart';
 
 import '../../../common/de_bouncer.dart';
-import '../../../model/group_members_model.dart';
-import '../../../model/recent_chat.dart';
-import '../../../model/userListModel.dart';
 
 class ForwardChatController extends GetxController {
 
@@ -264,7 +261,7 @@ class ForwardChatController extends GetxController {
   forwardMessages() {
     if(forwardMessageIds.isNotEmpty && selectedJids.value.isNotEmpty) {
       FlyChat.forwardMessagesToMultipleUsers(forwardMessageIds, selectedJids.value)
-          .then((value) {
+          .then((values) {
         // debugPrint("to chat profile ==> ${selectedUsersList[0].toJson().toString()}");
         FlyChat.getProfileDetails(selectedJids.value.last, false).then((value) {
           if (value != null) {

@@ -1,8 +1,7 @@
 import 'dart:convert';
 
 import 'package:mirror_fly_demo/app/common/constants.dart';
-
-import 'nativecall/fly_chat.dart';
+import 'package:flysdk/flysdk.dart';
 
 abstract class BaseController {
 

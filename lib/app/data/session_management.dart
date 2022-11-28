@@ -1,10 +1,9 @@
-
 import 'package:mirror_fly_demo/app/data/helper.dart';
-import 'package:mirror_fly_demo/app/model/registerModel.dart' as register;
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../common/constants.dart';
-import '../model/profile_update.dart';
+import 'package:flysdk/flysdk.dart'as register;
+import 'package:flysdk/src/model/profile_update.dart';
 
 
 class SessionManagement {
@@ -99,7 +98,7 @@ class SessionManagement {
     await _preferences.setString('userData', userData);*/
   }
 
-  static Future setCurrentUser(Data data) async {
+  static Future setCurrentUser(ProData data) async {
     data.toJson().forEach((key, value) async {
       await _preferences.setString(key, value.toString());
     });

@@ -1477,13 +1477,7 @@ open class FlyBaseController(activity: FlutterActivity) : MethodChannel.MethodCa
                 isMediaDelete,
                 object : ChatActionListener {
                     override fun onResponse(isSuccess: Boolean, message: String) {
-                        if (isSuccess) {
-                            Log.e("RESPONSE_CAPTURE", "===========================")
-                            DebugUtilis.v("ChatManager.deleteMessagesForMe", message)
-                            result.success(message)
-                        } else {
-                            result.error("500", "Unable to Delete the Chat", message)
-                        }
+                        result.success(isSuccess)
                     }
 
                 })
@@ -1503,13 +1497,7 @@ open class FlyBaseController(activity: FlutterActivity) : MethodChannel.MethodCa
                 isMediaDelete,
                 object : ChatActionListener {
                     override fun onResponse(isSuccess: Boolean, message: String) {
-                        if (isSuccess) {
-                            Log.e("RESPONSE_CAPTURE", "===========================")
-                            DebugUtilis.v("ChatManager.deleteMessagesForMe", message)
-                            result.success(message)
-                        } else {
-                            result.error("500", "Unable to Delete the Chat", message)
-                        }
+                        result.success(isSuccess)
                     }
 
                 })

@@ -3,11 +3,9 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
-import 'package:mirror_fly_demo/app/nativecall/fly_chat.dart';
+import 'package:flysdk/flysdk.dart';
 
 import '../../../common/widgets.dart';
-import '../../../model/chatMessageModel.dart';
-import '../../../model/userListModel.dart';
 import '../../starred_messages/controllers/starred_messages_controller.dart';
 
 class StarredMessageHeader extends StatefulWidget {

@@ -5,7 +5,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
-import 'package:mirror_fly_demo/app/nativecall/fly_chat.dart';
+import 'package:flysdk/flysdk.dart';
 import 'package:mirror_fly_demo/app/routes/app_pages.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
 

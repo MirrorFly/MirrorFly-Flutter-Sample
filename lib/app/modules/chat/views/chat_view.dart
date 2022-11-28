@@ -13,7 +13,6 @@ import 'package:marquee/marquee.dart';
 import 'package:mirror_fly_demo/app/common/widgets.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
 import 'package:mirror_fly_demo/app/data/permissions.dart';
-import 'package:mirror_fly_demo/app/model/chatMessageModel.dart';
 
 import 'package:mirror_fly_demo/app/routes/app_pages.dart';
 import 'package:swipe_to/swipe_to.dart';
@@ -23,6 +22,7 @@ import '../../../common/constants.dart';
 import '../../../widgets/custom_action_bar_icons.dart';
 import '../../../widgets/lottie_animation.dart';
 import '../controllers/chat_controller.dart';
+import 'package:flysdk/flysdk.dart';
 import 'dart:math' as math;
 
 

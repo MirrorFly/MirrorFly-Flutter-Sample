@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/common/main_controller.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
-import 'package:mirror_fly_demo/app/model/recent_chat.dart';
 import 'package:mirror_fly_demo/app/modules/dashboard/controllers/recent_chat_search_controller.dart';
 
 import '../../../common/constants.dart';
 import '../../../common/widgets.dart';
-import '../../../model/recent_search_model.dart';
 import '../widgets.dart';
+import 'package:flysdk/flysdk.dart';
+
 
 class RecentSearchView extends GetView<RecentChatSearchController> {
   const RecentSearchView({super.key});
