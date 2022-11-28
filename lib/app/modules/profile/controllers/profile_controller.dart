@@ -178,7 +178,7 @@ class ProfileController extends GetxController {
 
   static void insertDefaultStatusToUser() async{
     try {
-      await FlyChat.mirrorFlyMethodChannel.invokeMethod('getStatusList').then((value) {
+      await FlyChat.mirrorFlyMethodChannel.invokeMethod('getProfileStatusList').then((value) {
         mirrorFlyLog("status list", "$value");
         if (value != null) {
           var profileStatus = statusDataFromJson(value);

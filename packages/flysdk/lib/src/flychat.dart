@@ -1426,7 +1426,7 @@ class FlyChat {
   }
   /*static void insertDefaultStatusToUser() async{
     try {
-      await mirrorFlyMethodChannel.invokeMethod('getStatusList').then((value) {
+      await mirrorFlyMethodChannel.invokeMethod('getProfileStatusList').then((value) {
         mirrorFlyLog("status list", "$value");
         if (value != null) {
           var profileStatus = statusDataFromJson(value);

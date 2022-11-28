@@ -578,6 +578,7 @@ open class FlyBaseController(activity: FlutterActivity) : MethodChannel.MethodCa
 
 
     override fun onMethodCall(call: MethodCall, result: MethodChannel.Result) {
+        Log.e("call method",call.method.toString())
         when {
             call.method.equals("syncContacts") -> {
                 val isFirsttime = call.argument<Boolean>("is_first_time") ?: false
@@ -1275,11 +1276,13 @@ open class FlyBaseController(activity: FlutterActivity) : MethodChannel.MethodCa
     }
 
      private fun handleReceivedMessage(call: MethodCall,result: MethodChannel.Result) {
-         val notificationData = call.argument<Map<String,String>>("notificationData") ?: mapOf()
-         PushNotificationManager.handleReceivedMessage(notificationData, object :
+         val notificationdata = call.argument<Map<String,String>>("notificationdata") ?: mapOf()
+         Log.e("notificationdata",notificationdata.toString())
+         PushNotificationManager.handleReceivedMessage(notificationdata, object :
              NotificationEventListener {
              override fun onMessageReceived(chatMessage: ChatMessage) {
                  //Here you need to fetch recent unread messages to build up notification content
+                 Log.e("notificationdata",chatMessage.tojsonString())
                  val jsonObject = JSONObject()
                  jsonObject.put("groupJid","")
                  jsonObject.put("titleContent","")
@@ -1290,6 +1293,7 @@ open class FlyBaseController(activity: FlutterActivity) : MethodChannel.MethodCa
 
              override fun onGroupNotification(groupJid: String, titleContent: String,  chatMessage: ChatMessage) {
                  /* Create the notification for group creation with paramter values */
+                 Log.e("notificationdata group",chatMessage.tojsonString())
                  val jsonObject = JSONObject()
                  jsonObject.put("groupJid",groupJid)
                  jsonObject.put("titleContent",titleContent)
@@ -1300,6 +1304,7 @@ open class FlyBaseController(activity: FlutterActivity) : MethodChannel.MethodCa
 
              override fun onCancelNotification() {
                  // here you have to cancel notification
+                 Log.e("notificationdata","cancel")
                  val jsonObject = JSONObject()
                  jsonObject.put("groupJid","")
                  jsonObject.put("titleContent","")

@@ -1,3 +1,4 @@
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 
 import 'package:firebase_auth/firebase_auth.dart';
@@ -20,10 +21,15 @@ import 'package:google_maps_flutter_android/google_maps_flutter_android.dart';
 import 'package:google_maps_flutter_platform_interface/google_maps_flutter_platform_interface.dart';
 
 /*import 'package:local_auth/local_auth.dart';*/
-
+Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  // If you're going to use other Firebase services in the background, such as Firestore,
+  // make sure you call `initializeApp` before using other Firebase services.
+  //await Firebase.initializeApp();
+  debugPrint("Handling a background message: ${message.messageId}");
+  PushNotifications.onMessage(message);
+}
 bool shouldUseFirebaseEmulator = false;
 Future<void> main() async {
-  PushNotifications.initBackground();
 // Require Hybrid Composition mode on Android.
   final GoogleMapsFlutterPlatform mapsImplementation =
       GoogleMapsFlutterPlatform.instance;
@@ -33,8 +39,9 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   if (!kIsWeb) {
     await Firebase.initializeApp();
+    FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+    PushNotifications.setupInteractedMessage();
   }
-
   if (shouldUseFirebaseEmulator) {
     await FirebaseAuth.instance.useAuthEmulator('localhost', 5050);
   }
@@ -52,7 +59,6 @@ class MyApp extends StatelessWidget{
     return GetMaterialApp(
       title: "MirrorFly",
       theme: MirrorFlyAppTheme.theme,
-      builder: EasyLoading.init(),
       debugShowCheckedModeBanner: false,
       initialBinding: getBinding(),
       initialRoute: SessionManagement.getEnablePin() ? Routes.PIN : getInitialRoute(),

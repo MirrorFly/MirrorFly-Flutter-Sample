@@ -1,14 +1,49 @@
+import 'dart:convert';
+
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:flysdk/flysdk.dart';
+import 'package:mirror_fly_demo/app/data/session_management.dart';
+
+import '../common/constants.dart';
 
 class PushNotifications {
   PushNotifications._();
-  /*final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
-  FlutterLocalNotificationsPlugin();*/
+  static final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
   static void init(){
+    notificationPermission();
+    getToken();
+    initInfo();
     FirebaseMessaging.onMessage.listen(onMessage);
-    setupInteractedMessage();
+    //showNotification(RemoteMessage());
+  }
+  static void getToken(){
+    FirebaseMessaging.instance.getToken().then((value) {
+      if(value!=null) {
+        mirrorFlyLog("firebase_token", value);
+        SessionManagement.setToken(value);
+      }
+    }).catchError((er){
+      mirrorFlyLog("FirebaseMessaging", er.toString());
+    });
+  }
+  static void initInfo(){
+    var androidInitialize = const AndroidInitializationSettings('@mipmap/ic_launcher');
+    var iosInitialize = const DarwinInitializationSettings();
+    var initalizationSettings = InitializationSettings(android: androidInitialize,iOS: iosInitialize);
+    flutterLocalNotificationsPlugin.initialize(initalizationSettings,onDidReceiveNotificationResponse: (NotificationResponse response){
+      mirrorFlyLog("notificationresposne", response.payload.toString());
+      try {
+        if (response.payload != null && response.payload!.isNotEmpty) {
+          //on notification click
+        }
+      }catch(e){
+        mirrorFlyLog("error", e.toString());
+        return;
+      }
+    });
   }
   // It is assumed that all messages contain a data field with the key 'type'
   static Future<void> setupInteractedMessage() async {
@@ -28,7 +63,7 @@ class PushNotifications {
     FirebaseMessaging.onMessageOpenedApp.listen(onMessage);
   }
 
-  static void onMessage(RemoteMessage message){
+  static Future<void> onMessage(RemoteMessage message) async {
     debugPrint('Got a message whilst in the foreground!');
     debugPrint('Message data: ${message.data}');
 
@@ -40,9 +75,10 @@ class PushNotifications {
 
     // If `onMessage` is triggered with a notification, construct our own
     // local notification to show to users using the created channel.
-    if (notification != null && android != null) {
-
-      /*await flutterLocalNotificationsPlugin
+    // if (notification != null) {
+      showNotification(message);
+      /*var channel = AndroidNotificationChannel("id", "name",description: "");
+      await flutterLocalNotificationsPlugin
           .resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>()
           ?.createNotificationChannel(channel);
       flutterLocalNotificationsPlugin.show(
@@ -53,28 +89,19 @@ class PushNotifications {
             android: AndroidNotificationDetails(
               channel.id,
               channel.name,
-              channel.description,
-              icon: android?.smallIcon,
+              channelDescription : channel.description,
+              icon: android.smallIcon,
               // other properties...
             ),
           ));*/
-    }
-  }
-  static void initBackground(){
-    FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
-  }
-  static Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-    // If you're going to use other Firebase services in the background, such as Firestore,
-    // make sure you call `initializeApp` before using other Firebase services.
-    await Firebase.initializeApp();
-    debugPrint("Handling a background message: ${message.messageId}");
-    onMessage(message);
+    // }
   }
 
   static void notificationPermission() async{
     FirebaseMessaging messaging = FirebaseMessaging.instance;
     NotificationSettings currentsettings = await messaging.getNotificationSettings();
-
+   var permission = await flutterLocalNotificationsPlugin.resolvePlatformSpecificImplementation<
+        AndroidFlutterLocalNotificationsPlugin>()!.requestPermission();
     NotificationSettings settings = await messaging.requestPermission(
       alert: true,
       announcement: false,
@@ -91,6 +118,64 @@ class PushNotifications {
       debugPrint('User granted provisional permission');
     } else {
       debugPrint('User declined or has not accepted permission');
+    }
+    debugPrint("permission :"+permission.toString());
+  }
+
+  static void onDidReceiveLocalNotification(
+      int id, String? title, String? body, String? payload) async {
+    // display a dialog with the notification details, tap ok to go to another page
+
+  }
+
+  static void showNotification(RemoteMessage remoteMessage) async {
+    /*var data = {};
+    data["message_id"]="40e6e723-b4fc-469f-a072-0afe1d797a47";
+    data["message_time"]="1669639607745126";
+    data["to_jid"]="9638527410@xmpp-uikit-dev.contus.us";
+    data["user_jid"]="919894940560@xmpp-uikit-dev.contus.us";
+    data["message_content"]="Text";
+    data["push_from"]="MirrorFly";
+    data["type"]="text";
+    data["title"]="Text";
+    data["sent_from"]="919894940560@xmpp-uikit-dev.contus.us";
+    data["chat_type"]="chat";
+    var notificationData = data;*/
+    var notificationData = remoteMessage.data;
+    if(notificationData.isNotEmpty) {
+      FlyChat.handleReceivedMessage(notificationData).then((value){
+        mirrorFlyLog("notification message", value.toString());
+        var data = json.decode(value.toString());
+        var groupJid = data["groupJid"].toString();
+        var titleContent = data["titleContent"].toString();
+        var chatMessage = data["chatMessage"].toString();
+        var cancel = data["cancel"].toString();
+      });
+      /*var message = remoteMessage.notification;
+      if(message!=null) {
+        var channel = AndroidNotificationChannel("id", "name", description: "");
+        var bigtextstyleinfo = BigTextStyleInformation(
+            message.body.toString(), htmlFormatBigText: true,
+            contentTitle: message.title,
+            htmlFormatContentTitle: true);
+        var androidnotificationdetails = AndroidNotificationDetails(
+            channel.id, channel.name, channelDescription: channel.description,
+            importance: Importance.high,
+            styleInformation: bigtextstyleinfo,
+            priority: Priority.high,
+            playSound: true);
+        var notificationDetails = NotificationDetails(
+            android: androidnotificationdetails,
+            iOS: const DarwinNotificationDetails());
+        await flutterLocalNotificationsPlugin
+            .resolvePlatformSpecificImplementation<
+            AndroidFlutterLocalNotificationsPlugin>()
+            ?.createNotificationChannel(
+            channel);
+        await flutterLocalNotificationsPlugin.show(
+            0, message.title, message.body, notificationDetails,
+            payload: "chatpage");
+      }*/
     }
   }
 }

@@ -47,13 +47,15 @@ dependencies:
   firebase_core: ^2.1.1 #firebase core
   firebase_auth: ^4.1.1 #firebas authentication
   firebase_app_installations: ^0.2.1+3 #firebase installations
-  firebase_messaging: ^14.0.4 #firebase messaging
+  firebase_messaging: ^14.1.2 #firebase messaging
   flutter_switch: ^0.3.2 #switchbox
   marquee: ^2.2.0 # marquee text
   qr_code_scanner: ^1.0.1 #qr scanner
   yaml: ^3.1.1
   path: ^1.8.2
   camera: ^0.10.0+4
+  flutter_local_notifications: ^12.0.4 #local notification
+  workmanager: ^0.5.1
 
   flysdk:
     path: packages/flysdk
