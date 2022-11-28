@@ -2,7 +2,6 @@ package com.contusdemo.mirror_fly_demo
 
 import android.annotation.SuppressLint
 import android.app.Activity
-import android.content.Context
 import android.content.Intent
 import android.content.pm.ResolveInfo
 import android.graphics.Bitmap
@@ -34,7 +33,6 @@ import com.contusflysdk.backup.BackupManager
 import com.contusflysdk.backup.RestoreListener
 import com.contusflysdk.backup.RestoreManager
 import com.contusflysdk.media.MediaUploadHelper
-import com.contusflysdk.model.Message
 import com.contusflysdk.utils.NetworkConnection
 import com.contusflysdk.utils.ThumbSize
 import com.contusflysdk.utils.UpDateWebPassword

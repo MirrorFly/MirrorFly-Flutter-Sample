@@ -8,6 +8,7 @@
 import Foundation
 import FlyCore
 import FlyCommon
+import Flutter
 
 class FlySdkMethodCalls{
     
