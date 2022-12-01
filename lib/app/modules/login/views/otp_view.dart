@@ -10,6 +10,7 @@ import '../../../common/constants.dart';
 
 class OtpView extends GetView<LoginController> {
   const OtpView({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -112,21 +113,23 @@ class OtpView extends GetView<LoginController> {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            InkWell(
-                              onTap: controller.timeout.value ? () {
-                                controller.gotoLogin();
-                              } : null,
-                              child: const Padding(
-                                padding: EdgeInsets.all(8.0),
-                                child: Text(
-                                  'Change Number',
-                                  style: TextStyle(
-                                      color: Colors.red,
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w500),
+                            Obx(() {
+                              return InkWell(
+                                onTap: controller.timeout.value ? () {
+                                  controller.gotoLogin();
+                                } : null,
+                                child: const Padding(
+                                  padding: EdgeInsets.all(8.0),
+                                  child: Text(
+                                    'Change Number',
+                                    style: TextStyle(
+                                        color: Colors.red,
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w500),
+                                  ),
                                 ),
-                              ),
-                            ),
+                              );
+                            }),
                             Container(
                               color: dividerColor,
                               width: 1,

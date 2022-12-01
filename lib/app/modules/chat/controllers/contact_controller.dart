@@ -202,10 +202,10 @@ class ContactController extends GetxController {
         toToast("Add at least two contacts");
       }
     }else{
-      if(selectedUsersJIDList.isNotEmpty){
+      if (selectedUsersJIDList.length >= Constants.minGroupMembers) {
         Get.back(result: selectedUsersJIDList);
-      }else{
-        Get.back();
+      } else {
+        toToast("Add at least two contacts");
       }
     }
   }

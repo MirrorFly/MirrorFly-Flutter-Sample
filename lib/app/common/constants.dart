@@ -479,6 +479,11 @@ Widget forMessageTypeIcon(String messageType) {
         mDocumentIcon,
         fit: BoxFit.contain,
       );
+    case Constants.mFile:
+      return SvgPicture.asset(
+        mDocumentIcon,
+        fit: BoxFit.contain,
+      );
     case Constants.mContact:
       return SvgPicture.asset(
         mContactIcon,
@@ -503,6 +508,8 @@ String? forMessageTypeString(String messageType) {
     case Constants.mVideo:
       return "Video";
     case Constants.mDocument:
+      return "Document";
+    case Constants.mFile:
       return "Document";
     case Constants.mContact:
       return "Contact";

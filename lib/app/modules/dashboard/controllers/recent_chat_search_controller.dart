@@ -40,7 +40,7 @@ class RecentChatSearchController extends GetxController {
       //filteredRecentChatList.stream.listen((list) {
         var jidList = <String>[];
         for (var recent in callback) {
-          if(getChatType(recent)!="groupchat") {
+          //if(getChatType(recent)!="groupchat") {
             var recentSearchItem = RecentSearch(
                 jid: recent.jid,
                 mid: recent.lastMessageId,
@@ -50,7 +50,7 @@ class RecentChatSearchController extends GetxController {
             recentSearchList.add(recentSearchItem);
             update();
             jidList.add(recent.jid.toString());
-          }
+          //}
         }
         fetchContactList(jidList);
       chatCount(jidList.length);
@@ -58,9 +58,9 @@ class RecentChatSearchController extends GetxController {
     });
     ever(filteredMessageList, (callback){
       mirrorFlyLog("sfilteredMessageList", callback.entries.first.value.length.toString());
-      for (var item in callback.entries){
+      /*for (var item in callback.entries){
         mirrorFlyLog("msgs", item.value.first.value.jid.toString());
-      }
+      }*/
       messageCount(callback.entries.first.key.value);
       recentSearchList.addAll(callback.entries.first.value);
       update(recentSearchList);

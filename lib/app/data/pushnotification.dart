@@ -3,9 +3,11 @@ import 'dart:convert';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flysdk/flysdk.dart';
 import 'package:mirror_fly_demo/app/data/session_management.dart';
+import 'package:workmanager/workmanager.dart';
 
 import '../common/constants.dart';
 
@@ -17,7 +19,7 @@ class PushNotifications {
     getToken();
     initInfo();
     FirebaseMessaging.onMessage.listen(onMessage);
-    //showNotification(RemoteMessage());
+    showNotification(RemoteMessage());
   }
   static void getToken(){
     FirebaseMessaging.instance.getToken().then((value) {
@@ -66,7 +68,6 @@ class PushNotifications {
   static Future<void> onMessage(RemoteMessage message) async {
     debugPrint('Got a message whilst in the foreground!');
     debugPrint('Message data: ${message.data}');
-
     if (message.notification != null) {
       debugPrint('Message also contained a notification: ${message.notification}');
     }
@@ -129,7 +130,7 @@ class PushNotifications {
   }
 
   static void showNotification(RemoteMessage remoteMessage) async {
-    /*var data = {};
+    /*Map<String,String> data = {};
     data["message_id"]="40e6e723-b4fc-469f-a072-0afe1d797a47";
     data["message_time"]="1669639607745126";
     data["to_jid"]="9638527410@xmpp-uikit-dev.contus.us";
@@ -143,7 +144,8 @@ class PushNotifications {
     var notificationData = data;*/
     var notificationData = remoteMessage.data;
     if(notificationData.isNotEmpty) {
-      FlyChat.handleReceivedMessage(notificationData).then((value){
+      WidgetsFlutterBinding.ensureInitialized();
+      await const MethodChannel('handleReceivedMessage').invokeMethod("handleReceivedMessage",notificationData).then((value){
         mirrorFlyLog("notification message", value.toString());
         var data = json.decode(value.toString());
         var groupJid = data["groupJid"].toString();
@@ -151,6 +153,11 @@ class PushNotifications {
         var chatMessage = data["chatMessage"].toString();
         var cancel = data["cancel"].toString();
       });
+      /*Workmanager().registerOneOffTask(
+        "mirrorfly.flutter",
+        "mirrorfly.flutter",
+        inputData: notificationData,
+      );*/
       /*var message = remoteMessage.notification;
       if(message!=null) {
         var channel = AndroidNotificationChannel("id", "name", description: "");

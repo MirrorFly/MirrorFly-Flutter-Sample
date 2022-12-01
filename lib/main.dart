@@ -1,10 +1,16 @@
+import 'dart:convert';
+import 'dart:io';
+import 'dart:ui';
+
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/common/app_theme.dart';
@@ -13,14 +19,46 @@ import 'package:mirror_fly_demo/app/data/helper.dart';
 import 'package:mirror_fly_demo/app/data/pushnotification.dart';
 import 'package:mirror_fly_demo/app/modules/dashboard/bindings/dashboard_binding.dart';
 import 'package:mirror_fly_demo/app/modules/login/bindings/login_binding.dart';
+import 'package:workmanager/workmanager.dart';
+import 'app/common/constants.dart';
 import 'app/data/session_management.dart';
 import 'app/modules/profile/bindings/profile_binding.dart';
+import 'app/nativecall/fly_sdk.dart';
 import 'app/routes/app_pages.dart';
 
 import 'package:google_maps_flutter_android/google_maps_flutter_android.dart';
 import 'package:google_maps_flutter_platform_interface/google_maps_flutter_platform_interface.dart';
 
 /*import 'package:local_auth/local_auth.dart';*/
+@pragma('vm:entry-point') // Mandatory if the App is obfuscated or using Flutter 3.1+
+const simpleTaskKey = "mirrorfly.flutter";
+void callbackDispatcher() {
+  Workmanager().executeTask((String task, inputData) async {
+    switch (task) {
+      case simpleTaskKey:
+        print("$simpleTaskKey was executed. inputData = $inputData");
+        Map<String,String> map = {};
+        inputData?.entries.map((e){
+          map[e.key]=e.value.toString();
+        });
+        const MethodChannel('handleReceivedMessage').invokeMethod("handleReceivedMessage",map).then((value){
+          mirrorFlyLog("notification message", value.toString());
+          var data = json.decode(value.toString());
+          var groupJid = data["groupJid"].toString();
+          var titleContent = data["titleContent"].toString();
+          var chatMessage = data["chatMessage"].toString();
+          var cancel = data["cancel"].toString();
+        });
+        break;
+      case Workmanager.iOSBackgroundTask:
+        print("The iOS background fetch was triggered");
+
+        break;
+    }
+
+    return Future.value(true);
+  });
+}
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   // If you're going to use other Firebase services in the background, such as Firestore,
   // make sure you call `initializeApp` before using other Firebase services.
@@ -46,6 +84,10 @@ Future<void> main() async {
     await FirebaseAuth.instance.useAuthEmulator('localhost', 5050);
   }
   await SessionManagement.onInit();
+  Workmanager().initialize(
+    callbackDispatcher,
+    isInDebugMode: true,
+  );
   Get.put<MainController>(MainController());
   runApp(const MyApp());
 }

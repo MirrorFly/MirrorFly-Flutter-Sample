@@ -100,7 +100,7 @@ class ChatController extends GetxController with GetTickerProviderStateMixin, Ba
   void onInit() {
     super.onInit();
     profile_.value = Get.arguments as Profile;
-    onReady();
+    onready();
     initListeners();
     player.onDurationChanged.listen((Duration d) {
       //get the duration of audio
@@ -132,17 +132,15 @@ class ChatController extends GetxController with GetTickerProviderStateMixin, Ba
 
     filteredPosition.bindStream(filteredPosition.stream);
     ever(filteredPosition, (callback) {
-      mirrorFlyLog("filtered Position", callback.reversed.toString());
       lastPosition(callback.length);
-      chatList.refresh();
+      //chatList.refresh();
     });
 
     chatList.bindStream(chatList.stream);
     ever(chatList, (callback) {});
   }
 
-  @override
-  void onReady() {
+  void onready() {
     debugPrint("isBlocked===> ${profile.isBlocked}");
     debugPrint("profile detail===> ${profile.toJson().toString()}");
     isBlocked(profile.isBlocked);
@@ -170,7 +168,7 @@ class ChatController extends GetxController with GetTickerProviderStateMixin, Ba
     //scrollController.addListener(_scrollController);
 
     FlyChat.setOnGoingChatUser(profile.jid!);
-    //getChatHistory(profile.jid!);
+    getChatHistory(profile.jid!);
     debugPrint("==================");
     debugPrint(profile.image);
     sendReadReceipt();
@@ -281,7 +279,8 @@ class ChatController extends GetxController with GetTickerProviderStateMixin, Ba
     return dateHourFormat;
   }
 
-  getChatHistory() {
+  getChatHistory([String? from]) {
+    mirrorFlyLog("chat history", "$from");
     FlyChat.getMessagesOfJid(profile.jid.checkNull()).then((value) {
       List<ChatMessageModel> chatMessageModel = chatMessageModelFromJson(value);
       chatList(chatMessageModel);
@@ -1242,7 +1241,7 @@ class ChatController extends GetxController with GetTickerProviderStateMixin, Ba
 
   gotoSearch() {
     Future.delayed(const Duration(milliseconds: 100), () {
-      Get.toNamed(Routes.CHATSEARCH);
+      Get.toNamed(Routes.CHATSEARCH,arguments: chatList.value);
       /*if (searchScrollController.isAttached) {
         searchScrollController.jumpTo(index: chatList.value.length - 1);
       }*/
@@ -1271,9 +1270,9 @@ class ChatController extends GetxController with GetTickerProviderStateMixin, Ba
       debugPrint("Message Status Update index of search $index");
       if (index != -1) {
         // Helper.hideLoading();
-        chatList.value[index] = chatMessageModel;
+        chatList[index] = chatMessageModel;
       } else {
-        chatList.value.add(chatMessageModel);
+        chatList.add(chatMessageModel);
         scrollToBottom();
       }
     }
@@ -1288,7 +1287,7 @@ class ChatController extends GetxController with GetTickerProviderStateMixin, Ba
               (message) => message.messageId == chatMessageModel.messageId);
       debugPrint("Media Status Update index of search $index");
       if (index != -1) {
-        chatList.value[index] = chatMessageModel;
+        chatList[index] = chatMessageModel;
       }
     }
   }

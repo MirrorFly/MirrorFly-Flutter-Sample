@@ -8,6 +8,7 @@ import 'package:mirror_fly_demo/app/data/helper.dart';
 
 import '../../../common/constants.dart';
 import '../../../common/widgets.dart';
+import '../../../routes/app_pages.dart';
 import '../controllers/chat_info_controller.dart';
 
 class ChatInfoView extends GetView<ChatInfoController> {
@@ -63,7 +64,12 @@ class ChatInfoView extends GetView<ChatInfoController> {
                             : controller.profile.name.checkNull(),
                         radius: 0,
                         fontSize: 120,
-                      )),
+                      ),onTap: (){
+                    Get.toNamed(Routes.IMAGE_VIEW, arguments: {
+                      'imageName': controller.profile.nickName,
+                      'imageUrl': controller.profile.image.checkNull()
+                    });
+                  },),
                   titlePadding: controller.isSliverAppBarExpanded
                       ? const EdgeInsets.symmetric(vertical: 16, horizontal: 20)
                       : const EdgeInsets.symmetric(

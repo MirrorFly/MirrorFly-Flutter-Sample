@@ -61,7 +61,7 @@ class ProfileTextImage extends StatelessWidget {
             child: Center(
                 child: Text(
               getString(text),
-              style: TextStyle(fontSize: fontSize, color: fontColor),
+              style: TextStyle(fontSize:  radius !=0 ? radius/1.5 : fontSize, color: fontColor),
             )),
           );
   }
@@ -89,6 +89,7 @@ class ImageNetwork extends GetView<MainController> {
   final String url;
   final Widget? errorWidget;
   final bool clipOval;
+  final Function()? onTap;
 
   const ImageNetwork(
       {Key? key,
@@ -96,7 +97,7 @@ class ImageNetwork extends GetView<MainController> {
       required this.width,
       required this.height,
       this.errorWidget,
-      required this.clipOval})
+      required this.clipOval,this.onTap,})
       : super(key: key);
 
   @override
@@ -127,14 +128,22 @@ class ImageNetwork extends GetView<MainController> {
           fit: BoxFit.fill,
           width: width,
           height: height,
+          cacheKey: controller.uploadEndpoint + url,
           httpHeaders: {"Authorization": controller.authToken.value},
-
-          progressIndicatorBuilder: (context, link, progress) {
+          /*progressIndicatorBuilder: (context, link, progress) {
             return SizedBox(
               height: height,
               width: width,
               child: const Center(child: CircularProgressIndicator()),
             );
+          },*/
+          placeholder: (context,string){
+            return errorWidget ??
+                Image.asset(
+                  profileImg,
+                  height: height,
+                  width: width,
+                );
           },
           errorWidget: (context, link, error) {
             // mirrorFlyLog("image error", "$error link : $link");
@@ -156,10 +165,13 @@ class ImageNetwork extends GetView<MainController> {
                     image: provider,
                     fit: BoxFit.fill,
                   ))
-                : Image(
-                    image: provider,
-                    fit: BoxFit.fill,
-                  );
+                : InkWell(
+                  child: Image(
+                      image: provider,
+                      fit: BoxFit.fill,
+                    ),
+              onTap: onTap,
+                );
           },
         ),
       );
@@ -169,12 +181,13 @@ class ImageNetwork extends GetView<MainController> {
   void _deleteImageFromCache(String url) {
     /*cache.DefaultCacheManager manager = cache.DefaultCacheManager();
     manager.emptyCache();*/
-    cache.DefaultCacheManager().removeFile(url).then((value) {
+    CachedNetworkImage.evictFromCache(url,cacheKey: url).then((value) => controller.getAuthToken());
+    /*cache.DefaultCacheManager().removeFile(url).then((value) {
       mirrorFlyLog('File removed', "");
       controller.getAuthToken();
     }).onError((error, stackTrace) {
       mirrorFlyLog("", error.toString());
-    });
+    });*/
     //await CachedNetworkImage.evictFromCache(url);
   }
 }

@@ -4,13 +4,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
-import 'package:mirror_fly_demo/app/modules/chat/controllers/chat_controller.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../../common/constants.dart';
 import '../../../routes/app_pages.dart';
 import 'package:flysdk/flysdk.dart';
+
+import '../controllers/chat_controller.dart';
 
 class ChatSearchView extends GetView<ChatController> {
   const ChatSearchView({super.key});
@@ -32,13 +33,7 @@ class ChatSearchView extends GetView<ChatController> {
       },
       child: Scaffold(
         appBar: AppBar(
-          leading: IconButton(
-            icon: const Icon(Icons.arrow_back, color: iconColor),
-            onPressed: () {
-              controller.searchInit();
-              Get.back();
-            },
-          ),
+          automaticallyImplyLeading: true,
           title: TextField(
             onChanged: (text) => controller.setSearch(text),
             controller: controller.searchedText,

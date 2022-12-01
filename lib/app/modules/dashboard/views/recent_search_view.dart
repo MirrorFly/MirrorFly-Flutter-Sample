@@ -87,7 +87,10 @@ class RecentSearchView extends GetView<RecentChatSearchController> {
             builder: (context, snapshot) {
               var item = snapshot.data;
               return item != null
-                  ? InkWell(
+                  ? recentChatItem(item: item, context: context,onTap: () {
+                controller.toChatPage(data.value.jid.checkNull());
+              },) : const SizedBox();
+             /* InkWell(
                       child: Row(
                         children: [
                           Container(
@@ -141,14 +144,6 @@ class RecentSearchView extends GetView<RecentChatSearchController> {
                                             fontWeight: FontWeight.w700,
                                             fontFamily: 'sf_ui',
                                             color: textHintColor)),
-                                        /*Text(
-                                          item.profileName.toString(),
-                                          style: TextStyle(
-                                              fontSize: 16.0,
-                                              fontWeight: FontWeight.w700,
-                                              fontFamily: 'sf_ui',
-                                              color: text hint color),
-                                        ),*/
                                       ),
                                       Padding(
                                         padding: const EdgeInsets.only(
@@ -224,8 +219,7 @@ class RecentSearchView extends GetView<RecentChatSearchController> {
                       onTap: () {
                         controller.toChatPage(data.value.jid.checkNull());
                       },
-                    )
-                  : const SizedBox();
+                    )*/
             }),
       ],
     );
@@ -494,9 +488,9 @@ class RecentSearchView extends GetView<RecentChatSearchController> {
 
   Widget searchHeaderByType(RecentSearch searchItem, BuildContext context) {
     var searchType = searchItem.searchType;
-    var contactCount = " (${controller.filteredContactList.length})";
-    var messageCount = " (${controller.messageCount.value})";
-    var chatCount = " (${controller.chatCount.value})";
+    var contactCount = "${controller.filteredContactList.length}";
+    var messageCount = "${controller.messageCount.value}";
+    var chatCount = "${controller.chatCount.value}";
     switch (searchItem.searchType.toString()) {
       case Constants.typeSearchContact:
         return searchHeader(searchType, contactCount, context);

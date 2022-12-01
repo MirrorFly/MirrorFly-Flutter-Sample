@@ -52,10 +52,12 @@ class ChatView extends GetView<ChatController> {
               ),
               child: WillPopScope(
                 onWillPop: () {
+                  mirrorFlyLog("viewInsets", MediaQuery.of(context).viewInsets.bottom.toString());
                   if (controller.showEmoji.value) {
                     controller.showEmoji(false);
-                  } else if (MediaQuery.of(context).viewInsets.bottom > 0) {
-                    FocusManager.instance.primaryFocus?.unfocus();
+                  } else if (MediaQuery.of(context).viewInsets.bottom > 0.0) {
+                    //FocusManager.instance.primaryFocus?.unfocus();
+                    controller.focusNode.unfocus();
                   } else {
                     //Get.offAllNamed(Routes.DASHBOARD);
                     //Get.back();
@@ -66,13 +68,10 @@ class ChatView extends GetView<ChatController> {
                 child: Column(
                   children: [
                     Expanded(
-                      child: FutureBuilder(
-                        future: controller.getChatHistory(),
-                          builder: (c,d){
-                        return Obx(() {
+                      child:
+                        Obx(() {
                           return chatListView(controller.chatList);
-                        });
-                      })
+                        })
                     ),
                     Align(
                       alignment: Alignment.bottomCenter,
@@ -225,6 +224,13 @@ class ChatView extends GetView<ChatController> {
                                                                     }
                                                                     return false;
                                                                   },
+                                                                      onUpdate: (details){
+                                                                    mirrorFlyLog("dismiss", details.progress.toString());
+                                                                    if(details.progress>0.5){
+                                                                      controller
+                                                                          .cancelRecording();
+                                                                    }
+                                                                      },
                                                                   direction:
                                                                       DismissDirection
                                                                           .endToStart,
@@ -266,11 +272,6 @@ class ChatView extends GetView<ChatController> {
                                                                   height: 50,
                                                                   child:
                                                                       TextField(
-                                                                    onTap: () {
-                                                                      controller
-                                                                          .focusNode
-                                                                          .requestFocus();
-                                                                    },
                                                                     onChanged:
                                                                         (text) {
                                                                       controller
@@ -2219,67 +2220,71 @@ class ChatView extends GetView<ChatController> {
   chatAppBar() {
     return Obx(() {
       return AppBar(
-        leadingWidth: 20,
-        title: Row(
-          mainAxisSize: MainAxisSize.max,
-          children: [
-            ImageNetwork(
-              url: controller.profile.image.checkNull(),
-              width: 45,
-              height: 45,
-              clipOval: true,
-              errorWidget: controller.profile.isGroupProfile!
-                  ? ClipOval(
-                      child: Image.asset(
-                        groupImg,
-                        height: 45,
-                        width: 45,
-                        fit: BoxFit.cover,
-                      ),
-                    )
-                  : ProfileTextImage(
-                      text: controller.profile.name.checkNull().isEmpty
-                          ? controller.profile.mobileNumber.checkNull()
-                          : controller.profile.name.checkNull(),
-                      radius: 20,
-                    ),
-            ),
-            const SizedBox(
-              width: 8,
-            ),
-            SizedBox(
-              width: (controller.screenWidth) / 1.9,
-              child: InkWell(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.max,
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(controller.profile.name.checkNull()),
-                    controller.subtitle.isNotEmpty
-                        ? !controller.profile.isGroupProfile!
-                            ? Text(
-                                controller.subtitle,
-                                style: const TextStyle(fontSize: 12),
-                                overflow: TextOverflow.fade,
-                              )
-                            : SizedBox(
-                                width: (controller.screenWidth) / 1.9,
-                                height: 15,
-                                child: Marquee(
-                                    text: "${controller.subtitle},",
-                                    style: const TextStyle(fontSize: 12)))
-                        : const SizedBox()
-                  ],
+        automaticallyImplyLeading: false,
+        leadingWidth: 80,
+        leading: InkWell(
+          onTap: (){Get.back();},
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const SizedBox(width: 10,),
+              const Icon(Icons.arrow_back),
+              const SizedBox(width: 10,),
+              ImageNetwork(
+                url: controller.profile.image.checkNull(),
+                width: 35,
+                height: 35,
+                clipOval: true,
+                errorWidget: controller.profile.isGroupProfile!
+                    ? ClipOval(
+                  child: Image.asset(
+                    groupImg,
+                    height: 35,
+                    width: 35,
+                    fit: BoxFit.cover,
+                  ),
+                )
+                    : ProfileTextImage(
+                  text: controller.profile.name.checkNull().isEmpty
+                      ? controller.profile.mobileNumber.checkNull()
+                      : controller.profile.name.checkNull(),
+                  radius: 18,
                 ),
-                onTap: () {
-                  mirrorFlyLog("title clicked",
-                      controller.profile.isGroupProfile.toString());
-                  controller.infoPage();
-                },
               ),
+            ],
+          ),
+        ),
+        title: SizedBox(
+          width: (controller.screenWidth) / 1.9,
+          child: InkWell(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.max,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(controller.profile.name.checkNull()),
+                controller.subtitle.isNotEmpty
+                    ? !controller.profile.isGroupProfile!
+                        ? Text(
+                            controller.subtitle,
+                            style: const TextStyle(fontSize: 12),
+                            overflow: TextOverflow.fade,
+                          )
+                        : SizedBox(
+                            width: (controller.screenWidth) / 1.9,
+                            height: 15,
+                            child: Marquee(
+                                text: "${controller.subtitle},",
+                                style: const TextStyle(fontSize: 12)))
+                    : const SizedBox()
+              ],
             ),
-          ],
+            onTap: () {
+              mirrorFlyLog("title clicked",
+                  controller.profile.isGroupProfile.toString());
+              controller.infoPage();
+            },
+          ),
         ),
         actions: [
           CustomActionBarIcons(

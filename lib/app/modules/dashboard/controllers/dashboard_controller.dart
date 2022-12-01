@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/base_controller.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
+import 'package:mirror_fly_demo/app/data/helper.dart';
 import 'package:mirror_fly_demo/app/data/session_management.dart';
 
 import 'package:flysdk/flysdk.dart';
@@ -47,10 +48,12 @@ class DashboardController extends GetxController with GetTickerProviderStateMixi
     });
   }
 
-  toChatPage(String jid) {
+  toChatPage(String jid) async {
     if(jid.isNotEmpty) {
-      FlyChat.getProfileLocal(jid, false).then((value) {
+      Helper.progressLoading();
+      await FlyChat.getProfileLocal(jid, false).then((value) {
         if(value!=null){
+          Helper.hideLoading();
           var profileData = profileDataFromJson(value);
           var data = profileData.data!;
           var profile = Profile();

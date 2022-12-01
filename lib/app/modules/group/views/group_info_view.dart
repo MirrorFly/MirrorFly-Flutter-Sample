@@ -122,6 +122,19 @@ class GroupInfoView extends GetView<GroupInfoController> {
                               .width,
                           fit: BoxFit.fill,
                         ),
+                        onTap: (){
+                          if(controller.imagePath.value.isNotEmpty){
+                            Get.toNamed(Routes.IMAGE_VIEW, arguments: {
+                              'imageName': controller.profile.nickName,
+                              'imagePath': controller.profile.image.checkNull()
+                            });
+                          }else if(controller.profile.image.checkNull().isNotEmpty){
+                            Get.toNamed(Routes.IMAGE_VIEW, arguments: {
+                              'imageName': controller.profile.nickName,
+                              'imageUrl': controller.profile.image.checkNull()
+                            });
+                          }
+                        },
                       ) //Images.network
                   ),
                   //FlexibleSpaceBar

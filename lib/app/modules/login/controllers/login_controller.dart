@@ -48,6 +48,7 @@ class LoginController extends GetxController {
   }
 
   setUserJID(String username) {
+    FlyChat.getAllGroups(true);
     FlyChat.getJid(username).then((value) {
       if(value != null){
         SessionManagement.setUserJID(value);
@@ -70,7 +71,7 @@ class LoginController extends GetxController {
     } else {
       await _auth.verifyPhoneNumber(
         phoneNumber: countryCode! + mobileNumber.text,
-        timeout: const Duration(seconds: 60),
+        timeout: const Duration(seconds: 30),
         verificationCompleted: _onVerificationCompleted,
         verificationFailed: (FirebaseAuthException e) {
           timeout(true);
@@ -131,6 +132,7 @@ class LoginController extends GetxController {
     // need otp so i can autofill in a text box
     if (credential.smsCode != null) {
       otpController.set(credential.smsCode!.split(""));
+      //verifyOTP();
     }
   }
 
