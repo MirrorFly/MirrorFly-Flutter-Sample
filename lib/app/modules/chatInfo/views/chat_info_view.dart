@@ -65,7 +65,7 @@ class ChatInfoView extends GetView<ChatInfoController> {
                         radius: 0,
                         fontSize: 120,
                       ),onTap: (){
-                    Get.toNamed(Routes.IMAGE_VIEW, arguments: {
+                    Get.toNamed(Routes.imageView, arguments: {
                       'imageName': controller.profile.nickName,
                       'imageUrl': controller.profile.image.checkNull()
                     });

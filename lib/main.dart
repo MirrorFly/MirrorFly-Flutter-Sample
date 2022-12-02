@@ -60,7 +60,7 @@ class MyApp extends StatelessWidget{
       theme: MirrorFlyAppTheme.theme,
       debugShowCheckedModeBanner: false,
       initialBinding: getBinding(),
-      initialRoute: SessionManagement.getEnablePin() ? Routes.PIN : getInitialRoute(),
+      initialRoute: SessionManagement.getEnablePin() ? Routes.pin : getInitialRoute(),
       //initialRoute: AppPages.INITIAL,
       getPages: AppPages.routes,
     );

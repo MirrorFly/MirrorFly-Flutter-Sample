@@ -30,7 +30,7 @@ class SettingsController extends GetxController{
         var token = SessionManagement.getToken().checkNull();
         SessionManagement.clear().then((value){
           SessionManagement.setToken(token);
-          Get.offAllNamed(Routes.LOGIN);
+          Get.offAllNamed(Routes.login);
         });
       }else{
         Get.snackbar("Logout", "Logout Failed");
@@ -39,7 +39,7 @@ class SettingsController extends GetxController{
       Helper.hideLoading();
       SessionManagement.clear().then((value){
         // SessionManagement.setToken(token);
-        Get.offAllNamed(Routes.LOGIN);
+        Get.offAllNamed(Routes.login);
       });
     });
   }

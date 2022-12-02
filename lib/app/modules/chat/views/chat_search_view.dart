@@ -258,7 +258,7 @@ class ChatSearchView extends GetView<ChatController> {
                         Constants.mediaDownloaded ||
                         chatMessage.mediaDownloadStatus ==
                             Constants.mediaUploaded)) {
-                  Get.toNamed(Routes.VIDEO_PLAY, arguments: {
+                  Get.toNamed(Routes.videoPlay, arguments: {
                     "filePath": chatMessage.mediaLocalStoragePath,
                   });
                 }
@@ -401,7 +401,7 @@ class ChatSearchView extends GetView<ChatController> {
     } else if (chatList[index].messageType == Constants.mContact) {
       return InkWell(
         onTap: () {
-          Get.toNamed(Routes.PREVIEW_CONTACT, arguments: {
+          Get.toNamed(Routes.previewContact, arguments: {
             "contactList":
             chatList[index].contactChatMessage!.contactPhoneNumbers,
             "contactName": chatList[index].contactChatMessage!.contactName,
@@ -824,7 +824,7 @@ class ChatSearchView extends GetView<ChatController> {
     if (controller.checkFile(mediaLocalStoragePath)) {
       return InkWell(
           onTap: () {
-            Get.toNamed(Routes.IMAGE_VIEW, arguments: {
+            Get.toNamed(Routes.imageView, arguments: {
               'imageName': mediaFileName,
               'imagePath': mediaLocalStoragePath
             });
@@ -891,7 +891,7 @@ class ChatSearchView extends GetView<ChatController> {
                   chatList.mediaChatMessage!.mediaDownloadStatus ==
                       Constants.mediaUploaded ||
                   chatList.isMessageSentByMe)) {
-            Get.toNamed(Routes.VIDEO_PLAY, arguments: {
+            Get.toNamed(Routes.videoPlay, arguments: {
               "filePath": chatList.mediaChatMessage!.mediaLocalStoragePath,
             });
           }

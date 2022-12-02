@@ -6,7 +6,6 @@ import 'package:mirror_fly_demo/app/common/constants.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
 import 'package:mirror_fly_demo/app/modules/dashboard/widgets.dart';
 
-import '../../../common/widgets.dart';
 import '../../../routes/app_pages.dart';
 import '../../../widgets/custom_action_bar_icons.dart';
 import '../../dashboard/controllers/dashboard_controller.dart';
@@ -29,7 +28,7 @@ class DashboardView extends GetView<DashboardController> {
             floatingActionButton: FloatingActionButton(
               tooltip: "New Chat",
               onPressed: () {
-                Get.toNamed(Routes.CONTACTS, arguments: {
+                Get.toNamed(Routes.contacts, arguments: {
                   "forward": false,
                   "group": false,
                   "groupJid": ""
@@ -73,7 +72,7 @@ class DashboardView extends GetView<DashboardController> {
                           fit: BoxFit.contain,
                         ),
                         onPressed: () {
-                          Get.toNamed(Routes.RECENTSEARCH,
+                          Get.toNamed(Routes.recentSearch,
                               arguments: {"recents": controller.recentChats});
                         },
                       ),
@@ -89,7 +88,7 @@ class DashboardView extends GetView<DashboardController> {
                             keyValue: 'New Group',
                             onItemClick: () {
                               Future.delayed(const Duration(milliseconds: 100),
-                                  () => Get.toNamed(Routes.CREATE_GROUP));
+                                  () => Get.toNamed(Routes.createGroup));
                             },
                           ),
                           CustomAction(
@@ -99,7 +98,7 @@ class DashboardView extends GetView<DashboardController> {
                             keyValue: 'Settings',
                             onItemClick: () {
                               Future.delayed(const Duration(milliseconds: 100),
-                                  () => Get.toNamed(Routes.SETTINGS));
+                                  () => Get.toNamed(Routes.settings));
                             },
                           ),
                           CustomAction(

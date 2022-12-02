@@ -124,12 +124,12 @@ class GroupInfoView extends GetView<GroupInfoController> {
                         ),
                         onTap: (){
                           if(controller.imagePath.value.isNotEmpty){
-                            Get.toNamed(Routes.IMAGE_VIEW, arguments: {
+                            Get.toNamed(Routes.imageView, arguments: {
                               'imageName': controller.profile.nickName,
                               'imagePath': controller.profile.image.checkNull()
                             });
                           }else if(controller.profile.image.checkNull().isNotEmpty){
-                            Get.toNamed(Routes.IMAGE_VIEW, arguments: {
+                            Get.toNamed(Routes.imageView, arguments: {
                               'imageName': controller.profile.nickName,
                               'imageUrl': controller.profile.image.checkNull()
                             });
@@ -265,7 +265,7 @@ class GroupInfoView extends GetView<GroupInfoController> {
           });
         },),
         ListTile(title: const Text("View Info"), onTap: () {
-          Get.toNamed(Routes.CHAT_INFO, arguments: item);
+          Get.toNamed(Routes.chatInfo, arguments: item);
         },),
         Visibility(visible: controller.isAdmin,
             child: ListTile(title: const Text("Remove from Group"), onTap: () {

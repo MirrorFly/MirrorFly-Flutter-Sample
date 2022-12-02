@@ -8,8 +8,8 @@ import 'package:mirror_fly_demo/app/modules/profile/controllers/status_controlle
 import '../../../common/constants.dart';
 
 class AddStatusView extends GetView<StatusListController> {
-  AddStatusView({Key? key}) : super(key: key);
-  var controller = Get.find<StatusListController>();
+  const AddStatusView({Key? key}) : super(key: key);
+  //var controller = Get.find<StatusListController>();
 
   @override
   Widget build(BuildContext context) {

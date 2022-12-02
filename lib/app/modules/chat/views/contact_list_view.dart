@@ -83,11 +83,11 @@ class ContactListView extends GetView<ContactController> {
                         },
                         icon: const Icon(Icons.settings)),
                     overflowWidget: InkWell(child: const Text("Settings"),
-                      onTap: () => Get.toNamed(Routes.SETTINGS),),
+                      onTap: () => Get.toNamed(Routes.settings),),
                     showAsAction: ShowAsAction.never,
                     keyValue: 'Settings',
                     onItemClick: () {
-                      Get.toNamed(Routes.SETTINGS);
+                      Get.toNamed(Routes.settings);
                     },
                   )
                 ],

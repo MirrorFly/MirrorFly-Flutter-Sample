@@ -76,7 +76,7 @@ class DashboardController extends GetxController with GetTickerProviderStateMixi
           profile.name = data.name;
           profile.nickName = data.nickName;
           profile.status = data.status;
-          Get.toNamed(Routes.CHAT, arguments: profile);
+          Get.toNamed(Routes.chat, arguments: profile);
         }
       });
     }
@@ -93,7 +93,7 @@ class DashboardController extends GetxController with GetTickerProviderStateMixi
 
   logout() {
     SessionManagement.clear();
-    Get.offAllNamed(Routes.LOGIN);
+    Get.offAllNamed(Routes.login);
   }
 
   String getRecentChatTime(BuildContext context, int? epochTime) {
@@ -188,10 +188,10 @@ class DashboardController extends GetxController with GetTickerProviderStateMixi
   webLogin(){
     if(SessionManagement.getWebLogin()){
       Future.delayed(const Duration(milliseconds: 100),
-              () => Get.toNamed(Routes.WEBLOGINRESULT));
+              () => Get.toNamed(Routes.webLoginResult));
     }else{
       Future.delayed(const Duration(milliseconds: 100),
-              () => Get.toNamed(Routes.SCANNER));
+              () => Get.toNamed(Routes.scanner));
     }
   }
 

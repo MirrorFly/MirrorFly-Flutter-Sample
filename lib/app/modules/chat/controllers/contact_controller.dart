@@ -190,7 +190,7 @@ class ContactController extends GetxController {
     if (isForward.value|| isCreateGroup.value) {
       contactSelected(item);
     }else{
-      Get.offNamed(Routes.CHAT, arguments: item);
+      Get.offNamed(Routes.chat, arguments: item);
     }
   }
 

@@ -267,7 +267,7 @@ class RecentChatSearchController extends GetxController {
           profile.name = data.name;
           profile.nickName = data.nickName;
           profile.status = data.status;
-          Get.toNamed(Routes.CHAT, arguments: profile);
+          Get.toNamed(Routes.chat, arguments: profile);
         }
       });
     }

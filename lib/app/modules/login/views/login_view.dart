@@ -67,7 +67,7 @@ class LoginView extends GetView<LoginController> {
                             style: const TextStyle(color: Colors.black,fontSize: 16,fontWeight: FontWeight.w500)),
                         trailing: const Icon(Icons.keyboard_arrow_down_outlined),
                         onTap: (){
-                          Get.toNamed(Routes.COUNTRIES)?.then((value) => value!=null ? controller.selectedCountry.value = value : controller.india);
+                          Get.toNamed(Routes.countries)?.then((value) => value!=null ? controller.selectedCountry.value = value : controller.india);
                         },
                       ),
                     )),

@@ -229,7 +229,7 @@ class ViewAllMediaController extends GetxController {
   }
 
   openImage(String path){
-    Get.toNamed(Routes.IMAGE_VIEW, arguments: {
+    Get.toNamed(Routes.imageView, arguments: {
       "imagePath": path,
       "imageName": "Sent Media"
     });

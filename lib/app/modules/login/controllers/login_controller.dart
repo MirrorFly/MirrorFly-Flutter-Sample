@@ -53,7 +53,7 @@ class LoginController extends GetxController {
       if(value != null){
         SessionManagement.setUserJID(value);
         Helper.hideLoading();
-        Get.offAllNamed(Routes.PROFILE,arguments: {"mobile":mobileNumber.text.toString(),"from":Routes.LOGIN});
+        Get.offAllNamed(Routes.profile,arguments: {"mobile":mobileNumber.text.toString(),"from":Routes.login});
       }
     }).catchError((error) {
       debugPrint(error.message);
@@ -85,7 +85,7 @@ class LoginController extends GetxController {
           resendingToken = resendToken;
           if(verificationId.isNotEmpty){
             hideLoading();
-            Get.toNamed(Routes.OTP)?.then((value) {
+            Get.toNamed(Routes.otp)?.then((value) {
               //Change Number
               if(value!=null) {
                 mirrorFlyLog("change number", "initiated");
@@ -254,7 +254,7 @@ class LoginController extends GetxController {
   }
 
   gotoLogin(){
-    Get.offAllNamed(Routes.LOGIN);
+    Get.offAllNamed(Routes.login);
   }
 
 }

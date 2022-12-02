@@ -165,7 +165,7 @@ class _MessageContentState extends State<MessageContent> {
                         Constants.mediaDownloaded ||
                         chatMessage.mediaDownloadStatus ==
                             Constants.mediaUploaded)) {
-                  Get.toNamed(Routes.VIDEO_PLAY, arguments: {
+                  Get.toNamed(Routes.videoPlay, arguments: {
                     "filePath": chatMessage.mediaLocalStoragePath,
                   });
                 }
@@ -309,7 +309,7 @@ class _MessageContentState extends State<MessageContent> {
     } else if (chatList.messageType == Constants.mContact) {
       return InkWell(
         onTap: () {
-          Get.toNamed(Routes.PREVIEW_CONTACT, arguments: {
+          Get.toNamed(Routes.previewContact, arguments: {
             "contactList":
             chatList.contactChatMessage!.contactPhoneNumbers,
             "contactName": chatList.contactChatMessage!.contactName,
@@ -758,7 +758,7 @@ class _MessageContentState extends State<MessageContent> {
                   chatList.mediaChatMessage!.mediaDownloadStatus ==
                       Constants.mediaUploaded ||
                   chatList.isMessageSentByMe)) {
-            Get.toNamed(Routes.VIDEO_PLAY, arguments: {
+            Get.toNamed(Routes.videoPlay, arguments: {
               "filePath": chatList.mediaChatMessage!.mediaLocalStoragePath,
             });
           }
@@ -885,7 +885,7 @@ class _MessageContentState extends State<MessageContent> {
     if (controller.checkFile(mediaLocalStoragePath)) {
       return InkWell(
           onTap: () {
-            Get.toNamed(Routes.IMAGE_VIEW, arguments: {
+            Get.toNamed(Routes.imageView, arguments: {
               'imageName': mediaFileName,
               'imagePath': mediaLocalStoragePath
             });

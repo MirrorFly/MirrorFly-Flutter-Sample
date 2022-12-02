@@ -160,7 +160,7 @@ class GroupInfoController extends GetxController {
               Helper.hideLoading();
               if(value!=null){
                 if(value){
-                  Get.offAllNamed(Routes.DASHBOARD);
+                  Get.offAllNamed(Routes.dashboard);
                 }
               }
             }).catchError((error) {
@@ -270,7 +270,7 @@ class GroupInfoController extends GetxController {
   }
 
   gotoAddParticipants(){
-    Get.toNamed(Routes.CONTACTS, arguments: {"forward" : false,"group":true,"groupJid":profile.jid })?.then((value){
+    Get.toNamed(Routes.contacts, arguments: {"forward" : false,"group":true,"groupJid":profile.jid })?.then((value){
       if(value!=null){
         showLoader();
         FlyChat.addUsersToGroup(profile.jid.checkNull(),value as List<String>).then((value){
@@ -286,7 +286,7 @@ class GroupInfoController extends GetxController {
   }
 
   gotoViewAllMedia(){
-    Get.toNamed(Routes.VIEW_MEDIA,arguments: {"name":profile.name,"jid":profile.jid,"isgroup":profile.isGroupProfile});
+    Get.toNamed(Routes.viewMedia,arguments: {"name":profile.name,"jid":profile.jid,"isgroup":profile.isGroupProfile});
   }
 
   removeUser(String userJid){

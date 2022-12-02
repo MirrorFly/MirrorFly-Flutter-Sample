@@ -23,22 +23,22 @@ class SettingsView extends GetView<SettingsController> {
         child: Column(
           children: [
             settingListItem("Profile", profileIcon, rightArrowIcon,
-                () => Get.toNamed(Routes.PROFILE,arguments: {"from":Routes.SETTINGS})),
+                () => Get.toNamed(Routes.profile,arguments: {"from":Routes.settings})),
             settingListItem("Chats", chatIcon, rightArrowIcon, () {}),
             settingListItem(
                 "Starred Messages", staredMsgIcon, rightArrowIcon, () {
-                  Get.toNamed(Routes.STARRED_MESSAGES);
+                  Get.toNamed(Routes.starredMessages);
             }),
             settingListItem(
-                "Notifications", notificationIcon, rightArrowIcon, ()=>Get.toNamed(Routes.NOTIFICATION)),
+                "Notifications", notificationIcon, rightArrowIcon, ()=>Get.toNamed(Routes.notification)),
             settingListItem(
-                "Blocked Contacts", blockedIcon, rightArrowIcon, ()=>Get.toNamed(Routes.BLOCKEDLIST)),
-            settingListItem("App Lock", lockIcon, rightArrowIcon, ()=>Get.toNamed(Routes.APPLOCK)),
+                "Blocked Contacts", blockedIcon, rightArrowIcon, ()=>Get.toNamed(Routes.blockedList)),
+            settingListItem("App Lock", lockIcon, rightArrowIcon, ()=>Get.toNamed(Routes.appLock)),
             settingListItem("About and Help", aboutIcon, rightArrowIcon, () =>Get.to(const AboutAndHelpView())),
             settingListItem(
                 "Connection Label", connectionIcon, toggleOffIcon, () {}),
             settingListItem("Delete My Account", delete, rightArrowIcon, () {
-              Get.toNamed(Routes.DELETE_ACCOUNT);
+              Get.toNamed(Routes.deleteAccount);
             }),
             settingListItem("Logout", logoutIcon, rightArrowIcon, () {
               Helper.showAlert(

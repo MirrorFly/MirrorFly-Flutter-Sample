@@ -421,10 +421,10 @@ class FlyChat {
     }
   }
 
-  static updateChatMuteStatus(String Jid,bool mute_status) async {
+  static updateChatMuteStatus(String jid,bool muteStatus) async {
     try {
       await mirrorFlyMethodChannel
-          .invokeMethod('updateChatMuteStatus',{"jid":Jid,"mute_status":mute_status});
+          .invokeMethod('updateChatMuteStatus',{"jid":jid,"mute_status":muteStatus});
     } on PlatformException catch (e) {
       debugPrint("Platform Exception ===> $e");
       rethrow;
@@ -434,10 +434,10 @@ class FlyChat {
     }
   }
 
-  static updateRecentChatPinStatus(String Jid,bool pin_status) async {
+  static updateRecentChatPinStatus(String jid,bool pinStatus) async {
     try {
       await mirrorFlyMethodChannel
-          .invokeMethod('updateRecentChatPinStatus',{"jid":Jid,"pin_recent_chat":pin_status});
+          .invokeMethod('updateRecentChatPinStatus',{"jid":jid,"pin_recent_chat":pinStatus});
     } on PlatformException catch (e) {
       debugPrint("Platform Exception ===> $e");
       rethrow;
@@ -447,10 +447,10 @@ class FlyChat {
     }
   }
 
-  static deleteRecentChat(String Jid) async {
+  static deleteRecentChat(String jid) async {
     try {
       await mirrorFlyMethodChannel
-          .invokeMethod('deleteRecentChat',{"jid":Jid});
+          .invokeMethod('deleteRecentChat',{"jid":jid});
     } on PlatformException catch (e) {
       debugPrint("Platform Exception ===> $e");
       rethrow;
@@ -542,10 +542,10 @@ class FlyChat {
     }
   }
 
-  static setCustomValue(String message_id,String key,String value) async {
+  static setCustomValue(String messageId,String key,String value) async {
     try {
       await mirrorFlyMethodChannel
-          .invokeMethod('setCustomValue',{"message_id":message_id,"key":key,"value":value});
+          .invokeMethod('setCustomValue',{"message_id":messageId,"key":key,"value":value});
     } on PlatformException catch (e) {
       debugPrint("Platform Exception ===> $e");
       rethrow;
@@ -555,10 +555,10 @@ class FlyChat {
     }
   }
 
-  static removeCustomValue(String message_id,String key) async {
+  static removeCustomValue(String messageId,String key) async {
     try {
       await mirrorFlyMethodChannel
-          .invokeMethod('removeCustomValue',{"message_id":message_id,"key":key});
+          .invokeMethod('removeCustomValue',{"message_id":messageId,"key":key});
     } on PlatformException catch (e) {
       debugPrint("Platform Exception ===> $e");
       rethrow;
@@ -568,10 +568,10 @@ class FlyChat {
     }
   }
 
-  static inviteUserViaSMS(String mobile_no,String message) async {
+  static inviteUserViaSMS(String mobileNo,String message) async {
     try {
       await mirrorFlyMethodChannel
-          .invokeMethod('inviteUserViaSMS',{"mobile_no":mobile_no,"message":message});
+          .invokeMethod('inviteUserViaSMS',{"mobile_no":mobileNo,"message":message});
     } on PlatformException catch (e) {
       debugPrint("Platform Exception ===> $e");
       rethrow;
@@ -646,11 +646,11 @@ class FlyChat {
     }
   }
 
-  static Future<String?> getCustomValue(String message_id,String key) async {
+  static Future<String?> getCustomValue(String messageId,String key) async {
     String? res;
     try {
       res = await mirrorFlyMethodChannel
-          .invokeMethod<String>('getCustomValue',{"message_id":message_id,"key":key});
+          .invokeMethod<String>('getCustomValue',{"message_id":messageId,"key":key});
       return res;
     } on PlatformException catch (e) {
       debugPrint("Platform Exception ===> $e");
@@ -1244,7 +1244,7 @@ class FlyChat {
       debugPrint('RESULT ==> $re');
       return re;
     } on PlatformException catch (e) {
-      debugPrint("er"+e.toString());
+      debugPrint("er $e");
       return re;
     }
   }
@@ -1304,7 +1304,7 @@ class FlyChat {
       debugPrint('RESULT ==> $result');
       return result;
     } on PlatformException catch (e) {
-      debugPrint("er"+e.toString());
+      debugPrint("er $e");
       return re;
     }
   }
@@ -1320,7 +1320,7 @@ class FlyChat {
       debugPrint('RESULT $result');
       return result;
     } on PlatformException catch (e) {
-      debugPrint("er"+e.toString());
+      debugPrint("er $e");
       return result;
     }
   }
@@ -1333,7 +1333,7 @@ class FlyChat {
       debugPrint('RESULT $result');
       return result;
     } on PlatformException catch (e) {
-      debugPrint("er"+e.toString());
+      debugPrint("er $e");
       return re;
     }
   }
@@ -1358,7 +1358,7 @@ class FlyChat {
     try {
       statusResponse =
       await mirrorFlyMethodChannel.invokeMethod('getProfileStatusList');
-      debugPrint("statuslist "+"$statusResponse");
+      debugPrint("statuslist $statusResponse");
       return statusResponse;
     } on PlatformException catch (e) {
       debugPrint("Platform Exception ===> $e");
@@ -1689,10 +1689,10 @@ class FlyChat {
     }
   }
 
-  static Future<dynamic> sendDocumentMessage(String jid, String documentPath, String replyMessageId,[String? file_url]) async {
+  static Future<dynamic> sendDocumentMessage(String jid, String documentPath, String replyMessageId,[String? fileUrl]) async {
     dynamic documentResponse;
     try {
-      documentResponse = await mirrorFlyMethodChannel.invokeMethod('sendDocumentMessage',{ "file" : documentPath , "jid" : jid, "replyMessageId" : replyMessageId,"file_url":file_url});
+      documentResponse = await mirrorFlyMethodChannel.invokeMethod('sendDocumentMessage',{ "file" : documentPath , "jid" : jid, "replyMessageId" : replyMessageId,"file_url":fileUrl});
       debugPrint("documentResponse ==> $documentResponse");
       return documentResponse;
     }on PlatformException catch (e){

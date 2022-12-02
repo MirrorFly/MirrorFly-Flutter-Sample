@@ -43,7 +43,7 @@ class LocalContactController extends GetxController {
       contactList.add(number!.replaceAll(RegExp('[+() -]'), ''));
     }
 
-    Get.toNamed(Routes.PREVIEW_CONTACT, arguments: {"contactList" : contactList, "contactName": contactName, "from": "contact_pick"});
+    Get.toNamed(Routes.previewContact, arguments: {"contactList" : contactList, "contactName": contactName, "from": "contact_pick"});
 
   }
 
