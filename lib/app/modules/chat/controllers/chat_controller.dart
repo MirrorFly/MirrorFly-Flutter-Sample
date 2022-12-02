@@ -87,7 +87,7 @@ class ChatController extends GetxController with GetTickerProviderStateMixin, Ba
 
   late StreamSubscription<bool> keyboardSubscription;
 
-  var _isMemberOfGroup = false.obs;
+  final _isMemberOfGroup = false.obs;
 
   set isMemberOfGroup(value) => _isMemberOfGroup.value = value;
 
@@ -1124,7 +1124,7 @@ class ChatController extends GetxController with GetTickerProviderStateMixin, Ba
       })?.then((value) {
         if(value!=null) {
           debugPrint("result of forward ==> ${(value as Profile).toJson().toString()}");
-          profile_.value = value as Profile;
+          profile_.value = value;
           isBlocked(profile.isBlocked);
           memberOfGroup();
           FlyChat.setOnGoingChatUser(profile.jid!);

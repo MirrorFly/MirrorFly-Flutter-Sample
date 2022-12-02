@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:meta/meta.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
 import 'package:flysdk/flysdk.dart';
@@ -10,9 +9,9 @@ import '../../../common/de_bouncer.dart';
 class ForwardChatController extends GetxController {
 
   //main list
-  final _main_recentChats = <RecentChatData>[];
-  final _main_groupList = <Profile>[];
-  final _main_userList = <Profile>[];
+  final _mainrecentChats = <RecentChatData>[];
+  final _maingroupList = <Profile>[];
+  final _mainuserList = <Profile>[];
 
   final _recentChats = <RecentChatData>[].obs;
   set recentChats(List<RecentChatData> value) => _recentChats.value = value;
@@ -111,8 +110,8 @@ class ForwardChatController extends GetxController {
   void getRecentChatList() {
     FlyChat.getRecentChatList().then((value) {
       var data = recentChatFromJson(value);
-      if(_main_recentChats.isEmpty){
-        _main_recentChats.addAll(data.data!);
+      if(_mainrecentChats.isEmpty){
+        _mainrecentChats.addAll(data.data!);
       }
       _recentChats(data.data!);
     }).catchError((error) {
@@ -124,8 +123,8 @@ class ForwardChatController extends GetxController {
     FlyChat.getAllGroups().then((value){
       if(value!=null){
         var list = profileFromJson(value);
-        if(_main_groupList.isEmpty){
-          _main_groupList.addAll(list);
+        if(_maingroupList.isEmpty){
+          _maingroupList.addAll(list);
         }
         _groupList(list);
       }
@@ -144,8 +143,8 @@ class ForwardChatController extends GetxController {
       if(value!=null){
         var list = userListFromJson(value);
         if(list.data !=null) {
-          if(_main_userList.isEmpty){
-            _main_userList.addAll(list.data!);
+          if(_mainuserList.isEmpty){
+            _mainuserList.addAll(list.data!);
           }
           _userList.value.addAll(list.data!);
           _userList.refresh();
@@ -164,7 +163,7 @@ class ForwardChatController extends GetxController {
 
   void filterRecentchat(){
     _recentChats.value.clear();
-    for (var recentChat in _main_recentChats) {
+    for (var recentChat in _mainrecentChats) {
       if (recentChat.profileName != null &&
           recentChat.profileName!.toLowerCase().contains(searchQuery.text.trim().toString().toLowerCase()) ==
               true) {
@@ -176,7 +175,7 @@ class ForwardChatController extends GetxController {
 
   void filterGroupchat(){
     _groupList.value.clear();
-    for (var group in _main_groupList) {
+    for (var group in _maingroupList) {
       if (group.name != null &&
           group.name!.toLowerCase().contains(searchQuery.text.trim().toString().toLowerCase()) ==
               true) {
@@ -252,10 +251,10 @@ class ForwardChatController extends GetxController {
     pageNum=1;
     searchQuery.clear();
     _isSearchVisible(true);
-    scrollable(_main_userList.length==20);
-    _recentChats(_main_recentChats);
-    _groupList(_main_groupList);
-    _userList(_main_userList);
+    scrollable(_mainuserList.length==20);
+    _recentChats(_mainrecentChats);
+    _groupList(_maingroupList);
+    _userList(_mainuserList);
   }
 
   forwardMessages() {

@@ -10,7 +10,6 @@ import 'package:flysdk/flysdk.dart';
 
 import '../../../common/constants.dart';
 import '../../../routes/app_pages.dart';
-import 'package:flysdk/flysdk.dart';
 
 
 class ViewAllMediaController extends GetxController {

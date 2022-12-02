@@ -73,9 +73,9 @@ part 'app_routes.dart';
 class AppPages {
   AppPages._();
 
-  static const INITIAL = Routes.LOGIN;
-  static const PROFILE = Routes.PROFILE;
-  static const DASHBOARD = Routes.DASHBOARD;
+  static const initial = Routes.LOGIN;
+  static const profile = Routes.PROFILE;
+  static const dashboard = Routes.DASHBOARD;
 
   static final routes = [
     GetPage(name: _Paths.OTP, page: () => const OtpView(), binding: LoginBinding()),
@@ -131,7 +131,7 @@ class AppPages {
     ),
     GetPage(
       name: _Paths.STATUSLIST,
-      page: () => StatusListView(),
+      page: () => const StatusListView(),
       binding: StatusListBinding(),
     ),
     GetPage(
@@ -151,7 +151,7 @@ class AppPages {
     ),
     GetPage(
       name: _Paths.LOCATIONSENT,
-      page: () => LocationSentView(),
+      page: () => const LocationSentView(),
       binding: LocationBinding(),
     ),
     GetPage(

@@ -6,7 +6,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
 
-import 'package:flutter_cache_manager/flutter_cache_manager.dart' as cache;
 import 'package:mirror_fly_demo/app/modules/dashboard/widgets.dart';
 import 'constants.dart';
 import 'main_controller.dart';
@@ -166,11 +165,11 @@ class ImageNetwork extends GetView<MainController> {
                     fit: BoxFit.fill,
                   ))
                 : InkWell(
+                  onTap: onTap,
                   child: Image(
                       image: provider,
                       fit: BoxFit.fill,
                     ),
-              onTap: onTap,
                 );
           },
         ),

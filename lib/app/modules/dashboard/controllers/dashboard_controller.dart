@@ -10,8 +10,6 @@ import 'package:mirror_fly_demo/app/data/session_management.dart';
 import 'package:flysdk/flysdk.dart';
 import 'package:intl/intl.dart';
 
-import 'package:flysdk/flysdk.dart';
-
 import '../../../routes/app_pages.dart';
 
 class DashboardController extends GetxController with GetTickerProviderStateMixin, BaseController {

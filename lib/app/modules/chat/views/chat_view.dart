@@ -23,7 +23,6 @@ import '../../../widgets/custom_action_bar_icons.dart';
 import '../../../widgets/lottie_animation.dart';
 import '../controllers/chat_controller.dart';
 import 'package:flysdk/flysdk.dart';
-import 'dart:math' as math;
 
 
 class ChatView extends GetView<ChatController> {

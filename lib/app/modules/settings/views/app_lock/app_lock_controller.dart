@@ -196,12 +196,12 @@ class AppLockController extends GetxController {
     if (SessionManagement.getLogin()) {
       if (SessionManagement.getName().checkNull().isNotEmpty &&
           SessionManagement.getMobileNumber().checkNull().isNotEmpty) {
-        return AppPages.DASHBOARD;
+        return AppPages.dashboard;
       } else {
-        return AppPages.PROFILE;
+        return AppPages.profile;
       }
     } else {
-      return AppPages.INITIAL;
+      return AppPages.initial;
     }
   }
 }

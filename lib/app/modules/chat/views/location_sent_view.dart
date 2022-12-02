@@ -7,8 +7,7 @@ import 'package:mirror_fly_demo/app/common/constants.dart';
 import '../controllers/location_controller.dart';
 
 class LocationSentView extends GetView<LocationController>{
-  LocationSentView({Key? key}) : super(key: key);
-  var controller = Get.put<LocationController>(LocationController());
+  const LocationSentView({Key? key}) : super(key: key);
   @override
   Widget build(BuildContext context) {
     return Scaffold(

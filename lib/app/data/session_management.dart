@@ -1,9 +1,8 @@
+import 'package:flysdk/flysdk.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../common/constants.dart';
-import 'package:flysdk/flysdk.dart'as register;
-import 'package:flysdk/src/model/profile_update.dart';
 
 
 class SessionManagement {
@@ -87,7 +86,7 @@ class SessionManagement {
     await _preferences.clear();
   }
 
-  static Future setUser(register.Data data) async {
+  static Future setUser(Data data) async {
     await _preferences.setString('token', data.token.checkNull());
     await _preferences.setString('username', data.username.checkNull());
     await _preferences.setString('password', data.password.checkNull());

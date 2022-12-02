@@ -1,13 +1,10 @@
 import 'dart:convert';
 
-import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:flysdk/flysdk.dart';
 import 'package:mirror_fly_demo/app/data/session_management.dart';
-import 'package:workmanager/workmanager.dart';
 
 import '../common/constants.dart';
 
@@ -19,7 +16,6 @@ class PushNotifications {
     getToken();
     initInfo();
     FirebaseMessaging.onMessage.listen(onMessage);
-    showNotification(RemoteMessage());
   }
   static void getToken(){
     FirebaseMessaging.instance.getToken().then((value) {
@@ -71,36 +67,13 @@ class PushNotifications {
     if (message.notification != null) {
       debugPrint('Message also contained a notification: ${message.notification}');
     }
-    RemoteNotification? notification = message.notification;
-    AndroidNotification? android = message.notification?.android;
-
     // If `onMessage` is triggered with a notification, construct our own
     // local notification to show to users using the created channel.
-    // if (notification != null) {
-      showNotification(message);
-      /*var channel = AndroidNotificationChannel("id", "name",description: "");
-      await flutterLocalNotificationsPlugin
-          .resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>()
-          ?.createNotificationChannel(channel);
-      flutterLocalNotificationsPlugin.show(
-          notification.hashCode,
-          notification.title,
-          notification.body,
-          NotificationDetails(
-            android: AndroidNotificationDetails(
-              channel.id,
-              channel.name,
-              channelDescription : channel.description,
-              icon: android.smallIcon,
-              // other properties...
-            ),
-          ));*/
-    // }
+    showNotification(message);
   }
 
   static void notificationPermission() async{
     FirebaseMessaging messaging = FirebaseMessaging.instance;
-    NotificationSettings currentsettings = await messaging.getNotificationSettings();
    var permission = await flutterLocalNotificationsPlugin.resolvePlatformSpecificImplementation<
         AndroidFlutterLocalNotificationsPlugin>()!.requestPermission();
     NotificationSettings settings = await messaging.requestPermission(
@@ -120,7 +93,7 @@ class PushNotifications {
     } else {
       debugPrint('User declined or has not accepted permission');
     }
-    debugPrint("permission :"+permission.toString());
+    debugPrint("permission :$permission");
   }
 
   static void onDidReceiveLocalNotification(
@@ -147,20 +120,12 @@ class PushNotifications {
       WidgetsFlutterBinding.ensureInitialized();
       await const MethodChannel('handleReceivedMessage').invokeMethod("handleReceivedMessage",notificationData).then((value){
         mirrorFlyLog("notification message", value.toString());
-        var data = json.decode(value.toString());
+        /*var data = json.decode(value.toString());
         var groupJid = data["groupJid"].toString();
         var titleContent = data["titleContent"].toString();
         var chatMessage = data["chatMessage"].toString();
-        var cancel = data["cancel"].toString();
-      });
-      /*Workmanager().registerOneOffTask(
-        "mirrorfly.flutter",
-        "mirrorfly.flutter",
-        inputData: notificationData,
-      );*/
-      /*var message = remoteMessage.notification;
-      if(message!=null) {
-        var channel = AndroidNotificationChannel("id", "name", description: "");
+        var cancel = data["cancel"].toString();*/
+        /* var channel = AndroidNotificationChannel("id", "name", description: "");
         var bigtextstyleinfo = BigTextStyleInformation(
             message.body.toString(), htmlFormatBigText: true,
             contentTitle: message.title,
@@ -181,8 +146,8 @@ class PushNotifications {
             channel);
         await flutterLocalNotificationsPlugin.show(
             0, message.title, message.body, notificationDetails,
-            payload: "chatpage");
-      }*/
+            payload: "chatpage");*/
+      });
     }
   }
 }

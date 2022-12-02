@@ -14,8 +14,8 @@ class ContactusView extends StatelessWidget {
       color: Colors.black,
       fontSize: 16,
       fontWeight: FontWeight.w400);
-  TextEditingController title = TextEditingController();
-  TextEditingController description = TextEditingController();
+  final TextEditingController title = TextEditingController();
+  final TextEditingController description = TextEditingController();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
