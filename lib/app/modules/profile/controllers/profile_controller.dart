@@ -23,7 +23,7 @@ class ProfileController extends GetxController {
   var isUserProfileRemoved = false.obs;
   var imagePath = "".obs;
   var userImgUrl = "".obs;
-
+  var emailPatternMatch = RegExp(Constants.emailPattern,multiLine: false);
   var loading = false.obs;
   var changed = false.obs;
 
@@ -50,10 +50,14 @@ class ProfileController extends GetxController {
   }
 
   void save() {
-    if (profileName.text.isEmpty) {
-      toToast("Enter Profile Name");
-    } else if (profileEmail.text.isEmpty) {
-      toToast("Enter Profile Email");
+    if (profileName.text.trim().isEmpty) {
+      toToast("Please enter your username");
+    }else if (profileName.text.trim().length > 3) {
+      toToast("Username is too short");
+    } else if (profileEmail.text.trim().isEmpty) {
+      toToast("Email should not be empty");
+    } else if (emailPatternMatch.hasMatch(profileEmail.text.toString())) {
+      toToast("Please enter a valid Mail");
     } else if (profileStatus.value.isEmpty) {
       toToast("Enter Profile Status");
     } else {

@@ -141,6 +141,7 @@ class ProfileView extends GetView<ProfileController> {
                     height: 10,
                   ),
                   TextField(
+                    keyboardType: TextInputType.emailAddress,
                     onChanged: (value) => controller.onEmailChange(value),
                     controller: controller.profileEmail,
                     decoration: InputDecoration(
