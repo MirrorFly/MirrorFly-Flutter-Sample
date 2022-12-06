@@ -20,7 +20,7 @@ class ChatInfoController extends GetxController {
   set isSliverAppBarExpanded(value) => _isSliverAppBarExpanded.value = value;
   bool get isSliverAppBarExpanded => _isSliverAppBarExpanded.value;
 
-  bool muteable = false;
+  final muteable = false.obs;
 
   @override
   void onInit() {
@@ -33,7 +33,7 @@ class ChatInfoController extends GetxController {
   }
 
   muteAble() async {
-    muteable = (await FlyChat.isUserUnArchived(profile.jid.checkNull()))!;
+    muteable(await FlyChat.isUserUnArchived(profile.jid.checkNull()));
   }
 
   _scrollListener() {
@@ -44,7 +44,7 @@ class ChatInfoController extends GetxController {
   }
 
   onToggleChange(bool value) {
-    if(muteable) {
+    if(muteable.value) {
       mirrorFlyLog("change", value.toString());
       mute(value);
       FlyChat.updateChatMuteStatus(profile.jid.checkNull(), value);

@@ -124,7 +124,7 @@ class ChatInfoView extends GetView<ChatInfoController> {
                       controller.onToggleChange(value)
                     }
                 ), onTap: () {
-                controller.onToggleChange(controller.mute.value);
+                controller.onToggleChange(!controller.mute.value);
               },
               );
             }),

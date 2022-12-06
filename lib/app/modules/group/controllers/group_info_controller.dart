@@ -34,7 +34,7 @@ class GroupInfoController extends GetxController {
   final _isSliverAppBarExpanded = true.obs;
   set isSliverAppBarExpanded(value) => _isSliverAppBarExpanded.value = value;
   bool get isSliverAppBarExpanded => _isSliverAppBarExpanded.value;
-
+  final muteable = false.obs;
   @override
   void onInit(){
     super.onInit();
@@ -48,6 +48,10 @@ class GroupInfoController extends GetxController {
 
     nameController.text=profile.nickName.checkNull();
   }
+  muteAble() async {
+    muteable(await FlyChat.isUserUnArchived(profile.jid.checkNull()));
+  }
+
   _scrollListener() {
     if (scrollController.hasClients) {
       _isSliverAppBarExpanded(scrollController.offset < (250 - kToolbarHeight));
@@ -69,9 +73,11 @@ class GroupInfoController extends GetxController {
     });
   }
   onToggleChange(bool value){
-    mirrorFlyLog("change", value.toString());
-    _mute(value);
-    FlyChat.updateChatMuteStatus(profile.jid.checkNull(),value);
+    if(muteable.value) {
+      mirrorFlyLog("change", value.toString());
+      _mute(value);
+      FlyChat.updateChatMuteStatus(profile.jid.checkNull(), value);
+    }
   }
 
   getGroupMembers(bool? server){
