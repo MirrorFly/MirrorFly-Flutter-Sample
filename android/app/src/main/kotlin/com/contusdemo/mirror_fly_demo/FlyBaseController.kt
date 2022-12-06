@@ -757,6 +757,9 @@ open class FlyBaseController(activity: FlutterActivity) : MethodChannel.MethodCa
                 val jid = call.argument<String>("jid") ?: ""
                 FlyCore.deleteRecentChat(jid)
             }
+            call.method.equals("isUserUnArchived") -> {
+                result.success(FlyCore.isUserUnArchived(call.argument<String>("jid") ?: ""))
+            }
             call.method.equals("getIsProfileBlockedByAdmin") -> {
                 result.success(FlyCore.getIsProfileBlockedByAdmin())
             }
@@ -784,7 +787,7 @@ open class FlyBaseController(activity: FlutterActivity) : MethodChannel.MethodCa
             call.method.equals("getArchivedChatsFromServer") -> {
                 FlyCore.getArchivedChatsFromServer()
             }
-            call.method.equals("getArchivedChatsFromServer") -> {
+            call.method.equals("getArchivedChatList") -> {
                 getArchivedChatList(result)
             }
             call.method.equals("prepareChatConversationToExport") -> {
@@ -1334,7 +1337,7 @@ open class FlyBaseController(activity: FlutterActivity) : MethodChannel.MethodCa
          FlyCore.getArchivedChatList { isSuccess, throwable, data ->
              if (isSuccess) {
                  val res : ArrayList<RecentChat> = data["data"] as ArrayList<RecentChat>
-                 result.success(res.tojsonString())
+                 result.success(data.tojsonString())
              } else {
                  //Getting users blocked me list failed print throwable to find the exception details.
                  result.error("500",throwable!!.message,throwable)

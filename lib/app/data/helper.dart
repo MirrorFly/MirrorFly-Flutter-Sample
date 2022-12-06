@@ -276,6 +276,15 @@ extension ChatmessageParsing on ChatMessageModel{
   bool isFileMessage() => messageType == Constants.mDocument;
   bool isNotificationMessage() => messageType == Constants.mNotification;
 }
+extension RecentChatParsing on RecentChatData{
+  String getChatType(){
+    return (this.isGroup!) ? Constants.typeGroupChat : Constants.typeChat;
+  }
+}
+
+String returnFormattedCount(int count) {
+  return (count > 99) ? "99+" : count.toString();
+}
 
 InkWell listItem(
     {Widget? leading, required Widget title, Widget? trailing, required Function() onTap}) {
@@ -344,10 +353,10 @@ bool equalsWithYesterday(DateTime srcDate, String day) {
   // Time part has
   // discarded
   var yesterday = (day == Constants.yesterday)
-      ? calendar.subtract(const Duration(days: 1))
+      ? DateTime.now().subtract(const Duration(days: 1))
       : DateTime.now();
   return yesterday
-      .difference(calendar)
+      .difference(srcDate)
       .inDays == 0;
 }
 var calendar = DateTime.now();

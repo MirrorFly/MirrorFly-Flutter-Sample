@@ -241,32 +241,9 @@ class RecentChatSearchController extends GetxController {
 
   toChatPage(String jid){
     if(jid.isNotEmpty) {
-      FlyChat.getProfileLocal(jid, false).then((value) {
+      FlyChat.getProfileDetails(jid, false).then((value) {
         if(value!=null){
-          var datas = profileDataFromJson(value);
-          var data = datas.data!;
-          var profile = Profile();
-          profile.contactType = "";
-          profile.email = data.email;
-          profile.groupCreatedTime = "";
-          profile.image = data.image;
-          profile.imagePrivacyFlag = "";
-          profile.isAdminBlocked = data.isAdminBlocked;
-          profile.isBlocked = data.isBlocked;
-          profile.isBlockedMe = data.isBlockedMe;
-          profile.isGroupAdmin = data.isGroupAdmin;
-          profile.isGroupInOfflineMode = data.isGroupInOfflineMode;
-          profile.isGroupProfile = data.isGroupProfile;
-          profile.isItSavedContact = data.isItSavedContact;
-          profile.isMuted = data.isMuted;
-          profile.isSelected = data.isSelected;
-          profile.jid = data.jid;
-          profile.lastSeenPrivacyFlag = "";
-          profile.mobileNUmberPrivacyFlag = "";
-          profile.mobileNumber = data.mobileNumber;
-          profile.name = data.name;
-          profile.nickName = data.nickName;
-          profile.status = data.status;
+          var profile =  profiledata(value.toString());
           Get.toNamed(Routes.chat, arguments: profile);
         }
       });

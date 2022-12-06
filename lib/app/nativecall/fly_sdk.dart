@@ -11,7 +11,7 @@ class FlyChat {
   static const EventChannel mediaStatusUpdatedChannel = EventChannel('contus.mirrorfly/onMediaStatusUpdated');
   static const EventChannel uploadDownloadProgressChangedChannel = EventChannel('contus.mirrorfly/onUploadDownloadProgressChanged');
   static const EventChannel showUpdateCancelNotificationChannel = EventChannel('contus.mirrorfly/showOrUpdateOrCancelNotification');
-  
+
   static const EventChannel onGroupProfileFetchedChannel = EventChannel('contus.mirrorfly/onGroupProfileFetched');
   static const EventChannel onNewGroupCreatedChannel = EventChannel('contus.mirrorfly/onNewGroupCreated');
   static const EventChannel onGroupProfileUpdatedChannel = EventChannel('contus.mirrorfly/onGroupProfileUpdated');
@@ -291,6 +291,21 @@ class FlyChat {
     }
   }
 
+  static Future<bool?> deleteBusyStatus(num id, String status,bool isCurrentStatus) async {
+    bool? res;
+    try {
+      res = await mirrorFlyMethodChannel
+          .invokeMethod<bool>('deleteBusyStatus',{"id":id,"status":status,"isCurrentStatus":isCurrentStatus,});
+      return res;
+    } on PlatformException catch (e) {
+      debugPrint("Platform Exception ===> $e");
+      rethrow;
+    } on Exception catch (error) {
+      debugPrint("Exception ==> $error");
+      rethrow;
+    }
+  }
+
   static Future<String?> mediaEndPoint() async {
     String? response;
     try {
@@ -372,6 +387,36 @@ class FlyChat {
     try {
       res = await mirrorFlyMethodChannel
           .invokeMethod<int>('getMembersCountOfGroup',{"groupJid":groupJid});
+      return res;
+    } on PlatformException catch (e) {
+      debugPrint("Platform Exception ===> $e");
+      rethrow;
+    } on Exception catch (error) {
+      debugPrint("Exception ==> $error");
+      rethrow;
+    }
+  }
+
+  static Future<bool?> doesFetchingMembersListFromServedRequired(String groupJid) async {
+    bool? res;
+    try {
+      res = await mirrorFlyMethodChannel
+          .invokeMethod<bool>('doesFetchingMembersListFromServedRequired',{"groupJid":groupJid});
+      return res;
+    } on PlatformException catch (e) {
+      debugPrint("Platform Exception ===> $e");
+      rethrow;
+    } on Exception catch (error) {
+      debugPrint("Exception ==> $error");
+      rethrow;
+    }
+  }
+
+  static Future<bool?> isHideLastSeenEnabled() async {
+    bool? res;
+    try {
+      res = await mirrorFlyMethodChannel
+          .invokeMethod<bool>('isHideLastSeenEnabled');
       return res;
     } on PlatformException catch (e) {
       debugPrint("Platform Exception ===> $e");
@@ -464,6 +509,21 @@ class FlyChat {
     try {
       await mirrorFlyMethodChannel
           .invokeMethod('setTypingStatusListener');
+    } on PlatformException catch (e) {
+      debugPrint("Platform Exception ===> $e");
+      rethrow;
+    } on Exception catch (error) {
+      debugPrint("Exception ==> $error");
+      rethrow;
+    }
+  }
+
+  static Future<bool?> isUserUnArchived(String jid) async {
+    bool? res;
+    try {
+      res = await mirrorFlyMethodChannel
+          .invokeMethod<bool>('isUserUnArchived',{"jid":jid});
+      return res;
     } on PlatformException catch (e) {
       debugPrint("Platform Exception ===> $e");
       rethrow;
@@ -1248,7 +1308,7 @@ class FlyChat {
       return re;
     }
   }
-  
+
   static Stream<dynamic> get onMessageReceived => messageOnReceivedChannel.receiveBroadcastStream().cast();
   static Stream<dynamic> get onMessageStatusUpdated => messageStatusUpdatedChanel.receiveBroadcastStream().cast();
   static Stream<dynamic> get onMediaStatusUpdated => mediaStatusUpdatedChannel.receiveBroadcastStream().cast();
@@ -1266,7 +1326,7 @@ class FlyChat {
   static Stream<dynamic> get onLeftFromGroup => onLeftFromGroupChannel.receiveBroadcastStream().cast();
   static Stream<dynamic> get onGroupNotificationMessage => onGroupNotificationMessageChannel.receiveBroadcastStream().cast();
   static Stream<dynamic> get onGroupDeletedLocally => onGroupDeletedLocallyChannel.receiveBroadcastStream().cast();
-  
+
   static Stream<dynamic> get blockedThisUser => blockedThisUserChannel.receiveBroadcastStream().cast();
   static Stream<dynamic> get myProfileUpdated => myProfileUpdatedChannel.receiveBroadcastStream().cast();
   static Stream<dynamic> get onAdminBlockedOtherUser => onAdminBlockedOtherUserChannel.receiveBroadcastStream().cast();
@@ -1732,7 +1792,7 @@ class FlyChat {
       rethrow;
     }
   }
-  
+
   //Recent Chat Search
 
   static Future<dynamic> getRecentChatListIncludingArchived() async {//filteredRecentChatList
@@ -2436,6 +2496,4 @@ class FlyChat {
       rethrow;
     }
   }
-
-
 }

@@ -64,8 +64,8 @@ class ForwardChatView extends GetView<ForwardChatController> {
                           physics: const NeverScrollableScrollPhysics(),
                           itemBuilder: (context, index) {
                             var item = controller.recentChats[index];
-                            return recentChatItem(
-                                item: item, context: context,onTap:() {
+                            return RecentChatItem(
+                                item: item,onTap:() {
                                   //chat page
                                   controller.onItemClicked(item.jid.checkNull(),
                                       item.profileName.checkNull());

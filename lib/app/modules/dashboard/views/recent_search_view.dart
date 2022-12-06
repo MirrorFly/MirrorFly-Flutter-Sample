@@ -39,7 +39,7 @@ class RecentSearchView extends GetView<RecentChatSearchController> {
             if(controller.frmRecentChatList.isNotEmpty){
               var item = controller.frmRecentChatList[position];
               //var image = controller.image path(item.profileImage);
-              return recentChatItem(item: item.value, context: context,onTap: () {
+              return RecentChatItem(item: item.value,onTap: () {
                 controller.toChatPage(item.value.jid.checkNull());
               });
             }else {
@@ -86,7 +86,7 @@ class RecentSearchView extends GetView<RecentChatSearchController> {
             builder: (context, snapshot) {
               var item = snapshot.data;
               return item != null
-                  ? recentChatItem(item: item, context: context,onTap: () {
+                  ? RecentChatItem(item: item,onTap: () {
                 controller.toChatPage(data.value.jid.checkNull());
               },) : const SizedBox();
              /* InkWell(

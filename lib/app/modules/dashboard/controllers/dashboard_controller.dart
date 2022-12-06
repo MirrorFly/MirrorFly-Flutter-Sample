@@ -14,13 +14,30 @@ import '../../../routes/app_pages.dart';
 
 class DashboardController extends GetxController with GetTickerProviderStateMixin, BaseController {
   var recentChats = <RecentChatData>[].obs;
+  var archivedChats = <RecentChatData>[].obs;
   var calendar = DateTime.now();
+  var selectedChats = <String>[].obs;
+  var selectedChatsPosition = <int>[].obs;
+  var selected = false.obs;
 
+  //action icon visibles
+  var archive = false.obs;
+  var pin = false.obs;
+  var unpin = false.obs;
+  var mute = false.obs;
+  var unmute = false.obs;
+  var read = false.obs;
+  var unread = false.obs;
+  var delete = false.obs;
+  var info = false.obs;
+  var shortcut = false.obs;
   @override
   void onInit() {
     super.onInit();
     recentChats.bindStream(recentChats.stream);
     ever(recentChats, (callback) => unReadCount());
+    ever(archivedChats, (callback) => archivedChatCount());
+    getArchivedChatsList();
   }
 
   Future<RecentChatData?> getRecentChatOfJid(String jid) async{
@@ -39,8 +56,17 @@ class DashboardController extends GetxController with GetTickerProviderStateMixi
     FlyChat.getRecentChatList().then((value) {
       var data = recentChatFromJson(value);
       recentChats.clear();
-      recentChats
-          .addAll(data.data!);
+      recentChats.addAll(data.data!);
+    }).catchError((error) {
+      debugPrint("issue===> $error");
+    });
+  }
+
+  getArchivedChatsList() {
+    FlyChat.getArchivedChatList().then((value) {
+      var data = recentChatFromJson(value);
+      archivedChats.clear();
+      archivedChats.addAll(data.data!);
     }).catchError((error) {
       debugPrint("issue===> $error");
     });
@@ -49,36 +75,13 @@ class DashboardController extends GetxController with GetTickerProviderStateMixi
   toChatPage(String jid) async {
     if(jid.isNotEmpty) {
       Helper.progressLoading();
-      await FlyChat.getProfileLocal(jid, false).then((value) {
+      var value = await FlyChat.getProfileDetails(jid, false);//.then((value) {
         if(value!=null){
           Helper.hideLoading();
-          var profileData = profileDataFromJson(value);
-          var data = profileData.data!;
-          var profile = Profile();
-          profile.contactType = "";
-          profile.email = data.email;
-          profile.groupCreatedTime = "";
-          profile.image = data.image;
-          profile.imagePrivacyFlag = "";
-          profile.isAdminBlocked = data.isAdminBlocked;
-          profile.isBlocked = data.isBlocked;
-          profile.isBlockedMe = data.isBlockedMe;
-          profile.isGroupAdmin = data.isGroupAdmin;
-          profile.isGroupInOfflineMode = data.isGroupInOfflineMode;
-          profile.isGroupProfile = data.isGroupProfile;
-          profile.isItSavedContact = data.isItSavedContact;
-          profile.isMuted = data.isMuted;
-          profile.isSelected = data.isSelected;
-          profile.jid = data.jid;
-          profile.lastSeenPrivacyFlag ="";
-          profile.mobileNUmberPrivacyFlag = "";
-          profile.mobileNumber = data.mobileNumber;
-          profile.name = data.name;
-          profile.nickName = data.nickName;
-          profile.status = data.status;
+          var profile =  profiledata(value.toString());
           Get.toNamed(Routes.chat, arguments: profile);
         }
-      });
+      //});
     }
   }
 
@@ -142,14 +145,25 @@ class DashboardController extends GetxController with GetTickerProviderStateMixi
   }
   
   final _unreadCount = 0.obs;
-  int get unreadCount => _unreadCount.value;
+  String get unreadCountString => returnFormattedCount(_unreadCount.value);
   set unreadCount(int val) => _unreadCount.value = val;
   
   unReadCount(){
     _unreadCount(0);
     for (var p0 in recentChats) {
-      if(p0.unreadMessageCount!=null){
-        _unreadCount(((p0.unreadMessageCount!>0) ? 1+unreadCount : 0 +unreadCount));
+      if(p0.isConversationUnRead!){
+        _unreadCount(((p0.isConversationUnRead!) ? 1+_unreadCount.value : 0 +_unreadCount.value));
+      }
+    }
+  }
+
+  final _archivedCount = 0.obs;
+  String get archivedCount => returnFormattedCount(_archivedCount.value);
+  archivedChatCount(){
+    _archivedCount(0);
+    for (var p0 in archivedChats) {
+      if(p0.isConversationUnRead!){
+        _archivedCount(((p0.isConversationUnRead!) ? 1+_archivedCount.value : 0 +_archivedCount.value));
       }
     }
   }
@@ -195,6 +209,313 @@ class DashboardController extends GetxController with GetTickerProviderStateMixi
     }
   }
 
+  gotoSearch(){
+    Future.delayed(const Duration(milliseconds: 100), ()
+    {
+      Get.toNamed(Routes.recentSearch,
+          arguments: {
+            "recents": recentChats
+          });
+    });
+  }
+
+  gotoCreateGroup(){
+    Future.delayed(
+        const Duration(milliseconds: 100),
+            () => Get.toNamed(Routes.createGroup));
+  }
+
+  gotoSettings(){
+    Future.delayed(
+        const Duration(milliseconds: 100),
+            () => Get.toNamed(Routes.settings));
+  }
+
+  chatInfo() async {
+    var chatIndex = recentChats.indexWhere((element) => selectedChats.first == element.jid);//selectedChatsPosition[index];
+    var item = recentChats[chatIndex];
+    Helper.progressLoading();
+    clearAllChatSelection();
+    await FlyChat.getProfileDetails(item.jid.checkNull(), false).then((value) {
+      if (value != null) {
+        Helper.hideLoading();
+        var profile =  profiledata(value.toString());
+        if(item.isGroup!){
+          Future.delayed(const Duration(milliseconds: 100),
+                  () => Get.toNamed(Routes.groupInfo,arguments: profile));
+        }else{
+          Future.delayed(const Duration(milliseconds: 100),
+                  () => Get.toNamed(Routes.chatInfo,arguments: profile));
+        }
+      }
+    });
+  }
+
+  isSelected(int index) => selectedChats.contains(recentChats[index].jid);
+
+  selectOrRemoveChatfromList(int index){
+    if(selected.isTrue) {
+      if (selectedChats.contains(recentChats[index].jid)) {
+        selectedChats.remove(recentChats[index].jid.checkNull());
+        selectedChatsPosition.remove(index);
+      } else {
+        selectedChats.add(recentChats[index].jid.checkNull());
+        selectedChatsPosition.add(index);
+      }
+    }
+    if(selectedChats.isEmpty){
+      clearAllChatSelection();
+    }else{
+      menuValidationForItem(recentChats[index]);
+    }
+  }
+
+  clearAllChatSelection(){
+    selected(false);
+    selectedChats.clear();
+    archive(false);
+    pin(false);
+    unpin(false);
+    mute(false);
+    unmute(false);
+    read(false);
+    unread(false);
+    delete(false);
+    info(false);
+    shortcut(false);
+    update();
+  }
+
+  bool menuValidationForPinIcon(){
+    var checkListForPinIcon = <bool>[];
+    for (var value in recentChats) {
+      checkListForPinIcon.add(value.isChatPinned.checkNull());
+    }
+    return checkListForPinIcon.contains(false);//pin able
+  }
+
+  Future<bool> menuValidationForDeleteIcon() async {
+    for (var item in recentChats) {
+      var isMember = await FlyChat.isMemberOfGroup(item.jid.checkNull(),"");
+      if((item.getChatType() == Constants.typeGroupChat) && isMember!){
+        return false;
+      }
+    }
+    return true;
+  }
+
+  bool menuValidationForMuteUnMuteIcon(){
+    var checkListForMuteUnMuteIcon = <bool>[];
+    for (var value in recentChats) {
+      if(!value.isBroadCast!) {
+        checkListForMuteUnMuteIcon.add(value.isMuted.checkNull());
+      }
+    }
+    return checkListForMuteUnMuteIcon.contains(false);// Mute able
+  }
+
+  bool menuValidationForMarkReadUnReadIcon(){
+    var checkListForReadUnReadIcon = <bool>[];
+    for (var value in recentChats) {
+      checkListForReadUnReadIcon.add(value.isConversationUnRead.checkNull());
+    }
+    return checkListForReadUnReadIcon.contains(false);//Mark as Read Able
+  }
+
+  menuValidationForItem(RecentChatData item) {
+    archive(true);
+    if(selectedChats.length==1){
+      info(true);
+      pin(!item.isChatPinned!);
+      unpin(item.isChatPinned!);
+      if(Constants.typeBroadcastChat!= item.getChatType()){
+        unmute(item.isMuted);
+        mute(!item.isMuted!);
+        shortcut(true);
+      }else{
+        unmute(false);
+        mute(false);
+        shortcut(false);
+      }
+      read(item.isConversationUnRead);
+      unread(!item.isConversationUnRead!);
+      delete(Constants.typeGroupChat!= item.getChatType());
+      if(Constants.typeGroupChat == item.getChatType()){
+        FlyChat.isMemberOfGroup(item.jid.checkNull(),null).then((value) => delete(value));
+      }
+    }else {
+      info(false);
+      pin(menuValidationForPinIcon());
+      unpin(!menuValidationForPinIcon());
+      mute(menuValidationForMuteUnMuteIcon());
+      unmute(!menuValidationForMuteUnMuteIcon());
+      read(menuValidationForMarkReadUnReadIcon());
+      unread(!menuValidationForMarkReadUnReadIcon());
+      menuValidationForDeleteIcon().then((value) => delete(value));
+    }
+
+  }
+  pinChats(){
+    if(selectedChats.length==1){
+      _itemPin(0);
+      clearAllChatSelection();
+    }else{
+      selected(false);
+      for (var index =0;index<selectedChats.length;index++) {
+        _itemPin(index);
+      }
+      clearAllChatSelection();
+    }
+  }
+
+  unPinChats(){
+    if(selectedChats.length==1){
+      _itemUnPin(0);
+      clearAllChatSelection();
+    }else{
+      selected(false);
+      selectedChats.asMap().forEach((key, value) {_itemUnPin(key);});
+      clearAllChatSelection();
+    }
+  }
+
+  muteChats(){
+    if(selectedChats.length==1){
+      _itemMute(0);
+      clearAllChatSelection();
+    }else{
+      selected(false);
+      selectedChats.asMap().forEach((key, value) {_itemMute(key);});
+      clearAllChatSelection();
+    }
+  }
+
+  unMuteChats(){
+    if(selectedChats.length==1){
+      _itemUnMute(0);
+      clearAllChatSelection();
+    }else{
+      selected(false);
+      selectedChats.asMap().forEach((key, value) {_itemUnMute(key);});
+      clearAllChatSelection();
+    }
+  }
+
+  markAsRead(){
+    if(selectedChats.length==1){
+      _itemUnMute(0);
+      clearAllChatSelection();
+    }else{
+      selected(false);
+      selectedChats.asMap().forEach((key, value) {_itemUnMute(key);});
+      clearAllChatSelection();
+    }
+  }
+
+  archiveChats(){
+    if(selectedChats.length==1){
+      _itemArchive(0);
+      clearAllChatSelection();
+    }else{
+      selected(false);
+      selectedChats.asMap().forEach((key, value) {_itemArchive(key);});
+      clearAllChatSelection();
+    }
+  }
+
+  deleteChats(){
+    if(selectedChats.length==1){
+      _itemDelete(0);
+      clearAllChatSelection();
+    }else{
+      itemsDelete();
+      clearAllChatSelection();
+    }
+  }
+
+  _itemPin(int index){
+    var chatIndex = recentChats.indexWhere((element) => selectedChats[index] == element.jid);//selectedChatsPosition[index];
+    recentChats[chatIndex].isChatPinned=(true);
+    FlyChat.updateRecentChatPinStatus(selectedChats[index], true);
+  }
+
+  _itemUnPin(int index){
+    var chatIndex = recentChats.indexWhere((element) => selectedChats[index] == element.jid);//selectedChatsPosition[index];
+    recentChats[chatIndex].isChatPinned=(false);
+    FlyChat.updateRecentChatPinStatus(selectedChats[index], false);
+  }
+
+  _itemMute(int index){
+    var chatIndex = recentChats.indexWhere((element) => selectedChats[index] == element.jid);//selectedChatsPosition[index];
+    recentChats[chatIndex].isMuted=(true);
+    FlyChat.updateChatMuteStatus(selectedChats[index], true);
+  }
+
+  _itemUnMute(int index){
+    var chatIndex = recentChats.indexWhere((element) => selectedChats[index] == element.jid);//selectedChatsPosition[index];
+    recentChats[chatIndex].isMuted=(false);
+    FlyChat.updateChatMuteStatus(selectedChats[index], false);
+  }
+
+  /*_itemRead(int index){
+    var chatIndex = recentChats.indexWhere((element) => selectedChats[index] == element.jid);//selectedChatsPosition[index];
+    recentChats[chatIndex].isMuted=(false);
+    FlyChat.markAsRead(selectedChats[index]);
+    updateUnReadChatCount();
+  }*/
+
+  itemsRead(){
+    selected(false);
+    FlyChat.markConversationAsRead(selectedChats);
+    for (var element in selectedChatsPosition) {
+      recentChats[element].unreadMessageCount=0;
+    }
+    clearAllChatSelection();
+    updateUnReadChatCount();
+  }
+
+  itemsUnRead(){
+    selected(false);
+    FlyChat.markConversationAsUnread(selectedChats);
+    for (var element in selectedChatsPosition) {
+      recentChats[element].unreadMessageCount=1;
+    }
+    clearAllChatSelection();
+    updateUnReadChatCount();
+  }
+
+  _itemArchive(int index){
+    var chatIndex = recentChats.indexWhere((element) => selectedChats[index] == element.jid);//selectedChatsPosition[index];
+    recentChats[chatIndex].isChatArchived=(true);
+    recentChats.removeAt(chatIndex);
+    FlyChat.updateArchiveUnArchiveChat(selectedChats[index], true);
+  }
+
+  _itemDelete(int index){
+    var chatIndex = recentChats.indexWhere((element) => selectedChats[index] == element.jid);//selectedChatsPosition[index];
+    recentChats.removeAt(chatIndex);
+    FlyChat.deleteRecentChat(selectedChats[index]);
+  }
+
+  itemsDelete(){
+    selected(false);
+    FlyChat.deleteRecentChats(selectedChats);
+    for (var element in selectedChatsPosition) {
+      recentChats.removeAt(element);
+    }
+    clearAllChatSelection();
+    updateUnReadChatCount();
+  }
+
+  updateUnReadChatCount(){
+    /*FlyChat.getUnreadMessagesCount().then((value){
+      if(value!=null) {
+        _unreadCount(value);
+      }
+    });*/
+    unReadCount();
+  }
+  
   @override
   void onMessageReceived(chatMessage){
     mirrorFlyLog("dashboard controller", "onMessageReceived");
