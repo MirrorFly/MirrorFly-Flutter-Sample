@@ -1317,10 +1317,12 @@ class ChatController extends GetxController
     super.onMessageReceived(chatMessage);
     mirrorFlyLog("chatController", "onMessageReceived");
     ChatMessageModel chatMessageModel = sendMessageModelFromJson(chatMessage);
-    chatList.add(chatMessageModel);
-    scrollToBottom();
-    if (isLive) {
-      sendReadReceipt();
+    if (chatMessageModel.chatUserJid == profile.jid) {
+      chatList.add(chatMessageModel);
+      scrollToBottom();
+      if (isLive) {
+        sendReadReceipt();
+      }
     }
   }
 
