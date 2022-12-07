@@ -162,7 +162,7 @@ class RecentChatItem extends StatelessWidget {
                                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                                 children: [
                                   Visibility(visible: item.isChatPinned!,child: SvgPicture.asset(pin,width: 18,height: 18,)),
-                                  Visibility(visible: item.isMuted!,child: SvgPicture.asset(mute,width: 18,height: 18,)),
+                                  Visibility(visible: item.isMuted!,child: SvgPicture.asset(mute,width: 13,height: 13,)),
                                   Visibility(visible: item.isChatArchived!,child: SvgPicture.asset(archive,width: 18,height: 18,))
                                 ],
                               )

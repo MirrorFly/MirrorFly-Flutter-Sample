@@ -176,8 +176,16 @@ class DashboardController extends GetxController with GetTickerProviderStateMixi
         if (index.isNegative) {
           recentChats.add(recent);
         } else {
-          recentChats.removeAt(index);
-          recentChats.insert(0, recent);
+          var lastPinnedChat = recentChats.lastIndexWhere((element) => element.isChatPinned!);
+          var nxtIndex = lastPinnedChat.isNegative ? 0 : (lastPinnedChat+1);
+          mirrorFlyLog("lastPinnedChat", lastPinnedChat.toString());
+          if(recentChats[index].isChatPinned!){
+            recentChats.removeAt(index);
+            recentChats.insert(index, recent);
+          }else {
+            recentChats.removeAt(index);
+            recentChats.insert(nxtIndex, recent);
+          }
         }
       }else{
         if (!index.isNegative) {
@@ -266,7 +274,7 @@ class DashboardController extends GetxController with GetTickerProviderStateMixi
     if(selectedChats.isEmpty){
       clearAllChatSelection();
     }else{
-      menuValidationForItem(recentChats[index]);
+      menuValidationForItem();
     }
   }
 
@@ -286,50 +294,83 @@ class DashboardController extends GetxController with GetTickerProviderStateMixi
     update();
   }
 
-  bool menuValidationForPinIcon(){
+  menuValidationForPinIcon(){
     var checkListForPinIcon = <bool>[];
-    for (var value in recentChats) {
-      checkListForPinIcon.add(value.isChatPinned.checkNull());
+    var selected = recentChats.where((p0) => selectedChats.contains(p0.jid));
+    for (var value in selected) {
+      checkListForPinIcon.add(value.isChatPinned!);
     }
-    return checkListForPinIcon.contains(false);//pin able
+    if(checkListForPinIcon.contains(false)){//pin able
+      pin(true);
+      unpin(false);
+    }else{
+      pin(false);
+      unpin(true);
+    }
+    //return checkListForPinIcon.contains(false);//pin able
   }
 
-  Future<bool> menuValidationForDeleteIcon() async {
-    for (var item in recentChats) {
-      var isMember = await FlyChat.isMemberOfGroup(item.jid.checkNull(),"");
+  menuValidationForDeleteIcon() async {
+    var selected = recentChats.where((p0) => selectedChats.contains(p0.jid));
+    delete(true);
+    for (var item in selected) {
+      var isMember = await FlyChat.isMemberOfGroup(item.jid.checkNull(),null);
       if((item.getChatType() == Constants.typeGroupChat) && isMember!){
-        return false;
+        delete(false);
+        return;
+        //return false;
       }
     }
-    return true;
+    //return true;
   }
 
-  bool menuValidationForMuteUnMuteIcon(){
+  menuValidationForMuteUnMuteIcon(){
     var checkListForMuteUnMuteIcon = <bool>[];
-    for (var value in recentChats) {
+    var selected = recentChats.where((p0) => selectedChats.contains(p0.jid));
+    for (var value in selected) {
       if(!value.isBroadCast!) {
         checkListForMuteUnMuteIcon.add(value.isMuted.checkNull());
       }
     }
-    return checkListForMuteUnMuteIcon.contains(false);// Mute able
+    if(checkListForMuteUnMuteIcon.contains(false)){// Mute able
+      mute(true);
+      unmute(false);
+    }else if (checkListForMuteUnMuteIcon.contains(true)){
+      mute(false);
+      unmute(true);
+    }else{
+      mute(false);
+      unmute(false);
+    }
+    //return checkListForMuteUnMuteIcon.contains(false);// Mute able
   }
 
-  bool menuValidationForMarkReadUnReadIcon(){
+  menuValidationForMarkReadUnReadIcon(){
     var checkListForReadUnReadIcon = <bool>[];
-    for (var value in recentChats) {
+    var selected = recentChats.where((p0) => selectedChats.contains(p0.jid));
+    for (var value in selected) {
       checkListForReadUnReadIcon.add(value.isConversationUnRead.checkNull());
     }
-    return checkListForReadUnReadIcon.contains(false);//Mark as Read Able
+    if(!checkListForReadUnReadIcon.contains(true)){//Mark as Read Able
+      read(false);
+      unread(true);
+    }else{
+      read(true);
+      unread(false);
+    }
+    //return !checkListForReadUnReadIcon.contains(true);//Mark as Read Able
   }
 
-  menuValidationForItem(RecentChatData item) {
+  menuValidationForItem() {
+    mirrorFlyLog("selectedChats", selectedChats.length.toString());
     archive(true);
     if(selectedChats.length==1){
+      var item = recentChats.firstWhere((element) => selectedChats.first ==element.jid);
       info(true);
       pin(!item.isChatPinned!);
       unpin(item.isChatPinned!);
       if(Constants.typeBroadcastChat!= item.getChatType()){
-        unmute(item.isMuted);
+        unmute(item.isMuted!);
         mute(!item.isMuted!);
         shortcut(true);
       }else{
@@ -340,18 +381,25 @@ class DashboardController extends GetxController with GetTickerProviderStateMixi
       read(item.isConversationUnRead);
       unread(!item.isConversationUnRead!);
       delete(Constants.typeGroupChat!= item.getChatType());
-      if(Constants.typeGroupChat == item.getChatType()){
+      if(item.getChatType() == Constants.typeGroupChat){
+        mirrorFlyLog("isGroup", item.isGroup!.toString());
         FlyChat.isMemberOfGroup(item.jid.checkNull(),null).then((value) => delete(value));
       }
     }else {
       info(false);
-      pin(menuValidationForPinIcon());
-      unpin(!menuValidationForPinIcon());
-      mute(menuValidationForMuteUnMuteIcon());
-      unmute(!menuValidationForMuteUnMuteIcon());
-      read(menuValidationForMarkReadUnReadIcon());
-      unread(!menuValidationForMarkReadUnReadIcon());
-      menuValidationForDeleteIcon().then((value) => delete(value));
+      menuValidationForPinIcon();
+      /*var pinValid = menuValidationForPinIcon();
+      pin(pinValid);
+      unpin(!pinValid);*/
+      menuValidationForMuteUnMuteIcon();
+      /*var muteValid = menuValidationForMuteUnMuteIcon();
+      mute(muteValid);
+      unmute(!muteValid);*/
+      menuValidationForMarkReadUnReadIcon();
+      /*var readValid = menuValidationForMarkReadUnReadIcon();
+      read(readValid);
+      unread(!readValid);*/
+      menuValidationForDeleteIcon();//.then((value) => delete(value));
     }
 
   }
@@ -435,13 +483,24 @@ class DashboardController extends GetxController with GetTickerProviderStateMixi
 
   _itemPin(int index){
     var chatIndex = recentChats.indexWhere((element) => selectedChats[index] == element.jid);//selectedChatsPosition[index];
-    recentChats[chatIndex].isChatPinned=(true);
+    //recentChats[chatIndex].isChatPinned=(true);
+    var change = recentChats[chatIndex];
+    change.isChatPinned=true;
+    recentChats.removeAt(chatIndex);
+    recentChats.insert(0, change);
     FlyChat.updateRecentChatPinStatus(selectedChats[index], true);
   }
 
   _itemUnPin(int index){
     var chatIndex = recentChats.indexWhere((element) => selectedChats[index] == element.jid);//selectedChatsPosition[index];
-    recentChats[chatIndex].isChatPinned=(false);
+    //recentChats[chatIndex].isChatPinned=(false);
+    var lastPinnedChat = recentChats.lastIndexWhere((element) => element.isChatPinned!);
+    mirrorFlyLog("lastPinnedChat", lastPinnedChat.toString());
+    var nxtIndex = lastPinnedChat.isNegative ? chatIndex : (lastPinnedChat);
+    var change = recentChats[chatIndex];
+    change.isChatPinned=false;
+    recentChats.removeAt(chatIndex);
+    recentChats.insert(nxtIndex, change);
     FlyChat.updateRecentChatPinStatus(selectedChats[index], false);
   }
 

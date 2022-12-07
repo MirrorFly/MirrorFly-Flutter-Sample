@@ -48,7 +48,7 @@ class StatusListView extends GetView<StatusListController> {
                     fit: BoxFit.contain,
                   ),
                   onTap: () {
-                    Get.to(AddStatusView(),arguments: {"status":controller.selectedStatus.value})?.then((value){
+                    Get.to(const AddStatusView(),arguments: {"status":controller.selectedStatus.value})?.then((value){
                       if(value!=null){
                         controller.updateStatus();
                       }

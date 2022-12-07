@@ -278,7 +278,7 @@ extension ChatmessageParsing on ChatMessageModel{
 }
 extension RecentChatParsing on RecentChatData{
   String getChatType(){
-    return (this.isGroup!) ? Constants.typeGroupChat : Constants.typeChat;
+    return (isGroup!) ? Constants.typeGroupChat : (isBroadCast!) ? Constants.typeBroadcastChat : Constants.typeChat;
   }
 }
 
