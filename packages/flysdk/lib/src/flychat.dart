@@ -6,55 +6,55 @@ class FlyChat {
   static const mirrorFlyMethodChannel = MethodChannel('contus.mirrorfly/sdkCall');
 
   //Event Channels
-  static const EventChannel MESSAGE_ONRECEIVED_CHANNEL = EventChannel('contus.mirrorfly/onMessageReceived');
-  static const EventChannel MESSAGE_STATUS_UPDATED_CHANNEL = EventChannel('contus.mirrorfly/onMessageStatusUpdated');
-  static const EventChannel MEDIA_STATUS_UPDATED_CHANNEL = EventChannel('contus.mirrorfly/onMediaStatusUpdated');
-  static const EventChannel UPLOAD_DOWNLOAD_PROGRESS_CHANGED_CHANNEL = EventChannel('contus.mirrorfly/onUploadDownloadProgressChanged');
-  static const EventChannel SHOW_UPDATE_CANCEL_NOTIFICTION_CHANNEL = EventChannel('contus.mirrorfly/showOrUpdateOrCancelNotification');
+  static const EventChannel messageOnReceivedChannel = EventChannel('contus.mirrorfly/onMessageReceived');
+  static const EventChannel messageStatusUpdatedChanel = EventChannel('contus.mirrorfly/onMessageStatusUpdated');
+  static const EventChannel mediaStatusUpdatedChannel = EventChannel('contus.mirrorfly/onMediaStatusUpdated');
+  static const EventChannel uploadDownloadProgressChangedChannel = EventChannel('contus.mirrorfly/onUploadDownloadProgressChanged');
+  static const EventChannel showUpdateCancelNotificationChannel = EventChannel('contus.mirrorfly/showOrUpdateOrCancelNotification');
 
-  static const EventChannel onGroupProfileFetched_channel = EventChannel('contus.mirrorfly/onGroupProfileFetched');
-  static const EventChannel onNewGroupCreated_channel = EventChannel('contus.mirrorfly/onNewGroupCreated');
-  static const EventChannel onGroupProfileUpdated_channel = EventChannel('contus.mirrorfly/onGroupProfileUpdated');
-  static const EventChannel onNewMemberAddedToGroup_channel = EventChannel('contus.mirrorfly/onNewMemberAddedToGroup');
-  static const EventChannel onMemberRemovedFromGroup_channel = EventChannel('contus.mirrorfly/onMemberRemovedFromGroup');
-  static const EventChannel onFetchingGroupMembersCompleted_channel = EventChannel('contus.mirrorfly/onFetchingGroupMembersCompleted');
-  static const EventChannel onDeleteGroup_channel = EventChannel('contus.mirrorfly/onDeleteGroup');
-  static const EventChannel onFetchingGroupListCompleted_channel = EventChannel('contus.mirrorfly/onFetchingGroupListCompleted');
-  static const EventChannel onMemberMadeAsAdmin_channel = EventChannel('contus.mirrorfly/onMemberMadeAsAdmin');
-  static const EventChannel onMemberRemovedAsAdmin_channel = EventChannel('contus.mirrorfly/onMemberRemovedAsAdmin');
-  static const EventChannel onLeftFromGroup_channel = EventChannel('contus.mirrorfly/onLeftFromGroup');
-  static const EventChannel onGroupNotificationMessage_channel = EventChannel('contus.mirrorfly/onGroupNotificationMessage');
-  static const EventChannel onGroupDeletedLocally_channel = EventChannel('contus.mirrorfly/onGroupDeletedLocally');
+  static const EventChannel onGroupProfileFetchedChannel = EventChannel('contus.mirrorfly/onGroupProfileFetched');
+  static const EventChannel onNewGroupCreatedChannel = EventChannel('contus.mirrorfly/onNewGroupCreated');
+  static const EventChannel onGroupProfileUpdatedChannel = EventChannel('contus.mirrorfly/onGroupProfileUpdated');
+  static const EventChannel onNewMemberAddedToGroupChannel = EventChannel('contus.mirrorfly/onNewMemberAddedToGroup');
+  static const EventChannel onMemberRemovedFromGroupChannel = EventChannel('contus.mirrorfly/onMemberRemovedFromGroup');
+  static const EventChannel onFetchingGroupMembersCompletedChannel = EventChannel('contus.mirrorfly/onFetchingGroupMembersCompleted');
+  static const EventChannel onDeleteGroupChannel = EventChannel('contus.mirrorfly/onDeleteGroup');
+  static const EventChannel onFetchingGroupListCompletedChannel = EventChannel('contus.mirrorfly/onFetchingGroupListCompleted');
+  static const EventChannel onMemberMadeAsAdminChannel = EventChannel('contus.mirrorfly/onMemberMadeAsAdmin');
+  static const EventChannel onMemberRemovedAsAdminChannel = EventChannel('contus.mirrorfly/onMemberRemovedAsAdmin');
+  static const EventChannel onLeftFromGroupChannel = EventChannel('contus.mirrorfly/onLeftFromGroup');
+  static const EventChannel onGroupNotificationMessageChannel = EventChannel('contus.mirrorfly/onGroupNotificationMessage');
+  static const EventChannel onGroupDeletedLocallyChannel = EventChannel('contus.mirrorfly/onGroupDeletedLocally');
 
-  static const EventChannel blockedThisUser_channel = EventChannel('contus.mirrorfly/blockedThisUser');
-  static const EventChannel myProfileUpdated_channel = EventChannel('contus.mirrorfly/myProfileUpdated');
-  static const EventChannel onAdminBlockedOtherUser_channel = EventChannel('contus.mirrorfly/onAdminBlockedOtherUser');
-  static const EventChannel onAdminBlockedUser_channel = EventChannel('contus.mirrorfly/onAdminBlockedUser');
-  static const EventChannel onContactSyncComplete_channel = EventChannel('contus.mirrorfly/onContactSyncComplete');
-  static const EventChannel onLoggedOut_channel = EventChannel('contus.mirrorfly/onLoggedOut');
-  static const EventChannel unblockedThisUser_channel = EventChannel('contus.mirrorfly/unblockedThisUser');
-  static const EventChannel userBlockedMe_channel = EventChannel('contus.mirrorfly/userBlockedMe');
-  static const EventChannel userCameOnline_channel = EventChannel('contus.mirrorfly/userCameOnline');
-  static const EventChannel userDeletedHisProfile_channel = EventChannel('contus.mirrorfly/userDeletedHisProfile');
-  static const EventChannel userProfileFetched_channel = EventChannel('contus.mirrorfly/userProfileFetched');
-  static const EventChannel userUnBlockedMe_channel = EventChannel('contus.mirrorfly/userUnBlockedMe');
-  static const EventChannel userUpdatedHisProfile_channel = EventChannel('contus.mirrorfly/userUpdatedHisProfile');
-  static const EventChannel userWentOffline_channel = EventChannel('contus.mirrorfly/userWentOffline');
-  static const EventChannel usersIBlockedListFetched_channel = EventChannel('contus.mirrorfly/usersIBlockedListFetched');
-  static const EventChannel usersProfilesFetched_channel = EventChannel('contus.mirrorfly/usersProfilesFetched');
-  static const EventChannel usersWhoBlockedMeListFetched_channel = EventChannel('contus.mirrorfly/usersWhoBlockedMeListFetched');
-  static const EventChannel onConnected_channel = EventChannel('contus.mirrorfly/onConnected');
-  static const EventChannel onDisconnected_channel = EventChannel('contus.mirrorfly/onDisconnected');
-  static const EventChannel onConnectionNotAuthorized_channel = EventChannel('contus.mirrorfly/onConnectionNotAuthorized');
-  static const EventChannel connectionFailed_channel = EventChannel('contus.mirrorfly/connectionFailed');
-  static const EventChannel connectionSuccess_channel = EventChannel('contus.mirrorfly/connectionSuccess');
-  static const EventChannel onWebChatPasswordChanged_channel = EventChannel('contus.mirrorfly/onWebChatPasswordChanged');
-  static const EventChannel setTypingStatus_channel = EventChannel('contus.mirrorfly/setTypingStatus');
-  static const EventChannel onChatTypingStatus_channel = EventChannel('contus.mirrorfly/onChatTypingStatus');
-  static const EventChannel onGroupTypingStatus_channel = EventChannel('contus.mirrorfly/onGroupTypingStatus');
-  static const EventChannel onFailure_channel = EventChannel('contus.mirrorfly/onFailure');
-  static const EventChannel onProgressChanged_channel = EventChannel('contus.mirrorfly/onProgressChanged');
-  static const EventChannel onSuccess_channel = EventChannel('contus.mirrorfly/onSuccess');
+  static const EventChannel blockedThisUserChannel = EventChannel('contus.mirrorfly/blockedThisUser');
+  static const EventChannel myProfileUpdatedChannel = EventChannel('contus.mirrorfly/myProfileUpdated');
+  static const EventChannel onAdminBlockedOtherUserChannel = EventChannel('contus.mirrorfly/onAdminBlockedOtherUser');
+  static const EventChannel onAdminBlockedUserChannel = EventChannel('contus.mirrorfly/onAdminBlockedUser');
+  static const EventChannel onContactSyncCompleteChannel = EventChannel('contus.mirrorfly/onContactSyncComplete');
+  static const EventChannel onLoggedOutChannel = EventChannel('contus.mirrorfly/onLoggedOut');
+  static const EventChannel unblockedThisUserChannel = EventChannel('contus.mirrorfly/unblockedThisUser');
+  static const EventChannel userBlockedMeChannel = EventChannel('contus.mirrorfly/userBlockedMe');
+  static const EventChannel userCameOnlineChannel = EventChannel('contus.mirrorfly/userCameOnline');
+  static const EventChannel userDeletedHisProfileChannel = EventChannel('contus.mirrorfly/userDeletedHisProfile');
+  static const EventChannel userProfileFetchedChannel = EventChannel('contus.mirrorfly/userProfileFetched');
+  static const EventChannel userUnBlockedMeChannel = EventChannel('contus.mirrorfly/userUnBlockedMe');
+  static const EventChannel userUpdatedHisProfileChannel = EventChannel('contus.mirrorfly/userUpdatedHisProfile');
+  static const EventChannel userWentOfflineChannel = EventChannel('contus.mirrorfly/userWentOffline');
+  static const EventChannel usersIBlockedListFetchedChannel = EventChannel('contus.mirrorfly/usersIBlockedListFetched');
+  static const EventChannel usersProfilesFetchedChannel = EventChannel('contus.mirrorfly/usersProfilesFetched');
+  static const EventChannel usersWhoBlockedMeListFetchedChannel = EventChannel('contus.mirrorfly/usersWhoBlockedMeListFetched');
+  static const EventChannel onConnectedChannel = EventChannel('contus.mirrorfly/onConnected');
+  static const EventChannel onDisconnectedChannel = EventChannel('contus.mirrorfly/onDisconnected');
+  static const EventChannel onConnectionNotAuthorizedChannel = EventChannel('contus.mirrorfly/onConnectionNotAuthorized');
+  static const EventChannel connectionFailedChannel = EventChannel('contus.mirrorfly/connectionFailed');
+  static const EventChannel connectionSuccessChannel = EventChannel('contus.mirrorfly/connectionSuccess');
+  static const EventChannel onWebChatPasswordChangedChannel = EventChannel('contus.mirrorfly/onWebChatPasswordChanged');
+  static const EventChannel setTypingStatusChannel = EventChannel('contus.mirrorfly/setTypingStatus');
+  static const EventChannel onChatTypingStatusChannel = EventChannel('contus.mirrorfly/onChatTypingStatus');
+  static const EventChannel onGroupTypingStatusChannel = EventChannel('contus.mirrorfly/onGroupTypingStatus');
+  static const EventChannel onFailureChannel = EventChannel('contus.mirrorfly/onFailure');
+  static const EventChannel onProgressChangedChannel = EventChannel('contus.mirrorfly/onProgressChanged');
+  static const EventChannel onSuccessChannel = EventChannel('contus.mirrorfly/onSuccess');
 
 
   static Future<bool?> syncContacts(bool isfirsttime) async {
@@ -466,10 +466,10 @@ class FlyChat {
     }
   }
 
-  static updateChatMuteStatus(String Jid,bool mute_status) async {
+  static updateChatMuteStatus(String jid,bool muteStatus) async {
     try {
       await mirrorFlyMethodChannel
-          .invokeMethod('updateChatMuteStatus',{"jid":Jid,"mute_status":mute_status});
+          .invokeMethod('updateChatMuteStatus',{"jid":jid,"mute_status":muteStatus});
     } on PlatformException catch (e) {
       debugPrint("Platform Exception ===> $e");
       rethrow;
@@ -479,10 +479,10 @@ class FlyChat {
     }
   }
 
-  static updateRecentChatPinStatus(String Jid,bool pin_status) async {
+  static updateRecentChatPinStatus(String jid,bool pinStatus) async {
     try {
       await mirrorFlyMethodChannel
-          .invokeMethod('updateRecentChatPinStatus',{"jid":Jid,"pin_recent_chat":pin_status});
+          .invokeMethod('updateRecentChatPinStatus',{"jid":jid,"pin_recent_chat":pinStatus});
     } on PlatformException catch (e) {
       debugPrint("Platform Exception ===> $e");
       rethrow;
@@ -492,10 +492,10 @@ class FlyChat {
     }
   }
 
-  static deleteRecentChat(String Jid) async {
+  static deleteRecentChat(String jid) async {
     try {
       await mirrorFlyMethodChannel
-          .invokeMethod('deleteRecentChat',{"jid":Jid});
+          .invokeMethod('deleteRecentChat',{"jid":jid});
     } on PlatformException catch (e) {
       debugPrint("Platform Exception ===> $e");
       rethrow;
@@ -509,6 +509,21 @@ class FlyChat {
     try {
       await mirrorFlyMethodChannel
           .invokeMethod('setTypingStatusListener');
+    } on PlatformException catch (e) {
+      debugPrint("Platform Exception ===> $e");
+      rethrow;
+    } on Exception catch (error) {
+      debugPrint("Exception ==> $error");
+      rethrow;
+    }
+  }
+
+  static Future<bool?> isUserUnArchived(String jid) async {
+    bool? res;
+    try {
+      res = await mirrorFlyMethodChannel
+          .invokeMethod<bool>('isUserUnArchived',{"jid":jid});
+      return res;
     } on PlatformException catch (e) {
       debugPrint("Platform Exception ===> $e");
       rethrow;
@@ -587,10 +602,10 @@ class FlyChat {
     }
   }
 
-  static setCustomValue(String message_id,String key,String value) async {
+  static setCustomValue(String messageId,String key,String value) async {
     try {
       await mirrorFlyMethodChannel
-          .invokeMethod('setCustomValue',{"message_id":message_id,"key":key,"value":value});
+          .invokeMethod('setCustomValue',{"message_id":messageId,"key":key,"value":value});
     } on PlatformException catch (e) {
       debugPrint("Platform Exception ===> $e");
       rethrow;
@@ -600,10 +615,10 @@ class FlyChat {
     }
   }
 
-  static removeCustomValue(String message_id,String key) async {
+  static removeCustomValue(String messageId,String key) async {
     try {
       await mirrorFlyMethodChannel
-          .invokeMethod('removeCustomValue',{"message_id":message_id,"key":key});
+          .invokeMethod('removeCustomValue',{"message_id":messageId,"key":key});
     } on PlatformException catch (e) {
       debugPrint("Platform Exception ===> $e");
       rethrow;
@@ -613,10 +628,10 @@ class FlyChat {
     }
   }
 
-  static inviteUserViaSMS(String mobile_no,String message) async {
+  static inviteUserViaSMS(String mobileNo,String message) async {
     try {
       await mirrorFlyMethodChannel
-          .invokeMethod('inviteUserViaSMS',{"mobile_no":mobile_no,"message":message});
+          .invokeMethod('inviteUserViaSMS',{"mobile_no":mobileNo,"message":message});
     } on PlatformException catch (e) {
       debugPrint("Platform Exception ===> $e");
       rethrow;
@@ -691,11 +706,11 @@ class FlyChat {
     }
   }
 
-  static Future<String?> getCustomValue(String message_id,String key) async {
+  static Future<String?> getCustomValue(String messageId,String key) async {
     String? res;
     try {
       res = await mirrorFlyMethodChannel
-          .invokeMethod<String>('getCustomValue',{"message_id":message_id,"key":key});
+          .invokeMethod<String>('getCustomValue',{"message_id":messageId,"key":key});
       return res;
     } on PlatformException catch (e) {
       debugPrint("Platform Exception ===> $e");
@@ -758,10 +773,10 @@ class FlyChat {
           .invokeMethod('handleReceivedMessage',{"notificationdata":notificationdata});
       return res;
     } on PlatformException catch (e) {
-      debugPrint("Notification Platform Exception ===> $e");
+      debugPrint("Platform Exception ===> $e");
       rethrow;
     } on Exception catch (error) {
-      debugPrint("Notification Exception ==> $error");
+      debugPrint("Exception ==> $error");
       rethrow;
     }
   }
@@ -1166,11 +1181,11 @@ class FlyChat {
     }
   }
 
-  static Future<String?> getJid(String username) async {//getuserjid
-    String? userJID;
+  static Future<dynamic> getJid(String username) async {//getuserjid
+    dynamic userJID;
     try {
       userJID = await mirrorFlyMethodChannel
-          .invokeMethod<String>('get_jid', {"username": username});
+          .invokeMethod('get_jid', {"username": username});
       debugPrint("User JID Result ==> $userJID");
       return userJID;
     } on PlatformException catch (e) {
@@ -1289,57 +1304,57 @@ class FlyChat {
       debugPrint('RESULT ==> $re');
       return re;
     } on PlatformException catch (e) {
-      debugPrint("er$e");
+      debugPrint("er $e");
       return re;
     }
   }
 
-  static Stream<dynamic> get onMessageReceived => MESSAGE_ONRECEIVED_CHANNEL.receiveBroadcastStream().cast();
-  static Stream<dynamic> get onMessageStatusUpdated => MESSAGE_STATUS_UPDATED_CHANNEL.receiveBroadcastStream().cast();
-  static Stream<dynamic> get onMediaStatusUpdated => MEDIA_STATUS_UPDATED_CHANNEL.receiveBroadcastStream().cast();
+  static Stream<dynamic> get onMessageReceived => messageOnReceivedChannel.receiveBroadcastStream().cast();
+  static Stream<dynamic> get onMessageStatusUpdated => messageStatusUpdatedChanel.receiveBroadcastStream().cast();
+  static Stream<dynamic> get onMediaStatusUpdated => mediaStatusUpdatedChannel.receiveBroadcastStream().cast();
 
-  static Stream<dynamic> get onGroupProfileFetched => onGroupProfileFetched_channel.receiveBroadcastStream().cast();
-  static Stream<dynamic> get onNewGroupCreated => onNewGroupCreated_channel.receiveBroadcastStream().cast();
-  static Stream<dynamic> get onGroupProfileUpdated => onGroupProfileUpdated_channel.receiveBroadcastStream().cast();
-  static Stream<dynamic> get onNewMemberAddedToGroup => onNewMemberAddedToGroup_channel.receiveBroadcastStream().cast();
-  static Stream<dynamic> get onMemberRemovedFromGroup => onMemberRemovedFromGroup_channel.receiveBroadcastStream().cast();
-  static Stream<dynamic> get onFetchingGroupMembersCompleted => onFetchingGroupMembersCompleted_channel.receiveBroadcastStream().cast();
-  static Stream<dynamic> get onDeleteGroup => onDeleteGroup_channel.receiveBroadcastStream().cast();
-  static Stream<dynamic> get onFetchingGroupListCompleted => onFetchingGroupListCompleted_channel.receiveBroadcastStream().cast();
-  static Stream<dynamic> get onMemberMadeAsAdmin => onMemberMadeAsAdmin_channel.receiveBroadcastStream().cast();
-  static Stream<dynamic> get onMemberRemovedAsAdmin => onMemberRemovedAsAdmin_channel.receiveBroadcastStream().cast();
-  static Stream<dynamic> get onLeftFromGroup => onLeftFromGroup_channel.receiveBroadcastStream().cast();
-  static Stream<dynamic> get onGroupNotificationMessage => onGroupNotificationMessage_channel.receiveBroadcastStream().cast();
-  static Stream<dynamic> get onGroupDeletedLocally => onGroupDeletedLocally_channel.receiveBroadcastStream().cast();
+  static Stream<dynamic> get onGroupProfileFetched => onGroupProfileFetchedChannel.receiveBroadcastStream().cast();
+  static Stream<dynamic> get onNewGroupCreated => onNewGroupCreatedChannel.receiveBroadcastStream().cast();
+  static Stream<dynamic> get onGroupProfileUpdated => onGroupProfileUpdatedChannel.receiveBroadcastStream().cast();
+  static Stream<dynamic> get onNewMemberAddedToGroup => onNewMemberAddedToGroupChannel.receiveBroadcastStream().cast();
+  static Stream<dynamic> get onMemberRemovedFromGroup => onMemberRemovedFromGroupChannel.receiveBroadcastStream().cast();
+  static Stream<dynamic> get onFetchingGroupMembersCompleted => onFetchingGroupMembersCompletedChannel.receiveBroadcastStream().cast();
+  static Stream<dynamic> get onDeleteGroup => onDeleteGroupChannel.receiveBroadcastStream().cast();
+  static Stream<dynamic> get onFetchingGroupListCompleted => onFetchingGroupListCompletedChannel.receiveBroadcastStream().cast();
+  static Stream<dynamic> get onMemberMadeAsAdmin => onMemberMadeAsAdminChannel.receiveBroadcastStream().cast();
+  static Stream<dynamic> get onMemberRemovedAsAdmin => onMemberRemovedAsAdminChannel.receiveBroadcastStream().cast();
+  static Stream<dynamic> get onLeftFromGroup => onLeftFromGroupChannel.receiveBroadcastStream().cast();
+  static Stream<dynamic> get onGroupNotificationMessage => onGroupNotificationMessageChannel.receiveBroadcastStream().cast();
+  static Stream<dynamic> get onGroupDeletedLocally => onGroupDeletedLocallyChannel.receiveBroadcastStream().cast();
 
-  static Stream<dynamic> get blockedThisUser => blockedThisUser_channel.receiveBroadcastStream().cast();
-  static Stream<dynamic> get myProfileUpdated => myProfileUpdated_channel.receiveBroadcastStream().cast();
-  static Stream<dynamic> get onAdminBlockedOtherUser => onAdminBlockedOtherUser_channel.receiveBroadcastStream().cast();
-  static Stream<dynamic> get onAdminBlockedUser => onAdminBlockedUser_channel.receiveBroadcastStream().cast();
-  static Stream<dynamic> get onContactSyncComplete => onContactSyncComplete_channel.receiveBroadcastStream().cast();
-  static Stream<dynamic> get onLoggedOut => onLoggedOut_channel.receiveBroadcastStream().cast();
-  static Stream<dynamic> get unblockedThisUser => unblockedThisUser_channel.receiveBroadcastStream().cast();
-  static Stream<dynamic> get userBlockedMe => userBlockedMe_channel.receiveBroadcastStream().cast();
-  static Stream<dynamic> get userCameOnline => userCameOnline_channel.receiveBroadcastStream().cast();
-  static Stream<dynamic> get userDeletedHisProfile => userDeletedHisProfile_channel.receiveBroadcastStream().cast();
-  static Stream<dynamic> get userProfileFetched => userProfileFetched_channel.receiveBroadcastStream().cast();
-  static Stream<dynamic> get userUnBlockedMe => userUnBlockedMe_channel.receiveBroadcastStream().cast();
-  static Stream<dynamic> get userUpdatedHisProfile => userUpdatedHisProfile_channel.receiveBroadcastStream().cast();
-  static Stream<dynamic> get userWentOffline => userWentOffline_channel.receiveBroadcastStream().cast();
-  static Stream<dynamic> get usersIBlockedListFetched => usersIBlockedListFetched_channel.receiveBroadcastStream().cast();
-  static Stream<dynamic> get usersWhoBlockedMeListFetched => usersWhoBlockedMeListFetched_channel.receiveBroadcastStream().cast();
-  static Stream<dynamic> get onConnected => onConnected_channel.receiveBroadcastStream().cast();
-  static Stream<dynamic> get onDisconnected => onDisconnected_channel.receiveBroadcastStream().cast();
-  static Stream<dynamic> get onConnectionNotAuthorized => onConnectionNotAuthorized_channel.receiveBroadcastStream().cast();
-  static Stream<dynamic> get connectionFailed => connectionFailed_channel.receiveBroadcastStream().cast();
-  static Stream<dynamic> get connectionSuccess => connectionSuccess_channel.receiveBroadcastStream().cast();
-  static Stream<dynamic> get onWebChatPasswordChanged => onWebChatPasswordChanged_channel.receiveBroadcastStream().cast();
-  static Stream<dynamic> get setTypingStatus => setTypingStatus_channel.receiveBroadcastStream().cast();
-  static Stream<dynamic> get onChatTypingStatus => onChatTypingStatus_channel.receiveBroadcastStream().cast();
-  static Stream<dynamic> get onGroupTypingStatus => onGroupTypingStatus_channel.receiveBroadcastStream().cast();
-  static Stream<dynamic> get onFailure => onFailure_channel.receiveBroadcastStream().cast();
-  static Stream<dynamic> get onProgressChanged => onProgressChanged_channel.receiveBroadcastStream().cast();
-  static Stream<dynamic> get onSuccess => onSuccess_channel.receiveBroadcastStream().cast();
+  static Stream<dynamic> get blockedThisUser => blockedThisUserChannel.receiveBroadcastStream().cast();
+  static Stream<dynamic> get myProfileUpdated => myProfileUpdatedChannel.receiveBroadcastStream().cast();
+  static Stream<dynamic> get onAdminBlockedOtherUser => onAdminBlockedOtherUserChannel.receiveBroadcastStream().cast();
+  static Stream<dynamic> get onAdminBlockedUser => onAdminBlockedUserChannel.receiveBroadcastStream().cast();
+  static Stream<dynamic> get onContactSyncComplete => onContactSyncCompleteChannel.receiveBroadcastStream().cast();
+  static Stream<dynamic> get onLoggedOut => onLoggedOutChannel.receiveBroadcastStream().cast();
+  static Stream<dynamic> get unblockedThisUser => unblockedThisUserChannel.receiveBroadcastStream().cast();
+  static Stream<dynamic> get userBlockedMe => userBlockedMeChannel.receiveBroadcastStream().cast();
+  static Stream<dynamic> get userCameOnline => userCameOnlineChannel.receiveBroadcastStream().cast();
+  static Stream<dynamic> get userDeletedHisProfile => userDeletedHisProfileChannel.receiveBroadcastStream().cast();
+  static Stream<dynamic> get userProfileFetched => userProfileFetchedChannel.receiveBroadcastStream().cast();
+  static Stream<dynamic> get userUnBlockedMe => userUnBlockedMeChannel.receiveBroadcastStream().cast();
+  static Stream<dynamic> get userUpdatedHisProfile => userUpdatedHisProfileChannel.receiveBroadcastStream().cast();
+  static Stream<dynamic> get userWentOffline => userWentOfflineChannel.receiveBroadcastStream().cast();
+  static Stream<dynamic> get usersIBlockedListFetched => usersIBlockedListFetchedChannel.receiveBroadcastStream().cast();
+  static Stream<dynamic> get usersWhoBlockedMeListFetched => usersWhoBlockedMeListFetchedChannel.receiveBroadcastStream().cast();
+  static Stream<dynamic> get onConnected => onConnectedChannel.receiveBroadcastStream().cast();
+  static Stream<dynamic> get onDisconnected => onDisconnectedChannel.receiveBroadcastStream().cast();
+  static Stream<dynamic> get onConnectionNotAuthorized => onConnectionNotAuthorizedChannel.receiveBroadcastStream().cast();
+  static Stream<dynamic> get connectionFailed => connectionFailedChannel.receiveBroadcastStream().cast();
+  static Stream<dynamic> get connectionSuccess => connectionSuccessChannel.receiveBroadcastStream().cast();
+  static Stream<dynamic> get onWebChatPasswordChanged => onWebChatPasswordChangedChannel.receiveBroadcastStream().cast();
+  static Stream<dynamic> get setTypingStatus => setTypingStatusChannel.receiveBroadcastStream().cast();
+  static Stream<dynamic> get onChatTypingStatus => onChatTypingStatusChannel.receiveBroadcastStream().cast();
+  static Stream<dynamic> get onGroupTypingStatus => onGroupTypingStatusChannel.receiveBroadcastStream().cast();
+  static Stream<dynamic> get onFailure => onFailureChannel.receiveBroadcastStream().cast();
+  static Stream<dynamic> get onProgressChanged => onProgressChangedChannel.receiveBroadcastStream().cast();
+  static Stream<dynamic> get onSuccess => onSuccessChannel.receiveBroadcastStream().cast();
 
   static Future<String?> imagePath(String imgurl) async {
     var re = "";
@@ -1349,7 +1364,7 @@ class FlyChat {
       debugPrint('RESULT ==> $result');
       return result;
     } on PlatformException catch (e) {
-      debugPrint("er"+e.toString());
+      debugPrint("er $e");
       return re;
     }
   }
@@ -1365,7 +1380,7 @@ class FlyChat {
       debugPrint('RESULT $result');
       return result;
     } on PlatformException catch (e) {
-      debugPrint("er"+e.toString());
+      debugPrint("er $e");
       return result;
     }
   }
@@ -1378,7 +1393,7 @@ class FlyChat {
       debugPrint('RESULT $result');
       return result;
     } on PlatformException catch (e) {
-      debugPrint("er"+e.toString());
+      debugPrint("er $e");
       return re;
     }
   }
@@ -1403,7 +1418,7 @@ class FlyChat {
     try {
       statusResponse =
       await mirrorFlyMethodChannel.invokeMethod('getProfileStatusList');
-      debugPrint("statuslist "+"$statusResponse");
+      debugPrint("statuslist $statusResponse");
       return statusResponse;
     } on PlatformException catch (e) {
       debugPrint("Platform Exception ===> $e");
@@ -1734,10 +1749,10 @@ class FlyChat {
     }
   }
 
-  static Future<dynamic> sendDocumentMessage(String jid, String documentPath, String replyMessageId,[String? file_url]) async {
+  static Future<dynamic> sendDocumentMessage(String jid, String documentPath, String replyMessageId,[String? fileUrl]) async {
     dynamic documentResponse;
     try {
-      documentResponse = await mirrorFlyMethodChannel.invokeMethod('sendDocumentMessage',{ "file" : documentPath , "jid" : jid, "replyMessageId" : replyMessageId,"file_url":file_url});
+      documentResponse = await mirrorFlyMethodChannel.invokeMethod('sendDocumentMessage',{ "file" : documentPath , "jid" : jid, "replyMessageId" : replyMessageId,"file_url":fileUrl});
       debugPrint("documentResponse ==> $documentResponse");
       return documentResponse;
     }on PlatformException catch (e){
@@ -1853,8 +1868,8 @@ class FlyChat {
     }
   }
 
-  static Future<bool> clearChat(String jid, String chatType, bool clearExceptStarred) async {
-    bool clearChatResponse;
+  static Future<dynamic> clearChat(String jid, String chatType, bool clearExceptStarred) async {
+    dynamic clearChatResponse;
     try {
       clearChatResponse = await mirrorFlyMethodChannel.invokeMethod('clear_chat',{ "jid" : jid, "chat_type" : chatType, "clear_except_starred" : clearExceptStarred});
       debugPrint("clear chat Response ==> $clearChatResponse");
@@ -1900,10 +1915,10 @@ class FlyChat {
   }
 
   //Handled deleteMessagesForEveryone and deleteMessagesForMe in same function. so Named Commonly
-  static Future<bool?> deleteMessagesForMe(String jid,String chatType, List<String> messageIds,bool? isMediaDelete) async {
-    bool? messageDeleteResponse;
+  static Future<dynamic> deleteMessagesForMe(String jid,String chatType, List<String> messageIds,bool? isMediaDelete) async {
+    dynamic messageDeleteResponse;
     try {
-      messageDeleteResponse = await mirrorFlyMethodChannel.invokeMethod<bool>('deleteMessagesForMe', { "jid" : jid, "chat_type" : chatType,"isMediaDelete":isMediaDelete, "message_ids": messageIds});
+      messageDeleteResponse = await mirrorFlyMethodChannel.invokeMethod('deleteMessagesForMe', { "jid" : jid, "chat_type" : chatType,"isMediaDelete":isMediaDelete, "message_ids": messageIds});
       debugPrint("deleteMessagesForMe Response ==> $messageDeleteResponse");
       return messageDeleteResponse;
     }on PlatformException catch (e){
@@ -1914,10 +1929,10 @@ class FlyChat {
       rethrow;
     }
   }
-  static Future<bool?> deleteMessagesForEveryone(String jid,String chatType, List<String> messageIds,bool? isMediaDelete) async {
-    bool? messageDeleteResponse;
+  static Future<dynamic> deleteMessagesForEveryone(String jid,String chatType, List<String> messageIds,bool? isMediaDelete) async {
+    dynamic messageDeleteResponse;
     try {
-      messageDeleteResponse = await mirrorFlyMethodChannel.invokeMethod<bool>('deleteMessagesForEveryone', { "jid" : jid, "chat_type" : chatType,"isMediaDelete":isMediaDelete, "message_ids": messageIds});
+      messageDeleteResponse = await mirrorFlyMethodChannel.invokeMethod('deleteMessagesForEveryone', { "jid" : jid, "chat_type" : chatType,"isMediaDelete":isMediaDelete, "message_ids": messageIds});
       debugPrint("deleteMessagesForEveryone Response ==> $messageDeleteResponse");
       return messageDeleteResponse;
     }on PlatformException catch (e){
@@ -2481,6 +2496,4 @@ class FlyChat {
       rethrow;
     }
   }
-
-
 }

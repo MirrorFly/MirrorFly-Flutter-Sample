@@ -23,7 +23,6 @@ dependencies:
   permission_handler: ^10.1.0
   emoji_picker_flutter: ^1.4.0
   image_cropping: ^0.0.13 #crop image
-  flutter_easyloading: ^3.0.5 #loading
   path_provider: ^2.0.11 #path provider
   video_player: ^2.4.7
   lottie: ^1.4.3
@@ -55,7 +54,6 @@ dependencies:
   path: ^1.8.2
   camera: ^0.10.0+4
   flutter_local_notifications: ^12.0.4 #local notification
-  workmanager: ^0.5.1
 
   flysdk:
     path: packages/flysdk
@@ -66,7 +64,7 @@ dev_dependencies:
   flutter_test: 
     sdk: flutter
 
-flutter: 
+flutter:
   uses-material-design: true
 
   assets:

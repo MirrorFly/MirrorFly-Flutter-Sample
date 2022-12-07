@@ -4,13 +4,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
-import 'package:mirror_fly_demo/app/modules/chat/controllers/chat_controller.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../../common/constants.dart';
 import '../../../routes/app_pages.dart';
 import 'package:flysdk/flysdk.dart';
+
+import '../controllers/chat_controller.dart';
 
 class ChatSearchView extends GetView<ChatController> {
   const ChatSearchView({super.key});
@@ -32,13 +33,7 @@ class ChatSearchView extends GetView<ChatController> {
       },
       child: Scaffold(
         appBar: AppBar(
-          leading: IconButton(
-            icon: const Icon(Icons.arrow_back, color: iconColor),
-            onPressed: () {
-              controller.searchInit();
-              Get.back();
-            },
-          ),
+          automaticallyImplyLeading: true,
           title: TextField(
             onChanged: (text) => controller.setSearch(text),
             controller: controller.searchedText,
@@ -263,7 +258,7 @@ class ChatSearchView extends GetView<ChatController> {
                         Constants.mediaDownloaded ||
                         chatMessage.mediaDownloadStatus ==
                             Constants.mediaUploaded)) {
-                  Get.toNamed(Routes.VIDEO_PLAY, arguments: {
+                  Get.toNamed(Routes.videoPlay, arguments: {
                     "filePath": chatMessage.mediaLocalStoragePath,
                   });
                 }
@@ -406,7 +401,7 @@ class ChatSearchView extends GetView<ChatController> {
     } else if (chatList[index].messageType == Constants.mContact) {
       return InkWell(
         onTap: () {
-          Get.toNamed(Routes.PREVIEW_CONTACT, arguments: {
+          Get.toNamed(Routes.previewContact, arguments: {
             "contactList":
             chatList[index].contactChatMessage!.contactPhoneNumbers,
             "contactName": chatList[index].contactChatMessage!.contactName,
@@ -829,7 +824,7 @@ class ChatSearchView extends GetView<ChatController> {
     if (controller.checkFile(mediaLocalStoragePath)) {
       return InkWell(
           onTap: () {
-            Get.toNamed(Routes.IMAGE_VIEW, arguments: {
+            Get.toNamed(Routes.imageView, arguments: {
               'imageName': mediaFileName,
               'imagePath': mediaLocalStoragePath
             });
@@ -896,7 +891,7 @@ class ChatSearchView extends GetView<ChatController> {
                   chatList.mediaChatMessage!.mediaDownloadStatus ==
                       Constants.mediaUploaded ||
                   chatList.isMessageSentByMe)) {
-            Get.toNamed(Routes.VIDEO_PLAY, arguments: {
+            Get.toNamed(Routes.videoPlay, arguments: {
               "filePath": chatList.mediaChatMessage!.mediaLocalStoragePath,
             });
           }

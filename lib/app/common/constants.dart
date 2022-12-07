@@ -80,6 +80,8 @@ const String unarchive = 'assets/logos/unarchive.svg';
 const String mute = 'assets/logos/mute.svg';
 const String unMute = 'assets/logos/unmute.svg';
 const String pushpin = 'assets/logos/pushpin.svg';
+const String pin = 'assets/logos/pin.svg';
+const String unpin = 'assets/logos/unpin.svg';
 
 const String audioImg = 'assets/logos/audio.svg';
 const String documentImg = 'assets/logos/document_icon.svg';
@@ -319,7 +321,8 @@ class Constants {
   static const String msgTypeContact = "contact";
   static const String msgTypeNotification = "notification";
 
-
+  static const String emailPattern = ("^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@"
+      + "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,3})\$");
 
   static const String O = "o";
   static const String N = "n";
@@ -479,6 +482,11 @@ Widget forMessageTypeIcon(String messageType) {
         mDocumentIcon,
         fit: BoxFit.contain,
       );
+    case Constants.mFile:
+      return SvgPicture.asset(
+        mDocumentIcon,
+        fit: BoxFit.contain,
+      );
     case Constants.mContact:
       return SvgPicture.asset(
         mContactIcon,
@@ -503,6 +511,8 @@ String? forMessageTypeString(String messageType) {
     case Constants.mVideo:
       return "Video";
     case Constants.mDocument:
+      return "Document";
+    case Constants.mFile:
       return "Document";
     case Constants.mContact:
       return "Contact";

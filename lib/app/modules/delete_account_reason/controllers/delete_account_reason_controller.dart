@@ -39,7 +39,7 @@ class DeleteAccountReasonController extends GetxController {
                   .then((value) {
                 Helper.hideLoading();
                 SessionManagement.clear();
-                Get.offAllNamed(Routes.LOGIN);
+                Get.offAllNamed(Routes.login);
               }).catchError((error) {
                 Helper.hideLoading();
                 toToast("Unable to delete the account");

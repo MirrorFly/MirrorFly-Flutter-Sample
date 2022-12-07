@@ -3,8 +3,8 @@ import 'package:mirror_fly_demo/app/common/constants.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 class AppPermission {
-
-  Future<bool> getLocationPermission() async{
+  AppPermission._();
+  static Future<bool> getLocationPermission() async{
     var permission = await Geolocator.requestPermission();
     mirrorFlyLog(permission.name, permission.index.toString());
     return permission.index==2 || permission.index==3;

@@ -32,7 +32,7 @@ class DeleteAccountController extends GetxController {
       return;
     }
 
-    Get.toNamed(Routes.DELETE_ACCOUNT_REASON);
+    Get.toNamed(Routes.deleteAccountReason);
   }
 
 }

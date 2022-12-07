@@ -77,7 +77,7 @@ class ProfileView extends GetView<ProfileController> {
                                   if (controller.imagePath.value
                                       .checkNull()
                                       .isNotEmpty) {
-                                    Get.toNamed(Routes.IMAGE_VIEW, arguments: {
+                                    Get.toNamed(Routes.imageView, arguments: {
                                       'imageName': controller.profileName.text,
                                       'imagePath':
                                           controller.imagePath.value.checkNull()
@@ -85,7 +85,7 @@ class ProfileView extends GetView<ProfileController> {
                                   } else if (controller.userImgUrl.value
                                       .checkNull()
                                       .isNotEmpty) {
-                                    Get.toNamed(Routes.IMAGE_VIEW, arguments: {
+                                    Get.toNamed(Routes.imageView, arguments: {
                                       'imageName': controller.profileName.text,
                                       'imageUrl': controller.userImgUrl.value
                                               .checkNull()
@@ -141,6 +141,7 @@ class ProfileView extends GetView<ProfileController> {
                     height: 10,
                   ),
                   TextField(
+                    keyboardType: TextInputType.emailAddress,
                     onChanged: (value) => controller.onEmailChange(value),
                     controller: controller.profileEmail,
                     decoration: InputDecoration(
@@ -196,7 +197,7 @@ class ProfileView extends GetView<ProfileController> {
                         ),
                         leading: SvgPicture.asset('assets/logos/status.svg'),
                         onTap: () {
-                          Get.toNamed(Routes.STATUSLIST, arguments: {
+                          Get.toNamed(Routes.statusList, arguments: {
                             'status': controller.profileStatus.value
                           })?.then((value) {
                             if (value != null) {
@@ -225,7 +226,7 @@ class ProfileView extends GetView<ProfileController> {
                                   }
                                 : null,
                         child: Text(
-                          controller.from.value == Routes.LOGIN
+                          controller.from.value == Routes.login
                               ? 'Save'
                               : controller.changed.value
                                   ? 'Update & Continue'

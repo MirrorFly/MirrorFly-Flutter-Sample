@@ -9,22 +9,21 @@ import 'package:mirror_fly_demo/app/data/helper.dart';
 import 'package:flysdk/flysdk.dart';
 
 import '../../../common/crop_image.dart';
-import 'package:flysdk/flysdk.dart';
 import '../../../routes/app_pages.dart';
 import '../views/name_change_view.dart';
 
 class GroupInfoController extends GetxController {
   ScrollController scrollController = ScrollController();
   var groupMembers = <Profile>[].obs;
-  var _mute = false.obs;
+  final _mute = false.obs;
   set mute(value) => _mute.value=value;
   bool get mute => _mute.value;
 
-  var _isAdmin = false.obs;
+  final _isAdmin = false.obs;
   set isAdmin(value) => _isAdmin.value=value;
   bool get isAdmin => _isAdmin.value;
 
-  var _isMemberOfGroup = true.obs;
+  final _isMemberOfGroup = true.obs;
   set isMemberOfGroup(value) => _isMemberOfGroup.value=value;
   bool get isMemberOfGroup => _isMemberOfGroup.value;
 
@@ -35,7 +34,7 @@ class GroupInfoController extends GetxController {
   final _isSliverAppBarExpanded = true.obs;
   set isSliverAppBarExpanded(value) => _isSliverAppBarExpanded.value = value;
   bool get isSliverAppBarExpanded => _isSliverAppBarExpanded.value;
-
+  final muteable = false.obs;
   @override
   void onInit(){
     super.onInit();
@@ -49,6 +48,10 @@ class GroupInfoController extends GetxController {
 
     nameController.text=profile.nickName.checkNull();
   }
+  muteAble() async {
+    muteable(await FlyChat.isUserUnArchived(profile.jid.checkNull()));
+  }
+
   _scrollListener() {
     if (scrollController.hasClients) {
       _isSliverAppBarExpanded(scrollController.offset < (250 - kToolbarHeight));
@@ -70,9 +73,11 @@ class GroupInfoController extends GetxController {
     });
   }
   onToggleChange(bool value){
-    mirrorFlyLog("change", value.toString());
-    _mute(value);
-    FlyChat.updateChatMuteStatus(profile.jid.checkNull(),value);
+    if(muteable.value) {
+      mirrorFlyLog("change", value.toString());
+      _mute(value);
+      FlyChat.updateChatMuteStatus(profile.jid.checkNull(), value);
+    }
   }
 
   getGroupMembers(bool? server){
@@ -161,7 +166,7 @@ class GroupInfoController extends GetxController {
               Helper.hideLoading();
               if(value!=null){
                 if(value){
-                  Get.offAllNamed(Routes.DASHBOARD);
+                  Get.offAllNamed(Routes.dashboard);
                 }
               }
             }).catchError((error) {
@@ -271,7 +276,7 @@ class GroupInfoController extends GetxController {
   }
 
   gotoAddParticipants(){
-    Get.toNamed(Routes.CONTACTS, arguments: {"forward" : false,"group":true,"groupJid":profile.jid })?.then((value){
+    Get.toNamed(Routes.contacts, arguments: {"forward" : false,"group":true,"groupJid":profile.jid })?.then((value){
       if(value!=null){
         showLoader();
         FlyChat.addUsersToGroup(profile.jid.checkNull(),value as List<String>).then((value){
@@ -287,7 +292,7 @@ class GroupInfoController extends GetxController {
   }
 
   gotoViewAllMedia(){
-    Get.toNamed(Routes.VIEW_MEDIA,arguments: {"name":profile.name,"jid":profile.jid,"isgroup":profile.isGroupProfile});
+    Get.toNamed(Routes.viewMedia,arguments: {"name":profile.name,"jid":profile.jid,"isgroup":profile.isGroupProfile});
   }
 
   removeUser(String userJid){

@@ -73,179 +73,179 @@ part 'app_routes.dart';
 class AppPages {
   AppPages._();
 
-  static const INITIAL = Routes.LOGIN;
-  static const PROFILE = Routes.PROFILE;
-  static const DASHBOARD = Routes.DASHBOARD;
+  static const initial = Routes.login;
+  static const profile = Routes.profile;
+  static const dashboard = Routes.dashboard;
 
   static final routes = [
-    GetPage(name: _Paths.OTP, page: () => const OtpView(), binding: LoginBinding()),
+    GetPage(name: _Paths.otp, page: () => const OtpView(), binding: LoginBinding()),
     GetPage(
-      name: _Paths.DASHBOARD,
+      name: _Paths.dashboard,
       page: () => const DashboardView(),
       binding: DashboardBinding(),
     ),
     GetPage(
-      name: _Paths.SCANNER,
+      name: _Paths.scanner,
       page: () => const ScannerView(),
       binding: ScannerBinding(),
     ),
     GetPage(
-      name: _Paths.WEBLOGINRESULT,
+      name: _Paths.webLoginResult,
       page: () => const WebLoginResultView(),
       binding: ScannerBinding(),
     ),
     GetPage(
-      name: _Paths.CREATE_GROUP,
+      name: _Paths.createGroup,
       page: () => GroupCreationView(),
       binding: GroupCreationBinding(),
     ),
     GetPage(
-      name: _Paths.GROUP_INFO,
+      name: _Paths.groupInfo,
       page: () => GroupInfoView(),
       binding: GroupInfoBinding(),
     ),
     GetPage(
-      name: _Paths.VIEW_MEDIA,
+      name: _Paths.viewMedia,
       page: () => const ViewAllMediaView(),
       binding: ViewAllMediaBinding(),
     ),
     GetPage(
-      name: _Paths.RECENTSEARCH,
+      name: _Paths.recentSearch,
       page: () => const RecentSearchView(),
       binding: RecentSearchBinding(),
     ),
     GetPage(
-      name: _Paths.LOGIN,
+      name: _Paths.login,
       page: () => const LoginView(),
       binding: LoginBinding(),
     ),
     GetPage(
-      name: _Paths.COUNTRIES,
+      name: _Paths.countries,
       page: () => const CountryListView(),
       binding: CountryListBinding(),
     ),
     GetPage(
-      name: _Paths.PROFILE,
+      name: _Paths.profile,
       page: () => ProfileView(),
       binding: ProfileBinding(),
     ),
     GetPage(
-      name: _Paths.STATUSLIST,
-      page: () => StatusListView(),
+      name: _Paths.statusList,
+      page: () => const StatusListView(),
       binding: StatusListBinding(),
     ),
     GetPage(
-      name: _Paths.CHAT,
-      page: () => ChatView(),
+      name: _Paths.chat,
+      page: () => const ChatView(),
       arguments: Profile(),
       binding: ChatBinding(),
     ),
     GetPage(
-      name: _Paths.FORWARD_CHAT,
+      name: _Paths.forwardChat,
       page: () => const ForwardChatView(),
       binding: ForwardChatBinding(),
     ),
     GetPage(
-      name: _Paths.CHATSEARCH,
+      name: _Paths.chatSearch,
       page: () => const ChatSearchView(),
     ),
     GetPage(
-      name: _Paths.LOCATIONSENT,
-      page: () => LocationSentView(),
+      name: _Paths.locationSent,
+      page: () => const LocationSentView(),
       binding: LocationBinding(),
     ),
     GetPage(
-      name: _Paths.CONTACTS,
+      name: _Paths.contacts,
       page: () => const ContactListView(),
       binding: ContactListBinding(),
     ),
     GetPage(
-      name: _Paths.IMAGEPREVIEW,
+      name: _Paths.imagePreview,
       page: () => const ImagePreviewView(),
       binding: ImagePreviewBinding(),
     ),
     GetPage(
-      name: _Paths.SETTINGS,
+      name: _Paths.settings,
       page: () => const SettingsView(),
       binding: SettingsBinding(),
     ),
     GetPage(
-      name: _Paths.BLOCKEDLIST,
+      name: _Paths.blockedList,
       page: () => const BlockedListView(),
       binding: BlockedListBinding(),
     ),
     GetPage(
-      name: _Paths.NOTIFICATION,
+      name: _Paths.notification,
       page: () => const NotificationSettingsView(),
       binding: NotificationBinding(),
     ),
     GetPage(
-      name: _Paths.APPLOCK,
+      name: _Paths.appLock,
       page: () => const AppLockSettingsView(),
       binding: AppLockBinding(),
     ),
     GetPage(
-      name: _Paths.PIN,
+      name: _Paths.pin,
       page: () => const PinView(),
       binding: AppLockBinding(),
     ),
     GetPage(
-      name: _Paths.SET_PIN,
+      name: _Paths.setPin,
       page: () => const SetPinView(),
       binding: AppLockBinding(),
     ),
     GetPage(
-      name: _Paths.VIDEO_PREVIEW,
+      name: _Paths.videoPreview,
       page: () => const VideoPreviewView(),
       binding: VideoPreviewBinding(),
     ),
     GetPage(
-      name: _Paths.VIDEO_PLAY,
+      name: _Paths.videoPlay,
       page: () => const VideoPlayerView(),
       binding: VideoPlayBinding(),
     ),
     GetPage(
-      name: _Paths.IMAGE_VIEW,
+      name: _Paths.imageView,
       page: () => const ImageViewView(),
       binding: ImageViewBinding(),
     ),
     GetPage(
-      name: _Paths.LOCAL_CONTACT,
+      name: _Paths.localContact,
       page: () => const LocalContactView(),
       binding: LocalContactBinding(),
     ),
     GetPage(
-      name: _Paths.PREVIEW_CONTACT,
+      name: _Paths.previewContact,
       page: () => const PreviewContactView(),
       binding: PreviewContactBinding(),
     ),
     GetPage(
-      name: _Paths.MESSAGE_INFO,
+      name: _Paths.messageInfo,
       page: () => const MessageInfoView(),
       binding: MessageInfoBinding(),
     ),
     GetPage(
-      name: _Paths.CHAT_INFO,
+      name: _Paths.chatInfo,
       page: () => const ChatInfoView(),
       binding: ChatInfoBinding(),
     ),
     GetPage(
-      name: _Paths.DELETE_ACCOUNT,
+      name: _Paths.deleteAccount,
       page: () => const DeleteAccountView(),
       binding: DeleteAccountBinding(),
     ),
     GetPage(
-      name: _Paths.DELETE_ACCOUNT_REASON,
+      name: _Paths.deleteAccountReason,
       page: () => const DeleteAccountReasonView(),
       binding: DeleteAccountReasonBinding(),
     ),
     GetPage(
-      name: _Paths.STARRED_MESSAGES,
+      name: _Paths.starredMessages,
       page: () => const StarredMessagesView(),
       binding: StarredMessagesBinding(),
     ),
     GetPage(
-      name: _Paths.CAMERA_PICK,
+      name: _Paths.cameraPick,
       page: () => const CameraPickView(),
       binding: CameraPickBinding(),
     ),

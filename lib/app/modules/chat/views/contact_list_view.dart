@@ -45,7 +45,7 @@ class ContactListView extends GetView<ContactController> {
                 hintText: "Search", border: InputBorder.none),
           ): controller.isForward.value
               ? const Text("Forward to...") : controller.isCreateGroup.value
-              ? const Text("Add Participants")
+              ? const Text("Add Participants",overflow: TextOverflow.fade,)
               : const Text('Contacts'),
           actions: [
             Visibility(
@@ -83,11 +83,11 @@ class ContactListView extends GetView<ContactController> {
                         },
                         icon: const Icon(Icons.settings)),
                     overflowWidget: InkWell(child: const Text("Settings"),
-                      onTap: () => Get.toNamed(Routes.SETTINGS),),
+                      onTap: () => Get.toNamed(Routes.settings),),
                     showAsAction: ShowAsAction.never,
                     keyValue: 'Settings',
                     onItemClick: () {
-                      Get.toNamed(Routes.SETTINGS);
+                      Get.toNamed(Routes.settings);
                     },
                   )
                 ],
@@ -132,22 +132,20 @@ class ContactListView extends GetView<ContactController> {
                                     : buttonBgColor,
                                 shape: BoxShape.circle,
                               ),
-                              child: item.image.checkNull().isEmpty
-                                  ? const Icon(
-                                      Icons.person,
-                                      color: Colors.white,
-                                    )
-                                  : ImageNetwork(
+                              child:ImageNetwork(
                                       url: item.image.toString(),
                                       width: 48,
                                       height: 48,
                                       clipOval: true,
-                                      errorWidget: ProfileTextImage(
+                                      errorWidget: item.name.checkNull().isNotEmpty ? ProfileTextImage(
                                         text: item.name.checkNull().isEmpty
                                             ? item.mobileNumber.checkNull()
                                             : item.name.checkNull(),
+                                      ) : const Icon(
+                                        Icons.person,
+                                        color: Colors.white,
                                       ),
-                                    ),
+                                    )
                             ),
                             Expanded(
                               child: Column(

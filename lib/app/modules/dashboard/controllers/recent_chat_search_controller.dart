@@ -40,7 +40,7 @@ class RecentChatSearchController extends GetxController {
       //filteredRecentChatList.stream.listen((list) {
         var jidList = <String>[];
         for (var recent in callback) {
-          if(getChatType(recent)!="groupchat") {
+          //if(getChatType(recent)!="groupchat") {
             var recentSearchItem = RecentSearch(
                 jid: recent.jid,
                 mid: recent.lastMessageId,
@@ -50,7 +50,7 @@ class RecentChatSearchController extends GetxController {
             recentSearchList.add(recentSearchItem);
             update();
             jidList.add(recent.jid.toString());
-          }
+          //}
         }
         fetchContactList(jidList);
       chatCount(jidList.length);
@@ -58,9 +58,9 @@ class RecentChatSearchController extends GetxController {
     });
     ever(filteredMessageList, (callback){
       mirrorFlyLog("sfilteredMessageList", callback.entries.first.value.length.toString());
-      for (var item in callback.entries){
+      /*for (var item in callback.entries){
         mirrorFlyLog("msgs", item.value.first.value.jid.toString());
-      }
+      }*/
       messageCount(callback.entries.first.key.value);
       recentSearchList.addAll(callback.entries.first.value);
       update(recentSearchList);
@@ -241,33 +241,10 @@ class RecentChatSearchController extends GetxController {
 
   toChatPage(String jid){
     if(jid.isNotEmpty) {
-      FlyChat.getProfileLocal(jid, false).then((value) {
+      FlyChat.getProfileDetails(jid, false).then((value) {
         if(value!=null){
-          var datas = profileDataFromJson(value);
-          var data = datas.data!;
-          var profile = Profile();
-          profile.contactType = "";
-          profile.email = data.email;
-          profile.groupCreatedTime = "";
-          profile.image = data.image;
-          profile.imagePrivacyFlag = "";
-          profile.isAdminBlocked = data.isAdminBlocked;
-          profile.isBlocked = data.isBlocked;
-          profile.isBlockedMe = data.isBlockedMe;
-          profile.isGroupAdmin = data.isGroupAdmin;
-          profile.isGroupInOfflineMode = data.isGroupInOfflineMode;
-          profile.isGroupProfile = data.isGroupProfile;
-          profile.isItSavedContact = data.isItSavedContact;
-          profile.isMuted = data.isMuted;
-          profile.isSelected = data.isSelected;
-          profile.jid = data.jid;
-          profile.lastSeenPrivacyFlag = "";
-          profile.mobileNUmberPrivacyFlag = "";
-          profile.mobileNumber = data.mobileNumber;
-          profile.name = data.name;
-          profile.nickName = data.nickName;
-          profile.status = data.status;
-          Get.toNamed(Routes.CHAT, arguments: profile);
+          var profile =  profiledata(value.toString());
+          Get.toNamed(Routes.chat, arguments: profile);
         }
       });
     }

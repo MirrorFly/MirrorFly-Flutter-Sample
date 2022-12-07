@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:mirror_fly_demo/app/common/main_controller.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
 import 'package:mirror_fly_demo/app/modules/dashboard/controllers/recent_chat_search_controller.dart';
 
@@ -40,7 +39,7 @@ class RecentSearchView extends GetView<RecentChatSearchController> {
             if(controller.frmRecentChatList.isNotEmpty){
               var item = controller.frmRecentChatList[position];
               //var image = controller.image path(item.profileImage);
-              return recentChatItem(item: item.value, context: context,onTap: () {
+              return RecentChatItem(item: item.value,onTap: () {
                 controller.toChatPage(item.value.jid.checkNull());
               });
             }else {
@@ -87,7 +86,10 @@ class RecentSearchView extends GetView<RecentChatSearchController> {
             builder: (context, snapshot) {
               var item = snapshot.data;
               return item != null
-                  ? InkWell(
+                  ? RecentChatItem(item: item,onTap: () {
+                controller.toChatPage(data.value.jid.checkNull());
+              },) : const SizedBox();
+             /* InkWell(
                       child: Row(
                         children: [
                           Container(
@@ -141,14 +143,6 @@ class RecentSearchView extends GetView<RecentChatSearchController> {
                                             fontWeight: FontWeight.w700,
                                             fontFamily: 'sf_ui',
                                             color: textHintColor)),
-                                        /*Text(
-                                          item.profileName.toString(),
-                                          style: TextStyle(
-                                              fontSize: 16.0,
-                                              fontWeight: FontWeight.w700,
-                                              fontFamily: 'sf_ui',
-                                              color: text hint color),
-                                        ),*/
                                       ),
                                       Padding(
                                         padding: const EdgeInsets.only(
@@ -224,8 +218,7 @@ class RecentSearchView extends GetView<RecentChatSearchController> {
                       onTap: () {
                         controller.toChatPage(data.value.jid.checkNull());
                       },
-                    )
-                  : const SizedBox();
+                    )*/
             }),
       ],
     );
@@ -494,9 +487,9 @@ class RecentSearchView extends GetView<RecentChatSearchController> {
 
   Widget searchHeaderByType(RecentSearch searchItem, BuildContext context) {
     var searchType = searchItem.searchType;
-    var contactCount = " (${controller.filteredContactList.length})";
-    var messageCount = " (${controller.messageCount.value})";
-    var chatCount = " (${controller.chatCount.value})";
+    var contactCount = "${controller.filteredContactList.length}";
+    var messageCount = "${controller.messageCount.value}";
+    var chatCount = "${controller.chatCount.value}";
     switch (searchItem.searchType.toString()) {
       case Constants.typeSearchContact:
         return searchHeader(searchType, contactCount, context);

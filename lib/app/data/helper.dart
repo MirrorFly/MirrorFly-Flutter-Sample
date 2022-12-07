@@ -1,5 +1,6 @@
 
 import 'dart:convert';
+import 'dart:io';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
@@ -275,6 +276,15 @@ extension ChatmessageParsing on ChatMessageModel{
   bool isFileMessage() => messageType == Constants.mDocument;
   bool isNotificationMessage() => messageType == Constants.mNotification;
 }
+extension RecentChatParsing on RecentChatData{
+  String getChatType(){
+    return (isGroup!) ? Constants.typeGroupChat : (isBroadCast!) ? Constants.typeBroadcastChat : Constants.typeChat;
+  }
+}
+
+String returnFormattedCount(int count) {
+  return (count > 99) ? "99+" : count.toString();
+}
 
 InkWell listItem(
     {Widget? leading, required Widget title, Widget? trailing, required Function() onTap}) {
@@ -343,10 +353,10 @@ bool equalsWithYesterday(DateTime srcDate, String day) {
   // Time part has
   // discarded
   var yesterday = (day == Constants.yesterday)
-      ? calendar.subtract(const Duration(days: 1))
+      ? DateTime.now().subtract(const Duration(days: 1))
       : DateTime.now();
   return yesterday
-      .difference(calendar)
+      .difference(srcDate)
       .inDays == 0;
 }
 var calendar = DateTime.now();
@@ -358,4 +368,44 @@ String getChatTime(BuildContext context, int? epochTime) {
       context, DateTime.fromMicrosecondsSinceEpoch(convertedTime));
   calendar = DateTime.fromMicrosecondsSinceEpoch(convertedTime);
   return hourTime;
+}
+checkFile(String mediaLocalStoragePath) {
+  return mediaLocalStoragePath.isNotEmpty &&
+      File(mediaLocalStoragePath).existsSync();
+}
+
+openDocument(String mediaLocalStoragePath, BuildContext context) async {
+  // if (await askStoragePermission()) {
+  if (mediaLocalStoragePath.isNotEmpty) {
+    // final _result = await OpenFile.open(mediaLocalStoragePath);
+    // debugPrint(_result.message);
+    // FileView(
+    //   controller: FileViewController.file(File(mediaLocalStoragePath)),
+    // );
+    // Get.toNamed(Routes.FILE_VIEWER, arguments: { "filePath": mediaLocalStoragePath});
+    // final String filePath = testFile.absolute.path;
+    // final Uri uri = Uri.file(mediaLocalStoragePath);
+    //
+    // if (!File(uri.toFilePath()).existsSync()) {
+    //   throw '$uri does not exist!';
+    // }
+    // if (!await launchUrl(uri)) {
+    //   throw 'Could not launch $uri';
+    // }
+
+    FlyChat.openFile(mediaLocalStoragePath).catchError((onError) {
+      final scaffold = ScaffoldMessenger.of(context);
+      scaffold.showSnackBar(
+        SnackBar(
+          content: const Text(
+              'No supported application available to open this file format'),
+          action: SnackBarAction(
+              label: 'Ok', onPressed: scaffold.hideCurrentSnackBar),
+        ),
+      );
+    });
+  } else {
+    debugPrint("media does not exist");
+  }
+  // }
 }

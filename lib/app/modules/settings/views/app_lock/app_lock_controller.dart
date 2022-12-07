@@ -37,9 +37,9 @@ class AppLockController extends GetxController {
     if (SessionManagement.getEnablePin()) {
       //to confirm pin to off pin
       offPin = true;
-      Get.toNamed(Routes.PIN);
+      Get.toNamed(Routes.pin);
     } else {
-      Get.toNamed(Routes.SET_PIN);
+      Get.toNamed(Routes.setPin);
     }
   }
 
@@ -71,7 +71,7 @@ class AppLockController extends GetxController {
 
   changePin() {
     modifyPin(true);
-    Get.toNamed(Routes.PIN);
+    Get.toNamed(Routes.pin);
   }
 
   savePin() {
@@ -181,7 +181,7 @@ class AppLockController extends GetxController {
           offPin = false;
           disablePIN();
         } else if(modifyPin.value){
-          Get.offNamed(Routes.SET_PIN);
+          Get.offNamed(Routes.setPin);
         }
         else {
           Get.offAllNamed(getIntialRoute());
@@ -196,12 +196,12 @@ class AppLockController extends GetxController {
     if (SessionManagement.getLogin()) {
       if (SessionManagement.getName().checkNull().isNotEmpty &&
           SessionManagement.getMobileNumber().checkNull().isNotEmpty) {
-        return AppPages.DASHBOARD;
+        return AppPages.dashboard;
       } else {
-        return AppPages.PROFILE;
+        return AppPages.profile;
       }
     } else {
-      return AppPages.INITIAL;
+      return AppPages.initial;
     }
   }
 }

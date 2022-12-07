@@ -64,8 +64,8 @@ class ForwardChatView extends GetView<ForwardChatController> {
                           physics: const NeverScrollableScrollPhysics(),
                           itemBuilder: (context, index) {
                             var item = controller.recentChats[index];
-                            return recentChatItem(
-                                item: item, context: context,onTap:() {
+                            return RecentChatItem(
+                                item: item,onTap:() {
                                   //chat page
                                   controller.onItemClicked(item.jid.checkNull(),
                                       item.profileName.checkNull());
@@ -166,9 +166,9 @@ class ForwardChatView extends GetView<ForwardChatController> {
               padding: const EdgeInsets.all(8.0),
               child: Row(
                 children: [
-                  Expanded(child: controller.selectedNames.value.isEmpty ? const Text("No Users Selected",style: TextStyle(color: textColor)) : Text(controller.selectedNames.value.join(","),maxLines: 2,overflow: TextOverflow.ellipsis,style: const TextStyle(color: textColor),),),
+                  Expanded(child: controller.selectedNames.isEmpty ? const Text("No Users Selected",style: TextStyle(color: textColor)) : Text(controller.selectedNames.join(","),maxLines: 2,overflow: TextOverflow.ellipsis,style: const TextStyle(color: textColor),),),
                   Visibility(
-                    visible: controller.selectedNames.value.isNotEmpty,
+                    visible: controller.selectedNames.isNotEmpty,
                     child: InkWell(
                       onTap: () {
                         controller.forwardMessages();

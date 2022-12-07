@@ -10,7 +10,6 @@ import 'package:flysdk/flysdk.dart';
 
 import '../../../common/constants.dart';
 import '../../../routes/app_pages.dart';
-import 'package:flysdk/flysdk.dart';
 
 
 class ViewAllMediaController extends GetxController {
@@ -230,7 +229,7 @@ class ViewAllMediaController extends GetxController {
   }
 
   openImage(String path){
-    Get.toNamed(Routes.IMAGE_VIEW, arguments: {
+    Get.toNamed(Routes.imageView, arguments: {
       "imagePath": path,
       "imageName": "Sent Media"
     });

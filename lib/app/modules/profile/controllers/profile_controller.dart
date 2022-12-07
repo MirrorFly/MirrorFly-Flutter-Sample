@@ -23,12 +23,12 @@ class ProfileController extends GetxController {
   var isUserProfileRemoved = false.obs;
   var imagePath = "".obs;
   var userImgUrl = "".obs;
-
+  var emailPatternMatch = RegExp(Constants.emailPattern,multiLine: false);
   var loading = false.obs;
   var changed = false.obs;
 
   dynamic imageBytes;
-  var from = Routes.LOGIN.obs;
+  var from = Routes.login.obs;
 
   var name = "".obs;
 
@@ -39,7 +39,7 @@ class ProfileController extends GetxController {
     mirrorFlyLog("auth : ", SessionManagement.getAuthToken().toString());
     if (Get.arguments != null) {
       from(Get.arguments["from"]);
-      if (from.value == Routes.LOGIN) {
+      if (from.value == Routes.login) {
         profileMobile.text = Get.arguments['mobile'] ?? "";
       }
     } else {
@@ -50,10 +50,14 @@ class ProfileController extends GetxController {
   }
 
   void save() {
-    if (profileName.text.isEmpty) {
-      toToast("Enter Profile Name");
-    } else if (profileEmail.text.isEmpty) {
-      toToast("Enter Profile Email");
+    if (profileName.text.trim().isEmpty) {
+      toToast("Please enter your username");
+    }else if (profileName.text.trim().length > 3) {
+      toToast("Username is too short");
+    } else if (profileEmail.text.trim().isEmpty) {
+      toToast("Email should not be empty");
+    } else if (emailPatternMatch.hasMatch(profileEmail.text.toString())) {
+      toToast("Please enter a valid Mail");
     } else if (profileStatus.value.isEmpty) {
       toToast("Enter Profile Status");
     } else {
@@ -89,8 +93,8 @@ class ProfileController extends GetxController {
                     name: profileName.text,
                     status: profileStatus.value);
                 SessionManagement.setCurrentUser(userProfileData);
-                if (from.value == Routes.LOGIN) {
-                  Get.offNamed(Routes.DASHBOARD);
+                if (from.value == Routes.login) {
+                  Get.offNamed(Routes.dashboard);
                 }
               }
             }
@@ -135,7 +139,7 @@ class ProfileController extends GetxController {
         isImageSelected.value = false;
         isUserProfileRemoved.value = true;
         userImgUrl(Constants.emptyString);
-        if (from.value == Routes.LOGIN) {
+        if (from.value == Routes.login) {
           changed(true);
         } else {
           save();
@@ -166,7 +170,7 @@ class ProfileController extends GetxController {
             profileStatus.value = data.data!.status.checkNull().isNotEmpty ? data.data!.status.checkNull() : "I am in Mirror Fly";
             userImgUrl.value =
                 data.data!.image ?? SessionManagement.getUserImage() ?? "";
-            changed((from.value == Routes.LOGIN));
+            changed((from.value == Routes.login));
             name(data.data!.name.toString());
             update();
           }
@@ -236,7 +240,7 @@ class ProfileController extends GetxController {
         imageBytes = value.bytes;
         var name = "${DateTime.now().millisecondsSinceEpoch}.jpg";
         writeImageTemp(value.bytes, name).then((value) {
-          if (from.value == Routes.LOGIN) {
+          if (from.value == Routes.login) {
             imagePath(value.path);
             changed(true);
             update();
@@ -263,7 +267,7 @@ class ProfileController extends GetxController {
         imageBytes = value.bytes;
         var name = "${DateTime.now().millisecondsSinceEpoch}.jpg";
         writeImageTemp(value.bytes, name).then((value) {
-          if (from.value == Routes.LOGIN) {
+          if (from.value == Routes.login) {
             imagePath(value.path);
             changed(true);
           } else {

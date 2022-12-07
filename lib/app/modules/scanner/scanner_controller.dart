@@ -121,7 +121,7 @@ class ScannerController extends GetxController {
 
   addLogin() {
     FlyChat.webLoginDetailsCleared();
-    Get.toNamed(Routes.SCANNER)?.then((value) {
+    Get.toNamed(Routes.scanner)?.then((value) {
       getWebLoginDetails();
     });
   }

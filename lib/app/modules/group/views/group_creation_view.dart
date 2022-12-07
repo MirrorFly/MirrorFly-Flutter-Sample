@@ -80,7 +80,7 @@ class GroupCreationView extends GetView<GroupCreationController> {
                             if (controller.imagePath.value
                                 .checkNull()
                                 .isNotEmpty) {
-                              Get.toNamed(Routes.IMAGE_VIEW, arguments: {
+                              Get.toNamed(Routes.imageView, arguments: {
                                 'imageName': controller.groupName.text,
                                 'imagePath':
                                     controller.imagePath.value.checkNull()
@@ -88,7 +88,7 @@ class GroupCreationView extends GetView<GroupCreationController> {
                             } else if (controller.userImgUrl.value
                                 .checkNull()
                                 .isNotEmpty) {
-                              Get.toNamed(Routes.IMAGE_VIEW, arguments: {
+                              Get.toNamed(Routes.imageView, arguments: {
                                 'imageName': controller.groupName.text,
                                 'imageUrl':
                                     controller.userImgUrl.value.checkNull()

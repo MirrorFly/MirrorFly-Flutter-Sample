@@ -48,11 +48,12 @@ class LoginController extends GetxController {
   }
 
   setUserJID(String username) {
+    FlyChat.getAllGroups(true);
     FlyChat.getJid(username).then((value) {
       if(value != null){
         SessionManagement.setUserJID(value);
         Helper.hideLoading();
-        Get.offAllNamed(Routes.PROFILE,arguments: {"mobile":mobileNumber.text.toString(),"from":Routes.LOGIN});
+        Get.offAllNamed(Routes.profile,arguments: {"mobile":mobileNumber.text.toString(),"from":Routes.login});
       }
     }).catchError((error) {
       debugPrint(error.message);
@@ -70,7 +71,7 @@ class LoginController extends GetxController {
     } else {
       await _auth.verifyPhoneNumber(
         phoneNumber: countryCode! + mobileNumber.text,
-        timeout: const Duration(seconds: 60),
+        timeout: const Duration(seconds: 30),
         verificationCompleted: _onVerificationCompleted,
         verificationFailed: (FirebaseAuthException e) {
           timeout(true);
@@ -84,7 +85,7 @@ class LoginController extends GetxController {
           resendingToken = resendToken;
           if(verificationId.isNotEmpty){
             hideLoading();
-            Get.toNamed(Routes.OTP)?.then((value) {
+            Get.toNamed(Routes.otp)?.then((value) {
               //Change Number
               if(value!=null) {
                 mirrorFlyLog("change number", "initiated");
@@ -131,6 +132,7 @@ class LoginController extends GetxController {
     // need otp so i can autofill in a text box
     if (credential.smsCode != null) {
       otpController.set(credential.smsCode!.split(""));
+      //verifyOTP();
     }
   }
 
@@ -254,7 +256,7 @@ class LoginController extends GetxController {
   }
 
   gotoLogin(){
-    Get.offAllNamed(Routes.LOGIN);
+    Get.offAllNamed(Routes.login);
   }
 
 }
