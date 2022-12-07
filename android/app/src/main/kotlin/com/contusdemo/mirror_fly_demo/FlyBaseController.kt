@@ -986,19 +986,19 @@ open class FlyBaseController(activity: FlutterActivity) : MethodChannel.MethodCa
 //                    .toString()
                 result.success(FlyMessenger.getUnreadMessagesCount())
             }
-            call.method.equals("get_recent_chat_of") -> {
-                val userJID =
-                    if (call.argument<String>("jid") == null) "" else call.argument<String?>("jid")
-                        .toString()
-                val recent = FlyCore.getRecentChatOf(userJID)
-                if (recent != null) {
-                    Log.e("RESPONSE_CAPTURE", "===========================")
-                    DebugUtilis.v("FlyCore.getRecentChatOf", recent.tojsonString())
-                    result.success(recent.tojsonString())
-                } else {
-                    result.success(null)
-                }
-            }
+//            call.method.equals("get_recent_chat_of") -> {
+//                val userJID =
+//                    if (call.argument<String>("jid") == null) "" else call.argument<String?>("jid")
+//                        .toString()
+//                val recent = FlyCore.getRecentChatOf(userJID)
+//                if (recent != null) {
+//                    Log.e("RESPONSE_CAPTURE", "===========================")
+//                    DebugUtilis.v("FlyCore.getRecentChatOf", recent.tojsonString())
+//                    result.success(recent.tojsonString())
+//                } else {
+//                    result.success(null)
+//                }
+//            }
             call.method.equals("downloadMedia") -> {
                 val mediaId =
                     if (call.argument<String>("mediaMessage_id") == null) "" else call.argument<String?>(
@@ -1275,7 +1275,7 @@ open class FlyBaseController(activity: FlutterActivity) : MethodChannel.MethodCa
 
      private fun handleReceivedMessage(call: MethodCall,result: MethodChannel.Result) {
          val notificationdata = call.argument<Map<String,String>>("notificationdata") ?: mapOf()
-         Log.e("notificationdata",notificationdata.toString())
+         Log.e("===notificationdata===",notificationdata.toString())
          PushNotificationManager.handleReceivedMessage(notificationdata, object :
              NotificationEventListener {
              override fun onMessageReceived(chatMessage: ChatMessage) {
@@ -2358,7 +2358,7 @@ open class FlyBaseController(activity: FlutterActivity) : MethodChannel.MethodCa
     }
 
     private fun getProfileStatusList(result: MethodChannel.Result) {
-        val status = FlyCore.getProfileStatusList()
+        val status = FlyCore.getProfileStatusList()//[{"id":1,"isCurrentStatus":true,"status":"I am in Mirror Fly"}]
         result.success(status.tojsonString())
     }
 

@@ -122,7 +122,7 @@ Widget recentChatItem({required RecentChatData item, required BuildContext conte
                       padding: const EdgeInsets.only(right: 16.0, left: 8),
                       child: !isCheckBoxVisible ? Text(
                         getRecentChatTime(
-                            context, item.lastMessageTime),
+                            context, item.lastMessageTime?.toInt()),
                         textAlign: TextAlign.end,
                         style: TextStyle(
                             fontSize: 12.0,

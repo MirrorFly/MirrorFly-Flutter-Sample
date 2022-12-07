@@ -65,7 +65,7 @@ class _MessageContentState extends State<MessageContent> {
                   width: 5,
                 ),
                 getMessageIndicator(
-                    chatList.messageStatus.status,
+                    chatList.messageStatus?.status ?? chatList.iosMessageStatus,
                     chatList.isMessageSentByMe,
                     chatList.messageType),
                 const SizedBox(
@@ -135,7 +135,7 @@ class _MessageContentState extends State<MessageContent> {
                     width: 5,
                   ),
                   getMessageIndicator(
-                      chatList.messageStatus.status,
+                      chatList.messageStatus?.status ?? chatList.iosMessageStatus,
                       chatList.isMessageSentByMe,
                       chatList.messageType),
                   const SizedBox(
@@ -201,7 +201,7 @@ class _MessageContentState extends State<MessageContent> {
                     width: 5,
                   ),
                   getMessageIndicator(
-                      chatList.messageStatus.status,
+                      chatList.messageStatus?.status ?? chatList.iosMessageStatus,
                       chatList.isMessageSentByMe,
                       chatList.messageType),
                   const SizedBox(
@@ -282,7 +282,7 @@ class _MessageContentState extends State<MessageContent> {
                       width: 5,
                     ),
                     getMessageIndicator(
-                        chatList.messageStatus.status,
+                        chatList.messageStatus?.status ?? chatList.iosMessageStatus,
                         chatList.isMessageSentByMe,
                         chatList.messageType),
                     const SizedBox(
@@ -363,7 +363,7 @@ class _MessageContentState extends State<MessageContent> {
                       width: 5,
                     ),
                     getMessageIndicator(
-                        chatList.messageStatus.status,
+                        chatList.messageStatus?.status ?? chatList.iosMessageStatus,
                         chatList.isMessageSentByMe,
                         chatList.messageType),
                     const SizedBox(
@@ -492,7 +492,7 @@ class _MessageContentState extends State<MessageContent> {
                     width: 5,
                   ),
                   getMessageIndicator(
-                      chatList.messageStatus.status,
+                      chatList.messageStatus?.status ?? chatList.iosMessageStatus,
                       chatList.isMessageSentByMe,
                       chatList.messageType),
                   const SizedBox(
@@ -542,7 +542,7 @@ class _MessageContentState extends State<MessageContent> {
                     width: 5,
                   ),
                   getMessageIndicator(
-                      chatList.messageStatus.status,
+                      chatList.messageStatus?.status ?? chatList.iosMessageStatus,
                       chatList.isMessageSentByMe,
                       chatList.messageType),
                   const SizedBox(
@@ -611,7 +611,7 @@ class _MessageContentState extends State<MessageContent> {
     var chatMessage = chatList;
     if (controller
         .checkFile(chatMessage.mediaChatMessage!.mediaLocalStoragePath) &&
-        chatMessage.messageStatus.status != 'N') {
+        (chatMessage.messageStatus?.status ?? chatMessage.iosMessageStatus) != 'N') {
       if (chatMessage.messageType == 'VIDEO') {
         return SizedBox(
           width: 80,

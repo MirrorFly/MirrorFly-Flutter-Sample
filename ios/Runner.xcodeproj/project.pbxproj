@@ -13,11 +13,16 @@
 		97C146FC1CF9000F007C117D /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FA1CF9000F007C117D /* Main.storyboard */; };
 		97C146FE1CF9000F007C117D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FD1CF9000F007C117D /* Assets.xcassets */; };
 		97C147011CF9000F007C117D /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FF1CF9000F007C117D /* LaunchScreen.storyboard */; };
-		CE27092F2934A7B200F08803 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = CE27092E2934A7B200F08803 /* GoogleService-Info.plist */; };
 		CE2709312934BB9D00F08803 /* JsonSerializer.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE2709302934BB9C00F08803 /* JsonSerializer.swift */; };
 		CE3DE568291BD29600AC7AAA /* Commons.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE3DE567291BD29600AC7AAA /* Commons.swift */; };
+		CE54777929361265008C558D /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 12565C589831324D5B82B198 /* GoogleService-Info.plist */; };
+		CE54777B293653AB008C558D /* UserDefaults.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE54777A293653AB008C558D /* UserDefaults.swift */; };
+		CE54777D293654DC008C558D /* StringConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE54777C293654DC008C558D /* StringConstants.swift */; };
+		CE54777F29365653008C558D /* FontExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE54777E29365653008C558D /* FontExtension.swift */; };
+		CE5477812936BF8A008C558D /* ImageDetail.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE5477802936BF89008C558D /* ImageDetail.swift */; };
 		CE5E9932291D0F9500BC0C14 /* FlyMethodChannel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE5E9931291D0F9500BC0C14 /* FlyMethodChannel.swift */; };
 		CE5E9934291D101500BC0C14 /* FlySdkMethodCalls.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE5E9933291D101500BC0C14 /* FlySdkMethodCalls.swift */; };
+		CE720B8729384A250083DECF /* FlyEvents.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE720B8629384A250083DECF /* FlyEvents.swift */; };
 		CE78BAF9291A463E00D23AFD /* FlyCommon.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = CE3C3A162916677400545868 /* FlyCommon.xcframework */; };
 		CE78BAFA291A463E00D23AFD /* FlyCommon.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = CE3C3A162916677400545868 /* FlyCommon.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		CE78BAFB291A463E00D23AFD /* FlyCore.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = CE3C3A172916677500545868 /* FlyCore.xcframework */; };
@@ -53,6 +58,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		12565C589831324D5B82B198 /* GoogleService-Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "Runner/GoogleService-Info.plist"; sourceTree = "<group>"; };
 		1498D2321E8E86230040F4C2 /* GeneratedPluginRegistrant.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GeneratedPluginRegistrant.h; sourceTree = "<group>"; };
 		1498D2331E8E89220040F4C2 /* GeneratedPluginRegistrant.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GeneratedPluginRegistrant.m; sourceTree = "<group>"; };
 		3B3967151E833CAA004F5970 /* AppFrameworkInfo.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = AppFrameworkInfo.plist; path = Flutter/AppFrameworkInfo.plist; sourceTree = "<group>"; };
@@ -69,7 +75,6 @@
 		ABC62C3F5A4E0B80B03E4D7E /* Pods-Runner.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.debug.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.debug.xcconfig"; sourceTree = "<group>"; };
 		B117FE32A47E14CD067BA053 /* Pods-Runner.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.release.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.release.xcconfig"; sourceTree = "<group>"; };
 		C24F05AD5FAAF48F8A741070 /* Pods_Runner.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Runner.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		CE27092E2934A7B200F08803 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		CE2709302934BB9C00F08803 /* JsonSerializer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JsonSerializer.swift; sourceTree = "<group>"; };
 		CE3C3A112916677200545868 /* FlyNetwork.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = FlyNetwork.xcframework; path = ../../../../../Downloads/iOS_SDK/FlyNetwork.xcframework; sourceTree = "<group>"; };
 		CE3C3A122916677200545868 /* FlyCall.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = FlyCall.xcframework; path = ../../../../../Downloads/iOS_SDK/FlyCall.xcframework; sourceTree = "<group>"; };
@@ -79,8 +84,13 @@
 		CE3C3A162916677400545868 /* FlyCommon.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = FlyCommon.xcframework; path = ../../../../../Downloads/iOS_SDK/FlyCommon.xcframework; sourceTree = "<group>"; };
 		CE3C3A172916677500545868 /* FlyCore.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = FlyCore.xcframework; path = ../../../../../Downloads/iOS_SDK/FlyCore.xcframework; sourceTree = "<group>"; };
 		CE3DE567291BD29600AC7AAA /* Commons.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Commons.swift; sourceTree = "<group>"; };
+		CE54777A293653AB008C558D /* UserDefaults.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserDefaults.swift; sourceTree = "<group>"; };
+		CE54777C293654DC008C558D /* StringConstants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StringConstants.swift; sourceTree = "<group>"; };
+		CE54777E29365653008C558D /* FontExtension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FontExtension.swift; sourceTree = "<group>"; };
+		CE5477802936BF89008C558D /* ImageDetail.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageDetail.swift; sourceTree = "<group>"; };
 		CE5E9931291D0F9500BC0C14 /* FlyMethodChannel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlyMethodChannel.swift; sourceTree = "<group>"; };
 		CE5E9933291D101500BC0C14 /* FlySdkMethodCalls.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlySdkMethodCalls.swift; sourceTree = "<group>"; };
+		CE720B8629384A250083DECF /* FlyEvents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlyEvents.swift; sourceTree = "<group>"; };
 		CE78BAF6291A2F1B00D23AFD /* Runner.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Runner.entitlements; sourceTree = "<group>"; };
 		EB47D5081972A00F06B548B0 /* Pods-Runner.profile.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.profile.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.profile.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -127,12 +137,12 @@
 		97C146E51CF9000F007C117D = {
 			isa = PBXGroup;
 			children = (
-				CE27092E2934A7B200F08803 /* GoogleService-Info.plist */,
 				9740EEB11CF90186004384FC /* Flutter */,
 				97C146F01CF9000F007C117D /* Runner */,
 				97C146EF1CF9000F007C117D /* Products */,
 				CE3C3A102916677200545868 /* Frameworks */,
 				90B96F7F1DA8C2ECE4E4CBE3 /* Pods */,
+				12565C589831324D5B82B198 /* GoogleService-Info.plist */,
 			);
 			sourceTree = "<group>";
 		};
@@ -147,6 +157,10 @@
 		97C146F01CF9000F007C117D /* Runner */ = {
 			isa = PBXGroup;
 			children = (
+				CE5477802936BF89008C558D /* ImageDetail.swift */,
+				CE54777E29365653008C558D /* FontExtension.swift */,
+				CE54777C293654DC008C558D /* StringConstants.swift */,
+				CE54777A293653AB008C558D /* UserDefaults.swift */,
 				CE2709302934BB9C00F08803 /* JsonSerializer.swift */,
 				CE78BAF6291A2F1B00D23AFD /* Runner.entitlements */,
 				97C146FA1CF9000F007C117D /* Main.storyboard */,
@@ -160,6 +174,7 @@
 				CE3DE567291BD29600AC7AAA /* Commons.swift */,
 				CE5E9931291D0F9500BC0C14 /* FlyMethodChannel.swift */,
 				CE5E9933291D101500BC0C14 /* FlySdkMethodCalls.swift */,
+				CE720B8629384A250083DECF /* FlyEvents.swift */,
 			);
 			path = Runner;
 			sourceTree = "<group>";
@@ -243,9 +258,9 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CE54777929361265008C558D /* GoogleService-Info.plist in Resources */,
 				97C147011CF9000F007C117D /* LaunchScreen.storyboard in Resources */,
 				3B3967161E833CAA004F5970 /* AppFrameworkInfo.plist in Resources */,
-				CE27092F2934A7B200F08803 /* GoogleService-Info.plist in Resources */,
 				97C146FE1CF9000F007C117D /* Assets.xcassets in Resources */,
 				97C146FC1CF9000F007C117D /* Main.storyboard in Resources */,
 			);
@@ -345,11 +360,16 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CE720B8729384A250083DECF /* FlyEvents.swift in Sources */,
 				74858FAF1ED2DC5600515810 /* AppDelegate.swift in Sources */,
 				CE5E9934291D101500BC0C14 /* FlySdkMethodCalls.swift in Sources */,
 				CE3DE568291BD29600AC7AAA /* Commons.swift in Sources */,
 				CE5E9932291D0F9500BC0C14 /* FlyMethodChannel.swift in Sources */,
+				CE5477812936BF8A008C558D /* ImageDetail.swift in Sources */,
+				CE54777D293654DC008C558D /* StringConstants.swift in Sources */,
 				1498D2341E8E89220040F4C2 /* GeneratedPluginRegistrant.m in Sources */,
+				CE54777F29365653008C558D /* FontExtension.swift in Sources */,
+				CE54777B293653AB008C558D /* UserDefaults.swift in Sources */,
 				CE2709312934BB9D00F08803 /* JsonSerializer.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -433,8 +453,11 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;
-				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
-				DEVELOPMENT_TEAM = "";
+				CODE_SIGN_IDENTITY = "Apple Development: Balasubramaniyam Kandaswamy (HSBG5S6ZV9)";
+				CODE_SIGN_STYLE = Manual;
+				CURRENT_PROJECT_VERSION = 3;
+				DEVELOPMENT_TEAM = G44VFA67ZG;
+				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = G44VFA67ZG;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = Runner/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 12.1;
@@ -442,11 +465,14 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
+				MARKETING_VERSION = 2.2;
 				PRODUCT_BUNDLE_IDENTIFIER = com.mirrorfly.uikitflutter.dev;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "Flutter Development";
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = "Flutter Development";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;
-				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_OBJC_BRIDGING_HEADER = "Runner/Runner-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 1;
@@ -568,8 +594,11 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;
-				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
-				DEVELOPMENT_TEAM = "";
+				CODE_SIGN_IDENTITY = "Apple Development: Balasubramaniyam Kandaswamy (HSBG5S6ZV9)";
+				CODE_SIGN_STYLE = Manual;
+				CURRENT_PROJECT_VERSION = 3;
+				DEVELOPMENT_TEAM = G44VFA67ZG;
+				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = G44VFA67ZG;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = Runner/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 12.1;
@@ -577,11 +606,14 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
+				MARKETING_VERSION = 2.2;
 				PRODUCT_BUNDLE_IDENTIFIER = com.mirrorfly.uikitflutter.dev;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "Flutter Development";
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = "Flutter Development";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;
-				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_OBJC_BRIDGING_HEADER = "Runner/Runner-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
@@ -597,8 +629,11 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;
-				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
-				DEVELOPMENT_TEAM = "";
+				CODE_SIGN_IDENTITY = "Apple Development: Balasubramaniyam Kandaswamy (HSBG5S6ZV9)";
+				CODE_SIGN_STYLE = Manual;
+				CURRENT_PROJECT_VERSION = 3;
+				DEVELOPMENT_TEAM = G44VFA67ZG;
+				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = G44VFA67ZG;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = Runner/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 12.1;
@@ -606,11 +641,14 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
+				MARKETING_VERSION = 2.2;
 				PRODUCT_BUNDLE_IDENTIFIER = com.mirrorfly.uikitflutter.dev;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "Flutter Development";
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = "Flutter Development";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;
-				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_OBJC_BRIDGING_HEADER = "Runner/Runner-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 1;

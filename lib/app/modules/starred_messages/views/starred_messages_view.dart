@@ -68,7 +68,7 @@ class StarredMessagesView extends GetView<StarredMessagesController> {
                     Container(
                       key: Key(starredChatList[index].messageId),
                       color: controller.isSelected.value &&
-                          starredChatList[index].isSelected &&
+                          (starredChatList[index].isSelected ?? false) &&
                           controller.starredChatList.isNotEmpty
                           ? chatReplyContainerColor
                           : Colors.transparent,

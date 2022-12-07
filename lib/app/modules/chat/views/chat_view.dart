@@ -562,7 +562,7 @@ class ChatView extends GetView<ChatController> {
                   return Container(
                     key: Key(chatList[index].messageId),
                     color: controller.isSelected.value &&
-                            chatList[index].isSelected &&
+                            (chatList[index].isSelected ?? false) &&
                             controller.selectedChatList.isNotEmpty
                         ? chatReplyContainerColor
                         : Colors.transparent,
@@ -629,7 +629,7 @@ class ChatView extends GetView<ChatController> {
 
   Widget sender(List<ChatMessageModel> chatList, int index) {
     return Visibility(
-      visible: controller.profile.isGroupProfile!
+      visible: controller.profile.isGroupProfile ?? false
           ? (index == 0 ||
                   isSenderChanged(chatList, index) ||
                   !isMessageDateEqual(chatList, index)) &&
@@ -658,7 +658,7 @@ class ChatView extends GetView<ChatController> {
               previousMessage.isMessageSentByMe ||
           previousMessage.messageType == Constants.msgTypeNotification ||
           (currentMessage.messageChatType == Constants.typeGroupChat &&
-              currentMessage.isThisAReplyMessage)) {
+              (currentMessage.isThisAReplyMessage ?? false))) {
         return true;
       }
       var currentSenderJid = currentMessage.senderUserJid.checkNull();
@@ -688,11 +688,11 @@ class ChatView extends GetView<ChatController> {
       String? messageStatus, bool isSender, String messageType) {
     // debugPrint("Message Type ==> $messageType");
     if (isSender) {
-      if (messageStatus == 'A') {
+      if (messageStatus == 'A' || messageStatus == 'acknowledge') {
         return SvgPicture.asset('assets/logos/acknowledged.svg');
-      } else if (messageStatus == 'D') {
+      } else if (messageStatus == 'D' || messageStatus == 'delivered') {
         return SvgPicture.asset('assets/logos/delivered.svg');
-      } else if (messageStatus == 'S') {
+      } else if (messageStatus == 'S' || messageStatus == 'seen') {
         return SvgPicture.asset('assets/logos/seen.svg');
       } else {
         return const Icon(
@@ -708,7 +708,7 @@ class ChatView extends GetView<ChatController> {
 
   getMessageContent(
       int index, BuildContext context, List<ChatMessageModel> chatList) {
-    debugPrint(json.encode(chatList[index]));
+    debugPrint("Chat Content$index${json.encode(chatList[index])}");
     if (chatList[index].isMessageRecalled) {
       return Padding(
         padding: const EdgeInsets.all(10.0),
@@ -751,7 +751,7 @@ class ChatView extends GetView<ChatController> {
         ),
       );
     } else {
-      if (chatList[index].messageType == Constants.mText) {
+      if (chatList[index].messageType.toUpperCase() == Constants.mText) {
         return Padding(
           padding: const EdgeInsets.all(10.0),
           child: Row(
@@ -782,7 +782,7 @@ class ChatView extends GetView<ChatController> {
                     width: 5,
                   ),
                   getMessageIndicator(
-                      chatList[index].messageStatus.status,
+                      chatList[index].messageStatus?.status ?? chatList[index].iosMessageStatus,
                       chatList[index].isMessageSentByMe,
                       chatList[index].messageType),
                   const SizedBox(
@@ -790,7 +790,7 @@ class ChatView extends GetView<ChatController> {
                   ),
                   Text(
                     controller.getChatTime(
-                        context, chatList[index].messageSentTime),
+                        context, chatList[index].messageSentTime.toInt()),
                     style: const TextStyle(fontSize: 11, color: chatTimeColor),
                   ),
                 ],
@@ -798,7 +798,7 @@ class ChatView extends GetView<ChatController> {
             ],
           ),
         );
-      } else if (chatList[index].messageType == Constants.mNotification) {
+      } else if (chatList[index].messageType.toUpperCase() == Constants.mNotification) {
         return Center(
           child: Container(
             decoration: const BoxDecoration(
@@ -811,7 +811,7 @@ class ChatView extends GetView<ChatController> {
                 style: const TextStyle(fontSize: 12)),
           ),
         );
-      } else if (chatList[index].messageType == Constants.mImage) {
+      } else if (chatList[index].messageType.toUpperCase() == Constants.mImage) {
         if(chatList[index].mediaChatMessage == null){
           return const SizedBox.shrink();
         }
@@ -855,7 +855,7 @@ class ChatView extends GetView<ChatController> {
                       width: 5,
                     ),
                     getMessageIndicator(
-                        chatList[index].messageStatus.status,
+                        chatList[index].messageStatus?.status ?? chatList[index].iosMessageStatus,
                         chatList[index].isMessageSentByMe,
                         chatList[index].messageType),
                     const SizedBox(
@@ -872,7 +872,7 @@ class ChatView extends GetView<ChatController> {
             ],
           ),
         );
-      } else if (chatList[index].messageType == Constants.mVideo) {
+      } else if (chatList[index].messageType.toUpperCase() == Constants.mVideo) {
         if(chatList[index].mediaChatMessage == null){
           return const SizedBox.shrink();
         }
@@ -924,7 +924,7 @@ class ChatView extends GetView<ChatController> {
                       width: 5,
                     ),
                     getMessageIndicator(
-                        chatList[index].messageStatus.status,
+                        chatList[index].messageStatus?.status ?? chatList[index].iosMessageStatus,
                         chatList[index].isMessageSentByMe,
                         chatList[index].messageType),
                     const SizedBox(
@@ -941,7 +941,7 @@ class ChatView extends GetView<ChatController> {
             ],
           ),
         );
-      } else if (chatList[index].messageType == Constants.mDocument) {
+      } else if (chatList[index].messageType.toUpperCase() == Constants.mDocument) {
         if(chatList[index].mediaChatMessage == null){
           return const SizedBox.shrink();
         }
@@ -1009,7 +1009,7 @@ class ChatView extends GetView<ChatController> {
                         width: 5,
                       ),
                       getMessageIndicator(
-                          chatList[index].messageStatus.status,
+                          chatList[index].messageStatus?.status ?? chatList[index].iosMessageStatus,
                           chatList[index].isMessageSentByMe,
                           chatList[index].messageType),
                       const SizedBox(
@@ -1034,7 +1034,7 @@ class ChatView extends GetView<ChatController> {
             ),
           ),
         );
-      } else if (chatList[index].messageType == Constants.mContact) {
+      } else if (chatList[index].messageType.toUpperCase() == Constants.mContact) {
         if(chatList[index].contactChatMessage == null){
           return const SizedBox.shrink();
         }
@@ -1094,7 +1094,7 @@ class ChatView extends GetView<ChatController> {
                         width: 5,
                       ),
                       getMessageIndicator(
-                          chatList[index].messageStatus.status,
+                          chatList[index].messageStatus?.status ?? chatList[index].iosMessageStatus,
                           chatList[index].isMessageSentByMe,
                           chatList[index].messageType),
                       const SizedBox(
@@ -1119,7 +1119,7 @@ class ChatView extends GetView<ChatController> {
             ),
           ),
         );
-      } else if (chatList[index].messageType == Constants.mAudio) {
+      } else if (chatList[index].messageType.toUpperCase() == Constants.mAudio) {
         if(chatList[index].mediaChatMessage == null){
           return const SizedBox.shrink();
         }
@@ -1227,7 +1227,7 @@ class ChatView extends GetView<ChatController> {
                       width: 5,
                     ),
                     getMessageIndicator(
-                        chatList[index].messageStatus.status,
+                        chatList[index].messageStatus?.status ?? chatList[index].iosMessageStatus,
                         chatList[index].isMessageSentByMe,
                         chatList[index].messageType),
                     const SizedBox(
@@ -1280,7 +1280,7 @@ class ChatView extends GetView<ChatController> {
                       width: 5,
                     ),
                     getMessageIndicator(
-                        chatList[index].messageStatus.status,
+                        chatList[index].messageStatus?.status ?? chatList[index].iosMessageStatus,
                         chatList[index].isMessageSentByMe,
                         chatList[index].messageType),
                     const SizedBox(
@@ -1451,7 +1451,7 @@ class ChatView extends GetView<ChatController> {
 
     if (controller
             .checkFile(chatMessage.mediaChatMessage!.mediaLocalStoragePath) &&
-        chatMessage.messageStatus.status != 'N') {
+        (chatList[index].messageStatus?.status ?? chatList[index].iosMessageStatus) != 'N') {
       if (chatMessage.messageType == 'VIDEO') {
         return SizedBox(
           width: 80,
@@ -2228,7 +2228,7 @@ class ChatView extends GetView<ChatController> {
               width: 45,
               height: 45,
               clipOval: true,
-              errorWidget: controller.profile.isGroupProfile!
+              errorWidget: controller.profile.isGroupProfile ?? false
                   ? ClipOval(
                       child: Image.asset(
                         groupImg,
@@ -2343,7 +2343,7 @@ class ChatView extends GetView<ChatController> {
                         icon: const Icon(Icons.block),
                       ),
                       overflowWidget: const Text("Block"),
-                      showAsAction: controller.profile.isGroupProfile!
+                      showAsAction: controller.profile.isGroupProfile ?? false
                           ? ShowAsAction.gone
                           : ShowAsAction.never,
                       keyValue: 'Block',
@@ -2358,7 +2358,7 @@ class ChatView extends GetView<ChatController> {
                   icon: const Icon(Icons.search),
                 ),
                 overflowWidget: const Text("Search"),
-                showAsAction: controller.profile.isGroupProfile!
+                showAsAction: controller.profile.isGroupProfile ?? false
                     ? ShowAsAction.gone
                     : ShowAsAction.never,
                 keyValue: 'Search',

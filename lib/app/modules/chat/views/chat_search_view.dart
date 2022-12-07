@@ -72,7 +72,7 @@ class ChatSearchView extends GetView<ChatController> {
       itemPositionsListener: controller.itemPositionsListener,
       itemBuilder: (context, index) {
         return Container(
-          color: controller.chatList[index].isSelected ? chatReplyContainerColor : Colors.transparent,
+          color: controller.chatList[index].isSelected ?? false ? chatReplyContainerColor : Colors.transparent,
           margin: const EdgeInsets.only(
               left: 14, right: 14, top: 5, bottom: 10),
           child: Align(
@@ -168,7 +168,7 @@ class ChatSearchView extends GetView<ChatController> {
                   width: 5,
                 ),
                 getMessageIndicator(
-                    chatList[index].messageStatus.status,
+                    chatList[index].messageStatus?.status ?? chatList[index].iosMessageStatus,
                     chatList[index].isMessageSentByMe,
                     chatList[index].messageType),
                 const SizedBox(
@@ -233,7 +233,7 @@ class ChatSearchView extends GetView<ChatController> {
                     width: 5,
                   ),
                   getMessageIndicator(
-                      chatList[index].messageStatus.status,
+                      chatList[index].messageStatus?.status ?? chatList[index].iosMessageStatus,
                       chatList[index].isMessageSentByMe,
                       chatList[index].messageType),
                   const SizedBox(
@@ -299,7 +299,7 @@ class ChatSearchView extends GetView<ChatController> {
                     width: 5,
                   ),
                   getMessageIndicator(
-                      chatList[index].messageStatus.status,
+                      chatList[index].messageStatus?.status ?? chatList[index].iosMessageStatus,
                       chatList[index].isMessageSentByMe,
                       chatList[index].messageType),
                   const SizedBox(
@@ -379,7 +379,7 @@ class ChatSearchView extends GetView<ChatController> {
                       width: 5,
                     ),
                     getMessageIndicator(
-                        chatList[index].messageStatus.status,
+                        chatList[index].messageStatus?.status ?? chatList[index].iosMessageStatus,
                         chatList[index].isMessageSentByMe,
                         chatList[index].messageType),
                     const SizedBox(
@@ -461,7 +461,7 @@ class ChatSearchView extends GetView<ChatController> {
                       width: 5,
                     ),
                     getMessageIndicator(
-                        chatList[index].messageStatus.status,
+                        chatList[index].messageStatus?.status ?? chatList[index].iosMessageStatus,
                         chatList[index].isMessageSentByMe,
                         chatList[index].messageType),
                     const SizedBox(
@@ -590,7 +590,7 @@ class ChatSearchView extends GetView<ChatController> {
                     width: 5,
                   ),
                   getMessageIndicator(
-                      chatList[index].messageStatus.status,
+                      chatList[index].messageStatus?.status ?? chatList[index].iosMessageStatus,
                       chatList[index].isMessageSentByMe,
                       chatList[index].messageType),
                   const SizedBox(
@@ -640,7 +640,7 @@ class ChatSearchView extends GetView<ChatController> {
                     width: 5,
                   ),
                   getMessageIndicator(
-                      chatList[index].messageStatus.status,
+                      chatList[index].messageStatus?.status ?? chatList[index].iosMessageStatus,
                       chatList[index].isMessageSentByMe,
                       chatList[index].messageType),
                   const SizedBox(
@@ -728,7 +728,7 @@ class ChatSearchView extends GetView<ChatController> {
 
     if (controller
         .checkFile(chatMessage.mediaChatMessage!.mediaLocalStoragePath) &&
-        chatMessage.messageStatus.status != 'N') {
+        (chatList[index].messageStatus?.status ?? chatList[index].iosMessageStatus) != 'N') {
       if (chatMessage.messageType == 'VIDEO') {
         return SizedBox(
           width: 80,

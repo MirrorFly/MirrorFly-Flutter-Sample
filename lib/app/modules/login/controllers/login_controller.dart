@@ -1,6 +1,6 @@
 
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
+// import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -183,23 +183,25 @@ class LoginController extends GetxController {
 
   validateDeviceToken(String deviceToken) {
     var firebaseToken = SessionManagement.getToken().checkNull();
-    if (firebaseToken.isEmpty) {
-      FirebaseMessaging.instance.getToken().then((value) {
-        if(value!=null) {
-          firebaseToken = value;
-          mirrorFlyLog("firebase_token", firebaseToken);
-          SessionManagement.setToken(firebaseToken);
-          navigateToUserRegisterMethod(deviceToken, firebaseToken);
-        }else{
+    // if (firebaseToken.isEmpty) {
+    //   FirebaseMessaging.instance.getToken().then((value) {
+    //     if(value!=null) {
+    //       firebaseToken = value;
+    //       mirrorFlyLog("firebase_token", firebaseToken);
+    //       SessionManagement.setToken(firebaseToken);
+    //       navigateToUserRegisterMethod(deviceToken, firebaseToken);
+    //     }else{
+    //
+    //     }
+    //   }).catchError((er){
+    //     mirrorFlyLog("FirebaseInstallations", er.toString());
+    //     hideLoading();
+    //   });
+    // } else {
+    //   navigateToUserRegisterMethod(deviceToken, firebaseToken);
+    // }
 
-        }
-      }).catchError((er){
-        mirrorFlyLog("FirebaseInstallations", er.toString());
-        hideLoading();
-      });
-    } else {
-      navigateToUserRegisterMethod(deviceToken, firebaseToken);
-    }
+    navigateToUserRegisterMethod(deviceToken, firebaseToken);
   }
 
   navigateToUserRegisterMethod(String? deviceToken, String? firebaseToken) {

@@ -65,7 +65,7 @@ class ChatMessage {
     isMessageSentByMe: json["isMessageSentByMe"],
     isMessageStarred: json["isMessageStarred"],
     isSelected: json["isSelected"],
-    isThisAReplyMessage: json["isThisAReplyMessage"],
+    isThisAReplyMessage: json["isThisAReplyMessage"] ?? json["isReplyMessage"],
     messageChatType: json["messageChatType"],
     messageCustomField: json["messageCustomField"] == null ? null : MessageCustomField.fromJson(json["messageCustomField"]),
     messageId: json["messageId"],

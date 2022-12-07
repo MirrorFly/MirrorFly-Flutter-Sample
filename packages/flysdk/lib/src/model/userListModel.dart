@@ -59,9 +59,9 @@ class Profile {
 
   String? contactType;
   String? email;
-  String? groupCreatedTime;
+  dynamic groupCreatedTime;
   String? image;
-  String? imagePrivacyFlag;
+  dynamic imagePrivacyFlag;
   bool? isAdminBlocked;
   bool? isBlocked;
   bool? isBlockedMe;
@@ -72,8 +72,8 @@ class Profile {
   bool? isMuted;
   bool? isSelected;
   String? jid;
-  String? lastSeenPrivacyFlag;
-  String? mobileNUmberPrivacyFlag;
+  dynamic lastSeenPrivacyFlag;
+  dynamic mobileNUmberPrivacyFlag;
   String? mobileNumber;
   String? name;
   String? nickName;

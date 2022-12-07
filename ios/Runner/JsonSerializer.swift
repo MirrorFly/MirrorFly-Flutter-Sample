@@ -159,6 +159,10 @@ open class JSONSerializer {
                      value is Bool) && property.displayStyle != Mirror.DisplayStyle.optional {
                 handledValue = String(describing: value)
             }
+            else if property.displayStyle == Mirror.DisplayStyle.enum {
+                           handledValue = "\"\(value)\""
+                        }
+          
             else if let array = value as? [Int?] {
                 handledValue += "["
                 for (index, value) in array.enumerated() {
@@ -235,7 +239,9 @@ open class JSONSerializer {
                     // We remove the "Optional(" and last ")" from the value by string manipulation
                     var d = String(str).dropFirst(9)
                     d = d.dropLast(1)
-                    handledValue = String(d)
+//                    handledValue = String(d)
+                    handledValue =  "\"\(d)\""
+                    handledValue = handledValue.replacingOccurrences(of: "\"\"", with: "\"")
                 } else {
                     handledValue = "null"
                 }

@@ -62,17 +62,20 @@ class ProfileController extends GetxController {
       if (imagePath.value.isNotEmpty) {
         updateProfileImage(imagePath.value, update: true);
       } else {
+        var jid = SessionManagement.getUserJID().checkNull();
         FlyChat
             .updateMyProfile(
                 profileName.text.toString(),
                 profileEmail.text.toString(),
                 profileMobile.text.toString(),
                 profileStatus.value.toString(),
-                userImgUrl.value.isEmpty ? null : userImgUrl.value)
+                userImgUrl.value.isEmpty ? null : userImgUrl.value
+        )
             .then((value) {
           loading.value = false;
           hideLoader();
           if (value != null) {
+            debugPrint(value);
             var data = profileUpdateFromJson(value);
             if (data.status != null) {
               toToast(data.message.toString());

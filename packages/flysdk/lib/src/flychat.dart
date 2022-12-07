@@ -758,10 +758,10 @@ class FlyChat {
           .invokeMethod('handleReceivedMessage',{"notificationdata":notificationdata});
       return res;
     } on PlatformException catch (e) {
-      debugPrint("Platform Exception ===> $e");
+      debugPrint("Notification Platform Exception ===> $e");
       rethrow;
     } on Exception catch (error) {
-      debugPrint("Exception ==> $error");
+      debugPrint("Notification Exception ==> $error");
       rethrow;
     }
   }
@@ -1289,7 +1289,7 @@ class FlyChat {
       debugPrint('RESULT ==> $re');
       return re;
     } on PlatformException catch (e) {
-      debugPrint("er"+e.toString());
+      debugPrint("er$e");
       return re;
     }
   }

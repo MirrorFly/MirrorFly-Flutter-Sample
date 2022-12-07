@@ -57,12 +57,12 @@ android {
 
     buildTypes {
         debug {
-            buildConfigField 'String', 'SDK_BASE_URL', '"https://api-uikit-dev.contus.us/api/v1/"'
-            buildConfigField 'String', 'LICENSE', '"2sdgNtr3sFBSM3bYRa7RKDPEiB38Xo"'
-            buildConfigField 'String', 'WEB_CHAT_LOGIN', '"https://webchat-uikit-dev.contus.us/"'
-            /*buildConfigField 'String', 'SDK_BASE_URL', '"https://api-uikit-qa.contus.us/api/v1/"'
+//            buildConfigField 'String', 'SDK_BASE_URL', '"https://api-uikit-dev.contus.us/api/v1/"'
+//            buildConfigField 'String', 'LICENSE', '"2sdgNtr3sFBSM3bYRa7RKDPEiB38Xo"'
+//            buildConfigField 'String', 'WEB_CHAT_LOGIN', '"https://webchat-uikit-dev.contus.us/"'
+            buildConfigField 'String', 'SDK_BASE_URL', '"https://api-uikit-qa.contus.us/api/v1/"'
             buildConfigField 'String', 'LICENSE', '"ckIjaccWBoMNvxdbql8LJ2dmKqT5bp"'
-            buildConfigField 'String', 'WEB_CHAT_LOGIN', '"https://webchat-preprod-sandbox.mirrorfly.com/"'*/
+            buildConfigField 'String', 'WEB_CHAT_LOGIN', '"https://webchat-preprod-sandbox.mirrorfly.com/"'
             buildConfigField "String", "SUPPORT_MAIL", '"contussupport@gmail.com"'
             shrinkResources false
             debuggable true
@@ -139,7 +139,7 @@ flutter {
 
 
 dependencies {
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
 
     configurations {
         all {

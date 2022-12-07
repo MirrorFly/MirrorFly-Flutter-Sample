@@ -32,6 +32,7 @@ class ChatMessageModel {
     required this.messageId,
     required this.messageSentTime,
     required this.messageStatus,
+    required this.iosMessageStatus,
     required this.messageTextContent,
     required this.messageType,
     required this.replyParentChatMessage,
@@ -44,20 +45,21 @@ class ChatMessageModel {
   });
 
   String chatUserJid;
-  String contactType;
-  bool isItCarbonMessage;
-  bool isItSavedContact;
+  String? contactType;
+  bool? isItCarbonMessage;
+  bool? isItSavedContact;
   bool isMessageDeleted;
   bool isMessageRecalled;
   bool isMessageSentByMe;
   bool isMessageStarred;
-  bool isSelected;
-  bool isThisAReplyMessage;
+  bool? isSelected;
+  bool? isThisAReplyMessage;
   String messageChatType;
-  MessageCustomField messageCustomField;
+  MessageCustomField? messageCustomField;
   String messageId;
-  int messageSentTime;
-  MessageStatus messageStatus;
+  dynamic messageSentTime;
+  MessageStatus? messageStatus;
+  String? iosMessageStatus;
   String? messageTextContent;
   String messageType;
   ReplyParentChatMessage? replyParentChatMessage;
@@ -80,10 +82,11 @@ class ChatMessageModel {
     isSelected: json["isSelected"],
     isThisAReplyMessage: json["isThisAReplyMessage"],
     messageChatType: json["messageChatType"],
-    messageCustomField: MessageCustomField.fromJson(json["messageCustomField"]),
+    messageCustomField: json["replyParentChatMessage"] == null ? null : MessageCustomField.fromJson(json["messageCustomField"]),
     messageId: json["messageId"],
     messageSentTime: json["messageSentTime"],
-    messageStatus: MessageStatus.fromJson(json["messageStatus"]),
+    messageStatus: json["messageStatus"] == null ? null : MessageStatus.fromJson(json["messageStatus"]),
+    iosMessageStatus: json["iosMessageStatus"],
     messageTextContent: json["messageTextContent"],
     messageType: json["messageType"],
     replyParentChatMessage: json["replyParentChatMessage"] == null ? null : ReplyParentChatMessage.fromJson(json["replyParentChatMessage"]),
@@ -107,10 +110,10 @@ class ChatMessageModel {
     "isSelected": isSelected,
     "isThisAReplyMessage": isThisAReplyMessage,
     "messageChatType": messageChatType,
-    "messageCustomField": messageCustomField.toJson(),
+    "messageCustomField": messageCustomField ?? messageCustomField?.toJson(),
     "messageId": messageId,
     "messageSentTime": messageSentTime,
-    "messageStatus": messageStatus.toJson(),
+    "messageStatus": messageStatus?.toJson(),
     "messageTextContent": messageTextContent,
     "messageType": messageType,
     "replyParentChatMessage": replyParentChatMessage ?? replyParentChatMessage?.toJson(),

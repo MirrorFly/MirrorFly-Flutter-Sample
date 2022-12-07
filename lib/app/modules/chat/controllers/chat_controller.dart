@@ -92,7 +92,7 @@ class ChatController extends GetxController with GetTickerProviderStateMixin, Ba
   set isMemberOfGroup(value) => _isMemberOfGroup.value = value;
 
   bool get isMemberOfGroup =>
-      profile.isGroupProfile! ? _isMemberOfGroup.value : true;
+      profile.isGroupProfile ?? false ? _isMemberOfGroup.value : true;
 
   var profileDetail = Profile();
 
@@ -217,6 +217,13 @@ class ChatController extends GetxController with GetTickerProviderStateMixin, Ba
           .then((value) {
         messageController.text = "";
         isUserTyping(false);
+        final jsonResponse = json.decode(value);
+        //Written for iOS Response
+        if(jsonResponse.containsKey('some')){
+          debugPrint("Inside some condition");
+          value = json.encode(jsonResponse['some']);
+          debugPrint(value);
+        }
         ChatMessageModel chatMessageModel = sendMessageModelFromJson(value);
         chatList.add(chatMessageModel);
         scrollToBottom();
@@ -336,7 +343,7 @@ class ChatController extends GetxController with GetTickerProviderStateMixin, Ba
     }
     isReplying(false);
     if (File(path!).existsSync()) {
-      return FlyChat
+        FlyChat
           .sendImageMessage(profile.jid!, path, caption, replyMessageID)
           .then((value) {
         ChatMessageModel chatMessageModel = sendMessageModelFromJson(value);
@@ -357,7 +364,7 @@ class ChatController extends GetxController with GetTickerProviderStateMixin, Ba
     );
     if (result != null && File(result.files.single.path!).existsSync()) {
       debugPrint(result.files.first.extension);
-      if (result.files.first.extension == 'jpg' ||
+      if (result.files.first.extension == 'jpg' || result.files.first.extension == 'JPEG' ||
           result.files.first.extension == 'png') {
         debugPrint("Picked Image File");
         imagePath.value = (result.files.single.path!);
@@ -365,7 +372,7 @@ class ChatController extends GetxController with GetTickerProviderStateMixin, Ba
           "filePath": imagePath.value,
           "userName": profile.name!
         });
-      } else if (result.files.first.extension == 'mp4' ||
+      } else if (result.files.first.extension == 'mp4' ||result.files.first.extension == 'MP4' ||
           result.files.first.extension == 'mov' ||
           result.files.first.extension == 'mkv') {
         debugPrint("Picked Video File");
@@ -1208,8 +1215,16 @@ class ChatController extends GetxController with GetTickerProviderStateMixin, Ba
   }
 
   Future<void> setAudioPath() async {
-    audioSavePath = (await getExternalStorageDirectory())!.path;
-    debugPrint(audioSavePath);
+    Directory? directory = Platform.isAndroid
+        ? await getExternalStorageDirectory() //FOR ANDROID
+        : await getApplicationSupportDirectory(); //FOR iOS
+    if(directory != null){
+      audioSavePath = directory.path;
+      debugPrint(audioSavePath);
+    }else{
+      debugPrint("=======Unable to set Audio Path=========");
+    }
+
   }
 
   sendRecordedAudioMessage() {
@@ -1224,17 +1239,19 @@ class ChatController extends GetxController with GetTickerProviderStateMixin, Ba
   }
 
   infoPage() {
-    if (profile.isGroupProfile!) {
-      Get.toNamed(Routes.GROUP_INFO, arguments: profile)?.then((value) {
-        if (value != null) {
-          profile_(value as Profile);
-          isBlocked(profile.isBlocked);
-          memberOfGroup();
-          FlyChat.setOnGoingChatUser(profile.jid!);
-          getChatHistory();
-          sendReadReceipt();
-        }
-      });
+    if (profile.isGroupProfile != null) {
+      if (profile.isGroupProfile!) {
+        Get.toNamed(Routes.GROUP_INFO, arguments: profile)?.then((value) {
+          if (value != null) {
+            profile_(value as Profile);
+            isBlocked(profile.isBlocked);
+            memberOfGroup();
+            FlyChat.setOnGoingChatUser(profile.jid!);
+            getChatHistory();
+            sendReadReceipt();
+          }
+        });
+      }
     } else {
       Get.toNamed(Routes.CHAT_INFO, arguments: profile)?.then((value) {});
     }
@@ -1266,14 +1283,14 @@ class ChatController extends GetxController with GetTickerProviderStateMixin, Ba
     super.onMessageStatusUpdated(event);
     ChatMessageModel chatMessageModel = sendMessageModelFromJson(event);
     if(chatMessageModel.chatUserJid==profile.jid) {
-      final index = chatList.value.indexWhere(
+      final index = chatList.indexWhere(
               (message) => message.messageId == chatMessageModel.messageId);
       debugPrint("Message Status Update index of search $index");
       if (index != -1) {
         // Helper.hideLoading();
-        chatList.value[index] = chatMessageModel;
+        chatList[index] = chatMessageModel;
       } else {
-        chatList.value.add(chatMessageModel);
+        chatList.add(chatMessageModel);
         scrollToBottom();
       }
     }
@@ -1284,11 +1301,11 @@ class ChatController extends GetxController with GetTickerProviderStateMixin, Ba
     super.onMediaStatusUpdated(event);
     ChatMessageModel chatMessageModel = sendMessageModelFromJson(event);
     if(chatMessageModel.chatUserJid==profile.jid) {
-      final index = chatList.value.indexWhere(
+      final index = chatList.indexWhere(
               (message) => message.messageId == chatMessageModel.messageId);
       debugPrint("Media Status Update index of search $index");
       if (index != -1) {
-        chatList.value[index] = chatMessageModel;
+        chatList[index] = chatMessageModel;
       }
     }
   }
@@ -1324,14 +1341,16 @@ class ChatController extends GetxController with GetTickerProviderStateMixin, Ba
   }
 
   memberOfGroup() {
-    if (profile.isGroupProfile!) {
-      FlyChat
-          .isMemberOfGroup(profile.jid.checkNull(), null)
-          .then((bool? value) {
-        if (value != null) {
-          _isMemberOfGroup(value);
-        }
-      });
+    if (profile.isGroupProfile != null) {
+      if (profile.isGroupProfile!) {
+        FlyChat
+            .isMemberOfGroup(profile.jid.checkNull(), null)
+            .then((bool? value) {
+          if (value != null) {
+            _isMemberOfGroup(value);
+          }
+        });
+      }
     }
   }
 
@@ -1339,17 +1358,20 @@ class ChatController extends GetxController with GetTickerProviderStateMixin, Ba
   var typingList = <String>[].obs;
 
   setChatStatus() {
-    if (profile.isGroupProfile!) {
-      if (typingList.isNotEmpty) {
-        userPresenceStatus(
-            "${Member(jid: typingList[typingList.length - 1]).getUsername()} typing");
+    if (profile.isGroupProfile != null) {
+      if (profile.isGroupProfile!) {
+        if (typingList.isNotEmpty) {
+          userPresenceStatus(
+              "${Member(jid: typingList[typingList.length - 1])
+                  .getUsername()} typing");
+        } else {
+          getParticipantsNameAsCsv(profile.jid.checkNull());
+        }
       } else {
-        getParticipantsNameAsCsv(profile.jid.checkNull());
+        FlyChat.getUserLastSeenTime(profile.jid.toString()).then((value) {
+          userPresenceStatus(value.toString());
+        });
       }
-    } else {
-      FlyChat.getUserLastSeenTime(profile.jid.toString()).then((value) {
-        userPresenceStatus(value.toString());
-      });
     }
   }
 
