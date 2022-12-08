@@ -616,7 +616,7 @@ class DashboardController extends GetxController with GetTickerProviderStateMixi
   void setTypingStatus(String singleOrgroupJid, String userId, String typingStatus) {
     super.setTypingStatus(singleOrgroupJid, userId, typingStatus);
     var index = typingAndGoneStatus.indexWhere((it) => it.singleOrgroupJid ==singleOrgroupJid && it.userId == userId);
-    if(typingStatus.toLowerCase() == "composing"){
+    if(typingStatus.toLowerCase() == Constants.composing){
       if(index.isNegative){
         typingAndGoneStatus.insert(0, Triple(singleOrgroupJid, userId, true));
       }

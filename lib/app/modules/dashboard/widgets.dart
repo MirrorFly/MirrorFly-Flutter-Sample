@@ -34,6 +34,11 @@ class RecentChatItem extends StatelessWidget {
       fontWeight: FontWeight.w700,
       fontFamily: 'sf_ui',
       color: textHintColor);
+  final typingstyle = const TextStyle(
+    fontSize: 14.0,
+    fontWeight: FontWeight.w600,
+    fontFamily: 'sf_ui',
+    color: buttonBgColor);
   @override
   Widget build(BuildContext context) {
     return InkWell(
@@ -131,11 +136,8 @@ class RecentChatItem extends StatelessWidget {
                                       builder: (context,data) {
                                         if(data.hasData){
                                           return Text(
-                                            data.data!.name.checkNull() + " typing..",
-                                            style: Theme
-                                                .of(context)
-                                                .textTheme
-                                                .titleSmall,
+                                            "${data.data!.name.checkNull()} typing...",
+                                            style: typingstyle,
                                             maxLines: 1,
                                             overflow: TextOverflow.ellipsis,
                                           );
