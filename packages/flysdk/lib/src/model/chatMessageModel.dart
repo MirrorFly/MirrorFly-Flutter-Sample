@@ -3,7 +3,7 @@
 //     final chatMessageModel = chatMessageModelFromJson(jsonString);
 
 import 'dart:convert';
-import 'package:flysdk/flysdk.dart';
+import 'dart:io';
 
 List<ChatMessageModel> chatMessageModelFromJson(String str) => List<ChatMessageModel>.from(json.decode(str).map((x) => ChatMessageModel.fromJson(x)));
 
@@ -34,19 +34,19 @@ class ChatMessageModel {
     required this.messageStatus,
     required this.messageTextContent,
     required this.messageType,
-    required this.replyParentChatMessage,
+    required this.replyParentChatMessage,//
     required this.senderNickName,
     required this.senderUserJid,
     required this.senderUserName,
-    required this.contactChatMessage,
-    required this.mediaChatMessage,
-    required this.locationChatMessage,
+    required this.contactChatMessage,//
+    required this.mediaChatMessage,//
+    required this.locationChatMessage,//
   });
 
   String chatUserJid;
-  String contactType;
-  bool isItCarbonMessage;
-  bool isItSavedContact;
+  String? contactType;
+  bool? isItCarbonMessage;
+  bool? isItSavedContact;
   bool isMessageDeleted;
   bool isMessageRecalled;
   bool isMessageSentByMe;
@@ -54,10 +54,10 @@ class ChatMessageModel {
   bool isSelected;
   bool isThisAReplyMessage;
   String messageChatType;
-  MessageCustomField messageCustomField;
+  MessageCustomField? messageCustomField;
   String messageId;
-  int messageSentTime;
-  MessageStatus messageStatus;
+  dynamic messageSentTime;
+  String messageStatus;
   String? messageTextContent;
   String messageType;
   ReplyParentChatMessage? replyParentChatMessage;
@@ -77,13 +77,13 @@ class ChatMessageModel {
     isMessageRecalled: json["isMessageRecalled"],
     isMessageSentByMe: json["isMessageSentByMe"],
     isMessageStarred: json["isMessageStarred"],
-    isSelected: json["isSelected"],
-    isThisAReplyMessage: json["isThisAReplyMessage"],
+    isSelected: json["isSelected"] ?? false,
+    isThisAReplyMessage: Platform.isAndroid ? json["isThisAReplyMessage"] : json["isReplyMessage"],
     messageChatType: json["messageChatType"],
-    messageCustomField: MessageCustomField.fromJson(json["messageCustomField"]),
+    messageCustomField: json["replyParentChatMessage"] == null ? null : MessageCustomField.fromJson(json["messageCustomField"]),
     messageId: json["messageId"],
     messageSentTime: json["messageSentTime"],
-    messageStatus: MessageStatus.fromJson(json["messageStatus"]),
+    messageStatus: Platform.isAndroid ? json["messageStatus"]["status"] : json["messageStatus"],
     messageTextContent: json["messageTextContent"],
     messageType: json["messageType"],
     replyParentChatMessage: json["replyParentChatMessage"] == null ? null : ReplyParentChatMessage.fromJson(json["replyParentChatMessage"]),
@@ -107,10 +107,10 @@ class ChatMessageModel {
     "isSelected": isSelected,
     "isThisAReplyMessage": isThisAReplyMessage,
     "messageChatType": messageChatType,
-    "messageCustomField": messageCustomField.toJson(),
+    "messageCustomField": messageCustomField ?? messageCustomField?.toJson(),
     "messageId": messageId,
     "messageSentTime": messageSentTime,
-    "messageStatus": messageStatus.toJson(),
+    "messageStatus": messageStatus,
     "messageTextContent": messageTextContent,
     "messageType": messageType,
     "replyParentChatMessage": replyParentChatMessage ?? replyParentChatMessage?.toJson(),
@@ -121,6 +121,7 @@ class ChatMessageModel {
     "mediaChatMessage": mediaChatMessage == null ? null : mediaChatMessage!.toJson(),
     "locationChatMessage": locationChatMessage == null ? null : locationChatMessage!.toJson(),
   };
+
 }
 
 
@@ -256,7 +257,7 @@ class MediaChatMessage {
   };
 }
 
-/*class MessageCustomField {
+class MessageCustomField {
   MessageCustomField();
 
   factory MessageCustomField.fromJson(Map<String, dynamic> json) => MessageCustomField(
@@ -264,9 +265,9 @@ class MediaChatMessage {
 
   Map<String, dynamic> toJson() => {
   };
-}*/
+}
 
-/*class MessageStatus {
+class MessageStatus {
   MessageStatus({
     required this.status,
   });
@@ -280,7 +281,7 @@ class MediaChatMessage {
   Map<String, dynamic> toJson() => {
     "status": status,
   };
-}*/
+}
 class ReplyParentChatMessage {
   ReplyParentChatMessage({
     required this.chatUserJid,

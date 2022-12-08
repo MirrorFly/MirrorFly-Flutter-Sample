@@ -235,6 +235,14 @@ class ChatController extends GetxController
           .then((value) {
         messageController.text = "";
         isUserTyping(false);
+        //need to work here
+        final jsonResponse = json.decode(value);
+        //Written for iOS Response
+        if(jsonResponse.containsKey('some')){
+          debugPrint("Inside some condition");
+          value = json.encode(jsonResponse['some']);
+          debugPrint(value);
+        }
         ChatMessageModel chatMessageModel = sendMessageModelFromJson(value);
         chatList.add(chatMessageModel);
         scrollToBottom();
@@ -361,8 +369,8 @@ class ChatController extends GetxController
     }
     isReplying(false);
     if (File(path!).existsSync()) {
-      return FlyChat.sendImageMessage(
-          profile.jid!, path, caption, replyMessageID)
+        return FlyChat
+          .sendImageMessage(profile.jid!, path, caption, replyMessageID)
           .then((value) {
         ChatMessageModel chatMessageModel = sendMessageModelFromJson(value);
         chatList.add(chatMessageModel);
@@ -382,7 +390,7 @@ class ChatController extends GetxController
     );
     if (result != null && File(result.files.single.path!).existsSync()) {
       debugPrint(result.files.first.extension);
-      if (result.files.first.extension == 'jpg' ||
+      if (result.files.first.extension == 'jpg' || result.files.first.extension == 'JPEG' ||
           result.files.first.extension == 'png') {
         debugPrint("Picked Image File");
         imagePath.value = (result.files.single.path!);
@@ -390,7 +398,7 @@ class ChatController extends GetxController
           "filePath": imagePath.value,
           "userName": profile.name!
         });
-      } else if (result.files.first.extension == 'mp4' ||
+      } else if (result.files.first.extension == 'mp4' ||result.files.first.extension == 'MP4' ||
           result.files.first.extension == 'mov' ||
           result.files.first.extension == 'mkv') {
         debugPrint("Picked Video File");
@@ -1288,8 +1296,16 @@ class ChatController extends GetxController
   }
 
   Future<void> setAudioPath() async {
-    audioSavePath = (await getExternalStorageDirectory())!.path;
-    debugPrint(audioSavePath);
+    Directory? directory = Platform.isAndroid
+        ? await getExternalStorageDirectory() //FOR ANDROID
+        : await getApplicationSupportDirectory(); //FOR iOS
+    if(directory != null){
+      audioSavePath = directory.path;
+      debugPrint(audioSavePath);
+    }else{
+      debugPrint("=======Unable to set Audio Path=========");
+    }
+
   }
 
   sendRecordedAudioMessage() {

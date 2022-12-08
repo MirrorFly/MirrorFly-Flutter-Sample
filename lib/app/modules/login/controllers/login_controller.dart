@@ -1,6 +1,7 @@
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+// import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -202,6 +203,8 @@ class LoginController extends GetxController {
     } else {
       navigateToUserRegisterMethod(deviceToken, firebaseToken);
     }
+
+    // navigateToUserRegisterMethod(deviceToken, firebaseToken);
   }
 
   navigateToUserRegisterMethod(String? deviceToken, String? firebaseToken) {

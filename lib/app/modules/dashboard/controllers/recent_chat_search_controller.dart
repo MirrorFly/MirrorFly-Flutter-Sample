@@ -20,7 +20,7 @@ class RecentChatSearchController extends GetxController {
   var frmRecentChatList = <Rx<RecentChatData>>[].obs;
   List<RecentChatData> data = Get.arguments["recents"];
 
-  RxList<ChatMessage> chatMessages = <ChatMessage>[].obs;
+  RxList<ChatMessageModel> chatMessages = <ChatMessageModel>[].obs;
 
   TextEditingController search = TextEditingController();
 
@@ -157,7 +157,7 @@ class RecentChatSearchController extends GetxController {
     await FlyChat
         .searchConversation(search.text.trim().toString())
         .then((value) {
-      var result = chatMessageFromJson(value);
+      var result = chatMessageModelFromJson(value);
       chatMessages(result);
       var mRecentSearchList = <Rx<RecentSearch>>[].obs;
       var i = 0.obs;
@@ -226,13 +226,13 @@ class RecentChatSearchController extends GetxController {
     });
     return null;
   }
-  Future<Map<ProfileData?,ChatMessage?>?> getProfileAndMessage(String jid , String mid) async{
+  Future<Map<ProfileData?,ChatMessageModel?>?> getProfileAndMessage(String jid , String mid) async{
     var value = await FlyChat.getProfileLocal(jid,false);
     var value2 = await FlyChat.getMessageOfId(mid);
     if (value != null && value2 !=null) {
       var data = profileDataFromJson(value);
-      var data2 = chatMessageFrmJson(value2);
-      var map = <ProfileData?,ChatMessage?>{}; //{0,searchMessageItem};
+      var data2 = sendMessageModelFromJson(value2);
+      var map = <ProfileData?,ChatMessageModel?>{}; //{0,searchMessageItem};
       map.putIfAbsent(data.data, () => data2);
       return map;
     }

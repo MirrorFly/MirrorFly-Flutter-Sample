@@ -163,7 +163,7 @@ class ChatSearchView extends GetView<ChatController> {
                   width: 5,
                 ),
                 getMessageIndicator(
-                    chatList[index].messageStatus.status,
+                    chatList[index].messageStatus,
                     chatList[index].isMessageSentByMe,
                     chatList[index].messageType),
                 const SizedBox(
@@ -228,7 +228,7 @@ class ChatSearchView extends GetView<ChatController> {
                     width: 5,
                   ),
                   getMessageIndicator(
-                      chatList[index].messageStatus.status,
+                      chatList[index].messageStatus,
                       chatList[index].isMessageSentByMe,
                       chatList[index].messageType),
                   const SizedBox(
@@ -294,7 +294,7 @@ class ChatSearchView extends GetView<ChatController> {
                     width: 5,
                   ),
                   getMessageIndicator(
-                      chatList[index].messageStatus.status,
+                      chatList[index].messageStatus,
                       chatList[index].isMessageSentByMe,
                       chatList[index].messageType),
                   const SizedBox(
@@ -374,7 +374,7 @@ class ChatSearchView extends GetView<ChatController> {
                       width: 5,
                     ),
                     getMessageIndicator(
-                        chatList[index].messageStatus.status,
+                        chatList[index].messageStatus,
                         chatList[index].isMessageSentByMe,
                         chatList[index].messageType),
                     const SizedBox(
@@ -456,7 +456,7 @@ class ChatSearchView extends GetView<ChatController> {
                       width: 5,
                     ),
                     getMessageIndicator(
-                        chatList[index].messageStatus.status,
+                        chatList[index].messageStatus,
                         chatList[index].isMessageSentByMe,
                         chatList[index].messageType),
                     const SizedBox(
@@ -585,7 +585,7 @@ class ChatSearchView extends GetView<ChatController> {
                     width: 5,
                   ),
                   getMessageIndicator(
-                      chatList[index].messageStatus.status,
+                      chatList[index].messageStatus,
                       chatList[index].isMessageSentByMe,
                       chatList[index].messageType),
                   const SizedBox(
@@ -635,7 +635,7 @@ class ChatSearchView extends GetView<ChatController> {
                     width: 5,
                   ),
                   getMessageIndicator(
-                      chatList[index].messageStatus.status,
+                      chatList[index].messageStatus,
                       chatList[index].isMessageSentByMe,
                       chatList[index].messageType),
                   const SizedBox(
@@ -723,7 +723,7 @@ class ChatSearchView extends GetView<ChatController> {
 
     if (controller
         .checkFile(chatMessage.mediaChatMessage!.mediaLocalStoragePath) &&
-        chatMessage.messageStatus.status != 'N') {
+        chatList[index].messageStatus != 'N') {
       if (chatMessage.messageType == 'VIDEO') {
         return SizedBox(
           width: 80,

@@ -149,7 +149,7 @@ class RecentSearchView extends GetView<RecentChatSearchController> {
                                             right: 16.0, left: 8),
                                         child: Text(
                                           getRecentChatTime(
-                                              context, item.lastMessageTime),
+                                              context, item.lastMessageTime?.toInt()),
                                           textAlign: TextAlign.end,
                                           style: TextStyle(
                                               fontSize: 12.0,
@@ -339,17 +339,17 @@ class RecentSearchView extends GetView<RecentChatSearchController> {
                                           child: Row(
                                             children: [
                                               forMessageTypeIcon(
-                                                  item.messageType!),
+                                                  item.messageType),
                                               SizedBox(
                                                 width: forMessageTypeString(item
-                                                            .messageType!) !=
+                                                            .messageType) !=
                                                         null
                                                     ? 3.0
                                                     : 0.0,
                                               ),
                                               Expanded(
                                                 child: forMessageTypeString(item
-                                                    .messageType!) ==
+                                                    .messageType) ==
                                                     null
                                                     ? spannableText(
                                                     item.messageTextContent
@@ -359,7 +359,7 @@ class RecentSearchView extends GetView<RecentChatSearchController> {
                                                     .titleSmall,)
                                                     : Text(
                                                   forMessageTypeString(item
-                                                          .messageType!) ??
+                                                          .messageType) ??
                                                       item.messageTextContent
                                                           .toString(),
                                                   style: Theme.of(context)

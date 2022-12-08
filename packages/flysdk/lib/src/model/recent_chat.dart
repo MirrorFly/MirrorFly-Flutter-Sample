@@ -72,12 +72,12 @@ class RecentChatData {
   String? lastMessageContent;
   String? lastMessageId;
   String? lastMessageStatus;
-  int? lastMessageTime;
+  dynamic lastMessageTime;
   String? lastMessageType;
   String? nickName;
   String? profileImage;
   String? profileName;
-  int? unreadMessageCount;
+  dynamic unreadMessageCount;
 
   factory RecentChatData.fromJson(Map<String, dynamic> json) => RecentChatData(
     contactType: json["contactType"],

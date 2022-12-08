@@ -30,6 +30,14 @@
           }
         },
         {
+          "client_id": "1045831384770-fpt07b3mikmjbr2o2118a8jgedvs8g3t.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.mirrorfly.uikit.dev",
+            "certificate_hash": "9626f8a5334e94cb50c72750ffc123cb8f7c8dad"
+          }
+        },
+        {
           "client_id": "1045831384770-poaavfuqpdujcp8a660do0slg6a92big.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
@@ -53,6 +61,13 @@
             {
               "client_id": "1045831384770-dja80m0ncgornapu8gc5pl42p1a3mtn5.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "1045831384770-a90apqltl7dtlbaj4844235jgv8l1hfm.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.mirrorfly.uikitflutter.dev"
+              }
             }
           ]
         }
@@ -75,6 +90,14 @@
           }
         },
         {
+          "client_id": "1045831384770-ouv7e625fop4t632alfh3h8hlfmvk5cs.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.mirrorfly.uikit_flutter.dev",
+            "certificate_hash": "9626f8a5334e94cb50c72750ffc123cb8f7c8dad"
+          }
+        },
+        {
           "client_id": "1045831384770-dja80m0ncgornapu8gc5pl42p1a3mtn5.apps.googleusercontent.com",
           "client_type": 3
         }
@@ -90,6 +113,13 @@
             {
               "client_id": "1045831384770-dja80m0ncgornapu8gc5pl42p1a3mtn5.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "1045831384770-a90apqltl7dtlbaj4844235jgv8l1hfm.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.mirrorfly.uikitflutter.dev"
+              }
             }
           ]
         }

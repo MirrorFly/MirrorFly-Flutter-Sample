@@ -2,7 +2,6 @@ package com.contusdemo.mirror_fly_demo
 
 import android.annotation.SuppressLint
 import android.app.Activity
-import android.content.Context
 import android.content.Intent
 import android.content.pm.ResolveInfo
 import android.graphics.Bitmap
@@ -34,7 +33,6 @@ import com.contusflysdk.backup.BackupManager
 import com.contusflysdk.backup.RestoreListener
 import com.contusflysdk.backup.RestoreManager
 import com.contusflysdk.media.MediaUploadHelper
-import com.contusflysdk.model.Message
 import com.contusflysdk.utils.NetworkConnection
 import com.contusflysdk.utils.ThumbSize
 import com.contusflysdk.utils.UpDateWebPassword
@@ -991,19 +989,19 @@ open class FlyBaseController(activity: FlutterActivity) : MethodChannel.MethodCa
 //                    .toString()
                 result.success(FlyMessenger.getUnreadMessagesCount())
             }
-            call.method.equals("get_recent_chat_of") -> {
-                val userJID =
-                    if (call.argument<String>("jid") == null) "" else call.argument<String?>("jid")
-                        .toString()
-                val recent = FlyCore.getRecentChatOf(userJID)
-                if (recent != null) {
-                    Log.e("RESPONSE_CAPTURE", "===========================")
-                    DebugUtilis.v("FlyCore.getRecentChatOf", recent.tojsonString())
-                    result.success(recent.tojsonString())
-                } else {
-                    result.success(null)
-                }
-            }
+//            call.method.equals("get_recent_chat_of") -> {
+//                val userJID =
+//                    if (call.argument<String>("jid") == null) "" else call.argument<String?>("jid")
+//                        .toString()
+//                val recent = FlyCore.getRecentChatOf(userJID)
+//                if (recent != null) {
+//                    Log.e("RESPONSE_CAPTURE", "===========================")
+//                    DebugUtilis.v("FlyCore.getRecentChatOf", recent.tojsonString())
+//                    result.success(recent.tojsonString())
+//                } else {
+//                    result.success(null)
+//                }
+//            }
             call.method.equals("downloadMedia") -> {
                 val mediaId =
                     if (call.argument<String>("mediaMessage_id") == null) "" else call.argument<String?>(
@@ -1280,7 +1278,7 @@ open class FlyBaseController(activity: FlutterActivity) : MethodChannel.MethodCa
 
      private fun handleReceivedMessage(call: MethodCall,result: MethodChannel.Result) {
          val notificationdata = call.argument<Map<String,String>>("notificationdata") ?: mapOf()
-         Log.e("notificationdata",notificationdata.toString())
+         Log.e("===notificationdata===",notificationdata.toString())
          PushNotificationManager.handleReceivedMessage(notificationdata, object :
              NotificationEventListener {
              override fun onMessageReceived(chatMessage: ChatMessage) {
@@ -2081,7 +2079,7 @@ open class FlyBaseController(activity: FlutterActivity) : MethodChannel.MethodCa
         val server = call.argument<Boolean>("server") ?: false
         val saveasfriend = call.argument<Boolean>("saveasfriend") ?: false
         Log.i(TAG, "JID==> $jid")
-        ContactManager.getUserProfile(jid, server, saveasfriend, object : FlyCallback {
+        ContactManager.getUserProfile(jid, server, saveasfriend, object : FlyCallback {//ContactManager.shared.getUserProfileDetails
             override fun flyResponse(
                 isSuccess: Boolean,
                 throwable: Throwable?,
@@ -2363,7 +2361,7 @@ open class FlyBaseController(activity: FlutterActivity) : MethodChannel.MethodCa
     }
 
     private fun getProfileStatusList(result: MethodChannel.Result) {
-        val status = FlyCore.getProfileStatusList()
+        val status = FlyCore.getProfileStatusList()//[{"id":1,"isCurrentStatus":true,"status":"I am in Mirror Fly"}]
         result.success(status.tojsonString())
     }
 
