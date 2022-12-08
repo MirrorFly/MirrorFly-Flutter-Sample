@@ -211,7 +211,7 @@ class Constants {
   static const String image = "image";
   static const String emptyString = "";
   static const String encryptString = " Encrypted";
-  static const String composing = "Composing";
+  static const String composing = "composing";
   static const String gone = "Gone";
   static const String lastSeen = "lastseen";
   static const String online = "Online";

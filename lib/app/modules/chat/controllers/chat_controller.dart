@@ -9,7 +9,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:get/get.dart';
-import 'package:get/get_rx/src/rx_workers/utils/debouncer.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
@@ -1427,6 +1426,30 @@ class ChatController extends GetxController
     }
   }
 
+  @override
+  void setTypingStatus(String singleOrgroupJid, String userId, String typingStatus) {
+    super.setTypingStatus(singleOrgroupJid, userId, typingStatus);
+    if(profile.jid.checkNull() == singleOrgroupJid){
+      var jid = profile.isGroupProfile! ? userId : singleOrgroupJid;
+      if(!typingList.contains(jid)){
+        typingList.add(jid);
+      }
+      if(typingStatus.toLowerCase() == Constants.composing){
+        if(profile.isGroupProfile!){
+          groupParticipantsName("");
+          getProfileDetails(jid).then((value) => userPresenceStatus("${value.name} typing..."));
+        }else if(!profile.isGroupProfile!){
+          userPresenceStatus("typing...");
+        }
+      }else{
+        if(typingList.isNotEmpty && typingList.contains(jid)){
+          typingList.remove(jid);
+        }
+        setChatStatus();
+      }
+    }
+  }
+
   memberOfGroup() {
     if (profile.isGroupProfile!) {
       FlyChat.isMemberOfGroup(profile.jid.checkNull(), null)
@@ -1445,14 +1468,16 @@ class ChatController extends GetxController
     if (profile.isGroupProfile!) {
       if (typingList.isNotEmpty) {
         userPresenceStatus(
-            "${Member(jid: typingList[typingList.length - 1])
-                .getUsername()} typing");
+            "${Member(jid: typingList.last)
+                .getUsername()} typing...");
       } else {
         getParticipantsNameAsCsv(profile.jid.checkNull());
       }
     } else {
       FlyChat.getUserLastSeenTime(profile.jid.toString()).then((value) {
         userPresenceStatus(value.toString());
+      }).catchError((er){
+        userPresenceStatus("");
       });
     }
   }
@@ -1476,11 +1501,11 @@ class ChatController extends GetxController
   }
 
   String get subtitle =>
-      userPresenceStatus.value.isEmpty
-          ? groupParticipantsName.value.isNotEmpty
-          ? groupParticipantsName.value.toString()
-          : Constants.emptyString
-          : userPresenceStatus.value.toString();
+      userPresenceStatus.isEmpty
+          ? /*groupParticipantsName.isNotEmpty
+          ? groupParticipantsName.toString()
+          :*/ Constants.emptyString
+          : userPresenceStatus.toString();
 
   final ImagePicker _picker = ImagePicker();
 

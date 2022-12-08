@@ -967,21 +967,21 @@ class ChatView extends GetView<ChatController> {
               mainAxisSize: MainAxisSize.max,
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(controller.profile.name.checkNull()),
-                controller.subtitle.isNotEmpty
-                    ? !controller.profile.isGroupProfile!
-                        ? Text(
-                            controller.subtitle,
-                            style: const TextStyle(fontSize: 12),
-                            overflow: TextOverflow.fade,
-                          )
-                        : SizedBox(
-                            width: (controller.screenWidth) / 1.9,
-                            height: 15,
-                            child: Marquee(
-                                text: "${controller.subtitle},",
-                                style: const TextStyle(fontSize: 12)))
-                    : const SizedBox()
+                Text(controller.profile.name.checkNull(),overflow: TextOverflow.fade,),
+                Obx((){
+                  return controller.groupParticipantsName.isNotEmpty ? SizedBox(
+                      width: (controller.screenWidth) * 0.90,
+                      height: 15,
+                      child: Marquee(
+                          text: "${controller.groupParticipantsName},",
+                          style: const TextStyle(fontSize: 12)))
+                      : controller.subtitle.isNotEmpty
+                      ? Text(
+                    controller.subtitle,
+                    style: const TextStyle(fontSize: 12),
+                    overflow: TextOverflow.fade,
+                  ) : const SizedBox();
+                })
               ],
             ),
             onTap: () {
