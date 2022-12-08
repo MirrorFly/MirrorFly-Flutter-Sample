@@ -254,10 +254,18 @@ extension MemberParsing on Member{
     return str;
   }
 }
+Future<Profile> getProfileDetails(String jid) async {
+  var value = await FlyChat.getProfileDetails(jid.checkNull(), false);
+  var str = Profile.fromJson(json.decode(value.toString()));
+  return str;
+}
 
 extension ProfileParesing on Profile{
   bool isDeletedContact(){
     return contactType =="deleted_contact";
+  }
+  String getChatType(){
+    return (isGroupProfile!) ? Constants.typeGroupChat  : Constants.typeChat;
   }
 }
 
@@ -408,4 +416,11 @@ openDocument(String mediaLocalStoragePath, BuildContext context) async {
     debugPrint("media does not exist");
   }
   // }
+}
+
+class Triple{
+  Triple(this.singleOrgroupJid,this.userId,this.typingStatus);
+  String singleOrgroupJid;
+  String userId;
+  bool typingStatus;
 }

@@ -9,10 +9,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:get/get.dart';
+import 'package:get/get_rx/src/rx_workers/utils/debouncer.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:mirror_fly_demo/app/base_controller.dart';
+import 'package:mirror_fly_demo/app/common/de_bouncer.dart';
 import 'package:mirror_fly_demo/app/data/session_management.dart';
 import 'package:mirror_fly_demo/app/data/permissions.dart';
 import 'package:path_provider/path_provider.dart';
@@ -141,6 +143,21 @@ class ChatController extends GetxController
 
     chatList.bindStream(chatList.stream);
     ever(chatList, (callback) {});
+    isUserTyping.bindStream(isUserTyping.stream);
+    ever(isUserTyping,(callback){
+      mirrorFlyLog("typing ", callback.toString());
+      if(callback){
+        sendUserTypingStatus();
+        DeBouncer(milliseconds: 2100).run(() {
+          sendUserTypingGoneStatus();
+        });
+      }else{
+        sendUserTypingGoneStatus();
+      }
+    });
+    messageController.addListener(() {
+      mirrorFlyLog("typing", "typing..");
+    });
   }
 
   void onready() {
@@ -599,7 +616,7 @@ class ChatController extends GetxController
     if (isReplying.value) {
       replyMessageId = replyChatMessage.messageId;
     }
-    isTyping("");
+    isUserTyping(false);
     isReplying(false);
     FlyChat.sendAudioMessage(
         profile.jid!, filePath, isRecorded, duration, replyMessageId)
@@ -1310,6 +1327,14 @@ class ChatController extends GetxController
         searchScrollController.jumpTo(index: chatList.value.length - 1);
       }*/
     });
+  }
+
+  sendUserTypingStatus(){
+    FlyChat.sendTypingStatus(profile.jid.checkNull(),profile.getChatType());
+  }
+
+  sendUserTypingGoneStatus(){
+    FlyChat.sendTypingGoneStatus(profile.jid.checkNull(),profile.getChatType());
   }
 
   @override

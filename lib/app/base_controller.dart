@@ -52,7 +52,14 @@ abstract class BaseController {
     FlyChat.connectionFailed.listen(connectionFailed);
     FlyChat.connectionSuccess.listen(connectionSuccess);
     FlyChat.onWebChatPasswordChanged.listen(onWebChatPasswordChanged);
-    FlyChat.setTypingStatus.listen(setTypingStatus);
+    FlyChat.setTypingStatus.listen((event){
+      var data = json.decode(event.toString());
+      mirrorFlyLog("setTypingStatus", data.toString());
+      var singleOrgroupJid = data["singleOrgroupJid"];
+      var userId = data["userId"];
+      var typingStatus = data["composing"];
+      setTypingStatus(singleOrgroupJid, userId, typingStatus);
+    });
     FlyChat.onChatTypingStatus.listen(onChatTypingStatus);
     FlyChat.onGroupTypingStatus.listen(onGroupTypingStatus);
     FlyChat.onFailure.listen(onFailure);
@@ -172,7 +179,7 @@ abstract class BaseController {
   void onWebChatPasswordChanged(result){
 
   }
-  void setTypingStatus(result){
+  void setTypingStatus(String singleOrgroupJid,String userId,String typingStatus){
 
   }
   void onChatTypingStatus(result){

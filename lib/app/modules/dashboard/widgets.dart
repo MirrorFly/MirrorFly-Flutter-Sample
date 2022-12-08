@@ -19,7 +19,7 @@ Widget searchHeader(String? type, String count, BuildContext context) {
 }
 
 class RecentChatItem extends StatelessWidget {
-  const RecentChatItem({Key? key, required this.item, required this.onTap, this.onLongPress, this.onchange,this.spanTxt = "",this.isSelected = false,this.isCheckBoxVisible = false,this.isChecked = false}) : super(key: key);
+  const RecentChatItem({Key? key, required this.item, required this.onTap, this.onLongPress, this.onchange,this.spanTxt = "",this.isSelected = false,this.isCheckBoxVisible = false,this.isChecked = false, this.typingUserid = ""}) : super(key: key);
   final RecentChatData item;
   final Function() onTap;
   final Function()? onLongPress;
@@ -28,6 +28,7 @@ class RecentChatItem extends StatelessWidget {
   final bool isChecked;
   final Function(bool? value)? onchange;
   final bool isSelected;
+  final String typingUserid;
   final titlestyle = const TextStyle(
       fontSize: 16.0,
       fontWeight: FontWeight.w700,
@@ -102,7 +103,7 @@ class RecentChatItem extends StatelessWidget {
                               ) : spannableText(item.profileName.checkNull(), spanTxt, titlestyle),
                               Row(
                                 children: [
-                                  item.unreadMessageCount.toString() != "0"
+                                  item.isConversationUnRead!
                                       ? const Padding(
                                     padding: EdgeInsets.only(right: 8.0),
                                     child: CircleAvatar(
@@ -112,7 +113,7 @@ class RecentChatItem extends StatelessWidget {
                                   )
                                       : const SizedBox(),
                                   Expanded(
-                                    child: Row(
+                                    child: typingUserid.isEmpty ? Row(
                                       children: [
                                         item.isLastMessageRecalledByUser! ? const SizedBox() : forMessageTypeIcon(item.lastMessageType!),
                                         SizedBox(width: item.isLastMessageRecalledByUser! ? 0.0 : forMessageTypeString(item.lastMessageType!)!=null ? 3.0 : 0.0,),
@@ -125,6 +126,24 @@ class RecentChatItem extends StatelessWidget {
                                           ),
                                         ),
                                       ],
+                                    ) : FutureBuilder(
+                                      future: getProfileDetails(typingUserid.checkNull()),
+                                      builder: (context,data) {
+                                        if(data.hasData){
+                                          return Text(
+                                            data.data!.name.checkNull() + " typing..",
+                                            style: Theme
+                                                .of(context)
+                                                .textTheme
+                                                .titleSmall,
+                                            maxLines: 1,
+                                            overflow: TextOverflow.ellipsis,
+                                          );
+                                        }else{
+                                          mirrorFlyLog("hasError", data.error.toString());
+                                          return const SizedBox();
+                                        }
+                                      }
                                     ),
                                   ),
                                 ],

@@ -602,4 +602,27 @@ class DashboardController extends GetxController with GetTickerProviderStateMixi
     updateRecentChat(groupJid);
   }
 
+  var typingAndGoneStatus = <Triple>[].obs;
+  String typingUser(String jid){
+    var index = typingAndGoneStatus.indexWhere((it) => it.singleOrgroupJid ==jid);
+    if(index.isNegative) {
+      return "";
+    }else {
+      return typingAndGoneStatus[index].userId.isNotEmpty ? typingAndGoneStatus[index].userId : typingAndGoneStatus[index].singleOrgroupJid;
+    }
+  }
+  @override
+  void setTypingStatus(String singleOrgroupJid, String userId, String typingStatus) {
+    super.setTypingStatus(singleOrgroupJid, userId, typingStatus);
+    var index = typingAndGoneStatus.indexWhere((it) => it.singleOrgroupJid ==singleOrgroupJid && it.userId == userId);
+    if(typingStatus.toLowerCase() == "composing"){
+      if(index.isNegative){
+        typingAndGoneStatus.insert(0, Triple(singleOrgroupJid, userId, true));
+      }
+    }else{
+      if(!index.isNegative){
+        typingAndGoneStatus.removeAt(index);
+      }
+    }
+  }
 }

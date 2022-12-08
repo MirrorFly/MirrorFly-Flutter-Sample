@@ -364,6 +364,7 @@ class DashboardView extends GetView<DashboardController> {
                               return RecentChatItem(
                                 item: item,
                                 isSelected: controller.isSelected(index),
+                                typingUserid: controller.typingUser(item.jid.checkNull()),
                                 onTap: () {
                                   if (controller.selected.value) {
                                     controller.selectOrRemoveChatfromList(
