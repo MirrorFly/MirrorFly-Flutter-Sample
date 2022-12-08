@@ -386,7 +386,7 @@ class LocationMessageView extends StatelessWidget {
                   width: 5,
                 ),
                 getMessageIndicator(
-                    chatMessage.messageStatus.status,
+                    chatMessage.messageStatus,
                     chatMessage.isMessageSentByMe,
                     chatMessage.messageType),
                 const SizedBox(
@@ -511,7 +511,7 @@ class AudioMessageView extends StatelessWidget {
                   width: 5,
                 ),
                 getMessageIndicator(
-                    chatMessage.messageStatus.status,
+                    chatMessage.messageStatus,
                     chatMessage.isMessageSentByMe,
                     chatMessage.messageType),
                 const SizedBox(
@@ -597,7 +597,7 @@ class ContactMessageView extends StatelessWidget {
                     width: 5,
                   ),
                   getMessageIndicator(
-                      chatMessage.messageStatus.status,
+                      chatMessage.messageStatus,
                       chatMessage.isMessageSentByMe,
                       chatMessage.messageType),
                   const SizedBox(
@@ -686,7 +686,7 @@ class DocumentMessageView extends StatelessWidget {
                     width: 5,
                   ),
                   getMessageIndicator(
-                      chatMessage.messageStatus.status,
+                      chatMessage.messageStatus,
                       chatMessage.isMessageSentByMe,
                       chatMessage.messageType),
                   const SizedBox(
@@ -814,7 +814,7 @@ class VideoMessageView extends StatelessWidget {
                   width: 5,
                 ),
                 getMessageIndicator(
-                    chatMessage.messageStatus.status,
+                    chatMessage.messageStatus,
                     chatMessage.isMessageSentByMe,
                     chatMessage.messageType),
                 const SizedBox(
@@ -874,7 +874,7 @@ class ImageMessageView extends StatelessWidget {
                   width: 5,
                 ),
                 getMessageIndicator(
-                    chatMessage.messageStatus.status,
+                    chatMessage.messageStatus,
                     chatMessage.isMessageSentByMe,
                     chatMessage.messageType),
                 const SizedBox(
@@ -988,7 +988,7 @@ class TextMessageView extends StatelessWidget {
               const SizedBox(
                 width: 5,
               ),
-              getMessageIndicator(chatMessage.messageStatus.status,
+              getMessageIndicator(chatMessage.messageStatus,
                   chatMessage.isMessageSentByMe,chatMessage.messageType),
               const SizedBox(
                 width: 5,
@@ -1076,7 +1076,7 @@ getMessageIndicator(
 
 getImageOverlay(ChatMessageModel chatMessage) {
   if (checkFile(chatMessage.mediaChatMessage!.mediaLocalStoragePath) &&
-      chatMessage.messageStatus.status != 'N') {
+      chatMessage.messageStatus != 'N') {
     if (chatMessage.messageType == 'VIDEO') {
       return SizedBox(
         width: 80,

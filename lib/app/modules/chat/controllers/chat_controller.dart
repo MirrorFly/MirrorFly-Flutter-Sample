@@ -352,7 +352,7 @@ class ChatController extends GetxController
     }
     isReplying(false);
     if (File(path!).existsSync()) {
-        FlyChat
+        return FlyChat
           .sendImageMessage(profile.jid!, path, caption, replyMessageID)
           .then((value) {
         ChatMessageModel chatMessageModel = sendMessageModelFromJson(value);

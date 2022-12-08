@@ -52,11 +52,11 @@ class ProfileController extends GetxController {
   void save() {
     if (profileName.text.trim().isEmpty) {
       toToast("Please enter your username");
-    }else if (profileName.text.trim().length > 3) {
+    }else if (profileName.text.trim().length < 3) {
       toToast("Username is too short");
     } else if (profileEmail.text.trim().isEmpty) {
       toToast("Email should not be empty");
-    } else if (emailPatternMatch.hasMatch(profileEmail.text.toString())) {
+    } else if (!emailPatternMatch.hasMatch(profileEmail.text.toString())) {
       toToast("Please enter a valid Mail");
     } else if (profileStatus.value.isEmpty) {
       toToast("Enter Profile Status");
@@ -66,7 +66,6 @@ class ProfileController extends GetxController {
       if (imagePath.value.isNotEmpty) {
         updateProfileImage(imagePath.value, update: true);
       } else {
-        var jid = SessionManagement.getUserJID().checkNull();
         FlyChat
             .updateMyProfile(
                 profileName.text.toString(),

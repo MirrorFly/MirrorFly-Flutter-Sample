@@ -103,8 +103,6 @@ import Photos
              if isSuccess {
                  var chatMsg = JSONSerializer.toJson(chatMessage as Any)
                  
-               
-                 chatMsg = chatMsg.replacingOccurrences(of: "\"messageStatus\":", with: "\"iosMessageStatus\":")
                  result(chatMsg)
              }else{
                  result(FlutterError(code: "500", message: Commons.json(from: error as Any), details: nil))

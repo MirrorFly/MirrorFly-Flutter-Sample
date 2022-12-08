@@ -3,7 +3,6 @@ library flysdk;
 export 'src/flychat.dart';
 export 'src/model/registerModel.dart';
 export 'src/model/chatMessageModel.dart';
-export 'src/model/chatmessage_model.dart';
 export 'src/model/check_model.dart' ;
 export 'src/model/country_model.dart';
 export 'src/model/group_media_model.dart';
