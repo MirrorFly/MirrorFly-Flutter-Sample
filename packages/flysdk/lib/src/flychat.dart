@@ -72,6 +72,22 @@ class FlyChat {
     }
   }
 
+  static Future<String?> getSendData() async {
+    String? response;
+    try {
+      response = await mirrorFlyMethodChannel
+          .invokeMethod<String>('sendData');
+      debugPrint("sendData Result ==> $response");
+      return response;
+    } on PlatformException catch (e) {
+      debugPrint("Platform Exception ===> $e");
+      rethrow;
+    } on Exception catch (error) {
+      debugPrint("Exception ==> $error");
+      rethrow;
+    }
+  }
+
   static Future<String?> contactSyncStateValue() async {
     String? response;
     try {
@@ -1355,6 +1371,7 @@ class FlyChat {
   static Stream<dynamic> get onFailure => onFailureChannel.receiveBroadcastStream().cast();
   static Stream<dynamic> get onProgressChanged => onProgressChangedChannel.receiveBroadcastStream().cast();
   static Stream<dynamic> get onSuccess => onSuccessChannel.receiveBroadcastStream().cast();
+  static Stream<dynamic> get onSendData => onSendDataChannel.receiveBroadcastStream().cast();
 
   static Future<String?> imagePath(String imgurl) async {
     var re = "";

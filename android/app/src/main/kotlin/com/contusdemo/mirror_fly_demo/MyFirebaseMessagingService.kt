@@ -1,14 +1,14 @@
 package com.contusdemo.mirror_fly_demo
 
-import android.app.Application
-import android.app.NotificationManager
-import android.app.PendingIntent
+import android.annotation.SuppressLint
+import android.app.*
 import android.content.Context
 import android.content.Intent
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import com.contus.flycommons.LogMessage
+import com.contus.flycommons.PendingIntentHelper
 import com.contusflysdk.api.contacts.ContactManager
 import com.contusflysdk.api.models.ChatMessage
 import com.contusflysdk.api.notification.NotificationEventListener
@@ -41,24 +41,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
                 override fun onMessageReceived(chatMessage : ChatMessage) {
                     val messageType = Utils.returnEmptyStringIfNull(notificationData[com.contus.flycommons.Constants.TYPE])
                     LogMessage.d(TAG,chatMessage.messageTextContent)
-                    val builder: NotificationCompat.Builder = NotificationCompat.Builder(MirrorFlyApplication.getContext())
-                        .setSmallIcon(R.mipmap.ic_launcher)
-                        .setContentTitle(chatMessage.senderNickName)
-                        .setContentText(chatMessage.messageTextContent)
-
-                    val notificationIntent = Intent(MirrorFlyApplication.getContext(), MainActivity::class.java)
-                    val contentIntent: PendingIntent = PendingIntent.getActivity(
-                        MirrorFlyApplication.getContext(), 0, notificationIntent,
-                        PendingIntent.FLAG_UPDATE_CURRENT
-                    )
-                    builder.setContentIntent(contentIntent)
-
-                    // Add as notification
-
-                    // Add as notification
-                    val manager: NotificationManager =
-                        getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-                    manager.notify(chatMessage.messageSentTime.toInt(), builder.build())
+                    notificationDialog(chatMessage)
                 }
 
                 override fun onGroupNotification(groupJid: String, titleContent: String, chatMessage : ChatMessage) {
@@ -97,5 +80,41 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
 
     override fun onCreate() {
         super.onCreate()
+    }
+
+    private fun notificationDialog(chatMessage: ChatMessage) {
+        val notificationId = chatMessage.chatUserJid.hashCode().toLong().toInt()
+        val notificationIntent = Intent(this, MainActivity::class.java).apply {
+            flags = (Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP)
+            putExtra("from_notification", true)
+        putExtra("jid", chatMessage.senderUserJid)}
+        val requestID = System.currentTimeMillis().toInt()
+        val mainPendingIntent =
+            PendingIntentHelper.getActivity( MirrorFlyApplication.getContext(), requestID, notificationIntent)
+        val notificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
+        val NOTIFICATION_CHANNEL_ID = chatMessage.messageId
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            @SuppressLint("WrongConstant") val notificationChannel = NotificationChannel(
+                NOTIFICATION_CHANNEL_ID,
+                "MirrorFly",
+                NotificationManager.IMPORTANCE_MAX
+            )
+            // Configure the notification channel.
+            notificationChannel.setDescription(chatMessage.messageTextContent)
+            notificationChannel.enableLights(true)
+            notificationChannel.setVibrationPattern(longArrayOf(0, 1000, 500, 1000))
+            notificationChannel.enableVibration(true)
+            notificationManager.createNotificationChannel(notificationChannel)
+        }
+        val notificationBuilder = NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_ID)
+        notificationBuilder.setAutoCancel(true)
+            .setDefaults(Notification.DEFAULT_ALL)
+            .setWhen(System.currentTimeMillis())
+            .setSmallIcon(R.mipmap.ic_launcher)
+            .setTicker("MirrorFly") //.setPriority(Notification.PRIORITY_MAX)
+            .setContentTitle(chatMessage.senderNickName)
+            .setContentText(chatMessage.messageTextContent)
+        notificationBuilder.setContentIntent(mainPendingIntent)
+        notificationManager.notify(notificationId, notificationBuilder.build())
     }
 }

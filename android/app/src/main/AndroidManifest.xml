@@ -71,7 +71,16 @@
                android:resource="@xml/filepaths"
                tools:replace="android:resource" />
        </provider>
-
-
+       <service android:name=".AndroidPlugin" />
+       <service
+           android:name=".MyFirebaseMessagingService"
+           android:exported="true"
+           android:enabled="true"
+           android:directBootAware="true"
+           tools:targetApi="n">
+           <intent-filter>
+               <action android:name="com.google.firebase.MESSAGING_EVENT" />
+           </intent-filter>
+       </service>
     </application>
 </manifest>

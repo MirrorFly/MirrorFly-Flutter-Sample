@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flysdk/flysdk.dart';
 
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/common/app_theme.dart';
@@ -12,6 +13,7 @@ import 'package:mirror_fly_demo/app/data/helper.dart';
 import 'package:mirror_fly_demo/app/data/pushnotification.dart';
 import 'package:mirror_fly_demo/app/modules/dashboard/bindings/dashboard_binding.dart';
 import 'package:mirror_fly_demo/app/modules/login/bindings/login_binding.dart';
+import 'app/common/constants.dart';
 import 'app/data/session_management.dart';
 import 'app/modules/profile/bindings/profile_binding.dart';
 import 'app/routes/app_pages.dart';
@@ -83,9 +85,13 @@ Bindings? getBinding(){
   }
 }
 
-String getInitialRoute(){
+String getInitialRoute()  {
   if(SessionManagement.getLogin()){
     if(SessionManagement.getName().checkNull().isNotEmpty && SessionManagement.getMobileNumber().checkNull().isNotEmpty){
+      FlyChat.getSendData().then((value) {
+        SessionManagement.setChatJid(value.checkNull());
+        return value.checkNull().isEmpty ? AppPages.dashboard : AppPages.chat;
+      });
       return AppPages.dashboard;
     }else{
       return AppPages.profile;

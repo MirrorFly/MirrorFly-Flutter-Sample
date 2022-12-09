@@ -82,6 +82,9 @@ class SessionManagement {
   static Future setWebChatLogin(bool webChatLogin) async {
     await _preferences.setBool("web_chat_login", webChatLogin);
   }
+  static Future setChatJid(String setChatJid) async {
+    await _preferences.setString("chatJid", setChatJid);
+  }
   static Future clear()async{
     await _preferences.clear();
   }
@@ -107,6 +110,7 @@ class SessionManagement {
       ? false
       : _preferences.getBool("login")!;
 
+  static String? getChatJid() => _preferences.getString("chatJid");
   static String? getName() => _preferences.getString("name");
   static String? getMobileNumber() => _preferences.getString("mobileNumber");
   static String? getUsername() => _preferences.getString("username");

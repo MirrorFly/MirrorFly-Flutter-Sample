@@ -113,7 +113,8 @@ open class FlyBaseController(activity: FlutterActivity) : MethodChannel.MethodCa
 
     private val mContext: FlutterActivity = activity
 
-    fun init(flutterEngine: FlutterEngine) {
+    var jid ="";
+    fun init(flutterEngine: FlutterEngine,intent: Intent) {
         MethodChannel(
             flutterEngine.dartExecutor.binaryMessenger,
             MIRRORFLY_METHOD_CHANNEL
@@ -301,6 +302,16 @@ open class FlyBaseController(activity: FlutterActivity) : MethodChannel.MethodCa
         observeNetworkListener()
         //device width needs to be calculated to decide message view width in chat activity
         ChatManager.calculateAndStoreDeviceWidth()
+
+        val is_From_Notification = intent.getBooleanExtra("from_notification",false)
+        Log.d("onConfig",is_From_Notification.toString())
+        Log.d("onConfig",intent.toString())
+        Log.d("onConfig from",intent.getBooleanExtra("from_notification",false).toString())
+        if (is_From_Notification){
+            jid = intent.getStringExtra("jid").toString()
+            Log.d("onConfig jid",jid)
+            //sendData(jid);
+        }
     }
 
     private fun observeNetworkListener() {
@@ -578,6 +589,9 @@ open class FlyBaseController(activity: FlutterActivity) : MethodChannel.MethodCa
     override fun onMethodCall(call: MethodCall, result: MethodChannel.Result) {
         Log.e("call method",call.method.toString())
         when {
+            call.method.equals("sendData")-> {
+                result.success(jid);
+            }
             call.method.equals("syncContacts") -> {
                 val isFirsttime = call.argument<Boolean>("is_first_time") ?: false
                 FlyCore.syncContacts(isFirsttime)

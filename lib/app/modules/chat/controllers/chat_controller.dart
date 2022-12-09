@@ -104,6 +104,9 @@ class ChatController extends GetxController
   void onInit() {
     super.onInit();
     profile_.value = Get.arguments as Profile;
+    if(profile_.value==null){
+      getProfileDetails(SessionManagement.getChatJid().checkNull()).then((value) => profile_(value));
+    }
     onready();
     initListeners();
     player.onDurationChanged.listen((Duration d) {
