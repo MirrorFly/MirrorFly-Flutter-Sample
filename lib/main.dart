@@ -39,10 +39,10 @@ Future<void> main() async {
   }
   WidgetsFlutterBinding.ensureInitialized();
   if (!kIsWeb) {
-    // await Firebase.initializeApp();
-    await Firebase.initializeApp(
+     await Firebase.initializeApp();
+    /*await Firebase.initializeApp(
       options: DefaultFirebaseOptions.currentPlatform,
-    );
+    );*/
     FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
     PushNotifications.setupInteractedMessage();
   }

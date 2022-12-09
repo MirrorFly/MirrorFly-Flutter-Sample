@@ -1,6 +1,7 @@
 package com.contusdemo.mirror_fly_demo
 
 import android.app.Application
+import android.content.Context
 import com.contus.flycommons.Constants
 import com.contus.flycommons.LogMessage
 import com.contus.webrtc.GroupCallDetails
@@ -20,7 +21,17 @@ import io.flutter.app.FlutterApplication
 
 class MirrorFlyApplication : FlutterApplication() {
 
+    init {
+        instance = this
+    }
 
+    companion object {
+        private var instance: MirrorFlyApplication? = null
+
+        fun getContext(): Context {
+            return instance!!.applicationContext
+        }
+    }
     override fun onCreate() {
         super.onCreate()
 

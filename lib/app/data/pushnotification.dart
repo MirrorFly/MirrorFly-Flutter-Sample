@@ -13,7 +13,10 @@ class PushNotifications {
     notificationPermission();
     getToken();
     initInfo();
-    FirebaseMessaging.onMessage.listen(onMessage);
+    FirebaseMessaging.onMessage.listen((message){
+      debugPrint('Got a message whilst in the foreground!');
+      onMessage(message);
+    });
   }
   static void getToken(){
     FirebaseMessaging.instance.getToken().then((value) {
@@ -60,7 +63,7 @@ class PushNotifications {
   }
 
   static Future<void> onMessage(RemoteMessage message) async {
-    debugPrint('Got a message whilst in the foreground!');
+    debugPrint('RemoteMessage'+message.data.toString());
     debugPrint('Message data: ${message.data}');
     if (message.notification != null) {
       debugPrint('Message also contained a notification: ${message.notification}');
@@ -116,8 +119,8 @@ class PushNotifications {
     var notificationData = remoteMessage.data;
     if(notificationData.isNotEmpty) {
       WidgetsFlutterBinding.ensureInitialized();
-      await const MethodChannel('handleReceivedMessage').invokeMethod("handleReceivedMessage",notificationData).then((value){
-        mirrorFlyLog("notification message", value.toString());
+      //await const MethodChannel('handleReceivedMessage').invokeMethod("handleReceivedMessage",notificationData).then((value){
+        //mirrorFlyLog("notification message", value.toString());
         /*var data = json.decode(value.toString());
         var groupJid = data["groupJid"].toString();
         var titleContent = data["titleContent"].toString();
@@ -145,7 +148,7 @@ class PushNotifications {
         await flutterLocalNotificationsPlugin.show(
             0, message.title, message.body, notificationDetails,
             payload: "chatpage");*/
-      });
+      //});
     }
   }
 }

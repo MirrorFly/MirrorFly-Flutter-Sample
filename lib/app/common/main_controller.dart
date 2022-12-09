@@ -28,7 +28,7 @@ class MainController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    // PushNotifications.init();
+    PushNotifications.init();
     getMediaEndpoint();
     uploadEndpoint(SessionManagement.getMediaEndPoint().checkNull());
     authToken(SessionManagement.getAuthToken().checkNull());
