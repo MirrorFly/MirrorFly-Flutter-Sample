@@ -256,8 +256,10 @@ extension MemberParsing on Member{
 }
 Future<Profile> getProfileDetails(String jid) async {
   var value = await FlyChat.getProfileDetails(jid.checkNull(), false);
-  var str = Profile.fromJson(json.decode(value.toString()));
-  return str;
+  // profileDataFromJson(value);
+  var profile =  profiledata(value.toString());
+  // var str = Profile.fromJson(json.decode(value.toString()));
+  return profile;
 }
 
 extension ProfileParesing on Profile{
@@ -265,7 +267,7 @@ extension ProfileParesing on Profile{
     return contactType =="deleted_contact";
   }
   String getChatType(){
-    return (isGroupProfile!) ? Constants.typeGroupChat  : Constants.typeChat;
+    return (isGroupProfile ?? false) ? Constants.typeGroupChat  : Constants.typeChat;
   }
 }
 

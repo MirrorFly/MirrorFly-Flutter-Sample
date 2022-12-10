@@ -2,14 +2,12 @@ package com.contusdemo.mirror_fly_demo
 
 import android.annotation.SuppressLint
 import android.app.*
-import android.content.Context
 import android.content.Intent
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import com.contus.flycommons.LogMessage
 import com.contus.flycommons.PendingIntentHelper
-import com.contusflysdk.api.contacts.ContactManager
 import com.contusflysdk.api.models.ChatMessage
 import com.contusflysdk.api.notification.NotificationEventListener
 import com.contusflysdk.api.notification.PushNotificationManager
@@ -22,7 +20,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
     /**
      * Instance of the chat utils class that contains the common firebase methods
      */
-    lateinit var firebaseUtils: FirebaseUtils
+//    lateinit var firebaseUtils: FirebaseUtils
 
     /**
      * Called when message is received.
@@ -92,21 +90,21 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
         val mainPendingIntent =
             PendingIntentHelper.getActivity( MirrorFlyApplication.getContext(), requestID, notificationIntent)
         val notificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
-        val NOTIFICATION_CHANNEL_ID = chatMessage.messageId
+        val notificationChannelId = chatMessage.messageId
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             @SuppressLint("WrongConstant") val notificationChannel = NotificationChannel(
-                NOTIFICATION_CHANNEL_ID,
+                notificationChannelId,
                 "MirrorFly",
                 NotificationManager.IMPORTANCE_MAX
             )
             // Configure the notification channel.
-            notificationChannel.setDescription(chatMessage.messageTextContent)
+            notificationChannel.description = chatMessage.messageTextContent
             notificationChannel.enableLights(true)
-            notificationChannel.setVibrationPattern(longArrayOf(0, 1000, 500, 1000))
+            notificationChannel.vibrationPattern = longArrayOf(0, 1000, 500, 1000)
             notificationChannel.enableVibration(true)
             notificationManager.createNotificationChannel(notificationChannel)
         }
-        val notificationBuilder = NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_ID)
+        val notificationBuilder = NotificationCompat.Builder(this, notificationChannelId)
         notificationBuilder.setAutoCancel(true)
             .setDefaults(Notification.DEFAULT_ALL)
             .setWhen(System.currentTimeMillis())

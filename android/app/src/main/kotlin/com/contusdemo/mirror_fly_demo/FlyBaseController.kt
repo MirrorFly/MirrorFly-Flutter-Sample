@@ -303,11 +303,11 @@ open class FlyBaseController(activity: FlutterActivity) : MethodChannel.MethodCa
         //device width needs to be calculated to decide message view width in chat activity
         ChatManager.calculateAndStoreDeviceWidth()
 
-        val is_From_Notification = intent.getBooleanExtra("from_notification",false)
-        Log.d("onConfig",is_From_Notification.toString())
+        val isFromNotification = intent.getBooleanExtra("from_notification",false)
+        Log.d("onConfig",isFromNotification.toString())
         Log.d("onConfig",intent.toString())
         Log.d("onConfig from",intent.getBooleanExtra("from_notification",false).toString())
-        if (is_From_Notification){
+        if (isFromNotification){
             jid = intent.getStringExtra("jid").toString()
             Log.d("onConfig jid",jid)
             //sendData(jid);

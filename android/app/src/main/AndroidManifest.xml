@@ -71,7 +71,7 @@
                android:resource="@xml/filepaths"
                tools:replace="android:resource" />
        </provider>
-       <service android:name=".AndroidPlugin" />
+<!--       <service android:name=".AndroidPlugin" />-->
        <service
            android:name=".MyFirebaseMessagingService"
            android:exported="true"

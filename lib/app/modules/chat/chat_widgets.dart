@@ -335,7 +335,7 @@ class SenderHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Visibility(
-      visible: profile.isGroupProfile!
+      visible: profile.isGroupProfile ?? false
           ? (index == 0 ||
           isSenderChanged(chatList, index) ||
           !isMessageDateEqual(chatList, index)) &&

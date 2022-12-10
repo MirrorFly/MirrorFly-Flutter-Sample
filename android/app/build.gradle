@@ -46,7 +46,7 @@ android {
 
     defaultConfig {
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
-        //applicationId "com.mirrorfly.uikit_flutter.dev"
+//        applicationId "com.mirrorfly.uikit_flutter.dev"
         // You can update the following values to match your application needs.
         // For more information, see: https://docs.flutter.dev/deployment/android#reviewing-the-build-configuration.
         minSdkVersion flutter.minSdkVersion
@@ -60,10 +60,10 @@ android {
             /*buildConfigField 'String', 'SDK_BASE_URL', '"https://api-uikit-dev.contus.us/api/v1/"'
             buildConfigField 'String', 'LICENSE', '"2sdgNtr3sFBSM3bYRa7RKDPEiB38Xo"'
             buildConfigField 'String', 'WEB_CHAT_LOGIN', '"https://webchat-uikit-dev.contus.us/"'*/
-            /*buildConfigField 'String', 'SDK_BASE_URL', '"https://api-uikit-qa.contus.us/api/v1/"'
+            buildConfigField 'String', 'SDK_BASE_URL', '"https://api-uikit-qa.contus.us/api/v1/"'
             buildConfigField 'String', 'LICENSE', '"ckIjaccWBoMNvxdbql8LJ2dmKqT5bp"'
             buildConfigField 'String', 'WEB_CHAT_LOGIN', '"https://webchat-preprod-sandbox.mirrorfly.com/"'
-            buildConfigField "String", "SUPPORT_MAIL", '"contussupport@gmail.com"'*/
+            buildConfigField "String", "SUPPORT_MAIL", '"contussupport@gmail.com"'
             shrinkResources false
             debuggable true
             minifyEnabled false
@@ -165,6 +165,8 @@ dependencies {
 
     //For gson parsing
     implementation 'com.google.code.gson:gson:2.8.1'
+
+
 
     //for smack implementation
     implementation ('org.igniterealtime.smack:smack-android:4.4.6')

@@ -5,6 +5,7 @@ import 'dart:math';
 
 import 'package:audioplayers/audioplayers.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
@@ -96,19 +97,26 @@ class ChatController extends GetxController
   set isMemberOfGroup(value) => _isMemberOfGroup.value = value;
 
   bool get isMemberOfGroup =>
-      profile.isGroupProfile! ? _isMemberOfGroup.value : true;
+      profile.isGroupProfile ?? false ? _isMemberOfGroup.value : true;
 
   var profileDetail = Profile();
 
   @override
   void onInit() {
     super.onInit();
-    profile_.value = Get.arguments as Profile;
-    if(profile_.value==null){
-      getProfileDetails(SessionManagement.getChatJid().checkNull()).then((value) => profile_(value));
-    }
-    onready();
-    initListeners();
+    // var profileDetail = Get.arguments as Profile;
+    // profile_.value = profileDetail;
+    // if(profile_.value.jid == null){
+      getProfileDetails(SessionManagement.getChatJid().checkNull()).then((value){
+        profile_(value);
+        onready();
+        initListeners();
+      });
+    // }else{
+    //   debugPrint("Got the Profile value");
+    // }
+
+
     player.onDurationChanged.listen((Duration d) {
       //get the duration of audio
       maxDuration(d.inMilliseconds);
@@ -191,6 +199,7 @@ class ChatController extends GetxController
 
     FlyChat.setOnGoingChatUser(profile.jid!);
     getChatHistory(profile.jid!);
+    // compute(getChatHistory, profile.jid);
     debugPrint("==================");
     debugPrint(profile.image);
     sendReadReceipt();
@@ -331,6 +340,24 @@ class ChatController extends GetxController
         });
       });
     });
+    // compute(FlyChat.getMessagesOfJid, profile.jid.checkNull()).then((chatMessageModelList){
+    //   chatList(chatMessageModelList);
+    //   Future.delayed(const Duration(milliseconds: 500), () {
+    //     Future.doWhile(() {
+    //       if (scrollController.positions.isNotEmpty) {
+    //         if (scrollController.position.extentAfter == 0) {
+    //           return Future.value(false);
+    //         }
+    //         return scrollController
+    //             .animateTo(scrollController.position.maxScrollExtent,
+    //             duration: const Duration(milliseconds: 100),
+    //             curve: Curves.linear)
+    //             .then((value) => true);
+    //       }
+    //       return true;
+    //     });
+    //   });
+    // });
   }
 
   getMedia(String mid) {
@@ -817,7 +844,7 @@ class ChatController extends GetxController
       return;
     }
     var isMediaDelete = false.obs;
-    var chatType = profile.isGroupProfile! ? "groupchat" : "chat";
+    var chatType = profile.isGroupProfile ?? false ? "groupchat" : "chat";
     Helper.showAlert(
         content: Column(
           mainAxisSize: MainAxisSize.min,
@@ -1322,7 +1349,7 @@ class ChatController extends GetxController
   }
 
   infoPage() {
-    if (profile.isGroupProfile!) {
+    if (profile.isGroupProfile ?? false) {
       Get.toNamed(Routes.groupInfo, arguments: profile)?.then((value) {
         if (value != null) {
           profile_(value as Profile);
@@ -1418,7 +1445,7 @@ class ChatController extends GetxController
   @override
   void onLeftFromGroup({required String groupJid, required String userJid}) {
     super.onLeftFromGroup(groupJid: groupJid, userJid: userJid);
-    if (profile.isGroupProfile!) {
+    if (profile.isGroupProfile ?? false) {
       if (groupJid == profile.jid &&
           userJid == SessionManagement.getUserJID()) {
         //current user leave from the group
@@ -1433,15 +1460,15 @@ class ChatController extends GetxController
   void setTypingStatus(String singleOrgroupJid, String userId, String typingStatus) {
     super.setTypingStatus(singleOrgroupJid, userId, typingStatus);
     if(profile.jid.checkNull() == singleOrgroupJid){
-      var jid = profile.isGroupProfile! ? userId : singleOrgroupJid;
+      var jid = profile.isGroupProfile ?? false ? userId : singleOrgroupJid;
       if(!typingList.contains(jid)){
         typingList.add(jid);
       }
       if(typingStatus.toLowerCase() == Constants.composing){
-        if(profile.isGroupProfile!){
+        if(profile.isGroupProfile ?? false){
           groupParticipantsName("");
           getProfileDetails(jid).then((value) => userPresenceStatus("${value.name} typing..."));
-        }else if(!profile.isGroupProfile!){
+        }else {//if(!profile.isGroupProfile!){//commented if due to above if condition works
           userPresenceStatus("typing...");
         }
       }else{
@@ -1454,7 +1481,7 @@ class ChatController extends GetxController
   }
 
   memberOfGroup() {
-    if (profile.isGroupProfile!) {
+    if (profile.isGroupProfile ?? false) {
       FlyChat.isMemberOfGroup(profile.jid.checkNull(), null)
           .then((bool? value) {
         if (value != null) {
@@ -1468,7 +1495,7 @@ class ChatController extends GetxController
   var typingList = <String>[].obs;
 
   setChatStatus() {
-    if (profile.isGroupProfile!) {
+    if (profile.isGroupProfile ?? false) {
       if (typingList.isNotEmpty) {
         userPresenceStatus(
             "${Member(jid: typingList.last)

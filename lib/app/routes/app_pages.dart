@@ -66,7 +66,6 @@ import '../modules/video_preview/views/video_preview_view.dart';
 import '../modules/view_all_media/bindings/view_all_media_binding.dart';
 import '../modules/view_all_media/views/view_all_media_view.dart';
 
-import 'package:flysdk/flysdk.dart';
 
 part 'app_routes.dart';
 
@@ -138,7 +137,7 @@ class AppPages {
     GetPage(
       name: _Paths.chat,
       page: () => const ChatView(),
-      arguments: Profile(),
+      // arguments: Profile(),
       binding: ChatBinding(),
     ),
     GetPage(

@@ -75,14 +75,16 @@ class DashboardController extends GetxController with GetTickerProviderStateMixi
 
   toChatPage(String jid) async {
     if(jid.isNotEmpty) {
-      Helper.progressLoading();
-      var value = await FlyChat.getProfileDetails(jid, false);//.then((value) {
-        if(value!=null){
-          Helper.hideLoading();
-          var profile =  profiledata(value.toString());
-          Get.toNamed(Routes.chat, arguments: profile);
-        }
+      // Helper.progressLoading();
+      // var value = await FlyChat.getProfileDetails(jid, false);//.then((value) {
+      //   if(value!=null){
+      //     Helper.hideLoading();
+      //     var profile =  profiledata(value.toString());
+      //     Get.toNamed(Routes.chat, arguments: profile);
+      //   }
       //});
+      SessionManagement.setChatJid(jid);
+      Get.toNamed(Routes.chat);
     }
   }
 

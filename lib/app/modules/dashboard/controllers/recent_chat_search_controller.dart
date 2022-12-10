@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:flysdk/flysdk.dart';
+import 'package:mirror_fly_demo/app/data/session_management.dart';
 
 import '../../../common/constants.dart';
 import '../../../routes/app_pages.dart';
@@ -241,12 +242,14 @@ class RecentChatSearchController extends GetxController {
 
   toChatPage(String jid){
     if(jid.isNotEmpty) {
-      FlyChat.getProfileDetails(jid, false).then((value) {
-        if(value!=null){
-          var profile =  profiledata(value.toString());
-          Get.toNamed(Routes.chat, arguments: profile);
-        }
-      });
+      // FlyChat.getProfileDetails(jid, false).then((value) {
+      //   if(value!=null){
+      //     var profile =  profiledata(value.toString());
+      //     Get.toNamed(Routes.chat, arguments: profile);
+      //   }
+      // });
+      SessionManagement.setChatJid(jid);
+      Get.toNamed(Routes.chat);
     }
   }
 

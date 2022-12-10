@@ -60,7 +60,13 @@ class ChatView extends GetView<ChatController> {
                 child: Column(
                   children: [
                     Expanded(child: Obx(() {
-                      return chatListView(controller.chatList);
+                      if(controller.chatList.isNotEmpty) {
+                        return chatListView(controller.chatList);
+                      }else {
+                        return const Center(
+                          child: CircularProgressIndicator(),
+                        );
+                      }
                     })),
                     Align(
                       alignment: Alignment.bottomCenter,
@@ -940,7 +946,7 @@ class ChatView extends GetView<ChatController> {
                 width: 35,
                 height: 35,
                 clipOval: true,
-                errorWidget: controller.profile.isGroupProfile!
+                errorWidget: controller.profile.isGroupProfile ?? false
                     ? ClipOval(
                         child: Image.asset(
                           groupImg,
@@ -1053,7 +1059,7 @@ class ChatView extends GetView<ChatController> {
                         icon: const Icon(Icons.block),
                       ),
                       overflowWidget: const Text("Block"),
-                      showAsAction: controller.profile.isGroupProfile!
+                      showAsAction: controller.profile.isGroupProfile ?? false
                           ? ShowAsAction.gone
                           : ShowAsAction.never,
                       keyValue: 'Block',
@@ -1068,7 +1074,7 @@ class ChatView extends GetView<ChatController> {
                   icon: const Icon(Icons.search),
                 ),
                 overflowWidget: const Text("Search"),
-                showAsAction: controller.profile.isGroupProfile!
+                showAsAction: controller.profile.isGroupProfile ?? false
                     ? ShowAsAction.gone
                     : ShowAsAction.never,
                 keyValue: 'Search',

@@ -13,7 +13,6 @@ import 'package:mirror_fly_demo/app/data/helper.dart';
 import 'package:mirror_fly_demo/app/data/pushnotification.dart';
 import 'package:mirror_fly_demo/app/modules/dashboard/bindings/dashboard_binding.dart';
 import 'package:mirror_fly_demo/app/modules/login/bindings/login_binding.dart';
-import 'app/common/constants.dart';
 import 'app/data/session_management.dart';
 import 'app/modules/profile/bindings/profile_binding.dart';
 import 'app/routes/app_pages.dart';
@@ -21,7 +20,6 @@ import 'app/routes/app_pages.dart';
 import 'package:google_maps_flutter_android/google_maps_flutter_android.dart';
 import 'package:google_maps_flutter_platform_interface/google_maps_flutter_platform_interface.dart';
 
-import 'firebase_options.dart';
 
 
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
@@ -40,6 +38,11 @@ Future<void> main() async {
     mapsImplementation.useAndroidViewSurface = true;
   }
   WidgetsFlutterBinding.ensureInitialized();
+  await SessionManagement.onInit();
+  FlyChat.getSendData().then((value) {
+    SessionManagement.setChatJid(value.checkNull());
+  });
+
   if (!kIsWeb) {
      await Firebase.initializeApp();
     /*await Firebase.initializeApp(
@@ -51,7 +54,7 @@ Future<void> main() async {
   if (shouldUseFirebaseEmulator) {
     await FirebaseAuth.instance.useAuthEmulator('localhost', 5050);
   }
-  await SessionManagement.onInit();
+
   Get.put<MainController>(MainController());
   runApp(const MyApp());
 }
@@ -88,11 +91,13 @@ Bindings? getBinding(){
 String getInitialRoute()  {
   if(SessionManagement.getLogin()){
     if(SessionManagement.getName().checkNull().isNotEmpty && SessionManagement.getMobileNumber().checkNull().isNotEmpty){
-      FlyChat.getSendData().then((value) {
-        SessionManagement.setChatJid(value.checkNull());
-        return value.checkNull().isEmpty ? AppPages.dashboard : AppPages.chat;
-      });
-      return AppPages.dashboard;
+      debugPrint("=====CHAT ID=====");
+      debugPrint(SessionManagement.getChatJid());
+      if(SessionManagement.getChatJid().checkNull().isEmpty) {
+        return AppPages.dashboard;
+      }else{
+        return AppPages.chat;
+      }
     }else{
       return AppPages.profile;
     }

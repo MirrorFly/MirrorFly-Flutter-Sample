@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+
 class FlyChat {
   FlyChat._();
   static const mirrorFlyMethodChannel = MethodChannel('contus.mirrorfly/sdkCall');
@@ -1640,6 +1641,8 @@ class FlyChat {
     try {
       chatResponse = await mirrorFlyMethodChannel.invokeMethod('getMessagesOfJid',{ "JID" : jid });
       debugPrint("user Chat Result ==> $chatResponse");
+      // List<ChatMessageModel> chatMessageModel = chatMessageModelFromJson(chatResponse);
+      // return chatMessageModel;
       return chatResponse;
     }on PlatformException catch (e){
       debugPrint("Platform Exception ===> $e");
