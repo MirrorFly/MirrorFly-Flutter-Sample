@@ -60,13 +60,7 @@ class ChatView extends GetView<ChatController> {
                 child: Column(
                   children: [
                     Expanded(child: Obx(() {
-                      if(controller.chatList.isNotEmpty) {
                         return chatListView(controller.chatList);
-                      }else {
-                        return const Center(
-                          child: CircularProgressIndicator(),
-                        );
-                      }
                     })),
                     Align(
                       alignment: Alignment.bottomCenter,
