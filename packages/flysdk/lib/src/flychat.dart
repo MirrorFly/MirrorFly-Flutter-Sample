@@ -2515,4 +2515,80 @@ class FlyChat {
       rethrow;
     }
   }
+
+  static Future<String?> getDefaultNotificationUri() async {
+    String? uri = "";
+    try {
+      uri = await mirrorFlyMethodChannel
+          .invokeMethod<String?>('getDefaultNotificationUri');
+      return uri;
+    } on PlatformException catch (e) {
+      debugPrint("Platform Exception ===> $e");
+      rethrow;
+    } on Exception catch (error) {
+      debugPrint("Exception ==> $error");
+      rethrow;
+    }
+  }
+  static setNotificationUri(String uri) async {
+    try {
+      await mirrorFlyMethodChannel
+          .invokeMethod('setNotificationUri',{"uri":uri});
+    } on PlatformException catch (e) {
+      debugPrint("Platform Exception ===> $e");
+      rethrow;
+    } on Exception catch (error) {
+      debugPrint("Exception ==> $error");
+      rethrow;
+    }
+  }
+  static setNotificationSound(bool enable) async {
+    try {
+      await mirrorFlyMethodChannel
+          .invokeMethod('setNotificationSound',{"enable":enable});
+    } on PlatformException catch (e) {
+      debugPrint("Platform Exception ===> $e");
+      rethrow;
+    } on Exception catch (error) {
+      debugPrint("Exception ==> $error");
+      rethrow;
+    }
+  }
+  static setMuteNotification(bool enable) async {
+    try {
+      await mirrorFlyMethodChannel
+          .invokeMethod('setMuteNotification',{"enable":enable});
+    } on PlatformException catch (e) {
+      debugPrint("Platform Exception ===> $e");
+      rethrow;
+    } on Exception catch (error) {
+      debugPrint("Exception ==> $error");
+      rethrow;
+    }
+  }
+  static setNotificationVibration(bool enable) async {
+    try {
+      await mirrorFlyMethodChannel
+          .invokeMethod('setNotificationVibration',{"enable":enable});
+    } on PlatformException catch (e) {
+      debugPrint("Platform Exception ===> $e");
+      rethrow;
+    } on Exception catch (error) {
+      debugPrint("Exception ==> $error");
+      rethrow;
+    }
+  }
+  static cancelNotifications() async {
+    try {
+      await mirrorFlyMethodChannel
+          .invokeMethod('cancelNotifications');
+    } on PlatformException catch (e) {
+      debugPrint("Platform Exception ===> $e");
+      rethrow;
+    } on Exception catch (error) {
+      debugPrint("Exception ==> $error");
+      rethrow;
+    }
+  }
+
 }

@@ -42,7 +42,7 @@ Future<void> main() async {
   FlyChat.getSendData().then((value) {
     SessionManagement.setChatJid(value.checkNull());
   });
-
+  FlyChat.cancelNotifications();
   if (!kIsWeb) {
      await Firebase.initializeApp();
     /*await Firebase.initializeApp(

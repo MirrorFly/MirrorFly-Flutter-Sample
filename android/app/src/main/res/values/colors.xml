@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <color name="colorAccent">#3276e2</color>
+    <color name="colorSecondary">#4879f9</color>
+    <!--Call screen START-->
+    <color name="color_white_85">#D9FFFFFF</color>
+    <color name="caller_background">#152134</color>
+    <color name="caller_tile_background">#151F32</color>
+    <color name="audio_call_background">#0B111C</color>
+    <color name="color_grid_caller_status">#BF000000</color>
+    <color name="caller_background_border">#F2152134</color>
+    <color name="audio_caller_background">#0D2852</color>
+    <color name="group_pip_background">#0D274E</color>
+    <color name="pip_call_type">#77AAF7</color>
+    <color name="list_background">#1C2535</color>
+    <!--Call screen END-->
+    <color name="color_dark_gray_transparent">#66000000</color>
+    <color name="light_blue">#4879F9</color>
+    <color name="color_black">#000000</color>
+    <color name="blue">#3276E2</color>
+    <color name="grey">#959595</color>
+    <color name="color_black_transparent">#80000000</color>
+    <color name="colorDivider">#DEDEDE</color>
+    <color name="color_white">#FFFFFF</color>
+    <color name="color_text_grey">#4D4D4D</color>
+
+    <color name="color_text_more">#12233E</color>
+    <color name="color_pinned_speaking_indicator">#80FFFFFF</color>
+    <color name="color_join_link_circular_bg">#AFCAF4</color>
+</resources>

@@ -202,8 +202,9 @@ class ProfileController extends GetxController {
               }
             }
             SessionManagement.vibrationType("0");
-            FlyChat.getRingtoneName(null).then((value) {
+            FlyChat.getDefaultNotificationUri().then((value) {
               if (value != null) {
+                FlyChat.setNotificationUri(value);
                 SessionManagement.setNotificationUri(value);
               }
             });
@@ -214,8 +215,9 @@ class ProfileController extends GetxController {
             for (var statusValue in defaultStatus) {
               FlyChat.insertDefaultStatus(statusValue);
             }
-            FlyChat.getRingtoneName(null).then((value) {
+            FlyChat.getDefaultNotificationUri().then((value) {
               if (value != null) {
+                FlyChat.setNotificationUri(value);
                 SessionManagement.setNotificationUri(value);
               }
             });

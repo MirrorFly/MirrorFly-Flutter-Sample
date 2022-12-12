@@ -19,6 +19,7 @@ import com.contus.flynetwork.model.verifyfcm.VerifyFcmResponse
 import com.contus.xmpp.chat.listener.TypingStatusListener
 import com.contus.xmpp.chat.models.CreateGroupModel
 import com.contus.xmpp.chat.models.Profile
+import com.contusdemo.mirror_fly_demo.notification.AppNotificationManager
 import com.contusflysdk.AppUtils
 import com.contusflysdk.api.*
 import com.contusflysdk.api.chat.*
@@ -303,10 +304,10 @@ open class FlyBaseController(activity: FlutterActivity) : MethodChannel.MethodCa
         //device width needs to be calculated to decide message view width in chat activity
         ChatManager.calculateAndStoreDeviceWidth()
 
-        val isFromNotification = intent.getBooleanExtra("from_notification",false)
-        Log.d("onConfig",isFromNotification.toString())
+        val isFromNotification = intent.getBooleanExtra(Constants.IS_FROM_NOTIFICATION,false)
+        /*Log.d("onConfig",isFromNotification.toString())
         Log.d("onConfig",intent.toString())
-        Log.d("onConfig from",intent.getBooleanExtra("from_notification",false).toString())
+        Log.d("onConfig from",intent.getBooleanExtra(Constants.IS_FROM_NOTIFICATION,false).toString())*/
         if (isFromNotification){
             jid = intent.getStringExtra("jid").toString()
             Log.d("onConfig jid",jid)
@@ -1195,6 +1196,24 @@ open class FlyBaseController(activity: FlutterActivity) : MethodChannel.MethodCa
             }
             call.method.equals("showCustomTones") -> {
                 showCustomTones(call, result)
+            }
+            call.method.equals("cancelNotifications") -> {
+                cancelNotifications()
+            }
+            call.method.equals("getDefaultNotificationUri") -> {
+                getDefaultNotificationUri(result)
+            }
+            call.method.equals("setNotificationUri") -> {
+                setNotificationUri(call)
+            }
+            call.method.equals("setNotificationSound") -> {
+                setNotificationSound(call)
+            }
+            call.method.equals("setNotificationSound") -> {
+                setMuteNotification(call)
+            }
+            call.method.equals("setNotificationVibration") -> {
+                setNotificationVibration(call)
             }
             call.method.equals("getWebLoginDetails") -> {
                 val details = WebLoginDataManager.getWebLoginDetails()
@@ -2798,14 +2817,17 @@ open class FlyBaseController(activity: FlutterActivity) : MethodChannel.MethodCa
                 //SharedPreferenceManager.setString(com.contusfly.utils.Constants.NOTIFICATION_URI, data.getParcelableExtra<Parcelable>(RingtoneManager.EXTRA_RINGTONE_PICKED_URI).toString())
                 //binding.notificationToneLabel.setText(getRingtoneName(SharedPreferenceManager.getString(com.contusfly.utils.Constants.NOTIFICATION_URI)))
                 ringToneResult.success(selectedToneUri)
+                setNotificationUri(selectedToneUri)
             }
 
             if (data == null) {
                 ringToneResult.success(existingCustomTone)
+                setNotificationUri(existingCustomTone)
                 //SharedPreferenceManager.setString(com.contusfly.utils.Constants.NOTIFICATION_URI, SharedPreferenceManager.getString(com.contusfly.utils.Constants.NOTIFICATION_URI))
                 //binding.notificationToneLabel.setText(getRingtoneName(SharedPreferenceManager.getString(com.contusfly.utils.Constants.NOTIFICATION_URI)))
             } else if (data.parcelable<Parcelable>(RingtoneManager.EXTRA_RINGTONE_PICKED_URI) == null) {
                 ringToneResult.success("None")
+                setNotificationUri("")
                 //SharedPreferenceManager.setString(com.contusfly.utils.Constants.NOTIFICATION_URI, "None")
                 //binding.notificationToneLabel.setText(getRingtoneName(SharedPreferenceManager.getString(com.contusfly.utils.Constants.NOTIFICATION_URI)))
             }
@@ -3119,6 +3141,34 @@ open class FlyBaseController(activity: FlutterActivity) : MethodChannel.MethodCa
         map.put("groupUserJid", groupUserJid)
         map.put("status", status)
         onGroupTypingStatusStreamHandler.onGroupTypingStatus?.success(map.toString())
+    }
+
+    private fun getDefaultNotificationUri(result: MethodChannel.Result) {
+        val default = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION).toString()
+        setNotificationUri(default)
+        result.success(default)
+    }
+    private fun setNotificationUri(uri: String?){
+        SharedPreferenceManager.instance.storeString("notification_uri",uri)
+    }
+    private fun setNotificationUri(call: MethodCall){
+        val uri = call.argument<String>("uri") ?: ""
+        SharedPreferenceManager.instance.storeString("notification_uri",uri)
+    }
+    private fun setNotificationSound(call: MethodCall){
+        val enable = call.argument("enable") ?: false
+        SharedPreferenceManager.instance.storeBoolean("notification_sound",enable)
+    }
+    private fun setMuteNotification(call: MethodCall){
+        val enable = call.argument("enable") ?: false
+        SharedPreferenceManager.instance.storeBoolean("mute_notification",enable)
+    }
+    private fun setNotificationVibration(call: MethodCall){
+        val enable = call.argument("enable") ?: false
+        SharedPreferenceManager.instance.storeBoolean("vibration",enable)
+    }
+    private fun cancelNotifications(){
+        AppNotificationManager.cancelNotifications(mContext)
     }
 
 }

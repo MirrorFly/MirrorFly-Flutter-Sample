@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+import 'package:mirror_fly_demo/app/common/constants.dart';
 import 'package:mirror_fly_demo/app/data/session_management.dart';
 import 'package:flysdk/flysdk.dart';
 
@@ -48,7 +49,7 @@ class NotificationAlertController extends GetxController {
         SessionManagement.getNotificationSound());
     _displayNotificationPopupPreference(
         SessionManagement.getNotificationPopup());
-    _displayVibrationPreference(SessionManagement.getNotificationPopup());
+    _displayVibrationPreference(SessionManagement.getVibration());
     displayMutePreference();
   }
 
@@ -56,6 +57,7 @@ class NotificationAlertController extends GetxController {
     var uri = SessionManagement.getNotificationUri();
     FlyChat.showCustomTones(uri).then((value) {
       if (value != null) {
+        FlyChat.setNotificationUri(value);
         SessionManagement.setNotificationUri(value)
             .then((value) => getRingtoneName());
       }
@@ -64,6 +66,7 @@ class NotificationAlertController extends GetxController {
 
   getRingtoneName() {
     var uri = SessionManagement.getNotificationUri();
+    mirrorFlyLog("uri", uri.toString());
     FlyChat.getRingtoneName(uri).then((value) {
       if (value != null) {
         _defaultTone(value);
@@ -82,6 +85,7 @@ class NotificationAlertController extends GetxController {
 
   notificationSound(){
     SessionManagement.setNotificationSound(!displayNotificationSoundPreference);
+    FlyChat.setNotificationSound(!displayNotificationSoundPreference);
     SessionManagement.setKeyChangeFlag(true);
     _displayNotificationSoundPreference(!displayNotificationSoundPreference);
     checkWhetherMuteEnabled();
@@ -94,6 +98,7 @@ class NotificationAlertController extends GetxController {
   vibration(){
     checkWhetherMuteEnabled();
     SessionManagement.setNotificationVibration(!displayVibrationPreference);
+    FlyChat.setNotificationVibration(!displayVibrationPreference);
     SessionManagement.setKeyChangeFlag(true);
     _displayVibrationPreference(!displayVibrationPreference);
   }
@@ -104,19 +109,24 @@ class NotificationAlertController extends GetxController {
       enableNotification();
     }
     SessionManagement.setMuteNotification(!displayMuteNotificationPreference);
+    FlyChat.setMuteNotification(!displayMuteNotificationPreference);
     SessionManagement.setKeyChangeFlag(true);
     _displayMuteNotificationPreference(!displayMuteNotificationPreference);
   }
   unSetAlerts(){
     SessionManagement.setNotificationSound(false);
+    FlyChat.setNotificationSound(false);
+    SessionManagement.setNotificationPopup(false);
     SessionManagement.setNotificationPopup(false);
     SessionManagement.setNotificationVibration(false);
+    FlyChat.setNotificationVibration(false);
     _displayNotificationSoundPreference(false);
     _displayNotificationPopupPreference(false);
     _displayVibrationPreference(false);
   }
   enableNotification(){
     SessionManagement.setNotificationSound(true);
+    FlyChat.setNotificationSound(true);
     SessionManagement.setNotificationPopup(true);
     _displayNotificationSoundPreference(true);
     _displayNotificationPopupPreference(true);
@@ -125,7 +135,9 @@ class NotificationAlertController extends GetxController {
   checkWhetherMuteEnabled() {
     if (SessionManagement.getMuteNotification()) {
       SessionManagement.setNotificationSound(true);
+      FlyChat.setNotificationSound(true);
       SessionManagement.setMuteNotification(false);
+      FlyChat.setMuteNotification(false);
       _displayMuteNotificationPreference(false);
       _displayNotificationSoundPreference(true);
     }

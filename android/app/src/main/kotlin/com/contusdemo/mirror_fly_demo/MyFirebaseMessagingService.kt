@@ -2,18 +2,23 @@ package com.contusdemo.mirror_fly_demo
 
 import android.annotation.SuppressLint
 import android.app.*
+import android.content.Context
 import android.content.Intent
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
+import com.contus.flycommons.Constants
 import com.contus.flycommons.LogMessage
 import com.contus.flycommons.PendingIntentHelper
+import com.contusdemo.mirror_fly_demo.notification.AppNotificationManager
+import com.contusflysdk.api.contacts.ContactManager
 import com.contusflysdk.api.models.ChatMessage
 import com.contusflysdk.api.notification.NotificationEventListener
 import com.contusflysdk.api.notification.PushNotificationManager
 import com.contusflysdk.utils.Utils
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
+import com.google.gson.Gson
 
 class MyFirebaseMessagingService : FirebaseMessagingService() {
 
@@ -34,8 +39,8 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
         val notificationData: Map<String, String> = remoteMessage.data
         LogMessage.d(TAG, "RemoteMessage:$notificationData")
         if (notificationData.isNotEmpty()) {
-            //firebaseUtils.handleReceivedMessage(this, notificationData)
-            PushNotificationManager.handleReceivedMessage(notificationData, object : NotificationEventListener {
+            handleReceivedMessage(this, notificationData)
+            /*PushNotificationManager.handleReceivedMessage(notificationData, object : NotificationEventListener {
                 override fun onMessageReceived(chatMessage : ChatMessage) {
                     val messageType = Utils.returnEmptyStringIfNull(notificationData[com.contus.flycommons.Constants.TYPE])
                     LogMessage.d(TAG,chatMessage.messageTextContent)
@@ -43,7 +48,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
                 }
 
                 override fun onGroupNotification(groupJid: String, titleContent: String, chatMessage : ChatMessage) {
-                    /* Create the notification for group creation with parameter values */
+                    *//* Create the notification for group creation with parameter values *//*
                     //AppNotificationManager.createNotification(MobileApplication.getContext(), chatMessage)
                 }
 
@@ -51,7 +56,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
                 override fun onCancelNotification() {
                     //AppNotificationManager.cancelNotifications(context)
                 }
-            })
+            })*/
         }
     }
 
@@ -78,6 +83,33 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
 
     override fun onCreate() {
         super.onCreate()
+    }
+
+    private fun handleReceivedMessage(context: Context, firebaseData: Map<String, String>?) {
+        firebaseData?.let {
+            if (it.containsKey("push_from") && it["push_from"].equals("MirrorFly")) {
+                PushNotificationManager.handleReceivedMessage(it, object : NotificationEventListener {
+                    override fun onMessageReceived(chatMessage : ChatMessage) {
+                        LogMessage.d("notification msg",Gson().toJson(chatMessage))
+                        val messageType = Utils.returnEmptyStringIfNull(it[Constants.TYPE])
+                        if ((it.containsKey("user_jid") && !ContactManager.getProfileDetails(it["user_jid"].toString())?.isMuted!!) ||
+                            (messageType == Constants.RECALL)) {
+                            AppNotificationManager.createNotification(MirrorFlyApplication.getContext(), chatMessage)
+                        }
+                    }
+
+                    override fun onGroupNotification(groupJid: String, titleContent: String, chatMessage : ChatMessage) {
+                        /* Create the notification for group creation with parameter values */
+                        AppNotificationManager.createNotification(MirrorFlyApplication.getContext(), chatMessage)
+                    }
+
+                    @RequiresApi(Build.VERSION_CODES.M)
+                    override fun onCancelNotification() {
+                        AppNotificationManager.cancelNotifications(context)
+                    }
+                })
+            }
+        }
     }
 
     private fun notificationDialog(chatMessage: ChatMessage) {
