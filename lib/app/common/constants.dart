@@ -321,8 +321,7 @@ class Constants {
   static const String msgTypeContact = "contact";
   static const String msgTypeNotification = "notification";
 
-  static const String emailPattern = ("^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@"
-      + "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,3})\$");
+  static const String emailPattern = ("^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,3})\$");
 
   static const String O = "o";
   static const String N = "n";

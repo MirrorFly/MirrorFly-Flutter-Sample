@@ -1,6 +1,5 @@
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:mirror_fly_demo/app/data/session_management.dart';
 
@@ -63,7 +62,7 @@ class PushNotifications {
   }
 
   static Future<void> onMessage(RemoteMessage message) async {
-    debugPrint('RemoteMessage'+message.data.toString());
+    debugPrint('RemoteMessage ${message.data}');
     debugPrint('Message data: ${message.data}');
     if (message.notification != null) {
       debugPrint('Message also contained a notification: ${message.notification}');
