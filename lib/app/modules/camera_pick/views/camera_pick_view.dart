@@ -24,7 +24,7 @@ class CameraPickView extends GetView<CameraPickController> {
                     .of(context)
                     .size
                     .height,
-                child: CameraPreview(controller.cameraController),
+                child: CameraPreview(controller.cameraController!),
               ) : const Center(
                 child: CircularProgressIndicator(),
               );
@@ -55,34 +55,40 @@ class CameraPickView extends GetView<CameraPickController> {
                               color: Colors.white,
                             );
                           }),
-                          GestureDetector(
-                            onLongPress: () async {
-                              controller.cameraController.startVideoRecording();
-                              controller.isRecording(true);
-                            },
-                            onLongPressUp: () async {
-                              // to preview
-                            },
-                            onTap: () {
-                              if (!controller.isRecording.value) {
-                                controller.takePhoto(context);
-                              }
-                            },
-                            child: controller.isRecording.value
-                                ? const Icon(
-                              Icons.radio_button_on,
-                              color: Colors.red,
-                              size: 80,
-                            )
-                                : const Icon(
-                              Icons.panorama_fish_eye,
-                              color: Colors.white,
-                              size: 70,
-                            ),
-                          ),
+                          Obx(() {
+                            return GestureDetector(
+                              onLongPress: () async {
+                                controller.cameraController
+                                    ?.startVideoRecording();
+                                controller.isRecording(true);
+                              },
+                              onLongPressUp: () async {
+                                // to preview
+                                controller.stopRecord();
+                              },
+                              onTap: () {
+                                if (!controller.isRecording.value) {
+                                  controller.takePhoto(context);
+                                }
+                              },
+                              child: controller.isRecording.value
+                                  ? const Icon(
+                                Icons.radio_button_on,
+                                color: Colors.red,
+                                size: 80,
+                              )
+                                  : const Icon(
+                                Icons.panorama_fish_eye,
+                                color: Colors.white,
+                                size: 70,
+                              ),
+                            );
+                          }),
                           IconButton(
                               onPressed: () async {
-                                controller.toggleCamera();
+                                if(!controller.isRecording.value) {
+                                  controller.toggleCamera();
+                                }
                               },
                               icon: const Icon(
                                 Icons.flip_camera_ios,

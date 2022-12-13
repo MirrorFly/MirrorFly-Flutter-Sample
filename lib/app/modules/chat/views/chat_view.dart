@@ -50,9 +50,10 @@ class ChatView extends GetView<ChatController> {
                   } else if (MediaQuery.of(context).viewInsets.bottom > 0.0) {
                     //FocusManager.instance.primaryFocus?.unfocus();
                     controller.focusNode.unfocus();
+                  } else if(controller.nJid!=null){
+                    Get.offAllNamed(Routes.dashboard);
+                    //return Future.value(true);
                   } else {
-                    //Get.offAllNamed(Routes.DASHBOARD);
-                    //Get.back();
                     return Future.value(true);
                   }
                   return Future.value(false);

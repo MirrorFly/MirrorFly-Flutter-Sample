@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:mirror_fly_demo/app/common/constants.dart';
 import 'package:video_player/video_player.dart';
 
 import '../../chat/controllers/chat_controller.dart';
@@ -17,8 +18,9 @@ class VideoPreviewController extends GetxController {
 
   TextEditingController caption = TextEditingController();
 
+  var seekTo = const Duration(seconds: 0).obs;
   @override
-  void onInit() {
+  Future<void> onInit() async {
     super.onInit();
     userName = Get.arguments['userName'];
     videoPath = Get.arguments['filePath'];
@@ -27,6 +29,14 @@ class VideoPreviewController extends GetxController {
         // Ensure the first frame is shown after the video is initialized, even before the play button has been pressed.
         isInitialized(true);
       });
+    videoPlayerController.addListener(() {
+      if(!videoPlayerController.value.isPlaying){
+        isPlaying(false);
+        seekTo(const Duration(seconds: 0));
+      }else{
+        isPlaying(videoPlayerController.value.isPlaying);
+      }
+    });
   }
 
 
@@ -38,14 +48,14 @@ class VideoPreviewController extends GetxController {
   }
 
    togglePlay() {
-     if(videoPlayerController.value.isPlaying){
+     if(isPlaying.value){
        videoPlayerController.pause();
+       seekTo(videoPlayerController.value.position);
        isPlaying(false);
      }else{
-
        isPlaying(true);
-       videoPlayerController.play();
-
+       videoPlayerController.seekTo(seekTo.value);
+      videoPlayerController.play();
      }
    }
 

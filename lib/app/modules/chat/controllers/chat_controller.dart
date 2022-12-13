@@ -101,6 +101,7 @@ class ChatController extends GetxController
 
   var profileDetail = Profile();
 
+  String? nJid;
   @override
   void onInit() {
     super.onInit();
@@ -114,7 +115,13 @@ class ChatController extends GetxController
       onready();
       initListeners();
     }else {
-      getProfileDetails(SessionManagement.getChatJid().checkNull()).then((
+      nJid = Get.parameters['jid'];
+      var userJid = SessionManagement.getChatJid().checkNull();
+      debugPrint("parameter :${Get.parameters['jid']}");
+      if(nJid!=null){
+        userJid = Get.parameters['jid'] as String;
+      }
+      getProfileDetails(userJid).then((
           value) {
         SessionManagement.setChatJid("");
         profile_(value);
@@ -1548,14 +1555,29 @@ class ChatController extends GetxController
           :*/ Constants.emptyString
           : userPresenceStatus.toString();
 
-  final ImagePicker _picker = ImagePicker();
+  // final ImagePicker _picker = ImagePicker();
 
   onCameraClick() async {
-    final XFile? photo = await _picker.pickImage(source: ImageSource.camera);
+    Get.toNamed(Routes.cameraPick)?.then((photo){
+      photo as XFile?;
+      if (photo != null) {
+        mirrorFlyLog("photo", photo.name.toString());
+        if(photo.name.endsWith(".mp4")){
+          Get.toNamed(Routes.videoPreview, arguments: {
+            "filePath": photo.path,
+            "userName": profile.name!
+          });
+        }else {
+          Get.toNamed(Routes.imagePreview,
+              arguments: {"filePath": photo.path, "userName": profile.name!});
+        }
+      }
+    });
+    /*final XFile? photo = await _picker.pickImage(source: ImageSource.camera);
     if (photo != null) {
       Get.toNamed(Routes.imagePreview,
           arguments: {"filePath": photo.path, "userName": profile.name!});
-    }
+    }*/
   }
 
   onAudioClick() {
