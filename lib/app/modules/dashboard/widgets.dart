@@ -161,7 +161,7 @@ class RecentChatItem extends StatelessWidget {
                                 visible:!isCheckBoxVisible,
                                 child: Text(
                                   getRecentChatTime(
-                                      context, item.lastMessageTime),
+                                      context, item.lastMessageTime.toInt()),
                                   textAlign: TextAlign.end,
                                   style: TextStyle(
                                       fontSize: 12.0,

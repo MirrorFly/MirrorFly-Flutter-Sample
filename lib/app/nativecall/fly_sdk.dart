@@ -1502,7 +1502,7 @@ class FlyChat {
     dynamic profileResponse;
     try {
       profileResponse = await mirrorFlyMethodChannel.invokeMethod('getUserProfile',{"jid":jid,"server":fromserver,"saveasfriend":saveasfriend});
-      debugPrint("profile Result ==> $profileResponse");
+      debugPrint("getUserProfile Result ==> $profileResponse");
       //insertDefaultStatusToUser();
       return profileResponse;
     }on PlatformException catch (e){
@@ -1518,7 +1518,7 @@ class FlyChat {
     dynamic profileResponse;
     try {
       profileResponse = await mirrorFlyMethodChannel.invokeMethod('getProfileDetails',{"jid":jid, "server" : fromServer});
-      debugPrint("profile Result ==> $profileResponse");
+      debugPrint("getProfileDetails Result ==> $profileResponse");
       return profileResponse;
     }on PlatformException catch (e){
       debugPrint("Platform Exception ===> $e");
@@ -1533,7 +1533,7 @@ class FlyChat {
     dynamic profileResponse;
     try {
       profileResponse = await mirrorFlyMethodChannel.invokeMethod('getUserProfile',{"jid":jid,"server":server});
-      debugPrint("profile Result ==> $profileResponse");
+      debugPrint("getProfileLocal Result ==> $profileResponse");
       return profileResponse;
     }on PlatformException catch (e){
       debugPrint("Platform Exception ===> $e");
@@ -1548,7 +1548,7 @@ class FlyChat {
     dynamic profileResponse;
     try {
       profileResponse = await mirrorFlyMethodChannel.invokeMethod('setMyProfileStatus',{"status":status});
-      debugPrint("profile Result ==> $profileResponse");
+      debugPrint("setMyProfileStatus Result ==> $profileResponse");
       return profileResponse;
     }on PlatformException catch (e){
       debugPrint("Platform Exception ===> $e");
@@ -1563,7 +1563,7 @@ class FlyChat {
     dynamic profileResponse;
     try {
       profileResponse = await mirrorFlyMethodChannel.invokeMethod('updateMyProfileImage',{"image":image});
-      debugPrint("profile Result ==> $profileResponse");
+      debugPrint("updateMyProfileImage Result ==> $profileResponse");
       return profileResponse;
     }on PlatformException catch (e){
       debugPrint("Platform Exception ===> $e");
@@ -1578,7 +1578,7 @@ class FlyChat {
     bool? profileResponse;
     try {
       profileResponse = await mirrorFlyMethodChannel.invokeMethod<bool>('removeProfileImage');
-      debugPrint("profile Result ==> $profileResponse");
+      debugPrint("removeProfileImage Result ==> $profileResponse");
       return profileResponse;
     }on PlatformException catch (e){
       debugPrint("Platform Exception ===> $e");

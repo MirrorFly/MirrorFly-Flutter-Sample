@@ -46,7 +46,7 @@ class ReplyingMessageHeader extends StatelessWidget {
                     padding:
                     const EdgeInsets.only(bottom: 15.0, left: 15.0),
                     child: getReplyMessage(
-                        chatMessage.messageType,
+                        chatMessage.messageType.toUpperCase(),
                         chatMessage.messageTextContent,
                         chatMessage.contactChatMessage
                             ?.contactName,
@@ -61,7 +61,7 @@ class ReplyingMessageHeader extends StatelessWidget {
               children: [
                 getReplyImageHolder(
                     context,
-                    chatMessage.messageType,
+                    chatMessage.messageType.toUpperCase(),
                     chatMessage.mediaChatMessage?.mediaThumbImage,
                     chatMessage.locationChatMessage,
                     70),
@@ -394,7 +394,7 @@ class LocationMessageView extends StatelessWidget {
                 ),
                 Text(
                   getChatTime(
-                      context, chatMessage.messageSentTime),
+                      context, chatMessage.messageSentTime.toInt()),
                   style: const TextStyle(fontSize: 12, color: Colors.black),
                 ),
               ],
@@ -519,7 +519,7 @@ class AudioMessageView extends StatelessWidget {
                 ),
                 Text(
                   getChatTime(
-                      context, chatMessage.messageSentTime),
+                      context, chatMessage.messageSentTime.toInt()),
                   style: const TextStyle(fontSize: 12, color: Colors.black),
                 ),
                 const SizedBox(
@@ -605,7 +605,7 @@ class ContactMessageView extends StatelessWidget {
                   ),
                   Text(
                     getChatTime(
-                        context, chatMessage.messageSentTime),
+                        context, chatMessage.messageSentTime.toInt()),
                     style: const TextStyle(fontSize: 11, color: chatTimeColor),
                   ),
                   const SizedBox(
@@ -694,7 +694,7 @@ class DocumentMessageView extends StatelessWidget {
                   ),
                   Text(
                     getChatTime(
-                        context, chatMessage.messageSentTime),
+                        context, chatMessage.messageSentTime.toInt()),
                     style: const TextStyle(fontSize: 11, color: chatTimeColor),
                   ),
                   const SizedBox(
@@ -822,7 +822,7 @@ class VideoMessageView extends StatelessWidget {
                 ),
                 Text(
                   getChatTime(
-                      context, chatMessage.messageSentTime),
+                      context, chatMessage.messageSentTime.toInt()),
                   style: const TextStyle(fontSize: 11, color: Colors.white),
                 ),
               ],
@@ -882,7 +882,7 @@ class ImageMessageView extends StatelessWidget {
                 ),
                 Text(
                   getChatTime(
-                      context, chatMessage.messageSentTime),
+                      context, chatMessage.messageSentTime.toInt()),
                   style: const TextStyle(fontSize: 11, color: Colors.white),
                 ),
               ],
@@ -994,7 +994,7 @@ class TextMessageView extends StatelessWidget {
                 width: 5,
               ),
               Text(
-                getChatTime(context, chatMessage.messageSentTime),
+                getChatTime(context, chatMessage.messageSentTime.toInt()),
                 style: const TextStyle(fontSize: 11, color: chatTimeColor),
               ),
             ],
@@ -1041,7 +1041,7 @@ class RecalledMessageView extends StatelessWidget {
           Row(
             children: [
               Text(
-                getChatTime(context, chatMessage.messageSentTime),
+                getChatTime(context, chatMessage.messageSentTime.toInt()),
                 style: const TextStyle(fontSize: 12),
               ),
             ],
@@ -1056,11 +1056,11 @@ getMessageIndicator(
     String? messageStatus, bool isSender, String messageType) {
   // debugPrint("Message Type ==> $messageType");
   if (isSender) {
-    if (messageStatus == 'A') {
+    if (messageStatus == 'A' || messageStatus == 'acknowledge') {
       return SvgPicture.asset('assets/logos/acknowledged.svg');
-    } else if (messageStatus == 'D') {
+    } else if (messageStatus == 'D' || messageStatus == 'delivered') {
       return SvgPicture.asset('assets/logos/delivered.svg');
-    } else if (messageStatus == 'S') {
+    } else if (messageStatus == 'S' || messageStatus == 'seen') {
       return SvgPicture.asset('assets/logos/seen.svg');
     } else {
       return const Icon(
@@ -1077,7 +1077,7 @@ getMessageIndicator(
 getImageOverlay(ChatMessageModel chatMessage) {
   if (checkFile(chatMessage.mediaChatMessage!.mediaLocalStoragePath) &&
       chatMessage.messageStatus != 'N') {
-    if (chatMessage.messageType == 'VIDEO') {
+    if (chatMessage.messageType.toUpperCase() == 'VIDEO') {
       return SizedBox(
         width: 80,
         height: 50,
@@ -1087,7 +1087,7 @@ getImageOverlay(ChatMessageModel chatMessage) {
               fit: BoxFit.contain,
             )),
       );
-    } else if (chatMessage.messageType == 'AUDIO') {
+    } else if (chatMessage.messageType.toUpperCase() == 'AUDIO') {
       debugPrint("===============================");
       debugPrint(chatMessage.mediaChatMessage!.isPlaying.toString());
       return chatMessage.mediaChatMessage!.isPlaying
@@ -1110,19 +1110,19 @@ getImageOverlay(ChatMessageModel chatMessage) {
             chatMessage.mediaChatMessage!.mediaDownloadStatus,
             chatMessage.mediaChatMessage!.mediaFileSize,
             Icons.download_sharp,
-            chatMessage.messageType);
+            chatMessage.messageType.toUpperCase());
       case Constants.mediaUploadedNotAvailable:
         return getFileInfo(
             chatMessage.mediaChatMessage!.mediaDownloadStatus,
             chatMessage.mediaChatMessage!.mediaFileSize,
             Icons.upload_sharp,
-            chatMessage.messageType);
+            chatMessage.messageType.toUpperCase());
 
       case Constants.mediaNotUploaded:
       case Constants.mediaDownloading:
       case Constants.mediaUploading:
-        if (chatMessage.messageType == 'AUDIO' ||
-            chatMessage.messageType == 'DOCUMENT') {
+        if (chatMessage.messageType.toUpperCase() == 'AUDIO' ||
+            chatMessage.messageType.toUpperCase() == 'DOCUMENT') {
           return InkWell(
               onTap: () {
                 debugPrint(chatMessage.messageId);

@@ -4,8 +4,8 @@ import FlyCore
 import FlyCommon
 import GoogleMaps
 
-let BASE_URL = "https://api-uikit-qa.contus.us/api/v1/"
-let LICENSE_KEY = "ckIjaccWBoMNvxdbql8LJ2dmKqT5bp"
+var BASE_URL = "https://api-uikit-qa.contus.us/api/v1/"
+var LICENSE_KEY = "ckIjaccWBoMNvxdbql8LJ2dmKqT5bp"
 let XMPP_DOMAIN = "xmpp-preprod-sandbox.mirrorfly.com"
 let XMPP_PORT = 5222
 let SOCKETIO_SERVER_HOST = "https://signal-preprod-sandbox.mirrorfly.com/"
@@ -77,7 +77,11 @@ let onSuccess_channel = "contus.mirrorfly/onSuccess"
 @objc class AppDelegate: FlutterAppDelegate, LogoutDelegate, GroupEventsDelegate, ConnectionEventDelegate{
     
     let MESSAGE_ONRECEIVED_CHANNEL = "contus.mirrorfly/onMessageReceived"
-    var streamHandler: MessageReceivedStreamHandler?
+    var messageReceivedStreamHandler: MessageReceivedStreamHandler?
+    var messageStatusUpdatedStreamHandler: MessageStatusUpdatedStreamHandler?
+    var mediaStatusUpdatedStreamHandler: MediaStatusUpdatedStreamHandler?
+    var uploadDownloadProgressChangedStreamHandler: UploadDownloadProgressChangedStreamHandler?
+    var showOrUpdateOrCancelNotificationStreamHandler: ShowOrUpdateOrCancelNotificationStreamHandler?
     
     func onConnected() {
         print("======sdk connected=======")
@@ -168,11 +172,26 @@ let onSuccess_channel = "contus.mirrorfly/onSuccess"
     didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
   ) -> Bool {
       
+//      #if LOCAL || DEBUG || DEV
+//      BASE_URL = "https://api-uikit-qa.contus.us/api/v1/"
+//      LICENSE_KEY = "ckIjaccWBoMNvxdbql8LJ2dmKqT5bp"
+//
+//      #elseif QA
+//      BASE_URL = "https://api-uikit-dev.contus.us/api/v1/"
+//      LICENSE_KEY = "ckIjaccWBoMNvxdbql8LJ2dmKqT5bp"
+//
+//      #endif
+      
       let groupConfig = try? GroupConfig.Builder.enableGroupCreation(groupCreation: true)
           .onlyAdminCanAddOrRemoveMembers(adminOnly: true)
           .setMaximumMembersInAGroup(membersCount: 200)
           .build()
       assert(groupConfig != nil)
+      
+      print("============================")
+      print(BASE_URL)
+      print("============================")
+      
 
       try? ChatSDK.Builder.setAppGroupContainerID(containerID: CONTAINER_ID)
           .setLicenseKey(key: LICENSE_KEY)
@@ -188,16 +207,17 @@ let onSuccess_channel = "contus.mirrorfly/onSuccess"
       
       FlyMethodChannel.prepareMethodHandler(methodChannel: methodChannel)
       
-      let messageReceivedEventChannel = FlutterEventChannel(name: MESSAGE_ONRECEIVED_CHANNEL, binaryMessenger: controller.binaryMessenger)
       
-      if (self.streamHandler == nil) {
-          self.streamHandler = MessageReceivedStreamHandler()
+      if (self.messageReceivedStreamHandler == nil) {
+          self.messageReceivedStreamHandler = MessageReceivedStreamHandler()
         }
               
-      messageReceivedEventChannel.setStreamHandler((self.streamHandler as! FlutterStreamHandler & NSObjectProtocol))
+      FlutterEventChannel(name: MESSAGE_ONRECEIVED_CHANNEL, binaryMessenger: controller.binaryMessenger).setStreamHandler((self.messageReceivedStreamHandler as! FlutterStreamHandler & NSObjectProtocol))
 
-      
-      FlutterEventChannel(name: MESSAGE_STATUS_UPDATED_CHANNEL, binaryMessenger: controller.binaryMessenger).setStreamHandler(MessageStatusUpdatedStreamHandler())
+      if (self.messageStatusUpdatedStreamHandler == nil) {
+          self.messageStatusUpdatedStreamHandler = MessageStatusUpdatedStreamHandler()
+        }
+      FlutterEventChannel(name: MESSAGE_STATUS_UPDATED_CHANNEL, binaryMessenger: controller.binaryMessenger).setStreamHandler((self.messageStatusUpdatedStreamHandler!))
       
       FlutterEventChannel(name: MEDIA_STATUS_UPDATED_CHANNEL, binaryMessenger: controller.binaryMessenger).setStreamHandler(MediaStatusUpdatedStreamHandler())
       
@@ -336,8 +356,8 @@ extension AppDelegate : MessageEventsDelegate {
         print("Message Received Update--->")
         print(JSONSerializer.toJson(message))
         
-        if(self.streamHandler?.onMessageReceived != nil){
-            self.streamHandler?.onMessageReceived?(JSONSerializer.toJson(message))
+        if(self.messageReceivedStreamHandler?.onMessageReceived != nil){
+            self.messageReceivedStreamHandler?.onMessageReceived?(JSONSerializer.toJson(message))
 
         }else{
             print("Message Stream Handler is Nil")
@@ -346,13 +366,25 @@ extension AppDelegate : MessageEventsDelegate {
     }
     
     func onMessageStatusUpdated(messageId: String, chatJid: String, status: FlyCommon.MessageStatus) {
-        guard let messageStatusEventSink = MessageStatusUpdatedStreamHandler().onMessageStatusUpdated else {
-             return
-           }
-        var chatMessage = FlyMessenger.getMessageOfId(messageId: messageId)
+        
+        let chatMessage = FlyMessenger.getMessageOfId(messageId: messageId)
         print("Message Status Update--->")
-        print(JSONSerializer.toJson(chatMessage as Any))
-        messageStatusEventSink(JSONSerializer.toJson(chatMessage as Any))
+        var chatMessageJson = JSONSerializer.toJson(chatMessage as Any)
+        
+        chatMessageJson = chatMessageJson.replacingOccurrences(of: "{\"some\":", with: "")
+        chatMessageJson = chatMessageJson.replacingOccurrences(of: "}}", with: "}")
+        print(chatMessageJson)
+        
+        if(self.messageStatusUpdatedStreamHandler?.onMessageStatusUpdated != nil){
+            self.messageStatusUpdatedStreamHandler?.onMessageStatusUpdated?(chatMessageJson)
+
+        }else{
+            print("Message Stream Handler is Nil")
+        }
+//        var chatMessage = FlyMessenger.getMessageOfId(messageId: messageId)
+//        print("Message Status Update--->")
+//        print(JSONSerializer.toJson(chatMessage as Any))
+//        messageStatusEventSink(JSONSerializer.toJson(chatMessage as Any))
     }
     
     func onMediaStatusUpdated(message: FlyCommon.ChatMessage) {

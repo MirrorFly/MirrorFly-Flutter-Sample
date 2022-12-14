@@ -171,7 +171,7 @@ class ChatSearchView extends GetView<ChatController> {
                 ),
                 Text(
                   controller.getChatTime(
-                      context, chatList[index].messageSentTime),
+                      context, chatList[index].messageSentTime.toInt()),
                   style: const TextStyle(fontSize: 12),
                 ),
               ],
@@ -236,7 +236,7 @@ class ChatSearchView extends GetView<ChatController> {
                   ),
                   Text(
                     controller.getChatTime(
-                        context, chatList[index].messageSentTime),
+                        context, chatList[index].messageSentTime.toInt()),
                     style: const TextStyle(fontSize: 12, color: Colors.white),
                   ),
                 ],
@@ -302,7 +302,7 @@ class ChatSearchView extends GetView<ChatController> {
                   ),
                   Text(
                     controller.getChatTime(
-                        context, chatList[index].messageSentTime),
+                        context, chatList[index].messageSentTime.toInt()),
                     style: const TextStyle(fontSize: 12, color: Colors.white),
                   ),
                 ],
@@ -382,7 +382,7 @@ class ChatSearchView extends GetView<ChatController> {
                     ),
                     Text(
                       controller.getChatTime(
-                          context, chatList[index].messageSentTime),
+                          context, chatList[index].messageSentTime.toInt()),
                       style: const TextStyle(fontSize: 12, color: Colors.black),
                     ),
                     const SizedBox(
@@ -464,7 +464,7 @@ class ChatSearchView extends GetView<ChatController> {
                     ),
                     Text(
                       controller.getChatTime(
-                          context, chatList[index].messageSentTime),
+                          context, chatList[index].messageSentTime.toInt()),
                       style: const TextStyle(fontSize: 12, color: Colors.black),
                     ),
                     const SizedBox(
@@ -593,7 +593,7 @@ class ChatSearchView extends GetView<ChatController> {
                   ),
                   Text(
                     controller.getChatTime(
-                        context, chatList[index].messageSentTime),
+                        context, chatList[index].messageSentTime.toInt()),
                     style: const TextStyle(fontSize: 12, color: Colors.black),
                   ),
                   const SizedBox(
@@ -643,7 +643,7 @@ class ChatSearchView extends GetView<ChatController> {
                   ),
                   Text(
                     controller.getChatTime(
-                        context, chatList[index].messageSentTime),
+                        context, chatList[index].messageSentTime.toInt()),
                     style: const TextStyle(fontSize: 12, color: Colors.black),
                   ),
                 ],

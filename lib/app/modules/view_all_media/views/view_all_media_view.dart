@@ -188,7 +188,7 @@ class ViewAllMediaView extends GetView<ViewAllMediaController> {
                                 .toString()),
                             //item.mediaChatMessage!.mediaFileSize.readableFileSize(base1024: false),
                             date: getDateFromTimestamp(
-                                item.messageSentTime, "d/MM/yy"),
+                                item.messageSentTime.toInt(), "d/MM/yy"),
                             path: item.mediaChatMessage!.mediaLocalStoragePath)
                         : linkTile(list[header]![listIndex]);
                   })

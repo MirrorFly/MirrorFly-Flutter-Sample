@@ -73,7 +73,7 @@ class _MessageContentState extends State<MessageContent> {
                 ),
                 Text(
                   getChatTime(
-                      context, chatList.messageSentTime),
+                      context, chatList.messageSentTime.toInt()),
                   style: const TextStyle(fontSize: 12),
                 ),
               ],
@@ -143,7 +143,7 @@ class _MessageContentState extends State<MessageContent> {
                   ),
                   Text(
                     getChatTime(
-                        context, chatList.messageSentTime),
+                        context, chatList.messageSentTime.toInt()),
                     style: const TextStyle(fontSize: 12, color: Colors.white),
                   ),
                 ],
@@ -209,7 +209,7 @@ class _MessageContentState extends State<MessageContent> {
                   ),
                   Text(
                     getChatTime(
-                        context, chatList.messageSentTime),
+                        context, chatList.messageSentTime.toInt()),
                     style: const TextStyle(fontSize: 12, color: Colors.white),
                   ),
                 ],
@@ -290,7 +290,7 @@ class _MessageContentState extends State<MessageContent> {
                     ),
                     Text(
                       getChatTime(
-                          context, chatList.messageSentTime),
+                          context, chatList.messageSentTime.toInt()),
                       style: const TextStyle(fontSize: 12, color: Colors.black),
                     ),
                     const SizedBox(
@@ -371,7 +371,7 @@ class _MessageContentState extends State<MessageContent> {
                     ),
                     Text(
                       getChatTime(
-                          context, chatList.messageSentTime),
+                          context, chatList.messageSentTime.toInt()),
                       style: const TextStyle(fontSize: 12, color: Colors.black),
                     ),
                     const SizedBox(
@@ -500,7 +500,7 @@ class _MessageContentState extends State<MessageContent> {
                   ),
                   Text(
                     getChatTime(
-                        context, chatList.messageSentTime),
+                        context, chatList.messageSentTime.toInt()),
                     style: const TextStyle(fontSize: 12, color: Colors.black),
                   ),
                   const SizedBox(
@@ -550,7 +550,7 @@ class _MessageContentState extends State<MessageContent> {
                   ),
                   Text(
                     getChatTime(
-                        context, chatList.messageSentTime),
+                        context, chatList.messageSentTime.toInt()),
                     style: const TextStyle(fontSize: 12, color: Colors.black),
                   ),
                 ],

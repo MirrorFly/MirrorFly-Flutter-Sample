@@ -49,7 +49,7 @@ class _StarredMessageHeaderState extends State<StarredMessageHeader> {
     if (chatList.isMessageSentByMe) {
       return Row(
         children: [
-          getChatTime(chatList.messageSentTime),
+          getChatTime(chatList.messageSentTime.toInt()),
           const Spacer(),
           Obx(() {
             return Text("You --> ${userProfile.value.name}", style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15),);
@@ -68,7 +68,7 @@ class _StarredMessageHeaderState extends State<StarredMessageHeader> {
             return Text("${userProfile.value.name} --> You", style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15),);
           }),
           const Spacer(),
-          getChatTime(chatList.messageSentTime),
+          getChatTime(chatList.messageSentTime.toInt()),
         ],
       );
     }

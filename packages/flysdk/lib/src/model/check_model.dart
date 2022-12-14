@@ -75,7 +75,7 @@ class CheckModel {
     isSelected: json["isSelected"],
     isThisAReplyMessage: json["isThisAReplyMessage"],
     mediaChatMessage: MediaChatMessage.fromJson(json["mediaChatMessage"]),
-    messageChatType: json["messageChatType"],
+    messageChatType: json["messageChatType"] == "singleChat" ? "chat" : json["messageChatType"].toLowerCase(),
     // messageCustomField: MessageCustomField.fromJson(json["messageCustomField"]),
     messageId: json["messageId"],
     messageSentTime: json["messageSentTime"],

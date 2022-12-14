@@ -176,7 +176,9 @@ toToast(String text) {
 }
 mirrorFlyLog(String tag,String msg){
   if (kDebugMode) {
-    print("MirrorFly : $tag ==> $msg");
+    // print("MirrorFly : $tag ==> $msg");
+    final pattern = RegExp('.{1,800}'); // 800 is the size of each chunk
+    pattern.allMatches(msg).forEach((match) => print("MirrorFly : $tag==>${match.group(0)}"));
   }
 }
 class Constants {
@@ -417,6 +419,9 @@ class Constants {
   static const int mediaUploading = 1;
   static const int mediaUploaded = 2;
   static const int mediaUploadedNotAvailable = 7;
+
+  static const int mediaDownloadFailed = 401;
+  static const int mediaUploadFailed = 401;
 
 
   static const double borderRadius = 27;

@@ -306,7 +306,7 @@ class RecentSearchView extends GetView<RecentChatSearchController> {
                                           child: Text(
                                             getRecentChatTime(
                                                 context,
-                                                item.messageSentTime),
+                                                item.messageSentTime.toInt()),
                                             textAlign: TextAlign.end,
                                             style: TextStyle(
                                                 fontSize: 12.0,

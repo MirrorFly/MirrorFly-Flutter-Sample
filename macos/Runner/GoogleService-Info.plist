@@ -3,23 +3,23 @@
 <plist version="1.0">
 <dict>
 	<key>CLIENT_ID</key>
-	<string>235373697524-mlgfb575p2b6qo5n5nholplitf0d5k1f.apps.googleusercontent.com</string>
+	<string>1045831384770-od86edts5jinp5fg6e1t7qkf707rugrm.apps.googleusercontent.com</string>
 	<key>REVERSED_CLIENT_ID</key>
-	<string>com.googleusercontent.apps.235373697524-mlgfb575p2b6qo5n5nholplitf0d5k1f</string>
+	<string>com.googleusercontent.apps.1045831384770-od86edts5jinp5fg6e1t7qkf707rugrm</string>
 	<key>ANDROID_CLIENT_ID</key>
-	<string>235373697524-00ffa2b0fnuqiaq8lrsm4dngutag4gsi.apps.googleusercontent.com</string>
+	<string>1045831384770-aa561p9dbh0467tsg3395ufeleu162k4.apps.googleusercontent.com</string>
 	<key>API_KEY</key>
-	<string>AIzaSyDhRJWHV0kpw0UE30ymMahK0Fzmq6OaYbQ</string>
+	<string>AIzaSyBy7JDQj6Ar03dMXFCQ-SHgBdBPnKAteG4</string>
 	<key>GCM_SENDER_ID</key>
-	<string>235373697524</string>
+	<string>1045831384770</string>
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
-	<string>com.mirrorfly.uikitflutter.qa</string>
+	<string>com.contusdemo.mirrorFlyDemo</string>
 	<key>PROJECT_ID</key>
-	<string>mirrorfly-uikit-qa</string>
+	<string>mirrorfly-uikit-dev</string>
 	<key>STORAGE_BUCKET</key>
-	<string>mirrorfly-uikit-qa.appspot.com</string>
+	<string>mirrorfly-uikit-dev.appspot.com</string>
 	<key>IS_ADS_ENABLED</key>
 	<false></false>
 	<key>IS_ANALYTICS_ENABLED</key>
@@ -31,6 +31,6 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:235373697524:ios:2d40908026b55394a0c1a1</string>
+	<string>1:1045831384770:ios:8e3466b1aa07bd5811455b</string>
 </dict>
 </plist>

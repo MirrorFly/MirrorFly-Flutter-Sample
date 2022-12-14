@@ -70,7 +70,7 @@ class FlyMethodChannel{
                 FlySdkMethodCalls.deleteAllMessages(call: call, result: result)
             case "getGroupJid":
                 FlySdkMethodCalls.getGroupJid(call: call, result: result)
-            case "getProfileDetails":
+            case "getProfileDetails"://replacing the method because receiving null value from recent dashboard
                 FlySdkMethodCalls.getProfileDetails(call: call, result: result)
             case "getProfileStatusList":
                 FlySdkMethodCalls.getProfileStatusList(call: call, result: result)

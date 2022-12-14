@@ -27,9 +27,9 @@ open class JSONSerializer {
     
     /**
     Errors that indicates failures of JSONSerialization
-    - JsonIsNotDictionary:	-
-    - JsonIsNotArray:			-
-    - JsonIsNotValid:			-
+    - JsonIsNotDictionary:    -
+    - JsonIsNotArray:            -
+    - JsonIsNotValid:            -
     */
     public enum JSONSerializerError: Error {
         case jsonIsNotDictionary
@@ -40,7 +40,7 @@ open class JSONSerializer {
     //http://stackoverflow.com/questions/30480672/how-to-convert-a-json-string-to-a-dictionary
     /**
     Tries to convert a JSON string to a NSDictionary. NSDictionary can be easier to work with, and supports string bracket referencing. E.g. personDictionary["name"].
-    - parameter jsonString:	JSON string to be converted to a NSDictionary.
+    - parameter jsonString:    JSON string to be converted to a NSDictionary.
     - throws: Throws error of type JSONSerializerError. Either JsonIsNotValid or JsonIsNotDictionary. JsonIsNotDictionary will typically be thrown if you try to parse an array of JSON objects.
     - returns: A NSDictionary representation of the JSON string.
     */
@@ -54,7 +54,7 @@ open class JSONSerializer {
     
     /**
     Tries to convert a JSON string to a NSArray. NSArrays can be iterated and each item in the array can be converted to a NSDictionary.
-    - parameter jsonString:	The JSON string to be converted to an NSArray
+    - parameter jsonString:    The JSON string to be converted to an NSArray
     - throws: Throws error of type JSONSerializerError. Either JsonIsNotValid or JsonIsNotArray. JsonIsNotArray will typically be thrown if you try to parse a single JSON object.
     - returns: NSArray representation of the JSON objects.
     */
@@ -68,7 +68,7 @@ open class JSONSerializer {
     
     /**
     Tries to convert a JSON string to AnyObject. AnyObject can then be casted to either NSDictionary or NSArray.
-    - parameter jsonString:	JSON string to be converted to AnyObject
+    - parameter jsonString:    JSON string to be converted to AnyObject
     - throws: Throws error of type JSONSerializerError.
     - returns: Returns the JSON string as AnyObject
     */
@@ -90,7 +90,7 @@ open class JSONSerializer {
 
     /**
     Generates the JSON representation given any custom object of any custom class. Inherited properties will also be represented.
-    - parameter object:	The instantiation of any custom class to be represented as JSON.
+    - parameter object:    The instantiation of any custom class to be represented as JSON.
     - returns: A string JSON representation of the object.
     */
     public static func toJson(_ object: Any, prettify: Bool = false) -> String {
@@ -112,28 +112,51 @@ open class JSONSerializer {
         
         var currentMirror = mirror
         while let superclassChildren = currentMirror.superclassMirror?.children {
+            
+            if let mirrorChildrenCollection = AnyRandomAccessCollection(superclassChildren) {
+                children += mirrorChildrenCollection
+            }
+            else {
+                let mirrorIndexCollection = AnyCollection(superclassChildren)
+                children += mirrorIndexCollection
+            }
             let randomCollection = AnyRandomAccessCollection(superclassChildren)!
-            children += randomCollection
+            
+           // children += randomCollection
             currentMirror = currentMirror.superclassMirror!
+            print("children count \(children.count)")
+            
         }
         
         var filteredChildren = [(label: String?, value: Any)]()
         
         for (optionalPropertyName, value) in children {
+            print("optionalPropertyName")
+            if optionalPropertyName == "mediaChatMessage" {
+                print("Media value")
+            }
+            
+           // for (optionalPropertyName, value) in children {
+//                            if !optionalPropertyName!.contains("notMapped_") {
+//                                filteredChildren += [(optionalPropertyName, value)]
+//                            }
+                       // }
 
             if let optionalPropertyName = optionalPropertyName {
 
                 if !optionalPropertyName.contains("notMapped_") {
                     filteredChildren.append((optionalPropertyName, value))
                 }
-                
+
             }
             else {
                 filteredChildren.append((nil, value))
             }
         }
         
+        
         var skip = false
+        var hasChildren = false
         let size = filteredChildren.count
         var index = 0
         
@@ -145,12 +168,75 @@ open class JSONSerializer {
             let propertyName = optionalPropertyName
             let property = Mirror(reflecting: value)
             
+            if propertyName == "mediaChatMessage" {
+                print("Media value \(value)")
+            }
+            
+        if let mirrorChildrenCollection = AnyRandomAccessCollection(property.children), mirrorChildrenCollection.count > 0 {
+           // if let superclassChildren = property.superclassMirror?.children, superclassChildren.count > 0 {
+               // hasChildren = true
+            }
+           
+            
+//            var isObject = false
+//            let mirrorChildren = Mirror(reflecting: value)
+//
+//            var childrenChildren = [(label: String?, value: Any)]()
+//
+//            if let mirrorChildrenCollection = AnyRandomAccessCollection(mirrorChildren.children) {
+//                childrenChildren += mirrorChildrenCollection
+//                isObject = true
+//            }
+//            else {
+//                let mirrorIndexCollection = AnyCollection(mirrorChildren.children)
+//                childrenChildren += mirrorIndexCollection
+//                isObject = true
+//            }
+//
+//            var currentMirror = mirror
+//            while let superclassChildren = currentMirror.superclassMirror?.children {
+//                let randomCollection = AnyRandomAccessCollection(superclassChildren)!
+//                childrenChildren += randomCollection
+//                currentMirror = currentMirror.superclassMirror!
+//                isObject = true
+//            }
+//
+//
+//
+//            var filteredChildren = [(label: String?, value: Any)]()
+//
+//            for (optionalPropertyName, value) in children {
+//
+//                if let optionalPropertyName = optionalPropertyName {
+//
+//                    if !optionalPropertyName.contains("notMapped_") {
+//                        filteredChildren.append((optionalPropertyName, value))
+//                    }
+//
+//                }
+//                else {
+//                    filteredChildren.append((nil, value))
+//                }
+//            }
+            
+            
+            
             var handledValue = String()
             
-            if propertyName != nil && propertyName == "some" && property.displayStyle == Mirror.DisplayStyle.struct {
+//            if isObject == true {
+//                JSONSerializer.toJson(value)
+//                skip = true
+//            }
+            
+            print("property displaytype \(String(describing: property.displayStyle))")
+            if (propertyName != nil && propertyName == "some" && property.displayStyle == Mirror.DisplayStyle.struct){
                 handledValue = toJson(value)
                 skip = true
             }
+//            else if property.displayStyle == Mirror.DisplayStyle. {
+//                handledValue = toJson(value)
+//                skip = true
+//            }
             else if (value is Int ||
                      value is Int32 ||
                      value is Int64 ||
@@ -229,8 +315,14 @@ open class JSONSerializer {
             }
             else if property.displayStyle == Mirror.DisplayStyle.class ||
                 property.displayStyle == Mirror.DisplayStyle.struct ||
-                String(describing: value).contains("#") {
+                        String(describing: value).contains("#")   {
                 handledValue = toJson(value)
+            }
+            else if (propertyName == "mediaChatMessage" || propertyName == "contactChatMessage" || propertyName == "locationChatMessage") &&  String(describing: value) != "nil" {
+               // let refined = String(describing: value).replacingOccurrences(of: "some", with: "")
+                let force =  value
+                handledValue = toJson(force)
+                
             }
             else if property.displayStyle == Mirror.DisplayStyle.optional {
                 let str = String(describing: value)
@@ -247,10 +339,14 @@ open class JSONSerializer {
                 }
             }
             else {
-                handledValue = String(describing: value) != "nil" ? "\"\(value)\"" : "null"
+               
+                    handledValue = String(describing: value) != "nil" ? "\"\(value)\"" : "null"
+                
             }
             
-            if !skip {
+           
+            
+           if !skip {
                 
                 // if optional propertyName is populated we'll use it
                 if let propertyName = propertyName {
@@ -274,7 +370,7 @@ open class JSONSerializer {
             index += 1
         }
         
-        if !skip {
+        if !skip  {
             if (!(object is Array<Any>)) {
                 json += "}"
             }
@@ -289,6 +385,5 @@ open class JSONSerializer {
         
         return json
     }
-    
     
 }

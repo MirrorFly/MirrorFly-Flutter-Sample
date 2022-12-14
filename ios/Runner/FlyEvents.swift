@@ -22,37 +22,17 @@ public class MessageReceivedStreamHandler: FlutterStreamHandler {
         return nil
     }
     
-//    public init(id: String, messenger: FlutterBinaryMessenger) {
-//            super.init()
-//            let eventChannel = FlutterEventChannel(name: id, binaryMessenger: messenger)
-//            eventChannel.setStreamHandler(self)
-//        }
-//    
-//    public func success(event: Any?) throws {
-//        if self.onMessageReceived != nil {
-//            self.onMessageReceived?(event)
-//            }else{
-//                print("====Event Sink is Nil====")
-//            }
-//        }
-//
-//        public func error(code: String, message: String?, details: Any? = nil) {
-//            if self.onMessageReceived != nil {
-//                self.onMessageReceived?(FlutterError(code: code, message: message, details: details))
-//            }
-//        }
-
 }
 class MessageStatusUpdatedStreamHandler: NSObject, FlutterStreamHandler {
     public var onMessageStatusUpdated: FlutterEventSink?
     
     public func onListen(withArguments arguments: Any?, eventSink events: @escaping FlutterEventSink) -> FlutterError? {
-        onMessageStatusUpdated = events
+        self.onMessageStatusUpdated = events
         return nil
     }
 
     public func onCancel(withArguments arguments: Any?) -> FlutterError? {
-        onMessageStatusUpdated = nil
+        self.onMessageStatusUpdated = nil
         return nil
     }
 }

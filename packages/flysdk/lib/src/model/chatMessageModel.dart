@@ -79,7 +79,7 @@ class ChatMessageModel {
     isMessageStarred: json["isMessageStarred"],
     isSelected: json["isSelected"] ?? false,
     isThisAReplyMessage: Platform.isAndroid ? json["isThisAReplyMessage"] : json["isReplyMessage"],
-    messageChatType: json["messageChatType"],
+    messageChatType: json["messageChatType"] == "singleChat" ? "chat" : json["messageChatType"].toLowerCase(),
     messageCustomField: json["replyParentChatMessage"] == null ? null : MessageCustomField.fromJson(json["messageCustomField"]),
     messageId: json["messageId"],
     messageSentTime: json["messageSentTime"],
@@ -219,19 +219,19 @@ class MediaChatMessage {
   bool isPlaying;
 
   factory MediaChatMessage.fromJson(Map<String, dynamic> json) => MediaChatMessage(
-    isAudioRecorded: json["isAudioRecorded"],
-    mediaCaptionText: json["mediaCaptionText"],
-    mediaDownloadStatus: json["mediaDownloadStatus"],
+    isAudioRecorded: json["isAudioRecorded"] ?? false,
+    mediaCaptionText: json["mediaCaptionText"] ?? "",
+    mediaDownloadStatus: json["mediaDownloadStatus"] == "not_downloaded" ? 5 : json["mediaDownloadStatus"] == "downloading" ? 3 : json["mediaDownloadStatus"] == "downloaded" ? 4 : json["mediaDownloadStatus"] == "not_available" ? 6 : json["mediaDownloadStatus"] == "failed" ? 401 : json["mediaDownloadStatus"],
     mediaDuration: json["mediaDuration"],
-    mediaFileHeight: json["mediaFileHeight"],
+    mediaFileHeight: json["mediaFileHeight"] ?? 0,
     mediaFileName: json["mediaFileName"],
     mediaFileSize: json["mediaFileSize"],
     mediaFileType: json["mediaFileType"],
-    mediaFileWidth: json["mediaFileWidth"],
+    mediaFileWidth: json["mediaFileWidth"] ?? 0,
     mediaLocalStoragePath: json["mediaLocalStoragePath"],
     mediaProgressStatus: json["mediaProgressStatus"],
     mediaThumbImage: json["mediaThumbImage"],
-    mediaUploadStatus: json["mediaUploadStatus"],
+    mediaUploadStatus: json["mediaUploadStatus"] == "not_uploaded" ? 0 : json["mediaUploadStatus"] == "uploading" ? 1 : json["mediaUploadStatus"] == "uploaded" ? 2 : json["mediaUploadStatus"] == "not_available" ? 7 : json["mediaUploadStatus"] == "failed" ? 401 : json["mediaUploadStatus"],
     messageId: json["messageId"],
     messageType: json["messageType"],
     isPlaying: false,
@@ -306,7 +306,7 @@ class ReplyParentChatMessage {
   bool isMessageSentByMe;
   bool isMessageStarred;
   String messageId;
-  int messageSentTime;
+  dynamic messageSentTime;
   String? messageTextContent;
   String messageType;
   String senderNickName;

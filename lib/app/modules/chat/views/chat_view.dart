@@ -553,15 +553,16 @@ class ChatView extends GetView<ChatController> {
   getMessageContent(
       int index, BuildContext context, List<ChatMessageModel> chatList) {
     debugPrint(json.encode(chatList[index]));
+    debugPrint("Message Type===> ${chatList[index].messageType}");
     var chatMessage = chatList[index];
     if (chatList[index].isMessageRecalled) {
       return RecalledMessageView(
         chatMessage: chatMessage,
       );
     } else {
-      if (chatList[index].messageType == Constants.mText) {
+      if (chatList[index].messageType.toUpperCase() == Constants.mText) {
         return TextMessageView(chatMessage: chatMessage);
-      } else if (chatList[index].messageType == Constants.mNotification) {
+      } else if (chatList[index].messageType.toUpperCase() == Constants.mNotification) {
         return NotificationMessageView(chatMessage: chatMessage);
       } else if (chatList[index].messageType.toUpperCase() ==
           Constants.mLocation) {
@@ -569,7 +570,7 @@ class ChatView extends GetView<ChatController> {
           return const SizedBox.shrink();
         }
         return LocationMessageView(chatMessage: chatMessage);
-      } else if (chatList[index].messageType == Constants.mContact) {
+      } else if (chatList[index].messageType.toUpperCase() == Constants.mContact) {
         if (chatList[index].contactChatMessage == null) {
           return const SizedBox.shrink();
         }
@@ -578,7 +579,7 @@ class ChatView extends GetView<ChatController> {
         if (chatList[index].mediaChatMessage == null) {
           return const SizedBox.shrink();
         } else {
-          if (chatList[index].messageType == Constants.mImage) {
+          if (chatList[index].messageType.toUpperCase() == Constants.mImage) {
             return ImageMessageView(
                 chatMessage: chatMessage,
                 onTap: () {
@@ -586,7 +587,7 @@ class ChatView extends GetView<ChatController> {
                       chatMessage.mediaChatMessage!.mediaDownloadStatus,
                       chatList[index]);
                 });
-          } else if (chatList[index].messageType == Constants.mVideo) {
+          } else if (chatList[index].messageType.toUpperCase() == Constants.mVideo) {
             return VideoMessageView(
                 chatMessage: chatMessage,
                 onTap: () {
@@ -594,7 +595,7 @@ class ChatView extends GetView<ChatController> {
                       chatMessage.mediaChatMessage!.mediaDownloadStatus,
                       chatList[index]);
                 });
-          } else if (chatList[index].messageType == Constants.mDocument) {
+          } else if (chatList[index].messageType.toUpperCase() == Constants.mDocument || chatList[index].messageType.toUpperCase() == Constants.mFile) {
             return DocumentMessageView(
                 chatMessage: chatMessage,
                 onTap: () {
@@ -602,7 +603,7 @@ class ChatView extends GetView<ChatController> {
                       chatMessage.mediaChatMessage!.mediaDownloadStatus,
                       chatList[index]);
                 });
-          } else if (chatList[index].messageType == Constants.mAudio) {
+          } else if (chatList[index].messageType.toUpperCase() == Constants.mAudio) {
             return AudioMessageView(
                 chatMessage: chatMessage,
                 onTap: () {

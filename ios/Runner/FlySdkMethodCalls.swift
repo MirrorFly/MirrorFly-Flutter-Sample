@@ -190,8 +190,12 @@ import Photos
           if isSuccess {
               print("Send Image--->")
               print(message as Any)
-              print(JSONSerializer.toJson(message as Any))
-              result(JSONSerializer.toJson(message as Any))
+              
+              var response = JSONSerializer.toJson(message as Any)
+              response = response.replacingOccurrences(of: "{\"some\":", with: "")
+              response = response.replacingOccurrences(of: "}}", with: "}")
+              print(response)
+              result(response)
           }else{
               print("<---Send Image Failed--->")
           }
@@ -653,12 +657,16 @@ import Photos
         print("Get Messages of JID --->")
         var userChatHistory = JSONSerializer.toJson(messages)
         
+        userChatHistory = userChatHistory.replacingOccurrences(of: "{\"some\":", with: "")
+        userChatHistory = userChatHistory.replacingOccurrences(of: "}}", with: "}")
+        
+        
 //        let json = try! DSON.
 //        print("====DSON=====")
 //        print(json)
 //        print("====DSON=====")
         
-        userChatHistory = userChatHistory.replacingOccurrences(of: "\"messageStatus\":", with: "\"iosMessageStatus\":")
+//        userChatHistory = userChatHistory.replacingOccurrences(of: "\"messageStatus\":", with: "\"iosMessageStatus\":")
         print(userChatHistory)
         result(userChatHistory)
         
@@ -793,7 +801,11 @@ import Photos
         
         let jid = args["jid"] as? String ?? nil
         let recentChat = ChatManager.getRecentChatOf(jid:jid!)
-        result(recentChat)
+        
+        var recentChatJson = JSONSerializer.toJson(recentChat as Any)
+        recentChatJson = recentChatJson.replacingOccurrences(of: "{\"some\":", with: "")
+        recentChatJson = recentChatJson.replacingOccurrences(of: "}}", with: "}")
+        result(recentChatJson)
     }
     static func recentChatPinnedCount(call: FlutterMethodCall, result: @escaping FlutterResult){
         let recentPinCount = ChatManager.recentChatPinnedCount()
@@ -838,12 +850,14 @@ import Photos
         
         let userJid = args["jid"] as? String ?? ""
         print(userJid)
-        let userProfile = ChatManager.profileDetaisFor(jid: userJid)
+        var userProfile = ChatManager.profileDetaisFor(jid: userJid)
         print("User Profile --->")
-        
-        result(JSONSerializer.toJson(userProfile as Any))
+        var userProfileJson = JSONSerializer.toJson(userProfile as Any)
+        userProfileJson = userProfileJson.replacingOccurrences(of: "{\"some\":", with: "")
+        userProfileJson = userProfileJson.replacingOccurrences(of: "}}", with: "}")
+        result(userProfileJson)
 //        do {
-//            try ContactManager.shared.getUserProfile(for: jid, fetchFromServer: false, saveAsFriend: true){ isSuccess, flyError, flyData in
+//            try ContactManager.shared.getUserProfile(for: userJid, fetchFromServer: false, saveAsFriend: true){ isSuccess, flyError, flyData in
 //                var data  = flyData
 //                if isSuccess {
 //

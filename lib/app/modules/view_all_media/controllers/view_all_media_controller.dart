@@ -101,7 +101,7 @@ class ViewAllMediaController extends GetxController {
     var previousCategoryType = 10;
     var messages = <MessageItem>[];
     for (var chatMessage in mediaMessages) {
-      var date = chatMessage.messageSentTime;
+      var date = chatMessage.messageSentTime.toInt();
       var calendar = DateTime.fromMicrosecondsSinceEpoch(date);
       year = calendar.year;
       month = calendar.month;

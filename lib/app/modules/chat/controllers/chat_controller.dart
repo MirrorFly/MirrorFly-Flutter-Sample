@@ -109,11 +109,15 @@ class ChatController extends GetxController
     // if(profile_.value.jid == null){
     var jid = SessionManagement.getChatJid().checkNull();
     if(jid.isEmpty){
+      // var userProfile = Get.arguments;
+      // var profileDetail =  profiledata(userProfile);
       var profileDetail = Get.arguments as Profile;
+      debugPrint("Chat Page received Profile details ----> ${profileDetail.toJson()}");
       profile_(profileDetail);
       onready();
       initListeners();
     }else {
+      debugPrint("Chat page chat id is not empty");
       getProfileDetails(SessionManagement.getChatJid().checkNull()).then((
           value) {
         SessionManagement.setChatJid("");
@@ -330,9 +334,12 @@ class ChatController extends GetxController
     return dateHourFormat;
   }
 
+
   getChatHistory([String? from]) {
-    mirrorFlyLog("chat history", "$from");
+    mirrorFlyLog("from chat history", "$from");
     FlyChat.getMessagesOfJid(profile.jid.checkNull()).then((value) {
+      debugPrint("=====chat=====");
+      mirrorFlyLog("chat history", value);
       List<ChatMessageModel> chatMessageModel = chatMessageModelFromJson(value);
       chatList(chatMessageModel);
       Future.delayed(const Duration(milliseconds: 500), () {
@@ -825,7 +832,7 @@ class ChatController extends GetxController
         .now()
         .millisecondsSinceEpoch - 30000) * 1000);
     return {
-      selectedChatList.any((element) => element.isMessageSentByMe && !element.isMessageRecalled &&(element.messageSentTime >
+      selectedChatList.any((element) => element.isMessageSentByMe && !element.isMessageRecalled &&(element.messageSentTime.toInt() >
           recallTimeDifference)):
       selectedChatList.any((element) =>
       !element.isMessageRecalled && (element.isMediaMessage() && element.mediaChatMessage!
