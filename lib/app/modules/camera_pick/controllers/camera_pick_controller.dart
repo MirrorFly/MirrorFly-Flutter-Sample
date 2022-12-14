@@ -56,7 +56,7 @@ class CameraPickController extends GetxController with WidgetsBindingObserver  {
    }
 
   Future<void> takePhoto(context) async {
-    if(cameraController!=null) {
+    if(cameraInitialized.value) {
       Helper.showLoading();
       XFile? file = await cameraController?.takePicture();
       debugPrint("file : ${file?.path}");
@@ -66,7 +66,7 @@ class CameraPickController extends GetxController with WidgetsBindingObserver  {
   }
 
   stopRecord()async{
-    if(cameraController!=null) {
+    if(cameraInitialized.value) {
       Helper.showLoading();
       XFile? file = await cameraController?.stopVideoRecording();
       debugPrint("file : ${file?.path}");

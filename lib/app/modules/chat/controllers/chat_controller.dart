@@ -463,17 +463,19 @@ class ChatController extends GetxController
   }
 
   documentPickUpload() async {
-    FilePickerResult? result = await FilePicker.platform.pickFiles(
-      allowMultiple: false,
-      type: FileType.custom,
-      allowedExtensions: ['pdf', 'ppt', 'xls', 'doc', 'docx', 'xlsx'],
-    );
-    if (result != null && File(result.files.single.path!).existsSync()) {
-      debugPrint(result.files.first.extension);
-      filePath.value = (result.files.single.path!);
-      sendDocumentMessage(filePath.value, "");
-    } else {
-      // User canceled the picker
+    if(await askStoragePermission()) {
+      FilePickerResult? result = await FilePicker.platform.pickFiles(
+        allowMultiple: false,
+        type: FileType.custom,
+        allowedExtensions: ['pdf', 'ppt', 'xls', 'doc', 'docx', 'xlsx'],
+      );
+      if (result != null && File(result.files.single.path!).existsSync()) {
+        debugPrint(result.files.first.extension);
+        filePath.value = (result.files.single.path!);
+        sendDocumentMessage(filePath.value, "");
+      } else {
+        // User canceled the picker
+      }
     }
   }
 
@@ -1558,22 +1560,37 @@ class ChatController extends GetxController
 
   // final ImagePicker _picker = ImagePicker();
 
+  Future<bool> askCameraPermission() async {
+    final permission = await AppPermission.getCameraPermission();
+    switch (permission) {
+      case PermissionStatus.granted:
+        return true;
+      case PermissionStatus.permanentlyDenied:
+        return false;
+      default:
+        debugPrint("Contact Permission default");
+        return false;
+    }
+  }
+
   onCameraClick() async {
-    Get.toNamed(Routes.cameraPick)?.then((photo){
-      photo as XFile?;
-      if (photo != null) {
-        mirrorFlyLog("photo", photo.name.toString());
-        if(photo.name.endsWith(".mp4")){
-          Get.toNamed(Routes.videoPreview, arguments: {
-            "filePath": photo.path,
-            "userName": profile.name!
-          });
-        }else {
-          Get.toNamed(Routes.imagePreview,
-              arguments: {"filePath": photo.path, "userName": profile.name!});
+    if(await AppPermission.askFileCameraAudioPermission()) {
+      Get.toNamed(Routes.cameraPick)?.then((photo) {
+        photo as XFile?;
+        if (photo != null) {
+          mirrorFlyLog("photo", photo.name.toString());
+          if (photo.name.endsWith(".mp4")) {
+            Get.toNamed(Routes.videoPreview, arguments: {
+              "filePath": photo.path,
+              "userName": profile.name!
+            });
+          } else {
+            Get.toNamed(Routes.imagePreview,
+                arguments: {"filePath": photo.path, "userName": profile.name!});
+          }
         }
-      }
-    });
+      });
+    }
     /*final XFile? photo = await _picker.pickImage(source: ImageSource.camera);
     if (photo != null) {
       Get.toNamed(Routes.imagePreview,
@@ -1581,16 +1598,33 @@ class ChatController extends GetxController
     }*/
   }
 
-  onAudioClick() {
+  Future<bool> askMicrophonePermission() async {
+    final permission = await AppPermission.getAudioPermission();
+    switch (permission) {
+      case PermissionStatus.granted:
+        return true;
+      case PermissionStatus.permanentlyDenied:
+        return false;
+      default:
+        debugPrint("Contact Permission default");
+        return false;
+    }
+  }
+
+  onAudioClick() async {
     Get.back();
-    pickAudio();
+    if(await askMicrophonePermission()){
+      pickAudio();
+    }
   }
 
   onGalleryClick() async {
-    try {
-      imagePicker();
-    } catch (e) {
-      debugPrint(e.toString());
+    if(await askStoragePermission()) {
+      try {
+        imagePicker();
+      } catch (e) {
+        debugPrint(e.toString());
+      }
     }
   }
 
@@ -1611,13 +1645,21 @@ class ChatController extends GetxController
     }
   }
 
-  onLocationClick() {
-    AppPermission.getLocationPermission()
-        .then((bool value) {
-      mirrorFlyLog(
-          "Location permission", value.toString());
-      if (value) {
-        Get.back();
+  Future<bool> askLocationPermission() async {
+    final permission = await AppPermission.getLocationPermission();
+    switch (permission) {
+      case PermissionStatus.granted:
+        return true;
+      case PermissionStatus.permanentlyDenied:
+        return false;
+      default:
+        debugPrint("Contact Permission default");
+        return false;
+    }
+  }
+
+  onLocationClick() async {
+    if (await askLocationPermission()) {
         Get.toNamed(Routes.locationSent)
             ?.then((value) {
           if (value != null) {
@@ -1629,6 +1671,5 @@ class ChatController extends GetxController
           }
         });
       }
-    });
   }
 }

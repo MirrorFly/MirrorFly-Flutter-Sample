@@ -308,7 +308,7 @@ class ChatView extends GetView<ChatController> {
         controller.isAudioRecording.value == Constants.audioRecordInitial
             ? IconButton(
                 onPressed: () async {
-                  if (await controller.askStoragePermission()) {
+                  //if (await controller.askStoragePermission()) {
                     showModalBottomSheet(
                         backgroundColor: Colors.transparent,
                         context: context,
@@ -332,7 +332,7 @@ class ChatView extends GetView<ChatController> {
                               Get.back();
                               controller.onLocationClick();
                             }));
-                  }
+                  //}
                 },
                 icon: SvgPicture.asset('assets/logos/attach.svg'),
               )

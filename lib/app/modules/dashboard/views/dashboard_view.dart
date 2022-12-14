@@ -341,7 +341,7 @@ class DashboardView extends GetView<DashboardController> {
                     style: TextStyle(fontWeight: FontWeight.w500),
                   ),
                   trailing: Text(
-                    controller.archivedCount,
+                    controller.archivedChats.length.toString(),
                     style: const TextStyle(color: buttonBgColor),
                   ),
                   dividerPadding: EdgeInsets.zero,

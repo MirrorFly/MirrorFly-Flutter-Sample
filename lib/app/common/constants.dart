@@ -154,6 +154,13 @@ const String phoneIcon = 'assets/logos/phone.svg';
 const String deleteBin = 'assets/logos/delete_bin.svg';
 const String warningIcon = 'assets/logos/warning.svg';
 
+const String filePermission = "assets/logos/file_permission.svg";
+const String audioPermission = "assets/logos/audio_permission.svg";
+const String cameraPermission = "assets/logos/camera_permission.svg";
+const String contactPermission = "assets/logos/contact_permission.svg";
+const String settingsPermission = "assets/logos/settings_permission.svg";
+const String locationPinPermission = "assets/logos/location_pin_permission.svg";
+const String recordAudioVideoPermission = "assets/logos/record_audio_video_permission.svg";
 
 //About us
 const String titleContactMsg = "Mirror Fly is a ready-to-go messaging solution for building enterprise-grade real-time chat IM applications that meet various degrees of requirements like team discussion, data sharing, task delegation and information handling on the go.";
@@ -449,6 +456,14 @@ class Constants {
   static const String audioRecordDone = "AUDIO_RECORDING_COMPLETED";
   static const String audioRecordDelete = "AUDIO_RECORDING_DELETE";
   static const String audioRecordInitial = "AUDIO_RECORDING_NOT_INITIALIZED";
+
+  //Permission dialog contents
+  static const String settingPermission = "You will not receive notifications while the app is in background if you disable these permissions";
+  static const String filePermission = "To send media, allow MirrorFly access to your device's photos,media, and files.";
+  static const String cameraPermission = "To capture photos and video, allow MirrorFly access to the camera and storage.";
+  static const String locationPermission = "MirrorFly needs access to your location in order to share your current location.";
+  static const String contactPermission = "To help you connect with friends and family, allow Mirrorfly access to your contacts.";
+  static const String audioPermission = "To send audio messages, allow MirrorFly access to your Microphone.";
 }
 
 Future<void> launchWeb(String url) async{
