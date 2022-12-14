@@ -152,7 +152,7 @@ class ContactListView extends GetView<ContactController> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    item.name.toString(),
+                                    item.name.toString().checkNull() == "" ? item.nickName.toString() : item.name.toString(),
                                     style:
                                         Theme.of(context).textTheme.titleMedium,
                                   ),

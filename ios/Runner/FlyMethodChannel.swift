@@ -141,6 +141,15 @@ class FlyMethodChannel{
                 
             case "media_endpoint":
                 FlySdkMethodCalls.getMediaEndPoint(call: call, result: result)
+                
+            case "reportUserOrMessages":
+                FlySdkMethodCalls.reportUserOrMessages(call: call, result: result)
+            case "block_user":
+                FlySdkMethodCalls.blockUser(call: call, result: result)
+            case "un_block_user":
+                FlySdkMethodCalls.unblockUser(call: call, result: result)
+            case "createGroup":
+                FlySdkMethodCalls.createGroup(call: call, result: result)
             default:
                 result(FlutterMethodNotImplemented)
             }

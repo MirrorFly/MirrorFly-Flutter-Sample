@@ -304,33 +304,61 @@ import Photos
 //            return nil
         }
         
-        var base64Img = MediaUtils.convertImageToBase64(img: thumbnail!)
+        let base64Img = MediaUtils.convertImageToBase64(img: thumbnail!)
         
         var media = MediaData()
+        media.mediaType = .video
+        media.fileURL = videoFileUrl
+        media.fileName = "file_example_MP4_480_1_5MG.MP4"
+        media.fileSize = 20
+        media.fileKey = "fileKey"
+        media.duration = 2000
+        media.base64Thumbnail = base64Img
+        media.caption = "caption"
+        print("=====MEDIA DATA======")
+//        print(compressedURL)
+//        print(fileName)
+//        print(fileSize)
+//        print(fileKey)
+//        print(duration)
+        print(base64Img)
+        print(caption)
         
-        MediaUtils.compressVideo(videoURL: videoFileUrl) { isSuccess, url, fileName, fileKey, fileSize , duration in
-            if let compressedURL = url{
-                media.mediaType = .video
-                media.fileURL = compressedURL
-                media.fileName = fileName
-                media.fileSize = fileSize
-                media.fileKey = fileKey
-                media.duration = duration
-                media.base64Thumbnail = base64Img
-                media.caption = caption
-            }else{
-                print("Video Compression Error")
-            }
-        }
+//        MediaUtils.compressVideo(videoURL: videoFileUrl) { isSuccess, url, fileName, fileKey, fileSize , duration in
+//            if let compressedURL = url{
+//                media.mediaType = .video
+//                media.fileURL = compressedURL
+//                media.fileName = fileName
+//                media.fileSize = fileSize
+//                media.fileKey = fileKey
+//                media.duration = duration
+//                media.base64Thumbnail = base64Img
+//                media.caption = caption
+//                print("=====MEDIA DATA======")
+//                print(compressedURL)
+//                print(fileName)
+//                print(fileSize)
+//                print(fileKey)
+//                print(duration)
+//                print(base64Img)
+//                print(caption)
+//            }else{
+//                print("Video Compression Error")
+//            }
+//        }
         
         FlyMessenger.sendVideoMessage(toJid: userJid, mediaData: media, replyMessageId: replyMessageId){ isSuccess,error,message in
             if let chatMessage = message {
                 print("CAPTURE_RESPONSE")
                 print("sendVideoMessage")
                 dump(message)
-                print(JSONSerializer.toJson(chatMessage))
                 
-                result(JSONSerializer.toJson(chatMessage))
+                var sendVideoResposne = JSONSerializer.toJson(chatMessage)
+                
+                sendVideoResposne = sendVideoResposne.replacingOccurrences(of: "{\"some\":", with: "")
+                sendVideoResposne = sendVideoResposne.replacingOccurrences(of: "}}", with: "}")
+                print(sendVideoResposne)
+                result(sendVideoResposne)
                 
             }
         }
@@ -365,6 +393,7 @@ import Photos
                 print("CAPTURE_RESPONSE")
                 print("sendContactMessage")
                 dump(message)
+                print(message)
                 print(JSONSerializer.toJson(message as Any))
                 result(JSONSerializer.toJson(message as Any))
             
@@ -817,6 +846,94 @@ import Photos
         
         let userJid = args["jid"] as? String ?? ""
         ChatManager.setOnGoingChatUser(jid: userJid)
+    }
+    static func reportUserOrMessages(call: FlutterMethodCall, result: @escaping FlutterResult){
+        let args = call.arguments as! Dictionary<String, Any>
+        let userJid = args["jid"] as? String ?? ""
+        
+        let reportMessage : ReportMessage? = ChatManager.getMessagesForReporting(chatUserJid: userJid, messagesCount: 5)
+        
+        var reportMessageJson = JSONSerializer.toJson(reportMessage as Any)
+        reportMessageJson = reportMessageJson.replacingOccurrences(of: "{\"some\":", with: "")
+        reportMessageJson = reportMessageJson.replacingOccurrences(of: "}}", with: "}")
+        print("reportMessageJson=====>")
+        print(reportMessageJson)
+        result(reportMessageJson)
+        
+    }
+    static func blockUser(call: FlutterMethodCall, result: @escaping FlutterResult){
+        let args = call.arguments as! Dictionary<String, Any>
+        let userJid = args["userJID"] as? String ?? ""
+        
+        do{
+            
+            try ContactManager.shared.blockUser(for: userJid){ isSuccess, flyError, flyData in
+
+                    if isSuccess {
+                        var blockUserResponseJson = JSONSerializer.toJson(flyData as Any)
+                        print("before blockUserResponseJson===>")
+                        print(blockUserResponseJson)
+                        blockUserResponseJson = blockUserResponseJson.replacingOccurrences(of: "{\"some\":", with: "")
+                        blockUserResponseJson = blockUserResponseJson.replacingOccurrences(of: "}}", with: "}")
+                        print("blockUserResponseJson=====>")
+                        print(blockUserResponseJson)
+                        result(blockUserResponseJson)
+                    } else{
+                        print(flyError!.localizedDescription)
+                        result(FlutterError(code: "500", message: "Unable to Block User", details: flyError?.localizedDescription))
+                    }
+            }
+        }catch let error{
+            
+                result(FlutterError(code: "500", message: "Unable to Block User", details: error.localizedDescription))
+        }
+        
+    }
+    static func unblockUser(call: FlutterMethodCall, result: @escaping FlutterResult){
+        let args = call.arguments as! Dictionary<String, Any>
+        let userJid = args["userJID"] as? String ?? ""
+        
+        do{
+            
+            try ContactManager.shared.unblockUser(for: userJid){ isSuccess, flyError, flyData in
+
+                    if isSuccess {
+                        result(true)
+                    } else{
+                        print(flyError!.localizedDescription)
+                        result(FlutterError(code: "500", message: "Unable to Un-Block User", details: flyError?.localizedDescription))
+                    }
+            }
+        }catch let error{
+            result(FlutterError(code: "500", message: "Unable to Un-Block User", details: error.localizedDescription))
+        }
+        
+    }
+    static func createGroup(call: FlutterMethodCall, result: @escaping FlutterResult){
+        let args = call.arguments as! Dictionary<String, Any>
+        let groupName = args["group_name"] as? String ?? ""
+        let file = args["file"] as? String ?? ""
+        let members = args["members"] as? [String] ?? []
+        do{
+            
+            try GroupManager.shared.createGroup(groupName: groupName, participantJidList: members, groupImageFileUrl: file, completionHandler: { isSuccess, flyError, flyData in
+                if isSuccess {
+                    var createGroupResponseJson = JSONSerializer.toJson(flyData as Any)
+                    print("before createGroupResponseJson===>")
+                    print(createGroupResponseJson)
+                    createGroupResponseJson = createGroupResponseJson.replacingOccurrences(of: "{\"some\":", with: "")
+                    createGroupResponseJson = createGroupResponseJson.replacingOccurrences(of: "}}", with: "}")
+                    print("createGroupResponseJson=====>")
+                    print(createGroupResponseJson)
+                    result(createGroupResponseJson)
+                } else{
+                    result(FlutterError(code: "500", message: "Unable to Create Group", details: flyError?.localizedDescription))
+                }
+            })
+        }catch let error{
+            result(FlutterError(code: "500", message: "Unable to Create Group", details: error.localizedDescription))
+        }
+        
     }
     
     static func clearChat(call: FlutterMethodCall, result: @escaping FlutterResult){

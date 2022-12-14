@@ -494,6 +494,7 @@ class ChatController extends GetxController
     return FlyChat.sendVideoMessage(
         profile.jid!, videoPath, caption, replyMessageID)
         .then((value) {
+          mirrorFlyLog("Video send response", value);
       ChatMessageModel chatMessageModel = sendMessageModelFromJson(value);
       chatList.add(chatMessageModel);
       scrollToBottom();

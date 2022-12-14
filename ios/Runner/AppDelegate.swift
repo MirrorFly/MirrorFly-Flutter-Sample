@@ -83,89 +83,6 @@ let onSuccess_channel = "contus.mirrorfly/onSuccess"
     var uploadDownloadProgressChangedStreamHandler: UploadDownloadProgressChangedStreamHandler?
     var showOrUpdateOrCancelNotificationStreamHandler: ShowOrUpdateOrCancelNotificationStreamHandler?
     
-    func onConnected() {
-        print("======sdk connected=======")
-    }
-    
-    func onDisconnected() {
-        print("======sdk Disconnected======")
-    }
-    
-    func onConnectionNotAuthorized() {
-        print("======sdk Not Authorized=======")
-    }
-    
-    
-    func didAddNewMemeberToGroup(groupJid: String, newMemberJid: String, addedByMemberJid: String) {
-        
-    }
-    
-    func didRemoveMemberFromGroup(groupJid: String, removedMemberJid: String, removedByMemberJid: String) {
-        
-    }
-    
-    func didFetchGroupProfile(groupJid: String) {
-        
-    }
-    
-    func didUpdateGroupProfile(groupJid: String) {
-        
-    }
-    
-    func didMakeMemberAsAdmin(groupJid: String, newAdminMemberJid: String, madeByMemberJid: String) {
-        
-    }
-    
-    func didRemoveMemberFromAdmin(groupJid: String, removedAdminMemberJid: String, removedByMemberJid: String) {
-        
-    }
-    
-    func didDeleteGroupLocally(groupJid: String) {
-        
-    }
-    
-    func didLeftFromGroup(groupJid: String, leftUserJid: String) {
-        
-    }
-    
-    func didCreateGroup(groupJid: String) {
-        
-    }
-    
-    func didFetchGroups(groups: [FlyCommon.ProfileDetails]) {
-        
-    }
-    
-    func didFetchGroupMembers(groupJid: String) {
-        
-    }
-    
-    func didReceiveGroupNotificationMessage(message: FlyCommon.ChatMessage) {
-        
-    }
-    
-    
-    
-    
-    func didReceiveLogout() {
-        print("logout delegate received")
-        print("AppDelegate LogoutDelegate ===> LogoutDelegate")
-        Utility.saveInPreference(key: isProfileSaved, value: false)
-        Utility.saveInPreference(key: isLoggedIn, value: false)
-        
-        ChatManager.logoutApi { isSuccess, flyError, flyData in
-           if isSuccess {
-               print("requestLogout Logout api isSuccess")
-               
-           }else{
-               print("Logout api error : \(String(describing: flyError))")
-              
-           }
-       }
-        ChatManager.enableContactSync(isEnable: ENABLE_CONTACT_SYNC)
-        ChatManager.disconnect()
-        ChatManager.shared.resetFlyDefaults()
-    }
     
   override func application(
     _ application: UIApplication,
@@ -219,7 +136,11 @@ let onSuccess_channel = "contus.mirrorfly/onSuccess"
         }
       FlutterEventChannel(name: MESSAGE_STATUS_UPDATED_CHANNEL, binaryMessenger: controller.binaryMessenger).setStreamHandler((self.messageStatusUpdatedStreamHandler!))
       
-      FlutterEventChannel(name: MEDIA_STATUS_UPDATED_CHANNEL, binaryMessenger: controller.binaryMessenger).setStreamHandler(MediaStatusUpdatedStreamHandler())
+      if (self.mediaStatusUpdatedStreamHandler == nil) {
+          self.mediaStatusUpdatedStreamHandler = MediaStatusUpdatedStreamHandler()
+        }
+      
+      FlutterEventChannel(name: MEDIA_STATUS_UPDATED_CHANNEL, binaryMessenger: controller.binaryMessenger).setStreamHandler(self.mediaStatusUpdatedStreamHandler!)
       
       FlutterEventChannel(name: UPLOAD_DOWNLOAD_PROGRESS_CHANGED_CHANNEL, binaryMessenger: controller.binaryMessenger).setStreamHandler(UploadDownloadProgressChangedStreamHandler())
       
@@ -348,7 +269,94 @@ let onSuccess_channel = "contus.mirrorfly/onSuccess"
         }
     }
     
+    func onConnected() {
+        print("======sdk connected=======")
+    }
+    
+    func onDisconnected() {
+        print("======sdk Disconnected======")
+    }
+    
+    func onConnectionNotAuthorized() {
+        print("======sdk Not Authorized=======")
+    }
+    
+    
+    func didAddNewMemeberToGroup(groupJid: String, newMemberJid: String, addedByMemberJid: String) {
+        
+    }
+    
+    func didRemoveMemberFromGroup(groupJid: String, removedMemberJid: String, removedByMemberJid: String) {
+        
+    }
+    
+    func didFetchGroupProfile(groupJid: String) {
+        
+    }
+    
+    func didUpdateGroupProfile(groupJid: String) {
+        
+    }
+    
+    func didMakeMemberAsAdmin(groupJid: String, newAdminMemberJid: String, madeByMemberJid: String) {
+        
+    }
+    
+    func didRemoveMemberFromAdmin(groupJid: String, removedAdminMemberJid: String, removedByMemberJid: String) {
+        
+    }
+    
+    func didDeleteGroupLocally(groupJid: String) {
+        
+    }
+    
+    func didLeftFromGroup(groupJid: String, leftUserJid: String) {
+        
+    }
+    
+    func didCreateGroup(groupJid: String) {
+        
+    }
+    
+    func didFetchGroups(groups: [FlyCommon.ProfileDetails]) {
+        
+    }
+    
+    func didFetchGroupMembers(groupJid: String) {
+        
+    }
+    
+    func didReceiveGroupNotificationMessage(message: FlyCommon.ChatMessage) {
+        
+    }
+    
+    
+    
+    
+    func didReceiveLogout() {
+        print("logout delegate received")
+        print("AppDelegate LogoutDelegate ===> LogoutDelegate")
+        Utility.saveInPreference(key: isProfileSaved, value: false)
+        Utility.saveInPreference(key: isLoggedIn, value: false)
+        
+        ChatManager.logoutApi { isSuccess, flyError, flyData in
+           if isSuccess {
+               print("requestLogout Logout api isSuccess")
+               
+           }else{
+               print("Logout api error : \(String(describing: flyError))")
+              
+           }
+       }
+        ChatManager.enableContactSync(isEnable: ENABLE_CONTACT_SYNC)
+        ChatManager.disconnect()
+        ChatManager.shared.resetFlyDefaults()
+    }
+    
+    
 }
+
+
 
 extension AppDelegate : MessageEventsDelegate {
     func onMessageReceived(message: FlyCommon.ChatMessage, chatJid: String) {
@@ -388,44 +396,49 @@ extension AppDelegate : MessageEventsDelegate {
     }
     
     func onMediaStatusUpdated(message: FlyCommon.ChatMessage) {
-        guard let mediaStatusEventSink = MediaStatusUpdatedStreamHandler().onMediaStatusUpdated else {
-             return
-           }
         print("Media Status Update--->")
-        print(JSONSerializer.toJson(message))
-        mediaStatusEventSink(JSONSerializer.toJson(message))
+        var chatMediaJson = JSONSerializer.toJson(message as Any)
+        chatMediaJson = chatMediaJson.replacingOccurrences(of: "{\"some\":", with: "")
+        chatMediaJson = chatMediaJson.replacingOccurrences(of: "}}", with: "}")
+        print(chatMediaJson)
+        
+        if(self.mediaStatusUpdatedStreamHandler?.onMediaStatusUpdated != nil){
+            self.mediaStatusUpdatedStreamHandler?.onMediaStatusUpdated?(chatMediaJson)
+        }else{
+            print("chatMediaJson Stream Handler is Nil")
+        }
     }
     
     func onMediaStatusFailed(error: String, messageId: String) {
-        
+        print("Media Status Failed--->\(error)")
     }
     
     func onMediaProgressChanged(message: FlyCommon.ChatMessage, progressPercentage: Float) {
-        
+        print("Media Status Onprogress changed---> \(progressPercentage)")
     }
     
     func onMessagesClearedOrDeleted(messageIds: Array<String>) {
-        
+        print("Message Cleared--->")
     }
     
     func onMessagesDeletedforEveryone(messageIds: Array<String>) {
-        
+        print("Message Deleted For Everyone--->")
     }
     
     func showOrUpdateOrCancelNotification() {
-        
+        print("Message showOrUpdateOrCancelNotification--->")
     }
     
     func onMessagesCleared(toJid: String) {
-        
+        print("Message onMessagesCleared--->")
     }
     
     func setOrUpdateFavourite(messageId: String, favourite: Bool, removeAllFavourite: Bool) {
-        
+        print("Message setOrUpdateFavourite--->")
     }
     
     func onMessageTranslated(message: FlyCommon.ChatMessage, jid: String) {
-        
+        print("Message onMessageTranslated--->")
     }
     
     

@@ -318,10 +318,25 @@ open class JSONSerializer {
                         String(describing: value).contains("#")   {
                 handledValue = toJson(value)
             }
-            else if (propertyName == "mediaChatMessage" || propertyName == "contactChatMessage" || propertyName == "locationChatMessage") &&  String(describing: value) != "nil" {
+            else if (propertyName == "mediaChatMessage" || propertyName == "locationChatMessage") &&  String(describing: value) != "nil" {
                // let refined = String(describing: value).replacingOccurrences(of: "some", with: "")
                 let force =  value
                 handledValue = toJson(force)
+                
+            }
+            else if(propertyName == "contactPhoneNumbers") &&  String(describing: value) != "nil" {
+                print("contactPhoneNumbers-----")
+                print(value)
+            }
+            else if (propertyName == "contactChatMessage") &&  String(describing: value) != "nil" {
+               // let refined = String(describing: value).replacingOccurrences(of: "some", with: "")
+            
+                let force =  value
+                print("contactChatMessage block")
+                print(force)
+                handledValue = toJson(force)
+                print("handledValue-----")
+                print(handledValue)
                 
             }
             else if property.displayStyle == Mirror.DisplayStyle.optional {
