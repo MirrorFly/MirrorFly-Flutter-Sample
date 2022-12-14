@@ -2,7 +2,6 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:mirror_fly_demo/app/common/constants.dart';
 import 'package:video_player/video_player.dart';
 
 import '../../chat/controllers/chat_controller.dart';

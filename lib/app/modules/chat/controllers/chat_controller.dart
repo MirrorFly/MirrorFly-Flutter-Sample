@@ -108,19 +108,20 @@ class ChatController extends GetxController
     // var profileDetail = Get.arguments as Profile;
     // profile_.value = profileDetail;
     // if(profile_.value.jid == null){
-    var jid = SessionManagement.getChatJid().checkNull();
-    if(jid.isEmpty){
+    var userJid = SessionManagement.getChatJid().checkNull();
+    if(Get.parameters['jid']!=null){
+      nJid = Get.parameters['jid'];
+      debugPrint("parameter :${Get.parameters['jid']}");
+      if(nJid!=null){
+        userJid = Get.parameters['jid'] as String;
+      }
+    }
+    if(userJid.isEmpty){
       var profileDetail = Get.arguments as Profile;
       profile_(profileDetail);
       onready();
       initListeners();
     }else {
-      nJid = Get.parameters['jid'];
-      var userJid = SessionManagement.getChatJid().checkNull();
-      debugPrint("parameter :${Get.parameters['jid']}");
-      if(nJid!=null){
-        userJid = Get.parameters['jid'] as String;
-      }
       getProfileDetails(userJid).then((
           value) {
         SessionManagement.setChatJid("");

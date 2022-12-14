@@ -43,8 +43,7 @@ class ChatView extends GetView<ChatController> {
               ),
               child: WillPopScope(
                 onWillPop: () {
-                  mirrorFlyLog("viewInsets",
-                      MediaQuery.of(context).viewInsets.bottom.toString());
+                  mirrorFlyLog("viewInsets", MediaQuery.of(context).viewInsets.bottom.toString());
                   if (controller.showEmoji.value) {
                     controller.showEmoji(false);
                   } else if (MediaQuery.of(context).viewInsets.bottom > 0.0) {
@@ -52,7 +51,7 @@ class ChatView extends GetView<ChatController> {
                     controller.focusNode.unfocus();
                   } else if(controller.nJid!=null){
                     Get.offAllNamed(Routes.dashboard);
-                    //return Future.value(true);
+                    return Future.value(true);
                   } else {
                     return Future.value(true);
                   }
@@ -924,7 +923,13 @@ class ChatView extends GetView<ChatController> {
         leadingWidth: 80,
         leading: InkWell(
           onTap: () {
-            Get.back();
+            if (controller.showEmoji.value) {
+              controller.showEmoji(false);
+            } else if(controller.nJid!=null){
+              Get.offAllNamed(Routes.dashboard);
+            } else {
+              Get.back();
+            }
           },
           child: Row(
             mainAxisSize: MainAxisSize.min,

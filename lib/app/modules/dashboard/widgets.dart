@@ -167,7 +167,7 @@ class RecentChatItem extends StatelessWidget {
                                       fontSize: 12.0,
                                       fontWeight: FontWeight.w600,
                                       fontFamily: 'sf_ui',
-                                      color: item.unreadMessageCount.toString() != "0"
+                                      color: item.isConversationUnRead!
                                           ? buttonBgColor
                                           : textColor),
                                 ),
