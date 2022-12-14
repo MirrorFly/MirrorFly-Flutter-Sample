@@ -2873,7 +2873,7 @@ open class FlyBaseController(activity: FlutterActivity) : MethodChannel.MethodCa
     }
 
     override fun onMediaStatusUpdated(message: ChatMessage) {
-        Log.e(TAG, "media Status Updated ==> $message.messageId")
+        Log.e(TAG, "media Status Updated ==> ${message.messageId}")
         MediaStatusUpdatedStreamHandler.onMediaStatusUpdated?.success(message.tojsonString())
     }
 

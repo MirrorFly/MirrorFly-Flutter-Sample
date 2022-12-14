@@ -531,6 +531,7 @@ class DashboardController extends GetxController with GetTickerProviderStateMixi
     selected(false);
     FlyChat.markConversationAsRead(selectedChats);
     for (var element in selectedChatsPosition) {
+      recentChats[element].isConversationUnRead=false;
       recentChats[element].unreadMessageCount=0;
     }
     clearAllChatSelection();
@@ -541,7 +542,7 @@ class DashboardController extends GetxController with GetTickerProviderStateMixi
     selected(false);
     FlyChat.markConversationAsUnread(selectedChats);
     for (var element in selectedChatsPosition) {
-      recentChats[element].unreadMessageCount=1;
+      recentChats[element].isConversationUnRead=true;
     }
     clearAllChatSelection();
     updateUnReadChatCount();
@@ -552,6 +553,7 @@ class DashboardController extends GetxController with GetTickerProviderStateMixi
     recentChats[chatIndex].isChatArchived=(true);
     recentChats.removeAt(chatIndex);
     FlyChat.updateArchiveUnArchiveChat(selectedChats[index], true);
+    getArchivedChatsList();
   }
 
   _itemDelete(int index){

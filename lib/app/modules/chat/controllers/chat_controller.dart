@@ -101,24 +101,28 @@ class ChatController extends GetxController
 
   var profileDetail = Profile();
 
+  String? nJid;
   @override
   void onInit() {
     super.onInit();
     // var profileDetail = Get.arguments as Profile;
     // profile_.value = profileDetail;
     // if(profile_.value.jid == null){
-    var jid = SessionManagement.getChatJid().checkNull();
-    if(jid.isEmpty){
-      // var userProfile = Get.arguments;
-      // var profileDetail =  profiledata(userProfile);
+    var userJid = SessionManagement.getChatJid().checkNull();
+    if(Get.parameters['jid']!=null){
+      nJid = Get.parameters['jid'];
+      debugPrint("parameter :${Get.parameters['jid']}");
+      if(nJid!=null){
+        userJid = Get.parameters['jid'] as String;
+      }
+    }
+    if(userJid.isEmpty){
       var profileDetail = Get.arguments as Profile;
-      debugPrint("Chat Page received Profile details ----> ${profileDetail.toJson()}");
       profile_(profileDetail);
       onready();
       initListeners();
     }else {
-      debugPrint("Chat page chat id is not empty");
-      getProfileDetails(SessionManagement.getChatJid().checkNull()).then((
+      getProfileDetails(userJid).then((
           value) {
         SessionManagement.setChatJid("");
         profile_(value);
@@ -1555,14 +1559,29 @@ class ChatController extends GetxController
           :*/ Constants.emptyString
           : userPresenceStatus.toString();
 
-  final ImagePicker _picker = ImagePicker();
+  // final ImagePicker _picker = ImagePicker();
 
   onCameraClick() async {
-    final XFile? photo = await _picker.pickImage(source: ImageSource.camera);
+    Get.toNamed(Routes.cameraPick)?.then((photo){
+      photo as XFile?;
+      if (photo != null) {
+        mirrorFlyLog("photo", photo.name.toString());
+        if(photo.name.endsWith(".mp4")){
+          Get.toNamed(Routes.videoPreview, arguments: {
+            "filePath": photo.path,
+            "userName": profile.name!
+          });
+        }else {
+          Get.toNamed(Routes.imagePreview,
+              arguments: {"filePath": photo.path, "userName": profile.name!});
+        }
+      }
+    });
+    /*final XFile? photo = await _picker.pickImage(source: ImageSource.camera);
     if (photo != null) {
       Get.toNamed(Routes.imagePreview,
           arguments: {"filePath": photo.path, "userName": profile.name!});
-    }
+    }*/
   }
 
   onAudioClick() {

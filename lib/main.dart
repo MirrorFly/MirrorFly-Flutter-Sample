@@ -97,7 +97,7 @@ String getInitialRoute()  {
       if(SessionManagement.getChatJid().checkNull().isEmpty) {
         return AppPages.dashboard;
       }else{
-        return AppPages.chat;
+        return "${AppPages.chat}?jid=${SessionManagement.getChatJid().checkNull()}&from_notification=true";
       }
     }else{
       return AppPages.profile;
