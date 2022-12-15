@@ -1314,10 +1314,10 @@ class FlyChat {
     }
   }
 
-  static Future<dynamic> getUserList(int page,String search) async {
+  static Future<dynamic> getUserList(int page,String search,[int perPageResultSize =20]) async {
     dynamic re;
     try {
-      re = await mirrorFlyMethodChannel.invokeMethod("get_user_list",{"page":page,"search":search});
+      re = await mirrorFlyMethodChannel.invokeMethod("get_user_list",{"page":page,"search":search,"perPageResultSize":perPageResultSize});
       debugPrint('RESULT ==> $re');
       return re;
     } on PlatformException catch (e) {
@@ -1829,10 +1829,10 @@ class FlyChat {
     }
   }
 
-  static Future<dynamic> searchConversation(String searchKey) async {//filteredMessageList
+  static Future<dynamic> searchConversation(String searchKey,[String? jidForSearch,bool globalSearch = true]) async {//filteredMessageList
     dynamic response;
     try {
-      response = await mirrorFlyMethodChannel.invokeMethod('searchConversation',{"searchKey":searchKey});
+      response = await mirrorFlyMethodChannel.invokeMethod('searchConversation',{"searchKey":searchKey,"jidForSearch":jidForSearch,"globalSearch":globalSearch});
       debugPrint("searchConversation ==> $response");
       return response;
     }on PlatformException catch (e){

@@ -114,7 +114,7 @@ open class FlyBaseController(activity: FlutterActivity) : MethodChannel.MethodCa
 
     private val mContext: FlutterActivity = activity
 
-    var jid ="";
+    var jid =""
     fun init(flutterEngine: FlutterEngine,intent: Intent) {
         MethodChannel(
             flutterEngine.dartExecutor.binaryMessenger,
@@ -351,7 +351,7 @@ open class FlyBaseController(activity: FlutterActivity) : MethodChannel.MethodCa
             val userIdentifier: String? = call.argument("userIdentifier")
             val token: String = call.argument("token") ?: ""
             if (userIdentifier != null) {
-                Log.e(TAG, userIdentifier.toString())
+                //Log.e(TAG, userIdentifier.toString())
 
                 try {
                     FlyCore.registerUser(
@@ -361,8 +361,8 @@ open class FlyBaseController(activity: FlutterActivity) : MethodChannel.MethodCa
                         if (isSuccess) {
 
                             val response = JSONObject(data).toString()
-                            Log.e("RESPONSE_CAPTURE", "===========================")
-                            DebugUtilis.v("FlyCore.registerUser", data.tojsonString())
+                            //Log.e("RESPONSE_CAPTURE", "===========================")
+                            //DebugUtilis.v("FlyCore.registerUser", data.tojsonString())
                             if (token.isNotEmpty()) {
                                 PushNotificationManager.updateFcmToken(
                                     token,
@@ -372,11 +372,8 @@ open class FlyBaseController(activity: FlutterActivity) : MethodChannel.MethodCa
                                             message: String
                                         ) {
                                             if (isSuccess) {
-                                                Log.e(
-                                                    "RESPONSE_CAPTURE",
-                                                    "==========================="
-                                                )
-                                                DebugUtilis.v("updateFcmToken", message)
+                                                //Log.e( "RESPONSE_CAPTURE","===========================")
+                                                //DebugUtilis.v("updateFcmToken", message)
                                                 LogMessage.e(TAG, "Token updated successfully")
                                             }
                                         }
@@ -411,14 +408,14 @@ open class FlyBaseController(activity: FlutterActivity) : MethodChannel.MethodCa
                     }
                 } catch (e: Exception) {
 
-                    Log.e("Exception", e.toString())
+                    //Log.e("Exception", e.toString())
 
                     result.error("404", "User Name Required", null)
                 }
 
             } else {
-                Log.e("MIRROR_FLY", "user identifier is null")
-                Log.e("MIRROR_FLY", call.arguments.toString())
+                //Log.e("MIRROR_FLY", "user identifier is null")
+                //Log.e("MIRROR_FLY", call.arguments.toString())
             }
         }
     }
@@ -428,9 +425,9 @@ open class FlyBaseController(activity: FlutterActivity) : MethodChannel.MethodCa
             override fun onMessageReceived(message: ChatMessage) {
                 //called when the new message is received
 
-                Log.e("MirrorFly", "message Received")
-                Log.e("RESPONSE_CAPTURE", "===========================")
-                DebugUtilis.v("onMessageReceived", message.tojsonString())
+                //Log.e("MirrorFly", "message Received")
+                //Log.e("RESPONSE_CAPTURE", "===========================")
+                //DebugUtilis.v("onMessageReceived", message.tojsonString())
 
                 MessageReceivedStreamHandler.onMessageReceived?.success(message.tojsonString())
 
@@ -440,21 +437,21 @@ open class FlyBaseController(activity: FlutterActivity) : MethodChannel.MethodCa
                 //called when the message status is updated
                 //find the index of message object in list using messageId
                 //then fetch message object from db using `FlyCore.getMessageForId(messageId)` and notify the item in list
-                Log.e("onMessageStatusUpdated", "Received")
+                //Log.e("onMessageStatusUpdated", "Received")
 
 
                 val message = FlyMessenger.getMessageOfId(messageId)
                 if (message != null) {
-                    Log.e("RESPONSE_CAPTURE", "===========================")
-                    DebugUtilis.v("FlyMessenger.getMessageOfId", message.tojsonString())
+                    //Log.e("RESPONSE_CAPTURE", "===========================")
+                    //DebugUtilis.v("FlyMessenger.getMessageOfId", message.tojsonString())
                     MessageStatusUpdatedStreamHandler.onMessageStatusUpdated?.success(message.tojsonString())
                 }
             }
 
             override fun onMediaStatusUpdated(message: ChatMessage) {
-                Log.e(TAG, "media Status Updated ==> $message.messageId")
-                Log.e("RESPONSE_CAPTURE", "===========================")
-                DebugUtilis.v("onMediaStatusUpdated", message.tojsonString())
+                //Log.e(TAG, "media Status Updated ==> $message.messageId")
+                //Log.e("RESPONSE_CAPTURE", "===========================")
+                //DebugUtilis.v("onMediaStatusUpdated", message.tojsonString())
                 MediaStatusUpdatedStreamHandler.onMediaStatusUpdated?.success(message.tojsonString())
             }
 
@@ -463,7 +460,7 @@ open class FlyBaseController(activity: FlutterActivity) : MethodChannel.MethodCa
                 progressPercentage: Int
             ) {
                 //called when the media message progress is updated
-                Log.e("MirrorFly", "Upload/Download Status Updated")
+                //Log.e("MirrorFly", "Upload/Download Status Updated")
                 val js = JSONObject()
                 js.put("message_id", messageId)
                 js.put("progress_percentage", progressPercentage)
@@ -473,8 +470,8 @@ open class FlyBaseController(activity: FlutterActivity) : MethodChannel.MethodCa
             }
 
             override fun showOrUpdateOrCancelNotification(jid: String, chatMessage: ChatMessage?) {
-                Log.e("showOrUpdateOrCancelNotification", jid)
-                Log.e("MirrorFly", "showOrUpdateOrCancelNotification Status Updated")
+                //Log.e("showOrUpdateOrCancelNotification", jid)
+                //Log.e("MirrorFly", "showOrUpdateOrCancelNotification Status Updated")
 
             }
 
@@ -482,7 +479,7 @@ open class FlyBaseController(activity: FlutterActivity) : MethodChannel.MethodCa
             override fun onMessagesClearedOrDeleted(messageIds: ArrayList<String>, jid: String) {
                 //called when the message is deleted
 
-                Log.e("MirrorFly", "onMessagesClearedOrDeleted Status Updated")
+                //Log.e("MirrorFly", "onMessagesClearedOrDeleted Status Updated")
                 //onMessagesClearedOrDeleted?.success(Gson().toJson())
             }
         })
@@ -500,7 +497,7 @@ open class FlyBaseController(activity: FlutterActivity) : MethodChannel.MethodCa
             }
 
             override fun onGroupProfileUpdated(groupJid: String) {
-                Log.e("our GroupProfileUpdated", groupJid)
+                //Log.e("our GroupProfileUpdated", groupJid)
                 onGroupProfileUpdatedStreamHandler.onGroupProfileUpdated?.success(groupJid)
             }
 
@@ -588,10 +585,10 @@ open class FlyBaseController(activity: FlutterActivity) : MethodChannel.MethodCa
 
 
     override fun onMethodCall(call: MethodCall, result: MethodChannel.Result) {
-        Log.e("call method",call.method.toString())
+        //Log.e("call method",call.method.toString())
         when {
             call.method.equals("sendData")-> {
-                result.success(jid);
+                result.success(jid)
             }
             call.method.equals("syncContacts") -> {
                 val isFirsttime = call.argument<Boolean>("is_first_time") ?: false
@@ -613,7 +610,7 @@ open class FlyBaseController(activity: FlutterActivity) : MethodChannel.MethodCa
             }
             call.method.equals("getUnKnownUserProfiles") -> {
                 val unknownProfilesList: List<ProfileDetails> = FlyCore.getUnKnownUserProfiles()
-                result.success(unknownProfilesList.tojsonString());
+                result.success(unknownProfilesList.tojsonString())
             }
             call.method.equals("getMyProfileStatus") -> {
                 val myUserStatus: ProfileStatus = FlyCore.getMyProfileStatus()!!
@@ -1010,8 +1007,8 @@ open class FlyBaseController(activity: FlutterActivity) : MethodChannel.MethodCa
 //                        .toString()
 //                val recent = FlyCore.getRecentChatOf(userJID)
 //                if (recent != null) {
-//                    Log.e("RESPONSE_CAPTURE", "===========================")
-//                    DebugUtilis.v("FlyCore.getRecentChatOf", recent.tojsonString())
+//                    //Log.e("RESPONSE_CAPTURE", "===========================")
+//                    //DebugUtilis.v("FlyCore.getRecentChatOf", recent.tojsonString())
 //                    result.success(recent.tojsonString())
 //                } else {
 //                    result.success(null)
@@ -1050,8 +1047,8 @@ open class FlyBaseController(activity: FlutterActivity) : MethodChannel.MethodCa
                 val userJID = call.argument<String>("jid") ?: ""
                 val recent = FlyCore.getRecentChatOf(userJID)
                 if (recent != null) {
-                    Log.e("RESPONSE_CAPTURE", "===========================")
-                    DebugUtilis.v("FlyCore.getRecentChatOf", recent.tojsonString())
+                    //Log.e("RESPONSE_CAPTURE", "===========================")
+                    //DebugUtilis.v("FlyCore.getRecentChatOf", recent.tojsonString())
                     result.success(recent.tojsonString())
                 }
             }
@@ -1059,8 +1056,8 @@ open class FlyBaseController(activity: FlutterActivity) : MethodChannel.MethodCa
                 val mid = call.argument<String>("mid") ?: ""
                 val data = FlyMessenger.getMessageOfId(mid)
                 if (data != null) {
-                    Log.e("RESPONSE_CAPTURE", "===========================")
-                    DebugUtilis.v("FlyMessenger.getMessageOfId", data.tojsonString())
+                    //Log.e("RESPONSE_CAPTURE", "===========================")
+                    //DebugUtilis.v("FlyMessenger.getMessageOfId", data.tojsonString())
                     result.success(data.tojsonString())
                 }
             }
@@ -1123,7 +1120,7 @@ open class FlyBaseController(activity: FlutterActivity) : MethodChannel.MethodCa
                 val jid = call.argument<String>("jid") ?: ""
                 val isAdmin =
                     GroupManager.isAdmin(jid, SharedPreferenceManager.instance.currentUserJid)
-                DebugUtilis.v("GroupManager.isAdmin", isAdmin.toString())
+                //DebugUtilis.v("GroupManager.isAdmin", isAdmin.toString())
                 result.success(isAdmin)
             }
             call.method.equals("isMemberOfGroup") -> {
@@ -1131,7 +1128,7 @@ open class FlyBaseController(activity: FlutterActivity) : MethodChannel.MethodCa
                 val userjid = call.argument<String>("userjid")
                     ?: SharedPreferenceManager.instance.currentUserJid
                 val isMemberGroup = GroupManager.isMemberOfGroup(jid, userjid)
-                DebugUtilis.v("GroupManager.isMemberOfGroup", isMemberGroup.toString())
+                //DebugUtilis.v("GroupManager.isMemberOfGroup", isMemberGroup.toString())
                 result.success(isMemberGroup)
             }
 //            call.method.equals("reportUserOrMessages") -> {
@@ -1155,30 +1152,30 @@ open class FlyBaseController(activity: FlutterActivity) : MethodChannel.MethodCa
             call.method.equals("getMediaMessages") -> {
                 val jid = call.argument<String>("jid") ?: ""
                 val mediaMessage = ChatManager.getMediaMessages(jid)
-                Log.e("RESPONSE_CAPTURE", "===========================")
-                DebugUtilis.v("ChatManager.getMediaMessages", mediaMessage.tojsonString())
+                //Log.e("RESPONSE_CAPTURE", "===========================")
+                //DebugUtilis.v("ChatManager.getMediaMessages", mediaMessage.tojsonString())
                 result.success(mediaMessage.tojsonString())
             }
             call.method.equals("getDocsMessages") -> {
                 val jid = call.argument<String>("jid") ?: ""
                 val docMessages = ChatManager.getDocsMessages(jid)
-                Log.e("RESPONSE_CAPTURE", "===========================")
-                DebugUtilis.v("ChatManager.getDocsMessages", docMessages.tojsonString())
+                //Log.e("RESPONSE_CAPTURE", "===========================")
+                //DebugUtilis.v("ChatManager.getDocsMessages", docMessages.tojsonString())
                 result.success(docMessages.tojsonString())
             }
             call.method.equals("getLinkMessages") -> {
                 val jid = call.argument<String>("jid") ?: ""
                 val linkMessage = ChatManager.getLinkMessages(jid)
-                Log.e("RESPONSE_CAPTURE", "===========================")
-                DebugUtilis.v("ChatManager.getLinkMessages", linkMessage.tojsonString())
+                //Log.e("RESPONSE_CAPTURE", "===========================")
+                //DebugUtilis.v("ChatManager.getLinkMessages", linkMessage.tojsonString())
                 result.success(linkMessage.tojsonString())
             }
             call.method.equals("getProfileDetails") -> {
                 val jid = call.argument("jid") ?: ""
                 val profileDetails = ContactManager.getProfileDetails(jid)
                 if (profileDetails != null) {
-                    Log.e("RESPONSE_CAPTURE", "===========================")
-                    DebugUtilis.v("ContactManager.getProfileDetails", profileDetails.tojsonString())
+                    //Log.e("RESPONSE_CAPTURE", "===========================")
+                    //DebugUtilis.v("ContactManager.getProfileDetails", profileDetails.tojsonString())
                     result.success(profileDetails.tojsonString())
                 }
             }
@@ -1311,12 +1308,12 @@ open class FlyBaseController(activity: FlutterActivity) : MethodChannel.MethodCa
 
      private fun handleReceivedMessage(call: MethodCall,result: MethodChannel.Result) {
          val notificationdata = call.argument<Map<String,String>>("notificationdata") ?: mapOf()
-         Log.e("===notificationdata===",notificationdata.toString())
+         //Log.e("===notificationdata===",notificationdata.toString())
          PushNotificationManager.handleReceivedMessage(notificationdata, object :
              NotificationEventListener {
              override fun onMessageReceived(chatMessage: ChatMessage) {
                  //Here you need to fetch recent unread messages to build up notification content
-                 Log.e("notificationdata",chatMessage.tojsonString())
+                 //Log.e("notificationdata",chatMessage.tojsonString())
                  val jsonObject = JSONObject()
                  jsonObject.put("groupJid","")
                  jsonObject.put("titleContent","")
@@ -1327,7 +1324,7 @@ open class FlyBaseController(activity: FlutterActivity) : MethodChannel.MethodCa
 
              override fun onGroupNotification(groupJid: String, titleContent: String,  chatMessage: ChatMessage) {
                  /* Create the notification for group creation with paramter values */
-                 Log.e("notificationdata group",chatMessage.tojsonString())
+                 //Log.e("notificationdata group",chatMessage.tojsonString())
                  val jsonObject = JSONObject()
                  jsonObject.put("groupJid",groupJid)
                  jsonObject.put("titleContent",titleContent)
@@ -1338,7 +1335,7 @@ open class FlyBaseController(activity: FlutterActivity) : MethodChannel.MethodCa
 
              override fun onCancelNotification() {
                  // here you have to cancel notification
-                 Log.e("notificationdata","cancel")
+                 //Log.e("notificationdata","cancel")
                  val jsonObject = JSONObject()
                  jsonObject.put("groupJid","")
                  jsonObject.put("titleContent","")
@@ -1553,7 +1550,7 @@ open class FlyBaseController(activity: FlutterActivity) : MethodChannel.MethodCa
                 profilesList.let {
                     it.sortedBy { profileDetails -> profileDetails.name?.toLowerCase() }
                 }
-                DebugUtilis.v("GroupManager.getAllGroups", data.tojsonString())
+                //DebugUtilis.v("GroupManager.getAllGroups", data.tojsonString())
                 result.success(profilesList.tojsonString())
             } else {
                 result.error("500", "Unable to get all groups", throwable)
@@ -1563,8 +1560,8 @@ open class FlyBaseController(activity: FlutterActivity) : MethodChannel.MethodCa
 
     private fun getFavouriteMessages(result: MethodChannel.Result) {
         val favouriteMessages: List<ChatMessage> = FlyMessenger.getFavouriteMessages()
-        Log.e("RESPONSE_CAPTURE", "===========================")
-        DebugUtilis.v("FlyMessenger.getFavouriteMessages", favouriteMessages.tojsonString())
+        //Log.e("RESPONSE_CAPTURE", "===========================")
+        //DebugUtilis.v("FlyMessenger.getFavouriteMessages", favouriteMessages.tojsonString())
         result.success(favouriteMessages.tojsonString())
     }
 
@@ -1584,8 +1581,8 @@ open class FlyBaseController(activity: FlutterActivity) : MethodChannel.MethodCa
         val deleteFeedback = call.argument("delete_feedback") ?: ""
         FlyCore.deleteAccount(deleteReason, deleteFeedback) { isSuccess, throwable, data ->
             if (isSuccess) {
-                Log.e("RESPONSE_CAPTURE", "===========================")
-                DebugUtilis.v("FlyCore.deleteAccount", data.tojsonString())
+                //Log.e("RESPONSE_CAPTURE", "===========================")
+                //DebugUtilis.v("FlyCore.deleteAccount", data.tojsonString())
                 result.success(data.tojsonString())
             } else {
                 result.error("500", "Unable to Delete the Account", throwable)
@@ -1606,7 +1603,7 @@ open class FlyBaseController(activity: FlutterActivity) : MethodChannel.MethodCa
                 object : ChatActionListener {
                     override fun onResponse(isSuccess: Boolean, message: String) {
                         if (isSuccess) {
-                            Log.e("ChatManager.forwardMessagesToMultipleUsers", message)
+                            //Log.e("ChatManager.forwardMessagesToMultipleUsers", message)
                             result.success(message)
                         } else {
                             result.error("500", "Unable to Favourite the Message", message)
@@ -1649,7 +1646,7 @@ open class FlyBaseController(activity: FlutterActivity) : MethodChannel.MethodCa
                 object : ChatActionListener {
                     override fun onResponse(isSuccess: Boolean, message: String) {
                         if (isSuccess) {
-                            Log.e("ChatManager.updateFavouriteStatus", message)
+                            //Log.e("ChatManager.updateFavouriteStatus", message)
                             result.success(message)
                         } else {
                             result.error("500", "Unable to Favourite the Message", message)
@@ -1670,14 +1667,11 @@ open class FlyBaseController(activity: FlutterActivity) : MethodChannel.MethodCa
             )
         }
         if (messageStatus != null) {
-            Log.e("RESPONSE_CAPTURE", "===========================")
-            DebugUtilis.v(
-                "FlyMessenger.getMessageStatusOfASingleChatMessage",
-                messageStatus.tojsonString()
-            )
+            //Log.e("RESPONSE_CAPTURE", "===========================")
+            //DebugUtilis.v( "FlyMessenger.getMessageStatusOfASingleChatMessage", messageStatus.tojsonString() )
             result.success(messageStatus.tojsonString())
         } else {
-            Log.e(TAG, "Message Info Error")
+            //Log.e(TAG, "Message Info Error")
         }
     }
 
@@ -1690,7 +1684,7 @@ open class FlyBaseController(activity: FlutterActivity) : MethodChannel.MethodCa
         if (userJID != null && messageIDList != null && chatType != null) {
             if (isDeleteForEveryOne!!) {
 
-                Log.e(TAG, "Delete For EveryOne")
+                //Log.e(TAG, "Delete For EveryOne")
                 ChatManager.deleteMessagesForEveryone(
                     userJID,
                     messageIDList,
@@ -1700,8 +1694,8 @@ open class FlyBaseController(activity: FlutterActivity) : MethodChannel.MethodCa
                         override fun onResponse(isSuccess: Boolean, message: String) {
                             if (isSuccess) {
 
-                                Log.e("RESPONSE_CAPTURE", "===========================")
-                                DebugUtilis.v("ChatManager.deleteMessagesForEveryone", message)
+                                //Log.e("RESPONSE_CAPTURE", "===========================")
+                                //DebugUtilis.v("ChatManager.deleteMessagesForEveryone", message)
                                 result.success(message)
                             } else {
                                 result.error("500", "Unable to Delete the Chat", message)
@@ -1711,7 +1705,7 @@ open class FlyBaseController(activity: FlutterActivity) : MethodChannel.MethodCa
                     })
             } else {
 
-                Log.e(TAG, "Delete For Me")
+                //Log.e(TAG, "Delete For Me")
                 ChatManager.deleteMessagesForMe(
                     userJID,
                     messageIDList,
@@ -1720,8 +1714,8 @@ open class FlyBaseController(activity: FlutterActivity) : MethodChannel.MethodCa
                     object : ChatActionListener {
                         override fun onResponse(isSuccess: Boolean, message: String) {
                             if (isSuccess) {
-                                Log.e("RESPONSE_CAPTURE", "===========================")
-                                DebugUtilis.v("ChatManager.deleteMessagesForMe", message)
+                                //Log.e("RESPONSE_CAPTURE", "===========================")
+                                //DebugUtilis.v("ChatManager.deleteMessagesForMe", message)
                                 result.success(message)
                             } else {
                                 result.error("500", "Unable to Delete the Chat", message)
@@ -1750,8 +1744,8 @@ open class FlyBaseController(activity: FlutterActivity) : MethodChannel.MethodCa
                 selectedMessageID
             ) { isSuccess, throwable, data ->
                 if (isSuccess) {
-                    Log.e("RESPONSE_CAPTURE", "===========================")
-                    DebugUtilis.v("FlyCore.reportUserOrMessages", data.tojsonString())
+                    //Log.e("RESPONSE_CAPTURE", "===========================")
+                    //DebugUtilis.v("FlyCore.reportUserOrMessages", data.tojsonString())
                     result.success(data)
                 } else {
                     result.error("500", "Unable to report the User/Chat", throwable?.message)
@@ -1812,8 +1806,8 @@ open class FlyBaseController(activity: FlutterActivity) : MethodChannel.MethodCa
         val listener = object : SendMessageListener {
             override fun onResponse(isSuccess: Boolean, chatMessage: ChatMessage?) {
                 if (chatMessage != null) {
-                    Log.e("RESPONSE_CAPTURE", "===========================")
-                    DebugUtilis.v("FlyMessenger.sendAudioMessage", chatMessage.tojsonString())
+                    //Log.e("RESPONSE_CAPTURE", "===========================")
+                    //DebugUtilis.v("FlyMessenger.sendAudioMessage", chatMessage.tojsonString())
                     result.success(chatMessage.tojsonString())
                 } else {
                     result.error("500", "Unable to Send Audio Message", null)
@@ -1858,11 +1852,8 @@ open class FlyBaseController(activity: FlutterActivity) : MethodChannel.MethodCa
                 object : SendMessageListener {
                     override fun onResponse(isSuccess: Boolean, chatMessage: ChatMessage?) {
                         if (chatMessage != null) {
-                            Log.e("RESPONSE_CAPTURE", "===========================")
-                            DebugUtilis.v(
-                                "FlyMessenger.sendContactMessage",
-                                chatMessage.tojsonString()
-                            )
+                            //Log.e("RESPONSE_CAPTURE", "===========================")
+                            //DebugUtilis.v("FlyMessenger.sendContactMessage",chatMessage.tojsonString())
                             result.success(chatMessage.tojsonString())
                         } else {
                             result.error("500", "Unable to Send Contact Message", null)
@@ -1888,8 +1879,8 @@ open class FlyBaseController(activity: FlutterActivity) : MethodChannel.MethodCa
         val listener = object : SendMessageListener {
             override fun onResponse(isSuccess: Boolean, chatMessage: ChatMessage?) {
                 if (chatMessage != null) {
-                    Log.e("RESPONSE_CAPTURE", "===========================")
-                    DebugUtilis.v("FlyMessenger.sendVideoMessage", chatMessage.tojsonString())
+                    //Log.e("RESPONSE_CAPTURE", "===========================")
+                    //DebugUtilis.v("FlyMessenger.sendVideoMessage", chatMessage.tojsonString())
                     result.success(chatMessage.tojsonString())
                 } else {
                     result.error("500", "Unable to Send Video Message", null)
@@ -1936,7 +1927,7 @@ open class FlyBaseController(activity: FlutterActivity) : MethodChannel.MethodCa
                 }
             }
         } catch (e: Exception) {
-            Log.e(TAG, e.message.toString())
+            //Log.e(TAG, e.message.toString())
             result.error("400", e.message.toString(), "")
         }
 
@@ -1946,8 +1937,8 @@ open class FlyBaseController(activity: FlutterActivity) : MethodChannel.MethodCa
 //        val messageID: String? = call.argument("message_id")
 //        val message = FlyMessenger.getMessageOfId(messageID!!)
 //        if (message != null) {
-//            Log.e("RESPONSE_CAPTURE", "===========================")
-//            DebugUtilis.v("FlyMessenger.getMessageOfId", message.tojsonString())
+//            //Log.e("RESPONSE_CAPTURE", "===========================")
+//            //DebugUtilis.v("FlyMessenger.getMessageOfId", message.tojsonString())
 //            result.success(message.tojsonString())
 //        } else {
 //            result.error("500", "Media Details Not Found", null)
@@ -1963,8 +1954,8 @@ open class FlyBaseController(activity: FlutterActivity) : MethodChannel.MethodCa
                 val userJID: String? = call.argument("JID")
                 if (userJID != null) {
                     val messages: List<ChatMessage> = FlyMessenger.getMessagesOfJid(userJID)
-                    Log.e("RESPONSE_CAPTURE", "===========================")
-                    DebugUtilis.v("FlyMessenger.getMessagesOfJid", messages.tojsonString())
+                    //Log.e("RESPONSE_CAPTURE", "===========================")
+                    //DebugUtilis.v("FlyMessenger.getMessagesOfJid", messages.tojsonString())
 
                     result.success(messages.tojsonString())
                 } else {
@@ -1978,13 +1969,14 @@ open class FlyBaseController(activity: FlutterActivity) : MethodChannel.MethodCa
     private fun getUserList(call: MethodCall, result: MethodChannel.Result) {
         if (AppUtils.isNetConnected(mContext)) {
             val page = call.argument("page") ?: 1
+            val perPageResultSize = call.argument("perPageResultSize") ?: 20
             val search = call.argument("search") ?: ""
-            FlyCore.getUserList(page, 20, search) { isSuccess, throwable, data ->
+            FlyCore.getUserList(page, perPageResultSize, search) { isSuccess, throwable, data ->
                 data["status"] = isSuccess
                 Log.d("registered", "$isSuccess : $data : $throwable")
                 if (isSuccess) {
-                    Log.e("RESPONSE_CAPTURE", "===========================")
-                    DebugUtilis.v("getUserList", data.tojsonString())
+                    //Log.e("RESPONSE_CAPTURE", "===========================")
+                    //DebugUtilis.v("getUserList", data.tojsonString())
                     result.success(data.tojsonString())
                 } else {
                     println("friends error : " + throwable.toString())
@@ -2039,8 +2031,8 @@ open class FlyBaseController(activity: FlutterActivity) : MethodChannel.MethodCa
             }
 
             ContactManager.updateMyProfile(profileObj) { isSuccess, _, data ->
-                Log.e("RESPONSE_CAPTURE", "===========================")
-                DebugUtilis.v("ContactManager.updateMyProfile", data.tojsonString())
+                //Log.e("RESPONSE_CAPTURE", "===========================")
+                //DebugUtilis.v("ContactManager.updateMyProfile", data.tojsonString())
                 data["status"] = isSuccess
                 result.success(data.tojsonString())
             }
@@ -2060,8 +2052,8 @@ open class FlyBaseController(activity: FlutterActivity) : MethodChannel.MethodCa
                 val imagefile = File(image)
                 if (imagefile.exists()) {
                     ContactManager.updateMyProfileImage(imagefile) { isSuccess, _, data ->
-                        Log.e("RESPONSE_CAPTURE", "===========================")
-                        DebugUtilis.v("ContactManager.updateMyProfileImage", data.tojsonString())
+                        //Log.e("RESPONSE_CAPTURE", "===========================")
+                        //DebugUtilis.v("ContactManager.updateMyProfileImage", data.tojsonString())
                         data["status"] = isSuccess
                         result.success(data.tojsonString())
                     }
@@ -2081,8 +2073,8 @@ open class FlyBaseController(activity: FlutterActivity) : MethodChannel.MethodCa
 
     private fun removeProfileImage(result: MethodChannel.Result) {
         ContactManager.removeProfileImage { isSuccess, _, data ->
-            Log.e("RESPONSE_CAPTURE", "===========================")
-            DebugUtilis.v("ContactManager.removeProfileImage", data.tojsonString())
+            //Log.e("RESPONSE_CAPTURE", "===========================")
+            //DebugUtilis.v("ContactManager.removeProfileImage", data.tojsonString())
             data["status"] = isSuccess
             result.success(isSuccess)
         }
@@ -2094,8 +2086,8 @@ open class FlyBaseController(activity: FlutterActivity) : MethodChannel.MethodCa
             if (status.isNotEmpty()) {
                 FlyCore.setMyProfileStatus(status) { isSuccess, _, data ->
                     data["status"] = isSuccess
-                    Log.e("RESPONSE_CAPTURE", "===========================")
-                    DebugUtilis.v("FlyCore.setMyProfileStatus", data.tojsonString())
+                    //Log.e("RESPONSE_CAPTURE", "===========================")
+                    //DebugUtilis.v("FlyCore.setMyProfileStatus", data.tojsonString())
                     if (isSuccess) {
                         insertDefaultStatus(call, null)
                     }
@@ -2118,8 +2110,8 @@ open class FlyBaseController(activity: FlutterActivity) : MethodChannel.MethodCa
                 throwable: Throwable?,
                 data: HashMap<String, Any>
             ) {
-                Log.e("RESPONSE_CAPTURE", "===========================")
-                DebugUtilis.v("getUserProfile", data.tojsonString())
+                //Log.e("RESPONSE_CAPTURE", "===========================")
+                //DebugUtilis.v("getUserProfile", data.tojsonString())
                 data["status"] = isSuccess
                 Log.i(TAG, "getProfile => " + data.tojsonString())
                 result.success(data.tojsonString())
@@ -2146,12 +2138,12 @@ open class FlyBaseController(activity: FlutterActivity) : MethodChannel.MethodCa
                                 Log.i(TAG, "Message Sent Successfully")
                                 Log.i(TAG, "chat Message==> $chatMessage")
                                 if (chatMessage != null) {
-                                    Log.e("RESPONSE_CAPTURE", "===========================")
-                                    DebugUtilis.v("sendTextMessage", chatMessage.tojsonString())
+                                    //Log.e("RESPONSE_CAPTURE", "===========================")
+                                    //DebugUtilis.v("sendTextMessage", chatMessage.tojsonString())
                                     result.success(chatMessage.tojsonString())
                                 }
                             } else {
-                                Log.e(TAG, "Message sent Failed")
+                                //Log.e(TAG, "Message sent Failed")
                             }
                         }
                     })
@@ -2193,18 +2185,15 @@ open class FlyBaseController(activity: FlutterActivity) : MethodChannel.MethodCa
                 override fun onResponse(isSuccess: Boolean, chatMessage: ChatMessage?) {
                     // you will get the message sent success response
                     if (isSuccess) {
-                        Log.e("RESPONSE_CAPTURE", "===========================")
+                        //Log.e("RESPONSE_CAPTURE", "===========================")
                         if (chatMessage != null) {
 
-                            DebugUtilis.v(
-                                "FlyMessenger.sendDocumentMessage",
-                                chatMessage.tojsonString()
-                            )
+                            //DebugUtilis.v( "FlyMessenger.sendDocumentMessage",chatMessage.tojsonString())
                             Log.i(TAG, chatMessage.tojsonString())
                             result.success(chatMessage.tojsonString())
                         }
                     } else {
-                        Log.e(TAG, "File Message sent Failed")
+                        //Log.e(TAG, "File Message sent Failed")
                         result.error("500", "File Message sent Failed", null)
                     }
                 }
@@ -2251,8 +2240,8 @@ open class FlyBaseController(activity: FlutterActivity) : MethodChannel.MethodCa
                 object : SendMessageListener {
                     override fun onResponse(isSuccess: Boolean, chatMessage: ChatMessage?) {
                         if (chatMessage != null) {
-                            Log.e("RESPONSE_CAPTURE", "===========================")
-                            DebugUtilis.v("sendLocationMessage", chatMessage.tojsonString())
+                            //Log.e("RESPONSE_CAPTURE", "===========================")
+                            //DebugUtilis.v("sendLocationMessage", chatMessage.tojsonString())
                             result.success(chatMessage.tojsonString())
                         } else {
                             result.error("400", "Message Not Sent", null)
@@ -2281,14 +2270,14 @@ open class FlyBaseController(activity: FlutterActivity) : MethodChannel.MethodCa
 
         val thumbnailBase64 = getImageThumbImage(filePath)
 
-        Log.e("FILEPATH", filePath)
+        //Log.e("FILEPATH", filePath)
         Log.i(TAG, filePath)
         Log.i(TAG, thumbnailBase64)
         val listener = object : SendMessageListener {
             override fun onResponse(isSuccess: Boolean, chatMessage: ChatMessage?) {
                 if (chatMessage != null) {
-                    Log.e("RESPONSE_CAPTURE", "===========================")
-                    DebugUtilis.v("FlyMessenger.sendImageMessage", chatMessage.tojsonString())
+                    //Log.e("RESPONSE_CAPTURE", "===========================")
+                    //DebugUtilis.v("FlyMessenger.sendImageMessage", chatMessage.tojsonString())
                     result.success(Gson().toJson(chatMessage))
                 }
             }
@@ -2324,8 +2313,8 @@ open class FlyBaseController(activity: FlutterActivity) : MethodChannel.MethodCa
             FlyCore.getRecentChatList { isSuccess, throwable, data ->
                 //progress.dismiss()
                 if (isSuccess) {
-                    Log.e("RESPONSE_CAPTURE", "===========================")
-                    DebugUtilis.v("FlyCore.getRecentChatList", data.tojsonString())
+                    //Log.e("RESPONSE_CAPTURE", "===========================")
+                    //DebugUtilis.v("FlyCore.getRecentChatList", data.tojsonString())
                     result.success(Gson().toJson(data).toString())
                 } else {
                     result.error("500", throwable!!.message, null)
@@ -2454,18 +2443,18 @@ open class FlyBaseController(activity: FlutterActivity) : MethodChannel.MethodCa
 
         val mediaPath = VideoRecUtils.getSentParentPath(Constants.MSG_TYPE_IMAGE)
 
-        Log.e("FIle Upload root path", mediaPath)
+        //Log.e("FIle Upload root path", mediaPath)
 
         val sentMedia = File(mediaPath)
         if (!sentMedia.exists()) {
-            Log.e(TAG, "sent Media Not exists")
+            //Log.e(TAG, "sent Media Not exists")
             sentMedia.mkdirs()
         } else {
-            Log.e(TAG, "Sent Media Already Exists")
+            //Log.e(TAG, "Sent Media Already Exists")
         }
         val noMediaFile = File(sentMedia, ".nomedia")
         if (!noMediaFile.exists()) {
-            Log.e(TAG, "NoMediaFile not exists")
+            //Log.e(TAG, "NoMediaFile not exists")
             try {
                 FileWriter(noMediaFile).use { writer ->
                     LogMessage.d(
@@ -2474,11 +2463,11 @@ open class FlyBaseController(activity: FlutterActivity) : MethodChannel.MethodCa
                     )
                 }
             } catch (e: IOException) {
-                Log.e("File Upload Exception", e.message.toString())
+                //Log.e("File Upload Exception", e.message.toString())
                 LogMessage.e(e)
             }
         } else {
-            Log.e("File Upload", "No Media Already Exists")
+            //Log.e("File Upload", "No Media Already Exists")
         }
     }
 
@@ -2486,25 +2475,24 @@ open class FlyBaseController(activity: FlutterActivity) : MethodChannel.MethodCa
     private fun getRecentChatListIncludingArchived(result: MethodChannel.Result) {
 
         val recentChatListWithArchived = FlyCore.getRecentChatListIncludingArchived()
-        Log.e("RESPONSE_CAPTURE", "===========================")
-        DebugUtilis.v(
-            "FlyCore.getRecentChatListIncludingArchived",
-            recentChatListWithArchived.tojsonString()
-        )
+        //Log.e("RESPONSE_CAPTURE", "===========================")
+        //DebugUtilis.v( "FlyCore.getRecentChatListIncludingArchived",recentChatListWithArchived.tojsonString())
         result.success(recentChatListWithArchived.tojsonString())
 
     }
 
     private fun searchConversation(call: MethodCall, result: MethodChannel.Result) {
         val searchKey = call.argument<String>("searchKey") ?: ""
+        val jidForSearch = call.argument<String>("jidForSearch") ?: ""
+        val globalSearch = call.argument<Boolean>("globalSearch") ?: true
         FlyCore.searchConversation(
             searchKey,
-            Constants.EMPTY_STRING,
-            true
+            jidForSearch,
+            globalSearch
         ) { isSuccess, _, data ->
             if (isSuccess) {
-                Log.e("RESPONSE_CAPTURE", "===========================")
-                DebugUtilis.v("FlyCore.searchConversation", data.tojsonString())
+                //Log.e("RESPONSE_CAPTURE", "===========================")
+                //DebugUtilis.v("FlyCore.searchConversation", data.tojsonString())
                 val filterMessageList = data["data"] as MutableList<*>
                 Log.d("searchConversation", filterMessageList.tojsonString())
                 result.success(filterMessageList.tojsonString())
@@ -2516,8 +2504,8 @@ open class FlyBaseController(activity: FlutterActivity) : MethodChannel.MethodCa
         val server = call.argument<Boolean>("server") ?: false
         FlyCore.getRegisteredUsers(server) { isSuccess, _, data ->
             if (isSuccess) {
-                Log.e("RESPONSE_CAPTURE", "===========================")
-                DebugUtilis.v("FlyCore.getRegisteredUsers", data.tojsonString())
+                //Log.e("RESPONSE_CAPTURE", "===========================")
+                //DebugUtilis.v("FlyCore.getRegisteredUsers", data.tojsonString())
                 result.success(data.tojsonString())
             }
         }
@@ -2526,8 +2514,8 @@ open class FlyBaseController(activity: FlutterActivity) : MethodChannel.MethodCa
     private fun refreshAndGetAuthToken(result: MethodChannel.Result) {
         FlyCore.refreshAndGetAuthToken { isSuccess, _, data ->
             if (isSuccess) {
-                Log.e("RESPONSE_CAPTURE", "===========================")
-                DebugUtilis.v("FlyCore.refreshAndGetAuthToken", data.tojsonString())
+                //Log.e("RESPONSE_CAPTURE", "===========================")
+                //DebugUtilis.v("FlyCore.refreshAndGetAuthToken", data.tojsonString())
                 LogMessage.d(TAG, "Token Refresh success: ${data["data"]}")
                 result.success(data["data"].toString())
             } else {
@@ -2541,8 +2529,8 @@ open class FlyBaseController(activity: FlutterActivity) : MethodChannel.MethodCa
         val userJid = call.argument<String>("userJID") ?: ""
         FlyCore.blockUser(userJid) { isSuccess, throwable, data ->
             if (isSuccess) {
-                Log.e("RESPONSE_CAPTURE", "===========================")
-                DebugUtilis.v("FlyCore.blockUser", data.tojsonString())
+                //Log.e("RESPONSE_CAPTURE", "===========================")
+                //DebugUtilis.v("FlyCore.blockUser", data.tojsonString())
                 result.success(data.tojsonString())
             } else {
                 result.error("500", "Unable to Block User", throwable?.tojsonString())
@@ -2556,7 +2544,7 @@ open class FlyBaseController(activity: FlutterActivity) : MethodChannel.MethodCa
 
         FlyCore.unblockUser(userJid) { isSuccess, throwable, data ->
             if (isSuccess) {
-                DebugUtilis.v("FlyCore.unblockUser", data.tojsonString())
+                //DebugUtilis.v("FlyCore.unblockUser", data.tojsonString())
                 result.success(true)
             } else {
                 result.error("500", "Unable to Unblock User", throwable?.tojsonString())
@@ -2574,8 +2562,8 @@ open class FlyBaseController(activity: FlutterActivity) : MethodChannel.MethodCa
         GroupManager.createGroup(groupName, members,
             file, { isSuccess, throwable, hashmap ->
                 if (isSuccess) {
-                    Log.e("RESPONSE_CAPTURE", "===========================")
-                    DebugUtilis.v("GroupManager.createGroup", hashmap.tojsonString())
+                    //Log.e("RESPONSE_CAPTURE", "===========================")
+                    //DebugUtilis.v("GroupManager.createGroup", hashmap.tojsonString())
                     val groupData = hashmap.getData() as CreateGroupModel
                     result.success(groupData.tojsonString())
                 } else {
@@ -2612,7 +2600,7 @@ open class FlyBaseController(activity: FlutterActivity) : MethodChannel.MethodCa
         GroupManager.makeAdmin(groupjid, userjid, object :
             ChatActionListener {
             override fun onResponse(isSuccess: Boolean, message: String) {
-                Log.e("GroupManager.makeAdmin", message)
+                //Log.e("GroupManager.makeAdmin", message)
                 result.success(isSuccess)
             }
         })
@@ -2633,8 +2621,8 @@ open class FlyBaseController(activity: FlutterActivity) : MethodChannel.MethodCa
             FlyNetwork.verifyToken(userName, googleToken) { isSuccess, throwable, data ->
                 LogMessage.d(TAG, data["data"].toString())
                 if (isSuccess) {
-                    Log.e("RESPONSE_CAPTURE", "===========================")
-                    DebugUtilis.v("FlyNetwork.verifyToken", data.tojsonString())
+                    //Log.e("RESPONSE_CAPTURE", "===========================")
+                    //DebugUtilis.v("FlyNetwork.verifyToken", data.tojsonString())
                     val fcmData = data["data"] as VerifyFcmResponse
                     results.success(fcmData.data!!.deviceToken.toString())
                 } else {
@@ -2653,8 +2641,8 @@ open class FlyBaseController(activity: FlutterActivity) : MethodChannel.MethodCa
             ?: GroupManager.doesFetchingMembersListFromServedRequired(jid)
         GroupManager.getGroupMembersList(fromServer, jid) { isSuccess, throwable, data ->
             if (isSuccess) {
-                Log.e("RESPONSE_CAPTURE", "===========================")
-                DebugUtilis.v("GroupManager.getGroupMembersList", data.tojsonString())
+                //Log.e("RESPONSE_CAPTURE", "===========================")
+                //DebugUtilis.v("GroupManager.getGroupMembersList", data.tojsonString())
                 val groupMembers: MutableList<ProfileDetails> =
                     data.getData() as ArrayList<ProfileDetails>
                 val myProfileIndex =
@@ -2742,8 +2730,8 @@ open class FlyBaseController(activity: FlutterActivity) : MethodChannel.MethodCa
             }
 
             override fun onSuccess(lastSeenTime: String) {
-                Log.e("RESPONSE_CAPTURE", "===========================")
-                DebugUtilis.v("ContactManager.getUserLastSeenTime", lastSeenTime)
+                //Log.e("RESPONSE_CAPTURE", "===========================")
+                //DebugUtilis.v("ContactManager.getUserLastSeenTime", lastSeenTime)
                 result.success(lastSeenTime)
             }
         })
@@ -2761,8 +2749,8 @@ open class FlyBaseController(activity: FlutterActivity) : MethodChannel.MethodCa
         val serverCall = call.argument<Boolean>("serverCall") ?: false
         FlyCore.getUsersIBlocked(serverCall) { isSuccess: Boolean, _: Throwable?, data: HashMap<String, Any> ->
             if (isSuccess) {
-                Log.e("RESPONSE_CAPTURE", "===========================")
-                DebugUtilis.v("FlyCore.getUsersIBlocked", data.tojsonString())
+                //Log.e("RESPONSE_CAPTURE", "===========================")
+                //DebugUtilis.v("FlyCore.getUsersIBlocked", data.tojsonString())
                 val profilesList = data.getData() as ArrayList<ProfileDetails>
                 result.success(profilesList.tojsonString())
             }
@@ -2783,7 +2771,7 @@ open class FlyBaseController(activity: FlutterActivity) : MethodChannel.MethodCa
                 }
             }
         } catch (e: java.lang.Exception) {
-            android.util.Log.e("qr", e.toString())
+            //Log.e("qr", e.toString())
         }
     }
 
@@ -2856,16 +2844,16 @@ open class FlyBaseController(activity: FlutterActivity) : MethodChannel.MethodCa
 
     override fun onMessageReceived(message: ChatMessage) {
         //called when the new message is received
-        Log.e(TAG, "Message Received ${message.tojsonString()}")
+        //Log.e(TAG, "Message Received ${message.tojsonString()}")
         MessageReceivedStreamHandler.onMessageReceived?.success(message.tojsonString())
 
     }
 
     override fun onMessageStatusUpdated(messageId: String) {
         //called when the message status is updated
-        Log.e("Message Ack", "Received")
+        //Log.e("Message Ack", "Received")
 
-        Log.e(TAG, "Message Status Updated ==> $messageId")
+        //Log.e(TAG, "Message Status Updated ==> $messageId")
         val message = FlyMessenger.getMessageOfId(messageId)
         if (message != null) {
             MessageStatusUpdatedStreamHandler.onMessageStatusUpdated?.success(message.tojsonString())
@@ -2873,7 +2861,7 @@ open class FlyBaseController(activity: FlutterActivity) : MethodChannel.MethodCa
     }
 
     override fun onMediaStatusUpdated(message: ChatMessage) {
-        Log.e(TAG, "media Status Updated ==> ${message.messageId}")
+        //Log.e(TAG, "media Status Updated ==> ${message.messageId}")
         MediaStatusUpdatedStreamHandler.onMediaStatusUpdated?.success(message.tojsonString())
     }
 
@@ -2882,7 +2870,7 @@ open class FlyBaseController(activity: FlutterActivity) : MethodChannel.MethodCa
         progressPercentage: Int
     ) {
         //called when the media message progress is updated
-        Log.e("MirrorFly", "Upload/Download Status Updated")
+        //Log.e("MirrorFly", "Upload/Download Status Updated")
         val js = JSONObject()
         js.put("message_id", messageId)
         js.put("progress_percentage", progressPercentage)
@@ -2892,7 +2880,7 @@ open class FlyBaseController(activity: FlutterActivity) : MethodChannel.MethodCa
     }
 
     override fun onMessagesClearedOrDeleted(messageIds: ArrayList<String>, jid: String) {
-        Log.e("MirrorFly", "onMessagesClearedOrDeleted Status Updated")
+        //Log.e("MirrorFly", "onMessagesClearedOrDeleted Status Updated")
     }
 
     override fun showOrUpdateOrCancelNotification(jid: String, chatMessage: ChatMessage?) {
@@ -2929,7 +2917,7 @@ open class FlyBaseController(activity: FlutterActivity) : MethodChannel.MethodCa
     }
 
     override fun onGroupProfileUpdated(groupJid: String) {
-        Log.e("our GroupProfileUpdated", groupJid)
+        //Log.e("our GroupProfileUpdated", groupJid)
         onGroupProfileUpdatedStreamHandler.onGroupProfileUpdated?.success(groupJid)
     }
 
