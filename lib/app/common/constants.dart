@@ -61,6 +61,7 @@ const String pencilEditIcon = 'assets/logos/pencil.svg';
 const String tickIcon = 'assets/logos/tick.svg';
 const String smileIcon = 'assets/logos/smile.svg';
 const String icQrScannerWebLogin = 'assets/logos/ic_qr_scanner_web_login.png';
+const String redirectLastMessage = 'assets/logos/ic_redirect_last_message.png';
 
 const String icLogo = 'assets/logos/ic_logo.png';
 const String icChrome = 'assets/logos/ic_chrome.png';

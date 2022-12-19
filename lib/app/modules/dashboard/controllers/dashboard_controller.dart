@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/base_controller.dart';
@@ -53,9 +54,9 @@ class DashboardController extends GetxController with GetTickerProviderStateMixi
 
   getRecentChatList() {
     mirrorFlyLog("","recent chats");
-    FlyChat.getRecentChatList().then((value) {
+    FlyChat.getRecentChatList().then((value) async {
       debugPrint(value);
-      var data = recentChatFromJson(value);
+      var data = await compute(recentChatFromJson,value.toString());
       recentChats.clear();
       recentChats.addAll(data.data!);
     }).catchError((error) {

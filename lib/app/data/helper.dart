@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
@@ -257,7 +258,7 @@ extension MemberParsing on Member{
 Future<Profile> getProfileDetails(String jid) async {
   var value = await FlyChat.getProfileDetails(jid.checkNull(), false);
   // profileDataFromJson(value);
-  var profile =  profiledata(value.toString());
+  var profile =  await compute(profiledata,value.toString());
   // var str = Profile.fromJson(json.decode(value.toString()));
   return profile;
 }

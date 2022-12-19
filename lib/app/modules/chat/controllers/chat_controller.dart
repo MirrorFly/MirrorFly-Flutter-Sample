@@ -189,6 +189,7 @@ class ChatController extends GetxController
     });
   }
 
+  var showHideRedirectToLatest =false.obs;
   void onready() {
     debugPrint("isBlocked===> ${profile.isBlocked}");
     debugPrint("profile detail===> ${profile.toJson().toString()}");
@@ -215,6 +216,14 @@ class ChatController extends GetxController
           }
         });
     //scrollController.addListener(_scrollController);
+    scrollController.addListener(() {
+      if (scrollController.offset >= scrollController.position.maxScrollExtent &&
+          !scrollController.position.outOfRange) {
+        showHideRedirectToLatest(false);
+      }else{
+        showHideRedirectToLatest(true);
+      }
+    });
 
     FlyChat.setOnGoingChatUser(profile.jid!);
     getChatHistory(profile.jid!);
@@ -234,6 +243,16 @@ class ChatController extends GetxController
         );
       }
     });
+  }
+
+  scrollToEnd() {
+    if (scrollController.hasClients) {
+      scrollController.animateTo(
+        scrollController.position.maxScrollExtent,
+        duration: const Duration(milliseconds: 500),
+        curve: Curves.linear,
+      );
+    }
   }
 
   @override
@@ -1671,5 +1690,11 @@ class ChatController extends GetxController
           }
         });
       }
+  }
+
+  makeVoiceCall(){
+    FlyChat.makeVoiceCall(profile.jid.checkNull()).then((value){
+      mirrorFlyLog("makeVoiceCall", value.toString());
+    });
   }
 }
