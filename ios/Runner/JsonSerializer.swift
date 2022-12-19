@@ -131,7 +131,7 @@ open class JSONSerializer {
         var filteredChildren = [(label: String?, value: Any)]()
         
         for (optionalPropertyName, value) in children {
-            print("optionalPropertyName")
+//            print("optionalPropertyName")
             if optionalPropertyName == "mediaChatMessage" {
                 print("Media value")
             }
@@ -228,7 +228,7 @@ open class JSONSerializer {
 //                skip = true
 //            }
             
-            print("property displaytype \(String(describing: property.displayStyle))")
+//            print("property displaytype \(String(describing: property.displayStyle))")
             if (propertyName != nil && propertyName == "some" && property.displayStyle == Mirror.DisplayStyle.struct){
                 handledValue = toJson(value)
                 skip = true
@@ -326,17 +326,18 @@ open class JSONSerializer {
             }
             else if(propertyName == "contactPhoneNumbers") &&  String(describing: value) != "nil" {
                 print("contactPhoneNumbers-----")
-                print(value)
+//                print(value)
+                
             }
             else if (propertyName == "contactChatMessage") &&  String(describing: value) != "nil" {
                // let refined = String(describing: value).replacingOccurrences(of: "some", with: "")
             
                 let force =  value
                 print("contactChatMessage block")
-                print(force)
+//                print(force)
                 handledValue = toJson(force)
                 print("handledValue-----")
-                print(handledValue)
+//                print(handledValue)
                 
             }
             else if property.displayStyle == Mirror.DisplayStyle.optional {

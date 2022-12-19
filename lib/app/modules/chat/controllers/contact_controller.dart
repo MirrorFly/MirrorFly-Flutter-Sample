@@ -190,6 +190,7 @@ class ContactController extends GetxController {
     if (isForward.value|| isCreateGroup.value) {
       contactSelected(item);
     }else{
+      mirrorFlyLog("Contact Profile", item.toJson().toString());
       Get.offNamed(Routes.chat, arguments: item);
     }
   }

@@ -3,6 +3,11 @@ import Flutter
 import FlyCore
 import FlyCommon
 import GoogleMaps
+import UserNotifications
+import FirebaseAuth
+import FirebaseMessaging
+import Firebase
+
 
 var BASE_URL = "https://api-uikit-qa.contus.us/api/v1/"
 var LICENSE_KEY = "ckIjaccWBoMNvxdbql8LJ2dmKqT5bp"
@@ -10,7 +15,8 @@ let XMPP_DOMAIN = "xmpp-preprod-sandbox.mirrorfly.com"
 let XMPP_PORT = 5222
 let SOCKETIO_SERVER_HOST = "https://signal-preprod-sandbox.mirrorfly.com/"
 let JANUS_URL = "wss://janus.mirrorfly.com"
-let CONTAINER_ID = "group.com.mirror.flyflutter"
+//let CONTAINER_ID = "group.com.mirror.flyflutter"
+let CONTAINER_ID = "group.com.mirrorfly.qa"
 let ENABLE_CONTACT_SYNC = false
 let IS_LIVE = false
 let WEB_LOGIN_URL = "https://webchat-preprod-sandbox.mirrorfly.com/"
@@ -72,9 +78,13 @@ let onSuccess_channel = "contus.mirrorfly/onSuccess"
 
 
 
+let googleApiKey = "AIzaSyDnjPEs86MRsnFfW1sVPKvMWjqQRnSa7Ts"
 
 @UIApplicationMain
-@objc class AppDelegate: FlutterAppDelegate, LogoutDelegate, GroupEventsDelegate, ConnectionEventDelegate{
+@objc class AppDelegate: FlutterAppDelegate, LogoutDelegate, GroupEventsDelegate, ConnectionEventDelegate, MessagingDelegate{
+    
+    
+    var postNotificationdidEnterBackground : NotificationCenter? = nil
     
     let MESSAGE_ONRECEIVED_CHANNEL = "contus.mirrorfly/onMessageReceived"
     var messageReceivedStreamHandler: MessageReceivedStreamHandler?
@@ -116,7 +126,7 @@ let onSuccess_channel = "contus.mirrorfly/onSuccess"
           .setDomainBaseUrl(baseUrl: BASE_URL)
           .setGroupConfiguration(groupConfig: groupConfig!)
           .buildAndInitialize()
-      GMSServices.provideAPIKey("AIzaSyBy7JDQj6Ar03dMXFCQ-SHgBdBPnKAteG4")
+//      GMSServices.provideAPIKey("AIzaSyBy7JDQj6Ar03dMXFCQ-SHgBdBPnKAteG4")
       
       let controller : FlutterViewController = window?.rootViewController as! FlutterViewController
 
@@ -134,13 +144,13 @@ let onSuccess_channel = "contus.mirrorfly/onSuccess"
       if (self.messageStatusUpdatedStreamHandler == nil) {
           self.messageStatusUpdatedStreamHandler = MessageStatusUpdatedStreamHandler()
         }
-      FlutterEventChannel(name: MESSAGE_STATUS_UPDATED_CHANNEL, binaryMessenger: controller.binaryMessenger).setStreamHandler((self.messageStatusUpdatedStreamHandler!))
+      FlutterEventChannel(name: MESSAGE_STATUS_UPDATED_CHANNEL, binaryMessenger: controller.binaryMessenger).setStreamHandler((self.messageStatusUpdatedStreamHandler as! FlutterStreamHandler & NSObjectProtocol))
       
       if (self.mediaStatusUpdatedStreamHandler == nil) {
           self.mediaStatusUpdatedStreamHandler = MediaStatusUpdatedStreamHandler()
         }
       
-      FlutterEventChannel(name: MEDIA_STATUS_UPDATED_CHANNEL, binaryMessenger: controller.binaryMessenger).setStreamHandler(self.mediaStatusUpdatedStreamHandler!)
+      FlutterEventChannel(name: MEDIA_STATUS_UPDATED_CHANNEL, binaryMessenger: controller.binaryMessenger).setStreamHandler((self.mediaStatusUpdatedStreamHandler as! FlutterStreamHandler & NSObjectProtocol))
       
       FlutterEventChannel(name: UPLOAD_DOWNLOAD_PROGRESS_CHANGED_CHANNEL, binaryMessenger: controller.binaryMessenger).setStreamHandler(UploadDownloadProgressChangedStreamHandler())
       
@@ -231,6 +241,12 @@ let onSuccess_channel = "contus.mirrorfly/onSuccess"
       FlutterEventChannel(name: onSuccess_channel, binaryMessenger: controller.binaryMessenger).setStreamHandler(onSuccessStreamHandler())
 
       
+      GMSServices.provideAPIKey(googleApiKey)
+      
+      // MARK:- Push Notification
+      clearPushNotifications()
+      registerForPushNotifications()
+      
       ChatManager.shared.logoutDelegate = self
       FlyMessenger.shared.messageEventsDelegate = self
       ChatManager.shared.messageEventsDelegate = self
@@ -238,12 +254,41 @@ let onSuccess_channel = "contus.mirrorfly/onSuccess"
       ChatManager.shared.logoutDelegate = self
       ChatManager.shared.connectionDelegate = self
 //      ChatManager.shared.adminBlockCurrentUserDelegate = self
+      
+      
+      FirebaseApp.configure()
+      Messaging.messaging().delegate = self
+      if #available(iOS 10.0, *) {
+          // For iOS 10 display notification (sent via APNS)
+          UNUserNotificationCenter.current().delegate = self
+          
+          let authOptions: UNAuthorizationOptions = [.alert, .badge, .sound]
+          UNUserNotificationCenter.current().requestAuthorization(
+              options: authOptions,
+              completionHandler: { val, error in
+              }
+          )
+      } else {
+          let settings: UIUserNotificationSettings =
+          UIUserNotificationSettings(types: [.alert, .badge, .sound], categories: nil)
+          application.registerUserNotificationSettings(settings)
+      }
+      
+      application.registerForRemoteNotifications()
+      
     
       GeneratedPluginRegistrant.register(with: self)
       
       return super.application(application, didFinishLaunchingWithOptions: launchOptions)
   }
 
+    func messaging(_ messaging: Messaging, didReceiveRegistrationToken fcmToken: String?) {
+        if let deviceToken = fcmToken {
+            print("DeviceToken ==> " + deviceToken)
+            Utility.saveInPreference(key: googleToken, value: deviceToken)
+        }
+    }
+    
     override func applicationDidBecomeActive(_ application: UIApplication) {
         print("#appDelegate applicationDidBecomeActive")
         if Utility.getBoolFromPreference(key: isLoggedIn) && (FlyDefaults.isLoggedIn) {
@@ -255,13 +300,13 @@ let onSuccess_channel = "contus.mirrorfly/onSuccess"
             print(FlyDefaults.isLoggedIn)
             print("Unable to connect chat manager")
         }
-//        NotificationCenter.default.removeObserver(self, name: NSNotification.Name(didEnterBackground), object: nil)
+        NotificationCenter.default.removeObserver(self, name: NSNotification.Name(didEnterBackground), object: nil)
     }
     
     override func applicationDidEnterBackground(_ application: UIApplication) {
         print("#appDelegate applicationDidEnterBackground")
-//        postNotificationdidEnterBackground = NotificationCenter.default
-//        postNotificationdidEnterBackground?.post(name: Notification.Name(didEnterBackground), object: nil)
+        postNotificationdidEnterBackground = NotificationCenter.default
+        postNotificationdidEnterBackground?.post(name: Notification.Name(didEnterBackground), object: nil)
 
         if (FlyDefaults.isLoggedIn) {
             print("Disconnecting Chat Manager")
@@ -356,6 +401,82 @@ let onSuccess_channel = "contus.mirrorfly/onSuccess"
     
 }
 
+extension AppDelegate {
+    /// Register for APNS Notifications
+    func registerForPushNotifications() {
+        UNUserNotificationCenter.current().delegate = self
+        let authOptions: UNAuthorizationOptions = [.alert, .badge, .sound]
+        UNUserNotificationCenter.current().requestAuthorization(options: authOptions) { granted, error in
+            if granted {
+                self.getNotificationSettings()
+                DispatchQueue.main.async {
+                    UIApplication.shared.registerForRemoteNotifications()
+                    FlyUtils.setBaseUrl(BASE_URL)
+                }
+            }
+        }
+//        registerForVOIPNotifications()
+    }
+    /// This method is used to clear notifications and badge count
+    func clearPushNotifications() {
+        UNUserNotificationCenter.current().removeAllDeliveredNotifications()
+        UNUserNotificationCenter.current().removeAllPendingNotificationRequests()
+    }
+    
+    override func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
+        //Mark:- Added for swizzling
+//        Auth.auth().setAPNSToken(deviceToken, type: .unknown)
+        // Pass device token to messaging
+//        Messaging.messaging().apnsToken = deviceToken
+//        Messaging.messaging().setAPNSToken(deviceToken, type: .unknown)
+        
+        let token = deviceToken.map { String(format: "%.2hhx", $0) }.joined()
+        if token.count == 0 {
+            print("Push Status Credentials APNS:")
+            return;
+        }
+        print("#token appDelegate \(token)")
+        print("#token application DT => \(token)")
+//        VOIPManager.sharedInstance.saveAPNSToken(token: token)
+        Utility.saveInPreference(key: googleToken, value: token)
+//        VOIPManager.sharedInstance.updateDeviceToken()
+//        return super.application(application, didRegisterForRemoteNotificationsWithDeviceToken: deviceToken)
+    }
+    
+    override func application(_ application: UIApplication, didFailToRegisterForRemoteNotificationsWithError error: Error) {
+        print("Push didFailToRegisterForRemoteNotificationsWithError)")
+    }
+    override func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
+        completionHandler([.alert, .sound])
+    }
+    override func application(_ application: UIApplication, didReceiveRemoteNotification notification: [AnyHashable : Any], fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
+        print("Push userInfo \(notification)")
+        completionHandler(.noData)
+        // Handle the message for firebase auth phone verification
+//            if Auth.auth().canHandleNotification(notification) {
+//                completionHandler(.noData)
+//                return
+//            }
+//
+//            // Handle it for firebase messaging analytics
+//            if ((notification["gcm.message_id"]) != nil) {
+//                Messaging.messaging().appDidReceiveMessage(notification)
+//            }
+//
+//            return super.application(application, didReceiveRemoteNotification: notification, fetchCompletionHandler: completionHandler)
+
+    }
+    override func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
+        if response.notification.request.content.threadIdentifier.contains(XMPP_DOMAIN){
+//            if FlyDefaults.isBlockedByAdmin {
+//                navigateToBlockedScreen()
+//            } else {
+//                navigateToChatScreen(chatId: response.notification.request.content.threadIdentifier, completionHandler: completionHandler)
+//            }
+        }
+    }
+    
+}
 
 
 extension AppDelegate : MessageEventsDelegate {
@@ -440,6 +561,11 @@ extension AppDelegate : MessageEventsDelegate {
     func onMessageTranslated(message: FlyCommon.ChatMessage, jid: String) {
         print("Message onMessageTranslated--->")
     }
-    
+    func getNotificationSettings() {
+      UNUserNotificationCenter.current().getNotificationSettings { settings in
+        print("Notification settings: \(settings)")
+      }
+    }
     
 }
+

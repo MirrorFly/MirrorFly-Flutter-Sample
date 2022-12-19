@@ -40,12 +40,12 @@ class MediaStatusUpdatedStreamHandler: NSObject, FlutterStreamHandler {
     public var onMediaStatusUpdated: FlutterEventSink?
     
     public func onListen(withArguments arguments: Any?, eventSink events: @escaping FlutterEventSink) -> FlutterError? {
-        onMediaStatusUpdated = events
+        self.onMediaStatusUpdated = events
         return nil
     }
 
     public func onCancel(withArguments arguments: Any?) -> FlutterError? {
-        onMediaStatusUpdated = nil
+        self.onMediaStatusUpdated = nil
         return nil
     }
 }

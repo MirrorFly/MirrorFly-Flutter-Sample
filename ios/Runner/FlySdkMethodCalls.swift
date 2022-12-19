@@ -504,16 +504,24 @@ import Photos
     static func updateMyProfile(call: FlutterMethodCall, result: @escaping FlutterResult){
         let args = call.arguments as! Dictionary<String, Any>
         
-        let jid = args["jid"] as? String ?? ""
+//        let jid = args["jid"] as? String ?? ""
         let email = args["email"] as? String ?? ""
         let mobile = args["mobile"] as? String ?? ""
         let nickName = args["name"] as? String ?? ""
         let status = args["status"] as? String ?? ""
         let image = args["image"] as? String ?? nil
+        let userJid = FlyDefaults.myXmppUsername + "@" + FlyDefaults.xmppDomain
+        print("=====Response Capture=====")
+        print("jid===>" + userJid)
+        print("email===>" + email)
+        print("mobile===>" + mobile)
+        print("nickName===>" + nickName)
+        print("status===>" + status)
+        print("image===>" + (image ?? "Image is Nil"))
         
         var isImagePicked = false
         
-        var myProfile = FlyProfile(jid: jid)
+        var myProfile = FlyProfile(jid: userJid)
     
         myProfile.email = email
         
@@ -525,11 +533,15 @@ import Photos
         myProfile.status = status
         
         if(image != nil){
-            myProfile.image = image!
-            isImagePicked = true
+            print("Image is not null if condition")
+            myProfile.image = image!//xyaz.jpeg
+            isImagePicked = false
         }else{
+            print("Image is null else condition")
             isImagePicked = false
         }
+        
+        print("Profile json ===>" + JSONSerializer.toJson(myProfile))
         
         ContactManager.shared.updateMyProfile(for: myProfile, isFromLocal: isImagePicked){ isSuccess, flyError, flyData in
             if isSuccess {
@@ -796,6 +808,21 @@ import Photos
         let jid = args["jid"] as? String ?? nil
         
         ChatManager.deleteRecentChat(jid: jid!)
+    }
+    static func getUserLastSeenTime(call: FlutterMethodCall, result: @escaping FlutterResult){
+        let args = call.arguments as! Dictionary<String, Any>
+        
+        let jid = args["jid"] as? String ?? ""
+        
+        ChatManager.getUserLastSeen( for: jid) { isSuccess, flyError, flyData in
+              var data  = flyData
+              if isSuccess {
+                  print(data.getMessage() as! String )
+                  print(data.getData() as! String )
+              } else{
+                  print(data.getMessage() as! String )
+              }
+          }
     }
     static func getRecentChatList(call: FlutterMethodCall, result: @escaping FlutterResult){
         

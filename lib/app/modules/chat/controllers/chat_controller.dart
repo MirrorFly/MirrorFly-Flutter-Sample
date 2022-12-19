@@ -118,6 +118,7 @@ class ChatController extends GetxController
     }
     if(userJid.isEmpty){
       var profileDetail = Get.arguments as Profile;
+      debugPrint("received Profile==>${profileDetail.toJson()}");
       profile_(profileDetail);
       onready();
       initListeners();
@@ -344,8 +345,13 @@ class ChatController extends GetxController
     FlyChat.getMessagesOfJid(profile.jid.checkNull()).then((value) {
       debugPrint("=====chat=====");
       mirrorFlyLog("chat history", value);
-      List<ChatMessageModel> chatMessageModel = chatMessageModelFromJson(value);
-      chatList(chatMessageModel);
+      if(value == "" || value == null){
+        debugPrint("Chat List is Empty");
+      }else {
+        List<ChatMessageModel> chatMessageModel = chatMessageModelFromJson(
+            value);
+        chatList(chatMessageModel);
+      }
       Future.delayed(const Duration(milliseconds: 500), () {
         Future.doWhile(() {
           if (scrollController.positions.isNotEmpty) {

@@ -74,7 +74,7 @@ class ChatInfoView extends GetView<ChatInfoController> {
                       ? const EdgeInsets.symmetric(vertical: 16, horizontal: 20)
                       : const EdgeInsets.symmetric(
                       vertical: 19, horizontal: 50),
-                  title: Text(controller.profile.name.checkNull(),
+                  title: Text(controller.profile.name.checkNull().isEmpty ? controller.profile.nickName.checkNull() : controller.profile.name.checkNull(),
                       style: TextStyle(
                         color: controller.isSliverAppBarExpanded
                             ? Colors.white

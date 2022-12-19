@@ -974,7 +974,7 @@ class ChatView extends GetView<ChatController> {
               mainAxisSize: MainAxisSize.max,
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(controller.profile.name.checkNull(),overflow: TextOverflow.fade,),
+                Text(controller.profile.name.checkNull().isEmpty ? controller.profile.nickName.checkNull() : controller.profile.name.checkNull(),overflow: TextOverflow.fade,),
                 Obx((){
                   return controller.groupParticipantsName.isNotEmpty ? SizedBox(
                       width: (controller.screenWidth) * 0.90,
