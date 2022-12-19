@@ -1154,7 +1154,7 @@ class ChatView extends GetView<ChatController> {
                   controller.closeKeyBoard();
                 },
               ),
-              CustomAction(
+              /*CustomAction(
                 visibleWidget: IconButton(
                   onPressed: () {},
                   icon: const Icon(Icons.call),
@@ -1165,7 +1165,7 @@ class ChatView extends GetView<ChatController> {
                 onItemClick: () {
                   controller.makeVoiceCall();
                 },
-              ),
+              ),*/
             ],
           ),
         ],

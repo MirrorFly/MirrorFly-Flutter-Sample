@@ -1692,9 +1692,9 @@ class ChatController extends GetxController
       }
   }
 
-  makeVoiceCall(){
+  /*makeVoiceCall(){
     FlyChat.makeVoiceCall(profile.jid.checkNull()).then((value){
       mirrorFlyLog("makeVoiceCall", value.toString());
     });
-  }
+  }*/
 }
