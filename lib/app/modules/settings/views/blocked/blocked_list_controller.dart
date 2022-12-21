@@ -19,9 +19,11 @@ class BlockedListController extends GetxController {
 
   getUsersIBlocked(bool server){
     FlyChat.getUsersIBlocked(server).then((value){
-      if(value!=null){
+      if(value!=null && value != ""){
         var list = memberFromJson(value);
         _blockedUsers(list);
+      }else{
+        _blockedUsers.clear();
       }
     });
   }

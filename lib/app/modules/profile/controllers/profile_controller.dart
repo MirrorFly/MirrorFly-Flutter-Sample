@@ -97,6 +97,8 @@ class ProfileController extends GetxController {
                 }
               }
             }
+          }else{
+            toToast("Unable to update profile");
           }
         }).catchError((error) {
           loading.value = false;

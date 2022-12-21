@@ -25,7 +25,7 @@ class ProfileView extends GetView<ProfileController> {
             style: TextStyle(color: appbarTextColor),
           ),
           centerTitle: true,
-          automaticallyImplyLeading: false,
+          automaticallyImplyLeading: controller.from.value == Routes.login ? false : true,
         ),
         body: SafeArea(
           child: SingleChildScrollView(

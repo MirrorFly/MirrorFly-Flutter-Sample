@@ -660,7 +660,17 @@ class ChatController extends GetxController
 
   pickAudio() async {
     FilePickerResult? result = await FilePicker.platform
-        .pickFiles(allowMultiple: false, type: FileType.audio);
+        .pickFiles(allowMultiple: false, type: FileType.custom,
+      allowedExtensions: [
+        'wav',
+        'aiff',
+        'alac',
+        'flac',
+        'mp3',
+        'aac',
+        'wma',
+        'ogg'
+      ],);
     if (result != null && File(result.files.single.path!).existsSync()) {
       debugPrint(result.files.first.extension);
       AudioPlayer player = AudioPlayer();
@@ -673,6 +683,7 @@ class ChatController extends GetxController
       });
     } else {
       // User canceled the picker
+      return;
     }
   }
 
@@ -1592,7 +1603,7 @@ class ChatController extends GetxController
   }
 
   onAudioClick() {
-    Get.back();
+    // Get.back();
     pickAudio();
   }
 
@@ -1627,7 +1638,7 @@ class ChatController extends GetxController
       mirrorFlyLog(
           "Location permission", value.toString());
       if (value) {
-        Get.back();
+        // Get.back();
         Get.toNamed(Routes.locationSent)
             ?.then((value) {
           if (value != null) {

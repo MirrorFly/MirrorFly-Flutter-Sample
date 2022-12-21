@@ -113,11 +113,12 @@ class OtpView extends GetView<LoginController> {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Obx(() {
-                              return InkWell(
-                                onTap: controller.timeout.value ? () {
-                                  controller.gotoLogin();
-                                } : null,
+                            // Obx(() {
+                            //   return
+                        InkWell(
+                                onTap: //controller.timeout.value ? () {
+                            (){controller.gotoLogin();},
+                                //} : controller.gotoLogin(),
                                 child: const Padding(
                                   padding: EdgeInsets.all(8.0),
                                   child: Text(
@@ -128,8 +129,8 @@ class OtpView extends GetView<LoginController> {
                                         fontWeight: FontWeight.w500),
                                   ),
                                 ),
-                              );
-                            }),
+                              ),
+                            // }),
                             Container(
                               color: dividerColor,
                               width: 1,
@@ -140,11 +141,11 @@ class OtpView extends GetView<LoginController> {
                                 onTap: controller.timeout.value ? () {
                                   controller.resend();
                                 } : null,
-                                child: const Padding(
-                                  padding: EdgeInsets.all(8.0),
+                                child: Padding(
+                                  padding: const EdgeInsets.all(8.0),
                                   child: Text(
-                                    'Resend OTP',
-                                    style: TextStyle(
+                                    controller.timeout.value ? 'Resend OTP' : controller.seconds.value.toString(),
+                                    style: const TextStyle(
                                         color: textHintColor,
                                         fontSize: 14,
                                         fontWeight: FontWeight.w500),

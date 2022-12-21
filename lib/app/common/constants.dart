@@ -178,7 +178,7 @@ mirrorFlyLog(String tag,String msg){
   if (kDebugMode) {
     // print("MirrorFly : $tag ==> $msg");
     final pattern = RegExp('.{1,800}'); // 800 is the size of each chunk
-    pattern.allMatches(msg).forEach((match) => print("MirrorFly : $tag==>${match.group(0)}"));
+    pattern.allMatches(msg).forEach((match) => debugPrint("MirrorFly : $tag==>${match.group(0)}"));
   }
 }
 class Constants {

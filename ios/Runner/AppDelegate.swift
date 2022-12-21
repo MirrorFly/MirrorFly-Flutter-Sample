@@ -400,9 +400,10 @@ let googleApiKey = "AIzaSyDnjPEs86MRsnFfW1sVPKvMWjqQRnSa7Ts"
     
 }
 
-extension AppDelegate : UNUserNotificationCenterDelegate{
+extension AppDelegate {
     /// Register for APNS Notifications
     func registerForPushNotifications() {
+        print("###Registering push notification")
         UNUserNotificationCenter.current().delegate = self
         let authOptions: UNAuthorizationOptions = [.alert, .badge, .sound]
         UNUserNotificationCenter.current().requestAuthorization(options: authOptions) { granted, error in
@@ -418,16 +419,20 @@ extension AppDelegate : UNUserNotificationCenterDelegate{
     }
     /// This method is used to clear notifications and badge count
     func clearPushNotifications() {
+        
+            print("###Clearing push notification")
         UNUserNotificationCenter.current().removeAllDeliveredNotifications()
         UNUserNotificationCenter.current().removeAllPendingNotificationRequests()
     }
     
     override func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
         //Mark:- Added for swizzling
-//        Auth.auth().setAPNSToken(deviceToken, type: .unknown)
+        Auth.auth().setAPNSToken(deviceToken, type: .unknown)
         // Pass device token to messaging
 //        Messaging.messaging().apnsToken = deviceToken
 //        Messaging.messaging().setAPNSToken(deviceToken, type: .unknown)
+        
+            print("###didRegisterForRemoteNotificationsWithDeviceToken")
         
         let token = deviceToken.map { String(format: "%.2hhx", $0) }.joined()
         if token.count == 0 {
@@ -443,6 +448,7 @@ extension AppDelegate : UNUserNotificationCenterDelegate{
     }
     
     override func application(_ application: UIApplication, didFailToRegisterForRemoteNotificationsWithError error: Error) {
+        print("###didFailToRegisterForRemoteNotificationsWithError")
         print("Push didFailToRegisterForRemoteNotificationsWithError)")
     }
     override func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
@@ -450,12 +456,14 @@ extension AppDelegate : UNUserNotificationCenterDelegate{
     }
     override func application(_ application: UIApplication, didReceiveRemoteNotification notification: [AnyHashable : Any], fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
         print("Push userInfo \(notification)")
-        completionHandler(.noData)
+//        completionHandler(.noData)
         // Handle the message for firebase auth phone verification
-//            if Auth.auth().canHandleNotification(notification) {
-//                completionHandler(.noData)
-//                return
-//            }
+            if Auth.auth().canHandleNotification(notification) {
+                completionHandler(.noData)
+                return
+            }else{
+                print("###canHandleNotification issue")
+            }
 //
 //            // Handle it for firebase messaging analytics
 //            if ((notification["gcm.message_id"]) != nil) {
@@ -466,6 +474,7 @@ extension AppDelegate : UNUserNotificationCenterDelegate{
 
     }
     override func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
+        print("###userNotificationCenter withCompletionHandler")
         if response.notification.request.content.threadIdentifier.contains(XMPP_DOMAIN){
 //            if FlyDefaults.isBlockedByAdmin {
 //                navigateToBlockedScreen()

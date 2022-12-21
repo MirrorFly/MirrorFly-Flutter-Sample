@@ -92,7 +92,8 @@ class LoginView extends GetView<LoginController> {
                                 controller: controller.mobileNumber,
                                 keyboardType: TextInputType.phone,
                                 inputFormatters: <TextInputFormatter>[
-                                  FilteringTextInputFormatter.digitsOnly
+                                  FilteringTextInputFormatter.digitsOnly,
+                                  LengthLimitingTextInputFormatter(10)
                                 ],
                                 decoration: const InputDecoration(
                                   border: InputBorder.none,

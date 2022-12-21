@@ -152,6 +152,10 @@ class FlyMethodChannel{
                 FlySdkMethodCalls.createGroup(call: call, result: result)
             case "getUserLastSeenTime":
                 FlySdkMethodCalls.getUserLastSeenTime(call: call, result: result)
+            case "getUsersIBlocked":
+                FlySdkMethodCalls.getUsersIBlocked(call: call, result: result)
+            case "setMyProfileStatus":
+                FlySdkMethodCalls.setMyProfileStatus(call: call, result: result)
             default:
                 result(FlutterMethodNotImplemented)
             }

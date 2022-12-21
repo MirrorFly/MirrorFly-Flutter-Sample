@@ -626,7 +626,7 @@ class ChatView extends GetView<ChatController> {
         : mediaDownloadStatus) {
       case Constants.mediaDownloaded:
       case Constants.mediaUploaded:
-        if (chatList.messageType == 'VIDEO') {
+        if (chatList.messageType.toUpperCase() == 'VIDEO') {
           if (controller.checkFile(
                   chatList.mediaChatMessage!.mediaLocalStoragePath) &&
               (chatList.mediaChatMessage!.mediaDownloadStatus ==
@@ -639,7 +639,7 @@ class ChatView extends GetView<ChatController> {
             });
           }
         }
-        if (chatList.messageType == 'AUDIO') {
+        if (chatList.messageType.toUpperCase() == 'AUDIO') {
           if (controller.checkFile(
                   chatList.mediaChatMessage!.mediaLocalStoragePath) &&
               (chatList.mediaChatMessage!.mediaDownloadStatus ==

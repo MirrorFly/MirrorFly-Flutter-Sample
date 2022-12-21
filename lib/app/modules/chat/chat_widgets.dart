@@ -1075,8 +1075,13 @@ getMessageIndicator(
 }
 
 getImageOverlay(ChatMessageModel chatMessage) {
+
+  debugPrint("****GET IMAGE OVERLAY**** ${chatMessage.messageStatus} **** ${chatMessage.messageType.toUpperCase()}");
+  debugPrint(checkFile(chatMessage.mediaChatMessage!.mediaLocalStoragePath).toString());
+  debugPrint(chatMessage.mediaChatMessage!.mediaLocalStoragePath);
   if (checkFile(chatMessage.mediaChatMessage!.mediaLocalStoragePath) &&
       chatMessage.messageStatus != 'N') {
+    debugPrint("===media in play state===");
     if (chatMessage.messageType.toUpperCase() == 'VIDEO') {
       return SizedBox(
         width: 80,
@@ -1094,9 +1099,14 @@ getImageOverlay(ChatMessageModel chatMessage) {
           ? const Icon(Icons.pause)
           : const Icon(Icons.play_arrow_sharp);
     } else {
+      debugPrint("==Showing EMpty===");
       return const SizedBox.shrink();
     }
   } else {
+    debugPrint("===media in Download/Upload state===");
+    debugPrint(chatMessage.isMessageSentByMe.toString());
+    debugPrint(chatMessage.mediaChatMessage!.mediaUploadStatus.toString());
+    debugPrint(chatMessage.mediaChatMessage!.mediaDownloadStatus.toString());
     switch (chatMessage.isMessageSentByMe
         ? chatMessage.mediaChatMessage!.mediaUploadStatus
         : chatMessage.mediaChatMessage!.mediaDownloadStatus) {

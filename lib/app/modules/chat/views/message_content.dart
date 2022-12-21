@@ -609,10 +609,11 @@ class _MessageContentState extends State<MessageContent> {
   getImageOverlay(
       ChatMessageModel chatList, BuildContext context) {
     var chatMessage = chatList;
+    debugPrint("****GET IMAGE OVERLAY**** ${chatMessage.messageStatus} **** ${chatMessage.messageType.toUpperCase()}");
     if (controller
         .checkFile(chatMessage.mediaChatMessage!.mediaLocalStoragePath) &&
         chatMessage.messageStatus != 'N'){
-      if (chatMessage.messageType == 'VIDEO') {
+      if (chatMessage.messageType.toUpperCase() == 'VIDEO') {
         return SizedBox(
           width: 80,
           height: 50,
@@ -622,7 +623,7 @@ class _MessageContentState extends State<MessageContent> {
                 fit: BoxFit.contain,
               )),
         );
-      } else if (chatMessage.messageType == 'AUDIO') {
+      } else if (chatMessage.messageType.toUpperCase() == 'AUDIO') {
         debugPrint("===============================");
         debugPrint(chatMessage.mediaChatMessage!.isPlaying.toString());
         // return Obx(() {
@@ -647,19 +648,19 @@ class _MessageContentState extends State<MessageContent> {
               chatMessage.mediaChatMessage!.mediaDownloadStatus,
               chatMessage.mediaChatMessage!.mediaFileSize,
               Icons.download_sharp,
-              chatMessage.messageType);
+              chatMessage.messageType.toUpperCase());
         case Constants.mediaUploadedNotAvailable:
           return getFileInfo(
               chatMessage.mediaChatMessage!.mediaDownloadStatus,
               chatMessage.mediaChatMessage!.mediaFileSize,
               Icons.upload_sharp,
-              chatMessage.messageType);
+              chatMessage.messageType.toUpperCase());
 
         case Constants.mediaNotUploaded:
         case Constants.mediaDownloading:
         case Constants.mediaUploading:
-          if (chatMessage.messageType == 'AUDIO' ||
-              chatMessage.messageType == 'DOCUMENT') {
+          if (chatMessage.messageType.toUpperCase() == 'AUDIO' ||
+              chatMessage.messageType.toUpperCase() == 'DOCUMENT') {
             return InkWell(
                 onTap: () {
                   debugPrint(chatMessage.messageId);

@@ -1,6 +1,8 @@
 
+import 'dart:async';
+
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
+// import 'package:firebase_messaging/firebase_messaging.dart';
 // import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -20,15 +22,19 @@ class LoginController extends GetxController {
   TextEditingController mobileNumber = TextEditingController();
   OtpFieldController otpController = OtpFieldController();
 
+  Timer? countdownTimer;
+  Duration myDuration = const Duration(seconds: 31);
+
   String? get countryCode => selectedCountry.value.dialCode;
   var verificationId = "";
   int? resendingToken;
-  Rx<bool> timeout=false.obs;
+  Rx<bool> timeout = false.obs;
+
+  var seconds = 0.obs;
 
   final _smsCode = "".obs;
   String get smsCode => _smsCode.value;
   set smsCode(String val) => _smsCode.value = val;
-
 
   // void registerUser(BuildContext context) {
 
@@ -38,6 +44,33 @@ class LoginController extends GetxController {
 
   hideLoading(){
     Helper.hideLoading();
+  }
+
+  void startTimer() {
+    countdownTimer =
+        Timer.periodic(const Duration(seconds: 1), (_) => setCountDown());
+
+  }
+  void setCountDown() {
+    const reduceSecondsBy = 1;
+    seconds(myDuration.inSeconds - reduceSecondsBy);
+      if (seconds.value == 0) {
+        countdownTimer!.cancel();
+        timeout(true);
+      } else {
+        myDuration = Duration(seconds: seconds.value);
+        debugPrint(seconds.value.toString());
+      }
+
+  }
+
+  @override
+  void dispose() {
+    stopTimer();
+    super.dispose();
+  }
+  void stopTimer() {
+    countdownTimer!.cancel();
   }
 
   void registerUser() {
@@ -84,6 +117,10 @@ class LoginController extends GetxController {
           mirrorFlyLog("codeSent", verificationId);
           this.verificationId = verificationId;
           resendingToken = resendToken;
+
+          seconds(0);
+          startTimer();
+
           if(verificationId.isNotEmpty){
             hideLoading();
             Get.toNamed(Routes.otp)?.then((value) {
@@ -107,6 +144,7 @@ class LoginController extends GetxController {
 
   resend(){
     timeout(false);
+
     phoneAuth();
   }
 
@@ -142,10 +180,13 @@ class LoginController extends GetxController {
     try {
       await _auth.signInWithCredential(credential).then((value){
         sendTokenToServer();
+        stopTimer();
         mirrorFlyLog("sign in ", value.toString());
       }).catchError((error){
         debugPrint("Firebase Verify Error $error");
+        toToast("Invalid OTP");
         hideLoading();
+
       });
     } on FirebaseAuthException catch (e) {
       mirrorFlyLog("sign in error", e.toString());
@@ -187,19 +228,19 @@ class LoginController extends GetxController {
   validateDeviceToken(String deviceToken) {
     var firebaseToken = SessionManagement.getToken().checkNull();
     if (firebaseToken.isEmpty) {
-      FirebaseMessaging.instance.getToken().then((value) {
-        if(value!=null) {
-          firebaseToken = value;
-          mirrorFlyLog("firebase_token", firebaseToken);
-          SessionManagement.setToken(firebaseToken);
+      // FirebaseMessaging.instance.getToken().then((value) {
+      //   if(value!=null) {
+      //     firebaseToken = value;
+      //     mirrorFlyLog("firebase_token", firebaseToken);
+      //     SessionManagement.setToken(firebaseToken);
           navigateToUserRegisterMethod(deviceToken, firebaseToken);
-        }else{
-
-        }
-      }).catchError((er){
-        mirrorFlyLog("FirebaseInstallations", er.toString());
-        hideLoading();
-      });
+      //   }else{
+      //
+      //   }
+      // }).catchError((er){
+      //   mirrorFlyLog("FirebaseInstallations", er.toString());
+      //   hideLoading();
+      // });
     } else {
       navigateToUserRegisterMethod(deviceToken, firebaseToken);
     }

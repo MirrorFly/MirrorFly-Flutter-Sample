@@ -979,8 +979,43 @@ import Photos
         }
                
     }
+    static func getUsersIBlocked(call: FlutterMethodCall, result: @escaping FlutterResult){
+        let args = call.arguments as! Dictionary<String, Any>
+        
+        let fetchFromServer = args["serverCall"] as? Bool ?? false
+        
+      
+        ContactManager.shared.getUsersIBlocked(fetchFromServer: fetchFromServer){ isSuccess, flyError, flyData in
+
+                var data  = flyData
+          
+                if isSuccess {
+                    let blockedprofileDetailsArray = data.getData() as! [ProfileDetails]
+                    var blockedProfileJson = JSONSerializer.toJson(blockedprofileDetailsArray as Any)
+                    print("Blocked Profile --> \(blockedProfileJson)")
+                    result(blockedProfileJson)
+                } else{
+                    print(flyError!.localizedDescription)
+                    result(FlutterError(code: "500", message: "Unable to Get Blocked List", details: flyError?.localizedDescription))
+                }
+        }
+               
+    }
+    static func setMyProfileStatus(call: FlutterMethodCall, result: @escaping FlutterResult){
+        let args = call.arguments as! Dictionary<String, Any>
+        
+        let status = args["status"] as? String ?? ""
     
-  
+      
+        ChatManager.saveProfileStatus(statusText: status, currentStatus: true)
+        
+        var statusUpdateJSON = "{\"message\": \"Status Update Success\",\"status\": true}"
+        
+       result(statusUpdateJSON)
+               
+    }
+    
+    
     
     static func getProfileDetails(call: FlutterMethodCall, result: @escaping FlutterResult){
         let args = call.arguments as! Dictionary<String, Any>

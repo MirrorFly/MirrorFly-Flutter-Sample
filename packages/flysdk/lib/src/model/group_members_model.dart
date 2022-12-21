@@ -36,7 +36,7 @@ class Member {
   String? email;
   String? groupCreatedTime;
   String? image;
-  String? imagePrivacyFlag;
+  dynamic imagePrivacyFlag;
   bool? isAdminBlocked;
   bool? isBlocked;
   bool? isBlockedMe;
@@ -47,8 +47,8 @@ class Member {
   bool? isMuted;
   bool? isSelected;
   String? jid;
-  String? lastSeenPrivacyFlag;
-  String? mobileNUmberPrivacyFlag;
+  dynamic lastSeenPrivacyFlag;
+  dynamic mobileNUmberPrivacyFlag;
   String? mobileNumber;
   String? name;
   String? nickName;
@@ -57,7 +57,7 @@ class Member {
   factory Member.fromJson(Map<String, dynamic> json) => Member(
     contactType: json["contactType"],
     email: json["email"],
-    groupCreatedTime: json["groupCreatedTime"],
+    groupCreatedTime: json["groupCreatedTime"].toString(),
     image: json["image"],
     imagePrivacyFlag: json["imagePrivacyFlag"],
     isAdminBlocked: json["isAdminBlocked"],
