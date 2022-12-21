@@ -9,8 +9,10 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
 import 'package:otp_text_field/otp_field.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 import '../../../common/constants.dart';
+import '../../../data/permissions.dart';
 import '../../../data/session_management.dart';
 import 'package:flysdk/flysdk.dart';
 import '../../../routes/app_pages.dart';
@@ -149,15 +151,17 @@ class LoginController extends GetxController {
   }
 
   Future<void> verifyOTP() async {
-    if(smsCode.length==6) {
-      PhoneAuthCredential credential = PhoneAuthProvider.credential(
-          verificationId: verificationId, smsCode: smsCode);
-      // Sign the user in (or link) with the credential
-      debugPrint("Verification ID $verificationId");
-      debugPrint("smsCode $smsCode");
-      signIn(credential);
-    }else{
-      toToast("InValid OTP");
+    if(await askStoragePermission()) {
+      if (smsCode.length == 6) {
+        PhoneAuthCredential credential = PhoneAuthProvider.credential(
+            verificationId: verificationId, smsCode: smsCode);
+        // Sign the user in (or link) with the credential
+        debugPrint("Verification ID $verificationId");
+        debugPrint("smsCode $smsCode");
+        signIn(credential);
+      } else {
+        toToast("InValid OTP");
+      }
     }
   }
 
@@ -301,4 +305,16 @@ class LoginController extends GetxController {
     Get.offAllNamed(Routes.login);
   }
 
+  Future<bool> askStoragePermission() async {
+    final permission = await AppPermission.getStoragePermission();
+    switch (permission) {
+      case PermissionStatus.granted:
+        return true;
+      case PermissionStatus.permanentlyDenied:
+        return false;
+      default:
+        debugPrint("Permission default");
+        return false;
+    }
+  }
 }

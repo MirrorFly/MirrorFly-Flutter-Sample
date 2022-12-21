@@ -118,7 +118,6 @@ class ChatController extends GetxController
     }
     if(userJid.isEmpty){
       var profileDetail = Get.arguments as Profile;
-      debugPrint("received Profile==>${profileDetail.toJson()}");
       profile_(profileDetail);
       onready();
       initListeners();
@@ -190,6 +189,7 @@ class ChatController extends GetxController
     });
   }
 
+  var showHideRedirectToLatest =false.obs;
   void onready() {
     debugPrint("isBlocked===> ${profile.isBlocked}");
     debugPrint("profile detail===> ${profile.toJson().toString()}");
@@ -216,6 +216,14 @@ class ChatController extends GetxController
           }
         });
     //scrollController.addListener(_scrollController);
+    scrollController.addListener(() {
+      if (scrollController.offset >= scrollController.position.maxScrollExtent &&
+          !scrollController.position.outOfRange) {
+        showHideRedirectToLatest(false);
+      }else{
+        showHideRedirectToLatest(true);
+      }
+    });
 
     FlyChat.setOnGoingChatUser(profile.jid!);
     getChatHistory(profile.jid!);
@@ -235,6 +243,16 @@ class ChatController extends GetxController
         );
       }
     });
+  }
+
+  scrollToEnd() {
+    if (scrollController.hasClients) {
+      scrollController.animateTo(
+        scrollController.position.maxScrollExtent,
+        duration: const Duration(milliseconds: 500),
+        curve: Curves.linear,
+      );
+    }
   }
 
   @override
@@ -339,9 +357,8 @@ class ChatController extends GetxController
     return dateHourFormat;
   }
 
-
   getChatHistory([String? from]) {
-    mirrorFlyLog("from chat history", "$from");
+    mirrorFlyLog("chat history", "$from");
     FlyChat.getMessagesOfJid(profile.jid.checkNull()).then((value) {
       debugPrint("=====chat=====");
       mirrorFlyLog("chat history", value);
@@ -472,17 +489,19 @@ class ChatController extends GetxController
   }
 
   documentPickUpload() async {
-    FilePickerResult? result = await FilePicker.platform.pickFiles(
-      allowMultiple: false,
-      type: FileType.custom,
-      allowedExtensions: ['pdf', 'ppt', 'xls', 'doc', 'docx', 'xlsx'],
-    );
-    if (result != null && File(result.files.single.path!).existsSync()) {
-      debugPrint(result.files.first.extension);
-      filePath.value = (result.files.single.path!);
-      sendDocumentMessage(filePath.value, "");
-    } else {
-      // User canceled the picker
+    if(await askStoragePermission()) {
+      FilePickerResult? result = await FilePicker.platform.pickFiles(
+        allowMultiple: false,
+        type: FileType.custom,
+        allowedExtensions: ['pdf', 'ppt', 'xls', 'doc', 'docx', 'xlsx'],
+      );
+      if (result != null && File(result.files.single.path!).existsSync()) {
+        debugPrint(result.files.first.extension);
+        filePath.value = (result.files.single.path!);
+        sendDocumentMessage(filePath.value, "");
+      } else {
+        // User canceled the picker
+      }
     }
   }
 
@@ -500,7 +519,6 @@ class ChatController extends GetxController
     return FlyChat.sendVideoMessage(
         profile.jid!, videoPath, caption, replyMessageID)
         .then((value) {
-          mirrorFlyLog("Video send response", value);
       ChatMessageModel chatMessageModel = sendMessageModelFromJson(value);
       chatList.add(chatMessageModel);
       scrollToBottom();
@@ -660,17 +678,7 @@ class ChatController extends GetxController
 
   pickAudio() async {
     FilePickerResult? result = await FilePicker.platform
-        .pickFiles(allowMultiple: false, type: FileType.custom,
-      allowedExtensions: [
-        'wav',
-        'aiff',
-        'alac',
-        'flac',
-        'mp3',
-        'aac',
-        'wma',
-        'ogg'
-      ],);
+        .pickFiles(allowMultiple: false, type: FileType.audio);
     if (result != null && File(result.files.single.path!).existsSync()) {
       debugPrint(result.files.first.extension);
       AudioPlayer player = AudioPlayer();
@@ -683,7 +691,6 @@ class ChatController extends GetxController
       });
     } else {
       // User canceled the picker
-      return;
     }
   }
 
@@ -854,7 +861,7 @@ class ChatController extends GetxController
         .now()
         .millisecondsSinceEpoch - 30000) * 1000);
     return {
-      selectedChatList.any((element) => element.isMessageSentByMe && !element.isMessageRecalled &&(element.messageSentTime.toInt() >
+      selectedChatList.any((element) => element.isMessageSentByMe && !element.isMessageRecalled &&(element.messageSentTime >
           recallTimeDifference)):
       selectedChatList.any((element) =>
       !element.isMessageRecalled && (element.isMediaMessage() && element.mediaChatMessage!
@@ -1579,22 +1586,37 @@ class ChatController extends GetxController
 
   // final ImagePicker _picker = ImagePicker();
 
+  Future<bool> askCameraPermission() async {
+    final permission = await AppPermission.getCameraPermission();
+    switch (permission) {
+      case PermissionStatus.granted:
+        return true;
+      case PermissionStatus.permanentlyDenied:
+        return false;
+      default:
+        debugPrint("Contact Permission default");
+        return false;
+    }
+  }
+
   onCameraClick() async {
-    Get.toNamed(Routes.cameraPick)?.then((photo){
-      photo as XFile?;
-      if (photo != null) {
-        mirrorFlyLog("photo", photo.name.toString());
-        if(photo.name.endsWith(".mp4")){
-          Get.toNamed(Routes.videoPreview, arguments: {
-            "filePath": photo.path,
-            "userName": profile.name!
-          });
-        }else {
-          Get.toNamed(Routes.imagePreview,
-              arguments: {"filePath": photo.path, "userName": profile.name!});
+    if(await AppPermission.askFileCameraAudioPermission()) {
+      Get.toNamed(Routes.cameraPick)?.then((photo) {
+        photo as XFile?;
+        if (photo != null) {
+          mirrorFlyLog("photo", photo.name.toString());
+          if (photo.name.endsWith(".mp4")) {
+            Get.toNamed(Routes.videoPreview, arguments: {
+              "filePath": photo.path,
+              "userName": profile.name!
+            });
+          } else {
+            Get.toNamed(Routes.imagePreview,
+                arguments: {"filePath": photo.path, "userName": profile.name!});
+          }
         }
-      }
-    });
+      });
+    }
     /*final XFile? photo = await _picker.pickImage(source: ImageSource.camera);
     if (photo != null) {
       Get.toNamed(Routes.imagePreview,
@@ -1602,16 +1624,33 @@ class ChatController extends GetxController
     }*/
   }
 
-  onAudioClick() {
-    // Get.back();
-    pickAudio();
+  Future<bool> askMicrophonePermission() async {
+    final permission = await AppPermission.getAudioPermission();
+    switch (permission) {
+      case PermissionStatus.granted:
+        return true;
+      case PermissionStatus.permanentlyDenied:
+        return false;
+      default:
+        debugPrint("Contact Permission default");
+        return false;
+    }
+  }
+
+  onAudioClick() async {
+    Get.back();
+    if(await askMicrophonePermission()){
+      pickAudio();
+    }
   }
 
   onGalleryClick() async {
-    try {
-      imagePicker();
-    } catch (e) {
-      debugPrint(e.toString());
+    if(await askStoragePermission()) {
+      try {
+        imagePicker();
+      } catch (e) {
+        debugPrint(e.toString());
+      }
     }
   }
 
@@ -1632,13 +1671,21 @@ class ChatController extends GetxController
     }
   }
 
-  onLocationClick() {
-    AppPermission.getLocationPermission()
-        .then((bool value) {
-      mirrorFlyLog(
-          "Location permission", value.toString());
-      if (value) {
-        // Get.back();
+  Future<bool> askLocationPermission() async {
+    final permission = await AppPermission.getLocationPermission();
+    switch (permission) {
+      case PermissionStatus.granted:
+        return true;
+      case PermissionStatus.permanentlyDenied:
+        return false;
+      default:
+        debugPrint("Contact Permission default");
+        return false;
+    }
+  }
+
+  onLocationClick() async {
+    if (await askLocationPermission()) {
         Get.toNamed(Routes.locationSent)
             ?.then((value) {
           if (value != null) {
@@ -1650,6 +1697,11 @@ class ChatController extends GetxController
           }
         });
       }
-    });
   }
+
+  /*makeVoiceCall(){
+    FlyChat.makeVoiceCall(profile.jid.checkNull()).then((value){
+      mirrorFlyLog("makeVoiceCall", value.toString());
+    });
+  }*/
 }

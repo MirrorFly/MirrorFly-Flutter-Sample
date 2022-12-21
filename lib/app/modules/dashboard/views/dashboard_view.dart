@@ -340,10 +340,10 @@ class DashboardView extends GetView<DashboardController> {
                     "Archived",
                     style: TextStyle(fontWeight: FontWeight.w500),
                   ),
-                  trailing: Text(
+                  trailing: controller.archivedCount != "0" ? Text(
                     controller.archivedCount,
                     style: const TextStyle(color: buttonBgColor),
-                  ),
+                  ):null,
                   dividerPadding: EdgeInsets.zero,
                 ),
               );
