@@ -5,7 +5,6 @@ import FlyCommon
 import GoogleMaps
 import UserNotifications
 import FirebaseAuth
-import FirebaseMessaging
 import Firebase
 
 
@@ -81,7 +80,7 @@ let onSuccess_channel = "contus.mirrorfly/onSuccess"
 let googleApiKey = "AIzaSyDnjPEs86MRsnFfW1sVPKvMWjqQRnSa7Ts"
 
 @UIApplicationMain
-@objc class AppDelegate: FlutterAppDelegate, LogoutDelegate, GroupEventsDelegate, ConnectionEventDelegate, MessagingDelegate{
+@objc class AppDelegate: FlutterAppDelegate, LogoutDelegate, GroupEventsDelegate, ConnectionEventDelegate{
     
     
     var postNotificationdidEnterBackground : NotificationCenter? = nil
@@ -257,7 +256,7 @@ let googleApiKey = "AIzaSyDnjPEs86MRsnFfW1sVPKvMWjqQRnSa7Ts"
       
       
       FirebaseApp.configure()
-      Messaging.messaging().delegate = self
+//      Messaging.messaging().delegate = self
       if #available(iOS 10.0, *) {
           // For iOS 10 display notification (sent via APNS)
           UNUserNotificationCenter.current().delegate = self
@@ -282,12 +281,12 @@ let googleApiKey = "AIzaSyDnjPEs86MRsnFfW1sVPKvMWjqQRnSa7Ts"
       return super.application(application, didFinishLaunchingWithOptions: launchOptions)
   }
 
-    func messaging(_ messaging: Messaging, didReceiveRegistrationToken fcmToken: String?) {
-        if let deviceToken = fcmToken {
-            print("DeviceToken ==> " + deviceToken)
-            Utility.saveInPreference(key: googleToken, value: deviceToken)
-        }
-    }
+//    func messaging(_ messaging: Messaging, didReceiveRegistrationToken fcmToken: String?) {
+//        if let deviceToken = fcmToken {
+//            print("DeviceToken ==> " + deviceToken)
+//            Utility.saveInPreference(key: googleToken, value: deviceToken)
+//        }
+//    }
     
     override func applicationDidBecomeActive(_ application: UIApplication) {
         print("#appDelegate applicationDidBecomeActive")
@@ -401,7 +400,7 @@ let googleApiKey = "AIzaSyDnjPEs86MRsnFfW1sVPKvMWjqQRnSa7Ts"
     
 }
 
-extension AppDelegate {
+extension AppDelegate : UNUserNotificationCenterDelegate{
     /// Register for APNS Notifications
     func registerForPushNotifications() {
         UNUserNotificationCenter.current().delegate = self

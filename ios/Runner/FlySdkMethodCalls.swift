@@ -155,6 +155,11 @@ import Photos
         
         let imagefileUrl = URL(fileURLWithPath: filePath)
         
+        print("====imagefileUrl Path====")
+        
+        print(imagefileUrl)
+        print("====imagefileUrl Path====")
+        
         var selectedImage : UIImage?
     
         
@@ -291,6 +296,9 @@ import Photos
         print("====File Path====")
         
         let videoFileUrl = URL(fileURLWithPath: filePath)
+        print("====File URL====")
+        print(videoFileUrl)
+        print("====File URL====")
         var thumbnail : UIImage?
         do {
             let asset = AVURLAsset(url: videoFileUrl, options: nil)
@@ -306,60 +314,45 @@ import Photos
         
         let base64Img = MediaUtils.convertImageToBase64(img: thumbnail!)
         
+       
         var media = MediaData()
-        media.mediaType = .video
-        media.fileURL = videoFileUrl
-        media.fileName = "file_example_MP4_480_1_5MG.MP4"
-        media.fileSize = 20
-        media.fileKey = "fileKey"
-        media.duration = 2000
-        media.base64Thumbnail = base64Img
-        media.caption = "caption"
-        print("=====MEDIA DATA======")
-//        print(compressedURL)
-//        print(fileName)
-//        print(fileSize)
-//        print(fileKey)
-//        print(duration)
-        print(base64Img)
-        print(caption)
         
-//        MediaUtils.compressVideo(videoURL: videoFileUrl) { isSuccess, url, fileName, fileKey, fileSize , duration in
-//            if let compressedURL = url{
-//                media.mediaType = .video
-//                media.fileURL = compressedURL
-//                media.fileName = fileName
-//                media.fileSize = fileSize
-//                media.fileKey = fileKey
-//                media.duration = duration
-//                media.base64Thumbnail = base64Img
-//                media.caption = caption
-//                print("=====MEDIA DATA======")
-//                print(compressedURL)
-//                print(fileName)
-//                print(fileSize)
-//                print(fileKey)
-//                print(duration)
-//                print(base64Img)
-//                print(caption)
-//            }else{
-//                print("Video Compression Error")
-//            }
-//        }
-        
-        FlyMessenger.sendVideoMessage(toJid: userJid, mediaData: media, replyMessageId: replyMessageId){ isSuccess,error,message in
-            if let chatMessage = message {
-                print("CAPTURE_RESPONSE")
-                print("sendVideoMessage")
-                dump(message)
+        MediaUtils.compressVideo(videoURL: videoFileUrl) { isSuccess, url, fileName, fileKey, fileSize , duration in
+            if let compressedURL = url{
                 
-                var sendVideoResposne = JSONSerializer.toJson(chatMessage)
-                
-                sendVideoResposne = sendVideoResposne.replacingOccurrences(of: "{\"some\":", with: "")
-                sendVideoResposne = sendVideoResposne.replacingOccurrences(of: "}}", with: "}")
-                print(sendVideoResposne)
-                result(sendVideoResposne)
-                
+                media.mediaType = .video
+                media.fileURL = compressedURL
+                media.fileName = fileName
+                media.fileSize = fileSize
+                media.fileKey = fileKey
+                media.duration = duration
+                media.base64Thumbnail = base64Img
+                media.caption = caption
+                print("=====MEDIA DATA======")
+                print(compressedURL)
+                print(fileName)
+                print(fileSize)
+                print(fileKey)
+                print(duration)
+                print(base64Img)
+                print(caption)
+                FlyMessenger.sendVideoMessage(toJid: userJid, mediaData: media, replyMessageId: replyMessageId){ isSuccess,error,message in
+                    if let chatMessage = message {
+                        print("CAPTURE_RESPONSE")
+                        print("sendVideoMessage")
+                        dump(message)
+                        
+                        var sendVideoResposne = JSONSerializer.toJson(chatMessage)
+                        
+                        sendVideoResposne = sendVideoResposne.replacingOccurrences(of: "{\"some\":", with: "")
+                        sendVideoResposne = sendVideoResposne.replacingOccurrences(of: "}}", with: "}")
+                        print(sendVideoResposne)
+                        result(sendVideoResposne)
+                        
+                    }
+                }
+            }else{
+                print("Video Compression Error")
             }
         }
         
@@ -551,7 +544,7 @@ import Photos
                 print(Commons.json(from: data) as Any)
                 result(Commons.json(from: data as Any))
             } else{
-                print(flyError!.localizedDescription)
+                print("Update Profile Issue==> " + flyError!.localizedDescription)
             }
         }
         
