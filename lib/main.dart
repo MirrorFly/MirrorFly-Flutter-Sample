@@ -41,6 +41,7 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await SessionManagement.onInit();
   FlyChat.getSendData().then((value) {
+    debugPrint("notification value ===> $value");
     SessionManagement.setChatJid(value.checkNull());
   });
   FlyChat.cancelNotifications();

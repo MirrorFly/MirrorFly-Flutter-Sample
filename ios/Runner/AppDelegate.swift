@@ -79,6 +79,7 @@ let onSuccess_channel = "contus.mirrorfly/onSuccess"
 
 let googleApiKey = "AIzaSyDnjPEs86MRsnFfW1sVPKvMWjqQRnSa7Ts"
 
+
 @UIApplicationMain
 @objc class AppDelegate: FlutterAppDelegate, LogoutDelegate, GroupEventsDelegate, ConnectionEventDelegate{
     
@@ -456,7 +457,6 @@ extension AppDelegate {
     }
     override func application(_ application: UIApplication, didReceiveRemoteNotification notification: [AnyHashable : Any], fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
         print("Push userInfo \(notification)")
-//        completionHandler(.noData)
         // Handle the message for firebase auth phone verification
             if Auth.auth().canHandleNotification(notification) {
                 completionHandler(.noData)
@@ -464,24 +464,29 @@ extension AppDelegate {
             }else{
                 print("###canHandleNotification issue")
             }
-//
+
 //            // Handle it for firebase messaging analytics
 //            if ((notification["gcm.message_id"]) != nil) {
 //                Messaging.messaging().appDidReceiveMessage(notification)
 //            }
-//
-//            return super.application(application, didReceiveRemoteNotification: notification, fetchCompletionHandler: completionHandler)
+
 
     }
     override func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
         print("###userNotificationCenter withCompletionHandler")
-        if response.notification.request.content.threadIdentifier.contains(XMPP_DOMAIN){
+        let chatId = response.notification.request.content.threadIdentifier
+        print("chat ID ---> \(chatId)")
+        if let profileDetails = ContactManager.shared.getUserProfileDetails(for: chatId) , chatId != FlyDefaults.myJid{
+            Utility.saveInPreference(key: notificationUserJid, value: profileDetails.jid)
+            
+        }
+//        if response.notification.request.content.threadIdentifier.contains(XMPP_DOMAIN){
 //            if FlyDefaults.isBlockedByAdmin {
 //                navigateToBlockedScreen()
 //            } else {
 //                navigateToChatScreen(chatId: response.notification.request.content.threadIdentifier, completionHandler: completionHandler)
 //            }
-        }
+//        }
     }
     
 }

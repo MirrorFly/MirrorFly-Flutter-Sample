@@ -129,7 +129,8 @@ class FlyMethodChannel{
             case "get_user_list":
                 FlySdkMethodCalls.getUserList(call: call, result: result)
             case "getRegisteredUsers"://In Android we call getRegisteredUsers
-                FlySdkMethodCalls.getUserList(call: call, result: result)
+//                FlySdkMethodCalls.getUserList(call: call, result: result)
+                FlySdkMethodCalls.getRegisteredUsers(call: call, result: result)
                 
             case "getUserProfile":
                 FlySdkMethodCalls.getUserProfile(call: call, result: result)
@@ -156,6 +157,10 @@ class FlyMethodChannel{
                 FlySdkMethodCalls.getUsersIBlocked(call: call, result: result)
             case "setMyProfileStatus":
                 FlySdkMethodCalls.setMyProfileStatus(call: call, result: result)
+            case "sendData":
+                let UserJid = Utility.getStringFromPreference(key: notificationUserJid)
+                Utility.saveInPreference(key: notificationUserJid, value: "")
+                result(UserJid)
             default:
                 result(FlutterMethodNotImplemented)
             }

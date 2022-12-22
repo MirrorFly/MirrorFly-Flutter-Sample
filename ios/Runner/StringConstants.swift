@@ -187,6 +187,7 @@ let googleToken = "googleToken"
 let voipToken = "voipToken"
 let password = "password"
 let username = "username"
+let notificationUserJid = ""
 let isLoginContactSyncDone = "isLoginContactSyncDone"
 let firstTimeSandboxContactSyncDone = "firstTimeSandboxContactSyncDone"
 

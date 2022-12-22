@@ -124,6 +124,7 @@ class ChatController extends GetxController
     }else {
       getProfileDetails(userJid).then((
           value) {
+        debugPrint("getProfileDetails--> $value");
         SessionManagement.setChatJid("");
         profile_(value);
         onready();
@@ -1673,13 +1674,14 @@ class ChatController extends GetxController
 
   Future<bool> askLocationPermission() async {
     final permission = await AppPermission.getLocationPermission();
+    debugPrint("Permission$permission");
     switch (permission) {
       case PermissionStatus.granted:
         return true;
       case PermissionStatus.permanentlyDenied:
         return false;
       default:
-        debugPrint("Contact Permission default");
+        debugPrint("Location Permission default");
         return false;
     }
   }

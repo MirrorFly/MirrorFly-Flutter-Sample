@@ -136,6 +136,7 @@ class RecentChatSearchController extends GetxController {
   }
 
   fetchRecentChatList() async{
+    debugPrint("========fetchRecentChatList======");
     await FlyChat.getRecentChatListIncludingArchived().then((value) {
       var recentChatList = <RecentChatData>[];
       var js = json.decode(value);

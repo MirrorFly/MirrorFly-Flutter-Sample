@@ -110,11 +110,11 @@ class ChatSearchView extends GetView<ChatController> {
       String messageType) {
     // debugPrint("Message Type ==> $messageType");
     if (isSender) {
-      if (messageStatus == 'A') {
+      if (messageStatus == 'A' || messageStatus == 'acknowledge') {
         return SvgPicture.asset('assets/logos/acknowledged.svg');
-      } else if (messageStatus == 'D') {
+      } else if (messageStatus == 'D' || messageStatus == 'delivered') {
         return SvgPicture.asset('assets/logos/delivered.svg');
-      } else if (messageStatus == 'S') {
+      } else if (messageStatus == 'S' || messageStatus == 'seen') {
         return SvgPicture.asset('assets/logos/seen.svg');
       } else {
         return const Icon(
@@ -131,7 +131,7 @@ class ChatSearchView extends GetView<ChatController> {
   getMessageContent(int index, BuildContext context,
       List<ChatMessageModel> chatList) {
     // debugPrint(json.encode(chatList[index]));
-    if (chatList[index].messageType == Constants.mText) {
+    if (chatList[index].messageType.toUpperCase() == Constants.mText) {
       return Padding(
         padding: const EdgeInsets.all(10.0),
         child: Row(
@@ -179,7 +179,7 @@ class ChatSearchView extends GetView<ChatController> {
           ],
         ),
       );
-    } else if (chatList[index].messageType == Constants.mNotification) {
+    } else if (chatList[index].messageType.toUpperCase() == Constants.mNotification) {
       return Center(
         child: Padding(
           padding: const EdgeInsets.all(15.0),
@@ -187,7 +187,7 @@ class ChatSearchView extends GetView<ChatController> {
               controller.searchedText.text,const TextStyle(fontSize: 13, fontWeight: FontWeight.bold)),
         ),
       );
-    } else if (chatList[index].messageType == Constants.mImage) {
+    } else if (chatList[index].messageType.toUpperCase() == Constants.mImage) {
       var chatMessage = chatList[index].mediaChatMessage!;
       //mediaLocalStoragePath
       //mediaThumbImage
@@ -245,7 +245,7 @@ class ChatSearchView extends GetView<ChatController> {
           ],
         ),
       );
-    } else if (chatList[index].messageType == Constants.mVideo) {
+    } else if (chatList[index].messageType.toUpperCase() == Constants.mVideo) {
       var chatMessage = chatList[index].mediaChatMessage!;
       return Padding(
         padding: const EdgeInsets.all(8.0),
@@ -311,7 +311,7 @@ class ChatSearchView extends GetView<ChatController> {
           ],
         ),
       );
-    } else if (chatList[index].messageType == Constants.mDocument) {
+    } else if (chatList[index].messageType.toUpperCase() == Constants.mDocument || chatList[index].messageType.toUpperCase() == Constants.mFile) {
       return InkWell(
         onTap: () {
           controller.openDocument(
@@ -398,7 +398,7 @@ class ChatSearchView extends GetView<ChatController> {
           ),
         ),
       );
-    } else if (chatList[index].messageType == Constants.mContact) {
+    } else if (chatList[index].messageType.toUpperCase() == Constants.mContact) {
       return InkWell(
         onTap: () {
           Get.toNamed(Routes.previewContact, arguments: {
@@ -480,7 +480,7 @@ class ChatSearchView extends GetView<ChatController> {
           ),
         ),
       );
-    } else if (chatList[index].messageType == Constants.mAudio) {
+    } else if (chatList[index].messageType.toUpperCase() == Constants.mAudio) {
       var chatMessage = chatList[index];
       return Container(
         decoration: BoxDecoration(

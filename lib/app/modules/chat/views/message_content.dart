@@ -588,11 +588,11 @@ class _MessageContentState extends State<MessageContent> {
       String? messageStatus, bool isSender, String messageType) {
     // debugPrint("Message Type ==> $messageType");
     if (isSender) {
-      if (messageStatus == 'A') {
+      if (messageStatus == 'A' || messageStatus == 'acknowledge') {
         return SvgPicture.asset('assets/logos/acknowledged.svg');
-      } else if (messageStatus == 'D') {
+      } else if (messageStatus == 'D' || messageStatus == 'delivered') {
         return SvgPicture.asset('assets/logos/delivered.svg');
-      } else if (messageStatus == 'S') {
+      } else if (messageStatus == 'S' || messageStatus == 'seen') {
         return SvgPicture.asset('assets/logos/seen.svg');
       } else {
         return const Icon(

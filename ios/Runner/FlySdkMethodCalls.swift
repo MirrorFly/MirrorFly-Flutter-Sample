@@ -22,6 +22,10 @@ import Photos
         let userIdentifier = args["userIdentifier"] as? String ?? nil
         
         
+        let deviceToken = Utility.getStringFromPreference(key: googleToken)
+        var voipToken = Utility.getStringFromPreference(key: voipToken)
+
+        voipToken = voipToken.isEmpty ? deviceToken : voipToken
         
         if(userIdentifier == nil){
             result(FlutterError(code: "500",
@@ -30,7 +34,7 @@ import Photos
             return
         }
         
-        try! ChatManager.registerApiService(for:  userIdentifier!) { isSuccess, flyError, flyData in
+        try! ChatManager.registerApiService(for:  userIdentifier!, deviceToken: deviceToken, voipDeviceToken: voipToken, isExport: false) { isSuccess, flyError, flyData in
                 var data = flyData
                 if isSuccess {
 
@@ -262,7 +266,6 @@ import Photos
                var userlist = flyData
                 let userData = JSONSerializer.toJson(userlist.getData())
                 print(userData)
-//                var profileJSON = "{\"data\" : " + JSONSerializer.toJson(data.getData() as Any) + ",\"status\": true}"
                 
                 let totalPages = userlist["totalPages"] as! Int
                 let message = userlist["message"] as! String
@@ -279,6 +282,36 @@ import Photos
             }
         }
         
+    }
+    
+    static func getRegisteredUsers(call: FlutterMethodCall, result: @escaping FlutterResult){
+        let args = call.arguments as? Dictionary<String, Any>
+        let fromServer = args?["server"] as? Bool ?? false
+        
+        ContactManager.shared.getRegisteredUsers(fromServer: fromServer) {  isSuccess, flyError, flyData in
+            var data  = flyData
+            if isSuccess {
+            
+                print(data.getData())
+                let userData = (data.getData() as? [ProfileDetails])?.count == 0 ? "[]" : JSONSerializer.toJson(data.getData())
+//                let  userData = data.getData()
+                print("user data---> \(userData)")
+                
+                
+                
+                let message = data["message"] as! String
+                var userlistJson = "{\"message\" : \"" + message + "\",\"status\" : true,\"data\":" + userData + "}"
+                
+                userlistJson = userlistJson.replacingOccurrences(of: "{\"some\": {}}", with: "\"\"")
+                userlistJson = userlistJson.replacingOccurrences(of: "\"nickName\": {}", with: "\"nickName\": \"\"")
+                
+                print("getRegisteredUsers---> \(userlistJson)")
+                result(userlistJson)
+            } else{
+               //data.getMessage()
+                result(FlutterError(code: "500", message: flyError?.description, details: nil))
+            }
+        }
     }
     
     static func sendVideoMessage(call: FlutterMethodCall, result: @escaping FlutterResult){
@@ -843,7 +876,9 @@ import Photos
     static func getRecentChatListIncludingArchived(call: FlutterMethodCall, result: @escaping FlutterResult){
         
         let recentChatList = ChatManager.getRecentChatListIncludingArchived()
-        result(recentChatList)
+        print("recent chat list including archived ---> \(recentChatList)")
+        print("recent chat list including archived ---> \(JSONSerializer.toJson(recentChatList))")
+        result(JSONSerializer.toJson(recentChatList))
     }
     static func getRecentChatOf(call: FlutterMethodCall, result: @escaping FlutterResult){
         let args = call.arguments as! Dictionary<String, Any>
