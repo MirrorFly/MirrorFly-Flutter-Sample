@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:keyboard_dismisser/keyboard_dismisser.dart';
+
+import '../common/constants.dart';
 
 class CustomActionBarIcons extends StatelessWidget {
   final double availableWidth;
@@ -19,18 +22,18 @@ class CustomActionBarIcons extends StatelessWidget {
 
     List<CustomAction> visible = actions
         .where((CustomAction customAction) =>
-            customAction.showAsAction == ShowAsAction.ALWAYS)
+            customAction.showAsAction == ShowAsAction.always)
         .toList();
 
     List<CustomAction> overflow = actions
         .where((CustomAction customAction) =>
-            customAction.showAsAction == ShowAsAction.NEVER)
+            customAction.showAsAction == ShowAsAction.never)
         .toList();
 
     double getOverflowWidth() => overflow.isEmpty ? 0 : actionWidth;
 
     for (CustomAction customAction in actions) {
-      if (customAction.showAsAction == ShowAsAction.IF_ROOM) {
+      if (customAction.showAsAction == ShowAsAction.ifRoom) {
         if (availableWidth - visible.length * actionWidth - getOverflowWidth() >
             actionWidth) {
           // there is enough room
@@ -41,13 +44,12 @@ class CustomActionBarIcons extends StatelessWidget {
           if (overflow.isEmpty) {
             CustomAction lastOptionalAction = visible.lastWhere(
                 (CustomAction customAction) =>
-                    customAction.showAsAction == ShowAsAction.IF_ROOM);
-            if (lastOptionalAction != null) {
-              visible.remove(
-                  lastOptionalAction); // remove the last optionally visible action to make space for the overflow icon
-              overflow.add(lastOptionalAction);
-              overflow.add(customAction);
-            } // else the layout will overflow because there is not enough space for all the visible items and the overflow icon
+                    customAction.showAsAction == ShowAsAction.ifRoom);
+            visible.remove(
+                lastOptionalAction); // remove the last optionally visible action to make space for the overflow icon
+            overflow.add(lastOptionalAction);
+            overflow.add(customAction);
+// else the layout will overflow because there is not enough space for all the visible items and the overflow icon
           } else {
             overflow.add(customAction);
           }
@@ -63,7 +65,7 @@ class CustomActionBarIcons extends StatelessWidget {
               .map((CustomAction customAction) => customAction.visibleWidget),
           if (overflow.isNotEmpty)
             PopupMenuButton(
-              onSelected: (value) async { },
+              icon: SvgPicture.asset(moreIcon, width: 3.66, height: 16.31),
               onCanceled: (){ FocusManager.instance.primaryFocus!.unfocus(); },
               itemBuilder: (BuildContext context) => [
                 for (CustomAction customAction in overflow)
@@ -97,12 +99,12 @@ class CustomAction implements Comparable<CustomAction> {
 
   @override
   int compareTo(CustomAction other) {
-    if (showAsAction == ShowAsAction.NEVER &&
-        other.showAsAction == ShowAsAction.NEVER) {
+    if (showAsAction == ShowAsAction.never &&
+        other.showAsAction == ShowAsAction.never) {
       return 0;
-    } else if (showAsAction == ShowAsAction.NEVER) {
+    } else if (showAsAction == ShowAsAction.never) {
       return 1;
-    } else if (other.showAsAction == ShowAsAction.NEVER) {
+    } else if (other.showAsAction == ShowAsAction.never) {
       return -1;
     } else {
       return 0;
@@ -111,7 +113,8 @@ class CustomAction implements Comparable<CustomAction> {
 }
 
 enum ShowAsAction {
-  ALWAYS,
-  IF_ROOM,
-  NEVER,
+  always,
+  ifRoom,
+  never,
+  gone,
 }

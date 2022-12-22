@@ -4,8 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:get/get.dart';
 
-import '../../../model/chatMessageModel.dart';
-import '../../../nativecall/platformRepo.dart';
 import 'chat_controller.dart';
 
 class ImagePreviewController extends GetxController {
@@ -31,7 +29,7 @@ class ImagePreviewController extends GetxController {
         Get.back();
       }
     } else {
-      debugPrint("File Not Found For Image Uplaod");
+      debugPrint("File Not Found For Image Upload");
     }
   }
 

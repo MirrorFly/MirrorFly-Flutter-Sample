@@ -1,10 +1,9 @@
 import 'package:flutter/cupertino.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
-import 'package:mirror_fly_demo/app/model/chatMessageModel.dart';
-import 'package:mirror_fly_demo/app/nativecall/platformRepo.dart';
+import 'package:mirror_fly_demo/app/common/constants.dart';
+import 'package:mirror_fly_demo/app/data/helper.dart';
+import 'package:flysdk/flysdk.dart';
 
-import '../../../model/userlistModel.dart';
 import '../../../routes/app_pages.dart';
 
 class ContactController extends GetxController {
@@ -18,23 +17,47 @@ class ContactController extends GetxController {
   var selectedUsersJIDList = List<String>.empty(growable: true).obs;
   var forwardMessageIds = List<String>.empty(growable: true).obs;
   final TextEditingController searchQuery = TextEditingController();
-  var search = false.obs;
   var _searchText = "";
   var _first = true;
 
   var isForward = false.obs;
+  var isCreateGroup = false.obs;
+  var groupJid = "".obs;
 
   @override
   void onInit() {
     super.onInit();
     isForward(Get.arguments["forward"]);
     if (isForward.value) {
+      isCreateGroup(false);
       forwardMessageIds.addAll(Get.arguments["messageIds"]);
+    }else {
+      isCreateGroup(Get.arguments["group"]);
+      groupJid(Get.arguments["groupJid"]);
     }
     scrollController.addListener(_scrollListener);
     //searchQuery.addListener(_searchListener);
     fetchUsers(false);
   }
+
+  //Add participants
+  final _search = false.obs;
+  set search(bool value) => _search.value=value;
+  bool get search => _search.value;
+
+  void onSearchPressed(){
+    if (_search.value) {
+      _search(false);
+    } else {
+      _search(true);
+    }
+  }
+
+  bool get isCreateVisible => isCreateGroup.value;
+  bool get isSearchVisible => !_search.value;
+  bool get isClearVisible => _search.value && !isForward.value && isCreateGroup.value;
+  bool get isMenuVisible => !_search.value && !isForward.value;
+  bool get isCheckBoxVisible => isCreateGroup.value || isForward.value;
 
   _scrollListener() {
     if (scrollController.hasClients) {
@@ -63,8 +86,8 @@ class ContactController extends GetxController {
   }
 
   backFromSearch() {
-    search.value = false;
-    searchQuery.text = "";
+    _search.value = false;
+    searchQuery.clear();
     _searchText = "";
     //if(!_IsSearching){
     //isPageLoading.value=true;
@@ -72,29 +95,60 @@ class ContactController extends GetxController {
     //fetchUsers(true);
     //}
     usersList(mainUsersList);
+    scrollable(true);
   }
 
   fetchUsers(bool fromSearch) {
-    PlatformRepo().getUsers(pageNum, _searchText).then((data) {
+    FlyChat.getUserList(pageNum, _searchText).then((data) async {
       var item = userListFromJson(data);
-      fromSearch ? usersList(item.data) : usersList.addAll(item.data!);
-      pageNum = pageNum + 1;
-      isPageLoading.value = false;
-      scrollable.value = item.data!.length == 20;
-      usersList.refresh();
-      if (_first) {
-        _first = false;
-        mainUsersList(item.data!);
+      var list = <Profile>[];
+
+      if(groupJid.value.checkNull().isNotEmpty){
+        await Future.forEach(item.data!, (it) async {
+          await FlyChat.isMemberOfGroup(groupJid.value.checkNull(), it.jid.checkNull()).then((value){
+            mirrorFlyLog("item", value.toString());
+            if(value==null || !value){
+              list.add(it);
+            }
+          });
+        });
+        fromSearch ? usersList(list) : usersList.addAll(list);
+        pageNum = pageNum + 1;
+        isPageLoading.value = false;
+        scrollable.value = list.length == 20;
+        usersList.refresh();
+        if (_first) {
+          _first = false;
+          mainUsersList(list);
+        }
+      }else{
+        list.addAll(item.data!);
+        fromSearch ? usersList(list) : usersList.addAll(list);
+        pageNum = pageNum + 1;
+        isPageLoading.value = false;
+        scrollable.value = list.length == 20;
+        usersList.refresh();
+        if (_first) {
+          _first = false;
+          mainUsersList(list);
+        }
       }
-    })
-        .catchError((error) {
-      Fluttertoast.showToast(
-          msg: error.toString(),
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.CENTER,
-          timeInSecForIosWeb: 1,
-          fontSize: 16.0);
+
+    }).catchError((error) {
+      toToast(error.toString());
     });
+  }
+
+  Future<List<Profile>> removeGroupMembers(List<Profile> items) async {
+    var list = <Profile>[];
+    for (var it in items) {
+      var value = await FlyChat.isMemberOfGroup(groupJid.value.checkNull(), it.jid.checkNull());
+      mirrorFlyLog("item", value.toString());
+      if(value==null || !value){
+        list.add(it);
+      }
+    }
+    return list;
   }
 
   get users => usersList;
@@ -103,7 +157,7 @@ class ContactController extends GetxController {
     if (imgUrl == null || imgUrl == "") {
       return "";
     }
-    PlatformRepo().imagePath(imgUrl).then((value) {
+    FlyChat.imagePath(imgUrl).then((value) {
       return value ?? "";
     });
     return "";
@@ -113,27 +167,47 @@ class ContactController extends GetxController {
     if (selectedUsersList.contains(item)) {
       selectedUsersList.remove(item);
       selectedUsersJIDList.remove(item.jid);
-      item.isSelected = false;
+      //item.isSelected = false;
     } else {
       selectedUsersList.add(item);
       selectedUsersJIDList.add(item.jid!);
-      item.isSelected = true;
+      //item.isSelected = true;
     }
     usersList.refresh();
   }
 
   forwardMessages() {
-    PlatformRepo()
-        .forwardMessage(forwardMessageIds, selectedUsersJIDList)
+    FlyChat
+        .forwardMessagesToMultipleUsers(forwardMessageIds, selectedUsersJIDList)
         .then((value) {
       debugPrint(
           "to chat profile ==> ${selectedUsersList[0].toJson().toString()}");
       Get.back(result: selectedUsersList[0]);
-      // Future.delayed(const Duration(milliseconds: 100), (){
-      // Get.off(Routes.CHAT,
-      //     arguments: selectedUsersList[0]);
-      // });
-      // });
     });
+  }
+
+  onListItemPressed(Profile item){
+    if (isForward.value|| isCreateGroup.value) {
+      contactSelected(item);
+    }else{
+      mirrorFlyLog("Contact Profile", item.toJson().toString());
+      Get.offNamed(Routes.chat, arguments: item);
+    }
+  }
+
+  backToCreateGroup(){
+    if(groupJid.value.isEmpty) {
+      if (selectedUsersJIDList.length >= Constants.minGroupMembers) {
+        Get.back(result: selectedUsersJIDList);
+      } else {
+        toToast("Add at least two contacts");
+      }
+    }else{
+      if (selectedUsersJIDList.length >= Constants.minGroupMembers) {
+        Get.back(result: selectedUsersJIDList);
+      } else {
+        toToast("Add at least two contacts");
+      }
+    }
   }
 }

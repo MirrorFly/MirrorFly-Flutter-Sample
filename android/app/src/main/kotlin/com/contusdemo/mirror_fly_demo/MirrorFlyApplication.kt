@@ -1,6 +1,7 @@
 package com.contusdemo.mirror_fly_demo
 
 import android.app.Application
+import android.content.Context
 import com.contus.flycommons.Constants
 import com.contus.flycommons.LogMessage
 import com.contus.webrtc.GroupCallDetails
@@ -15,11 +16,22 @@ import com.contusflysdk.api.ChatManager
 import com.contusflysdk.api.GroupManager
 import com.contusflysdk.api.contacts.ContactManager
 import com.contusflysdk.api.utils.NameHelper
+import io.flutter.app.FlutterApplication
 
 
-class MirrorFlyApplication : Application() {
+class MirrorFlyApplication : FlutterApplication() {
 
+    init {
+        instance = this
+    }
 
+    companion object {
+        private var instance: MirrorFlyApplication? = null
+
+        fun getContext(): Context {
+            return instance!!.applicationContext
+        }
+    }
     override fun onCreate() {
         super.onCreate()
 
@@ -44,6 +56,10 @@ class MirrorFlyApplication : Application() {
             .setGroupConfiguration(groupConfiguration)
             .build()
 
+        //activity to open when use clicked from notification
+        //activity to open when a user logout from the app.
+        ChatManager.startActivity = MainActivity::class.java
+
         //initialize call sdk
         CallManager.init(this)
 //        CallManager.setCurrentUserId(SharedPreferenceManager.instance.currentUserJid)
@@ -64,13 +80,13 @@ class MirrorFlyApplication : Application() {
         })
 
         CallManager.setCallHelper(object : CallHelper {
-            /*override fun getDisplayName(jid: String): String {
-                return ContactManager.getDisplayName(jid)
-            }
-
-            override fun isDeletedUser(jid: String): Boolean {
-                return ContactManager.getProfileDetails(jid)?.contactType == ContactType.DELETED_CONTACT
-            }*/
+//            override fun getDisplayName(jid: String): String {
+//                return ContactManager.getDisplayName(jid)
+//            }
+//
+//            override fun isDeletedUser(jid: String): Boolean {
+//                return ContactManager.getProfileDetails(jid)?.contactType == ContactType.DELETED_CONTACT
+//            }
 
             override fun getNotificationContent(callDirection: String): String {
                 return callDirection
@@ -83,10 +99,10 @@ class MirrorFlyApplication : Application() {
             ) {
                 CallMessenger.sendCallMessage(details, users, invitedUsers)
             }
-
-            /*override fun sendCallMessage(details: GroupCallDetails, users: List<String>, invitedUsers: List<String>) {
-                CallMessenger.sendCallMessage(details, users, invitedUsers)
-            }*/
+//
+//            override fun sendCallMessage(details: GroupCallDetails, users: List<String>, invitedUsers: List<String>) {
+//                CallMessenger.sendCallMessage(details, users, invitedUsers)
+//            }
         })
 
         ChatManager.callService = WebRtcCallService::class.java

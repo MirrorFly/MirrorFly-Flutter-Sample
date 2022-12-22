@@ -3,62 +3,66 @@ import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-import 'package:flutter_svg/parser.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
-import 'package:mirror_fly_demo/app/data/SessionManagement.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
 
-import 'package:flutter_cache_manager/flutter_cache_manager.dart' as cache;
-import '../nativecall/platformRepo.dart';
+import 'package:mirror_fly_demo/app/modules/dashboard/widgets.dart';
 import 'constants.dart';
 import 'main_controller.dart';
 
 class AppDivider extends StatelessWidget {
-  final double padding;
 
-  const AppDivider({Key? key, this.padding = 18.0}) : super(key: key);
+  const AppDivider({Key? key, this.padding}) : super(key: key);
+
+  final EdgeInsetsGeometry? padding;
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.symmetric(horizontal: padding),
-      child: const Divider(
-        thickness: 0.29,
-        color: dividercolor,
-      ),
+    return Container(
+      margin: padding,
+      height: 0.29,
+      color: dividerColor,
     );
   }
 }
 
 class ProfileTextImage extends StatelessWidget {
   final String text;
-  final Color bgcolor;
-  final double fontsize;
+  final Color bgColor;
+  final double fontSize;
   final double radius;
-  final Color fontcolor;
+  final Color fontColor;
 
-  ProfileTextImage(
+  const ProfileTextImage(
       {Key? key,
       required this.text,
-      this.fontsize = 15,
-      this.bgcolor = buttonbgcolor,
-      this.radius = 22,
-      this.fontcolor = Colors.white})
+      this.fontSize = 15,
+      this.bgColor = buttonBgColor,
+      this.radius = 25,
+      this.fontColor = Colors.white})
       : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return CircleAvatar(
-      radius: radius,
-      backgroundColor: Color(Helper.getColourCode(text)), //bgcolor,
-      child: Center(
-          child: Text(
-        getString(text),
-        style: TextStyle(fontSize: fontsize, color: fontcolor),
-      )),
-    );
+    return radius == 0
+        ? Container(
+        decoration: BoxDecoration(color: Color(Helper.getColourCode(text))),
+          child: Center(
+            child: Text(
+            getString(text),
+            style: TextStyle(fontSize: fontSize, color: fontColor, fontWeight: FontWeight.w800),
+              ),
+          ),
+        )
+        : CircleAvatar(
+            radius: radius,
+            backgroundColor: Color(Helper.getColourCode(text)),
+            child: Center(
+                child: Text(
+              getString(text),
+              style: TextStyle(fontSize:  radius !=0 ? radius/1.5 : fontSize, color: fontColor),
+            )),
+          );
   }
 
   String getString(String str) {
@@ -83,7 +87,8 @@ class ImageNetwork extends GetView<MainController> {
   final double? height;
   final String url;
   final Widget? errorWidget;
-  final bool clipoval;
+  final bool clipOval;
+  final Function()? onTap;
 
   const ImageNetwork(
       {Key? key,
@@ -91,101 +96,220 @@ class ImageNetwork extends GetView<MainController> {
       required this.width,
       required this.height,
       this.errorWidget,
-      required this.clipoval})
+      required this.clipOval,this.onTap,})
       : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    var AUTHTOKEN = controller.AUTHTOKEN;
-    Log("Mirrorfly Auth", AUTHTOKEN.value);
-    Log("Image URL", url);
-    return Obx(
-      () => CachedNetworkImage(
-        imageUrl: imagedomin + url,
-        fit: BoxFit.fill,
-        width: width,
-        height: height,
-        httpHeaders: {"Authorization": controller.AUTHTOKEN.value},
-        /*placeholder: (context, url) {
-          //Log("placeholder", url);
-          return errorWidget ??
-              Image.asset(
-                'assets/logos/profile_img.png',
-                height: width,
-                width: height,
-              );
-        },*/
-
-        progressIndicatorBuilder: (context, link, progress) {
-          return SizedBox(
-            height: height,
-            width: width,
-            child: const Center(child: CircularProgressIndicator()),
-          );
-        },
-        errorWidget: (context, link, error) {
-          Log("imageerror", error.toString());
-          if(error.toString().contains("401")&&url.isNotEmpty){
-            // controller.getAuthToken();
-            _deleteImageFromCache(url);
-          }
-          return errorWidget ??
-              Image.asset(
-                'assets/logos/profile_img.png',
-                height: width,
-                width: height,
-              );
-        },
-        imageBuilder: (context,provider){
-          return clipoval ? ClipOval(child: Image(image: provider,fit: BoxFit.fill,)) : Image(image: provider,fit: BoxFit.fill,);
-        },
-      ),
-      /*Image.network(
-        imagedomin + url,
-        fit: BoxFit.fill,
-        width: width,
-        height: height,
-        headers: {"Authorization": controller.AUTHTOKEN.value},
-        loadingBuilder: (context, widget, chunkevent) {
-          if(chunkevent==null) return clipoval ? ClipOval(child: widget) : widget;
-          return errorWidget ?? SizedBox(child: Center(child: const CircularProgressIndicator()),height: height,width: width,);
-        },
-        errorBuilder: (context,Object object, trace) {
-          Log("image", imagedomin + url);
-          Log("imageError", object.toString());
-          if(object.toString().contains("401")){
-            Get.find<MainController>().getAuthToken();
-          }
-          return errorWidget ??
-              Image.asset(
-                'assets/logos/profile_img.png',
-                height: width,
-                width: height,
-              );
-        },
-      ),*/
-    );
+    //var authToken = controller.authToken;
+    // mirrorFlyLog("MirrorFly Auth", authToken.value);
+    // mirrorFlyLog("Image URL", url);
+    if (url.isEmpty) {
+      return errorWidget != null
+          ? errorWidget!
+          : clipOval
+              ? ClipOval(
+                  child: Image.asset(
+                    profileImg,
+                    height: height,
+                    width: width,
+                  ),
+                )
+              : Image.asset(
+                  profileImg,
+                  height: height,
+                  width: width,
+                );
+    } else {
+      return Obx(
+        () => CachedNetworkImage(
+          imageUrl: controller.uploadEndpoint + url,
+          fit: BoxFit.fill,
+          width: width,
+          height: height,
+          cacheKey: controller.uploadEndpoint + url,
+          httpHeaders: {"Authorization": controller.authToken.value},
+          /*progressIndicatorBuilder: (context, link, progress) {
+            return SizedBox(
+              height: height,
+              width: width,
+              child: const Center(child: CircularProgressIndicator()),
+            );
+          },*/
+          placeholder: (context,string){
+            return errorWidget ??
+                Image.asset(
+                  profileImg,
+                  height: height,
+                  width: width,
+                );
+          },
+          errorWidget: (context, link, error) {
+            // mirrorFlyLog("image error", "$error link : $link");
+            if (error.toString().contains("401") && url.isNotEmpty) {
+              // controller.getAuthToken();
+              _deleteImageFromCache(url);
+            }
+            return errorWidget ??
+                Image.asset(
+                  profileImg,
+                  height: height,
+                  width: width,
+                );
+          },
+          imageBuilder: (context, provider) {
+            return clipOval
+                ? ClipOval(
+                    child: Image(
+                    image: provider,
+                    fit: BoxFit.fill,
+                  ))
+                : InkWell(
+                  onTap: onTap,
+                  child: Image(
+                      image: provider,
+                      fit: BoxFit.fill,
+                    ),
+                );
+          },
+        ),
+      );
+    }
   }
+
   void _deleteImageFromCache(String url) {
-    cache.DefaultCacheManager manager = cache.DefaultCacheManager();
-    manager.emptyCache();
-    // cache.DefaultCacheManager().removeFile(url).then((value) {
-      //ignore: avoid_print
-      print('File removed');
+    /*cache.DefaultCacheManager manager = cache.DefaultCacheManager();
+    manager.emptyCache();*/
+    CachedNetworkImage.evictFromCache(url,cacheKey: url).then((value) => controller.getAuthToken());
+    /*cache.DefaultCacheManager().removeFile(url).then((value) {
+      mirrorFlyLog('File removed', "");
       controller.getAuthToken();
-    // }).onError((error, stackTrace) {
-    //   ignore: avoid_print
-      // print(error);
-    // });
+    }).onError((error, stackTrace) {
+      mirrorFlyLog("", error.toString());
+    });*/
     //await CachedNetworkImage.evictFromCache(url);
   }
+}
+class ListItem extends StatelessWidget {
+  final Widget? leading;
+  final Widget title;
+  final Widget? trailing;
+  final Function()? onTap;
+  final EdgeInsetsGeometry? dividerPadding;
+
+  const ListItem({Key? key, this.leading, required this.title, this.trailing, this.onTap, this.dividerPadding }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: onTap,
+      child: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Row(
+
+              children: [
+                leading != null ? Padding(
+                    padding: const EdgeInsets.only(right: 16.0),
+                    child: leading) : const SizedBox(),
+                Expanded(
+                  child: title,
+                ),
+                trailing ?? const SizedBox()
+              ],
+            ),
+          ),
+          dividerPadding != null ? AppDivider(padding: dividerPadding) : const SizedBox()
+        ],
+      ),
+    );
+  }
+}
+
+
+Widget memberItem({required String name,required String image,required String status,bool? isAdmin, required Function() onTap,String spantext = "",bool isCheckBoxVisible = false,bool isChecked = false,Function(bool? value)? onchange}) {
+  var titlestyle =  const TextStyle(
+      color: Colors.black,
+      fontSize: 14.0,
+      fontWeight: FontWeight.w700
+  );
+  return Container(
+    padding: const EdgeInsets.symmetric(vertical: 4.0),
+    child: InkWell(
+      onTap: onTap,
+      child: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(
+                right: 16.0, left: 16.0, top: 4, bottom: 4),
+            child: Row(
+              children: [
+                ImageNetwork(
+                  url: image.checkNull(),
+                  width: 48,
+                  height: 48,
+                  clipOval: true,
+                  errorWidget: name
+                      .checkNull()
+                      .isNotEmpty
+                      ? ProfileTextImage(
+                    fontSize: 20,
+                    text: name.checkNull(),
+                  )
+                      : null,),
+                Expanded(child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      spantext.isEmpty ? Text(name.checkNull(),
+                        style: titlestyle,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis, //TextStyle
+                      ) : spannableText(name.checkNull(), spantext, titlestyle,),
+                      Text(status.checkNull(),
+                        style: const TextStyle(
+                          color: Colors.black,
+                          fontSize: 12.0,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis, //T
+                      ),
+                    ],
+                  ),
+                ),
+                ),
+                (isAdmin!=null&& isAdmin) ? const Text("Admin",
+                    style: TextStyle(
+                      color: Colors.blue,
+                      fontSize: 12.0,
+                    )
+                ) : const SizedBox(),
+                Visibility(
+                  visible: isCheckBoxVisible,
+                  child: Checkbox(
+                    value: isChecked,
+                    onChanged: onchange,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const AppDivider(padding: EdgeInsets.only(right: 16, left: 16, top: 4))
+        ],
+      ),
+    ),
+  );
 }
 
 class EmojiLayout extends StatelessWidget {
   const EmojiLayout(
-      {Key? key, required this.textcontroller, this.onEmojiSelected})
+      {Key? key, required this.textController, this.onEmojiSelected})
       : super(key: key);
-  final TextEditingController textcontroller;
+  final TextEditingController textController;
   final Function(Category?, Emoji)? onEmojiSelected;
 
   @override
@@ -197,7 +321,7 @@ class EmojiLayout extends StatelessWidget {
           // Do something when the user taps the backspace button (optional)
         },
         onEmojiSelected: onEmojiSelected,
-        textEditingController: textcontroller,
+        textEditingController: textController,
         config: Config(
           columns: 7,
           emojiSizeMax: 32 * (Platform.isIOS ? 1.30 : 1.0),
@@ -223,18 +347,3 @@ class EmojiLayout extends StatelessWidget {
     );
   }
 }
-
-/*
-Image NetImage (String url,double width,double height){
-  return Image.network(imagedomin+url,
-      width: width,
-      height: height,
-      headers: {"Authorization":SessionManagement().getauthToken().toString()},
-  errorBuilder:(context,object,trace){
-    return Image.asset(
-      'assets/logos/profile_img.png',
-      height: width,
-      width: height,
-    );
-  },);
-}*/

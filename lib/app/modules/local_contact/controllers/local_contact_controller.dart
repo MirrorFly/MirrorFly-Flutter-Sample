@@ -1,9 +1,7 @@
 import 'package:contacts_service/contacts_service.dart';
-import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/routes/app_pages.dart';
 
-import '../../chat/controllers/chat_controller.dart';
 
 class LocalContactController extends GetxController {
   //TODO: Implement LocalContactController
@@ -18,10 +16,7 @@ class LocalContactController extends GetxController {
     getContacts();
   }
 
-  @override
-  void onReady() {
-    super.onReady();
-  }
+
   getContacts() async{
     contactList.addAll(await ContactsService.getContacts());
 
@@ -32,10 +27,11 @@ class LocalContactController extends GetxController {
       return;
     }
 
-    contactList.forEach((userDetail) {
-      if (userDetail.displayName!.contains(text))
+    for (var userDetail in contactList) {
+      if (name(userDetail).toString().toLowerCase().contains(text.toLowerCase())) {
         searchList.add(userDetail);
-    });
+      }
+    }
 
   }
 
@@ -47,7 +43,11 @@ class LocalContactController extends GetxController {
       contactList.add(number!.replaceAll(RegExp('[+() -]'), ''));
     }
 
-    Get.toNamed(Routes.PREVIEW_CONTACT, arguments: {"contactList" : contactList, "contactName": contactName, "from": "contact_pick"});
+    Get.toNamed(Routes.previewContact, arguments: {"contactList" : contactList, "contactName": contactName, "from": "contact_pick"});
 
+  }
+
+  name(Contact item) {
+    return item.displayName ?? item.givenName ?? item.middleName ?? item.androidAccountName ?? item.familyName ?? "";
   }
 }

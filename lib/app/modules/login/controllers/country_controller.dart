@@ -1,38 +1,37 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
-import 'package:mirror_fly_demo/app/common/constants.dart';
-import 'package:mirror_fly_demo/app/model/countryModel.dart';
+import 'package:flysdk/flysdk.dart';
 
 class CountryController extends GetxController{
 
-  var maincountrylist = List<CountryData>.empty(growable: true);
-  var countrylist = List<CountryData>.empty(growable: true).obs;
-  final TextEditingController searchQuery = new TextEditingController();
+  var mainCountryList = List<CountryData>.empty(growable: true);
+  var countryList = List<CountryData>.empty(growable: true).obs;
+  final TextEditingController searchQuery = TextEditingController();
   var search=false.obs;
-  var IsSearching=false;
+  var isSearching=false;
   FocusNode focusNode = FocusNode();
 
   countrySearchFilter(String text){
-    IsSearching=true;
-    countrylist.value.clear();
+    isSearching=true;
+    countryList.clear();
     if(text.isNotEmpty) {
-      var filter = maincountrylist.where((item) => item.name.toLowerCase().contains(text.toLowerCase()));
-      countrylist.value.addAll(filter);
+      var filter = mainCountryList.where((item) => item.name!.toLowerCase().contains(text.toLowerCase()));
+      countryList.addAll(filter);
     }else{
-      countrylist.value.addAll(maincountrylist);
+      countryList.addAll(mainCountryList);
     }
-    countrylist.refresh();
+    countryList.refresh();
   }
 
-  void backfromSearch(){
+  void backFromSearch(){
     searchQuery.text="";
     search.value=false;
-    if(IsSearching){
-     countrylist.clear();
-     countrylist.addAll(maincountrylist);
-     countrylist.refresh();
-     IsSearching=false;
+    if(isSearching){
+     countryList.clear();
+     countryList.addAll(mainCountryList);
+     countryList.refresh();
+     isSearching=false;
     }else{
       Get.back();
     }
@@ -42,12 +41,12 @@ class CountryController extends GetxController{
   void onInit() {
     super.onInit();
     loadAsset().then((value){
-      maincountrylist.addAll(value);
-      countrylist.addAll(value);
+      mainCountryList.addAll(value);
+      countryList.addAll(value);
     });
     focusNode.addListener(() {
       if (focusNode.hasFocus) {
-        IsSearching=true;
+        isSearching=true;
       }
     });
   }

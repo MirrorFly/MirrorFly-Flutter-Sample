@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
@@ -8,10 +7,13 @@ import 'package:mirror_fly_demo/app/routes/app_pages.dart';
 
 import '../../../common/constants.dart';
 import '../../../common/widgets.dart';
+import 'about/about_and_help_view.dart';
 
 class SettingsView extends GetView<SettingsController> {
+  const SettingsView({Key? key}) : super(key: key);
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Settings'),
@@ -20,23 +22,25 @@ class SettingsView extends GetView<SettingsController> {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            SettingListItem("Profile", profileicon, rightarrowicon,
-                () => Get.toNamed(Routes.PROFILE,arguments: {"from":Routes.SETTINGS})),
-            SettingListItem("Chats", chaticon, rightarrowicon, () {}),
-            SettingListItem(
-                "Starred Messages", staredmsgicon, rightarrowicon, () {}),
-            SettingListItem(
-                "Notifications", notificationicon, rightarrowicon, () {}),
-            SettingListItem(
-                "Blocked Contacts", blockedicon, rightarrowicon, () {}),
-            SettingListItem(
-                "Archived Chats", archiveicon, rightarrowicon, () {}),
-            SettingListItem("App Lock", lockicon, rightarrowicon, () {}),
-            SettingListItem("About and Help", abouticon, rightarrowicon, () {}),
-            SettingListItem(
-                "Connection Label", connectionicon, toggleofficon, () {}),
-            SettingListItem("Report Log", reporticon, rightarrowicon, () {}),
-            SettingListItem("Logout", logouticon, rightarrowicon, () {
+            settingListItem("Profile", profileIcon, rightArrowIcon,
+                () => Get.toNamed(Routes.profile,arguments: {"from":Routes.settings})),
+            settingListItem("Chats", chatIcon, rightArrowIcon, () {}),
+            settingListItem(
+                "Starred Messages", staredMsgIcon, rightArrowIcon, () {
+                  Get.toNamed(Routes.starredMessages);
+            }),
+            settingListItem(
+                "Notifications", notificationIcon, rightArrowIcon, ()=>Get.toNamed(Routes.notification)),
+            settingListItem(
+                "Blocked Contacts", blockedIcon, rightArrowIcon, ()=>Get.toNamed(Routes.blockedList)),
+            settingListItem("App Lock", lockIcon, rightArrowIcon, ()=>Get.toNamed(Routes.appLock)),
+            settingListItem("About and Help", aboutIcon, rightArrowIcon, () =>Get.to(const AboutAndHelpView())),
+            settingListItem(
+                "Connection Label", connectionIcon, toggleOffIcon, () {}),
+            settingListItem("Delete My Account", delete, rightArrowIcon, () {
+              Get.toNamed(Routes.deleteAccount);
+            }),
+            settingListItem("Logout", logoutIcon, rightArrowIcon, () {
               Helper.showAlert(
                   message:
                   "Are you sure want to logout from the app?",
@@ -62,23 +66,23 @@ class SettingsView extends GetView<SettingsController> {
                     RichText(
                       text: const TextSpan(
                           text: "Released On: ",
-                          style: TextStyle(color: textcolor),
+                          style: TextStyle(color: textColor),
                           children: [
                             TextSpan(
-                                text: "August 28, 2022",
-                                style: TextStyle(color: texthintcolor))
+                                text: "Nov 2022",
+                                style: TextStyle(color: textHintColor))
                           ]),
                     ),
                     RichText(
                         text: TextSpan(
                             text: "Version ",
-                            style: TextStyle(color: textcolor),
+                            style: const TextStyle(color: textColor),
                             children: [
                               TextSpan(
                                   text: controller.packageInfo != null
                                       ? controller.packageInfo!.version
                                       : "",
-                                  style: TextStyle(color: texthintcolor))
+                                  style: const TextStyle(color: textHintColor))
                             ]),
                       ),
                   ]),
@@ -89,37 +93,35 @@ class SettingsView extends GetView<SettingsController> {
     );
   }
 
-  Widget SettingListItem(
-      String title, String leading, String trailing, Function() ontap) {
-    return Container(
-      child: Column(
-        children: [
-          InkWell(
-            onTap: ontap,
-            child: Row(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.all(18.0),
-                  child: SvgPicture.asset(leading),
-                ),
-                Expanded(
-                    child: Text(
-                  title,
-                  style: const TextStyle(
-                      fontSize: 15.0,
-                      fontFamily: 'sf_ui',
-                      fontWeight: FontWeight.w700),
-                )),
-                Padding(
-                  padding: const EdgeInsets.all(18.0),
-                  child: SvgPicture.asset(trailing),
-                ),
-              ],
-            ),
+  Widget settingListItem(
+      String title, String leading, String trailing, Function() onTap) {
+    return Column(
+      children: [
+        InkWell(
+          onTap: onTap,
+          child: Row(
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(18.0),
+                child: SvgPicture.asset(leading),
+              ),
+              Expanded(
+                  child: Text(
+                title,
+                style: const TextStyle(
+                    fontSize: 15.0,
+                    fontFamily: 'sf_ui',
+                    fontWeight: FontWeight.w400),
+              )),
+              Padding(
+                padding: const EdgeInsets.all(18.0),
+                child: SvgPicture.asset(trailing),
+              ),
+            ],
           ),
-          AppDivider(),
-        ],
-      ),
+        ),
+        const AppDivider(),
+      ],
     );
   }
 }

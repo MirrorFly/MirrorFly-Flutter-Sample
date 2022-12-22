@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../common/constants.dart';
+import '../../../common/main_controller.dart';
 import '../../../data/helper.dart';
-import '../../../model/chatMessageModel.dart';
-import '../controllers/chat_controller.dart';
+import 'package:flysdk/flysdk.dart';
 
 class MessageHeader extends StatefulWidget {
   const MessageHeader({Key? key, required this.chatList, required this.isTapEnabled}) : super(key: key);
@@ -17,18 +17,9 @@ class MessageHeader extends StatefulWidget {
 }
 
 class _MessageHeaderState extends State<MessageHeader> {
-  var controller = Get.find<ChatController>();
-  var screenWidth, screenHeight;
+  var controller = Get.find<MainController>();
   @override
   Widget build(BuildContext context) {
-    screenHeight = MediaQuery
-        .of(context)
-        .size
-        .height;
-    screenWidth = MediaQuery
-        .of(context)
-        .size
-        .width;
 
     return Container(
         child: getMessageHeader(widget.chatList)
@@ -45,8 +36,8 @@ class _MessageHeaderState extends State<MessageHeader> {
         decoration: BoxDecoration(
           borderRadius: const BorderRadius.all(Radius.circular(10)),
           color: chatList.isMessageSentByMe
-              ? chatreplycontainercolor
-              : chatreplysendercolor,
+              ? chatReplyContainerColor
+              : chatReplySenderColor,
         ),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.center,
@@ -88,15 +79,15 @@ class _MessageHeaderState extends State<MessageHeader> {
       LocationChatMessage? locationChatMessage,
       double size) {
     switch (messageType) {
-      case Constants.MIMAGE:
+      case Constants.mImage:
         return ClipRRect(
           borderRadius: BorderRadius.circular(5),
           child: controller.imageFromBase64String(
               mediaThumbImage!, context, size, size),
         );
-      case Constants.MLOCATION:
+      case Constants.mLocation:
         return controller.getLocationImage(locationChatMessage, size, size);
-      case Constants.MVIDEO:
+      case Constants.mVideo:
         return ClipRRect(
           borderRadius: BorderRadius.circular(5),
           child: controller.imageFromBase64String(
@@ -122,55 +113,55 @@ class _MessageHeaderState extends State<MessageHeader> {
       String? contactName, String? mediaFileName) {
     debugPrint(messageType);
     switch (messageType) {
-      case Constants.MTEXT:
+      case Constants.mText:
         return Row(
           children: [
-            Helper.forMessageTypeIcon(Constants.MTEXT),
+            Helper.forMessageTypeIcon(Constants.mText),
             Text(messageTextContent!),
           ],
         );
-      case Constants.MIMAGE:
+      case Constants.mImage:
         return Row(
           children: [
-            Helper.forMessageTypeIcon(Constants.MIMAGE),
+            Helper.forMessageTypeIcon(Constants.mImage),
             const SizedBox(
               width: 10,
             ),
-            Text(Helper.capitalize(Constants.MIMAGE)),
+            Text(Helper.capitalize(Constants.mImage)),
           ],
         );
-      case Constants.MVIDEO:
+      case Constants.mVideo:
         return Row(
           children: [
-            Helper.forMessageTypeIcon(Constants.MVIDEO),
+            Helper.forMessageTypeIcon(Constants.mVideo),
             const SizedBox(
               width: 10,
             ),
-            Text(Helper.capitalize(Constants.MVIDEO)),
+            Text(Helper.capitalize(Constants.mVideo)),
           ],
         );
-      case Constants.MAUDIO:
+      case Constants.mAudio:
         return Row(
           children: [
-            Helper.forMessageTypeIcon(Constants.MAUDIO),
-            SizedBox(
+            Helper.forMessageTypeIcon(Constants.mAudio),
+            const SizedBox(
               width: 10,
             ),
             // Text(controller.replyChatMessage.mediaChatMessage!.mediaDuration),
             // SizedBox(
             //   width: 10,
             // ),
-            Text(Helper.capitalize(Constants.MAUDIO)),
+            Text(Helper.capitalize(Constants.mAudio)),
           ],
         );
-      case Constants.MCONTACT:
+      case Constants.mContact:
         return Row(
           children: [
-            Helper.forMessageTypeIcon(Constants.MCONTACT),
+            Helper.forMessageTypeIcon(Constants.mContact),
             const SizedBox(
               width: 10,
             ),
-            Text("${Helper.capitalize(Constants.MCONTACT)} :"),
+            Text("${Helper.capitalize(Constants.mContact)} :"),
             const SizedBox(
               width: 5,
             ),
@@ -184,20 +175,20 @@ class _MessageHeaderState extends State<MessageHeader> {
                 )),
           ],
         );
-      case Constants.MLOCATION:
+      case Constants.mLocation:
         return Row(
           children: [
-            Helper.forMessageTypeIcon(Constants.MLOCATION),
+            Helper.forMessageTypeIcon(Constants.mLocation),
             const SizedBox(
               width: 10,
             ),
-            Text(Helper.capitalize(Constants.MLOCATION)),
+            Text(Helper.capitalize(Constants.mLocation)),
           ],
         );
-      case Constants.MDOCUMENT:
+      case Constants.mDocument:
         return Row(
           children: [
-            Helper.forMessageTypeIcon(Constants.MDOCUMENT),
+            Helper.forMessageTypeIcon(Constants.mDocument),
             const SizedBox(
               width: 10,
             ),

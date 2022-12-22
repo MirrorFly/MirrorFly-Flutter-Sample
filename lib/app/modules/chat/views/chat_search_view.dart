@@ -1,38 +1,28 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import 'package:image_picker/image_picker.dart';
-import 'package:mirror_fly_demo/app/common/main_controller.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
-import 'package:mirror_fly_demo/app/model/recentchat.dart';
-import 'package:mirror_fly_demo/app/modules/chat/controllers/chat_controller.dart';
-import 'package:mirror_fly_demo/app/modules/dashboard/controllers/recent_chat_search_controller.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
-import 'package:swipe_to/swipe_to.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'dart:math' as math;
 
 import '../../../common/constants.dart';
-import '../../../common/widgets.dart';
-import '../../../model/chatMessageModel.dart';
-import '../../../model/chatmessage_model.dart';
-import '../../../model/recentSearchModel.dart';
 import '../../../routes/app_pages.dart';
-import '../../../widgets/custom_action_bar_icons.dart';
+import 'package:flysdk/flysdk.dart';
+
+import '../controllers/chat_controller.dart';
 
 class ChatSearchView extends GetView<ChatController> {
-  ChatSearchView({super.key});
-  var screenWidth, screenHeight;
+  const ChatSearchView({super.key});
+
   @override
   Widget build(BuildContext context) {
-    screenHeight = MediaQuery
+    controller.screenHeight = MediaQuery
         .of(context)
         .size
         .height;
-    screenWidth = MediaQuery
+    controller.screenWidth = MediaQuery
         .of(context)
         .size
         .width;
@@ -43,13 +33,7 @@ class ChatSearchView extends GetView<ChatController> {
       },
       child: Scaffold(
         appBar: AppBar(
-          leading: IconButton(
-            icon: Icon(Icons.arrow_back, color: iconcolor),
-            onPressed: () {
-              controller.searchInit();
-              Get.back();
-            },
-          ),
+          automaticallyImplyLeading: true,
           title: TextField(
             onChanged: (text) => controller.setSearch(text),
             controller: controller.searchedText,
@@ -57,20 +41,20 @@ class ChatSearchView extends GetView<ChatController> {
             decoration: const InputDecoration(
                 hintText: "Search", border: InputBorder.none),
           ),
-          iconTheme: IconThemeData(color: iconcolor),
+          iconTheme: const IconThemeData(color: iconColor),
           actions: [
             IconButton(onPressed: (){
               controller.scrollUp();
-            }, icon: Icon(Icons.keyboard_arrow_up)),
+            }, icon: const Icon(Icons.keyboard_arrow_up)),
             IconButton(onPressed: (){
               controller.scrollDown();
-            }, icon: Icon(Icons.keyboard_arrow_down)),
+            }, icon: const Icon(Icons.keyboard_arrow_down)),
           ],
         ),
         body:  Obx(() =>
         controller.chatList.isEmpty
             ? const SizedBox.shrink()
-            : chatListView(controller.chatList.reversed.toList())),
+            : chatListView(controller.chatList.toList())),
       ),
     );
   }
@@ -78,13 +62,12 @@ class ChatSearchView extends GetView<ChatController> {
   Widget chatListView(List<ChatMessageModel> chatList) {
     return ScrollablePositionedList.builder(
       itemCount: chatList.length,
-      reverse: true,
-      itemScrollController: controller.searchscrollController,
+      initialScrollIndex: chatList.length,
+      itemScrollController: controller.searchScrollController,
       itemPositionsListener: controller.itemPositionsListener,
       itemBuilder: (context, index) {
-        // int reversedIndex = chatList.length - 1 - index;
         return Container(
-          color: controller.chatList[index].isSelected ? chatreplycontainercolor : Colors.transparent,
+          color: controller.chatList[index].isSelected ? chatReplyContainerColor : Colors.transparent,
           margin: const EdgeInsets.only(
               left: 14, right: 14, top: 5, bottom: 10),
           child: Align(
@@ -92,7 +75,7 @@ class ChatSearchView extends GetView<ChatController> {
                   ? Alignment.bottomRight
                   : Alignment.bottomLeft),
               child: Container(
-                constraints: BoxConstraints(maxWidth: screenWidth * 0.6),
+                constraints: BoxConstraints(maxWidth: controller.screenWidth * 0.6),
                 decoration: BoxDecoration(
                     borderRadius: chatList[index].isMessageSentByMe
                         ? const BorderRadius.only(
@@ -104,10 +87,10 @@ class ChatSearchView extends GetView<ChatController> {
                         topRight: Radius.circular(10),
                         bottomRight: Radius.circular(10)),
                     color: (chatList[index].isMessageSentByMe
-                        ? chatsentbgcolor
+                        ? chatSentBgColor
                         : Colors.white),
                     border: chatList[index].isMessageSentByMe
-                        ? Border.all(color: chatsentbgcolor)
+                        ? Border.all(color: chatSentBgColor)
                         : Border.all(color: Colors.grey)),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -148,7 +131,7 @@ class ChatSearchView extends GetView<ChatController> {
   getMessageContent(int index, BuildContext context,
       List<ChatMessageModel> chatList) {
     // debugPrint(json.encode(chatList[index]));
-    if (chatList[index].messageType == Constants.MTEXT) {
+    if (chatList[index].messageType == Constants.mText) {
       return Padding(
         padding: const EdgeInsets.all(10.0),
         child: Row(
@@ -158,10 +141,12 @@ class ChatSearchView extends GetView<ChatController> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
-            spannableText(
-              chatList[index].messageTextContent ?? "",
-              controller.searchedText.text,
-              const TextStyle(fontSize: 17),
+            Flexible(
+              child: spannableText(
+                chatList[index].messageTextContent ?? "",
+                controller.searchedText.text,
+                const TextStyle(fontSize: 14),
+              ),
             ),
             const SizedBox(
               width: 10,
@@ -178,7 +163,7 @@ class ChatSearchView extends GetView<ChatController> {
                   width: 5,
                 ),
                 getMessageIndicator(
-                    chatList[index].messageStatus.status,
+                    chatList[index].messageStatus,
                     chatList[index].isMessageSentByMe,
                     chatList[index].messageType),
                 const SizedBox(
@@ -186,7 +171,7 @@ class ChatSearchView extends GetView<ChatController> {
                 ),
                 Text(
                   controller.getChatTime(
-                      context, chatList[index].messageSentTime),
+                      context, chatList[index].messageSentTime.toInt()),
                   style: const TextStyle(fontSize: 12),
                 ),
               ],
@@ -194,15 +179,15 @@ class ChatSearchView extends GetView<ChatController> {
           ],
         ),
       );
-    } else if (chatList[index].messageType == Constants.MNOTIFICATION) {
+    } else if (chatList[index].messageType == Constants.mNotification) {
       return Center(
         child: Padding(
           padding: const EdgeInsets.all(15.0),
           child: spannableText(chatList[index].messageTextContent ?? "",
-              controller.searchedText.text,TextStyle(fontSize: 13, fontWeight: FontWeight.bold)),
+              controller.searchedText.text,const TextStyle(fontSize: 13, fontWeight: FontWeight.bold)),
         ),
       );
-    } else if (chatList[index].messageType == Constants.MIMAGE) {
+    } else if (chatList[index].messageType == Constants.mImage) {
       var chatMessage = chatList[index].mediaChatMessage!;
       //mediaLocalStoragePath
       //mediaThumbImage
@@ -219,74 +204,8 @@ class ChatSearchView extends GetView<ChatController> {
                   chatMessage.mediaFileName),
             ),
             Positioned(
-                top: (screenHeight * 0.4) / 2.5,
-                left: (screenWidth * 0.6) / 3,
-                child: InkWell(
-                    onTap: () {
-                      handleMediaUploadDownload(
-                          chatMessage.mediaDownloadStatus, chatList[index]);
-                    },
-                    child: getImageOverlay(chatList, index, context))),
-            Positioned(
-              bottom: 8,
-              right: 10,
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  chatList[index].isMessageStarred
-                      ? const Icon(
-                    Icons.star,
-                    size: 13,
-                  )
-                      : SizedBox.shrink(),
-                  const SizedBox(
-                    width: 5,
-                  ),
-                  getMessageIndicator(
-                      chatList[index].messageStatus.status,
-                      chatList[index].isMessageSentByMe,
-                      chatList[index].messageType),
-                  const SizedBox(
-                    width: 4,
-                  ),
-                  Text(
-                    controller.getChatTime(
-                        context, chatList[index].messageSentTime),
-                    style: const TextStyle(fontSize: 12, color: Colors.white),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      );
-    } else if (chatList[index].messageType == Constants.MVIDEO) {
-      var chatMessage = chatList[index].mediaChatMessage!;
-      return Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Stack(
-          children: [
-            InkWell(
-              onTap: () {
-                if (controller.checkFile(chatMessage.mediaLocalStoragePath) &&
-                    (chatMessage.mediaDownloadStatus ==
-                        Constants.MEDIA_DOWNLOADED ||
-                        chatMessage.mediaDownloadStatus ==
-                            Constants.MEDIA_UPLOADED)) {
-                  Get.toNamed(Routes.VIDEO_PLAY, arguments: {
-                    "filePath": chatMessage.mediaLocalStoragePath,
-                  });
-                }
-              },
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(15),
-                child: controller.imageFromBase64String(
-                    chatMessage.mediaThumbImage, context, null, null),
-              ),
-            ),
-            Positioned(
-                top: (screenHeight * 0.4) / 2.6,
-                left: (screenWidth * 0.6) / 2.9,
+                top: (controller.screenHeight * 0.4) / 2.5,
+                left: (controller.screenWidth * 0.6) / 3,
                 child: InkWell(
                     onTap: () {
                       handleMediaUploadDownload(
@@ -309,7 +228,7 @@ class ChatSearchView extends GetView<ChatController> {
                     width: 5,
                   ),
                   getMessageIndicator(
-                      chatList[index].messageStatus.status,
+                      chatList[index].messageStatus,
                       chatList[index].isMessageSentByMe,
                       chatList[index].messageType),
                   const SizedBox(
@@ -317,7 +236,7 @@ class ChatSearchView extends GetView<ChatController> {
                   ),
                   Text(
                     controller.getChatTime(
-                        context, chatList[index].messageSentTime),
+                        context, chatList[index].messageSentTime.toInt()),
                     style: const TextStyle(fontSize: 12, color: Colors.white),
                   ),
                 ],
@@ -326,7 +245,73 @@ class ChatSearchView extends GetView<ChatController> {
           ],
         ),
       );
-    } else if (chatList[index].messageType == Constants.MDOCUMENT) {
+    } else if (chatList[index].messageType == Constants.mVideo) {
+      var chatMessage = chatList[index].mediaChatMessage!;
+      return Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Stack(
+          children: [
+            InkWell(
+              onTap: () {
+                if (controller.checkFile(chatMessage.mediaLocalStoragePath) &&
+                    (chatMessage.mediaDownloadStatus ==
+                        Constants.mediaDownloaded ||
+                        chatMessage.mediaDownloadStatus ==
+                            Constants.mediaUploaded)) {
+                  Get.toNamed(Routes.videoPlay, arguments: {
+                    "filePath": chatMessage.mediaLocalStoragePath,
+                  });
+                }
+              },
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(15),
+                child: controller.imageFromBase64String(
+                    chatMessage.mediaThumbImage, context, null, null),
+              ),
+            ),
+            Positioned(
+                top: (controller.screenHeight * 0.4) / 2.6,
+                left: (controller.screenWidth * 0.6) / 2.9,
+                child: InkWell(
+                    onTap: () {
+                      handleMediaUploadDownload(
+                          chatMessage.mediaDownloadStatus, chatList[index]);
+                    },
+                    child: getImageOverlay(chatList, index, context))),
+            Positioned(
+              bottom: 8,
+              right: 10,
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  chatList[index].isMessageStarred
+                      ? const Icon(
+                    Icons.star,
+                    size: 13,
+                  )
+                      : const SizedBox.shrink(),
+                  const SizedBox(
+                    width: 5,
+                  ),
+                  getMessageIndicator(
+                      chatList[index].messageStatus,
+                      chatList[index].isMessageSentByMe,
+                      chatList[index].messageType),
+                  const SizedBox(
+                    width: 4,
+                  ),
+                  Text(
+                    controller.getChatTime(
+                        context, chatList[index].messageSentTime.toInt()),
+                    style: const TextStyle(fontSize: 12, color: Colors.white),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      );
+    } else if (chatList[index].messageType == Constants.mDocument) {
       return InkWell(
         onTap: () {
           controller.openDocument(
@@ -335,12 +320,12 @@ class ChatSearchView extends GetView<ChatController> {
         child: Container(
           decoration: BoxDecoration(
             border: Border.all(
-              color: chatreplysendercolor,
+              color: chatReplySenderColor,
             ),
             borderRadius: const BorderRadius.all(Radius.circular(10)),
             color: Colors.white,
           ),
-          width: screenWidth * 0.60,
+          width: controller.screenWidth * 0.60,
           child: Column(
             children: [
               Padding(
@@ -355,7 +340,7 @@ class ChatSearchView extends GetView<ChatController> {
                     ),
                     Expanded(
                         child: spannableText(
-                          chatList[index].mediaChatMessage!.mediaFileName,controller.searchedText.text,null//maxline 2
+                          chatList[index].mediaChatMessage!.mediaFileName,controller.searchedText.text,null
                         )),
                     const Spacer(),
                     InkWell(
@@ -384,12 +369,12 @@ class ChatSearchView extends GetView<ChatController> {
                       Icons.star,
                       size: 13,
                     )
-                        : SizedBox.shrink(),
+                        : const SizedBox.shrink(),
                     const SizedBox(
                       width: 5,
                     ),
                     getMessageIndicator(
-                        chatList[index].messageStatus.status,
+                        chatList[index].messageStatus,
                         chatList[index].isMessageSentByMe,
                         chatList[index].messageType),
                     const SizedBox(
@@ -397,7 +382,7 @@ class ChatSearchView extends GetView<ChatController> {
                     ),
                     Text(
                       controller.getChatTime(
-                          context, chatList[index].messageSentTime),
+                          context, chatList[index].messageSentTime.toInt()),
                       style: const TextStyle(fontSize: 12, color: Colors.black),
                     ),
                     const SizedBox(
@@ -413,10 +398,10 @@ class ChatSearchView extends GetView<ChatController> {
           ),
         ),
       );
-    } else if (chatList[index].messageType == Constants.MCONTACT) {
+    } else if (chatList[index].messageType == Constants.mContact) {
       return InkWell(
         onTap: () {
-          Get.toNamed(Routes.PREVIEW_CONTACT, arguments: {
+          Get.toNamed(Routes.previewContact, arguments: {
             "contactList":
             chatList[index].contactChatMessage!.contactPhoneNumbers,
             "contactName": chatList[index].contactChatMessage!.contactName,
@@ -426,12 +411,12 @@ class ChatSearchView extends GetView<ChatController> {
         child: Container(
           decoration: BoxDecoration(
             border: Border.all(
-              color: chatreplysendercolor,
+              color: chatReplySenderColor,
             ),
             borderRadius: const BorderRadius.all(Radius.circular(10)),
             color: Colors.white,
           ),
-          width: screenWidth * 0.60,
+          width: controller.screenWidth * 0.60,
           child: Column(
             children: [
               Padding(
@@ -440,7 +425,7 @@ class ChatSearchView extends GetView<ChatController> {
                 child: Row(
                   children: [
                     Image.asset(
-                      profile_img,
+                      profileImage,
                       width: 35,
                       height: 35,
                     ),
@@ -471,7 +456,7 @@ class ChatSearchView extends GetView<ChatController> {
                       width: 5,
                     ),
                     getMessageIndicator(
-                        chatList[index].messageStatus.status,
+                        chatList[index].messageStatus,
                         chatList[index].isMessageSentByMe,
                         chatList[index].messageType),
                     const SizedBox(
@@ -479,7 +464,7 @@ class ChatSearchView extends GetView<ChatController> {
                     ),
                     Text(
                       controller.getChatTime(
-                          context, chatList[index].messageSentTime),
+                          context, chatList[index].messageSentTime.toInt()),
                       style: const TextStyle(fontSize: 12, color: Colors.black),
                     ),
                     const SizedBox(
@@ -495,17 +480,17 @@ class ChatSearchView extends GetView<ChatController> {
           ),
         ),
       );
-    } else if (chatList[index].messageType == Constants.MAUDIO) {
+    } else if (chatList[index].messageType == Constants.mAudio) {
       var chatMessage = chatList[index];
       return Container(
         decoration: BoxDecoration(
           border: Border.all(
-            color: chatreplysendercolor,
+            color: chatReplySenderColor,
           ),
           borderRadius: const BorderRadius.all(Radius.circular(10)),
           color: Colors.white,
         ),
-        width: screenWidth * 0.60,
+        width: controller.screenWidth * 0.60,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -514,7 +499,7 @@ class ChatSearchView extends GetView<ChatController> {
                 borderRadius: BorderRadius.only(
                     topLeft: Radius.circular(10),
                     topRight: Radius.circular(10)),
-                color: chatreplysendercolor,
+                color: chatReplySenderColor,
               ),
               child: Padding(
                 padding: const EdgeInsets.all(15),
@@ -525,13 +510,13 @@ class ChatSearchView extends GetView<ChatController> {
                       alignment: Alignment.center,
                       children: [
                         SvgPicture.asset(
-                          audio_mic_bg,
+                          audioMicBg,
                           width: 28,
                           height: 28,
                           fit: BoxFit.contain,
                         ),
                         SvgPicture.asset(
-                          audio_mic_1,
+                          audioMic1,
                           fit: BoxFit.contain,
                         ),
                       ],
@@ -557,29 +542,22 @@ class ChatSearchView extends GetView<ChatController> {
                         // width: 168,
                         child: SliderTheme(
                           data: SliderThemeData(
-                            thumbColor: audiocolordark,
+                            thumbColor: audioColorDark,
                             overlayShape: SliderComponentShape.noOverlay,
                             thumbShape:
                             const RoundSliderThumbShape(enabledThumbRadius: 5),
                           ),
                           child: Slider(
                             value: double.parse(
-                                controller.currentpos.value.toString()),
+                                controller.currentPos.value.toString()),
                             min: 0,
-                            activeColor: audiocolordark,
-                            inactiveColor: audiocolor,
+                            activeColor: audioColorDark,
+                            inactiveColor: audioColor,
                             max: double.parse(
-                                controller.maxduration.value.toString()),
-                            divisions: controller.maxduration.value,
-                            // label: controller.currentpostlabel,
+                                controller.maxDuration.value.toString()),
+                            divisions: controller.maxDuration.value,
                             onChanged: (double value) async {
-                              // int seekval = value.round();
-                              // int result = await player.seek(Duration(milliseconds: seekval));
-                              // if(result == 1){ //seek successful
-                              //   currentpos = seekval;
-                              // }else{
-                              //   print("Seek unsuccessful.");
-                              // }
+
                             },
                           ),
                         ),
@@ -607,7 +585,7 @@ class ChatSearchView extends GetView<ChatController> {
                     width: 5,
                   ),
                   getMessageIndicator(
-                      chatList[index].messageStatus.status,
+                      chatList[index].messageStatus,
                       chatList[index].isMessageSentByMe,
                       chatList[index].messageType),
                   const SizedBox(
@@ -615,7 +593,7 @@ class ChatSearchView extends GetView<ChatController> {
                   ),
                   Text(
                     controller.getChatTime(
-                        context, chatList[index].messageSentTime),
+                        context, chatList[index].messageSentTime.toInt()),
                     style: const TextStyle(fontSize: 12, color: Colors.black),
                   ),
                   const SizedBox(
@@ -631,7 +609,7 @@ class ChatSearchView extends GetView<ChatController> {
         ),
       );
     } else if (chatList[index].messageType.toUpperCase() ==
-        Constants.MLOCATION) {
+        Constants.mLocation) {
       return Padding(
         padding: const EdgeInsets.all(2.0),
         child: Stack(
@@ -657,7 +635,7 @@ class ChatSearchView extends GetView<ChatController> {
                     width: 5,
                   ),
                   getMessageIndicator(
-                      chatList[index].messageStatus.status,
+                      chatList[index].messageStatus,
                       chatList[index].isMessageSentByMe,
                       chatList[index].messageType),
                   const SizedBox(
@@ -665,7 +643,7 @@ class ChatSearchView extends GetView<ChatController> {
                   ),
                   Text(
                     controller.getChatTime(
-                        context, chatList[index].messageSentTime),
+                        context, chatList[index].messageSentTime.toInt()),
                     style: const TextStyle(fontSize: 12, color: Colors.black),
                   ),
                 ],
@@ -745,62 +723,58 @@ class ChatSearchView extends GetView<ChatController> {
 
     if (controller
         .checkFile(chatMessage.mediaChatMessage!.mediaLocalStoragePath) &&
-        chatMessage.messageStatus.status != 'N') {
+        chatList[index].messageStatus != 'N') {
       if (chatMessage.messageType == 'VIDEO') {
         return SizedBox(
           width: 80,
           height: 50,
           child: Center(
               child: SvgPicture.asset(
-                video_play,
+                videoPlay,
                 fit: BoxFit.contain,
               )),
         );
       } else if (chatMessage.messageType == 'AUDIO') {
         debugPrint("===============================");
         debugPrint(chatMessage.mediaChatMessage!.isPlaying.toString());
-        // return Obx(() {
-        // chatMessage.mediaChatMessage!.isPlaying = controller.audioplayed.value;
         return chatMessage.mediaChatMessage!.isPlaying
-            ? Icon(Icons.pause)
-            : Icon(Icons.play_arrow_sharp);
-        // });
+            ? const Icon(Icons.pause)
+            : const Icon(Icons.play_arrow_sharp);
       } else {
-        return SizedBox.shrink();
+        return const SizedBox.shrink();
       }
     } else {
       switch (chatMessage.isMessageSentByMe
           ? chatMessage.mediaChatMessage!.mediaUploadStatus
           : chatMessage.mediaChatMessage!.mediaDownloadStatus) {
-        case Constants.MEDIA_DOWNLOADED:
-        case Constants.MEDIA_UPLOADED:
-          return SizedBox.shrink();
+        case Constants.mediaDownloaded:
+        case Constants.mediaUploaded:
+          return const SizedBox.shrink();
 
-        case Constants.MEDIA_DOWNLOADED_NOT_AVAILABLE:
-        case Constants.MEDIA_NOT_DOWNLOADED:
+        case Constants.mediaDownloadedNotAvailable:
+        case Constants.mediaNotDownloaded:
           return getFileInfo(
               chatMessage.mediaChatMessage!.mediaDownloadStatus,
               chatMessage.mediaChatMessage!.mediaFileSize,
               Icons.download_sharp,
               chatMessage.messageType);
-        case Constants.MEDIA_UPLOADED_NOT_AVAILABLE:
+        case Constants.mediaUploadedNotAvailable:
           return getFileInfo(
               chatMessage.mediaChatMessage!.mediaDownloadStatus,
               chatMessage.mediaChatMessage!.mediaFileSize,
               Icons.upload_sharp,
               chatMessage.messageType);
 
-        case Constants.MEDIA_NOT_UPLOADED:
-        case Constants.MEDIA_DOWNLOADING:
-        case Constants.MEDIA_UPLOADING:
+        case Constants.mediaNotUploaded:
+        case Constants.mediaDownloading:
+        case Constants.mediaUploading:
           if (chatMessage.messageType == 'AUDIO' ||
               chatMessage.messageType == 'DOCUMENT') {
             return InkWell(
                 onTap: () {
                   debugPrint(chatMessage.messageId);
                 },
-                child:
-                Container(width: 30, height: 30, child: uploadingView()));
+                child: SizedBox(width: 30, height: 30, child: uploadingView()));
           } else {
             return SizedBox(
               height: 40,
@@ -817,29 +791,29 @@ class ChatSearchView extends GetView<ChatController> {
     return messageType == 'AUDIO' || messageType == 'DOCUMENT'
         ? Icon(
       iconData,
-      color: audiocolordark,
+      color: audioColorDark,
     )
         : Container(
         decoration: BoxDecoration(
           border: Border.all(
-            color: textcolor,
+            color: textColor,
           ),
           borderRadius: const BorderRadius.all(Radius.circular(5)),
           color: Colors.black38,
         ),
-        padding: EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+        padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
         child: Row(
           children: [
             Icon(
               iconData,
               color: Colors.white,
             ),
-            SizedBox(
+            const SizedBox(
               width: 5,
             ),
             Text(
               Helper.formatBytes(mediaFileSize, 0),
-              style: TextStyle(color: Colors.white),
+              style: const TextStyle(color: Colors.white),
             ),
           ],
         ));
@@ -850,15 +824,15 @@ class ChatSearchView extends GetView<ChatController> {
     if (controller.checkFile(mediaLocalStoragePath)) {
       return InkWell(
           onTap: () {
-            Get.toNamed(Routes.IMAGE_VIEW, arguments: {
+            Get.toNamed(Routes.imageView, arguments: {
               'imageName': mediaFileName,
               'imagePath': mediaLocalStoragePath
             });
           },
           child: Image.file(
             File(mediaLocalStoragePath),
-            width: screenWidth * 0.60,
-            height: screenHeight * 0.4,
+            width: controller.screenWidth * 0.60,
+            height: controller.screenHeight * 0.4,
             fit: BoxFit.cover,
           ));
     } else {
@@ -873,10 +847,10 @@ class ChatSearchView extends GetView<ChatController> {
       // width: 80,
         decoration: BoxDecoration(
           border: Border.all(
-            color: textcolor,
+            color: textColor,
           ),
           borderRadius: const BorderRadius.all(Radius.circular(2)),
-          color: audiobgcolor,
+          color: audioBgColor,
         ),
         // padding: EdgeInsets.symmetric(vertical: 5),
         child: Stack(alignment: Alignment.center,
@@ -894,7 +868,7 @@ class ChatSearchView extends GetView<ChatController> {
                     valueColor: AlwaysStoppedAnimation<Color>(
                       Colors.white,
                     ),
-                    backgroundColor: audiobgcolor,
+                    backgroundColor: audioBgColor,
                     // minHeight: 1,
                   ),
                 ),
@@ -907,17 +881,17 @@ class ChatSearchView extends GetView<ChatController> {
     switch (chatList.isMessageSentByMe
         ? chatList.mediaChatMessage?.mediaUploadStatus
         : mediaDownloadStatus) {
-      case Constants.MEDIA_DOWNLOADED:
-      case Constants.MEDIA_UPLOADED:
+      case Constants.mediaDownloaded:
+      case Constants.mediaUploaded:
         if (chatList.messageType == 'VIDEO') {
           if (controller.checkFile(
               chatList.mediaChatMessage!.mediaLocalStoragePath) &&
               (chatList.mediaChatMessage!.mediaDownloadStatus ==
-                  Constants.MEDIA_DOWNLOADED ||
+                  Constants.mediaDownloaded ||
                   chatList.mediaChatMessage!.mediaDownloadStatus ==
-                      Constants.MEDIA_UPLOADED ||
+                      Constants.mediaUploaded ||
                   chatList.isMessageSentByMe)) {
-            Get.toNamed(Routes.VIDEO_PLAY, arguments: {
+            Get.toNamed(Routes.videoPlay, arguments: {
               "filePath": chatList.mediaChatMessage!.mediaLocalStoragePath,
             });
           }
@@ -926,12 +900,12 @@ class ChatSearchView extends GetView<ChatController> {
           if (controller.checkFile(
               chatList.mediaChatMessage!.mediaLocalStoragePath) &&
               (chatList.mediaChatMessage!.mediaDownloadStatus ==
-                  Constants.MEDIA_DOWNLOADED ||
+                  Constants.mediaDownloaded ||
                   chatList.mediaChatMessage!.mediaDownloadStatus ==
-                      Constants.MEDIA_UPLOADED ||
+                      Constants.mediaUploaded ||
                   chatList.isMessageSentByMe)) {
             // debugPrint("audio click1");
-            chatList.mediaChatMessage!.isPlaying = controller.isplaying.value;
+            chatList.mediaChatMessage!.isPlaying = controller.isPlaying.value;
             // controller.playAudio(chatList.mediaChatMessage!);
             playAudio(chatList.mediaChatMessage!.mediaLocalStoragePath,
                 chatList.mediaChatMessage!.mediaFileName);
@@ -941,21 +915,21 @@ class ChatSearchView extends GetView<ChatController> {
         }
         break;
 
-      case Constants.MEDIA_DOWNLOADED_NOT_AVAILABLE:
-      case Constants.MEDIA_NOT_DOWNLOADED:
+      case Constants.mediaDownloadedNotAvailable:
+      case Constants.mediaNotDownloaded:
       //download
         debugPrint("Download");
         debugPrint(chatList.messageId);
         chatList.mediaChatMessage!.mediaDownloadStatus =
-            Constants.MEDIA_DOWNLOADING;
+            Constants.mediaDownloading;
         controller.downloadMedia(chatList.messageId);
         break;
-      case Constants.MEDIA_UPLOADED_NOT_AVAILABLE:
+      case Constants.mediaUploadedNotAvailable:
       //upload
         break;
-      case Constants.MEDIA_NOT_UPLOADED:
-      case Constants.MEDIA_DOWNLOADING:
-      case Constants.MEDIA_UPLOADING:
+      case Constants.mediaNotUploaded:
+      case Constants.mediaDownloading:
+      case Constants.mediaUploading:
         return uploadingView();
     // break;
     }
@@ -969,46 +943,46 @@ class ChatSearchView extends GetView<ChatController> {
         .last;
     debugPrint("File Type ==> $result");
     switch (result) {
-      case Constants.PDF:
+      case Constants.pdf:
         return SvgPicture.asset(
-          pdf_image,
+          pdfImage,
           width: 30,
           height: 30,
         );
-      case Constants.PPT:
+      case Constants.ppt:
         return SvgPicture.asset(
-          ppt_image,
+          pptImage,
           width: 30,
           height: 30,
         );
-      case Constants.XLS:
+      case Constants.xls:
         return SvgPicture.asset(
-          xls_image,
+          xlsImage,
           width: 30,
           height: 30,
         );
-      case Constants.XLXS:
+      case Constants.xlsx:
         return SvgPicture.asset(
-          xlsx_image,
+          xlsxImage,
           width: 30,
           height: 30,
         );
-      case Constants.DOC:
-      case Constants.DOCX:
+      case Constants.doc:
+      case Constants.docx:
         return SvgPicture.asset(
-          doc_image,
+          docImage,
           width: 30,
           height: 30,
         );
-      case Constants.APK:
+      case Constants.apk:
         return SvgPicture.asset(
-          apk_image,
+          apkImage,
           width: 30,
           height: 30,
         );
       default:
         return SvgPicture.asset(
-          doc_image,
+          docImage,
           width: 30,
           height: 30,
         );
@@ -1031,20 +1005,20 @@ class ChatSearchView extends GetView<ChatController> {
                   alignment: Alignment.center,
                   children: [
                     SvgPicture.asset(
-                      audio_mic_bg,
+                      audioMicBg,
                       width: 50,
                       height: 50,
                       fit: BoxFit.contain,
                     ),
                     Obx(() {
-                      return controller.isplaying.value
-                          ? Icon(Icons.pause)
-                          : Icon(Icons.play_arrow);
+                      return controller.isPlaying.value
+                          ? const Icon(Icons.pause)
+                          : const Icon(Icons.play_arrow);
                     }),
                   ],
                 ),
               ),
-              SizedBox(
+              const SizedBox(
                 width: 20,
               ),
               Expanded(
@@ -1055,37 +1029,31 @@ class ChatSearchView extends GetView<ChatController> {
                       mediaFileName,controller.searchedText.text,null
                       //maxLines: 2,
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 15,
                     ),
                     SizedBox(
                       // width: 168,
                       child: SliderTheme(
                         data: SliderThemeData(
-                          thumbColor: audiocolordark,
+                          thumbColor: audioColorDark,
                           overlayShape: SliderComponentShape.noOverlay,
                           thumbShape:
-                          RoundSliderThumbShape(enabledThumbRadius: 5),
+                          const RoundSliderThumbShape(enabledThumbRadius: 5),
                         ),
                         child: Obx(() {
                           return Slider(
                             value:
-                            double.parse(controller.currentpos.toString()),
+                            double.parse(controller.currentPos.toString()),
                             min: 0,
-                            activeColor: audiocolordark,
-                            inactiveColor: audiocolor,
+                            activeColor: audioColorDark,
+                            inactiveColor: audioColor,
                             max: double.parse(
-                                controller.maxduration.value.toString()),
-                            divisions: controller.maxduration.value,
-                            label: controller.currentpostlabel,
+                                controller.maxDuration.value.toString()),
+                            divisions: controller.maxDuration.value,
+                            label: controller.currentPostLabel,
                             onChanged: (double value) async {
-                              // int seekval = value.round();
-                              // int result = await player.seek(Duration(milliseconds: seekval));
-                              // if(result == 1){ //seek successful
-                              //   currentpos = seekval;
-                              // }else{
-                              //   print("Seek unsuccessful.");
-                              // }
+
                             },
                           );
                         }),
@@ -1108,11 +1076,11 @@ class ChatSearchView extends GetView<ChatController> {
           width: double.infinity,
           padding: const EdgeInsets.all(6),
           decoration: const BoxDecoration(
-            color: chatsentbgcolor,
+            color: chatSentBgColor,
           ),
           child: Container(
             decoration: const BoxDecoration(
-              color: chatreplycontainercolor,
+              color: chatReplyContainerColor,
               borderRadius: BorderRadius.all(Radius.circular(5)),
             ),
             child: Row(
@@ -1169,9 +1137,8 @@ class ChatSearchView extends GetView<ChatController> {
             ),
           ),
         );
-        ;
       } else {
-        return SizedBox.shrink();
+        return const SizedBox.shrink();
       }
     });
   }
@@ -1190,58 +1157,58 @@ class ChatSearchView extends GetView<ChatController> {
       String? contactName, String? mediaFileName) {
     debugPrint(messageType);
     switch (messageType) {
-      case Constants.MTEXT:
+      case Constants.mText:
         return Row(
           children: [
-            Helper.forMessageTypeIcon(Constants.MTEXT),
+            Helper.forMessageTypeIcon(Constants.mText),
             //Text(messageTextContent!),
             spannableText(
                 messageType.toString(),
                 controller.searchedText.text,null)
           ],
         );
-      case Constants.MIMAGE:
+      case Constants.mImage:
         return Row(
           children: [
-            Helper.forMessageTypeIcon(Constants.MIMAGE),
+            Helper.forMessageTypeIcon(Constants.mImage),
             const SizedBox(
               width: 10,
             ),
-            Text(Helper.capitalize(Constants.MIMAGE)),
+            Text(Helper.capitalize(Constants.mImage)),
           ],
         );
-      case Constants.MVIDEO:
+      case Constants.mVideo:
         return Row(
           children: [
-            Helper.forMessageTypeIcon(Constants.MVIDEO),
+            Helper.forMessageTypeIcon(Constants.mVideo),
             const SizedBox(
               width: 10,
             ),
-            Text(Helper.capitalize(Constants.MVIDEO)),
+            Text(Helper.capitalize(Constants.mVideo)),
           ],
         );
-      case Constants.MAUDIO:
+      case Constants.mAudio:
         return Row(
           children: [
-            Helper.forMessageTypeIcon(Constants.MAUDIO),
-            SizedBox(
+            Helper.forMessageTypeIcon(Constants.mAudio),
+            const SizedBox(
               width: 10,
             ),
             // Text(controller.replyChatMessage.mediaChatMessage!.mediaDuration),
             // SizedBox(
             //   width: 10,
             // ),
-            Text(Helper.capitalize(Constants.MAUDIO)),
+            Text(Helper.capitalize(Constants.mAudio)),
           ],
         );
-      case Constants.MCONTACT:
+      case Constants.mContact:
         return Row(
           children: [
-            Helper.forMessageTypeIcon(Constants.MCONTACT),
+            Helper.forMessageTypeIcon(Constants.mContact),
             const SizedBox(
               width: 10,
             ),
-            Text("${Helper.capitalize(Constants.MCONTACT)} :"),
+            Text("${Helper.capitalize(Constants.mContact)} :"),
             const SizedBox(
               width: 5,
             ),
@@ -1256,20 +1223,20 @@ class ChatSearchView extends GetView<ChatController> {
                 )),
           ],
         );
-      case Constants.MLOCATION:
+      case Constants.mLocation:
         return Row(
           children: [
-            Helper.forMessageTypeIcon(Constants.MLOCATION),
+            Helper.forMessageTypeIcon(Constants.mLocation),
             const SizedBox(
               width: 10,
             ),
-            Text(Helper.capitalize(Constants.MLOCATION)),
+            Text(Helper.capitalize(Constants.mLocation)),
           ],
         );
-      case Constants.MDOCUMENT:
+      case Constants.mDocument:
         return Row(
           children: [
-            Helper.forMessageTypeIcon(Constants.MDOCUMENT),
+            Helper.forMessageTypeIcon(Constants.mDocument),
             const SizedBox(
               width: 10,
             ),
@@ -1287,15 +1254,15 @@ class ChatSearchView extends GetView<ChatController> {
       LocationChatMessage? locationChatMessage,
       double size) {
     switch (messageType) {
-      case Constants.MIMAGE:
+      case Constants.mImage:
         return ClipRRect(
           borderRadius: BorderRadius.circular(5),
           child: controller.imageFromBase64String(
               mediaThumbImage!, context, size, size),
         );
-      case Constants.MLOCATION:
+      case Constants.mLocation:
         return getLocationImage(locationChatMessage, size, size);
-      case Constants.MVIDEO:
+      case Constants.mVideo:
         return ClipRRect(
           borderRadius: BorderRadius.circular(5),
           child: controller.imageFromBase64String(
@@ -1318,8 +1285,8 @@ class ChatSearchView extends GetView<ChatController> {
         decoration: BoxDecoration(
           borderRadius: const BorderRadius.all(Radius.circular(10)),
           color: chatList.isMessageSentByMe
-              ? chatreplycontainercolor
-              : chatreplysendercolor,
+              ? chatReplyContainerColor
+              : chatReplySenderColor,
         ),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.center,
@@ -1355,9 +1322,9 @@ class ChatSearchView extends GetView<ChatController> {
     }
   }
 
-  Widget spannableText(String text, String spannabletext,TextStyle? style) {
-    var startIndex = text.toLowerCase().startsWith(spannabletext.toLowerCase()) ? text.toLowerCase().indexOf(spannabletext.toLowerCase()) : -1;
-    var endIndex = startIndex + spannabletext.length;
+  Widget spannableText(String text, String spannableText,TextStyle? style) {
+    var startIndex = text.toLowerCase().startsWith(spannableText.toLowerCase()) ? text.toLowerCase().indexOf(spannableText.toLowerCase()) : -1;
+    var endIndex = startIndex + spannableText.length;
     if (startIndex != -1 && endIndex != -1) {
       var startText = text.substring(0, startIndex);
       var colorText = text.substring(startIndex, endIndex);
@@ -1365,7 +1332,7 @@ class ChatSearchView extends GetView<ChatController> {
       return Text.rich(TextSpan(
           text: startText,
           children: [
-            TextSpan(text: colorText, style: TextStyle(color: Colors.orange)),
+            TextSpan(text: colorText, style: const TextStyle(color: Colors.orange)),
             TextSpan(
                 text: endText,
                 style: style)

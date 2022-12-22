@@ -33,8 +33,8 @@ class MessageInfoView extends GetView<MessageInfoController> {
                               topLeft: Radius.circular(10),
                               topRight: Radius.circular(10),
                               bottomLeft: Radius.circular(10)),
-                          color: chatsentbgcolor,
-                          border: Border.all(color: chatsentbgcolor)),
+                          color: chatSentBgColor,
+                          border: Border.all(color: chatSentBgColor)),
                       child: Column(
                         children: [
                           MessageHeader(chatList: controller.chatMessage, isTapEnabled: false,),

@@ -2,20 +2,15 @@ import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
-import 'package:mirror_fly_demo/app/model/recentchat.dart';
-import 'package:mirror_fly_demo/app/model/userlistModel.dart';
-import 'package:mirror_fly_demo/app/nativecall/platformRepo.dart';
+import 'package:flysdk/flysdk.dart';
 
 import '../../../common/constants.dart';
-import '../../../model/chatmessage_model.dart';
-import '../../../model/checkModel.dart';
-import '../../../model/profileModel.dart';
-import '../../../model/recentSearchModel.dart';
 import '../../../routes/app_pages.dart';
+
 
 class RecentChatSearchController extends GetxController {
   var filteredRecentChatList = <RecentChatData>[].obs;
-  var filteredMessageList = Map<Rx<int>, RxList<Rx<RecentSearch>>>().obs;
+  var filteredMessageList = <Rx<int>, RxList<Rx<RecentSearch>>>{}.obs;
   var filteredContactList = <Profile>[].obs;
   var recentSearchList = <Rx<RecentSearch>>[].obs;
   var chatCount = 0.obs;
@@ -25,70 +20,70 @@ class RecentChatSearchController extends GetxController {
   var frmRecentChatList = <Rx<RecentChatData>>[].obs;
   List<RecentChatData> data = Get.arguments["recents"];
 
-  RxList<ChatMessage> chatMessages = <ChatMessage>[].obs;
+  RxList<ChatMessageModel> chatMessages = <ChatMessageModel>[].obs;
 
   TextEditingController search = TextEditingController();
 
   @override
   void onInit() {
     super.onInit();
-    data.forEach((element) {
+    for (var element in data) {
       mainRecentChatList.add(element.obs);
       frmRecentChatList.add(element.obs);
-    });
+    }
     filteredRecentChatList.bindStream(filteredRecentChatList.stream);
     filteredMessageList.bindStream(filteredMessageList.stream);
     filteredContactList.bindStream(filteredContactList.stream);
     recentSearchList.bindStream(recentSearchList.stream);
     ever(filteredRecentChatList, (callback) {
-      Log("sfilteredRecentChatList", callback.toString());
+      mirrorFlyLog("sfilteredRecentChatList", callback.toString());
       //filteredRecentChatList.stream.listen((list) {
         var jidList = <String>[];
         for (var recent in callback) {
-          if(getChatType(recent)!="groupchat") {
+          //if(getChatType(recent)!="groupchat") {
             var recentSearchItem = RecentSearch(
                 jid: recent.jid,
                 mid: recent.lastMessageId,
-                searchType: Constants.TYPE_SEARCH_RECENT,
+                searchType: Constants.typeSearchRecent,
                 chatType: getChatType(recent),
                 isSearch: true).obs;
-            recentSearchList.value.add(recentSearchItem);
+            recentSearchList.add(recentSearchItem);
             update();
             jidList.add(recent.jid.toString());
-          }
+          //}
         }
         fetchContactList(jidList);
       chatCount(jidList.length);
       //});
     });
     ever(filteredMessageList, (callback){
-      Log("sfilteredMessageList", callback.entries.first.value.value.length.toString());
-      for (var item in callback.entries){
-        Log("msgs", item.value.value.first.value.jid.toString());
-      }
+      mirrorFlyLog("sfilteredMessageList", callback.entries.first.value.length.toString());
+      /*for (var item in callback.entries){
+        mirrorFlyLog("msgs", item.value.first.value.jid.toString());
+      }*/
       messageCount(callback.entries.first.key.value);
-      recentSearchList.addAll(callback.entries.first.value.value);
+      recentSearchList.addAll(callback.entries.first.value);
       update(recentSearchList);
     });
 
     ever(filteredContactList, (callback){
-      Log("sfilteredContactList", callback.toString());
+      mirrorFlyLog("sfilteredContactList", callback.toString());
       for (var profile in callback) {
         if (!profile.isAdminBlocked!) {
           var searchContactItem = RecentSearch(
               jid: profile.jid,
               mid: null,
-              searchType: Constants.TYPE_SEARCH_CONTACT,
+              searchType: Constants.typeSearchContact,
               chatType: getProfileChatType(profile),
               isSearch: true).obs;
-          recentSearchList.value.add(searchContactItem);
+          recentSearchList.add(searchContactItem);
           update();
         }
       }
     });
 
     ever(recentSearchList,(callback){
-      Log("searched", callback.toString());
+      mirrorFlyLog("searched", callback.toString());
       update(recentSearchList);
     });
 
@@ -122,8 +117,8 @@ class RecentChatSearchController extends GetxController {
     if(search.text.isNotEmpty) {
       fetchRecentChatList();
     }else{
-      Log("empty", "empty");
-      frmRecentChatList.addAll(mainRecentChatList.value);
+      mirrorFlyLog("empty", "empty");
+      frmRecentChatList.addAll(mainRecentChatList);
     }
     update();
   }
@@ -141,17 +136,15 @@ class RecentChatSearchController extends GetxController {
   }
 
   fetchRecentChatList() async{
-    await PlatformRepo().filteredRecentChatList().then((value) {
+    await FlyChat.getRecentChatListIncludingArchived().then((value) {
       var recentChatList = <RecentChatData>[];
       var js = json.decode(value);
       var recentChatListWithArchived = List<RecentChatData>.from(js.map((x) => RecentChatData.fromJson(x)));
-      if (recentChatListWithArchived != null) {
-        for (var recentChat in recentChatListWithArchived) {
-          if (recentChat.profileName != null &&
-              recentChat.profileName!.toLowerCase().contains(search.text.trim().toString().toLowerCase()) ==
-                  true) {
-            recentChatList.add(recentChat);
-          }
+      for (var recentChat in recentChatListWithArchived) {
+        if (recentChat.profileName != null &&
+            recentChat.profileName!.toLowerCase().contains(search.text.trim().toString().toLowerCase()) ==
+                true) {
+          recentChatList.add(recentChat);
         }
       }
       filteredRecentChatList(recentChatList);
@@ -161,10 +154,10 @@ class RecentChatSearchController extends GetxController {
   }
 
   fetchMessageList() async{
-    await PlatformRepo()
-        .filteredMessageList(search.text.trim().toString())
+    await FlyChat
+        .searchConversation(search.text.trim().toString())
         .then((value) {
-      var result = chatMessageFromJson(value);
+      var result = chatMessageModelFromJson(value);
       chatMessages(result);
       var mRecentSearchList = <Rx<RecentSearch>>[].obs;
       var i = 0.obs;
@@ -172,10 +165,10 @@ class RecentChatSearchController extends GetxController {
         var searchMessageItem = RecentSearch(
             jid: message.chatUserJid,
             mid: message.messageId,
-            searchType: Constants.TYPE_SEARCH_MESSAGE,
+            searchType: Constants.typeSearchMessage,
             chatType: message.messageChatType.toString(),
             isSearch: true).obs;
-        mRecentSearchList.value.insert(0, searchMessageItem);
+        mRecentSearchList.insert(0, searchMessageItem);
         i++;
       }
       var map = <Rx<int>, RxList<Rx<RecentSearch>>>{}; //{0,searchMessageItem};
@@ -186,7 +179,7 @@ class RecentChatSearchController extends GetxController {
   }
 
   fetchContactList(List<String> jidList) {
-    PlatformRepo().filteredContactList().then((value) {
+    FlyChat.getRegisteredUsers().then((value) {
       var profileDetails = userListFromJson(value).data;
       if (profileDetails != null) {
         var filterProfileList = profileDetails.where((it) =>
@@ -202,8 +195,8 @@ class RecentChatSearchController extends GetxController {
   }
 
   Future<RecentChatData?> getRecentChatofJid(String jid) async{
-    var value = await PlatformRepo().getRecentChatOf(jid);
-    Log("rchat", value.toString());
+    var value = await FlyChat.getRecentChatOf(jid);
+    mirrorFlyLog("rchat", value.toString());
     if (value != null) {
       var data = RecentChatData.fromJson(json.decode(value));
       return data;
@@ -213,7 +206,7 @@ class RecentChatSearchController extends GetxController {
   }
 
   Future<CheckModel?> getMessageOfId(String mid) async{
-    var value = await PlatformRepo().getMessageOfId(mid);
+    var value = await FlyChat.getMessageOfId(mid);
     if (value != null) {
       var data = checkModelFromJson(value);
       return data;
@@ -223,58 +216,39 @@ class RecentChatSearchController extends GetxController {
   }
 
   Future<ProfileData?> getProfile(String jid) async{
-    await PlatformRepo().getProfileLocal(jid,false).then((value)async{
+    await FlyChat.getProfileLocal(jid,false).then((value)async{
       if (value != null) {
-        var data = profileDataFromJson(value);;
+        var data = profileDataFromJson(value);
         return data.data;
       }else {
         return null;
       }
     });
+    return null;
   }
-  Future<Map<ProfileData?,ChatMessage?>?> getProfileandMessage(String jid , String mid) async{
-    var value = await PlatformRepo().getProfileLocal(jid,false);
-    var value2 = await PlatformRepo().getMessageOfId(mid);
+  Future<Map<ProfileData?,ChatMessageModel?>?> getProfileAndMessage(String jid , String mid) async{
+    var value = await FlyChat.getProfileLocal(jid,false);
+    var value2 = await FlyChat.getMessageOfId(mid);
     if (value != null && value2 !=null) {
       var data = profileDataFromJson(value);
-      var data2 = chatMessageFrmJson(value2);
-      var map = <ProfileData?,ChatMessage?>{}; //{0,searchMessageItem};
+      var data2 = sendMessageModelFromJson(value2);
+      var map = <ProfileData?,ChatMessageModel?>{}; //{0,searchMessageItem};
       map.putIfAbsent(data.data, () => data2);
       return map;
     }
+    return null;
   }
 
   toChatPage(String jid){
     if(jid.isNotEmpty) {
-      PlatformRepo().getProfileLocal(jid, false).then((value) {
+      FlyChat.getProfileDetails(jid, false).then((value) {
         if(value!=null){
-          var datas = profileDataFromJson(value);
-          var data = datas.data!;
-          var profile = Profile();
-          profile.contactType = "";
-          profile.email = data.email;
-          profile.groupCreatedTime = "";
-          profile.image = data.image;
-          profile.imagePrivacyFlag = "";
-          profile.isAdminBlocked = data.isAdminBlocked;
-          profile.isBlocked = data.isBlocked;
-          profile.isBlockedMe = data.isBlockedMe;
-          profile.isGroupAdmin = false;
-          profile.isGroupInOfflineMode = data.isGroupInOfflineMode;
-          profile.isGroupProfile = false;
-          profile.isItSavedContact = data.isItSavedContact;
-          profile.isMuted = data.isMuted;
-          profile.isSelected = data.isSelected;
-          profile.jid = data.jid;
-          profile.lastSeenPrivacyFlag = "";
-          profile.mobileNUmberPrivacyFlag = "";
-          profile.mobileNumber = data.mobileNumber;
-          profile.name = data.name;
-          profile.nickName = data.nickName;
-          profile.status = data.status;
-          Get.toNamed(Routes.CHAT, arguments: profile);
+          var profile =  profiledata(value.toString());
+          Get.toNamed(Routes.chat, arguments: profile);
         }
       });
+      // SessionManagement.setChatJid(jid);
+      // Get.toNamed(Routes.chat);
     }
   }
 

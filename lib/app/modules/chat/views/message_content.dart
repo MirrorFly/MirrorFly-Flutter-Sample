@@ -3,13 +3,12 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import 'package:mirror_fly_demo/app/modules/chat/controllers/chat_controller.dart';
-import 'package:url_launcher/url_launcher.dart';
+import 'package:mirror_fly_demo/app/common/main_controller.dart';
 
 import '../../../common/constants.dart';
 import '../../../data/helper.dart';
-import '../../../model/chatMessageModel.dart';
 import '../../../routes/app_pages.dart';
+import 'package:flysdk/flysdk.dart';
 
 class MessageContent extends StatefulWidget {
    const MessageContent({Key? key, required this.chatList, required this.isTapEnabled}) : super(key: key);
@@ -22,22 +21,22 @@ class MessageContent extends StatefulWidget {
 }
 
 class _MessageContentState extends State<MessageContent> {
-  var controller = Get.find<ChatController>();
-  var screenWidth, screenHeight;
+  var controller = Get.find<MainController>();
+  // var screenWidth, screenHeight;
   @override
   Widget build(BuildContext context) {
 
-    screenHeight = MediaQuery.of(context).size.height;
-    screenWidth = MediaQuery.of(context).size.width;
+    double screenHeight = MediaQuery.of(context).size.height;
+    double screenWidth = MediaQuery.of(context).size.width;
 
     return Container(
-      child: getMessageContent(widget.chatList)
+      child: getMessageContent(widget.chatList, screenHeight, screenWidth)
     );
 }
 
-  getMessageContent(ChatMessageModel chatList) {
+  getMessageContent(ChatMessageModel chatList, double screenHeight, double screenWidth) {
 
-    if (chatList.messageType == Constants.MTEXT) {
+    if (chatList.messageType == Constants.mText) {
       return Padding(
         padding: const EdgeInsets.all(10.0),
         child: Row(
@@ -66,15 +65,15 @@ class _MessageContentState extends State<MessageContent> {
                   width: 5,
                 ),
                 getMessageIndicator(
-                    chatList.messageStatus.status,
+                    chatList.messageStatus,
                     chatList.isMessageSentByMe,
                     chatList.messageType),
                 const SizedBox(
                   width: 5,
                 ),
                 Text(
-                  controller.getChatTime(
-                      context, chatList.messageSentTime),
+                  getChatTime(
+                      context, chatList.messageSentTime.toInt()),
                   style: const TextStyle(fontSize: 12),
                 ),
               ],
@@ -82,17 +81,20 @@ class _MessageContentState extends State<MessageContent> {
           ],
         ),
       );
-    } else if (chatList.messageType == Constants.MNOTIFICATION) {
+    } else if (chatList.messageType == Constants.mNotification) {
       return Center(
-        child: Padding(
-          padding: const EdgeInsets.all(15.0),
-          // child: Text(chatList.messageTextContent!,
+        child: Container(
+          decoration: const BoxDecoration(
+              borderRadius: BorderRadius.all(Radius.circular(40)),
+              color: chatReplyContainerColor),
+          padding: const EdgeInsets.only(left: 15.0, right: 15.0, top: 8.0, bottom: 8.0),
+          // child: Text(chatList[index].messageTextContent!,
           child: Text(chatList.messageTextContent ?? "",
               style:
-              const TextStyle(fontSize: 13, fontWeight: FontWeight.bold)),
+              const TextStyle(fontSize: 12)),
         ),
       );
-    } else if (chatList.messageType == Constants.MIMAGE) {
+    } else if (chatList.messageType == Constants.mImage) {
       var chatMessage = chatList.mediaChatMessage!;
       //mediaLocalStoragePath
       //mediaThumbImage
@@ -128,20 +130,20 @@ class _MessageContentState extends State<MessageContent> {
                     Icons.star,
                     size: 13,
                   )
-                      : SizedBox.shrink(),
+                      : const SizedBox.shrink(),
                   const SizedBox(
                     width: 5,
                   ),
                   getMessageIndicator(
-                      chatList.messageStatus.status,
+                      chatList.messageStatus,
                       chatList.isMessageSentByMe,
                       chatList.messageType),
                   const SizedBox(
                     width: 4,
                   ),
                   Text(
-                    controller.getChatTime(
-                        context, chatList.messageSentTime),
+                    getChatTime(
+                        context, chatList.messageSentTime.toInt()),
                     style: const TextStyle(fontSize: 12, color: Colors.white),
                   ),
                 ],
@@ -150,7 +152,7 @@ class _MessageContentState extends State<MessageContent> {
           ],
         ),
       );
-    } else if (chatList.messageType == Constants.MVIDEO) {
+    } else if (chatList.messageType == Constants.mVideo) {
       var chatMessage = chatList.mediaChatMessage!;
       return Padding(
         padding: const EdgeInsets.all(8.0),
@@ -160,10 +162,10 @@ class _MessageContentState extends State<MessageContent> {
               onTap: () {
                 if (controller.checkFile(chatMessage.mediaLocalStoragePath) &&
                     (chatMessage.mediaDownloadStatus ==
-                        Constants.MEDIA_DOWNLOADED ||
+                        Constants.mediaDownloaded ||
                         chatMessage.mediaDownloadStatus ==
-                            Constants.MEDIA_UPLOADED)) {
-                  Get.toNamed(Routes.VIDEO_PLAY, arguments: {
+                            Constants.mediaUploaded)) {
+                  Get.toNamed(Routes.videoPlay, arguments: {
                     "filePath": chatMessage.mediaLocalStoragePath,
                   });
                 }
@@ -199,15 +201,15 @@ class _MessageContentState extends State<MessageContent> {
                     width: 5,
                   ),
                   getMessageIndicator(
-                      chatList.messageStatus.status,
+                      chatList.messageStatus,
                       chatList.isMessageSentByMe,
                       chatList.messageType),
                   const SizedBox(
                     width: 4,
                   ),
                   Text(
-                    controller.getChatTime(
-                        context, chatList.messageSentTime),
+                    getChatTime(
+                        context, chatList.messageSentTime.toInt()),
                     style: const TextStyle(fontSize: 12, color: Colors.white),
                   ),
                 ],
@@ -216,7 +218,7 @@ class _MessageContentState extends State<MessageContent> {
           ],
         ),
       );
-    } else if (chatList.messageType == Constants.MDOCUMENT) {
+    } else if (chatList.messageType == Constants.mDocument) {
       return InkWell(
         onTap: () {
           controller.openDocument(
@@ -225,7 +227,7 @@ class _MessageContentState extends State<MessageContent> {
         child: Container(
           decoration: BoxDecoration(
             border: Border.all(
-              color: chatreplysendercolor,
+              color: chatReplySenderColor,
             ),
             borderRadius: const BorderRadius.all(Radius.circular(10)),
             color: Colors.white,
@@ -275,20 +277,20 @@ class _MessageContentState extends State<MessageContent> {
                       Icons.star,
                       size: 13,
                     )
-                        : SizedBox.shrink(),
+                        : const SizedBox.shrink(),
                     const SizedBox(
                       width: 5,
                     ),
                     getMessageIndicator(
-                        chatList.messageStatus.status,
+                        chatList.messageStatus,
                         chatList.isMessageSentByMe,
                         chatList.messageType),
                     const SizedBox(
                       width: 4,
                     ),
                     Text(
-                      controller.getChatTime(
-                          context, chatList.messageSentTime),
+                      getChatTime(
+                          context, chatList.messageSentTime.toInt()),
                       style: const TextStyle(fontSize: 12, color: Colors.black),
                     ),
                     const SizedBox(
@@ -304,10 +306,10 @@ class _MessageContentState extends State<MessageContent> {
           ),
         ),
       );
-    } else if (chatList.messageType == Constants.MCONTACT) {
+    } else if (chatList.messageType == Constants.mContact) {
       return InkWell(
         onTap: () {
-          Get.toNamed(Routes.PREVIEW_CONTACT, arguments: {
+          Get.toNamed(Routes.previewContact, arguments: {
             "contactList":
             chatList.contactChatMessage!.contactPhoneNumbers,
             "contactName": chatList.contactChatMessage!.contactName,
@@ -317,7 +319,7 @@ class _MessageContentState extends State<MessageContent> {
         child: Container(
           decoration: BoxDecoration(
             border: Border.all(
-              color: chatreplysendercolor,
+              color: chatReplySenderColor,
             ),
             borderRadius: const BorderRadius.all(Radius.circular(10)),
             color: Colors.white,
@@ -331,7 +333,7 @@ class _MessageContentState extends State<MessageContent> {
                 child: Row(
                   children: [
                     Image.asset(
-                      profile_img,
+                      profileImage,
                       width: 35,
                       height: 35,
                     ),
@@ -361,15 +363,15 @@ class _MessageContentState extends State<MessageContent> {
                       width: 5,
                     ),
                     getMessageIndicator(
-                        chatList.messageStatus.status,
+                        chatList.messageStatus,
                         chatList.isMessageSentByMe,
                         chatList.messageType),
                     const SizedBox(
                       width: 4,
                     ),
                     Text(
-                      controller.getChatTime(
-                          context, chatList.messageSentTime),
+                      getChatTime(
+                          context, chatList.messageSentTime.toInt()),
                       style: const TextStyle(fontSize: 12, color: Colors.black),
                     ),
                     const SizedBox(
@@ -385,12 +387,12 @@ class _MessageContentState extends State<MessageContent> {
           ),
         ),
       );
-    } else if (chatList.messageType == Constants.MAUDIO) {
+    } else if (chatList.messageType == Constants.mAudio) {
       var chatMessage = chatList;
       return Container(
         decoration: BoxDecoration(
           border: Border.all(
-            color: chatreplysendercolor,
+            color: chatReplySenderColor,
           ),
           borderRadius: const BorderRadius.all(Radius.circular(10)),
           color: Colors.white,
@@ -404,7 +406,7 @@ class _MessageContentState extends State<MessageContent> {
                 borderRadius: BorderRadius.only(
                     topLeft: Radius.circular(10),
                     topRight: Radius.circular(10)),
-                color: chatreplysendercolor,
+                color: chatReplySenderColor,
               ),
               child: Padding(
                 padding: const EdgeInsets.all(15),
@@ -415,13 +417,13 @@ class _MessageContentState extends State<MessageContent> {
                       alignment: Alignment.center,
                       children: [
                         SvgPicture.asset(
-                          audio_mic_bg,
+                          audioMicBg,
                           width: 28,
                           height: 28,
                           fit: BoxFit.contain,
                         ),
                         SvgPicture.asset(
-                          audio_mic_1,
+                          audioMic1,
                           fit: BoxFit.contain,
                         ),
                       ],
@@ -447,29 +449,22 @@ class _MessageContentState extends State<MessageContent> {
                         // width: 168,
                         child: SliderTheme(
                           data: SliderThemeData(
-                            thumbColor: audiocolordark,
+                            thumbColor: audioColorDark,
                             overlayShape: SliderComponentShape.noOverlay,
                             thumbShape:
                             const RoundSliderThumbShape(enabledThumbRadius: 5),
                           ),
                           child: Slider(
                             value: double.parse(
-                                controller.currentpos.value.toString()),
+                                controller.currentPos.value.toString()),
                             min: 0,
-                            activeColor: audiocolordark,
-                            inactiveColor: audiocolor,
+                            activeColor: audioColorDark,
+                            inactiveColor: audioColor,
                             max: double.parse(
-                                controller.maxduration.value.toString()),
-                            divisions: controller.maxduration.value,
-                            // label: controller.currentpostlabel,
+                                controller.maxDuration.value.toString()),
+                            divisions: controller.maxDuration.value,
                             onChanged: (double value) async {
-                              // int seekval = value.round();
-                              // int result = await player.seek(Duration(milliseconds: seekval));
-                              // if(result == 1){ //seek successful
-                              //   currentpos = seekval;
-                              // }else{
-                              //   print("Seek unsuccessful.");
-                              // }
+
                             },
                           ),
                         ),
@@ -497,15 +492,15 @@ class _MessageContentState extends State<MessageContent> {
                     width: 5,
                   ),
                   getMessageIndicator(
-                      chatList.messageStatus.status,
+                      chatList.messageStatus,
                       chatList.isMessageSentByMe,
                       chatList.messageType),
                   const SizedBox(
                     width: 4,
                   ),
                   Text(
-                    controller.getChatTime(
-                        context, chatList.messageSentTime),
+                    getChatTime(
+                        context, chatList.messageSentTime.toInt()),
                     style: const TextStyle(fontSize: 12, color: Colors.black),
                   ),
                   const SizedBox(
@@ -521,7 +516,7 @@ class _MessageContentState extends State<MessageContent> {
         ),
       );
     } else if (chatList.messageType.toUpperCase() ==
-        Constants.MLOCATION) {
+        Constants.mLocation) {
       return Padding(
         padding: const EdgeInsets.all(2.0),
         child: Stack(
@@ -547,15 +542,15 @@ class _MessageContentState extends State<MessageContent> {
                     width: 5,
                   ),
                   getMessageIndicator(
-                      chatList.messageStatus.status,
+                      chatList.messageStatus,
                       chatList.isMessageSentByMe,
                       chatList.messageType),
                   const SizedBox(
                     width: 4,
                   ),
                   Text(
-                    controller.getChatTime(
-                        context, chatList.messageSentTime),
+                    getChatTime(
+                        context, chatList.messageSentTime.toInt()),
                     style: const TextStyle(fontSize: 12, color: Colors.black),
                   ),
                 ],
@@ -614,64 +609,64 @@ class _MessageContentState extends State<MessageContent> {
   getImageOverlay(
       ChatMessageModel chatList, BuildContext context) {
     var chatMessage = chatList;
+    debugPrint("****GET IMAGE OVERLAY**** ${chatMessage.messageStatus} **** ${chatMessage.messageType.toUpperCase()}");
     if (controller
         .checkFile(chatMessage.mediaChatMessage!.mediaLocalStoragePath) &&
-        chatMessage.messageStatus.status != 'N') {
-      if (chatMessage.messageType == 'VIDEO') {
+        chatMessage.messageStatus != 'N'){
+      if (chatMessage.messageType.toUpperCase() == 'VIDEO') {
         return SizedBox(
           width: 80,
           height: 50,
           child: Center(
               child: SvgPicture.asset(
-                video_play,
+                videoPlay,
                 fit: BoxFit.contain,
               )),
         );
-      } else if (chatMessage.messageType == 'AUDIO') {
+      } else if (chatMessage.messageType.toUpperCase() == 'AUDIO') {
         debugPrint("===============================");
         debugPrint(chatMessage.mediaChatMessage!.isPlaying.toString());
         // return Obx(() {
-        // chatMessage.mediaChatMessage!.isPlaying = controller.audioplayed.value;
         return chatMessage.mediaChatMessage!.isPlaying
             ? const Icon(Icons.pause)
             : const Icon(Icons.play_arrow_sharp);
         // });
       } else {
-        return SizedBox.shrink();
+        return const SizedBox.shrink();
       }
     } else {
       switch (chatMessage.isMessageSentByMe
           ? chatMessage.mediaChatMessage!.mediaUploadStatus
           : chatMessage.mediaChatMessage!.mediaDownloadStatus) {
-        case Constants.MEDIA_DOWNLOADED:
-        case Constants.MEDIA_UPLOADED:
-          return SizedBox.shrink();
+        case Constants.mediaDownloaded:
+        case Constants.mediaUploaded:
+          return const SizedBox.shrink();
 
-        case Constants.MEDIA_DOWNLOADED_NOT_AVAILABLE:
-        case Constants.MEDIA_NOT_DOWNLOADED:
+        case Constants.mediaDownloadedNotAvailable:
+        case Constants.mediaNotDownloaded:
           return getFileInfo(
               chatMessage.mediaChatMessage!.mediaDownloadStatus,
               chatMessage.mediaChatMessage!.mediaFileSize,
               Icons.download_sharp,
-              chatMessage.messageType);
-        case Constants.MEDIA_UPLOADED_NOT_AVAILABLE:
+              chatMessage.messageType.toUpperCase());
+        case Constants.mediaUploadedNotAvailable:
           return getFileInfo(
               chatMessage.mediaChatMessage!.mediaDownloadStatus,
               chatMessage.mediaChatMessage!.mediaFileSize,
               Icons.upload_sharp,
-              chatMessage.messageType);
+              chatMessage.messageType.toUpperCase());
 
-        case Constants.MEDIA_NOT_UPLOADED:
-        case Constants.MEDIA_DOWNLOADING:
-        case Constants.MEDIA_UPLOADING:
-          if (chatMessage.messageType == 'AUDIO' ||
-              chatMessage.messageType == 'DOCUMENT') {
+        case Constants.mediaNotUploaded:
+        case Constants.mediaDownloading:
+        case Constants.mediaUploading:
+          if (chatMessage.messageType.toUpperCase() == 'AUDIO' ||
+              chatMessage.messageType.toUpperCase() == 'DOCUMENT') {
             return InkWell(
                 onTap: () {
                   debugPrint(chatMessage.messageId);
                 },
                 child:
-                Container(width: 30, height: 30, child: uploadingView()));
+                SizedBox(width: 30, height: 30, child: uploadingView()));
           } else {
             return SizedBox(
               height: 40,
@@ -687,12 +682,12 @@ class _MessageContentState extends State<MessageContent> {
     return messageType == 'AUDIO' || messageType == 'DOCUMENT'
         ? Icon(
       iconData,
-      color: audiocolordark,
+      color: audioColorDark,
     )
         : Container(
         decoration: BoxDecoration(
           border: Border.all(
-            color: textcolor,
+            color: textColor,
           ),
           borderRadius: const BorderRadius.all(Radius.circular(5)),
           color: Colors.black38,
@@ -720,10 +715,10 @@ class _MessageContentState extends State<MessageContent> {
       // width: 80,
         decoration: BoxDecoration(
           border: Border.all(
-            color: textcolor,
+            color: textColor,
           ),
           borderRadius: const BorderRadius.all(Radius.circular(2)),
-          color: audiobgcolor,
+          color: audioBgColor,
         ),
         // padding: EdgeInsets.symmetric(vertical: 5),
         child: Stack(alignment: Alignment.center,
@@ -741,7 +736,7 @@ class _MessageContentState extends State<MessageContent> {
                     valueColor: AlwaysStoppedAnimation<Color>(
                       Colors.white,
                     ),
-                    backgroundColor: audiobgcolor,
+                    backgroundColor: audioBgColor,
                     // minHeight: 1,
                   ),
                 ),
@@ -754,17 +749,17 @@ class _MessageContentState extends State<MessageContent> {
     switch (chatList.isMessageSentByMe
         ? chatList.mediaChatMessage?.mediaUploadStatus
         : mediaDownloadStatus) {
-      case Constants.MEDIA_DOWNLOADED:
-      case Constants.MEDIA_UPLOADED:
+      case Constants.mediaDownloaded:
+      case Constants.mediaUploaded:
         if (chatList.messageType == 'VIDEO') {
           if (controller.checkFile(
               chatList.mediaChatMessage!.mediaLocalStoragePath) &&
               (chatList.mediaChatMessage!.mediaDownloadStatus ==
-                  Constants.MEDIA_DOWNLOADED ||
+                  Constants.mediaDownloaded ||
                   chatList.mediaChatMessage!.mediaDownloadStatus ==
-                      Constants.MEDIA_UPLOADED ||
+                      Constants.mediaUploaded ||
                   chatList.isMessageSentByMe)) {
-            Get.toNamed(Routes.VIDEO_PLAY, arguments: {
+            Get.toNamed(Routes.videoPlay, arguments: {
               "filePath": chatList.mediaChatMessage!.mediaLocalStoragePath,
             });
           }
@@ -773,12 +768,12 @@ class _MessageContentState extends State<MessageContent> {
           if (controller.checkFile(
               chatList.mediaChatMessage!.mediaLocalStoragePath) &&
               (chatList.mediaChatMessage!.mediaDownloadStatus ==
-                  Constants.MEDIA_DOWNLOADED ||
+                  Constants.mediaDownloaded ||
                   chatList.mediaChatMessage!.mediaDownloadStatus ==
-                      Constants.MEDIA_UPLOADED ||
+                      Constants.mediaUploaded ||
                   chatList.isMessageSentByMe)) {
             // debugPrint("audio click1");
-            chatList.mediaChatMessage!.isPlaying = controller.isplaying.value;
+            chatList.mediaChatMessage!.isPlaying = controller.isPlaying.value;
             // controller.playAudio(chatList.mediaChatMessage!);
             playAudio(chatList.mediaChatMessage!.mediaLocalStoragePath,
                 chatList.mediaChatMessage!.mediaFileName);
@@ -788,21 +783,21 @@ class _MessageContentState extends State<MessageContent> {
         }
         break;
 
-      case Constants.MEDIA_DOWNLOADED_NOT_AVAILABLE:
-      case Constants.MEDIA_NOT_DOWNLOADED:
+      case Constants.mediaDownloadedNotAvailable:
+      case Constants.mediaNotDownloaded:
       //download
         debugPrint("Download");
         debugPrint(chatList.messageId);
         chatList.mediaChatMessage!.mediaDownloadStatus =
-            Constants.MEDIA_DOWNLOADING;
+            Constants.mediaDownloading;
         controller.downloadMedia(chatList.messageId);
         break;
-      case Constants.MEDIA_UPLOADED_NOT_AVAILABLE:
+      case Constants.mediaUploadedNotAvailable:
       //upload
         break;
-      case Constants.MEDIA_NOT_UPLOADED:
-      case Constants.MEDIA_DOWNLOADING:
-      case Constants.MEDIA_UPLOADING:
+      case Constants.mediaNotUploaded:
+      case Constants.mediaDownloading:
+      case Constants.mediaUploading:
         return uploadingView();
     // break;
     }
@@ -823,20 +818,20 @@ class _MessageContentState extends State<MessageContent> {
                   alignment: Alignment.center,
                   children: [
                     SvgPicture.asset(
-                      audio_mic_bg,
+                      audioMicBg,
                       width: 50,
                       height: 50,
                       fit: BoxFit.contain,
                     ),
                     Obx(() {
-                      return controller.isplaying.value
-                          ? Icon(Icons.pause)
-                          : Icon(Icons.play_arrow);
+                      return controller.isPlaying.value
+                          ? const Icon(Icons.pause)
+                          : const Icon(Icons.play_arrow);
                     }),
                   ],
                 ),
               ),
-              SizedBox(
+              const SizedBox(
                 width: 20,
               ),
               Expanded(
@@ -854,7 +849,7 @@ class _MessageContentState extends State<MessageContent> {
                       // width: 168,
                       child: SliderTheme(
                         data: SliderThemeData(
-                          thumbColor: audiocolordark,
+                          thumbColor: audioColorDark,
                           overlayShape: SliderComponentShape.noOverlay,
                           thumbShape:
                           const RoundSliderThumbShape(enabledThumbRadius: 5),
@@ -862,22 +857,16 @@ class _MessageContentState extends State<MessageContent> {
                         child: Obx(() {
                           return Slider(
                             value:
-                            double.parse(controller.currentpos.toString()),
+                            double.parse(controller.currentPos.toString()),
                             min: 0,
-                            activeColor: audiocolordark,
-                            inactiveColor: audiocolor,
+                            activeColor: audioColorDark,
+                            inactiveColor: audioColor,
                             max: double.parse(
-                                controller.maxduration.value.toString()),
-                            divisions: controller.maxduration.value,
-                            label: controller.currentpostlabel,
+                                controller.maxDuration.value.toString()),
+                            divisions: controller.maxDuration.value,
+                            label: controller.currentPostLabel,
                             onChanged: (double value) async {
-                              // int seekval = value.round();
-                              // int result = await player.seek(Duration(milliseconds: seekval));
-                              // if(result == 1){ //seek successful
-                              //   currentpos = seekval;
-                              // }else{
-                              //   print("Seek unsuccessful.");
-                              // }
+
                             },
                           );
                         }),
@@ -897,15 +886,15 @@ class _MessageContentState extends State<MessageContent> {
     if (controller.checkFile(mediaLocalStoragePath)) {
       return InkWell(
           onTap: () {
-            Get.toNamed(Routes.IMAGE_VIEW, arguments: {
+            Get.toNamed(Routes.imageView, arguments: {
               'imageName': mediaFileName,
               'imagePath': mediaLocalStoragePath
             });
           },
           child: Image.file(
             File(mediaLocalStoragePath),
-            width: screenWidth * 0.60,
-            height: screenHeight * 0.4,
+            width: MediaQuery.of(context).size.width * 0.60,
+            height: MediaQuery.of(context).size.height * 0.4,
             fit: BoxFit.cover,
           ));
     } else {
@@ -918,46 +907,46 @@ class _MessageContentState extends State<MessageContent> {
     String result = mediaFileName.split('.').last;
     debugPrint("File Type ==> $result");
     switch (result) {
-      case Constants.PDF:
+      case Constants.pdf:
         return SvgPicture.asset(
-          pdf_image,
+          pdfImage,
           width: 30,
           height: 30,
         );
-      case Constants.PPT:
+      case Constants.ppt:
         return SvgPicture.asset(
-          ppt_image,
+          pptImage,
           width: 30,
           height: 30,
         );
-      case Constants.XLS:
+      case Constants.xls:
         return SvgPicture.asset(
-          xls_image,
+          xlsImage,
           width: 30,
           height: 30,
         );
-      case Constants.XLXS:
+      case Constants.xlsx:
         return SvgPicture.asset(
-          xlsx_image,
+          xlsxImage,
           width: 30,
           height: 30,
         );
-      case Constants.DOC:
-      case Constants.DOCX:
+      case Constants.doc:
+      case Constants.docx:
         return SvgPicture.asset(
-          doc_image,
+          docImage,
           width: 30,
           height: 30,
         );
-      case Constants.APK:
+      case Constants.apk:
         return SvgPicture.asset(
-          apk_image,
+          apkImage,
           width: 30,
           height: 30,
         );
       default:
         return SvgPicture.asset(
-          doc_image,
+          docImage,
           width: 30,
           height: 30,
         );

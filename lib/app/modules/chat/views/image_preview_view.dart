@@ -6,7 +6,6 @@ import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/modules/chat/controllers/image_preview_controller.dart';
 import 'package:photo_view/photo_view.dart';
 
-import '../../../common/constants.dart';
 
 class ImagePreviewView extends GetView<ImagePreviewController> {
   const ImagePreviewView({super.key});
@@ -20,7 +19,7 @@ class ImagePreviewView extends GetView<ImagePreviewController> {
         iconTheme: const IconThemeData(
             color: Colors.white
         ),
-        actions: [
+        /*actions: [
           IconButton(
               icon: const Icon(
                 Icons.delete_outline_outlined,
@@ -51,7 +50,7 @@ class ImagePreviewView extends GetView<ImagePreviewController> {
                 size: 27,
               ),
               onPressed: () {}),
-        ],
+        ],*/
       ),
       body: SafeArea(
         child: SizedBox(
@@ -83,11 +82,11 @@ class ImagePreviewView extends GetView<ImagePreviewController> {
                     maxScale: PhotoViewComputedScale.covered * 2,
                     enableRotation: true,
                     // Set the background color to the "classic white"
-                    backgroundDecoration: BoxDecoration(
+                    backgroundDecoration: const BoxDecoration(
                       color: Colors.transparent
                     ),
                     loadingBuilder: (context, event) =>
-                        Center(
+                        const Center(
                           child: CircularProgressIndicator(),
                         ),
                   ),

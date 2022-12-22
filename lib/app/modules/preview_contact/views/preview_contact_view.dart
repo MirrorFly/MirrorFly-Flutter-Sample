@@ -2,16 +2,17 @@ import 'package:flutter/material.dart';
 
 import 'package:get/get.dart';
 
-import '../../../common/constants.dart';
+import '../../../common/widgets.dart';
 import '../controllers/preview_contact_controller.dart';
 
 class PreviewContactView extends GetView<PreviewContactController> {
   const PreviewContactView({Key? key}) : super(key: key);
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return SafeArea(
+        child: Scaffold(
         appBar: AppBar(
-          title: controller.from == "contact_pick" ? Text('Send Contacts') : Text('Contact Details'),
+          title: controller.from == "contact_pick" ? const Text('Send Contacts') : const Text('Contact Details'),
         ),
         body: Stack(
           children: [
@@ -22,33 +23,34 @@ class PreviewContactView extends GetView<PreviewContactController> {
                       const EdgeInsets.only(left: 18.0, top: 18.0, bottom: 5),
                   child: Row(
                     children: [
-                      Image.asset(
+                      SizedBox(width: 50,height: 50,child: ProfileTextImage(text: controller.contactName,),),
+                      /*Image.asset(
                         profile_img,
                         width: 50,
                         height: 50,
-                      ),
-                      SizedBox(
+                      ),*/
+                      const SizedBox(
                         width: 10,
                       ),
                       Text(controller.contactName),
                     ],
                   ),
                 ),
-                Divider(
+                const Divider(
                   color: Colors.grey,
                   thickness: 0.5,
                 ),
                 Expanded(
                   child: ListView.builder(
                       itemCount: controller.contactList.length,
-                      physics: AlwaysScrollableScrollPhysics(),
+                      physics: const AlwaysScrollableScrollPhysics(),
                       itemBuilder: (BuildContext context, int index) {
                           return Column(
                             children: [
                               Row(
                                 children: [
-                                  Padding(
-                                    padding: const EdgeInsets.fromLTRB(18.0,10,18,10),
+                                  const Padding(
+                                    padding: EdgeInsets.fromLTRB(18.0,10,18,10),
                                     child: Icon(Icons.phone, color: Colors.blue,),
                                   ),
                                   Text(
@@ -57,7 +59,7 @@ class PreviewContactView extends GetView<PreviewContactController> {
 
                                 ],
                               ),
-                              Divider(
+                              const Divider(
                                 color: Colors.grey,
                                 thickness: 0.8,
                               ),
@@ -75,12 +77,13 @@ class PreviewContactView extends GetView<PreviewContactController> {
                   onTap: (){
                     controller.shareContact();
                   },
-                  child: CircleAvatar(
+                  child: const CircleAvatar(
                     backgroundColor: Colors.blueAccent,
                       radius: 25,
                       child: Icon(Icons.send, color: Colors.white,)),
-                )) : SizedBox.shrink()
+                )) : const SizedBox.shrink()
           ],
-        ));
+        )),
+    );
   }
 }

@@ -1,22 +1,37 @@
-
+// import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_easyloading/flutter_easyloading.dart';
+
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flysdk/flysdk.dart';
 
 import 'package:get/get.dart';
-import 'package:mirror_fly_demo/app/common/constants.dart';
-import 'package:mirror_fly_demo/app/common/apptheme.dart';
+import 'package:mirror_fly_demo/app/common/app_theme.dart';
 import 'package:mirror_fly_demo/app/common/main_controller.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
+import 'package:mirror_fly_demo/app/data/pushnotification.dart';
 import 'package:mirror_fly_demo/app/modules/dashboard/bindings/dashboard_binding.dart';
 import 'package:mirror_fly_demo/app/modules/login/bindings/login_binding.dart';
-import 'app/data/SessionManagement.dart';
+import 'app/data/session_management.dart';
 import 'app/modules/profile/bindings/profile_binding.dart';
 import 'app/routes/app_pages.dart';
 
 import 'package:google_maps_flutter_android/google_maps_flutter_android.dart';
 import 'package:google_maps_flutter_platform_interface/google_maps_flutter_platform_interface.dart';
 
-void main() async {
+
+
+
+// Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+//   // If you're going to use other Firebase services in the background, such as Firestore,
+//   // make sure you call `initializeApp` before using other Firebase services.
+//   //await Firebase.initializeApp();
+//   debugPrint("Handling a background message: ${message.messageId}");
+//   PushNotifications.onMessage(message);
+// }
+bool shouldUseFirebaseEmulator = false;
+Future<void> main() async {
 // Require Hybrid Composition mode on Android.
   final GoogleMapsFlutterPlatform mapsImplementation =
       GoogleMapsFlutterPlatform.instance;
@@ -25,25 +40,24 @@ void main() async {
   }
   WidgetsFlutterBinding.ensureInitialized();
   await SessionManagement.onInit();
-  // await FlutterLibphonenumber().init();
+  FlyChat.getSendData().then((value) {
+    SessionManagement.setChatJid(value.checkNull());
+  });
+  FlyChat.cancelNotifications();
+  if (!kIsWeb) {
+     await Firebase.initializeApp();
+    // await Firebase.initializeApp(
+    //   options: DefaultFirebaseOptions.currentPlatform,
+    // );
+    // FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+    PushNotifications.setupInteractedMessage();
+  }
+  if (shouldUseFirebaseEmulator) {
+    await FirebaseAuth.instance.useAuthEmulator('localhost', 5050);
+  }
+
   Get.put<MainController>(MainController());
   runApp(const MyApp());
-  configLoading();
-}
-void configLoading() {
-  EasyLoading.instance
-    ..displayDuration = const Duration(milliseconds: 2000)
-    ..indicatorType = EasyLoadingIndicatorType.rotatingCircle
-    ..loadingStyle = EasyLoadingStyle.light
-    ..indicatorSize = 45.0
-    ..radius = 10.0
-    ..progressColor = Colors.blue
-    ..backgroundColor = Colors.white
-    ..indicatorColor = Colors.yellow
-    ..textColor = Colors.black
-    ..maskColor = Colors.blue.withOpacity(0.5)
-    ..userInteractions = true
-    ..dismissOnTap = false;
 }
 
 class MyApp extends StatelessWidget{
@@ -54,19 +68,18 @@ class MyApp extends StatelessWidget{
   Widget build(BuildContext context) {
     return GetMaterialApp(
       title: "MirrorFly",
-      theme: apptheme.theme,
-      builder: EasyLoading.init(),
+      theme: MirrorFlyAppTheme.theme,
       debugShowCheckedModeBanner: false,
       initialBinding: getBinding(),
-      initialRoute: getIntialRoute(),
+      initialRoute: SessionManagement.getEnablePin() ? Routes.pin : getInitialRoute(),
       //initialRoute: AppPages.INITIAL,
       getPages: AppPages.routes,
     );
   }
 }
 Bindings? getBinding(){
-  if(SessionManagement().getLogin()){
-    if(SessionManagement().getName().checkNull().isNotEmpty && SessionManagement().getMobileNumber().checkNull().isNotEmpty){
+  if(SessionManagement.getLogin()){
+    if(SessionManagement.getName().checkNull().isNotEmpty && SessionManagement.getMobileNumber().checkNull().isNotEmpty){
       return DashboardBinding();
     }else{
       return ProfileBinding();
@@ -76,60 +89,21 @@ Bindings? getBinding(){
   }
 }
 
-String getIntialRoute(){
-  if(SessionManagement().getLogin()){
-    if(SessionManagement().getName().checkNull().isNotEmpty && SessionManagement().getMobileNumber().checkNull().isNotEmpty){
-      return AppPages.DASHBOARD;
+String getInitialRoute()  {
+  if(SessionManagement.getLogin()){
+    if(SessionManagement.getName().checkNull().isNotEmpty && SessionManagement.getMobileNumber().checkNull().isNotEmpty){
+      debugPrint("=====CHAT ID=====");
+      debugPrint(SessionManagement.getChatJid());
+      if(SessionManagement.getChatJid().checkNull().isEmpty) {
+        return AppPages.dashboard;
+      }else{
+        return "${AppPages.chat}?jid=${SessionManagement.getChatJid().checkNull()}&from_notification=true";
+      }
     }else{
-      return AppPages.PROFILE;
+      return AppPages.profile;
     }
   }else{
-    return AppPages.INITIAL;
+    return AppPages.initial;
   }
 }
-
-// class MyApp extends StatefulWidget {
-//   const MyApp({super.key});
-//
-//   @override
-//   State<MyApp> createState() => _MyAppState();
-// }
-//
-// class _MyAppState extends State<MyApp> {
-//
-//   static const mirrorfly_method_channel = MethodChannel('contus.mirrorfly/mirrorfly_sdk');
-//
-//   @override
-//   void initState() {
-//     super.initState();
-//     initSDKState();
-//   }
-//
-//   // Platform messages are asynchronous, so we initialize in an async method.
-//   Future<void> initSDKState() async {
-//     String? sdkInit;
-//     try {
-//       debugPrint("MethodChannel call===> SDK INIT");
-//       sdkInit = await mirrorfly_method_channel.invokeMethod('sdk_init');
-//       debugPrint("Result ==> $sdkInit");
-//     }on PlatformException {
-//       sdkInit = "Failed to Initialize SDK";
-//       debugPrint("Result ===> Platform Exception");
-//     } on Exception catch(error){
-//       sdkInit = 'Failed to Initialize SDK';
-//       debugPrint("Result ==> $error");
-//     }
-//
-//   }
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     return GetMaterialApp(
-//       title: "MirrorFly",
-//       debugShowCheckedModeBanner: false,
-//       initialRoute: AppPages.INITIAL,
-//       getPages: AppPages.routes,
-//     );
-//   }
-// }
 

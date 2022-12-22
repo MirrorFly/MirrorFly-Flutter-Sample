@@ -3,7 +3,7 @@ package com.contusdemo.mirror_fly_demo
 import android.util.Log
 
 object DebugUtilis {
-    var _charLimit = 2000
+    private var _charLimit = 2000
     @JvmStatic
     fun v(tag: String?, message: String): Int {
         // If the message is less than the limit just show

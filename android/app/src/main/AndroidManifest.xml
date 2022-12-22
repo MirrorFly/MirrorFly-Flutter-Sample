@@ -4,6 +4,7 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.READ_CONTACTS" />
     <uses-permission android:name="android.permission.WRITE_CONTACTS" />
+
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"
         tools:ignore="ScopedStorage" />
@@ -15,7 +16,7 @@
 
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
    <application
-        android:label="MirrorFly Flutter"
+        android:label="@string/app_name"
         android:name=".MirrorFlyApplication"
         android:requestLegacyExternalStorage="true"
         android:icon="@mipmap/ic_launcher">
@@ -27,7 +28,8 @@
             android:theme="@style/LaunchTheme"
             android:configChanges="orientation|keyboardHidden|keyboard|screenSize|smallestScreenSize|locale|layoutDirection|fontScale|screenLayout|density|uiMode"
             android:hardwareAccelerated="true"
-            android:windowSoftInputMode="adjustResize">
+            android:windowSoftInputMode="adjustResize"
+            tools:ignore="LockedOrientationActivity">
             <!-- Specifies an Android theme to apply to this Activity as soon as
                  the Android process has started. This theme is visible to the user
                  while the Flutter UI initializes. After that, this theme continues
@@ -40,6 +42,10 @@
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
+            <intent-filter>
+                <action android:name="FLUTTER_NOTIFICATION_CLICK" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
         </activity>
         <!-- Don't delete the meta-data below.
              This is used by the Flutter tool to generate GeneratedPluginRegistrant.java -->
@@ -48,6 +54,12 @@
             android:value="2" />
        <meta-data android:name="com.google.android.geo.API_KEY"
            android:value="AIzaSyCfG5u1-XDZhWD8vOZGK5hTKyqsVOjHSSM"/>
+       <meta-data
+           android:name="io.flutter.app.android.SplashScreenUntilFirstFrame"
+           android:value="true" />
+       <meta-data
+           android:name="com.google.firebase.messaging.default_notification_channel_id"
+           android:value="@string/default_notification_channel_id"/>
        <provider
            android:name="androidx.core.content.FileProvider"
            android:authorities="${applicationId}.fileProvider"
@@ -59,7 +71,15 @@
                android:resource="@xml/filepaths"
                tools:replace="android:resource" />
        </provider>
-
-
+       <service
+           android:name=".MyFirebaseMessagingService"
+           android:exported="true"
+           android:enabled="true"
+           android:directBootAware="true"
+           tools:targetApi="n">
+           <intent-filter>
+               <action android:name="com.google.firebase.MESSAGING_EVENT" />
+           </intent-filter>
+       </service>
     </application>
 </manifest>

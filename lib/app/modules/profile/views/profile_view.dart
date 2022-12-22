@@ -1,6 +1,5 @@
 import 'dart:io';
 
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
@@ -10,7 +9,6 @@ import 'package:mirror_fly_demo/app/common/constants.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
 import 'package:mirror_fly_demo/app/routes/app_pages.dart';
 
-import '../../../common/cropimage.dart';
 import '../../../common/widgets.dart';
 import '../controllers/profile_controller.dart';
 
@@ -24,10 +22,10 @@ class ProfileView extends GetView<ProfileController> {
         appBar: AppBar(
           title: const Text(
             'Profile',
-            style: TextStyle(color: appbartextcolor),
+            style: TextStyle(color: appbarTextColor),
           ),
           centerTitle: true,
-          automaticallyImplyLeading: false,
+          automaticallyImplyLeading: controller.from.value == Routes.login ? false : true,
         ),
         body: SafeArea(
           child: SingleChildScrollView(
@@ -48,13 +46,13 @@ class ProfileView extends GetView<ProfileController> {
                             borderRadius: BorderRadius.circular(8.0),
                             child: Obx(
                               () => InkWell(
-                                child: controller.imagepath.value.isNotEmpty
+                                child: controller.imagePath.value.isNotEmpty
                                     ? SizedBox(
                                         width: 150,
                                         height: 150,
                                         child: ClipOval(
                                           child: Image.file(
-                                            File(controller.imagepath.value),
+                                            File(controller.imagePath.value),
                                             fit: BoxFit.fill,
                                           ),
                                         ))
@@ -63,12 +61,12 @@ class ProfileView extends GetView<ProfileController> {
                                             .checkNull(),
                                         width: 150,
                                         height: 150,
-                                        clipoval: true,
+                                        clipOval: true,
                                         errorWidget: controller.name.value
                                                 .checkNull()
                                                 .isNotEmpty
                                             ? ProfileTextImage(
-                                                fontsize: 40,
+                                                fontSize: 40,
                                                 text: controller.name.value
                                                     .checkNull(),
                                                 radius: 75,
@@ -76,34 +74,26 @@ class ProfileView extends GetView<ProfileController> {
                                             : null,
                                       ),
                                 onTap: () {
-                                  if (controller.imagepath.value
+                                  if (controller.imagePath.value
                                       .checkNull()
                                       .isNotEmpty) {
-                                    Get.toNamed(Routes.IMAGE_VIEW, arguments: {
+                                    Get.toNamed(Routes.imageView, arguments: {
                                       'imageName': controller.profileName.text,
                                       'imagePath':
-                                          controller.imagepath.value.checkNull()
+                                          controller.imagePath.value.checkNull()
                                     });
                                   } else if (controller.userImgUrl.value
                                       .checkNull()
                                       .isNotEmpty) {
-                                    Get.toNamed(Routes.IMAGE_VIEW, arguments: {
+                                    Get.toNamed(Routes.imageView, arguments: {
                                       'imageName': controller.profileName.text,
-                                      'imageurl': imagedomin +
-                                          controller.userImgUrl.value
+                                      'imageUrl': controller.userImgUrl.value
                                               .checkNull()
                                     });
                                   }
                                 },
                               ),
-                              /*controller.userImgUrl.value.isEmpty ? Image.asset(
-                                'assets/logos/profile_img.png',
-                                height: 150,
-                                width: 150,
-                              ) : ImageNetwork(url: controller.userImgUrl.value,
-                                width: 150,
-                                height: 150,
-                                clipoval: true,),*/
+
                             ),
                           ),
                         ),
@@ -115,7 +105,7 @@ class ProfileView extends GetView<ProfileController> {
                               onTap: controller.loading.value
                                   ? null
                                   : () {
-                                      BottomSheetView(context);
+                                      bottomSheetView(context);
                                     },
                               child: Image.asset(
                                 'assets/logos/camera_profile_change.png',
@@ -151,6 +141,7 @@ class ProfileView extends GetView<ProfileController> {
                     height: 10,
                   ),
                   TextField(
+                    keyboardType: TextInputType.emailAddress,
                     onChanged: (value) => controller.onEmailChange(value),
                     controller: controller.profileEmail,
                     decoration: InputDecoration(
@@ -160,9 +151,7 @@ class ProfileView extends GetView<ProfileController> {
                     ),
                     style: const TextStyle(fontWeight: FontWeight.bold),
                   ),
-                  const AppDivider(
-                    padding: 0.0,
-                  ),
+                  const AppDivider(),
                   const SizedBox(
                     height: 20,
                   ),
@@ -183,9 +172,7 @@ class ProfileView extends GetView<ProfileController> {
                     ),
                     style: const TextStyle(fontWeight: FontWeight.bold),
                   ),
-                  const AppDivider(
-                    padding: 0.0,
-                  ),
+                  const AppDivider(),
                   const SizedBox(
                     height: 20,
                   ),
@@ -196,28 +183,13 @@ class ProfileView extends GetView<ProfileController> {
                   const SizedBox(
                     height: 10,
                   ),
-                  /*TextField(
-                    onChanged: (value) => controller.changed.value =true,
-                    controller: controller.profileStatus,
-                    decoration: InputDecoration(
-                      border: InputBorder.none,
-                      hintText: 'I’m in Mirrorfly',
-                      icon: InkWell(child: SvgPicture.asset('assets/logos/status.svg'),onTap: (){
-                        Get.toNamed(Routes.STATUSLIST)?.then((value){
-                          if(value!=null){
-                            controller.profileStatus.text = value;
-                          }
-                        });
-                      },),
-                    ),
-                    style: const TextStyle(fontWeight: FontWeight.bold),
-                  ),*/
+
                   Obx(() => ListTile(
                         contentPadding: EdgeInsets.zero,
                         title: Text(
                           controller.profileStatus.value.isNotEmpty
                               ? controller.profileStatus.value
-                              : Constants.defaultstatus,
+                              : Constants.defaultStatus,
                           style: TextStyle(
                               color: controller.profileStatus.value.isNotEmpty
                                   ? Colors.black
@@ -225,7 +197,7 @@ class ProfileView extends GetView<ProfileController> {
                         ),
                         leading: SvgPicture.asset('assets/logos/status.svg'),
                         onTap: () {
-                          Get.toNamed(Routes.STATUSLIST, arguments: {
+                          Get.toNamed(Routes.statusList, arguments: {
                             'status': controller.profileStatus.value
                           })?.then((value) {
                             if (value != null) {
@@ -234,9 +206,7 @@ class ProfileView extends GetView<ProfileController> {
                           });
                         },
                       )),
-                  const AppDivider(
-                    padding: 0.0,
-                  ),
+                  const AppDivider(padding: EdgeInsets.only(bottom: 16),),
                   Center(
                     child: Obx(
                       () => ElevatedButton(
@@ -256,12 +226,12 @@ class ProfileView extends GetView<ProfileController> {
                                   }
                                 : null,
                         child: Text(
-                          controller.from.value == Routes.LOGIN
+                          controller.from.value == Routes.login
                               ? 'Save'
                               : controller.changed.value
                                   ? 'Update & Continue'
                                   : 'Save',
-                          style: TextStyle(fontWeight: FontWeight.w600),
+                          style: const TextStyle(fontWeight: FontWeight.w600),
                         ),
                       ),
                     ),
@@ -273,68 +243,71 @@ class ProfileView extends GetView<ProfileController> {
         ));
   }
 
-  BottomSheetView(BuildContext context) {
+  bottomSheetView(BuildContext context) {
     showModalBottomSheet(
+        useRootNavigator: true,
         backgroundColor: Colors.transparent,
         context: context,
         builder: (builder) {
-          return SizedBox(
-            child: Card(
-              shape: const RoundedRectangleBorder(
-                  borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(30),
-                      topRight: Radius.circular(30))),
-              child: Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 10, vertical: 20),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    // const Text("Options"),
-                    TextButton(
-                        onPressed: () async {
-                          Get.back();
-                          final XFile? photo = await _picker.pickImage(
-                              source: ImageSource.camera);
-                          controller.Camera(photo);
-                        },
-                        child: const Text("Take Photo",
-                            style: TextStyle(color: texthintcolor))),
-                    TextButton(
-                        onPressed: () {
-                          Get.back();
-                          controller.ImagePicker(context);
-                        },
-                        child: const Text("Choose from Gallery",
-                            style: TextStyle(color: texthintcolor))),
-                    controller.userImgUrl.value.isNotEmpty
-                        ? TextButton(
-                            onPressed: () {
-                              Get.back();
-                              Helper.showAlert(
-                                  message:
-                                      "Are you sure want to remove the photo?",
-                                  actions: [
-                                    TextButton(
-                                        onPressed: () {
-                                          Get.back();
-                                        },
-                                        child: const Text("CANCEL")),
-                                    TextButton(
-                                        onPressed: () {
-                                          Get.back();
-                                          controller.remomveProfileImage();
-                                        },
-                                        child: const Text("REMOVE"))
-                                  ]);
-                            },
-                            child: const Text(
-                              "Remove Profile Image",
-                              style: TextStyle(color: texthintcolor),
-                            ))
-                        : const SizedBox(),
-                  ],
+          return SafeArea(
+            child: SizedBox(
+              child: Card(
+                shape: const RoundedRectangleBorder(
+                    borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(30),
+                        topRight: Radius.circular(30))),
+                child: Padding(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 10, vertical: 20),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      // const Text("Options"),
+                      TextButton(
+                          onPressed: () async {
+                            Get.back();
+                            final XFile? photo = await _picker.pickImage(
+                                source: ImageSource.camera);
+                            controller.camera(photo);
+                          },
+                          child: const Text("Take Photo",
+                              style: TextStyle(color: textHintColor))),
+                      TextButton(
+                          onPressed: () {
+                            Get.back();
+                            controller.imagePicker(context);
+                          },
+                          child: const Text("Choose from Gallery",
+                              style: TextStyle(color: textHintColor))),
+                      controller.userImgUrl.value.isNotEmpty
+                          ? TextButton(
+                              onPressed: () {
+                                Get.back();
+                                Helper.showAlert(
+                                    message:
+                                        "Are you sure want to remove the photo?",
+                                    actions: [
+                                      TextButton(
+                                          onPressed: () {
+                                            Get.back();
+                                          },
+                                          child: const Text("CANCEL")),
+                                      TextButton(
+                                          onPressed: () {
+                                            Get.back();
+                                            controller.removeProfileImage();
+                                          },
+                                          child: const Text("REMOVE"))
+                                    ]);
+                              },
+                              child: const Text(
+                                "Remove Profile Image",
+                                style: TextStyle(color: textHintColor),
+                              ))
+                          : const SizedBox(),
+                    ],
+                  ),
                 ),
               ),
             ),

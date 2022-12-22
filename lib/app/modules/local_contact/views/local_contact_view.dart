@@ -22,13 +22,13 @@ class LocalContactView extends GetView<LocalContactController> {
             decoration: const InputDecoration(
                 hintText: "Search", border: InputBorder.none),
           )
-              : Text('Contacts'),
+              : const Text('Contacts'),
           actions: [
             controller.search.value
                 ? const SizedBox()
                 : IconButton(
               icon: SvgPicture.asset(
-                searchicon,
+                searchIcon,
                 width: 18,
                 height: 18,
                 fit: BoxFit.contain,
@@ -43,7 +43,7 @@ class LocalContactView extends GetView<LocalContactController> {
             ),
           ],
         ),
-        body: Container(
+        body: SafeArea(
           child: Obx(() =>
           controller.contactList.isEmpty
               ? const Center(child: CircularProgressIndicator())
@@ -55,13 +55,9 @@ class LocalContactView extends GetView<LocalContactController> {
 
   contactListView() {
     return Obx(() {
-      return controller.searchList.length > 0 ? ListView.builder(
+      return controller.searchList.isNotEmpty ? ListView.builder(
           itemCount: controller.searchList.length,
-          shrinkWrap: true,
-          // reverse: true,
-          // controller: controller.scrollController,
           itemBuilder: (context, index) {
-            // int reversedIndex = chatList.length - 1 - index;
             return InkWell(
               onTap: (){
                 controller.shareContact(controller.searchList.elementAt(index).phones,controller.searchList
@@ -77,7 +73,7 @@ class LocalContactView extends GetView<LocalContactController> {
                           .elementAt(index)
                           .displayName!,
                     ),
-                    SizedBox(width: 10,),
+                    const SizedBox(width: 10,),
                     Text(controller.searchList
                         .elementAt(index)
                         .displayName!),
@@ -88,28 +84,21 @@ class LocalContactView extends GetView<LocalContactController> {
           }
       ) :  ListView.builder(
           itemCount: controller.contactList.length,
-          shrinkWrap: true,
-          // reverse: true,
-          // controller: controller.scrollController,
           itemBuilder: (context, index) {
-            // int reversedIndex = chatList.length - 1 - index;
+            var item = controller.contactList.elementAt(index);
             return InkWell(
               onTap: (){
-                controller.shareContact(controller.contactList.elementAt(index).phones, controller.contactList.elementAt(index).displayName!);
+                controller.shareContact(controller.contactList.elementAt(index).phones, controller.name(controller.contactList.elementAt(index)));
               },
               child: Container(
                 padding: const EdgeInsets.all(20),
                 child: Row(
                   children: [
                     ProfileTextImage(
-                      text: controller.contactList
-                          .elementAt(index)
-                          .displayName!,
+                      text: controller.name(item),
                     ),
-                    SizedBox(width: 10,),
-                    Text(controller.contactList
-                        .elementAt(index)
-                        .displayName!),
+                    const SizedBox(width: 10,),
+                    Text(controller.name(item)),
                   ],
                 ),
               ),
