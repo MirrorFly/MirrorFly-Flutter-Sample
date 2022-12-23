@@ -1160,70 +1160,92 @@ class ChatController extends GetxController
 
   searchInit() {
     lastPosition = (-1).obs;
+    j =-1;
     searchedPrev = "";
     searchedNxt = "";
     filteredPosition.clear();
     searchedText.clear();
   }
 
+  var j =-1;
   scrollUp() {
+    var visiblePos = findLastVisibleItemPosition();
+    //_scrollToPosition(getPreviousPosition(visiblePos));
     if (searchedPrev != (searchedText.text.toString())) {
-      var pre = getPreviousPosition(findLastVisibleItemPosition());
-      lastPosition.value = pre;
+      j = getPreviousPosition(visiblePos);
+      //lastPosition.value = pre;
       searchedPrev = searchedText.text;
+      searchedNxt = searchedText.text;
     } else if (filteredPosition.isNotEmpty) {
-      lastPosition.value = max(lastPosition.value - 1, (-1));
+      j = max(j-1, -1);
+      //lastPosition.value = max(lastPosition.value - 1, (-1));
     } else {
-      lastPosition.value = -1;
+      j = -1;
+      //lastPosition.value = -1;
     }
-    if (lastPosition.value > -1 &&
+    if(j>-1 && j<filteredPosition.length){
+      _scrollToPosition(j);
+    }
+    /*if (lastPosition.value > -1 &&
         lastPosition.value <= filteredPosition.length) {
       var po = filteredPosition;
       _scrollToPosition(po[lastPosition.value] + 1);
     } else {
       toToast("No Results Found");
       searchedNxt = "";
-    }
+    }*/
   }
 
   scrollDown() {
+    var visiblePos = findLastVisibleItemPosition();
+    _scrollToPosition(getNextPosition(visiblePos));
     if (searchedNxt != searchedText.text.toString()) {
-      var nex = getNextPosition(findLastVisibleItemPosition());
-      lastPosition.value = nex;
+      j = getNextPosition(findLastVisibleItemPosition());
+      //lastPosition.value = nex;
       searchedNxt = searchedText.text;
+      searchedPrev = searchedText.text;
     } else if (filteredPosition.isNotEmpty) {
-      lastPosition.value = min(lastPosition.value - 1, filteredPosition.length);
+      j = min(j + 1, filteredPosition.length);
+      //lastPosition.value = min(j + 1, filteredPosition.length);
     } else {
-      lastPosition.value = -1;
+      j=-1;
+      //lastPosition.value = -1;
     }
-    if (lastPosition.value > -1 &&
+    if(j>-1 && j<filteredPosition.length){
+      _scrollToPosition(j);
+    }
+   /* if (lastPosition.value > -1 &&
         lastPosition.value <= filteredPosition.length) {
       var po = filteredPosition.reversed.toList();
       _scrollToPosition(po[lastPosition.value] + 1);
     } else {
       toToast("No Results Found");
       searchedPrev = "";
-    }
+    }*/
   }
 
   var color = Colors.transparent.obs;
 
   _scrollToPosition(int position) {
-    var currentPosition = (chatList.length - (position));
-    chatList[chatList.length - position].isSelected = true;
-    searchScrollController.jumpTo(index: currentPosition);
-    Future.delayed(const Duration(milliseconds: 800), () {
-      currentPosition = (chatList.length - position);
-      chatList[chatList.length - position].isSelected = false;
-      chatList.refresh();
-    });
+    if(!position.isNegative) {
+      var currentPosition = filteredPosition[position]; //(chatList.length - (position));
+      chatList[currentPosition].isSelected = true;
+      searchScrollController.jumpTo(index: currentPosition);
+      Future.delayed(const Duration(milliseconds: 800), () {
+        currentPosition = (currentPosition);
+        chatList[currentPosition].isSelected = false;
+        chatList.refresh();
+      });
+    }else{
+      toToast("No Results Found");
+    }
   }
 
   int getPreviousPosition(int visiblePos) {
     for (var i = 0; i < filteredPosition.length; i++) {
       var po = filteredPosition.reversed.toList();
-      if (visiblePos > po[i]) {
-        return filteredPosition.indexOf(po[i]);
+      if (visiblePos > po.toList()[i]) {
+        return filteredPosition.indexOf(po.toList()[i]);
       }
     }
     return -1;
@@ -1245,9 +1267,9 @@ class ChatController extends GetxController
     var r = itemPositionsListener.itemPositions.value
         .where((ItemPosition position) => position.itemTrailingEdge < 1)
         .reduce((ItemPosition min, ItemPosition position) =>
-    position.itemTrailingEdge < min.itemTrailingEdge ? position : min)
+    position.itemTrailingEdge > min.itemTrailingEdge ? position : min)
         .index;
-    return chatList.length - r;
+    return r<chatList.length ? r+1 : r;
   }
 
   exportChat() async {
