@@ -141,7 +141,7 @@ class ContactChatMessage {
   factory ContactChatMessage.fromJson(Map<String, dynamic> json) => ContactChatMessage(
     contactName: json["contactName"],
     contactPhoneNumbers: List<String>.from(json["contactPhoneNumbers"].map((x) => x)),
-    isChatAppUser: List<bool>.from(json["isChatAppUser"].map((x) => x)),
+    isChatAppUser: Platform.isAndroid ? List<bool>.from(json["isChatAppUser"].map((x) => x)) : List<bool>.from(json["isChatUser"].map((x) => x)),
     messageId: json["messageId"],
   );
 

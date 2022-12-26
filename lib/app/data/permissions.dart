@@ -4,6 +4,8 @@ import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
 import 'package:permission_handler/permission_handler.dart';
 
+import 'helper.dart';
+
 class AppPermission {
   AppPermission._();
   /*static Future<bool> getLocationPermission() async{
@@ -11,34 +13,16 @@ class AppPermission {
     mirrorFlyLog(permission.name, permission.index.toString());
     return permission.index==2 || permission.index==3;
   }*/
-  static Future<PermissionStatus> getLocationPermission() async {
-    final permission = await Permission.location.status;
-    if (permission != PermissionStatus.granted ||
-        permission != PermissionStatus.permanentlyDenied) {
-      const newPermission = Permission.location;
-      mirrorflyPermissionDialog(
-          notnowBtn: () {
-            return false;
-          },
-          continueBtn: () async {
-            debugPrint("location continue");
-            newPermission.request();
-          },
-          icon: locationPinPermission,
-          content: Constants.locationPermission);
-      return newPermission.status;
-    } else {
-      return permission;
-    }
-  }
+
+
 
   static Future<PermissionStatus> getContactPermission() async {
     final permission = await Permission.contacts.status;
     if (permission != PermissionStatus.granted &&
         permission != PermissionStatus.permanentlyDenied) {
       const newPermission = Permission.contacts;
-      mirrorflyPermissionDialog(
-          notnowBtn: () {
+      mirrorFlyPermissionDialog(
+          notNowBtn: () {
             return false;
           },
           continueBtn: () async {
@@ -57,8 +41,8 @@ class AppPermission {
     if (permission != PermissionStatus.granted &&
         permission != PermissionStatus.permanentlyDenied) {
       const newPermission = Permission.storage;
-      mirrorflyPermissionDialog(
-          notnowBtn: () {
+      mirrorFlyPermissionDialog(
+          notNowBtn: () {
             return false;
           },
           continueBtn: () async {
@@ -88,8 +72,8 @@ class AppPermission {
     if (permission != PermissionStatus.granted &&
         permission != PermissionStatus.permanentlyDenied) {
       const newPermission = Permission.camera;
-      mirrorflyPermissionDialog(
-          notnowBtn: () {
+      mirrorFlyPermissionDialog(
+          notNowBtn: () {
             return false;
           },
           continueBtn: () async {
@@ -108,8 +92,8 @@ class AppPermission {
     if (permission != PermissionStatus.granted &&
         permission != PermissionStatus.permanentlyDenied) {
       const newPermission = Permission.microphone;
-      mirrorflyPermissionDialog(
-          notnowBtn: () {
+      mirrorFlyPermissionDialog(
+          notNowBtn: () {
             return false;
           },
           continueBtn: () async {
@@ -130,8 +114,8 @@ class AppPermission {
     if (await filePermission.isGranted == false ||
         await camerapermission.isGranted == false ||
         await audioPermission.isGranted == false) {
-      mirrorflyPermissionDialog(
-          notnowBtn: () {
+      mirrorFlyPermissionDialog(
+          notNowBtn: () {
             return false;
           },
           continueBtn: () async {
@@ -161,8 +145,43 @@ class AppPermission {
     return status.isGranted;
   }
 
-  static mirrorflyPermissionDialog(
-      {required Function() notnowBtn,
+  static Future<bool> checkPermission(Permission permission, String permissionIcon, String permissionContent) async {
+    if (await permission.status == PermissionStatus.granted) {
+      debugPrint("Location permission granted opening");
+      return true;
+    }else{
+      var popupValue = await customPermissionDialog(icon: permissionIcon,
+          content: permissionContent);
+      if(popupValue){
+        return AppPermission.requestPermission(Permission.location).then((value) {
+          if(value){
+            return true;
+          }else{
+            return false;
+          }
+        });
+      }else{
+        return false;
+      }
+    }
+  }
+
+  static permissionDeniedDialog({required String content}){
+    Helper.showAlert(
+        message:
+        content,
+        title: "Permission Denied",
+        actions: [
+          TextButton(
+              onPressed: () {
+                Get.back();
+                openAppSettings();
+              },
+              child: const Text("OK")),
+        ]);
+  }
+  static mirrorFlyPermissionDialog(
+      {required Function() notNowBtn,
       required Function() continueBtn,
       required String icon,
       required String content}) {
@@ -188,8 +207,8 @@ class AppPermission {
       actions: [
         TextButton(
             onPressed: () {
-              Get.back();
-              notnowBtn();
+              Get.back(result: "no");
+              notNowBtn();
             },
             child: const Text(
               "NOT NOW",
@@ -197,8 +216,53 @@ class AppPermission {
             )),
         TextButton(
             onPressed: () {
-              Get.back();
+              Get.back(result: "yes");
               continueBtn();
+            },
+            child: const Text(
+              "CONTINUE",
+              style: TextStyle(color: buttonBgColor),
+            ))
+      ],
+    ));
+  }
+
+  static Future<bool> customPermissionDialog(
+      {required String icon,
+      required String content}) async {
+    return await Get.dialog(AlertDialog(
+      contentPadding: EdgeInsets.zero,
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            padding: const EdgeInsets.symmetric(vertical: 35.0),
+            color: buttonBgColor,
+            child: Center(child: SvgPicture.asset(icon)),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Text(
+              content,
+              style: const TextStyle(fontSize: 14, color: textColor),
+            ),
+          )
+        ],
+      ),
+      actions: [
+        TextButton(
+            onPressed: () {
+              Get.back(result: false);
+              // notNowBtn();
+            },
+            child: const Text(
+              "NOT NOW",
+              style: TextStyle(color: buttonBgColor),
+            )),
+        TextButton(
+            onPressed: () {
+              Get.back(result: true);
+              // continueBtn();
             },
             child: const Text(
               "CONTINUE",

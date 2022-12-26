@@ -177,7 +177,7 @@ const String notificationNotWorkingURL ="https://app.mirrorfly.com/notifications
 toToast(String text) {
   Fluttertoast.showToast(
       msg: text,
-      toastLength: Toast.LENGTH_SHORT,
+      toastLength: Toast.LENGTH_LONG,
       gravity: ToastGravity.BOTTOM,
       timeInSecForIosWeb: 1,
       fontSize: 16.0);

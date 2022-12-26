@@ -53,6 +53,7 @@ class ViewAllMediaController extends GetxController {
   getMediaMessages() {
     FlyChat.getMediaMessages(jid).then((value) async {
       if (value != null) {
+        mirrorFlyLog("getMediaMessages", value);
         var data = chatMessageModelFromJson(value);
         if (data.isNotEmpty) {
           _medialist(await getMapGroupedMediaList(data, true));

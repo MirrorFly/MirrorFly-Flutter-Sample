@@ -62,7 +62,7 @@ class Helper {
     Get.dialog(
       AlertDialog(
         title: title!=null ? Text(title) : const Text(""),
-        contentPadding: title!=null ? const EdgeInsets.only(top: 15,right: 25,left: 25,bottom: 15) :
+        contentPadding: title!=null ? const EdgeInsets.only(top: 15,right: 25,left: 25,bottom: 0) :
         const EdgeInsets.only(top: 0,right: 25,left: 25,bottom: 15),
         content: content ?? Text(message),
         contentTextStyle: const TextStyle(color: textHintColor,fontWeight: FontWeight.w500),

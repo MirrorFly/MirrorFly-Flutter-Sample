@@ -161,6 +161,8 @@ class FlyMethodChannel{
                 let UserJid = Utility.getStringFromPreference(key: notificationUserJid)
                 Utility.saveInPreference(key: notificationUserJid, value: "")
                 result(UserJid)
+            case "getMediaMessages":
+                FlySdkMethodCalls.getMediaMessages(call: call, result: result)
             default:
                 result(FlutterMethodNotImplemented)
             }

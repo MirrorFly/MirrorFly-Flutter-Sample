@@ -75,6 +75,7 @@ class ProfileController extends GetxController {
                 userImgUrl.value.isEmpty ? null : userImgUrl.value
         )
             .then((value) {
+              mirrorFlyLog("updateMyProfile", value);
           loading.value = false;
           hideLoader();
           if (value != null) {
@@ -114,6 +115,7 @@ class ProfileController extends GetxController {
     loading.value = true;
     showLoader();
     FlyChat.updateMyProfileImage(path).then((value) {
+      mirrorFlyLog("updateMyProfileImage", value);
       loading.value = false;
       var data = json.decode(value);
       imagePath.value = Constants.emptyString;
@@ -124,6 +126,7 @@ class ProfileController extends GetxController {
         save();
       }
     }).catchError((onError) {
+      debugPrint("Profile Update on error");
       loading.value = false;
       hideLoader();
     });
@@ -166,7 +169,10 @@ class ProfileController extends GetxController {
         if (data.status != null && data.status!) {
           if (data.data != null) {
             profileName.text = data.data!.name ?? "";
-            profileMobile.text = data.data!.mobileNumber ?? "";
+            if (from.value != Routes.login) {
+              profileMobile.text = data.data!.mobileNumber ?? "";
+            }
+
             profileEmail.text = data.data!.email ?? "";
             profileStatus.value = data.data!.status.checkNull().isNotEmpty ? data.data!.status.checkNull() : "I am in Mirror Fly";
             userImgUrl.value =
@@ -177,9 +183,11 @@ class ProfileController extends GetxController {
           }
         } else {
           debugPrint("Unable to load Profile data");
+          toToast("Unable to Connect to Server. Please login Again");
         }
       }).catchError((onError) {
         loading.value = false;
+        toToast("Unable to load profile data, please login again");
       });
     }
   }

@@ -416,12 +416,15 @@ import Photos
         
         FlyMessenger.sendContactMessage(toJid: userJid, contactName: contactName, contactNumbers: contactList, replyMessageId: replyMessageId){ isSuccess,error,message  in
             if isSuccess {
-                print("CAPTURE_RESPONSE")
-                print("sendContactMessage")
-                dump(message)
-                print(message)
-                print(JSONSerializer.toJson(message as Any))
-                result(JSONSerializer.toJson(message as Any))
+                
+                var contactMessageResponse = JSONSerializer.toJson(message as Any)
+                
+                contactMessageResponse = contactMessageResponse.replacingOccurrences(of: "{\"some\":", with: "")
+                contactMessageResponse = contactMessageResponse.replacingOccurrences(of: "}}", with: "}")
+
+                print("sendContactMessage \(contactMessageResponse)")
+                
+                result(contactMessageResponse)
             
             }
         }
@@ -1036,6 +1039,23 @@ import Photos
         }
                
     }
+    static func getMediaMessages(call: FlutterMethodCall, result: @escaping FlutterResult){
+        let args = call.arguments as! Dictionary<String, Any>
+        
+        let userJid = args["jid"] as? String ?? ""
+    
+        var mediaMessages : [ChatMessage] = FlyMessenger.getMediaMessagesOf(jid: userJid)
+        
+        print("mediaMessages---> \(mediaMessages)")
+        
+        var mediaMsgJson = JSONSerializer.toJson(mediaMessages)
+        
+        print(mediaMsgJson)
+        
+       result(mediaMsgJson)
+               
+    }
+    
     static func setMyProfileStatus(call: FlutterMethodCall, result: @escaping FlutterResult){
         let args = call.arguments as! Dictionary<String, Any>
         

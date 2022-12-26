@@ -1,0 +1,11 @@
+framework module FlyDatabase {
+  umbrella header "FlyDatabase.h"
+
+  export *
+  module * { export * }
+}
+
+module FlyDatabase.Swift {
+  header "FlyDatabase-Swift.h"
+  requires objc
+}
