@@ -172,7 +172,7 @@ dependencies {
 
     //For lifecycle listener
     implementation 'android.arch.lifecycle:extensions:1.1.1'
-    annotationProcessor 'android.arch.lifecycle:compiler:1.1.1'
+    kapt 'android.arch.lifecycle:compiler:1.1.1'
 
     //For GreenDao
     implementation 'de.greenrobot:greendao:2.1.0'
