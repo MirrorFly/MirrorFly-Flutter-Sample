@@ -1257,8 +1257,9 @@ class ChatController extends GetxController
     for (var i = 0; i < filteredPosition.length; i++) {
       var po = filteredPosition.reversed.toList();
       if (visiblePos > po.toList()[i]) {
-        return filteredPosition.indexOf(po.toList()[i]);
+        break;
       }
+      return filteredPosition.indexOf(po.toList()[i]);
     }
     return -1;
   }
@@ -1266,8 +1267,9 @@ class ChatController extends GetxController
   int getNextPosition(int visiblePos) {
     for (var i = 0; i < filteredPosition.length; i++) {
       if (visiblePos <= filteredPosition[i]) {
-        return i;
+        break;
       }
+      return i;
     }
     return -1;
   }

@@ -11,6 +11,7 @@ import '../../../common/constants.dart';
 import '../../../routes/app_pages.dart';
 import 'package:flysdk/flysdk.dart';
 
+import '../chat_widgets.dart';
 import '../controllers/chat_controller.dart';
 
 class ChatSearchView extends GetView<ChatController> {
@@ -71,64 +72,116 @@ class ChatSearchView extends GetView<ChatController> {
           margin: const EdgeInsets.only(
               left: 14, right: 14, top: 5, bottom: 10),
           child: Align(
-              alignment: (chatList[index].isMessageSentByMe
-                  ? Alignment.bottomRight
-                  : Alignment.bottomLeft),
-              child: Container(
-                constraints: BoxConstraints(maxWidth: controller.screenWidth * 0.6),
-                decoration: BoxDecoration(
-                    borderRadius: chatList[index].isMessageSentByMe
-                        ? const BorderRadius.only(
-                        topLeft: Radius.circular(10),
-                        topRight: Radius.circular(10),
-                        bottomLeft: Radius.circular(10))
-                        : const BorderRadius.only(
-                        topLeft: Radius.circular(10),
-                        topRight: Radius.circular(10),
-                        bottomRight: Radius.circular(10)),
-                    color: (chatList[index].isMessageSentByMe
-                        ? chatSentBgColor
-                        : Colors.white),
-                    border: chatList[index].isMessageSentByMe
-                        ? Border.all(color: chatSentBgColor)
-                        : Border.all(color: Colors.grey)),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    getMessageHeader(chatList[index], context),
-                    getMessageContent(index, context, chatList),
-                  ],
-                ),
+            alignment: (chatList[index].isMessageSentByMe
+                ? Alignment.bottomRight
+                : Alignment.bottomLeft),
+            child: Container(
+              constraints: BoxConstraints(
+                  maxWidth: controller.screenWidth * 0.75),
+              decoration: BoxDecoration(
+                  borderRadius: chatList[index].isMessageSentByMe
+                      ? const BorderRadius.only(
+                      topLeft: Radius.circular(10),
+                      topRight: Radius.circular(10),
+                      bottomLeft: Radius.circular(10))
+                      : const BorderRadius.only(
+                      topLeft: Radius.circular(10),
+                      topRight: Radius.circular(10),
+                      bottomRight: Radius.circular(10)),
+                  color: (chatList[index].isMessageSentByMe
+                      ? chatSentBgColor
+                      : Colors.white),
+                  border: chatList[index].isMessageSentByMe
+                      ? Border.all(color: chatSentBgColor)
+                      : Border.all(color: chatBorderColor)),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  (chatList[index].replyParentChatMessage == null)
+                      ? const SizedBox.shrink()
+                      : ReplyMessageHeader(
+                      chatMessage: chatList[index]),
+                  getMessageContent(index, context, chatList),
+                ],
               ),
             ),
+          ),
         );
       },
     );
   }
 
-  getMessageIndicator(String? messageStatus, bool isSender,
-      String messageType) {
-    // debugPrint("Message Type ==> $messageType");
-    if (isSender) {
-      if (messageStatus == 'A' || messageStatus == 'acknowledge') {
-        return SvgPicture.asset('assets/logos/acknowledged.svg');
-      } else if (messageStatus == 'D' || messageStatus == 'delivered') {
-        return SvgPicture.asset('assets/logos/delivered.svg');
-      } else if (messageStatus == 'S' || messageStatus == 'seen') {
-        return SvgPicture.asset('assets/logos/seen.svg');
-      } else {
-        return const Icon(
-          Icons.access_time_filled,
-          size: 10,
-          color: Colors.red,
-        );
-      }
+  getMessageContent(int index, BuildContext context,
+      List<ChatMessageModel> chatList) {
+    var chatMessage = chatList[index];
+    if (chatList[index].isMessageRecalled) {
+      return RecalledMessageView(
+        chatMessage: chatMessage,
+      );
     } else {
-      return const SizedBox.shrink();
+      if (chatList[index].messageType.toUpperCase() == Constants.mText) {
+        return TextMessageView(chatMessage: chatMessage,
+          search: controller.searchedText.text,);
+      } else if (chatList[index].messageType.toUpperCase() == Constants.mNotification) {
+        return NotificationMessageView(chatMessage: chatMessage);
+      } else if (chatList[index].messageType.toUpperCase() ==
+          Constants.mLocation) {
+        if (chatList[index].locationChatMessage == null) {
+          return const SizedBox.shrink();
+        }
+        return LocationMessageView(chatMessage: chatMessage);
+      } else if (chatList[index].messageType.toUpperCase() == Constants.mContact) {
+        if (chatList[index].contactChatMessage == null) {
+          return const SizedBox.shrink();
+        }
+        return ContactMessageView(chatMessage: chatMessage);
+      } else {
+        if (chatList[index].mediaChatMessage == null) {
+          return const SizedBox.shrink();
+        } else {
+          if (chatList[index].messageType.toUpperCase() == Constants.mImage) {
+            return ImageMessageView(
+                chatMessage: chatMessage,
+                search: controller.searchedText.text,
+                onTap: () {
+                  handleMediaUploadDownload(
+                      chatMessage.mediaChatMessage!.mediaDownloadStatus,
+                      chatList[index]);
+                });
+          } else if (chatList[index].messageType.toUpperCase() == Constants.mVideo) {
+            return VideoMessageView(
+                chatMessage: chatMessage,
+                search: controller.searchedText.text,
+                onTap: () {
+                  handleMediaUploadDownload(
+                      chatMessage.mediaChatMessage!.mediaDownloadStatus,
+                      chatList[index]);
+                });
+          } else if (chatList[index].messageType.toUpperCase() == Constants.mDocument || chatList[index].messageType.toUpperCase() == Constants.mFile) {
+            return DocumentMessageView(
+                chatMessage: chatMessage,
+                onTap: () {
+                  handleMediaUploadDownload(
+                      chatMessage.mediaChatMessage!.mediaDownloadStatus,
+                      chatList[index]);
+                });
+          } else if (chatList[index].messageType.toUpperCase() == Constants.mAudio) {
+            return AudioMessageView(
+                chatMessage: chatMessage,
+                onTap: () {
+                  handleMediaUploadDownload(
+                      chatMessage.mediaChatMessage!.mediaDownloadStatus,
+                      chatList[index]);
+                },
+                currentPos: controller.currentPos.value,
+                maxDuration: controller.maxDuration.value);
+          }
+        }
+      }
     }
   }
 
-  getMessageContent(int index, BuildContext context,
+  /*getMessageContent(int index, BuildContext context,
       List<ChatMessageModel> chatList) {
     // debugPrint(json.encode(chatList[index]));
     if (chatList[index].messageType.toUpperCase() == Constants.mText) {
@@ -649,7 +702,7 @@ class ChatSearchView extends GetView<ChatController> {
                 ],
               ),
             ),
-            /*Positioned(
+            *//*Positioned(
               bottom: 8,
               right: 10,
               child: Row(
@@ -669,12 +722,12 @@ class ChatSearchView extends GetView<ChatController> {
                   ),
                 ],
               ),
-            ),*/
+            ),*//*
           ],
         ),
       );
     }
-  }
+  }*/
 
   Widget getLocationImage(LocationChatMessage? locationChatMessage,
       double width, double height) {
@@ -1025,7 +1078,7 @@ class ChatSearchView extends GetView<ChatController> {
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    spannableText(
+                    chatSpannedText(
                       mediaFileName,controller.searchedText.text,null
                       //maxLines: 2,
                     ),
@@ -1067,282 +1120,5 @@ class ChatSearchView extends GetView<ChatController> {
         ),
       ),
     );
-  }
-
-  Widget replyMessageHeader(BuildContext context) {
-    return Obx(() {
-      if (controller.isReplying.value) {
-        return Container(
-          width: double.infinity,
-          padding: const EdgeInsets.all(6),
-          decoration: const BoxDecoration(
-            color: chatSentBgColor,
-          ),
-          child: Container(
-            decoration: const BoxDecoration(
-              color: chatReplyContainerColor,
-              borderRadius: BorderRadius.all(Radius.circular(5)),
-            ),
-            child: Row(
-              children: [
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.only(top: 15.0, left: 15.0),
-                        child: getReplyTitle(
-                            controller.replyChatMessage.isMessageSentByMe,
-                            controller.replyChatMessage.senderNickName),
-                      ),
-                      const SizedBox(height: 8),
-                      Padding(
-                        padding:
-                        const EdgeInsets.only(bottom: 15.0, left: 15.0),
-                        child: getReplyMessage(
-                            controller.replyChatMessage.messageType,
-                            controller.replyChatMessage.messageTextContent,
-                            controller.replyChatMessage.contactChatMessage
-                                ?.contactName,
-                            controller.replyChatMessage.mediaChatMessage
-                                ?.mediaFileName),
-                      ),
-                    ],
-                  ),
-                ),
-                Stack(
-                  alignment: Alignment.topRight,
-                  children: [
-                    getReplyImageHolder(
-                        context,
-                        controller.replyChatMessage.messageType,
-                        controller
-                            .replyChatMessage.mediaChatMessage?.mediaThumbImage,
-                        controller.replyChatMessage.locationChatMessage,
-                        70),
-                    GestureDetector(
-                      child: const Padding(
-                        padding: EdgeInsets.all(8.0),
-                        child: CircleAvatar(
-                            backgroundColor: Colors.white,
-                            radius: 10,
-                            child: Icon(Icons.close,
-                                size: 15, color: Colors.black)),
-                      ),
-                      onTap: () => controller.cancelReplyMessage(),
-                    ),
-                  ],
-                )
-              ],
-            ),
-          ),
-        );
-      } else {
-        return const SizedBox.shrink();
-      }
-    });
-  }
-
-  getReplyTitle(bool isMessageSentByMe, String senderNickName) {
-    return isMessageSentByMe
-        ? const Text(
-      'You',
-      style: TextStyle(fontWeight: FontWeight.bold),
-    )
-        : Text(senderNickName,
-        style: const TextStyle(fontWeight: FontWeight.bold));
-  }
-
-  getReplyMessage(String messageType, String? messageTextContent,
-      String? contactName, String? mediaFileName) {
-    debugPrint(messageType);
-    switch (messageType) {
-      case Constants.mText:
-        return Row(
-          children: [
-            Helper.forMessageTypeIcon(Constants.mText),
-            //Text(messageTextContent!),
-            spannableText(
-                messageType.toString(),
-                controller.searchedText.text,null)
-          ],
-        );
-      case Constants.mImage:
-        return Row(
-          children: [
-            Helper.forMessageTypeIcon(Constants.mImage),
-            const SizedBox(
-              width: 10,
-            ),
-            Text(Helper.capitalize(Constants.mImage)),
-          ],
-        );
-      case Constants.mVideo:
-        return Row(
-          children: [
-            Helper.forMessageTypeIcon(Constants.mVideo),
-            const SizedBox(
-              width: 10,
-            ),
-            Text(Helper.capitalize(Constants.mVideo)),
-          ],
-        );
-      case Constants.mAudio:
-        return Row(
-          children: [
-            Helper.forMessageTypeIcon(Constants.mAudio),
-            const SizedBox(
-              width: 10,
-            ),
-            // Text(controller.replyChatMessage.mediaChatMessage!.mediaDuration),
-            // SizedBox(
-            //   width: 10,
-            // ),
-            Text(Helper.capitalize(Constants.mAudio)),
-          ],
-        );
-      case Constants.mContact:
-        return Row(
-          children: [
-            Helper.forMessageTypeIcon(Constants.mContact),
-            const SizedBox(
-              width: 10,
-            ),
-            Text("${Helper.capitalize(Constants.mContact)} :"),
-            const SizedBox(
-              width: 5,
-            ),
-            SizedBox(
-                width: 120,
-                child: spannableText(
-                  contactName!,
-                  controller.searchedText.text,null
-                  //maxLines: 1,
-                  //softWrap: false,
-                  //overflow: TextOverflow.ellipsis,
-                )),
-          ],
-        );
-      case Constants.mLocation:
-        return Row(
-          children: [
-            Helper.forMessageTypeIcon(Constants.mLocation),
-            const SizedBox(
-              width: 10,
-            ),
-            Text(Helper.capitalize(Constants.mLocation)),
-          ],
-        );
-      case Constants.mDocument:
-        return Row(
-          children: [
-            Helper.forMessageTypeIcon(Constants.mDocument),
-            const SizedBox(
-              width: 10,
-            ),
-            spannableText(mediaFileName!,controller.searchedText.text,null),
-          ],
-        );
-      default:
-        return const SizedBox.shrink();
-    }
-  }
-
-  getReplyImageHolder(BuildContext context,
-      String messageType,
-      String? mediaThumbImage,
-      LocationChatMessage? locationChatMessage,
-      double size) {
-    switch (messageType) {
-      case Constants.mImage:
-        return ClipRRect(
-          borderRadius: BorderRadius.circular(5),
-          child: controller.imageFromBase64String(
-              mediaThumbImage!, context, size, size),
-        );
-      case Constants.mLocation:
-        return getLocationImage(locationChatMessage, size, size);
-      case Constants.mVideo:
-        return ClipRRect(
-          borderRadius: BorderRadius.circular(5),
-          child: controller.imageFromBase64String(
-              mediaThumbImage!, context, size, size),
-        );
-      default:
-        return SizedBox(
-          height: size,
-        );
-    }
-  }
-
-  getMessageHeader(ChatMessageModel chatList, BuildContext context) {
-    if (chatList.replyParentChatMessage == null) {
-      return const SizedBox.shrink();
-    } else {
-      return Container(
-        padding: const EdgeInsets.fromLTRB(12, 0, 0, 0),
-        margin: const EdgeInsets.all(2),
-        decoration: BoxDecoration(
-          borderRadius: const BorderRadius.all(Radius.circular(10)),
-          color: chatList.isMessageSentByMe
-              ? chatReplyContainerColor
-              : chatReplySenderColor,
-        ),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  getReplyTitle(
-                      chatList.replyParentChatMessage!.isMessageSentByMe,
-                      chatList.replyParentChatMessage!.senderUserName),
-                  const SizedBox(height: 5),
-                  getReplyMessage(
-                      chatList.replyParentChatMessage!.messageType,
-                      chatList.replyParentChatMessage?.messageTextContent,
-                      chatList.replyParentChatMessage?.contactChatMessage
-                          ?.contactName,
-                      chatList.replyParentChatMessage?.mediaChatMessage
-                          ?.mediaFileName),
-                ],
-              ),
-            ),
-            getReplyImageHolder(
-                context,
-                chatList.replyParentChatMessage!.messageType,
-                chatList
-                    .replyParentChatMessage?.mediaChatMessage?.mediaThumbImage,
-                chatList.replyParentChatMessage?.locationChatMessage,
-                55),
-          ],
-        ),
-      );
-    }
-  }
-
-  Widget spannableText(String text, String spannableText,TextStyle? style) {
-    var startIndex = text.toLowerCase().startsWith(spannableText.toLowerCase()) ? text.toLowerCase().indexOf(spannableText.toLowerCase()) : -1;
-    var endIndex = startIndex + spannableText.length;
-    if (startIndex != -1 && endIndex != -1) {
-      var startText = text.substring(0, startIndex);
-      var colorText = text.substring(startIndex, endIndex);
-      var endText = text.substring(endIndex, text.length);
-      return Text.rich(TextSpan(
-          text: startText,
-          children: [
-            TextSpan(text: colorText, style: const TextStyle(color: Colors.orange)),
-            TextSpan(
-                text: endText,
-                style: style)
-          ],
-          style: style),maxLines: 1,overflow: TextOverflow.ellipsis,);
-    } else {
-      return Text(
-          text,
-          style: style, maxLines: 1,overflow: TextOverflow.ellipsis
-      );
-    }
   }
 }
