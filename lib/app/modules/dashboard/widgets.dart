@@ -123,12 +123,12 @@ class RecentChatItem extends StatelessWidget {
                                         item.isLastMessageRecalledByUser! ? const SizedBox() : forMessageTypeIcon(item.lastMessageType!),
                                         SizedBox(width: item.isLastMessageRecalledByUser! ? 0.0 : forMessageTypeString(item.lastMessageType!)!=null ? 3.0 : 0.0,),
                                         Expanded(
-                                          child: Text(
+                                          child: spanTxt.isEmpty ? Text(
                                             item.isLastMessageRecalledByUser! ? setRecalledMessageText(item.isLastMessageSentByMe!) : forMessageTypeString(item.lastMessageType!) ?? item.lastMessageContent.toString(),
                                             style: Theme.of(context).textTheme.titleSmall,
                                             maxLines: 1,
                                             overflow: TextOverflow.ellipsis,
-                                          ),
+                                          ) : spannableText(item.isLastMessageRecalledByUser! ? setRecalledMessageText(item.isLastMessageSentByMe!) : forMessageTypeString(item.lastMessageType!) ?? item.lastMessageContent.toString(),spanTxt,Theme.of(context).textTheme.titleSmall),
                                         ),
                                       ],
                                     ) : FutureBuilder(
@@ -368,9 +368,9 @@ Widget spannableText(String text, String spannableText,TextStyle? style) {
     var startText = text.substring(0, startIndex);
     var colorText = text.substring(startIndex, endIndex);
     var endText = text.substring(endIndex, text.length);
-    mirrorFlyLog("startText", startText);
-    mirrorFlyLog("endText", endText);
-    mirrorFlyLog("colorText", colorText);
+    //mirrorFlyLog("startText", startText);
+    //mirrorFlyLog("endText", endText);
+    //mirrorFlyLog("colorText", colorText);
     return Text.rich(TextSpan(
         text: startText,
         children: [

@@ -24,7 +24,6 @@ class ForwardChatView extends GetView<ForwardChatController> {
           ),
           title: !controller.isSearchVisible
               ? TextField(
-            focusNode: controller.focusnode,
                   onChanged: (text) {
                     controller.onSearch(text);
                   },

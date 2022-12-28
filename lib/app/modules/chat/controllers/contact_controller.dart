@@ -71,18 +71,22 @@ class ContactController extends GetxController {
     }
   }
 
+  String lastInputValue ="";
   searchListener(String text) async {
     debugPrint("searching .. ");
-    if (text.isEmpty) {
-      _searchText = "";
-      pageNum = 1;
+    if (lastInputValue != text) {
+      lastInputValue = text;
+      if (text.isEmpty) {
+        _searchText = "";
+        pageNum = 1;
+      }
+      else {
+        isPageLoading(true);
+        _searchText = text;
+        pageNum = 1;
+      }
+      fetchUsers(true);
     }
-    else {
-      isPageLoading(true);
-      _searchText = text;
-      pageNum = 1;
-    }
-    fetchUsers(true);
   }
 
   backFromSearch() {

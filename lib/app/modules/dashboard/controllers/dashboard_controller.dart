@@ -388,7 +388,7 @@ class DashboardController extends GetxController with GetTickerProviderStateMixi
       delete(Constants.typeGroupChat!= item.getChatType());
       if(item.getChatType() == Constants.typeGroupChat){
         mirrorFlyLog("isGroup", item.isGroup!.toString());
-        FlyChat.isMemberOfGroup(item.jid.checkNull(),null).then((value) => delete(value));
+        FlyChat.isMemberOfGroup(item.jid.checkNull(),null).then((value) => delete(!value!));
       }
     }else {
       info(false);

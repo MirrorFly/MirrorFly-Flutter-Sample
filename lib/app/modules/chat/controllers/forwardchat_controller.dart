@@ -38,8 +38,6 @@ class ForwardChatController extends GetxController {
 
   var selectedJids = <String>[].obs;
   var selectedNames = <String>[].obs;
-  var focusnode = FocusNode();
-  var focus =true;
 
   var forwardMessageIds =<String>[];
   @override
@@ -52,11 +50,6 @@ class ForwardChatController extends GetxController {
     getAllgroups();
     getUsers();
 
-    focusnode.addListener(() {
-      if(!focusnode.hasFocus){
-        focus=false;
-      }
-    });
     _recentChats.bindStream(_recentChats.stream);
     ever(_recentChats, (callback){
       removeGroupItem();
@@ -231,8 +224,10 @@ class ForwardChatController extends GetxController {
   }
 
   final deBouncer = DeBouncer(milliseconds: 700);
+  String lastInputValue = "";
   void onSearch(String search){
-    if(focus) {
+    if (lastInputValue != search) {
+      lastInputValue = search;
       if (searchQuery.text
           .toString()
           .trim()

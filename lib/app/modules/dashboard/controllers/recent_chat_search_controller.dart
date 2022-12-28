@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:flysdk/flysdk.dart';
 
 import '../../../common/constants.dart';
+import '../../../common/de_bouncer.dart';
 import '../../../routes/app_pages.dart';
 
 
@@ -24,9 +25,28 @@ class RecentChatSearchController extends GetxController {
 
   TextEditingController search = TextEditingController();
 
+  final _mainuserList = <Profile>[];
+  var userlistScrollController = ScrollController();
+  var scrollable =true.obs;
+  var isPageLoading =false.obs;
+  final _userList = <Profile>[].obs;
+  set userList(List<Profile> value) => _userList.value = value;
+  List<Profile> get userList => _userList.value;
+
+  var focusNode = FocusNode();
+  var focus =true;
+
+
   @override
   void onInit() {
     super.onInit();
+    focusNode.addListener(() {
+      mirrorFlyLog("focus", focusNode.hasFocus.toString());
+      if(!focusNode.hasFocus){
+        focus=false;
+      }
+    });
+    userlistScrollController.addListener(_scrollListener);
     for (var element in data) {
       mainRecentChatList.add(element.obs);
       frmRecentChatList.add(element.obs);
@@ -52,7 +72,7 @@ class RecentChatSearchController extends GetxController {
             jidList.add(recent.jid.toString());
           //}
         }
-        fetchContactList(jidList);
+        //fetchContactList(jidList);
       chatCount(jidList.length);
       //});
     });
@@ -111,14 +131,25 @@ class RecentChatSearchController extends GetxController {
     });*/
   }
 
-  onChange(){
-    frmRecentChatList.clear();
-    recentSearchList.clear();
-    if(search.text.isNotEmpty) {
-      fetchRecentChatList();
-    }else{
-      mirrorFlyLog("empty", "empty");
-      frmRecentChatList.addAll(mainRecentChatList);
+  final deBouncer = DeBouncer(milliseconds: 700);
+  String lastInputValue = "";
+  onChange(String inputValue){
+    if (lastInputValue != inputValue) {
+      lastInputValue = inputValue;
+      searchLoading(true);
+      frmRecentChatList.clear();
+      recentSearchList.clear();
+      if (search.text.isNotEmpty) {
+        deBouncer.run(() {
+          pageNum = 1;
+          fetchRecentChatList();
+          fetchMessageList();
+          filterUserlist();
+        });
+      } else {
+        mirrorFlyLog("empty", "empty");
+        frmRecentChatList.addAll(mainRecentChatList);
+      }
     }
     update();
   }
@@ -151,7 +182,7 @@ class RecentChatSearchController extends GetxController {
       filteredRecentChatList(recentChatList);
       update(filteredRecentChatList);
     });
-    fetchMessageList();
+    //fetchMessageList();
   }
 
   fetchMessageList() async{
@@ -261,4 +292,65 @@ class RecentChatSearchController extends GetxController {
     }
 
   }*/
+
+  _scrollListener() {
+    if (userlistScrollController.hasClients) {
+      if (userlistScrollController.position.extentAfter <= 0 &&
+          isPageLoading.value == false) {
+        if (scrollable.value && !searching) {
+          //isPageLoading.value = true;
+          mirrorFlyLog("scroll", "end");
+          pageNum++;
+          getUsers();
+        }
+      }
+    }
+  }
+
+  var pageNum = 1;
+  var searching = false;
+  var searchLoading = false.obs;
+  void filterUserlist(){
+    searching=true;
+    FlyChat.getUserList(pageNum, search.text.toString()).then((value){
+      if(value!=null){
+        var list = userListFromJson(value);
+        if(list.data !=null) {
+          scrollable(list.data!.length==20);
+          _userList(list.data);
+        }else{
+          scrollable(false);
+        }
+      }
+      searching=false;
+      searchLoading(false);
+    }).catchError((error) {
+      debugPrint("issue===> $error");
+      searching=false;
+      searchLoading(false);
+    });
+  }
+
+  void getUsers() {
+    searching=true;
+    FlyChat.getUserList(pageNum, search.text.toString()).then((value){
+      if(value!=null){
+        var list = userListFromJson(value);
+        if(list.data !=null) {
+          if(_mainuserList.isEmpty){
+            _mainuserList.addAll(list.data!);
+          }
+          scrollable(list.data!.length==20);
+          _userList.value.addAll(list.data!);
+          _userList.refresh();
+        }else{
+          scrollable(false);
+        }
+      }
+      searching=false;
+    }).catchError((error) {
+      debugPrint("issue===> $error");
+      searching=false;
+    });
+  }
 }
