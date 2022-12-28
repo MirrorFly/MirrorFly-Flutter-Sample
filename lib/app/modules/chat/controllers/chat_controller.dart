@@ -166,10 +166,7 @@ class ChatController extends GetxController
 
     filteredPosition.bindStream(filteredPosition.stream);
     ever(filteredPosition, (callback) {
-
       lastPosition(callback.length);
-      debugPrint("filter position==> ${filteredPosition.join(",")}");
-      debugPrint("find last position==> ${findLastVisibleItemPosition()}");
       //chatList.refresh();
     });
 
@@ -1184,29 +1181,24 @@ class ChatController extends GetxController
 
   var j =-1;
   scrollUp() {
-    debugPrint("SCROLL UP");
     var visiblePos = findLastVisibleItemPosition();
-    debugPrint("Visible POS===> $visiblePos");
     //_scrollToPosition(getPreviousPosition(visiblePos));
     if (searchedPrev != (searchedText.text.toString())) {
-
       j = getPreviousPosition(visiblePos);
-      debugPrint("if loop ===> $j");
       //lastPosition.value = pre;
       searchedPrev = searchedText.text;
       searchedNxt = searchedText.text;
     } else if (filteredPosition.isNotEmpty) {
       j = max(j-1, -1);
-      debugPrint("else if loop ===> $j");
       //lastPosition.value = max(lastPosition.value - 1, (-1));
     } else {
       j = -1;
-      debugPrint("else loop ===> $j");
       //lastPosition.value = -1;
     }
     if(j>-1 && j<filteredPosition.length){
-      debugPrint("Item found at $j");
       _scrollToPosition(j);
+    }else{
+      toToast("No Results Found");
     }
     /*if (lastPosition.value > -1 &&
         lastPosition.value <= filteredPosition.length) {
@@ -1219,28 +1211,23 @@ class ChatController extends GetxController
   }
 
   scrollDown() {
-    debugPrint("SCROLL DOWN");
     var visiblePos = findLastVisibleItemPosition();
-    debugPrint("visible pos scroll down ==> $visiblePos");
-    _scrollToPosition(getNextPosition(visiblePos));
     if (searchedNxt != searchedText.text.toString()) {
-      j = getNextPosition(findLastVisibleItemPosition());
-      debugPrint("if loop scroll down===> $j");
+      j = getNextPosition(visiblePos);
       //lastPosition.value = nex;
       searchedNxt = searchedText.text;
       searchedPrev = searchedText.text;
     } else if (filteredPosition.isNotEmpty) {
       j = min(j + 1, filteredPosition.length);
-      debugPrint("if loop scroll down===> $j");
       //lastPosition.value = min(j + 1, filteredPosition.length);
     } else {
       j=-1;
-      debugPrint("if loop scroll down===> $j");
       //lastPosition.value = -1;
     }
     if(j>-1 && j<filteredPosition.length){
-      debugPrint("Item found at $j");
       _scrollToPosition(j);
+    }else{
+      toToast("No Results Found");
     }
    /* if (lastPosition.value > -1 &&
         lastPosition.value <= filteredPosition.length) {
@@ -1255,9 +1242,7 @@ class ChatController extends GetxController
   var color = Colors.transparent.obs;
 
   _scrollToPosition(int position) {
-    debugPrint("position-->$position");
     if(!position.isNegative) {
-      debugPrint("Item found ===> $position");
       var currentPosition = filteredPosition[position]; //(chatList.length - (position));
       chatList[currentPosition].isSelected = true;
       searchScrollController.jumpTo(index: currentPosition);
@@ -1275,8 +1260,9 @@ class ChatController extends GetxController
     for (var i = 0; i < filteredPosition.length; i++) {
       var po = filteredPosition.reversed.toList();
       if (visiblePos > po.toList()[i]) {
-        return filteredPosition.indexOf(po.toList()[i]);
+        break;
       }
+      return filteredPosition.indexOf(po.toList()[i]);
     }
     return -1;
   }
@@ -1284,8 +1270,9 @@ class ChatController extends GetxController
   int getNextPosition(int visiblePos) {
     for (var i = 0; i < filteredPosition.length; i++) {
       if (visiblePos <= filteredPosition[i]) {
-        return i;
+        break;
       }
+      return i;
     }
     return -1;
   }
