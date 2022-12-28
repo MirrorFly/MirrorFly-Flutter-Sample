@@ -1051,6 +1051,7 @@ class TextMessageView extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
+          //saravanakumar search code
           // Flexible(
           //   child: chatSpannedText(
           //     chatMessage.messageTextContent ?? "",
@@ -1058,6 +1059,7 @@ class TextMessageView extends StatelessWidget {
           //     const TextStyle(fontSize: 14),
           //   ),
           // ),
+          //Mani Vendhan Text Hyperlink code
           Flexible(
             child: textMessageSpannableText(chatMessage.messageTextContent ?? ""),
           ),
