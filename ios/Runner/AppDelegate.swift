@@ -498,8 +498,12 @@ extension AppDelegate : MessageEventsDelegate {
         print("Message Received Update--->")
         print(JSONSerializer.toJson(message))
         
+        var messageReceivedJson = JSONSerializer.toJson(message)
+        messageReceivedJson = messageReceivedJson.replacingOccurrences(of: "{\"some\":", with: "")
+        messageReceivedJson = messageReceivedJson.replacingOccurrences(of: "}}", with: "}")
+        
         if(self.messageReceivedStreamHandler?.onMessageReceived != nil){
-            self.messageReceivedStreamHandler?.onMessageReceived?(JSONSerializer.toJson(message))
+            self.messageReceivedStreamHandler?.onMessageReceived?(messageReceivedJson)
 
         }else{
             print("Message Stream Handler is Nil")

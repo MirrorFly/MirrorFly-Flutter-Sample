@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'dart:io';
 
 import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
@@ -590,8 +589,8 @@ class ChatView extends GetView<ChatController> {
 
   getMessageContent(int index, BuildContext context,
       List<ChatMessageModel> chatList) {
-    debugPrint(json.encode(chatList[index]));
-    debugPrint("Message Type===> ${chatList[index].messageType}");
+    // debugPrint(json.encode(chatList[index]));
+    // debugPrint("Message Type===> ${chatList[index].messageType}");
     var chatMessage = chatList[index];
     if (chatList[index].isMessageRecalled) {
       return RecalledMessageView(

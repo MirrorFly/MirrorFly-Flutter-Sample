@@ -56,6 +56,7 @@ class DashboardController extends GetxController with GetTickerProviderStateMixi
     mirrorFlyLog("","recent chats");
     FlyChat.getRecentChatList().then((value) async {
       debugPrint(value);
+      mirrorFlyLog("Recent chat list", value);
       var data = await compute(recentChatFromJson,value.toString());
       recentChats.clear();
       recentChats.addAll(data.data!);
@@ -108,6 +109,7 @@ class DashboardController extends GetxController with GetTickerProviderStateMixi
     if (epochTime == null) return "";
     if (epochTime == 0) return "";
     var convertedTime = epochTime; // / 1000;
+
     //messageDate.time = convertedTime
     var hourTime = manipulateMessageTime(
         context, DateTime.fromMicrosecondsSinceEpoch(convertedTime));
@@ -320,6 +322,8 @@ class DashboardController extends GetxController with GetTickerProviderStateMixi
     delete(true);
     for (var item in selected) {
       var isMember = await FlyChat.isMemberOfGroup(item.jid.checkNull(),null);
+      debugPrint("isMember--> $isMember");
+      debugPrint("isMember--> ${item.getChatType()}");
       if((item.getChatType() == Constants.typeGroupChat) && isMember!){
         delete(false);
         return;
@@ -388,7 +392,9 @@ class DashboardController extends GetxController with GetTickerProviderStateMixi
       delete(Constants.typeGroupChat!= item.getChatType());
       if(item.getChatType() == Constants.typeGroupChat){
         mirrorFlyLog("isGroup", item.isGroup!.toString());
-        FlyChat.isMemberOfGroup(item.jid.checkNull(),null).then((value) => delete(value));
+        FlyChat.isMemberOfGroup(item.jid.checkNull(),null).then((value) {
+          debugPrint("isMemberofGroup --> $value");
+          delete(!value!);});
       }
     }else {
       info(false);

@@ -39,7 +39,7 @@ class ChatSearchView extends GetView<ChatController> {
             controller: controller.searchedText,
             autofocus: true,
             decoration: const InputDecoration(
-                hintText: "Search", border: InputBorder.none),
+                hintText: "Search...", border: InputBorder.none),
           ),
           iconTheme: const IconThemeData(color: iconColor),
           actions: [

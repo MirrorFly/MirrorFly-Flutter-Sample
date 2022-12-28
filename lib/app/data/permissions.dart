@@ -147,13 +147,13 @@ class AppPermission {
 
   static Future<bool> checkPermission(Permission permission, String permissionIcon, String permissionContent) async {
     if (await permission.status == PermissionStatus.granted) {
-      debugPrint("Location permission granted opening");
+      debugPrint("permission granted opening");
       return true;
     }else{
       var popupValue = await customPermissionDialog(icon: permissionIcon,
           content: permissionContent);
       if(popupValue){
-        return AppPermission.requestPermission(Permission.location).then((value) {
+        return AppPermission.requestPermission(permission).then((value) {
           if(value){
             return true;
           }else{

@@ -84,7 +84,7 @@ class ChatMessageModel {
     messageId: json["messageId"],
     messageSentTime: json["messageSentTime"],
     messageStatus: Platform.isAndroid ? json["messageStatus"]["status"] : json["messageStatus"],
-    messageTextContent: json["messageTextContent"],
+    messageTextContent: json["messageTextContent"].toString(),
     messageType: json["messageType"],
     replyParentChatMessage: json["replyParentChatMessage"] == null ? null : ReplyParentChatMessage.fromJson(json["replyParentChatMessage"]),
     senderNickName: json["senderNickName"],

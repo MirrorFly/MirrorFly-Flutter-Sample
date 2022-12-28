@@ -26,7 +26,7 @@ class CountryListView extends GetView<CountryController> {
                   controller: controller.searchQuery,
                   style: const TextStyle(fontSize: 18),
                   decoration: const InputDecoration(
-                      hintText: "Search", border: InputBorder.none),
+                      hintText: "Search...", border: InputBorder.none),
                 )
               : const Text('Select Country'),
           actions: [

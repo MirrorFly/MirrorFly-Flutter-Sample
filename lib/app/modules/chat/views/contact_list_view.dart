@@ -42,7 +42,7 @@ class ContactListView extends GetView<ContactController> {
             controller: controller.searchQuery,
             autofocus: true,
             decoration: const InputDecoration(
-                hintText: "Search", border: InputBorder.none),
+                hintText: "Search...", border: InputBorder.none),
           ): controller.isForward.value
               ? const Text("Forward to...") : controller.isCreateGroup.value
               ? const Text("Add Participants",overflow: TextOverflow.fade,)

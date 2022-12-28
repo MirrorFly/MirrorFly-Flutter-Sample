@@ -27,29 +27,39 @@ class RecentSearchView extends GetView<RecentChatSearchController> {
           controller: controller.search,
           autofocus: true,
           decoration: const InputDecoration(
-              hintText: "Search", border: InputBorder.none),
+              hintText: "Search...", border: InputBorder.none),
         ),
         iconTheme: const IconThemeData(color: iconColor),
       ),
-      body: Obx(() =>
-          ListView.builder(
-          itemCount: controller.frmRecentChatList.isNotEmpty ? controller.frmRecentChatList.length : controller.recentSearchList.length,
-          physics: const AlwaysScrollableScrollPhysics(),
-          itemBuilder: (BuildContext context, int position) {
-            if(controller.frmRecentChatList.isNotEmpty){
-              var item = controller.frmRecentChatList[position];
-              //var image = controller.image path(item.profileImage);
-              return RecentChatItem(item: item.value,onTap: () {
-                controller.toChatPage(item.value.jid.checkNull());
+      body: Obx(() {
+        if(controller.frmRecentChatList.isEmpty && controller.recentSearchList.isEmpty){
+          return const Center(child: Text("No results Found"),);
+        }else {
+          return ListView.builder(
+              itemCount: controller.frmRecentChatList.isNotEmpty ? controller
+                  .frmRecentChatList.length : controller.recentSearchList
+                  .length,
+              physics: const AlwaysScrollableScrollPhysics(),
+              itemBuilder: (BuildContext context, int position) {
+                if (controller.frmRecentChatList.isNotEmpty) {
+                  var item = controller.frmRecentChatList[position];
+                  //var image = controller.image path(item.profileImage);
+                  return RecentChatItem(item: item.value, onTap: () {
+                    controller.toChatPage(item.value.jid.checkNull());
+                  });
+                } else {
+                  mirrorFlyLog("RecentSearch",
+                      controller.recentSearchList[position]
+                          .toJson()
+                          .toString());
+                  return getViewByType(
+                      controller.recentSearchList[position], context,
+                      position) ??
+                      const SizedBox();
+                }
               });
-            }else {
-              mirrorFlyLog("RecentSearch",
-                  controller.recentSearchList[position].toJson().toString());
-              return getViewByType(
-                  controller.recentSearchList[position], context, position) ??
-                  const SizedBox();
-            }
-          }))
+        }
+      }),
     );
   }
 

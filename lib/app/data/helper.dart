@@ -10,6 +10,7 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
 import 'package:flysdk/flysdk.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 
 
@@ -372,9 +373,12 @@ bool equalsWithYesterday(DateTime srcDate, String day) {
 }
 var calendar = DateTime.now();
 String getChatTime(BuildContext context, int? epochTime) {
+  // debugPrint("epochTime--> $epochTime");
   if (epochTime == null) return "";
   if (epochTime == 0) return "";
   var convertedTime = epochTime;
+  // var convertedTime = Platform.isAndroid ? epochTime : epochTime * 1000; // / 1000;
+  // debugPrint("epoch convertedTime---> $convertedTime");
   var hourTime = manipulateMessageTime(
       context, DateTime.fromMicrosecondsSinceEpoch(convertedTime));
   calendar = DateTime.fromMicrosecondsSinceEpoch(convertedTime);
@@ -419,6 +423,64 @@ openDocument(String mediaLocalStoragePath, BuildContext context) async {
     debugPrint("media does not exist");
   }
   // }
+}
+Future<void> launchInBrowser(String url) async {
+  var webUrl = url.replaceAll("http://", "").replaceAll("https://", "");
+  final Uri toLaunch =
+  Uri(scheme: 'https', host: webUrl);
+  if (!await launchUrl(
+    toLaunch,
+    mode: LaunchMode.externalApplication,
+  )) {
+    throw 'Could not launch $url';
+  }
+}
+Future<void> makePhoneCall(String phoneNumber) async {
+  final Uri launchUri = Uri(
+    scheme: 'tel',
+    path: phoneNumber,
+  );
+  // if (await canLaunch(launchUri.toString())) {
+  //   await launch(launchUri.toString());
+  // } else {
+  //   throw 'Could not launch $launchUri';
+  // }
+  // try {
+  //   var cellphone = '7192822224';
+  //   await launch('tel://$cellphone');
+  //
+  // }catch (e){
+  //   throw 'Could not launch $e';
+  // }
+  await launchUrl(launchUri);
+}
+launchCaller(String phoneNumber) async {
+  // var url = "tel:$phoneNumber";
+  // if (await canLaunch(url)) {
+  //   await launch(url);
+  // } else {
+  //   throw 'Could not launch $url';
+  // }
+  canLaunchUrl(Uri(scheme: 'tel', path: phoneNumber)).then((bool result) {
+   debugPrint("success");
+  });
+}
+Future<void> launchEmail(String emailID) async {
+  // String? encodeQueryParameters(Map<String, String> params) {
+  //   return params.entries
+  //       .map((MapEntry<String, String> e) =>
+  //   '${Uri.encodeComponent(e.key)}=${Uri.encodeComponent(e.value)}')
+  //       .join('&');
+  // }
+
+  final Uri emailLaunchUri = Uri(
+    scheme: 'mailto',
+    path: emailID,
+    // query: encodeQueryParameters(<String, String>{
+    //   'subject': 'Example Subject & Symbols are allowed!',
+    // }),
+  );
+  await launchUrl(emailLaunchUri);
 }
 
 class Triple{

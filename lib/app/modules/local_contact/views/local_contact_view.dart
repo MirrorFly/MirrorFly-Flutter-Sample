@@ -20,7 +20,7 @@ class LocalContactView extends GetView<LocalContactController> {
             onChanged: (text) => controller.onSearchTextChanged(text),
             autofocus: true,
             decoration: const InputDecoration(
-                hintText: "Search", border: InputBorder.none),
+                hintText: "Search...", border: InputBorder.none),
           )
               : const Text('Contacts'),
           actions: [

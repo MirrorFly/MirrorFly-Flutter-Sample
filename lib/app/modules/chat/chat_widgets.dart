@@ -11,6 +11,7 @@ import 'package:url_launcher/url_launcher.dart';
 import '../../common/constants.dart';
 import '../../data/helper.dart';
 import '../../routes/app_pages.dart';
+import '../dashboard/widgets.dart';
 
 class ReplyingMessageHeader extends StatelessWidget {
   const ReplyingMessageHeader({Key? key, required this.chatMessage, required this.onCancel}) : super(key: key);
@@ -968,11 +969,14 @@ class TextMessageView extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
+          // Flexible(
+          //   child: Text(
+          //     chatMessage.messageTextContent ?? "",
+          //     style: const TextStyle(fontSize: 14),
+          //   ),
+          // ),
           Flexible(
-            child: Text(
-              chatMessage.messageTextContent ?? "",
-              style: const TextStyle(fontSize: 14),
-            ),
+            child: textMessageSpannableText(chatMessage.messageTextContent ?? ""),
           ),
           const SizedBox(
             width: 10,

@@ -16,7 +16,7 @@ import Photos
     
     
     static func registerUser(call: FlutterMethodCall, result: @escaping FlutterResult){
-
+        
         let args = call.arguments as! Dictionary<String, Any>
         
         let userIdentifier = args["userIdentifier"] as? String ?? nil
@@ -24,50 +24,50 @@ import Photos
         
         let deviceToken = Utility.getStringFromPreference(key: googleToken)
         var voipToken = Utility.getStringFromPreference(key: voipToken)
-
+        
         voipToken = voipToken.isEmpty ? deviceToken : voipToken
         
         if(userIdentifier == nil){
             result(FlutterError(code: "500",
                                 message: "User Name is Empty",
-                                    details: nil))
+                                details: nil))
             return
         }
         
         try! ChatManager.registerApiService(for:  userIdentifier!, deviceToken: deviceToken, voipDeviceToken: voipToken, isExport: false) { isSuccess, flyError, flyData in
-                var data = flyData
-                if isSuccess {
-
-                    print("Register Response")
+            var data = flyData
+            if isSuccess {
                 
-                    let registerResponse = [
-                        "data": data,
-                        "is_new_user": data["newLogin"] as Any,
-                        "message" : "Register Trial API Success"
-                    ] as [String : Any]
-                    
-                    FlyDefaults.isLoggedIn = true
-                    Utility.saveInPreference(key: isLoggedIn, value: true)
-                    FlyDefaults.myXmppPassword = data["password"] as! String
-                    FlyDefaults.myXmppUsername = data["username"] as! String
-                    FlyDefaults.myMobileNumber = userIdentifier!
-                    FlyDefaults.isProfileUpdated = data["isProfileUpdated"] as! Int == 1
-                    
-                    ChatManager.connect()
-                    
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 10.0) {
-                        result(Commons.json(from: registerResponse))
-                     }
-                    
-                    
-                }else{
-                    let error = data.getMessage()
-                    result(FlutterError(code: "500",
-                                        message: error as? String,
-                                            details: nil))
-                    print("#chatSDK \(error)")
+                print("Register Response")
+                
+                let registerResponse = [
+                    "data": data,
+                    "is_new_user": data["newLogin"] as Any,
+                    "message" : "Register Trial API Success"
+                ] as [String : Any]
+                
+                FlyDefaults.isLoggedIn = true
+                Utility.saveInPreference(key: isLoggedIn, value: true)
+                FlyDefaults.myXmppPassword = data["password"] as! String
+                FlyDefaults.myXmppUsername = data["username"] as! String
+                FlyDefaults.myMobileNumber = userIdentifier!
+                FlyDefaults.isProfileUpdated = data["isProfileUpdated"] as! Int == 1
+                
+                ChatManager.connect()
+                
+                DispatchQueue.main.asyncAfter(deadline: .now() + 10.0) {
+                    result(Commons.json(from: registerResponse))
                 }
+                
+                
+            }else{
+                let error = data.getMessage()
+                result(FlutterError(code: "500",
+                                    message: error as? String,
+                                    details: nil))
+                print("#chatSDK \(error)")
             }
+        }
     }
     
     static func refreshAndGetAuthToken(call: FlutterMethodCall, result: @escaping FlutterResult){
@@ -80,7 +80,7 @@ import Photos
         if(userName == nil){
             result(FlutterError(code: "500",
                                 message: "User Name is Empty",
-                                    details: nil))
+                                details: nil))
             return
         }
         do{
@@ -104,15 +104,15 @@ import Photos
         }
         
         FlyMessenger.sendTextMessage(toJid: receiverJID!, message: txtMessage!, replyMessageId: replyMessageID) { isSuccess,error,chatMessage in
-             if isSuccess {
-                 var chatMsg = JSONSerializer.toJson(chatMessage as Any)
-                 
-                 result(chatMsg)
-             }else{
-                 result(FlutterError(code: "500", message: Commons.json(from: error as Any), details: nil))
-             }
-         }
-
+            if isSuccess {
+                var chatMsg = JSONSerializer.toJson(chatMessage as Any)
+                
+                result(chatMsg)
+            }else{
+                result(FlutterError(code: "500", message: Commons.json(from: error as Any), details: nil))
+            }
+        }
+        
     }
     
     static func sendLocationMessage(call: FlutterMethodCall, result: @escaping FlutterResult){
@@ -132,18 +132,18 @@ import Photos
         }
         
         FlyMessenger.sendLocationMessage(toJid: userJid!, latitude: latitude, longitude: longitude, replyMessageId: replyMessageID) { isSuccess,error,chatMessage in
-             if isSuccess {
-                 var locationResponse = JSONSerializer.toJson(chatMessage as Any)
-                 
-                 locationResponse = locationResponse.replacingOccurrences(of: "{\"some\":", with: "")
-                 locationResponse = locationResponse.replacingOccurrences(of: "}}", with: "}")
-                 print(locationResponse)
-                 
-                 result(locationResponse)
-             }else{
-                 result(FlutterError(code: "500", message: Commons.json(from: error as Any), details: nil))
-             }
-         }
+            if isSuccess {
+                var locationResponse = JSONSerializer.toJson(chatMessage as Any)
+                
+                locationResponse = locationResponse.replacingOccurrences(of: "{\"some\":", with: "")
+                locationResponse = locationResponse.replacingOccurrences(of: "}}", with: "}")
+                print(locationResponse)
+                
+                result(locationResponse)
+            }else{
+                result(FlutterError(code: "500", message: Commons.json(from: error as Any), details: nil))
+            }
+        }
     }
     
     static func sendImageMessage(call: FlutterMethodCall, result: @escaping FlutterResult){
@@ -165,17 +165,17 @@ import Photos
         print("====imagefileUrl Path====")
         
         var selectedImage : UIImage?
-    
+        
         
         let selectedImageData = NSData(contentsOf: imagefileUrl)
-            
+        
         if(selectedImageData != nil){
             selectedImage = UIImage(data: selectedImageData! as Data)
         }else{
             print("Selected Image Data is null")
         }
-    
-       
+        
+        
         if(userJid == nil){
             result(FlutterError(code: "500", message: "Location is Empty", details: nil))
             return
@@ -194,20 +194,20 @@ import Photos
             media.caption = emptyString()
             
         }
-
+        
         FlyMessenger.sendImageMessage(toJid: userJid!, mediaData: media, replyMessageId: replyMessageId){isSuccess,error,message in
-          if isSuccess {
-              print("Send Image--->")
-              print(message as Any)
-              
-              var response = JSONSerializer.toJson(message as Any)
-              response = response.replacingOccurrences(of: "{\"some\":", with: "")
-              response = response.replacingOccurrences(of: "}}", with: "}")
-              print(response)
-              result(response)
-          }else{
-              print("<---Send Image Failed--->")
-          }
+            if isSuccess {
+                print("Send Image--->")
+                print(message as Any)
+                
+                var response = JSONSerializer.toJson(message as Any)
+                response = response.replacingOccurrences(of: "{\"some\":", with: "")
+                response = response.replacingOccurrences(of: "}}", with: "}")
+                print(response)
+                result(response)
+            }else{
+                print("<---Send Image Failed--->")
+            }
         }
     }
     
@@ -263,7 +263,7 @@ import Photos
         
         ContactManager.shared.getUsersList(pageNo: pageNumber, pageSize: 20, search: searchTerm){ isSuccess,flyError,flyData in
             if isSuccess {
-               var userlist = flyData
+                var userlist = flyData
                 let userData = JSONSerializer.toJson(userlist.getData())
                 print(userData)
                 
@@ -278,7 +278,7 @@ import Photos
                 print(userlistJson)
                 result(userlistJson)
             }else{
-//                result(FlutterError(code: "500", message: flyError?.description, details: nil))
+                //                result(FlutterError(code: "500", message: flyError?.description, details: nil))
             }
         }
         
@@ -291,10 +291,10 @@ import Photos
         ContactManager.shared.getRegisteredUsers(fromServer: fromServer) {  isSuccess, flyError, flyData in
             var data  = flyData
             if isSuccess {
-            
+                
                 print(data.getData())
                 let userData = (data.getData() as? [ProfileDetails])?.count == 0 ? "[]" : JSONSerializer.toJson(data.getData())
-//                let  userData = data.getData()
+                //                let  userData = data.getData()
                 print("user data---> \(userData)")
                 
                 
@@ -308,7 +308,7 @@ import Photos
                 print("getRegisteredUsers---> \(userlistJson)")
                 result(userlistJson)
             } else{
-               //data.getMessage()
+                //data.getMessage()
                 result(FlutterError(code: "500", message: flyError?.description, details: nil))
             }
         }
@@ -339,15 +339,15 @@ import Photos
             imgGenerator.appliesPreferredTrackTransform = true
             let cgImage = try imgGenerator.copyCGImage(at: CMTimeMake(value: 0, timescale: 1), actualTime: nil)
             thumbnail = UIImage(cgImage: cgImage)
-//            return thumbnail
+            //            return thumbnail
         } catch let error {
             print("*** Error generating thumbnail: \(error.localizedDescription)")
-//            return nil
+            //            return nil
         }
         
         let base64Img = MediaUtils.convertImageToBase64(img: thumbnail!)
         
-       
+        
         var media = MediaData()
         
         MediaUtils.compressVideo(videoURL: videoFileUrl) { isSuccess, url, fileName, fileKey, fileSize , duration in
@@ -421,15 +421,15 @@ import Photos
                 
                 contactMessageResponse = contactMessageResponse.replacingOccurrences(of: "{\"some\":", with: "")
                 contactMessageResponse = contactMessageResponse.replacingOccurrences(of: "}}", with: "}")
-
+                
                 print("sendContactMessage \(contactMessageResponse)")
                 
                 result(contactMessageResponse)
-            
+                
             }
         }
     }
-        
+    
     
     static func sendDocumentMessage(call: FlutterMethodCall, result: @escaping FlutterResult){
         
@@ -463,9 +463,9 @@ import Photos
                         dump(message)
                         print(JSONSerializer.toJson(message as Any))
                         result(JSONSerializer.toJson(message as Any))
-                       
+                        
                     }
-                   
+                    
                 }
                 
             } else {
@@ -477,19 +477,36 @@ import Photos
     static func getProfileStatusList(call: FlutterMethodCall, result: @escaping FlutterResult){
         let profileStatus = ChatManager.getAllStatus()
         print("Status list -->")
-//        print(profileStatus)
-//        print(JSONSerializer.toJson(profileStatus))
+        //        print(profileStatus)
+        //        print(JSONSerializer.toJson(profileStatus))
         var dumpresponse = "[{\"id\":1,\"isCurrentStatus\":true,\"status\":\"I am in Mirror Fly\"}]"
         result(dumpresponse)
         
     }
     static func insertDefaultStatus(call: FlutterMethodCall, result: @escaping FlutterResult){
-       
+        
         result("[]")
         
     }
+    
+    static func isMemberOfGroup(call: FlutterMethodCall, result: @escaping FlutterResult){
+        
+        let args = call.arguments as! Dictionary<String, Any>
+        
+        let groupJid = args["jid"] as? String ?? ""
+        let currentJid = FlyDefaults.myXmppUsername + "@" + FlyDefaults.xmppDomain
+        let participantJid = args["userjid"] as? String ?? currentJid
+        
+        
+        let isMember = GroupManager.shared.isParticiapntExistingIn(groupJid: groupJid,
+                                                                   participantJid: participantJid)
+        
+        print("isMemberOfGroup--> \(isMember.doesExist)")
+        result(isMember.doesExist)
+        
+    }
     static func getRingtoneName(call: FlutterMethodCall, result: @escaping FlutterResult){
-       
+        
         result("[]")
         
     }
@@ -509,7 +526,7 @@ import Photos
         
         let server = args["server"] as? Bool ?? false
         let userjid = args["jid"] as? String ?? ""
-//        let JID = FlyDefaults.myXmppUsername + "@" + FlyDefaults.xmppDomain
+        //        let JID = FlyDefaults.myXmppUsername + "@" + FlyDefaults.xmppDomain
         
         do {
             try ContactManager.shared.getUserProfile(for: userjid, fetchFromServer: server, saveAsFriend: true){ isSuccess, flyError, flyData in
@@ -533,7 +550,7 @@ import Photos
     static func updateMyProfile(call: FlutterMethodCall, result: @escaping FlutterResult){
         let args = call.arguments as! Dictionary<String, Any>
         
-//        let jid = args["jid"] as? String ?? ""
+        //        let jid = args["jid"] as? String ?? ""
         let email = args["email"] as? String ?? ""
         let mobile = args["mobile"] as? String ?? ""
         let nickName = args["name"] as? String ?? ""
@@ -551,7 +568,7 @@ import Photos
         var isImagePicked = false
         
         var myProfile = FlyProfile(jid: userJid)
-    
+        
         myProfile.email = email
         
         myProfile.mobileNumber = mobile
@@ -597,13 +614,13 @@ import Photos
     static func syncContacts(call: FlutterMethodCall, result: @escaping FlutterResult){
         
         ContactSyncManager.shared.syncContacts(){ isSuccess, flyError, flyData in
-                    var data  = flyData
-                    if isSuccess {
-                       // Contact synced successfully update the UI
-                    } else{
-                        print(data.getMessage() as! String)
-                    }
-                }
+            var data  = flyData
+            if isSuccess {
+                // Contact synced successfully update the UI
+            } else{
+                print(data.getMessage() as! String)
+            }
+        }
         
     }
     static func contactSyncStateValue(call: FlutterMethodCall, result: @escaping FlutterResult){
@@ -611,19 +628,19 @@ import Photos
     }
     
     static func contactSyncState(call: FlutterMethodCall, result: @escaping FlutterResult){
-//        NotificationCenter.default.addObserver(self, selector: #selector(self.contactSyncCompleted(notification:)), name: NSNotification.Name(FlyConstants.contactSyncState), object: nil)
-//        @objc func contactSyncCompleted(notification: Notification){
-//             if let contactSyncState = notification.userInfo?[FlyConstants.contactSyncState] as? String {
-//                switch ContactSyncState(rawValue: contactSyncState) {
-//                    case .inprogress:
-//                        //Update the UI
-//                    case .success:
-//                        //Update the UI
-//                    case .failed:
-//                        //Update the UI
-//                }
-//            }
-//        }
+        //        NotificationCenter.default.addObserver(self, selector: #selector(self.contactSyncCompleted(notification:)), name: NSNotification.Name(FlyConstants.contactSyncState), object: nil)
+        //        @objc func contactSyncCompleted(notification: Notification){
+        //             if let contactSyncState = notification.userInfo?[FlyConstants.contactSyncState] as? String {
+        //                switch ContactSyncState(rawValue: contactSyncState) {
+        //                    case .inprogress:
+        //                        //Update the UI
+        //                    case .success:
+        //                        //Update the UI
+        //                    case .failed:
+        //                        //Update the UI
+        //                }
+        //            }
+        //        }
         
     }
     
@@ -639,48 +656,48 @@ import Photos
         let isFetchFromServer = args["server"] as? Bool ?? false
         
         ContactManager.shared.getUsersWhoBlockedMe(fetchFromServer: isFetchFromServer){ isSuccess, flyError, flyData in
-
-                var data  = flyData
-          
-                if isSuccess {
-                    let blockedprofileDetailsArray = data.getData() as! [ProfileDetails]
-                } else{
-                    print(flyError!.localizedDescription)
-                }
+            
+            var data  = flyData
+            
+            if isSuccess {
+                let blockedprofileDetailsArray = data.getData() as! [ProfileDetails]
+            } else{
+                print(flyError!.localizedDescription)
+            }
         }
     }
     static func getUnKnownUserProfiles(call: FlutterMethodCall, result: @escaping FlutterResult){
         
-       
+        
     }
     static func getMyProfileStatus(call: FlutterMethodCall, result: @escaping FlutterResult){
         
-       
+        
     }
     static func getMyBusyStatus(call: FlutterMethodCall, result: @escaping FlutterResult){
         
-       
+        
     }
     static func setMyBusyStatus(call: FlutterMethodCall, result: @escaping FlutterResult){
         
-       
+        
     }
     static func enableDisableBusyStatus(call: FlutterMethodCall, result: @escaping FlutterResult){
         
-       
+        
     }
     
     static func getBusyStatusList(call: FlutterMethodCall, result: @escaping FlutterResult){
         
-       
+        
     }
     static func deleteProfileStatus(call: FlutterMethodCall, result: @escaping FlutterResult){
         
-       
+        
     }
     static func deleteBusyStatus(call: FlutterMethodCall, result: @escaping FlutterResult){
         
-       
+        
     }
     static func enableDisableHideLastSeen(call: FlutterMethodCall, result: @escaping FlutterResult){
         
@@ -690,13 +707,13 @@ import Photos
         let enableLastSeen = args["enable"] as? Bool ?? false
         
         ChatManager.enableDisableHideLastSeen(EnableLastSeen: enableLastSeen) { isSuccess, flyError, flyData in
-                var data  = flyData
-                if isSuccess {
-                    print(data.getMessage() as! String )
-                } else{
-                    print(data.getMessage() as! String )
-                }
+            var data  = flyData
+            if isSuccess {
+                print(data.getMessage() as! String )
+            } else{
+                print(data.getMessage() as! String )
             }
+        }
     }
     static func isHideLastSeenEnabled(call: FlutterMethodCall, result: @escaping FlutterResult){
         
@@ -729,7 +746,6 @@ import Photos
         
         userChatHistory = userChatHistory.replacingOccurrences(of: "{\"some\":", with: "")
         userChatHistory = userChatHistory.replacingOccurrences(of: "}}", with: "}")
-        
         
 //        let json = try! DSON.
 //        print("====DSON=====")

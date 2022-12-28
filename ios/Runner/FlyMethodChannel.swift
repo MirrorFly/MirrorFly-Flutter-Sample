@@ -163,6 +163,8 @@ class FlyMethodChannel{
                 result(UserJid)
             case "getMediaMessages":
                 FlySdkMethodCalls.getMediaMessages(call: call, result: result)
+            case "isMemberOfGroup":
+                FlySdkMethodCalls.isMemberOfGroup(call: call, result: result)
             default:
                 result(FlutterMethodNotImplemented)
             }

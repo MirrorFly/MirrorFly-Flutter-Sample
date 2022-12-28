@@ -166,7 +166,10 @@ class ChatController extends GetxController
 
     filteredPosition.bindStream(filteredPosition.stream);
     ever(filteredPosition, (callback) {
+
       lastPosition(callback.length);
+      debugPrint("filter position==> ${filteredPosition.join(",")}");
+      debugPrint("find last position==> ${findLastVisibleItemPosition()}");
       //chatList.refresh();
     });
 
@@ -1128,33 +1131,33 @@ class ChatController extends GetxController
     filteredPosition.clear();
     if (searchedText.text.isNotEmpty) {
       for (var i = 0; i < chatList.length; i++) {
-        if (chatList[i].messageType == Constants.mText &&
+        if (chatList[i].messageType.toUpperCase() == Constants.mText &&
             chatList[i]
                 .messageTextContent
                 .startsWithTextInWords(searchedText.text)) {
           filteredPosition.add(i);
-        } else if (chatList[i].messageType == Constants.mImage &&
+        } else if (chatList[i].messageType.toUpperCase() == Constants.mImage &&
             chatList[i].mediaChatMessage!.mediaCaptionText.isNotEmpty &&
             chatList[i]
                 .mediaChatMessage!
                 .mediaCaptionText
                 .startsWithTextInWords(searchedText.text)) {
           filteredPosition.add(i);
-        } else if (chatList[i].messageType == Constants.mVideo &&
+        } else if (chatList[i].messageType.toUpperCase() == Constants.mVideo &&
             chatList[i].mediaChatMessage!.mediaCaptionText.isNotEmpty &&
             chatList[i]
                 .mediaChatMessage!
                 .mediaCaptionText
                 .startsWithTextInWords(searchedText.text)) {
           filteredPosition.add(i);
-        } else if (chatList[i].messageType == Constants.mDocument &&
+        } else if (chatList[i].messageType.toUpperCase() == Constants.mDocument &&
             chatList[i].mediaChatMessage!.mediaFileName.isNotEmpty &&
             chatList[i]
                 .mediaChatMessage!
                 .mediaFileName
                 .startsWithTextInWords(searchedText.text)) {
           filteredPosition.add(i);
-        } else if (chatList[i].messageType == Constants.mContact &&
+        } else if (chatList[i].messageType.toUpperCase() == Constants.mContact &&
             chatList[i].contactChatMessage!.contactName.isNotEmpty &&
             chatList[i]
                 .contactChatMessage!
@@ -1181,21 +1184,28 @@ class ChatController extends GetxController
 
   var j =-1;
   scrollUp() {
+    debugPrint("SCROLL UP");
     var visiblePos = findLastVisibleItemPosition();
+    debugPrint("Visible POS===> $visiblePos");
     //_scrollToPosition(getPreviousPosition(visiblePos));
     if (searchedPrev != (searchedText.text.toString())) {
+
       j = getPreviousPosition(visiblePos);
+      debugPrint("if loop ===> $j");
       //lastPosition.value = pre;
       searchedPrev = searchedText.text;
       searchedNxt = searchedText.text;
     } else if (filteredPosition.isNotEmpty) {
       j = max(j-1, -1);
+      debugPrint("else if loop ===> $j");
       //lastPosition.value = max(lastPosition.value - 1, (-1));
     } else {
       j = -1;
+      debugPrint("else loop ===> $j");
       //lastPosition.value = -1;
     }
     if(j>-1 && j<filteredPosition.length){
+      debugPrint("Item found at $j");
       _scrollToPosition(j);
     }
     /*if (lastPosition.value > -1 &&
@@ -1209,21 +1219,27 @@ class ChatController extends GetxController
   }
 
   scrollDown() {
+    debugPrint("SCROLL DOWN");
     var visiblePos = findLastVisibleItemPosition();
+    debugPrint("visible pos scroll down ==> $visiblePos");
     _scrollToPosition(getNextPosition(visiblePos));
     if (searchedNxt != searchedText.text.toString()) {
       j = getNextPosition(findLastVisibleItemPosition());
+      debugPrint("if loop scroll down===> $j");
       //lastPosition.value = nex;
       searchedNxt = searchedText.text;
       searchedPrev = searchedText.text;
     } else if (filteredPosition.isNotEmpty) {
       j = min(j + 1, filteredPosition.length);
+      debugPrint("if loop scroll down===> $j");
       //lastPosition.value = min(j + 1, filteredPosition.length);
     } else {
       j=-1;
+      debugPrint("if loop scroll down===> $j");
       //lastPosition.value = -1;
     }
     if(j>-1 && j<filteredPosition.length){
+      debugPrint("Item found at $j");
       _scrollToPosition(j);
     }
    /* if (lastPosition.value > -1 &&
@@ -1239,7 +1255,9 @@ class ChatController extends GetxController
   var color = Colors.transparent.obs;
 
   _scrollToPosition(int position) {
+    debugPrint("position-->$position");
     if(!position.isNegative) {
+      debugPrint("Item found ===> $position");
       var currentPosition = filteredPosition[position]; //(chatList.length - (position));
       chatList[currentPosition].isSelected = true;
       searchScrollController.jumpTo(index: currentPosition);
@@ -1636,7 +1654,9 @@ class ChatController extends GetxController
 
   onCameraClick() async {
     // if (await AppPermission.askFileCameraAudioPermission()) {
-    if(await AppPermission.checkPermission(Permission.camera, cameraPermission, Constants.cameraPermission)){
+    var cameraPermissionStatus = await AppPermission.checkPermission(Permission.camera, cameraPermission, Constants.cameraPermission);
+    debugPrint("Camera Permission Status---> $cameraPermissionStatus");
+    if(cameraPermissionStatus){
       Get.toNamed(Routes.cameraPick)?.then((photo) {
         photo as XFile?;
         if (photo != null) {
@@ -1658,18 +1678,18 @@ class ChatController extends GetxController
     }*/
   }
 
-  Future<bool> askMicrophonePermission() async {
-    final permission = await AppPermission.getAudioPermission();
-    switch (permission) {
-      case PermissionStatus.granted:
-        return true;
-      case PermissionStatus.permanentlyDenied:
-        return false;
-      default:
-        debugPrint("Contact Permission default");
-        return false;
-    }
-  }
+  // Future<bool> askMicrophonePermission() async {
+  //   final permission = await AppPermission.getAudioPermission();
+  //   switch (permission) {
+  //     case PermissionStatus.granted:
+  //       return true;
+  //     case PermissionStatus.permanentlyDenied:
+  //       return false;
+  //     default:
+  //       debugPrint("Contact Permission default");
+  //       return false;
+  //   }
+  // }
 
   onAudioClick() async {
     // Get.back();
