@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
 import 'package:get/get.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
 import 'package:mirror_fly_demo/app/routes/app_pages.dart';
@@ -14,7 +13,6 @@ import '../controllers/profile_controller.dart';
 
 class ProfileView extends GetView<ProfileController> {
   ProfileView({Key? key}) : super(key: key);
-  final ImagePicker _picker = ImagePicker();
 
   @override
   Widget build(BuildContext context) {
@@ -267,9 +265,7 @@ class ProfileView extends GetView<ProfileController> {
                       TextButton(
                           onPressed: () async {
                             Get.back();
-                            final XFile? photo = await _picker.pickImage(
-                                source: ImageSource.camera);
-                            controller.camera(photo);
+                            controller.camera();
                           },
                           child: const Text("Take Photo",
                               style: TextStyle(color: textHintColor))),

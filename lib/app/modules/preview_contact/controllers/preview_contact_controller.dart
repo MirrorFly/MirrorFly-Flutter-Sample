@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../../common/constants.dart';
+import '../../../data/apputils.dart';
 import '../../chat/controllers/chat_controller.dart';
 
 class PreviewContactController extends GetxController {
@@ -21,12 +23,17 @@ class PreviewContactController extends GetxController {
 
 
   shareContact() async {
-    var response = await Get.find<ChatController>().sendContactMessage(contactList, contactName);
-    debugPrint("ContactResponse ==> $response");
-    if(response != null){
-      Get.back();
-      Get.back();
+    if(await AppUtils.isNetConnected()) {
+      var response = await Get.find<ChatController>().sendContactMessage(contactList, contactName);
+      debugPrint("ContactResponse ==> $response");
+      if(response != null){
+        Get.back();
+        Get.back();
+      }
+    }else{
+      toToast(Constants.noInternetConnection);
     }
+
   }
 
 }

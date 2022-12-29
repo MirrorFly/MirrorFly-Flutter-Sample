@@ -4,12 +4,13 @@ import 'package:mirror_fly_demo/app/common/constants.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
 import 'package:flysdk/flysdk.dart';
 
+import '../../../data/apputils.dart';
 import '../../../routes/app_pages.dart';
 
 class ContactController extends GetxController {
   ScrollController scrollController = ScrollController();
   var pageNum = 1;
-  var isPageLoading = true.obs;
+  var isPageLoading = false.obs;
   var scrollable = true.obs;
   var usersList = <Profile>[].obs;
   var mainUsersList = List<Profile>.empty(growable: true).obs;
@@ -25,7 +26,7 @@ class ContactController extends GetxController {
   var groupJid = "".obs;
 
   @override
-  void onInit() {
+  Future<void> onInit() async {
     super.onInit();
     isForward(Get.arguments["forward"]);
     if (isForward.value) {
@@ -37,7 +38,13 @@ class ContactController extends GetxController {
     }
     scrollController.addListener(_scrollListener);
     //searchQuery.addListener(_searchListener);
-    fetchUsers(false);
+    if(await AppUtils.isNetConnected()) {
+      isPageLoading(true);
+      fetchUsers(false);
+    }else{
+      toToast(Constants.noInternetConnection);
+    }
+
   }
 
   //Add participants
@@ -102,45 +109,49 @@ class ContactController extends GetxController {
     scrollable(true);
   }
 
-  fetchUsers(bool fromSearch) {
-    FlyChat.getUserList(pageNum, _searchText).then((data) async {
-      var item = userListFromJson(data);
-      var list = <Profile>[];
+  fetchUsers(bool fromSearch) async {
+    if(await AppUtils.isNetConnected()) {
+      FlyChat.getUserList(pageNum, _searchText).then((data) async {
+        var item = userListFromJson(data);
+        var list = <Profile>[];
 
-      if(groupJid.value.checkNull().isNotEmpty){
-        await Future.forEach(item.data!, (it) async {
-          await FlyChat.isMemberOfGroup(groupJid.value.checkNull(), it.jid.checkNull()).then((value){
-            mirrorFlyLog("item", value.toString());
-            if(value==null || !value){
-              list.add(it);
-            }
+        if(groupJid.value.checkNull().isNotEmpty){
+          await Future.forEach(item.data!, (it) async {
+            await FlyChat.isMemberOfGroup(groupJid.value.checkNull(), it.jid.checkNull()).then((value){
+              mirrorFlyLog("item", value.toString());
+              if(value==null || !value){
+                list.add(it);
+              }
+            });
           });
-        });
-        fromSearch ? usersList(list) : usersList.addAll(list);
-        pageNum = pageNum + 1;
-        isPageLoading.value = false;
-        scrollable.value = list.length == 20;
-        usersList.refresh();
-        if (_first) {
-          _first = false;
-          mainUsersList(list);
+          fromSearch ? usersList(list) : usersList.addAll(list);
+          pageNum = pageNum + 1;
+          isPageLoading.value = false;
+          scrollable.value = list.length == 20;
+          usersList.refresh();
+          if (_first) {
+            _first = false;
+            mainUsersList(list);
+          }
+        }else{
+          list.addAll(item.data!);
+          fromSearch ? usersList(list) : usersList.addAll(list);
+          pageNum = pageNum + 1;
+          isPageLoading.value = false;
+          scrollable.value = list.length == 20;
+          usersList.refresh();
+          if (_first) {
+            _first = false;
+            mainUsersList(list);
+          }
         }
-      }else{
-        list.addAll(item.data!);
-        fromSearch ? usersList(list) : usersList.addAll(list);
-        pageNum = pageNum + 1;
-        isPageLoading.value = false;
-        scrollable.value = list.length == 20;
-        usersList.refresh();
-        if (_first) {
-          _first = false;
-          mainUsersList(list);
-        }
-      }
 
-    }).catchError((error) {
-      toToast(error.toString());
-    });
+      }).catchError((error) {
+        toToast(error.toString());
+      });
+    }else{
+      toToast(Constants.noInternetConnection);
+    }
   }
 
   Future<List<Profile>> removeGroupMembers(List<Profile> items) async {
@@ -180,14 +191,19 @@ class ContactController extends GetxController {
     usersList.refresh();
   }
 
-  forwardMessages() {
-    FlyChat
-        .forwardMessagesToMultipleUsers(forwardMessageIds, selectedUsersJIDList)
-        .then((value) {
-      debugPrint(
-          "to chat profile ==> ${selectedUsersList[0].toJson().toString()}");
-      Get.back(result: selectedUsersList[0]);
-    });
+  forwardMessages() async {
+    if(await AppUtils.isNetConnected()) {
+      FlyChat
+          .forwardMessagesToMultipleUsers(
+          forwardMessageIds, selectedUsersJIDList)
+          .then((value) {
+        debugPrint(
+            "to chat profile ==> ${selectedUsersList[0].toJson().toString()}");
+        Get.back(result: selectedUsersList[0]);
+      });
+    }else{
+      toToast(Constants.noInternetConnection);
+    }
   }
 
   onListItemPressed(Profile item){
@@ -199,8 +215,17 @@ class ContactController extends GetxController {
     }
   }
 
-  backToCreateGroup(){
-    if(groupJid.value.isEmpty) {
+  backToCreateGroup() async {
+    if(await AppUtils.isNetConnected()) {
+      if (selectedUsersJIDList.length >= Constants.minGroupMembers) {
+        Get.back(result: selectedUsersJIDList);
+      } else {
+        toToast("Add at least two contacts");
+      }
+    }else{
+      toToast(Constants.noInternetConnection);
+    }
+    /*if(groupJid.value.isEmpty) {
       if (selectedUsersJIDList.length >= Constants.minGroupMembers) {
         Get.back(result: selectedUsersJIDList);
       } else {
@@ -212,6 +237,6 @@ class ContactController extends GetxController {
       } else {
         toToast("Add at least two contacts");
       }
-    }
+    }*/
   }
 }

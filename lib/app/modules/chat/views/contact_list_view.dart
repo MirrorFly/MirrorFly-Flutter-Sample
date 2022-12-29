@@ -106,7 +106,10 @@ class ContactListView extends GetView<ContactController> {
         ) : const SizedBox.shrink(),
         body: Obx(() {
           return controller.isPageLoading.value
-              ? const Center(child: CircularProgressIndicator())
+              ? const Center(child: Padding(
+                padding: EdgeInsets.all(16.0),
+                child: CircularProgressIndicator(),
+              ))
               : ListView.builder(
                   itemCount: controller.scrollable.value
                       ? controller.usersList.length + 1
@@ -114,9 +117,9 @@ class ContactListView extends GetView<ContactController> {
                   controller: controller.scrollController,
                   physics: const AlwaysScrollableScrollPhysics(),
                   itemBuilder: (BuildContext context, int index) {
-                    if (index >= controller.usersList.length) {
+                    if (index >= controller.usersList.length && controller.usersList.isNotEmpty) {
                       return const Center(child: CircularProgressIndicator());
-                    } else {
+                    } else if(controller.usersList.isNotEmpty){
                       var item = controller.usersList[index];
                       return InkWell(
                         child: Row(
@@ -180,6 +183,8 @@ class ContactListView extends GetView<ContactController> {
                           controller.onListItemPressed(item);
                         },
                       );
+                    }else{
+                      return const SizedBox();
                     }
                   });
         }),

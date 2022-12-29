@@ -3,7 +3,6 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
 import 'package:mirror_fly_demo/app/modules/group/controllers/group_creation_controller.dart';
 
@@ -13,7 +12,6 @@ import '../../../routes/app_pages.dart';
 
 class GroupCreationView extends GetView<GroupCreationController> {
   GroupCreationView({Key? key}) : super(key: key);
-  final ImagePicker _picker = ImagePicker();
 
   @override
   Widget build(BuildContext context) {
@@ -119,9 +117,7 @@ class GroupCreationView extends GetView<GroupCreationController> {
                               TextButton(
                                   onPressed: () async{
                                     Get.back();
-                                    final XFile? photo = await _picker.pickImage(
-                                        source: ImageSource.camera);
-                                    controller.camera(photo);
+                                    controller.camera();
                                   },
                                   child: const Text("Take Photo",style: TextStyle(color: Colors.black))),
                             ] ));

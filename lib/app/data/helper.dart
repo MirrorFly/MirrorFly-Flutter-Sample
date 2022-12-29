@@ -12,6 +12,8 @@ import 'package:mirror_fly_demo/app/common/constants.dart';
 import 'package:flysdk/flysdk.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import 'apputils.dart';
+
 
 
 class Helper {
@@ -425,15 +427,20 @@ openDocument(String mediaLocalStoragePath, BuildContext context) async {
   // }
 }
 Future<void> launchInBrowser(String url) async {
-  var webUrl = url.replaceAll("http://", "").replaceAll("https://", "");
-  final Uri toLaunch =
-  Uri(scheme: 'https', host: webUrl);
-  if (!await launchUrl(
-    toLaunch,
-    mode: LaunchMode.externalApplication,
-  )) {
-    throw 'Could not launch $url';
+  if(await AppUtils.isNetConnected()) {
+    var webUrl = url.replaceAll("http://", "").replaceAll("https://", "");
+    final Uri toLaunch =
+    Uri(scheme: 'https', host: webUrl);
+    if (!await launchUrl(
+      toLaunch,
+      mode: LaunchMode.externalApplication,
+    )) {
+      throw 'Could not launch $url';
+    }
+  }else{
+    toToast(Constants.noInternetConnection);
   }
+
 }
 Future<void> makePhoneCall(String phoneNumber) async {
   final Uri launchUri = Uri(

@@ -52,7 +52,6 @@ class SettingsView extends GetView<SettingsController> {
                         child: const Text("NO")),
                     TextButton(
                         onPressed: () {
-                          Get.back();
                           controller.logout();
                         },
                         child: const Text("YES"))

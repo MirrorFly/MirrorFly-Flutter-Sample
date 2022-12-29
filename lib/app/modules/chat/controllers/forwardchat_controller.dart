@@ -5,6 +5,7 @@ import 'package:mirror_fly_demo/app/data/helper.dart';
 import 'package:flysdk/flysdk.dart';
 
 import '../../../common/de_bouncer.dart';
+import '../../../data/apputils.dart';
 
 class ForwardChatController extends GetxController {
 
@@ -130,24 +131,29 @@ class ForwardChatController extends GetxController {
   var searchQuery = TextEditingController();
   var searching = false;
   var searchLoading = false.obs;
-  void getUsers() {
-    searching=true;
-    FlyChat.getUserList(pageNum, searchQuery.text.toString()).then((value){
-      if(value!=null){
-        var list = userListFromJson(value);
-        if(list.data !=null) {
-          if(_mainuserList.isEmpty){
-            _mainuserList.addAll(list.data!);
+  Future<void> getUsers() async {
+    if(await AppUtils.isNetConnected()) {
+      searching=true;
+      FlyChat.getUserList(pageNum, searchQuery.text.toString()).then((value){
+        if(value!=null){
+          var list = userListFromJson(value);
+          if(list.data !=null) {
+            if(_mainuserList.isEmpty){
+              _mainuserList.addAll(list.data!);
+            }
+            _userList.value.addAll(list.data!);
+            _userList.refresh();
           }
-          _userList.value.addAll(list.data!);
-          _userList.refresh();
         }
-      }
-      searching=false;
-    }).catchError((error) {
-      debugPrint("issue===> $error");
-      searching=false;
-    });
+        searching=false;
+      }).catchError((error) {
+        debugPrint("issue===> $error");
+        searching=false;
+      });
+    }else{
+      toToast(Constants.noInternetConnection);
+    }
+
   }
 
   void onSearchPressed(){
@@ -178,27 +184,32 @@ class ForwardChatController extends GetxController {
     }
   }
 
-  void filterUserlist(){
-    _userList.clear();
-    searching=true;
-    searchLoading(true);
-    FlyChat.getUserList(pageNum, searchQuery.text.toString()).then((value){
-      if(value!=null){
-        var list = userListFromJson(value);
-        if(list.data !=null) {
-          scrollable(list.data!.length==20);
-          _userList(list.data);
-        }else{
-          scrollable(false);
+  Future<void> filterUserlist() async {
+    if(await AppUtils.isNetConnected()) {
+      _userList.clear();
+      searching=true;
+      searchLoading(true);
+      FlyChat.getUserList(pageNum, searchQuery.text.toString()).then((value){
+        if(value!=null){
+          var list = userListFromJson(value);
+          if(list.data !=null) {
+            scrollable(list.data!.length==20);
+            _userList(list.data);
+          }else{
+            scrollable(false);
+          }
         }
-      }
-      searching=false;
-      searchLoading(false);
-    }).catchError((error) {
-      debugPrint("issue===> $error");
-      searching=false;
-      searchLoading(false);
-    });
+        searching=false;
+        searchLoading(false);
+      }).catchError((error) {
+        debugPrint("issue===> $error");
+        searching=false;
+        searchLoading(false);
+      });
+    }else{
+      toToast(Constants.noInternetConnection);
+    }
+
   }
 
   bool isChecked(String jid) => selectedJids.value.contains(jid);

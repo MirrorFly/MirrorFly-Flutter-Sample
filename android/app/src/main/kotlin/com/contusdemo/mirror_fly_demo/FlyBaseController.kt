@@ -1947,7 +1947,7 @@ open class FlyBaseController(activity: FlutterActivity) : MethodChannel.MethodCa
 //    }
 
     private fun getMessagesOfJid(call: MethodCall, result: MethodChannel.Result) {
-        if (AppUtils.isNetConnected(mContext)) {
+        //if (AppUtils.isNetConnected(mContext)) {
             if (!call.hasArgument("JID")) {
                 result.error("404", "User JID Required", null)
             } else {
@@ -1963,7 +1963,7 @@ open class FlyBaseController(activity: FlutterActivity) : MethodChannel.MethodCa
                 }
             }
 
-        }
+        //}
     }
 
     private fun getUserList(call: MethodCall, result: MethodChannel.Result) {
@@ -2081,7 +2081,7 @@ open class FlyBaseController(activity: FlutterActivity) : MethodChannel.MethodCa
     }
 
     private fun setMyProfileStatus(call: MethodCall, result: MethodChannel.Result) {
-        if (AppUtils.isNetConnected(mContext)) {
+        //if (AppUtils.isNetConnected(mContext)) {
             val status = call.argument<String>("status") ?: ""
             if (status.isNotEmpty()) {
                 FlyCore.setMyProfileStatus(status) { isSuccess, _, data ->
@@ -2094,9 +2094,9 @@ open class FlyBaseController(activity: FlutterActivity) : MethodChannel.MethodCa
                     result.success(data.tojsonString())
                 }
             }
-        } else {
+        /*} else {
             result.error("500", "Please Check Your Internet connection", null)
-        }
+        }*/
     }
 
     private fun getUserProfile(call: MethodCall, result: MethodChannel.Result) {
@@ -2308,7 +2308,7 @@ open class FlyBaseController(activity: FlutterActivity) : MethodChannel.MethodCa
 
     private fun getRecentChatList(result: MethodChannel.Result) {
         println("recent here")
-        if (AppUtils.isNetConnected(mContext)) {
+        //if (AppUtils.isNetConnected(mContext)) {
             //progress.show()
             FlyCore.getRecentChatList { isSuccess, throwable, data ->
                 //progress.dismiss()
@@ -2321,10 +2321,10 @@ open class FlyBaseController(activity: FlutterActivity) : MethodChannel.MethodCa
                 }
                 Log.d("Recent ==>", data.toString())
             }
-        } else {
+        /*} else {
             //Toast.makeText(this, "Please Check Your Internet connection", Toast.LENGTH_SHORT).show()
             result.error("500", "Please Check Your Internet connection", null)
-        }
+        }*/
     }
 
     private fun getImageThumbImage(imagePath: String?): String {

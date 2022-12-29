@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:video_player/video_player.dart';
 
+import '../../../common/constants.dart';
+import '../../../data/apputils.dart';
 import '../../chat/controllers/chat_controller.dart';
 
 class VideoPreviewController extends GetxController {
@@ -59,11 +61,16 @@ class VideoPreviewController extends GetxController {
    }
 
    sendVideoMessage() async{
-     var response = await Get.find<ChatController>().sendVideoMessage(videoPath, caption.text , "");
-     debugPrint("Preview View ==> $response");
-     if(response != null){
-       Get.back();
+     if(await AppUtils.isNetConnected()) {
+       var response = await Get.find<ChatController>().sendVideoMessage(videoPath, caption.text , "");
+       debugPrint("Preview View ==> $response");
+       if(response != null){
+         Get.back();
+       }
+     }else{
+       toToast(Constants.noInternetConnection);
      }
+
    }
 
 }

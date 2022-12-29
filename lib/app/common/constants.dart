@@ -7,6 +7,8 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../data/apputils.dart';
+
 //Colors
 const Color appBarColor = Color(0xffF2F2F2);
 const Color iconColor = Color(0xff181818);
@@ -177,9 +179,11 @@ const String notificationNotWorkingURL ="https://app.mirrorfly.com/notifications
 toToast(String text) {
   Fluttertoast.showToast(
       msg: text,
-      toastLength: Toast.LENGTH_LONG,
+      toastLength: Toast.LENGTH_SHORT,
       gravity: ToastGravity.BOTTOM,
       timeInSecForIosWeb: 1,
+      textColor: Colors.black,
+      backgroundColor: Colors.white,
       fontSize: 16.0);
 }
 mirrorFlyLog(String tag,String msg){
@@ -474,14 +478,21 @@ class Constants {
   static const String locationPermission = "MirrorFly needs access to your location in order to share your current location.";
   static const String contactPermission = "To help you connect with friends and family, allow Mirrorfly access to your contacts.";
   static const String audioPermission = "To send audio messages, allow MirrorFly access to your Microphone.";
+
+  static const String noInternetConnection = "Please check your internet connection";
 }
 
 Future<void> launchWeb(String url) async{
-  if (await canLaunchUrl(Uri.parse(url))) {
-    await launchUrl(Uri.parse(url));
-  } else {
-    throw "Could not launch $url";
+  if(await AppUtils.isNetConnected()) {
+    if (await canLaunchUrl(Uri.parse(url))) {
+      await launchUrl(Uri.parse(url));
+    } else {
+      throw "Could not launch $url";
+    }
+  }else{
+    toToast(Constants.noInternetConnection);
   }
+
 }
 
 Widget forMessageTypeIcon(String messageType) {

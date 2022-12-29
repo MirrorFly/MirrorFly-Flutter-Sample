@@ -6,6 +6,7 @@ import 'package:flysdk/flysdk.dart';
 
 import '../../../common/constants.dart';
 import '../../../common/de_bouncer.dart';
+import '../../../data/apputils.dart';
 import '../../../routes/app_pages.dart';
 
 
@@ -310,47 +311,57 @@ class RecentChatSearchController extends GetxController {
   var pageNum = 1;
   var searching = false;
   var searchLoading = false.obs;
-  void filterUserlist(){
-    searching=true;
-    FlyChat.getUserList(pageNum, search.text.toString()).then((value){
-      if(value!=null){
-        var list = userListFromJson(value);
-        if(list.data !=null) {
-          scrollable(list.data!.length==20);
-          _userList(list.data);
-        }else{
-          scrollable(false);
+  Future<void> filterUserlist() async {
+    if(await AppUtils.isNetConnected()) {
+      searching=true;
+      FlyChat.getUserList(pageNum, search.text.toString()).then((value){
+        if(value!=null){
+          var list = userListFromJson(value);
+          if(list.data !=null) {
+            scrollable(list.data!.length==20);
+            _userList(list.data);
+          }else{
+            scrollable(false);
+          }
         }
-      }
-      searching=false;
-      searchLoading(false);
-    }).catchError((error) {
-      debugPrint("issue===> $error");
-      searching=false;
-      searchLoading(false);
-    });
+        searching=false;
+        searchLoading(false);
+      }).catchError((error) {
+        debugPrint("issue===> $error");
+        searching=false;
+        searchLoading(false);
+      });
+    }else{
+      toToast(Constants.noInternetConnection);
+    }
+
   }
 
-  void getUsers() {
-    searching=true;
-    FlyChat.getUserList(pageNum, search.text.toString()).then((value){
-      if(value!=null){
-        var list = userListFromJson(value);
-        if(list.data !=null) {
-          if(_mainuserList.isEmpty){
-            _mainuserList.addAll(list.data!);
+  Future<void> getUsers() async {
+    if(await AppUtils.isNetConnected()) {
+      searching=true;
+      FlyChat.getUserList(pageNum, search.text.toString()).then((value){
+        if(value!=null){
+          var list = userListFromJson(value);
+          if(list.data !=null) {
+            if(_mainuserList.isEmpty){
+              _mainuserList.addAll(list.data!);
+            }
+            scrollable(list.data!.length==20);
+            _userList.value.addAll(list.data!);
+            _userList.refresh();
+          }else{
+            scrollable(false);
           }
-          scrollable(list.data!.length==20);
-          _userList.value.addAll(list.data!);
-          _userList.refresh();
-        }else{
-          scrollable(false);
         }
-      }
-      searching=false;
-    }).catchError((error) {
-      debugPrint("issue===> $error");
-      searching=false;
-    });
+        searching=false;
+      }).catchError((error) {
+        debugPrint("issue===> $error");
+        searching=false;
+      });
+    }else{
+      toToast(Constants.noInternetConnection);
+    }
+
   }
 }
