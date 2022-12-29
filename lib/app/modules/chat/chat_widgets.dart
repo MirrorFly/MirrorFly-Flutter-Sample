@@ -977,8 +977,8 @@ Widget setCaptionMessage(MediaChatMessage mediaMessage,
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        chatSpannedText(
-          mediaMessage.mediaCaptionText,
+        search.isEmpty ? textMessageSpannableText(mediaMessage.mediaCaptionText.checkNull()) : chatSpannedText(
+          mediaMessage.mediaCaptionText.checkNull(),
           search,
           const TextStyle(fontSize: 14),
         ),
@@ -1051,17 +1051,12 @@ class TextMessageView extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
-          //saravanakumar search code
-          // Flexible(
-          //   child: chatSpannedText(
-          //     chatMessage.messageTextContent ?? "",
-          //     search,
-          //     const TextStyle(fontSize: 14),
-          //   ),
-          // ),
-          //Mani Vendhan Text Hyperlink code
           Flexible(
-            child: textMessageSpannableText(chatMessage.messageTextContent ?? ""),
+            child: search.isEmpty ? textMessageSpannableText(chatMessage.messageTextContent ?? "") : chatSpannedText(
+             chatMessage.messageTextContent ?? "",
+             search,
+             const TextStyle(fontSize: 14),
+           ),
           ),
           const SizedBox(
             width: 10,
