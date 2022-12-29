@@ -234,11 +234,11 @@ class ChatController extends GetxController
   }
 
   scrollToBottom() {
-    Future.delayed(const Duration(milliseconds: 500), () {
+    Future.delayed(const Duration(milliseconds: 100), () {
       if (scrollController.hasClients) {
         scrollController.animateTo(
           scrollController.position.maxScrollExtent,
-          duration: const Duration(milliseconds: 500),
+          duration: const Duration(milliseconds: 100),
           curve: Curves.linear,
         );
       }
@@ -249,7 +249,7 @@ class ChatController extends GetxController
     if (scrollController.hasClients) {
       scrollController.animateTo(
         scrollController.position.maxScrollExtent,
-        duration: const Duration(milliseconds: 500),
+        duration: const Duration(milliseconds: 100),
         curve: Curves.linear,
       );
     }
@@ -362,9 +362,9 @@ class ChatController extends GetxController
     FlyChat.getMessagesOfJid(profile.jid.checkNull()).then((value) {
       debugPrint("=====chat=====");
       mirrorFlyLog("chat history", value);
-      if(value == "" || value == null){
+      if (value == "" || value == null) {
         debugPrint("Chat List is Empty");
-      }else {
+      } else {
         List<ChatMessageModel> chatMessageModel = chatMessageModelFromJson(
             value);
         chatList(chatMessageModel);
@@ -378,13 +378,17 @@ class ChatController extends GetxController
             return scrollController
                 .animateTo(scrollController.position.maxScrollExtent,
                 duration: const Duration(milliseconds: 100),
-                curve: Curves.linear)
+                curve: Curves.easeInToLinear)
                 .then((value) => true);
+            // final position = scrollController.position.maxScrollExtent + 125;
+            // scrollController.jumpTo(position);
+            // return true;
           }
           return true;
         });
       });
     });
+
     // compute(FlyChat.getMessagesOfJid, profile.jid.checkNull()).then((chatMessageModelList){
     //   chatList(chatMessageModelList);
     //   Future.delayed(const Duration(milliseconds: 500), () {
