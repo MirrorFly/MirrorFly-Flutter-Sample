@@ -15,7 +15,7 @@ import 'package:flysdk/flysdk.dart';
 
 
 class GroupInfoView extends GetView<GroupInfoController> {
-  GroupInfoView({Key? key}) : super(key: key);
+  const GroupInfoView({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

@@ -96,12 +96,12 @@ class AppPages {
     ),
     GetPage(
       name: _Paths.createGroup,
-      page: () => GroupCreationView(),
+      page: () => const GroupCreationView(),
       binding: GroupCreationBinding(),
     ),
     GetPage(
       name: _Paths.groupInfo,
-      page: () => GroupInfoView(),
+      page: () => const GroupInfoView(),
       binding: GroupInfoBinding(),
     ),
     GetPage(
@@ -126,7 +126,7 @@ class AppPages {
     ),
     GetPage(
       name: _Paths.profile,
-      page: () => ProfileView(),
+      page: () => const ProfileView(),
       binding: ProfileBinding(),
     ),
     GetPage(

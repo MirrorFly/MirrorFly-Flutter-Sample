@@ -11,7 +11,7 @@ import '../../../common/widgets.dart';
 import '../../../routes/app_pages.dart';
 
 class GroupCreationView extends GetView<GroupCreationController> {
-  GroupCreationView({Key? key}) : super(key: key);
+  const GroupCreationView({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
