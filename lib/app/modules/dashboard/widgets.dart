@@ -408,50 +408,58 @@ bool isCountryCode(String text){
 }
 
 Widget textMessageSpannableText(String message) {
-  final GlobalKey _textKey = GlobalKey();
+  final GlobalKey textKey = GlobalKey();
   TextStyle underlineStyle = const TextStyle(decoration: TextDecoration.underline, fontSize: 14, color: Colors.blueAccent);
-  TextStyle normalStyle = const TextStyle(fontSize: 14, color: Colors.black);
+  TextStyle normalStyle = const TextStyle(fontSize: 14, color: textHintColor);
   var prevValue = "";
   return RichText(
-    key: _textKey,
-      text: TextSpan(
-      children: message.split(" ").map((e){
-      if(isCountryCode(e)){
-        prevValue = e;
-        return const TextSpan(text: "");
-      }else if(prevValue != "" && spannableTextType(e) == "mobile"){
-        e = "$prevValue $e";
-        prevValue = "";
-        var stringType = spannableTextType(e);
-        return TextSpan(text: "$e ", style: stringType == "text" ? normalStyle : underlineStyle, recognizer: TapGestureRecognizer()
-          ..onTap = () {
-          debugPrint("Phone Clicked");
-            makePhoneCall(e);
-          // launchCaller(e);
-          });
-      }
+    key: textKey,
+      text: customTextSpan(message, prevValue, normalStyle, underlineStyle));
+}
 
-      return TextSpan(text: "$e ", style: spannableTextType(e) == "text" ? normalStyle : underlineStyle, recognizer: TapGestureRecognizer() ..onTap = (){
-        var stringType = spannableTextType(e);
-        debugPrint("Text span click");
-        if(stringType == "website"){
-          launchInBrowser(e);
-          // return;
-        }
-        else if(stringType == "mobile"){
+TextSpan customTextSpan(String message, String prevValue, TextStyle? normalStyle, TextStyle underlineStyle) {
+  return TextSpan(
+    children: message.split(" ").map((e){
+    if(isCountryCode(e)){
+      prevValue = e;
+      //return TextSpan(text: e);
+    }else if(prevValue != "" && spannableTextType(e) == "mobile"){
+      e = "$prevValue $e";
+      prevValue = "";
+      /*var stringType = spannableTextType(e);
+      return TextSpan(text: "$e ", style: stringType == "text" ? normalStyle : underlineStyle, recognizer: TapGestureRecognizer()
+        ..onTap = () {
+        debugPrint("Phone Clicked");
           makePhoneCall(e);
-          // launchCaller(e);
-          // return;
-        }
-        else if(stringType == "email"){
-          debugPrint("email click");
-          launchEmail(e);
-          // return;
-        }else{
-          debugPrint("no condition match");
-        }
-        // return;
-      });
-    }).toList(),
-  ));
+        // launchCaller(e);
+        });*/
+    }
+
+    return TextSpan(text: e, style: spannableTextType(e) == "text" ? normalStyle : underlineStyle, recognizer: TapGestureRecognizer() ..onTap = (){
+      onTapForSpantext(e);
+    });
+  }).toList(),
+);
+}
+
+onTapForSpantext(String e){
+    var stringType = spannableTextType(e);
+    debugPrint("Text span click");
+    if(stringType == "website"){
+      launchInBrowser(e);
+      // return;
+    }
+    else if(stringType == "mobile"){
+      makePhoneCall(e);
+      // launchCaller(e);
+      // return;
+    }
+    else if(stringType == "email"){
+      debugPrint("email click");
+      launchEmail(e);
+      // return;
+    }else{
+      debugPrint("no condition match");
+    }
+    // return;
 }

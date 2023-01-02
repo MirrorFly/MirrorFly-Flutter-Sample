@@ -980,7 +980,7 @@ Widget setCaptionMessage(MediaChatMessage mediaMessage,
         search.isEmpty ? textMessageSpannableText(mediaMessage.mediaCaptionText.checkNull()) : chatSpannedText(
           mediaMessage.mediaCaptionText.checkNull(),
           search,
-          const TextStyle(fontSize: 14),
+          const TextStyle(fontSize: 14,color: textColor),
         ),
         Row(
           mainAxisAlignment: MainAxisAlignment.end,
@@ -1055,7 +1055,7 @@ class TextMessageView extends StatelessWidget {
             child: search.isEmpty ? textMessageSpannableText(chatMessage.messageTextContent ?? "") : chatSpannedText(
              chatMessage.messageTextContent ?? "",
              search,
-             const TextStyle(fontSize: 14),
+             const TextStyle(fontSize: 14,color: textHintColor),
            ),
           ),
           const SizedBox(
@@ -1397,9 +1397,6 @@ Widget chatSpannedText(String text, String spannableText,TextStyle? style) {
         ],
         style: style),maxLines: 1,overflow: TextOverflow.ellipsis,);
   } else {
-    return Text(
-        text,
-        style: style, maxLines: 1,overflow: TextOverflow.ellipsis
-    );
+    return textMessageSpannableText(text);//Text(text, style: style);
   }
 }

@@ -1132,46 +1132,54 @@ class ChatController extends GetxController
 
   var filteredPosition = <int>[].obs;
   var searchedText = TextEditingController();
-
+  String lastInputValue ="";
   setSearch(String text) {
-    filteredPosition.clear();
-    if (searchedText.text.isNotEmpty) {
-      for (var i = 0; i < chatList.length; i++) {
-        if (chatList[i].messageType.toUpperCase() == Constants.mText &&
-            chatList[i]
-                .messageTextContent
-                .startsWithTextInWords(searchedText.text)) {
-          filteredPosition.add(i);
-        } else if (chatList[i].messageType.toUpperCase() == Constants.mImage &&
-            chatList[i].mediaChatMessage!.mediaCaptionText.isNotEmpty &&
-            chatList[i]
-                .mediaChatMessage!
-                .mediaCaptionText
-                .startsWithTextInWords(searchedText.text)) {
-          filteredPosition.add(i);
-        } else if (chatList[i].messageType.toUpperCase() == Constants.mVideo &&
-            chatList[i].mediaChatMessage!.mediaCaptionText.isNotEmpty &&
-            chatList[i]
-                .mediaChatMessage!
-                .mediaCaptionText
-                .startsWithTextInWords(searchedText.text)) {
-          filteredPosition.add(i);
-        } else if (chatList[i].messageType.toUpperCase() == Constants.mDocument &&
-            chatList[i].mediaChatMessage!.mediaFileName.isNotEmpty &&
-            chatList[i]
-                .mediaChatMessage!
-                .mediaFileName
-                .startsWithTextInWords(searchedText.text)) {
-          filteredPosition.add(i);
-        } else if (chatList[i].messageType.toUpperCase() == Constants.mContact &&
-            chatList[i].contactChatMessage!.contactName.isNotEmpty &&
-            chatList[i]
-                .contactChatMessage!
-                .contactName
-                .startsWithTextInWords(searchedText.text)) {
-          filteredPosition.add(i);
+    if (lastInputValue != text) {
+      lastInputValue = text;
+      filteredPosition.clear();
+      if (searchedText.text.isNotEmpty) {
+        for (var i = 0; i < chatList.length; i++) {
+          if (chatList[i].messageType.toUpperCase() == Constants.mText &&
+              chatList[i]
+                  .messageTextContent
+                  .startsWithTextInWords(searchedText.text)) {
+            filteredPosition.add(i);
+          } else
+          if (chatList[i].messageType.toUpperCase() == Constants.mImage &&
+              chatList[i].mediaChatMessage!.mediaCaptionText.isNotEmpty &&
+              chatList[i]
+                  .mediaChatMessage!
+                  .mediaCaptionText
+                  .startsWithTextInWords(searchedText.text)) {
+            filteredPosition.add(i);
+          } else
+          if (chatList[i].messageType.toUpperCase() == Constants.mVideo &&
+              chatList[i].mediaChatMessage!.mediaCaptionText.isNotEmpty &&
+              chatList[i]
+                  .mediaChatMessage!
+                  .mediaCaptionText
+                  .startsWithTextInWords(searchedText.text)) {
+            filteredPosition.add(i);
+          } else
+          if (chatList[i].messageType.toUpperCase() == Constants.mDocument &&
+              chatList[i].mediaChatMessage!.mediaFileName.isNotEmpty &&
+              chatList[i]
+                  .mediaChatMessage!
+                  .mediaFileName
+                  .startsWithTextInWords(searchedText.text)) {
+            filteredPosition.add(i);
+          } else
+          if (chatList[i].messageType.toUpperCase() == Constants.mContact &&
+              chatList[i].contactChatMessage!.contactName.isNotEmpty &&
+              chatList[i]
+                  .contactChatMessage!
+                  .contactName
+                  .startsWithTextInWords(searchedText.text)) {
+            filteredPosition.add(i);
+          }
         }
       }
+      chatList.refresh();
     }
   }
 

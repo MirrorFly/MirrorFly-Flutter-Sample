@@ -27,87 +27,84 @@ class RecentSearchView extends GetView<RecentChatSearchController> {
             controller: controller.search,
             autofocus: true,
             decoration: const InputDecoration(
-                hintText: "Search", border: InputBorder.none),
+                hintText: "Search...", border: InputBorder.none),
           ),
           iconTheme: const IconThemeData(color: iconColor),
+          actions: [
+            Obx(() {
+              return Visibility(
+                visible: controller.clearVisible.value,
+                child: IconButton(
+                    onPressed: () => controller.onClearPressed(),
+                    icon: const Icon(Icons.close)),
+              );
+            })
+          ],
         ),
         body: Column(
           children: [
             Flexible(
                 child: ListView(
-              controller: controller.userlistScrollController,
-              physics: const AlwaysScrollableScrollPhysics(),
-              children: [
-                Obx(() {
-                  return Column(
-                    children: [
-                      Visibility(
-                          visible: controller.search.text.isEmpty,
-                          child: buildEarlyChatList()),
-                      Visibility(
-                        visible: controller.filteredRecentChatList.isNotEmpty,
-                        child: searchHeader(
-                            Constants.typeSearchRecent,
-                            controller.filteredRecentChatList.length.toString(),
-                            context),
-                      ),
-                      recentChatListView(),
-                      Visibility(
-                        visible: controller.chatMessages.isNotEmpty,
-                        child: searchHeader(Constants.typeSearchMessage,
-                            controller.chatMessages.length.toString(), context),
-                      ),
-                      filteredMessageListView(),
-                      Visibility(
-                        visible: controller.userList.isNotEmpty && !controller.searchLoading.value,
-                        child: searchHeader(Constants.typeSearchContact,
-                            controller.userList.length.toString(), context),
-                      ),
-                      Visibility(visible: controller.searchLoading.value,child: const Center(
-                        child: CircularProgressIndicator(),
-                      )),
-                      Visibility(
-                        visible: controller.userList.isNotEmpty && !controller.searchLoading.value,
-                        child: filteredUsersListView(),
-                      ),
-                      Visibility(
-                          visible: controller.search.text.isNotEmpty &&
-                              controller.filteredRecentChatList.isEmpty &&
-                              controller.chatMessages.isEmpty &&
-                              controller.userList.isEmpty,
-                          child: const Center(
-                            child: Padding(
-                              padding: EdgeInsets.all(16.0),
-                              child: Text("No data found"),
-                            ),
-                          ))
-                    ],
-                  );
-                })
-              ],
-            ))
+                  controller: controller.userlistScrollController,
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  children: [
+                    Obx(() {
+                      return Column(
+                        children: [
+                          Visibility(
+                              visible: controller.search.text.isEmpty,
+                              child: buildEarlyChatList()),
+                          Visibility(
+                            visible: controller.filteredRecentChatList
+                                .isNotEmpty,
+                            child: searchHeader(
+                                Constants.typeSearchRecent,
+                                controller.filteredRecentChatList.length
+                                    .toString(),
+                                context),
+                          ),
+                          recentChatListView(),
+                          Visibility(
+                            visible: controller.chatMessages.isNotEmpty,
+                            child: searchHeader(Constants.typeSearchMessage,
+                                controller.chatMessages.length.toString(),
+                                context),
+                          ),
+                          filteredMessageListView(),
+                          Visibility(
+                            visible: controller.userList.isNotEmpty &&
+                                !controller.searchLoading.value,
+                            child: searchHeader(Constants.typeSearchContact,
+                                controller.userList.length.toString(), context),
+                          ),
+                          Visibility(visible: controller.searchLoading.value,
+                              child: const Center(
+                                child: CircularProgressIndicator(),
+                              )),
+                          Visibility(
+                            visible: controller.userList.isNotEmpty &&
+                                !controller.searchLoading.value,
+                            child: filteredUsersListView(),
+                          ),
+                          Visibility(
+                              visible: controller.search.text.isNotEmpty &&
+                                  controller.filteredRecentChatList.isEmpty &&
+                                  controller.chatMessages.isEmpty &&
+                                  controller.userList.isEmpty,
+                              child: const Center(
+                                child: Padding(
+                                  padding: EdgeInsets.all(16.0),
+                                  child: Text("No data found"),
+                                ),
+                              ))
+                        ],
+                      );
+                    })
+                  ],
+                ))
           ],
         )
-        /*body: Obx(() =>
-            ListView.builder(
-            itemCount: controller.frmRecentChatList.isNotEmpty ? controller.frmRecentChatList.length : controller.recentSearchList.length,
-            physics: const AlwaysScrollableScrollPhysics(),
-            itemBuilder: (BuildContext context, int position) {
-              if(controller.frmRecentChatList.isNotEmpty){
-                var item = controller.frmRecentChatList[position];
-                //var image = controller.image path(item.profileImage);
-                return RecentChatItem(item: item.value,onTap: () {
-                  controller.toChatPage(item.value.jid.checkNull());
-                });
-              }else {
-                mirrorFlyLog("RecentSearch",
-                    controller.recentSearchList[position].toJson().toString());
-                return getViewByType(
-                    controller.recentSearchList[position], context, position) ??
-                    const SizedBox();
-              }
-            }))*/
-        );
+    );
   }
 
   ListView filteredUsersListView() {
@@ -124,7 +121,12 @@ class RecentSearchView extends GetView<RecentChatSearchController> {
           } else {
             var item = controller.userList[index];
             return memberItem(
-              name: item.name.checkNull().isEmpty ? (item.nickName.checkNull().isEmpty ? item.mobileNumber.checkNull() : item.nickName.checkNull()) : item.name.checkNull(),
+              name: item.name
+                  .checkNull()
+                  .isEmpty ? (item.nickName
+                  .checkNull()
+                  .isEmpty ? item.mobileNumber.checkNull() : item.nickName
+                  .checkNull()) : item.name.checkNull(),
               image: item.image.checkNull(),
               status: item.status.checkNull(),
               spantext: controller.search.text.toString(),
@@ -166,24 +168,26 @@ class RecentSearchView extends GetView<RecentChatSearchController> {
                                   height: 48,
                                   clipOval: true,
                                   errorWidget: ProfileTextImage(
-                                    text: profile.name.checkNull().isEmpty
+                                    text: profile.name
+                                        .checkNull()
+                                        .isEmpty
                                         ? profile.nickName.checkNull()
                                         : profile.name.checkNull(),
                                   ),
                                 ),
                                 unreadMessageCount.toString() != "0"
                                     ? Positioned(
-                                        right: 0,
-                                        child: CircleAvatar(
-                                          radius: 8,
-                                          child: Text(
-                                            unreadMessageCount.toString(),
-                                            style: const TextStyle(
-                                                fontSize: 9,
-                                                color: Colors.white,
-                                                fontFamily: 'sf_ui'),
-                                          ),
-                                        ))
+                                    right: 0,
+                                    child: CircleAvatar(
+                                      radius: 8,
+                                      child: Text(
+                                        unreadMessageCount.toString(),
+                                        style: const TextStyle(
+                                            fontSize: 9,
+                                            color: Colors.white,
+                                            fontFamily: 'sf_ui'),
+                                      ),
+                                    ))
                                     : const SizedBox(),
                               ],
                             )),
@@ -219,10 +223,10 @@ class RecentSearchView extends GetView<RecentChatSearchController> {
                                             fontWeight: FontWeight.w600,
                                             fontFamily: 'sf_ui',
                                             color:
-                                                unreadMessageCount.toString() !=
-                                                        "0"
-                                                    ? buttonBgColor
-                                                    : textColor),
+                                            unreadMessageCount.toString() !=
+                                                "0"
+                                                ? buttonBgColor
+                                                : textColor),
                                       ),
                                     ),
                                   ],
@@ -231,13 +235,13 @@ class RecentSearchView extends GetView<RecentChatSearchController> {
                                   children: [
                                     unreadMessageCount.toString() != "0"
                                         ? const Padding(
-                                            padding:
-                                                EdgeInsets.only(right: 8.0),
-                                            child: CircleAvatar(
-                                              radius: 4,
-                                              backgroundColor: Colors.green,
-                                            ),
-                                          )
+                                      padding:
+                                      EdgeInsets.only(right: 8.0),
+                                      child: CircleAvatar(
+                                        radius: 4,
+                                        backgroundColor: Colors.green,
+                                      ),
+                                    )
                                         : const SizedBox(),
                                     Expanded(
                                       child: Row(
@@ -245,35 +249,37 @@ class RecentSearchView extends GetView<RecentChatSearchController> {
                                           forMessageTypeIcon(item.messageType),
                                           SizedBox(
                                             width: forMessageTypeString(
-                                                        item.messageType) !=
-                                                    null
+                                                item.messageType) !=
+                                                null
                                                 ? 3.0
                                                 : 0.0,
                                           ),
                                           Expanded(
                                             child: forMessageTypeString(
-                                                        item.messageType) ==
-                                                    null
+                                                item.messageType) ==
+                                                null
                                                 ? spannableText(
-                                                    item.messageTextContent
-                                                        .toString(),
-                                                    controller.search.text,
-                                                    Theme.of(context)
-                                                        .textTheme
-                                                        .titleSmall,
-                                                  )
+                                              item.messageTextContent
+                                                  .toString(),
+                                              controller.search.text,
+                                              Theme
+                                                  .of(context)
+                                                  .textTheme
+                                                  .titleSmall,
+                                            )
                                                 : Text(
-                                                    forMessageTypeString(
-                                                            item.messageType) ??
-                                                        item.messageTextContent
-                                                            .toString(),
-                                                    style: Theme.of(context)
-                                                        .textTheme
-                                                        .titleSmall,
-                                                    maxLines: 1,
-                                                    overflow:
-                                                        TextOverflow.ellipsis,
-                                                  ),
+                                              forMessageTypeString(
+                                                  item.messageType) ??
+                                                  item.messageTextContent
+                                                      .toString(),
+                                              style: Theme
+                                                  .of(context)
+                                                  .textTheme
+                                                  .titleSmall,
+                                              maxLines: 1,
+                                              overflow:
+                                              TextOverflow.ellipsis,
+                                            ),
                                           ),
                                         ],
                                       ),
@@ -312,12 +318,12 @@ class RecentSearchView extends GetView<RecentChatSearchController> {
                 var item = snapshot.data;
                 return item != null
                     ? RecentChatItem(
-                        item: item,
-                        spanTxt: controller.search.text,
-                        onTap: () {
-                          controller.toChatPage(item.jid.checkNull());
-                        },
-                      )
+                  item: item,
+                  spanTxt: controller.search.text,
+                  onTap: () {
+                    controller.toChatPage(item.jid.checkNull());
+                  },
+                )
                     : const SizedBox();
               });
         });
@@ -339,33 +345,33 @@ class RecentSearchView extends GetView<RecentChatSearchController> {
         });
   }
 
-  Widget? getViewByType(
-      Rx<RecentSearch> item, BuildContext context, int position) {
+  Widget? getViewByType(Rx<RecentSearch> item, BuildContext context,
+      int position) {
     mirrorFlyLog(
         "search type", item.value.searchType.reactive.value.toString());
     switch (item.value.searchType.reactive.value.toString()) {
       case Constants.typeSearchRecent:
-        //viewRecentChatItem
+      //viewRecentChatItem
         return viewRecentChatItem(item, context, position);
       case Constants.typeSearchContact:
-        //viewContactItem
+      //viewContactItem
         return viewContactItem(context, position);
       case Constants.typeSearchMessage:
-        //viewMessageItem
+      //viewMessageItem
         return viewMessageItem(context, position);
       default:
         return const SizedBox(); //viewRecentChatItem(item, context,position);
     }
   }
 
-  Widget? viewRecentChatItem(
-      Rx<RecentSearch> data, BuildContext context, int position) {
+  Widget? viewRecentChatItem(Rx<RecentSearch> data, BuildContext context,
+      int position) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         position == 0 ||
-                controller.recentSearchList[position].value.searchType !=
-                    controller.recentSearchList[position - 1].value.searchType
+            controller.recentSearchList[position].value.searchType !=
+                controller.recentSearchList[position - 1].value.searchType
             ? searchHeaderByType(data.value, context)
             : const SizedBox(),
         FutureBuilder(
@@ -374,12 +380,12 @@ class RecentSearchView extends GetView<RecentChatSearchController> {
               var item = snapshot.data;
               return item != null
                   ? RecentChatItem(
-                      item: item,
-                      spanTxt: controller.search.text,
-                      onTap: () {
-                        controller.toChatPage(data.value.jid.checkNull());
-                      },
-                    )
+                item: item,
+                spanTxt: controller.search.text,
+                onTap: () {
+                  controller.toChatPage(data.value.jid.checkNull());
+                },
+              )
                   : const SizedBox();
             }),
       ],
@@ -392,8 +398,8 @@ class RecentSearchView extends GetView<RecentChatSearchController> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         position == 0 ||
-                data.searchType !=
-                    controller.recentSearchList[position - 1].value.searchType
+            data.searchType !=
+                controller.recentSearchList[position - 1].value.searchType
             ? searchHeaderByType(data, context)
             : const SizedBox(),
         FutureBuilder(
@@ -418,24 +424,26 @@ class RecentSearchView extends GetView<RecentChatSearchController> {
                                 height: 48,
                                 clipOval: true,
                                 errorWidget: ProfileTextImage(
-                                  text: profile.name.checkNull().isEmpty
+                                  text: profile.name
+                                      .checkNull()
+                                      .isEmpty
                                       ? profile.nickName.checkNull()
                                       : profile.name.checkNull(),
                                 ),
                               ),
                               unreadMessageCount.toString() != "0"
                                   ? Positioned(
-                                      right: 0,
-                                      child: CircleAvatar(
-                                        radius: 8,
-                                        child: Text(
-                                          unreadMessageCount.toString(),
-                                          style: const TextStyle(
-                                              fontSize: 9,
-                                              color: Colors.white,
-                                              fontFamily: 'sf_ui'),
-                                        ),
-                                      ))
+                                  right: 0,
+                                  child: CircleAvatar(
+                                    radius: 8,
+                                    child: Text(
+                                      unreadMessageCount.toString(),
+                                      style: const TextStyle(
+                                          fontSize: 9,
+                                          color: Colors.white,
+                                          fontFamily: 'sf_ui'),
+                                    ),
+                                  ))
                                   : const SizedBox(),
                             ],
                           )),
@@ -471,10 +479,10 @@ class RecentSearchView extends GetView<RecentChatSearchController> {
                                           fontWeight: FontWeight.w600,
                                           fontFamily: 'sf_ui',
                                           color:
-                                              unreadMessageCount.toString() !=
-                                                      "0"
-                                                  ? buttonBgColor
-                                                  : textColor),
+                                          unreadMessageCount.toString() !=
+                                              "0"
+                                              ? buttonBgColor
+                                              : textColor),
                                     ),
                                   ),
                                 ],
@@ -483,12 +491,12 @@ class RecentSearchView extends GetView<RecentChatSearchController> {
                                 children: [
                                   unreadMessageCount.toString() != "0"
                                       ? const Padding(
-                                          padding: EdgeInsets.only(right: 8.0),
-                                          child: CircleAvatar(
-                                            radius: 4,
-                                            backgroundColor: Colors.green,
-                                          ),
-                                        )
+                                    padding: EdgeInsets.only(right: 8.0),
+                                    child: CircleAvatar(
+                                      radius: 4,
+                                      backgroundColor: Colors.green,
+                                    ),
+                                  )
                                       : const SizedBox(),
                                   Expanded(
                                     child: Row(
@@ -496,35 +504,37 @@ class RecentSearchView extends GetView<RecentChatSearchController> {
                                         forMessageTypeIcon(item.messageType),
                                         SizedBox(
                                           width: forMessageTypeString(
-                                                      item.messageType) !=
-                                                  null
+                                              item.messageType) !=
+                                              null
                                               ? 3.0
                                               : 0.0,
                                         ),
                                         Expanded(
                                           child: forMessageTypeString(
-                                                      item.messageType) ==
-                                                  null
+                                              item.messageType) ==
+                                              null
                                               ? spannableText(
-                                                  item.messageTextContent
-                                                      .toString(),
-                                                  controller.search.text,
-                                                  Theme.of(context)
-                                                      .textTheme
-                                                      .titleSmall,
-                                                )
+                                            item.messageTextContent
+                                                .toString(),
+                                            controller.search.text,
+                                            Theme
+                                                .of(context)
+                                                .textTheme
+                                                .titleSmall,
+                                          )
                                               : Text(
-                                                  forMessageTypeString(
-                                                          item.messageType) ??
-                                                      item.messageTextContent
-                                                          .toString(),
-                                                  style: Theme.of(context)
-                                                      .textTheme
-                                                      .titleSmall,
-                                                  maxLines: 1,
-                                                  overflow:
-                                                      TextOverflow.ellipsis,
-                                                ),
+                                            forMessageTypeString(
+                                                item.messageType) ??
+                                                item.messageTextContent
+                                                    .toString(),
+                                            style: Theme
+                                                .of(context)
+                                                .textTheme
+                                                .titleSmall,
+                                            maxLines: 1,
+                                            overflow:
+                                            TextOverflow.ellipsis,
+                                          ),
                                         ),
                                       ],
                                     ),
@@ -557,8 +567,8 @@ class RecentSearchView extends GetView<RecentChatSearchController> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         position == 0 ||
-                data.searchType !=
-                    controller.recentSearchList[position - 1].value.searchType
+            data.searchType !=
+                controller.recentSearchList[position - 1].value.searchType
             ? searchHeaderByType(data, context)
             : const SizedBox(),
         FutureBuilder(
@@ -575,27 +585,33 @@ class RecentSearchView extends GetView<RecentChatSearchController> {
                         width: 50,
                         height: 50,
                         decoration: BoxDecoration(
-                          color: item.image.checkNull().isEmpty
+                          color: item.image
+                              .checkNull()
+                              .isEmpty
                               ? iconBgColor
                               : buttonBgColor,
                           shape: BoxShape.circle,
                         ),
-                        child: item.image.checkNull().isEmpty
+                        child: item.image
+                            .checkNull()
+                            .isEmpty
                             ? const Icon(
-                                Icons.person,
-                                color: Colors.white,
-                              )
+                          Icons.person,
+                          color: Colors.white,
+                        )
                             : ImageNetwork(
-                                url: item.image.toString(),
-                                width: 48,
-                                height: 48,
-                                clipOval: true,
-                                errorWidget: ProfileTextImage(
-                                  text: item.name.checkNull().isEmpty
-                                      ? item.mobileNumber.checkNull()
-                                      : item.name.checkNull(),
-                                ),
-                              ),
+                          url: item.image.toString(),
+                          width: 48,
+                          height: 48,
+                          clipOval: true,
+                          errorWidget: ProfileTextImage(
+                            text: item.name
+                                .checkNull()
+                                .isEmpty
+                                ? item.mobileNumber.checkNull()
+                                : item.name.checkNull(),
+                          ),
+                        ),
                       ),
                       Flexible(
                         child: Column(
@@ -604,11 +620,17 @@ class RecentSearchView extends GetView<RecentChatSearchController> {
                             spannableText(
                               item.name.toString(),
                               controller.search.text,
-                              Theme.of(context).textTheme.titleMedium,
+                              Theme
+                                  .of(context)
+                                  .textTheme
+                                  .titleMedium,
                             ),
                             Text(
                               item.status.toString(),
-                              style: Theme.of(context).textTheme.titleSmall,
+                              style: Theme
+                                  .of(context)
+                                  .textTheme
+                                  .titleSmall,
                             )
                           ],
                         ),

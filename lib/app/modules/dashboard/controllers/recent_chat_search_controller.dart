@@ -134,25 +134,39 @@ class RecentChatSearchController extends GetxController {
 
   final deBouncer = DeBouncer(milliseconds: 700);
   String lastInputValue = "";
+  RxBool clearVisible = false.obs;
   onChange(String inputValue){
-    if (lastInputValue != inputValue) {
-      lastInputValue = inputValue;
-      searchLoading(true);
-      frmRecentChatList.clear();
-      recentSearchList.clear();
-      if (search.text.isNotEmpty) {
-        deBouncer.run(() {
-          pageNum = 1;
-          fetchRecentChatList();
-          fetchMessageList();
-          filterUserlist();
-        });
-      } else {
-        mirrorFlyLog("empty", "empty");
-        frmRecentChatList.addAll(mainRecentChatList);
+    if(inputValue.trim().isNotEmpty) {
+      clearVisible(true);
+      if (lastInputValue != inputValue) {
+        lastInputValue = inputValue;
+        searchLoading(true);
+        frmRecentChatList.clear();
+        recentSearchList.clear();
+        if (search.text.isNotEmpty) {
+          deBouncer.run(() {
+            pageNum = 1;
+            fetchRecentChatList();
+            fetchMessageList();
+            filterUserlist();
+          });
+        } else {
+          mirrorFlyLog("empty", "empty");
+          frmRecentChatList.addAll(mainRecentChatList);
+        }
       }
+    }else{
+      clearVisible(false);
     }
     update();
+  }
+
+  onClearPressed(){
+    filteredRecentChatList.clear();
+    chatMessages.clear();
+    userList.clear();
+    search.clear();
+    frmRecentChatList.addAll(mainRecentChatList);
   }
 
   String getChatType(RecentChatData recent) {
