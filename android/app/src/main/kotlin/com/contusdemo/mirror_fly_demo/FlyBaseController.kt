@@ -402,8 +402,11 @@ open class FlyBaseController(activity: FlutterActivity) : MethodChannel.MethodCa
                             })
 
                         } else {
-                            // Register user failed print throwable to find the exception details.
-                            result.error("500", throwable?.message.toString(), null)
+                            if (data["http_status_code"] == 403) {
+                                result.error("403", throwable?.message.toString(), null)
+                            }else{
+                                result.error("500", data["message"].toString(), null)
+                            }
                         }
                     }
                 } catch (e: Exception) {

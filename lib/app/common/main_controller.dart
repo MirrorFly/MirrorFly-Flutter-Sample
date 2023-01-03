@@ -9,6 +9,7 @@ import 'package:mirror_fly_demo/app/common/constants.dart';
 import 'package:mirror_fly_demo/app/data/pushnotification.dart';
 import 'package:mirror_fly_demo/app/data/session_management.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
+import 'package:mirror_fly_demo/app/routes/app_pages.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -192,5 +193,19 @@ class MainController extends GetxController {
         mirrorFlyLog("", "Error on pause audio.");
       }
     }
+  }
+
+  handleAdminBlockedUser(String jid, bool status){
+    if(SessionManagement.getUserJID().checkNull()==jid){
+      if(status) {
+        //show Admin Blocked Activity
+        SessionManagement.setAdminBlocked(status);
+        Get.toNamed(Routes.adminBlocked);
+      }
+    }
+  }
+
+  handleAdminBlockedUserFromRegister(){
+
   }
 }

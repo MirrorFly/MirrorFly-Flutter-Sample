@@ -85,6 +85,9 @@ class SessionManagement {
   static Future setChatJid(String setChatJid) async {
     await _preferences.setString("chatJid", setChatJid);
   }
+  static void setAdminBlocked(bool status) async {
+    await _preferences.setBool("admin_blocked", status);
+  }
   static Future clear()async{
     await _preferences.clear();
   }
@@ -130,4 +133,5 @@ class SessionManagement {
   static bool getEnablePin() => _preferences.getBool("enable_pin") ?? false;
   static bool getEnableBio() => _preferences.getBool("enable_bio") ?? false;
   static bool? synced() => _preferences.getBool("synced");
+  static bool adminBlocked() => _preferences.getBool("admin_blocked") ?? false;
 }

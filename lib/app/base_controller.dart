@@ -33,7 +33,12 @@ abstract class BaseController {
     
     FlyChat.blockedThisUser.listen(blockedThisUser);
     FlyChat.myProfileUpdated.listen(myProfileUpdated);
-    FlyChat.onAdminBlockedUser.listen(onAdminBlockedUser);
+    FlyChat.onAdminBlockedUser.listen((event){
+      var data = json.decode(event.toString());
+      var jid = data["jid"];
+      var status = data["status"];
+      onAdminBlockedUser(jid,status);
+    });
     FlyChat.onContactSyncComplete.listen(onContactSyncComplete);
     FlyChat.onLoggedOut.listen(onLoggedOut);
     FlyChat.unblockedThisUser.listen(unblockedThisUser);
@@ -122,7 +127,7 @@ abstract class BaseController {
   void myProfileUpdated(result){
 
   }
-  void onAdminBlockedUser(result){
+  void onAdminBlockedUser(String jid, bool status){
 
   }
   void onContactSyncComplete(result){
