@@ -37,6 +37,8 @@ class GroupCreationController extends GetxController {
   }
 
   onGroupNameChanged(){
+    debugPrint("text changing");
+    debugPrint("length--> ${groupName.text.length}");
     _count((25 - groupName.text.length));
   }
   goToAddParticipantsPage(){

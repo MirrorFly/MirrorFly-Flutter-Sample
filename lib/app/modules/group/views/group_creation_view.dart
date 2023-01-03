@@ -179,7 +179,8 @@ class GroupCreationView extends GetView<GroupCreationController> {
                   if (controller.showEmoji.value) {
                     return EmojiLayout(
                         textController: controller.groupName,
-                        onEmojiSelected : (cat, emoji)=>controller.onGroupNameChanged()
+                        onBackspacePressed: () => controller.onGroupNameChanged(),
+                        onEmojiSelected : (cat, emoji)=>controller.onGroupNameChanged(),
                     );
                   } else {
                     return const SizedBox.shrink();

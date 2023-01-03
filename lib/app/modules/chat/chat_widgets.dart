@@ -509,6 +509,14 @@ class AudioMessageView extends StatelessWidget {
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
+                const SizedBox(
+                  width: 10,
+                ),
+                Text(
+                  Helper.durationToString(Duration(microseconds: chatMessage.mediaChatMessage?.mediaDuration ?? 0)),
+                  style: const TextStyle(color: Colors.black, fontSize: 10),
+                ),
+                const Spacer(),
                 chatMessage.isMessageStarred
                     ? const Icon(
                   Icons.star,
@@ -686,6 +694,14 @@ class DocumentMessageView extends StatelessWidget {
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
+                  const SizedBox(
+                    width: 10,
+                  ),
+                  Text(
+                    Helper.formatBytes(chatMessage.mediaChatMessage?.mediaFileSize ?? 0, 0),
+                    style: const TextStyle(color: Colors.black, fontSize: 10),
+                  ),
+                  const Spacer(),
                   chatMessage.isMessageStarred
                       ? const Icon(
                     Icons.star,

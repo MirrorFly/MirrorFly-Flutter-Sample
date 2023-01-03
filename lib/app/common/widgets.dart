@@ -307,19 +307,18 @@ Widget memberItem({required String name,required String image,required String st
 
 class EmojiLayout extends StatelessWidget {
   const EmojiLayout(
-      {Key? key, required this.textController, this.onEmojiSelected})
+      {Key? key, required this.textController, this.onEmojiSelected, this.onBackspacePressed})
       : super(key: key);
   final TextEditingController textController;
   final Function(Category?, Emoji)? onEmojiSelected;
+  final Function()? onBackspacePressed;
 
   @override
   Widget build(BuildContext context) {
     return SizedBox(
       height: 250,
       child: EmojiPicker(
-        onBackspacePressed: () {
-          // Do something when the user taps the backspace button (optional)
-        },
+        onBackspacePressed: onBackspacePressed,
         onEmojiSelected: onEmojiSelected,
         textEditingController: textController,
         config: Config(
