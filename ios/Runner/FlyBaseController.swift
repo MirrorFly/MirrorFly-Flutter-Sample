@@ -67,13 +67,7 @@ let onSuccess_channel = "contus.mirrorfly/onSuccess"
 
 
 
-class FlyBaseController: NSObject, ConnectionEventDelegate{
-    
-    
-   
-    
-    
-   
+class FlyBaseController: NSObject{
     
     static let MESSAGE_ONRECEIVED_CHANNEL = "contus.mirrorfly/onMessageReceived"
     static var messageReceivedStreamHandler: MessageReceivedStreamHandler?
@@ -114,8 +108,8 @@ class FlyBaseController: NSObject, ConnectionEventDelegate{
             .setGroupConfiguration(groupConfig: groupConfig!)
             .buildAndInitialize()
         
-        ChatManager.shared.connectionDelegate = self
-        ChatManager.connect()
+//        ChatManager.shared.connectionDelegate = self
+    
         
         let methodChannel = FlutterMethodChannel(name: MIRRORFLY_METHOD_CHANNEL, binaryMessenger: controller.binaryMessenger)
         
@@ -387,6 +381,8 @@ class FlyBaseController: NSObject, ConnectionEventDelegate{
                 FlySdkMethodCalls.updateChatMuteStatus(call: call, result: result)
             case "sendTypingStatus":
                 FlySdkMethodCalls.sendTypingStatus(call: call, result: result)
+            case "sendTypingGoneStatus":
+                FlySdkMethodCalls.sendTypingGoneStatus(call: call, result: result)
             default:
                 result(FlutterMethodNotImplemented)
             }

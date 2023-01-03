@@ -435,7 +435,7 @@ TextSpan customTextSpan(String message, String prevValue, TextStyle? normalStyle
         });*/
     }
 
-    return TextSpan(text: e, style: spannableTextType(e) == "text" ? normalStyle : underlineStyle, recognizer: TapGestureRecognizer() ..onTap = (){
+    return TextSpan(text: "$e ", style: spannableTextType(e) == "text" ? normalStyle : underlineStyle, recognizer: TapGestureRecognizer() ..onTap = (){
       onTapForSpantext(e);
     });
   }).toList(),

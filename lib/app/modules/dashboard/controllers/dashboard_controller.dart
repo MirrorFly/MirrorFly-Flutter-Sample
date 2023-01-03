@@ -56,9 +56,9 @@ class DashboardController extends GetxController with GetTickerProviderStateMixi
   getRecentChatList() {
     mirrorFlyLog("","recent chats");
     FlyChat.getRecentChatList().then((value) async {
-      String recentList = value.replaceAll('\n', '\\n');
-      debugPrint(recentList);
-      var data = await compute(recentChatFromJson,recentList.toString());
+      // String recentList = value.replaceAll('\n', '\\n');
+      // debugPrint(recentList);
+      var data = await compute(recentChatFromJson,value.toString());
       recentChats.clear();
       recentChats.addAll(data.data!);
     }).catchError((error) {

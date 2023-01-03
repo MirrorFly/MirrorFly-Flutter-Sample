@@ -53,7 +53,7 @@ import Photos
                 FlyDefaults.myMobileNumber = userIdentifier!
                 FlyDefaults.isProfileUpdated = data["isProfileUpdated"] as! Int == 1
                 
-//                ChatManager.connect()
+                ChatManager.connect()
                 
                 DispatchQueue.main.asyncAfter(deadline: .now() + 10.0) {
                     result(Commons.json(from: registerResponse))

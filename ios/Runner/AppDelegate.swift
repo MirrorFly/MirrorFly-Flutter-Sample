@@ -49,35 +49,16 @@ let googleApiKey = "AIzaSyDnjPEs86MRsnFfW1sVPKvMWjqQRnSa7Ts"
     didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
   ) -> Bool {
       
-      
-//      let groupConfig = try? GroupConfig.Builder.enableGroupCreation(groupCreation: true)
-//          .onlyAdminCanAddOrRemoveMembers(adminOnly: true)
-//          .setMaximumMembersInAGroup(membersCount: 200)
-//          .build()
-//      assert(groupConfig != nil)
-//
-//      try? ChatSDK.Builder.setAppGroupContainerID(containerID: CONTAINER_ID)
-//          .setLicenseKey(key: LICENSE_KEY)
-//          .isTrialLicense(isTrial: !IS_LIVE)
-//          .setDomainBaseUrl(baseUrl: BASE_URL)
-//          .setGroupConfiguration(groupConfig: groupConfig!)
-//          .buildAndInitialize()
-     
-//      ChatManager.shared.connectionDelegate = self
-//      ChatManager.connect()
-     
       let controller : FlutterViewController = window?.rootViewController as! FlutterViewController
       
       FlyBaseController.initSDK(controller: controller, licenseKey: LICENSE_KEY, isTrial: !IS_LIVE, baseUrl: BASE_URL, containerID: CONTAINER_ID)
-
-      
       
 //      ChatManager.shared.logoutDelegate = self
-//              FlyMessenger.shared.messageEventsDelegate = self
-//              ChatManager.shared.messageEventsDelegate = self
+              FlyMessenger.shared.messageEventsDelegate = self
+              ChatManager.shared.messageEventsDelegate = self
 //              GroupManager.shared.groupDelegate = self
 //              ChatManager.shared.logoutDelegate = self
-              
+      ChatManager.shared.connectionDelegate = self
 //              ChatManager.shared.adminBlockCurrentUserDelegate = self
       
       GMSServices.provideAPIKey(googleApiKey)
@@ -117,8 +98,7 @@ let googleApiKey = "AIzaSyDnjPEs86MRsnFfW1sVPKvMWjqQRnSa7Ts"
         print("#appDelegate applicationDidBecomeActive")
         if Utility.getBoolFromPreference(key: isLoggedIn) && (FlyDefaults.isLoggedIn) {
             print("connecting chat manager")
-           
-            
+            ChatManager.connect()
         }else{
             print(Utility.getBoolFromPreference(key: isLoggedIn))
             print(FlyDefaults.isLoggedIn)
@@ -226,115 +206,110 @@ extension AppDelegate {
     }
     
 }
-//func didReceiveLogout() {
-//    print("logout delegate received")
-//    print("AppDelegate LogoutDelegate ===> LogoutDelegate")
-//    Utility.saveInPreference(key: isProfileSaved, value: false)
-//    Utility.saveInPreference(key: isLoggedIn, value: false)
-//
-//    ChatManager.logoutApi { isSuccess, flyError, flyData in
-//       if isSuccess {
-//           print("requestLogout Logout api isSuccess")
-//
-//       }else{
-//           print("Logout api error : \(String(describing: flyError))")
-//
-//       }
-//   }
-//    ChatManager.enableContactSync(isEnable: ENABLE_CONTACT_SYNC)
-//    ChatManager.disconnect()
-//    ChatManager.shared.resetFlyDefaults()
-//}
+func didReceiveLogout() {
+    print("logout delegate received")
+    print("AppDelegate LogoutDelegate ===> LogoutDelegate")
+    Utility.saveInPreference(key: isProfileSaved, value: false)
+    Utility.saveInPreference(key: isLoggedIn, value: false)
+
+    ChatManager.logoutApi { isSuccess, flyError, flyData in
+       if isSuccess {
+           print("requestLogout Logout api isSuccess")
+
+       }else{
+           print("Logout api error : \(String(describing: flyError))")
+
+       }
+   }
+    ChatManager.enableContactSync(isEnable: ENABLE_CONTACT_SYNC)
+    ChatManager.disconnect()
+    ChatManager.shared.resetFlyDefaults()
+}
 
 
-//extension AppDelegate : MessageEventsDelegate {
-//    func onMessageReceived(message: FlyCommon.ChatMessage, chatJid: String) {
+extension AppDelegate : MessageEventsDelegate {
+    func onMessageReceived(message: FlyCommon.ChatMessage, chatJid: String) {
+
+        print("Message Received Update--->")
+        print(JSONSerializer.toJson(message))
+
+        var messageReceivedJson = JSONSerializer.toJson(message)
+        messageReceivedJson = messageReceivedJson.replacingOccurrences(of: "{\"some\":", with: "")
+        messageReceivedJson = messageReceivedJson.replacingOccurrences(of: "}}", with: "}")
+
+        if(FlyBaseController.messageReceivedStreamHandler?.onMessageReceived != nil){
+            FlyBaseController.messageReceivedStreamHandler?.onMessageReceived?(messageReceivedJson)
+
+        }else{
+            print("Message Stream Handler is Nil")
+        }
+
+    }
+
+    func onMessageStatusUpdated(messageId: String, chatJid: String, status: FlyCommon.MessageStatus) {
+
+        let chatMessage = FlyMessenger.getMessageOfId(messageId: messageId)
+        print("Message Status Update--->")
+        var chatMessageJson = JSONSerializer.toJson(chatMessage as Any)
+
+        chatMessageJson = chatMessageJson.replacingOccurrences(of: "{\"some\":", with: "")
+        chatMessageJson = chatMessageJson.replacingOccurrences(of: "}}", with: "}")
+        print(chatMessageJson)
+
+        if(FlyBaseController.messageStatusUpdatedStreamHandler?.onMessageStatusUpdated != nil){
+            FlyBaseController.messageStatusUpdatedStreamHandler?.onMessageStatusUpdated?(chatMessageJson)
+
+        }else{
+            print("Message Stream Handler is Nil")
+        }
 //
-//        print("Message Received Update--->")
-//        print(JSONSerializer.toJson(message))
-//
-//        var messageReceivedJson = JSONSerializer.toJson(message)
-//        messageReceivedJson = messageReceivedJson.replacingOccurrences(of: "{\"some\":", with: "")
-//        messageReceivedJson = messageReceivedJson.replacingOccurrences(of: "}}", with: "}")
-//
-////        if(self.messageReceivedStreamHandler?.onMessageReceived != nil){
-////            self.messageReceivedStreamHandler?.onMessageReceived?(messageReceivedJson)
-////
-////        }else{
-////            print("Message Stream Handler is Nil")
-////        }
-////
-//    }
-//
-//    func onMessageStatusUpdated(messageId: String, chatJid: String, status: FlyCommon.MessageStatus) {
-//
-//        let chatMessage = FlyMessenger.getMessageOfId(messageId: messageId)
-//        print("Message Status Update--->")
-//        var chatMessageJson = JSONSerializer.toJson(chatMessage as Any)
-//
-//        chatMessageJson = chatMessageJson.replacingOccurrences(of: "{\"some\":", with: "")
-//        chatMessageJson = chatMessageJson.replacingOccurrences(of: "}}", with: "}")
-//        print(chatMessageJson)
-//
-////        if(self.messageStatusUpdatedStreamHandler?.onMessageStatusUpdated != nil){
-////            self.messageStatusUpdatedStreamHandler?.onMessageStatusUpdated?(chatMessageJson)
-////
-////        }else{
-////            print("Message Stream Handler is Nil")
-////        }
-////
-//    }
-//
-//    func onMediaStatusUpdated(message: FlyCommon.ChatMessage) {
-//        print("Media Status Update--->")
-//        var chatMediaJson = JSONSerializer.toJson(message as Any)
-//        chatMediaJson = chatMediaJson.replacingOccurrences(of: "{\"some\":", with: "")
-//        chatMediaJson = chatMediaJson.replacingOccurrences(of: "}}", with: "}")
-//        print(chatMediaJson)
-//
-////        if(self.mediaStatusUpdatedStreamHandler?.onMediaStatusUpdated != nil){
-////            self.mediaStatusUpdatedStreamHandler?.onMediaStatusUpdated?(chatMediaJson)
-////        }else{
-////            print("chatMediaJson Stream Handler is Nil")
-////        }
-//    }
-//
-//    func onMediaStatusFailed(error: String, messageId: String) {
-//        print("Media Status Failed--->\(error)")
-//    }
-//
-//    func onMediaProgressChanged(message: FlyCommon.ChatMessage, progressPercentage: Float) {
-//        print("Media Status Onprogress changed---> \(progressPercentage)")
-//    }
-//
-//    func onMessagesClearedOrDeleted(messageIds: Array<String>) {
-//        print("Message Cleared--->")
-//    }
-//
-//    func onMessagesDeletedforEveryone(messageIds: Array<String>) {
-//        print("Message Deleted For Everyone--->")
-//    }
-//
-//    func showOrUpdateOrCancelNotification() {
-//        print("Message showOrUpdateOrCancelNotification--->")
-//    }
-//
-//    func onMessagesCleared(toJid: String) {
-//        print("Message onMessagesCleared--->")
-//    }
-//
-//    func setOrUpdateFavourite(messageId: String, favourite: Bool, removeAllFavourite: Bool) {
-//        print("Message setOrUpdateFavourite--->")
-//    }
-//
-//    func onMessageTranslated(message: FlyCommon.ChatMessage, jid: String) {
-//        print("Message onMessageTranslated--->")
-//    }
-//    func getNotificationSettings() {
-//      UNUserNotificationCenter.current().getNotificationSettings { settings in
-//        print("Notification settings: \(settings)")
-//      }
-//    }
-//
-//}
+    }
+
+    func onMediaStatusUpdated(message: FlyCommon.ChatMessage) {
+        print("Media Status Update--->")
+        var chatMediaJson = JSONSerializer.toJson(message as Any)
+        chatMediaJson = chatMediaJson.replacingOccurrences(of: "{\"some\":", with: "")
+        chatMediaJson = chatMediaJson.replacingOccurrences(of: "}}", with: "}")
+        print(chatMediaJson)
+
+        if(FlyBaseController.mediaStatusUpdatedStreamHandler?.onMediaStatusUpdated != nil){
+            FlyBaseController.mediaStatusUpdatedStreamHandler?.onMediaStatusUpdated?(chatMediaJson)
+        }else{
+            print("chatMediaJson Stream Handler is Nil")
+        }
+    }
+
+    func onMediaStatusFailed(error: String, messageId: String) {
+        print("Media Status Failed--->\(error)")
+    }
+
+    func onMediaProgressChanged(message: FlyCommon.ChatMessage, progressPercentage: Float) {
+        print("Media Status Onprogress changed---> \(progressPercentage)")
+    }
+
+    func onMessagesClearedOrDeleted(messageIds: Array<String>) {
+        print("Message Cleared--->")
+    }
+
+    func onMessagesDeletedforEveryone(messageIds: Array<String>) {
+        print("Message Deleted For Everyone--->")
+    }
+
+    func showOrUpdateOrCancelNotification() {
+        print("Message showOrUpdateOrCancelNotification--->")
+    }
+
+    func onMessagesCleared(toJid: String) {
+        print("Message onMessagesCleared--->")
+    }
+
+    func setOrUpdateFavourite(messageId: String, favourite: Bool, removeAllFavourite: Bool) {
+        print("Message setOrUpdateFavourite--->")
+    }
+
+    func onMessageTranslated(message: FlyCommon.ChatMessage, jid: String) {
+        print("Message onMessageTranslated--->")
+    }
+
+}
 
