@@ -7,6 +7,14 @@
 
 import Foundation
 
+
+let isLoggedIn = "isLoggedIn"
+let didEnterBackground = "DidEnterBackground"
+let isProfileSaved = "isProfileSaved"
+let googleToken = "googleToken"
+let notificationUserJid = ""
+let voipToken = "voipToken"
+
 class Commons{
     
     

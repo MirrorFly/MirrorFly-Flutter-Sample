@@ -20,62 +20,9 @@ let ENABLE_CONTACT_SYNC = false
 let IS_LIVE = false
 let WEB_LOGIN_URL = "https://webchat-preprod-sandbox.mirrorfly.com/"
 let IS_MOBILE_NUMBER_LOGIN = true
+
+
 let MIRRORFLY_METHOD_CHANNEL = "contus.mirrorfly/sdkCall"
-
-let MESSAGE_STATUS_UPDATED_CHANNEL = "contus.mirrorfly/onMessageStatusUpdated"
-let MEDIA_STATUS_UPDATED_CHANNEL = "contus.mirrorfly/onMediaStatusUpdated"
-let UPLOAD_DOWNLOAD_PROGRESS_CHANGED_CHANNEL =
-    "contus.mirrorfly/onUploadDownloadProgressChanged"
-let SHOW_UPDATE_CANCEL_NOTIFICTION_CHANNEL =
-    "contus.mirrorfly/showOrUpdateOrCancelNotification"
-
-let onGroupProfileFetched_channel = "contus.mirrorfly/onGroupProfileFetched"
-let onNewGroupCreated_channel = "contus.mirrorfly/onNewGroupCreated"
-let onGroupProfileUpdated_channel = "contus.mirrorfly/onGroupProfileUpdated"
-let onNewMemberAddedToGroup_channel = "contus.mirrorfly/onNewMemberAddedToGroup"
-let onMemberRemovedFromGroup_channel = "contus.mirrorfly/onMemberRemovedFromGroup"
-let onFetchingGroupMembersCompleted_channel =
-    "contus.mirrorfly/onFetchingGroupMembersCompleted"
-let onDeleteGroup_channel = "contus.mirrorfly/onDeleteGroup"
-let onFetchingGroupListCompleted_channel =
-    "contus.mirrorfly/onFetchingGroupListCompleted"
-let onMemberMadeAsAdmin_channel = "contus.mirrorfly/onMemberMadeAsAdmin"
-let onMemberRemovedAsAdmin_channel = "contus.mirrorfly/onMemberRemovedAsAdmin"
-let onLeftFromGroup_channel = "contus.mirrorfly/onLeftFromGroup"
-let onGroupNotificationMessage_channel = "contus.mirrorfly/onGroupNotificationMessage"
-let onGroupDeletedLocally_channel = "contus.mirrorfly/onGroupDeletedLocally"
-
-let blockedThisUser_channel = "contus.mirrorfly/blockedThisUser"
-let myProfileUpdated_channel = "contus.mirrorfly/myProfileUpdated"
-let onAdminBlockedOtherUser_channel = "contus.mirrorfly/onAdminBlockedOtherUser"
-let onAdminBlockedUser_channel = "contus.mirrorfly/onAdminBlockedUser"
-let onContactSyncComplete_channel = "contus.mirrorfly/onContactSyncComplete"
-let onLoggedOut_channel = "contus.mirrorfly/onLoggedOut"
-let unblockedThisUser_channel = "contus.mirrorfly/unblockedThisUser"
-let userBlockedMe_channel = "contus.mirrorfly/userBlockedMe"
-let userCameOnline_channel = "contus.mirrorfly/userCameOnline"
-let userDeletedHisProfile_channel = "contus.mirrorfly/userDeletedHisProfile"
-let userProfileFetched_channel = "contus.mirrorfly/userProfileFetched"
-let userUnBlockedMe_channel = "contus.mirrorfly/userUnBlockedMe"
-let userUpdatedHisProfile_channel = "contus.mirrorfly/userUpdatedHisProfile"
-let userWentOffline_channel = "contus.mirrorfly/userWentOffline"
-let usersIBlockedListFetched_channel = "contus.mirrorfly/usersIBlockedListFetched"
-let usersProfilesFetched_channel = "contus.mirrorfly/usersProfilesFetched"
-let usersWhoBlockedMeListFetched_channel = "contus.mirrorfly/usersWhoBlockedMeListFetched"
-let onConnected_channel = "contus.mirrorfly/onConnected"
-let onDisconnected_channel = "contus.mirrorfly/onDisconnected"
-let onConnectionNotAuthorized_channel = "contus.mirrorfly/onConnectionNotAuthorized"
-let connectionFailed_channel = "contus.mirrorfly/connectionFailed"
-let connectionSuccess_channel = "contus.mirrorfly/connectionSuccess"
-let onWebChatPasswordChanged_channel = "contus.mirrorfly/onWebChatPasswordChanged"
-let setTypingStatus_channel = "contus.mirrorfly/setTypingStatus"
-let onChatTypingStatus_channel = "contus.mirrorfly/onChatTypingStatus"
-let onGroupTypingStatus_channel = "contus.mirrorfly/onGroupTypingStatus"
-let onFailure_channel = "contus.mirrorfly/onFailure"
-let onProgressChanged_channel = "contus.mirrorfly/onProgressChanged"
-let onSuccess_channel = "contus.mirrorfly/onSuccess"
-
-
 
 let googleApiKey = "AIzaSyDnjPEs86MRsnFfW1sVPKvMWjqQRnSa7Ts"
 
@@ -86,160 +33,24 @@ let googleApiKey = "AIzaSyDnjPEs86MRsnFfW1sVPKvMWjqQRnSa7Ts"
     
     var postNotificationdidEnterBackground : NotificationCenter? = nil
     
-    let MESSAGE_ONRECEIVED_CHANNEL = "contus.mirrorfly/onMessageReceived"
-    var messageReceivedStreamHandler: MessageReceivedStreamHandler?
-    var messageStatusUpdatedStreamHandler: MessageStatusUpdatedStreamHandler?
-    var mediaStatusUpdatedStreamHandler: MediaStatusUpdatedStreamHandler?
-    var uploadDownloadProgressChangedStreamHandler: UploadDownloadProgressChangedStreamHandler?
-    var showOrUpdateOrCancelNotificationStreamHandler: ShowOrUpdateOrCancelNotificationStreamHandler?
-    
+   
     
   override func application(
     _ application: UIApplication,
     didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
   ) -> Bool {
       
-//      #if LOCAL || DEBUG || DEV
-//      BASE_URL = "https://api-uikit-qa.contus.us/api/v1/"
-//      LICENSE_KEY = "ckIjaccWBoMNvxdbql8LJ2dmKqT5bp"
-//
-//      #elseif QA
-//      BASE_URL = "https://api-uikit-dev.contus.us/api/v1/"
-//      LICENSE_KEY = "ckIjaccWBoMNvxdbql8LJ2dmKqT5bp"
-//
-//      #endif
-      
-      let groupConfig = try? GroupConfig.Builder.enableGroupCreation(groupCreation: true)
-          .onlyAdminCanAddOrRemoveMembers(adminOnly: true)
-          .setMaximumMembersInAGroup(membersCount: 200)
-          .build()
-      assert(groupConfig != nil)
-      
-      print("============================")
-      print(BASE_URL)
-      print("============================")
-      
-
-      try? ChatSDK.Builder.setAppGroupContainerID(containerID: CONTAINER_ID)
-          .setLicenseKey(key: LICENSE_KEY)
-          .isTrialLicense(isTrial: !IS_LIVE)
-          .setDomainBaseUrl(baseUrl: BASE_URL)
-          .setGroupConfiguration(groupConfig: groupConfig!)
-          .buildAndInitialize()
-//      GMSServices.provideAPIKey("AIzaSyBy7JDQj6Ar03dMXFCQ-SHgBdBPnKAteG4")
       
       let controller : FlutterViewController = window?.rootViewController as! FlutterViewController
+      
+      FlyBaseController.initSDK(controller: controller, licenseKey: LICENSE_KEY, isTrial: !IS_LIVE, baseUrl: BASE_URL, containerID: CONTAINER_ID)
 
       let methodChannel = FlutterMethodChannel(name: MIRRORFLY_METHOD_CHANNEL, binaryMessenger: controller.binaryMessenger)
       
-      FlyMethodChannel.prepareMethodHandler(methodChannel: methodChannel)
+      FlyBaseController.prepareMethodHandler(methodChannel: methodChannel)
       
+      FlyBaseController.registerEventChannels(controller: controller)
       
-      if (self.messageReceivedStreamHandler == nil) {
-          self.messageReceivedStreamHandler = MessageReceivedStreamHandler()
-        }
-              
-      FlutterEventChannel(name: MESSAGE_ONRECEIVED_CHANNEL, binaryMessenger: controller.binaryMessenger).setStreamHandler((self.messageReceivedStreamHandler as! FlutterStreamHandler & NSObjectProtocol))
-
-      if (self.messageStatusUpdatedStreamHandler == nil) {
-          self.messageStatusUpdatedStreamHandler = MessageStatusUpdatedStreamHandler()
-        }
-      FlutterEventChannel(name: MESSAGE_STATUS_UPDATED_CHANNEL, binaryMessenger: controller.binaryMessenger).setStreamHandler((self.messageStatusUpdatedStreamHandler as! FlutterStreamHandler & NSObjectProtocol))
-      
-      if (self.mediaStatusUpdatedStreamHandler == nil) {
-          self.mediaStatusUpdatedStreamHandler = MediaStatusUpdatedStreamHandler()
-        }
-      
-      FlutterEventChannel(name: MEDIA_STATUS_UPDATED_CHANNEL, binaryMessenger: controller.binaryMessenger).setStreamHandler((self.mediaStatusUpdatedStreamHandler as! FlutterStreamHandler & NSObjectProtocol))
-      
-      FlutterEventChannel(name: UPLOAD_DOWNLOAD_PROGRESS_CHANGED_CHANNEL, binaryMessenger: controller.binaryMessenger).setStreamHandler(UploadDownloadProgressChangedStreamHandler())
-      
-      FlutterEventChannel(name: SHOW_UPDATE_CANCEL_NOTIFICTION_CHANNEL, binaryMessenger: controller.binaryMessenger).setStreamHandler(ShowOrUpdateOrCancelNotificationStreamHandler())
-      
-      FlutterEventChannel(name: onGroupProfileFetched_channel, binaryMessenger: controller.binaryMessenger).setStreamHandler(GroupProfileFetchedStreamHandler())
-      
-      FlutterEventChannel(name: onNewGroupCreated_channel, binaryMessenger: controller.binaryMessenger).setStreamHandler(NewGroupCreatedStreamHandler())
-      
-      FlutterEventChannel(name: onGroupProfileUpdated_channel, binaryMessenger: controller.binaryMessenger).setStreamHandler(GroupProfileUpdatedStreamHandler())
-      
-      FlutterEventChannel(name: onNewMemberAddedToGroup_channel, binaryMessenger: controller.binaryMessenger).setStreamHandler(NewMemberAddedToGroupStreamHandler())
-      
-      FlutterEventChannel(name: onMemberRemovedFromGroup_channel, binaryMessenger: controller.binaryMessenger).setStreamHandler(MemberRemovedFromGroupStreamHandler())
-      
-      FlutterEventChannel(name: onFetchingGroupMembersCompleted_channel, binaryMessenger: controller.binaryMessenger).setStreamHandler(FetchingGroupMembersCompletedStreamHandler())
-      
-      FlutterEventChannel(name: onDeleteGroup_channel, binaryMessenger: controller.binaryMessenger).setStreamHandler(DeleteGroupStreamHandler())
-      
-      FlutterEventChannel(name: onFetchingGroupListCompleted_channel, binaryMessenger: controller.binaryMessenger).setStreamHandler(FetchingGroupListCompletedStreamHandler())
-      
-      FlutterEventChannel(name: onMemberMadeAsAdmin_channel, binaryMessenger: controller.binaryMessenger).setStreamHandler(MemberMadeAsAdminStreamHandler())
-      
-      FlutterEventChannel(name: onMemberRemovedAsAdmin_channel, binaryMessenger: controller.binaryMessenger).setStreamHandler(MemberRemovedAsAdminStreamHandler())
-      
-      FlutterEventChannel(name: onLeftFromGroup_channel, binaryMessenger: controller.binaryMessenger).setStreamHandler(LeftFromGroupStreamHandler())
-      
-      FlutterEventChannel(name: onGroupNotificationMessage_channel, binaryMessenger: controller.binaryMessenger).setStreamHandler(GroupNotificationMessageStreamHandler())
-      
-      FlutterEventChannel(name: onGroupDeletedLocally_channel, binaryMessenger: controller.binaryMessenger).setStreamHandler(GroupDeletedLocallyStreamHandler())
-      
-      FlutterEventChannel(name: blockedThisUser_channel, binaryMessenger: controller.binaryMessenger).setStreamHandler(blockedThisUserStreamHandler())
-      
-      FlutterEventChannel(name: myProfileUpdated_channel, binaryMessenger: controller.binaryMessenger).setStreamHandler(myProfileUpdatedStreamHandler())
-      
-      FlutterEventChannel(name: onAdminBlockedOtherUser_channel, binaryMessenger: controller.binaryMessenger).setStreamHandler(onAdminBlockedOtherUserStreamHandler())
-      
-      FlutterEventChannel(name: onAdminBlockedUser_channel, binaryMessenger: controller.binaryMessenger).setStreamHandler(onAdminBlockedUserStreamHandler())
-      
-      FlutterEventChannel(name: onContactSyncComplete_channel, binaryMessenger: controller.binaryMessenger).setStreamHandler(onContactSyncCompleteStreamHandler())
-      
-      FlutterEventChannel(name: onLoggedOut_channel, binaryMessenger: controller.binaryMessenger).setStreamHandler(onLoggedOutStreamHandler())
-      
-      FlutterEventChannel(name: unblockedThisUser_channel, binaryMessenger: controller.binaryMessenger).setStreamHandler(unblockedThisUserStreamHandler())
-      
-      FlutterEventChannel(name: userBlockedMe_channel, binaryMessenger: controller.binaryMessenger).setStreamHandler(userBlockedMeStreamHandler())
-      
-      FlutterEventChannel(name: userCameOnline_channel, binaryMessenger: controller.binaryMessenger).setStreamHandler(userCameOnlineStreamHandler())
-      
-      FlutterEventChannel(name: userDeletedHisProfile_channel, binaryMessenger: controller.binaryMessenger).setStreamHandler(userDeletedHisProfileStreamHandler())
-      
-      FlutterEventChannel(name: userProfileFetched_channel, binaryMessenger: controller.binaryMessenger).setStreamHandler(userProfileFetchedStreamHandler())
-      
-      FlutterEventChannel(name: userUnBlockedMe_channel, binaryMessenger: controller.binaryMessenger).setStreamHandler(userUnBlockedMeStreamHandler())
-      
-      FlutterEventChannel(name: userUpdatedHisProfile_channel, binaryMessenger: controller.binaryMessenger).setStreamHandler(userUpdatedHisProfileStreamHandler())
-      
-      FlutterEventChannel(name: userWentOffline_channel, binaryMessenger: controller.binaryMessenger).setStreamHandler(userWentOfflineStreamHandler())
-      
-      FlutterEventChannel(name: usersIBlockedListFetched_channel, binaryMessenger: controller.binaryMessenger).setStreamHandler(usersIBlockedListFetchedStreamHandler())
-      
-      FlutterEventChannel(name: usersProfilesFetched_channel, binaryMessenger: controller.binaryMessenger).setStreamHandler(usersProfilesFetchedStreamHandler())
-      
-      FlutterEventChannel(name: usersWhoBlockedMeListFetched_channel, binaryMessenger: controller.binaryMessenger).setStreamHandler(usersWhoBlockedMeListFetchedStreamHandler())
-      
-      FlutterEventChannel(name: onConnected_channel, binaryMessenger: controller.binaryMessenger).setStreamHandler(onConnectedStreamHandler())
-      
-      FlutterEventChannel(name: onDisconnected_channel, binaryMessenger: controller.binaryMessenger).setStreamHandler(onDisconnectedStreamHandler())
-      
-      FlutterEventChannel(name: onConnectionNotAuthorized_channel, binaryMessenger: controller.binaryMessenger).setStreamHandler(onConnectionNotAuthorizedStreamHandler())
-      
-      FlutterEventChannel(name: connectionFailed_channel, binaryMessenger: controller.binaryMessenger).setStreamHandler(connectionFailedStreamHandler())
-      
-      FlutterEventChannel(name: connectionSuccess_channel, binaryMessenger: controller.binaryMessenger).setStreamHandler(connectionSuccessStreamHandler())
-      
-      FlutterEventChannel(name: onWebChatPasswordChanged_channel, binaryMessenger: controller.binaryMessenger).setStreamHandler(onWebChatPasswordChangedStreamHandler())
-      
-      FlutterEventChannel(name: setTypingStatus_channel, binaryMessenger: controller.binaryMessenger).setStreamHandler(setTypingStatusStreamHandler())
-      
-      FlutterEventChannel(name: onChatTypingStatus_channel, binaryMessenger: controller.binaryMessenger).setStreamHandler(onChatTypingStatusStreamHandler())
-      
-      FlutterEventChannel(name: onGroupTypingStatus_channel, binaryMessenger: controller.binaryMessenger).setStreamHandler(onGroupTypingStatusStreamHandler())
-      
-      FlutterEventChannel(name: onFailure_channel, binaryMessenger: controller.binaryMessenger).setStreamHandler(onFailureStreamHandler())
-      
-      FlutterEventChannel(name: onProgressChanged_channel, binaryMessenger: controller.binaryMessenger).setStreamHandler(onProgressChangedStreamHandler())
-      
-      FlutterEventChannel(name: onSuccess_channel, binaryMessenger: controller.binaryMessenger).setStreamHandler(onSuccessStreamHandler())
-
       
       GMSServices.provideAPIKey(googleApiKey)
       
@@ -477,7 +288,7 @@ extension AppDelegate {
         let chatId = response.notification.request.content.threadIdentifier
         print("chat ID ---> \(chatId)")
         if let profileDetails = ContactManager.shared.getUserProfileDetails(for: chatId) , chatId != FlyDefaults.myJid{
-            Utility.saveInPreference(key: notificationUserJid, value: profileDetails.jid)
+            Utility.saveInPreference(key: notificationUserJid, value: profileDetails.jid ?? "")
             
         }
 //        if response.notification.request.content.threadIdentifier.contains(XMPP_DOMAIN){
@@ -502,13 +313,13 @@ extension AppDelegate : MessageEventsDelegate {
         messageReceivedJson = messageReceivedJson.replacingOccurrences(of: "{\"some\":", with: "")
         messageReceivedJson = messageReceivedJson.replacingOccurrences(of: "}}", with: "}")
         
-        if(self.messageReceivedStreamHandler?.onMessageReceived != nil){
-            self.messageReceivedStreamHandler?.onMessageReceived?(messageReceivedJson)
-
-        }else{
-            print("Message Stream Handler is Nil")
-        }
-        
+//        if(self.messageReceivedStreamHandler?.onMessageReceived != nil){
+//            self.messageReceivedStreamHandler?.onMessageReceived?(messageReceivedJson)
+//
+//        }else{
+//            print("Message Stream Handler is Nil")
+//        }
+//
     }
     
     func onMessageStatusUpdated(messageId: String, chatJid: String, status: FlyCommon.MessageStatus) {
@@ -521,16 +332,13 @@ extension AppDelegate : MessageEventsDelegate {
         chatMessageJson = chatMessageJson.replacingOccurrences(of: "}}", with: "}")
         print(chatMessageJson)
         
-        if(self.messageStatusUpdatedStreamHandler?.onMessageStatusUpdated != nil){
-            self.messageStatusUpdatedStreamHandler?.onMessageStatusUpdated?(chatMessageJson)
-
-        }else{
-            print("Message Stream Handler is Nil")
-        }
-//        var chatMessage = FlyMessenger.getMessageOfId(messageId: messageId)
-//        print("Message Status Update--->")
-//        print(JSONSerializer.toJson(chatMessage as Any))
-//        messageStatusEventSink(JSONSerializer.toJson(chatMessage as Any))
+//        if(self.messageStatusUpdatedStreamHandler?.onMessageStatusUpdated != nil){
+//            self.messageStatusUpdatedStreamHandler?.onMessageStatusUpdated?(chatMessageJson)
+//
+//        }else{
+//            print("Message Stream Handler is Nil")
+//        }
+//
     }
     
     func onMediaStatusUpdated(message: FlyCommon.ChatMessage) {
@@ -540,11 +348,11 @@ extension AppDelegate : MessageEventsDelegate {
         chatMediaJson = chatMediaJson.replacingOccurrences(of: "}}", with: "}")
         print(chatMediaJson)
         
-        if(self.mediaStatusUpdatedStreamHandler?.onMediaStatusUpdated != nil){
-            self.mediaStatusUpdatedStreamHandler?.onMediaStatusUpdated?(chatMediaJson)
-        }else{
-            print("chatMediaJson Stream Handler is Nil")
-        }
+//        if(self.mediaStatusUpdatedStreamHandler?.onMediaStatusUpdated != nil){
+//            self.mediaStatusUpdatedStreamHandler?.onMediaStatusUpdated?(chatMediaJson)
+//        }else{
+//            print("chatMediaJson Stream Handler is Nil")
+//        }
     }
     
     func onMediaStatusFailed(error: String, messageId: String) {
