@@ -72,7 +72,7 @@ class MyApp extends StatelessWidget{
       title: "MirrorFly",
       theme: MirrorFlyAppTheme.theme,
       debugShowCheckedModeBanner: false,
-      initialBinding: getBinding(),
+      //initialBinding: getBinding(),
       initialRoute: SessionManagement.getEnablePin() ? Routes.pin : getInitialRoute(),
       //initialRoute: AppPages.INITIAL,
       getPages: AppPages.routes,
@@ -92,20 +92,34 @@ Bindings? getBinding(){
 }
 
 String getInitialRoute()  {
-  if(SessionManagement.getLogin()){
-    if(SessionManagement.getName().checkNull().isNotEmpty && SessionManagement.getMobileNumber().checkNull().isNotEmpty){
-      debugPrint("=====CHAT ID=====");
-      debugPrint(SessionManagement.getChatJid());
-      if(SessionManagement.getChatJid().checkNull().isEmpty) {
-        return AppPages.dashboard;
-      }else{
-        return "${AppPages.chat}?jid=${SessionManagement.getChatJid().checkNull()}&from_notification=true";
+  if(!SessionManagement.adminBlocked()) {
+    if (SessionManagement.getLogin()) {
+      if (SessionManagement
+          .getName()
+          .checkNull()
+          .isNotEmpty && SessionManagement
+          .getMobileNumber()
+          .checkNull()
+          .isNotEmpty) {
+        debugPrint("=====CHAT ID=====");
+        debugPrint(SessionManagement.getChatJid());
+        if (SessionManagement
+            .getChatJid()
+            .checkNull()
+            .isEmpty) {
+          return AppPages.dashboard;
+        } else {
+          return "${AppPages.chat}?jid=${SessionManagement.getChatJid()
+              .checkNull()}&from_notification=true";
+        }
+      } else {
+        return AppPages.profile;
       }
-    }else{
-      return AppPages.profile;
+    } else {
+      return AppPages.initial;
     }
   }else{
-    return AppPages.initial;
+    return AppPages.adminBlocked;
   }
 }
 

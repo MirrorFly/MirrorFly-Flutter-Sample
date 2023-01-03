@@ -24,6 +24,7 @@ import 'package:record/record.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../../common/constants.dart';
+import '../../../common/main_controller.dart';
 import '../../../data/apputils.dart';
 import '../../../data/helper.dart';
 import '../../../routes/app_pages.dart';
@@ -106,6 +107,7 @@ class ChatController extends GetxController
   @override
   void onInit() {
     super.onInit();
+
     // var profileDetail = Get.arguments as Profile;
     // profile_.value = profileDetail;
     // if(profile_.value.jid == null){
@@ -120,6 +122,7 @@ class ChatController extends GetxController
     if(userJid.isEmpty){
       var profileDetail = Get.arguments as Profile;
       profile_(profileDetail);
+      checkAdminBlocked();
       onready();
       initListeners();
     }else {
@@ -127,6 +130,7 @@ class ChatController extends GetxController
           value) {
         SessionManagement.setChatJid("");
         profile_(value);
+        checkAdminBlocked();
         onready();
         initListeners();
       });
@@ -1339,6 +1343,7 @@ class ChatController extends GetxController
                   .toString()}");
           profile_.value = value;
           isBlocked(profile.isBlocked);
+          checkAdminBlocked();
           memberOfGroup();
           FlyChat.setOnGoingChatUser(profile.jid!);
           getChatHistory();
@@ -1457,6 +1462,7 @@ class ChatController extends GetxController
         if (value != null) {
           profile_(value as Profile);
           isBlocked(profile.isBlocked);
+          checkAdminBlocked();
           memberOfGroup();
           FlyChat.setOnGoingChatUser(profile.jid!);
           getChatHistory();
@@ -1541,6 +1547,7 @@ class ChatController extends GetxController
           var member = Profile.fromJson(json.decode(value.toString()));
           profile_.value = member;
           profile_.refresh();
+          checkAdminBlocked();
         }
       });
     }
@@ -1764,7 +1771,26 @@ class ChatController extends GetxController
     }
   }
 
+  checkAdminBlocked(){
+    if(profile.isGroupProfile.checkNull()){
+      if(profile.isAdminBlocked.checkNull()){
+        toToast("This group is no longer available");
+        Get.back();
+      }
+    }else{
+      if(profile.isAdminBlocked.checkNull()){
+        toToast("This chat is no longer available");
+        Get.back();
+      }
+    }
+  }
 
+  @override
+  void onAdminBlockedUser(String jid, bool status){
+    super.onAdminBlockedUser(jid,status);
+    mirrorFlyLog("chat onAdminBlockedUser", "$jid, $status");
+    Get.find<MainController>().handleAdminBlockedUser(jid,status);
+  }
   /*makeVoiceCall(){
     FlyChat.makeVoiceCall(profile.jid.checkNull()).then((value){
       mirrorFlyLog("makeVoiceCall", value.toString());

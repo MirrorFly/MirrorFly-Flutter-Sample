@@ -37,6 +37,7 @@ abstract class Routes {
   static const deleteAccountReason = _Paths.deleteAccountReason;
   static const starredMessages = _Paths.starredMessages;
   static const cameraPick = _Paths.cameraPick;
+  static const adminBlocked = _Paths.adminBlocked;
 }
 
 abstract class _Paths {
@@ -76,4 +77,5 @@ abstract class _Paths {
   static const deleteAccountReason = '/delete-account-reason';
   static const starredMessages = '/starred-messages';
   static const cameraPick = '/camera-pick';
+  static const adminBlocked = '/adminBlocked';
 }

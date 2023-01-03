@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+import 'package:mirror_fly_demo/app/modules/admin_blocked/adminblockedview.dart';
 import 'package:mirror_fly_demo/app/modules/chat/views/forwardchat_view.dart';
 
 import '../modules/camera_pick/bindings/camera_pick_binding.dart';
@@ -76,6 +77,7 @@ class AppPages {
   static const profile = Routes.profile;
   static const dashboard = Routes.dashboard;
   static const chat = Routes.chat;
+  static const adminBlocked = Routes.adminBlocked;
 
   static final routes = [
     GetPage(name: _Paths.otp, page: () => const OtpView(), binding: LoginBinding()),
@@ -248,6 +250,10 @@ class AppPages {
       name: _Paths.cameraPick,
       page: () => const CameraPickView(),
       binding: CameraPickBinding(),
+    ),
+    GetPage(
+      name: _Paths.adminBlocked,
+      page: () => const AdminBlockedView(),
     ),
   ];
 }

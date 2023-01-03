@@ -19,6 +19,7 @@ const Color textBlackColor = Color(0xff000000);
 const Color textBlack1color = Color(0xff313131);
 const Color textHintColor = Color(0xff181818);
 const Color textColor = Color(0xff767676);
+const Color textColorBlack = Color(0xff333333);
 const Color textButtonColor = Color(0xffFFFFFF);
 const Color buttonBgColor = Color(0xff3276E2);
 const Color chatSentBgColor = Color(0xffe2eafc);
@@ -164,6 +165,8 @@ const String contactPermission = "assets/logos/contact_permission.svg";
 const String settingsPermission = "assets/logos/settings_permission.svg";
 const String locationPinPermission = "assets/logos/location_pin_permission.svg";
 const String recordAudioVideoPermission = "assets/logos/record_audio_video_permission.svg";
+
+const String icAdminBlocked = "assets/logos/ic_admin_blocked.svg";
 
 //About us
 const String titleContactMsg = "Mirror Fly is a ready-to-go messaging solution for building enterprise-grade real-time chat IM applications that meet various degrees of requirements like team discussion, data sharing, task delegation and information handling on the go.";
@@ -480,6 +483,10 @@ class Constants {
   static const String audioPermission = "To send audio messages, allow MirrorFly access to your Microphone.";
 
   static const String noInternetConnection = "Please check your internet connection";
+  static const String adminBlockedMessage ="This application is no longer available for you.";
+  static const String adminBlockedMessageLabel ="Please contact admin if you have any query.";
+  static const String supportMail ="contussupport@gmail.co";
+  static const String httpStatusCode = "http_status_code";
 }
 
 Future<void> launchWeb(String url) async{

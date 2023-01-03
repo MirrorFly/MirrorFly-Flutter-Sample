@@ -303,6 +303,11 @@ class LoginController extends GetxController {
         debugPrint("issue===> $error");
         debugPrint(error.message);
         hideLoading();
+        if(error.code == 403){
+          Get.offAllNamed(Routes.adminBlocked);
+        }else{
+          toToast(error.message);
+        }
       });
     } else {
       toToast(Constants.noInternetConnection);

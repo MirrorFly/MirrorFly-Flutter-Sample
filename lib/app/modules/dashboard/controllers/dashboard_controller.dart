@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/base_controller.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
+import 'package:mirror_fly_demo/app/common/main_controller.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
 import 'package:mirror_fly_demo/app/data/session_management.dart';
 
@@ -641,5 +642,11 @@ class DashboardController extends GetxController with GetTickerProviderStateMixi
         typingAndGoneStatus.removeAt(index);
       }
     }
+  }
+  @override
+  void onAdminBlockedUser(String jid, bool status) {
+    super.onAdminBlockedUser(jid,status);
+    mirrorFlyLog("dash onAdminBlockedUser", "$jid, $status");
+    Get.find<MainController>().handleAdminBlockedUser(jid,status);
   }
 }
