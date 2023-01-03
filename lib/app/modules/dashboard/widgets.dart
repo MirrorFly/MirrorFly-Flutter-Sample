@@ -122,11 +122,11 @@ class RecentChatItem extends StatelessWidget {
                                   Expanded(
                                     child: typingUserid.isEmpty ? Row(
                                       children: [
-                                        item.isLastMessageRecalledByUser! ? const SizedBox() : forMessageTypeIcon(item.lastMessageType!),
-                                        SizedBox(width: item.isLastMessageRecalledByUser! ? 0.0 : forMessageTypeString(item.lastMessageType!)!=null ? 3.0 : 0.0,),
+                                        item.isLastMessageRecalledByUser! ? const SizedBox() : forMessageTypeIcon(item.lastMessageType ?? ""),
+                                        SizedBox(width: item.isLastMessageRecalledByUser! ? 0.0 : forMessageTypeString(item.lastMessageType ?? "")!=null ? 3.0 : 0.0,),
                                         Expanded(
                                           child: spanTxt.isEmpty ? Text(
-                                            item.isLastMessageRecalledByUser! ? setRecalledMessageText(item.isLastMessageSentByMe!) : forMessageTypeString(item.lastMessageType!) ?? item.lastMessageContent.toString(),
+                                            item.isLastMessageRecalledByUser! ? setRecalledMessageText(item.isLastMessageSentByMe!) : forMessageTypeString(item.lastMessageType ?? "") ?? item.lastMessageContent.toString(),
                                             style: Theme.of(context).textTheme.titleSmall,
                                             maxLines: 1,
                                             overflow: TextOverflow.ellipsis,

@@ -53,7 +53,7 @@ import Photos
                 FlyDefaults.myMobileNumber = userIdentifier!
                 FlyDefaults.isProfileUpdated = data["isProfileUpdated"] as! Int == 1
                 
-                ChatManager.connect()
+//                ChatManager.connect()
                 
                 DispatchQueue.main.asyncAfter(deadline: .now() + 10.0) {
                     result(Commons.json(from: registerResponse))
@@ -847,6 +847,48 @@ import Photos
         ChatManager.updateRecentChatPinStatus(jid: userJID, pinRecentChat: pin_recent_chat)
     }
     
+    static func updateChatMuteStatus(call: FlutterMethodCall, result: @escaping FlutterResult){
+        
+        let args = call.arguments as! Dictionary<String, Any>
+        
+        let userJID = args["jid"] as? String ?? ""
+        let muteStatus = args["mute_status"] as? Bool ?? false
+        ChatManager.updateChatMuteStatus(jid: userJID, muteStatus: muteStatus)
+    }
+    static func sendTypingStatus(call: FlutterMethodCall, result: @escaping FlutterResult){
+        
+        let args = call.arguments as! Dictionary<String, Any>
+        
+        let toJid = args["to_jid"] as? String ?? ""
+        let chattype = args["chattype"] as? String ?? ""
+        
+        var chatType : ChatType
+        if(chattype == "chat"){
+            chatType = .singleChat
+        }else{
+            chatType = .groupChat
+        }
+            
+        ChatManager.sendTypingStatus(to: toJid, chatType: chatType)
+    }
+    
+    static func sendTypingGoneStatus(call: FlutterMethodCall, result: @escaping FlutterResult){
+        
+        let args = call.arguments as! Dictionary<String, Any>
+        
+        let toJid = args["to_jid"] as? String ?? ""
+        let chattype = args["chattype"] as? String ?? ""
+        
+        var chatType : ChatType
+        if(chattype == "chat"){
+            chatType = .singleChat
+        }else{
+            chatType = .groupChat
+        }
+            
+        ChatManager.sendTypingGoneStatus(to: toJid, chatType: chatType)
+    }
+    
     static func deleteRecentChat(call: FlutterMethodCall, result: @escaping FlutterResult){
         let args = call.arguments as! Dictionary<String, Any>
         
@@ -1086,6 +1128,51 @@ import Photos
                
     }
     
+    static func updateArchiveUnArchiveChat(call: FlutterMethodCall, result: @escaping FlutterResult){
+        let args = call.arguments as! Dictionary<String, Any>
+        
+        let userJid = args["jid"] as? String ?? ""
+        let archive = args["isArchived"] as? Bool ?? false
+        
+        var userJidList = [] as [String]
+        userJidList.append(userJid)
+       
+    
+        if(archive){
+            ChatManager.archiveChatConversation(jidsToArchive: userJidList)
+        }else{
+            ChatManager.unarchiveChatConversation(jidsToUnarchive: userJidList)
+        }
+    
+       result(true)
+               
+    }
+    static func getArchivedChatList(call: FlutterMethodCall, result: @escaping FlutterResult){
+        
+        ChatManager.getArchivedChatList { (isSuccess, flyError, resultDict) in
+           if isSuccess {
+               var flydata = resultDict
+               print(flydata.getData())
+               
+               let archiveChatJson = JSONSerializer.toJson(flydata.getData())
+               
+               print("Archive Chat---> \(archiveChatJson)")
+               
+               
+               let archiveChatListJson = "{\"data\":" + archiveChatJson + "}"
+              
+               print("Archive Chat list json---> \(archiveChatListJson)")
+               result(archiveChatListJson)
+           }else{
+               print(flyError!.localizedDescription)
+               result(FlutterError(code: "500", message: "Unable to Get Archived List", details: flyError?.localizedDescription))
+           }
+        }
+    
+       result(true)
+               
+    }
+    
     
     
     static func getProfileDetails(call: FlutterMethodCall, result: @escaping FlutterResult){
@@ -1116,5 +1203,7 @@ import Photos
 //            print("Error while calling User Profile Details")
 //        }
     }
+    
+    
     
 }

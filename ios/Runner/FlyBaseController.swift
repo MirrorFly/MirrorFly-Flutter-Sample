@@ -67,12 +67,13 @@ let onSuccess_channel = "contus.mirrorfly/onSuccess"
 
 
 
-
-class FlyBaseController{
+class FlyBaseController: NSObject, ConnectionEventDelegate{
     
-//    public func setDelegate() {
-//        ChatManager.shared.connectionDelegate = self
-//        }
+    
+   
+    
+    
+   
     
     static let MESSAGE_ONRECEIVED_CHANNEL = "contus.mirrorfly/onMessageReceived"
     static var messageReceivedStreamHandler: MessageReceivedStreamHandler?
@@ -92,6 +93,12 @@ class FlyBaseController{
     static var memberRemovedAsAdminStreamHandler: MemberRemovedAsAdminStreamHandler?
     
     
+//    override init() {
+//        super.init()
+//        ChatManager.shared.connectionDelegate = self
+//    }
+
+    
     static func initSDK(controller: FlutterViewController, licenseKey: String, isTrial: Bool, baseUrl: String, containerID: String){
         
         let groupConfig = try? GroupConfig.Builder.enableGroupCreation(groupCreation: true)
@@ -107,11 +114,14 @@ class FlyBaseController{
             .setGroupConfiguration(groupConfig: groupConfig!)
             .buildAndInitialize()
         
-//        let methodChannel = FlutterMethodChannel(name: MIRRORFLY_METHOD_CHANNEL, binaryMessenger: controller.binaryMessenger)
+        ChatManager.shared.connectionDelegate = self
+        ChatManager.connect()
         
-//        prepareMethodHandler(methodChannel: methodChannel)
+        let methodChannel = FlutterMethodChannel(name: MIRRORFLY_METHOD_CHANNEL, binaryMessenger: controller.binaryMessenger)
         
-//        prepareEventHandler(flutterEventController: controller)
+        prepareMethodHandler(methodChannel: methodChannel)
+        
+        registerEventChannels(controller: controller)
         
 //        ChatManager.shared.logoutDelegate = self
 //        FlyMessenger.shared.messageEventsDelegate = self
@@ -220,7 +230,7 @@ class FlyBaseController{
             switch call.method {
             case "syncContacts":
                 FlySdkMethodCalls.syncContacts(call: call, result: result)
-            case "contactSyncStateValue"://need to cross check with saravanan
+            case "contactSyncStateValue":
                 FlySdkMethodCalls.contactSyncStateValue(call: call, result: result)
             case "contactSyncState":
                 FlySdkMethodCalls.contactSyncState(call: call, result: result)
@@ -270,11 +280,11 @@ class FlyBaseController{
                 FlySdkMethodCalls.cancelMediaUploadOrDownload(call: call, result: result)
             case "setMediaEncryption":
                 FlySdkMethodCalls.setMediaEncryption(call: call, result: result)
-            case "deleteAllMessages"://need to discuss with saravanan bcz there is clear chat as a seperate function
+            case "deleteAllMessages":
                 FlySdkMethodCalls.deleteAllMessages(call: call, result: result)
             case "getGroupJid":
                 FlySdkMethodCalls.getGroupJid(call: call, result: result)
-            case "getProfileDetails"://replacing the method because receiving null value from recent dashboard
+            case "getProfileDetails":
                 FlySdkMethodCalls.getProfileDetails(call: call, result: result)
             case "getProfileStatusList":
                 FlySdkMethodCalls.getProfileStatusList(call: call, result: result)
@@ -369,6 +379,14 @@ class FlyBaseController{
                 FlySdkMethodCalls.getMediaMessages(call: call, result: result)
             case "isMemberOfGroup":
                 FlySdkMethodCalls.isMemberOfGroup(call: call, result: result)
+            case "updateArchiveUnArchiveChat":
+                FlySdkMethodCalls.updateArchiveUnArchiveChat(call: call, result: result)
+            case "getArchivedChatList":
+                FlySdkMethodCalls.getArchivedChatList(call: call, result: result)
+            case "updateChatMuteStatus":
+                FlySdkMethodCalls.updateChatMuteStatus(call: call, result: result)
+            case "sendTypingStatus":
+                FlySdkMethodCalls.sendTypingStatus(call: call, result: result)
             default:
                 result(FlutterMethodNotImplemented)
             }
@@ -378,4 +396,19 @@ class FlyBaseController{
     
     
     
+}
+
+extension FlyBaseController: ConnectionEventDelegate{
+    
+    func onConnected() {
+        print("======sdk connected=======")
+    }
+    
+    func onDisconnected() {
+        print("======sdk Disconnected======")
+    }
+    
+    func onConnectionNotAuthorized() {
+        print("======sdk Not Authorized=======")
+    }
 }
