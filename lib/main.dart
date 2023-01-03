@@ -32,6 +32,7 @@ import 'package:google_maps_flutter_platform_interface/google_maps_flutter_platf
 // }
 bool shouldUseFirebaseEmulator = false;
 Future<void> main() async {
+  //Get.put<NetworkManager>(NetworkManager());
 // Require Hybrid Composition mode on Android.
   final GoogleMapsFlutterPlatform mapsImplementation =
       GoogleMapsFlutterPlatform.instance;

@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 
 import '../../../common/constants.dart';
+import '../../../data/apputils.dart';
 import '../../../data/helper.dart';
 import 'package:flysdk/flysdk.dart';
 
@@ -44,19 +45,37 @@ class StatusListController extends GetxController{
     });
   }
 
-  updateStatus([String? text]){
-    Helper.showLoading();
-    FlyChat.setMyProfileStatus(text ?? addStatusController.text.trim().toString()).then((value){
-      selectedStatus.value=text ?? addStatusController.text.trim().toString();
-      addStatusController.text=text ?? addStatusController.text.trim().toString();
-      var data = json.decode(value.toString());
-      toToast(data['message'].toString());
-      Helper.hideLoading();
-      if(data['status']) {
-        getStatusList();
+  updateStatus([String? text]) async {
+    if(await AppUtils.isNetConnected()) {
+      Helper.showLoading();
+      FlyChat.setMyProfileStatus(text ?? addStatusController.text.trim().toString()).then((value){
+        selectedStatus.value=text ?? addStatusController.text.trim().toString();
+        addStatusController.text=text ?? addStatusController.text.trim().toString();
+        var data = json.decode(value.toString());
+        toToast(data['message'].toString());
+        Helper.hideLoading();
+        if(data['status']) {
+          getStatusList();
+        }
+      }).catchError((er){
+        toToast(er);
+      });
+    }else{
+      toToast(Constants.noInternetConnection);
+    }
+  }
+
+  validateAndFinish()async{
+    if(addStatusController.text.trim().isNotEmpty) {
+      if(await AppUtils.isNetConnected()) {
+        Get.back(result: addStatusController.text
+            .trim().toString());
+      }else{
+        toToast(Constants.noInternetConnection);
+        Get.back();
       }
-    }).catchError((er){
-      toToast(er);
-    });
+    }else{
+      toToast("Status cannot be empty");
+    }
   }
 }

@@ -96,12 +96,7 @@ class AddStatusView extends GetView<StatusListController> {
               Expanded(
                 child: ElevatedButton(
                   onPressed: () {
-                    if(controller.addStatusController.text.trim().isNotEmpty) {
-                      Get.back(result: controller.addStatusController.text
-                          .trim().toString());
-                    }else{
-                      toToast("Status cannot be empty");
-                    }
+                    controller.validateAndFinish();
                   },
                   style: ElevatedButton.styleFrom(
                       backgroundColor: MaterialStateColor.resolveWith(

@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:get/get.dart';
 
+import '../../../common/constants.dart';
+import '../../../data/apputils.dart';
 import 'chat_controller.dart';
 
 class ImagePreviewController extends GetxController {
@@ -22,11 +24,15 @@ class ImagePreviewController extends GetxController {
 
   sendImageMessage() async {
     if (File(filePath.value).existsSync()) {
-      var response = await Get.find<ChatController>().sendImageMessage(
-          filePath.value, caption.text, "");
-      debugPrint("Preview View ==> $response");
-      if (response != null) {
-        Get.back();
+      if(await AppUtils.isNetConnected()) {
+        var response = await Get.find<ChatController>().sendImageMessage(
+            filePath.value, caption.text, "");
+        debugPrint("Preview View ==> $response");
+        if (response != null) {
+          Get.back();
+        }
+      }else{
+        toToast(Constants.noInternetConnection);
       }
     } else {
       debugPrint("File Not Found For Image Upload");

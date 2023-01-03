@@ -24,6 +24,7 @@ import 'package:record/record.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../../common/constants.dart';
+import '../../../data/apputils.dart';
 import '../../../data/helper.dart';
 import '../../../routes/app_pages.dart';
 
@@ -362,9 +363,9 @@ class ChatController extends GetxController
     FlyChat.getMessagesOfJid(profile.jid.checkNull()).then((value) {
       debugPrint("=====chat=====");
       mirrorFlyLog("chat history", value);
-      if (value == "" || value == null) {
+      if(value == "" || value == null){
         debugPrint("Chat List is Empty");
-      } else {
+      }else {
         List<ChatMessageModel> chatMessageModel = chatMessageModelFromJson(
             value);
         chatList(chatMessageModel);
@@ -380,15 +381,11 @@ class ChatController extends GetxController
                 duration: const Duration(milliseconds: 100),
                 curve: Curves.easeInToLinear)
                 .then((value) => true);
-            // final position = scrollController.position.maxScrollExtent + 125;
-            // scrollController.jumpTo(position);
-            // return true;
           }
           return true;
         });
       });
     });
-
     // compute(FlyChat.getMessagesOfJid, profile.jid.checkNull()).then((chatMessageModelList){
     //   chatList(chatMessageModelList);
     //   Future.delayed(const Duration(milliseconds: 500), () {
@@ -1058,17 +1055,21 @@ class ChatController extends GetxController
                 },
                 child: const Text("CANCEL")),
             TextButton(
-                onPressed: () {
-                  Get.back();
-                  Helper.showLoading(message: "Blocking User");
-                  FlyChat.blockUser(profile.jid!).then((value) {
-                    debugPrint(value);
-                    isBlocked(true);
-                    Helper.hideLoading();
-                  }).catchError((error) {
-                    Helper.hideLoading();
-                    debugPrint(error);
-                  });
+                onPressed: () async {
+                  if (await AppUtils.isNetConnected()) {
+                    Get.back();
+                    Helper.showLoading(message: "Blocking User");
+                    FlyChat.blockUser(profile.jid!).then((value) {
+                      debugPrint(value);
+                      isBlocked(true);
+                      Helper.hideLoading();
+                    }).catchError((error) {
+                      Helper.hideLoading();
+                      debugPrint(error);
+                    });
+                  } else {
+                    toToast(Constants.noInternetConnection);
+                  }
                 },
                 child: const Text("BLOCK")),
           ]);
@@ -1109,17 +1110,21 @@ class ChatController extends GetxController
           },
           child: const Text("CANCEL")),
       TextButton(
-          onPressed: () {
-            Get.back();
-            Helper.showLoading(message: "Unblocking User");
-            FlyChat.unblockUser(profile.jid!).then((value) {
-              debugPrint(value.toString());
-              isBlocked(false);
-              Helper.hideLoading();
-            }).catchError((error) {
-              Helper.hideLoading();
-              debugPrint(error);
-            });
+          onPressed: () async {
+            if (await AppUtils.isNetConnected()) {
+              Get.back();
+              Helper.showLoading(message: "Unblocking User");
+              FlyChat.unblockUser(profile.jid!).then((value) {
+                debugPrint(value.toString());
+                isBlocked(false);
+                Helper.hideLoading();
+              }).catchError((error) {
+                Helper.hideLoading();
+                debugPrint(error);
+              });
+            } else {
+              toToast(Constants.noInternetConnection);
+            }
           },
           child: const Text("UNBLOCK")),
     ]);
@@ -1127,46 +1132,54 @@ class ChatController extends GetxController
 
   var filteredPosition = <int>[].obs;
   var searchedText = TextEditingController();
-
+  String lastInputValue ="";
   setSearch(String text) {
-    filteredPosition.clear();
-    if (searchedText.text.isNotEmpty) {
-      for (var i = 0; i < chatList.length; i++) {
-        if (chatList[i].messageType.toUpperCase() == Constants.mText &&
-            chatList[i]
-                .messageTextContent
-                .startsWithTextInWords(searchedText.text)) {
-          filteredPosition.add(i);
-        } else if (chatList[i].messageType.toUpperCase() == Constants.mImage &&
-            chatList[i].mediaChatMessage!.mediaCaptionText.isNotEmpty &&
-            chatList[i]
-                .mediaChatMessage!
-                .mediaCaptionText
-                .startsWithTextInWords(searchedText.text)) {
-          filteredPosition.add(i);
-        } else if (chatList[i].messageType.toUpperCase() == Constants.mVideo &&
-            chatList[i].mediaChatMessage!.mediaCaptionText.isNotEmpty &&
-            chatList[i]
-                .mediaChatMessage!
-                .mediaCaptionText
-                .startsWithTextInWords(searchedText.text)) {
-          filteredPosition.add(i);
-        } else if (chatList[i].messageType.toUpperCase() == Constants.mDocument &&
-            chatList[i].mediaChatMessage!.mediaFileName.isNotEmpty &&
-            chatList[i]
-                .mediaChatMessage!
-                .mediaFileName
-                .startsWithTextInWords(searchedText.text)) {
-          filteredPosition.add(i);
-        } else if (chatList[i].messageType.toUpperCase() == Constants.mContact &&
-            chatList[i].contactChatMessage!.contactName.isNotEmpty &&
-            chatList[i]
-                .contactChatMessage!
-                .contactName
-                .startsWithTextInWords(searchedText.text)) {
-          filteredPosition.add(i);
+    if (lastInputValue != text) {
+      lastInputValue = text;
+      filteredPosition.clear();
+      if (searchedText.text.isNotEmpty) {
+        for (var i = 0; i < chatList.length; i++) {
+          if (chatList[i].messageType.toUpperCase() == Constants.mText &&
+              chatList[i]
+                  .messageTextContent
+                  .startsWithTextInWords(searchedText.text)) {
+            filteredPosition.add(i);
+          } else
+          if (chatList[i].messageType.toUpperCase() == Constants.mImage &&
+              chatList[i].mediaChatMessage!.mediaCaptionText.isNotEmpty &&
+              chatList[i]
+                  .mediaChatMessage!
+                  .mediaCaptionText
+                  .startsWithTextInWords(searchedText.text)) {
+            filteredPosition.add(i);
+          } else
+          if (chatList[i].messageType.toUpperCase() == Constants.mVideo &&
+              chatList[i].mediaChatMessage!.mediaCaptionText.isNotEmpty &&
+              chatList[i]
+                  .mediaChatMessage!
+                  .mediaCaptionText
+                  .startsWithTextInWords(searchedText.text)) {
+            filteredPosition.add(i);
+          } else
+          if (chatList[i].messageType.toUpperCase() == Constants.mDocument &&
+              chatList[i].mediaChatMessage!.mediaFileName.isNotEmpty &&
+              chatList[i]
+                  .mediaChatMessage!
+                  .mediaFileName
+                  .startsWithTextInWords(searchedText.text)) {
+            filteredPosition.add(i);
+          } else
+          if (chatList[i].messageType.toUpperCase() == Constants.mContact &&
+              chatList[i].contactChatMessage!.contactName.isNotEmpty &&
+              chatList[i]
+                  .contactChatMessage!
+                  .contactName
+                  .startsWithTextInWords(searchedText.text)) {
+            filteredPosition.add(i);
+          }
         }
       }
+      chatList.refresh();
     }
   }
 
@@ -1585,21 +1598,22 @@ class ChatController extends GetxController
   var userPresenceStatus = ''.obs;
   var typingList = <String>[].obs;
 
-  setChatStatus() {
-    if (profile.isGroupProfile ?? false) {
-      if (typingList.isNotEmpty) {
-        userPresenceStatus(
-            "${Member(jid: typingList.last)
-                .getUsername()} typing...");
+  setChatStatus() async {
+    if (await AppUtils.isNetConnected()) {
+      if (profile.isGroupProfile ?? false) {
+        if (typingList.isNotEmpty) {
+          userPresenceStatus(
+              "${Member(jid: typingList.last).getUsername()} typing...");
+        } else {
+          getParticipantsNameAsCsv(profile.jid.checkNull());
+        }
       } else {
-        getParticipantsNameAsCsv(profile.jid.checkNull());
+        FlyChat.getUserLastSeenTime(profile.jid.toString()).then((value) {
+          userPresenceStatus(value.toString());
+        }).catchError((er) {
+          userPresenceStatus("");
+        });
       }
-    } else {
-      FlyChat.getUserLastSeenTime(profile.jid.toString()).then((value) {
-        userPresenceStatus(value.toString());
-      }).catchError((er) {
-        userPresenceStatus("");
-      });
     }
   }
 

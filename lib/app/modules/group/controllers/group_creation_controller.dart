@@ -84,11 +84,14 @@ class GroupCreationController extends GetxController {
     }
   }
 
-  camera(XFile? result) {
-    if (result != null) {
+  final ImagePicker _picker = ImagePicker();
+  camera() async {
+    final XFile? photo = await _picker.pickImage(
+        source: ImageSource.camera);
+    if (photo != null) {
       // isImageSelected.value = true;
       Get.to(CropImage(
-        imageFile: File(result.path),
+        imageFile: File(photo.path),
       ))?.then((value) {
         value as MemoryImage;
         // imageBytes = value.bytes;

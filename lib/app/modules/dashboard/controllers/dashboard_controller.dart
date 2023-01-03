@@ -11,6 +11,7 @@ import 'package:mirror_fly_demo/app/data/session_management.dart';
 import 'package:flysdk/flysdk.dart';
 import 'package:intl/intl.dart';
 
+import '../../../data/apputils.dart';
 import '../../../routes/app_pages.dart';
 
 class DashboardController extends GetxController with GetTickerProviderStateMixin, BaseController {
@@ -466,14 +467,18 @@ class DashboardController extends GetxController with GetTickerProviderStateMixi
     }
   }
 
-  archiveChats(){
-    if(selectedChats.length==1){
-      _itemArchive(0);
-      clearAllChatSelection();
+  archiveChats() async {
+    if(await AppUtils.isNetConnected()) {
+      if(selectedChats.length==1){
+        _itemArchive(0);
+        clearAllChatSelection();
+      }else{
+        selected(false);
+        selectedChats.asMap().forEach((key, value) {_itemArchive(key);});
+        clearAllChatSelection();
+      }
     }else{
-      selected(false);
-      selectedChats.asMap().forEach((key, value) {_itemArchive(key);});
-      clearAllChatSelection();
+      toToast(Constants.noInternetConnection);
     }
   }
 
@@ -529,15 +534,20 @@ class DashboardController extends GetxController with GetTickerProviderStateMixi
     updateUnReadChatCount();
   }*/
 
-  itemsRead(){
-    selected(false);
-    FlyChat.markConversationAsRead(selectedChats);
-    for (var element in selectedChatsPosition) {
-      recentChats[element].isConversationUnRead=false;
-      recentChats[element].unreadMessageCount=0;
+  itemsRead() async {
+    if(await AppUtils.isNetConnected()) {
+      selected(false);
+      FlyChat.markConversationAsRead(selectedChats);
+      for (var element in selectedChatsPosition) {
+        recentChats[element].isConversationUnRead=false;
+        recentChats[element].unreadMessageCount=0;
+      }
+      clearAllChatSelection();
+      updateUnReadChatCount();
+    }else{
+      toToast(Constants.noInternetConnection);
     }
-    clearAllChatSelection();
-    updateUnReadChatCount();
+
   }
 
   itemsUnRead(){

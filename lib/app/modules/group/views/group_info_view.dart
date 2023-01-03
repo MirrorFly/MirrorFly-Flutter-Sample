@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_switch/flutter_switch.dart';
 import 'package:get/get.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:mirror_fly_demo/app/common/widgets.dart';
 import 'package:mirror_fly_demo/app/data/session_management.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
@@ -16,8 +15,7 @@ import 'package:flysdk/flysdk.dart';
 
 
 class GroupInfoView extends GetView<GroupInfoController> {
-  GroupInfoView({Key? key}) : super(key: key);
-  final ImagePicker _picker = ImagePicker();
+  const GroupInfoView({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -265,6 +263,7 @@ class GroupInfoView extends GetView<GroupInfoController> {
           });
         },),
         ListTile(title: const Text("View Info"), onTap: () {
+          Get.back();
           Get.toNamed(Routes.chatInfo, arguments: item);
         },),
         Visibility(visible: controller.isAdmin,
@@ -331,9 +330,7 @@ class GroupInfoView extends GetView<GroupInfoController> {
                     TextButton(
                         onPressed: () async {
                           Get.back();
-                          final XFile? photo = await _picker.pickImage(
-                              source: ImageSource.camera);
-                          controller.camera(photo);
+                          controller.camera();
                         },
                         child: const Text("Take Photo",
                             style: TextStyle(color: textHintColor))),

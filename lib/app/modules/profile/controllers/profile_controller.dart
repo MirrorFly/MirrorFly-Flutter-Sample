@@ -14,6 +14,8 @@ import 'package:mirror_fly_demo/app/routes/app_pages.dart';
 import '../../../common/crop_image.dart';
 import 'package:flysdk/flysdk.dart';
 
+import '../../../data/apputils.dart';
+
 class ProfileController extends GetxController {
   TextEditingController profileName = TextEditingController();
   TextEditingController profileEmail = TextEditingController();
@@ -33,7 +35,7 @@ class ProfileController extends GetxController {
   var name = "".obs;
 
   @override
-  void onInit() {
+  Future<void> onInit() async {
     super.onInit();
     userImgUrl.value = SessionManagement.getUserImage() ?? "";
     mirrorFlyLog("auth : ", SessionManagement.getAuthToken().toString());
@@ -45,11 +47,19 @@ class ProfileController extends GetxController {
     } else {
       profileMobile.text = "";
     }
-    getProfile();
+    if (from.value == Routes.login) {
+      if(await AppUtils.isNetConnected()) {
+        getProfile();
+      }else{
+        toToast(Constants.noInternetConnection);
+      }
+    }else{
+      getProfile();
+    }
     //profileStatus.value="I'm Mirror fly user";
   }
 
-  void save() {
+  Future<void> save() async {
     if (profileName.text.trim().isEmpty) {
       toToast("Please enter your username");
     }else if (profileName.text.trim().length < 3) {
@@ -66,130 +76,151 @@ class ProfileController extends GetxController {
       if (imagePath.value.isNotEmpty) {
         updateProfileImage(imagePath.value, update: true);
       } else {
-        FlyChat
-            .updateMyProfile(
-                profileName.text.toString(),
-                profileEmail.text.toString(),
-                profileMobile.text.toString(),
-                profileStatus.value.toString(),
-                userImgUrl.value.isEmpty ? null : userImgUrl.value
-        )
-            .then((value) {
-              mirrorFlyLog("updateMyProfile", value);
-          loading.value = false;
-          hideLoader();
-          if (value != null) {
-            debugPrint(value);
-            var data = profileUpdateFromJson(value);
-            if (data.status != null) {
-              toToast(data.message.toString());
-              if (data.status!) {
-                changed(false);
-                var userProfileData = ProData(
-                    email: profileEmail.text.toString(),
-                    image: userImgUrl.value,
-                    mobileNumber: profileMobile.text,
-                    nickName: profileName.text,
-                    name: profileName.text,
-                    status: profileStatus.value);
-                SessionManagement.setCurrentUser(userProfileData);
-                if (from.value == Routes.login) {
-                  Get.offNamed(Routes.dashboard);
+        if(await AppUtils.isNetConnected()) {
+          FlyChat
+              .updateMyProfile(
+              profileName.text.toString(),
+              profileEmail.text.toString(),
+              profileMobile.text.toString(),
+              profileStatus.value.toString(),
+              userImgUrl.value.isEmpty ? null : userImgUrl.value
+          )
+              .then((value) {
+            mirrorFlyLog("updateMyProfile", value);
+            loading.value = false;
+            hideLoader();
+            if (value != null) {
+              debugPrint(value);
+              var data = profileUpdateFromJson(value);
+              if (data.status != null) {
+                toToast(data.message.toString());
+                if (data.status!) {
+                  changed(false);
+                  var userProfileData = ProData(
+                      email: profileEmail.text.toString(),
+                      image: userImgUrl.value,
+                      mobileNumber: profileMobile.text,
+                      nickName: profileName.text,
+                      name: profileName.text,
+                      status: profileStatus.value);
+                  SessionManagement.setCurrentUser(userProfileData);
+                  if (from.value == Routes.login) {
+                    Get.offNamed(Routes.dashboard);
+                  }
                 }
               }
+            }else{
+              toToast("Unable to update profile");
             }
-          }else{
-            toToast("Unable to update profile");
-          }
-        }).catchError((error) {
-          loading.value = false;
+          }).catchError((error) {
+            loading.value = false;
+            hideLoader();
+            debugPrint("issue===> $error");
+            toToast(error.toString());
+          });
+        }else{
+          loading(false);
           hideLoader();
-          debugPrint("issue===> $error");
-          toToast(error.toString());
-        });
+          toToast(Constants.noInternetConnection);
+        }
       }
     }
   }
 
-  updateProfileImage(String path, {bool update = false}) {
-    loading.value = true;
-    showLoader();
-    FlyChat.updateMyProfileImage(path).then((value) {
-      mirrorFlyLog("updateMyProfileImage", value);
-      loading.value = false;
-      var data = json.decode(value);
-      imagePath.value = Constants.emptyString;
-      userImgUrl.value = data['data']['image'];
-      SessionManagement.setUserImage(data['data']['image'].toString());
-      hideLoader();
-      if (update) {
-        save();
-      }
-    }).catchError((onError) {
-      debugPrint("Profile Update on error");
-      loading.value = false;
-      hideLoader();
-    });
-  }
-
-  removeProfileImage() {
-    showLoader();
-    loading.value = true;
-    FlyChat.removeProfileImage().then((value) {
-      loading.value = false;
-      hideLoader();
-      if (value != null) {
-        SessionManagement.setUserImage(Constants.emptyString);
-        isImageSelected.value = false;
-        isUserProfileRemoved.value = true;
-        userImgUrl(Constants.emptyString);
-        if (from.value == Routes.login) {
-          changed(true);
-        } else {
+  updateProfileImage(String path, {bool update = false}) async {
+    if(await AppUtils.isNetConnected()) {
+      loading.value = true;
+      showLoader();
+      FlyChat.updateMyProfileImage(path).then((value) {
+        mirrorFlyLog("updateMyProfileImage", value);
+        loading.value = false;
+        var data = json.decode(value);
+        imagePath.value = Constants.emptyString;
+        userImgUrl.value = data['data']['image'];
+        SessionManagement.setUserImage(data['data']['image'].toString());
+        hideLoader();
+        if (update) {
           save();
         }
-        update();
-      }
-    }).catchError((onError) {
-      loading.value = false;
-      hideLoader();
-    });
+      }).catchError((onError) {
+        debugPrint("Profile Update on error");
+        loading.value = false;
+        hideLoader();
+      });
+    }else{
+      toToast(Constants.noInternetConnection);
+    }
+
   }
 
-  getProfile() {
-    var jid = SessionManagement.getUserJID().checkNull();
-    mirrorFlyLog("jid", jid);
-    if (jid.isNotEmpty) {
-      mirrorFlyLog("jid.isNotEmpty", jid.isNotEmpty.toString());
+  removeProfileImage() async {
+    if(await AppUtils.isNetConnected()) {
+      showLoader();
       loading.value = true;
-      FlyChat.getUserProfile(jid,true).then((value) {
-        insertDefaultStatusToUser();
+      FlyChat.removeProfileImage().then((value) {
         loading.value = false;
-        var data = profileDataFromJson(value);
-        if (data.status != null && data.status!) {
-          if (data.data != null) {
-            profileName.text = data.data!.name ?? "";
-            if (from.value != Routes.login) {
-              profileMobile.text = data.data!.mobileNumber ?? "";
-            }
-
-            profileEmail.text = data.data!.email ?? "";
-            profileStatus.value = data.data!.status.checkNull().isNotEmpty ? data.data!.status.checkNull() : "I am in Mirror Fly";
-            userImgUrl.value =
-                data.data!.image ?? SessionManagement.getUserImage() ?? "";
-            changed((from.value == Routes.login));
-            name(data.data!.name.toString());
-            update();
+        hideLoader();
+        if (value != null) {
+          SessionManagement.setUserImage(Constants.emptyString);
+          isImageSelected.value = false;
+          isUserProfileRemoved.value = true;
+          userImgUrl(Constants.emptyString);
+          if (from.value == Routes.login) {
+            changed(true);
+          } else {
+            save();
           }
-        } else {
-          debugPrint("Unable to load Profile data");
-          toToast("Unable to Connect to Server. Please login Again");
+          update();
         }
       }).catchError((onError) {
         loading.value = false;
-        toToast("Unable to load profile data, please login again");
+        hideLoader();
       });
+    }else{
+      toToast(Constants.noInternetConnection);
     }
+  }
+
+  getProfile() async {
+    //if(await AppUtils.isNetConnected()) {
+      var jid = SessionManagement.getUserJID().checkNull();
+      mirrorFlyLog("jid", jid);
+      if (jid.isNotEmpty) {
+        mirrorFlyLog("jid.isNotEmpty", jid.isNotEmpty.toString());
+        loading.value = true;
+        FlyChat.getUserProfile(jid,await AppUtils.isNetConnected()).then((value) {
+          insertDefaultStatusToUser();
+          loading.value = false;
+          var data = profileDataFromJson(value);
+          if (data.status != null && data.status!) {
+            if (data.data != null) {
+              profileName.text = data.data!.name ?? "";
+              if (from.value != Routes.login) {
+                profileMobile.text = data.data!.mobileNumber ?? "";
+              }
+
+              profileEmail.text = data.data!.email ?? "";
+              profileStatus.value = data.data!.status.checkNull().isNotEmpty ? data.data!.status.checkNull() : "I am in Mirror Fly";
+              userImgUrl.value =
+                  data.data!.image ?? SessionManagement.getUserImage() ?? "";
+              changed((from.value == Routes.login));
+              name(data.data!.name.toString());
+              update();
+            }
+          } else {
+            debugPrint("Unable to load Profile data");
+            toToast("Unable to Connect to Server. Please login Again");
+          }
+        }).catchError((onError) {
+          loading.value = false;
+          toToast("Unable to load profile data, please login again");
+        });
+      }
+   /* }else{
+      toToast(Constants.noInternetConnection);
+      Get.back();
+    }*/
+
   }
 
   static void insertDefaultStatusToUser() async{
@@ -240,57 +271,68 @@ class ProfileController extends GetxController {
   }
 
   Future imagePicker(BuildContext context) async {
-    FilePickerResult? result = await FilePicker.platform
-        .pickFiles(allowMultiple: false, type: FileType.image);
-    if (result != null) {
-      isImageSelected.value = true;
-      Get.to(CropImage(
-        imageFile: File(result.files.single.path!),
-      ))?.then((value) {
-        value as MemoryImage;
-        imageBytes = value.bytes;
-        var name = "${DateTime.now().millisecondsSinceEpoch}.jpg";
-        writeImageTemp(value.bytes, name).then((value) {
-          if (from.value == Routes.login) {
-            imagePath(value.path);
-            changed(true);
-            update();
-          } else {
-            imagePath(value.path);
-            changed(true);
-            updateProfileImage(value.path, update: true);
-          }
+    if(await AppUtils.isNetConnected()) {
+      FilePickerResult? result = await FilePicker.platform
+          .pickFiles(allowMultiple: false, type: FileType.image);
+      if (result != null) {
+        isImageSelected.value = true;
+        Get.to(CropImage(
+          imageFile: File(result.files.single.path!),
+        ))?.then((value) {
+          value as MemoryImage;
+          imageBytes = value.bytes;
+          var name = "${DateTime.now().millisecondsSinceEpoch}.jpg";
+          writeImageTemp(value.bytes, name).then((value) {
+            if (from.value == Routes.login) {
+              imagePath(value.path);
+              changed(true);
+              update();
+            } else {
+              imagePath(value.path);
+              changed(true);
+              updateProfileImage(value.path, update: true);
+            }
+          });
         });
-      });
-    } else {
-      // User canceled the picker
-      isImageSelected.value = false;
+      } else {
+        // User canceled the picker
+        isImageSelected.value = false;
+      }
+    }else{
+      toToast(Constants.noInternetConnection);
     }
   }
 
-  camera(XFile? result) {
-    if (result != null) {
-      isImageSelected.value = true;
-      Get.to(CropImage(
-        imageFile: File(result.path),
-      ))?.then((value) {
-        value as MemoryImage;
-        imageBytes = value.bytes;
-        var name = "${DateTime.now().millisecondsSinceEpoch}.jpg";
-        writeImageTemp(value.bytes, name).then((value) {
-          if (from.value == Routes.login) {
-            imagePath(value.path);
-            changed(true);
-          } else {
-            imagePath(value.path);
-            changed(true);
-            updateProfileImage(value.path, update: true);
-          }
+  final ImagePicker _picker = ImagePicker();
+  camera() async {
+    if(await AppUtils.isNetConnected()) {
+      final XFile? photo = await _picker.pickImage(
+          source: ImageSource.camera);
+      if (photo != null) {
+        isImageSelected.value = true;
+        Get.to(CropImage(
+          imageFile: File(photo.path),
+        ))?.then((value) {
+          value as MemoryImage;
+          imageBytes = value.bytes;
+          var name = "${DateTime.now().millisecondsSinceEpoch}.jpg";
+          writeImageTemp(value.bytes, name).then((value) {
+            if (from.value == Routes.login) {
+              imagePath(value.path);
+              changed(true);
+            } else {
+              imagePath(value.path);
+              changed(true);
+              updateProfileImage(value.path, update: true);
+            }
+          });
         });
-      });
-    } else {
-      // User canceled the Camera
-      isImageSelected.value = false;
+      } else {
+        // User canceled the Camera
+        isImageSelected.value = false;
+      }
+    }else{
+      toToast(Constants.noInternetConnection);
     }
   }
 

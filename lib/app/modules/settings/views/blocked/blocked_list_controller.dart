@@ -5,6 +5,8 @@ import 'package:mirror_fly_demo/app/common/constants.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
 import 'package:flysdk/flysdk.dart';
 
+import '../../../../data/apputils.dart';
+
 
 class BlockedListController extends GetxController {
   final _blockedUsers = <Member>[].obs;
@@ -35,19 +37,24 @@ class BlockedListController extends GetxController {
           },
           child: const Text("CANCEL")),
       TextButton(
-          onPressed: () {
-            Get.back();
-            Helper.progressLoading();
-            FlyChat.unblockUser(item.jid.checkNull()).then((value) {
-              Helper.hideLoading();
-              if(value!=null && value) {
-                toToast("${item.name} Unblocked");
-                getUsersIBlocked(false);
-              }
-            }).catchError((error) {
-              Helper.hideLoading();
-              debugPrint(error);
-            });
+          onPressed: () async {
+            if(await AppUtils.isNetConnected()) {
+              Get.back();
+              Helper.progressLoading();
+              FlyChat.unblockUser(item.jid.checkNull()).then((value) {
+                Helper.hideLoading();
+                if(value!=null && value) {
+                  toToast("${item.name} Unblocked");
+                  getUsersIBlocked(false);
+                }
+              }).catchError((error) {
+                Helper.hideLoading();
+                debugPrint(error);
+              });
+            }else{
+              toToast(Constants.noInternetConnection);
+            }
+
           },
           child: const Text("UNBLOCK")),
     ]);
