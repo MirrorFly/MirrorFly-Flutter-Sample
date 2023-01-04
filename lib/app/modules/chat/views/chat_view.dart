@@ -1114,9 +1114,7 @@ class ChatView extends GetView<ChatController> {
                   icon: const Icon(Icons.search),
                 ),
                 overflowWidget: const Text("Search"),
-                showAsAction: controller.profile.isGroupProfile ?? false
-                    ? ShowAsAction.gone
-                    : ShowAsAction.never,
+                showAsAction: ShowAsAction.never,
                 keyValue: 'Search',
                 onItemClick: () {
                   controller.closeKeyBoard();

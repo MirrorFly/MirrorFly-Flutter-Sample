@@ -67,46 +67,56 @@ class ChatSearchView extends GetView<ChatController> {
       itemScrollController: controller.searchScrollController,
       itemPositionsListener: controller.itemPositionsListener,
       itemBuilder: (context, index) {
-        return Container(
-          color: controller.chatList[index].isSelected ? chatReplyContainerColor : Colors.transparent,
-          margin: const EdgeInsets.only(
-              left: 14, right: 14, top: 5, bottom: 10),
-          child: Align(
-            alignment: (chatList[index].isMessageSentByMe
-                ? Alignment.bottomRight
-                : Alignment.bottomLeft),
-            child: Container(
-              constraints: BoxConstraints(
-                  maxWidth: controller.screenWidth * 0.75),
-              decoration: BoxDecoration(
-                  borderRadius: chatList[index].isMessageSentByMe
-                      ? const BorderRadius.only(
-                      topLeft: Radius.circular(10),
-                      topRight: Radius.circular(10),
-                      bottomLeft: Radius.circular(10))
-                      : const BorderRadius.only(
-                      topLeft: Radius.circular(10),
-                      topRight: Radius.circular(10),
-                      bottomRight: Radius.circular(10)),
-                  color: (chatList[index].isMessageSentByMe
-                      ? chatSentBgColor
-                      : Colors.white),
-                  border: chatList[index].isMessageSentByMe
-                      ? Border.all(color: chatSentBgColor)
-                      : Border.all(color: chatBorderColor)),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  (chatList[index].replyParentChatMessage == null)
-                      ? const SizedBox.shrink()
-                      : ReplyMessageHeader(
-                      chatMessage: chatList[index]),
-                  getMessageContent(index, context, chatList),
-                ],
+        if (chatList[index].messageType != Constants.mNotification) {
+          return Container(
+            color: controller.chatList[index].isSelected
+                ? chatReplyContainerColor
+                : Colors.transparent,
+            margin: const EdgeInsets.only(
+                left: 14, right: 14, top: 5, bottom: 10),
+            child: Align(
+              alignment: (chatList[index].isMessageSentByMe
+                  ? Alignment.bottomRight
+                  : Alignment.bottomLeft),
+              child: Container(
+                constraints: BoxConstraints(
+                    maxWidth: controller.screenWidth * 0.75),
+                decoration: BoxDecoration(
+                    borderRadius: chatList[index].isMessageSentByMe
+                        ? const BorderRadius.only(
+                        topLeft: Radius.circular(10),
+                        topRight: Radius.circular(10),
+                        bottomLeft: Radius.circular(10))
+                        : const BorderRadius.only(
+                        topLeft: Radius.circular(10),
+                        topRight: Radius.circular(10),
+                        bottomRight: Radius.circular(10)),
+                    color: (chatList[index].isMessageSentByMe
+                        ? chatSentBgColor
+                        : Colors.white),
+                    border: chatList[index].isMessageSentByMe
+                        ? Border.all(color: chatSentBgColor)
+                        : Border.all(color: chatBorderColor)),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    (chatList[index].replyParentChatMessage == null)
+                        ? const SizedBox.shrink()
+                        : ReplyMessageHeader(
+                        chatMessage: chatList[index]),
+                    SenderHeader(
+                        profile: controller.profile,
+                        chatList: chatList,
+                        index: index),
+                    getMessageContent(index, context, chatList),
+                  ],
+                ),
               ),
             ),
-          ),
-        );
+          );
+        }else{
+          return NotificationMessageView(chatMessage: chatList[index]);
+        }
       },
     );
   }
@@ -180,554 +190,6 @@ class ChatSearchView extends GetView<ChatController> {
       }
     }
   }
-
-  /*getMessageContent(int index, BuildContext context,
-      List<ChatMessageModel> chatList) {
-    // debugPrint(json.encode(chatList[index]));
-    if (chatList[index].messageType.toUpperCase() == Constants.mText) {
-      return Padding(
-        padding: const EdgeInsets.all(10.0),
-        child: Row(
-          mainAxisSize: chatList[index].replyParentChatMessage == null
-              ? MainAxisSize.min
-              : MainAxisSize.max,
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          crossAxisAlignment: CrossAxisAlignment.end,
-          children: [
-            Flexible(
-              child: spannableText(
-                chatList[index].messageTextContent ?? "",
-                controller.searchedText.text,
-                const TextStyle(fontSize: 14),
-              ),
-            ),
-            const SizedBox(
-              width: 10,
-            ),
-            Row(
-              children: [
-                chatList[index].isMessageStarred
-                    ? const Icon(
-                  Icons.star,
-                  size: 13,
-                )
-                    : const SizedBox.shrink(),
-                const SizedBox(
-                  width: 5,
-                ),
-                getMessageIndicator(
-                    chatList[index].messageStatus,
-                    chatList[index].isMessageSentByMe,
-                    chatList[index].messageType),
-                const SizedBox(
-                  width: 5,
-                ),
-                Text(
-                  controller.getChatTime(
-                      context, chatList[index].messageSentTime.toInt()),
-                  style: const TextStyle(fontSize: 12),
-                ),
-              ],
-            ),
-          ],
-        ),
-      );
-    } else if (chatList[index].messageType.toUpperCase() == Constants.mNotification) {
-      return Center(
-        child: Padding(
-          padding: const EdgeInsets.all(15.0),
-          child: spannableText(chatList[index].messageTextContent ?? "",
-              controller.searchedText.text,const TextStyle(fontSize: 13, fontWeight: FontWeight.bold)),
-        ),
-      );
-    } else if (chatList[index].messageType.toUpperCase() == Constants.mImage) {
-      var chatMessage = chatList[index].mediaChatMessage!;
-      //mediaLocalStoragePath
-      //mediaThumbImage
-      return Padding(
-        padding: const EdgeInsets.all(2.0),
-        child: Stack(
-          children: [
-            ClipRRect(
-              borderRadius: BorderRadius.circular(15),
-              child: getImage(
-                  chatMessage.mediaLocalStoragePath,
-                  chatMessage.mediaThumbImage,
-                  context,
-                  chatMessage.mediaFileName),
-            ),
-            Positioned(
-                top: (controller.screenHeight * 0.4) / 2.5,
-                left: (controller.screenWidth * 0.6) / 3,
-                child: InkWell(
-                    onTap: () {
-                      handleMediaUploadDownload(
-                          chatMessage.mediaDownloadStatus, chatList[index]);
-                    },
-                    child: getImageOverlay(chatList, index, context))),
-            Positioned(
-              bottom: 8,
-              right: 10,
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  chatList[index].isMessageStarred
-                      ? const Icon(
-                    Icons.star,
-                    size: 13,
-                  )
-                      : const SizedBox.shrink(),
-                  const SizedBox(
-                    width: 5,
-                  ),
-                  getMessageIndicator(
-                      chatList[index].messageStatus,
-                      chatList[index].isMessageSentByMe,
-                      chatList[index].messageType),
-                  const SizedBox(
-                    width: 4,
-                  ),
-                  Text(
-                    controller.getChatTime(
-                        context, chatList[index].messageSentTime.toInt()),
-                    style: const TextStyle(fontSize: 12, color: Colors.white),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      );
-    } else if (chatList[index].messageType.toUpperCase() == Constants.mVideo) {
-      var chatMessage = chatList[index].mediaChatMessage!;
-      return Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Stack(
-          children: [
-            InkWell(
-              onTap: () {
-                if (controller.checkFile(chatMessage.mediaLocalStoragePath) &&
-                    (chatMessage.mediaDownloadStatus ==
-                        Constants.mediaDownloaded ||
-                        chatMessage.mediaDownloadStatus ==
-                            Constants.mediaUploaded)) {
-                  Get.toNamed(Routes.videoPlay, arguments: {
-                    "filePath": chatMessage.mediaLocalStoragePath,
-                  });
-                }
-              },
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(15),
-                child: controller.imageFromBase64String(
-                    chatMessage.mediaThumbImage, context, null, null),
-              ),
-            ),
-            Positioned(
-                top: (controller.screenHeight * 0.4) / 2.6,
-                left: (controller.screenWidth * 0.6) / 2.9,
-                child: InkWell(
-                    onTap: () {
-                      handleMediaUploadDownload(
-                          chatMessage.mediaDownloadStatus, chatList[index]);
-                    },
-                    child: getImageOverlay(chatList, index, context))),
-            Positioned(
-              bottom: 8,
-              right: 10,
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  chatList[index].isMessageStarred
-                      ? const Icon(
-                    Icons.star,
-                    size: 13,
-                  )
-                      : const SizedBox.shrink(),
-                  const SizedBox(
-                    width: 5,
-                  ),
-                  getMessageIndicator(
-                      chatList[index].messageStatus,
-                      chatList[index].isMessageSentByMe,
-                      chatList[index].messageType),
-                  const SizedBox(
-                    width: 4,
-                  ),
-                  Text(
-                    controller.getChatTime(
-                        context, chatList[index].messageSentTime.toInt()),
-                    style: const TextStyle(fontSize: 12, color: Colors.white),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      );
-    } else if (chatList[index].messageType.toUpperCase() == Constants.mDocument || chatList[index].messageType.toUpperCase() == Constants.mFile) {
-      return InkWell(
-        onTap: () {
-          controller.openDocument(
-              chatList[index].mediaChatMessage!.mediaLocalStoragePath, context);
-        },
-        child: Container(
-          decoration: BoxDecoration(
-            border: Border.all(
-              color: chatReplySenderColor,
-            ),
-            borderRadius: const BorderRadius.all(Radius.circular(10)),
-            color: Colors.white,
-          ),
-          width: controller.screenWidth * 0.60,
-          child: Column(
-            children: [
-              Padding(
-                padding:
-                const EdgeInsets.only(left: 15.0, right: 15.0, top: 10.0),
-                child: Row(
-                  children: [
-                    getImageHolder(
-                        chatList[index].mediaChatMessage!.mediaFileName),
-                    const SizedBox(
-                      width: 12,
-                    ),
-                    Expanded(
-                        child: spannableText(
-                          chatList[index].mediaChatMessage!.mediaFileName,controller.searchedText.text,null
-                        )),
-                    const Spacer(),
-                    InkWell(
-                      onTap: () {
-                        handleMediaUploadDownload(
-                            chatList[index]
-                                .mediaChatMessage!
-                                .mediaDownloadStatus,
-                            chatList[index]);
-                      },
-                      child: getImageOverlay(chatList, index, context),
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(
-                height: 5,
-              ),
-              Align(
-                alignment: Alignment.bottomRight,
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    chatList[index].isMessageStarred
-                        ? const Icon(
-                      Icons.star,
-                      size: 13,
-                    )
-                        : const SizedBox.shrink(),
-                    const SizedBox(
-                      width: 5,
-                    ),
-                    getMessageIndicator(
-                        chatList[index].messageStatus,
-                        chatList[index].isMessageSentByMe,
-                        chatList[index].messageType),
-                    const SizedBox(
-                      width: 4,
-                    ),
-                    Text(
-                      controller.getChatTime(
-                          context, chatList[index].messageSentTime.toInt()),
-                      style: const TextStyle(fontSize: 12, color: Colors.black),
-                    ),
-                    const SizedBox(
-                      width: 10,
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(
-                height: 5,
-              ),
-            ],
-          ),
-        ),
-      );
-    } else if (chatList[index].messageType.toUpperCase() == Constants.mContact) {
-      return InkWell(
-        onTap: () {
-          Get.toNamed(Routes.previewContact, arguments: {
-            "contactList":
-            chatList[index].contactChatMessage!.contactPhoneNumbers,
-            "contactName": chatList[index].contactChatMessage!.contactName,
-            "from": "chat"
-          });
-        },
-        child: Container(
-          decoration: BoxDecoration(
-            border: Border.all(
-              color: chatReplySenderColor,
-            ),
-            borderRadius: const BorderRadius.all(Radius.circular(10)),
-            color: Colors.white,
-          ),
-          width: controller.screenWidth * 0.60,
-          child: Column(
-            children: [
-              Padding(
-                padding:
-                const EdgeInsets.only(left: 15.0, right: 15.0, top: 15.0),
-                child: Row(
-                  children: [
-                    Image.asset(
-                      profileImage,
-                      width: 35,
-                      height: 35,
-                    ),
-                    const SizedBox(
-                      width: 12,
-                    ),
-                    Expanded(
-                        child: spannableText(
-                          chatList[index].contactChatMessage!.contactName,
-                          controller.searchedText.text,null
-                          //maxLines: 2,
-                        )),
-                  ],
-                ),
-              ),
-              Align(
-                alignment: Alignment.bottomRight,
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    chatList[index].isMessageStarred
-                        ? const Icon(
-                      Icons.star,
-                      size: 13,
-                    )
-                        : const SizedBox.shrink(),
-                    const SizedBox(
-                      width: 5,
-                    ),
-                    getMessageIndicator(
-                        chatList[index].messageStatus,
-                        chatList[index].isMessageSentByMe,
-                        chatList[index].messageType),
-                    const SizedBox(
-                      width: 4,
-                    ),
-                    Text(
-                      controller.getChatTime(
-                          context, chatList[index].messageSentTime.toInt()),
-                      style: const TextStyle(fontSize: 12, color: Colors.black),
-                    ),
-                    const SizedBox(
-                      width: 10,
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(
-                height: 5,
-              ),
-            ],
-          ),
-        ),
-      );
-    } else if (chatList[index].messageType.toUpperCase() == Constants.mAudio) {
-      var chatMessage = chatList[index];
-      return Container(
-        decoration: BoxDecoration(
-          border: Border.all(
-            color: chatReplySenderColor,
-          ),
-          borderRadius: const BorderRadius.all(Radius.circular(10)),
-          color: Colors.white,
-        ),
-        width: controller.screenWidth * 0.60,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Container(
-              decoration: const BoxDecoration(
-                borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(10),
-                    topRight: Radius.circular(10)),
-                color: chatReplySenderColor,
-              ),
-              child: Padding(
-                padding: const EdgeInsets.all(15),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Stack(
-                      alignment: Alignment.center,
-                      children: [
-                        SvgPicture.asset(
-                          audioMicBg,
-                          width: 28,
-                          height: 28,
-                          fit: BoxFit.contain,
-                        ),
-                        SvgPicture.asset(
-                          audioMic1,
-                          fit: BoxFit.contain,
-                        ),
-                      ],
-                    ),
-                    // getAudioFeedButton(chatMessage),
-                    const SizedBox(
-                      width: 10,
-                    ),
-                    InkWell(
-                      onTap: () {
-                        handleMediaUploadDownload(
-                            chatMessage.mediaChatMessage!.mediaDownloadStatus,
-                            chatList[index]);
-                      },
-                      child: getImageOverlay(chatList, index, context),
-                    ),
-
-                    const SizedBox(
-                      width: 10,
-                    ),
-                    Expanded(
-                      child: SizedBox(
-                        // width: 168,
-                        child: SliderTheme(
-                          data: SliderThemeData(
-                            thumbColor: audioColorDark,
-                            overlayShape: SliderComponentShape.noOverlay,
-                            thumbShape:
-                            const RoundSliderThumbShape(enabledThumbRadius: 5),
-                          ),
-                          child: Slider(
-                            value: double.parse(
-                                controller.currentPos.value.toString()),
-                            min: 0,
-                            activeColor: audioColorDark,
-                            inactiveColor: audioColor,
-                            max: double.parse(
-                                controller.maxDuration.value.toString()),
-                            divisions: controller.maxDuration.value,
-                            onChanged: (double value) async {
-
-                            },
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            const SizedBox(
-              height: 5,
-            ),
-            Align(
-              alignment: Alignment.bottomRight,
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  chatList[index].isMessageStarred
-                      ? const Icon(
-                    Icons.star,
-                    size: 13,
-                  )
-                      : const SizedBox.shrink(),
-                  const SizedBox(
-                    width: 5,
-                  ),
-                  getMessageIndicator(
-                      chatList[index].messageStatus,
-                      chatList[index].isMessageSentByMe,
-                      chatList[index].messageType),
-                  const SizedBox(
-                    width: 4,
-                  ),
-                  Text(
-                    controller.getChatTime(
-                        context, chatList[index].messageSentTime.toInt()),
-                    style: const TextStyle(fontSize: 12, color: Colors.black),
-                  ),
-                  const SizedBox(
-                    width: 10,
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(
-              height: 5,
-            ),
-          ],
-        ),
-      );
-    } else if (chatList[index].messageType.toUpperCase() ==
-        Constants.mLocation) {
-      return Padding(
-        padding: const EdgeInsets.all(2.0),
-        child: Stack(
-          children: [
-            ClipRRect(
-              borderRadius: BorderRadius.circular(15),
-              child: getLocationImage(
-                  chatList[index].locationChatMessage, 200, 171),
-            ),
-            Positioned(
-              bottom: 8,
-              right: 10,
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  chatList[index].isMessageStarred
-                      ? const Icon(
-                    Icons.star,
-                    size: 13,
-                  )
-                      : const SizedBox.shrink(),
-                  const SizedBox(
-                    width: 5,
-                  ),
-                  getMessageIndicator(
-                      chatList[index].messageStatus,
-                      chatList[index].isMessageSentByMe,
-                      chatList[index].messageType),
-                  const SizedBox(
-                    width: 4,
-                  ),
-                  Text(
-                    controller.getChatTime(
-                        context, chatList[index].messageSentTime.toInt()),
-                    style: const TextStyle(fontSize: 12, color: Colors.black),
-                  ),
-                ],
-              ),
-            ),
-            *//*Positioned(
-              bottom: 8,
-              right: 10,
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  getMessageIndicator(
-                      chatList[index].messageStatus.status,
-                      chatList[index].isMessageSentByMe,
-                      chatList[index].messageType),
-                  const SizedBox(
-                    width: 4,
-                  ),
-                  Text(
-                    controller.getChatTime(
-                        context, chatList[index].messageSentTime),
-                    style: const TextStyle(fontSize: 12, color: Colors.white),
-                  ),
-                ],
-              ),
-            ),*//*
-          ],
-        ),
-      );
-    }
-  }*/
 
   Widget getLocationImage(LocationChatMessage? locationChatMessage,
       double width, double height) {
@@ -1079,8 +541,8 @@ class ChatSearchView extends GetView<ChatController> {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     chatSpannedText(
-                      mediaFileName,controller.searchedText.text,null
-                      //maxLines: 2,
+                      mediaFileName,controller.searchedText.text,
+                      const TextStyle(fontSize: 14,color: textHintColor),
                     ),
                     const SizedBox(
                       height: 15,

@@ -163,6 +163,7 @@ class DashboardController extends GetxController with GetTickerProviderStateMixi
         _unreadCount(((p0.isConversationUnRead!) ? 1+_unreadCount.value : 0 +_unreadCount.value));
       }
     }
+    recentPinnedCount(recentChats.where((element) => element.isChatPinned.checkNull()).length);
   }
 
   final _archivedCount = 0.obs;
@@ -182,7 +183,7 @@ class DashboardController extends GetxController with GetTickerProviderStateMixi
     getRecentChatOfJid(jid).then((recent){
       if(recent!=null){
         if (index.isNegative) {
-          recentChats.add(recent);
+          recentChats.insert(0,recent);
         } else {
           var lastPinnedChat = recentChats.lastIndexWhere((element) => element.isChatPinned!);
           var nxtIndex = lastPinnedChat.isNegative ? 0 : (lastPinnedChat+1);
@@ -411,27 +412,67 @@ class DashboardController extends GetxController with GetTickerProviderStateMixi
     }
 
   }
+
+  var recentPinnedCount = 0.obs;
   pinChats(){
-    if(selectedChats.length==1){
-      _itemPin(0);
-      clearAllChatSelection();
-    }else{
-      selected(false);
-      for (var index =0;index<selectedChats.length;index++) {
-        _itemPin(index);
+    if(isSelectedPositionsValidForPin()) {
+      mirrorFlyLog("pinChat", "isSelectedPositionsValidForPin");
+      if (selectedChats.length == 1) {
+        _itemPin(0);
+        clearAllChatSelection();
+        toToast("Chat pinned");
+      } else {
+        selected(false);
+        for (var index = 0; index < selectedChats.length; index++) {
+          var selectedChat = recentChats.indexWhere((p0) => p0.jid==selectedChats[index] && p0.isChatPinned.checkNull());
+          if(selectedChat.isNegative) {
+            mirrorFlyLog("pinChat", "$selectedChat selected chat is have to pinned");
+            _itemPin(index);
+          }else{
+            mirrorFlyLog("pinChat", "$selectedChat selected chat is already pinned");
+          }
+        }
+        clearAllChatSelection();
+        toToast("Chats pinned");
       }
-      clearAllChatSelection();
+    }else{
+      toToast("You can only pin upto 3 chats");
     }
+  }
+
+  bool isSelectedPositionsValidForPin(){
+    var pinnedListPosition = selectedChats;
+    var validPositions = 0; //selected non pinned items
+    for (var value in selectedChats) {
+      var valid = recentChats.firstWhere((p0) => p0.jid == value);// check, is non pinned item
+      if(!valid.isChatPinned.checkNull()){
+        validPositions++;
+      }
+    }
+    /*for (position in pinnedListPosition) {
+      if (position >= recentPinnedCount) // check, is non pinned item
+        validPositions++;
+    }*/
+    //mirrorFlyLog("validPositions", "$validPositions");
+    if ((recentPinnedCount + validPositions) <= 3) {
+      return true;
+    }
+    if ((recentPinnedCount + pinnedListPosition.length) <= 3) {
+      return true;
+    }
+    return false;
   }
 
   unPinChats(){
     if(selectedChats.length==1){
       _itemUnPin(0);
       clearAllChatSelection();
+      toToast("Chat unpinned");
     }else{
       selected(false);
       selectedChats.asMap().forEach((key, value) {_itemUnPin(key);});
       clearAllChatSelection();
+      toToast("Chats unpinned");
     }
   }
 
@@ -461,10 +502,12 @@ class DashboardController extends GetxController with GetTickerProviderStateMixi
     if(selectedChats.length==1){
       _itemUnMute(0);
       clearAllChatSelection();
+      toToast("Chat marked as read");
     }else{
       selected(false);
       selectedChats.asMap().forEach((key, value) {_itemUnMute(key);});
       clearAllChatSelection();
+      toToast("Chats marked as read");
     }
   }
 
@@ -494,16 +537,17 @@ class DashboardController extends GetxController with GetTickerProviderStateMixi
   }
 
   _itemPin(int index){
+    FlyChat.updateRecentChatPinStatus(selectedChats[index], true);
     var chatIndex = recentChats.indexWhere((element) => selectedChats[index] == element.jid);//selectedChatsPosition[index];
     //recentChats[chatIndex].isChatPinned=(true);
     var change = recentChats[chatIndex];
     change.isChatPinned=true;
     recentChats.removeAt(chatIndex);
     recentChats.insert(0, change);
-    FlyChat.updateRecentChatPinStatus(selectedChats[index], true);
   }
 
   _itemUnPin(int index){
+    FlyChat.updateRecentChatPinStatus(selectedChats[index], false);
     var chatIndex = recentChats.indexWhere((element) => selectedChats[index] == element.jid);//selectedChatsPosition[index];
     //recentChats[chatIndex].isChatPinned=(false);
     var lastPinnedChat = recentChats.lastIndexWhere((element) => element.isChatPinned!);
@@ -513,13 +557,12 @@ class DashboardController extends GetxController with GetTickerProviderStateMixi
     change.isChatPinned=false;
     recentChats.removeAt(chatIndex);
     recentChats.insert(nxtIndex, change);
-    FlyChat.updateRecentChatPinStatus(selectedChats[index], false);
   }
 
   _itemMute(int index){
+    FlyChat.updateChatMuteStatus(selectedChats[index], true);
     var chatIndex = recentChats.indexWhere((element) => selectedChats[index] == element.jid);//selectedChatsPosition[index];
     recentChats[chatIndex].isMuted=(true);
-    FlyChat.updateChatMuteStatus(selectedChats[index], true);
   }
 
   _itemUnMute(int index){
@@ -559,6 +602,7 @@ class DashboardController extends GetxController with GetTickerProviderStateMixi
     }
     clearAllChatSelection();
     updateUnReadChatCount();
+    toToast("Chat${selectedChats.length==1 ? "" : "s"} marked as unread");
   }
 
   _itemArchive(int index){
