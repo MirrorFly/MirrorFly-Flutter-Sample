@@ -299,8 +299,8 @@ Widget getLocationImage(
 }
 
 class SenderHeader extends StatelessWidget {
-  const SenderHeader({Key? key, required this.profile, required this.chatList, required this.index}) : super(key: key);
-  final Profile profile;
+  const SenderHeader({Key? key, required this.isGroupProfile, required this.chatList, required this.index}) : super(key: key);
+  final bool? isGroupProfile;
   final List<ChatMessageModel> chatList;
   final int index;
   
@@ -341,7 +341,7 @@ class SenderHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Visibility(
-      visible: profile.isGroupProfile ?? false
+      visible: isGroupProfile ?? false
           ? (index == 0 ||
           isSenderChanged(chatList, index) ||
           !isMessageDateEqual(chatList, index)) &&
@@ -1049,6 +1049,85 @@ class NotificationMessageView extends StatelessWidget {
     );
   }
 }
+
+class MessageContent extends StatelessWidget {
+  const MessageContent({Key? key, required this.chatList, required this.index, required this.handleMediaUploadDownload, required this.currentPos, required this.maxDuration}) : super(key: key);
+  final List<ChatMessageModel> chatList;
+  final int index;
+  final Function(int mediaDownloadStatus,
+      ChatMessageModel chatList) handleMediaUploadDownload;
+  final int currentPos;
+  final int maxDuration;
+  @override
+  Widget build(BuildContext context) {
+    var chatMessage = chatList[index];
+    if (chatList[index].isMessageRecalled) {
+      return RecalledMessageView(
+        chatMessage: chatMessage,
+      );
+    } else {
+      if (chatList[index].messageType.toUpperCase() == Constants.mText) {
+        return TextMessageView(chatMessage: chatMessage);
+      } else if (chatList[index].messageType.toUpperCase() == Constants.mNotification) {
+        return NotificationMessageView(chatMessage: chatMessage);
+      } else if (chatList[index].messageType.toUpperCase() ==
+          Constants.mLocation) {
+        if (chatList[index].locationChatMessage == null) {
+          return const SizedBox.shrink();
+        }
+        return LocationMessageView(chatMessage: chatMessage);
+      } else if (chatList[index].messageType.toUpperCase() == Constants.mContact) {
+        if (chatList[index].contactChatMessage == null) {
+          return const SizedBox.shrink();
+        }
+        return ContactMessageView(chatMessage: chatMessage);
+      } else {
+        if (chatList[index].mediaChatMessage == null) {
+          return const SizedBox.shrink();
+        } else {
+          if (chatList[index].messageType.toUpperCase() == Constants.mImage) {
+            return ImageMessageView(
+                chatMessage: chatMessage,
+                onTap: () {
+                  handleMediaUploadDownload(
+                      chatMessage.mediaChatMessage!.mediaDownloadStatus,
+                      chatList[index]);
+                });
+          } else if (chatList[index].messageType.toUpperCase() == Constants.mVideo) {
+            return VideoMessageView(
+                chatMessage: chatMessage,
+                onTap: () {
+                  handleMediaUploadDownload(
+                      chatMessage.mediaChatMessage!.mediaDownloadStatus,
+                      chatList[index]);
+                });
+          } else if (chatList[index].messageType.toUpperCase() == Constants.mDocument || chatList[index].messageType.toUpperCase() == Constants.mFile) {
+            return DocumentMessageView(
+                chatMessage: chatMessage,
+                onTap: () {
+                  handleMediaUploadDownload(
+                      chatMessage.mediaChatMessage!.mediaDownloadStatus,
+                      chatList[index]);
+                });
+          } else if (chatList[index].messageType.toUpperCase() == Constants.mAudio) {
+            return AudioMessageView(
+                chatMessage: chatMessage,
+                onTap: () {
+                  handleMediaUploadDownload(
+                      chatMessage.mediaChatMessage!.mediaDownloadStatus,
+                      chatList[index]);
+                },
+                currentPos: currentPos,
+                maxDuration: maxDuration);
+          }else{
+            return const SizedBox.shrink();
+          }
+        }
+      }
+    }
+  }
+}
+
 
 class TextMessageView extends StatelessWidget {
   const TextMessageView({Key? key, required this.chatMessage, this.search="",})

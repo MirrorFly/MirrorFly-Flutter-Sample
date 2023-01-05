@@ -1,16 +1,25 @@
 import 'dart:convert';
+import 'dart:io';
 
+import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
 import 'package:flysdk/flysdk.dart';
+import 'package:mirror_fly_demo/app/modules/chat/controllers/chat_controller.dart';
+import 'package:permission_handler/permission_handler.dart';
+
+import '../../../common/constants.dart';
+import '../../../data/helper.dart';
+import '../../../data/permissions.dart';
 
 class MessageInfoController extends GetxController {
-  //TODO: Implement MessageInfoController
+  var chatController = Get.find<ChatController>();
 
   var messageID = Get.arguments["messageID"];
-  var chatMessage = Get.arguments["chatMessage"] as ChatMessageModel;
+  var isGroupProfile = Get.arguments["isGroupProfile"];
+  var chatMessage = [Get.arguments["chatMessage"] as ChatMessageModel].obs;
   var readTime = ''.obs;
   var deliveredTime = ''.obs;
 
@@ -20,11 +29,31 @@ class MessageInfoController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    debugPrint("Message Info $messageID");
-    FlyChat.getMessageStatusOfASingleChatMessage(messageID).then((value) {
-      var response = json.decode(value);
-      readTime(response["seenTime"]);
-      deliveredTime(response["deliveredTime"]);
+    getStatusOfMessage(chatMessage.first.messageId);
+    player.onDurationChanged.listen((Duration d) {
+      //get the duration of audio
+      maxDuration(d.inMilliseconds);
+    });
+
+    player.onPlayerCompletion.listen((event) {
+      isPlaying(false);
+      audioPlayed(false);
+    });
+
+    player.onAudioPositionChanged.listen((Duration p) {
+      currentPos(p.inMilliseconds); //get the current position of playing audio
+
+      int milliseconds = currentPos.value;
+      //generating the duration label
+      int sHours = Duration(milliseconds: milliseconds).inHours;
+      int sMinutes = Duration(milliseconds: milliseconds).inMinutes;
+      int sSeconds = Duration(milliseconds: milliseconds).inSeconds;
+
+      int rHours = sHours;
+      int rMinutes = sMinutes - (sHours * 60);
+      int rSeconds = sSeconds - (sMinutes * 60 + sHours * 60 * 60);
+
+      currentPostLabel = "$rHours:$rMinutes:$rSeconds";
     });
   }
 
@@ -60,5 +89,121 @@ class MessageInfoController extends GetxController {
         ? "HH:mm"
         : "H:mm";
     return dateHourFormat;
+  }
+
+  checkFile(String mediaLocalStoragePath) {
+    return mediaLocalStoragePath.isNotEmpty &&
+        File(mediaLocalStoragePath).existsSync();
+  }
+
+  Future<bool> askStoragePermission() async {
+    final permission = await AppPermission.getStoragePermission();
+    switch (permission) {
+      case PermissionStatus.granted:
+        return true;
+      case PermissionStatus.permanentlyDenied:
+        return false;
+      default:
+        debugPrint("Permission default");
+        return false;
+    }
+  }
+
+  downloadMedia(String messageId) async {
+    if (await askStoragePermission()) {
+      FlyChat.downloadMedia(messageId);
+    }
+  }
+
+  String currentPostLabel = "00:00";
+  var maxDuration = 100.obs;
+  var currentPos = 0.obs;
+  var isPlaying = false.obs;
+  var audioPlayed = false.obs;
+  AudioPlayer player = AudioPlayer();
+  playAudio(String filePath) async {
+    if (!isPlaying.value && !audioPlayed.value) {
+      int result = await player.play(filePath, isLocal: true);
+      if (result == 1) {
+        //play success
+
+        isPlaying(true);
+        audioPlayed(true);
+      } else {
+        mirrorFlyLog("", "Error while playing audio.");
+      }
+    } else if (audioPlayed.value && !isPlaying.value) {
+      int result = await player.resume();
+      if (result == 1) {
+        //resume success
+
+        isPlaying(true);
+        audioPlayed(true);
+      } else {
+        mirrorFlyLog("", "Error on resume audio.");
+      }
+    } else {
+      int result = await player.pause();
+      if (result == 1) {
+        //pause success
+
+        isPlaying(false);
+      } else {
+        mirrorFlyLog("", "Error on pause audio.");
+      }
+    }
+  }
+
+  var messageDeliveredList = <MessageDeliveredStatus>[].obs;
+  var messageReadList = <MessageDeliveredStatus>[].obs;
+  var statusCount = 0.obs;
+  String chatDate(BuildContext cxt,MessageDeliveredStatus item) => getChatTime(cxt, int.parse(item.time.checkNull()));
+  getMessageStatus(String messageId) async {
+    statusCount(await FlyChat.getGroupMessageStatusCount(messageId));
+    var delivered = await FlyChat.getGroupMessageDeliveredToList(messageId);
+    messageDeliveredList(messageDeliveredStatusFromJson(delivered));
+    mirrorFlyLog("getGroupMessageDeliveredToList", delivered.toString());
+    var read = await FlyChat.getGroupMessageReadByList(messageId);
+    messageReadList(messageDeliveredStatusFromJson(read));
+    mirrorFlyLog("getGroupMessageReadByList", read.toString());
+  }
+
+  var visibleDeliveredList = false.obs;
+  onDeliveredClick(){
+    if(visibleDeliveredList.value){
+      visibleDeliveredList(false);
+    }else{
+      visibleDeliveredList(true);
+    }
+  }
+
+  var visibleReadList = false.obs;
+  onReadClick(){
+    if(visibleReadList.value){
+      visibleReadList(false);
+    }else{
+      visibleReadList(true);
+    }
+  }
+
+  void onMessageStatusUpdated(ChatMessageModel chatMessageModel){
+    mirrorFlyLog("MESSAGE STATUS UPDATED on Info", chatMessageModel.messageId);
+    if(chatMessageModel.messageId == chatMessage[0].messageId){
+      chatMessage[0]=chatMessageModel;
+      chatMessage.refresh();
+      getStatusOfMessage(chatMessageModel.messageId);
+    }
+  }
+  
+  getStatusOfMessage(String messageId){
+    if(!isGroupProfile) {
+      FlyChat.getMessageStatusOfASingleChatMessage(messageId).then((value) {
+        var response = json.decode(value);
+        readTime(response["seenTime"]);
+        deliveredTime(response["deliveredTime"]);
+      });
+    }else{
+      getMessageStatus(messageId);
+    }
   }
 }

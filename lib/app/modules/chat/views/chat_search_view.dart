@@ -105,7 +105,7 @@ class ChatSearchView extends GetView<ChatController> {
                         : ReplyMessageHeader(
                         chatMessage: chatList[index]),
                     SenderHeader(
-                        profile: controller.profile,
+                        isGroupProfile: controller.profile.isGroupProfile,
                         chatList: chatList,
                         index: index),
                     getMessageContent(index, context, chatList),

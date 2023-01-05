@@ -567,10 +567,11 @@ class ChatView extends GetView<ChatController> {
                                 : ReplyMessageHeader(
                                 chatMessage: chatList[index]),
                             SenderHeader(
-                                profile: controller.profile,
+                                isGroupProfile: controller.profile.isGroupProfile,
                                 chatList: chatList,
                                 index: index),
-                            getMessageContent(index, context, chatList),
+                            //getMessageContent(index, context, chatList),
+                            MessageContent(chatList: chatList, index: index, handleMediaUploadDownload: handleMediaUploadDownload, currentPos: controller.currentPos.value, maxDuration: controller.maxDuration.value,)
                           ],
                         ),
                       ),

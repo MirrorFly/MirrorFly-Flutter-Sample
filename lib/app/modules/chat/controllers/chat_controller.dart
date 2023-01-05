@@ -31,6 +31,8 @@ import '../../../routes/app_pages.dart';
 
 import 'package:flysdk/flysdk.dart';
 
+import '../../message_info/controllers/message_info_controller.dart';
+
 class ChatController extends GetxController
     with GetTickerProviderStateMixin, BaseController {
   var chatList = List<ChatMessageModel>.empty(growable: true).obs;
@@ -1006,7 +1008,8 @@ class ChatController extends GetxController
       debugPrint("sending mid ===> ${selectedChatList[0].messageId}");
       Get.toNamed(Routes.messageInfo, arguments: {
         "messageID": selectedChatList[0].messageId,
-        "chatMessage": selectedChatList[0]
+        "chatMessage": selectedChatList[0],
+        "isGroupProfile": profile.isGroupProfile
       });
       clearChatSelection(selectedChatList[0]);
     });
@@ -1520,6 +1523,10 @@ class ChatController extends GetxController
       } else {
         chatList.add(chatMessageModel);
         scrollToBottom();
+      }
+      if(Get.isRegistered<MessageInfoController>()) {
+        Get.find<MessageInfoController>().onMessageStatusUpdated(
+            chatMessageModel);
       }
     }
   }
