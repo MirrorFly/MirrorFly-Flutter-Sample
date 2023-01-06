@@ -21,6 +21,7 @@ class DashboardView extends GetView<DashboardController> {
     return FocusDetector(
       onFocusGained: () {
         controller.initListeners();
+        controller.checkArchiveSetting();
         controller.getRecentChatList();
       },
       child: WillPopScope(
@@ -330,7 +331,7 @@ class DashboardView extends GetView<DashboardController> {
           children: [
             Obx(() {
               return Visibility(
-                visible: controller.archivedChats.isNotEmpty && controller.archivedCount.isNotEmpty,
+                visible: controller.archivedChats.isNotEmpty && controller.archiveSettingEnabled.value /*&& controller.archivedCount.isNotEmpty*/,
                 child: ListItem(
                   leading: Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 16.0),
@@ -345,6 +346,9 @@ class DashboardView extends GetView<DashboardController> {
                     style: const TextStyle(color: buttonBgColor),
                   ):null,
                   dividerPadding: EdgeInsets.zero,
+                  onTap: (){
+                    Get.toNamed(Routes.archivedChats);
+                  },
                 ),
               );
             }),
@@ -356,28 +360,57 @@ class DashboardView extends GetView<DashboardController> {
                       return ListView.builder(
                           padding: EdgeInsets.zero,
                           physics: const NeverScrollableScrollPhysics(),
-                          itemCount: controller.recentChats.length,
+                          itemCount: controller.recentChats.length+1,
                           shrinkWrap: true,
                           itemBuilder: (BuildContext context, int index) {
-                            var item = controller.recentChats[index];
-                            return Obx(() {
-                              return RecentChatItem(
-                                item: item,
-                                isSelected: controller.isSelected(index),
-                                typingUserid: controller.typingUser(item.jid.checkNull()),
-                                onTap: () {
-                                  if (controller.selected.value) {
+                            if(index<controller.recentChats.length) {
+                              var item = controller.recentChats[index];
+                              return Obx(() {
+                                return RecentChatItem(
+                                  item: item,
+                                  isSelected: controller.isSelected(index),
+                                  typingUserid: controller.typingUser(
+                                      item.jid.checkNull()),
+                                  onTap: () {
+                                    if (controller.selected.value) {
+                                      controller.selectOrRemoveChatfromList(
+                                          index);
+                                    } else {
+                                      controller.toChatPage(
+                                          item.jid.checkNull());
+                                    }
+                                  },
+                                  onLongPress: () {
+                                    controller.selected(true);
                                     controller.selectOrRemoveChatfromList(
                                         index);
-                                  } else {
-                                    controller.toChatPage(item.jid.checkNull());
-                                  }
-                                },
-                                onLongPress: () {
-                                  controller.selected(true);
-                                  controller.selectOrRemoveChatfromList(index);
-                                },);
-                            });
+                                  },);
+                              });
+                            }else{
+                              return Obx(() {
+                                return Visibility(
+                                  visible: controller.archivedChats.isNotEmpty && !controller.archiveSettingEnabled.value /*&& controller.archivedCount.isNotEmpty*/,
+                                  child: ListItem(
+                                    leading: Padding(
+                                      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                                      child: SvgPicture.asset(archive),
+                                    ),
+                                    title: const Text(
+                                      "Archived",
+                                      style: TextStyle(fontWeight: FontWeight.w500),
+                                    ),
+                                    trailing: controller.archivedCount != "0" ? Text(
+                                      controller.archivedCount,
+                                      style: const TextStyle(color: buttonBgColor),
+                                    ):null,
+                                    dividerPadding: EdgeInsets.zero,
+                                    onTap: (){
+                                      Get.toNamed(Routes.archivedChats);
+                                    },
+                                  ),
+                                );
+                              });
+                          }
                           });
                     });
                   }),
