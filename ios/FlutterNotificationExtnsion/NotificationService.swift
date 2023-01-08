@@ -58,6 +58,9 @@ class NotificationService: UNNotificationServiceExtension {
             // Handle Message Push messages
             NotificationMessageSupport.shared.didReceiveNotificationRequest(request.content.mutableCopy() as? UNMutableNotificationContent, onCompletion: { [self] bestAttemptContent in
                 FlyLog.DLog(param1: "#notification request ID", param2: "\(request.identifier)")
+                
+                
+                
                 let center = UNUserNotificationCenter.current()
                 let (messageCount, chatCount) = ChatManager.getUNreadMessageAndChatCount()
                 if FlyDefaults.hideNotificationContent{

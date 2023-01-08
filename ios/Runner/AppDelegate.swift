@@ -28,18 +28,8 @@ let googleApiKey = "AIzaSyDnjPEs86MRsnFfW1sVPKvMWjqQRnSa7Ts"
 
 
 @UIApplicationMain
-@objc class AppDelegate: FlutterAppDelegate, ConnectionEventDelegate{
-    func onConnected() {
-        print("======Appdelegate sdk connected=======")
-    }
-
-    func onDisconnected() {
-        print("======Appdelegate sdk Disconnected======")
-    }
-
-    func onConnectionNotAuthorized() {
-        print("======Appdelegate sdk Not Authorized=======")
-    }
+@objc class AppDelegate: FlutterAppDelegate{
+    
     
    
     var postNotificationdidEnterBackground : NotificationCenter? = nil
@@ -53,13 +43,13 @@ let googleApiKey = "AIzaSyDnjPEs86MRsnFfW1sVPKvMWjqQRnSa7Ts"
       
       FlyBaseController.initSDK(controller: controller, licenseKey: LICENSE_KEY, isTrial: !IS_LIVE, baseUrl: BASE_URL, containerID: CONTAINER_ID)
       
-//      ChatManager.shared.logoutDelegate = self
-              FlyMessenger.shared.messageEventsDelegate = self
-              ChatManager.shared.messageEventsDelegate = self
-//              GroupManager.shared.groupDelegate = self
-//              ChatManager.shared.logoutDelegate = self
+      ChatManager.shared.logoutDelegate = self
+      FlyMessenger.shared.messageEventsDelegate = self
+      ChatManager.shared.messageEventsDelegate = self
+      GroupManager.shared.groupDelegate = self
+      ChatManager.shared.logoutDelegate = self
       ChatManager.shared.connectionDelegate = self
-//              ChatManager.shared.adminBlockCurrentUserDelegate = self
+      ChatManager.shared.adminBlockCurrentUserDelegate = self
       
       GMSServices.provideAPIKey(googleApiKey)
       
@@ -227,7 +217,7 @@ func didReceiveLogout() {
 }
 
 
-extension AppDelegate : MessageEventsDelegate {
+extension AppDelegate : MessageEventsDelegate, ConnectionEventDelegate, LogoutDelegate, GroupEventsDelegate, AdminBlockCurrentUserDelegate {
     func onMessageReceived(message: FlyCommon.ChatMessage, chatJid: String) {
 
         print("Message Received Update--->")
@@ -262,7 +252,7 @@ extension AppDelegate : MessageEventsDelegate {
         }else{
             print("Message Stream Handler is Nil")
         }
-//
+
     }
 
     func onMediaStatusUpdated(message: FlyCommon.ChatMessage) {
@@ -309,6 +299,82 @@ extension AppDelegate : MessageEventsDelegate {
 
     func onMessageTranslated(message: FlyCommon.ChatMessage, jid: String) {
         print("Message onMessageTranslated--->")
+    }
+    
+    func didBlockOrUnblockCurrentUser(userJid: String, isBlocked: Bool) {
+        
+    }
+    
+    func didBlockOrUnblockGroup(groupJid: String, isBlocked: Bool) {
+        
+    }
+    
+    func didBlockOrUnblockContact(userJid: String, isBlocked: Bool) {
+        
+    }
+    
+    func didAddNewMemeberToGroup(groupJid: String, newMemberJid: String, addedByMemberJid: String) {
+        
+    }
+    
+    func didRemoveMemberFromGroup(groupJid: String, removedMemberJid: String, removedByMemberJid: String) {
+        
+    }
+    
+    func didFetchGroupProfile(groupJid: String) {
+        
+    }
+    
+    func didUpdateGroupProfile(groupJid: String) {
+        
+    }
+    
+    func didMakeMemberAsAdmin(groupJid: String, newAdminMemberJid: String, madeByMemberJid: String) {
+        
+    }
+    
+    func didRemoveMemberFromAdmin(groupJid: String, removedAdminMemberJid: String, removedByMemberJid: String) {
+        
+    }
+    
+    func didDeleteGroupLocally(groupJid: String) {
+        
+    }
+    
+    func didLeftFromGroup(groupJid: String, leftUserJid: String) {
+        
+    }
+    
+    func didCreateGroup(groupJid: String) {
+        
+    }
+    
+    func didFetchGroups(groups: [FlyCommon.ProfileDetails]) {
+        
+    }
+    
+    func didFetchGroupMembers(groupJid: String) {
+        
+    }
+    
+    func didReceiveGroupNotificationMessage(message: FlyCommon.ChatMessage) {
+        
+    }
+    
+    func didReceiveLogout() {
+        
+    }
+    
+    func onConnected() {
+        print("======Appdelegate sdk connected=======")
+    }
+
+    func onDisconnected() {
+        print("======Appdelegate sdk Disconnected======")
+    }
+
+    func onConnectionNotAuthorized() {
+        print("======Appdelegate sdk Not Authorized=======")
     }
 
 }

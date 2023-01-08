@@ -383,6 +383,8 @@ class FlyBaseController: NSObject{
                 FlySdkMethodCalls.sendTypingStatus(call: call, result: result)
             case "sendTypingGoneStatus":
                 FlySdkMethodCalls.sendTypingGoneStatus(call: call, result: result)
+            case "setNotificationSound":
+                FlySdkMethodCalls.setNotificationSound(call: call, result: result)
             default:
                 result(FlutterMethodNotImplemented)
             }

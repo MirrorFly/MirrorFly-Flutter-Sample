@@ -1429,7 +1429,7 @@ class AttachmentsSheetView extends StatelessWidget {
                   const SizedBox(
                     width: 50,
                   ),
-                  iconCreation(galleryImg, "Gallery", onGallery),
+                  iconCreation(galleryImg,  "Gallery", onGallery),
                 ],
               ),
               const SizedBox(

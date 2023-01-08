@@ -9,6 +9,7 @@ import Foundation
 
 
 let isLoggedIn = "isLoggedIn"
+let muteNotification = "muteNotification"
 let didEnterBackground = "DidEnterBackground"
 let isProfileSaved = "isProfileSaved"
 let googleToken = "googleToken"

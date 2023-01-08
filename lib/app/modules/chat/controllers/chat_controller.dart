@@ -1722,7 +1722,10 @@ class ChatController extends GetxController
     // if (await askStoragePermission()) {
     if(await AppPermission.checkPermission(Permission.storage, filePermission, Constants.filePermission)){
       try {
-        imagePicker();
+        // imagePicker();
+        Get.toNamed(Routes.galleryPicker, arguments: {
+          "userName": profile.name!
+        });
       } catch (e) {
         debugPrint(e.toString());
       }

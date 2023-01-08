@@ -896,6 +896,13 @@ import Photos
         
         ChatManager.deleteRecentChat(jid: jid!)
     }
+    static func setNotificationSound(call: FlutterMethodCall, result: @escaping FlutterResult){
+        let args = call.arguments as! Dictionary<String, Any>
+        
+        let notification_sound = args["enable"] as? Bool ?? false
+        
+        Utility.saveInPreference(key: muteNotification, value: notification_sound)
+    }
     static func getUserLastSeenTime(call: FlutterMethodCall, result: @escaping FlutterResult){
         let args = call.arguments as! Dictionary<String, Any>
         
