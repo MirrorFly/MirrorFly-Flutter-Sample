@@ -39,6 +39,7 @@ class DashboardController extends GetxController with GetTickerProviderStateMixi
     super.onInit();
     recentChats.bindStream(recentChats.stream);
     ever(recentChats, (callback) => unReadCount());
+    archivedChats.bindStream(archivedChats.stream);
     ever(archivedChats, (callback) => archivedChatCount());
     getArchivedChatsList();
   }
@@ -60,8 +61,8 @@ class DashboardController extends GetxController with GetTickerProviderStateMixi
       // String recentList = value.replaceAll('\n', '\\n');
       // debugPrint(recentList);
       var data = await compute(recentChatFromJson,value.toString());
-      recentChats.clear();
-      recentChats.addAll(data.data!);
+      //recentChats.clear();
+      recentChats(data.data!);
     }).catchError((error) {
       debugPrint("recent chat issue===> $error");
     });
@@ -158,12 +159,17 @@ class DashboardController extends GetxController with GetTickerProviderStateMixi
   
   unReadCount(){
     _unreadCount(0);
+    recentPinnedCount(0);
     for (var p0 in recentChats) {
       if(p0.isConversationUnRead!){
         _unreadCount(((p0.isConversationUnRead!) ? 1+_unreadCount.value : 0 +_unreadCount.value));
       }
+      if(p0.isChatPinned.checkNull()){
+        recentPinnedCount(recentPinnedCount.value+1);
+      }
     }
-    recentPinnedCount(recentChats.where((element) => element.isChatPinned.checkNull()).length);
+    /*mirrorFlyLog("recentPinned", recentChats.where((element) => (element.isChatPinned.checkNull()==true)).join(","));
+    recentPinnedCount(recentChats.where((element) => (element.isChatPinned.checkNull()==true)).length);*/
   }
 
   final _archivedCount = 0.obs;
@@ -443,10 +449,12 @@ class DashboardController extends GetxController with GetTickerProviderStateMixi
   bool isSelectedPositionsValidForPin(){
     var pinnedListPosition = selectedChats;
     var validPositions = 0; //selected non pinned items
-    for (var value in selectedChats) {
+    mirrorFlyLog("selectedchats", pinnedListPosition.join(","));
+    mirrorFlyLog("recentPinnedCount", recentPinnedCount.toString());
+    for (var value in pinnedListPosition) {
       var valid = recentChats.firstWhere((p0) => p0.jid == value);// check, is non pinned item
       if(!valid.isChatPinned.checkNull()){
-        validPositions++;
+         validPositions= validPositions+1;
       }
     }
     /*for (position in pinnedListPosition) {
@@ -454,10 +462,12 @@ class DashboardController extends GetxController with GetTickerProviderStateMixi
         validPositions++;
     }*/
     //mirrorFlyLog("validPositions", "$validPositions");
-    if ((recentPinnedCount + validPositions) <= 3) {
+    var count = recentPinnedCount.value + validPositions;
+    if (count <= 3) {
       return true;
     }
-    if ((recentPinnedCount + pinnedListPosition.length) <= 3) {
+    var count2 = recentPinnedCount.value + pinnedListPosition.length;
+    if (count2 <= 3) {
       return true;
     }
     return false;

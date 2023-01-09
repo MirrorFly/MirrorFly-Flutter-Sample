@@ -195,7 +195,8 @@ class ProfileController extends GetxController {
           if (data.status != null && data.status!) {
             if (data.data != null) {
               profileName.text = data.data!.name ?? "";
-              if (from.value != Routes.login) {
+              if (data.data!.mobileNumber.checkNull().isNotEmpty) {
+              //if (from.value != Routes.login) {
                 profileMobile.text = data.data!.mobileNumber ?? "";
               }
 
