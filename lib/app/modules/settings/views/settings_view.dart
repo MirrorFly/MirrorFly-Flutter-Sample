@@ -24,7 +24,9 @@ class SettingsView extends GetView<SettingsController> {
           children: [
             settingListItem("Profile", profileIcon, rightArrowIcon,
                 () => Get.toNamed(Routes.profile,arguments: {"from":Routes.settings})),
-            settingListItem("Chats", chatIcon, rightArrowIcon, () {}),
+            settingListItem("Chats", chatIcon, rightArrowIcon, () {
+              Get.toNamed(Routes.chatSettings);
+            }),
             settingListItem(
                 "Starred Messages", staredMsgIcon, rightArrowIcon, () {
                   Get.toNamed(Routes.starredMessages);

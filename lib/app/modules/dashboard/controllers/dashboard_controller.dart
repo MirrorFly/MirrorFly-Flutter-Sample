@@ -11,6 +11,7 @@ import 'package:mirror_fly_demo/app/data/session_management.dart';
 
 import 'package:flysdk/flysdk.dart';
 import 'package:intl/intl.dart';
+import 'package:mirror_fly_demo/app/modules/archived_chats/archived_chat_list_controller.dart';
 
 import '../../../data/apputils.dart';
 import '../../../routes/app_pages.dart';
@@ -34,6 +35,8 @@ class DashboardController extends GetxController with GetTickerProviderStateMixi
   var delete = false.obs;
   var info = false.obs;
   var shortcut = false.obs;
+
+  var archiveSettingEnabled = false.obs;
   @override
   void onInit() {
     super.onInit();
@@ -42,6 +45,11 @@ class DashboardController extends GetxController with GetTickerProviderStateMixi
     archivedChats.bindStream(archivedChats.stream);
     ever(archivedChats, (callback) => archivedChatCount());
     getArchivedChatsList();
+    checkArchiveSetting();
+  }
+
+  checkArchiveSetting(){
+    FlyChat.isArchivedSettingsEnabled().then((value) => archiveSettingEnabled(value));
   }
 
   Future<RecentChatData?> getRecentChatOfJid(String jid) async{
@@ -68,11 +76,11 @@ class DashboardController extends GetxController with GetTickerProviderStateMixi
     });
   }
 
-  getArchivedChatsList() {
-    FlyChat.getArchivedChatList().then((value) {
+  getArchivedChatsList() async {
+    await FlyChat.getArchivedChatList().then((value) {
+      mirrorFlyLog("archived", value.toString());
       var data = recentChatFromJson(value);
-      archivedChats.clear();
-      archivedChats.addAll(data.data!);
+      archivedChats(data.data!);
     }).catchError((error) {
       debugPrint("issue===> $error");
     });
@@ -188,19 +196,30 @@ class DashboardController extends GetxController with GetTickerProviderStateMixi
     debugPrint("my update index $index");
     getRecentChatOfJid(jid).then((recent){
       if(recent!=null){
-        if (index.isNegative) {
-          recentChats.insert(0,recent);
-        } else {
-          var lastPinnedChat = recentChats.lastIndexWhere((element) => element.isChatPinned!);
-          var nxtIndex = lastPinnedChat.isNegative ? 0 : (lastPinnedChat+1);
-          mirrorFlyLog("lastPinnedChat", lastPinnedChat.toString());
-          if(recentChats[index].isChatPinned!){
-            recentChats.removeAt(index);
-            recentChats.insert(index, recent);
-          }else {
-            recentChats.removeAt(index);
-            recentChats.insert(nxtIndex, recent);
+        if(!recent.isChatArchived.checkNull()) {
+          if (index.isNegative) {
+            recentChats.insert(0, recent);
+          } else {
+            var lastPinnedChat = recentChats.lastIndexWhere((element) =>
+            element.isChatPinned!);
+            var nxtIndex = lastPinnedChat.isNegative ? 0 : (lastPinnedChat + 1);
+            mirrorFlyLog("lastPinnedChat", lastPinnedChat.toString());
+            if (recentChats[index].isChatPinned!) {
+              recentChats.removeAt(index);
+              recentChats.insert(index, recent);
+            } else {
+              recentChats.removeAt(index);
+              recentChats.insert(nxtIndex, recent);
+            }
           }
+        }else{
+          if (!index.isNegative) {
+            recentChats.removeAt(index);
+          }
+          if(Get.isRegistered<ArchivedChatListController>()) {
+            Get.find<ArchivedChatListController>().checkArchiveList(recent);
+          }
+          checkArchiveList(recent);
         }
       }else{
         if (!index.isNegative) {
@@ -209,6 +228,31 @@ class DashboardController extends GetxController with GetTickerProviderStateMixi
       }
       recentChats.refresh();
     });
+  }
+
+  void checkArchiveList(RecentChatData recent) async {
+    await FlyChat.isArchivedSettingsEnabled().then((value){
+      if(value.checkNull()){
+        var archiveIndex = archivedChats.indexWhere((element) => recent.jid==element.jid);
+        if(!archiveIndex.isNegative){
+          archivedChats.removeAt(archiveIndex);
+          archivedChats.insert(0, recent);
+        }else{
+          archivedChats.insert(0,recent);
+        }
+      }else{
+        var archiveIndex = archivedChats.indexWhere((element) => recent.jid==element.jid);
+        if(!archiveIndex.isNegative){
+          archivedChats.removeAt(archiveIndex);
+          var lastPinnedChat = recentChats.lastIndexWhere((element) =>
+          element.isChatPinned!);
+          var nxtIndex = lastPinnedChat.isNegative ? 0 : (lastPinnedChat + 1);
+          mirrorFlyLog("lastPinnedChat", lastPinnedChat.toString());
+          recentChats.insert(nxtIndex, recent);
+        }
+      }
+    });
+
   }
 
   Future<ChatMessageModel?> getMessageOfId(String mid) async{
@@ -610,17 +654,22 @@ class DashboardController extends GetxController with GetTickerProviderStateMixi
     for (var element in selectedChatsPosition) {
       recentChats[element].isConversationUnRead=true;
     }
+    toToast("Chat${selectedChats.length==1 ? "" : "s"} marked as unread");
     clearAllChatSelection();
     updateUnReadChatCount();
-    toToast("Chat${selectedChats.length==1 ? "" : "s"} marked as unread");
   }
 
   _itemArchive(int index){
+    FlyChat.updateArchiveUnArchiveChat(selectedChats[index], true);
     var chatIndex = recentChats.indexWhere((element) => selectedChats[index] == element.jid);//selectedChatsPosition[index];
     recentChats[chatIndex].isChatArchived=(true);
+    //getArchivedChatsList();
+    if(archivedChats.isEmpty){
+      archivedChats([recentChats[chatIndex]]);
+    }else {
+      archivedChats.add(recentChats[chatIndex]);
+    }
     recentChats.removeAt(chatIndex);
-    FlyChat.updateArchiveUnArchiveChat(selectedChats[index], true);
-    getArchivedChatsList();
   }
 
   _itemDelete(int index){
@@ -696,6 +745,9 @@ class DashboardController extends GetxController with GetTickerProviderStateMixi
       if(!index.isNegative){
         typingAndGoneStatus.removeAt(index);
       }
+    }
+    if(Get.isRegistered<ArchivedChatListController>()){
+      Get.find<ArchivedChatListController>().setTypingStatus(singleOrgroupJid,userId,typingStatus);
     }
   }
   @override

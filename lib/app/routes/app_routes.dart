@@ -38,6 +38,8 @@ abstract class Routes {
   static const starredMessages = _Paths.starredMessages;
   static const cameraPick = _Paths.cameraPick;
   static const adminBlocked = _Paths.adminBlocked;
+  static const archivedChats = _Paths.archivedChats;
+  static const chatSettings = _Paths.chatSettings;
   static const galleryPicker = _Paths.galleryPicker;
   static const mediaPreview = _Paths.mediaPreview;
 }
@@ -80,6 +82,8 @@ abstract class _Paths {
   static const starredMessages = '/starred-messages';
   static const cameraPick = '/camera-pick';
   static const adminBlocked = '/adminBlocked';
+  static const archivedChats = '/archivedChats';
+  static const chatSettings = '/chatSettings';
   static const galleryPicker = '/gallery-picker';
   static const mediaPreview = '/media-preview';
 }

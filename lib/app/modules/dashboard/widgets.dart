@@ -31,7 +31,7 @@ class RecentChatItem extends StatelessWidget {
       this.isSelected = false,
       this.isCheckBoxVisible = false,
       this.isChecked = false,
-      this.typingUserid = ""})
+      this.typingUserid = "", this.archiveVisible =true})
       : super(key: key);
   final RecentChatData item;
   final Function() onTap;
@@ -39,6 +39,7 @@ class RecentChatItem extends StatelessWidget {
   final String spanTxt;
   final bool isCheckBoxVisible;
   final bool isChecked;
+  final bool archiveVisible;
   final Function(bool? value)? onchange;
   final bool isSelected;
   final String typingUserid;
@@ -261,12 +262,14 @@ class RecentChatItem extends StatelessWidget {
                                         height: 13,
                                       )),
                                   Visibility(
-                                      visible: item.isChatArchived!,
-                                      child: SvgPicture.asset(
+                                      visible: item.isChatArchived! && archiveVisible,
+                                      child: Container(padding: const EdgeInsets.symmetric(horizontal: 2.0),decoration: BoxDecoration(borderRadius: BorderRadius.circular(4.0),border: Border.all(color: buttonBgColor,width: 0.8)),
+                                        child: const Text("Archived",style: TextStyle(color: buttonBgColor),),
+                                      )/*SvgPicture.asset(
                                         archive,
                                         width: 18,
                                         height: 18,
-                                      ))
+                                      )*/)
                                 ],
                               )
                             ],
