@@ -868,9 +868,9 @@ open class FlyBaseController(activity: FlutterActivity) : MethodChannel.MethodCa
                     }
                 })
             }
-            call.method.equals("cancelRestore") -> {
-                RestoreManager.cancelRestore()
-            }
+//            call.method.equals("cancelRestore") -> {
+//                RestoreManager.cancelRestore()
+//            }
             call.method.equals("cancelRestore") -> {
                 val filepath = call.argument<String>("file") ?: ""
                 val file = File(filepath)
@@ -1209,7 +1209,7 @@ open class FlyBaseController(activity: FlutterActivity) : MethodChannel.MethodCa
             call.method.equals("setNotificationSound") -> {
                 setNotificationSound(call)
             }
-            call.method.equals("setNotificationSound") -> {
+            call.method.equals("setMuteNotification") -> {
                 setMuteNotification(call)
             }
             call.method.equals("setNotificationVibration") -> {
