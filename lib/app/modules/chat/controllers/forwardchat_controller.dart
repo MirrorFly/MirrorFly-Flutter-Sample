@@ -263,19 +263,32 @@ class ForwardChatController extends GetxController {
     _userList(_mainuserList);
   }
 
-  forwardMessages() {
-    if(forwardMessageIds.isNotEmpty && selectedJids.value.isNotEmpty) {
-      FlyChat.forwardMessagesToMultipleUsers(forwardMessageIds, selectedJids.value)
-          .then((values) {
-        // debugPrint("to chat profile ==> ${selectedUsersList[0].toJson().toString()}");
-        FlyChat.getProfileDetails(selectedJids.value.last, false).then((value) {
-          if (value != null) {
-            var str = profiledata(value.toString());
-            Get.back(result: str);
-          }
-        });
-      });
+  forwardMessages() async {
+    if(await AppUtils.isNetConnected()) {
+      var busyStatus = await FlyChat.isBusyStatusEnabled();
+      if(!busyStatus.checkNull()) {
+        if(forwardMessageIds.isNotEmpty && selectedJids.value.isNotEmpty) {
+          FlyChat.forwardMessagesToMultipleUsers(forwardMessageIds, selectedJids.value)
+              .then((values) {
+            // debugPrint("to chat profile ==> ${selectedUsersList[0].toJson().toString()}");
+            FlyChat.getProfileDetails(selectedJids.value.last, false).then((value) {
+              if (value != null) {
+                var str = profiledata(value.toString());
+                Get.back(result: str);
+              }
+            });
+          });
+        }
+      }else{
+        //show busy status popup
+        //var messageObject = MessageObject(toJid: profile.jid.toString(),replyMessageId: (isReplying.value) ? replyChatMessage.messageId : "", messageType: Constants.mText,textMessage: messageController.text);
+        //showBusyStatusAlert(disableBusyChatAndSend());
+      }
+
+    }else{
+      toToast(Constants.noInternetConnection);
     }
+
   }
 
   Future<String> getParticipantsNameAsCsv(String jid) async{

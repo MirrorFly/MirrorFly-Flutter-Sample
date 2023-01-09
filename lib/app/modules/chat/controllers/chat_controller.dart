@@ -32,6 +32,7 @@ import '../../../routes/app_pages.dart';
 import 'package:flysdk/flysdk.dart';
 
 import '../../message_info/controllers/message_info_controller.dart';
+import '../chat_widgets.dart';
 
 class ChatController extends GetxController
     with GetTickerProviderStateMixin, BaseController {
@@ -107,9 +108,9 @@ class ChatController extends GetxController
 
   String? nJid;
   @override
-  void onInit() {
+  void onInit() async{
     super.onInit();
-
+    //await FlyChat.enableDisableBusyStatus(true);
     // var profileDetail = Get.arguments as Profile;
     // profile_.value = profileDetail;
     // if(profile_.value.jid == null){
@@ -276,51 +277,149 @@ class ChatController extends GetxController
     super.dispose();
   }
 
-  sendMessage(Profile profile) {
-    var replyMessageId = "";
-
-    if (isReplying.value) {
-      replyMessageId = replyChatMessage.messageId;
+  showAttachmentsView(BuildContext context) async {
+    var busyStatus = !profile.isGroupProfile.checkNull() ? await FlyChat.isBusyStatusEnabled() : false;
+    if(!busyStatus.checkNull()) {
+      showBottomSheetAttachment();
+    }else{
+      //show busy status popup
+      showBusyStatusAlert(showBottomSheetAttachment);
     }
-    isReplying(false);
-    if (messageController.text
-        .trim()
-        .isNotEmpty) {
-      FlyChat.sendTextMessage(
-          messageController.text, profile.jid.toString(), replyMessageId)
+  }
+
+  showBottomSheetAttachment(){
+    showModalBottomSheet(
+        backgroundColor: Colors.transparent,
+        context: Get.context!,
+        builder: (builder) =>
+            AttachmentsSheetView(onDocument: () {
+              Get.back();
+              documentPickUpload();
+            },
+                onCamera: () {
+                  Get.back();
+                  onCameraClick();
+                },
+                onGallery: () {
+                  Get.back();
+                  onGalleryClick();
+                },
+                onAudio: () {
+                  Get.back();
+                  onAudioClick();
+                },
+                onContact: () {
+                  Get.back();
+                  onContactClick();
+                },
+                onLocation: () {
+                  Get.back();
+                  onLocationClick();
+                }));
+  }
+
+  MessageObject? messageObject;
+  sendMessage(Profile profile) async {
+    var busyStatus = !profile.isGroupProfile.checkNull() ? await FlyChat.isBusyStatusEnabled() : false;
+    if(!busyStatus.checkNull()) {
+      var replyMessageId = "";
+
+      if (isReplying.value) {
+        replyMessageId = replyChatMessage.messageId;
+      }
+      isReplying(false);
+      if (messageController.text
+          .trim()
+          .isNotEmpty) {
+        FlyChat.sendTextMessage(
+            messageController.text, profile.jid.toString(), replyMessageId)
+            .then((value) {
+          messageController.text = "";
+          isUserTyping(false);
+          //need to work here
+          final jsonResponse = json.decode(value);
+          //Written for iOS Response
+          if (jsonResponse.containsKey('some')) {
+            debugPrint("Inside some condition");
+            value = json.encode(jsonResponse['some']);
+            debugPrint(value);
+          }
+          ChatMessageModel chatMessageModel = sendMessageModelFromJson(value);
+          chatList.add(chatMessageModel);
+          scrollToBottom();
+        });
+      }
+    }else{
+      //show busy status popup
+      messageObject = MessageObject(toJid: profile.jid.toString(),replyMessageId: (isReplying.value) ? replyChatMessage.messageId : "", messageType: Constants.mText,textMessage: messageController.text);
+      showBusyStatusAlert(disableBusyChatAndSend);
+    }
+  }
+
+  showBusyStatusAlert(Function? function){
+    Helper.showAlert(message: "Disable busy status. Do you want to continue?",actions: [
+      TextButton(
+          onPressed: () {
+            Get.back();
+          },
+          child: const Text("No")),
+      TextButton(
+          onPressed: () async {
+            Get.back();
+            await FlyChat.enableDisableBusyStatus(false);
+            if(function !=null) {
+              function();
+            }
+          },
+          child: const Text("Yes")),
+    ]);
+  }
+
+  disableBusyChatAndSend() async {
+    if(messageObject!=null) {
+      switch (messageObject!.messageType) {
+        case Constants.mText:
+          sendMessage(profile);
+          break;
+        case Constants.mImage:
+          sendImageMessage(messageObject!.file!, messageObject!.caption!, messageObject!.replyMessageId!);
+          break;
+        case Constants.mLocation :
+          sendLocationMessage(
+              profile, messageObject!.latitude!, messageObject!.longitude!);
+          break;
+        case Constants.mContact : sendContactMessage(messageObject!.contactNumbers!, messageObject!.contactName!);
+        break;
+        case Constants.mAudio : sendAudioMessage(messageObject!.file!, messageObject!.isAudioRecorded!, messageObject!.audioDuration!);
+        break;
+        case Constants.mDocument : sendDocumentMessage(messageObject!.file!, messageObject!.replyMessageId!);
+        break;
+      }
+    }
+  }
+
+  sendLocationMessage(Profile profile, double latitude, double longitude) async {
+    var busyStatus = !profile.isGroupProfile.checkNull() ? await FlyChat.isBusyStatusEnabled() : false;
+    if(!busyStatus.checkNull()) {
+      var replyMessageId = "";
+      if (isReplying.value) {
+        replyMessageId = replyChatMessage.messageId;
+      }
+      isReplying(false);
+
+      FlyChat.sendLocationMessage(
+          profile.jid.toString(), latitude, longitude, replyMessageId)
           .then((value) {
-        messageController.text = "";
-        isUserTyping(false);
-        //need to work here
-        final jsonResponse = json.decode(value);
-        //Written for iOS Response
-        if(jsonResponse.containsKey('some')){
-          debugPrint("Inside some condition");
-          value = json.encode(jsonResponse['some']);
-          debugPrint(value);
-        }
+        mirrorFlyLog("Location_msg", value.toString());
         ChatMessageModel chatMessageModel = sendMessageModelFromJson(value);
         chatList.add(chatMessageModel);
         scrollToBottom();
       });
+    }else{
+      //show busy status popup
+      messageObject = MessageObject(toJid: profile.jid.toString(),replyMessageId: (isReplying.value) ? replyChatMessage.messageId : "", messageType: Constants.mLocation,latitude: latitude,longitude: longitude);
+      showBusyStatusAlert(disableBusyChatAndSend);
     }
-  }
-
-  sendLocationMessage(Profile profile, double latitude, double longitude) {
-    var replyMessageId = "";
-    if (isReplying.value) {
-      replyMessageId = replyChatMessage.messageId;
-    }
-    isReplying(false);
-
-    FlyChat.sendLocationMessage(
-        profile.jid.toString(), latitude, longitude, replyMessageId)
-        .then((value) {
-      mirrorFlyLog("Location_msg", value.toString());
-      ChatMessageModel chatMessageModel = sendMessageModelFromJson(value);
-      chatList.add(chatMessageModel);
-      scrollToBottom();
-    });
   }
 
   String getTime(int? timestamp) {
@@ -443,24 +542,32 @@ class ChatController extends GetxController
     );
   }
 
-  sendImageMessage(String? path, String? caption, String? replyMessageID) {
+  sendImageMessage(String? path, String? caption, String? replyMessageID) async {
     debugPrint("Path ==> $path");
-    if (isReplying.value) {
-      replyMessageID = replyChatMessage.messageId;
-    }
-    isReplying(false);
-    if (File(path!).existsSync()) {
+    var busyStatus = !profile.isGroupProfile.checkNull() ? await FlyChat.isBusyStatusEnabled() : false;
+    if(!busyStatus.checkNull()) {
+      if (isReplying.value) {
+        replyMessageID = replyChatMessage.messageId;
+      }
+      isReplying(false);
+      if (File(path!).existsSync()) {
         return FlyChat
-          .sendImageMessage(profile.jid!, path, caption, replyMessageID)
-          .then((value) {
-        ChatMessageModel chatMessageModel = sendMessageModelFromJson(value);
-        chatList.add(chatMessageModel);
-        scrollToBottom();
-        return chatMessageModel;
-      });
-    } else {
-      debugPrint("file not found for upload");
+            .sendImageMessage(profile.jid!, path, caption, replyMessageID)
+            .then((value) {
+          ChatMessageModel chatMessageModel = sendMessageModelFromJson(value);
+          chatList.add(chatMessageModel);
+          scrollToBottom();
+          return chatMessageModel;
+        });
+      } else {
+        debugPrint("file not found for upload");
+      }
+    }else{
+      //show busy status popup
+      messageObject = MessageObject(toJid: profile.jid.toString(),replyMessageId: (isReplying.value) ? replyChatMessage.messageId : "", messageType: Constants.mImage,file: path,caption: caption);
+      showBusyStatusAlert(disableBusyChatAndSend);
     }
+
   }
 
   Future imagePicker() async {
@@ -616,35 +723,51 @@ class ChatController extends GetxController
     }
   }
 
-  sendContactMessage(List<String> contactList, String contactName) {
-    var replyMessageId = "";
+  sendContactMessage(List<String> contactList, String contactName) async {
+    var busyStatus = !profile.isGroupProfile.checkNull() ? await FlyChat.isBusyStatusEnabled() : false;
+    if(!busyStatus.checkNull()) {
+      var replyMessageId = "";
 
-    if (isReplying.value) {
-      replyMessageId = replyChatMessage.messageId;
+      if (isReplying.value) {
+        replyMessageId = replyChatMessage.messageId;
+      }
+      isReplying(false);
+      return FlyChat.sendContactMessage(
+          contactList, profile.jid!, contactName, replyMessageId)
+          .then((value) {
+        ChatMessageModel chatMessageModel = sendMessageModelFromJson(value);
+        chatList.add(chatMessageModel);
+        scrollToBottom();
+        return chatMessageModel;
+      });
+    }else{
+      //show busy status popup
+      messageObject = MessageObject(toJid: profile.jid.toString(),replyMessageId: (isReplying.value) ? replyChatMessage.messageId : "", messageType: Constants.mContact,contactNumbers: contactList,contactName: contactName);
+      showBusyStatusAlert(disableBusyChatAndSend);
     }
-    isReplying(false);
-    return FlyChat.sendContactMessage(
-        contactList, profile.jid!, contactName, replyMessageId)
-        .then((value) {
-      ChatMessageModel chatMessageModel = sendMessageModelFromJson(value);
-      chatList.add(chatMessageModel);
-      scrollToBottom();
-      return chatMessageModel;
-    });
+
   }
 
-  sendDocumentMessage(String documentPath, String replyMessageId) {
-    if (isReplying.value) {
-      replyMessageId = replyChatMessage.messageId;
+  sendDocumentMessage(String documentPath, String replyMessageId) async {
+    var busyStatus = !profile.isGroupProfile.checkNull() ? await FlyChat.isBusyStatusEnabled() : false;
+    if(!busyStatus.checkNull()) {
+      if (isReplying.value) {
+        replyMessageId = replyChatMessage.messageId;
+      }
+      isReplying(false);
+      FlyChat.sendDocumentMessage(profile.jid!, documentPath, replyMessageId)
+          .then((value) {
+        ChatMessageModel chatMessageModel = sendMessageModelFromJson(value);
+        chatList.add(chatMessageModel);
+        scrollToBottom();
+        return chatMessageModel;
+      });
+    }else{
+      //show busy status popup
+      messageObject = MessageObject(toJid: profile.jid.toString(),replyMessageId: (isReplying.value) ? replyChatMessage.messageId : "", messageType: Constants.mText,file: documentPath);
+      showBusyStatusAlert(disableBusyChatAndSend);
     }
-    isReplying(false);
-    FlyChat.sendDocumentMessage(profile.jid!, documentPath, replyMessageId)
-        .then((value) {
-      ChatMessageModel chatMessageModel = sendMessageModelFromJson(value);
-      chatList.add(chatMessageModel);
-      scrollToBottom();
-      return chatMessageModel;
-    });
+
   }
 
   openDocument(String mediaLocalStoragePath, BuildContext context) async {
@@ -713,22 +836,30 @@ class ChatController extends GetxController
     }
   }
 
-  sendAudioMessage(String filePath, bool isRecorded, String duration) {
-    var replyMessageId = "";
+  sendAudioMessage(String filePath, bool isRecorded, String duration) async {
+    var busyStatus = !profile.isGroupProfile.checkNull() ? await FlyChat.isBusyStatusEnabled() : false;
+    if(!busyStatus.checkNull()) {
+      var replyMessageId = "";
 
-    if (isReplying.value) {
-      replyMessageId = replyChatMessage.messageId;
+      if (isReplying.value) {
+        replyMessageId = replyChatMessage.messageId;
+      }
+      isUserTyping(false);
+      isReplying(false);
+      FlyChat.sendAudioMessage(
+          profile.jid!, filePath, isRecorded, duration, replyMessageId)
+          .then((value) {
+        ChatMessageModel chatMessageModel = sendMessageModelFromJson(value);
+        chatList.add(chatMessageModel);
+        scrollToBottom();
+        return chatMessageModel;
+      });
+    }else{
+      //show busy status popup
+      messageObject = MessageObject(toJid: profile.jid.toString(),replyMessageId: (isReplying.value) ? replyChatMessage.messageId : "", messageType: Constants.mAudio,file: filePath,isAudioRecorded: isRecorded,audioDuration: duration);
+      showBusyStatusAlert(disableBusyChatAndSend);
     }
-    isUserTyping(false);
-    isReplying(false);
-    FlyChat.sendAudioMessage(
-        profile.jid!, filePath, isRecorded, duration, replyMessageId)
-        .then((value) {
-      ChatMessageModel chatMessageModel = sendMessageModelFromJson(value);
-      chatList.add(chatMessageModel);
-      scrollToBottom();
-      return chatMessageModel;
-    });
+
   }
 
   void isTyping([String? typingText]) {
@@ -1323,6 +1454,14 @@ class ChatController extends GetxController
     }
   }
 
+  checkBusyStatusForForward() async {
+    var busyStatus = !profile.isGroupProfile.checkNull() ? await FlyChat.isBusyStatusEnabled() : false;
+    if(!busyStatus.checkNull()) {
+      forwardMessage();
+    }else{
+      showBusyStatusAlert(forwardMessage);
+    }
+  }
   forwardMessage() {
     var messageIds = List<String>.empty(growable: true);
     for (var chatItem in selectedChatList) {
@@ -1394,21 +1533,30 @@ class ChatController extends GetxController
   }
 
   Future<void> startRecording() async {
-    if (await Record().hasPermission()) {
-      record = Record();
-      timerInit("00.00");
-      isAudioRecording(Constants.audioRecording);
-      startTimer();
-      await record.start(
-        path:
-        "$audioSavePath/audio_${DateTime
-            .now()
-            .millisecondsSinceEpoch}.m4a",
-        encoder: AudioEncoder.AAC,
-        bitRate: 128000,
-        samplingRate: 44100,
-      );
+    var busyStatus = !profile.isGroupProfile.checkNull() ? await FlyChat.isBusyStatusEnabled() : false;
+    if(!busyStatus.checkNull()) {
+      if (await askStoragePermission()) {
+        if (await Record().hasPermission()) {
+          record = Record();
+          timerInit("00.00");
+          isAudioRecording(Constants.audioRecording);
+          startTimer();
+          await record.start(
+            path:
+            "$audioSavePath/audio_${DateTime
+                .now()
+                .millisecondsSinceEpoch}.m4a",
+            encoder: AudioEncoder.AAC,
+            bitRate: 128000,
+            samplingRate: 44100,
+          );
+        }
+      }
+    }else{
+      //show busy status popup
+      showBusyStatusAlert(null);
     }
+
   }
 
   Future<void> stopRecording() async {

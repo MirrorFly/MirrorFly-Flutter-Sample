@@ -339,47 +339,16 @@ class ChatView extends GetView<ChatController> {
             : const SizedBox.shrink(),
         controller.isAudioRecording.value == Constants.audioRecordInitial
             ? IconButton(
-          onPressed: () async {
-            //if (await controller.askStoragePermission()) {
-            showModalBottomSheet(
-                backgroundColor: Colors.transparent,
-                context: context,
-                builder: (builder) =>
-                    AttachmentsSheetView(onDocument: () {
-                      Get.back();
-                      controller.documentPickUpload();
-                    },
-                        onCamera: () {
-                          Get.back();
-                          controller.onCameraClick();
-                        },
-                        onGallery: () {
-                          Get.back();
-                          controller.onGalleryClick();
-                        },
-                        onAudio: () {
-                          Get.back();
-                          controller.onAudioClick();
-                        },
-                        onContact: () {
-                          Get.back();
-                          controller.onContactClick();
-                        },
-                        onLocation: () {
-                          Get.back();
-                          controller.onLocationClick();
-                        }));
-            //}
+          onPressed: () {
+            controller.showAttachmentsView(context);
           },
           icon: SvgPicture.asset('assets/logos/attach.svg'),
         )
             : const SizedBox.shrink(),
         controller.isAudioRecording.value == Constants.audioRecordInitial
             ? IconButton(
-          onPressed: () async {
-            if (await controller.askStoragePermission()) {
+          onPressed: () {
               controller.startRecording();
-            }
           },
           icon: SvgPicture.asset('assets/logos/mic.svg'),
         )
@@ -835,7 +804,7 @@ class ChatView extends GetView<ChatController> {
               CustomAction(
                 visibleWidget: IconButton(
                     onPressed: () {
-                      controller.forwardMessage();
+                      controller.checkBusyStatusForForward();
                     },
                     icon: SvgPicture.asset(forwardIcon)),
                 overflowWidget: const Text("Forward"),
@@ -843,7 +812,7 @@ class ChatView extends GetView<ChatController> {
                 keyValue: 'Forward',
                 onItemClick: () {
                   controller.closeKeyBoard();
-                  controller.forwardMessage();
+                  controller.checkBusyStatusForForward();
                 },
               ),
               controller.getOptionStatus('Favourite')
