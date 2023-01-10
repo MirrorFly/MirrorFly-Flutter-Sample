@@ -170,7 +170,7 @@ class RecentChatItem extends StatelessWidget {
                                                                     item.lastMessageType ??
                                                                         "") ??
                                                                 item.lastMessageContent
-                                                                    .toString(),
+                                                                    .checkNull(),
                                                         style: Theme.of(context)
                                                             .textTheme
                                                             .titleSmall,
@@ -185,7 +185,7 @@ class RecentChatItem extends StatelessWidget {
                                                             : forMessageTypeString(item
                                                                     .lastMessageType!) ??
                                                                 item.lastMessageContent
-                                                                    .toString(),
+                                                                    .checkNull(),
                                                         spanTxt,
                                                         Theme.of(context)
                                                             .textTheme
@@ -296,159 +296,6 @@ class RecentChatItem extends StatelessWidget {
         : "This message was deleted";
   }
 }
-
-/*Widget recentChatItem({required RecentChatData item, required BuildContext context,required Function() onTap,Function()? onLongPress, String spanTxt = "",bool isCheckBoxVisible = false,bool isChecked = false,Function(bool? value)? onchange,bool isSelected = false}) {
-  var titlestyle = const TextStyle(
-    fontSize: 16.0,
-    fontWeight: FontWeight.w700,
-    fontFamily: 'sf_ui',
-    color: textHintColor);
-  return InkWell(
-    onLongPress: onLongPress,
-    onTap:onTap,
-    child: Container(
-      color: isSelected ? Colors.black12 : Colors.transparent,
-      child: Row(
-        children: [
-          Container(
-              margin:
-              const EdgeInsets.only(left: 19.0, top: 10, bottom: 10, right: 10),
-              child: Stack(
-                children: [
-                  ImageNetwork(
-                    url: item.profileImage.toString(),
-                    width: 48,
-                    height: 48,
-                    clipOval: true,
-                    errorWidget: item.isGroup!
-                        ? ClipOval(
-                      child: Image.asset(
-                        groupImg,
-                        height: 48,
-                        width: 48,
-                        fit: BoxFit.cover,
-                      ),
-                    )
-                        : ProfileTextImage(
-                      text: item.profileName.checkNull().isEmpty
-                          ? item.nickName.checkNull()
-                          : item.profileName.checkNull(),
-                    ),
-                  ),
-                  item.isConversationUnRead!
-                      ? Positioned(
-                      right: 0,
-                      child: CircleAvatar(
-                        radius: 8,
-                        child: Text(
-                            returnFormattedCount(item.unreadMessageCount!)!="0" ? returnFormattedCount(item.unreadMessageCount!) : "",
-                          style: const TextStyle(
-                              fontSize: 9,
-                              color: Colors.white,
-                              fontFamily: 'sf_ui'),
-                        ),
-                      ))
-                      : const SizedBox(),
-                ],
-              )),
-          Expanded(
-            child: Container(
-              padding: const EdgeInsets.only(top: 8),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            spanTxt.isEmpty ? Text(
-                              item.profileName.toString(),
-                              style: titlestyle,
-                            ) : spannableText(item.profileName.checkNull(), spanTxt, titlestyle),
-                            Row(
-                              children: [
-                                item.unreadMessageCount.toString() != "0"
-                                    ? const Padding(
-                                  padding: EdgeInsets.only(right: 8.0),
-                                  child: CircleAvatar(
-                                    radius: 4,
-                                    backgroundColor: Colors.green,
-                                  ),
-                                )
-                                    : const SizedBox(),
-                                Expanded(
-                                  child: Row(
-                                    children: [
-                                      forMessageTypeIcon(item.lastMessageType!),
-                                      SizedBox(width: forMessageTypeString(item.lastMessageType!)!=null ? 3.0 : 0.0,),
-                                      Expanded(
-                                        child: Text(
-                                          item.isLastMessageRecalledByUser! ? "" : forMessageTypeString(item.lastMessageType!) ?? item.lastMessageContent.toString(),
-                                          style: Theme.of(context).textTheme.titleSmall,
-                                          maxLines: 1,
-                                          overflow: TextOverflow.ellipsis,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(right: 16.0, left: 8),
-                        child: Column(
-                          children: [
-                            Visibility(
-                              visible:!isCheckBoxVisible,
-                              child: Text(
-                                getRecentChatTime(
-                                    context, item.lastMessageTime),
-                                textAlign: TextAlign.end,
-                                style: TextStyle(
-                                    fontSize: 12.0,
-                                    fontWeight: FontWeight.w600,
-                                    fontFamily: 'sf_ui',
-                                    color: item.unreadMessageCount.toString() != "0"
-                                        ? buttonBgColor
-                                        : textColor),
-                              ),
-                            ),
-                            Visibility(
-                              visible: isCheckBoxVisible,
-                              child: Checkbox(
-                                value: isChecked,
-                                onChanged: onchange,
-                              ),
-                            ),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceAround,
-                              children: [
-                                Visibility(visible: item.isChatPinned!,child: SvgPicture.asset(pin,width: 18,height: 18,)),
-                                Visibility(visible: item.isMuted!,child: SvgPicture.asset(mute,width: 18,height: 18,)),
-                                Visibility(visible: item.isChatArchived!,child: SvgPicture.asset(archive,width: 18,height: 18,))
-                              ],
-                            )
-                          ],
-                        ),
-                      )
-                    ],
-                  ),
-                  const AppDivider(padding: EdgeInsets.only(top: 8),)
-                ],
-              ),
-            ),
-          )
-        ],
-      ),
-    ),
-  );
-}*/
 
 Widget spannableText(String text, String spannableText, TextStyle? style) {
   var startIndex = text.toLowerCase().indexOf(spannableText.toLowerCase());
