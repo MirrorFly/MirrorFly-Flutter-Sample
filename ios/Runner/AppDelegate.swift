@@ -50,6 +50,7 @@ let googleApiKey = "AIzaSyDnjPEs86MRsnFfW1sVPKvMWjqQRnSa7Ts"
       ChatManager.shared.logoutDelegate = self
       ChatManager.shared.connectionDelegate = self
       ChatManager.shared.adminBlockCurrentUserDelegate = self
+      ChatManager.shared.typingStatusDelegate = self
       
       GMSServices.provideAPIKey(googleApiKey)
       
@@ -217,7 +218,48 @@ func didReceiveLogout() {
 }
 
 
-extension AppDelegate : MessageEventsDelegate, ConnectionEventDelegate, LogoutDelegate, GroupEventsDelegate, AdminBlockCurrentUserDelegate {
+extension AppDelegate : MessageEventsDelegate, ConnectionEventDelegate, LogoutDelegate, GroupEventsDelegate, AdminBlockCurrentUserDelegate, TypingStatusDelegate {
+    func onChatTypingStatus(userJid: String, status: FlyCommon.TypingStatus) {
+        
+        print("onChatTypingStatus")
+        let jsonObject: NSMutableDictionary = NSMutableDictionary()
+        jsonObject.setValue(userJid, forKey: "fromUserJid")
+        jsonObject.setValue(status.rawValue, forKey: "status")
+        
+        print("json data-->\(jsonObject)")
+        
+
+        let jsonString = Commons.json(from: jsonObject)
+        print("json-->\(jsonString)")
+        
+        if(FlyBaseController.onChatTypingStatusStreamHandler?.onChatTyping != nil){
+            FlyBaseController.onChatTypingStatusStreamHandler?.onChatTyping?(jsonString)
+
+        }else{
+            print("Chat Typing Stream Handler is Nil")
+        }
+        
+    }
+    
+    func onGroupTypingStatus(groupJid: String, groupUserJid: String, status: FlyCommon.TypingStatus) {
+        
+        print("onGroupTypingStatus")
+        
+        let jsonObject: NSMutableDictionary = NSMutableDictionary()
+        jsonObject.setValue(groupJid, forKey: "groupJid")
+        jsonObject.setValue(groupUserJid, forKey: "groupUserJid")
+        jsonObject.setValue(status, forKey: "status")
+        
+        let jsonString = Commons.json(from: jsonObject)
+        
+        if(FlyBaseController.onGroupTypingStatusStreamHandler?.onGroupTyping != nil){
+            FlyBaseController.onGroupTypingStatusStreamHandler?.onGroupTyping?(jsonString)
+
+        }else{
+            print("Group Chat Typing Stream Handler is Nil")
+        }
+    }
+    
     func onMessageReceived(message: FlyCommon.ChatMessage, chatJid: String) {
 
         print("Message Received Update--->")

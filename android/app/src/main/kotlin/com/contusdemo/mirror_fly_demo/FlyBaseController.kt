@@ -2864,7 +2864,7 @@ open class FlyBaseController(activity: FlutterActivity) : MethodChannel.MethodCa
     }
 
     override fun onMediaStatusUpdated(message: ChatMessage) {
-        //Log.e(TAG, "media Status Updated ==> ${message.messageId}")
+        Log.e(TAG, "media Status Updated ==> ${message.messageId}")
         MediaStatusUpdatedStreamHandler.onMediaStatusUpdated?.success(message.tojsonString())
     }
 
@@ -3123,7 +3123,8 @@ open class FlyBaseController(activity: FlutterActivity) : MethodChannel.MethodCa
         val map = JSONObject()
         map.put("fromUserJid", fromUserJid)
         map.put("status", status)
-        onChatTypingStatusStreamHandler.onChatTypingStatus?.success(map.toString())
+//        onChatTypingStatusStreamHandler.onChatTypingStatus?.success(map.toString())
+        setTypingStatusStreamHandler.setTypingStatus?.success(map.toString())
     }
 
     override fun onGroupTypingStatus(groupJid: String, groupUserJid: String, status: TypingStatus) {
@@ -3131,7 +3132,8 @@ open class FlyBaseController(activity: FlutterActivity) : MethodChannel.MethodCa
         map.put("groupJid", groupJid)
         map.put("groupUserJid", groupUserJid)
         map.put("status", status)
-        onGroupTypingStatusStreamHandler.onGroupTypingStatus?.success(map.toString())
+//        onGroupTypingStatusStreamHandler.onGroupTypingStatus?.success(map.toString())
+        setTypingStatusStreamHandler.setTypingStatus?.success(map.toString())
     }
 
     private fun getDefaultNotificationUri(result: MethodChannel.Result) {

@@ -1285,8 +1285,8 @@ getImageOverlay(ChatMessageModel chatMessage) {
   } else {
     debugPrint("===media in Download/Upload state===");
     debugPrint(chatMessage.isMessageSentByMe.toString());
-    debugPrint(chatMessage.mediaChatMessage!.mediaUploadStatus.toString());
-    debugPrint(chatMessage.mediaChatMessage!.mediaDownloadStatus.toString());
+    debugPrint("upload status--- ${chatMessage.mediaChatMessage!.mediaUploadStatus.toString()}");
+    debugPrint("download status--- ${chatMessage.mediaChatMessage!.mediaDownloadStatus.toString()}");
     switch (chatMessage.isMessageSentByMe
         ? chatMessage.mediaChatMessage!.mediaUploadStatus
         : chatMessage.mediaChatMessage!.mediaDownloadStatus) {

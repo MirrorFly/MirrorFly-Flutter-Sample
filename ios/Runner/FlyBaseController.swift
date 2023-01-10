@@ -67,6 +67,7 @@ let onSuccess_channel = "contus.mirrorfly/onSuccess"
 
 
 
+
 class FlyBaseController: NSObject{
     
     static let MESSAGE_ONRECEIVED_CHANNEL = "contus.mirrorfly/onMessageReceived"
@@ -85,6 +86,9 @@ class FlyBaseController: NSObject{
     static var fetchingGroupListCompletedStreamHandler: FetchingGroupListCompletedStreamHandler?
     static var memberMadeAsAdminStreamHandler: MemberMadeAsAdminStreamHandler?
     static var memberRemovedAsAdminStreamHandler: MemberRemovedAsAdminStreamHandler?
+    
+    static var onChatTypingStatusStreamHandler: OnChatTypingStatusStreamHandler?
+    static var onGroupTypingStatusStreamHandler: OnGroupTypingStatusStreamHandler?
     
     
 //    override init() {
@@ -215,6 +219,18 @@ class FlyBaseController: NSObject{
           }
         
         FlutterEventChannel(name: onMemberRemovedAsAdmin_channel, binaryMessenger: controller.binaryMessenger).setStreamHandler(self.memberRemovedAsAdminStreamHandler as? FlutterStreamHandler & NSObjectProtocol)
+        
+        if (self.onChatTypingStatusStreamHandler == nil) {
+            self.onChatTypingStatusStreamHandler = OnChatTypingStatusStreamHandler()
+          }
+                
+        FlutterEventChannel(name: onChatTypingStatus_channel, binaryMessenger: controller.binaryMessenger).setStreamHandler((self.onChatTypingStatusStreamHandler!))
+        
+        if (self.onGroupTypingStatusStreamHandler == nil) {
+            self.onGroupTypingStatusStreamHandler = OnGroupTypingStatusStreamHandler()
+          }
+                
+        FlutterEventChannel(name: onGroupTypingStatus_channel, binaryMessenger: controller.binaryMessenger).setStreamHandler((self.onGroupTypingStatusStreamHandler!))
         
 
     }

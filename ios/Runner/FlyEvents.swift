@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import Flutter
 
 
 
@@ -620,6 +621,32 @@ class onSuccessStreamHandler: NSObject, FlutterStreamHandler {
 
     public func onCancel(withArguments arguments: Any?) -> FlutterError? {
         onSuccess = nil
+        return nil
+    }
+}
+class OnChatTypingStatusStreamHandler: NSObject, FlutterStreamHandler {
+    public var onChatTyping: FlutterEventSink?
+    
+    public func onListen(withArguments arguments: Any?, eventSink events: @escaping FlutterEventSink) -> FlutterError? {
+        self.onChatTyping = events
+        return nil
+    }
+
+    public func onCancel(withArguments arguments: Any?) -> FlutterError? {
+        self.onChatTyping = nil
+        return nil
+    }
+}
+class OnGroupTypingStatusStreamHandler: NSObject, FlutterStreamHandler {
+    public var onGroupTyping: FlutterEventSink?
+    
+    public func onListen(withArguments arguments: Any?, eventSink events: @escaping FlutterEventSink) -> FlutterError? {
+        self.onGroupTyping = events
+        return nil
+    }
+
+    public func onCancel(withArguments arguments: Any?) -> FlutterError? {
+        self.onGroupTyping = nil
         return nil
     }
 }
