@@ -11,6 +11,8 @@ import FlyCore
 import FlyCommon
 
 
+let MIRRORFLY_METHOD_CHANNEL = "contus.mirrorfly/sdkCall"
+
 let MESSAGE_ONRECEIVED_CHANNEL = "contus.mirrorfly/onMessageReceived"
 let MESSAGE_STATUS_UPDATED_CHANNEL = "contus.mirrorfly/onMessageStatusUpdated"
 let MEDIA_STATUS_UPDATED_CHANNEL = "contus.mirrorfly/onMediaStatusUpdated"
@@ -401,6 +403,12 @@ class FlyBaseController: NSObject{
                 FlySdkMethodCalls.sendTypingGoneStatus(call: call, result: result)
             case "setNotificationSound":
                 FlySdkMethodCalls.setNotificationSound(call: call, result: result)
+            case "isBusyStatusEnabled":
+                FlySdkMethodCalls.isBusyStatusEnabled(call: call, result: result)
+            case "updateMyProfileImage":
+                FlySdkMethodCalls.updateMyProfileImage(call: call, result: result)
+            case "isUserUnArchived":
+                FlySdkMethodCalls.isUserUnArchived(call: call, result: result)
             default:
                 result(FlutterMethodNotImplemented)
             }

@@ -908,7 +908,7 @@ class ChatController extends GetxController
   }
 
   void addChatSelection(ChatMessageModel chatList) {
-    if (chatList.messageType != Constants.mNotification) {
+    if (chatList.messageType.toUpperCase() != Constants.mNotification) {
       selectedChatList.add(chatList);
       chatList.isSelected = true;
       this.chatList.refresh();

@@ -22,7 +22,6 @@ let WEB_LOGIN_URL = "https://webchat-preprod-sandbox.mirrorfly.com/"
 let IS_MOBILE_NUMBER_LOGIN = true
 
 
-let MIRRORFLY_METHOD_CHANNEL = "contus.mirrorfly/sdkCall"
 
 let googleApiKey = "AIzaSyDnjPEs86MRsnFfW1sVPKvMWjqQRnSa7Ts"
 

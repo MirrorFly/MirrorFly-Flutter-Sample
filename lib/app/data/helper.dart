@@ -295,7 +295,7 @@ extension ChatmessageParsing on ChatMessageModel{
   bool isImageMessage() => messageType == Constants.mImage;
   bool isVideoMessage() => messageType == Constants.mVideo;
   bool isFileMessage() => messageType == Constants.mDocument;
-  bool isNotificationMessage() => messageType == Constants.mNotification;
+  bool isNotificationMessage() => messageType.toUpperCase() == Constants.mNotification;
 }
 extension RecentChatParsing on RecentChatData{
   String getChatType(){

@@ -283,6 +283,7 @@ class FlyChat {
     try {
       res = await mirrorFlyMethodChannel
           .invokeMethod<bool>('isBusyStatusEnabled');
+      debugPrint("isBusyStatusEnabled--> $res");
       return res;
     } on PlatformException catch (e) {
       debugPrint("Platform Exception ===> $e");
@@ -540,6 +541,7 @@ class FlyChat {
     try {
       res = await mirrorFlyMethodChannel
           .invokeMethod<bool>('isUserUnArchived',{"jid":jid});
+      debugPrint("isUserUnArchived==>$res");
       return res;
     } on PlatformException catch (e) {
       debugPrint("Platform Exception ===> $e");

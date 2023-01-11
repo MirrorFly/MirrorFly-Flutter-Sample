@@ -34,6 +34,8 @@ import Photos
             return
         }
         
+        
+        
         try! ChatManager.registerApiService(for:  userIdentifier!, deviceToken: deviceToken, voipDeviceToken: voipToken, isExport: false) { isSuccess, flyError, flyData in
             var data = flyData
             if isSuccess {
@@ -71,7 +73,19 @@ import Photos
     }
     
     static func refreshAndGetAuthToken(call: FlutterMethodCall, result: @escaping FlutterResult){
-        //Need to check iOS Side.
+        ChatManager.refreshToken { (isSuccess, flyError, resultDict) in
+                  if (isSuccess) {
+                      var token = resultDict
+                      
+                      print("ios token-->\(token)")
+                      
+                      result(token)
+                   
+                  } else {
+                      result(FlutterError(code: "500", message: "Unable to refresh token", details: flyError?.description))
+
+                  }
+            }
     }
     
     static func getJid(call: FlutterMethodCall, result: @escaping FlutterResult){
@@ -485,7 +499,18 @@ import Photos
     }
     static func insertDefaultStatus(call: FlutterMethodCall, result: @escaping FlutterResult){
         
+    
         result("[]")
+        
+    }
+    static func isUserUnArchived(call: FlutterMethodCall, result: @escaping FlutterResult){
+        
+        let args = call.arguments as! Dictionary<String, Any>
+        
+        let userJid = args["jid"] as? String ?? ""
+        
+        var isUserUnarchived : Bool = ChatManager.isUserUnArchived(jid: userJid)
+        result(isUserUnarchived)
         
     }
     
@@ -623,6 +648,23 @@ import Photos
         }
         
     }
+    static func updateMyProfileImage(call: FlutterMethodCall, result: @escaping FlutterResult){
+        let args = call.arguments as! Dictionary<String, Any>
+        let profileImage = args["image"] as? String ?? ""
+       
+        ContactManager.shared.updateMyProfileImage(image: profileImage){ isSuccess, flyError, flyData in
+                if isSuccess {
+                    var data = flyData
+                    print("updateMyProfileImage-->\(data)")
+                    result(data)
+                } else{
+                    print("updateMyProfileImage Error-->\(flyError!.localizedDescription)")
+                    result(FlutterError(code: "500", message: flyError!.localizedDescription, details: nil))
+                }
+        }
+        
+    }
+    
     static func contactSyncStateValue(call: FlutterMethodCall, result: @escaping FlutterResult){
         
     }
@@ -785,7 +827,17 @@ import Photos
     static func uploadMedia(call: FlutterMethodCall, result: @escaping FlutterResult){
         let args = call.arguments as! Dictionary<String, Any>
         
-        let jid = args["jid"] as? String ?? nil
+        let messageid = args["messageid"] as? String ?? ""
+        
+        FlyMessenger.uploadMedia(messageId: messageid) { isSuccess, error, chatMessage in
+            if isSuccess{
+                result(true)
+            }else{
+                result(false)
+            }
+        }
+        
+       
         
         
     }
@@ -808,10 +860,17 @@ import Photos
     }
     static func cancelMediaUploadOrDownload(call: FlutterMethodCall, result: @escaping FlutterResult){
         let args = call.arguments as! Dictionary<String, Any>
+        let messageId = args["messageId"] as? String ?? ""
         
-//        FlyMessenger.cancelMediaUploadOrDownload(message: message) { isSuccess in
-//
-//        }
+        FlyMessenger.cancelMediaUploadOrDownload(messageId: messageId){ isSuccess in
+            if isSuccess{
+                result(true)
+            }else{
+                result(false)
+            }
+        }
+        
+
     }
     static func setMediaEncryption(call: FlutterMethodCall, result: @escaping FlutterResult){
         let args = call.arguments as! Dictionary<String, Any>
@@ -902,6 +961,9 @@ import Photos
         let notification_sound = args["enable"] as? Bool ?? false
         
         Utility.saveInPreference(key: muteNotification, value: notification_sound)
+    }
+    static func isBusyStatusEnabled(call: FlutterMethodCall, result: @escaping FlutterResult){
+       result(ChatManager.shared.isBusyStatusEnabled())
     }
     static func getUserLastSeenTime(call: FlutterMethodCall, result: @escaping FlutterResult){
         let args = call.arguments as! Dictionary<String, Any>

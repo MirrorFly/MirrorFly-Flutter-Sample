@@ -6,6 +6,6 @@ framework module FlyTranslate {
 }
 
 module FlyTranslate.Swift {
-    header "FlyTranslate-Swift.h"
-    requires objc
+  header "FlyTranslate-Swift.h"
+  requires objc
 }

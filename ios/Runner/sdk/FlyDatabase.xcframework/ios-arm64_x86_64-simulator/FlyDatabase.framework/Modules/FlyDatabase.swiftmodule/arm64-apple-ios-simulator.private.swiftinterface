@@ -1,11 +1,12 @@
 // swift-interface-format-version: 1.0
-// swift-compiler-version: Apple Swift version 5.7.1 (swiftlang-5.7.1.135.3 clang-1400.0.29.51)
+// swift-compiler-version: Apple Swift version 5.7 (swiftlang-5.7.0.127.4 clang-1400.0.29.50)
 // swift-module-flags: -target arm64-apple-ios12.1-simulator -enable-objc-interop -enable-library-evolution -swift-version 5 -enforce-exclusivity=checked -O -module-name FlyDatabase
 // swift-module-flags-ignorable: -enable-bare-slash-regex
 import FlyCommon
 @_exported import FlyDatabase
 import Foundation
-@_exported import RealmSwift
+import Realm
+import RealmSwift
 import Swift
 import _Concurrency
 import _StringProcessing
@@ -22,23 +23,6 @@ import _StringProcessing
   public func deleteStatus(statusId: Swift.String) -> (status: Swift.Bool, statusMessge: Swift.String)
   public func updateStatus(statusId: Swift.String, statusText: Swift.String, currentStatus: Swift.Bool? = false) -> (status: Swift.Bool, statusMessage: Swift.String)
   public func getProfileStatusForId(statusId: Swift.String) -> FlyCommon.ProfileStatus?
-  @objc override dynamic public init()
-  @objc deinit
-}
-@objc @_inheritsConvenienceInitializers public class AvailableFeaturesManager : ObjectiveC.NSObject {
-  public func saveAvailableFeatures(jid: Swift.String, encryptedData: Swift.String)
-  public func getAvailableFeatures(jid: Swift.String) -> FlyCommon.AvailableFeaturesModel
-  public func isGroupChatAvailable() -> Swift.Bool
-  public func isGroupCallAvailable() -> Swift.Bool
-  public func isOneToOneCallAvailable() -> Swift.Bool
-  public func isRecentChatSearchAvailable() -> Swift.Bool
-  public func isImageAttachmentAvailable() -> Swift.Bool
-  public func isVideoAttachmentAvailable() -> Swift.Bool
-  public func isAudioAttachmentAvailable() -> Swift.Bool
-  public func isDocumentAttachmentAvailable() -> Swift.Bool
-  public func isContactAttachmentAvailable() -> Swift.Bool
-  public func isLocationAttachmentAvailable() -> Swift.Bool
-  public func isAttachmentAvailable() -> Swift.Bool
   @objc override dynamic public init()
   @objc deinit
 }
@@ -83,16 +67,6 @@ public func hardDeleteAllTable()
 extension RealmSwift.Realm {
   public func safeWrite(_ block: (() throws -> Swift.Void)) throws
 }
-@objc @_inheritsConvenienceInitializers public class WebLoginManager : ObjectiveC.NSObject {
-  public func saveWebInfo(webLoginInfo: FlyCommon.WebLoginInfo)
-  public func getWebInfo(bowser: Swift.String, platform: Swift.String) -> FlyCommon.WebLoginInfo?
-  public func getAllWebInfo() -> [FlyCommon.WebLoginInfo?]
-  public func getRecentWebInfo() -> [FlyCommon.WebLoginInfo?]
-  public func deleteAll()
-  public func deleteBySocketId(socketId: Swift.String)
-  @objc override dynamic public init()
-  @objc deinit
-}
 @objc @_inheritsConvenienceInitializers public class GroupMemberManager : ObjectiveC.NSObject {
   public func saveGroupContact(groupDetailList: [FlyCommon.GroupParticipantDetail])
   public func getGroupMemberUsingJID(jId: Swift.String, groupId: Swift.String) -> [FlyCommon.GroupParticipantDetail]
@@ -129,8 +103,22 @@ extension RealmSwift.Realm {
   public func getUnreadMessageAndChatCountForUnmutedUsers() -> (Swift.Int, Swift.Int)
   public func migrateRecentChat()
   public func hasNextRecentChatData(limit: Swift.Int = 40, messageTime: Swift.Double = 0) -> Swift.Bool
+  public func clearUnreadCountOfAllRecentChats()
+  public func getIsUserUnArchived(jid: Swift.String) -> Swift.Bool
   @objc override dynamic public init()
   @objc deinit
+}
+public class FileStreamReader {
+  public init?(path: Swift.String, delimiter: Swift.String = "\n", encoding: Swift.String.Encoding = .utf8, chunkSize: Swift.Int = 4096)
+  @objc deinit
+  public func nextLine() -> Swift.String?
+  public func rewind()
+  public func close()
+}
+extension FlyDatabase.FileStreamReader : Swift.Sequence {
+  public func makeIterator() -> Swift.AnyIterator<Swift.String>
+  public typealias Element = Swift.String
+  public typealias Iterator = Swift.AnyIterator<Swift.String>
 }
 @objc @_inheritsConvenienceInitializers public class RosterManager : ObjectiveC.NSObject {
   public func getContactsCount() -> Swift.Int
@@ -139,6 +127,7 @@ extension RealmSwift.Realm {
   public func getContactAsProfileDetails(forJid: Swift.String) -> FlyCommon.ProfileDetails?
   public func getVcardAsProfileDetails(forJid: Swift.String) -> FlyCommon.ProfileDetails?
   public func blockUnblockUser(for jid: Swift.String, isBlock: Swift.Bool)
+  public func setUnblockForAllContact()
   public func updateUserBlockedMeStatus(forJid: Swift.String, isBlockedMe: Swift.Bool)
   public func saveUserBlockList(jidList: [Swift.String], isBlockedMe: Swift.Bool)
   public func getUserBlockedList(isBlockedMe: Swift.Bool) -> [FlyCommon.ProfileDetails]
@@ -163,8 +152,11 @@ extension RealmSwift.Realm {
   @objc deinit
 }
 @objc @_inheritsConvenienceInitializers public class UserBusyStatusManager : ObjectiveC.NSObject {
-  public func saveStatus(busyStatus: FlyCommon.BusyStatus)
-  public func getAllUserBusyStatus() -> [FlyCommon.BusyStatus]
+  public func saveStatus(busyStatus: FlyCommon.BusyStatus) -> Swift.Bool
+  public func deleteBusyStatus(status: FlyCommon.BusyStatus)
+  public func getAllUserBusyStatus(_ busyStatus: [FlyCommon.BusyStatus]) -> [FlyCommon.BusyStatus]
+  public func getCurrentBusyStatus() -> FlyCommon.BusyStatus
+  public func updateBusyStatus(busyStatus: Swift.String)
   @objc override dynamic public init()
   @objc deinit
 }
@@ -172,7 +164,13 @@ extension RealmSwift.Realm {
   @objc override dynamic public init()
   @objc deinit
 }
-@objc @_inheritsConvenienceInitializers public class VcardManager : ObjectiveC.NSObject {
+@objc @_inheritsConvenienceInitializers public class WebLoginManager : ObjectiveC.NSObject {
+  public func saveWebInfo(webLoginInfo: FlyCommon.WebLoginInfo)
+  public func getWebInfo(bowser: Swift.String, platform: Swift.String) -> FlyCommon.WebLoginInfo?
+  public func getAllWebInfo() -> [FlyCommon.WebLoginInfo?]
+  public func getRecentWebInfo() -> [FlyCommon.WebLoginInfo?]
+  public func deleteAll()
+  public func deleteBySocketId(socketId: Swift.String)
   @objc override dynamic public init()
   @objc deinit
 }
@@ -191,6 +189,31 @@ extension RealmSwift.Realm {
   public func getReceiptsFor(messageId: Swift.String, messageStatus: FlyCommon.MessageStatus) -> [FlyCommon.MessageReceipt]
   public func getReceiptFor(messageId: Swift.String, userJid: Swift.String) -> FlyCommon.DeliveryReceipt?
   public func getReceiptsFor(messageId: Swift.String) -> [FlyCommon.DeliveryReceipt]
+  @objc deinit
+}
+@objc @_inheritsConvenienceInitializers @_hasMissingDesignatedInitializers public class BackupMessageManager : ObjectiveC.NSObject {
+  public static let shared: FlyDatabase.BackupMessageManager
+  public func getAllBackupMessages(completionHandler: (_ isSuccess: Swift.Bool, _ error: FlyCommon.FlyError?, _ data: [Swift.String : Any]) -> Swift.Void)
+  public func insertMessageToDatabase(messageModel: FlyCommon.BackupMessageModel? = nil, recentModel: FlyCommon.BackupRecentModel? = nil)
+  public func saveTempContact(userId: Swift.String, name: Swift.String = "") -> FlyCommon.ProfileDetails?
+  public func removeAllMessages()
+  @objc deinit
+}
+@objc @_inheritsConvenienceInitializers public class AvailableFeaturesManager : ObjectiveC.NSObject {
+  public func saveAvailableFeatures(jid: Swift.String, encryptedData: Swift.String)
+  public func getAvailableFeatures(jid: Swift.String) -> FlyCommon.AvailableFeaturesModel
+  public func isGroupChatAvailable() -> Swift.Bool
+  public func isGroupCallAvailable() -> Swift.Bool
+  public func isOneToOneCallAvailable() -> Swift.Bool
+  public func isRecentChatSearchAvailable() -> Swift.Bool
+  public func isImageAttachmentAvailable() -> Swift.Bool
+  public func isVideoAttachmentAvailable() -> Swift.Bool
+  public func isAudioAttachmentAvailable() -> Swift.Bool
+  public func isDocumentAttachmentAvailable() -> Swift.Bool
+  public func isContactAttachmentAvailable() -> Swift.Bool
+  public func isLocationAttachmentAvailable() -> Swift.Bool
+  public func isAttachmentAvailable() -> Swift.Bool
+  @objc override dynamic public init()
   @objc deinit
 }
 @objc @_inheritsConvenienceInitializers public class MessageManager : ObjectiveC.NSObject {
@@ -229,6 +252,17 @@ extension RealmSwift.Realm {
   public func getMessagesOfAnUserWithConstraints(fetchMessageListParams: FlyCommon.FetchMessageListParams, isAfter: Swift.Bool) -> [FlyCommon.ChatMessage]
   public func hasNextMessages(chatId: Swift.String, messageTime: Swift.Double) -> Swift.Bool
   public func hasPreviousMessages(chatId: Swift.String, messageTime: Swift.Double) -> Swift.Bool
+  public func getVideoAudioImageMessagesOf(jid: Swift.String) -> [FlyCommon.ChatMessage]
+  public func getDocumentMessageOf(jid: Swift.String) -> [FlyCommon.ChatMessage]
+  public func getMessagesForLink(jid: Swift.String) -> [FlyCommon.ChatMessage]
+  public func getMessagesForAutoDownload(lastEnabledTime: Swift.Double) -> [FlyCommon.ChatMessage]
   @objc override dynamic public init()
   @objc deinit
+}
+extension FlyDatabase.MessageManager {
+  public func deleteUnreadNotificationMessage(messageId: Swift.String)
+  public func getUnreadMessages(chatUserJid: Swift.String, messageId: Swift.String) -> [Swift.String]
+}
+extension FlyDatabase.MessageManager {
+  public func searchMessage(text: Swift.String) -> [FlyCommon.SearchMessage]
 }

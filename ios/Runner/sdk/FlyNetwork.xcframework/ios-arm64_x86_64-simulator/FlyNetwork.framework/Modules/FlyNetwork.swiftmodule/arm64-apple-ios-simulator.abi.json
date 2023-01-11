@@ -374,10 +374,7 @@
         "name": "Alamofire",
         "printedName": "Alamofire",
         "declKind": "Import",
-        "moduleName": "FlyNetwork",
-        "declAttributes": [
-          "ImplementationOnly"
-        ]
+        "moduleName": "FlyNetwork"
       },
       {
         "kind": "Import",
@@ -408,10 +405,7 @@
         "name": "Alamofire",
         "printedName": "Alamofire",
         "declKind": "Import",
-        "moduleName": "FlyNetwork",
-        "declAttributes": [
-          "ImplementationOnly"
-        ]
+        "moduleName": "FlyNetwork"
       },
       {
         "kind": "Import",
@@ -721,10 +715,7 @@
         "name": "SocketIO",
         "printedName": "SocketIO",
         "declKind": "Import",
-        "moduleName": "FlyNetwork",
-        "declAttributes": [
-          "ImplementationOnly"
-        ]
+        "moduleName": "FlyNetwork"
       },
       {
         "kind": "Import",
@@ -1330,10 +1321,7 @@
         "name": "Alamofire",
         "printedName": "Alamofire",
         "declKind": "Import",
-        "moduleName": "FlyNetwork",
-        "declAttributes": [
-          "ImplementationOnly"
-        ]
+        "moduleName": "FlyNetwork"
       },
       {
         "kind": "TypeDecl",
@@ -2016,10 +2004,7 @@
         "name": "Alamofire",
         "printedName": "Alamofire",
         "declKind": "Import",
-        "moduleName": "FlyNetwork",
-        "declAttributes": [
-          "ImplementationOnly"
-        ]
+        "moduleName": "FlyNetwork"
       },
       {
         "kind": "Import",
@@ -2904,6 +2889,92 @@
           },
           {
             "kind": "Function",
+            "name": "clearAllChatRevokeApiService",
+            "printedName": "clearAllChatRevokeApiService(status:completionHandler:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Void",
+                "printedName": "()"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "String",
+                "printedName": "Swift.String",
+                "usr": "s:SS"
+              },
+              {
+                "kind": "TypeFunc",
+                "name": "Function",
+                "printedName": "(Swift.Bool, FlyCommon.FlyError?, [Swift.String : Any]) -> ()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Void",
+                    "printedName": "()"
+                  },
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Tuple",
+                    "printedName": "(Swift.Bool, FlyCommon.FlyError?, [Swift.String : Any])",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "Bool",
+                        "printedName": "Swift.Bool",
+                        "usr": "s:Sb"
+                      },
+                      {
+                        "kind": "TypeNominal",
+                        "name": "Optional",
+                        "printedName": "FlyCommon.FlyError?",
+                        "children": [
+                          {
+                            "kind": "TypeNominal",
+                            "name": "FlyError",
+                            "printedName": "FlyCommon.FlyError",
+                            "usr": "s:9FlyCommon0A5ErrorO"
+                          }
+                        ],
+                        "usr": "s:Sq"
+                      },
+                      {
+                        "kind": "TypeNominal",
+                        "name": "Dictionary",
+                        "printedName": "[Swift.String : Any]",
+                        "children": [
+                          {
+                            "kind": "TypeNominal",
+                            "name": "String",
+                            "printedName": "Swift.String",
+                            "usr": "s:SS"
+                          },
+                          {
+                            "kind": "TypeNominal",
+                            "name": "ProtocolComposition",
+                            "printedName": "Any"
+                          }
+                        ],
+                        "usr": "s:SD"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:10FlyNetwork0aB10ControllerC28clearAllChatRevokeApiService6status17completionHandlerySS_ySb_0A6Common0A5ErrorOSgSDySSypGtctF",
+            "mangledName": "$s10FlyNetwork0aB10ControllerC28clearAllChatRevokeApiService6status17completionHandlerySS_ySb_0A6Common0A5ErrorOSgSDySSypGtctF",
+            "moduleName": "FlyNetwork",
+            "declAttributes": [
+              "AccessControl",
+              "RawDocComment"
+            ],
+            "isFromExtension": true,
+            "funcSelfKind": "NonMutating"
+          },
+          {
+            "kind": "Function",
             "name": "deleteForEveryoneMediaRevokeAccessApiService",
             "printedName": "deleteForEveryoneMediaRevokeAccessApiService(fileNames:starredMessage:status:completionHandler:)",
             "children": [
@@ -3777,10 +3848,7 @@
         "name": "Alamofire",
         "printedName": "Alamofire",
         "declKind": "Import",
-        "moduleName": "FlyNetwork",
-        "declAttributes": [
-          "ImplementationOnly"
-        ]
+        "moduleName": "FlyNetwork"
       },
       {
         "kind": "Import",
@@ -3801,338 +3869,338 @@
   },
   "ConstValues": [
     {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleNetwork\/FlyNetwork\/FlyNetwork\/FlyDownloader.swift",
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleNetwork\/FlyNetwork\/FlyNetwork\/FlyDownloader.swift",
       "kind": "IntegerLiteral",
-      "offset": 265,
+      "offset": 244,
       "length": 1,
       "value": "3"
     },
     {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleNetwork\/FlyNetwork\/FlyNetwork\/FlyDownloader.swift",
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleNetwork\/FlyNetwork\/FlyNetwork\/FlyDownloader.swift",
       "kind": "StringLiteral",
-      "offset": 454,
+      "offset": 433,
       "length": 24,
       "value": "\"downloadRequestDetails\""
     },
     {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleNetwork\/FlyNetwork\/FlyNetwork\/FlyDownloader.swift",
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleNetwork\/FlyNetwork\/FlyNetwork\/FlyDownloader.swift",
       "kind": "StringLiteral",
-      "offset": 506,
+      "offset": 485,
       "length": 11,
       "value": "\"messageID\""
     },
     {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleNetwork\/FlyNetwork\/FlyNetwork\/RequestManager.swift",
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleNetwork\/FlyNetwork\/FlyNetwork\/RequestManager.swift",
       "kind": "StringLiteral",
-      "offset": 437,
+      "offset": 416,
       "length": 6,
       "value": "\"POST\""
     },
     {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleNetwork\/FlyNetwork\/FlyNetwork\/RequestManager.swift",
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleNetwork\/FlyNetwork\/FlyNetwork\/RequestManager.swift",
       "kind": "StringLiteral",
-      "offset": 465,
+      "offset": 444,
       "length": 5,
       "value": "\"GET\""
     },
     {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleNetwork\/FlyNetwork\/FlyNetwork\/RequestManager.swift",
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleNetwork\/FlyNetwork\/FlyNetwork\/RequestManager.swift",
       "kind": "IntegerLiteral",
-      "offset": 621,
+      "offset": 600,
       "length": 1,
       "value": "3"
     },
     {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleNetwork\/FlyNetwork\/FlyNetwork\/RegisterModel.swift",
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleNetwork\/FlyNetwork\/FlyNetwork\/RegisterModel.swift",
       "kind": "IntegerLiteral",
       "offset": 548,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleNetwork\/FlyNetwork\/FlyNetwork\/Socket.swift",
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleNetwork\/FlyNetwork\/FlyNetwork\/Socket.swift",
       "kind": "StringLiteral",
-      "offset": 635,
+      "offset": 614,
       "length": 18,
       "value": "\"SocketConnection\""
     },
     {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleNetwork\/FlyNetwork\/FlyNetwork\/MediaManager.swift",
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleNetwork\/FlyNetwork\/FlyNetwork\/MediaManager.swift",
       "kind": "Array",
-      "offset": 354,
+      "offset": 333,
       "length": 2,
       "value": "[]"
     },
     {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleNetwork\/FlyNetwork\/FlyNetwork\/MediaManager.swift",
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleNetwork\/FlyNetwork\/FlyNetwork\/MediaManager.swift",
       "kind": "Dictionary",
-      "offset": 419,
+      "offset": 398,
       "length": 3,
       "value": "[]"
     },
     {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleNetwork\/FlyNetwork\/FlyNetwork\/FlyNetworkController.swift",
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleNetwork\/FlyNetwork\/FlyNetwork\/FlyNetworkController.swift",
       "kind": "StringLiteral",
-      "offset": 229,
+      "offset": 208,
       "length": 12,
       "value": "\"requestotp\""
     },
     {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleNetwork\/FlyNetwork\/FlyNetwork\/FlyNetworkController.swift",
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleNetwork\/FlyNetwork\/FlyNetwork\/FlyNetworkController.swift",
       "kind": "StringLiteral",
-      "offset": 259,
+      "offset": 238,
       "length": 7,
       "value": "\"login\""
     },
     {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleNetwork\/FlyNetwork\/FlyNetwork\/FlyNetworkController.swift",
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleNetwork\/FlyNetwork\/FlyNetwork\/FlyNetworkController.swift",
       "kind": "StringLiteral",
-      "offset": 287,
+      "offset": 266,
       "length": 10,
       "value": "\"register\""
     },
     {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleNetwork\/FlyNetwork\/FlyNetwork\/FlyNetworkController.swift",
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleNetwork\/FlyNetwork\/FlyNetwork\/FlyNetworkController.swift",
       "kind": "StringLiteral",
-      "offset": 315,
+      "offset": 294,
       "length": 8,
       "value": "\"media\/\""
     },
     {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleNetwork\/FlyNetwork\/FlyNetwork\/FlyNetworkController.swift",
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleNetwork\/FlyNetwork\/FlyNetwork\/FlyNetworkController.swift",
       "kind": "StringLiteral",
-      "offset": 344,
+      "offset": 323,
       "length": 12,
       "value": "\"image.jpeg\""
     },
     {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleNetwork\/FlyNetwork\/FlyNetwork\/FlyNetworkController.swift",
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleNetwork\/FlyNetwork\/FlyNetwork\/FlyNetworkController.swift",
       "kind": "StringLiteral",
-      "offset": 381,
+      "offset": 360,
       "length": 7,
       "value": "\"media\""
     },
     {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleNetwork\/FlyNetwork\/FlyNetwork\/FlyNetworkController.swift",
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleNetwork\/FlyNetwork\/FlyNetwork\/FlyNetworkController.swift",
       "kind": "StringLiteral",
-      "offset": 408,
+      "offset": 387,
       "length": 15,
       "value": "\"media\/forward\""
     },
     {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleNetwork\/FlyNetwork\/FlyNetwork\/FlyNetworkController.swift",
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleNetwork\/FlyNetwork\/FlyNetwork\/FlyNetworkController.swift",
       "kind": "StringLiteral",
-      "offset": 454,
+      "offset": 433,
       "length": 17,
       "value": "\"users\/delivered\""
     },
     {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleNetwork\/FlyNetwork\/FlyNetwork\/FlyNetworkController.swift",
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleNetwork\/FlyNetwork\/FlyNetwork\/FlyNetworkController.swift",
       "kind": "StringLiteral",
-      "offset": 490,
+      "offset": 469,
       "length": 8,
       "value": "\"logout\""
     },
     {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleNetwork\/FlyNetwork\/FlyNetwork\/FlyNetworkController.swift",
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleNetwork\/FlyNetwork\/FlyNetwork\/FlyNetworkController.swift",
       "kind": "StringLiteral",
-      "offset": 522,
+      "offset": 501,
       "length": 26,
       "value": "\"contacts\/syncContactsNew\""
     },
     {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleNetwork\/FlyNetwork\/FlyNetwork\/FlyNetworkController.swift",
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleNetwork\/FlyNetwork\/FlyNetwork\/FlyNetworkController.swift",
       "kind": "StringLiteral",
-      "offset": 576,
+      "offset": 555,
       "length": 18,
       "value": "\"sandbox\/register\""
     },
     {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleNetwork\/FlyNetwork\/FlyNetwork\/FlyNetworkController.swift",
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleNetwork\/FlyNetwork\/FlyNetwork\/FlyNetworkController.swift",
       "kind": "StringLiteral",
-      "offset": 616,
+      "offset": 595,
       "length": 21,
       "value": "\"moderation\/feedback\""
     },
     {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleNetwork\/FlyNetwork\/FlyNetwork\/FlyNetworkController.swift",
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleNetwork\/FlyNetwork\/FlyNetwork\/FlyNetworkController.swift",
       "kind": "StringLiteral",
-      "offset": 656,
+      "offset": 635,
       "length": 19,
       "value": "\"moderation\/report\""
     },
     {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleNetwork\/FlyNetwork\/FlyNetwork\/FlyNetworkController.swift",
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleNetwork\/FlyNetwork\/FlyNetwork\/FlyNetworkController.swift",
       "kind": "StringLiteral",
-      "offset": 701,
+      "offset": 680,
       "length": 23,
       "value": "\"users\/deleteMyAccount\""
     },
     {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleNetwork\/FlyNetwork\/FlyNetwork\/FlyNetworkController.swift",
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleNetwork\/FlyNetwork\/FlyNetwork\/FlyNetworkController.swift",
       "kind": "StringLiteral",
-      "offset": 746,
+      "offset": 725,
       "length": 19,
       "value": "\"contacts\/userList\""
     },
     {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleNetwork\/FlyNetwork\/FlyNetwork\/FlyNetworkController.swift",
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleNetwork\/FlyNetwork\/FlyNetwork\/FlyNetworkController.swift",
       "kind": "StringLiteral",
-      "offset": 784,
+      "offset": 763,
       "length": 14,
       "value": "\"users\/config\""
     },
     {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleNetwork\/FlyNetwork\/FlyNetwork\/FlyNetworkController.swift",
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleNetwork\/FlyNetwork\/FlyNetwork\/FlyNetworkController.swift",
       "kind": "StringLiteral",
-      "offset": 229,
+      "offset": 208,
       "length": 12,
       "value": "\"requestotp\""
     },
     {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleNetwork\/FlyNetwork\/FlyNetwork\/FlyNetworkController.swift",
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleNetwork\/FlyNetwork\/FlyNetwork\/FlyNetworkController.swift",
       "kind": "StringLiteral",
-      "offset": 259,
+      "offset": 238,
       "length": 7,
       "value": "\"login\""
     },
     {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleNetwork\/FlyNetwork\/FlyNetwork\/FlyNetworkController.swift",
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleNetwork\/FlyNetwork\/FlyNetwork\/FlyNetworkController.swift",
       "kind": "StringLiteral",
-      "offset": 287,
+      "offset": 266,
       "length": 10,
       "value": "\"register\""
     },
     {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleNetwork\/FlyNetwork\/FlyNetwork\/FlyNetworkController.swift",
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleNetwork\/FlyNetwork\/FlyNetwork\/FlyNetworkController.swift",
       "kind": "StringLiteral",
-      "offset": 315,
+      "offset": 294,
       "length": 8,
       "value": "\"media\/\""
     },
     {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleNetwork\/FlyNetwork\/FlyNetwork\/FlyNetworkController.swift",
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleNetwork\/FlyNetwork\/FlyNetwork\/FlyNetworkController.swift",
       "kind": "StringLiteral",
-      "offset": 344,
+      "offset": 323,
       "length": 12,
       "value": "\"image.jpeg\""
     },
     {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleNetwork\/FlyNetwork\/FlyNetwork\/FlyNetworkController.swift",
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleNetwork\/FlyNetwork\/FlyNetwork\/FlyNetworkController.swift",
       "kind": "StringLiteral",
-      "offset": 381,
+      "offset": 360,
       "length": 7,
       "value": "\"media\""
     },
     {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleNetwork\/FlyNetwork\/FlyNetwork\/FlyNetworkController.swift",
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleNetwork\/FlyNetwork\/FlyNetwork\/FlyNetworkController.swift",
       "kind": "StringLiteral",
-      "offset": 408,
+      "offset": 387,
       "length": 15,
       "value": "\"media\/forward\""
     },
     {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleNetwork\/FlyNetwork\/FlyNetwork\/FlyNetworkController.swift",
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleNetwork\/FlyNetwork\/FlyNetwork\/FlyNetworkController.swift",
       "kind": "StringLiteral",
-      "offset": 454,
+      "offset": 433,
       "length": 17,
       "value": "\"users\/delivered\""
     },
     {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleNetwork\/FlyNetwork\/FlyNetwork\/FlyNetworkController.swift",
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleNetwork\/FlyNetwork\/FlyNetwork\/FlyNetworkController.swift",
       "kind": "StringLiteral",
-      "offset": 490,
+      "offset": 469,
       "length": 8,
       "value": "\"logout\""
     },
     {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleNetwork\/FlyNetwork\/FlyNetwork\/FlyNetworkController.swift",
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleNetwork\/FlyNetwork\/FlyNetwork\/FlyNetworkController.swift",
       "kind": "StringLiteral",
-      "offset": 522,
+      "offset": 501,
       "length": 26,
       "value": "\"contacts\/syncContactsNew\""
     },
     {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleNetwork\/FlyNetwork\/FlyNetwork\/FlyNetworkController.swift",
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleNetwork\/FlyNetwork\/FlyNetwork\/FlyNetworkController.swift",
       "kind": "StringLiteral",
-      "offset": 576,
+      "offset": 555,
       "length": 18,
       "value": "\"sandbox\/register\""
     },
     {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleNetwork\/FlyNetwork\/FlyNetwork\/FlyNetworkController.swift",
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleNetwork\/FlyNetwork\/FlyNetwork\/FlyNetworkController.swift",
       "kind": "StringLiteral",
-      "offset": 616,
+      "offset": 595,
       "length": 21,
       "value": "\"moderation\/feedback\""
     },
     {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleNetwork\/FlyNetwork\/FlyNetwork\/FlyNetworkController.swift",
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleNetwork\/FlyNetwork\/FlyNetwork\/FlyNetworkController.swift",
       "kind": "StringLiteral",
-      "offset": 656,
+      "offset": 635,
       "length": 19,
       "value": "\"moderation\/report\""
     },
     {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleNetwork\/FlyNetwork\/FlyNetwork\/FlyNetworkController.swift",
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleNetwork\/FlyNetwork\/FlyNetwork\/FlyNetworkController.swift",
       "kind": "StringLiteral",
-      "offset": 701,
+      "offset": 680,
       "length": 23,
       "value": "\"users\/deleteMyAccount\""
     },
     {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleNetwork\/FlyNetwork\/FlyNetwork\/FlyNetworkController.swift",
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleNetwork\/FlyNetwork\/FlyNetwork\/FlyNetworkController.swift",
       "kind": "StringLiteral",
-      "offset": 746,
+      "offset": 725,
       "length": 19,
       "value": "\"contacts\/userList\""
     },
     {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleNetwork\/FlyNetwork\/FlyNetwork\/FlyNetworkController.swift",
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleNetwork\/FlyNetwork\/FlyNetwork\/FlyNetworkController.swift",
       "kind": "StringLiteral",
-      "offset": 784,
+      "offset": 763,
       "length": 14,
       "value": "\"users\/config\""
     },
     {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleNetwork\/FlyNetwork\/FlyNetwork\/FlyNetworkController.swift",
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleNetwork\/FlyNetwork\/FlyNetwork\/FlyNetworkController.swift",
       "kind": "StringLiteral",
-      "offset": 943,
+      "offset": 922,
       "length": 19,
       "value": "\"NetworkController\""
     },
     {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleNetwork\/FlyNetwork\/FlyNetwork\/FlyNetworkController.swift",
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleNetwork\/FlyNetwork\/FlyNetwork\/FlyNetworkController.swift",
       "kind": "StringLiteral",
-      "offset": 9285,
+      "offset": 9264,
       "length": 3,
       "value": "\" \""
     },
     {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleNetwork\/FlyNetwork\/FlyNetwork\/FlyNetworkController.swift",
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleNetwork\/FlyNetwork\/FlyNetwork\/FlyNetworkController.swift",
       "kind": "StringLiteral",
-      "offset": 9311,
+      "offset": 9290,
       "length": 4,
       "value": "\"\n\""
     },
     {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleNetwork\/FlyNetwork\/FlyNetwork\/FlyUploader.swift",
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleNetwork\/FlyNetwork\/FlyNetwork\/FlyUploader.swift",
       "kind": "IntegerLiteral",
-      "offset": 296,
+      "offset": 275,
       "length": 1,
       "value": "3"
     },
     {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleNetwork\/FlyNetwork\/FlyNetwork\/FlyUploader.swift",
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleNetwork\/FlyNetwork\/FlyNetwork\/FlyUploader.swift",
       "kind": "StringLiteral",
-      "offset": 472,
+      "offset": 451,
       "length": 22,
       "value": "\"uploadRequestDetails\""
     },
     {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleNetwork\/FlyNetwork\/FlyNetwork\/FlyUploader.swift",
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleNetwork\/FlyNetwork\/FlyNetwork\/FlyUploader.swift",
       "kind": "StringLiteral",
-      "offset": 522,
+      "offset": 501,
       "length": 11,
       "value": "\"messageID\""
     }

@@ -1,5 +1,5 @@
 // swift-interface-format-version: 1.0
-// swift-compiler-version: Apple Swift version 5.7.1 (swiftlang-5.7.1.135.3 clang-1400.0.29.51)
+// swift-compiler-version: Apple Swift version 5.7 (swiftlang-5.7.0.127.4 clang-1400.0.29.50)
 // swift-module-flags: -target arm64-apple-ios12.1 -enable-objc-interop -enable-library-evolution -swift-version 5 -enforce-exclusivity=checked -O -module-name FlyXmpp
 // swift-module-flags-ignorable: -enable-bare-slash-regex
 import FlyCommon
@@ -40,6 +40,10 @@ public protocol XMPPTypingStatusDelegate : ObjectiveC.NSObjectProtocol {
 }
 public protocol XMPPAdminBlockDelegate : ObjectiveC.NSObjectProtocol {
   func didBlock(adminBlock: FlyCommon.AdminBlock?)
+}
+public protocol XMPPArchiveDelegate : ObjectiveC.NSObjectProtocol {
+  func updateArchiveUnArchiveChats(toUser: Swift.String, archiveStatus: Swift.Bool)
+  func updateArchivedSettings(archivedSettingsStatus: Swift.Bool)
 }
 public protocol XMPPGroupDelegate : ObjectiveC.NSObjectProtocol {
   func didReceiveUseraddedMessage(participantProfile: FlyCommon.ProfileDetails, publisherProfile: FlyCommon.ProfileDetails, groupMemberDetail: FlyCommon.GroupParticipantDetail, isFromPush: Swift.Bool)
@@ -102,6 +106,7 @@ public protocol FlyXmppControllerDelegate : ObjectiveC.NSObjectProtocol {
   public func setWebLogoutDelegate(webLogoutDelegate: FlyXmpp.XMPPWebLogoutDelegate)
   public func setAdminBlockDelegate(adminBlockDelegate: FlyXmpp.XMPPAdminBlockDelegate)
   public func setLogoutDelegate(logoutDelegate: FlyXmpp.XMPPLogoutDelegate)
+  public func setArchiveDelegate(archiveDelegate: FlyXmpp.XMPPArchiveDelegate)
   public func connect()
   public func disConnect()
   public func isXmppAuthenticated() -> Swift.Bool
@@ -124,6 +129,7 @@ extension FlyXmpp.FlyXmppController {
   public func blockUser(jid: Swift.String, callback: @escaping FlyCommon.FlyCompletionHandler)
   public func unblockUser(jid: Swift.String, callback: @escaping FlyCommon.FlyCompletionHandler)
   public func clearChat(toJid: Swift.String, chatType: FlyCommon.ChatType, clearChatExceptStarred: Swift.Bool, deleteType: Swift.Int, callback: @escaping FlyCommon.FlyCompletionHandler)
+  public func clearAllConversation(deleteType: Swift.Int, callback: @escaping FlyCommon.FlyCompletionHandler)
   public func addFavourite(messageId: Swift.String, chatUserId: Swift.String, callback: @escaping FlyCommon.FlyCompletionHandler)
   public func updateFavourite(messageId: Swift.String, chatUserId: Swift.String, callback: @escaping FlyCommon.FlyCompletionHandler)
   public func unFavouriteAllFavouriteMessages(callback: @escaping FlyCommon.FlyCompletionHandler)
@@ -144,6 +150,10 @@ extension FlyXmpp.FlyXmppController {
   public func sendDeleteGroupIQ(groupJID: Swift.String, userJID: Swift.String, callback: @escaping FlyCommon.FlyCompletionHandler)
   public func exitParticipantFromGroup(groupJID: Swift.String, userJID: Swift.String, status: Swift.String, callback: @escaping FlyCommon.FlyCompletionHandler)
   public func getParticipant(groupJID: Swift.String, callback: FlyCommon.FlyCompletionHandler? = nil)
+  public func archiveUnarchiveChat(jid: Swift.String, status: Swift.Bool, callback: FlyCommon.FlyCompletionHandler? = nil)
+  public func getArchivedChatList(callback: FlyCommon.FlyCompletionHandler? = nil)
+  public func enableDisablearchiveChat(status: Swift.Bool, callback: FlyCommon.FlyCompletionHandler? = nil)
+  public func getArchivedSettingsStatus(callback: FlyCommon.FlyCompletionHandler? = nil)
   public func sendCallMessage(for status: Swift.String, roomId: Swift.String, groupId: Swift.String, callType: Swift.String, callMode: Swift.String, callTime: Swift.String, startTime: Swift.String, endTime: Swift.String, callStatus: Swift.String, callFrom: Swift.String, users: [Swift.String], inviteUsers: [Swift.String], callback: @escaping FlyCommon.FlyCompletionHandler)
   public func sendWebLogout(socketId: Swift.String, callback: @escaping FlyCommon.FlyCompletionHandler)
   public func sendRegisterUpdate(callback: @escaping FlyCommon.FlyCompletionHandler)

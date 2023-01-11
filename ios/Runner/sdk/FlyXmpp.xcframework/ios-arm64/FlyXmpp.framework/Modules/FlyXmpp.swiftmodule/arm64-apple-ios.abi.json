@@ -1068,6 +1068,92 @@
         ]
       },
       {
+        "kind": "TypeDecl",
+        "name": "XMPPArchiveDelegate",
+        "printedName": "XMPPArchiveDelegate",
+        "children": [
+          {
+            "kind": "Function",
+            "name": "updateArchiveUnArchiveChats",
+            "printedName": "updateArchiveUnArchiveChats(toUser:archiveStatus:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Void",
+                "printedName": "()"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "String",
+                "printedName": "Swift.String",
+                "usr": "s:SS"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "Bool",
+                "printedName": "Swift.Bool",
+                "usr": "s:Sb"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:7FlyXmpp19XMPPArchiveDelegateP015updateArchiveUnF5Chats6toUser13archiveStatusySS_SbtF",
+            "mangledName": "$s7FlyXmpp19XMPPArchiveDelegateP015updateArchiveUnF5Chats6toUser13archiveStatusySS_SbtF",
+            "moduleName": "FlyXmpp",
+            "genericSig": "<τ_0_0 where τ_0_0 : FlyXmpp.XMPPArchiveDelegate>",
+            "sugared_genericSig": "<Self where Self : FlyXmpp.XMPPArchiveDelegate>",
+            "protocolReq": true,
+            "reqNewWitnessTableEntry": true,
+            "funcSelfKind": "NonMutating"
+          },
+          {
+            "kind": "Function",
+            "name": "updateArchivedSettings",
+            "printedName": "updateArchivedSettings(archivedSettingsStatus:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Void",
+                "printedName": "()"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "Bool",
+                "printedName": "Swift.Bool",
+                "usr": "s:Sb"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:7FlyXmpp19XMPPArchiveDelegateP22updateArchivedSettings08archivedG6StatusySb_tF",
+            "mangledName": "$s7FlyXmpp19XMPPArchiveDelegateP22updateArchivedSettings08archivedG6StatusySb_tF",
+            "moduleName": "FlyXmpp",
+            "genericSig": "<τ_0_0 where τ_0_0 : FlyXmpp.XMPPArchiveDelegate>",
+            "sugared_genericSig": "<Self where Self : FlyXmpp.XMPPArchiveDelegate>",
+            "protocolReq": true,
+            "reqNewWitnessTableEntry": true,
+            "funcSelfKind": "NonMutating"
+          }
+        ],
+        "declKind": "Protocol",
+        "usr": "s:7FlyXmpp19XMPPArchiveDelegateP",
+        "mangledName": "$s7FlyXmpp19XMPPArchiveDelegateP",
+        "moduleName": "FlyXmpp",
+        "genericSig": "<τ_0_0 : ObjectiveC.NSObjectProtocol>",
+        "sugared_genericSig": "<Self : ObjectiveC.NSObjectProtocol>",
+        "declAttributes": [
+          "AccessControl"
+        ]
+      },
+      {
+        "kind": "Import",
+        "name": "Foundation",
+        "printedName": "Foundation",
+        "declKind": "Import",
+        "moduleName": "FlyXmpp",
+        "declAttributes": [
+          "RawDocComment"
+        ]
+      },
+      {
         "kind": "Import",
         "name": "XMPPFramework",
         "printedName": "XMPPFramework",
@@ -2976,6 +3062,32 @@
           },
           {
             "kind": "Function",
+            "name": "setArchiveDelegate",
+            "printedName": "setArchiveDelegate(archiveDelegate:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Void",
+                "printedName": "()"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "XMPPArchiveDelegate",
+                "printedName": "FlyXmpp.XMPPArchiveDelegate",
+                "usr": "s:7FlyXmpp19XMPPArchiveDelegateP"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:7FlyXmpp0aB10ControllerC18setArchiveDelegate07archiveF0yAA011XMPPArchiveF0_p_tF",
+            "mangledName": "$s7FlyXmpp0aB10ControllerC18setArchiveDelegate07archiveF0yAA011XMPPArchiveF0_p_tF",
+            "moduleName": "FlyXmpp",
+            "declAttributes": [
+              "AccessControl"
+            ],
+            "funcSelfKind": "NonMutating"
+          },
+          {
+            "kind": "Function",
             "name": "connect",
             "printedName": "connect()",
             "children": [
@@ -3997,6 +4109,91 @@
             "declAttributes": [
               "AccessControl",
               "RawDocComment"
+            ],
+            "isFromExtension": true,
+            "funcSelfKind": "NonMutating"
+          },
+          {
+            "kind": "Function",
+            "name": "clearAllConversation",
+            "printedName": "clearAllConversation(deleteType:callback:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Void",
+                "printedName": "()"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "Int",
+                "printedName": "Swift.Int",
+                "usr": "s:Si"
+              },
+              {
+                "kind": "TypeFunc",
+                "name": "Function",
+                "printedName": "(Swift.Bool, FlyCommon.FlyError?, [Swift.String : Any]) -> ()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Void",
+                    "printedName": "()"
+                  },
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Tuple",
+                    "printedName": "(Swift.Bool, FlyCommon.FlyError?, [Swift.String : Any])",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "Bool",
+                        "printedName": "Swift.Bool",
+                        "usr": "s:Sb"
+                      },
+                      {
+                        "kind": "TypeNominal",
+                        "name": "Optional",
+                        "printedName": "FlyCommon.FlyError?",
+                        "children": [
+                          {
+                            "kind": "TypeNominal",
+                            "name": "FlyError",
+                            "printedName": "FlyCommon.FlyError",
+                            "usr": "s:9FlyCommon0A5ErrorO"
+                          }
+                        ],
+                        "usr": "s:Sq"
+                      },
+                      {
+                        "kind": "TypeNominal",
+                        "name": "Dictionary",
+                        "printedName": "[Swift.String : Any]",
+                        "children": [
+                          {
+                            "kind": "TypeNominal",
+                            "name": "String",
+                            "printedName": "Swift.String",
+                            "usr": "s:SS"
+                          },
+                          {
+                            "kind": "TypeNominal",
+                            "name": "ProtocolComposition",
+                            "printedName": "Any"
+                          }
+                        ],
+                        "usr": "s:SD"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:7FlyXmpp0aB10ControllerC20clearAllConversation10deleteType8callbackySi_ySb_0A6Common0A5ErrorOSgSDySSypGtctF",
+            "mangledName": "$s7FlyXmpp0aB10ControllerC20clearAllConversation10deleteType8callbackySi_ySb_0A6Common0A5ErrorOSgSDySSypGtctF",
+            "moduleName": "FlyXmpp",
+            "declAttributes": [
+              "AccessControl"
             ],
             "isFromExtension": true,
             "funcSelfKind": "NonMutating"
@@ -5738,6 +5935,380 @@
           },
           {
             "kind": "Function",
+            "name": "archiveUnarchiveChat",
+            "printedName": "archiveUnarchiveChat(jid:status:callback:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Void",
+                "printedName": "()"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "String",
+                "printedName": "Swift.String",
+                "usr": "s:SS"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "Bool",
+                "printedName": "Swift.Bool",
+                "usr": "s:Sb"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "Optional",
+                "printedName": "((Swift.Bool, FlyCommon.FlyError?, [Swift.String : Any]) -> ())?",
+                "children": [
+                  {
+                    "kind": "TypeFunc",
+                    "name": "Function",
+                    "printedName": "(Swift.Bool, FlyCommon.FlyError?, [Swift.String : Any]) -> ()",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "Void",
+                        "printedName": "()"
+                      },
+                      {
+                        "kind": "TypeNominal",
+                        "name": "Tuple",
+                        "printedName": "(Swift.Bool, FlyCommon.FlyError?, [Swift.String : Any])",
+                        "children": [
+                          {
+                            "kind": "TypeNominal",
+                            "name": "Bool",
+                            "printedName": "Swift.Bool",
+                            "usr": "s:Sb"
+                          },
+                          {
+                            "kind": "TypeNominal",
+                            "name": "Optional",
+                            "printedName": "FlyCommon.FlyError?",
+                            "children": [
+                              {
+                                "kind": "TypeNominal",
+                                "name": "FlyError",
+                                "printedName": "FlyCommon.FlyError",
+                                "usr": "s:9FlyCommon0A5ErrorO"
+                              }
+                            ],
+                            "usr": "s:Sq"
+                          },
+                          {
+                            "kind": "TypeNominal",
+                            "name": "Dictionary",
+                            "printedName": "[Swift.String : Any]",
+                            "children": [
+                              {
+                                "kind": "TypeNominal",
+                                "name": "String",
+                                "printedName": "Swift.String",
+                                "usr": "s:SS"
+                              },
+                              {
+                                "kind": "TypeNominal",
+                                "name": "ProtocolComposition",
+                                "printedName": "Any"
+                              }
+                            ],
+                            "usr": "s:SD"
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ],
+                "hasDefaultArg": true,
+                "usr": "s:Sq"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:7FlyXmpp0aB10ControllerC20archiveUnarchiveChat3jid6status8callbackySS_SbySb_0A6Common0A5ErrorOSgSDySSypGtcSgtF",
+            "mangledName": "$s7FlyXmpp0aB10ControllerC20archiveUnarchiveChat3jid6status8callbackySS_SbySb_0A6Common0A5ErrorOSgSDySSypGtcSgtF",
+            "moduleName": "FlyXmpp",
+            "declAttributes": [
+              "AccessControl",
+              "RawDocComment"
+            ],
+            "isFromExtension": true,
+            "funcSelfKind": "NonMutating"
+          },
+          {
+            "kind": "Function",
+            "name": "getArchivedChatList",
+            "printedName": "getArchivedChatList(callback:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Void",
+                "printedName": "()"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "Optional",
+                "printedName": "((Swift.Bool, FlyCommon.FlyError?, [Swift.String : Any]) -> ())?",
+                "children": [
+                  {
+                    "kind": "TypeFunc",
+                    "name": "Function",
+                    "printedName": "(Swift.Bool, FlyCommon.FlyError?, [Swift.String : Any]) -> ()",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "Void",
+                        "printedName": "()"
+                      },
+                      {
+                        "kind": "TypeNominal",
+                        "name": "Tuple",
+                        "printedName": "(Swift.Bool, FlyCommon.FlyError?, [Swift.String : Any])",
+                        "children": [
+                          {
+                            "kind": "TypeNominal",
+                            "name": "Bool",
+                            "printedName": "Swift.Bool",
+                            "usr": "s:Sb"
+                          },
+                          {
+                            "kind": "TypeNominal",
+                            "name": "Optional",
+                            "printedName": "FlyCommon.FlyError?",
+                            "children": [
+                              {
+                                "kind": "TypeNominal",
+                                "name": "FlyError",
+                                "printedName": "FlyCommon.FlyError",
+                                "usr": "s:9FlyCommon0A5ErrorO"
+                              }
+                            ],
+                            "usr": "s:Sq"
+                          },
+                          {
+                            "kind": "TypeNominal",
+                            "name": "Dictionary",
+                            "printedName": "[Swift.String : Any]",
+                            "children": [
+                              {
+                                "kind": "TypeNominal",
+                                "name": "String",
+                                "printedName": "Swift.String",
+                                "usr": "s:SS"
+                              },
+                              {
+                                "kind": "TypeNominal",
+                                "name": "ProtocolComposition",
+                                "printedName": "Any"
+                              }
+                            ],
+                            "usr": "s:SD"
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ],
+                "hasDefaultArg": true,
+                "usr": "s:Sq"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:7FlyXmpp0aB10ControllerC19getArchivedChatList8callbackyySb_0A6Common0A5ErrorOSgSDySSypGtcSg_tF",
+            "mangledName": "$s7FlyXmpp0aB10ControllerC19getArchivedChatList8callbackyySb_0A6Common0A5ErrorOSgSDySSypGtcSg_tF",
+            "moduleName": "FlyXmpp",
+            "declAttributes": [
+              "AccessControl",
+              "RawDocComment"
+            ],
+            "isFromExtension": true,
+            "funcSelfKind": "NonMutating"
+          },
+          {
+            "kind": "Function",
+            "name": "enableDisablearchiveChat",
+            "printedName": "enableDisablearchiveChat(status:callback:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Void",
+                "printedName": "()"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "Bool",
+                "printedName": "Swift.Bool",
+                "usr": "s:Sb"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "Optional",
+                "printedName": "((Swift.Bool, FlyCommon.FlyError?, [Swift.String : Any]) -> ())?",
+                "children": [
+                  {
+                    "kind": "TypeFunc",
+                    "name": "Function",
+                    "printedName": "(Swift.Bool, FlyCommon.FlyError?, [Swift.String : Any]) -> ()",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "Void",
+                        "printedName": "()"
+                      },
+                      {
+                        "kind": "TypeNominal",
+                        "name": "Tuple",
+                        "printedName": "(Swift.Bool, FlyCommon.FlyError?, [Swift.String : Any])",
+                        "children": [
+                          {
+                            "kind": "TypeNominal",
+                            "name": "Bool",
+                            "printedName": "Swift.Bool",
+                            "usr": "s:Sb"
+                          },
+                          {
+                            "kind": "TypeNominal",
+                            "name": "Optional",
+                            "printedName": "FlyCommon.FlyError?",
+                            "children": [
+                              {
+                                "kind": "TypeNominal",
+                                "name": "FlyError",
+                                "printedName": "FlyCommon.FlyError",
+                                "usr": "s:9FlyCommon0A5ErrorO"
+                              }
+                            ],
+                            "usr": "s:Sq"
+                          },
+                          {
+                            "kind": "TypeNominal",
+                            "name": "Dictionary",
+                            "printedName": "[Swift.String : Any]",
+                            "children": [
+                              {
+                                "kind": "TypeNominal",
+                                "name": "String",
+                                "printedName": "Swift.String",
+                                "usr": "s:SS"
+                              },
+                              {
+                                "kind": "TypeNominal",
+                                "name": "ProtocolComposition",
+                                "printedName": "Any"
+                              }
+                            ],
+                            "usr": "s:SD"
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ],
+                "hasDefaultArg": true,
+                "usr": "s:Sq"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:7FlyXmpp0aB10ControllerC24enableDisablearchiveChat6status8callbackySb_ySb_0A6Common0A5ErrorOSgSDySSypGtcSgtF",
+            "mangledName": "$s7FlyXmpp0aB10ControllerC24enableDisablearchiveChat6status8callbackySb_ySb_0A6Common0A5ErrorOSgSDySSypGtcSgtF",
+            "moduleName": "FlyXmpp",
+            "declAttributes": [
+              "AccessControl",
+              "RawDocComment"
+            ],
+            "isFromExtension": true,
+            "funcSelfKind": "NonMutating"
+          },
+          {
+            "kind": "Function",
+            "name": "getArchivedSettingsStatus",
+            "printedName": "getArchivedSettingsStatus(callback:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Void",
+                "printedName": "()"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "Optional",
+                "printedName": "((Swift.Bool, FlyCommon.FlyError?, [Swift.String : Any]) -> ())?",
+                "children": [
+                  {
+                    "kind": "TypeFunc",
+                    "name": "Function",
+                    "printedName": "(Swift.Bool, FlyCommon.FlyError?, [Swift.String : Any]) -> ()",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "Void",
+                        "printedName": "()"
+                      },
+                      {
+                        "kind": "TypeNominal",
+                        "name": "Tuple",
+                        "printedName": "(Swift.Bool, FlyCommon.FlyError?, [Swift.String : Any])",
+                        "children": [
+                          {
+                            "kind": "TypeNominal",
+                            "name": "Bool",
+                            "printedName": "Swift.Bool",
+                            "usr": "s:Sb"
+                          },
+                          {
+                            "kind": "TypeNominal",
+                            "name": "Optional",
+                            "printedName": "FlyCommon.FlyError?",
+                            "children": [
+                              {
+                                "kind": "TypeNominal",
+                                "name": "FlyError",
+                                "printedName": "FlyCommon.FlyError",
+                                "usr": "s:9FlyCommon0A5ErrorO"
+                              }
+                            ],
+                            "usr": "s:Sq"
+                          },
+                          {
+                            "kind": "TypeNominal",
+                            "name": "Dictionary",
+                            "printedName": "[Swift.String : Any]",
+                            "children": [
+                              {
+                                "kind": "TypeNominal",
+                                "name": "String",
+                                "printedName": "Swift.String",
+                                "usr": "s:SS"
+                              },
+                              {
+                                "kind": "TypeNominal",
+                                "name": "ProtocolComposition",
+                                "printedName": "Any"
+                              }
+                            ],
+                            "usr": "s:SD"
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ],
+                "hasDefaultArg": true,
+                "usr": "s:Sq"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:7FlyXmpp0aB10ControllerC25getArchivedSettingsStatus8callbackyySb_0A6Common0A5ErrorOSgSDySSypGtcSg_tF",
+            "mangledName": "$s7FlyXmpp0aB10ControllerC25getArchivedSettingsStatus8callbackyySb_0A6Common0A5ErrorOSgSDySSypGtcSg_tF",
+            "moduleName": "FlyXmpp",
+            "declAttributes": [
+              "AccessControl",
+              "RawDocComment"
+            ],
+            "isFromExtension": true,
+            "funcSelfKind": "NonMutating"
+          },
+          {
+            "kind": "Function",
             "name": "sendCallMessage",
             "printedName": "sendCallMessage(for:roomId:groupId:callType:callMode:callTime:startTime:endTime:callStatus:callFrom:users:inviteUsers:callback:)",
             "children": [
@@ -6274,1465 +6845,1528 @@
   },
   "ConstValues": [
     {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConnectionManager.swift",
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConnectionManager.swift",
       "kind": "StringLiteral",
       "offset": 355,
       "length": 23,
       "value": "\"ChatConnectionManager\""
     },
     {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConnectionManager.swift",
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConnectionManager.swift",
       "kind": "FloatLiteral",
       "offset": 412,
       "length": 4,
       "value": "12.0"
     },
     {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConnectionManager.swift",
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConnectionManager.swift",
       "kind": "BooleanLiteral",
       "offset": 542,
       "length": 4,
       "value": "true"
     },
     {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConnectionManager.swift",
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConnectionManager.swift",
       "kind": "Dictionary",
       "offset": 606,
       "length": 3,
       "value": "[]"
     },
     {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConnectionManager.swift",
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConnectionManager.swift",
       "kind": "BooleanLiteral",
-      "offset": 12770,
+      "offset": 13082,
       "length": 4,
       "value": "true"
     },
     {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/MessageManager.swift",
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/MessageManager.swift",
       "kind": "BooleanLiteral",
       "offset": 4829,
       "length": 4,
       "value": "true"
     },
     {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/FlyXmppController.swift",
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/FlyXmppController.swift",
       "kind": "StringLiteral",
       "offset": 665,
       "length": 16,
       "value": "\"XMPPController\""
     },
     {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/FlyXmppController.swift",
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/FlyXmppController.swift",
       "kind": "StringLiteral",
-      "offset": 22274,
+      "offset": 23676,
       "length": 3,
       "value": "\" \""
     },
     {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/FlyXmppController.swift",
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/FlyXmppController.swift",
       "kind": "StringLiteral",
-      "offset": 22300,
+      "offset": 23702,
       "length": 4,
       "value": "\"\n\""
     },
     {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
       "kind": "StringLiteral",
       "offset": 185,
       "length": 5,
       "value": "\"jid\""
     },
     {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
       "kind": "StringLiteral",
       "offset": 224,
       "length": 5,
       "value": "\"get\""
     },
     {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
       "kind": "StringLiteral",
       "offset": 263,
       "length": 5,
       "value": "\"set\""
     },
     {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
       "kind": "StringLiteral",
       "offset": 305,
       "length": 8,
       "value": "\"result\""
     },
     {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
       "kind": "StringLiteral",
       "offset": 351,
       "length": 10,
       "value": "\"bad-auth\""
     },
     {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
       "kind": "StringLiteral",
       "offset": 405,
       "length": 16,
       "value": "\"not-authorized\""
     },
     {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
       "kind": "StringLiteral",
       "offset": 465,
       "length": 15,
       "value": "\"profileUpdate\""
     },
     {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
       "kind": "StringLiteral",
       "offset": 523,
       "length": 14,
       "value": "\"hideLastSeen\""
     },
     {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
       "kind": "StringLiteral",
       "offset": 578,
       "length": 12,
       "value": "\"block_user\""
     },
     {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
       "kind": "StringLiteral",
       "offset": 633,
       "length": 14,
       "value": "\"unblock_user\""
     },
     {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
       "kind": "StringLiteral",
       "offset": 689,
       "length": 13,
       "value": "\"remove_user\""
     },
     {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
       "kind": "StringLiteral",
       "offset": 742,
       "length": 11,
       "value": "\"chat_type\""
     },
     {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
       "kind": "StringLiteral",
       "offset": 788,
       "length": 6,
       "value": "\"chat\""
     },
     {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
       "kind": "StringLiteral",
       "offset": 839,
       "length": 15,
       "value": "\"hide_lastseen\""
     },
     {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
       "kind": "StringLiteral",
       "offset": 889,
       "length": 6,
       "value": "\"mode\""
     },
     {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
       "kind": "StringLiteral",
       "offset": 938,
       "length": 14,
       "value": "\"create_group\""
     },
     {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
       "kind": "StringLiteral",
       "offset": 991,
       "length": 10,
       "value": "\"group_id\""
     },
     {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
       "kind": "StringLiteral",
       "offset": 1048,
       "length": 18,
       "value": "\"add_participants\""
     },
     {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
       "kind": "StringLiteral",
       "offset": 1121,
       "length": 26,
       "value": "\"admin_remove_participant\""
     },
     {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
       "kind": "StringLiteral",
       "offset": 1193,
       "length": 17,
       "value": "\"get_group_vcard\""
     },
     {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
       "kind": "StringLiteral",
       "offset": 1255,
       "length": 16,
       "value": "\"set_group_info\""
     },
     {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
       "kind": "StringLiteral",
       "offset": 1312,
       "length": 12,
       "value": "\"make_admin\""
     },
     {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
       "kind": "StringLiteral",
       "offset": 1372,
       "length": 19,
       "value": "\"user_delete_group\""
     },
     {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
       "kind": "StringLiteral",
       "offset": 1434,
       "length": 13,
       "value": "\"message_ids\""
     },
     {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
       "kind": "StringLiteral",
       "offset": 1485,
       "length": 9,
       "value": "\"to_user\""
     },
     {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
       "kind": "StringLiteral",
       "offset": 1534,
       "length": 11,
       "value": "\"favourite\""
     },
     {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
       "kind": "StringLiteral",
       "offset": 1582,
       "length": 8,
       "value": "\"status\""
     },
     {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
       "kind": "StringLiteral",
       "offset": 1632,
       "length": 13,
       "value": "\"delete_type\""
     },
     {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
       "kind": "StringLiteral",
       "offset": 1689,
       "length": 15,
       "value": "\"clear_message\""
     },
     {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
       "kind": "StringLiteral",
-      "offset": 1742,
+      "offset": 1744,
+      "length": 11,
+      "value": "\"clear_all\""
+    },
+    {
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
+      "kind": "StringLiteral",
+      "offset": 1793,
       "length": 13,
       "value": "\"getLastSeen\""
     },
     {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
       "kind": "StringLiteral",
-      "offset": 1795,
+      "offset": 1846,
       "length": 11,
       "value": "\"composing\""
     },
     {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
       "kind": "StringLiteral",
-      "offset": 1841,
+      "offset": 1892,
       "length": 6,
       "value": "\"gone\""
     },
     {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
       "kind": "StringLiteral",
-      "offset": 1892,
+      "offset": 1943,
       "length": 16,
       "value": "\"getCreateGroup\""
     },
     {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
       "kind": "StringLiteral",
-      "offset": 1956,
+      "offset": 2007,
       "length": 19,
       "value": "\"getAddParticipant\""
     },
     {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
       "kind": "StringLiteral",
-      "offset": 2031,
+      "offset": 2082,
       "length": 27,
       "value": "\"getAdminRemoveParticipant\""
     },
     {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
       "kind": "StringLiteral",
-      "offset": 2104,
+      "offset": 2155,
       "length": 17,
       "value": "\"getGroupProfile\""
     },
     {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
       "kind": "StringLiteral",
-      "offset": 2170,
+      "offset": 2221,
       "length": 20,
       "value": "\"groupProfileUpdate\""
     },
     {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
       "kind": "StringLiteral",
-      "offset": 2232,
+      "offset": 2283,
       "length": 13,
       "value": "\"groupTyping\""
     },
     {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
       "kind": "StringLiteral",
-      "offset": 2285,
+      "offset": 2336,
       "length": 11,
       "value": "\"groupGone\""
     },
     {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
       "kind": "StringLiteral",
-      "offset": 2336,
+      "offset": 2387,
       "length": 11,
       "value": "\"makeAdmin\""
     },
     {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
       "kind": "StringLiteral",
-      "offset": 2389,
+      "offset": 2440,
       "length": 13,
       "value": "\"deleteGroup\""
     },
     {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
       "kind": "StringLiteral",
-      "offset": 2453,
+      "offset": 2504,
       "length": 20,
       "value": "\"adminUserExitGroup\""
     },
     {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
       "kind": "StringLiteral",
-      "offset": 2522,
+      "offset": 2573,
       "length": 20,
       "value": "\"customParticipants\""
     },
     {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
       "kind": "StringLiteral",
-      "offset": 2589,
+      "offset": 2640,
       "length": 18,
       "value": "\"get_participants\""
     },
     {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
       "kind": "StringLiteral",
-      "offset": 2644,
+      "offset": 2695,
       "length": 8,
       "value": "\"itemid\""
     },
     {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
       "kind": "StringLiteral",
-      "offset": 2693,
+      "offset": 2744,
       "length": 12,
       "value": "\"created_at\""
     },
     {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
       "kind": "StringLiteral",
-      "offset": 2748,
+      "offset": 2799,
       "length": 14,
       "value": "\"user_profile\""
     },
     {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
       "kind": "StringLiteral",
-      "offset": 2805,
+      "offset": 2856,
       "length": 14,
       "value": "\"participants\""
     },
     {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
       "kind": "StringLiteral",
-      "offset": 2856,
+      "offset": 2907,
       "length": 8,
       "value": "\"recall\""
     },
     {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
       "kind": "StringLiteral",
-      "offset": 2906,
+      "offset": 2957,
       "length": 13,
       "value": "\"participant\""
     },
     {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
       "kind": "StringLiteral",
-      "offset": 2963,
+      "offset": 3014,
       "length": 15,
       "value": "\"subscriptions\""
     },
     {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
       "kind": "StringLiteral",
-      "offset": 3018,
+      "offset": 3069,
       "length": 11,
       "value": "\"subscribe\""
     },
     {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
       "kind": "StringLiteral",
-      "offset": 3064,
+      "offset": 3115,
       "length": 6,
       "value": "\"nick\""
     },
     {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
       "kind": "StringLiteral",
-      "offset": 3110,
+      "offset": 3161,
       "length": 16,
       "value": "\"delete_message\""
     },
     {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
       "kind": "StringLiteral",
-      "offset": 3170,
+      "offset": 3221,
       "length": 17,
       "value": "\"new_admin_added\""
     },
     {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
       "kind": "StringLiteral",
-      "offset": 3237,
+      "offset": 3288,
       "length": 23,
       "value": "\"group_profile_updated\""
     },
     {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
       "kind": "StringLiteral",
-      "offset": 3297,
+      "offset": 3348,
       "length": 12,
       "value": "\"message_id\""
     },
     {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
       "kind": "StringLiteral",
-      "offset": 3361,
+      "offset": 3412,
       "length": 23,
       "value": "\"set_favourite_message\""
     },
     {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
       "kind": "StringLiteral",
-      "offset": 3435,
+      "offset": 3486,
       "length": 26,
       "value": "\"update_favourite_message\""
     },
     {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
       "kind": "StringLiteral",
-      "offset": 3513,
+      "offset": 3564,
       "length": 23,
       "value": "\"get_favourite_message\""
     },
     {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
       "kind": "StringLiteral",
-      "offset": 3593,
+      "offset": 3633,
+      "length": 21,
+      "value": "\"update_archive_chat\""
+    },
+    {
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
+      "kind": "StringLiteral",
+      "offset": 3695,
+      "length": 16,
+      "value": "\"archive_status\""
+    },
+    {
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
+      "kind": "StringLiteral",
+      "offset": 3745,
+      "length": 9,
+      "value": "\"archive\""
+    },
+    {
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
+      "kind": "StringLiteral",
+      "offset": 3794,
+      "length": 15,
+      "value": "\"user_settings\""
+    },
+    {
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
+      "kind": "StringLiteral",
+      "offset": 3854,
+      "length": 20,
+      "value": "\"all_archived_chats\""
+    },
+    {
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
+      "kind": "StringLiteral",
+      "offset": 3931,
       "length": 28,
       "value": "\"clearall_favourite_message\""
     },
     {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
       "kind": "StringLiteral",
-      "offset": 3676,
+      "offset": 4014,
       "length": 26,
       "value": "\"delete_favourite_message\""
     },
     {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
       "kind": "StringLiteral",
-      "offset": 3750,
+      "offset": 4088,
       "length": 19,
       "value": "\"get_group_profile\""
     },
     {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
       "kind": "StringLiteral",
-      "offset": 3809,
+      "offset": 4147,
       "length": 11,
       "value": "\"getGroups\""
     },
     {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
       "kind": "StringLiteral",
-      "offset": 3863,
+      "offset": 4201,
       "length": 14,
       "value": "\"get_group_id\""
     },
     {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
       "kind": "StringLiteral",
-      "offset": 3914,
+      "offset": 4252,
       "length": 8,
       "value": "\"logout\""
     },
     {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
       "kind": "StringLiteral",
-      "offset": 3962,
+      "offset": 4300,
       "length": 11,
       "value": "\"mediacall\""
     },
     {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
       "kind": "StringLiteral",
-      "offset": 4016,
+      "offset": 4354,
       "length": 14,
       "value": "\"callInitiate\""
     },
     {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
       "kind": "StringLiteral",
-      "offset": 4066,
+      "offset": 4404,
       "length": 7,
       "value": "\"error\""
     },
     {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
       "kind": "StringLiteral",
-      "offset": 4115,
+      "offset": 4453,
       "length": 13,
       "value": "\"user_logout\""
     },
     {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
       "kind": "StringLiteral",
-      "offset": 4172,
+      "offset": 4510,
       "length": 15,
       "value": "\"webUserLogout\""
     },
     {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
       "kind": "StringLiteral",
-      "offset": 4233,
+      "offset": 4571,
       "length": 17,
       "value": "\"register_update\""
     },
     {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
       "kind": "StringLiteral",
-      "offset": 4285,
+      "offset": 4623,
       "length": 6,
       "value": "\"user\""
     },
     {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
       "kind": "StringLiteral",
-      "offset": 4339,
+      "offset": 4677,
       "length": 19,
       "value": "\"deleteForEveryOne\""
     },
     {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
       "kind": "StringLiteral",
-      "offset": 4395,
+      "offset": 4733,
       "length": 8,
       "value": "\"normal\""
     },
     {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
       "kind": "StringLiteral",
-      "offset": 4495,
+      "offset": 4833,
       "length": 20,
       "value": "\"jabber:iq:user_fav\""
     },
     {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
       "kind": "StringLiteral",
-      "offset": 4561,
+      "offset": 4899,
       "length": 27,
       "value": "\"jabber:iq:user_activities\""
     },
     {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
       "kind": "StringLiteral",
-      "offset": 4628,
+      "offset": 4966,
       "length": 16,
       "value": "\"jabber:iq:last\""
     },
     {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
       "kind": "StringLiteral",
-      "offset": 4685,
+      "offset": 5023,
       "length": 12,
       "value": "\"vcard-temp\""
     },
     {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
       "kind": "StringLiteral",
-      "offset": 4741,
+      "offset": 5079,
       "length": 15,
       "value": "\"jabber:client\""
     },
     {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
       "kind": "StringLiteral",
-      "offset": 4800,
+      "offset": 5138,
       "length": 18,
       "value": "\"jabber:iq:roster\""
     },
     {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
       "kind": "StringLiteral",
-      "offset": 4862,
+      "offset": 5200,
       "length": 19,
       "value": "\"urn:xmpp:blocking\""
     },
     {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
       "kind": "StringLiteral",
-      "offset": 4920,
+      "offset": 5258,
       "length": 19,
       "value": "\"urn:xmpp:receipts\""
     },
     {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
       "kind": "StringLiteral",
-      "offset": 4977,
+      "offset": 5315,
       "length": 18,
       "value": "\"urn:xmpp:content\""
     },
     {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
       "kind": "StringLiteral",
-      "offset": 5030,
+      "offset": 5368,
       "length": 22,
       "value": "\"urn:xmpp:messagetime\""
     },
     {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
       "kind": "StringLiteral",
-      "offset": 5086,
+      "offset": 5424,
       "length": 18,
       "value": "\"urn:xmpp:mam:tmp\""
     },
     {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
       "kind": "StringLiteral",
-      "offset": 5141,
+      "offset": 5479,
       "length": 16,
       "value": "\"urn:xmpp:sid:0\""
     },
     {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
       "kind": "StringLiteral",
-      "offset": 5198,
+      "offset": 5536,
       "length": 27,
       "value": "\"jabber:iq:user_activities\""
     },
     {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
       "kind": "StringLiteral",
-      "offset": 5268,
+      "offset": 5606,
       "length": 16,
       "value": "\"jabber:iq:last\""
     },
     {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
       "kind": "StringLiteral",
-      "offset": 5329,
+      "offset": 5667,
       "length": 24,
       "value": "\"jabber:iq:mixgroupchat\""
     },
     {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
       "kind": "StringLiteral",
-      "offset": 5405,
+      "offset": 5743,
       "length": 24,
       "value": "\"jabber:iq:mixgroupchat\""
     },
     {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
       "kind": "StringLiteral",
-      "offset": 5477,
+      "offset": 5815,
       "length": 29,
       "value": "\"urn:xmpp:mix:nodes:messages\""
     },
     {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
       "kind": "StringLiteral",
-      "offset": 5558,
+      "offset": 5896,
       "length": 29,
       "value": "\"'urn:xmpp:mix:nodes:subject\""
     },
     {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
       "kind": "StringLiteral",
-      "offset": 5640,
+      "offset": 5978,
       "length": 29,
       "value": "\"urn:xmpp:mix:nodes:presence\""
     },
     {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
       "kind": "StringLiteral",
-      "offset": 5725,
+      "offset": 6063,
       "length": 33,
       "value": "\"urn:xmpp:mix:nodes:participants\""
     },
     {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
       "kind": "StringLiteral",
-      "offset": 5809,
+      "offset": 6147,
       "length": 27,
       "value": "\"urn:xmpp:mix:nodes:config\""
     },
     {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
       "kind": "StringLiteral",
-      "offset": 5882,
+      "offset": 6220,
       "length": 15,
       "value": "\"mix.localhost\""
     },
     {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
       "kind": "StringLiteral",
-      "offset": 5931,
+      "offset": 6269,
       "length": 33,
       "value": "\"urn:xmpp:mix:nodes:participants\""
     },
     {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
       "kind": "StringLiteral",
-      "offset": 6001,
+      "offset": 6339,
       "length": 20,
       "value": "\"urn:xmpp:carbons:2\""
     },
     {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
       "kind": "StringLiteral",
-      "offset": 6059,
+      "offset": 6397,
       "length": 20,
       "value": "\"urn:xmpp:forward:0\""
     },
     {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
       "kind": "StringLiteral",
-      "offset": 6116,
+      "offset": 6454,
       "length": 35,
       "value": "\"http:\/\/jabber.org\/protocol\/pubsub\""
     },
     {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
       "kind": "StringLiteral",
-      "offset": 6196,
+      "offset": 6534,
       "length": 25,
       "value": "\"urn:xmpp:mix:nodes:info\""
     },
     {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
       "kind": "StringLiteral",
-      "offset": 6261,
+      "offset": 6599,
       "length": 33,
       "value": "\"jabber:iq:media_call_activities\""
     },
     {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
       "kind": "StringLiteral",
-      "offset": 6332,
+      "offset": 6670,
       "length": 15,
       "value": "\"urn:xmpp:call\""
     },
     {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
       "kind": "StringLiteral",
-      "offset": 6388,
+      "offset": 6726,
       "length": 16,
       "value": "\"urn:xmpp:hints\""
     },
     {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
       "kind": "StringLiteral",
-      "offset": 6450,
+      "offset": 6788,
       "length": 26,
       "value": "\"urn:xmpp:register_update\""
     },
     {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
       "kind": "StringLiteral",
-      "offset": 6512,
+      "offset": 6850,
       "length": 16,
       "value": "\"urn:xmpp:delay\""
     },
     {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
       "kind": "StringLiteral",
-      "offset": 6572,
+      "offset": 6910,
       "length": 21,
       "value": "\"urn:xmpp:mix:core:0\""
     },
     {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
       "kind": "StringLiteral",
-      "offset": 6681,
+      "offset": 7019,
       "length": 7,
       "value": "\"query\""
     },
     {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
       "kind": "StringLiteral",
-      "offset": 6721,
+      "offset": 7059,
       "length": 4,
       "value": "\"iq\""
     },
     {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
       "kind": "StringLiteral",
-      "offset": 6763,
+      "offset": 7101,
       "length": 9,
       "value": "\"profile\""
     },
     {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
       "kind": "StringLiteral",
-      "offset": 6808,
+      "offset": 7146,
       "length": 7,
       "value": "\"vCard\""
     },
     {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
       "kind": "StringLiteral",
-      "offset": 6850,
+      "offset": 7188,
       "length": 6,
       "value": "\"name\""
     },
     {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
       "kind": "StringLiteral",
-      "offset": 6892,
+      "offset": 7230,
       "length": 7,
       "value": "\"image\""
     },
     {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
       "kind": "StringLiteral",
-      "offset": 6938,
+      "offset": 7276,
       "length": 10,
       "value": "\"nickName\""
     },
     {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
       "kind": "StringLiteral",
-      "offset": 6984,
+      "offset": 7322,
       "length": 7,
       "value": "\"email\""
     },
     {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
       "kind": "StringLiteral",
-      "offset": 7036,
+      "offset": 7374,
       "length": 18,
       "value": "\"is_admin_blocked\""
     },
     {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
       "kind": "StringLiteral",
-      "offset": 7091,
+      "offset": 7429,
       "length": 8,
       "value": "\"status\""
     },
     {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
       "kind": "StringLiteral",
-      "offset": 7142,
+      "offset": 7480,
       "length": 14,
       "value": "\"mobileNumber\""
     },
     {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
       "kind": "StringLiteral",
-      "offset": 7191,
+      "offset": 7529,
       "length": 6,
       "value": "\"item\""
     },
     {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
       "kind": "StringLiteral",
-      "offset": 7233,
+      "offset": 7571,
       "length": 7,
       "value": "\"block\""
     },
     {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
       "kind": "StringLiteral",
-      "offset": 7278,
+      "offset": 7616,
       "length": 9,
       "value": "\"unblock\""
     },
     {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
       "kind": "StringLiteral",
-      "offset": 7321,
+      "offset": 7659,
       "length": 5,
       "value": "\"jid\""
     },
     {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
       "kind": "StringLiteral",
-      "offset": 7359,
+      "offset": 7697,
       "length": 4,
       "value": "\"id\""
     },
     {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
       "kind": "StringLiteral",
-      "offset": 7405,
+      "offset": 7743,
       "length": 13,
       "value": "\"userblocked\""
     },
     {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
       "kind": "StringLiteral",
-      "offset": 7460,
+      "offset": 7798,
       "length": 13,
       "value": "\"chatcontent\""
     },
     {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
       "kind": "StringLiteral",
-      "offset": 7515,
+      "offset": 7853,
       "length": 13,
       "value": "\"acknowledge\""
     },
     {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
       "kind": "StringLiteral",
-      "offset": 7568,
+      "offset": 7906,
       "length": 11,
       "value": "\"delivered\""
     },
     {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
       "kind": "StringLiteral",
-      "offset": 7614,
+      "offset": 7952,
       "length": 6,
       "value": "\"seen\""
     },
     {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
       "kind": "StringLiteral",
-      "offset": 7660,
+      "offset": 7998,
       "length": 11,
       "value": "\"timestamp\""
     },
     {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
       "kind": "StringLiteral",
-      "offset": 7710,
+      "offset": 8048,
       "length": 10,
       "value": "\"archived\""
     },
     {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
       "kind": "StringLiteral",
-      "offset": 7757,
+      "offset": 8095,
       "length": 8,
       "value": "\"stanza\""
     },
     {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
       "kind": "StringLiteral",
-      "offset": 7808,
+      "offset": 8146,
       "length": 14,
       "value": "\"messageclear\""
     },
     {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
       "kind": "StringLiteral",
-      "offset": 7858,
+      "offset": 8196,
       "length": 11,
       "value": "\"blocklist\""
     },
     {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
       "kind": "StringLiteral",
-      "offset": 7909,
+      "offset": 8247,
       "length": 11,
       "value": "\"blockedMe\""
     },
     {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
       "kind": "StringLiteral",
-      "offset": 7958,
+      "offset": 8296,
       "length": 9,
       "value": "\"members\""
     },
     {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
       "kind": "StringLiteral",
-      "offset": 8007,
+      "offset": 8345,
       "length": 11,
       "value": "\"composing\""
     },
     {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
       "kind": "StringLiteral",
-      "offset": 8053,
+      "offset": 8391,
       "length": 6,
       "value": "\"gone\""
     },
     {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
       "kind": "StringLiteral",
-      "offset": 8096,
+      "offset": 8434,
       "length": 8,
       "value": "\"recall\""
     },
     {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
       "kind": "StringLiteral",
-      "offset": 8142,
+      "offset": 8480,
       "length": 9,
       "value": "\"message\""
     },
     {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
       "kind": "StringLiteral",
-      "offset": 8187,
+      "offset": 8525,
       "length": 7,
       "value": "\"event\""
     },
     {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
       "kind": "StringLiteral",
-      "offset": 8230,
+      "offset": 8568,
       "length": 7,
       "value": "\"items\""
     },
     {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
       "kind": "StringLiteral",
-      "offset": 8275,
+      "offset": 8613,
       "length": 9,
       "value": "\"item_id\""
     },
     {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
       "kind": "StringLiteral",
-      "offset": 8324,
+      "offset": 8662,
       "length": 11,
       "value": "\"publisher\""
     },
     {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
       "kind": "StringLiteral",
-      "offset": 8373,
+      "offset": 8711,
       "length": 9,
       "value": "\"retract\""
     },
     {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
       "kind": "StringLiteral",
-      "offset": 8418,
+      "offset": 8756,
       "length": 7,
       "value": "\"group\""
     },
     {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
       "kind": "StringLiteral",
-      "offset": 8468,
+      "offset": 8806,
       "length": 14,
       "value": "\"groupdetails\""
     },
     {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
       "kind": "StringLiteral",
-      "offset": 8520,
+      "offset": 8858,
       "length": 9,
       "value": "\"groupid\""
     },
     {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
       "kind": "StringLiteral",
-      "offset": 8569,
+      "offset": 8907,
       "length": 11,
       "value": "\"groupinfo\""
     },
     {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
       "kind": "StringLiteral",
-      "offset": 8622,
+      "offset": 8960,
       "length": 13,
       "value": "\"affiliation\""
     },
     {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
       "kind": "StringLiteral",
-      "offset": 8677,
+      "offset": 9015,
       "length": 13,
       "value": "\"createddate\""
     },
     {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
       "kind": "StringLiteral",
-      "offset": 8725,
+      "offset": 9063,
       "length": 6,
       "value": "\"info\""
     },
     {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
       "kind": "StringLiteral",
-      "offset": 8768,
+      "offset": 9106,
       "length": 9,
       "value": "\"done_by\""
     },
     {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
       "kind": "StringLiteral",
-      "offset": 8817,
+      "offset": 9155,
       "length": 11,
       "value": "\"new_admin\""
     },
     {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
       "kind": "StringLiteral",
-      "offset": 8870,
+      "offset": 9208,
       "length": 13,
       "value": "\"groupdelete\""
     },
     {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
       "kind": "StringLiteral",
-      "offset": 8914,
+      "offset": 9252,
       "length": 6,
       "value": "\"sent\""
     },
     {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
       "kind": "StringLiteral",
-      "offset": 8959,
+      "offset": 9297,
       "length": 10,
       "value": "\"received\""
     },
     {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
       "kind": "StringLiteral",
-      "offset": 9007,
+      "offset": 9345,
       "length": 11,
       "value": "\"forwarded\""
     },
     {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
       "kind": "StringLiteral",
-      "offset": 9055,
+      "offset": 9393,
       "length": 8,
       "value": "\"pubsub\""
     },
     {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
       "kind": "StringLiteral",
-      "offset": 9100,
-      "length": 7,
-      "value": "\"users\""
-    },
-    {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
-      "kind": "StringLiteral",
-      "offset": 9142,
-      "length": 6,
-      "value": "\"user\""
-    },
-    {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
-      "kind": "StringLiteral",
-      "offset": 9185,
-      "length": 8,
-      "value": "\"invite\""
-    },
-    {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
-      "kind": "StringLiteral",
-      "offset": 9227,
-      "length": 10,
-      "value": "\"no-store\""
-    },
-    {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
-      "kind": "StringLiteral",
-      "offset": 9271,
-      "length": 5,
-      "value": "\"mix\""
-    },
-    {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
-      "kind": "StringLiteral",
-      "offset": 9314,
-      "length": 9,
-      "value": "\"subject\""
-    },
-    {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
-      "kind": "StringLiteral",
-      "offset": 9364,
-      "length": 13,
-      "value": "\"admin_block\""
-    },
-    {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
-      "kind": "StringLiteral",
-      "offset": 9419,
-      "length": 14,
-      "value": "\"user_deleted\""
-    },
-    {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
-      "kind": "StringLiteral",
-      "offset": 9479,
-      "length": 17,
-      "value": "\"register_update\""
-    },
-    {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
-      "kind": "StringLiteral",
-      "offset": 9532,
-      "length": 7,
-      "value": "\"delay\""
-    },
-    {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
-      "kind": "StringLiteral",
-      "offset": 9626,
-      "length": 4,
-      "value": "\"id\""
-    },
-    {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
-      "kind": "StringLiteral",
-      "offset": 9665,
-      "length": 6,
-      "value": "\"type\""
-    },
-    {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
-      "kind": "StringLiteral",
-      "offset": 9708,
-      "length": 8,
-      "value": "\"status\""
-    },
-    {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
-      "kind": "StringLiteral",
-      "offset": 9751,
-      "length": 6,
-      "value": "\"from\""
-    },
-    {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
-      "kind": "StringLiteral",
-      "offset": 9800,
-      "length": 14,
-      "value": "\"blocked_user\""
-    },
-    {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
-      "kind": "StringLiteral",
-      "offset": 9857,
-      "length": 14,
-      "value": "\"message_type\""
-    },
-    {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
-      "kind": "StringLiteral",
-      "offset": 9914,
-      "length": 14,
-      "value": "\"broadcast_id\""
-    },
-    {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
-      "kind": "StringLiteral",
-      "offset": 9974,
-      "length": 17,
-      "value": "\"broadcast_msgid\""
-    },
-    {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
-      "kind": "StringLiteral",
-      "offset": 10027,
-      "length": 7,
-      "value": "\"msgid\""
-    },
-    {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
-      "kind": "StringLiteral",
-      "offset": 10069,
-      "length": 6,
-      "value": "\"time\""
-    },
-    {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
-      "kind": "StringLiteral",
-      "offset": 10113,
-      "length": 9,
-      "value": "\"sent_to\""
-    },
-    {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
-      "kind": "StringLiteral",
-      "offset": 10172,
-      "length": 21,
-      "value": "\"remove_message_user\""
-    },
-    {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
-      "kind": "StringLiteral",
-      "offset": 10233,
+      "offset": 9441,
       "length": 11,
       "value": "\"favourite\""
     },
     {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
       "kind": "StringLiteral",
-      "offset": 10285,
+      "offset": 9488,
+      "length": 7,
+      "value": "\"users\""
+    },
+    {
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
+      "kind": "StringLiteral",
+      "offset": 9530,
+      "length": 6,
+      "value": "\"user\""
+    },
+    {
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
+      "kind": "StringLiteral",
+      "offset": 9573,
+      "length": 8,
+      "value": "\"invite\""
+    },
+    {
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
+      "kind": "StringLiteral",
+      "offset": 9615,
+      "length": 10,
+      "value": "\"no-store\""
+    },
+    {
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
+      "kind": "StringLiteral",
+      "offset": 9659,
+      "length": 5,
+      "value": "\"mix\""
+    },
+    {
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
+      "kind": "StringLiteral",
+      "offset": 9702,
+      "length": 9,
+      "value": "\"subject\""
+    },
+    {
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
+      "kind": "StringLiteral",
+      "offset": 9752,
+      "length": 13,
+      "value": "\"admin_block\""
+    },
+    {
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
+      "kind": "StringLiteral",
+      "offset": 9807,
+      "length": 14,
+      "value": "\"user_deleted\""
+    },
+    {
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
+      "kind": "StringLiteral",
+      "offset": 9867,
+      "length": 17,
+      "value": "\"register_update\""
+    },
+    {
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
+      "kind": "StringLiteral",
+      "offset": 9920,
+      "length": 7,
+      "value": "\"delay\""
+    },
+    {
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
+      "kind": "StringLiteral",
+      "offset": 9968,
+      "length": 16,
+      "value": "\"archived_chats\""
+    },
+    {
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
+      "kind": "StringLiteral",
+      "offset": 10020,
+      "length": 11,
+      "value": "\"chat_type\""
+    },
+    {
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
+      "kind": "StringLiteral",
+      "offset": 10118,
+      "length": 4,
+      "value": "\"id\""
+    },
+    {
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
+      "kind": "StringLiteral",
+      "offset": 10157,
+      "length": 6,
+      "value": "\"type\""
+    },
+    {
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
+      "kind": "StringLiteral",
+      "offset": 10200,
+      "length": 8,
+      "value": "\"status\""
+    },
+    {
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
+      "kind": "StringLiteral",
+      "offset": 10243,
+      "length": 6,
+      "value": "\"from\""
+    },
+    {
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
+      "kind": "StringLiteral",
+      "offset": 10292,
+      "length": 14,
+      "value": "\"blocked_user\""
+    },
+    {
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
+      "kind": "StringLiteral",
+      "offset": 10349,
+      "length": 14,
+      "value": "\"message_type\""
+    },
+    {
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
+      "kind": "StringLiteral",
+      "offset": 10406,
+      "length": 14,
+      "value": "\"broadcast_id\""
+    },
+    {
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
+      "kind": "StringLiteral",
+      "offset": 10466,
+      "length": 17,
+      "value": "\"broadcast_msgid\""
+    },
+    {
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
+      "kind": "StringLiteral",
+      "offset": 10519,
+      "length": 7,
+      "value": "\"msgid\""
+    },
+    {
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
+      "kind": "StringLiteral",
+      "offset": 10561,
+      "length": 6,
+      "value": "\"time\""
+    },
+    {
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
+      "kind": "StringLiteral",
+      "offset": 10605,
+      "length": 9,
+      "value": "\"sent_to\""
+    },
+    {
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
+      "kind": "StringLiteral",
+      "offset": 10664,
+      "length": 21,
+      "value": "\"remove_message_user\""
+    },
+    {
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
+      "kind": "StringLiteral",
+      "offset": 10725,
+      "length": 11,
+      "value": "\"favourite\""
+    },
+    {
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
+      "kind": "StringLiteral",
+      "offset": 10777,
       "length": 13,
       "value": "\"delete_type\""
     },
     {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
       "kind": "StringLiteral",
-      "offset": 10327,
+      "offset": 10819,
       "length": 4,
       "value": "\"to\""
     },
     {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
       "kind": "StringLiteral",
-      "offset": 10366,
+      "offset": 10858,
       "length": 6,
       "value": "\"node\""
     },
     {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
       "kind": "StringLiteral",
-      "offset": 10411,
+      "offset": 10903,
       "length": 12,
       "value": "\"yugjgjgjgj\""
     },
     {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
       "kind": "StringLiteral",
-      "offset": 10458,
+      "offset": 10950,
       "length": 6,
       "value": "\"body\""
     },
     {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
       "kind": "StringLiteral",
-      "offset": 10503,
+      "offset": 10995,
       "length": 9,
       "value": "\"room_id\""
     },
     {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
       "kind": "StringLiteral",
-      "offset": 10551,
+      "offset": 11043,
       "length": 10,
       "value": "\"group_id\""
     },
     {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
       "kind": "StringLiteral",
-      "offset": 10601,
+      "offset": 11093,
       "length": 11,
       "value": "\"call_type\""
     },
     {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
       "kind": "StringLiteral",
-      "offset": 10652,
+      "offset": 11144,
       "length": 11,
       "value": "\"call_mode\""
     },
     {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
       "kind": "StringLiteral",
-      "offset": 10703,
+      "offset": 11195,
       "length": 11,
       "value": "\"call_time\""
     },
     {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
       "kind": "StringLiteral",
-      "offset": 10755,
+      "offset": 11247,
       "length": 12,
       "value": "\"start_time\""
     },
     {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
       "kind": "StringLiteral",
-      "offset": 10806,
+      "offset": 11298,
       "length": 10,
       "value": "\"end_time\""
     },
     {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
       "kind": "StringLiteral",
-      "offset": 10856,
+      "offset": 11348,
       "length": 15,
       "value": "\"submission-id\""
     },
     {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
       "kind": "StringLiteral",
-      "offset": 10909,
+      "offset": 11401,
       "length": 13,
       "value": "\"call_status\""
     },
     {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
       "kind": "StringLiteral",
-      "offset": 10962,
+      "offset": 11454,
       "length": 11,
       "value": "\"call_from\""
     },
     {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
       "kind": "StringLiteral",
-      "offset": 11013,
+      "offset": 11505,
       "length": 11,
       "value": "\"socket_id\""
     },
     {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
       "kind": "StringLiteral",
-      "offset": 11067,
+      "offset": 11559,
       "length": 14,
       "value": "\"block_status\""
     },
     {
-      "filePath": "\/Users\/user\/Documents\/uikit\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConstants.swift",
       "kind": "StringLiteral",
-      "offset": 11122,
+      "offset": 11614,
       "length": 12,
       "value": "\"admin_user\""
     }

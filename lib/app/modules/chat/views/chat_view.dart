@@ -469,7 +469,7 @@ class ChatView extends GetView<ChatController> {
         shrinkWrap: true,
         reverse: false,
         itemBuilder: (context, index) {
-          if (chatList[index].messageType != Constants.mNotification) {
+          if (chatList[index].messageType.toUpperCase() != Constants.mNotification) {
             return SwipeTo(
               key: ValueKey(chatList[index].messageId),
               onRightSwipe: () {

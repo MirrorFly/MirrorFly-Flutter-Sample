@@ -67,7 +67,7 @@ class ChatSearchView extends GetView<ChatController> {
       itemScrollController: controller.searchScrollController,
       itemPositionsListener: controller.itemPositionsListener,
       itemBuilder: (context, index) {
-        if (chatList[index].messageType != Constants.mNotification) {
+        if (chatList[index].messageType.toUpperCase() != Constants.mNotification) {
           return Container(
             color: controller.chatList[index].isSelected
                 ? chatReplyContainerColor

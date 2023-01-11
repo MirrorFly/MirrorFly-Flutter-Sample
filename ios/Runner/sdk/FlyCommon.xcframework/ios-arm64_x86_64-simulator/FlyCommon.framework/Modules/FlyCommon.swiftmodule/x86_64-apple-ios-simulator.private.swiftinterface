@@ -1,5 +1,5 @@
 // swift-interface-format-version: 1.0
-// swift-compiler-version: Apple Swift version 5.7.1 (swiftlang-5.7.1.135.3 clang-1400.0.29.51)
+// swift-compiler-version: Apple Swift version 5.7 (swiftlang-5.7.0.127.4 clang-1400.0.29.50)
 // swift-module-flags: -target x86_64-apple-ios12.1-simulator -enable-objc-interop -enable-library-evolution -swift-version 5 -enforce-exclusivity=checked -O -module-name FlyCommon
 // swift-module-flags-ignorable: -enable-bare-slash-regex
 import AVFoundation
@@ -43,6 +43,11 @@ import _StringProcessing
   @objc override dynamic public init()
   @objc deinit
 }
+public struct SearchMessage {
+  public init()
+  public var chatUserJid: Swift.String
+  public var messageId: Swift.String
+}
 public typealias FlyCompletionHandler = (_ isSuccess: Swift.Bool, _ error: FlyCommon.FlyError?, _ data: [Swift.String : Any]) -> Swift.Void
 extension Swift.Dictionary where Key == Swift.String, Value == Any {
   public mutating func addMessage(message: Swift.String)
@@ -79,7 +84,9 @@ public enum OfflineActionType : Swift.String, Swift.CustomStringConvertible {
   }
 }
 public func emptyString() -> Swift.String
+public func newLine() -> Swift.String
 public func executeOnMainThread(codeBlock: @escaping () -> Swift.Void)
+public func executeInBackground(codeBlock: @escaping () -> Swift.Void)
 public func encryptDecryptData(key: Swift.String, data: Swift.String, encrypt: Swift.Bool, iv: Swift.String = FlyDefaults.profileIV) -> Swift.String
 extension FlyCommon.MessageType {
   public func isMediaMessage() -> Swift.Bool
@@ -100,6 +107,18 @@ extension Swift.String {
   public var base64Encoded: Swift.String? {
     get
   }
+  public func parseToInt() -> Swift.Int?
+}
+extension Swift.Int {
+  public static func parse(from string: Swift.String) -> Swift.Int?
+}
+extension Foundation.FileManager {
+  public func removeItem(at url: Foundation.URL, completion: @escaping (Swift.Bool, Swift.Error?) -> ())
+}
+extension Swift.Double {
+  public func roundTo0f() -> Swift.String
+  public func roundTo1f() -> Swift.String
+  public func roundTo2f() -> Swift.String
 }
 public struct OfflineActionModel : Swift.Codable {
   public var actionId: Swift.String!
@@ -140,6 +159,11 @@ public struct MessageReceipt {
   public var time: Swift.Double
   public var profileDetails: FlyCommon.ProfileDetails?
   public init()
+}
+public struct LinkMessage {
+  public init()
+  public var link: Swift.String
+  public var chatMessage: FlyCommon.ChatMessage
 }
 public struct LoginData : Swift.Codable {
   public init()
@@ -225,6 +249,11 @@ public enum MediaStatus : Swift.String, Swift.CustomStringConvertible {
     _modify
   }
   @FlyCommon.SDKDefaults public static var isGroupsFetched: Swift.Bool {
+    get
+    set
+    _modify
+  }
+  @FlyCommon.SDKDefaults public static var isArchivedChatsFetched: Swift.Bool {
     get
     set
     _modify
@@ -444,12 +473,22 @@ public enum MediaStatus : Swift.String, Swift.CustomStringConvertible {
     set
     _modify
   }
+  @FlyCommon.SDKDefaults public static var isArchivedChatEnabled: Swift.Bool {
+    get
+    set
+    _modify
+  }
   @FlyCommon.SDKDefaults public static var notificationSoundID: Swift.Int {
     get
     set
     _modify
   }
   @FlyCommon.SDKDefaults public static var notificationSoundUrl: Swift.String {
+    get
+    set
+    _modify
+  }
+  @FlyCommon.SDKDefaults public static var selectedNotificationSoundName: [Swift.String : Swift.String] {
     get
     set
     _modify
@@ -500,6 +539,36 @@ public enum MediaStatus : Swift.String, Swift.CustomStringConvertible {
     _modify
   }
   @FlyCommon.SDKDefaults public static var selectedLanguage: Swift.String {
+    get
+    set
+    _modify
+  }
+  @FlyCommon.SDKDefaults public static var autoDownloadLastEnabledTime: Swift.Double {
+    get
+    set
+    _modify
+  }
+  @FlyCommon.SDKDefaults public static var appLockPassword: Swift.String {
+    get
+    set
+    _modify
+  }
+  @FlyCommon.SDKDefaults public static var appLockenable: Swift.Bool {
+    get
+    set
+    _modify
+  }
+  @FlyCommon.SDKDefaults public static var appFingerprintenable: Swift.Bool {
+    get
+    set
+    _modify
+  }
+  @FlyCommon.SDKDefaults public static var remotePush: Swift.Bool {
+    get
+    set
+    _modify
+  }
+  @FlyCommon.SDKDefaults public static var localPush: Swift.Bool {
     get
     set
     _modify
@@ -560,6 +629,16 @@ public enum MediaStatus : Swift.String, Swift.CustomStringConvertible {
     _modify
   }
   @FlyCommon.SDKDefaults public static var hideLastSeen: Swift.Bool {
+    get
+    set
+    _modify
+  }
+  @FlyCommon.SDKDefaults public static var isUserBusyStatusEnabled: Swift.Bool {
+    get
+    set
+    _modify
+  }
+  @FlyCommon.SDKDefaults public static var userBusyStatus: Swift.String {
     get
     set
     _modify
@@ -642,7 +721,20 @@ public struct BusyStatus {
   public var id: Swift.String!
   public var status: Swift.String!
   public var isCurrentStatus: Swift.Bool
-  public init(statusText: Swift.String)
+  public init(statusText: Swift.String, isCurrentStatus: Swift.Bool = false)
+}
+public struct DeliveryReceipt : Swift.Codable {
+  public init()
+  public var receiptId: Swift.String
+  public var userJid: Swift.String
+  public var messageId: Swift.String
+  public var broadcastMessageID: Swift.String
+  public var sentTime: Swift.Double
+  public var acknowledgeTime: Swift.Double
+  public var receivedTime: Swift.Double
+  public var seenTime: Swift.Double
+  public func encode(to encoder: Swift.Encoder) throws
+  public init(from decoder: Swift.Decoder) throws
 }
 public struct ReportMessage : Swift.Codable {
   public init()
@@ -754,6 +846,7 @@ public struct FlyUtils {
   public static func getOfflineActionModelData(offlineActionModel: FlyCommon.OfflineActionModel) -> Foundation.Data?
   public static func getDecodedData(data: Foundation.Data) -> FlyCommon.OfflineActionModel?
   public static func isNetworkAvailable() -> Swift.Bool
+  public static func inValidNetworkPreCondition(resultDict: inout [Swift.String : Any], completionHandler: (_ isSuccess: Swift.Bool, _ error: FlyCommon.FlyError?, _ data: [Swift.String : Any]) -> Swift.Void) -> Swift.Bool
   public static func isValidJid(jid: Swift.String?) -> Swift.Bool
   public static func isMyJid(jid: Swift.String?) -> Swift.Bool
   public static func isItGroupJid(groupJid: Swift.String?) -> Swift.Bool
@@ -815,7 +908,6 @@ extension FlyCommon.FlyUtils {
   public static func setAppName(appName: Swift.String)
   public static func encryptLoginParamsData(password: Swift.String = FlyDefaults.myXmppPassword) -> Swift.String?
   public static func getUTCTimeInMillis() -> Swift.Double
-  public static func inValidNetworkPreCondition(resultDict: inout [Swift.String : Any], completionHandler: (_ isSuccess: Swift.Bool, _ error: FlyCommon.FlyError?, _ data: [Swift.String : Any]) -> Swift.Void) -> Swift.Bool
 }
 extension Foundation.Date {
   public var millisecondsSince1970: Swift.Double {
@@ -824,6 +916,109 @@ extension Foundation.Date {
 }
 extension Foundation.URL {
   public func mimeType() -> Swift.String
+}
+public struct BackupRestoreModels : Swift.Codable {
+  public var messages: [FlyCommon.BackupMessage]
+  public var recentMessages: [FlyCommon.BackupRecentChat]
+  public init(messages: [FlyCommon.BackupMessage], recentMessages: [FlyCommon.BackupRecentChat])
+  public func encode(to encoder: Swift.Encoder) throws
+  public init(from decoder: Swift.Decoder) throws
+}
+public struct BackupMessageModel : Swift.Codable {
+  public var message: FlyCommon.BackupMessage
+  public init(message: FlyCommon.BackupMessage)
+  public func encode(to encoder: Swift.Encoder) throws
+  public init(from decoder: Swift.Decoder) throws
+}
+public struct BackupRecentModel : Swift.Codable {
+  public var recentMessages: FlyCommon.BackupRecentChat
+  public init(recentMessages: FlyCommon.BackupRecentChat)
+  public func encode(to encoder: Swift.Encoder) throws
+  public init(from decoder: Swift.Decoder) throws
+}
+public struct BackupMessage : Swift.Codable {
+  public var messageId: Swift.String
+  public var chatUserJid: Swift.String
+  public var messageType: Swift.String
+  public var chatType: Swift.String
+  public var messageTime: Swift.String
+  public var replyToMessageId: Swift.String
+  public var isCarbon: Swift.Bool
+  public var isSender: Swift.Bool
+  public var isStarred: Swift.Bool
+  public var isRecalled: Swift.Bool
+  public var isDeleted: Swift.Bool
+  public var textModel: FlyCommon.TextModel?
+  public var groupUserSenderJid: Swift.String
+  public var contactModel: FlyCommon.ContactChat?
+  public var locationModel: FlyCommon.LocationChat?
+  public var mediaModel: FlyCommon.MediaChat?
+  public var messageStatus: Swift.Int
+  public var messageStatusList: [FlyCommon.MessageStatusList]?
+  public init(messageId: Swift.String, chatUserJid: Swift.String, messageType: Swift.String, replyToMessageId: Swift.String, chatType: Swift.String, messageTime: Swift.String, isCarbon: Swift.Bool, isSender: Swift.Bool, isStarred: Swift.Bool, isRecalled: Swift.Bool, isDeleted: Swift.Bool, textModel: FlyCommon.TextModel, groupUserSenderJid: Swift.String, messageStatus: Swift.Int)
+  public func encode(to encoder: Swift.Encoder) throws
+  public init(from decoder: Swift.Decoder) throws
+}
+public struct TextModel : Swift.Codable {
+  public var text: Swift.String
+  public init(text: Swift.String)
+  public func encode(to encoder: Swift.Encoder) throws
+  public init(from decoder: Swift.Decoder) throws
+}
+public struct MessageStatusList : Swift.Codable {
+  public var id: Swift.String
+  public var jid: Swift.String
+  public var acknowledgedTime: Swift.String?
+  public var receivedTime: Swift.String?
+  public var seenTime: Swift.String?
+  public var broadcastMessageId: Swift.String?
+  public init(id: Swift.String, jid: Swift.String)
+  public func encode(to encoder: Swift.Encoder) throws
+  public init(from decoder: Swift.Decoder) throws
+}
+public struct ContactChat : Swift.Codable {
+  public var name: Swift.String
+  public var numbers: [FlyCommon.PhoneModel]?
+  public init(name: Swift.String)
+  public func encode(to encoder: Swift.Encoder) throws
+  public init(from decoder: Swift.Decoder) throws
+}
+public struct PhoneModel : Swift.Codable {
+  public var number: Swift.String
+  public var activeStatus: Swift.String
+  public init(number: Swift.String, activeStatus: Swift.String)
+  public func encode(to encoder: Swift.Encoder) throws
+  public init(from decoder: Swift.Decoder) throws
+}
+public struct LocationChat : Swift.Codable {
+  public var latitude: Swift.Double
+  public var longitude: Swift.Double
+  public init(latitude: Swift.Double, longitude: Swift.Double)
+  public func encode(to encoder: Swift.Encoder) throws
+  public init(from decoder: Swift.Decoder) throws
+}
+public struct MediaChat : Swift.Codable {
+  public var fileName: Swift.String
+  public var duration: Swift.Int32?
+  public var fileSize: Swift.Int32?
+  public var fileType: Swift.String?
+  public var fileUrl: Swift.String?
+  public var localFileName: Swift.String?
+  public var thumbImage: Swift.String?
+  public init(fileName: Swift.String)
+  public func encode(to encoder: Swift.Encoder) throws
+  public init(from decoder: Swift.Decoder) throws
+}
+public struct BackupRecentChat : Swift.Codable {
+  public var jid: Swift.String
+  public var messageId: Swift.String
+  public var messageTime: Swift.String
+  public var isArchived: Swift.Bool
+  public var isMuted: Swift.Bool
+  public var isPinned: Swift.Bool
+  public init(jid: Swift.String, messageId: Swift.String, messageTime: Swift.String, isArchived: Swift.Bool, isMuted: Swift.Bool, isPinned: Swift.Bool)
+  public func encode(to encoder: Swift.Encoder) throws
+  public init(from decoder: Swift.Decoder) throws
 }
 public enum ChatType : Swift.String, Swift.CustomStringConvertible {
   case singleChat
@@ -935,6 +1130,12 @@ public protocol FlyCommonControllerDelegate : ObjectiveC.NSObjectProtocol {
   }
   @objc deinit
   final public func startMonitoring()
+  final public var isCellular: Swift.Bool {
+    get
+  }
+  final public var isWifi: Swift.Bool {
+    get
+  }
   final public func stopMonitoring()
 }
 public struct ProfileStatus {
@@ -1014,19 +1215,6 @@ public struct FlyProfile {
   @objc public var mapLocationUrl: Swift.String
   @objc override dynamic public init()
   @objc deinit
-}
-public struct DeliveryReceipt : Swift.Codable {
-  public init()
-  public var receiptId: Swift.String
-  public var userJid: Swift.String
-  public var messageId: Swift.String
-  public var broadcastMessageID: Swift.String
-  public var sentTime: Swift.Double
-  public var acknowledgeTime: Swift.Double
-  public var receivedTime: Swift.Double
-  public var seenTime: Swift.Double
-  public func encode(to encoder: Swift.Encoder) throws
-  public init(from decoder: Swift.Decoder) throws
 }
 @objc @_inheritsConvenienceInitializers @objcMembers public class ChatMessage : ObjectiveC.NSObject {
   @objc public var messageId: Swift.String
@@ -1349,6 +1537,16 @@ public struct Media : Swift.Codable {
   public init(from decoder: Swift.Decoder) throws
   public func encode(to encoder: Swift.Encoder) throws
 }
+public enum NotificationSoundKeys : Swift.String {
+  case name
+  case file
+  case extensions
+  public init?(rawValue: Swift.String)
+  public typealias RawValue = Swift.String
+  public var rawValue: Swift.String {
+    get
+  }
+}
 public struct FlyConstants {
   public static var suiteName: Swift.String
   public static var isTrialLicense: Swift.String
@@ -1365,6 +1563,8 @@ public struct FlyConstants {
   public static let authorization: Swift.String
   public static let file: Swift.String
   public static let hideLastSeenActivity: Swift.String
+  public static let userBusyStatus: Swift.String
+  public static let isUserBusyStatusEnabled: Swift.String
   public static let authtoken: Swift.String
   public static let localPath: Swift.String
   public static let clear_message: Swift.String
@@ -1394,6 +1594,7 @@ public struct FlyConstants {
   public static let admin_exit_group: Swift.String
   public static let user_exit_group: Swift.String
   public static let deleteMultipleConversation: Swift.String
+  public static let deleteAllConversation: Swift.String
   public static let applicationJsonType: Swift.String
   public static let chat: Swift.String
   public static let groupchat: Swift.String
@@ -1419,13 +1620,21 @@ public struct FlyConstants {
   public static let autoDownloadEnable: Swift.String
   public static let autoDownloadMobile: Swift.String
   public static let autoDownloadWifi: Swift.String
+  public static let autoDownloadLastEnabledTime: Swift.String
   public static let targetLanguageCode: Swift.String
   public static let selectedLanguage: Swift.String
+  public static let appLockenable: Swift.String
+  public static let appFingerprintenable: Swift.String
+  public static let localPush: Swift.String
+  public static let remotePush: Swift.String
+  public static let appLockPassword: Swift.String
   public static let isBlockedByAdmin: Swift.String
   public static let isContactPermissionSkipped: Swift.String
+  public static let isArchivedChatEnabled: Swift.String
   public static let notificationSoundID: Swift.String
   public static let notificationSoundName: Swift.String
   public static let notificationSoundUrl: Swift.String
+  public static let selectedNotificationSoundName: Swift.String
   public static let vibrationEnable: Swift.String
   public static let muteNotificationEnable: Swift.String
   public static let notificationSoundEnable: Swift.String
@@ -1447,6 +1656,13 @@ public struct FlyConstants {
   public static var callIceServers: Swift.String
   public static let lastLoginJid: Swift.String
   public static let unreadMissedCallCount: Swift.String
+  public static let backupId: Swift.String
+  public static let recent: Swift.String
+  public static let messageStart: Swift.String
+  public static let messageEnd: Swift.String
+  public static let recentStart: Swift.String
+  public static let recentEnd: Swift.String
+  public static let backupVersion: Swift.String
   public struct ErrorMessage {
     public static let internetNotAvailable: Swift.String
     public static let invalidJid: Swift.String
@@ -1486,6 +1702,12 @@ public struct FlyConstants {
     public static let invalidLimit: Swift.String
     public static let invalidTime: Swift.String
     public static let spaceValidation: Swift.String
+    public static let databaseError: Swift.String
+    public static let fileWriteError: Swift.String
+    public static let noMessageAvailable: Swift.String
+    public static let noInternetAvailable: Swift.String
+    public static let storageError: Swift.String
+    public static let invalidFileError: Swift.String
     public static let forbidden: Swift.String
   }
   public struct SuccessMessage {
@@ -1528,6 +1750,10 @@ public struct FlyConstants {
     public static let typingGoneStatusSuccess: Swift.String
     public static let register_update_success: Swift.String
     public static let result: Swift.String
+    public static let backup_success: Swift.String
+    public static let backup_count_success: Swift.String
+    public static let backup_message_success: Swift.String
+    public static let backup_recent_success: Swift.String
   }
 }
 extension FlyCommon.OfflineActionType : Swift.Equatable {}
@@ -1575,3 +1801,6 @@ extension FlyCommon.TypingStatus : Swift.RawRepresentable {}
 extension FlyCommon.MessageExtension : Swift.Equatable {}
 extension FlyCommon.MessageExtension : Swift.Hashable {}
 extension FlyCommon.MessageExtension : Swift.RawRepresentable {}
+extension FlyCommon.NotificationSoundKeys : Swift.Equatable {}
+extension FlyCommon.NotificationSoundKeys : Swift.Hashable {}
+extension FlyCommon.NotificationSoundKeys : Swift.RawRepresentable {}

@@ -1,13 +1,15 @@
 // swift-interface-format-version: 1.0
-// swift-compiler-version: Apple Swift version 5.7.1 (swiftlang-5.7.1.135.3 clang-1400.0.29.51)
+// swift-compiler-version: Apple Swift version 5.7 (swiftlang-5.7.0.127.4 clang-1400.0.29.50)
 // swift-module-flags: -target arm64-apple-ios12.1-simulator -enable-objc-interop -enable-library-evolution -swift-version 5 -enforce-exclusivity=checked -O -module-name FlyNetwork
 // swift-module-flags-ignorable: -enable-bare-slash-regex
+import Alamofire
 import CommonCrypto
 import FlyCommon
 @_exported import FlyNetwork
 import Foundation
 import MobileCoreServices
 import Network
+import SocketIO
 import Swift
 import UniformTypeIdentifiers
 import _Concurrency
@@ -79,6 +81,7 @@ extension FlyNetwork.FlyNetworkController {
   public func downloadProfileImage(imageUrl: Swift.String, completionHandler: @escaping FlyCommon.FlyCompletionHandler)
   public func contactSync(contactPermission: Swift.Bool, addContacts: [FlyCommon.ContactInfo], deleteContacts: [FlyCommon.ContactInfo], forceDelete: Swift.Bool, completionHandler: @escaping FlyCommon.FlyCompletionHandler)
   public func clearChatRevokeApiService(toUsers: Swift.Dictionary<Swift.String, Swift.String>, starredMessage: Swift.Bool, status: Swift.String, completionHandler: @escaping FlyCommon.FlyCompletionHandler)
+  public func clearAllChatRevokeApiService(status: Swift.String, completionHandler: @escaping FlyCommon.FlyCompletionHandler)
   public func deleteForEveryoneMediaRevokeAccessApiService(fileNames: [Swift.String], starredMessage: Swift.Bool, status: Swift.String, completionHandler: @escaping FlyCommon.FlyCompletionHandler)
   public func sendMessageReceivedStatusApiService(userInfo: [Swift.AnyHashable : Any]?, completionHandler: @escaping ([Swift.String : Any]) -> Swift.Void)
   public func logoutApiService(completionHandler: @escaping FlyCommon.FlyCompletionHandler)

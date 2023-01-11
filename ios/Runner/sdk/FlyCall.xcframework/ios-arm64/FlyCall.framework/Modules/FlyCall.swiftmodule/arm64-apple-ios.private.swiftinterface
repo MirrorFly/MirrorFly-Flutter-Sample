@@ -1,5 +1,5 @@
 // swift-interface-format-version: 1.0
-// swift-compiler-version: Apple Swift version 5.7.1 (swiftlang-5.7.1.135.3 clang-1400.0.29.51)
+// swift-compiler-version: Apple Swift version 5.7 (swiftlang-5.7.0.127.4 clang-1400.0.29.50)
 // swift-module-flags: -target arm64-apple-ios12.1 -enable-objc-interop -enable-library-evolution -swift-version 5 -enforce-exclusivity=checked -O -module-name FlyCall
 // swift-module-flags-ignorable: -enable-bare-slash-regex
 import AVFAudio
@@ -27,57 +27,6 @@ public enum ARDSignalingChannelState : Swift.Int {
   public init?(rawValue: Swift.Int)
   public typealias RawValue = Swift.Int
   public var rawValue: Swift.Int {
-    get
-  }
-}
-@objc @_inheritsConvenienceInitializers public class RealmCallLog : RealmSwift.Object {
-  @objc dynamic public var callId: Swift.String?
-  @objc dynamic public var fromUser: Swift.String?
-  @objc dynamic public var toUser: Swift.String?
-  @objc dynamic public var callerDevice: Swift.String?
-  @objc dynamic public var callType: Swift.String?
-  @objc dynamic public var callTime: Swift.Double
-  @objc dynamic public var startTime: Swift.Double
-  @objc dynamic public var endTime: Swift.Double
-  @objc dynamic public var callState: Swift.String?
-  @objc dynamic public var callMode: Swift.String?
-  @objc dynamic public var userList: Swift.String?
-  @objc dynamic public var sessionStatus: Swift.String?
-  @objc dynamic public var groupId: Swift.String?
-  @objc dynamic public var customData: Swift.String
-  @objc dynamic public var isLogSync: Swift.Bool
-  public func initWithCallID(_ callID: Swift.String?, fromJID: Swift.String?, toJID: Swift.String?, callerDevice: Swift.String?, callType: Swift.String?, callingTime: Swift.Double, callStartTime: Swift.Double, callEndTime: Swift.Double, callState: Swift.String, callMode: Swift.String, usersList: Swift.String, groupId: Swift.String?) -> FlyCall.RealmCallLog?
-  public func getCallLog(forCallID callID: Swift.String?) -> FlyCall.RealmCallLog?
-  @objc override dynamic public init()
-  @objc deinit
-}
-@_hasMissingDesignatedInitializers @available(*, deprecated, message: "Handled internally from this release. Call CallManager.initCallSDK() to initialize CallSDK")
-@objcMembers public class CallSDK {
-  public static let Builder: FlyCall.CallSDK
-  public func setUserId(id: Swift.String) -> FlyCall.CallSDK
-  @available(*, deprecated, message: "Handled internally from this release. Call CallManager.initCallSDK() to initialize CallSDK")
-  public func setDomainBaseUrl(baseUrl: Swift.String) -> FlyCall.CallSDK
-  @available(*, deprecated, message: "Handled internally from this release. Call CallManager.initCallSDK() to initialize CallSDK")
-  public func setSignalSeverUrl(url: Swift.String) -> FlyCall.CallSDK
-  @available(*, deprecated, message: "Handled internally from this release. Call CallManager.initCallSDK() to initialize CallSDK")
-  public func setJanusSeverUrl(url: Swift.String) -> FlyCall.CallSDK
-  @available(*, deprecated, message: "Handled internally from this release. Call CallManager.initCallSDK() to initialize CallSDK")
-  public func setAppGroupContainerID(containerID: Swift.String) -> FlyCall.CallSDK
-  @available(*, deprecated, message: "Call CallManager.setCallViewController() to setViewController")
-  public func setCallViewController(viewController: UIKit.UIViewController) -> FlyCall.CallSDK
-  @available(*, deprecated, message: "Handled internally from this release. Call CallManager.initCallSDK() to initialize CallSDK")
-  public func setICEServersList(iceServers: [WebRTC.RTCIceServer]) -> FlyCall.CallSDK
-  @available(*, deprecated, message: "Call CallManager.setCallEventsDelegate() to observe Call Events")
-  public func setCallDelegate(delegate: FlyCall.CallManagerDelegate) -> FlyCall.CallSDK
-  @objc @available(*, deprecated, message: "Handled internally from this release. Call CallManager.initCallSDK() to initialize CallSDK")
-  public func buildAndInitialize() throws
-  @objc deinit
-}
-public enum FlyCallError : Swift.Error {
-  case invalid_input
-  public static func == (a: FlyCall.FlyCallError, b: FlyCall.FlyCallError) -> Swift.Bool
-  public func hash(into hasher: inout Swift.Hasher)
-  public var hashValue: Swift.Int {
     get
   }
 }
@@ -194,8 +143,6 @@ extension FlyCall.PeerConnectionClient : WebRTC.RTCPeerConnectionDelegate {
 public protocol AudioManagerDelegate {
   func audioRoutedTo(deviceName: Swift.String, audioDeviceType: FlyCall.OutputType)
 }
-public struct CallLog {
-}
 public protocol JoinCallDelegate {
   func onUsersUpdated(usersList: [Swift.String])
   func onLocalTrack(videoTrack: WebRTC.RTCVideoTrack?)
@@ -242,6 +189,21 @@ public enum CallState : Swift.String {
   public var rawValue: Swift.String {
     get
   }
+}
+public struct CallLog {
+  public let callLogId: Swift.String
+  public let fromUserId: Swift.String
+  public let toUserId: Swift.String
+  public var callType: FlyCall.CallType
+  public var callReceivedTime: Swift.Double
+  public var callAttendedTime: Swift.Double
+  public var callEndedTime: Swift.Double
+  public var callState: FlyCall.CallState
+  public var callMode: FlyCall.CallMode
+  public var userList: [Swift.String]
+  public var groupId: Swift.String?
+  public var customData: Swift.String?
+  public var isLogSynced: Swift.Bool
 }
 @objc @_inheritsConvenienceInitializers public class CallParticipantsStatus : ObjectiveC.NSObject {
   @objc override dynamic public init()
@@ -346,6 +308,7 @@ public protocol FeaturesDelegate {
   public static var incomingUserJidArr: [Swift.String]
   @objc override dynamic public init()
   public class func initCallSDK() throws
+  public class func setVideoWidthHeightAdjuster(videoWidthHeightAdjuster: FlyCall.VideoWidthHeightAdjuster)
   public class func getRoomLink() -> Swift.String
   public class func setMyInfo(name: Swift.String, imageUrl: Swift.String)
   public class func setCurrentUserId(_ myID: Swift.String)
@@ -407,7 +370,9 @@ extension FlyCall.CallManager {
   public class func makeVideoCall(_ userId: Swift.String, onCompletion: @escaping (_ isSuccess: Swift.Bool, _ message: Swift.String) -> Swift.Void) throws
   public class func makeGroupVoiceCall(_ userIDsList: [Swift.String], groupID: Swift.String, onCompletion: @escaping (_ isSuccess: Swift.Bool, _ message: Swift.String) -> Swift.Void) throws
   public class func makeGroupVideoCall(_ userIDsList: [Swift.String], groupID: Swift.String, onCompletion: @escaping (_ isSuccess: Swift.Bool, _ message: Swift.String) -> Swift.Void) throws
+  @available(*, deprecated, message: "Use the CallManager.inviteUsersToOngoingCall(_ userIDsList : [String], onCompletion: @escaping (_ isSuccess: Bool, _ message: String) -> Void) instead")
   public class func inviteUsersToOngoingCall(_ userIDsList: [Swift.String])
+  public class func inviteUsersToOngoingCall(_ userIDsList: [Swift.String], onCompletion: @escaping (_ isSuccess: Swift.Bool, _ message: Swift.String) -> Swift.Void)
   public class func muteAudio(_ isMute: Swift.Bool)
   public class func getContactNames(IncomingUserName: [Swift.String])
   public class func muteVideo(_ isMute: Swift.Bool)
@@ -428,25 +393,54 @@ extension FlyCall.CallManager {
   public class func isCurrentCallJoinedViaLink() -> Swift.Bool
   public class func isUserJoinedViaLink(userId: Swift.String) -> Swift.Bool
 }
+public protocol VideoWidthHeightAdjuster {
+  func getVideoHeightConstraint(usersCount: Swift.Int) -> Swift.Int
+  func getVideoWidthConstraint(usersCount: Swift.Int) -> Swift.Int
+}
 @objc @_inheritsConvenienceInitializers public class CallPayload : ObjectiveC.NSObject {
   @objc override dynamic public init()
   @objc deinit
 }
 @objc @_inheritsConvenienceInitializers public class CallLogManager : ObjectiveC.NSObject {
-  public func saveCallLog(callLog: FlyCall.RealmCallLog?)
-  public class func getCallLogs() -> [Any]
-  public func getCallLogsWithSync(isLogSync: Swift.Bool) -> [Any]
+  public class func getAllCallLogs() -> [FlyCall.CallLog]
   public func deleteCallLogs()
-  public func deleteSingleCallLogs(callLog: FlyCall.RealmCallLog)
   public func updatecallLog(callLogs: [Any])
-  public func saveRealmArray(_ objects: [FlyCall.RealmCallLog])
-  public class func deleteAllEmptyCallLogs()
-  public class func getAllMissedCallList() -> [Any]
   public class func getMissedCallCount() -> Swift.Int
-  public func setCustomCallData(callId: Swift.String, data: Swift.String)
-  public func getCallLog(for callId: Swift.String) -> FlyCall.RealmCallLog?
+  public func deleteCallLog(callLogId: Swift.String? = nil, completionHandler: @escaping FlyCommon.FlyCompletionHandler)
+  public func getCallLogs(pageNumber: Swift.Int, completionHandler: @escaping FlyCommon.FlyCompletionHandler)
+  public func syncCallLogs(completionHandler: @escaping FlyCommon.FlyCompletionHandler)
   @objc override dynamic public init()
   @objc deinit
+}
+@_hasMissingDesignatedInitializers @available(*, deprecated, message: "Handled internally from this release. Call CallManager.initCallSDK() to initialize CallSDK")
+@objcMembers public class CallSDK {
+  public static let Builder: FlyCall.CallSDK
+  public func setUserId(id: Swift.String) -> FlyCall.CallSDK
+  @available(*, deprecated, message: "Handled internally from this release. Call CallManager.initCallSDK() to initialize CallSDK")
+  public func setDomainBaseUrl(baseUrl: Swift.String) -> FlyCall.CallSDK
+  @available(*, deprecated, message: "Handled internally from this release. Call CallManager.initCallSDK() to initialize CallSDK")
+  public func setSignalSeverUrl(url: Swift.String) -> FlyCall.CallSDK
+  @available(*, deprecated, message: "Handled internally from this release. Call CallManager.initCallSDK() to initialize CallSDK")
+  public func setJanusSeverUrl(url: Swift.String) -> FlyCall.CallSDK
+  @available(*, deprecated, message: "Handled internally from this release. Call CallManager.initCallSDK() to initialize CallSDK")
+  public func setAppGroupContainerID(containerID: Swift.String) -> FlyCall.CallSDK
+  @available(*, deprecated, message: "Call CallManager.setCallViewController() to setViewController")
+  public func setCallViewController(viewController: UIKit.UIViewController) -> FlyCall.CallSDK
+  @available(*, deprecated, message: "Handled internally from this release. Call CallManager.initCallSDK() to initialize CallSDK")
+  public func setICEServersList(iceServers: [WebRTC.RTCIceServer]) -> FlyCall.CallSDK
+  @available(*, deprecated, message: "Call CallManager.setCallEventsDelegate() to observe Call Events")
+  public func setCallDelegate(delegate: FlyCall.CallManagerDelegate) -> FlyCall.CallSDK
+  @objc @available(*, deprecated, message: "Handled internally from this release. Call CallManager.initCallSDK() to initialize CallSDK")
+  public func buildAndInitialize() throws
+  @objc deinit
+}
+public enum FlyCallError : Swift.Error {
+  case invalid_input
+  public static func == (a: FlyCall.FlyCallError, b: FlyCall.FlyCallError) -> Swift.Bool
+  public func hash(into hasher: inout Swift.Hasher)
+  public var hashValue: Swift.Int {
+    get
+  }
 }
 @objc @_inheritsConvenienceInitializers public class FlyCallUtils : ObjectiveC.NSObject {
   public static let klExistingTokenAPNS: Swift.String
@@ -463,8 +457,6 @@ extension FlyCall.FlyCallUtils {
 extension FlyCall.ARDSignalingChannelState : Swift.Equatable {}
 extension FlyCall.ARDSignalingChannelState : Swift.Hashable {}
 extension FlyCall.ARDSignalingChannelState : Swift.RawRepresentable {}
-extension FlyCall.FlyCallError : Swift.Equatable {}
-extension FlyCall.FlyCallError : Swift.Hashable {}
 extension FlyCall.CallDirection : Swift.Equatable {}
 extension FlyCall.CallDirection : Swift.Hashable {}
 extension FlyCall.CallType : Swift.Equatable {}
@@ -486,3 +478,5 @@ extension FlyCall.MuteEvent : Swift.Hashable {}
 extension FlyCall.CALLSTATUS : Swift.Equatable {}
 extension FlyCall.CALLSTATUS : Swift.Hashable {}
 extension FlyCall.CALLSTATUS : Swift.RawRepresentable {}
+extension FlyCall.FlyCallError : Swift.Equatable {}
+extension FlyCall.FlyCallError : Swift.Hashable {}

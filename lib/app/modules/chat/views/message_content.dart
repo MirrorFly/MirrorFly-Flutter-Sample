@@ -81,7 +81,7 @@ class _MessageContentState extends State<MessageContent> {
           ],
         ),
       );
-    } else if (chatList.messageType == Constants.mNotification) {
+    } else if (chatList.messageType.toUpperCase() == Constants.mNotification) {
       return Center(
         child: Container(
           decoration: const BoxDecoration(

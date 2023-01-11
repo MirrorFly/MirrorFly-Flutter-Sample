@@ -335,7 +335,7 @@ class SenderHeader extends StatelessWidget {
 
   bool checkIsNotNotification(ChatMessageModel messageItem) {
     var msgType = messageItem.messageType;
-    return msgType != Constants.mNotification;
+    return msgType.toUpperCase() != Constants.mNotification;
   }
 
   @override
