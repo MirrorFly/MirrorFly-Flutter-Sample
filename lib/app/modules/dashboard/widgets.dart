@@ -218,7 +218,7 @@ class RecentChatItem extends StatelessWidget {
                           ),
                         ),
                         Padding(
-                          padding: const EdgeInsets.only(right: 16.0, left: 8),
+                          padding: const EdgeInsets.only(right: 16.0, left: 8, top: 5),
                           child: Column(
                             children: [
                               Visibility(

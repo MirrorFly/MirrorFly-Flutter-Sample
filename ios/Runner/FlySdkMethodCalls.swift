@@ -509,7 +509,7 @@ import Photos
         
         let userJid = args["jid"] as? String ?? ""
         
-        var isUserUnarchived : Bool = ChatManager.isUserUnArchived(jid: userJid)
+        var isUserUnarchived : Bool = ChatManager.shared.isUserUnArchived(jid: userJid)
         result(isUserUnarchived)
         
     }

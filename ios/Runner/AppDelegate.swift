@@ -46,10 +46,11 @@ let googleApiKey = "AIzaSyDnjPEs86MRsnFfW1sVPKvMWjqQRnSa7Ts"
       FlyMessenger.shared.messageEventsDelegate = self
       ChatManager.shared.messageEventsDelegate = self
       GroupManager.shared.groupDelegate = self
-      ChatManager.shared.logoutDelegate = self
       ChatManager.shared.connectionDelegate = self
       ChatManager.shared.adminBlockCurrentUserDelegate = self
       ChatManager.shared.typingStatusDelegate = self
+//      ChatManager.shared.adminBlockDelegate = self
+//      ContactManager.shared.profileDelegate = self
       
       GMSServices.provideAPIKey(googleApiKey)
       
@@ -247,7 +248,7 @@ extension AppDelegate : MessageEventsDelegate, ConnectionEventDelegate, LogoutDe
         let jsonObject: NSMutableDictionary = NSMutableDictionary()
         jsonObject.setValue(groupJid, forKey: "groupJid")
         jsonObject.setValue(groupUserJid, forKey: "groupUserJid")
-        jsonObject.setValue(status, forKey: "status")
+        jsonObject.setValue(status.rawValue, forKey: "status")
         
         let jsonString = Commons.json(from: jsonObject)
         
@@ -280,7 +281,7 @@ extension AppDelegate : MessageEventsDelegate, ConnectionEventDelegate, LogoutDe
     func onMessageStatusUpdated(messageId: String, chatJid: String, status: FlyCommon.MessageStatus) {
 
         let chatMessage = FlyMessenger.getMessageOfId(messageId: messageId)
-        print("Message Status Update--->")
+        print("Message Status Update--->\(chatMessage)")
         var chatMessageJson = JSONSerializer.toJson(chatMessage as Any)
 
         chatMessageJson = chatMessageJson.replacingOccurrences(of: "{\"some\":", with: "")
