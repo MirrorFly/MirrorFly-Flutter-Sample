@@ -71,6 +71,7 @@ class DashboardController extends GetxController with GetTickerProviderStateMixi
       var data = await compute(recentChatFromJson,value.toString());
       //recentChats.clear();
       recentChats(data.data!);
+      recentChats.refresh();
     }).catchError((error) {
       debugPrint("recent chat issue===> $error");
     });
