@@ -234,8 +234,7 @@ class LoginController extends GetxController {
 
   verifyTokenWithServer(String token) async {
     if(await AppUtils.isNetConnected()) {
-      var userName =
-      (countryCode! + mobileNumber.text.toString()).replaceAll("+", "");
+      var userName = (/*countryCode! + */mobileNumber.text.toString()).replaceAll("+", "");
       //make api call
       FlyChat.verifyToken(userName, token).then((value) {
         if (value != null) {
@@ -279,7 +278,7 @@ class LoginController extends GetxController {
 
   navigateToUserRegisterMethod(String? deviceToken, String? firebaseToken) {
     //OTP validated successfully
-    if (deviceToken.checkNull().isEmpty || deviceToken == firebaseToken) {
+    if (deviceToken.checkNull().isEmpty || deviceToken == "null" || deviceToken == firebaseToken) {
       registerAccount();
     } else {
       showUserAccountDeviceStatus();
