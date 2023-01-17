@@ -280,8 +280,17 @@ extension AppDelegate : MessageEventsDelegate, ConnectionEventDelegate, LogoutDe
 
     func onMessageStatusUpdated(messageId: String, chatJid: String, status: FlyCommon.MessageStatus) {
 
-        let chatMessage = FlyMessenger.getMessageOfId(messageId: messageId)
-        print("Message Status Update--->\(chatMessage)")
+        print("====Message status update====")
+        print("messageID-->\(messageId)")
+        
+        var tempSaveContact = ContactManager.shared.saveTempContact(userId: chatJid)
+        print(tempSaveContact as Any)
+        
+//        FlyMessenger.database.messageManager.getMessageDetailFor(id: messageId)!)
+        
+        let chatMessage = ChatManager.getMessageOfId(messageId: messageId)
+        print("Message Status Update--->\(String(describing: chatMessage))")
+        print("getMessageOfId==>", ChatManager.getMessageOfId(messageId: messageId)?.messageTextContent as Any)
         var chatMessageJson = JSONSerializer.toJson(chatMessage as Any)
 
         chatMessageJson = chatMessageJson.replacingOccurrences(of: "{\"some\":", with: "")

@@ -1447,7 +1447,7 @@ class FlyChat {
       rethrow;
     }
   }
-  static Future<dynamic> insertDefaultStatus(String status) async {//insertStatus
+  static Future<dynamic> insertDefaultStatus(String status) async {
     try {
       await mirrorFlyMethodChannel.invokeMethod('insertDefaultStatus', {"status" : status });
     }on PlatformException catch (e){

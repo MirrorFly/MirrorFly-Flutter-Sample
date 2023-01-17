@@ -334,6 +334,8 @@ class FlyBaseController: NSObject{
                 FlySdkMethodCalls.registerUser(call: call, result: result)
             case "authtoken":
                 FlySdkMethodCalls.refreshAndGetAuthToken(call: call, result: result)
+            case "refreshAuthToken":
+                FlySdkMethodCalls.refreshAndGetAuthToken(call: call, result: result)
             case "verifyToken":
                 FlySdkMethodCalls.verifyToken(call: call, result: result)
             case "get_jid":
@@ -409,6 +411,8 @@ class FlyBaseController: NSObject{
                 FlySdkMethodCalls.updateMyProfileImage(call: call, result: result)
             case "isUserUnArchived":
                 FlySdkMethodCalls.isUserUnArchived(call: call, result: result)
+            case "forwardMessagesToMultipleUsers":
+                FlySdkMethodCalls.forwardMessagesToMultipleUsers(call: call, result: result)
             default:
                 result(FlutterMethodNotImplemented)
             }

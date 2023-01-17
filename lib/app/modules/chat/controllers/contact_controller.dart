@@ -112,6 +112,7 @@ class ContactController extends GetxController {
   fetchUsers(bool fromSearch) async {
     if(await AppUtils.isNetConnected()) {
       FlyChat.getUserList(pageNum, _searchText).then((data) async {
+        mirrorFlyLog("userlist", data);
         var item = userListFromJson(data);
         var list = <Profile>[];
 
@@ -147,6 +148,7 @@ class ContactController extends GetxController {
         }
 
       }).catchError((error) {
+        debugPrint("Get User list error--> $error");
         toToast(error.toString());
       });
     }else{

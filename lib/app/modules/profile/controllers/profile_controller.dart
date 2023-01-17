@@ -229,9 +229,10 @@ class ProfileController extends GetxController {
       await FlyChat.mirrorFlyMethodChannel.invokeMethod('getProfileStatusList').then((value) {
         mirrorFlyLog("status list", "$value");
         if (value != null) {
-          var profileStatus = statusDataFromJson(value);
+          var profileStatus = statusDataFromJson(value.toString());
           if (profileStatus.isNotEmpty) {
             var defaultStatus = Constants.defaultStatusList;
+
             for (var statusValue in defaultStatus) {
               var isStatusNotExist = true;
               for (var flyStatus in profileStatus) {
@@ -253,9 +254,12 @@ class ProfileController extends GetxController {
             SessionManagement.convSound(true);
             SessionManagement.muteAll( false);
           }else{
+            debugPrint("Inserting Status");
             var defaultStatus = Constants.defaultStatusList;
+
             for (var statusValue in defaultStatus) {
               FlyChat.insertDefaultStatus(statusValue);
+
             }
             FlyChat.getDefaultNotificationUri().then((value) {
               if (value != null) {

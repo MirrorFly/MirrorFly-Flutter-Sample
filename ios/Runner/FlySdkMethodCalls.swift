@@ -75,11 +75,15 @@ import Photos
     static func refreshAndGetAuthToken(call: FlutterMethodCall, result: @escaping FlutterResult){
         ChatManager.refreshToken { (isSuccess, flyError, resultDict) in
                   if (isSuccess) {
-                      var token = resultDict
+                      var resp = resultDict
+                      var tokendata = resp.getData()
+                      var refreshToken = tokendata as AnyObject
                       
-                      print("ios token-->\(token)")
+                      var newToken = refreshToken["token"] as Any
                       
-                      result(token)
+                      print("ios refreshAndGetAuthToken-->\(newToken)")
+                      
+                      result(newToken)
                    
                   } else {
                       result(FlutterError(code: "500", message: "Unable to refresh token", details: flyError?.description))
@@ -279,6 +283,7 @@ import Photos
             if isSuccess {
                 var userlist = flyData
                 let userData = JSONSerializer.toJson(userlist.getData())
+                print("==========")
                 print(userData)
                 
                 let totalPages = userlist["totalPages"] as! Int
@@ -490,17 +495,23 @@ import Photos
     
     static func getProfileStatusList(call: FlutterMethodCall, result: @escaping FlutterResult){
         let profileStatus = ChatManager.getAllStatus()
-        print("Status list -->")
-        //        print(profileStatus)
-        //        print(JSONSerializer.toJson(profileStatus))
-        var dumpresponse = "[{\"id\":1,\"isCurrentStatus\":true,\"status\":\"I am in Mirror Fly\"}]"
-        result(dumpresponse)
+        print("Status list -->\(profileStatus)")
+        var profileStatusJson = JSONSerializer.toJson(profileStatus)
+        print(profileStatusJson)
+        result(profileStatusJson)
         
     }
     static func insertDefaultStatus(call: FlutterMethodCall, result: @escaping FlutterResult){
+        let args = call.arguments as! Dictionary<String, Any>
         
+        let status = args["status"] as? String ?? ""
+        
+        
+        print("Insert Status-->\(index) ---> \(status)")
+//        var insertStatus = ChatManager.updateStatus(statusId: index, statusText: status)
+        var insertStatus = ChatManager.saveProfileStatus(statusText: status, currentStatus: false)
+        print("Insert Status Result-->\(insertStatus)")
     
-        result("[]")
         
     }
     static func isUserUnArchived(call: FlutterMethodCall, result: @escaping FlutterResult){
@@ -509,8 +520,20 @@ import Photos
         
         let userJid = args["jid"] as? String ?? ""
         
-        var isUserUnarchived : Bool = ChatManager.shared.isUserUnArchived(jid: userJid)
+        let isUserUnarchived : Bool = ChatManager.shared.isUserUnArchived(jid: userJid)
         result(isUserUnarchived)
+        
+    }
+    static func forwardMessagesToMultipleUsers(call: FlutterMethodCall, result: @escaping FlutterResult){
+        
+        let args = call.arguments as! Dictionary<String, Any>
+        
+        let messageIDList = args["message_ids"] as? [String] ?? []
+        let userList = args["userList"] as? [String] ?? []
+        
+        FlyMessenger.composeForwardMessage(messageIds: messageIDList, toJidList: userList)
+        
+        result("Message Forward Success")
         
     }
     
@@ -655,8 +678,10 @@ import Photos
         ContactManager.shared.updateMyProfileImage(image: profileImage){ isSuccess, flyError, flyData in
                 if isSuccess {
                     var data = flyData
+                    data["status"] = isSuccess
                     print("updateMyProfileImage-->\(data)")
-                    result(data)
+                    var jsonResponse = Commons.json(from: data)
+                    result(jsonResponse)
                 } else{
                     print("updateMyProfileImage Error-->\(flyError!.localizedDescription)")
                     result(FlutterError(code: "500", message: flyError!.localizedDescription, details: nil))
