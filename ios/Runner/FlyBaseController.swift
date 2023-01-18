@@ -72,34 +72,30 @@ let onSuccess_channel = "contus.mirrorfly/onSuccess"
 
 class FlyBaseController: NSObject{
     
-    static let MESSAGE_ONRECEIVED_CHANNEL = "contus.mirrorfly/onMessageReceived"
-    static var messageReceivedStreamHandler: MessageReceivedStreamHandler?
-    static var messageStatusUpdatedStreamHandler: MessageStatusUpdatedStreamHandler?
-    static var mediaStatusUpdatedStreamHandler: MediaStatusUpdatedStreamHandler?
-    static var uploadDownloadProgressChangedStreamHandler: UploadDownloadProgressChangedStreamHandler?
-    static var showOrUpdateOrCancelNotificationStreamHandler: ShowOrUpdateOrCancelNotificationStreamHandler?
-    static var groupProfileFetchedStreamHandler: GroupProfileFetchedStreamHandler?
-    static var newGroupCreatedStreamHandler: NewGroupCreatedStreamHandler?
-    static var groupProfileUpdatedStreamHandler: GroupProfileUpdatedStreamHandler?
-    static var newMemberAddedToGroupStreamHandler: NewMemberAddedToGroupStreamHandler?
-    static var memberRemovedFromGroupStreamHandler: MemberRemovedFromGroupStreamHandler?
-    static var fetchingGroupMembersCompletedStreamHandler: FetchingGroupMembersCompletedStreamHandler?
-    static var deleteGroupStreamHandler: DeleteGroupStreamHandler?
-    static var fetchingGroupListCompletedStreamHandler: FetchingGroupListCompletedStreamHandler?
-    static var memberMadeAsAdminStreamHandler: MemberMadeAsAdminStreamHandler?
-    static var memberRemovedAsAdminStreamHandler: MemberRemovedAsAdminStreamHandler?
+     let MESSAGE_ONRECEIVED_CHANNEL = "contus.mirrorfly/onMessageReceived"
+     var messageReceivedStreamHandler: MessageReceivedStreamHandler?
+     var messageStatusUpdatedStreamHandler: MessageStatusUpdatedStreamHandler?
+     var mediaStatusUpdatedStreamHandler: MediaStatusUpdatedStreamHandler?
+     var uploadDownloadProgressChangedStreamHandler: UploadDownloadProgressChangedStreamHandler?
+     var showOrUpdateOrCancelNotificationStreamHandler: ShowOrUpdateOrCancelNotificationStreamHandler?
+     var groupProfileFetchedStreamHandler: GroupProfileFetchedStreamHandler?
+     var newGroupCreatedStreamHandler: NewGroupCreatedStreamHandler?
+     var groupProfileUpdatedStreamHandler: GroupProfileUpdatedStreamHandler?
+     var newMemberAddedToGroupStreamHandler: NewMemberAddedToGroupStreamHandler?
+     var memberRemovedFromGroupStreamHandler: MemberRemovedFromGroupStreamHandler?
+     var fetchingGroupMembersCompletedStreamHandler: FetchingGroupMembersCompletedStreamHandler?
+     var deleteGroupStreamHandler: DeleteGroupStreamHandler?
+     var fetchingGroupListCompletedStreamHandler: FetchingGroupListCompletedStreamHandler?
+     var memberMadeAsAdminStreamHandler: MemberMadeAsAdminStreamHandler?
+     var memberRemovedAsAdminStreamHandler: MemberRemovedAsAdminStreamHandler?
     
-    static var onChatTypingStatusStreamHandler: OnChatTypingStatusStreamHandler?
-    static var onGroupTypingStatusStreamHandler: OnGroupTypingStatusStreamHandler?
-    
-    
-//    override init() {
-//        super.init()
-//        ChatManager.shared.connectionDelegate = self
-//    }
+     var onChatTypingStatusStreamHandler: OnChatTypingStatusStreamHandler?
+     var onGroupTypingStatusStreamHandler: OnGroupTypingStatusStreamHandler?
 
     
-    static func initSDK(controller: FlutterViewController, licenseKey: String, isTrial: Bool, baseUrl: String, containerID: String){
+     func initSDK(controller: FlutterViewController, licenseKey: String, isTrial: Bool, baseUrl: String, containerID: String){
+         
+         print("Initializing SDK")
         
         let groupConfig = try? GroupConfig.Builder.enableGroupCreation(groupCreation: true)
             .onlyAdminCanAddOrRemoveMembers(adminOnly: true)
@@ -114,7 +110,6 @@ class FlyBaseController: NSObject{
             .setGroupConfiguration(groupConfig: groupConfig!)
             .buildAndInitialize()
         
-//        ChatManager.shared.connectionDelegate = self
     
         
         let methodChannel = FlutterMethodChannel(name: MIRRORFLY_METHOD_CHANNEL, binaryMessenger: controller.binaryMessenger)
@@ -122,16 +117,21 @@ class FlyBaseController: NSObject{
         prepareMethodHandler(methodChannel: methodChannel)
         
         registerEventChannels(controller: controller)
+         
+         FlyMessenger.shared.messageEventsDelegate = self
+         ChatManager.shared.messageEventsDelegate = self
+         
+         ChatManager.shared.logoutDelegate = self
+         FlyMessenger.shared.messageEventsDelegate = self
+         ChatManager.shared.messageEventsDelegate = self
+         GroupManager.shared.groupDelegate = self
+         ChatManager.shared.connectionDelegate = self
+         ChatManager.shared.adminBlockCurrentUserDelegate = self
+         ChatManager.shared.typingStatusDelegate = self
         
-//        ChatManager.shared.logoutDelegate = self
-//        FlyMessenger.shared.messageEventsDelegate = self
-//        ChatManager.shared.messageEventsDelegate = self
-//        GroupManager.shared.groupDelegate = self
-//        ChatManager.shared.logoutDelegate = self
-//        ChatManager.shared.connectionDelegate = self
     }
 
-    static func registerEventChannels(controller: FlutterViewController){
+     func registerEventChannels(controller: FlutterViewController){
         if (self.messageReceivedStreamHandler == nil) {
             self.messageReceivedStreamHandler = MessageReceivedStreamHandler()
           }
@@ -236,7 +236,7 @@ class FlyBaseController: NSObject{
         
 
     }
-    static func prepareMethodHandler(methodChannel: FlutterMethodChannel){
+     func prepareMethodHandler(methodChannel: FlutterMethodChannel){
         methodChannel.setMethodCallHandler({
             (call: FlutterMethodCall, result: @escaping FlutterResult) -> Void in
             switch call.method {
@@ -420,21 +420,233 @@ class FlyBaseController: NSObject{
         })
     }
     
-    
-    
 }
 
-extension FlyBaseController: ConnectionEventDelegate{
+
+extension FlyBaseController : MessageEventsDelegate, ConnectionEventDelegate, LogoutDelegate, GroupEventsDelegate, AdminBlockCurrentUserDelegate, TypingStatusDelegate {
+    func onChatTypingStatus(userJid: String, status: FlyCommon.TypingStatus) {
+        
+        print("onChatTypingStatus")
+        let jsonObject: NSMutableDictionary = NSMutableDictionary()
+        jsonObject.setValue(userJid, forKey: "fromUserJid")
+        jsonObject.setValue(status.rawValue, forKey: "status")
+        
+        print("json data-->\(jsonObject)")
+        
+
+        let jsonString = Commons.json(from: jsonObject)
+        print("json-->\(String(describing: jsonString))")
+        
+        if(onChatTypingStatusStreamHandler?.onChatTyping != nil){
+            onChatTypingStatusStreamHandler?.onChatTyping?(jsonString)
+
+        }else{
+            print("Chat Typing Stream Handler is Nil")
+        }
+        
+    }
+    
+    func onGroupTypingStatus(groupJid: String, groupUserJid: String, status: FlyCommon.TypingStatus) {
+        
+        print("onGroupTypingStatus")
+        
+        let jsonObject: NSMutableDictionary = NSMutableDictionary()
+        jsonObject.setValue(groupJid, forKey: "groupJid")
+        jsonObject.setValue(groupUserJid, forKey: "groupUserJid")
+        jsonObject.setValue(status.rawValue, forKey: "status")
+        
+        let jsonString = Commons.json(from: jsonObject)
+        
+        if(onGroupTypingStatusStreamHandler?.onGroupTyping != nil){
+            onGroupTypingStatusStreamHandler?.onGroupTyping?(jsonString)
+
+        }else{
+            print("Group Chat Typing Stream Handler is Nil")
+        }
+    }
+    
+    func onMessageReceived(message: FlyCommon.ChatMessage, chatJid: String) {
+
+        print("Message Received Update--->")
+        print(JSONSerializer.toJson(message))
+
+        var messageReceivedJson = JSONSerializer.toJson(message)
+        messageReceivedJson = messageReceivedJson.replacingOccurrences(of: "{\"some\":", with: "")
+        messageReceivedJson = messageReceivedJson.replacingOccurrences(of: "}}", with: "}")
+
+        if(messageReceivedStreamHandler?.onMessageReceived != nil){
+            messageReceivedStreamHandler?.onMessageReceived?(messageReceivedJson)
+
+        }else{
+            print("Message Stream Handler is Nil")
+        }
+
+    }
+
+    func onMessageStatusUpdated(messageId: String, chatJid: String, status: FlyCommon.MessageStatus) {
+
+        print("====Message status update====")
+        print("messageID-->\(messageId)")
+        
+//        var tempSaveContact = ContactManager.shared.saveTempContact(userId: chatJid)
+//        print(tempSaveContact as Any)
+        
+//        FlyMessenger.database.messageManager.getMessageDetailFor(id: messageId)!)
+        
+        let chatMessage = ChatManager.getMessageOfId(messageId: messageId)
+        print("Message Status Update--->\(String(describing: chatMessage))")
+        print("getMessageOfId==>", ChatManager.getMessageOfId(messageId: messageId)?.messageTextContent as Any)
+        var chatMessageJson = JSONSerializer.toJson(chatMessage as Any)
+
+        chatMessageJson = chatMessageJson.replacingOccurrences(of: "{\"some\":", with: "")
+        chatMessageJson = chatMessageJson.replacingOccurrences(of: "}}", with: "}")
+        print(chatMessageJson)
+
+        if(messageStatusUpdatedStreamHandler?.onMessageStatusUpdated != nil){
+            messageStatusUpdatedStreamHandler?.onMessageStatusUpdated?(chatMessageJson)
+
+        }else{
+            print("Message status Stream Handler is Nil")
+        }
+
+    }
+
+    func onMediaStatusUpdated(message: FlyCommon.ChatMessage) {
+        print("Media Status Update--->")
+        var chatMediaJson = JSONSerializer.toJson(message as Any)
+        chatMediaJson = chatMediaJson.replacingOccurrences(of: "{\"some\":", with: "")
+        chatMediaJson = chatMediaJson.replacingOccurrences(of: "}}", with: "}")
+        print(chatMediaJson)
+
+        if(mediaStatusUpdatedStreamHandler?.onMediaStatusUpdated != nil){
+            mediaStatusUpdatedStreamHandler?.onMediaStatusUpdated?(chatMediaJson)
+        }else{
+            print("chatMediaJson Stream Handler is Nil")
+        }
+    }
+
+    func onMediaStatusFailed(error: String, messageId: String) {
+        print("Media Status Failed--->\(error)")
+    }
+
+    func onMediaProgressChanged(message: FlyCommon.ChatMessage, progressPercentage: Float) {
+        print("Media Status Onprogress changed---> \(progressPercentage)")
+    }
+
+    func onMessagesClearedOrDeleted(messageIds: Array<String>) {
+        print("Message Cleared--->")
+    }
+
+    func onMessagesDeletedforEveryone(messageIds: Array<String>) {
+        print("Message Deleted For Everyone--->")
+    }
+
+    func showOrUpdateOrCancelNotification() {
+        print("Message showOrUpdateOrCancelNotification--->")
+    }
+
+    func onMessagesCleared(toJid: String) {
+        print("Message onMessagesCleared--->")
+    }
+
+    func setOrUpdateFavourite(messageId: String, favourite: Bool, removeAllFavourite: Bool) {
+        print("Message setOrUpdateFavourite--->")
+    }
+
+    func onMessageTranslated(message: FlyCommon.ChatMessage, jid: String) {
+        print("Message onMessageTranslated--->")
+    }
+    
+    func didBlockOrUnblockCurrentUser(userJid: String, isBlocked: Bool) {
+        
+    }
+    
+    func didBlockOrUnblockGroup(groupJid: String, isBlocked: Bool) {
+        
+    }
+    
+    func didBlockOrUnblockContact(userJid: String, isBlocked: Bool) {
+        
+    }
+    
+    func didAddNewMemeberToGroup(groupJid: String, newMemberJid: String, addedByMemberJid: String) {
+        
+    }
+    
+    func didRemoveMemberFromGroup(groupJid: String, removedMemberJid: String, removedByMemberJid: String) {
+        
+    }
+    
+    func didFetchGroupProfile(groupJid: String) {
+        
+    }
+    
+    func didUpdateGroupProfile(groupJid: String) {
+        
+    }
+    
+    func didMakeMemberAsAdmin(groupJid: String, newAdminMemberJid: String, madeByMemberJid: String) {
+        
+    }
+    
+    func didRemoveMemberFromAdmin(groupJid: String, removedAdminMemberJid: String, removedByMemberJid: String) {
+        
+    }
+    
+    func didDeleteGroupLocally(groupJid: String) {
+        
+    }
+    
+    func didLeftFromGroup(groupJid: String, leftUserJid: String) {
+        
+    }
+    
+    func didCreateGroup(groupJid: String) {
+        
+    }
+    
+    func didFetchGroups(groups: [FlyCommon.ProfileDetails]) {
+        
+    }
+    
+    func didFetchGroupMembers(groupJid: String) {
+        
+    }
+    
+    func didReceiveGroupNotificationMessage(message: FlyCommon.ChatMessage) {
+        
+    }
+    
+    func didReceiveLogout() {
+        print("logout delegate received")
+        print("AppDelegate LogoutDelegate ===> LogoutDelegate")
+        Utility.saveInPreference(key: isProfileSaved, value: false)
+        Utility.saveInPreference(key: isLoggedIn, value: false)
+
+        ChatManager.logoutApi { isSuccess, flyError, flyData in
+           if isSuccess {
+               print("requestLogout Logout api isSuccess")
+
+           }else{
+               print("Logout api error : \(String(describing: flyError))")
+
+           }
+       }
+        ChatManager.enableContactSync(isEnable: ENABLE_CONTACT_SYNC)
+        ChatManager.disconnect()
+        ChatManager.shared.resetFlyDefaults()
+    }
     
     func onConnected() {
-        print("======sdk connected=======")
+        print("====== sdk connected=======")
     }
-    
+
     func onDisconnected() {
-        print("======sdk Disconnected======")
+        print("====== sdk Disconnected======")
     }
-    
+
     func onConnectionNotAuthorized() {
-        print("======sdk Not Authorized=======")
+        print("====== sdk Not Authorized=======")
     }
+
 }

@@ -10,6 +10,7 @@ import FlyCore
 import FlyCommon
 import Flutter
 import Photos
+import FlyDatabase
 //import DSON
 
 @objc class FlySdkMethodCalls : NSObject{
@@ -54,6 +55,7 @@ import Photos
                 FlyDefaults.myXmppUsername = data["username"] as! String
                 FlyDefaults.myMobileNumber = userIdentifier!
                 FlyDefaults.isProfileUpdated = data["isProfileUpdated"] as! Int == 1
+                
                 
                 ChatManager.connect()
                 
@@ -507,9 +509,9 @@ import Photos
         let status = args["status"] as? String ?? ""
         
         
-        print("Insert Status-->\(index) ---> \(status)")
+        print("Insert Status-->\(String(describing: index)) ---> \(status)")
 //        var insertStatus = ChatManager.updateStatus(statusId: index, statusText: status)
-        var insertStatus = ChatManager.saveProfileStatus(statusText: status, currentStatus: false)
+        var insertStatus: () = ChatManager.saveProfileStatus(statusText: status, currentStatus: false)
         print("Insert Status Result-->\(insertStatus)")
     
         
@@ -613,7 +615,7 @@ import Photos
         print("status===>" + status)
         print("image===>" + (image ?? "Image is Nil"))
         
-        var isImagePicked = false
+//        var isImagePicked = false
         
         var myProfile = FlyProfile(jid: userJid)
         
@@ -629,26 +631,53 @@ import Photos
         if(image != nil){
             print("Image is not null if condition")
             myProfile.image = image!//xyaz.jpeg
-            isImagePicked = false
+//            isImagePicked = false
         }else{
             print("Image is null else condition")
-            isImagePicked = false
+//            isImagePicked = false
         }
         
         print("Profile json ===>" + JSONSerializer.toJson(myProfile))
         
-        ContactManager.shared.updateMyProfile(for: myProfile, isFromLocal: isImagePicked){ isSuccess, flyError, flyData in
+        ContactManager.shared.updateMyProfile(for: myProfile){ isSuccess, flyError, flyData in
             if isSuccess {
                 var data = flyData
                 
                 data["status"] = true
                 print(Commons.json(from: data) as Any)
+                //need to compare the contact sync when contact sync is enabled. //ProfileViewController//line-> 292
+                
+                saveMyProfileDataToUserDefaults(profile: myProfile)
+                
                 result(Commons.json(from: data as Any))
             } else{
                 print("Update Profile Issue==> " + flyError!.localizedDescription)
             }
         }
         
+    }
+    
+    static func saveMyProfileDataToUserDefaults(profile : FlyProfile){
+        FlyDefaults.myName = profile.name
+        FlyDefaults.myImageUrl = profile.image
+        FlyDefaults.myMobileNumber = profile.mobileNumber
+        FlyDefaults.myStatus = profile.status
+        FlyDefaults.myEmail = profile.email
+        
+        self.saveMyJidAsContacts()
+    }
+    
+    static func saveMyJidAsContacts() {
+        print("saveMyJidAsContacts jid -->\(FlyDefaults.myJid)")
+        let profileData = ProfileDetails(jid: FlyDefaults.myJid)
+        profileData.name = FlyDefaults.myName
+        profileData.nickName = FlyDefaults.myNickName
+        profileData.mobileNumber  = FlyDefaults.myMobileNumber
+        profileData.email = FlyDefaults.myEmail
+        profileData.status = FlyDefaults.myStatus
+        profileData.image = FlyDefaults.myImageUrl
+        
+        FlyDatabaseController.shared.rosterManager.saveContact(profileDetailsArray: [profileData], chatType: .singleChat, contactType: .live, saveAsTemp: false, calledBy: "")
     }
     
     static func getMediaEndPoint(call: FlutterMethodCall, result: @escaping FlutterResult){
