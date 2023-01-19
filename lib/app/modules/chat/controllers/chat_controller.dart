@@ -1748,6 +1748,7 @@ class ChatController extends GetxController
       }else{
         if(typingList.isNotEmpty && typingList.contains(jid)){
           typingList.remove(jid);
+          userPresenceStatus("");
         }
         setChatStatus();
       }

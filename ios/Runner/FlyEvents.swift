@@ -637,6 +637,19 @@ class OnChatTypingStatusStreamHandler: NSObject, FlutterStreamHandler {
         return nil
     }
 }
+class OnsetTypingStatusStreamHandler: NSObject, FlutterStreamHandler {
+    public var onSetTyping: FlutterEventSink?
+    
+    public func onListen(withArguments arguments: Any?, eventSink events: @escaping FlutterEventSink) -> FlutterError? {
+        self.onSetTyping = events
+        return nil
+    }
+
+    public func onCancel(withArguments arguments: Any?) -> FlutterError? {
+        self.onSetTyping = nil
+        return nil
+    }
+}
 class OnGroupTypingStatusStreamHandler: NSObject, FlutterStreamHandler {
     public var onGroupTyping: FlutterEventSink?
     

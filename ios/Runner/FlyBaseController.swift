@@ -86,6 +86,7 @@ class FlyBaseController: NSObject{
      var memberRemovedAsAdminStreamHandler: MemberRemovedAsAdminStreamHandler?
     
      var onChatTypingStatusStreamHandler: OnChatTypingStatusStreamHandler?
+     var onsetTypingStatusStreamHandler: OnsetTypingStatusStreamHandler?
      var onGroupTypingStatusStreamHandler: OnGroupTypingStatusStreamHandler?
 
     
@@ -223,6 +224,12 @@ class FlyBaseController: NSObject{
           }
                 
         FlutterEventChannel(name: onChatTypingStatus_channel, binaryMessenger: controller.binaryMessenger).setStreamHandler((self.onChatTypingStatusStreamHandler!))
+        
+         if (self.onsetTypingStatusStreamHandler == nil) {
+            self.onsetTypingStatusStreamHandler = OnsetTypingStatusStreamHandler()
+          }
+                
+        FlutterEventChannel(name: setTypingStatus_channel, binaryMessenger: controller.binaryMessenger).setStreamHandler((self.onsetTypingStatusStreamHandler!))
         
         if (self.onGroupTypingStatusStreamHandler == nil) {
             self.onGroupTypingStatusStreamHandler = OnGroupTypingStatusStreamHandler()
@@ -411,6 +418,14 @@ class FlyBaseController: NSObject{
                 FlySdkMethodCalls.forwardMessagesToMultipleUsers(call: call, result: result)
             case "removeProfileImage":
                 FlySdkMethodCalls.removeProfileImage(call: call, result: result)
+            case "isArchivedSettingsEnabled":
+                FlySdkMethodCalls.isArchivedSettingsEnabled(call: call, result: result)
+            case "getGroupMembersList":
+                FlySdkMethodCalls.getGroupMembersList(call: call, result: result)
+            case "enableDisableArchivedSettings":
+                FlySdkMethodCalls.enableDisableArchivedSettings(call: call, result: result)
+            case "clearAllConversation":
+                FlySdkMethodCalls.clearAllConversation(call: call, result: result)
             default:
                 result(FlutterMethodNotImplemented)
             }
@@ -444,8 +459,11 @@ extension FlyBaseController : MessageEventsDelegate, ConnectionEventDelegate, Lo
         
         print("onChatTypingStatus")
         let jsonObject: NSMutableDictionary = NSMutableDictionary()
-        jsonObject.setValue(userJid, forKey: "fromUserJid")
-        jsonObject.setValue(status.rawValue, forKey: "status")
+        
+        
+        jsonObject.setValue(userJid, forKey: "singleOrgroupJid")
+        jsonObject.setValue(userJid, forKey: "userId")
+        jsonObject.setValue(status == TypingStatus.composing ? "composing" : "Gone", forKey: "composing")
         
         print("json data-->\(jsonObject)")
         
@@ -453,8 +471,8 @@ extension FlyBaseController : MessageEventsDelegate, ConnectionEventDelegate, Lo
         let jsonString = Commons.json(from: jsonObject)
         print("json-->\(String(describing: jsonString))")
         
-        if(onChatTypingStatusStreamHandler?.onChatTyping != nil){
-            onChatTypingStatusStreamHandler?.onChatTyping?(jsonString)
+        if(onsetTypingStatusStreamHandler?.onSetTyping != nil){
+            onsetTypingStatusStreamHandler?.onSetTyping?(jsonString)
 
         }else{
             print("Chat Typing Stream Handler is Nil")
@@ -467,15 +485,16 @@ extension FlyBaseController : MessageEventsDelegate, ConnectionEventDelegate, Lo
         print("onGroupTypingStatus")
         
         let jsonObject: NSMutableDictionary = NSMutableDictionary()
-        jsonObject.setValue(groupJid, forKey: "groupJid")
-        jsonObject.setValue(groupUserJid, forKey: "groupUserJid")
-        jsonObject.setValue(status.rawValue, forKey: "status")
-        
+//        jsonObject.setValue(groupJid, forKey: "groupJid")
+//        jsonObject.setValue(groupUserJid, forKey: "groupUserJid")
+//        jsonObject.setValue(status.rawValue, forKey: "status")
+        jsonObject.setValue(groupJid, forKey: "singleOrgroupJid")
+        jsonObject.setValue(groupUserJid, forKey: "userId")
+        jsonObject.setValue(status == TypingStatus.composing ? "composing" : "Gone", forKey: "composing")
         let jsonString = Commons.json(from: jsonObject)
         
-        if(onGroupTypingStatusStreamHandler?.onGroupTyping != nil){
-            onGroupTypingStatusStreamHandler?.onGroupTyping?(jsonString)
-
+        if(onsetTypingStatusStreamHandler?.onSetTyping != nil){
+            onsetTypingStatusStreamHandler?.onSetTyping?(jsonString)
         }else{
             print("Group Chat Typing Stream Handler is Nil")
         }

@@ -103,7 +103,7 @@ class Profile {
     mobileNUmberPrivacyFlag: json["mobileNUmberPrivacyFlag"],
     mobileNumber: json["mobileNumber"],
     name: json["name"],
-    nickName: json["nickName"],
+    nickName: json["nickName"].toString(),
     status: json["status"],
     profileChatType: json["profileChatType"],
   );

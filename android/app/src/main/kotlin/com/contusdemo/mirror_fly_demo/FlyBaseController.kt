@@ -3121,18 +3121,32 @@ open class FlyBaseController(activity: FlutterActivity) : MethodChannel.MethodCa
     }
     override fun onChatTypingStatus(fromUserJid: String, status: TypingStatus) {
         val map = JSONObject()
-        map.put("fromUserJid", fromUserJid)
-        map.put("status", status)
+//        map.put("fromUserJid", fromUserJid)
+//        map.put("status", status)
 //        onChatTypingStatusStreamHandler.onChatTypingStatus?.success(map.toString())
+        map.put("singleOrgroupJid", fromUserJid)
+        map.put("userId", fromUserJid)
+        map.put("composing", getTypingStatus(status))
         setTypingStatusStreamHandler.setTypingStatus?.success(map.toString())
+    }
+
+    private fun getTypingStatus(status: TypingStatus): String {
+        return if(status == TypingStatus.COMPOSING){
+            "composing"
+        }else{
+            "Gone"
+        }
     }
 
     override fun onGroupTypingStatus(groupJid: String, groupUserJid: String, status: TypingStatus) {
         val map = JSONObject()
-        map.put("groupJid", groupJid)
-        map.put("groupUserJid", groupUserJid)
-        map.put("status", status)
+//        map.put("groupJid", groupJid)
+//        map.put("groupUserJid", groupUserJid)
+//        map.put("status", status)
 //        onGroupTypingStatusStreamHandler.onGroupTypingStatus?.success(map.toString())
+        map.put("singleOrgroupJid", groupJid)
+        map.put("userId", groupUserJid)
+        map.put("composing", status)
         setTypingStatusStreamHandler.setTypingStatus?.success(map.toString())
     }
 

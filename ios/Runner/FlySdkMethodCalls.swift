@@ -172,6 +172,7 @@ import FlyDatabase
         let filePath = args["filePath"] as? String ?? ""
         let replyMessageId = args["replyMessageId"] as? String ?? ""
         
+        let caption = args["caption"] as? String ?? ""
         print("====File Path====")
         
         print(filePath)
@@ -211,7 +212,7 @@ import FlyDatabase
             media.fileSize = fileSize
             media.fileKey = fileKey
             media.base64Thumbnail = MediaUtils.convertImageToBase64(img: selectedImage!)
-            media.caption = emptyString()
+            media.caption = caption
             
         }
         
@@ -275,6 +276,10 @@ import FlyDatabase
         
     }
     
+    static func isArchivedSettingsEnabled(call: FlutterMethodCall, result: @escaping FlutterResult){
+        result(FlyDefaults.isArchivedChatEnabled)
+    }
+    
     static func getUserList(call: FlutterMethodCall, result: @escaping FlutterResult){
         let args = call.arguments as! Dictionary<String, Any>
         
@@ -284,6 +289,9 @@ import FlyDatabase
         ContactManager.shared.getUsersList(pageNo: pageNumber, pageSize: 20, search: searchTerm){ isSuccess,flyError,flyData in
             if isSuccess {
                 var userlist = flyData
+                print(userlist)
+                print("-----")
+                dump(userlist)
                 let userData = JSONSerializer.toJson(userlist.getData())
                 print("==========")
                 print(userData)
@@ -555,6 +563,75 @@ import FlyDatabase
         result(isMember.doesExist)
         
     }
+    static func getGroupMembersList(call: FlutterMethodCall, result: @escaping FlutterResult){
+        let args = call.arguments as! Dictionary<String, Any>
+        let groupJid = args["jid"] as? String ?? ""
+        var groupMembers = [GroupParticipantDetail]()
+        
+        groupMembers = GroupManager.shared.getGroupMemebersFromLocal(groupJid: groupJid).participantDetailArray.filter({$0.memberJid != FlyDefaults.myJid})
+        
+        let myJid = GroupManager.shared.getGroupMemebersFromLocal(groupJid: groupJid).participantDetailArray.filter({$0.memberJid == FlyDefaults.myJid})
+        groupMembers = groupMembers.sorted(by: { $0.profileDetail?.name.lowercased() ?? "" < $1.profileDetail?.name.lowercased() ?? "" })
+        groupMembers.insert(contentsOf: myJid, at: 0)
+        
+        print("get group member list==>\(groupMembers)")
+        
+        var groupMemberResponse = [String: Any]()
+
+        print("group member count-->\(groupMembers.count)")
+        groupMembers.forEach{groupMember in
+//            groupMember.profileDetail = JSONSerializer.toJson(groupMember.profileDetail)
+            var profileDetailJson = JSONSerializer.toJson(groupMember.profileDetail as Any)
+            profileDetailJson = profileDetailJson.replacingOccurrences(of: "{\"some\":", with: "")
+            profileDetailJson = profileDetailJson.replacingOccurrences(of: "}}", with: "}")
+            
+            var profileDetailDict: NSDictionary
+            do{
+                try profileDetailDict = JSONSerializer.toDictionary(profileDetailJson)
+                groupMemberResponse.addData(data: [
+                    "groupMemberId": groupMember.groupMemberId as String,
+                    "groupJid": groupMember.groupJid as String,
+                    "memberJid": groupMember.memberJid,
+                    "memberItemId": groupMember.memberItemId,
+                    "time": groupMember.time,
+                    "stanzaId": groupMember.stanzaId as Any,
+                    "isAdminMember": groupMember.isAdminMember,
+                    "profileDetail" : profileDetailDict
+                ] as [String : Any])
+            }catch{
+                print("Error while Parsing User Profile Details")
+            }
+            
+            
+        }
+        
+        print("get group member list json==>\(JSONSerializer.toJson(groupMemberResponse))")
+//        var groupMemberJson = JSONSerializer.toJson(groupMembers)
+//        print("get group member list json==>\(groupMemberJson)")
+        
+        result(groupMemberResponse)
+    }
+    static func enableDisableArchivedSettings(call: FlutterMethodCall, result: @escaping FlutterResult){
+        let args = call.arguments as! Dictionary<String, Any>
+        let enableArchive = args["enable"] as? Bool ?? false
+        ChatManager.enableDisableArchivedSettings(enableArchive) { isSuccess, error, data in
+            if isSuccess {
+                FlyDefaults.isArchivedChatEnabled = !FlyDefaults.isArchivedChatEnabled
+                result(isSuccess)
+            }
+        }
+        
+    }
+    static func clearAllConversation(call: FlutterMethodCall, result: @escaping FlutterResult){
+        
+        ChatManager.shared.clearAllConversation{ isSuccess, error, data in
+            
+            result(isSuccess)
+            
+        }
+        
+    }
+    
     static func getRingtoneName(call: FlutterMethodCall, result: @escaping FlutterResult){
         
         result("[]")
