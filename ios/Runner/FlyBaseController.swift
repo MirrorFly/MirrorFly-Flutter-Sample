@@ -67,12 +67,8 @@ let onFailure_channel = "contus.mirrorfly/onFailure"
 let onProgressChanged_channel = "contus.mirrorfly/onProgressChanged"
 let onSuccess_channel = "contus.mirrorfly/onSuccess"
 
-
-
-
 class FlyBaseController: NSObject{
     
-     let MESSAGE_ONRECEIVED_CHANNEL = "contus.mirrorfly/onMessageReceived"
      var messageReceivedStreamHandler: MessageReceivedStreamHandler?
      var messageStatusUpdatedStreamHandler: MessageStatusUpdatedStreamHandler?
      var mediaStatusUpdatedStreamHandler: MediaStatusUpdatedStreamHandler?
@@ -413,11 +409,31 @@ class FlyBaseController: NSObject{
                 FlySdkMethodCalls.isUserUnArchived(call: call, result: result)
             case "forwardMessagesToMultipleUsers":
                 FlySdkMethodCalls.forwardMessagesToMultipleUsers(call: call, result: result)
+            case "removeProfileImage":
+                FlySdkMethodCalls.removeProfileImage(call: call, result: result)
             default:
                 result(FlutterMethodNotImplemented)
             }
             
         })
+    }
+    
+    func applicationDidBecomeActive(){
+        if Utility.getBoolFromPreference(key: isLoggedIn) && (FlyDefaults.isLoggedIn) {
+            print("connecting chat manager")
+            ChatManager.connect()
+        }else{
+            print(Utility.getBoolFromPreference(key: isLoggedIn))
+            print(FlyDefaults.isLoggedIn)
+            print("Unable to connect chat manager")
+        }
+    }
+    
+    func applicationDidEnterBackground(){
+        if (FlyDefaults.isLoggedIn) {
+            print("Disconnecting Chat Manager")
+            ChatManager.disconnect()
+        }
     }
     
 }

@@ -280,7 +280,11 @@ class ChatController extends GetxController
   showAttachmentsView(BuildContext context) async {
     var busyStatus = !profile.isGroupProfile.checkNull() ? await FlyChat.isBusyStatusEnabled() : false;
     if(!busyStatus.checkNull()) {
-      showBottomSheetAttachment();
+      if (await AppUtils.isNetConnected()) {
+        showBottomSheetAttachment();
+      } else {
+        toToast(Constants.noInternetConnection);
+      }
     }else{
       //show busy status popup
       showBusyStatusAlert(showBottomSheetAttachment);
@@ -1535,22 +1539,26 @@ class ChatController extends GetxController
   Future<void> startRecording() async {
     var busyStatus = !profile.isGroupProfile.checkNull() ? await FlyChat.isBusyStatusEnabled() : false;
     if(!busyStatus.checkNull()) {
-      if (await askStoragePermission()) {
-        if (await Record().hasPermission()) {
-          record = Record();
-          timerInit("00.00");
-          isAudioRecording(Constants.audioRecording);
-          startTimer();
-          await record.start(
-            path:
-            "$audioSavePath/audio_${DateTime
-                .now()
-                .millisecondsSinceEpoch}.m4a",
-            encoder: AudioEncoder.AAC,
-            bitRate: 128000,
-            samplingRate: 44100,
-          );
+      if (await AppUtils.isNetConnected()) {
+        if (await askStoragePermission()) {
+          if (await Record().hasPermission()) {
+            record = Record();
+            timerInit("00.00");
+            isAudioRecording(Constants.audioRecording);
+            startTimer();
+            await record.start(
+              path:
+              "$audioSavePath/audio_${DateTime
+                  .now()
+                  .millisecondsSinceEpoch}.m4a",
+              encoder: AudioEncoder.AAC,
+              bitRate: 128000,
+              samplingRate: 44100,
+            );
+          }
         }
+      }else {
+        toToast(Constants.noInternetConnection);
       }
     }else{
       //show busy status popup

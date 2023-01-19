@@ -78,10 +78,10 @@ import FlyDatabase
         ChatManager.refreshToken { (isSuccess, flyError, resultDict) in
                   if (isSuccess) {
                       var resp = resultDict
-                      var tokendata = resp.getData()
-                      var refreshToken = tokendata as AnyObject
+                      let tokendata = resp.getData()
+                      let refreshToken = tokendata as AnyObject
                       
-                      var newToken = refreshToken["token"] as Any
+                      let newToken = refreshToken["token"] as Any
                       
                       print("ios refreshAndGetAuthToken-->\(newToken)")
                       
@@ -125,7 +125,7 @@ import FlyDatabase
         
         FlyMessenger.sendTextMessage(toJid: receiverJID!, message: txtMessage!, replyMessageId: replyMessageID) { isSuccess,error,chatMessage in
             if isSuccess {
-                var chatMsg = JSONSerializer.toJson(chatMessage as Any)
+                let chatMsg = JSONSerializer.toJson(chatMessage as Any)
                 
                 result(chatMsg)
             }else{
@@ -498,7 +498,7 @@ import FlyDatabase
     static func getProfileStatusList(call: FlutterMethodCall, result: @escaping FlutterResult){
         let profileStatus = ChatManager.getAllStatus()
         print("Status list -->\(profileStatus)")
-        var profileStatusJson = JSONSerializer.toJson(profileStatus)
+        let profileStatusJson = JSONSerializer.toJson(profileStatus)
         print(profileStatusJson)
         result(profileStatusJson)
         
@@ -511,7 +511,7 @@ import FlyDatabase
         
         print("Insert Status-->\(String(describing: index)) ---> \(status)")
 //        var insertStatus = ChatManager.updateStatus(statusId: index, statusText: status)
-        var insertStatus: () = ChatManager.saveProfileStatus(statusText: status, currentStatus: false)
+        let insertStatus: () = ChatManager.saveProfileStatus(statusText: status, currentStatus: false)
         print("Insert Status Result-->\(insertStatus)")
     
         
@@ -562,10 +562,10 @@ import FlyDatabase
     }
     
     static func verifyToken(call: FlutterMethodCall, result: @escaping FlutterResult){
-        let args = call.arguments as! Dictionary<String, Any>
+//        let args = call.arguments as! Dictionary<String, Any>
         
-        let userName = args["userName"] as? String
-        let token = args["googleToken"] as? String ?? ""
+//        let userName = args["userName"] as? String
+//        let token = args["googleToken"] as? String ?? ""
         
         result("")
         
@@ -583,7 +583,7 @@ import FlyDatabase
                 var data  = flyData
                 if isSuccess {
                     
-                    var profileJSON = "{\"data\" : " + JSONSerializer.toJson(data.getData() as Any) + ",\"status\": true}"
+                    let profileJSON = "{\"data\" : " + JSONSerializer.toJson(data.getData() as Any) + ",\"status\": true}"
                     print(profileJSON)
                     result(profileJSON)
                 } else{
@@ -657,6 +657,21 @@ import FlyDatabase
         
     }
     
+    static func removeProfileImage(call: FlutterMethodCall, result: @escaping FlutterResult){
+        ContactManager.shared.removeProfileImage(){ isSuccess, flyError, flyData in
+                if isSuccess {
+                    print("removeProfileImage raw data\(flyData)")
+                    var data = flyData
+                    data["status"] = true
+                    var responseJson = Commons.json(from: data) as Any
+                    print(responseJson)
+                    result(responseJson)
+                } else{
+                    print(flyError!.localizedDescription)
+                }
+        }
+    }
+    
     static func saveMyProfileDataToUserDefaults(profile : FlyProfile){
         FlyDefaults.myName = profile.name
         FlyDefaults.myImageUrl = profile.image
@@ -709,7 +724,7 @@ import FlyDatabase
                     var data = flyData
                     data["status"] = isSuccess
                     print("updateMyProfileImage-->\(data)")
-                    var jsonResponse = Commons.json(from: data)
+                    let jsonResponse = Commons.json(from: data)
                     result(jsonResponse)
                 } else{
                     print("updateMyProfileImage Error-->\(flyError!.localizedDescription)")
@@ -757,6 +772,7 @@ import FlyDatabase
             
             if isSuccess {
                 let blockedprofileDetailsArray = data.getData() as! [ProfileDetails]
+                print("blockedprofileDetailsArray-->\(blockedprofileDetailsArray)")
             } else{
                 print(flyError!.localizedDescription)
             }
@@ -865,16 +881,16 @@ import FlyDatabase
     }
     
     static func deleteUnreadMessageSeparatorOfAConversation(call: FlutterMethodCall, result: @escaping FlutterResult){
-        let args = call.arguments as! Dictionary<String, Any>
+//        let args = call.arguments as! Dictionary<String, Any>
         
-        let jid = args["jid"] as? String ?? nil
+//        let jid = args["jid"] as? String ?? nil
         
         
     }
     static func getRecalledMessagesOfAConversation(call: FlutterMethodCall, result: @escaping FlutterResult){
-        let args = call.arguments as! Dictionary<String, Any>
+//        let args = call.arguments as! Dictionary<String, Any>
         
-        let jid = args["jid"] as? String ?? nil
+//        let jid = args["jid"] as? String ?? nil
         
         
     }
@@ -896,19 +912,19 @@ import FlyDatabase
         
     }
     static func getMessagesUsingIds(call: FlutterMethodCall, result: @escaping FlutterResult){
-        let args = call.arguments as! Dictionary<String, Any>
+//        let args = call.arguments as! Dictionary<String, Any>
         
 //        var messages : [ChatMessage] = FlyMessenger.getMessagesUsingIds(MESSAGE_MIDS)
         
         
     }
     static func updateMediaDownloadStatus(call: FlutterMethodCall, result: @escaping FlutterResult){
-        let args = call.arguments as! Dictionary<String, Any>
+//        let args = call.arguments as! Dictionary<String, Any>
         
         
     }
     static func updateMediaUploadStatus(call: FlutterMethodCall, result: @escaping FlutterResult){
-        let args = call.arguments as! Dictionary<String, Any>
+//        let args = call.arguments as! Dictionary<String, Any>
         
         
     }
@@ -934,7 +950,7 @@ import FlyDatabase
         ChatManager.setMediaEncryption(isEnable: isEncryptionEnable)
     }
     static func deleteAllMessages(call: FlutterMethodCall, result: @escaping FlutterResult){
-        let args = call.arguments as! Dictionary<String, Any>
+        _ = call.arguments as! Dictionary<String, Any>
         
     }
     static func getGroupJid(call: FlutterMethodCall, result: @escaping FlutterResult){
@@ -943,7 +959,7 @@ import FlyDatabase
     
         do
         {
-            var groupIDResponse = try FlyUtils.getGroupJid(groupId: groupId)
+            let groupIDResponse = try FlyUtils.getGroupJid(groupId: groupId)
             result(groupIDResponse)
             
         }catch let sdkError{
@@ -1210,7 +1226,7 @@ import FlyDatabase
           
                 if isSuccess {
                     let blockedprofileDetailsArray = data.getData() as! [ProfileDetails]
-                    var blockedProfileJson = JSONSerializer.toJson(blockedprofileDetailsArray as Any)
+                    let blockedProfileJson = JSONSerializer.toJson(blockedprofileDetailsArray as Any)
                     print("Blocked Profile --> \(blockedProfileJson)")
                     result(blockedProfileJson)
                 } else{
@@ -1225,11 +1241,11 @@ import FlyDatabase
         
         let userJid = args["jid"] as? String ?? ""
     
-        var mediaMessages : [ChatMessage] = FlyMessenger.getMediaMessagesOf(jid: userJid)
+        let mediaMessages : [ChatMessage] = FlyMessenger.getMediaMessagesOf(jid: userJid)
         
         print("mediaMessages---> \(mediaMessages)")
         
-        var mediaMsgJson = JSONSerializer.toJson(mediaMessages)
+        let mediaMsgJson = JSONSerializer.toJson(mediaMessages)
         
         print(mediaMsgJson)
         
@@ -1241,14 +1257,27 @@ import FlyDatabase
         let args = call.arguments as! Dictionary<String, Any>
         
         let status = args["status"] as? String ?? ""
+       
     
+//        var getAllStatus: [ProfileStatus] = []
+//            getAllStatus = getStatus()
+//            for status in getAllStatus {
+//            var chatUpdateStatus = ChatManager.updateStatus(statusId: status.id, statusText: status.status, currentStatus: false)
+//            print("Update Status---> \(chatUpdateStatus)")
+//        }
       
         ChatManager.saveProfileStatus(statusText: status, currentStatus: true)
         
-        var statusUpdateJSON = "{\"message\": \"Status Update Success\",\"status\": true}"
+        let statusUpdateJSON = "{\"message\": \"Status Update Success\",\"status\": true}"
         
        result(statusUpdateJSON)
                
+    }
+    
+    static func getStatus() -> [ProfileStatus] {
+        let profileStatus = ChatManager.getAllStatus()
+        print("Get Status Started profileList Count \(profileStatus.count)")
+        return profileStatus
     }
     
     static func updateArchiveUnArchiveChat(call: FlutterMethodCall, result: @escaping FlutterResult){
@@ -1303,7 +1332,7 @@ import FlyDatabase
         
         let userJid = args["jid"] as? String ?? ""
         print(userJid)
-        var userProfile = ChatManager.profileDetaisFor(jid: userJid)
+        let userProfile = ChatManager.profileDetaisFor(jid: userJid)
         print("User Profile --->")
         var userProfileJson = JSONSerializer.toJson(userProfile as Any)
         userProfileJson = userProfileJson.replacingOccurrences(of: "{\"some\":", with: "")

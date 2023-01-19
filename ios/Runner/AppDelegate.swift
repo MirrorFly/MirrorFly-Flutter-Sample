@@ -21,8 +21,6 @@ let IS_LIVE = false
 let WEB_LOGIN_URL = "https://webchat-preprod-sandbox.mirrorfly.com/"
 let IS_MOBILE_NUMBER_LOGIN = true
 
-
-
 let googleApiKey = "AIzaSyDnjPEs86MRsnFfW1sVPKvMWjqQRnSa7Ts"
 
 
@@ -40,25 +38,13 @@ let googleApiKey = "AIzaSyDnjPEs86MRsnFfW1sVPKvMWjqQRnSa7Ts"
       
       let controller : FlutterViewController = window?.rootViewController as! FlutterViewController
       
-      
       FlyBaseController().initSDK(controller: controller, licenseKey: LICENSE_KEY, isTrial: !IS_LIVE, baseUrl: BASE_URL, containerID: CONTAINER_ID)
-      
-//      ChatManager.shared.logoutDelegate = self
-//      FlyMessenger.shared.messageEventsDelegate = self
-//      ChatManager.shared.messageEventsDelegate = self
-//      GroupManager.shared.groupDelegate = self
-//      ChatManager.shared.connectionDelegate = self
-//      ChatManager.shared.adminBlockCurrentUserDelegate = self
-//      ChatManager.shared.typingStatusDelegate = self
-//      ChatManager.shared.adminBlockDelegate = self
-//      ContactManager.shared.profileDelegate = self
       
       GMSServices.provideAPIKey(googleApiKey)
       
       // MARK:- Push Notification
       clearPushNotifications()
       registerForPushNotifications()
-      
       
       FirebaseApp.configure()
       if #available(iOS 10.0, *) {
@@ -79,7 +65,6 @@ let googleApiKey = "AIzaSyDnjPEs86MRsnFfW1sVPKvMWjqQRnSa7Ts"
       
       application.registerForRemoteNotifications()
       
-    
       GeneratedPluginRegistrant.register(with: self)
       
       return super.application(application, didFinishLaunchingWithOptions: launchOptions)
@@ -88,14 +73,7 @@ let googleApiKey = "AIzaSyDnjPEs86MRsnFfW1sVPKvMWjqQRnSa7Ts"
     
     override func applicationDidBecomeActive(_ application: UIApplication) {
         print("#appDelegate applicationDidBecomeActive")
-        if Utility.getBoolFromPreference(key: isLoggedIn) && (FlyDefaults.isLoggedIn) {
-            print("connecting chat manager")
-            ChatManager.connect()
-        }else{
-            print(Utility.getBoolFromPreference(key: isLoggedIn))
-            print(FlyDefaults.isLoggedIn)
-            print("Unable to connect chat manager")
-        }
+        FlyBaseController().applicationDidBecomeActive()
         NotificationCenter.default.removeObserver(self, name: NSNotification.Name(didEnterBackground), object: nil)
     }
     
@@ -104,10 +82,7 @@ let googleApiKey = "AIzaSyDnjPEs86MRsnFfW1sVPKvMWjqQRnSa7Ts"
         postNotificationdidEnterBackground = NotificationCenter.default
         postNotificationdidEnterBackground?.post(name: Notification.Name(didEnterBackground), object: nil)
 
-        if (FlyDefaults.isLoggedIn) {
-            print("Disconnecting Chat Manager")
-            ChatManager.disconnect()
-        }
+        FlyBaseController().applicationDidEnterBackground()
     }
     
 }
@@ -132,7 +107,7 @@ extension AppDelegate {
     /// This method is used to clear notifications and badge count
     func clearPushNotifications() {
         
-            print("###Clearing push notification")
+        print("###Clearing push notification")
         UNUserNotificationCenter.current().removeAllDeliveredNotifications()
         UNUserNotificationCenter.current().removeAllPendingNotificationRequests()
     }
@@ -186,7 +161,6 @@ extension AppDelegate {
             Utility.saveInPreference(key: notificationUserJid, value: profileDetails.jid ?? "")
             
         }
-        
        
 //        if response.notification.request.content.threadIdentifier.contains(XMPP_DOMAIN){
 //            if FlyDefaults.isBlockedByAdmin {

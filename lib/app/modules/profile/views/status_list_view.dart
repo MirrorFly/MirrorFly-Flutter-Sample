@@ -85,6 +85,7 @@ class StatusListView extends GetView<StatusListController> {
                         onTap: (){
                           controller.updateStatus(item.status.checkNull());
                           /*Helper.showLoading();
+
                           PlatformRepo().updateProfileStatus(controller.add status controller.text.trim().toString()).then((value){
                             controller.selectedStatus.value=item.status.checkNull();
                             var data = json.decode(value.toString());

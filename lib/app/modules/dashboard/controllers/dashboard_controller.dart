@@ -194,7 +194,6 @@ class DashboardController extends GetxController with GetTickerProviderStateMixi
 
   updateRecentChat(String jid){
     final index = recentChats.indexWhere((chat) => chat.jid == jid);
-    debugPrint("my update index $index");
     getRecentChatOfJid(jid).then((recent){
       if(recent!=null){
         if(!recent.isChatArchived.checkNull()) {
@@ -204,13 +203,13 @@ class DashboardController extends GetxController with GetTickerProviderStateMixi
             var lastPinnedChat = recentChats.lastIndexWhere((element) =>
             element.isChatPinned!);
             var nxtIndex = lastPinnedChat.isNegative ? 0 : (lastPinnedChat + 1);
-            mirrorFlyLog("lastPinnedChat", lastPinnedChat.toString());
             if (recentChats[index].isChatPinned!) {
               recentChats.removeAt(index);
               recentChats.insert(index, recent);
             } else {
               recentChats.removeAt(index);
               recentChats.insert(nxtIndex, recent);
+              recentChats.refresh();
             }
           }
         }else{
@@ -703,7 +702,7 @@ class DashboardController extends GetxController with GetTickerProviderStateMixi
     mirrorFlyLog("dashboard controller", "onMessageReceived");
     super.onMessageReceived(chatMessage);
     ChatMessageModel chatMessageModel = sendMessageModelFromJson(chatMessage);
-    updateRecentChat(chatMessageModel.senderUserJid);
+    updateRecentChat(chatMessageModel.chatUserJid);
   }
 
 
