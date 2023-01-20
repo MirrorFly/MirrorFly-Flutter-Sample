@@ -1,6 +1,6 @@
 name: mirror_fly_demo
-version: 2.1.6+9
-build_release_date: Dec 15
+version: 2.1.7+10
+build_release_date: Jan 20
 publish_to: none
 description: A new Flutter project.
 environment: 
