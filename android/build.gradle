@@ -18,10 +18,9 @@ allprojects {
         google()
         mavenCentral()
         jcenter()
-        maven {
-            url "http://repo.mirrorfly.com/snapshot/"
-            allowInsecureProtocol = true
-        }
+//        maven {
+//            url "https://repo.mirrorfly.com/snapshot/"
+//        }
     }
 }
 

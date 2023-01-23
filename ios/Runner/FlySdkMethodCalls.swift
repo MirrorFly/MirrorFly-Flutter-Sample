@@ -909,11 +909,44 @@ import FlyDatabase
         result(ChatManager.isLastSeenEnabled())
     }
     static func deleteMessagesForMe(call: FlutterMethodCall, result: @escaping FlutterResult){
+        let args = call.arguments as! Dictionary<String, Any>
+        let jid = args["jid"] as? String ?? ""
+        let chatType = args["chat_type"] as? String ?? ""
+        let isMediaDelete = args["isMediaDelete"] as? Bool ?? false
+        let messageIDList = args["message_ids"] as? [String] ?? []
         
+        var deleteChatType : ChatType
+        if(chatType == "chat"){
+            deleteChatType = .singleChat
+        }else{
+            deleteChatType = .groupChat
+        }
+        
+        ChatManager.deleteMessagesForMe(toJid: jid, messageIdList: messageIDList, deleteChatType: deleteChatType,isRevokeMediaAccess: isMediaDelete) { (isSuccess, error, data) in
+            
+            result(isSuccess)
+        }
         
     }
     static func deleteMessagesForEveryone(call: FlutterMethodCall, result: @escaping FlutterResult){
+        let args = call.arguments as! Dictionary<String, Any>
+        let jid = args["jid"] as? String ?? ""
+        let chatType = args["chat_type"] as? String ?? ""
+        let isMediaDelete = args["isMediaDelete"] as? Bool ?? false
+        let messageIDList = args["message_ids"] as? [String] ?? []
         
+        var deleteChatType : ChatType
+        if(chatType == "chat"){
+            deleteChatType = .singleChat
+        }else{
+            deleteChatType = .groupChat
+        }
+        
+        ChatManager.deleteMessagesForEveryone(toJid: jid, messageIdList: messageIDList, deleteChatType: deleteChatType,isRevokeMediaAccess: isMediaDelete) { (isSuccess, error, data) in
+            
+            result(isSuccess)
+            
+        }
         
     }
     static func markAsRead(call: FlutterMethodCall, result: @escaping FlutterResult){
