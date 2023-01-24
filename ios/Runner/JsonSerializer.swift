@@ -172,6 +172,12 @@ open class JSONSerializer {
                 print("Media value \(value)")
             }
             
+            
+            if(propertyName == "nickName" && value as! String == "67890"){
+                print("property nickName-->\(propertyName)")
+                print("property nickName-->\(value)")
+            }
+            
         if let mirrorChildrenCollection = AnyRandomAccessCollection(property.children), mirrorChildrenCollection.count > 0 {
            // if let superclassChildren = property.superclassMirror?.children, superclassChildren.count > 0 {
                // hasChildren = true
@@ -318,6 +324,7 @@ open class JSONSerializer {
                         String(describing: value).contains("#")   {
                 handledValue = toJson(value)
             }
+            
             else if (propertyName == "mediaChatMessage" || propertyName == "locationChatMessage") &&  String(describing: value) != "nil" {
                // let refined = String(describing: value).replacingOccurrences(of: "some", with: "")
                 let force =  value

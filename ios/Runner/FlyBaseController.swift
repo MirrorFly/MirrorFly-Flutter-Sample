@@ -84,6 +84,34 @@ class FlyBaseController: NSObject{
      var fetchingGroupListCompletedStreamHandler: FetchingGroupListCompletedStreamHandler?
      var memberMadeAsAdminStreamHandler: MemberMadeAsAdminStreamHandler?
      var memberRemovedAsAdminStreamHandler: MemberRemovedAsAdminStreamHandler?
+     var userWentOfflineStreamHandler: UserWentOfflineStreamHandler?
+    
+     var leftFromGroupStreamHandler: LeftFromGroupStreamHandler?
+     var onGroupNotificationMessageStreamHandler: GroupNotificationMessageStreamHandler?
+     var onGroupDeletedLocallyStreamHandler: GroupDeletedLocallyStreamHandler?
+     var blockedThisUserStreamHandler: BlockedThisUserStreamHandler?
+     var myProfileUpdatedStreamHandler: MyProfileUpdatedStreamHandler?
+     var onAdminBlockedUserStreamHandler: OnAdminBlockedUserStreamHandler?
+     var onContactSyncCompleteStreamHandler: OnContactSyncCompleteStreamHandler?
+     var onLoggedOutStreamHandler: OnLoggedOutStreamHandler?
+     var unblockedThisUserStreamHandler: UnblockedThisUserStreamHandler?
+     var userBlockedMeStreamHandler: UserBlockedMeStreamHandler?
+     var userCameOnlineStreamHandler: UserCameOnlineStreamHandler?
+     var userDeletedHisProfileStreamHandler: UserDeletedHisProfileStreamHandler?
+     var userProfileFetchedStreamHandler: UserProfileFetchedStreamHandler?
+     var userUnBlockedMeStreamHandler: UserUnBlockedMeStreamHandler?
+     var userUpdatedHisProfileStreamHandler: UserUpdatedHisProfileStreamHandler?
+     var usersIBlockedListFetchedStreamHandler: UsersIBlockedListFetchedStreamHandler?
+     var usersWhoBlockedMeListFetchedStreamHandler: UsersWhoBlockedMeListFetchedStreamHandler?
+     var onConnectedStreamHandler: OnConnectedStreamHandler?
+     var onDisconnectedStreamHandler: OnDisconnectedStreamHandler?
+     var onConnectionNotAuthorizedStreamHandler: OnConnectionNotAuthorizedStreamHandler?
+     var connectionFailedStreamHandler: ConnectionFailedStreamHandler?
+     var connectionSuccessStreamHandler: ConnectionSuccessStreamHandler?
+     var onWebChatPasswordChangedStreamHandler: OnWebChatPasswordChangedStreamHandler?
+     var onFailureStreamHandler: OnFailureStreamHandler?
+     var onProgressChangedStreamHandler: OnProgressChangedStreamHandler?
+     var onSuccessStreamHandler: OnSuccessStreamHandler?
     
      var onChatTypingStatusStreamHandler: OnChatTypingStatusStreamHandler?
      var onsetTypingStatusStreamHandler: OnsetTypingStatusStreamHandler?
@@ -218,6 +246,180 @@ class FlyBaseController: NSObject{
           }
         
         FlutterEventChannel(name: onMemberRemovedAsAdmin_channel, binaryMessenger: controller.binaryMessenger).setStreamHandler(self.memberRemovedAsAdminStreamHandler as? FlutterStreamHandler & NSObjectProtocol)
+         
+        if (self.leftFromGroupStreamHandler == nil) {
+            self.leftFromGroupStreamHandler = LeftFromGroupStreamHandler()
+          }
+        
+        FlutterEventChannel(name: onLeftFromGroup_channel, binaryMessenger: controller.binaryMessenger).setStreamHandler(self.leftFromGroupStreamHandler as? FlutterStreamHandler & NSObjectProtocol)
+        
+        if (self.userWentOfflineStreamHandler == nil) {
+            self.userWentOfflineStreamHandler = UserWentOfflineStreamHandler()
+          }
+        
+        FlutterEventChannel(name: userWentOffline_channel, binaryMessenger: controller.binaryMessenger).setStreamHandler(self.userWentOfflineStreamHandler as? FlutterStreamHandler & NSObjectProtocol)
+        
+         
+        if (self.onGroupNotificationMessageStreamHandler == nil) {
+            self.onGroupNotificationMessageStreamHandler = GroupNotificationMessageStreamHandler()
+          }
+        
+        FlutterEventChannel(name: onGroupNotificationMessage_channel, binaryMessenger: controller.binaryMessenger).setStreamHandler(self.onGroupNotificationMessageStreamHandler as? FlutterStreamHandler & NSObjectProtocol)
+         
+        if (self.onGroupDeletedLocallyStreamHandler == nil) {
+            self.onGroupDeletedLocallyStreamHandler = GroupDeletedLocallyStreamHandler()
+          }
+        
+        FlutterEventChannel(name: onGroupDeletedLocally_channel, binaryMessenger: controller.binaryMessenger).setStreamHandler(self.onGroupDeletedLocallyStreamHandler as? FlutterStreamHandler & NSObjectProtocol)
+         
+        if (self.blockedThisUserStreamHandler == nil) {
+            self.blockedThisUserStreamHandler = BlockedThisUserStreamHandler()
+          }
+        
+        FlutterEventChannel(name: blockedThisUser_channel, binaryMessenger: controller.binaryMessenger).setStreamHandler(self.blockedThisUserStreamHandler as? FlutterStreamHandler & NSObjectProtocol)
+        
+         
+        if (self.myProfileUpdatedStreamHandler == nil) {
+            self.myProfileUpdatedStreamHandler = MyProfileUpdatedStreamHandler()
+          }
+        
+        FlutterEventChannel(name: myProfileUpdated_channel, binaryMessenger: controller.binaryMessenger).setStreamHandler(self.myProfileUpdatedStreamHandler as? FlutterStreamHandler & NSObjectProtocol)
+         
+        if (self.onAdminBlockedUserStreamHandler == nil) {
+            self.onAdminBlockedUserStreamHandler = OnAdminBlockedUserStreamHandler()
+          }
+        
+        FlutterEventChannel(name: onAdminBlockedUser_channel, binaryMessenger: controller.binaryMessenger).setStreamHandler(self.onAdminBlockedUserStreamHandler as? FlutterStreamHandler & NSObjectProtocol)
+         
+         
+        if (self.onContactSyncCompleteStreamHandler == nil) {
+            self.onContactSyncCompleteStreamHandler = OnContactSyncCompleteStreamHandler()
+          }
+        
+        FlutterEventChannel(name: onContactSyncComplete_channel, binaryMessenger: controller.binaryMessenger).setStreamHandler(self.onContactSyncCompleteStreamHandler as? FlutterStreamHandler & NSObjectProtocol)
+         
+        if (self.onLoggedOutStreamHandler == nil) {
+            self.onLoggedOutStreamHandler = OnLoggedOutStreamHandler()
+          }
+        
+        FlutterEventChannel(name: onLoggedOut_channel, binaryMessenger: controller.binaryMessenger).setStreamHandler(self.onLoggedOutStreamHandler as? FlutterStreamHandler & NSObjectProtocol)
+         
+         
+        if (self.unblockedThisUserStreamHandler == nil) {
+            self.unblockedThisUserStreamHandler = UnblockedThisUserStreamHandler()
+          }
+        
+        FlutterEventChannel(name: unblockedThisUser_channel, binaryMessenger: controller.binaryMessenger).setStreamHandler(self.unblockedThisUserStreamHandler as? FlutterStreamHandler & NSObjectProtocol)
+         
+        if (self.userBlockedMeStreamHandler == nil) {
+            self.userBlockedMeStreamHandler = UserBlockedMeStreamHandler()
+          }
+        
+        FlutterEventChannel(name: userBlockedMe_channel, binaryMessenger: controller.binaryMessenger).setStreamHandler(self.userBlockedMeStreamHandler as? FlutterStreamHandler & NSObjectProtocol)
+         
+         
+        if (self.userCameOnlineStreamHandler == nil) {
+            self.userCameOnlineStreamHandler = UserCameOnlineStreamHandler()
+          }
+        
+        FlutterEventChannel(name: userCameOnline_channel, binaryMessenger: controller.binaryMessenger).setStreamHandler(self.userCameOnlineStreamHandler as? FlutterStreamHandler & NSObjectProtocol)
+         
+         
+        if (self.userDeletedHisProfileStreamHandler == nil) {
+            self.userDeletedHisProfileStreamHandler = UserDeletedHisProfileStreamHandler()
+          }
+        
+        FlutterEventChannel(name: userDeletedHisProfile_channel, binaryMessenger: controller.binaryMessenger).setStreamHandler(self.userDeletedHisProfileStreamHandler as? FlutterStreamHandler & NSObjectProtocol)
+         
+        if (self.userProfileFetchedStreamHandler == nil) {
+            self.userProfileFetchedStreamHandler = UserProfileFetchedStreamHandler()
+          }
+        
+        FlutterEventChannel(name: userProfileFetched_channel, binaryMessenger: controller.binaryMessenger).setStreamHandler(self.userProfileFetchedStreamHandler as? FlutterStreamHandler & NSObjectProtocol)
+         
+          
+        if (self.userUnBlockedMeStreamHandler == nil) {
+            self.userUnBlockedMeStreamHandler = UserUnBlockedMeStreamHandler()
+          }
+        
+        FlutterEventChannel(name: userUnBlockedMe_channel, binaryMessenger: controller.binaryMessenger).setStreamHandler(self.userUnBlockedMeStreamHandler as? FlutterStreamHandler & NSObjectProtocol)
+         
+        if (self.userUpdatedHisProfileStreamHandler == nil) {
+            self.userUpdatedHisProfileStreamHandler = UserUpdatedHisProfileStreamHandler()
+          }
+        
+        FlutterEventChannel(name: userUpdatedHisProfile_channel, binaryMessenger: controller.binaryMessenger).setStreamHandler(self.userUpdatedHisProfileStreamHandler as? FlutterStreamHandler & NSObjectProtocol)
+         
+        if (self.usersIBlockedListFetchedStreamHandler == nil) {
+            self.usersIBlockedListFetchedStreamHandler = UsersIBlockedListFetchedStreamHandler()
+          }
+        
+        FlutterEventChannel(name: usersIBlockedListFetched_channel, binaryMessenger: controller.binaryMessenger).setStreamHandler(self.usersIBlockedListFetchedStreamHandler as? FlutterStreamHandler & NSObjectProtocol)
+         
+        if (self.usersWhoBlockedMeListFetchedStreamHandler == nil) {
+            self.usersWhoBlockedMeListFetchedStreamHandler = UsersWhoBlockedMeListFetchedStreamHandler()
+          }
+        
+        FlutterEventChannel(name: usersWhoBlockedMeListFetched_channel, binaryMessenger: controller.binaryMessenger).setStreamHandler(self.usersWhoBlockedMeListFetchedStreamHandler as? FlutterStreamHandler & NSObjectProtocol)
+         
+         
+        if (self.onConnectedStreamHandler == nil) {
+            self.onConnectedStreamHandler = OnConnectedStreamHandler()
+          }
+        
+        FlutterEventChannel(name: onConnected_channel, binaryMessenger: controller.binaryMessenger).setStreamHandler(self.onConnectedStreamHandler as? FlutterStreamHandler & NSObjectProtocol)
+         
+        if (self.onDisconnectedStreamHandler == nil) {
+            self.onDisconnectedStreamHandler = OnDisconnectedStreamHandler()
+          }
+        
+        FlutterEventChannel(name: onDisconnected_channel, binaryMessenger: controller.binaryMessenger).setStreamHandler(self.onDisconnectedStreamHandler as? FlutterStreamHandler & NSObjectProtocol)
+         
+        if (self.onConnectionNotAuthorizedStreamHandler == nil) {
+            self.onConnectionNotAuthorizedStreamHandler = OnConnectionNotAuthorizedStreamHandler()
+          }
+        
+        FlutterEventChannel(name: onConnectionNotAuthorized_channel, binaryMessenger: controller.binaryMessenger).setStreamHandler(self.onConnectionNotAuthorizedStreamHandler as? FlutterStreamHandler & NSObjectProtocol)
+         
+         
+        if (self.connectionFailedStreamHandler == nil) {
+            self.connectionFailedStreamHandler = ConnectionFailedStreamHandler()
+          }
+        
+        FlutterEventChannel(name: connectionFailed_channel, binaryMessenger: controller.binaryMessenger).setStreamHandler(self.connectionFailedStreamHandler as? FlutterStreamHandler & NSObjectProtocol)
+         
+         
+        if (self.connectionSuccessStreamHandler == nil) {
+            self.connectionSuccessStreamHandler = ConnectionSuccessStreamHandler()
+          }
+        
+        FlutterEventChannel(name: connectionSuccess_channel, binaryMessenger: controller.binaryMessenger).setStreamHandler(self.connectionSuccessStreamHandler as? FlutterStreamHandler & NSObjectProtocol)
+         
+         
+        if (self.onWebChatPasswordChangedStreamHandler == nil) {
+            self.onWebChatPasswordChangedStreamHandler = OnWebChatPasswordChangedStreamHandler()
+          }
+        
+        FlutterEventChannel(name: onWebChatPasswordChanged_channel, binaryMessenger: controller.binaryMessenger).setStreamHandler(self.onWebChatPasswordChangedStreamHandler as? FlutterStreamHandler & NSObjectProtocol)
+         
+        if (self.onFailureStreamHandler == nil) {
+            self.onFailureStreamHandler = OnFailureStreamHandler()
+          }
+        
+        FlutterEventChannel(name: onFailure_channel, binaryMessenger: controller.binaryMessenger).setStreamHandler(self.onFailureStreamHandler as? FlutterStreamHandler & NSObjectProtocol)
+         
+        if (self.onProgressChangedStreamHandler == nil) {
+            self.onProgressChangedStreamHandler = OnProgressChangedStreamHandler()
+          }
+        
+        FlutterEventChannel(name: onProgressChanged_channel, binaryMessenger: controller.binaryMessenger).setStreamHandler(self.onProgressChangedStreamHandler as? FlutterStreamHandler & NSObjectProtocol)
+         
+        if (self.onSuccessStreamHandler == nil) {
+            self.onSuccessStreamHandler = OnSuccessStreamHandler()
+          }
+        
+        FlutterEventChannel(name: onSuccess_channel, binaryMessenger: controller.binaryMessenger).setStreamHandler(self.onSuccessStreamHandler as? FlutterStreamHandler & NSObjectProtocol)
+         
         
         if (self.onChatTypingStatusStreamHandler == nil) {
             self.onChatTypingStatusStreamHandler = OnChatTypingStatusStreamHandler()

@@ -294,7 +294,8 @@ import FlyDatabase
                 dump(userlist)
                 let userData = JSONSerializer.toJson(userlist.getData())
                 print("==========")
-                print(userData)
+                print("Json data--->\(userData)")
+                print("==========")
                 
                 let totalPages = userlist["totalPages"] as! Int
                 let message = userlist["message"] as! String
@@ -304,7 +305,7 @@ import FlyDatabase
                 userlistJson = userlistJson.replacingOccurrences(of: "\"nickName\": {}", with: "\"nickName\": \"\"")
                 
                 
-                print(userlistJson)
+                print("userlist json after replacing---> \(userlistJson)")
                 result(userlistJson)
             }else{
                 //                result(FlutterError(code: "500", message: flyError?.description, details: nil))
