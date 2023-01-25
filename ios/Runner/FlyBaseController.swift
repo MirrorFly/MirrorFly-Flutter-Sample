@@ -628,6 +628,8 @@ class FlyBaseController: NSObject{
                 FlySdkMethodCalls.enableDisableArchivedSettings(call: call, result: result)
             case "clearAllConversation":
                 FlySdkMethodCalls.clearAllConversation(call: call, result: result)
+            case "cancelNotifications":
+                FlySdkMethodCalls.cancelNotifications(call: call, result: result)
             default:
                 result(FlutterMethodNotImplemented)
             }

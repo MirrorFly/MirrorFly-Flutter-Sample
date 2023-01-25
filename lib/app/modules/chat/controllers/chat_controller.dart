@@ -1670,12 +1670,13 @@ class ChatController extends GetxController
     mirrorFlyLog("MESSAGE STATUS UPDATED", event);
     ChatMessageModel chatMessageModel = sendMessageModelFromJson(event);
     if (chatMessageModel.chatUserJid == profile.jid) {
-      final index = chatList.value.indexWhere(
+      final index = chatList.indexWhere(
           (message) => message.messageId == chatMessageModel.messageId);
       debugPrint("Message Status Update index of search $index");
       if (index != -1) {
         // Helper.hideLoading();
-        chatList[index] = chatMessageModel;
+        chatList[index].messageStatus = chatMessageModel.messageStatus;
+        chatList.refresh();
       } else {
         chatList.add(chatMessageModel);
         scrollToBottom();

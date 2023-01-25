@@ -280,6 +280,10 @@ import FlyDatabase
         result(FlyDefaults.isArchivedChatEnabled)
     }
     
+    static func cancelNotifications(call: FlutterMethodCall, result: @escaping FlutterResult){
+        result("")
+    }
+    
     static func getUserList(call: FlutterMethodCall, result: @escaping FlutterResult){
         let args = call.arguments as! Dictionary<String, Any>
         

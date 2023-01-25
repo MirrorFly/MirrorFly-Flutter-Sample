@@ -141,7 +141,7 @@ class _GalleryMediaPickerState extends State<GalleryMediaPicker> {
       provider.pickedFile.clear();
       provider.picked.clear();
       provider.pathList.clear();
-      provider.onPickMax.removeListener(GalleryFunctions.onPickMax(provider));
+      provider.onPickMax.removeListener(() { GalleryFunctions.onPickMax(provider);});
       PhotoManager.stopChangeNotify();
       super.dispose();
     }
