@@ -88,6 +88,15 @@ class SessionManagement {
   static void setAdminBlocked(bool status) async {
     await _preferences.setBool("admin_blocked", status);
   }
+  static void setGoogleTranslationEnable(bool status) async {
+    await _preferences.setBool("TranslateLanguageChecked", status);
+  }
+  static void setGoogleTranslationLanguage(String language) async {
+    await _preferences.setString("LanguageName", language);
+  }
+  static void setGoogleTranslationLanguageCode(String languagecode) async {
+    await _preferences.setString("LanguageCode", languagecode);
+  }
   static Future clear()async{
     await _preferences.clear();
   }
@@ -134,4 +143,7 @@ class SessionManagement {
   static bool getEnableBio() => _preferences.getBool("enable_bio") ?? false;
   static bool? synced() => _preferences.getBool("synced");
   static bool adminBlocked() => _preferences.getBool("admin_blocked") ?? false;
+  static bool isGoogleTranslationEnable() => _preferences.getBool("TranslateLanguageChecked") ?? false;
+  static String getTranslationLanguage() => _preferences.getString("LanguageName") ?? "English";
+  static String getTranslationLanguageCode() => _preferences.getString("LanguageCode") ?? "en";
 }

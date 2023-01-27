@@ -2,19 +2,29 @@ import 'package:flutter/material.dart';
 import 'package:flysdk/flysdk.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
+import 'package:mirror_fly_demo/app/data/session_management.dart';
 
 import '../../../../data/apputils.dart';
 import '../../../../data/helper.dart';
+import '../../../../routes/app_pages.dart';
 
 class ChatSettingsController extends GetxController {
 
   final _archiveEnabled = false.obs;
   bool get archiveEnabled => _archiveEnabled.value;
 
+  final _translationEnabled = false.obs;
+  bool get translationEnabled => _translationEnabled.value;
+
+  final _translationLanguage = "English".obs;
+  String get translationLanguage => _translationLanguage.value;
+
   @override
   void onInit(){
     super.onInit();
     getArchivedSettingsEnabled();
+    _translationEnabled(SessionManagement.isGoogleTranslationEnable());
+    _translationLanguage(SessionManagement.getTranslationLanguage());
   }
   Future<void> getArchivedSettingsEnabled() async {
     await FlyChat.isArchivedSettingsEnabled().then((value) => _archiveEnabled(value));
@@ -24,6 +34,29 @@ class ChatSettingsController extends GetxController {
   void enableArchive(){
     FlyChat.enableDisableArchivedSettings(!archiveEnabled);
     _archiveEnabled(!archiveEnabled);
+  }
+
+  Future<void> enableDisableTranslate() async {
+    //if (await AppUtils.isNetConnected() && SessionManagement.isGoogleTranslationEnable()) {
+    var enable = !SessionManagement.isGoogleTranslationEnable();
+      SessionManagement.setGoogleTranslationEnable(enable);
+      _translationEnabled(enable);
+    /*}else{
+      toToast(Constants.noInternetConnection);
+    }*/
+  }
+
+  void displayTranslateLanguagePreference(){
+
+  }
+
+  void chooseLanguage(){
+    Get.toNamed(Routes.languages,arguments: translationLanguage)?.then((value){
+      if(value!=null){
+        var language = value as String;
+        _translationLanguage(language);
+      }
+    });
   }
 
   void clearAllConversation(){
