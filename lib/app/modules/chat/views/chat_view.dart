@@ -1099,6 +1099,7 @@ class ChatView extends GetView<ChatController> {
                 overflowWidget: GestureDetector(
                   onTap: () {
                     controller.closeKeyBoard();
+                    controller.exportChat();
                   },
                   child: const Text("Email Chat"),
                 ),

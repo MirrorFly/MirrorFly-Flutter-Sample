@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
-import 'package:mirror_fly_demo/app/common/constants.dart';
 
-import '../../../../common/widgets.dart';
+import '../settings_widgets.dart';
 import 'notification_alert_controller.dart';
 
 class NotificationAlertView extends GetView<NotificationAlertController> {
@@ -47,32 +45,4 @@ class NotificationAlertView extends GetView<NotificationAlertController> {
     );
   }
 
-  ListItem notificationItem({required String title,
-    required String subtitle,
-    bool on = false,
-    required Function() onTap}) {
-    return ListItem(
-        title: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(title,
-                style: const TextStyle(
-                    color: Colors.black,
-                    fontSize: 14,
-                    fontWeight: FontWeight.w400)),
-            const SizedBox(
-              height: 4,
-            ),
-            Text(
-              subtitle,
-              style: const TextStyle(fontSize: 13, color: textColor),
-            ),
-          ],
-        ),
-        dividerPadding: const EdgeInsets.symmetric(horizontal: 16),
-        trailing: SvgPicture.asset(
-          on ? tickRoundBlue : tickRound,
-        ),
-        onTap: onTap);
-  }
 }
