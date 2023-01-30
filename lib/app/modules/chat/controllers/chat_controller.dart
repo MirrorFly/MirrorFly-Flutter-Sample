@@ -1964,4 +1964,71 @@ class ChatController extends GetxController
       mirrorFlyLog("makeVoiceCall", value.toString());
     });
   }*/
+
+  Future<void> translateMessage(int index) async {
+    if(SessionManagement.isGoogleTranslationEnable()) {
+      var text = chatList[index].messageTextContent!;
+      debugPrint("customField : ${chatList[index].messageCustomField.isEmpty}");
+      if (chatList[index].messageCustomField.isNotEmpty) {
+
+      } else {
+        await translator.translate(
+            text: text, to: SessionManagement.getTranslationLanguageCode()).then((translation) {
+          var map = <String, dynamic>{};
+          map["is_message_translated"] = true;
+          map["translated_language"] =
+              SessionManagement.getTranslationLanguage();
+          map["translated_message_content"] = translation.translatedText;
+          debugPrint(
+              "translation source : ${translation.detectedSourceLanguage}");
+          debugPrint("translation text : ${translation.translatedText}");
+        }).catchError((onError){
+          debugPrint("exception : ${onError}");
+        });
+      }
+    }
+  }
+
+  bool forwardMessageVisibility(ChatMessageModel chat) {
+    if(chat.isMessageSentByMe) {
+      if (chat.isMediaMessage()) {
+        if (chat.mediaChatMessage!.mediaDownloadStatus ==
+            Constants.mediaDownloaded ||
+            chat.mediaChatMessage!.mediaUploadStatus ==
+                Constants.mediaUploaded) {
+          return true;
+        }
+      } else {
+        if (chat.messageType == Constants.mLocation) {
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+
+  forwardSingleMessage(String messageId) {
+    var messageIds =<String>[];
+    messageIds.add(messageId);
+    Get.toNamed(Routes.forwardChat, arguments: {
+      "forward": true,
+      "group": false,
+      "groupJid": "",
+      "messageIds": messageIds
+    })?.then((value) {
+      if (value != null) {
+        debugPrint(
+            "result of forward ==> ${(value as Profile)
+                .toJson()
+                .toString()}");
+        profile_.value = value;
+        isBlocked(profile.isBlocked);
+        checkAdminBlocked();
+        memberOfGroup();
+        FlyChat.setOnGoingChatUser(profile.jid!);
+        getChatHistory();
+        sendReadReceipt();
+      }
+    });
+  }
 }
