@@ -10,6 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:get/get.dart';
+import 'package:google_cloud_translation/google_cloud_translation.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
@@ -31,11 +32,14 @@ import '../../../routes/app_pages.dart';
 
 import 'package:flysdk/flysdk.dart';
 
+import '../../archived_chats/archived_chat_list_controller.dart';
 import '../../message_info/controllers/message_info_controller.dart';
 import '../chat_widgets.dart';
 
 class ChatController extends GetxController
     with GetTickerProviderStateMixin, BaseController {
+  final translator = Translation(apiKey: Constants.googleTranslateKey);
+
   var chatList = List<ChatMessageModel>.empty(growable: true).obs;
   late AnimationController controller;
   ScrollController scrollController = ScrollController(
@@ -1662,6 +1666,9 @@ class ChatController extends GetxController
         sendReadReceipt();
       }
     }
+    if(Get.isRegistered<ArchivedChatListController>()){
+      Get.find<ArchivedChatListController>().onMessageReceived(chatMessageModel);
+    }
   }
 
   @override
@@ -1753,6 +1760,9 @@ class ChatController extends GetxController
         }
         setChatStatus();
       }
+    }
+    if(Get.isRegistered<ArchivedChatListController>()){
+      Get.find<ArchivedChatListController>().setTypingStatus(singleOrgroupJid,userId,typingStatus);
     }
   }
 

@@ -499,6 +499,9 @@ class ChatView extends GetView<ChatController> {
                           : controller.addChatSelection(chatList[index])
                       : null;
                 },
+                onDoubleTap: () {
+                  controller.translateMessage(index);
+                },
                 child: Obx(() {
                   return Container(
                     key: Key(chatList[index].messageId),
