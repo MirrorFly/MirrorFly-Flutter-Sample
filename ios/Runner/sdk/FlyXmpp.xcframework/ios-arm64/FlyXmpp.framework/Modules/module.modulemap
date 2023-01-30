@@ -1,0 +1,11 @@
+framework module FlyXmpp {
+  umbrella header "FlyXmpp.h"
+
+  export *
+  module * { export * }
+}
+
+module FlyXmpp.Swift {
+  header "FlyXmpp-Swift.h"
+  requires objc
+}
