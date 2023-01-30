@@ -9,7 +9,6 @@ import '../../../common/constants.dart';
 
 class AddStatusView extends GetView<StatusListController> {
   const AddStatusView({Key? key}) : super(key: key);
-  //var controller = Get.find<StatusListController>();
 
   @override
   Widget build(BuildContext context) {

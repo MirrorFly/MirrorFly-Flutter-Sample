@@ -22,6 +22,7 @@ import com.contus.xmpp.chat.models.Profile
 import com.contusdemo.mirror_fly_demo.notification.AppNotificationManager
 import com.contusflysdk.AppUtils
 import com.contusflysdk.api.*
+import com.contusflysdk.api.FlyCore.insertMyBusyStatus
 import com.contusflysdk.api.chat.*
 import com.contusflysdk.api.contacts.ContactManager
 import com.contusflysdk.api.contacts.ProfileDetails
@@ -619,7 +620,13 @@ open class FlyBaseController(activity: FlutterActivity) : MethodChannel.MethodCa
                 val myUserStatus: ProfileStatus = FlyCore.getMyProfileStatus()!!
                 result.success(myUserStatus.tojsonString())
             }
-            call.method.equals("getMyBusyStatus") -> {
+            call.method.equals("insertBusyStatus") -> {
+                val busyStatus = call.argument<String>("busy_status") ?: ""
+                insertMyBusyStatus(busyStatus)
+                FlyCore.setMyBusyStatus(busyStatus)
+                result.success(true)
+            }
+            call.method.equals("getMyBusyStatus") -> {//{"id": null, "status": "", "isCurrentStatus": false}
                 val myBusyStatus: BusyStatus = FlyCore.getMyBusyStatus()!!
                 result.success(myBusyStatus.tojsonString())
             }
@@ -646,7 +653,7 @@ open class FlyBaseController(activity: FlutterActivity) : MethodChannel.MethodCa
                 result.success(true)
             }
             call.method.equals("deleteBusyStatus") -> {
-                val id = call.argument<Long>("id") ?: 0
+                val id = call.argument<String>("id") ?: "0"
                 val status = call.argument<String>("status") ?: ""
                 val isCurrentStatus = call.argument<Boolean>("isCurrentStatus") ?: false
                 val profileStatus = BusyStatus(id, status, isCurrentStatus)

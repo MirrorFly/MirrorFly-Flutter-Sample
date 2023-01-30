@@ -2445,6 +2445,13 @@
       },
       {
         "kind": "Import",
+        "name": "FlyCommon",
+        "printedName": "FlyCommon",
+        "declKind": "Import",
+        "moduleName": "FlyCall"
+      },
+      {
+        "kind": "Import",
         "name": "WebRTC",
         "printedName": "WebRTC",
         "declKind": "Import",
@@ -10594,6 +10601,48 @@
           },
           {
             "kind": "Function",
+            "name": "connectCallServers",
+            "printedName": "connectCallServers()",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Void",
+                "printedName": "()"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:7FlyCall0B7ManagerC07connectB7ServersyyFZ",
+            "mangledName": "$s7FlyCall0B7ManagerC07connectB7ServersyyFZ",
+            "moduleName": "FlyCall",
+            "static": true,
+            "declAttributes": [
+              "AccessControl"
+            ],
+            "funcSelfKind": "NonMutating"
+          },
+          {
+            "kind": "Function",
+            "name": "disconnectCallServers",
+            "printedName": "disconnectCallServers()",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Void",
+                "printedName": "()"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:7FlyCall0B7ManagerC010disconnectB7ServersyyFZ",
+            "mangledName": "$s7FlyCall0B7ManagerC010disconnectB7ServersyyFZ",
+            "moduleName": "FlyCall",
+            "static": true,
+            "declAttributes": [
+              "AccessControl"
+            ],
+            "funcSelfKind": "NonMutating"
+          },
+          {
+            "kind": "Function",
             "name": "getLocalUserId",
             "printedName": "getLocalUserId()",
             "children": [
@@ -13894,6 +13943,13 @@
       "value": "false"
     },
     {
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleCall\/FlyCall\/FlyCall\/Classes\/JanusWebrtc\/WebSocketChannel.swift",
+      "kind": "BooleanLiteral",
+      "offset": 2336,
+      "length": 5,
+      "value": "false"
+    },
+    {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleCall\/FlyCall\/FlyCall\/ARDCaptureControllers.swift",
       "kind": "BooleanLiteral",
       "offset": 287,
@@ -13945,7 +14001,7 @@
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleCall\/FlyCall\/FlyCall\/Classes\/JanusWebrtc\/SignalServerManager.swift",
       "kind": "StringLiteral",
-      "offset": 1412,
+      "offset": 1501,
       "length": 6,
       "value": "\"call\""
     },
@@ -14708,21 +14764,21 @@
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleCall\/FlyCall\/FlyCall\/Classes\/JanusWebrtc\/WebRtcCallService.swift",
       "kind": "BooleanLiteral",
-      "offset": 2470,
+      "offset": 2437,
       "length": 5,
       "value": "false"
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleCall\/FlyCall\/FlyCall\/Classes\/JanusWebrtc\/WebRtcCallService.swift",
       "kind": "BooleanLiteral",
-      "offset": 2507,
+      "offset": 2474,
       "length": 5,
       "value": "false"
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleCall\/FlyCall\/FlyCall\/Classes\/JanusWebrtc\/WebRtcCallService.swift",
       "kind": "BooleanLiteral",
-      "offset": 2544,
+      "offset": 2511,
       "length": 5,
       "value": "false"
     },
@@ -14770,50 +14826,43 @@
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleCall\/FlyCall\/FlyCall\/Classes\/JanusWebrtc\/JanusWebRtc.swift",
-      "kind": "Dictionary",
-      "offset": 1393,
-      "length": 3,
-      "value": "[]"
-    },
-    {
-      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleCall\/FlyCall\/FlyCall\/Classes\/JanusWebrtc\/JanusWebRtc.swift",
       "kind": "IntegerLiteral",
-      "offset": 1579,
+      "offset": 1397,
       "length": 1,
       "value": "0"
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleCall\/FlyCall\/FlyCall\/Classes\/JanusWebrtc\/JanusWebRtc.swift",
       "kind": "StringLiteral",
-      "offset": 1670,
+      "offset": 1488,
       "length": 8,
       "value": "\"ARDAMS\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleCall\/FlyCall\/FlyCall\/Classes\/JanusWebrtc\/JanusWebRtc.swift",
       "kind": "StringLiteral",
-      "offset": 1714,
+      "offset": 1532,
       "length": 10,
       "value": "\"ARDAMSa0\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleCall\/FlyCall\/FlyCall\/Classes\/JanusWebrtc\/JanusWebRtc.swift",
       "kind": "StringLiteral",
-      "offset": 1760,
+      "offset": 1578,
       "length": 10,
       "value": "\"ARDAMSv0\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleCall\/FlyCall\/FlyCall\/Classes\/JanusWebrtc\/JanusWebRtc.swift",
       "kind": "BooleanLiteral",
-      "offset": 1814,
+      "offset": 1632,
       "length": 5,
       "value": "false"
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleCall\/FlyCall\/FlyCall\/Classes\/JanusWebrtc\/JanusWebRtc.swift",
       "kind": "BooleanLiteral",
-      "offset": 1866,
+      "offset": 1684,
       "length": 5,
       "value": "false"
     },
@@ -15553,6 +15602,20 @@
       "value": "\"\""
     },
     {
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleCall\/FlyCall\/FlyCall\/Classes\/JanusWebrtc\/CallManager.swift",
+      "kind": "BooleanLiteral",
+      "offset": 6333,
+      "length": 5,
+      "value": "false"
+    },
+    {
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleCall\/FlyCall\/FlyCall\/Classes\/JanusWebrtc\/CallManager.swift",
+      "kind": "BooleanLiteral",
+      "offset": 6376,
+      "length": 5,
+      "value": "false"
+    },
+    {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleCall\/FlyCall\/FlyCall\/Classes\/JanusWebrtc\/WebRTCTrackManager.swift",
       "kind": "BooleanLiteral",
       "offset": 471,
@@ -16024,98 +16087,105 @@
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleCall\/FlyCall\/FlyCall\/Classes\/Utils\/FlyCallUtils.swift",
       "kind": "StringLiteral",
-      "offset": 3345,
+      "offset": 3312,
+      "length": 10,
+      "value": "\"deviceId\""
+    },
+    {
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleCall\/FlyCall\/FlyCall\/Classes\/Utils\/FlyCallUtils.swift",
+      "kind": "StringLiteral",
+      "offset": 3384,
       "length": 9,
       "value": "\"room_id\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleCall\/FlyCall\/FlyCall\/Classes\/Utils\/FlyCallUtils.swift",
       "kind": "StringLiteral",
-      "offset": 3382,
+      "offset": 3421,
       "length": 10,
       "value": "\"end_time\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleCall\/FlyCall\/FlyCall\/Classes\/Utils\/FlyCallUtils.swift",
       "kind": "StringLiteral",
-      "offset": 3422,
+      "offset": 3461,
       "length": 12,
       "value": "\"start_time\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleCall\/FlyCall\/FlyCall\/Classes\/Utils\/FlyCallUtils.swift",
       "kind": "StringLiteral",
-      "offset": 3463,
+      "offset": 3502,
       "length": 11,
       "value": "\"call_time\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleCall\/FlyCall\/FlyCall\/Classes\/Utils\/FlyCallUtils.swift",
       "kind": "StringLiteral",
-      "offset": 3502,
+      "offset": 3541,
       "length": 10,
       "value": "\"group_id\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleCall\/FlyCall\/FlyCall\/Classes\/Utils\/FlyCallUtils.swift",
       "kind": "StringLiteral",
-      "offset": 3546,
+      "offset": 3585,
       "length": 16,
       "value": "\"session_status\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleCall\/FlyCall\/FlyCall\/Classes\/Utils\/FlyCallUtils.swift",
       "kind": "StringLiteral",
-      "offset": 3591,
+      "offset": 3630,
       "length": 11,
       "value": "\"call_mode\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleCall\/FlyCall\/FlyCall\/Classes\/Utils\/FlyCallUtils.swift",
       "kind": "StringLiteral",
-      "offset": 3625,
+      "offset": 3664,
       "length": 5,
       "value": "\"Jid\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleCall\/FlyCall\/FlyCall\/Classes\/Utils\/FlyCallUtils.swift",
       "kind": "StringLiteral",
-      "offset": 3656,
+      "offset": 3695,
       "length": 8,
       "value": "\"isVoip\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleCall\/FlyCall\/FlyCall\/Classes\/Utils\/FlyCallUtils.swift",
       "kind": "StringLiteral",
-      "offset": 3725,
+      "offset": 3764,
       "length": 6,
       "value": "\"time\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleCall\/FlyCall\/FlyCall\/Classes\/Utils\/FlyCallUtils.swift",
       "kind": "StringLiteral",
-      "offset": 3814,
+      "offset": 3853,
       "length": 7,
       "value": "\"login\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleCall\/FlyCall\/FlyCall\/Classes\/Utils\/FlyCallUtils.swift",
       "kind": "StringLiteral",
-      "offset": 3933,
+      "offset": 3972,
       "length": 26,
       "value": "\"users\/calls\/validateCall\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleCall\/FlyCall\/FlyCall\/Classes\/Utils\/FlyCallUtils.swift",
       "kind": "StringLiteral",
-      "offset": 3989,
+      "offset": 4028,
       "length": 14,
       "value": "\"users\/device\""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleCall\/FlyCall\/FlyCall\/Classes\/Utils\/FlyCallUtils.swift",
       "kind": "StringLiteral",
-      "offset": 4034,
+      "offset": 4073,
       "length": 28,
       "value": "\"users\/calls\/getRoomDetails\""
     },

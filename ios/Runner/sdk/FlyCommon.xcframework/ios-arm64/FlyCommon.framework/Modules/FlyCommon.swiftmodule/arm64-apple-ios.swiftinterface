@@ -43,11 +43,6 @@ import _StringProcessing
   @objc override dynamic public init()
   @objc deinit
 }
-public struct SearchMessage {
-  public init()
-  public var chatUserJid: Swift.String
-  public var messageId: Swift.String
-}
 public typealias FlyCompletionHandler = (_ isSuccess: Swift.Bool, _ error: FlyCommon.FlyError?, _ data: [Swift.String : Any]) -> Swift.Void
 extension Swift.Dictionary where Key == Swift.String, Value == Any {
   public mutating func addMessage(message: Swift.String)
@@ -65,6 +60,11 @@ public struct ContactInfo : Swift.Codable {
   public func encode(to encoder: Swift.Encoder) throws
   public init(_ name: Swift.String, _ mobileNumber: Swift.String)
 }
+public struct SearchMessage {
+  public init()
+  public var chatUserJid: Swift.String
+  public var messageId: Swift.String
+}
 public enum OfflineActionType : Swift.String, Swift.CustomStringConvertible {
   case clearMessage
   case deleteRecent
@@ -74,6 +74,7 @@ public enum OfflineActionType : Swift.String, Swift.CustomStringConvertible {
   case updateFavouriteMessage
   case clearAllFav
   case contactPermissionRevoked
+  case unarchiveChats
   public var description: Swift.String {
     get
   }
@@ -138,6 +139,11 @@ public struct OfflineActionModel : Swift.Codable {
   public init(from decoder: Swift.Decoder) throws
   public func encode(to encoder: Swift.Encoder) throws
 }
+public struct LinkMessage {
+  public init()
+  public var link: Swift.String
+  public var chatMessage: FlyCommon.ChatMessage
+}
 @objc @_inheritsConvenienceInitializers @objcMembers public class ContactChatMessage : ObjectiveC.NSObject {
   @objc public var messageId: Swift.String
   @objc public var contactName: Swift.String
@@ -159,11 +165,6 @@ public struct MessageReceipt {
   public var time: Swift.Double
   public var profileDetails: FlyCommon.ProfileDetails?
   public init()
-}
-public struct LinkMessage {
-  public init()
-  public var link: Swift.String
-  public var chatMessage: FlyCommon.ChatMessage
 }
 public struct LoginData : Swift.Codable {
   public init()
@@ -548,6 +549,46 @@ public enum MediaStatus : Swift.String, Swift.CustomStringConvertible {
     set
     _modify
   }
+  @FlyCommon.SDKDefaults public static var autoDownloadTimeMobileDataImage: Swift.Double {
+    get
+    set
+    _modify
+  }
+  @FlyCommon.SDKDefaults public static var autoDownloadTimeMobileDataVideo: Swift.Double {
+    get
+    set
+    _modify
+  }
+  @FlyCommon.SDKDefaults public static var autoDownloadTimeMobileDataAudio: Swift.Double {
+    get
+    set
+    _modify
+  }
+  @FlyCommon.SDKDefaults public static var autoDownloadTimeMobileDataDocument: Swift.Double {
+    get
+    set
+    _modify
+  }
+  @FlyCommon.SDKDefaults public static var autoDownloadTimeWifiImage: Swift.Double {
+    get
+    set
+    _modify
+  }
+  @FlyCommon.SDKDefaults public static var autoDownloadTimeWifiVideo: Swift.Double {
+    get
+    set
+    _modify
+  }
+  @FlyCommon.SDKDefaults public static var autoDownloadTimeWifiAudio: Swift.Double {
+    get
+    set
+    _modify
+  }
+  @FlyCommon.SDKDefaults public static var autoDownloadTimeWifiDocument: Swift.Double {
+    get
+    set
+    _modify
+  }
   @FlyCommon.SDKDefaults public static var appLockPassword: Swift.String {
     get
     set
@@ -723,19 +764,6 @@ public struct BusyStatus {
   public var isCurrentStatus: Swift.Bool
   public init(statusText: Swift.String, isCurrentStatus: Swift.Bool = false)
 }
-public struct DeliveryReceipt : Swift.Codable {
-  public init()
-  public var receiptId: Swift.String
-  public var userJid: Swift.String
-  public var messageId: Swift.String
-  public var broadcastMessageID: Swift.String
-  public var sentTime: Swift.Double
-  public var acknowledgeTime: Swift.Double
-  public var receivedTime: Swift.Double
-  public var seenTime: Swift.Double
-  public func encode(to encoder: Swift.Encoder) throws
-  public init(from decoder: Swift.Decoder) throws
-}
 public struct ReportMessage : Swift.Codable {
   public init()
   public var from: Swift.String
@@ -766,6 +794,19 @@ public struct MediaData {
   public var fileKey: Swift.String
   public var mediaType: FlyCommon.MediaType
   public var caption: Swift.String
+}
+public struct DeliveryReceipt : Swift.Codable {
+  public init()
+  public var receiptId: Swift.String
+  public var userJid: Swift.String
+  public var messageId: Swift.String
+  public var broadcastMessageID: Swift.String
+  public var sentTime: Swift.Double
+  public var acknowledgeTime: Swift.Double
+  public var receivedTime: Swift.Double
+  public var seenTime: Swift.Double
+  public func encode(to encoder: Swift.Encoder) throws
+  public init(from decoder: Swift.Decoder) throws
 }
 public struct QrCodeInfo : Swift.Codable {
   public var browser: Swift.String
@@ -908,6 +949,8 @@ extension FlyCommon.FlyUtils {
   public static func setAppName(appName: Swift.String)
   public static func encryptLoginParamsData(password: Swift.String = FlyDefaults.myXmppPassword) -> Swift.String?
   public static func getUTCTimeInMillis() -> Swift.Double
+  public static func convertMilliSecondsToDate(milliSec: Swift.Double) -> Swift.String
+  public static func getImageFromMessage(chatMessage: FlyCommon.ChatMessage) -> UIKit.UIImage?
 }
 extension Foundation.Date {
   public var millisecondsSince1970: Swift.Double {
@@ -917,108 +960,8 @@ extension Foundation.Date {
 extension Foundation.URL {
   public func mimeType() -> Swift.String
 }
-public struct BackupRestoreModels : Swift.Codable {
-  public var messages: [FlyCommon.BackupMessage]
-  public var recentMessages: [FlyCommon.BackupRecentChat]
-  public init(messages: [FlyCommon.BackupMessage], recentMessages: [FlyCommon.BackupRecentChat])
-  public func encode(to encoder: Swift.Encoder) throws
-  public init(from decoder: Swift.Decoder) throws
-}
-public struct BackupMessageModel : Swift.Codable {
-  public var message: FlyCommon.BackupMessage
-  public init(message: FlyCommon.BackupMessage)
-  public func encode(to encoder: Swift.Encoder) throws
-  public init(from decoder: Swift.Decoder) throws
-}
-public struct BackupRecentModel : Swift.Codable {
-  public var recentMessages: FlyCommon.BackupRecentChat
-  public init(recentMessages: FlyCommon.BackupRecentChat)
-  public func encode(to encoder: Swift.Encoder) throws
-  public init(from decoder: Swift.Decoder) throws
-}
-public struct BackupMessage : Swift.Codable {
-  public var messageId: Swift.String
-  public var chatUserJid: Swift.String
-  public var messageType: Swift.String
-  public var chatType: Swift.String
-  public var messageTime: Swift.String
-  public var replyToMessageId: Swift.String
-  public var isCarbon: Swift.Bool
-  public var isSender: Swift.Bool
-  public var isStarred: Swift.Bool
-  public var isRecalled: Swift.Bool
-  public var isDeleted: Swift.Bool
-  public var textModel: FlyCommon.TextModel?
-  public var groupUserSenderJid: Swift.String
-  public var contactModel: FlyCommon.ContactChat?
-  public var locationModel: FlyCommon.LocationChat?
-  public var mediaModel: FlyCommon.MediaChat?
-  public var messageStatus: Swift.Int
-  public var messageStatusList: [FlyCommon.MessageStatusList]?
-  public init(messageId: Swift.String, chatUserJid: Swift.String, messageType: Swift.String, replyToMessageId: Swift.String, chatType: Swift.String, messageTime: Swift.String, isCarbon: Swift.Bool, isSender: Swift.Bool, isStarred: Swift.Bool, isRecalled: Swift.Bool, isDeleted: Swift.Bool, textModel: FlyCommon.TextModel, groupUserSenderJid: Swift.String, messageStatus: Swift.Int)
-  public func encode(to encoder: Swift.Encoder) throws
-  public init(from decoder: Swift.Decoder) throws
-}
-public struct TextModel : Swift.Codable {
-  public var text: Swift.String
-  public init(text: Swift.String)
-  public func encode(to encoder: Swift.Encoder) throws
-  public init(from decoder: Swift.Decoder) throws
-}
-public struct MessageStatusList : Swift.Codable {
-  public var id: Swift.String
-  public var jid: Swift.String
-  public var acknowledgedTime: Swift.String?
-  public var receivedTime: Swift.String?
-  public var seenTime: Swift.String?
-  public var broadcastMessageId: Swift.String?
-  public init(id: Swift.String, jid: Swift.String)
-  public func encode(to encoder: Swift.Encoder) throws
-  public init(from decoder: Swift.Decoder) throws
-}
-public struct ContactChat : Swift.Codable {
-  public var name: Swift.String
-  public var numbers: [FlyCommon.PhoneModel]?
-  public init(name: Swift.String)
-  public func encode(to encoder: Swift.Encoder) throws
-  public init(from decoder: Swift.Decoder) throws
-}
-public struct PhoneModel : Swift.Codable {
-  public var number: Swift.String
-  public var activeStatus: Swift.String
-  public init(number: Swift.String, activeStatus: Swift.String)
-  public func encode(to encoder: Swift.Encoder) throws
-  public init(from decoder: Swift.Decoder) throws
-}
-public struct LocationChat : Swift.Codable {
-  public var latitude: Swift.Double
-  public var longitude: Swift.Double
-  public init(latitude: Swift.Double, longitude: Swift.Double)
-  public func encode(to encoder: Swift.Encoder) throws
-  public init(from decoder: Swift.Decoder) throws
-}
-public struct MediaChat : Swift.Codable {
-  public var fileName: Swift.String
-  public var duration: Swift.Int32?
-  public var fileSize: Swift.Int32?
-  public var fileType: Swift.String?
-  public var fileUrl: Swift.String?
-  public var localFileName: Swift.String?
-  public var thumbImage: Swift.String?
-  public init(fileName: Swift.String)
-  public func encode(to encoder: Swift.Encoder) throws
-  public init(from decoder: Swift.Decoder) throws
-}
-public struct BackupRecentChat : Swift.Codable {
-  public var jid: Swift.String
-  public var messageId: Swift.String
-  public var messageTime: Swift.String
-  public var isArchived: Swift.Bool
-  public var isMuted: Swift.Bool
-  public var isPinned: Swift.Bool
-  public init(jid: Swift.String, messageId: Swift.String, messageTime: Swift.String, isArchived: Swift.Bool, isMuted: Swift.Bool, isPinned: Swift.Bool)
-  public func encode(to encoder: Swift.Encoder) throws
-  public init(from decoder: Swift.Decoder) throws
+extension FlyCommon.FlyUtils {
+  public static func getDeviceID() -> Swift.String
 }
 public enum ChatType : Swift.String, Swift.CustomStringConvertible {
   case singleChat
@@ -1175,6 +1118,12 @@ public struct WebLoginInfo {
   public var loginTime: Swift.Double?
   public init(browser: Swift.String, platform: Swift.String, token: Swift.String)
 }
+public struct ChatDataModel {
+  public init()
+  public var subject: Swift.String
+  public var messageContent: Swift.String
+  public var mediaAttachmentsUrl: [Foundation.URL]
+}
 public enum AudioType : Swift.String {
   case recording
   case file
@@ -1197,6 +1146,109 @@ public enum AudioType : Swift.String {
 @_hasMissingDesignatedInitializers public class FlyLog {
   public class func DLog(param1: Swift.String?, param2: Any?)
   @objc deinit
+}
+public struct BackupRestoreModels : Swift.Codable {
+  public var messages: [FlyCommon.BackupMessage]
+  public var recentMessages: [FlyCommon.BackupRecentChat]
+  public init(messages: [FlyCommon.BackupMessage], recentMessages: [FlyCommon.BackupRecentChat])
+  public func encode(to encoder: Swift.Encoder) throws
+  public init(from decoder: Swift.Decoder) throws
+}
+public struct BackupMessageModel : Swift.Codable {
+  public var message: FlyCommon.BackupMessage
+  public init(message: FlyCommon.BackupMessage)
+  public func encode(to encoder: Swift.Encoder) throws
+  public init(from decoder: Swift.Decoder) throws
+}
+public struct BackupRecentModel : Swift.Codable {
+  public var recentMessages: FlyCommon.BackupRecentChat
+  public init(recentMessages: FlyCommon.BackupRecentChat)
+  public func encode(to encoder: Swift.Encoder) throws
+  public init(from decoder: Swift.Decoder) throws
+}
+public struct BackupMessage : Swift.Codable {
+  public var messageId: Swift.String
+  public var chatUserJid: Swift.String
+  public var messageType: Swift.String
+  public var chatType: Swift.String
+  public var messageTime: Swift.String
+  public var replyToMessageId: Swift.String
+  public var isCarbon: Swift.Bool
+  public var isSender: Swift.Bool
+  public var isStarred: Swift.Bool
+  public var isRecalled: Swift.Bool
+  public var isDeleted: Swift.Bool
+  public var textModel: FlyCommon.TextModel?
+  public var groupUserSenderJid: Swift.String
+  public var contactModel: FlyCommon.ContactChat?
+  public var locationModel: FlyCommon.LocationChat?
+  public var mediaModel: FlyCommon.MediaChat?
+  public var messageStatus: Swift.Int
+  public var messageStatusList: [FlyCommon.MessageStatusList]?
+  public init(messageId: Swift.String, chatUserJid: Swift.String, messageType: Swift.String, replyToMessageId: Swift.String, chatType: Swift.String, messageTime: Swift.String, isCarbon: Swift.Bool, isSender: Swift.Bool, isStarred: Swift.Bool, isRecalled: Swift.Bool, isDeleted: Swift.Bool, textModel: FlyCommon.TextModel, groupUserSenderJid: Swift.String, messageStatus: Swift.Int)
+  public func encode(to encoder: Swift.Encoder) throws
+  public init(from decoder: Swift.Decoder) throws
+}
+public struct TextModel : Swift.Codable {
+  public var text: Swift.String
+  public init(text: Swift.String)
+  public func encode(to encoder: Swift.Encoder) throws
+  public init(from decoder: Swift.Decoder) throws
+}
+public struct MessageStatusList : Swift.Codable {
+  public var id: Swift.String
+  public var jid: Swift.String
+  public var acknowledgedTime: Swift.String?
+  public var receivedTime: Swift.String?
+  public var seenTime: Swift.String?
+  public var broadcastMessageId: Swift.String?
+  public init(id: Swift.String, jid: Swift.String)
+  public func encode(to encoder: Swift.Encoder) throws
+  public init(from decoder: Swift.Decoder) throws
+}
+public struct ContactChat : Swift.Codable {
+  public var name: Swift.String
+  public var numbers: [FlyCommon.PhoneModel]?
+  public init(name: Swift.String)
+  public func encode(to encoder: Swift.Encoder) throws
+  public init(from decoder: Swift.Decoder) throws
+}
+public struct PhoneModel : Swift.Codable {
+  public var number: Swift.String
+  public var activeStatus: Swift.String
+  public init(number: Swift.String, activeStatus: Swift.String)
+  public func encode(to encoder: Swift.Encoder) throws
+  public init(from decoder: Swift.Decoder) throws
+}
+public struct LocationChat : Swift.Codable {
+  public var latitude: Swift.Double
+  public var longitude: Swift.Double
+  public init(latitude: Swift.Double, longitude: Swift.Double)
+  public func encode(to encoder: Swift.Encoder) throws
+  public init(from decoder: Swift.Decoder) throws
+}
+public struct MediaChat : Swift.Codable {
+  public var fileName: Swift.String
+  public var duration: Swift.Int32?
+  public var fileSize: Swift.Int32?
+  public var fileType: Swift.String?
+  public var fileUrl: Swift.String?
+  public var localFileName: Swift.String?
+  public var thumbImage: Swift.String?
+  public init(fileName: Swift.String)
+  public func encode(to encoder: Swift.Encoder) throws
+  public init(from decoder: Swift.Decoder) throws
+}
+public struct BackupRecentChat : Swift.Codable {
+  public var jid: Swift.String
+  public var messageId: Swift.String
+  public var messageTime: Swift.String
+  public var isArchived: Swift.Bool
+  public var isMuted: Swift.Bool
+  public var isPinned: Swift.Bool
+  public init(jid: Swift.String, messageId: Swift.String, messageTime: Swift.String, isArchived: Swift.Bool, isMuted: Swift.Bool, isPinned: Swift.Bool)
+  public func encode(to encoder: Swift.Encoder) throws
+  public init(from decoder: Swift.Decoder) throws
 }
 public struct FlyProfile {
   public let jid: Swift.String!
@@ -1621,6 +1673,14 @@ public struct FlyConstants {
   public static let autoDownloadMobile: Swift.String
   public static let autoDownloadWifi: Swift.String
   public static let autoDownloadLastEnabledTime: Swift.String
+  public static let autoDownloadTimeMobileDataImage: Swift.String
+  public static let autoDownloadTimeMobileDataVideo: Swift.String
+  public static let autoDownloadTimeMobileDataAudio: Swift.String
+  public static let autoDownloadTimeMobileDataDocument: Swift.String
+  public static let autoDownloadTimeWifiImage: Swift.String
+  public static let autoDownloadTimeWifiVideo: Swift.String
+  public static let autoDownloadTimeWifiAudio: Swift.String
+  public static let autoDownloadTimeWifiDocument: Swift.String
   public static let targetLanguageCode: Swift.String
   public static let selectedLanguage: Swift.String
   public static let appLockenable: Swift.String
@@ -1709,6 +1769,7 @@ public struct FlyConstants {
     public static let storageError: Swift.String
     public static let invalidFileError: Swift.String
     public static let forbidden: Swift.String
+    public static let invalidSession: Swift.String
   }
   public struct SuccessMessage {
     public static let profileFetch: Swift.String

@@ -43,6 +43,7 @@ abstract class Routes {
   static const galleryPicker = _Paths.galleryPicker;
   static const mediaPreview = _Paths.mediaPreview;
   static const languages = _Paths.languages;
+  static const busy_status = _Paths.busy_status;
 }
 
 abstract class _Paths {
@@ -88,4 +89,5 @@ abstract class _Paths {
   static const galleryPicker = '/gallery-picker';
   static const mediaPreview = '/media-preview';
   static const languages = '/languages';
+  static const busy_status = '/busy-status';
 }

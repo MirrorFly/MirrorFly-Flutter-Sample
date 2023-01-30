@@ -42,11 +42,11 @@
 		</data>
 		<key>Modules/FlyCall.swiftmodule/x86_64-apple-ios-simulator.abi.json</key>
 		<data>
-		RbDR78FkCwhLcT2gKfkzWxtjERc=
+		PMdqAagz1ONqkmi0+jZotV4KtU4=
 		</data>
 		<key>Modules/FlyCall.swiftmodule/x86_64-apple-ios-simulator.private.swiftinterface</key>
 		<data>
-		y642zpUL3iAjuHi/GedFwdRE8gI=
+		3SPDPupqKR9Lra1OpK2KAJH/wAo=
 		</data>
 		<key>Modules/FlyCall.swiftmodule/x86_64-apple-ios-simulator.swiftdoc</key>
 		<data>
@@ -54,11 +54,11 @@
 		</data>
 		<key>Modules/FlyCall.swiftmodule/x86_64-apple-ios-simulator.swiftinterface</key>
 		<data>
-		y642zpUL3iAjuHi/GedFwdRE8gI=
+		3SPDPupqKR9Lra1OpK2KAJH/wAo=
 		</data>
 		<key>Modules/FlyCall.swiftmodule/x86_64-apple-ios-simulator.swiftmodule</key>
 		<data>
-		Oy27W5XwHbkTU2btFC8GQst9nSA=
+		gOhwnokssxDmfRrz4DhOdceh5so=
 		</data>
 		<key>Modules/module.modulemap</key>
 		<data>
@@ -127,14 +127,14 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			xDR3CO35CGsTn2XslkQCmIDR5J1u95MGAehcAxSGOGc=
+			jvdsmQvNqy+whXizCCclQ7YMTbWjwttGzVCvo6kK6ZI=
 			</data>
 		</dict>
 		<key>Modules/FlyCall.swiftmodule/x86_64-apple-ios-simulator.private.swiftinterface</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			//AEvqRmRPxjaBFZXp6Ht3NArXJjv7W4E1GBk00KUbE=
+			ExsDhLkEtlBNXsAQ4KCfKEdMWaC59iqUS/vaOXX2fEM=
 			</data>
 		</dict>
 		<key>Modules/FlyCall.swiftmodule/x86_64-apple-ios-simulator.swiftdoc</key>
@@ -148,14 +148,14 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			//AEvqRmRPxjaBFZXp6Ht3NArXJjv7W4E1GBk00KUbE=
+			ExsDhLkEtlBNXsAQ4KCfKEdMWaC59iqUS/vaOXX2fEM=
 			</data>
 		</dict>
 		<key>Modules/FlyCall.swiftmodule/x86_64-apple-ios-simulator.swiftmodule</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			4tosWbVsAL7PRjvoCjZ72uisOqL8QNa6Kpz7RALqJA4=
+			I47bmM8Fb7kS4K1A9hHAiEX2tEV/1ldXjqRkENrutHs=
 			</data>
 		</dict>
 		<key>Modules/module.modulemap</key>

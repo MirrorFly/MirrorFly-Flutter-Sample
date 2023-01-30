@@ -74,7 +74,7 @@ public protocol FlyNetworkControllerDelegate : ObjectiveC.NSObjectProtocol {
   @objc deinit
 }
 extension FlyNetwork.FlyNetworkController {
-  public func registerApiService(uniqueIdentifier: Swift.String, deviceToken: Swift.String, voipDeviceToken: Swift.String, mode: Swift.Bool, completionHandler: @escaping FlyCommon.FlyCompletionHandler)
+  public func registerApiService(uniqueIdentifier: Swift.String, deviceToken: Swift.String, voipDeviceToken: Swift.String, mode: Swift.Bool, isForceRegister: Swift.Bool, completionHandler: @escaping FlyCommon.FlyCompletionHandler)
   public func requestOtpApiService(mobileNumber: Swift.String, completionHandler: @escaping FlyCommon.FlyCompletionHandler)
   public func removeProfileImage(completionHandler: @escaping FlyCommon.FlyCompletionHandler)
   public func uploadMyProfileImage(fileUrl: Swift.String, completionHandler: @escaping FlyCommon.FlyCompletionHandler)

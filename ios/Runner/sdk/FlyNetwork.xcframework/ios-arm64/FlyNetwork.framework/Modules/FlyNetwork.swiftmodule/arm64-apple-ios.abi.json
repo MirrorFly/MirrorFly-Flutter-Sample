@@ -2222,7 +2222,7 @@
           {
             "kind": "Function",
             "name": "registerApiService",
-            "printedName": "registerApiService(uniqueIdentifier:deviceToken:voipDeviceToken:mode:completionHandler:)",
+            "printedName": "registerApiService(uniqueIdentifier:deviceToken:voipDeviceToken:mode:isForceRegister:completionHandler:)",
             "children": [
               {
                 "kind": "TypeNominal",
@@ -2246,6 +2246,12 @@
                 "name": "String",
                 "printedName": "Swift.String",
                 "usr": "s:SS"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "Bool",
+                "printedName": "Swift.Bool",
+                "usr": "s:Sb"
               },
               {
                 "kind": "TypeNominal",
@@ -2313,8 +2319,8 @@
               }
             ],
             "declKind": "Func",
-            "usr": "s:10FlyNetwork0aB10ControllerC18registerApiService16uniqueIdentifier11deviceToken010voipDeviceJ04mode17completionHandlerySS_S2SSbySb_0A6Common0A5ErrorOSgSDySSypGtctF",
-            "mangledName": "$s10FlyNetwork0aB10ControllerC18registerApiService16uniqueIdentifier11deviceToken010voipDeviceJ04mode17completionHandlerySS_S2SSbySb_0A6Common0A5ErrorOSgSDySSypGtctF",
+            "usr": "s:10FlyNetwork0aB10ControllerC18registerApiService16uniqueIdentifier11deviceToken010voipDeviceJ04mode15isForceRegister17completionHandlerySS_S2SS2bySb_0A6Common0A5ErrorOSgSDySSypGtctF",
+            "mangledName": "$s10FlyNetwork0aB10ControllerC18registerApiService16uniqueIdentifier11deviceToken010voipDeviceJ04mode15isForceRegister17completionHandlerySS_S2SS2bySb_0A6Common0A5ErrorOSgSDySSypGtctF",
             "moduleName": "FlyNetwork",
             "declAttributes": [
               "AccessControl"
@@ -3918,6 +3924,13 @@
       "value": "0"
     },
     {
+      "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleNetwork\/FlyNetwork\/FlyNetwork\/RegisterModel.swift",
+      "kind": "BooleanLiteral",
+      "offset": 720,
+      "length": 5,
+      "value": "false"
+    },
+    {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleNetwork\/FlyNetwork\/FlyNetwork\/Socket.swift",
       "kind": "StringLiteral",
       "offset": 614,
@@ -4172,14 +4185,14 @@
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleNetwork\/FlyNetwork\/FlyNetwork\/FlyNetworkController.swift",
       "kind": "StringLiteral",
-      "offset": 9264,
+      "offset": 9579,
       "length": 3,
       "value": "\" \""
     },
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleNetwork\/FlyNetwork\/FlyNetwork\/FlyNetworkController.swift",
       "kind": "StringLiteral",
-      "offset": 9290,
+      "offset": 9605,
       "length": 4,
       "value": "\"\n\""
     },

@@ -286,6 +286,7 @@ SWIFT_CLASS("_TtC11FlyDatabase14MessageManager")
 
 
 
+
 SWIFT_CLASS("_TtC11FlyDatabase20OfflineActionManager")
 @interface OfflineActionManager : NSObject
 - (nonnull instancetype)init OBJC_DESIGNATED_INITIALIZER;

@@ -254,6 +254,17 @@ using UInt = size_t;
 #endif
 
 #if defined(__OBJC__)
+@class NSString;
+
+/// Archive related event delegate for Archive/Unarchive activities
+SWIFT_PROTOCOL("_TtP7FlyCore21ArchiveEventsDelegate_")
+@protocol ArchiveEventsDelegate <NSObject>
+/// Called when the a chat is Archived/Unarchived
+- (void)updateArchiveUnArchiveChatsToUser:(NSString * _Nonnull)toUser archiveStatus:(BOOL)archiveStatus;
+/// Called when the archive settings changed
+- (void)updateArchivedSettingsWithArchivedSettingsStatus:(BOOL)archivedSettingsStatus;
+@end
+
 
 SWIFT_CLASS("_TtC7FlyCore13BackupManager")
 @interface BackupManager : NSObject
@@ -282,7 +293,9 @@ SWIFT_CLASS("_TtC7FlyCore11ChatManager")
 
 
 
-@class NSString;
+
+
+
 @class ProfileDetails;
 @class ChatMessage;
 
@@ -415,8 +428,26 @@ SWIFT_CLASS_PROPERTY(@property (nonatomic, class, readonly, strong) FlyMessenger
 ///
 + (ChatMessage * _Nullable)getMessageOfIdWithMessageId:(NSString * _Nonnull)messageId SWIFT_WARN_UNUSED_RESULT;
 + (void)uploadFileWithChatMessage:(ChatMessage * _Nonnull)chatMessage;
+/// Sets the unsent sender message of an user/group
+/// \param id id of an user or a group
+///
+/// \param message content of the unsent message
+///
++ (void)saveUnsentMessageWithId:(NSString * _Nonnull)id message:(NSString * _Nonnull)message;
+/// Provides the unsent sender message of an user or a group
+/// \param id id of an user or a group
+///
+///
+/// returns:
+/// (String) content of the unsent message
++ (NSString * _Nonnull)getUnsentMessageOfId:(NSString * _Nonnull)id SWIFT_WARN_UNUSED_RESULT;
 @end
 
+
+
+@interface FlyMessenger (SWIFT_EXTENSION(FlyCore))
+- (void)deleteUnreadMessageSeparatorOfAConversationWithJid:(NSString * _Nonnull)jid;
+@end
 
 
 @interface FlyMessenger (SWIFT_EXTENSION(FlyCore))
@@ -482,7 +513,7 @@ SWIFT_PROTOCOL("_TtP7FlyCore21MessageEventsDelegate_")
 /// Called whenever a notification needed to be shown or updated or cancelled
 - (void)showOrUpdateOrCancelNotification;
 /// Called whenever messages are cleared
-- (void)onMessagesClearedToJid:(NSString * _Nonnull)toJid;
+- (void)onMessagesClearedToJid:(NSString * _Nonnull)toJid deleteType:(NSString * _Nullable)deleteType;
 /// Called on set or update or remove all favourite messages
 - (void)setOrUpdateFavouriteWithMessageId:(NSString * _Nonnull)messageId favourite:(BOOL)favourite removeAllFavourite:(BOOL)removeAllFavourite;
 /// Called when an incoming message is being translated

@@ -868,21 +868,44 @@ import FlyDatabase
         
         
     }
+    
     static func getMyBusyStatus(call: FlutterMethodCall, result: @escaping FlutterResult){
-        
-        
+        let profileStatus = ChatManager.shared.getMyBusyStatus()
+        result(JSONSerializer.toJson(profileStatus))
     }
+    
     static func setMyBusyStatus(call: FlutterMethodCall, result: @escaping FlutterResult){
+        let args = call.arguments as! Dictionary<String, Any>
+        let userStatus = args["status"] as? String ?? ""
         
-        
+        ChatManager.shared.setMyBusyStatus(userStatus)
+        result(true)
     }
     static func enableDisableBusyStatus(call: FlutterMethodCall, result: @escaping FlutterResult){
         
+        let args = call.arguments as! Dictionary<String, Any>
+        
+        let busyStatusVal = args["enable"] as? Bool ?? false
+        
+        ChatManager.shared.enableDisableBusyStatus(busyStatusVal)
+        
+        result(true)
         
     }
     
-    static func getBusyStatusList(call: FlutterMethodCall, result: @escaping FlutterResult){
+    static func insertBusyStatus(call: FlutterMethodCall, result: @escaping FlutterResult){
+        let args = call.arguments as! Dictionary<String, Any>
+        let busyStatus = args["busy_status"] as? String ?? ""
         
+
+        result(FlyDatabaseController.shared.userBusyStatusManager.saveStatus(busyStatus: BusyStatus(statusText: busyStatus)))
+    }
+    
+    static func getBusyStatusList(call: FlutterMethodCall, result: @escaping FlutterResult){
+        let busyStatusList = ChatManager.shared.getBusyStatusList()
+        print("Get Status Started profileList Count \(busyStatusList.count)")
+        var busyStatusJsonList = JSONSerializer.toJson(busyStatusList)
+        result(busyStatusJsonList)
         
     }
     static func deleteProfileStatus(call: FlutterMethodCall, result: @escaping FlutterResult){
@@ -890,6 +913,17 @@ import FlyDatabase
         
     }
     static func deleteBusyStatus(call: FlutterMethodCall, result: @escaping FlutterResult){
+        let args = call.arguments as! Dictionary<String, Any>
+        
+        let busyId = args["id"] as? String ?? ""
+        let status = args["status"] as? String ?? ""
+        let isCurrentStatus = args["isCurrentStatus"] as? Bool ?? false
+                        
+        let busyStatus = BusyStatus(statusText: status, isCurrentStatus: isCurrentStatus)
+        
+        ChatManager.shared.deleteBusyStatus(busyStatus)
+        
+        result(true)
         
         
     }
@@ -1022,9 +1056,6 @@ import FlyDatabase
             }
         }
         
-       
-        
-        
     }
     static func getMessagesUsingIds(call: FlutterMethodCall, result: @escaping FlutterResult){
 //        let args = call.arguments as! Dictionary<String, Any>
@@ -1054,7 +1085,6 @@ import FlyDatabase
                 result(false)
             }
         }
-        
 
     }
     static func setMediaEncryption(call: FlutterMethodCall, result: @escaping FlutterResult){

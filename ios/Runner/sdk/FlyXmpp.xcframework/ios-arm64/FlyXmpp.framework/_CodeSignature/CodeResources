@@ -6,7 +6,7 @@
 	<dict>
 		<key>Headers/FlyXmpp-Swift.h</key>
 		<data>
-		OOrGf/G3MPQRNKglMG6aEOCC0Og=
+		7CJ2rZhT92PbKSG5sm4Bv12LBYs=
 		</data>
 		<key>Headers/FlyXmpp.h</key>
 		<data>
@@ -18,11 +18,11 @@
 		</data>
 		<key>Modules/FlyXmpp.swiftmodule/arm64-apple-ios.abi.json</key>
 		<data>
-		iFv4e9uIDh9qWKQRAtaFxGaI55M=
+		2gxHaHAIr78gcGQb1ux+mrt0GPM=
 		</data>
 		<key>Modules/FlyXmpp.swiftmodule/arm64-apple-ios.private.swiftinterface</key>
 		<data>
-		ILeCMI65SC9v8VzuPawqbl102ek=
+		41yhpTBJ0/lidOHoW93u2XXy7Uw=
 		</data>
 		<key>Modules/FlyXmpp.swiftmodule/arm64-apple-ios.swiftdoc</key>
 		<data>
@@ -30,11 +30,11 @@
 		</data>
 		<key>Modules/FlyXmpp.swiftmodule/arm64-apple-ios.swiftinterface</key>
 		<data>
-		ILeCMI65SC9v8VzuPawqbl102ek=
+		41yhpTBJ0/lidOHoW93u2XXy7Uw=
 		</data>
 		<key>Modules/FlyXmpp.swiftmodule/arm64-apple-ios.swiftmodule</key>
 		<data>
-		057z7fs3u7Wdf2IW55m3iPTVB7o=
+		9SWh9ZtmAgRVsBR7aPz2IOX2m20=
 		</data>
 		<key>Modules/module.modulemap</key>
 		<data>
@@ -47,7 +47,7 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			5TkkqPRxlc1aZkYSItHxn3w1bhSIeay9Kwfcl3aDPPI=
+			e+d/CnrdTs4T6Mp1faxtYcwWIFFjJ8pzPhgf1eumJwY=
 			</data>
 		</dict>
 		<key>Headers/FlyXmpp.h</key>
@@ -61,14 +61,14 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			d2wNavR+rhxdBkpUA7I4+Ytax2zdObRfovRVDTPXne0=
+			B++oBhppz2MXQU0Zv4OdwTQnj2S/nfyt1OGSRzT3DxA=
 			</data>
 		</dict>
 		<key>Modules/FlyXmpp.swiftmodule/arm64-apple-ios.private.swiftinterface</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			4aY576VU6qF5R+oCRHqsNjWHQcTo1TfwwR00lXcmag8=
+			vcolOpKV1vl8O13T1IA8jyj/PS8SjcAXMf45jTqIKUo=
 			</data>
 		</dict>
 		<key>Modules/FlyXmpp.swiftmodule/arm64-apple-ios.swiftdoc</key>
@@ -82,14 +82,14 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			4aY576VU6qF5R+oCRHqsNjWHQcTo1TfwwR00lXcmag8=
+			vcolOpKV1vl8O13T1IA8jyj/PS8SjcAXMf45jTqIKUo=
 			</data>
 		</dict>
 		<key>Modules/FlyXmpp.swiftmodule/arm64-apple-ios.swiftmodule</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			Qw8vRcmsyFnZI3sK8IXpLQx3uI4UiAWrRNymYoE0BmU=
+			uXBT25tSZczaAB6opKmJ8/ljFVvw9dUxirISvvZ/4pY=
 			</data>
 		</dict>
 		<key>Modules/module.modulemap</key>

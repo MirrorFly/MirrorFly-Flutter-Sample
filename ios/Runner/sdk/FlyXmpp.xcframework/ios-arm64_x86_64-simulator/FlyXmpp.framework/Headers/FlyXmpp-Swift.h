@@ -260,6 +260,7 @@ SWIFT_CLASS("_TtC7FlyXmpp17FlyXmppController")
 
 
 
+
 @class UNMutableNotificationContent;
 
 SWIFT_CLASS("_TtC7FlyXmpp26NotificationMessageSupport")
@@ -535,6 +536,7 @@ SWIFT_CLASS("_TtC7FlyXmpp17FlyXmppController")
 - (nonnull instancetype)init SWIFT_UNAVAILABLE;
 + (nonnull instancetype)new SWIFT_UNAVAILABLE_MSG("-init is unavailable");
 @end
+
 
 
 

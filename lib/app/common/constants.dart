@@ -496,6 +496,13 @@ class Constants {
   static const String googleTranslationLanguageDoubleTap = "Double Tap the received messages to translate";
   static const String googleTranslateKey = "AIzaSyCdwzAZR6tx8KB-2dMn0KzSI1V0LpsYdH0";
 
+  static const String editBusyStatus = "Edit Busy Status Message";
+  static const String yourBusyStatus = "Your Busy Status";
+  static const String newBusyStatus = "Select your new Status";
+  static const String busyStatusDescription = "Your busy status will be set as auto-response to the messages received from individuals.";
+
+
+
 }
 
 Future<void> launchWeb(String url) async{

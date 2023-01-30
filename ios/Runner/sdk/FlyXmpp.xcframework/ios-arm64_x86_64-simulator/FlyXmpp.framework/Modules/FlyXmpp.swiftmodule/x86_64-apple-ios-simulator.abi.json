@@ -85,6 +85,27 @@
               "AccessControl"
             ],
             "funcSelfKind": "NonMutating"
+          },
+          {
+            "kind": "Function",
+            "name": "resetMyXmppResource",
+            "printedName": "resetMyXmppResource()",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Void",
+                "printedName": "()"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:7FlyXmpp0B5UtilsV07resetMyB8ResourceyyFZ",
+            "mangledName": "$s7FlyXmpp0B5UtilsV07resetMyB8ResourceyyFZ",
+            "moduleName": "FlyXmpp",
+            "static": true,
+            "declAttributes": [
+              "AccessControl"
+            ],
+            "funcSelfKind": "NonMutating"
           }
         ],
         "declKind": "Struct",
@@ -6637,6 +6658,48 @@
             ],
             "isFromExtension": true,
             "funcSelfKind": "NonMutating"
+          },
+          {
+            "kind": "Function",
+            "name": "generateXmppResource",
+            "printedName": "generateXmppResource()",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Void",
+                "printedName": "()"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:7FlyXmpp0aB10ControllerC08generateB8ResourceyyF",
+            "mangledName": "$s7FlyXmpp0aB10ControllerC08generateB8ResourceyyF",
+            "moduleName": "FlyXmpp",
+            "declAttributes": [
+              "AccessControl"
+            ],
+            "isFromExtension": true,
+            "funcSelfKind": "NonMutating"
+          },
+          {
+            "kind": "Function",
+            "name": "resetXmppResource",
+            "printedName": "resetXmppResource()",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Void",
+                "printedName": "()"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:7FlyXmpp0aB10ControllerC05resetB8ResourceyyF",
+            "mangledName": "$s7FlyXmpp0aB10ControllerC05resetB8ResourceyyF",
+            "moduleName": "FlyXmpp",
+            "declAttributes": [
+              "AccessControl"
+            ],
+            "isFromExtension": true,
+            "funcSelfKind": "NonMutating"
           }
         ],
         "declKind": "Class",
@@ -6733,17 +6796,23 @@
           {
             "kind": "Function",
             "name": "didReceiveLogout",
-            "printedName": "didReceiveLogout()",
+            "printedName": "didReceiveLogout(isDeleteAccount:)",
             "children": [
               {
                 "kind": "TypeNominal",
                 "name": "Void",
                 "printedName": "()"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "Bool",
+                "printedName": "Swift.Bool",
+                "usr": "s:Sb"
               }
             ],
             "declKind": "Func",
-            "usr": "s:7FlyXmpp18XMPPLogoutDelegateP16didReceiveLogoutyyF",
-            "mangledName": "$s7FlyXmpp18XMPPLogoutDelegateP16didReceiveLogoutyyF",
+            "usr": "s:7FlyXmpp18XMPPLogoutDelegateP16didReceiveLogout15isDeleteAccountySb_tF",
+            "mangledName": "$s7FlyXmpp18XMPPLogoutDelegateP16didReceiveLogout15isDeleteAccountySb_tF",
             "moduleName": "FlyXmpp",
             "genericSig": "<τ_0_0 where τ_0_0 : FlyXmpp.XMPPLogoutDelegate>",
             "sugared_genericSig": "<Self where Self : FlyXmpp.XMPPLogoutDelegate>",
@@ -6875,7 +6944,7 @@
     {
       "filePath": "\/Users\/user\/Documents\/Projects\/UIKitiOS\/SubmoduleXmpp\/FlyXmpp\/FlyXmpp\/XMPPConnectionManager.swift",
       "kind": "BooleanLiteral",
-      "offset": 13082,
+      "offset": 13104,
       "length": 4,
       "value": "true"
     },

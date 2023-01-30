@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flysdk/flysdk.dart';
 import 'package:get/get.dart';
@@ -12,6 +14,8 @@ class ChatSettingsController extends GetxController {
 
   final _archiveEnabled = false.obs;
   final lastSeenPreference = false.obs;
+  final busyStatusPreference = false.obs;
+  final busyStatus = "".obs;
   bool get archiveEnabled => _archiveEnabled.value;
 
   final _translationEnabled = false.obs;
@@ -26,6 +30,8 @@ class ChatSettingsController extends GetxController {
     getArchivedSettingsEnabled();
     _translationEnabled(SessionManagement.isGoogleTranslationEnable());
     _translationLanguage(SessionManagement.getTranslationLanguage());
+    getBusyStatusPreference();
+    getMyBusyStatus();
   }
   Future<void> getArchivedSettingsEnabled() async {
     await FlyChat.isArchivedSettingsEnabled().then((value) => _archiveEnabled(value));
@@ -91,5 +97,27 @@ class ChatSettingsController extends GetxController {
 
   lastSeenEnableDisable() {
     lastSeenPreference(!lastSeenPreference.value);
+  }
+
+  busyStatusEnable() async {
+    bool busyStatusVal = !busyStatusPreference.value;
+    debugPrint("busy_status_val ${busyStatusVal.toString()}");
+    busyStatusPreference(busyStatusVal);
+    await FlyChat.enableDisableBusyStatus(busyStatusVal);
+  }
+
+  void getMyBusyStatus() {
+    FlyChat.getMyBusyStatus().then((value) {
+      var userBusyStatus = json.decode(value);
+      debugPrint("Busy Status ${userBusyStatus["status"]}");
+      busyStatus(userBusyStatus["status"]);
+
+    });
+  }
+
+  Future<void> getBusyStatusPreference() async {
+    bool? busyStatusPref = await FlyChat.isBusyStatusEnabled();
+    busyStatusPreference(busyStatusPref);
+    debugPrint("busyStatusPref ${busyStatusPref.toString()}");
   }
 }

@@ -351,6 +351,8 @@ public protocol FeaturesDelegate {
   public class func getCallStatus(userId: Swift.String) -> FlyCall.CALLSTATUS?
   public class func getUserName(userId: Swift.String) -> Swift.String
   public class func isAlreadyOnAnotherCall() -> Swift.Bool
+  public class func connectCallServers()
+  public class func disconnectCallServers()
   public class func getLocalUserId() -> Swift.String?
   public class func isCallOnHold() -> Swift.Bool
   public class func setIsCallOnHold(isCallOnHold: Swift.Bool)

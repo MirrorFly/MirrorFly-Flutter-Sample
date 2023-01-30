@@ -13,54 +13,54 @@ import FlyCommon
 
 let MIRRORFLY_METHOD_CHANNEL = "contus.mirrorfly/sdkCall"
 
-let MESSAGE_ONRECEIVED_CHANNEL = "contus.mirrorfly/onMessageReceived"//
-let MESSAGE_STATUS_UPDATED_CHANNEL = "contus.mirrorfly/onMessageStatusUpdated"//
-let MEDIA_STATUS_UPDATED_CHANNEL = "contus.mirrorfly/onMediaStatusUpdated"//
+let MESSAGE_ONRECEIVED_CHANNEL = "contus.mirrorfly/onMessageReceived"
+let MESSAGE_STATUS_UPDATED_CHANNEL = "contus.mirrorfly/onMessageStatusUpdated"
+let MEDIA_STATUS_UPDATED_CHANNEL = "contus.mirrorfly/onMediaStatusUpdated"
 let UPLOAD_DOWNLOAD_PROGRESS_CHANGED_CHANNEL =
     "contus.mirrorfly/onUploadDownloadProgressChanged"
 let SHOW_UPDATE_CANCEL_NOTIFICTION_CHANNEL =
     "contus.mirrorfly/showOrUpdateOrCancelNotification"//dependency issue
 
-let onGroupProfileFetched_channel = "contus.mirrorfly/onGroupProfileFetched"//
-let onNewGroupCreated_channel = "contus.mirrorfly/onNewGroupCreated"//
-let onGroupProfileUpdated_channel = "contus.mirrorfly/onGroupProfileUpdated"//
-let onNewMemberAddedToGroup_channel = "contus.mirrorfly/onNewMemberAddedToGroup"//
-let onMemberRemovedFromGroup_channel = "contus.mirrorfly/onMemberRemovedFromGroup"//
+let onGroupProfileFetched_channel = "contus.mirrorfly/onGroupProfileFetched"
+let onNewGroupCreated_channel = "contus.mirrorfly/onNewGroupCreated"
+let onGroupProfileUpdated_channel = "contus.mirrorfly/onGroupProfileUpdated"
+let onNewMemberAddedToGroup_channel = "contus.mirrorfly/onNewMemberAddedToGroup"
+let onMemberRemovedFromGroup_channel = "contus.mirrorfly/onMemberRemovedFromGroup"
 let onFetchingGroupMembersCompleted_channel =
-    "contus.mirrorfly/onFetchingGroupMembersCompleted"//
+    "contus.mirrorfly/onFetchingGroupMembersCompleted"
 let onDeleteGroup_channel = "contus.mirrorfly/onDeleteGroup"//not found
 let onFetchingGroupListCompleted_channel =
     "contus.mirrorfly/onFetchingGroupListCompleted"//not found
-let onMemberMadeAsAdmin_channel = "contus.mirrorfly/onMemberMadeAsAdmin"//
-let onMemberRemovedAsAdmin_channel = "contus.mirrorfly/onMemberRemovedAsAdmin"//
-let onLeftFromGroup_channel = "contus.mirrorfly/onLeftFromGroup"//
+let onMemberMadeAsAdmin_channel = "contus.mirrorfly/onMemberMadeAsAdmin"
+let onMemberRemovedAsAdmin_channel = "contus.mirrorfly/onMemberRemovedAsAdmin"
+let onLeftFromGroup_channel = "contus.mirrorfly/onLeftFromGroup"
 let onGroupNotificationMessage_channel = "contus.mirrorfly/onGroupNotificationMessage"//not found
-let onGroupDeletedLocally_channel = "contus.mirrorfly/onGroupDeletedLocally"//
+let onGroupDeletedLocally_channel = "contus.mirrorfly/onGroupDeletedLocally"
 
-let blockedThisUser_channel = "contus.mirrorfly/blockedThisUser"//
-let myProfileUpdated_channel = "contus.mirrorfly/myProfileUpdated"//
-let onAdminBlockedOtherUser_channel = "contus.mirrorfly/onAdminBlockedOtherUser"//
-let onAdminBlockedUser_channel = "contus.mirrorfly/onAdminBlockedUser"//
+let blockedThisUser_channel = "contus.mirrorfly/blockedThisUser"
+let myProfileUpdated_channel = "contus.mirrorfly/myProfileUpdated"
+let onAdminBlockedOtherUser_channel = "contus.mirrorfly/onAdminBlockedOtherUser"
+let onAdminBlockedUser_channel = "contus.mirrorfly/onAdminBlockedUser"
 let onContactSyncComplete_channel = "contus.mirrorfly/onContactSyncComplete"//need to verify with ios team
 let onLoggedOut_channel = "contus.mirrorfly/onLoggedOut"//not found
-let unblockedThisUser_channel = "contus.mirrorfly/unblockedThisUser"//
-let userBlockedMe_channel = "contus.mirrorfly/userBlockedMe"//
-let userCameOnline_channel = "contus.mirrorfly/userCameOnline"//
-let userDeletedHisProfile_channel = "contus.mirrorfly/userDeletedHisProfile"//
-let userProfileFetched_channel = "contus.mirrorfly/userProfileFetched"//
-let userUnBlockedMe_channel = "contus.mirrorfly/userUnBlockedMe"//
-let userUpdatedHisProfile_channel = "contus.mirrorfly/userUpdatedHisProfile"//
-let userWentOffline_channel = "contus.mirrorfly/userWentOffline"//
-let usersIBlockedListFetched_channel = "contus.mirrorfly/usersIBlockedListFetched"//
-let usersProfilesFetched_channel = "contus.mirrorfly/usersProfilesFetched"//
-let usersWhoBlockedMeListFetched_channel = "contus.mirrorfly/usersWhoBlockedMeListFetched"//
-let onConnected_channel = "contus.mirrorfly/onConnected"//
-let onDisconnected_channel = "contus.mirrorfly/onDisconnected"//
-let onConnectionNotAuthorized_channel = "contus.mirrorfly/onConnectionNotAuthorized"//
+let unblockedThisUser_channel = "contus.mirrorfly/unblockedThisUser"
+let userBlockedMe_channel = "contus.mirrorfly/userBlockedMe"
+let userCameOnline_channel = "contus.mirrorfly/userCameOnline"
+let userDeletedHisProfile_channel = "contus.mirrorfly/userDeletedHisProfile"
+let userProfileFetched_channel = "contus.mirrorfly/userProfileFetched"
+let userUnBlockedMe_channel = "contus.mirrorfly/userUnBlockedMe"
+let userUpdatedHisProfile_channel = "contus.mirrorfly/userUpdatedHisProfile"
+let userWentOffline_channel = "contus.mirrorfly/userWentOffline"
+let usersIBlockedListFetched_channel = "contus.mirrorfly/usersIBlockedListFetched"
+let usersProfilesFetched_channel = "contus.mirrorfly/usersProfilesFetched"
+let usersWhoBlockedMeListFetched_channel = "contus.mirrorfly/usersWhoBlockedMeListFetched"
+let onConnected_channel = "contus.mirrorfly/onConnected"
+let onDisconnected_channel = "contus.mirrorfly/onDisconnected"
+let onConnectionNotAuthorized_channel = "contus.mirrorfly/onConnectionNotAuthorized"
 let connectionFailed_channel = "contus.mirrorfly/connectionFailed"
 let connectionSuccess_channel = "contus.mirrorfly/connectionSuccess"
 let onWebChatPasswordChanged_channel = "contus.mirrorfly/onWebChatPasswordChanged"
-let setTypingStatus_channel = "contus.mirrorfly/setTypingStatus"//
+let setTypingStatus_channel = "contus.mirrorfly/setTypingStatus"
 let onChatTypingStatus_channel = "contus.mirrorfly/onChatTypingStatus"
 let onGroupTypingStatus_channel = "contus.mirrorfly/onGroupTypingStatus"
 let onFailure_channel = "contus.mirrorfly/onFailure"
@@ -654,6 +654,8 @@ class FlyBaseController: NSObject{
                 FlySdkMethodCalls.clearAllConversation(call: call, result: result)
             case "cancelNotifications":
                 FlySdkMethodCalls.cancelNotifications(call: call, result: result)
+            case "insertBusyStatus":
+                FlySdkMethodCalls.insertBusyStatus(call: call, result: result)
             default:
                 result(FlutterMethodNotImplemented)
             }
@@ -684,7 +686,12 @@ class FlyBaseController: NSObject{
 
 extension FlyBaseController : MessageEventsDelegate, ConnectionEventDelegate, LogoutDelegate, GroupEventsDelegate,
                               AdminBlockCurrentUserDelegate, TypingStatusDelegate, ProfileEventsDelegate,
-                                AdminBlockDelegate,AvailableFeaturesDelegate, BackupEventDelegate, RestoreEventDelegate {
+                              AdminBlockDelegate,AvailableFeaturesDelegate, BackupEventDelegate, RestoreEventDelegate {
+    
+    func onMessagesCleared(toJid: String, deleteType: String?) {
+        
+    }
+    
     func restoreProgressDidReceive(completedCount: Double, completedPercentage: String, completedSize: String) {
         
     }

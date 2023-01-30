@@ -14,6 +14,7 @@ import _StringProcessing
 public struct XmppUtils {
   public static func generateMyXmppResource()
   public static func getMyXMPPJID() -> XMPPFramework.XMPPJID
+  public static func resetMyXmppResource()
 }
 public protocol XMPPMessageDelegate : ObjectiveC.NSObjectProtocol {
   func didReciveSingleChatCorbonMessage(messageId: Swift.String, from: Swift.String, to: Swift.String, body: Swift.String, time: Swift.String) -> Swift.String
@@ -158,8 +159,12 @@ extension FlyXmpp.FlyXmppController {
   public func sendWebLogout(socketId: Swift.String, callback: @escaping FlyCommon.FlyCompletionHandler)
   public func sendRegisterUpdate(callback: @escaping FlyCommon.FlyCompletionHandler)
 }
+extension FlyXmpp.FlyXmppController {
+  public func generateXmppResource()
+  public func resetXmppResource()
+}
 public protocol XMPPLogoutDelegate : ObjectiveC.NSObjectProtocol {
-  func didReceiveLogout()
+  func didReceiveLogout(isDeleteAccount: Swift.Bool)
 }
 public protocol XMPPWebLogoutDelegate : ObjectiveC.NSObjectProtocol {
   func didLogoutWeb(socketId: Swift.String)

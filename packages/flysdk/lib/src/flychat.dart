@@ -233,11 +233,25 @@ class FlyChat {
     }
   }
 
-  static Future<bool?> setMyBusyStatus(String busystatus) async {
+  static Future<bool?> setMyBusyStatus(String busyStatus) async {
     bool? res;
     try {
       res = await mirrorFlyMethodChannel
-          .invokeMethod<bool>('setMyBusyStatus',{"status":busystatus});
+          .invokeMethod<bool>('setMyBusyStatus',{"status":busyStatus});
+      return res;
+    } on PlatformException catch (e) {
+      debugPrint("Platform Exception ===> $e");
+      rethrow;
+    } on Exception catch (error) {
+      debugPrint("Exception ==> $error");
+      rethrow;
+    }
+  }
+  static Future<bool?> insertBusyStatus(String busyStatus) async {
+    bool? res;
+    try {
+      res = await mirrorFlyMethodChannel
+          .invokeMethod<bool>('insertBusyStatus',{"busy_status":busyStatus});
       return res;
     } on PlatformException catch (e) {
       debugPrint("Platform Exception ===> $e");
@@ -309,7 +323,7 @@ class FlyChat {
     }
   }
 
-  static Future<bool?> deleteBusyStatus(num id, String status,bool isCurrentStatus) async {
+  static Future<bool?> deleteBusyStatus(String id, String status,bool isCurrentStatus) async {
     bool? res;
     try {
       res = await mirrorFlyMethodChannel

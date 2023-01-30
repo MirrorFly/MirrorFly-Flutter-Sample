@@ -1,10 +1,10 @@
 import 'package:get/get.dart';
-import 'package:mirror_fly_demo/app/modules/admin_blocked/adminblockedview.dart';
-import 'package:mirror_fly_demo/app/modules/archived_chats/archived_chat_list_binding.dart';
-import 'package:mirror_fly_demo/app/modules/archived_chats/archived_chat_list_view.dart';
-import 'package:mirror_fly_demo/app/modules/chat/views/forwardchat_view.dart';
-import 'package:mirror_fly_demo/app/modules/settings/views/chat_settings/chat_settings_view.dart';
 
+import '../modules/admin_blocked/adminblockedview.dart';
+import '../modules/archived_chats/archived_chat_list_binding.dart';
+import '../modules/archived_chats/archived_chat_list_view.dart';
+import '../modules/busy_status/bindings/busy_status_binding.dart';
+import '../modules/busy_status/views/busy_status_view.dart';
 import '../modules/camera_pick/bindings/camera_pick_binding.dart';
 import '../modules/camera_pick/views/camera_pick_view.dart';
 import '../modules/chat/bindings/chat_binding.dart';
@@ -15,6 +15,7 @@ import '../modules/chat/bindings/location_binding.dart';
 import '../modules/chat/views/chat_search_view.dart';
 import '../modules/chat/views/chat_view.dart';
 import '../modules/chat/views/contact_list_view.dart';
+import '../modules/chat/views/forwardchat_view.dart';
 import '../modules/chat/views/image_preview_view.dart';
 import '../modules/chat/views/location_sent_view.dart';
 import '../modules/chatInfo/bindings/chat_info_binding.dart';
@@ -63,6 +64,7 @@ import '../modules/settings/views/app_lock/set_pin_view.dart';
 import '../modules/settings/views/blocked/blocked_list_binding.dart';
 import '../modules/settings/views/blocked/blocked_list_view.dart';
 import '../modules/settings/views/chat_settings/chat_settings_binding.dart';
+import '../modules/settings/views/chat_settings/chat_settings_view.dart';
 import '../modules/settings/views/chat_settings/language/language_binding.dart';
 import '../modules/settings/views/chat_settings/language/language_list_view.dart';
 import '../modules/settings/views/notification/notification_binding.dart';
@@ -76,7 +78,6 @@ import '../modules/video_preview/views/video_player_view.dart';
 import '../modules/video_preview/views/video_preview_view.dart';
 import '../modules/view_all_media/bindings/view_all_media_binding.dart';
 import '../modules/view_all_media/views/view_all_media_view.dart';
-
 
 part 'app_routes.dart';
 
@@ -267,15 +268,13 @@ class AppPages {
       page: () => const AdminBlockedView(),
     ),
     GetPage(
-      name: _Paths.archivedChats,
-      page: () => const ArchivedChatListView(),
-      binding: ArchivedChatListBinding()
-    ),
+        name: _Paths.archivedChats,
+        page: () => const ArchivedChatListView(),
+        binding: ArchivedChatListBinding()),
     GetPage(
-      name: _Paths.chatSettings,
-      page: () => const ChatSettingsView(),
-      binding: ChatSettingsBinding()
-    ),
+        name: _Paths.chatSettings,
+        page: () => const ChatSettingsView(),
+        binding: ChatSettingsBinding()),
     GetPage(
       name: _Paths.galleryPicker,
       page: () => const GalleryPickerView(),
@@ -290,6 +289,11 @@ class AppPages {
       name: _Paths.languages,
       page: () => const LanguageListView(),
       binding: LanguageListBinding(),
+    ),
+    GetPage(
+      name: _Paths.busy_status,
+      page: () => const BusyStatusView(),
+      binding: BusyStatusBinding(),
     ),
   ];
 }
