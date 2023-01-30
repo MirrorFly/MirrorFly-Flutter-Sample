@@ -9,6 +9,7 @@ import '../../../../data/helper.dart';
 class ChatSettingsController extends GetxController {
 
   final _archiveEnabled = false.obs;
+  final lastSeenPreference = false.obs;
   bool get archiveEnabled => _archiveEnabled.value;
 
   @override
@@ -53,5 +54,9 @@ class ChatSettingsController extends GetxController {
     } else {
       toToast(Constants.noInternetConnection);
     }
+  }
+
+  lastSeenEnableDisable() {
+    lastSeenPreference(!lastSeenPreference.value);
   }
 }
