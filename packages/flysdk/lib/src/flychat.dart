@@ -1169,7 +1169,7 @@ class FlyChat {
     }
   }
 
-  static Future<dynamic> registerUser(String userIdentifier,String token) async {
+  static Future<dynamic> registerUser(String userIdentifier, {String token = ""}) async {
     dynamic registerResponse;
     try {
       registerResponse = await mirrorFlyMethodChannel

@@ -285,7 +285,7 @@ class LoginController extends GetxController {
     if (await AppUtils.isNetConnected()) {
       showLoading();
       FlyChat.registerUser(
-        /*countryCode! + */mobileNumber.text, SessionManagement.getToken().checkNull())
+        /*countryCode! + */mobileNumber.text, token:SessionManagement.getToken().checkNull())
           .then((value) {
         if (value.contains("data")) {
           var userData = registerModelFromJson(value); //message
