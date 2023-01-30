@@ -63,6 +63,8 @@ import '../modules/settings/views/app_lock/set_pin_view.dart';
 import '../modules/settings/views/blocked/blocked_list_binding.dart';
 import '../modules/settings/views/blocked/blocked_list_view.dart';
 import '../modules/settings/views/chat_settings/chat_settings_binding.dart';
+import '../modules/settings/views/chat_settings/language/language_binding.dart';
+import '../modules/settings/views/chat_settings/language/language_list_view.dart';
 import '../modules/settings/views/notification/notification_binding.dart';
 import '../modules/settings/views/notification/notification_settings_view.dart';
 import '../modules/settings/views/settings_view.dart';
@@ -283,6 +285,11 @@ class AppPages {
       name: _Paths.mediaPreview,
       page: () => const MediaPreviewView(),
       binding: MediaPreviewBinding(),
+    ),
+    GetPage(
+      name: _Paths.languages,
+      page: () => const LanguageListView(),
+      binding: LanguageListBinding(),
     ),
   ];
 }

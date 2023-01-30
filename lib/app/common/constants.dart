@@ -489,6 +489,13 @@ class Constants {
   static const String adminBlockedMessageLabel ="Please contact admin if you have any query.";
   static const String supportMail ="contussupport@gmail.co";
   static const String httpStatusCode = "http_status_code";
+
+  static const String googleTranslationLabel = "Translate Message";
+  static const String googleTranslationMessage = "Enable Translate Message to choose Translation Language";
+  static const String googleTranslationLanguageLable = "Choose Translation Language";
+  static const String googleTranslationLanguageDoubleTap = "Double Tap the received messages to translate";
+  static const String googleTranslateKey = "AIzaSyCdwzAZR6tx8KB-2dMn0KzSI1V0LpsYdH0";
+
 }
 
 Future<void> launchWeb(String url) async{

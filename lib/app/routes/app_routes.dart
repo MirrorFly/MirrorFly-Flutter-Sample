@@ -42,6 +42,7 @@ abstract class Routes {
   static const chatSettings = _Paths.chatSettings;
   static const galleryPicker = _Paths.galleryPicker;
   static const mediaPreview = _Paths.mediaPreview;
+  static const languages = _Paths.languages;
 }
 
 abstract class _Paths {
@@ -86,4 +87,5 @@ abstract class _Paths {
   static const chatSettings = '/chatSettings';
   static const galleryPicker = '/gallery-picker';
   static const mediaPreview = '/media-preview';
+  static const languages = '/languages';
 }
