@@ -656,7 +656,7 @@ open class FlyBaseController(activity: FlutterActivity) : MethodChannel.MethodCa
                 val id = call.argument<String>("id") ?: "0"
                 val status = call.argument<String>("status") ?: ""
                 val isCurrentStatus = call.argument<Boolean>("isCurrentStatus") ?: false
-                val profileStatus = BusyStatus(id, status, isCurrentStatus)
+                val profileStatus = BusyStatus(id.toLong(), status, isCurrentStatus)
                 FlyCore.deleteBusyStatus(profileStatus)
                 result.success(true)
             }
