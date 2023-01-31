@@ -1993,7 +1993,7 @@ class ChatController extends GetxController
               "translation source : ${translation.detectedSourceLanguage}");
           debugPrint("translation text : ${translation.translatedText}");
         }).catchError((onError){
-          debugPrint("exception : ${onError}");
+          debugPrint("exception : $onError");
         });
       }
     }

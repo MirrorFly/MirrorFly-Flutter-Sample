@@ -55,7 +55,7 @@ class ChatSettingsView extends GetView<ChatSettingsController> {
                     ),
                   ],
                 ),
-                rightArrowIcon, () => {Get.toNamed(Routes.busy_status)},
+                rightArrowIcon, () => {Get.toNamed(Routes.busyStatus)},
                 )),
             notificationItem(title: Constants.googleTranslationLabel, subtitle: Constants.googleTranslationMessage,on: controller.translationEnabled, onTap: controller.enableDisableTranslate),
             Visibility(

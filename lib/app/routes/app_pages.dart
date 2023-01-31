@@ -291,7 +291,7 @@ class AppPages {
       binding: LanguageListBinding(),
     ),
     GetPage(
-      name: _Paths.busy_status,
+      name: _Paths.busyStatus,
       page: () => const BusyStatusView(),
       binding: BusyStatusBinding(),
     ),

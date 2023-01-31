@@ -744,6 +744,7 @@ class DashboardController extends GetxController with GetTickerProviderStateMixi
     }
   }
 
+  @override
   void onMessageStatusUpdated(event) {
     mirrorFlyLog("MESSAGE STATUS UPDATED", event);
     ChatMessageModel chatMessageModel = sendMessageModelFromJson(event);

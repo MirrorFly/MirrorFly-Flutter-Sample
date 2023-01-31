@@ -187,7 +187,7 @@ class ArchivedChatListController extends GetxController {
 
 
   updateArchiveRecentChat(String jid){
-    mirrorFlyLog("checkArchiveList", "$jid");
+    mirrorFlyLog("checkArchiveList", jid);
     final index = archivedChats.indexWhere((chat) => chat.jid == jid);
     getRecentChatOfJid(jid).then((recent){
       if(recent!=null){
