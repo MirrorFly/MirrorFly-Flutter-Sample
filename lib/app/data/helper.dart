@@ -73,6 +73,13 @@ class Helper {
       ),
     );
   }
+  static void showButtonAlert({List<Widget>? actions}) {
+    Get.dialog(
+      AlertDialog(
+        actions: actions,
+      ),
+    );
+  }
 
 //hide loading
   static void hideLoading() {
