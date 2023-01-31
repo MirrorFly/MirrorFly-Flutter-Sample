@@ -88,6 +88,9 @@ class SessionManagement {
   static void setAdminBlocked(bool status) async {
     await _preferences.setBool("admin_blocked", status);
   }
+  static void setAutoDownloadEnable(bool status) async {
+    await _preferences.setBool("MediaAutoDownload", status);
+  }
   static void setGoogleTranslationEnable(bool status) async {
     await _preferences.setBool("TranslateLanguageChecked", status);
   }
@@ -144,6 +147,7 @@ class SessionManagement {
   static bool? synced() => _preferences.getBool("synced");
   static bool adminBlocked() => _preferences.getBool("admin_blocked") ?? false;
   static bool isGoogleTranslationEnable() => _preferences.getBool("TranslateLanguageChecked") ?? false;
+  static bool isAutoDownloadEnable() => _preferences.getBool("MediaAutoDownload") ?? false;
   static String getTranslationLanguage() => _preferences.getString("LanguageName") ?? "English";
   static String getTranslationLanguageCode() => _preferences.getString("LanguageCode") ?? "en";
 }

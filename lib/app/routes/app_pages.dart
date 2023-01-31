@@ -1,4 +1,6 @@
 import 'package:get/get.dart';
+import 'package:mirror_fly_demo/app/modules/settings/views/chat_settings/datausage/datausage_binding.dart';
+import 'package:mirror_fly_demo/app/modules/settings/views/chat_settings/datausage/datausage_list_view.dart';
 
 import '../modules/admin_blocked/adminblockedview.dart';
 import '../modules/archived_chats/archived_chat_list_binding.dart';
@@ -294,6 +296,11 @@ class AppPages {
       name: _Paths.busyStatus,
       page: () => const BusyStatusView(),
       binding: BusyStatusBinding(),
+    ),
+    GetPage(
+      name: _Paths.dataUsageSetting,
+      page: () => const DataUsageListView(),
+      binding: DataUsageListBinding(),
     ),
   ];
 }

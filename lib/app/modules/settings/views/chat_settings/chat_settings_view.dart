@@ -57,6 +57,29 @@ class ChatSettingsView extends GetView<ChatSettingsController> {
                 ),
                 rightArrowIcon, () => {Get.toNamed(Routes.busyStatus)},
                 )),
+            notificationItem(title: Constants.autoDownload, subtitle: Constants.autoDownloadLable,on: controller.autoDownloadEnabled, onTap: controller.enableDisableAutoDownload),
+            Visibility(
+              visible: controller.autoDownloadEnabled,
+                child: chatListItem(
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: const [
+                  Text(Constants.dataUsageSettings,
+                      style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w400)),
+                  Padding(
+                    padding: EdgeInsets.symmetric(vertical: 4.0),
+                    child: Text(Constants.dataUsageSettingsLable,
+                        style: TextStyle(
+                            color: textColor,
+                            fontSize: 14,
+                            fontWeight: FontWeight.w400)),
+                  ),
+                ],
+              ),
+              rightArrowIcon, () => {Get.toNamed(Routes.dataUsageSetting)},
+            )),
             notificationItem(title: Constants.googleTranslationLabel, subtitle: Constants.googleTranslationMessage,on: controller.translationEnabled, onTap: controller.enableDisableTranslate),
             Visibility(
                 visible: controller.translationEnabled,
