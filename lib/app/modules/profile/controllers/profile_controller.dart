@@ -10,11 +10,13 @@ import 'package:mirror_fly_demo/app/common/constants.dart';
 import 'package:mirror_fly_demo/app/data/session_management.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
 import 'package:mirror_fly_demo/app/routes/app_pages.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 import '../../../common/crop_image.dart';
 import 'package:flysdk/flysdk.dart';
 
 import '../../../data/apputils.dart';
+import '../../../data/permissions.dart';
 
 class ProfileController extends GetxController {
   TextEditingController profileName = TextEditingController();
@@ -57,71 +59,93 @@ class ProfileController extends GetxController {
       getProfile();
     }
     //profileStatus.value="I'm Mirror fly user";
+    await askStoragePermission();
+  }
+
+  Future<bool> askStoragePermission() async {
+    final permission = await AppPermission.getStoragePermission();
+    switch (permission) {
+      case PermissionStatus.granted:
+        return true;
+      case PermissionStatus.permanentlyDenied:
+        return false;
+      default:
+        debugPrint("Permission default");
+        return false;
+    }
   }
 
   Future<void> save() async {
-    if (profileName.text.trim().isEmpty) {
-      toToast("Please enter your username");
-    }else if (profileName.text.trim().length < 3) {
-      toToast("Username is too short");
-    } else if (profileEmail.text.trim().isEmpty) {
-      toToast("Email should not be empty");
-    } else if (!emailPatternMatch.hasMatch(profileEmail.text.toString())) {
-      toToast("Please enter a valid Mail");
-    } else if (profileStatus.value.isEmpty) {
-      toToast("Enter Profile Status");
-    } else {
-      loading.value = true;
-      showLoader();
-      if (imagePath.value.isNotEmpty) {
-        updateProfileImage(imagePath.value, update: true);
+    if (await askStoragePermission()) {
+      if (profileName.text
+          .trim()
+          .isEmpty) {
+        toToast("Please enter your username");
+      } else if (profileName.text
+          .trim()
+          .length < 3) {
+        toToast("Username is too short");
+      } else if (profileEmail.text
+          .trim()
+          .isEmpty) {
+        toToast("Email should not be empty");
+      } else if (!emailPatternMatch.hasMatch(profileEmail.text.toString())) {
+        toToast("Please enter a valid Mail");
+      } else if (profileStatus.value.isEmpty) {
+        toToast("Enter Profile Status");
       } else {
-        if(await AppUtils.isNetConnected()) {
-          FlyChat
-              .updateMyProfile(
-              profileName.text.toString(),
-              profileEmail.text.toString(),
-              profileMobile.text.toString(),
-              profileStatus.value.toString(),
-              userImgUrl.value.isEmpty ? null : userImgUrl.value
-          )
-              .then((value) {
-            mirrorFlyLog("updateMyProfile", value);
-            loading.value = false;
-            hideLoader();
-            if (value != null) {
-              debugPrint(value);
-              var data = profileUpdateFromJson(value);
-              if (data.status != null) {
-                toToast(data.message.toString());
-                if (data.status!) {
-                  changed(false);
-                  var userProfileData = ProData(
-                      email: profileEmail.text.toString(),
-                      image: userImgUrl.value,
-                      mobileNumber: profileMobile.text,
-                      nickName: profileName.text,
-                      name: profileName.text,
-                      status: profileStatus.value);
-                  SessionManagement.setCurrentUser(userProfileData);
-                  if (from.value == Routes.login) {
-                    Get.offNamed(Routes.dashboard);
+        loading.value = true;
+        showLoader();
+        if (imagePath.value.isNotEmpty) {
+          updateProfileImage(imagePath.value, update: true);
+        } else {
+          if (await AppUtils.isNetConnected()) {
+            FlyChat
+                .updateMyProfile(
+                profileName.text.toString(),
+                profileEmail.text.toString(),
+                profileMobile.text.toString(),
+                profileStatus.value.toString(),
+                userImgUrl.value.isEmpty ? null : userImgUrl.value
+            )
+                .then((value) {
+              mirrorFlyLog("updateMyProfile", value);
+              loading.value = false;
+              hideLoader();
+              if (value != null) {
+                debugPrint(value);
+                var data = profileUpdateFromJson(value);
+                if (data.status != null) {
+                  toToast(data.message.toString());
+                  if (data.status!) {
+                    changed(false);
+                    var userProfileData = ProData(
+                        email: profileEmail.text.toString(),
+                        image: userImgUrl.value,
+                        mobileNumber: profileMobile.text,
+                        nickName: profileName.text,
+                        name: profileName.text,
+                        status: profileStatus.value);
+                    SessionManagement.setCurrentUser(userProfileData);
+                    if (from.value == Routes.login) {
+                      Get.offNamed(Routes.dashboard);
+                    }
                   }
                 }
+              } else {
+                toToast("Unable to update profile");
               }
-            }else{
-              toToast("Unable to update profile");
-            }
-          }).catchError((error) {
-            loading.value = false;
+            }).catchError((error) {
+              loading.value = false;
+              hideLoader();
+              debugPrint("issue===> $error");
+              toToast(error.toString());
+            });
+          } else {
+            loading(false);
             hideLoader();
-            debugPrint("issue===> $error");
-            toToast(error.toString());
-          });
-        }else{
-          loading(false);
-          hideLoader();
-          toToast(Constants.noInternetConnection);
+            toToast(Constants.noInternetConnection);
+          }
         }
       }
     }

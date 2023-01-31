@@ -10,6 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:get/get.dart';
+import 'package:google_cloud_translation/google_cloud_translation.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
@@ -31,11 +32,14 @@ import '../../../routes/app_pages.dart';
 
 import 'package:flysdk/flysdk.dart';
 
+import '../../archived_chats/archived_chat_list_controller.dart';
 import '../../message_info/controllers/message_info_controller.dart';
 import '../chat_widgets.dart';
 
 class ChatController extends GetxController
     with GetTickerProviderStateMixin, BaseController {
+  final translator = Translation(apiKey: Constants.googleTranslateKey);
+
   var chatList = List<ChatMessageModel>.empty(growable: true).obs;
   late AnimationController controller;
   ScrollController scrollController = ScrollController(
@@ -1662,6 +1666,9 @@ class ChatController extends GetxController
         sendReadReceipt();
       }
     }
+    if(Get.isRegistered<ArchivedChatListController>()){
+      Get.find<ArchivedChatListController>().onMessageReceived(chatMessageModel);
+    }
   }
 
   @override
@@ -1753,6 +1760,9 @@ class ChatController extends GetxController
         }
         setChatStatus();
       }
+    }
+    if(Get.isRegistered<ArchivedChatListController>()){
+      Get.find<ArchivedChatListController>().setTypingStatus(singleOrgroupJid,userId,typingStatus);
     }
   }
 
@@ -1964,4 +1974,71 @@ class ChatController extends GetxController
       mirrorFlyLog("makeVoiceCall", value.toString());
     });
   }*/
+
+  Future<void> translateMessage(int index) async {
+    if(SessionManagement.isGoogleTranslationEnable()) {
+      var text = chatList[index].messageTextContent!;
+      debugPrint("customField : ${chatList[index].messageCustomField.isEmpty}");
+      if (chatList[index].messageCustomField.isNotEmpty) {
+
+      } else {
+        await translator.translate(
+            text: text, to: SessionManagement.getTranslationLanguageCode()).then((translation) {
+          var map = <String, dynamic>{};
+          map["is_message_translated"] = true;
+          map["translated_language"] =
+              SessionManagement.getTranslationLanguage();
+          map["translated_message_content"] = translation.translatedText;
+          debugPrint(
+              "translation source : ${translation.detectedSourceLanguage}");
+          debugPrint("translation text : ${translation.translatedText}");
+        }).catchError((onError){
+          debugPrint("exception : ${onError}");
+        });
+      }
+    }
+  }
+
+  bool forwardMessageVisibility(ChatMessageModel chat) {
+    if(chat.isMessageSentByMe) {
+      if (chat.isMediaMessage()) {
+        if (chat.mediaChatMessage!.mediaDownloadStatus ==
+            Constants.mediaDownloaded ||
+            chat.mediaChatMessage!.mediaUploadStatus ==
+                Constants.mediaUploaded) {
+          return true;
+        }
+      } else {
+        if (chat.messageType == Constants.mLocation) {
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+
+  forwardSingleMessage(String messageId) {
+    var messageIds =<String>[];
+    messageIds.add(messageId);
+    Get.toNamed(Routes.forwardChat, arguments: {
+      "forward": true,
+      "group": false,
+      "groupJid": "",
+      "messageIds": messageIds
+    })?.then((value) {
+      if (value != null) {
+        debugPrint(
+            "result of forward ==> ${(value as Profile)
+                .toJson()
+                .toString()}");
+        profile_.value = value;
+        isBlocked(profile.isBlocked);
+        checkAdminBlocked();
+        memberOfGroup();
+        FlyChat.setOnGoingChatUser(profile.jid!);
+        getChatHistory();
+        sendReadReceipt();
+      }
+    });
+  }
 }

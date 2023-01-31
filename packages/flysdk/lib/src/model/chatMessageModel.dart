@@ -54,7 +54,7 @@ class ChatMessageModel {
   bool isSelected;
   bool isThisAReplyMessage;
   String messageChatType;
-  MessageCustomField? messageCustomField;
+  Map<String,dynamic> messageCustomField;
   String messageId;
   dynamic messageSentTime;
   String messageStatus;
@@ -80,7 +80,7 @@ class ChatMessageModel {
     isSelected: json["isSelected"] ?? false,
     isThisAReplyMessage: Platform.isAndroid ? json["isThisAReplyMessage"] : json["isReplyMessage"],
     messageChatType: json["messageChatType"] == "singleChat" ? "chat" : json["messageChatType"].toLowerCase(),
-    messageCustomField: json["replyParentChatMessage"] == null ? null : MessageCustomField.fromJson(json["messageCustomField"]),
+    messageCustomField: json["messageCustomField"] ?? {},
     messageId: json["messageId"],
     messageSentTime: json["messageSentTime"],
     messageStatus: Platform.isAndroid ? json["messageStatus"]["status"] : json["messageStatus"],
@@ -107,7 +107,7 @@ class ChatMessageModel {
     "isSelected": isSelected,
     "isThisAReplyMessage": isThisAReplyMessage,
     "messageChatType": messageChatType,
-    "messageCustomField": messageCustomField ?? messageCustomField?.toJson(),
+    "messageCustomField": messageCustomField,
     "messageId": messageId,
     "messageSentTime": messageSentTime,
     "messageStatus": messageStatus,

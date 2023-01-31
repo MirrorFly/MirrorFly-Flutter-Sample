@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:flysdk/flysdk.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
@@ -17,8 +18,18 @@ class ArchivedChatListController extends GetxController {
   /*@override
   void onInit(){
     super.onInit();
-    archivedChats(dashboardController.archivedChats);
+    //archivedChats(dashboardController.archivedChats);
   }*/
+
+  getArchivedChatsList() async {
+    await FlyChat.getArchivedChatList().then((value) {
+      mirrorFlyLog("archived", value.toString());
+      var data = recentChatFromJson(value);
+      archivedChats(data.data!);
+    }).catchError((error) {
+      debugPrint("issue===> $error");
+    });
+  }
 
   var selected = false.obs;
   var selectedChats = <String>[].obs;
@@ -120,27 +131,95 @@ class ArchivedChatListController extends GetxController {
     }
   }
   void checkArchiveList(RecentChatData recent) async {
-    await FlyChat.isArchivedSettingsEnabled().then((value){
+    FlyChat.isArchivedSettingsEnabled().then((value){
       if(value.checkNull()){
         var archiveIndex = archivedChats.indexWhere((element) => recent.jid==element.jid);
+        mirrorFlyLog("checkArchiveList", "$archiveIndex");
         if(!archiveIndex.isNegative){
           archivedChats.removeAt(archiveIndex);
           archivedChats.insert(0, recent);
+          archivedChats.refresh();
         }else{
           archivedChats.insert(0,recent);
+          archivedChats.refresh();
         }
       }else{
         var archiveIndex = archivedChats.indexWhere((element) => recent.jid==element.jid);
         if(!archiveIndex.isNegative){
           archivedChats.removeAt(archiveIndex);
-          var lastPinnedChat = dashboardController.recentChats.lastIndexWhere((element) =>
+          /*var lastPinnedChat = dashboardController.recentChats.lastIndexWhere((element) =>
           element.isChatPinned!);
           var nxtIndex = lastPinnedChat.isNegative ? 0 : (lastPinnedChat + 1);
           mirrorFlyLog("lastPinnedChat", lastPinnedChat.toString());
-          dashboardController.recentChats.insert(nxtIndex, recent);
+          dashboardController.recentChats.insert(nxtIndex, recent);*/
         }
       }
     });
 
+  }
+
+  void onMessageReceived( ChatMessageModel chatMessage){
+    updateArchiveRecentChat(chatMessage.chatUserJid);
+  }
+
+  void onMessageStatusUpdated(event) {
+    mirrorFlyLog("MESSAGE STATUS UPDATED", event);
+    ChatMessageModel chatMessageModel = sendMessageModelFromJson(event);
+    final index = archivedChats.indexWhere(
+            (message) => message.lastMessageId == chatMessageModel.messageId);
+    debugPrint("Message Status Update index of search $index");
+    if (!index.isNegative) {
+      archivedChats[index].lastMessageStatus = chatMessageModel.messageStatus;
+      archivedChats.refresh();
+    }
+  }
+
+  Future<RecentChatData?> getRecentChatOfJid(String jid) async{
+    var value = await FlyChat.getRecentChatOf(jid);
+    mirrorFlyLog("chat", value.toString());
+    if (value != null) {
+      var data = recentChatDataFromJson(value);
+      return data;
+    }else {
+      return null;
+    }
+  }
+
+
+  updateArchiveRecentChat(String jid){
+    mirrorFlyLog("checkArchiveList", "$jid");
+    final index = archivedChats.indexWhere((chat) => chat.jid == jid);
+    getRecentChatOfJid(jid).then((recent){
+      if(recent!=null){
+        /*if(!recent.isChatArchived.checkNull()) {
+          if (index.isNegative) {
+            archivedChats.insert(0, recent);
+          } else {
+            var lastPinnedChat = archivedChats.lastIndexWhere((element) =>
+            element.isChatPinned!);
+            var nxtIndex = lastPinnedChat.isNegative ? 0 : (lastPinnedChat + 1);
+            if (archivedChats[index].isChatPinned!) {
+              archivedChats.removeAt(index);
+              archivedChats.insert(index, recent);
+            } else {
+              archivedChats.removeAt(index);
+              archivedChats.insert(nxtIndex, recent);
+              archivedChats.refresh();
+            }
+          }
+        }else{
+          if (!index.isNegative) {
+            archivedChats.removeAt(index);
+          }
+          checkArchiveList(recent);
+        }*/
+        checkArchiveList(recent);
+      }else{
+        if (!index.isNegative) {
+          archivedChats.removeAt(index);
+        }
+      }
+      archivedChats.refresh();
+    });
   }
 }

@@ -78,39 +78,55 @@ class ChatSearchView extends GetView<ChatController> {
               alignment: (chatList[index].isMessageSentByMe
                   ? Alignment.bottomRight
                   : Alignment.bottomLeft),
-              child: Container(
-                constraints: BoxConstraints(
-                    maxWidth: controller.screenWidth * 0.75),
-                decoration: BoxDecoration(
-                    borderRadius: chatList[index].isMessageSentByMe
-                        ? const BorderRadius.only(
-                        topLeft: Radius.circular(10),
-                        topRight: Radius.circular(10),
-                        bottomLeft: Radius.circular(10))
-                        : const BorderRadius.only(
-                        topLeft: Radius.circular(10),
-                        topRight: Radius.circular(10),
-                        bottomRight: Radius.circular(10)),
-                    color: (chatList[index].isMessageSentByMe
-                        ? chatSentBgColor
-                        : Colors.white),
-                    border: chatList[index].isMessageSentByMe
-                        ? Border.all(color: chatSentBgColor)
-                        : Border.all(color: chatBorderColor)),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    (chatList[index].replyParentChatMessage == null)
-                        ? const SizedBox.shrink()
-                        : ReplyMessageHeader(
-                        chatMessage: chatList[index]),
-                    SenderHeader(
-                        isGroupProfile: controller.profile.isGroupProfile,
-                        chatList: chatList,
-                        index: index),
-                    getMessageContent(index, context, chatList),
-                  ],
-                ),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Visibility(
+                    visible: controller
+                        .forwardMessageVisibility(chatList[index]),
+                    child: IconButton(
+                        onPressed: () {
+                          controller.forwardSingleMessage(
+                              chatList[index].messageId);
+                        },
+                        icon: SvgPicture.asset(forwardMedia)),
+                  ),
+                  Container(
+                    constraints: BoxConstraints(
+                        maxWidth: controller.screenWidth * 0.75),
+                    decoration: BoxDecoration(
+                        borderRadius: chatList[index].isMessageSentByMe
+                            ? const BorderRadius.only(
+                            topLeft: Radius.circular(10),
+                            topRight: Radius.circular(10),
+                            bottomLeft: Radius.circular(10))
+                            : const BorderRadius.only(
+                            topLeft: Radius.circular(10),
+                            topRight: Radius.circular(10),
+                            bottomRight: Radius.circular(10)),
+                        color: (chatList[index].isMessageSentByMe
+                            ? chatSentBgColor
+                            : Colors.white),
+                        border: chatList[index].isMessageSentByMe
+                            ? Border.all(color: chatSentBgColor)
+                            : Border.all(color: chatBorderColor)),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        (chatList[index].replyParentChatMessage == null)
+                            ? const SizedBox.shrink()
+                            : ReplyMessageHeader(
+                            chatMessage: chatList[index]),
+                        SenderHeader(
+                            isGroupProfile: controller.profile.isGroupProfile,
+                            chatList: chatList,
+                            index: index),
+                        getMessageContent(index, context, chatList),
+                      ],
+                    ),
+                  ),
+                ],
               ),
             ),
           );

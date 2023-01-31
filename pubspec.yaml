@@ -58,6 +58,7 @@ dependencies:
   provider: ^6.0.3
   photo_manager: ^2.5.2
   oktoast: ^3.3.1
+  google_cloud_translation: ^0.0.3 # Google Translator
 
   flysdk:
     path: packages/flysdk
@@ -73,6 +74,7 @@ flutter:
 
   assets:
     - assets/countries.txt
+    - assets/languages.txt
     - assets/logos/
     - assets/animation/
     - pubspec.yaml

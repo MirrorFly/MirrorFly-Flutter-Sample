@@ -193,6 +193,7 @@ class DashboardController extends GetxController with GetTickerProviderStateMixi
   }
 
   updateRecentChat(String jid){
+    //updateArchiveRecentChat(jid);
     final index = recentChats.indexWhere((chat) => chat.jid == jid);
     getRecentChatOfJid(jid).then((recent){
       if(recent!=null){
@@ -212,12 +213,10 @@ class DashboardController extends GetxController with GetTickerProviderStateMixi
               recentChats.refresh();
             }
           }
+          checkArchiveList(recent);
         }else{
           if (!index.isNegative) {
             recentChats.removeAt(index);
-          }
-          if(Get.isRegistered<ArchivedChatListController>()) {
-            Get.find<ArchivedChatListController>().checkArchiveList(recent);
           }
           checkArchiveList(recent);
         }
@@ -230,8 +229,44 @@ class DashboardController extends GetxController with GetTickerProviderStateMixi
     });
   }
 
+  updateArchiveRecentChat(String jid){
+    mirrorFlyLog("archived chat update", jid);
+    final index = archivedChats.indexWhere((chat) => chat.jid == jid);
+    getRecentChatOfJid(jid).then((recent){
+      if(recent!=null){
+        //if(recent.isChatArchived.checkNull()) {
+          if (index.isNegative) {
+            archivedChats.insert(0, recent);
+          } else {
+            var lastPinnedChat = archivedChats.lastIndexWhere((element) =>
+            element.isChatPinned!);
+            var nxtIndex = lastPinnedChat.isNegative ? 0 : (lastPinnedChat + 1);
+            if (archivedChats[index].isChatPinned!) {
+              archivedChats.removeAt(index);
+              archivedChats.insert(index, recent);
+            } else {
+              archivedChats.removeAt(index);
+              archivedChats.insert(nxtIndex, recent);
+              archivedChats.refresh();
+            }
+          }
+        /*}else{
+          if (!index.isNegative) {
+            archivedChats.removeAt(index);
+          }
+          checkArchiveList(recent);
+        }*/
+      }else{
+        if (!index.isNegative) {
+          archivedChats.removeAt(index);
+        }
+      }
+      archivedChats.refresh();
+    });
+  }
+
   void checkArchiveList(RecentChatData recent) async {
-    await FlyChat.isArchivedSettingsEnabled().then((value){
+    FlyChat.isArchivedSettingsEnabled().then((value){
       if(value.checkNull()){
         var archiveIndex = archivedChats.indexWhere((element) => recent.jid==element.jid);
         if(!archiveIndex.isNegative){
@@ -244,11 +279,11 @@ class DashboardController extends GetxController with GetTickerProviderStateMixi
         var archiveIndex = archivedChats.indexWhere((element) => recent.jid==element.jid);
         if(!archiveIndex.isNegative){
           archivedChats.removeAt(archiveIndex);
-          var lastPinnedChat = recentChats.lastIndexWhere((element) =>
+          /*var lastPinnedChat = recentChats.lastIndexWhere((element) =>
           element.isChatPinned!);
           var nxtIndex = lastPinnedChat.isNegative ? 0 : (lastPinnedChat + 1);
           mirrorFlyLog("lastPinnedChat", lastPinnedChat.toString());
-          recentChats.insert(nxtIndex, recent);
+          recentChats.insert(nxtIndex, recent);*/
         }
       }
     });
@@ -703,6 +738,22 @@ class DashboardController extends GetxController with GetTickerProviderStateMixi
     super.onMessageReceived(chatMessage);
     ChatMessageModel chatMessageModel = sendMessageModelFromJson(chatMessage);
     updateRecentChat(chatMessageModel.chatUserJid);
+    mirrorFlyLog("message", chatMessageModel.toJson().toString());
+    if(Get.isRegistered<ArchivedChatListController>()){
+      Get.find<ArchivedChatListController>().onMessageReceived(chatMessageModel);
+    }
+  }
+
+  void onMessageStatusUpdated(event) {
+    mirrorFlyLog("MESSAGE STATUS UPDATED", event);
+    ChatMessageModel chatMessageModel = sendMessageModelFromJson(event);
+      final index = recentChats.indexWhere(
+              (message) => message.lastMessageId == chatMessageModel.messageId);
+      debugPrint("Message Status Update index of search $index");
+      if (!index.isNegative) {
+        recentChats[index].lastMessageStatus = chatMessageModel.messageStatus;
+        recentChats.refresh();
+      }
   }
 
 
