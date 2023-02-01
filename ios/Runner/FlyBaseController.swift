@@ -658,6 +658,10 @@ class FlyBaseController: NSObject{
                 FlySdkMethodCalls.insertBusyStatus(call: call, result: result)
             case "getDocsMessages":
                 FlySdkMethodCalls.getDocsMessages(call: call, result: result)
+            case "isAdmin":
+                FlySdkMethodCalls.isAdmin(call: call, result: result)
+            case "leaveFromGroup":
+                FlySdkMethodCalls.leaveFromGroup(call: call, result: result)
             default:
                 result(FlutterMethodNotImplemented)
             }

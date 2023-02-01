@@ -8,7 +8,6 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.media.RingtoneManager
 import android.media.ThumbnailUtils
-import android.net.ConnectivityManager
 import android.net.Uri
 import android.os.*
 import android.util.Base64
@@ -1127,8 +1126,9 @@ open class FlyBaseController(activity: FlutterActivity) : MethodChannel.MethodCa
             }
             call.method.equals("isAdmin") -> {
                 val jid = call.argument<String>("jid") ?: ""
+                val groupJid = call.argument<String>("group_jid") ?: ""
                 val isAdmin =
-                    GroupManager.isAdmin(jid, SharedPreferenceManager.instance.currentUserJid)
+                    GroupManager.isAdmin(groupJid , jid)
                 //DebugUtilis.v("GroupManager.isAdmin", isAdmin.toString())
                 result.success(isAdmin)
             }
@@ -2735,8 +2735,8 @@ open class FlyBaseController(activity: FlutterActivity) : MethodChannel.MethodCa
 //    }
 
     private fun leaveFromGroup(call: MethodCall, result: MethodChannel.Result) {
-        val jid = call.argument<String>("jid") ?: ""
-        GroupManager.leaveFromGroup(jid) { isSuccess, _, _ ->
+        val groupJid = call.argument<String>("groupJid") ?: ""
+        GroupManager.leaveFromGroup(groupJid) { isSuccess, _, _ ->
             if (isSuccess) {
                 result.success(true)
             } else {

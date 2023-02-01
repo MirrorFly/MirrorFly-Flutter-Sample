@@ -2702,11 +2702,11 @@ class FlyChat {
     }
   }
 
-  static Future<bool?> leaveFromGroup(String jid) async {
+  static Future<bool?> leaveFromGroup(String? userJid, String groupJid) async {
     bool? response;
     try {
       response = await mirrorFlyMethodChannel
-          .invokeMethod<bool>('leaveFromGroup', {"jid": jid});
+          .invokeMethod<bool>('leaveFromGroup', {"userJid": userJid , "groupJid": groupJid});
       debugPrint("leaveFromGroup Result ==> $response");
       return response;
     } on PlatformException catch (e) {
@@ -2723,7 +2723,7 @@ class FlyChat {
     try {
       response = await mirrorFlyMethodChannel
           .invokeMethod<bool>('deleteGroup', {"jid": jid});
-      debugPrint("leaveFromGroup Result ==> $response");
+      debugPrint("deleteGroup Result ==> $response");
       return response;
     } on PlatformException catch (e) {
       debugPrint("Platform Exception ===> $e");
@@ -2734,11 +2734,11 @@ class FlyChat {
     }
   }
 
-  static Future<bool?> isAdmin(String jid) async {
+  static Future<bool?> isAdmin(String userJid, String groupJID) async {
     bool? response;
     try {
       response = await mirrorFlyMethodChannel
-          .invokeMethod<bool>('isAdmin', {"jid": jid});
+          .invokeMethod<bool>('isAdmin', {"jid": userJid, "group_jid" : groupJID});
       debugPrint("isAdmin Result ==> $response");
       return response;
     } on PlatformException catch (e) {

@@ -70,6 +70,7 @@ class ViewAllMediaController extends GetxController {
     FlyChat.getDocsMessages(jid).then((value) async {
       if (value != null) {
         var data = chatMessageModelFromJson(value);
+        debugPrint("getDocsMessagess--> ${json.encode(data)}");
         if (data.isNotEmpty) {
           _docslist(await getMapGroupedMediaList(data, false));
         }

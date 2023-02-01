@@ -577,42 +577,21 @@ import FlyDatabase
         groupMembers = groupMembers.sorted(by: { $0.profileDetail?.name.lowercased() ?? "" < $1.profileDetail?.name.lowercased() ?? "" })
         groupMembers.insert(contentsOf: myJid, at: 0)
         
-        print("get group member list==>\(groupMembers)")
+        var groupMemberProfile: String = "["
         
-        var groupMemberResponse = [String: Any]()
-
-        print("group member count-->\(groupMembers.count)")
         groupMembers.forEach{groupMember in
-//            groupMember.profileDetail = JSONSerializer.toJson(groupMember.profileDetail)
             var profileDetailJson = JSONSerializer.toJson(groupMember.profileDetail as Any)
             profileDetailJson = profileDetailJson.replacingOccurrences(of: "{\"some\":", with: "")
             profileDetailJson = profileDetailJson.replacingOccurrences(of: "}}", with: "}")
             
-            var profileDetailDict: NSDictionary
-            do{
-                try profileDetailDict = JSONSerializer.toDictionary(profileDetailJson)
-                groupMemberResponse.addData(data: [
-                    "groupMemberId": groupMember.groupMemberId as String,
-                    "groupJid": groupMember.groupJid as String,
-                    "memberJid": groupMember.memberJid,
-                    "memberItemId": groupMember.memberItemId,
-                    "time": groupMember.time,
-                    "stanzaId": groupMember.stanzaId as Any,
-                    "isAdminMember": groupMember.isAdminMember,
-                    "profileDetail" : profileDetailDict
-                ] as [String : Any])
-            }catch{
-                print("Error while Parsing User Profile Details")
-            }
-            
+            print("profileDetailJson--> \(profileDetailJson)")
+             
+            groupMemberProfile = groupMemberProfile + profileDetailJson + ","
             
         }
-        
-        print("get group member list json==>\(JSONSerializer.toJson(groupMemberResponse))")
-//        var groupMemberJson = JSONSerializer.toJson(groupMembers)
-//        print("get group member list json==>\(groupMemberJson)")
-        
-        result(groupMemberResponse)
+        groupMemberProfile = groupMemberProfile.dropLast() + "]"
+    
+        result(groupMemberProfile)
     }
     static func enableDisableArchivedSettings(call: FlutterMethodCall, result: @escaping FlutterResult){
         let args = call.arguments as! Dictionary<String, Any>
@@ -1472,6 +1451,26 @@ import FlyDatabase
         return profileStatus
     }
     
+    static func isAdmin(call: FlutterMethodCall, result: @escaping FlutterResult){
+        let args = call.arguments as! Dictionary<String, Any>
+        
+        let groupJid = args["group_jid"] as? String ?? ""
+        let userJid = args["jid"] as? String ?? ""
+        
+        result(GroupManager.shared.isAdmin(participantJid: userJid, groupJid: groupJid).isAdmin)
+        
+    }
+    static func leaveFromGroup(call: FlutterMethodCall, result: @escaping FlutterResult){
+        let args = call.arguments as! Dictionary<String, Any>
+        
+        let groupJid = args["groupJid"] as? String ?? ""
+        let userJid = args["userJid"] as? String ?? ""
+        
+        try! GroupManager.shared.leaveFromGroup(groupJid: groupJid, userJid: userJid) { isSuccess,error,data in
+            result(isSuccess)
+        }
+        
+    }
     static func updateArchiveUnArchiveChat(call: FlutterMethodCall, result: @escaping FlutterResult){
         let args = call.arguments as! Dictionary<String, Any>
         

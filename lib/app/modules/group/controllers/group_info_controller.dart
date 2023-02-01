@@ -10,6 +10,7 @@ import 'package:flysdk/flysdk.dart';
 
 import '../../../common/crop_image.dart';
 import '../../../data/apputils.dart';
+import '../../../data/session_management.dart';
 import '../../../routes/app_pages.dart';
 import '../views/name_change_view.dart';
 
@@ -60,7 +61,7 @@ class GroupInfoController extends GetxController {
     }
   }
   groupAdmin(){
-    FlyChat.isAdmin(profile.jid.checkNull()).then((bool? value){
+    FlyChat.isAdmin(SessionManagement.getUserJID()! ,profile.jid.checkNull()).then((bool? value){
       if(value!=null){
         _isAdmin(value);
       }
@@ -145,7 +146,7 @@ class GroupInfoController extends GetxController {
   exitFromGroup()async{
     if(await AppUtils.isNetConnected()) {
       Helper.progressLoading();
-      FlyChat.leaveFromGroup(profile.jid.checkNull()).then((value) {
+      FlyChat.leaveFromGroup(SessionManagement.getUserJID() ,profile.jid.checkNull()).then((value) {
         Helper.hideLoading();
         if(value!=null){
           if(value){
