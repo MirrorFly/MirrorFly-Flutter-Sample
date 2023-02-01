@@ -36,6 +36,8 @@ class ProfileController extends GetxController {
 
   var name = "".obs;
 
+  bool get emailEditAccess => Get.previousRoute!=Routes.settings;
+
   @override
   Future<void> onInit() async {
     super.onInit();
