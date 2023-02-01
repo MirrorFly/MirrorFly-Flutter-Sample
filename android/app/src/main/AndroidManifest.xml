@@ -56,7 +56,7 @@
             android:name="flutterEmbedding"
             android:value="2" />
        <meta-data android:name="com.google.android.geo.API_KEY"
-           android:value="AIzaSyCfG5u1-XDZhWD8vOZGK5hTKyqsVOjHSSM"/>
+           android:value="{Please add your google api key}"/>
        <meta-data
            android:name="io.flutter.app.android.SplashScreenUntilFirstFrame"
            android:value="true" />
