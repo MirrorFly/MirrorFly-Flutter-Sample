@@ -69,7 +69,7 @@ class ChatMessageModel {
   LocationChatMessage? locationChatMessage;
 
   factory ChatMessageModel.fromJson(Map<String, dynamic> json) => ChatMessageModel(
-    chatUserJid: json["chatUserJid"],
+    chatUserJid: json["chatUserJid"] ?? "",
     contactType: json["contactType"] ?? "",
     isItCarbonMessage: json["isItCarbonMessage"] ?? false,
     isItSavedContact: json["isItSavedContact"] ?? false,

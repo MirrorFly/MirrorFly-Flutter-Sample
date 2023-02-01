@@ -662,6 +662,16 @@ class FlyBaseController: NSObject{
                 FlySdkMethodCalls.isAdmin(call: call, result: result)
             case "leaveFromGroup":
                 FlySdkMethodCalls.leaveFromGroup(call: call, result: result)
+            case "getMediaAutoDownload":
+                FlySdkMethodCalls.getMediaAutoDownload(call: call, result: result)
+            case "setMediaAutoDownload":
+                FlySdkMethodCalls.setMediaAutoDownload(call: call, result: result)
+            case "getMediaSetting":
+                FlySdkMethodCalls.getMediaSetting(call: call, result: result)
+            case "saveMediaSettings":
+                FlySdkMethodCalls.saveMediaSettings(call: call, result: result)
+            case "downloadMedia":
+                FlySdkMethodCalls.downloadMedia(call: call, result: result)
             default:
                 result(FlutterMethodNotImplemented)
             }
@@ -673,6 +683,7 @@ class FlyBaseController: NSObject{
         if Utility.getBoolFromPreference(key: isLoggedIn) && (FlyDefaults.isLoggedIn) {
             print("connecting chat manager")
             ChatManager.connect()
+            ChatManager.shared.startAutoDownload()
         }else{
             print(Utility.getBoolFromPreference(key: isLoggedIn))
             print(FlyDefaults.isLoggedIn)

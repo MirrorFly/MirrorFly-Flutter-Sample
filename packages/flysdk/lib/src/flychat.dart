@@ -3005,6 +3005,7 @@ class FlyChat {
     try {
       val = await mirrorFlyMethodChannel.invokeMethod<bool?>(
           'getMediaAutoDownload');
+      debugPrint("MediaAutoDownloadEnabled--> $val");
       return val;
     } on PlatformException catch (e) {
       debugPrint("Platform Exception ===> $e");

@@ -282,6 +282,18 @@ import FlyDatabase
         result("")
     }
     
+    static func downloadMedia(call: FlutterMethodCall, result: @escaping FlutterResult){
+        let args = call.arguments as! Dictionary<String, Any>
+        
+        let mediaMessageId = args["mediaMessage_id"] as? String ?? ""
+        
+        FlyMessenger.downloadMedia(messageId: mediaMessageId){ isSuccess,error,message in
+            result(isSuccess)
+        }
+        
+        
+    }
+    
     static func getUserList(call: FlutterMethodCall, result: @escaping FlutterResult){
         let args = call.arguments as! Dictionary<String, Any>
         
@@ -598,7 +610,7 @@ import FlyDatabase
         let enableArchive = args["enable"] as? Bool ?? false
         ChatManager.enableDisableArchivedSettings(enableArchive) { isSuccess, error, data in
             if isSuccess {
-                FlyDefaults.isArchivedChatEnabled = !FlyDefaults.isArchivedChatEnabled
+//                FlyDefaults.isArchivedChatEnabled = !FlyDefaults.isArchivedChatEnabled
                 result(isSuccess)
             }
         }
@@ -1471,6 +1483,75 @@ import FlyDatabase
         }
         
     }
+    static func getMediaAutoDownload(call: FlutterMethodCall, result: @escaping FlutterResult){
+        result(FlyDefaults.autoDownloadEnable)
+    }
+    static func setMediaAutoDownload(call: FlutterMethodCall, result: @escaping FlutterResult){
+        let args = call.arguments as! Dictionary<String, Any>
+        let autoDownloadEnable = args["enable"] as? Bool ?? false
+        FlyDefaults.autoDownloadEnable = autoDownloadEnable
+        result(true)
+    }
+    static func getMediaSetting(call: FlutterMethodCall, result: @escaping FlutterResult){
+        let args = call.arguments as! Dictionary<String, Any>
+        
+        let networkType = args["NetworkType"] as? Int ?? 0
+        let type = args["type"] as? String ?? ""
+        
+        if (networkType == 0){
+            switch (type) {
+                case "Photos":
+                    result(FlyDefaults.autoDownloadMobile["photo"] ?? false)
+                case "Videos":
+                    result(FlyDefaults.autoDownloadMobile["videos"] ?? false)
+                case "Audio":
+                    result(FlyDefaults.autoDownloadMobile["audio"] ?? false)
+                case "Documents":
+                    result(FlyDefaults.autoDownloadMobile["documents"] ?? false)
+                default:
+                    result(false)
+                }
+            
+        }else{
+            switch (type) {
+                case "Photos":
+                    result(FlyDefaults.autoDownloadWifi["photo"] ?? false)
+                case "Videos":
+                    result(FlyDefaults.autoDownloadWifi["videos"] ?? false)
+                case "Audio":
+                    result(FlyDefaults.autoDownloadWifi["audio"] ?? false)
+                case "Documents":
+                    result(FlyDefaults.autoDownloadWifi["documents"] ?? false)
+                default:
+                    result(false)
+                }
+        }
+    }
+    
+    static func saveMediaSettings(call: FlutterMethodCall, result: @escaping FlutterResult){
+        let args = call.arguments as! Dictionary<String, Any>
+        
+        let photos = args["Photos"] as? Bool ?? false
+        let videos = args["Videos"] as? Bool ?? false
+        let audios = args["Audio"] as? Bool ?? false
+        let documents = args["Documents"] as? Bool ?? false
+        let networkType = args["NetworkType"] as? Int ?? 0
+        
+        if (networkType == 0){
+            FlyDefaults.autoDownloadMobile["photo"] = photos
+            FlyDefaults.autoDownloadMobile["videos"] = videos
+            FlyDefaults.autoDownloadMobile["audio"] = audios
+            FlyDefaults.autoDownloadMobile["documents"] = documents
+            
+        }else{
+            FlyDefaults.autoDownloadWifi["photo"] = photos
+            FlyDefaults.autoDownloadWifi["videos"] = videos
+            FlyDefaults.autoDownloadWifi["audio"] = audios
+            FlyDefaults.autoDownloadWifi["documents"] = documents
+        }
+        
+    }
+    
     static func updateArchiveUnArchiveChat(call: FlutterMethodCall, result: @escaping FlutterResult){
         let args = call.arguments as! Dictionary<String, Any>
         
