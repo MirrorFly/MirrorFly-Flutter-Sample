@@ -1,1 +1,14 @@
-# MirrorFly-Flutter-Sample
+# [MirrorFly](https://mirrorfly.com) Chat SDK Sample for Flutter
+
+[![Platform](https://img.shields.io/badge/platform-flutter-blue)](https://flutter.dev/)
+[![Language](https://img.shields.io/badge/language-dart-blue)](https://dart.dev/)
+
+If you're looking for the fastest way in action with CONTUS [MirrorFly Chat SDKs], then you need to build your app on top of our sample version. Simply download the sample app and commence your app development.
+ 
+ <br />
+
+## Getting Help
+
+Check out the Official MirrorFly [Flutter docs](https://www.mirrorfly.com/docs/chat/flutter/quick-start/) and MirrorFly [Developer Portal](https://www.mirrorfly.com/docs/) for tutorials and videos. If you need any help in resolving any issues or have questions, Drop a mail to (integration@contus.in).
+
+<br />

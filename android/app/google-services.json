@@ -1,0 +1,98 @@
+{
+  "project_info": {
+    "project_number": "235373697524",
+    "project_id": "mirrorfly-uikit-qa",
+    "storage_bucket": "mirrorfly-uikit-qa.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:235373697524:android:6003ca46ab3fd6ada0c1a1",
+        "android_client_info": {
+          "package_name": "com.mirrorfly.uikit.qa"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "235373697524-00ffa2b0fnuqiaq8lrsm4dngutag4gsi.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.mirrorfly.uikit.qa",
+            "certificate_hash": "f2e6cce5db55425b8fb5e6da0db05cd82bd76a48"
+          }
+        },
+        {
+          "client_id": "235373697524-lnprhrs93p068q2fempp75f5t00u39ga.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.mirrorfly.uikit.qa",
+            "certificate_hash": "e31756556a43b89c8b95f22eb86f47af53baa7fb"
+          }
+        },
+        {
+          "client_id": "235373697524-3tl5e1eoqvqmv51qcqhgmcg2nkndfgu7.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDfIqmrHFXEvJgE29tWr3Ps1bFJ-sOd2Go"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "235373697524-3tl5e1eoqvqmv51qcqhgmcg2nkndfgu7.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "235373697524-2na45jkmpo3vu58u26m96huimhjkrrgi.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.mirrorfly.uikit.qa"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:235373697524:android:8c60557f4f35c990a0c1a1",
+        "android_client_info": {
+          "package_name": "com.mirrorfly.uikit_flutter.qa"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "235373697524-3tl5e1eoqvqmv51qcqhgmcg2nkndfgu7.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDfIqmrHFXEvJgE29tWr3Ps1bFJ-sOd2Go"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "235373697524-3tl5e1eoqvqmv51qcqhgmcg2nkndfgu7.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "235373697524-2na45jkmpo3vu58u26m96huimhjkrrgi.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.mirrorfly.uikit.qa"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,0 +1,11 @@
+framework module FlyCore {
+  umbrella header "FlyCore.h"
+
+  export *
+  module * { export * }
+}
+
+module FlyCore.Swift {
+  header "FlyCore-Swift.h"
+  requires objc
+}

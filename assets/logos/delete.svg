@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20">
+  <g id="delete" transform="translate(-4095 -697)">
+    <g id="Group_281" data-name="Group 281" transform="translate(50 2)">
+      <g id="Group_279" data-name="Group 279" transform="translate(34 -15)">
+        <g id="Group_277" data-name="Group 277" transform="translate(81 -5)">
+          <g id="star" transform="translate(-263 -57)">
+            <rect id="Rectangle_188" data-name="Rectangle 188" width="20" height="20" transform="translate(4193 772)" fill="rgba(139,68,68,0)"/>
+          </g>
+        </g>
+      </g>
+    </g>
+    <g id="Delete-2" data-name="Delete" transform="translate(4097 697.519)">
+      <g id="Group_3" transform="translate(0 1.481)">
+        <g id="Group_1" transform="translate(0 0)">
+          <path id="Path_1" d="M138.338,424.9H126.613a.463.463,0,0,0-.336.109.349.349,0,0,0-.1.353l1.216,11.018a2.339,2.339,0,0,0,2.3,2.117h5.85a2.354,2.354,0,0,0,2.329-2.2l1.009-10.991a.489.489,0,0,0-.1-.326A3.847,3.847,0,0,0,138.338,424.9Zm-1.475,11.4a1.383,1.383,0,0,1-1.4,1.275h-5.85a1.353,1.353,0,0,1-1.372-1.248l-1.231-10.562,10.908.029Z" transform="translate(-123.914 -422.441)" fill="#181818" stroke="#181818" stroke-width="0.2"/>
+          <path id="Path_2" d="M135.932,419.242H130.86V418.4a1.424,1.424,0,0,0-1.316-1.5h-3.18a1.394,1.394,0,0,0-1.4,1.418h0v.926h-5.072a.522.522,0,0,0,0,1.042H135.9a.506.506,0,0,0,.493-.521.468.468,0,0,0-.466-.521ZM129.9,418.4v.839h-3.92V418.4a.418.418,0,0,1,.329-.463h3.18a.368.368,0,0,1,.411.376h0Z" transform="translate(-119.4 -416.897)" fill="#181818" stroke="#181818" stroke-width="0.1"/>
+        </g>
+        <g id="Group_2" transform="translate(5.314 5.159)">
+          <path id="Rectangle_1_3_" d="M1269.937,1029.354v5.972a.535.535,0,0,1-.518.554h0a.535.535,0,0,1-.518-.554v-5.972a.535.535,0,0,1,.518-.554h0A.535.535,0,0,1,1269.937,1029.354Z" transform="translate(-1268.9 -1028.8)" fill="#181818"/>
+          <path id="Rectangle_2" d="M1278.636,1029.354v5.972a.535.535,0,0,1-.518.554h0a.535.535,0,0,1-.518-.554v-5.972a.535.535,0,0,1,.518-.554h0A.535.535,0,0,1,1278.636,1029.354Z" transform="translate(-1274.859 -1028.8)" fill="#181818"/>
+          <path id="Rectangle_3" d="M1287.436,1029.354v5.972a.535.535,0,0,1-.518.554h0a.535.535,0,0,1-.518-.554v-5.972a.535.535,0,0,1,.518-.554h0A.535.535,0,0,1,1287.436,1029.354Z" transform="translate(-1280.887 -1028.8)" fill="#181818"/>
+        </g>
+      </g>
+    </g>
+  </g>
+</svg>
