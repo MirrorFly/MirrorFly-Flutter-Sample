@@ -57,6 +57,7 @@ class ChatController extends GetxController
 
   var maxDuration = 100.obs;
   var currentPos = 0.obs;
+  var currentPlayingPosId = "0".obs;
   var isPlaying = false.obs;
   var audioPlayed = false.obs;
 
@@ -472,10 +473,10 @@ class ChatController extends GetxController
   }
 
   getChatHistory([String? from]) {
-    mirrorFlyLog("chat history", "$from");
+    // mirrorFlyLog("chat history", "$from");
     FlyChat.getMessagesOfJid(profile.jid.checkNull()).then((value) {
       debugPrint("=====chat=====");
-      mirrorFlyLog("chat history", value);
+      // mirrorFlyLog("chat history", value);
       if(value == "" || value == null){
         debugPrint("Chat List is Empty");
       }else {
@@ -659,12 +660,16 @@ class ChatController extends GetxController
     }
   }
 
-  playAudio(String filePath) async {
+  playAudio(String messageID, String filePath) async {
+
+    debugPrint("isPlaying--> ${isPlaying.toString()}");
+    debugPrint("audioPlayed--> ${audioPlayed.toString()}");
+
     if (!isPlaying.value && !audioPlayed.value) {
       int result = await player.play(filePath, isLocal: true);
       if (result == 1) {
         //play success
-
+        currentPlayingPosId(messageID);
         isPlaying(true);
         audioPlayed(true);
       } else {
@@ -674,7 +679,7 @@ class ChatController extends GetxController
       int result = await player.resume();
       if (result == 1) {
         //resume success
-
+        currentPlayingPosId(messageID);
         isPlaying(true);
         audioPlayed(true);
       } else {
@@ -684,9 +689,10 @@ class ChatController extends GetxController
       int result = await player.pause();
       if (result == 1) {
         //pause success
-
+        currentPlayingPosId("0");
         isPlaying(false);
       } else {
+        currentPlayingPosId("0");
         mirrorFlyLog("", "Error on pause audio.");
       }
     }

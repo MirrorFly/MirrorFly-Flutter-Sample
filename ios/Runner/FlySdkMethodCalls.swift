@@ -35,8 +35,6 @@ import FlyDatabase
             return
         }
         
-        
-        
         try! ChatManager.registerApiService(for:  userIdentifier!, deviceToken: deviceToken, voipDeviceToken: voipToken, isExport: false) { isSuccess, flyError, flyData in
             var data = flyData
             if isSuccess {
@@ -921,6 +919,8 @@ import FlyDatabase
                         
         let busyStatus = BusyStatus(statusText: status, isCurrentStatus: isCurrentStatus)
         
+        print(busyStatus)
+        
         ChatManager.shared.deleteBusyStatus(busyStatus)
         
         result(true)
@@ -1390,11 +1390,58 @@ import FlyDatabase
         
         print("mediaMessages---> \(mediaMessages)")
         
-        let mediaMsgJson = JSONSerializer.toJson(mediaMessages)
+        var mediaMsgJson = JSONSerializer.toJson(mediaMessages)
+        mediaMsgJson = mediaMsgJson.replacingOccurrences(of: "{\"some\":", with: "")
+        mediaMsgJson = mediaMsgJson.replacingOccurrences(of: "}}", with: "}")
         
         print(mediaMsgJson)
         
        result(mediaMsgJson)
+        
+        
+//        ChatManager.getVedioImageAudioMessageGroupByMonth(jid: userJid) { chatMessages in
+//            let mediaMessages : [[ChatMessage]] = chatMessages
+//            print("mediaMessages---> \(mediaMessages)")
+//
+//            var mediaMsgJson = JSONSerializer.toJson(mediaMessages)
+//            mediaMsgJson = mediaMsgJson.replacingOccurrences(of: "{\"some\":", with: "")
+//            mediaMsgJson = mediaMsgJson.replacingOccurrences(of: "}}", with: "}")
+//            mediaMsgJson = mediaMsgJson.replacingOccurrences(of: "[[", with: "[")
+//            mediaMsgJson = mediaMsgJson.replacingOccurrences(of: "]]", with: "]")
+//
+//            print(mediaMsgJson)
+//
+//           result(mediaMsgJson)
+//        }
+               
+    }
+    static func getDocsMessages(call: FlutterMethodCall, result: @escaping FlutterResult){
+        let args = call.arguments as! Dictionary<String, Any>
+
+        let userJid = args["jid"] as? String ?? ""
+
+
+        ChatManager.getDocumentMessageGroupByMonth(jid: userJid) { chatMessages in
+            let mediaMessages : [[ChatMessage]] = chatMessages
+            
+            var mediaMsgJson = JSONSerializer.toJson(mediaMessages)
+            mediaMsgJson = mediaMsgJson.replacingOccurrences(of: "{\"some\":", with: "")
+            mediaMsgJson = mediaMsgJson.replacingOccurrences(of: "}}", with: "}")
+            mediaMsgJson = mediaMsgJson.replacingOccurrences(of: "[[", with: "[")
+            mediaMsgJson = mediaMsgJson.replacingOccurrences(of: "]]", with: "]")
+            print(mediaMsgJson)
+            result(mediaMsgJson)
+        }
+        
+//        print("mediaMessages---> \(mediaMessages)")
+//
+//        var mediaMsgJson = JSONSerializer.toJson(mediaMessages)
+//        mediaMsgJson = mediaMsgJson.replacingOccurrences(of: "{\"some\":", with: "")
+//        mediaMsgJson = mediaMsgJson.replacingOccurrences(of: "}}", with: "}")
+//
+//        print(mediaMsgJson)
+//
+//       result(mediaMsgJson)
                
     }
     

@@ -530,7 +530,7 @@ class ChatSearchView extends GetView<ChatController> {
             children: [
               InkWell(
                 onTap: () {
-                  controller.playAudio(filePath);
+                  // controller.playAudio(filePath);
                 },
                 child: Stack(
                   alignment: Alignment.center,

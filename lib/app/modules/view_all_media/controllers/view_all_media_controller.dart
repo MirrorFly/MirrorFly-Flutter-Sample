@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io' as io;
+import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -53,10 +54,12 @@ class ViewAllMediaController extends GetxController {
   getMediaMessages() {
     FlyChat.getMediaMessages(jid).then((value) async {
       if (value != null) {
-        mirrorFlyLog("getMediaMessages", value);
+        // mirrorFlyLog("getMediaMessages", value);
         var data = chatMessageModelFromJson(value);
+
         if (data.isNotEmpty) {
           _medialist(await getMapGroupedMediaList(data, true));
+          debugPrint("_media list length--> ${_medialist.length}");
         }
       }
     });
@@ -89,6 +92,7 @@ class ViewAllMediaController extends GetxController {
   Future<Map<String,List<MessageItem>>> getMapGroupedMediaList(
       List<ChatMessageModel> mediaMessages, bool isMedia,
       [bool isLinkMedia = false]) async {
+    debugPrint("media message length--> ${mediaMessages.length}");
     var calendarInstance = DateTime.now();
     var currentYear = calendarInstance.year;
     var currentMonth = calendarInstance.month;
@@ -108,9 +112,15 @@ class ViewAllMediaController extends GetxController {
       month = calendar.month;
       day = calendar.day;
 
+      debugPrint("year--> $year");
+      debugPrint("month--> $month");
+      debugPrint("day--> $day");
+      debugPrint("dateSymbols--> $dateSymbols");
+
       var category = getCategoryName(
           dateSymbols, currentDay, currentMonth, currentYear, day, month, year);
 
+      debugPrint("getMapGroupedMediaList category--> $category");
       if (isLinkMedia) {
         if (previousCategoryType != category.key) {
           messages=[];
@@ -118,19 +128,29 @@ class ViewAllMediaController extends GetxController {
         previousCategoryType = category.key;
         mapMediaList[category.value]=getMapMessageWithURLList(messages,chatMessage);
       } else {
+        debugPrint("getMapGroupedMediaList isMessage Recalled--> ${chatMessage.isMessageRecalled}");
+        debugPrint("getMapGroupedMediaList isMediaDownloaded--> ${chatMessage.isMediaDownloaded()}");
+        debugPrint("getMapGroupedMediaList isMediaUploaded--> ${chatMessage.isMediaUploaded()}");
         if (!chatMessage.isMessageRecalled &&
             (chatMessage.isMediaDownloaded() ||
                 chatMessage.isMediaUploaded()) &&
             await isMediaAvailable(chatMessage, isMedia)) {
+          debugPrint("getMapGroupedMediaList isMediaAvailable --> true");
           if (previousCategoryType != category.key) {
+            debugPrint("getMapGroupedMediaList previousCategoryType check --->${previousCategoryType != category.key}");
             messages=[];
           }
+          debugPrint("getMapGroupedMediaList messages add--> ${chatMessage.toJson()}");
           messages.add(MessageItem(chatMessage));
+          debugPrint("getMapGroupedMediaList category value--> ${category.value}");
           mapMediaList[category.value]=messages;
           previousCategoryType = category.key;
+        }else{
+          debugPrint("getMapGroupedMediaList isMediaAvailable --> false");
         }
       }
     }
+    debugPrint("getMapGroupedMediaList Return map list--> ${mapMediaList.length.toString()}");
     return mapMediaList;//viewAllMediaList;
   }
 
@@ -174,11 +194,22 @@ class ViewAllMediaController extends GetxController {
       ChatMessageModel chatMessage, bool isMedia) async {
     var mediaExist = await isMediaExists(
         chatMessage.mediaChatMessage!.mediaLocalStoragePath);
+    debugPrint("mediaLocalStoragePath---> ${chatMessage.mediaChatMessage!.mediaLocalStoragePath}");
+    debugPrint("isMediaAvailable---> ${mediaExist.toString()}");
     return (!isMedia || mediaExist);
   }
 
   Future<bool> isMediaExists(String filePath) async {
-    return await io.File(filePath).exists();
+    io.File file = io.File(filePath);
+    var fileExists = file.absolute.existsSync();
+    debugPrint("file path---> $filePath");
+    debugPrint("file exists---> ${fileExists.toString()}");
+    var fileExists1 =
+        File(filePath).existsSync() ||
+            Directory(filePath).existsSync() ||
+            Link(filePath).existsSync();
+    debugPrint("file exists1---> ${fileExists1.toString()}");
+    return await io.File(filePath).absolute.exists();
   }
 
   MapEntry<int, String> getCategoryName(

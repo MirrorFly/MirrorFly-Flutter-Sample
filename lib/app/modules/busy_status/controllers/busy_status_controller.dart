@@ -69,22 +69,22 @@ class BusyStatusController extends GetxController {
 
   void deleteBusyStatus(StatusData item) {
 
-    Helper.showButtonAlert(actions: [
-      ListTile(
-        contentPadding: const EdgeInsets.only(left: 10),
-        title: const Text("Delete",
-            style: TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.normal)),
+    if(!item.isCurrentStatus!){
+      Helper.showButtonAlert(actions: [
+        ListTile(
+          contentPadding: const EdgeInsets.only(left: 10),
+          title: const Text("Delete",
+              style: TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.normal)),
 
-        onTap: () {
-          Get.back();
-          busyDeleteConfirmation(item);
-        },
-      ),
-    ]);
-
-
+          onTap: () {
+            Get.back();
+            busyDeleteConfirmation(item);
+          },
+        ),
+      ]);
+    }
   }
 
   insertBusyStatus(String newBusyStatus) {

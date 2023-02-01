@@ -656,6 +656,8 @@ class FlyBaseController: NSObject{
                 FlySdkMethodCalls.cancelNotifications(call: call, result: result)
             case "insertBusyStatus":
                 FlySdkMethodCalls.insertBusyStatus(call: call, result: result)
+            case "getDocsMessages":
+                FlySdkMethodCalls.getDocsMessages(call: call, result: result)
             default:
                 result(FlutterMethodNotImplemented)
             }

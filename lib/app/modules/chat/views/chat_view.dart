@@ -567,7 +567,8 @@ class ChatView extends GetView<ChatController> {
                                   index: index,
                                   handleMediaUploadDownload:
                                       handleMediaUploadDownload,
-                                  currentPos: controller.currentPos.value,
+                                  currentPos: controller.currentPlayingPosId.value == chatList[index].messageId ? controller.currentPos.value : 0,
+                                  // currentPos: controller.currentPos.value,
                                   maxDuration: controller.maxDuration.value,
                                 )
                               ],
@@ -655,7 +656,7 @@ class ChatView extends GetView<ChatController> {
                       chatMessage.mediaChatMessage!.mediaDownloadStatus,
                       chatList[index]);
                 },
-                currentPos: controller.currentPos.value,
+                currentPos: controller.currentPlayingPosId.value == chatMessage.messageId ? controller.currentPos.value : 0,
                 maxDuration: controller.maxDuration.value);
           }
         }
@@ -693,9 +694,9 @@ class ChatView extends GetView<ChatController> {
                   chatList.isMessageSentByMe)) {
             // debugPrint("audio click1");
             chatList.mediaChatMessage!.isPlaying = controller.isPlaying.value;
-            // controller.playAudio(chatList.mediaChatMessage!);
-            playAudio(chatList.mediaChatMessage!.mediaLocalStoragePath,
-                chatList.mediaChatMessage!.mediaFileName);
+            controller.playAudio(chatList.messageId, chatList.mediaChatMessage!.mediaLocalStoragePath);
+            // playAudio(chatList.mediaChatMessage!.mediaLocalStoragePath,
+            //     chatList.mediaChatMessage!.mediaFileName);
           } else {
             debugPrint("condition failed");
           }
@@ -732,7 +733,7 @@ class ChatView extends GetView<ChatController> {
             children: [
               InkWell(
                 onTap: () {
-                  controller.playAudio(filePath);
+                  // controller.playAudio(filePath);
                 },
                 child: Stack(
                   alignment: Alignment.center,

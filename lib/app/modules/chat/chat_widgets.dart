@@ -1054,8 +1054,7 @@ class MessageContent extends StatelessWidget {
   const MessageContent({Key? key, required this.chatList, required this.index, required this.handleMediaUploadDownload, required this.currentPos, required this.maxDuration}) : super(key: key);
   final List<ChatMessageModel> chatList;
   final int index;
-  final Function(int mediaDownloadStatus,
-      ChatMessageModel chatList) handleMediaUploadDownload;
+  final Function(int mediaDownloadStatus, ChatMessageModel chatList) handleMediaUploadDownload;
   final int currentPos;
   final int maxDuration;
   @override
