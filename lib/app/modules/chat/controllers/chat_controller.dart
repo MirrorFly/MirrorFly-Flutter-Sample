@@ -921,11 +921,11 @@ class ChatController extends GetxController
     selectedChatList.clear();
   }
 
-  void addChatSelection(ChatMessageModel chatList) {
-    if (chatList.messageType.toUpperCase() != Constants.mNotification) {
-      selectedChatList.add(chatList);
-      chatList.isSelected = true;
-      this.chatList.refresh();
+  void addChatSelection(ChatMessageModel item) {
+    if (item.messageType.toUpperCase() != Constants.mNotification) {
+      selectedChatList.add(item);
+      item.isSelected = true;
+      chatList.refresh();
     } else {
       debugPrint("Unable to Select Notification Banner");
     }
@@ -1130,6 +1130,7 @@ class ChatController extends GetxController
                     // removeChatList(selectedChatList);//
                     for (var chatList in selectedChatList) {
                       chatList.isMessageRecalled = true;
+                      chatList.isSelected=false;
                       this.chatList.refresh();
                     }
                   }

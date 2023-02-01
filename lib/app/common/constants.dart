@@ -171,6 +171,8 @@ const String icExpand = "assets/logos/ic_expand.svg";
 const String icCollapse = "assets/logos/ic_collapse.svg";
 
 const String forwardMedia = "assets/logos/forward_media.svg";
+const String arrowDown = "assets/logos/arrow_down.svg";
+const String arrowUp = "assets/logos/arrow_up.svg";
 
 //About us
 const String titleContactMsg = "Mirror Fly is a ready-to-go messaging solution for building enterprise-grade real-time chat IM applications that meet various degrees of requirements like team discussion, data sharing, task delegation and information handling on the go.";
@@ -503,7 +505,18 @@ class Constants {
   static const String newBusyStatus = "Select your new Status";
   static const String busyStatusDescription = "Your busy status will be set as auto-response to the messages received from individuals.";
 
-
+  static const String autoDownload = "Auto Download";
+  static const String autoDownloadLable = "Enable “Auto download” to turn all types of files received readily viewable";
+  static const String dataUsageSettings = "Data Usage Settings";
+  static const String dataUsageSettingsLable = "Setup your mobile and wifi data usage based on media type";
+  static const String mediaAutoDownload = "Media Auto download";
+  static const String whenUsingMobileData = "When using Mobile Data";
+  static const String whenUsingWifiData = "When connected on Wi-Fi";
+  static const List<String> mediaTypes = ["Photos","Videos","Audio","Documents"];
+  static const photo="Photos";
+  static const audio="Videos";
+  static const video="Audio";
+  static const document="Documents";
 
 }
 

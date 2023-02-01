@@ -5,9 +5,11 @@ import 'package:flysdk/flysdk.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
 import 'package:mirror_fly_demo/app/data/session_management.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 import '../../../../data/apputils.dart';
 import '../../../../data/helper.dart';
+import '../../../../data/permissions.dart';
 import '../../../../routes/app_pages.dart';
 
 class ChatSettingsController extends GetxController {
@@ -18,6 +20,9 @@ class ChatSettingsController extends GetxController {
   final busyStatus = "".obs;
   bool get archiveEnabled => _archiveEnabled.value;
 
+  final _autoDownlaodEnabled = false.obs;
+  bool get autoDownloadEnabled => _autoDownlaodEnabled.value;
+
   final _translationEnabled = false.obs;
   bool get translationEnabled => _translationEnabled.value;
 
@@ -25,11 +30,13 @@ class ChatSettingsController extends GetxController {
   String get translationLanguage => _translationLanguage.value;
 
   @override
-  void onInit(){
+  Future<void> onInit() async {
     super.onInit();
     getArchivedSettingsEnabled();
     _translationEnabled(SessionManagement.isGoogleTranslationEnable());
     _translationLanguage(SessionManagement.getTranslationLanguage());
+    _autoDownlaodEnabled(await FlyChat.getMediaAutoDownload());
+
     getBusyStatusPreference();
     getMyBusyStatus();
   }
@@ -43,6 +50,26 @@ class ChatSettingsController extends GetxController {
     _archiveEnabled(!archiveEnabled);
   }
 
+  Future<void> enableDisableAutoDownload() async {
+    if (await askStoragePermission()) {
+      var enable = !_autoDownlaodEnabled.value;//SessionManagement.isAutoDownloadEnable();
+        FlyChat.setMediaAutoDownload(enable);
+        _autoDownlaodEnabled(enable);
+    }
+  }
+  Future<bool> askStoragePermission() async {
+    final permission = await AppPermission.getStoragePermission();
+    switch (permission) {
+      case PermissionStatus.granted:
+        return true;
+      case PermissionStatus.permanentlyDenied:
+        return false;
+      default:
+        debugPrint("Contact Permission default");
+        return false;
+    }
+  }
+
   Future<void> enableDisableTranslate() async {
     //if (await AppUtils.isNetConnected() && SessionManagement.isGoogleTranslationEnable()) {
     var enable = !SessionManagement.isGoogleTranslationEnable();
@@ -51,10 +78,6 @@ class ChatSettingsController extends GetxController {
     /*}else{
       toToast(Constants.noInternetConnection);
     }*/
-  }
-
-  void displayTranslateLanguagePreference(){
-
   }
 
   void chooseLanguage(){

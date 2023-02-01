@@ -8,6 +8,7 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.media.RingtoneManager
 import android.media.ThumbnailUtils
+import android.net.ConnectivityManager
 import android.net.Uri
 import android.os.*
 import android.util.Base64
@@ -35,10 +36,8 @@ import com.contusflysdk.backup.BackupManager
 import com.contusflysdk.backup.RestoreListener
 import com.contusflysdk.backup.RestoreManager
 import com.contusflysdk.media.MediaUploadHelper
-import com.contusflysdk.utils.NetworkConnection
-import com.contusflysdk.utils.ThumbSize
-import com.contusflysdk.utils.UpDateWebPassword
-import com.contusflysdk.utils.VideoRecUtils
+import com.contusflysdk.models.MediaDownloadSettingsModel
+import com.contusflysdk.utils.*
 import com.google.gson.Gson
 import io.flutter.Log
 import io.flutter.embedding.android.FlutterActivity
@@ -1256,10 +1255,62 @@ open class FlyBaseController(activity: FlutterActivity) : MethodChannel.MethodCa
             call.method.equals("getAllGroups") -> {
                 getAllGroups(call, result)
             }
+            call.method.equals("setMediaAutoDownload") -> {
+                setMediaAutoDownload(call)
+            }
+            call.method.equals("getMediaAutoDownload") -> {
+                getMediaAutoDownload(result)
+            }
+            call.method.equals("saveMediaSettings") -> {
+                saveMediaSettings(call)
+            }
+            call.method.equals("getMediaSetting") -> {
+                getMediaSetting(call,result)
+            }
             else -> {
                 result.notImplemented()
             }
 
+        }
+    }
+
+    private fun setMediaAutoDownload(call: MethodCall){
+        val enable = call.argument<Boolean>("enable") ?: false
+        SharedPreferenceManager.instance.storeBoolean(SharedPreferenceManager.MEDIA_AUTO_DOWNLOAD,enable);
+    }
+
+    private fun getMediaAutoDownload(result: MethodChannel.Result){
+        val enable = SharedPreferenceManager.instance.getBoolean(SharedPreferenceManager.MEDIA_AUTO_DOWNLOAD)
+        result.success(enable);
+    }
+
+    private fun saveMediaSettings(call: MethodCall){
+        val Photos = call.argument<Boolean>("Photos") ?: false
+        val Videos = call.argument<Boolean>("Videos") ?: false
+        val Audio = call.argument<Boolean>("Audio") ?: false
+        val Documents = call.argument<Boolean>("Documents") ?: false
+        val NetworkType = call.argument<Int>("NetworkType") ?: 0
+        val settingsUtil = SettingsUtil()
+        val mobileDataSettingsModel = MediaDownloadSettingsModel()
+        mobileDataSettingsModel.isShouldAutoDownloadPhotos = Photos
+        mobileDataSettingsModel.isShouldAutoDownloadVideos = Videos
+        mobileDataSettingsModel.isShouldAutoDownloadAudios = Audio
+        mobileDataSettingsModel.isShouldAutoDownloadDocuments = Documents
+        mobileDataSettingsModel.dataConnectionNetworkType = NetworkType // 0 is TYPE_MOBILE , 1 is TYPE_WIFI
+        settingsUtil.saveMediaSettings(mobileDataSettingsModel)
+    }
+
+    private fun getMediaSetting(call: MethodCall,result: MethodChannel.Result){
+        val NetworkType = call.argument<Int>("NetworkType") ?: 0
+        val type = call.argument<String>("type") ?: ""
+        val settingsUtil = SettingsUtil()
+        val net = if (NetworkType==0) SharedPreferenceManager.CONNECTION_TYPE_MOBILE else SharedPreferenceManager.CONNECTION_TYPE_WIFI
+        when(type){
+            "Photos" -> result.success(settingsUtil.getMediaSetting(net).isShouldAutoDownloadPhotos);
+            "Videos" -> result.success(settingsUtil.getMediaSetting(net).isShouldAutoDownloadVideos);
+            "Audio" -> result.success(settingsUtil.getMediaSetting(net).isShouldAutoDownloadAudios);
+            "Documents" -> result.success(settingsUtil.getMediaSetting(net).isShouldAutoDownloadDocuments);
+            "" -> result.success(false);
         }
     }
 
