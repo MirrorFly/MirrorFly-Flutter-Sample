@@ -226,7 +226,7 @@ class RecentChatSearchController extends GetxController {
   }
 
   fetchContactList(List<String> jidList) {
-    FlyChat.getRegisteredUsers().then((value) {
+    FlyChat.getRegisteredUsers(true).then((value) {
       var profileDetails = userListFromJson(value).data;
       if (profileDetails != null) {
         var filterProfileList = profileDetails.where((it) =>

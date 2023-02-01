@@ -199,7 +199,8 @@ class LoginController extends GetxController {
     showLoading();
     try {
       await _auth.signInWithCredential(credential).then((value) {
-        sendTokenToServer();
+        sendTokenToServer();// for Mirrorfly user list purpose verify the user
+        //registerAccount();//for get registered user purpose
         stopTimer();
         mirrorFlyLog("sign in ", value.toString());
       }).catchError((error) {

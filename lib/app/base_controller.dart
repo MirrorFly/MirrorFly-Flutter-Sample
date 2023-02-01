@@ -131,7 +131,8 @@ abstract class BaseController {
 
   }
   void onContactSyncComplete(result){
-
+    mirrorFlyLog("onContactSyncComplete", result.toString());
+    //FlyChat.getRegisteredUsers(true).then((value) => mirrorFlyLog("registeredUsers", value.toString()));
   }
   void onLoggedOut(result){
 

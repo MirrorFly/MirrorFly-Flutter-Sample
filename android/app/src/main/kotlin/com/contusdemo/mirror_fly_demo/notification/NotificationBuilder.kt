@@ -33,7 +33,6 @@ import com.contusflysdk.api.contacts.ContactManager
 import com.contusflysdk.api.contacts.ProfileDetails
 import com.contusflysdk.api.models.ChatMessage
 import com.contusflysdk.media.MediaUploadHelper
-import okhttp3.internal.waitMillis
 
 object NotificationBuilder {
 
