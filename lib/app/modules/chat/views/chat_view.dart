@@ -718,7 +718,7 @@ class ChatView extends GetView<ChatController> {
       case Constants.mediaNotUploaded:
       case Constants.mediaDownloading:
       case Constants.mediaUploading:
-        return uploadingView();
+        return uploadingView(chatList.messageId);
       // break;
     }
   }

@@ -672,6 +672,10 @@ class FlyBaseController: NSObject{
                 FlySdkMethodCalls.saveMediaSettings(call: call, result: result)
             case "downloadMedia":
                 FlySdkMethodCalls.downloadMedia(call: call, result: result)
+            case "updateFavouriteStatus":
+                FlySdkMethodCalls.updateFavouriteStatus(call: call, result: result)
+            case "iOSFileExist":
+                FlySdkMethodCalls.iOSFileExist(call: call, result: result)
             default:
                 result(FlutterMethodNotImplemented)
             }

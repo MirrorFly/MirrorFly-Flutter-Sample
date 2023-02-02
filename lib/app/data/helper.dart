@@ -404,7 +404,10 @@ checkFile(String mediaLocalStoragePath) {
   return mediaLocalStoragePath.isNotEmpty &&
       File(mediaLocalStoragePath).existsSync();
 }
-
+checkIosFile(String mediaLocalStoragePath) async {
+  var isExists = await FlyChat.iOSFileExist(mediaLocalStoragePath);
+  return isExists;
+}
 openDocument(String mediaLocalStoragePath, BuildContext context) async {
   // if (await askStoragePermission()) {
   if (mediaLocalStoragePath.isNotEmpty) {

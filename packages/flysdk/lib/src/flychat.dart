@@ -1157,6 +1157,7 @@ class FlyChat {
 
   static cancelMediaUploadOrDownload(String messageId) async {
     try {
+      debugPrint("cancelMediaUploadOrDownload--> $messageId");
       await mirrorFlyMethodChannel.invokeMethod(
           'cancelMediaUploadOrDownload', {"messageId": messageId});
     } on PlatformException catch (e) {
@@ -2436,6 +2437,21 @@ class FlyChat {
       rethrow;
     }
   }
+  static Future<bool?> iOSFileExist(String filePath) async {
+    bool? response;
+    try {
+      response = await mirrorFlyMethodChannel
+          .invokeMethod<bool>('iOSFileExist', {"file_path": filePath});
+      debugPrint("iOSFileExist Response ==> $response");
+      return response;
+    } on PlatformException catch (e) {
+      debugPrint("Platform Exception ===> $e");
+      rethrow;
+    } on Exception catch (error) {
+      debugPrint("Exception ==> $error");
+      rethrow;
+    }
+  }
 
   static Future<dynamic> getWebLoginDetails() async {
     dynamic response;
@@ -2454,7 +2470,7 @@ class FlyChat {
   }
 
   static Future<dynamic> updateFavouriteStatus(
-      String messageID, String chatUserJID, bool isFavourite) async {
+      String messageID, String chatUserJID, bool isFavourite, String chatType) async {
     //favouriteMessage
     dynamic favResponse;
     try {
@@ -2462,7 +2478,8 @@ class FlyChat {
           'updateFavouriteStatus', {
         "messageID": messageID,
         "chatUserJID": chatUserJID,
-        "isFavourite": isFavourite
+        "isFavourite": isFavourite,
+        "chatType": chatType,
       });
       debugPrint("Favourite Msg Response ==> $favResponse");
       return favResponse;

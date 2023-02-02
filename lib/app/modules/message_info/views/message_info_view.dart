@@ -246,9 +246,9 @@ class MessageInfoView extends GetView<MessageInfoController> {
                   chatList.isMessageSentByMe)) {
             // debugPrint("audio click1");
             chatList.mediaChatMessage!.isPlaying = controller.isPlaying.value;
-            // controller.playAudio(chatList.mediaChatMessage!);
-            playAudio(chatList.mediaChatMessage!.mediaLocalStoragePath,
-                chatList.mediaChatMessage!.mediaFileName);
+            controller.playAudio(chatList.mediaChatMessage!.mediaLocalStoragePath);
+            // playAudio(chatList.mediaChatMessage!.mediaLocalStoragePath,
+            //     chatList.mediaChatMessage!.mediaFileName);
           } else {
             debugPrint("condition failed");
           }
@@ -270,7 +270,13 @@ class MessageInfoView extends GetView<MessageInfoController> {
       case Constants.mediaNotUploaded:
       case Constants.mediaDownloading:
       case Constants.mediaUploading:
-        return uploadingView();
+      return InkWell(
+        onTap: (){
+          cancelMediaUploadOrDownload(chatList.messageId);
+        },
+        child: uploadingView(chatList.messageId),
+      );
+        // return uploadingView();
     // break;
     }
   }

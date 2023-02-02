@@ -10,6 +10,8 @@ import '../../../data/helper.dart';
 import '../../../routes/app_pages.dart';
 import 'package:flysdk/flysdk.dart';
 
+import '../chat_widgets.dart';
+
 class MessageContent extends StatefulWidget {
    const MessageContent({Key? key, required this.chatList, required this.isTapEnabled}) : super(key: key);
 
@@ -664,14 +666,20 @@ class _MessageContentState extends State<MessageContent> {
             return InkWell(
                 onTap: () {
                   debugPrint(chatMessage.messageId);
+                  cancelMediaUploadOrDownload(chatMessage.messageId);
                 },
                 child:
-                SizedBox(width: 30, height: 30, child: uploadingView()));
+                SizedBox(width: 30, height: 30, child: uploadingView(chatMessage.messageId)));
           } else {
-            return SizedBox(
-              height: 40,
-              width: 80,
-              child: uploadingView(),
+            return InkWell(
+              onTap: (){
+                cancelMediaUploadOrDownload(chatMessage.messageId);
+              },
+              child: SizedBox(
+                height: 40,
+                width: 80,
+                child: uploadingView(chatMessage.messageId),
+              ),
             );
           }
       }
@@ -709,7 +717,7 @@ class _MessageContentState extends State<MessageContent> {
           ],
         ));
   }
-  uploadingView() {
+  uploadingView(String messageId) {
     return Container(
       // height: 40,
       // width: 80,
@@ -798,7 +806,13 @@ class _MessageContentState extends State<MessageContent> {
       case Constants.mediaNotUploaded:
       case Constants.mediaDownloading:
       case Constants.mediaUploading:
-        return uploadingView();
+        return InkWell(
+          onTap: (){
+            cancelMediaUploadOrDownload(chatList.messageId);
+          },
+          child: uploadingView(chatList.messageId),
+        );
+        // return uploadingView();
     // break;
     }
   }

@@ -668,10 +668,12 @@ class ChatController extends GetxController
     if (!isPlaying.value && !audioPlayed.value) {
       int result = await player.play(filePath, isLocal: true);
       if (result == 1) {
-        //play success
-        currentPlayingPosId(messageID);
+
+
         isPlaying(true);
         audioPlayed(true);
+        currentPlayingPosId(messageID);
+        debugPrint("-**1->isplaying $isPlaying audio played $audioPlayed");
       } else {
         mirrorFlyLog("", "Error while playing audio.");
       }
@@ -682,6 +684,7 @@ class ChatController extends GetxController
         currentPlayingPosId(messageID);
         isPlaying(true);
         audioPlayed(true);
+        debugPrint("-**2->isplaying $isPlaying audio played $audioPlayed");
       } else {
         mirrorFlyLog("", "Error on resume audio.");
       }
@@ -691,6 +694,7 @@ class ChatController extends GetxController
         //pause success
         currentPlayingPosId("0");
         isPlaying(false);
+        debugPrint("-**3->isplaying $isPlaying audio played $audioPlayed");
       } else {
         currentPlayingPosId("0");
         mirrorFlyLog("", "Error on pause audio.");
@@ -1168,7 +1172,7 @@ class ChatController extends GetxController
             : 'Favoriting Message');
 
     FlyChat.updateFavouriteStatus(selectedChatList[0].messageId, profile.jid!,
-        !selectedChatList[0].isMessageStarred)
+        !selectedChatList[0].isMessageStarred, profile.getChatType())
         .then((value) {
       clearChatSelection(selectedChatList[0]);
       Helper.hideLoading();

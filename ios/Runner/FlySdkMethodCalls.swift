@@ -290,8 +290,41 @@ import FlyDatabase
         FlyMessenger.downloadMedia(messageId: mediaMessageId){ isSuccess,error,message in
             result(isSuccess)
         }
+    }
+    static func iOSFileExist(call: FlutterMethodCall, result: @escaping FlutterResult){
+        let args = call.arguments as! Dictionary<String, Any>
+        
+        let filePath = args["file_path"] as? String ?? ""
+        
+        let fileManagerr = FileManager.default
+        
+        let existsOrNot = fileManagerr.fileExists(atPath: filePath)
+//        print("file check--> \(![fileManager fileExistsAtPath:[storeURL path]])")
+        print("file exists--> \(existsOrNot)")
+        result(existsOrNot)
+    }
+    static func updateFavouriteStatus(call: FlutterMethodCall, result: @escaping FlutterResult){
+        let args = call.arguments as! Dictionary<String, Any>
         
         
+        let messageID = args["messageID"] as? String ?? ""
+        let chatUserJID = args["chatUserJID"] as? String ?? ""
+        let chatType = args["chatType"] as? String ?? ""
+        let isFavourite = args["isFavourite"] as? Bool ?? false
+        
+        var favChatType : ChatType
+        if(chatType == "chat"){
+            favChatType = .singleChat
+        }else{
+            favChatType = .groupChat
+        }
+        
+        ChatManager.updateFavouriteStatus(messageId: messageID, chatUserId: chatUserJID, isFavourite: isFavourite, chatType: favChatType) { (isSuccess, flyError, data) in
+            
+            print("update favourites--->\(data)")
+            print("update favourites json--->\(JSONSerializer.toJson(data))")
+            
+        }
     }
     
     static func getUserList(call: FlutterMethodCall, result: @escaping FlutterResult){
@@ -701,7 +734,7 @@ import FlyDatabase
         
         if(image != nil){
             print("Image is not null if condition")
-//            myProfile.image = image!//xyaz.jpeg
+            myProfile.image = image!//xyaz.jpeg
 //            isImagePicked = false
         }else{
             print("Image is null else condition")
@@ -1416,14 +1449,18 @@ import FlyDatabase
 
         ChatManager.getDocumentMessageGroupByMonth(jid: userJid) { chatMessages in
             let mediaMessages : [[ChatMessage]] = chatMessages
-            
-            var mediaMsgJson = JSONSerializer.toJson(mediaMessages)
-            mediaMsgJson = mediaMsgJson.replacingOccurrences(of: "{\"some\":", with: "")
-            mediaMsgJson = mediaMsgJson.replacingOccurrences(of: "}}", with: "}")
-            mediaMsgJson = mediaMsgJson.replacingOccurrences(of: "[[", with: "[")
-            mediaMsgJson = mediaMsgJson.replacingOccurrences(of: "]]", with: "]")
-            print(mediaMsgJson)
-            result(mediaMsgJson)
+            print("getDocsMessages-> \(mediaMessages)")
+            if (mediaMessages.isEmpty){
+                result(nil)
+            }else{
+                var mediaMsgJson = JSONSerializer.toJson(mediaMessages)
+                mediaMsgJson = mediaMsgJson.replacingOccurrences(of: "{\"some\":", with: "")
+                mediaMsgJson = mediaMsgJson.replacingOccurrences(of: "}}", with: "}")
+                mediaMsgJson = mediaMsgJson.replacingOccurrences(of: "[[", with: "[")
+                mediaMsgJson = mediaMsgJson.replacingOccurrences(of: "]]", with: "]")
+                print("getDocsMessages--> \(mediaMsgJson)")
+                result(mediaMsgJson)
+            }
         }
         
 //        print("mediaMessages---> \(mediaMessages)")
