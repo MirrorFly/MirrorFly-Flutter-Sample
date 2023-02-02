@@ -18,272 +18,274 @@ class DashboardView extends GetView<DashboardController> {
 
   @override
   Widget build(BuildContext context) {
-    return FocusDetector(
-      onFocusGained: () {
-        controller.initListeners();
-        controller.checkArchiveSetting();
-        controller.getRecentChatList();
-      },
-      child: WillPopScope(
-        onWillPop: () {
-          if (controller.selected.value) {
-            controller.clearAllChatSelection();
-            return Future.value(false);
-          }
-          return Future.value(true);
+    return SafeArea(
+      child: FocusDetector(
+        onFocusGained: () {
+          controller.initListeners();
+          controller.checkArchiveSetting();
+          controller.getRecentChatList();
         },
-        child: DefaultTabController(
-          length: 2,
-          child: Scaffold(
-              floatingActionButton: FloatingActionButton(
-                tooltip: "New Chat",
-                onPressed: () {
-                  Get.toNamed(Routes.contacts, arguments: {
-                    "forward": false,
-                    "group": false,
-                    "groupJid": ""
-                  });
-                },
-                backgroundColor: buttonBgColor,
-                child: SvgPicture.asset(
-                  chatFabIcon,
-                  width: 18,
-                  height: 18,
-                  fit: BoxFit.contain,
+        child: WillPopScope(
+          onWillPop: () {
+            if (controller.selected.value) {
+              controller.clearAllChatSelection();
+              return Future.value(false);
+            }
+            return Future.value(true);
+          },
+          child: DefaultTabController(
+            length: 2,
+            child: Scaffold(
+                floatingActionButton: FloatingActionButton(
+                  tooltip: "New Chat",
+                  onPressed: () {
+                    Get.toNamed(Routes.contacts, arguments: {
+                      "forward": false,
+                      "group": false,
+                      "groupJid": ""
+                    });
+                  },
+                  backgroundColor: buttonBgColor,
+                  child: SvgPicture.asset(
+                    chatFabIcon,
+                    width: 18,
+                    height: 18,
+                    fit: BoxFit.contain,
+                  ),
                 ),
-              ),
-              body: NestedScrollView(
-                headerSliverBuilder:
-                    (BuildContext context, bool innerBoxIsScrolled) {
-                  return [
-                    Obx(() {
-                      return SliverAppBar(
-                        snap: false,
-                        pinned: true,
-                        floating: !controller.selected.value,
-                        automaticallyImplyLeading: false,
-                        leading: controller.selected.value ? IconButton(
-                          icon: const Icon(Icons.clear),
-                          onPressed: () {
-                            controller.clearAllChatSelection();
-                          },
-                        ) : null,
-                        title: controller.selected.value
-                            ? Text(
-                            (controller.selectedChats.length).toString())
-                            : null,
-                        bottom: TabBar(
-                            indicatorColor: buttonBgColor,
-                            labelColor: buttonBgColor,
-                            unselectedLabelColor: appbarTextColor,
-                            tabs: [
-                              Obx(() {
-                                return tabItem(
-                                    title: "CHATS",
-                                    count: controller.unreadCountString);
-                              }),
-                              tabItem(title: "CALLS", count: "0")
-                            ]),
-                        actions: [
-                          CustomActionBarIcons(
-                              availableWidth: MediaQuery
-                                  .of(context)
-                                  .size
-                                  .width * 0.80,
-                              // 80 percent of the screen width
-                              actionWidth: 48,
-                              // default for IconButtons
-                              actions: [
-                                CustomAction(
-                                  visibleWidget: IconButton(
+                body: NestedScrollView(
+                  headerSliverBuilder:
+                      (BuildContext context, bool innerBoxIsScrolled) {
+                    return [
+                      Obx(() {
+                        return SliverAppBar(
+                          snap: false,
+                          pinned: true,
+                          floating: !controller.selected.value,
+                          automaticallyImplyLeading: false,
+                          leading: controller.selected.value ? IconButton(
+                            icon: const Icon(Icons.clear),
+                            onPressed: () {
+                              controller.clearAllChatSelection();
+                            },
+                          ) : null,
+                          title: controller.selected.value
+                              ? Text(
+                              (controller.selectedChats.length).toString())
+                              : null,
+                          bottom: TabBar(
+                              indicatorColor: buttonBgColor,
+                              labelColor: buttonBgColor,
+                              unselectedLabelColor: appbarTextColor,
+                              tabs: [
+                                Obx(() {
+                                  return tabItem(
+                                      title: "CHATS",
+                                      count: controller.unreadCountString);
+                                }),
+                                tabItem(title: "CALLS", count: "0")
+                              ]),
+                          actions: [
+                            CustomActionBarIcons(
+                                availableWidth: MediaQuery
+                                    .of(context)
+                                    .size
+                                    .width * 0.80,
+                                // 80 percent of the screen width
+                                actionWidth: 48,
+                                // default for IconButtons
+                                actions: [
+                                  CustomAction(
+                                    visibleWidget: IconButton(
+                                        onPressed: () {
+                                          controller.chatInfo();
+                                        },
+                                        icon: SvgPicture.asset(infoIcon)),
+                                    overflowWidget: const Text("Info"),
+                                    showAsAction: controller.info.value
+                                        ? ShowAsAction.always
+                                        : ShowAsAction.gone,
+                                    keyValue: 'Info',
+                                    onItemClick: () {
+                                      controller.chatInfo();
+                                    },
+                                  ),
+                                  CustomAction(
+                                    visibleWidget: IconButton(
+                                        onPressed: () {
+                                          controller.deleteChats();
+                                        },
+                                        icon: SvgPicture.asset(delete)),
+                                    overflowWidget: const Text("Delete"),
+                                    showAsAction: controller.delete.value
+                                        ? ShowAsAction.always
+                                        : ShowAsAction.gone,
+                                    keyValue: 'Delete',
+                                    onItemClick: () {
+                                      controller.deleteChats();
+                                    },
+                                  ),
+                                  CustomAction(
+                                    visibleWidget: IconButton(
+                                        onPressed: () {
+                                          controller.pinChats();
+                                        },
+                                        icon: SvgPicture.asset(pin)),
+                                    overflowWidget: const Text("Pin"),
+                                    showAsAction: controller.pin.value
+                                        ? ShowAsAction.always
+                                        : ShowAsAction.gone,
+                                    keyValue: 'Pin',
+                                    onItemClick: () {
+                                      controller.pinChats();
+                                    },
+                                  ),
+                                  CustomAction(
+                                    visibleWidget: IconButton(
+                                        onPressed: () {
+                                          controller.unPinChats();
+                                        },
+                                        icon: SvgPicture.asset(unpin)),
+                                    overflowWidget: const Text("UnPin"),
+                                    showAsAction: controller.unpin.value
+                                        ? ShowAsAction.always
+                                        : ShowAsAction.gone,
+                                    keyValue: 'UnPin',
+                                    onItemClick: () {
+                                      controller.unPinChats();
+                                    },
+                                  ),
+                                  CustomAction(
+                                    visibleWidget: IconButton(
+                                        onPressed: () {
+                                          controller.muteChats();
+                                        },
+                                        icon: SvgPicture.asset(mute)),
+                                    overflowWidget: const Text("Mute"),
+                                    showAsAction: controller.mute.value
+                                        ? ShowAsAction.always
+                                        : ShowAsAction.gone,
+                                    keyValue: 'Mute',
+                                    onItemClick: () {
+                                      controller.muteChats();
+                                    },
+                                  ),
+                                  CustomAction(
+                                    visibleWidget: IconButton(
+                                        onPressed: () {
+                                          controller.unMuteChats();
+                                        },
+                                        icon: SvgPicture.asset(unMute)),
+                                    overflowWidget: const Text("UnMute"),
+                                    showAsAction: controller.unmute.value
+                                        ? ShowAsAction.always
+                                        : ShowAsAction.gone,
+                                    keyValue: 'UnMute',
+                                    onItemClick: () {
+                                      controller.unMuteChats();
+                                    },
+                                  ),
+                                  CustomAction(
+                                    visibleWidget: IconButton(
+                                        onPressed: () {
+                                          controller.archiveChats();
+                                        },
+                                        icon: SvgPicture.asset(archive)),
+                                    overflowWidget: const Text("Archived"),
+                                    showAsAction: controller.archive.value
+                                        ? ShowAsAction.always
+                                        : ShowAsAction.gone,
+                                    keyValue: 'Archived',
+                                    onItemClick: () {
+                                      controller.archiveChats();
+                                    },
+                                  ),
+                                  CustomAction(
+                                    visibleWidget: const Icon(
+                                        Icons.mark_chat_read),
+                                    overflowWidget: const Text("Mark as read"),
+                                    showAsAction: controller.read.value
+                                        ? ShowAsAction.never
+                                        : ShowAsAction.gone,
+                                    keyValue: 'Mark as Read',
+                                    onItemClick: () {
+                                      controller.itemsRead();
+                                    },
+                                  ),
+                                  CustomAction(
+                                    visibleWidget: const Icon(
+                                        Icons.mark_chat_unread),
+                                    overflowWidget: const Text("Mark as unread"),
+                                    showAsAction: controller.unread.value
+                                        ? ShowAsAction.never
+                                        : ShowAsAction.gone,
+                                    keyValue: 'Mark as unread',
+                                    onItemClick: () {
+                                      controller.itemsUnRead();
+                                    },
+                                  ),
+                                  CustomAction(
+                                    visibleWidget: IconButton(
                                       onPressed: () {
-                                        controller.chatInfo();
+                                        controller.gotoSearch();
                                       },
-                                      icon: SvgPicture.asset(infoIcon)),
-                                  overflowWidget: const Text("Info"),
-                                  showAsAction: controller.info.value
-                                      ? ShowAsAction.always
-                                      : ShowAsAction.gone,
-                                  keyValue: 'Info',
-                                  onItemClick: () {
-                                    controller.chatInfo();
-                                  },
-                                ),
-                                CustomAction(
-                                  visibleWidget: IconButton(
-                                      onPressed: () {
-                                        controller.deleteChats();
-                                      },
-                                      icon: SvgPicture.asset(delete)),
-                                  overflowWidget: const Text("Delete"),
-                                  showAsAction: controller.delete.value
-                                      ? ShowAsAction.always
-                                      : ShowAsAction.gone,
-                                  keyValue: 'Delete',
-                                  onItemClick: () {
-                                    controller.deleteChats();
-                                  },
-                                ),
-                                CustomAction(
-                                  visibleWidget: IconButton(
-                                      onPressed: () {
-                                        controller.pinChats();
-                                      },
-                                      icon: SvgPicture.asset(pin)),
-                                  overflowWidget: const Text("Pin"),
-                                  showAsAction: controller.pin.value
-                                      ? ShowAsAction.always
-                                      : ShowAsAction.gone,
-                                  keyValue: 'Pin',
-                                  onItemClick: () {
-                                    controller.pinChats();
-                                  },
-                                ),
-                                CustomAction(
-                                  visibleWidget: IconButton(
-                                      onPressed: () {
-                                        controller.unPinChats();
-                                      },
-                                      icon: SvgPicture.asset(unpin)),
-                                  overflowWidget: const Text("UnPin"),
-                                  showAsAction: controller.unpin.value
-                                      ? ShowAsAction.always
-                                      : ShowAsAction.gone,
-                                  keyValue: 'UnPin',
-                                  onItemClick: () {
-                                    controller.unPinChats();
-                                  },
-                                ),
-                                CustomAction(
-                                  visibleWidget: IconButton(
-                                      onPressed: () {
-                                        controller.muteChats();
-                                      },
-                                      icon: SvgPicture.asset(mute)),
-                                  overflowWidget: const Text("Mute"),
-                                  showAsAction: controller.mute.value
-                                      ? ShowAsAction.always
-                                      : ShowAsAction.gone,
-                                  keyValue: 'Mute',
-                                  onItemClick: () {
-                                    controller.muteChats();
-                                  },
-                                ),
-                                CustomAction(
-                                  visibleWidget: IconButton(
-                                      onPressed: () {
-                                        controller.unMuteChats();
-                                      },
-                                      icon: SvgPicture.asset(unMute)),
-                                  overflowWidget: const Text("UnMute"),
-                                  showAsAction: controller.unmute.value
-                                      ? ShowAsAction.always
-                                      : ShowAsAction.gone,
-                                  keyValue: 'UnMute',
-                                  onItemClick: () {
-                                    controller.unMuteChats();
-                                  },
-                                ),
-                                CustomAction(
-                                  visibleWidget: IconButton(
-                                      onPressed: () {
-                                        controller.archiveChats();
-                                      },
-                                      icon: SvgPicture.asset(archive)),
-                                  overflowWidget: const Text("Archived"),
-                                  showAsAction: controller.archive.value
-                                      ? ShowAsAction.always
-                                      : ShowAsAction.gone,
-                                  keyValue: 'Archived',
-                                  onItemClick: () {
-                                    controller.archiveChats();
-                                  },
-                                ),
-                                CustomAction(
-                                  visibleWidget: const Icon(
-                                      Icons.mark_chat_read),
-                                  overflowWidget: const Text("Mark as read"),
-                                  showAsAction: controller.read.value
-                                      ? ShowAsAction.never
-                                      : ShowAsAction.gone,
-                                  keyValue: 'Mark as Read',
-                                  onItemClick: () {
-                                    controller.itemsRead();
-                                  },
-                                ),
-                                CustomAction(
-                                  visibleWidget: const Icon(
-                                      Icons.mark_chat_unread),
-                                  overflowWidget: const Text("Mark as unread"),
-                                  showAsAction: controller.unread.value
-                                      ? ShowAsAction.never
-                                      : ShowAsAction.gone,
-                                  keyValue: 'Mark as unread',
-                                  onItemClick: () {
-                                    controller.itemsUnRead();
-                                  },
-                                ),
-                                CustomAction(
-                                  visibleWidget: IconButton(
-                                    onPressed: () {
+                                      icon: SvgPicture.asset(
+                                        searchIcon,
+                                        width: 18,
+                                        height: 18,
+                                        fit: BoxFit.contain,
+                                      ),
+                                    ),
+                                    overflowWidget: const Text("Search"),
+                                    showAsAction: controller.selected.value
+                                        ? ShowAsAction.gone
+                                        : ShowAsAction.always,
+                                    keyValue: 'Search',
+                                    onItemClick: () {
                                       controller.gotoSearch();
                                     },
-                                    icon: SvgPicture.asset(
-                                      searchIcon,
-                                      width: 18,
-                                      height: 18,
-                                      fit: BoxFit.contain,
-                                    ),
                                   ),
-                                  overflowWidget: const Text("Search"),
-                                  showAsAction: controller.selected.value
-                                      ? ShowAsAction.gone
-                                      : ShowAsAction.always,
-                                  keyValue: 'Search',
-                                  onItemClick: () {
-                                    controller.gotoSearch();
-                                  },
-                                ),
-                                CustomAction(
-                                  visibleWidget: const Icon(Icons.group_add),
-                                  overflowWidget: const Text("New Group     "),
-                                  showAsAction: controller.selected.value
-                                      ? ShowAsAction.gone
-                                      : ShowAsAction.never,
-                                  keyValue: 'New Group',
-                                  onItemClick: () {
-                                    controller.gotoCreateGroup();
-                                  },
-                                ),
-                                CustomAction(
-                                  visibleWidget: const Icon(Icons.settings),
-                                  overflowWidget: const Text("Settings"),
-                                  showAsAction: controller.selected.value
-                                      ? ShowAsAction.gone
-                                      : ShowAsAction.never,
-                                  keyValue: 'Settings',
-                                  onItemClick: () {
-                                    controller.gotoSettings();
-                                  },
-                                ),
-                                CustomAction(
-                                  visibleWidget: const Icon(Icons.web),
-                                  overflowWidget: const Text("Web"),
-                                  showAsAction: controller.selected.value
-                                      ? ShowAsAction.gone
-                                      : ShowAsAction.never,
-                                  keyValue: 'Web',
-                                  onItemClick: () => controller.webLogin(),
-                                )
-                              ]),
-                        ],
-                      );
-                    }),
-                  ];
-                },
-                body: TabBarView(
-                    children: [chatView(context), callsView(context)]),
-              )),
+                                  CustomAction(
+                                    visibleWidget: const Icon(Icons.group_add),
+                                    overflowWidget: const Text("New Group     "),
+                                    showAsAction: controller.selected.value
+                                        ? ShowAsAction.gone
+                                        : ShowAsAction.never,
+                                    keyValue: 'New Group',
+                                    onItemClick: () {
+                                      controller.gotoCreateGroup();
+                                    },
+                                  ),
+                                  CustomAction(
+                                    visibleWidget: const Icon(Icons.settings),
+                                    overflowWidget: const Text("Settings"),
+                                    showAsAction: controller.selected.value
+                                        ? ShowAsAction.gone
+                                        : ShowAsAction.never,
+                                    keyValue: 'Settings',
+                                    onItemClick: () {
+                                      controller.gotoSettings();
+                                    },
+                                  ),
+                                  CustomAction(
+                                    visibleWidget: const Icon(Icons.web),
+                                    overflowWidget: const Text("Web"),
+                                    showAsAction: controller.selected.value
+                                        ? ShowAsAction.gone
+                                        : ShowAsAction.never,
+                                    keyValue: 'Web',
+                                    onItemClick: () => controller.webLogin(),
+                                  )
+                                ]),
+                          ],
+                        );
+                      }),
+                    ];
+                  },
+                  body: TabBarView(
+                      children: [chatView(context), callsView(context)]),
+                )),
+          ),
         ),
       ),
     );

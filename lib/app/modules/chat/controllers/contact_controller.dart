@@ -44,6 +44,8 @@ class ContactController extends GetxController {
     }else{
       toToast(Constants.noInternetConnection);
     }
+    //FlyChat.syncContacts(true);
+    //FlyChat.getRegisteredUsers(true).then((value) => mirrorFlyLog("registeredUsers", value.toString()));
 
   }
 
@@ -111,6 +113,7 @@ class ContactController extends GetxController {
 
   fetchUsers(bool fromSearch) async {
     if(await AppUtils.isNetConnected()) {
+      //FlyChat.getRegisteredUsers(true).then((data) async {
       FlyChat.getUserList(pageNum, _searchText).then((data) async {
         mirrorFlyLog("userlist", data);
         var item = userListFromJson(data);

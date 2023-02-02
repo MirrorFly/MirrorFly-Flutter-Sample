@@ -3067,6 +3067,7 @@ open class FlyBaseController(activity: FlutterActivity) : MethodChannel.MethodCa
     }
 
     override fun onContactSyncComplete(isSuccess: Boolean) {
+        Log.d("onContactSyncComplete",isSuccess.toString())
         onContactSyncCompleteStreamHandler.onContactSyncComplete?.success(isSuccess)
     }
 

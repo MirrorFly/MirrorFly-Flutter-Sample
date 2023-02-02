@@ -2101,12 +2101,12 @@ class FlyChat {
     }
   }
 
-  static Future<dynamic> getRegisteredUsers() async {
+  static Future<dynamic> getRegisteredUsers(bool server) async {
     //filteredContactList
     dynamic response;
     try {
       response =
-          await mirrorFlyMethodChannel.invokeMethod('getRegisteredUsers');
+          await mirrorFlyMethodChannel.invokeMethod('getRegisteredUsers',{"server":server});
       debugPrint("getRegisteredUsers ==> $response");
       return response;
     } on PlatformException catch (e) {
