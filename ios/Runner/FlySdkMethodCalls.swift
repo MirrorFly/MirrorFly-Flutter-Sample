@@ -701,7 +701,7 @@ import FlyDatabase
         
         if(image != nil){
             print("Image is not null if condition")
-            myProfile.image = image!//xyaz.jpeg
+//            myProfile.image = image!//xyaz.jpeg
 //            isImagePicked = false
         }else{
             print("Image is null else condition")
@@ -723,6 +723,8 @@ import FlyDatabase
                 result(Commons.json(from: data as Any))
             } else{
                 print("Update Profile Issue==> " + flyError!.localizedDescription)
+                result(FlutterError(code: "500", message: flyError!.localizedDescription, details: nil))
+                
             }
         }
         
@@ -734,7 +736,7 @@ import FlyDatabase
                     print("removeProfileImage raw data\(flyData)")
                     var data = flyData
                     data["status"] = true
-                    var responseJson = Commons.json(from: data) as Any
+                    let responseJson = Commons.json(from: data) as Any
                     print(responseJson)
                     result(responseJson)
                 } else{

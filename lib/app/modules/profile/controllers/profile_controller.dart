@@ -97,9 +97,11 @@ class ProfileController extends GetxController {
         loading.value = true;
         showLoader();
         if (imagePath.value.isNotEmpty) {
+          debugPrint("profile image update");
           updateProfileImage(imagePath.value, update: true);
         } else {
           if (await AppUtils.isNetConnected()) {
+            debugPrint("profile update");
             FlyChat
                 .updateMyProfile(
                 profileName.text.toString(),
@@ -167,7 +169,7 @@ class ProfileController extends GetxController {
           save();
         }
       }).catchError((onError) {
-        debugPrint("Profile Update on error");
+        debugPrint("Profile Update on error--> ${onError.toString()}");
         loading.value = false;
         hideLoader();
       });
@@ -213,6 +215,7 @@ class ProfileController extends GetxController {
         mirrorFlyLog("jid.isNotEmpty", jid.isNotEmpty.toString());
         loading.value = true;
         FlyChat.getUserProfile(jid,await AppUtils.isNetConnected()).then((value) {
+          debugPrint("profile--> $value");
           insertDefaultStatusToUser();
           loading.value = false;
           var data = profileDataFromJson(value);
