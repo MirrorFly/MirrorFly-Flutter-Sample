@@ -6,7 +6,6 @@ import '../../../data/apputils.dart';
 import '../../chat/controllers/chat_controller.dart';
 
 class PreviewContactController extends GetxController {
-  //TODO: Implement PreviewContactController
 
 
   late List<String> contactList;
@@ -24,11 +23,14 @@ class PreviewContactController extends GetxController {
 
   shareContact() async {
     if(await AppUtils.isNetConnected()) {
-      var response = await Get.find<ChatController>().sendContactMessage(contactList, contactName);
-      debugPrint("ContactResponse ==> $response");
-      if(response != null){
-        Get.back();
-        Get.back();
+      if(contactList.isNotEmpty) {
+        var response = await Get.find<ChatController>().sendContactMessage(
+            contactList, contactName);
+        debugPrint("ContactResponse ==> $response");
+        if (response != null) {
+          Get.back();
+          Get.back();
+        }
       }
     }else{
       toToast(Constants.noInternetConnection);

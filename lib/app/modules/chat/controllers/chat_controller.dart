@@ -112,6 +112,7 @@ class ChatController extends GetxController
   var profileDetail = Profile();
 
   String? nJid;
+
   @override
   void onInit() async{
     super.onInit();
@@ -785,7 +786,6 @@ class ChatController extends GetxController
       messageObject = MessageObject(toJid: profile.jid.toString(),replyMessageId: (isReplying.value) ? replyChatMessage.messageId : "", messageType: Constants.mText,file: documentPath);
       showBusyStatusAlert(disableBusyChatAndSend);
     }
-
   }
 
   openDocument(String mediaLocalStoragePath, BuildContext context) async {
@@ -1570,6 +1570,11 @@ class ChatController extends GetxController
               bitRate: 128000,
               samplingRate: 44100,
             );
+            Future.delayed(const Duration(seconds: 300), () {
+              if (isAudioRecording.value == Constants.audioRecording) {
+                stopRecording();
+              }
+            });
           }
         }
       }else {

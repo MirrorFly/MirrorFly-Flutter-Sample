@@ -909,7 +909,8 @@ class ChatView extends GetView<ChatController> {
                   : CustomAction(
                       visibleWidget: IconButton(
                         onPressed: () {
-                          // controller.copyTextMessages();
+                          controller.closeKeyBoard();
+                          controller.copyTextMessages();
                         },
                         icon: SvgPicture.asset(
                           copyIcon,
