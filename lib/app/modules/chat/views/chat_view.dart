@@ -1001,7 +1001,7 @@ class ChatView extends GetView<ChatController> {
                       )
                     : ProfileTextImage(
                         text: controller.profile.name.checkNull().isEmpty
-                            ? controller.profile.mobileNumber.checkNull()
+                            ? controller.profile.nickName.checkNull().isEmpty ? controller.profile.mobileNumber.checkNull() : controller.profile.nickName.checkNull()
                             : controller.profile.name.checkNull(),
                         radius: 18,
                       ),
