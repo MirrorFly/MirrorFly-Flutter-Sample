@@ -1927,7 +1927,7 @@ class ChatController extends GetxController
     if(await AppPermission.checkPermission(Permission.contacts, contactPermission, Constants.contactPermission)){
       Get.toNamed(Routes.localContact);
     } else {
-      AppPermission.permissionDeniedDialog(content: "Permission is permanently denied. Please enable Contact permission from settings");
+      // AppPermission.permissionDeniedDialog(content: "Permission is permanently denied. Please enable Contact permission from settings");
     }
   }
 
@@ -1967,7 +1967,7 @@ class ChatController extends GetxController
         }
       });
     }else{
-      AppPermission.permissionDeniedDialog(content: "Permission is permanently denied. Please enable location permission from settings");
+      // AppPermission.permissionDeniedDialog(content: "Permission is permanently denied. Please enable location permission from settings");
     }
   }
 

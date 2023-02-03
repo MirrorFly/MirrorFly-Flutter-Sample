@@ -149,6 +149,40 @@ class AppPermission {
     if (await permission.status == PermissionStatus.granted) {
       debugPrint("permission granted opening");
       return true;
+    }else if(await permission.status == PermissionStatus.permanentlyDenied){
+
+      var permissionAlertMessage = "";
+      var permissionName = "$permission";
+      permissionName = permissionName.replaceAll("Permission.", "");
+
+      switch (permissionName.toLowerCase()){
+        case "camera":
+          permissionAlertMessage = Constants.contactPermissionDenied;
+          break;
+        case "microphone":
+          permissionAlertMessage = Constants.microPhonePermissionDenied;
+          break;
+        case "storage":
+          permissionAlertMessage = Constants.storagePermissionDenied;
+          break;
+        case "contacts":
+          permissionAlertMessage = Constants.contactPermissionDenied;
+          break;
+        case "location":
+          permissionAlertMessage = Constants.locationPermissionDenied;
+          break;
+        default:
+          permissionAlertMessage = "MirrorFly need the ${permissionName.toUpperCase()} Permission. But they have been permanently denied. Please continue to app settings, select \"Permissions\", and enable \"${permissionName.toUpperCase()}\"";
+      }
+
+      var deniedPopupValue = await customPermissionDialog(icon: permissionIcon,
+          content: permissionAlertMessage);
+      if(deniedPopupValue){
+        openAppSettings();
+        return false;
+      }else{
+        return false;
+      }
     }else{
       var popupValue = await customPermissionDialog(icon: permissionIcon,
           content: permissionContent);
