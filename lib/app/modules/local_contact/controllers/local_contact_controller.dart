@@ -23,7 +23,15 @@ class LocalContactController extends GetxController {
 
 
   getContacts() async{
-    contactList.addAll(await ContactsService.getContacts());
+    // var localContactList = List<String>.empty(growable: true);
+    await ContactsService.getContacts().then((localContactList) {
+      for (var userDetail in localContactList) {
+        if (userDetail.phones != null && userDetail.phones!.isNotEmpty) {
+          contactList.add(userDetail);
+        }
+      }
+    });
+    // contactList.addAll(await ContactsService.getContacts());
 
   }
   onSearchTextChanged(String text) async {
@@ -34,6 +42,7 @@ class LocalContactController extends GetxController {
     for (var userDetail in contactList) {
       if (name(userDetail).toString().toLowerCase().contains(text.toLowerCase())) {
         searchList.add(userDetail);
+
       }
     }
 
@@ -53,5 +62,9 @@ class LocalContactController extends GetxController {
 
   name(Contact item) {
     return item.displayName ?? item.givenName ?? item.middleName ?? item.androidAccountName ?? item.familyName ?? "";
+  }
+
+  isValidContactNumber(List<Item> phones){
+    return phones.isNotEmpty;
   }
 }
