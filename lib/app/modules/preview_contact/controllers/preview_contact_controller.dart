@@ -31,6 +31,8 @@ class PreviewContactController extends GetxController {
           Get.back();
           Get.back();
         }
+      }else{
+        toToast("Contact Number is Empty");
       }
     }else{
       toToast(Constants.noInternetConnection);

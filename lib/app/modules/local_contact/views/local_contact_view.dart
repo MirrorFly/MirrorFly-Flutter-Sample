@@ -15,14 +15,23 @@ class LocalContactView extends GetView<LocalContactController> {
     return Obx(() {
       return Scaffold(
         appBar: AppBar(
+          centerTitle: false,
+          titleSpacing: 0.0,
           title: controller.search.value
               ? TextField(
+            controller: controller.searchTextController,
             onChanged: (text) => controller.onSearchTextChanged(text),
             autofocus: true,
             decoration: const InputDecoration(
                 hintText: "Search...", border: InputBorder.none),
           )
-              : const Text('Contacts'),
+              :  Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text('Contact to send', style: TextStyle(fontSize: 15),),
+                  Text('${controller.contactsSelected.length} Selected', style: const TextStyle(fontSize: 12),),
+                ],
+              ),
           actions: [
             controller.search.value
                 ? const SizedBox()
@@ -55,7 +64,8 @@ class LocalContactView extends GetView<LocalContactController> {
 
   contactListView() {
     return Obx(() {
-      return controller.searchList.isNotEmpty ? ListView.builder(
+
+      return controller.searchList.isNotEmpty && controller.search.value ? ListView.builder(
           itemCount: controller.searchList.length,
           itemBuilder: (context, index) {
             return InkWell(
@@ -82,7 +92,7 @@ class LocalContactView extends GetView<LocalContactController> {
               ),
             );
           }
-      ) :  ListView.builder(
+      ) :  controller.searchList.isEmpty && controller.searchTextController.text.isNotEmpty ? const Center(child: Text("No result found")) : ListView.builder(
           itemCount: controller.contactList.length,
           itemBuilder: (context, index) {
             var item = controller.contactList.elementAt(index);
@@ -98,7 +108,7 @@ class LocalContactView extends GetView<LocalContactController> {
                       text: controller.name(item),
                     ),
                     const SizedBox(width: 10,),
-                    Text(controller.name(item)),
+                    Flexible(child: Text(controller.name(item), overflow: TextOverflow.ellipsis,)),
                   ],
                 ),
               ),

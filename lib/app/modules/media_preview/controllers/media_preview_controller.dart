@@ -15,6 +15,9 @@ class MediaPreviewController extends GetxController {
 
   var filePath = [].obs;
 
+  var currentPageIndex = 0.obs;
+
+
   @override
   void onInit() {
     super.onInit();
@@ -55,5 +58,9 @@ class MediaPreviewController extends GetxController {
     } else {
       toToast(Constants.noInternetConnection);
     }
+  }
+
+  void deleteMedia() {
+    filePath.removeAt(currentPageIndex.value);
   }
 }

@@ -494,10 +494,18 @@ class Constants {
   static const String contactPermission = "To help you connect with friends and family, allow Mirrorfly access to your contacts.";
   static const String audioPermission = "To send audio messages, allow MirrorFly access to your Microphone.";
 
+  static const String contactPermissionDenied = "MirrorFly need the Contacts Permission in order to help you connect with friends and family, but they have been permanently denied. Please continue to app settings, select \"Permissions\", and enable \"Contacts\"";
+  static const String locationPermissionDenied = "MirrorFly need the Location Permission in order to attach a location, but they have been permanently denied. Please continue to app settings, select \"Permissions\", and enable \"Location\".";
+  static const String cameraPermissionDenied = "MirrorFly need the Camera and Storage Permission in order to capture photos and video, but they have been permanently denied. Please continue to app settings, select \"Permissions\", and enable \"Camera\" and \"Storage\".";
+  static const String storagePermissionDenied = "MirrorFly need the Storage Permission in order to attach photos, media, and files, but they have been permanently denied. Please continue to app settings, select \"Permissions\", and enable \"Storage\".";
+  static const String microPhonePermissionDenied = "MirrorFly need the Microphone Permission in order to send audio messages, but they have been permanently denied. Please continue to app settings, select \"Permissions\", and enable \"Microphone\".";
+  static const String audioCallPermissionDenied = "MirrorFly need the Microphone Permission in order to call Family, but they have been permanently denied. Please continue to app settings, select \"Permissions\", and enable \"Microphone\".";
+  static const String videoCallPermissionDenied = "MirrorFly need the Microphone and Camera Permissions in order to call Family, but they have been permanently denied. Please continue to app settings, select \"Permissions\", and enable \"Microphone\" and \"Camera\".";
+
   static const String noInternetConnection = "Please check your internet connection";
   static const String adminBlockedMessage ="This application is no longer available for you.";
   static const String adminBlockedMessageLabel ="Please contact admin if you have any query.";
-  static const String supportMail ="contussupport@gmail.co";
+  static const String supportMail ="contussupport@gmail.com";
   static const String httpStatusCode = "http_status_code";
 
   static const String googleTranslationLabel = "Translate Message";

@@ -601,6 +601,7 @@ class ContactMessageView extends StatelessWidget {
                       child: Text(
                     chatMessage.contactChatMessage!.contactName,
                     maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
                   )),
                 ],
               ),

@@ -321,8 +321,8 @@ import FlyDatabase
         
         ChatManager.updateFavouriteStatus(messageId: messageID, chatUserId: chatUserJID, isFavourite: isFavourite, chatType: favChatType) { (isSuccess, flyError, data) in
             
-            print("update favourites--->\(data)")
-            print("update favourites json--->\(JSONSerializer.toJson(data))")
+            
+            result(isSuccess)
             
         }
     }

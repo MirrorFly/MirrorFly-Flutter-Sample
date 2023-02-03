@@ -1,4 +1,5 @@
 import 'package:contacts_service/contacts_service.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/routes/app_pages.dart';
 
@@ -10,6 +11,10 @@ class LocalContactController extends GetxController {
   var contactList = List<Contact>.empty(growable: true).obs;
   var searchList = List<Contact>.empty(growable: true).obs;
 
+  var contactsSelected = List<Contact>.empty(growable: true).obs;
+
+  TextEditingController searchTextController = TextEditingController();
+
   @override
   void onInit() {
     super.onInit();
@@ -18,7 +23,15 @@ class LocalContactController extends GetxController {
 
 
   getContacts() async{
-    contactList.addAll(await ContactsService.getContacts());
+    // var localContactList = List<String>.empty(growable: true);
+    await ContactsService.getContacts().then((localContactList) {
+      for (var userDetail in localContactList) {
+        if (userDetail.phones != null && userDetail.phones!.isNotEmpty) {
+          contactList.add(userDetail);
+        }
+      }
+    });
+    // contactList.addAll(await ContactsService.getContacts());
 
   }
   onSearchTextChanged(String text) async {
@@ -26,10 +39,10 @@ class LocalContactController extends GetxController {
     if (text.isEmpty) {
       return;
     }
-
     for (var userDetail in contactList) {
       if (name(userDetail).toString().toLowerCase().contains(text.toLowerCase())) {
         searchList.add(userDetail);
+
       }
     }
 
@@ -49,5 +62,9 @@ class LocalContactController extends GetxController {
 
   name(Contact item) {
     return item.displayName ?? item.givenName ?? item.middleName ?? item.androidAccountName ?? item.familyName ?? "";
+  }
+
+  isValidContactNumber(List<Item> phones){
+    return phones.isNotEmpty;
   }
 }

@@ -618,7 +618,7 @@ class ChatController extends GetxController
       FilePickerResult? result = await FilePicker.platform.pickFiles(
         allowMultiple: false,
         type: FileType.custom,
-        allowedExtensions: ['pdf', 'ppt', 'xls', 'doc', 'docx', 'xlsx'],
+        allowedExtensions: ['pdf', 'ppt', 'xls', 'doc', 'docx', 'xlsx', 'txt'],
       );
       if (result != null && File(result.files.single.path!).existsSync()) {
         debugPrint(result.files.first.extension);
@@ -1168,6 +1168,7 @@ class ChatController extends GetxController
   }
 
   favouriteMessage() {
+    var isMessageStarred = selectedChatList[0].isMessageStarred;
     Helper.showLoading(
         message: selectedChatList[0].isMessageStarred
             ? 'Unfavoriting Message'
@@ -1176,6 +1177,7 @@ class ChatController extends GetxController
     FlyChat.updateFavouriteStatus(selectedChatList[0].messageId, profile.jid!,
         !selectedChatList[0].isMessageStarred, profile.getChatType())
         .then((value) {
+      selectedChatList[0].isMessageStarred = !isMessageStarred;
       clearChatSelection(selectedChatList[0]);
       Helper.hideLoading();
     });
@@ -1627,10 +1629,14 @@ class ChatController extends GetxController
   }
 
   sendRecordedAudioMessage() {
-    final format = DateFormat('mm:ss');
-    final dt = format.parse(timerInit.value, true);
-    final recordDuration = dt.millisecondsSinceEpoch;
-    sendAudioMessage(recordedAudioPath, true, recordDuration.toString());
+    if(timerInit.value != "00.00") {
+      final format = DateFormat('mm:ss');
+      final dt = format.parse(timerInit.value, true);
+      final recordDuration = dt.millisecondsSinceEpoch;
+      sendAudioMessage(recordedAudioPath, true, recordDuration.toString());
+    }else{
+      toToast("Recorded Audio Time is too Short");
+    }
     isUserTyping(false);
     isAudioRecording(Constants.audioRecordInitial);
     timerInit("00.00");
@@ -1657,7 +1663,7 @@ class ChatController extends GetxController
 
   gotoSearch() {
     Future.delayed(const Duration(milliseconds: 100), () {
-      Get.toNamed(Routes.chatSearch, arguments: chatList.value);
+      Get.toNamed(Routes.chatSearch, arguments: chatList);
       /*if (searchScrollController.isAttached) {
         searchScrollController.jumpTo(index: chatList.value.length - 1);
       }*/
@@ -1718,7 +1724,7 @@ class ChatController extends GetxController
     super.onMediaStatusUpdated(event);
     ChatMessageModel chatMessageModel = sendMessageModelFromJson(event);
     if (chatMessageModel.chatUserJid == profile.jid) {
-      final index = chatList.value.indexWhere(
+      final index = chatList.indexWhere(
               (message) => message.messageId == chatMessageModel.messageId);
       debugPrint("Media Status Update index of search $index");
       if (index != -1) {
@@ -1923,7 +1929,7 @@ class ChatController extends GetxController
     if(await AppPermission.checkPermission(Permission.contacts, contactPermission, Constants.contactPermission)){
       Get.toNamed(Routes.localContact);
     } else {
-      AppPermission.permissionDeniedDialog(content: "Permission is permanently denied. Please enable Contact permission from settings");
+      // AppPermission.permissionDeniedDialog(content: "Permission is permanently denied. Please enable Contact permission from settings");
     }
   }
 
@@ -1963,7 +1969,7 @@ class ChatController extends GetxController
         }
       });
     }else{
-      AppPermission.permissionDeniedDialog(content: "Permission is permanently denied. Please enable location permission from settings");
+      // AppPermission.permissionDeniedDialog(content: "Permission is permanently denied. Please enable location permission from settings");
     }
   }
 

@@ -57,10 +57,10 @@ class ChatInfoView extends GetView<ChatInfoController> {
                           .height * 0.45,
                       clipOval: false,
                       errorWidget: ProfileTextImage(
-                        text: controller.profile.nickName
+                        text: controller.profile.name
                             .checkNull()
                             .isEmpty
-                            ? controller.profile.nickName.checkNull()
+                            ? controller.profile.nickName.checkNull().isEmpty ? controller.profile.mobileNumber.checkNull() : controller.profile.nickName.checkNull()
                             : controller.profile.name.checkNull(),
                         radius: 0,
                         fontSize: 120,
