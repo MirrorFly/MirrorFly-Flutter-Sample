@@ -1,4 +1,5 @@
 import 'package:contacts_service/contacts_service.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/routes/app_pages.dart';
 
@@ -11,6 +12,8 @@ class LocalContactController extends GetxController {
   var searchList = List<Contact>.empty(growable: true).obs;
 
   var contactsSelected = List<Contact>.empty(growable: true).obs;
+
+  TextEditingController searchTextController = TextEditingController();
 
   @override
   void onInit() {
@@ -28,7 +31,6 @@ class LocalContactController extends GetxController {
     if (text.isEmpty) {
       return;
     }
-
     for (var userDetail in contactList) {
       if (name(userDetail).toString().toLowerCase().contains(text.toLowerCase())) {
         searchList.add(userDetail);

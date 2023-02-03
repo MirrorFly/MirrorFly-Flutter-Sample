@@ -19,6 +19,7 @@ class LocalContactView extends GetView<LocalContactController> {
           titleSpacing: 0.0,
           title: controller.search.value
               ? TextField(
+            controller: controller.searchTextController,
             onChanged: (text) => controller.onSearchTextChanged(text),
             autofocus: true,
             decoration: const InputDecoration(
@@ -63,7 +64,8 @@ class LocalContactView extends GetView<LocalContactController> {
 
   contactListView() {
     return Obx(() {
-      return controller.searchList.isNotEmpty ? ListView.builder(
+
+      return controller.searchList.isNotEmpty && controller.search.value ? ListView.builder(
           itemCount: controller.searchList.length,
           itemBuilder: (context, index) {
             return InkWell(
@@ -90,7 +92,7 @@ class LocalContactView extends GetView<LocalContactController> {
               ),
             );
           }
-      ) :  ListView.builder(
+      ) :  controller.searchList.isEmpty && controller.searchTextController.text.isNotEmpty ? const Center(child: Text("No result found")) : ListView.builder(
           itemCount: controller.contactList.length,
           itemBuilder: (context, index) {
             var item = controller.contactList.elementAt(index);
