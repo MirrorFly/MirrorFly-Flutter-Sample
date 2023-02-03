@@ -28,6 +28,8 @@ class ChatInfoView extends GetView<ChatInfoController> {
           return <Widget>[
             Obx(() {
               return SliverAppBar(
+                centerTitle: false,
+                titleSpacing: 0.0,
                 expandedHeight: MediaQuery
                     .of(context)
                     .size
