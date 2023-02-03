@@ -319,24 +319,21 @@ class ChatView extends GetView<ChatController> {
             : const SizedBox.shrink(),
         controller.isAudioRecording.value == Constants.audioRecordInitial
             ? Expanded(
-                child: SizedBox(
-                  height: 50,
-                  child: TextField(
-                    onChanged: (text) {
-                      controller.isTyping(text);
-                    },
-                    keyboardType: TextInputType.multiline,
-                    minLines: 1,
-                    maxLines: 4,
-                    enabled: controller.isAudioRecording.value ==
-                            Constants.audioRecordInitial
-                        ? true
-                        : false,
-                    controller: controller.messageController,
-                    focusNode: controller.focusNode,
-                    decoration: const InputDecoration(
-                        hintText: "Start Typing...", border: InputBorder.none),
-                  ),
+                child: TextField(
+                  onChanged: (text) {
+                    controller.isTyping(text);
+                  },
+                  keyboardType: TextInputType.multiline,
+                  minLines: 1,
+                  maxLines: 5,
+                  enabled: controller.isAudioRecording.value ==
+                          Constants.audioRecordInitial
+                      ? true
+                      : false,
+                  controller: controller.messageController,
+                  focusNode: controller.focusNode,
+                  decoration: const InputDecoration(
+                      hintText: "Start Typing...", border: InputBorder.none),
                 ),
               )
             : const SizedBox.shrink(),
