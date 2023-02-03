@@ -108,7 +108,7 @@ class LocalContactView extends GetView<LocalContactController> {
                       text: controller.name(item),
                     ),
                     const SizedBox(width: 10,),
-                    Text(controller.name(item)),
+                    Flexible(child: Text(controller.name(item), overflow: TextOverflow.ellipsis,)),
                   ],
                 ),
               ),

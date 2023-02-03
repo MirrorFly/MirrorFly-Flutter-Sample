@@ -20,7 +20,7 @@ class PreviewContactView extends GetView<PreviewContactController> {
               children: [
                 Padding(
                   padding:
-                      const EdgeInsets.only(left: 18.0, top: 18.0, bottom: 5),
+                      const EdgeInsets.only(left: 18.0, top: 18.0, bottom: 5, right: 10),
                   child: Row(
                     children: [
                       SizedBox(width: 50,height: 50,child: ProfileTextImage(text: controller.contactName,),),
@@ -32,7 +32,7 @@ class PreviewContactView extends GetView<PreviewContactController> {
                       const SizedBox(
                         width: 10,
                       ),
-                      Text(controller.contactName),
+                      Flexible(child: Text(controller.contactName, overflow: TextOverflow.ellipsis,),),
                     ],
                   ),
                 ),
