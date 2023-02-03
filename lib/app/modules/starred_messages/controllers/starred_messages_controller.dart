@@ -196,7 +196,7 @@ class StarredMessagesController extends GetxController {
   favouriteMessage() {
     for (var item in selectedChatList) {
       FlyChat.updateFavouriteStatus(
-          item.messageId, item.chatUserJid, !item.isMessageStarred);
+          item.messageId, item.chatUserJid, !item.isMessageStarred, item.messageChatType);
       starredChatList
           .removeWhere((element) => item.messageId == element.messageId);
     }
