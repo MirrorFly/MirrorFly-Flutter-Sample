@@ -122,6 +122,7 @@ class ProfileView extends GetView<ProfileController> {
                     TextField(
                       onChanged: (value) => controller.nameChanges(value),
                       textAlign: TextAlign.center,
+                      maxLength: 30,
                       controller: controller.profileName,
                       decoration: const InputDecoration(
                         border: InputBorder.none,
