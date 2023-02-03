@@ -1166,6 +1166,7 @@ class ChatController extends GetxController
   }
 
   favouriteMessage() {
+    var isMessageStarred = selectedChatList[0].isMessageStarred;
     Helper.showLoading(
         message: selectedChatList[0].isMessageStarred
             ? 'Unfavoriting Message'
@@ -1174,6 +1175,7 @@ class ChatController extends GetxController
     FlyChat.updateFavouriteStatus(selectedChatList[0].messageId, profile.jid!,
         !selectedChatList[0].isMessageStarred, profile.getChatType())
         .then((value) {
+      selectedChatList[0].isMessageStarred = !isMessageStarred;
       clearChatSelection(selectedChatList[0]);
       Helper.hideLoading();
     });
