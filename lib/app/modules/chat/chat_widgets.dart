@@ -9,6 +9,7 @@ import 'package:get/get.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../common/constants.dart';
+import '../../data/apputils.dart';
 import '../../data/helper.dart';
 import '../../routes/app_pages.dart';
 import '../dashboard/widgets.dart';
@@ -1087,7 +1088,7 @@ class MessageContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var chatMessage = chatList[index];
-    mirrorFlyLog("message==>", json.encode(chatMessage));
+    //mirrorFlyLog("message==>", json.encode(chatMessage));
     debugPrint("Message Type===> ${chatMessage.messageType}");
     if (chatList[index].isMessageRecalled) {
       return RecalledMessageView(
@@ -1272,7 +1273,7 @@ class RecalledMessageView extends StatelessWidget {
 }
 
 getMessageIndicator(String? messageStatus, bool isSender, String messageType) {
-  // debugPrint("Message Type ==> $messageType");
+   debugPrint("Message Status ==> $messageStatus");
   if (isSender) {
     if (messageStatus == 'A' || messageStatus == 'acknowledge') {
       return SvgPicture.asset('assets/logos/acknowledged.svg');
@@ -1315,8 +1316,8 @@ getImageOverlay(ChatMessageModel chatMessage) {
       debugPrint("===============================");
       debugPrint(chatMessage.mediaChatMessage!.isPlaying.toString());
       return chatMessage.mediaChatMessage!.isPlaying
-          ? const Icon(Icons.pause)
-          : const Icon(Icons.play_arrow_sharp);
+          ? SvgPicture.asset(pauseIcon,height: 17,)//const Icon(Icons.pause)
+          : SvgPicture.asset(playIcon); //const Icon(Icons.play_arrow_sharp);
     } else {
       debugPrint("==Showing EMpty===");
       return const SizedBox.shrink();
@@ -1333,32 +1334,30 @@ getImageOverlay(ChatMessageModel chatMessage) {
         : chatMessage.mediaChatMessage!.mediaDownloadStatus) {
       case Constants.mediaDownloaded:
       case Constants.mediaUploaded:
-        return const SizedBox.shrink();
-
       case Constants.mediaDownloadedNotAvailable:
-      case Constants.mediaNotDownloaded:
-        return getFileInfo(
-            chatMessage.mediaChatMessage!.mediaDownloadStatus,
-            chatMessage.mediaChatMessage!.mediaFileSize,
-            Icons.download_sharp,
-            chatMessage.messageType.toUpperCase());
       case Constants.mediaUploadedNotAvailable:
-        return getFileInfo(
-            chatMessage.mediaChatMessage!.mediaDownloadStatus,
-            chatMessage.mediaChatMessage!.mediaFileSize,
-            Icons.upload_sharp,
-            chatMessage.messageType.toUpperCase());
-
+        return const SizedBox.shrink();
+      case Constants.mediaNotDownloaded:
+        return InkWell(
+          child: getFileInfo(
+              chatMessage.mediaChatMessage!.mediaDownloadStatus,
+              chatMessage.mediaChatMessage!.mediaFileSize,
+              Icons.download_sharp,
+              chatMessage.messageType.toUpperCase()),
+          onTap: (){
+            downloadMedia(chatMessage.messageId);
+          },
+        );
       case Constants.mediaNotUploaded:
         return InkWell(
             onTap: () {
               debugPrint(chatMessage.messageId);
-              cancelMediaUploadOrDownload(chatMessage.messageId);
+              uploadMedia(chatMessage.messageId);
             },
             child: retryFileInfo(
             chatMessage.mediaChatMessage!.mediaDownloadStatus,
             chatMessage.mediaChatMessage!.mediaFileSize,
-            Icons.refresh,
+            Icons.upload_sharp,
             chatMessage.messageType.toUpperCase()));
 
       case Constants.mediaDownloading:
@@ -1381,8 +1380,8 @@ getImageOverlay(ChatMessageModel chatMessage) {
               cancelMediaUploadOrDownload(chatMessage.messageId);
             },
             child: SizedBox(
-              height: 40,
-              width: 80,
+              height: 30,
+              width: 70,
               child: uploadingView(chatMessage.messageId),
             ),
           );
@@ -1394,10 +1393,7 @@ getImageOverlay(ChatMessageModel chatMessage) {
 retryFileInfo(int mediaDownloadStatus, int mediaFileSize, IconData iconData,
     String messageType) {
   return messageType == 'AUDIO' || messageType == 'DOCUMENT'
-      ? Icon(
-          iconData,
-          color: audioColorDark,
-        )
+      ? Container(decoration: BoxDecoration(border: Border.all(color: borderColor),borderRadius: BorderRadius.circular(3)),padding: const EdgeInsets.all(5), child: SvgPicture.asset(uploadIcon,color: playIconColor,))
       : Container(
           decoration: BoxDecoration(
             border: Border.all(
@@ -1407,25 +1403,15 @@ retryFileInfo(int mediaDownloadStatus, int mediaFileSize, IconData iconData,
             color: Colors.black54,
           ),
           padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
-          child: Column(
+          child: Row(
             children: [
-              Icon(
-                iconData,
-                color: Colors.white,
-              ),
+              SvgPicture.asset(uploadIcon),
               const SizedBox(
                 width: 5,
               ),
               const Text(
-                "Retry",
-                style: TextStyle(color: Colors.white),
-              ),
-              const SizedBox(
-                width: 10,
-              ),
-              Text(
-                Helper.formatBytes(mediaFileSize, 0),
-                style: const TextStyle(color: Colors.white),
+                "RETRY",
+                style: TextStyle(color: Colors.white,fontSize: 10),
               ),
             ],
           ));
@@ -1434,14 +1420,25 @@ retryFileInfo(int mediaDownloadStatus, int mediaFileSize, IconData iconData,
 void cancelMediaUploadOrDownload(String messageId) {
   FlyChat.cancelMediaUploadOrDownload(messageId);
 }
+void uploadMedia(String messageId) async {
+  if(await AppUtils.isNetConnected()) {
+    FlyChat.uploadMedia(messageId);
+  }else{
+    toToast(Constants.noInternetConnection);
+  }
+}
+void downloadMedia(String messageId) async {
+  if(await AppUtils.isNetConnected()) {
+    FlyChat.downloadMedia(messageId);
+  }else{
+    toToast(Constants.noInternetConnection);
+  }
+}
 
-getFileInfo(int mediaDownloadStatus, int mediaFileSize, IconData iconData,
+Widget getFileInfo(int mediaDownloadStatus, int mediaFileSize, IconData iconData,
     String messageType) {
   return messageType == 'AUDIO' || messageType == 'DOCUMENT'
-      ? Icon(
-          iconData,
-          color: audioColorDark,
-        )
+      ? Container(decoration: BoxDecoration(border: Border.all(color: borderColor),borderRadius: BorderRadius.circular(3)),padding: const EdgeInsets.all(5), child: SvgPicture.asset(downloadIcon,color: playIconColor,))
       : Container(
           decoration: BoxDecoration(
             border: Border.all(
@@ -1453,16 +1450,13 @@ getFileInfo(int mediaDownloadStatus, int mediaFileSize, IconData iconData,
           padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
           child: Row(
             children: [
-              Icon(
-                iconData,
-                color: Colors.white,
-              ),
+              SvgPicture.asset(downloadIcon),
               const SizedBox(
                 width: 5,
               ),
               Text(
                 Helper.formatBytes(mediaFileSize, 0),
-                style: const TextStyle(color: Colors.white),
+                style: const TextStyle(color: Colors.white,fontSize: 10),
               ),
             ],
           ));
@@ -1475,7 +1469,7 @@ uploadingView(String messageId) {
           color: textColor,
         ),
         borderRadius: const BorderRadius.all(Radius.circular(2)),
-        color: audioBgColor,
+        color: Colors.black45,
       ),
       child: Stack(alignment: Alignment.center,
           // mainAxisAlignment: MainAxisAlignment.center,

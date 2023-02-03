@@ -436,7 +436,6 @@ class ChatSearchView extends GetView<ChatController> {
                       Constants.mediaUploaded ||
                   chatList.isMessageSentByMe)) {
             // debugPrint("audio click1");
-            chatList.mediaChatMessage!.isPlaying = controller.isPlaying.value;
             // controller.playAudio(chatList.mediaChatMessage!);
             playAudio(chatList.mediaChatMessage!.mediaLocalStoragePath,
                 chatList.mediaChatMessage!.mediaFileName);

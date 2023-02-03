@@ -34,6 +34,8 @@ const Color notificationTextColor = Color(0Xff565656);
 const Color notificationTextBgColor = Color(0XffDADADA);
 const Color chatBorderColor = Color(0XffDDE3E5);
 const Color chatTimeColor = Color(0Xff959595);
+const Color borderColor = Color(0xffAFB8D0);
+const Color playIconColor = Color(0xff7285B5);
 
 //Assets
 const String registerIcon = 'assets/logos/register_logo.svg';
@@ -137,6 +139,10 @@ const String favouriteIcon = 'assets/logos/star.svg';
 const String unFavouriteIcon = 'assets/logos/unstar.svg';
 const String copyIcon = 'assets/logos/copy.svg';
 const String infoIcon = 'assets/logos/info.svg';
+const String uploadIcon = 'assets/logos/upload.svg';
+const String downloadIcon = 'assets/logos/download.svg';
+const String playIcon = 'assets/logos/play.svg';
+const String pauseIcon = 'assets/logos/pause.svg';
 
 //Animation
  const String deleteDustbin = 'assets/animation/delete_dustbin.json';
@@ -534,6 +540,7 @@ Future<void> launchWeb(String url) async{
 }
 
 Widget forMessageTypeIcon(String messageType) {
+  debugPrint("messagetype $messageType");
   switch (messageType.toUpperCase()) {
     case Constants.mImage:
       return SvgPicture.asset(

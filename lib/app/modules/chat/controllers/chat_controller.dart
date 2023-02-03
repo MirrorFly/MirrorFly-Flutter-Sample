@@ -158,6 +158,7 @@ class ChatController extends GetxController
     player.onPlayerCompletion.listen((event) {
       isPlaying(false);
       audioPlayed(false);
+      chatList.firstWhere((element) => currentPlayingPosId.value==element.messageId).mediaChatMessage!.isPlaying=false;
     });
 
     player.onAudioPositionChanged.listen((Duration p) {
@@ -661,7 +662,7 @@ class ChatController extends GetxController
     }
   }
 
-  playAudio(String messageID, String filePath) async {
+  playAudio(ChatMessageModel chatMessage, String filePath) async {
 
     debugPrint("isPlaying--> ${isPlaying.toString()}");
     debugPrint("audioPlayed--> ${audioPlayed.toString()}");
@@ -669,11 +670,10 @@ class ChatController extends GetxController
     if (!isPlaying.value && !audioPlayed.value) {
       int result = await player.play(filePath, isLocal: true);
       if (result == 1) {
-
-
         isPlaying(true);
         audioPlayed(true);
-        currentPlayingPosId(messageID);
+        currentPlayingPosId(chatMessage.messageId);
+        chatMessage.mediaChatMessage!.isPlaying=isPlaying.value;
         debugPrint("-**1->isplaying $isPlaying audio played $audioPlayed");
       } else {
         mirrorFlyLog("", "Error while playing audio.");
@@ -682,9 +682,10 @@ class ChatController extends GetxController
       int result = await player.resume();
       if (result == 1) {
         //resume success
-        currentPlayingPosId(messageID);
+        currentPlayingPosId(chatMessage.messageId);
         isPlaying(true);
         audioPlayed(true);
+        chatMessage.mediaChatMessage!.isPlaying=isPlaying.value;
         debugPrint("-**2->isplaying $isPlaying audio played $audioPlayed");
       } else {
         mirrorFlyLog("", "Error on resume audio.");
@@ -695,6 +696,7 @@ class ChatController extends GetxController
         //pause success
         currentPlayingPosId("0");
         isPlaying(false);
+        chatMessage.mediaChatMessage!.isPlaying=isPlaying.value;
         debugPrint("-**3->isplaying $isPlaying audio played $audioPlayed");
       } else {
         currentPlayingPosId("0");
