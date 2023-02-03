@@ -690,8 +690,7 @@ class ChatView extends GetView<ChatController> {
                       Constants.mediaUploaded ||
                   chatList.isMessageSentByMe)) {
             // debugPrint("audio click1");
-            chatList.mediaChatMessage!.isPlaying = controller.isPlaying.value;
-            controller.playAudio(chatList.messageId, chatList.mediaChatMessage!.mediaLocalStoragePath);
+            controller.playAudio(chatList, chatList.mediaChatMessage!.mediaLocalStoragePath);
             // playAudio(chatList.mediaChatMessage!.mediaLocalStoragePath,
             //     chatList.mediaChatMessage!.mediaFileName);
           } else {
@@ -720,7 +719,7 @@ class ChatView extends GetView<ChatController> {
     }
   }
 
-  playAudio(String filePath, String mediaFileName) {
+  playAudio(String filePath, String mediaFileName,bool isPlaying) {
     Get.dialog(
       Dialog(
         child: Padding(
@@ -742,7 +741,7 @@ class ChatView extends GetView<ChatController> {
                       fit: BoxFit.contain,
                     ),
                     Obx(() {
-                      return controller.isPlaying.value
+                      return isPlaying
                           ? const Icon(Icons.pause)
                           : const Icon(Icons.play_arrow);
                     }),
