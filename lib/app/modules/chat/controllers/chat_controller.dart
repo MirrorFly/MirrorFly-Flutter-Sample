@@ -617,7 +617,7 @@ class ChatController extends GetxController
       FilePickerResult? result = await FilePicker.platform.pickFiles(
         allowMultiple: false,
         type: FileType.custom,
-        allowedExtensions: ['pdf', 'ppt', 'xls', 'doc', 'docx', 'xlsx'],
+        allowedExtensions: ['pdf', 'ppt', 'xls', 'doc', 'docx', 'xlsx', 'txt'],
       );
       if (result != null && File(result.files.single.path!).existsSync()) {
         debugPrint(result.files.first.extension);
@@ -1627,10 +1627,14 @@ class ChatController extends GetxController
   }
 
   sendRecordedAudioMessage() {
-    final format = DateFormat('mm:ss');
-    final dt = format.parse(timerInit.value, true);
-    final recordDuration = dt.millisecondsSinceEpoch;
-    sendAudioMessage(recordedAudioPath, true, recordDuration.toString());
+    if(timerInit.value != "00.00") {
+      final format = DateFormat('mm:ss');
+      final dt = format.parse(timerInit.value, true);
+      final recordDuration = dt.millisecondsSinceEpoch;
+      sendAudioMessage(recordedAudioPath, true, recordDuration.toString());
+    }else{
+      toToast("Recorded Audio Time is too Short");
+    }
     isUserTyping(false);
     isAudioRecording(Constants.audioRecordInitial);
     timerInit("00.00");
@@ -1657,7 +1661,7 @@ class ChatController extends GetxController
 
   gotoSearch() {
     Future.delayed(const Duration(milliseconds: 100), () {
-      Get.toNamed(Routes.chatSearch, arguments: chatList.value);
+      Get.toNamed(Routes.chatSearch, arguments: chatList);
       /*if (searchScrollController.isAttached) {
         searchScrollController.jumpTo(index: chatList.value.length - 1);
       }*/
@@ -1718,7 +1722,7 @@ class ChatController extends GetxController
     super.onMediaStatusUpdated(event);
     ChatMessageModel chatMessageModel = sendMessageModelFromJson(event);
     if (chatMessageModel.chatUserJid == profile.jid) {
-      final index = chatList.value.indexWhere(
+      final index = chatList.indexWhere(
               (message) => message.messageId == chatMessageModel.messageId);
       debugPrint("Media Status Update index of search $index");
       if (index != -1) {
