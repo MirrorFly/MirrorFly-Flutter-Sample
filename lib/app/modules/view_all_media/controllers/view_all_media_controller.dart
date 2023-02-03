@@ -54,7 +54,7 @@ class ViewAllMediaController extends GetxController {
   getMediaMessages() {
     FlyChat.getMediaMessages(jid).then((value) async {
       if (value != null) {
-        // mirrorFlyLog("getMediaMessages", value);
+        mirrorFlyLog("getMediaMessages", value);
         var data = chatMessageModelFromJson(value);
 
         if (data.isNotEmpty) {
@@ -69,9 +69,9 @@ class ViewAllMediaController extends GetxController {
   getDocsMessages() {
     FlyChat.getDocsMessages(jid).then((value) async {
       if (value != null) {
-        debugPrint("get doc before json--> $value");
+        mirrorFlyLog("get doc before json",value);
         var data = chatMessageModelFromJson(value);
-        debugPrint("getDocsMessagess--> ${json.encode(data)}");
+        mirrorFlyLog("getDocsMessagess",json.encode(data));
         if (data.isNotEmpty) {
           _docslist(await getMapGroupedMediaList(data, false));
         }

@@ -1415,14 +1415,18 @@ import FlyDatabase
         let mediaMessages : [ChatMessage] = FlyMessenger.getMediaMessagesOf(jid: userJid)
         
         print("mediaMessages---> \(mediaMessages)")
-        
-        var mediaMsgJson = JSONSerializer.toJson(mediaMessages)
-        mediaMsgJson = mediaMsgJson.replacingOccurrences(of: "{\"some\":", with: "")
-        mediaMsgJson = mediaMsgJson.replacingOccurrences(of: "}}", with: "}")
-        
-        print(mediaMsgJson)
-        
-       result(mediaMsgJson)
+        if(mediaMessages.isEmpty){
+            result(nil)
+        }else{
+            
+            var mediaMsgJson = JSONSerializer.toJson(mediaMessages)
+            mediaMsgJson = mediaMsgJson.replacingOccurrences(of: "{\"some\":", with: "")
+            mediaMsgJson = mediaMsgJson.replacingOccurrences(of: "}}", with: "}")
+            
+            print(mediaMsgJson)
+            
+            result(mediaMsgJson)
+        }
         
         
 //        ChatManager.getVedioImageAudioMessageGroupByMonth(jid: userJid) { chatMessages in
@@ -1473,6 +1477,38 @@ import FlyDatabase
 //
 //       result(mediaMsgJson)
                
+    }
+    
+    static func getLinkMessages(call: FlutterMethodCall, result: @escaping FlutterResult){
+        let args = call.arguments as! Dictionary<String, Any>
+        let userJid = args["jid"] as? String ?? ""
+        
+        ChatManager.getLinkMessageGroupByMonth(jid: userJid) { linkMessages in
+            let mediaLinkMessages = linkMessages
+            print("getLinkMessages-> \(mediaLinkMessages)")
+            
+            if (mediaLinkMessages.isEmpty){
+                result(nil)
+            }else{
+                var viewAllMediaLinkMessages: String = "["
+                
+                mediaLinkMessages.forEach { mediaLinkMessage in
+                    mediaLinkMessage.forEach{ linkChatMessage in
+                        let mediaMsgJson = JSONSerializer.toJson(linkChatMessage.chatMessage)
+                        
+                        viewAllMediaLinkMessages = viewAllMediaLinkMessages + mediaMsgJson + ","
+                        print("getLinkMessage--> \(mediaMsgJson)")
+                        
+                    }
+                   
+                }
+                viewAllMediaLinkMessages = viewAllMediaLinkMessages.dropLast() + "]"
+                
+                print("getLinkMessages Array--> \(viewAllMediaLinkMessages)")
+                result(viewAllMediaLinkMessages)
+            }
+        }
+        
     }
     
     static func setMyProfileStatus(call: FlutterMethodCall, result: @escaping FlutterResult){
