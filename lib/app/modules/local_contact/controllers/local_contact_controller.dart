@@ -10,6 +10,8 @@ class LocalContactController extends GetxController {
   var contactList = List<Contact>.empty(growable: true).obs;
   var searchList = List<Contact>.empty(growable: true).obs;
 
+  var contactsSelected = List<Contact>.empty(growable: true).obs;
+
   @override
   void onInit() {
     super.onInit();

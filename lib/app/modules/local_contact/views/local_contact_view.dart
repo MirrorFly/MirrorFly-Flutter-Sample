@@ -15,6 +15,8 @@ class LocalContactView extends GetView<LocalContactController> {
     return Obx(() {
       return Scaffold(
         appBar: AppBar(
+          centerTitle: false,
+          titleSpacing: 0.0,
           title: controller.search.value
               ? TextField(
             onChanged: (text) => controller.onSearchTextChanged(text),
@@ -22,7 +24,13 @@ class LocalContactView extends GetView<LocalContactController> {
             decoration: const InputDecoration(
                 hintText: "Search...", border: InputBorder.none),
           )
-              : const Text('Contacts'),
+              :  Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text('Contact to send', style: TextStyle(fontSize: 15),),
+                  Text('${controller.contactsSelected.length} Selected', style: const TextStyle(fontSize: 12),),
+                ],
+              ),
           actions: [
             controller.search.value
                 ? const SizedBox()
