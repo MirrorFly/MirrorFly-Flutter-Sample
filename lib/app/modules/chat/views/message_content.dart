@@ -669,7 +669,7 @@ class _MessageContentState extends State<MessageContent> {
                   cancelMediaUploadOrDownload(chatMessage.messageId);
                 },
                 child:
-                SizedBox(width: 30, height: 30, child: uploadingView(chatMessage.messageId)));
+                SizedBox(width: 30, height: 30, child: uploadingView(chatMessage.messageType)));
           } else {
             return InkWell(
               onTap: (){
@@ -678,7 +678,7 @@ class _MessageContentState extends State<MessageContent> {
               child: SizedBox(
                 height: 40,
                 width: 80,
-                child: uploadingView(chatMessage.messageId),
+                child: uploadingView(chatMessage.messageType),
               ),
             );
           }
@@ -717,7 +717,38 @@ class _MessageContentState extends State<MessageContent> {
           ],
         ));
   }
-  uploadingView(String messageId) {
+  uploadingView(String messageType) {
+    if(messageType == "AUDIO"){
+      return Container(
+          decoration: BoxDecoration(
+            border: Border.all(
+              color: textColor,
+            ),
+            borderRadius: const BorderRadius.all(Radius.circular(2)),
+            color: Colors.black45,
+          ),
+          child: Stack(alignment: Alignment.center,
+              // mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                SvgPicture.asset(
+                  downloading,
+                  fit: BoxFit.contain,
+                ),
+                const Align(
+                  alignment: Alignment.bottomCenter,
+                  child: SizedBox(
+                    height: 2,
+                    child: LinearProgressIndicator(
+                      valueColor: AlwaysStoppedAnimation<Color>(
+                        Colors.white,
+                      ),
+                      backgroundColor: audioBgColor,
+                      // minHeight: 1,
+                    ),
+                  ),
+                ),
+              ]));
+    }
     return Container(
       // height: 40,
       // width: 80,
@@ -810,7 +841,7 @@ class _MessageContentState extends State<MessageContent> {
           onTap: (){
             cancelMediaUploadOrDownload(chatList.messageId);
           },
-          child: uploadingView(chatList.messageId),
+          child: uploadingView(chatList.messageType),
         );
         // return uploadingView();
     // break;

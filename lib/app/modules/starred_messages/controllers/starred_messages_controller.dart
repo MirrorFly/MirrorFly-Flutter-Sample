@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
@@ -22,8 +23,26 @@ class StarredMessagesController extends GetxController {
   void onInit() {
     super.onInit();
     getFavouriteMessages();
+    player.onPlayerCompletion.listen((event) {
+      playingChat!.mediaChatMessage!.isPlaying=false;
+      playingChat!.mediaChatMessage!.currentPos=0;
+      player.stop();
+      starredChatList.refresh();
+      playingChat=null;
+    });
+
+    player.onAudioPositionChanged.listen((Duration p) {
+      playingChat?.mediaChatMessage!.currentPos=(p.inMilliseconds);
+      starredChatList.refresh();
+    });
   }
 
+  @override
+  void onClose(){
+    super.onClose();
+    player.stop();
+    player.dispose();
+  }
   getFavouriteMessages() {
     FlyChat.getFavouriteMessages().then((value) {
       List<ChatMessageModel> chatMessageModel = chatMessageModelFromJson(value);
@@ -326,6 +345,45 @@ class StarredMessagesController extends GetxController {
               child: const Text("DELETE FOR EVERYONE"))
               : const SizedBox.shrink(),*/
         ]);
+  }
+
+  AudioPlayer player = AudioPlayer();
+  ChatMessageModel? playingChat;
+  playAudio(ChatMessageModel chatMessage) async {
+    if(playingChat!=null){
+      if(playingChat?.mediaChatMessage!.messageId!=chatMessage.messageId){
+        player.stop();
+        playingChat?.mediaChatMessage!.isPlaying=false;
+        playingChat = chatMessage;
+      }
+    }
+    else{
+      playingChat = chatMessage;
+    }
+    if (!playingChat!.mediaChatMessage!.isPlaying) {
+      int result = await player.play(playingChat!.mediaChatMessage!.mediaLocalStoragePath,position: Duration(milliseconds:playingChat!.mediaChatMessage!.currentPos), isLocal: true);
+      if (result == 1) {
+        playingChat!.mediaChatMessage!.isPlaying=true;
+      } else {
+        mirrorFlyLog("", "Error while playing audio.");
+      }
+    } else if (!playingChat!.mediaChatMessage!.isPlaying) {
+      int result = await player.resume();
+      if (result == 1) {
+        playingChat!.mediaChatMessage!.isPlaying=true;
+        starredChatList.refresh();
+      } else {
+        mirrorFlyLog("", "Error on resume audio.");
+      }
+    } else {
+      int result = await player.pause();
+      if (result == 1) {
+        playingChat!.mediaChatMessage!.isPlaying=false;
+        starredChatList.refresh();
+      } else {
+        mirrorFlyLog("", "Error on pause audio.");
+      }
+    }
   }
 
   var isSearch = false.obs;

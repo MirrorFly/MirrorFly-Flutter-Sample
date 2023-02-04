@@ -1,16 +1,19 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flysdk/flysdk.dart';
 import 'package:get/get.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../common/constants.dart';
 import '../../data/apputils.dart';
 import '../../data/helper.dart';
+import '../../data/permissions.dart';
 import '../../routes/app_pages.dart';
 import '../dashboard/widgets.dart';
 
@@ -418,14 +421,30 @@ class AudioMessageView extends StatelessWidget {
   const AudioMessageView(
       {Key? key,
       required this.chatMessage,
-      required this.onTap,
-      required this.currentPos,
-      required this.maxDuration})
+      required this.onPlayAudio})
       : super(key: key);
   final ChatMessageModel chatMessage;
-  final int currentPos;
-  final int maxDuration;
-  final Function() onTap;
+  final Function() onPlayAudio;
+  
+  onAudioClick(){
+    switch (chatMessage.isMessageSentByMe
+        ? chatMessage.mediaChatMessage?.mediaUploadStatus
+        : chatMessage.mediaChatMessage?.mediaDownloadStatus) {
+      case Constants.mediaDownloaded:
+      case Constants.mediaUploaded:
+          if (checkFile(
+              chatMessage.mediaChatMessage!.mediaLocalStoragePath) &&
+              (chatMessage.mediaChatMessage!.mediaDownloadStatus ==
+                  Constants.mediaDownloaded ||
+                  chatMessage.mediaChatMessage!.mediaDownloadStatus ==
+                      Constants.mediaUploaded ||
+                  chatMessage.isMessageSentByMe)) {
+            //playAudio(chatList, chatList.mediaChatMessage!.mediaLocalStoragePath);
+          } else {
+            debugPrint("condition failed");
+          }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -436,7 +455,7 @@ class AudioMessageView extends StatelessWidget {
           color: chatReplySenderColor,
         ),
         borderRadius: const BorderRadius.all(Radius.circular(10)),
-        color: Colors.white,
+        color: Colors.transparent,
       ),
       width: screenWidth * 0.60,
       child: Column(
@@ -446,64 +465,66 @@ class AudioMessageView extends StatelessWidget {
             decoration: const BoxDecoration(
               borderRadius: BorderRadius.only(
                   topLeft: Radius.circular(10), topRight: Radius.circular(10)),
-              color: chatReplySenderColor,
+              color: chatBgColor,
             ),
-            child: Padding(
-              padding: const EdgeInsets.all(15),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Stack(
-                    alignment: Alignment.center,
+            padding: const EdgeInsets.all(15),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    SvgPicture.asset(
+                      audioMicBg,
+                      width: 28,
+                      height: 28,
+                      fit: BoxFit.contain,
+                    ),
+                    SvgPicture.asset(
+                      audioMic1,
+                      fit: BoxFit.contain,
+                    ),
+                  ],
+                ),
+                getImageOverlay(chatMessage,onAudio: onPlayAudio),
+                Expanded(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      SvgPicture.asset(
-                        audioMicBg,
-                        width: 28,
-                        height: 28,
-                        fit: BoxFit.contain,
-                      ),
-                      SvgPicture.asset(
-                        audioMic1,
-                        fit: BoxFit.contain,
-                      ),
-                    ],
-                  ),
-                  // getAudioFeedButton(chatMessage),
-                  const SizedBox(
-                    width: 10,
-                  ),
-                  InkWell(
-                    onTap: onTap,
-                    child: getImageOverlay(chatMessage),
-                  ),
-
-                  const SizedBox(
-                    width: 10,
-                  ),
-                  Expanded(
-                    child: SizedBox(
-                      // width: 168,
-                      child: SliderTheme(
+                      SliderTheme(
                         data: SliderThemeData(
                           thumbColor: audioColorDark,
+                          trackHeight: 2,
                           overlayShape: SliderComponentShape.noOverlay,
                           thumbShape: const RoundSliderThumbShape(
                               enabledThumbRadius: 5),
                         ),
                         child: Slider(
-                          value: double.parse(currentPos.toString()),
+                          value: double.parse(chatMessage.mediaChatMessage!.currentPos.toString()),
                           min: 0,
-                          activeColor: audioColorDark,
-                          inactiveColor: audioColor,
-                          max: double.parse(maxDuration.toString()),
-                          divisions: maxDuration,
+                          activeColor: Colors.white,
+                          thumbColor: audioColorDark,
+                          inactiveColor: borderColor,
+                          max: double.parse(chatMessage.mediaChatMessage!.mediaDuration.toString()),
+                          divisions: chatMessage.mediaChatMessage!.mediaDuration,
                           onChanged: (double value) async {},
                         ),
                       ),
-                    ),
+                      Padding(
+                        padding: const EdgeInsets.only(left: 5.0),
+                        child: Text(
+                          Helper.durationToString(Duration(
+                              microseconds:
+                              chatMessage.mediaChatMessage?.currentPos ?? 0)),
+                          style: const TextStyle(color: durationTextColor, fontSize: 8, fontWeight: FontWeight.w400),
+                        ),
+                      ),
+                    ],
                   ),
-                ],
-              ),
+                ),
+
+              ],
             ),
           ),
           const SizedBox(
@@ -514,16 +535,6 @@ class AudioMessageView extends StatelessWidget {
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                const SizedBox(
-                  width: 10,
-                ),
-                Text(
-                  Helper.durationToString(Duration(
-                      microseconds:
-                          chatMessage.mediaChatMessage?.mediaDuration ?? 0)),
-                  style: const TextStyle(color: Colors.black, fontSize: 10),
-                ),
-                const Spacer(),
                 chatMessage.isMessageStarred
                     ? const Icon(
                         Icons.star,
@@ -540,7 +551,7 @@ class AudioMessageView extends StatelessWidget {
                 ),
                 Text(
                   getChatTime(context, chatMessage.messageSentTime.toInt()),
-                  style: const TextStyle(fontSize: 12, color: Colors.black),
+                  style: const TextStyle(fontSize: 12, color: durationTextColor),
                 ),
                 const SizedBox(
                   width: 10,
@@ -647,18 +658,21 @@ class ContactMessageView extends StatelessWidget {
 
 class DocumentMessageView extends StatelessWidget {
   const DocumentMessageView(
-      {Key? key, required this.chatMessage, required this.onTap})
+      {Key? key, required this.chatMessage})
       : super(key: key);
   final ChatMessageModel chatMessage;
-  final Function() onTap;
+
+  onDocumentClick(){
+    openDocument(
+        chatMessage.mediaChatMessage!.mediaLocalStoragePath, Get.context!);
+  }
 
   @override
   Widget build(BuildContext context) {
     var screenWidth = MediaQuery.of(context).size.width;
     return InkWell(
       onTap: () {
-        openDocument(
-            chatMessage.mediaChatMessage!.mediaLocalStoragePath, context);
+        onDocumentClick();
       },
       child: Container(
         decoration: BoxDecoration(
@@ -666,14 +680,19 @@ class DocumentMessageView extends StatelessWidget {
             color: chatReplySenderColor,
           ),
           borderRadius: const BorderRadius.all(Radius.circular(10)),
-          color: Colors.white,
+          color: Colors.transparent,
         ),
         width: screenWidth * 0.60,
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Padding(
-              padding:
-                  const EdgeInsets.only(left: 15.0, right: 15.0, top: 10.0),
+            Container(
+              decoration: const BoxDecoration(
+                borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(10), topRight: Radius.circular(10)),
+                color: chatBgColor,
+              ),
+              padding: const EdgeInsets.all(15.0),
               child: Row(
                 children: [
                   getImageHolder(chatMessage.mediaChatMessage!.mediaFileName),
@@ -684,12 +703,10 @@ class DocumentMessageView extends StatelessWidget {
                       child: Text(
                     chatMessage.mediaChatMessage!.mediaFileName,
                     maxLines: 2,
+                        style: const TextStyle(fontSize: 12,color: Colors.black,fontWeight: FontWeight.w400),
                   )),
                   const Spacer(),
-                  InkWell(
-                    onTap: onTap,
-                    child: getImageOverlay(chatMessage),
-                  ),
+                  getImageOverlay(chatMessage),
                 ],
               ),
             ),
@@ -707,7 +724,7 @@ class DocumentMessageView extends StatelessWidget {
                   Text(
                     Helper.formatBytes(
                         chatMessage.mediaChatMessage?.mediaFileSize ?? 0, 0),
-                    style: const TextStyle(color: Colors.black, fontSize: 10),
+                    style: const TextStyle(color: Colors.black, fontSize: 7,fontWeight: FontWeight.w400),
                   ),
                   const Spacer(),
                   chatMessage.isMessageStarred
@@ -726,7 +743,7 @@ class DocumentMessageView extends StatelessWidget {
                   ),
                   Text(
                     getChatTime(context, chatMessage.messageSentTime.toInt()),
-                    style: const TextStyle(fontSize: 11, color: chatTimeColor),
+                    style: const TextStyle(fontSize: 12, color: durationTextColor),
                   ),
                   const SizedBox(
                     width: 10,
@@ -798,12 +815,32 @@ class VideoMessageView extends StatelessWidget {
   const VideoMessageView(
       {Key? key,
       required this.chatMessage,
-      required this.onTap,
       this.search = ""})
       : super(key: key);
   final ChatMessageModel chatMessage;
   final String search;
-  final Function() onTap;
+  
+  onVideoClick() {
+    switch (chatMessage.isMessageSentByMe
+        ? chatMessage.mediaChatMessage?.mediaUploadStatus
+        : chatMessage.mediaChatMessage?.mediaDownloadStatus) {
+      case Constants.mediaDownloaded:
+      case Constants.mediaUploaded:
+        if (chatMessage.messageType.toUpperCase() == 'VIDEO') {
+          if (checkFile(
+              chatMessage.mediaChatMessage!.mediaLocalStoragePath) &&
+              (chatMessage.mediaChatMessage!.mediaDownloadStatus ==
+                  Constants.mediaDownloaded ||
+                  chatMessage.mediaChatMessage!.mediaDownloadStatus ==
+                      Constants.mediaUploaded ||
+                  chatMessage.isMessageSentByMe)) {
+            Get.toNamed(Routes.videoPlay, arguments: {
+              "filePath": chatMessage.mediaChatMessage!.mediaLocalStoragePath,
+            });
+          }
+        }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -819,15 +856,7 @@ class VideoMessageView extends StatelessWidget {
             children: [
               InkWell(
                 onTap: () {
-                  if (checkFile(mediaMessage.mediaLocalStoragePath) &&
-                      (mediaMessage.mediaDownloadStatus ==
-                              Constants.mediaDownloaded ||
-                          mediaMessage.mediaDownloadStatus ==
-                              Constants.mediaUploaded)) {
-                    Get.toNamed(Routes.videoPlay, arguments: {
-                      "filePath": mediaMessage.mediaLocalStoragePath,
-                    });
-                  }
+                  onVideoClick();
                 },
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(15),
@@ -837,9 +866,8 @@ class VideoMessageView extends StatelessWidget {
               ),
               Positioned(
                   top: (screenHeight * 0.4) / 2.5,
-                  left: (screenWidth * 0.6) / 3,
-                  child: InkWell(
-                      onTap: onTap, child: getImageOverlay(chatMessage))),
+                  left: (screenWidth * 0.6) / 2.8,
+                  child: getImageOverlay(chatMessage,onVideo: onVideoClick)),
               mediaMessage.mediaCaptionText.checkNull().isEmpty
                   ? Positioned(
                       bottom: 8,
@@ -889,12 +917,10 @@ class ImageMessageView extends StatelessWidget {
   const ImageMessageView(
       {Key? key,
       required this.chatMessage,
-      required this.onTap,
       this.search = ""})
       : super(key: key);
   final ChatMessageModel chatMessage;
   final String search;
-  final Function() onTap;
 
   @override
   Widget build(BuildContext context) {
@@ -918,9 +944,8 @@ class ImageMessageView extends StatelessWidget {
               ),
               Positioned(
                   top: (screenHeight * 0.4) / 2.5,
-                  left: (screenWidth * 0.6) / 3,
-                  child: InkWell(
-                      onTap: onTap, child: getImageOverlay(chatMessage))),
+                  left: (screenWidth * 0.6) / 2.8,
+                  child: getImageOverlay(chatMessage)),
               mediaMessage.mediaCaptionText.checkNull().isEmpty
                   ? Positioned(
                       bottom: 8,
@@ -1038,7 +1063,7 @@ Widget setCaptionMessage(MediaChatMessage mediaMessage,
             ),
             Text(
               getChatTime(context, chatMessage.messageSentTime.toInt()),
-              style: const TextStyle(fontSize: 11, color: chatTimeColor),
+              style: const TextStyle(fontSize: 12, color: durationTextColor),
             ),
           ],
         ),
@@ -1076,16 +1101,12 @@ class MessageContent extends StatelessWidget {
       {Key? key,
       required this.chatList,
       required this.index,
-      required this.handleMediaUploadDownload,
-      required this.currentPos,
-      required this.maxDuration})
+      required this.onPlayAudio})
       : super(key: key);
   final List<ChatMessageModel> chatList;
   final int index;
-  final Function(int mediaDownloadStatus, ChatMessageModel chatList)
-      handleMediaUploadDownload;
-  final int currentPos;
-  final int maxDuration;
+  final Function()
+      onPlayAudio;
   @override
   Widget build(BuildContext context) {
     var chatMessage = chatList[index];
@@ -1120,41 +1141,22 @@ class MessageContent extends StatelessWidget {
           if (chatList[index].messageType.toUpperCase() == Constants.mImage) {
             return ImageMessageView(
                 chatMessage: chatMessage,
-                onTap: () {
-                  handleMediaUploadDownload(
-                      chatMessage.mediaChatMessage!.mediaDownloadStatus,
-                      chatList[index]);
-                });
+            );
           } else if (chatList[index].messageType.toUpperCase() ==
               Constants.mVideo) {
             return VideoMessageView(
                 chatMessage: chatMessage,
-                onTap: () {
-                  handleMediaUploadDownload(
-                      chatMessage.mediaChatMessage!.mediaDownloadStatus,
-                      chatList[index]);
-                });
+                );
           } else if (chatList[index].messageType.toUpperCase() ==
                   Constants.mDocument ||
               chatList[index].messageType.toUpperCase() == Constants.mFile) {
             return DocumentMessageView(
-                chatMessage: chatMessage,
-                onTap: () {
-                  handleMediaUploadDownload(
-                      chatMessage.mediaChatMessage!.mediaDownloadStatus,
-                      chatList[index]);
-                });
+                chatMessage: chatMessage,);
           } else if (chatList[index].messageType.toUpperCase() ==
               Constants.mAudio) {
             return AudioMessageView(
                 chatMessage: chatMessage,
-                onTap: () {
-                  handleMediaUploadDownload(
-                      chatMessage.mediaChatMessage!.mediaDownloadStatus,
-                      chatList[index]);
-                },
-                currentPos: currentPos,
-                maxDuration: maxDuration);
+                onPlayAudio:onPlayAudio);
           } else {
             return const SizedBox.shrink();
           }
@@ -1214,7 +1216,7 @@ class TextMessageView extends StatelessWidget {
               ),
               Text(
                 getChatTime(context, chatMessage.messageSentTime.toInt()),
-                style: const TextStyle(fontSize: 11, color: chatTimeColor),
+                style: const TextStyle(fontSize: 12, color: durationTextColor),
               ),
             ],
           ),
@@ -1294,42 +1296,36 @@ getMessageIndicator(String? messageStatus, bool isSender, String messageType) {
   }
 }
 
-getImageOverlay(ChatMessageModel chatMessage) {
-  debugPrint(
-      "****GET IMAGE OVERLAY**** ${chatMessage.messageStatus} **** ${chatMessage.messageType.toUpperCase()}");
-  debugPrint(checkFile(chatMessage.mediaChatMessage!.mediaLocalStoragePath)
-      .toString());
-  debugPrint(chatMessage.mediaChatMessage!.mediaLocalStoragePath);
+Widget getImageOverlay(ChatMessageModel chatMessage, {Function()? onAudio,Function()? onVideo}) {
   if (checkFile(chatMessage.mediaChatMessage!.mediaLocalStoragePath) &&
       chatMessage.messageStatus != 'N') {
-    debugPrint("===media in play state===");
     if (chatMessage.messageType.toUpperCase() == 'VIDEO') {
-      return SizedBox(
-        width: 80,
-        height: 50,
-        child: Center(
-            child: SvgPicture.asset(
-          videoPlay,
-          fit: BoxFit.contain,
-        )),
+      return InkWell(
+        onTap: onVideo,
+        child: SizedBox(
+          width: 80,
+          height: 50,
+          child: Center(
+              child: SvgPicture.asset(
+            videoPlay,
+            fit: BoxFit.contain,
+          )),
+        ),
       );
     } else if (chatMessage.messageType.toUpperCase() == 'AUDIO') {
-      debugPrint("===============================");
-      debugPrint(chatMessage.mediaChatMessage!.isPlaying.toString());
-      return chatMessage.mediaChatMessage!.isPlaying
-          ? SvgPicture.asset(pauseIcon,height: 17,)//const Icon(Icons.pause)
-          : SvgPicture.asset(playIcon); //const Icon(Icons.play_arrow_sharp);
+      return InkWell(
+        onTap: onAudio,
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: chatMessage.mediaChatMessage!.isPlaying
+              ? SvgPicture.asset(pauseIcon,height: 17,)//const Icon(Icons.pause)
+              : SvgPicture.asset(playIcon,height: 17,),
+        ),
+      ); //const Icon(Icons.play_arrow_sharp);
     } else {
-      debugPrint("==Showing EMpty===");
       return const SizedBox.shrink();
     }
   } else {
-    debugPrint("===media in Download/Upload state===");
-    debugPrint(chatMessage.isMessageSentByMe.toString());
-    debugPrint(
-        "upload status--- ${chatMessage.mediaChatMessage!.mediaUploadStatus.toString()}");
-    debugPrint(
-        "download status--- ${chatMessage.mediaChatMessage!.mediaDownloadStatus.toString()}");
     switch (chatMessage.isMessageSentByMe
         ? chatMessage.mediaChatMessage!.mediaUploadStatus
         : chatMessage.mediaChatMessage!.mediaDownloadStatus) {
@@ -1340,10 +1336,9 @@ getImageOverlay(ChatMessageModel chatMessage) {
         return const SizedBox.shrink();
       case Constants.mediaNotDownloaded:
         return InkWell(
-          child: getFileInfo(
+          child: downloadView(
               chatMessage.mediaChatMessage!.mediaDownloadStatus,
               chatMessage.mediaChatMessage!.mediaFileSize,
-              Icons.download_sharp,
               chatMessage.messageType.toUpperCase()),
           onTap: (){
             downloadMedia(chatMessage.messageId);
@@ -1352,70 +1347,50 @@ getImageOverlay(ChatMessageModel chatMessage) {
       case Constants.mediaNotUploaded:
         return InkWell(
             onTap: () {
-              debugPrint(chatMessage.messageId);
               uploadMedia(chatMessage.messageId);
             },
-            child: retryFileInfo(
+            child: uploadView(
             chatMessage.mediaChatMessage!.mediaDownloadStatus,
             chatMessage.mediaChatMessage!.mediaFileSize,
-            Icons.upload_sharp,
             chatMessage.messageType.toUpperCase()));
 
       case Constants.mediaDownloading:
       case Constants.mediaUploading:
-        if (chatMessage.messageType.toUpperCase() == 'AUDIO' ||
-            chatMessage.messageType.toUpperCase() == 'DOCUMENT') {
-          return InkWell(
-              onTap: () {
-                debugPrint(chatMessage.messageId);
-                cancelMediaUploadOrDownload(chatMessage.messageId);
-              },
-              child: SizedBox(
-                  width: 30,
-                  height: 30,
-                  child: uploadingView(chatMessage.messageId)));
-        } else {
-          return InkWell(
+        return InkWell(
             onTap: () {
-              debugPrint(chatMessage.messageId);
               cancelMediaUploadOrDownload(chatMessage.messageId);
             },
-            child: SizedBox(
-              height: 30,
-              width: 70,
-              child: uploadingView(chatMessage.messageId),
-            ),
-          );
-        }
+            child: downloadingView(chatMessage.messageType));
+      default:return const SizedBox.shrink();
     }
   }
 }
 
-retryFileInfo(int mediaDownloadStatus, int mediaFileSize, IconData iconData,
+uploadView(int mediaDownloadStatus, int mediaFileSize,
     String messageType) {
-  return messageType == 'AUDIO' || messageType == 'DOCUMENT'
-      ? Container(decoration: BoxDecoration(border: Border.all(color: borderColor),borderRadius: BorderRadius.circular(3)),padding: const EdgeInsets.all(5), child: SvgPicture.asset(uploadIcon,color: playIconColor,))
-      : Container(
-          decoration: BoxDecoration(
-            border: Border.all(
-              color: textColor,
+  return Padding(
+    padding: const EdgeInsets.symmetric(horizontal: 8.0),
+    child: messageType == 'AUDIO' || messageType == 'DOCUMENT'
+        ? Container(decoration: BoxDecoration(border: Border.all(color: borderColor),borderRadius: BorderRadius.circular(3)),padding: const EdgeInsets.all(5), child: SvgPicture.asset(uploadIcon,color: playIconColor,))
+        : Container(
+            decoration: const BoxDecoration(
+              borderRadius: BorderRadius.all(Radius.circular(5)),
+              color: Colors.black45,
             ),
-            borderRadius: const BorderRadius.all(Radius.circular(5)),
-            color: Colors.black54,
-          ),
-          padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
-          child: Row(
-            children: [
-              SvgPicture.asset(uploadIcon),
-              const SizedBox(
-                width: 5,
-              ),
-              const Text(
-                "RETRY",
-                style: TextStyle(color: Colors.white,fontSize: 10),
-              ),
-            ],
-          ));
+            padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+            child: Row(
+              children: [
+                SvgPicture.asset(uploadIcon),
+                const SizedBox(
+                  width: 5,
+                ),
+                const Text(
+                  "RETRY",
+                  style: TextStyle(color: Colors.white,fontSize: 10),
+                ),
+              ],
+            )),
+  );
 }
 
 void cancelMediaUploadOrDownload(String messageId) {
@@ -1430,69 +1405,124 @@ void uploadMedia(String messageId) async {
 }
 void downloadMedia(String messageId) async {
   if(await AppUtils.isNetConnected()) {
-    FlyChat.downloadMedia(messageId);
+    if (await askStoragePermission()) {
+      FlyChat.downloadMedia(messageId);
+    }
   }else{
     toToast(Constants.noInternetConnection);
   }
 }
-
-Widget getFileInfo(int mediaDownloadStatus, int mediaFileSize, IconData iconData,
-    String messageType) {
-  return messageType == 'AUDIO' || messageType == 'DOCUMENT'
-      ? Container(decoration: BoxDecoration(border: Border.all(color: borderColor),borderRadius: BorderRadius.circular(3)),padding: const EdgeInsets.all(5), child: SvgPicture.asset(downloadIcon,color: playIconColor,))
-      : Container(
-          decoration: BoxDecoration(
-            border: Border.all(
-              color: textColor,
-            ),
-            borderRadius: const BorderRadius.all(Radius.circular(5)),
-            color: Colors.black38,
-          ),
-          padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
-          child: Row(
-            children: [
-              SvgPicture.asset(downloadIcon),
-              const SizedBox(
-                width: 5,
-              ),
-              Text(
-                Helper.formatBytes(mediaFileSize, 0),
-                style: const TextStyle(color: Colors.white,fontSize: 10),
-              ),
-            ],
-          ));
+Future<bool> askStoragePermission() async {
+  final permission = await AppPermission.getStoragePermission();
+  switch (permission) {
+    case PermissionStatus.granted:
+      return true;
+    case PermissionStatus.permanentlyDenied:
+      return false;
+    default:
+      debugPrint("Permission default");
+      return false;
+  }
 }
 
-uploadingView(String messageId) {
-  return Container(
-      decoration: BoxDecoration(
-        border: Border.all(
-          color: textColor,
-        ),
-        borderRadius: const BorderRadius.all(Radius.circular(2)),
-        color: Colors.black45,
-      ),
-      child: Stack(alignment: Alignment.center,
-          // mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            SvgPicture.asset(
-              downloading,
-              fit: BoxFit.contain,
+
+Widget downloadView(int mediaDownloadStatus, int mediaFileSize,
+    String messageType) {
+  return Padding(
+    padding: const EdgeInsets.symmetric(horizontal: 8.0),
+    child: messageType == 'AUDIO' || messageType == 'DOCUMENT'
+        ? Container(decoration: BoxDecoration(border: Border.all(color: borderColor),borderRadius: BorderRadius.circular(3)),padding: const EdgeInsets.all(5), child: SvgPicture.asset(downloadIcon,color: playIconColor,))
+        : Container(
+            decoration: BoxDecoration(
+              border: Border.all(
+                color: textColor,
+              ),
+              borderRadius: const BorderRadius.all(Radius.circular(5)),
+              color: Colors.black38,
             ),
-            const Align(
-              alignment: Alignment.bottomCenter,
-              child: SizedBox(
-                height: 2,
-                child: LinearProgressIndicator(
-                  valueColor: AlwaysStoppedAnimation<Color>(
-                    Colors.white,
+            padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+            child: Row(
+              children: [
+                SvgPicture.asset(downloadIcon),
+                const SizedBox(
+                  width: 5,
+                ),
+                Text(
+                  Helper.formatBytes(mediaFileSize, 0),
+                  style: const TextStyle(color: Colors.white,fontSize: 10),
+                ),
+              ],
+            )),
+  );
+}
+
+downloadingView(String messageType) {
+  if(messageType == "AUDIO" || messageType == "DOCUMENT"){
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 8.0),
+      child: Container(
+          width: 30,
+          height: 30,
+          decoration: BoxDecoration(
+            border: Border.all(
+              color: borderColor,
+            ),
+            borderRadius: const BorderRadius.all(Radius.circular(3)),
+            // color: Colors.black45,
+          ),
+          child: Stack(alignment: Alignment.center,
+              // mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                SvgPicture.asset(
+                  downloading,
+                  fit: BoxFit.contain,
+                  color: playIconColor,
+                ),
+                const Align(
+                  alignment: Alignment.bottomCenter,
+                  child: SizedBox(
+                    height: 2,
+                    child: LinearProgressIndicator(
+                      valueColor: AlwaysStoppedAnimation<Color>(
+                        playIconColor,
+                      ),
+                      backgroundColor: Colors.transparent,
+                      // minHeight: 1,
+                    ),
                   ),
-                  backgroundColor: audioBgColor,
-                  // minHeight: 1,
+                ),
+              ])),
+    );
+  }else {
+    return Container(
+        height: 30,
+        width: 70,
+        decoration: const BoxDecoration(
+          borderRadius: BorderRadius.all(Radius.circular(4)),
+          color: Colors.black45,
+        ),
+        child: Stack(alignment: Alignment.center,
+            // mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              SvgPicture.asset(
+                downloading,
+                fit: BoxFit.contain,
+              ),
+              const Align(
+                alignment: Alignment.bottomCenter,
+                child: SizedBox(
+                  height: 2,
+                  child: LinearProgressIndicator(
+                    valueColor: AlwaysStoppedAnimation<Color>(
+                      Colors.white,
+                    ),
+                    backgroundColor: Colors.transparent,
+                    // minHeight: 1,
+                  ),
                 ),
               ),
-            ),
-          ]));
+            ]));
+  }
 }
 
 class AttachmentsSheetView extends StatelessWidget {
@@ -1603,5 +1633,125 @@ Widget chatSpannedText(String text, String spannableText, TextStyle? style) {
         style: style));
   } else {
     return textMessageSpannableText(text); //Text(text, style: style);
+  }
+}
+
+/*handleMediaUploadDownload(
+    int mediaDownloadStatus, ChatMessageModel chatList) {
+  switch (chatList.isMessageSentByMe
+      ? chatList.mediaChatMessage?.mediaUploadStatus
+      : mediaDownloadStatus) {
+    case Constants.mediaDownloaded:
+    case Constants.mediaUploaded:
+      if (chatList.messageType.toUpperCase() == 'VIDEO') {
+        if (checkFile(
+            chatList.mediaChatMessage!.mediaLocalStoragePath) &&
+            (chatList.mediaChatMessage!.mediaDownloadStatus ==
+                Constants.mediaDownloaded ||
+                chatList.mediaChatMessage!.mediaDownloadStatus ==
+                    Constants.mediaUploaded ||
+                chatList.isMessageSentByMe)) {
+          Get.toNamed(Routes.videoPlay, arguments: {
+            "filePath": chatList.mediaChatMessage!.mediaLocalStoragePath,
+          });
+        }
+      }
+      if (chatList.messageType.toUpperCase() == 'AUDIO') {
+        if (checkFile(
+            chatList.mediaChatMessage!.mediaLocalStoragePath) &&
+            (chatList.mediaChatMessage!.mediaDownloadStatus ==
+                Constants.mediaDownloaded ||
+                chatList.mediaChatMessage!.mediaDownloadStatus ==
+                    Constants.mediaUploaded ||
+                chatList.isMessageSentByMe)) {
+          debugPrint("audio click1");
+          //playAudio(chatList, chatList.mediaChatMessage!.mediaLocalStoragePath);
+        } else {
+          debugPrint("condition failed");
+        }
+      }
+      break;
+
+    case Constants.mediaDownloadedNotAvailable:
+    case Constants.mediaNotDownloaded:
+    //download
+      debugPrint("Download");
+      debugPrint(chatList.messageId);
+      chatList.mediaChatMessage!.mediaDownloadStatus =
+          Constants.mediaDownloading;
+      downloadMedia(chatList.messageId);
+      break;
+    case Constants.mediaUploadedNotAvailable:
+    //upload
+      break;
+    case Constants.mediaNotUploaded:
+    case Constants.mediaDownloading:
+    case Constants.mediaUploading:
+      return uploadingView(chatList.messageType);
+  // break;
+  }
+}*/
+
+class AudioMessagePlayerController extends GetxController {
+
+  final _obj = ''.obs;
+  set obj(value) => _obj.value = value;
+  get obj => _obj.value;
+  var maxDuration = 100.obs;
+  var currentPos = 0.obs;
+  var currentPlayingPosId = "0".obs;
+  String currentPostLabel = "00:00";
+  var audioPlayed = false.obs;
+  AudioPlayer player = AudioPlayer();
+
+  @override
+  void onInit(){
+    super.onInit();
+    player.onPlayerCompletion.listen((event) {
+      playingChat!.mediaChatMessage!.isPlaying=false;
+      playingChat!.mediaChatMessage!.currentPos=0;
+      player.stop();
+      //chatList.refresh();
+    });
+
+    player.onAudioPositionChanged.listen((Duration p) {
+      playingChat?.mediaChatMessage!.currentPos=(p.inMilliseconds);
+      //chatList.refresh();
+    });
+  }
+  ChatMessageModel? playingChat;
+  playAudio(ChatMessageModel chatMessage, String filePath) async {
+    if(playingChat!=null){
+      if(playingChat?.mediaChatMessage!.messageId!=chatMessage.messageId){
+        player.stop();
+        playingChat?.mediaChatMessage!.isPlaying=false;
+        playingChat = chatMessage;
+      }
+    }
+    else{
+      playingChat = chatMessage;
+    }
+    if (!playingChat!.mediaChatMessage!.isPlaying) {
+      int result = await player.play(playingChat!.mediaChatMessage!.mediaLocalStoragePath,position: Duration(milliseconds:playingChat!.mediaChatMessage!.currentPos), isLocal: true);
+      if (result == 1) {
+        playingChat!.mediaChatMessage!.isPlaying=true;
+      } else {
+        mirrorFlyLog("", "Error while playing audio.");
+      }
+    } else if (!playingChat!.mediaChatMessage!.isPlaying) {
+      int result = await player.resume();
+      if (result == 1) {
+        playingChat!.mediaChatMessage!.isPlaying=true;
+      } else {
+        mirrorFlyLog("", "Error on resume audio.");
+      }
+    } else {
+      int result = await player.pause();
+      if (result == 1) {
+        playingChat!.mediaChatMessage!.isPlaying=false;
+      } else {
+        mirrorFlyLog("", "Error on pause audio.");
+      }
+    }
   }
 }

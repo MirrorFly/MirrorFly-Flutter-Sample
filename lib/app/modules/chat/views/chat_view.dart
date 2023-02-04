@@ -473,10 +473,10 @@ class ChatView extends GetView<ChatController> {
               Constants.mNotification) {
             return SwipeTo(
               key: ValueKey(chatList[index].messageId),
-              onRightSwipe: () {
+              onRightSwipe: !chatList[index].isMessageRecalled && !chatList[index].isMessageDeleted ? () {
                 var swipeList = controller.chatList.toList();
                 controller.handleReplyChatMessage(swipeList[index]);
-              },
+              } : null,
               animationDuration: const Duration(milliseconds: 300),
               offsetDx: 0.2,
               child: GestureDetector(
@@ -518,7 +518,7 @@ class ChatView extends GetView<ChatController> {
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           Visibility(
-                            visible: controller
+                            visible:chatList[index].isMessageSentByMe && controller
                                 .forwardMessageVisibility(chatList[index]),
                             child: IconButton(
                                 onPressed: () {
@@ -562,14 +562,23 @@ class ChatView extends GetView<ChatController> {
                                 MessageContent(
                                   chatList: chatList,
                                   index: index,
-                                  handleMediaUploadDownload:
-                                      handleMediaUploadDownload,
-                                  currentPos: controller.currentPlayingPosId.value == chatList[index].messageId ? controller.currentPos.value : 0,
-                                  // currentPos: controller.currentPos.value,
-                                  maxDuration: controller.maxDuration.value,
+                                  onPlayAudio:(){
+                                    controller.playAudio(chatList[index]);
+                                  },
                                 )
                               ],
                             ),
+                          ),
+
+                          Visibility(
+                            visible:!chatList[index].isMessageSentByMe && controller
+                                .forwardMessageVisibility(chatList[index]),
+                            child: IconButton(
+                                onPressed: () {
+                                  controller.forwardSingleMessage(
+                                      chatList[index].messageId);
+                                },
+                                icon: SvgPicture.asset(forwardMedia)),
                           ),
                         ],
                       ),
@@ -586,82 +595,7 @@ class ChatView extends GetView<ChatController> {
     );
   }
 
-  getMessageContent(
-      int index, BuildContext context, List<ChatMessageModel> chatList) {
-    // debugPrint(json.encode(chatList[index]));
-    // debugPrint("Message Type===> ${chatList[index].messageType}");
-    var chatMessage = chatList[index];
-    if (chatList[index].isMessageRecalled) {
-      return RecalledMessageView(
-        chatMessage: chatMessage,
-      );
-    } else {
-      if (chatList[index].messageType.toUpperCase() == Constants.mText) {
-        return TextMessageView(chatMessage: chatMessage);
-      } else if (chatList[index].messageType.toUpperCase() ==
-          Constants.mNotification) {
-        return NotificationMessageView(chatMessage: chatMessage);
-      } else if (chatList[index].messageType.toUpperCase() ==
-          Constants.mLocation) {
-        if (chatList[index].locationChatMessage == null) {
-          return const SizedBox.shrink();
-        }
-        return LocationMessageView(chatMessage: chatMessage);
-      } else if (chatList[index].messageType.toUpperCase() ==
-          Constants.mContact) {
-        if (chatList[index].contactChatMessage == null) {
-          return const SizedBox.shrink();
-        }
-        return ContactMessageView(chatMessage: chatMessage);
-      } else {
-        if (chatList[index].mediaChatMessage == null) {
-          return const SizedBox.shrink();
-        } else {
-          if (chatList[index].messageType.toUpperCase() == Constants.mImage) {
-            return ImageMessageView(
-                chatMessage: chatMessage,
-                onTap: () {
-                  handleMediaUploadDownload(
-                      chatMessage.mediaChatMessage!.mediaDownloadStatus,
-                      chatList[index]);
-                });
-          } else if (chatList[index].messageType.toUpperCase() ==
-              Constants.mVideo) {
-            return VideoMessageView(
-                chatMessage: chatMessage,
-                onTap: () {
-                  handleMediaUploadDownload(
-                      chatMessage.mediaChatMessage!.mediaDownloadStatus,
-                      chatList[index]);
-                });
-          } else if (chatList[index].messageType.toUpperCase() ==
-                  Constants.mDocument ||
-              chatList[index].messageType.toUpperCase() == Constants.mFile) {
-            return DocumentMessageView(
-                chatMessage: chatMessage,
-                onTap: () {
-                  handleMediaUploadDownload(
-                      chatMessage.mediaChatMessage!.mediaDownloadStatus,
-                      chatList[index]);
-                });
-          } else if (chatList[index].messageType.toUpperCase() ==
-              Constants.mAudio) {
-            return AudioMessageView(
-                chatMessage: chatMessage,
-                onTap: () {
-                  handleMediaUploadDownload(
-                      chatMessage.mediaChatMessage!.mediaDownloadStatus,
-                      chatList[index]);
-                },
-                currentPos: controller.currentPlayingPosId.value == chatMessage.messageId ? controller.currentPos.value : 0,
-                maxDuration: controller.maxDuration.value);
-          }
-        }
-      }
-    }
-  }
-
-  handleMediaUploadDownload(
+  /*handleMediaUploadDownload(
       int mediaDownloadStatus, ChatMessageModel chatList) {
     switch (chatList.isMessageSentByMe
         ? chatList.mediaChatMessage?.mediaUploadStatus
@@ -689,16 +623,13 @@ class ChatView extends GetView<ChatController> {
                   chatList.mediaChatMessage!.mediaDownloadStatus ==
                       Constants.mediaUploaded ||
                   chatList.isMessageSentByMe)) {
-            // debugPrint("audio click1");
+            debugPrint("audio click1");
             controller.playAudio(chatList, chatList.mediaChatMessage!.mediaLocalStoragePath);
-            // playAudio(chatList.mediaChatMessage!.mediaLocalStoragePath,
-            //     chatList.mediaChatMessage!.mediaFileName);
           } else {
             debugPrint("condition failed");
           }
         }
         break;
-
       case Constants.mediaDownloadedNotAvailable:
       case Constants.mediaNotDownloaded:
         //download
@@ -714,88 +645,10 @@ class ChatView extends GetView<ChatController> {
       case Constants.mediaNotUploaded:
       case Constants.mediaDownloading:
       case Constants.mediaUploading:
-        return uploadingView(chatList.messageId);
+        //return uploadingView(chatList.messageType);
       // break;
     }
-  }
-
-  playAudio(String filePath, String mediaFileName,bool isPlaying) {
-    Get.dialog(
-      Dialog(
-        child: Padding(
-          padding: const EdgeInsets.all(15),
-          child: Row(
-            // mainAxisSize: MainAxisSize.min,
-            children: [
-              InkWell(
-                onTap: () {
-                  // controller.playAudio(filePath);
-                },
-                child: Stack(
-                  alignment: Alignment.center,
-                  children: [
-                    SvgPicture.asset(
-                      audioMicBg,
-                      width: 50,
-                      height: 50,
-                      fit: BoxFit.contain,
-                    ),
-                    Obx(() {
-                      return isPlaying
-                          ? const Icon(Icons.pause)
-                          : const Icon(Icons.play_arrow);
-                    }),
-                  ],
-                ),
-              ),
-              const SizedBox(
-                width: 20,
-              ),
-              Expanded(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(
-                      mediaFileName,
-                      maxLines: 2,
-                    ),
-                    const SizedBox(
-                      height: 15,
-                    ),
-                    SizedBox(
-                      // width: 168,
-                      child: SliderTheme(
-                        data: SliderThemeData(
-                          thumbColor: audioColorDark,
-                          overlayShape: SliderComponentShape.noOverlay,
-                          thumbShape: const RoundSliderThumbShape(
-                              enabledThumbRadius: 5),
-                        ),
-                        child: Obx(() {
-                          return Slider(
-                            value:
-                                double.parse(controller.currentPos.toString()),
-                            min: 0,
-                            activeColor: audioColorDark,
-                            inactiveColor: audioColor,
-                            max: double.parse(
-                                controller.maxDuration.value.toString()),
-                            divisions: controller.maxDuration.value,
-                            label: controller.currentPostLabel,
-                            onChanged: (double value) async {},
-                          );
-                        }),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
+  }*/
 
   selectedAppBar() {
     return AppBar(

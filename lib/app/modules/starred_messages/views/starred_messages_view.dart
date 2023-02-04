@@ -6,7 +6,7 @@ import 'package:get/get.dart';
 import '../../../common/constants.dart';
 import '../../../common/widgets.dart';
 import '../../../widgets/custom_action_bar_icons.dart';
-import '../../chat/views/message_content.dart';
+import '../../chat/chat_widgets.dart';
 import '../../chat/views/starred_message_header.dart';
 import '../controllers/starred_messages_controller.dart';
 import 'package:flysdk/flysdk.dart';
@@ -107,7 +107,9 @@ class StarredMessagesView extends GetView<StarredMessagesController> {
                                   border: starredChatList[index].isMessageSentByMe
                                       ? Border.all(color: chatSentBgColor)
                                       : Border.all(color: chatBorderColor)),
-                              child: MessageContent(chatList: starredChatList[index], isTapEnabled: false,),
+                              child: MessageContent(chatList: starredChatList,index:index, onPlayAudio: (){
+                                controller.playAudio(starredChatList[index]);
+                              },),
                             ),
                           ),
                         ],

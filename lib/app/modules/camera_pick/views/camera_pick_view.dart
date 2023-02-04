@@ -41,7 +41,7 @@ class CameraPickView extends GetView<CameraPickController> {
                             }),),
                       ),
                     ),
-                    Stack(
+                    /*Stack(
                       alignment: Alignment.center,
                       children: [
                         Positioned(
@@ -56,8 +56,8 @@ class CameraPickView extends GetView<CameraPickController> {
                           ),
                         ),
                       ],
-                    ),
-                    controller.isRecording.value ? Row(
+                    ),*/
+                    Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
@@ -66,7 +66,7 @@ class CameraPickView extends GetView<CameraPickController> {
                           padding: const EdgeInsets.all(5.0),
                           child: Text(controller.timeString,style: const TextStyle(color: Colors.white),),
                         )
-                      ],) : const SizedBox.shrink()
+                      ],)
                   ]
                 ) : const Center(
                   child: CircularProgressIndicator(),

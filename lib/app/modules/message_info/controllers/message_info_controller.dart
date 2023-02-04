@@ -30,31 +30,18 @@ class MessageInfoController extends GetxController {
   void onInit() {
     super.onInit();
     getStatusOfMessage(chatMessage.first.messageId);
-    player.onDurationChanged.listen((Duration d) {
-      //get the duration of audio
-      maxDuration(d.inMilliseconds);
-    });
-
     player.onPlayerCompletion.listen((event) {
-      isPlaying(false);
-      audioPlayed(false);
+      playingChat!.mediaChatMessage!.isPlaying=false;
+      playingChat!.mediaChatMessage!.currentPos=0;
+      player.stop();
+      chatMessage.refresh();
     });
 
     player.onAudioPositionChanged.listen((Duration p) {
-      currentPos(p.inMilliseconds); //get the current position of playing audio
-
-      int milliseconds = currentPos.value;
-      //generating the duration label
-      int sHours = Duration(milliseconds: milliseconds).inHours;
-      int sMinutes = Duration(milliseconds: milliseconds).inMinutes;
-      int sSeconds = Duration(milliseconds: milliseconds).inSeconds;
-
-      int rHours = sHours;
-      int rMinutes = sMinutes - (sHours * 60);
-      int rSeconds = sSeconds - (sMinutes * 60 + sHours * 60 * 60);
-
-      currentPostLabel = "$rHours:$rMinutes:$rSeconds";
+      playingChat?.mediaChatMessage!.currentPos=(p.inMilliseconds);
+      chatMessage.refresh();
     });
+
   }
 
   String getChatTime(BuildContext context, int? epochTime) {
@@ -114,6 +101,12 @@ class MessageInfoController extends GetxController {
       FlyChat.downloadMedia(messageId);
     }
   }
+  @override
+  void onClose(){
+    super.onClose();
+    player.stop();
+    player.dispose();
+  }
 
   String currentPostLabel = "00:00";
   var maxDuration = 100.obs;
@@ -121,33 +114,38 @@ class MessageInfoController extends GetxController {
   var isPlaying = false.obs;
   var audioPlayed = false.obs;
   AudioPlayer player = AudioPlayer();
-  playAudio(String filePath) async {
-    if (!isPlaying.value && !audioPlayed.value) {
-      int result = await player.play(filePath, isLocal: true);
+  ChatMessageModel? playingChat;
+  playAudio(ChatMessageModel chatMessage) async {
+    if(playingChat!=null){
+      if(playingChat?.mediaChatMessage!.messageId!=chatMessage.messageId){
+        player.stop();
+        playingChat?.mediaChatMessage!.isPlaying=false;
+        playingChat = chatMessage;
+      }
+    }
+    else{
+      playingChat = chatMessage;
+    }
+    if (!playingChat!.mediaChatMessage!.isPlaying) {
+      int result = await player.play(playingChat!.mediaChatMessage!.mediaLocalStoragePath,position: Duration(milliseconds:playingChat!.mediaChatMessage!.currentPos), isLocal: true);
       if (result == 1) {
-        //play success
-
-        isPlaying(true);
-        audioPlayed(true);
+        playingChat!.mediaChatMessage!.isPlaying=true;
       } else {
         mirrorFlyLog("", "Error while playing audio.");
       }
-    } else if (audioPlayed.value && !isPlaying.value) {
+    } else if (!playingChat!.mediaChatMessage!.isPlaying) {
       int result = await player.resume();
       if (result == 1) {
-        //resume success
-
-        isPlaying(true);
-        audioPlayed(true);
+        playingChat!.mediaChatMessage!.isPlaying=true;
+        this.chatMessage.refresh();
       } else {
         mirrorFlyLog("", "Error on resume audio.");
       }
     } else {
       int result = await player.pause();
       if (result == 1) {
-        //pause success
-
-        isPlaying(false);
+        playingChat!.mediaChatMessage!.isPlaying=false;
+        this.chatMessage.refresh();
       } else {
         mirrorFlyLog("", "Error on pause audio.");
       }

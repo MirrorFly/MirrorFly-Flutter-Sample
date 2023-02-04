@@ -199,6 +199,7 @@ class MediaChatMessage {
     required this.messageId,
     required this.messageType,
     required this.isPlaying,
+    required this.currentPos,
   });
 
   bool isAudioRecorded;
@@ -217,6 +218,7 @@ class MediaChatMessage {
   String messageId;
   String messageType;
   bool isPlaying;
+  int currentPos;
 
   factory MediaChatMessage.fromJson(Map<String, dynamic> json) => MediaChatMessage(
     isAudioRecorded: json["isAudioRecorded"] ?? false,
@@ -235,6 +237,7 @@ class MediaChatMessage {
     messageId: json["messageId"],
     messageType: json["messageType"],
     isPlaying: false,
+    currentPos: 0,
   );
 
   Map<String, dynamic> toJson() => {

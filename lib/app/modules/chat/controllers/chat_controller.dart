@@ -53,14 +53,6 @@ class ChatController extends GetxController
 
   var isReplying = false.obs;
 
-  String currentPostLabel = "00:00";
-
-  var maxDuration = 100.obs;
-  var currentPos = 0.obs;
-  var currentPlayingPosId = "0".obs;
-  var isPlaying = false.obs;
-  var audioPlayed = false.obs;
-
   var isUserTyping = false.obs;
   var isAudioRecording = Constants.audioRecordInitial.obs;
   late Timer? _audioTimer;
@@ -145,36 +137,17 @@ class ChatController extends GetxController
       });
     }
 
-    // }else{
-    //   debugPrint("Got the Profile value");
-    // }
-
-
-    player.onDurationChanged.listen((Duration d) {
-      //get the duration of audio
-      maxDuration(d.inMilliseconds);
-    });
-
     player.onPlayerCompletion.listen((event) {
-      isPlaying(false);
-      audioPlayed(false);
-      chatList.firstWhere((element) => currentPlayingPosId.value==element.messageId).mediaChatMessage!.isPlaying=false;
+      playingChat!.mediaChatMessage!.isPlaying=false;
+      playingChat!.mediaChatMessage!.currentPos=0;
+      player.stop();
+      chatList.refresh();
+      playingChat=null;
     });
 
     player.onAudioPositionChanged.listen((Duration p) {
-      currentPos(p.inMilliseconds); //get the current position of playing audio
-
-      int milliseconds = currentPos.value;
-      //generating the duration label
-      int sHours = Duration(milliseconds: milliseconds).inHours;
-      int sMinutes = Duration(milliseconds: milliseconds).inMinutes;
-      int sSeconds = Duration(milliseconds: milliseconds).inSeconds;
-
-      int rHours = sHours;
-      int rMinutes = sMinutes - (sHours * 60);
-      int rSeconds = sSeconds - (sMinutes * 60 + sHours * 60 * 60);
-
-      currentPostLabel = "$rHours:$rMinutes:$rSeconds";
+      playingChat?.mediaChatMessage!.currentPos=(p.inMilliseconds);
+      chatList.refresh();
     });
 
     setAudioPath();
@@ -275,6 +248,8 @@ class ChatController extends GetxController
     scrollController.dispose();
     FlyChat.setOnGoingChatUser("");
     isLive = false;
+    player.stop();
+    player.dispose();
     super.onClose();
   }
 
@@ -662,44 +637,39 @@ class ChatController extends GetxController
     }
   }
 
-  playAudio(ChatMessageModel chatMessage, String filePath) async {
-
-    debugPrint("isPlaying--> ${isPlaying.toString()}");
-    debugPrint("audioPlayed--> ${audioPlayed.toString()}");
-
-    if (!isPlaying.value && !audioPlayed.value) {
-      int result = await player.play(filePath, isLocal: true);
+  ChatMessageModel? playingChat;
+  playAudio(ChatMessageModel chatMessage) async {
+    if(playingChat!=null){
+      if(playingChat?.mediaChatMessage!.messageId!=chatMessage.messageId){
+        player.stop();
+        playingChat?.mediaChatMessage!.isPlaying=false;
+        playingChat = chatMessage;
+      }
+    }
+    else{
+      playingChat = chatMessage;
+    }
+    if (!playingChat!.mediaChatMessage!.isPlaying) {
+      int result = await player.play(playingChat!.mediaChatMessage!.mediaLocalStoragePath,position: Duration(milliseconds:playingChat!.mediaChatMessage!.currentPos), isLocal: true);
       if (result == 1) {
-        isPlaying(true);
-        audioPlayed(true);
-        currentPlayingPosId(chatMessage.messageId);
-        chatMessage.mediaChatMessage!.isPlaying=isPlaying.value;
-        debugPrint("-**1->isplaying $isPlaying audio played $audioPlayed");
+        playingChat!.mediaChatMessage!.isPlaying=true;
       } else {
         mirrorFlyLog("", "Error while playing audio.");
       }
-    } else if (audioPlayed.value && !isPlaying.value) {
+    } else if (!playingChat!.mediaChatMessage!.isPlaying) {
       int result = await player.resume();
       if (result == 1) {
-        //resume success
-        currentPlayingPosId(chatMessage.messageId);
-        isPlaying(true);
-        audioPlayed(true);
-        chatMessage.mediaChatMessage!.isPlaying=isPlaying.value;
-        debugPrint("-**2->isplaying $isPlaying audio played $audioPlayed");
+        playingChat!.mediaChatMessage!.isPlaying=true;
+        chatList.refresh();
       } else {
         mirrorFlyLog("", "Error on resume audio.");
       }
     } else {
       int result = await player.pause();
       if (result == 1) {
-        //pause success
-        currentPlayingPosId("0");
-        isPlaying(false);
-        chatMessage.mediaChatMessage!.isPlaying=isPlaying.value;
-        debugPrint("-**3->isplaying $isPlaying audio played $audioPlayed");
+        playingChat!.mediaChatMessage!.isPlaying=false;
+        chatList.refresh();
       } else {
-        currentPlayingPosId("0");
         mirrorFlyLog("", "Error on pause audio.");
       }
     }
@@ -892,17 +862,20 @@ class ChatController extends GetxController
     FlyChat.clearChat(profile.jid!, "chat", isStarredExcluded).then((value) {
       if (value) {
         chatList.clear();
+        cancelReplyMessage();
       }
     });
   }
 
   void handleReplyChatMessage(ChatMessageModel chatListItem) {
-    debugPrint(chatListItem.messageType);
-    if (isReplying.value) {
-      isReplying(false);
+    if(!chatListItem.isMessageRecalled && !chatListItem.isMessageDeleted) {
+      debugPrint(chatListItem.messageType);
+      if (isReplying.value) {
+        isReplying(false);
+      }
+      replyChatMessage = chatListItem;
+      isReplying(true);
     }
-    replyChatMessage = chatListItem;
-    isReplying(true);
   }
 
   cancelReplyMessage() {
@@ -935,6 +908,7 @@ class ChatController extends GetxController
     } else {
       debugPrint("Unable to Select Notification Banner");
     }
+    getMessageActions();
   }
 
   bool getOptionStatus(String optionName) {
@@ -1238,29 +1212,33 @@ class ChatController extends GetxController
   }
 
   clearUserChatHistory() {
-    Future.delayed(const Duration(milliseconds: 100), () {
-      Helper.showAlert(
-          message: "Are you sure you want to clear the chat?",
-          actions: [
-            TextButton(
-                onPressed: () {
-                  Get.back();
-                  clearChatHistory(false);
-                },
-                child: const Text("CLEAR ALL")),
-            TextButton(
-                onPressed: () {
-                  Get.back();
-                },
-                child: const Text("CANCEL")),
-            TextButton(
-                onPressed: () {
-                  Get.back();
-                  clearChatHistory(true);
-                },
-                child: const Text("CLEAR EXCEPT STARRED")),
-          ]);
-    });
+    if(chatList.isNotEmpty) {
+      Future.delayed(const Duration(milliseconds: 100), () {
+        Helper.showAlert(
+            message: "Are you sure you want to clear the chat?",
+            actions: [
+              TextButton(
+                  onPressed: () {
+                    Get.back();
+                    clearChatHistory(false);
+                  },
+                  child: const Text("CLEAR ALL")),
+              TextButton(
+                  onPressed: () {
+                    Get.back();
+                  },
+                  child: const Text("CANCEL")),
+              TextButton(
+                  onPressed: () {
+                    Get.back();
+                    clearChatHistory(true);
+                  },
+                  child: const Text("CLEAR EXCEPT STARRED")),
+            ]);
+      });
+    }else{
+      toToast("There is no conversation.");
+    }
   }
 
   unBlockUser() {
@@ -1556,6 +1534,12 @@ class ChatController extends GetxController
   }
 
   Future<void> startRecording() async {
+    if(playingChat!=null){
+      playingChat!.mediaChatMessage!.isPlaying=false;
+      playingChat=null;
+      player.stop();
+      chatList.refresh();
+    }
     var busyStatus = !profile.isGroupProfile.checkNull() ? await FlyChat.isBusyStatusEnabled() : false;
     if(!busyStatus.checkNull()) {
       if (await AppUtils.isNetConnected()) {
@@ -2024,7 +2008,7 @@ class ChatController extends GetxController
   }
 
   bool forwardMessageVisibility(ChatMessageModel chat) {
-    if(chat.isMessageSentByMe) {
+    //if(chat.isMessageSentByMe) {
       if (chat.isMediaMessage()) {
         if (chat.mediaChatMessage!.mediaDownloadStatus ==
             Constants.mediaDownloaded ||
@@ -2037,7 +2021,7 @@ class ChatController extends GetxController
           return true;
         }
       }
-    }
+    //}
     return false;
   }
 
@@ -2064,5 +2048,134 @@ class ChatController extends GetxController
         sendReadReceipt();
       }
     });
+  }
+
+  var containsRecalled = false.obs;
+  var canBeStarred =false.obs;
+  var canBeStarredSet = false;
+  var canBeUnStarred =false.obs;
+  var canBeUnStarredSet = false;
+  var canBeShared =false.obs;
+  var canBeSharedSet = false;
+  var canBeForwarded =false.obs;
+  var canBeForwardedSet = false;
+  var canBeCopied =false.obs;
+  var canBeCopiedSet = false;
+  var canBeReplied =false.obs;
+  var canShowInfo =false.obs;
+  var canShowReport =false.obs;
+  getMessageActions() {
+
+    if (selectedChatList.isEmpty) {
+      return;
+    }
+
+    containsRecalled(false);
+    canBeStarred(true);
+    canBeStarredSet = false;
+    canBeUnStarred(true);
+    canBeUnStarredSet = false;
+    canBeShared(true);
+    canBeSharedSet = false;
+    canBeForwarded(true);
+    canBeForwardedSet = false;
+    canBeCopied(true);
+    canBeCopiedSet = false;
+    canBeReplied(true);
+    canShowInfo(true);
+    canShowReport(true);
+
+    for (var message in selectedChatList) {
+      //Recalled Validation
+      if (message.isMessageRecalled) {
+        containsRecalled(true);
+        break;
+      }
+      //Copy Validation
+      if (!canBeCopiedSet && (!message.isTextMessage())) {
+        canBeCopied(false);
+        canBeCopiedSet = true;
+      }
+      setMessageActionValidations(message);
+    }
+    getMessagesActionDetails();
+  }
+
+  setMessageActionValidations(ChatMessageModel message) {
+    //Forward Validation - can be added for forwarding more than one messages
+    if (!canBeForwardedSet && ((message.isMessageSentByMe && message.messageStatus == "N")
+      || (message.isMediaMessage() && !checkFile(message.mediaChatMessage!.mediaLocalStoragePath)))) {
+      canBeForwarded(false);
+      canBeForwardedSet = true;
+    }
+    //Share Validation
+    if (!canBeSharedSet && (!message.isMediaMessage() || (message.isMediaMessage()
+      && !checkFile(message.mediaChatMessage!.mediaLocalStoragePath)))) {
+      canBeShared(false);
+      canBeSharedSet = true;
+    }
+    //Starred Validation
+    if (!canBeStarredSet && message.isMessageStarred
+      || (message.isMediaMessage() && !checkFile(message.mediaChatMessage!.mediaLocalStoragePath))) {
+      canBeStarred(false);
+      canBeStarredSet = true;
+    }
+    //UnStarred Validation
+    if (!canBeUnStarredSet && !message.isMessageStarred) {
+      canBeUnStarred(false);
+      canBeUnStarredSet = true;
+    }
+  }
+
+  getMessagesActionDetails() {
+    switch(selectedChatList.length) {
+      case 1:
+        var message = selectedChatList.first;
+        setMenuItemsValidations(message);
+        break;
+      default:
+      canBeReplied(false);
+      canShowInfo(false);
+      canBeCopied(false);
+      canShowReport(false);
+    }
+
+    if (containsRecalled.value) {
+      canBeCopied(false);
+      canBeForwarded(false);
+      canBeShared(false);
+      canBeStarred(false);
+      canBeUnStarred(false);
+      canBeReplied(false);
+      canShowInfo(false);
+      canShowReport(false);
+    }
+
+    // return messageActions;
+    mirrorFlyLog("action_menu canBeCopied", canBeCopied.toString());
+    mirrorFlyLog("action_menu canBeForwarded", canBeForwarded.toString());
+    mirrorFlyLog("action_menu canBeShared", canBeShared.toString());
+    mirrorFlyLog("action_menu canBeStarred", canBeStarred.toString());
+    mirrorFlyLog("action_menu canBeUnStarred", canBeUnStarred.toString());
+    mirrorFlyLog("action_menu canBeReplied", canBeReplied.toString());
+    mirrorFlyLog("action_menu canShowInfo", canShowInfo.toString());
+    mirrorFlyLog("action_menu canShowReport", canShowReport.toString());
+  }
+
+  setMenuItemsValidations(ChatMessageModel message) {
+    if (!containsRecalled.value) {
+      //Reply Validation
+      if (message.isMessageSentByMe && message.messageStatus == "N") {
+        canBeReplied(false);
+      }
+      //Info Validation
+      if (!message.isMessageSentByMe || message.messageStatus == "N" || message.isMessageRecalled || (message.isMediaMessage() && !checkFile(message.mediaChatMessage!.mediaLocalStoragePath))) {
+        canShowInfo(false);
+      }
+      //Report validation
+      if (message.isMessageSentByMe){
+        canShowReport(false);
+      }
+    }
   }
 }
