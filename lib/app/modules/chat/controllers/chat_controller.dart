@@ -2018,7 +2018,7 @@ class ChatController extends GetxController
   }
 
   bool forwardMessageVisibility(ChatMessageModel chat) {
-    //if(chat.isMessageSentByMe) {
+    if(!chat.isMessageRecalled && !chat.isMessageDeleted) {
       if (chat.isMediaMessage()) {
         if (chat.mediaChatMessage!.mediaDownloadStatus ==
             Constants.mediaDownloaded ||
@@ -2031,7 +2031,7 @@ class ChatController extends GetxController
           return true;
         }
       }
-    //}
+    }
     return false;
   }
 
