@@ -27,10 +27,17 @@ class LocationController extends GetxController{
     completer.complete(googleMapController);
     controller = googleMapController;
     getLocation();
+    mirrorFlyLog("onMapCreated", googleMapController.getVisibleRegion().toString());
+  }
+
+  @override
+  void onClose(){
+    super.onClose();
+    controller.dispose();
   }
 
   onCameraMove(CameraPosition position){
-
+    mirrorFlyLog("onCameraMove", position.toString());
   }
   onTap(LatLng latLng){
       setLocation(latLng);
