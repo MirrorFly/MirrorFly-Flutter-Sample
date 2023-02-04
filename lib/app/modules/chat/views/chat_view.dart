@@ -495,6 +495,7 @@ class ChatView extends GetView<ChatController> {
                           ? controller.clearChatSelection(chatList[index])
                           : controller.addChatSelection(chatList[index])
                       : null;
+                  controller.getMessageActions();
                 },
                 onDoubleTap: () {
                   controller.translateMessage(index);
@@ -666,28 +667,27 @@ class ChatView extends GetView<ChatController> {
             availableWidth: controller.screenWidth / 2, // half the screen width
             actionWidth: 48, // default for IconButtons
             actions: [
-              controller.getOptionStatus('Reply')
-                  ? CustomAction(
-                      visibleWidget: IconButton(
-                          onPressed: () {
-                            controller.handleReplyChatMessage(
-                                controller.selectedChatList[0]);
-                            controller.clearChatSelection(
-                                controller.selectedChatList[0]);
-                          },
-                          icon: SvgPicture.asset(replyIcon)),
-                      overflowWidget: const Text("Reply"),
-                      showAsAction: ShowAsAction.always,
-                      keyValue: 'Reply',
-                      onItemClick: () {
-                        controller.closeKeyBoard();
-                        controller.handleReplyChatMessage(
-                            controller.selectedChatList[0]);
-                        controller
-                            .clearChatSelection(controller.selectedChatList[0]);
-                      },
-                    )
-                  : customEmptyAction(),
+              // controller.getOptionStatus('Reply')
+              CustomAction(
+                visibleWidget: IconButton(
+                    onPressed: () {
+                      controller.handleReplyChatMessage(
+                          controller.selectedChatList[0]);
+                      controller.clearChatSelection(
+                          controller.selectedChatList[0]);
+                    },
+                    icon: SvgPicture.asset(replyIcon)),
+                overflowWidget: const Text("Reply"),
+                showAsAction: controller.canBeReplied.value ? ShowAsAction.always : ShowAsAction.gone,
+                keyValue: 'Reply',
+                onItemClick: () {
+                  controller.closeKeyBoard();
+                  controller.handleReplyChatMessage(
+                      controller.selectedChatList[0]);
+                  controller
+                      .clearChatSelection(controller.selectedChatList[0]);
+                },
+              ),
               CustomAction(
                 visibleWidget: IconButton(
                     onPressed: () {
@@ -695,32 +695,48 @@ class ChatView extends GetView<ChatController> {
                     },
                     icon: SvgPicture.asset(forwardIcon)),
                 overflowWidget: const Text("Forward"),
-                showAsAction: ShowAsAction.always,
+                showAsAction: controller.canBeForwarded.value ? ShowAsAction.always : ShowAsAction.gone,
                 keyValue: 'Forward',
                 onItemClick: () {
                   controller.closeKeyBoard();
                   controller.checkBusyStatusForForward();
                 },
               ),
-              controller.getOptionStatus('Favourite')
-                  ? CustomAction(
-                      visibleWidget: IconButton(
-                          onPressed: () {
-                            controller.favouriteMessage();
-                          },
-                          // icon: controller.getOptionStatus('Favourite') ? const Icon(Icons.star_border_outlined)
-                          icon: controller.selectedChatList[0].isMessageStarred
-                              ? SvgPicture.asset(unFavouriteIcon)
-                              : SvgPicture.asset(favouriteIcon)),
-                      overflowWidget: const Text("Favourite"),
-                      showAsAction: ShowAsAction.always,
-                      keyValue: 'favourite',
-                      onItemClick: () {
-                        controller.closeKeyBoard();
-                        controller.favouriteMessage();
-                      },
-                    )
-                  : customEmptyAction(),
+              /*controller.getOptionStatus('Favourite')
+                  ?
+                  : customEmptyAction(),*/
+              CustomAction(
+                visibleWidget: IconButton(
+                    onPressed: () {
+                      controller.favouriteMessage();
+                    },
+                    // icon: controller.getOptionStatus('Favourite') ? const Icon(Icons.star_border_outlined)
+                    // icon: controller.selectedChatList[0].isMessageStarred
+                    icon: SvgPicture.asset(favouriteIcon)),
+                overflowWidget: const Text("Favourite"),
+                showAsAction: controller.canBeStarred.value ? ShowAsAction.always : ShowAsAction.gone,
+                keyValue: 'favourite',
+                onItemClick: () {
+                  controller.closeKeyBoard();
+                  controller.favouriteMessage();
+                },
+              ),
+              CustomAction(
+                visibleWidget: IconButton(
+                    onPressed: () {
+                      controller.favouriteMessage();
+                    },
+                    // icon: controller.getOptionStatus('Favourite') ? const Icon(Icons.star_border_outlined)
+                    // icon: controller.selectedChatList[0].isMessageStarred
+                    icon: SvgPicture.asset(unFavouriteIcon)),
+                overflowWidget: const Text("unFavourite"),
+                showAsAction: controller.canBeUnStarred.value ? ShowAsAction.always : ShowAsAction.gone,
+                keyValue: 'favourite',
+                onItemClick: () {
+                  controller.closeKeyBoard();
+                  controller.favouriteMessage();
+                },
+              ),
               CustomAction(
                 visibleWidget: IconButton(
                     onPressed: () {
@@ -735,78 +751,82 @@ class ChatView extends GetView<ChatController> {
                   controller.deleteMessages();
                 },
               ),
-              controller.getOptionStatus('Report')
-                  ? CustomAction(
-                      visibleWidget: IconButton(
-                          onPressed: () {
-                            controller.reportChatOrUser();
-                          },
-                          icon: const Icon(Icons.report_problem_rounded)),
-                      overflowWidget: const Text("Report"),
-                      showAsAction: ShowAsAction.never,
-                      keyValue: 'Report',
-                      onItemClick: () {
-                        controller.closeKeyBoard();
-                        controller.reportChatOrUser();
-                      },
-                    )
-                  : customEmptyAction(),
-              controller.selectedChatList.length > 1 ||
+              /*controller.getOptionStatus('Report')
+                  ?
+                  : customEmptyAction(),*/
+              CustomAction(
+                visibleWidget: IconButton(
+                    onPressed: () {
+                      controller.reportChatOrUser();
+                    },
+                    icon: const Icon(Icons.report_problem_rounded)),
+                overflowWidget: const Text("Report"),
+                showAsAction:controller.canShowReport.value ? ShowAsAction.never : ShowAsAction.gone,
+                keyValue: 'Report',
+                onItemClick: () {
+                  controller.closeKeyBoard();
+                  controller.reportChatOrUser();
+                },
+              ),
+              /*controller.selectedChatList.length > 1 ||
                       controller.selectedChatList[0].messageType !=
                           Constants.mText
                   ? customEmptyAction()
-                  : CustomAction(
-                      visibleWidget: IconButton(
-                        onPressed: () {
-                          controller.closeKeyBoard();
-                          controller.copyTextMessages();
-                        },
-                        icon: SvgPicture.asset(
-                          copyIcon,
-                          fit: BoxFit.contain,
-                        ),
-                      ),
-                      overflowWidget: const Text("Copy"),
-                      showAsAction: ShowAsAction.never,
-                      keyValue: 'Copy',
-                      onItemClick: () {
-                        controller.closeKeyBoard();
-                        controller.copyTextMessages();
-                      },
-                    ),
-              controller.getOptionStatus('Message Info')
-                  ? CustomAction(
-                      visibleWidget: IconButton(
-                        onPressed: () {
-                          // Get.back();
-                          controller.messageInfo();
-                        },
-                        icon: SvgPicture.asset(
-                          infoIcon,
-                          fit: BoxFit.contain,
-                        ),
-                      ),
-                      overflowWidget: const Text("Message Info"),
-                      showAsAction: ShowAsAction.never,
-                      keyValue: 'MessageInfo',
-                      onItemClick: () {
-                        controller.closeKeyBoard();
-                        controller.messageInfo();
-                      },
-                    )
-                  : customEmptyAction(),
-              controller.getOptionStatus('Share')
-                  ? CustomAction(
-                      visibleWidget: IconButton(
-                          onPressed: () {}, icon: const Icon(Icons.share)),
-                      overflowWidget: const Text("Share"),
-                      showAsAction: ShowAsAction.never,
-                      keyValue: 'Share',
-                      onItemClick: () {
-                        controller.closeKeyBoard();
-                      },
-                    )
-                  : customEmptyAction(),
+                  : ,*/
+              CustomAction(
+                visibleWidget: IconButton(
+                  onPressed: () {
+                    controller.closeKeyBoard();
+                    controller.copyTextMessages();
+                  },
+                  icon: SvgPicture.asset(
+                    copyIcon,
+                    fit: BoxFit.contain,
+                  ),
+                ),
+                overflowWidget: const Text("Copy"),
+                showAsAction: controller.canBeCopied.value ? ShowAsAction.never : ShowAsAction.gone,
+                keyValue: 'Copy',
+                onItemClick: () {
+                  controller.closeKeyBoard();
+                  controller.copyTextMessages();
+                },
+              ),
+              /*controller.getOptionStatus('Message Info')
+                  ?
+                  : customEmptyAction(),*/
+              CustomAction(
+                visibleWidget: IconButton(
+                  onPressed: () {
+                    // Get.back();
+                    controller.messageInfo();
+                  },
+                  icon: SvgPicture.asset(
+                    infoIcon,
+                    fit: BoxFit.contain,
+                  ),
+                ),
+                overflowWidget: const Text("Message Info"),
+                showAsAction: controller.canShowInfo.value ? ShowAsAction.never : ShowAsAction.gone,
+                keyValue: 'MessageInfo',
+                onItemClick: () {
+                  controller.closeKeyBoard();
+                  controller.messageInfo();
+                },
+              ),
+              /*controller.getOptionStatus('Share')
+                  ?
+                  : customEmptyAction(),*/
+              CustomAction(
+                visibleWidget: IconButton(
+                    onPressed: () {}, icon: const Icon(Icons.share)),
+                overflowWidget: const Text("Share"),
+                showAsAction: controller.canBeShared.value ? ShowAsAction.never : ShowAsAction.gone,
+                keyValue: 'Share',
+                onItemClick: () {
+                  controller.closeKeyBoard();
+                },
+              )
             ]),
       ],
     );

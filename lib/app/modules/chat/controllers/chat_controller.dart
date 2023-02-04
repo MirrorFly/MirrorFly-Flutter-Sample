@@ -1142,7 +1142,7 @@ class ChatController extends GetxController
   }
 
   favouriteMessage() {
-    var isMessageStarred = selectedChatList[0].isMessageStarred;
+    /*var isMessageStarred = selectedChatList[0].isMessageStarred;
     Helper.showLoading(
         message: selectedChatList[0].isMessageStarred
             ? 'Unfavoriting Message'
@@ -1154,7 +1154,17 @@ class ChatController extends GetxController
       selectedChatList[0].isMessageStarred = !isMessageStarred;
       clearChatSelection(selectedChatList[0]);
       Helper.hideLoading();
-    });
+    });*/
+    for (var item in selectedChatList) {
+      FlyChat.updateFavouriteStatus(
+          item.messageId, item.chatUserJid, !item.isMessageStarred, item.messageChatType);
+      var msg = chatList.firstWhere((element) => item.messageId == element.messageId);
+      msg.isMessageStarred=!item.isMessageStarred;
+      msg.isSelected=false;
+    }
+    isSelected(false);
+    selectedChatList.clear();
+    chatList.refresh();
   }
 
   Widget getLocationImage(LocationChatMessage? locationChatMessage,
