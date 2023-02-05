@@ -138,12 +138,12 @@ class RecentChatSearchController extends GetxController {
   onChange(String inputValue){
     if(inputValue.trim().isNotEmpty) {
       clearVisible(true);
-      if (lastInputValue != inputValue) {
-        lastInputValue = inputValue;
+      if (lastInputValue != inputValue.trim()) {
+        lastInputValue = inputValue.trim();
         searchLoading(true);
         frmRecentChatList.clear();
         recentSearchList.clear();
-        if (search.text.isNotEmpty) {
+        if (search.text.trim().isNotEmpty) {
           deBouncer.run(() {
             pageNum = 1;
             fetchRecentChatList();
@@ -328,7 +328,7 @@ class RecentChatSearchController extends GetxController {
   Future<void> filterUserlist() async {
     if(await AppUtils.isNetConnected()) {
       searching=true;
-      FlyChat.getUserList(pageNum, search.text.toString()).then((value){
+      FlyChat.getUserList(pageNum, search.text.trim().toString()).then((value){
         if(value!=null){
           var list = userListFromJson(value);
           if(list.data !=null) {
@@ -354,7 +354,7 @@ class RecentChatSearchController extends GetxController {
   Future<void> getUsers() async {
     if(await AppUtils.isNetConnected()) {
       searching=true;
-      FlyChat.getUserList(pageNum, search.text.toString()).then((value){
+      FlyChat.getUserList(pageNum, search.text.trim().toString()).then((value){
         if(value!=null){
           var list = userListFromJson(value);
           if(list.data !=null) {

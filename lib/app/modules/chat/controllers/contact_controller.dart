@@ -83,15 +83,15 @@ class ContactController extends GetxController {
   String lastInputValue ="";
   searchListener(String text) async {
     debugPrint("searching .. ");
-    if (lastInputValue != text) {
-      lastInputValue = text;
-      if (text.isEmpty) {
+    if (lastInputValue != text.trim()) {
+      lastInputValue = text.trim();
+      if (text.trim().isEmpty) {
         _searchText = "";
         pageNum = 1;
       }
       else {
         isPageLoading(true);
-        _searchText = text;
+        _searchText = text.trim();
         pageNum = 1;
       }
       fetchUsers(true);

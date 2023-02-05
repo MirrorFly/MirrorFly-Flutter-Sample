@@ -134,7 +134,7 @@ class ForwardChatController extends GetxController {
   Future<void> getUsers() async {
     if(await AppUtils.isNetConnected()) {
       searching=true;
-      FlyChat.getUserList(pageNum, searchQuery.text.toString()).then((value){
+      FlyChat.getUserList(pageNum, searchQuery.text.trim().toString()).then((value){
         if(value!=null){
           var list = userListFromJson(value);
           if(list.data !=null) {
@@ -189,7 +189,7 @@ class ForwardChatController extends GetxController {
       _userList.clear();
       searching=true;
       searchLoading(true);
-      FlyChat.getUserList(pageNum, searchQuery.text.toString()).then((value){
+      FlyChat.getUserList(pageNum, searchQuery.text.trim().toString()).then((value){
         if(value!=null){
           var list = userListFromJson(value);
           if(list.data !=null) {
@@ -237,8 +237,8 @@ class ForwardChatController extends GetxController {
   final deBouncer = DeBouncer(milliseconds: 700);
   String lastInputValue = "";
   void onSearch(String search){
-    if (lastInputValue != search) {
-      lastInputValue = search;
+    if (lastInputValue != search.trim()) {
+      lastInputValue = search.trim();
       if (searchQuery.text
           .toString()
           .trim()

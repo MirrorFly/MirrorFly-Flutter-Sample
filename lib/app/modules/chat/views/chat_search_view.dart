@@ -50,7 +50,7 @@ class ChatSearchView extends GetView<ChatController> {
         body:  Obx(() =>
         controller.chatList.isEmpty
             ? const SizedBox.shrink()
-            : chatListView(controller.chatList.toList())),
+            : chatListView(controller.chatList)),
       ),
     );
   }
@@ -58,13 +58,14 @@ class ChatSearchView extends GetView<ChatController> {
   Widget chatListView(List<ChatMessageModel> chatList) {
     return ScrollablePositionedList.builder(
       itemCount: chatList.length,
-      initialScrollIndex: chatList.length,
+      //initialScrollIndex: chatList.length,
       itemScrollController: controller.searchScrollController,
       itemPositionsListener: controller.itemPositionsListener,
+      reverse: true,
       itemBuilder: (context, index) {
         if (chatList[index].messageType.toUpperCase() != Constants.mNotification) {
           return Container(
-            color: controller.chatList[index].isSelected
+            color: chatList[index].isSelected
                 ? chatReplyContainerColor
                 : Colors.transparent,
             margin: const EdgeInsets.only(
@@ -78,7 +79,7 @@ class ChatSearchView extends GetView<ChatController> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Visibility(
-                    visible: controller
+                    visible:chatList[index].isMessageSentByMe && controller
                         .forwardMessageVisibility(chatList[index]),
                     child: IconButton(
                         onPressed: () {
@@ -117,11 +118,21 @@ class ChatSearchView extends GetView<ChatController> {
                             isGroupProfile: controller.profile.isGroupProfile,
                             chatList: chatList,
                             index: index),
-                        MessageContent(chatList: chatList, index: index, onPlayAudio: () {
+                        MessageContent(chatList: chatList, index: index,search: controller.searchedText.text, onPlayAudio: () {
                           controller.playAudio(chatList[index]);
                         },),
                       ],
                     ),
+                  ),
+                  Visibility(
+                    visible:!chatList[index].isMessageSentByMe && controller
+                        .forwardMessageVisibility(chatList[index]),
+                    child: IconButton(
+                        onPressed: () {
+                          controller.forwardSingleMessage(
+                              chatList[index].messageId);
+                        },
+                        icon: SvgPicture.asset(forwardMedia)),
                   ),
                 ],
               ),

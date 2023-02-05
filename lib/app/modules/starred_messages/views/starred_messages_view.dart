@@ -131,7 +131,7 @@ class StarredMessagesView extends GetView<StarredMessagesController> {
         return Container(
           child: controller.isSelected.value ? selectedAppBar() : controller.isSearch.value ? searchBar() : AppBar(
             title: const Text('Starred Messages'),
-            /*actions: [
+            actions: [
               IconButton(
                 icon: SvgPicture.asset(
                   searchIcon,
@@ -140,14 +140,14 @@ class StarredMessagesView extends GetView<StarredMessagesController> {
                   fit: BoxFit.contain,
                 ),
                 onPressed: () {
-                  if (controller.isSearch.value) {
+                  /*if (controller.isSearch.value) {
                     controller.isSearch(false);
                   } else {
                     controller.isSearch(true);
-                  }
+                  }*/
                 },
               ),
-            ],*/
+            ],
           ),
         );
       }),

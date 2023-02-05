@@ -467,14 +467,14 @@ class ChatView extends GetView<ChatController> {
         controller: controller.scrollController,
         itemCount: chatList.length,
         shrinkWrap: true,
-        reverse: false,
+        reverse: true,
         itemBuilder: (context, index) {
           if (chatList[index].messageType.toUpperCase() !=
               Constants.mNotification) {
             return SwipeTo(
               key: ValueKey(chatList[index].messageId),
               onRightSwipe: !chatList[index].isMessageRecalled && !chatList[index].isMessageDeleted ? () {
-                var swipeList = controller.chatList.toList();
+                var swipeList = chatList.toList();
                 controller.handleReplyChatMessage(swipeList[index]);
               } : null,
               animationDuration: const Duration(milliseconds: 300),
@@ -570,7 +570,6 @@ class ChatView extends GetView<ChatController> {
                               ],
                             ),
                           ),
-
                           Visibility(
                             visible:!chatList[index].isMessageSentByMe && controller
                                 .forwardMessageVisibility(chatList[index]),

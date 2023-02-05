@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
-import 'dart:math';
 
 import 'package:audioplayers/audioplayers.dart';
 import 'package:file_picker/file_picker.dart';
@@ -205,7 +204,7 @@ class ChatController extends GetxController
         });
     //scrollController.addListener(_scrollController);
     scrollController.addListener(() {
-      if (scrollController.offset >= scrollController.position.maxScrollExtent &&
+      if (scrollController.offset <= scrollController.position.minScrollExtent &&
           !scrollController.position.outOfRange) {
         showHideRedirectToLatest(false);
       }else{
@@ -225,7 +224,7 @@ class ChatController extends GetxController
     Future.delayed(const Duration(milliseconds: 100), () {
       if (scrollController.hasClients) {
         scrollController.animateTo(
-          scrollController.position.maxScrollExtent,
+          scrollController.position.minScrollExtent,
           duration: const Duration(milliseconds: 100),
           curve: Curves.linear,
         );
@@ -236,7 +235,7 @@ class ChatController extends GetxController
   scrollToEnd() {
     if (scrollController.hasClients) {
       scrollController.animateTo(
-        scrollController.position.maxScrollExtent,
+        scrollController.position.minScrollExtent,
         duration: const Duration(milliseconds: 100),
         curve: Curves.linear,
       );
@@ -331,7 +330,7 @@ class ChatController extends GetxController
             debugPrint(value);
           }
           ChatMessageModel chatMessageModel = sendMessageModelFromJson(value);
-          chatList.add(chatMessageModel);
+          chatList.insert(0,chatMessageModel);
           scrollToBottom();
         });
       }
@@ -398,7 +397,7 @@ class ChatController extends GetxController
           .then((value) {
         mirrorFlyLog("Location_msg", value.toString());
         ChatMessageModel chatMessageModel = sendMessageModelFromJson(value);
-        chatList.add(chatMessageModel);
+        chatList.insert(0,chatMessageModel);
         scrollToBottom();
       });
     }else{
@@ -459,9 +458,9 @@ class ChatController extends GetxController
       }else {
         List<ChatMessageModel> chatMessageModel = chatMessageModelFromJson(
             value);
-        chatList(chatMessageModel);
+        chatList(chatMessageModel.reversed.toList());
       }
-      Future.delayed(const Duration(milliseconds: 500), () {
+      /*Future.delayed(const Duration(milliseconds: 500), () {
         Future.doWhile(() {
           if (scrollController.positions.isNotEmpty) {
             if (scrollController.position.extentAfter == 0) {
@@ -475,7 +474,7 @@ class ChatController extends GetxController
           }
           return true;
         });
-      });
+      });*/
     });
     // compute(FlyChat.getMessagesOfJid, profile.jid.checkNull()).then((chatMessageModelList){
     //   chatList(chatMessageModelList);
@@ -541,7 +540,7 @@ class ChatController extends GetxController
             .sendImageMessage(profile.jid!, path, caption, replyMessageID)
             .then((value) {
           ChatMessageModel chatMessageModel = sendMessageModelFromJson(value);
-          chatList.add(chatMessageModel);
+          chatList.insert(0,chatMessageModel);
           scrollToBottom();
           return chatMessageModel;
         });
@@ -620,7 +619,7 @@ class ChatController extends GetxController
         profile.jid!, videoPath, caption, replyMessageID)
         .then((value) {
       ChatMessageModel chatMessageModel = sendMessageModelFromJson(value);
-      chatList.add(chatMessageModel);
+      chatList.insert(0,chatMessageModel);
       scrollToBottom();
       return chatMessageModel;
     });
@@ -727,7 +726,7 @@ class ChatController extends GetxController
           contactList, profile.jid!, contactName, replyMessageId)
           .then((value) {
         ChatMessageModel chatMessageModel = sendMessageModelFromJson(value);
-        chatList.add(chatMessageModel);
+        chatList.insert(0,chatMessageModel);
         scrollToBottom();
         return chatMessageModel;
       });
@@ -749,7 +748,7 @@ class ChatController extends GetxController
       FlyChat.sendDocumentMessage(profile.jid!, documentPath, replyMessageId)
           .then((value) {
         ChatMessageModel chatMessageModel = sendMessageModelFromJson(value);
-        chatList.add(chatMessageModel);
+        chatList.insert(0,chatMessageModel);
         scrollToBottom();
         return chatMessageModel;
       });
@@ -840,7 +839,7 @@ class ChatController extends GetxController
           profile.jid!, filePath, isRecorded, duration, replyMessageId)
           .then((value) {
         ChatMessageModel chatMessageModel = sendMessageModelFromJson(value);
-        chatList.add(chatMessageModel);
+        chatList.insert(0,chatMessageModel);
         scrollToBottom();
         return chatMessageModel;
       });
@@ -861,7 +860,7 @@ class ChatController extends GetxController
   clearChatHistory(bool isStarredExcluded) {
     FlyChat.clearChat(profile.jid!, "chat", isStarredExcluded).then((value) {
       if (value) {
-        chatList.clear();
+        chatList.where((p0) => p0.isMessageStarred==false).toList().clear();
         cancelReplyMessage();
       }
     });
@@ -998,6 +997,7 @@ class ChatController extends GetxController
     // selectedChatList.clear();
     // isSelected(false);
     clearChatSelection(selectedChatList[0]);
+    toToast("1 Text Copied Successfully to the clipboard");
   }
 
   Map<bool, bool> isMessageCanbeRecalled() {
@@ -1283,15 +1283,15 @@ class ChatController extends GetxController
   var searchedText = TextEditingController();
   String lastInputValue ="";
   setSearch(String text) {
-    if (lastInputValue != text) {
-      lastInputValue = text;
+    if (lastInputValue != text.trim()) {
+      lastInputValue = text.trim();
       filteredPosition.clear();
-      if (searchedText.text.isNotEmpty) {
+      if (searchedText.text.trim().isNotEmpty) {
         for (var i = 0; i < chatList.length; i++) {
           if (chatList[i].messageType.toUpperCase() == Constants.mText &&
               chatList[i]
                   .messageTextContent
-                  .startsWithTextInWords(searchedText.text)) {
+                  .startsWithTextInWords(searchedText.text.trim())) {
             filteredPosition.add(i);
           } else
           if (chatList[i].messageType.toUpperCase() == Constants.mImage &&
@@ -1299,7 +1299,7 @@ class ChatController extends GetxController
               chatList[i]
                   .mediaChatMessage!
                   .mediaCaptionText
-                  .startsWithTextInWords(searchedText.text)) {
+                  .startsWithTextInWords(searchedText.text.trim())) {
             filteredPosition.add(i);
           } else
           if (chatList[i].messageType.toUpperCase() == Constants.mVideo &&
@@ -1307,7 +1307,7 @@ class ChatController extends GetxController
               chatList[i]
                   .mediaChatMessage!
                   .mediaCaptionText
-                  .startsWithTextInWords(searchedText.text)) {
+                  .startsWithTextInWords(searchedText.text.trim())) {
             filteredPosition.add(i);
           } else
           if (chatList[i].messageType.toUpperCase() == Constants.mDocument &&
@@ -1315,7 +1315,7 @@ class ChatController extends GetxController
               chatList[i]
                   .mediaChatMessage!
                   .mediaFileName
-                  .startsWithTextInWords(searchedText.text)) {
+                  .startsWithTextInWords(searchedText.text.trim())) {
             filteredPosition.add(i);
           } else
           if (chatList[i].messageType.toUpperCase() == Constants.mContact &&
@@ -1323,7 +1323,7 @@ class ChatController extends GetxController
               chatList[i]
                   .contactChatMessage!
                   .contactName
-                  .startsWithTextInWords(searchedText.text)) {
+                  .startsWithTextInWords(searchedText.text.trim())) {
             filteredPosition.add(i);
           }
         }
@@ -1348,8 +1348,11 @@ class ChatController extends GetxController
   var j =-1;
   scrollUp() {
     var visiblePos = findLastVisibleItemPosition();
+    mirrorFlyLog("visiblePos", visiblePos.toString());
+    mirrorFlyLog("filteredPosition", filteredPosition.join(","));
+    j=j+1;
     //_scrollToPosition(getPreviousPosition(visiblePos));
-    if (searchedPrev != (searchedText.text.toString())) {
+    /*if (searchedPrev != (searchedText.text.toString())) {
       j = getPreviousPosition(visiblePos);
       //lastPosition.value = pre;
       searchedPrev = searchedText.text;
@@ -1360,7 +1363,8 @@ class ChatController extends GetxController
     } else {
       j = -1;
       //lastPosition.value = -1;
-    }
+    }*/
+    mirrorFlyLog("scrollUp", j.toString());
     if(j>-1 && j<filteredPosition.length){
       _scrollToPosition(j);
     }else{
@@ -1378,7 +1382,9 @@ class ChatController extends GetxController
 
   scrollDown() {
     var visiblePos = findLastVisibleItemPosition();
-    if (searchedNxt != searchedText.text.toString()) {
+    mirrorFlyLog("visiblePos", visiblePos.toString());
+    j=j-1;
+    /*if (searchedNxt != searchedText.text.toString()) {
       j = getNextPosition(visiblePos);
       //lastPosition.value = nex;
       searchedNxt = searchedText.text;
@@ -1389,7 +1395,8 @@ class ChatController extends GetxController
     } else {
       j=-1;
       //lastPosition.value = -1;
-    }
+    }*/
+    mirrorFlyLog("scrollDown", j.toString());
     if(j>-1 && j<filteredPosition.length){
       _scrollToPosition(j);
     }else{
@@ -1408,6 +1415,7 @@ class ChatController extends GetxController
   var color = Colors.transparent.obs;
 
   _scrollToPosition(int position) {
+    mirrorFlyLog("position", position.toString());
     if(!position.isNegative) {
       var currentPosition = filteredPosition[position]; //(chatList.length - (position));
       chatList[currentPosition].isSelected = true;
@@ -1424,7 +1432,7 @@ class ChatController extends GetxController
 
   int getPreviousPosition(int visiblePos) {
     for (var i = 0; i < filteredPosition.length; i++) {
-      var po = filteredPosition.reversed.toList();
+      var po = filteredPosition.toList();//reversed
       if (visiblePos > po.toList()[i]) {
         break;
       }
@@ -1446,11 +1454,21 @@ class ChatController extends GetxController
   final ItemPositionsListener itemPositionsListener =
   ItemPositionsListener.create();
 
-  int findLastVisibleItemPosition() {
+  /*int findLastVisibleItemPosition() {
     var r = itemPositionsListener.itemPositions.value
         .where((ItemPosition position) => position.itemTrailingEdge < 1)
         .reduce((ItemPosition min, ItemPosition position) =>
     position.itemTrailingEdge > min.itemTrailingEdge ? position : min)
+        .index;
+    return r<chatList.length ? r+1 : r;
+  }*/
+
+  int findLastVisibleItemPosition(){
+    var r= itemPositionsListener.itemPositions.value.where((ItemPosition position) => position.itemTrailingEdge < 1)
+        .reduce((ItemPosition min, ItemPosition position) =>
+    position.itemTrailingEdge > min.itemTrailingEdge
+        ? position
+        : min)
         .index;
     return r<chatList.length ? r+1 : r;
   }
@@ -1678,7 +1696,7 @@ class ChatController extends GetxController
     mirrorFlyLog("chatController", "onMessageReceived");
     ChatMessageModel chatMessageModel = sendMessageModelFromJson(chatMessage);
     if (chatMessageModel.chatUserJid == profile.jid) {
-      chatList.add(chatMessageModel);
+      chatList.insert(0,chatMessageModel);
       scrollToBottom();
       if (isLive) {
         sendReadReceipt();
@@ -1703,7 +1721,7 @@ class ChatController extends GetxController
         chatList[index].messageStatus = chatMessageModel.messageStatus;
         chatList.refresh();
       } else {
-        chatList.add(chatMessageModel);
+        chatList.insert(0,chatMessageModel);
         scrollToBottom();
       }
       if(Get.isRegistered<MessageInfoController>()) {

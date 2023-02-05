@@ -346,7 +346,7 @@ bool isCountryCode(String text) {
   return false;
 }
 
-Widget textMessageSpannableText(String message) {
+Widget textMessageSpannableText(String message, {int? maxLines}) {
   //final GlobalKey textKey = GlobalKey();
   TextStyle underlineStyle = const TextStyle(
       decoration: TextDecoration.underline,
@@ -355,7 +355,7 @@ Widget textMessageSpannableText(String message) {
   TextStyle normalStyle = const TextStyle(fontSize: 14, color: textHintColor);
   var prevValue = "";
   return Text.rich(
-      customTextSpan(message, prevValue, normalStyle, underlineStyle));
+      customTextSpan(message, prevValue, normalStyle, underlineStyle),maxLines: maxLines,);
 }
 
 TextSpan customTextSpan(String message, String prevValue,

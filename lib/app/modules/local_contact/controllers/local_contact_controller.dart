@@ -36,11 +36,11 @@ class LocalContactController extends GetxController {
   }
   onSearchTextChanged(String text) async {
     searchList.clear();
-    if (text.isEmpty) {
+    if (text.trim().isEmpty) {
       return;
     }
     for (var userDetail in contactList) {
-      if (name(userDetail).toString().toLowerCase().contains(text.toLowerCase())) {
+      if (name(userDetail).toString().toLowerCase().contains(text.trim().toLowerCase())) {
         searchList.add(userDetail);
 
       }

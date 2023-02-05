@@ -311,10 +311,10 @@ class SenderHeader extends StatelessWidget {
   final int index;
 
   bool isSenderChanged(List<ChatMessageModel> messageList, int position) {
-    var preposition = position - 1;
+    var preposition = position + 1;
     if (!preposition.isNegative) {
       var currentMessage = messageList[position];
-      var previousMessage = messageList[position - 1];
+      var previousMessage = messageList[preposition];
       if (currentMessage.isMessageSentByMe !=
               previousMessage.isMessageSentByMe ||
           previousMessage.messageType == Constants.msgTypeNotification ||
@@ -337,7 +337,7 @@ class SenderHeader extends StatelessWidget {
 
   ChatMessageModel? getPreviousMessage(
       List<ChatMessageModel> messageList, int position) {
-    return (position > 0) ? messageList[position - 1] : null;
+    return (position > 0) ? messageList[position + 1] : null;
   }
 
   bool checkIsNotNotification(ChatMessageModel messageItem) {
@@ -347,9 +347,10 @@ class SenderHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    mirrorFlyLog("index", index.toString());
     return Visibility(
       visible: isGroupProfile ?? false
-          ? (index == 0 ||
+          ? (index == chatList.length-1 ||
                   isSenderChanged(chatList, index) ||
                   !isMessageDateEqual(chatList, index)) &&
               !chatList[index].isMessageSentByMe
@@ -569,9 +570,10 @@ class AudioMessageView extends StatelessWidget {
 }
 
 class ContactMessageView extends StatelessWidget {
-  const ContactMessageView({Key? key, required this.chatMessage})
+  const ContactMessageView({Key? key, required this.chatMessage, this.search=""})
       : super(key: key);
   final ChatMessageModel chatMessage;
+  final String search;
 
   @override
   Widget build(BuildContext context) {
@@ -609,11 +611,18 @@ class ContactMessageView extends StatelessWidget {
                     width: 12,
                   ),
                   Expanded(
-                      child: Text(
+                      child: search.isEmpty
+                          ? textMessageSpannableText(
+                          chatMessage.contactChatMessage!.contactName.checkNull(),maxLines: 2)
+                          : chatSpannedText(
+                        chatMessage.contactChatMessage!.contactName,
+                        search,
+                        const TextStyle(fontSize: 14, color: textHintColor),maxLines: 2
+                      )/*,Text(
                     chatMessage.contactChatMessage!.contactName,
                     maxLines: 2,
                         overflow: TextOverflow.ellipsis,
-                  )),
+                  )*/),
                 ],
               ),
             ),
@@ -658,9 +667,10 @@ class ContactMessageView extends StatelessWidget {
 
 class DocumentMessageView extends StatelessWidget {
   const DocumentMessageView(
-      {Key? key, required this.chatMessage})
+      {Key? key, required this.chatMessage, this.search = ""})
       : super(key: key);
   final ChatMessageModel chatMessage;
+  final String search;
 
   onDocumentClick(){
     openDocument(
@@ -700,11 +710,18 @@ class DocumentMessageView extends StatelessWidget {
                     width: 12,
                   ),
                   Expanded(
-                      child: Text(
+                      child: search.isEmpty
+                          ? textMessageSpannableText(
+    chatMessage.mediaChatMessage!.mediaFileName.checkNull(),maxLines:2,)
+                          : chatSpannedText(
+                          chatMessage.mediaChatMessage!.mediaFileName.checkNull(),
+                        search,
+                        const TextStyle(fontSize: 12,color: Colors.black,fontWeight: FontWeight.w400),maxLines: 2
+                      ),/*Text(
                     chatMessage.mediaChatMessage!.mediaFileName,
                     maxLines: 2,
                         style: const TextStyle(fontSize: 12,color: Colors.black,fontWeight: FontWeight.w400),
-                  )),
+                  )*/),
                   const Spacer(),
                   getImageOverlay(chatMessage),
                 ],
@@ -1101,12 +1118,14 @@ class MessageContent extends StatelessWidget {
       {Key? key,
       required this.chatList,
       required this.index,
+        this.search = "",
       required this.onPlayAudio})
       : super(key: key);
   final List<ChatMessageModel> chatList;
   final int index;
   final Function()
       onPlayAudio;
+  final String search;
   @override
   Widget build(BuildContext context) {
     var chatMessage = chatList[index];
@@ -1118,7 +1137,7 @@ class MessageContent extends StatelessWidget {
       );
     } else {
       if (chatList[index].messageType.toUpperCase() == Constants.mText) {
-        return TextMessageView(chatMessage: chatMessage);
+        return TextMessageView(chatMessage: chatMessage,search: search,);
       } else if (chatList[index].messageType.toUpperCase() ==
           Constants.mNotification) {
         return NotificationMessageView(chatMessage: chatMessage);
@@ -1133,19 +1152,19 @@ class MessageContent extends StatelessWidget {
         if (chatList[index].contactChatMessage == null) {
           return const SizedBox.shrink();
         }
-        return ContactMessageView(chatMessage: chatMessage);
+        return ContactMessageView(chatMessage: chatMessage,search: search,);
       } else {
         if (chatList[index].mediaChatMessage == null) {
           return const SizedBox.shrink();
         } else {
           if (chatList[index].messageType.toUpperCase() == Constants.mImage) {
             return ImageMessageView(
-                chatMessage: chatMessage,
+                chatMessage: chatMessage,search: search,
             );
           } else if (chatList[index].messageType.toUpperCase() ==
               Constants.mVideo) {
             return VideoMessageView(
-                chatMessage: chatMessage,
+                chatMessage: chatMessage,search: search,
                 );
           } else if (chatList[index].messageType.toUpperCase() ==
                   Constants.mDocument ||
@@ -1614,7 +1633,7 @@ Widget iconCreation(String iconPath, String text, VoidCallback onTap) {
   );
 }
 
-Widget chatSpannedText(String text, String spannableText, TextStyle? style) {
+Widget chatSpannedText(String text, String spannableText, TextStyle? style,{int? maxLines}) {
   var startIndex = text.toLowerCase().startsWith(spannableText.toLowerCase())
       ? text.toLowerCase().indexOf(spannableText.toLowerCase())
       : -1;
@@ -1630,9 +1649,9 @@ Widget chatSpannedText(String text, String spannableText, TextStyle? style) {
               text: colorText, style: const TextStyle(color: Colors.orange)),
           TextSpan(text: endText)
         ],
-        style: style));
+        style: style),maxLines: maxLines,);
   } else {
-    return textMessageSpannableText(text); //Text(text, style: style);
+    return textMessageSpannableText(text,maxLines:maxLines); //Text(text, style: style);
   }
 }
 
