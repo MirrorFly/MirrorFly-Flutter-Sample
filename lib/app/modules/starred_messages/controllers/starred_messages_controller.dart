@@ -91,6 +91,7 @@ class StarredMessagesController extends GetxController {
       selectedChatList.add(item);
       item.isSelected = true;
       starredChatList.refresh();
+      validateForForwardMessage();
     } else {
       debugPrint("Unable to Select Notification Banner");
     }
@@ -104,6 +105,7 @@ class StarredMessagesController extends GetxController {
       selectedChatList.clear();
     }
     starredChatList.refresh();
+    validateForForwardMessage();
   }
 
   clearAllChatSelection() {
@@ -386,6 +388,20 @@ class StarredMessagesController extends GetxController {
       }
     }
   }
+  RxBool canBeForward=false.obs;
+  validateForForwardMessage(){
+    for (var value in selectedChatList) {
+      if(value.isMediaMessage()) {
+        if ((value.isMediaDownloaded() || value.isMediaUploaded())) {
+          canBeForward(true);
+        } else {
+          canBeForward(false);
+        }
+      }else{
+        canBeForward(true);
+      }
+    }
+  }
 
   var isSearch = false.obs;
   var searchedText = TextEditingController();
@@ -475,4 +491,5 @@ class StarredMessagesController extends GetxController {
     var value = await FlyChat.getProfileDetails(jid, true);
     return Profile.fromJson(json.decode(value.toString()));
   }
+
 }

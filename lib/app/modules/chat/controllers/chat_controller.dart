@@ -1686,6 +1686,7 @@ class ChatController extends GetxController
       debugPrint("Message Status Update index of search $index");
       if (index != -1) {
         // Helper.hideLoading();
+        // chatMessageModel.isSelected=chatList[index].isSelected;
         chatList[index] = chatMessageModel;
         chatList.refresh();
       } else {
@@ -1696,6 +1697,13 @@ class ChatController extends GetxController
         Get.find<MessageInfoController>().onMessageStatusUpdated(
             chatMessageModel);
       }
+    }
+    if(isSelected.value){
+      var selectedIndex = selectedChatList.indexWhere((element) => chatMessageModel.messageId==element.messageId);
+      chatMessageModel.isSelected=true;//selectedChatList[selectedIndex].isSelected;
+      selectedChatList[selectedIndex] = chatMessageModel;
+      selectedChatList.refresh();
+      getMessageActions();
     }
   }
 
@@ -1708,8 +1716,16 @@ class ChatController extends GetxController
               (message) => message.messageId == chatMessageModel.messageId);
       debugPrint("Media Status Update index of search $index");
       if (index != -1) {
+        // chatMessageModel.isSelected=chatList[index].isSelected;
         chatList[index] = chatMessageModel;
       }
+    }
+    if(isSelected.value){
+      var selectedIndex = selectedChatList.indexWhere((element) => chatMessageModel.messageId==element.messageId);
+      chatMessageModel.isSelected=true;//selectedChatList[selectedIndex].isSelected;
+      selectedChatList[selectedIndex] = chatMessageModel;
+      selectedChatList.refresh();
+      getMessageActions();
     }
   }
 

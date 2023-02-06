@@ -472,7 +472,7 @@ class ChatView extends GetView<ChatController> {
               Constants.mNotification) {
             return SwipeTo(
               key: ValueKey(chatList[index].messageId),
-              onRightSwipe: !chatList[index].isMessageRecalled && !chatList[index].isMessageDeleted ? () {
+              onRightSwipe: !chatList[index].isMessageRecalled && !chatList[index].isMessageDeleted && chatList[index].messageStatus!="N" ? () {
                 var swipeList = chatList.toList();
                 controller.handleReplyChatMessage(swipeList[index]);
               } : null,
@@ -558,13 +558,13 @@ class ChatView extends GetView<ChatController> {
                                         controller.profile.isGroupProfile,
                                     chatList: chatList,
                                     index: index),
-                                //getMessageContent(index, context, chatList),
                                 MessageContent(
                                   chatList: chatList,
                                   index: index,
                                   onPlayAudio:(){
                                     controller.playAudio(chatList[index]);
                                   },
+                                    isSelected:controller.isSelected.value
                                 )
                               ],
                             ),

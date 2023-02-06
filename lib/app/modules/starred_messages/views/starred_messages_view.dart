@@ -191,7 +191,7 @@ class StarredMessagesView extends GetView<StarredMessagesController> {
                     },
                     icon: SvgPicture.asset(forwardIcon)),
                 overflowWidget: const Text("Forward"),
-                showAsAction: ShowAsAction.always,
+                showAsAction: controller.canBeForward.value ? ShowAsAction.always : ShowAsAction.gone,
                 keyValue: 'Forward',
                 onItemClick: () {
                   controller.checkBusyStatusForForward();

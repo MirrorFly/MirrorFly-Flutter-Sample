@@ -279,11 +279,12 @@ Image imageFromBase64String(
 }
 
 Widget getLocationImage(
-    LocationChatMessage? locationChatMessage, double width, double height) {
+    LocationChatMessage? locationChatMessage, double width, double height,
+    {bool isSelected=false}) {
   return InkWell(
-      onTap: () async {
+      onTap: isSelected ? null : () async {
         String googleUrl =
-            'https://www.google.com/maps/search/?api=1&query=${locationChatMessage.latitude}, ${locationChatMessage.longitude}';
+            'https://www.google.com/maps/search/?api=1&query=${locationChatMessage!.latitude}, ${locationChatMessage.longitude}';
         if (await canLaunchUrl(Uri.parse(googleUrl))) {
           await launchUrl(Uri.parse(googleUrl));
         } else {
@@ -371,10 +372,10 @@ class SenderHeader extends StatelessWidget {
 }
 
 class LocationMessageView extends StatelessWidget {
-  const LocationMessageView({Key? key, required this.chatMessage})
+  const LocationMessageView({Key? key, required this.chatMessage, required this.isSelected})
       : super(key: key);
   final ChatMessageModel chatMessage;
-
+  final bool isSelected;
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -383,7 +384,7 @@ class LocationMessageView extends StatelessWidget {
         children: [
           ClipRRect(
             borderRadius: BorderRadius.circular(15),
-            child: getLocationImage(chatMessage.locationChatMessage, 200, 171),
+            child: getLocationImage(chatMessage.locationChatMessage, 200, 171,isSelected:isSelected),
           ),
           Positioned(
             bottom: 8,
@@ -570,16 +571,16 @@ class AudioMessageView extends StatelessWidget {
 }
 
 class ContactMessageView extends StatelessWidget {
-  const ContactMessageView({Key? key, required this.chatMessage, this.search=""})
+  const ContactMessageView({Key? key, required this.chatMessage, this.search="", required this.isSelected})
       : super(key: key);
   final ChatMessageModel chatMessage;
   final String search;
-
+  final bool isSelected;
   @override
   Widget build(BuildContext context) {
     var screenWidth = MediaQuery.of(context).size.width;
     return InkWell(
-      onTap: () {
+      onTap: isSelected ? null : () {
         Get.toNamed(Routes.previewContact, arguments: {
           "contactList": chatMessage.contactChatMessage!.contactPhoneNumbers,
           "contactName": chatMessage.contactChatMessage!.contactName,
@@ -832,11 +833,11 @@ class VideoMessageView extends StatelessWidget {
   const VideoMessageView(
       {Key? key,
       required this.chatMessage,
-      this.search = ""})
+      this.search = "", required this.isSelected})
       : super(key: key);
   final ChatMessageModel chatMessage;
   final String search;
-  
+  final bool isSelected;
   onVideoClick() {
     switch (chatMessage.isMessageSentByMe
         ? chatMessage.mediaChatMessage?.mediaUploadStatus
@@ -872,7 +873,7 @@ class VideoMessageView extends StatelessWidget {
           Stack(
             children: [
               InkWell(
-                onTap: () {
+                onTap: isSelected ? null : () {
                   onVideoClick();
                 },
                 child: ClipRRect(
@@ -884,7 +885,7 @@ class VideoMessageView extends StatelessWidget {
               Positioned(
                   top: (screenHeight * 0.4) / 2.5,
                   left: (screenWidth * 0.6) / 2.8,
-                  child: getImageOverlay(chatMessage,onVideo: onVideoClick)),
+                  child: getImageOverlay(chatMessage,onVideo: isSelected ? null : onVideoClick)),
               mediaMessage.mediaCaptionText.checkNull().isEmpty
                   ? Positioned(
                       bottom: 8,
@@ -934,11 +935,11 @@ class ImageMessageView extends StatelessWidget {
   const ImageMessageView(
       {Key? key,
       required this.chatMessage,
-      this.search = ""})
+      this.search = "", required this.isSelected})
       : super(key: key);
   final ChatMessageModel chatMessage;
   final String search;
-
+  final bool isSelected;
   @override
   Widget build(BuildContext context) {
     var mediaMessage = chatMessage.mediaChatMessage!;
@@ -957,7 +958,7 @@ class ImageMessageView extends StatelessWidget {
                     mediaMessage.mediaLocalStoragePath,
                     mediaMessage.mediaThumbImage,
                     context,
-                    mediaMessage.mediaFileName),
+                    mediaMessage.mediaFileName,isSelected),
               ),
               Positioned(
                   top: (screenHeight * 0.4) / 2.5,
@@ -1008,12 +1009,12 @@ class ImageMessageView extends StatelessWidget {
   }
 
   getImage(String mediaLocalStoragePath, String mediaThumbImage,
-      BuildContext context, String mediaFileName) {
+      BuildContext context, String mediaFileName,bool isSelected) {
     var screenHeight = MediaQuery.of(context).size.height;
     var screenWidth = MediaQuery.of(context).size.width;
     if (checkFile(mediaLocalStoragePath)) {
       return InkWell(
-          onTap: () {
+          onTap: isSelected ? null : () {
             Get.toNamed(Routes.imageView, arguments: {
               'imageName': mediaFileName,
               'imagePath': mediaLocalStoragePath
@@ -1119,6 +1120,7 @@ class MessageContent extends StatelessWidget {
       required this.chatList,
       required this.index,
         this.search = "",
+        this.isSelected = false,
       required this.onPlayAudio})
       : super(key: key);
   final List<ChatMessageModel> chatList;
@@ -1126,6 +1128,7 @@ class MessageContent extends StatelessWidget {
   final Function()
       onPlayAudio;
   final String search;
+  final bool isSelected;
   @override
   Widget build(BuildContext context) {
     var chatMessage = chatList[index];
@@ -1146,25 +1149,25 @@ class MessageContent extends StatelessWidget {
         if (chatList[index].locationChatMessage == null) {
           return const SizedBox.shrink();
         }
-        return LocationMessageView(chatMessage: chatMessage);
+        return LocationMessageView(chatMessage: chatMessage, isSelected: isSelected,);
       } else if (chatList[index].messageType.toUpperCase() ==
           Constants.mContact) {
         if (chatList[index].contactChatMessage == null) {
           return const SizedBox.shrink();
         }
-        return ContactMessageView(chatMessage: chatMessage,search: search,);
+        return ContactMessageView(chatMessage: chatMessage,search: search,isSelected: isSelected,);
       } else {
         if (chatList[index].mediaChatMessage == null) {
           return const SizedBox.shrink();
         } else {
           if (chatList[index].messageType.toUpperCase() == Constants.mImage) {
             return ImageMessageView(
-                chatMessage: chatMessage,search: search,
+                chatMessage: chatMessage,search: search,isSelected:isSelected
             );
           } else if (chatList[index].messageType.toUpperCase() ==
               Constants.mVideo) {
             return VideoMessageView(
-                chatMessage: chatMessage,search: search,
+                chatMessage: chatMessage,search: search,isSelected:isSelected
                 );
           } else if (chatList[index].messageType.toUpperCase() ==
                   Constants.mDocument ||
