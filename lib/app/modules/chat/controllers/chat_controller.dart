@@ -860,8 +860,9 @@ class ChatController extends GetxController
   clearChatHistory(bool isStarredExcluded) {
     FlyChat.clearChat(profile.jid!, "chat", isStarredExcluded).then((value) {
       if (value) {
-        chatList.where((p0) => p0.isMessageStarred==false).toList().clear();
+        chatList.removeWhere((p0) => p0.isMessageStarred==false);
         cancelReplyMessage();
+        chatList.refresh();
       }
     });
   }
