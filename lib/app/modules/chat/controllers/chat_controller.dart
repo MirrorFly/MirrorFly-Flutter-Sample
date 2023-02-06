@@ -1571,31 +1571,27 @@ class ChatController extends GetxController
     }
     var busyStatus = !profile.isGroupProfile.checkNull() ? await FlyChat.isBusyStatusEnabled() : false;
     if(!busyStatus.checkNull()) {
-      if (await AppUtils.isNetConnected()) {
-        if (await askStoragePermission()) {
-          if (await Record().hasPermission()) {
-            record = Record();
-            timerInit("00.00");
-            isAudioRecording(Constants.audioRecording);
-            startTimer();
-            await record.start(
-              path:
-              "$audioSavePath/audio_${DateTime
-                  .now()
-                  .millisecondsSinceEpoch}.m4a",
-              encoder: AudioEncoder.AAC,
-              bitRate: 128000,
-              samplingRate: 44100,
-            );
-            Future.delayed(const Duration(seconds: 300), () {
-              if (isAudioRecording.value == Constants.audioRecording) {
-                stopRecording();
-              }
-            });
-          }
+      if (await askStoragePermission()) {
+        if (await Record().hasPermission()) {
+          record = Record();
+          timerInit("00.00");
+          isAudioRecording(Constants.audioRecording);
+          startTimer();
+          await record.start(
+            path:
+            "$audioSavePath/audio_${DateTime
+                .now()
+                .millisecondsSinceEpoch}.m4a",
+            encoder: AudioEncoder.AAC,
+            bitRate: 128000,
+            samplingRate: 44100,
+          );
+          Future.delayed(const Duration(seconds: 300), () {
+            if (isAudioRecording.value == Constants.audioRecording) {
+              stopRecording();
+            }
+          });
         }
-      }else {
-        toToast(Constants.noInternetConnection);
       }
     }else{
       //show busy status popup
