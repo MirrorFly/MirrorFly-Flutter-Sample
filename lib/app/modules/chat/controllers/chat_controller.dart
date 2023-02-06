@@ -448,8 +448,9 @@ class ChatController extends GetxController
     return dateHourFormat;
   }
 
+  RxBool chatLoading = false.obs;
   getChatHistory([String? from]) {
-    // mirrorFlyLog("chat history", "$from");
+    chatLoading(true);
     FlyChat.getMessagesOfJid(profile.jid.checkNull()).then((value) {
       debugPrint("=====chat=====");
       // mirrorFlyLog("chat history", value);
@@ -460,40 +461,8 @@ class ChatController extends GetxController
             value);
         chatList(chatMessageModel.reversed.toList());
       }
-      /*Future.delayed(const Duration(milliseconds: 500), () {
-        Future.doWhile(() {
-          if (scrollController.positions.isNotEmpty) {
-            if (scrollController.position.extentAfter == 0) {
-              return Future.value(false);
-            }
-            return scrollController
-                .animateTo(scrollController.position.maxScrollExtent,
-                duration: const Duration(milliseconds: 100),
-                curve: Curves.easeInToLinear)
-                .then((value) => true);
-          }
-          return true;
-        });
-      });*/
+      chatLoading(false);
     });
-    // compute(FlyChat.getMessagesOfJid, profile.jid.checkNull()).then((chatMessageModelList){
-    //   chatList(chatMessageModelList);
-    //   Future.delayed(const Duration(milliseconds: 500), () {
-    //     Future.doWhile(() {
-    //       if (scrollController.positions.isNotEmpty) {
-    //         if (scrollController.position.extentAfter == 0) {
-    //           return Future.value(false);
-    //         }
-    //         return scrollController
-    //             .animateTo(scrollController.position.maxScrollExtent,
-    //             duration: const Duration(milliseconds: 100),
-    //             curve: Curves.linear)
-    //             .then((value) => true);
-    //       }
-    //       return true;
-    //     });
-    //   });
-    // });
   }
 
   getMedia(String mid) {
