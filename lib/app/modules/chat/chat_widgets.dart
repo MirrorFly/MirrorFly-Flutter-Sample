@@ -517,7 +517,7 @@ class AudioMessageView extends StatelessWidget {
                         child: Text(
                           Helper.durationToString(Duration(
                               microseconds:
-                              chatMessage.mediaChatMessage?.currentPos ?? 0)),
+                              chatMessage.mediaChatMessage?.currentPos!=0 ? chatMessage.mediaChatMessage?.currentPos ?? 0 : chatMessage.mediaChatMessage!.mediaDuration)),
                           style: const TextStyle(color: durationTextColor, fontSize: 8, fontWeight: FontWeight.w400),
                         ),
                       ),

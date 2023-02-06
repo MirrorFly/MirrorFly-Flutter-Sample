@@ -1082,31 +1082,33 @@ class ChatController extends GetxController
           TextButton(
               onPressed: () {
                 Get.back();
-                Helper.showLoading(message: 'Deleting Message');
+                //Helper.showLoading(message: 'Deleting Message');
                 FlyChat.deleteMessagesForMe(
                     profile.jid!,chatType, deleteChatListID, isMediaDelete.value)
                     .then((value) {
                   debugPrint(value.toString());
-                  Helper.hideLoading();
-                  if (value!=null && value) {
-                    removeChatList(selectedChatList);
-                  }
-                  isSelected(false);
-                  selectedChatList.clear();
+                  //Helper.hideLoading();
+                  /*if (value!=null && value) {
+                  removeChatList(selectedChatList);
+                }
+                isSelected(false);
+                selectedChatList.clear();*/
                 });
+                removeChatList(selectedChatList);
+                isSelected(false);
+                selectedChatList.clear();
               },
               child: const Text("DELETE FOR ME")),
           isRecallAvailable
               ? TextButton(
               onPressed: () {
                 Get.back();
-                Helper.showLoading(
-                    message: 'Deleting Message for Everyone');
+                //Helper.showLoading(message: 'Deleting Message for Everyone');
                 FlyChat.deleteMessagesForEveryone(
                     profile.jid!,chatType, deleteChatListID, isMediaDelete.value)
                     .then((value) {
                   debugPrint(value.toString());
-                  Helper.hideLoading();
+                  //Helper.hideLoading();
                   if (value!=null && value) {
                     // removeChatList(selectedChatList);//
                     for (var chatList in selectedChatList) {
@@ -1715,7 +1717,7 @@ class ChatController extends GetxController
       debugPrint("Message Status Update index of search $index");
       if (index != -1) {
         // Helper.hideLoading();
-        chatList[index].messageStatus = chatMessageModel.messageStatus;
+        chatList[index] = chatMessageModel;
         chatList.refresh();
       } else {
         chatList.insert(0,chatMessageModel);
