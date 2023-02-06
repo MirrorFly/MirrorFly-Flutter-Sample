@@ -55,6 +55,13 @@ class ForwardChatView extends GetView<ForwardChatController> {
                     Column(
                       children: [
                         Visibility(
+                          visible: !controller.searchLoading.value && controller.recentChats.isEmpty && controller.groupList.isEmpty && controller.userList.isEmpty,
+                          child: const Center(child: Padding(
+                            padding: EdgeInsets.symmetric(vertical: 20.0),
+                            child: Text('No Results found'),
+                          ),),
+                        ),
+                        Visibility(
                           visible: controller.recentChats.isNotEmpty,
                           child: searchHeader("Recent Chat",
                               controller.recentChats.length.toString(), context),
@@ -124,7 +131,7 @@ class ForwardChatView extends GetView<ForwardChatController> {
                         Visibility(
                           visible: controller.userList.isNotEmpty,
                           child: searchHeader("Contacts",
-                              controller.userList.length.toString(), context),
+                              controller.userList.isNotEmpty ? controller.userList.length.toString() : "", context),
                         ),
                         Visibility(
                           visible: controller.searchLoading.value,
@@ -133,6 +140,13 @@ class ForwardChatView extends GetView<ForwardChatController> {
                             child: CircularProgressIndicator(),
                           ),),
                         ),
+                        /*Visibility(
+                          visible: !controller.searchLoading.value && controller.userList.isEmpty,
+                          child: const Center(child: Padding(
+                            padding: EdgeInsets.symmetric(vertical: 8.0),
+                            child: Text('No Contacts found'),
+                          ),),
+                        ),*/
                         Visibility(
                           visible: controller.userList.isNotEmpty,
                           child: controller.searchLoading.value ? const SizedBox.shrink() : ListView.builder(

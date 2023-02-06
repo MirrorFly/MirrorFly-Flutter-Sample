@@ -54,34 +54,65 @@ class StarredMessageHeader extends StatelessWidget {
           if (userProfile != null) {
             if (chatList.isMessageSentByMe) {
               return Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   getChatTime(chatList.messageSentTime.toInt()),
-                  const Spacer(),
-                  Text(
-                    "You --> ${userProfile.name}",
-                    style: const TextStyle(
-                        fontWeight: FontWeight.bold, fontSize: 15),
+                  Flexible(
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: Align(
+                            alignment: Alignment.centerRight,
+                            child: Expanded(
+                              child: Text(
+                                "You --> ${userProfile.name}",
+                                style: const TextStyle(
+                                    fontWeight: FontWeight.bold, fontSize: 15),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(
+                          width: 10,
+                        ),
+                        getProfileImage(userProfile),
+                      ],
+                    ),
                   ),
-                  const SizedBox(
-                    width: 10,
-                  ),
-                  getProfileImage(userProfile),
                 ],
               );
             } else {
               return Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   getProfileImage(userProfile),
                   const SizedBox(
                     width: 10,
                   ),
-                  Text(
-                    "${userProfile.name} --> You",
-                    style: const TextStyle(
-                        fontWeight: FontWeight.w600, fontSize: 14),
+                  Flexible(
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: Align(
+                            alignment: Alignment.centerLeft,
+                            child: Expanded(
+                              child: Text(
+                                "${userProfile.name} --> You",
+                                style: const TextStyle(
+                                    fontWeight: FontWeight.w600, fontSize: 14),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                          ),
+                        ),
+                        getChatTime(chatList.messageSentTime.toInt()),
+                      ],
+                    ),
                   ),
-                  const Spacer(),
-                  getChatTime(chatList.messageSentTime.toInt()),
+
                 ],
               );
             }

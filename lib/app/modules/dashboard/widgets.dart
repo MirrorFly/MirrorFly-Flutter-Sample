@@ -14,7 +14,7 @@ Widget searchHeader(String? type, String count, BuildContext context) {
     color: dividerColor,
     child: Text.rich(TextSpan(text: type, children: [
       TextSpan(
-          text: " ($count)",
+          text: count.isNotEmpty ? " ($count)" : "",
           style: const TextStyle(fontWeight: FontWeight.bold))
     ])),
   );
@@ -126,6 +126,8 @@ class RecentChatItem extends StatelessWidget {
                                   ? Text(
                                       item.profileName.toString(),
                                       style: titlestyle,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
                                     )
                                   : spannableText(item.profileName.checkNull(),
                                       spanTxt, titlestyle),
