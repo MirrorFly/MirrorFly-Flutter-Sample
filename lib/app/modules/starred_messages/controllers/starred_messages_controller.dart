@@ -227,6 +227,7 @@ class StarredMessagesController extends GetxController {
     Clipboard.setData(
         ClipboardData(text: selectedChatList[0].messageTextContent));
     clearChatSelection(selectedChatList[0]);
+    toToast("1 Text Copied Successfully to the clipboard");
   }
 
   Map<bool, bool> isMessageCanbeRecalled() {

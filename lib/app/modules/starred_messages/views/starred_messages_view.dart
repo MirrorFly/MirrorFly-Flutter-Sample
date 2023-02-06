@@ -225,7 +225,7 @@ class StarredMessagesView extends GetView<StarredMessagesController> {
                   ),
                 ),
                 overflowWidget: const Text("Copy"),
-                showAsAction: ShowAsAction.never,
+                showAsAction: ShowAsAction.always,
                 keyValue: 'Copy',
                 onItemClick: () {
                   controller.copyTextMessages();
