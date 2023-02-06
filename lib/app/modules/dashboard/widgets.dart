@@ -183,7 +183,7 @@ class RecentChatItem extends StatelessWidget {
                                                             ? setRecalledMessageText(item
                                                                 .isLastMessageSentByMe!)
                                                             : forMessageTypeString(item
-                                                                    .lastMessageType!) ??
+                                                                    .lastMessageType.checkNull()) ??
                                                                 item.lastMessageContent
                                                                     .checkNull(),
                                                         spanTxt,

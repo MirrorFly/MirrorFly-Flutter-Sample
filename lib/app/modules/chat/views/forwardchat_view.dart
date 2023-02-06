@@ -26,6 +26,7 @@ class ForwardChatView extends GetView<ForwardChatController> {
             title: !controller.isSearchVisible
                 ? TextField(
                     onChanged: (text) {
+                      mirrorFlyLog("text", text);
                       controller.onSearch(text);
                     },
                     style: const TextStyle(fontSize: 16),
@@ -126,8 +127,15 @@ class ForwardChatView extends GetView<ForwardChatController> {
                               controller.userList.length.toString(), context),
                         ),
                         Visibility(
+                          visible: controller.searchLoading.value,
+                          child: const Center(child: Padding(
+                            padding: EdgeInsets.symmetric(vertical: 8.0),
+                            child: CircularProgressIndicator(),
+                          ),),
+                        ),
+                        Visibility(
                           visible: controller.userList.isNotEmpty,
-                          child: controller.searchLoading.value ? const Center(child: CircularProgressIndicator(),) : ListView.builder(
+                          child: controller.searchLoading.value ? const SizedBox.shrink() : ListView.builder(
                               itemCount: controller.scrollable.value
                                   ? controller.userList.length + 1
                                   : controller.userList.length,
