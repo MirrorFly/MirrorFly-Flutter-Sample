@@ -54,33 +54,34 @@ class StarredMessageHeader extends StatelessWidget {
           if (userProfile != null) {
             if (chatList.isMessageSentByMe) {
               return Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                // mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   getChatTime(chatList.messageSentTime.toInt()),
-                  Flexible(
+                  const SizedBox(width: 10,),
+                  Expanded(
                     child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Expanded(
+                        Flexible(
                           child: Align(
                             alignment: Alignment.centerRight,
-                            child: Expanded(
-                              child: Text(
-                                "You --> ${userProfile.name}",
-                                style: const TextStyle(
-                                    fontWeight: FontWeight.bold, fontSize: 15),
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                              ),
+                            child: Text(
+                              "You --> ${userProfile.name}",
+                              style: const TextStyle(
+                                  fontWeight: FontWeight.bold, fontSize: 15),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
                             ),
                           ),
                         ),
                         const SizedBox(
                           width: 10,
                         ),
-                        getProfileImage(userProfile),
                       ],
                     ),
                   ),
+                  getProfileImage(userProfile),
                 ],
               );
             } else {

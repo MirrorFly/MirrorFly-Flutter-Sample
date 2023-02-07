@@ -125,7 +125,10 @@ class ChatSettingsController extends GetxController {
   }
 
   lastSeenEnableDisable() {
+    debugPrint("calling lastSeenEnableDisable ");
+    debugPrint("calling lastSeenEnableDisable --> ${!lastSeenPreference.value}");
     FlyChat.enableDisableHideLastSeen(!lastSeenPreference.value).then((value) {
+      debugPrint("enableDisableHideLastSeen--> $value");
       if(value != null && value) {
         lastSeenPreference(!lastSeenPreference.value);
       }

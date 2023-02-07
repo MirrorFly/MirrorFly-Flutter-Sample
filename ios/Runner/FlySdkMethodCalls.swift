@@ -196,7 +196,7 @@ import FlyDatabase
         
         
         if(userJid == nil){
-            result(FlutterError(code: "500", message: "Location is Empty", details: nil))
+            result(FlutterError(code: "500", message: "User jid is Empty", details: nil))
             return
         }
         
@@ -969,12 +969,8 @@ import FlyDatabase
         let enableLastSeen = args["enable"] as? Bool ?? false
         
         ChatManager.enableDisableHideLastSeen(EnableLastSeen: enableLastSeen) { isSuccess, flyError, flyData in
-            var data  = flyData
-            if isSuccess {
-                print(data.getMessage() as! String )
-            } else{
-                print(data.getMessage() as! String )
-            }
+            
+            result(isSuccess)
         }
     }
     static func isHideLastSeenEnabled(call: FlutterMethodCall, result: @escaping FlutterResult){
