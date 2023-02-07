@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../common/constants.dart';
+import '../../../data/apputils.dart';
 import '../../../data/session_management.dart';
 import '../../../data/helper.dart';
 import 'package:flysdk/flysdk.dart';
@@ -16,7 +17,7 @@ class DeleteAccountController extends GetxController {
   TextEditingController mobileNumber = TextEditingController();
 
 
-  deleteAccount() {
+  deleteAccount() async {
     if(mobileNumber.text.isEmpty){
       toToast("Please Enter Mobile Number");
       return;
@@ -31,8 +32,11 @@ class DeleteAccountController extends GetxController {
       ]);
       return;
     }
-
-    Get.toNamed(Routes.deleteAccountReason);
+    if(await AppUtils.isNetConnected()) {
+      Get.toNamed(Routes.deleteAccountReason);
+    }else{
+      toToast(Constants.noInternetConnection);
+    }
   }
 
 }
