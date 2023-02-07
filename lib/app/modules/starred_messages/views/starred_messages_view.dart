@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:focus_detector/focus_detector.dart';
 
 import 'package:get/get.dart';
 
@@ -17,22 +18,27 @@ class StarredMessagesView extends GetView<StarredMessagesController> {
   Widget build(BuildContext context) {
     controller.height = MediaQuery.of(context).size.height;
     controller.width = MediaQuery.of(context).size.width;
-    return WillPopScope(
-      onWillPop: () {
-        if (controller.isSelected.value) {
-          controller.clearAllChatSelection();
-          return Future.value(false);
-        }
-        return Future.value(true);
+    return FocusDetector(
+      onFocusGained: () {
+        controller.getFavouriteMessages();
       },
-      child: Scaffold(
-        appBar: getAppBar(),
-        body: SingleChildScrollView(
-          child: Obx(() {
-            return controller.starredChatList.isNotEmpty ?
-            favouriteChatListView(controller.starredChatList) : const Center(child: Text("No Starred Messages Found"));
-          }),
-        )
+      child: WillPopScope(
+        onWillPop: () {
+          if (controller.isSelected.value) {
+            controller.clearAllChatSelection();
+            return Future.value(false);
+          }
+          return Future.value(true);
+        },
+        child: Scaffold(
+          appBar: getAppBar(),
+          body: SingleChildScrollView(
+            child: Obx(() {
+              return controller.starredChatList.isNotEmpty ?
+              favouriteChatListView(controller.starredChatList) : const Center(child: Text("No Starred Messages Found"));
+            }),
+          )
+        ),
       ),
     );
   }

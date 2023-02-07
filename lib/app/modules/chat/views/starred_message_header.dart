@@ -42,7 +42,7 @@ class StarredMessageHeader extends StatelessWidget {
   }
 
   Future<Profile> getProfile() async {
-    var value = await FlyChat.getProfileDetails(chatList.senderUserJid, true);
+    var value = await FlyChat.getProfileDetails(chatList.chatUserJid, true);
     return Profile.fromJson(json.decode(value.toString()));
   }
 

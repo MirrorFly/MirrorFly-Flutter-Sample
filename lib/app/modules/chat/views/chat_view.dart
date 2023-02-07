@@ -477,10 +477,11 @@ class ChatView extends GetView<ChatController> {
               Constants.mNotification) {
             return SwipeTo(
               key: ValueKey(chatList[index].messageId),
-              onRightSwipe: !chatList[index].isMessageRecalled && !chatList[index].isMessageDeleted && chatList[index].messageStatus!="N" ? () {
-                var swipeList = chatList.toList();
-                controller.handleReplyChatMessage(swipeList[index]);
-              } : null,
+              onRightSwipe:() {
+                if(!chatList[index].isMessageRecalled && !chatList[index].isMessageDeleted && chatList[index].messageStatus.checkNull().toString()!="N"){
+                  controller.handleReplyChatMessage(chatList[index]);
+                }
+              },
               animationDuration: const Duration(milliseconds: 300),
               offsetDx: 0.2,
               child: GestureDetector(
@@ -492,14 +493,25 @@ class ChatView extends GetView<ChatController> {
                     controller.addChatSelection(chatList[index]);
                   }
                 },
-                onTap: () {
+                onTap:() {
                   debugPrint("On Tap");
-                  controller.isSelected.value
-                      ? controller.selectedChatList.contains(chatList[index])
-                          ? controller.clearChatSelection(chatList[index])
-                          : controller.addChatSelection(chatList[index])
-                      : null;
-                  controller.getMessageActions();
+                  if(controller.isSelected.value) {
+                    controller.isSelected.value
+                        ? controller.selectedChatList.contains(chatList[index])
+                        ? controller.clearChatSelection(chatList[index])
+                        : controller.addChatSelection(chatList[index])
+                        : null;
+                    controller.getMessageActions();
+                  }else{
+                    var replyChat = chatList[index].replyParentChatMessage;
+                    if(replyChat!=null) {
+                      debugPrint("reply tap ");
+                      var chat = chatList.indexWhere((element) => element.messageId==replyChat.messageId);
+                      if(!chat.isNegative) {
+                        controller.navigateToMessage(chatList[chat],index:chat);
+                      }
+                    }
+                  }
                 },
                 onDoubleTap: () {
                   controller.translateMessage(index);
@@ -552,15 +564,15 @@ class ChatView extends GetView<ChatController> {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
+                                SenderHeader(
+                                    isGroupProfile:
+                                    controller.profile.isGroupProfile,
+                                    chatList: chatList,
+                                    index: index),
                                 (chatList[index].replyParentChatMessage == null)
                                     ? const SizedBox.shrink()
                                     : ReplyMessageHeader(
                                         chatMessage: chatList[index]),
-                                SenderHeader(
-                                    isGroupProfile:
-                                        controller.profile.isGroupProfile,
-                                    chatList: chatList,
-                                    index: index),
                                 MessageContent(
                                   chatList: chatList,
                                   index: index,
