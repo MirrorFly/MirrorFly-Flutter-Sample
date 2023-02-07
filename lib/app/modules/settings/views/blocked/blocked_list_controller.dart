@@ -44,7 +44,7 @@ class BlockedListController extends GetxController {
               FlyChat.unblockUser(item.jid.checkNull()).then((value) {
                 Helper.hideLoading();
                 if(value!=null && value) {
-                  toToast("${item.name} Unblocked");
+                  toToast("${item.name} has been Unblocked");
                   getUsersIBlocked(false);
                 }
               }).catchError((error) {

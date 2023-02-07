@@ -36,7 +36,7 @@ class ChatSettingsController extends GetxController {
     _translationEnabled(SessionManagement.isGoogleTranslationEnable());
     _translationLanguage(SessionManagement.getTranslationLanguage());
     _autoDownloadEnabled(await FlyChat.getMediaAutoDownload());
-
+    getLastSeenSettingsEnabled();
     getBusyStatusPreference();
     getMyBusyStatus();
   }

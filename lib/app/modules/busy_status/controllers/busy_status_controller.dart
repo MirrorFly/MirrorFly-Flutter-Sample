@@ -99,8 +99,8 @@ class BusyStatusController extends GetxController {
     }
 
     FlyChat.insertBusyStatus(newBusyStatus).then((value) {
+      busyStatus(newBusyStatus);
       setCurrentStatus(newBusyStatus);
-      getMyBusyStatusList();
     });
   }
 
@@ -122,6 +122,7 @@ class BusyStatusController extends GetxController {
       debugPrint("status value $value");
       var settingController = Get.find<ChatSettingsController>();
       settingController.busyStatus(status);
+      getMyBusyStatusList();
     });
   }
 

@@ -1191,6 +1191,7 @@ class ChatController extends GetxController
                       debugPrint(value);
                       isBlocked(true);
                       Helper.hideLoading();
+                      toToast('${profile.name} has been blocked');
                     }).catchError((error) {
                       Helper.hideLoading();
                       debugPrint(error);
@@ -1250,6 +1251,7 @@ class ChatController extends GetxController
                 debugPrint(value.toString());
                 isBlocked(false);
                 Helper.hideLoading();
+                toToast('${profile.name} has been unblocked');
               }).catchError((error) {
                 Helper.hideLoading();
                 debugPrint(error);
@@ -1711,10 +1713,13 @@ class ChatController extends GetxController
     }
     if(isSelected.value){
       var selectedIndex = selectedChatList.indexWhere((element) => chatMessageModel.messageId==element.messageId);
-      chatMessageModel.isSelected=true;//selectedChatList[selectedIndex].isSelected;
-      selectedChatList[selectedIndex] = chatMessageModel;
-      selectedChatList.refresh();
-      getMessageActions();
+      if(!selectedIndex.isNegative) {
+        chatMessageModel.isSelected =
+        true; //selectedChatList[selectedIndex].isSelected;
+        selectedChatList[selectedIndex] = chatMessageModel;
+        selectedChatList.refresh();
+        getMessageActions();
+      }
     }
   }
 
@@ -1733,10 +1738,13 @@ class ChatController extends GetxController
     }
     if(isSelected.value){
       var selectedIndex = selectedChatList.indexWhere((element) => chatMessageModel.messageId==element.messageId);
-      chatMessageModel.isSelected=true;//selectedChatList[selectedIndex].isSelected;
-      selectedChatList[selectedIndex] = chatMessageModel;
-      selectedChatList.refresh();
-      getMessageActions();
+      if(!selectedIndex.isNegative) {
+        chatMessageModel.isSelected =
+        true; //selectedChatList[selectedIndex].isSelected;
+        selectedChatList[selectedIndex] = chatMessageModel;
+        selectedChatList.refresh();
+        getMessageActions();
+      }
     }
   }
 
