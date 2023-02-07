@@ -585,11 +585,11 @@ class ContactMessageView extends StatelessWidget {
     var screenWidth = MediaQuery.of(context).size.width;
     return InkWell(
       onTap: isSelected ? null : () {
-        Get.toNamed(Routes.previewContact, arguments: {
-          "contactList": chatMessage.contactChatMessage!.contactPhoneNumbers,
-          "contactName": chatMessage.contactChatMessage!.contactName,
-          "from": "chat"
-        });
+        // Get.toNamed(Routes.previewContact, arguments: {
+        //   "contactList": chatMessage.contactChatMessage!.contactPhoneNumbers,
+        //   "contactName": chatMessage.contactChatMessage!.contactName,
+        //   "from": "chat"
+        // });
       },
       child: Container(
         decoration: BoxDecoration(

@@ -55,10 +55,11 @@ class PreviewContactController extends GetxController {
     //   toToast(Constants.noInternetConnection);
     // }
 
-    var contactSharing = <String>[];
+
     var contactServerSharing = <ShareContactDetails>[];
 
     for(var item in contactList){
+      var contactSharing = <String>[];
       for(var contactItem in item.contactNo){
         if(contactItem.isSelected){
           debugPrint("adding--> ${contactItem.mobNo}");
@@ -71,18 +72,17 @@ class PreviewContactController extends GetxController {
         toToast("Select at least one number");
         return;
       }
-      debugPrint("adding contact lsit--> ${contactSharing.toString()}");
+      debugPrint("adding contact list--> ${contactSharing.toString()}");
       contactServerSharing.add(ShareContactDetails(contactNo: contactSharing, userName: item.userName));
-      contactSharing.clear();
+      // contactSharing.clear();
     }
-
 
     debugPrint("sharing contact length--> ${contactServerSharing.length}");
 
     for(var contactItem in contactServerSharing){
       debugPrint("sending contact--> ${contactItem.userName}");
       debugPrint("sending contact--> ${contactItem.contactNo}");
-      //
+
       var response = await Get.find<ChatController>().sendContactMessage(
                   contactItem.contactNo, contactItem.userName);
               debugPrint("ContactResponse ==> $response");
