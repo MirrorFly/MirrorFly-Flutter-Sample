@@ -311,12 +311,11 @@ class _MessageContentState extends State<MessageContent> {
     } else if (chatList.messageType == Constants.mContact) {
       return InkWell(
         onTap: () {
-          // Get.toNamed(Routes.previewContact, arguments: {
-          //   "contactList":
-          //   chatList.contactChatMessage!.contactPhoneNumbers,
-          //   "contactName": chatList.contactChatMessage!.contactName,
-          //   "from": "chat"
-          // });
+          Get.toNamed(Routes.previewContact, arguments: {
+            "previewContactList": chatList.contactChatMessage!.contactPhoneNumbers,
+            "contactName": chatList.contactChatMessage!.contactName,
+            "from": "chat"
+          });
         },
         child: Container(
           decoration: BoxDecoration(

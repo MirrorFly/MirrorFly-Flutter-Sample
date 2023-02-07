@@ -11,6 +11,8 @@ class PreviewContactController extends GetxController {
 
   var contactList = <LocalContactPhone>[].obs;
   var argContactList = <LocalContact>[];
+  var previewContactList = <String>[];
+  var previewContactName = "";
   var from = "";
 
   @override
@@ -18,19 +20,37 @@ class PreviewContactController extends GetxController {
     super.onInit();
 
     argContactList = Get.arguments['contactList'];
+    from = Get.arguments['from'];
 
-    for(var contact in argContactList){
+    if (from == "chat") {
+      previewContactList = Get.arguments['previewContactList'];
+      previewContactName = Get.arguments['contactName'];
+
       var newContactList = <ContactDetail>[];
-      for(var phone in contact.contact.phones!){
-        ContactDetail contactDetail = ContactDetail(mobNo: phone.value!, isSelected: true, mobNoType: phone.label!);
+      for (var phone in previewContactList) {
+        ContactDetail contactDetail = ContactDetail(
+            mobNo: phone, isSelected: true, mobNoType: "");
         newContactList.add(contactDetail);
       }
-      LocalContactPhone localContactPhone = LocalContactPhone(contactNo: newContactList, userName: name(contact.contact));
+      LocalContactPhone localContactPhone = LocalContactPhone(
+          contactNo: newContactList, userName: previewContactName);
       contactList.add(localContactPhone);
-    }
+    } else{
+      for (var contact in argContactList) {
+        var newContactList = <ContactDetail>[];
+        for (var phone in contact.contact.phones!) {
+          ContactDetail contactDetail = ContactDetail(
+              mobNo: phone.value!, isSelected: true, mobNoType: phone.label!);
+          newContactList.add(contactDetail);
+        }
+        LocalContactPhone localContactPhone = LocalContactPhone(
+            contactNo: newContactList, userName: name(contact.contact));
+        contactList.add(localContactPhone);
+      }
+  }
     // shareContactList.addAll(args1);
     debugPrint("received length--> ${contactList.length}");
-    from = Get.arguments['from'];
+
   }
 
   name(Contact item) {
