@@ -450,6 +450,8 @@ class AudioMessageView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var screenWidth = MediaQuery.of(context).size.width;
+    debugPrint("currentPos--> ${double.parse(chatMessage.mediaChatMessage!.currentPos.toString())}");
+    debugPrint("max duration--> ${double.parse(chatMessage.mediaChatMessage!.mediaDuration.toString())}");
     return Container(
       decoration: BoxDecoration(
         border: Border.all(
@@ -493,6 +495,7 @@ class AudioMessageView extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.end,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
+
                       SliderTheme(
                         data: SliderThemeData(
                           thumbColor: audioColorDark,
@@ -501,9 +504,10 @@ class AudioMessageView extends StatelessWidget {
                           thumbShape: const RoundSliderThumbShape(
                               enabledThumbRadius: 5),
                         ),
+
                         child: Slider(
                           value: double.parse(chatMessage.mediaChatMessage!.currentPos.toString()),
-                          min: 0,
+                          min: 0.0,
                           activeColor: Colors.white,
                           thumbColor: audioColorDark,
                           inactiveColor: borderColor,

@@ -1,43 +1,102 @@
+
+import 'package:contacts_service/contacts_service.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../common/constants.dart';
-import '../../../data/apputils.dart';
+import '../../../model/local_contact_model.dart';
 import '../../chat/controllers/chat_controller.dart';
 
 class PreviewContactController extends GetxController {
 
-
-  late List<String> contactList;
-  var contactName = "", from = "";
+  var contactList = <LocalContactPhone>[].obs;
+  var argContactList = <LocalContact>[];
+  var from = "";
 
   @override
   void onInit() {
     super.onInit();
 
-    contactList = Get.arguments['contactList'];
-    contactName = Get.arguments['contactName'];
+    argContactList = Get.arguments['contactList'];
+
+    for(var contact in argContactList){
+      var newContactList = <ContactDetail>[];
+      for(var phone in contact.contact.phones!){
+        ContactDetail contactDetail = ContactDetail(mobNo: phone.value!, isSelected: true, mobNoType: phone.label!);
+        newContactList.add(contactDetail);
+      }
+      LocalContactPhone localContactPhone = LocalContactPhone(contactNo: newContactList, userName: name(contact.contact));
+      contactList.add(localContactPhone);
+    }
+    // shareContactList.addAll(args1);
+    debugPrint("received length--> ${contactList.length}");
     from = Get.arguments['from'];
+  }
+
+  name(Contact item) {
+    return item.displayName ?? item.givenName ?? item.middleName ?? item.androidAccountName ?? item.familyName ?? "";
   }
 
 
   shareContact() async {
-    if(await AppUtils.isNetConnected()) {
-      if(contactList.isNotEmpty) {
-        var response = await Get.find<ChatController>().sendContactMessage(
-            contactList, contactName);
-        debugPrint("ContactResponse ==> $response");
-        if (response != null) {
-          Get.back();
-          Get.back();
+    // if(await AppUtils.isNetConnected()) {
+    //   if(contactList.isNotEmpty) {
+    //     var response = await Get.find<ChatController>().sendContactMessage(
+    //         contactList, contactName);
+    //     debugPrint("ContactResponse ==> $response");
+    //     if (response != null) {
+    //       Get.back();
+    //       Get.back();
+    //     }
+    //   }else{
+    //     toToast("Contact Number is Empty");
+    //   }
+    // }else{
+    //   toToast(Constants.noInternetConnection);
+    // }
+
+    var contactSharing = <String>[];
+    var contactServerSharing = <ShareContactDetails>[];
+
+    for(var item in contactList){
+      for(var contactItem in item.contactNo){
+        if(contactItem.isSelected){
+          debugPrint("adding--> ${contactItem.mobNo}");
+          contactSharing.add(contactItem.mobNo);
+        }else{
+          debugPrint("skipping--> ${contactItem.mobNo}");
         }
-      }else{
-        toToast("Contact Number is Empty");
       }
-    }else{
-      toToast(Constants.noInternetConnection);
+      if(contactSharing.isEmpty){
+        toToast("Select at least one number");
+        return;
+      }
+      debugPrint("adding contact lsit--> ${contactSharing.toString()}");
+      contactServerSharing.add(ShareContactDetails(contactNo: contactSharing, userName: item.userName));
+      contactSharing.clear();
     }
+
+
+    debugPrint("sharing contact length--> ${contactServerSharing.length}");
+
+    for(var contactItem in contactServerSharing){
+      debugPrint("sending contact--> ${contactItem.userName}");
+      debugPrint("sending contact--> ${contactItem.contactNo}");
+      //
+      var response = await Get.find<ChatController>().sendContactMessage(
+                  contactItem.contactNo, contactItem.userName);
+              debugPrint("ContactResponse ==> $response");
+    }
+
+    Get.back();
+    Get.back();
 
   }
 
+
+
+  void changeStatus(ContactDetail phoneItem) {
+    phoneItem.isSelected = !phoneItem.isSelected;
+    contactList.refresh();
+  }
 }

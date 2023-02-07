@@ -647,16 +647,24 @@ import FlyDatabase
                 result(isSuccess)
             }
         }
-        
     }
+    
+    static func getFavouriteMessages(call: FlutterMethodCall, result: @escaping FlutterResult){
+        
+        var starredMessages =  ChatManager.getFavouriteMessages()
+        
+        var starredMessagesJson = JSONSerializer.toJson(starredMessages)
+        
+        starredMessagesJson = starredMessagesJson.replacingOccurrences(of: "{\"some\":", with: "")
+        starredMessagesJson = starredMessagesJson.replacingOccurrences(of: "}}", with: "}")
+        result(starredMessagesJson)
+    }
+    
     static func clearAllConversation(call: FlutterMethodCall, result: @escaping FlutterResult){
         
         ChatManager.shared.clearAllConversation{ isSuccess, error, data in
-            
             result(isSuccess)
-            
         }
-        
     }
     
     static func getRingtoneName(call: FlutterMethodCall, result: @escaping FlutterResult){
