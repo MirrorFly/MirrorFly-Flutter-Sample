@@ -7,7 +7,6 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:get/get.dart';
 import 'package:google_cloud_translation/google_cloud_translation.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -89,9 +88,9 @@ class ChatController extends GetxController
 
   var selectedChatList = List<ChatMessageModel>.empty(growable: true).obs;
 
-  var keyboardVisibilityController = KeyboardVisibilityController();
+  // var keyboardVisibilityController = KeyboardVisibilityController();
 
-  late StreamSubscription<bool> keyboardSubscription;
+  // late StreamSubscription<bool> keyboardSubscription;
 
   final _isMemberOfGroup = false.obs;
 
@@ -123,7 +122,7 @@ class ChatController extends GetxController
       var profileDetail = Get.arguments as Profile;
       profile_(profileDetail);
       checkAdminBlocked();
-      onready();
+      ready();
       initListeners();
     }else {
       getProfileDetails(userJid).then((
@@ -131,7 +130,7 @@ class ChatController extends GetxController
         SessionManagement.setChatJid("");
         profile_(value);
         checkAdminBlocked();
-        onready();
+        ready();
         initListeners();
       });
     }
@@ -177,7 +176,7 @@ class ChatController extends GetxController
   }
 
   var showHideRedirectToLatest =false.obs;
-  void onready() {
+  void ready() {
     debugPrint("isBlocked===> ${profile.isBlocked}");
     debugPrint("profile detail===> ${profile.toJson().toString()}");
     isBlocked(profile.isBlocked);
@@ -196,12 +195,12 @@ class ChatController extends GetxController
         showEmoji(false);
       }
     });
-    keyboardSubscription =
+    /*keyboardSubscription =
         keyboardVisibilityController.onChange.listen((bool visible) {
           if (!visible) {
             focusNode.canRequestFocus = false;
           }
-        });
+        });*/
     //scrollController.addListener(_scrollController);
     scrollController.addListener(() {
       if (scrollController.offset <= scrollController.position.minScrollExtent &&
@@ -855,6 +854,10 @@ class ChatController extends GetxController
       }
       replyChatMessage = chatListItem;
       isReplying(true);
+      focusNode.unfocus();
+      Future.delayed(const Duration(milliseconds: 100),(){
+        focusNode.requestFocus();
+      });
     }
   }
 
