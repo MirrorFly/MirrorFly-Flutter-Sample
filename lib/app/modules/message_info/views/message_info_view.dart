@@ -49,7 +49,7 @@ class MessageInfoView extends GetView<MessageInfoController> {
                                 null)
                                 ? const SizedBox.shrink()
                                 : ReplyMessageHeader(
-                                chatMessage: controller.chatMessage[0]),
+                                chatMessage: controller.chatMessage[0],),
                             SenderHeader(
                                 isGroupProfile: controller.isGroupProfile,
                                 chatList: controller.chatMessage,

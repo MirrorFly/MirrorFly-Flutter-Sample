@@ -22,7 +22,7 @@ class StarredMessagesController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    getFavouriteMessages();
+    //getFavouriteMessages();
     player.onPlayerCompletion.listen((event) {
       playingChat!.mediaChatMessage!.isPlaying=false;
       playingChat!.mediaChatMessage!.currentPos=0;
@@ -492,8 +492,8 @@ class StarredMessagesController extends GetxController {
     return Profile.fromJson(json.decode(value.toString()));
   }
 
-  navigateMessage(ChatMessageModel starredChatList) {
-    //Get.toNamed();
+  navigateMessage(ChatMessageModel starredChat) {
+    Get.toNamed(Routes.chat,parameters: {'isFromStarred':'true',"userJid":starredChat.chatUserJid,"messageId":starredChat.messageId});
   }
 
 }

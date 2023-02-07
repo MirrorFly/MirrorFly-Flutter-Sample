@@ -117,14 +117,14 @@ class ChatSearchView extends GetView<ChatController> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        (chatList[index].replyParentChatMessage == null)
-                            ? const SizedBox.shrink()
-                            : ReplyMessageHeader(
-                            chatMessage: chatList[index]),
                         SenderHeader(
                             isGroupProfile: controller.profile.isGroupProfile,
                             chatList: chatList,
                             index: index),
+                        (chatList[index].replyParentChatMessage == null)
+                            ? const SizedBox.shrink()
+                            : ReplyMessageHeader(
+                            chatMessage: chatList[index]),
                         MessageContent(chatList: chatList, index: index,search: controller.searchedText.text.trim(), onPlayAudio: () {
                           controller.playAudio(chatList[index]);
                         },),

@@ -41,7 +41,7 @@ class ChatController extends GetxController
 
   var chatList = List<ChatMessageModel>.empty(growable: true).obs;
   late AnimationController controller;
-  ScrollController scrollController = ScrollController();
+  // ScrollController scrollController = ScrollController();
 
   ItemScrollController newScrollController = ItemScrollController();
   ItemPositionsListener newitemPositionsListener = ItemPositionsListener.create();
@@ -102,6 +102,7 @@ class ChatController extends GetxController
   var profileDetail = Profile();
 
   String? nJid;
+  String? starredChatMessageId;
 
   @override
   void onInit() async{
@@ -116,6 +117,13 @@ class ChatController extends GetxController
       debugPrint("parameter :${Get.parameters['jid']}");
       if(nJid!=null){
         userJid = Get.parameters['jid'] as String;
+      }
+    }else if(Get.parameters['isFromStarred']=="true"){
+      if(Get.parameters['userJid']!=null){
+        userJid = Get.parameters['userJid'] as String;
+      }
+      if(Get.parameters['messageId']!=null){
+        starredChatMessageId = Get.parameters['messageId'] as String;
       }
     }
     if(userJid.isEmpty){
@@ -202,16 +210,17 @@ class ChatController extends GetxController
           }
         });*/
     //scrollController.addListener(_scrollController);
-    scrollController.addListener(() {
+    /*scrollController.addListener(() {
       if (scrollController.offset <= scrollController.position.minScrollExtent &&
           !scrollController.position.outOfRange) {
         showHideRedirectToLatest(false);
       }else{
         showHideRedirectToLatest(true);
       }
-    });
+    });*/
     newitemPositionsListener.itemPositions.addListener((){
       var pos = findLastVisibleItemPositionForChat();
+      //debugPrint('pos $pos');
       if(pos>1){
         showHideRedirectToLatest(true);
       }else{
@@ -220,7 +229,7 @@ class ChatController extends GetxController
     });
 
     FlyChat.setOnGoingChatUser(profile.jid!);
-    getChatHistory(profile.jid!);
+    getChatHistory();
     // compute(getChatHistory, profile.jid);
     debugPrint("==================");
     debugPrint(profile.image);
@@ -229,12 +238,16 @@ class ChatController extends GetxController
 
   scrollToBottom() {
     Future.delayed(const Duration(milliseconds: 100), () {
-      if (scrollController.hasClients) {
+      /*if (scrollController.hasClients) {
         scrollController.animateTo(
           scrollController.position.minScrollExtent,
           duration: const Duration(milliseconds: 100),
           curve: Curves.linear,
         );
+      }*/
+      if(newScrollController.isAttached){
+        newScrollController.scrollTo(index: 0, duration: const Duration(milliseconds: 100),
+          curve: Curves.linear);
       }
     });
   }
@@ -253,7 +266,7 @@ class ChatController extends GetxController
 
   @override
   void onClose() {
-    scrollController.dispose();
+    // scrollController.dispose();
     FlyChat.setOnGoingChatUser("");
     isLive = false;
     player.stop();
@@ -458,7 +471,7 @@ class ChatController extends GetxController
   }
 
   RxBool chatLoading = false.obs;
-  getChatHistory([String? from]) {
+  getChatHistory() {
     chatLoading(true);
     FlyChat.getMessagesOfJid(profile.jid.checkNull()).then((value) {
       debugPrint("=====chat=====");
@@ -470,6 +483,17 @@ class ChatController extends GetxController
             value);
         // mirrorFlyLog("chat parsed history", chatMessageModelToJson(chatMessageModel));
         chatList(chatMessageModel.reversed.toList());
+        Future.delayed(const Duration(milliseconds: 200),(){
+          if(starredChatMessageId!=null){
+            debugPrint('starredChatMessageId $starredChatMessageId');
+            var chat = chatList.indexWhere((element) => element.messageId==starredChatMessageId);
+            debugPrint('chat $chat');
+            if(!chat.isNegative) {
+              navigateToMessage(chatList[chat]);
+              starredChatMessageId = null;
+            }
+          }
+        });
       }
       chatLoading(false);
     });
@@ -2225,9 +2249,9 @@ class ChatController extends GetxController
     }
   }
 
-  void navigateToMessage(ChatMessageModel chatMessage) {
+  void navigateToMessage(ChatMessageModel chatMessage, {int? index}) {
     var messageID = chatMessage.messageId;
-    var chatIndex = chatList.indexWhere((element) => element.messageId==messageID);
+    var chatIndex = index ?? chatList.indexWhere((element) => element.messageId==messageID);
     if(!chatIndex.isNegative){
       chatList[chatIndex].isSelected=true;
       newScrollController.jumpTo(index: chatIndex);
@@ -2241,7 +2265,7 @@ class ChatController extends GetxController
   int findLastVisibleItemPositionForChat(){
     var r= newitemPositionsListener.itemPositions.value.where((ItemPosition position) => position.itemTrailingEdge < 1)
         .reduce((ItemPosition min, ItemPosition position) =>
-    position.itemTrailingEdge > min.itemTrailingEdge
+    position.itemTrailingEdge < min.itemTrailingEdge
         ? position
         : min)
         .index;
