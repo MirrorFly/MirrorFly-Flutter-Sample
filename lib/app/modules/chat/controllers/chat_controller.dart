@@ -7,6 +7,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:get/get.dart';
 import 'package:google_cloud_translation/google_cloud_translation.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -854,10 +855,12 @@ class ChatController extends GetxController
       }
       replyChatMessage = chatListItem;
       isReplying(true);
-      focusNode.unfocus();
-      Future.delayed(const Duration(milliseconds: 100),(){
-        focusNode.requestFocus();
-      });
+      if(!KeyboardVisibilityController().isVisible) {
+        focusNode.unfocus();
+        Future.delayed(const Duration(milliseconds: 100), () {
+          focusNode.requestFocus();
+        });
+      }
     }
   }
 
