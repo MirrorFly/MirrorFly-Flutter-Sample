@@ -63,7 +63,7 @@ class StarredMessagesView extends GetView<StarredMessagesController> {
                     ? controller.selectedChatList.contains(starredChatList[index])
                     ? controller.clearChatSelection(starredChatList[index])
                     : controller.addChatSelection(starredChatList[index])
-                    : null;
+                    : controller.navigateMessage(starredChatList[index]);
               },
               child: Obx(() {
                 return Column(

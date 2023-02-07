@@ -41,11 +41,10 @@ class ChatController extends GetxController
 
   var chatList = List<ChatMessageModel>.empty(growable: true).obs;
   late AnimationController controller;
-  ScrollController scrollController = ScrollController(
-    initialScrollOffset: 0.0,
-    keepScrollOffset: true,
-  );
+  ScrollController scrollController = ScrollController();
 
+  ItemScrollController newScrollController = ItemScrollController();
+  ItemPositionsListener newitemPositionsListener = ItemPositionsListener.create();
   ItemScrollController searchScrollController = ItemScrollController();
 
   late ChatMessageModel replyChatMessage;
@@ -211,6 +210,14 @@ class ChatController extends GetxController
         showHideRedirectToLatest(true);
       }
     });
+    newitemPositionsListener.itemPositions.addListener((){
+      var pos = findLastVisibleItemPositionForChat();
+      if(pos>1){
+        showHideRedirectToLatest(true);
+      }else{
+        showHideRedirectToLatest(false);
+      }
+    });
 
     FlyChat.setOnGoingChatUser(profile.jid!);
     getChatHistory(profile.jid!);
@@ -233,13 +240,15 @@ class ChatController extends GetxController
   }
 
   scrollToEnd() {
-    if (scrollController.hasClients) {
+    /*if (scrollController.hasClients) {
       scrollController.animateTo(
         scrollController.position.minScrollExtent,
         duration: const Duration(milliseconds: 100),
         curve: Curves.linear,
       );
-    }
+    }*/
+    newScrollController.jumpTo(index: 0);
+    showHideRedirectToLatest(false);
   }
 
   @override
@@ -2214,5 +2223,28 @@ class ChatController extends GetxController
         canShowReport(false);
       }
     }
+  }
+
+  void navigateToMessage(ChatMessageModel chatMessage) {
+    var messageID = chatMessage.messageId;
+    var chatIndex = chatList.indexWhere((element) => element.messageId==messageID);
+    if(!chatIndex.isNegative){
+      chatList[chatIndex].isSelected=true;
+      newScrollController.jumpTo(index: chatIndex);
+      Future.delayed(const Duration(milliseconds: 800), () {
+        chatList[chatIndex].isSelected = false;
+        chatList.refresh();
+      });
+    }
+  }
+
+  int findLastVisibleItemPositionForChat(){
+    var r= newitemPositionsListener.itemPositions.value.where((ItemPosition position) => position.itemTrailingEdge < 1)
+        .reduce((ItemPosition min, ItemPosition position) =>
+    position.itemTrailingEdge > min.itemTrailingEdge
+        ? position
+        : min)
+        .index;
+    return r<chatList.length ? r+1 : r;
   }
 }

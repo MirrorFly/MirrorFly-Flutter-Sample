@@ -19,70 +19,74 @@ import '../dashboard/widgets.dart';
 
 class ReplyingMessageHeader extends StatelessWidget {
   const ReplyingMessageHeader(
-      {Key? key, required this.chatMessage, required this.onCancel})
+      {Key? key, required this.chatMessage, required this.onCancel, required this.onClick})
       : super(key: key);
   final ChatMessageModel chatMessage;
   final Function() onCancel;
+  final Function() onClick;
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(6),
-      decoration: const BoxDecoration(
-        color: chatSentBgColor,
-      ),
+    return InkWell(
+      onTap: onClick,
       child: Container(
+        width: double.infinity,
+        padding: const EdgeInsets.all(6),
         decoration: const BoxDecoration(
-          color: chatReplyContainerColor,
-          borderRadius: BorderRadius.all(Radius.circular(5)),
+          color: chatSentBgColor,
         ),
-        child: Row(
-          children: [
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+        child: Container(
+          decoration: const BoxDecoration(
+            color: chatReplyContainerColor,
+            borderRadius: BorderRadius.all(Radius.circular(5)),
+          ),
+          child: Row(
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(top: 15.0, left: 15.0),
+                      child: getReplyTitle(chatMessage.isMessageSentByMe,
+                          chatMessage.senderNickName),
+                    ),
+                    const SizedBox(height: 8),
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 15.0, left: 15.0),
+                      child: getReplyMessage(
+                          chatMessage.messageType.toUpperCase(),
+                          chatMessage.messageTextContent,
+                          chatMessage.contactChatMessage?.contactName,
+                          chatMessage.mediaChatMessage?.mediaFileName),
+                    ),
+                  ],
+                ),
+              ),
+              Stack(
+                alignment: Alignment.topRight,
                 children: [
-                  Padding(
-                    padding: const EdgeInsets.only(top: 15.0, left: 15.0),
-                    child: getReplyTitle(chatMessage.isMessageSentByMe,
-                        chatMessage.senderNickName),
-                  ),
-                  const SizedBox(height: 8),
-                  Padding(
-                    padding: const EdgeInsets.only(bottom: 15.0, left: 15.0),
-                    child: getReplyMessage(
-                        chatMessage.messageType.toUpperCase(),
-                        chatMessage.messageTextContent,
-                        chatMessage.contactChatMessage?.contactName,
-                        chatMessage.mediaChatMessage?.mediaFileName),
+                  getReplyImageHolder(
+                      context,
+                      chatMessage.messageType.toUpperCase(),
+                      chatMessage.mediaChatMessage?.mediaThumbImage,
+                      chatMessage.locationChatMessage,
+                      70),
+                  GestureDetector(
+                    onTap: onCancel,
+                    child: const Padding(
+                      padding: EdgeInsets.all(8.0),
+                      child: CircleAvatar(
+                          backgroundColor: Colors.white,
+                          radius: 10,
+                          child:
+                              Icon(Icons.close, size: 15, color: Colors.black)),
+                    ),
                   ),
                 ],
-              ),
-            ),
-            Stack(
-              alignment: Alignment.topRight,
-              children: [
-                getReplyImageHolder(
-                    context,
-                    chatMessage.messageType.toUpperCase(),
-                    chatMessage.mediaChatMessage?.mediaThumbImage,
-                    chatMessage.locationChatMessage,
-                    70),
-                GestureDetector(
-                  onTap: onCancel,
-                  child: const Padding(
-                    padding: EdgeInsets.all(8.0),
-                    child: CircleAvatar(
-                        backgroundColor: Colors.white,
-                        radius: 10,
-                        child:
-                            Icon(Icons.close, size: 15, color: Colors.black)),
-                  ),
-                ),
-              ],
-            )
-          ],
+              )
+            ],
+          ),
         ),
       ),
     );

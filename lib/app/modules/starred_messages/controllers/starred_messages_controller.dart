@@ -492,4 +492,8 @@ class StarredMessagesController extends GetxController {
     return Profile.fromJson(json.decode(value.toString()));
   }
 
+  navigateMessage(ChatMessageModel starredChatList) {
+    //Get.toNamed();
+  }
+
 }

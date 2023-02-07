@@ -10,6 +10,7 @@ import 'package:mirror_fly_demo/app/common/widgets.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
 
 import 'package:mirror_fly_demo/app/routes/app_pages.dart';
+import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:swipe_to/swipe_to.dart';
 
 import '../../../common/constants.dart';
@@ -83,7 +84,7 @@ class ChatView extends GetView<ChatController> {
                                                   chatMessage: controller
                                                       .replyChatMessage,
                                                   onCancel: () => controller
-                                                      .cancelReplyMessage());
+                                                      .cancelReplyMessage(), onClick: () { controller.navigateToMessage(controller.replyChatMessage); },);
                                             } else {
                                               return const SizedBox.shrink();
                                             }
@@ -462,8 +463,9 @@ class ChatView extends GetView<ChatController> {
   Widget chatListView(List<ChatMessageModel> chatList) {
     return Align(
       alignment: Alignment.bottomCenter,
-      child: ListView.builder(
-        controller: controller.scrollController,
+      child: ScrollablePositionedList.builder(
+        itemScrollController: controller.newScrollController,
+        itemPositionsListener: controller.newitemPositionsListener,
         itemCount: chatList.length,
         shrinkWrap: true,
         reverse: true,
@@ -502,9 +504,7 @@ class ChatView extends GetView<ChatController> {
                 child: Obx(() {
                   return Container(
                     key: Key(chatList[index].messageId),
-                    color: controller.isSelected.value &&
-                            chatList[index].isSelected &&
-                            controller.selectedChatList.isNotEmpty
+                    color: chatList[index].isSelected
                         ? chatReplyContainerColor
                         : Colors.transparent,
                     margin: const EdgeInsets.only(
