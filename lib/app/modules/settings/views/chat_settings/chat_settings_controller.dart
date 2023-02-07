@@ -20,8 +20,8 @@ class ChatSettingsController extends GetxController {
   final busyStatus = "".obs;
   bool get archiveEnabled => _archiveEnabled.value;
 
-  final _autoDownlaodEnabled = false.obs;
-  bool get autoDownloadEnabled => _autoDownlaodEnabled.value;
+  final _autoDownloadEnabled = false.obs;
+  bool get autoDownloadEnabled => _autoDownloadEnabled.value;
 
   final _translationEnabled = false.obs;
   bool get translationEnabled => _translationEnabled.value;
@@ -35,7 +35,7 @@ class ChatSettingsController extends GetxController {
     getArchivedSettingsEnabled();
     _translationEnabled(SessionManagement.isGoogleTranslationEnable());
     _translationLanguage(SessionManagement.getTranslationLanguage());
-    _autoDownlaodEnabled(await FlyChat.getMediaAutoDownload());
+    _autoDownloadEnabled(await FlyChat.getMediaAutoDownload());
 
     getBusyStatusPreference();
     getMyBusyStatus();
@@ -45,6 +45,12 @@ class ChatSettingsController extends GetxController {
 
   }
 
+  Future<void> getLastSeenSettingsEnabled() async {
+    // boolean lastSeenStatus = FlyCore.isHideLastSeenEnabled();
+    await FlyChat.isHideLastSeenEnabled().then((value) => lastSeenPreference(value));
+  }
+
+
   void enableArchive(){
     FlyChat.enableDisableArchivedSettings(!archiveEnabled);
     _archiveEnabled(!archiveEnabled);
@@ -52,9 +58,9 @@ class ChatSettingsController extends GetxController {
 
   Future<void> enableDisableAutoDownload() async {
     if (await askStoragePermission()) {
-      var enable = !_autoDownlaodEnabled.value;//SessionManagement.isAutoDownloadEnable();
+      var enable = !_autoDownloadEnabled.value;//SessionManagement.isAutoDownloadEnable();
         FlyChat.setMediaAutoDownload(enable);
-        _autoDownlaodEnabled(enable);
+        _autoDownloadEnabled(enable);
     }
   }
   Future<bool> askStoragePermission() async {
@@ -119,7 +125,11 @@ class ChatSettingsController extends GetxController {
   }
 
   lastSeenEnableDisable() {
-    lastSeenPreference(!lastSeenPreference.value);
+    FlyChat.enableDisableHideLastSeen(lastSeenPreference.value).then((value) {
+      if(value) {
+        lastSeenPreference(!lastSeenPreference.value);
+      }
+    });
   }
 
   busyStatusEnable() async {

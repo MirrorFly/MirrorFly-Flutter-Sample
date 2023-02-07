@@ -678,6 +678,8 @@ class FlyBaseController: NSObject{
                 FlySdkMethodCalls.updateFavouriteStatus(call: call, result: result)
             case "iOSFileExist":
                 FlySdkMethodCalls.iOSFileExist(call: call, result: result)
+            case "get_favourite_messages":
+                FlySdkMethodCalls.getFavouriteMessages(call: call, result: result)
             default:
                 result(FlutterMethodNotImplemented)
             }

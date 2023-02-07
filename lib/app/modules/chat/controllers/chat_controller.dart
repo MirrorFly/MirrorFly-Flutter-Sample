@@ -453,12 +453,13 @@ class ChatController extends GetxController
     chatLoading(true);
     FlyChat.getMessagesOfJid(profile.jid.checkNull()).then((value) {
       debugPrint("=====chat=====");
-      // mirrorFlyLog("chat history", value);
+
       if(value == "" || value == null){
         debugPrint("Chat List is Empty");
       }else {
         List<ChatMessageModel> chatMessageModel = chatMessageModelFromJson(
             value);
+        // mirrorFlyLog("chat parsed history", chatMessageModelToJson(chatMessageModel));
         chatList(chatMessageModel.reversed.toList());
       }
       chatLoading(false);
@@ -584,9 +585,11 @@ class ChatController extends GetxController
       replyMessageID = replyChatMessage.messageId;
     }
     isReplying(false);
+    Platform.isIOS ? Helper.showLoading(message: "Compressing Video") : null;
     return FlyChat.sendVideoMessage(
         profile.jid!, videoPath, caption, replyMessageID)
         .then((value) {
+          Platform.isIOS ? Helper.hideLoading() : null;
       ChatMessageModel chatMessageModel = sendMessageModelFromJson(value);
       chatList.insert(0,chatMessageModel);
       scrollToBottom();
@@ -683,17 +686,25 @@ class ChatController extends GetxController
   }
 
   sendContactMessage(List<String> contactList, String contactName) async {
+    debugPrint("sendingName--> $contactName");
     var busyStatus = !profile.isGroupProfile.checkNull() ? await FlyChat.isBusyStatusEnabled() : false;
+    debugPrint("sendContactMessage busyStatus--> $busyStatus");
     if(!busyStatus.checkNull()) {
+      debugPrint("busy status not enabled");
       var replyMessageId = "";
 
       if (isReplying.value) {
         replyMessageId = replyChatMessage.messageId;
       }
       isReplying(false);
+      debugPrint("contactList--> ${contactList.toString()}");
+      debugPrint("jid--> ${profile.jid}");
+      debugPrint("contactName--> $contactName");
+      debugPrint("replyMessageId--> $replyMessageId");
       return FlyChat.sendContactMessage(
           contactList, profile.jid!, contactName, replyMessageId)
           .then((value) {
+            debugPrint("response--> $value");
         ChatMessageModel chatMessageModel = sendMessageModelFromJson(value);
         chatList.insert(0,chatMessageModel);
         scrollToBottom();

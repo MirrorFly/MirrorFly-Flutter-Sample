@@ -161,6 +161,10 @@ const String reportUser = 'assets/logos/report_user.svg';
 const String reportGroup = 'assets/logos/report_group.svg';
 const String leaveGroup = 'assets/logos/leave_group.svg';
 
+const String contactSelectTick = 'assets/logos/contact_select.svg';
+const String rightArrowProceed = 'assets/logos/right_arrow_proceed.svg';
+const String closeContactIcon = 'assets/logos/close_icon_contact.svg';
+
 const String emailIcon = 'assets/logos/email.svg';
 const String phoneIcon = 'assets/logos/phone.svg';
 const String deleteBin = 'assets/logos/delete_bin.svg';

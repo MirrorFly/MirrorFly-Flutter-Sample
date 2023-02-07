@@ -7,83 +7,110 @@ import '../controllers/preview_contact_controller.dart';
 
 class PreviewContactView extends GetView<PreviewContactController> {
   const PreviewContactView({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-        child: Scaffold(
+    return Scaffold(
         appBar: AppBar(
-          title: controller.from == "contact_pick" ? const Text('Send Contacts') : const Text('Contact Details'),
+          title: controller.from == "contact_pick"
+              ? const Text('Send Contacts')
+              : const Text('Contact Details'),
         ),
         body: Stack(
           children: [
-            Column(
-              children: [
-                Padding(
-                  padding:
-                      const EdgeInsets.only(left: 18.0, top: 18.0, bottom: 5, right: 10),
-                  child: Row(
-                    children: [
-                      SizedBox(width: 50,height: 50,child: ProfileTextImage(text: controller.contactName,),),
-                      /*Image.asset(
-                        profile_img,
-                        width: 50,
-                        height: 50,
-                      ),*/
-                      const SizedBox(
-                        width: 10,
-                      ),
-                      Flexible(child: Text(controller.contactName, overflow: TextOverflow.ellipsis,),),
-                    ],
-                  ),
-                ),
-                const Divider(
-                  color: Colors.grey,
-                  thickness: 0.5,
-                ),
-                Expanded(
-                  child: ListView.builder(
-                      itemCount: controller.contactList.length,
-                      physics: const AlwaysScrollableScrollPhysics(),
-                      itemBuilder: (BuildContext context, int index) {
-                          return Column(
-                            children: [
-                              Row(
-                                children: [
-                                  const Padding(
-                                    padding: EdgeInsets.fromLTRB(18.0,10,18,10),
-                                    child: Icon(Icons.phone, color: Colors.blue,),
+            Obx(() {
+              return SizedBox(
+                height: double.infinity,
+                child: ListView.builder(
+                    itemCount: controller.contactList.length,
+                    // shrinkWrap: true,
+                    physics: const AlwaysScrollableScrollPhysics(),
+                    itemBuilder: (BuildContext context, int index) {
+                      // var parentIndex = index;
+                      var contactItem = controller.contactList[index];
+                      return Column(
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.fromLTRB(10, 10, 10, 5),
+                            child: Row(
+                              children: [
+                                ProfileTextImage(
+                                  text: contactItem.userName,
+                                  radius: 20,),
+                                const SizedBox(
+                                  width: 10,
+                                ),
+                                Flexible(child: Text(
+                                  contactItem.userName,
+                                  style: const TextStyle(
+                                      fontWeight: FontWeight.bold),
+                                  overflow: TextOverflow.ellipsis,),),
+                              ],
+                            ),
+                          ),
+                          const Divider(
+                            color: Colors.grey,
+                            thickness: 0.1,
+                          ),
+                          ListView.builder(
+                              itemCount: contactItem.contactNo.length,
+                              physics: const ClampingScrollPhysics(),
+                              shrinkWrap: true,
+                              itemBuilder: (BuildContext context, int childIndex) {
+                                var phoneItem = contactItem.contactNo[childIndex];
+                                return ListTile(
+                                  onTap: (){
+                                    controller.changeStatus(phoneItem);
+                                  },
+                                  title: Text(
+                                    phoneItem.mobNo,
+                                    style: const TextStyle(
+                                        fontSize: 13),
                                   ),
-                                  Text(
-                                    controller.contactList[index].toString(),
+                                  subtitle: Text(phoneItem.mobNoType,
+                                    style: const TextStyle(
+                                        fontSize: 12),
+                                ),
+                                  leading: const Icon(
+                                    Icons.phone, color: Colors.blue,
+                                    size: 20,),
+                                  trailing: Visibility(
+                                    visible: contactItem.contactNo.length > 1,
+                                    child: Checkbox(
+                                        activeColor: Colors.green,
+                                        shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius
+                                                .circular(4)),
+                                        value: phoneItem.isSelected,
+                                      onChanged: (bool? value) { debugPrint("value"); },
+                                    ),
                                   ),
-
-                                ],
-                              ),
-                              const Divider(
-                                color: Colors.grey,
-                                thickness: 0.8,
-                              ),
-                            ],
-                          );
-
-                      }),
-                ),
-              ],
-            ),
+                                );
+                              }),
+                          const Divider(
+                            color: Colors.grey,
+                            thickness: 0.8,
+                          ),
+                        ],
+                      );
+                    }),
+              );
+            }),
             controller.from == "contact_pick" ? Positioned(
                 bottom: 25,
                 right: 20,
                 child: InkWell(
-                  onTap: (){
+                  onTap: () {
                     controller.shareContact();
                   },
                   child: const CircleAvatar(
-                    backgroundColor: Colors.blueAccent,
+                      backgroundColor: Colors.blueAccent,
                       radius: 25,
                       child: Icon(Icons.send, color: Colors.white,)),
                 )) : const SizedBox.shrink()
           ],
-        )),
-    );
+        ));
   }
+
+
 }
