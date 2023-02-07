@@ -1,14 +1,13 @@
-
 import 'package:contacts_service/contacts_service.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../common/constants.dart';
+import '../../../data/apputils.dart';
 import '../../../model/local_contact_model.dart';
 import '../../chat/controllers/chat_controller.dart';
 
 class PreviewContactController extends GetxController {
-
   var contactList = <LocalContactPhone>[].obs;
   var argContactList = <LocalContact>[];
   var previewContactList = <String>[];
@@ -28,14 +27,14 @@ class PreviewContactController extends GetxController {
 
       var newContactList = <ContactDetail>[];
       for (var phone in previewContactList) {
-        ContactDetail contactDetail = ContactDetail(
-            mobNo: phone, isSelected: true, mobNoType: "");
+        ContactDetail contactDetail =
+            ContactDetail(mobNo: phone, isSelected: true, mobNoType: "");
         newContactList.add(contactDetail);
       }
       LocalContactPhone localContactPhone = LocalContactPhone(
           contactNo: newContactList, userName: previewContactName);
       contactList.add(localContactPhone);
-    } else{
+    } else {
       for (var contact in argContactList) {
         var newContactList = <ContactDetail>[];
         for (var phone in contact.contact.phones!) {
@@ -47,16 +46,19 @@ class PreviewContactController extends GetxController {
             contactNo: newContactList, userName: name(contact.contact));
         contactList.add(localContactPhone);
       }
-  }
+    }
     // shareContactList.addAll(args1);
     debugPrint("received length--> ${contactList.length}");
-
   }
 
   name(Contact item) {
-    return item.displayName ?? item.givenName ?? item.middleName ?? item.androidAccountName ?? item.familyName ?? "";
+    return item.displayName ??
+        item.givenName ??
+        item.middleName ??
+        item.androidAccountName ??
+        item.familyName ??
+        "";
   }
-
 
   shareContact() async {
     // if(await AppUtils.isNetConnected()) {
@@ -75,45 +77,45 @@ class PreviewContactController extends GetxController {
     //   toToast(Constants.noInternetConnection);
     // }
 
-
     var contactServerSharing = <ShareContactDetails>[];
-
-    for(var item in contactList){
-      var contactSharing = <String>[];
-      for(var contactItem in item.contactNo){
-        if(contactItem.isSelected){
-          debugPrint("adding--> ${contactItem.mobNo}");
-          contactSharing.add(contactItem.mobNo);
-        }else{
-          debugPrint("skipping--> ${contactItem.mobNo}");
+    if (await AppUtils.isNetConnected()) {
+      for (var item in contactList) {
+        var contactSharing = <String>[];
+        for (var contactItem in item.contactNo) {
+          if (contactItem.isSelected) {
+            debugPrint("adding--> ${contactItem.mobNo}");
+            contactSharing.add(contactItem.mobNo);
+          } else {
+            debugPrint("skipping--> ${contactItem.mobNo}");
+          }
         }
+        if (contactSharing.isEmpty) {
+          toToast("Select at least one number");
+          return;
+        }
+        debugPrint("adding contact list--> ${contactSharing.toString()}");
+        contactServerSharing.add(ShareContactDetails(
+            contactNo: contactSharing, userName: item.userName));
+        // contactSharing.clear();
       }
-      if(contactSharing.isEmpty){
-        toToast("Select at least one number");
-        return;
+
+      debugPrint("sharing contact length--> ${contactServerSharing.length}");
+
+      for (var contactItem in contactServerSharing) {
+        debugPrint("sending contact--> ${contactItem.userName}");
+        debugPrint("sending contact--> ${contactItem.contactNo}");
+
+        var response = await Get.find<ChatController>()
+            .sendContactMessage(contactItem.contactNo, contactItem.userName);
+        debugPrint("ContactResponse ==> $response");
       }
-      debugPrint("adding contact list--> ${contactSharing.toString()}");
-      contactServerSharing.add(ShareContactDetails(contactNo: contactSharing, userName: item.userName));
-      // contactSharing.clear();
+
+      Get.back();
+      Get.back();
+    } else {
+      toToast(Constants.noInternetConnection);
     }
-
-    debugPrint("sharing contact length--> ${contactServerSharing.length}");
-
-    for(var contactItem in contactServerSharing){
-      debugPrint("sending contact--> ${contactItem.userName}");
-      debugPrint("sending contact--> ${contactItem.contactNo}");
-
-      var response = await Get.find<ChatController>().sendContactMessage(
-                  contactItem.contactNo, contactItem.userName);
-              debugPrint("ContactResponse ==> $response");
-    }
-
-    Get.back();
-    Get.back();
-
   }
-
-
 
   void changeStatus(ContactDetail phoneItem) {
     phoneItem.isSelected = !phoneItem.isSelected;

@@ -75,7 +75,7 @@ class PreviewContactView extends GetView<PreviewContactController> {
                                     Icons.phone, color: Colors.blue,
                                     size: 20,),
                                   trailing: Visibility(
-                                    visible: contactItem.contactNo.length > 1,
+                                    visible: contactItem.contactNo.length > 1 && controller.from != "chat",
                                     child: Checkbox(
                                         activeColor: Colors.green,
                                         shape: RoundedRectangleBorder(
