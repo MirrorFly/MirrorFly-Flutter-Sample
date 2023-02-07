@@ -18,7 +18,7 @@ class PreviewContactController extends GetxController {
   void onInit() {
     super.onInit();
 
-    argContactList = Get.arguments['contactList'];
+
     from = Get.arguments['from'];
 
     if (from == "chat") {
@@ -35,6 +35,7 @@ class PreviewContactController extends GetxController {
           contactNo: newContactList, userName: previewContactName);
       contactList.add(localContactPhone);
     } else {
+      argContactList = Get.arguments['contactList'];
       for (var contact in argContactList) {
         var newContactList = <ContactDetail>[];
         for (var phone in contact.contact.phones!) {

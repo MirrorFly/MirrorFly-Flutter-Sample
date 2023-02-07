@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
 import 'package:get/get.dart';
+import 'package:grouped_list/grouped_list.dart';
 import 'package:marquee/marquee.dart';
 import 'package:mirror_fly_demo/app/common/widgets.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
@@ -459,6 +460,8 @@ class ChatView extends GetView<ChatController> {
     });
   }
 
+
+
   Widget chatListView(List<ChatMessageModel> chatList) {
     return Align(
       alignment: Alignment.bottomCenter,
@@ -591,6 +594,19 @@ class ChatView extends GetView<ChatController> {
           }
         },
       ),
+    );
+  }
+
+  Widget chatGroupedListView(List<ChatMessageModel> chatList){
+    return GroupedListView<dynamic, String>(
+      elements: chatList,
+      groupBy: (element) => element['group'],
+      groupSeparatorBuilder: (String groupByValue) => Text(groupByValue),
+      itemBuilder: (context, dynamic element) => Text(element['name']),
+      // itemComparator: (item1, item2) => item1['name'].compareTo(item2['name']), // optional
+      useStickyGroupSeparators: true, // optional
+      floatingHeader: true, // optional
+      order: GroupedListOrder.ASC, // optional
     );
   }
 
