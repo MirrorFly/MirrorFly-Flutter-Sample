@@ -17,7 +17,10 @@ class PreviewContactController extends GetxController {
   @override
   void onInit() {
     super.onInit();
+
+
     from = Get.arguments['from'];
+
     if (from == "chat") {
       previewContactList = Get.arguments['previewContactList'];
       previewContactName = Get.arguments['contactName'];
