@@ -9,7 +9,6 @@ import '../../../model/local_contact_model.dart';
 
 
 class LocalContactController extends GetxController {
-  //TODO: Implement LocalContactController
 
   var search=false.obs;
 
@@ -44,12 +43,12 @@ class LocalContactController extends GetxController {
   onSearchTextChanged(String text) async {
     debugPrint("ontextChanged--> $text");
     searchList.clear();
-    if (text.trim().isEmpty) {
+    if (searchTextController.text.trim().isEmpty) {
       searchList.addAll(contactList);
       return;
     }
     for (var userDetail in contactList) {
-      if (name(userDetail.contact).toString().toLowerCase().contains(text.trim().toLowerCase())) {
+      if (name(userDetail.contact).toString().toLowerCase().contains(searchTextController.text.trim().toLowerCase())) {
         searchList.add(userDetail);
       }
     }
