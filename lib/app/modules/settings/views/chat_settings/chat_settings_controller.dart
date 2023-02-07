@@ -36,7 +36,7 @@ class ChatSettingsController extends GetxController {
     _translationEnabled(SessionManagement.isGoogleTranslationEnable());
     _translationLanguage(SessionManagement.getTranslationLanguage());
     _autoDownloadEnabled(await FlyChat.getMediaAutoDownload());
-
+    getLastSeenSettingsEnabled();
     getBusyStatusPreference();
     getMyBusyStatus();
   }
@@ -125,8 +125,8 @@ class ChatSettingsController extends GetxController {
   }
 
   lastSeenEnableDisable() {
-    FlyChat.enableDisableHideLastSeen(lastSeenPreference.value).then((value) {
-      if(value) {
+    FlyChat.enableDisableHideLastSeen(!lastSeenPreference.value).then((value) {
+      if(value != null && value) {
         lastSeenPreference(!lastSeenPreference.value);
       }
     });
