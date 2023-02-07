@@ -4,6 +4,7 @@ import 'package:mirror_fly_demo/app/common/constants.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
 import 'package:flysdk/flysdk.dart';
 
+import '../../../common/de_bouncer.dart';
 import '../../../data/apputils.dart';
 import '../../../routes/app_pages.dart';
 
@@ -80,21 +81,30 @@ class ContactController extends GetxController {
     }
   }
 
+  @override
+  void onClose(){
+    super.onClose();
+    searchQuery.dispose();
+  }
+  final deBouncer = DeBouncer(milliseconds: 700);
   String lastInputValue ="";
   searchListener(String text) async {
     debugPrint("searching .. ");
-    if (lastInputValue != text.trim()) {
-      lastInputValue = text.trim();
-      if (text.trim().isEmpty) {
+    if (lastInputValue != searchQuery.text.trim()) {
+      lastInputValue = searchQuery.text.trim();
+      if (searchQuery.text.trim().isEmpty) {
         _searchText = "";
         pageNum = 1;
       }
       else {
         isPageLoading(true);
-        _searchText = text.trim();
+        _searchText = searchQuery.text.trim();
         pageNum = 1;
       }
-      fetchUsers(true);
+      deBouncer.run(() {
+        fetchUsers(true);
+      });
+
     }
   }
 

@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
 import 'package:get/get.dart';
-import 'package:keyboard_dismisser/keyboard_dismisser.dart';
 import 'package:marquee/marquee.dart';
 import 'package:mirror_fly_demo/app/common/widgets.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
@@ -27,209 +26,209 @@ class ChatView extends GetView<ChatController> {
   Widget build(BuildContext context) {
     controller.screenHeight = MediaQuery.of(context).size.height;
     controller.screenWidth = MediaQuery.of(context).size.width;
-    return KeyboardDismisser(
-      child: Scaffold(
-          appBar: getAppBar(),
-          body: SafeArea(
-            child: Container(
-              width: controller.screenWidth,
-              height: controller.screenHeight,
-              decoration: const BoxDecoration(
-                image: DecorationImage(
-                  image: AssetImage("assets/logos/chat_bg.png"),
-                  fit: BoxFit.cover,
-                ),
-              ),
-              child: WillPopScope(
-                onWillPop: () {
-                  mirrorFlyLog("viewInsets",
-                      MediaQuery.of(context).viewInsets.bottom.toString());
-                  if (controller.showEmoji.value) {
-                    controller.showEmoji(false);
-                  } else if (MediaQuery.of(context).viewInsets.bottom > 0.0) {
-                    //FocusManager.instance.primaryFocus?.unfocus();
-                    controller.focusNode.unfocus();
-                  } else if (controller.nJid != null) {
-                    Get.offAllNamed(Routes.dashboard);
-                    return Future.value(true);
-                  } else {
-                    return Future.value(true);
-                  }
-                  return Future.value(false);
-                },
-                child: Stack(
-                  children: [
-                    Column(
-                      children: [
-                        Expanded(child: Obx(() {
-                          return chatListView(controller.chatList);
-                        })),
-                        Align(
-                          alignment: Alignment.bottomCenter,
-                          child: Obx(() {
-                            return Container(
-                              color: Colors.white,
-                              child: controller.isBlocked.value
-                                  ? userBlocked()
-                                  : !controller.isMemberOfGroup
-                                      ? userNoLonger()
-                                      : Column(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.end,
-                                          children: [
-                                            Obx(() {
-                                              if (controller.isReplying.value) {
-                                                return ReplyingMessageHeader(
-                                                    chatMessage: controller
-                                                        .replyChatMessage,
-                                                    onCancel: () => controller
-                                                        .cancelReplyMessage());
-                                              } else {
-                                                return const SizedBox.shrink();
-                                              }
-                                            }),
-                                            const Divider(
-                                              height: 1,
-                                              thickness: 0.29,
-                                              color: textBlackColor,
-                                            ),
-                                            const SizedBox(
-                                              height: 10,
-                                            ),
-                                            IntrinsicHeight(
-                                              child: Row(
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.stretch,
-                                                children: [
-                                                  Flexible(
-                                                    child: Container(
-                                                      padding:
-                                                          const EdgeInsets.only(
-                                                              left: 10),
-                                                      margin:
-                                                          const EdgeInsets.only(
-                                                              left: 10,
-                                                              right: 10,
-                                                              bottom: 10),
-                                                      width: double.infinity,
-                                                      decoration: BoxDecoration(
-                                                        border: Border.all(
-                                                          color: textColor,
-                                                        ),
-                                                        borderRadius:
-                                                            const BorderRadius
-                                                                    .all(
-                                                                Radius.circular(
-                                                                    40)),
-                                                        color: Colors.white,
-                                                      ),
-                                                      child: Obx(() {
-                                                        return messageTypingView(
-                                                            context);
-                                                      }),
-                                                    ),
-                                                  ),
-                                                  Obx(() {
-                                                    return controller
-                                                            .isUserTyping.value
-                                                        ? InkWell(
-                                                            onTap: () {
-                                                              controller.isAudioRecording
-                                                                          .value ==
-                                                                      Constants
-                                                                          .audioRecordDone
-                                                                  ? controller
-                                                                      .sendRecordedAudioMessage()
-                                                                  : controller.sendMessage(
-                                                                      controller
-                                                                          .profile);
-                                                            },
-                                                            child: Padding(
-                                                              padding:
-                                                                  const EdgeInsets
-                                                                          .only(
-                                                                      left: 8.0,
-                                                                      right:
-                                                                          8.0,
-                                                                      bottom:
-                                                                          8),
-                                                              child: SvgPicture
-                                                                  .asset(
-                                                                      'assets/logos/send.svg'),
-                                                            ))
-                                                        : const SizedBox
-                                                            .shrink();
-                                                  }),
-                                                  Obx(() {
-                                                    return controller
-                                                                .isAudioRecording
-                                                                .value ==
-                                                            Constants
-                                                                .audioRecording
-                                                        ? InkWell(
-                                                            onTap: () {
-                                                              controller
-                                                                  .stopRecording();
-                                                            },
-                                                            child:
-                                                                const Padding(
-                                                              padding: EdgeInsets
-                                                                  .only(
-                                                                      bottom:
-                                                                          8.0),
-                                                              child:
-                                                                  LottieAnimation(
-                                                                lottieJson:
-                                                                    audioJson1,
-                                                                showRepeat:
-                                                                    true,
-                                                                width: 54,
-                                                                height: 54,
-                                                              ),
-                                                            ))
-                                                        : const SizedBox
-                                                            .shrink();
-                                                  }),
-                                                  const SizedBox(
-                                                    width: 5,
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-                                            emojiLayout(),
-                                          ],
-                                        ),
-                            );
-                          }),
-                        ),
-                      ],
-                    ),
-                    Obx(() {
-                      return Visibility(
-                        visible: controller.showHideRedirectToLatest.value,
-                        child: Positioned(
-                          bottom: 100,
-                          right: 20,
-                          child: IconButton(
-                            icon: Image.asset(
-                              redirectLastMessage,
-                              width: 32,
-                              height: 32,
-                            ),
-                            onPressed: () {
-                              //scroll to end
-                              controller.scrollToEnd();
-                            },
-                          ),
-                        ),
-                      );
-                    })
-                  ],
-                ),
+    return Scaffold(
+        appBar: getAppBar(),
+        body: SafeArea(
+          child: Container(
+            width: controller.screenWidth,
+            height: controller.screenHeight,
+            decoration: const BoxDecoration(
+              image: DecorationImage(
+                image: AssetImage("assets/logos/chat_bg.png"),
+                fit: BoxFit.cover,
               ),
             ),
-          )),
-    );
+            child: WillPopScope(
+              onWillPop: () {
+                mirrorFlyLog("viewInsets",
+                    MediaQuery.of(context).viewInsets.bottom.toString());
+                if (controller.showEmoji.value) {
+                  controller.showEmoji(false);
+                } else if (MediaQuery.of(context).viewInsets.bottom > 0.0) {
+                  //FocusManager.instance.primaryFocus?.unfocus();
+                  controller.focusNode.unfocus();
+                } else if (controller.nJid != null) {
+                  Get.offAllNamed(Routes.dashboard);
+                  return Future.value(true);
+                } else if(controller.isSelected.value) {
+                  controller.clearAllChatSelection();
+                }else {
+                  return Future.value(true);
+                }
+                return Future.value(false);
+              },
+              child: Stack(
+                children: [
+                  Column(
+                    children: [
+                      Expanded(child: Obx(() {
+                        return controller.chatLoading.value ? const Center(child: CircularProgressIndicator(),) :chatListView(controller.chatList);
+                      })),
+                      Align(
+                        alignment: Alignment.bottomCenter,
+                        child: Obx(() {
+                          return Container(
+                            color: Colors.white,
+                            child: controller.isBlocked.value
+                                ? userBlocked()
+                                : !controller.isMemberOfGroup
+                                    ? userNoLonger()
+                                    : Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.end,
+                                        children: [
+                                          Obx(() {
+                                            if (controller.isReplying.value) {
+                                              return ReplyingMessageHeader(
+                                                  chatMessage: controller
+                                                      .replyChatMessage,
+                                                  onCancel: () => controller
+                                                      .cancelReplyMessage());
+                                            } else {
+                                              return const SizedBox.shrink();
+                                            }
+                                          }),
+                                          const Divider(
+                                            height: 1,
+                                            thickness: 0.29,
+                                            color: textBlackColor,
+                                          ),
+                                          const SizedBox(
+                                            height: 10,
+                                          ),
+                                          IntrinsicHeight(
+                                            child: Row(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.stretch,
+                                              children: [
+                                                Flexible(
+                                                  child: Container(
+                                                    padding:
+                                                        const EdgeInsets.only(
+                                                            left: 10),
+                                                    margin:
+                                                        const EdgeInsets.only(
+                                                            left: 10,
+                                                            right: 10,
+                                                            bottom: 10),
+                                                    width: double.infinity,
+                                                    decoration: BoxDecoration(
+                                                      border: Border.all(
+                                                        color: textColor,
+                                                      ),
+                                                      borderRadius:
+                                                          const BorderRadius
+                                                                  .all(
+                                                              Radius.circular(
+                                                                  40)),
+                                                      color: Colors.white,
+                                                    ),
+                                                    child: Obx(() {
+                                                      return messageTypingView(
+                                                          context);
+                                                    }),
+                                                  ),
+                                                ),
+                                                Obx(() {
+                                                  return controller
+                                                          .isUserTyping.value
+                                                      ? InkWell(
+                                                          onTap: () {
+                                                            controller.isAudioRecording
+                                                                        .value ==
+                                                                    Constants
+                                                                        .audioRecordDone
+                                                                ? controller
+                                                                    .sendRecordedAudioMessage()
+                                                                : controller.sendMessage(
+                                                                    controller
+                                                                        .profile);
+                                                          },
+                                                          child: Padding(
+                                                            padding:
+                                                                const EdgeInsets
+                                                                        .only(
+                                                                    left: 8.0,
+                                                                    right:
+                                                                        8.0,
+                                                                    bottom:
+                                                                        8),
+                                                            child: SvgPicture
+                                                                .asset(
+                                                                    'assets/logos/send.svg'),
+                                                          ))
+                                                      : const SizedBox
+                                                          .shrink();
+                                                }),
+                                                Obx(() {
+                                                  return controller
+                                                              .isAudioRecording
+                                                              .value ==
+                                                          Constants
+                                                              .audioRecording
+                                                      ? InkWell(
+                                                          onTap: () {
+                                                            controller
+                                                                .stopRecording();
+                                                          },
+                                                          child:
+                                                              const Padding(
+                                                            padding: EdgeInsets
+                                                                .only(
+                                                                    bottom:
+                                                                        8.0),
+                                                            child:
+                                                                LottieAnimation(
+                                                              lottieJson:
+                                                                  audioJson1,
+                                                              showRepeat:
+                                                                  true,
+                                                              width: 54,
+                                                              height: 54,
+                                                            ),
+                                                          ))
+                                                      : const SizedBox
+                                                          .shrink();
+                                                }),
+                                                const SizedBox(
+                                                  width: 5,
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                          emojiLayout(),
+                                        ],
+                                      ),
+                          );
+                        }),
+                      ),
+                    ],
+                  ),
+                  Obx(() {
+                    return Visibility(
+                      visible: controller.showHideRedirectToLatest.value,
+                      child: Positioned(
+                        bottom: 100,
+                        right: 20,
+                        child: IconButton(
+                          icon: Image.asset(
+                            redirectLastMessage,
+                            width: 32,
+                            height: 32,
+                          ),
+                          onPressed: () {
+                            //scroll to end
+                            controller.scrollToEnd();
+                          },
+                        ),
+                      ),
+                    );
+                  })
+                ],
+              ),
+            ),
+          ),
+        ));
   }
 
   messageTypingView(BuildContext context) {
@@ -473,7 +472,7 @@ class ChatView extends GetView<ChatController> {
               Constants.mNotification) {
             return SwipeTo(
               key: ValueKey(chatList[index].messageId),
-              onRightSwipe: !chatList[index].isMessageRecalled && !chatList[index].isMessageDeleted ? () {
+              onRightSwipe: !chatList[index].isMessageRecalled && !chatList[index].isMessageDeleted && chatList[index].messageStatus!="N" ? () {
                 var swipeList = chatList.toList();
                 controller.handleReplyChatMessage(swipeList[index]);
               } : null,
@@ -559,13 +558,13 @@ class ChatView extends GetView<ChatController> {
                                         controller.profile.isGroupProfile,
                                     chatList: chatList,
                                     index: index),
-                                //getMessageContent(index, context, chatList),
                                 MessageContent(
                                   chatList: chatList,
                                   index: index,
                                   onPlayAudio:(){
                                     controller.playAudio(chatList[index]);
                                   },
+                                    isSelected:controller.isSelected.value
                                 )
                               ],
                             ),

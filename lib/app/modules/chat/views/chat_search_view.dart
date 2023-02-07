@@ -36,6 +36,13 @@ class ChatSearchView extends GetView<ChatController> {
             autofocus: true,
             decoration: const InputDecoration(
                 hintText: "Search...", border: InputBorder.none),
+            onSubmitted: (str){
+              if(controller.filteredPosition.isNotEmpty){
+                controller.scrollUp();
+              }else{
+                toToast("No Results Found");
+              }
+            },
           ),
           iconTheme: const IconThemeData(color: iconColor),
           actions: [
@@ -118,7 +125,7 @@ class ChatSearchView extends GetView<ChatController> {
                             isGroupProfile: controller.profile.isGroupProfile,
                             chatList: chatList,
                             index: index),
-                        MessageContent(chatList: chatList, index: index,search: controller.searchedText.text, onPlayAudio: () {
+                        MessageContent(chatList: chatList, index: index,search: controller.searchedText.text.trim(), onPlayAudio: () {
                           controller.playAudio(chatList[index]);
                         },),
                       ],

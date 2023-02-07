@@ -448,8 +448,9 @@ class ChatController extends GetxController
     return dateHourFormat;
   }
 
+  RxBool chatLoading = false.obs;
   getChatHistory([String? from]) {
-    // mirrorFlyLog("chat history", "$from");
+    chatLoading(true);
     FlyChat.getMessagesOfJid(profile.jid.checkNull()).then((value) {
       debugPrint("=====chat=====");
 
@@ -461,40 +462,8 @@ class ChatController extends GetxController
         // mirrorFlyLog("chat parsed history", chatMessageModelToJson(chatMessageModel));
         chatList(chatMessageModel.reversed.toList());
       }
-      /*Future.delayed(const Duration(milliseconds: 500), () {
-        Future.doWhile(() {
-          if (scrollController.positions.isNotEmpty) {
-            if (scrollController.position.extentAfter == 0) {
-              return Future.value(false);
-            }
-            return scrollController
-                .animateTo(scrollController.position.maxScrollExtent,
-                duration: const Duration(milliseconds: 100),
-                curve: Curves.easeInToLinear)
-                .then((value) => true);
-          }
-          return true;
-        });
-      });*/
+      chatLoading(false);
     });
-    // compute(FlyChat.getMessagesOfJid, profile.jid.checkNull()).then((chatMessageModelList){
-    //   chatList(chatMessageModelList);
-    //   Future.delayed(const Duration(milliseconds: 500), () {
-    //     Future.doWhile(() {
-    //       if (scrollController.positions.isNotEmpty) {
-    //         if (scrollController.position.extentAfter == 0) {
-    //           return Future.value(false);
-    //         }
-    //         return scrollController
-    //             .animateTo(scrollController.position.maxScrollExtent,
-    //             duration: const Duration(milliseconds: 100),
-    //             curve: Curves.linear)
-    //             .then((value) => true);
-    //       }
-    //       return true;
-    //     });
-    //   });
-    // });
   }
 
   getMedia(String mid) {
@@ -871,8 +840,9 @@ class ChatController extends GetxController
   clearChatHistory(bool isStarredExcluded) {
     FlyChat.clearChat(profile.jid!, "chat", isStarredExcluded).then((value) {
       if (value) {
-        chatList.where((p0) => p0.isMessageStarred==false).toList().clear();
+        chatList.removeWhere((p0) => p0.isMessageStarred==false);
         cancelReplyMessage();
+        chatList.refresh();
       }
     });
   }
@@ -1092,31 +1062,33 @@ class ChatController extends GetxController
           TextButton(
               onPressed: () {
                 Get.back();
-                Helper.showLoading(message: 'Deleting Message');
+                //Helper.showLoading(message: 'Deleting Message');
                 FlyChat.deleteMessagesForMe(
                     profile.jid!,chatType, deleteChatListID, isMediaDelete.value)
                     .then((value) {
                   debugPrint(value.toString());
-                  Helper.hideLoading();
-                  if (value!=null && value) {
-                    removeChatList(selectedChatList);
-                  }
-                  isSelected(false);
-                  selectedChatList.clear();
+                  //Helper.hideLoading();
+                  /*if (value!=null && value) {
+                  removeChatList(selectedChatList);
+                }
+                isSelected(false);
+                selectedChatList.clear();*/
                 });
+                removeChatList(selectedChatList);
+                isSelected(false);
+                selectedChatList.clear();
               },
               child: const Text("DELETE FOR ME")),
           isRecallAvailable
               ? TextButton(
               onPressed: () {
                 Get.back();
-                Helper.showLoading(
-                    message: 'Deleting Message for Everyone');
+                //Helper.showLoading(message: 'Deleting Message for Everyone');
                 FlyChat.deleteMessagesForEveryone(
                     profile.jid!,chatType, deleteChatListID, isMediaDelete.value)
                     .then((value) {
                   debugPrint(value.toString());
-                  Helper.hideLoading();
+                  //Helper.hideLoading();
                   if (value!=null && value) {
                     // removeChatList(selectedChatList);//
                     for (var chatList in selectedChatList) {
@@ -1581,31 +1553,27 @@ class ChatController extends GetxController
     }
     var busyStatus = !profile.isGroupProfile.checkNull() ? await FlyChat.isBusyStatusEnabled() : false;
     if(!busyStatus.checkNull()) {
-      if (await AppUtils.isNetConnected()) {
-        if (await askStoragePermission()) {
-          if (await Record().hasPermission()) {
-            record = Record();
-            timerInit("00.00");
-            isAudioRecording(Constants.audioRecording);
-            startTimer();
-            await record.start(
-              path:
-              "$audioSavePath/audio_${DateTime
-                  .now()
-                  .millisecondsSinceEpoch}.m4a",
-              encoder: AudioEncoder.AAC,
-              bitRate: 128000,
-              samplingRate: 44100,
-            );
-            Future.delayed(const Duration(seconds: 300), () {
-              if (isAudioRecording.value == Constants.audioRecording) {
-                stopRecording();
-              }
-            });
-          }
+      if (await askStoragePermission()) {
+        if (await Record().hasPermission()) {
+          record = Record();
+          timerInit("00.00");
+          isAudioRecording(Constants.audioRecording);
+          startTimer();
+          await record.start(
+            path:
+            "$audioSavePath/audio_${DateTime
+                .now()
+                .millisecondsSinceEpoch}.m4a",
+            encoder: AudioEncoder.AAC,
+            bitRate: 128000,
+            samplingRate: 44100,
+          );
+          Future.delayed(const Duration(seconds: 300), () {
+            if (isAudioRecording.value == Constants.audioRecording) {
+              stopRecording();
+            }
+          });
         }
-      }else {
-        toToast(Constants.noInternetConnection);
       }
     }else{
       //show busy status popup
@@ -1729,7 +1697,8 @@ class ChatController extends GetxController
       debugPrint("Message Status Update index of search $index");
       if (index != -1) {
         // Helper.hideLoading();
-        chatList[index].messageStatus = chatMessageModel.messageStatus;
+        // chatMessageModel.isSelected=chatList[index].isSelected;
+        chatList[index] = chatMessageModel;
         chatList.refresh();
       } else {
         chatList.insert(0,chatMessageModel);
@@ -1739,6 +1708,13 @@ class ChatController extends GetxController
         Get.find<MessageInfoController>().onMessageStatusUpdated(
             chatMessageModel);
       }
+    }
+    if(isSelected.value){
+      var selectedIndex = selectedChatList.indexWhere((element) => chatMessageModel.messageId==element.messageId);
+      chatMessageModel.isSelected=true;//selectedChatList[selectedIndex].isSelected;
+      selectedChatList[selectedIndex] = chatMessageModel;
+      selectedChatList.refresh();
+      getMessageActions();
     }
   }
 
@@ -1751,8 +1727,16 @@ class ChatController extends GetxController
               (message) => message.messageId == chatMessageModel.messageId);
       debugPrint("Media Status Update index of search $index");
       if (index != -1) {
+        // chatMessageModel.isSelected=chatList[index].isSelected;
         chatList[index] = chatMessageModel;
       }
+    }
+    if(isSelected.value){
+      var selectedIndex = selectedChatList.indexWhere((element) => chatMessageModel.messageId==element.messageId);
+      chatMessageModel.isSelected=true;//selectedChatList[selectedIndex].isSelected;
+      selectedChatList[selectedIndex] = chatMessageModel;
+      selectedChatList.refresh();
+      getMessageActions();
     }
   }
 

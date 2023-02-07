@@ -48,7 +48,7 @@ class ForwardChatController extends GetxController {
     forwardMessageIds.addAll(messageIds);
     userlistScrollController.addListener(_scrollListener);
     getRecentChatList();
-    getAllgroups();
+    getAllGroups();
     getUsers();
 
     _recentChats.bindStream(_recentChats.stream);
@@ -70,7 +70,7 @@ class ForwardChatController extends GetxController {
       for (var element in recentChats) {
         var groupIndex = groupList.indexWhere((it) => it.jid == element.jid);
         if (!groupIndex.isNegative) {
-          _groupList.value.removeAt(groupIndex);
+          _groupList.removeAt(groupIndex);
           _groupList.refresh();
         }
       }
@@ -81,7 +81,7 @@ class ForwardChatController extends GetxController {
       for (var element in recentChats) {
         var index = userList.indexWhere((it) => it.jid == element.jid);
         if (!index.isNegative) {
-          _userList.value.removeAt(index);
+          _userList.removeAt(index);
           _userList.refresh();
         }
       }
@@ -113,7 +113,7 @@ class ForwardChatController extends GetxController {
     });
   }
 
-  void getAllgroups() {
+  void getAllGroups() {
     FlyChat.getAllGroups().then((value){
       if(value!=null){
         var list = profileFromJson(value);
@@ -127,8 +127,14 @@ class ForwardChatController extends GetxController {
     });
   }
 
+  @override
+  void onClose(){
+    super.onClose();
+    searchQuery.dispose();
+  }
+
   var pageNum = 1;
-  var searchQuery = TextEditingController();
+  var searchQuery = TextEditingController(text: '');
   var searching = false;
   var searchLoading = false.obs;
   Future<void> getUsers() async {
@@ -160,31 +166,31 @@ class ForwardChatController extends GetxController {
     _isSearchVisible(false);
   }
 
-  void filterRecentchat(){
-    _recentChats.value.clear();
+  void filterRecentChat(){
+    _recentChats.clear();
     for (var recentChat in _mainrecentChats) {
       if (recentChat.profileName != null &&
           recentChat.profileName!.toLowerCase().contains(searchQuery.text.trim().toString().toLowerCase()) ==
               true) {
-        _recentChats.value.add(recentChat);
+        _recentChats.add(recentChat);
         _recentChats.refresh();
       }
     }
   }
 
-  void filterGroupchat(){
-    _groupList.value.clear();
+  void filterGroupChat(){
+    _groupList.clear();
     for (var group in _maingroupList) {
       if (group.name != null &&
           group.name!.toLowerCase().contains(searchQuery.text.trim().toString().toLowerCase()) ==
               true) {
-        _groupList.value.add(group);
+        _groupList.add(group);
         _groupList.refresh();
       }
     }
   }
 
-  Future<void> filterUserlist() async {
+  Future<void> filterUserList() async {
     if(await AppUtils.isNetConnected()) {
       _userList.clear();
       searching=true;
@@ -237,18 +243,25 @@ class ForwardChatController extends GetxController {
   final deBouncer = DeBouncer(milliseconds: 700);
   String lastInputValue = "";
   void onSearch(String search){
-    if (lastInputValue != search.trim()) {
-      lastInputValue = search.trim();
+    mirrorFlyLog("search", "onSearch");
+    if (lastInputValue != searchQuery.text.toString().trim()) {
+      lastInputValue = searchQuery.text.toString().trim();
       if (searchQuery.text
           .toString()
           .trim()
           .isNotEmpty) {
+        debugPrint("cleared not");
         deBouncer.run(() {
           pageNum = 1;
-          filterRecentchat();
-          filterGroupchat();
-          filterUserlist();
+          filterRecentChat();
+          filterGroupChat();
+          filterUserList();
         });
+      }else{
+        debugPrint("cleared");
+        _recentChats.refresh();
+        _groupList.refresh();
+        _userList.refresh();
       }
     }
   }
