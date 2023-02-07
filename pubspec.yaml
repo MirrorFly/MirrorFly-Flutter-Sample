@@ -59,6 +59,7 @@ dependencies:
   photo_manager: ^2.5.2
   oktoast: ^3.3.1
   google_cloud_translation: ^0.0.3 # Google Translator
+  grouped_list: ^5.1.2
 
   flysdk:
     path: packages/flysdk
