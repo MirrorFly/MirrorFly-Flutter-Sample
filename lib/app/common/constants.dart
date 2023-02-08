@@ -145,6 +145,8 @@ const String uploadIcon = 'assets/logos/upload.svg';
 const String downloadIcon = 'assets/logos/download.svg';
 const String playIcon = 'assets/logos/play.svg';
 const String pauseIcon = 'assets/logos/pause.svg';
+const String shareIcon = 'assets/logos/share.svg';
+const String starSmallIcon = 'assets/logos/star_small_icon.svg';
 
 //Animation
  const String deleteDustbin = 'assets/animation/delete_dustbin.json';

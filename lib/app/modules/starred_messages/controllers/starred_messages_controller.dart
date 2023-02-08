@@ -7,6 +7,7 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:flysdk/flysdk.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
+import 'package:share_plus/share_plus.dart';
 
 import '../../../common/constants.dart';
 import '../../../routes/app_pages.dart';
@@ -44,10 +45,13 @@ class StarredMessagesController extends GetxController {
     player.dispose();
   }
   getFavouriteMessages() {
-    FlyChat.getFavouriteMessages().then((value) {
-      List<ChatMessageModel> chatMessageModel = chatMessageModelFromJson(value);
-      starredChatList(chatMessageModel.reversed.toList());
-    });
+    if(!isSelected.value) {
+      FlyChat.getFavouriteMessages().then((value) {
+        List<ChatMessageModel> chatMessageModel = chatMessageModelFromJson(
+            value);
+        starredChatList(chatMessageModel.reversed.toList());
+      });
+    }
   }
 
   String getChatTime(context, int? epochTime) {
@@ -92,6 +96,7 @@ class StarredMessagesController extends GetxController {
       item.isSelected = true;
       starredChatList.refresh();
       validateForForwardMessage();
+      validateForShareMessage();
     } else {
       debugPrint("Unable to Select Notification Banner");
     }
@@ -106,6 +111,7 @@ class StarredMessagesController extends GetxController {
     }
     starredChatList.refresh();
     validateForForwardMessage();
+    validateForShareMessage();
   }
 
   clearAllChatSelection() {
@@ -392,13 +398,31 @@ class StarredMessagesController extends GetxController {
   validateForForwardMessage(){
     for (var value in selectedChatList) {
       if(value.isMediaMessage()) {
-        if ((value.isMediaDownloaded() || value.isMediaUploaded())) {
+        if ((value.isMediaDownloaded() || value.isMediaUploaded()) && value.mediaChatMessage!.mediaLocalStoragePath.checkNull().isNotEmpty) {
           canBeForward(true);
         } else {
           canBeForward(false);
+          break;
         }
       }else{
         canBeForward(true);
+      }
+    }
+  }
+
+  RxBool canBeShare=false.obs;
+  validateForShareMessage(){
+    for (var value in selectedChatList) {
+      if(value.isMediaMessage()) {
+        if ((value.isMediaDownloaded() || value.isMediaUploaded()) && checkFile(value.mediaChatMessage!.mediaLocalStoragePath.checkNull())) {
+          canBeShare(true);
+        } else {
+          canBeShare(false);
+          break;
+        }
+      }else{
+        canBeShare(false);
+        break;
       }
     }
   }
@@ -494,6 +518,19 @@ class StarredMessagesController extends GetxController {
 
   navigateMessage(ChatMessageModel starredChat) {
     Get.toNamed(Routes.chat,parameters: {'isFromStarred':'true',"userJid":starredChat.chatUserJid,"messageId":starredChat.messageId});
+  }
+
+  void share() {
+    var mediaPaths = <XFile>[];
+    for(var item in selectedChatList){
+      if(item.isMediaMessage()){
+        if((item.isMediaDownloaded() || item.isMediaUploaded()) && item.mediaChatMessage!.mediaLocalStoragePath.checkNull().isNotEmpty){
+          mediaPaths.add(XFile(item.mediaChatMessage!.mediaLocalStoragePath.checkNull()));
+        }
+      }
+    }
+    clearAllChatSelection();
+    Share.shareXFiles(mediaPaths);
   }
 
 }

@@ -845,14 +845,15 @@ class ChatView extends GetView<ChatController> {
                   : customEmptyAction(),*/
               CustomAction(
                 visibleWidget: IconButton(
-                    onPressed: () {}, icon: const Icon(Icons.share)),
+                    onPressed: () {}, icon: SvgPicture.asset(shareIcon)),
                 overflowWidget: const Text("Share"),
                 showAsAction: controller.canBeShared.value ? ShowAsAction.never : ShowAsAction.gone,
                 keyValue: 'Share',
                 onItemClick: () {
                   controller.closeKeyBoard();
+                  controller.share();
                 },
-              )
+              ),
             ]),
       ],
     );

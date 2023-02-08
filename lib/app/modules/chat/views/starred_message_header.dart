@@ -86,34 +86,34 @@ class StarredMessageHeader extends StatelessWidget {
               );
             } else {
               return Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                // mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   getProfileImage(userProfile),
-                  const SizedBox(
-                    width: 10,
-                  ),
-                  Flexible(
+                  const SizedBox(width: 10,),
+                  Expanded(
                     child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Expanded(
+                        Flexible(
                           child: Align(
                             alignment: Alignment.centerLeft,
-                            child: Expanded(
-                              child: Text(
-                                "${userProfile.name} --> You",
-                                style: const TextStyle(
-                                    fontWeight: FontWeight.w600, fontSize: 14),
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                              ),
+                            child: Text(
+                              "${userProfile.name} --> You",
+                              style: const TextStyle(
+                                  fontWeight: FontWeight.bold, fontSize: 15),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
                             ),
                           ),
                         ),
-                        getChatTime(chatList.messageSentTime.toInt()),
+                        const SizedBox(
+                          width: 10,
+                        ),
                       ],
                     ),
                   ),
-
+                  getChatTime(chatList.messageSentTime.toInt()),
                 ],
               );
             }

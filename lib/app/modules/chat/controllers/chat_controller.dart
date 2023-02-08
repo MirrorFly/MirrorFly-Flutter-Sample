@@ -21,6 +21,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:record/record.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../../common/constants.dart';
@@ -913,7 +914,7 @@ class ChatController extends GetxController
 
   clearAllChatSelection() {
     isSelected(false);
-    for (var chatItem in selectedChatList) {
+    for (var chatItem in chatList) {
       chatItem.isSelected = false;
     }
     selectedChatList.clear();
@@ -2221,6 +2222,7 @@ class ChatController extends GetxController
       canShowReport(false);
     }
 
+    canBeStarred(!canBeStarred.value && !canBeUnStarred.value || canBeStarred.value && !canBeUnStarred.value);
     // return messageActions;
     mirrorFlyLog("action_menu canBeCopied", canBeCopied.toString());
     mirrorFlyLog("action_menu canBeForwarded", canBeForwarded.toString());
@@ -2270,5 +2272,18 @@ class ChatController extends GetxController
         : min)
         .index;
     return r<chatList.length ? r+1 : r;
+  }
+
+  void share() {
+    var mediaPaths = <XFile>[];
+    for(var item in selectedChatList){
+      if(item.isMediaMessage()){
+        if((item.isMediaDownloaded() || item.isMediaUploaded()) && item.mediaChatMessage!.mediaLocalStoragePath.checkNull().isNotEmpty){
+          mediaPaths.add(XFile(item.mediaChatMessage!.mediaLocalStoragePath.checkNull()));
+        }
+      }
+    }
+    clearAllChatSelection();
+    Share.shareXFiles(mediaPaths);
   }
 }

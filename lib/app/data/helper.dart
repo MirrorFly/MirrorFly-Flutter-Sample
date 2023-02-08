@@ -400,7 +400,7 @@ String getChatTime(BuildContext context, int? epochTime) {
   calendar = DateTime.fromMicrosecondsSinceEpoch(convertedTime);
   return hourTime;
 }
-checkFile(String mediaLocalStoragePath) {
+bool checkFile(String mediaLocalStoragePath) {
   return mediaLocalStoragePath.isNotEmpty &&
       File(mediaLocalStoragePath).existsSync();
 }

@@ -397,10 +397,7 @@ class LocationMessageView extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               children: [
                 chatMessage.isMessageStarred
-                    ? const Icon(
-                        Icons.star,
-                        size: 13,
-                      )
+                    ? SvgPicture.asset(starSmallIcon)
                     : const SizedBox.shrink(),
                 const SizedBox(
                   width: 5,
@@ -546,10 +543,7 @@ class AudioMessageView extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               children: [
                 chatMessage.isMessageStarred
-                    ? const Icon(
-                        Icons.star,
-                        size: 13,
-                      )
+                    ? SvgPicture.asset(starSmallIcon)
                     : const SizedBox.shrink(),
                 const SizedBox(
                   width: 5,
@@ -641,10 +635,7 @@ class ContactMessageView extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   chatMessage.isMessageStarred
-                      ? const Icon(
-                          Icons.star,
-                          size: 13,
-                        )
+                      ? SvgPicture.asset(starSmallIcon)
                       : const SizedBox.shrink(),
                   const SizedBox(
                     width: 5,
@@ -754,10 +745,7 @@ class DocumentMessageView extends StatelessWidget {
                   ),
                   const Spacer(),
                   chatMessage.isMessageStarred
-                      ? const Icon(
-                          Icons.star,
-                          size: 13,
-                        )
+                      ? SvgPicture.asset(starSmallIcon)
                       : const SizedBox.shrink(),
                   const SizedBox(
                     width: 5,
@@ -902,10 +890,7 @@ class VideoMessageView extends StatelessWidget {
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           chatMessage.isMessageStarred
-                              ? const Icon(
-                                  Icons.star,
-                                  size: 13,
-                                )
+                              ? SvgPicture.asset(starSmallIcon)
                               : const SizedBox.shrink(),
                           const SizedBox(
                             width: 5,
@@ -980,10 +965,7 @@ class ImageMessageView extends StatelessWidget {
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           chatMessage.isMessageStarred
-                              ? const Icon(
-                                  Icons.star,
-                                  size: 13,
-                                )
+                              ? SvgPicture.asset(starSmallIcon)
                               : const SizedBox.shrink(),
                           const SizedBox(
                             width: 5,
@@ -1074,10 +1056,7 @@ Widget setCaptionMessage(MediaChatMessage mediaMessage,
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
             chatMessage.isMessageStarred
-                ? const Icon(
-                    Icons.star,
-                    size: 13,
-                  )
+                ? SvgPicture.asset(starSmallIcon)
                 : const SizedBox.shrink(),
             const SizedBox(
               width: 5,
@@ -1231,10 +1210,7 @@ class TextMessageView extends StatelessWidget {
           Row(
             children: [
               chatMessage.isMessageStarred
-                  ? const Icon(
-                      Icons.star,
-                      size: 13,
-                    )
+                  ? SvgPicture.asset(starSmallIcon)
                   : const SizedBox.shrink(),
               const SizedBox(
                 width: 5,
