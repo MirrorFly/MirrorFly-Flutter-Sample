@@ -11,7 +11,6 @@ import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:get/get.dart';
 import 'package:google_cloud_translation/google_cloud_translation.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:mirror_fly_demo/app/base_controller.dart';
 import 'package:mirror_fly_demo/app/common/de_bouncer.dart';
@@ -495,7 +494,13 @@ class ChatController extends GetxController
             }
           }
         });
+        /*for (var index =0;index<=chatMessageModel.reversed.toList().length;index++) {
+          debugPrint("isDateChanged ${isDateChanged(index,chatMessageModel.reversed.toList())}");
+
+        }*/
       }
+      chatLoading(false);
+    }).catchError((e){
       chatLoading(false);
     });
   }

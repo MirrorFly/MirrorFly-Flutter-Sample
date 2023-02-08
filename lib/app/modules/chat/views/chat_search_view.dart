@@ -14,16 +14,10 @@ class ChatSearchView extends GetView<ChatController> {
 
   @override
   Widget build(BuildContext context) {
-    controller.screenHeight = MediaQuery
-        .of(context)
-        .size
-        .height;
-    controller.screenWidth = MediaQuery
-        .of(context)
-        .size
-        .width;
+    controller.screenHeight = MediaQuery.of(context).size.height;
+    controller.screenWidth = MediaQuery.of(context).size.width;
     return WillPopScope(
-      onWillPop: (){
+      onWillPop: () {
         controller.searchInit();
         return Future.value(true);
       },
@@ -36,26 +30,29 @@ class ChatSearchView extends GetView<ChatController> {
             autofocus: true,
             decoration: const InputDecoration(
                 hintText: "Search...", border: InputBorder.none),
-            onSubmitted: (str){
-              if(controller.filteredPosition.isNotEmpty){
+            onSubmitted: (str) {
+              if (controller.filteredPosition.isNotEmpty) {
                 controller.scrollUp();
-              }else{
+              } else {
                 toToast("No Results Found");
               }
             },
           ),
           iconTheme: const IconThemeData(color: iconColor),
           actions: [
-            IconButton(onPressed: (){
-              controller.scrollUp();
-            }, icon: const Icon(Icons.keyboard_arrow_up)),
-            IconButton(onPressed: (){
-              controller.scrollDown();
-            }, icon: const Icon(Icons.keyboard_arrow_down)),
+            IconButton(
+                onPressed: () {
+                  controller.scrollUp();
+                },
+                icon: const Icon(Icons.keyboard_arrow_up)),
+            IconButton(
+                onPressed: () {
+                  controller.scrollDown();
+                },
+                icon: const Icon(Icons.keyboard_arrow_down)),
           ],
         ),
-        body:  Obx(() =>
-        controller.chatList.isEmpty
+        body: Obx(() => controller.chatList.isEmpty
             ? const SizedBox.shrink()
             : chatListView(controller.chatList)),
       ),
@@ -70,185 +67,101 @@ class ChatSearchView extends GetView<ChatController> {
       itemPositionsListener: controller.itemPositionsListener,
       reverse: true,
       itemBuilder: (context, index) {
-        if (chatList[index].messageType.toUpperCase() != Constants.mNotification) {
-          return Container(
-            color: chatList[index].isSelected
-                ? chatReplyContainerColor
-                : Colors.transparent,
-            margin: const EdgeInsets.only(
-                left: 14, right: 14, top: 5, bottom: 10),
-            child: Align(
-              alignment: (chatList[index].isMessageSentByMe
-                  ? Alignment.bottomRight
-                  : Alignment.bottomLeft),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Visibility(
-                    visible:chatList[index].isMessageSentByMe && controller
-                        .forwardMessageVisibility(chatList[index]),
-                    child: IconButton(
-                        onPressed: () {
-                          controller.forwardSingleMessage(
-                              chatList[index].messageId);
-                        },
-                        icon: SvgPicture.asset(forwardMedia)),
-                  ),
-                  Container(
-                    constraints: BoxConstraints(
-                        maxWidth: controller.screenWidth * 0.75),
-                    decoration: BoxDecoration(
-                        borderRadius: chatList[index].isMessageSentByMe
-                            ? const BorderRadius.only(
-                            topLeft: Radius.circular(10),
-                            topRight: Radius.circular(10),
-                            bottomLeft: Radius.circular(10))
-                            : const BorderRadius.only(
-                            topLeft: Radius.circular(10),
-                            topRight: Radius.circular(10),
-                            bottomRight: Radius.circular(10)),
-                        color: (chatList[index].isMessageSentByMe
-                            ? chatSentBgColor
-                            : Colors.white),
-                        border: chatList[index].isMessageSentByMe
-                            ? Border.all(color: chatSentBgColor)
-                            : Border.all(color: chatBorderColor)),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        SenderHeader(
-                            isGroupProfile: controller.profile.isGroupProfile,
-                            chatList: chatList,
-                            index: index),
-                        (chatList[index].replyParentChatMessage == null)
-                            ? const SizedBox.shrink()
-                            : ReplyMessageHeader(
-                            chatMessage: chatList[index]),
-                        MessageContent(chatList: chatList, index: index,search: controller.searchedText.text.trim(), onPlayAudio: () {
-                          controller.playAudio(chatList[index]);
-                        },),
-                      ],
+        return Column(
+          children: [
+            groupedDateMessage(index, chatList) != null
+                ? NotificationMessageView(
+                    chatMessage: groupedDateMessage(index, chatList))
+                : const SizedBox.shrink(),
+            (chatList[index].messageType.toUpperCase() !=
+                    Constants.mNotification)
+                ? Container(
+                    color: chatList[index].isSelected
+                        ? chatReplyContainerColor
+                        : Colors.transparent,
+                    margin: const EdgeInsets.only(
+                        left: 14, right: 14, top: 5, bottom: 10),
+                    child: Align(
+                      alignment: (chatList[index].isMessageSentByMe
+                          ? Alignment.bottomRight
+                          : Alignment.bottomLeft),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Visibility(
+                            visible: chatList[index].isMessageSentByMe &&
+                                controller
+                                    .forwardMessageVisibility(chatList[index]),
+                            child: IconButton(
+                                onPressed: () {
+                                  controller.forwardSingleMessage(
+                                      chatList[index].messageId);
+                                },
+                                icon: SvgPicture.asset(forwardMedia)),
+                          ),
+                          Container(
+                            constraints: BoxConstraints(
+                                maxWidth: controller.screenWidth * 0.75),
+                            decoration: BoxDecoration(
+                                borderRadius: chatList[index].isMessageSentByMe
+                                    ? const BorderRadius.only(
+                                        topLeft: Radius.circular(10),
+                                        topRight: Radius.circular(10),
+                                        bottomLeft: Radius.circular(10))
+                                    : const BorderRadius.only(
+                                        topLeft: Radius.circular(10),
+                                        topRight: Radius.circular(10),
+                                        bottomRight: Radius.circular(10)),
+                                color: (chatList[index].isMessageSentByMe
+                                    ? chatSentBgColor
+                                    : Colors.white),
+                                border: chatList[index].isMessageSentByMe
+                                    ? Border.all(color: chatSentBgColor)
+                                    : Border.all(color: chatBorderColor)),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                SenderHeader(
+                                    isGroupProfile:
+                                        controller.profile.isGroupProfile,
+                                    chatList: chatList,
+                                    index: index),
+                                (chatList[index].replyParentChatMessage == null)
+                                    ? const SizedBox.shrink()
+                                    : ReplyMessageHeader(
+                                        chatMessage: chatList[index]),
+                                MessageContent(
+                                  chatList: chatList,
+                                  index: index,
+                                  search: controller.searchedText.text.trim(),
+                                  onPlayAudio: () {
+                                    controller.playAudio(chatList[index]);
+                                  },
+                                ),
+                              ],
+                            ),
+                          ),
+                          Visibility(
+                            visible: !chatList[index].isMessageSentByMe &&
+                                controller
+                                    .forwardMessageVisibility(chatList[index]),
+                            child: IconButton(
+                                onPressed: () {
+                                  controller.forwardSingleMessage(
+                                      chatList[index].messageId);
+                                },
+                                icon: SvgPicture.asset(forwardMedia)),
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
-                  Visibility(
-                    visible:!chatList[index].isMessageSentByMe && controller
-                        .forwardMessageVisibility(chatList[index]),
-                    child: IconButton(
-                        onPressed: () {
-                          controller.forwardSingleMessage(
-                              chatList[index].messageId);
-                        },
-                        icon: SvgPicture.asset(forwardMedia)),
-                  ),
-                ],
-              ),
-            ),
-          );
-        }else{
-          return NotificationMessageView(chatMessage: chatList[index]);
-        }
+                  )
+                : NotificationMessageView(
+                    chatMessage: chatList[index].messageTextContent),
+          ],
+        );
       },
     );
   }
-
-  /*getMessageContent(int index, BuildContext context,
-      List<ChatMessageModel> chatList) {
-    var chatMessage = chatList[index];
-    if (chatList[index].isMessageRecalled) {
-      return RecalledMessageView(
-        chatMessage: chatMessage,
-      );
-    } else {
-      if (chatList[index].messageType.toUpperCase() == Constants.mText) {
-        return TextMessageView(chatMessage: chatMessage,
-          search: controller.searchedText.text,);
-      } else if (chatList[index].messageType.toUpperCase() == Constants.mNotification) {
-        return NotificationMessageView(chatMessage: chatMessage);
-      } else if (chatList[index].messageType.toUpperCase() ==
-          Constants.mLocation) {
-        if (chatList[index].locationChatMessage == null) {
-          return const SizedBox.shrink();
-        }
-        return LocationMessageView(chatMessage: chatMessage);
-      } else if (chatList[index].messageType.toUpperCase() == Constants.mContact) {
-        if (chatList[index].contactChatMessage == null) {
-          return const SizedBox.shrink();
-        }
-        return ContactMessageView(chatMessage: chatMessage);
-      } else {
-        if (chatList[index].mediaChatMessage == null) {
-          return const SizedBox.shrink();
-        } else {
-          if (chatList[index].messageType.toUpperCase() == Constants.mImage) {
-            return ImageMessageView(
-                chatMessage: chatMessage,
-                search: controller.searchedText.text,
-                onTap: () {
-                  handleMediaUploadDownload(
-                      chatMessage.mediaChatMessage!.mediaDownloadStatus,
-                      chatList[index]);
-                });
-          } else if (chatList[index].messageType.toUpperCase() == Constants.mVideo) {
-            return VideoMessageView(
-                chatMessage: chatMessage,
-                search: controller.searchedText.text,);
-          } else if (chatList[index].messageType.toUpperCase() == Constants.mDocument || chatList[index].messageType.toUpperCase() == Constants.mFile) {
-            return DocumentMessageView(
-                chatMessage: chatMessage,);
-          } else if (chatList[index].messageType.toUpperCase() == Constants.mAudio) {
-            return AudioMessageView(
-                chatMessage: chatMessage,
-                onPlayAudio: () {
-                  handleMediaUploadDownload(
-                      chatMessage.mediaChatMessage!.mediaDownloadStatus,
-                      chatList[index]);
-                });
-          }
-        }
-      }
-    }
-  }
-
-  Widget getLocationImage(LocationChatMessage? locationChatMessage,
-      double width, double height) {
-    return InkWell(
-        onTap: () async {
-          //Redirect to Google maps App
-          String googleUrl =
-              'https://www.google.com/maps/search/?api=1&query=${locationChatMessage
-              .latitude}, ${locationChatMessage.longitude}';
-          if (await canLaunchUrl(Uri.parse(googleUrl))) {
-            await launchUrl(Uri.parse(googleUrl));
-          } else {
-            throw 'Could not open the map.';
-          }
-        },
-        child: Image.network(
-          Helper.getMapImageUri(
-              locationChatMessage!.latitude, locationChatMessage.longitude),
-          fit: BoxFit.fill,
-          width: width,
-          height: height,
-        ));
-  }*/
-
-  Widget iconCreation(String iconPath, String text, VoidCallback onTap) {
-    return InkWell(
-      onTap: onTap,
-      child: Column(
-        children: [
-          SvgPicture.asset(iconPath),
-          const SizedBox(
-            height: 5,
-          ),
-          Text(
-            text,
-            style: const TextStyle(fontSize: 12, color: Colors.white),
-          )
-        ],
-      ),
-    );
-  }
-
 }
