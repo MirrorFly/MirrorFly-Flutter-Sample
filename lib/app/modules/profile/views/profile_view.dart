@@ -87,6 +87,7 @@ class ProfileView extends GetView<ProfileController> {
                                                     .isNotEmpty
                                                 ? ProfileTextImage(
                                                     fontSize: 40,
+                                                    bgColor: buttonBgColor,
                                                     text: controller.name.value
                                                         .checkNull(),
                                                     radius: 75,

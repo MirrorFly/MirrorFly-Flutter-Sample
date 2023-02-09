@@ -28,7 +28,7 @@ class AppDivider extends StatelessWidget {
 
 class ProfileTextImage extends StatelessWidget {
   final String text;
-  final Color bgColor;
+  final Color? bgColor;
   final double fontSize;
   final double radius;
   final Color fontColor;
@@ -37,7 +37,7 @@ class ProfileTextImage extends StatelessWidget {
       {Key? key,
       required this.text,
       this.fontSize = 15,
-      this.bgColor = buttonBgColor,
+      this.bgColor,
       this.radius = 25,
       this.fontColor = Colors.white})
       : super(key: key);
@@ -46,7 +46,7 @@ class ProfileTextImage extends StatelessWidget {
   Widget build(BuildContext context) {
     return radius == 0
         ? Container(
-        decoration: BoxDecoration(color: Color(Helper.getColourCode(text))),
+        decoration: BoxDecoration(color: bgColor ?? Color(Helper.getColourCode(text))),
           child: Center(
             child: Text(
             getString(text),
@@ -56,7 +56,7 @@ class ProfileTextImage extends StatelessWidget {
         )
         : CircleAvatar(
             radius: radius,
-            backgroundColor: Color(Helper.getColourCode(text)),
+            backgroundColor: bgColor ?? Color(Helper.getColourCode(text)),
             child: Center(
                 child: Text(
               getString(text),
