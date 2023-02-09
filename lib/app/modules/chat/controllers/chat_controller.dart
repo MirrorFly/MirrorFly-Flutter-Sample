@@ -294,10 +294,17 @@ class ChatController extends FullLifeCycleController
 
   getUnsentMessageOfAJid() async {
     if (profile.jid.checkNull().isNotEmpty) {
-      FlyChat.getUnsentMessageOfAJid(profile.jid.checkNull()).then((value) =>
-          value != null
-              ? messageController.text = value
-              : messageController.text = '');
+      FlyChat.getUnsentMessageOfAJid(profile.jid.checkNull()).then((value) {
+        if (value != null) {
+          messageController.text = value;
+
+        } else {
+          messageController.text = '';
+        }
+        if(value.checkNull().trim().isNotEmpty){
+          isUserTyping(true);
+        }
+      });
     }
 
   }
