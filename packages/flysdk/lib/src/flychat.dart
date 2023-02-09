@@ -1299,7 +1299,7 @@ class FlyChat {
     try {
       messageResp = await mirrorFlyMethodChannel.invokeMethod('send_text_msg',
           {"message": message, "JID": jid, "replyMessageId": replyMessageId});
-      debugPrint("Message Result ==> $messageResp");
+      debugPrint("Text Message Result ==> $messageResp");
       return messageResp;
     } on PlatformException catch (e) {
       debugPrint("Flutter Exception ===> $e");
@@ -1322,7 +1322,7 @@ class FlyChat {
         "longitude": longitude,
         "replyMessageId": replyMessageId
       });
-      debugPrint("Message Result ==> $messageResp");
+      debugPrint("Location Message Result ==> $messageResp");
       return messageResp;
     } on PlatformException catch (e) {
       debugPrint("Flutter Exception ===> $e");

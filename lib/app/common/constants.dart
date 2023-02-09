@@ -38,6 +38,7 @@ const Color borderColor = Color(0xffAFB8D0);
 const Color playIconColor = Color(0xff7285B5);
 const Color durationTextColor = Color(0xff455E93);
 const Color chatBgColor = Color(0xffD0D8EB);
+const Color previewTextColor = Color(0xff7f7f7f);
 
 //Assets
 const String registerIcon = 'assets/logos/register_logo.svg';
@@ -98,6 +99,7 @@ const String contactImg = 'assets/logos/contact_icon.svg';
 const String galleryImg = 'assets/logos/gallery.svg';
 const String locationImg = 'assets/logos/location_icon.svg';
 const String rightArrow = 'assets/logos/right_arrow.svg';
+const String previewAddImg = 'assets/logos/preview_add.svg';
 
 const String downloading = 'assets/logos/downloading.svg';
 const String videoPlay = 'assets/logos/video_play.svg';

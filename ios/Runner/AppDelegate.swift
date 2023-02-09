@@ -8,18 +8,32 @@ import FirebaseAuth
 import Firebase
 
 
-var BASE_URL = "https://api-uikit-qa.contus.us/api/v1/"
-var LICENSE_KEY = "ckIjaccWBoMNvxdbql8LJ2dmKqT5bp"
-let XMPP_DOMAIN = "xmpp-preprod-sandbox.mirrorfly.com"
-let XMPP_PORT = 5222
-let SOCKETIO_SERVER_HOST = "https://signal-preprod-sandbox.mirrorfly.com/"
-let JANUS_URL = "wss://janus.mirrorfly.com"
+//var BASE_URL = "https://api-uikit-qa.contus.us/api/v1/"
+//var LICENSE_KEY = "ckIjaccWBoMNvxdbql8LJ2dmKqT5bp"
+//let XMPP_DOMAIN = "xmpp-preprod-sandbox.mirrorfly.com"
+//let XMPP_PORT = 5222
+//let SOCKETIO_SERVER_HOST = "https://signal-preprod-sandbox.mirrorfly.com/"
+//let JANUS_URL = "wss://janus.mirrorfly.com"
 //let CONTAINER_ID = "group.com.mirror.flyflutter"
-let CONTAINER_ID = "group.com.mirrorfly.qa"
-let ENABLE_CONTACT_SYNC = false
-let IS_LIVE = false
-let WEB_LOGIN_URL = "https://webchat-preprod-sandbox.mirrorfly.com/"
-let IS_MOBILE_NUMBER_LOGIN = true
+//let CONTAINER_ID = "group.com.mirrorfly.qa"
+//let ENABLE_CONTACT_SYNC = false
+//let IS_LIVE = false
+//let WEB_LOGIN_URL = "https://webchat-preprod-sandbox.mirrorfly.com/"
+//let IS_MOBILE_NUMBER_LOGIN = true
+
+let BASE_URL = "https://api-uikit-qa.contus.us/api/v1/"
+    let LICENSE_KEY = "ckIjaccWBoMNvxdbql8LJ2dmKqT5bp"
+    let XMPP_DOMAIN = "xmpp-uikit-qa.contus.us"
+    let XMPP_PORT = 5249
+    let SOCKETIO_SERVER_HOST = "https://signal-uikit-qa.contus.us/"
+    let JANUS_URL = "wss://janus.mirrorfly.com"
+    let CONTAINER_ID = "group.com.mirrorfly.qa"
+    let ENABLE_CONTACT_SYNC = false
+    let IS_LIVE = false
+    let WEB_LOGIN_URL = "https://webchat-uikit-qa.contus.us/"
+    let IS_MOBILE_NUMBER_LOGIN = false
+//    let APP_NAME = "UiKitQa"
+//    let ICLOUD_CONTAINER_ID = "iCloud.com.mirrorfly.qa"
 
 let googleApiKey = "AIzaSyDnjPEs86MRsnFfW1sVPKvMWjqQRnSa7Ts"
 

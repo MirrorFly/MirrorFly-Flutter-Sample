@@ -82,7 +82,8 @@ class LoginController extends GetxController {
     if (mobileNumber.text.isEmpty) {
       toToast("Please Enter Mobile Number");
     } else {
-      phoneAuth();
+      //phoneAuth();
+      registerAccount();
     }
   }
 
@@ -119,7 +120,10 @@ class LoginController extends GetxController {
           verificationCompleted: _onVerificationCompleted,
           verificationFailed: (FirebaseAuthException e) {
             timeout(true);
+
             mirrorFlyLog("verificationFailed", e.toString());
+            mirrorFlyLog("verificationFailed", e.message!);
+            mirrorFlyLog("verificationFailed", e.code);
             toToast("Please Enter Valid Mobile Number");
             hideLoading();
           },

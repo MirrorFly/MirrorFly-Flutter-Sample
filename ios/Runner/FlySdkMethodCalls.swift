@@ -123,8 +123,10 @@ import FlyDatabase
         
         FlyMessenger.sendTextMessage(toJid: receiverJID!, message: txtMessage!, replyMessageId: replyMessageID) { isSuccess,error,chatMessage in
             if isSuccess {
-                let chatMsg = JSONSerializer.toJson(chatMessage as Any)
-                
+                var chatMsg = JSONSerializer.toJson(chatMessage as Any)
+                chatMsg = chatMsg.replacingOccurrences(of: "{\"some\":", with: "")
+                chatMsg = chatMsg.replacingOccurrences(of: "}}", with: "}")
+                print(chatMsg)
                 result(chatMsg)
             }else{
                 result(FlutterError(code: "500", message: Commons.json(from: error as Any), details: nil))
@@ -617,7 +619,7 @@ import FlyDatabase
         var groupMembers = [GroupParticipantDetail]()
         
         groupMembers = GroupManager.shared.getGroupMemebersFromLocal(groupJid: groupJid).participantDetailArray.filter({$0.memberJid != FlyDefaults.myJid})
-        
+        dump("groupMembers--> \(groupMembers)")
         let myJid = GroupManager.shared.getGroupMemebersFromLocal(groupJid: groupJid).participantDetailArray.filter({$0.memberJid == FlyDefaults.myJid})
         groupMembers = groupMembers.sorted(by: { $0.profileDetail?.name.lowercased() ?? "" < $1.profileDetail?.name.lowercased() ?? "" })
         groupMembers.insert(contentsOf: myJid, at: 0)
@@ -625,6 +627,9 @@ import FlyDatabase
         var groupMemberProfile: String = "["
         
         groupMembers.forEach{groupMember in
+            print("groupMembers jid--> \(String(describing: groupMember.profileDetail?.jid))")
+            print("groupMembers--> \(groupMember.profileDetail?.image)")
+            print("groupMembers--> \(groupMember.profileDetail?.name)")
             var profileDetailJson = JSONSerializer.toJson(groupMember.profileDetail as Any)
             profileDetailJson = profileDetailJson.replacingOccurrences(of: "{\"some\":", with: "")
             profileDetailJson = profileDetailJson.replacingOccurrences(of: "}}", with: "}")
@@ -1032,9 +1037,36 @@ import FlyDatabase
         print("Get Messages of JID --->")
         print(userJid)
         let messages : [ChatMessage] = FlyMessenger.getMessagesOf(jid: userJid)
-        print("Get Messages of JID --->")
-        var userChatHistory = JSONSerializer.toJson(messages)
+              
+       /* do {
+            let dic = messages.last?.toDictionary()
+            print(dic)
+            let jsonData = try JSONSerialization.data(withJSONObject: dic, options: .prettyPrinted)
+            // here "jsonData" is the dictionary encoded in JSON data
+            let convertedString1 = String(data: jsonData, encoding: .utf8) // the data will be converted to the string
         
+            print("Converted String --> \(convertedString1)")
+
+            let decoded = try JSONSerialization.jsonObject(with: jsonData, options: [])
+            // here "decoded" is of type Any, decoded from JSON data
+            print(decoded)
+            
+            let convertedString = String(data: decoded as! Data, encoding: .utf8) // the data will be converted to the string
+            print("Converted String \(convertedString)")
+            // you can now cast it with the right type
+            if let dictFromJSON = decoded as? [String:String] {
+                // use dictFromJSON
+            }
+        } catch {
+            print(error.localizedDescription)
+        }
+        
+        print("Get Messages of JID --->", messages.last?.mediaChatMessage?.mediaThumbImage)
+        var medmes = messages.last?.mediaChatMessage?.mediaThumbImage.replacingOccurrences(of: "\n", with: "")
+        var userChatHistory2 = JSONSerializer.toJson(medmes)
+        print(userChatHistory2)*/
+        var userChatHistory = JSONSerializer.toJson(messages)
+        dump(userChatHistory)
         userChatHistory = userChatHistory.replacingOccurrences(of: "{\"some\":", with: "")
         userChatHistory = userChatHistory.replacingOccurrences(of: "}}", with: "}")
         
@@ -1709,4 +1741,80 @@ import FlyDatabase
     
     
     
+}
+extension Array {
+    public func toDictionary<Key: Hashable>(with selectKey: (Element) -> Key) -> [Key:Element] {
+        var dict = [Key:Element]()
+        for element in self {
+            dict[selectKey(element)] = element
+        }
+        return dict
+    }
+}
+extension ChatMessage: Serializable {
+    
+    var properties: Array<String> {
+        return ["mediaChatMessage"]
+    }
+    func valueForKey(key: String) -> Any? {
+        switch key {
+        case "mediaChatMessage":
+            return mediaChatMessage
+        default:
+            return nil
+        }
+    }
+    
+}
+extension MediaChatMessage: Serializable {
+    var properties: Array<String> {
+        return ["mediaThumbImage"]
+    }
+    func valueForKey(key: String) -> Any? {
+        switch key {
+        case "mediaThumbImage":
+            return mediaThumbImage
+        default:
+            return nil
+        }
+    }
+}
+
+protocol Serializable {
+    var properties:Array<String> { get }
+    func valueForKey(key: String) -> Any?
+    func toDictionary() -> [String:Any]
+}
+extension Serializable {
+    func toDictionary() -> [String:Any] {
+        var dict:[String:Any] = [:]
+
+        for prop in self.properties {
+            if let val = self.valueForKey(key: prop) as? String {
+                dict[prop] = val
+            } else if let val = self.valueForKey(key: prop) as? Int {
+                dict[prop] = val
+            } else if let val = self.valueForKey(key: prop) as? Double {
+                dict[prop] = val
+            } else if let val = self.valueForKey(key: prop) as? Array<String> {
+                dict[prop] = val
+            } else if let val = self.valueForKey(key: prop) as? Serializable {
+                dict[prop] = val.toDictionary()
+            } else if let val = self.valueForKey(key: prop) as? Array<Serializable> {
+                var arr = Array<[String:Any]>()
+
+                for item in (val as Array<Serializable>) {
+                    arr.append(item.toDictionary())
+                }
+
+                dict[prop] = arr
+            } else if prop == "mediaChatMessage" {
+                if let value = dict[prop] as? MediaChatMessage {
+                    value.toDictionary()
+                }
+            }
+        }
+
+        return dict
+    }
 }

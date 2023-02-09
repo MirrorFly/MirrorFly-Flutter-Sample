@@ -2619,7 +2619,7 @@ open class FlyBaseController(activity: FlutterActivity) : MethodChannel.MethodCa
         val groupName = call.argument<String>("group_name") ?: ""
         val members = call.argument<List<String>>("members") ?: arrayListOf()
         val fileTemp = call.argument<String>("file") ?: ""
-        val file = if (fileTemp.isNotEmpty()) File(fileTemp) else null
+        val file = if (fileTemp.trim().isNotEmpty()) File(fileTemp) else null
         GroupManager.createGroup(groupName, members,
             file, { isSuccess, throwable, hashmap ->
                 if (isSuccess) {

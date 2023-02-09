@@ -17,6 +17,10 @@ class MediaPreviewController extends GetxController {
 
   var currentPageIndex = 0.obs;
 
+  PageController pageViewController = PageController(initialPage: 0, keepPage: false);
+
+
+
 
   @override
   void onInit() {

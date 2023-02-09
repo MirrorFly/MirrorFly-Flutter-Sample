@@ -46,13 +46,16 @@ class GalleryFunctions {
                   animationController: animationController,
                   builder: builder),
             ));
-    Overlay.of(context)!.insert(entry);
+    Overlay.of(context).insert(entry);
     animationController.animateTo(1);
     return FeatureController(
       completer,
       close,
     );
+
   }
+
+
 
   static onPickMax(GalleryMediaPickerController provider) {
     provider.onPickMax
