@@ -1285,20 +1285,19 @@ class RecalledMessageView extends StatelessWidget {
 }
 
 getMessageIndicator(String? messageStatus, bool isSender, String messageType) {
+   debugPrint("Message Status ==>");
    debugPrint("Message Status ==> $messageStatus");
   if (isSender) {
-    if (messageStatus == 'A' || messageStatus == 'acknowledge') {
-      return SvgPicture.asset('assets/logos/acknowledged.svg');
-    } else if (messageStatus == 'D' || messageStatus == 'delivered') {
-      return SvgPicture.asset('assets/logos/delivered.svg');
-    } else if (messageStatus == 'S' || messageStatus == 'seen') {
-      return SvgPicture.asset('assets/logos/seen.svg');
-    } else {
-      return const Icon(
-        Icons.access_time_filled,
-        size: 10,
-        color: Colors.red,
-      );
+    if (messageStatus == 'A') {
+      return SvgPicture.asset(acknowledgedIcon);
+    } else if (messageStatus == 'D') {
+      return SvgPicture.asset(deliveredIcon);
+    } else if (messageStatus == 'S') {
+      return SvgPicture.asset(seenIcon);
+    } else if(messageStatus == 'N'){
+      return SvgPicture.asset(unSendIcon);
+    }else{
+      return const SizedBox.shrink();
     }
   } else {
     return const SizedBox.shrink();

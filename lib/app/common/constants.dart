@@ -148,6 +148,13 @@ const String pauseIcon = 'assets/logos/pause.svg';
 const String shareIcon = 'assets/logos/share.svg';
 const String starSmallIcon = 'assets/logos/star_small_icon.svg';
 
+const String seenIcon = 'assets/logos/seen.svg';
+const String unSendIcon = 'assets/logos/unsend.svg';
+const String deliveredIcon = 'assets/logos/delivered.svg';
+const String acknowledgedIcon = 'assets/logos/acknowledged.svg';
+
+
+
 //Animation
  const String deleteDustbin = 'assets/animation/delete_dustbin.json';
  const String audioJson = 'assets/animation/enable_mic.json';

@@ -826,9 +826,7 @@ open class FlyBaseController(activity: FlutterActivity) : MethodChannel.MethodCa
                 ChatManager.copyTextMessages(messageIdlist).tojsonString()
             }
             call.method.equals("saveUnsentMessage") -> {
-                val jid = call.argument<String>("jid") ?: ""
-                val message = call.argument<String>("message") ?: ""
-                FlyMessenger.saveUnsentMessage(jid,message)
+                saveUnsentMessage(call, result)
             }
             call.method.equals("setCustomValue") -> {
                 val mid = call.argument<String>("message_id") ?: ""
@@ -852,8 +850,7 @@ open class FlyBaseController(activity: FlutterActivity) : MethodChannel.MethodCa
                 ContactManager.inviteUserViaSMS(mobile_no,message)
             }
             call.method.equals("getUnsentMessageOfAJid") -> {
-                val jid = call.argument<String>("jid") ?: ""
-                result.success(FlyMessenger.getUnsentMessageOfAJid(jid))
+                getUnsentMessageOfAJid(call,result);
             }
             call.method.equals("cancelBackup") -> {
                 BackupManager.cancelBackup()
@@ -1267,11 +1264,29 @@ open class FlyBaseController(activity: FlutterActivity) : MethodChannel.MethodCa
             call.method.equals("getMediaSetting") -> {
                 getMediaSetting(call,result)
             }
+            call.method.equals("saveUnsentMessage") -> {
+                saveUnsentMessage(call,result)
+            }
+            call.method.equals("getUnsentMessageOfAJid") -> {
+                getUnsentMessageOfAJid(call,result)
+            }
             else -> {
                 result.notImplemented()
             }
 
         }
+    }
+    
+    private fun getUnsentMessageOfAJid(call: MethodCall,result: MethodChannel.Result){
+        val jid = call.argument<String>("jid") ?: ""
+        val data = FlyMessenger.getUnsentMessageOfAJid(jid)
+        result.success(data);
+    }
+    
+    private fun saveUnsentMessage(call: MethodCall,result: MethodChannel.Result){
+        val jid = call.argument<String>("jid") ?: ""
+        val texMessage = call.argument<String>("texMessage") ?: ""
+        FlyMessenger.saveUnsentMessage(jid, texMessage)
     }
 
     private fun setMediaAutoDownload(call: MethodCall){

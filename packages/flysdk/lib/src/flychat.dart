@@ -2848,7 +2848,7 @@ class FlyChat {
   static saveUnsentMessage(String jid, String message) async {
     try {
       await mirrorFlyMethodChannel
-          .invokeMethod('saveUnsentMessage', {"jid": jid, "message": message});
+          .invokeMethod('saveUnsentMessage', {"jid": jid, "texMessage": message});
     } on PlatformException catch (e) {
       debugPrint("Platform Exception ===> $e");
       rethrow;

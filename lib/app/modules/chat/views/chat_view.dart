@@ -250,10 +250,9 @@ class ChatView extends GetView<ChatController> {
             ? InkWell(
                 onTap: () {
                   if (!controller.showEmoji.value) {
-                    FocusScope.of(context).unfocus();
-                    controller.focusNode.canRequestFocus = false;
+                    controller.focusNode.unfocus();
                   }
-                  Future.delayed(const Duration(milliseconds: 500), () {
+                  Future.delayed(const Duration(milliseconds: 100), () {
                     controller.showEmoji(!controller.showEmoji.value);
                   });
                 },
