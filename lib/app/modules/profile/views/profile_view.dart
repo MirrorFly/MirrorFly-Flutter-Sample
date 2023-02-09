@@ -1,7 +1,9 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:focus_detector/focus_detector.dart';
 
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
@@ -17,231 +19,266 @@ class ProfileView extends GetView<ProfileController> {
   @override
   Widget build(BuildContext context) {
     return SafeArea(
-      child: Scaffold(
-          appBar: AppBar(
-            title: const Text(
-              'Profile',
-              style: TextStyle(color: appbarTextColor),
+      child: FocusDetector(
+        onFocusGained: () {
+          if (!KeyboardVisibilityController().isVisible) {
+            if (controller.userNameFocus.hasFocus) {
+              controller.userNameFocus.unfocus();
+              Future.delayed(const Duration(milliseconds: 100), () {
+                controller.userNameFocus.requestFocus();
+              });
+            }else if (controller.emailFocus.hasFocus) {
+              controller.emailFocus.unfocus();
+              Future.delayed(const Duration(milliseconds: 100), () {
+                controller.emailFocus.requestFocus();
+              });
+            }
+          }
+        },
+        child: Scaffold(
+            appBar: AppBar(
+              title: const Text(
+                'Profile',
+                style: TextStyle(color: appbarTextColor),
+              ),
+              centerTitle: true,
+              automaticallyImplyLeading:
+                  controller.from.value == Routes.login ? false : true,
             ),
-            centerTitle: true,
-            automaticallyImplyLeading: controller.from.value == Routes.login ? false : true,
-          ),
-          body: SafeArea(
-            child: SingleChildScrollView(
-              child: Padding(
-                padding: const EdgeInsets.all(15.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const SizedBox(
-                      height: 10,
-                    ),
-                    Center(
-                      child: Stack(
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.fromLTRB(18.0, 0, 18.0, 0),
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(8.0),
-                              child: Obx(
-                                () => InkWell(
-                                  child: controller.imagePath.value.isNotEmpty
-                                      ? SizedBox(
-                                          width: 150,
-                                          height: 150,
-                                          child: ClipOval(
-                                            child: Image.file(
-                                              File(controller.imagePath.value),
-                                              fit: BoxFit.fill,
-                                            ),
-                                          ))
-                                      : ImageNetwork(
-                                          url: controller.userImgUrl.value
-                                              .checkNull(),
-                                          width: 150,
-                                          height: 150,
-                                          clipOval: true,
-                                          errorWidget: controller.name.value
+            body: SafeArea(
+              child: SingleChildScrollView(
+                child: Padding(
+                  padding: const EdgeInsets.all(15.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      Center(
+                        child: Stack(
+                          children: [
+                            Padding(
+                              padding:
+                                  const EdgeInsets.fromLTRB(18.0, 0, 18.0, 0),
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(8.0),
+                                child: Obx(
+                                  () => InkWell(
+                                    child: controller.imagePath.value.isNotEmpty
+                                        ? SizedBox(
+                                            width: 150,
+                                            height: 150,
+                                            child: ClipOval(
+                                              child: Image.file(
+                                                File(
+                                                    controller.imagePath.value),
+                                                fit: BoxFit.fill,
+                                              ),
+                                            ))
+                                        : ImageNetwork(
+                                            url: controller.userImgUrl.value
+                                                .checkNull(),
+                                            width: 150,
+                                            height: 150,
+                                            clipOval: true,
+                                            errorWidget: controller.name.value
+                                                    .checkNull()
+                                                    .isNotEmpty
+                                                ? ProfileTextImage(
+                                                    fontSize: 40,
+                                                    text: controller.name.value
+                                                        .checkNull(),
+                                                    radius: 75,
+                                                  )
+                                                : null,
+                                          ),
+                                    onTap: () {
+                                      if (controller.imagePath.value
+                                          .checkNull()
+                                          .isNotEmpty) {
+                                        Get.toNamed(Routes.imageView,
+                                            arguments: {
+                                              'imageName':
+                                                  controller.profileName.text,
+                                              'imagePath': controller
+                                                  .imagePath.value
                                                   .checkNull()
-                                                  .isNotEmpty
-                                              ? ProfileTextImage(
-                                                  fontSize: 40,
-                                                  text: controller.name.value
-                                                      .checkNull(),
-                                                  radius: 75,
-                                                )
-                                              : null,
-                                        ),
-                                  onTap: () {
-                                    if (controller.imagePath.value
-                                        .checkNull()
-                                        .isNotEmpty) {
-                                      Get.toNamed(Routes.imageView, arguments: {
-                                        'imageName': controller.profileName.text,
-                                        'imagePath':
-                                            controller.imagePath.value.checkNull()
-                                      });
-                                    } else if (controller.userImgUrl.value
-                                        .checkNull()
-                                        .isNotEmpty) {
-                                      Get.toNamed(Routes.imageView, arguments: {
-                                        'imageName': controller.profileName.text,
-                                        'imageUrl': controller.userImgUrl.value
-                                                .checkNull()
-                                      });
-                                    }
-                                  },
-                                ),
-
-                              ),
-                            ),
-                          ),
-                          Obx(
-                            () => Positioned(
-                              right: 10,
-                              bottom: 10,
-                              child: InkWell(
-                                onTap: controller.loading.value
-                                    ? null
-                                    : () {
-                                        bottomSheetView(context);
-                                      },
-                                child: Image.asset(
-                                  'assets/logos/camera_profile_change.png',
-                                  height: 40,
-                                ),
-                              ),
-                            ),
-                          )
-                        ],
-                      ),
-                    ),
-                    const SizedBox(
-                      height: 10,
-                    ),
-                    TextField(
-                      onChanged: (value) => controller.nameChanges(value),
-                      textAlign: TextAlign.center,
-                      maxLength: 30,
-                      controller: controller.profileName,
-                      decoration: const InputDecoration(
-                        border: InputBorder.none,
-                        hintText: 'Enter User Name',
-                      ),
-                      style: const TextStyle(fontWeight: FontWeight.bold),
-                    ),
-                    const SizedBox(
-                      height: 20,
-                    ),
-                    const Text(
-                      'Email',
-                      style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14),
-                    ),
-                    const SizedBox(
-                      height: 10,
-                    ),
-                    TextField(
-                      keyboardType: TextInputType.emailAddress,
-                      onChanged: (value) => controller.onEmailChange(value),
-                      controller: controller.profileEmail,
-                      enabled: controller.emailEditAccess,
-                      decoration: InputDecoration(
-                        border: InputBorder.none,
-                        hintText: 'Enter Email Id',
-                        icon: SvgPicture.asset('assets/logos/email.svg'),
-                      ),
-                      style: const TextStyle(fontWeight: FontWeight.bold),
-                    ),
-                    const AppDivider(),
-                    const SizedBox(
-                      height: 20,
-                    ),
-                    const Text(
-                      'Mobile Number',
-                      style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14),
-                    ),
-                    const SizedBox(
-                      height: 10,
-                    ),
-                    TextField(
-                      controller: controller.profileMobile,
-                      enabled: false,
-                      decoration: InputDecoration(
-                        border: InputBorder.none,
-                        hintText: 'Enter Mobile Number',
-                        icon: SvgPicture.asset('assets/logos/phone.svg'),
-                      ),
-                      style: const TextStyle(fontWeight: FontWeight.bold),
-                    ),
-                    const AppDivider(),
-                    const SizedBox(
-                      height: 20,
-                    ),
-                    const Text(
-                      'Status',
-                      style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14),
-                    ),
-                    const SizedBox(
-                      height: 10,
-                    ),
-
-                    Obx(() => ListTile(
-                          contentPadding: EdgeInsets.zero,
-                          title: Text(
-                            controller.profileStatus.value.isNotEmpty
-                                ? controller.profileStatus.value
-                                : Constants.defaultStatus,
-                            style: TextStyle(
-                                color: controller.profileStatus.value.isNotEmpty
-                                    ? Colors.black
-                                    : Colors.black38),
-                          ),
-                          leading: SvgPicture.asset('assets/logos/status.svg'),
-                          onTap: () {
-                            Get.toNamed(Routes.statusList, arguments: {
-                              'status': controller.profileStatus.value
-                            })?.then((value) {
-                              if (value != null) {
-                                controller.profileStatus.value = value;
-                              }
-                            });
-                          },
-                        )),
-                    const AppDivider(padding: EdgeInsets.only(bottom: 16),),
-                    Center(
-                      child: Obx(
-                        () => ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 40, vertical: 15),
-                              textStyle: const TextStyle(fontSize: 14),
-                              shape: const StadiumBorder()),
-                          onPressed: controller.loading.value
-                              ? null
-                              : controller.changed.value
-                                  ? () {
-                                      FocusScope.of(context).unfocus();
-                                      if (!controller.loading.value) {
-                                        controller.save();
+                                            });
+                                      } else if (controller.userImgUrl.value
+                                          .checkNull()
+                                          .isNotEmpty) {
+                                        Get.toNamed(Routes.imageView,
+                                            arguments: {
+                                              'imageName':
+                                                  controller.profileName.text,
+                                              'imageUrl': controller
+                                                  .userImgUrl.value
+                                                  .checkNull()
+                                            });
                                       }
-                                    }
-                                  : null,
-                          child: Text(
-                            controller.from.value == Routes.login
-                                ? 'Save'
+                                    },
+                                  ),
+                                ),
+                              ),
+                            ),
+                            Obx(
+                              () => Positioned(
+                                right: 10,
+                                bottom: 10,
+                                child: InkWell(
+                                  onTap: controller.loading.value
+                                      ? null
+                                      : () {
+                                          bottomSheetView(context);
+                                        },
+                                  child: Image.asset(
+                                    'assets/logos/camera_profile_change.png',
+                                    height: 40,
+                                  ),
+                                ),
+                              ),
+                            )
+                          ],
+                        ),
+                      ),
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      TextField(
+                        focusNode: controller.userNameFocus,
+                        autofocus: false,
+                        onChanged: (value) => controller.nameChanges(value),
+                        textAlign: TextAlign.center,
+                        maxLength: 30,
+                        controller: controller.profileName,
+                        decoration: const InputDecoration(
+                          border: InputBorder.none,
+                          hintText: 'Enter User Name',
+                        ),
+                        style: const TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                      const SizedBox(
+                        height: 20,
+                      ),
+                      const Text(
+                        'Email',
+                        style: TextStyle(
+                            fontWeight: FontWeight.w600, fontSize: 14),
+                      ),
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      TextField(
+                        keyboardType: TextInputType.emailAddress,
+                        focusNode: controller.emailFocus,
+                        onChanged: (value) => controller.onEmailChange(value),
+                        controller: controller.profileEmail,
+                        enabled: controller.emailEditAccess,
+                        decoration: InputDecoration(
+                          border: InputBorder.none,
+                          hintText: 'Enter Email Id',
+                          icon: SvgPicture.asset('assets/logos/email.svg'),
+                        ),
+                        style: const TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                      const AppDivider(),
+                      const SizedBox(
+                        height: 20,
+                      ),
+                      const Text(
+                        'Mobile Number',
+                        style: TextStyle(
+                            fontWeight: FontWeight.w600, fontSize: 14),
+                      ),
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      TextField(
+                        controller: controller.profileMobile,
+                        enabled: false,
+                        decoration: InputDecoration(
+                          border: InputBorder.none,
+                          hintText: 'Enter Mobile Number',
+                          icon: SvgPicture.asset('assets/logos/phone.svg'),
+                        ),
+                        style: const TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                      const AppDivider(),
+                      const SizedBox(
+                        height: 20,
+                      ),
+                      const Text(
+                        'Status',
+                        style: TextStyle(
+                            fontWeight: FontWeight.w600, fontSize: 14),
+                      ),
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      Obx(() => ListTile(
+                            contentPadding: EdgeInsets.zero,
+                            title: Text(
+                              controller.profileStatus.value.isNotEmpty
+                                  ? controller.profileStatus.value
+                                  : Constants.defaultStatus,
+                              style: TextStyle(
+                                  color:
+                                      controller.profileStatus.value.isNotEmpty
+                                          ? Colors.black
+                                          : Colors.black38),
+                            ),
+                            leading:
+                                SvgPicture.asset('assets/logos/status.svg'),
+                            onTap: () {
+                              Get.toNamed(Routes.statusList, arguments: {
+                                'status': controller.profileStatus.value
+                              })?.then((value) {
+                                if (value != null) {
+                                  controller.profileStatus.value = value;
+                                }
+                              });
+                            },
+                          )),
+                      const AppDivider(
+                        padding: EdgeInsets.only(bottom: 16),
+                      ),
+                      Center(
+                        child: Obx(
+                          () => ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 40, vertical: 15),
+                                textStyle: const TextStyle(fontSize: 14),
+                                shape: const StadiumBorder()),
+                            onPressed: controller.loading.value
+                                ? null
                                 : controller.changed.value
-                                    ? 'Update & Continue'
-                                    : 'Save',
-                            style: const TextStyle(fontWeight: FontWeight.w600),
+                                    ? () {
+                                        FocusScope.of(context).unfocus();
+                                        if (!controller.loading.value) {
+                                          controller.save();
+                                        }
+                                      }
+                                    : null,
+                            child: Text(
+                              controller.from.value == Routes.login
+                                  ? 'Save'
+                                  : controller.changed.value
+                                      ? 'Update & Continue'
+                                      : 'Save',
+                              style:
+                                  const TextStyle(fontWeight: FontWeight.w600),
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
-            ),
-          )),
+            )),
+      ),
     );
   }
 
