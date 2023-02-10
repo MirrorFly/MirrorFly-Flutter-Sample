@@ -25,7 +25,7 @@ class MediaPreviewView extends GetView<MediaPreviewController> {
               return controller.filePath.length > 1 ? IconButton(
                   onPressed: () {
                     controller.deleteMedia();
-                  }, icon: const Icon(Icons.delete_outline)) : const SizedBox
+                  }, icon: SvgPicture.asset(deleteBinWhite)) : const SizedBox
                   .shrink();
             })
           ],
@@ -155,12 +155,14 @@ class MediaPreviewView extends GetView<MediaPreviewController> {
                             children: [
                               Row(
                                 children: [
-                                  InkWell(
-                                    onTap: () {
-                                      Get.back();
-                                    },
-                                    child: SvgPicture.asset(previewAddImg),
-                                  ),
+                                  Obx(() {
+                                    return controller.filePath.length < 10 ? InkWell(
+                                      onTap: () {
+                                        Get.back();
+                                      },
+                                      child: SvgPicture.asset(previewAddImg),
+                                    ) : const SizedBox.shrink();
+                                  }),
                                   const SizedBox(
                                     width: 5,
                                   ),
@@ -176,11 +178,12 @@ class MediaPreviewView extends GetView<MediaPreviewController> {
                                   ),
                                   Expanded(
                                     child: TextFormField(
+                                      focusNode: controller.captionFocusNode,
                                       controller: controller.caption,
                                       onChanged: controller.onCaptionTyped,
                                       style: const TextStyle(
                                         color: Colors.white,
-                                        fontSize: 17,
+                                        fontSize: 15,
                                       ),
                                       maxLines: 6,
                                       minLines: 1,
@@ -230,7 +233,7 @@ class MediaPreviewView extends GetView<MediaPreviewController> {
                         ),
                         const SizedBox(height: 10,),
                         Obx(() {
-                          return SizedBox(
+                          return controller.filePath.length > 1 ? SizedBox(
                             height: 45,
                             child: ListView.builder(
                                 scrollDirection: Axis.horizontal,
@@ -245,36 +248,41 @@ class MediaPreviewView extends GetView<MediaPreviewController> {
                                             controller.pageViewController
                                                 .animateToPage(index,
                                                 duration: const Duration(
-                                                    milliseconds: 200),
+                                                    milliseconds: 1),
                                                 curve: Curves.easeIn);
                                           },
                                           child: Container(
-                                              width: 45,
-                                              height: 45,
-                                              decoration: controller
-                                                  .currentPageIndex.value ==
-                                                  index
-                                                  ? BoxDecoration(
-                                                  border: Border.all(
-                                                    color: Colors.blue,
-                                                    width: 1,
-                                                  ))
-                                                  : null,
-                                              margin: const EdgeInsets
-                                                  .symmetric(
-                                                  horizontal: 1),
-                                            child: Image.memory(controller.filePath[index].thumbnail),
+                                            width: 45,
+                                            height: 45,
+                                            decoration: controller
+                                                .currentPageIndex.value ==
+                                                index
+                                                ? BoxDecoration(
+                                                border: Border.all(
+                                                  color: Colors.blue,
+                                                  width: 1,
+                                                ))
+                                                : null,
+                                            margin: const EdgeInsets
+                                                .symmetric(
+                                                horizontal: 1),
+                                            child: Image.memory(
+                                                controller.filePath[index]
+                                                    .thumbnail),
                                           ),
                                         );
                                       }),
-                                      controller.filePath[index].type == "image" ? const SizedBox.shrink() : Positioned(
-                                        bottom: 4,
+                                      controller.filePath[index].type == "image"
+                                          ? const SizedBox.shrink()
+                                          : Positioned(
+                                          bottom: 4,
                                           left: 4,
-                                          child: SvgPicture.asset(videoCamera, width: 5, height: 5,)),
+                                          child: SvgPicture.asset(
+                                            videoCamera, width: 5, height: 5,)),
                                     ],
                                   );
                                 }),
-                          );
+                          ) : const SizedBox.shrink();
                         })
                       ],
                     ),
@@ -288,6 +296,16 @@ class MediaPreviewView extends GetView<MediaPreviewController> {
 
   void onMediaPreviewPageChanged(int value) {
     debugPrint(value.toString());
+    // final deBouncer = DeBouncer(milliseconds: 200);
+    // deBouncer.run(() {
     controller.currentPageIndex(value);
+    controller.caption.text = controller.captionMessage[value];
+    controller.captionFocusNode.unfocus();
+    // });
+    // Future.delayed(const Duration(milliseconds: 200), (){
+    //   controller.currentPageIndex(value);
+    //   controller.caption.text = controller.captionMessage[value];
+    // });
+
   }
 }

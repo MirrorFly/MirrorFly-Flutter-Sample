@@ -185,7 +185,7 @@ class MessageInfoController extends GetxController {
   }
 
   void onMessageStatusUpdated(ChatMessageModel chatMessageModel){
-    mirrorFlyLog("MESSAGE STATUS UPDATED on Info", chatMessageModel.messageId);
+    // mirrorFlyLog("MESSAGE STATUS UPDATED on Info", chatMessageModel.messageId);
     if(chatMessageModel.messageId == chatMessage[0].messageId){
       chatMessage[0]=chatMessageModel;
       chatMessage.refresh();

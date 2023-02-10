@@ -152,7 +152,7 @@ const String shareIcon = 'assets/logos/share.svg';
 const String starSmallIcon = 'assets/logos/star_small_icon.svg';
 
 const String seenIcon = 'assets/logos/seen.svg';
-const String unSendIcon = 'assets/logos/unsend.svg';
+const String unSendIcon = 'assets/logos/unsent.svg';
 const String deliveredIcon = 'assets/logos/delivered.svg';
 const String acknowledgedIcon = 'assets/logos/acknowledged.svg';
 
@@ -180,6 +180,7 @@ const String closeContactIcon = 'assets/logos/close_icon_contact.svg';
 const String emailIcon = 'assets/logos/email.svg';
 const String phoneIcon = 'assets/logos/phone.svg';
 const String deleteBin = 'assets/logos/delete_bin.svg';
+const String deleteBinWhite = 'assets/logos/delete_bin_white.svg';
 const String warningIcon = 'assets/logos/warning.svg';
 
 const String filePermission = "assets/logos/file_permission.svg";

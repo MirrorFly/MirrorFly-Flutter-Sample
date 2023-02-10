@@ -1334,9 +1334,13 @@ Widget getImageOverlay(ChatMessageModel chatMessage, {Function()? onAudio,Functi
       return const SizedBox.shrink();
     }
   } else {
+    debugPrint("overlay status-->${chatMessage.isMessageSentByMe
+        ? chatMessage.mediaChatMessage!.mediaUploadStatus
+        : chatMessage.mediaChatMessage!.mediaDownloadStatus}");
     switch (chatMessage.isMessageSentByMe
         ? chatMessage.mediaChatMessage!.mediaUploadStatus
         : chatMessage.mediaChatMessage!.mediaDownloadStatus) {
+
       case Constants.mediaDownloaded:
       case Constants.mediaUploaded:
       case Constants.mediaDownloadedNotAvailable:
@@ -1412,9 +1416,14 @@ void uploadMedia(String messageId) async {
   }
 }
 void downloadMedia(String messageId) async {
+  debugPrint("media download click");
+  debugPrint("media download click--> $messageId");
   if(await AppUtils.isNetConnected()) {
     if (await askStoragePermission()) {
+      debugPrint("media permission granted");
       FlyChat.downloadMedia(messageId);
+    }else{
+      debugPrint("storage permission not granted");
     }
   }else{
     toToast(Constants.noInternetConnection);

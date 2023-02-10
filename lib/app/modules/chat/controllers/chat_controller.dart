@@ -534,10 +534,10 @@ class ChatController extends FullLifeCycleController
         debugPrint("Chat List is Empty");
       } else {
         debugPrint("parsing the value");
-        mirrorFlyLog("chat parsed history before", value);
+        // mirrorFlyLog("chat parsed history before", value);
         List<ChatMessageModel> chatMessageModel =
             chatMessageModelFromJson(value);
-        mirrorFlyLog("chat parsed history", chatMessageModelToJson(chatMessageModel));
+        // mirrorFlyLog("chat parsed history", chatMessageModelToJson(chatMessageModel));
         chatList(chatMessageModel.reversed.toList());
         Future.delayed(const Duration(milliseconds: 200), () {
           if (starredChatMessageId != null) {
@@ -702,11 +702,6 @@ class ChatController extends FullLifeCycleController
         File(mediaLocalStoragePath).existsSync();
   }
 
-  downloadMedia(String messageId) async {
-    if (await askStoragePermission()) {
-      FlyChat.downloadMedia(messageId);
-    }
-  }
 
   ChatMessageModel? playingChat;
 
@@ -1824,11 +1819,13 @@ class ChatController extends FullLifeCycleController
   @override
   void onMessageStatusUpdated(event) {
     super.onMessageStatusUpdated(event);
-    mirrorFlyLog("MESSAGE STATUS UPDATED", event);
+    // mirrorFlyLog("MESSAGE STATUS UPDATED", event);
     if(event == null){
       debugPrint("MESSAGE STATUS UPDATED IS NULL");
     }
+
     ChatMessageModel chatMessageModel = sendMessageModelFromJson(event);
+    debugPrint("message update status --> ${chatMessageModel.messageType} --> ${chatMessageModel.messageId} --> ${chatMessageModel.mediaChatMessage?.mediaUploadStatus}");
     if (chatMessageModel.chatUserJid == profile.jid) {
       final index = chatList.indexWhere(
           (message) => message.messageId == chatMessageModel.messageId);
@@ -1839,8 +1836,8 @@ class ChatController extends FullLifeCycleController
         chatList[index] = chatMessageModel;
         chatList.refresh();
       } else {
-        chatList.insert(0, chatMessageModel);
-        scrollToBottom();
+        // chatList.insert(0, chatMessageModel);
+        // scrollToBottom();
       }
       if (Get.isRegistered<MessageInfoController>()) {
         Get.find<MessageInfoController>()

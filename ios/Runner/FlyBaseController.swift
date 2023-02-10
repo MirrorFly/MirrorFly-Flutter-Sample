@@ -994,7 +994,7 @@ extension FlyBaseController : MessageEventsDelegate, ConnectionEventDelegate, Lo
 
     }
 
-    func onMediaStatusUpdated(message: FlyCommon.ChatMessage) {
+    func onMediaStatusUpdated(message : FlyCommon.ChatMessage) {
         print("Media Status Update--->")
         var chatMediaJson = JSONSerializer.toJson(message as Any)
         chatMediaJson = chatMediaJson.replacingOccurrences(of: "{\"some\":", with: "")

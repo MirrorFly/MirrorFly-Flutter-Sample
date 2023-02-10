@@ -219,12 +219,12 @@ import FlyDatabase
         FlyMessenger.sendImageMessage(toJid: userJid!, mediaData: media, replyMessageId: replyMessageId){isSuccess,error,message in
             if isSuccess {
                 print("Send Image--->")
-                print(message as Any)
+//                print(message as Any)
                 
                 var response = JSONSerializer.toJson(message as Any)
                 response = response.replacingOccurrences(of: "{\"some\":", with: "")
                 response = response.replacingOccurrences(of: "}}", with: "}")
-                print(response)
+//                print(response)
                 result(response)
             }else{
                 print("<---Send Image Failed--->")
@@ -289,7 +289,14 @@ import FlyDatabase
         
         let mediaMessageId = args["mediaMessage_id"] as? String ?? ""
         
+        print("-->download Media id\(mediaMessageId)")
+        
         FlyMessenger.downloadMedia(messageId: mediaMessageId){ isSuccess,error,message in
+            print("-->mediaMessageId \(isSuccess)")
+            if(!isSuccess){
+                print("-->downloadMedia error \(error)")
+                print("-->downloadMedia message \(message)")
+            }
             result(isSuccess)
         }
     }
@@ -1076,7 +1083,8 @@ import FlyDatabase
         var userChatHistory2 = JSONSerializer.toJson(medmes)
         print(userChatHistory2)*/
         var userChatHistory = JSONSerializer.toJson(messages)
-        dump(userChatHistory)
+//        dump(userChatHistory)
+        
         userChatHistory = userChatHistory.replacingOccurrences(of: "{\"some\":", with: "")
         userChatHistory = userChatHistory.replacingOccurrences(of: "}}", with: "}")
         
@@ -1086,7 +1094,7 @@ import FlyDatabase
 //        print("====DSON=====")
         
 //        userChatHistory = userChatHistory.replacingOccurrences(of: "\"messageStatus\":", with: "\"iosMessageStatus\":")
-        print(userChatHistory)
+//        print(userChatHistory)
         result(userChatHistory)
         
     }
@@ -1293,8 +1301,8 @@ import FlyDatabase
     static func getRecentChatListIncludingArchived(call: FlutterMethodCall, result: @escaping FlutterResult){
         
         let recentChatList = ChatManager.getRecentChatListIncludingArchived()
-        print("recent chat list including archived ---> \(recentChatList)")
-        print("recent chat list including archived ---> \(JSONSerializer.toJson(recentChatList))")
+//        print("recent chat list including archived ---> \(recentChatList)")
+//        print("recent chat list including archived ---> \(JSONSerializer.toJson(recentChatList))")
         result(JSONSerializer.toJson(recentChatList))
     }
     static func getRecentChatOf(call: FlutterMethodCall, result: @escaping FlutterResult){

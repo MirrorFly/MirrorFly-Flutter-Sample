@@ -59,7 +59,7 @@ class GalleryFunctions {
 
   static onPickMax(GalleryMediaPickerController provider) {
     provider.onPickMax
-        .addListener(() => showToast("You can only able to share ${provider.max} items.", position: ToastPosition.bottom));
+        .addListener(() => showToast("Can't share more than ${provider.max} media items.", position: ToastPosition.bottom));
   }
 
   static getPermission(setState, GalleryMediaPickerController provider) async {

@@ -163,7 +163,7 @@ class ArchivedChatListController extends GetxController {
   }
 
   void onMessageStatusUpdated(event) {
-    mirrorFlyLog("MESSAGE STATUS UPDATED", event);
+    // mirrorFlyLog("MESSAGE STATUS UPDATED", event);
     ChatMessageModel chatMessageModel = sendMessageModelFromJson(event);
     final index = archivedChats.indexWhere(
             (message) => message.lastMessageId == chatMessageModel.messageId);

@@ -21,6 +21,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.*/
 
 import Foundation
+import FlyCore
+import FlyCommon
 
 /// Handles Convertion from instances of objects to JSON strings. Also helps with casting strings of JSON to Arrays or Dictionaries.
 open class JSONSerializer {
@@ -169,19 +171,23 @@ open class JSONSerializer {
             let property = Mirror(reflecting: value)
             
             if propertyName == "mediaChatMessage" {
-                print("Media value \(value)")
+//                print("Media value \(value)")
+            }
+            
+            if propertyName == "mediaThumbImage" {
+//                print("mediaThumbImage value \(value)")
             }
             
             if propertyName == "replyParentChatMessage"{
-                print("replyParentChatMessage--> \(value)")
-                print("replyParentChatMessage--> \(String(describing: value))")
+//                print("replyParentChatMessage--> \(value)")
+//                print("replyParentChatMessage--> \(String(describing: value))")
             }
             
             
-            if(propertyName == "nickName" && value as! String == "67890"){
-                print("property nickName-->\(propertyName)")
-                print("property nickName-->\(value)")
-            }
+//            if(propertyName == "nickName" && value as! String == "67890"){
+//                print("property nickName-->\(propertyName)")
+//                print("property nickName-->\(value)")
+//            }
             
         if let mirrorChildrenCollection = AnyRandomAccessCollection(property.children), mirrorChildrenCollection.count > 0 {
            // if let superclassChildren = property.superclassMirror?.children, superclassChildren.count > 0 {
@@ -293,6 +299,7 @@ open class JSONSerializer {
                 handledValue += "]"
             }
             else if let array = value as? [String?] {
+               
                 handledValue += "["
                 for (index, value) in array.enumerated() {
                     handledValue += value != nil ? "\"\(value!)\"" : "null"
@@ -332,17 +339,17 @@ open class JSONSerializer {
             
             else if (propertyName == "mediaChatMessage" || propertyName == "locationChatMessage") &&  String(describing: value) != "nil" {
                // let refined = String(describing: value).replacingOccurrences(of: "some", with: "")
-                if (propertyName == "mediaThumbImage") {
-                    var force =  String(describing: value).replacingOccurrences(of: "\n", with: "")
-                    handledValue = toJson(force)
-                } else {
-                    let force = value
-                    handledValue = toJson(force)
+                print("mediaThumbImage check")
+//                 else {
+                var force = value as! MediaChatMessage
+                var image: String = "\(force.mediaThumbImage)"
+                force.mediaThumbImage = image.replacingOccurrences(of: "\n", with: "")
+                handledValue = toJson(force)
 
-                }
+//                }
                
                 
-            }
+            } 
             else if(propertyName == "contactPhoneNumbers") &&  String(describing: value) != "nil" {
                 print("contactPhoneNumbers-----")
 //                print(value)
@@ -359,9 +366,8 @@ open class JSONSerializer {
 //                print(handledValue)
                 
             }
-            
+        
             else if (propertyName == "replyParentChatMessage" && String(describing: value) != "nil"){
-                print("changing the replyParentChatMessage--> \(String(describing: value) != "nil")")
                 let force = value
                 handledValue = toJson(force)
             }
@@ -385,7 +391,7 @@ open class JSONSerializer {
                 
             }
             if (propertyName == "mediaChatMessage" || propertyName == "locationChatMessage") &&  String(describing: value) != "nil" {
-                print(handledValue)
+//                print(handledValue)
             }
            
             
@@ -410,7 +416,7 @@ open class JSONSerializer {
                 json = "\(handledValue)" + (index < size-1 ? ", " : "")
             }
             if (propertyName == "mediaChatMessage" || propertyName == "locationChatMessage") &&  String(describing: value) != "nil" {
-                print(json)
+//                print(json)
             }
             index += 1
         }

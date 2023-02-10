@@ -54,7 +54,7 @@ class DashboardController extends GetxController with GetTickerProviderStateMixi
 
   Future<RecentChatData?> getRecentChatOfJid(String jid) async{
     var value = await FlyChat.getRecentChatOf(jid);
-    mirrorFlyLog("chat", value.toString());
+    // mirrorFlyLog("chat", value.toString());
     if (value != null) {
       var data = RecentChatData.fromJson(json.decode(value));
       return data;
@@ -292,7 +292,7 @@ class DashboardController extends GetxController with GetTickerProviderStateMixi
 
   Future<ChatMessageModel?> getMessageOfId(String mid) async{
     var value = await FlyChat.getMessageOfId(mid);
-    mirrorFlyLog("getMessageOfId recent", value.toString());
+    // mirrorFlyLog("getMessageOfId recent", value.toString());
     if(value!=null) {
       var data = ChatMessageModel.fromJson(json.decode(value.toString()));
       return data;
@@ -528,8 +528,8 @@ class DashboardController extends GetxController with GetTickerProviderStateMixi
   bool isSelectedPositionsValidForPin(){
     var pinnedListPosition = selectedChats;
     var validPositions = 0; //selected non pinned items
-    mirrorFlyLog("selectedchats", pinnedListPosition.join(","));
-    mirrorFlyLog("recentPinnedCount", recentPinnedCount.toString());
+    // mirrorFlyLog("selectedchats", pinnedListPosition.join(","));
+    // mirrorFlyLog("recentPinnedCount", recentPinnedCount.toString());
     for (var value in pinnedListPosition) {
       var valid = recentChats.firstWhere((p0) => p0.jid == value);// check, is non pinned item
       if(!valid.isChatPinned.checkNull()){
@@ -738,7 +738,7 @@ class DashboardController extends GetxController with GetTickerProviderStateMixi
     super.onMessageReceived(chatMessage);
     ChatMessageModel chatMessageModel = sendMessageModelFromJson(chatMessage);
     updateRecentChat(chatMessageModel.chatUserJid);
-    mirrorFlyLog("message", chatMessageModel.toJson().toString());
+    // mirrorFlyLog("message", chatMessageModel.toJson().toString());
     if(Get.isRegistered<ArchivedChatListController>()){
       Get.find<ArchivedChatListController>().onMessageReceived(chatMessageModel);
     }
@@ -746,7 +746,7 @@ class DashboardController extends GetxController with GetTickerProviderStateMixi
 
   @override
   void onMessageStatusUpdated(event) {
-    mirrorFlyLog("MESSAGE STATUS UPDATED", event);
+    // mirrorFlyLog("MESSAGE STATUS UPDATED", event);
     ChatMessageModel chatMessageModel = sendMessageModelFromJson(event);
       final index = recentChats.indexWhere(
               (message) => message.lastMessageId == chatMessageModel.messageId);

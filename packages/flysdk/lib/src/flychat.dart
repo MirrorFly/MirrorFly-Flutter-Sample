@@ -1342,7 +1342,7 @@ class FlyChat {
           await mirrorFlyMethodChannel.invokeMethod('send_image_message', {
         "jid": jid,
         "filePath": filePath,
-        "caption": caption,
+        "caption": caption?.trim(),
         "replyMessageId": replyMessageID,
         "imageFileUrl": imageFileUrl
       });
