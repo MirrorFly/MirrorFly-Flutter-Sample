@@ -67,4 +67,8 @@ class MediaPreviewController extends GetxController {
   void deleteMedia() {
     filePath.removeAt(currentPageIndex.value);
   }
+
+  void onCaptionTyped(String value) {
+
+  }
 }

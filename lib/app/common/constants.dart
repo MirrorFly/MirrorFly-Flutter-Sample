@@ -103,6 +103,7 @@ const String previewAddImg = 'assets/logos/preview_add.svg';
 
 const String downloading = 'assets/logos/downloading.svg';
 const String videoPlay = 'assets/logos/video_play.svg';
+const String videoCamera = 'assets/logos/video_camera.svg';
 const String audioPlay = 'assets/logos/audio_play.svg';
 const String audioMicBg = 'assets/logos/audio_mic.svg';
 const String audioMic = 'assets/logos/mic.svg';

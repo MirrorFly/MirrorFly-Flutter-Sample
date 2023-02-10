@@ -139,137 +139,144 @@ class MediaPreviewView extends GetView<MediaPreviewController> {
                       );
                     }),
                   ),
-                  Positioned(
-                    bottom: 0,
-                    child: Container(
-                      color: Colors.black38,
-                      width: MediaQuery
-                          .of(context)
-                          .size
-                          .width,
-                      padding:
-                      const EdgeInsets.symmetric(vertical: 5, horizontal: 15),
-                      child: Column(
-                        children: [
-                          IntrinsicHeight(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Row(
-                                  children: [
-                                    InkWell(
-                                      onTap: () {
-                                        Get.back();
-                                      },
-                                      child: SvgPicture.asset(previewAddImg),
-                                    ),
-                                    const SizedBox(
-                                      width: 5,
-                                    ),
-                                    Container(
-                                      color: previewTextColor,
-                                      width: 1,
-                                      height: 25,
-                                      margin: const EdgeInsets.symmetric(
-                                          horizontal: 5),
-                                    ),
-                                    const SizedBox(
-                                      width: 5,
-                                    ),
-                                    Expanded(
-                                      child: TextFormField(
-                                        controller: controller.caption,
-                                        style: const TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 17,
-                                        ),
-                                        maxLines: 6,
-                                        minLines: 1,
-                                        decoration: const InputDecoration(
-                                          border: InputBorder.none,
-                                          hintText: "Add Caption...",
-                                          hintStyle: TextStyle(
-                                            color: previewTextColor,
-                                            fontSize: 15,
-                                          ),
+                  Container(
+                    color: Colors.black38,
+                    width: MediaQuery
+                        .of(context)
+                        .size
+                        .width,
+                    padding:
+                    const EdgeInsets.symmetric(vertical: 5, horizontal: 15),
+                    child: Column(
+                      children: [
+                        IntrinsicHeight(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                children: [
+                                  InkWell(
+                                    onTap: () {
+                                      Get.back();
+                                    },
+                                    child: SvgPicture.asset(previewAddImg),
+                                  ),
+                                  const SizedBox(
+                                    width: 5,
+                                  ),
+                                  Container(
+                                    color: previewTextColor,
+                                    width: 1,
+                                    height: 25,
+                                    margin: const EdgeInsets.symmetric(
+                                        horizontal: 5),
+                                  ),
+                                  const SizedBox(
+                                    width: 5,
+                                  ),
+                                  Expanded(
+                                    child: TextFormField(
+                                      controller: controller.caption,
+                                      onChanged: controller.onCaptionTyped,
+                                      style: const TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 17,
+                                      ),
+                                      maxLines: 6,
+                                      minLines: 1,
+                                      decoration: const InputDecoration(
+                                        border: InputBorder.none,
+                                        hintText: "Add Caption...",
+                                        hintStyle: TextStyle(
+                                          color: previewTextColor,
+                                          fontSize: 15,
                                         ),
                                       ),
                                     ),
-                                    InkWell(
-                                        onTap: () {
-                                          controller.sendMedia();
-                                          // controller.sendMessage(controller.profile);
-                                        },
-                                        child: SvgPicture.asset(
-                                            'assets/logos/img_send.svg')),
-                                  ],
-                                ),
-                                // SvgPicture.asset(
-                                //   rightArrow,
-                                //   width: 18,
-                                //   height: 18,
-                                //   fit: BoxFit.contain,
-                                //   color: Colors.white,
-                                // ),
-                                Row(
-                                  children: [
-                                    const Icon(
-                                      Icons.keyboard_arrow_right,
-                                      color: Colors.white,
-                                      size: 13,
-                                    ),
-                                    Text(
-                                      controller.userName,
-                                      style: const TextStyle(
-                                          color: previewTextColor,
-                                          fontSize: 13),
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            ),
+                                  ),
+                                  InkWell(
+                                      onTap: () {
+                                        controller.sendMedia();
+                                        // controller.sendMessage(controller.profile);
+                                      },
+                                      child: SvgPicture.asset(
+                                          'assets/logos/img_send.svg')),
+                                ],
+                              ),
+                              // SvgPicture.asset(
+                              //   rightArrow,
+                              //   width: 18,
+                              //   height: 18,
+                              //   fit: BoxFit.contain,
+                              //   color: Colors.white,
+                              // ),
+                              Row(
+                                children: [
+                                  const Icon(
+                                    Icons.keyboard_arrow_right,
+                                    color: Colors.white,
+                                    size: 13,
+                                  ),
+                                  Text(
+                                    controller.userName,
+                                    style: const TextStyle(
+                                        color: previewTextColor,
+                                        fontSize: 13),
+                                  ),
+                                ],
+                              ),
+                            ],
                           ),
-                          const SizedBox(height: 10,),
-                          SizedBox(
+                        ),
+                        const SizedBox(height: 10,),
+                        Obx(() {
+                          return SizedBox(
                             height: 45,
                             child: ListView.builder(
                                 scrollDirection: Axis.horizontal,
                                 itemCount: controller.filePath.length,
                                 itemBuilder: (context, index) {
-                                  var item = controller.filePath
-                                      .elementAt(index)
-                                      .path;
                                   return Stack(
                                     children: [
                                       Obx(() {
                                         return InkWell(
-                                          onTap: (){
+                                          onTap: () {
                                             controller.currentPageIndex(index);
-                                            controller.pageViewController.animateToPage(index, duration: const Duration(milliseconds: 200), curve: Curves.easeIn);
+                                            controller.pageViewController
+                                                .animateToPage(index,
+                                                duration: const Duration(
+                                                    milliseconds: 200),
+                                                curve: Curves.easeIn);
                                           },
                                           child: Container(
                                               width: 45,
                                               height: 45,
                                               decoration: controller
-                                                  .currentPageIndex.value == index
+                                                  .currentPageIndex.value ==
+                                                  index
                                                   ? BoxDecoration(
                                                   border: Border.all(
                                                     color: Colors.blue,
                                                     width: 1,
                                                   ))
                                                   : null,
-                                              margin: const EdgeInsets.symmetric(
+                                              margin: const EdgeInsets
+                                                  .symmetric(
                                                   horizontal: 1),
-                                              child: Image.file(
-                                                File(item), fit: BoxFit.cover,)),
+                                            child: Image.memory(controller.filePath[index].thumbnail),
+                                          ),
                                         );
-                                      })
+                                      }),
+                                      controller.filePath[index].type == "image" ? const SizedBox.shrink() : Positioned(
+                                        bottom: 4,
+                                          left: 4,
+                                          child: SvgPicture.asset(videoCamera, width: 5, height: 5,)),
                                     ],
                                   );
                                 }),
-                          )
-                        ],
-                      ),
+                          );
+                        })
+                      ],
                     ),
                   ),
                 ],
