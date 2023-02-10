@@ -36,7 +36,7 @@ class ProfileController extends GetxController {
 
   var name = "".obs;
 
-  bool get emailEditAccess => Get.previousRoute!=Routes.settings;
+  bool get emailEditAccess => true;//Get.previousRoute!=Routes.settings;
 
   var userNameFocus= FocusNode();
   var emailFocus= FocusNode();
@@ -79,7 +79,7 @@ class ProfileController extends GetxController {
     }
   }
 
-  Future<void> save() async {
+  Future<void> save({bool frmImage=false}) async {
     if (await askStoragePermission()) {
       if (profileName.text
           .trim()
@@ -122,7 +122,7 @@ class ProfileController extends GetxController {
                 debugPrint(value);
                 var data = profileUpdateFromJson(value);
                 if (data.status != null) {
-                  toToast(data.message.toString());
+                  toToast(frmImage ? 'Removed profile image successfully' : data.message.toString());
                   if (data.status!) {
                     changed(false);
                     var userProfileData = ProData(
@@ -198,7 +198,7 @@ class ProfileController extends GetxController {
           if (from.value == Routes.login) {
             changed(true);
           } else {
-            save();
+            save(frmImage: true);
           }
           update();
         }

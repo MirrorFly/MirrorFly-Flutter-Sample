@@ -13,103 +13,107 @@ class BusyStatusView extends GetView<BusyStatusController> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        appBar: AppBar(
-          title: const Text(Constants.editBusyStatus),
-        ),
-        body: Padding(
-          padding: const EdgeInsets.all(20.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Text(
-                Constants.yourBusyStatus,
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
-              ),
-              const SizedBox(
-                height: 5,
-              ),
-              const Divider(
-                thickness: 1,
-              ),
-
-              Obx(
-                    () =>
-                    ListTile(
-                      contentPadding: EdgeInsets.zero,
-                      title: Text(controller.busyStatus.value,
-                          style: const TextStyle(
-                              color: textColor,
-                              fontSize: 14,
-                              fontWeight: FontWeight.normal)),
-                      trailing: SvgPicture.asset(
-                        pencilEditIcon,
-                        fit: BoxFit.contain,
-                      ),
-                      onTap: () {
-                        controller.addStatusController.text = controller.busyStatus.value;
-                        Get.to(const AddBusyStatusView(),arguments: {"status":controller.selectedStatus.value})?.then((value){
-                          if(value!=null){
-                            controller.insertBusyStatus(value);
-                          }
-                        });
-                      },
-                    ),
-              ),
-              const SizedBox(
-                height: 5,
-              ),
-
-              const Text(
-                Constants.busyStatusDescription,
-                style: TextStyle(fontSize: 15),
-              ),
-              const SizedBox(
-                height: 40,
-              ),
-              const Text(
-                Constants.newBusyStatus,
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
-              ),
-              const SizedBox(
-                height: 5,
-              ),
-              Expanded(
-                child: Obx(() {
-                  debugPrint("reloading list");
-                  return ListView.builder(
-                      itemCount: controller.busyStatusList.length,
-                      physics: const AlwaysScrollableScrollPhysics(),
-                      itemBuilder: (context, index) {
-                        var item = controller.busyStatusList[index];
-                        return ListTile(
-                          contentPadding: EdgeInsets.zero,
-                          title: Text(item.status.checkNull(),
-                              style: TextStyle(
-                                  color: item.status ==
-                                      controller.busyStatus.value
-                                      ? textBlack1color
-                                      : textColor,
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w500)),
-                          trailing: item.status == controller.busyStatus.value
-                              ? SvgPicture.asset(
-                            tickIcon,
-                            fit: BoxFit.contain,
-                          ) : const SizedBox(),
-                          onTap: () {
-                            controller.updateBusyStatus(
-                                index, item.status.checkNull());
-                          },
-                          onLongPress: () {
-                            controller.deleteBusyStatus(item);
-                          },
-                        );
-                      });
-                }),
-              ),
-            ],
+    return SafeArea(
+      child: Scaffold(
+          appBar: AppBar(
+            title: const Text(Constants.editBusyStatus),
           ),
-        ));
+          body: Padding(
+            padding: const EdgeInsets.all(20.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  Constants.yourBusyStatus,
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
+                ),
+                const SizedBox(
+                  height: 5,
+                ),
+                const Divider(
+                  thickness: 1,
+                ),
+
+                Obx(
+                      () =>
+                      ListTile(
+                        contentPadding: EdgeInsets.zero,
+                        title: Text(controller.busyStatus.value,
+                            style: const TextStyle(
+                                color: textColor,
+                                fontSize: 14,
+                                fontWeight: FontWeight.normal)),
+                        trailing: SvgPicture.asset(
+                          pencilEditIcon,
+                          fit: BoxFit.contain,
+                        ),
+                        onTap: () {
+                          controller.addStatusController.text = controller.busyStatus.value;
+                          controller.onChanged();
+                          Get.to(const AddBusyStatusView(),arguments: {"status":controller.selectedStatus.value})?.then((value){
+                            if(value!=null){
+                              controller.insertBusyStatus(value);
+                            }
+                          });
+                        },
+                      ),
+                ),
+                const SizedBox(
+                  height: 5,
+                ),
+
+                const Text(
+                  Constants.busyStatusDescription,
+                  style: TextStyle(fontSize: 15),
+                ),
+                const SizedBox(
+                  height: 40,
+                ),
+                const Text(
+                  Constants.newBusyStatus,
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
+                ),
+                const SizedBox(
+                  height: 5,
+                ),
+                Expanded(
+                  child: Obx(() {
+                    debugPrint("reloading list");
+                    return controller.busyStatusList.isNotEmpty
+                        ?  ListView.builder(
+                        itemCount: controller.busyStatusList.length,
+                        physics: const AlwaysScrollableScrollPhysics(),
+                        itemBuilder: (context, index) {
+                          var item = controller.busyStatusList[index];
+                          return ListTile(
+                            contentPadding: EdgeInsets.zero,
+                            title: Text(item.status.checkNull(),
+                                style: TextStyle(
+                                    color: item.status ==
+                                        controller.busyStatus.value
+                                        ? textBlack1color
+                                        : textColor,
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w500)),
+                            trailing: item.status == controller.busyStatus.value
+                                ? SvgPicture.asset(
+                              tickIcon,
+                              fit: BoxFit.contain,
+                            ) : const SizedBox(),
+                            onTap: () {
+                              controller.updateBusyStatus(
+                                  index, item.status.checkNull());
+                            },
+                            onLongPress: () {
+                              controller.deleteBusyStatus(item);
+                            },
+                          );
+                        }) : const SizedBox();
+                  }),
+                ),
+              ],
+            ),
+          )),
+    );
   }
 }

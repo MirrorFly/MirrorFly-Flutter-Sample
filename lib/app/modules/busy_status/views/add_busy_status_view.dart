@@ -40,8 +40,10 @@ class AddBusyStatusView extends GetView<BusyStatusController> {
                         style:
                         const TextStyle(fontSize: 20, fontWeight: FontWeight.normal,overflow: TextOverflow.visible),
                         onChanged: (_) => controller.onChanged(),
-                        maxLength: 130,
+                        maxLength: 139,
                         maxLines: 1,
+                        autofocus: true,
+                        focusNode: controller.focusNode,
                         controller: controller.addStatusController,
                         decoration: const InputDecoration(enabledBorder: UnderlineInputBorder(
                           borderSide: BorderSide(color: Colors.grey),
@@ -49,6 +51,11 @@ class AddBusyStatusView extends GetView<BusyStatusController> {
                             focusedBorder: UnderlineInputBorder(
                               borderSide: BorderSide(color: buttonBgColor),
                             ),counterText:"" ),
+                        onTap: (){
+                          if (controller.showEmoji.value) {
+                            controller.showEmoji(false);
+                          }
+                        },
                       ),
                     ),
                     Container(
@@ -65,8 +72,7 @@ class AddBusyStatusView extends GetView<BusyStatusController> {
                     IconButton(
                         onPressed: () {
                           if (!controller.showEmoji.value) {
-                            FocusScope.of(context).unfocus();
-                            controller.focusNode.canRequestFocus = false;
+                            controller.focusNode.unfocus();
                           }
                           Future.delayed(const Duration(milliseconds: 500), () {
                             controller.showEmoji(!controller.showEmoji.value);
