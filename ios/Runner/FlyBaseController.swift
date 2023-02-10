@@ -680,6 +680,10 @@ class FlyBaseController: NSObject{
                 FlySdkMethodCalls.iOSFileExist(call: call, result: result)
             case "get_favourite_messages":
                 FlySdkMethodCalls.getFavouriteMessages(call: call, result: result)
+            case "getUnsentMessageOfAJid":
+                FlySdkMethodCalls.getUnsentMessageOfAJid(call: call, result: result)
+            case "saveUnsentMessage":
+                FlySdkMethodCalls.saveUnsentMessage(call: call, result: result)
             default:
                 result(FlutterMethodNotImplemented)
             }

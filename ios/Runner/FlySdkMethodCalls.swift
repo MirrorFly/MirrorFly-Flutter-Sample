@@ -672,6 +672,16 @@ import FlyDatabase
         }
     }
     
+    static func getUnsentMessageOfAJid(call: FlutterMethodCall, result: @escaping FlutterResult){
+        
+        result("")
+        
+    }
+    static func saveUnsentMessage(call: FlutterMethodCall, result: @escaping FlutterResult){
+        
+        result("")
+        
+    }
     static func getRingtoneName(call: FlutterMethodCall, result: @escaping FlutterResult){
         
         result("[]")

@@ -82,7 +82,7 @@ class ChatMessageModel {
     messageChatType: json["messageChatType"] == "singleChat" ? "chat" : json["messageChatType"].toLowerCase(),
     messageCustomField: json["messageCustomField"] ?? {},
     messageId: json["messageId"],
-    messageSentTime: json["messageSentTime"],
+    messageSentTime: json["messageSentTime"].toInt(),
     messageStatus: Platform.isAndroid ? json["messageStatus"]["status"] : json["messageStatus"] == "acknowledge" ? "A" : json["messageStatus"] == "delivered" ? "D" : json["messageStatus"] == "seen" ? "S" : "N",
     messageTextContent: json["messageTextContent"].toString(),
     messageType: json["messageType"].toString().toUpperCase() == "FILE" ? "DOCUMENT" : json["messageType"].toString().toUpperCase(),

@@ -297,7 +297,6 @@ class ChatController extends FullLifeCycleController
       FlyChat.getUnsentMessageOfAJid(profile.jid.checkNull()).then((value) {
         if (value != null) {
           messageController.text = value;
-
         } else {
           messageController.text = '';
         }
@@ -529,13 +528,16 @@ class ChatController extends FullLifeCycleController
     chatLoading(true);
     FlyChat.getMessagesOfJid(profile.jid.checkNull()).then((value) {
       debugPrint("=====chat=====");
+      debugPrint("history--> $value");
 
       if (value == "" || value == null) {
         debugPrint("Chat List is Empty");
       } else {
+        debugPrint("parsing the value");
+        mirrorFlyLog("chat parsed history before", value);
         List<ChatMessageModel> chatMessageModel =
             chatMessageModelFromJson(value);
-        // mirrorFlyLog("chat parsed history", chatMessageModelToJson(chatMessageModel));
+        mirrorFlyLog("chat parsed history", chatMessageModelToJson(chatMessageModel));
         chatList(chatMessageModel.reversed.toList());
         Future.delayed(const Duration(milliseconds: 200), () {
           if (starredChatMessageId != null) {
@@ -1554,9 +1556,10 @@ class ChatController extends FullLifeCycleController
     for (var i = 0; i < filteredPosition.length; i++) {
       var po = filteredPosition.toList(); //reversed
       if (visiblePos > po.toList()[i]) {
-        break;
+        return filteredPosition.indexOf(po.toList()[i]);
+        // break;
       }
-      return filteredPosition.indexOf(po.toList()[i]);
+      // return filteredPosition.indexOf(po.toList()[i]);
     }
     return -1;
   }
@@ -1564,9 +1567,10 @@ class ChatController extends FullLifeCycleController
   int getNextPosition(int visiblePos) {
     for (var i = 0; i < filteredPosition.length; i++) {
       if (visiblePos <= filteredPosition[i]) {
-        break;
+        return i;
+        // break;
       }
-      return i;
+      // return i;
     }
     return -1;
   }
@@ -1821,6 +1825,9 @@ class ChatController extends FullLifeCycleController
   void onMessageStatusUpdated(event) {
     super.onMessageStatusUpdated(event);
     mirrorFlyLog("MESSAGE STATUS UPDATED", event);
+    if(event == null){
+      debugPrint("MESSAGE STATUS UPDATED IS NULL");
+    }
     ChatMessageModel chatMessageModel = sendMessageModelFromJson(event);
     if (chatMessageModel.chatUserJid == profile.jid) {
       final index = chatList.indexWhere(
