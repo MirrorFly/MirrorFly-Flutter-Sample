@@ -533,7 +533,7 @@ class ChatController extends FullLifeCycleController
       if (value == "" || value == null) {
         debugPrint("Chat List is Empty");
       } else {
-        debugPrint("parsing the value");
+        // debugPrint("parsing the value");
         // mirrorFlyLog("chat parsed history before", value);
         List<ChatMessageModel> chatMessageModel =
             chatMessageModelFromJson(value);
@@ -745,6 +745,20 @@ class ChatController extends FullLifeCycleController
     }
   }
 
+  Future<void> playerPause() async {
+    if(playingChat!=null) {
+      if (playingChat!.mediaChatMessage!.isPlaying) {
+        int result = await player.pause();
+        if (result == 1) {
+          playingChat!.mediaChatMessage!.isPlaying = false;
+          chatList.refresh();
+        } else {
+          mirrorFlyLog("", "Error on pause audio.");
+        }
+      }
+    }
+  }
+
   Future<bool> askContactsPermission() async {
     final permission = await AppPermission.getContactPermission();
     switch (permission) {
@@ -798,10 +812,6 @@ class ChatController extends FullLifeCycleController
         replyMessageId = replyChatMessage.messageId;
       }
       isReplying(false);
-      debugPrint("contactList--> ${contactList.toString()}");
-      debugPrint("jid--> ${profile.jid}");
-      debugPrint("contactName--> $contactName");
-      debugPrint("replyMessageId--> $replyMessageId");
       return FlyChat.sendContactMessage(
               contactList, profile.jid!, contactName, replyMessageId)
           .then((value) {
@@ -1823,9 +1833,7 @@ class ChatController extends FullLifeCycleController
     if(event == null){
       debugPrint("MESSAGE STATUS UPDATED IS NULL");
     }
-
     ChatMessageModel chatMessageModel = sendMessageModelFromJson(event);
-    debugPrint("message update status --> ${chatMessageModel.messageType} --> ${chatMessageModel.messageId} --> ${chatMessageModel.mediaChatMessage?.mediaUploadStatus}");
     if (chatMessageModel.chatUserJid == profile.jid) {
       final index = chatList.indexWhere(
           (message) => message.messageId == chatMessageModel.messageId);
@@ -2406,6 +2414,7 @@ class ChatController extends FullLifeCycleController
   @override
   void onPaused() {
     mirrorFlyLog("LifeCycle", "onPaused");
+    playerPause();
     saveUnsentMessage();
   }
 

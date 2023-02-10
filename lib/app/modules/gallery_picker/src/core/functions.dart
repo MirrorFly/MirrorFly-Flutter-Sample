@@ -46,7 +46,7 @@ class GalleryFunctions {
                   animationController: animationController,
                   builder: builder),
             ));
-    Overlay.of(context).insert(entry);
+    Overlay.of(context)?.insert(entry);
     animationController.animateTo(1);
     return FeatureController(
       completer,

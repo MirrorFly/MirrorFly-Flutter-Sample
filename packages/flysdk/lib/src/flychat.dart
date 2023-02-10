@@ -1372,7 +1372,7 @@ class FlyChat {
           await mirrorFlyMethodChannel.invokeMethod('send_video_message', {
         "jid": jid,
         "filePath": filePath,
-        "caption": caption,
+        "caption": caption?.trim(),
         "replyMessageId": replyMessageID,
         "videoFileUrl": videoFileUrl,
         "videoDuration": videoDuration,

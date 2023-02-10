@@ -59,7 +59,7 @@ class ReplyingMessageHeader extends StatelessWidget {
                           chatMessage.messageType.toUpperCase(),
                           chatMessage.messageTextContent,
                           chatMessage.contactChatMessage?.contactName,
-                          chatMessage.mediaChatMessage?.mediaFileName),
+                          chatMessage.mediaChatMessage?.mediaFileName,chatMessage.mediaChatMessage),
                     ),
                   ],
                 ),
@@ -105,7 +105,7 @@ getReplyTitle(bool isMessageSentByMe, String senderNickName) {
 }
 
 getReplyMessage(String messageType, String? messageTextContent,
-    String? contactName, String? mediaFileName) {
+    String? contactName, String? mediaFileName, MediaChatMessage? mediaChatMessage) {
   debugPrint(messageType);
   switch (messageType) {
     case Constants.mText:
@@ -120,7 +120,7 @@ getReplyMessage(String messageType, String? messageTextContent,
         children: [
           Helper.forMessageTypeIcon(Constants.mImage),
           const SizedBox(
-            width: 10,
+            width: 5,
           ),
           Text(Helper.capitalize(Constants.mImage)),
         ],
@@ -130,7 +130,7 @@ getReplyMessage(String messageType, String? messageTextContent,
         children: [
           Helper.forMessageTypeIcon(Constants.mVideo),
           const SizedBox(
-            width: 10,
+            width: 5,
           ),
           Text(Helper.capitalize(Constants.mVideo)),
         ],
@@ -138,14 +138,15 @@ getReplyMessage(String messageType, String? messageTextContent,
     case Constants.mAudio:
       return Row(
         children: [
-          Helper.forMessageTypeIcon(Constants.mAudio),
+          Helper.forMessageTypeIcon(Constants.mAudio,mediaChatMessage!.isAudioRecorded),
           const SizedBox(
-            width: 10,
+            width: 5,
           ),
-          // Text(controller.replyChatMessage.mediaChatMessage!.mediaDuration),
-          // SizedBox(
-          //   width: 10,
-          // ),
+          Text(Helper.durationToString(Duration(
+              microseconds:mediaChatMessage.mediaDuration)),),
+          const SizedBox(
+            width: 5,
+          ),
           Text(Helper.capitalize(Constants.mAudio)),
         ],
       );
@@ -154,7 +155,7 @@ getReplyMessage(String messageType, String? messageTextContent,
         children: [
           Helper.forMessageTypeIcon(Constants.mContact),
           const SizedBox(
-            width: 10,
+            width: 5,
           ),
           Text("${Helper.capitalize(Constants.mContact)} :"),
           const SizedBox(
@@ -175,7 +176,7 @@ getReplyMessage(String messageType, String? messageTextContent,
         children: [
           Helper.forMessageTypeIcon(Constants.mLocation),
           const SizedBox(
-            width: 10,
+            width: 5,
           ),
           Text(Helper.capitalize(Constants.mLocation)),
         ],
@@ -185,7 +186,7 @@ getReplyMessage(String messageType, String? messageTextContent,
         children: [
           Helper.forMessageTypeIcon(Constants.mDocument),
           const SizedBox(
-            width: 10,
+            width: 5,
           ),
           Text(mediaFileName!),
         ],
@@ -254,7 +255,7 @@ class ReplyMessageHeader extends StatelessWidget {
                     chatMessage.replyParentChatMessage?.contactChatMessage
                         ?.contactName,
                     chatMessage.replyParentChatMessage?.mediaChatMessage
-                        ?.mediaFileName),
+                        ?.mediaFileName,chatMessage.mediaChatMessage),
               ],
             ),
           ),
@@ -479,7 +480,7 @@ class AudioMessageView extends StatelessWidget {
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                Stack(
+                chatMessage.mediaChatMessage!.isAudioRecorded ? Stack(
                   alignment: Alignment.center,
                   children: [
                     SvgPicture.asset(
@@ -493,6 +494,9 @@ class AudioMessageView extends StatelessWidget {
                       fit: BoxFit.contain,
                     ),
                   ],
+                ) : SvgPicture.asset(
+                  musicIcon,
+                  fit: BoxFit.contain,
                 ),
                 getImageOverlay(chatMessage,onAudio: onPlayAudio),
                 Expanded(
@@ -500,7 +504,6 @@ class AudioMessageView extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.end,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-
                       SliderTheme(
                         data: SliderThemeData(
                           thumbColor: audioColorDark,

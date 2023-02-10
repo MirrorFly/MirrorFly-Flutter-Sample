@@ -115,43 +115,50 @@ class Helper {
     return colorsArray[(rand).abs()];
   }
 
-  static Widget forMessageTypeIcon(String? messageType) {
+  static Widget forMessageTypeIcon(String? messageType, [bool isAudioRecorded=false]) {
     mirrorFlyLog("iconfor", messageType.toString());
     switch (messageType?.toUpperCase()) {
       case Constants.mImage:
         return SvgPicture.asset(
           mImageIcon,
           fit: BoxFit.contain,
+          color: playIconColor,
         );
       case Constants.mAudio:
         return SvgPicture.asset(
-          mAudioIcon,
+          isAudioRecorded ? mAudioRecordIcon : mAudioIcon,
           fit: BoxFit.contain,
+          color: playIconColor,
         );
       case Constants.mVideo:
         return SvgPicture.asset(
           mVideoIcon,
           fit: BoxFit.contain,
+          color: playIconColor,
         );
       case Constants.mDocument:
         return SvgPicture.asset(
           mDocumentIcon,
           fit: BoxFit.contain,
+          color: playIconColor,
         );
       case Constants.mFile:
         return SvgPicture.asset(
           mDocumentIcon,
           fit: BoxFit.contain,
+          color: playIconColor,
         );
       case Constants.mContact:
         return SvgPicture.asset(
           mContactIcon,
           fit: BoxFit.contain,
+          color: playIconColor,
         );
       case Constants.mLocation:
         return SvgPicture.asset(
           mLocationIcon,
           fit: BoxFit.contain,
+          color: playIconColor,
         );
       default:
         return const SizedBox.shrink();
