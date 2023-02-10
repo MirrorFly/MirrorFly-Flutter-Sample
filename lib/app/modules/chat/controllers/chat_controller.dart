@@ -533,11 +533,11 @@ class ChatController extends FullLifeCycleController
       if (value == "" || value == null) {
         debugPrint("Chat List is Empty");
       } else {
-        debugPrint("parsing the value");
-        mirrorFlyLog("chat parsed history before", value);
+        // debugPrint("parsing the value");
+        // mirrorFlyLog("chat parsed history before", value);
         List<ChatMessageModel> chatMessageModel =
             chatMessageModelFromJson(value);
-        mirrorFlyLog("chat parsed history", chatMessageModelToJson(chatMessageModel));
+        // mirrorFlyLog("chat parsed history", chatMessageModelToJson(chatMessageModel));
         chatList(chatMessageModel.reversed.toList());
         Future.delayed(const Duration(milliseconds: 200), () {
           if (starredChatMessageId != null) {
@@ -750,6 +750,20 @@ class ChatController extends FullLifeCycleController
     }
   }
 
+  Future<void> playerPause() async {
+    if(playingChat!=null) {
+      if (playingChat!.mediaChatMessage!.isPlaying) {
+        int result = await player.pause();
+        if (result == 1) {
+          playingChat!.mediaChatMessage!.isPlaying = false;
+          chatList.refresh();
+        } else {
+          mirrorFlyLog("", "Error on pause audio.");
+        }
+      }
+    }
+  }
+
   Future<bool> askContactsPermission() async {
     final permission = await AppPermission.getContactPermission();
     switch (permission) {
@@ -803,10 +817,6 @@ class ChatController extends FullLifeCycleController
         replyMessageId = replyChatMessage.messageId;
       }
       isReplying(false);
-      debugPrint("contactList--> ${contactList.toString()}");
-      debugPrint("jid--> ${profile.jid}");
-      debugPrint("contactName--> $contactName");
-      debugPrint("replyMessageId--> $replyMessageId");
       return FlyChat.sendContactMessage(
               contactList, profile.jid!, contactName, replyMessageId)
           .then((value) {
@@ -1824,7 +1834,7 @@ class ChatController extends FullLifeCycleController
   @override
   void onMessageStatusUpdated(event) {
     super.onMessageStatusUpdated(event);
-    mirrorFlyLog("MESSAGE STATUS UPDATED", event);
+    // mirrorFlyLog("MESSAGE STATUS UPDATED", event);
     if(event == null){
       debugPrint("MESSAGE STATUS UPDATED IS NULL");
     }
@@ -2409,6 +2419,7 @@ class ChatController extends FullLifeCycleController
   @override
   void onPaused() {
     mirrorFlyLog("LifeCycle", "onPaused");
+    playerPause();
     saveUnsentMessage();
   }
 

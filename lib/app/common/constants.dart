@@ -92,7 +92,9 @@ const String pushpin = 'assets/logos/pushpin.svg';
 const String pin = 'assets/logos/pin.svg';
 const String unpin = 'assets/logos/unpin.svg';
 
-const String audioImg = 'assets/logos/audio.svg';
+// const String audioImg = 'assets/logos/audio.svg';
+const String audioImg = 'assets/logos/headset_img.svg';
+const String headsetImg = 'assets/logos/headset_white.svg';
 const String documentImg = 'assets/logos/document_icon.svg';
 const String cameraImg = 'assets/logos/camera.svg';
 const String contactImg = 'assets/logos/contact_icon.svg';
@@ -108,6 +110,7 @@ const String audioPlay = 'assets/logos/audio_play.svg';
 const String audioMicBg = 'assets/logos/audio_mic.svg';
 const String audioMic = 'assets/logos/mic.svg';
 const String audioMic1 = 'assets/logos/mic1.svg';
+const String musicIcon = 'assets/logos/music_icon.svg';
 const String profileImage = 'assets/logos/profile_img.png';
 
 const String linkImage = 'assets/logos/link.svg';
@@ -129,6 +132,7 @@ const String mImageIcon = 'assets/logos/image.svg';
 const String mLocationIcon = 'assets/logos/location_chat.svg';
 const String mVideoIcon = 'assets/logos/video.svg';
 const String mAudioIcon = 'assets/logos/noun_Audio_3408360.svg';
+const String mAudioRecordIcon = 'assets/logos/record_reply_preview.svg';
 const String audioWhite = 'assets/logos/audio_white.svg';
 const String videoWhite = 'assets/logos/video_icon.svg';
 const String cornerShadow = 'assets/logos/ic_baloon.png';
