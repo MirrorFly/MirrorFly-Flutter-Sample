@@ -67,13 +67,14 @@ class ProfileTextImage extends StatelessWidget {
 
   String getString(String str) {
     String string = "";
+    // debugPrint("str.characters.length ${str.characters.length}");
     if (str.characters.length >= 2) {
       if (str.trim().contains(" ")) {
         var st = str.trim().split(" ");
         string = st[0].characters.first.toUpperCase() +
             st[1].characters.first.toUpperCase();
       } else {
-        string = str.substring(0, 2).toUpperCase().toString();
+        string = str.characters.take(2).toUpperCase().toString();
       }
     } else {
       string = str;

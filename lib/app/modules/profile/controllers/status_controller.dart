@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
+import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:get/get.dart';
 
 import '../../../common/constants.dart';
@@ -8,7 +9,7 @@ import '../../../data/apputils.dart';
 import '../../../data/helper.dart';
 import 'package:flysdk/flysdk.dart';
 
-class StatusListController extends GetxController{
+class StatusListController extends FullLifeCycleController with FullLifeCycleMixin{
   var statusList = List<StatusData>.empty(growable: true).obs;
   var selectedStatus = "".obs;
   var loading =false.obs;
@@ -17,10 +18,10 @@ class StatusListController extends GetxController{
   var addStatusController = TextEditingController();
   FocusNode focusNode = FocusNode();
   var showEmoji = false.obs;
-  var count= 121.obs;
+  var count= 139.obs;
 
   onChanged(){
-    count.value = (121 - addStatusController.text.length);
+    count(139 - addStatusController.text.length);
   }
 
   @override
@@ -28,6 +29,7 @@ class StatusListController extends GetxController{
     super.onInit();
     selectedStatus.value = Get.arguments['status'];
     addStatusController.text=selectedStatus.value;
+    onChanged();
     getStatusList();
     onChanged();
   }
@@ -76,6 +78,30 @@ class StatusListController extends GetxController{
       }
     }else{
       toToast("Status cannot be empty");
+    }
+  }
+
+  @override
+  void onDetached() {
+  }
+
+  @override
+  void onInactive() {
+  }
+
+  @override
+  void onPaused() {
+  }
+
+  @override
+  void onResumed() {
+    if(!KeyboardVisibilityController().isVisible) {
+      if (focusNode.hasFocus) {
+        focusNode.unfocus();
+        Future.delayed(const Duration(milliseconds: 100), () {
+          focusNode.requestFocus();
+        });
+      }
     }
   }
 }

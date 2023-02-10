@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
@@ -38,31 +37,41 @@ class AddStatusView extends GetView<StatusListController> {
                   children: [
                     Expanded(
                       child: TextField(
-                        style:
-                            const TextStyle(fontSize: 20, fontWeight: FontWeight.normal,overflow: TextOverflow.visible),
+                        style: const TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.normal,
+                            overflow: TextOverflow.visible),
                         onChanged: (_) => controller.onChanged(),
-                        maxLength: 121,
+                        autofocus: true,
+                        focusNode: controller.focusNode,
+                        maxLength: 139,
                         maxLines: 1,
                         controller: controller.addStatusController,
-                        decoration: const InputDecoration(border: InputBorder.none,counterText:"" ),
+                        decoration: const InputDecoration(
+                            border: InputBorder.none, counterText: ""),
+                        onTap: () {
+                          if (controller.showEmoji.value) {
+                            controller.showEmoji(false);
+                          }
+                        },
                       ),
                     ),
                     Container(
-                      height: 50,
-                      padding: const EdgeInsets.all(4.0),
+                        height: 50,
+                        padding: const EdgeInsets.all(4.0),
                         child: Center(
                           child: Obx(
-                            ()=> Text(
-                      controller.count.toString(),
-                      style: const TextStyle(fontSize: 20, fontWeight: FontWeight.normal),
-                    ),
+                            () => Text(
+                              controller.count.toString(),
+                              style: const TextStyle(
+                                  fontSize: 20, fontWeight: FontWeight.normal),
+                            ),
                           ),
                         )),
                     IconButton(
                         onPressed: () {
                           if (!controller.showEmoji.value) {
-                            FocusScope.of(context).unfocus();
-                            controller.focusNode.canRequestFocus = false;
+                            controller.focusNode.unfocus();
                           }
                           Future.delayed(const Duration(milliseconds: 500), () {
                             controller.showEmoji(!controller.showEmoji.value);
@@ -120,9 +129,8 @@ class AddStatusView extends GetView<StatusListController> {
     return Obx(() {
       if (controller.showEmoji.value) {
         return EmojiLayout(
-          textController: controller.addStatusController,
-            onEmojiSelected : (cat, emoji)=>controller.onChanged()
-        );
+            textController: controller.addStatusController,
+            onEmojiSelected: (cat, emoji) => controller.onChanged());
       } else {
         return const SizedBox.shrink();
       }

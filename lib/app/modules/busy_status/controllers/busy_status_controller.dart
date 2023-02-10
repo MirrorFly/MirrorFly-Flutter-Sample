@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:flysdk/flysdk.dart';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
@@ -9,7 +10,7 @@ import '../../../data/apputils.dart';
 import '../../../data/helper.dart';
 import '../../settings/views/chat_settings/chat_settings_controller.dart';
 
-class BusyStatusController extends GetxController {
+class BusyStatusController extends FullLifeCycleController with FullLifeCycleMixin {
   final busyStatus = "".obs;
   var busyStatusList = List<StatusData>.empty(growable: true).obs;
   var selectedStatus = "".obs;
@@ -18,15 +19,20 @@ class BusyStatusController extends GetxController {
   var addStatusController = TextEditingController();
   FocusNode focusNode = FocusNode();
   var showEmoji = false.obs;
-  var count = 130.obs;
+  var count = 139.obs;
 
   onChanged() {
-    count.value = (130 - addStatusController.text.length);
+    count(139 - addStatusController.text.length);
   }
 
   @override
   void onInit() {
     super.onInit();
+    if(Get.arguments!=null) {
+      selectedStatus.value = Get.arguments['status'];
+      addStatusController.text = selectedStatus.value;
+    }
+    onChanged();
     getMyBusyStatus();
     getMyBusyStatusList();
   }
@@ -153,5 +159,29 @@ class BusyStatusController extends GetxController {
           },
           child: const Text("Yes")),
     ]);
+  }
+
+  @override
+  void onDetached() {
+  }
+
+  @override
+  void onInactive() {
+  }
+
+  @override
+  void onPaused() {
+  }
+
+  @override
+  void onResumed() {
+    if(!KeyboardVisibilityController().isVisible) {
+      if (focusNode.hasFocus) {
+        focusNode.unfocus();
+        Future.delayed(const Duration(milliseconds: 100), () {
+          focusNode.requestFocus();
+        });
+      }
+    }
   }
 }
