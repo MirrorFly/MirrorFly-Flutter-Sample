@@ -7,6 +7,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flysdk/flysdk.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -329,6 +330,9 @@ class SenderHeader extends StatelessWidget {
       }
       var currentSenderJid = currentMessage.senderUserJid.checkNull();
       var previousSenderJid = previousMessage.senderUserJid.checkNull();
+      debugPrint("currentSenderJid  : $currentSenderJid");
+      debugPrint("previousSenderJid : $previousSenderJid");
+      debugPrint("isSenderChanged : ${previousSenderJid != currentSenderJid}");
       return previousSenderJid != currentSenderJid;
     } else {
       return false;
@@ -356,9 +360,8 @@ class SenderHeader extends StatelessWidget {
     return Visibility(
       visible: isGroupProfile ?? false
           ? (index == chatList.length-1 ||
-                  isSenderChanged(chatList, index) ||
-                  !isMessageDateEqual(chatList, index)) &&
-              !chatList[index].isMessageSentByMe
+                  isSenderChanged(chatList, index))
+          && !chatList[index].isMessageSentByMe
           : false,
       child: Padding(
         padding: const EdgeInsets.only(top: 8.0, right: 8.0, left: 8.0),
@@ -397,10 +400,7 @@ class LocationMessageView extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               children: [
                 chatMessage.isMessageStarred
-                    ? const Icon(
-                        Icons.star,
-                        size: 13,
-                      )
+                    ? SvgPicture.asset(starSmallIcon)
                     : const SizedBox.shrink(),
                 const SizedBox(
                   width: 5,
@@ -546,10 +546,7 @@ class AudioMessageView extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               children: [
                 chatMessage.isMessageStarred
-                    ? const Icon(
-                        Icons.star,
-                        size: 13,
-                      )
+                    ? SvgPicture.asset(starSmallIcon)
                     : const SizedBox.shrink(),
                 const SizedBox(
                   width: 5,
@@ -641,10 +638,7 @@ class ContactMessageView extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   chatMessage.isMessageStarred
-                      ? const Icon(
-                          Icons.star,
-                          size: 13,
-                        )
+                      ? SvgPicture.asset(starSmallIcon)
                       : const SizedBox.shrink(),
                   const SizedBox(
                     width: 5,
@@ -754,10 +748,7 @@ class DocumentMessageView extends StatelessWidget {
                   ),
                   const Spacer(),
                   chatMessage.isMessageStarred
-                      ? const Icon(
-                          Icons.star,
-                          size: 13,
-                        )
+                      ? SvgPicture.asset(starSmallIcon)
                       : const SizedBox.shrink(),
                   const SizedBox(
                     width: 5,
@@ -902,10 +893,7 @@ class VideoMessageView extends StatelessWidget {
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           chatMessage.isMessageStarred
-                              ? const Icon(
-                                  Icons.star,
-                                  size: 13,
-                                )
+                              ? SvgPicture.asset(starSmallIcon)
                               : const SizedBox.shrink(),
                           const SizedBox(
                             width: 5,
@@ -980,10 +968,7 @@ class ImageMessageView extends StatelessWidget {
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           chatMessage.isMessageStarred
-                              ? const Icon(
-                                  Icons.star,
-                                  size: 13,
-                                )
+                              ? SvgPicture.asset(starSmallIcon)
                               : const SizedBox.shrink(),
                           const SizedBox(
                             width: 5,
@@ -1074,10 +1059,7 @@ Widget setCaptionMessage(MediaChatMessage mediaMessage,
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
             chatMessage.isMessageStarred
-                ? const Icon(
-                    Icons.star,
-                    size: 13,
-                  )
+                ? SvgPicture.asset(starSmallIcon)
                 : const SizedBox.shrink(),
             const SizedBox(
               width: 5,
@@ -1101,7 +1083,7 @@ Widget setCaptionMessage(MediaChatMessage mediaMessage,
 class NotificationMessageView extends StatelessWidget {
   const NotificationMessageView({Key? key, required this.chatMessage})
       : super(key: key);
-  final ChatMessageModel chatMessage;
+  final String? chatMessage;
 
   @override
   Widget build(BuildContext context) {
@@ -1112,7 +1094,7 @@ class NotificationMessageView extends StatelessWidget {
         decoration: const BoxDecoration(
             color: notificationTextBgColor,
             borderRadius: BorderRadius.all(Radius.circular(15))),
-        child: Text(chatMessage.messageTextContent ?? "",
+        child: Text(chatMessage ?? "",
             style: const TextStyle(
                 fontSize: 13,
                 fontWeight: FontWeight.w400,
@@ -1151,7 +1133,7 @@ class MessageContent extends StatelessWidget {
         return TextMessageView(chatMessage: chatMessage,search: search,);
       } else if (chatList[index].messageType.toUpperCase() ==
           Constants.mNotification) {
-        return NotificationMessageView(chatMessage: chatMessage);
+        return NotificationMessageView(chatMessage: chatMessage.messageTextContent);
       } else if (chatList[index].messageType.toUpperCase() ==
           Constants.mLocation) {
         if (chatList[index].locationChatMessage == null) {
@@ -1231,10 +1213,7 @@ class TextMessageView extends StatelessWidget {
           Row(
             children: [
               chatMessage.isMessageStarred
-                  ? const Icon(
-                      Icons.star,
-                      size: 13,
-                    )
+                  ? SvgPicture.asset(starSmallIcon)
                   : const SizedBox.shrink(),
               const SizedBox(
                 width: 5,
@@ -1306,20 +1285,19 @@ class RecalledMessageView extends StatelessWidget {
 }
 
 getMessageIndicator(String? messageStatus, bool isSender, String messageType) {
+   debugPrint("Message Status ==>");
    debugPrint("Message Status ==> $messageStatus");
   if (isSender) {
-    if (messageStatus == 'A' || messageStatus == 'acknowledge') {
-      return SvgPicture.asset('assets/logos/acknowledged.svg');
-    } else if (messageStatus == 'D' || messageStatus == 'delivered') {
-      return SvgPicture.asset('assets/logos/delivered.svg');
-    } else if (messageStatus == 'S' || messageStatus == 'seen') {
-      return SvgPicture.asset('assets/logos/seen.svg');
-    } else {
-      return const Icon(
-        Icons.access_time_filled,
-        size: 10,
-        color: Colors.red,
-      );
+    if (messageStatus == 'A') {
+      return SvgPicture.asset(acknowledgedIcon);
+    } else if (messageStatus == 'D') {
+      return SvgPicture.asset(deliveredIcon);
+    } else if (messageStatus == 'S') {
+      return SvgPicture.asset(seenIcon);
+    } else if(messageStatus == 'N'){
+      return SvgPicture.asset(unSendIcon);
+    }else{
+      return const SizedBox.shrink();
     }
   } else {
     return const SizedBox.shrink();
@@ -1784,4 +1762,83 @@ class AudioMessagePlayerController extends GetxController {
       }
     }
   }
+}
+
+/// Checks the current header id with previous header id
+/// @param position Position of the current item
+/// @return boolean True if header changed, else false
+bool isDateChanged(int position,List<ChatMessageModel> mChatData) {
+  // try {
+    var prePosition = position + 1;
+    var size = mChatData.length - 1;
+    if(position==size){
+      return true;
+    }else {
+      if (prePosition <= size && position <= size) {
+        debugPrint("position $position $size");
+        debugPrint("sentTime ${mChatData[position].messageSentTime}");
+        debugPrint("pre sentTime ${mChatData[prePosition].messageSentTime}");
+        var currentHeaderId = mChatData[position].messageSentTime.toInt();
+        var previousHeaderId = mChatData[prePosition].messageSentTime.toInt();
+        return currentHeaderId != previousHeaderId;
+      }
+    }
+  // }catch(e){
+  //   return false;
+  // }
+  return false;//currentHeaderId != previousHeaderId;
+}
+
+String? groupedDateMessage(int index,List<ChatMessageModel> chatList){
+  if(index==chatList.length-1){
+    return addDateHeaderMessage(chatList.last);
+  }else {
+    return (isDateChanged(index, chatList) &&
+        (addDateHeaderMessage(chatList[index + 1]) !=
+            addDateHeaderMessage(chatList[index]))) ? addDateHeaderMessage(
+        chatList[index]) : null;
+  }
+}
+
+String addDateHeaderMessage(ChatMessageModel item) {
+  var calendar = DateTime.now();
+  var messageDate = getDateFromTimestamp(item.messageSentTime,"MMMM dd, yyyy");
+  var monthNumber = calendar.month-1;
+  var month = getMonthForInt(monthNumber);
+  var yesterdayDate = DateTime.now().subtract(const Duration(days: 1)).day;
+  var today = "$month ${checkTwoDigitsForDate(calendar.day)}, ${calendar.year}";
+  var yesterday = "$month ${checkTwoDigitsForDate(yesterdayDate)}, ${calendar.year}";
+  // var dateHeaderMessage = ChatMessage()
+  debugPrint("messageDate $messageDate");
+  debugPrint("today $today");
+  debugPrint("yesterday $yesterday");
+  if (messageDate.toString() == (today).toString()) {
+    return "Today";
+  //dateHeaderMessage = createDateHeaderMessageWithDate(date, item)
+  } else if (messageDate == yesterday) {
+    return "Yesterday";
+  //dateHeaderMessage = createDateHeaderMessageWithDate(date, item)
+  } else if (!messageDate.contains("1970")){
+    //dateHeaderMessage = createDateHeaderMessageWithDate(messageDate, item)
+    return messageDate;
+  }
+  return "";
+}
+
+String checkTwoDigitsForDate(int date) {
+   if (date.toString().length != 2) {
+    return "0$date";
+  } else {
+     return date.toString();
+   }
+}
+
+String getMonthForInt(int num) {
+  var month = "";
+  var dateFormatSymbols = DateFormat().dateSymbols.STANDALONEMONTHS;
+  var months = dateFormatSymbols;
+  if (num<=11) {
+    month = months[num];
+  }
+  return month;
 }

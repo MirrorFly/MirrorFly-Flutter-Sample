@@ -35,7 +35,10 @@ class StarredMessagesView extends GetView<StarredMessagesController> {
           body: SingleChildScrollView(
             child: Obx(() {
               return controller.starredChatList.isNotEmpty ?
-              favouriteChatListView(controller.starredChatList) : const Center(child: Text("No Starred Messages Found"));
+              favouriteChatListView(controller.starredChatList) : const Center(child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: 10.0,vertical: 30),
+                child: Text("No Starred Messages Found"),
+              ));
             }),
           )
         ),
@@ -213,6 +216,17 @@ class StarredMessagesView extends GetView<StarredMessagesController> {
                 onItemClick: () {
                   controller.favouriteMessage();
                 },
+              ),
+              CustomAction(
+                visibleWidget: IconButton(
+                    onPressed: () {
+                      controller.share();
+                    },
+                    icon: SvgPicture.asset(shareIcon)),
+                overflowWidget: const Text("Share"),
+                showAsAction: controller.canBeShare.value ? ShowAsAction.always : ShowAsAction.gone,
+                keyValue: 'Share',
+                onItemClick: () {},
               ),
               controller.selectedChatList.length > 1 ||
                   controller.selectedChatList[0].messageType !=

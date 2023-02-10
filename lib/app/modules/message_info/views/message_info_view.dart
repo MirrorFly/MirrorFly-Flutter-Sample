@@ -8,7 +8,6 @@ import 'package:mirror_fly_demo/app/data/helper.dart';
 import '../../../common/constants.dart';
 import '../../chat/chat_widgets.dart';
 
-//import '../../chat/views/message_content.dart';
 import '../controllers/message_info_controller.dart';
 
 class MessageInfoView extends GetView<MessageInfoController> {

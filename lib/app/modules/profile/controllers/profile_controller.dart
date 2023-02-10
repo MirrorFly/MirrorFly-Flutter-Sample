@@ -38,6 +38,8 @@ class ProfileController extends GetxController {
 
   bool get emailEditAccess => Get.previousRoute!=Routes.settings;
 
+  var userNameFocus= FocusNode();
+  var emailFocus= FocusNode();
   @override
   Future<void> onInit() async {
     super.onInit();
