@@ -324,7 +324,7 @@ class DashboardView extends GetView<DashboardController> {
       children: [
         Obx(() {
           return Visibility(
-              visible: controller.recentChats.isEmpty,
+              visible: !controller.recentChatLoding.value && controller.recentChats.isEmpty,
               child: emptyChat(context));
         }),
         Column(
@@ -353,11 +353,12 @@ class DashboardView extends GetView<DashboardController> {
               );
             }),
             Expanded(
-              child: FutureBuilder(
+              child: /*FutureBuilder(
                   future: controller.getRecentChatList(),
-                  builder: (c, d) {
-                    return Obx(() {
-                      return ListView.builder(
+                  builder: (c, d) {*/
+                    Obx(() {
+                      return controller.recentChatLoding.value ? const Center(child: CircularProgressIndicator(),) :
+                      ListView.builder(
                           padding: EdgeInsets.zero,
                           physics: const NeverScrollableScrollPhysics(),
                           itemCount: controller.recentChats.length+1,
@@ -412,8 +413,8 @@ class DashboardView extends GetView<DashboardController> {
                               });
                           }
                           });
-                    });
-                  }),
+                    })
+                  // }),
             ),
           ],
         )
