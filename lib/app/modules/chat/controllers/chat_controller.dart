@@ -223,8 +223,7 @@ class ChatController extends FullLifeCycleController
     });*/
     newitemPositionsListener.itemPositions.addListener(() {
       var pos = findLastVisibleItemPositionForChat();
-      //debugPrint('pos $pos');
-      if (pos > 1) {
+      if (pos >= 1) {
         showHideRedirectToLatest(true);
       } else {
         showHideRedirectToLatest(false);
@@ -2386,12 +2385,13 @@ class ChatController extends FullLifeCycleController
   }
 
   int findLastVisibleItemPositionForChat() {
-    var r = newitemPositionsListener.itemPositions.value
+    /*var r = newitemPositionsListener.itemPositions.value
         .where((ItemPosition position) => position.itemTrailingEdge < 1)
         .reduce((ItemPosition min, ItemPosition position) =>
             position.itemTrailingEdge < min.itemTrailingEdge ? position : min)
         .index;
-    return r < chatList.length ? r + 1 : r;
+    return r < chatList.length ? r + 1 : r;*/
+    return newitemPositionsListener.itemPositions.value.first.index;
   }
 
   void share() {
