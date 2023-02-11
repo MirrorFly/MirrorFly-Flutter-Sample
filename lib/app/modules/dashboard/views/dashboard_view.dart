@@ -99,7 +99,7 @@ class DashboardView extends GetView<DashboardController> {
                                       onPressed: () {
                                         controller.chatInfo();
                                       },
-                                      icon: SvgPicture.asset(infoIcon)),
+                                      icon: SvgPicture.asset(infoIcon),tooltip: 'Info',),
                                   overflowWidget: const Text("Info"),
                                   showAsAction: controller.info.value
                                       ? ShowAsAction.always
@@ -114,7 +114,7 @@ class DashboardView extends GetView<DashboardController> {
                                       onPressed: () {
                                         controller.deleteChats();
                                       },
-                                      icon: SvgPicture.asset(delete)),
+                                      icon: SvgPicture.asset(delete),tooltip: 'Delete',),
                                   overflowWidget: const Text("Delete"),
                                   showAsAction: controller.delete.value
                                       ? ShowAsAction.always
@@ -129,7 +129,7 @@ class DashboardView extends GetView<DashboardController> {
                                       onPressed: () {
                                         controller.pinChats();
                                       },
-                                      icon: SvgPicture.asset(pin)),
+                                      icon: SvgPicture.asset(pin),tooltip: 'Pin',),
                                   overflowWidget: const Text("Pin"),
                                   showAsAction: controller.pin.value
                                       ? ShowAsAction.always
@@ -144,7 +144,7 @@ class DashboardView extends GetView<DashboardController> {
                                       onPressed: () {
                                         controller.unPinChats();
                                       },
-                                      icon: SvgPicture.asset(unpin)),
+                                      icon: SvgPicture.asset(unpin),tooltip: 'UnPin',),
                                   overflowWidget: const Text("UnPin"),
                                   showAsAction: controller.unpin.value
                                       ? ShowAsAction.always
@@ -159,7 +159,7 @@ class DashboardView extends GetView<DashboardController> {
                                       onPressed: () {
                                         controller.muteChats();
                                       },
-                                      icon: SvgPicture.asset(mute)),
+                                      icon: SvgPicture.asset(mute),tooltip: 'Mute',),
                                   overflowWidget: const Text("Mute"),
                                   showAsAction: controller.mute.value
                                       ? ShowAsAction.always
@@ -174,7 +174,7 @@ class DashboardView extends GetView<DashboardController> {
                                       onPressed: () {
                                         controller.unMuteChats();
                                       },
-                                      icon: SvgPicture.asset(unMute)),
+                                      icon: SvgPicture.asset(unMute),tooltip: 'UnMute',),
                                   overflowWidget: const Text("UnMute"),
                                   showAsAction: controller.unmute.value
                                       ? ShowAsAction.always
@@ -189,7 +189,7 @@ class DashboardView extends GetView<DashboardController> {
                                       onPressed: () {
                                         controller.archiveChats();
                                       },
-                                      icon: SvgPicture.asset(archive)),
+                                      icon: SvgPicture.asset(archive),tooltip: 'Archive',),
                                   overflowWidget: const Text("Archived"),
                                   showAsAction: controller.archive.value
                                       ? ShowAsAction.always
@@ -234,6 +234,7 @@ class DashboardView extends GetView<DashboardController> {
                                       height: 18,
                                       fit: BoxFit.contain,
                                     ),
+                                    tooltip: 'Search',
                                   ),
                                   overflowWidget: const Text("Search"),
                                   showAsAction: controller.selected.value

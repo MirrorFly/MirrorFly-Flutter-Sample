@@ -740,7 +740,7 @@ class ChatView extends GetView<ChatController> {
                       controller
                           .clearChatSelection(controller.selectedChatList[0]);
                     },
-                    icon: SvgPicture.asset(replyIcon)),
+                    icon: SvgPicture.asset(replyIcon),tooltip: 'Reply',),
                 overflowWidget: const Text("Reply"),
                 showAsAction: controller.canBeReplied.value
                     ? ShowAsAction.always
@@ -758,7 +758,7 @@ class ChatView extends GetView<ChatController> {
                     onPressed: () {
                       controller.checkBusyStatusForForward();
                     },
-                    icon: SvgPicture.asset(forwardIcon)),
+                    icon: SvgPicture.asset(forwardIcon),tooltip: 'Forward',),
                 overflowWidget: const Text("Forward"),
                 showAsAction: controller.canBeForwarded.value
                     ? ShowAsAction.always
@@ -779,7 +779,7 @@ class ChatView extends GetView<ChatController> {
                     },
                     // icon: controller.getOptionStatus('Favourite') ? const Icon(Icons.star_border_outlined)
                     // icon: controller.selectedChatList[0].isMessageStarred
-                    icon: SvgPicture.asset(favouriteIcon)),
+                    icon: SvgPicture.asset(favouriteIcon),tooltip: 'Favourite',),
                 overflowWidget: const Text("Favourite"),
                 showAsAction: controller.canBeStarred.value
                     ? ShowAsAction.always
@@ -797,7 +797,7 @@ class ChatView extends GetView<ChatController> {
                     },
                     // icon: controller.getOptionStatus('Favourite') ? const Icon(Icons.star_border_outlined)
                     // icon: controller.selectedChatList[0].isMessageStarred
-                    icon: SvgPicture.asset(unFavouriteIcon)),
+                    icon: SvgPicture.asset(unFavouriteIcon),tooltip: 'unFavourite',),
                 overflowWidget: const Text("unFavourite"),
                 showAsAction: controller.canBeUnStarred.value
                     ? ShowAsAction.always
@@ -813,7 +813,7 @@ class ChatView extends GetView<ChatController> {
                     onPressed: () {
                       controller.deleteMessages();
                     },
-                    icon: SvgPicture.asset(deleteIcon)),
+                    icon: SvgPicture.asset(deleteIcon),tooltip: 'Delete',),
                 overflowWidget: const Text("Delete"),
                 showAsAction: ShowAsAction.always,
                 keyValue: 'Delete',
@@ -856,6 +856,7 @@ class ChatView extends GetView<ChatController> {
                     copyIcon,
                     fit: BoxFit.contain,
                   ),
+                  tooltip: 'Copy',
                 ),
                 overflowWidget: const Text("Copy"),
                 showAsAction: controller.canBeCopied.value
@@ -880,6 +881,7 @@ class ChatView extends GetView<ChatController> {
                     infoIcon,
                     fit: BoxFit.contain,
                   ),
+                  tooltip: 'Message Info',
                 ),
                 overflowWidget: const Text("Message Info"),
                 showAsAction: controller.canShowInfo.value
@@ -896,7 +898,7 @@ class ChatView extends GetView<ChatController> {
                   : customEmptyAction(),*/
               CustomAction(
                 visibleWidget: IconButton(
-                    onPressed: () {}, icon: SvgPicture.asset(shareIcon)),
+                    onPressed: () {}, icon: SvgPicture.asset(shareIcon),tooltip: 'Share',),
                 overflowWidget: const Text("Share"),
                 showAsAction: controller.canBeShared.value
                     ? ShowAsAction.never

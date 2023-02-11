@@ -196,7 +196,7 @@ class StarredMessagesView extends GetView<StarredMessagesController> {
                     onPressed: () {
                       controller.checkBusyStatusForForward();
                     },
-                    icon: SvgPicture.asset(forwardIcon)),
+                    icon: SvgPicture.asset(forwardIcon),tooltip: 'Forward',),
                 overflowWidget: const Text("Forward"),
                 showAsAction: controller.canBeForward.value ? ShowAsAction.always : ShowAsAction.gone,
                 keyValue: 'Forward',
@@ -209,7 +209,7 @@ class StarredMessagesView extends GetView<StarredMessagesController> {
                     onPressed: () {
                       controller.favouriteMessage();
                     },
-                    icon: SvgPicture.asset(unFavouriteIcon)),
+                    icon: SvgPicture.asset(unFavouriteIcon),tooltip: 'unFavourite',),
                 overflowWidget: const Text("unFavourite"),
                 showAsAction: ShowAsAction.always,
                 keyValue: 'unfavoured',
@@ -222,7 +222,7 @@ class StarredMessagesView extends GetView<StarredMessagesController> {
                     onPressed: () {
                       controller.share();
                     },
-                    icon: SvgPicture.asset(shareIcon)),
+                    icon: SvgPicture.asset(shareIcon),tooltip: 'Share',),
                 overflowWidget: const Text("Share"),
                 showAsAction: controller.canBeShare.value ? ShowAsAction.always : ShowAsAction.gone,
                 keyValue: 'Share',
@@ -241,6 +241,7 @@ class StarredMessagesView extends GetView<StarredMessagesController> {
                     copyIcon,
                     fit: BoxFit.contain,
                   ),
+                  tooltip: 'Copy',
                 ),
                 overflowWidget: const Text("Copy"),
                 showAsAction: ShowAsAction.always,
@@ -254,7 +255,7 @@ class StarredMessagesView extends GetView<StarredMessagesController> {
                     onPressed: () {
                       controller.deleteMessages();
                     },
-                    icon: SvgPicture.asset(deleteIcon)),
+                    icon: SvgPicture.asset(deleteIcon),tooltip: 'Delete',),
                 overflowWidget: const Text("Delete"),
                 showAsAction: ShowAsAction.always,
                 keyValue: 'Delete',
