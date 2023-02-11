@@ -609,10 +609,13 @@ class DashboardController extends GetxController with GetTickerProviderStateMixi
       if(selectedChats.length==1){
         _itemArchive(0);
         clearAllChatSelection();
+        toToast('1 Chat archived');
       }else{
+        var count = selectedChats.length;
         selected(false);
         selectedChats.asMap().forEach((key, value) {_itemArchive(key);});
         clearAllChatSelection();
+        toToast('$count Chats archived');
       }
     }else{
       toToast(Constants.noInternetConnection);
