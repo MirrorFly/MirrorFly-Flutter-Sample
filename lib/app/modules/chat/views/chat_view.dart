@@ -217,16 +217,31 @@ class ChatView extends GetView<ChatController> {
                       child: Positioned(
                         bottom: 100,
                         right: 20,
-                        child: IconButton(
-                          icon: Image.asset(
-                            redirectLastMessage,
-                            width: 32,
-                            height: 32,
-                          ),
-                          onPressed: () {
-                            //scroll to end
-                            controller.scrollToEnd();
-                          },
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            controller.unreadCount.value != 0 ? CircleAvatar(
+                              radius: 8,
+                              child: Text(
+                                returnFormattedCount(controller.unreadCount.value),
+                                style: const TextStyle(
+                                    fontSize: 9,
+                                    color: Colors.white,
+                                    fontFamily: 'sf_ui'),
+                              ),
+                            ) : const SizedBox.shrink(),
+                            IconButton(
+                              icon: Image.asset(
+                                redirectLastMessage,
+                                width: 32,
+                                height: 32,
+                              ),
+                              onPressed: () {
+                                //scroll to end
+                                controller.scrollToEnd();
+                              },
+                            ),
+                          ],
                         ),
                       ),
                     );

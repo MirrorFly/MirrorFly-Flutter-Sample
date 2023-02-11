@@ -227,6 +227,7 @@ class ChatController extends FullLifeCycleController
         showHideRedirectToLatest(true);
       } else {
         showHideRedirectToLatest(false);
+        unreadCount(0);
       }
     });
 
@@ -252,6 +253,7 @@ class ChatController extends FullLifeCycleController
             index: 0,
             duration: const Duration(milliseconds: 100),
             curve: Curves.linear);
+        unreadCount(0);
       }
     });
   }
@@ -1805,7 +1807,7 @@ class ChatController extends FullLifeCycleController
     FlyChat.sendTypingGoneStatus(
         profile.jid.checkNull(), profile.getChatType());
   }
-
+  var unreadCount = 0.obs;
   @override
   void onMessageReceived(chatMessage) {
     super.onMessageReceived(chatMessage);
@@ -1813,7 +1815,8 @@ class ChatController extends FullLifeCycleController
     ChatMessageModel chatMessageModel = sendMessageModelFromJson(chatMessage);
     if (chatMessageModel.chatUserJid == profile.jid) {
       chatList.insert(0, chatMessageModel);
-      scrollToBottom();
+      unreadCount.value++;
+      //scrollToBottom();
       if (isLive) {
         sendReadReceipt();
       }
