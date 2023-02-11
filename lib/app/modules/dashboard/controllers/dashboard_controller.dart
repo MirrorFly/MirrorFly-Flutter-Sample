@@ -44,6 +44,7 @@ class DashboardController extends GetxController with GetTickerProviderStateMixi
     ever(recentChats, (callback) => unReadCount());
     archivedChats.bindStream(archivedChats.stream);
     ever(archivedChats, (callback) => archivedChatCount());
+    getRecentChatList();
     getArchivedChatsList();
     checkArchiveSetting();
   }
@@ -63,6 +64,7 @@ class DashboardController extends GetxController with GetTickerProviderStateMixi
     }
   }
 
+  var recentChatLoding =true.obs;
   getRecentChatList() {
     mirrorFlyLog("","recent chats");
     FlyChat.getRecentChatList().then((value) async {
@@ -72,8 +74,10 @@ class DashboardController extends GetxController with GetTickerProviderStateMixi
       //recentChats.clear();
       recentChats(data.data!);
       recentChats.refresh();
+      recentChatLoding(false);
     }).catchError((error) {
       debugPrint("recent chat issue===> $error");
+      recentChatLoding(false);
     });
   }
 
@@ -605,10 +609,13 @@ class DashboardController extends GetxController with GetTickerProviderStateMixi
       if(selectedChats.length==1){
         _itemArchive(0);
         clearAllChatSelection();
+        toToast('1 Chat archived');
       }else{
+        var count = selectedChats.length;
         selected(false);
         selectedChats.asMap().forEach((key, value) {_itemArchive(key);});
         clearAllChatSelection();
+        toToast('$count Chats archived');
       }
     }else{
       toToast(Constants.noInternetConnection);

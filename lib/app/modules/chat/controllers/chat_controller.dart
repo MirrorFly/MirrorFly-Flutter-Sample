@@ -223,11 +223,11 @@ class ChatController extends FullLifeCycleController
     });*/
     newitemPositionsListener.itemPositions.addListener(() {
       var pos = findLastVisibleItemPositionForChat();
-      //debugPrint('pos $pos');
-      if (pos > 1) {
+      if (pos >= 1) {
         showHideRedirectToLatest(true);
       } else {
         showHideRedirectToLatest(false);
+        unreadCount(0);
       }
     });
 
@@ -253,6 +253,7 @@ class ChatController extends FullLifeCycleController
             index: 0,
             duration: const Duration(milliseconds: 100),
             curve: Curves.linear);
+        unreadCount(0);
       }
     });
   }
@@ -1630,8 +1631,7 @@ class ChatController extends FullLifeCycleController
       debugPrint(selectedChatList.length.toString());
     }
     if (messageIds.length == selectedChatList.length) {
-      isSelected(false);
-      selectedChatList.clear();
+      clearAllChatSelection();
       Get.toNamed(Routes.forwardChat, arguments: {
         "forward": true,
         "group": false,
@@ -1807,7 +1807,7 @@ class ChatController extends FullLifeCycleController
     FlyChat.sendTypingGoneStatus(
         profile.jid.checkNull(), profile.getChatType());
   }
-
+  var unreadCount = 0.obs;
   @override
   void onMessageReceived(chatMessage) {
     super.onMessageReceived(chatMessage);
@@ -1815,7 +1815,8 @@ class ChatController extends FullLifeCycleController
     ChatMessageModel chatMessageModel = sendMessageModelFromJson(chatMessage);
     if (chatMessageModel.chatUserJid == profile.jid) {
       chatList.insert(0, chatMessageModel);
-      scrollToBottom();
+      unreadCount.value++;
+      //scrollToBottom();
       if (isLive) {
         sendReadReceipt();
       }
@@ -2386,12 +2387,13 @@ class ChatController extends FullLifeCycleController
   }
 
   int findLastVisibleItemPositionForChat() {
-    var r = newitemPositionsListener.itemPositions.value
+    /*var r = newitemPositionsListener.itemPositions.value
         .where((ItemPosition position) => position.itemTrailingEdge < 1)
         .reduce((ItemPosition min, ItemPosition position) =>
             position.itemTrailingEdge < min.itemTrailingEdge ? position : min)
         .index;
-    return r < chatList.length ? r + 1 : r;
+    return r < chatList.length ? r + 1 : r;*/
+    return newitemPositionsListener.itemPositions.value.first.index;
   }
 
   void share() {

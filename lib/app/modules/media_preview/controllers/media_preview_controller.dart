@@ -7,7 +7,7 @@ import '../../../common/constants.dart';
 import '../../../data/apputils.dart';
 import '../../chat/controllers/chat_controller.dart';
 
-class MediaPreviewController extends GetxController {
+class MediaPreviewController extends FullLifeCycleController with FullLifeCycleMixin {
 
   var userName = Get.arguments['userName'];
 
@@ -92,5 +92,25 @@ class MediaPreviewController extends GetxController {
     captionMessage[currentPageIndex.value] = value;
   }
 
+  @override
+  void onPaused() {}
 
+  @override
+  void onResumed() {
+    mirrorFlyLog("LifeCycle", "onResumed");
+    if(!KeyboardVisibilityController().isVisible) {
+      if (captionFocusNode.hasFocus) {
+        captionFocusNode.unfocus();
+        Future.delayed(const Duration(milliseconds: 100), () {
+          captionFocusNode.requestFocus();
+        });
+      }
+    }
+  }
+
+  @override
+  void onDetached() {}
+
+  @override
+  void onInactive() {}
 }

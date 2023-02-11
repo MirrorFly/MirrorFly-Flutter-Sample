@@ -56,7 +56,7 @@ class ArchivedChatListView extends GetView<ArchivedChatListController> {
                               onPressed: () {
                                 controller.unArchiveSelectedChats();
                               },
-                              icon: SvgPicture.asset(unarchive)),
+                              icon: SvgPicture.asset(unarchive),tooltip: 'UnArchive',),
                           overflowWidget: const Text("UnArchive"),
                           showAsAction: ShowAsAction.always,
                           keyValue: 'UnArchive',
