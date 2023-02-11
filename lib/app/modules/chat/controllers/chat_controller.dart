@@ -1629,8 +1629,7 @@ class ChatController extends FullLifeCycleController
       debugPrint(selectedChatList.length.toString());
     }
     if (messageIds.length == selectedChatList.length) {
-      isSelected(false);
-      selectedChatList.clear();
+      clearAllChatSelection();
       Get.toNamed(Routes.forwardChat, arguments: {
         "forward": true,
         "group": false,
