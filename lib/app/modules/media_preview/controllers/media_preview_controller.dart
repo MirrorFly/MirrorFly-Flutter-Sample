@@ -19,6 +19,9 @@ class MediaPreviewController extends GetxController {
 
   var currentPageIndex = 0.obs;
 
+  var isFocused = false.obs;
+  var showEmoji = false.obs;
+
   FocusNode captionFocusNode = FocusNode();
   PageController pageViewController = PageController(initialPage: 0, keepPage: false);
 
@@ -33,6 +36,9 @@ class MediaPreviewController extends GetxController {
           }
     });
 
+  }
+  onChanged() {
+    // count(139 - addStatusController.text.length);
   }
 
   sendMedia() async {
@@ -85,4 +91,6 @@ class MediaPreviewController extends GetxController {
     debugPrint("length--> ${captionMessage.length}");
     captionMessage[currentPageIndex.value] = value;
   }
+
+
 }
