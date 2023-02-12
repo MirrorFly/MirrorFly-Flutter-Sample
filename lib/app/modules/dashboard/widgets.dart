@@ -250,7 +250,7 @@ class RecentChatItem extends StatelessWidget {
                                     MainAxisAlignment.spaceAround,
                                 children: [
                                   Visibility(
-                                      visible: item.isChatPinned!,
+                                      visible: !item.isChatArchived! && item.isChatPinned!,
                                       child: SvgPicture.asset(
                                         pin,
                                         width: 18,
