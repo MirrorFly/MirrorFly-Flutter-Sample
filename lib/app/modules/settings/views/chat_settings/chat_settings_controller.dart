@@ -51,9 +51,13 @@ class ChatSettingsController extends GetxController {
   }
 
 
-  void enableArchive(){
-    FlyChat.enableDisableArchivedSettings(!archiveEnabled);
-    _archiveEnabled(!archiveEnabled);
+  void enableArchive() async{
+    if(await AppUtils.isNetConnected()) {
+      FlyChat.enableDisableArchivedSettings(!archiveEnabled);
+      _archiveEnabled(!archiveEnabled);
+    }else{
+      toToast(Constants.noInternetConnection);
+    }
   }
 
   Future<void> enableDisableAutoDownload() async {
@@ -124,15 +128,17 @@ class ChatSettingsController extends GetxController {
     }
   }
 
-  lastSeenEnableDisable() {
-    debugPrint("calling lastSeenEnableDisable ");
-    debugPrint("calling lastSeenEnableDisable --> ${!lastSeenPreference.value}");
-    FlyChat.enableDisableHideLastSeen(!lastSeenPreference.value).then((value) {
-      debugPrint("enableDisableHideLastSeen--> $value");
-      if(value != null && value) {
-        lastSeenPreference(!lastSeenPreference.value);
-      }
-    });
+  lastSeenEnableDisable() async{
+    if(await AppUtils.isNetConnected()) {
+      FlyChat.enableDisableHideLastSeen(!lastSeenPreference.value).then((value) {
+        debugPrint("enableDisableHideLastSeen--> $value");
+        if(value != null && value) {
+          lastSeenPreference(!lastSeenPreference.value);
+        }
+      });
+    }else{
+      toToast(Constants.noInternetConnection);
+    }
   }
 
   busyStatusEnable() async {
