@@ -2467,7 +2467,6 @@ class ChatController extends FullLifeCycleController
         profile_(value);
         checkAdminBlocked();
         isBlocked(profile.isBlocked);
-        ;
         setChatStatus();
       });
     }
