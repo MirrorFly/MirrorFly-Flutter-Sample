@@ -54,6 +54,19 @@ class ArchivedChatListView extends GetView<ArchivedChatListController> {
                         CustomAction(
                           visibleWidget: IconButton(
                               onPressed: () {
+                                controller.deleteChats();
+                              },
+                              icon: SvgPicture.asset(delete),tooltip: 'Delete',),
+                          overflowWidget: const Text("Delete"),
+                          showAsAction: controller.delete.value ? ShowAsAction.always : ShowAsAction.gone,
+                          keyValue: 'Delete',
+                          onItemClick: () {
+                            controller.deleteChats();
+                          },
+                        ),
+                        CustomAction(
+                          visibleWidget: IconButton(
+                              onPressed: () {
                                 controller.unArchiveSelectedChats();
                               },
                               icon: SvgPicture.asset(unarchive),tooltip: 'UnArchive',),
@@ -85,14 +98,14 @@ class ArchivedChatListView extends GetView<ArchivedChatListController> {
                             archiveVisible: false,
                             onTap: () {
                               if (controller.selected.value) {
-                                controller.selectOrRemoveChatfromList(index);
+                                controller.selectOrRemoveChatFromList(index);
                               } else {
                                 controller.toChatPage(item.jid.checkNull());
                               }
                             },
                             onLongPress: () {
                               controller.selected(true);
-                              controller.selectOrRemoveChatfromList(index);
+                              controller.selectOrRemoveChatFromList(index);
                             },
                           );
                         });

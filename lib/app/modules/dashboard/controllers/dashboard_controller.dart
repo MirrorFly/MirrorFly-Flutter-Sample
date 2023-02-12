@@ -379,6 +379,7 @@ class DashboardController extends GetxController with GetTickerProviderStateMixi
   clearAllChatSelection(){
     selected(false);
     selectedChats.clear();
+    selectedChatsPosition.clear();
     archive(false);
     pin(false);
     unpin(false);
@@ -410,7 +411,6 @@ class DashboardController extends GetxController with GetTickerProviderStateMixi
 
   menuValidationForDeleteIcon() async {
     var selected = recentChats.where((p0) => selectedChats.contains(p0.jid));
-    delete(true);
     for (var item in selected) {
       var isMember = await FlyChat.isMemberOfGroup(item.jid.checkNull(),null);
       if((item.getChatType() == Constants.typeGroupChat) && isMember!){
@@ -420,6 +420,7 @@ class DashboardController extends GetxController with GetTickerProviderStateMixi
       }
     }
     //return true;
+    delete(true);
   }
 
   menuValidationForMuteUnMuteIcon(){

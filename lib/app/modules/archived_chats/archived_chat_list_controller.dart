@@ -33,29 +33,41 @@ class ArchivedChatListController extends GetxController {
 
   var selected = false.obs;
   var selectedChats = <String>[].obs;
+  var selectedChatsPosition = <int>[].obs;
 
   isSelected(int index) => selectedChats.contains(archivedChats[index].jid);
 
-  selectOrRemoveChatfromList(int index) {
+  selectOrRemoveChatFromList(int index) {
     if (selected.isTrue) {
       if (selectedChats.contains(archivedChats[index].jid)) {
         selectedChats.remove(archivedChats[index].jid.checkNull());
-        //selectedChatsPosition.remove(index);
+        selectedChatsPosition.remove(index);
       } else {
         selectedChats.add(archivedChats[index].jid.checkNull());
-        //selectedChatsPosition.add(index);
+        selectedChatsPosition.add(index);
       }
     }
     if (selectedChats.isEmpty) {
       clearAllChatSelection();
     } else {
-      //menuValidationForItem();
+      menuValidationForItem();
+    }
+  }
+
+  menuValidationForItem(){
+    delete(false);
+    if(selectedChats.length==1){
+      var item = archivedChats.firstWhere((element) => selectedChats.first ==element.jid);
+      delete(Constants.typeGroupChat!= item.getChatType());
+    }else{
+      menuValidationForDeleteIcon();
     }
   }
 
   clearAllChatSelection() {
     selected(false);
     selectedChats.clear();
+    selectedChatsPosition.clear();
     update();
   }
 
@@ -221,5 +233,59 @@ class ArchivedChatListController extends GetxController {
       }
       archivedChats.refresh();
     });
+  }
+  var delete = false.obs;
+  menuValidationForDeleteIcon() async {
+    var selected = archivedChats.where((p0) => selectedChats.contains(p0.jid));
+    for (var item in selected) {
+      var isMember = await FlyChat.isMemberOfGroup(item.jid.checkNull(),null);
+      if((item.getChatType() == Constants.typeGroupChat) && isMember!){
+        delete(false);
+        return;
+        //return false;
+      }
+    }
+    delete(true);
+    //return true;
+  }
+
+  deleteChats(){
+    String? profile = '';
+    profile = archivedChats.firstWhere((element) => selectedChats.first ==element.jid).profileName;
+    Helper.showAlert(
+        title: selectedChats.length==1 ? "Delete chat with $profile?" : "Delete ${selectedChats.length} selected chats?",
+        actions: [
+          TextButton(
+              onPressed: () {
+                Get.back();
+              },
+              child: const Text("NO")),
+          TextButton(
+              onPressed: () {
+                Get.back();
+                if(selectedChats.length==1){
+                  _itemDelete(0);
+                }else{
+                  itemsDelete();
+                }
+              },
+              child: const Text("YES")),
+        ], message: '');
+  }
+
+  _itemDelete(int index){
+    var chatIndex = archivedChats.indexWhere((element) => selectedChats[index] == element.jid);//selectedChatsPosition[index];
+    archivedChats.removeAt(chatIndex);
+    FlyChat.deleteRecentChat(selectedChats[index]);
+    clearAllChatSelection();
+  }
+
+  itemsDelete(){
+    // debugPrint('selectedChatsPosition : ${selectedChatsPosition.join(',')}');
+    FlyChat.deleteRecentChats(selectedChats);
+    for (var element in selectedChatsPosition) {
+      archivedChats.removeAt(element);
+    }
+    clearAllChatSelection();
   }
 }
