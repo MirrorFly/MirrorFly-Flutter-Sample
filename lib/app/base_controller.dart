@@ -4,8 +4,7 @@ import 'package:mirror_fly_demo/app/common/constants.dart';
 import 'package:flysdk/flysdk.dart';
 
 abstract class BaseController {
-
-  initListeners(){
+  initListeners() {
     FlyChat.onMessageReceived.listen(onMessageReceived);
     FlyChat.onMessageStatusUpdated.listen(onMessageStatusUpdated);
     FlyChat.onMediaStatusUpdated.listen(onMediaStatusUpdated);
@@ -15,29 +14,30 @@ abstract class BaseController {
     FlyChat.onGroupProfileUpdated.listen(onGroupProfileUpdated);
     FlyChat.onNewMemberAddedToGroup.listen(onNewMemberAddedToGroup);
     FlyChat.onMemberRemovedFromGroup.listen(onMemberRemovedFromGroup);
-    FlyChat.onFetchingGroupMembersCompleted.listen(onFetchingGroupMembersCompleted);
+    FlyChat.onFetchingGroupMembersCompleted
+        .listen(onFetchingGroupMembersCompleted);
     FlyChat.onDeleteGroup.listen(onDeleteGroup);
     FlyChat.onFetchingGroupListCompleted.listen(onFetchingGroupListCompleted);
     FlyChat.onMemberMadeAsAdmin.listen(onMemberMadeAsAdmin);
     FlyChat.onMemberRemovedAsAdmin.listen(onMemberRemovedAsAdmin);
-    FlyChat.onLeftFromGroup.listen((event){
-      if(event!=null) {
+    FlyChat.onLeftFromGroup.listen((event) {
+      if (event != null) {
         var data = json.decode(event.toString());
         var groupJid = data["groupJid"] ?? "";
         var leftUserJid = data["leftUserJid"] ?? "";
-        onLeftFromGroup(groupJid: groupJid,userJid: leftUserJid);
+        onLeftFromGroup(groupJid: groupJid, userJid: leftUserJid);
       }
     });
     FlyChat.onGroupNotificationMessage.listen(onGroupNotificationMessage);
     FlyChat.onGroupDeletedLocally.listen(onGroupDeletedLocally);
-    
+
     FlyChat.blockedThisUser.listen(blockedThisUser);
     FlyChat.myProfileUpdated.listen(myProfileUpdated);
-    FlyChat.onAdminBlockedUser.listen((event){
+    FlyChat.onAdminBlockedUser.listen((event) {
       var data = json.decode(event.toString());
       var jid = data["jid"];
       var status = data["status"];
-      onAdminBlockedUser(jid,status);
+      onAdminBlockedUser(jid, status);
     });
     FlyChat.onContactSyncComplete.listen(onContactSyncComplete);
     FlyChat.onLoggedOut.listen(onLoggedOut);
@@ -47,7 +47,11 @@ abstract class BaseController {
     FlyChat.userDeletedHisProfile.listen(userDeletedHisProfile);
     FlyChat.userProfileFetched.listen(userProfileFetched);
     FlyChat.userUnBlockedMe.listen(userUnBlockedMe);
-    FlyChat.userUpdatedHisProfile.listen(userUpdatedHisProfile);
+    FlyChat.userUpdatedHisProfile.listen((event) {
+      var data = json.decode(event.toString());
+      var jid = data["jid"];
+      userUpdatedHisProfile(jid);
+    });
     FlyChat.userWentOffline.listen(userWentOffline);
     FlyChat.usersIBlockedListFetched.listen(usersIBlockedListFetched);
     FlyChat.usersWhoBlockedMeListFetched.listen(usersWhoBlockedMeListFetched);
@@ -57,7 +61,7 @@ abstract class BaseController {
     FlyChat.connectionFailed.listen(connectionFailed);
     FlyChat.connectionSuccess.listen(connectionSuccess);
     FlyChat.onWebChatPasswordChanged.listen(onWebChatPasswordChanged);
-    FlyChat.setTypingStatus.listen((event){
+    FlyChat.setTypingStatus.listen((event) {
       var data = json.decode(event.toString());
       mirrorFlyLog("setTypingStatus", data.toString());
       var singleOrgroupJid = data["singleOrgroupJid"];
@@ -72,135 +76,101 @@ abstract class BaseController {
     FlyChat.onSuccess.listen(onSuccess);
   }
 
-  void onMessageReceived(chatMessage){
+  void onMessageReceived(chatMessage) {
     mirrorFlyLog("flutter onMessageReceived", chatMessage.toString());
   }
-  void onMessageStatusUpdated(event){
+
+  void onMessageStatusUpdated(event) {
     //Log("flutter onMessageStatusUpdated", event.toString());
   }
-  void onMediaStatusUpdated(event){
 
-  }
-  void onGroupProfileFetched(groupJid){
+  void onMediaStatusUpdated(event) {}
 
-  }
-  void onNewGroupCreated(groupJid){
+  void onGroupProfileFetched(groupJid) {}
 
-  }
-  void onGroupProfileUpdated(groupJid){
+  void onNewGroupCreated(groupJid) {}
+
+  void onGroupProfileUpdated(groupJid) {
     mirrorFlyLog("flutter GroupProfileUpdated", groupJid.toString());
   }
-  void onNewMemberAddedToGroup(event){
 
-  }
-  void onMemberRemovedFromGroup(event){
+  void onNewMemberAddedToGroup(event) {}
 
-  }
-  void onFetchingGroupMembersCompleted(groupJid){
+  void onMemberRemovedFromGroup(event) {}
 
-  }
-  void onDeleteGroup(groupJid){
+  void onFetchingGroupMembersCompleted(groupJid) {}
 
-  }
-  void onFetchingGroupListCompleted(noOfGroups){
+  void onDeleteGroup(groupJid) {}
 
-  }
-  void onMemberMadeAsAdmin(event){
+  void onFetchingGroupListCompleted(noOfGroups) {}
 
-  }
-  void onMemberRemovedAsAdmin(event){
+  void onMemberMadeAsAdmin(event) {}
 
-  }
-  void onLeftFromGroup({required String groupJid,required String userJid}){
+  void onMemberRemovedAsAdmin(event) {}
 
-  }
-  void onGroupNotificationMessage(event){
+  void onLeftFromGroup({required String groupJid, required String userJid}) {}
 
-  }
-  void onGroupDeletedLocally(groupJid){
+  void onGroupNotificationMessage(event) {}
 
-  }
+  void onGroupDeletedLocally(groupJid) {}
 
-  void blockedThisUser(result){
+  void blockedThisUser(result) {}
 
-  }
-  void myProfileUpdated(result){
+  void myProfileUpdated(result) {}
 
-  }
-  void onAdminBlockedUser(String jid, bool status){
+  void onAdminBlockedUser(String jid, bool status) {}
 
-  }
-  void onContactSyncComplete(result){
+  void onContactSyncComplete(result) {
     mirrorFlyLog("onContactSyncComplete", result.toString());
     //FlyChat.getRegisteredUsers(true).then((value) => mirrorFlyLog("registeredUsers", value.toString()));
   }
-  void onLoggedOut(result){
 
-  }
-  void unblockedThisUser(result){
+  void onLoggedOut(result) {}
 
-  }
-  void userBlockedMe(result){
+  void unblockedThisUser(result) {}
 
-  }
-  void userCameOnline(result){
+  void userBlockedMe(result) {}
 
-  }
-  void userDeletedHisProfile(result){
+  void userCameOnline(result) {}
 
-  }
-  void userProfileFetched(result){
+  void userDeletedHisProfile(result) {}
 
-  }
-  void userUnBlockedMe(result){
+  void userProfileFetched(result) {}
 
-  }
-  void userUpdatedHisProfile(result){
+  void userUnBlockedMe(result) {}
 
+  void userUpdatedHisProfile(String jid) {
+    mirrorFlyLog("userUpdatedHisProfile", jid.toString());
   }
-  void userWentOffline(result){
 
-  }
-  void usersIBlockedListFetched(result){
+  void userWentOffline(result) {}
 
-  }
-  void usersWhoBlockedMeListFetched(result){
+  void usersIBlockedListFetched(result) {}
 
-  }
-  void onConnected(result){
+  void usersWhoBlockedMeListFetched(result) {}
 
-  }
-  void onDisconnected(result){
+  void onConnected(result) {}
 
-  }
-  void onConnectionNotAuthorized(result){
+  void onDisconnected(result) {}
 
-  }
-  void connectionFailed(result){
+  void onConnectionNotAuthorized(result) {}
 
-  }
-  void connectionSuccess(result){
+  void connectionFailed(result) {}
 
-  }
-  void onWebChatPasswordChanged(result){
+  void connectionSuccess(result) {}
 
-  }
-  void setTypingStatus(String singleOrgroupJid,String userId,String typingStatus){
+  void onWebChatPasswordChanged(result) {}
 
-  }
-  void onChatTypingStatus(result){
+  void setTypingStatus(
+      String singleOrgroupJid, String userId, String typingStatus) {}
 
-  }
-  void onGroupTypingStatus(result){
+  void onChatTypingStatus(result) {}
 
-  }
-  void onFailure(result){
+  void onGroupTypingStatus(result) {}
 
-  }
-  void onProgressChanged(result){
+  void onFailure(result) {}
 
-  }
-  void onSuccess(result){
+  void onProgressChanged(result) {}
 
-  }
+  void onSuccess(result) {}
 }

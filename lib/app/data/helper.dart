@@ -1,4 +1,3 @@
-
 import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
@@ -13,8 +12,6 @@ import 'package:flysdk/flysdk.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import 'apputils.dart';
-
-
 
 class Helper {
   static void showLoading({String? message, bool dismiss = false}) {
@@ -61,18 +58,25 @@ class Helper {
         barrierColor: Colors.transparent);
   }
 
-  static void showAlert({String? title,required String message,List<Widget>? actions,Widget? content}) {
+  static void showAlert(
+      {String? title,
+      required String message,
+      List<Widget>? actions,
+      Widget? content}) {
     Get.dialog(
       AlertDialog(
-        title: title!=null ? Text(title) : const Text(""),
-        contentPadding: title!=null ? const EdgeInsets.only(top: 15,right: 25,left: 25,bottom: 0) :
-        const EdgeInsets.only(top: 0,right: 25,left: 25,bottom: 15),
+        title: title != null ? Text(title) : const Text(""),
+        contentPadding: title != null
+            ? const EdgeInsets.only(top: 15, right: 25, left: 25, bottom: 0)
+            : const EdgeInsets.only(top: 0, right: 25, left: 25, bottom: 15),
         content: content ?? Text(message),
-        contentTextStyle: const TextStyle(color: textHintColor,fontWeight: FontWeight.w500),
+        contentTextStyle:
+            const TextStyle(color: textHintColor, fontWeight: FontWeight.w500),
         actions: actions,
       ),
     );
   }
+
   static void showButtonAlert({List<Widget>? actions}) {
     Get.dialog(
       AlertDialog(
@@ -84,7 +88,9 @@ class Helper {
 //hide loading
   static void hideLoading() {
     if (Get.isDialogOpen!) {
-      Get.back(canPop: true,);
+      Get.back(
+        canPop: true,
+      );
     }
   }
 
@@ -115,7 +121,8 @@ class Helper {
     return colorsArray[(rand).abs()];
   }
 
-  static Widget forMessageTypeIcon(String? messageType, [bool isAudioRecorded=false]) {
+  static Widget forMessageTypeIcon(String? messageType,
+      [bool isAudioRecorded = false]) {
     mirrorFlyLog("iconfor", messageType.toString());
     switch (messageType?.toUpperCase()) {
       case Constants.mImage:
@@ -185,30 +192,33 @@ class Helper {
         return "";
     }
   }
+
   static String capitalize(String str) {
     return "${str[0].toUpperCase()}${str.substring(1).toLowerCase()}";
   }
-
 }
 
-
 String getFileSizeText(String fileSizeInBytes) {
-  var fileSizeBuilder ="";
+  var fileSizeBuilder = "";
   var fileSize = int.parse(fileSizeInBytes);
   if (fileSize > 1073741824) {
-    fileSizeBuilder = (getRoundedFileSize(fileSize / 1073741824)).toString()+(" ")+("GB");
+    fileSizeBuilder =
+        (getRoundedFileSize(fileSize / 1073741824)).toString() + (" ") + ("GB");
   } else if (fileSize > 1048576) {
-    fileSizeBuilder = (getRoundedFileSize(fileSize / 1048576)).toString()+(" ")+("MB");
+    fileSizeBuilder =
+        (getRoundedFileSize(fileSize / 1048576)).toString() + (" ") + ("MB");
   } else if (fileSize > 1024) {
-    fileSizeBuilder = (getRoundedFileSize(fileSize / 1024)).toString()+(" ")+("KB");
+    fileSizeBuilder =
+        (getRoundedFileSize(fileSize / 1024)).toString() + (" ") + ("KB");
   } else {
-    fileSizeBuilder = (fileSizeInBytes).toString()+(" ")+("bytes");
+    fileSizeBuilder = (fileSizeInBytes).toString() + (" ") + ("bytes");
   }
   return fileSizeBuilder.toString();
 }
+
 double getRoundedFileSize(double unscaledValue) {
   //return BigDecimal.valueOf(unscaledValue).setScale(2, RoundingMode.HALF_UP).toDouble()
-  return  unscaledValue.roundToDouble();
+  return unscaledValue.roundToDouble();
 }
 
 extension FileFormatter on num {
@@ -221,7 +231,7 @@ extension FileFormatter on num {
   }
 }
 
-String getDateFromTimestamp(int convertedTime,String format){
+String getDateFromTimestamp(int convertedTime, String format) {
   var calendar = DateTime.fromMicrosecondsSinceEpoch(convertedTime);
   return DateFormat(format).format(calendar);
 }
@@ -231,15 +241,17 @@ extension StringParsing on String? {
   String checkNull() {
     return this ?? "";
   }
+
   int checkIndexes(String searchedKey) {
     var i = -1;
-    if(i==-1 || i<searchedKey.length) {
+    if (i == -1 || i < searchedKey.length) {
       while (this!.contains(searchedKey, i + 1)) {
         i = this!.indexOf(searchedKey, i + 1);
 
         if (i == 0 ||
-            (i > 0 && (RegExp("[^A-Za-z0-9 ]").hasMatch(this!.split("")[i])
-                || this!.split("")[i] == " "))) {
+            (i > 0 &&
+                (RegExp("[^A-Za-z0-9 ]").hasMatch(this!.split("")[i]) ||
+                    this!.split("")[i] == " "))) {
           return i;
         }
         i++;
@@ -248,9 +260,10 @@ extension StringParsing on String? {
     return -1;
   }
 
-
   bool startsWithTextInWords(String text) {
-    return !this!.toLowerCase().contains(text.toLowerCase()) ? false : this!.toLowerCase().startsWith(text.toLowerCase());
+    return !this!.toLowerCase().contains(text.toLowerCase())
+        ? false
+        : this!.toLowerCase().startsWith(text.toLowerCase());
     //checkIndexes(text)>-1;
     /*return when {
       this.indexOf(text, ignoreCase = true) <= -1 -> false
@@ -266,54 +279,77 @@ extension BooleanParsing on bool? {
   }
 }
 
-extension MemberParsing on Member{
-
-  String getUsername(){
+extension MemberParsing on Member {
+  String getUsername() {
     var value = FlyChat.getProfileDetails(jid.checkNull(), false);
     var str = Profile.fromJson(json.decode(value.toString()));
     return str.name.checkNull();
   }
+
   Future<Profile> getProfileDetails() async {
     var value = await FlyChat.getProfileDetails(jid.checkNull(), false);
     var str = Profile.fromJson(json.decode(value.toString()));
     return str;
   }
 }
+
 Future<Profile> getProfileDetails(String jid) async {
   var value = await FlyChat.getProfileDetails(jid.checkNull(), false);
   // profileDataFromJson(value);
-  var profile =  await compute(profiledata,value.toString());
+  var profile = await compute(profiledata, value.toString());
   // var str = Profile.fromJson(json.decode(value.toString()));
   return profile;
 }
 
-extension ProfileParesing on Profile{
-  bool isDeletedContact(){
-    return contactType =="deleted_contact";
+extension ProfileParesing on Profile {
+  bool isDeletedContact() {
+    return contactType == "deleted_contact";
   }
-  String getChatType(){
-    return (isGroupProfile ?? false) ? Constants.typeGroupChat  : Constants.typeChat;
+
+  String getChatType() {
+    return (isGroupProfile ?? false)
+        ? Constants.typeGroupChat
+        : Constants.typeChat;
   }
 }
 
-extension ChatmessageParsing on ChatMessageModel{
+extension ChatmessageParsing on ChatMessageModel {
   bool isMediaDownloaded() {
-      return isMediaMessage() && (mediaChatMessage?.mediaDownloadStatus == Constants.mediaDownloaded);
+    return isMediaMessage() &&
+        (mediaChatMessage?.mediaDownloadStatus == Constants.mediaDownloaded);
   }
+
   bool isMediaUploaded() {
-    return isMediaMessage() && (mediaChatMessage?.mediaUploadStatus == Constants.mediaUploaded);
+    return isMediaMessage() &&
+        (mediaChatMessage?.mediaUploadStatus == Constants.mediaUploaded);
   }
-  bool isMediaMessage() => (isAudioMessage() || isVideoMessage() || isImageMessage() || isFileMessage());
+
+  bool isMediaMessage() => (isAudioMessage() ||
+      isVideoMessage() ||
+      isImageMessage() ||
+      isFileMessage());
+
   bool isTextMessage() => messageType == Constants.mText;
+
   bool isAudioMessage() => messageType == Constants.mAudio;
+
   bool isImageMessage() => messageType == Constants.mImage;
+
   bool isVideoMessage() => messageType == Constants.mVideo;
+
   bool isFileMessage() => messageType == Constants.mDocument;
-  bool isNotificationMessage() => messageType.toUpperCase() == Constants.mNotification;
+
+  bool isNotificationMessage() =>
+      messageType.toUpperCase() == Constants.mNotification;
 }
-extension RecentChatParsing on RecentChatData{
-  String getChatType(){
-    return (isGroup!) ? Constants.typeGroupChat : (isBroadCast!) ? Constants.typeBroadcastChat : Constants.typeChat;
+
+extension RecentChatParsing on RecentChatData {
+  String getChatType() {
+    return (isGroup!)
+        ? Constants.typeGroupChat
+        : (isBroadCast!)
+            ? Constants.typeBroadcastChat
+            : Constants.typeChat;
   }
 }
 
@@ -322,16 +358,20 @@ String returnFormattedCount(int count) {
 }
 
 InkWell listItem(
-    {Widget? leading, required Widget title, Widget? trailing, required Function() onTap}) {
+    {Widget? leading,
+    required Widget title,
+    Widget? trailing,
+    required Function() onTap}) {
   return InkWell(
     onTap: onTap,
     child: Padding(
       padding: const EdgeInsets.all(16.0),
       child: Row(
         children: [
-          leading != null ? Padding(
-              padding: const EdgeInsets.only(right: 16.0),
-              child: leading) : const SizedBox(),
+          leading != null
+              ? Padding(
+                  padding: const EdgeInsets.only(right: 16.0), child: leading)
+              : const SizedBox(),
           Expanded(
             child: title,
           ),
@@ -349,9 +389,7 @@ String getRecentChatTime(BuildContext context, int? epochTime) {
   //messageDate.time = convertedTime
   var hourTime = manipulateMessageTime(
       context, DateTime.fromMicrosecondsSinceEpoch(convertedTime));
-  var currentYear = DateTime
-      .now()
-      .year;
+  var currentYear = DateTime.now().year;
   calendar = DateTime.fromMicrosecondsSinceEpoch(convertedTime);
   var time = (currentYear == calendar.year)
       ? DateFormat("dd-MMM").format(calendar)
@@ -359,14 +397,12 @@ String getRecentChatTime(BuildContext context, int? epochTime) {
   return (equalsWithYesterday(calendar, Constants.today))
       ? hourTime
       : (equalsWithYesterday(calendar, Constants.yesterday))
-      ? Constants.yesterdayUpper
-      : time;
+          ? Constants.yesterdayUpper
+          : time;
 }
 
 String manipulateMessageTime(BuildContext context, DateTime messageDate) {
-  var format = MediaQuery
-      .of(context)
-      .alwaysUse24HourFormat ? 24 : 12;
+  var format = MediaQuery.of(context).alwaysUse24HourFormat ? 24 : 12;
   var hours = calendar.hour; //calendar[Calendar.HOUR]
   calendar = messageDate;
   var dateHourFormat = setDateHourFormat(format, hours);
@@ -376,11 +412,11 @@ String manipulateMessageTime(BuildContext context, DateTime messageDate) {
 String setDateHourFormat(int format, int hours) {
   var dateHourFormat = (format == 12)
       ? (hours < 10)
-      ? "hh:mm aa"
-      : "h:mm aa"
+          ? "hh:mm aa"
+          : "h:mm aa"
       : (hours < 10)
-      ? "HH:mm"
-      : "H:mm";
+          ? "HH:mm"
+          : "H:mm";
   return dateHourFormat;
 }
 
@@ -390,11 +426,11 @@ bool equalsWithYesterday(DateTime srcDate, String day) {
   var yesterday = (day == Constants.yesterday)
       ? DateTime.now().subtract(const Duration(days: 1))
       : DateTime.now();
-  return yesterday
-      .difference(srcDate)
-      .inDays == 0;
+  return yesterday.difference(srcDate).inDays == 0;
 }
+
 var calendar = DateTime.now();
+
 String getChatTime(BuildContext context, int? epochTime) {
   // debugPrint("epochTime--> $epochTime");
   if (epochTime == null) return "";
@@ -407,14 +443,17 @@ String getChatTime(BuildContext context, int? epochTime) {
   calendar = DateTime.fromMicrosecondsSinceEpoch(convertedTime);
   return hourTime;
 }
+
 bool checkFile(String mediaLocalStoragePath) {
   return mediaLocalStoragePath.isNotEmpty &&
       File(mediaLocalStoragePath).existsSync();
 }
+
 checkIosFile(String mediaLocalStoragePath) async {
   var isExists = await FlyChat.iOSFileExist(mediaLocalStoragePath);
   return isExists;
 }
+
 openDocument(String mediaLocalStoragePath, BuildContext context) async {
   // if (await askStoragePermission()) {
   if (mediaLocalStoragePath.isNotEmpty) {
@@ -450,22 +489,22 @@ openDocument(String mediaLocalStoragePath, BuildContext context) async {
   }
   // }
 }
+
 Future<void> launchInBrowser(String url) async {
-  if(await AppUtils.isNetConnected()) {
+  if (await AppUtils.isNetConnected()) {
     var webUrl = url.replaceAll("http://", "").replaceAll("https://", "");
-    final Uri toLaunch =
-    Uri(scheme: 'https', host: webUrl);
+    final Uri toLaunch = Uri(scheme: 'https', host: webUrl);
     if (!await launchUrl(
       toLaunch,
       mode: LaunchMode.externalApplication,
     )) {
       throw 'Could not launch $url';
     }
-  }else{
+  } else {
     toToast(Constants.noInternetConnection);
   }
-
 }
+
 Future<void> makePhoneCall(String phoneNumber) async {
   final Uri launchUri = Uri(
     scheme: 'tel',
@@ -485,6 +524,7 @@ Future<void> makePhoneCall(String phoneNumber) async {
   // }
   await launchUrl(launchUri);
 }
+
 launchCaller(String phoneNumber) async {
   // var url = "tel:$phoneNumber";
   // if (await canLaunch(url)) {
@@ -493,9 +533,10 @@ launchCaller(String phoneNumber) async {
   //   throw 'Could not launch $url';
   // }
   canLaunchUrl(Uri(scheme: 'tel', path: phoneNumber)).then((bool result) {
-   debugPrint("success");
+    debugPrint("success");
   });
 }
+
 Future<void> launchEmail(String emailID) async {
   // String? encodeQueryParameters(Map<String, String> params) {
   //   return params.entries
@@ -514,9 +555,21 @@ Future<void> launchEmail(String emailID) async {
   await launchUrl(emailLaunchUri);
 }
 
-class Triple{
-  Triple(this.singleOrgroupJid,this.userId,this.typingStatus);
+class Triple {
+  Triple(this.singleOrgroupJid, this.userId, this.typingStatus);
+
   String singleOrgroupJid;
   String userId;
   bool typingStatus;
+}
+
+Future<RecentChatData?> getRecentChatOfJid(String jid) async {
+  var value = await FlyChat.getRecentChatOf(jid);
+  mirrorFlyLog("chat", value.toString());
+  if (value != null) {
+    var data = recentChatDataFromJson(value);
+    return data;
+  } else {
+    return null;
+  }
 }

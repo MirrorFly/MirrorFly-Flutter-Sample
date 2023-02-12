@@ -54,12 +54,13 @@ class ArchivedChatListController extends GetxController {
     }
   }
 
-  menuValidationForItem(){
+  menuValidationForItem() {
     delete(false);
-    if(selectedChats.length==1){
-      var item = archivedChats.firstWhere((element) => selectedChats.first ==element.jid);
-      delete(Constants.typeGroupChat!= item.getChatType());
-    }else{
+    if (selectedChats.length == 1) {
+      var item = archivedChats
+          .firstWhere((element) => selectedChats.first == element.jid);
+      delete(Constants.typeGroupChat != item.getChatType());
+    } else {
       menuValidationForDeleteIcon();
     }
   }
@@ -142,22 +143,25 @@ class ArchivedChatListController extends GetxController {
       toToast(Constants.noInternetConnection);
     }
   }
+
   void checkArchiveList(RecentChatData recent) async {
-    FlyChat.isArchivedSettingsEnabled().then((value){
-      if(value.checkNull()){
-        var archiveIndex = archivedChats.indexWhere((element) => recent.jid==element.jid);
+    FlyChat.isArchivedSettingsEnabled().then((value) {
+      if (value.checkNull()) {
+        var archiveIndex =
+            archivedChats.indexWhere((element) => recent.jid == element.jid);
         mirrorFlyLog("checkArchiveList", "$archiveIndex");
-        if(!archiveIndex.isNegative){
+        if (!archiveIndex.isNegative) {
           archivedChats.removeAt(archiveIndex);
           archivedChats.insert(0, recent);
           archivedChats.refresh();
-        }else{
-          archivedChats.insert(0,recent);
+        } else {
+          archivedChats.insert(0, recent);
           archivedChats.refresh();
         }
-      }else{
-        var archiveIndex = archivedChats.indexWhere((element) => recent.jid==element.jid);
-        if(!archiveIndex.isNegative){
+      } else {
+        var archiveIndex =
+            archivedChats.indexWhere((element) => recent.jid == element.jid);
+        if (!archiveIndex.isNegative) {
           archivedChats.removeAt(archiveIndex);
           /*var lastPinnedChat = dashboardController.recentChats.lastIndexWhere((element) =>
           element.isChatPinned!);
@@ -167,10 +171,9 @@ class ArchivedChatListController extends GetxController {
         }
       }
     });
-
   }
 
-  void onMessageReceived( ChatMessageModel chatMessage){
+  void onMessageReceived(ChatMessageModel chatMessage) {
     updateArchiveRecentChat(chatMessage.chatUserJid);
   }
 
@@ -178,7 +181,7 @@ class ArchivedChatListController extends GetxController {
     // mirrorFlyLog("MESSAGE STATUS UPDATED", event);
     ChatMessageModel chatMessageModel = sendMessageModelFromJson(event);
     final index = archivedChats.indexWhere(
-            (message) => message.lastMessageId == chatMessageModel.messageId);
+        (message) => message.lastMessageId == chatMessageModel.messageId);
     debugPrint("Message Status Update index of search $index");
     if (!index.isNegative) {
       archivedChats[index].lastMessageStatus = chatMessageModel.messageStatus;
@@ -186,23 +189,22 @@ class ArchivedChatListController extends GetxController {
     }
   }
 
-  Future<RecentChatData?> getRecentChatOfJid(String jid) async{
+  Future<RecentChatData?> getRecentChatOfJid(String jid) async {
     var value = await FlyChat.getRecentChatOf(jid);
     mirrorFlyLog("chat", value.toString());
     if (value != null) {
       var data = recentChatDataFromJson(value);
       return data;
-    }else {
+    } else {
       return null;
     }
   }
 
-
-  updateArchiveRecentChat(String jid){
+  updateArchiveRecentChat(String jid) {
     mirrorFlyLog("checkArchiveList", jid);
     final index = archivedChats.indexWhere((chat) => chat.jid == jid);
-    getRecentChatOfJid(jid).then((recent){
-      if(recent!=null){
+    getRecentChatOfJid(jid).then((recent) {
+      if (recent != null) {
         /*if(!recent.isChatArchived.checkNull()) {
           if (index.isNegative) {
             archivedChats.insert(0, recent);
@@ -226,7 +228,7 @@ class ArchivedChatListController extends GetxController {
           checkArchiveList(recent);
         }*/
         checkArchiveList(recent);
-      }else{
+      } else {
         if (!index.isNegative) {
           archivedChats.removeAt(index);
         }
@@ -234,12 +236,14 @@ class ArchivedChatListController extends GetxController {
       archivedChats.refresh();
     });
   }
+
   var delete = false.obs;
+
   menuValidationForDeleteIcon() async {
     var selected = archivedChats.where((p0) => selectedChats.contains(p0.jid));
     for (var item in selected) {
-      var isMember = await FlyChat.isMemberOfGroup(item.jid.checkNull(),null);
-      if((item.getChatType() == Constants.typeGroupChat) && isMember!){
+      var isMember = await FlyChat.isMemberOfGroup(item.jid.checkNull(), null);
+      if ((item.getChatType() == Constants.typeGroupChat) && isMember!) {
         delete(false);
         return;
         //return false;
@@ -249,11 +253,15 @@ class ArchivedChatListController extends GetxController {
     //return true;
   }
 
-  deleteChats(){
+  deleteChats() {
     String? profile = '';
-    profile = archivedChats.firstWhere((element) => selectedChats.first ==element.jid).profileName;
+    profile = archivedChats
+        .firstWhere((element) => selectedChats.first == element.jid)
+        .profileName;
     Helper.showAlert(
-        title: selectedChats.length==1 ? "Delete chat with $profile?" : "Delete ${selectedChats.length} selected chats?",
+        title: selectedChats.length == 1
+            ? "Delete chat with $profile?"
+            : "Delete ${selectedChats.length} selected chats?",
         actions: [
           TextButton(
               onPressed: () {
@@ -263,29 +271,48 @@ class ArchivedChatListController extends GetxController {
           TextButton(
               onPressed: () {
                 Get.back();
-                if(selectedChats.length==1){
+                if (selectedChats.length == 1) {
                   _itemDelete(0);
-                }else{
+                } else {
                   itemsDelete();
                 }
               },
               child: const Text("YES")),
-        ], message: '');
+        ],
+        message: '');
   }
 
-  _itemDelete(int index){
-    var chatIndex = archivedChats.indexWhere((element) => selectedChats[index] == element.jid);//selectedChatsPosition[index];
+  _itemDelete(int index) {
+    var chatIndex = archivedChats.indexWhere((element) =>
+        selectedChats[index] == element.jid); //selectedChatsPosition[index];
     archivedChats.removeAt(chatIndex);
     FlyChat.deleteRecentChat(selectedChats[index]);
     clearAllChatSelection();
   }
 
-  itemsDelete(){
+  itemsDelete() {
     // debugPrint('selectedChatsPosition : ${selectedChatsPosition.join(',')}');
     FlyChat.deleteRecentChats(selectedChats);
     for (var element in selectedChatsPosition) {
       archivedChats.removeAt(element);
     }
     clearAllChatSelection();
+  }
+
+  void userUpdatedHisProfile(jid) {
+    updateRecentChatAdapter(jid);
+  }
+
+  Future<void> updateRecentChatAdapter(String jid) async {
+    if (jid.isNotEmpty) {
+      var index = archivedChats.indexWhere((element) =>
+          element.jid == jid); // { it.jid ?: Constants.EMPTY_STRING == jid }
+      if (!index.isNegative) {
+        var recent = await getRecentChatOfJid(jid);
+        if (recent != null) {
+          archivedChats[index] = recent;
+        }
+      }
+    }
   }
 }
