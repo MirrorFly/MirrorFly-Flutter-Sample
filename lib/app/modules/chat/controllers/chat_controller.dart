@@ -1686,7 +1686,7 @@ class ChatController extends FullLifeCycleController
         () => isAudioRecording(Constants.audioRecordInitial));
   }
 
-  Future<void> startRecording() async {
+  startRecording() async {
     if (playingChat != null) {
       playingChat!.mediaChatMessage!.isPlaying = false;
       playingChat = null;
@@ -1719,7 +1719,7 @@ class ChatController extends FullLifeCycleController
       }
     } else {
       //show busy status popup
-      showBusyStatusAlert(null);
+      showBusyStatusAlert(startRecording);
     }
   }
 
