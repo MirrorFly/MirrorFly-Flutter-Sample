@@ -31,7 +31,7 @@ class RecentChatItem extends StatelessWidget {
       this.isSelected = false,
       this.isCheckBoxVisible = false,
       this.isChecked = false,
-      this.typingUserid = "", this.archiveVisible =true})
+      this.typingUserid = "", this.archiveVisible =true, this.archiveEnabled = false})
       : super(key: key);
   final RecentChatData item;
   final Function() onTap;
@@ -53,6 +53,7 @@ class RecentChatItem extends StatelessWidget {
       fontWeight: FontWeight.w600,
       fontFamily: 'sf_ui',
       color: buttonBgColor);
+  final bool archiveEnabled;
 
   @override
   Widget build(BuildContext context) {
@@ -257,7 +258,7 @@ class RecentChatItem extends StatelessWidget {
                                         height: 18,
                                       )),
                                   Visibility(
-                                      visible: !item.isChatArchived! && item.isMuted!,
+                                      visible: !archiveEnabled && item.isMuted!,
                                       child: SvgPicture.asset(
                                         mute,
                                         width: 13,

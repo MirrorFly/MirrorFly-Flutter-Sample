@@ -39,6 +39,8 @@ class StatusListView extends GetView<StatusListController> {
                 () => ListTile(
                   contentPadding: EdgeInsets.zero,
                   title: Text(controller.selectedStatus.value,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                       style: const TextStyle(
                           color: textColor,
                           fontSize: 14,
@@ -72,6 +74,8 @@ class StatusListView extends GetView<StatusListController> {
                       return ListTile(
                         contentPadding: EdgeInsets.zero,
                         title: Text(item.status.checkNull(),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
                             style: TextStyle(
                                 color: item.status==controller.selectedStatus.value ? textBlack1color : textColor,
                                 fontSize: 14,

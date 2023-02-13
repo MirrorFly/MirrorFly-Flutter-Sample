@@ -15,11 +15,16 @@ class ArchivedChatListController extends GetxController {
 
   //RxList<RecentChatData> archivedChats = <RecentChatData>[].obs;
 
-  /*@override
+  @override
   void onInit(){
     super.onInit();
     //archivedChats(dashboardController.archivedChats);
-  }*/
+    getArchivedSettingsEnabled();
+  }
+  final archiveEnabled = true.obs;
+  Future<void> getArchivedSettingsEnabled() async {
+    await FlyChat.isArchivedSettingsEnabled().then((value) => archiveEnabled(value));
+  }
 
   getArchivedChatsList() async {
     await FlyChat.getArchivedChatList().then((value) {
@@ -60,8 +65,21 @@ class ArchivedChatListController extends GetxController {
       var item = archivedChats
           .firstWhere((element) => selectedChats.first == element.jid);
       delete(Constants.typeGroupChat != item.getChatType());
+      if ((Constants.typeBroadcastChat != item.getChatType()&& !archiveEnabled.value)) {
+        unMute(item.isMuted!);
+        mute(!item.isMuted!);
+        // shortcut(true);
+        debugPrint("item.isMuted! ${item.isMuted!}");
+      } else {
+        unMute(false);
+        mute(false);
+        // shortcut(false);
+      }
     } else {
       menuValidationForDeleteIcon();
+      if(!archiveEnabled.value) {
+        menuValidationForMuteUnMuteIcon();
+      }
     }
   }
 
@@ -251,6 +269,70 @@ class ArchivedChatListController extends GetxController {
     }
     delete(true);
     //return true;
+  }
+
+  var mute = false.obs;
+  var unMute = false.obs;
+  menuValidationForMuteUnMuteIcon() {
+    var checkListForMuteUnMuteIcon = <bool>[];
+    var selected = archivedChats.where((p0) => selectedChats.contains(p0.jid));
+    for (var value in selected) {
+      if (!value.isBroadCast!) {
+        checkListForMuteUnMuteIcon.add(value.isMuted.checkNull());
+      }
+    }
+    if (checkListForMuteUnMuteIcon.contains(false)) {
+      // Mute able
+      mute(true);
+      unMute(false);
+    } else if (checkListForMuteUnMuteIcon.contains(true)) {
+      mute(false);
+      unMute(true);
+    } else {
+      mute(false);
+      unMute(false);
+    }
+    //return checkListForMuteUnMuteIcon.contains(false);// Mute able
+  }
+
+  muteChats() {
+    if (selectedChats.length == 1) {
+      _itemMute(0);
+      clearAllChatSelection();
+    } else {
+      selected(false);
+      selectedChats.asMap().forEach((key, value) {
+        _itemMute(key);
+      });
+      clearAllChatSelection();
+    }
+  }
+
+  unMuteChats() {
+    if (selectedChats.length == 1) {
+      _itemUnMute(0);
+      clearAllChatSelection();
+    } else {
+      selected(false);
+      selectedChats.asMap().forEach((key, value) {
+        _itemUnMute(key);
+      });
+      clearAllChatSelection();
+    }
+  }
+
+  _itemMute(int index) {
+    FlyChat.updateChatMuteStatus(selectedChats[index], true);
+    var chatIndex = archivedChats.indexWhere((element) =>
+    selectedChats[index] == element.jid); //selectedChatsPosition[index];
+    archivedChats[chatIndex].isMuted = (true);
+  }
+
+  _itemUnMute(int index) {
+    var chatIndex = archivedChats.indexWhere((element) =>
+    selectedChats[index] == element.jid); //selectedChatsPosition[index];
+    archivedChats[chatIndex].isMuted = (false);
+    FlyChat.updateChatMuteStatus(selectedChats[index], false);
   }
 
   deleteChats() {
