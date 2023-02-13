@@ -257,7 +257,7 @@ class RecentChatItem extends StatelessWidget {
                                         height: 18,
                                       )),
                                   Visibility(
-                                      visible: item.isMuted!,
+                                      visible: !item.isChatArchived! && item.isMuted!,
                                       child: SvgPicture.asset(
                                         mute,
                                         width: 13,
