@@ -82,8 +82,8 @@ class LoginController extends GetxController {
     if (mobileNumber.text.isEmpty) {
       toToast("Please Enter Mobile Number");
     } else {
-      //phoneAuth();
-      registerAccount();
+      phoneAuth();
+      //registerAccount();
     }
   }
 
@@ -297,6 +297,7 @@ class LoginController extends GetxController {
           SessionManagement.setLogin(userData.data!.username!.isNotEmpty);
           SessionManagement.setUser(userData.data!);
           // userData.data.
+          enableArchive();
           setUserJID(userData.data!.username!);
         }
       }).catchError((error) {
@@ -310,6 +311,13 @@ class LoginController extends GetxController {
         }
       });
     } else {
+      toToast(Constants.noInternetConnection);
+    }
+  }
+  void enableArchive() async{
+    if(await AppUtils.isNetConnected()) {
+      FlyChat.enableDisableArchivedSettings(true);
+    }else{
       toToast(Constants.noInternetConnection);
     }
   }
