@@ -48,6 +48,8 @@ class ChatSettingsView extends GetView<ChatSettingsController> {
                     Padding(
                       padding: const EdgeInsets.symmetric(vertical: 4.0),
                       child: Text(controller.busyStatus.value,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
                           style: const TextStyle(
                               color: buttonBgColor,
                               fontSize: 14,
