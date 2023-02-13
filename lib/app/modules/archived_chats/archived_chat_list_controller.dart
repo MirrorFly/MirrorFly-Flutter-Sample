@@ -29,8 +29,12 @@ class ArchivedChatListController extends GetxController {
   getArchivedChatsList() async {
     await FlyChat.getArchivedChatList().then((value) {
       mirrorFlyLog("archived", value.toString());
-      var data = recentChatFromJson(value);
-      archivedChats(data.data!);
+      if(value != null) {
+        var data = recentChatFromJson(value);
+        archivedChats(data.data!);
+      }else{
+        debugPrint("Archive list is empty");
+      }
     }).catchError((error) {
       debugPrint("issue===> $error");
     });

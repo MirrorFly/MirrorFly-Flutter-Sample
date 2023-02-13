@@ -198,6 +198,24 @@ class Helper {
   }
 }
 
+bool checkFileUploadSize(String path, String mediaType){
+  var file = File(path);
+  int sizeInBytes = file.lengthSync();
+  debugPrint("file size --> $sizeInBytes");
+  double sizeInMb = sizeInBytes / (1024 * 1024);
+  debugPrint("sizeInBytes $sizeInMb");
+
+  // debugPrint(getFileSizeText(sizeInBytes.toString()));
+
+  if(mediaType == Constants.mImage && sizeInMb < 10){
+    return true;
+  }else if((mediaType == Constants.mAudio || mediaType == Constants.mVideo || mediaType == Constants.mDocument) && sizeInMb < 20){
+    return true;
+  }else{
+    return false;
+  }
+}
+
 String getFileSizeText(String fileSizeInBytes) {
   var fileSizeBuilder = "";
   var fileSize = int.parse(fileSizeInBytes);

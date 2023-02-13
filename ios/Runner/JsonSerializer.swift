@@ -336,6 +336,9 @@ open class JSONSerializer {
                         String(describing: value).contains("#")   {
                 handledValue = toJson(value)
             }
+//            else if(propertyName == "messageTextContent" || propertyName == "lastMessageContent") &&  String(describing: value) != "nil" {
+//                handledValue = String(describing: value).replacingOccurrences(of: "\n", with: "\\\\n")
+//            }
             
             else if (propertyName == "mediaChatMessage" || propertyName == "locationChatMessage") &&  String(describing: value) != "nil" {
                // let refined = String(describing: value).replacingOccurrences(of: "some", with: "")

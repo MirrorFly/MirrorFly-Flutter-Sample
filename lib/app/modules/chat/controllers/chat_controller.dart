@@ -538,28 +538,33 @@ class ChatController extends FullLifeCycleController
         debugPrint("Chat List is Empty");
       } else {
         // debugPrint("parsing the value");
-        // mirrorFlyLog("chat parsed history before", value);
-        List<ChatMessageModel> chatMessageModel =
-            chatMessageModelFromJson(value);
-        // mirrorFlyLog("chat parsed history", chatMessageModelToJson(chatMessageModel));
-        chatList(chatMessageModel.reversed.toList());
-        Future.delayed(const Duration(milliseconds: 200), () {
-          if (starredChatMessageId != null) {
-            debugPrint('starredChatMessageId $starredChatMessageId');
-            var chat = chatList.indexWhere(
-                (element) => element.messageId == starredChatMessageId);
-            debugPrint('chat $chat');
-            if (!chat.isNegative) {
-              navigateToMessage(chatList[chat]);
-              starredChatMessageId = null;
+        try {
+          mirrorFlyLog("chat parsed history before", value);
+          List<ChatMessageModel> chatMessageModel = chatMessageModelFromJson(
+              value);
+          mirrorFlyLog(
+              "chat parsed history", chatMessageModelToJson(chatMessageModel));
+          chatList(chatMessageModel.reversed.toList());
+          Future.delayed(const Duration(milliseconds: 200), () {
+            if (starredChatMessageId != null) {
+              debugPrint('starredChatMessageId $starredChatMessageId');
+              var chat = chatList.indexWhere(
+                      (element) => element.messageId == starredChatMessageId);
+              debugPrint('chat $chat');
+              if (!chat.isNegative) {
+                navigateToMessage(chatList[chat]);
+                starredChatMessageId = null;
+              }
             }
-          }
-          getUnsentReplyMessage();
-        });
-        /*for (var index =0;index<=chatMessageModel.reversed.toList().length;index++) {
+            getUnsentReplyMessage();
+          });
+          /*for (var index =0;index<=chatMessageModel.reversed.toList().length;index++) {
           debugPrint("isDateChanged ${isDateChanged(index,chatMessageModel.reversed.toList())}");
 
         }*/
+        }catch(error){
+          debugPrint("chatHistory parsing error--> $error");
+        }
       }
       chatLoading(false);
     }).catchError((e) {
@@ -669,9 +674,13 @@ class ChatController extends FullLifeCycleController
         allowedExtensions: ['pdf', 'ppt', 'xls', 'doc', 'docx', 'xlsx', 'txt'],
       );
       if (result != null && File(result.files.single.path!).existsSync()) {
-        debugPrint(result.files.first.extension);
-        filePath.value = (result.files.single.path!);
-        sendDocumentMessage(filePath.value, "");
+        if(checkFileUploadSize(result.files.single.path!, Constants.mDocument)) {
+          debugPrint(result.files.first.extension);
+          filePath.value = (result.files.single.path!);
+          sendDocumentMessage(filePath.value, "");
+        }else{
+          toToast("File Size should not exceed 20 MB");
+        }
       } else {
         // User canceled the picker
       }
@@ -915,14 +924,18 @@ class ChatController extends FullLifeCycleController
     );
     if (result != null && File(result.files.single.path!).existsSync()) {
       debugPrint(result.files.first.extension);
-      AudioPlayer player = AudioPlayer();
-      player.setUrl(result.files.single.path!);
-      player.onDurationChanged.listen((Duration duration) {
-        mirrorFlyLog("", 'max duration: ${duration.inMilliseconds}');
-        filePath.value = (result.files.single.path!);
-        sendAudioMessage(
-            filePath.value, false, duration.inMilliseconds.toString());
-      });
+      if(checkFileUploadSize(result.files.single.path!, Constants.mAudio)) {
+        AudioPlayer player = AudioPlayer();
+        player.setUrl(result.files.single.path!);
+        player.onDurationChanged.listen((Duration duration) {
+          mirrorFlyLog("", 'max duration: ${duration.inMilliseconds}');
+          filePath.value = (result.files.single.path!);
+          sendAudioMessage(
+              filePath.value, false, duration.inMilliseconds.toString());
+        });
+      }else{
+        toToast("File Size should not exceed 20 MB");
+      }
     } else {
       // User canceled the picker
     }

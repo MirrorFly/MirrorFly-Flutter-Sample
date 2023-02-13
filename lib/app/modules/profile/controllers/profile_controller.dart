@@ -160,23 +160,28 @@ class ProfileController extends GetxController {
   updateProfileImage(String path, {bool update = false}) async {
     if(await AppUtils.isNetConnected()) {
       loading.value = true;
-      showLoader();
-      FlyChat.updateMyProfileImage(path).then((value) {
-        mirrorFlyLog("updateMyProfileImage", value);
-        loading.value = false;
-        var data = json.decode(value);
-        imagePath.value = Constants.emptyString;
-        userImgUrl.value = data['data']['image'];
-        SessionManagement.setUserImage(data['data']['image'].toString());
-        hideLoader();
-        if (update) {
-          save();
-        }
-      }).catchError((onError) {
-        debugPrint("Profile Update on error--> ${onError.toString()}");
-        loading.value = false;
-        hideLoader();
-      });
+
+      // if(checkFileUploadSize(path, Constants.mImage)) {
+        showLoader();
+        FlyChat.updateMyProfileImage(path).then((value) {
+          mirrorFlyLog("updateMyProfileImage", value);
+          loading.value = false;
+          var data = json.decode(value);
+          imagePath.value = Constants.emptyString;
+          userImgUrl.value = data['data']['image'];
+          SessionManagement.setUserImage(data['data']['image'].toString());
+          hideLoader();
+          if (update) {
+            save();
+          }
+        }).catchError((onError) {
+          debugPrint("Profile Update on error--> ${onError.toString()}");
+          loading.value = false;
+          hideLoader();
+        });
+      // }else{
+      //   toToast("Image Size exceeds 10MB");
+      // }
     }else{
       toToast(Constants.noInternetConnection);
     }
@@ -262,6 +267,7 @@ class ProfileController extends GetxController {
         if (value != null) {
           var profileStatus = statusDataFromJson(value.toString());
           if (profileStatus.isNotEmpty) {
+            debugPrint("profile status list is not empty");
             var defaultStatus = Constants.defaultStatusList;
 
             for (var statusValue in defaultStatus) {
@@ -285,20 +291,12 @@ class ProfileController extends GetxController {
             SessionManagement.convSound(true);
             SessionManagement.muteAll( false);
           }else{
-            debugPrint("Inserting Status");
-            var defaultStatus = Constants.defaultStatusList;
-
-            for (var statusValue in defaultStatus) {
-              FlyChat.insertDefaultStatus(statusValue);
-
-            }
-            FlyChat.getDefaultNotificationUri().then((value) {
-              if (value != null) {
-                FlyChat.setNotificationUri(value);
-                SessionManagement.setNotificationUri(value);
-              }
-            });
+            insertStatus();
           }
+        }else{
+          debugPrint("status list is empty");
+          insertStatus();
+
         }
       });
     } on Exception catch(er){
@@ -311,25 +309,31 @@ class ProfileController extends GetxController {
       FilePickerResult? result = await FilePicker.platform
           .pickFiles(allowMultiple: false, type: FileType.image);
       if (result != null) {
-        isImageSelected.value = true;
-        Get.to(CropImage(
-          imageFile: File(result.files.single.path!),
-        ))?.then((value) {
-          value as MemoryImage;
-          imageBytes = value.bytes;
-          var name = "${DateTime.now().millisecondsSinceEpoch}.jpg";
-          writeImageTemp(value.bytes, name).then((value) {
-            if (from.value == Routes.login) {
-              imagePath(value.path);
-              changed(true);
-              update();
-            } else {
-              imagePath(value.path);
-              changed(true);
-              updateProfileImage(value.path, update: true);
-            }
+        if(checkFileUploadSize(result.files.single.path!, Constants.mImage)) {
+          isImageSelected.value = true;
+          Get.to(CropImage(
+            imageFile: File(result.files.single.path!),
+          ))?.then((value) {
+            value as MemoryImage;
+            imageBytes = value.bytes;
+            var name = "${DateTime
+                .now()
+                .millisecondsSinceEpoch}.jpg";
+            writeImageTemp(value.bytes, name).then((value) {
+              if (from.value == Routes.login) {
+                imagePath(value.path);
+                changed(true);
+                update();
+              } else {
+                imagePath(value.path);
+                changed(true);
+                updateProfileImage(value.path, update: true);
+              }
+            });
           });
-        });
+        }else{
+          toToast("Please select Image less than 10MB");
+        }
       } else {
         // User canceled the picker
         isImageSelected.value = false;
@@ -390,5 +394,21 @@ class ProfileController extends GetxController {
   onEmailChange(String text) {
     changed(true);
     update();
+  }
+
+  static void insertStatus() {
+    debugPrint("Inserting Status");
+    var defaultStatus = Constants.defaultStatusList;
+
+    for (var statusValue in defaultStatus) {
+      FlyChat.insertDefaultStatus(statusValue);
+
+    }
+    FlyChat.getDefaultNotificationUri().then((value) {
+      if (value != null) {
+        FlyChat.setNotificationUri(value);
+        SessionManagement.setNotificationUri(value);
+      }
+    });
   }
 }

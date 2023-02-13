@@ -121,8 +121,9 @@ import FlyDatabase
             return
         }
         
-        FlyMessenger.sendTextMessage(toJid: receiverJID!, message: txtMessage!, replyMessageId: replyMessageID) { isSuccess,error,chatMessage in
+        FlyMessenger.sendTextMessage(toJid: receiverJID!, message: txtMessage!.trimmingCharacters(in: .whitespacesAndNewlines), replyMessageId: replyMessageID) { isSuccess,error,chatMessage in
             if isSuccess {
+                print("sending text messages-->\(chatMessage?.messageTextContent)")
                 var chatMsg = JSONSerializer.toJson(chatMessage as Any)
                 chatMsg = chatMsg.replacingOccurrences(of: "{\"some\":", with: "")
                 chatMsg = chatMsg.replacingOccurrences(of: "}}", with: "}")
@@ -544,11 +545,13 @@ import FlyDatabase
                 
                 FlyMessenger.sendDocumentMessage(toJid: userJid,mediaData: mediaData,replyMessageId: replyMessageId) { isSuccess, error, message in
                     if message != nil {
-                        print("CAPTURE_RESPONSE")
                         print("sendDocumentMessage")
-                        dump(message)
-                        print(JSONSerializer.toJson(message as Any))
-                        result(JSONSerializer.toJson(message as Any))
+                        var documentMessageResponse = JSONSerializer.toJson(message as Any)
+                        
+                        documentMessageResponse = documentMessageResponse.replacingOccurrences(of: "{\"some\":", with: "")
+                        documentMessageResponse = documentMessageResponse.replacingOccurrences(of: "}}", with: "}")
+                        
+                        result(documentMessageResponse)
                         
                     }
                     
@@ -563,6 +566,9 @@ import FlyDatabase
     static func getProfileStatusList(call: FlutterMethodCall, result: @escaping FlutterResult){
         let profileStatus = ChatManager.getAllStatus()
         print("Status list -->\(profileStatus)")
+        if(profileStatus.isEmpty){
+            result(nil)
+        }
         let profileStatusJson = JSONSerializer.toJson(profileStatus)
         print(profileStatusJson)
         result(profileStatusJson)
@@ -690,6 +696,11 @@ import FlyDatabase
         
     }
     static func getRingtoneName(call: FlutterMethodCall, result: @escaping FlutterResult){
+        
+        result("[]")
+        
+    }
+    static func getDefaultNotificationUri(call: FlutterMethodCall, result: @escaping FlutterResult){
         
         result("[]")
         
@@ -992,6 +1003,7 @@ import FlyDatabase
         
         ChatManager.enableDisableHideLastSeen(EnableLastSeen: enableLastSeen) { isSuccess, flyError, flyData in
             
+            print("enableDisableHideLastSeen\(isSuccess)")
             result(isSuccess)
         }
     }
@@ -1094,7 +1106,7 @@ import FlyDatabase
 //        print("====DSON=====")
         
 //        userChatHistory = userChatHistory.replacingOccurrences(of: "\"messageStatus\":", with: "\"iosMessageStatus\":")
-//        print(userChatHistory)
+        print(userChatHistory)
         result(userChatHistory)
         
     }
@@ -1706,6 +1718,10 @@ import FlyDatabase
            if isSuccess {
                var flydata = resultDict
                print(flydata.getData())
+               
+               if(flydata.isEmpty){
+                   result("{\"data\": [] }")
+               }
                
                let archiveChatJson = JSONSerializer.toJson(flydata.getData())
                
