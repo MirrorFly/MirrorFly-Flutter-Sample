@@ -211,7 +211,7 @@ import FlyDatabase
             media.fileName = fileName
             media.fileSize = fileSize
             media.fileKey = fileKey
-            media.base64Thumbnail = MediaUtils.convertImageToBase64(img: selectedImage!)
+            media.base64Thumbnail = MediaUtils.convertImageToBase64String(img: selectedImage!)
             media.caption = caption
             
         }
@@ -626,7 +626,7 @@ import FlyDatabase
         var groupMembers = [GroupParticipantDetail]()
         
         groupMembers = GroupManager.shared.getGroupMemebersFromLocal(groupJid: groupJid).participantDetailArray.filter({$0.memberJid != FlyDefaults.myJid})
-        dump("groupMembers--> \(groupMembers)")
+//        dump("groupMembers--> \(JSONSerializer.toJson(groupMembers))")
         let myJid = GroupManager.shared.getGroupMemebersFromLocal(groupJid: groupJid).participantDetailArray.filter({$0.memberJid == FlyDefaults.myJid})
         groupMembers = groupMembers.sorted(by: { $0.profileDetail?.name.lowercased() ?? "" < $1.profileDetail?.name.lowercased() ?? "" })
         groupMembers.insert(contentsOf: myJid, at: 0)

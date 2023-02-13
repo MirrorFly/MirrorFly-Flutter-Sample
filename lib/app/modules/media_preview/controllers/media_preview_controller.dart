@@ -1,4 +1,6 @@
 
+import 'dart:io';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
@@ -6,6 +8,7 @@ import 'package:get/get.dart';
 
 import '../../../common/constants.dart';
 import '../../../data/apputils.dart';
+import '../../../data/helper.dart';
 import '../../chat/controllers/chat_controller.dart';
 
 class MediaPreviewController extends FullLifeCycleController with FullLifeCycleMixin {
@@ -47,6 +50,7 @@ class MediaPreviewController extends FullLifeCycleController with FullLifeCycleM
     if (await AppUtils.isNetConnected()) {
       try {
         int i = 0;
+        Platform.isIOS ? Helper.showLoading(message: "Compressing files") : null;
         for (var data in filePath) {
           /// show image
           debugPrint(data.type);
@@ -70,6 +74,7 @@ class MediaPreviewController extends FullLifeCycleController with FullLifeCycleM
           i++;
         }
       } finally {
+        Platform.isIOS ? Helper.hideLoading() : null;
         Get.back();
         Get.back();
       }
