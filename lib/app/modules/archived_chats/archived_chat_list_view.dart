@@ -66,6 +66,36 @@ class ArchivedChatListView extends GetView<ArchivedChatListController> {
                         ),
                         CustomAction(
                           visibleWidget: IconButton(
+                            onPressed: () {
+                              controller.muteChats();
+                            },
+                            icon: SvgPicture.asset(mute),tooltip: 'Mute',),
+                          overflowWidget: const Text("Mute"),
+                          showAsAction: controller.mute.value
+                              ? ShowAsAction.always
+                              : ShowAsAction.gone,
+                          keyValue: 'Mute',
+                          onItemClick: () {
+                            controller.muteChats();
+                          },
+                        ),
+                        CustomAction(
+                          visibleWidget: IconButton(
+                            onPressed: () {
+                              controller.unMuteChats();
+                            },
+                            icon: SvgPicture.asset(unMute),tooltip: 'UnMute',),
+                          overflowWidget: const Text("UnMute"),
+                          showAsAction: controller.unMute.value
+                              ? ShowAsAction.always
+                              : ShowAsAction.gone,
+                          keyValue: 'UnMute',
+                          onItemClick: () {
+                            controller.unMuteChats();
+                          },
+                        ),
+                        CustomAction(
+                          visibleWidget: IconButton(
                               onPressed: () {
                                 controller.unArchiveSelectedChats();
                               },
@@ -96,6 +126,7 @@ class ArchivedChatListView extends GetView<ArchivedChatListController> {
                             typingUserid: controller.typingUser(
                                 item.jid.checkNull()),
                             archiveVisible: false,
+                            archiveEnabled: controller.archiveEnabled.value,
                             onTap: () {
                               if (controller.selected.value) {
                                 controller.selectOrRemoveChatFromList(index);
