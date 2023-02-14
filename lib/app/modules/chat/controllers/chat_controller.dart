@@ -1994,11 +1994,15 @@ class ChatController extends FullLifeCycleController
           getParticipantsNameAsCsv(profile.jid.checkNull());
         }
       } else {
-        FlyChat.getUserLastSeenTime(profile.jid.toString()).then((value) {
-          userPresenceStatus(value.toString());
-        }).catchError((er) {
+        if(await AppUtils.isNetConnected()) {
+          FlyChat.getUserLastSeenTime(profile.jid.toString()).then((value) {
+            userPresenceStatus(value.toString());
+          }).catchError((er) {
+            userPresenceStatus("");
+          });
+        }else{
           userPresenceStatus("");
-        });
+        }
       }
     }
   }
@@ -2440,6 +2444,7 @@ class ChatController extends FullLifeCycleController
   @override
   void onResumed() {
     mirrorFlyLog("LifeCycle", "onResumed");
+    setChatStatus();
     if (!KeyboardVisibilityController().isVisible) {
       if (focusNode.hasFocus) {
         focusNode.unfocus();
@@ -2480,6 +2485,27 @@ class ChatController extends FullLifeCycleController
         profile_(value);
         checkAdminBlocked();
         isBlocked(profile.isBlocked);
+        setChatStatus();
+      });
+    }
+  }
+
+  @override
+  void userCameOnline(jid) {
+    super.userCameOnline(jid);
+    if(jid.isNotEmpty && profile.jid==jid && !profile.isGroupProfile.checkNull()) {
+      debugPrint("userCameOnline : $jid");
+      Future.delayed(const Duration(milliseconds: 3000),(){
+        setChatStatus();
+      });
+    }
+  }
+  @override
+  void userWentOffline(jid) {
+    super.userWentOffline(jid);
+    if(jid.isNotEmpty && profile.jid==jid && !profile.isGroupProfile.checkNull()) {
+      debugPrint("userWentOffline : $jid");
+      Future.delayed(const Duration(milliseconds: 3000),(){
         setChatStatus();
       });
     }

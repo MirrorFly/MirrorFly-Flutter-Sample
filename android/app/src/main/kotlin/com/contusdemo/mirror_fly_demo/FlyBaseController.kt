@@ -2803,6 +2803,7 @@ open class FlyBaseController(activity: FlutterActivity) : MethodChannel.MethodCa
         ContactManager.getUserLastSeenTime(jid, object : ContactManager.LastSeenListener {
             override fun onFailure(message: String) {
                 /* No Implementation Needed */
+                result.success("")
             }
 
             override fun onSuccess(lastSeenTime: String) {

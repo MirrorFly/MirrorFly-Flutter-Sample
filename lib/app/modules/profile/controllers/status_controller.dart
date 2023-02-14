@@ -54,7 +54,7 @@ class StatusListController extends FullLifeCycleController with FullLifeCycleMix
         selectedStatus.value=text ?? addStatusController.text.trim().toString();
         addStatusController.text=text ?? addStatusController.text.trim().toString();
         var data = json.decode(value.toString());
-        toToast(data['message'].toString());
+        toToast('Status update successfully');
         Helper.hideLoading();
         if(data['status']) {
           getStatusList();

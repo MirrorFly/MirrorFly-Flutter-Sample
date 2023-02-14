@@ -43,7 +43,11 @@ abstract class BaseController {
     FlyChat.onLoggedOut.listen(onLoggedOut);
     FlyChat.unblockedThisUser.listen(unblockedThisUser);
     FlyChat.userBlockedMe.listen(userBlockedMe);
-    FlyChat.userCameOnline.listen(userCameOnline);
+    FlyChat.userCameOnline.listen((event){
+      var data = json.decode(event.toString());
+      var jid = data["jid"];
+      userCameOnline(jid);
+    });
     FlyChat.userDeletedHisProfile.listen(userDeletedHisProfile);
     FlyChat.userProfileFetched.listen(userProfileFetched);
     FlyChat.userUnBlockedMe.listen(userUnBlockedMe);
@@ -52,7 +56,11 @@ abstract class BaseController {
       var jid = data["jid"];
       userUpdatedHisProfile(jid);
     });
-    FlyChat.userWentOffline.listen(userWentOffline);
+    FlyChat.userWentOffline.listen((event){
+      var data = json.decode(event.toString());
+      var jid = data["jid"];
+      userWentOffline(jid);
+    });
     FlyChat.usersIBlockedListFetched.listen(usersIBlockedListFetched);
     FlyChat.usersWhoBlockedMeListFetched.listen(usersWhoBlockedMeListFetched);
     FlyChat.onConnected.listen(onConnected);
@@ -131,7 +139,9 @@ abstract class BaseController {
 
   void userBlockedMe(result) {}
 
-  void userCameOnline(result) {}
+  void userCameOnline(String jid) {
+    // debugPrint("userCameOnline : $jid");
+  }
 
   void userDeletedHisProfile(result) {}
 
@@ -143,7 +153,9 @@ abstract class BaseController {
     mirrorFlyLog("userUpdatedHisProfile", jid.toString());
   }
 
-  void userWentOffline(result) {}
+  void userWentOffline(String jid) {
+    // debugPrint("userWentOffline : $jid");
+  }
 
   void usersIBlockedListFetched(result) {}
 

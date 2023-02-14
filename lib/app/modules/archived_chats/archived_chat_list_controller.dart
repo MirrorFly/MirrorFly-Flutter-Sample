@@ -373,6 +373,7 @@ class ArchivedChatListController extends GetxController {
         selectedChats[index] == element.jid); //selectedChatsPosition[index];
     archivedChats.removeAt(chatIndex);
     FlyChat.deleteRecentChat(selectedChats[index]);
+    //FlyChat.updateArchiveUnArchiveChat(selectedChats[index], false);
     clearAllChatSelection();
   }
 
@@ -380,6 +381,7 @@ class ArchivedChatListController extends GetxController {
     // debugPrint('selectedChatsPosition : ${selectedChatsPosition.join(',')}');
     FlyChat.deleteRecentChats(selectedChats);
     for (var element in selectedChatsPosition) {
+      // FlyChat.updateArchiveUnArchiveChat(selectedChats[element], false);
       archivedChats.removeAt(element);
     }
     clearAllChatSelection();

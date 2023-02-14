@@ -232,13 +232,12 @@ class DashboardController extends GetxController
               recentChats.refresh();
             }
           }
-          checkArchiveList(recent);
         } else {
           if (!index.isNegative) {
             recentChats.removeAt(index);
           }
-          checkArchiveList(recent);
         }
+        checkArchiveList(recent);
       } else {
         if (!index.isNegative) {
           recentChats.removeAt(index);
@@ -293,7 +292,9 @@ class DashboardController extends GetxController
           archivedChats.removeAt(archiveIndex);
           archivedChats.insert(0, recent);
         } else {
-          archivedChats.insert(0, recent);
+          if(recent.isChatArchived.checkNull()) {
+            archivedChats.insert(0, recent);
+          }
         }
       } else {
         var archiveIndex =
