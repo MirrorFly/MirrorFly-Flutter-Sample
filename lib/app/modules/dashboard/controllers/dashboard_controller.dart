@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/base_controller.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
@@ -14,11 +15,12 @@ import 'package:intl/intl.dart';
 import 'package:mirror_fly_demo/app/modules/archived_chats/archived_chat_list_controller.dart';
 import 'package:mirror_fly_demo/app/modules/dashboard/controllers/recent_chat_search_controller.dart';
 
+import '../../../common/de_bouncer.dart';
 import '../../../data/apputils.dart';
 import '../../../routes/app_pages.dart';
 
-class DashboardController extends GetxController
-    with GetTickerProviderStateMixin, BaseController {
+class DashboardController extends FullLifeCycleController
+    with FullLifeCycleMixin,GetTickerProviderStateMixin, BaseController {
   var recentChats = <RecentChatData>[].obs;
   var archivedChats = <RecentChatData>[].obs;
   var calendar = DateTime.now();
@@ -50,6 +52,7 @@ class DashboardController extends GetxController
     getRecentChatList();
     getArchivedChatsList();
     checkArchiveSetting();
+    userlistScrollController.addListener(_scrollListener);
   }
 
   checkArchiveSetting() {
@@ -332,10 +335,13 @@ class DashboardController extends GetxController
     }
   }
 
+  var isSearching = false.obs;
   gotoSearch() {
-    Future.delayed(const Duration(milliseconds: 100), () {
+    isSearching(true);
+    // frmRecentChatList(recentChats);
+    /*Future.delayed(const Duration(milliseconds: 100), () {
       Get.toNamed(Routes.recentSearch, arguments: {"recents": recentChats});
-    });
+    });*/
   }
 
   gotoCreateGroup() {
@@ -868,6 +874,8 @@ class DashboardController extends GetxController
   void userUpdatedHisProfile(jid) {
     super.userUpdatedHisProfile(jid);
     updateRecentChatAdapter(jid);
+    updateRecentChatAdapterSearch(jid);
+    updateProfileSearch(jid);
     if (Get.isRegistered<ArchivedChatListController>()) {
       Get.find<ArchivedChatListController>().userUpdatedHisProfile(jid);
     }
@@ -885,6 +893,250 @@ class DashboardController extends GetxController
         if (!index.isNegative) {
           recentChats[index] = recent;
         }
+      }
+    }
+  }
+
+  //search
+  // var frmRecentChatList = <RecentChatData>[].obs;
+  var recentSearchList = <Rx<RecentSearch>>[].obs;
+  var filteredRecentChatList = <RecentChatData>[].obs;
+  RxList<ChatMessageModel> chatMessages = <ChatMessageModel>[].obs;
+  final deBouncer = DeBouncer(milliseconds: 700);
+  TextEditingController search = TextEditingController();
+  var searchFocusNode = FocusNode();
+  String lastInputValue = "";
+  RxBool clearVisible = false.obs;
+  final _mainuserList = <Profile>[];
+  var userlistScrollController = ScrollController();
+  var scrollable = true.obs;
+  var isPageLoading = false.obs;
+  final _userList = <Profile>[].obs;
+
+  set userList(List<Profile> value) => _userList.value = value;
+
+  List<Profile> get userList => _userList.value;
+
+  onChange(String inputValue) {
+    if (search.text.trim().isNotEmpty) {
+      clearVisible(true);
+    } else {
+      clearVisible(false);
+      recentChats.refresh();
+    }
+    if (lastInputValue != search.text.trim()) {
+      lastInputValue = search.text.trim();
+      searchLoading(true);
+      // frmRecentChatList.clear();
+      recentSearchList.clear();
+      if (search.text.trim().isNotEmpty) {
+        deBouncer.run(() {
+          pageNum = 1;
+          fetchRecentChatList();
+          fetchMessageList();
+          filterUserlist();
+        });
+      } else {
+        mirrorFlyLog("empty", "empty");
+        // frmRecentChatList.addAll(recentChats);
+      }
+    }
+    update();
+  }
+
+  onClearPressed() {
+    filteredRecentChatList.clear();
+    chatMessages.clear();
+    userList.clear();
+    search.clear();
+    clearVisible(false);
+    // frmRecentChatList(recentChats);
+  }
+
+  var pageNum = 1;
+  var searching = false;
+  var searchLoading = false.obs;
+
+  Future<void> filterUserlist() async {
+    if (await AppUtils.isNetConnected()) {
+      searching = true;
+      FlyChat.getUserList(pageNum, search.text.trim().toString()).then((value) {
+        if (value != null) {
+          var list = userListFromJson(value);
+          if (list.data != null) {
+            scrollable(list.data!.length == 20);
+            _userList(list.data);
+          } else {
+            scrollable(false);
+          }
+        }
+        searching = false;
+        searchLoading(false);
+      }).catchError((error) {
+        debugPrint("issue===> $error");
+        searching = false;
+        searchLoading(false);
+      });
+    } else {
+      toToast(Constants.noInternetConnection);
+    }
+  }
+  fetchRecentChatList() async {
+    debugPrint("========fetchRecentChatList======");
+    await FlyChat.getRecentChatListIncludingArchived().then((value) {
+      var recentChatList = <RecentChatData>[];
+      var js = json.decode(value);
+      var recentChatListWithArchived =
+      List<RecentChatData>.from(js.map((x) => RecentChatData.fromJson(x)));
+      for (var recentChat in recentChatListWithArchived) {
+        if (recentChat.profileName != null &&
+            recentChat.profileName!
+                .toLowerCase()
+                .contains(search.text.trim().toString().toLowerCase()) ==
+                true) {
+          recentChatList.add(recentChat);
+        }
+      }
+      filteredRecentChatList(recentChatList);
+      update(filteredRecentChatList);
+    });
+    //fetchMessageList();
+  }
+
+  fetchMessageList() async {
+    await FlyChat.searchConversation(search.text.trim().toString())
+        .then((value) {
+      var result = chatMessageModelFromJson(value);
+      chatMessages(result);
+      var mRecentSearchList = <Rx<RecentSearch>>[].obs;
+      // var i = 0.obs;
+      for (var message in result) {
+        var searchMessageItem = RecentSearch(
+            jid: message.chatUserJid,
+            mid: message.messageId,
+            searchType: Constants.typeSearchMessage,
+            chatType: message.messageChatType.toString(),
+            isSearch: true)
+            .obs;
+        mRecentSearchList.insert(0, searchMessageItem);
+        // i++;
+      }
+      /*var map = <Rx<int>, RxList<Rx<RecentSearch>>>{}; //{0,searchMessageItem};
+      map.putIfAbsent(i, () => mRecentSearchList).obs;
+      filteredMessageList(map);
+      update();*/
+    });
+  }
+
+  Future<Map<ProfileData?, ChatMessageModel?>?> getProfileAndMessage(
+      String jid, String mid) async {
+    var value = await FlyChat.getProfileLocal(jid, false);
+    var value2 = await FlyChat.getMessageOfId(mid);
+    if (value != null && value2 != null) {
+      var data = profileDataFromJson(value);
+      var data2 = sendMessageModelFromJson(value2);
+      var map = <ProfileData?, ChatMessageModel?>{}; //{0,searchMessageItem};
+      map.putIfAbsent(data.data, () => data2);
+      return map;
+    }
+    return null;
+  }
+
+  void getBackFromSearch() {
+    searchFocusNode.unfocus();
+    onClearPressed();
+    clearVisible(false);
+    isSearching(false);
+  }
+
+  _scrollListener() {
+    if (userlistScrollController.hasClients) {
+      if (userlistScrollController.position.extentAfter <= 0 &&
+          isPageLoading.value == false) {
+        if (scrollable.value && !searching) {
+          //isPageLoading.value = true;
+          mirrorFlyLog("scroll", "end");
+          pageNum++;
+          getUsers();
+        }
+      }
+    }
+  }
+
+  Future<void> getUsers() async {
+    if (await AppUtils.isNetConnected()) {
+      searching = true;
+      FlyChat.getUserList(pageNum, search.text.trim().toString()).then((value) {
+        if (value != null) {
+          var list = userListFromJson(value);
+          if (list.data != null) {
+            if (_mainuserList.isEmpty) {
+              _mainuserList.addAll(list.data!);
+            }
+            scrollable(list.data!.length == 20);
+            _userList.value.addAll(list.data!);
+            _userList.refresh();
+          } else {
+            scrollable(false);
+          }
+        }
+        searching = false;
+      }).catchError((error) {
+        debugPrint("issue===> $error");
+        searching = false;
+      });
+    } else {
+      toToast(Constants.noInternetConnection);
+    }
+  }
+
+  Future<void> updateRecentChatAdapterSearch(String jid) async {
+    if (jid.isNotEmpty) {
+      var filterIndex = filteredRecentChatList.indexWhere((element) =>
+      element.jid == jid); // { it.jid ?: Constants.EMPTY_STRING == jid }
+      /*var frmIndex = frmRecentChatList.indexWhere((element) =>
+      element.jid ==
+          jid);*/ // { it.jid ?: Constants.EMPTY_STRING == jid }
+      var recent = await getRecentChatOfJid(jid);
+      if (recent != null) {
+        if (!filterIndex.isNegative) {
+          filteredRecentChatList[filterIndex] = recent;
+        }
+        /*if (!frmIndex.isNegative) {
+          frmRecentChatList[frmIndex] = recent;
+        }*/
+      }
+    }
+  }
+
+  Future<void> updateProfileSearch(String jid) async {
+    if (jid.isNotEmpty) {
+      var userListIndex = _userList.indexWhere((element) => element.jid == jid);
+      getProfileDetails(jid).then((value) {
+        if (!userListIndex.isNegative) {
+          _userList[userListIndex] = value;
+        }
+      });
+    }
+  }
+
+  @override
+  void onDetached() {}
+
+  @override
+  void onInactive() {}
+
+  @override
+  void onPaused() {}
+
+  @override
+  void onResumed() {
+    if (!KeyboardVisibilityController().isVisible) {
+      if (searchFocusNode.hasFocus) {
+        searchFocusNode.unfocus();
+        Future.delayed(const Duration(milliseconds: 100), () {
+          searchFocusNode.requestFocus();
+        });
       }
     }
   }
