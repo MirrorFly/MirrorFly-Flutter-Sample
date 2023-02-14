@@ -8,6 +8,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flysdk/flysdk.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:mirror_fly_demo/app/common/widgets.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -15,6 +16,7 @@ import '../../common/constants.dart';
 import '../../data/apputils.dart';
 import '../../data/helper.dart';
 import '../../data/permissions.dart';
+import '../../data/session_management.dart';
 import '../../routes/app_pages.dart';
 import '../dashboard/widgets.dart';
 
@@ -587,88 +589,182 @@ class ContactMessageView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var screenWidth = MediaQuery.of(context).size.width;
-    return InkWell(
-      onTap: isSelected ? null : () {
-        Get.toNamed(Routes.previewContact, arguments: {
-          "previewContactList": chatMessage.contactChatMessage!.contactPhoneNumbers,
-          "contactName": chatMessage.contactChatMessage!.contactName,
-          "from": "chat"
-        });
-      },
-      child: Container(
-        decoration: BoxDecoration(
-          border: Border.all(
-            color: chatReplySenderColor,
+    return Container(
+      decoration: BoxDecoration(
+        border: Border.all(
+          color: chatReplySenderColor,
+        ),
+        borderRadius: const BorderRadius.all(Radius.circular(10)),
+        color: Colors.white,
+      ),
+      width: screenWidth * 0.60,
+      child: Column(
+        children: [
+          Padding(
+            padding:
+                const EdgeInsets.only(left: 15.0, right: 15.0, top: 15.0),
+            child: Row(
+              children: [
+                Image.asset(
+                  profileImage,
+                  width: 35,
+                  height: 35,
+                ),
+                const SizedBox(
+                  width: 12,
+                ),
+                Expanded(
+                    child: search.isEmpty
+                        ? textMessageSpannableText(
+                        chatMessage.contactChatMessage!.contactName.checkNull(),maxLines: 2)
+                        : chatSpannedText(
+                      chatMessage.contactChatMessage!.contactName,
+                      search,
+                      const TextStyle(fontSize: 14, color: textHintColor),maxLines: 2
+                    )/*,Text(
+                  chatMessage.contactChatMessage!.contactName,
+                  maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                )*/),
+              ],
+            ),
           ),
-          borderRadius: const BorderRadius.all(Radius.circular(10)),
-          color: Colors.white,
-        ),
-        width: screenWidth * 0.60,
-        child: Column(
-          children: [
-            Padding(
-              padding:
-                  const EdgeInsets.only(left: 15.0, right: 15.0, top: 15.0),
-              child: Row(
-                children: [
-                  Image.asset(
-                    profileImage,
-                    width: 35,
-                    height: 35,
-                  ),
-                  const SizedBox(
-                    width: 12,
-                  ),
-                  Expanded(
-                      child: search.isEmpty
-                          ? textMessageSpannableText(
-                          chatMessage.contactChatMessage!.contactName.checkNull(),maxLines: 2)
-                          : chatSpannedText(
-                        chatMessage.contactChatMessage!.contactName,
-                        search,
-                        const TextStyle(fontSize: 14, color: textHintColor),maxLines: 2
-                      )/*,Text(
-                    chatMessage.contactChatMessage!.contactName,
-                    maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                  )*/),
-                ],
-              ),
+          Align(
+            alignment: Alignment.bottomRight,
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                chatMessage.isMessageStarred
+                    ? SvgPicture.asset(starSmallIcon)
+                    : const SizedBox.shrink(),
+                const SizedBox(
+                  width: 5,
+                ),
+                getMessageIndicator(chatMessage.messageStatus,
+                    chatMessage.isMessageSentByMe, chatMessage.messageType),
+                const SizedBox(
+                  width: 4,
+                ),
+                Text(
+                  getChatTime(context, chatMessage.messageSentTime.toInt()),
+                  style: const TextStyle(fontSize: 11, color: chatTimeColor),
+                ),
+                const SizedBox(
+                  width: 10,
+                ),
+              ],
             ),
-            Align(
-              alignment: Alignment.bottomRight,
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  chatMessage.isMessageStarred
-                      ? SvgPicture.asset(starSmallIcon)
-                      : const SizedBox.shrink(),
-                  const SizedBox(
-                    width: 5,
-                  ),
-                  getMessageIndicator(chatMessage.messageStatus,
-                      chatMessage.isMessageSentByMe, chatMessage.messageType),
-                  const SizedBox(
-                    width: 4,
-                  ),
-                  Text(
-                    getChatTime(context, chatMessage.messageSentTime.toInt()),
-                    style: const TextStyle(fontSize: 11, color: chatTimeColor),
-                  ),
-                  const SizedBox(
-                    width: 10,
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(
-              height: 5,
-            ),
-          ],
-        ),
+          ),
+          const SizedBox(
+            height: 5,
+          ),
+          const AppDivider(),
+          getJidOfContact(chatMessage.contactChatMessage),
+        ],
       ),
     );
   }
+
+  Widget getJidOfContact(ContactChatMessage? contactChatMessage) {
+    String? userJid;
+    if(contactChatMessage == null || contactChatMessage.contactPhoneNumbers.isEmpty){
+      return const SizedBox.shrink();
+    }
+    for (int i = 0; i < contactChatMessage.contactPhoneNumbers.length; i++) {
+      debugPrint("contactChatMessage.isChatAppUser[i]--> ${contactChatMessage.isChatAppUser[i]}");
+      if(contactChatMessage.isChatAppUser[i]){
+        FlyChat.getJidFromPhoneNumber(contactChatMessage.contactPhoneNumbers[i], SessionManagement.getCountryCode() ?? "").then((value) {
+          userJid = value;
+          debugPrint("FlyChat.getJidFromPhoneNumber--> $value");
+          return userJid;
+        });
+      }
+
+    }
+    debugPrint("getJidOfContact--> $userJid");
+
+      return InkWell(
+        onTap: (){
+          (userJid != null && userJid!.isNotEmpty) ? sendToChatPage(userJid!) : showInvitePopup(contactChatMessage);
+        },
+        child: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Expanded(child: Center(child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: (userJid != null && userJid!.isNotEmpty) ? const Text("Message") : const Text("Invite"),
+              ))),
+            ],
+          ),
+      );
+
+
+
+  }
+
+  sendToChatPage(String userJid) {
+    Get.toNamed(Routes.chat,parameters: {'isFromStarred':'true',"userJid":userJid});
+
+  }
+
+  showInvitePopup(ContactChatMessage contactChatMessage) {
+    Helper.showButtonAlert(actions: [
+      ListTile(
+        contentPadding: const EdgeInsets.only(left: 10),
+        title: const Text("Invite Friend",
+            style: TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.bold)),
+
+        onTap: () {
+
+        },
+      ),
+      ListTile(
+        contentPadding: const EdgeInsets.only(left: 10),
+        title: const Text("Copy Link",
+            style: TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.normal)),
+
+        onTap: () {
+          Clipboard.setData(
+              const ClipboardData(text: Constants.applicationLink));
+          Get.back();
+          toToast("Link Copied");
+
+        },
+      ),
+      ListTile(
+        contentPadding: const EdgeInsets.only(left: 10),
+        title: const Text("Send SMS",
+            style: TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.normal)),
+
+        onTap: () {
+          Get.back();
+          sendSMS(contactChatMessage.contactPhoneNumbers[0]);
+        },
+      ),
+    ]);
+  }
+
+  void sendSMS(String contactPhoneNumber) async{
+
+    Uri sms = Uri.parse('sms:$contactPhoneNumber?body=${Constants.smsContent}');
+    if (await launchUrl(sms)) {
+      //app opened
+    }else{
+      //app is not opened
+    }
+  }
+  String? encodeQueryParameters(Map<String, String> params) {
+    return params.entries
+        .map((e) => '${Uri.encodeComponent(e.key)}=${Uri.encodeComponent(e.value)}')
+        .join('&');
+  }
+
 }
 
 class DocumentMessageView extends StatelessWidget {

@@ -371,7 +371,7 @@ class ForwardChatController extends GetxController {
       if (!_maingroupListIndex.isNegative) {
         _maingroupList[_maingroupListIndex] = value;
       }
-      if (_mainuserListIndex.isNegative) {
+      if (!_mainuserListIndex.isNegative) {
         _mainuserList[_mainuserListIndex] = value;
       }
       if (!_groupListIndex.isNegative) {

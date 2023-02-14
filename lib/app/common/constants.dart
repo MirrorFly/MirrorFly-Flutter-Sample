@@ -238,6 +238,10 @@ class Constants {
   static const String googleMapKey = "AIzaSyBaKkrQnLT4nacpKblIE5d4QK6GpaX5luQ";
   static const String googleMapPackageName = "com.google.android.apps.maps";
   static const String packageName = "com.contus.flycommons.";
+
+  static const String applicationLink = "https://app.contusfly.contus.com";
+  static const String smsContent = "Hey, MirrorFly is a real time chat, Audio and Video call solution for B2B and B2C.\n Download the app from this URL: https://app.mirrorfly.com";
+
   static const String rosterJid = "roster_jid";
   static const String isLiveUser = "is_live_user";
   static const String ifBlockedMe = "ifBlockedMe";

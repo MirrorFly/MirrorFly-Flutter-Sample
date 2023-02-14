@@ -3045,4 +3045,19 @@ class FlyChat {
       rethrow;
     }
   }
+
+  static Future<String?> getJidFromPhoneNumber(String mobileNumber, String countryCode) async {
+    String? jid = "";
+    try {
+      jid = await mirrorFlyMethodChannel
+          .invokeMethod<String?>('getJidFromPhoneNumber', {"mobileNumber": mobileNumber , "countryCode": countryCode});
+      return jid;
+    } on PlatformException catch (e) {
+      debugPrint("Platform Exception ===> $e");
+      rethrow;
+    } on Exception catch (error) {
+      debugPrint("Exception ==> $error");
+      rethrow;
+    }
+  }
 }

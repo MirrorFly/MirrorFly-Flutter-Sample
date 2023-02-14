@@ -298,6 +298,7 @@ class LoginController extends GetxController {
           SessionManagement.setUser(userData.data!);
           // userData.data.
           enableArchive();
+          SessionManagement.setCountryCode(countryCode ?? "");
           setUserJID(userData.data!.username!);
         }
       }).catchError((error) {

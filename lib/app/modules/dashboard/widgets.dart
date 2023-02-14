@@ -451,17 +451,9 @@ TextSpan customTextSpan(String message, String prevValue,
     children: message.split(" ").map((e) {
       if (isCountryCode(e)) {
         prevValue = e;
-        //return TextSpan(text: e);
       } else if (prevValue != "" && spannableTextType(e) == "mobile") {
         e = "$prevValue $e";
         prevValue = "";
-        /*var stringType = spannableTextType(e);
-      return TextSpan(text: "$e ", style: stringType == "text" ? normalStyle : underlineStyle, recognizer: TapGestureRecognizer()
-        ..onTap = () {
-        debugPrint("Phone Clicked");
-          makePhoneCall(e);
-        // launchCaller(e);
-        });*/
       }
       return TextSpan(
           text: "$e ",

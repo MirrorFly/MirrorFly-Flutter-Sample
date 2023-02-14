@@ -1270,11 +1270,21 @@ open class FlyBaseController(activity: FlutterActivity) : MethodChannel.MethodCa
             call.method.equals("getUnsentMessageOfAJid") -> {
                 getUnsentMessageOfAJid(call,result)
             }
+            call.method.equals("getJidFromPhoneNumber") -> {
+                getJidFromPhoneNumber(call,result)
+            }
             else -> {
                 result.notImplemented()
             }
 
         }
+    }
+
+    private fun getJidFromPhoneNumber(call: MethodCall,result: MethodChannel.Result){
+        val mobileNumber = call.argument<String>("mobileNumber") ?: ""
+        val countryCode = call.argument<String>("countryCode") ?: ""
+        val userJID = Utils.getJidFromPhoneNumber(mContext,mobileNumber,countryCode)
+        result.success(userJID ?: "")
     }
     
     private fun getUnsentMessageOfAJid(call: MethodCall,result: MethodChannel.Result){

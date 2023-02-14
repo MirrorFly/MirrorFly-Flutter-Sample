@@ -14,38 +14,38 @@ class ForwardChatView extends GetView<ForwardChatController> {
   @override
   Widget build(BuildContext context) {
     return Obx(() {
-      return SafeArea(
-        child: Scaffold(
-          appBar: AppBar(
-            leading: IconButton(
-              icon: const Icon(Icons.close),
-              onPressed: () {
-                !controller.isSearchVisible ? controller.backFromSearch() : Get.back();
-              },
-            ),
-            title: !controller.isSearchVisible
-                ? TextField(
-                    onChanged: (text) {
-                      mirrorFlyLog("text", text);
-                      controller.onSearch(text);
-                    },
-                    style: const TextStyle(fontSize: 16),
-                    controller: controller.searchQuery,
-                    autofocus: true,
-                    decoration: const InputDecoration(
-                        hintText: "Search...", border: InputBorder.none),
-                  )
-                : const Text("Forward to..."),
-            actions: [
-              Visibility(
-                visible: controller.isSearchVisible,
-                child: IconButton(
-                    onPressed: () => controller.onSearchPressed(),
-                    icon: SvgPicture.asset(searchIcon)),
-              )
-            ],
+      return Scaffold(
+        appBar: AppBar(
+          leading: IconButton(
+            icon: const Icon(Icons.close),
+            onPressed: () {
+              !controller.isSearchVisible ? controller.backFromSearch() : Get.back();
+            },
           ),
-          body: Column(
+          title: !controller.isSearchVisible
+              ? TextField(
+                  onChanged: (text) {
+                    mirrorFlyLog("text", text);
+                    controller.onSearch(text);
+                  },
+                  style: const TextStyle(fontSize: 16),
+                  controller: controller.searchQuery,
+                  autofocus: true,
+                  decoration: const InputDecoration(
+                      hintText: "Search...", border: InputBorder.none),
+                )
+              : const Text("Forward to..."),
+          actions: [
+            Visibility(
+              visible: controller.isSearchVisible,
+              child: IconButton(
+                  onPressed: () => controller.onSearchPressed(),
+                  icon: SvgPicture.asset(searchIcon)),
+            )
+          ],
+        ),
+        body: SafeArea(
+          child: Column(
             children: [
               Flexible(
                 child: ListView(
