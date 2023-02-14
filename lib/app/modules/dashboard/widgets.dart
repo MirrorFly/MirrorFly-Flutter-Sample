@@ -1,11 +1,14 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
 
 import '../../common/constants.dart';
 import '../../common/widgets.dart';
 import 'package:flysdk/flysdk.dart';
+
+import '../../data/session_management.dart';
 
 Widget searchHeader(String? type, String count, BuildContext context) {
   return Container(
@@ -31,7 +34,10 @@ class RecentChatItem extends StatelessWidget {
       this.isSelected = false,
       this.isCheckBoxVisible = false,
       this.isChecked = false,
-      this.typingUserid = "", this.archiveVisible =true, this.archiveEnabled = false})
+      this.isForwardMessage = false,
+      this.typingUserid = "",
+      this.archiveVisible = true,
+      this.archiveEnabled = false})
       : super(key: key);
   final RecentChatData item;
   final Function() onTap;
@@ -39,10 +45,12 @@ class RecentChatItem extends StatelessWidget {
   final String spanTxt;
   final bool isCheckBoxVisible;
   final bool isChecked;
+  final bool isForwardMessage;
   final bool archiveVisible;
   final Function(bool? value)? onchange;
   final bool isSelected;
   final String typingUserid;
+
   final titlestyle = const TextStyle(
       fontSize: 16.0,
       fontWeight: FontWeight.w700,
@@ -127,8 +135,8 @@ class RecentChatItem extends StatelessWidget {
                                   ? Text(
                                       item.profileName.toString(),
                                       style: titlestyle,
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
                                     )
                                   : spannableText(item.profileName.checkNull(),
                                       spanTxt, titlestyle),
@@ -143,85 +151,125 @@ class RecentChatItem extends StatelessWidget {
                                           ),
                                         )
                                       : const SizedBox(),
-                                  Expanded(
-                                    child: typingUserid.isEmpty
-                                        ? Row(
-                                            children: [
-                                              item.isLastMessageRecalledByUser!
-                                                  ? const SizedBox()
-                                                  : forMessageTypeIcon(
-                                                      item.lastMessageType ??
-                                                          ""),
-                                              SizedBox(
-                                                width: item
-                                                        .isLastMessageRecalledByUser!
-                                                    ? 0.0
-                                                    : forMessageTypeString(
-                                                                item.lastMessageType ??
-                                                                    "") !=
-                                                            null
-                                                        ? 3.0
-                                                        : 0.0,
-                                              ),
-                                              Expanded(
-                                                child: spanTxt.isEmpty
-                                                    ? Text(
-                                                        item.isLastMessageRecalledByUser!
-                                                            ? setRecalledMessageText(item
-                                                                .isLastMessageSentByMe!)
-                                                            : forMessageTypeString(
-                                                                    item.lastMessageType ??
-                                                                        "") ??
-                                                                item.lastMessageContent
-                                                                    .checkNull(),
-                                                        style: Theme.of(context)
-                                                            .textTheme
-                                                            .titleSmall,
+                                  isForwardMessage
+                                      ? item.isGroup!
+                                          ? Expanded(
+                                              child: FutureBuilder<String>(
+                                                  future:
+                                                      getParticipantsNameAsCsv(
+                                                          item.jid!),
+                                                  builder:
+                                                      (BuildContext context,
+                                                          data) {
+                                                    if (data.hasData) {
+                                                      return Text(
+                                                        data.data ?? "",
                                                         maxLines: 1,
                                                         overflow: TextOverflow
                                                             .ellipsis,
-                                                      )
-                                                    : spannableText(
-                                                        item.isLastMessageRecalledByUser!
-                                                            ? setRecalledMessageText(item
-                                                                .isLastMessageSentByMe!)
-                                                            : forMessageTypeString(item
-                                                                    .lastMessageType.checkNull()) ??
-                                                                item.lastMessageContent
-                                                                    .checkNull(),
-                                                        spanTxt,
-                                                        Theme.of(context)
-                                                            .textTheme
-                                                            .titleSmall),
-                                              ),
-                                            ],
-                                          )
-                                        : FutureBuilder(
-                                            future: getProfileDetails(
-                                                typingUserid.checkNull()),
-                                            builder: (context, data) {
-                                              if (data.hasData) {
-                                                return Text(
-                                                  "${data.data!.name.checkNull()} typing...",
-                                                  style: typingstyle,
-                                                  maxLines: 1,
-                                                  overflow:
-                                                      TextOverflow.ellipsis,
-                                                );
-                                              } else {
-                                                mirrorFlyLog("hasError",
-                                                    data.error.toString());
-                                                return const SizedBox();
-                                              }
-                                            }),
-                                  ),
+                                                      );
+                                                    }
+                                                    return const Text("");
+                                                  }),
+                                            )
+                                          : Expanded(
+                                              child: FutureBuilder(
+                                                  future: getProfileDetails(
+                                                      item.jid!),
+                                                  builder:
+                                                      (context, profileData) {
+                                                    if (profileData.hasData) {
+                                                      return Text(profileData
+                                                              .data?.status ??
+                                                          "");
+                                                    }
+                                                    return const Text("");
+                                                  }))
+                                      : Expanded(
+                                          child: typingUserid.isEmpty
+                                              ? Row(
+                                                  children: [
+                                                    item.isLastMessageRecalledByUser!
+                                                        ? const SizedBox()
+                                                        : forMessageTypeIcon(
+                                                            item.lastMessageType ??
+                                                                ""),
+                                                    SizedBox(
+                                                      width: item
+                                                              .isLastMessageRecalledByUser!
+                                                          ? 0.0
+                                                          : forMessageTypeString(
+                                                                      item.lastMessageType ??
+                                                                          "") !=
+                                                                  null
+                                                              ? 3.0
+                                                              : 0.0,
+                                                    ),
+                                                    Expanded(
+                                                      child: spanTxt.isEmpty
+                                                          ? Text(
+                                                              item.isLastMessageRecalledByUser!
+                                                                  ? setRecalledMessageText(item
+                                                                      .isLastMessageSentByMe!)
+                                                                  : forMessageTypeString(
+                                                                          item.lastMessageType ??
+                                                                              "") ??
+                                                                      item.lastMessageContent
+                                                                          .checkNull(),
+                                                              style: Theme.of(
+                                                                      context)
+                                                                  .textTheme
+                                                                  .titleSmall,
+                                                              maxLines: 1,
+                                                              overflow:
+                                                                  TextOverflow
+                                                                      .ellipsis,
+                                                            )
+                                                          : spannableText(
+                                                              item.isLastMessageRecalledByUser!
+                                                                  ? setRecalledMessageText(item
+                                                                      .isLastMessageSentByMe!)
+                                                                  : forMessageTypeString(item
+                                                                          .lastMessageType
+                                                                          .checkNull()) ??
+                                                                      item.lastMessageContent
+                                                                          .checkNull(),
+                                                              spanTxt,
+                                                              Theme.of(context)
+                                                                  .textTheme
+                                                                  .titleSmall),
+                                                    ),
+                                                  ],
+                                                )
+                                              : FutureBuilder(
+                                                  future: getProfileDetails(
+                                                      typingUserid.checkNull()),
+                                                  builder: (context, data) {
+                                                    if (data.hasData) {
+                                                      return Text(
+                                                        "${data.data!.name.checkNull()} typing...",
+                                                        style: typingstyle,
+                                                        maxLines: 1,
+                                                        overflow: TextOverflow
+                                                            .ellipsis,
+                                                      );
+                                                    } else {
+                                                      mirrorFlyLog(
+                                                          "hasError",
+                                                          data.error
+                                                              .toString());
+                                                      return const SizedBox();
+                                                    }
+                                                  }),
+                                        ),
                                 ],
                               ),
                             ],
                           ),
                         ),
                         Padding(
-                          padding: const EdgeInsets.only(right: 16.0, left: 8, top: 5),
+                          padding: const EdgeInsets.only(
+                              right: 16.0, left: 8, top: 5),
                           child: Column(
                             children: [
                               Visibility(
@@ -251,7 +299,8 @@ class RecentChatItem extends StatelessWidget {
                                     MainAxisAlignment.spaceAround,
                                 children: [
                                   Visibility(
-                                      visible: !item.isChatArchived! && item.isChatPinned!,
+                                      visible: !item.isChatArchived! &&
+                                          item.isChatPinned!,
                                       child: SvgPicture.asset(
                                         pin,
                                         width: 18,
@@ -265,14 +314,28 @@ class RecentChatItem extends StatelessWidget {
                                         height: 13,
                                       )),
                                   Visibility(
-                                      visible: item.isChatArchived! && archiveVisible,
-                                      child: Container(padding: const EdgeInsets.symmetric(horizontal: 2.0),decoration: BoxDecoration(borderRadius: BorderRadius.circular(4.0),border: Border.all(color: buttonBgColor,width: 0.8)),
-                                        child: const Text("Archived",style: TextStyle(color: buttonBgColor),),
-                                      )/*SvgPicture.asset(
+                                      visible: item.isChatArchived! &&
+                                          archiveVisible,
+                                      child: Container(
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 2.0),
+                                        decoration: BoxDecoration(
+                                            borderRadius:
+                                                BorderRadius.circular(4.0),
+                                            border: Border.all(
+                                                color: buttonBgColor,
+                                                width: 0.8)),
+                                        child: const Text(
+                                          "Archived",
+                                          style:
+                                              TextStyle(color: buttonBgColor),
+                                        ),
+                                      ) /*SvgPicture.asset(
                                         archive,
                                         width: 18,
                                         height: 18,
-                                      )*/)
+                                      )*/
+                                      )
                                 ],
                               )
                             ],
@@ -291,6 +354,25 @@ class RecentChatItem extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  Future<String> getParticipantsNameAsCsv(String jid) {
+    var groupParticipantsName = ''.obs;
+    return FlyChat.getGroupMembersList(jid, false).then((value) {
+      if (value != null) {
+        var str = <String>[];
+        var groupsMembersProfileList = memberFromJson(value);
+        for (var it in groupsMembersProfileList) {
+          if (it.jid.checkNull() !=
+              SessionManagement.getUserJID().checkNull()) {
+            str.add(it.name.checkNull());
+          }
+        }
+        groupParticipantsName(str.join(","));
+      }
+      return groupParticipantsName.value;
+    });
+    // return groupParticipantsName.value;
   }
 
   String setRecalledMessageText(bool isFromSender) {
@@ -358,7 +440,9 @@ Widget textMessageSpannableText(String message, {int? maxLines}) {
   TextStyle normalStyle = const TextStyle(fontSize: 14, color: textHintColor);
   var prevValue = "";
   return Text.rich(
-      customTextSpan(message, prevValue, normalStyle, underlineStyle),maxLines: maxLines,);
+    customTextSpan(message, prevValue, normalStyle, underlineStyle),
+    maxLines: maxLines,
+  );
 }
 
 TextSpan customTextSpan(String message, String prevValue,

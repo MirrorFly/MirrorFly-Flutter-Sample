@@ -690,6 +690,11 @@ import FlyDatabase
         result("")
         
     }
+    static func deleteRecentChats(call: FlutterMethodCall, result: @escaping FlutterResult){
+        
+        result("")
+        
+    }
     static func saveUnsentMessage(call: FlutterMethodCall, result: @escaping FlutterResult){
         
         result("")

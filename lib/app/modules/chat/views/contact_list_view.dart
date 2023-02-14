@@ -185,8 +185,14 @@ class ContactListView extends GetView<ContactController> {
                                               .textTheme
                                               .titleMedium,
                                         ),
+                                        // Text(
+                                        //   item.mobileNumber.toString(),
+                                        //   style: Theme.of(context)
+                                        //       .textTheme
+                                        //       .titleSmall,
+                                        // )
                                         Text(
-                                          item.mobileNumber.toString(),
+                                          item.status.toString(),
                                           style: Theme.of(context)
                                               .textTheme
                                               .titleSmall,

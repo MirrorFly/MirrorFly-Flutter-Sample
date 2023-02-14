@@ -80,6 +80,7 @@ class ForwardChatView extends GetView<ForwardChatController> {
                                   },
                                   spanTxt: controller.searchQuery.text.toString(),
                                   isCheckBoxVisible: true,
+                                  isForwardMessage: true,
                                   isChecked: controller.isChecked(item.jid.checkNull()),
                                   onchange: (value) {
                                     controller.onItemClicked(item.jid.checkNull(),

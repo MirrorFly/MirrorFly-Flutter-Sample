@@ -684,6 +684,8 @@ class FlyBaseController: NSObject{
                 FlySdkMethodCalls.getUnsentMessageOfAJid(call: call, result: result)
             case "saveUnsentMessage":
                 FlySdkMethodCalls.saveUnsentMessage(call: call, result: result)
+            case "deleteRecentChats":
+                FlySdkMethodCalls.deleteRecentChats(call: call, result: result)
             case "getDefaultNotificationUri":
                 FlySdkMethodCalls.getDefaultNotificationUri(call: call, result: result)
             default:
