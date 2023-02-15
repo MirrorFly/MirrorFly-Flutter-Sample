@@ -20,7 +20,7 @@ class ContactusView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('About us'),
+        title: const Text('Contact us'),
         automaticallyImplyLeading: true,
       ),
       body: Padding(
@@ -35,11 +35,15 @@ class ContactusView extends StatelessWidget {
             TextField(
               controller: title,
               onChanged: (value) {},
+              maxLines: null,
+              maxLength: 100,
+              keyboardType: TextInputType.multiline,
               decoration: const InputDecoration(
                 focusedBorder: UnderlineInputBorder(borderSide: BorderSide(color: dividerColor)),
                 border: UnderlineInputBorder(borderSide: BorderSide(color: dividerColor,width: 0)),
+                counterText: ''
               ),
-              style: const TextStyle(fontWeight: FontWeight.bold),
+              style: const TextStyle(fontWeight: FontWeight.normal,fontSize: 14,color: textColor),
             ),
             const SizedBox(
               height: 10,
@@ -51,12 +55,16 @@ class ContactusView extends StatelessWidget {
             TextField(
               controller: description,
               onChanged: (value) {},
+              maxLines: null,
+              maxLength: 460,
+              keyboardType: TextInputType.multiline,
               decoration: const InputDecoration(
                 focusedBorder: UnderlineInputBorder(borderSide: BorderSide(color: dividerColor)),
                 disabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: dividerColor)),
                 border: UnderlineInputBorder(borderSide: BorderSide(color: dividerColor,width: 0)),
+                counterText: ''
               ),
-              style: const TextStyle(fontWeight: FontWeight.bold),
+              style: const TextStyle(fontWeight: FontWeight.normal,fontSize: 14,color: textColor),
             ),
             const SizedBox(
               height: 40,

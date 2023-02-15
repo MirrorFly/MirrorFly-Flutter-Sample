@@ -560,7 +560,7 @@ class Constants {
 Future<void> launchWeb(String url) async{
   if(await AppUtils.isNetConnected()) {
     if (await canLaunchUrl(Uri.parse(url))) {
-      await launchUrl(Uri.parse(url));
+      await launchUrl(Uri.parse(url),mode: LaunchMode.externalApplication,);
     } else {
       throw "Could not launch $url";
     }
@@ -571,7 +571,7 @@ Future<void> launchWeb(String url) async{
 }
 
 Widget forMessageTypeIcon(String messageType) {
-  debugPrint("messagetype $messageType");
+  // debugPrint("messagetype $messageType");
   switch (messageType.toUpperCase()) {
     case Constants.mImage:
       return SvgPicture.asset(
