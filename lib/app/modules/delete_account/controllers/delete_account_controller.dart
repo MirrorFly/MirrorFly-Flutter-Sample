@@ -18,21 +18,30 @@ class DeleteAccountController extends GetxController {
 
 
   deleteAccount() async {
-    if(mobileNumber.text.isEmpty){
-      toToast("Please Enter Mobile Number");
-      return;
-    }
-    if(mobileNumber.text != SessionManagement.getMobileNumber()){
-      Helper.showAlert(message: "The mobile number you entered doesn't match your account", actions: [
-        TextButton(
-            onPressed: () {
-              Get.back();
-            },
-            child: const Text("Ok")),
-      ]);
-      return;
-    }
     if(await AppUtils.isNetConnected()) {
+      if(mobileNumber.text.isEmpty){
+        Helper.showAlert(message: "Please enter your mobile number", actions: [
+          TextButton(
+              onPressed: () {
+                Get.back();
+              },
+              child: const Text("Ok")),
+        ]);
+        return;
+      }
+      mirrorFlyLog("SessionManagement.getMobileNumber()", SessionManagement.getMobileNumber().toString());
+      mirrorFlyLog("SessionManagement.getCountryCode()", SessionManagement.getCountryCode().toString());
+      mirrorFlyLog("countryCode", countryCode.toString());
+      if(mobileNumber.text.trim() != SessionManagement.getMobileNumber() || SessionManagement.getCountryCode()?.replaceAll('+', '')!=countryCode?.replaceAll('+', '')){
+        Helper.showAlert(message: "The mobile number you entered doesn't match your account", actions: [
+          TextButton(
+              onPressed: () {
+                Get.back();
+              },
+              child: const Text("Ok")),
+        ]);
+        return;
+      }
       Get.toNamed(Routes.deleteAccountReason);
     }else{
       toToast(Constants.noInternetConnection);

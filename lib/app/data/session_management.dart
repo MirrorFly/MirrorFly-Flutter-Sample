@@ -124,14 +124,12 @@ class SessionManagement {
     });
   }
 
-  static bool getLogin() => _preferences.getBool("login") == null
-      ? false
-      : _preferences.getBool("login")!;
+  static bool getLogin() => _preferences.getBool("login") ?? false;
 
   static String? getChatJid() => _preferences.getString("chatJid");
   static String? getName() => _preferences.getString("name");
   static String? getMobileNumber() => _preferences.getString("mobileNumber");
-  static String? getCountryCode() => _preferences.getString("country_code");
+  static String? getCountryCode() => _preferences.getString("country_code") ?? "+91";
   static String? getUsername() => _preferences.getString("username");
   static String? getPassword() => _preferences.getString("password");
   static String? getUserJID() => _preferences.getString("user_jid").toString();
