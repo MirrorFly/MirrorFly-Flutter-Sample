@@ -61,6 +61,7 @@ dependencies:
   google_cloud_translation: ^0.0.3 # Google Translator
   grouped_list: ^5.1.2
   share_plus: ^6.3.0
+  flutter_inappwebview: ^5.7.2+3 # inapp webview
 
   flysdk:
     path: packages/flysdk
