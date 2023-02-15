@@ -1,10 +1,14 @@
+import 'dart:async';
+
 import 'package:audioplayers/audioplayers.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/base_controller.dart';
+import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
 import 'package:mirror_fly_demo/app/data/pushnotification.dart';
 import 'package:mirror_fly_demo/app/data/session_management.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
+import 'package:mirror_fly_demo/app/modules/chat/controllers/chat_controller.dart';
 import 'package:mirror_fly_demo/app/routes/app_pages.dart';
 
 import 'package:flysdk/flysdk.dart';
@@ -20,6 +24,9 @@ class MainController extends GetxController with BaseController
   AudioPlayer player = AudioPlayer();
   String currentPostLabel = "00:00";
 
+  //network listener
+  static StreamSubscription<InternetConnectionStatus>? listener;
+
   @override
   void onInit() {
     super.onInit();
@@ -29,6 +36,7 @@ class MainController extends GetxController with BaseController
     uploadEndpoint(SessionManagement.getMediaEndPoint().checkNull());
     authToken(SessionManagement.getAuthToken().checkNull());
     getAuthToken();
+    startNetworkListen();
   }
 
 
@@ -88,5 +96,38 @@ class MainController extends GetxController with BaseController
 
   handleAdminBlockedUserFromRegister(){
 
+  }
+
+  void startNetworkListen() {
+    final InternetConnectionChecker customInstance =
+    InternetConnectionChecker.createInstance(
+      checkTimeout: const Duration(seconds: 1),
+      checkInterval: const Duration(seconds: 1),
+
+    );
+    listener = customInstance.onStatusChange.listen(
+          (InternetConnectionStatus status) {
+        switch (status) {
+          case InternetConnectionStatus.connected:
+            mirrorFlyLog("network",'Data connection is available.');
+            if (Get.isRegistered<ChatController>()) {
+              Get.find<ChatController>().networkConnected();
+            }
+            break;
+          case InternetConnectionStatus.disconnected:
+            mirrorFlyLog("network",'You are disconnected from the internet.');
+            if (Get.isRegistered<ChatController>()) {
+              Get.find<ChatController>().networkDisconnected();
+            }
+            break;
+        }
+      },
+    );
+  }
+
+  @override
+  void onClose() {
+    listener?.cancel();
+    super.onClose();
   }
 }

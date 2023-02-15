@@ -535,17 +535,16 @@ class ChatController extends FullLifeCycleController
       } else {
         // debugPrint("parsing the value");
         try {
-          mirrorFlyLog("chat parsed history before", value);
-          List<ChatMessageModel> chatMessageModel = chatMessageModelFromJson(
-              value);
-          mirrorFlyLog(
-              "chat parsed history", chatMessageModelToJson(chatMessageModel));
+          // mirrorFlyLog("chat parsed history before", value);
+          List<ChatMessageModel> chatMessageModel =
+              chatMessageModelFromJson(value);
+          //mirrorFlyLog("chat parsed history", chatMessageModelToJson(chatMessageModel));
           chatList(chatMessageModel.reversed.toList());
           Future.delayed(const Duration(milliseconds: 200), () {
             if (starredChatMessageId != null) {
               debugPrint('starredChatMessageId $starredChatMessageId');
               var chat = chatList.indexWhere(
-                      (element) => element.messageId == starredChatMessageId);
+                  (element) => element.messageId == starredChatMessageId);
               debugPrint('chat $chat');
               if (!chat.isNegative) {
                 navigateToMessage(chatList[chat]);
@@ -558,7 +557,7 @@ class ChatController extends FullLifeCycleController
           debugPrint("isDateChanged ${isDateChanged(index,chatMessageModel.reversed.toList())}");
 
         }*/
-        }catch(error){
+        } catch (error) {
           debugPrint("chatHistory parsing error--> $error");
         }
       }
@@ -670,11 +669,12 @@ class ChatController extends FullLifeCycleController
         allowedExtensions: ['pdf', 'ppt', 'xls', 'doc', 'docx', 'xlsx', 'txt'],
       );
       if (result != null && File(result.files.single.path!).existsSync()) {
-        if(checkFileUploadSize(result.files.single.path!, Constants.mDocument)) {
+        if (checkFileUploadSize(
+            result.files.single.path!, Constants.mDocument)) {
           debugPrint(result.files.first.extension);
           filePath.value = (result.files.single.path!);
           sendDocumentMessage(filePath.value, "");
-        }else{
+        } else {
           toToast("File Size should not exceed 20 MB");
         }
       } else {
@@ -920,7 +920,7 @@ class ChatController extends FullLifeCycleController
     );
     if (result != null && File(result.files.single.path!).existsSync()) {
       debugPrint(result.files.first.extension);
-      if(checkFileUploadSize(result.files.single.path!, Constants.mAudio)) {
+      if (checkFileUploadSize(result.files.single.path!, Constants.mAudio)) {
         AudioPlayer player = AudioPlayer();
         player.setUrl(result.files.single.path!);
         player.onDurationChanged.listen((Duration duration) {
@@ -929,7 +929,7 @@ class ChatController extends FullLifeCycleController
           sendAudioMessage(
               filePath.value, false, duration.inMilliseconds.toString());
         });
-      }else{
+      } else {
         toToast("File Size should not exceed 20 MB");
       }
     } else {
@@ -1971,16 +1971,14 @@ class ChatController extends FullLifeCycleController
           getParticipantsNameAsCsv(profile.jid.checkNull());
         }
       } else {
-        if(await AppUtils.isNetConnected()) {
-          FlyChat.getUserLastSeenTime(profile.jid.toString()).then((value) {
-            userPresenceStatus(value.toString());
-          }).catchError((er) {
-            userPresenceStatus("");
-          });
-        }else{
+        FlyChat.getUserLastSeenTime(profile.jid.toString()).then((value) {
+          userPresenceStatus(value.toString());
+        }).catchError((er) {
           userPresenceStatus("");
-        }
+        });
       }
+    } else {
+      userPresenceStatus("");
     }
   }
 
@@ -2420,6 +2418,7 @@ class ChatController extends FullLifeCycleController
     mirrorFlyLog("LifeCycle", "onPaused");
     playerPause();
     saveUnsentMessage();
+    sendUserTypingGoneStatus();
   }
 
   @override
@@ -2470,7 +2469,7 @@ class ChatController extends FullLifeCycleController
 
   void userCameOnline(jid) {
 
-    if(jid.isNotEmpty && profile.jid==jid && !profile.isGroupProfile.checkNull()) {
+    if(jid.isNotEmpty && profile.jid == jid && !profile.isGroupProfile.checkNull()) {
       debugPrint("userCameOnline : $jid");
       Future.delayed(const Duration(milliseconds: 3000),(){
         setChatStatus();
@@ -2485,6 +2484,18 @@ class ChatController extends FullLifeCycleController
         setChatStatus();
       });
     }
+  }
+
+  void networkConnected() {
+    mirrorFlyLog("networkConnected", 'true');
+    Future.delayed(const Duration(milliseconds: 2000), () {
+      setChatStatus();
+    });
+  }
+
+  void networkDisconnected() {
+    mirrorFlyLog('networkDisconnected', 'false');
+    setChatStatus();
   }
 
   void removeUnreadSeparator() async{

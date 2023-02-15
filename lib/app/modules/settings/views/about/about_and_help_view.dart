@@ -4,6 +4,7 @@ import 'package:mirror_fly_demo/app/common/widgets.dart';
 import 'package:mirror_fly_demo/app/modules/settings/views/about/contactus_view.dart';
 
 import '../../../../common/constants.dart';
+import '../../../../data/apputils.dart';
 import 'about_us_view.dart';
 
 class AboutAndHelpView extends StatelessWidget {
@@ -21,22 +22,30 @@ class AboutAndHelpView extends StatelessWidget {
       ),
       body: Column(
         children: [
-          ListItem(title: Text("About us", style: textStyle),trailing: const Icon(Icons.keyboard_arrow_right),dividerPadding: const EdgeInsets.only(top: 8), onTap: ()=>Get.to(const AboutUsView())),
+          ListItem(title: Text("About us", style: textStyle),trailing: const Icon(Icons.keyboard_arrow_right),dividerPadding: const EdgeInsets.only(top: 8), onTap: () async {
+            if(await AppUtils.isNetConnected()){
+              Get.to(const AboutUsView());
+            }else{
+              toToast(Constants.noInternetConnection);
+            }
+          }),
           ListItem(title: Text("Contact us", style: textStyle),trailing: const Icon(Icons.keyboard_arrow_right),dividerPadding: const EdgeInsets.only(top:8), onTap: ()=>Get.to(ContactusView())),
           ListItem(title: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text("Terms and Privacy Policy", style: textStyle),
-              const SizedBox(height: 8,),
               Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
                   InkWell(
-                    child: const Text(
-                      'Terms and Condition,',
-                      style: TextStyle(
-                          decoration: TextDecoration.underline,
-                          color: buttonBgColor),
+                    child: const Padding(
+                      padding: EdgeInsets.symmetric(vertical: 8.0),
+                      child: Text(
+                        'Terms and Condition,',
+                        style: TextStyle(
+                            decoration: TextDecoration.underline,
+                            color: buttonBgColor),
+                      ),
                     ),
                     onTap:()=>launchWeb(Constants.termsConditions),
                   ),
@@ -44,11 +53,14 @@ class AboutAndHelpView extends StatelessWidget {
                     width: 5,
                   ),
                   InkWell(
-                    child: const Text(
-                      'Privacy Policy.',
-                      style: TextStyle(
-                          decoration: TextDecoration.underline,
-                          color: buttonBgColor),
+                    child: const Padding(
+                      padding: EdgeInsets.symmetric(vertical: 8.0),
+                      child: Text(
+                        'Privacy Policy.',
+                        style: TextStyle(
+                            decoration: TextDecoration.underline,
+                            color: buttonBgColor),
+                      ),
                     ),
                     onTap: ()=>launchWeb(Constants.privacyPolicy),
                   ),

@@ -569,18 +569,32 @@ class Constants {
 Future<void> launchWeb(String url) async{
   if(await AppUtils.isNetConnected()) {
     if (await canLaunchUrl(Uri.parse(url))) {
-      await launchUrl(Uri.parse(url));
+      await launchUrl(Uri.parse(url),mode: LaunchMode.externalApplication,);
     } else {
       throw "Could not launch $url";
     }
   }else{
     toToast(Constants.noInternetConnection);
   }
+}
 
+Future<void> launchInWebViewOrVC(String url,String title) async {
+  if(await AppUtils.isNetConnected()) {
+    if (!await launchUrl(
+      Uri.parse(url),
+      mode: LaunchMode.inAppWebView,
+      webViewConfiguration: WebViewConfiguration(
+          headers: <String, String>{'my_header_key': title}),
+    )) {
+      throw Exception('Could not launch $url');
+    }
+  }else{
+    toToast(Constants.noInternetConnection);
+  }
 }
 
 Widget forMessageTypeIcon(String messageType) {
-  debugPrint("messagetype $messageType");
+  // debugPrint("messagetype $messageType");
   switch (messageType.toUpperCase()) {
     case Constants.mImage:
       return SvgPicture.asset(
