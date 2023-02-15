@@ -12,11 +12,9 @@ import 'package:get/get.dart';
 import 'package:google_cloud_translation/google_cloud_translation.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:intl/intl.dart';
-import 'package:mirror_fly_demo/app/base_controller.dart';
 import 'package:mirror_fly_demo/app/common/de_bouncer.dart';
 import 'package:mirror_fly_demo/app/data/session_management.dart';
 import 'package:mirror_fly_demo/app/data/permissions.dart';
-import 'package:mirror_fly_demo/app/modules/chat/controllers/forwardchat_controller.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
@@ -25,7 +23,6 @@ import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../../common/constants.dart';
-import '../../../common/main_controller.dart';
 import '../../../data/apputils.dart';
 import '../../../data/helper.dart';
 import '../../../model/reply_hash_map.dart';
@@ -33,12 +30,10 @@ import '../../../routes/app_pages.dart';
 
 import 'package:flysdk/flysdk.dart';
 
-import '../../archived_chats/archived_chat_list_controller.dart';
-import '../../message_info/controllers/message_info_controller.dart';
 import '../chat_widgets.dart';
 
 class ChatController extends FullLifeCycleController
-    with FullLifeCycleMixin, GetTickerProviderStateMixin, BaseController {
+    with FullLifeCycleMixin, GetTickerProviderStateMixin {
   final translator = Translation(apiKey: Constants.googleTranslateKey);
 
   var chatList = List<ChatMessageModel>.empty(growable: true).obs;
@@ -109,8 +104,8 @@ class ChatController extends FullLifeCycleController
   String? starredChatMessageId;
 
   @override
-  void onInit() async {
-    super.onInit();
+  void onReady() async {
+    super.onReady();
     //await FlyChat.enableDisableBusyStatus(true);
     // var profileDetail = Get.arguments as Profile;
     // profile_.value = profileDetail;
@@ -135,14 +130,14 @@ class ChatController extends FullLifeCycleController
       profile_(profileDetail);
       checkAdminBlocked();
       ready();
-      initListeners();
+      // initListeners();
     } else {
       getProfileDetails(userJid).then((value) {
         SessionManagement.setChatJid("");
         profile_(value);
         checkAdminBlocked();
         ready();
-        initListeners();
+        // initListeners();
       });
     }
 
@@ -364,6 +359,7 @@ class ChatController extends FullLifeCycleController
   MessageObject? messageObject;
 
   sendMessage(Profile profile) async {
+    removeUnreadSeparator();
     var busyStatus = !profile.isGroupProfile.checkNull()
         ? await FlyChat.isBusyStatusEnabled()
         : false;
@@ -1825,12 +1821,13 @@ class ChatController extends FullLifeCycleController
 
   var unreadCount = 0.obs;
 
-  @override
-  void onMessageReceived(chatMessage) {
-    super.onMessageReceived(chatMessage);
+  void onMessageReceived(chatMessageModel) {
+
     mirrorFlyLog("chatController", "onMessageReceived");
-    ChatMessageModel chatMessageModel = sendMessageModelFromJson(chatMessage);
+
     if (chatMessageModel.chatUserJid == profile.jid) {
+      removeUnreadSeparator();
+
       chatList.insert(0, chatMessageModel);
       unreadCount.value++;
       //scrollToBottom();
@@ -1838,20 +1835,12 @@ class ChatController extends FullLifeCycleController
         sendReadReceipt();
       }
     }
-    if (Get.isRegistered<ArchivedChatListController>()) {
-      Get.find<ArchivedChatListController>()
-          .onMessageReceived(chatMessageModel);
-    }
+
   }
 
-  @override
-  void onMessageStatusUpdated(event) {
-    super.onMessageStatusUpdated(event);
-    // mirrorFlyLog("MESSAGE STATUS UPDATED", event);
-    if (event == null) {
-      debugPrint("MESSAGE STATUS UPDATED IS NULL");
-    }
-    ChatMessageModel chatMessageModel = sendMessageModelFromJson(event);
+
+  void onMessageStatusUpdated(chatMessageModel) {
+
     if (chatMessageModel.chatUserJid == profile.jid) {
       final index = chatList.indexWhere(
           (message) => message.messageId == chatMessageModel.messageId);
@@ -1865,10 +1854,7 @@ class ChatController extends FullLifeCycleController
         // chatList.insert(0, chatMessageModel);
         // scrollToBottom();
       }
-      if (Get.isRegistered<MessageInfoController>()) {
-        Get.find<MessageInfoController>()
-            .onMessageStatusUpdated(chatMessageModel);
-      }
+
     }
     if (isSelected.value) {
       var selectedIndex = selectedChatList.indexWhere(
@@ -1883,10 +1869,7 @@ class ChatController extends FullLifeCycleController
     }
   }
 
-  @override
-  void onMediaStatusUpdated(event) {
-    super.onMediaStatusUpdated(event);
-    ChatMessageModel chatMessageModel = sendMessageModelFromJson(event);
+  void onMediaStatusUpdated(chatMessageModel) {
     if (chatMessageModel.chatUserJid == profile.jid) {
       final index = chatList.indexWhere(
           (message) => message.messageId == chatMessageModel.messageId);
@@ -1909,9 +1892,7 @@ class ChatController extends FullLifeCycleController
     }
   }
 
-  @override
   void onGroupProfileUpdated(groupJid) {
-    super.onGroupProfileUpdated(groupJid);
     if (profile.jid.checkNull() == groupJid.toString()) {
       FlyChat.getProfileDetails(profile.jid.checkNull(), false).then((value) {
         if (value != null) {
@@ -1924,9 +1905,8 @@ class ChatController extends FullLifeCycleController
     }
   }
 
-  @override
+
   void onLeftFromGroup({required String groupJid, required String userJid}) {
-    super.onLeftFromGroup(groupJid: groupJid, userJid: userJid);
     if (profile.isGroupProfile ?? false) {
       if (groupJid == profile.jid &&
           userJid == SessionManagement.getUserJID()) {
@@ -1938,10 +1918,10 @@ class ChatController extends FullLifeCycleController
     }
   }
 
-  @override
+
   void setTypingStatus(
       String singleOrgroupJid, String userId, String typingStatus) {
-    super.setTypingStatus(singleOrgroupJid, userId, typingStatus);
+
     if (profile.jid.checkNull() == singleOrgroupJid) {
       var jid = profile.isGroupProfile ?? false ? userId : singleOrgroupJid;
       if (!typingList.contains(jid)) {
@@ -1964,10 +1944,7 @@ class ChatController extends FullLifeCycleController
         setChatStatus();
       }
     }
-    if (Get.isRegistered<ArchivedChatListController>()) {
-      Get.find<ArchivedChatListController>()
-          .setTypingStatus(singleOrgroupJid, userId, typingStatus);
-    }
+
   }
 
   memberOfGroup() {
@@ -2174,12 +2151,12 @@ class ChatController extends FullLifeCycleController
     }
   }
 
-  @override
+  /*@override
   void onAdminBlockedUser(String jid, bool status) {
     super.onAdminBlockedUser(jid, status);
     mirrorFlyLog("chat onAdminBlockedUser", "$jid, $status");
     Get.find<MainController>().handleAdminBlockedUser(jid, status);
-  }
+  }*/
 
   /*makeVoiceCall(){
     FlyChat.makeVoiceCall(profile.jid.checkNull()).then((value){
@@ -2398,8 +2375,12 @@ class ChatController extends FullLifeCycleController
     var chatIndex = index ??
         chatList.indexWhere((element) => element.messageId == messageID);
     if (!chatIndex.isNegative) {
-      chatList[chatIndex].isSelected = true;
-      newScrollController.jumpTo(index: chatIndex);
+      newScrollController.scrollTo(index: chatIndex, duration: const Duration(milliseconds: 10));
+      Future.delayed(const Duration(milliseconds: 15), () {
+        chatList[chatIndex].isSelected = true;
+        chatList.refresh();
+      });
+
       Future.delayed(const Duration(milliseconds: 800), () {
         chatList[chatIndex].isSelected = false;
         chatList.refresh();
@@ -2465,34 +2446,30 @@ class ChatController extends FullLifeCycleController
     mirrorFlyLog("LifeCycle", "onInactive");
   }
 
-  @override
+
   void userUpdatedHisProfile(jid) {
-    super.userUpdatedHisProfile(jid);
-    // debugPrint('chatPage : $jid');
     updateProfile(jid);
-    if (Get.isRegistered<ForwardChatController>()) {
-      Get.find<ForwardChatController>().userUpdatedHisProfile(jid);
-    }
-    if (Get.isRegistered<ArchivedChatListController>()) {
-      Get.find<ArchivedChatListController>().userUpdatedHisProfile(jid);
-    }
   }
 
   Future<void> updateProfile(String jid) async {
-    if (jid.isNotEmpty) {
-      getProfileDetails(jid).then((value) {
-        SessionManagement.setChatJid("");
-        profile_(value);
-        checkAdminBlocked();
-        isBlocked(profile.isBlocked);
-        setChatStatus();
-      });
+    if (jid.isNotEmpty && jid == profile.jid) {
+      if(!profile.isGroupProfile.checkNull()) {
+        getProfileDetails(jid).then((value) {
+          SessionManagement.setChatJid("");
+          profile_(value);
+          checkAdminBlocked();
+          isBlocked(profile.isBlocked);
+          setChatStatus();
+        });
+      }else{
+        debugPrint("unable to update profile due to group chat");
+      }
     }
   }
 
-  @override
+
   void userCameOnline(jid) {
-    super.userCameOnline(jid);
+
     if(jid.isNotEmpty && profile.jid==jid && !profile.isGroupProfile.checkNull()) {
       debugPrint("userCameOnline : $jid");
       Future.delayed(const Duration(milliseconds: 3000),(){
@@ -2500,9 +2477,8 @@ class ChatController extends FullLifeCycleController
       });
     }
   }
-  @override
+
   void userWentOffline(jid) {
-    super.userWentOffline(jid);
     if(jid.isNotEmpty && profile.jid==jid && !profile.isGroupProfile.checkNull()) {
       debugPrint("userWentOffline : $jid");
       Future.delayed(const Duration(milliseconds: 3000),(){
@@ -2510,4 +2486,11 @@ class ChatController extends FullLifeCycleController
       });
     }
   }
+
+  void removeUnreadSeparator() async{
+
+    chatList.removeWhere((chatItem) => chatItem.messageType == Constants.mNotification);
+
+  }
+
 }

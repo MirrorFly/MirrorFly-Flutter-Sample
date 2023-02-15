@@ -382,9 +382,14 @@ class Constants {
   static const String textPattern = r'[a-zA-Z]';
   static const String countryCodePattern = r'(^(\+?[0-9]{1,4}\-?)$)';
   static const String websitePattern = r'(?:(?:https?|ftp):\/\/)?[\w/\-?=%.]+\.[\w/\-?=%.]+';
+  // static const String websitePattern = r'(http|https)://[\w-]+(\.[\w-]+)+([\w.,@?^=%&amp;:/~+#-]*[\w@?^=%&amp;/~+#-])?';
+  // static const String websitePattern = r"((https?:www\.)|(https?:\/\/)|(www\.))[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9]{1,6}(\/[-a-zA-Z0-9()@:%_\+.~#?&\/=]*)?";
+  // static const String websitePattern = ("^((http?|https?)://)?[-a-zA-Z0-9@:%._\\+~#?&//=]{2,256}\\.[a-z]{2,6}\\b([-a-zA-Z0-9@:%._\\+~#?&//=]*)\$");
+
 
   static const String O = "o";
   static const String N = "n";
+
 
 
   static const String typeSearchRecent = "Chats";

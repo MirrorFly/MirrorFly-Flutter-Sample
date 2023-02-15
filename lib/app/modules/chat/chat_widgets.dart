@@ -679,10 +679,8 @@ class ContactMessageView extends StatelessWidget {
           return userJid;
         });
       }
-
     }
     debugPrint("getJidOfContact--> $userJid");
-
       return InkWell(
         onTap: (){
           (userJid != null && userJid!.isNotEmpty) ? sendToChatPage(userJid!) : showInvitePopup(contactChatMessage);
@@ -697,9 +695,6 @@ class ContactMessageView extends StatelessWidget {
             ],
           ),
       );
-
-
-
   }
 
   sendToChatPage(String userJid) {
@@ -709,16 +704,12 @@ class ContactMessageView extends StatelessWidget {
 
   showInvitePopup(ContactChatMessage contactChatMessage) {
     Helper.showButtonAlert(actions: [
-      ListTile(
-        contentPadding: const EdgeInsets.only(left: 10),
-        title: const Text("Invite Friend",
+      const ListTile(
+        contentPadding: EdgeInsets.only(left: 10),
+        title: Text("Invite Friend",
             style: TextStyle(
                 fontSize: 14,
                 fontWeight: FontWeight.bold)),
-
-        onTap: () {
-
-        },
       ),
       ListTile(
         contentPadding: const EdgeInsets.only(left: 10),

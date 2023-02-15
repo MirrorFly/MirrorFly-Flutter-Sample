@@ -421,6 +421,10 @@ String spannableTextType(String text) {
   if (RegExp(Constants.websitePattern).hasMatch(text)) {
     return "website";
   }
+  // if (Uri.parse(text).isAbsolute) {
+  /*if (Uri.parse(text).host.isNotEmpty) {
+    return "website";
+  }*/
   return "text";
 }
 

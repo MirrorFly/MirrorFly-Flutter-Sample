@@ -1,5 +1,6 @@
 import 'package:audioplayers/audioplayers.dart';
 import 'package:get/get.dart';
+import 'package:mirror_fly_demo/app/base_controller.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
 import 'package:mirror_fly_demo/app/data/pushnotification.dart';
 import 'package:mirror_fly_demo/app/data/session_management.dart';
@@ -8,7 +9,7 @@ import 'package:mirror_fly_demo/app/routes/app_pages.dart';
 
 import 'package:flysdk/flysdk.dart';
 
-class MainController extends GetxController
+class MainController extends GetxController with BaseController
     /*with FullLifeCycleMixin */{
   var authToken = "".obs;
   Rx<String> uploadEndpoint = "".obs;
@@ -23,11 +24,14 @@ class MainController extends GetxController
   void onInit() {
     super.onInit();
     PushNotifications.init();
+    initListeners();
     getMediaEndpoint();
     uploadEndpoint(SessionManagement.getMediaEndPoint().checkNull());
     authToken(SessionManagement.getAuthToken().checkNull());
     getAuthToken();
   }
+
+
 
   getMediaEndpoint() async {
     if (SessionManagement

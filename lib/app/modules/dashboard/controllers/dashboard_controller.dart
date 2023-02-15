@@ -3,22 +3,19 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:mirror_fly_demo/app/base_controller.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
-import 'package:mirror_fly_demo/app/common/main_controller.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
 import 'package:mirror_fly_demo/app/data/session_management.dart';
 
 import 'package:flysdk/flysdk.dart';
 import 'package:intl/intl.dart';
 import 'package:mirror_fly_demo/app/modules/archived_chats/archived_chat_list_controller.dart';
-import 'package:mirror_fly_demo/app/modules/dashboard/controllers/recent_chat_search_controller.dart';
 
 import '../../../data/apputils.dart';
 import '../../../routes/app_pages.dart';
 
 class DashboardController extends GetxController
-    with GetTickerProviderStateMixin, BaseController {
+    with GetTickerProviderStateMixin {
   var recentChats = <RecentChatData>[].obs;
   var archivedChats = <RecentChatData>[].obs;
   var calendar = DateTime.now();
@@ -777,23 +774,14 @@ class DashboardController extends GetxController
     unReadCount();
   }
 
-  @override
-  void onMessageReceived(chatMessage) {
+  void onMessageReceived(chatMessageModel) {
     mirrorFlyLog("dashboard controller", "onMessageReceived");
-    super.onMessageReceived(chatMessage);
-    ChatMessageModel chatMessageModel = sendMessageModelFromJson(chatMessage);
+
     updateRecentChat(chatMessageModel.chatUserJid);
-    // mirrorFlyLog("message", chatMessageModel.toJson().toString());
-    if (Get.isRegistered<ArchivedChatListController>()) {
-      Get.find<ArchivedChatListController>()
-          .onMessageReceived(chatMessageModel);
-    }
   }
 
-  @override
-  void onMessageStatusUpdated(event) {
-    // mirrorFlyLog("MESSAGE STATUS UPDATED", event);
-    ChatMessageModel chatMessageModel = sendMessageModelFromJson(event);
+
+  void onMessageStatusUpdated(chatMessageModel) {
     final index = recentChats.indexWhere(
         (message) => message.lastMessageId == chatMessageModel.messageId);
     debugPrint("Message Status Update index of search $index");
@@ -803,22 +791,20 @@ class DashboardController extends GetxController
     }
   }
 
-  @override
+
   void onGroupProfileUpdated(groupJid) {
-    super.onGroupProfileUpdated(groupJid);
     mirrorFlyLog("super", groupJid.toString());
     updateRecentChat(groupJid);
   }
 
-  @override
+
   void onDeleteGroup(groupJid) {
-    super.onDeleteGroup(groupJid);
     updateRecentChat(groupJid);
   }
 
-  @override
+
   void onGroupDeletedLocally(groupJid) {
-    super.onGroupDeletedLocally(groupJid);
+
     updateRecentChat(groupJid);
   }
 
@@ -836,10 +822,8 @@ class DashboardController extends GetxController
     }
   }
 
-  @override
   void setTypingStatus(
       String singleOrgroupJid, String userId, String typingStatus) {
-    super.setTypingStatus(singleOrgroupJid, userId, typingStatus);
     var index = typingAndGoneStatus.indexWhere(
         (it) => it.singleOrgroupJid == singleOrgroupJid && it.userId == userId);
     if (typingStatus.toLowerCase() == Constants.composing) {
@@ -857,23 +841,17 @@ class DashboardController extends GetxController
     }
   }
 
-  @override
+  /* //Moved to Base Controller
   void onAdminBlockedUser(String jid, bool status) {
-    super.onAdminBlockedUser(jid, status);
     mirrorFlyLog("dash onAdminBlockedUser", "$jid, $status");
     Get.find<MainController>().handleAdminBlockedUser(jid, status);
-  }
+  }*/
 
-  @override
+
   void userUpdatedHisProfile(jid) {
-    super.userUpdatedHisProfile(jid);
+
     updateRecentChatAdapter(jid);
-    if (Get.isRegistered<ArchivedChatListController>()) {
-      Get.find<ArchivedChatListController>().userUpdatedHisProfile(jid);
-    }
-    if (Get.isRegistered<RecentChatSearchController>()) {
-      Get.find<RecentChatSearchController>().userUpdatedHisProfile(jid);
-    }
+
   }
 
   Future<void> updateRecentChatAdapter(String jid) async {

@@ -29,6 +29,25 @@ class BlockedListController extends GetxController {
       }
     });
   }
+  void userUpdatedHisProfile(jid) {
+    if (jid.isNotEmpty) {
+      /* //This function is not working in UI kit so commented
+      getProfileDetails(jid).then((value) {
+        var index = _blockedUsers.indexWhere((element) => element.jid == jid);
+        if(!index.isNegative) {
+          _blockedUsers[index].name = value.name;
+          _blockedUsers[index].nickName = value.nickName;
+          _blockedUsers[index].email = value.email;
+          _blockedUsers[index].image = value.image;
+          _blockedUsers[index].isBlocked = value.isBlocked;
+          _blockedUsers[index].mobileNumber = value.mobileNumber;
+          _blockedUsers[index].status = value.status;
+        }
+      });*/
+
+    }
+
+  }
   unBlock(Member item){
     Helper.showAlert(message: "Unblock ${item.name}?", actions: [
       TextButton(

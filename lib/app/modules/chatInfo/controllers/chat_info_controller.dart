@@ -7,7 +7,6 @@ import 'package:flysdk/flysdk.dart';
 import '../../../routes/app_pages.dart';
 
 class ChatInfoController extends GetxController {
-  //TODO: Implement ChatInfoController
   var profile_ = Profile().obs;
   Profile get profile => profile_.value;
   var mute = false.obs;
@@ -41,6 +40,17 @@ class ChatInfoController extends GetxController {
       _isSliverAppBarExpanded(
           scrollController.offset < (silverBarHeight - kToolbarHeight));
     }
+  }
+
+  void userUpdatedHisProfile(jid) {
+    if (jid.isNotEmpty && jid == profile.jid) {
+      getProfileDetails(jid).then((value) {
+        profile_(value);
+        mute(profile.isMuted!);
+        nameController.text = profile.nickName.checkNull();
+      });
+    }
+
   }
 
   onToggleChange(bool value) {

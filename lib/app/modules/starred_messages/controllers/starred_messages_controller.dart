@@ -53,6 +53,48 @@ class StarredMessagesController extends GetxController {
       });
     }
   }
+  void userUpdatedHisProfile(jid) {
+    if (jid.isNotEmpty) {
+      getProfileDetails(jid).then((value) {
+        var messageIndex = starredChatList.indexWhere((element) => element.chatUserJid == jid);
+        if(!messageIndex.isNegative){
+          starredChatList.refresh();
+        }
+      });
+    }
+  }
+  void onMessageStatusUpdated(chatMessageModel) {
+    final index = starredChatList.indexWhere(
+            (message) => message.messageId == chatMessageModel.messageId);
+    debugPrint("Message Status Update index of search $index");
+    if (!index.isNegative) {
+      starredChatList[index].messageStatus = chatMessageModel.messageStatus;
+      starredChatList.refresh();
+    }
+  }
+
+  void onMediaStatusUpdated(ChatMessageModel chatMessageModel) {
+    final index = starredChatList.indexWhere(
+            (message) => message.messageId == chatMessageModel.messageId);
+    if (!index.isNegative) {
+      starredChatList[index] = chatMessageModel;
+      starredChatList.refresh();
+    }
+
+    if (isSelected.value) {
+      var selectedIndex = selectedChatList.indexWhere(
+              (element) => chatMessageModel.messageId == element.messageId);
+      if (!selectedIndex.isNegative) {
+        chatMessageModel.isSelected =
+        true; //selectedChatList[selectedIndex].isSelected;
+        selectedChatList[selectedIndex] = chatMessageModel;
+        selectedChatList.refresh();
+        validateForForwardMessage();
+        validateForShareMessage();
+      }
+    }
+
+  }
 
   String getChatTime(context, int? epochTime) {
     if (epochTime == null) return "";
@@ -532,5 +574,7 @@ class StarredMessagesController extends GetxController {
     clearAllChatSelection();
     Share.shareXFiles(mediaPaths);
   }
+
+
 
 }

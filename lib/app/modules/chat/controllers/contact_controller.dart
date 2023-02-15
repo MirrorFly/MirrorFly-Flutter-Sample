@@ -8,7 +8,7 @@ import '../../../common/de_bouncer.dart';
 import '../../../data/apputils.dart';
 import '../../../routes/app_pages.dart';
 
-class ContactController extends GetxController {
+class ContactController extends GetxController{
   ScrollController scrollController = ScrollController();
   var pageNum = 1;
   var isPageLoading = false.obs;
@@ -48,6 +48,30 @@ class ContactController extends GetxController {
     //FlyChat.syncContacts(true);
     //FlyChat.getRegisteredUsers(true).then((value) => mirrorFlyLog("registeredUsers", value.toString()));
 
+  }
+
+  void userUpdatedHisProfile(jid) {
+
+    updateProfile(jid);
+
+  }
+
+  Future<void> updateProfile(String jid) async {
+
+    if (jid.isNotEmpty) {
+
+      var userListIndex = usersList.indexWhere((element) => element.jid == jid);
+      var mainListIndex = mainUsersList.indexWhere((element) => element.jid == jid);
+
+      getProfileDetails(jid).then((value) {
+        if (!userListIndex.isNegative) {
+          usersList[userListIndex] = value;
+        }
+        if (!mainListIndex.isNegative) {
+          mainUsersList[mainListIndex] = value;
+        }
+      });
+    }
   }
 
   //Add participants

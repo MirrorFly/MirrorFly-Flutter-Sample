@@ -1,14 +1,28 @@
 import 'dart:convert';
 
+import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
 import 'package:flysdk/flysdk.dart';
+import 'package:mirror_fly_demo/app/modules/chat/controllers/chat_controller.dart';
+import 'package:mirror_fly_demo/app/modules/chat/controllers/contact_controller.dart';
+import 'package:mirror_fly_demo/app/modules/group/controllers/group_info_controller.dart';
+import 'package:mirror_fly_demo/app/modules/settings/views/blocked/blocked_list_controller.dart';
+
+import 'common/main_controller.dart';
+import 'modules/archived_chats/archived_chat_list_controller.dart';
+import 'modules/chat/controllers/forwardchat_controller.dart';
+import 'modules/chatInfo/controllers/chat_info_controller.dart';
+import 'modules/dashboard/controllers/dashboard_controller.dart';
+import 'modules/dashboard/controllers/recent_chat_search_controller.dart';
+import 'modules/message_info/controllers/message_info_controller.dart';
+import 'modules/starred_messages/controllers/starred_messages_controller.dart';
 
 abstract class BaseController {
+
   initListeners() {
     FlyChat.onMessageReceived.listen(onMessageReceived);
     FlyChat.onMessageStatusUpdated.listen(onMessageStatusUpdated);
     FlyChat.onMediaStatusUpdated.listen(onMediaStatusUpdated);
-
     FlyChat.onGroupProfileFetched.listen(onGroupProfileFetched);
     FlyChat.onNewGroupCreated.listen(onNewGroupCreated);
     FlyChat.onGroupProfileUpdated.listen(onGroupProfileUpdated);
@@ -86,13 +100,48 @@ abstract class BaseController {
 
   void onMessageReceived(chatMessage) {
     mirrorFlyLog("flutter onMessageReceived", chatMessage.toString());
+    ChatMessageModel chatMessageModel = sendMessageModelFromJson(chatMessage);
+
+    if (Get.isRegistered<ChatController>()) {
+      Get.find<ChatController>().onMessageReceived(chatMessageModel);
+    }
+    if (Get.isRegistered<DashboardController>()) {
+      Get.find<DashboardController>().onMessageReceived(chatMessageModel);
+    }
+    if (Get.isRegistered<ArchivedChatListController>()) {
+      Get.find<ArchivedChatListController>().onMessageReceived(chatMessageModel);
+    }
+
   }
 
   void onMessageStatusUpdated(event) {
-    //Log("flutter onMessageStatusUpdated", event.toString());
+    ChatMessageModel chatMessageModel = sendMessageModelFromJson(event);
+
+    if (Get.isRegistered<ChatController>()) {
+      Get.find<ChatController>().onMessageStatusUpdated(chatMessageModel);
+    }
+    if (Get.isRegistered<DashboardController>()) {
+      Get.find<DashboardController>().onMessageStatusUpdated(chatMessageModel);
+    }
+    if (Get.isRegistered<MessageInfoController>()) {
+      Get.find<MessageInfoController>().onMessageStatusUpdated(chatMessageModel);
+    }
+    if (Get.isRegistered<StarredMessagesController>()) {
+      Get.find<StarredMessagesController>().onMessageStatusUpdated(chatMessageModel);
+    }
   }
 
-  void onMediaStatusUpdated(event) {}
+  void onMediaStatusUpdated(event) {
+    ChatMessageModel chatMessageModel = sendMessageModelFromJson(event);
+
+    if (Get.isRegistered<ChatController>()) {
+      Get.find<ChatController>().onMediaStatusUpdated(chatMessageModel);
+    }
+    if (Get.isRegistered<StarredMessagesController>()) {
+      Get.find<StarredMessagesController>().onMediaStatusUpdated(chatMessageModel);
+    }
+
+  }
 
   void onGroupProfileFetched(groupJid) {}
 
@@ -100,6 +149,12 @@ abstract class BaseController {
 
   void onGroupProfileUpdated(groupJid) {
     mirrorFlyLog("flutter GroupProfileUpdated", groupJid.toString());
+    if (Get.isRegistered<ChatController>()) {
+      Get.find<ChatController>().onGroupProfileUpdated(groupJid);
+    }
+    if (Get.isRegistered<DashboardController>()) {
+      Get.find<DashboardController>().onGroupProfileUpdated(groupJid);
+    }
   }
 
   void onNewMemberAddedToGroup(event) {}
@@ -108,7 +163,11 @@ abstract class BaseController {
 
   void onFetchingGroupMembersCompleted(groupJid) {}
 
-  void onDeleteGroup(groupJid) {}
+  void onDeleteGroup(groupJid) {
+    if (Get.isRegistered<DashboardController>()) {
+      Get.find<DashboardController>().onDeleteGroup(groupJid);
+    }
+  }
 
   void onFetchingGroupListCompleted(noOfGroups) {}
 
@@ -116,17 +175,28 @@ abstract class BaseController {
 
   void onMemberRemovedAsAdmin(event) {}
 
-  void onLeftFromGroup({required String groupJid, required String userJid}) {}
+  void onLeftFromGroup({required String groupJid, required String userJid}) {
+    if (Get.isRegistered<ChatController>()) {
+      Get.find<ChatController>().onLeftFromGroup(groupJid: groupJid, userJid : userJid);
+    }
+  }
 
   void onGroupNotificationMessage(event) {}
 
-  void onGroupDeletedLocally(groupJid) {}
+  void onGroupDeletedLocally(groupJid) {
+    if (Get.isRegistered<DashboardController>()) {
+      Get.find<DashboardController>().onGroupDeletedLocally(groupJid);
+    }
+  }
 
   void blockedThisUser(result) {}
 
   void myProfileUpdated(result) {}
 
-  void onAdminBlockedUser(String jid, bool status) {}
+  void onAdminBlockedUser(String jid, bool status) {
+    Get.find<MainController>().handleAdminBlockedUser(jid, status);
+
+  }
 
   void onContactSyncComplete(result) {
     mirrorFlyLog("onContactSyncComplete", result.toString());
@@ -140,7 +210,9 @@ abstract class BaseController {
   void userBlockedMe(result) {}
 
   void userCameOnline(String jid) {
-    // debugPrint("userCameOnline : $jid");
+    if (Get.isRegistered<ChatController>()) {
+      Get.find<ChatController>().userCameOnline(jid);
+    }
   }
 
   void userDeletedHisProfile(result) {}
@@ -151,10 +223,43 @@ abstract class BaseController {
 
   void userUpdatedHisProfile(String jid) {
     mirrorFlyLog("userUpdatedHisProfile", jid.toString());
+
+    if (Get.isRegistered<ChatController>()) {
+      Get.find<ChatController>().userUpdatedHisProfile(jid);
+    }
+    if (Get.isRegistered<DashboardController>()) {
+      Get.find<DashboardController>().userUpdatedHisProfile(jid);
+    }
+    if (Get.isRegistered<ForwardChatController>()) {
+      Get.find<ForwardChatController>().userUpdatedHisProfile(jid);
+    }
+    if (Get.isRegistered<ArchivedChatListController>()) {
+      Get.find<ArchivedChatListController>().userUpdatedHisProfile(jid);
+    }
+    if (Get.isRegistered<RecentChatSearchController>()) {
+      Get.find<RecentChatSearchController>().userUpdatedHisProfile(jid);
+    }
+    if (Get.isRegistered<ContactController>()) {
+      Get.find<ContactController>().userUpdatedHisProfile(jid);
+    }
+    if (Get.isRegistered<ChatInfoController>()) {
+      Get.find<ChatInfoController>().userUpdatedHisProfile(jid);
+    }
+    if (Get.isRegistered<StarredMessagesController>()) {
+      Get.find<StarredMessagesController>().userUpdatedHisProfile(jid);
+    }
+    if (Get.isRegistered<BlockedListController>()) {
+      Get.find<BlockedListController>().userUpdatedHisProfile(jid);
+    }
+    if (Get.isRegistered<GroupInfoController>()) {
+      Get.find<GroupInfoController>().userUpdatedHisProfile(jid);
+    }
   }
 
   void userWentOffline(String jid) {
-    // debugPrint("userWentOffline : $jid");
+    if (Get.isRegistered<ChatController>()) {
+      Get.find<ChatController>().userWentOffline(jid);
+    }
   }
 
   void usersIBlockedListFetched(result) {}
@@ -174,7 +279,18 @@ abstract class BaseController {
   void onWebChatPasswordChanged(result) {}
 
   void setTypingStatus(
-      String singleOrgroupJid, String userId, String typingStatus) {}
+      String singleOrgroupJid, String userId, String typingStatus) {
+    if (Get.isRegistered<ChatController>()) {
+      Get.find<ChatController>().setTypingStatus(singleOrgroupJid, userId, typingStatus);
+    }
+    if (Get.isRegistered<DashboardController>()) {
+      Get.find<DashboardController>().setTypingStatus(singleOrgroupJid, userId, typingStatus);
+    }
+    if (Get.isRegistered<ArchivedChatListController>()) {
+      Get.find<ArchivedChatListController>()
+          .setTypingStatus(singleOrgroupJid, userId, typingStatus);
+    }
+  }
 
   void onChatTypingStatus(result) {}
 
