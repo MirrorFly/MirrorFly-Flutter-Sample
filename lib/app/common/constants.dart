@@ -140,6 +140,13 @@ const String disabledIcon = 'assets/logos/disabled.png';
 
 const String phoneCall = 'assets/logos/phonecall.svg';
 const String videoCall = 'assets/logos/videocall.svg';
+const String call = 'assets/logos/call.svg';
+
+const String quickCall = 'assets/logos/quick_call.svg';
+const String quickInfo = 'assets/logos/quick_info.svg';
+const String quickMessage = 'assets/logos/quick_message.svg';
+const String quickVideo = 'assets/logos/quick_video.svg';
+
 const String replyIcon = 'assets/logos/reply.svg';
 const String forwardIcon = 'assets/logos/forward.svg';
 const String deleteIcon = 'assets/logos/delete_black.svg';

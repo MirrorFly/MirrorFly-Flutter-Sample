@@ -1,3 +1,4 @@
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -23,6 +24,7 @@ class BlockedListController extends GetxController {
     FlyChat.getUsersIBlocked(server).then((value){
       if(value!=null && value != ""){
         var list = memberFromJson(value);
+        list.sort((a, b) => a.name.checkNull().toString().toLowerCase().compareTo(b.name.checkNull().toString().toLowerCase()));
         _blockedUsers(list);
       }else{
         _blockedUsers.clear();

@@ -29,6 +29,7 @@ class RecentChatItem extends StatelessWidget {
       required this.item,
       required this.onTap,
       this.onLongPress,
+      this.onAvatarClick,
       this.onchange,
       this.spanTxt = "",
       this.isSelected = false,
@@ -42,6 +43,7 @@ class RecentChatItem extends StatelessWidget {
   final RecentChatData item;
   final Function() onTap;
   final Function()? onLongPress;
+  final Function()? onAvatarClick;
   final String spanTxt;
   final bool isCheckBoxVisible;
   final bool isChecked;
@@ -65,14 +67,13 @@ class RecentChatItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-      onLongPress: onLongPress,
-      onTap: onTap,
-      child: Container(
-        color: isSelected ? Colors.black12 : Colors.transparent,
-        child: Row(
-          children: [
-            Container(
+    return Container(
+      color: isSelected ? Colors.black12 : Colors.transparent,
+      child: Row(
+        children: [
+          InkWell(
+            onTap: onAvatarClick,
+            child: Container(
                 margin: const EdgeInsets.only(
                     left: 19.0, top: 10, bottom: 10, right: 10),
                 child: Stack(
@@ -118,7 +119,11 @@ class RecentChatItem extends StatelessWidget {
                         : const SizedBox(),
                   ],
                 )),
-            Expanded(
+          ),
+          Expanded(
+            child: InkWell(
+              onLongPress: onLongPress,
+              onTap: onTap,
               child: Container(
                 padding: const EdgeInsets.only(top: 8),
                 child: Column(
@@ -349,9 +354,9 @@ class RecentChatItem extends StatelessWidget {
                   ],
                 ),
               ),
-            )
-          ],
-        ),
+            ),
+          )
+        ],
       ),
     );
   }

@@ -441,7 +441,12 @@ class DashboardView extends GetView<DashboardController> {
                                 controller.selected(true);
                                 controller.selectOrRemoveChatfromList(
                                     index);
-                              },);
+                              },
+                              onAvatarClick: (){
+                                controller.getProfileDetail(context, item, index);
+
+                              },
+                            );
                           });
                         } else {
                           return Obx(() {
@@ -482,6 +487,7 @@ class DashboardView extends GetView<DashboardController> {
       ],
     );
   }
+
 
   Widget recentSearchView(BuildContext context) {
     return ListView(

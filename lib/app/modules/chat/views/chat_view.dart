@@ -389,13 +389,22 @@ class ChatView extends GetView<ChatController> {
           color: textBlackColor,
         ),
         Padding(
-          padding: const EdgeInsets.only(top: 15.0, bottom: 15.0),
+          padding: const EdgeInsets.only(top: 15.0, bottom: 15.0, left: 10),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Text(
-                "You have blocked ${controller.profile.name}.",
-                style: const TextStyle(fontSize: 15),
+              const Text(
+                "You have blocked ",
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(fontSize: 15),
+              ),
+              const SizedBox(width: 5,),
+              Flexible(
+                child: Text(controller.profile.name.checkNull(),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(fontSize: 15),),
               ),
               const SizedBox(
                 width: 10,
