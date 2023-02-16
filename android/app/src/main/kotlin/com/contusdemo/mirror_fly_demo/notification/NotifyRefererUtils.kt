@@ -35,7 +35,7 @@ object NotifyRefererUtils {
         val notificationSoundUri = Uri.parse(SharedPreferenceManager.instance.getString("notification_uri"))
 
         LogMessage.d("notification_uri",notificationSoundUri.toString())
-        LogMessage.d("notification_sound",SharedPreferenceManager.instance.getString("notification_sound").toString())
+        LogMessage.d("notification_sound",SharedPreferenceManager.instance.getBoolean("notification_sound").toString())
         if (!SharedPreferenceManager.instance.getBoolean("notification_sound")) {
             notificationCompatBuilder.setSound(null)
         } else {

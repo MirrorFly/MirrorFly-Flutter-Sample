@@ -30,7 +30,7 @@ class NotificationSettingsView extends GetView<NotificationAlertController> {
                 return Obx(() {
                   return notificationSettingsItem(
                       title: "Notification Tone",
-                      subtitle: 'Default (${controller.defaultTone})',
+                      subtitle: controller.defaultTone,
                       onTap: () => controller.showCustomTones());
                 });
               }),

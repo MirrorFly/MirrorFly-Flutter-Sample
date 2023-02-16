@@ -292,7 +292,7 @@ class ProfileController extends GetxController {
             SessionManagement.vibrationType("0");
             FlyChat.getDefaultNotificationUri().then((value) {
               if (value != null) {
-                FlyChat.setNotificationUri(value);
+                // FlyChat.setNotificationUri(value);
                 SessionManagement.setNotificationUri(value);
               }
             });
@@ -414,7 +414,7 @@ class ProfileController extends GetxController {
     }
     FlyChat.getDefaultNotificationUri().then((value) {
       if (value != null) {
-        FlyChat.setNotificationUri(value);
+        // FlyChat.setNotificationUri(value);
         SessionManagement.setNotificationUri(value);
       }
     });

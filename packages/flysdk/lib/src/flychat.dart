@@ -1,3 +1,4 @@
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -2358,11 +2359,11 @@ class FlyChat {
     }
   }
 
-  static Future<String?> showCustomTones(String? uri) async {
+  static Future<String?> showCustomTones() async {
     String? response;
     try {
       response = await mirrorFlyMethodChannel
-          .invokeMethod<String>('showCustomTones', {"ringtone_uri": uri});
+          .invokeMethod<String>('showCustomTones');
       debugPrint("showCustomTones Response ==> $response");
       return response;
     } on PlatformException catch (e) {
@@ -2374,11 +2375,11 @@ class FlyChat {
     }
   }
 
-  static Future<String?> getRingtoneName(String? uri) async {
+  static Future<String?> getRingtoneName() async {
     String? response;
     try {
       response = await mirrorFlyMethodChannel
-          .invokeMethod<String>('getRingtoneName', {"ringtone_uri": uri});
+          .invokeMethod<String>('getRingtoneName');
       debugPrint("getRingtoneName Response ==> $response");
       return response;
     } on PlatformException catch (e) {
@@ -2937,6 +2938,21 @@ class FlyChat {
     try {
       await mirrorFlyMethodChannel
           .invokeMethod('setNotificationSound', {"enable": enable});
+    } on PlatformException catch (e) {
+      debugPrint("Platform Exception ===> $e");
+      rethrow;
+    } on Exception catch (error) {
+      debugPrint("Exception ==> $error");
+      rethrow;
+    }
+  }
+
+  static Future<bool?> getNotificationSound() async {
+    bool? isEnabled = false;
+    try {
+      isEnabled = await mirrorFlyMethodChannel
+          .invokeMethod('getNotificationSound');
+      return isEnabled;
     } on PlatformException catch (e) {
       debugPrint("Platform Exception ===> $e");
       rethrow;

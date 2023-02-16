@@ -1,9 +1,10 @@
+import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
-import 'package:mirror_fly_demo/app/common/constants.dart';
 import 'package:mirror_fly_demo/app/data/session_management.dart';
 import 'package:flysdk/flysdk.dart';
 
-class NotificationAlertController extends GetxController {
+class NotificationAlertController extends FullLifeCycleController
+with FullLifeCycleMixin {
   final _defaultTone = ''.obs;
 
   set defaultTone(value) => _defaultTone.value = value;
@@ -53,11 +54,13 @@ class NotificationAlertController extends GetxController {
     displayMutePreference();
   }
 
+
   showCustomTones() {
-    var uri = SessionManagement.getNotificationUri();
-    FlyChat.showCustomTones(uri).then((value) {
+    // var uri = SessionManagement.getNotificationUri();
+    FlyChat.showCustomTones().then((value) {
       if (value != null) {
-        FlyChat.setNotificationUri(value);
+        debugPrint("Custom tone set --> $value");
+        // FlyChat.setNotificationUri(value);
         SessionManagement.setNotificationUri(value)
             .then((value) => getRingtoneName());
       }
@@ -65,9 +68,9 @@ class NotificationAlertController extends GetxController {
   }
 
   getRingtoneName() {
-    var uri = SessionManagement.getNotificationUri();
-    mirrorFlyLog("uri", uri.toString());
-    FlyChat.getRingtoneName(uri).then((value) {
+    // var uri = SessionManagement.getNotificationUri();
+    // mirrorFlyLog("uri", uri.toString());
+    FlyChat.getRingtoneName().then((value) {
       if (value != null) {
         _defaultTone(value);
       }
@@ -141,5 +144,28 @@ class NotificationAlertController extends GetxController {
       _displayMuteNotificationPreference(false);
       _displayNotificationSoundPreference(true);
     }
+  }
+
+  @override
+  void onDetached() {
+
+  }
+
+  @override
+  void onInactive() {
+
+  }
+
+  @override
+  void onPaused() {
+
+  }
+
+  @override
+  void onResumed() {
+    getRingtoneName();
+    // FlyChat.setNotificationUri(value);
+    // SessionManagement.setNotificationUri(value)
+    //     .then((value) => getRingtoneName());
   }
 }

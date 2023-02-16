@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:audioplayers/audioplayers.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/base_controller.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
@@ -37,6 +38,7 @@ class MainController extends GetxController with BaseController
     authToken(SessionManagement.getAuthToken().checkNull());
     getAuthToken();
     startNetworkListen();
+    checkAndEnableNotificationSound();
   }
 
 
@@ -129,5 +131,17 @@ class MainController extends GetxController with BaseController
   void onClose() {
     listener?.cancel();
     super.onClose();
+  }
+
+  void checkAndEnableNotificationSound() {
+    FlyChat.getNotificationSound().then((value){
+      debugPrint("initial notification sound--> $value");
+      if(value == null){
+        FlyChat.setNotificationSound(true);
+        SessionManagement.setNotificationSound(true);
+      }else{
+        SessionManagement.setNotificationSound(value);
+      }
+    });
   }
 }

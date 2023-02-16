@@ -5,8 +5,10 @@ import android.app.*
 import android.content.Context
 import android.content.Intent
 import android.os.Build
+import android.service.notification.StatusBarNotification
 import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
 import com.contus.flycommons.Constants
 import com.contus.flycommons.LogMessage
 import com.contus.flycommons.PendingIntentHelper
@@ -69,7 +71,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
 
     override fun onNewToken(s: String) {
         LogMessage.e(TAG, "FirebaseToken:$s")
-        //firebaseUtils.postRefreshedToken(s)
+//        firebaseUtils.postRefreshedToken(s)
     }
 
     companion object {
@@ -105,11 +107,22 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
 
                     @RequiresApi(Build.VERSION_CODES.M)
                     override fun onCancelNotification() {
-                        AppNotificationManager.cancelNotifications(context)
+                        cancelNotifications(context)
                     }
                 })
             }
         }
+    }
+
+    private fun cancelNotifications(context: Context) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            val barNotifications: Array<StatusBarNotification> = notificationManager.activeNotifications
+            for (notification in barNotifications) {
+                NotificationManagerCompat.from(context).cancel(notification.id)
+            }
+        } else
+            NotificationManagerCompat.from(context).cancel(Constants.NOTIFICATION_ID)
     }
 
     private fun notificationDialog(chatMessage: ChatMessage) {

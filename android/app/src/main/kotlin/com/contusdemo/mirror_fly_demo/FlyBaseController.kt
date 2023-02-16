@@ -1206,11 +1206,14 @@ open class FlyBaseController(activity: FlutterActivity) : MethodChannel.MethodCa
             call.method.equals("getDefaultNotificationUri") -> {
                 getDefaultNotificationUri(result)
             }
-            call.method.equals("setNotificationUri") -> {
+            /*call.method.equals("setNotificationUri") -> {
                 setNotificationUri(call)
-            }
+            }*/
             call.method.equals("setNotificationSound") -> {
                 setNotificationSound(call)
+            }
+            call.method.equals("getNotificationSound") -> {
+                getNotificationSound(result)
             }
             call.method.equals("setMuteNotification") -> {
                 setMuteNotification(call)
@@ -1237,8 +1240,8 @@ open class FlyBaseController(activity: FlutterActivity) : MethodChannel.MethodCa
                 result.success(true)
             }
             call.method.equals("getRingtoneName") -> {
-                val uri = call.argument<String>("ringtone_uri")
-                result.success(getRingtoneName(uri))
+//                val uri = call.argument<String>("ringtone_uri")
+                result.success(getRingtoneName())
             }
             call.method.equals("delete_account") -> {
                 deleteAccount(call, result)
@@ -2866,13 +2869,13 @@ open class FlyBaseController(activity: FlutterActivity) : MethodChannel.MethodCa
     private var existingCustomTone = "None"
     private fun showCustomTones(call: MethodCall, result: MethodChannel.Result) {
         ringToneResult = result
-        existingCustomTone = call.argument<String>("ringtone_uri") ?: "None"
-        //val existingCustomTone = Uri.parse(SharedPreferenceManager.getString(Constants.NOTIFICATION_URI))
-        val customToneUri = Uri.parse(existingCustomTone).toString()
+//        existingCustomTone = call.argument<String>("ringtone_uri") ?: "None"
+        val customToneUri = Uri.parse(SharedPreferenceManager.instance.getString("notification_uri"))
+//        val customToneUri = Uri.parse(existingCustomTone).toString()
         val intent = Intent(RingtoneManager.ACTION_RINGTONE_PICKER)
         intent.putExtra(RingtoneManager.EXTRA_RINGTONE_TYPE, RingtoneManager.TYPE_NOTIFICATION)
         intent.putExtra(RingtoneManager.EXTRA_RINGTONE_TITLE, "Notification")
-        if (customToneUri != "None")
+        if (customToneUri != null)
             intent.putExtra(RingtoneManager.EXTRA_RINGTONE_EXISTING_URI, customToneUri)
         (mContext as Activity).startActivityForResult(intent, Constants.ACTIVITY_REQ_CODE)
         /* setting isActivityStartedForResult to true to avoid xmpp disconnection */
@@ -2881,28 +2884,37 @@ open class FlyBaseController(activity: FlutterActivity) : MethodChannel.MethodCa
 
     fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         /* setting isActivityStartedForResult to false for xmpp disconnection */
+        Log.e("Android Notification", "onActivty Result")
         ChatManager.isActivityStartedForResult = false
         try {
             if (resultCode == Activity.RESULT_OK && requestCode == Constants.ACTIVITY_REQ_CODE &&
                 data?.parcelable<Parcelable>(RingtoneManager.EXTRA_RINGTONE_PICKED_URI) != null
             ) {
+
+
                 val selectedToneUri =
                     (data.parcelable<Parcelable>(RingtoneManager.EXTRA_RINGTONE_PICKED_URI)
                         .toString())
+                Log.e("Android Notification", selectedToneUri)
                 //SharedPreferenceManager.setString(com.contusfly.utils.Constants.NOTIFICATION_URI, data.getParcelableExtra<Parcelable>(RingtoneManager.EXTRA_RINGTONE_PICKED_URI).toString())
                 //binding.notificationToneLabel.setText(getRingtoneName(SharedPreferenceManager.getString(com.contusfly.utils.Constants.NOTIFICATION_URI)))
-                ringToneResult.success(selectedToneUri)
                 setNotificationUri(selectedToneUri)
+                ringToneResult.success(selectedToneUri)
+
             }
 
             if (data == null) {
-                ringToneResult.success(existingCustomTone)
+                Log.e("Android Notification", "data is null")
                 setNotificationUri(existingCustomTone)
+                ringToneResult.success(existingCustomTone)
+
                 //SharedPreferenceManager.setString(com.contusfly.utils.Constants.NOTIFICATION_URI, SharedPreferenceManager.getString(com.contusfly.utils.Constants.NOTIFICATION_URI))
                 //binding.notificationToneLabel.setText(getRingtoneName(SharedPreferenceManager.getString(com.contusfly.utils.Constants.NOTIFICATION_URI)))
             } else if (data.parcelable<Parcelable>(RingtoneManager.EXTRA_RINGTONE_PICKED_URI) == null) {
-                ringToneResult.success("None")
+                Log.e("Android Notification", "ringtone is null")
                 setNotificationUri("")
+                ringToneResult.success("None")
+
                 //SharedPreferenceManager.setString(com.contusfly.utils.Constants.NOTIFICATION_URI, "None")
                 //binding.notificationToneLabel.setText(getRingtoneName(SharedPreferenceManager.getString(com.contusfly.utils.Constants.NOTIFICATION_URI)))
             }
@@ -2912,9 +2924,14 @@ open class FlyBaseController(activity: FlutterActivity) : MethodChannel.MethodCa
 
     }
 
-    private fun getRingtoneName(uri: String?): String? {
+    private fun getRingtoneName(): String? {
         val default = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION).toString()
-        val ringtone = RingtoneManager.getRingtone(mContext, Uri.parse(uri ?: default))
+        val storedNotification = SharedPreferenceManager.instance.getString("notification_uri")
+        Log.e("stored notification", storedNotification)
+        if(storedNotification == ""){
+            return RingtoneManager.getRingtone(mContext, Uri.parse(default)).getTitle(mContext)
+        }
+        val ringtone = RingtoneManager.getRingtone(mContext, Uri.parse(storedNotification))
         return ringtone.getTitle(mContext)
 
     }
@@ -3241,15 +3258,19 @@ open class FlyBaseController(activity: FlutterActivity) : MethodChannel.MethodCa
         result.success(default)
     }
     private fun setNotificationUri(uri: String?){
+        Log.e("Android Notification set", uri.toString())
         SharedPreferenceManager.instance.storeString("notification_uri",uri)
     }
-    private fun setNotificationUri(call: MethodCall){
+    /*private fun setNotificationUri(call: MethodCall){
         val uri = call.argument<String>("uri") ?: ""
         SharedPreferenceManager.instance.storeString("notification_uri",uri)
-    }
+    }*/
     private fun setNotificationSound(call: MethodCall){
         val enable = call.argument("enable") ?: false
         SharedPreferenceManager.instance.storeBoolean("notification_sound",enable)
+    }
+    private fun getNotificationSound(result: MethodChannel.Result) {
+        result.success(SharedPreferenceManager.instance.getBoolean("notification_sound"))
     }
     private fun setMuteNotification(call: MethodCall){
         val enable = call.argument("enable") ?: false

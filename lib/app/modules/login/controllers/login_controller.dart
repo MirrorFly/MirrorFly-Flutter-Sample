@@ -296,6 +296,8 @@ class LoginController extends GetxController {
           var userData = registerModelFromJson(value); //message
           SessionManagement.setLogin(userData.data!.username!.isNotEmpty);
           SessionManagement.setUser(userData.data!);
+          FlyChat.setNotificationSound(true);
+          SessionManagement.setNotificationSound(true);
           // userData.data.
           enableArchive();
           SessionManagement.setCountryCode(countryCode ?? "");
