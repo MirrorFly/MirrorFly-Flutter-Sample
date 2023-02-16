@@ -9,6 +9,7 @@ import '../../common/widgets.dart';
 import 'package:flysdk/flysdk.dart';
 
 import '../../data/session_management.dart';
+import '../chat/chat_widgets.dart';
 
 Widget searchHeader(String? type, String count, BuildContext context) {
   return Container(
@@ -147,13 +148,14 @@ class RecentChatItem extends StatelessWidget {
                                       spanTxt, titlestyle),
                               Row(
                                 children: [
-                                  item.isConversationUnRead!
-                                      ? const Padding(
-                                          padding: EdgeInsets.only(right: 8.0),
-                                          child: CircleAvatar(
+                                  item.isLastMessageSentByMe.checkNull()
+                                      ? Padding(
+                                          padding: const EdgeInsets.only(right: 8.0),
+                                          child: getMessageIndicator(item.lastMessageStatus.checkNull(),
+                                              item.isLastMessageSentByMe.checkNull(), item.lastMessageType.checkNull())/*CircleAvatar(
                                             radius: 4,
                                             backgroundColor: Colors.green,
-                                          ),
+                                          )*/,
                                         )
                                       : const SizedBox(),
                                   isForwardMessage
@@ -205,7 +207,7 @@ class RecentChatItem extends StatelessWidget {
                                                           ? 0.0
                                                           : forMessageTypeString(
                                                                       item.lastMessageType ??
-                                                                          "") !=
+                                                                          "",content: item.lastMessageContent.checkNull()) !=
                                                                   null
                                                               ? 3.0
                                                               : 0.0,
@@ -218,7 +220,7 @@ class RecentChatItem extends StatelessWidget {
                                                                       .isLastMessageSentByMe!)
                                                                   : forMessageTypeString(
                                                                           item.lastMessageType ??
-                                                                              "") ??
+                                                                              "",content: item.lastMessageContent.checkNull()) ??
                                                                       item.lastMessageContent
                                                                           .checkNull(),
                                                               style: Theme.of(
@@ -236,7 +238,7 @@ class RecentChatItem extends StatelessWidget {
                                                                       .isLastMessageSentByMe!)
                                                                   : forMessageTypeString(item
                                                                           .lastMessageType
-                                                                          .checkNull()) ??
+                                                                          .checkNull(),content: item.lastMessageContent.checkNull()) ??
                                                                       item.lastMessageContent
                                                                           .checkNull(),
                                                               spanTxt,
