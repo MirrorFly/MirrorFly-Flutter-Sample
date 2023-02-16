@@ -287,10 +287,23 @@ class ContactController extends GetxController{
 
   backToCreateGroup() async {
     if(await AppUtils.isNetConnected()) {
-      if (selectedUsersJIDList.length >= Constants.minGroupMembers) {
+      /*if (selectedUsersJIDList.length >= Constants.minGroupMembers) {
         Get.back(result: selectedUsersJIDList);
       } else {
         toToast("Add at least two contacts");
+      }*/
+      if(groupJid.value.isEmpty) {
+        if (selectedUsersJIDList.length >= Constants.minGroupMembers) {
+          Get.back(result: selectedUsersJIDList);
+        } else {
+          toToast("Add at least two contacts");
+        }
+      }else{
+        if (selectedUsersJIDList.isNotEmpty) {
+          Get.back(result: selectedUsersJIDList);
+        } else {
+          toToast("Add at least two contacts");
+        }
       }
     }else{
       toToast(Constants.noInternetConnection);

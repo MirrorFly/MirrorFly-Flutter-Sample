@@ -1256,18 +1256,18 @@ class DashboardController extends FullLifeCycleController
                         fit: BoxFit.cover,
                       ),
                     ),
-                    InkWell(onTap: callTap,
+                    !profile.isGroupProfile.checkNull() ? InkWell(onTap: callTap,
                       child: SvgPicture.asset(
                         quickCall,
                         fit: BoxFit.cover,
                       ),
-                    ),
-                    InkWell(onTap: videoTap,
+                    ) : const SizedBox.shrink(),
+                    !profile.isGroupProfile.checkNull() ? InkWell(onTap: videoTap,
                       child: SvgPicture.asset(
                         quickVideo,
                         fit: BoxFit.cover,
                       ),
-                    ),
+                    ): const SizedBox.shrink(),
                     InkWell(onTap: infoTap,
                       child: SvgPicture.asset(
                         quickInfo,
