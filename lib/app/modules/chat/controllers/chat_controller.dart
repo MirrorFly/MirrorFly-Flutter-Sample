@@ -278,6 +278,19 @@ class ChatController extends FullLifeCycleController
     player.dispose();
     super.onClose();
   }
+  @override
+  void dispose(){
+    super.dispose();
+    debugPrint("dispose");
+  }
+
+  clearMessage(){
+    if (profile.jid.checkNull().isNotEmpty) {
+      FlyChat.saveUnsentMessage(profile.jid.checkNull(), '');
+      ReplyHashMap.saveReplyId(
+          profile.jid.checkNull(), '');
+    }
+  }
 
   saveUnsentMessage() {
     if (messageController.text.trim().isNotEmpty &&
@@ -376,6 +389,7 @@ class ChatController extends FullLifeCycleController
             .then((value) {
           messageController.text = "";
           isUserTyping(false);
+          clearMessage();
           //need to work here
           final jsonResponse = json.decode(value);
           //Written for iOS Response
@@ -2416,6 +2430,7 @@ class ChatController extends FullLifeCycleController
   @override
   void onPaused() {
     mirrorFlyLog("LifeCycle", "onPaused");
+    FlyChat.setOnGoingChatUser("");
     playerPause();
     saveUnsentMessage();
     sendUserTypingGoneStatus();
@@ -2433,6 +2448,7 @@ class ChatController extends FullLifeCycleController
         });
       }
     }
+    FlyChat.setOnGoingChatUser(profile.jid.checkNull());
   }
 
   @override

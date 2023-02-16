@@ -130,7 +130,7 @@ const String zipImage = 'assets/logos/zip.svg';
 const String rarImage = 'assets/logos/rar.svg';
 const String mImageIcon = 'assets/logos/image.svg';
 const String mLocationIcon = 'assets/logos/location_chat.svg';
-const String mVideoIcon = 'assets/logos/video.svg';
+const String mVideoIcon = 'assets/logos/ic_video.svg';
 const String mAudioIcon = 'assets/logos/noun_Audio_3408360.svg';
 const String mAudioRecordIcon = 'assets/logos/record_reply_preview.svg';
 const String audioWhite = 'assets/logos/audio_white.svg';
@@ -643,14 +643,15 @@ Widget forMessageTypeIcon(String messageType) {
   }
 }
 
-String? forMessageTypeString(String messageType) {
+String? forMessageTypeString(String messageType, {String? content}) {
+  mirrorFlyLog("content", content.toString());
   switch (messageType.toUpperCase()) {
     case Constants.mImage:
-      return "Image";
+      return content ?? "Image";
     case Constants.mAudio:
       return "Audio";
     case Constants.mVideo:
-      return "Video";
+      return content ?? "Video";
     case Constants.mDocument:
       return "Document";
     case Constants.mFile:
