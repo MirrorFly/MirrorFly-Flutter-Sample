@@ -242,6 +242,14 @@ class ProfileController extends GetxController {
                   data.data!.image ?? SessionManagement.getUserImage() ?? "";
               changed((from.value == Routes.login));
               name(data.data!.name.toString());
+              var userProfileData = ProData(
+                  email: profileEmail.text.toString(),
+                  image: userImgUrl.value,
+                  mobileNumber: profileMobile.text,
+                  nickName: profileName.text,
+                  name: profileName.text,
+                  status: profileStatus.value);
+              SessionManagement.setCurrentUser(userProfileData);
               update();
             }
           } else {

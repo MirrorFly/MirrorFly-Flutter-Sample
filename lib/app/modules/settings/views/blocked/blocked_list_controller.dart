@@ -56,7 +56,7 @@ class BlockedListController extends GetxController {
           onPressed: () {
             Get.back();
           },
-          child: const Text("CANCEL")),
+          child: const Text("NO")),
       TextButton(
           onPressed: () async {
             if(await AppUtils.isNetConnected()) {
@@ -77,7 +77,7 @@ class BlockedListController extends GetxController {
             }
 
           },
-          child: const Text("UNBLOCK")),
+          child: const Text("YES")),
     ]);
   }
 }

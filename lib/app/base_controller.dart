@@ -55,7 +55,11 @@ abstract class BaseController {
     });
     FlyChat.onContactSyncComplete.listen(onContactSyncComplete);
     FlyChat.onLoggedOut.listen(onLoggedOut);
-    FlyChat.unblockedThisUser.listen(unblockedThisUser);
+    FlyChat.unblockedThisUser.listen((event){
+      var data = json.decode(event.toString());
+      var jid = data["jid"];
+      unblockedThisUser(jid);
+    });
     FlyChat.userBlockedMe.listen(userBlockedMe);
     FlyChat.userCameOnline.listen((event){
       var data = json.decode(event.toString());
@@ -205,7 +209,12 @@ abstract class BaseController {
 
   void onLoggedOut(result) {}
 
-  void unblockedThisUser(result) {}
+  void unblockedThisUser(String jid) {
+    mirrorFlyLog("unblockedThisUser", jid.toString());
+    if (Get.isRegistered<ChatController>()) {
+      Get.find<ChatController>().unblockedThisUser(jid);
+    }
+  }
 
   void userBlockedMe(result) {}
 

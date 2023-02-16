@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
@@ -51,18 +52,13 @@ class ContactController extends GetxController{
   }
 
   void userUpdatedHisProfile(jid) {
-
     updateProfile(jid);
-
   }
 
   Future<void> updateProfile(String jid) async {
-
     if (jid.isNotEmpty) {
-
       var userListIndex = usersList.indexWhere((element) => element.jid == jid);
       var mainListIndex = mainUsersList.indexWhere((element) => element.jid == jid);
-
       getProfileDetails(jid).then((value) {
         if (!userListIndex.isNegative) {
           usersList[userListIndex] = value;
@@ -247,11 +243,46 @@ class ContactController extends GetxController{
 
   onListItemPressed(Profile item){
     if (isForward.value|| isCreateGroup.value) {
-      contactSelected(item);
+      if(item.isBlocked.checkNull()){
+        unBlock(item);
+      }else{
+        contactSelected(item);
+      }
     }else{
       mirrorFlyLog("Contact Profile", item.toJson().toString());
       Get.offNamed(Routes.chat, arguments: item);
     }
+  }
+
+  unBlock(Profile item){
+    Helper.showAlert(message: "Unblock ${item.name}?", actions: [
+      TextButton(
+          onPressed: () {
+            Get.back();
+          },
+          child: const Text("NO")),
+      TextButton(
+          onPressed: () async {
+            if(await AppUtils.isNetConnected()) {
+              Get.back();
+              Helper.progressLoading();
+              FlyChat.unblockUser(item.jid.checkNull()).then((value) {
+                Helper.hideLoading();
+                if(value!=null && value) {
+                  toToast("${item.name} has been Unblocked");
+                  userUpdatedHisProfile(item.jid);
+                }
+              }).catchError((error) {
+                Helper.hideLoading();
+                debugPrint(error);
+              });
+            }else{
+              toToast(Constants.noInternetConnection);
+            }
+
+          },
+          child: const Text("YES")),
+    ]);
   }
 
   backToCreateGroup() async {

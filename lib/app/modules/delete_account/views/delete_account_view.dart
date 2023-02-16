@@ -110,10 +110,12 @@ class DeleteAccountView extends GetView<DeleteAccountController> {
                           child: TextField(
                             controller: controller.mobileNumber,
                             keyboardType: TextInputType.phone,
+                            maxLength: 15,
                             inputFormatters: <TextInputFormatter>[
                               FilteringTextInputFormatter.digitsOnly
                             ],
                             decoration: const InputDecoration(
+                              counterText: '',
                               enabledBorder: UnderlineInputBorder(
                                 borderSide: BorderSide(color: Colors.grey),
                               ),

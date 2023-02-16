@@ -72,20 +72,23 @@ class ForwardChatView extends GetView<ForwardChatController> {
                             physics: const NeverScrollableScrollPhysics(),
                             itemBuilder: (context, index) {
                               var item = controller.recentChats[index];
-                              return RecentChatItem(
-                                  item: item,onTap:() {
-                                    //chat page
-                                    controller.onItemClicked(item.jid.checkNull(),
-                                        item.profileName.checkNull());
-                                  },
-                                  spanTxt: controller.searchQuery.text.toString(),
-                                  isCheckBoxVisible: true,
-                                  isForwardMessage: true,
-                                  isChecked: controller.isChecked(item.jid.checkNull()),
-                                  onchange: (value) {
-                                    controller.onItemClicked(item.jid.checkNull(),
-                                        item.profileName.checkNull());
-                                  });
+                              return Opacity(
+                                opacity: item.isBlocked.checkNull() ? 0.3 : 1.0,
+                                child: RecentChatItem(
+                                    item: item,onTap:() {
+                                      //chat page
+                                      controller.onItemSelect(item.jid.checkNull(),
+                                          item.profileName.checkNull(),item.isBlocked.checkNull());
+                                    },
+                                    spanTxt: controller.searchQuery.text.toString(),
+                                    isCheckBoxVisible: true,
+                                    isForwardMessage: true,
+                                    isChecked: controller.isChecked(item.jid.checkNull()),
+                                    onchange: (value) {
+                                      controller.onItemSelect(item.jid.checkNull(),
+                                          item.profileName.checkNull(),item.isBlocked.checkNull());
+                                    }),
+                              );
                             }),
                         Visibility(
                           visible: controller.groupList.isNotEmpty,
@@ -105,24 +108,27 @@ class ForwardChatView extends GetView<ForwardChatController> {
                                     return const SizedBox();
                                   }else {
                                     if (data.data != null) {
-                                      return memberItem(
-                                          name: item.name.checkNull(),
-                                          image: item.image.checkNull(),
-                                          status: data.data.checkNull(),
-                                          spantext: controller.searchQuery.text.toString(),
-                                          onTap: () {
-                                            controller.onItemClicked(
-                                                item.jid.checkNull(),
-                                                item.name.checkNull());
-                                          },
-                                          isCheckBoxVisible: true,
-                                          isChecked: controller.isChecked(
-                                              item.jid.checkNull()),
-                                          onchange: (value) {
-                                            controller.onItemClicked(
-                                                item.jid.checkNull(),
-                                                item.name.checkNull());
-                                          });
+                                      return Opacity(
+                                        opacity: item.isBlocked.checkNull() ? 0.3 : 1.0,
+                                        child: memberItem(
+                                            name: item.name.checkNull(),
+                                            image: item.image.checkNull(),
+                                            status: data.data.checkNull(),
+                                            spantext: controller.searchQuery.text.toString(),
+                                            onTap: () {
+                                              controller.onItemSelect(
+                                                  item.jid.checkNull(),
+                                                  item.name.checkNull(),item.isBlocked.checkNull());
+                                            },
+                                            isCheckBoxVisible: true,
+                                            isChecked: controller.isChecked(
+                                                item.jid.checkNull()),
+                                            onchange: (value) {
+                                              controller.onItemSelect(
+                                                  item.jid.checkNull(),
+                                                  item.name.checkNull(),item.isBlocked.checkNull());
+                                            }),
+                                      );
                                     }else{
                                       return const SizedBox();
                                     }
@@ -135,7 +141,7 @@ class ForwardChatView extends GetView<ForwardChatController> {
                               controller.userList.isNotEmpty ? controller.userList.length.toString() : "", context),
                         ),
                         Visibility(
-                          visible: controller.searchLoading.value,
+                          visible: controller.searchLoading.value || controller.contactLoading.value,
                           child: const Center(child: Padding(
                             padding: EdgeInsets.symmetric(vertical: 8.0),
                             child: CircularProgressIndicator(),
@@ -162,21 +168,24 @@ class ForwardChatView extends GetView<ForwardChatController> {
                                       child: CircularProgressIndicator());
                                 } else {
                                   var item = controller.userList[index];
-                                  return memberItem(
-                                      name: item.name.checkNull(),
-                                      image: item.image.checkNull(),
-                                      status: item.status.checkNull(),
-                                      spantext: controller.searchQuery.text.toString(),
-                                      onTap: () {
-                                        controller.onItemClicked(item.jid.checkNull(),
-                                            item.name.checkNull());
-                                      },
-                                      isCheckBoxVisible: true,
-                                      isChecked: controller.isChecked(item.jid.checkNull()),
-                                      onchange: (value) {
-                                        controller.onItemClicked(item.jid.checkNull(),
-                                            item.name.checkNull());
-                                      });
+                                  return Opacity(
+                                    opacity: item.isBlocked.checkNull() ? 0.3 : 1.0,
+                                    child: memberItem(
+                                        name: item.name.checkNull(),
+                                        image: item.image.checkNull(),
+                                        status: item.status.checkNull(),
+                                        spantext: controller.searchQuery.text.toString(),
+                                        onTap: () {
+                                          controller.onItemSelect(item.jid.checkNull(),
+                                              item.name.checkNull(),item.isBlocked.checkNull());
+                                        },
+                                        isCheckBoxVisible: true,
+                                        isChecked: controller.isChecked(item.jid.checkNull()),
+                                        onchange: (value) {
+                                          controller.onItemSelect(item.jid.checkNull(),
+                                              item.name.checkNull(),item.isBlocked.checkNull());
+                                        }),
+                                  );
                                 }
                               }),
                         ),
