@@ -284,7 +284,7 @@ object NotificationBuilder {
             val mNotificationManagerCompat: NotificationManagerCompat =
                 NotificationManagerCompat.from(context)
             if (ActivityCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
-                
+
                 return
             }
             mNotificationManagerCompat.notify(SUMMARY_ID, summaryBuilder.build())

@@ -198,7 +198,7 @@ class ProfileView extends GetView<ProfileController> {
                         hintText: 'Enter Email Id',
                         icon: SvgPicture.asset('assets/logos/email.svg'),
                       ),
-                      style: const TextStyle(fontWeight: FontWeight.bold),
+                      style: const TextStyle(fontWeight: FontWeight.normal),
                     ),
                     const AppDivider(),
                     const SizedBox(
@@ -220,7 +220,7 @@ class ProfileView extends GetView<ProfileController> {
                         hintText: 'Enter Mobile Number',
                         icon: SvgPicture.asset('assets/logos/phone.svg'),
                       ),
-                      style: const TextStyle(fontWeight: FontWeight.bold),
+                      style: const TextStyle(fontWeight: FontWeight.normal),
                     ),
                     const AppDivider(),
                     const SizedBox(
@@ -245,7 +245,7 @@ class ProfileView extends GetView<ProfileController> {
                                 color:
                                 controller.profileStatus.value.isNotEmpty
                                     ? Colors.black
-                                    : Colors.black38),
+                                    : Colors.black38, fontWeight: FontWeight.normal),
                           ),
                           leading:
                           SvgPicture.asset('assets/logos/status.svg'),
