@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:mirror_fly_demo/app/data/helper.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -647,11 +648,11 @@ String? forMessageTypeString(String messageType, {String? content}) {
   mirrorFlyLog("content", content.toString());
   switch (messageType.toUpperCase()) {
     case Constants.mImage:
-      return content ?? "Image";
+      return content.checkNull().isNotEmpty ? content : "Image";
     case Constants.mAudio:
       return "Audio";
     case Constants.mVideo:
-      return content ?? "Video";
+      return content.checkNull().isNotEmpty ? content : "Video";
     case Constants.mDocument:
       return "Document";
     case Constants.mFile:

@@ -1853,19 +1853,19 @@ class ChatController extends FullLifeCycleController
   }
 
 
-  void onMessageStatusUpdated(chatMessageModel) {
-
+  void onMessageStatusUpdated(ChatMessageModel chatMessageModel) {
     if (chatMessageModel.chatUserJid == profile.jid) {
       final index = chatList.indexWhere(
           (message) => message.messageId == chatMessageModel.messageId);
-      debugPrint("Message Status Update index of search $index");
-      if (index != -1) {
+      debugPrint("ChatScreen Message Status Update index of search $index");
+      if (!index.isNegative) {
         // Helper.hideLoading();
         // chatMessageModel.isSelected=chatList[index].isSelected;
         chatList[index] = chatMessageModel;
         chatList.refresh();
       } else {
-        // chatList.insert(0, chatMessageModel);
+        chatList.insert(0, chatMessageModel);
+        unreadCount.value++;
         // scrollToBottom();
       }
 
