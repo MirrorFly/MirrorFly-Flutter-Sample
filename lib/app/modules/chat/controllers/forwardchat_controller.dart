@@ -107,7 +107,7 @@ class ForwardChatController extends GetxController {
           //isPageLoading.value = true;
           mirrorFlyLog("scroll", "end");
           pageNum++;
-          getUsers();
+          getUsers(bottom: true);
         }
       }
     }
@@ -149,9 +149,11 @@ class ForwardChatController extends GetxController {
   var searchQuery = TextEditingController(text: '');
   var searching = false;
   var searchLoading = false.obs;
+  var contactLoading = false.obs;
 
-  Future<void> getUsers() async {
+  Future<void> getUsers({bool bottom = false}) async {
     if (await AppUtils.isNetConnected()) {
+      if(!bottom)contactLoading(true);
       searching = true;
       FlyChat.getUserList(pageNum, searchQuery.text.trim().toString())
           .then((value) {
@@ -166,9 +168,11 @@ class ForwardChatController extends GetxController {
           }
         }
         searching = false;
+        contactLoading(false);
       }).catchError((error) {
         debugPrint("issue===> $error");
         searching = false;
+        contactLoading(false);
       });
     } else {
       toToast(Constants.noInternetConnection);
@@ -236,6 +240,45 @@ class ForwardChatController extends GetxController {
   }
 
   bool isChecked(String jid) => selectedJids.value.contains(jid);
+
+  void onItemSelect(String jid, String name,bool isBlocked){
+    if(isBlocked.checkNull()){
+      unBlock(jid,name);
+    }else{
+      onItemClicked(jid,name);
+    }
+  }
+
+  unBlock(String jid, String name,){
+    Helper.showAlert(message: "Unblock ${name}?", actions: [
+      TextButton(
+          onPressed: () {
+            Get.back();
+          },
+          child: const Text("NO")),
+      TextButton(
+          onPressed: () async {
+            if(await AppUtils.isNetConnected()) {
+              Get.back();
+              // Helper.progressLoading();
+              FlyChat.unblockUser(jid.checkNull()).then((value) {
+                // Helper.hideLoading();
+                if(value!=null && value.checkNull()) {
+                  toToast("$name has been Unblocked");
+                  userUpdatedHisProfile(jid);
+                }
+              }).catchError((error) {
+                // Helper.hideLoading();
+                debugPrint(error.toString());
+              });
+            }else{
+              toToast(Constants.noInternetConnection);
+            }
+
+          },
+          child: const Text("YES")),
+    ]);
+  }
 
   void onItemClicked(String jid, String name) {
     if (selectedJids.value.contains(jid)) {
@@ -360,25 +403,25 @@ class ForwardChatController extends GetxController {
   }
 
   Future<void> updateProfile(String jid) async {
-    var _maingroupListIndex =
+    var maingroupListIndex =
         _maingroupList.indexWhere((element) => element.jid == jid);
-    var _mainuserListIndex =
+    var mainuserListIndex =
         _mainuserList.indexWhere((element) => element.jid == jid);
-    var _groupListIndex =
+    var groupListIndex =
         _groupList.indexWhere((element) => element.jid == jid);
-    var _userListIndex = _userList.indexWhere((element) => element.jid == jid);
+    var userListIndex = _userList.indexWhere((element) => element.jid == jid);
     getProfileDetails(jid).then((value) {
-      if (!_maingroupListIndex.isNegative) {
-        _maingroupList[_maingroupListIndex] = value;
+      if (!maingroupListIndex.isNegative) {
+        _maingroupList[maingroupListIndex] = value;
       }
-      if (!_mainuserListIndex.isNegative) {
-        _mainuserList[_mainuserListIndex] = value;
+      if (!mainuserListIndex.isNegative) {
+        _mainuserList[mainuserListIndex] = value;
       }
-      if (!_groupListIndex.isNegative) {
-        _groupList[_groupListIndex] = value;
+      if (!groupListIndex.isNegative) {
+        _groupList[groupListIndex] = value;
       }
-      if (!_userListIndex.isNegative) {
-        _userList[_userListIndex] = value;
+      if (!userListIndex.isNegative) {
+        _userList[userListIndex] = value;
       }
     });
   }

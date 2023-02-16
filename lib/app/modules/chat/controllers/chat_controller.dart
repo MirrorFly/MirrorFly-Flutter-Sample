@@ -2450,6 +2450,10 @@ class ChatController extends FullLifeCycleController
     updateProfile(jid);
   }
 
+  void unblockedThisUser(jid) {
+    updateProfile(jid);
+  }
+
   Future<void> updateProfile(String jid) async {
     if (jid.isNotEmpty && jid == profile.jid) {
       if(!profile.isGroupProfile.checkNull()) {
