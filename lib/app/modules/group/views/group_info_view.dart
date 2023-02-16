@@ -252,9 +252,7 @@ class GroupInfoView extends GetView<GroupInfoController> {
   }
 
   showOptions(Profile item) {
-    Helper.showAlert(message: "", content: Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
+    Helper.showButtonAlert(actions: [
         ListTile(title: const Text("Start Chat"), onTap: () {
           // Get.toNamed(Routes.CHAT, arguments: item);
           Get.back();
@@ -305,7 +303,7 @@ class GroupInfoView extends GetView<GroupInfoController> {
               ]);
             },)),
       ],
-    ));
+    );
   }
 
   bottomSheetView(BuildContext context) {
