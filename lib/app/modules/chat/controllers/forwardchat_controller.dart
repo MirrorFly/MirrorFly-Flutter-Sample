@@ -250,7 +250,7 @@ class ForwardChatController extends GetxController {
   }
 
   unBlock(String jid, String name,){
-    Helper.showAlert(message: "Unblock ${name}?", actions: [
+    Helper.showAlert(message: "Unblock $name?", actions: [
       TextButton(
           onPressed: () {
             Get.back();
