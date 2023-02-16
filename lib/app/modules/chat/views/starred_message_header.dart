@@ -61,18 +61,17 @@ class StarredMessageHeader extends StatelessWidget {
                   Expanded(
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.center,
-                      mainAxisAlignment: MainAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.end,
                       children: [
+                        const Text("You --> ", style: TextStyle(
+                        fontWeight: FontWeight.bold, fontSize: 15)),
                         Flexible(
-                          child: Align(
-                            alignment: Alignment.centerRight,
-                            child: Text(
-                              "You --> ${userProfile.name}",
-                              style: const TextStyle(
-                                  fontWeight: FontWeight.bold, fontSize: 15),
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                            ),
+                          child: Text(
+                            userProfile.name.checkNull(),
+                            style: const TextStyle(
+                                fontWeight: FontWeight.bold, fontSize: 15),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
                           ),
                         ),
                         const SizedBox(
@@ -93,20 +92,21 @@ class StarredMessageHeader extends StatelessWidget {
                   Expanded(
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.center,
-                      mainAxisAlignment: MainAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.start,
                       children: [
+
                         Flexible(
-                          child: Align(
-                            alignment: Alignment.centerLeft,
-                            child: Text(
-                              "${userProfile.name} --> You",
-                              style: const TextStyle(
-                                  fontWeight: FontWeight.bold, fontSize: 15),
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                            ),
+                          child: Text(
+                            userProfile.name.checkNull(),
+                            style: const TextStyle(
+                                fontWeight: FontWeight.bold, fontSize: 15),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
                           ),
                         ),
+                        const Text(" --> You", style: TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 15)),
+
                         const SizedBox(
                           width: 10,
                         ),

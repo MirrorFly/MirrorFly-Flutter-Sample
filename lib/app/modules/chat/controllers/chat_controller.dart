@@ -1396,7 +1396,7 @@ class ChatController extends FullLifeCycleController
           onPressed: () async {
             if (await AppUtils.isNetConnected()) {
               Get.back();
-              Helper.showLoading(message: "Unblocking User");
+              // Helper.showLoading(message: "Unblocking User");
               FlyChat.unblockUser(profile.jid!).then((value) {
                 debugPrint(value.toString());
                 isBlocked(false);
@@ -1404,7 +1404,7 @@ class ChatController extends FullLifeCycleController
                 Helper.hideLoading();
                 toToast('${profile.name} has been unblocked');
               }).catchError((error) {
-                Helper.hideLoading();
+                // Helper.hideLoading();
                 debugPrint(error);
               });
             } else {
