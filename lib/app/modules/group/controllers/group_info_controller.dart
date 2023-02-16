@@ -47,7 +47,7 @@ class GroupInfoController extends GetxController {
     getGroupMembers(null);
     groupAdmin();
     memberOfGroup();
-
+    muteAble();
     nameController.text=profile.nickName.checkNull();
   }
   muteAble() async {
