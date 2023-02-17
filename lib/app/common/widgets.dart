@@ -105,7 +105,7 @@ class ImageNetwork extends GetView<MainController> {
     //var authToken = controller.authToken;
     // mirrorFlyLog("MirrorFly Auth", authToken.value);
     // mirrorFlyLog("Image URL", url);
-    if (url.isEmpty) {
+    /*if (url.isEmpty) {
       return errorWidget != null
           ? errorWidget!
           : clipOval
@@ -121,7 +121,7 @@ class ImageNetwork extends GetView<MainController> {
                   height: height,
                   width: width,
                 );
-    } else {
+    } else {*/
       return Obx(
         () => CachedNetworkImage(
           imageUrl: controller.uploadEndpoint + url,
@@ -138,12 +138,27 @@ class ImageNetwork extends GetView<MainController> {
             );
           },*/
           placeholder: (context,string){
-            return errorWidget ??
+            return errorWidget != null
+                ? errorWidget!
+                : clipOval
+                ? ClipOval(
+              child: Image.asset(
+                profileImg,
+                height: height,
+                width: width,
+              ),
+            )
+                : Image.asset(
+              profileImg,
+              height: height,
+              width: width,
+            );
+            /*return errorWidget ??
                 Image.asset(
                   profileImg,
                   height: height,
                   width: width,
-                );
+                );*/
           },
           errorWidget: (context, link, error) {
             mirrorFlyLog("image error", "$error link : $link token : ${controller.authToken.value}");
@@ -151,12 +166,27 @@ class ImageNetwork extends GetView<MainController> {
               // controller.getAuthToken();
               _deleteImageFromCache(url);
             }
-            return errorWidget ??
+            return errorWidget != null
+                ? errorWidget!
+                : clipOval
+                ? ClipOval(
+              child: Image.asset(
+                profileImg,
+                height: height,
+                width: width,
+              ),
+            )
+                : Image.asset(
+              profileImg,
+              height: height,
+              width: width,
+            );
+            /*return errorWidget ??
                 Image.asset(
                   profileImg,
                   height: height,
                   width: width,
-                );
+                );*/
           },
           imageBuilder: (context, provider) {
             return clipOval
@@ -175,7 +205,7 @@ class ImageNetwork extends GetView<MainController> {
           },
         ),
       );
-    }
+    // }
   }
 
   void _deleteImageFromCache(String url) {
