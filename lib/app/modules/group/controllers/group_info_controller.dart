@@ -277,7 +277,7 @@ class GroupInfoController extends GetxController {
   }
 
   removeProfileImage() {
-    Helper.showAlert(message: "Are you sure you want to remove the group photo?.",actions: [
+    Helper.showAlert(message: "Are you sure you want to remove the group photo?",actions: [
       TextButton(
           onPressed: () {
             Get.back();
