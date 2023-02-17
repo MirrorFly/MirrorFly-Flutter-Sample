@@ -32,15 +32,13 @@ class StarredMessagesView extends GetView<StarredMessagesController> {
         },
         child: Scaffold(
           appBar: getAppBar(),
-          body: SingleChildScrollView(
-            child: Obx(() {
-              return controller.starredChatList.isNotEmpty ?
-              favouriteChatListView(controller.starredChatList) : const Center(child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: 10.0,vertical: 30),
-                child: Text("No Starred Messages Found"),
-              ));
-            }),
-          )
+          body: Obx(() {
+            return controller.starredChatList.isNotEmpty ?
+            SingleChildScrollView(child: favouriteChatListView(controller.starredChatList)) : const Center(child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: 10.0,vertical: 30),
+              child: Text("No Starred Messages Found"),
+            ));
+          })
         ),
       ),
     );
