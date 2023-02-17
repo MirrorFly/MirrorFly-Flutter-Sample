@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
@@ -54,13 +55,31 @@ class GroupInfoController extends GetxController {
     muteable(await FlyChat.isUserUnArchived(profile.jid.checkNull()));
   }
 
-  void userUpdatedHisProfile(jid) {
-    getProfileDetails(jid).then((value) {
-      var index = groupMembers.indexWhere((element) => element.jid == jid);
-      if(!index.isNegative){
-        groupMembers[index] = value;
+  void onGroupProfileUpdated(String groupJid) {
+    if (groupJid.checkNull().isNotEmpty) {
+      if (profile.jid.checkNull() == groupJid.toString()) {
+        mirrorFlyLog("group info", groupJid.toString());
+        FlyChat.getProfileDetails(profile.jid.checkNull(), false).then((value) {
+          if (value != null) {
+            var member = Profile.fromJson(json.decode(value.toString()));
+            profile_(member);
+            _mute(profile.isMuted!);
+            nameController.text=profile.nickName.checkNull();
+          }
+        });
       }
-    });
+    }
+  }
+
+  void userUpdatedHisProfile(String jid) {
+    if(jid.checkNull().isNotEmpty) {
+      getProfileDetails(jid).then((value) {
+        var index = groupMembers.indexWhere((element) => element.jid == jid);
+        if (!index.isNegative) {
+          groupMembers[index] = value;
+        }
+      });
+    }
   }
 
 
