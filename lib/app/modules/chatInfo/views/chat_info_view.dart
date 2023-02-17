@@ -45,6 +45,18 @@ class ChatInfoView extends GetView<ChatInfoController> {
                     Get.back();
                   },
                 ),
+                title: Visibility(
+                  visible: !controller.isSliverAppBarExpanded,
+                  child: Text(controller.profile.name
+                      .checkNull()
+                      .isEmpty
+                      ? controller.profile.nickName.checkNull()
+                      : controller.profile.name.checkNull(),
+                      style: const TextStyle(
+                        color: Colors.black,
+                        fontSize: 18.0,
+                      )),
+                ),
                 flexibleSpace: FlexibleSpaceBar(
                   background: ImageNetwork(
                     url: controller.profile.image.checkNull(),
@@ -72,25 +84,56 @@ class ChatInfoView extends GetView<ChatInfoController> {
                     ),
                     onTap: () {
                       Get.toNamed(Routes.imageView, arguments: {
-                        'imageName': controller.profile.nickName,
+                        'imageName': controller.profile.name
+                            .checkNull()
+                            .isEmpty
+                            ? controller.profile.nickName
+                            .checkNull()
+                            .isEmpty
+                            ? controller.profile.mobileNumber.checkNull()
+                            : controller.profile.nickName.checkNull()
+                            : controller.profile.name.checkNull(),
                         'imageUrl': controller.profile.image.checkNull()
                       });
                     },),
-                  titlePadding: controller.isSliverAppBarExpanded
-                      ? const EdgeInsets.symmetric(vertical: 16, horizontal: 20)
-                      : const EdgeInsets.symmetric(
-                      vertical: 19, horizontal: 50),
-                  title: Text(controller.profile.name
-                      .checkNull()
-                      .isEmpty
-                      ? controller.profile.nickName.checkNull()
-                      : controller.profile.name.checkNull(),
-                      style: TextStyle(
-                        color: controller.isSliverAppBarExpanded
-                            ? Colors.white
-                            : Colors.black,
-                        fontSize: 18.0,
-                      )),
+                  // titlePadding: controller.isSliverAppBarExpanded
+                  //     ? const EdgeInsets.symmetric(vertical: 16, horizontal: 20)
+                  //     : const EdgeInsets.symmetric(
+                  //     vertical: 19, horizontal: 50),
+                  titlePadding: const EdgeInsets.only(left: 16),
+
+                  title: Visibility(
+                    visible: controller.isSliverAppBarExpanded,
+                    child: Padding(
+                      padding: const EdgeInsets.all(4.0),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(controller.profile.name
+                              .checkNull()
+                              .isEmpty
+                              ? controller.profile.nickName.checkNull()
+                              : controller.profile.name.checkNull(),
+                              style: TextStyle(
+                                color: controller.isSliverAppBarExpanded
+                                    ? Colors.white
+                                    : Colors.black,
+                                fontSize: 18.0,
+                              )),
+                          Obx(() {
+                            return Text(controller.userPresenceStatus.value,
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 8.0,
+                                ) //TextStyle
+                            );
+                          }),
+                        ],
+                      ),
+                    ),
+                  ),
                   stretchModes: const [
                     StretchMode.zoomBackground,
                     StretchMode.blurBackground,

@@ -20,6 +20,7 @@ class ChatInfoController extends GetxController {
   bool get isSliverAppBarExpanded => _isSliverAppBarExpanded.value;
 
   final muteable = false.obs;
+  var userPresenceStatus = ''.obs;
 
   @override
   void onInit() {
@@ -29,6 +30,7 @@ class ChatInfoController extends GetxController {
     scrollController.addListener(_scrollListener);
     nameController.text = profile.nickName.checkNull();
     muteAble();
+    getUserLastSeen();
   }
 
   muteAble() async {
@@ -59,6 +61,46 @@ class ChatInfoController extends GetxController {
       mute(value);
       FlyChat.updateChatMuteStatus(profile.jid.checkNull(), value);
     }
+  }
+
+  getUserLastSeen(){
+    FlyChat.getUserLastSeenTime(profile.jid.toString()).then((value) {
+      userPresenceStatus(value.toString());
+    }).catchError((er) {
+      userPresenceStatus("");
+    });
+  }
+
+
+  void userCameOnline(jid) {
+    debugPrint("userCameOnline : $jid");
+    if(jid.isNotEmpty && profile.jid == jid && !profile.isGroupProfile.checkNull()) {
+      debugPrint("userCameOnline jid match: $jid");
+      Future.delayed(const Duration(milliseconds: 3000),(){
+        getUserLastSeen();
+      });
+    }
+  }
+
+  void userWentOffline(jid) {
+    if(jid.isNotEmpty && profile.jid==jid && !profile.isGroupProfile.checkNull()) {
+      debugPrint("userWentOffline : $jid");
+      Future.delayed(const Duration(milliseconds: 3000),(){
+        getUserLastSeen();
+      });
+    }
+  }
+
+  void networkConnected() {
+    mirrorFlyLog("networkConnected", 'true');
+    Future.delayed(const Duration(milliseconds: 2000), () {
+      getUserLastSeen();
+    });
+  }
+
+  void networkDisconnected() {
+    mirrorFlyLog('networkDisconnected', 'false');
+    getUserLastSeen();
   }
 
   reportChatOrUser() {

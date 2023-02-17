@@ -1250,33 +1250,44 @@ class DashboardController extends FullLifeCycleController
               SizedBox(
                 height: 50,
                 child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  // mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    InkWell(
-                      onTap: chatTap,
-                      child: SvgPicture.asset(
-                        quickMessage,
-                        fit: BoxFit.cover,
+                    Expanded(
+                      child: InkWell(
+                        onTap: chatTap,
+                        child: SvgPicture.asset(
+                          quickMessage,
+                          fit: BoxFit.contain,
+                          width: 30,
+                          height: 30,
+                        ),
                       ),
                     ),
-                    !profile.isGroupProfile.checkNull() ? InkWell(
-                      onTap: callTap,
-                      child: SvgPicture.asset(
-                        quickCall,
-                        fit: BoxFit.cover,
+                    !profile.isGroupProfile.checkNull() ? Expanded(
+                      child: InkWell(
+                        onTap: callTap,
+                        child: SvgPicture.asset(
+                          quickCall,
+                          fit: BoxFit.contain,
+                        ),
                       ),
                     ) : const SizedBox.shrink(),
-                    !profile.isGroupProfile.checkNull() ? InkWell(
-                      onTap: videoTap,
-                      child: SvgPicture.asset(
-                        quickVideo,
-                        fit: BoxFit.cover,
+                    !profile.isGroupProfile.checkNull() ? Expanded(
+                      child: InkWell(
+                        onTap: videoTap,
+                        child: SvgPicture.asset(
+                          quickVideo,
+                          fit: BoxFit.contain,
+                        ),
                       ),
                     ) : const SizedBox.shrink(),
-                    InkWell(onTap: infoTap,
-                      child: SvgPicture.asset(
-                        quickInfo,
-                        fit: BoxFit.cover,
+
+                    Expanded(
+                      child: InkWell(onTap: infoTap,
+                        child: SvgPicture.asset(
+                          quickInfo,
+                          fit: BoxFit.contain,
+                        ),
                       ),
                     ),
                   ],

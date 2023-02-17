@@ -14,6 +14,8 @@ import 'package:mirror_fly_demo/app/routes/app_pages.dart';
 
 import 'package:flysdk/flysdk.dart';
 
+import '../modules/chatInfo/controllers/chat_info_controller.dart';
+
 class MainController extends GetxController with BaseController
     /*with FullLifeCycleMixin */{
   var authToken = "".obs;
@@ -115,11 +117,17 @@ class MainController extends GetxController with BaseController
             if (Get.isRegistered<ChatController>()) {
               Get.find<ChatController>().networkConnected();
             }
+            if (Get.isRegistered<ChatInfoController>()) {
+              Get.find<ChatInfoController>().networkConnected();
+            }
             break;
           case InternetConnectionStatus.disconnected:
             mirrorFlyLog("network",'You are disconnected from the internet.');
             if (Get.isRegistered<ChatController>()) {
               Get.find<ChatController>().networkDisconnected();
+            }
+            if (Get.isRegistered<ChatInfoController>()) {
+              Get.find<ChatInfoController>().networkDisconnected();
             }
             break;
         }

@@ -222,6 +222,9 @@ abstract class BaseController {
     if (Get.isRegistered<ChatController>()) {
       Get.find<ChatController>().userCameOnline(jid);
     }
+    if (Get.isRegistered<ChatInfoController>()) {
+      Get.find<ChatInfoController>().userCameOnline(jid);
+    }
   }
 
   void userDeletedHisProfile(result) {}
@@ -268,6 +271,9 @@ abstract class BaseController {
   void userWentOffline(String jid) {
     if (Get.isRegistered<ChatController>()) {
       Get.find<ChatController>().userWentOffline(jid);
+    }
+    if (Get.isRegistered<ChatInfoController>()) {
+      Get.find<ChatInfoController>().userWentOffline(jid);
     }
   }
 
