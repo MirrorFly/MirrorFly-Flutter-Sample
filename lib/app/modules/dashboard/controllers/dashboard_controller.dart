@@ -1158,6 +1158,7 @@ class DashboardController extends FullLifeCycleController
   void getProfileDetail(context, RecentChatData chatItem, int index) {
     getProfileDetails(chatItem.jid.checkNull()).then((value) {
       profile_(value);
+      debugPrint("dashboard controller profile update received");
       showQuickProfilePopup(context: context,
           chatItem: chatItem,
           chatTap: () {
@@ -1201,7 +1202,8 @@ class DashboardController extends FullLifeCycleController
                       borderRadius: const BorderRadius.only(
                           topLeft: Radius.circular(20),
                           topRight: Radius.circular(20)),
-                      child: ImageNetwork(
+                      child: Obx(() {
+                        return ImageNetwork(
                           url: profile.image.toString(),
                           width: MediaQuery
                               .of(context)
@@ -1228,7 +1230,8 @@ class DashboardController extends FullLifeCycleController
                             fontSize: 75,
                             radius: 0,
                           ),
-                        ),
+                        );
+                      }),
                     ),
                     Padding(
                       padding:
@@ -1247,7 +1250,7 @@ class DashboardController extends FullLifeCycleController
               SizedBox(
                 height: 50,
                 child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
                     InkWell(
                       onTap: chatTap,
@@ -1256,18 +1259,20 @@ class DashboardController extends FullLifeCycleController
                         fit: BoxFit.cover,
                       ),
                     ),
-                    !profile.isGroupProfile.checkNull() ? InkWell(onTap: callTap,
+                    !profile.isGroupProfile.checkNull() ? InkWell(
+                      onTap: callTap,
                       child: SvgPicture.asset(
                         quickCall,
                         fit: BoxFit.cover,
                       ),
                     ) : const SizedBox.shrink(),
-                    !profile.isGroupProfile.checkNull() ? InkWell(onTap: videoTap,
+                    !profile.isGroupProfile.checkNull() ? InkWell(
+                      onTap: videoTap,
                       child: SvgPicture.asset(
                         quickVideo,
                         fit: BoxFit.cover,
                       ),
-                    ): const SizedBox.shrink(),
+                    ) : const SizedBox.shrink(),
                     InkWell(onTap: infoTap,
                       child: SvgPicture.asset(
                         quickInfo,
