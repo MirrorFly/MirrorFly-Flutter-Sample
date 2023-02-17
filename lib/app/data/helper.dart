@@ -67,11 +67,11 @@ class Helper {
       Widget? content}) {
     Get.dialog(
       AlertDialog(
-        title: title != null ? Text(title) : const Text(""),
+        title: title != null ? Text(title, style: const TextStyle(fontSize: 17),) : const SizedBox.shrink(),
         contentPadding: title != null
             ? const EdgeInsets.only(top: 15, right: 25, left: 25, bottom: 0)
-            : const EdgeInsets.only(top: 0, right: 25, left: 25, bottom: 15),
-        content: content ?? Text(message),
+            : const EdgeInsets.only(top: 0, right: 25, left: 25, bottom: 5),
+        content: content ?? Text(message, style: const TextStyle(color: textHintColor, fontWeight: FontWeight.normal),),
         contentTextStyle:
             const TextStyle(color: textHintColor, fontWeight: FontWeight.w500),
         actions: actions,

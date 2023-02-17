@@ -184,9 +184,6 @@ class ProfileView extends GetView<ProfileController> {
                       style: TextStyle(
                           fontWeight: FontWeight.w600, fontSize: 14),
                     ),
-                    const SizedBox(
-                      height: 10,
-                    ),
                     TextField(
                       keyboardType: TextInputType.emailAddress,
                       focusNode: controller.emailFocus,
@@ -198,7 +195,7 @@ class ProfileView extends GetView<ProfileController> {
                         hintText: 'Enter Email Id',
                         icon: SvgPicture.asset('assets/logos/email.svg'),
                       ),
-                      style: const TextStyle(fontWeight: FontWeight.normal),
+                      style: const TextStyle(fontWeight: FontWeight.normal, color: textColor),
                     ),
                     const AppDivider(),
                     const SizedBox(
@@ -209,9 +206,7 @@ class ProfileView extends GetView<ProfileController> {
                       style: TextStyle(
                           fontWeight: FontWeight.w600, fontSize: 14),
                     ),
-                    const SizedBox(
-                      height: 10,
-                    ),
+
                     TextField(
                       controller: controller.profileMobile,
                       enabled: false,
@@ -220,7 +215,7 @@ class ProfileView extends GetView<ProfileController> {
                         hintText: 'Enter Mobile Number',
                         icon: SvgPicture.asset('assets/logos/phone.svg'),
                       ),
-                      style: const TextStyle(fontWeight: FontWeight.normal),
+                      style: const TextStyle(fontWeight: FontWeight.normal, color: textColor),
                     ),
                     const AppDivider(),
                     const SizedBox(
@@ -230,9 +225,6 @@ class ProfileView extends GetView<ProfileController> {
                       'Status',
                       style: TextStyle(
                           fontWeight: FontWeight.w600, fontSize: 14),
-                    ),
-                    const SizedBox(
-                      height: 10,
                     ),
                     Obx(() =>
                         ListTile(
@@ -244,9 +236,10 @@ class ProfileView extends GetView<ProfileController> {
                             style: TextStyle(
                                 color:
                                 controller.profileStatus.value.isNotEmpty
-                                    ? Colors.black
+                                    ? textColor
                                     : Colors.black38, fontWeight: FontWeight.normal),
                           ),
+                          minLeadingWidth: 10,
                           leading:
                           SvgPicture.asset('assets/logos/status.svg'),
                           onTap: () {
@@ -316,38 +309,49 @@ class ProfileView extends GetView<ProfileController> {
                         topRight: Radius.circular(30))),
                 child: Padding(
                   padding:
-                  const EdgeInsets.symmetric(horizontal: 10, vertical: 20),
+                  const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      // const Text("Options"),
+                      const SizedBox(height: 10,),
+                      const Text("Options"),
+                      const SizedBox(height: 10,),
                       TextButton(
                           onPressed: () async {
                             Get.back();
                             controller.camera();
                           },
+                          style: TextButton.styleFrom(
+                              padding: EdgeInsets.zero,
+                              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                              alignment: Alignment.centerLeft),
                           child: const Text("Take Photo",
-                              style: TextStyle(color: textHintColor))),
+                              style: TextStyle(color: textColor, fontWeight: FontWeight.bold))),
                       TextButton(
                           onPressed: () {
                             Get.back();
                             controller.imagePicker(context);
                           },
+                          style: TextButton.styleFrom(
+                              padding: EdgeInsets.zero,
+                              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                              alignment: Alignment.centerLeft),
                           child: const Text("Choose from Gallery",
-                              style: TextStyle(color: textHintColor))),
+                              style: TextStyle(color: textColor, fontWeight: FontWeight.bold))),
                       controller.userImgUrl.value.isNotEmpty
                           ? TextButton(
                           onPressed: () {
                             Get.back();
                             Helper.showAlert(
                                 message:
-                                "Are you sure want to remove the photo?",
+                                "Are you sure you want to remove the photo?",
                                 actions: [
                                   TextButton(
                                       onPressed: () {
                                         Get.back();
                                       },
+
                                       child: const Text("CANCEL")),
                                   TextButton(
                                       onPressed: () {
@@ -357,9 +361,13 @@ class ProfileView extends GetView<ProfileController> {
                                       child: const Text("REMOVE"))
                                 ]);
                           },
+                          style: TextButton.styleFrom(
+                              padding: EdgeInsets.zero,
+                              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                              alignment: Alignment.centerLeft),
                           child: const Text(
-                            "Remove Profile Image",
-                            style: TextStyle(color: textHintColor),
+                            "Remove Photo",
+                            style: TextStyle(color: textColor, fontWeight: FontWeight.bold),
                           ))
                           : const SizedBox(),
                     ],
