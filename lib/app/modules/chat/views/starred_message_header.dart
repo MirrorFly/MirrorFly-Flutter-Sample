@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
 import 'package:flysdk/flysdk.dart';
 
+import '../../../common/constants.dart';
 import '../../../common/widgets.dart';
 import '../../starred_messages/controllers/starred_messages_controller.dart';
 
@@ -57,14 +58,14 @@ class StarredMessageHeader extends StatelessWidget {
                 // mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   getChatTime(chatList.messageSentTime.toInt()),
-                  const SizedBox(width: 10,),
+                  const SizedBox(
+                    width: 10,
+                  ),
                   Expanded(
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.center,
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
-                        const Text("You --> ", style: TextStyle(
-                        fontWeight: FontWeight.bold, fontSize: 15)),
                         Flexible(
                           child: Text(
                             userProfile.name.checkNull(),
@@ -74,6 +75,21 @@ class StarredMessageHeader extends StatelessWidget {
                             overflow: TextOverflow.ellipsis,
                           ),
                         ),
+                        Container(
+                            decoration: const BoxDecoration(
+                              color: statusBarColor,
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(5)),
+                            ),
+                            margin: const EdgeInsets.all(5),
+                            // padding: const EdgeInsets.all(1),
+                            child: const Icon(
+                              Icons.arrow_left,
+                              color: Colors.black,
+                            )),
+                        const Text("You",
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold, fontSize: 15)),
                         const SizedBox(
                           width: 10,
                         ),
@@ -88,25 +104,48 @@ class StarredMessageHeader extends StatelessWidget {
                 // mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   getProfileImage(userProfile),
-                  const SizedBox(width: 10,),
+                  const SizedBox(
+                    width: 10,
+                  ),
                   Expanded(
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.center,
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
-
                         Flexible(
                           child: Text(
-                            userProfile.name.checkNull(),
+                        userProfile.isGroupProfile.checkNull() ? chatList.senderNickName : userProfile.name.checkNull(),
                             style: const TextStyle(
                                 fontWeight: FontWeight.bold, fontSize: 15),
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                           ),
                         ),
-                        const Text(" --> You", style: TextStyle(
-                            fontWeight: FontWeight.bold, fontSize: 15)),
-
+                        Container(
+                            decoration: const BoxDecoration(
+                              color: statusBarColor,
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(5)),
+                            ),
+                            margin: const EdgeInsets.all(5),
+                            child: const Icon(
+                              Icons.arrow_right,
+                              color: Colors.black,
+                            )),
+                        userProfile.isGroupProfile.checkNull()
+                            ? Flexible(
+                                child: Text(
+                                  userProfile.name.checkNull(),
+                                  style: const TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 15),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              )
+                            : const Text("You",
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold, fontSize: 15)),
                         const SizedBox(
                           width: 10,
                         ),
@@ -124,7 +163,10 @@ class StarredMessageHeader extends StatelessWidget {
   }
 
   getChatTime(int messageSentTime) {
-    return Text(controller.getChatTime(Get.context, messageSentTime),style: const TextStyle(fontSize: 12,color: Color(0xff959595)),);
+    return Text(
+      controller.getChatTime(Get.context, messageSentTime),
+      style: const TextStyle(fontSize: 12, color: Color(0xff959595)),
+    );
   }
 
   getProfileImage(Profile userProfile) {

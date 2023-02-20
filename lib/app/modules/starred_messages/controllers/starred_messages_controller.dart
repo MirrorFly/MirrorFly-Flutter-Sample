@@ -49,7 +49,7 @@ class StarredMessagesController extends GetxController {
       FlyChat.getFavouriteMessages().then((value) {
         List<ChatMessageModel> chatMessageModel = chatMessageModelFromJson(
             value);
-        starredChatList(chatMessageModel.reversed.toList());
+        starredChatList(chatMessageModel.toList());
       });
     }
   }
