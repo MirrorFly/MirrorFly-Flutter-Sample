@@ -19,20 +19,6 @@
 		CE2582232951A053009D974C /* NotificationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE2582222951A053009D974C /* NotificationService.swift */; };
 		CE2582272951A053009D974C /* FlutterNotificationExtnsion.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = CE2582202951A053009D974C /* FlutterNotificationExtnsion.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		CEB9F2DB2948F9E10080BC48 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = CEB9F2DA2948F9E10080BC48 /* GoogleService-Info.plist */; };
-		CEC69EE1296EE63A003A5787 /* FlyTranslate.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = CEC69EDA296EE637003A5787 /* FlyTranslate.xcframework */; };
-		CEC69EE2296EE63A003A5787 /* FlyTranslate.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = CEC69EDA296EE637003A5787 /* FlyTranslate.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		CEC69EE3296EE63A003A5787 /* FlyNetwork.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = CEC69EDB296EE637003A5787 /* FlyNetwork.xcframework */; };
-		CEC69EE4296EE63A003A5787 /* FlyNetwork.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = CEC69EDB296EE637003A5787 /* FlyNetwork.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		CEC69EE5296EE63B003A5787 /* FlyCommon.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = CEC69EDC296EE638003A5787 /* FlyCommon.xcframework */; };
-		CEC69EE6296EE63B003A5787 /* FlyCommon.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = CEC69EDC296EE638003A5787 /* FlyCommon.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		CEC69EE7296EE63B003A5787 /* FlyXmpp.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = CEC69EDD296EE638003A5787 /* FlyXmpp.xcframework */; };
-		CEC69EE8296EE63B003A5787 /* FlyXmpp.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = CEC69EDD296EE638003A5787 /* FlyXmpp.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		CEC69EE9296EE63B003A5787 /* FlyCall.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = CEC69EDE296EE639003A5787 /* FlyCall.xcframework */; };
-		CEC69EEA296EE63B003A5787 /* FlyCall.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = CEC69EDE296EE639003A5787 /* FlyCall.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		CEC69EEB296EE63C003A5787 /* FlyDatabase.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = CEC69EDF296EE639003A5787 /* FlyDatabase.xcframework */; };
-		CEC69EEC296EE63C003A5787 /* FlyDatabase.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = CEC69EDF296EE639003A5787 /* FlyDatabase.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		CEC69EED296EE63C003A5787 /* FlyCore.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = CEC69EE0296EE63A003A5787 /* FlyCore.xcframework */; };
-		CEC69EEE296EE63C003A5787 /* FlyCore.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = CEC69EE0296EE63A003A5787 /* FlyCore.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		CEC69EF0296EE64A003A5787 /* FlyCall.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = CEC69EDE296EE639003A5787 /* FlyCall.xcframework */; };
 		CEC69EF2296EE64A003A5787 /* FlyCommon.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = CEC69EDC296EE638003A5787 /* FlyCommon.xcframework */; };
 		CEC69EF4296EE64A003A5787 /* FlyCore.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = CEC69EE0296EE63A003A5787 /* FlyCore.xcframework */; };
@@ -64,23 +50,6 @@
 				CE2582272951A053009D974C /* FlutterNotificationExtnsion.appex in Embed Foundation Extensions */,
 			);
 			name = "Embed Foundation Extensions";
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		CEC69EEF296EE63D003A5787 /* Embed Frameworks */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 10;
-			files = (
-				CEC69EE4296EE63A003A5787 /* FlyNetwork.xcframework in Embed Frameworks */,
-				CEC69EE6296EE63B003A5787 /* FlyCommon.xcframework in Embed Frameworks */,
-				CEC69EEE296EE63C003A5787 /* FlyCore.xcframework in Embed Frameworks */,
-				CEC69EEC296EE63C003A5787 /* FlyDatabase.xcframework in Embed Frameworks */,
-				CEC69EE8296EE63B003A5787 /* FlyXmpp.xcframework in Embed Frameworks */,
-				CEC69EE2296EE63A003A5787 /* FlyTranslate.xcframework in Embed Frameworks */,
-				CEC69EEA296EE63B003A5787 /* FlyCall.xcframework in Embed Frameworks */,
-			);
-			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXCopyFilesBuildPhase section */
@@ -133,14 +102,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CEC69EE7296EE63B003A5787 /* FlyXmpp.xcframework in Frameworks */,
-				CEC69EE9296EE63B003A5787 /* FlyCall.xcframework in Frameworks */,
-				CEC69EE5296EE63B003A5787 /* FlyCommon.xcframework in Frameworks */,
-				CEC69EE1296EE63A003A5787 /* FlyTranslate.xcframework in Frameworks */,
-				CEC69EEB296EE63C003A5787 /* FlyDatabase.xcframework in Frameworks */,
 				287581C40BF479673A7828B5 /* Pods_Runner.framework in Frameworks */,
-				CEC69EED296EE63C003A5787 /* FlyCore.xcframework in Frameworks */,
-				CEC69EE3296EE63A003A5787 /* FlyNetwork.xcframework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -269,7 +231,6 @@
 				CBA1776176601D1DA0081A3C /* [CP] Embed Pods Frameworks */,
 				836380C8891A7686ACE770B3 /* [CP] Copy Pods Resources */,
 				CE25822C2951A054009D974C /* Embed Foundation Extensions */,
-				CEC69EEF296EE63D003A5787 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);

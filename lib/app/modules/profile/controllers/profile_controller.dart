@@ -46,7 +46,7 @@ class ProfileController extends GetxController {
     userImgUrl.value = SessionManagement.getUserImage() ?? "";
     mirrorFlyLog("auth : ", SessionManagement.getAuthToken().toString());
     if (Get.arguments != null) {
-      from(Get.arguments["from"]);
+       (Get.arguments["from"]);
       if (from.value == Routes.login) {
         profileMobile.text = Get.arguments['mobile'] ?? "";
       }
@@ -59,6 +59,7 @@ class ProfileController extends GetxController {
       }else{
         toToast(Constants.noInternetConnection);
       }
+      checkAndEnableNotificationSound();
     }else{
       getProfile();
     }
@@ -289,15 +290,6 @@ class ProfileController extends GetxController {
                 FlyChat.insertDefaultStatus(statusValue);
               }
             }
-            SessionManagement.vibrationType("0");
-            FlyChat.getDefaultNotificationUri().then((value) {
-              if (value != null) {
-                // FlyChat.setNotificationUri(value);
-                SessionManagement.setNotificationUri(value);
-              }
-            });
-            SessionManagement.convSound(true);
-            SessionManagement.muteAll( false);
           }else{
             insertStatus();
           }
@@ -412,10 +404,27 @@ class ProfileController extends GetxController {
       FlyChat.insertDefaultStatus(statusValue);
 
     }
+    // FlyChat.getDefaultNotificationUri().then((value) {
+    //   if (value != null) {
+    //     // FlyChat.setNotificationUri(value);
+    //     SessionManagement.setNotificationUri(value);
+    //   }
+    // });
+  }
+  static void checkAndEnableNotificationSound() {
+
+    SessionManagement.vibrationType("0");
+    SessionManagement.convSound(true);
+    SessionManagement.muteAll(false);
+
     FlyChat.getDefaultNotificationUri().then((value) {
+      debugPrint("getDefaultNotificationUri--> $value");
       if (value != null) {
         // FlyChat.setNotificationUri(value);
         SessionManagement.setNotificationUri(value);
+        FlyChat.setNotificationSound(true);
+        FlyChat.setDefaultNotificationSound();
+        SessionManagement.setNotificationSound(true);
       }
     });
   }

@@ -316,6 +316,7 @@ extension MemberParsing on Member {
 Future<Profile> getProfileDetails(String jid) async {
   var value = await FlyChat.getProfileDetails(jid.checkNull(), false);
   // profileDataFromJson(value);
+  debugPrint("update profile--> $value");
   var profile = await compute(profiledata, value.toString());
   // var str = Profile.fromJson(json.decode(value.toString()));
   return profile;

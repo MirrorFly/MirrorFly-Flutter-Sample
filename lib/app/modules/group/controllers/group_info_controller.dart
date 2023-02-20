@@ -44,7 +44,7 @@ class GroupInfoController extends GetxController {
     profile_((Get.arguments as Profile));
     _mute(profile.isMuted!);
     scrollController.addListener(_scrollListener);
-    // getGroupMembers(false);
+    getGroupMembers(false);
     getGroupMembers(null);
     groupAdmin();
     memberOfGroup();
@@ -76,6 +76,7 @@ class GroupInfoController extends GetxController {
       getProfileDetails(jid).then((value) {
         var index = groupMembers.indexWhere((element) => element.jid == jid);
         if (!index.isNegative) {
+          value.isGroupAdmin = groupMembers[index].isGroupAdmin;
           groupMembers[index] = value;
         }
       });

@@ -2921,10 +2921,10 @@ class FlyChat {
     }
   }
 
-  static setNotificationUri(String uri) async {
+  static setDefaultNotificationSound() async {
     try {
       await mirrorFlyMethodChannel
-          .invokeMethod('setNotificationUri', {"uri": uri});
+          .invokeMethod('setDefaultNotificationSound');
     } on PlatformException catch (e) {
       debugPrint("Platform Exception ===> $e");
       rethrow;
