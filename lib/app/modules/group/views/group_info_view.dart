@@ -370,22 +370,7 @@ class GroupInfoView extends GetView<GroupInfoController> {
                           ? TextButton(
                           onPressed: () {
                             Get.back();
-                            Helper.showAlert(
-                                message:
-                                "Are you sure want to remove the photo?",
-                                actions: [
-                                  TextButton(
-                                      onPressed: () {
-                                        Get.back();
-                                      },
-                                      child: const Text("CANCEL")),
-                                  TextButton(
-                                      onPressed: () {
-                                        Get.back();
-                                        controller.removeProfileImage();
-                                      },
-                                      child: const Text("REMOVE"))
-                                ]);
+                            controller.removeProfileImage();
                           },
                           style: TextButton.styleFrom(
                               padding: EdgeInsets.zero,

@@ -159,6 +159,9 @@ abstract class BaseController {
     if (Get.isRegistered<DashboardController>()) {
       Get.find<DashboardController>().onGroupProfileUpdated(groupJid);
     }
+    if (Get.isRegistered<GroupInfoController>()) {
+      Get.find<GroupInfoController>().onGroupProfileUpdated(groupJid);
+    }
   }
 
   void onNewMemberAddedToGroup(event) {}
