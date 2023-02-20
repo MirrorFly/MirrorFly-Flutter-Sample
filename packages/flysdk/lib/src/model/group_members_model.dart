@@ -3,6 +3,7 @@
 //     final member = memberFromJson(jsonString);
 
 import 'dart:convert';
+import 'dart:io';
 List<Member> memberFromJson(String str) => List<Member>.from(json.decode(str).map((x) => Member.fromJson(x)));
 
 String memberToJson(List<Member> data) => json.encode(List<dynamic>.from(data.map((x) => x.toJson())));
@@ -55,23 +56,23 @@ class Member {
   String? status;
 
   factory Member.fromJson(Map<String, dynamic> json) => Member(
-    contactType: json["contactType"],
+    contactType: json["contactType"] == "unknown" ? "unknown_contact" : json["contactType"],
     email: json["email"],
     groupCreatedTime: json["groupCreatedTime"].toString(),
     image: json["image"],
-    imagePrivacyFlag: json["imagePrivacyFlag"],
-    isAdminBlocked: json["isAdminBlocked"],
+    imagePrivacyFlag: json["imagePrivacyFlag"].toString(),
+    isAdminBlocked: Platform.isIOS ? json["isBlockedByAdmin"] : json["isAdminBlocked"],
     isBlocked: json["isBlocked"],
     isBlockedMe: json["isBlockedMe"],
     isGroupAdmin: json["isGroupAdmin"],
     isGroupInOfflineMode: json["isGroupInOfflineMode"],
-    isGroupProfile: json["isGroupProfile"],
+    isGroupProfile: Platform.isIOS ? json["profileChatType"] == "singleChat" ? false : true : json["isGroupProfile"],
     isItSavedContact: json["isItSavedContact"],
     isMuted: json["isMuted"],
     isSelected: json["isSelected"],
     jid: json["jid"],
-    lastSeenPrivacyFlag: json["lastSeenPrivacyFlag"],
-    mobileNUmberPrivacyFlag: json["mobileNUmberPrivacyFlag"],
+    lastSeenPrivacyFlag: json["lastSeenPrivacyFlag"].toString(),
+    mobileNUmberPrivacyFlag: json["mobileNUmberPrivacyFlag"].toString(),
     mobileNumber: json["mobileNumber"],
     name: json["name"],
     nickName: json["nickName"],

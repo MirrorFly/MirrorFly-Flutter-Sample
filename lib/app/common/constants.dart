@@ -4,8 +4,11 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:mirror_fly_demo/app/data/helper.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:url_launcher/url_launcher.dart';
+
+import '../data/apputils.dart';
 
 //Colors
 const Color appBarColor = Color(0xffF2F2F2);
@@ -17,6 +20,7 @@ const Color textBlackColor = Color(0xff000000);
 const Color textBlack1color = Color(0xff313131);
 const Color textHintColor = Color(0xff181818);
 const Color textColor = Color(0xff767676);
+const Color textColorBlack = Color(0xff333333);
 const Color textButtonColor = Color(0xffFFFFFF);
 const Color buttonBgColor = Color(0xff3276E2);
 const Color chatSentBgColor = Color(0xffe2eafc);
@@ -31,6 +35,11 @@ const Color notificationTextColor = Color(0Xff565656);
 const Color notificationTextBgColor = Color(0XffDADADA);
 const Color chatBorderColor = Color(0XffDDE3E5);
 const Color chatTimeColor = Color(0Xff959595);
+const Color borderColor = Color(0xffAFB8D0);
+const Color playIconColor = Color(0xff7285B5);
+const Color durationTextColor = Color(0xff455E93);
+const Color chatBgColor = Color(0xffD0D8EB);
+const Color previewTextColor = Color(0xff7f7f7f);
 
 //Assets
 const String registerIcon = 'assets/logos/register_logo.svg';
@@ -84,20 +93,25 @@ const String pushpin = 'assets/logos/pushpin.svg';
 const String pin = 'assets/logos/pin.svg';
 const String unpin = 'assets/logos/unpin.svg';
 
-const String audioImg = 'assets/logos/audio.svg';
+// const String audioImg = 'assets/logos/audio.svg';
+const String audioImg = 'assets/logos/headset_img.svg';
+const String headsetImg = 'assets/logos/headset_white.svg';
 const String documentImg = 'assets/logos/document_icon.svg';
 const String cameraImg = 'assets/logos/camera.svg';
 const String contactImg = 'assets/logos/contact_icon.svg';
 const String galleryImg = 'assets/logos/gallery.svg';
 const String locationImg = 'assets/logos/location_icon.svg';
 const String rightArrow = 'assets/logos/right_arrow.svg';
+const String previewAddImg = 'assets/logos/preview_add.svg';
 
 const String downloading = 'assets/logos/downloading.svg';
 const String videoPlay = 'assets/logos/video_play.svg';
+const String videoCamera = 'assets/logos/video_camera.svg';
 const String audioPlay = 'assets/logos/audio_play.svg';
 const String audioMicBg = 'assets/logos/audio_mic.svg';
 const String audioMic = 'assets/logos/mic.svg';
 const String audioMic1 = 'assets/logos/mic1.svg';
+const String musicIcon = 'assets/logos/music_icon.svg';
 const String profileImage = 'assets/logos/profile_img.png';
 
 const String linkImage = 'assets/logos/link.svg';
@@ -117,8 +131,9 @@ const String zipImage = 'assets/logos/zip.svg';
 const String rarImage = 'assets/logos/rar.svg';
 const String mImageIcon = 'assets/logos/image.svg';
 const String mLocationIcon = 'assets/logos/location_chat.svg';
-const String mVideoIcon = 'assets/logos/video.svg';
+const String mVideoIcon = 'assets/logos/ic_video.svg';
 const String mAudioIcon = 'assets/logos/noun_Audio_3408360.svg';
+const String mAudioRecordIcon = 'assets/logos/record_reply_preview.svg';
 const String audioWhite = 'assets/logos/audio_white.svg';
 const String videoWhite = 'assets/logos/video_icon.svg';
 const String cornerShadow = 'assets/logos/ic_baloon.png';
@@ -126,6 +141,13 @@ const String disabledIcon = 'assets/logos/disabled.png';
 
 const String phoneCall = 'assets/logos/phonecall.svg';
 const String videoCall = 'assets/logos/videocall.svg';
+const String call = 'assets/logos/call.svg';
+
+const String quickCall = 'assets/logos/quick_call.svg';
+const String quickInfo = 'assets/logos/quick_info.svg';
+const String quickMessage = 'assets/logos/quick_message.svg';
+const String quickVideo = 'assets/logos/quick_video.svg';
+
 const String replyIcon = 'assets/logos/reply.svg';
 const String forwardIcon = 'assets/logos/forward.svg';
 const String deleteIcon = 'assets/logos/delete_black.svg';
@@ -134,6 +156,19 @@ const String favouriteIcon = 'assets/logos/star.svg';
 const String unFavouriteIcon = 'assets/logos/unstar.svg';
 const String copyIcon = 'assets/logos/copy.svg';
 const String infoIcon = 'assets/logos/info.svg';
+const String uploadIcon = 'assets/logos/upload.svg';
+const String downloadIcon = 'assets/logos/download.svg';
+const String playIcon = 'assets/logos/play.svg';
+const String pauseIcon = 'assets/logos/pause.svg';
+const String shareIcon = 'assets/logos/share.svg';
+const String starSmallIcon = 'assets/logos/star_small_icon.svg';
+
+const String seenIcon = 'assets/logos/seen.svg';
+const String unSendIcon = 'assets/logos/unsent.svg';
+const String deliveredIcon = 'assets/logos/delivered.svg';
+const String acknowledgedIcon = 'assets/logos/acknowledged.svg';
+
+
 
 //Animation
  const String deleteDustbin = 'assets/animation/delete_dustbin.json';
@@ -150,9 +185,14 @@ const String reportUser = 'assets/logos/report_user.svg';
 const String reportGroup = 'assets/logos/report_group.svg';
 const String leaveGroup = 'assets/logos/leave_group.svg';
 
+const String contactSelectTick = 'assets/logos/contact_select.svg';
+const String rightArrowProceed = 'assets/logos/right_arrow_proceed.svg';
+const String closeContactIcon = 'assets/logos/close_icon_contact.svg';
+
 const String emailIcon = 'assets/logos/email.svg';
 const String phoneIcon = 'assets/logos/phone.svg';
 const String deleteBin = 'assets/logos/delete_bin.svg';
+const String deleteBinWhite = 'assets/logos/delete_bin_white.svg';
 const String warningIcon = 'assets/logos/warning.svg';
 
 const String filePermission = "assets/logos/file_permission.svg";
@@ -162,6 +202,14 @@ const String contactPermission = "assets/logos/contact_permission.svg";
 const String settingsPermission = "assets/logos/settings_permission.svg";
 const String locationPinPermission = "assets/logos/location_pin_permission.svg";
 const String recordAudioVideoPermission = "assets/logos/record_audio_video_permission.svg";
+
+const String icAdminBlocked = "assets/logos/ic_admin_blocked.svg";
+const String icExpand = "assets/logos/ic_expand.svg";
+const String icCollapse = "assets/logos/ic_collapse.svg";
+
+const String forwardMedia = "assets/logos/forward_media.svg";
+const String arrowDown = "assets/logos/arrow_down.svg";
+const String arrowUp = "assets/logos/arrow_up.svg";
 
 //About us
 const String titleContactMsg = "Mirror Fly is a ready-to-go messaging solution for building enterprise-grade real-time chat IM applications that meet various degrees of requirements like team discussion, data sharing, task delegation and information handling on the go.";
@@ -180,6 +228,8 @@ toToast(String text) {
       toastLength: Toast.LENGTH_SHORT,
       gravity: ToastGravity.BOTTOM,
       timeInSecForIosWeb: 1,
+      textColor: Colors.black,
+      backgroundColor: Colors.white,
       fontSize: 16.0);
 }
 mirrorFlyLog(String tag,String msg){
@@ -196,6 +246,10 @@ class Constants {
   static const String googleMapKey = "AIzaSyBaKkrQnLT4nacpKblIE5d4QK6GpaX5luQ";
   static const String googleMapPackageName = "com.google.android.apps.maps";
   static const String packageName = "com.contus.flycommons.";
+
+  static const String applicationLink = "https://app.contusfly.contus.com";
+  static const String smsContent = "Hey, MirrorFly is a real time chat, Audio and Video call solution for B2B and B2C.\n Download the app from this URL: https://app.mirrorfly.com";
+
   static const String rosterJid = "roster_jid";
   static const String isLiveUser = "is_live_user";
   static const String ifBlockedMe = "ifBlockedMe";
@@ -331,10 +385,19 @@ class Constants {
   static const String msgTypeContact = "contact";
   static const String msgTypeNotification = "notification";
 
-  static const String emailPattern = ("^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,3})\$");
+  static const String emailPattern = ("^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,10})\$");
+  static const String mobilePattern = r'(?:[\\+0-9]{1,4}\\-)?[0-9]{6,12}';
+  static const String textPattern = r'[a-zA-Z]';
+  static const String countryCodePattern = r'(^(\+?[0-9]{1,4}\-?)$)';
+  static const String websitePattern = r'(?:(?:https?|ftp):\/\/)?[\w/\-?=%.]+\.[\w/\-?=%.]+';
+  // static const String websitePattern = r'(http|https)://[\w-]+(\.[\w-]+)+([\w.,@?^=%&amp;:/~+#-]*[\w@?^=%&amp;/~+#-])?';
+  // static const String websitePattern = r"((https?:www\.)|(https?:\/\/)|(www\.))[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9]{1,6}(\/[-a-zA-Z0-9()@:%_\+.~#?&\/=]*)?";
+  // static const String websitePattern = ("^((http?|https?)://)?[-a-zA-Z0-9@:%._\\+~#?&//=]{2,256}\\.[a-z]{2,6}\\b([-a-zA-Z0-9@:%._\\+~#?&//=]*)\$");
+
 
   static const String O = "o";
   static const String N = "n";
+
 
 
   static const String typeSearchRecent = "Chats";
@@ -470,17 +533,76 @@ class Constants {
   static const String locationPermission = "MirrorFly needs access to your location in order to share your current location.";
   static const String contactPermission = "To help you connect with friends and family, allow Mirrorfly access to your contacts.";
   static const String audioPermission = "To send audio messages, allow MirrorFly access to your Microphone.";
+
+  static const String contactPermissionDenied = "MirrorFly need the Contacts Permission in order to help you connect with friends and family, but they have been permanently denied. Please continue to app settings, select \"Permissions\", and enable \"Contacts\"";
+  static const String locationPermissionDenied = "MirrorFly need the Location Permission in order to attach a location, but they have been permanently denied. Please continue to app settings, select \"Permissions\", and enable \"Location\".";
+  static const String cameraPermissionDenied = "MirrorFly need the Camera and Storage Permission in order to capture photos and video, but they have been permanently denied. Please continue to app settings, select \"Permissions\", and enable \"Camera\" and \"Storage\".";
+  static const String storagePermissionDenied = "MirrorFly need the Storage Permission in order to attach photos, media, and files, but they have been permanently denied. Please continue to app settings, select \"Permissions\", and enable \"Storage\".";
+  static const String microPhonePermissionDenied = "MirrorFly need the Microphone Permission in order to send audio messages, but they have been permanently denied. Please continue to app settings, select \"Permissions\", and enable \"Microphone\".";
+  static const String audioCallPermissionDenied = "MirrorFly need the Microphone Permission in order to call Family, but they have been permanently denied. Please continue to app settings, select \"Permissions\", and enable \"Microphone\".";
+  static const String videoCallPermissionDenied = "MirrorFly need the Microphone and Camera Permissions in order to call Family, but they have been permanently denied. Please continue to app settings, select \"Permissions\", and enable \"Microphone\" and \"Camera\".";
+
+  static const String noInternetConnection = "Please check your internet connection";
+  static const String adminBlockedMessage ="This application is no longer available for you.";
+  static const String adminBlockedMessageLabel ="Please contact admin if you have any query.";
+  static const String supportMail ="contussupport@gmail.com";
+  static const String httpStatusCode = "http_status_code";
+
+  static const String googleTranslationLabel = "Translate Message";
+  static const String googleTranslationMessage = "Enable Translate Message to choose Translation Language";
+  static const String googleTranslationLanguageLable = "Choose Translation Language";
+  static const String googleTranslationLanguageDoubleTap = "Double Tap the received messages to translate";
+  static const String googleTranslateKey = "AIzaSyCdwzAZR6tx8KB-2dMn0KzSI1V0LpsYdH0";
+
+  static const String editBusyStatus = "Edit Busy Status Message";
+  static const String yourBusyStatus = "Your Busy Status";
+  static const String newBusyStatus = "Select your new Status";
+  static const String busyStatusDescription = "Your busy status will be set as auto-response to the messages received from individuals.";
+
+  static const String autoDownload = "Auto Download";
+  static const String autoDownloadLable = "Enable “Auto download” to turn all types of files received readily viewable";
+  static const String dataUsageSettings = "Data Usage Settings";
+  static const String dataUsageSettingsLable = "Setup your mobile and wifi data usage based on media type";
+  static const String mediaAutoDownload = "Media Auto download";
+  static const String whenUsingMobileData = "When using Mobile Data";
+  static const String whenUsingWifiData = "When connected on Wi-Fi";
+  static const List<String> mediaTypes = ["Photos","Videos","Audio","Documents"];
+  static const photo="Photos";
+  static const audio="Videos";
+  static const video="Audio";
+  static const document="Documents";
+
 }
 
 Future<void> launchWeb(String url) async{
-  if (await canLaunchUrl(Uri.parse(url))) {
-    await launchUrl(Uri.parse(url));
-  } else {
-    throw "Could not launch $url";
+  if(await AppUtils.isNetConnected()) {
+    if (await canLaunchUrl(Uri.parse(url))) {
+      await launchUrl(Uri.parse(url),mode: LaunchMode.externalApplication,);
+    } else {
+      throw "Could not launch $url";
+    }
+  }else{
+    toToast(Constants.noInternetConnection);
+  }
+}
+
+Future<void> launchInWebViewOrVC(String url,String title) async {
+  if(await AppUtils.isNetConnected()) {
+    if (!await launchUrl(
+      Uri.parse(url),
+      mode: LaunchMode.inAppWebView,
+      webViewConfiguration: WebViewConfiguration(
+          headers: <String, String>{'my_header_key': title}),
+    )) {
+      throw Exception('Could not launch $url');
+    }
+  }else{
+    toToast(Constants.noInternetConnection);
   }
 }
 
 Widget forMessageTypeIcon(String messageType) {
+  // debugPrint("messagetype $messageType");
   switch (messageType.toUpperCase()) {
     case Constants.mImage:
       return SvgPicture.asset(
@@ -522,14 +644,15 @@ Widget forMessageTypeIcon(String messageType) {
   }
 }
 
-String? forMessageTypeString(String messageType) {
+String? forMessageTypeString(String messageType, {String? content}) {
+  mirrorFlyLog("content", content.toString());
   switch (messageType.toUpperCase()) {
     case Constants.mImage:
-      return "Image";
+      return content.checkNull().isNotEmpty ? content : "Image";
     case Constants.mAudio:
       return "Audio";
     case Constants.mVideo:
-      return "Video";
+      return content.checkNull().isNotEmpty ? content : "Video";
     case Constants.mDocument:
       return "Document";
     case Constants.mFile:

@@ -5,6 +5,7 @@
 import 'dart:convert';
 
 RecentChat recentChatFromJson(String str) => RecentChat.fromJson(json.decode(str));
+RecentChatData recentChatDataFromJson(String str) => RecentChatData.fromJson(json.decode(str));
 
 String recentChatToJson(RecentChat data) => json.encode(data.toJson());
 
@@ -33,7 +34,7 @@ class RecentChatData {
     this.isBroadCast,
     this.isChatArchived,
     this.isChatPinned,
-    this.isConversationUnRead,
+    this.isConversationUnRead,//// need to check
     this.isGroup,
     this.isGroupInOfflineMode,
     this.isItSavedContact,
@@ -99,7 +100,8 @@ class RecentChatData {
     lastMessageContent: json["lastMessageContent"],
     lastMessageId: json["lastMessageId"],
     lastMessageStatus: json["lastMessageStatus"],
-    lastMessageTime: json["lastMessageTime"],
+    // lastMessageTime: Platform.isAndroid ? json["lastMessageTime"] : json["isGroup"] ? json["lastMessageTime"] * 1000 : json["lastMessageTime"],
+    lastMessageTime: json["lastMessageTime"].toInt().toString().length == 13 ? json["lastMessageTime"] * 1000 : json["lastMessageTime"],
     lastMessageType: json["lastMessageType"],
     nickName: json["nickName"],
     profileImage: json["profileImage"],

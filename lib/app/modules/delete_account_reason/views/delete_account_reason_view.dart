@@ -38,11 +38,11 @@ class DeleteAccountReasonView extends GetView<DeleteAccountReasonController> {
                           ? null
                           : controller.reasonValue.value,
                       icon: const Icon(Icons.keyboard_arrow_down),
-                      hint: const Text("Select a reason"),
+                      hint: const Text("Select a reason",style: TextStyle(fontWeight: FontWeight.normal),),
                       items: controller.deleteReasons.map((String items) {
                         return DropdownMenuItem(
                           value: items,
-                          child: Text(items),
+                          child: Text(items,style: const TextStyle(fontWeight: FontWeight.normal),),
                         );
                       }).toList(),
                       onChanged: (newValue) {
@@ -55,17 +55,16 @@ class DeleteAccountReasonView extends GetView<DeleteAccountReasonController> {
                   ),
                   TextField(
                     keyboardType: TextInputType.multiline,
-                    minLines: 1,
-                    maxLines: 4,
+                    maxLength: 250,
+                    maxLines: null,
+                    focusNode: controller.focusNode,
                     controller: controller.feedback,
                     decoration: const InputDecoration(
                       hintText: "Tell us how we can improve",
-                      enabledBorder: UnderlineInputBorder(
-                        borderSide: BorderSide(color: Colors.grey),
-                      ),
-                      focusedBorder: UnderlineInputBorder(
-                        borderSide: BorderSide(color: buttonBgColor),
-                      ),
+                      hintStyle: TextStyle(fontWeight: FontWeight.normal),
+                      counterText: '',
+                      focusedBorder: UnderlineInputBorder(borderSide: BorderSide(color: dividerColor)),
+                      border: UnderlineInputBorder(borderSide: BorderSide(color: dividerColor,width: 0)),
                     ),
                   ),
                   const SizedBox(

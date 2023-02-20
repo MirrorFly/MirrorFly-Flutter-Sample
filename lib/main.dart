@@ -14,6 +14,7 @@ import 'package:mirror_fly_demo/app/data/pushnotification.dart';
 import 'package:mirror_fly_demo/app/modules/dashboard/bindings/dashboard_binding.dart';
 import 'package:mirror_fly_demo/app/modules/login/bindings/login_binding.dart';
 import 'app/data/session_management.dart';
+import 'app/model/reply_hash_map.dart';
 import 'app/modules/profile/bindings/profile_binding.dart';
 import 'app/routes/app_pages.dart';
 
@@ -32,6 +33,7 @@ import 'package:google_maps_flutter_platform_interface/google_maps_flutter_platf
 // }
 bool shouldUseFirebaseEmulator = false;
 Future<void> main() async {
+  //Get.put<NetworkManager>(NetworkManager());
 // Require Hybrid Composition mode on Android.
   final GoogleMapsFlutterPlatform mapsImplementation =
       GoogleMapsFlutterPlatform.instance;
@@ -40,7 +42,9 @@ Future<void> main() async {
   }
   WidgetsFlutterBinding.ensureInitialized();
   await SessionManagement.onInit();
+  ReplyHashMap.init();
   FlyChat.getSendData().then((value) {
+    debugPrint("notification value ===> $value");
     SessionManagement.setChatJid(value.checkNull());
   });
   FlyChat.cancelNotifications();
@@ -70,7 +74,7 @@ class MyApp extends StatelessWidget{
       title: "MirrorFly",
       theme: MirrorFlyAppTheme.theme,
       debugShowCheckedModeBanner: false,
-      initialBinding: getBinding(),
+      //initialBinding: getBinding(),
       initialRoute: SessionManagement.getEnablePin() ? Routes.pin : getInitialRoute(),
       //initialRoute: AppPages.INITIAL,
       getPages: AppPages.routes,
@@ -90,20 +94,34 @@ Bindings? getBinding(){
 }
 
 String getInitialRoute()  {
-  if(SessionManagement.getLogin()){
-    if(SessionManagement.getName().checkNull().isNotEmpty && SessionManagement.getMobileNumber().checkNull().isNotEmpty){
-      debugPrint("=====CHAT ID=====");
-      debugPrint(SessionManagement.getChatJid());
-      if(SessionManagement.getChatJid().checkNull().isEmpty) {
-        return AppPages.dashboard;
-      }else{
-        return "${AppPages.chat}?jid=${SessionManagement.getChatJid().checkNull()}&from_notification=true";
+  if(!SessionManagement.adminBlocked()) {
+    if (SessionManagement.getLogin()) {
+      if (SessionManagement
+          .getName()
+          .checkNull()
+          .isNotEmpty && SessionManagement
+          .getMobileNumber()
+          .checkNull()
+          .isNotEmpty) {
+        debugPrint("=====CHAT ID=====");
+        debugPrint(SessionManagement.getChatJid());
+        if (SessionManagement
+            .getChatJid()
+            .checkNull()
+            .isEmpty) {
+          return AppPages.dashboard;
+        } else {
+          return "${AppPages.chat}?jid=${SessionManagement.getChatJid()
+              .checkNull()}&from_notification=true";
+        }
+      } else {
+        return AppPages.profile;
       }
-    }else{
-      return AppPages.profile;
+    } else {
+      return AppPages.initial;
     }
   }else{
-    return AppPages.initial;
+    return AppPages.adminBlocked;
   }
 }
 

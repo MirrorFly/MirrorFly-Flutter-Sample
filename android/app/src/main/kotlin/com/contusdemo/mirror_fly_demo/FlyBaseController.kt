@@ -22,6 +22,7 @@ import com.contus.xmpp.chat.models.Profile
 import com.contusdemo.mirror_fly_demo.notification.AppNotificationManager
 import com.contusflysdk.AppUtils
 import com.contusflysdk.api.*
+import com.contusflysdk.api.FlyCore.insertMyBusyStatus
 import com.contusflysdk.api.chat.*
 import com.contusflysdk.api.contacts.ContactManager
 import com.contusflysdk.api.contacts.ProfileDetails
@@ -34,10 +35,8 @@ import com.contusflysdk.backup.BackupManager
 import com.contusflysdk.backup.RestoreListener
 import com.contusflysdk.backup.RestoreManager
 import com.contusflysdk.media.MediaUploadHelper
-import com.contusflysdk.utils.NetworkConnection
-import com.contusflysdk.utils.ThumbSize
-import com.contusflysdk.utils.UpDateWebPassword
-import com.contusflysdk.utils.VideoRecUtils
+import com.contusflysdk.models.MediaDownloadSettingsModel
+import com.contusflysdk.utils.*
 import com.google.gson.Gson
 import io.flutter.Log
 import io.flutter.embedding.android.FlutterActivity
@@ -402,8 +401,11 @@ open class FlyBaseController(activity: FlutterActivity) : MethodChannel.MethodCa
                             })
 
                         } else {
-                            // Register user failed print throwable to find the exception details.
-                            result.error("500", throwable?.message.toString(), null)
+                            if (data["http_status_code"] == 403) {
+                                result.error("403", throwable?.message.toString(), null)
+                            }else{
+                                result.error("500", data["message"].toString(), null)
+                            }
                         }
                     }
                 } catch (e: Exception) {
@@ -616,7 +618,13 @@ open class FlyBaseController(activity: FlutterActivity) : MethodChannel.MethodCa
                 val myUserStatus: ProfileStatus = FlyCore.getMyProfileStatus()!!
                 result.success(myUserStatus.tojsonString())
             }
-            call.method.equals("getMyBusyStatus") -> {
+            call.method.equals("insertBusyStatus") -> {
+                val busyStatus = call.argument<String>("busy_status") ?: ""
+                insertMyBusyStatus(busyStatus)
+                FlyCore.setMyBusyStatus(busyStatus)
+                result.success(true)
+            }
+            call.method.equals("getMyBusyStatus") -> {//{"id": null, "status": "", "isCurrentStatus": false}
                 val myBusyStatus: BusyStatus = FlyCore.getMyBusyStatus()!!
                 result.success(myBusyStatus.tojsonString())
             }
@@ -643,10 +651,10 @@ open class FlyBaseController(activity: FlutterActivity) : MethodChannel.MethodCa
                 result.success(true)
             }
             call.method.equals("deleteBusyStatus") -> {
-                val id = call.argument<Long>("id") ?: 0
+                val id = call.argument<String>("id") ?: "0"
                 val status = call.argument<String>("status") ?: ""
                 val isCurrentStatus = call.argument<Boolean>("isCurrentStatus") ?: false
-                val profileStatus = BusyStatus(id, status, isCurrentStatus)
+                val profileStatus = BusyStatus(id.toLong(), status, isCurrentStatus)
                 FlyCore.deleteBusyStatus(profileStatus)
                 result.success(true)
             }
@@ -818,9 +826,7 @@ open class FlyBaseController(activity: FlutterActivity) : MethodChannel.MethodCa
                 ChatManager.copyTextMessages(messageIdlist).tojsonString()
             }
             call.method.equals("saveUnsentMessage") -> {
-                val jid = call.argument<String>("jid") ?: ""
-                val message = call.argument<String>("message") ?: ""
-                FlyMessenger.saveUnsentMessage(jid,message)
+                saveUnsentMessage(call, result)
             }
             call.method.equals("setCustomValue") -> {
                 val mid = call.argument<String>("message_id") ?: ""
@@ -844,8 +850,7 @@ open class FlyBaseController(activity: FlutterActivity) : MethodChannel.MethodCa
                 ContactManager.inviteUserViaSMS(mobile_no,message)
             }
             call.method.equals("getUnsentMessageOfAJid") -> {
-                val jid = call.argument<String>("jid") ?: ""
-                result.success(FlyMessenger.getUnsentMessageOfAJid(jid))
+                getUnsentMessageOfAJid(call,result);
             }
             call.method.equals("cancelBackup") -> {
                 BackupManager.cancelBackup()
@@ -865,9 +870,9 @@ open class FlyBaseController(activity: FlutterActivity) : MethodChannel.MethodCa
                     }
                 })
             }
-            call.method.equals("cancelRestore") -> {
-                RestoreManager.cancelRestore()
-            }
+//            call.method.equals("cancelRestore") -> {
+//                RestoreManager.cancelRestore()
+//            }
             call.method.equals("cancelRestore") -> {
                 val filepath = call.argument<String>("file") ?: ""
                 val file = File(filepath)
@@ -1118,8 +1123,9 @@ open class FlyBaseController(activity: FlutterActivity) : MethodChannel.MethodCa
             }
             call.method.equals("isAdmin") -> {
                 val jid = call.argument<String>("jid") ?: ""
+                val groupJid = call.argument<String>("group_jid") ?: ""
                 val isAdmin =
-                    GroupManager.isAdmin(jid, SharedPreferenceManager.instance.currentUserJid)
+                    GroupManager.isAdmin(groupJid , jid)
                 //DebugUtilis.v("GroupManager.isAdmin", isAdmin.toString())
                 result.success(isAdmin)
             }
@@ -1200,13 +1206,16 @@ open class FlyBaseController(activity: FlutterActivity) : MethodChannel.MethodCa
             call.method.equals("getDefaultNotificationUri") -> {
                 getDefaultNotificationUri(result)
             }
-            call.method.equals("setNotificationUri") -> {
+            /*call.method.equals("setNotificationUri") -> {
                 setNotificationUri(call)
-            }
+            }*/
             call.method.equals("setNotificationSound") -> {
                 setNotificationSound(call)
             }
-            call.method.equals("setNotificationSound") -> {
+            call.method.equals("getNotificationSound") -> {
+                getNotificationSound(result)
+            }
+            call.method.equals("setMuteNotification") -> {
                 setMuteNotification(call)
             }
             call.method.equals("setNotificationVibration") -> {
@@ -1231,8 +1240,8 @@ open class FlyBaseController(activity: FlutterActivity) : MethodChannel.MethodCa
                 result.success(true)
             }
             call.method.equals("getRingtoneName") -> {
-                val uri = call.argument<String>("ringtone_uri")
-                result.success(getRingtoneName(uri))
+//                val uri = call.argument<String>("ringtone_uri")
+                result.success(getRingtoneName())
             }
             call.method.equals("delete_account") -> {
                 deleteAccount(call, result)
@@ -1246,10 +1255,90 @@ open class FlyBaseController(activity: FlutterActivity) : MethodChannel.MethodCa
             call.method.equals("getAllGroups") -> {
                 getAllGroups(call, result)
             }
+            call.method.equals("setMediaAutoDownload") -> {
+                setMediaAutoDownload(call)
+            }
+            call.method.equals("getMediaAutoDownload") -> {
+                getMediaAutoDownload(result)
+            }
+            call.method.equals("saveMediaSettings") -> {
+                saveMediaSettings(call)
+            }
+            call.method.equals("getMediaSetting") -> {
+                getMediaSetting(call,result)
+            }
+            call.method.equals("saveUnsentMessage") -> {
+                saveUnsentMessage(call,result)
+            }
+            call.method.equals("getUnsentMessageOfAJid") -> {
+                getUnsentMessageOfAJid(call,result)
+            }
+            call.method.equals("getJidFromPhoneNumber") -> {
+                getJidFromPhoneNumber(call,result)
+            }
             else -> {
                 result.notImplemented()
             }
 
+        }
+    }
+
+    private fun getJidFromPhoneNumber(call: MethodCall,result: MethodChannel.Result){
+        val mobileNumber = call.argument<String>("mobileNumber") ?: ""
+        val countryCode = call.argument<String>("countryCode") ?: ""
+        val userJID = Utils.getJidFromPhoneNumber(mContext,mobileNumber,countryCode)
+        result.success(userJID ?: "")
+    }
+    
+    private fun getUnsentMessageOfAJid(call: MethodCall,result: MethodChannel.Result){
+        val jid = call.argument<String>("jid") ?: ""
+        val data = FlyMessenger.getUnsentMessageOfAJid(jid)
+        result.success(data);
+    }
+    
+    private fun saveUnsentMessage(call: MethodCall,result: MethodChannel.Result){
+        val jid = call.argument<String>("jid") ?: ""
+        val texMessage = call.argument<String>("texMessage") ?: ""
+        FlyMessenger.saveUnsentMessage(jid, texMessage)
+    }
+
+    private fun setMediaAutoDownload(call: MethodCall){
+        val enable = call.argument<Boolean>("enable") ?: false
+        SharedPreferenceManager.instance.storeBoolean(SharedPreferenceManager.MEDIA_AUTO_DOWNLOAD,enable);
+    }
+
+    private fun getMediaAutoDownload(result: MethodChannel.Result){
+        val enable = SharedPreferenceManager.instance.getBoolean(SharedPreferenceManager.MEDIA_AUTO_DOWNLOAD)
+        result.success(enable);
+    }
+
+    private fun saveMediaSettings(call: MethodCall){
+        val Photos = call.argument<Boolean>("Photos") ?: false
+        val Videos = call.argument<Boolean>("Videos") ?: false
+        val Audio = call.argument<Boolean>("Audio") ?: false
+        val Documents = call.argument<Boolean>("Documents") ?: false
+        val NetworkType = call.argument<Int>("NetworkType") ?: 0
+        val settingsUtil = SettingsUtil()
+        val mobileDataSettingsModel = MediaDownloadSettingsModel()
+        mobileDataSettingsModel.isShouldAutoDownloadPhotos = Photos
+        mobileDataSettingsModel.isShouldAutoDownloadVideos = Videos
+        mobileDataSettingsModel.isShouldAutoDownloadAudios = Audio
+        mobileDataSettingsModel.isShouldAutoDownloadDocuments = Documents
+        mobileDataSettingsModel.dataConnectionNetworkType = NetworkType // 0 is TYPE_MOBILE , 1 is TYPE_WIFI
+        settingsUtil.saveMediaSettings(mobileDataSettingsModel)
+    }
+
+    private fun getMediaSetting(call: MethodCall,result: MethodChannel.Result){
+        val NetworkType = call.argument<Int>("NetworkType") ?: 0
+        val type = call.argument<String>("type") ?: ""
+        val settingsUtil = SettingsUtil()
+        val net = if (NetworkType==0) SharedPreferenceManager.CONNECTION_TYPE_MOBILE else SharedPreferenceManager.CONNECTION_TYPE_WIFI
+        when(type){
+            "Photos" -> result.success(settingsUtil.getMediaSetting(net).isShouldAutoDownloadPhotos);
+            "Videos" -> result.success(settingsUtil.getMediaSetting(net).isShouldAutoDownloadVideos);
+            "Audio" -> result.success(settingsUtil.getMediaSetting(net).isShouldAutoDownloadAudios);
+            "Documents" -> result.success(settingsUtil.getMediaSetting(net).isShouldAutoDownloadDocuments);
+            "" -> result.success(false);
         }
     }
 
@@ -1947,7 +2036,7 @@ open class FlyBaseController(activity: FlutterActivity) : MethodChannel.MethodCa
 //    }
 
     private fun getMessagesOfJid(call: MethodCall, result: MethodChannel.Result) {
-        if (AppUtils.isNetConnected(mContext)) {
+        //if (AppUtils.isNetConnected(mContext)) {
             if (!call.hasArgument("JID")) {
                 result.error("404", "User JID Required", null)
             } else {
@@ -1963,7 +2052,7 @@ open class FlyBaseController(activity: FlutterActivity) : MethodChannel.MethodCa
                 }
             }
 
-        }
+        //}
     }
 
     private fun getUserList(call: MethodCall, result: MethodChannel.Result) {
@@ -2081,7 +2170,7 @@ open class FlyBaseController(activity: FlutterActivity) : MethodChannel.MethodCa
     }
 
     private fun setMyProfileStatus(call: MethodCall, result: MethodChannel.Result) {
-        if (AppUtils.isNetConnected(mContext)) {
+        //if (AppUtils.isNetConnected(mContext)) {
             val status = call.argument<String>("status") ?: ""
             if (status.isNotEmpty()) {
                 FlyCore.setMyProfileStatus(status) { isSuccess, _, data ->
@@ -2094,9 +2183,9 @@ open class FlyBaseController(activity: FlutterActivity) : MethodChannel.MethodCa
                     result.success(data.tojsonString())
                 }
             }
-        } else {
+        /*} else {
             result.error("500", "Please Check Your Internet connection", null)
-        }
+        }*/
     }
 
     private fun getUserProfile(call: MethodCall, result: MethodChannel.Result) {
@@ -2308,7 +2397,7 @@ open class FlyBaseController(activity: FlutterActivity) : MethodChannel.MethodCa
 
     private fun getRecentChatList(result: MethodChannel.Result) {
         println("recent here")
-        if (AppUtils.isNetConnected(mContext)) {
+        //if (AppUtils.isNetConnected(mContext)) {
             //progress.show()
             FlyCore.getRecentChatList { isSuccess, throwable, data ->
                 //progress.dismiss()
@@ -2321,10 +2410,10 @@ open class FlyBaseController(activity: FlutterActivity) : MethodChannel.MethodCa
                 }
                 Log.d("Recent ==>", data.toString())
             }
-        } else {
+        /*} else {
             //Toast.makeText(this, "Please Check Your Internet connection", Toast.LENGTH_SHORT).show()
             result.error("500", "Please Check Your Internet connection", null)
-        }
+        }*/
     }
 
     private fun getImageThumbImage(imagePath: String?): String {
@@ -2558,7 +2647,7 @@ open class FlyBaseController(activity: FlutterActivity) : MethodChannel.MethodCa
         val groupName = call.argument<String>("group_name") ?: ""
         val members = call.argument<List<String>>("members") ?: arrayListOf()
         val fileTemp = call.argument<String>("file") ?: ""
-        val file = if (fileTemp.isNotEmpty()) File(fileTemp) else null
+        val file = if (fileTemp.trim().isNotEmpty()) File(fileTemp) else null
         GroupManager.createGroup(groupName, members,
             file, { isSuccess, throwable, hashmap ->
                 if (isSuccess) {
@@ -2674,8 +2763,8 @@ open class FlyBaseController(activity: FlutterActivity) : MethodChannel.MethodCa
 //    }
 
     private fun leaveFromGroup(call: MethodCall, result: MethodChannel.Result) {
-        val jid = call.argument<String>("jid") ?: ""
-        GroupManager.leaveFromGroup(jid) { isSuccess, _, _ ->
+        val groupJid = call.argument<String>("groupJid") ?: ""
+        GroupManager.leaveFromGroup(groupJid) { isSuccess, _, _ ->
             if (isSuccess) {
                 result.success(true)
             } else {
@@ -2727,6 +2816,7 @@ open class FlyBaseController(activity: FlutterActivity) : MethodChannel.MethodCa
         ContactManager.getUserLastSeenTime(jid, object : ContactManager.LastSeenListener {
             override fun onFailure(message: String) {
                 /* No Implementation Needed */
+                result.success("")
             }
 
             override fun onSuccess(lastSeenTime: String) {
@@ -2779,13 +2869,13 @@ open class FlyBaseController(activity: FlutterActivity) : MethodChannel.MethodCa
     private var existingCustomTone = "None"
     private fun showCustomTones(call: MethodCall, result: MethodChannel.Result) {
         ringToneResult = result
-        existingCustomTone = call.argument<String>("ringtone_uri") ?: "None"
-        //val existingCustomTone = Uri.parse(SharedPreferenceManager.getString(Constants.NOTIFICATION_URI))
-        val customToneUri = Uri.parse(existingCustomTone).toString()
+//        existingCustomTone = call.argument<String>("ringtone_uri") ?: "None"
+        val customToneUri = Uri.parse(SharedPreferenceManager.instance.getString("notification_uri"))
+//        val customToneUri = Uri.parse(existingCustomTone).toString()
         val intent = Intent(RingtoneManager.ACTION_RINGTONE_PICKER)
         intent.putExtra(RingtoneManager.EXTRA_RINGTONE_TYPE, RingtoneManager.TYPE_NOTIFICATION)
         intent.putExtra(RingtoneManager.EXTRA_RINGTONE_TITLE, "Notification")
-        if (customToneUri != "None")
+        if (customToneUri != null)
             intent.putExtra(RingtoneManager.EXTRA_RINGTONE_EXISTING_URI, customToneUri)
         (mContext as Activity).startActivityForResult(intent, Constants.ACTIVITY_REQ_CODE)
         /* setting isActivityStartedForResult to true to avoid xmpp disconnection */
@@ -2794,28 +2884,37 @@ open class FlyBaseController(activity: FlutterActivity) : MethodChannel.MethodCa
 
     fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         /* setting isActivityStartedForResult to false for xmpp disconnection */
+        Log.e("Android Notification", "onActivty Result")
         ChatManager.isActivityStartedForResult = false
         try {
             if (resultCode == Activity.RESULT_OK && requestCode == Constants.ACTIVITY_REQ_CODE &&
                 data?.parcelable<Parcelable>(RingtoneManager.EXTRA_RINGTONE_PICKED_URI) != null
             ) {
+
+
                 val selectedToneUri =
                     (data.parcelable<Parcelable>(RingtoneManager.EXTRA_RINGTONE_PICKED_URI)
                         .toString())
+                Log.e("Android Notification", selectedToneUri)
                 //SharedPreferenceManager.setString(com.contusfly.utils.Constants.NOTIFICATION_URI, data.getParcelableExtra<Parcelable>(RingtoneManager.EXTRA_RINGTONE_PICKED_URI).toString())
                 //binding.notificationToneLabel.setText(getRingtoneName(SharedPreferenceManager.getString(com.contusfly.utils.Constants.NOTIFICATION_URI)))
-                ringToneResult.success(selectedToneUri)
                 setNotificationUri(selectedToneUri)
+                ringToneResult.success(selectedToneUri)
+
             }
 
             if (data == null) {
-                ringToneResult.success(existingCustomTone)
+                Log.e("Android Notification", "data is null")
                 setNotificationUri(existingCustomTone)
+                ringToneResult.success(existingCustomTone)
+
                 //SharedPreferenceManager.setString(com.contusfly.utils.Constants.NOTIFICATION_URI, SharedPreferenceManager.getString(com.contusfly.utils.Constants.NOTIFICATION_URI))
                 //binding.notificationToneLabel.setText(getRingtoneName(SharedPreferenceManager.getString(com.contusfly.utils.Constants.NOTIFICATION_URI)))
             } else if (data.parcelable<Parcelable>(RingtoneManager.EXTRA_RINGTONE_PICKED_URI) == null) {
-                ringToneResult.success("None")
+                Log.e("Android Notification", "ringtone is null")
                 setNotificationUri("")
+                ringToneResult.success("None")
+
                 //SharedPreferenceManager.setString(com.contusfly.utils.Constants.NOTIFICATION_URI, "None")
                 //binding.notificationToneLabel.setText(getRingtoneName(SharedPreferenceManager.getString(com.contusfly.utils.Constants.NOTIFICATION_URI)))
             }
@@ -2825,9 +2924,14 @@ open class FlyBaseController(activity: FlutterActivity) : MethodChannel.MethodCa
 
     }
 
-    private fun getRingtoneName(uri: String?): String? {
+    private fun getRingtoneName(): String? {
         val default = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION).toString()
-        val ringtone = RingtoneManager.getRingtone(mContext, Uri.parse(uri ?: default))
+        val storedNotification = SharedPreferenceManager.instance.getString("notification_uri")
+        Log.e("stored notification", storedNotification)
+        if(storedNotification == ""){
+            return RingtoneManager.getRingtone(mContext, Uri.parse(default)).getTitle(mContext)
+        }
+        val ringtone = RingtoneManager.getRingtone(mContext, Uri.parse(storedNotification))
         return ringtone.getTitle(mContext)
 
     }
@@ -2861,7 +2965,7 @@ open class FlyBaseController(activity: FlutterActivity) : MethodChannel.MethodCa
     }
 
     override fun onMediaStatusUpdated(message: ChatMessage) {
-        //Log.e(TAG, "media Status Updated ==> ${message.messageId}")
+        Log.e(TAG, "media Status Updated ==> ${message.messageId}")
         MediaStatusUpdatedStreamHandler.onMediaStatusUpdated?.success(message.tojsonString())
     }
 
@@ -3006,6 +3110,7 @@ open class FlyBaseController(activity: FlutterActivity) : MethodChannel.MethodCa
     }
 
     override fun onContactSyncComplete(isSuccess: Boolean) {
+        Log.d("onContactSyncComplete",isSuccess.toString())
         onContactSyncCompleteStreamHandler.onContactSyncComplete?.success(isSuccess)
     }
 
@@ -3118,17 +3223,33 @@ open class FlyBaseController(activity: FlutterActivity) : MethodChannel.MethodCa
     }
     override fun onChatTypingStatus(fromUserJid: String, status: TypingStatus) {
         val map = JSONObject()
-        map.put("fromUserJid", fromUserJid)
-        map.put("status", status)
-        onChatTypingStatusStreamHandler.onChatTypingStatus?.success(map.toString())
+//        map.put("fromUserJid", fromUserJid)
+//        map.put("status", status)
+//        onChatTypingStatusStreamHandler.onChatTypingStatus?.success(map.toString())
+        map.put("singleOrgroupJid", fromUserJid)
+        map.put("userId", fromUserJid)
+        map.put("composing", getTypingStatus(status))
+        setTypingStatusStreamHandler.setTypingStatus?.success(map.toString())
+    }
+
+    private fun getTypingStatus(status: TypingStatus): String {
+        return if(status == TypingStatus.COMPOSING){
+            "composing"
+        }else{
+            "Gone"
+        }
     }
 
     override fun onGroupTypingStatus(groupJid: String, groupUserJid: String, status: TypingStatus) {
         val map = JSONObject()
-        map.put("groupJid", groupJid)
-        map.put("groupUserJid", groupUserJid)
-        map.put("status", status)
-        onGroupTypingStatusStreamHandler.onGroupTypingStatus?.success(map.toString())
+//        map.put("groupJid", groupJid)
+//        map.put("groupUserJid", groupUserJid)
+//        map.put("status", status)
+//        onGroupTypingStatusStreamHandler.onGroupTypingStatus?.success(map.toString())
+        map.put("singleOrgroupJid", groupJid)
+        map.put("userId", groupUserJid)
+        map.put("composing", status)
+        setTypingStatusStreamHandler.setTypingStatus?.success(map.toString())
     }
 
     private fun getDefaultNotificationUri(result: MethodChannel.Result) {
@@ -3137,15 +3258,19 @@ open class FlyBaseController(activity: FlutterActivity) : MethodChannel.MethodCa
         result.success(default)
     }
     private fun setNotificationUri(uri: String?){
+        Log.e("Android Notification set", uri.toString())
         SharedPreferenceManager.instance.storeString("notification_uri",uri)
     }
-    private fun setNotificationUri(call: MethodCall){
+    /*private fun setNotificationUri(call: MethodCall){
         val uri = call.argument<String>("uri") ?: ""
         SharedPreferenceManager.instance.storeString("notification_uri",uri)
-    }
+    }*/
     private fun setNotificationSound(call: MethodCall){
         val enable = call.argument("enable") ?: false
         SharedPreferenceManager.instance.storeBoolean("notification_sound",enable)
+    }
+    private fun getNotificationSound(result: MethodChannel.Result) {
+        result.success(SharedPreferenceManager.instance.getBoolean("notification_sound"))
     }
     private fun setMuteNotification(call: MethodCall){
         val enable = call.argument("enable") ?: false

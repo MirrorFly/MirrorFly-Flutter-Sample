@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 12 12">
+  <g id="Group_7516" data-name="Group 7516" transform="translate(-231.135 -448.135)">
+    <g id="Rectangle_3766" data-name="Rectangle 3766" transform="translate(231.135 448.135)" fill="#30c076" stroke="#fff" stroke-width="1">
+      <rect width="12" height="12" rx="6" stroke="none"/>
+      <rect x="0.5" y="0.5" width="11" height="11" rx="5.5" fill="none"/>
+    </g>
+    <path id="Shape_1_copy_2" data-name="Shape 1 copy 2" d="M322.629,187.042a.253.253,0,0,0-.373,0l-3.161,3.354-1.215-1.289a.253.253,0,0,0-.373,0,.292.292,0,0,0,0,.4l1.4,1.487a.253.253,0,0,0,.373,0l3.348-3.552A.292.292,0,0,0,322.629,187.042Z" transform="translate(-82.942 265.213)" fill="#fff" stroke="#fff" stroke-width="0.3"/>
+  </g>
+</svg>

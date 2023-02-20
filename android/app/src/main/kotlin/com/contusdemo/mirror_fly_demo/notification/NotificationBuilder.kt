@@ -1,10 +1,12 @@
 package com.contusdemo.mirror_fly_demo.notification
 
+import android.Manifest
 import android.annotation.SuppressLint
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.graphics.*
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
@@ -12,6 +14,7 @@ import android.net.Uri
 import android.os.Build
 import android.text.TextUtils
 import android.util.Log
+import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.app.Person
@@ -33,7 +36,6 @@ import com.contusflysdk.api.contacts.ContactManager
 import com.contusflysdk.api.contacts.ProfileDetails
 import com.contusflysdk.api.models.ChatMessage
 import com.contusflysdk.media.MediaUploadHelper
-import okhttp3.internal.waitMillis
 
 object NotificationBuilder {
 
@@ -203,6 +205,9 @@ object NotificationBuilder {
         chatNotifications[notificationId]!!.unReadMessageCount++
         val unReadMessageCount  = if (chatNotifications.size == 1) getTotalUnReadMessageCount(notificationId) else chatNotifications[notificationId]?.unReadMessageCount ?:1
         LogMessage.i(TAG,"unReadMessageCount $unReadMessageCount")
+        val storedNotification = SharedPreferenceManager.instance.getString("notification_uri")
+
+        Log.e("Notification play sound", storedNotification)
         chatNotifications[notificationId]!!.unReadMessageCount = unReadMessageCount
         notificationCompatBuilder.apply {
             setStyle(messagingStyle)
@@ -214,6 +219,7 @@ object NotificationBuilder {
             setContentIntent(mainPendingIntent)
             setGroup(GROUP_KEY_MESSAGE)  // Adds the notification to the group sharing the specified key.
             setNumber(unReadMessageCount)
+            setSound(Uri.parse(storedNotification))
             setGroupAlertBehavior(NotificationCompat.GROUP_ALERT_SUMMARY)
             setCategory(NotificationCompat.CATEGORY_MESSAGE)
             priority = NotificationCompat.PRIORITY_HIGH
@@ -236,6 +242,10 @@ object NotificationBuilder {
 
         val mNotificationManagerCompat: NotificationManagerCompat =
             NotificationManagerCompat.from(context)
+        if (ActivityCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+            LogMessage.d("Firebase Message","Permission Issue")
+            return
+        }
         mNotificationManagerCompat.notify(notificationId, notificationCompatBuilder.build())
     }
 
@@ -273,6 +283,10 @@ object NotificationBuilder {
         if (chatNotifications.size > 0) {
             val mNotificationManagerCompat: NotificationManagerCompat =
                 NotificationManagerCompat.from(context)
+            if (ActivityCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+
+                return
+            }
             mNotificationManagerCompat.notify(SUMMARY_ID, summaryBuilder.build())
         }
     }

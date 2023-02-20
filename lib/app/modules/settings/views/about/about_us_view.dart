@@ -16,7 +16,7 @@ class AboutUsView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Contact Us'),
+        title: const Text('About Us'),
         automaticallyImplyLeading: true,
       ),
       body: Padding(
@@ -34,7 +34,11 @@ class AboutUsView extends StatelessWidget {
             const SizedBox(height: 16,),
             const Text(titleFaqMsg,style: textMsgStyle,),
             const SizedBox(height: 16,),
-            InkWell(child: const Text.rich(TextSpan(text: mirrorFly,style: TextStyle(fontSize: 17, decoration: TextDecoration.underline,))),onTap: ()=>launchWeb(websiteMirrorFly),)
+            InkWell(child: const Padding(
+              padding: EdgeInsets.symmetric(vertical: 8.0),
+              child: Text.rich(TextSpan(text: mirrorFly,style: TextStyle(fontSize: 17, decoration: TextDecoration.underline,color: Color(
+                  0xffa2a1a1)))),
+            ),onTap: ()=>launchWeb(websiteMirrorFly),)
           ],
         ),
       ),

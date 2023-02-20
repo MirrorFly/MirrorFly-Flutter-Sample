@@ -37,6 +37,9 @@ class SessionManagement {
   static Future setMobile(String mobile) async {
     await _preferences.setString("mobile", mobile);
   }
+  static Future setCountryCode(String countryCode) async {
+    await _preferences.setString("country_code", countryCode);
+  }
   static Future setUserJID(String jid) async {
     await _preferences.setString("user_jid", jid);
   }
@@ -85,6 +88,21 @@ class SessionManagement {
   static Future setChatJid(String setChatJid) async {
     await _preferences.setString("chatJid", setChatJid);
   }
+  static void setAdminBlocked(bool status) async {
+    await _preferences.setBool("admin_blocked", status);
+  }
+  static void setAutoDownloadEnable(bool status) async {
+    await _preferences.setBool("MediaAutoDownload", status);
+  }
+  static void setGoogleTranslationEnable(bool status) async {
+    await _preferences.setBool("TranslateLanguageChecked", status);
+  }
+  static void setGoogleTranslationLanguage(String language) async {
+    await _preferences.setString("LanguageName", language);
+  }
+  static void setGoogleTranslationLanguageCode(String languagecode) async {
+    await _preferences.setString("LanguageCode", languagecode);
+  }
   static Future clear()async{
     await _preferences.clear();
   }
@@ -106,13 +124,12 @@ class SessionManagement {
     });
   }
 
-  static bool getLogin() => _preferences.getBool("login") == null
-      ? false
-      : _preferences.getBool("login")!;
+  static bool getLogin() => _preferences.getBool("login") ?? false;
 
   static String? getChatJid() => _preferences.getString("chatJid");
   static String? getName() => _preferences.getString("name");
   static String? getMobileNumber() => _preferences.getString("mobileNumber");
+  static String? getCountryCode() => _preferences.getString("country_code") ?? "+91";
   static String? getUsername() => _preferences.getString("username");
   static String? getPassword() => _preferences.getString("password");
   static String? getUserJID() => _preferences.getString("user_jid").toString();
@@ -130,4 +147,9 @@ class SessionManagement {
   static bool getEnablePin() => _preferences.getBool("enable_pin") ?? false;
   static bool getEnableBio() => _preferences.getBool("enable_bio") ?? false;
   static bool? synced() => _preferences.getBool("synced");
+  static bool adminBlocked() => _preferences.getBool("admin_blocked") ?? false;
+  static bool isGoogleTranslationEnable() => _preferences.getBool("TranslateLanguageChecked") ?? false;
+  static bool isAutoDownloadEnable() => _preferences.getBool("MediaAutoDownload") ?? false;
+  static String getTranslationLanguage() => _preferences.getString("LanguageName") ?? "English";
+  static String getTranslationLanguageCode() => _preferences.getString("LanguageCode") ?? "en";
 }

@@ -15,12 +15,12 @@ class StatusData {
     this.status,
   });
 
-  int? id;
+  String? id;
   bool? isCurrentStatus;
   String? status;
 
   factory StatusData.fromJson(Map<String, dynamic> json) => StatusData(
-    id: json["id"],
+    id: json["id"].toString(),
     isCurrentStatus: json["isCurrentStatus"],
     status: json["status"],
   );

@@ -10,6 +10,9 @@ import UserNotifications
 import FlyXmpp
 import FlyCore
 import FlyCommon
+import AVFoundation
+import FlyDatabase
+import AudioToolbox
 
 //let BASE_URL = "https://api-preprod-sandbox.mirrorfly.com/api/v1/"
 let BASE_URL = "https://api-uikit-qa.contus.us/api/v1/"
@@ -52,33 +55,86 @@ class NotificationService: UNNotificationServiceExtension {
 //                self.bestAttemptContent = bestAttemptContent
 //                contentHandler(self.bestAttemptContent!)
 //            })
+        } else if payloadType == "adminblock" {
+            ChatSDK.Builder.initializeDelegate()
+            NotificationMessageSupport.shared.handleAdminBlockNotification(request.content.mutableCopy() as? UNMutableNotificationContent) {  bestAttemptContent in
+                contentHandler(bestAttemptContent!)
+            }
         }
         else {
+            /// Handle Push messages
             ChatSDK.Builder.initializeDelegate()
-            // Handle Message Push messages
-            NotificationMessageSupport.shared.didReceiveNotificationRequest(request.content.mutableCopy() as? UNMutableNotificationContent, onCompletion: { [self] bestAttemptContent in
+            NotificationMessageSupport.shared.didReceiveNotificationRequest(request.content.mutableCopy() as? UNMutableNotificationContent, onCompletion: { [self] bestAttemptContents in
                 FlyLog.DLog(param1: "#notification request ID", param2: "\(request.identifier)")
                 let center = UNUserNotificationCenter.current()
-                let (messageCount, chatCount) = ChatManager.getUNreadMessageAndChatCount()
+                let (messageCount, chatCount) = FlyDatabaseController.shared.recentManager.getUnreadMessageAndChatCountForUnmutedUsers()
                 if FlyDefaults.hideNotificationContent{
                     var titleContent = emptyString()
                     if chatCount == 1{
                         titleContent = "\(messageCount) \(messageCount == 1 ? "message" : "messages")"
-                    }else{
+                    } else {
                         titleContent = "\(messageCount) messages from \(chatCount) chats"
                     }
-                    bestAttemptContent?.title = FlyDefaults.appName + " (\(titleContent))"
-                    bestAttemptContent?.body = "New Message"
-                }else{
-                    if let userInfo = bestAttemptContent?.userInfo["message_id"] {
-                        print("Push Show title: \(bestAttemptContent?.title ?? "") body: \(bestAttemptContent?.body ?? ""), ID - \(userInfo)")
-                        FlyLog.DLog(param1: "NotificationMessageSupport id ", param2: "\(bestAttemptContent?.title ?? "") body: \(bestAttemptContent?.body ?? "")")
+                    bestAttemptContents?.title = FlyDefaults.appName + " (\(titleContent))"
+                    bestAttemptContents?.body = "New Message"
+                } else {
+                    if let userInfo = bestAttemptContents?.userInfo["message_id"] {
+                        print("Push Show title: \(bestAttemptContents?.title ?? "") body: \(bestAttemptContents?.body ?? ""), ID - \(userInfo)")
+                        FlyLog.DLog(param1: "NotificationMessageSupport id ", param2: "\(bestAttemptContents?.title ?? "") body: \(bestAttemptContents?.body ?? "")")
                     }
                 }
-                bestAttemptContent?.badge = messageCount as? NSNumber
-                self.bestAttemptContent = bestAttemptContent
+//                bestAttemptContent?.badge = messageCount as? NSNumber
+//                self.bestAttemptContent = bestAttemptContent
+//                contentHandler(self.bestAttemptContent!)
+//                FlyDefaults.lastNotificationId = request.identifier
+                
+                var canVibrate = true
+                if !FlyCoreController.shared.isContactMuted(jid: bestAttemptContents?.userInfo["from_user"] as? String ?? "") || !(FlyDefaults.isArchivedChatEnabled && ChatManager.getRechtChat(jid: bestAttemptContents?.userInfo["from_user"] as? String ?? "")?.isChatArchived ?? false){
+                    bestAttemptContents?.badge = messageCount as? NSNumber
+                }
+                
+                let chatType = (bestAttemptContents?.userInfo["chat_type"] as? String ?? "")
+                let messageId = (self.bestAttemptContent?.userInfo["message_id"] as? String ?? "").components(separatedBy: ",").last ?? ""
+                
+                self.bestAttemptContent = bestAttemptContents
+                
+                if FlyDatabaseController.shared.messageManager.getMessageFor(id: messageId)?.senderUserJid == FlyDefaults.myJid && (chatType == "chat" || chatType == "normal") {
+                    if !FlyUtils.isValidGroupJid(groupJid: FlyDatabaseController.shared.messageManager.getMessageFor(id: messageId)?.chatUserJid) {
+                        self.bestAttemptContent?.title = "You"
+                    }
+                    canVibrate = false
+                    self.bestAttemptContent?.sound = .none
+                } else if FlyDatabaseController.shared.messageManager.getMessageFor(id: messageId)?.senderUserJid != FlyDefaults.myJid {
+                    if FlyCoreController.shared.isContactMuted(jid: bestAttemptContents?.userInfo["from_user"] as? String ?? "") || (FlyDefaults.isArchivedChatEnabled && ChatManager.getRechtChat(jid: bestAttemptContents?.userInfo["from_user"] as? String ?? "")?.isChatArchived ?? false) {
+                        self.bestAttemptContent?.sound = .none
+                        canVibrate = false
+                    } else if !FlyDefaults.notificationSoundUrl.contains("Default") && !FlyDefaults.notificationSoundUrl.contains("None") && FlyDefaults.notificationSoundEnable  {
+                        self.bestAttemptContent?.sound = .default
+                    } else if FlyDefaults.notificationSoundUrl.contains("Default") && FlyDefaults.notificationSoundEnable {
+                        self.bestAttemptContent?.sound = .default
+                    } else if FlyDefaults.notificationSoundEnable == false || FlyDefaults.notificationSoundUrl.contains("None") {
+                        self.bestAttemptContent?.sound = nil
+                    }
+                } else if self.bestAttemptContent?.userInfo["sent_from"] as? String ?? "" == FlyDefaults.myJid && self.bestAttemptContent?.userInfo["group_id"] != nil {
+                    self.bestAttemptContent?.sound = nil
+                    canVibrate = false
+                } else if self.bestAttemptContent?.userInfo["sent_from"] as? String ?? "" != FlyDefaults.myJid && self.bestAttemptContent?.userInfo["group_id"] != nil {
+                    if !FlyDefaults.notificationSoundUrl.contains("Default") && !FlyDefaults.notificationSoundUrl.contains("None") && FlyDefaults.notificationSoundEnable  {
+                        self.bestAttemptContent?.sound = .default
+                    } else if FlyDefaults.notificationSoundUrl.contains("Default") && FlyDefaults.notificationSoundEnable {
+                        self.bestAttemptContent?.sound = .default
+                    } else if FlyDefaults.notificationSoundEnable == false || FlyDefaults.notificationSoundUrl.contains("None") {
+                        self.bestAttemptContent?.sound = nil
+                    }
+                }
+                
+                if FlyDefaults.vibrationEnable && canVibrate {
+                    AudioServicesPlayAlertSound(SystemSoundID(kSystemSoundID_Vibrate))
+                }
+                
                 contentHandler(self.bestAttemptContent!)
                 FlyDefaults.lastNotificationId = request.identifier
+                
             })
         }
     }

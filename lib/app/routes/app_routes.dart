@@ -37,6 +37,14 @@ abstract class Routes {
   static const deleteAccountReason = _Paths.deleteAccountReason;
   static const starredMessages = _Paths.starredMessages;
   static const cameraPick = _Paths.cameraPick;
+  static const adminBlocked = _Paths.adminBlocked;
+  static const archivedChats = _Paths.archivedChats;
+  static const chatSettings = _Paths.chatSettings;
+  static const galleryPicker = _Paths.galleryPicker;
+  static const mediaPreview = _Paths.mediaPreview;
+  static const languages = _Paths.languages;
+  static const busyStatus = _Paths.busyStatus;
+  static const dataUsageSetting = _Paths.dataUsageSetting;
 }
 
 abstract class _Paths {
@@ -76,4 +84,12 @@ abstract class _Paths {
   static const deleteAccountReason = '/delete-account-reason';
   static const starredMessages = '/starred-messages';
   static const cameraPick = '/camera-pick';
+  static const adminBlocked = '/adminBlocked';
+  static const archivedChats = '/archivedChats';
+  static const chatSettings = '/chatSettings';
+  static const galleryPicker = '/gallery-picker';
+  static const mediaPreview = '/media-preview';
+  static const languages = '/languages';
+  static const busyStatus = '/busy-status';
+  static const dataUsageSetting = '/data_usage_setting';
 }

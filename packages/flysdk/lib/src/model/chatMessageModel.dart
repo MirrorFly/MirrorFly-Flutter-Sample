@@ -54,7 +54,7 @@ class ChatMessageModel {
   bool isSelected;
   bool isThisAReplyMessage;
   String messageChatType;
-  MessageCustomField? messageCustomField;
+  Map<String,dynamic> messageCustomField;
   String messageId;
   dynamic messageSentTime;
   String messageStatus;
@@ -69,10 +69,10 @@ class ChatMessageModel {
   LocationChatMessage? locationChatMessage;
 
   factory ChatMessageModel.fromJson(Map<String, dynamic> json) => ChatMessageModel(
-    chatUserJid: json["chatUserJid"],
-    contactType: json["contactType"],
-    isItCarbonMessage: json["isItCarbonMessage"],
-    isItSavedContact: json["isItSavedContact"],
+    chatUserJid: json["chatUserJid"] ?? "",
+    contactType: json["contactType"] ?? "",
+    isItCarbonMessage: Platform.isAndroid ? json["isItCarbonMessage"] ?? false : json["isCarbonMessage"] ?? false,
+    isItSavedContact: Platform.isAndroid ? json["isItSavedContact"] ?? false : json["isSavedContact"] ?? false,
     isMessageDeleted: json["isMessageDeleted"],
     isMessageRecalled: json["isMessageRecalled"],
     isMessageSentByMe: json["isMessageSentByMe"],
@@ -80,12 +80,12 @@ class ChatMessageModel {
     isSelected: json["isSelected"] ?? false,
     isThisAReplyMessage: Platform.isAndroid ? json["isThisAReplyMessage"] : json["isReplyMessage"],
     messageChatType: json["messageChatType"] == "singleChat" ? "chat" : json["messageChatType"].toLowerCase(),
-    messageCustomField: json["replyParentChatMessage"] == null ? null : MessageCustomField.fromJson(json["messageCustomField"]),
+    messageCustomField: json["messageCustomField"] ?? {},
     messageId: json["messageId"],
-    messageSentTime: json["messageSentTime"],
-    messageStatus: Platform.isAndroid ? json["messageStatus"]["status"] : json["messageStatus"],
-    messageTextContent: json["messageTextContent"],
-    messageType: json["messageType"],
+    messageSentTime: json["messageSentTime"].toInt(),
+    messageStatus: Platform.isAndroid ? json["messageStatus"]["status"] : json["messageStatus"] == "acknowledge" ? "A" : json["messageStatus"] == "delivered" ? "D" : json["messageStatus"] == "seen" ? "S" : "N",
+    messageTextContent: json["messageTextContent"].toString(),
+    messageType: json["messageType"].toString().toUpperCase() == "FILE" ? "DOCUMENT" : json["messageType"].toString().toUpperCase(),
     replyParentChatMessage: json["replyParentChatMessage"] == null ? null : ReplyParentChatMessage.fromJson(json["replyParentChatMessage"]),
     senderNickName: json["senderNickName"],
     senderUserJid: json["senderUserJid"],
@@ -107,7 +107,7 @@ class ChatMessageModel {
     "isSelected": isSelected,
     "isThisAReplyMessage": isThisAReplyMessage,
     "messageChatType": messageChatType,
-    "messageCustomField": messageCustomField ?? messageCustomField?.toJson(),
+    "messageCustomField": messageCustomField,
     "messageId": messageId,
     "messageSentTime": messageSentTime,
     "messageStatus": messageStatus,
@@ -141,7 +141,7 @@ class ContactChatMessage {
   factory ContactChatMessage.fromJson(Map<String, dynamic> json) => ContactChatMessage(
     contactName: json["contactName"],
     contactPhoneNumbers: List<String>.from(json["contactPhoneNumbers"].map((x) => x)),
-    isChatAppUser: List<bool>.from(json["isChatAppUser"].map((x) => x)),
+    isChatAppUser: Platform.isAndroid ? List<bool>.from(json["isChatAppUser"].map((x) => x)) : List<bool>.from(json["isChatUser"].map((x) => x)),
     messageId: json["messageId"],
   );
 
@@ -199,6 +199,7 @@ class MediaChatMessage {
     required this.messageId,
     required this.messageType,
     required this.isPlaying,
+    required this.currentPos,
   });
 
   bool isAudioRecorded;
@@ -217,6 +218,7 @@ class MediaChatMessage {
   String messageId;
   String messageType;
   bool isPlaying;
+  int currentPos;
 
   factory MediaChatMessage.fromJson(Map<String, dynamic> json) => MediaChatMessage(
     isAudioRecorded: json["isAudioRecorded"] ?? false,
@@ -230,11 +232,12 @@ class MediaChatMessage {
     mediaFileWidth: json["mediaFileWidth"] ?? 0,
     mediaLocalStoragePath: json["mediaLocalStoragePath"],
     mediaProgressStatus: json["mediaProgressStatus"],
-    mediaThumbImage: json["mediaThumbImage"],
+    mediaThumbImage: json["mediaThumbImage"].toString().replaceAll("\\\\n", "\\n").replaceAll("\\n", "\n").replaceAll("\n", "").replaceAll(" ", ""),
     mediaUploadStatus: json["mediaUploadStatus"] == "not_uploaded" ? 0 : json["mediaUploadStatus"] == "uploading" ? 1 : json["mediaUploadStatus"] == "uploaded" ? 2 : json["mediaUploadStatus"] == "not_available" ? 7 : json["mediaUploadStatus"] == "failed" ? 401 : json["mediaUploadStatus"],
     messageId: json["messageId"],
     messageType: json["messageType"],
     isPlaying: false,
+    currentPos: 0,
   );
 
   Map<String, dynamic> toJson() => {

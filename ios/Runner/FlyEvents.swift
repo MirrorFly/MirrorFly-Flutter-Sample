@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import Flutter
 
 
 
@@ -246,7 +247,7 @@ class GroupDeletedLocallyStreamHandler: NSObject, FlutterStreamHandler {
         return nil
     }
 }
-class blockedThisUserStreamHandler: NSObject, FlutterStreamHandler {
+class BlockedThisUserStreamHandler: NSObject, FlutterStreamHandler {
     public var blockedThisUser: FlutterEventSink?
     
     public func onListen(withArguments arguments: Any?, eventSink events: @escaping FlutterEventSink) -> FlutterError? {
@@ -259,7 +260,7 @@ class blockedThisUserStreamHandler: NSObject, FlutterStreamHandler {
         return nil
     }
 }
-class myProfileUpdatedStreamHandler: NSObject, FlutterStreamHandler {
+class MyProfileUpdatedStreamHandler: NSObject, FlutterStreamHandler {
     public var myProfileUpdated: FlutterEventSink?
     
     public func onListen(withArguments arguments: Any?, eventSink events: @escaping FlutterEventSink) -> FlutterError? {
@@ -272,7 +273,7 @@ class myProfileUpdatedStreamHandler: NSObject, FlutterStreamHandler {
         return nil
     }
 }
-class onAdminBlockedOtherUserStreamHandler: NSObject, FlutterStreamHandler {
+class OnAdminBlockedOtherUserStreamHandler: NSObject, FlutterStreamHandler {
     public var onAdminBlockedOtherUser: FlutterEventSink?
     
     public func onListen(withArguments arguments: Any?, eventSink events: @escaping FlutterEventSink) -> FlutterError? {
@@ -285,7 +286,7 @@ class onAdminBlockedOtherUserStreamHandler: NSObject, FlutterStreamHandler {
         return nil
     }
 }
-class onAdminBlockedUserStreamHandler: NSObject, FlutterStreamHandler {
+class OnAdminBlockedUserStreamHandler: NSObject, FlutterStreamHandler {
     public var onAdminBlockedUser: FlutterEventSink?
     
     public func onListen(withArguments arguments: Any?, eventSink events: @escaping FlutterEventSink) -> FlutterError? {
@@ -298,7 +299,7 @@ class onAdminBlockedUserStreamHandler: NSObject, FlutterStreamHandler {
         return nil
     }
 }
-class onContactSyncCompleteStreamHandler: NSObject, FlutterStreamHandler {
+class OnContactSyncCompleteStreamHandler: NSObject, FlutterStreamHandler {
     public var onContactSyncComplete: FlutterEventSink?
     
     public func onListen(withArguments arguments: Any?, eventSink events: @escaping FlutterEventSink) -> FlutterError? {
@@ -311,7 +312,7 @@ class onContactSyncCompleteStreamHandler: NSObject, FlutterStreamHandler {
         return nil
     }
 }
-class onLoggedOutStreamHandler: NSObject, FlutterStreamHandler {
+class OnLoggedOutStreamHandler: NSObject, FlutterStreamHandler {
     public var onLoggedOut: FlutterEventSink?
     
     public func onListen(withArguments arguments: Any?, eventSink events: @escaping FlutterEventSink) -> FlutterError? {
@@ -324,7 +325,7 @@ class onLoggedOutStreamHandler: NSObject, FlutterStreamHandler {
         return nil
     }
 }
-class unblockedThisUserStreamHandler: NSObject, FlutterStreamHandler {
+class UnblockedThisUserStreamHandler: NSObject, FlutterStreamHandler {
     public var unblockedThisUser: FlutterEventSink?
     
     public func onListen(withArguments arguments: Any?, eventSink events: @escaping FlutterEventSink) -> FlutterError? {
@@ -337,7 +338,7 @@ class unblockedThisUserStreamHandler: NSObject, FlutterStreamHandler {
         return nil
     }
 }
-class userBlockedMeStreamHandler: NSObject, FlutterStreamHandler {
+class UserBlockedMeStreamHandler: NSObject, FlutterStreamHandler {
     public var userBlockedMe: FlutterEventSink?
     
     public func onListen(withArguments arguments: Any?, eventSink events: @escaping FlutterEventSink) -> FlutterError? {
@@ -350,7 +351,7 @@ class userBlockedMeStreamHandler: NSObject, FlutterStreamHandler {
         return nil
     }
 }
-class userCameOnlineStreamHandler: NSObject, FlutterStreamHandler {
+class UserCameOnlineStreamHandler: NSObject, FlutterStreamHandler {
     public var userCameOnline: FlutterEventSink?
     
     public func onListen(withArguments arguments: Any?, eventSink events: @escaping FlutterEventSink) -> FlutterError? {
@@ -363,7 +364,7 @@ class userCameOnlineStreamHandler: NSObject, FlutterStreamHandler {
         return nil
     }
 }
-class userDeletedHisProfileStreamHandler: NSObject, FlutterStreamHandler {
+class UserDeletedHisProfileStreamHandler: NSObject, FlutterStreamHandler {
     public var userDeletedHisProfile: FlutterEventSink?
     
     public func onListen(withArguments arguments: Any?, eventSink events: @escaping FlutterEventSink) -> FlutterError? {
@@ -376,7 +377,7 @@ class userDeletedHisProfileStreamHandler: NSObject, FlutterStreamHandler {
         return nil
     }
 }
-class userProfileFetchedStreamHandler: NSObject, FlutterStreamHandler {
+class UserProfileFetchedStreamHandler: NSObject, FlutterStreamHandler {
     public var userProfileFetched: FlutterEventSink?
     
     public func onListen(withArguments arguments: Any?, eventSink events: @escaping FlutterEventSink) -> FlutterError? {
@@ -389,7 +390,7 @@ class userProfileFetchedStreamHandler: NSObject, FlutterStreamHandler {
         return nil
     }
 }
-class userUnBlockedMeStreamHandler: NSObject, FlutterStreamHandler {
+class UserUnBlockedMeStreamHandler: NSObject, FlutterStreamHandler {
     public var userUnBlockedMe: FlutterEventSink?
     
     public func onListen(withArguments arguments: Any?, eventSink events: @escaping FlutterEventSink) -> FlutterError? {
@@ -402,7 +403,7 @@ class userUnBlockedMeStreamHandler: NSObject, FlutterStreamHandler {
         return nil
     }
 }
-class userUpdatedHisProfileStreamHandler: NSObject, FlutterStreamHandler {
+class UserUpdatedHisProfileStreamHandler: NSObject, FlutterStreamHandler {
     public var userUpdatedHisProfile: FlutterEventSink?
     
     public func onListen(withArguments arguments: Any?, eventSink events: @escaping FlutterEventSink) -> FlutterError? {
@@ -415,7 +416,7 @@ class userUpdatedHisProfileStreamHandler: NSObject, FlutterStreamHandler {
         return nil
     }
 }
-class userWentOfflineStreamHandler: NSObject, FlutterStreamHandler {
+class UserWentOfflineStreamHandler: NSObject, FlutterStreamHandler {
     public var userWentOffline: FlutterEventSink?
     
     public func onListen(withArguments arguments: Any?, eventSink events: @escaping FlutterEventSink) -> FlutterError? {
@@ -428,7 +429,7 @@ class userWentOfflineStreamHandler: NSObject, FlutterStreamHandler {
         return nil
     }
 }
-class usersIBlockedListFetchedStreamHandler: NSObject, FlutterStreamHandler {
+class UsersIBlockedListFetchedStreamHandler: NSObject, FlutterStreamHandler {
     public var usersIBlockedListFetched: FlutterEventSink?
     
     public func onListen(withArguments arguments: Any?, eventSink events: @escaping FlutterEventSink) -> FlutterError? {
@@ -441,7 +442,7 @@ class usersIBlockedListFetchedStreamHandler: NSObject, FlutterStreamHandler {
         return nil
     }
 }
-class usersProfilesFetchedStreamHandler: NSObject, FlutterStreamHandler {
+class UsersProfilesFetchedStreamHandler: NSObject, FlutterStreamHandler {
     public var usersProfilesFetched: FlutterEventSink?
     
     public func onListen(withArguments arguments: Any?, eventSink events: @escaping FlutterEventSink) -> FlutterError? {
@@ -454,7 +455,7 @@ class usersProfilesFetchedStreamHandler: NSObject, FlutterStreamHandler {
         return nil
     }
 }
-class usersWhoBlockedMeListFetchedStreamHandler: NSObject, FlutterStreamHandler {
+class UsersWhoBlockedMeListFetchedStreamHandler: NSObject, FlutterStreamHandler {
     public var usersWhoBlockedMeListFetched: FlutterEventSink?
     
     public func onListen(withArguments arguments: Any?, eventSink events: @escaping FlutterEventSink) -> FlutterError? {
@@ -467,7 +468,7 @@ class usersWhoBlockedMeListFetchedStreamHandler: NSObject, FlutterStreamHandler 
         return nil
     }
 }
-class onConnectedStreamHandler: NSObject, FlutterStreamHandler {
+class OnConnectedStreamHandler: NSObject, FlutterStreamHandler {
     public var onConnected: FlutterEventSink?
     
     public func onListen(withArguments arguments: Any?, eventSink events: @escaping FlutterEventSink) -> FlutterError? {
@@ -480,7 +481,7 @@ class onConnectedStreamHandler: NSObject, FlutterStreamHandler {
         return nil
     }
 }
-class onDisconnectedStreamHandler: NSObject, FlutterStreamHandler {
+class OnDisconnectedStreamHandler: NSObject, FlutterStreamHandler {
     public var onDisconnected: FlutterEventSink?
     
     public func onListen(withArguments arguments: Any?, eventSink events: @escaping FlutterEventSink) -> FlutterError? {
@@ -493,7 +494,7 @@ class onDisconnectedStreamHandler: NSObject, FlutterStreamHandler {
         return nil
     }
 }
-class onConnectionNotAuthorizedStreamHandler: NSObject, FlutterStreamHandler {
+class OnConnectionNotAuthorizedStreamHandler: NSObject, FlutterStreamHandler {
     public var onConnectionNotAuthorized: FlutterEventSink?
     
     public func onListen(withArguments arguments: Any?, eventSink events: @escaping FlutterEventSink) -> FlutterError? {
@@ -506,7 +507,7 @@ class onConnectionNotAuthorizedStreamHandler: NSObject, FlutterStreamHandler {
         return nil
     }
 }
-class connectionFailedStreamHandler: NSObject, FlutterStreamHandler {
+class ConnectionFailedStreamHandler: NSObject, FlutterStreamHandler {
     public var connectionFailed: FlutterEventSink?
     
     public func onListen(withArguments arguments: Any?, eventSink events: @escaping FlutterEventSink) -> FlutterError? {
@@ -519,7 +520,7 @@ class connectionFailedStreamHandler: NSObject, FlutterStreamHandler {
         return nil
     }
 }
-class connectionSuccessStreamHandler: NSObject, FlutterStreamHandler {
+class ConnectionSuccessStreamHandler: NSObject, FlutterStreamHandler {
     public var connectionSuccess: FlutterEventSink?
     
     public func onListen(withArguments arguments: Any?, eventSink events: @escaping FlutterEventSink) -> FlutterError? {
@@ -532,7 +533,7 @@ class connectionSuccessStreamHandler: NSObject, FlutterStreamHandler {
         return nil
     }
 }
-class onWebChatPasswordChangedStreamHandler: NSObject, FlutterStreamHandler {
+class OnWebChatPasswordChangedStreamHandler: NSObject, FlutterStreamHandler {
     public var onWebChatPasswordChanged: FlutterEventSink?
     
     public func onListen(withArguments arguments: Any?, eventSink events: @escaping FlutterEventSink) -> FlutterError? {
@@ -584,7 +585,7 @@ class onGroupTypingStatusStreamHandler: NSObject, FlutterStreamHandler {
         return nil
     }
 }
-class onFailureStreamHandler: NSObject, FlutterStreamHandler {
+class OnFailureStreamHandler: NSObject, FlutterStreamHandler {
     public var onFailure: FlutterEventSink?
     
     public func onListen(withArguments arguments: Any?, eventSink events: @escaping FlutterEventSink) -> FlutterError? {
@@ -597,7 +598,7 @@ class onFailureStreamHandler: NSObject, FlutterStreamHandler {
         return nil
     }
 }
-class onProgressChangedStreamHandler: NSObject, FlutterStreamHandler {
+class OnProgressChangedStreamHandler: NSObject, FlutterStreamHandler {
     public var onProgressChanged: FlutterEventSink?
     
     public func onListen(withArguments arguments: Any?, eventSink events: @escaping FlutterEventSink) -> FlutterError? {
@@ -610,7 +611,7 @@ class onProgressChangedStreamHandler: NSObject, FlutterStreamHandler {
         return nil
     }
 }
-class onSuccessStreamHandler: NSObject, FlutterStreamHandler {
+class OnSuccessStreamHandler: NSObject, FlutterStreamHandler {
     public var onSuccess: FlutterEventSink?
     
     public func onListen(withArguments arguments: Any?, eventSink events: @escaping FlutterEventSink) -> FlutterError? {
@@ -620,6 +621,45 @@ class onSuccessStreamHandler: NSObject, FlutterStreamHandler {
 
     public func onCancel(withArguments arguments: Any?) -> FlutterError? {
         onSuccess = nil
+        return nil
+    }
+}
+class OnChatTypingStatusStreamHandler: NSObject, FlutterStreamHandler {
+    public var onChatTyping: FlutterEventSink?
+    
+    public func onListen(withArguments arguments: Any?, eventSink events: @escaping FlutterEventSink) -> FlutterError? {
+        self.onChatTyping = events
+        return nil
+    }
+
+    public func onCancel(withArguments arguments: Any?) -> FlutterError? {
+        self.onChatTyping = nil
+        return nil
+    }
+}
+class OnsetTypingStatusStreamHandler: NSObject, FlutterStreamHandler {
+    public var onSetTyping: FlutterEventSink?
+    
+    public func onListen(withArguments arguments: Any?, eventSink events: @escaping FlutterEventSink) -> FlutterError? {
+        self.onSetTyping = events
+        return nil
+    }
+
+    public func onCancel(withArguments arguments: Any?) -> FlutterError? {
+        self.onSetTyping = nil
+        return nil
+    }
+}
+class OnGroupTypingStatusStreamHandler: NSObject, FlutterStreamHandler {
+    public var onGroupTyping: FlutterEventSink?
+    
+    public func onListen(withArguments arguments: Any?, eventSink events: @escaping FlutterEventSink) -> FlutterError? {
+        self.onGroupTyping = events
+        return nil
+    }
+
+    public func onCancel(withArguments arguments: Any?) -> FlutterError? {
+        self.onGroupTyping = nil
         return nil
     }
 }

@@ -14,3 +14,5 @@ export 'src/model/recent_search_model.dart';
 export 'src/model/statusModel.dart';
 export 'src/model/userListModel.dart';
 export 'src/model/web_login_model.dart';
+export 'src/model/message_delivered_model.dart';
+export 'src/model/message_object.dart';

@@ -7,6 +7,7 @@ import 'package:mirror_fly_demo/app/data/helper.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 
 import 'package:flysdk/flysdk.dart';
+import '../../data/apputils.dart';
 import '../../routes/app_pages.dart';
 
 class ScannerController extends GetxController {
@@ -48,33 +49,42 @@ class ScannerController extends GetxController {
     }
   }
 
-  loginWebChatViaQRCode(String? barcode) {
+  loginWebChatViaQRCode(String? barcode) async {
     mirrorFlyLog("barcode", barcode.toString());
     if (barcode != null) {
-      controller!.pauseCamera();
-      FlyChat.loginWebChatViaQRCode(barcode).then((value) {
-        if (value != null) {
-          SessionManagement.setWebChatLogin(value);
-          Get.back();
-        } else {
+      if(await AppUtils.isNetConnected()) {
+        controller!.pauseCamera();
+        FlyChat.loginWebChatViaQRCode(barcode).then((value) {
+          if (value != null) {
+            SessionManagement.setWebChatLogin(value);
+            Get.back();
+          } else {
+
+          }
+        }).catchError((er) {
           controller!.resumeCamera();
-        }
-      }).catchError((er) {
-        controller!.resumeCamera();
-      });
+        });
+      }else{
+        toToast(Constants.noInternetConnection);
+      }
+
     }
   }
 
-  logoutWebUser() {
-    Helper.progressLoading();
-    FlyChat.webLoginDetailsCleared();
-    FlyChat.logoutWebUser(loginQr).then((value) {
-      Helper.hideLoading();
-      if (value != null && value) {
-        SessionManagement.setWebChatLogin(false);
-        Get.back();
-      }
-    });
+  logoutWebUser() async {
+    if(await AppUtils.isNetConnected()) {
+      Helper.progressLoading();
+      FlyChat.webLoginDetailsCleared();
+      FlyChat.logoutWebUser(loginQr).then((value) {
+        Helper.hideLoading();
+        if (value != null && value) {
+          SessionManagement.setWebChatLogin(false);
+          Get.back();
+        }
+      });
+    }else{
+      toToast(Constants.noInternetConnection);
+    }
   }
 
   webLoginDetailsCleared() {

@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
@@ -9,6 +10,8 @@ import 'package:mirror_fly_demo/app/data/helper.dart';
 import 'package:flysdk/flysdk.dart';
 
 import '../../../common/crop_image.dart';
+import '../../../data/apputils.dart';
+import '../../../data/session_management.dart';
 import '../../../routes/app_pages.dart';
 import '../views/name_change_view.dart';
 
@@ -41,16 +44,44 @@ class GroupInfoController extends GetxController {
     profile_((Get.arguments as Profile));
     _mute(profile.isMuted!);
     scrollController.addListener(_scrollListener);
-    getGroupMembers(false);
+    // getGroupMembers(false);
     getGroupMembers(null);
     groupAdmin();
     memberOfGroup();
-
+    muteAble();
     nameController.text=profile.nickName.checkNull();
   }
   muteAble() async {
     muteable(await FlyChat.isUserUnArchived(profile.jid.checkNull()));
   }
+
+  void onGroupProfileUpdated(String groupJid) {
+    if (groupJid.checkNull().isNotEmpty) {
+      if (profile.jid.checkNull() == groupJid.toString()) {
+        mirrorFlyLog("group info", groupJid.toString());
+        FlyChat.getProfileDetails(profile.jid.checkNull(), false).then((value) {
+          if (value != null) {
+            var member = Profile.fromJson(json.decode(value.toString()));
+            profile_(member);
+            _mute(profile.isMuted!);
+            nameController.text=profile.nickName.checkNull();
+          }
+        });
+      }
+    }
+  }
+
+  void userUpdatedHisProfile(String jid) {
+    if(jid.checkNull().isNotEmpty) {
+      getProfileDetails(jid).then((value) {
+        var index = groupMembers.indexWhere((element) => element.jid == jid);
+        if (!index.isNegative) {
+          groupMembers[index] = value;
+        }
+      });
+    }
+  }
+
 
   _scrollListener() {
     if (scrollController.hasClients) {
@@ -59,7 +90,7 @@ class GroupInfoController extends GetxController {
     }
   }
   groupAdmin(){
-    FlyChat.isAdmin(profile.jid.checkNull()).then((bool? value){
+    FlyChat.isAdmin(SessionManagement.getUserJID()! ,profile.jid.checkNull()).then((bool? value){
       if(value!=null){
         _isAdmin(value);
       }
@@ -136,20 +167,27 @@ class GroupInfoController extends GetxController {
       TextButton(
           onPressed: () {
             Get.back();
-            Helper.progressLoading();
-            FlyChat.leaveFromGroup(profile.jid.checkNull()).then((value) {
-              Helper.hideLoading();
-              if(value!=null){
-                if(value){
-                  _isMemberOfGroup(!value);
-                }
-              }
-            }).catchError((error) {
-              Helper.hideLoading();
-            });
+            exitFromGroup();
           },
           child: const Text("LEAVE")),
     ]);
+  }
+  exitFromGroup()async{
+    if(await AppUtils.isNetConnected()) {
+      Helper.progressLoading();
+      FlyChat.leaveFromGroup(SessionManagement.getUserJID() ,profile.jid.checkNull()).then((value) {
+        Helper.hideLoading();
+        if(value!=null){
+          if(value){
+            _isMemberOfGroup(!value);
+          }
+        }
+      }).catchError((error) {
+        Helper.hideLoading();
+      });
+    }else{
+      toToast(Constants.noInternetConnection);
+    }
   }
   deleteGroup(){
     Helper.showAlert(message: "Are you sure you want to delete this group?.",actions: [
@@ -159,19 +197,24 @@ class GroupInfoController extends GetxController {
           },
           child: const Text("CANCEL")),
       TextButton(
-          onPressed: () {
-            Get.back();
-            Helper.progressLoading();
-            FlyChat.deleteGroup(profile.jid.checkNull()).then((value) {
-              Helper.hideLoading();
-              if(value!=null){
-                if(value){
-                  Get.offAllNamed(Routes.dashboard);
+          onPressed: () async {
+            if(await AppUtils.isNetConnected()) {
+              Get.back();
+              Helper.progressLoading();
+              FlyChat.deleteGroup(profile.jid.checkNull()).then((value) {
+                Helper.hideLoading();
+                if(value!=null){
+                  if(value){
+                    Get.offAllNamed(Routes.dashboard);
+                  }
                 }
-              }
-            }).catchError((error) {
-              Helper.hideLoading();
-            });
+              }).catchError((error) {
+                Helper.hideLoading();
+              });
+            }else{
+              toToast(Constants.noInternetConnection);
+            }
+
           },
           child: const Text("DELETE")),
     ]);
@@ -179,38 +222,49 @@ class GroupInfoController extends GetxController {
 
   var imagePath = "".obs;
   Future imagePicker(BuildContext context) async {
-    FilePickerResult? result = await FilePicker.platform
-        .pickFiles(allowMultiple: false, type: FileType.image);
-    if (result != null) {
-      Get.to(CropImage(
-        imageFile: File(result.files.single.path!),
-      ))?.then((value) {
-        value as MemoryImage;
-        var name = "${DateTime.now().millisecondsSinceEpoch}.jpg";
-        writeImageTemp(value.bytes, name).then((value) {
+    if(await AppUtils.isNetConnected()) {
+      FilePickerResult? result = await FilePicker.platform
+          .pickFiles(allowMultiple: false, type: FileType.image);
+      if (result != null) {
+        Get.to(CropImage(
+          imageFile: File(result.files.single.path!),
+        ))?.then((value) {
+          value as MemoryImage;
+          var name = "${DateTime.now().millisecondsSinceEpoch}.jpg";
+          writeImageTemp(value.bytes, name).then((value) {
             imagePath(value.path);
             updateGroupProfileImage(value.path);
+          });
         });
-      });
-    } else {
-      // User canceled the picker
+      } else {
+        // User canceled the picker
+      }
+    }else{
+      toToast(Constants.noInternetConnection);
     }
   }
 
-  camera(XFile? result) {
-    if (result != null) {
-      Get.to(CropImage(
-        imageFile: File(result.path),
-      ))?.then((value) {
-        value as MemoryImage;
-        var name = "${DateTime.now().millisecondsSinceEpoch}.jpg";
-        writeImageTemp(value.bytes, name).then((value) {
+  final ImagePicker _picker = ImagePicker();
+  camera() async {
+    if(await AppUtils.isNetConnected()) {
+      final XFile? photo = await _picker.pickImage(
+          source: ImageSource.camera);
+      if (photo != null) {
+        Get.to(CropImage(
+          imageFile: File(photo.path),
+        ))?.then((value) {
+          value as MemoryImage;
+          var name = "${DateTime.now().millisecondsSinceEpoch}.jpg";
+          writeImageTemp(value.bytes, name).then((value) {
             imagePath(value.path);
             updateGroupProfileImage(value.path);
+          });
         });
-      });
-    } else {
-      // User canceled the Camera
+      } else {
+        // User canceled the Camera
+      }
+    }else{
+      toToast(Constants.noInternetConnection);
     }
   }
 
@@ -242,7 +296,7 @@ class GroupInfoController extends GetxController {
   }
 
   removeProfileImage() {
-    Helper.showAlert(message: "Are you sure you want to remove the group photo?.",actions: [
+    Helper.showAlert(message: "Are you sure you want to remove the group photo?",actions: [
       TextButton(
           onPressed: () {
             Get.back();
@@ -251,21 +305,29 @@ class GroupInfoController extends GetxController {
       TextButton(
           onPressed: () {
             Get.back();
-            showLoader();
-            FlyChat.removeGroupProfileImage(profile.jid.checkNull()).then((bool? value) {
-              hideLoader();
-              if (value != null) {
-                if(value){
-                  profile_.value.image=Constants.emptyString;
-                  profile_.refresh();
-                }
-              }
-            }).catchError((onError) {
-              hideLoader();
-            });
+            revokeAccessForProfileImage();
           },
           child: const Text("REMOVE")),
     ]);
+  }
+
+  revokeAccessForProfileImage()async{
+    if(await AppUtils.isNetConnected()) {
+      showLoader();
+      FlyChat.removeGroupProfileImage(profile.jid.checkNull()).then((bool? value) {
+        hideLoader();
+        if (value != null) {
+          if(value){
+            profile_.value.image=Constants.emptyString;
+            profile_.refresh();
+          }
+        }
+      }).catchError((onError) {
+        hideLoader();
+      });
+    }else{
+      toToast(Constants.noInternetConnection);
+    }
   }
 
   showLoader(){
@@ -278,48 +340,64 @@ class GroupInfoController extends GetxController {
   gotoAddParticipants(){
     Get.toNamed(Routes.contacts, arguments: {"forward" : false,"group":true,"groupJid":profile.jid })?.then((value){
       if(value!=null){
-        showLoader();
-        FlyChat.addUsersToGroup(profile.jid.checkNull(),value as List<String>).then((value){
-          hideLoader();
-          if(value!=null && value){
-            getGroupMembers(false);
-          }else{
-            toToast("Error while adding Members in this group");
-          }
-        });
+        addUsers(value);
       }
     });
+  }
+
+  addUsers(dynamic value)async{
+    if(await AppUtils.isNetConnected()) {
+      showLoader();
+      FlyChat.addUsersToGroup(profile.jid.checkNull(),value as List<String>).then((value){
+        hideLoader();
+        if(value!=null && value){
+          getGroupMembers(false);
+        }else{
+          toToast("Error while adding Members in this group");
+        }
+      });
+    }else{
+      toToast(Constants.noInternetConnection);
+    }
   }
 
   gotoViewAllMedia(){
     Get.toNamed(Routes.viewMedia,arguments: {"name":profile.name,"jid":profile.jid,"isgroup":profile.isGroupProfile});
   }
 
-  removeUser(String userJid){
+  removeUser(String userJid) async {
     if(isMemberOfGroup){
-      showLoader();
-      FlyChat.removeMemberFromGroup(profile.jid.checkNull(), userJid).then((value){
-        hideLoader();
-        if(value!=null && value){
-          getGroupMembers(false);
-        }else{
-          toToast("Error while Removing this member");
-        }
-      });
+      if(await AppUtils.isNetConnected()) {
+        showLoader();
+        FlyChat.removeMemberFromGroup(profile.jid.checkNull(), userJid).then((value){
+          hideLoader();
+          if(value!=null && value){
+            getGroupMembers(false);
+          }else{
+            toToast("Error while Removing this member");
+          }
+        });
+      }else{
+        toToast(Constants.noInternetConnection);
+      }
     }
   }
 
-  makeAdmin(String userJid){
+  makeAdmin(String userJid) async {
     if(isMemberOfGroup){
-      showLoader();
-      FlyChat.makeAdmin(profile.jid.checkNull(), userJid).then((value){
-        hideLoader();
-        if(value!=null && value){
-          getGroupMembers(false);
-        }else{
-          toToast("Error while make admin this member");
-        }
-      });
+      if(await AppUtils.isNetConnected()) {
+        showLoader();
+        FlyChat.makeAdmin(profile.jid.checkNull(), userJid).then((value){
+          hideLoader();
+          if(value!=null && value){
+            getGroupMembers(false);
+          }else{
+            toToast("Error while make admin this member");
+          }
+        });
+      }else{
+        toToast(Constants.noInternetConnection);
+      }
     }
   }
 

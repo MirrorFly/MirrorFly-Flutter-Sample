@@ -3,6 +3,7 @@
 //     final userList = userListFromJson(jsonString);
 
 import 'dart:convert';
+import 'dart:io';
 
 UserList userListFromJson(String str) => UserList.fromJson(json.decode(str));
 
@@ -55,6 +56,8 @@ class Profile {
     this.name,
     this.nickName,
     this.status,
+    //only for iOS
+    this.profileChatType
   });
 
   String? contactType;
@@ -78,6 +81,7 @@ class Profile {
   String? name;
   String? nickName;
   String? status;
+  dynamic profileChatType;
 
   factory Profile.fromJson(Map<String, dynamic> json) => Profile(
     contactType: json["contactType"],
@@ -85,12 +89,12 @@ class Profile {
     groupCreatedTime: json["groupCreatedTime"],
     image: json["image"],
     imagePrivacyFlag: json["imagePrivacyFlag"],
-    isAdminBlocked: json["isAdminBlocked"],
+    isAdminBlocked: Platform.isAndroid ? json["isAdminBlocked"] : json["isBlockedByAdmin"],
     isBlocked: json["isBlocked"],
     isBlockedMe: json["isBlockedMe"],
     isGroupAdmin: json["isGroupAdmin"],
     isGroupInOfflineMode: json["isGroupInOfflineMode"],
-    isGroupProfile: json["isGroupProfile"],
+    isGroupProfile: Platform.isAndroid ? json["isGroupProfile"] : json["profileChatType"] == "singleChat" ? false : true,
     isItSavedContact: json["isItSavedContact"],
     isMuted: json["isMuted"],
     isSelected: json["isSelected"],
@@ -99,8 +103,9 @@ class Profile {
     mobileNUmberPrivacyFlag: json["mobileNUmberPrivacyFlag"],
     mobileNumber: json["mobileNumber"],
     name: json["name"],
-    nickName: json["nickName"],
+    nickName: json["nickName"].toString(),
     status: json["status"],
+    profileChatType: json["profileChatType"],
   );
 
   Map<String, dynamic> toJson() => {
@@ -125,5 +130,6 @@ class Profile {
     "name": name,
     "nickName": nickName,
     "status": status,
+    "profileChatType": profileChatType,
   };
 }

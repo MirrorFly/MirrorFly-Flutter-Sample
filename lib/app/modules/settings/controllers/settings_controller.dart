@@ -9,6 +9,8 @@ import 'package:package_info_plus/package_info_plus.dart';
 import 'package:path/path.dart';
 import 'package:yaml/yaml.dart';
 
+import '../../../common/constants.dart';
+import '../../../data/apputils.dart';
 import '../../../data/session_management.dart';
 
 class SettingsController extends GetxController{
@@ -22,26 +24,31 @@ class SettingsController extends GetxController{
     packageInfo.obs.value = await PackageInfo.fromPlatform();
   }
 
-  logout() {
-    Helper.progressLoading();
-    FlyChat.logoutOfChatSDK().then((value) {
-      Helper.hideLoading();
-      if(value) {
-        var token = SessionManagement.getToken().checkNull();
+  logout() async {
+    if(await AppUtils.isNetConnected()) {
+      Get.back();
+      Helper.progressLoading();
+      FlyChat.logoutOfChatSDK().then((value) {
+        Helper.hideLoading();
+        if(value) {
+          var token = SessionManagement.getToken().checkNull();
+          SessionManagement.clear().then((value){
+            SessionManagement.setToken(token);
+            Get.offAllNamed(Routes.login);
+          });
+        }else{
+          Get.snackbar("Logout", "Logout Failed");
+        }
+      }).catchError((er){
+        Helper.hideLoading();
         SessionManagement.clear().then((value){
-          SessionManagement.setToken(token);
+          // SessionManagement.setToken(token);
           Get.offAllNamed(Routes.login);
         });
-      }else{
-        Get.snackbar("Logout", "Logout Failed");
-      }
-    }).catchError((er){
-      Helper.hideLoading();
-      SessionManagement.clear().then((value){
-        // SessionManagement.setToken(token);
-        Get.offAllNamed(Routes.login);
       });
-    });
+    }else{
+      toToast(Constants.noInternetConnection);
+    }
   }
 
   getReleaseDate() async {

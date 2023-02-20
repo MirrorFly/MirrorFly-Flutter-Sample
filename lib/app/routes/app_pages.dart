@@ -1,6 +1,12 @@
 import 'package:get/get.dart';
-import 'package:mirror_fly_demo/app/modules/chat/views/forwardchat_view.dart';
+import 'package:mirror_fly_demo/app/modules/settings/views/chat_settings/datausage/datausage_binding.dart';
+import 'package:mirror_fly_demo/app/modules/settings/views/chat_settings/datausage/datausage_list_view.dart';
 
+import '../modules/admin_blocked/adminblockedview.dart';
+import '../modules/archived_chats/archived_chat_list_binding.dart';
+import '../modules/archived_chats/archived_chat_list_view.dart';
+import '../modules/busy_status/bindings/busy_status_binding.dart';
+import '../modules/busy_status/views/busy_status_view.dart';
 import '../modules/camera_pick/bindings/camera_pick_binding.dart';
 import '../modules/camera_pick/views/camera_pick_view.dart';
 import '../modules/chat/bindings/chat_binding.dart';
@@ -11,6 +17,7 @@ import '../modules/chat/bindings/location_binding.dart';
 import '../modules/chat/views/chat_search_view.dart';
 import '../modules/chat/views/chat_view.dart';
 import '../modules/chat/views/contact_list_view.dart';
+import '../modules/chat/views/forwardchat_view.dart';
 import '../modules/chat/views/image_preview_view.dart';
 import '../modules/chat/views/location_sent_view.dart';
 import '../modules/chatInfo/bindings/chat_info_binding.dart';
@@ -23,6 +30,8 @@ import '../modules/delete_account/bindings/delete_account_binding.dart';
 import '../modules/delete_account/views/delete_account_view.dart';
 import '../modules/delete_account_reason/bindings/delete_account_reason_binding.dart';
 import '../modules/delete_account_reason/views/delete_account_reason_view.dart';
+import '../modules/gallery_picker/bindings/gallery_picker_binding.dart';
+import '../modules/gallery_picker/views/gallery_picker_view.dart';
 import '../modules/group/bindings/group_creation_binding.dart';
 import '../modules/group/bindings/group_info_binding.dart';
 import '../modules/group/views/group_creation_view.dart';
@@ -36,6 +45,8 @@ import '../modules/login/bindings/login_binding.dart';
 import '../modules/login/views/country_list_view.dart';
 import '../modules/login/views/login_view.dart';
 import '../modules/login/views/otp_view.dart';
+import '../modules/media_preview/bindings/media_preview_binding.dart';
+import '../modules/media_preview/views/media_preview_view.dart';
 import '../modules/message_info/bindings/message_info_binding.dart';
 import '../modules/message_info/views/message_info_view.dart';
 import '../modules/preview_contact/bindings/preview_contact_binding.dart';
@@ -54,6 +65,10 @@ import '../modules/settings/views/app_lock/pin_view.dart';
 import '../modules/settings/views/app_lock/set_pin_view.dart';
 import '../modules/settings/views/blocked/blocked_list_binding.dart';
 import '../modules/settings/views/blocked/blocked_list_view.dart';
+import '../modules/settings/views/chat_settings/chat_settings_binding.dart';
+import '../modules/settings/views/chat_settings/chat_settings_view.dart';
+import '../modules/settings/views/chat_settings/language/language_binding.dart';
+import '../modules/settings/views/chat_settings/language/language_list_view.dart';
 import '../modules/settings/views/notification/notification_binding.dart';
 import '../modules/settings/views/notification/notification_settings_view.dart';
 import '../modules/settings/views/settings_view.dart';
@@ -66,7 +81,6 @@ import '../modules/video_preview/views/video_preview_view.dart';
 import '../modules/view_all_media/bindings/view_all_media_binding.dart';
 import '../modules/view_all_media/views/view_all_media_view.dart';
 
-
 part 'app_routes.dart';
 
 class AppPages {
@@ -76,9 +90,11 @@ class AppPages {
   static const profile = Routes.profile;
   static const dashboard = Routes.dashboard;
   static const chat = Routes.chat;
+  static const adminBlocked = Routes.adminBlocked;
 
   static final routes = [
-    GetPage(name: _Paths.otp, page: () => const OtpView(), binding: LoginBinding()),
+    GetPage(
+        name: _Paths.otp, page: () => const OtpView(), binding: LoginBinding()),
     GetPage(
       name: _Paths.dashboard,
       page: () => const DashboardView(),
@@ -96,12 +112,12 @@ class AppPages {
     ),
     GetPage(
       name: _Paths.createGroup,
-      page: () => GroupCreationView(),
+      page: () => const GroupCreationView(),
       binding: GroupCreationBinding(),
     ),
     GetPage(
       name: _Paths.groupInfo,
-      page: () => GroupInfoView(),
+      page: () => const GroupInfoView(),
       binding: GroupInfoBinding(),
     ),
     GetPage(
@@ -126,7 +142,7 @@ class AppPages {
     ),
     GetPage(
       name: _Paths.profile,
-      page: () => ProfileView(),
+      page: () => const ProfileView(),
       binding: ProfileBinding(),
     ),
     GetPage(
@@ -248,6 +264,43 @@ class AppPages {
       name: _Paths.cameraPick,
       page: () => const CameraPickView(),
       binding: CameraPickBinding(),
+    ),
+    GetPage(
+      name: _Paths.adminBlocked,
+      page: () => const AdminBlockedView(),
+    ),
+    GetPage(
+        name: _Paths.archivedChats,
+        page: () => const ArchivedChatListView(),
+        binding: ArchivedChatListBinding()),
+    GetPage(
+        name: _Paths.chatSettings,
+        page: () => const ChatSettingsView(),
+        binding: ChatSettingsBinding()),
+    GetPage(
+      name: _Paths.galleryPicker,
+      page: () => const GalleryPickerView(),
+      binding: GalleryPickerBinding(),
+    ),
+    GetPage(
+      name: _Paths.mediaPreview,
+      page: () => const MediaPreviewView(),
+      binding: MediaPreviewBinding(),
+    ),
+    GetPage(
+      name: _Paths.languages,
+      page: () => const LanguageListView(),
+      binding: LanguageListBinding(),
+    ),
+    GetPage(
+      name: _Paths.busyStatus,
+      page: () => const BusyStatusView(),
+      binding: BusyStatusBinding(),
+    ),
+    GetPage(
+      name: _Paths.dataUsageSetting,
+      page: () => const DataUsageListView(),
+      binding: DataUsageListBinding(),
     ),
   ];
 }

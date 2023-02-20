@@ -41,7 +41,7 @@ target 'Runner' do
   pod 'SocketRocket'
   pod 'Socket.IO-Client-Swift'
 #  pod 'DSON'
-#  pod 'GoogleWebRTC' # WebRTC for Calls
+  pod 'GoogleWebRTC' # WebRTC for Calls
   flutter_install_all_ios_pods File.dirname(File.realpath(__FILE__))
 end
 
@@ -52,7 +52,7 @@ def notification_pods
    # Pods for FlyCall
    pod 'SocketRocket'
    pod 'Socket.IO-Client-Swift' # To communicte Socket I/O server
-#   pod 'GoogleWebRTC' # WebRTC for Calls
+   pod 'GoogleWebRTC' # WebRTC for Calls
    pod 'RealmSwift', '10.20.1'
    pod 'XMPPFramework/Swift'
  
@@ -74,7 +74,13 @@ post_install do |installer|
       config.build_settings['GCC_PREPROCESSOR_DEFINITIONS'] ||= [
               '$(inherited)',
         ## dart: PermissionGroup.contacts
-        'PERMISSION_CONTACTS=1'
+        'PERMISSION_CONTACTS=1',
+        'PERMISSION_LOCATION=1',
+        'PERMISSION_PHOTOS=1',
+        #'PERMISSION_MICROPHONE=1',
+        'PERMISSION_CAMERA=1',
+      ## dart: PermissionGroup.mediaLibrary
+        'PERMISSION_MEDIA_LIBRARY=1',
       ]
      end
   end

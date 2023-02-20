@@ -8,6 +8,7 @@ import 'package:flysdk/flysdk.dart';
 import '../../../common/widgets.dart';
 import '../../starred_messages/controllers/starred_messages_controller.dart';
 
+/*
 class StarredMessageHeader extends StatefulWidget {
   const StarredMessageHeader(
       {Key? key, required this.chatList, required this.isTapEnabled})
@@ -19,77 +20,132 @@ class StarredMessageHeader extends StatefulWidget {
   @override
   State<StarredMessageHeader> createState() => _StarredMessageHeaderState();
 }
+*/
 
-class _StarredMessageHeaderState extends State<StarredMessageHeader> {
-  var controller = Get.find<StarredMessagesController>();
+class StarredMessageHeader extends StatelessWidget {
+  StarredMessageHeader(
+      {Key? key, required this.chatList, required this.isTapEnabled})
+      : super(key: key);
+  final ChatMessageModel chatList;
+  final bool isTapEnabled;
+  final controller = Get.find<StarredMessagesController>();
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.fromLTRB(12, 0, 0, 0),
+      padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
       margin: const EdgeInsets.all(2),
       decoration: const BoxDecoration(
           borderRadius: BorderRadius.all(Radius.circular(10))),
-      child: Column(
-        children: [
-          const Divider(thickness: 1),
-          const SizedBox(height: 10,),
-          getHeader(widget.chatList, context),
-        ],
-      ),
+      child: getHeader(chatList, context),
     );
+  }
+
+  Future<Profile> getProfile() async {
+    var value = await FlyChat.getProfileDetails(chatList.chatUserJid, true);
+    return Profile.fromJson(json.decode(value.toString()));
   }
 
   getHeader(ChatMessageModel chatList, BuildContext context) {
-    var userProfile = Profile().obs;
-    FlyChat.getProfileDetails(chatList.senderUserJid, true).then((value) {
-      userProfile.value = Profile.fromJson(json.decode(value.toString()));
-      debugPrint("Image==>${userProfile.value.image}");
-    });
-    if (chatList.isMessageSentByMe) {
-      return Row(
-        children: [
-          getChatTime(chatList.messageSentTime.toInt()),
-          const Spacer(),
-          Obx(() {
-            return Text("You --> ${userProfile.value.name}", style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15),);
-          }),
-          const SizedBox(width: 10,),
-          getProfileImage(userProfile),
-          const SizedBox(width: 10,),
-        ],
-      );
-    }else{
-      return Row(
-        children: [
-          getProfileImage(userProfile),
-          const SizedBox(width: 10,),
-          Obx(() {
-            return Text("${userProfile.value.name} --> You", style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15),);
-          }),
-          const Spacer(),
-          getChatTime(chatList.messageSentTime.toInt()),
-        ],
-      );
-    }
+    return FutureBuilder(
+        future: getProfile(),
+        builder: (context, d) {
+          var userProfile = d.data;
+          if (userProfile != null) {
+            if (chatList.isMessageSentByMe) {
+              return Row(
+                // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  getChatTime(chatList.messageSentTime.toInt()),
+                  const SizedBox(width: 10,),
+                  Expanded(
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        const Text("You --> ", style: TextStyle(
+                        fontWeight: FontWeight.bold, fontSize: 15)),
+                        Flexible(
+                          child: Text(
+                            userProfile.name.checkNull(),
+                            style: const TextStyle(
+                                fontWeight: FontWeight.bold, fontSize: 15),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                        const SizedBox(
+                          width: 10,
+                        ),
+                      ],
+                    ),
+                  ),
+                  getProfileImage(userProfile),
+                ],
+              );
+            } else {
+              return Row(
+                // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  getProfileImage(userProfile),
+                  const SizedBox(width: 10,),
+                  Expanded(
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+
+                        Flexible(
+                          child: Text(
+                            userProfile.name.checkNull(),
+                            style: const TextStyle(
+                                fontWeight: FontWeight.bold, fontSize: 15),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                        const Text(" --> You", style: TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 15)),
+
+                        const SizedBox(
+                          width: 10,
+                        ),
+                      ],
+                    ),
+                  ),
+                  getChatTime(chatList.messageSentTime.toInt()),
+                ],
+              );
+            }
+          } else {
+            return const SizedBox.shrink();
+          }
+        });
   }
 
   getChatTime(int messageSentTime) {
-    return Text(controller.getChatTime(context, messageSentTime));
+    return Text(controller.getChatTime(Get.context, messageSentTime),style: const TextStyle(fontSize: 12,color: Color(0xff959595)),);
   }
 
-  getProfileImage(Rx<Profile> userProfile) {
-    return ImageNetwork(
-      url: userProfile.value.image.checkNull(),
-      width: 55,
-      height: 55,
-      clipOval: true,
-      errorWidget: ProfileTextImage(
-        text: userProfile.value.name.checkNull().isEmpty
-            ? userProfile.value.mobileNumber.checkNull()
-            : userProfile.value.name.checkNull(),
-        radius: 25,
-      ),
-    );
+  getProfileImage(Profile userProfile) {
+    if (userProfile.image.checkNull().isNotEmpty) {
+      return ImageNetwork(
+        url: userProfile.image.checkNull(),
+        width: 48,
+        height: 48,
+        clipOval: true,
+        errorWidget: ProfileTextImage(
+          text: userProfile.name.checkNull().isEmpty
+              ? userProfile.mobileNumber.checkNull()
+              : userProfile.name.checkNull(),
+        ),
+      );
+    } else {
+      return ProfileTextImage(
+        text: userProfile.name.checkNull().isEmpty
+            ? userProfile.mobileNumber.checkNull()
+            : userProfile.name.checkNull(),
+      );
+    }
   }
 }

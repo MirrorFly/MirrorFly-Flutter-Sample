@@ -39,6 +39,8 @@ class StatusListView extends GetView<StatusListController> {
                 () => ListTile(
                   contentPadding: EdgeInsets.zero,
                   title: Text(controller.selectedStatus.value,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                       style: const TextStyle(
                           color: textColor,
                           fontSize: 14,
@@ -72,6 +74,8 @@ class StatusListView extends GetView<StatusListController> {
                       return ListTile(
                         contentPadding: EdgeInsets.zero,
                         title: Text(item.status.checkNull(),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
                             style: TextStyle(
                                 color: item.status==controller.selectedStatus.value ? textBlack1color : textColor,
                                 fontSize: 14,
@@ -85,6 +89,7 @@ class StatusListView extends GetView<StatusListController> {
                         onTap: (){
                           controller.updateStatus(item.status.checkNull());
                           /*Helper.showLoading();
+
                           PlatformRepo().updateProfileStatus(controller.add status controller.text.trim().toString()).then((value){
                             controller.selectedStatus.value=item.status.checkNull();
                             var data = json.decode(value.toString());

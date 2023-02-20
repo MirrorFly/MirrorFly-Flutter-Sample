@@ -1,0 +1,48 @@
+// swift-interface-format-version: 1.0
+// swift-compiler-version: Apple Swift version 5.7 (swiftlang-5.7.0.127.4 clang-1400.0.29.50)
+// swift-module-flags: -target x86_64-apple-ios15.2-simulator -enable-objc-interop -enable-library-evolution -swift-version 5 -enforce-exclusivity=checked -O -module-name FlyTranslate
+// swift-module-flags-ignorable: -enable-bare-slash-regex
+import Alamofire
+@_exported import FlyTranslate
+import Foundation
+import Swift
+import UIKit
+import _Concurrency
+import _StringProcessing
+public struct LanguagesSupported : Swift.Codable {
+  public func encode(to encoder: Swift.Encoder) throws
+  public init(from decoder: Swift.Decoder) throws
+}
+public struct Datas : Swift.Codable {
+  public func encode(to encoder: Swift.Encoder) throws
+  public init(from decoder: Swift.Decoder) throws
+}
+public struct LanguageSelection : Swift.Codable {
+  public var language: Swift.String?
+  public var name: Swift.String?
+  public func encode(to encoder: Swift.Encoder) throws
+  public init(from decoder: Swift.Decoder) throws
+}
+public struct Root : Swift.Codable {
+  public func encode(to encoder: Swift.Encoder) throws
+  public init(from decoder: Swift.Decoder) throws
+}
+public struct FlyData : Swift.Codable {
+  public func encode(to encoder: Swift.Encoder) throws
+  public init(from decoder: Swift.Decoder) throws
+}
+public struct Translations : Swift.Codable {
+  public func encode(to encoder: Swift.Encoder) throws
+  public init(from decoder: Swift.Decoder) throws
+}
+public protocol FlyTranslationManagerDelegate : ObjectiveC.NSObjectProtocol {
+  func updateTranslateMessage(jid: Swift.String, messageId: Swift.String, translatedText: Swift.String)
+}
+@objc @_inheritsConvenienceInitializers public class FlyTranslationManager : ObjectiveC.NSObject {
+  public var delegate: FlyTranslate.FlyTranslationManagerDelegate?
+  public static let shared: FlyTranslate.FlyTranslationManager
+  public func supportedTranslationLanguages(TargetLanguageCode: Swift.String, GooogleAPIKey: Swift.String, complete: @escaping (_ languageList: [FlyTranslate.LanguageSelection], _ success: Swift.Bool, _ error: Swift.String) -> ())
+  public func languageTransalation(jid: Swift.String, messageId: Swift.String, QueryString: Swift.String, targetLanguageCode: Swift.String, GooogleAPIKey: Swift.String, complete: @escaping (_ translatedText: Swift.String, _ success: Swift.Bool, _ error: Swift.String) -> ())
+  @objc override dynamic public init()
+  @objc deinit
+}

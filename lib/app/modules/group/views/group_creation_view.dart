@@ -3,7 +3,6 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
 import 'package:mirror_fly_demo/app/modules/group/controllers/group_creation_controller.dart';
 
@@ -12,8 +11,7 @@ import '../../../common/widgets.dart';
 import '../../../routes/app_pages.dart';
 
 class GroupCreationView extends GetView<GroupCreationController> {
-  GroupCreationView({Key? key}) : super(key: key);
-  final ImagePicker _picker = ImagePicker();
+  const GroupCreationView({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -119,9 +117,7 @@ class GroupCreationView extends GetView<GroupCreationController> {
                               TextButton(
                                   onPressed: () async{
                                     Get.back();
-                                    final XFile? photo = await _picker.pickImage(
-                                        source: ImageSource.camera);
-                                    controller.camera(photo);
+                                    controller.camera();
                                   },
                                   child: const Text("Take Photo",style: TextStyle(color: Colors.black))),
                             ] ));
@@ -183,7 +179,8 @@ class GroupCreationView extends GetView<GroupCreationController> {
                   if (controller.showEmoji.value) {
                     return EmojiLayout(
                         textController: controller.groupName,
-                        onEmojiSelected : (cat, emoji)=>controller.onGroupNameChanged()
+                        onBackspacePressed: () => controller.onGroupNameChanged(),
+                        onEmojiSelected : (cat, emoji)=>controller.onGroupNameChanged(),
                     );
                   } else {
                     return const SizedBox.shrink();
