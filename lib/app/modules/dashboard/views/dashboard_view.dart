@@ -6,6 +6,7 @@ import 'package:mirror_fly_demo/app/common/constants.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
 import 'package:mirror_fly_demo/app/modules/dashboard/widgets.dart';
 
+import '../../../common/app_theme.dart';
 import '../../../common/widgets.dart';
 import '../../../routes/app_pages.dart';
 import '../../../widgets/custom_action_bar_icons.dart';
@@ -35,9 +36,9 @@ class DashboardView extends GetView<DashboardController> {
           }
           return Future.value(true);
         },
-        child: DefaultTabController(
-          length: 2,
-          child: SafeArea(
+        child: CustomSafeArea(
+          child: DefaultTabController(
+            length: 2,
             child: Scaffold(
                 floatingActionButton: controller.isSearching.value
                     ? null
@@ -330,12 +331,10 @@ class DashboardView extends GetView<DashboardController> {
                       }),
                     ];
                   },
-                  body: SafeArea(
-                    child: TabBarView(
-                        children: [Obx(() {
-                          return chatView(context);
-                        }), callsView(context)]),
-                  ),
+                  body: TabBarView(
+                      children: [Obx(() {
+                        return chatView(context);
+                      }), callsView(context)]),
                 )),
           ),
         ),

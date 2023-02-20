@@ -29,3 +29,20 @@ class MirrorFlyAppTheme {
     ),
   );
 }
+class CustomSafeArea extends StatelessWidget {
+  final Widget child;
+  final Color? color;
+
+  const CustomSafeArea({Key? key, required this.child, this.color})
+      : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      color: color ?? appBarColor,
+      child: SafeArea(
+        child: child,
+      ),
+    );
+  }
+}
