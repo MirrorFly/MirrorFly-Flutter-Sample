@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
 import 'package:flysdk/flysdk.dart';
@@ -13,6 +14,7 @@ import 'package:mirror_fly_demo/app/modules/group/controllers/group_info_control
 import 'package:mirror_fly_demo/app/modules/settings/views/blocked/blocked_list_controller.dart';
 
 import 'common/main_controller.dart';
+import 'common/notification_service.dart';
 import 'modules/archived_chats/archived_chat_list_controller.dart';
 import 'modules/chat/controllers/forwardchat_controller.dart';
 import 'modules/chatInfo/controllers/chat_info_controller.dart';
@@ -114,7 +116,7 @@ abstract class BaseController {
     if(SessionManagement.getCurrentChatJID().checkNull() == chatMessageModel.chatUserJid.checkNull()){
       debugPrint("Message Received user chat screen is in online");
     }else{
-
+     showLocalNotification(chatMessageModel);
     }
 
     if (Get.isRegistered<ChatController>()) {
@@ -330,4 +332,23 @@ abstract class BaseController {
   void onProgressChanged(result) {}
 
   void onSuccess(result) {}
+
+  Future<void> showLocalNotification(ChatMessageModel chatMessageModel) async {
+    debugPrint("showing local notification");
+    final String? notificationUri = SessionManagement.getNotificationUri();
+    final UriAndroidNotificationSound uriSound = UriAndroidNotificationSound(notificationUri!);
+    debugPrint("notificationUri--> $notificationUri");
+    int id = DateTime.now().millisecond;
+    debugPrint("id--> $id");
+    AndroidNotificationDetails androidNotificationDetails =
+    AndroidNotificationDetails(chatMessageModel.messageId, 'MirrorFly',
+        importance: Importance.max,
+        priority: Priority.high,
+        sound: uriSound,
+        styleInformation: const DefaultStyleInformation(true, true));
+    NotificationDetails notificationDetails =
+    NotificationDetails(android: androidNotificationDetails);
+    await flutterLocalNotificationsPlugin.show(
+        id, chatMessageModel.senderUserName, chatMessageModel.messageTextContent, notificationDetails, payload: chatMessageModel.chatUserJid);
+  }
 }

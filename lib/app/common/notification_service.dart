@@ -20,8 +20,6 @@ StreamController<String?>.broadcast();
 
 String? selectedNotificationPayload;
 
-/// A notification action which triggers a url launch event
-const String urlLaunchActionId = 'id_1';
 
 /// A notification action which triggers a App navigation event
 const String navigationActionId = 'id_3';
@@ -64,7 +62,7 @@ class NotificationService {
     }
 
     const AndroidInitializationSettings initializationSettingsAndroid =
-    AndroidInitializationSettings('app_icon');
+    AndroidInitializationSettings('ic_notification_blue');
 
     /// Note: permissions aren't requested here just to demonstrate that can be
     /// done later
@@ -97,9 +95,12 @@ class NotificationService {
           (NotificationResponse notificationResponse) {
         switch (notificationResponse.notificationResponseType) {
           case NotificationResponseType.selectedNotification:
+            debugPrint("NotificationResponseType.selectedNotification");
+            debugPrint("NotificationResponseType.payload-->${notificationResponse.payload}");
             selectNotificationStream.add(notificationResponse.payload);
             break;
           case NotificationResponseType.selectedNotificationAction:
+            debugPrint("NotificationResponseType.selectedNotificationAction");
             if (notificationResponse.actionId == navigationActionId) {
               selectNotificationStream.add(notificationResponse.payload);
             }

@@ -2938,15 +2938,21 @@ open class FlyBaseController(activity: FlutterActivity) : MethodChannel.MethodCa
         val storedNotification = SharedPreferenceManager.instance.getString("notification_uri")
         Log.e("stored notification", storedNotification)
 
+        val ringtoneJSONObject = JSONObject()
+
         if (storedNotification == "") {
-            return SharedPreferenceManager.instance.getString("notification_uri");
+            ringtoneJSONObject.put("name", SharedPreferenceManager.instance.getString("notification_uri"))
+            ringtoneJSONObject.put("tone_uri", SharedPreferenceManager.instance.getString("notification_uri"))
+            return ringtoneJSONObject.toString()
         }
 //        if(storedNotification == ""){
 //            return RingtoneManager.getRingtone(mContext, Uri.parse(default)).getTitle(mContext)
 //        }
         val ringtone = RingtoneManager.getRingtone(mContext, Uri.parse(storedNotification))
+        ringtoneJSONObject.put("name", ringtone.getTitle(mContext))
+        ringtoneJSONObject.put("tone_uri", storedNotification)
 
-        return ringtone.getTitle(mContext)
+        return ringtoneJSONObject.toString()
 
     }
 
