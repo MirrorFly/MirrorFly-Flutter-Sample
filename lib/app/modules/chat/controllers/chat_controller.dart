@@ -334,6 +334,7 @@ class ChatController extends FullLifeCycleController
         : false;
     if (!busyStatus.checkNull()) {
       if (await AppUtils.isNetConnected()) {
+        // focusNode.unfocus();
         showBottomSheetAttachment();
       } else {
         toToast(Constants.noInternetConnection);
@@ -390,14 +391,6 @@ class ChatController extends FullLifeCycleController
           messageController.text = "";
           isUserTyping(false);
           clearMessage();
-          //need to work here
-          final jsonResponse = json.decode(value);
-          //Written for iOS Response
-          if (jsonResponse.containsKey('some')) {
-            debugPrint("Inside some condition");
-            value = json.encode(jsonResponse['some']);
-            debugPrint(value);
-          }
           ChatMessageModel chatMessageModel = sendMessageModelFromJson(value);
           chatList.insert(0, chatMessageModel);
           scrollToBottom();

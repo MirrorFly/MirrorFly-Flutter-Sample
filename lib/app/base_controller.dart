@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
 import 'package:flysdk/flysdk.dart';
@@ -26,13 +27,37 @@ abstract class BaseController {
     FlyChat.onGroupProfileFetched.listen(onGroupProfileFetched);
     FlyChat.onNewGroupCreated.listen(onNewGroupCreated);
     FlyChat.onGroupProfileUpdated.listen(onGroupProfileUpdated);
-    FlyChat.onNewMemberAddedToGroup.listen(onNewMemberAddedToGroup);
-    FlyChat.onMemberRemovedFromGroup.listen(onMemberRemovedFromGroup);
+    FlyChat.onNewMemberAddedToGroup.listen((event){
+      if(event!=null){
+        var data = json.decode(event.toString());
+        var groupJid = data["groupJid"] ?? "";
+        var newMemberJid = data["newMemberJid"] ?? "";
+        var addedByMemberJid = data["addedByMemberJid"] ?? "";
+        onNewMemberAddedToGroup(groupJid: groupJid, newMemberJid: newMemberJid,addedByMemberJid: addedByMemberJid);
+      }
+    });
+    FlyChat.onMemberRemovedFromGroup.listen((event){
+      if(event!=null){
+        var data = json.decode(event.toString());
+        var groupJid = data["groupJid"] ?? "";
+        var removedMemberJid = data["removedMemberJid"] ?? "";
+        var removedByMemberJid = data["removedByMemberJid"] ?? "";
+        onMemberRemovedFromGroup(groupJid: groupJid, removedMemberJid: removedMemberJid,removedByMemberJid: removedByMemberJid);
+      }
+    });
     FlyChat.onFetchingGroupMembersCompleted
         .listen(onFetchingGroupMembersCompleted);
     FlyChat.onDeleteGroup.listen(onDeleteGroup);
     FlyChat.onFetchingGroupListCompleted.listen(onFetchingGroupListCompleted);
-    FlyChat.onMemberMadeAsAdmin.listen(onMemberMadeAsAdmin);
+    FlyChat.onMemberMadeAsAdmin.listen((event){
+      if(event!=null){
+        var data = json.decode(event.toString());
+        var groupJid = data["groupJid"] ?? "";
+        var newAdminMemberJid = data["newAdminMemberJid"] ?? "";
+        var madeByMemberJid = data["madeByMemberJid"] ?? "";
+        onMemberMadeAsAdmin(groupJid: groupJid, newAdminMemberJid: newAdminMemberJid,madeByMemberJid: madeByMemberJid);
+      }
+    });
     FlyChat.onMemberRemovedAsAdmin.listen(onMemberRemovedAsAdmin);
     FlyChat.onLeftFromGroup.listen((event) {
       if (event != null) {
@@ -164,9 +189,21 @@ abstract class BaseController {
     }
   }
 
-  void onNewMemberAddedToGroup(event) {}
+  void onNewMemberAddedToGroup({required String groupJid,
+  required String newMemberJid, required String addedByMemberJid}) {
+    debugPrint('onNewMemberAddedToGroup $newMemberJid');
+    if (Get.isRegistered<GroupInfoController>()) {
+      Get.find<GroupInfoController>().onNewMemberAddedToGroup(groupJid: groupJid, newMemberJid: newMemberJid, addedByMemberJid: addedByMemberJid);
+    }
+  }
 
-  void onMemberRemovedFromGroup(event) {}
+  void onMemberRemovedFromGroup({required String groupJid,
+    required String removedMemberJid, required String removedByMemberJid}) {
+    debugPrint('onMemberRemovedFromGroup $removedMemberJid');
+    if (Get.isRegistered<GroupInfoController>()) {
+      Get.find<GroupInfoController>().onMemberRemovedFromGroup(groupJid: groupJid, removedMemberJid: removedMemberJid, removedByMemberJid: removedByMemberJid);
+    }
+  }
 
   void onFetchingGroupMembersCompleted(groupJid) {}
 
@@ -178,9 +215,17 @@ abstract class BaseController {
 
   void onFetchingGroupListCompleted(noOfGroups) {}
 
-  void onMemberMadeAsAdmin(event) {}
+  void onMemberMadeAsAdmin({required String groupJid,
+    required String newAdminMemberJid, required String madeByMemberJid}) {
+    debugPrint('onMemberMadeAsAdmin $newAdminMemberJid');
+    if (Get.isRegistered<GroupInfoController>()) {
+      Get.find<GroupInfoController>().onMemberMadeAsAdmin(groupJid: groupJid, newAdminMemberJid: newAdminMemberJid, madeByMemberJid: madeByMemberJid);
+    }
+  }
 
-  void onMemberRemovedAsAdmin(event) {}
+  void onMemberRemovedAsAdmin(event) {
+    debugPrint('onMemberRemovedAsAdmin $event');
+  }
 
   void onLeftFromGroup({required String groupJid, required String userJid}) {
     if (Get.isRegistered<ChatController>()) {
