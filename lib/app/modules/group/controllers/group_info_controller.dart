@@ -72,9 +72,11 @@ class GroupInfoController extends GetxController {
   }
 
   void userUpdatedHisProfile(String jid) {
+    // debugPrint("userUpdatedHisProfile : $jid");
     if(jid.checkNull().isNotEmpty) {
       getProfileDetails(jid).then((value) {
         var index = groupMembers.indexWhere((element) => element.jid == jid);
+        // debugPrint("profile : $index");
         if (!index.isNegative) {
           value.isGroupAdmin = groupMembers[index].isGroupAdmin;
           groupMembers[index] = value;

@@ -210,7 +210,9 @@ abstract class BaseController {
     //FlyChat.getRegisteredUsers(true).then((value) => mirrorFlyLog("registeredUsers", value.toString()));
   }
 
-  void onLoggedOut(result) {}
+  void onLoggedOut(result) {
+    mirrorFlyLog('logout called', result.toString());
+  }
 
   void unblockedThisUser(String jid) {
     mirrorFlyLog("unblockedThisUser", jid.toString());
@@ -286,7 +288,9 @@ abstract class BaseController {
 
   void onConnected(result) {}
 
-  void onDisconnected(result) {}
+  void onDisconnected(result) {
+    mirrorFlyLog('onDisconnected', result.toString());
+  }
 
   void onConnectionNotAuthorized(result) {}
 
