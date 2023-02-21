@@ -149,13 +149,13 @@ getReplyMessage(
       return Row(
         children: [
           Helper.forMessageTypeIcon(
-              Constants.mAudio, mediaChatMessage!.isAudioRecorded),
+              Constants.mAudio,mediaChatMessage!=null ? mediaChatMessage.isAudioRecorded : true),
           const SizedBox(
             width: 5,
           ),
           Text(
             Helper.durationToString(
-                Duration(microseconds: mediaChatMessage.mediaDuration)),
+                Duration(microseconds: mediaChatMessage!=null ? mediaChatMessage.mediaDuration : 0)),
           ),
           const SizedBox(
             width: 5,
@@ -1411,21 +1411,23 @@ class RecalledMessageView extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
-          Row(
-            children: [
-              Image.asset(
-                disabledIcon,
-                width: 15,
-                height: 15,
-              ),
-              const SizedBox(width: 10),
-              Text(
-                chatMessage.isMessageSentByMe
-                    ? "You deleted this message"
-                    : "This message was deleted",
-                style: const TextStyle(fontSize: 16),
-              ),
-            ],
+          Flexible(
+            child: Row(
+              children: [
+                Image.asset(
+                  disabledIcon,
+                  width: 15,
+                  height: 15,
+                ),
+                const SizedBox(width: 10),
+                Text(
+                  chatMessage.isMessageSentByMe
+                      ? "You deleted this message"
+                      : "This message was deleted",
+                  maxLines: 2,
+                ),
+              ],
+            ),
           ),
           const SizedBox(
             width: 10,
