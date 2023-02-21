@@ -1794,6 +1794,8 @@ class ChatController extends FullLifeCycleController
   }
 
   infoPage() {
+    // FlyChat.setOnGoingChatUser("");
+    // SessionManagement.setCurrentChatJID("");
     if (profile.isGroupProfile ?? false) {
       Get.toNamed(Routes.groupInfo, arguments: profile)?.then((value) {
         if (value != null) {
@@ -1805,10 +1807,16 @@ class ChatController extends FullLifeCycleController
           SessionManagement.setCurrentChatJID(profile.jid.checkNull());
           getChatHistory();
           sendReadReceipt();
+          setChatStatus();
+          debugPrint("value--> ${profile.isGroupProfile}");
         }
       });
     } else {
-      Get.toNamed(Routes.chatInfo, arguments: profile)?.then((value) {});
+      Get.toNamed(Routes.chatInfo, arguments: profile)?.then((value) {
+        debugPrint("chat info-->$value");
+        // FlyChat.setOnGoingChatUser(profile.jid!);
+        // SessionManagement.setCurrentChatJID(profile.jid.checkNull());
+      });
     }
   }
 
@@ -1974,7 +1982,8 @@ class ChatController extends FullLifeCycleController
 
   setChatStatus() async {
     if (await AppUtils.isNetConnected()) {
-      if (profile.isGroupProfile ?? false) {
+      if (profile.isGroupProfile.checkNull()) {
+        debugPrint("value--> show group list");
         if (typingList.isNotEmpty) {
           userPresenceStatus(
               "${Member(jid: typingList.last).getUsername()} typing...");
@@ -1982,9 +1991,12 @@ class ChatController extends FullLifeCycleController
           getParticipantsNameAsCsv(profile.jid.checkNull());
         }
       } else {
+        debugPrint("value--> show user presence");
         FlyChat.getUserLastSeenTime(profile.jid.toString()).then((value) {
+          groupParticipantsName('');
           userPresenceStatus(value.toString());
         }).catchError((er) {
+          groupParticipantsName('');
           userPresenceStatus("");
         });
       }
