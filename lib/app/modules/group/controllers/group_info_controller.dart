@@ -85,6 +85,14 @@ class GroupInfoController extends GetxController {
     }
   }
 
+  void onLeftFromGroup({required String groupJid, required String userJid}) {
+    /*if (profile.isGroupProfile.checkNull()) {
+      if (groupJid == profile.jid) {
+
+      }
+    }*/
+  }
+
 
   _scrollListener() {
     if (scrollController.hasClients) {

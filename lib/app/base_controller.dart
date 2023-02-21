@@ -186,6 +186,9 @@ abstract class BaseController {
     if (Get.isRegistered<ChatController>()) {
       Get.find<ChatController>().onLeftFromGroup(groupJid: groupJid, userJid : userJid);
     }
+    if (Get.isRegistered<GroupInfoController>()) {
+      Get.find<GroupInfoController>().onLeftFromGroup(groupJid: groupJid, userJid : userJid);
+    }
   }
 
   void onGroupNotificationMessage(event) {}
