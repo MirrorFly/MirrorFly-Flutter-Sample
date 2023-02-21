@@ -229,6 +229,7 @@ class ChatController extends FullLifeCycleController
     });
 
     FlyChat.setOnGoingChatUser(profile.jid!);
+    SessionManagement.setCurrentChatJID(profile.jid.checkNull());
     getChatHistory();
     // compute(getChatHistory, profile.jid);
     debugPrint("==================");
@@ -273,6 +274,7 @@ class ChatController extends FullLifeCycleController
     debugPrint("onClose");
     saveUnsentMessage();
     FlyChat.setOnGoingChatUser("");
+    SessionManagement.setCurrentChatJID("");
     isLive = false;
     player.stop();
     player.dispose();
@@ -1671,6 +1673,7 @@ class ChatController extends FullLifeCycleController
           checkAdminBlocked();
           memberOfGroup();
           FlyChat.setOnGoingChatUser(profile.jid!);
+          SessionManagement.setCurrentChatJID(profile.jid.checkNull());
           getChatHistory();
           sendReadReceipt();
         }
@@ -1806,6 +1809,7 @@ class ChatController extends FullLifeCycleController
           checkAdminBlocked();
           memberOfGroup();
           FlyChat.setOnGoingChatUser(profile.jid!);
+          SessionManagement.setCurrentChatJID(profile.jid.checkNull());
           getChatHistory();
           sendReadReceipt();
         }
@@ -2236,6 +2240,7 @@ class ChatController extends FullLifeCycleController
         checkAdminBlocked();
         memberOfGroup();
         FlyChat.setOnGoingChatUser(profile.jid!);
+        SessionManagement.setCurrentChatJID(profile.jid.checkNull());
         getChatHistory();
         sendReadReceipt();
       }
@@ -2431,6 +2436,7 @@ class ChatController extends FullLifeCycleController
   void onPaused() {
     mirrorFlyLog("LifeCycle", "onPaused");
     FlyChat.setOnGoingChatUser("");
+    SessionManagement.setCurrentChatJID("");
     playerPause();
     saveUnsentMessage();
     sendUserTypingGoneStatus();
@@ -2449,6 +2455,7 @@ class ChatController extends FullLifeCycleController
       }
     }
     FlyChat.setOnGoingChatUser(profile.jid.checkNull());
+    SessionManagement.setCurrentChatJID(profile.jid.checkNull());
   }
 
   @override

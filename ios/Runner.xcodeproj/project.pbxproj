@@ -19,10 +19,6 @@
 		CE2582232951A053009D974C /* NotificationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE2582222951A053009D974C /* NotificationService.swift */; };
 		CE2582272951A053009D974C /* FlutterNotificationExtnsion.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = CE2582202951A053009D974C /* FlutterNotificationExtnsion.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		CEB9F2DB2948F9E10080BC48 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = CEB9F2DA2948F9E10080BC48 /* GoogleService-Info.plist */; };
-		CEC69EF0296EE64A003A5787 /* FlyCall.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = CEC69EDE296EE639003A5787 /* FlyCall.xcframework */; };
-		CEC69EF2296EE64A003A5787 /* FlyCommon.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = CEC69EDC296EE638003A5787 /* FlyCommon.xcframework */; };
-		CEC69EF4296EE64A003A5787 /* FlyCore.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = CEC69EE0296EE63A003A5787 /* FlyCore.xcframework */; };
-		CEC69EF7296EE64E003A5787 /* FlyXmpp.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = CEC69EDD296EE638003A5787 /* FlyXmpp.xcframework */; };
 		CED95E0D29472C1600B02558 /* FlyEvents.swift in Sources */ = {isa = PBXBuildFile; fileRef = CED95E0429472C1600B02558 /* FlyEvents.swift */; };
 		CED95E0E29472C1600B02558 /* Commons.swift in Sources */ = {isa = PBXBuildFile; fileRef = CED95E0529472C1600B02558 /* Commons.swift */; };
 		CED95E0F29472C1600B02558 /* FlySdkMethodCalls.swift in Sources */ = {isa = PBXBuildFile; fileRef = CED95E0629472C1600B02558 /* FlySdkMethodCalls.swift */; };
@@ -110,11 +106,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CEC69EF7296EE64E003A5787 /* FlyXmpp.xcframework in Frameworks */,
 				B830FAC576CFE4976CC5F50C /* Pods_FlutterNotificationExtnsion.framework in Frameworks */,
-				CEC69EF2296EE64A003A5787 /* FlyCommon.xcframework in Frameworks */,
-				CEC69EF4296EE64A003A5787 /* FlyCore.xcframework in Frameworks */,
-				CEC69EF0296EE64A003A5787 /* FlyCall.xcframework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -118,6 +118,10 @@ class SessionManagement {
     await _preferences.setString('userData', userData);*/
   }
 
+  static void setCurrentChatJID(String chatJID) async {
+    await _preferences.setString("CurrentChatJID", chatJID);
+  }
+
   static Future setCurrentUser(ProData data) async {
     data.toJson().forEach((key, value) async {
       await _preferences.setString(key, value.toString());
@@ -127,6 +131,7 @@ class SessionManagement {
   static bool getLogin() => _preferences.getBool("login") ?? false;
 
   static String? getChatJid() => _preferences.getString("chatJid");
+  static String? getCurrentChatJID() => _preferences.getString("CurrentChatJID");
   static String? getName() => _preferences.getString("name");
   static String? getMobileNumber() => _preferences.getString("mobileNumber");
   static String? getCountryCode() => _preferences.getString("country_code") ?? "+91";

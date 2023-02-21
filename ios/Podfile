@@ -47,7 +47,7 @@ target 'Runner' do
 end
 
 def notification_pods
-
+  pod 'Mirrorfly-ios-framework', :git => 'https://github.com/MirrorFly/Mirrorfly-ios-framework.git', :tag => '0.0.5'
 #  pod 'libPhoneNumber-iOS' #, '~> 0.8'
 #   pod 'Alamofire' #, '~> 5.3'
 #   # Pods for FlyCall
