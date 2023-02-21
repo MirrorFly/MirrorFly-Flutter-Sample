@@ -46,7 +46,7 @@ class ProfileController extends GetxController {
     userImgUrl.value = SessionManagement.getUserImage() ?? "";
     mirrorFlyLog("auth : ", SessionManagement.getAuthToken().toString());
     if (Get.arguments != null) {
-       (Get.arguments["from"]);
+      from(Get.arguments["from"]);
       if (from.value == Routes.login) {
         profileMobile.text = Get.arguments['mobile'] ?? "";
       }

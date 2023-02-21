@@ -18,6 +18,7 @@ class StarredMessagesController extends GetxController {
   double width = 0.0;
   var isSelected = false.obs;
 
+  var isListLoading = true.obs;
   var calendar = DateTime.now();
 
   @override
@@ -46,10 +47,12 @@ class StarredMessagesController extends GetxController {
   }
   getFavouriteMessages() {
     if(!isSelected.value) {
+      isListLoading(true);
       FlyChat.getFavouriteMessages().then((value) {
         List<ChatMessageModel> chatMessageModel = chatMessageModelFromJson(
             value);
         starredChatList(chatMessageModel.toList());
+        isListLoading(false);
       });
     }
   }
