@@ -133,14 +133,20 @@ class MainController extends GetxController with BaseController
       // ));
       debugPrint("opening chat page--> $payload");
       if(payload != null && payload.isNotEmpty){
-        // FlyChat.getProfileDetails(payload, false).then((value) {
-        //   if (value != null) {
-        //     var profile = profiledata(value.toString());
-        //     Get.toNamed(Routes.chat, arguments: profile);
-        //   }
-        // });
-        Get.toNamed(Routes.chat,
-            parameters: {'isFromStarred': 'true', "userJid": payload});
+
+        if (Get.isRegistered<ChatController>()) {
+          FlyChat.getProfileDetails(payload, false).then((value) {
+            if (value != null) {
+              debugPrint("notification group info controller");
+              var profile = profiledata(value.toString());
+              // Get.toNamed(Routes.chat, arguments: profile);
+              Get.back(result: profile);
+            }
+          });
+        }else {
+          Get.toNamed(Routes.chat,
+              parameters: {'isFromStarred': 'true', "userJid": payload});
+        }
       }
     });
   }
