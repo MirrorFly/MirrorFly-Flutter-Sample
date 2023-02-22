@@ -80,6 +80,7 @@ class GroupInfoController extends GetxController {
         if (!index.isNegative) {
           value.isGroupAdmin = groupMembers[index].isGroupAdmin;
           groupMembers[index] = value;
+          groupMembers.refresh();
         }
       });
     }
