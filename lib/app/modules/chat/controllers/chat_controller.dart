@@ -2347,6 +2347,9 @@ class ChatController extends FullLifeCycleController
         canShowReport(false);
     }
 
+    canBeStarred(!canBeStarred.value && !canBeUnStarred.value ||
+        canBeStarred.value && !canBeUnStarred.value);
+
     if (containsRecalled.value) {
       canBeCopied(false);
       canBeForwarded(false);
@@ -2357,9 +2360,6 @@ class ChatController extends FullLifeCycleController
       canShowInfo(false);
       canShowReport(false);
     }
-
-    canBeStarred(!canBeStarred.value && !canBeUnStarred.value ||
-        canBeStarred.value && !canBeUnStarred.value);
     // return messageActions;
     mirrorFlyLog("action_menu canBeCopied", canBeCopied.toString());
     mirrorFlyLog("action_menu canBeForwarded", canBeForwarded.toString());
