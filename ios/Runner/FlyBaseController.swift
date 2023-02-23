@@ -42,7 +42,7 @@ let myProfileUpdated_channel = "contus.mirrorfly/myProfileUpdated"
 let onAdminBlockedOtherUser_channel = "contus.mirrorfly/onAdminBlockedOtherUser"
 let onAdminBlockedUser_channel = "contus.mirrorfly/onAdminBlockedUser"
 let onContactSyncComplete_channel = "contus.mirrorfly/onContactSyncComplete"//need to verify with ios team
-let onLoggedOut_channel = "contus.mirrorfly/onLoggedOut"//not found
+let onLoggedOut_channel = "contus.mirrorfly/onLoggedOut"
 let unblockedThisUser_channel = "contus.mirrorfly/unblockedThisUser"
 let userBlockedMe_channel = "contus.mirrorfly/userBlockedMe"
 let userCameOnline_channel = "contus.mirrorfly/userCameOnline"
@@ -688,6 +688,8 @@ class FlyBaseController: NSObject{
                 FlySdkMethodCalls.deleteRecentChats(call: call, result: result)
             case "getDefaultNotificationUri":
                 FlySdkMethodCalls.getDefaultNotificationUri(call: call, result: result)
+            case "logoutOfChatSDK":
+                FlySdkMethodCalls.logoutOfChatSDK(call: call, result: result)
             default:
                 result(FlutterMethodNotImplemented)
             }
@@ -720,6 +722,10 @@ class FlyBaseController: NSObject{
 extension FlyBaseController : MessageEventsDelegate, ConnectionEventDelegate, LogoutDelegate, GroupEventsDelegate,
                               AdminBlockCurrentUserDelegate, TypingStatusDelegate, ProfileEventsDelegate,
                               AdminBlockDelegate,AvailableFeaturesDelegate, BackupEventDelegate, RestoreEventDelegate {
+    func clearAllConversationForSyncedDevice() {
+        
+    }
+    
     
     func onMessagesCleared(toJid: String, deleteType: String?) {
         
@@ -1202,21 +1208,12 @@ extension FlyBaseController : MessageEventsDelegate, ConnectionEventDelegate, Lo
     func didReceiveLogout() {
         print("logout delegate received")
         print("AppDelegate LogoutDelegate ===> LogoutDelegate")
-        Utility.saveInPreference(key: isProfileSaved, value: false)
-        Utility.saveInPreference(key: isLoggedIn, value: false)
-
-        ChatManager.logoutApi { isSuccess, flyError, flyData in
-           if isSuccess {
-               print("requestLogout Logout api isSuccess")
-
-           }else{
-               print("Logout api error : \(String(describing: flyError))")
-
-           }
-       }
-        ChatManager.enableContactSync(isEnable: ENABLE_CONTACT_SYNC)
-        ChatManager.disconnect()
-        ChatManager.shared.resetFlyDefaults()
+        
+        if(onLoggedOutStreamHandler?.onLoggedOut != nil){
+            onLoggedOutStreamHandler?.onLoggedOut?(true)
+        }else{
+            print("logout Stream Handler is Nil")
+        }
     }
     
     func onConnected() {

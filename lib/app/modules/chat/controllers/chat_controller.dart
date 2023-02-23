@@ -229,6 +229,7 @@ class ChatController extends FullLifeCycleController
     });
 
     FlyChat.setOnGoingChatUser(profile.jid!);
+    SessionManagement.setCurrentChatJID(profile.jid.checkNull());
     getChatHistory();
     // compute(getChatHistory, profile.jid);
     debugPrint("==================");
@@ -273,6 +274,7 @@ class ChatController extends FullLifeCycleController
     debugPrint("onClose");
     saveUnsentMessage();
     FlyChat.setOnGoingChatUser("");
+    SessionManagement.setCurrentChatJID("");
     isLive = false;
     player.stop();
     player.dispose();
@@ -334,6 +336,7 @@ class ChatController extends FullLifeCycleController
         : false;
     if (!busyStatus.checkNull()) {
       if (await AppUtils.isNetConnected()) {
+        // focusNode.unfocus();
         showBottomSheetAttachment();
       } else {
         toToast(Constants.noInternetConnection);
@@ -390,14 +393,6 @@ class ChatController extends FullLifeCycleController
           messageController.text = "";
           isUserTyping(false);
           clearMessage();
-          //need to work here
-          final jsonResponse = json.decode(value);
-          //Written for iOS Response
-          if (jsonResponse.containsKey('some')) {
-            debugPrint("Inside some condition");
-            value = json.encode(jsonResponse['some']);
-            debugPrint(value);
-          }
           ChatMessageModel chatMessageModel = sendMessageModelFromJson(value);
           chatList.insert(0, chatMessageModel);
           scrollToBottom();
@@ -1671,6 +1666,7 @@ class ChatController extends FullLifeCycleController
           checkAdminBlocked();
           memberOfGroup();
           FlyChat.setOnGoingChatUser(profile.jid!);
+          SessionManagement.setCurrentChatJID(profile.jid.checkNull());
           getChatHistory();
           sendReadReceipt();
         }
@@ -1798,6 +1794,8 @@ class ChatController extends FullLifeCycleController
   }
 
   infoPage() {
+    // FlyChat.setOnGoingChatUser("");
+    // SessionManagement.setCurrentChatJID("");
     if (profile.isGroupProfile ?? false) {
       Get.toNamed(Routes.groupInfo, arguments: profile)?.then((value) {
         if (value != null) {
@@ -1806,12 +1804,19 @@ class ChatController extends FullLifeCycleController
           checkAdminBlocked();
           memberOfGroup();
           FlyChat.setOnGoingChatUser(profile.jid!);
+          SessionManagement.setCurrentChatJID(profile.jid.checkNull());
           getChatHistory();
           sendReadReceipt();
+          setChatStatus();
+          debugPrint("value--> ${profile.isGroupProfile}");
         }
       });
     } else {
-      Get.toNamed(Routes.chatInfo, arguments: profile)?.then((value) {});
+      Get.toNamed(Routes.chatInfo, arguments: profile)?.then((value) {
+        debugPrint("chat info-->$value");
+        // FlyChat.setOnGoingChatUser(profile.jid!);
+        // SessionManagement.setCurrentChatJID(profile.jid.checkNull());
+      });
     }
   }
 
@@ -1977,7 +1982,8 @@ class ChatController extends FullLifeCycleController
 
   setChatStatus() async {
     if (await AppUtils.isNetConnected()) {
-      if (profile.isGroupProfile ?? false) {
+      if (profile.isGroupProfile.checkNull()) {
+        debugPrint("value--> show group list");
         if (typingList.isNotEmpty) {
           userPresenceStatus(
               "${Member(jid: typingList.last).getUsername()} typing...");
@@ -1985,9 +1991,12 @@ class ChatController extends FullLifeCycleController
           getParticipantsNameAsCsv(profile.jid.checkNull());
         }
       } else {
+        debugPrint("value--> show user presence");
         FlyChat.getUserLastSeenTime(profile.jid.toString()).then((value) {
+          groupParticipantsName('');
           userPresenceStatus(value.toString());
         }).catchError((er) {
+          groupParticipantsName('');
           userPresenceStatus("");
         });
       }
@@ -2236,6 +2245,7 @@ class ChatController extends FullLifeCycleController
         checkAdminBlocked();
         memberOfGroup();
         FlyChat.setOnGoingChatUser(profile.jid!);
+        SessionManagement.setCurrentChatJID(profile.jid.checkNull());
         getChatHistory();
         sendReadReceipt();
       }
@@ -2337,6 +2347,9 @@ class ChatController extends FullLifeCycleController
         canShowReport(false);
     }
 
+    canBeStarred(!canBeStarred.value && !canBeUnStarred.value ||
+        canBeStarred.value && !canBeUnStarred.value);
+
     if (containsRecalled.value) {
       canBeCopied(false);
       canBeForwarded(false);
@@ -2347,9 +2360,6 @@ class ChatController extends FullLifeCycleController
       canShowInfo(false);
       canShowReport(false);
     }
-
-    canBeStarred(!canBeStarred.value && !canBeUnStarred.value ||
-        canBeStarred.value && !canBeUnStarred.value);
     // return messageActions;
     mirrorFlyLog("action_menu canBeCopied", canBeCopied.toString());
     mirrorFlyLog("action_menu canBeForwarded", canBeForwarded.toString());
@@ -2431,6 +2441,7 @@ class ChatController extends FullLifeCycleController
   void onPaused() {
     mirrorFlyLog("LifeCycle", "onPaused");
     FlyChat.setOnGoingChatUser("");
+    SessionManagement.setCurrentChatJID("");
     playerPause();
     saveUnsentMessage();
     sendUserTypingGoneStatus();
@@ -2449,6 +2460,7 @@ class ChatController extends FullLifeCycleController
       }
     }
     FlyChat.setOnGoingChatUser(profile.jid.checkNull());
+    SessionManagement.setCurrentChatJID(profile.jid.checkNull());
   }
 
   @override

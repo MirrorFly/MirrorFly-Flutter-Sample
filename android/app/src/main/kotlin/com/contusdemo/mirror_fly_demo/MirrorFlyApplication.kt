@@ -60,7 +60,7 @@ class MirrorFlyApplication : FlutterApplication() {
         //activity to open when use clicked from notification
         //activity to open when a user logout from the app.
         //ChatManager.enableMobileNumberLogin(true) //for syncContact
-        ChatManager.startActivity = MainActivity::class.java
+//        ChatManager.startActivity = MainActivity::class.java
 
         //initialize call sdk
         CallManager.init(this)

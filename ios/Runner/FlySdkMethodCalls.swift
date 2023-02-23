@@ -993,7 +993,8 @@ import FlyDatabase
         
         print(busyStatus)
         
-        ChatManager.shared.deleteBusyStatus(busyStatus)
+//        ChatManager.shared.deleteBusyStatus(busyStatus)
+        ChatManager.shared.deleteBusyStatus(statusId: busyId)
         
         result(true)
         
@@ -1264,8 +1265,9 @@ import FlyDatabase
         let args = call.arguments as! Dictionary<String, Any>
         
         let jid = args["jid"] as? String ?? nil
+        //Multiple
+//        ChatManager.deleteRecentChat(jid: jid!)
         
-        ChatManager.deleteRecentChat(jid: jid!)
     }
     static func setNotificationSound(call: FlutterMethodCall, result: @escaping FlutterResult){
         let args = call.arguments as! Dictionary<String, Any>
@@ -1522,8 +1524,9 @@ import FlyDatabase
         let userJid = args["jid"] as? String ?? ""
 
 
-        ChatManager.getDocumentMessageGroupByMonth(jid: userJid) { chatMessages in
-            let mediaMessages : [[ChatMessage]] = chatMessages
+        ChatManager.getDocumentMessageGroupByMonth(jid: userJid) { _,_,data in
+            var flydata = data
+            let mediaMessages : [[ChatMessage]] = flydata.getData() as? [[ChatMessage]] ?? []
             print("getDocsMessages-> \(mediaMessages)")
             if (mediaMessages.isEmpty){
                 result(nil)
@@ -1554,8 +1557,9 @@ import FlyDatabase
         let args = call.arguments as! Dictionary<String, Any>
         let userJid = args["jid"] as? String ?? ""
         
-        ChatManager.getLinkMessageGroupByMonth(jid: userJid) { linkMessages in
-            let mediaLinkMessages = linkMessages
+        ChatManager.getLinkMessageGroupByMonth(jid: userJid) { _,_,data  in
+            var flydata = data
+            let mediaLinkMessages = flydata.getData() as? [[LinkMessage]] ?? []
             print("getLinkMessages-> \(mediaLinkMessages)")
             
             if (mediaLinkMessages.isEmpty){
@@ -1713,6 +1717,27 @@ import FlyDatabase
         }else{
             ChatManager.unarchiveChatConversation(jidsToUnarchive: userJidList)
         }
+    
+       result(true)
+               
+    }
+    static func logoutOfChatSDK(call: FlutterMethodCall, result: @escaping FlutterResult){
+        
+        Utility.saveInPreference(key: isProfileSaved, value: false)
+        Utility.saveInPreference(key: isLoggedIn, value: false)
+
+        ChatManager.logoutApi { isSuccess, flyError, flyData in
+           if isSuccess {
+               print("requestLogout Logout api isSuccess")
+
+           }else{
+               print("Logout api error : \(String(describing: flyError))")
+
+           }
+       }
+//        ChatManager.enableContactSync(isEnable: ENABLE_CONTACT_SYNC)
+        ChatManager.disconnect()
+        ChatManager.shared.resetFlyDefaults()
     
        result(true)
                

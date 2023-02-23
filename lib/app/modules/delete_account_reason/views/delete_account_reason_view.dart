@@ -21,12 +21,9 @@ class DeleteAccountReasonView extends GetView<DeleteAccountReasonController> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const SizedBox(
-                    height: 10,
-                  ),
                   const Text(
                     'We hate to see you leave! Tell us why you are deleting your account:',
-                    style: TextStyle(color: Colors.black, fontSize: 17),
+                    style: TextStyle(color: textHintColor, fontSize: 15,fontWeight: FontWeight.normal),
                   ),
                   const SizedBox(
                     height: 15,
@@ -71,7 +68,7 @@ class DeleteAccountReasonView extends GetView<DeleteAccountReasonController> {
                     height: 15,
                   ),
                   const Text(
-                    'We will store your feedback for future purpose',
+                    'We will store your feedback for future purpose',style: TextStyle(color: textColor,fontSize: 11,fontWeight: FontWeight.w300),
                   ),
                   const SizedBox(
                     height: 55,

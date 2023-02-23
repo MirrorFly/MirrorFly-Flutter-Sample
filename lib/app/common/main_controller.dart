@@ -1,11 +1,15 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:audioplayers/audioplayers.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/base_controller.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
+import 'package:mirror_fly_demo/app/common/received_notification.dart';
 import 'package:mirror_fly_demo/app/data/pushnotification.dart';
 import 'package:mirror_fly_demo/app/data/session_management.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
@@ -15,6 +19,7 @@ import 'package:mirror_fly_demo/app/routes/app_pages.dart';
 import 'package:flysdk/flysdk.dart';
 
 import '../modules/chatInfo/controllers/chat_info_controller.dart';
+import 'notification_service.dart';
 
 class MainController extends GetxController with BaseController
     /*with FullLifeCycleMixin */{
@@ -26,12 +31,12 @@ class MainController extends GetxController with BaseController
   var audioPlayed = false.obs;
   AudioPlayer player = AudioPlayer();
   String currentPostLabel = "00:00";
-
+  bool _notificationsEnabled = false;
   //network listener
   static StreamSubscription<InternetConnectionStatus>? listener;
 
   @override
-  void onInit() {
+  Future<void> onInit() async {
     super.onInit();
     PushNotifications.init();
     initListeners();
@@ -40,9 +45,118 @@ class MainController extends GetxController with BaseController
     authToken(SessionManagement.getAuthToken().checkNull());
     getAuthToken();
     startNetworkListen();
-    checkAndEnableNotificationSound();
+
+    NotificationService notificationService = NotificationService();
+    await notificationService.init();
+    _isAndroidPermissionGranted();
+    _requestPermissions();
+    _configureDidReceiveLocalNotificationSubject();
+    _configureSelectNotificationSubject();
   }
 
+
+  Future<void> _isAndroidPermissionGranted() async {
+    if (Platform.isAndroid) {
+      final bool granted = await flutterLocalNotificationsPlugin
+          .resolvePlatformSpecificImplementation<
+          AndroidFlutterLocalNotificationsPlugin>()
+          ?.areNotificationsEnabled() ??
+          false;
+
+      // setState(() {
+        _notificationsEnabled = granted;
+        debugPrint("Notification Enabled--> $_notificationsEnabled");
+      // });
+    }
+  }
+
+  Future<void> _requestPermissions() async {
+    if (Platform.isIOS || Platform.isMacOS) {
+      await flutterLocalNotificationsPlugin
+          .resolvePlatformSpecificImplementation<
+          IOSFlutterLocalNotificationsPlugin>()
+          ?.requestPermissions(
+        alert: true,
+        badge: true,
+        sound: true,
+      );
+      await flutterLocalNotificationsPlugin
+          .resolvePlatformSpecificImplementation<
+          MacOSFlutterLocalNotificationsPlugin>()
+          ?.requestPermissions(
+        alert: true,
+        badge: true,
+        sound: true,
+      );
+    } else if (Platform.isAndroid) {
+      final AndroidFlutterLocalNotificationsPlugin? androidImplementation =
+      flutterLocalNotificationsPlugin.resolvePlatformSpecificImplementation<
+          AndroidFlutterLocalNotificationsPlugin>();
+
+      final bool? granted = await androidImplementation?.requestPermission();
+      // setState(() {
+        _notificationsEnabled = granted ?? false;
+      // });
+    }
+  }
+
+  void _configureDidReceiveLocalNotificationSubject() {
+    didReceiveLocalNotificationStream.stream
+        .listen((ReceivedNotification receivedNotification) async {
+      await showDialog(
+        context: Get.context!,
+        builder: (BuildContext context) => CupertinoAlertDialog(
+          title: receivedNotification.title != null
+              ? Text(receivedNotification.title!)
+              : null,
+          content: receivedNotification.body != null
+              ? Text(receivedNotification.body!)
+              : null,
+          actions: <Widget>[
+            CupertinoDialogAction(
+              isDefaultAction: true,
+              onPressed: () async {
+
+              },
+              child: const Text('Ok'),
+            )
+          ],
+        ),
+      );
+    });
+  }
+
+  void _configureSelectNotificationSubject() {
+    selectNotificationStream.stream.listen((String? payload) async {
+      // await Navigator.of(context).push(MaterialPageRoute<void>(
+      //   builder: (BuildContext context) => SecondPage(payload),
+      // ));
+      debugPrint("opening chat page--> $payload");
+      if(payload != null && payload.isNotEmpty){
+
+        if (Get.isRegistered<ChatController>()) {
+          FlyChat.getProfileDetails(payload, false).then((value) {
+            if (value != null) {
+              debugPrint("notification group info controller");
+              var profile = profiledata(value.toString());
+              // Get.toNamed(Routes.chat, arguments: profile);
+              Get.back(result: profile);
+            }
+          });
+        }else {
+          Get.toNamed(Routes.chat,
+              parameters: {'isFromStarred': 'true', "userJid": payload});
+        }
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    didReceiveLocalNotificationStream.close();
+    selectNotificationStream.close();
+    super.dispose();
+  }
 
 
   getMediaEndpoint() async {
@@ -141,15 +255,5 @@ class MainController extends GetxController with BaseController
     super.onClose();
   }
 
-  void checkAndEnableNotificationSound() {
-    FlyChat.getNotificationSound().then((value){
-      debugPrint("initial notification sound--> $value");
-      if(value == null){
-        FlyChat.setNotificationSound(true);
-        SessionManagement.setNotificationSound(true);
-      }else{
-        SessionManagement.setNotificationSound(value);
-      }
-    });
-  }
+
 }

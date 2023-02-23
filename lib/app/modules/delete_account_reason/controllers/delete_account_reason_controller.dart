@@ -36,7 +36,7 @@ class DeleteAccountReasonController extends FullLifeCycleController
               child: const Text("CANCEL")),
           TextButton(
               onPressed: () async {
-                Get.back();
+                // Get.back();
                 deleteUserAccount();
               },
               child: const Text("OK")),
@@ -45,16 +45,24 @@ class DeleteAccountReasonController extends FullLifeCycleController
 
   Future<void> deleteUserAccount() async {
     if (await AppUtils.isNetConnected()) {
-      Future.delayed(const Duration(milliseconds: 100), () {
-        Helper.showLoading(message: "Deleting Account");
-        FlyChat.deleteAccount(reasonValue.value, feedback.text).then((value) {
+      Get.back();
+      // Future.delayed(const Duration(milliseconds: 100), () {
+       Helper.showLoading(message: "Deleting Account");
+      debugPrint("on DeleteAccount");
+      FlyChat.deleteAccount(reasonValue.value, feedback.text).then((value) {
+        debugPrint('DeleteAccount $value');
+        Future.delayed(const Duration(milliseconds: 500), ()
+        {
           Helper.hideLoading();
-          SessionManagement.clear().then((value) => Get.offAllNamed(Routes.login));
-        }).catchError((error) {
-          Helper.hideLoading();
-          toToast("Unable to delete the account");
+          SessionManagement.clear()
+              .then((value) => Get.offAllNamed(Routes.login));
+          toToast('Your MirrorFly account has been deleted');
         });
+      }).catchError((error) {
+        Helper.hideLoading();
+        toToast("Unable to delete the account");
       });
+      // });
     } else {
       toToast(Constants.noInternetConnection);
     }

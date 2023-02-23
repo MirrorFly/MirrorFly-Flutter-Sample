@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/data/session_management.dart';
@@ -71,8 +73,14 @@ with FullLifeCycleMixin {
     // var uri = SessionManagement.getNotificationUri();
     // mirrorFlyLog("uri", uri.toString());
     FlyChat.getRingtoneName().then((value) {
-      if (value != null) {
-        _defaultTone(value);
+      var jsonNotification = json.decode(value!);
+      if (jsonNotification != null) {
+        var notificationName = jsonNotification["name"];
+        var notificationURI = jsonNotification["tone_uri"];
+        debugPrint("notificationName--> $notificationName");
+        debugPrint("notificationURI--> $notificationURI");
+        _defaultTone(notificationName);
+        SessionManagement.setNotificationUri(notificationURI);
       }
     });
   }

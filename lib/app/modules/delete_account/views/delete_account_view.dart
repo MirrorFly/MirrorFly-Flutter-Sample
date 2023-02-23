@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
 
 import 'package:get/get.dart';
+import 'package:mirror_fly_demo/app/common/widgets.dart';
 
 import '../../../common/constants.dart';
 import '../../../routes/app_pages.dart';
@@ -40,52 +41,49 @@ class DeleteAccountView extends GetView<DeleteAccountController> {
                 Row(
                   children: const [
                     SizedBox(width: 30,),
-                    Text(Constants.bulletPoint, style: TextStyle(fontSize: 18),),
-                    Text("Delete your account from MirrorFly"),
+                    Text(Constants.bulletPoint, style: TextStyle(fontSize: 12),),
+                    Text("Delete your account from MirrorFly",style: TextStyle(color: textColor),),
                   ],
                 ),
                 const SizedBox(height: 10,),
                 Row(
                   children: const [
                     SizedBox(width: 30,),
-                    Text(Constants.bulletPoint, style: TextStyle(fontSize: 18),),
-                    Text("Erase your message history"),
+                    Text(Constants.bulletPoint, style: TextStyle(fontSize: 12),),
+                    Text("Erase your message history",style: TextStyle(color: textColor),),
                   ],
                 ),
                 const SizedBox(height: 10,),
                 Row(
                   children: const [
                     SizedBox(width: 30,),
-                    Text(Constants.bulletPoint, style: TextStyle(fontSize: 18),),
-                    Text("Delete you from all of your MirrorFly groups"),
+                    Text(Constants.bulletPoint, style: TextStyle(fontSize: 12),),
+                    Text("Delete you from all of your MirrorFly groups",style: TextStyle(color: textColor),),
                   ],
                 ),
                 const SizedBox(height: 15,),
                 const Text(
                   'To delete your account, confirm your country and enter your phone number.',
-                  style: TextStyle(color: Colors.black, fontSize: 16),
+                  style: TextStyle(color: textHintColor, fontSize: 15),
                 ),
                 const SizedBox(height: 10,),
                 const Text(
                   'Country',
-                  style: TextStyle(color: Colors.black, fontSize: 16, fontWeight: FontWeight.bold),
+                  style: TextStyle(color: textHintColor, fontSize: 14, fontWeight: FontWeight.w600),
                 ),
-                Obx(() => Padding(
-                  padding: const EdgeInsets.only(left : 10.0 , right: 10.0,top: 10.0),
-                  child: ListTile(
-                    contentPadding: EdgeInsets.zero,
-                    title: Text(controller.selectedCountry.value.name ?? "",
-                        style: const TextStyle(color: Colors.black,fontSize: 16,fontWeight: FontWeight.w500)),
-                    trailing: const Icon(Icons.keyboard_arrow_down_outlined),
-                    onTap: (){
-                      Get.toNamed(Routes.countries)?.then((value) => value!=null ? controller.selectedCountry.value = value : controller.india);
-                    },
-                  ),
+                Obx(() => countryItem(
+                  // contentPadding: EdgeInsets.zero,
+                  title: Text(controller.selectedCountry.value.name ?? "",
+                      style: const TextStyle(color: textHintColor,fontSize: 16,fontWeight: FontWeight.normal)),
+                  trailing: const Icon(Icons.keyboard_arrow_down_outlined),
+                  onTap: (){
+                    Get.toNamed(Routes.countries)?.then((value) => value!=null ? controller.selectedCountry.value = value : controller.india);
+                  },
                 )),
                 const SizedBox(height: 10,),
                 const Text(
                   'Mobile number',
-                  style: TextStyle(color: Colors.black, fontSize: 16, fontWeight: FontWeight.bold),
+                  style: TextStyle(color: textHintColor, fontSize: 14, fontWeight: FontWeight.w600),
                 ),
                 const SizedBox(height: 10,),
                 Padding(
@@ -96,7 +94,7 @@ class DeleteAccountView extends GetView<DeleteAccountController> {
                         Obx(
                               ()=> Text(
                             controller.selectedCountry.value.dialCode ?? "",
-                            style: const TextStyle(fontSize: 15),
+                            style: const TextStyle(fontSize: 15,color: textHintColor,fontWeight: FontWeight.normal),
                           ),
                         ),
                         const Padding(
@@ -114,6 +112,7 @@ class DeleteAccountView extends GetView<DeleteAccountController> {
                             inputFormatters: <TextInputFormatter>[
                               FilteringTextInputFormatter.digitsOnly
                             ],
+                            style: const TextStyle(color: textHintColor,fontWeight: FontWeight.normal),
                             decoration: const InputDecoration(
                               counterText: '',
                               enabledBorder: UnderlineInputBorder(
@@ -155,6 +154,30 @@ class DeleteAccountView extends GetView<DeleteAccountController> {
             ),
           ),
         ),
+      ),
+    );
+  }
+
+  Widget countryItem({Function()? onTap, required Widget title, Widget? trailing,EdgeInsetsGeometry? dividerPadding }){
+    return InkWell(
+      onTap: onTap,
+      child: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(right: 10.0,top: 10.0,bottom: 10.0),
+            child: Row(
+              children: [
+                Expanded(
+                  child: title,
+                ),
+                trailing ?? const SizedBox()
+              ],
+            ),
+          ),
+          dividerPadding != null
+              ? AppDivider(padding: dividerPadding)
+              : const SizedBox()
+        ],
       ),
     );
   }

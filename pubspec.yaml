@@ -62,7 +62,7 @@ dependencies:
   grouped_list: ^5.1.2
   share_plus: ^6.3.0
   flutter_inappwebview: ^5.7.2+3 # inapp webview
-
+  flutter_local_notifications: ^13.0.0
   flysdk:
     path: packages/flysdk
 

@@ -1,14 +1,21 @@
 import 'dart:convert';
 
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
 import 'package:flysdk/flysdk.dart';
+import 'package:mirror_fly_demo/app/data/helper.dart';
+import 'package:mirror_fly_demo/app/data/session_management.dart';
 import 'package:mirror_fly_demo/app/modules/chat/controllers/chat_controller.dart';
 import 'package:mirror_fly_demo/app/modules/chat/controllers/contact_controller.dart';
 import 'package:mirror_fly_demo/app/modules/group/controllers/group_info_controller.dart';
 import 'package:mirror_fly_demo/app/modules/settings/views/blocked/blocked_list_controller.dart';
+import 'package:mirror_fly_demo/app/routes/app_pages.dart';
 
 import 'common/main_controller.dart';
+import 'common/notification_service.dart';
 import 'modules/archived_chats/archived_chat_list_controller.dart';
 import 'modules/chat/controllers/forwardchat_controller.dart';
 import 'modules/chatInfo/controllers/chat_info_controller.dart';
@@ -26,13 +33,37 @@ abstract class BaseController {
     FlyChat.onGroupProfileFetched.listen(onGroupProfileFetched);
     FlyChat.onNewGroupCreated.listen(onNewGroupCreated);
     FlyChat.onGroupProfileUpdated.listen(onGroupProfileUpdated);
-    FlyChat.onNewMemberAddedToGroup.listen(onNewMemberAddedToGroup);
-    FlyChat.onMemberRemovedFromGroup.listen(onMemberRemovedFromGroup);
+    FlyChat.onNewMemberAddedToGroup.listen((event){
+      if(event!=null){
+        var data = json.decode(event.toString());
+        var groupJid = data["groupJid"] ?? "";
+        var newMemberJid = data["newMemberJid"] ?? "";
+        var addedByMemberJid = data["addedByMemberJid"] ?? "";
+        onNewMemberAddedToGroup(groupJid: groupJid, newMemberJid: newMemberJid,addedByMemberJid: addedByMemberJid);
+      }
+    });
+    FlyChat.onMemberRemovedFromGroup.listen((event){
+      if(event!=null){
+        var data = json.decode(event.toString());
+        var groupJid = data["groupJid"] ?? "";
+        var removedMemberJid = data["removedMemberJid"] ?? "";
+        var removedByMemberJid = data["removedByMemberJid"] ?? "";
+        onMemberRemovedFromGroup(groupJid: groupJid, removedMemberJid: removedMemberJid,removedByMemberJid: removedByMemberJid);
+      }
+    });
     FlyChat.onFetchingGroupMembersCompleted
         .listen(onFetchingGroupMembersCompleted);
     FlyChat.onDeleteGroup.listen(onDeleteGroup);
     FlyChat.onFetchingGroupListCompleted.listen(onFetchingGroupListCompleted);
-    FlyChat.onMemberMadeAsAdmin.listen(onMemberMadeAsAdmin);
+    FlyChat.onMemberMadeAsAdmin.listen((event){
+      if(event!=null){
+        var data = json.decode(event.toString());
+        var groupJid = data["groupJid"] ?? "";
+        var newAdminMemberJid = data["newAdminMemberJid"] ?? "";
+        var madeByMemberJid = data["madeByMemberJid"] ?? "";
+        onMemberMadeAsAdmin(groupJid: groupJid, newAdminMemberJid: newAdminMemberJid,madeByMemberJid: madeByMemberJid);
+      }
+    });
     FlyChat.onMemberRemovedAsAdmin.listen(onMemberRemovedAsAdmin);
     FlyChat.onLeftFromGroup.listen((event) {
       if (event != null) {
@@ -100,11 +131,19 @@ abstract class BaseController {
     FlyChat.onFailure.listen(onFailure);
     FlyChat.onProgressChanged.listen(onProgressChanged);
     FlyChat.onSuccess.listen(onSuccess);
+    FlyChat.onLoggedOut.listen(onLogout);
   }
 
   void onMessageReceived(chatMessage) {
     mirrorFlyLog("flutter onMessageReceived", chatMessage.toString());
     ChatMessageModel chatMessageModel = sendMessageModelFromJson(chatMessage);
+
+
+    if(SessionManagement.getCurrentChatJID().checkNull() == chatMessageModel.chatUserJid.checkNull()){
+      debugPrint("Message Received user chat screen is in online");
+    }else{
+     showLocalNotification(chatMessageModel);
+    }
 
     if (Get.isRegistered<ChatController>()) {
       Get.find<ChatController>().onMessageReceived(chatMessageModel);
@@ -164,9 +203,21 @@ abstract class BaseController {
     }
   }
 
-  void onNewMemberAddedToGroup(event) {}
+  void onNewMemberAddedToGroup({required String groupJid,
+  required String newMemberJid, required String addedByMemberJid}) {
+    debugPrint('onNewMemberAddedToGroup $newMemberJid');
+    if (Get.isRegistered<GroupInfoController>()) {
+      Get.find<GroupInfoController>().onNewMemberAddedToGroup(groupJid: groupJid, newMemberJid: newMemberJid, addedByMemberJid: addedByMemberJid);
+    }
+  }
 
-  void onMemberRemovedFromGroup(event) {}
+  void onMemberRemovedFromGroup({required String groupJid,
+    required String removedMemberJid, required String removedByMemberJid}) {
+    debugPrint('onMemberRemovedFromGroup $removedMemberJid');
+    if (Get.isRegistered<GroupInfoController>()) {
+      Get.find<GroupInfoController>().onMemberRemovedFromGroup(groupJid: groupJid, removedMemberJid: removedMemberJid, removedByMemberJid: removedByMemberJid);
+    }
+  }
 
   void onFetchingGroupMembersCompleted(groupJid) {}
 
@@ -178,13 +229,24 @@ abstract class BaseController {
 
   void onFetchingGroupListCompleted(noOfGroups) {}
 
-  void onMemberMadeAsAdmin(event) {}
+  void onMemberMadeAsAdmin({required String groupJid,
+    required String newAdminMemberJid, required String madeByMemberJid}) {
+    debugPrint('onMemberMadeAsAdmin $newAdminMemberJid');
+    if (Get.isRegistered<GroupInfoController>()) {
+      Get.find<GroupInfoController>().onMemberMadeAsAdmin(groupJid: groupJid, newAdminMemberJid: newAdminMemberJid, madeByMemberJid: madeByMemberJid);
+    }
+  }
 
-  void onMemberRemovedAsAdmin(event) {}
+  void onMemberRemovedAsAdmin(event) {
+    debugPrint('onMemberRemovedAsAdmin $event');
+  }
 
   void onLeftFromGroup({required String groupJid, required String userJid}) {
     if (Get.isRegistered<ChatController>()) {
       Get.find<ChatController>().onLeftFromGroup(groupJid: groupJid, userJid : userJid);
+    }
+    if (Get.isRegistered<GroupInfoController>()) {
+      Get.find<GroupInfoController>().onLeftFromGroup(groupJid: groupJid, userJid : userJid);
     }
   }
 
@@ -210,7 +272,9 @@ abstract class BaseController {
     //FlyChat.getRegisteredUsers(true).then((value) => mirrorFlyLog("registeredUsers", value.toString()));
   }
 
-  void onLoggedOut(result) {}
+  void onLoggedOut(result) {
+    mirrorFlyLog('logout called', result.toString());
+  }
 
   void unblockedThisUser(String jid) {
     mirrorFlyLog("unblockedThisUser", jid.toString());
@@ -286,7 +350,9 @@ abstract class BaseController {
 
   void onConnected(result) {}
 
-  void onDisconnected(result) {}
+  void onDisconnected(result) {
+    mirrorFlyLog('onDisconnected', result.toString());
+  }
 
   void onConnectionNotAuthorized(result) {}
 
@@ -319,4 +385,47 @@ abstract class BaseController {
   void onProgressChanged(result) {}
 
   void onSuccess(result) {}
+
+  Future<void> showLocalNotification(ChatMessageModel chatMessageModel) async {
+    debugPrint("showing local notification");
+    final String? notificationUri = SessionManagement.getNotificationUri();
+    final UriAndroidNotificationSound uriSound = UriAndroidNotificationSound(notificationUri!);
+    debugPrint("notificationUri--> $notificationUri");
+    int id = DateTime.now().millisecond;
+    debugPrint("id--> $id");
+    AndroidNotificationDetails androidNotificationDetails =
+    AndroidNotificationDetails(chatMessageModel.messageId, 'MirrorFly',
+        importance: Importance.max,
+        priority: Priority.high,
+        sound: uriSound,
+        styleInformation: const DefaultStyleInformation(true, true));
+    NotificationDetails notificationDetails =
+    NotificationDetails(android: androidNotificationDetails);
+    await flutterLocalNotificationsPlugin.show(
+        id, chatMessageModel.senderUserName, chatMessageModel.messageTextContent, notificationDetails, payload: chatMessageModel.chatUserJid);
+  }
+
+  void onLogout(isLogout) {
+    if(isLogout){
+      Helper.progressLoading();
+      FlyChat.logoutOfChatSDK().then((value) {
+        Helper.hideLoading();
+        if(value) {
+          var token = SessionManagement.getToken().checkNull();
+          SessionManagement.clear().then((value){
+            SessionManagement.setToken(token);
+            Get.offAllNamed(Routes.login);
+          });
+        }else{
+          Get.snackbar("Logout", "Logout Failed");
+        }
+      }).catchError((er){
+        Helper.hideLoading();
+        SessionManagement.clear().then((value){
+          // SessionManagement.setToken(token);
+          Get.offAllNamed(Routes.login);
+        });
+      });
+    }
+  }
 }
