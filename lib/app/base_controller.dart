@@ -12,6 +12,7 @@ import 'package:mirror_fly_demo/app/modules/chat/controllers/chat_controller.dar
 import 'package:mirror_fly_demo/app/modules/chat/controllers/contact_controller.dart';
 import 'package:mirror_fly_demo/app/modules/group/controllers/group_info_controller.dart';
 import 'package:mirror_fly_demo/app/modules/settings/views/blocked/blocked_list_controller.dart';
+import 'package:mirror_fly_demo/app/routes/app_pages.dart';
 
 import 'common/main_controller.dart';
 import 'common/notification_service.dart';
@@ -130,6 +131,7 @@ abstract class BaseController {
     FlyChat.onFailure.listen(onFailure);
     FlyChat.onProgressChanged.listen(onProgressChanged);
     FlyChat.onSuccess.listen(onSuccess);
+    FlyChat.onLoggedOut.listen(onLogout);
   }
 
   void onMessageReceived(chatMessage) {
@@ -401,5 +403,29 @@ abstract class BaseController {
     NotificationDetails(android: androidNotificationDetails);
     await flutterLocalNotificationsPlugin.show(
         id, chatMessageModel.senderUserName, chatMessageModel.messageTextContent, notificationDetails, payload: chatMessageModel.chatUserJid);
+  }
+
+  void onLogout(isLogout) {
+    if(isLogout){
+      Helper.progressLoading();
+      FlyChat.logoutOfChatSDK().then((value) {
+        Helper.hideLoading();
+        if(value) {
+          var token = SessionManagement.getToken().checkNull();
+          SessionManagement.clear().then((value){
+            SessionManagement.setToken(token);
+            Get.offAllNamed(Routes.login);
+          });
+        }else{
+          Get.snackbar("Logout", "Logout Failed");
+        }
+      }).catchError((er){
+        Helper.hideLoading();
+        SessionManagement.clear().then((value){
+          // SessionManagement.setToken(token);
+          Get.offAllNamed(Routes.login);
+        });
+      });
+    }
   }
 }
