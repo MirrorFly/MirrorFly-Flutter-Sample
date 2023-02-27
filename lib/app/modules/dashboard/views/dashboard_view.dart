@@ -465,9 +465,9 @@ class DashboardView extends GetView<DashboardController> {
                                   "Archived",
                                   style: TextStyle(fontWeight: FontWeight.w500),
                                 ),
-                                trailing: controller.archivedCount != "0"
+                                trailing: controller.archivedChats.isNotEmpty
                                     ? Text(
-                                  controller.archivedCount,
+                                  controller.archivedChats.length.toString(),
                                   style: const TextStyle(color: buttonBgColor),
                                 )
                                     : null,
