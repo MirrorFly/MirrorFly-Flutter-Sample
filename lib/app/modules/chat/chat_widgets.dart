@@ -478,7 +478,9 @@ class AudioMessageView extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         border: Border.all(
-          color: chatReplySenderColor,
+          color: chatMessage.isMessageSentByMe
+              ? chatReplyContainerColor
+              : chatReplySenderColor,
         ),
         borderRadius: const BorderRadius.all(Radius.circular(10)),
         color: Colors.transparent,
@@ -625,7 +627,9 @@ class ContactMessageView extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         border: Border.all(
-          color: chatReplySenderColor,
+          color: chatMessage.isMessageSentByMe
+              ? chatReplyContainerColor
+              : chatReplySenderColor,
         ),
         borderRadius: const BorderRadius.all(Radius.circular(10)),
         color: Colors.white,
@@ -817,7 +821,9 @@ class DocumentMessageView extends StatelessWidget {
       child: Container(
         decoration: BoxDecoration(
           border: Border.all(
-            color: chatReplySenderColor,
+            color: chatMessage.isMessageSentByMe
+                ? chatReplyContainerColor
+                : chatReplySenderColor,
           ),
           borderRadius: const BorderRadius.all(Radius.circular(10)),
           color: Colors.transparent,
@@ -827,13 +833,18 @@ class DocumentMessageView extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Container(
-              decoration: const BoxDecoration(
-                borderRadius: BorderRadius.only(
+              margin: const EdgeInsets.all(2),
+              decoration: BoxDecoration(
+                borderRadius: const BorderRadius.only(
+                    bottomRight: Radius.circular(10),
+                    bottomLeft: Radius.circular(10),
                     topLeft: Radius.circular(10),
                     topRight: Radius.circular(10)),
-                color: chatBgColor,
+                color: chatMessage.isMessageSentByMe
+                    ? chatReplyContainerColor
+                    : chatReplySenderColor,
               ),
-              padding: const EdgeInsets.all(15.0),
+              padding: const EdgeInsets.all(8.0),
               child: Row(
                 children: [
                   getImageHolder(chatMessage.mediaChatMessage!.mediaFileName),
