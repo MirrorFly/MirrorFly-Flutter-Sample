@@ -246,7 +246,7 @@ class RecentSearchView extends GetView<RecentChatSearchController> {
                                     Expanded(
                                       child: Row(
                                         children: [
-                                          forMessageTypeIcon(item.messageType),
+                                          forMessageTypeIcon(item.messageType,item.mediaChatMessage),
                                           SizedBox(
                                             width: forMessageTypeString(
                                                 item.messageType) !=
@@ -501,7 +501,7 @@ class RecentSearchView extends GetView<RecentChatSearchController> {
                                   Expanded(
                                     child: Row(
                                       children: [
-                                        forMessageTypeIcon(item.messageType),
+                                        forMessageTypeIcon(item.messageType,item.mediaChatMessage),
                                         SizedBox(
                                           width: forMessageTypeString(
                                               item.messageType) !=

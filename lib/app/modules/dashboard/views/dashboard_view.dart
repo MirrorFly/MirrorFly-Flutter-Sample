@@ -687,7 +687,7 @@ class DashboardView extends GetView<DashboardController> {
                                     Expanded(
                                       child: Row(
                                         children: [
-                                          forMessageTypeIcon(item.messageType),
+                                          forMessageTypeIcon(item.messageType,item.mediaChatMessage),
                                           SizedBox(
                                             width: forMessageTypeString(
                                                 item.messageType,content: item.messageTextContent.checkNull()) !=
