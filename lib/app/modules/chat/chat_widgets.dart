@@ -431,7 +431,9 @@ class LocationMessageView extends StatelessWidget {
                 ),
                 Text(
                   getChatTime(context, chatMessage.messageSentTime.toInt()),
-                  style: const TextStyle(fontSize: 12, color: Colors.black),
+                  style: TextStyle(fontSize: 12, color: chatMessage.isMessageSentByMe
+                      ? durationTextColor
+                      : textHintColor),
                 ),
               ],
             ),
@@ -490,10 +492,12 @@ class AudioMessageView extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
-            decoration: const BoxDecoration(
-              borderRadius: BorderRadius.only(
+            decoration: BoxDecoration(
+              borderRadius: const BorderRadius.only(
                   topLeft: Radius.circular(10), topRight: Radius.circular(10)),
-              color: chatBgColor,
+              color: chatMessage.isMessageSentByMe
+                  ? chatReplyContainerColor
+                  : chatReplySenderColor,
             ),
             padding: const EdgeInsets.all(15),
             child: Row(
@@ -593,8 +597,9 @@ class AudioMessageView extends StatelessWidget {
                 ),
                 Text(
                   getChatTime(context, chatMessage.messageSentTime.toInt()),
-                  style:
-                      const TextStyle(fontSize: 12, color: durationTextColor),
+                  style: TextStyle(fontSize: 12, color: chatMessage.isMessageSentByMe
+                          ? durationTextColor
+                          : textHintColor),
                 ),
                 const SizedBox(
                   width: 10,
@@ -626,19 +631,16 @@ class ContactMessageView extends StatelessWidget {
     var screenWidth = MediaQuery.of(context).size.width;
     return Container(
       decoration: BoxDecoration(
-        border: Border.all(
-          color: chatMessage.isMessageSentByMe
-              ? chatReplyContainerColor
-              : chatReplySenderColor,
-        ),
         borderRadius: const BorderRadius.all(Radius.circular(10)),
-        color: Colors.white,
+        color: chatMessage.isMessageSentByMe
+            ? chatReplyContainerColor
+            : chatReplySenderColor,
       ),
       width: screenWidth * 0.60,
       child: Column(
         children: [
           Padding(
-            padding: const EdgeInsets.only(left: 15.0, right: 15.0, top: 15.0),
+            padding: const EdgeInsets.only(left: 8.0, right: 8.0, top: 8.0),
             child: Row(
               children: [
                 Image.asset(
@@ -687,7 +689,9 @@ class ContactMessageView extends StatelessWidget {
                 ),
                 Text(
                   getChatTime(context, chatMessage.messageSentTime.toInt()),
-                  style: const TextStyle(fontSize: 11, color: chatTimeColor),
+                  style: TextStyle(fontSize: 11, color: chatMessage.isMessageSentByMe
+                      ? durationTextColor
+                      : textHintColor),
                 ),
                 const SizedBox(
                   width: 10,
@@ -911,7 +915,9 @@ class DocumentMessageView extends StatelessWidget {
                   Text(
                     getChatTime(context, chatMessage.messageSentTime.toInt()),
                     style:
-                        const TextStyle(fontSize: 12, color: durationTextColor),
+                        TextStyle(fontSize: 12, color: chatMessage.isMessageSentByMe
+                            ? durationTextColor
+                            : textHintColor),
                   ),
                   const SizedBox(
                     width: 10,
@@ -1062,8 +1068,10 @@ class VideoMessageView extends StatelessWidget {
                           Text(
                             getChatTime(
                                 context, chatMessage.messageSentTime.toInt()),
-                            style: const TextStyle(
-                                fontSize: 11, color: Colors.white),
+                            style: TextStyle(
+                                fontSize: 11, color: chatMessage.isMessageSentByMe
+                                ? durationTextColor
+                                : textHintColor),
                           ),
                         ],
                       ),
@@ -1139,8 +1147,10 @@ class ImageMessageView extends StatelessWidget {
                           Text(
                             getChatTime(
                                 context, chatMessage.messageSentTime.toInt()),
-                            style: const TextStyle(
-                                fontSize: 11, color: Colors.white),
+                            style: TextStyle(
+                                fontSize: 11, color: chatMessage.isMessageSentByMe
+                                ? durationTextColor
+                                : textHintColor),
                           ),
                         ],
                       ),
@@ -1229,7 +1239,9 @@ Widget setCaptionMessage(MediaChatMessage mediaMessage,
             ),
             Text(
               getChatTime(context, chatMessage.messageSentTime.toInt()),
-              style: const TextStyle(fontSize: 12, color: durationTextColor),
+              style: TextStyle(fontSize: 12, color: chatMessage.isMessageSentByMe
+                  ? durationTextColor
+                  : textHintColor),
             ),
           ],
         ),
@@ -1396,7 +1408,9 @@ class TextMessageView extends StatelessWidget {
               ),
               Text(
                 getChatTime(context, chatMessage.messageSentTime.toInt()),
-                style: const TextStyle(fontSize: 12, color: durationTextColor),
+                style: TextStyle(fontSize: 12, color: chatMessage.isMessageSentByMe
+                    ? durationTextColor
+                    : textHintColor),
               ),
             ],
           ),
@@ -1447,7 +1461,9 @@ class RecalledMessageView extends StatelessWidget {
             children: [
               Text(
                 getChatTime(context, chatMessage.messageSentTime.toInt()),
-                style: const TextStyle(fontSize: 12),
+                style: TextStyle(fontSize: 12,color: chatMessage.isMessageSentByMe
+                    ? durationTextColor
+                    : textHintColor),
               ),
             ],
           ),
