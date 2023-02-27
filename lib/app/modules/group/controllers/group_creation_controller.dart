@@ -117,6 +117,7 @@ class GroupCreationController extends GetxController {
       Helper.hideLoading();
       if(value!=null) {
         Get.back();
+        toToast('Group created Successfully');
       }
     });
   }
