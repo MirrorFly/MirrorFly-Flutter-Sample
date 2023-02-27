@@ -852,7 +852,6 @@ class DocumentMessageView extends StatelessWidget {
                                 .checkNull(),
                             search,
                             const TextStyle(
-                                fontSize: 12,
                                 color: Colors.black,
                                 fontWeight: FontWeight.w400),
                             maxLines:
@@ -1324,6 +1323,7 @@ class MessageContent extends StatelessWidget {
               chatList[index].messageType.toUpperCase() == Constants.mFile) {
             return DocumentMessageView(
               chatMessage: chatMessage,
+              search: search,
             );
           } else if (chatList[index].messageType.toUpperCase() ==
               Constants.mAudio) {
