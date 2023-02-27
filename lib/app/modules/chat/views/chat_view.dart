@@ -1009,7 +1009,7 @@ class ChatView extends GetView<ChatController> {
                           width: (controller.screenWidth) * 0.90,
                           height: 15,
                           child: Marquee(
-                              text: "${controller.groupParticipantsName},",
+                              text: "${controller.groupParticipantsName}       ",
                               style: const TextStyle(fontSize: 12)))
                       : controller.subtitle.isNotEmpty
                           ? Text(

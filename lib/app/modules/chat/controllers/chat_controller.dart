@@ -2018,6 +2018,9 @@ class ChatController extends FullLifeCycleController
             str.add(it.name.checkNull());
           }
         }
+        str.sort((a, b) {
+          return a.toLowerCase().compareTo(b.toLowerCase());
+        });
         groupParticipantsName(str.join(","));
       }
     });
