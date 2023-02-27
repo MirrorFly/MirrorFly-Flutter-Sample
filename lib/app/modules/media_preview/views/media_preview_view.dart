@@ -6,6 +6,7 @@ import 'package:flutter_svg/svg.dart';
 
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
+import 'package:mirror_fly_demo/app/data/helper.dart';
 import 'package:photo_view/photo_view.dart';
 
 import '../../../common/widgets.dart';
@@ -20,7 +21,48 @@ class MediaPreviewView extends GetView<MediaPreviewController> {
         backgroundColor: Colors.black,
         appBar: AppBar(
           backgroundColor: Colors.black,
-          iconTheme: const IconThemeData(color: Colors.white),
+          automaticallyImplyLeading: false,
+          leadingWidth: 80,
+          leading: InkWell(
+            onTap: (){
+              Get.back();
+            },
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const SizedBox(
+                  width: 10,
+                ),
+                const Icon(Icons.arrow_back ,color: Colors.white,),
+                const SizedBox(
+                  width: 10,
+                ),
+                ImageNetwork(
+                  url: controller.profile.image.checkNull(),
+                  width: 35,
+                  height: 35,
+                  clipOval: true,
+                  errorWidget: controller.profile.isGroupProfile ?? false
+                      ? ClipOval(
+                    child: Image.asset(
+                      groupImg,
+                      height: 35,
+                      width: 35,
+                      fit: BoxFit.cover,
+                    ),
+                  )
+                      : ProfileTextImage(
+                    text: controller.profile.name.checkNull().isEmpty
+                        ? controller.profile.nickName.checkNull().isEmpty
+                        ? controller.profile.mobileNumber.checkNull()
+                        : controller.profile.nickName.checkNull()
+                        : controller.profile.name.checkNull(),
+                    radius: 18,
+                  ),
+                ),
+              ],
+            ),
+          ),
           actions: [
             Obx(() {
               return controller.filePath.length > 1
