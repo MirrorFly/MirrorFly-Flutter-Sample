@@ -116,116 +116,114 @@ class ContactListView extends GetView<ContactController> {
                       padding: EdgeInsets.symmetric(vertical: 20.0),
                       child: Text("No Contacts found"),
                     ),)),
-                Expanded(
-                  child: controller.isPageLoading.value
-                      ? const Center(
-                          child: Padding(
-                          padding: EdgeInsets.all(16.0),
-                          child: CircularProgressIndicator(),
-                        ))
-                      : ListView.builder(
-                          itemCount: controller.scrollable.value
-                              ? controller.usersList.length + 1
-                              : controller.usersList.length,
-                          controller: controller.scrollController,
-                          physics: const AlwaysScrollableScrollPhysics(),
-                          itemBuilder: (BuildContext context, int index) {
-                            if (index >= controller.usersList.length &&
-                                controller.usersList.isNotEmpty) {
-                              return const Center(
-                                  child: CircularProgressIndicator());
-                            } else if (controller.usersList.isNotEmpty) {
-                              var item = controller.usersList[index];
-                              return Opacity(
-                                opacity: item.isBlocked.checkNull() ? 0.3 : 1.0,
-                                child: InkWell(
-                                  child: Row(
-                                    children: [
-                                      Container(
-                                          margin: const EdgeInsets.only(
-                                              left: 19.0,
-                                              top: 10,
-                                              bottom: 10,
-                                              right: 10),
-                                          width: 50,
-                                          height: 50,
-                                          decoration: BoxDecoration(
-                                            color: item.image.checkNull().isEmpty
-                                                ? iconBgColor
-                                                : buttonBgColor,
-                                            shape: BoxShape.circle,
+                controller.isPageLoading.value
+                    ? const Center(
+                        child: Padding(
+                        padding: EdgeInsets.all(16.0),
+                        child: CircularProgressIndicator(),
+                      ))
+                    : ListView.builder(
+                        itemCount: controller.scrollable.value
+                            ? controller.usersList.length + 1
+                            : controller.usersList.length,
+                        controller: controller.scrollController,
+                        physics: const AlwaysScrollableScrollPhysics(),
+                        itemBuilder: (BuildContext context, int index) {
+                          if (index >= controller.usersList.length &&
+                              controller.usersList.isNotEmpty) {
+                            return const Center(
+                                child: CircularProgressIndicator());
+                          } else if (controller.usersList.isNotEmpty) {
+                            var item = controller.usersList[index];
+                            return Opacity(
+                              opacity: item.isBlocked.checkNull() ? 0.3 : 1.0,
+                              child: InkWell(
+                                child: Row(
+                                  children: [
+                                    Container(
+                                        margin: const EdgeInsets.only(
+                                            left: 19.0,
+                                            top: 10,
+                                            bottom: 10,
+                                            right: 10),
+                                        width: 50,
+                                        height: 50,
+                                        decoration: BoxDecoration(
+                                          color: item.image.checkNull().isEmpty
+                                              ? iconBgColor
+                                              : buttonBgColor,
+                                          shape: BoxShape.circle,
+                                        ),
+                                        child: ImageNetwork(
+                                          url: item.image.toString(),
+                                          width: 48,
+                                          height: 48,
+                                          clipOval: true,
+                                          errorWidget: item.name
+                                                  .checkNull()
+                                                  .isNotEmpty
+                                              ? ProfileTextImage(
+                                                  text:
+                                                      item.name.checkNull().isEmpty
+                                                          ? item.mobileNumber
+                                                              .checkNull()
+                                                          : item.name.checkNull(),
+                                                )
+                                              : const Icon(
+                                                  Icons.person,
+                                                  color: Colors.white,
+                                                ),
+                                        )),
+                                    Expanded(
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            item.name.toString().checkNull() == ""
+                                                ? item.nickName.toString()
+                                                : item.name.toString(),
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .titleMedium,
                                           ),
-                                          child: ImageNetwork(
-                                            url: item.image.toString(),
-                                            width: 48,
-                                            height: 48,
-                                            clipOval: true,
-                                            errorWidget: item.name
-                                                    .checkNull()
-                                                    .isNotEmpty
-                                                ? ProfileTextImage(
-                                                    text:
-                                                        item.name.checkNull().isEmpty
-                                                            ? item.mobileNumber
-                                                                .checkNull()
-                                                            : item.name.checkNull(),
-                                                  )
-                                                : const Icon(
-                                                    Icons.person,
-                                                    color: Colors.white,
-                                                  ),
-                                          )),
-                                      Expanded(
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Text(
-                                              item.name.toString().checkNull() == ""
-                                                  ? item.nickName.toString()
-                                                  : item.name.toString(),
-                                              style: Theme.of(context)
-                                                  .textTheme
-                                                  .titleMedium,
-                                            ),
-                                            // Text(
-                                            //   item.mobileNumber.toString(),
-                                            //   style: Theme.of(context)
-                                            //       .textTheme
-                                            //       .titleSmall,
-                                            // )
-                                            Text(
-                                              item.status.toString(),
-                                              style: Theme.of(context)
-                                                  .textTheme
-                                                  .titleSmall,
-                                            )
-                                          ],
-                                        ),
+                                          // Text(
+                                          //   item.mobileNumber.toString(),
+                                          //   style: Theme.of(context)
+                                          //       .textTheme
+                                          //       .titleSmall,
+                                          // )
+                                          Text(
+                                            item.status.toString(),
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .titleSmall,
+                                          )
+                                        ],
                                       ),
-                                      const Spacer(),
-                                      Visibility(
-                                        visible: controller.isCheckBoxVisible,
-                                        child: Checkbox(
-                                          value: controller.selectedUsersJIDList
-                                              .contains(item.jid),
-                                          onChanged: (value) {
-                                            controller.onListItemPressed(item);
-                                          },
-                                        ),
+                                    ),
+                                    const Spacer(),
+                                    Visibility(
+                                      visible: controller.isCheckBoxVisible,
+                                      child: Checkbox(
+                                        value: controller.selectedUsersJIDList
+                                            .contains(item.jid),
+                                        onChanged: (value) {
+                                          controller.onListItemPressed(item);
+                                        },
                                       ),
-                                    ],
-                                  ),
-                                  onTap: () {
-                                    controller.onListItemPressed(item);
-                                  },
+                                    ),
+                                  ],
                                 ),
-                              );
-                            } else {
-                              return const SizedBox();
-                            }
-                          }),
-                )
+                                onTap: () {
+                                  controller.onListItemPressed(item);
+                                },
+                              ),
+                            );
+                          } else {
+                            return const SizedBox();
+                          }
+                        })
               ],
             ),
           );
