@@ -215,8 +215,8 @@ class ChatView extends GetView<ChatController> {
                     return Visibility(
                       visible: controller.showHideRedirectToLatest.value,
                       child: Positioned(
-                        bottom: 100,
-                        right: 20,
+                        bottom: controller.isReplying.value ? 160 : 100,
+                        right: 0,
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [

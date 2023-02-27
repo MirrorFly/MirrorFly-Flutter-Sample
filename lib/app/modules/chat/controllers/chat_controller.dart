@@ -1400,7 +1400,7 @@ class ChatController extends FullLifeCycleController
           onPressed: () {
             Get.back();
           },
-          child: const Text("NO")),
+          child: const Text("CANCEL")),
       TextButton(
           onPressed: () async {
             if (await AppUtils.isNetConnected()) {
@@ -1420,7 +1420,7 @@ class ChatController extends FullLifeCycleController
               toToast(Constants.noInternetConnection);
             }
           },
-          child: const Text("YES")),
+          child: const Text("UNBLOCK")),
     ]);
   }
 
