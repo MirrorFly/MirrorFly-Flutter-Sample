@@ -19,7 +19,7 @@ let MEDIA_STATUS_UPDATED_CHANNEL = "contus.mirrorfly/onMediaStatusUpdated"
 let UPLOAD_DOWNLOAD_PROGRESS_CHANGED_CHANNEL =
     "contus.mirrorfly/onUploadDownloadProgressChanged"
 let SHOW_UPDATE_CANCEL_NOTIFICTION_CHANNEL =
-    "contus.mirrorfly/showOrUpdateOrCancelNotification"
+    "contus.mirrorfly/showOrUpdateOrCancelNotification"//dependency issue
 
 let onGroupProfileFetched_channel = "contus.mirrorfly/onGroupProfileFetched"
 let onNewGroupCreated_channel = "contus.mirrorfly/onNewGroupCreated"
@@ -28,20 +28,20 @@ let onNewMemberAddedToGroup_channel = "contus.mirrorfly/onNewMemberAddedToGroup"
 let onMemberRemovedFromGroup_channel = "contus.mirrorfly/onMemberRemovedFromGroup"
 let onFetchingGroupMembersCompleted_channel =
     "contus.mirrorfly/onFetchingGroupMembersCompleted"
-let onDeleteGroup_channel = "contus.mirrorfly/onDeleteGroup"
+let onDeleteGroup_channel = "contus.mirrorfly/onDeleteGroup"//not found
 let onFetchingGroupListCompleted_channel =
-    "contus.mirrorfly/onFetchingGroupListCompleted"
+    "contus.mirrorfly/onFetchingGroupListCompleted"//not found
 let onMemberMadeAsAdmin_channel = "contus.mirrorfly/onMemberMadeAsAdmin"
 let onMemberRemovedAsAdmin_channel = "contus.mirrorfly/onMemberRemovedAsAdmin"
 let onLeftFromGroup_channel = "contus.mirrorfly/onLeftFromGroup"
-let onGroupNotificationMessage_channel = "contus.mirrorfly/onGroupNotificationMessage"
+let onGroupNotificationMessage_channel = "contus.mirrorfly/onGroupNotificationMessage"//not found
 let onGroupDeletedLocally_channel = "contus.mirrorfly/onGroupDeletedLocally"
 
 let blockedThisUser_channel = "contus.mirrorfly/blockedThisUser"
 let myProfileUpdated_channel = "contus.mirrorfly/myProfileUpdated"
 let onAdminBlockedOtherUser_channel = "contus.mirrorfly/onAdminBlockedOtherUser"
 let onAdminBlockedUser_channel = "contus.mirrorfly/onAdminBlockedUser"
-let onContactSyncComplete_channel = "contus.mirrorfly/onContactSyncComplete"
+let onContactSyncComplete_channel = "contus.mirrorfly/onContactSyncComplete"//need to verify with ios team
 let onLoggedOut_channel = "contus.mirrorfly/onLoggedOut"
 let unblockedThisUser_channel = "contus.mirrorfly/unblockedThisUser"
 let userBlockedMe_channel = "contus.mirrorfly/userBlockedMe"
@@ -67,7 +67,9 @@ let onFailure_channel = "contus.mirrorfly/onFailure"
 let onProgressChanged_channel = "contus.mirrorfly/onProgressChanged"
 let onSuccess_channel = "contus.mirrorfly/onSuccess"
 
+
 class FlyBaseController: NSObject{
+    
     
      var messageReceivedStreamHandler: MessageReceivedStreamHandler?
      var messageStatusUpdatedStreamHandler: MessageStatusUpdatedStreamHandler?
@@ -81,7 +83,7 @@ class FlyBaseController: NSObject{
      var memberRemovedFromGroupStreamHandler: MemberRemovedFromGroupStreamHandler?
      var fetchingGroupMembersCompletedStreamHandler: FetchingGroupMembersCompletedStreamHandler?
      var deleteGroupStreamHandler: DeleteGroupStreamHandler?
-     var fetchingGroupListCompletedStreamHandler: FetchingGroupListCompletedStreamHandler?
+     var fetchingGroupListCompletedStreamHandler: FetchingGroupListCompletedStreamHandler?//
      var memberMadeAsAdminStreamHandler: MemberMadeAsAdminStreamHandler?
      var memberRemovedAsAdminStreamHandler: MemberRemovedAsAdminStreamHandler?
      var userWentOfflineStreamHandler: UserWentOfflineStreamHandler?
@@ -91,6 +93,7 @@ class FlyBaseController: NSObject{
      var onGroupDeletedLocallyStreamHandler: GroupDeletedLocallyStreamHandler?
      var blockedThisUserStreamHandler: BlockedThisUserStreamHandler?
      var myProfileUpdatedStreamHandler: MyProfileUpdatedStreamHandler?
+     var onAdminBlockedOtherUserStreamHandler: OnAdminBlockedOtherUserStreamHandler?
      var onAdminBlockedUserStreamHandler: OnAdminBlockedUserStreamHandler?
      var onContactSyncCompleteStreamHandler: OnContactSyncCompleteStreamHandler?
      var onLoggedOutStreamHandler: OnLoggedOutStreamHandler?
@@ -102,6 +105,7 @@ class FlyBaseController: NSObject{
      var userUnBlockedMeStreamHandler: UserUnBlockedMeStreamHandler?
      var userUpdatedHisProfileStreamHandler: UserUpdatedHisProfileStreamHandler?
      var usersIBlockedListFetchedStreamHandler: UsersIBlockedListFetchedStreamHandler?
+     var usersProfilesFetchedStreamHandler: UsersProfilesFetchedStreamHandler?
      var usersWhoBlockedMeListFetchedStreamHandler: UsersWhoBlockedMeListFetchedStreamHandler?
      var onConnectedStreamHandler: OnConnectedStreamHandler?
      var onDisconnectedStreamHandler: OnDisconnectedStreamHandler?
@@ -143,9 +147,6 @@ class FlyBaseController: NSObject{
         
         registerEventChannels(controller: controller)
          
-         FlyMessenger.shared.messageEventsDelegate = self
-         ChatManager.shared.messageEventsDelegate = self
-         
          ChatManager.shared.logoutDelegate = self
          FlyMessenger.shared.messageEventsDelegate = self
          ChatManager.shared.messageEventsDelegate = self
@@ -153,6 +154,13 @@ class FlyBaseController: NSObject{
          ChatManager.shared.connectionDelegate = self
          ChatManager.shared.adminBlockCurrentUserDelegate = self
          ChatManager.shared.typingStatusDelegate = self
+         
+         ContactManager.shared.profileDelegate = self
+         ChatManager.shared.adminBlockDelegate = self
+         ChatManager.shared.availableFeaturesDelegate = self
+         BackupManager.shared.backupDelegate = self
+         BackupManager.shared.restoreDelegate = self
+//         iCloudmanager.iCloudDelegate = self
         
     }
 
@@ -173,6 +181,12 @@ class FlyBaseController: NSObject{
           }
         
         FlutterEventChannel(name: MEDIA_STATUS_UPDATED_CHANNEL, binaryMessenger: controller.binaryMessenger).setStreamHandler((self.mediaStatusUpdatedStreamHandler as! FlutterStreamHandler & NSObjectProtocol))
+         
+        if (self.onAdminBlockedOtherUserStreamHandler == nil) {
+            self.onAdminBlockedOtherUserStreamHandler = OnAdminBlockedOtherUserStreamHandler()
+          }
+        
+        FlutterEventChannel(name: onAdminBlockedOtherUser_channel, binaryMessenger: controller.binaryMessenger).setStreamHandler((self.onAdminBlockedOtherUserStreamHandler as! FlutterStreamHandler & NSObjectProtocol))
         
         if (self.uploadDownloadProgressChangedStreamHandler == nil) {
             self.uploadDownloadProgressChangedStreamHandler = UploadDownloadProgressChangedStreamHandler()
@@ -355,6 +369,16 @@ class FlyBaseController: NSObject{
           }
         
         FlutterEventChannel(name: usersIBlockedListFetched_channel, binaryMessenger: controller.binaryMessenger).setStreamHandler(self.usersIBlockedListFetchedStreamHandler as? FlutterStreamHandler & NSObjectProtocol)
+         
+      
+         
+        if (self.usersProfilesFetchedStreamHandler == nil) {
+            self.usersProfilesFetchedStreamHandler = UsersProfilesFetchedStreamHandler()
+          }
+        
+        FlutterEventChannel(name: userProfileFetched_channel, binaryMessenger: controller.binaryMessenger).setStreamHandler(self.usersProfilesFetchedStreamHandler as? FlutterStreamHandler & NSObjectProtocol)
+         
+      
          
         if (self.usersWhoBlockedMeListFetchedStreamHandler == nil) {
             self.usersWhoBlockedMeListFetchedStreamHandler = UsersWhoBlockedMeListFetchedStreamHandler()
@@ -630,6 +654,42 @@ class FlyBaseController: NSObject{
                 FlySdkMethodCalls.clearAllConversation(call: call, result: result)
             case "cancelNotifications":
                 FlySdkMethodCalls.cancelNotifications(call: call, result: result)
+            case "insertBusyStatus":
+                FlySdkMethodCalls.insertBusyStatus(call: call, result: result)
+            case "getDocsMessages":
+                FlySdkMethodCalls.getDocsMessages(call: call, result: result)
+            case "getLinkMessages":
+                FlySdkMethodCalls.getLinkMessages(call: call, result: result)
+            case "isAdmin":
+                FlySdkMethodCalls.isAdmin(call: call, result: result)
+            case "leaveFromGroup":
+                FlySdkMethodCalls.leaveFromGroup(call: call, result: result)
+            case "getMediaAutoDownload":
+                FlySdkMethodCalls.getMediaAutoDownload(call: call, result: result)
+            case "setMediaAutoDownload":
+                FlySdkMethodCalls.setMediaAutoDownload(call: call, result: result)
+            case "getMediaSetting":
+                FlySdkMethodCalls.getMediaSetting(call: call, result: result)
+            case "saveMediaSettings":
+                FlySdkMethodCalls.saveMediaSettings(call: call, result: result)
+            case "downloadMedia":
+                FlySdkMethodCalls.downloadMedia(call: call, result: result)
+            case "updateFavouriteStatus":
+                FlySdkMethodCalls.updateFavouriteStatus(call: call, result: result)
+            case "iOSFileExist":
+                FlySdkMethodCalls.iOSFileExist(call: call, result: result)
+            case "get_favourite_messages":
+                FlySdkMethodCalls.getFavouriteMessages(call: call, result: result)
+            case "getUnsentMessageOfAJid":
+                FlySdkMethodCalls.getUnsentMessageOfAJid(call: call, result: result)
+            case "saveUnsentMessage":
+                FlySdkMethodCalls.saveUnsentMessage(call: call, result: result)
+            case "deleteRecentChats":
+                FlySdkMethodCalls.deleteRecentChats(call: call, result: result)
+            case "getDefaultNotificationUri":
+                FlySdkMethodCalls.getDefaultNotificationUri(call: call, result: result)
+            case "logoutOfChatSDK":
+                FlySdkMethodCalls.logoutOfChatSDK(call: call, result: result)
             default:
                 result(FlutterMethodNotImplemented)
             }
@@ -641,6 +701,7 @@ class FlyBaseController: NSObject{
         if Utility.getBoolFromPreference(key: isLoggedIn) && (FlyDefaults.isLoggedIn) {
             print("connecting chat manager")
             ChatManager.connect()
+            ChatManager.shared.startAutoDownload()
         }else{
             print(Utility.getBoolFromPreference(key: isLoggedIn))
             print(FlyDefaults.isLoggedIn)
@@ -658,7 +719,200 @@ class FlyBaseController: NSObject{
 }
 
 
-extension FlyBaseController : MessageEventsDelegate, ConnectionEventDelegate, LogoutDelegate, GroupEventsDelegate, AdminBlockCurrentUserDelegate, TypingStatusDelegate {
+extension FlyBaseController : MessageEventsDelegate, ConnectionEventDelegate, LogoutDelegate, GroupEventsDelegate,
+                              AdminBlockCurrentUserDelegate, TypingStatusDelegate, ProfileEventsDelegate,
+                              AdminBlockDelegate,AvailableFeaturesDelegate, BackupEventDelegate, RestoreEventDelegate {
+    func clearAllConversationForSyncedDevice() {
+        
+    }
+    
+    
+    func onMessagesCleared(toJid: String, deleteType: String?) {
+        
+    }
+    
+    func restoreProgressDidReceive(completedCount: Double, completedPercentage: String, completedSize: String) {
+        
+    }
+    
+    func restoreDidFinish() {
+        
+    }
+    
+    func restoreDidFailed(errorMessage: String) {
+        
+    }
+    
+    
+    func didUpdateAvailableFeatures(features: FlyCommon.AvailableFeaturesModel) {
+        
+    }
+    func backupProgressDidReceive(completedCount: String, completedSize: String) {
+        
+    }
+    
+    func backupDidFinish(fileUrl: String) {
+        
+    }
+    
+    func backupDidFailed(errorMessage: String) {
+        
+    }
+    
+    func userCameOnline(for jid: String) {
+        
+        let jsonObject: NSMutableDictionary = NSMutableDictionary()
+        jsonObject.setValue(jid, forKey: "jid")
+        let jsonString = Commons.json(from: jsonObject)
+        if(userCameOnlineStreamHandler?.userCameOnline != nil){
+            userCameOnlineStreamHandler?.userCameOnline?(jsonString)
+        }else{
+            print("Chat Typing Stream Handler is Nil")
+        }
+    
+    }
+    
+    func userWentOffline(for jid: String) {
+        let jsonObject: NSMutableDictionary = NSMutableDictionary()
+        jsonObject.setValue(jid, forKey: "jid")
+        let jsonString = Commons.json(from: jsonObject)
+        if(userWentOfflineStreamHandler?.userWentOffline != nil){
+            userWentOfflineStreamHandler?.userWentOffline?(jsonString)
+        }else{
+            print("userWentOffline Stream Handler is Nil")
+        }
+    }
+    
+    func userProfileFetched(for jid: String, profileDetails: FlyCommon.ProfileDetails?) {
+//        var userProfileJson = JSONSerializer.toJson(profileDetails as Any)
+        let jsonObject: NSMutableDictionary = NSMutableDictionary()
+        jsonObject.setValue(jid, forKey: "jid")
+        jsonObject.setValue(profileDetails, forKey: "profileDetails")
+        let jsonString = JSONSerializer.toJson(jsonObject)
+        if(userProfileFetchedStreamHandler?.userProfileFetched != nil){
+            userProfileFetchedStreamHandler?.userProfileFetched?(jsonString)
+        }else{
+            print("userProfileFetched Stream Handler is Nil")
+        }
+    }
+    
+    func myProfileUpdated() {
+        if(myProfileUpdatedStreamHandler?.myProfileUpdated != nil){
+            myProfileUpdatedStreamHandler?.myProfileUpdated?(true)
+        }else{
+            print("myProfileUpdated Stream Handler is Nil")
+        }
+    }
+    
+    func usersProfilesFetched() {
+        if(usersProfilesFetchedStreamHandler?.usersProfilesFetched != nil){
+            usersProfilesFetchedStreamHandler?.usersProfilesFetched?(true)
+        }else{
+            print("usersProfilesFetched Stream Handler is Nil")
+        }
+    }
+    
+    func blockedThisUser(jid: String) {
+        let jsonObject: NSMutableDictionary = NSMutableDictionary()
+        jsonObject.setValue(jid, forKey: "jid")
+        let jsonString = Commons.json(from: jsonObject)
+        if(blockedThisUserStreamHandler?.blockedThisUser != nil){
+            blockedThisUserStreamHandler?.blockedThisUser?(jsonString)
+        }else{
+            print("blockedThisUser Stream Handler is Nil")
+        }
+    }
+    
+    func unblockedThisUser(jid: String) {
+        let jsonObject: NSMutableDictionary = NSMutableDictionary()
+        jsonObject.setValue(jid, forKey: "jid")
+        let jsonString = Commons.json(from: jsonObject)
+        if(unblockedThisUserStreamHandler?.unblockedThisUser != nil){
+            unblockedThisUserStreamHandler?.unblockedThisUser?(jsonString)
+        }else{
+            print("unblockedThisUser Stream Handler is Nil")
+        }
+    }
+    
+    func usersIBlockedListFetched(jidList: [String]) {
+        let jsonObject: NSMutableDictionary = NSMutableDictionary()
+        jsonObject.setValue(jidList, forKey: "jidlist")
+        let jsonString = Commons.json(from: jsonObject)
+        if(usersIBlockedListFetchedStreamHandler?.usersIBlockedListFetched != nil){
+            usersIBlockedListFetchedStreamHandler?.usersIBlockedListFetched?(jsonString)
+        }else{
+            print("usersIBlockedListFetched Stream Handler is Nil")
+        }
+    }
+    
+    func usersBlockedMeListFetched(jidList: [String]) {
+        let jsonObject: NSMutableDictionary = NSMutableDictionary()
+        jsonObject.setValue(jidList, forKey: "jidlist")
+        let jsonString = Commons.json(from: jsonObject)
+        if(usersWhoBlockedMeListFetchedStreamHandler?.usersWhoBlockedMeListFetched != nil){
+            usersWhoBlockedMeListFetchedStreamHandler?.usersWhoBlockedMeListFetched?(jsonString)
+        }else{
+            print("usersBlockedMeListFetched Stream Handler is Nil")
+        }
+    }
+    
+    func userUpdatedTheirProfile(for jid: String, profileDetails: FlyCommon.ProfileDetails) {
+        let jsonObject: NSMutableDictionary = NSMutableDictionary()
+        jsonObject.setValue(jid, forKey: "jid")
+        let jsonString = Commons.json(from: jsonObject)
+        if(userUpdatedHisProfileStreamHandler?.userUpdatedHisProfile != nil){
+            userUpdatedHisProfileStreamHandler?.userUpdatedHisProfile?(jsonString)
+        }else{
+            print("userUpdatedTheirProfile Stream Handler is Nil")
+        }
+        
+    }
+    
+    func userBlockedMe(jid: String) {
+        let jsonObject: NSMutableDictionary = NSMutableDictionary()
+        jsonObject.setValue(jid, forKey: "jid")
+        let jsonString = Commons.json(from: jsonObject)
+        if(userBlockedMeStreamHandler?.userBlockedMe != nil){
+            userBlockedMeStreamHandler?.userBlockedMe?(jsonString)
+        }else{
+            print("userBlockedMe Stream Handler is Nil")
+        }
+    }
+    
+    func userUnBlockedMe(jid: String) {
+        let jsonObject: NSMutableDictionary = NSMutableDictionary()
+        jsonObject.setValue(jid, forKey: "jid")
+        let jsonString = Commons.json(from: jsonObject)
+        if(userUnBlockedMeStreamHandler?.userUnBlockedMe != nil){
+            userUnBlockedMeStreamHandler?.userUnBlockedMe?(jsonString)
+        }else{
+            print("userUnBlockedMe Stream Handler is Nil")
+        }
+    }
+    
+    func hideUserLastSeen() {
+        
+    }
+    
+    func getUserLastSeen() {
+        
+    }
+    
+    func userDeletedTheirProfile(for jid: String, profileDetails: FlyCommon.ProfileDetails) {
+        let jsonObject: NSMutableDictionary = NSMutableDictionary()
+        jsonObject.setValue(jid, forKey: "jid")
+        let jsonString = Commons.json(from: jsonObject)
+        if(userDeletedHisProfileStreamHandler?.userDeletedHisProfile != nil){
+            userDeletedHisProfileStreamHandler?.userDeletedHisProfile?(jsonString)
+        }else{
+            print("userDeletedTheirProfile Stream Handler is Nil")
+        }
+    }
+    
+    func didBlockOrUnblockSelf(userJid: String, isBlocked: Bool) {
+        
+    }
+    
     func onChatTypingStatus(userJid: String, status: FlyCommon.TypingStatus) {
         
         print("onChatTypingStatus")
@@ -750,7 +1004,7 @@ extension FlyBaseController : MessageEventsDelegate, ConnectionEventDelegate, Lo
 
     }
 
-    func onMediaStatusUpdated(message: FlyCommon.ChatMessage) {
+    func onMediaStatusUpdated(message : FlyCommon.ChatMessage) {
         print("Media Status Update--->")
         var chatMediaJson = JSONSerializer.toJson(message as Any)
         chatMediaJson = chatMediaJson.replacingOccurrences(of: "{\"some\":", with: "")
@@ -770,6 +1024,7 @@ extension FlyBaseController : MessageEventsDelegate, ConnectionEventDelegate, Lo
 
     func onMediaProgressChanged(message: FlyCommon.ChatMessage, progressPercentage: Float) {
         print("Media Status Onprogress changed---> \(progressPercentage)")
+        
     }
 
     func onMessagesClearedOrDeleted(messageIds: Array<String>) {
@@ -782,6 +1037,7 @@ extension FlyBaseController : MessageEventsDelegate, ConnectionEventDelegate, Lo
 
     func showOrUpdateOrCancelNotification() {
         print("Message showOrUpdateOrCancelNotification--->")
+        
     }
 
     func onMessagesCleared(toJid: String) {
@@ -798,6 +1054,16 @@ extension FlyBaseController : MessageEventsDelegate, ConnectionEventDelegate, Lo
     
     func didBlockOrUnblockCurrentUser(userJid: String, isBlocked: Bool) {
         
+        let jsonObject: NSMutableDictionary = NSMutableDictionary()
+        jsonObject.setValue(userJid, forKey: "jid")
+        jsonObject.setValue(isBlocked, forKey: "status")
+        let jsonString = Commons.json(from: jsonObject)
+        if(onAdminBlockedUserStreamHandler?.onAdminBlockedUser != nil){
+            onAdminBlockedUserStreamHandler?.onAdminBlockedUser?(jsonString)
+        }else{
+            print("didBlockOrUnblockContact Stream Handler is Nil")
+        }
+        
     }
     
     func didBlockOrUnblockGroup(groupJid: String, isBlocked: Bool) {
@@ -806,42 +1072,121 @@ extension FlyBaseController : MessageEventsDelegate, ConnectionEventDelegate, Lo
     
     func didBlockOrUnblockContact(userJid: String, isBlocked: Bool) {
         
-    }
-    
-    func didAddNewMemeberToGroup(groupJid: String, newMemberJid: String, addedByMemberJid: String) {
+        let jsonObject: NSMutableDictionary = NSMutableDictionary()
+        jsonObject.setValue(userJid, forKey: "jid")
+        jsonObject.setValue("", forKey: "type")
+        jsonObject.setValue(isBlocked, forKey: "status")
+        let jsonString = Commons.json(from: jsonObject)
+        if(onAdminBlockedOtherUserStreamHandler?.onAdminBlockedOtherUser != nil){
+            onAdminBlockedOtherUserStreamHandler?.onAdminBlockedOtherUser?(jsonString)
+        }else{
+            print("didBlockOrUnblockContact Stream Handler is Nil")
+        }
         
     }
     
+    func didAddNewMemeberToGroup(groupJid: String, newMemberJid: String, addedByMemberJid: String) {
+        let jsonObject: NSMutableDictionary = NSMutableDictionary()
+        jsonObject.setValue(groupJid, forKey: "groupJid")
+        jsonObject.setValue(newMemberJid, forKey: "newMemberJid")
+        jsonObject.setValue(addedByMemberJid, forKey: "addedByMemberJid")
+        let jsonString = Commons.json(from: jsonObject)
+        if(newMemberAddedToGroupStreamHandler?.onNewMemberAddedToGroup != nil){
+            newMemberAddedToGroupStreamHandler?.onNewMemberAddedToGroup?(jsonString)
+        }else{
+            print("didAddNewMemeberToGroup Stream Handler is Nil")
+        }
+    }
+    
     func didRemoveMemberFromGroup(groupJid: String, removedMemberJid: String, removedByMemberJid: String) {
+        let jsonObject: NSMutableDictionary = NSMutableDictionary()
+        jsonObject.setValue(groupJid, forKey: "groupJid")
+        jsonObject.setValue(removedMemberJid, forKey: "removedMemberJid")
+        jsonObject.setValue(removedByMemberJid, forKey: "removedByMemberJid")
+        let jsonString = Commons.json(from: jsonObject)
+        if(memberRemovedFromGroupStreamHandler?.onMemberRemovedFromGroup != nil){
+            memberRemovedFromGroupStreamHandler?.onMemberRemovedFromGroup?(jsonString)
+        }else{
+            print("didRemoveMemberFromGroup Stream Handler is Nil")
+        }
         
     }
     
     func didFetchGroupProfile(groupJid: String) {
         
+        if(groupProfileFetchedStreamHandler?.onGroupProfileFetched != nil){
+            groupProfileFetchedStreamHandler?.onGroupProfileFetched?(groupJid)
+        }else{
+            print("didFetchGroupProfile Stream Handler is Nil")
+        }
+        
     }
     
     func didUpdateGroupProfile(groupJid: String) {
         
+        if(groupProfileUpdatedStreamHandler?.onGroupProfileUpdated != nil){
+            groupProfileUpdatedStreamHandler?.onGroupProfileUpdated?(groupJid)
+        }else{
+            print("didUpdateGroupProfile Stream Handler is Nil")
+        }
+        
     }
     
     func didMakeMemberAsAdmin(groupJid: String, newAdminMemberJid: String, madeByMemberJid: String) {
+        let jsonObject: NSMutableDictionary = NSMutableDictionary()
+        jsonObject.setValue(groupJid, forKey: "groupJid")
+        jsonObject.setValue(newAdminMemberJid, forKey: "newAdminMemberJid")
+        jsonObject.setValue(madeByMemberJid, forKey: "madeByMemberJid")
+        let jsonString = Commons.json(from: jsonObject)
+        if(memberMadeAsAdminStreamHandler?.onMemberMadeAsAdmin != nil){
+            memberMadeAsAdminStreamHandler?.onMemberMadeAsAdmin?(jsonString)
+        }else{
+            print("didMakeMemberAsAdmin Stream Handler is Nil")
+        }
         
     }
     
     func didRemoveMemberFromAdmin(groupJid: String, removedAdminMemberJid: String, removedByMemberJid: String) {
+        let jsonObject: NSMutableDictionary = NSMutableDictionary()
+        jsonObject.setValue(groupJid, forKey: "groupJid")
+        jsonObject.setValue(removedAdminMemberJid, forKey: "removedAdminMemberJid")
+        jsonObject.setValue(removedByMemberJid, forKey: "removedByMemberJid")
+        let jsonString = Commons.json(from: jsonObject)
+        if(memberRemovedAsAdminStreamHandler?.onMemberRemovedAsAdmin != nil){
+            memberRemovedAsAdminStreamHandler?.onMemberRemovedAsAdmin?(jsonString)
+        }else{
+            print("didRemoveMemberFromAdmin Stream Handler is Nil")
+        }
         
     }
     
     func didDeleteGroupLocally(groupJid: String) {
+        if(onGroupDeletedLocallyStreamHandler?.onGroupDeletedLocally != nil){
+            onGroupDeletedLocallyStreamHandler?.onGroupDeletedLocally?(groupJid)
+        }else{
+            print("didDeleteGroupLocally Stream Handler is Nil")
+        }
         
     }
     
     func didLeftFromGroup(groupJid: String, leftUserJid: String) {
-        
+        let jsonObject: NSMutableDictionary = NSMutableDictionary()
+        jsonObject.setValue(groupJid, forKey: "groupJid")
+        jsonObject.setValue(leftUserJid, forKey: "leftUserJid")
+        let jsonString = Commons.json(from: jsonObject)
+        if(leftFromGroupStreamHandler?.onLeftFromGroup != nil){
+            leftFromGroupStreamHandler?.onLeftFromGroup?(jsonString)
+        }else{
+            print("didRemoveMemberFromAdmin Stream Handler is Nil")
+        }
     }
     
     func didCreateGroup(groupJid: String) {
-        
+        if(newGroupCreatedStreamHandler?.onNewGroupCreated != nil){
+            newGroupCreatedStreamHandler?.onNewGroupCreated?(groupJid)
+        }else{
+            print("didCreateGroup Stream Handler is Nil")
+        }
     }
     
     func didFetchGroups(groups: [FlyCommon.ProfileDetails]) {
@@ -849,7 +1194,11 @@ extension FlyBaseController : MessageEventsDelegate, ConnectionEventDelegate, Lo
     }
     
     func didFetchGroupMembers(groupJid: String) {
-        
+        if(fetchingGroupMembersCompletedStreamHandler?.onFetchingGroupMembersCompleted != nil){
+            fetchingGroupMembersCompletedStreamHandler?.onFetchingGroupMembersCompleted?(groupJid)
+        }else{
+            print("didFetchGroupMembers Stream Handler is Nil")
+        }
     }
     
     func didReceiveGroupNotificationMessage(message: FlyCommon.ChatMessage) {
@@ -859,33 +1208,39 @@ extension FlyBaseController : MessageEventsDelegate, ConnectionEventDelegate, Lo
     func didReceiveLogout() {
         print("logout delegate received")
         print("AppDelegate LogoutDelegate ===> LogoutDelegate")
-        Utility.saveInPreference(key: isProfileSaved, value: false)
-        Utility.saveInPreference(key: isLoggedIn, value: false)
-
-        ChatManager.logoutApi { isSuccess, flyError, flyData in
-           if isSuccess {
-               print("requestLogout Logout api isSuccess")
-
-           }else{
-               print("Logout api error : \(String(describing: flyError))")
-
-           }
-       }
-        ChatManager.enableContactSync(isEnable: ENABLE_CONTACT_SYNC)
-        ChatManager.disconnect()
-        ChatManager.shared.resetFlyDefaults()
+        
+        if(onLoggedOutStreamHandler?.onLoggedOut != nil){
+            onLoggedOutStreamHandler?.onLoggedOut?(true)
+        }else{
+            print("logout Stream Handler is Nil")
+        }
     }
     
     func onConnected() {
         print("====== sdk connected=======")
+        if(onConnectedStreamHandler?.onConnected != nil){
+            onConnectedStreamHandler?.onConnected?(true)
+        }else{
+            print("onConnected Stream Handler is Nil")
+        }
     }
 
     func onDisconnected() {
         print("====== sdk Disconnected======")
+        if(onDisconnectedStreamHandler?.onDisconnected != nil){
+            onDisconnectedStreamHandler?.onDisconnected?(true)
+        }else{
+            print("onDisconnected Stream Handler is Nil")
+        }
     }
 
     func onConnectionNotAuthorized() {
         print("====== sdk Not Authorized=======")
+        if(onConnectionNotAuthorizedStreamHandler?.onConnectionNotAuthorized != nil){
+            onConnectionNotAuthorizedStreamHandler?.onConnectionNotAuthorized?(true)
+        }else{
+            print("onConnectionNotAuthorized Stream Handler is Nil")
+        }
     }
 
 }

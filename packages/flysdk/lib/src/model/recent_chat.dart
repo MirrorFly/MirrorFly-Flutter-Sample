@@ -5,6 +5,7 @@
 import 'dart:convert';
 
 RecentChat recentChatFromJson(String str) => RecentChat.fromJson(json.decode(str));
+RecentChatData recentChatDataFromJson(String str) => RecentChatData.fromJson(json.decode(str));
 
 String recentChatToJson(RecentChat data) => json.encode(data.toJson());
 

@@ -273,7 +273,7 @@ class MyProfileUpdatedStreamHandler: NSObject, FlutterStreamHandler {
         return nil
     }
 }
-class onAdminBlockedOtherUserStreamHandler: NSObject, FlutterStreamHandler {
+class OnAdminBlockedOtherUserStreamHandler: NSObject, FlutterStreamHandler {
     public var onAdminBlockedOtherUser: FlutterEventSink?
     
     public func onListen(withArguments arguments: Any?, eventSink events: @escaping FlutterEventSink) -> FlutterError? {
