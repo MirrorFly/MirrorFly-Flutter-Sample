@@ -13,12 +13,12 @@ class BusyStatusView extends GetView<BusyStatusController> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-          appBar: AppBar(
-            title: const Text(Constants.editBusyStatus),
-          ),
-          body: Padding(
+    return Scaffold(
+        appBar: AppBar(
+          title: const Text(Constants.editBusyStatus),
+        ),
+        body: SafeArea(
+          child: Padding(
             padding: const EdgeInsets.all(20.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -33,7 +33,6 @@ class BusyStatusView extends GetView<BusyStatusController> {
                 const Divider(
                   thickness: 1,
                 ),
-
                 Obx(
                       () =>
                       ListTile(
@@ -117,7 +116,7 @@ class BusyStatusView extends GetView<BusyStatusController> {
                 ),
               ],
             ),
-          )),
-    );
+          ),
+        ));
   }
 }
