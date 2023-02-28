@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
@@ -20,7 +19,7 @@ class StatusListView extends GetView<StatusListController> {
         title: const Text('Status'),
       ),
       body: WillPopScope(
-        onWillPop: (){
+        onWillPop: () {
           Get.back(result: controller.selectedStatus.value);
           return Future.value(false);
         },
@@ -50,61 +49,61 @@ class StatusListView extends GetView<StatusListController> {
                     fit: BoxFit.contain,
                   ),
                   onTap: () {
-                    Get.to(const AddStatusView(),arguments: {"status":controller.selectedStatus.value})?.then((value){
-                      if(value!=null){
-                        controller.updateStatus();
+                    Get.to(const AddStatusView(), arguments: {
+                      "status": controller.selectedStatus.value
+                    })?.then((value) {
+                      if (value != null) {
+                        controller.insertStatus();
                       }
                     });
                   },
                 ),
               ),
               const AppDivider(),
-              const SizedBox(height: 10,),
+              const SizedBox(
+                height: 10,
+              ),
               const Text(
                 'Select Your new status',
                 style: TextStyle(fontSize: 14, fontWeight: FontWeight.w700),
               ),
               Obx(() => controller.statusList.isNotEmpty
                   ? Expanded(
-                child: ListView.builder(
-                    itemCount: controller.statusList.length,
-                    physics: const AlwaysScrollableScrollPhysics(),
-                    itemBuilder: (context, index) {
-                      var item = controller.statusList[index];
-                      return ListTile(
-                        contentPadding: EdgeInsets.zero,
-                        title: Text(item.status.checkNull(),
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: TextStyle(
-                                color: item.status==controller.selectedStatus.value ? textBlack1color : textColor,
-                                fontSize: 14,
-                                fontWeight: FontWeight.w500)),
-                        trailing: item.status==controller.selectedStatus.value
-                            ? SvgPicture.asset(
-                          tickIcon,
-                          fit: BoxFit.contain,
-                        )
-                            : const SizedBox(),
-                        onTap: (){
-                          controller.updateStatus(item.status.checkNull());
-                          /*Helper.showLoading();
-
-                          PlatformRepo().updateProfileStatus(controller.add status controller.text.trim().toString()).then((value){
-                            controller.selectedStatus.value=item.status.checkNull();
-                            var data = json.decode(value.toString());
-                            toToast(data['message'].toString());
-                            Helper.hideLoading();
-                            if(data['status']) {
-                              controller.getStatusList();
-                            }
-                          }).catchError((er){
-                            toToast(er);
-                          });*/
-                        },
-                      );
-                    }),
-              )
+                      child: ListView.builder(
+                          itemCount: controller.statusList.length,
+                          physics: const AlwaysScrollableScrollPhysics(),
+                          itemBuilder: (context, index) {
+                            var item = controller.statusList[index];
+                            return ListTile(
+                              contentPadding: EdgeInsets.zero,
+                              title: Text(item.status.checkNull(),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: TextStyle(
+                                      color: item.status ==
+                                              controller.selectedStatus.value
+                                          ? textBlack1color
+                                          : textColor,
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w500)),
+                              trailing:
+                                  item.status == controller.selectedStatus.value
+                                      ? SvgPicture.asset(
+                                          tickIcon,
+                                          fit: BoxFit.contain,
+                                        )
+                                      : const SizedBox(),
+                              onTap: () {
+                                controller.updateStatus(item.status.checkNull(),
+                                    item.id.checkNull());
+                              },
+                              onLongPress: (){
+                                debugPrint("Status list long press");
+                                controller.deleteStatus(item);
+                              },
+                            );
+                          }),
+                    )
                   : const SizedBox()),
             ],
           ),
