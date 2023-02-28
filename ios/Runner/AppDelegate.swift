@@ -57,8 +57,8 @@ let googleApiKey = "AIzaSyDnjPEs86MRsnFfW1sVPKvMWjqQRnSa7Ts"
       GMSServices.provideAPIKey(googleApiKey)
       
       // MARK:- Push Notification
-      clearPushNotifications()
-      registerForPushNotifications()
+//      clearPushNotifications()
+//      registerForPushNotifications()
       
       FirebaseApp.configure()
       if #available(iOS 10.0, *) {

@@ -13,11 +13,8 @@
 		97C146FC1CF9000F007C117D /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FA1CF9000F007C117D /* Main.storyboard */; };
 		97C146FE1CF9000F007C117D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FD1CF9000F007C117D /* Assets.xcassets */; };
 		97C147011CF9000F007C117D /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FF1CF9000F007C117D /* LaunchScreen.storyboard */; };
-		9EF20FED396FE6E021A703D3 /* Pods_FlutterNotificationExtnsion.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 40093300E43136E620FB40C8 /* Pods_FlutterNotificationExtnsion.framework */; };
-		BE495FA6B5C76F2E24D5C057 /* Pods_Runner.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BA4AF035E37AC33833313121 /* Pods_Runner.framework */; };
+		ABEE7EF2773EB2C66B4EA77B /* Pods_Runner.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B65DC8762F5BAC1342CDAE7F /* Pods_Runner.framework */; };
 		CE071F24295F09E60035BBAD /* FlyBaseController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE071F23295F09E60035BBAD /* FlyBaseController.swift */; };
-		CE2582232951A053009D974C /* NotificationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE2582222951A053009D974C /* NotificationService.swift */; };
-		CE2582272951A053009D974C /* FlutterNotificationExtnsion.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = CE2582202951A053009D974C /* FlutterNotificationExtnsion.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		CEB9F2DB2948F9E10080BC48 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = CEB9F2DA2948F9E10080BC48 /* GoogleService-Info.plist */; };
 		CED95E0D29472C1600B02558 /* FlyEvents.swift in Sources */ = {isa = PBXBuildFile; fileRef = CED95E0429472C1600B02558 /* FlyEvents.swift */; };
 		CED95E0E29472C1600B02558 /* Commons.swift in Sources */ = {isa = PBXBuildFile; fileRef = CED95E0529472C1600B02558 /* Commons.swift */; };
@@ -26,16 +23,6 @@
 		CED95E1229472C1600B02558 /* UserDefaults.swift in Sources */ = {isa = PBXBuildFile; fileRef = CED95E0929472C1600B02558 /* UserDefaults.swift */; };
 /* End PBXBuildFile section */
 
-/* Begin PBXContainerItemProxy section */
-		CE2582252951A053009D974C /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 97C146E61CF9000F007C117D /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = CE25821F2951A053009D974C;
-			remoteInfo = FlutterNotificationExtnsion;
-		};
-/* End PBXContainerItemProxy section */
-
 /* Begin PBXCopyFilesBuildPhase section */
 		CE25822C2951A054009D974C /* Embed Foundation Extensions */ = {
 			isa = PBXCopyFilesBuildPhase;
@@ -43,7 +30,6 @@
 			dstPath = "";
 			dstSubfolderSpec = 13;
 			files = (
-				CE2582272951A053009D974C /* FlutterNotificationExtnsion.appex in Embed Foundation Extensions */,
 			);
 			name = "Embed Foundation Extensions";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -51,17 +37,13 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		11B2F322E05C0852159CC915 /* Pods-Runner.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.debug.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.debug.xcconfig"; sourceTree = "<group>"; };
 		1498D2321E8E86230040F4C2 /* GeneratedPluginRegistrant.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GeneratedPluginRegistrant.h; sourceTree = "<group>"; };
 		1498D2331E8E89220040F4C2 /* GeneratedPluginRegistrant.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GeneratedPluginRegistrant.m; sourceTree = "<group>"; };
+		3221A410CE5C25880AA769AC /* Pods-Runner.profile.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.profile.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.profile.xcconfig"; sourceTree = "<group>"; };
 		3B3967151E833CAA004F5970 /* AppFrameworkInfo.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = AppFrameworkInfo.plist; path = Flutter/AppFrameworkInfo.plist; sourceTree = "<group>"; };
-		3D58061DDC9B80E792E53BDF /* Pods-FlutterNotificationExtnsion.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-FlutterNotificationExtnsion.debug.xcconfig"; path = "Target Support Files/Pods-FlutterNotificationExtnsion/Pods-FlutterNotificationExtnsion.debug.xcconfig"; sourceTree = "<group>"; };
-		40093300E43136E620FB40C8 /* Pods_FlutterNotificationExtnsion.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_FlutterNotificationExtnsion.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		4FF670ACF81EA5C058C110FA /* Pods-FlutterNotificationExtnsion.profile.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-FlutterNotificationExtnsion.profile.xcconfig"; path = "Target Support Files/Pods-FlutterNotificationExtnsion/Pods-FlutterNotificationExtnsion.profile.xcconfig"; sourceTree = "<group>"; };
 		74858FAD1ED2DC5600515810 /* Runner-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Runner-Bridging-Header.h"; sourceTree = "<group>"; };
 		74858FAE1ED2DC5600515810 /* AppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		7AFA3C8E1D35360C0083082E /* Release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = Release.xcconfig; path = Flutter/Release.xcconfig; sourceTree = "<group>"; };
-		8F0D7EF54821317DB710549E /* Pods-Runner.profile.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.profile.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.profile.xcconfig"; sourceTree = "<group>"; };
 		9740EEB21CF90195004384FC /* Debug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = Debug.xcconfig; path = Flutter/Debug.xcconfig; sourceTree = "<group>"; };
 		9740EEB31CF90195004384FC /* Generated.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = Generated.xcconfig; path = Flutter/Generated.xcconfig; sourceTree = "<group>"; };
 		97C146EE1CF9000F007C117D /* Runner.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Runner.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -69,28 +51,20 @@
 		97C146FD1CF9000F007C117D /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		97C147001CF9000F007C117D /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		97C147021CF9000F007C117D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		A34B0F789607B24A4A657D1F /* Pods-Runner.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.release.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.release.xcconfig"; sourceTree = "<group>"; };
-		BA4AF035E37AC33833313121 /* Pods_Runner.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Runner.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B65DC8762F5BAC1342CDAE7F /* Pods_Runner.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Runner.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		C3D1935CD1465CCB1706864E /* Pods-Runner.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.release.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.release.xcconfig"; sourceTree = "<group>"; };
+		C4D8499B93DFA42FE31DFEA0 /* Pods-Runner.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.debug.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.debug.xcconfig"; sourceTree = "<group>"; };
 		CE071F23295F09E60035BBAD /* FlyBaseController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlyBaseController.swift; sourceTree = "<group>"; };
-		CE2582202951A053009D974C /* FlutterNotificationExtnsion.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = FlutterNotificationExtnsion.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		CE2582222951A053009D974C /* NotificationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationService.swift; sourceTree = "<group>"; };
 		CE2582242951A053009D974C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		CE25823629523757009D974C /* FlutterNotificationExtnsion.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = FlutterNotificationExtnsion.entitlements; sourceTree = "<group>"; };
 		CEB9F2DA2948F9E10080BC48 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
-		CEC69EDA296EE637003A5787 /* FlyTranslate.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = FlyTranslate.xcframework; path = Runner/sdk/FlyTranslate.xcframework; sourceTree = "<group>"; };
-		CEC69EDB296EE637003A5787 /* FlyNetwork.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = FlyNetwork.xcframework; path = Runner/sdk/FlyNetwork.xcframework; sourceTree = "<group>"; };
-		CEC69EDC296EE638003A5787 /* FlyCommon.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = FlyCommon.xcframework; path = Runner/sdk/FlyCommon.xcframework; sourceTree = "<group>"; };
-		CEC69EDD296EE638003A5787 /* FlyXmpp.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = FlyXmpp.xcframework; path = Runner/sdk/FlyXmpp.xcframework; sourceTree = "<group>"; };
-		CEC69EDE296EE639003A5787 /* FlyCall.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = FlyCall.xcframework; path = Runner/sdk/FlyCall.xcframework; sourceTree = "<group>"; };
-		CEC69EDF296EE639003A5787 /* FlyDatabase.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = FlyDatabase.xcframework; path = Runner/sdk/FlyDatabase.xcframework; sourceTree = "<group>"; };
-		CEC69EE0296EE63A003A5787 /* FlyCore.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = FlyCore.xcframework; path = Runner/sdk/FlyCore.xcframework; sourceTree = "<group>"; };
 		CED95E0429472C1600B02558 /* FlyEvents.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FlyEvents.swift; sourceTree = "<group>"; };
 		CED95E0529472C1600B02558 /* Commons.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Commons.swift; sourceTree = "<group>"; };
 		CED95E0629472C1600B02558 /* FlySdkMethodCalls.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FlySdkMethodCalls.swift; sourceTree = "<group>"; };
 		CED95E0729472C1600B02558 /* JsonSerializer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JsonSerializer.swift; sourceTree = "<group>"; };
 		CED95E0929472C1600B02558 /* UserDefaults.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserDefaults.swift; sourceTree = "<group>"; };
 		CED95E2229472EC900B02558 /* Runner.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Runner.entitlements; sourceTree = "<group>"; };
-		EBF6D0923033F88FBC21D7B5 /* Pods-FlutterNotificationExtnsion.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-FlutterNotificationExtnsion.release.xcconfig"; path = "Target Support Files/Pods-FlutterNotificationExtnsion/Pods-FlutterNotificationExtnsion.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -98,15 +72,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				BE495FA6B5C76F2E24D5C057 /* Pods_Runner.framework in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		CE25821D2951A053009D974C /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				9EF20FED396FE6E021A703D3 /* Pods_FlutterNotificationExtnsion.framework in Frameworks */,
+				ABEE7EF2773EB2C66B4EA77B /* Pods_Runner.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -116,30 +82,11 @@
 		0DADEE341125B655544B4FAA /* Pods */ = {
 			isa = PBXGroup;
 			children = (
-				3D58061DDC9B80E792E53BDF /* Pods-FlutterNotificationExtnsion.debug.xcconfig */,
-				EBF6D0923033F88FBC21D7B5 /* Pods-FlutterNotificationExtnsion.release.xcconfig */,
-				4FF670ACF81EA5C058C110FA /* Pods-FlutterNotificationExtnsion.profile.xcconfig */,
-				11B2F322E05C0852159CC915 /* Pods-Runner.debug.xcconfig */,
-				A34B0F789607B24A4A657D1F /* Pods-Runner.release.xcconfig */,
-				8F0D7EF54821317DB710549E /* Pods-Runner.profile.xcconfig */,
+				C4D8499B93DFA42FE31DFEA0 /* Pods-Runner.debug.xcconfig */,
+				C3D1935CD1465CCB1706864E /* Pods-Runner.release.xcconfig */,
+				3221A410CE5C25880AA769AC /* Pods-Runner.profile.xcconfig */,
 			);
 			path = Pods;
-			sourceTree = "<group>";
-		};
-		6F6BA5F4832D5862729A6FF0 /* Frameworks */ = {
-			isa = PBXGroup;
-			children = (
-				CEC69EDE296EE639003A5787 /* FlyCall.xcframework */,
-				CEC69EDC296EE638003A5787 /* FlyCommon.xcframework */,
-				CEC69EE0296EE63A003A5787 /* FlyCore.xcframework */,
-				CEC69EDF296EE639003A5787 /* FlyDatabase.xcframework */,
-				CEC69EDB296EE637003A5787 /* FlyNetwork.xcframework */,
-				CEC69EDA296EE637003A5787 /* FlyTranslate.xcframework */,
-				CEC69EDD296EE638003A5787 /* FlyXmpp.xcframework */,
-				40093300E43136E620FB40C8 /* Pods_FlutterNotificationExtnsion.framework */,
-				BA4AF035E37AC33833313121 /* Pods_Runner.framework */,
-			);
-			name = Frameworks;
 			sourceTree = "<group>";
 		};
 		9740EEB11CF90186004384FC /* Flutter */ = {
@@ -161,7 +108,7 @@
 				CE2582212951A053009D974C /* FlutterNotificationExtnsion */,
 				97C146EF1CF9000F007C117D /* Products */,
 				0DADEE341125B655544B4FAA /* Pods */,
-				6F6BA5F4832D5862729A6FF0 /* Frameworks */,
+				C3E53F4E1D82A37559838ADF /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -169,7 +116,6 @@
 			isa = PBXGroup;
 			children = (
 				97C146EE1CF9000F007C117D /* Runner.app */,
-				CE2582202951A053009D974C /* FlutterNotificationExtnsion.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -197,6 +143,14 @@
 			path = Runner;
 			sourceTree = "<group>";
 		};
+		C3E53F4E1D82A37559838ADF /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				B65DC8762F5BAC1342CDAE7F /* Pods_Runner.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		CE2582212951A053009D974C /* FlutterNotificationExtnsion */ = {
 			isa = PBXGroup;
 			children = (
@@ -214,44 +168,24 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 97C147051CF9000F007C117D /* Build configuration list for PBXNativeTarget "Runner" */;
 			buildPhases = (
-				62F3D7C3B479FE571F9F4B91 /* [CP] Check Pods Manifest.lock */,
+				12FA7AEFCD19F1491BBC2557 /* [CP] Check Pods Manifest.lock */,
 				9740EEB61CF901F6004384FC /* Run Script */,
 				97C146EA1CF9000F007C117D /* Sources */,
 				97C146EB1CF9000F007C117D /* Frameworks */,
 				97C146EC1CF9000F007C117D /* Resources */,
 				3B06AD1E1E4923F5004D2608 /* Thin Binary */,
 				CE25822C2951A054009D974C /* Embed Foundation Extensions */,
-				08A25C4EB4DA54CCC519C0D0 /* [CP] Embed Pods Frameworks */,
-				8A6E69F8B0F2259ED3069024 /* [CP] Copy Pods Resources */,
+				9ACD424C1AD70E7C24ECAF8C /* [CP] Embed Pods Frameworks */,
+				EC8442521D183E1CD618EE93 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
 			dependencies = (
-				CE2582262951A053009D974C /* PBXTargetDependency */,
 			);
 			name = Runner;
 			productName = Runner;
 			productReference = 97C146EE1CF9000F007C117D /* Runner.app */;
 			productType = "com.apple.product-type.application";
-		};
-		CE25821F2951A053009D974C /* FlutterNotificationExtnsion */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = CE2582282951A054009D974C /* Build configuration list for PBXNativeTarget "FlutterNotificationExtnsion" */;
-			buildPhases = (
-				BCD00A8C808CC6D56CE15351 /* [CP] Check Pods Manifest.lock */,
-				CE25821C2951A053009D974C /* Sources */,
-				CE25821D2951A053009D974C /* Frameworks */,
-				CE25821E2951A053009D974C /* Resources */,
-				38CF636FD03D8844DFA43503 /* [CP] Copy Pods Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			name = FlutterNotificationExtnsion;
-			productName = FlutterNotificationExtnsion;
-			productReference = CE2582202951A053009D974C /* FlutterNotificationExtnsion.appex */;
-			productType = "com.apple.product-type.app-extension";
 		};
 /* End PBXNativeTarget section */
 
@@ -266,9 +200,6 @@
 					97C146ED1CF9000F007C117D = {
 						CreatedOnToolsVersion = 7.3.1;
 						LastSwiftMigration = 1100;
-					};
-					CE25821F2951A053009D974C = {
-						CreatedOnToolsVersion = 14.1;
 					};
 				};
 			};
@@ -286,7 +217,6 @@
 			projectRoot = "";
 			targets = (
 				97C146ED1CF9000F007C117D /* Runner */,
-				CE25821F2951A053009D974C /* FlutterNotificationExtnsion */,
 			);
 		};
 /* End PBXProject section */
@@ -304,65 +234,10 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		CE25821E2951A053009D974C /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		08A25C4EB4DA54CCC519C0D0 /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-Runner/Pods-Runner-frameworks-${CONFIGURATION}-input-files.xcfilelist",
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-Runner/Pods-Runner-frameworks-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Runner/Pods-Runner-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		38CF636FD03D8844DFA43503 /* [CP] Copy Pods Resources */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-FlutterNotificationExtnsion/Pods-FlutterNotificationExtnsion-resources-${CONFIGURATION}-input-files.xcfilelist",
-			);
-			name = "[CP] Copy Pods Resources";
-			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-FlutterNotificationExtnsion/Pods-FlutterNotificationExtnsion-resources-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-FlutterNotificationExtnsion/Pods-FlutterNotificationExtnsion-resources.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		3B06AD1E1E4923F5004D2608 /* Thin Binary */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 12;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "Thin Binary";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "/bin/sh \"$FLUTTER_ROOT/packages/flutter_tools/bin/xcode_backend.sh\" embed_and_thin\n";
-		};
-		62F3D7C3B479FE571F9F4B91 /* [CP] Check Pods Manifest.lock */ = {
+		12FA7AEFCD19F1491BBC2557 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -384,22 +259,19 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
-		8A6E69F8B0F2259ED3069024 /* [CP] Copy Pods Resources */ = {
+		3B06AD1E1E4923F5004D2608 /* Thin Binary */ = {
 			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
+			buildActionMask = 12;
 			files = (
 			);
-			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-Runner/Pods-Runner-resources-${CONFIGURATION}-input-files.xcfilelist",
+			inputPaths = (
 			);
-			name = "[CP] Copy Pods Resources";
-			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-Runner/Pods-Runner-resources-${CONFIGURATION}-output-files.xcfilelist",
+			name = "Thin Binary";
+			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Runner/Pods-Runner-resources.sh\"\n";
-			showEnvVarsInLog = 0;
+			shellScript = "/bin/sh \"$FLUTTER_ROOT/packages/flutter_tools/bin/xcode_backend.sh\" embed_and_thin\n";
 		};
 		9740EEB61CF901F6004384FC /* Run Script */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -415,26 +287,38 @@
 			shellPath = /bin/sh;
 			shellScript = "/bin/sh \"$FLUTTER_ROOT/packages/flutter_tools/bin/xcode_backend.sh\" build\n";
 		};
-		BCD00A8C808CC6D56CE15351 /* [CP] Check Pods Manifest.lock */ = {
+		9ACD424C1AD70E7C24ECAF8C /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Runner/Pods-Runner-frameworks-${CONFIGURATION}-input-files.xcfilelist",
 			);
-			inputPaths = (
-				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
-				"${PODS_ROOT}/Manifest.lock",
-			);
-			name = "[CP] Check Pods Manifest.lock";
+			name = "[CP] Embed Pods Frameworks";
 			outputFileListPaths = (
-			);
-			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-FlutterNotificationExtnsion-checkManifestLockResult.txt",
+				"${PODS_ROOT}/Target Support Files/Pods-Runner/Pods-Runner-frameworks-${CONFIGURATION}-output-files.xcfilelist",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Runner/Pods-Runner-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		EC8442521D183E1CD618EE93 /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Runner/Pods-Runner-resources-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Copy Pods Resources";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Runner/Pods-Runner-resources-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Runner/Pods-Runner-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
@@ -455,23 +339,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		CE25821C2951A053009D974C /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				CE2582232951A053009D974C /* NotificationService.swift in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXSourcesBuildPhase section */
-
-/* Begin PBXTargetDependency section */
-		CE2582262951A053009D974C /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = CE25821F2951A053009D974C /* FlutterNotificationExtnsion */;
-			targetProxy = CE2582252951A053009D974C /* PBXContainerItemProxy */;
-		};
-/* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
 		97C146FA1CF9000F007C117D /* Main.storyboard */ = {
@@ -549,7 +417,6 @@
 			baseConfigurationReference = 7AFA3C8E1D35360C0083082E /* Release.xcconfig */;
 			buildSettings = {
 				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;
@@ -559,6 +426,8 @@
 				DEVELOPMENT_TEAM = G44VFA67ZG;
 				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = G44VFA67ZG;
 				ENABLE_BITCODE = NO;
+				"EXCLUDED_ARCHS[sdk=*]" = arm64;
+				"EXCLUDED_ARCHS[sdk=iphoneos*]" = "";
 				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = arm64;
 				INFOPLIST_FILE = Runner/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -569,8 +438,8 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "Mirror Fly Qa Development Profile";
 				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = "Mirror Fly Qa Development Profile";
-				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
-				SUPPORTS_MACCATALYST = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_OBJC_BRIDGING_HEADER = "Runner/Runner-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
@@ -693,7 +562,6 @@
 			baseConfigurationReference = 9740EEB21CF90195004384FC /* Debug.xcconfig */;
 			buildSettings = {
 				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;
@@ -704,6 +572,8 @@
 				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = G44VFA67ZG;
 				ENABLE_BITCODE = NO;
 				"EXCLUDED_ARCHS[sdk=*]" = arm64;
+				"EXCLUDED_ARCHS[sdk=iphoneos*]" = "";
+				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = arm64;
 				INFOPLIST_FILE = Runner/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -713,8 +583,8 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "Mirror Fly Qa Development Profile";
 				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = "Mirror Fly Qa Development Profile";
-				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
-				SUPPORTS_MACCATALYST = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_OBJC_BRIDGING_HEADER = "Runner/Runner-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
@@ -729,7 +599,6 @@
 			baseConfigurationReference = 7AFA3C8E1D35360C0083082E /* Release.xcconfig */;
 			buildSettings = {
 				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;
@@ -739,8 +608,9 @@
 				DEVELOPMENT_TEAM = G44VFA67ZG;
 				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = G44VFA67ZG;
 				ENABLE_BITCODE = NO;
-				"EXCLUDED_ARCHS[sdk=iphoneos*]" = "armv7 arm64 i386";
-				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = "i386 arm64 armv7";
+				"EXCLUDED_ARCHS[sdk=*]" = arm64;
+				"EXCLUDED_ARCHS[sdk=iphoneos*]" = "";
+				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = arm64;
 				INFOPLIST_FILE = Runner/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -750,8 +620,8 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "Mirror Fly Qa Development Profile";
 				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = "Mirror Fly Qa Development Profile";
-				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
-				SUPPORTS_MACCATALYST = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_OBJC_BRIDGING_HEADER = "Runner/Runner-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
@@ -759,133 +629,6 @@
 				VERSIONING_SYSTEM = "apple-generic";
 			};
 			name = Release;
-		};
-		CE2582292951A054009D974C /* Debug */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 3D58061DDC9B80E792E53BDF /* Pods-FlutterNotificationExtnsion.debug.xcconfig */;
-			buildSettings = {
-				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
-				CLANG_ENABLE_OBJC_WEAK = YES;
-				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
-				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
-				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CODE_SIGN_ENTITLEMENTS = FlutterNotificationExtnsion/FlutterNotificationExtnsion.entitlements;
-				CODE_SIGN_IDENTITY = "Apple Development: Balasubramaniyam Kandaswamy (HSBG5S6ZV9)";
-				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = "";
-				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = G44VFA67ZG;
-				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = "arm64 arvm7 i386";
-				GCC_C_LANGUAGE_STANDARD = gnu11;
-				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = FlutterNotificationExtnsion/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = NotificationExtnsion;
-				INFOPLIST_KEY_NSHumanReadableCopyright = "";
-				IPHONEOS_DEPLOYMENT_TARGET = 12.1;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@executable_path/../../Frameworks",
-				);
-				MARKETING_VERSION = 1.0;
-				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
-				MTL_FAST_MATH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = com.mirrorfly.qa.notificationextention;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "";
-				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = "MirrorFly Qa Notification Dev Profile";
-				SKIP_INSTALL = YES;
-				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
-				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-			};
-			name = Debug;
-		};
-		CE25822A2951A054009D974C /* Release */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = EBF6D0923033F88FBC21D7B5 /* Pods-FlutterNotificationExtnsion.release.xcconfig */;
-			buildSettings = {
-				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
-				CLANG_ENABLE_OBJC_WEAK = YES;
-				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
-				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
-				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CODE_SIGN_ENTITLEMENTS = FlutterNotificationExtnsion/FlutterNotificationExtnsion.entitlements;
-				CODE_SIGN_IDENTITY = "Apple Development: Balasubramaniyam Kandaswamy (HSBG5S6ZV9)";
-				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = "";
-				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = G44VFA67ZG;
-				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = "arm64 i386 arvm7";
-				GCC_C_LANGUAGE_STANDARD = gnu11;
-				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = FlutterNotificationExtnsion/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = NotificationExtnsion;
-				INFOPLIST_KEY_NSHumanReadableCopyright = "";
-				IPHONEOS_DEPLOYMENT_TARGET = 12.1;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@executable_path/../../Frameworks",
-				);
-				MARKETING_VERSION = 1.0;
-				MTL_FAST_MATH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = com.mirrorfly.qa.notificationextention;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "";
-				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = "MirrorFly Qa Notification Dev Profile";
-				SKIP_INSTALL = YES;
-				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
-				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-			};
-			name = Release;
-		};
-		CE25822B2951A054009D974C /* Profile */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 4FF670ACF81EA5C058C110FA /* Pods-FlutterNotificationExtnsion.profile.xcconfig */;
-			buildSettings = {
-				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
-				CLANG_ENABLE_OBJC_WEAK = YES;
-				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
-				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
-				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CODE_SIGN_ENTITLEMENTS = FlutterNotificationExtnsion/FlutterNotificationExtnsion.entitlements;
-				CODE_SIGN_IDENTITY = "Apple Development: Balasubramaniyam Kandaswamy (HSBG5S6ZV9)";
-				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = "";
-				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = G44VFA67ZG;
-				GCC_C_LANGUAGE_STANDARD = gnu11;
-				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = FlutterNotificationExtnsion/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = NotificationExtnsion;
-				INFOPLIST_KEY_NSHumanReadableCopyright = "";
-				IPHONEOS_DEPLOYMENT_TARGET = 12.1;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@executable_path/../../Frameworks",
-				);
-				MARKETING_VERSION = 1.0;
-				MTL_FAST_MATH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = com.mirrorfly.qa.notificationextention;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "";
-				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = "MirrorFly Qa Notification Dev Profile";
-				SKIP_INSTALL = YES;
-				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
-				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-			};
-			name = Profile;
 		};
 /* End XCBuildConfiguration section */
 
@@ -906,16 +649,6 @@
 				97C147061CF9000F007C117D /* Debug */,
 				97C147071CF9000F007C117D /* Release */,
 				249021D4217E4FDB00AE95B9 /* Profile */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		CE2582282951A054009D974C /* Build configuration list for PBXNativeTarget "FlutterNotificationExtnsion" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				CE2582292951A054009D974C /* Debug */,
-				CE25822A2951A054009D974C /* Release */,
-				CE25822B2951A054009D974C /* Profile */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

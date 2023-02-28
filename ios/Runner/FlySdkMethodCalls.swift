@@ -793,13 +793,20 @@ import FlyDatabase
             if isSuccess {
                 var data = flyData
                 
-                data["status"] = true
-                print(Commons.json(from: data) as Any)
-                //need to compare the contact sync when contact sync is enabled. //ProfileViewController//line-> 292
+                let profileData = data.getData()
+                let message = data.getMessage()
+                print("profile update response-->\(profileData)")
+
+                let profileDataJson = JSONSerializer.toJson(profileData)
+
+
+                var profileResponseJson = "{\"status\": true ,\"message\" : \"\(message)\" ,\"data\": \(profileDataJson) }"
+
+                print("Profile response-->\(profileResponseJson)")
+
+//                saveMyProfileDataToUserDefaults(profile: myProfile)
                 
-                saveMyProfileDataToUserDefaults(profile: myProfile)
-                
-                result(Commons.json(from: data as Any))
+                result(profileResponseJson)
             } else{
                 print("Update Profile Issue==> " + flyError!.localizedDescription)
                 result(FlutterError(code: "500", message: flyError!.localizedDescription, details: nil))
@@ -873,11 +880,23 @@ import FlyDatabase
        
         ContactManager.shared.updateMyProfileImage(image: profileImage){ isSuccess, flyError, flyData in
                 if isSuccess {
+                    
                     var data = flyData
-                    data["status"] = isSuccess
-                    print("updateMyProfileImage-->\(data)")
-                    let jsonResponse = Commons.json(from: data)
-                    result(jsonResponse)
+                    
+                    let profileData = data.getData()
+                    let message = data.getMessage()
+                    print("profile Image update response-->\(profileData)")
+
+                    let profileDataJson = JSONSerializer.toJson(profileData)
+
+
+                    var profileResponseJson = "{\"status\": true ,\"message\" : \"\(message)\" ,\"data\": \(profileDataJson) }"
+
+                    print("Profile Image Update response-->\(profileResponseJson)")
+
+                    result(profileResponseJson)
+                    
+                    
                 } else{
                     print("updateMyProfileImage Error-->\(flyError!.localizedDescription)")
                     result(FlutterError(code: "500", message: flyError!.localizedDescription, details: nil))
@@ -1007,9 +1026,10 @@ import FlyDatabase
         
         let enableLastSeen = args["enable"] as? Bool ?? false
         
+        print("calling enableDisableHideLastSeen \(enableLastSeen)")
         ChatManager.enableDisableHideLastSeen(EnableLastSeen: enableLastSeen) { isSuccess, flyError, flyData in
             
-            print("enableDisableHideLastSeen\(isSuccess)")
+            print("enableDisableHideLastSeen response \(isSuccess)")
             result(isSuccess)
         }
     }
@@ -1284,11 +1304,29 @@ import FlyDatabase
         
         let jid = args["jid"] as? String ?? ""
         
+        print("getUserLastSeenTime called")
+        
         ChatManager.getUserLastSeen( for: jid) { isSuccess, flyError, flyData in
               var data  = flyData
+            print("getUserLastSeenTime response \(isSuccess)")
+            print("getUserLastSeenTime response \(data)")
               if isSuccess {
                   print(data.getMessage() as! String )
                   print(data.getData() as! String )
+                  
+//                  let dateReceived = data.getData()
+//                  
+//                  let dateFormat = DateFormatter()
+//                  dateFormat.timeStyle = .short
+//                  dateFormat.dateStyle = .short
+//                  dateFormat.doesRelativeDateFormatting = true
+//                  let dateString = dateFormat.string(from: Date(timeIntervalSinceNow: TimeInterval(-(Int(dateReceived) ?? 0))))
+//                  
+//                  let timeDifference = "\(NSLocalizedString(dateReceived.localized, comment: "")) \(dateString)"
+//                  let lastSeen = timeDifference.lowercased()
+//                  
+//                  print("getUserLastSeenTime response parsed \(lastSeen)")
+                  
               } else{
                   print(data.getMessage() as! String )
               }
@@ -1527,6 +1565,8 @@ import FlyDatabase
         ChatManager.getDocumentMessageGroupByMonth(jid: userJid) { _,_,data in
             var flydata = data
             let mediaMessages : [[ChatMessage]] = flydata.getData() as? [[ChatMessage]] ?? []
+//        ChatManager.getDocumentMessageGroupByMonth(jid: userJid) { chatMessages in
+//                    let mediaMessages : [[ChatMessage]] = chatMessages
             print("getDocsMessages-> \(mediaMessages)")
             if (mediaMessages.isEmpty){
                 result(nil)
@@ -1560,6 +1600,8 @@ import FlyDatabase
         ChatManager.getLinkMessageGroupByMonth(jid: userJid) { _,_,data  in
             var flydata = data
             let mediaLinkMessages = flydata.getData() as? [[LinkMessage]] ?? []
+//        ChatManager.getLinkMessageGroupByMonth(jid: userJid) { linkMessages in
+//                    let mediaLinkMessages = linkMessages
             print("getLinkMessages-> \(mediaLinkMessages)")
             
             if (mediaLinkMessages.isEmpty){
