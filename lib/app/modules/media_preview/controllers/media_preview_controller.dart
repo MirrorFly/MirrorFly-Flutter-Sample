@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
+import 'package:flysdk/flysdk.dart';
 import 'package:get/get.dart';
 
 import '../../../common/constants.dart';
@@ -14,6 +15,7 @@ import '../../chat/controllers/chat_controller.dart';
 class MediaPreviewController extends FullLifeCycleController with FullLifeCycleMixin {
 
   var userName = Get.arguments['userName'];
+  var profile = Get.arguments['profile'] as Profile;
 
   TextEditingController caption = TextEditingController();
 

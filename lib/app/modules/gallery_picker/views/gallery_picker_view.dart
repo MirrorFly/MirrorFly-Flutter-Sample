@@ -71,7 +71,8 @@ class GalleryPickerView extends GetView<GalleryPickerController> {
                                   // await Share.shareFiles(mediaPath);
                                   Get.toNamed(Routes.mediaPreview, arguments: {
                                     "filePath": controller.pickedFile,
-                                    "userName": controller.userName
+                                    "userName": controller.userName,
+                                    'profile': controller.profile
                                   })?.then((value) {
                                     value != null ? Get.back() : null;
 

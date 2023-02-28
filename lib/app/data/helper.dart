@@ -321,6 +321,12 @@ Future<Profile> getProfileDetails(String jid) async {
   // var str = Profile.fromJson(json.decode(value.toString()));
   return profile;
 }
+Future<ChatMessageModel> getMessageOfId(String mid) async {
+  var value = await FlyChat.getMessageOfId(mid.checkNull());
+  debugPrint("message--> $value");
+  var chatMessage = await compute(sendMessageModelFromJson, value.toString());
+  return chatMessage;
+}
 
 extension ProfileParesing on Profile {
   bool isDeletedContact() {

@@ -37,15 +37,19 @@ class PreviewContactView extends GetView<PreviewContactController> {
                                 children: [
                                   ProfileTextImage(
                                     text: contactItem.userName,
-                                    radius: 20,),
+                                    radius: 20,
+                                  ),
                                   const SizedBox(
                                     width: 10,
                                   ),
-                                  Flexible(child: Text(
-                                    contactItem.userName,
-                                    style: const TextStyle(
-                                        fontWeight: FontWeight.bold),
-                                    overflow: TextOverflow.ellipsis,),),
+                                  Flexible(
+                                    child: Text(
+                                      contactItem.userName,
+                                      style: const TextStyle(
+                                          fontWeight: FontWeight.bold),
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ),
                                 ],
                               ),
                             ),
@@ -57,33 +61,40 @@ class PreviewContactView extends GetView<PreviewContactController> {
                                 itemCount: contactItem.contactNo.length,
                                 physics: const ClampingScrollPhysics(),
                                 shrinkWrap: true,
-                                itemBuilder: (BuildContext context, int childIndex) {
-                                  var phoneItem = contactItem.contactNo[childIndex];
+                                itemBuilder:
+                                    (BuildContext context, int childIndex) {
+                                  var phoneItem =
+                                      contactItem.contactNo[childIndex];
                                   return ListTile(
-                                    onTap: (){
+                                    onTap: () {
                                       controller.changeStatus(phoneItem);
                                     },
                                     title: Text(
                                       phoneItem.mobNo,
-                                      style: const TextStyle(
-                                          fontSize: 13),
+                                      style: const TextStyle(fontSize: 13),
                                     ),
-                                    subtitle: Text(phoneItem.mobNoType,
-                                      style: const TextStyle(
-                                          fontSize: 12),
-                                  ),
+                                    subtitle: Text(
+                                      phoneItem.mobNoType,
+                                      style: const TextStyle(fontSize: 12),
+                                    ),
                                     leading: const Icon(
-                                      Icons.phone, color: Colors.blue,
-                                      size: 20,),
+                                      Icons.phone,
+                                      color: Colors.blue,
+                                      size: 20,
+                                    ),
                                     trailing: Visibility(
-                                      visible: contactItem.contactNo.length > 1 && controller.from != "chat",
+                                      visible:
+                                          contactItem.contactNo.length > 1 &&
+                                              controller.from != "chat",
                                       child: Checkbox(
-                                          activeColor: Colors.green,
-                                          shape: RoundedRectangleBorder(
-                                              borderRadius: BorderRadius
-                                                  .circular(4)),
-                                          value: phoneItem.isSelected,
-                                        onChanged: (bool? value) { debugPrint("value"); },
+                                        activeColor: Colors.green,
+                                        shape: RoundedRectangleBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(4)),
+                                        value: phoneItem.isSelected,
+                                        onChanged: (bool? value) {
+                                          controller.changeStatus(phoneItem);
+                                        },
                                       ),
                                     ),
                                   );
@@ -97,22 +108,25 @@ class PreviewContactView extends GetView<PreviewContactController> {
                       }),
                 );
               }),
-              controller.from == "contact_pick" ? Positioned(
-                  bottom: 25,
-                  right: 20,
-                  child: InkWell(
-                    onTap: () {
-                      controller.shareContact();
-                    },
-                    child: const CircleAvatar(
-                        backgroundColor: Colors.blueAccent,
-                        radius: 25,
-                        child: Icon(Icons.send, color: Colors.white,)),
-                  )) : const SizedBox.shrink()
+              controller.from == "contact_pick"
+                  ? Positioned(
+                      bottom: 25,
+                      right: 20,
+                      child: InkWell(
+                        onTap: () {
+                          controller.shareContact();
+                        },
+                        child: const CircleAvatar(
+                            backgroundColor: Colors.blueAccent,
+                            radius: 25,
+                            child: Icon(
+                              Icons.send,
+                              color: Colors.white,
+                            )),
+                      ))
+                  : const SizedBox.shrink()
             ],
           ),
         ));
   }
-
-
 }

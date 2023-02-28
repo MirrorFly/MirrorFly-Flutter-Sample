@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:flysdk/flysdk.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -647,7 +648,7 @@ Future<void> launchInWebViewOrVC(String url, String title) async {
   }
 }
 
-Widget forMessageTypeIcon(String messageType) {
+Widget forMessageTypeIcon(String messageType,[MediaChatMessage? mediaChatMessage]) {
   // debugPrint("messagetype $messageType");
   switch (messageType.toUpperCase()) {
     case Constants.mImage:
@@ -657,8 +658,9 @@ Widget forMessageTypeIcon(String messageType) {
       );
     case Constants.mAudio:
       return SvgPicture.asset(
-        mAudioIcon,
+        mediaChatMessage != null ? mediaChatMessage.isAudioRecorded ? mAudioRecordIcon : mAudioIcon : mAudioIcon,
         fit: BoxFit.contain,
+        color: textColor,
       );
     case Constants.mVideo:
       return SvgPicture.asset(

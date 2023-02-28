@@ -148,14 +148,21 @@ class RecentChatItem extends StatelessWidget {
                                       spanTxt, titlestyle),
                               Row(
                                 children: [
-                                  item.isLastMessageSentByMe.checkNull()
+                                  item.isLastMessageSentByMe.checkNull() && !isForwardMessage
                                       ? Padding(
-                                          padding: const EdgeInsets.only(right: 8.0),
-                                          child: getMessageIndicator(item.lastMessageStatus.checkNull(),
-                                              item.isLastMessageSentByMe.checkNull(), item.lastMessageType.checkNull())/*CircleAvatar(
+                                          padding:
+                                              const EdgeInsets.only(right: 8.0),
+                                          child: getMessageIndicator(
+                                              item.lastMessageStatus
+                                                  .checkNull(),
+                                              item.isLastMessageSentByMe
+                                                  .checkNull(),
+                                              item.lastMessageType
+                                                  .checkNull()) /*CircleAvatar(
                                             radius: 4,
                                             backgroundColor: Colors.green,
-                                          )*/,
+                                          )*/
+                                          ,
                                         )
                                       : const SizedBox(),
                                   isForwardMessage
@@ -196,18 +203,37 @@ class RecentChatItem extends StatelessWidget {
                                           child: typingUserid.isEmpty
                                               ? Row(
                                                   children: [
-                                                    item.isLastMessageRecalledByUser!
+                                                    item
+                                                            .isLastMessageRecalledByUser!
                                                         ? const SizedBox()
-                                                        : forMessageTypeIcon(
-                                                            item.lastMessageType ??
-                                                                ""),
+                                                        : FutureBuilder(
+                                                            future: getMessageOfId(item
+                                                                .lastMessageId
+                                                                .checkNull()),
+                                                            builder: (context,
+                                                                data) {
+                                                              if (data.hasData &&
+                                                                  data.data !=
+                                                                      null && !data.hasError) {
+                                                                return forMessageTypeIcon(
+                                                                    item.lastMessageType ??
+                                                                        "",
+                                                                    data
+                                                                        .data!
+                                                                        .mediaChatMessage);
+                                                              }
+                                                              return const SizedBox();
+                                                            }),
                                                     SizedBox(
                                                       width: item
                                                               .isLastMessageRecalledByUser!
                                                           ? 0.0
                                                           : forMessageTypeString(
                                                                       item.lastMessageType ??
-                                                                          "",content: item.lastMessageContent.checkNull()) !=
+                                                                          "",
+                                                                      content: item
+                                                                          .lastMessageContent
+                                                                          .checkNull()) !=
                                                                   null
                                                               ? 3.0
                                                               : 0.0,
@@ -220,7 +246,10 @@ class RecentChatItem extends StatelessWidget {
                                                                       .isLastMessageSentByMe!)
                                                                   : forMessageTypeString(
                                                                           item.lastMessageType ??
-                                                                              "",content: item.lastMessageContent.checkNull()) ??
+                                                                              "",
+                                                                          content: item
+                                                                              .lastMessageContent
+                                                                              .checkNull()) ??
                                                                       item.lastMessageContent
                                                                           .checkNull(),
                                                               style: Theme.of(
@@ -236,9 +265,12 @@ class RecentChatItem extends StatelessWidget {
                                                               item.isLastMessageRecalledByUser!
                                                                   ? setRecalledMessageText(item
                                                                       .isLastMessageSentByMe!)
-                                                                  : forMessageTypeString(item
-                                                                          .lastMessageType
-                                                                          .checkNull(),content: item.lastMessageContent.checkNull()) ??
+                                                                  : forMessageTypeString(
+                                                                          item.lastMessageType
+                                                                              .checkNull(),
+                                                                          content: item
+                                                                              .lastMessageContent
+                                                                              .checkNull()) ??
                                                                       item.lastMessageContent
                                                                           .checkNull(),
                                                               spanTxt,
@@ -289,7 +321,10 @@ class RecentChatItem extends StatelessWidget {
                                       fontSize: 12.0,
                                       fontWeight: FontWeight.w600,
                                       fontFamily: 'sf_ui',
-                                      color: item.isConversationUnRead!
+                                      color: returnFormattedCount(
+                                                  item.unreadMessageCount!) !=
+                                              "0"
+                                          //item.isConversationUnRead!
                                           ? buttonBgColor
                                           : textColor),
                                 ),
