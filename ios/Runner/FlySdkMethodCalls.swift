@@ -20,8 +20,8 @@ import FlyDatabase
         
         let args = call.arguments as! Dictionary<String, Any>
         
-        let userIdentifier = args["userIdentifier"] as? String ?? nil
-        
+        var userIdentifier = args["userIdentifier"] as? String ?? ""
+        userIdentifier = userIdentifier.replacingOccurrences(of: "+", with: "")
         
         let deviceToken = Utility.getStringFromPreference(key: googleToken)
         var voipToken = Utility.getStringFromPreference(key: voipToken)
@@ -35,7 +35,7 @@ import FlyDatabase
             return
         }
         
-        try! ChatManager.registerApiService(for:  userIdentifier!, deviceToken: deviceToken, voipDeviceToken: voipToken, isExport: false) { isSuccess, flyError, flyData in
+        try! ChatManager.registerApiService(for: userIdentifier ?? "", deviceToken: deviceToken, voipDeviceToken: voipToken, isExport: false) { isSuccess, flyError, flyData in
             var data = flyData
             if isSuccess {
                 
@@ -51,7 +51,7 @@ import FlyDatabase
                 Utility.saveInPreference(key: isLoggedIn, value: true)
                 FlyDefaults.myXmppPassword = data["password"] as! String
                 FlyDefaults.myXmppUsername = data["username"] as! String
-                FlyDefaults.myMobileNumber = userIdentifier!
+                FlyDefaults.myMobileNumber = userIdentifier
                 FlyDefaults.isProfileUpdated = data["isProfileUpdated"] as! Int == 1
                 
                 
@@ -779,9 +779,10 @@ import FlyDatabase
         let userjid = args["jid"] as? String ?? ""
         //        let JID = FlyDefaults.myXmppUsername + "@" + FlyDefaults.xmppDomain
         
+        print("getting user profile from userjid-->\(userjid)")
         print("getting user profile from server-->\(server)")
         do {
-            try ContactManager.shared.getUserProfile(for: userjid, fetchFromServer: server, saveAsFriend: true){ isSuccess, flyError, flyData in
+            try ContactManager.shared.getUserProfile(for: userjid, fetchFromServer: false, saveAsFriend: true){ isSuccess, flyError, flyData in
                 var data  = flyData
                 if isSuccess {
                     
@@ -856,7 +857,7 @@ import FlyDatabase
 
                 print("Profile response-->\(profileResponseJson)")
 
-//                saveMyProfileDataToUserDefaults(profile: myProfile)
+                saveMyProfileDataToUserDefaults(profile: myProfile)
                 
                 result(profileResponseJson)
             } else{

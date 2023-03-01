@@ -992,7 +992,11 @@ extension FlyBaseController : MessageEventsDelegate, ConnectionEventDelegate, Lo
         
         let chatMessage = ChatManager.getMessageOfId(messageId: messageId)
         print("Message Status Update--->\(String(describing: chatMessage))")
-        print("getMessageOfId==>", ChatManager.getMessageOfId(messageId: messageId)?.messageTextContent as Any)
+        print("getMessageOfId==>", chatMessage?.messageTextContent as Any)
+        
+        if(chatMessage == nil){
+            return
+        }
         var chatMessageJson = JSONSerializer.toJson(chatMessage as Any)
 
         chatMessageJson = chatMessageJson.replacingOccurrences(of: "{\"some\":", with: "")

@@ -1019,7 +1019,7 @@ class VideoMessageView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var mediaMessage = chatMessage.mediaChatMessage!;
-    var screenHeight = MediaQuery.of(context).size.height;
+    // var screenHeight = MediaQuery.of(context).size.height;
     var screenWidth = MediaQuery.of(context).size.width;
     return Container(
       width: screenWidth * 0.60,
@@ -1027,6 +1027,7 @@ class VideoMessageView extends StatelessWidget {
       child: Column(
         children: [
           Stack(
+            alignment: Alignment.center,
             children: [
               InkWell(
                 onTap: isSelected
@@ -1040,11 +1041,8 @@ class VideoMessageView extends StatelessWidget {
                       mediaMessage.mediaThumbImage, context, null, null),
                 ),
               ),
-              Positioned(
-                  top: (screenHeight * 0.4) / 2.5,
-                  left: (screenWidth * 0.6) / 2.8,
-                  child: getImageOverlay(chatMessage,
-                      onVideo: isSelected ? null : onVideoClick)),
+              getImageOverlay(chatMessage,
+                  onVideo: isSelected ? null : onVideoClick),
               mediaMessage.mediaCaptionText.checkNull().isEmpty
                   ? Positioned(
                       bottom: 8,
@@ -1495,20 +1493,17 @@ getMessageIndicator(String? messageStatus, bool isSender, String messageType) {
 
 Widget getImageOverlay(ChatMessageModel chatMessage,
     {Function()? onAudio, Function()? onVideo}) {
+  debugPrint("getImageOverlay checkFile ${checkFile(chatMessage.mediaChatMessage!.mediaLocalStoragePath)}");
+  debugPrint("getImageOverlay messageStatus ${chatMessage.messageStatus}");
+  debugPrint("getImageOverlay ${(checkFile(chatMessage.mediaChatMessage!.mediaLocalStoragePath) &&
+      chatMessage.messageStatus != 'N')}");
   if (checkFile(chatMessage.mediaChatMessage!.mediaLocalStoragePath) &&
       chatMessage.messageStatus != 'N') {
     if (chatMessage.messageType.toUpperCase() == 'VIDEO') {
-      return InkWell(
-        onTap: onVideo,
-        child: SizedBox(
-          width: 80,
-          height: 50,
-          child: Center(
-              child: SvgPicture.asset(
-            videoPlay,
-            fit: BoxFit.contain,
-          )),
-        ),
+      return FloatingActionButton.small(
+        onPressed: onVideo,
+        backgroundColor: Colors.white,
+        child: const Icon(Icons.play_arrow_rounded, color: buttonBgColor,),
       );
     } else if (chatMessage.messageType.toUpperCase() == 'AUDIO') {
       return InkWell(

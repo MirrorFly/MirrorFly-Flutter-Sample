@@ -83,7 +83,7 @@ class ChatMessageModel {
     messageCustomField: json["messageCustomField"] ?? {},
     messageId: json["messageId"],
     messageSentTime: json["messageSentTime"].toInt(),
-    messageStatus: Platform.isAndroid ? json["messageStatus"]["status"] : json["messageStatus"] == "acknowledge" ? "A" : json["messageStatus"] == "delivered" ? "D" : json["messageStatus"] == "seen" ? "S" : "N",
+    messageStatus: Platform.isAndroid ? json["messageStatus"]["status"] : json["messageStatus"] == "acknowledge" ? "A" : json["messageStatus"] == "delivered" ? "D" : json["messageStatus"] == "seen" ? "S" : json["messageStatus"] == "received" ? "R" : "N",//"N" for "sent" in iOS
     messageTextContent: json["messageTextContent"].toString(),
     messageType: json["messageType"].toString().toUpperCase() == "FILE" ? "DOCUMENT" : json["messageType"].toString().toUpperCase(),
     replyParentChatMessage: json["replyParentChatMessage"] == null ? null : ReplyParentChatMessage.fromJson(json["replyParentChatMessage"]),
