@@ -353,7 +353,7 @@ class FlyChat {
   }
 
   static Future<bool?> deleteProfileStatus(
-      num id, String status, bool isCurrentStatus) async {
+      String id, String status, bool isCurrentStatus) async {
     bool? res;
     try {
       res = await mirrorFlyMethodChannel
@@ -1764,13 +1764,29 @@ class FlyChat {
     }
   }
 
-  static Future<dynamic> setMyProfileStatus(String status) async {
+  static Future<dynamic> setMyProfileStatus(String status, [String? statusId]) async {
     //updateProfileStatus
     dynamic profileResponse;
     try {
       profileResponse = await mirrorFlyMethodChannel
-          .invokeMethod('setMyProfileStatus', {"status": status});
+          .invokeMethod('setMyProfileStatus', {"status": status, "statusId": statusId});
       debugPrint("setMyProfileStatus Result ==> $profileResponse");
+      return profileResponse;
+    } on PlatformException catch (e) {
+      debugPrint("Platform Exception ===> $e");
+      rethrow;
+    } on Exception catch (error) {
+      debugPrint("Exception ==> $error");
+      rethrow;
+    }
+  }
+
+  static Future<dynamic> insertNewProfileStatus(String status) async {
+    dynamic profileResponse;
+    try {
+      profileResponse = await mirrorFlyMethodChannel
+          .invokeMethod('insertNewProfileStatus', {"status": status});
+      debugPrint("insertNewProfileStatus Result ==> $profileResponse");
       return profileResponse;
     } on PlatformException catch (e) {
       debugPrint("Platform Exception ===> $e");

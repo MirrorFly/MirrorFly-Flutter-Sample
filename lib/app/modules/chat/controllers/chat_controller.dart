@@ -651,7 +651,8 @@ class ChatController extends FullLifeCycleController
         imagePath.value = (result.files.single.path!);
         Get.toNamed(Routes.imagePreview, arguments: {
           "filePath": imagePath.value,
-          "userName": profile.name!
+          "userName": profile.name!,
+          "profile": profile
         });
       } else if (result.files.first.extension == 'mp4' ||
           result.files.first.extension == 'MP4' ||
@@ -661,7 +662,8 @@ class ChatController extends FullLifeCycleController
         imagePath.value = (result.files.single.path!);
         Get.toNamed(Routes.videoPreview, arguments: {
           "filePath": imagePath.value,
-          "userName": profile.name!
+          "userName": profile.name!,
+          "profile": profile
         });
       }
     } else {
@@ -1400,7 +1402,7 @@ class ChatController extends FullLifeCycleController
           onPressed: () {
             Get.back();
           },
-          child: const Text("NO")),
+          child: const Text("CANCEL")),
       TextButton(
           onPressed: () async {
             if (await AppUtils.isNetConnected()) {
@@ -1420,7 +1422,7 @@ class ChatController extends FullLifeCycleController
               toToast(Constants.noInternetConnection);
             }
           },
-          child: const Text("YES")),
+          child: const Text("UNBLOCK")),
     ]);
   }
 
@@ -2018,6 +2020,9 @@ class ChatController extends FullLifeCycleController
             str.add(it.name.checkNull());
           }
         }
+        str.sort((a, b) {
+          return a.toLowerCase().compareTo(b.toLowerCase());
+        });
         groupParticipantsName(str.join(","));
       }
     });
@@ -2057,10 +2062,10 @@ class ChatController extends FullLifeCycleController
           mirrorFlyLog("photo", photo.name.toString());
           if (photo.name.endsWith(".mp4")) {
             Get.toNamed(Routes.videoPreview,
-                arguments: {"filePath": photo.path, "userName": profile.name!});
+                arguments: {"filePath": photo.path, "userName": profile.name!,"profile": profile});
           } else {
             Get.toNamed(Routes.imagePreview,
-                arguments: {"filePath": photo.path, "userName": profile.name!});
+                arguments: {"filePath": photo.path, "userName": profile.name!,"profile": profile});
           }
         }
       });
@@ -2101,7 +2106,7 @@ class ChatController extends FullLifeCycleController
       try {
         // imagePicker();
         Get.toNamed(Routes.galleryPicker,
-            arguments: {"userName": profile.name!});
+            arguments: {"userName": profile.name!,'profile':profile});
       } catch (e) {
         debugPrint(e.toString());
       }

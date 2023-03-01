@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:get/get.dart';
 
@@ -21,7 +21,7 @@ class StatusListController extends FullLifeCycleController with FullLifeCycleMix
   var count= 139.obs;
 
   onChanged(){
-    count(139 - addStatusController.text.length);
+    count(139 - addStatusController.text.characters.length);
   }
 
   @override
@@ -38,6 +38,7 @@ class StatusListController extends FullLifeCycleController with FullLifeCycleMix
     FlyChat.getProfileStatusList().then((value){
       loading.value=false;
       if(value!=null){
+        statusList.clear();
         statusList.value = statusDataFromJson(value);
         statusList.refresh();
 
@@ -47,12 +48,13 @@ class StatusListController extends FullLifeCycleController with FullLifeCycleMix
     });
   }
 
-  updateStatus([String? text]) async {
+  updateStatus([String? statusText, String? statusId]) async {
+    debugPrint("updating item details--> $statusId");
     if(await AppUtils.isNetConnected()) {
       Helper.showLoading();
-      FlyChat.setMyProfileStatus(text ?? addStatusController.text.trim().toString()).then((value){
-        selectedStatus.value=text ?? addStatusController.text.trim().toString();
-        addStatusController.text=text ?? addStatusController.text.trim().toString();
+      FlyChat.setMyProfileStatus(statusText!, statusId).then((value){
+        selectedStatus.value= statusText;
+        addStatusController.text= statusText;
         var data = json.decode(value.toString());
         toToast('Status update successfully');
         Helper.hideLoading();
@@ -62,6 +64,27 @@ class StatusListController extends FullLifeCycleController with FullLifeCycleMix
       }).catchError((er){
         toToast(er);
       });
+    }else{
+      toToast(Constants.noInternetConnection);
+    }
+  }
+
+  insertStatus() async{
+    if(await AppUtils.isNetConnected()){
+      Helper.showLoading();
+        FlyChat.insertNewProfileStatus(addStatusController.text.trim().toString(),)
+            .then((value) {
+          selectedStatus.value = addStatusController.text.trim().toString();
+          addStatusController.text = addStatusController.text.trim().toString();
+          var data = json.decode(value.toString());
+          toToast('Status update successfully');
+          Helper.hideLoading();
+          if (data['status']) {
+            getStatusList();
+          }
+        }).catchError((er) {
+          toToast(er);
+        });
     }else{
       toToast(Constants.noInternetConnection);
     }
@@ -103,5 +126,55 @@ class StatusListController extends FullLifeCycleController with FullLifeCycleMix
         });
       }
     }
+  }
+
+  void deleteStatus(StatusData item) {
+    debugPrint("item delete status-->${item.isCurrentStatus}");
+    debugPrint("item delete status-->${item.id}");
+    debugPrint("item delete status-->${item.status}");
+    if(!item.isCurrentStatus!){
+      Helper.showButtonAlert(actions: [
+        ListTile(
+          contentPadding: const EdgeInsets.only(left: 10),
+          title: const Text("Delete",
+              style: TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.normal)),
+
+          onTap: () {
+            Get.back();
+            statusDeleteConfirmation(item);
+          },
+        ),
+      ]);
+    }
+  }
+
+  void statusDeleteConfirmation(StatusData item) {
+    Helper.showAlert(message: "Do you want to delete the status?", actions: [
+      TextButton(
+          onPressed: () {
+            Get.back();
+          },
+          child: const Text("No")),
+      TextButton(
+          onPressed: () async {
+            if (await AppUtils.isNetConnected()) {
+              Get.back();
+              Helper.showLoading(message: "Deleting Status");
+              FlyChat.deleteProfileStatus(item.id!, item.status!, item.isCurrentStatus!)
+                  .then((value) {
+                statusList.remove(item);
+                Helper.hideLoading();
+              }).catchError((error) {
+                Helper.hideLoading();
+                toToast("Unable to delete the Busy Status");
+              });
+            } else {
+              toToast(Constants.noInternetConnection);
+            }
+          },
+          child: const Text("Yes")),
+    ]);
   }
 }

@@ -750,12 +750,14 @@ class DashboardController extends FullLifeCycleController
     if (await AppUtils.isNetConnected()) {
       selected(false);
       FlyChat.markConversationAsRead(selectedChats);
+      var count = selectedChatsPosition.length;
       for (var element in selectedChatsPosition) {
         recentChats[element].isConversationUnRead = false;
         recentChats[element].unreadMessageCount = 0;
       }
       clearAllChatSelection();
       updateUnReadChatCount();
+      toToast("Chat${count>1 ? 's' : ''} marked as read");
     } else {
       toToast(Constants.noInternetConnection);
     }

@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:flysdk/flysdk.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -228,7 +229,7 @@ toToast(String text) {
   Fluttertoast.showToast(
       msg: text,
       toastLength: Toast.LENGTH_SHORT,
-      gravity: ToastGravity.BOTTOM,
+      gravity: ToastGravity.CENTER,
       timeInSecForIosWeb: 1,
       textColor: Colors.black,
       backgroundColor: Colors.white,
@@ -395,7 +396,8 @@ class Constants {
   static const String msgTypeNotification = "notification";
 
   static const String emailPattern =
-      ("^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,10})\$");
+      ("^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,3})\$");
+
   static const String mobilePattern = r'(?:[\\+0-9]{1,4}\\-)?[0-9]{6,12}';
   static const String textPattern = r'[a-zA-Z]';
   static const String countryCodePattern = r'(^(\+?[0-9]{1,4}\-?)$)';
@@ -647,7 +649,7 @@ Future<void> launchInWebViewOrVC(String url, String title) async {
   }
 }
 
-Widget forMessageTypeIcon(String messageType) {
+Widget forMessageTypeIcon(String messageType,[MediaChatMessage? mediaChatMessage]) {
   // debugPrint("messagetype $messageType");
   switch (messageType.toUpperCase()) {
     case Constants.mImage:
@@ -657,8 +659,9 @@ Widget forMessageTypeIcon(String messageType) {
       );
     case Constants.mAudio:
       return SvgPicture.asset(
-        mAudioIcon,
+        mediaChatMessage != null ? mediaChatMessage.isAudioRecorded ? mAudioRecordIcon : mAudioIcon : mAudioIcon,
         fit: BoxFit.contain,
+        color: textColor,
       );
     case Constants.mVideo:
       return SvgPicture.asset(

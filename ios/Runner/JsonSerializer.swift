@@ -341,9 +341,10 @@ open class JSONSerializer {
                 handledValue =  "\"\(convert)\""
             }
             
-            else if (propertyName == "mediaChatMessage" || propertyName == "locationChatMessage") &&  String(describing: value) != "nil" {
+            else if (propertyName == "mediaChatMessage") &&  String(describing: value) != "nil" {
                // let refined = String(describing: value).replacingOccurrences(of: "some", with: "")
                 print("mediaThumbImage check")
+                print("force-->\(value)")
 //                 else {
                 var force = value as! MediaChatMessage
                 var image: String = "\(force.mediaThumbImage)"
@@ -353,7 +354,13 @@ open class JSONSerializer {
 //                }
                
                 
-            } 
+            }
+            
+            else if(propertyName == "locationChatMessage") &&  String(describing: value) != "nil" {
+                let force =  value
+                handledValue = toJson(force)
+            }
+            
             else if(propertyName == "contactPhoneNumbers") &&  String(describing: value) != "nil" {
                 print("contactPhoneNumbers-----")
 //                print(value)

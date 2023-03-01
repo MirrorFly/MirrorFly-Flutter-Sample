@@ -690,6 +690,10 @@ class FlyBaseController: NSObject{
                 FlySdkMethodCalls.getDefaultNotificationUri(call: call, result: result)
             case "logoutOfChatSDK":
                 FlySdkMethodCalls.logoutOfChatSDK(call: call, result: result)
+            case "getMessageOfId":
+                FlySdkMethodCalls.getMessageOfId(call: call, result: result)
+            case "insertNewProfileStatus":
+                FlySdkMethodCalls.insertNewProfileStatus(call: call, result: result)
             default:
                 result(FlutterMethodNotImplemented)
             }

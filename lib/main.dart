@@ -21,7 +21,6 @@ import 'app/routes/app_pages.dart';
 import 'package:google_maps_flutter_android/google_maps_flutter_android.dart';
 import 'package:google_maps_flutter_platform_interface/google_maps_flutter_platform_interface.dart';
 
-import 'firebase_options.dart';
 
 
 
@@ -51,10 +50,10 @@ Future<void> main() async {
   });
   FlyChat.cancelNotifications();
   if (!kIsWeb) {
-     //await Firebase.initializeApp();
-    await Firebase.initializeApp(
-      options: DefaultFirebaseOptions.currentPlatform,
-    );
+     await Firebase.initializeApp();
+    // await Firebase.initializeApp(
+    //   options: DefaultFirebaseOptions.currentPlatform,
+    // );
     // FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
     PushNotifications.setupInteractedMessage();
   }

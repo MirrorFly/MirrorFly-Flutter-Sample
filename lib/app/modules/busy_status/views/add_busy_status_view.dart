@@ -25,102 +25,114 @@ class AddBusyStatusView extends GetView<BusyStatusController> {
           }
           return Future.value(false);
         },
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Expanded(
-              child: Container(
-                padding: const EdgeInsets.all(16.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Expanded(
-                      child: TextField(
-                        style:
-                        const TextStyle(fontSize: 20, fontWeight: FontWeight.normal,overflow: TextOverflow.visible),
-                        onChanged: (_) => controller.onChanged(),
-                        maxLength: 139,
-                        maxLines: 1,
-                        autofocus: true,
-                        focusNode: controller.focusNode,
-                        controller: controller.addStatusController,
-                        decoration: const InputDecoration(enabledBorder: UnderlineInputBorder(
-                          borderSide: BorderSide(color: Colors.grey),
-                        ),
-                            focusedBorder: UnderlineInputBorder(
-                              borderSide: BorderSide(color: buttonBgColor),
-                            ),counterText:"" ),
-                        onTap: (){
-                          if (controller.showEmoji.value) {
-                            controller.showEmoji(false);
-                          }
-                        },
-                      ),
-                    ),
-                    Container(
-                        height: 50,
-                        padding: const EdgeInsets.all(4.0),
-                        child: Center(
-                          child: Obx(
-                                ()=> Text(
-                              controller.count.toString(),
-                              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.normal),
-                            ),
+        child: SafeArea(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(
+                child: Container(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Expanded(
+                        child: TextField(
+                          style:
+                          const TextStyle(fontSize: 20, fontWeight: FontWeight.normal,overflow: TextOverflow.visible),
+                          onChanged: (value){
+                            debugPrint("keypad length--> ${value.characters.length.toString()}");
+                            controller.onChanged(); },
+                          maxLength: 139,
+                          maxLines: 1,
+                          autofocus: true,
+                          focusNode: controller.focusNode,
+                          controller: controller.addStatusController,
+                          decoration: const InputDecoration(enabledBorder: UnderlineInputBorder(
+                            borderSide: BorderSide(color: Colors.grey),
                           ),
-                        )),
-                    IconButton(
-                        onPressed: () {
-                          if (!controller.showEmoji.value) {
-                            controller.focusNode.unfocus();
-                          }
-                          Future.delayed(const Duration(milliseconds: 500), () {
-                            controller.showEmoji(!controller.showEmoji.value);
-                          });
-                        },
-                        icon: SvgPicture.asset(smileIcon))
-                  ],
-                ),
-              ),
-            ),
-            Row(children: [
-              Expanded(
-                child: ElevatedButton(
-                  onPressed: () => Get.back(),
-                  style: ElevatedButton.styleFrom(
-                      backgroundColor: MaterialStateColor.resolveWith(
-                              (states) => Colors.white),
-                      shape: const RoundedRectangleBorder(
-                          borderRadius: BorderRadius.zero)),
-                  child: const Text(
-                    "CANCEL",
-                    style: TextStyle(color: Colors.black, fontSize: 16.0),
+                              focusedBorder: UnderlineInputBorder(
+                                borderSide: BorderSide(color: buttonBgColor),
+                              ),counterText:"" ),
+                          onTap: (){
+                            if (controller.showEmoji.value) {
+                              controller.showEmoji(false);
+                            }
+                          },
+                        ),
+                      ),
+                      Container(
+                          height: 50,
+                          padding: const EdgeInsets.all(4.0),
+                          child: Center(
+                            child: Obx(
+                                  ()=> Text(
+                                controller.count.toString(),
+                                style: const TextStyle(fontSize: 20, fontWeight: FontWeight.normal),
+                              ),
+                            ),
+                          )),
+                      IconButton(
+                          onPressed: () {
+                            if (!controller.showEmoji.value) {
+                              controller.focusNode.unfocus();
+                            }
+                            Future.delayed(const Duration(milliseconds: 500), () {
+                              controller.showEmoji(!controller.showEmoji.value);
+                            });
+                          },
+                          icon: SvgPicture.asset(smileIcon))
+                    ],
                   ),
                 ),
               ),
-              const Divider(
-                color: Colors.grey,
-                thickness: 0.2,
-              ),
-              Expanded(
-                child: ElevatedButton(
-                  onPressed: () {
-                    controller.validateAndFinish();
-                  },
-                  style: ElevatedButton.styleFrom(
-                      backgroundColor: MaterialStateColor.resolveWith(
-                              (states) => Colors.white),
-                      shape: const RoundedRectangleBorder(
-                          borderRadius: BorderRadius.zero)),
-                  child: const Text(
-                    "OK",
-                    style: TextStyle(color: Colors.black, fontSize: 16.0),
+              Row(children: [
+                Expanded(
+                  child: ElevatedButton(
+                    onPressed: () {
+                      if (controller.showEmoji.value) {
+                        controller.showEmoji(false);
+                      }
+                      Get.back();
+                    },
+                    style: ElevatedButton.styleFrom(
+                        backgroundColor: MaterialStateColor.resolveWith(
+                                (states) => Colors.white),
+                        shape: const RoundedRectangleBorder(
+                            borderRadius: BorderRadius.zero)),
+                    child: const Text(
+                      "CANCEL",
+                      style: TextStyle(color: Colors.black, fontSize: 16.0),
+                    ),
                   ),
                 ),
-              ),
-            ]),
-            emojiLayout(),
-          ],
+                const Divider(
+                  color: Colors.grey,
+                  thickness: 0.2,
+                ),
+                Expanded(
+                  child: ElevatedButton(
+                    onPressed: () {
+                      if (controller.showEmoji.value) {
+                        controller.showEmoji(false);
+                      }
+                      controller.validateAndFinish();
+                    },
+                    style: ElevatedButton.styleFrom(
+                        backgroundColor: MaterialStateColor.resolveWith(
+                                (states) => Colors.white),
+                        shape: const RoundedRectangleBorder(
+                            borderRadius: BorderRadius.zero)),
+                    child: const Text(
+                      "OK",
+                      style: TextStyle(color: Colors.black, fontSize: 16.0),
+                    ),
+                  ),
+                ),
+              ]),
+              emojiLayout(),
+            ],
+          ),
         ),
       ),
     );
@@ -131,6 +143,9 @@ class AddBusyStatusView extends GetView<BusyStatusController> {
       if (controller.showEmoji.value) {
         return EmojiLayout(
             textController: controller.addStatusController,
+            onBackspacePressed: () {
+              controller.onChanged();
+            },
             onEmojiSelected : (cat, emoji)=>controller.onChanged()
         );
       } else {

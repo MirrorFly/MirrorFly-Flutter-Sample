@@ -1,3 +1,4 @@
+import 'package:flysdk/flysdk.dart';
 import 'package:get/get.dart';
 
 import '../src/data/models/picked_asset_model.dart';
@@ -6,6 +7,7 @@ class GalleryPickerController extends GetxController {
 
   var pickedFile = <PickedAssetModel>[].obs;
   var userName = Get.arguments['userName'];
+  var profile = Get.arguments['profile'] as Profile;
   var maxPickImages = 10;
 
   @override
