@@ -38,8 +38,7 @@ class BusyStatusView extends GetView<BusyStatusController> {
                       ListTile(
                         contentPadding: EdgeInsets.zero,
                         title: Text(controller.busyStatus.value,
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
+                            maxLines: null,
                             style: const TextStyle(
                                 color: textColor,
                                 fontSize: 14,
