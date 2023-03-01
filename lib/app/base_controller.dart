@@ -10,6 +10,7 @@ import 'package:mirror_fly_demo/app/data/helper.dart';
 import 'package:mirror_fly_demo/app/data/session_management.dart';
 import 'package:mirror_fly_demo/app/modules/chat/controllers/chat_controller.dart';
 import 'package:mirror_fly_demo/app/modules/chat/controllers/contact_controller.dart';
+import 'package:mirror_fly_demo/app/modules/contact_sync/controllers/contact_sync_controller.dart';
 import 'package:mirror_fly_demo/app/modules/group/controllers/group_info_controller.dart';
 import 'package:mirror_fly_demo/app/modules/settings/views/blocked/blocked_list_controller.dart';
 import 'package:mirror_fly_demo/app/routes/app_pages.dart';
@@ -267,8 +268,24 @@ abstract class BaseController {
 
   }
 
-  void onContactSyncComplete(result) {
+  void onContactSyncComplete(bool result) {
     mirrorFlyLog("onContactSyncComplete", result.toString());
+    if(result) {
+      SessionManagement.setInitialContactSync(true);
+      SessionManagement.setSyncDone(true);
+    }
+    if (Get.isRegistered<ContactSyncController>()) {
+      Get.find<ContactSyncController>().onContactSyncComplete(result);
+    }
+    if (Get.isRegistered<ContactController>()) {
+      Get.find<ContactController>().onContactSyncComplete(result);
+    }
+    if (Get.isRegistered<ForwardChatController>()) {
+      Get.find<ForwardChatController>().onContactSyncComplete(result);
+    }
+    if (Get.isRegistered<DashboardController>()) {
+      Get.find<DashboardController>().onContactSyncComplete(result);
+    }
     //FlyChat.getRegisteredUsers(true).then((value) => mirrorFlyLog("registeredUsers", value.toString()));
   }
 
@@ -406,7 +423,8 @@ abstract class BaseController {
   }
 
   void onLogout(isLogout) {
-    if(isLogout){
+    mirrorFlyLog('Get.currentRoute', Get.currentRoute);
+    if(isLogout && Get.currentRoute != Routes.login){
       Helper.progressLoading();
       FlyChat.logoutOfChatSDK().then((value) {
         Helper.hideLoading();

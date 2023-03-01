@@ -45,11 +45,7 @@ class DashboardView extends GetView<DashboardController> {
                     : FloatingActionButton(
                   tooltip: "New Chat",
                   onPressed: () {
-                    Get.toNamed(Routes.contacts, arguments: {
-                      "forward": false,
-                      "group": false,
-                      "groupJid": ""
-                    });
+                   controller.gotoContacts();
                   },
                   backgroundColor: buttonBgColor,
                   child: SvgPicture.asset(
@@ -562,12 +558,7 @@ class DashboardView extends GetView<DashboardController> {
           } else {
             var item = controller.userList[index];
             return memberItem(
-              name: item.name
-                  .checkNull()
-                  .isEmpty ? (item.nickName
-                  .checkNull()
-                  .isEmpty ? item.mobileNumber.checkNull() : item.nickName
-                  .checkNull()) : item.name.checkNull(),
+              name: getName(item),
               image: item.image.checkNull(),
               status: item.status.checkNull(),
               spantext: controller.search.text.toString(),

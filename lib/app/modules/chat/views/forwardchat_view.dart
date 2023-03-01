@@ -171,7 +171,7 @@ class ForwardChatView extends GetView<ForwardChatController> {
                                   return Opacity(
                                     opacity: item.isBlocked.checkNull() ? 0.3 : 1.0,
                                     child: memberItem(
-                                        name: item.name.checkNull(),
+                                        name: getName(item),
                                         image: item.image.checkNull(),
                                         status: item.status.checkNull(),
                                         spantext: controller.searchQuery.text.toString(),

@@ -135,7 +135,12 @@ class ProfileController extends GetxController {
                         status: profileStatus.value);
                     SessionManagement.setCurrentUser(userProfileData);
                     if (from.value == Routes.login) {
-                      Get.offNamed(Routes.dashboard);
+                      var trail = SessionManagement.isTrailLicence();
+                      if(trail.checkNull()) {
+                        Get.offNamed(Routes.dashboard);
+                      }else{
+                        Get.offNamed(Routes.contactSync);
+                      }
                     }
                   }
                 }

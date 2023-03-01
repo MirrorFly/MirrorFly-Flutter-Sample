@@ -592,14 +592,24 @@ open class FlyBaseController(activity: FlutterActivity) : MethodChannel.MethodCa
             call.method.equals("sendData")-> {
                 result.success(jid)
             }
+            call.method.equals("getNonChatUsers")-> {
+                val nonchatusers = FlyCore.getNonChatUsers();
+                result.success(nonchatusers.tojsonString());
+            }
+            call.method.equals("IS_TRIAL_LICENSE")-> {
+                result.success(BuildConfig.IS_TRIAL_LICENSE)
+            }
             call.method.equals("syncContacts") -> {
                 val isFirsttime = call.argument<Boolean>("is_first_time") ?: false
-                FlyCore.syncContacts(isFirsttime)
-                result.success(true)
+                FlyCore.syncContacts(isFirsttime){b,_,data->
+                    LogMessage.d(TAG, "Contacts Sync contactSyncSuccess:$b and data: ${data}")
+                    result.success(true);
+                }
             }
             call.method.equals("contactSyncStateValue") -> {
-                val contactSyncStateResult: Result<Boolean> = FlyCore.contactSyncState.value!!
-                result.success(contactSyncStateResult.toString())
+                val contactSyncStateResult: Result<Boolean>? = FlyCore.contactSyncState.value
+                val res = (contactSyncStateResult==Result.InProgress)
+                result.success(res);
             }
             call.method.equals("contactSyncState") -> {
                 contactSyncState(result)

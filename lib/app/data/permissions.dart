@@ -28,8 +28,8 @@ class AppPermission {
           continueBtn: () async {
             newPermission.request();
           },
-          icon: locationPinPermission,
-          content: Constants.locationPermission);
+          icon: contactPermission,
+          content: Constants.contactPermission);
       return newPermission.status;
     } else {
       return permission;

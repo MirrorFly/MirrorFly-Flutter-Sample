@@ -919,7 +919,7 @@ class DashboardController extends FullLifeCycleController
   RxBool clearVisible = false.obs;
   final _mainuserList = <Profile>[];
   var userlistScrollController = ScrollController();
-  var scrollable = true.obs;
+  var scrollable = SessionManagement.isTrailLicence().obs;
   var isPageLoading = false.obs;
   final _userList = <Profile>[].obs;
 
@@ -974,12 +974,21 @@ class DashboardController extends FullLifeCycleController
   Future<void> filterUserlist() async {
     if (await AppUtils.isNetConnected()) {
       searching = true;
-      FlyChat.getUserList(pageNum, search.text.trim().toString()).then((value) {
+      var future = (SessionManagement.isTrailLicence())
+          ? FlyChat.getUserList(pageNum, search.text.trim().toString())
+          : FlyChat.getRegisteredUsers(false);
+      future.then((value) {
+      // FlyChat.getUserList(pageNum, search.text.trim().toString()).then((value) {
         if (value != null) {
           var list = userListFromJson(value);
           if (list.data != null) {
-            scrollable(list.data!.length == 20);
-            _userList(list.data);
+            if(SessionManagement.isTrailLicence()) {
+              scrollable(list.data!.length == 20);
+              _userList(list.data);
+            }else{
+              _userList(list.data!.where((element) => element.nickName.checkNull().toLowerCase().contains(search.text.trim().toString().toLowerCase())).toList());
+              // scrollable(false);
+            }
           } else {
             scrollable(false);
           }
@@ -1300,5 +1309,30 @@ class DashboardController extends FullLifeCycleController
         ),
       ),
     );
+  }
+
+  Future<void> gotoContacts() async {
+    if(SessionManagement.isTrailLicence()) {
+      Get.toNamed(Routes.contacts, arguments: {
+        "forward": false,
+        "group": false,
+        "groupJid": ""
+      });
+    }else{
+      /*var contactPermissionHandle = await AppPermission.checkPermission(
+          Permission.contacts, contactPermission,
+          Constants.contactPermission);
+      if (contactPermissionHandle) {*/
+        Get.toNamed(Routes.contacts, arguments: {
+          "forward": false,
+          "group": false,
+          "groupJid": ""
+        });
+      // }
+    }
+  }
+
+  void onContactSyncComplete(bool result) {
+    filterUserlist();
   }
 }
