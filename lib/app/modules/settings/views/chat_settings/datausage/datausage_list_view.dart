@@ -10,13 +10,13 @@ class DataUsageListView extends GetView<DataUsageController> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-          appBar: AppBar(
-            title: const Text('Data Usage Setting'),
-            automaticallyImplyLeading: true,
-          ),
-          body: SingleChildScrollView(
+    return Scaffold(
+        appBar: AppBar(
+          title: const Text('Data Usage Setting'),
+          automaticallyImplyLeading: true,
+        ),
+        body: SafeArea(
+          child: SingleChildScrollView(
             child: Obx(() {
               return Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -83,8 +83,8 @@ class DataUsageListView extends GetView<DataUsageController> {
                 ],
               );
             }),
-          )),
-    );
+          ),
+        ));
   }
 
   Widget mediaItem(String item, bool on, String type) {
