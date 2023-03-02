@@ -21,7 +21,7 @@ class StatusListController extends FullLifeCycleController with FullLifeCycleMix
   var count= 139.obs;
 
   onChanged(){
-    count(139 - addStatusController.text.length);
+    count(139 - addStatusController.text.characters.length);
   }
 
   @override
