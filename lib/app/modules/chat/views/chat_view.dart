@@ -401,7 +401,7 @@ class ChatView extends GetView<ChatController> {
               ),
               const SizedBox(width: 5,),
               Flexible(
-                child: Text(controller.profile.name.checkNull(),
+                child: Text(getName(controller.profile),//controller.profile.name.checkNull(),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: const TextStyle(fontSize: 15),),
@@ -968,6 +968,7 @@ class ChatView extends GetView<ChatController> {
                 width: 35,
                 height: 35,
                 clipOval: true,
+                isGroup: controller.profile.isGroupProfile.checkNull(),
                 errorWidget: controller.profile.isGroupProfile ?? false
                     ? ClipOval(
                         child: Image.asset(
@@ -978,13 +979,15 @@ class ChatView extends GetView<ChatController> {
                         ),
                       )
                     : ProfileTextImage(
-                        text: controller.profile.name.checkNull().isEmpty
+                        text: getName(controller.profile),/*controller.profile.name.checkNull().isEmpty
                             ? controller.profile.nickName.checkNull().isEmpty
                                 ? controller.profile.mobileNumber.checkNull()
                                 : controller.profile.nickName.checkNull()
-                            : controller.profile.name.checkNull(),
+                            : controller.profile.name.checkNull(),*/
                         radius: 18,
                       ),
+                blocked: controller.profile.isBlockedMe.checkNull() || controller.profile.isAdminBlocked.checkNull(),
+                unknown: (!controller.profile.isItSavedContact.checkNull() || controller.profile.isDeletedContact()),
               ),
             ],
           ),
@@ -998,9 +1001,9 @@ class ChatView extends GetView<ChatController> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  controller.profile.name.checkNull().isEmpty
+                  getName(controller.profile),/*controller.profile.name.checkNull().isEmpty
                       ? controller.profile.nickName.checkNull()
-                      : controller.profile.name.checkNull(),
+                      : controller.profile.name.checkNull(),*/
                   overflow: TextOverflow.fade,
                 ),
                 Obx(() {

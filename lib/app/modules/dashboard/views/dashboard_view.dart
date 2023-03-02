@@ -566,6 +566,9 @@ class DashboardView extends GetView<DashboardController> {
                 controller.toChatPage(item.jid.checkNull());
               },
               isCheckBoxVisible: false,
+              isGroup: item.isGroupProfile.checkNull(),
+              blocked: item.isBlockedMe.checkNull() || item.isAdminBlocked.checkNull(),
+              unknown: (!item.isItSavedContact.checkNull() || item.isDeletedContact()),
             );
           }
         });
@@ -600,12 +603,15 @@ class DashboardView extends GetView<DashboardController> {
                                   height: 48,
                                   clipOval: true,
                                   errorWidget: ProfileTextImage(
-                                    text: profile.name
+                                    text: getName(profile)/*profile.name
                                         .checkNull()
                                         .isEmpty
                                         ? profile.nickName.checkNull()
-                                        : profile.name.checkNull(),
+                                        : profile.name.checkNull(),*/
                                   ),
+                                  isGroup: profile.isGroupProfile.checkNull(),
+                                  blocked: profile.isBlockedMe.checkNull() || profile.isAdminBlocked.checkNull(),
+                                  unknown: (!profile.isItSavedContact.checkNull() || profile.isDeletedContact()),
                                 ),
                                 unreadMessageCount.toString() != "0"
                                     ? Positioned(
@@ -634,7 +640,7 @@ class DashboardView extends GetView<DashboardController> {
                                   children: [
                                     Expanded(
                                       child: spannableText(
-                                        profile.name.toString(),
+                                        getName(profile),//profile.name.toString(),
                                         controller.search.text,
                                         const TextStyle(
                                             fontSize: 16.0,

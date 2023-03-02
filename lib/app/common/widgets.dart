@@ -95,6 +95,9 @@ class ImageNetwork extends GetView<MainController> {
   final Widget? errorWidget;
   final bool clipOval;
   final Function()? onTap;
+  final bool isGroup;
+  final bool blocked;
+  final bool unknown;
 
   const ImageNetwork({
     Key? key,
@@ -104,6 +107,9 @@ class ImageNetwork extends GetView<MainController> {
     this.errorWidget,
     required this.clipOval,
     this.onTap,
+    required this.isGroup,
+    required this.blocked,
+    required this.unknown,
   }) : super(key: key);
 
   @override
@@ -144,75 +150,88 @@ class ImageNetwork extends GetView<MainController> {
             );
           },*/
         placeholder: (context, string) {
-          return errorWidget != null
-              ? errorWidget!
-              : clipOval
+          if(!(blocked || unknown)){
+            if(errorWidget !=null){
+              return errorWidget!;
+            }
+          }
+          return clipOval
                   ? ClipOval(
                       child: Image.asset(
-                        profileImg,
+                        getSingleOrGroup(isGroup),
                         height: height,
                         width: width,
+                        fit: BoxFit.cover,
                       ),
                     )
                   : Image.asset(
-                      profileImg,
+            getSingleOrGroup(isGroup),
                       height: height,
                       width: width,
+            fit: BoxFit.cover,
                     );
-          /*return errorWidget ??
-                Image.asset(
-                  profileImg,
-                  height: height,
-                  width: width,
-                );*/
         },
         errorWidget: (context, link, error) {
-          mirrorFlyLog("image error",
-              "$error link : $link token : ${controller.authToken.value}");
-          if (error.toString().contains("401") && url.isNotEmpty) {
-            // controller.getAuthToken();
-            _deleteImageFromCache(url);
+          if(url.isNotEmpty) {
+            mirrorFlyLog("image error", "$error link : $link token : ${controller.authToken.value}");
+            if (error.toString().contains("401") && url.isNotEmpty) {
+              // controller.getAuthToken();
+              _deleteImageFromCache(url);
+            }
           }
-          return errorWidget != null
-              ? errorWidget!
-              : clipOval
-                  ? ClipOval(
-                      child: Image.asset(
-                        profileImg,
-                        height: height,
-                        width: width,
-                      ),
-                    )
-                  : Image.asset(
-                      profileImg,
-                      height: height,
-                      width: width,
-                    );
-          /*return errorWidget ??
-                Image.asset(
-                  profileImg,
-                  height: height,
-                  width: width,
-                );*/
+          if(!(blocked || unknown)){
+            if(errorWidget !=null){
+              return errorWidget!;
+            }
+          }
+          return clipOval
+              ? ClipOval(
+            child: Image.asset(
+              getSingleOrGroup(isGroup),
+              height: height,
+              width: width,
+              fit: BoxFit.cover,
+            ),
+          )
+              : Image.asset(
+            getSingleOrGroup(isGroup),
+            height: height,
+            width: width,
+            fit: BoxFit.cover,
+          );
         },
         imageBuilder: (context, provider) {
           return clipOval
               ? ClipOval(
-                  child: Image(
+                  child: !(blocked || unknown) ? Image(
                   image: provider,
                   fit: BoxFit.fill,
-                ))
+                ) : Image.asset(
+                    getSingleOrGroup(isGroup),
+                    height: height,
+                    width: width,
+                    fit: BoxFit.cover,
+                  ),)
               : InkWell(
                   onTap: onTap,
-                  child: Image(
+                  child: !(blocked || unknown) ? Image(
                     image: provider,
                     fit: BoxFit.fill,
+                  ) : Image.asset(
+                    getSingleOrGroup(isGroup),
+                    height: height,
+                    width: width,
+                    fit: BoxFit.cover,
                   ),
                 );
         },
       ),
     );
     // }
+  }
+
+  String getSingleOrGroup(bool isGroup){
+    return isGroup ? groupImg : profileImg;
   }
 
   void _deleteImageFromCache(String url) {
@@ -286,7 +305,10 @@ Widget memberItem(
     String spantext = "",
     bool isCheckBoxVisible = false,
     bool isChecked = false,
-    Function(bool? value)? onchange}) {
+    Function(bool? value)? onchange,
+      bool isGroup = false,
+      required bool blocked,
+      required bool unknown}) {
   var titlestyle = const TextStyle(
       color: Colors.black, fontSize: 14.0, fontWeight: FontWeight.w700);
   return Container(
@@ -310,7 +332,8 @@ Widget memberItem(
                           fontSize: 20,
                           text: name.checkNull(),
                         )
-                      : null,
+                      : null, blocked: blocked, unknown: unknown,
+                  isGroup: isGroup,
                 ),
                 Expanded(
                   child: Padding(

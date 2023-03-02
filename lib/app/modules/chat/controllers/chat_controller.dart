@@ -104,8 +104,8 @@ class ChatController extends FullLifeCycleController
   String? starredChatMessageId;
 
   @override
-  void onReady() async {
-    super.onReady();
+  void onInit() async {
+    super.onInit();
     //await FlyChat.enableDisableBusyStatus(true);
     // var profileDetail = Get.arguments as Profile;
     // profile_.value = profileDetail;
@@ -651,7 +651,7 @@ class ChatController extends FullLifeCycleController
         imagePath.value = (result.files.single.path!);
         Get.toNamed(Routes.imagePreview, arguments: {
           "filePath": imagePath.value,
-          "userName": profile.name!,
+          "userName": getName(profile),
           "profile": profile
         });
       } else if (result.files.first.extension == 'mp4' ||
@@ -662,7 +662,7 @@ class ChatController extends FullLifeCycleController
         imagePath.value = (result.files.single.path!);
         Get.toNamed(Routes.videoPreview, arguments: {
           "filePath": imagePath.value,
-          "userName": profile.name!,
+          "userName": getName(profile),
           "profile": profile
         });
       }
@@ -1096,7 +1096,7 @@ class ChatController extends FullLifeCycleController
       var chatMessage =
           selectedChatList.isNotEmpty ? selectedChatList[0] : null;
       Helper.showAlert(
-          title: "Report ${profile.name}?",
+          title: "Report ${getName(profile)}?",
           message:
               "${selectedChatList.isNotEmpty ? "This message will be forwarded to admin." : "The last 5 messages from this contact will be forwarded to admin."} This Contact will not be notified.",
           actions: [
@@ -1335,7 +1335,7 @@ class ChatController extends FullLifeCycleController
   blockUser() {
     Future.delayed(const Duration(milliseconds: 100), () {
       Helper.showAlert(
-          message: "Are you sure you want to Block ${profile.name}?",
+          message: "Are you sure you want to Block ${getName(profile)}?",
           actions: [
             TextButton(
                 onPressed: () {
@@ -1352,7 +1352,7 @@ class ChatController extends FullLifeCycleController
                       isBlocked(true);
                       saveUnsentMessage();
                       Helper.hideLoading();
-                      toToast('${profile.name} has been blocked');
+                      toToast('${getName(profile)} has been blocked');
                     }).catchError((error) {
                       Helper.hideLoading();
                       debugPrint(error);
@@ -1397,7 +1397,7 @@ class ChatController extends FullLifeCycleController
   }
 
   unBlockUser() {
-    Helper.showAlert(message: "Unblock ${profile.name}?", actions: [
+    Helper.showAlert(message: "Unblock ${getName(profile)}?", actions: [
       TextButton(
           onPressed: () {
             Get.back();
@@ -1413,7 +1413,7 @@ class ChatController extends FullLifeCycleController
                 isBlocked(false);
                 getUnsentMessageOfAJid();
                 Helper.hideLoading();
-                toToast('${profile.name} has been unblocked');
+                toToast('${getName(profile)} has been unblocked');
               }).catchError((error) {
                 // Helper.hideLoading();
                 debugPrint(error);
@@ -1989,18 +1989,24 @@ class ChatController extends FullLifeCycleController
         if (typingList.isNotEmpty) {
           userPresenceStatus(
               "${Member(jid: typingList.last).getUsername()} typing...");
+              //"${Member(jid: typingList.last).getUsername()} typing...");
         } else {
           getParticipantsNameAsCsv(profile.jid.checkNull());
         }
       } else {
         debugPrint("value--> show user presence");
-        FlyChat.getUserLastSeenTime(profile.jid.toString()).then((value) {
-          groupParticipantsName('');
-          userPresenceStatus(value.toString());
-        }).catchError((er) {
+        if(!profile.isBlockedMe.checkNull() || !profile.isAdminBlocked.checkNull()) {
+          FlyChat.getUserLastSeenTime(profile.jid.toString()).then((value) {
+            groupParticipantsName('');
+            userPresenceStatus(value.toString());
+          }).catchError((er) {
+            groupParticipantsName('');
+            userPresenceStatus("");
+          });
+        }else{
           groupParticipantsName('');
           userPresenceStatus("");
-        });
+        }
       }
     } else {
       userPresenceStatus("");
@@ -2106,7 +2112,7 @@ class ChatController extends FullLifeCycleController
       try {
         // imagePicker();
         Get.toNamed(Routes.galleryPicker,
-            arguments: {"userName": profile.name!,'profile':profile});
+            arguments: {"userName": getName(profile),'profile':profile});
       } catch (e) {
         debugPrint(e.toString());
       }
@@ -2479,11 +2485,11 @@ class ChatController extends FullLifeCycleController
   }
 
 
-  void userUpdatedHisProfile(jid) {
+  void userUpdatedHisProfile(String jid) {
     updateProfile(jid);
   }
 
-  void unblockedThisUser(jid) {
+  void unblockedThisUser(String jid) {
     updateProfile(jid);
   }
 
@@ -2539,6 +2545,10 @@ class ChatController extends FullLifeCycleController
 
     chatList.removeWhere((chatItem) => chatItem.messageType == Constants.mNotification);
 
+  }
+
+  void onContactSyncComplete(bool result) {
+    userUpdatedHisProfile(profile.jid.checkNull());
   }
 
 }

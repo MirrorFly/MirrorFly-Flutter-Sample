@@ -423,6 +423,7 @@ class Constants {
   static const String typeSearchMessage = "Message";
 
   static const String you = "You";
+  static const String deletedUser = "Deleted User";
 
   static const int minGroupMembers = 2;
 

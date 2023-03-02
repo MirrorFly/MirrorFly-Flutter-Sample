@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
 import 'package:flysdk/flysdk.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 import '../../../common/de_bouncer.dart';
 import '../../../data/apputils.dart';
@@ -440,10 +441,22 @@ class ForwardChatController extends GetxController {
   }
 
   void onContactSyncComplete(bool result) {
+    getRecentChatList();
+    getAllGroups();
+    getUsers();
     if (searchQuery.text.toString().trim().isNotEmpty) {
-      filterUserList();
-    }else{
-      getUsers();
+      lastInputValue='';
+      onSearch(searchQuery.text.toString());
     }
+  }
+
+  void checkContactSyncPermission() {
+    Permission.contacts.isGranted.then((value) {
+      if(!value){
+        _mainuserList.clear();
+        _userList.clear();
+        _userList.refresh();
+      }
+    });
   }
 }

@@ -73,6 +73,9 @@ class GroupCreationView extends GetView<GroupCreationController> {
                                         height: 150,
                                         fit: BoxFit.cover),
                                   ),
+                            isGroup: true,
+                            blocked: false,
+                            unknown: false,
                                 ),
                           onTap: () {
                             if (controller.imagePath.value

@@ -190,20 +190,22 @@ class ContactListView extends GetView<ContactController> {
                                             width: 48,
                                             height: 48,
                                             clipOval: true,
-                                            errorWidget: item.nickName
+                                            errorWidget: getName(item)//item.nickName
                                                     .checkNull()
                                                     .isNotEmpty
                                                 ? ProfileTextImage(
                                                     text:
-                                                        item.nickName.checkNull().isEmpty
+                                                        getName(item)/*item.nickName.checkNull().isEmpty
                                                             ? item.mobileNumber
                                                                 .checkNull()
-                                                            : item.nickName.checkNull(),
+                                                            : item.nickName.checkNull()*/,
                                                   )
                                                 : const Icon(
                                                     Icons.person,
                                                     color: Colors.white,
                                                   ),
+                                            blocked: item.isBlockedMe.checkNull() || item.isAdminBlocked.checkNull(),
+                                            unknown: (!item.isItSavedContact.checkNull() || item.isDeletedContact()),isGroup: item.isGroupProfile.checkNull(),
                                           )),
                                       Expanded(
                                         child: Column(

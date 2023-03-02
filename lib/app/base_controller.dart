@@ -286,6 +286,12 @@ abstract class BaseController {
     if (Get.isRegistered<DashboardController>()) {
       Get.find<DashboardController>().onContactSyncComplete(result);
     }
+    if (Get.isRegistered<ChatController>()) {
+      Get.find<ChatController>().onContactSyncComplete(result);
+    }
+    if (Get.isRegistered<ChatInfoController>()) {
+      Get.find<ChatInfoController>().onContactSyncComplete(result);
+    }
     //FlyChat.getRegisteredUsers(true).then((value) => mirrorFlyLog("registeredUsers", value.toString()));
   }
 

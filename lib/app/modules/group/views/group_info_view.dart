@@ -133,6 +133,9 @@ class GroupInfoView extends GetView<GroupInfoController> {
                             });
                           }
                         },
+                        isGroup: controller.profile.isGroupProfile.checkNull(),
+                        blocked: controller.profile.isBlockedMe.checkNull() || controller.profile.isAdminBlocked.checkNull(),
+                        unknown: (!controller.profile.isItSavedContact.checkNull() || controller.profile.isDeletedContact()),
                       ) //Images.network
                   ),
                   //FlexibleSpaceBar
@@ -219,7 +222,10 @@ class GroupInfoView extends GetView<GroupInfoController> {
                               SessionManagement.getUserJID().checkNull()) {
                             showOptions(item);
                           }
-                        });
+                        },
+                          isGroup: item.isGroupProfile.checkNull(),
+                          blocked: item.isBlockedMe.checkNull() || item.isAdminBlocked.checkNull(),
+                          unknown: (!item.isItSavedContact.checkNull() || item.isDeletedContact()),);
                       });
                 }),
                 ListItem(

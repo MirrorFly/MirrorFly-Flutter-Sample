@@ -312,10 +312,13 @@ extension BooleanParsing on bool? {
 }
 
 extension MemberParsing on Member {
+  bool isDeletedContact() {
+    return contactType == "deleted_contact";
+  }
   String getUsername() {
     var value = FlyChat.getProfileDetails(jid.checkNull(), false);
     var str = Profile.fromJson(json.decode(value.toString()));
-    return str.name.checkNull();
+    return getName(str);//str.name.checkNull();
   }
 
   Future<Profile> getProfileDetails() async {
@@ -351,6 +354,12 @@ extension ProfileParesing on Profile {
         ? Constants.typeGroupChat
         : Constants.typeChat;
   }
+  bool isItSavedContact(){
+    return contactType == 'live_contact';
+  }
+  bool isUnknownContact(){
+    return !isDeletedContact() && !isItSavedContact() && !isGroupProfile.checkNull();
+  }
 }
 
 extension ChatmessageParsing on ChatMessageModel {
@@ -385,11 +394,21 @@ extension ChatmessageParsing on ChatMessageModel {
 
 extension RecentChatParsing on RecentChatData {
   String getChatType() {
-    return (isGroup!)
+    return (isGroup.checkNull())
         ? Constants.typeGroupChat
-        : (isBroadCast!)
+        : (isBroadCast.checkNull())
             ? Constants.typeBroadcastChat
             : Constants.typeChat;
+  }
+  bool isDeletedContact() {
+    return contactType == "deleted_contact";
+  }
+
+  bool isItSavedContact(){
+    return contactType == 'live_contact';
+  }
+  bool isUnknownContact(){
+    return !isDeletedContact() && !isItSavedContact() && !isGroup.checkNull();
   }
 }
 
@@ -622,7 +641,6 @@ Future<RecentChatData?> getRecentChatOfJid(String jid) async {
     return null;
   }
 }
-
 String getName(Profile item) {
   if (SessionManagement.isTrailLicence()) {
     /*return item.name.toString().checkNull().isEmpty
@@ -634,13 +652,73 @@ String getName(Profile item) {
             : item.nickName.checkNull())
         : item.name.checkNull();
   } else {
-    /*return item.nickName.toString().checkNull().isEmpty
-        ? item.name.toString()
-        : item.nickName.toString();*/
-    return item.nickName.checkNull().isEmpty
-        ? (item.name.checkNull().isEmpty
-            ? item.mobileNumber.checkNull()
-            : item.name.checkNull())
-        : item.nickName.checkNull();
+   if(item.jid.checkNull()==SessionManagement.getUserJID()){
+     return Constants.you;
+   }else if(item.isDeletedContact()){
+     mirrorFlyLog('isDeletedContact', item.isDeletedContact().toString());
+     return Constants.deletedUser;
+   }else if(item.isUnknownContact() || item.nickName.checkNull().isEmpty){
+     mirrorFlyLog('isUnknownContact', item.isUnknownContact().toString());
+     return item.mobileNumber.checkNull();
+   }else{
+     mirrorFlyLog('nickName', item.nickName.toString());
+     return item.nickName.checkNull();
+   }
+    /*var status = true;
+    if(status) {
+      return item.nickName
+          .checkNull()
+          .isEmpty
+          ? (item.name
+          .checkNull()
+          .isEmpty
+          ? item.mobileNumber.checkNull()
+          : item.name.checkNull())
+          : item.nickName.checkNull();
+    }else{
+      return item.mobileNumber.checkNull();
+    }*/
   }
+}
+
+String getRecentName(RecentChatData item) {
+  if (SessionManagement.isTrailLicence()) {
+    /*return item.name.toString().checkNull().isEmpty
+        ? item.nickName.toString()
+        : item.name.toString();*/
+    return item.profileName.checkNull().isEmpty
+        ? item.nickName.checkNull()
+        : item.profileName.checkNull();
+  } else {
+    if(item.jid.checkNull()==SessionManagement.getUserJID()){
+      return Constants.you;
+    }else if(item.isDeletedContact()){
+      mirrorFlyLog('isDeletedContact', item.isDeletedContact().toString());
+      return Constants.deletedUser;
+    }else if(item.isUnknownContact() || item.nickName.checkNull().isEmpty){
+      mirrorFlyLog('isUnknownContact', item.jid.toString());
+      return getMobileNumberFromJid(item.jid.checkNull());
+    }else{
+      mirrorFlyLog('nickName', item.nickName.toString());
+      return item.nickName.checkNull();
+    }
+  }
+}
+String getMobileNumberFromJid(String jid){
+  var str = jid.split('@');
+  return str[0];
+}
+
+String getDisplayImage(RecentChatData recentChat) {
+  var imageUrl = recentChat.profileImage ?? Constants.emptyString;
+  if (recentChat.isBlockedMe.checkNull() ||
+      recentChat.isAdminBlocked.checkNull()) {
+    imageUrl = Constants.emptyString;
+    //drawable = CustomDrawable(context).getDefaultDrawable(recentChat)
+  } else if (!recentChat.isItSavedContact.checkNull() ||
+      recentChat.isDeletedContact()) {
+    imageUrl = recentChat.profileImage ?? Constants.emptyString;
+    // drawable = CustomDrawable(context).getDefaultDrawable(recentChat)
+  }
+  return imageUrl;
 }

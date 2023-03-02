@@ -157,6 +157,13 @@ class ContactController extends FullLifeCycleController
   }
 
   fetchUsers(bool fromSearch) async {
+    if(!SessionManagement.isTrailLicence()){
+      var granted = await Permission.contacts.isGranted;
+      if(!granted){
+        isPageLoading(false);
+        return;
+      }
+    }
     if (await AppUtils.isNetConnected()) {
       var future = (SessionManagement.isTrailLicence())
           ? FlyChat.getUserList(pageNum, _searchText)
@@ -413,7 +420,7 @@ class ContactController extends FullLifeCycleController
       if(!await FlyChat.contactSyncStateValue()) {
         var contactPermissionHandle = await AppPermission.checkPermission(
             Permission.contacts, contactPermission,
-            Constants.contactPermission);
+            Constants.contactSyncPermission);
         if (contactPermissionHandle) {
           progressSpinner(true);
             FlyChat.syncContacts(!SessionManagement.isInitialContactSyncDone())
@@ -461,9 +468,15 @@ class ContactController extends FullLifeCycleController
   void onPaused() {}
 
   @override
-  void onResumed() {
+  Future<void> onResumed() async {
     if (!SessionManagement.isTrailLicence()) {
-      refreshContacts();
+      var status = await Permission.contacts.isGranted;
+      if(status) {
+        refreshContacts();
+      }else{
+        usersList.clear();
+        usersList.refresh();
+      }
     }
   }
 }

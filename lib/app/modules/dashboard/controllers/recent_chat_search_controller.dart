@@ -283,15 +283,15 @@ class RecentChatSearchController extends GetxController {
     return null;
   }
 
-  Future<Map<ProfileData?, ChatMessageModel?>?> getProfileAndMessage(
+  Future<Map<Profile?, ChatMessageModel?>?> getProfileAndMessage(
       String jid, String mid) async {
-    var value = await FlyChat.getProfileLocal(jid, false);
+    var value = await getProfileDetails(jid);//FlyChat.getProfileLocal(jid, false);
     var value2 = await FlyChat.getMessageOfId(mid);
     if (value != null && value2 != null) {
-      var data = profileDataFromJson(value);
+      var data = value;// profileDataFromJson(value);
       var data2 = sendMessageModelFromJson(value2);
-      var map = <ProfileData?, ChatMessageModel?>{}; //{0,searchMessageItem};
-      map.putIfAbsent(data.data, () => data2);
+      var map = <Profile?, ChatMessageModel?>{}; //{0,searchMessageItem};
+      map.putIfAbsent(data, () => data2);
       return map;
     }
     return null;
