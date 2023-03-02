@@ -10,18 +10,21 @@ import 'package:mirror_fly_demo/app/base_controller.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
 import 'package:mirror_fly_demo/app/common/received_notification.dart';
+import 'package:mirror_fly_demo/app/data/apputils.dart';
 import 'package:mirror_fly_demo/app/data/pushnotification.dart';
 import 'package:mirror_fly_demo/app/data/session_management.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
 import 'package:mirror_fly_demo/app/modules/chat/controllers/chat_controller.dart';
+import 'package:mirror_fly_demo/app/modules/contact_sync/controllers/contact_sync_controller.dart';
 import 'package:mirror_fly_demo/app/routes/app_pages.dart';
 
 import 'package:flysdk/flysdk.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 import '../modules/chatInfo/controllers/chat_info_controller.dart';
 import 'notification_service.dart';
 
-class MainController extends GetxController with BaseController
+class MainController extends FullLifeCycleController with BaseController, FullLifeCycleMixin
     /*with FullLifeCycleMixin */{
   var authToken = "".obs;
   Rx<String> uploadEndpoint = "".obs;
@@ -234,6 +237,9 @@ class MainController extends GetxController with BaseController
             if (Get.isRegistered<ChatInfoController>()) {
               Get.find<ChatInfoController>().networkConnected();
             }
+            if (Get.isRegistered<ContactSyncController>()) {
+              Get.find<ContactSyncController>().networkConnected();
+            }
             break;
           case InternetConnectionStatus.disconnected:
             mirrorFlyLog("network",'You are disconnected from the internet.');
@@ -242,6 +248,9 @@ class MainController extends GetxController with BaseController
             }
             if (Get.isRegistered<ChatInfoController>()) {
               Get.find<ChatInfoController>().networkDisconnected();
+            }
+            if (Get.isRegistered<ContactSyncController>()) {
+              Get.find<ContactSyncController>().networkDisconnected();
             }
             break;
         }
@@ -253,6 +262,36 @@ class MainController extends GetxController with BaseController
   void onClose() {
     listener?.cancel();
     super.onClose();
+  }
+
+  @override
+  void onDetached() {
+
+  }
+
+  @override
+  void onInactive() {
+
+  }
+
+  @override
+  void onPaused() {
+
+  }
+
+  @override
+  void onResumed() {
+    mirrorFlyLog('mainController', 'onResumed');
+    syncContacts();
+  }
+
+  void syncContacts() async {
+    if(await AppUtils.isNetConnected() && !await FlyChat.contactSyncStateValue()){
+      final permission = await Permission.contacts.status;
+      if (permission == PermissionStatus.granted) {
+        FlyChat.syncContacts(!SessionManagement.isInitialContactSyncDone());
+      }
+    }
   }
 
 

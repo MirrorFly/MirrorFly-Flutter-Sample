@@ -198,6 +198,7 @@ const String filePermission = "assets/logos/file_permission.svg";
 const String audioPermission = "assets/logos/audio_permission.svg";
 const String cameraPermission = "assets/logos/camera_permission.svg";
 const String contactPermission = "assets/logos/contact_permission.svg";
+const String contactSyncPermission = "assets/logos/contact_media_permission.svg";
 const String settingsPermission = "assets/logos/settings_permission.svg";
 const String locationPinPermission = "assets/logos/location_pin_permission.svg";
 const String recordAudioVideoPermission =
@@ -210,6 +211,12 @@ const String icCollapse = "assets/logos/ic_collapse.svg";
 const String forwardMedia = "assets/logos/forward_media.svg";
 const String arrowDown = "assets/logos/arrow_down.svg";
 const String arrowUp = "assets/logos/arrow_up.svg";
+
+//contact sync
+const String syncIcon = "assets/logos/sync.svg";
+const String contactSyncBg = "assets/logos/contact_sync_bg.png";
+const String contactBookFill = "assets/logos/contacts_book_fill.svg";
+
 
 //About us
 const String titleContactMsg =
@@ -416,6 +423,7 @@ class Constants {
   static const String typeSearchMessage = "Message";
 
   static const String you = "You";
+  static const String deletedUser = "Deleted User";
 
   static const int minGroupMembers = 2;
 
@@ -555,6 +563,8 @@ class Constants {
       "MirrorFly needs access to your location in order to share your current location.";
   static const String contactPermission =
       "To help you connect with friends and family, allow Mirrorfly access to your contacts.";
+  static const String contactSyncPermission =
+      "MirrorFly will continuously upload your contacts to its encrypted servers to let you discover and connect with your friends. Your contacts are uploaded using MirrorFly private contact discovery which means they are end-to-end encrypted and secured.";
   static const String audioPermission =
       "To send audio messages, allow MirrorFly access to your Microphone.";
 

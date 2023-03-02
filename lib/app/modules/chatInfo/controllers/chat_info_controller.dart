@@ -64,11 +64,15 @@ class ChatInfoController extends GetxController {
   }
 
   getUserLastSeen(){
-    FlyChat.getUserLastSeenTime(profile.jid.toString()).then((value) {
-      userPresenceStatus(value.toString());
-    }).catchError((er) {
+    if(!profile.isBlockedMe.checkNull() || !profile.isAdminBlocked.checkNull()) {
+      FlyChat.getUserLastSeenTime(profile.jid.toString()).then((value) {
+        userPresenceStatus(value.toString());
+      }).catchError((er) {
+        userPresenceStatus("");
+      });
+    }else{
       userPresenceStatus("");
-    });
+    }
   }
 
 
@@ -140,5 +144,9 @@ class ChatInfoController extends GetxController {
   gotoViewAllMedia(){
     debugPrint("to Media Page==>${profile.name} jid==>${profile.jid} isgroup==>${profile.isGroupProfile ?? false}");
     Get.toNamed(Routes.viewMedia,arguments: {"name":profile.name,"jid":profile.jid,"isgroup":profile.isGroupProfile ?? false});
+  }
+
+  void onContactSyncComplete(bool result) {
+    userUpdatedHisProfile(profile.jid);
   }
 }

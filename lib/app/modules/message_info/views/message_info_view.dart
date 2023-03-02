@@ -109,7 +109,9 @@ class MessageInfoView extends GetView<MessageInfoController> {
                         image: member.image.checkNull(),
                         status: controller.chatDate(context,
                             controller.messageDeliveredList[index]),
-                        onTap: () {});
+                        onTap: () {},
+                      blocked: member.isBlockedMe.checkNull() || member.isAdminBlocked.checkNull(),
+                      unknown: (!member.isItSavedContact.checkNull() || member.isDeletedContact()),);
                   }) : emptyDeliveredSeen(
                   context, 'Message sent, not delivered yet')),
           const AppDivider(),
@@ -141,7 +143,9 @@ class MessageInfoView extends GetView<MessageInfoController> {
                         image: member.image.checkNull(),
                         status: controller.chatDate(context,
                             controller.messageDeliveredList[index]),
-                        onTap: () {});
+                        onTap: () {},
+                      blocked: member.isBlockedMe.checkNull() || member.isAdminBlocked.checkNull(),
+                      unknown: (!member.isItSavedContact.checkNull() || member.isDeletedContact()),);
                   }) : emptyDeliveredSeen(context, "Your message is not read")),
           const AppDivider(),
         ],

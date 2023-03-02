@@ -94,6 +94,9 @@ class ProfileView extends GetView<ProfileController> {
                                           radius: 75,
                                         )
                                             : null,
+                                        isGroup: false,
+                                        blocked: false,
+                                        unknown: false,
                                       ),
                                       onTap: () {
                                         if (controller.imagePath.value

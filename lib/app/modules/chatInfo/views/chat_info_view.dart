@@ -47,11 +47,11 @@ class ChatInfoView extends GetView<ChatInfoController> {
                 ),
                 title: Visibility(
                   visible: !controller.isSliverAppBarExpanded,
-                  child: Text(controller.profile.name
+                  child: Text(getName(controller.profile),/*controller.profile.name
                       .checkNull()
                       .isEmpty
                       ? controller.profile.nickName.checkNull()
-                      : controller.profile.name.checkNull(),
+                      : controller.profile.name.checkNull(),*/
                       style: const TextStyle(
                         color: Colors.black,
                         fontSize: 18.0,
@@ -70,7 +70,7 @@ class ChatInfoView extends GetView<ChatInfoController> {
                         .height * 0.45,
                     clipOval: false,
                     errorWidget: ProfileTextImage(
-                      text: controller.profile.name
+                      text: getName(controller.profile),/*controller.profile.name
                           .checkNull()
                           .isEmpty
                           ? controller.profile.nickName
@@ -78,13 +78,14 @@ class ChatInfoView extends GetView<ChatInfoController> {
                           .isEmpty
                           ? controller.profile.mobileNumber.checkNull()
                           : controller.profile.nickName.checkNull()
-                          : controller.profile.name.checkNull(),
+                          : controller.profile.name.checkNull(),*/
                       radius: 0,
                       fontSize: 120,
                     ),
                     onTap: () {
                       Get.toNamed(Routes.imageView, arguments: {
-                        'imageName': controller.profile.name
+                      'imageName': getName(controller.profile),
+                        /*'imageName': controller.profile.name
                             .checkNull()
                             .isEmpty
                             ? controller.profile.nickName
@@ -92,10 +93,14 @@ class ChatInfoView extends GetView<ChatInfoController> {
                             .isEmpty
                             ? controller.profile.mobileNumber.checkNull()
                             : controller.profile.nickName.checkNull()
-                            : controller.profile.name.checkNull(),
+                            : controller.profile.name.checkNull(),*/
                         'imageUrl': controller.profile.image.checkNull()
                       });
-                    },),
+                    },
+                    isGroup: controller.profile.isGroupProfile.checkNull(),
+                    blocked: controller.profile.isBlockedMe.checkNull() || controller.profile.isAdminBlocked.checkNull(),
+                    unknown: (!controller.profile.isItSavedContact.checkNull() || controller.profile.isDeletedContact()),
+                  ),
                   // titlePadding: controller.isSliverAppBarExpanded
                   //     ? const EdgeInsets.symmetric(vertical: 16, horizontal: 20)
                   //     : const EdgeInsets.symmetric(
@@ -111,11 +116,11 @@ class ChatInfoView extends GetView<ChatInfoController> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          Text(controller.profile.name
+                          Text(getName(controller.profile),/*controller.profile.name
                               .checkNull()
                               .isEmpty
                               ? controller.profile.nickName.checkNull()
-                              : controller.profile.name.checkNull(),
+                              : controller.profile.name.checkNull(),*/
                               style: TextStyle(
                                 color: controller.isSliverAppBarExpanded
                                     ? Colors.white

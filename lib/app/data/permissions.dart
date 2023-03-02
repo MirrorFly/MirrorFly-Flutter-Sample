@@ -28,8 +28,8 @@ class AppPermission {
           continueBtn: () async {
             newPermission.request();
           },
-          icon: locationPinPermission,
-          content: Constants.locationPermission);
+          icon: contactPermission,
+          content: Constants.contactPermission);
       return newPermission.status;
     } else {
       return permission;
@@ -136,28 +136,31 @@ class AppPermission {
   }
 
   static Future<bool> requestPermission(Permission permission) async {
-    var status = await permission.status;
-    if (status != PermissionStatus.granted &&
-        status != PermissionStatus.permanentlyDenied) {
+    var status1 = await permission.status;
+    mirrorFlyLog('status', status1.toString());
+    if (status1 == PermissionStatus.denied &&
+        status1 != PermissionStatus.permanentlyDenied) {
+      mirrorFlyLog('permission.request', status1.toString());
       final status = await permission.request();
       return status.isGranted;
     }
-    return status.isGranted;
+    return status1.isGranted;
   }
 
   static Future<bool> checkPermission(Permission permission, String permissionIcon, String permissionContent) async {
-    if (await permission.status == PermissionStatus.granted) {
+    var status = await permission.status;
+    if (status == PermissionStatus.granted) {
       debugPrint("permission granted opening");
       return true;
-    }else if(await permission.status == PermissionStatus.permanentlyDenied){
-
+    }else if(status == PermissionStatus.permanentlyDenied){
+      mirrorFlyLog('permanentlyDenied', 'permission');
       var permissionAlertMessage = "";
       var permissionName = "$permission";
       permissionName = permissionName.replaceAll("Permission.", "");
 
       switch (permissionName.toLowerCase()){
         case "camera":
-          permissionAlertMessage = Constants.contactPermissionDenied;
+          permissionAlertMessage = Constants.cameraPermissionDenied;
           break;
         case "microphone":
           permissionAlertMessage = Constants.microPhonePermissionDenied;
@@ -184,16 +187,17 @@ class AppPermission {
         return false;
       }
     }else{
+      mirrorFlyLog('denied', 'permission');
       var popupValue = await customPermissionDialog(icon: permissionIcon,
           content: permissionContent);
       if(popupValue){
-        return AppPermission.requestPermission(permission).then((value) {
+        return AppPermission.requestPermission(permission);/*.then((value) {
           if(value){
             return true;
           }else{
             return false;
           }
-        });
+        });*/
       }else{
         return false;
       }

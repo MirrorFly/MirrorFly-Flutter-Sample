@@ -45,6 +45,7 @@ abstract class Routes {
   static const languages = _Paths.languages;
   static const busyStatus = _Paths.busyStatus;
   static const dataUsageSetting = _Paths.dataUsageSetting;
+  static const contactSync = _Paths.contactSync;
 }
 
 abstract class _Paths {
@@ -92,4 +93,5 @@ abstract class _Paths {
   static const languages = '/languages';
   static const busyStatus = '/busy-status';
   static const dataUsageSetting = '/data_usage_setting';
+  static const contactSync = '/contact_sync';
 }

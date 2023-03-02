@@ -28,7 +28,8 @@ class BlockedListView extends GetView<BlockedListController> {
               if (item.jid.checkNull().isNotEmpty) {
                 controller.unBlock(item);
               }
-            });
+            },blocked: item.isBlockedMe.checkNull() || item.isAdminBlocked.checkNull(),
+              unknown: (!item.isItSavedContact.checkNull() || item.isDeletedContact()),);
           }),
         );
       }),
