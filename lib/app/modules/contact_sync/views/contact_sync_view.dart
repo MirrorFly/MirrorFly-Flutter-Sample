@@ -28,7 +28,7 @@ class ContactSyncPage extends GetView<ContactSyncController> {
               return Visibility(
                 visible: controller.syncing.value,
                 child: Text(controller.textContactSync.value,
-                  style: TextStyle(fontSize: 16, color: textColor),
+                  style: const TextStyle(fontSize: 16, color: textColor),
                   textAlign: TextAlign.center,),
               );
             }),
