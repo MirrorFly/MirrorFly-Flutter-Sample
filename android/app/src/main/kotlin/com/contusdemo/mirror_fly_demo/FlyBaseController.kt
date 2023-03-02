@@ -653,10 +653,10 @@ open class FlyBaseController(activity: FlutterActivity) : MethodChannel.MethodCa
                 result.success(myBusyStatusList.tojsonString())
             }
             call.method.equals("deleteProfileStatus") -> {
-                val id = call.argument<Long>("id") ?: 0
+                val id = call.argument<String>("id") ?: "0"
                 val status = call.argument<String>("status") ?: ""
                 val isCurrentStatus = call.argument<Boolean>("isCurrentStatus") ?: false
-                val profileStatus = ProfileStatus(id, status, isCurrentStatus)
+                val profileStatus = ProfileStatus(id.toLong(), status, isCurrentStatus)
                 FlyCore.deleteProfileStatus(profileStatus)
                 result.success(true)
             }
@@ -977,6 +977,9 @@ open class FlyBaseController(activity: FlutterActivity) : MethodChannel.MethodCa
             }
             call.method.equals("setMyProfileStatus") -> {
                 setMyProfileStatus(call, result)
+            }
+            call.method.equals("insertNewProfileStatus") -> {
+                insertNewProfileStatus(call, result)
             }
             call.method.equals("getRecentChatList") -> {
                 getRecentChatList(result)
@@ -2204,6 +2207,22 @@ open class FlyBaseController(activity: FlutterActivity) : MethodChannel.MethodCa
         /*} else {
             result.error("500", "Please Check Your Internet connection", null)
         }*/
+    }
+    private fun insertNewProfileStatus(call: MethodCall, result: MethodChannel.Result) {
+
+        // Same Function as "setMyProfileStatus", writing as seperate new function inorder to match the iOS Functionality
+        val status = call.argument<String>("status") ?: ""
+        if (status.isNotEmpty()) {
+            FlyCore.setMyProfileStatus(status) { isSuccess, _, data ->
+                data["status"] = isSuccess
+
+                if (isSuccess) {
+                    insertDefaultStatus(call, null)
+                }
+                result.success(data.tojsonString())
+            }
+        }
+
     }
 
     private fun getUserProfile(call: MethodCall, result: MethodChannel.Result) {
