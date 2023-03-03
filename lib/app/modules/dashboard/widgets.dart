@@ -94,10 +94,13 @@ class RecentChatItem extends StatelessWidget {
                               ),
                             )
                           : ProfileTextImage(
-                              text: item.profileName.checkNull().isEmpty
+                              text:getRecentName(item),/* item.profileName.checkNull().isEmpty
                                   ? item.nickName.checkNull()
-                                  : item.profileName.checkNull(),
+                                  : item.profileName.checkNull(),*/
                             ),
+                      isGroup: item.isGroup.checkNull(),
+                      blocked: item.isBlockedMe.checkNull() || item.isAdminBlocked.checkNull(),
+                      unknown: (!item.isItSavedContact.checkNull() || item.isDeletedContact()),
                     ),
                     item.isConversationUnRead!
                         ? Positioned(
@@ -139,12 +142,12 @@ class RecentChatItem extends StatelessWidget {
                             children: [
                               spanTxt.isEmpty
                                   ? Text(
-                                      item.profileName.toString(),
+                                      getRecentName(item),
                                       style: titlestyle,
                                       maxLines: 1,
                                       overflow: TextOverflow.ellipsis,
                                     )
-                                  : spannableText(item.profileName.checkNull(),
+                                  : spannableText(getRecentName(item),//item.profileName.checkNull(),
                                       spanTxt, titlestyle),
                               Row(
                                 children: [
@@ -286,7 +289,8 @@ class RecentChatItem extends StatelessWidget {
                                                   builder: (context, data) {
                                                     if (data.hasData) {
                                                       return Text(
-                                                        "${data.data!.name.checkNull()} typing...",
+                                                        "${getName(data.data!).checkNull()} typing...",
+                                                        //"${data.data!.name.checkNull()} typing...",
                                                         style: typingstyle,
                                                         maxLines: 1,
                                                         overflow: TextOverflow

@@ -181,6 +181,9 @@ class StarredMessageHeader extends StatelessWidget {
               ? userProfile.mobileNumber.checkNull()
               : userProfile.name.checkNull(),
         ),
+        isGroup: userProfile.isGroupProfile.checkNull(),
+        blocked: userProfile.isBlockedMe.checkNull() || userProfile.isAdminBlocked.checkNull(),
+        unknown: (!userProfile.isItSavedContact.checkNull() || userProfile.isDeletedContact()),
       );
     } else {
       return ProfileTextImage(

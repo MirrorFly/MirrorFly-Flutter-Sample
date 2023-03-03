@@ -712,51 +712,70 @@ class ContactMessageView extends StatelessWidget {
     );
   }
 
+  Future<String?> getUserJid(ContactChatMessage contactChatMessage) async {
+    for (int i = 0; i < contactChatMessage.contactPhoneNumbers.length; i++) {
+      debugPrint("contactChatMessage.isChatAppUser[i]--> ${contactChatMessage.isChatAppUser[i]}");
+      if (contactChatMessage.isChatAppUser[i]) {
+        return await FlyChat.getJidFromPhoneNumber(contactChatMessage.contactPhoneNumbers[i],
+          (SessionManagement.getCountryCode() ?? "").replaceAll('+', ''));
+      }
+    }
+    return '';
+  }
+
   Widget getJidOfContact(ContactChatMessage? contactChatMessage) {
-    String? userJid;
+    // String? userJid;
     if (contactChatMessage == null ||
         contactChatMessage.contactPhoneNumbers.isEmpty) {
       return const SizedBox.shrink();
     }
-    for (int i = 0; i < contactChatMessage.contactPhoneNumbers.length; i++) {
-      debugPrint(
-          "contactChatMessage.isChatAppUser[i]--> ${contactChatMessage.isChatAppUser[i]}");
-      if (contactChatMessage.isChatAppUser[i]) {
-        FlyChat.getJidFromPhoneNumber(contactChatMessage.contactPhoneNumbers[i],
-                SessionManagement.getCountryCode() ?? "")
-            .then((value) {
-          userJid = value;
-          debugPrint("FlyChat.getJidFromPhoneNumber--> $value");
-          return userJid;
-        });
+    return FutureBuilder(
+      future: getUserJid(contactChatMessage),
+      builder: (context, snapshot) {
+        if(snapshot.hasError || !snapshot.hasData){
+          return const SizedBox.shrink();
+        }
+        var userJid = snapshot.data;
+        debugPrint("getJidOfContact--> $userJid");
+        return InkWell(
+          onTap: () {
+            (userJid != null && userJid.isNotEmpty)
+                ? sendToChatPage(userJid)
+                : showInvitePopup(contactChatMessage);
+          },
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Expanded(
+                  child: Center(
+                      child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: (userJid != null && userJid.isNotEmpty)
+                    ? const Text("Message")
+                    : const Text("Invite"),
+              ))),
+            ],
+          ),
+        );
       }
-    }
-    debugPrint("getJidOfContact--> $userJid");
-    return InkWell(
-      onTap: () {
-        (userJid != null && userJid!.isNotEmpty)
-            ? sendToChatPage(userJid!)
-            : showInvitePopup(contactChatMessage);
-      },
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Expanded(
-              child: Center(
-                  child: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: (userJid != null && userJid!.isNotEmpty)
-                ? const Text("Message")
-                : const Text("Invite"),
-          ))),
-        ],
-      ),
     );
   }
 
   sendToChatPage(String userJid) {
-    Get.toNamed(Routes.chat,
-        parameters: {'isFromStarred': 'true', "userJid": userJid});
+    // Get.back();
+    mirrorFlyLog('Get.currentRoute', Get.currentRoute);
+    if(Get.currentRoute==Routes.chat){
+      Get.back();
+      Future.delayed(const Duration(milliseconds: 500),(){
+        Get.toNamed(Routes.chat,
+            parameters: {'isFromStarred': 'true', "userJid": userJid});
+      });
+    }else {
+      Get.back();
+      sendToChatPage(userJid);
+      /*Get.toNamed(Routes.chat,
+          parameters: {'isFromStarred': 'true', "userJid": userJid});*/
+    }
   }
 
   showInvitePopup(ContactChatMessage contactChatMessage) {

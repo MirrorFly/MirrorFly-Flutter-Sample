@@ -3,6 +3,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
+import 'package:mirror_fly_demo/app/data/session_management.dart';
 import 'package:mirror_fly_demo/app/modules/chat/controllers/contact_controller.dart';
 
 import '../../../common/widgets.dart';
@@ -50,6 +51,16 @@ class ContactListView extends GetView<ContactController> {
                       : const Text('Contacts'),
           actions: [
             Visibility(
+              visible: controller.progressSpinner.value,
+              child:  const Center(
+                child: SizedBox(
+                  height: 20.0,
+                  width: 20.0,
+                  child: CircularProgressIndicator( color: iconColor,strokeWidth: 2,),
+                ),
+              ),
+            ),
+            Visibility(
               visible: controller.isSearchVisible,
               child: IconButton(
                   onPressed: () => controller.onSearchPressed(),
@@ -89,6 +100,21 @@ class ContactListView extends GetView<ContactController> {
                     onItemClick: () {
                       Get.toNamed(Routes.settings);
                     },
+                  ),
+                  CustomAction(
+                    visibleWidget: IconButton(
+                        onPressed: () {}, icon: const Icon(Icons.refresh)),
+                    overflowWidget: InkWell(
+                      child: const Text("Refresh"),
+                      onTap: (){
+                        controller.refreshContacts();
+                      },
+                    ),
+                    showAsAction: SessionManagement.isTrailLicence() ? ShowAsAction.never : ShowAsAction.gone,
+                    keyValue: 'Refresh',
+                    onItemClick: () {
+                      Get.toNamed(Routes.settings);
+                    },
                   )
                 ],
               ),
@@ -107,124 +133,131 @@ class ContactListView extends GetView<ContactController> {
                 child: const Icon(Icons.check))
             : const SizedBox.shrink(),
         body: Obx(() {
-          return SafeArea(
-            child: Stack(
-              children: [
-                Visibility(
-                  visible: !controller.isPageLoading.value && controller.usersList.isEmpty,
-                    child: const Center(child: Padding(
-                      padding: EdgeInsets.symmetric(vertical: 20.0),
-                      child: Text("No Contacts found"),
-                    ),)),
-                controller.isPageLoading.value
-                    ? const Center(
-                        child: Padding(
-                        padding: EdgeInsets.all(16.0),
-                        child: CircularProgressIndicator(),
-                      ))
-                    : ListView.builder(
-                        itemCount: controller.scrollable.value
-                            ? controller.usersList.length + 1
-                            : controller.usersList.length,
-                        controller: controller.scrollController,
-                        physics: const AlwaysScrollableScrollPhysics(),
-                        itemBuilder: (BuildContext context, int index) {
-                          if (index >= controller.usersList.length &&
-                              controller.usersList.isNotEmpty) {
-                            return const Center(
-                                child: CircularProgressIndicator());
-                          } else if (controller.usersList.isNotEmpty) {
-                            var item = controller.usersList[index];
-                            return Opacity(
-                              opacity: item.isBlocked.checkNull() ? 0.3 : 1.0,
-                              child: InkWell(
-                                child: Row(
-                                  children: [
-                                    Container(
-                                        margin: const EdgeInsets.only(
-                                            left: 19.0,
-                                            top: 10,
-                                            bottom: 10,
-                                            right: 10),
-                                        width: 50,
-                                        height: 50,
-                                        decoration: BoxDecoration(
-                                          color: item.image.checkNull().isEmpty
-                                              ? iconBgColor
-                                              : buttonBgColor,
-                                          shape: BoxShape.circle,
-                                        ),
-                                        child: ImageNetwork(
-                                          url: item.image.toString(),
-                                          width: 48,
-                                          height: 48,
-                                          clipOval: true,
-                                          errorWidget: item.name
-                                                  .checkNull()
-                                                  .isNotEmpty
-                                              ? ProfileTextImage(
-                                                  text:
-                                                      item.name.checkNull().isEmpty
-                                                          ? item.mobileNumber
-                                                              .checkNull()
-                                                          : item.name.checkNull(),
-                                                )
-                                              : const Icon(
-                                                  Icons.person,
-                                                  color: Colors.white,
-                                                ),
-                                        )),
-                                    Expanded(
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Text(
-                                            item.name.toString().checkNull() == ""
-                                                ? item.nickName.toString()
-                                                : item.name.toString(),
-                                            style: Theme.of(context)
-                                                .textTheme
-                                                .titleMedium,
+          return RefreshIndicator(
+            key: controller.refreshIndicatorKey,
+            onRefresh: (){
+              return Future(()=>controller.refreshContacts());
+            },
+            child: SafeArea(
+              child: Stack(
+                children: [
+                  Visibility(
+                    visible: !controller.isPageLoading.value && controller.usersList.isEmpty,
+                      child: const Center(child: Padding(
+                        padding: EdgeInsets.symmetric(vertical: 20.0),
+                        child: Text("No Contacts found"),
+                      ),)),
+                  controller.isPageLoading.value
+                      ? const Center(
+                          child: Padding(
+                          padding: EdgeInsets.all(16.0),
+                          child: CircularProgressIndicator(),
+                        ))
+                      : ListView.builder(
+                          itemCount: controller.scrollable.value
+                              ? controller.usersList.length + 1
+                              : controller.usersList.length,
+                          controller: controller.scrollController,
+                          physics: const AlwaysScrollableScrollPhysics(),
+                          itemBuilder: (BuildContext context, int index) {
+                            if (index >= controller.usersList.length &&
+                                controller.usersList.isNotEmpty) {
+                              return const Center(
+                                  child: CircularProgressIndicator());
+                            } else if (controller.usersList.isNotEmpty) {
+                              var item = controller.usersList[index];
+                              return Opacity(
+                                opacity: item.isBlocked.checkNull() ? 0.3 : 1.0,
+                                child: InkWell(
+                                  child: Row(
+                                    children: [
+                                      Container(
+                                          margin: const EdgeInsets.only(
+                                              left: 19.0,
+                                              top: 10,
+                                              bottom: 10,
+                                              right: 10),
+                                          width: 50,
+                                          height: 50,
+                                          decoration: BoxDecoration(
+                                            color: item.image.checkNull().isEmpty
+                                                ? iconBgColor
+                                                : buttonBgColor,
+                                            shape: BoxShape.circle,
                                           ),
-                                          // Text(
-                                          //   item.mobileNumber.toString(),
-                                          //   style: Theme.of(context)
-                                          //       .textTheme
-                                          //       .titleSmall,
-                                          // )
-                                          Text(
-                                            item.status.toString(),
-                                            style: Theme.of(context)
-                                                .textTheme
-                                                .titleSmall,
-                                          )
-                                        ],
+                                          child: ImageNetwork(
+                                            url: item.image.toString(),
+                                            width: 48,
+                                            height: 48,
+                                            clipOval: true,
+                                            errorWidget: getName(item)//item.nickName
+                                                    .checkNull()
+                                                    .isNotEmpty
+                                                ? ProfileTextImage(
+                                                    text:
+                                                        getName(item)/*item.nickName.checkNull().isEmpty
+                                                            ? item.mobileNumber
+                                                                .checkNull()
+                                                            : item.nickName.checkNull()*/,
+                                                  )
+                                                : const Icon(
+                                                    Icons.person,
+                                                    color: Colors.white,
+                                                  ),
+                                            blocked: item.isBlockedMe.checkNull() || item.isAdminBlocked.checkNull(),
+                                            unknown: (!item.isItSavedContact.checkNull() || item.isDeletedContact()),isGroup: item.isGroupProfile.checkNull(),
+                                          )),
+                                      Expanded(
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              getName(item),
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .titleMedium,
+                                              maxLines: 1,
+                                              overflow: TextOverflow.ellipsis,
+                                            ),
+                                            // Text(
+                                            //   item.mobileNumber.toString(),
+                                            //   style: Theme.of(context)
+                                            //       .textTheme
+                                            //       .titleSmall,
+                                            // )
+                                            Text(
+                                              item.status.toString(),
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .titleSmall,
+                                            )
+                                          ],
+                                        ),
                                       ),
-                                    ),
-                                    const Spacer(),
-                                    Visibility(
-                                      visible: controller.isCheckBoxVisible,
-                                      child: Checkbox(
-                                        value: controller.selectedUsersJIDList
-                                            .contains(item.jid),
-                                        onChanged: (value) {
-                                          controller.onListItemPressed(item);
-                                        },
+                                      Visibility(
+                                        visible: controller.isCheckBoxVisible,
+                                        child: Checkbox(
+                                          value: controller.selectedUsersJIDList
+                                              .contains(item.jid),
+                                          onChanged: (value) {
+                                            controller.onListItemPressed(item);
+                                          },
+                                        ),
                                       ),
-                                    ),
-                                  ],
+                                    ],
+                                  ),
+                                  onTap: () {
+                                    controller.onListItemPressed(item);
+                                  },
                                 ),
-                                onTap: () {
-                                  controller.onListItemPressed(item);
-                                },
-                              ),
-                            );
-                          } else {
-                            return const SizedBox();
-                          }
-                        })
-              ],
+                              );
+                            } else {
+                              return const SizedBox();
+                            }
+                          })
+                ],
+              ),
             ),
           );
         }),

@@ -12,10 +12,12 @@ import 'package:mirror_fly_demo/app/data/session_management.dart';
 import 'package:flysdk/flysdk.dart';
 import 'package:intl/intl.dart';
 import 'package:mirror_fly_demo/app/modules/archived_chats/archived_chat_list_controller.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 import '../../../common/de_bouncer.dart';
 import '../../../common/widgets.dart';
 import '../../../data/apputils.dart';
+import '../../../data/permissions.dart';
 import '../../../routes/app_pages.dart';
 
 class DashboardController extends FullLifeCycleController
@@ -924,7 +926,7 @@ class DashboardController extends FullLifeCycleController
   RxBool clearVisible = false.obs;
   final _mainuserList = <Profile>[];
   var userlistScrollController = ScrollController();
-  var scrollable = true.obs;
+  var scrollable = SessionManagement.isTrailLicence().obs;
   var isPageLoading = false.obs;
   final _userList = <Profile>[].obs;
 
@@ -979,12 +981,21 @@ class DashboardController extends FullLifeCycleController
   Future<void> filterUserlist() async {
     if (await AppUtils.isNetConnected()) {
       searching = true;
-      FlyChat.getUserList(pageNum, search.text.trim().toString()).then((value) {
+      var future = (SessionManagement.isTrailLicence())
+          ? FlyChat.getUserList(pageNum, search.text.trim().toString())
+          : FlyChat.getRegisteredUsers(false);
+      future.then((value) {
+      // FlyChat.getUserList(pageNum, search.text.trim().toString()).then((value) {
         if (value != null) {
           var list = userListFromJson(value);
           if (list.data != null) {
-            scrollable(list.data!.length == 20);
-            _userList(list.data);
+            if(SessionManagement.isTrailLicence()) {
+              scrollable(list.data!.length == 20);
+              _userList(list.data);
+            }else{
+              _userList(list.data!.where((element) => element.nickName.checkNull().toLowerCase().contains(search.text.trim().toString().toLowerCase())).toList());
+              // scrollable(false);
+            }
           } else {
             scrollable(false);
           }
@@ -1048,15 +1059,15 @@ class DashboardController extends FullLifeCycleController
     });
   }
 
-  Future<Map<ProfileData?, ChatMessageModel?>?> getProfileAndMessage(String jid,
+  Future<Map<Profile?, ChatMessageModel?>?> getProfileAndMessage(String jid,
       String mid) async {
-    var value = await FlyChat.getProfileLocal(jid, false);
+    var value = await getProfileDetails(jid);//FlyChat.getProfileLocal(jid, false);
     var value2 = await FlyChat.getMessageOfId(mid);
     if (value != null && value2 != null) {
-      var data = profileDataFromJson(value);
+      var data = value; //profileDataFromJson(value);
       var data2 = sendMessageModelFromJson(value2);
-      var map = <ProfileData?, ChatMessageModel?>{}; //{0,searchMessageItem};
-      map.putIfAbsent(data.data, () => data2);
+      var map = <Profile?, ChatMessageModel?>{}; //{0,searchMessageItem};
+      map.putIfAbsent(data, () => data2);
       return map;
     }
     return null;
@@ -1160,6 +1171,7 @@ class DashboardController extends FullLifeCycleController
         });
       }
     }
+    checkContactSyncPermission();
   }
 
   void getProfileDetail(context, RecentChatData chatItem, int index) {
@@ -1237,6 +1249,9 @@ class DashboardController extends FullLifeCycleController
                             fontSize: 75,
                             radius: 0,
                           ),
+                          isGroup: profile.isGroupProfile.checkNull(),
+                          blocked: profile.isBlockedMe.checkNull() || profile.isAdminBlocked.checkNull(),
+                          unknown: (!profile.isItSavedContact.checkNull() || profile.isDeletedContact()),
                         );
                       }),
                     ),
@@ -1306,4 +1321,46 @@ class DashboardController extends FullLifeCycleController
       ),
     );
   }
+
+  Future<void> gotoContacts() async {
+    if(SessionManagement.isTrailLicence()) {
+      Get.toNamed(Routes.contacts, arguments: {
+        "forward": false,
+        "group": false,
+        "groupJid": ""
+      });
+    }else{
+      var contactPermissionHandle = await AppPermission.checkPermission(
+          Permission.contacts, contactPermission,
+          Constants.contactSyncPermission);
+      if (contactPermissionHandle) {
+        Get.toNamed(Routes.contacts, arguments: {
+          "forward": false,
+          "group": false,
+          "groupJid": ""
+        });
+      }
+    }
+  }
+
+  void onContactSyncComplete(bool result) {
+    getRecentChatList();
+    getArchivedChatsList();
+    filterUserlist();
+    if(isSearching.value){
+      lastInputValue='';
+      onChange(search.text.toString());
+    }
+  }
+
+  void checkContactSyncPermission() {
+    Permission.contacts.isGranted.then((value) {
+      if(!value){
+        _userList.clear();
+        _userList.refresh();
+      }
+    });
+  }
 }
+
+

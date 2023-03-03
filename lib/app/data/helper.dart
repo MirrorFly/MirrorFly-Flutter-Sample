@@ -9,6 +9,7 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
 import 'package:flysdk/flysdk.dart';
+import 'package:mirror_fly_demo/app/data/session_management.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import 'apputils.dart';
@@ -58,8 +59,6 @@ class Helper {
         barrierColor: Colors.transparent);
   }
 
-
-
   static void showAlert(
       {String? title,
       required String message,
@@ -67,11 +66,21 @@ class Helper {
       Widget? content}) {
     Get.dialog(
       AlertDialog(
-        title: title != null ? Text(title, style: const TextStyle(fontSize: 17),) : const SizedBox.shrink(),
+        title: title != null
+            ? Text(
+                title,
+                style: const TextStyle(fontSize: 17),
+              )
+            : const SizedBox.shrink(),
         contentPadding: title != null
             ? const EdgeInsets.only(top: 15, right: 25, left: 25, bottom: 0)
             : const EdgeInsets.only(top: 0, right: 25, left: 25, bottom: 5),
-        content: content ?? Text(message, style: const TextStyle(color: textHintColor, fontWeight: FontWeight.normal),),
+        content: content ??
+            Text(
+              message,
+              style: const TextStyle(
+                  color: textHintColor, fontWeight: FontWeight.normal),
+            ),
         contentTextStyle:
             const TextStyle(color: textHintColor, fontWeight: FontWeight.w500),
         actions: actions,
@@ -200,7 +209,7 @@ class Helper {
   }
 }
 
-bool checkFileUploadSize(String path, String mediaType){
+bool checkFileUploadSize(String path, String mediaType) {
   var file = File(path);
   int sizeInBytes = file.lengthSync();
   debugPrint("file size --> $sizeInBytes");
@@ -209,11 +218,14 @@ bool checkFileUploadSize(String path, String mediaType){
 
   // debugPrint(getFileSizeText(sizeInBytes.toString()));
 
-  if(mediaType == Constants.mImage && sizeInMb < 10){
+  if (mediaType == Constants.mImage && sizeInMb < 10) {
     return true;
-  }else if((mediaType == Constants.mAudio || mediaType == Constants.mVideo || mediaType == Constants.mDocument) && sizeInMb < 20){
+  } else if ((mediaType == Constants.mAudio ||
+          mediaType == Constants.mVideo ||
+          mediaType == Constants.mDocument) &&
+      sizeInMb < 20) {
     return true;
-  }else{
+  } else {
     return false;
   }
 }
@@ -300,10 +312,13 @@ extension BooleanParsing on bool? {
 }
 
 extension MemberParsing on Member {
+  bool isDeletedContact() {
+    return contactType == "deleted_contact";
+  }
   String getUsername() {
     var value = FlyChat.getProfileDetails(jid.checkNull(), false);
     var str = Profile.fromJson(json.decode(value.toString()));
-    return str.name.checkNull();
+    return getName(str);//str.name.checkNull();
   }
 
   Future<Profile> getProfileDetails() async {
@@ -321,6 +336,7 @@ Future<Profile> getProfileDetails(String jid) async {
   // var str = Profile.fromJson(json.decode(value.toString()));
   return profile;
 }
+
 Future<ChatMessageModel> getMessageOfId(String mid) async {
   var value = await FlyChat.getMessageOfId(mid.checkNull());
   debugPrint("message--> $value");
@@ -337,6 +353,12 @@ extension ProfileParesing on Profile {
     return (isGroupProfile ?? false)
         ? Constants.typeGroupChat
         : Constants.typeChat;
+  }
+  bool isItSavedContact(){
+    return contactType == 'live_contact';
+  }
+  bool isUnknownContact(){
+    return !isDeletedContact() && !isItSavedContact() && !isGroupProfile.checkNull();
   }
 }
 
@@ -372,11 +394,21 @@ extension ChatmessageParsing on ChatMessageModel {
 
 extension RecentChatParsing on RecentChatData {
   String getChatType() {
-    return (isGroup!)
+    return (isGroup.checkNull())
         ? Constants.typeGroupChat
-        : (isBroadCast!)
+        : (isBroadCast.checkNull())
             ? Constants.typeBroadcastChat
             : Constants.typeChat;
+  }
+  bool isDeletedContact() {
+    return contactType == "deleted_contact";
+  }
+
+  bool isItSavedContact(){
+    return contactType == 'live_contact';
+  }
+  bool isUnknownContact(){
+    return !isDeletedContact() && !isItSavedContact() && !isGroup.checkNull();
   }
 }
 
@@ -448,21 +480,19 @@ String setDateHourFormat(int format, int hours) {
 }
 
 bool equalsWithYesterday(DateTime srcDate, String day) {
-  if(day == Constants.yesterday) {
+  if (day == Constants.yesterday) {
     var messageDate = DateFormat('yyyy/MM/dd').format(srcDate);
-    var yesterdayDate = DateFormat('yyyy/MM/dd').format(DateTime.now().subtract(const Duration(days: 1,
-        hours: 0,
-        minutes: 0,
-        seconds: 0,
-        milliseconds: 0)));
+    var yesterdayDate = DateFormat('yyyy/MM/dd').format(DateTime.now().subtract(
+        const Duration(
+            days: 1, hours: 0, minutes: 0, seconds: 0, milliseconds: 0)));
     return yesterdayDate == messageDate;
-  }else{
+  } else {
     return equalsWithToday(srcDate, day);
   }
 }
 
 bool equalsWithToday(DateTime srcDate, String day) {
-  var today =  DateFormat('yyyy/MM/dd').format(DateTime.now());
+  var today = DateFormat('yyyy/MM/dd').format(DateTime.now());
   var messageDate = DateFormat('yyyy/MM/dd').format(srcDate);
   return messageDate == today;
 }
@@ -610,4 +640,85 @@ Future<RecentChatData?> getRecentChatOfJid(String jid) async {
   } else {
     return null;
   }
+}
+String getName(Profile item) {
+  if (SessionManagement.isTrailLicence()) {
+    /*return item.name.toString().checkNull().isEmpty
+        ? item.nickName.toString()
+        : item.name.toString();*/
+    return item.name.checkNull().isEmpty
+        ? (item.nickName.checkNull().isEmpty
+            ? item.mobileNumber.checkNull()
+            : item.nickName.checkNull())
+        : item.name.checkNull();
+  } else {
+   if(item.jid.checkNull()==SessionManagement.getUserJID()){
+     return Constants.you;
+   }else if(item.isDeletedContact()){
+     mirrorFlyLog('isDeletedContact', item.isDeletedContact().toString());
+     return Constants.deletedUser;
+   }else if(item.isUnknownContact() || item.nickName.checkNull().isEmpty){
+     mirrorFlyLog('isUnknownContact', item.isUnknownContact().toString());
+     return item.mobileNumber.checkNull();
+   }else{
+     mirrorFlyLog('nickName', item.nickName.toString());
+     return item.nickName.checkNull();
+   }
+    /*var status = true;
+    if(status) {
+      return item.nickName
+          .checkNull()
+          .isEmpty
+          ? (item.name
+          .checkNull()
+          .isEmpty
+          ? item.mobileNumber.checkNull()
+          : item.name.checkNull())
+          : item.nickName.checkNull();
+    }else{
+      return item.mobileNumber.checkNull();
+    }*/
+  }
+}
+
+String getRecentName(RecentChatData item) {
+  if (SessionManagement.isTrailLicence()) {
+    /*return item.name.toString().checkNull().isEmpty
+        ? item.nickName.toString()
+        : item.name.toString();*/
+    return item.profileName.checkNull().isEmpty
+        ? item.nickName.checkNull()
+        : item.profileName.checkNull();
+  } else {
+    if(item.jid.checkNull()==SessionManagement.getUserJID()){
+      return Constants.you;
+    }else if(item.isDeletedContact()){
+      mirrorFlyLog('isDeletedContact', item.isDeletedContact().toString());
+      return Constants.deletedUser;
+    }else if(item.isUnknownContact() || item.nickName.checkNull().isEmpty){
+      mirrorFlyLog('isUnknownContact', item.jid.toString());
+      return getMobileNumberFromJid(item.jid.checkNull());
+    }else{
+      mirrorFlyLog('nickName', item.nickName.toString());
+      return item.nickName.checkNull();
+    }
+  }
+}
+String getMobileNumberFromJid(String jid){
+  var str = jid.split('@');
+  return str[0];
+}
+
+String getDisplayImage(RecentChatData recentChat) {
+  var imageUrl = recentChat.profileImage ?? Constants.emptyString;
+  if (recentChat.isBlockedMe.checkNull() ||
+      recentChat.isAdminBlocked.checkNull()) {
+    imageUrl = Constants.emptyString;
+    //drawable = CustomDrawable(context).getDefaultDrawable(recentChat)
+  } else if (!recentChat.isItSavedContact.checkNull() ||
+      recentChat.isDeletedContact()) {
+    imageUrl = recentChat.profileImage ?? Constants.emptyString;
+    // drawable = CustomDrawable(context).getDefaultDrawable(recentChat)
+  }
+  return imageUrl;
 }

@@ -203,8 +203,12 @@ class LoginController extends GetxController {
     showLoading();
     try {
       await _auth.signInWithCredential(credential).then((value) {
-        sendTokenToServer();// for Mirrorfly user list purpose verify the user
-        //registerAccount();//for get registered user purpose
+        if(SessionManagement.isTrailLicence()) {
+          sendTokenToServer(); // for Mirrorfly user list purpose verify the user
+        }else{
+          validateDeviceToken('');
+          //registerAccount();//for get registered user purpose
+        }
         stopTimer();
         mirrorFlyLog("sign in ", value.toString());
       }).catchError((error) {
@@ -235,7 +239,7 @@ class LoginController extends GetxController {
 
   verifyTokenWithServer(String token) async {
     if(await AppUtils.isNetConnected()) {
-      var userName = (/*countryCode! + */mobileNumber.text.toString()).replaceAll("+", "");
+      var userName = (countryCode!.replaceAll('+', '') + mobileNumber.text.toString()).replaceAll("+", "");
       //make api call
       FlyChat.verifyToken(userName, token).then((value) {
         if (value != null) {
@@ -290,7 +294,7 @@ class LoginController extends GetxController {
     if (await AppUtils.isNetConnected()) {
       showLoading();
       FlyChat.registerUser(
-        countryCode! + mobileNumber.text, token:SessionManagement.getToken().checkNull())
+        countryCode!.replaceAll('+', '') + mobileNumber.text, token:SessionManagement.getToken().checkNull())
           .then((value) {
         if (value.contains("data")) {
           var userData = registerModelFromJson(value); //message
@@ -300,7 +304,7 @@ class LoginController extends GetxController {
           // SessionManagement.setNotificationSound(true);
           // userData.data.
           enableArchive();
-          SessionManagement.setCountryCode(countryCode ?? "");
+          SessionManagement.setCountryCode((countryCode ?? "").replaceAll('+', ''));
           setUserJID(userData.data!.username!);
         }
       }).catchError((error) {

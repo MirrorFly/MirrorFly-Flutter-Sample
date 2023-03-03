@@ -21,8 +21,15 @@ class SessionManagement {
     await _preferences.setBool("login", val);
   }
 
-  static Future setSync(bool val) async {
-    await _preferences.setBool("synced", val);
+
+  static setIsTrailLicence(bool trail) async {
+    await _preferences.setBool("IS_TRIAL_LICENSE", trail);
+  }
+  static Future setInitialContactSync(bool val) async {
+    await _preferences.setBool("is_initial_contact_sync_done", val);
+  }
+  static Future setSyncDone(bool val) async {
+    await _preferences.setBool("is_contact_sync_done", val);
   }
 
   static Future setMediaEndPoint(String mediaEndpoint) async {
@@ -157,4 +164,7 @@ class SessionManagement {
   static bool isAutoDownloadEnable() => _preferences.getBool("MediaAutoDownload") ?? false;
   static String getTranslationLanguage() => _preferences.getString("LanguageName") ?? "English";
   static String getTranslationLanguageCode() => _preferences.getString("LanguageCode") ?? "en";
+  static bool isInitialContactSyncDone() => _preferences.getBool("is_initial_contact_sync_done") ?? false;
+  static bool isContactSyncDone() => _preferences.getBool("is_contact_sync_done") ?? false;
+  static bool isTrailLicence() => _preferences.getBool("IS_TRIAL_LICENSE") ?? false;
 }

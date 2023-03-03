@@ -213,6 +213,12 @@ const String arrowUp = "assets/logos/arrow_up.svg";
 
 const String mediaBg = "assets/logos/ic_baloon.svg";
 
+//contact sync
+const String syncIcon = "assets/logos/sync.svg";
+const String contactSyncBg = "assets/logos/contact_sync_bg.png";
+const String contactBookFill = "assets/logos/contacts_book_fill.svg";
+
+
 //About us
 const String titleContactMsg =
     "Mirror Fly is a ready-to-go messaging solution for building enterprise-grade real-time chat IM applications that meet various degrees of requirements like team discussion, data sharing, task delegation and information handling on the go.";
