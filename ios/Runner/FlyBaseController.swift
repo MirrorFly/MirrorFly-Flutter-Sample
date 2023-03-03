@@ -717,6 +717,8 @@ class FlyBaseController: NSObject{
                 FlySdkMethodCalls.getMessageOfId(call: call, result: result)
             case "insertNewProfileStatus":
                 FlySdkMethodCalls.insertNewProfileStatus(call: call, result: result)
+            case "IS_TRIAL_LICENSE":
+                FlySdkMethodCalls.isTrailLicence(call: call, result: result)
             default:
                 result(FlutterMethodNotImplemented)
             }

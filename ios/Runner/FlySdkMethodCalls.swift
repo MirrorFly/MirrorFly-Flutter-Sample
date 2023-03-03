@@ -592,6 +592,9 @@ import FlyDatabase
         let insertStatus: () = ChatManager.saveProfileStatus(statusText: status, currentStatus: true)
         print("Insert New Status Result-->\(insertStatus)")
     }
+    static func isTrailLicence(call: FlutterMethodCall, result: @escaping FlutterResult){
+       result(true)
+    }
     
     static func setMyProfileStatus(call: FlutterMethodCall, result: @escaping FlutterResult){
         let args = call.arguments as! Dictionary<String, Any>
