@@ -485,4 +485,8 @@ class GroupInfoController extends GetxController {
   onChanged(){
     count.value = (25 - nameController.text.length);
   }
+
+  void userDeletedHisProfile(String jid) {
+    userUpdatedHisProfile(jid);
+  }
 }

@@ -387,7 +387,7 @@ class ArchivedChatListController extends GetxController {
     clearAllChatSelection();
   }
 
-  void userUpdatedHisProfile(jid) {
+  void userUpdatedHisProfile(String jid) {
     updateRecentChatAdapter(jid);
   }
 
@@ -402,5 +402,9 @@ class ArchivedChatListController extends GetxController {
         }
       }
     }
+  }
+
+  void userDeletedHisProfile(String jid) {
+    userUpdatedHisProfile(jid);
   }
 }

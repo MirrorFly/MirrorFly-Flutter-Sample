@@ -317,7 +317,35 @@ abstract class BaseController {
     }
   }
 
-  void userDeletedHisProfile(result) {}
+  void userDeletedHisProfile(String jid) {
+    if (Get.isRegistered<DashboardController>()) {
+      Get.find<DashboardController>().userDeletedHisProfile(jid);
+    }
+    if (Get.isRegistered<ChatController>()) {
+      Get.find<ChatController>().userDeletedHisProfile(jid);
+    }
+    if (Get.isRegistered<ArchivedChatListController>()) {
+      Get.find<ArchivedChatListController>().userDeletedHisProfile(jid);
+    }
+    if (Get.isRegistered<ContactController>()) {
+      Get.find<ContactController>().userDeletedHisProfile(jid);
+    }
+    if (Get.isRegistered<BlockedListController>()) {
+      Get.find<BlockedListController>().userDeletedHisProfile(jid);
+    }
+    if (Get.isRegistered<ForwardChatController>()) {
+      Get.find<ForwardChatController>().userDeletedHisProfile(jid);
+    }
+    if (Get.isRegistered<ChatInfoController>()) {
+      Get.find<ChatInfoController>().userDeletedHisProfile(jid);
+    }
+    if (Get.isRegistered<GroupInfoController>()) {
+      Get.find<GroupInfoController>().userDeletedHisProfile(jid);
+    }
+    if (Get.isRegistered<StarredMessagesController>()) {
+      Get.find<StarredMessagesController>().userDeletedHisProfile(jid);
+    }
+  }
 
   void userProfileFetched(result) {}
 

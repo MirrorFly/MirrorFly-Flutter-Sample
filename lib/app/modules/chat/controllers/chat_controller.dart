@@ -2551,4 +2551,8 @@ class ChatController extends FullLifeCycleController
     userUpdatedHisProfile(profile.jid.checkNull());
   }
 
+  void userDeletedHisProfile(String jid) {
+    userUpdatedHisProfile(jid);
+  }
+
 }

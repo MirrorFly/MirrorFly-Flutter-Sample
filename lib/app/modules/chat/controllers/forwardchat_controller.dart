@@ -459,4 +459,8 @@ class ForwardChatController extends GetxController {
       }
     });
   }
+
+  void userDeletedHisProfile(String jid) {
+    userUpdatedHisProfile(jid);
+  }
 }

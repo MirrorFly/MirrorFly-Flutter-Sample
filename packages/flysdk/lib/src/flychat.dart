@@ -1500,7 +1500,7 @@ class FlyChat {
   static Stream<dynamic> get userCameOnline =>
       userCameOnlineChannel.receiveBroadcastStream().cast();
 
-  static Stream<dynamic> get userDeletedHisProfile =>
+  static Stream<String> get userDeletedHisProfile =>
       userDeletedHisProfileChannel.receiveBroadcastStream().cast();
 
   static Stream<dynamic> get userProfileFetched =>

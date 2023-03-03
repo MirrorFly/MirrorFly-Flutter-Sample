@@ -479,4 +479,8 @@ class ContactController extends FullLifeCycleController
       }
     }
   }
+
+  void userDeletedHisProfile(String jid) {
+    userUpdatedHisProfile(jid);
+  }
 }

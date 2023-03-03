@@ -890,7 +890,7 @@ class DashboardController extends FullLifeCycleController
   }*/
 
 
-  void userUpdatedHisProfile(jid) {
+  void userUpdatedHisProfile(String jid) {
     updateRecentChatAdapter(jid);
     updateRecentChatAdapterSearch(jid);
     updateProfileSearch(jid);
@@ -1355,6 +1355,10 @@ class DashboardController extends FullLifeCycleController
         _userList.refresh();
       }
     });
+  }
+
+  void userDeletedHisProfile(String jid) {
+    userUpdatedHisProfile(jid);
   }
 }
 

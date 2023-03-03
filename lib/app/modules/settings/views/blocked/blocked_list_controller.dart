@@ -80,4 +80,8 @@ class BlockedListController extends GetxController {
           child: const Text("YES")),
     ]);
   }
+
+  void userDeletedHisProfile(String jid) {
+    userUpdatedHisProfile(jid);
+  }
 }
