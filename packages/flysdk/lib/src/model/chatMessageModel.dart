@@ -327,7 +327,11 @@ class ReplyParentChatMessage {
     messageId: json["messageId"],
     messageSentTime: json["messageSentTime"],
     messageTextContent: json["messageTextContent"],
-    messageType: json["messageType"],
+    messageType: Platform.isAndroid ? json["messageType"]
+        : json["messageTextContent"].toString().isNotEmpty ? "TEXT"
+        : json["mediaChatMessage"] != null && json["mediaChatMessage"]["mediaFileType"].toString().isNotEmpty ?  json["mediaChatMessage"]["mediaFileType"].toString().toUpperCase() == "FILE" ? "DOCUMENT" : json["mediaChatMessage"]["mediaFileType"].toString().toUpperCase()
+        : json["contactChatMessage"] != null ? "CONTACT"
+        : json["locationChatMessage"] != null ? "LOCATION" : null,
     senderNickName: json["senderNickName"],
     senderUserName: json["senderUserName"],
     locationChatMessage: json["locationChatMessage"] == null ? null : LocationChatMessage.fromJson(json["locationChatMessage"]),

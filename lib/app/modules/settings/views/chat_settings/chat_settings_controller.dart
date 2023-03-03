@@ -39,6 +39,7 @@ class ChatSettingsController extends GetxController {
     getLastSeenSettingsEnabled();
     getBusyStatusPreference();
     getMyBusyStatus();
+
   }
   Future<void> getArchivedSettingsEnabled() async {
     await FlyChat.isArchivedSettingsEnabled().then((value) => _archiveEnabled(value));
@@ -145,13 +146,15 @@ class ChatSettingsController extends GetxController {
     bool busyStatusVal = !busyStatusPreference.value;
     debugPrint("busy_status_val ${busyStatusVal.toString()}");
     busyStatusPreference(busyStatusVal);
-    await FlyChat.enableDisableBusyStatus(busyStatusVal);
+    await FlyChat.enableDisableBusyStatus(busyStatusVal).then((value) => getMyBusyStatus());
   }
 
   void getMyBusyStatus() {
     FlyChat.getMyBusyStatus().then((value) {
       var userBusyStatus = json.decode(value);
       debugPrint("Busy Status ${userBusyStatus["status"]}");
+      // var busyStatus = userBusyStatus["status"];
+      // if(busyStatus)
       busyStatus(userBusyStatus["status"]);
 
     });

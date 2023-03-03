@@ -351,8 +351,8 @@ class GroupInfoController extends GetxController {
       hideLoader();
       if(value!=null){
         if(value){
-          profile_.value.name=name;
-          profile_.value.nickName=name;
+          profile_.value.name = name;
+          profile_.value.nickName = name;
           profile_.refresh();
         }
       }

@@ -390,10 +390,12 @@ class ChatController extends FullLifeCycleController
         FlyChat.sendTextMessage(
                 messageController.text, profile.jid.toString(), replyMessageId)
             .then((value) {
+              mirrorFlyLog("text message", value);
           messageController.text = "";
           isUserTyping(false);
           clearMessage();
           ChatMessageModel chatMessageModel = sendMessageModelFromJson(value);
+          mirrorFlyLog("inserting chat message", chatMessageModel.replyParentChatMessage?.messageType ?? "value is null");
           chatList.insert(0, chatMessageModel);
           scrollToBottom();
         });
@@ -1865,12 +1867,15 @@ class ChatController extends FullLifeCycleController
       final index = chatList.indexWhere(
           (message) => message.messageId == chatMessageModel.messageId);
       debugPrint("ChatScreen Message Status Update index of search $index");
+      debugPrint("messageID--> $index");
       if (!index.isNegative) {
+        debugPrint("messageID--> replacing the value");
         // Helper.hideLoading();
         // chatMessageModel.isSelected=chatList[index].isSelected;
         chatList[index] = chatMessageModel;
         chatList.refresh();
       } else {
+        debugPrint("messageID--> Inserting the value");
         chatList.insert(0, chatMessageModel);
         unreadCount.value++;
         // scrollToBottom();

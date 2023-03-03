@@ -75,10 +75,8 @@ class ReplyingMessageHeader extends StatelessWidget {
                 children: [
                   getReplyImageHolder(
                       context,
-                      chatMessage.messageType.toUpperCase(),
-                      chatMessage.mediaChatMessage?.mediaThumbImage,
-                      chatMessage.locationChatMessage,
-                      70),
+                      chatMessage,
+                      70, true),
                   GestureDetector(
                     onTap: onCancel,
                     child: const Padding(
@@ -208,27 +206,35 @@ getReplyMessage(
       return const SizedBox.shrink();
   }
 }
-
+// chatMessage.messageType.toUpperCase(),
+// chatMessage.mediaChatMessage?.mediaThumbImage,
+// chatMessage.locationChatMessage,
 getReplyImageHolder(
     BuildContext context,
-    String messageType,
-    String? mediaThumbImage,
-    LocationChatMessage? locationChatMessage,
-    double size) {
-  switch (messageType) {
+    ChatMessageModel chatMessage,
+    double size, bool isNotChatItem) {
+  debugPrint("reply header--> ${chatMessage.messageType.toUpperCase()}");
+  switch (chatMessage.messageType.toUpperCase()) {
     case Constants.mImage:
+      debugPrint("reply header--> IMAGE");
       return ClipRRect(
         borderRadius: BorderRadius.circular(5),
-        child: imageFromBase64String(mediaThumbImage!, context, size, size),
+        child: imageFromBase64String(chatMessage.mediaChatMessage!.mediaThumbImage, context, size, size),
       );
     case Constants.mLocation:
-      return getLocationImage(locationChatMessage, size, size);
+      return getLocationImage(chatMessage.locationChatMessage, size, size);
     case Constants.mVideo:
       return ClipRRect(
         borderRadius: BorderRadius.circular(5),
-        child: imageFromBase64String(mediaThumbImage!, context, size, size),
+        child: imageFromBase64String(chatMessage.mediaChatMessage!.mediaThumbImage, context, size, size),
+      );
+    case Constants.mDocument:
+      return isNotChatItem ? SizedBox(height: size) : ClipRRect(
+        borderRadius: BorderRadius.circular(5),
+        child: getImageHolder(chatMessage.mediaChatMessage!.mediaFileName.checkNull(), size),
       );
     default:
+      debugPrint("reply header--> DEFAULT");
       return SizedBox(
         height: size,
       );
@@ -275,11 +281,8 @@ class ReplyMessageHeader extends StatelessWidget {
           ),
           getReplyImageHolder(
               context,
-              chatMessage.replyParentChatMessage!.messageType,
-              chatMessage
-                  .replyParentChatMessage?.mediaChatMessage?.mediaThumbImage,
-              chatMessage.replyParentChatMessage?.locationChatMessage,
-              55),
+              chatMessage,
+              55, false),
         ],
       ),
     );
@@ -851,7 +854,7 @@ class DocumentMessageView extends StatelessWidget {
               padding: const EdgeInsets.all(8.0),
               child: Row(
                 children: [
-                  getImageHolder(chatMessage.mediaChatMessage!.mediaFileName),
+                  getImageHolder(chatMessage.mediaChatMessage!.mediaFileName, 30),
                   const SizedBox(
                     width: 12,
                   ),
@@ -933,55 +936,55 @@ class DocumentMessageView extends StatelessWidget {
       ),
     );
   }
+}
 
-  Widget getImageHolder(String mediaFileName) {
-    String result = mediaFileName.split('.').last;
-    debugPrint("File Type ==> $result");
-    switch (result) {
-      case Constants.pdf:
-        return SvgPicture.asset(
-          pdfImage,
-          width: 30,
-          height: 30,
-        );
-      case Constants.ppt:
-        return SvgPicture.asset(
-          pptImage,
-          width: 30,
-          height: 30,
-        );
-      case Constants.xls:
-        return SvgPicture.asset(
-          xlsImage,
-          width: 30,
-          height: 30,
-        );
-      case Constants.xlsx:
-        return SvgPicture.asset(
-          xlsxImage,
-          width: 30,
-          height: 30,
-        );
-      case Constants.doc:
-      case Constants.docx:
-        return SvgPicture.asset(
-          docImage,
-          width: 30,
-          height: 30,
-        );
-      case Constants.apk:
-        return SvgPicture.asset(
-          apkImage,
-          width: 30,
-          height: 30,
-        );
-      default:
-        return SvgPicture.asset(
-          docImage,
-          width: 30,
-          height: 30,
-        );
-    }
+Widget getImageHolder(String mediaFileName, double size) {
+  String result = mediaFileName.split('.').last;
+  debugPrint("File Type ==> $result");
+  switch (result) {
+    case Constants.pdf:
+      return SvgPicture.asset(
+        pdfImage,
+        width: size,
+        height: size,
+      );
+    case Constants.ppt:
+      return SvgPicture.asset(
+        pptImage,
+        width: size,
+        height: size,
+      );
+    case Constants.xls:
+      return SvgPicture.asset(
+        xlsImage,
+        width: size,
+        height: size,
+      );
+    case Constants.xlsx:
+      return SvgPicture.asset(
+        xlsxImage,
+        width: size,
+        height: size,
+      );
+    case Constants.doc:
+    case Constants.docx:
+      return SvgPicture.asset(
+        docImage,
+        width: 30,
+        height: 30,
+      );
+    case Constants.apk:
+      return SvgPicture.asset(
+        apkImage,
+        width: 30,
+        height: 30,
+      );
+    default:
+      return SvgPicture.asset(
+        docImage,
+        width: 30,
+        height: 30,
+      );
   }
 }
 
@@ -1011,7 +1014,11 @@ class VideoMessageView extends StatelessWidget {
             Get.toNamed(Routes.videoPlay, arguments: {
               "filePath": chatMessage.mediaChatMessage!.mediaLocalStoragePath,
             });
+          }else{
+            debugPrint("file is video but condition failed");
           }
+        }else{
+          debugPrint("File is not video");
         }
     }
   }
@@ -1039,6 +1046,25 @@ class VideoMessageView extends StatelessWidget {
                   borderRadius: BorderRadius.circular(15),
                   child: imageFromBase64String(
                       mediaMessage.mediaThumbImage, context, null, null),
+                ),
+              ),
+              Positioned(
+                top: 10,
+              left: 10,
+                child: Row(
+                  children: [
+                    SvgPicture.asset(
+                      mVideoIcon,
+                      fit: BoxFit.contain,
+                      color: Colors.white,
+                    ),
+                    const SizedBox(width: 5,),
+                    Text(
+                      Helper.durationToString(
+                          Duration(microseconds: mediaMessage.mediaDuration)), style: const TextStyle(
+                        fontSize: 11, color: Colors.white),
+                    ),
+                  ],
                 ),
               ),
               getImageOverlay(chatMessage,
@@ -1126,29 +1152,34 @@ class ImageMessageView extends StatelessWidget {
                   ? Positioned(
                       bottom: 8,
                       right: 10,
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
+                      child: Stack(
                         children: [
-                          chatMessage.isMessageStarred
-                              ? SvgPicture.asset(starSmallIcon)
-                              : const SizedBox.shrink(),
-                          const SizedBox(
-                            width: 5,
-                          ),
-                          getMessageIndicator(
-                              chatMessage.messageStatus,
-                              chatMessage.isMessageSentByMe,
-                              chatMessage.messageType),
-                          const SizedBox(
-                            width: 4,
-                          ),
-                          Text(
-                            getChatTime(
-                                context, chatMessage.messageSentTime.toInt()),
-                            style: TextStyle(
-                                fontSize: 11, color: chatMessage.isMessageSentByMe
-                                ? durationTextColor
-                                : textHintColor),
+                          SvgPicture.asset(mediaBg),
+                          Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              chatMessage.isMessageStarred
+                                  ? SvgPicture.asset(starSmallIcon)
+                                  : const SizedBox.shrink(),
+                              const SizedBox(
+                                width: 5,
+                              ),
+                              getMessageIndicator(
+                                  chatMessage.messageStatus,
+                                  chatMessage.isMessageSentByMe,
+                                  chatMessage.messageType),
+                              const SizedBox(
+                                width: 4,
+                              ),
+                              Text(
+                                getChatTime(
+                                    context, chatMessage.messageSentTime.toInt()),
+                                style: TextStyle(
+                                    fontSize: 11, color: chatMessage.isMessageSentByMe
+                                    ? durationTextColor
+                                    : textButtonColor),
+                              ),
+                            ],
                           ),
                         ],
                       ),

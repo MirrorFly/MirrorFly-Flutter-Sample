@@ -67,6 +67,8 @@ let onFailure_channel = "contus.mirrorfly/onFailure"
 let onProgressChanged_channel = "contus.mirrorfly/onProgressChanged"
 let onSuccess_channel = "contus.mirrorfly/onSuccess"
 
+var networkConnected = false;
+
 
 class FlyBaseController: NSObject{
     
@@ -161,9 +163,30 @@ class FlyBaseController: NSObject{
          BackupManager.shared.backupDelegate = self
          BackupManager.shared.restoreDelegate = self
 //         iCloudmanager.iCloudDelegate = self
+         
+         NetworkMonitor.shared.startMonitoring()
+         NotificationCenter.default.addObserver(self, selector: #selector(showOfflineDeviceUI(notification:)), name: NSNotification.Name.connectivityStatus, object: nil)
         
     }
+    
+    func applicationWillTerminate(){
+        NetworkMonitor.shared.stopMonitoring()
+        NotificationCenter.default.removeObserver(self, name: NSNotification.Name.connectivityStatus, object: nil)
+    }
 
+    @objc func showOfflineDeviceUI(notification: Notification) {
+        print("AppDelegate Internet listener called")
+            if NetworkMonitor.shared.isConnected {
+//                if(!networkConnected){
+                    print("calling Auto Download")
+                    ChatManager.shared.startAutoDownload()
+//                }
+                networkConnected = true;
+            } else {
+                networkConnected = false;
+            }
+        }
+    
      func registerEventChannels(controller: FlutterViewController){
         if (self.messageReceivedStreamHandler == nil) {
             self.messageReceivedStreamHandler = MessageReceivedStreamHandler()
@@ -720,6 +743,10 @@ class FlyBaseController: NSObject{
         }
     }
     
+    func applicationWillResignActive(_ application: UIApplication) {
+       
+    }
+    
 }
 
 
@@ -965,6 +992,8 @@ extension FlyBaseController : MessageEventsDelegate, ConnectionEventDelegate, Lo
     func onMessageReceived(message: FlyCommon.ChatMessage, chatJid: String) {
 
         print("Message Received Update--->")
+        print("Message Received Update--->\(message.messageId)")
+        print("Message Received Update--->\(message.messageTextContent)")
         print(JSONSerializer.toJson(message))
 
         var messageReceivedJson = JSONSerializer.toJson(message)

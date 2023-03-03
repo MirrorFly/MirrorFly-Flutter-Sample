@@ -146,12 +146,15 @@ abstract class BaseController {
     }
 
     if (Get.isRegistered<ChatController>()) {
+      debugPrint("basecontroller ChatController registered");
       Get.find<ChatController>().onMessageReceived(chatMessageModel);
     }
     if (Get.isRegistered<DashboardController>()) {
+      debugPrint("basecontroller DashboardController registered");
       Get.find<DashboardController>().onMessageReceived(chatMessageModel);
     }
     if (Get.isRegistered<ArchivedChatListController>()) {
+      debugPrint("basecontroller ArchivedChatListController registered");
       Get.find<ArchivedChatListController>().onMessageReceived(chatMessageModel);
     }
 

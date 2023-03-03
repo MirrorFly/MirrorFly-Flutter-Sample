@@ -1258,8 +1258,10 @@ import FlyDatabase
         
         FlyMessenger.cancelMediaUploadOrDownload(messageId: messageId){ isSuccess in
             if isSuccess{
+                print("cancel media upload true")
                 result(true)
             }else{
+                print("cancel media upload false")
                 result(false)
             }
         }
