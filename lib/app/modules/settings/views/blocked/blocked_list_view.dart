@@ -24,7 +24,7 @@ class BlockedListView extends GetView<BlockedListController> {
             itemCount: controller.blockedUsers.length,
               itemBuilder: (context, index) {
             var item = controller.blockedUsers[index];
-            return memberItem(name :item.name.checkNull(),image: item.image.checkNull(),status: item.mobileNumber.checkNull(),onTap: (){
+            return memberItem(name :getMemberName(item).checkNull(),image: item.image.checkNull(),status: item.mobileNumber.checkNull(),onTap: (){
               if (item.jid.checkNull().isNotEmpty) {
                 controller.unBlock(item);
               }

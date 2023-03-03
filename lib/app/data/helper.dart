@@ -326,6 +326,12 @@ extension MemberParsing on Member {
     var str = Profile.fromJson(json.decode(value.toString()));
     return str;
   }
+  bool isItSavedContact(){
+    return contactType == 'live_contact';
+  }
+  bool isUnknownContact(){
+    return !isDeletedContact() && !isItSavedContact() && !isGroupProfile.checkNull();
+  }
 }
 
 Future<Profile> getProfileDetails(String jid) async {
@@ -702,6 +708,46 @@ String getRecentName(RecentChatData item) {
       mirrorFlyLog('nickName', item.nickName.toString());
       return item.nickName.checkNull();
     }
+  }
+}
+
+String getMemberName(Member item) {
+  if (SessionManagement.isTrailLicence()) {
+    /*return item.name.toString().checkNull().isEmpty
+        ? item.nickName.toString()
+        : item.name.toString();*/
+    return item.name.checkNull().isEmpty
+        ? (item.nickName.checkNull().isEmpty
+        ? item.mobileNumber.checkNull()
+        : item.nickName.checkNull())
+        : item.name.checkNull();
+  } else {
+    if(item.jid.checkNull()==SessionManagement.getUserJID()){
+      return Constants.you;
+    }else if(item.isDeletedContact()){
+      mirrorFlyLog('isDeletedContact', item.isDeletedContact().toString());
+      return Constants.deletedUser;
+    }else if(item.isUnknownContact() || item.nickName.checkNull().isEmpty){
+      mirrorFlyLog('isUnknownContact', item.isUnknownContact().toString());
+      return item.mobileNumber.checkNull();
+    }else{
+      mirrorFlyLog('nickName', item.nickName.toString());
+      return item.nickName.checkNull();
+    }
+    /*var status = true;
+    if(status) {
+      return item.nickName
+          .checkNull()
+          .isEmpty
+          ? (item.name
+          .checkNull()
+          .isEmpty
+          ? item.mobileNumber.checkNull()
+          : item.name.checkNull())
+          : item.nickName.checkNull();
+    }else{
+      return item.mobileNumber.checkNull();
+    }*/
   }
 }
 String getMobileNumberFromJid(String jid){

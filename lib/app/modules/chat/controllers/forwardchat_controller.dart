@@ -391,7 +391,7 @@ class ForwardChatController extends GetxController {
     return groupParticipantsName;
   }
 
-  void userUpdatedHisProfile(jid) {
+  void userUpdatedHisProfile(String jid) {
     if (jid.toString().isNotEmpty) {
       updateRecentChatAdapter(jid);
       updateProfile(jid);

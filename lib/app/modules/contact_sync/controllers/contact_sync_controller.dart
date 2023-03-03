@@ -43,8 +43,8 @@ class ContactSyncController extends GetxController
 
   @override
   void dispose() {
-    animController.dispose();
     super.dispose();
+    animController.dispose();
   }
 
   Rx<bool> syncing = false.obs;
