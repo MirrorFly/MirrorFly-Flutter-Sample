@@ -1433,6 +1433,12 @@ import FlyDatabase
         let jid = args["jid"] as? String ?? nil
         let recentChat = ChatManager.getRecentChatOf(jid:jid!)
         
+        if(recentChat == nil){
+            result(nil)
+        }
+        
+        print("recentChat-->\(recentChat)")
+        
         var recentChatJson = JSONSerializer.toJson(recentChat as Any)
         recentChatJson = recentChatJson.replacingOccurrences(of: "{\"some\":", with: "")
         recentChatJson = recentChatJson.replacingOccurrences(of: "}}", with: "}")

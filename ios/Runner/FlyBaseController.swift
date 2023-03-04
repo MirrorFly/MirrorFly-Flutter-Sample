@@ -162,6 +162,7 @@ class FlyBaseController: NSObject{
          ChatManager.shared.availableFeaturesDelegate = self
          BackupManager.shared.backupDelegate = self
          BackupManager.shared.restoreDelegate = self
+         ChatManager.disableLocalNotification()
 //         iCloudmanager.iCloudDelegate = self
          
          NetworkMonitor.shared.startMonitoring()

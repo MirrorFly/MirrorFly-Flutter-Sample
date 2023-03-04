@@ -414,21 +414,30 @@ abstract class BaseController {
 
   Future<void> showLocalNotification(ChatMessageModel chatMessageModel) async {
     debugPrint("showing local notification");
-    final String? notificationUri = SessionManagement.getNotificationUri();
-    final UriAndroidNotificationSound uriSound = UriAndroidNotificationSound(notificationUri!);
-    debugPrint("notificationUri--> $notificationUri");
-    int id = DateTime.now().millisecond;
-    debugPrint("id--> $id");
-    AndroidNotificationDetails androidNotificationDetails =
-    AndroidNotificationDetails(chatMessageModel.messageId, 'MirrorFly',
-        importance: Importance.max,
-        priority: Priority.high,
-        sound: uriSound,
-        styleInformation: const DefaultStyleInformation(true, true));
-    NotificationDetails notificationDetails =
-    NotificationDetails(android: androidNotificationDetails);
-    await flutterLocalNotificationsPlugin.show(
-        id, chatMessageModel.senderUserName, chatMessageModel.messageTextContent, notificationDetails, payload: chatMessageModel.chatUserJid);
+    if(!chatMessageModel.isMessageSentByMe) {
+      final String? notificationUri = SessionManagement.getNotificationUri();
+      final UriAndroidNotificationSound uriSound = UriAndroidNotificationSound(
+          notificationUri!);
+      debugPrint("notificationUri--> $notificationUri");
+      int id = DateTime
+          .now()
+          .millisecond;
+      debugPrint("id--> $id");
+      AndroidNotificationDetails androidNotificationDetails =
+      AndroidNotificationDetails(chatMessageModel.messageId, 'MirrorFly',
+          importance: Importance.max,
+          priority: Priority.high,
+          sound: uriSound,
+          styleInformation: const DefaultStyleInformation(true, true));
+      NotificationDetails notificationDetails =
+      NotificationDetails(android: androidNotificationDetails);
+      await flutterLocalNotificationsPlugin.show(
+          id, chatMessageModel.senderUserName,
+          chatMessageModel.messageTextContent, notificationDetails,
+          payload: chatMessageModel.chatUserJid);
+    }else{
+      debugPrint("self sent message don't need notification");
+    }
   }
 
   void onLogout(isLogout) {
