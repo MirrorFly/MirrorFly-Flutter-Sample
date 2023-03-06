@@ -67,6 +67,8 @@ let onFailure_channel = "contus.mirrorfly/onFailure"
 let onProgressChanged_channel = "contus.mirrorfly/onProgressChanged"
 let onSuccess_channel = "contus.mirrorfly/onSuccess"
 
+var networkConnected = false;
+
 
 class FlyBaseController: NSObject{
     
@@ -160,10 +162,32 @@ class FlyBaseController: NSObject{
          ChatManager.shared.availableFeaturesDelegate = self
          BackupManager.shared.backupDelegate = self
          BackupManager.shared.restoreDelegate = self
+         ChatManager.disableLocalNotification()
 //         iCloudmanager.iCloudDelegate = self
+         
+         NetworkMonitor.shared.startMonitoring()
+         NotificationCenter.default.addObserver(self, selector: #selector(showOfflineDeviceUI(notification:)), name: NSNotification.Name.connectivityStatus, object: nil)
         
     }
+    
+    func applicationWillTerminate(){
+        NetworkMonitor.shared.stopMonitoring()
+        NotificationCenter.default.removeObserver(self, name: NSNotification.Name.connectivityStatus, object: nil)
+    }
 
+    @objc func showOfflineDeviceUI(notification: Notification) {
+        print("AppDelegate Internet listener called")
+            if NetworkMonitor.shared.isConnected {
+//                if(!networkConnected){
+                    print("calling Auto Download")
+                    ChatManager.shared.startAutoDownload()
+//                }
+                networkConnected = true;
+            } else {
+                networkConnected = false;
+            }
+        }
+    
      func registerEventChannels(controller: FlutterViewController){
         if (self.messageReceivedStreamHandler == nil) {
             self.messageReceivedStreamHandler = MessageReceivedStreamHandler()
@@ -546,7 +570,7 @@ class FlyBaseController: NSObject{
             case "updateRecentChatPinStatus":
                 FlySdkMethodCalls.updateRecentChatPinStatus(call: call, result: result)
                 
-            case "deleteRecentChat"://need to discuss there is 2 delete recent chat functions
+            case "deleteRecentChat":
                 FlySdkMethodCalls.deleteRecentChat(call: call, result: result)
             case "recentChatPinnedCount":
                 FlySdkMethodCalls.recentChatPinnedCount(call: call, result: result)
@@ -694,6 +718,16 @@ class FlyBaseController: NSObject{
                 FlySdkMethodCalls.getMessageOfId(call: call, result: result)
             case "insertNewProfileStatus":
                 FlySdkMethodCalls.insertNewProfileStatus(call: call, result: result)
+            case "IS_TRIAL_LICENSE":
+                FlySdkMethodCalls.isTrailLicence(call: call, result: result)
+            case "makeAdmin":
+                FlySdkMethodCalls.makeAdmin(call: call, result: result)
+            case "updateGroupName":
+                FlySdkMethodCalls.updateGroupName(call: call, result: result)
+            case "updateGroupProfileImage":
+                FlySdkMethodCalls.updateGroupProfileImage(call: call, result: result)
+            case "removeGroupProfileImage":
+                FlySdkMethodCalls.removeGroupProfileImage(call: call, result: result)
             default:
                 result(FlutterMethodNotImplemented)
             }
@@ -718,6 +752,10 @@ class FlyBaseController: NSObject{
             print("Disconnecting Chat Manager")
             ChatManager.disconnect()
         }
+    }
+    
+    func applicationWillResignActive(_ application: UIApplication) {
+       
     }
     
 }
@@ -965,6 +1003,8 @@ extension FlyBaseController : MessageEventsDelegate, ConnectionEventDelegate, Lo
     func onMessageReceived(message: FlyCommon.ChatMessage, chatJid: String) {
 
         print("Message Received Update--->")
+        print("Message Received Update--->\(message.messageId)")
+        print("Message Received Update--->\(message.messageTextContent)")
         print(JSONSerializer.toJson(message))
 
         var messageReceivedJson = JSONSerializer.toJson(message)
@@ -992,7 +1032,11 @@ extension FlyBaseController : MessageEventsDelegate, ConnectionEventDelegate, Lo
         
         let chatMessage = ChatManager.getMessageOfId(messageId: messageId)
         print("Message Status Update--->\(String(describing: chatMessage))")
-        print("getMessageOfId==>", ChatManager.getMessageOfId(messageId: messageId)?.messageTextContent as Any)
+        print("getMessageOfId==>", chatMessage?.messageTextContent as Any)
+        
+        if(chatMessage == nil){
+            return
+        }
         var chatMessageJson = JSONSerializer.toJson(chatMessage as Any)
 
         chatMessageJson = chatMessageJson.replacingOccurrences(of: "{\"some\":", with: "")

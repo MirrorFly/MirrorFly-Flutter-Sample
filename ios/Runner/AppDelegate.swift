@@ -84,7 +84,14 @@ let googleApiKey = "AIzaSyDnjPEs86MRsnFfW1sVPKvMWjqQRnSa7Ts"
       return super.application(application, didFinishLaunchingWithOptions: launchOptions)
   }
 
+    override func applicationWillResignActive(_ application: UIApplication) {
+        
+    }
     
+    override func applicationWillTerminate(_ application: UIApplication) {
+        print("#appDelegate app terminated")
+        FlyBaseController().applicationWillTerminate()
+    }
     override func applicationDidBecomeActive(_ application: UIApplication) {
         print("#appDelegate applicationDidBecomeActive")
         FlyBaseController().applicationDidBecomeActive()

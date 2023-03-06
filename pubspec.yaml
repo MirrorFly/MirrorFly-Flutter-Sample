@@ -1,8 +1,8 @@
 name: mirror_fly_demo
-version: 2.1.8+11
-build_release_date: Jan 20
+version: 2.2.1+14
+build_release_date: Mar 1
 publish_to: none
-description: A new Flutter project.
+description: A MirrorFly Flutter Sample Application.
 environment: 
   sdk: '>=2.18.0 <3.0.0'
 

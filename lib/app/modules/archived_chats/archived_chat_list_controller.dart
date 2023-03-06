@@ -224,8 +224,8 @@ class ArchivedChatListController extends GetxController {
 
   updateArchiveRecentChat(String jid) {
     mirrorFlyLog("checkArchiveList", jid);
-    final index = archivedChats.indexWhere((chat) => chat.jid == jid);
     getRecentChatOfJid(jid).then((recent) {
+      final index = archivedChats.indexWhere((chat) => chat.jid == jid);
       if (recent != null) {
         /*if(!recent.isChatArchived.checkNull()) {
           if (index.isNegative) {
@@ -380,9 +380,8 @@ class ArchivedChatListController extends GetxController {
   itemsDelete() {
     // debugPrint('selectedChatsPosition : ${selectedChatsPosition.join(',')}');
     FlyChat.deleteRecentChats(selectedChats);
-    for (var element in selectedChatsPosition) {
-      // FlyChat.updateArchiveUnArchiveChat(selectedChats[element], false);
-      archivedChats.removeAt(element);
+    for (var element in selectedChats) {
+      archivedChats.removeWhere((e) => e.jid == element);
     }
     clearAllChatSelection();
   }

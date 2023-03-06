@@ -7,6 +7,7 @@ import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
 
 import 'package:mirror_fly_demo/app/modules/dashboard/widgets.dart';
+import '../data/session_management.dart';
 import 'constants.dart';
 import 'main_controller.dart';
 
@@ -150,7 +151,7 @@ class ImageNetwork extends GetView<MainController> {
             );
           },*/
         placeholder: (context, string) {
-          if(!(blocked || unknown)){
+          if(!(blocked || (unknown && !SessionManagement.isTrailLicence()))){
             if(errorWidget !=null){
               return errorWidget!;
             }
@@ -179,7 +180,10 @@ class ImageNetwork extends GetView<MainController> {
               _deleteImageFromCache(url);
             }
           }
-          if(!(blocked || unknown)){
+          debugPrint("image blocked--> $blocked");
+          debugPrint("image unknown--> $unknown");
+
+          if(!(blocked || (unknown && !SessionManagement.isTrailLicence()))){
             if(errorWidget !=null){
               return errorWidget!;
             }
@@ -203,7 +207,7 @@ class ImageNetwork extends GetView<MainController> {
         imageBuilder: (context, provider) {
           return clipOval
               ? ClipOval(
-                  child: !(blocked || unknown) ? Image(
+                  child: !(blocked || (unknown && !SessionManagement.isTrailLicence())) ? Image(
                   image: provider,
                   fit: BoxFit.fill,
                 ) : Image.asset(
@@ -214,7 +218,7 @@ class ImageNetwork extends GetView<MainController> {
                   ),)
               : InkWell(
                   onTap: onTap,
-                  child: !(blocked || unknown) ? Image(
+                  child: !(blocked || (unknown && !SessionManagement.isTrailLicence())) ? Image(
                     image: provider,
                     fit: BoxFit.fill,
                   ) : Image.asset(

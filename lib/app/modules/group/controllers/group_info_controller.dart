@@ -178,6 +178,7 @@ class GroupInfoController extends GetxController {
 
   getGroupMembers(bool? server){
     FlyChat.getGroupMembersList(profile.jid.checkNull(),server).then((value) {
+      mirrorFlyLog("getGroupMembersList", value);
       if(value!=null){
         var list = profileFromJson(value);
         groupMembers.value=(list);
@@ -352,8 +353,8 @@ class GroupInfoController extends GetxController {
       hideLoader();
       if(value!=null){
         if(value){
-          profile_.value.name=name;
-          profile_.value.nickName=name;
+          profile_.value.name = name;
+          profile_.value.nickName = name;
           profile_.refresh();
         }
       }

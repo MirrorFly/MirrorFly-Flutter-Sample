@@ -2839,11 +2839,7 @@ open class FlyBaseController(activity: FlutterActivity) : MethodChannel.MethodCa
         val name = call.argument<String>("name") ?: ""
         GroupManager.updateGroupName(jid, name, object : ChatActionListener {
             override fun onResponse(isSuccess: Boolean, message: String) {
-                if (isSuccess) {
-                    result.success(true)
-                } else {
-                    result.success(false)
-                }
+                result.success(isSuccess)
             }
         })
     }
