@@ -212,10 +212,13 @@ const String forwardMedia = "assets/logos/forward_media.svg";
 const String arrowDown = "assets/logos/arrow_down.svg";
 const String arrowUp = "assets/logos/arrow_up.svg";
 
+const String mediaBg = "assets/logos/ic_baloon.svg";
+
 //contact sync
 const String syncIcon = "assets/logos/sync.svg";
 const String contactSyncBg = "assets/logos/contact_sync_bg.png";
 const String contactBookFill = "assets/logos/contacts_book_fill.svg";
+const String emailContactIcon = "assets/logos/emailcontact_icon.svg";
 
 
 //About us
@@ -565,6 +568,7 @@ class Constants {
       "To help you connect with friends and family, allow Mirrorfly access to your contacts.";
   static const String contactSyncPermission =
       "MirrorFly will continuously upload your contacts to its encrypted servers to let you discover and connect with your friends. Your contacts are uploaded using MirrorFly private contact discovery which means they are end-to-end encrypted and secured.";
+
   static const String audioPermission =
       "To send audio messages, allow MirrorFly access to your Microphone.";
 

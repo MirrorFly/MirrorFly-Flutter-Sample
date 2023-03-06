@@ -21,6 +21,7 @@ allprojects {
         maven {
             url "https://repo.mirrorfly.com/snapshot/"
         }
+        //mavenLocal()
     }
 }
 

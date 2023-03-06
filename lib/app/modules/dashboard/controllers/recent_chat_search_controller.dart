@@ -195,8 +195,8 @@ class RecentChatSearchController extends GetxController {
       var recentChatListWithArchived =
           List<RecentChatData>.from(js.map((x) => RecentChatData.fromJson(x)));
       for (var recentChat in recentChatListWithArchived) {
-        if (recentChat.profileName != null &&
-            recentChat.profileName!
+        if (getRecentName(recentChat).isNotEmpty &&
+            getRecentName(recentChat)
                     .toLowerCase()
                     .contains(search.text.trim().toString().toLowerCase()) ==
                 true) {
@@ -240,9 +240,9 @@ class RecentChatSearchController extends GetxController {
       if (profileDetails != null) {
         var filterProfileList = profileDetails.where((it) =>
             !jidList.contains(it.jid) &&
-            it.name!.contains(search.text.trim().toString()) == true);
+            getName(it).contains(search.text.trim().toString()) == true);
         filterProfileList.toList().sort((a, b) {
-          return a.name!.toLowerCase().compareTo(b.name!.toLowerCase());
+          return getName(a).toLowerCase().compareTo(getName(b).toLowerCase());
         });
         filteredContactList(filterProfileList.toList());
         update(filteredContactList);
@@ -287,7 +287,7 @@ class RecentChatSearchController extends GetxController {
       String jid, String mid) async {
     var value = await getProfileDetails(jid);//FlyChat.getProfileLocal(jid, false);
     var value2 = await FlyChat.getMessageOfId(mid);
-    if (value != null && value2 != null) {
+    if (value2 != null) {
       var data = value;// profileDataFromJson(value);
       var data2 = sendMessageModelFromJson(value2);
       var map = <Profile?, ChatMessageModel?>{}; //{0,searchMessageItem};

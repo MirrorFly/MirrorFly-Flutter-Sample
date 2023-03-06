@@ -111,6 +111,7 @@ class FlyChat {
     try {
       res = await mirrorFlyMethodChannel
           .invokeMethod<bool>('syncContacts', {"is_first_time": isfirsttime});
+      debugPrint('syncContacts $res');
       return res;
     } on PlatformException catch (e) {
       debugPrint("Platform Exception ===> $e");
@@ -136,12 +137,12 @@ class FlyChat {
     }
   }
 
-  static Future<String?> contactSyncStateValue() async {
-    String? response;
+  static Future<bool> contactSyncStateValue() async {
+    bool response=false;
     try {
       response = await mirrorFlyMethodChannel
-          .invokeMethod<String>('contactSyncStateValue');
-      debugPrint("contactSyncState Result ==> $response");
+          .invokeMethod<bool>('contactSyncStateValue') ?? false;
+      debugPrint("contactSyncStateValue Result ==> $response");
       return response;
     } on PlatformException catch (e) {
       debugPrint("Platform Exception ===> $e");
@@ -353,7 +354,7 @@ class FlyChat {
   }
 
   static Future<bool?> deleteProfileStatus(
-      num id, String status, bool isCurrentStatus) async {
+      String id, String status, bool isCurrentStatus) async {
     bool? res;
     try {
       res = await mirrorFlyMethodChannel
@@ -1484,7 +1485,7 @@ class FlyChat {
   static Stream<dynamic> get onAdminBlockedUser =>
       onAdminBlockedUserChannel.receiveBroadcastStream().cast();
 
-  static Stream<dynamic> get onContactSyncComplete =>
+  static Stream<bool> get onContactSyncComplete =>
       onContactSyncCompleteChannel.receiveBroadcastStream().cast();
 
   static Stream<dynamic> get onLoggedOut =>
@@ -1499,7 +1500,7 @@ class FlyChat {
   static Stream<dynamic> get userCameOnline =>
       userCameOnlineChannel.receiveBroadcastStream().cast();
 
-  static Stream<dynamic> get userDeletedHisProfile =>
+  static Stream<String> get userDeletedHisProfile =>
       userDeletedHisProfileChannel.receiveBroadcastStream().cast();
 
   static Stream<dynamic> get userProfileFetched =>
@@ -1764,13 +1765,29 @@ class FlyChat {
     }
   }
 
-  static Future<dynamic> setMyProfileStatus(String status) async {
+  static Future<dynamic> setMyProfileStatus(String status, [String? statusId]) async {
     //updateProfileStatus
     dynamic profileResponse;
     try {
       profileResponse = await mirrorFlyMethodChannel
-          .invokeMethod('setMyProfileStatus', {"status": status});
+          .invokeMethod('setMyProfileStatus', {"status": status, "statusId": statusId});
       debugPrint("setMyProfileStatus Result ==> $profileResponse");
+      return profileResponse;
+    } on PlatformException catch (e) {
+      debugPrint("Platform Exception ===> $e");
+      rethrow;
+    } on Exception catch (error) {
+      debugPrint("Exception ==> $error");
+      rethrow;
+    }
+  }
+
+  static Future<dynamic> insertNewProfileStatus(String status) async {
+    dynamic profileResponse;
+    try {
+      profileResponse = await mirrorFlyMethodChannel
+          .invokeMethod('insertNewProfileStatus', {"status": status});
+      debugPrint("insertNewProfileStatus Result ==> $profileResponse");
       return profileResponse;
     } on PlatformException catch (e) {
       debugPrint("Platform Exception ===> $e");
@@ -3068,6 +3085,36 @@ class FlyChat {
       jid = await mirrorFlyMethodChannel
           .invokeMethod<String?>('getJidFromPhoneNumber', {"mobileNumber": mobileNumber , "countryCode": countryCode});
       return jid;
+    } on PlatformException catch (e) {
+      debugPrint("Platform Exception ===> $e");
+      rethrow;
+    } on Exception catch (error) {
+      debugPrint("Exception ==> $error");
+      rethrow;
+    }
+  }
+  static Future<bool?> isTrailLicence() async {
+    bool? val = true;
+    try {
+      val = await mirrorFlyMethodChannel
+          .invokeMethod<bool?>('IS_TRIAL_LICENSE');
+      debugPrint('isTrailLicence : $val');
+      return val;
+    } on PlatformException catch (e) {
+      debugPrint("Platform Exception ===> $e");
+      rethrow;
+    } on Exception catch (error) {
+      debugPrint("Exception ==> $error");
+      rethrow;
+    }
+  }
+  static Future<dynamic> getNonChatUsers() async {
+    dynamic val;
+    try {
+      val = await mirrorFlyMethodChannel
+          .invokeMethod('getNonChatUsers');
+      debugPrint('getNonChatUsers : $val');
+      return val;
     } on PlatformException catch (e) {
       debugPrint("Platform Exception ===> $e");
       rethrow;

@@ -1,5 +1,4 @@
 // import 'package:firebase_messaging/firebase_messaging.dart';
-import 'dart:convert';
 
 import 'package:flutter/material.dart';
 
@@ -36,7 +35,7 @@ import 'package:google_maps_flutter_platform_interface/google_maps_flutter_platf
 //   PushNotifications.onMessage(message);
 // }
 bool shouldUseFirebaseEmulator = false;
-dynamic nonChatUsers = [];
+// dynamic nonChatUsers = [];
 Future<void> main() async {
   //Get.put<NetworkManager>(NetworkManager());
 // Require Hybrid Composition mode on Android.
@@ -52,8 +51,8 @@ Future<void> main() async {
     debugPrint("notification value ===> $value");
     SessionManagement.setChatJid(value.checkNull());
   });
-  var nonchat = await FlyChat.getNonChatUsers();
-  nonChatUsers = json.decode(nonchat.toString());
+  // var nonchat = await FlyChat.getNonChatUsers();
+  // nonChatUsers = json.decode(nonchat.toString());
   FlyChat.isTrailLicence().then((value) => SessionManagement.setIsTrailLicence(value.checkNull()));
   FlyChat.cancelNotifications();
   if (!kIsWeb) {
@@ -118,7 +117,7 @@ String getInitialRoute() {
             .checkNull()
             .isEmpty) {
           if(!SessionManagement.isTrailLicence()) {
-              mirrorFlyLog("nonChatUsers", nonChatUsers.toString());
+              // mirrorFlyLog("nonChatUsers", nonChatUsers.toString());
               mirrorFlyLog("SessionManagement.isContactSyncDone()", SessionManagement.isContactSyncDone().toString());
               if (!SessionManagement.isContactSyncDone() /*|| nonChatUsers.isEmpty*/) {
                 return AppPages.contactSync;

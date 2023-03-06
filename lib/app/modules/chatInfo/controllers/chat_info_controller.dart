@@ -149,4 +149,8 @@ class ChatInfoController extends GetxController {
   void onContactSyncComplete(bool result) {
     userUpdatedHisProfile(profile.jid);
   }
+
+  void userDeletedHisProfile(String jid) {
+    userUpdatedHisProfile(jid);
+  }
 }

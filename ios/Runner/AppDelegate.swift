@@ -8,20 +8,16 @@ import FirebaseAuth
 import Firebase
 
 
-var BASE_URL = "https://api-preprod-sandbox.mirrorfly.com/api/v1/"
-var LICENSE_KEY = "please enter your mirrorfly license key"
-let XMPP_DOMAIN = "xmpp-preprod-sandbox.mirrorfly.com"
-let XMPP_PORT = 5222
-let SOCKETIO_SERVER_HOST = "https://signal-preprod-sandbox.mirrorfly.com/"
-let JANUS_URL = "wss://janus.mirrorfly.com"
-//let CONTAINER_ID = "group.com.mirror.flyflutter"
-let CONTAINER_ID = "group.com.mirrorfly.qa"
-let ENABLE_CONTACT_SYNC = false
-let IS_LIVE = false
-let WEB_LOGIN_URL = "https://webchat-preprod-sandbox.mirrorfly.com/"
-let IS_MOBILE_NUMBER_LOGIN = true
 
-let googleApiKey = "please ennter your google api key"
+let BASE_URL = "https://api-preprod-sandbox.mirrorfly.com/api/v1/"
+    let LICENSE_KEY = "Please enter your License key"
+    let CONTAINER_ID = "group.com.mirrorfly.qa"
+    let ENABLE_CONTACT_SYNC = false
+    let IS_LIVE = false
+    let WEB_LOGIN_URL = "https://webchat-preprod-sandbox.mirrorfly.com/"
+    let IS_MOBILE_NUMBER_LOGIN = false
+
+let googleApiKey = "Please add your google api key"
 
 
 @UIApplicationMain
@@ -43,8 +39,8 @@ let googleApiKey = "please ennter your google api key"
       GMSServices.provideAPIKey(googleApiKey)
       
       // MARK:- Push Notification
-      clearPushNotifications()
-      registerForPushNotifications()
+//      clearPushNotifications()
+//      registerForPushNotifications()
       
       FirebaseApp.configure()
       if #available(iOS 10.0, *) {
@@ -70,7 +66,14 @@ let googleApiKey = "please ennter your google api key"
       return super.application(application, didFinishLaunchingWithOptions: launchOptions)
   }
 
+    override func applicationWillResignActive(_ application: UIApplication) {
+        
+    }
     
+    override func applicationWillTerminate(_ application: UIApplication) {
+        print("#appDelegate app terminated")
+        FlyBaseController().applicationWillTerminate()
+    }
     override func applicationDidBecomeActive(_ application: UIApplication) {
         print("#appDelegate applicationDidBecomeActive")
         FlyBaseController().applicationDidBecomeActive()

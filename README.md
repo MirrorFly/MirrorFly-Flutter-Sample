@@ -14,11 +14,11 @@ Check out the Official MirrorFly [Flutter docs](https://www.mirrorfly.com/docs/c
 ## Configuration
 
 ``
-buildConfigField 'String', 'LICENSE', '"Please enter your License key"'
+'LICENSE', '"Please enter your License key"'
 ``
 <br />
 
-Replace the licence with yours in android app level build.gradle file
+Replace the licence with yours in android app level build.gradle file and app delegate in iOS project
 
 <br />
 
@@ -28,6 +28,6 @@ android:value="{Please add your google api key}"/>``
 
 <br />
 
-Replace the google API key with yours in android manifest file
+Replace the google API key with yours in android manifest file and AppDelegate(googleApiKey) in iOS project 
 
 <br />

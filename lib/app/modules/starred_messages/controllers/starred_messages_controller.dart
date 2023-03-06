@@ -56,7 +56,7 @@ class StarredMessagesController extends GetxController {
       });
     }
   }
-  void userUpdatedHisProfile(jid) {
+  void userUpdatedHisProfile(String jid) {
     if (jid.isNotEmpty) {
       getProfileDetails(jid).then((value) {
         var messageIndex = starredChatList.indexWhere((element) => element.chatUserJid == jid);
@@ -576,6 +576,10 @@ class StarredMessagesController extends GetxController {
     }
     clearAllChatSelection();
     Share.shareXFiles(mediaPaths);
+  }
+
+  void userDeletedHisProfile(String jid) {
+    userUpdatedHisProfile(jid);
   }
 
 

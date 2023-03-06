@@ -121,6 +121,7 @@ class RecentChatItem extends StatelessWidget {
                               ),
                             ))
                         : const SizedBox(),
+                    item.isEmailContact().checkNull() ? Positioned(right:0,bottom:0,child: SvgPicture.asset(emailContactIcon)) : const SizedBox.shrink(),
                   ],
                 )),
           ),

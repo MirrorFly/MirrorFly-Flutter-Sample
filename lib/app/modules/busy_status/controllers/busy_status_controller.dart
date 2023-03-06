@@ -112,12 +112,13 @@ class BusyStatusController extends FullLifeCycleController with FullLifeCycleMix
 
   validateAndFinish() async {
     if (addStatusController.text.trim().isNotEmpty) {
-      if (await AppUtils.isNetConnected()) {
+      //FLUTTER-567
+      // if (await AppUtils.isNetConnected()) {
         Get.back(result: addStatusController.text.trim().toString());
-      } else {
-        toToast(Constants.noInternetConnection);
-        Get.back();
-      }
+      // } else {
+      //   toToast(Constants.noInternetConnection);
+      //   Get.back();
+      // }
     } else {
       toToast("Status cannot be empty");
     }

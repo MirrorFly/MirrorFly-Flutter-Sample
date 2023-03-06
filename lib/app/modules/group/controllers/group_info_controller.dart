@@ -125,6 +125,7 @@ class GroupInfoController extends GetxController {
           groupMembers.removeAt(index);
           groupMembers.refresh();
         }
+        loadGroupExistence();
       }
     }
   }
@@ -177,6 +178,7 @@ class GroupInfoController extends GetxController {
 
   getGroupMembers(bool? server){
     FlyChat.getGroupMembersList(profile.jid.checkNull(),server).then((value) {
+      mirrorFlyLog("getGroupMembersList", value);
       if(value!=null){
         var list = profileFromJson(value);
         groupMembers.value=(list);
@@ -351,8 +353,8 @@ class GroupInfoController extends GetxController {
       hideLoader();
       if(value!=null){
         if(value){
-          profile_.value.name=name;
-          profile_.value.nickName=name;
+          profile_.value.name = name;
+          profile_.value.nickName = name;
           profile_.refresh();
         }
       }
@@ -484,5 +486,13 @@ class GroupInfoController extends GetxController {
 
   onChanged(){
     count.value = (25 - nameController.text.length);
+  }
+
+  void userDeletedHisProfile(String jid) {
+    userUpdatedHisProfile(jid);
+  }
+
+  void loadGroupExistence() {
+    memberOfGroup();
   }
 }

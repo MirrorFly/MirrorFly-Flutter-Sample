@@ -69,7 +69,7 @@ class SettingsView extends GetView<SettingsController> {
                           style: TextStyle(color: textColor),
                           children: [
                             TextSpan(
-                                text: "Nov 2022",
+                                text: "March 2023",
                                 style: TextStyle(color: textHintColor))
                           ]),
                     ),

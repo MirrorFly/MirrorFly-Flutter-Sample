@@ -52,13 +52,15 @@ class MirrorFlyApplication : FlutterApplication() {
         ChatSDK.Builder()
             .setDomainBaseUrl(BuildConfig.SDK_BASE_URL)
             .setLicenseKey(BuildConfig.LICENSE)
-            .setIsTrialLicenceKey(true)
+            .setIsTrialLicenceKey(BuildConfig.IS_TRIAL_LICENSE)
+            .setMediaFolderName("MFlutter")
             .setGroupConfiguration(groupConfiguration)
             .build()
 
         //activity to open when use clicked from notification
         //activity to open when a user logout from the app.
-        ChatManager.startActivity = MainActivity::class.java
+        ChatManager.enableMobileNumberLogin(true) //for syncContact
+//        ChatManager.startActivity = MainActivity::class.java
 
         //initialize call sdk
         CallManager.init(this)

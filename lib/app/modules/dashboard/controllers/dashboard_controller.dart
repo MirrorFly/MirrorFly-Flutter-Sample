@@ -246,8 +246,9 @@ class DashboardController extends FullLifeCycleController
 
   updateRecentChat(String jid) {
     //updateArchiveRecentChat(jid);
-    final index = recentChats.indexWhere((chat) => chat.jid == jid);
     getRecentChatOfJid(jid).then((recent) {
+      final index = recentChats.indexWhere((chat) => chat.jid == jid);
+      debugPrint("dashboard index--> $index");
       if (recent != null) {
         if (!recent.isChatArchived.checkNull()) {
           if (index.isNegative) {
@@ -282,8 +283,8 @@ class DashboardController extends FullLifeCycleController
 
   updateArchiveRecentChat(String jid) {
     mirrorFlyLog("archived chat update", jid);
-    final index = archivedChats.indexWhere((chat) => chat.jid == jid);
     getRecentChatOfJid(jid).then((recent) {
+      final index = archivedChats.indexWhere((chat) => chat.jid == jid);
       if (recent != null) {
         //if(recent.isChatArchived.checkNull()) {
         if (index.isNegative) {
@@ -890,7 +891,7 @@ class DashboardController extends FullLifeCycleController
   }*/
 
 
-  void userUpdatedHisProfile(jid) {
+  void userUpdatedHisProfile(String jid) {
     updateRecentChatAdapter(jid);
     updateRecentChatAdapterSearch(jid);
     updateProfileSearch(jid);
@@ -1355,6 +1356,10 @@ class DashboardController extends FullLifeCycleController
         _userList.refresh();
       }
     });
+  }
+
+  void userDeletedHisProfile(String jid) {
+    userUpdatedHisProfile(jid);
   }
 }
 
