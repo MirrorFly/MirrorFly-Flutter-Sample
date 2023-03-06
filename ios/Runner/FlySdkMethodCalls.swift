@@ -1481,6 +1481,12 @@ import FlyDatabase
         
     }
     
+    static func isMuted(call: FlutterMethodCall, result: @escaping FlutterResult){
+        let args = call.arguments as! Dictionary<String, Any>
+        let userJID = args["jid"] as? String ?? ""
+        result(FlyCoreController.shared.isContactMuted(jid: userJID))
+    }
+    
     static func isBusyStatusEnabled(call: FlutterMethodCall, result: @escaping FlutterResult){
        result(ChatManager.shared.isBusyStatusEnabled())
     }

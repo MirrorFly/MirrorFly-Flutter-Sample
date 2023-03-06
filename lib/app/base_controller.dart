@@ -458,7 +458,13 @@ abstract class BaseController {
 
   Future<void> showLocalNotification(ChatMessageModel chatMessageModel) async {
     debugPrint("showing local notification");
-    if(!chatMessageModel.isMessageSentByMe) {
+    var isUserMuted = await FlyChat.isMuted(chatMessageModel.chatUserJid);
+    var isUserUnArchived = await FlyChat.isUserUnArchived(chatMessageModel.chatUserJid);
+    var isArchivedSettingsEnabled =  await FlyChat.isArchivedSettingsEnabled();
+
+    var archiveSettings = isArchivedSettingsEnabled.checkNull() ? isUserUnArchived.checkNull() : true;
+
+    if(!chatMessageModel.isMessageSentByMe && !isUserMuted.checkNull() && archiveSettings) {
       final String? notificationUri = SessionManagement.getNotificationUri();
       final UriAndroidNotificationSound uriSound = UriAndroidNotificationSound(
           notificationUri!);

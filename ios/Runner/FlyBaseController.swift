@@ -732,6 +732,8 @@ class FlyBaseController: NSObject{
                 FlySdkMethodCalls.addUsersToGroup(call: call, result: result)
             case "removeMemberFromGroup":
                 FlySdkMethodCalls.removeMemberFromGroup(call: call, result: result)
+            case "isMuted":
+                FlySdkMethodCalls.isMuted(call: call, result: result)
             default:
                 result(FlutterMethodNotImplemented)
             }
