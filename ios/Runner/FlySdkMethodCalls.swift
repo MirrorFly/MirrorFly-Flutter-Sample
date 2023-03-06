@@ -744,11 +744,7 @@ import FlyDatabase
         result("")
         
     }
-    static func deleteRecentChats(call: FlutterMethodCall, result: @escaping FlutterResult){
-        
-        result("")
-        
-    }
+    
     static func saveUnsentMessage(call: FlutterMethodCall, result: @escaping FlutterResult){
         
         result("")
@@ -1198,6 +1194,7 @@ import FlyDatabase
         print(userChatHistory)
         result(userChatHistory)
         
+        
     }
     
     static func markAsReadDeleteUnreadSeparator(call: FlutterMethodCall, result: @escaping FlutterResult){
@@ -1206,7 +1203,7 @@ import FlyDatabase
         let jid = args["jid"] as? String ?? ""
 
         ChatManager.markConversationAsRead(for: [jid])
-//        FlyMessenger.deleteUnreadMessageSeparatorOfAConversation(receiverJID)//not found need to implement here after adding
+//        FlyMessenger.deleteUnreadMessageSeparatorOfAConversation(jid)//not found need to implement here after adding
         result(true)
     }
     
@@ -1349,11 +1346,26 @@ import FlyDatabase
     static func deleteRecentChat(call: FlutterMethodCall, result: @escaping FlutterResult){
         let args = call.arguments as! Dictionary<String, Any>
         
-        let jid = args["jid"] as? String ?? nil
-        //Multiple
-//        ChatManager.deleteRecentChat(jid: jid!)
+        var userJID = args["jid"] as? String ?? ""
+        
+        var userJIDs: [String] = []
+        userJIDs.append(userJID)
+        
+        ChatManager.deleteRecentChats(jids: userJIDs, completionHandler: { isSuccess, flyError, flyData in
+            result(isSuccess)
+        })
         
     }
+    static func deleteRecentChats(call: FlutterMethodCall, result: @escaping FlutterResult){
+        let args = call.arguments as! Dictionary<String, Any>
+        let userJIDList = args["jidlist"] as? [String] ?? []
+        
+        ChatManager.deleteRecentChats(jids: userJIDList, completionHandler: { isSuccess, FlyError, flyData in
+            result(isSuccess)
+        })
+        
+    }
+    
     static func setNotificationSound(call: FlutterMethodCall, result: @escaping FlutterResult){
         let args = call.arguments as! Dictionary<String, Any>
         

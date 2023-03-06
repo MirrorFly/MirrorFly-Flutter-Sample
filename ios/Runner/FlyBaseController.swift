@@ -570,7 +570,7 @@ class FlyBaseController: NSObject{
             case "updateRecentChatPinStatus":
                 FlySdkMethodCalls.updateRecentChatPinStatus(call: call, result: result)
                 
-            case "deleteRecentChat"://need to discuss there is 2 delete recent chat functions
+            case "deleteRecentChat":
                 FlySdkMethodCalls.deleteRecentChat(call: call, result: result)
             case "recentChatPinnedCount":
                 FlySdkMethodCalls.recentChatPinnedCount(call: call, result: result)
