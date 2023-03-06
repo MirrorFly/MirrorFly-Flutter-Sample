@@ -133,7 +133,7 @@ dependencies {
         }
     }
     
-    implementation 'com.mirrorfly.sdk:appbase:0.0.9'
+    implementation 'com.mirrorfly.sdk:appbase:0.0.10'
     // Import the Firebase BoM
     implementation platform('com.google.firebase:firebase-bom:30.2.0')
 
