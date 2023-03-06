@@ -720,6 +720,14 @@ class FlyBaseController: NSObject{
                 FlySdkMethodCalls.insertNewProfileStatus(call: call, result: result)
             case "IS_TRIAL_LICENSE":
                 FlySdkMethodCalls.isTrailLicence(call: call, result: result)
+            case "makeAdmin":
+                FlySdkMethodCalls.makeAdmin(call: call, result: result)
+            case "updateGroupName":
+                FlySdkMethodCalls.updateGroupName(call: call, result: result)
+            case "updateGroupProfileImage":
+                FlySdkMethodCalls.updateGroupProfileImage(call: call, result: result)
+            case "removeGroupProfileImage":
+                FlySdkMethodCalls.removeGroupProfileImage(call: call, result: result)
             default:
                 result(FlutterMethodNotImplemented)
             }

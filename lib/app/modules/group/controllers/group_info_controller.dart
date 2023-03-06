@@ -177,6 +177,7 @@ class GroupInfoController extends GetxController {
 
   getGroupMembers(bool? server){
     FlyChat.getGroupMembersList(profile.jid.checkNull(),server).then((value) {
+      mirrorFlyLog("getGroupMembersList", value);
       if(value!=null){
         var list = profileFromJson(value);
         groupMembers.value=(list);

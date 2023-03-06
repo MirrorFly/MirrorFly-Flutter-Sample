@@ -582,6 +582,7 @@ import FlyDatabase
         print("Insert Status-->\(status)")
         let insertStatus: () = ChatManager.saveProfileStatus(statusText: status, currentStatus: false)
         print("Insert Status Result-->\(insertStatus)")
+        result(true)
     
     }
     
@@ -589,8 +590,14 @@ import FlyDatabase
         let args = call.arguments as! Dictionary<String, Any>
         let status = args["status"] as? String ?? ""
         print("Insert New Status ---> \(status)")
-        let insertStatus: () = ChatManager.saveProfileStatus(statusText: status, currentStatus: true)
-        print("Insert New Status Result-->\(insertStatus)")
+        var getAllStatus: [ProfileStatus] = []
+        getAllStatus = ChatManager.getAllStatus()
+        for status in getAllStatus {
+           ChatManager.updateStatus(statusId: status.id, statusText: status.status, currentStatus: false)
+        }
+        ChatManager.saveProfileStatus(statusText: status, currentStatus: true)
+        result("{\"status\" : true }")
+        
     }
     static func isTrailLicence(call: FlutterMethodCall, result: @escaping FlutterResult){
        result(true)
@@ -707,6 +714,8 @@ import FlyDatabase
             
         }
         groupMemberProfile = groupMemberProfile.dropLast() + "]"
+        
+        print("groupMemberProfile \(groupMemberProfile)")
     
         result(groupMemberProfile)
     }
@@ -1365,6 +1374,27 @@ import FlyDatabase
         })
         
     }
+    static func makeAdmin(call: FlutterMethodCall, result: @escaping FlutterResult){
+        let args = call.arguments as! Dictionary<String, Any>
+        var groupJID = args["jid"] as? String ?? ""
+        var userJID = args["userjid"] as? String ?? ""
+        
+        do{
+            
+            try GroupManager.shared.makeAdmin(groupJid: groupJID, userJid: userJID, completionHandler: { isSuccess, flyError, flyData in
+                if isSuccess {
+                    // update UI
+                    result(isSuccess)
+                } else{
+                    result(FlutterError(code: "500", message: "Unable to Make User Admin", details: flyError))
+                }
+            })
+        }catch let error{
+
+                result(FlutterError(code: "500", message: "Unable to Make User Admin", details: error.localizedDescription))
+        }
+        
+    }
     
     static func setNotificationSound(call: FlutterMethodCall, result: @escaping FlutterResult){
         let args = call.arguments as! Dictionary<String, Any>
@@ -1373,9 +1403,58 @@ import FlyDatabase
         
         Utility.saveInPreference(key: muteNotification, value: notification_sound)
     }
+    
+    static func updateGroupName(call: FlutterMethodCall, result: @escaping FlutterResult){
+        let args = call.arguments as! Dictionary<String, Any>
+        
+        let groupJID = args["jid"] as? String ?? ""
+        let groupName = args["name"] as? String ?? ""
+        
+        do{
+            try GroupManager.shared.updateGroupName(groupJid: groupJID, groupName: groupName, completionHandler: { isSuccess, flyError, flyData in
+                result(isSuccess)
+            })
+        }catch let error{
+            result(FlutterError(code: "500", message: "Unable to Make User Admin", details: error.localizedDescription))
+        }
+        
+    }
+    static func updateGroupProfileImage(call: FlutterMethodCall, result: @escaping FlutterResult){
+        let args = call.arguments as! Dictionary<String, Any>
+        
+        let groupJID = args["jid"] as? String ?? ""
+        let groupImageFile = args["file"] as? String ?? ""
+        
+        do{
+            try GroupManager.shared.updateGroupProfileImage(groupJid: groupJID, groupProfileImageUrl: groupImageFile, completionHandler: { isSuccess, flyError, flyData in
+        
+            result(isSuccess)
+                
+            })
+        }catch let error{
+            result(FlutterError(code: "500", message: "Unable to Update Group Image", details: error.localizedDescription))
+        }
+        
+    }
+    static func removeGroupProfileImage(call: FlutterMethodCall, result: @escaping FlutterResult){
+        let args = call.arguments as! Dictionary<String, Any>
+        
+        let groupJID = args["jid"] as? String ?? ""
+        
+        do{
+            try GroupManager.shared.removeGroupProfileImage(groupJid: groupJID, completionHandler: { isSuccess, flyError, flyData in
+                result(isSuccess)
+            })
+        }catch let error{
+            result(FlutterError(code: "500", message: "Unable to Update Group Image", details: error.localizedDescription))
+        }
+        
+    }
+    
     static func isBusyStatusEnabled(call: FlutterMethodCall, result: @escaping FlutterResult){
        result(ChatManager.shared.isBusyStatusEnabled())
     }
+    
     static func getUserLastSeenTime(call: FlutterMethodCall, result: @escaping FlutterResult){
         let args = call.arguments as! Dictionary<String, Any>
         
