@@ -530,4 +530,8 @@ class ContactController extends FullLifeCycleController
   void unblockedThisUser(String jid) {
     userUpdatedHisProfile(jid);
   }
+
+  void userDeletedHisProfile(String jid) {
+    userUpdatedHisProfile(jid);
+  }
 }
