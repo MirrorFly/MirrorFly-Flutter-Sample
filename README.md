@@ -21,4 +21,12 @@ Replace the `licence key` with yours in `main.dart` file.
 
 Check out the Official MirrorFly [Flutter docs](https://www.mirrorfly.com/docs/chat/flutter/quick-start/) and MirrorFly [Developer Portal](https://www.mirrorfly.com/docs/) for tutorials and videos. If you need any help in resolving any issues or have questions, Drop a mail to (integration@contus.in).
 
+## Configuration
+
+``
+buildConfigField 'String', 'LICENSE', '"Please enter your License key"'
+``
+Replace the licence with yours in android app level build.gradle file
+
+
 <br />
