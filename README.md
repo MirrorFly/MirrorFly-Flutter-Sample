@@ -32,8 +32,9 @@ Replace the licence with yours in android app level build.gradle file
 
 <br />
 
+``
 <meta-data android:name="com.google.android.geo.API_KEY"
-android:value="{Please add your google api key}"/>
+android:value="{Please add your google api key}"/>``
 
 <br />
 
