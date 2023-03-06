@@ -134,6 +134,9 @@ class RecentSearchView extends GetView<RecentChatSearchController> {
                 controller.toChatPage(item.jid.checkNull());
               },
               isCheckBoxVisible: false,
+              isGroup: item.isGroupProfile.checkNull(),
+              blocked: item.isBlockedMe.checkNull() || item.isAdminBlocked.checkNull(),
+              unknown: (!item.isItSavedContact.checkNull() || item.isDeletedContact()),
             );
           }
         });
@@ -174,6 +177,9 @@ class RecentSearchView extends GetView<RecentChatSearchController> {
                                         ? profile.nickName.checkNull()
                                         : profile.name.checkNull(),
                                   ),
+                                  isGroup: profile.isGroupProfile.checkNull(),
+                                  blocked: profile.isBlockedMe.checkNull() || profile.isAdminBlocked.checkNull(),
+                                  unknown: (!profile.isItSavedContact.checkNull() || profile.isDeletedContact()),
                                 ),
                                 unreadMessageCount.toString() != "0"
                                     ? Positioned(
@@ -246,7 +252,7 @@ class RecentSearchView extends GetView<RecentChatSearchController> {
                                     Expanded(
                                       child: Row(
                                         children: [
-                                          forMessageTypeIcon(item.messageType),
+                                          forMessageTypeIcon(item.messageType,item.mediaChatMessage),
                                           SizedBox(
                                             width: forMessageTypeString(
                                                 item.messageType) !=
@@ -430,6 +436,9 @@ class RecentSearchView extends GetView<RecentChatSearchController> {
                                       ? profile.nickName.checkNull()
                                       : profile.name.checkNull(),
                                 ),
+                                isGroup: profile.isGroupProfile.checkNull(),
+                                blocked: profile.isBlockedMe.checkNull() || profile.isAdminBlocked.checkNull(),
+                                unknown: (!profile.isItSavedContact.checkNull() || profile.isDeletedContact()),
                               ),
                               unreadMessageCount.toString() != "0"
                                   ? Positioned(
@@ -501,7 +510,7 @@ class RecentSearchView extends GetView<RecentChatSearchController> {
                                   Expanded(
                                     child: Row(
                                       children: [
-                                        forMessageTypeIcon(item.messageType),
+                                        forMessageTypeIcon(item.messageType,item.mediaChatMessage),
                                         SizedBox(
                                           width: forMessageTypeString(
                                               item.messageType) !=
@@ -572,7 +581,7 @@ class RecentSearchView extends GetView<RecentChatSearchController> {
             ? searchHeaderByType(data, context)
             : const SizedBox(),
         FutureBuilder(
-            future: controller.getProfile(data.jid.checkNull()),
+            future: getProfileDetails(data.jid.checkNull()),//controller.getProfile(data.jid.checkNull()),
             builder: (context, snapshot) {
               if (snapshot.hasData && snapshot.data != null) {
                 var item = snapshot.data!;
@@ -611,6 +620,9 @@ class RecentSearchView extends GetView<RecentChatSearchController> {
                                 ? item.mobileNumber.checkNull()
                                 : item.name.checkNull(),
                           ),
+                          isGroup: item.isGroupProfile.checkNull(),
+                          blocked: item.isBlockedMe.checkNull() || item.isAdminBlocked.checkNull(),
+                          unknown: (!item.isItSavedContact.checkNull() || item.isDeletedContact()),
                         ),
                       ),
                       Flexible(

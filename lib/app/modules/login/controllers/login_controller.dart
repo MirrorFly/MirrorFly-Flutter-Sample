@@ -10,11 +10,9 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
 import 'package:otp_text_field/otp_field.dart';
-import 'package:permission_handler/permission_handler.dart';
 
 import '../../../common/constants.dart';
 import '../../../data/apputils.dart';
-import '../../../data/permissions.dart';
 import '../../../data/session_management.dart';
 import 'package:flysdk/flysdk.dart';
 import '../../../routes/app_pages.dart';
@@ -85,6 +83,7 @@ class LoginController extends GetxController {
       toToast("Please Enter Mobile Number");
     } else {
       phoneAuth();
+      //registerAccount();
     }
   }
 
@@ -121,7 +120,10 @@ class LoginController extends GetxController {
           verificationCompleted: _onVerificationCompleted,
           verificationFailed: (FirebaseAuthException e) {
             timeout(true);
+
             mirrorFlyLog("verificationFailed", e.toString());
+            mirrorFlyLog("verificationFailed", e.message!);
+            mirrorFlyLog("verificationFailed", e.code);
             toToast("Please Enter Valid Mobile Number");
             hideLoading();
           },
@@ -164,17 +166,15 @@ class LoginController extends GetxController {
 
   Future<void> verifyOTP() async {
     if (await AppUtils.isNetConnected()) {
-      if (await askStoragePermission()) {
-        if (smsCode.length == 6) {
-          PhoneAuthCredential credential = PhoneAuthProvider.credential(
-              verificationId: verificationId, smsCode: smsCode);
-          // Sign the user in (or link) with the credential
-          debugPrint("Verification ID $verificationId");
-          debugPrint("smsCode $smsCode");
-          signIn(credential);
-        } else {
-          toToast("InValid OTP");
-        }
+      if (smsCode.length == 6) {
+        PhoneAuthCredential credential = PhoneAuthProvider.credential(
+            verificationId: verificationId, smsCode: smsCode);
+        // Sign the user in (or link) with the credential
+        debugPrint("Verification ID $verificationId");
+        debugPrint("smsCode $smsCode");
+        signIn(credential);
+      } else {
+        toToast("InValid OTP");
       }
     } else {
       toToast(Constants.noInternetConnection);
@@ -195,7 +195,7 @@ class LoginController extends GetxController {
     // need otp so i can autofill in a text box
     if (credential.smsCode != null) {
       otpController.set(credential.smsCode!.split(""));
-      //verifyOTP();
+      verifyOTP();
     }
   }
 
@@ -203,7 +203,12 @@ class LoginController extends GetxController {
     showLoading();
     try {
       await _auth.signInWithCredential(credential).then((value) {
-        sendTokenToServer();
+        if(SessionManagement.isTrailLicence()) {
+          sendTokenToServer(); // for Mirrorfly user list purpose verify the user
+        }else{
+          validateDeviceToken('');
+          //registerAccount();//for get registered user purpose
+        }
         stopTimer();
         mirrorFlyLog("sign in ", value.toString());
       }).catchError((error) {
@@ -234,7 +239,7 @@ class LoginController extends GetxController {
 
   verifyTokenWithServer(String token) async {
     if(await AppUtils.isNetConnected()) {
-      var userName = (/*countryCode! + */mobileNumber.text.toString()).replaceAll("+", "");
+      var userName = (countryCode!.replaceAll('+', '') + mobileNumber.text.toString()).replaceAll("+", "");
       //make api call
       FlyChat.verifyToken(userName, token).then((value) {
         if (value != null) {
@@ -289,13 +294,17 @@ class LoginController extends GetxController {
     if (await AppUtils.isNetConnected()) {
       showLoading();
       FlyChat.registerUser(
-              mobileNumber.text, SessionManagement.getToken().checkNull())
+        countryCode!.replaceAll('+', '') + mobileNumber.text, token:SessionManagement.getToken().checkNull())
           .then((value) {
         if (value.contains("data")) {
           var userData = registerModelFromJson(value); //message
           SessionManagement.setLogin(userData.data!.username!.isNotEmpty);
           SessionManagement.setUser(userData.data!);
+          // FlyChat.setNotificationSound(true);
+          // SessionManagement.setNotificationSound(true);
           // userData.data.
+          enableArchive();
+          SessionManagement.setCountryCode((countryCode ?? "").replaceAll('+', ''));
           setUserJID(userData.data!.username!);
         }
       }).catchError((error) {
@@ -309,6 +318,13 @@ class LoginController extends GetxController {
         }
       });
     } else {
+      toToast(Constants.noInternetConnection);
+    }
+  }
+  void enableArchive() async{
+    if(await AppUtils.isNetConnected()) {
+      FlyChat.enableDisableArchivedSettings(true);
+    }else{
       toToast(Constants.noInternetConnection);
     }
   }
@@ -342,18 +358,5 @@ class LoginController extends GetxController {
 
   gotoLogin() {
     Get.offAllNamed(Routes.login);
-  }
-
-  Future<bool> askStoragePermission() async {
-    final permission = await AppPermission.getStoragePermission();
-    switch (permission) {
-      case PermissionStatus.granted:
-        return true;
-      case PermissionStatus.permanentlyDenied:
-        return false;
-      default:
-        debugPrint("Permission default");
-        return false;
-    }
   }
 }

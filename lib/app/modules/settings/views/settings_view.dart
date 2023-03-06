@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
 import 'package:mirror_fly_demo/app/modules/settings/controllers/settings_controller.dart';
+import 'package:mirror_fly_demo/app/modules/settings/views/settings_widgets.dart';
 import 'package:mirror_fly_demo/app/routes/app_pages.dart';
 
 import '../../../common/constants.dart';
-import '../../../common/widgets.dart';
 import 'about/about_and_help_view.dart';
 
 class SettingsView extends GetView<SettingsController> {
@@ -94,35 +93,5 @@ class SettingsView extends GetView<SettingsController> {
     );
   }
 
-  Widget settingListItem(
-      String title, String leading, String trailing, Function() onTap) {
-    return Column(
-      children: [
-        InkWell(
-          onTap: onTap,
-          child: Row(
-            children: [
-              Padding(
-                padding: const EdgeInsets.all(18.0),
-                child: SvgPicture.asset(leading),
-              ),
-              Expanded(
-                  child: Text(
-                title,
-                style: const TextStyle(
-                    fontSize: 15.0,
-                    fontFamily: 'sf_ui',
-                    fontWeight: FontWeight.w400),
-              )),
-              Padding(
-                padding: const EdgeInsets.all(18.0),
-                child: SvgPicture.asset(trailing),
-              ),
-            ],
-          ),
-        ),
-        const AppDivider(),
-      ],
-    );
-  }
+
 }

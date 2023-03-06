@@ -14,37 +14,38 @@ class ForwardChatView extends GetView<ForwardChatController> {
   @override
   Widget build(BuildContext context) {
     return Obx(() {
-      return SafeArea(
-        child: Scaffold(
-          appBar: AppBar(
-            leading: IconButton(
-              icon: const Icon(Icons.close),
-              onPressed: () {
-                !controller.isSearchVisible ? controller.backFromSearch() : Get.back();
-              },
-            ),
-            title: !controller.isSearchVisible
-                ? TextField(
-                    onChanged: (text) {
-                      controller.onSearch(text);
-                    },
-                    style: const TextStyle(fontSize: 16),
-                    controller: controller.searchQuery,
-                    autofocus: true,
-                    decoration: const InputDecoration(
-                        hintText: "Search...", border: InputBorder.none),
-                  )
-                : const Text("Forward to..."),
-            actions: [
-              Visibility(
-                visible: controller.isSearchVisible,
-                child: IconButton(
-                    onPressed: () => controller.onSearchPressed(),
-                    icon: SvgPicture.asset(searchIcon)),
-              )
-            ],
+      return Scaffold(
+        appBar: AppBar(
+          leading: IconButton(
+            icon: const Icon(Icons.close),
+            onPressed: () {
+              !controller.isSearchVisible ? controller.backFromSearch() : Get.back();
+            },
           ),
-          body: Column(
+          title: !controller.isSearchVisible
+              ? TextField(
+                  onChanged: (text) {
+                    mirrorFlyLog("text", text);
+                    controller.onSearch(text);
+                  },
+                  style: const TextStyle(fontSize: 16),
+                  controller: controller.searchQuery,
+                  autofocus: true,
+                  decoration: const InputDecoration(
+                      hintText: "Search...", border: InputBorder.none),
+                )
+              : const Text("Forward to..."),
+          actions: [
+            Visibility(
+              visible: controller.isSearchVisible,
+              child: IconButton(
+                  onPressed: () => controller.onSearchPressed(),
+                  icon: SvgPicture.asset(searchIcon)),
+            )
+          ],
+        ),
+        body: SafeArea(
+          child: Column(
             children: [
               Flexible(
                 child: ListView(
@@ -53,6 +54,13 @@ class ForwardChatView extends GetView<ForwardChatController> {
                   children: [
                     Column(
                       children: [
+                        Visibility(
+                          visible: !controller.searchLoading.value && controller.recentChats.isEmpty && controller.groupList.isEmpty && controller.userList.isEmpty,
+                          child: const Center(child: Padding(
+                            padding: EdgeInsets.symmetric(vertical: 20.0),
+                            child: Text('No Results found'),
+                          ),),
+                        ),
                         Visibility(
                           visible: controller.recentChats.isNotEmpty,
                           child: searchHeader("Recent Chat",
@@ -64,19 +72,23 @@ class ForwardChatView extends GetView<ForwardChatController> {
                             physics: const NeverScrollableScrollPhysics(),
                             itemBuilder: (context, index) {
                               var item = controller.recentChats[index];
-                              return RecentChatItem(
-                                  item: item,onTap:() {
-                                    //chat page
-                                    controller.onItemClicked(item.jid.checkNull(),
-                                        item.profileName.checkNull());
-                                  },
-                                  spanTxt: controller.searchQuery.text.toString(),
-                                  isCheckBoxVisible: true,
-                                  isChecked: controller.isChecked(item.jid.checkNull()),
-                                  onchange: (value) {
-                                    controller.onItemClicked(item.jid.checkNull(),
-                                        item.profileName.checkNull());
-                                  });
+                              return Opacity(
+                                opacity: item.isBlocked.checkNull() ? 0.3 : 1.0,
+                                child: RecentChatItem(
+                                    item: item,onTap:() {
+                                      //chat page
+                                      controller.onItemSelect(item.jid.checkNull(),
+                                          getRecentName(item)/*item.profileName.checkNull()*/,item.isBlocked.checkNull());
+                                    },
+                                    spanTxt: controller.searchQuery.text.toString(),
+                                    isCheckBoxVisible: true,
+                                    isForwardMessage: true,
+                                    isChecked: controller.isChecked(item.jid.checkNull()),
+                                    onchange: (value) {
+                                      controller.onItemSelect(item.jid.checkNull(),
+                                          getRecentName(item)/*item.profileName.checkNull()*/,item.isBlocked.checkNull());
+                                    }),
+                              );
                             }),
                         Visibility(
                           visible: controller.groupList.isNotEmpty,
@@ -96,24 +108,29 @@ class ForwardChatView extends GetView<ForwardChatController> {
                                     return const SizedBox();
                                   }else {
                                     if (data.data != null) {
-                                      return memberItem(
-                                          name: item.name.checkNull(),
-                                          image: item.image.checkNull(),
-                                          status: data.data.checkNull(),
-                                          spantext: controller.searchQuery.text.toString(),
-                                          onTap: () {
-                                            controller.onItemClicked(
-                                                item.jid.checkNull(),
-                                                item.name.checkNull());
-                                          },
-                                          isCheckBoxVisible: true,
-                                          isChecked: controller.isChecked(
-                                              item.jid.checkNull()),
-                                          onchange: (value) {
-                                            controller.onItemClicked(
-                                                item.jid.checkNull(),
-                                                item.name.checkNull());
-                                          });
+                                      return Opacity(
+                                        opacity: item.isBlocked.checkNull() ? 0.3 : 1.0,
+                                        child: memberItem(
+                                            name: getName(item),//item.name.checkNull(),
+                                            image: item.image.checkNull(),
+                                            status: data.data.checkNull(),
+                                            spantext: controller.searchQuery.text.toString(),
+                                            onTap: () {
+                                              controller.onItemSelect(
+                                                  item.jid.checkNull(),
+                                                  getName(item)/*item.name.checkNull()*/,item.isBlocked.checkNull());
+                                            },
+                                            isCheckBoxVisible: true,
+                                            isChecked: controller.isChecked(
+                                                item.jid.checkNull()),
+                                            onchange: (value) {
+                                              controller.onItemSelect(
+                                                  item.jid.checkNull(),
+                                                  getName(item)/*item.name.checkNull()*/,item.isBlocked.checkNull());
+                                            },
+                                          blocked: item.isBlockedMe.checkNull() || item.isAdminBlocked.checkNull(),
+                                          unknown: (!item.isItSavedContact.checkNull() || item.isDeletedContact()),),
+                                      );
                                     }else{
                                       return const SizedBox();
                                     }
@@ -123,11 +140,25 @@ class ForwardChatView extends GetView<ForwardChatController> {
                         Visibility(
                           visible: controller.userList.isNotEmpty,
                           child: searchHeader("Contacts",
-                              controller.userList.length.toString(), context),
+                              controller.userList.isNotEmpty ? controller.userList.length.toString() : "", context),
                         ),
                         Visibility(
+                          visible: controller.searchLoading.value || controller.contactLoading.value,
+                          child: const Center(child: Padding(
+                            padding: EdgeInsets.symmetric(vertical: 8.0),
+                            child: CircularProgressIndicator(),
+                          ),),
+                        ),
+                        /*Visibility(
+                          visible: !controller.searchLoading.value && controller.userList.isEmpty,
+                          child: const Center(child: Padding(
+                            padding: EdgeInsets.symmetric(vertical: 8.0),
+                            child: Text('No Contacts found'),
+                          ),),
+                        ),*/
+                        Visibility(
                           visible: controller.userList.isNotEmpty,
-                          child: controller.searchLoading.value ? const Center(child: CircularProgressIndicator(),) : ListView.builder(
+                          child: controller.searchLoading.value ? const SizedBox.shrink() : ListView.builder(
                               itemCount: controller.scrollable.value
                                   ? controller.userList.length + 1
                                   : controller.userList.length,
@@ -139,21 +170,26 @@ class ForwardChatView extends GetView<ForwardChatController> {
                                       child: CircularProgressIndicator());
                                 } else {
                                   var item = controller.userList[index];
-                                  return memberItem(
-                                      name: item.name.checkNull(),
-                                      image: item.image.checkNull(),
-                                      status: item.status.checkNull(),
-                                      spantext: controller.searchQuery.text.toString(),
-                                      onTap: () {
-                                        controller.onItemClicked(item.jid.checkNull(),
-                                            item.name.checkNull());
-                                      },
-                                      isCheckBoxVisible: true,
-                                      isChecked: controller.isChecked(item.jid.checkNull()),
-                                      onchange: (value) {
-                                        controller.onItemClicked(item.jid.checkNull(),
-                                            item.name.checkNull());
-                                      });
+                                  return Opacity(
+                                    opacity: item.isBlocked.checkNull() ? 0.3 : 1.0,
+                                    child: memberItem(
+                                        name: getName(item),
+                                        image: item.image.checkNull(),
+                                        status: item.status.checkNull(),
+                                        spantext: controller.searchQuery.text.toString(),
+                                        onTap: () {
+                                          controller.onItemSelect(item.jid.checkNull(),
+                                              getName(item)/*item.name.checkNull()*/,item.isBlocked.checkNull());
+                                        },
+                                        isCheckBoxVisible: true,
+                                        isChecked: controller.isChecked(item.jid.checkNull()),
+                                        onchange: (value) {
+                                          controller.onItemSelect(item.jid.checkNull(),
+                                              getName(item)/*item.name.checkNull()*/,item.isBlocked.checkNull());
+                                        },
+                                      blocked: item.isBlockedMe.checkNull() || item.isAdminBlocked.checkNull(),
+                                      unknown: (!item.isItSavedContact.checkNull() || item.isDeletedContact()),),
+                                  );
                                 }
                               }),
                         ),

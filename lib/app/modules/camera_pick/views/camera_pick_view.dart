@@ -41,7 +41,7 @@ class CameraPickView extends GetView<CameraPickController> {
                             }),),
                       ),
                     ),
-                    Stack(
+                    /*Stack(
                       alignment: Alignment.center,
                       children: [
                         Positioned(
@@ -56,7 +56,7 @@ class CameraPickView extends GetView<CameraPickController> {
                           ),
                         ),
                       ],
-                    ),
+                    ),*/
                     controller.isRecording.value ? Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.center,

@@ -7,7 +7,6 @@ import 'package:flysdk/flysdk.dart';
 import '../../../routes/app_pages.dart';
 
 class ChatInfoController extends GetxController {
-  //TODO: Implement ChatInfoController
   var profile_ = Profile().obs;
   Profile get profile => profile_.value;
   var mute = false.obs;
@@ -21,6 +20,7 @@ class ChatInfoController extends GetxController {
   bool get isSliverAppBarExpanded => _isSliverAppBarExpanded.value;
 
   final muteable = false.obs;
+  var userPresenceStatus = ''.obs;
 
   @override
   void onInit() {
@@ -30,6 +30,7 @@ class ChatInfoController extends GetxController {
     scrollController.addListener(_scrollListener);
     nameController.text = profile.nickName.checkNull();
     muteAble();
+    getUserLastSeen();
   }
 
   muteAble() async {
@@ -43,12 +44,67 @@ class ChatInfoController extends GetxController {
     }
   }
 
+  void userUpdatedHisProfile(jid) {
+    if (jid.isNotEmpty && jid == profile.jid) {
+      getProfileDetails(jid).then((value) {
+        profile_(value);
+        mute(profile.isMuted!);
+        nameController.text = profile.nickName.checkNull();
+      });
+    }
+
+  }
+
   onToggleChange(bool value) {
     if(muteable.value) {
       mirrorFlyLog("change", value.toString());
       mute(value);
       FlyChat.updateChatMuteStatus(profile.jid.checkNull(), value);
     }
+  }
+
+  getUserLastSeen(){
+    if(!profile.isBlockedMe.checkNull() || !profile.isAdminBlocked.checkNull()) {
+      FlyChat.getUserLastSeenTime(profile.jid.toString()).then((value) {
+        userPresenceStatus(value.toString());
+      }).catchError((er) {
+        userPresenceStatus("");
+      });
+    }else{
+      userPresenceStatus("");
+    }
+  }
+
+
+  void userCameOnline(jid) {
+    debugPrint("userCameOnline : $jid");
+    if(jid.isNotEmpty && profile.jid == jid && !profile.isGroupProfile.checkNull()) {
+      debugPrint("userCameOnline jid match: $jid");
+      Future.delayed(const Duration(milliseconds: 3000),(){
+        getUserLastSeen();
+      });
+    }
+  }
+
+  void userWentOffline(jid) {
+    if(jid.isNotEmpty && profile.jid==jid && !profile.isGroupProfile.checkNull()) {
+      debugPrint("userWentOffline : $jid");
+      Future.delayed(const Duration(milliseconds: 3000),(){
+        getUserLastSeen();
+      });
+    }
+  }
+
+  void networkConnected() {
+    mirrorFlyLog("networkConnected", 'true');
+    Future.delayed(const Duration(milliseconds: 2000), () {
+      getUserLastSeen();
+    });
+  }
+
+  void networkDisconnected() {
+    mirrorFlyLog('networkDisconnected', 'false');
+    getUserLastSeen();
   }
 
   reportChatOrUser() {
@@ -88,5 +144,9 @@ class ChatInfoController extends GetxController {
   gotoViewAllMedia(){
     debugPrint("to Media Page==>${profile.name} jid==>${profile.jid} isgroup==>${profile.isGroupProfile ?? false}");
     Get.toNamed(Routes.viewMedia,arguments: {"name":profile.name,"jid":profile.jid,"isgroup":profile.isGroupProfile ?? false});
+  }
+
+  void onContactSyncComplete(bool result) {
+    userUpdatedHisProfile(profile.jid);
   }
 }

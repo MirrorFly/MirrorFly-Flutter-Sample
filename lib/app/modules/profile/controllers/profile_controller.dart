@@ -10,11 +10,13 @@ import 'package:mirror_fly_demo/app/common/constants.dart';
 import 'package:mirror_fly_demo/app/data/session_management.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
 import 'package:mirror_fly_demo/app/routes/app_pages.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 import '../../../common/crop_image.dart';
 import 'package:flysdk/flysdk.dart';
 
 import '../../../data/apputils.dart';
+import '../../../data/permissions.dart';
 
 class ProfileController extends GetxController {
   TextEditingController profileName = TextEditingController();
@@ -34,6 +36,10 @@ class ProfileController extends GetxController {
 
   var name = "".obs;
 
+  bool get emailEditAccess => true;//Get.previousRoute!=Routes.settings;
+
+  var userNameFocus= FocusNode();
+  var emailFocus= FocusNode();
   @override
   Future<void> onInit() async {
     super.onInit();
@@ -53,75 +59,105 @@ class ProfileController extends GetxController {
       }else{
         toToast(Constants.noInternetConnection);
       }
+      checkAndEnableNotificationSound();
     }else{
       getProfile();
     }
     //profileStatus.value="I'm Mirror fly user";
+    await askStoragePermission();
   }
 
-  Future<void> save() async {
-    if (profileName.text.trim().isEmpty) {
-      toToast("Please enter your username");
-    }else if (profileName.text.trim().length < 3) {
-      toToast("Username is too short");
-    } else if (profileEmail.text.trim().isEmpty) {
-      toToast("Email should not be empty");
-    } else if (!emailPatternMatch.hasMatch(profileEmail.text.toString())) {
-      toToast("Please enter a valid Mail");
-    } else if (profileStatus.value.isEmpty) {
-      toToast("Enter Profile Status");
-    } else {
-      loading.value = true;
-      showLoader();
-      if (imagePath.value.isNotEmpty) {
-        updateProfileImage(imagePath.value, update: true);
+  Future<bool> askStoragePermission() async {
+    final permission = await AppPermission.getStoragePermission();
+    switch (permission) {
+      case PermissionStatus.granted:
+        return true;
+      case PermissionStatus.permanentlyDenied:
+        return false;
+      default:
+        debugPrint("Permission default");
+        return false;
+    }
+  }
+
+  Future<void> save({bool frmImage=false}) async {
+    if (await askStoragePermission()) {
+      if (profileName.text
+          .trim()
+          .isEmpty) {
+        toToast("Please enter your username");
+      } else if (profileName.text
+          .trim()
+          .length < 3) {
+        toToast("Username is too short");
+      } else if (profileEmail.text
+          .trim()
+          .isEmpty) {
+        toToast("Email should not be empty");
+      } else if (!emailPatternMatch.hasMatch(profileEmail.text.toString())) {
+        toToast("Please enter a valid Mail");
+      } else if (profileStatus.value.isEmpty) {
+        toToast("Enter Profile Status");
       } else {
-        if(await AppUtils.isNetConnected()) {
-          FlyChat
-              .updateMyProfile(
-              profileName.text.toString(),
-              profileEmail.text.toString(),
-              profileMobile.text.toString(),
-              profileStatus.value.toString(),
-              userImgUrl.value.isEmpty ? null : userImgUrl.value
-          )
-              .then((value) {
-            mirrorFlyLog("updateMyProfile", value);
-            loading.value = false;
-            hideLoader();
-            if (value != null) {
-              debugPrint(value);
-              var data = profileUpdateFromJson(value);
-              if (data.status != null) {
-                toToast(data.message.toString());
-                if (data.status!) {
-                  changed(false);
-                  var userProfileData = ProData(
-                      email: profileEmail.text.toString(),
-                      image: userImgUrl.value,
-                      mobileNumber: profileMobile.text,
-                      nickName: profileName.text,
-                      name: profileName.text,
-                      status: profileStatus.value);
-                  SessionManagement.setCurrentUser(userProfileData);
-                  if (from.value == Routes.login) {
-                    Get.offNamed(Routes.dashboard);
+        loading.value = true;
+        showLoader();
+        if (imagePath.value.isNotEmpty) {
+          debugPrint("profile image update");
+          updateProfileImage(imagePath.value, update: true);
+        } else {
+          if (await AppUtils.isNetConnected()) {
+            debugPrint("profile update");
+            FlyChat
+                .updateMyProfile(
+                profileName.text.toString(),
+                profileEmail.text.toString(),
+                profileMobile.text.toString(),
+                profileStatus.value.toString(),
+                userImgUrl.value.isEmpty ? null : userImgUrl.value
+            )
+                .then((value) {
+              mirrorFlyLog("updateMyProfile", value);
+              loading.value = false;
+              hideLoader();
+              if (value != null) {
+                debugPrint(value);
+                var data = profileUpdateFromJson(value);
+                if (data.status != null) {
+                  toToast(frmImage ? 'Removed profile image successfully' : data.message.toString());
+                  if (data.status!) {
+                    changed(false);
+                    var userProfileData = ProData(
+                        email: profileEmail.text.toString(),
+                        image: userImgUrl.value,
+                        mobileNumber: profileMobile.text,
+                        nickName: profileName.text,
+                        name: profileName.text,
+                        status: profileStatus.value);
+                    SessionManagement.setCurrentUser(userProfileData);
+                    if (from.value == Routes.login) {
+                      var trail = SessionManagement.isTrailLicence();
+                      if(trail.checkNull()) {
+                        Get.offNamed(Routes.dashboard);
+                      }else{
+                        Get.offNamed(Routes.contactSync);
+                      }
+                    }
                   }
                 }
+              } else {
+                toToast("Unable to update profile");
               }
-            }else{
-              toToast("Unable to update profile");
-            }
-          }).catchError((error) {
-            loading.value = false;
+            }).catchError((error) {
+              loading.value = false;
+              hideLoader();
+              debugPrint("issue===> $error");
+              toToast(error.toString());
+            });
+          } else {
+            loading(false);
             hideLoader();
-            debugPrint("issue===> $error");
-            toToast(error.toString());
-          });
-        }else{
-          loading(false);
-          hideLoader();
-          toToast(Constants.noInternetConnection);
+            toToast(Constants.noInternetConnection);
+          }
         }
       }
     }
@@ -130,23 +166,28 @@ class ProfileController extends GetxController {
   updateProfileImage(String path, {bool update = false}) async {
     if(await AppUtils.isNetConnected()) {
       loading.value = true;
-      showLoader();
-      FlyChat.updateMyProfileImage(path).then((value) {
-        mirrorFlyLog("updateMyProfileImage", value);
-        loading.value = false;
-        var data = json.decode(value);
-        imagePath.value = Constants.emptyString;
-        userImgUrl.value = data['data']['image'];
-        SessionManagement.setUserImage(data['data']['image'].toString());
-        hideLoader();
-        if (update) {
-          save();
-        }
-      }).catchError((onError) {
-        debugPrint("Profile Update on error");
-        loading.value = false;
-        hideLoader();
-      });
+
+      // if(checkFileUploadSize(path, Constants.mImage)) {
+        showLoader();
+        FlyChat.updateMyProfileImage(path).then((value) {
+          mirrorFlyLog("updateMyProfileImage", value);
+          loading.value = false;
+          var data = json.decode(value);
+          imagePath.value = Constants.emptyString;
+          userImgUrl.value = data['data']['image'];
+          SessionManagement.setUserImage(data['data']['image'].toString());
+          hideLoader();
+          if (update) {
+            save();
+          }
+        }).catchError((onError) {
+          debugPrint("Profile Update on error--> ${onError.toString()}");
+          loading.value = false;
+          hideLoader();
+        });
+      // }else{
+      //   toToast("Image Size exceeds 10MB");
+      // }
     }else{
       toToast(Constants.noInternetConnection);
     }
@@ -168,7 +209,7 @@ class ProfileController extends GetxController {
           if (from.value == Routes.login) {
             changed(true);
           } else {
-            save();
+            save(frmImage: true);
           }
           update();
         }
@@ -189,6 +230,7 @@ class ProfileController extends GetxController {
         mirrorFlyLog("jid.isNotEmpty", jid.isNotEmpty.toString());
         loading.value = true;
         FlyChat.getUserProfile(jid,await AppUtils.isNetConnected()).then((value) {
+          debugPrint("profile--> $value");
           insertDefaultStatusToUser();
           loading.value = false;
           var data = profileDataFromJson(value);
@@ -206,6 +248,14 @@ class ProfileController extends GetxController {
                   data.data!.image ?? SessionManagement.getUserImage() ?? "";
               changed((from.value == Routes.login));
               name(data.data!.name.toString());
+              var userProfileData = ProData(
+                  email: profileEmail.text.toString(),
+                  image: userImgUrl.value,
+                  mobileNumber: profileMobile.text,
+                  nickName: profileName.text,
+                  name: profileName.text,
+                  status: profileStatus.value);
+              SessionManagement.setCurrentUser(userProfileData);
               update();
             }
           } else {
@@ -231,6 +281,7 @@ class ProfileController extends GetxController {
         if (value != null) {
           var profileStatus = statusDataFromJson(value.toString());
           if (profileStatus.isNotEmpty) {
+            debugPrint("profile status list is not empty");
             var defaultStatus = Constants.defaultStatusList;
 
             for (var statusValue in defaultStatus) {
@@ -244,30 +295,13 @@ class ProfileController extends GetxController {
                 FlyChat.insertDefaultStatus(statusValue);
               }
             }
-            SessionManagement.vibrationType("0");
-            FlyChat.getDefaultNotificationUri().then((value) {
-              if (value != null) {
-                FlyChat.setNotificationUri(value);
-                SessionManagement.setNotificationUri(value);
-              }
-            });
-            SessionManagement.convSound(true);
-            SessionManagement.muteAll( false);
           }else{
-            debugPrint("Inserting Status");
-            var defaultStatus = Constants.defaultStatusList;
-
-            for (var statusValue in defaultStatus) {
-              FlyChat.insertDefaultStatus(statusValue);
-
-            }
-            FlyChat.getDefaultNotificationUri().then((value) {
-              if (value != null) {
-                FlyChat.setNotificationUri(value);
-                SessionManagement.setNotificationUri(value);
-              }
-            });
+            insertStatus();
           }
+        }else{
+          debugPrint("status list is empty");
+          insertStatus();
+
         }
       });
     } on Exception catch(er){
@@ -280,25 +314,31 @@ class ProfileController extends GetxController {
       FilePickerResult? result = await FilePicker.platform
           .pickFiles(allowMultiple: false, type: FileType.image);
       if (result != null) {
-        isImageSelected.value = true;
-        Get.to(CropImage(
-          imageFile: File(result.files.single.path!),
-        ))?.then((value) {
-          value as MemoryImage;
-          imageBytes = value.bytes;
-          var name = "${DateTime.now().millisecondsSinceEpoch}.jpg";
-          writeImageTemp(value.bytes, name).then((value) {
-            if (from.value == Routes.login) {
-              imagePath(value.path);
-              changed(true);
-              update();
-            } else {
-              imagePath(value.path);
-              changed(true);
-              updateProfileImage(value.path, update: true);
-            }
+        if(checkFileUploadSize(result.files.single.path!, Constants.mImage)) {
+          isImageSelected.value = true;
+          Get.to(CropImage(
+            imageFile: File(result.files.single.path!),
+          ))?.then((value) {
+            value as MemoryImage;
+            imageBytes = value.bytes;
+            var name = "${DateTime
+                .now()
+                .millisecondsSinceEpoch}.jpg";
+            writeImageTemp(value.bytes, name).then((value) {
+              if (from.value == Routes.login) {
+                imagePath(value.path);
+                changed(true);
+                update();
+              } else {
+                imagePath(value.path);
+                changed(true);
+                updateProfileImage(value.path, update: true);
+              }
+            });
           });
-        });
+        }else{
+          toToast("Please select Image less than 10MB");
+        }
       } else {
         // User canceled the picker
         isImageSelected.value = false;
@@ -359,5 +399,38 @@ class ProfileController extends GetxController {
   onEmailChange(String text) {
     changed(true);
     update();
+  }
+
+  static void insertStatus() {
+    debugPrint("Inserting Status");
+    var defaultStatus = Constants.defaultStatusList;
+
+    for (var statusValue in defaultStatus) {
+      FlyChat.insertDefaultStatus(statusValue);
+
+    }
+    // FlyChat.getDefaultNotificationUri().then((value) {
+    //   if (value != null) {
+    //     // FlyChat.setNotificationUri(value);
+    //     SessionManagement.setNotificationUri(value);
+    //   }
+    // });
+  }
+  static void checkAndEnableNotificationSound() {
+
+    SessionManagement.vibrationType("0");
+    SessionManagement.convSound(true);
+    SessionManagement.muteAll(false);
+
+    FlyChat.getDefaultNotificationUri().then((value) {
+      debugPrint("getDefaultNotificationUri--> $value");
+      if (value != null) {
+        // FlyChat.setNotificationUri(value);
+        SessionManagement.setNotificationUri(value);
+        FlyChat.setNotificationSound(true);
+        FlyChat.setDefaultNotificationSound();
+        SessionManagement.setNotificationSound(true);
+      }
+    });
   }
 }

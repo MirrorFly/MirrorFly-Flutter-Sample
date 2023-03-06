@@ -46,17 +46,20 @@ class GalleryFunctions {
                   animationController: animationController,
                   builder: builder),
             ));
-    Overlay.of(context)!.insert(entry);
+    Overlay.of(context)?.insert(entry);
     animationController.animateTo(1);
     return FeatureController(
       completer,
       close,
     );
+
   }
+
+
 
   static onPickMax(GalleryMediaPickerController provider) {
     provider.onPickMax
-        .addListener(() => showToast("You can only able to share ${provider.max} items.", position: ToastPosition.bottom));
+        .addListener(() => showToast("Can't share more than ${provider.max} media items.", position: ToastPosition.bottom));
   }
 
   static getPermission(setState, GalleryMediaPickerController provider) async {
@@ -83,7 +86,7 @@ class GalleryFunctions {
   }
 
   static _refreshPathList(setState, GalleryMediaPickerController provider) {
-    PhotoManager.getAssetPathList(type: RequestType.all).then((pathList) {
+    PhotoManager.getAssetPathList(type: RequestType.common).then((pathList) {
       /// don't delete setState
       setState(() {
         provider.resetPathList(pathList);

@@ -5,203 +5,395 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
 import 'package:get/get.dart';
+import 'package:mirror_fly_demo/app/common/constants.dart';
+import 'package:mirror_fly_demo/app/data/helper.dart';
 import 'package:photo_view/photo_view.dart';
 
+import '../../../common/widgets.dart';
 import '../controllers/media_preview_controller.dart';
 
 class MediaPreviewView extends GetView<MediaPreviewController> {
   const MediaPreviewView({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         backgroundColor: Colors.black,
         appBar: AppBar(
           backgroundColor: Colors.black,
-          iconTheme: const IconThemeData(color: Colors.white),
-        ),
-        body: SafeArea(
-          child: Container(
-            height: MediaQuery.of(context).size.height,
-            color: Colors.black,
-            child: Stack(
+          automaticallyImplyLeading: false,
+          leadingWidth: 80,
+          leading: InkWell(
+            onTap: (){
+              Get.back();
+            },
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
               children: [
-                SizedBox(
-                  height: 500,
-                  child: Obx(() {
-                    return controller.filePath.isEmpty
-                        /// no images selected
-                        ? Container(
-                            height: double.infinity,
-                            width: double.infinity,
-                            alignment: Alignment.center,
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                Transform.scale(
-                                  scale: 8,
-                                  child: const Icon(
-                                    Icons.image_outlined,
-                                    color: Colors.white,
-                                    size: 10,
-                                  ),
-                                ),
-                                const SizedBox(height: 50),
-                                const Text(
-                                  'No Media selected',
-                                  style: TextStyle(
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w600,
-                                      color: Colors.white70),
-                                )
-                              ],
-                            ),
-                          )
-
-                        /// selected media
-                        : PageView(
-                            children: [
-                              ...controller.filePath.map((data) {
-                                /// show image
-                                if (data.type == 'image') {
-                                  return Center(
-                                    child: PhotoView(
-                                      imageProvider: FileImage(File(data.path)),
-                                      // Contained = the smallest possible size to fit one dimension of the screen
-                                      minScale: PhotoViewComputedScale.contained * 0.8,
-                                      // Covered = the smallest possible size to fit the whole screen
-                                      maxScale: PhotoViewComputedScale.covered * 2,
-                                      enableRotation: true,
-                                      // Set the background color to the "classic white"
-                                      backgroundDecoration: const BoxDecoration(
-                                          color: Colors.transparent
-                                      ),
-                                      loadingBuilder: (context, event) =>
-                                      const Center(
-                                        child: CircularProgressIndicator(),
-                                      ),
-                                    )
-                                    // PhotoView.customChild(
-                                    //   enablePanAlways: true,
-                                    //   maxScale: 2.0,
-                                    //   minScale: 1.0,
-                                    //   child: Image.file(File(data.path)),
-                                    // ),
-                                  );
-                                }
-
-                                /// show video
-                                else {
-                                  return AspectRatio(
-                                    aspectRatio: 16.0 / 9.0,
-                                    child: BetterVideoPlayer(
-                                      configuration:
-                                          const BetterVideoPlayerConfiguration(
-                                        looping: false,
-                                        autoPlay: false,
-                                        allowedScreenSleep: false,
-                                        autoPlayWhenResume: false,
-                                      ),
-                                      controller: BetterVideoPlayerController(),
-                                      dataSource: BetterVideoPlayerDataSource(
-                                        BetterVideoPlayerDataSourceType.file,
-                                        data.path,
-                                      ),
-                                    ),
-                                  );
-                                }
-                              })
-                            ],
-                          );
-                  }),
+                const SizedBox(
+                  width: 10,
                 ),
-                Positioned(
-                  bottom: 0,
-                  child: Container(
-                    color: Colors.black38,
-                    width: MediaQuery.of(context).size.width,
-                    padding:
-                        const EdgeInsets.symmetric(vertical: 5, horizontal: 15),
-                    child: IntrinsicHeight(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            children: [
-                              const Icon(
-                                Icons.add_photo_alternate,
-                                color: Colors.white,
-                                size: 27,
-                              ),
-                              const SizedBox(
-                                width: 5,
-                              ),
-                              const Padding(
-                                padding: EdgeInsets.only(top: 12.0, bottom: 12.0),
-                                child: VerticalDivider(
-                                  color: Colors.white,
-                                  thickness: 1,
-                                ),
-                              ),
-                              const SizedBox(
-                                width: 5,
-                              ),
-                              Expanded(
-                                child: TextFormField(
-                                  controller: controller.caption,
-                                  style: const TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 17,
-                                  ),
-                                  maxLines: 6,
-                                  minLines: 1,
-                                  decoration: const InputDecoration(
-                                    border: InputBorder.none,
-                                    hintText: "Add Caption....",
-                                    hintStyle: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 17,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              InkWell(
-                                  onTap: () {
-                                    controller.sendMedia();
-                                    // controller.sendMessage(controller.profile);
-                                  },
-                                  child: SvgPicture.asset(
-                                      'assets/logos/img_send.svg')),
-                            ],
-                          ),
-                          // SvgPicture.asset(
-                          //   rightArrow,
-                          //   width: 18,
-                          //   height: 18,
-                          //   fit: BoxFit.contain,
-                          //   color: Colors.white,
-                          // ),
-                          Row(
-                            children: [
-                              const Icon(
-                                Icons.chevron_right_sharp,
-                                color: Colors.white,
-                                size: 27,
-                              ),
-                              Text(
-                                controller.userName,
-                                style: const TextStyle(color: Colors.white),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
+                const Icon(Icons.arrow_back ,color: Colors.white,),
+                const SizedBox(
+                  width: 10,
+                ),
+                ImageNetwork(
+                  url: controller.profile.image.checkNull(),
+                  width: 35,
+                  height: 35,
+                  clipOval: true,
+                  errorWidget: controller.profile.isGroupProfile ?? false
+                      ? ClipOval(
+                    child: Image.asset(
+                      groupImg,
+                      height: 35,
+                      width: 35,
+                      fit: BoxFit.cover,
                     ),
+                  )
+                      : ProfileTextImage(
+                    text: controller.profile.name.checkNull().isEmpty
+                        ? controller.profile.nickName.checkNull().isEmpty
+                        ? controller.profile.mobileNumber.checkNull()
+                        : controller.profile.nickName.checkNull()
+                        : controller.profile.name.checkNull(),
+                    radius: 18,
                   ),
+                  isGroup: controller.profile.isGroupProfile.checkNull(),
+                  blocked: controller.profile.isBlockedMe.checkNull() || controller.profile.isAdminBlocked.checkNull(),
+                  unknown: (!controller.profile.isItSavedContact.checkNull() || controller.profile.isDeletedContact()),
                 ),
               ],
             ),
           ),
+          actions: [
+            Obx(() {
+              return controller.filePath.length > 1
+                  ? IconButton(
+                      onPressed: () {
+                        controller.deleteMedia();
+                      },
+                      icon: SvgPicture.asset(deleteBinWhite))
+                  : const SizedBox.shrink();
+            })
+          ],
+        ),
+        body: WillPopScope(
+          onWillPop: () {
+            Get.back(result: "back");
+            return Future.value(false);
+          },
+          child: SafeArea(
+            child: Container(
+              height: MediaQuery.of(context).size.height,
+              color: Colors.black,
+              child: Column(
+                children: [
+                  Expanded(
+                    child: Obx(() {
+                      return controller.filePath.isEmpty
+
+                          /// no images selected
+                          ? Container(
+                              height: double.infinity,
+                              width: double.infinity,
+                              alignment: Alignment.center,
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  Transform.scale(
+                                    scale: 8,
+                                    child: const Icon(
+                                      Icons.image_outlined,
+                                      color: Colors.white,
+                                      size: 10,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 50),
+                                  const Text(
+                                    'No Media selected',
+                                    style: TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w600,
+                                        color: Colors.white70),
+                                  )
+                                ],
+                              ),
+                            )
+
+                          /// selected media
+                          : PageView(
+                              controller: controller.pageViewController,
+                              onPageChanged: onMediaPreviewPageChanged,
+                              children: [
+                                ...controller.filePath.map((data) {
+                                  /// show image
+                                  if (data.type == 'image') {
+                                    return Center(
+                                        child: PhotoView(
+                                      imageProvider: FileImage(File(data.path)),
+                                      // Contained = the smallest possible size to fit one dimension of the screen
+                                      minScale:
+                                          PhotoViewComputedScale.contained * 1,
+                                      // Covered = the smallest possible size to fit the whole screen
+                                      maxScale:
+                                          PhotoViewComputedScale.covered * 2,
+                                      enableRotation: true,
+                                      basePosition: Alignment.center,
+                                      // Set the background color to the "classic white"
+                                      backgroundDecoration: const BoxDecoration(
+                                          color: Colors.transparent),
+                                      loadingBuilder: (context, event) =>
+                                          const Center(
+                                        child: CircularProgressIndicator(),
+                                      ),
+                                    )
+                                        // PhotoView.customChild(
+                                        //   enablePanAlways: true,
+                                        //   maxScale: 2.0,
+                                        //   minScale: 1.0,
+                                        //   child: Image.file(File(data.path)),
+                                        // ),
+                                        );
+                                  }
+
+                                  /// show video
+                                  else {
+                                    return AspectRatio(
+                                      aspectRatio: 16.0 / 9.0,
+                                      child: BetterVideoPlayer(
+                                        configuration:
+                                            const BetterVideoPlayerConfiguration(
+                                          looping: false,
+                                          autoPlay: false,
+                                          allowedScreenSleep: false,
+                                          autoPlayWhenResume: false,
+                                        ),
+                                        controller:
+                                            BetterVideoPlayerController(),
+                                        dataSource: BetterVideoPlayerDataSource(
+                                          BetterVideoPlayerDataSourceType.file,
+                                          data.path,
+                                        ),
+                                      ),
+                                    );
+                                  }
+                                })
+                              ],
+                            );
+                    }),
+                  ),
+                  Container(
+                    color: Colors.black38,
+                    width: MediaQuery.of(context).size.width,
+                    padding:
+                        const EdgeInsets.symmetric(vertical: 5, horizontal: 15),
+                    child: Column(
+                      children: [
+                        IntrinsicHeight(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                children: [
+                                  Obx(() {
+                                    return controller.isFocused.value || controller.showEmoji.value
+                                        ? InkWell(
+                                            onTap: () {
+                                              if (!controller.showEmoji.value) {
+                                                controller.captionFocusNode
+                                                    .unfocus();
+                                              }
+                                              Future.delayed(
+                                                  const Duration(
+                                                      milliseconds: 100), () {
+                                                controller.showEmoji(!controller
+                                                    .showEmoji.value);
+                                              });
+                                            },
+                                            child: SvgPicture.asset(
+                                                'assets/logos/smile.svg'))
+                                        : controller.filePath.length < 10
+                                            ? InkWell(
+                                                onTap: () {
+                                                  Get.back();
+                                                },
+                                                child: SvgPicture.asset(
+                                                    previewAddImg),
+                                              )
+                                            : const SizedBox.shrink();
+                                  }),
+                                  const SizedBox(
+                                    width: 5,
+                                  ),
+                                  Container(
+                                    color: previewTextColor,
+                                    width: 1,
+                                    height: 25,
+                                    margin: const EdgeInsets.symmetric(
+                                        horizontal: 5),
+                                  ),
+                                  const SizedBox(
+                                    width: 5,
+                                  ),
+                                  Expanded(
+                                    child: Focus(
+                                      onFocusChange: (isFocus) =>
+                                          controller.isFocused(isFocus),
+                                      child: TextFormField(
+                                        focusNode: controller.captionFocusNode,
+                                        controller: controller.caption,
+                                        onChanged: controller.onCaptionTyped,
+                                        style: const TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 15,
+                                        ),
+                                        maxLines: 6,
+                                        minLines: 1,
+                                        decoration: const InputDecoration(
+                                          border: InputBorder.none,
+                                          hintText: "Add Caption...",
+                                          hintStyle: TextStyle(
+                                            color: previewTextColor,
+                                            fontSize: 15,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  InkWell(
+                                      onTap: () {
+                                        controller.sendMedia();
+                                        // controller.sendMessage(controller.profile);
+                                      },
+                                      child: SvgPicture.asset(
+                                          'assets/logos/img_send.svg')),
+                                ],
+                              ),
+                              // SvgPicture.asset(
+                              //   rightArrow,
+                              //   width: 18,
+                              //   height: 18,
+                              //   fit: BoxFit.contain,
+                              //   color: Colors.white,
+                              // ),
+                              Row(
+                                children: [
+                                  const Icon(
+                                    Icons.keyboard_arrow_right,
+                                    color: Colors.white,
+                                    size: 13,
+                                  ),
+                                  Text(
+                                    controller.userName,
+                                    style: const TextStyle(
+                                        color: previewTextColor, fontSize: 13),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        Obx(() {
+                          return controller.filePath.length > 1
+                              ? SizedBox(
+                                  height: 45,
+                                  child: ListView.builder(
+                                      scrollDirection: Axis.horizontal,
+                                      itemCount: controller.filePath.length,
+                                      itemBuilder: (context, index) {
+                                        return Stack(
+                                          children: [
+                                            Obx(() {
+                                              return InkWell(
+                                                onTap: () {
+                                                  controller
+                                                      .currentPageIndex(index);
+                                                  controller.pageViewController
+                                                      .animateToPage(index,
+                                                          duration:
+                                                              const Duration(
+                                                                  milliseconds:
+                                                                      1),
+                                                          curve: Curves.easeIn);
+                                                },
+                                                child: Container(
+                                                  width: 45,
+                                                  height: 45,
+                                                  decoration: controller
+                                                              .currentPageIndex
+                                                              .value ==
+                                                          index
+                                                      ? BoxDecoration(
+                                                          border: Border.all(
+                                                          color: Colors.blue,
+                                                          width: 1,
+                                                        ))
+                                                      : null,
+                                                  margin: const EdgeInsets
+                                                      .symmetric(horizontal: 1),
+                                                  child: Image.memory(controller
+                                                      .filePath[index]
+                                                      .thumbnail),
+                                                ),
+                                              );
+                                            }),
+                                            controller.filePath[index].type ==
+                                                    "image"
+                                                ? const SizedBox.shrink()
+                                                : Positioned(
+                                                    bottom: 4,
+                                                    left: 4,
+                                                    child: SvgPicture.asset(
+                                                      videoCamera,
+                                                      width: 5,
+                                                      height: 5,
+                                                    )),
+                                          ],
+                                        );
+                                      }),
+                                )
+                              : const SizedBox.shrink();
+                        }),
+                        emojiLayout(),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
         ));
+  }
+
+  void onMediaPreviewPageChanged(int value) {
+    debugPrint(value.toString());
+    // final deBouncer = DeBouncer(milliseconds: 200);
+    // deBouncer.run(() {
+    controller.currentPageIndex(value);
+    controller.caption.text = controller.captionMessage[value];
+    controller.captionFocusNode.unfocus();
+    // });
+    // Future.delayed(const Duration(milliseconds: 200), (){
+    //   controller.currentPageIndex(value);
+    //   controller.caption.text = controller.captionMessage[value];
+    // });
+  }
+
+  Widget emojiLayout() {
+    return Obx(() {
+      if (controller.showEmoji.value) {
+        return EmojiLayout(
+            textController: controller.caption,
+            onEmojiSelected : (cat, emoji)=>controller.onChanged()
+        );
+      } else {
+        return const SizedBox.shrink();
+      }
+    });
   }
 }

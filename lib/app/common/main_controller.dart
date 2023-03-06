@@ -1,22 +1,31 @@
-import 'dart:convert';
+import 'dart:async';
 import 'dart:io';
 
 import 'package:audioplayers/audioplayers.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get/get.dart';
+import 'package:mirror_fly_demo/app/base_controller.dart';
+import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
+import 'package:mirror_fly_demo/app/common/received_notification.dart';
+import 'package:mirror_fly_demo/app/data/apputils.dart';
 import 'package:mirror_fly_demo/app/data/pushnotification.dart';
 import 'package:mirror_fly_demo/app/data/session_management.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
+import 'package:mirror_fly_demo/app/modules/chat/controllers/chat_controller.dart';
+import 'package:mirror_fly_demo/app/modules/contact_sync/controllers/contact_sync_controller.dart';
 import 'package:mirror_fly_demo/app/routes/app_pages.dart';
-import 'package:permission_handler/permission_handler.dart';
-import 'package:url_launcher/url_launcher.dart';
 
-import '../data/permissions.dart';
 import 'package:flysdk/flysdk.dart';
+import 'package:permission_handler/permission_handler.dart';
 
-class MainController extends GetxController {
+import '../modules/chatInfo/controllers/chat_info_controller.dart';
+import 'notification_service.dart';
+
+class MainController extends FullLifeCycleController with BaseController, FullLifeCycleMixin
+    /*with FullLifeCycleMixin */{
   var authToken = "".obs;
   Rx<String> uploadEndpoint = "".obs;
   var maxDuration = 100.obs;
@@ -25,16 +34,133 @@ class MainController extends GetxController {
   var audioPlayed = false.obs;
   AudioPlayer player = AudioPlayer();
   String currentPostLabel = "00:00";
+  bool _notificationsEnabled = false;
+  //network listener
+  static StreamSubscription<InternetConnectionStatus>? listener;
 
   @override
-  void onInit() {
+  Future<void> onInit() async {
     super.onInit();
     PushNotifications.init();
+    initListeners();
     getMediaEndpoint();
     uploadEndpoint(SessionManagement.getMediaEndPoint().checkNull());
     authToken(SessionManagement.getAuthToken().checkNull());
     getAuthToken();
+    startNetworkListen();
+
+    NotificationService notificationService = NotificationService();
+    await notificationService.init();
+    _isAndroidPermissionGranted();
+    _requestPermissions();
+    _configureDidReceiveLocalNotificationSubject();
+    _configureSelectNotificationSubject();
   }
+
+
+  Future<void> _isAndroidPermissionGranted() async {
+    if (Platform.isAndroid) {
+      final bool granted = await flutterLocalNotificationsPlugin
+          .resolvePlatformSpecificImplementation<
+          AndroidFlutterLocalNotificationsPlugin>()
+          ?.areNotificationsEnabled() ??
+          false;
+
+      // setState(() {
+        _notificationsEnabled = granted;
+        debugPrint("Notification Enabled--> $_notificationsEnabled");
+      // });
+    }
+  }
+
+  Future<void> _requestPermissions() async {
+    if (Platform.isIOS || Platform.isMacOS) {
+      await flutterLocalNotificationsPlugin
+          .resolvePlatformSpecificImplementation<
+          IOSFlutterLocalNotificationsPlugin>()
+          ?.requestPermissions(
+        alert: true,
+        badge: true,
+        sound: true,
+      );
+      await flutterLocalNotificationsPlugin
+          .resolvePlatformSpecificImplementation<
+          MacOSFlutterLocalNotificationsPlugin>()
+          ?.requestPermissions(
+        alert: true,
+        badge: true,
+        sound: true,
+      );
+    } else if (Platform.isAndroid) {
+      final AndroidFlutterLocalNotificationsPlugin? androidImplementation =
+      flutterLocalNotificationsPlugin.resolvePlatformSpecificImplementation<
+          AndroidFlutterLocalNotificationsPlugin>();
+
+      final bool? granted = await androidImplementation?.requestPermission();
+      // setState(() {
+        _notificationsEnabled = granted ?? false;
+      // });
+    }
+  }
+
+  void _configureDidReceiveLocalNotificationSubject() {
+    didReceiveLocalNotificationStream.stream
+        .listen((ReceivedNotification receivedNotification) async {
+      await showDialog(
+        context: Get.context!,
+        builder: (BuildContext context) => CupertinoAlertDialog(
+          title: receivedNotification.title != null
+              ? Text(receivedNotification.title!)
+              : null,
+          content: receivedNotification.body != null
+              ? Text(receivedNotification.body!)
+              : null,
+          actions: <Widget>[
+            CupertinoDialogAction(
+              isDefaultAction: true,
+              onPressed: () async {
+
+              },
+              child: const Text('Ok'),
+            )
+          ],
+        ),
+      );
+    });
+  }
+
+  void _configureSelectNotificationSubject() {
+    selectNotificationStream.stream.listen((String? payload) async {
+      // await Navigator.of(context).push(MaterialPageRoute<void>(
+      //   builder: (BuildContext context) => SecondPage(payload),
+      // ));
+      debugPrint("opening chat page--> $payload");
+      if(payload != null && payload.isNotEmpty){
+
+        if (Get.isRegistered<ChatController>()) {
+          FlyChat.getProfileDetails(payload, false).then((value) {
+            if (value != null) {
+              debugPrint("notification group info controller");
+              var profile = profiledata(value.toString());
+              // Get.toNamed(Routes.chat, arguments: profile);
+              Get.back(result: profile);
+            }
+          });
+        }else {
+          Get.toNamed(Routes.chat,
+              parameters: {'isFromStarred': 'true', "userJid": payload});
+        }
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    didReceiveLocalNotificationStream.close();
+    selectNotificationStream.close();
+    super.dispose();
+  }
+
 
   getMediaEndpoint() async {
     if (SessionManagement
@@ -79,122 +205,6 @@ class MainController extends GetxController {
     }
   }
 
-
-
-  Image imageFromBase64String(String base64String, BuildContext context,
-      double? width, double? height) {
-    var decodedBase64 = base64String.replaceAll("\n", "");
-    Uint8List image = const Base64Decoder().convert(decodedBase64);
-    return Image.memory(
-      image,
-      width: width ?? MediaQuery
-          .of(context)
-          .size
-          .width * 0.60,
-      height: height ?? MediaQuery
-          .of(context)
-          .size
-          .height * 0.4,
-      fit: BoxFit.cover,
-    );
-  }
-
-  Widget getLocationImage(LocationChatMessage? locationChatMessage,
-      double width, double height) {
-    return InkWell(
-        onTap: () async {
-          String googleUrl =
-              'https://www.google.com/maps/search/?api=1&query=${locationChatMessage
-              .latitude}, ${locationChatMessage.longitude}';
-          if (await canLaunchUrl(Uri.parse(googleUrl))) {
-            await launchUrl(Uri.parse(googleUrl));
-          } else {
-            throw 'Could not open the map.';
-          }
-        },
-        child: Image.network(
-          Helper.getMapImageUri(
-              locationChatMessage!.latitude, locationChatMessage.longitude),
-          fit: BoxFit.fill,
-          width: width,
-          height: height,
-        ));
-  }
-
-  checkFile(String mediaLocalStoragePath) {
-    return mediaLocalStoragePath.isNotEmpty &&
-        File(mediaLocalStoragePath).existsSync();
-  }
-
-  openDocument(String mediaLocalStoragePath, BuildContext context) async {
-    // if (await askStoragePermission()) {
-    if (mediaLocalStoragePath.isNotEmpty) {
-      FlyChat.openFile(mediaLocalStoragePath).catchError((onError) {
-        final scaffold = ScaffoldMessenger.of(context);
-        scaffold.showSnackBar(
-          SnackBar(
-            content: const Text(
-                'No supported application available to open this file format'),
-            action: SnackBarAction(
-                label: 'Ok', onPressed: scaffold.hideCurrentSnackBar),
-          ),
-        );
-      });
-    } else {
-      debugPrint("media does not exist");
-    }
-    // }
-  }
-
-  downloadMedia(String messageId) async {
-    if (await askStoragePermission()) {
-      FlyChat.downloadMedia(messageId);
-    }
-  }
-
-  Future<bool> askStoragePermission() async {
-    final permission = await AppPermission.getStoragePermission();
-    switch (permission) {
-      case PermissionStatus.granted:
-        return true;
-      case PermissionStatus.permanentlyDenied:
-        return false;
-      default:
-        debugPrint("Contact Permission default");
-        return false;
-    }
-  }
-
-  playAudio(String filePath) async {
-    if (!isPlaying.value && !audioPlayed.value) {
-      int result = await player.play(filePath, isLocal: true);
-      if (result == 1) {
-
-        isPlaying(true);
-        audioPlayed(true);
-      } else {
-        mirrorFlyLog("", "Error while playing audio.");
-      }
-    } else if (audioPlayed.value && !isPlaying.value) {
-      int result = await player.resume();
-      if (result == 1) {
-
-        isPlaying(true);
-        audioPlayed(true);
-      } else {
-        mirrorFlyLog("", "Error on resume audio.");
-      }
-    } else {
-      int result = await player.pause();
-      if (result == 1) {
-
-        isPlaying(false);
-      } else {
-        mirrorFlyLog("", "Error on pause audio.");
-      }
-    }
-  }
-
   handleAdminBlockedUser(String jid, bool status){
     if(SessionManagement.getUserJID().checkNull()==jid){
       if(status) {
@@ -208,4 +218,81 @@ class MainController extends GetxController {
   handleAdminBlockedUserFromRegister(){
 
   }
+
+  void startNetworkListen() {
+    final InternetConnectionChecker customInstance =
+    InternetConnectionChecker.createInstance(
+      checkTimeout: const Duration(seconds: 1),
+      checkInterval: const Duration(seconds: 1),
+
+    );
+    listener = customInstance.onStatusChange.listen(
+          (InternetConnectionStatus status) {
+        switch (status) {
+          case InternetConnectionStatus.connected:
+            mirrorFlyLog("network",'Data connection is available.');
+            if (Get.isRegistered<ChatController>()) {
+              Get.find<ChatController>().networkConnected();
+            }
+            if (Get.isRegistered<ChatInfoController>()) {
+              Get.find<ChatInfoController>().networkConnected();
+            }
+            if (Get.isRegistered<ContactSyncController>()) {
+              Get.find<ContactSyncController>().networkConnected();
+            }
+            break;
+          case InternetConnectionStatus.disconnected:
+            mirrorFlyLog("network",'You are disconnected from the internet.');
+            if (Get.isRegistered<ChatController>()) {
+              Get.find<ChatController>().networkDisconnected();
+            }
+            if (Get.isRegistered<ChatInfoController>()) {
+              Get.find<ChatInfoController>().networkDisconnected();
+            }
+            if (Get.isRegistered<ContactSyncController>()) {
+              Get.find<ContactSyncController>().networkDisconnected();
+            }
+            break;
+        }
+      },
+    );
+  }
+
+  @override
+  void onClose() {
+    listener?.cancel();
+    super.onClose();
+  }
+
+  @override
+  void onDetached() {
+
+  }
+
+  @override
+  void onInactive() {
+
+  }
+
+  @override
+  void onPaused() {
+
+  }
+
+  @override
+  void onResumed() {
+    mirrorFlyLog('mainController', 'onResumed');
+    syncContacts();
+  }
+
+  void syncContacts() async {
+    if(await AppUtils.isNetConnected() && !await FlyChat.contactSyncStateValue()){
+      final permission = await Permission.contacts.status;
+      if (permission == PermissionStatus.granted) {
+        FlyChat.syncContacts(!SessionManagement.isInitialContactSyncDone());
+      }
+    }
+  }
+
+
 }

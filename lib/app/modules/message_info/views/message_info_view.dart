@@ -1,16 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:flysdk/flysdk.dart';
 
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/common/widgets.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
 
 import '../../../common/constants.dart';
-import '../../../routes/app_pages.dart';
 import '../../chat/chat_widgets.dart';
 
-//import '../../chat/views/message_content.dart';
 import '../controllers/message_info_controller.dart';
 
 class MessageInfoView extends GetView<MessageInfoController> {
@@ -51,7 +48,7 @@ class MessageInfoView extends GetView<MessageInfoController> {
                                 null)
                                 ? const SizedBox.shrink()
                                 : ReplyMessageHeader(
-                                chatMessage: controller.chatMessage[0]),
+                                chatMessage: controller.chatMessage[0],),
                             SenderHeader(
                                 isGroupProfile: controller.isGroupProfile,
                                 chatList: controller.chatMessage,
@@ -59,9 +56,9 @@ class MessageInfoView extends GetView<MessageInfoController> {
                             //getMessageContent(index, context, chatList),
                             MessageContent(chatList: controller.chatMessage,
                               index: 0,
-                              handleMediaUploadDownload: handleMediaUploadDownload,
-                              currentPos: controller.currentPos.value,
-                              maxDuration: controller.maxDuration.value,)
+                              onPlayAudio: (){
+                                controller.playAudio(controller.chatMessage[0]);
+                              },)
                             //MessageHeader(chatList: controller.chatMessage, isTapEnabled: false,),
                             //MessageContent(chatList: controller.chatMessage, isTapEnabled: false,),
                           ],
@@ -112,7 +109,9 @@ class MessageInfoView extends GetView<MessageInfoController> {
                         image: member.image.checkNull(),
                         status: controller.chatDate(context,
                             controller.messageDeliveredList[index]),
-                        onTap: () {});
+                        onTap: () {},
+                      blocked: member.isBlockedMe.checkNull() || member.isAdminBlocked.checkNull(),
+                      unknown: (!member.isItSavedContact.checkNull() || member.isDeletedContact()),);
                   }) : emptyDeliveredSeen(
                   context, 'Message sent, not delivered yet')),
           const AppDivider(),
@@ -144,7 +143,9 @@ class MessageInfoView extends GetView<MessageInfoController> {
                         image: member.image.checkNull(),
                         status: controller.chatDate(context,
                             controller.messageDeliveredList[index]),
-                        onTap: () {});
+                        onTap: () {},
+                      blocked: member.isBlockedMe.checkNull() || member.isAdminBlocked.checkNull(),
+                      unknown: (!member.isItSavedContact.checkNull() || member.isDeletedContact()),);
                   }) : emptyDeliveredSeen(context, "Your message is not read")),
           const AppDivider(),
         ],
@@ -212,143 +213,6 @@ class MessageInfoView extends GetView<MessageInfoController> {
             ),
           ),
         ],
-      ),
-    );
-  }
-
-  handleMediaUploadDownload(int mediaDownloadStatus,
-      ChatMessageModel chatList) {
-    switch (chatList.isMessageSentByMe
-        ? chatList.mediaChatMessage?.mediaUploadStatus
-        : mediaDownloadStatus) {
-      case Constants.mediaDownloaded:
-      case Constants.mediaUploaded:
-        if (chatList.messageType.toUpperCase() == 'VIDEO') {
-          if (controller.checkFile(
-              chatList.mediaChatMessage!.mediaLocalStoragePath) &&
-              (chatList.mediaChatMessage!.mediaDownloadStatus ==
-                  Constants.mediaDownloaded ||
-                  chatList.mediaChatMessage!.mediaDownloadStatus ==
-                      Constants.mediaUploaded ||
-                  chatList.isMessageSentByMe)) {
-            Get.toNamed(Routes.videoPlay, arguments: {
-              "filePath": chatList.mediaChatMessage!.mediaLocalStoragePath,
-            });
-          }
-        }
-        if (chatList.messageType.toUpperCase() == 'AUDIO') {
-          if (controller.checkFile(
-              chatList.mediaChatMessage!.mediaLocalStoragePath) &&
-              (chatList.mediaChatMessage!.mediaDownloadStatus ==
-                  Constants.mediaDownloaded ||
-                  chatList.mediaChatMessage!.mediaDownloadStatus ==
-                      Constants.mediaUploaded ||
-                  chatList.isMessageSentByMe)) {
-            // debugPrint("audio click1");
-            chatList.mediaChatMessage!.isPlaying = controller.isPlaying.value;
-            // controller.playAudio(chatList.mediaChatMessage!);
-            playAudio(chatList.mediaChatMessage!.mediaLocalStoragePath,
-                chatList.mediaChatMessage!.mediaFileName);
-          } else {
-            debugPrint("condition failed");
-          }
-        }
-        break;
-
-      case Constants.mediaDownloadedNotAvailable:
-      case Constants.mediaNotDownloaded:
-      //download
-        debugPrint("Download");
-        debugPrint(chatList.messageId);
-        chatList.mediaChatMessage!.mediaDownloadStatus =
-            Constants.mediaDownloading;
-        controller.downloadMedia(chatList.messageId);
-        break;
-      case Constants.mediaUploadedNotAvailable:
-      //upload
-        break;
-      case Constants.mediaNotUploaded:
-      case Constants.mediaDownloading:
-      case Constants.mediaUploading:
-        return uploadingView();
-    // break;
-    }
-  }
-
-  playAudio(String filePath, String mediaFileName) {
-    Get.dialog(
-      Dialog(
-        child: Padding(
-          padding: const EdgeInsets.all(15),
-          child: Row(
-            // mainAxisSize: MainAxisSize.min,
-            children: [
-              InkWell(
-                onTap: () {
-                  controller.playAudio(filePath);
-                },
-                child: Stack(
-                  alignment: Alignment.center,
-                  children: [
-                    SvgPicture.asset(
-                      audioMicBg,
-                      width: 50,
-                      height: 50,
-                      fit: BoxFit.contain,
-                    ),
-                    Obx(() {
-                      return controller.isPlaying.value
-                          ? const Icon(Icons.pause)
-                          : const Icon(Icons.play_arrow);
-                    }),
-                  ],
-                ),
-              ),
-              const SizedBox(
-                width: 20,
-              ),
-              Expanded(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(
-                      mediaFileName,
-                      maxLines: 2,
-                    ),
-                    const SizedBox(
-                      height: 15,
-                    ),
-                    SizedBox(
-                      // width: 168,
-                      child: SliderTheme(
-                        data: SliderThemeData(
-                          thumbColor: audioColorDark,
-                          overlayShape: SliderComponentShape.noOverlay,
-                          thumbShape: const RoundSliderThumbShape(
-                              enabledThumbRadius: 5),
-                        ),
-                        child: Obx(() {
-                          return Slider(
-                            value:
-                            double.parse(controller.currentPos.toString()),
-                            min: 0,
-                            activeColor: audioColorDark,
-                            inactiveColor: audioColor,
-                            max: double.parse(
-                                controller.maxDuration.value.toString()),
-                            divisions: controller.maxDuration.value,
-                            label: controller.currentPostLabel,
-                            onChanged: (double value) async {},
-                          );
-                        }),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ),
       ),
     );
   }

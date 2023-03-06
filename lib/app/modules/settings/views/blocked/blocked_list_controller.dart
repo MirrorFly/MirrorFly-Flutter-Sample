@@ -1,3 +1,4 @@
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -23,11 +24,31 @@ class BlockedListController extends GetxController {
     FlyChat.getUsersIBlocked(server).then((value){
       if(value!=null && value != ""){
         var list = memberFromJson(value);
+        list.sort((a, b) => a.name.checkNull().toString().toLowerCase().compareTo(b.name.checkNull().toString().toLowerCase()));
         _blockedUsers(list);
       }else{
         _blockedUsers.clear();
       }
     });
+  }
+  void userUpdatedHisProfile(jid) {
+    if (jid.isNotEmpty) {
+      /* //This function is not working in UI kit so commented
+      getProfileDetails(jid).then((value) {
+        var index = _blockedUsers.indexWhere((element) => element.jid == jid);
+        if(!index.isNegative) {
+          _blockedUsers[index].name = value.name;
+          _blockedUsers[index].nickName = value.nickName;
+          _blockedUsers[index].email = value.email;
+          _blockedUsers[index].image = value.image;
+          _blockedUsers[index].isBlocked = value.isBlocked;
+          _blockedUsers[index].mobileNumber = value.mobileNumber;
+          _blockedUsers[index].status = value.status;
+        }
+      });*/
+
+    }
+
   }
   unBlock(Member item){
     Helper.showAlert(message: "Unblock ${item.name}?", actions: [
@@ -35,7 +56,7 @@ class BlockedListController extends GetxController {
           onPressed: () {
             Get.back();
           },
-          child: const Text("CANCEL")),
+          child: const Text("NO")),
       TextButton(
           onPressed: () async {
             if(await AppUtils.isNetConnected()) {
@@ -44,7 +65,7 @@ class BlockedListController extends GetxController {
               FlyChat.unblockUser(item.jid.checkNull()).then((value) {
                 Helper.hideLoading();
                 if(value!=null && value) {
-                  toToast("${item.name} Unblocked");
+                  toToast("${item.name} has been Unblocked");
                   getUsersIBlocked(false);
                 }
               }).catchError((error) {
@@ -56,7 +77,7 @@ class BlockedListController extends GetxController {
             }
 
           },
-          child: const Text("UNBLOCK")),
+          child: const Text("YES")),
     ]);
   }
 }

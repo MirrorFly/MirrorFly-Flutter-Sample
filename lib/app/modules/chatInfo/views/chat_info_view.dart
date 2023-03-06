@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:flutter_switch/flutter_switch.dart';
@@ -28,6 +27,8 @@ class ChatInfoView extends GetView<ChatInfoController> {
           return <Widget>[
             Obx(() {
               return SliverAppBar(
+                centerTitle: false,
+                titleSpacing: 0.0,
                 expandedHeight: MediaQuery
                     .of(context)
                     .size
@@ -44,43 +45,100 @@ class ChatInfoView extends GetView<ChatInfoController> {
                     Get.back();
                   },
                 ),
-                flexibleSpace: FlexibleSpaceBar(
-                  background: ImageNetwork(
-                      url: controller.profile.image.checkNull(),
-                      width: MediaQuery
-                          .of(context)
-                          .size
-                          .width,
-                      height: MediaQuery
-                          .of(context)
-                          .size
-                          .height * 0.45,
-                      clipOval: false,
-                      errorWidget: ProfileTextImage(
-                        text: controller.profile.nickName
-                            .checkNull()
-                            .isEmpty
-                            ? controller.profile.nickName.checkNull()
-                            : controller.profile.name.checkNull(),
-                        radius: 0,
-                        fontSize: 120,
-                      ),onTap: (){
-                    Get.toNamed(Routes.imageView, arguments: {
-                      'imageName': controller.profile.nickName,
-                      'imageUrl': controller.profile.image.checkNull()
-                    });
-                  },),
-                  titlePadding: controller.isSliverAppBarExpanded
-                      ? const EdgeInsets.symmetric(vertical: 16, horizontal: 20)
-                      : const EdgeInsets.symmetric(
-                      vertical: 19, horizontal: 50),
-                  title: Text(controller.profile.name.checkNull().isEmpty ? controller.profile.nickName.checkNull() : controller.profile.name.checkNull(),
-                      style: TextStyle(
-                        color: controller.isSliverAppBarExpanded
-                            ? Colors.white
-                            : Colors.black,
+                title: Visibility(
+                  visible: !controller.isSliverAppBarExpanded,
+                  child: Text(getName(controller.profile),/*controller.profile.name
+                      .checkNull()
+                      .isEmpty
+                      ? controller.profile.nickName.checkNull()
+                      : controller.profile.name.checkNull(),*/
+                      style: const TextStyle(
+                        color: Colors.black,
                         fontSize: 18.0,
                       )),
+                ),
+                flexibleSpace: FlexibleSpaceBar(
+                  background: ImageNetwork(
+                    url: controller.profile.image.checkNull(),
+                    width: MediaQuery
+                        .of(context)
+                        .size
+                        .width,
+                    height: MediaQuery
+                        .of(context)
+                        .size
+                        .height * 0.45,
+                    clipOval: false,
+                    errorWidget: ProfileTextImage(
+                      text: getName(controller.profile),/*controller.profile.name
+                          .checkNull()
+                          .isEmpty
+                          ? controller.profile.nickName
+                          .checkNull()
+                          .isEmpty
+                          ? controller.profile.mobileNumber.checkNull()
+                          : controller.profile.nickName.checkNull()
+                          : controller.profile.name.checkNull(),*/
+                      radius: 0,
+                      fontSize: 120,
+                    ),
+                    onTap: () {
+                      Get.toNamed(Routes.imageView, arguments: {
+                      'imageName': getName(controller.profile),
+                        /*'imageName': controller.profile.name
+                            .checkNull()
+                            .isEmpty
+                            ? controller.profile.nickName
+                            .checkNull()
+                            .isEmpty
+                            ? controller.profile.mobileNumber.checkNull()
+                            : controller.profile.nickName.checkNull()
+                            : controller.profile.name.checkNull(),*/
+                        'imageUrl': controller.profile.image.checkNull()
+                      });
+                    },
+                    isGroup: controller.profile.isGroupProfile.checkNull(),
+                    blocked: controller.profile.isBlockedMe.checkNull() || controller.profile.isAdminBlocked.checkNull(),
+                    unknown: (!controller.profile.isItSavedContact.checkNull() || controller.profile.isDeletedContact()),
+                  ),
+                  // titlePadding: controller.isSliverAppBarExpanded
+                  //     ? const EdgeInsets.symmetric(vertical: 16, horizontal: 20)
+                  //     : const EdgeInsets.symmetric(
+                  //     vertical: 19, horizontal: 50),
+                  titlePadding: const EdgeInsets.only(left: 16),
+
+                  title: Visibility(
+                    visible: controller.isSliverAppBarExpanded,
+                    child: Padding(
+                      padding: const EdgeInsets.all(4.0),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(getName(controller.profile),/*controller.profile.name
+                              .checkNull()
+                              .isEmpty
+                              ? controller.profile.nickName.checkNull()
+                              : controller.profile.name.checkNull(),*/
+                              style: TextStyle(
+                                color: controller.isSliverAppBarExpanded
+                                    ? Colors.white
+                                    : Colors.black,
+                                fontSize: 18.0,
+                              )),
+                          Obx(() {
+                            return Text(controller.userPresenceStatus.value,
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 8.0,
+                                ) //TextStyle
+                            );
+                          }),
+                        ],
+                      ),
+                    ),
+                  ),
                   stretchModes: const [
                     StretchMode.zoomBackground,
                     StretchMode.blurBackground,
@@ -144,10 +202,12 @@ class ChatInfoView extends GetView<ChatInfoController> {
                     children: [
                       SvgPicture.asset(emailIcon),
                       const SizedBox(width: 10,),
-                      Text(controller.profile.email.checkNull(),
-                          style: const TextStyle(
-                              fontSize: 13,
-                              fontWeight: FontWeight.w500)),
+                      Obx(() {
+                        return Text(controller.profile.email.checkNull(),
+                            style: const TextStyle(
+                                fontSize: 13,
+                                fontWeight: FontWeight.w500));
+                      }),
                     ],
                   ),
                 ),
@@ -169,10 +229,12 @@ class ChatInfoView extends GetView<ChatInfoController> {
                     children: [
                       SvgPicture.asset(phoneIcon),
                       const SizedBox(width: 10,),
-                      Text(controller.profile.mobileNumber.checkNull(),
-                          style: const TextStyle(
-                              fontSize: 13,
-                              fontWeight: FontWeight.w500)),
+                      Obx(() {
+                        return Text(controller.profile.mobileNumber.checkNull(),
+                            style: const TextStyle(
+                                fontSize: 13,
+                                fontWeight: FontWeight.w500));
+                      }),
                     ],
                   ),
                 ),
@@ -194,10 +256,12 @@ class ChatInfoView extends GetView<ChatInfoController> {
                     children: [
                       SvgPicture.asset(statusIcon),
                       const SizedBox(width: 10,),
-                      Text(controller.profile.status.checkNull(),
-                          style: const TextStyle(
-                              fontSize: 13,
-                              fontWeight: FontWeight.w500)),
+                      Obx(() {
+                        return Text(controller.profile.status.checkNull(),
+                            style: const TextStyle(
+                                fontSize: 13,
+                                fontWeight: FontWeight.w500));
+                      }),
                     ],
                   ),
                 ),
@@ -211,7 +275,8 @@ class ChatInfoView extends GetView<ChatInfoController> {
                         fontSize: 14,
                         fontWeight: FontWeight.w500)),
                 trailing: const Icon(Icons.keyboard_arrow_right),
-                onTap: () => {
+                onTap: () =>
+                {
                   controller.gotoViewAllMedia()
                 } //controller.gotoViewAllMedia(),
             ),
@@ -222,8 +287,9 @@ class ChatInfoView extends GetView<ChatInfoController> {
                         color: Colors.red,
                         fontSize: 14,
                         fontWeight: FontWeight.w500)),
-                onTap: () => {
-                controller.reportChatOrUser()
+                onTap: () =>
+                {
+                  controller.reportChatOrUser()
                 }
             ),
           ],

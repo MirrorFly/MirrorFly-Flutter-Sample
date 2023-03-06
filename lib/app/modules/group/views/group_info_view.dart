@@ -133,6 +133,9 @@ class GroupInfoView extends GetView<GroupInfoController> {
                             });
                           }
                         },
+                        isGroup: controller.profile.isGroupProfile.checkNull(),
+                        blocked: controller.profile.isBlockedMe.checkNull() || controller.profile.isAdminBlocked.checkNull(),
+                        unknown: (!controller.profile.isItSavedContact.checkNull() || controller.profile.isDeletedContact()),
                       ) //Images.network
                   ),
                   //FlexibleSpaceBar
@@ -163,111 +166,124 @@ class GroupInfoView extends GetView<GroupInfoController> {
               })
             ];
           },
-          body: ListView(
-            children: <Widget>[
-              Obx(() {
-                return ListItem(title: const Text("Mute Notification",
-                    style: TextStyle(
-                        color: Colors.black,
-                        fontSize: 14,
-                        fontWeight: FontWeight.w500)), trailing: FlutterSwitch(
-                  width: 40.0,
-                  height: 20.0,
-                  valueFontSize: 12.0,
-                  toggleSize: 12.0,
-                  activeColor: Colors.white,
-                  activeToggleColor: Colors.blue,
-                  inactiveToggleColor: Colors.grey,
-                  inactiveColor: Colors.white,
-                  switchBorder: Border.all(
-                      color: controller.mute ? Colors.blue : Colors.grey,
-                      width: 1
-                  ),
-                  value: controller.mute,
-                  onToggle:  (value) => controller.isMemberOfGroup ? controller.onToggleChange(value) : null,
-                ), onTap: () => controller.isMemberOfGroup ? controller.onToggleChange(!controller.mute) : null);
-              }),
-              Obx(() =>
-                  Visibility(
-                    visible: controller.isAdmin,
-                    child: ListItem(leading: SvgPicture.asset(addUser),
-                        title: const Text("Add Participants",
-                            style: TextStyle(
-                                color: Colors.black,
-                                fontSize: 14,
-                                fontWeight: FontWeight.w500)),
-                        onTap: () => controller.gotoAddParticipants()),
-                  )),
-              Obx(() {
-                return ListView.builder(
-                    physics: const NeverScrollableScrollPhysics(),
-                    itemCount: controller.groupMembers.length,
-                    shrinkWrap: true,
-                    itemBuilder: (context, index) {
-                      var item = controller.groupMembers[index];
-                      return memberItem(name: item.name.checkNull(),image: item.image.checkNull(),isAdmin: item.isGroupAdmin,status: item.status.checkNull(),onTap: (){
-                        if (item.jid.checkNull() !=
-                            SessionManagement.getUserJID().checkNull()) {
-                          showOptions(item);
-                        }
+          body: SafeArea(
+            child: ListView(
+              children: <Widget>[
+                Obx(() {
+                  return ListItem(title: const Text("Mute Notification",
+                      style: TextStyle(
+                          color: Colors.black,
+                          fontSize: 14,
+                          fontWeight: FontWeight.w500)), trailing: FlutterSwitch(
+                    width: 40.0,
+                    height: 20.0,
+                    valueFontSize: 12.0,
+                    toggleSize: 12.0,
+                    activeColor: Colors.white,
+                    activeToggleColor: Colors.blue,
+                    inactiveToggleColor: Colors.grey,
+                    inactiveColor: Colors.white,
+                    switchBorder: Border.all(
+                        color: controller.mute ? Colors.blue : Colors.grey,
+                        width: 1
+                    ),
+                    value: controller.mute,
+                    onToggle:  (value){
+                      if(controller.isMemberOfGroup) {
+                        controller.onToggleChange(value);
+                      }
+                    },
+                  ), onTap: (){
+                    if(controller.isMemberOfGroup) {
+                      controller.onToggleChange(!controller.mute);
+                    }
+                  });
+                }),
+                Obx(() =>
+                    Visibility(
+                      visible: controller.isAdmin,
+                      child: ListItem(leading: SvgPicture.asset(addUser),
+                          title: const Text("Add Participants",
+                              style: TextStyle(
+                                  color: Colors.black,
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w500)),
+                          onTap: () => controller.gotoAddParticipants()),
+                    )),
+                Obx(() {
+                  return ListView.builder(
+                      physics: const NeverScrollableScrollPhysics(),
+                      itemCount: controller.groupMembers.length,
+                      shrinkWrap: true,
+                      itemBuilder: (context, index) {
+                        var item = controller.groupMembers[index];
+                        return memberItem(name: item.name.checkNull(),image: item.image.checkNull(),isAdmin: item.isGroupAdmin,status: item.status.checkNull(),onTap: (){
+                          if (item.jid.checkNull() !=
+                              SessionManagement.getUserJID().checkNull()) {
+                            showOptions(item);
+                          }
+                        },
+                          isGroup: item.isGroupProfile.checkNull(),
+                          blocked: item.isBlockedMe.checkNull() || item.isAdminBlocked.checkNull(),
+                          unknown: (!item.isItSavedContact.checkNull() || item.isDeletedContact()),);
                       });
-                    });
-              }),
-              ListItem(
-                leading: SvgPicture.asset(imageOutline),
-                title: const Text("View All Media",
-                    style: TextStyle(
-                        color: Colors.black,
-                        fontSize: 14,
-                        fontWeight: FontWeight.w500)),
-                trailing: const Icon(Icons.keyboard_arrow_right),
-                onTap: ()=>controller.gotoViewAllMedia(),
-              ),
-              ListItem(
-                leading: SvgPicture.asset(reportGroup),
-                title: const Text("Report Group",
-                    style: TextStyle(
-                        color: Colors.red,
-                        fontSize: 14,
-                        fontWeight: FontWeight.w500)),
-                onTap: () => controller.reportGroup(),
-              ),
-              Obx(() {
-                return ListItem(
-                  leading: SvgPicture.asset(leaveGroup, width: 18,),
-                  title: Text(!controller.isMemberOfGroup
-                      ? "Delete Group"
-                      : "Leave Group",
-                      style: const TextStyle(
+                }),
+                ListItem(
+                  leading: SvgPicture.asset(imageOutline),
+                  title: const Text("View All Media",
+                      style: TextStyle(
+                          color: Colors.black,
+                          fontSize: 14,
+                          fontWeight: FontWeight.w500)),
+                  trailing: const Icon(Icons.keyboard_arrow_right),
+                  onTap: ()=>controller.gotoViewAllMedia(),
+                ),
+                ListItem(
+                  leading: SvgPicture.asset(reportGroup),
+                  title: const Text("Report Group",
+                      style: TextStyle(
                           color: Colors.red,
                           fontSize: 14,
                           fontWeight: FontWeight.w500)),
-                  onTap: () => controller.exitOrDeleteGroup(),
-                );
-              }),
-            ],
+                  onTap: () => controller.reportGroup(),
+                ),
+                Obx(() {
+                  return ListItem(
+                    leading: SvgPicture.asset(leaveGroup, width: 18,),
+                    title: Text(!controller.isMemberOfGroup
+                        ? "Delete Group"
+                        : "Leave Group",
+                        style: const TextStyle(
+                            color: Colors.red,
+                            fontSize: 14,
+                            fontWeight: FontWeight.w500)),
+                    onTap: () => controller.exitOrDeleteGroup(),
+                  );
+                }),
+              ],
+            ),
           ),
         ),
     );
   }
 
   showOptions(Profile item) {
-    Helper.showAlert(message: "", content: Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        ListTile(title: const Text("Start Chat"), onTap: () {
+    Helper.showButtonAlert(actions: [
+        ListTile(title: const Text("Start Chat", style: TextStyle(fontWeight: FontWeight.normal, fontSize: 16),), onTap: () {
           // Get.toNamed(Routes.CHAT, arguments: item);
           Get.back();
           Future.delayed(const Duration(milliseconds: 300),(){
             Get.back(result: item);
           });
-        },),
-        ListTile(title: const Text("View Info"), onTap: () {
+        },
+        visualDensity: const VisualDensity(horizontal: 0, vertical: -3)),
+        ListTile(title: const Text("View Info",style: TextStyle(fontWeight: FontWeight.normal, fontSize: 16),), onTap: () {
           Get.back();
           Get.toNamed(Routes.chatInfo, arguments: item);
-        },),
+        },
+        visualDensity: const VisualDensity(horizontal: 0, vertical: -3)),
         Visibility(visible: controller.isAdmin,
-            child: ListTile(title: const Text("Remove from Group"), onTap: () {
+            child: ListTile(title: const Text("Remove from Group",style: TextStyle(fontWeight: FontWeight.normal, fontSize: 16),), onTap: () {
               Get.back();
               Helper.showAlert(
                   message: "Are you sure you want to remove ${item.name}?",
@@ -284,10 +300,11 @@ class GroupInfoView extends GetView<GroupInfoController> {
                         },
                         child: const Text("YES")),
                   ]);
-            },)),
+            },
+            visualDensity: const VisualDensity(horizontal: 0, vertical: -3))),
         Visibility(
             visible: (!item.isGroupAdmin! && controller.isAdmin),
-            child: ListTile(title: const Text("Make Admin"), onTap: () {
+            child: ListTile(title: const Text("Make Admin", style: TextStyle(fontWeight: FontWeight.normal, fontSize: 16),), onTap: () {
               Get.back();
               Helper.showAlert(message: "Are you sure you want to make ${item
                   .name} the admin?", actions: [
@@ -303,9 +320,10 @@ class GroupInfoView extends GetView<GroupInfoController> {
                     },
                     child: const Text("YES")),
               ]);
-            },)),
+            },
+            visualDensity: const VisualDensity(horizontal: 0, vertical: -3))),
       ],
-    ));
+    );
   }
 
   bottomSheetView(BuildContext context) {
@@ -313,63 +331,64 @@ class GroupInfoView extends GetView<GroupInfoController> {
         backgroundColor: Colors.transparent,
         context: context,
         builder: (builder) {
-          return SizedBox(
-            child: Card(
-              shape: const RoundedRectangleBorder(
-                  borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(30),
-                      topRight: Radius.circular(30))),
-              child: Padding(
-                padding:
-                const EdgeInsets.symmetric(horizontal: 10, vertical: 20),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const Text("Options"),
-                    TextButton(
-                        onPressed: () async {
-                          Get.back();
-                          controller.camera();
-                        },
-                        child: const Text("Take Photo",
-                            style: TextStyle(color: textHintColor))),
-                    TextButton(
-                        onPressed: () {
-                          Get.back();
-                          controller.imagePicker(context);
-                        },
-                        child: const Text("Choose from Gallery",
-                            style: TextStyle(color: textHintColor))),
-                    controller.profile.image
-                        .checkNull()
-                        .isNotEmpty
-                        ? TextButton(
-                        onPressed: () {
-                          Get.back();
-                          Helper.showAlert(
-                              message:
-                              "Are you sure want to remove the photo?",
-                              actions: [
-                                TextButton(
-                                    onPressed: () {
-                                      Get.back();
-                                    },
-                                    child: const Text("CANCEL")),
-                                TextButton(
-                                    onPressed: () {
-                                      Get.back();
-                                      controller.removeProfileImage();
-                                    },
-                                    child: const Text("REMOVE"))
-                              ]);
-                        },
-                        child: const Text(
-                          "Remove Photo",
-                          style: TextStyle(color: textHintColor),
-                        ))
-                        : const SizedBox(),
-                  ],
+          return SafeArea(
+            child: SizedBox(
+              child: Card(
+                shape: const RoundedRectangleBorder(
+                    borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(30),
+                        topRight: Radius.circular(30))),
+                child: Padding(
+                  padding:
+                  const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const SizedBox(height: 10,),
+                      const Text("Options"),
+                      const SizedBox(height: 10,),
+                      TextButton(
+                          onPressed: () async {
+                            Get.back();
+                            controller.camera();
+                          },
+                          style: TextButton.styleFrom(
+                              padding: EdgeInsets.zero,
+                              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                              alignment: Alignment.centerLeft),
+                          child: const Text("Take Photo",
+                              style: TextStyle(color: textColor, fontWeight: FontWeight.bold))),
+                      TextButton(
+                          onPressed: () {
+                            Get.back();
+                            controller.imagePicker(context);
+                          },
+                          style: TextButton.styleFrom(
+                              padding: EdgeInsets.zero,
+                              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                              alignment: Alignment.centerLeft),
+                          child: const Text("Choose from Gallery",
+                              style: TextStyle(color: textColor, fontWeight: FontWeight.bold))),
+                      controller.profile.image
+                          .checkNull()
+                          .isNotEmpty
+                          ? TextButton(
+                          onPressed: () {
+                            Get.back();
+                            controller.removeProfileImage();
+                          },
+                          style: TextButton.styleFrom(
+                              padding: EdgeInsets.zero,
+                              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                              alignment: Alignment.centerLeft),
+                          child: const Text(
+                            "Remove Photo",
+                            style: TextStyle(color: textColor, fontWeight: FontWeight.bold),
+                          ))
+                          : const SizedBox(),
+                    ],
+                  ),
                 ),
               ),
             ),

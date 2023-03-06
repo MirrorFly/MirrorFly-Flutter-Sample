@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
@@ -10,6 +11,7 @@ import 'package:flysdk/flysdk.dart';
 
 import '../../../common/crop_image.dart';
 import '../../../data/apputils.dart';
+import '../../../data/session_management.dart';
 import '../../../routes/app_pages.dart';
 import '../views/name_change_view.dart';
 
@@ -46,11 +48,103 @@ class GroupInfoController extends GetxController {
     getGroupMembers(null);
     groupAdmin();
     memberOfGroup();
-
+    muteAble();
     nameController.text=profile.nickName.checkNull();
   }
   muteAble() async {
     muteable(await FlyChat.isUserUnArchived(profile.jid.checkNull()));
+  }
+
+  void onGroupProfileUpdated(String groupJid) {
+    if (groupJid.checkNull().isNotEmpty) {
+      if (profile.jid.checkNull() == groupJid.toString()) {
+        mirrorFlyLog("group info", groupJid.toString());
+        FlyChat.getProfileDetails(profile.jid.checkNull(), false).then((value) {
+          if (value != null) {
+            var member = Profile.fromJson(json.decode(value.toString()));
+            profile_(member);
+            _mute(profile.isMuted!);
+            nameController.text=profile.nickName.checkNull();
+          }
+        });
+      }
+    }
+  }
+
+  void userUpdatedHisProfile(String jid) {
+    // debugPrint("userUpdatedHisProfile : $jid");
+    if(jid.checkNull().isNotEmpty) {
+      getProfileDetails(jid).then((value) {
+        var index = groupMembers.indexWhere((element) => element.jid == jid);
+        // debugPrint("profile : $index");
+        if (!index.isNegative) {
+          value.isGroupAdmin = groupMembers[index].isGroupAdmin;
+          groupMembers[index] = value;
+          groupMembers.refresh();
+        }
+      });
+    }
+  }
+
+  void onLeftFromGroup({required String groupJid, required String userJid}) {
+    if (profile.isGroupProfile.checkNull()) {
+      if (groupJid == profile.jid) {
+        var index = groupMembers.indexWhere((element) => element.jid == userJid);
+        if(!index.isNegative) {
+          debugPrint('user left ${groupMembers[index].name}');
+          groupMembers.removeAt(index);
+          groupMembers.refresh();
+        }
+      }
+    }
+  }
+
+  void onMemberMadeAsAdmin({required String groupJid,
+    required String newAdminMemberJid, required String madeByMemberJid}) {
+    if (profile.isGroupProfile.checkNull()) {
+      debugPrint('onMemberMadeAsAdmin $newAdminMemberJid');
+      if (groupJid == profile.jid) {
+        var index = groupMembers.indexWhere((element) => element.jid == newAdminMemberJid);
+        if(!index.isNegative) {
+          debugPrint('user admin ${groupMembers[index].name}');
+          groupMembers[index].isGroupAdmin=true;
+          groupMembers.refresh();
+        }
+      }
+    }
+  }
+
+  void onMemberRemovedFromGroup({required String groupJid,
+    required String removedMemberJid, required String removedByMemberJid}) {
+    if (profile.isGroupProfile.checkNull()) {
+      debugPrint('onMemberRemovedFromGroup $removedMemberJid');
+      if (groupJid == profile.jid) {
+        var index = groupMembers.indexWhere((element) => element.jid == removedMemberJid);
+        if(!index.isNegative) {
+          debugPrint('user removed ${groupMembers[index].name}');
+          groupMembers.removeAt(index);
+          groupMembers.refresh();
+        }
+      }
+    }
+  }
+
+  void onNewMemberAddedToGroup({required String groupJid,
+    required String newMemberJid, required String addedByMemberJid}) {
+    if (profile.isGroupProfile.checkNull()) {
+      debugPrint('onNewMemberAddedToGroup $newMemberJid');
+      if (groupJid == profile.jid) {
+        var index = groupMembers.indexWhere((element) => element.jid == newMemberJid);
+        if(index.isNegative) {
+          if(newMemberJid.checkNull().isNotEmpty) {
+            getProfileDetails(newMemberJid).then((value) {
+              groupMembers.add(value);
+              groupMembers.refresh();
+            });
+          }
+        }
+      }
+    }
   }
 
   _scrollListener() {
@@ -60,7 +154,7 @@ class GroupInfoController extends GetxController {
     }
   }
   groupAdmin(){
-    FlyChat.isAdmin(profile.jid.checkNull()).then((bool? value){
+    FlyChat.isAdmin(SessionManagement.getUserJID()! ,profile.jid.checkNull()).then((bool? value){
       if(value!=null){
         _isAdmin(value);
       }
@@ -145,7 +239,7 @@ class GroupInfoController extends GetxController {
   exitFromGroup()async{
     if(await AppUtils.isNetConnected()) {
       Helper.progressLoading();
-      FlyChat.leaveFromGroup(profile.jid.checkNull()).then((value) {
+      FlyChat.leaveFromGroup(SessionManagement.getUserJID() ,profile.jid.checkNull()).then((value) {
         Helper.hideLoading();
         if(value!=null){
           if(value){
@@ -266,7 +360,7 @@ class GroupInfoController extends GetxController {
   }
 
   removeProfileImage() {
-    Helper.showAlert(message: "Are you sure you want to remove the group photo?.",actions: [
+    Helper.showAlert(message: "Are you sure you want to remove the group photo?",actions: [
       TextButton(
           onPressed: () {
             Get.back();
@@ -321,7 +415,7 @@ class GroupInfoController extends GetxController {
       FlyChat.addUsersToGroup(profile.jid.checkNull(),value as List<String>).then((value){
         hideLoader();
         if(value!=null && value){
-          getGroupMembers(false);
+          //getGroupMembers(false);
         }else{
           toToast("Error while adding Members in this group");
         }
@@ -342,7 +436,7 @@ class GroupInfoController extends GetxController {
         FlyChat.removeMemberFromGroup(profile.jid.checkNull(), userJid).then((value){
           hideLoader();
           if(value!=null && value){
-            getGroupMembers(false);
+            //getGroupMembers(false);
           }else{
             toToast("Error while Removing this member");
           }
@@ -360,7 +454,7 @@ class GroupInfoController extends GetxController {
         FlyChat.makeAdmin(profile.jid.checkNull(), userJid).then((value){
           hideLoader();
           if(value!=null && value){
-            getGroupMembers(false);
+            //getGroupMembers(false);
           }else{
             toToast("Error while make admin this member");
           }

@@ -73,3 +73,62 @@ ListItem notificationItem({required String title,
       ),
       onTap: onTap);
 }
+
+Widget settingListItem(
+    String title, String? leading, String trailing, Function() onTap) {
+  return Column(
+    children: [
+      InkWell(
+        onTap: onTap,
+        child: Row(
+          children: [
+            leading != null ? Padding(
+              padding: const EdgeInsets.all(18.0),
+              child: SvgPicture.asset(leading),
+            ) :  const SizedBox(height: 4,),
+            Expanded(
+                child: Text(
+                  title,
+                  style: const TextStyle(
+                      fontSize: 15.0,
+                      fontFamily: 'sf_ui',
+                      fontWeight: FontWeight.w400),
+                )),
+            Padding(
+              padding: const EdgeInsets.all(18.0),
+              child: SvgPicture.asset(trailing),
+            ),
+          ],
+        ),
+      ),
+      const AppDivider(),
+    ],
+  );
+}
+
+
+Widget chatListItem(
+    Widget title, String trailing, Function() onTap) {
+  return Column(
+    children: [
+      InkWell(
+        onTap: onTap,
+        child: Row(
+          children: [
+            Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.all(18.0),
+                  child: title,
+                )),
+            Padding(
+              padding: const EdgeInsets.all(18.0),
+              child: SvgPicture.asset(trailing),
+            ),
+          ],
+        ),
+      ),
+      const AppDivider(),
+    ],
+  );
+}
+

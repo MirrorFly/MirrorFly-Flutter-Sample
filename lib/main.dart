@@ -1,4 +1,6 @@
 // import 'package:firebase_messaging/firebase_messaging.dart';
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 
 import 'package:firebase_auth/firebase_auth.dart';
@@ -8,17 +10,20 @@ import 'package:flysdk/flysdk.dart';
 
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/common/app_theme.dart';
+import 'package:mirror_fly_demo/app/common/constants.dart';
 import 'package:mirror_fly_demo/app/common/main_controller.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
 import 'package:mirror_fly_demo/app/data/pushnotification.dart';
 import 'package:mirror_fly_demo/app/modules/dashboard/bindings/dashboard_binding.dart';
 import 'package:mirror_fly_demo/app/modules/login/bindings/login_binding.dart';
 import 'app/data/session_management.dart';
+import 'app/model/reply_hash_map.dart';
 import 'app/modules/profile/bindings/profile_binding.dart';
 import 'app/routes/app_pages.dart';
 
 import 'package:google_maps_flutter_android/google_maps_flutter_android.dart';
 import 'package:google_maps_flutter_platform_interface/google_maps_flutter_platform_interface.dart';
+
 
 
 
@@ -31,6 +36,7 @@ import 'package:google_maps_flutter_platform_interface/google_maps_flutter_platf
 //   PushNotifications.onMessage(message);
 // }
 bool shouldUseFirebaseEmulator = false;
+dynamic nonChatUsers = [];
 Future<void> main() async {
   //Get.put<NetworkManager>(NetworkManager());
 // Require Hybrid Composition mode on Android.
@@ -41,10 +47,14 @@ Future<void> main() async {
   }
   WidgetsFlutterBinding.ensureInitialized();
   await SessionManagement.onInit();
+  ReplyHashMap.init();
   FlyChat.getSendData().then((value) {
     debugPrint("notification value ===> $value");
     SessionManagement.setChatJid(value.checkNull());
   });
+  var nonchat = await FlyChat.getNonChatUsers();
+  nonChatUsers = json.decode(nonchat.toString());
+  FlyChat.isTrailLicence().then((value) => SessionManagement.setIsTrailLicence(value.checkNull()));
   FlyChat.cancelNotifications();
   if (!kIsWeb) {
      await Firebase.initializeApp();
@@ -91,7 +101,7 @@ Bindings? getBinding(){
   }
 }
 
-String getInitialRoute()  {
+String getInitialRoute() {
   if(!SessionManagement.adminBlocked()) {
     if (SessionManagement.getLogin()) {
       if (SessionManagement
@@ -107,7 +117,17 @@ String getInitialRoute()  {
             .getChatJid()
             .checkNull()
             .isEmpty) {
-          return AppPages.dashboard;
+          if(!SessionManagement.isTrailLicence()) {
+              mirrorFlyLog("nonChatUsers", nonChatUsers.toString());
+              mirrorFlyLog("SessionManagement.isContactSyncDone()", SessionManagement.isContactSyncDone().toString());
+              if (!SessionManagement.isContactSyncDone() /*|| nonChatUsers.isEmpty*/) {
+                return AppPages.contactSync;
+              }else{
+                return AppPages.dashboard;
+              }
+          }else{
+            return AppPages.dashboard;
+          }
         } else {
           return "${AppPages.chat}?jid=${SessionManagement.getChatJid()
               .checkNull()}&from_notification=true";

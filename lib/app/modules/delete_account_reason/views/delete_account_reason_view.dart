@@ -21,12 +21,9 @@ class DeleteAccountReasonView extends GetView<DeleteAccountReasonController> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const SizedBox(
-                    height: 10,
-                  ),
                   const Text(
                     'We hate to see you leave! Tell us why you are deleting your account:',
-                    style: TextStyle(color: Colors.black, fontSize: 17),
+                    style: TextStyle(color: textHintColor, fontSize: 15,fontWeight: FontWeight.normal),
                   ),
                   const SizedBox(
                     height: 15,
@@ -38,11 +35,11 @@ class DeleteAccountReasonView extends GetView<DeleteAccountReasonController> {
                           ? null
                           : controller.reasonValue.value,
                       icon: const Icon(Icons.keyboard_arrow_down),
-                      hint: const Text("Select a reason"),
+                      hint: const Text("Select a reason",style: TextStyle(fontWeight: FontWeight.normal),),
                       items: controller.deleteReasons.map((String items) {
                         return DropdownMenuItem(
                           value: items,
-                          child: Text(items),
+                          child: Text(items,style: const TextStyle(fontWeight: FontWeight.normal),),
                         );
                       }).toList(),
                       onChanged: (newValue) {
@@ -55,24 +52,23 @@ class DeleteAccountReasonView extends GetView<DeleteAccountReasonController> {
                   ),
                   TextField(
                     keyboardType: TextInputType.multiline,
-                    minLines: 1,
-                    maxLines: 4,
+                    maxLength: 250,
+                    maxLines: null,
+                    focusNode: controller.focusNode,
                     controller: controller.feedback,
                     decoration: const InputDecoration(
                       hintText: "Tell us how we can improve",
-                      enabledBorder: UnderlineInputBorder(
-                        borderSide: BorderSide(color: Colors.grey),
-                      ),
-                      focusedBorder: UnderlineInputBorder(
-                        borderSide: BorderSide(color: buttonBgColor),
-                      ),
+                      hintStyle: TextStyle(fontWeight: FontWeight.normal),
+                      counterText: '',
+                      focusedBorder: UnderlineInputBorder(borderSide: BorderSide(color: dividerColor)),
+                      border: UnderlineInputBorder(borderSide: BorderSide(color: dividerColor,width: 0)),
                     ),
                   ),
                   const SizedBox(
                     height: 15,
                   ),
                   const Text(
-                    'We will store your feedback for future purpose',
+                    'We will store your feedback for future purpose',style: TextStyle(color: textColor,fontSize: 11,fontWeight: FontWeight.w300),
                   ),
                   const SizedBox(
                     height: 55,

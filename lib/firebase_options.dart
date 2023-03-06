@@ -54,11 +54,11 @@ class DefaultFirebaseOptions {
   );
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyCfG5u1-XDZhWD8vOZGK5hTKyqsVOjHSSM',
-    appId: '1:1045831384770:android:cfdf83b6e0ada96911455b',
-    messagingSenderId: '1045831384770',
-    projectId: 'mirrorfly-uikit-dev',
-    storageBucket: 'mirrorfly-uikit-dev.appspot.com',
+    apiKey: 'AIzaSyDfIqmrHFXEvJgE29tWr3Ps1bFJ-sOd2Go',
+    appId: '1:235373697524:android:8c60557f4f35c990a0c1a1',
+    messagingSenderId: '235373697524',
+    projectId: 'mirrorfly-uikit-qa',
+    storageBucket: 'mirrorfly-uikit-qa.appspot.com',
   );
 
   //for dev Bundle ID

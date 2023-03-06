@@ -21,8 +21,15 @@ class SessionManagement {
     await _preferences.setBool("login", val);
   }
 
-  static Future setSync(bool val) async {
-    await _preferences.setBool("synced", val);
+
+  static setIsTrailLicence(bool trail) async {
+    await _preferences.setBool("IS_TRIAL_LICENSE", trail);
+  }
+  static Future setInitialContactSync(bool val) async {
+    await _preferences.setBool("is_initial_contact_sync_done", val);
+  }
+  static Future setSyncDone(bool val) async {
+    await _preferences.setBool("is_contact_sync_done", val);
   }
 
   static Future setMediaEndPoint(String mediaEndpoint) async {
@@ -36,6 +43,9 @@ class SessionManagement {
   }
   static Future setMobile(String mobile) async {
     await _preferences.setString("mobile", mobile);
+  }
+  static Future setCountryCode(String countryCode) async {
+    await _preferences.setString("country_code", countryCode);
   }
   static Future setUserJID(String jid) async {
     await _preferences.setString("user_jid", jid);
@@ -88,6 +98,9 @@ class SessionManagement {
   static void setAdminBlocked(bool status) async {
     await _preferences.setBool("admin_blocked", status);
   }
+  static void setAutoDownloadEnable(bool status) async {
+    await _preferences.setBool("MediaAutoDownload", status);
+  }
   static void setGoogleTranslationEnable(bool status) async {
     await _preferences.setBool("TranslateLanguageChecked", status);
   }
@@ -112,19 +125,23 @@ class SessionManagement {
     await _preferences.setString('userData', userData);*/
   }
 
+  static void setCurrentChatJID(String chatJID) async {
+    await _preferences.setString("CurrentChatJID", chatJID);
+  }
+
   static Future setCurrentUser(ProData data) async {
     data.toJson().forEach((key, value) async {
       await _preferences.setString(key, value.toString());
     });
   }
 
-  static bool getLogin() => _preferences.getBool("login") == null
-      ? false
-      : _preferences.getBool("login")!;
+  static bool getLogin() => _preferences.getBool("login") ?? false;
 
   static String? getChatJid() => _preferences.getString("chatJid");
+  static String? getCurrentChatJID() => _preferences.getString("CurrentChatJID");
   static String? getName() => _preferences.getString("name");
   static String? getMobileNumber() => _preferences.getString("mobileNumber");
+  static String? getCountryCode() => _preferences.getString("country_code") ?? "+91";
   static String? getUsername() => _preferences.getString("username");
   static String? getPassword() => _preferences.getString("password");
   static String? getUserJID() => _preferences.getString("user_jid").toString();
@@ -144,6 +161,10 @@ class SessionManagement {
   static bool? synced() => _preferences.getBool("synced");
   static bool adminBlocked() => _preferences.getBool("admin_blocked") ?? false;
   static bool isGoogleTranslationEnable() => _preferences.getBool("TranslateLanguageChecked") ?? false;
+  static bool isAutoDownloadEnable() => _preferences.getBool("MediaAutoDownload") ?? false;
   static String getTranslationLanguage() => _preferences.getString("LanguageName") ?? "English";
   static String getTranslationLanguageCode() => _preferences.getString("LanguageCode") ?? "en";
+  static bool isInitialContactSyncDone() => _preferences.getBool("is_initial_contact_sync_done") ?? false;
+  static bool isContactSyncDone() => _preferences.getBool("is_contact_sync_done") ?? false;
+  static bool isTrailLicence() => _preferences.getBool("IS_TRIAL_LICENSE") ?? false;
 }

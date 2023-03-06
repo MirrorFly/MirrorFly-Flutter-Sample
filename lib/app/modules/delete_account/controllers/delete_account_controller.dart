@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../common/constants.dart';
+import '../../../data/apputils.dart';
 import '../../../data/session_management.dart';
 import '../../../data/helper.dart';
 import 'package:flysdk/flysdk.dart';
@@ -16,23 +17,35 @@ class DeleteAccountController extends GetxController {
   TextEditingController mobileNumber = TextEditingController();
 
 
-  deleteAccount() {
-    if(mobileNumber.text.isEmpty){
-      toToast("Please Enter Mobile Number");
-      return;
+  deleteAccount() async {
+    if(await AppUtils.isNetConnected()) {
+      if(mobileNumber.text.isEmpty){
+        Helper.showAlert(message: "Please enter your mobile number", actions: [
+          TextButton(
+              onPressed: () {
+                Get.back();
+              },
+              child: const Text("Ok")),
+        ]);
+        return;
+      }
+      mirrorFlyLog("SessionManagement.getMobileNumber()", SessionManagement.getMobileNumber().toString());
+      mirrorFlyLog("SessionManagement.getCountryCode()", SessionManagement.getCountryCode().toString());
+      mirrorFlyLog("countryCode", countryCode.toString());
+      if(mobileNumber.text.trim() != SessionManagement.getMobileNumber() || SessionManagement.getCountryCode()?.replaceAll('+', '')!=countryCode?.replaceAll('+', '')){
+        Helper.showAlert(message: "The mobile number you entered doesn't match your account", actions: [
+          TextButton(
+              onPressed: () {
+                Get.back();
+              },
+              child: const Text("Ok")),
+        ]);
+        return;
+      }
+      Get.toNamed(Routes.deleteAccountReason);
+    }else{
+      toToast(Constants.noInternetConnection);
     }
-    if(mobileNumber.text != SessionManagement.getMobileNumber()){
-      Helper.showAlert(message: "The mobile number you entered doesn't match your account", actions: [
-        TextButton(
-            onPressed: () {
-              Get.back();
-            },
-            child: const Text("Ok")),
-      ]);
-      return;
-    }
-
-    Get.toNamed(Routes.deleteAccountReason);
   }
 
 }

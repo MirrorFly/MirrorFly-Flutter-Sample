@@ -1,11 +1,14 @@
+import 'package:flysdk/flysdk.dart';
 import 'package:get/get.dart';
 
 import '../src/data/models/picked_asset_model.dart';
 
 class GalleryPickerController extends GetxController {
 
-  List<PickedAssetModel> pickedFile = [];
+  var pickedFile = <PickedAssetModel>[].obs;
   var userName = Get.arguments['userName'];
+  var profile = Get.arguments['profile'] as Profile;
+  var maxPickImages = 10;
 
   @override
   void onInit() {
@@ -13,5 +16,23 @@ class GalleryPickerController extends GetxController {
     pickedFile.clear();
   }
 
+
+   addFile(List<PickedAssetModel> paths) {
+     pickedFile.clear();
+     pickedFile.addAll(paths);
+   }
+   // addFile(List<PickedAssetModel> paths) {
+   //  debugPrint("list size--> ${paths.length}");
+   //  debugPrint("file name--> ${paths[0].file?.path}");
+   //  for(var filePath in paths){
+   //    if(pickedFile.contains(filePath)){
+   //      debugPrint("picked file remove");
+   //      pickedFile.remove(filePath);
+   //    }else{
+   //      debugPrint("picked file add");
+   //      pickedFile.add(filePath);
+   //    }
+   //  }
+   // }
 
 }

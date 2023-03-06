@@ -1,9 +1,13 @@
 // ignore_for_file: unnecessary_null_comparison
 
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:oktoast/oktoast.dart';
 import 'package:photo_manager/photo_manager.dart';
 
+import '../../../../../common/constants.dart';
+import '../../../../../data/helper.dart';
 import '../../core/functions.dart';
 import '../../data/models/picked_asset_model.dart';
 import '../widgets/gallery_grid/gallery_grid_view.dart';
@@ -212,31 +216,38 @@ class _GalleryMediaPickerState extends State<GalleryMediaPicker> {
                             selectedCheckBackgroundColor:
                                 widget.selectedCheckBackgroundColor,
                             onAssetItemClick: (asset, index) async {
-                              provider.pickEntity(asset);
-                              GalleryFunctions.getFile(asset)
-                                  .then((value) async {
-                                /// add metadata to map list
-                                provider.pickPath(PickedAssetModel(
-                                  id: asset.id,
-                                  path: value,
-                                  type: asset.typeInt == 1 ? 'image' : 'video',
-                                  videoDuration: asset.videoDuration,
-                                  createDateTime: asset.createDateTime,
-                                  latitude: asset.latitude,
-                                  longitude: asset.longitude,
-                                  thumbnail: await asset.thumbnailData,
-                                  height: asset.height,
-                                  width: asset.width,
-                                  orientationHeight: asset.orientatedHeight,
-                                  orientationWidth: asset.orientatedWidth,
-                                  orientationSize: asset.orientatedSize,
-                                  file: await asset.file,
-                                  modifiedDateTime: asset.modifiedDateTime,
-                                  title: asset.title,
-                                  size: asset.size,
-                                ));
-                                widget.pathList!(provider.pickedFile);
-                              });
+                              File? file = await asset.file;
+                              if(checkFileUploadSize(file!.path, asset.typeInt == 1 ? Constants.mImage : Constants.mVideo)) {
+                                provider.pickEntity(asset);
+                                GalleryFunctions.getFile(asset)
+                                    .then((value) async {
+                                  /// add metadata to map list
+                                  provider.pickPath(PickedAssetModel(
+                                    id: asset.id,
+                                    path: value,
+                                    type: asset.typeInt == 1
+                                        ? 'image'
+                                        : 'video',
+                                    videoDuration: asset.videoDuration,
+                                    createDateTime: asset.createDateTime,
+                                    latitude: asset.latitude,
+                                    longitude: asset.longitude,
+                                    thumbnail: await asset.thumbnailData,
+                                    height: asset.height,
+                                    width: asset.width,
+                                    orientationHeight: asset.orientatedHeight,
+                                    orientationWidth: asset.orientatedWidth,
+                                    orientationSize: asset.orientatedSize,
+                                    file: await asset.file,
+                                    modifiedDateTime: asset.modifiedDateTime,
+                                    title: asset.title,
+                                    size: asset.size,
+                                  ));
+                                  widget.pathList!(provider.pickedFile);
+                                });
+                              }else{
+                                toToast("File Size should not exceed ${asset.typeInt == 1 ? 10 : 20} MB");
+                              }
                             },
                           ),
                         )

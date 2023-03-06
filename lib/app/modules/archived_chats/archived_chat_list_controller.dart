@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:flysdk/flysdk.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
@@ -14,37 +15,82 @@ class ArchivedChatListController extends GetxController {
 
   //RxList<RecentChatData> archivedChats = <RecentChatData>[].obs;
 
-  /*@override
+  @override
   void onInit(){
     super.onInit();
-    archivedChats(dashboardController.archivedChats);
-  }*/
+    //archivedChats(dashboardController.archivedChats);
+    getArchivedSettingsEnabled();
+  }
+  final archiveEnabled = true.obs;
+  Future<void> getArchivedSettingsEnabled() async {
+    await FlyChat.isArchivedSettingsEnabled().then((value) => archiveEnabled(value));
+  }
+
+  getArchivedChatsList() async {
+    await FlyChat.getArchivedChatList().then((value) {
+      mirrorFlyLog("archived response", value.toString());
+      if(value != null) {
+        var data = recentChatFromJson(value);
+        archivedChats(data.data!);
+      }else{
+        debugPrint("Archive list is empty");
+      }
+    }).catchError((error) {
+      debugPrint("issue===> $error");
+    });
+  }
 
   var selected = false.obs;
   var selectedChats = <String>[].obs;
+  var selectedChatsPosition = <int>[].obs;
 
   isSelected(int index) => selectedChats.contains(archivedChats[index].jid);
 
-  selectOrRemoveChatfromList(int index) {
+  selectOrRemoveChatFromList(int index) {
     if (selected.isTrue) {
       if (selectedChats.contains(archivedChats[index].jid)) {
         selectedChats.remove(archivedChats[index].jid.checkNull());
-        //selectedChatsPosition.remove(index);
+        selectedChatsPosition.remove(index);
       } else {
         selectedChats.add(archivedChats[index].jid.checkNull());
-        //selectedChatsPosition.add(index);
+        selectedChatsPosition.add(index);
       }
     }
     if (selectedChats.isEmpty) {
       clearAllChatSelection();
     } else {
-      //menuValidationForItem();
+      menuValidationForItem();
+    }
+  }
+
+  menuValidationForItem() {
+    delete(false);
+    if (selectedChats.length == 1) {
+      var item = archivedChats
+          .firstWhere((element) => selectedChats.first == element.jid);
+      delete(Constants.typeGroupChat != item.getChatType());
+      if ((Constants.typeBroadcastChat != item.getChatType()&& !archiveEnabled.value)) {
+        unMute(item.isMuted!);
+        mute(!item.isMuted!);
+        // shortcut(true);
+        debugPrint("item.isMuted! ${item.isMuted!}");
+      } else {
+        unMute(false);
+        mute(false);
+        // shortcut(false);
+      }
+    } else {
+      menuValidationForDeleteIcon();
+      if(!archiveEnabled.value) {
+        menuValidationForMuteUnMuteIcon();
+      }
     }
   }
 
   clearAllChatSelection() {
     selected(false);
     selectedChats.clear();
+    selectedChatsPosition.clear();
     update();
   }
 
@@ -119,28 +165,242 @@ class ArchivedChatListController extends GetxController {
       toToast(Constants.noInternetConnection);
     }
   }
+
   void checkArchiveList(RecentChatData recent) async {
-    await FlyChat.isArchivedSettingsEnabled().then((value){
-      if(value.checkNull()){
-        var archiveIndex = archivedChats.indexWhere((element) => recent.jid==element.jid);
-        if(!archiveIndex.isNegative){
+    FlyChat.isArchivedSettingsEnabled().then((value) {
+      if (value.checkNull()) {
+        var archiveIndex =
+            archivedChats.indexWhere((element) => recent.jid == element.jid);
+        mirrorFlyLog("checkArchiveList", "$archiveIndex");
+        if (!archiveIndex.isNegative) {
           archivedChats.removeAt(archiveIndex);
           archivedChats.insert(0, recent);
-        }else{
-          archivedChats.insert(0,recent);
+          archivedChats.refresh();
+        } else {
+          archivedChats.insert(0, recent);
+          archivedChats.refresh();
         }
-      }else{
-        var archiveIndex = archivedChats.indexWhere((element) => recent.jid==element.jid);
-        if(!archiveIndex.isNegative){
+      } else {
+        var archiveIndex =
+            archivedChats.indexWhere((element) => recent.jid == element.jid);
+        if (!archiveIndex.isNegative) {
           archivedChats.removeAt(archiveIndex);
-          var lastPinnedChat = dashboardController.recentChats.lastIndexWhere((element) =>
+          /*var lastPinnedChat = dashboardController.recentChats.lastIndexWhere((element) =>
           element.isChatPinned!);
           var nxtIndex = lastPinnedChat.isNegative ? 0 : (lastPinnedChat + 1);
           mirrorFlyLog("lastPinnedChat", lastPinnedChat.toString());
-          dashboardController.recentChats.insert(nxtIndex, recent);
+          dashboardController.recentChats.insert(nxtIndex, recent);*/
         }
       }
     });
+  }
 
+  void onMessageReceived(ChatMessageModel chatMessage) {
+    updateArchiveRecentChat(chatMessage.chatUserJid);
+  }
+
+  void onMessageStatusUpdated(event) {
+    // mirrorFlyLog("MESSAGE STATUS UPDATED", event);
+    ChatMessageModel chatMessageModel = sendMessageModelFromJson(event);
+    final index = archivedChats.indexWhere(
+        (message) => message.lastMessageId == chatMessageModel.messageId);
+    debugPrint("Message Status Update index of search $index");
+    if (!index.isNegative) {
+      archivedChats[index].lastMessageStatus = chatMessageModel.messageStatus;
+      archivedChats.refresh();
+    }
+  }
+
+  Future<RecentChatData?> getRecentChatOfJid(String jid) async {
+    var value = await FlyChat.getRecentChatOf(jid);
+    mirrorFlyLog("chat", value.toString());
+    if (value != null) {
+      var data = recentChatDataFromJson(value);
+      return data;
+    } else {
+      return null;
+    }
+  }
+
+  updateArchiveRecentChat(String jid) {
+    mirrorFlyLog("checkArchiveList", jid);
+    final index = archivedChats.indexWhere((chat) => chat.jid == jid);
+    getRecentChatOfJid(jid).then((recent) {
+      if (recent != null) {
+        /*if(!recent.isChatArchived.checkNull()) {
+          if (index.isNegative) {
+            archivedChats.insert(0, recent);
+          } else {
+            var lastPinnedChat = archivedChats.lastIndexWhere((element) =>
+            element.isChatPinned!);
+            var nxtIndex = lastPinnedChat.isNegative ? 0 : (lastPinnedChat + 1);
+            if (archivedChats[index].isChatPinned!) {
+              archivedChats.removeAt(index);
+              archivedChats.insert(index, recent);
+            } else {
+              archivedChats.removeAt(index);
+              archivedChats.insert(nxtIndex, recent);
+              archivedChats.refresh();
+            }
+          }
+        }else{
+          if (!index.isNegative) {
+            archivedChats.removeAt(index);
+          }
+          checkArchiveList(recent);
+        }*/
+        checkArchiveList(recent);
+      } else {
+        if (!index.isNegative) {
+          archivedChats.removeAt(index);
+        }
+      }
+      archivedChats.refresh();
+    });
+  }
+
+  var delete = false.obs;
+
+  menuValidationForDeleteIcon() async {
+    var selected = archivedChats.where((p0) => selectedChats.contains(p0.jid));
+    for (var item in selected) {
+      var isMember = await FlyChat.isMemberOfGroup(item.jid.checkNull(), null);
+      if ((item.getChatType() == Constants.typeGroupChat) && isMember!) {
+        delete(false);
+        return;
+        //return false;
+      }
+    }
+    delete(true);
+    //return true;
+  }
+
+  var mute = false.obs;
+  var unMute = false.obs;
+  menuValidationForMuteUnMuteIcon() {
+    var checkListForMuteUnMuteIcon = <bool>[];
+    var selected = archivedChats.where((p0) => selectedChats.contains(p0.jid));
+    for (var value in selected) {
+      if (!value.isBroadCast!) {
+        checkListForMuteUnMuteIcon.add(value.isMuted.checkNull());
+      }
+    }
+    if (checkListForMuteUnMuteIcon.contains(false)) {
+      // Mute able
+      mute(true);
+      unMute(false);
+    } else if (checkListForMuteUnMuteIcon.contains(true)) {
+      mute(false);
+      unMute(true);
+    } else {
+      mute(false);
+      unMute(false);
+    }
+    //return checkListForMuteUnMuteIcon.contains(false);// Mute able
+  }
+
+  muteChats() {
+    if (selectedChats.length == 1) {
+      _itemMute(0);
+      clearAllChatSelection();
+    } else {
+      selected(false);
+      selectedChats.asMap().forEach((key, value) {
+        _itemMute(key);
+      });
+      clearAllChatSelection();
+    }
+  }
+
+  unMuteChats() {
+    if (selectedChats.length == 1) {
+      _itemUnMute(0);
+      clearAllChatSelection();
+    } else {
+      selected(false);
+      selectedChats.asMap().forEach((key, value) {
+        _itemUnMute(key);
+      });
+      clearAllChatSelection();
+    }
+  }
+
+  _itemMute(int index) {
+    FlyChat.updateChatMuteStatus(selectedChats[index], true);
+    var chatIndex = archivedChats.indexWhere((element) =>
+    selectedChats[index] == element.jid); //selectedChatsPosition[index];
+    archivedChats[chatIndex].isMuted = (true);
+  }
+
+  _itemUnMute(int index) {
+    var chatIndex = archivedChats.indexWhere((element) =>
+    selectedChats[index] == element.jid); //selectedChatsPosition[index];
+    archivedChats[chatIndex].isMuted = (false);
+    FlyChat.updateChatMuteStatus(selectedChats[index], false);
+  }
+
+  deleteChats() {
+    String? profile = '';
+    profile = archivedChats
+        .firstWhere((element) => selectedChats.first == element.jid)
+        .profileName;
+    Helper.showAlert(
+        title: selectedChats.length == 1
+            ? "Delete chat with $profile?"
+            : "Delete ${selectedChats.length} selected chats?",
+        actions: [
+          TextButton(
+              onPressed: () {
+                Get.back();
+              },
+              child: const Text("NO")),
+          TextButton(
+              onPressed: () {
+                Get.back();
+                if (selectedChats.length == 1) {
+                  _itemDelete(0);
+                } else {
+                  itemsDelete();
+                }
+              },
+              child: const Text("YES")),
+        ],
+        message: '');
+  }
+
+  _itemDelete(int index) {
+    var chatIndex = archivedChats.indexWhere((element) =>
+        selectedChats[index] == element.jid); //selectedChatsPosition[index];
+    archivedChats.removeAt(chatIndex);
+    FlyChat.deleteRecentChat(selectedChats[index]);
+    //FlyChat.updateArchiveUnArchiveChat(selectedChats[index], false);
+    clearAllChatSelection();
+  }
+
+  itemsDelete() {
+    // debugPrint('selectedChatsPosition : ${selectedChatsPosition.join(',')}');
+    FlyChat.deleteRecentChats(selectedChats);
+    for (var element in selectedChatsPosition) {
+      // FlyChat.updateArchiveUnArchiveChat(selectedChats[element], false);
+      archivedChats.removeAt(element);
+    }
+    clearAllChatSelection();
+  }
+
+  void userUpdatedHisProfile(jid) {
+    updateRecentChatAdapter(jid);
+  }
+
+  Future<void> updateRecentChatAdapter(String jid) async {
+    if (jid.isNotEmpty) {
+      var index = archivedChats.indexWhere((element) =>
+          element.jid == jid); // { it.jid ?: Constants.EMPTY_STRING == jid }
+      if (!index.isNegative) {
+        var recent = await getRecentChatOfJid(jid);
+        if (recent != null) {
+          archivedChats[index] = recent;
+        }
+      }
+    }
   }
 }

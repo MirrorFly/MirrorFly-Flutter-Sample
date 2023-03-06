@@ -6,6 +6,7 @@ import 'package:mirror_fly_demo/app/modules/settings/views/notification/notifica
 import 'package:mirror_fly_demo/app/modules/settings/views/notification/notification_alert_view.dart';
 
 import '../../../../common/widgets.dart';
+import 'notification_not_working_view.dart';
 
 class NotificationSettingsView extends GetView<NotificationAlertController> {
   const NotificationSettingsView({Key? key}) : super(key: key);
@@ -29,14 +30,14 @@ class NotificationSettingsView extends GetView<NotificationAlertController> {
                 return Obx(() {
                   return notificationSettingsItem(
                       title: "Notification Tone",
-                      subtitle: 'Default (${controller.defaultTone})',
+                      subtitle: controller.defaultTone,
                       onTap: () => controller.showCustomTones());
                 });
               }),
           notificationSettingsItem(
               title: "Notification Not Working?",
               subtitle: 'Learn more in our Help Center',
-              onTap: () => launchWeb(notificationNotWorkingURL)),
+              onTap: () => Get.to(const NotificationNotWorkingView())),
         ],
       ),
     );
