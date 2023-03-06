@@ -41,3 +41,10 @@ android:value="{Please add your google api key}"/>``
 Replace the google API key with yours in android manifest file and AppDelegate(googleApiKey) in iOS project 
 
 <br />
+
+## Run project
+ - flutter clean
+ - flutter pub get
+ - pod install (if iOS)
+ - flutter run
+
