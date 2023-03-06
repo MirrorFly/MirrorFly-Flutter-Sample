@@ -31,17 +31,7 @@ android {
     compileSdkVersion flutter.compileSdkVersion
     ndkVersion flutter.ndkVersion
 
-    signingConfigs {
-        config {
-            keyAlias 'UiKit'
-            keyPassword 'contus@uikit'
-            storeFile file('contus_internal_uikit_keystore.jks')
-            storePassword 'contus@uikit'
-        }
-        aaptOptions {
-            noCompress "tflite"
-        }
-    }
+
 
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
@@ -82,7 +72,7 @@ android {
             shrinkResources false
             debuggable true
             minifyEnabled false
-            signingConfig signingConfigs.config
+            signingConfig signingConfigs.debug
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
 
@@ -97,7 +87,7 @@ android {
             shrinkResources false
             debuggable false
             minifyEnabled false
-            signingConfig signingConfigs.config
+            signingConfig signingConfigs.debug
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
