@@ -1446,7 +1446,37 @@ import FlyDatabase
                 result(isSuccess)
             })
         }catch let error{
-            result(FlutterError(code: "500", message: "Unable to Update Group Image", details: error.localizedDescription))
+            result(FlutterError(code: "500", message: "Unable to Remove Group Image", details: error.localizedDescription))
+        }
+        
+    }
+    static func addUsersToGroup(call: FlutterMethodCall, result: @escaping FlutterResult){
+        let args = call.arguments as! Dictionary<String, Any>
+        
+        let groupJID = args["jid"] as? String ?? ""
+        let members = args["members"] as? [String] ?? []
+        
+        do{
+            try GroupManager.shared.addParticipantToGroup(groupId: groupJID, newUserJidList: members, completionHandler: { isSuccess, flyError, flyData in
+                result(isSuccess)
+            })
+        }catch let error{
+            result(FlutterError(code: "500", message: "Unable to Add Group Members", details: error.localizedDescription))
+        }
+        
+    }
+    static func removeMemberFromGroup(call: FlutterMethodCall, result: @escaping FlutterResult){
+        let args = call.arguments as! Dictionary<String, Any>
+        
+        let groupJID = args["jid"] as? String ?? ""
+        let userJID = args["userjid"] as? String ?? ""
+        
+        do{
+            try GroupManager.shared.removeParticipantFromGroup(groupId: groupJID, removeGroupMemberJid: userJID, completionHandler: { isSuccess, flyError, flyData in
+                result(isSuccess)
+            })
+        }catch let error{
+            result(FlutterError(code: "500", message: "Unable to remove member from group", details: error.localizedDescription))
         }
         
     }

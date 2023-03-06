@@ -728,6 +728,10 @@ class FlyBaseController: NSObject{
                 FlySdkMethodCalls.updateGroupProfileImage(call: call, result: result)
             case "removeGroupProfileImage":
                 FlySdkMethodCalls.removeGroupProfileImage(call: call, result: result)
+            case "addUsersToGroup":
+                FlySdkMethodCalls.addUsersToGroup(call: call, result: result)
+            case "removeMemberFromGroup":
+                FlySdkMethodCalls.removeMemberFromGroup(call: call, result: result)
             default:
                 result(FlutterMethodNotImplemented)
             }
@@ -1251,6 +1255,16 @@ extension FlyBaseController : MessageEventsDelegate, ConnectionEventDelegate, Lo
     
     func didReceiveGroupNotificationMessage(message: FlyCommon.ChatMessage) {
         
+        var groupNotificationJson = JSONSerializer.toJson(message)
+        groupNotificationJson = groupNotificationJson.replacingOccurrences(of: "{\"some\":", with: "")
+        groupNotificationJson = groupNotificationJson.replacingOccurrences(of: "}}", with: "}")
+        
+        if(onGroupNotificationMessageStreamHandler?.onGroupNotificationMessage != nil){
+            onGroupNotificationMessageStreamHandler?.onGroupNotificationMessage?(groupNotificationJson)
+        }else{
+            print("on group notification Stream Handler is Nil")
+        }
+
     }
     
     func didReceiveLogout() {
