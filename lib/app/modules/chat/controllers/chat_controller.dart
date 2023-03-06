@@ -2023,7 +2023,7 @@ class ChatController extends FullLifeCycleController
         for (var it in groupsMembersProfileList) {
           if (it.jid.checkNull() !=
               SessionManagement.getUserJID().checkNull()) {
-            str.add(it.name.checkNull());
+            str.add(getMemberName(it).checkNull());
           }
         }
         str.sort((a, b) {
@@ -2542,9 +2542,10 @@ class ChatController extends FullLifeCycleController
   }
 
   void removeUnreadSeparator() async{
-
-    chatList.removeWhere((chatItem) => chatItem.messageType == Constants.mNotification);
-
+    if(!profile.isGroupProfile.checkNull()) {
+      chatList.removeWhere((chatItem) =>
+      chatItem.messageType == Constants.mNotification);
+    }
   }
 
   void onContactSyncComplete(bool result) {
@@ -2553,6 +2554,29 @@ class ChatController extends FullLifeCycleController
 
   void userDeletedHisProfile(String jid) {
     userUpdatedHisProfile(jid);
+  }
+
+  void onNewMemberAddedToGroup({required String groupJid, required String newMemberJid, required String addedByMemberJid}) {
+    if (profile.isGroupProfile.checkNull()) {
+      if(profile.jid==groupJid) {
+        debugPrint('onNewMemberAddedToGroup $newMemberJid');
+        getParticipantsNameAsCsv(groupJid);
+      }
+    }
+  }
+
+  void onMemberRemovedFromGroup({required String groupJid, required String removedMemberJid, required String removedByMemberJid}) {
+    if (profile.isGroupProfile.checkNull()) {
+      if(profile.jid==groupJid) {
+        debugPrint('onMemberRemovedFromGroup $removedMemberJid');
+        if (removedMemberJid != profile.jid) {
+          getParticipantsNameAsCsv(groupJid);
+        } else {
+          //removed me
+          onLeftFromGroup(groupJid: groupJid,userJid: removedMemberJid);
+        }
+      }
+    }
   }
 
 }

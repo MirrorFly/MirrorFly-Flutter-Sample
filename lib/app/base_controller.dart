@@ -138,8 +138,6 @@ abstract class BaseController {
   void onMessageReceived(chatMessage) {
     mirrorFlyLog("flutter onMessageReceived", chatMessage.toString());
     ChatMessageModel chatMessageModel = sendMessageModelFromJson(chatMessage);
-
-
     if(SessionManagement.getCurrentChatJID().checkNull() == chatMessageModel.chatUserJid.checkNull()){
       debugPrint("Message Received user chat screen is in online");
     }else{
@@ -210,6 +208,9 @@ abstract class BaseController {
     if (Get.isRegistered<GroupInfoController>()) {
       Get.find<GroupInfoController>().onNewMemberAddedToGroup(groupJid: groupJid, newMemberJid: newMemberJid, addedByMemberJid: addedByMemberJid);
     }
+    if (Get.isRegistered<ChatController>()) {
+      Get.find<ChatController>().onNewMemberAddedToGroup(groupJid: groupJid, newMemberJid: newMemberJid, addedByMemberJid: addedByMemberJid);
+    }
   }
 
   void onMemberRemovedFromGroup({required String groupJid,
@@ -217,6 +218,9 @@ abstract class BaseController {
     debugPrint('onMemberRemovedFromGroup $removedMemberJid');
     if (Get.isRegistered<GroupInfoController>()) {
       Get.find<GroupInfoController>().onMemberRemovedFromGroup(groupJid: groupJid, removedMemberJid: removedMemberJid, removedByMemberJid: removedByMemberJid);
+    }
+    if (Get.isRegistered<ChatController>()) {
+      Get.find<ChatController>().onMemberRemovedFromGroup(groupJid: groupJid, removedMemberJid: removedMemberJid, removedByMemberJid: removedByMemberJid);
     }
   }
 
@@ -251,7 +255,19 @@ abstract class BaseController {
     }
   }
 
-  void onGroupNotificationMessage(event) {}
+  void onGroupNotificationMessage(event) {
+    debugPrint('onGroupNotificationMessage $event');
+    ChatMessageModel chatMessageModel = sendMessageModelFromJson(event);
+    if (Get.isRegistered<DashboardController>()) {
+      Get.find<DashboardController>().onMessageReceived(chatMessageModel);
+    }
+    if (Get.isRegistered<ArchivedChatListController>()) {
+      Get.find<ArchivedChatListController>().onMessageReceived(chatMessageModel);
+    }
+    if (Get.isRegistered<ChatController>()) {
+      Get.find<ChatController>().onMessageReceived(chatMessageModel);
+    }
+  }
 
   void onGroupDeletedLocally(groupJid) {
     if (Get.isRegistered<DashboardController>()) {

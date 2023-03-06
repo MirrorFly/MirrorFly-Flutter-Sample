@@ -216,6 +216,7 @@ const String arrowUp = "assets/logos/arrow_up.svg";
 const String syncIcon = "assets/logos/sync.svg";
 const String contactSyncBg = "assets/logos/contact_sync_bg.png";
 const String contactBookFill = "assets/logos/contacts_book_fill.svg";
+const String emailContactIcon = "assets/logos/emailcontact_icon.svg";
 
 
 //About us

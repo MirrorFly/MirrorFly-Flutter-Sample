@@ -125,6 +125,7 @@ class GroupInfoController extends GetxController {
           groupMembers.removeAt(index);
           groupMembers.refresh();
         }
+        loadGroupExistence();
       }
     }
   }
@@ -488,5 +489,9 @@ class GroupInfoController extends GetxController {
 
   void userDeletedHisProfile(String jid) {
     userUpdatedHisProfile(jid);
+  }
+
+  void loadGroupExistence() {
+    memberOfGroup();
   }
 }

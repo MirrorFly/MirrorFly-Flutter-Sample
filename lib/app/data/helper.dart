@@ -332,6 +332,7 @@ extension MemberParsing on Member {
   bool isUnknownContact(){
     return !isDeletedContact() && !isItSavedContact() && !isGroupProfile.checkNull();
   }
+  bool isEmailContact() => !isGroupProfile.checkNull() && isGroupInOfflineMode.checkNull(); // for email contact isGroupInOfflineMode will be true
 }
 
 Future<Profile> getProfileDetails(String jid) async {
@@ -366,6 +367,8 @@ extension ProfileParesing on Profile {
   bool isUnknownContact(){
     return !isDeletedContact() && !isItSavedContact() && !isGroupProfile.checkNull();
   }
+  bool isEmailContact() => !isGroupProfile.checkNull() && isGroupInOfflineMode.checkNull(); // for email contact isGroupInOfflineMode will be true
+
 }
 
 extension ChatmessageParsing on ChatMessageModel {
@@ -416,6 +419,7 @@ extension RecentChatParsing on RecentChatData {
   bool isUnknownContact(){
     return !isDeletedContact() && !isItSavedContact() && !isGroup.checkNull();
   }
+  bool isEmailContact() => !isGroup.checkNull() && isGroupInOfflineMode.checkNull(); // for email contact isGroupInOfflineMode will be true
 }
 
 String returnFormattedCount(int count) {
