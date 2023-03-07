@@ -11,6 +11,7 @@ import FlyCommon
 import Flutter
 import Photos
 import FlyDatabase
+
 //import DSON
 
 @objc class FlySdkMethodCalls : NSObject{
@@ -1446,9 +1447,91 @@ import FlyDatabase
                 result(isSuccess)
             })
         }catch let error{
-            result(FlutterError(code: "500", message: "Unable to Update Group Image", details: error.localizedDescription))
+            result(FlutterError(code: "500", message: "Unable to Remove Group Image", details: error.localizedDescription))
         }
         
+    }
+    static func addUsersToGroup(call: FlutterMethodCall, result: @escaping FlutterResult){
+        let args = call.arguments as! Dictionary<String, Any>
+        
+        let groupJID = args["jid"] as? String ?? ""
+        let members = args["members"] as? [String] ?? []
+        
+        do{
+            try GroupManager.shared.addParticipantToGroup(groupId: groupJID, newUserJidList: members, completionHandler: { isSuccess, flyError, flyData in
+                result(isSuccess)
+            })
+        }catch let error{
+            result(FlutterError(code: "500", message: "Unable to Add Group Members", details: error.localizedDescription))
+        }
+        
+    }
+    static func removeMemberFromGroup(call: FlutterMethodCall, result: @escaping FlutterResult){
+        let args = call.arguments as! Dictionary<String, Any>
+        
+        let groupJID = args["jid"] as? String ?? ""
+        let userJID = args["userjid"] as? String ?? ""
+        
+        do{
+            try GroupManager.shared.removeParticipantFromGroup(groupId: groupJID, removeGroupMemberJid: userJID, completionHandler: { isSuccess, flyError, flyData in
+                result(isSuccess)
+            })
+        }catch let error{
+            result(FlutterError(code: "500", message: "Unable to remove member from group", details: error.localizedDescription))
+        }
+        
+    }
+    
+    
+    static func exportChatConversationToEmail(call: FlutterMethodCall, result: @escaping FlutterResult, vc : FlutterViewController){
+        let args = call.arguments as! Dictionary<String, Any>
+        let userJID = args["jid"] as? String ?? ""
+//        let mailRecipients = args["mailRecipients"] as? [String] ?? []
+        
+        ChatManager.shared.exportChatConversationToEmail(jid: userJID) { chatDataModel in
+            
+            print(chatDataModel)
+//            print(JSONSerializer.toJson(chatDataModel))
+            
+            var dataToShare = [Any]()
+            
+            dataToShare.append(chatDataModel.subject)
+            dataToShare.append(chatDataModel.messageContent)
+            chatDataModel.mediaAttachmentsUrl.forEach { url in
+                dataToShare.append(url)
+            }
+//            executeOnMainThread { [weak self] in
+//                self?.stopLoading()
+                let ac = UIActivityViewController(activityItems: dataToShare, applicationActivities: nil)
+                vc.present(ac, animated: true)
+//            }
+            
+        }
+        
+//        result(FlyCoreController.shared.isContactMuted(jid: userJID))
+    }
+    
+    static func getAllGroups(call: FlutterMethodCall, result: @escaping FlutterResult){
+        let args = call.arguments as! Dictionary<String, Any>
+        let fetchFromServer = args["server"] as? Bool ?? false
+        
+        // Note: This Function is called internally from SDK in iOS side, so no need to call seperately
+        print("calling getAllGroups")
+        GroupManager.shared.getGroups(fetchFromServer: fetchFromServer) { isSuccess, flyError, flyData in
+            var data  = flyData
+            print("GroupManager.shared.getGroups \(data)")
+            if isSuccess {
+                // Update UI
+            } else{
+                // failure cases
+            }
+        }
+    }
+    
+    static func isMuted(call: FlutterMethodCall, result: @escaping FlutterResult){
+        let args = call.arguments as! Dictionary<String, Any>
+        let userJID = args["jid"] as? String ?? ""
+        result(FlyCoreController.shared.isContactMuted(jid: userJID))
     }
     
     static func isBusyStatusEnabled(call: FlutterMethodCall, result: @escaping FlutterResult){

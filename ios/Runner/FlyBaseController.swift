@@ -123,10 +123,13 @@ class FlyBaseController: NSObject{
      var onsetTypingStatusStreamHandler: OnsetTypingStatusStreamHandler?
      var onGroupTypingStatusStreamHandler: OnGroupTypingStatusStreamHandler?
 
+    var rootViewController: FlutterViewController?
     
      func initSDK(controller: FlutterViewController, licenseKey: String, isTrial: Bool, baseUrl: String, containerID: String){
          
          print("Initializing SDK")
+         
+         rootViewController = controller
         
         let groupConfig = try? GroupConfig.Builder.enableGroupCreation(groupCreation: true)
             .onlyAdminCanAddOrRemoveMembers(adminOnly: true)
@@ -728,6 +731,16 @@ class FlyBaseController: NSObject{
                 FlySdkMethodCalls.updateGroupProfileImage(call: call, result: result)
             case "removeGroupProfileImage":
                 FlySdkMethodCalls.removeGroupProfileImage(call: call, result: result)
+            case "addUsersToGroup":
+                FlySdkMethodCalls.addUsersToGroup(call: call, result: result)
+            case "removeMemberFromGroup":
+                FlySdkMethodCalls.removeMemberFromGroup(call: call, result: result)
+            case "isMuted":
+                FlySdkMethodCalls.isMuted(call: call, result: result)
+            case "exportChatConversationToEmail":
+                FlySdkMethodCalls.exportChatConversationToEmail(call: call, result: result, vc: self.rootViewController!)
+            case "getAllGroups":
+                FlySdkMethodCalls.getAllGroups(call: call, result: result)
             default:
                 result(FlutterMethodNotImplemented)
             }
@@ -1251,6 +1264,16 @@ extension FlyBaseController : MessageEventsDelegate, ConnectionEventDelegate, Lo
     
     func didReceiveGroupNotificationMessage(message: FlyCommon.ChatMessage) {
         
+        var groupNotificationJson = JSONSerializer.toJson(message)
+        groupNotificationJson = groupNotificationJson.replacingOccurrences(of: "{\"some\":", with: "")
+        groupNotificationJson = groupNotificationJson.replacingOccurrences(of: "}}", with: "}")
+        
+        if(onGroupNotificationMessageStreamHandler?.onGroupNotificationMessage != nil){
+            onGroupNotificationMessageStreamHandler?.onGroupNotificationMessage?(groupNotificationJson)
+        }else{
+            print("on group notification Stream Handler is Nil")
+        }
+
     }
     
     func didReceiveLogout() {
