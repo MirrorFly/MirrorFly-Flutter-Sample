@@ -11,6 +11,7 @@ import FlyCommon
 import Flutter
 import Photos
 import FlyDatabase
+
 //import DSON
 
 @objc class FlySdkMethodCalls : NSObject{
@@ -1479,6 +1480,36 @@ import FlyDatabase
             result(FlutterError(code: "500", message: "Unable to remove member from group", details: error.localizedDescription))
         }
         
+    }
+    
+    static func exportChatConversationToEmail(call: FlutterMethodCall, result: @escaping FlutterResult){
+        let args = call.arguments as! Dictionary<String, Any>
+        let userJID = args["jid"] as? String ?? ""
+//        let mailRecipients = args["mailRecipients"] as? [String] ?? []
+        
+        ChatManager.shared.exportChatConversationToEmail(jid: userJID) { chatDataModel in
+            
+            print(chatDataModel)
+        }
+        
+//        result(FlyCoreController.shared.isContactMuted(jid: userJID))
+    }
+    
+    static func getAllGroups(call: FlutterMethodCall, result: @escaping FlutterResult){
+        let args = call.arguments as! Dictionary<String, Any>
+        let fetchFromServer = args["server"] as? Bool ?? false
+        
+        // Note: This Function is called internally from SDK in iOS side, so no need to call seperately
+        print("calling getAllGroups")
+        GroupManager.shared.getGroups(fetchFromServer: fetchFromServer) { isSuccess, flyError, flyData in
+            var data  = flyData
+            print("GroupManager.shared.getGroups \(data)")
+            if isSuccess {
+                // Update UI
+            } else{
+                // failure cases
+            }
+        }
     }
     
     static func isMuted(call: FlutterMethodCall, result: @escaping FlutterResult){

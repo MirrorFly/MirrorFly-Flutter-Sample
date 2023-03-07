@@ -734,6 +734,10 @@ class FlyBaseController: NSObject{
                 FlySdkMethodCalls.removeMemberFromGroup(call: call, result: result)
             case "isMuted":
                 FlySdkMethodCalls.isMuted(call: call, result: result)
+            case "exportChatConversationToEmail":
+                FlySdkMethodCalls.exportChatConversationToEmail(call: call, result: result)
+            case "getAllGroups":
+                FlySdkMethodCalls.getAllGroups(call: call, result: result)
             default:
                 result(FlutterMethodNotImplemented)
             }
