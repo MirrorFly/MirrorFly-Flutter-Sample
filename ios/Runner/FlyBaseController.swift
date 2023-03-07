@@ -123,10 +123,13 @@ class FlyBaseController: NSObject{
      var onsetTypingStatusStreamHandler: OnsetTypingStatusStreamHandler?
      var onGroupTypingStatusStreamHandler: OnGroupTypingStatusStreamHandler?
 
+    var rootViewController: FlutterViewController?
     
      func initSDK(controller: FlutterViewController, licenseKey: String, isTrial: Bool, baseUrl: String, containerID: String){
          
          print("Initializing SDK")
+         
+         rootViewController = controller
         
         let groupConfig = try? GroupConfig.Builder.enableGroupCreation(groupCreation: true)
             .onlyAdminCanAddOrRemoveMembers(adminOnly: true)
@@ -735,7 +738,7 @@ class FlyBaseController: NSObject{
             case "isMuted":
                 FlySdkMethodCalls.isMuted(call: call, result: result)
             case "exportChatConversationToEmail":
-                FlySdkMethodCalls.exportChatConversationToEmail(call: call, result: result)
+                FlySdkMethodCalls.exportChatConversationToEmail(call: call, result: result, vc: self.rootViewController!)
             case "getAllGroups":
                 FlySdkMethodCalls.getAllGroups(call: call, result: result)
             default:

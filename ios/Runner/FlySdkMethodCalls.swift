@@ -1482,7 +1482,8 @@ import FlyDatabase
         
     }
     
-    static func exportChatConversationToEmail(call: FlutterMethodCall, result: @escaping FlutterResult){
+    
+    static func exportChatConversationToEmail(call: FlutterMethodCall, result: @escaping FlutterResult, vc : FlutterViewController){
         let args = call.arguments as! Dictionary<String, Any>
         let userJID = args["jid"] as? String ?? ""
 //        let mailRecipients = args["mailRecipients"] as? [String] ?? []
@@ -1490,6 +1491,21 @@ import FlyDatabase
         ChatManager.shared.exportChatConversationToEmail(jid: userJID) { chatDataModel in
             
             print(chatDataModel)
+//            print(JSONSerializer.toJson(chatDataModel))
+            
+            var dataToShare = [Any]()
+            
+            dataToShare.append(chatDataModel.subject)
+            dataToShare.append(chatDataModel.messageContent)
+            chatDataModel.mediaAttachmentsUrl.forEach { url in
+                dataToShare.append(url)
+            }
+//            executeOnMainThread { [weak self] in
+//                self?.stopLoading()
+                let ac = UIActivityViewController(activityItems: dataToShare, applicationActivities: nil)
+                vc.present(ac, animated: true)
+//            }
+            
         }
         
 //        result(FlyCoreController.shared.isContactMuted(jid: userJID))
