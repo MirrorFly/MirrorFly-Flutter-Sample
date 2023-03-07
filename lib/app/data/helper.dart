@@ -12,6 +12,7 @@ import 'package:flysdk/flysdk.dart';
 import 'package:mirror_fly_demo/app/data/session_management.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../common/widgets.dart';
 import 'apputils.dart';
 
 class Helper {
@@ -771,4 +772,124 @@ String getDisplayImage(RecentChatData recentChat) {
     // drawable = CustomDrawable(context).getDefaultDrawable(recentChat)
   }
   return imageUrl;
+}
+
+void showQuickProfilePopup(
+    {required context, required Function() chatTap,
+      required Function() callTap, required Function() videoTap, required Function() infoTap,required Rx<Profile> profile}) {
+  Get.dialog(
+    Dialog(
+      shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.all(Radius.circular(20.0))),
+      child: SizedBox(
+        width: MediaQuery
+            .of(context)
+            .size
+            .width * 0.7,
+        height: 300,
+        child: Column(
+          children: [
+            Expanded(
+              child: Stack(
+                fit: StackFit.expand,
+                children: [
+                  ClipRRect(
+                    borderRadius: const BorderRadius.only(
+                        topLeft: Radius.circular(20),
+                        topRight: Radius.circular(20)),
+                    child: Obx(() {
+                      return ImageNetwork(
+                        url: profile.value.image.toString(),
+                        width: MediaQuery
+                            .of(context)
+                            .size
+                            .width * 0.7,
+                        height: 250,
+                        clipOval: false,
+                        errorWidget: profile.value.isGroupProfile!
+                            ? Image.asset(
+                          groupImg,
+                          height: 250,
+                          width: MediaQuery
+                              .of(context)
+                              .size
+                              .width * 0.72,
+                          fit: BoxFit.cover,
+                        )
+                            : ProfileTextImage(
+                          text: getName(profile.value),
+                          fontSize: 75,
+                          radius: 0,
+                        ),
+                        isGroup: profile.value.isGroupProfile.checkNull(),
+                        blocked: profile.value.isBlockedMe.checkNull() || profile.value.isAdminBlocked.checkNull(),
+                        unknown: (!profile.value.isItSavedContact.checkNull() || profile.value.isDeletedContact()),
+                      );
+                    }),
+                  ),
+                  Padding(
+                    padding:
+                    const EdgeInsets.symmetric(
+                        vertical: 10.0, horizontal: 20),
+                    child: Text(
+                      profile.value.isGroupProfile!
+                          ? profile.value.name.checkNull()
+                          : profile.value.mobileNumber.checkNull(),
+                      style: const TextStyle(color: Colors.white),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            SizedBox(
+              height: 50,
+              child: Row(
+                // mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Expanded(
+                    child: InkWell(
+                      onTap: chatTap,
+                      child: SvgPicture.asset(
+                        quickMessage,
+                        fit: BoxFit.contain,
+                        width: 30,
+                        height: 30,
+                      ),
+                    ),
+                  ),
+                  !profile.value.isGroupProfile.checkNull() ? Expanded(
+                    child: InkWell(
+                      onTap: callTap,
+                      child: SvgPicture.asset(
+                        quickCall,
+                        fit: BoxFit.contain,
+                      ),
+                    ),
+                  ) : const SizedBox.shrink(),
+                  !profile.value.isGroupProfile.checkNull() ? Expanded(
+                    child: InkWell(
+                      onTap: videoTap,
+                      child: SvgPicture.asset(
+                        quickVideo,
+                        fit: BoxFit.contain,
+                      ),
+                    ),
+                  ) : const SizedBox.shrink(),
+
+                  Expanded(
+                    child: InkWell(onTap: infoTap,
+                      child: SvgPicture.asset(
+                        quickInfo,
+                        fit: BoxFit.contain,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    ),
+  );
 }

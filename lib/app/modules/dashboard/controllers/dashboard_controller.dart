@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
@@ -15,7 +14,6 @@ import 'package:mirror_fly_demo/app/modules/archived_chats/archived_chat_list_co
 import 'package:permission_handler/permission_handler.dart';
 
 import '../../../common/de_bouncer.dart';
-import '../../../common/widgets.dart';
 import '../../../data/apputils.dart';
 import '../../../data/permissions.dart';
 import '../../../routes/app_pages.dart';
@@ -824,11 +822,12 @@ class DashboardController extends FullLifeCycleController
   }
 
 
-  void onMessageStatusUpdated(chatMessageModel) {
+  void onMessageStatusUpdated(ChatMessageModel chatMessageModel) {
     final index = recentChats.indexWhere(
             (message) => message.lastMessageId == chatMessageModel.messageId);
     debugPrint("Message Status Update index of search $index");
     if (!index.isNegative) {
+      // updateRecentChat(chatMessageModel.chatUserJid);
       recentChats[index].lastMessageStatus = chatMessageModel.messageStatus;
       recentChats.refresh();
     }
@@ -1175,7 +1174,7 @@ class DashboardController extends FullLifeCycleController
       profile_(value);
       debugPrint("dashboard controller profile update received");
       showQuickProfilePopup(context: context,
-          chatItem: chatItem,
+          // chatItem: chatItem,
           chatTap: () {
             Get.back();
             if (selected.value) {
@@ -1189,133 +1188,8 @@ class DashboardController extends FullLifeCycleController
           infoTap: () {
             Get.back();
             infoPage(value);
-          });
+          },profile: profile_);
     });
-  }
-
-
-  void showQuickProfilePopup(
-      {required context, required RecentChatData chatItem, required Function() chatTap,
-        required Function() callTap, required Function() videoTap, required Function() infoTap}) {
-    Get.dialog(
-      Dialog(
-        shape: const RoundedRectangleBorder(
-            borderRadius: BorderRadius.all(Radius.circular(20.0))),
-        child: SizedBox(
-          width: MediaQuery
-              .of(context)
-              .size
-              .width * 0.7,
-          height: 300,
-          child: Column(
-            children: [
-              Expanded(
-                child: Stack(
-                  fit: StackFit.expand,
-                  children: [
-                    ClipRRect(
-                      borderRadius: const BorderRadius.only(
-                          topLeft: Radius.circular(20),
-                          topRight: Radius.circular(20)),
-                      child: Obx(() {
-                        return ImageNetwork(
-                          url: profile.image.toString(),
-                          width: MediaQuery
-                              .of(context)
-                              .size
-                              .width * 0.7,
-                          height: 250,
-                          clipOval: false,
-                          errorWidget: chatItem.isGroup!
-                              ? Image.asset(
-                            groupImg,
-                            height: 250,
-                            width: MediaQuery
-                                .of(context)
-                                .size
-                                .width * 0.72,
-                            fit: BoxFit.cover,
-                          )
-                              : ProfileTextImage(
-                            text: chatItem.profileName
-                                .checkNull()
-                                .isEmpty
-                                ? chatItem.nickName.checkNull()
-                                : chatItem.profileName.checkNull(),
-                            fontSize: 75,
-                            radius: 0,
-                          ),
-                          isGroup: profile.isGroupProfile.checkNull(),
-                          blocked: profile.isBlockedMe.checkNull() || profile.isAdminBlocked.checkNull(),
-                          unknown: (!profile.isItSavedContact.checkNull() || profile.isDeletedContact()),
-                        );
-                      }),
-                    ),
-                    Padding(
-                      padding:
-                      const EdgeInsets.symmetric(
-                          vertical: 10.0, horizontal: 20),
-                      child: Text(
-                        profile.isGroupProfile!
-                            ? profile.name.checkNull()
-                            : profile.mobileNumber.checkNull(),
-                        style: const TextStyle(color: Colors.white),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              SizedBox(
-                height: 50,
-                child: Row(
-                  // mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Expanded(
-                      child: InkWell(
-                        onTap: chatTap,
-                        child: SvgPicture.asset(
-                          quickMessage,
-                          fit: BoxFit.contain,
-                          width: 30,
-                          height: 30,
-                        ),
-                      ),
-                    ),
-                    !profile.isGroupProfile.checkNull() ? Expanded(
-                      child: InkWell(
-                        onTap: callTap,
-                        child: SvgPicture.asset(
-                          quickCall,
-                          fit: BoxFit.contain,
-                        ),
-                      ),
-                    ) : const SizedBox.shrink(),
-                    !profile.isGroupProfile.checkNull() ? Expanded(
-                      child: InkWell(
-                        onTap: videoTap,
-                        child: SvgPicture.asset(
-                          quickVideo,
-                          fit: BoxFit.contain,
-                        ),
-                      ),
-                    ) : const SizedBox.shrink(),
-
-                    Expanded(
-                      child: InkWell(onTap: infoTap,
-                        child: SvgPicture.asset(
-                          quickInfo,
-                          fit: BoxFit.contain,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
   }
 
   Future<void> gotoContacts() async {
