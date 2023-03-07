@@ -338,7 +338,7 @@ class ContactController extends FullLifeCycleController
       }
     } else {
       mirrorFlyLog("Contact Profile", item.toJson().toString());
-      Get.offNamed(Routes.chat, arguments: item);
+      Get.toNamed(Routes.chat, arguments: item);
     }
   }
 
