@@ -20,7 +20,6 @@ Replace the `licence key` with yours in `main.dart` file.
 ## Configuration
 
 Replace the licence with yours in android app level `build.gradle` file and `AppDelegate` in iOS project
-
 <br />
 
 ``
@@ -29,7 +28,6 @@ Replace the licence with yours in android app level `build.gradle` file and `App
 <br />
 
 Replace the google API key with yours in android `manifest` file and `AppDelegate`(googleApiKey) in iOS project
-
 <br />
 
 ``<meta-data android:name="com.google.android.geo.API_KEY"
