@@ -323,9 +323,17 @@ abstract class BaseController {
     if (Get.isRegistered<ChatController>()) {
       Get.find<ChatController>().unblockedThisUser(jid);
     }
+    if (Get.isRegistered<ChatInfoController>()) {
+      Get.find<ChatInfoController>().unblockedThisUser(jid);
+    }
+    if (Get.isRegistered<GroupInfoController>()) {
+      Get.find<GroupInfoController>().unblockedThisUser(jid);
+    }
   }
 
-  void userBlockedMe(result) {}
+  void userBlockedMe(result) {
+    mirrorFlyLog('userBlockedMe', result.toString());
+  }
 
   void userCameOnline(String jid) {
     if (Get.isRegistered<ChatController>()) {

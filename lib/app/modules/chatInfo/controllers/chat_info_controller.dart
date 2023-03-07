@@ -153,4 +153,8 @@ class ChatInfoController extends GetxController {
   void userDeletedHisProfile(String jid) {
     userUpdatedHisProfile(jid);
   }
+
+  void unblockedThisUser(String jid) {
+    userUpdatedHisProfile(jid);
+  }
 }

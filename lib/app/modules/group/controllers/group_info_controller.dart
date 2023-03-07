@@ -495,4 +495,8 @@ class GroupInfoController extends GetxController {
   void loadGroupExistence() {
     memberOfGroup();
   }
+
+  void unblockedThisUser(String jid) {
+    userUpdatedHisProfile(jid);
+  }
 }
