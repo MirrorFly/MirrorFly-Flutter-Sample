@@ -32,15 +32,35 @@ class DeleteAccountController extends GetxController {
       mirrorFlyLog("SessionManagement.getMobileNumber()", SessionManagement.getMobileNumber().toString());
       mirrorFlyLog("SessionManagement.getCountryCode()", SessionManagement.getCountryCode().toString());
       mirrorFlyLog("countryCode", countryCode.toString());
-      if(mobileNumber.text.trim() != SessionManagement.getMobileNumber() || SessionManagement.getCountryCode()?.replaceAll('+', '')!=countryCode?.replaceAll('+', '')){
-        Helper.showAlert(message: "The mobile number you entered doesn't match your account", actions: [
-          TextButton(
-              onPressed: () {
-                Get.back();
-              },
-              child: const Text("Ok")),
-        ]);
-        return;
+      if(SessionManagement.isTrailLicence()) {
+        if (mobileNumber.text.trim() != SessionManagement.getMobileNumber() ||
+            SessionManagement.getCountryCode()?.replaceAll('+', '') !=
+                countryCode?.replaceAll('+', '')) {
+          Helper.showAlert(
+              message: "The mobile number you entered doesn't match your account",
+              actions: [
+                TextButton(
+                    onPressed: () {
+                      Get.back();
+                    },
+                    child: const Text("Ok")),
+              ]);
+          return;
+        }
+      }else{
+        var mob = '${countryCode?.replaceAll('+', '').toString().checkNull()}${mobileNumber.text.trim()}';
+        if (mob != SessionManagement.getMobileNumber()) {
+          Helper.showAlert(
+              message: "The mobile number you entered doesn't match your account",
+              actions: [
+                TextButton(
+                    onPressed: () {
+                      Get.back();
+                    },
+                    child: const Text("Ok")),
+              ]);
+          return;
+        }
       }
       Get.toNamed(Routes.deleteAccountReason);
     }else{
