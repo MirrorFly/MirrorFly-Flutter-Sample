@@ -18,14 +18,15 @@ Replace the licence with yours in android app level `build.gradle` file and `App
 ``
 <br />
 
+Replace the google API key with yours in android `manifest` file and `AppDelegate`(googleApiKey) in iOS project
+
+<br />
+
 ``<meta-data android:name="com.google.android.geo.API_KEY"
 android:value="{Please add your google api key}"/>``
 
 <br />
 
-Replace the google API key with yours in android `manifest` file and `AppDelegate`(googleApiKey) in iOS project
-
-<br />
 
 ## Run project
 - flutter clean
