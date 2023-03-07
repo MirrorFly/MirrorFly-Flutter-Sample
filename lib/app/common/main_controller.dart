@@ -282,7 +282,9 @@ class MainController extends FullLifeCycleController with BaseController, FullLi
   @override
   void onResumed() {
     mirrorFlyLog('mainController', 'onResumed');
-    syncContacts();
+    if(!SessionManagement.isTrailLicence()) {
+      syncContacts();
+    }
   }
 
   void syncContacts() async {
