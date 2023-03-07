@@ -93,7 +93,7 @@ class ContactController extends FullLifeCycleController
   bool get isSearchVisible => !_search.value;
 
   bool get isClearVisible =>
-      _search.value && !isForward.value && isCreateGroup.value;
+      _search.value && lastInputValue.value.isNotEmpty /*&& !isForward.value && isCreateGroup.value*/;
 
   bool get isMenuVisible => !_search.value && !isForward.value;
 
@@ -118,12 +118,12 @@ class ContactController extends FullLifeCycleController
   }
 
   final deBouncer = DeBouncer(milliseconds: 700);
-  String lastInputValue = "";
+  RxString lastInputValue = "".obs;
 
   searchListener(String text) async {
     debugPrint("searching .. ");
-    if (lastInputValue != searchQuery.text.trim()) {
-      lastInputValue = searchQuery.text.trim();
+    if (lastInputValue.value != searchQuery.text.trim()) {
+      lastInputValue(searchQuery.text.trim());
       if (searchQuery.text.trim().isEmpty) {
         _searchText = "";
         pageNum = 1;
@@ -146,6 +146,7 @@ class ContactController extends FullLifeCycleController
     _search.value = false;
     searchQuery.clear();
     _searchText = "";
+    lastInputValue('');
     //if(!_IsSearching){
     //isPageLoading.value=true;
     pageNum = 1;
