@@ -231,6 +231,7 @@ class MainController extends FullLifeCycleController with BaseController, FullLi
         switch (status) {
           case InternetConnectionStatus.connected:
             mirrorFlyLog("network",'Data connection is available.');
+            networkConnected();
             if (Get.isRegistered<ChatController>()) {
               Get.find<ChatController>().networkConnected();
             }
@@ -243,6 +244,7 @@ class MainController extends FullLifeCycleController with BaseController, FullLi
             break;
           case InternetConnectionStatus.disconnected:
             mirrorFlyLog("network",'You are disconnected from the internet.');
+            networkDisconnected();
             if (Get.isRegistered<ChatController>()) {
               Get.find<ChatController>().networkDisconnected();
             }
@@ -301,6 +303,14 @@ class MainController extends FullLifeCycleController with BaseController, FullLi
         onContactSyncComplete(true);
         mirrorFlyLog("checkContactPermission isSuccess",value.toString());
       });
+    }
+  }
+
+  void networkDisconnected() {}
+
+  void networkConnected() {
+    if(!SessionManagement.isTrailLicence()) {
+      syncContacts();
     }
   }
 

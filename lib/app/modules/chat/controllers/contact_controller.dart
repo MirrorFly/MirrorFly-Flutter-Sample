@@ -59,15 +59,18 @@ class ContactController extends FullLifeCycleController
 
   Future<void> updateProfile(String jid) async {
     if (jid.isNotEmpty) {
-      var userListIndex = usersList.indexWhere((element) => element.jid == jid);
-      var mainListIndex =
-          mainUsersList.indexWhere((element) => element.jid == jid);
       getProfileDetails(jid).then((value) {
+        var userListIndex = usersList.indexWhere((element) => element.jid == jid);
+        var mainListIndex =
+        mainUsersList.indexWhere((element) => element.jid == jid);
+        mirrorFlyLog('value.isBlockedMe', value.isBlockedMe.toString());
         if (!userListIndex.isNegative) {
           usersList[userListIndex] = value;
+          usersList.refresh();
         }
         if (!mainListIndex.isNegative) {
           mainUsersList[mainListIndex] = value;
+          mainUsersList.refresh();
         }
       });
     }
@@ -481,6 +484,33 @@ class ContactController extends FullLifeCycleController
   }
 
   void userDeletedHisProfile(String jid) {
+    userUpdatedHisProfile(jid);
+  }
+
+  showProfilePopup(Rx<Profile> profile){
+    showQuickProfilePopup(context: Get.context,
+        // chatItem: chatItem,
+        chatTap: () {
+          Get.back();
+          onListItemPressed(profile.value);
+        },
+        callTap: () {},
+        videoTap: () {},
+        infoTap: () {
+          Get.back();
+          if (profile.value.isGroupProfile ?? false) {
+            Get.toNamed(Routes.groupInfo, arguments: profile.value);
+          } else {
+            Get.toNamed(Routes.chatInfo, arguments: profile.value);
+          }
+        },profile: profile);
+  }
+
+  void userBlockedMe(String jid) {
+    userUpdatedHisProfile(jid);
+  }
+
+  void unblockedThisUser(String jid) {
     userUpdatedHisProfile(jid);
   }
 }

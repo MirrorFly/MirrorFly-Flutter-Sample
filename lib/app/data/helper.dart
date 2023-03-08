@@ -10,6 +10,7 @@ import 'package:intl/intl.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
 import 'package:flysdk/flysdk.dart';
 import 'package:mirror_fly_demo/app/data/session_management.dart';
+import 'package:mirror_fly_demo/app/routes/app_pages.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../common/widgets.dart';
@@ -60,18 +61,17 @@ class Helper {
         barrierColor: Colors.transparent);
   }
 
-  static void showAlert(
-      {String? title,
-      required String message,
-      List<Widget>? actions,
-      Widget? content}) {
+  static void showAlert({String? title,
+    required String message,
+    List<Widget>? actions,
+    Widget? content}) {
     Get.dialog(
       AlertDialog(
         title: title != null
             ? Text(
-                title,
-                style: const TextStyle(fontSize: 17),
-              )
+          title,
+          style: const TextStyle(fontSize: 17),
+        )
             : const SizedBox.shrink(),
         contentPadding: title != null
             ? const EdgeInsets.only(top: 15, right: 25, left: 25, bottom: 0)
@@ -83,7 +83,7 @@ class Helper {
                   color: textHintColor, fontWeight: FontWeight.normal),
             ),
         contentTextStyle:
-            const TextStyle(color: textHintColor, fontWeight: FontWeight.w500),
+        const TextStyle(color: textHintColor, fontWeight: FontWeight.w500),
         actions: actions,
       ),
     );
@@ -222,8 +222,8 @@ bool checkFileUploadSize(String path, String mediaType) {
   if (mediaType == Constants.mImage && sizeInMb < 10) {
     return true;
   } else if ((mediaType == Constants.mAudio ||
-          mediaType == Constants.mVideo ||
-          mediaType == Constants.mDocument) &&
+      mediaType == Constants.mVideo ||
+      mediaType == Constants.mDocument) &&
       sizeInMb < 20) {
     return true;
   } else {
@@ -260,7 +260,8 @@ extension FileFormatter on num {
     if (this <= 0) return "0";
     final units = ["bytes", "KB", "MB", "GB", "TB"];
     int digitGroups = (log(this) / log(base)).round();
-    return "${NumberFormat("#,##0.#").format(this / pow(base, digitGroups))} ${units[digitGroups]}";
+    return "${NumberFormat("#,##0.#").format(
+        this / pow(base, digitGroups))} ${units[digitGroups]}";
   }
 }
 
@@ -316,10 +317,11 @@ extension MemberParsing on Member {
   bool isDeletedContact() {
     return contactType == "deleted_contact";
   }
+
   String getUsername() {
     var value = FlyChat.getProfileDetails(jid.checkNull(), false);
     var str = Profile.fromJson(json.decode(value.toString()));
-    return getName(str);//str.name.checkNull();
+    return getName(str); //str.name.checkNull();
   }
 
   Future<Profile> getProfileDetails() async {
@@ -327,13 +329,19 @@ extension MemberParsing on Member {
     var str = Profile.fromJson(json.decode(value.toString()));
     return str;
   }
-  bool isItSavedContact(){
+
+  bool isItSavedContact() {
     return contactType == 'live_contact';
   }
-  bool isUnknownContact(){
-    return !isDeletedContact() && !isItSavedContact() && !isGroupProfile.checkNull();
+
+  bool isUnknownContact() {
+    return !isDeletedContact() && !isItSavedContact() &&
+        !isGroupProfile.checkNull();
   }
-  bool isEmailContact() => !isGroupProfile.checkNull() && isGroupInOfflineMode.checkNull(); // for email contact isGroupInOfflineMode will be true
+
+  bool isEmailContact() =>
+      !isGroupProfile.checkNull() && isGroupInOfflineMode
+          .checkNull(); // for email contact isGroupInOfflineMode will be true
 }
 
 Future<Profile> getProfileDetails(String jid) async {
@@ -362,13 +370,19 @@ extension ProfileParesing on Profile {
         ? Constants.typeGroupChat
         : Constants.typeChat;
   }
-  bool isItSavedContact(){
+
+  bool isItSavedContact() {
     return contactType == 'live_contact';
   }
-  bool isUnknownContact(){
-    return !isDeletedContact() && !isItSavedContact() && !isGroupProfile.checkNull();
+
+  bool isUnknownContact() {
+    return !isDeletedContact() && !isItSavedContact() &&
+        !isGroupProfile.checkNull();
   }
-  bool isEmailContact() => !isGroupProfile.checkNull() && isGroupInOfflineMode.checkNull(); // for email contact isGroupInOfflineMode will be true
+
+  bool isEmailContact() =>
+      !isGroupProfile.checkNull() && isGroupInOfflineMode
+          .checkNull(); // for email contact isGroupInOfflineMode will be true
 
 }
 
@@ -383,10 +397,11 @@ extension ChatmessageParsing on ChatMessageModel {
         (mediaChatMessage?.mediaUploadStatus == Constants.mediaUploaded);
   }
 
-  bool isMediaMessage() => (isAudioMessage() ||
-      isVideoMessage() ||
-      isImageMessage() ||
-      isFileMessage());
+  bool isMediaMessage() =>
+      (isAudioMessage() ||
+          isVideoMessage() ||
+          isImageMessage() ||
+          isFileMessage());
 
   bool isTextMessage() => messageType == Constants.mText;
 
@@ -407,31 +422,35 @@ extension RecentChatParsing on RecentChatData {
     return (isGroup.checkNull())
         ? Constants.typeGroupChat
         : (isBroadCast.checkNull())
-            ? Constants.typeBroadcastChat
-            : Constants.typeChat;
+        ? Constants.typeBroadcastChat
+        : Constants.typeChat;
   }
+
   bool isDeletedContact() {
     return contactType == "deleted_contact";
   }
 
-  bool isItSavedContact(){
+  bool isItSavedContact() {
     return contactType == 'live_contact';
   }
-  bool isUnknownContact(){
+
+  bool isUnknownContact() {
     return !isDeletedContact() && !isItSavedContact() && !isGroup.checkNull();
   }
-  bool isEmailContact() => !isGroup.checkNull() && isGroupInOfflineMode.checkNull(); // for email contact isGroupInOfflineMode will be true
+
+  bool isEmailContact() =>
+      !isGroup.checkNull() && isGroupInOfflineMode
+          .checkNull(); // for email contact isGroupInOfflineMode will be true
 }
 
 String returnFormattedCount(int count) {
   return (count > 99) ? "99+" : count.toString();
 }
 
-InkWell listItem(
-    {Widget? leading,
-    required Widget title,
-    Widget? trailing,
-    required Function() onTap}) {
+InkWell listItem({Widget? leading,
+  required Widget title,
+  Widget? trailing,
+  required Function() onTap}) {
   return InkWell(
     onTap: onTap,
     child: Padding(
@@ -440,7 +459,7 @@ InkWell listItem(
         children: [
           leading != null
               ? Padding(
-                  padding: const EdgeInsets.only(right: 16.0), child: leading)
+              padding: const EdgeInsets.only(right: 16.0), child: leading)
               : const SizedBox(),
           Expanded(
             child: title,
@@ -459,7 +478,9 @@ String getRecentChatTime(BuildContext context, int? epochTime) {
   //messageDate.time = convertedTime
   var hourTime = manipulateMessageTime(
       context, DateTime.fromMicrosecondsSinceEpoch(convertedTime));
-  var currentYear = DateTime.now().year;
+  var currentYear = DateTime
+      .now()
+      .year;
   var calendar = DateTime.fromMicrosecondsSinceEpoch(convertedTime);
   var time = (currentYear == calendar.year)
       ? DateFormat("dd-MMM").format(calendar)
@@ -467,12 +488,14 @@ String getRecentChatTime(BuildContext context, int? epochTime) {
   return (equalsWithYesterday(calendar, Constants.today))
       ? hourTime
       : (equalsWithYesterday(calendar, Constants.yesterday))
-          ? Constants.yesterdayUpper
-          : time;
+      ? Constants.yesterdayUpper
+      : time;
 }
 
 String manipulateMessageTime(BuildContext context, DateTime messageDate) {
-  var format = MediaQuery.of(context).alwaysUse24HourFormat ? 24 : 12;
+  var format = MediaQuery
+      .of(context)
+      .alwaysUse24HourFormat ? 24 : 12;
   var hours = calendar.hour; //calendar[Calendar.HOUR]
   calendar = messageDate;
   var dateHourFormat = setDateHourFormat(format, hours);
@@ -482,11 +505,11 @@ String manipulateMessageTime(BuildContext context, DateTime messageDate) {
 String setDateHourFormat(int format, int hours) {
   var dateHourFormat = (format == 12)
       ? (hours < 10)
-          ? "hh:mm aa"
-          : "h:mm aa"
+      ? "hh:mm aa"
+      : "h:mm aa"
       : (hours < 10)
-          ? "HH:mm"
-          : "H:mm";
+      ? "HH:mm"
+      : "H:mm";
   return dateHourFormat;
 }
 
@@ -495,7 +518,11 @@ bool equalsWithYesterday(DateTime srcDate, String day) {
     var messageDate = DateFormat('yyyy/MM/dd').format(srcDate);
     var yesterdayDate = DateFormat('yyyy/MM/dd').format(DateTime.now().subtract(
         const Duration(
-            days: 1, hours: 0, minutes: 0, seconds: 0, milliseconds: 0)));
+            days: 1,
+            hours: 0,
+            minutes: 0,
+            seconds: 0,
+            milliseconds: 0)));
     return yesterdayDate == messageDate;
   } else {
     return equalsWithToday(srcDate, day);
@@ -652,29 +679,36 @@ Future<RecentChatData?> getRecentChatOfJid(String jid) async {
     return null;
   }
 }
+
 String getName(Profile item) {
   if (SessionManagement.isTrailLicence()) {
     /*return item.name.toString().checkNull().isEmpty
         ? item.nickName.toString()
         : item.name.toString();*/
-    return item.name.checkNull().isEmpty
-        ? (item.nickName.checkNull().isEmpty
-            ? item.mobileNumber.checkNull()
-            : item.nickName.checkNull())
+    return item.name
+        .checkNull()
+        .isEmpty
+        ? (item.nickName
+        .checkNull()
+        .isEmpty
+        ? item.mobileNumber.checkNull()
+        : item.nickName.checkNull())
         : item.name.checkNull();
   } else {
-   if(item.jid.checkNull()==SessionManagement.getUserJID()){
-     return Constants.you;
-   }else if(item.isDeletedContact()){
-     mirrorFlyLog('isDeletedContact', item.isDeletedContact().toString());
-     return Constants.deletedUser;
-   }else if(item.isUnknownContact() || item.nickName.checkNull().isEmpty){
-     mirrorFlyLog('isUnknownContact', item.isUnknownContact().toString());
-     return item.mobileNumber.checkNull();
-   }else{
-     mirrorFlyLog('nickName', item.nickName.toString());
-     return item.nickName.checkNull();
-   }
+    if (item.jid.checkNull() == SessionManagement.getUserJID()) {
+      return Constants.you;
+    } else if (item.isDeletedContact()) {
+      mirrorFlyLog('isDeletedContact', item.isDeletedContact().toString());
+      return Constants.deletedUser;
+    } else if (item.isUnknownContact() || item.nickName
+        .checkNull()
+        .isEmpty) {
+      mirrorFlyLog('isUnknownContact', item.isUnknownContact().toString());
+      return item.mobileNumber.checkNull();
+    } else {
+      mirrorFlyLog('nickName', item.nickName.toString());
+      return item.nickName.checkNull();
+    }
     /*var status = true;
     if(status) {
       return item.nickName
@@ -697,19 +731,23 @@ String getRecentName(RecentChatData item) {
     /*return item.name.toString().checkNull().isEmpty
         ? item.nickName.toString()
         : item.name.toString();*/
-    return item.profileName.checkNull().isEmpty
+    return item.profileName
+        .checkNull()
+        .isEmpty
         ? item.nickName.checkNull()
         : item.profileName.checkNull();
   } else {
-    if(item.jid.checkNull()==SessionManagement.getUserJID()){
+    if (item.jid.checkNull() == SessionManagement.getUserJID()) {
       return Constants.you;
-    }else if(item.isDeletedContact()){
+    } else if (item.isDeletedContact()) {
       mirrorFlyLog('isDeletedContact', item.isDeletedContact().toString());
       return Constants.deletedUser;
-    }else if(item.isUnknownContact() || item.nickName.checkNull().isEmpty){
+    } else if (item.isUnknownContact() || item.nickName
+        .checkNull()
+        .isEmpty) {
       mirrorFlyLog('isUnknownContact', item.jid.toString());
       return getMobileNumberFromJid(item.jid.checkNull());
-    }else{
+    } else {
       mirrorFlyLog('nickName', item.nickName.toString());
       return item.nickName.checkNull();
     }
@@ -721,21 +759,27 @@ String getMemberName(Member item) {
     /*return item.name.toString().checkNull().isEmpty
         ? item.nickName.toString()
         : item.name.toString();*/
-    return item.name.checkNull().isEmpty
-        ? (item.nickName.checkNull().isEmpty
+    return item.name
+        .checkNull()
+        .isEmpty
+        ? (item.nickName
+        .checkNull()
+        .isEmpty
         ? item.mobileNumber.checkNull()
         : item.nickName.checkNull())
         : item.name.checkNull();
   } else {
-    if(item.jid.checkNull()==SessionManagement.getUserJID()){
+    if (item.jid.checkNull() == SessionManagement.getUserJID()) {
       return Constants.you;
-    }else if(item.isDeletedContact()){
+    } else if (item.isDeletedContact()) {
       mirrorFlyLog('isDeletedContact', item.isDeletedContact().toString());
       return Constants.deletedUser;
-    }else if(item.isUnknownContact() || item.nickName.checkNull().isEmpty){
+    } else if (item.isUnknownContact() || item.nickName
+        .checkNull()
+        .isEmpty) {
       mirrorFlyLog('isUnknownContact', item.isUnknownContact().toString());
       return item.mobileNumber.checkNull();
-    }else{
+    } else {
       mirrorFlyLog('nickName', item.nickName.toString());
       return item.nickName.checkNull();
     }
@@ -755,7 +799,8 @@ String getMemberName(Member item) {
     }*/
   }
 }
-String getMobileNumberFromJid(String jid){
+
+String getMobileNumberFromJid(String jid) {
   var str = jid.split('@');
   return str[0];
 }
@@ -774,122 +819,140 @@ String getDisplayImage(RecentChatData recentChat) {
   return imageUrl;
 }
 
-void showQuickProfilePopup(
-    {required context, required Function() chatTap,
-      required Function() callTap, required Function() videoTap, required Function() infoTap,required Rx<Profile> profile}) {
+void showQuickProfilePopup({required context, required Function() chatTap,
+  required Function() callTap, required Function() videoTap, required Function() infoTap, required Rx<
+      Profile> profile}) {
   Get.dialog(
-    Dialog(
-      shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.all(Radius.circular(20.0))),
-      child: SizedBox(
-        width: MediaQuery
-            .of(context)
-            .size
-            .width * 0.7,
-        height: 300,
-        child: Column(
-          children: [
-            Expanded(
-              child: Stack(
-                fit: StackFit.expand,
-                children: [
-                  ClipRRect(
-                    borderRadius: const BorderRadius.only(
-                        topLeft: Radius.circular(20),
-                        topRight: Radius.circular(20)),
-                    child: Obx(() {
-                      return ImageNetwork(
-                        url: profile.value.image.toString(),
-                        width: MediaQuery
-                            .of(context)
-                            .size
-                            .width * 0.7,
-                        height: 250,
-                        clipOval: false,
-                        errorWidget: profile.value.isGroupProfile!
-                            ? Image.asset(
-                          groupImg,
-                          height: 250,
-                          width: MediaQuery
-                              .of(context)
-                              .size
-                              .width * 0.72,
-                          fit: BoxFit.cover,
-                        )
-                            : ProfileTextImage(
-                          text: getName(profile.value),
-                          fontSize: 75,
-                          radius: 0,
+    Obx(() {
+      return Dialog(
+        shape: const RoundedRectangleBorder(
+            borderRadius: BorderRadius.all(Radius.circular(20.0))),
+        child: SizedBox(
+          width: MediaQuery
+              .of(context)
+              .size
+              .width * 0.7,
+          height: 300,
+          child: Column(
+            children: [
+              Expanded(
+                child: InkWell(
+                  onTap: () {
+                    mirrorFlyLog('image click', 'true');
+                    if (profile.value.image!.isNotEmpty && !(profile.value
+                        .isBlockedMe.checkNull() || profile.value.isAdminBlocked
+                        .checkNull()) && !(!profile.value.isItSavedContact
+                        .checkNull() || profile.value.isDeletedContact())) {
+                      Get.back();
+                      Get.toNamed(Routes.imageView, arguments: {
+                        'imageName': getName(profile.value),
+                        'imageUrl': profile.value.image.checkNull()
+                      });
+                    }
+                  },
+                  child: Stack(
+                    fit: StackFit.expand,
+                    children: [
+                      ClipRRect(
+                          borderRadius: const BorderRadius.only(
+                              topLeft: Radius.circular(20),
+                              topRight: Radius.circular(20)),
+                          child: ImageNetwork(
+                            url: profile.value.image.toString(),
+                            width: MediaQuery
+                                .of(context)
+                                .size
+                                .width * 0.7,
+                            height: 250,
+                            clipOval: false,
+                            errorWidget: profile.value.isGroupProfile!
+                                ? Image.asset(
+                              groupImg,
+                              height: 250,
+                              width: MediaQuery
+                                  .of(context)
+                                  .size
+                                  .width * 0.72,
+                              fit: BoxFit.cover,
+                            )
+                                : ProfileTextImage(
+                              text: getName(profile.value),
+                              fontSize: 75,
+                              radius: 0,
+                            ),
+                            isGroup: profile.value.isGroupProfile.checkNull(),
+                            blocked: profile.value.isBlockedMe.checkNull() ||
+                                profile.value.isAdminBlocked.checkNull(),
+                            unknown: (!profile.value.isItSavedContact
+                                .checkNull() ||
+                                profile.value.isDeletedContact()),
+                          )
+                      ),
+                      Padding(
+                        padding:
+                        const EdgeInsets.symmetric(
+                            vertical: 10.0, horizontal: 20),
+                        child: Text(
+                          profile.value.isGroupProfile!
+                              ? profile.value.name.checkNull()
+                              : profile.value.mobileNumber.checkNull(),
+                          style: const TextStyle(color: Colors.white),
                         ),
-                        isGroup: profile.value.isGroupProfile.checkNull(),
-                        blocked: profile.value.isBlockedMe.checkNull() || profile.value.isAdminBlocked.checkNull(),
-                        unknown: (!profile.value.isItSavedContact.checkNull() || profile.value.isDeletedContact()),
-                      );
-                    }),
+                      ),
+                    ],
                   ),
-                  Padding(
-                    padding:
-                    const EdgeInsets.symmetric(
-                        vertical: 10.0, horizontal: 20),
-                    child: Text(
-                      profile.value.isGroupProfile!
-                          ? profile.value.name.checkNull()
-                          : profile.value.mobileNumber.checkNull(),
-                      style: const TextStyle(color: Colors.white),
-                    ),
-                  ),
-                ],
+                ),
               ),
-            ),
-            SizedBox(
-              height: 50,
-              child: Row(
-                // mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Expanded(
-                    child: InkWell(
-                      onTap: chatTap,
-                      child: SvgPicture.asset(
-                        quickMessage,
-                        fit: BoxFit.contain,
-                        width: 30,
-                        height: 30,
+              SizedBox(
+                height: 50,
+                child: Row(
+                  // mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Expanded(
+                      child: InkWell(
+                        onTap: chatTap,
+                        child: SvgPicture.asset(
+                          quickMessage,
+                          fit: BoxFit.contain,
+                          width: 30,
+                          height: 30,
+                        ),
                       ),
                     ),
-                  ),
-                  !profile.value.isGroupProfile.checkNull() ? Expanded(
-                    child: InkWell(
-                      onTap: callTap,
-                      child: SvgPicture.asset(
-                        quickCall,
-                        fit: BoxFit.contain,
+                    !profile.value.isGroupProfile.checkNull() ? Expanded(
+                      child: InkWell(
+                        onTap: callTap,
+                        child: SvgPicture.asset(
+                          quickCall,
+                          fit: BoxFit.contain,
+                        ),
                       ),
-                    ),
-                  ) : const SizedBox.shrink(),
-                  !profile.value.isGroupProfile.checkNull() ? Expanded(
-                    child: InkWell(
-                      onTap: videoTap,
-                      child: SvgPicture.asset(
-                        quickVideo,
-                        fit: BoxFit.contain,
+                    ) : const SizedBox.shrink(),
+                    !profile.value.isGroupProfile.checkNull() ? Expanded(
+                      child: InkWell(
+                        onTap: videoTap,
+                        child: SvgPicture.asset(
+                          quickVideo,
+                          fit: BoxFit.contain,
+                        ),
                       ),
-                    ),
-                  ) : const SizedBox.shrink(),
+                    ) : const SizedBox.shrink(),
 
-                  Expanded(
-                    child: InkWell(onTap: infoTap,
-                      child: SvgPicture.asset(
-                        quickInfo,
-                        fit: BoxFit.contain,
+                    Expanded(
+                      child: InkWell(onTap: infoTap,
+                        child: SvgPicture.asset(
+                          quickInfo,
+                          fit: BoxFit.contain,
+                        ),
                       ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
-      ),
-    ),
+      );
+    }),
   );
 }

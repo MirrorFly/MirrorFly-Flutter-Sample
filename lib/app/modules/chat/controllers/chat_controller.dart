@@ -1357,6 +1357,7 @@ class ChatController extends FullLifeCycleController
                     Helper.showLoading(message: "Blocking User");
                     FlyChat.blockUser(profile.jid!).then((value) {
                       debugPrint(value);
+                      profile.isBlocked=true;
                       isBlocked(true);
                       saveUnsentMessage();
                       Helper.hideLoading();
@@ -1419,6 +1420,7 @@ class ChatController extends FullLifeCycleController
                 // Helper.showLoading(message: "Unblocking User");
                 FlyChat.unblockUser(profile.jid!).then((value) {
                   debugPrint(value.toString());
+                  profile.isBlocked=false;
                   isBlocked(false);
                   getUnsentMessageOfAJid();
                   Helper.hideLoading();
@@ -2600,4 +2602,8 @@ class ChatController extends FullLifeCycleController
   }
 
   void saveContact() {}
+
+  void userBlockedMe(String jid) {
+    updateProfile(jid);
+  }
 }
