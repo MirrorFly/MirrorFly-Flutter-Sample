@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
@@ -472,6 +473,7 @@ class ContactController extends FullLifeCycleController
   @override
   void onPaused() {}
 
+  FocusNode searchFocus = FocusNode();
   @override
   Future<void> onResumed() async {
     if (!SessionManagement.isTrailLicence()) {
@@ -481,6 +483,16 @@ class ContactController extends FullLifeCycleController
       }else{
         usersList.clear();
         usersList.refresh();
+      }
+    }
+    if(search) {
+      if (!KeyboardVisibilityController().isVisible) {
+        if (searchFocus.hasFocus) {
+          searchFocus.unfocus();
+          Future.delayed(const Duration(milliseconds: 100), () {
+            searchFocus.requestFocus();
+          });
+        }
       }
     }
   }

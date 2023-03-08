@@ -35,6 +35,7 @@ class ContactListView extends GetView<ContactController> {
                   onChanged: (text) {
                     controller.searchListener(text);
                   },
+            focusNode: controller.searchFocus,
                   style: const TextStyle(fontSize: 16),
                   controller: controller.searchQuery,
                   autofocus: true,
