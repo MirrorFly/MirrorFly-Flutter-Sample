@@ -11,6 +11,7 @@ import FlyCommon
 import Flutter
 import Photos
 import FlyDatabase
+
 //import DSON
 
 @objc class FlySdkMethodCalls : NSObject{
@@ -20,8 +21,8 @@ import FlyDatabase
         
         let args = call.arguments as! Dictionary<String, Any>
         
-        let userIdentifier = args["userIdentifier"] as? String ?? nil
-        
+        var userIdentifier = args["userIdentifier"] as? String ?? ""
+        userIdentifier = userIdentifier.replacingOccurrences(of: "+", with: "")
         
         let deviceToken = Utility.getStringFromPreference(key: googleToken)
         var voipToken = Utility.getStringFromPreference(key: voipToken)
@@ -35,7 +36,7 @@ import FlyDatabase
             return
         }
         
-        try! ChatManager.registerApiService(for:  userIdentifier!, deviceToken: deviceToken, voipDeviceToken: voipToken, isExport: false) { isSuccess, flyError, flyData in
+        try! ChatManager.registerApiService(for: userIdentifier ?? "", deviceToken: deviceToken, voipDeviceToken: voipToken, isExport: false) { isSuccess, flyError, flyData in
             var data = flyData
             if isSuccess {
                 
@@ -51,7 +52,7 @@ import FlyDatabase
                 Utility.saveInPreference(key: isLoggedIn, value: true)
                 FlyDefaults.myXmppPassword = data["password"] as! String
                 FlyDefaults.myXmppUsername = data["username"] as! String
-                FlyDefaults.myMobileNumber = userIdentifier!
+                FlyDefaults.myMobileNumber = userIdentifier
                 FlyDefaults.isProfileUpdated = data["isProfileUpdated"] as! Int == 1
                 
                 
@@ -582,6 +583,7 @@ import FlyDatabase
         print("Insert Status-->\(status)")
         let insertStatus: () = ChatManager.saveProfileStatus(statusText: status, currentStatus: false)
         print("Insert Status Result-->\(insertStatus)")
+        result(true)
     
     }
     
@@ -589,8 +591,17 @@ import FlyDatabase
         let args = call.arguments as! Dictionary<String, Any>
         let status = args["status"] as? String ?? ""
         print("Insert New Status ---> \(status)")
-        let insertStatus: () = ChatManager.saveProfileStatus(statusText: status, currentStatus: true)
-        print("Insert New Status Result-->\(insertStatus)")
+        var getAllStatus: [ProfileStatus] = []
+        getAllStatus = ChatManager.getAllStatus()
+        for status in getAllStatus {
+           ChatManager.updateStatus(statusId: status.id, statusText: status.status, currentStatus: false)
+        }
+        ChatManager.saveProfileStatus(statusText: status, currentStatus: true)
+        result("{\"status\" : true }")
+        
+    }
+    static func isTrailLicence(call: FlutterMethodCall, result: @escaping FlutterResult){
+       result(true)
     }
     
     static func setMyProfileStatus(call: FlutterMethodCall, result: @escaping FlutterResult){
@@ -704,6 +715,8 @@ import FlyDatabase
             
         }
         groupMemberProfile = groupMemberProfile.dropLast() + "]"
+        
+        print("groupMemberProfile \(groupMemberProfile)")
     
         result(groupMemberProfile)
     }
@@ -741,11 +754,7 @@ import FlyDatabase
         result("")
         
     }
-    static func deleteRecentChats(call: FlutterMethodCall, result: @escaping FlutterResult){
-        
-        result("")
-        
-    }
+    
     static func saveUnsentMessage(call: FlutterMethodCall, result: @escaping FlutterResult){
         
         result("")
@@ -779,9 +788,10 @@ import FlyDatabase
         let userjid = args["jid"] as? String ?? ""
         //        let JID = FlyDefaults.myXmppUsername + "@" + FlyDefaults.xmppDomain
         
+        print("getting user profile from userjid-->\(userjid)")
         print("getting user profile from server-->\(server)")
         do {
-            try ContactManager.shared.getUserProfile(for: userjid, fetchFromServer: server, saveAsFriend: true){ isSuccess, flyError, flyData in
+            try ContactManager.shared.getUserProfile(for: userjid, fetchFromServer: false, saveAsFriend: true){ isSuccess, flyError, flyData in
                 var data  = flyData
                 if isSuccess {
                     
@@ -856,7 +866,7 @@ import FlyDatabase
 
                 print("Profile response-->\(profileResponseJson)")
 
-//                saveMyProfileDataToUserDefaults(profile: myProfile)
+                saveMyProfileDataToUserDefaults(profile: myProfile)
                 
                 result(profileResponseJson)
             } else{
@@ -1194,6 +1204,7 @@ import FlyDatabase
         print(userChatHistory)
         result(userChatHistory)
         
+        
     }
     
     static func markAsReadDeleteUnreadSeparator(call: FlutterMethodCall, result: @escaping FlutterResult){
@@ -1202,7 +1213,7 @@ import FlyDatabase
         let jid = args["jid"] as? String ?? ""
 
         ChatManager.markConversationAsRead(for: [jid])
-//        FlyMessenger.deleteUnreadMessageSeparatorOfAConversation(receiverJID)//not found need to implement here after adding
+//        FlyMessenger.deleteUnreadMessageSeparatorOfAConversation(jid)//not found need to implement here after adding
         result(true)
     }
     
@@ -1257,8 +1268,10 @@ import FlyDatabase
         
         FlyMessenger.cancelMediaUploadOrDownload(messageId: messageId){ isSuccess in
             if isSuccess{
+                print("cancel media upload true")
                 result(true)
             }else{
+                print("cancel media upload false")
                 result(false)
             }
         }
@@ -1343,11 +1356,47 @@ import FlyDatabase
     static func deleteRecentChat(call: FlutterMethodCall, result: @escaping FlutterResult){
         let args = call.arguments as! Dictionary<String, Any>
         
-        let jid = args["jid"] as? String ?? nil
-        //Multiple
-//        ChatManager.deleteRecentChat(jid: jid!)
+        var userJID = args["jid"] as? String ?? ""
+        
+        var userJIDs: [String] = []
+        userJIDs.append(userJID)
+        
+        ChatManager.deleteRecentChats(jids: userJIDs, completionHandler: { isSuccess, flyError, flyData in
+            result(isSuccess)
+        })
         
     }
+    static func deleteRecentChats(call: FlutterMethodCall, result: @escaping FlutterResult){
+        let args = call.arguments as! Dictionary<String, Any>
+        let userJIDList = args["jidlist"] as? [String] ?? []
+        
+        ChatManager.deleteRecentChats(jids: userJIDList, completionHandler: { isSuccess, FlyError, flyData in
+            result(isSuccess)
+        })
+        
+    }
+    static func makeAdmin(call: FlutterMethodCall, result: @escaping FlutterResult){
+        let args = call.arguments as! Dictionary<String, Any>
+        var groupJID = args["jid"] as? String ?? ""
+        var userJID = args["userjid"] as? String ?? ""
+        
+        do{
+            
+            try GroupManager.shared.makeAdmin(groupJid: groupJID, userJid: userJID, completionHandler: { isSuccess, flyError, flyData in
+                if isSuccess {
+                    // update UI
+                    result(isSuccess)
+                } else{
+                    result(FlutterError(code: "500", message: "Unable to Make User Admin", details: flyError))
+                }
+            })
+        }catch let error{
+
+                result(FlutterError(code: "500", message: "Unable to Make User Admin", details: error.localizedDescription))
+        }
+        
+    }
+    
     static func setNotificationSound(call: FlutterMethodCall, result: @escaping FlutterResult){
         let args = call.arguments as! Dictionary<String, Any>
         
@@ -1355,9 +1404,140 @@ import FlyDatabase
         
         Utility.saveInPreference(key: muteNotification, value: notification_sound)
     }
+    
+    static func updateGroupName(call: FlutterMethodCall, result: @escaping FlutterResult){
+        let args = call.arguments as! Dictionary<String, Any>
+        
+        let groupJID = args["jid"] as? String ?? ""
+        let groupName = args["name"] as? String ?? ""
+        
+        do{
+            try GroupManager.shared.updateGroupName(groupJid: groupJID, groupName: groupName, completionHandler: { isSuccess, flyError, flyData in
+                result(isSuccess)
+            })
+        }catch let error{
+            result(FlutterError(code: "500", message: "Unable to Make User Admin", details: error.localizedDescription))
+        }
+        
+    }
+    static func updateGroupProfileImage(call: FlutterMethodCall, result: @escaping FlutterResult){
+        let args = call.arguments as! Dictionary<String, Any>
+        
+        let groupJID = args["jid"] as? String ?? ""
+        let groupImageFile = args["file"] as? String ?? ""
+        
+        do{
+            try GroupManager.shared.updateGroupProfileImage(groupJid: groupJID, groupProfileImageUrl: groupImageFile, completionHandler: { isSuccess, flyError, flyData in
+        
+            result(isSuccess)
+                
+            })
+        }catch let error{
+            result(FlutterError(code: "500", message: "Unable to Update Group Image", details: error.localizedDescription))
+        }
+        
+    }
+    static func removeGroupProfileImage(call: FlutterMethodCall, result: @escaping FlutterResult){
+        let args = call.arguments as! Dictionary<String, Any>
+        
+        let groupJID = args["jid"] as? String ?? ""
+        
+        do{
+            try GroupManager.shared.removeGroupProfileImage(groupJid: groupJID, completionHandler: { isSuccess, flyError, flyData in
+                result(isSuccess)
+            })
+        }catch let error{
+            result(FlutterError(code: "500", message: "Unable to Remove Group Image", details: error.localizedDescription))
+        }
+        
+    }
+    static func addUsersToGroup(call: FlutterMethodCall, result: @escaping FlutterResult){
+        let args = call.arguments as! Dictionary<String, Any>
+        
+        let groupJID = args["jid"] as? String ?? ""
+        let members = args["members"] as? [String] ?? []
+        
+        do{
+            try GroupManager.shared.addParticipantToGroup(groupId: groupJID, newUserJidList: members, completionHandler: { isSuccess, flyError, flyData in
+                result(isSuccess)
+            })
+        }catch let error{
+            result(FlutterError(code: "500", message: "Unable to Add Group Members", details: error.localizedDescription))
+        }
+        
+    }
+    static func removeMemberFromGroup(call: FlutterMethodCall, result: @escaping FlutterResult){
+        let args = call.arguments as! Dictionary<String, Any>
+        
+        let groupJID = args["jid"] as? String ?? ""
+        let userJID = args["userjid"] as? String ?? ""
+        
+        do{
+            try GroupManager.shared.removeParticipantFromGroup(groupId: groupJID, removeGroupMemberJid: userJID, completionHandler: { isSuccess, flyError, flyData in
+                result(isSuccess)
+            })
+        }catch let error{
+            result(FlutterError(code: "500", message: "Unable to remove member from group", details: error.localizedDescription))
+        }
+        
+    }
+    
+    
+    static func exportChatConversationToEmail(call: FlutterMethodCall, result: @escaping FlutterResult, vc : FlutterViewController){
+        let args = call.arguments as! Dictionary<String, Any>
+        let userJID = args["jid"] as? String ?? ""
+//        let mailRecipients = args["mailRecipients"] as? [String] ?? []
+        
+        ChatManager.shared.exportChatConversationToEmail(jid: userJID) { chatDataModel in
+            
+            print(chatDataModel)
+//            print(JSONSerializer.toJson(chatDataModel))
+            
+            var dataToShare = [Any]()
+            
+            dataToShare.append(chatDataModel.subject)
+            dataToShare.append(chatDataModel.messageContent)
+            chatDataModel.mediaAttachmentsUrl.forEach { url in
+                dataToShare.append(url)
+            }
+//            executeOnMainThread { [weak self] in
+//                self?.stopLoading()
+                let ac = UIActivityViewController(activityItems: dataToShare, applicationActivities: nil)
+                vc.present(ac, animated: true)
+//            }
+            
+        }
+        
+//        result(FlyCoreController.shared.isContactMuted(jid: userJID))
+    }
+    
+    static func getAllGroups(call: FlutterMethodCall, result: @escaping FlutterResult){
+        let args = call.arguments as! Dictionary<String, Any>
+        let fetchFromServer = args["server"] as? Bool ?? false
+        
+        // Note: This Function is called internally from SDK in iOS side, so no need to call seperately
+        print("calling getAllGroups")
+        GroupManager.shared.getGroups(fetchFromServer: fetchFromServer) { isSuccess, flyError, flyData in
+            var data  = flyData
+            print("GroupManager.shared.getGroups \(data)")
+            if isSuccess {
+                // Update UI
+            } else{
+                // failure cases
+            }
+        }
+    }
+    
+    static func isMuted(call: FlutterMethodCall, result: @escaping FlutterResult){
+        let args = call.arguments as! Dictionary<String, Any>
+        let userJID = args["jid"] as? String ?? ""
+        result(FlyCoreController.shared.isContactMuted(jid: userJID))
+    }
+    
     static func isBusyStatusEnabled(call: FlutterMethodCall, result: @escaping FlutterResult){
        result(ChatManager.shared.isBusyStatusEnabled())
     }
+    
     static func getUserLastSeenTime(call: FlutterMethodCall, result: @escaping FlutterResult){
         let args = call.arguments as! Dictionary<String, Any>
         
@@ -1426,6 +1606,12 @@ import FlyDatabase
         
         let jid = args["jid"] as? String ?? nil
         let recentChat = ChatManager.getRecentChatOf(jid:jid!)
+        
+        if(recentChat == nil){
+            result(nil)
+        }
+        
+        print("recentChat-->\(recentChat)")
         
         var recentChatJson = JSONSerializer.toJson(recentChat as Any)
         recentChatJson = recentChatJson.replacingOccurrences(of: "{\"some\":", with: "")

@@ -217,7 +217,7 @@ class GroupInfoView extends GetView<GroupInfoController> {
                       shrinkWrap: true,
                       itemBuilder: (context, index) {
                         var item = controller.groupMembers[index];
-                        return memberItem(name: item.name.checkNull(),image: item.image.checkNull(),isAdmin: item.isGroupAdmin,status: item.status.checkNull(),onTap: (){
+                        return memberItem(name: getName(item).checkNull(),image: item.image.checkNull(),isAdmin: item.isGroupAdmin,status: item.status.checkNull(),onTap: (){
                           if (item.jid.checkNull() !=
                               SessionManagement.getUserJID().checkNull()) {
                             showOptions(item);
@@ -286,7 +286,7 @@ class GroupInfoView extends GetView<GroupInfoController> {
             child: ListTile(title: const Text("Remove from Group",style: TextStyle(fontWeight: FontWeight.normal, fontSize: 16),), onTap: () {
               Get.back();
               Helper.showAlert(
-                  message: "Are you sure you want to remove ${item.name}?",
+                  message: "Are you sure you want to remove ${getName(item)}?",
                   actions: [
                     TextButton(
                         onPressed: () {
@@ -306,8 +306,7 @@ class GroupInfoView extends GetView<GroupInfoController> {
             visible: (!item.isGroupAdmin! && controller.isAdmin),
             child: ListTile(title: const Text("Make Admin", style: TextStyle(fontWeight: FontWeight.normal, fontSize: 16),), onTap: () {
               Get.back();
-              Helper.showAlert(message: "Are you sure you want to make ${item
-                  .name} the admin?", actions: [
+              Helper.showAlert(message: "Are you sure you want to make ${getName(item)} the admin?", actions: [
                 TextButton(
                     onPressed: () {
                       Get.back();

@@ -2839,11 +2839,7 @@ open class FlyBaseController(activity: FlutterActivity) : MethodChannel.MethodCa
         val name = call.argument<String>("name") ?: ""
         GroupManager.updateGroupName(jid, name, object : ChatActionListener {
             override fun onResponse(isSuccess: Boolean, message: String) {
-                if (isSuccess) {
-                    result.success(true)
-                } else {
-                    result.success(false)
-                }
+                result.success(isSuccess)
             }
         })
     }
@@ -3187,9 +3183,9 @@ open class FlyBaseController(activity: FlutterActivity) : MethodChannel.MethodCa
     }
 
     override fun userDeletedHisProfile(jid: String) {
-        val map = JSONObject()
-        map.put("jid", jid)
-        userDeletedHisProfileStreamHandler.userDeletedHisProfile?.success(map.toString())
+        /*val map = JSONObject()
+        map.put("jid", jid)*/
+        userDeletedHisProfileStreamHandler.userDeletedHisProfile?.success(jid.toString())
     }
 
     override fun userProfileFetched(jid: String, profileDetails: ProfileDetails) {

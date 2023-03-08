@@ -282,15 +282,25 @@ class MainController extends FullLifeCycleController with BaseController, FullLi
   @override
   void onResumed() {
     mirrorFlyLog('mainController', 'onResumed');
-    syncContacts();
+    if(!SessionManagement.isTrailLicence()) {
+      syncContacts();
+    }
   }
 
   void syncContacts() async {
-    if(await AppUtils.isNetConnected() && !await FlyChat.contactSyncStateValue()){
-      final permission = await Permission.contacts.status;
-      if (permission == PermissionStatus.granted) {
-        FlyChat.syncContacts(!SessionManagement.isInitialContactSyncDone());
+    if(await Permission.contacts.isGranted) {
+      if (await AppUtils.isNetConnected() &&
+          !await FlyChat.contactSyncStateValue()) {
+        final permission = await Permission.contacts.status;
+        if (permission == PermissionStatus.granted) {
+          FlyChat.syncContacts(!SessionManagement.isInitialContactSyncDone());
+        }
       }
+    }else{
+      FlyChat.revokeContactSync().then((value){
+        onContactSyncComplete(true);
+        mirrorFlyLog("checkContactPermission isSuccess",value.toString());
+      });
     }
   }
 

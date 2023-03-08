@@ -24,16 +24,16 @@ class BlockedListController extends GetxController {
     FlyChat.getUsersIBlocked(server).then((value){
       if(value!=null && value != ""){
         var list = memberFromJson(value);
-        list.sort((a, b) => a.name.checkNull().toString().toLowerCase().compareTo(b.name.checkNull().toString().toLowerCase()));
+        list.sort((a, b) => getMemberName(a).checkNull().toString().toLowerCase().compareTo(getMemberName(b).checkNull().toString().toLowerCase()));
         _blockedUsers(list);
       }else{
         _blockedUsers.clear();
       }
     });
   }
-  void userUpdatedHisProfile(jid) {
+  void userUpdatedHisProfile(String jid) {
     if (jid.isNotEmpty) {
-      /* //This function is not working in UI kit so commented
+       //This function is not working in UI kit so commented
       getProfileDetails(jid).then((value) {
         var index = _blockedUsers.indexWhere((element) => element.jid == jid);
         if(!index.isNegative) {
@@ -44,14 +44,14 @@ class BlockedListController extends GetxController {
           _blockedUsers[index].isBlocked = value.isBlocked;
           _blockedUsers[index].mobileNumber = value.mobileNumber;
           _blockedUsers[index].status = value.status;
+          _blockedUsers.refresh();
         }
-      });*/
-
+      });
     }
 
   }
   unBlock(Member item){
-    Helper.showAlert(message: "Unblock ${item.name}?", actions: [
+    Helper.showAlert(message: "Unblock ${getMemberName(item)}?", actions: [
       TextButton(
           onPressed: () {
             Get.back();
@@ -65,7 +65,7 @@ class BlockedListController extends GetxController {
               FlyChat.unblockUser(item.jid.checkNull()).then((value) {
                 Helper.hideLoading();
                 if(value!=null && value) {
-                  toToast("${item.name} has been Unblocked");
+                  toToast("${getMemberName(item)} has been Unblocked");
                   getUsersIBlocked(false);
                 }
               }).catchError((error) {
@@ -79,5 +79,9 @@ class BlockedListController extends GetxController {
           },
           child: const Text("YES")),
     ]);
+  }
+
+  void userDeletedHisProfile(String jid) {
+    userUpdatedHisProfile(jid);
   }
 }

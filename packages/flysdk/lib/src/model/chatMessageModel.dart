@@ -83,7 +83,7 @@ class ChatMessageModel {
     messageCustomField: json["messageCustomField"] ?? {},
     messageId: json["messageId"],
     messageSentTime: json["messageSentTime"].toInt(),
-    messageStatus: Platform.isAndroid ? json["messageStatus"]["status"] : json["messageStatus"] == "acknowledge" ? "A" : json["messageStatus"] == "delivered" ? "D" : json["messageStatus"] == "seen" ? "S" : "N",
+    messageStatus: Platform.isAndroid ? json["messageStatus"]["status"] : json["messageStatus"] == "acknowledge" ? "A" : json["messageStatus"] == "delivered" ? "D" : json["messageStatus"] == "seen" ? "S" : json["messageStatus"] == "received" ? "R" : "N",//"N" for "sent" in iOS
     messageTextContent: json["messageTextContent"].toString(),
     messageType: json["messageType"].toString().toUpperCase() == "FILE" ? "DOCUMENT" : json["messageType"].toString().toUpperCase(),
     replyParentChatMessage: json["replyParentChatMessage"] == null ? null : ReplyParentChatMessage.fromJson(json["replyParentChatMessage"]),
@@ -327,7 +327,11 @@ class ReplyParentChatMessage {
     messageId: json["messageId"],
     messageSentTime: json["messageSentTime"],
     messageTextContent: json["messageTextContent"],
-    messageType: json["messageType"],
+    messageType: Platform.isAndroid ? json["messageType"]
+        : json["messageTextContent"].toString().isNotEmpty ? "TEXT"
+        : json["mediaChatMessage"] != null && json["mediaChatMessage"]["mediaFileType"].toString().isNotEmpty ?  json["mediaChatMessage"]["mediaFileType"].toString().toUpperCase() == "FILE" ? "DOCUMENT" : json["mediaChatMessage"]["mediaFileType"].toString().toUpperCase()
+        : json["contactChatMessage"] != null ? "CONTACT"
+        : json["locationChatMessage"] != null ? "LOCATION" : null,
     senderNickName: json["senderNickName"],
     senderUserName: json["senderUserName"],
     locationChatMessage: json["locationChatMessage"] == null ? null : LocationChatMessage.fromJson(json["locationChatMessage"]),

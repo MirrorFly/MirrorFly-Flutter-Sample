@@ -57,16 +57,30 @@ class CameraPickView extends GetView<CameraPickController> {
                         ),
                       ],
                     ),*/
-                    controller.isRecording.value ? Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center,
+                    Row(
                       children: [
-                        SizedBox(height:12,width: 12,child: CircularProgressIndicator(backgroundColor: Colors.red,value: controller.progress/1000,valueColor: const AlwaysStoppedAnimation<Color>(Colors.white))),
-                        Padding(
-                          padding: const EdgeInsets.all(5.0),
-                          child: Text(controller.timeString,style: const TextStyle(color: Colors.white),),
+                        IconButton(
+                          icon: const Icon(Icons.clear,
+                              color: Colors.white),
+                          onPressed: () {
+                            Get.back();
+                          },
+                        ),
+                        Expanded(
+                          child: controller.isRecording.value ? Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              SizedBox(height:12,width: 12,child: CircularProgressIndicator(backgroundColor: Colors.red,value: controller.progress/1000,valueColor: const AlwaysStoppedAnimation<Color>(Colors.white))),
+                              Padding(
+                                padding: const EdgeInsets.all(5.0),
+                                child: Text(controller.timeString,style: const TextStyle(color: Colors.white),),
+                              )
+                            ],) : const SizedBox.shrink(),
                         )
-                      ],) : const SizedBox.shrink()
+                      ],
+                    ),
+
                   ]
                 ) : const Center(
                   child: CircularProgressIndicator(),

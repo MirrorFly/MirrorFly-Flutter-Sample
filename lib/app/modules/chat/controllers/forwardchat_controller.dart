@@ -391,7 +391,7 @@ class ForwardChatController extends GetxController {
     return groupParticipantsName;
   }
 
-  void userUpdatedHisProfile(jid) {
+  void userUpdatedHisProfile(String jid) {
     if (jid.toString().isNotEmpty) {
       updateRecentChatAdapter(jid);
       updateProfile(jid);
@@ -458,5 +458,9 @@ class ForwardChatController extends GetxController {
         _userList.refresh();
       }
     });
+  }
+
+  void userDeletedHisProfile(String jid) {
+    userUpdatedHisProfile(jid);
   }
 }

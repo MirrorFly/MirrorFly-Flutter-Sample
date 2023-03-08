@@ -12,6 +12,7 @@ import 'package:flysdk/flysdk.dart';
 import 'package:mirror_fly_demo/app/data/session_management.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../common/widgets.dart';
 import 'apputils.dart';
 
 class Helper {
@@ -326,6 +327,13 @@ extension MemberParsing on Member {
     var str = Profile.fromJson(json.decode(value.toString()));
     return str;
   }
+  bool isItSavedContact(){
+    return contactType == 'live_contact';
+  }
+  bool isUnknownContact(){
+    return !isDeletedContact() && !isItSavedContact() && !isGroupProfile.checkNull();
+  }
+  bool isEmailContact() => !isGroupProfile.checkNull() && isGroupInOfflineMode.checkNull(); // for email contact isGroupInOfflineMode will be true
 }
 
 Future<Profile> getProfileDetails(String jid) async {
@@ -360,6 +368,8 @@ extension ProfileParesing on Profile {
   bool isUnknownContact(){
     return !isDeletedContact() && !isItSavedContact() && !isGroupProfile.checkNull();
   }
+  bool isEmailContact() => !isGroupProfile.checkNull() && isGroupInOfflineMode.checkNull(); // for email contact isGroupInOfflineMode will be true
+
 }
 
 extension ChatmessageParsing on ChatMessageModel {
@@ -410,6 +420,7 @@ extension RecentChatParsing on RecentChatData {
   bool isUnknownContact(){
     return !isDeletedContact() && !isItSavedContact() && !isGroup.checkNull();
   }
+  bool isEmailContact() => !isGroup.checkNull() && isGroupInOfflineMode.checkNull(); // for email contact isGroupInOfflineMode will be true
 }
 
 String returnFormattedCount(int count) {
@@ -704,6 +715,46 @@ String getRecentName(RecentChatData item) {
     }
   }
 }
+
+String getMemberName(Member item) {
+  if (SessionManagement.isTrailLicence()) {
+    /*return item.name.toString().checkNull().isEmpty
+        ? item.nickName.toString()
+        : item.name.toString();*/
+    return item.name.checkNull().isEmpty
+        ? (item.nickName.checkNull().isEmpty
+        ? item.mobileNumber.checkNull()
+        : item.nickName.checkNull())
+        : item.name.checkNull();
+  } else {
+    if(item.jid.checkNull()==SessionManagement.getUserJID()){
+      return Constants.you;
+    }else if(item.isDeletedContact()){
+      mirrorFlyLog('isDeletedContact', item.isDeletedContact().toString());
+      return Constants.deletedUser;
+    }else if(item.isUnknownContact() || item.nickName.checkNull().isEmpty){
+      mirrorFlyLog('isUnknownContact', item.isUnknownContact().toString());
+      return item.mobileNumber.checkNull();
+    }else{
+      mirrorFlyLog('nickName', item.nickName.toString());
+      return item.nickName.checkNull();
+    }
+    /*var status = true;
+    if(status) {
+      return item.nickName
+          .checkNull()
+          .isEmpty
+          ? (item.name
+          .checkNull()
+          .isEmpty
+          ? item.mobileNumber.checkNull()
+          : item.name.checkNull())
+          : item.nickName.checkNull();
+    }else{
+      return item.mobileNumber.checkNull();
+    }*/
+  }
+}
 String getMobileNumberFromJid(String jid){
   var str = jid.split('@');
   return str[0];
@@ -721,4 +772,124 @@ String getDisplayImage(RecentChatData recentChat) {
     // drawable = CustomDrawable(context).getDefaultDrawable(recentChat)
   }
   return imageUrl;
+}
+
+void showQuickProfilePopup(
+    {required context, required Function() chatTap,
+      required Function() callTap, required Function() videoTap, required Function() infoTap,required Rx<Profile> profile}) {
+  Get.dialog(
+    Dialog(
+      shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.all(Radius.circular(20.0))),
+      child: SizedBox(
+        width: MediaQuery
+            .of(context)
+            .size
+            .width * 0.7,
+        height: 300,
+        child: Column(
+          children: [
+            Expanded(
+              child: Stack(
+                fit: StackFit.expand,
+                children: [
+                  ClipRRect(
+                    borderRadius: const BorderRadius.only(
+                        topLeft: Radius.circular(20),
+                        topRight: Radius.circular(20)),
+                    child: Obx(() {
+                      return ImageNetwork(
+                        url: profile.value.image.toString(),
+                        width: MediaQuery
+                            .of(context)
+                            .size
+                            .width * 0.7,
+                        height: 250,
+                        clipOval: false,
+                        errorWidget: profile.value.isGroupProfile!
+                            ? Image.asset(
+                          groupImg,
+                          height: 250,
+                          width: MediaQuery
+                              .of(context)
+                              .size
+                              .width * 0.72,
+                          fit: BoxFit.cover,
+                        )
+                            : ProfileTextImage(
+                          text: getName(profile.value),
+                          fontSize: 75,
+                          radius: 0,
+                        ),
+                        isGroup: profile.value.isGroupProfile.checkNull(),
+                        blocked: profile.value.isBlockedMe.checkNull() || profile.value.isAdminBlocked.checkNull(),
+                        unknown: (!profile.value.isItSavedContact.checkNull() || profile.value.isDeletedContact()),
+                      );
+                    }),
+                  ),
+                  Padding(
+                    padding:
+                    const EdgeInsets.symmetric(
+                        vertical: 10.0, horizontal: 20),
+                    child: Text(
+                      profile.value.isGroupProfile!
+                          ? profile.value.name.checkNull()
+                          : profile.value.mobileNumber.checkNull(),
+                      style: const TextStyle(color: Colors.white),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            SizedBox(
+              height: 50,
+              child: Row(
+                // mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Expanded(
+                    child: InkWell(
+                      onTap: chatTap,
+                      child: SvgPicture.asset(
+                        quickMessage,
+                        fit: BoxFit.contain,
+                        width: 30,
+                        height: 30,
+                      ),
+                    ),
+                  ),
+                  !profile.value.isGroupProfile.checkNull() ? Expanded(
+                    child: InkWell(
+                      onTap: callTap,
+                      child: SvgPicture.asset(
+                        quickCall,
+                        fit: BoxFit.contain,
+                      ),
+                    ),
+                  ) : const SizedBox.shrink(),
+                  !profile.value.isGroupProfile.checkNull() ? Expanded(
+                    child: InkWell(
+                      onTap: videoTap,
+                      child: SvgPicture.asset(
+                        quickVideo,
+                        fit: BoxFit.contain,
+                      ),
+                    ),
+                  ) : const SizedBox.shrink(),
+
+                  Expanded(
+                    child: InkWell(onTap: infoTap,
+                      child: SvgPicture.asset(
+                        quickInfo,
+                        fit: BoxFit.contain,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    ),
+  );
 }

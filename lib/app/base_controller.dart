@@ -138,8 +138,6 @@ abstract class BaseController {
   void onMessageReceived(chatMessage) {
     mirrorFlyLog("flutter onMessageReceived", chatMessage.toString());
     ChatMessageModel chatMessageModel = sendMessageModelFromJson(chatMessage);
-
-
     if(SessionManagement.getCurrentChatJID().checkNull() == chatMessageModel.chatUserJid.checkNull()){
       debugPrint("Message Received user chat screen is in online");
     }else{
@@ -147,12 +145,15 @@ abstract class BaseController {
     }
 
     if (Get.isRegistered<ChatController>()) {
+      debugPrint("basecontroller ChatController registered");
       Get.find<ChatController>().onMessageReceived(chatMessageModel);
     }
     if (Get.isRegistered<DashboardController>()) {
+      debugPrint("basecontroller DashboardController registered");
       Get.find<DashboardController>().onMessageReceived(chatMessageModel);
     }
     if (Get.isRegistered<ArchivedChatListController>()) {
+      debugPrint("basecontroller ArchivedChatListController registered");
       Get.find<ArchivedChatListController>().onMessageReceived(chatMessageModel);
     }
 
@@ -210,6 +211,9 @@ abstract class BaseController {
     if (Get.isRegistered<GroupInfoController>()) {
       Get.find<GroupInfoController>().onNewMemberAddedToGroup(groupJid: groupJid, newMemberJid: newMemberJid, addedByMemberJid: addedByMemberJid);
     }
+    if (Get.isRegistered<ChatController>()) {
+      Get.find<ChatController>().onNewMemberAddedToGroup(groupJid: groupJid, newMemberJid: newMemberJid, addedByMemberJid: addedByMemberJid);
+    }
   }
 
   void onMemberRemovedFromGroup({required String groupJid,
@@ -217,6 +221,9 @@ abstract class BaseController {
     debugPrint('onMemberRemovedFromGroup $removedMemberJid');
     if (Get.isRegistered<GroupInfoController>()) {
       Get.find<GroupInfoController>().onMemberRemovedFromGroup(groupJid: groupJid, removedMemberJid: removedMemberJid, removedByMemberJid: removedByMemberJid);
+    }
+    if (Get.isRegistered<ChatController>()) {
+      Get.find<ChatController>().onMemberRemovedFromGroup(groupJid: groupJid, removedMemberJid: removedMemberJid, removedByMemberJid: removedByMemberJid);
     }
   }
 
@@ -251,7 +258,19 @@ abstract class BaseController {
     }
   }
 
-  void onGroupNotificationMessage(event) {}
+  void onGroupNotificationMessage(event) {
+    debugPrint('onGroupNotificationMessage $event');
+    ChatMessageModel chatMessageModel = sendMessageModelFromJson(event);
+    if (Get.isRegistered<DashboardController>()) {
+      Get.find<DashboardController>().onMessageReceived(chatMessageModel);
+    }
+    if (Get.isRegistered<ArchivedChatListController>()) {
+      Get.find<ArchivedChatListController>().onMessageReceived(chatMessageModel);
+    }
+    if (Get.isRegistered<ChatController>()) {
+      Get.find<ChatController>().onMessageReceived(chatMessageModel);
+    }
+  }
 
   void onGroupDeletedLocally(groupJid) {
     if (Get.isRegistered<DashboardController>()) {
@@ -304,9 +323,17 @@ abstract class BaseController {
     if (Get.isRegistered<ChatController>()) {
       Get.find<ChatController>().unblockedThisUser(jid);
     }
+    if (Get.isRegistered<ChatInfoController>()) {
+      Get.find<ChatInfoController>().unblockedThisUser(jid);
+    }
+    if (Get.isRegistered<GroupInfoController>()) {
+      Get.find<GroupInfoController>().unblockedThisUser(jid);
+    }
   }
 
-  void userBlockedMe(result) {}
+  void userBlockedMe(result) {
+    mirrorFlyLog('userBlockedMe', result.toString());
+  }
 
   void userCameOnline(String jid) {
     if (Get.isRegistered<ChatController>()) {
@@ -317,7 +344,35 @@ abstract class BaseController {
     }
   }
 
-  void userDeletedHisProfile(result) {}
+  void userDeletedHisProfile(String jid) {
+    if (Get.isRegistered<DashboardController>()) {
+      Get.find<DashboardController>().userDeletedHisProfile(jid);
+    }
+    if (Get.isRegistered<ChatController>()) {
+      Get.find<ChatController>().userDeletedHisProfile(jid);
+    }
+    if (Get.isRegistered<ArchivedChatListController>()) {
+      Get.find<ArchivedChatListController>().userDeletedHisProfile(jid);
+    }
+    if (Get.isRegistered<ContactController>()) {
+      Get.find<ContactController>().userDeletedHisProfile(jid);
+    }
+    if (Get.isRegistered<BlockedListController>()) {
+      Get.find<BlockedListController>().userDeletedHisProfile(jid);
+    }
+    if (Get.isRegistered<ForwardChatController>()) {
+      Get.find<ForwardChatController>().userDeletedHisProfile(jid);
+    }
+    if (Get.isRegistered<ChatInfoController>()) {
+      Get.find<ChatInfoController>().userDeletedHisProfile(jid);
+    }
+    if (Get.isRegistered<GroupInfoController>()) {
+      Get.find<GroupInfoController>().userDeletedHisProfile(jid);
+    }
+    if (Get.isRegistered<StarredMessagesController>()) {
+      Get.find<StarredMessagesController>().userDeletedHisProfile(jid);
+    }
+  }
 
   void userProfileFetched(result) {}
 
@@ -411,21 +466,36 @@ abstract class BaseController {
 
   Future<void> showLocalNotification(ChatMessageModel chatMessageModel) async {
     debugPrint("showing local notification");
-    final String? notificationUri = SessionManagement.getNotificationUri();
-    final UriAndroidNotificationSound uriSound = UriAndroidNotificationSound(notificationUri!);
-    debugPrint("notificationUri--> $notificationUri");
-    int id = DateTime.now().millisecond;
-    debugPrint("id--> $id");
-    AndroidNotificationDetails androidNotificationDetails =
-    AndroidNotificationDetails(chatMessageModel.messageId, 'MirrorFly',
-        importance: Importance.max,
-        priority: Priority.high,
-        sound: uriSound,
-        styleInformation: const DefaultStyleInformation(true, true));
-    NotificationDetails notificationDetails =
-    NotificationDetails(android: androidNotificationDetails);
-    await flutterLocalNotificationsPlugin.show(
-        id, chatMessageModel.senderUserName, chatMessageModel.messageTextContent, notificationDetails, payload: chatMessageModel.chatUserJid);
+    var isUserMuted = await FlyChat.isMuted(chatMessageModel.chatUserJid);
+    var isUserUnArchived = await FlyChat.isUserUnArchived(chatMessageModel.chatUserJid);
+    var isArchivedSettingsEnabled =  await FlyChat.isArchivedSettingsEnabled();
+
+    var archiveSettings = isArchivedSettingsEnabled.checkNull() ? isUserUnArchived.checkNull() : true;
+
+    if(!chatMessageModel.isMessageSentByMe && !isUserMuted.checkNull() && archiveSettings) {
+      final String? notificationUri = SessionManagement.getNotificationUri();
+      final UriAndroidNotificationSound uriSound = UriAndroidNotificationSound(
+          notificationUri!);
+      debugPrint("notificationUri--> $notificationUri");
+      int id = DateTime
+          .now()
+          .millisecond;
+      debugPrint("id--> $id");
+      AndroidNotificationDetails androidNotificationDetails =
+      AndroidNotificationDetails(chatMessageModel.messageId, 'MirrorFly',
+          importance: Importance.max,
+          priority: Priority.high,
+          sound: uriSound,
+          styleInformation: const DefaultStyleInformation(true, true));
+      NotificationDetails notificationDetails =
+      NotificationDetails(android: androidNotificationDetails);
+      await flutterLocalNotificationsPlugin.show(
+          id, chatMessageModel.senderUserName,
+          chatMessageModel.messageTextContent, notificationDetails,
+          payload: chatMessageModel.chatUserJid);
+    }else{
+      debugPrint("self sent message don't need notification");
+    }
   }
 
   void onLogout(isLogout) {

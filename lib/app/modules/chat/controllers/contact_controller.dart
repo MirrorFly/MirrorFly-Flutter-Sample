@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
@@ -54,7 +53,7 @@ class ContactController extends FullLifeCycleController
     //FlyChat.getRegisteredUsers(true).then((value) => mirrorFlyLog("registeredUsers", value.toString()));
   }
 
-  void userUpdatedHisProfile(jid) {
+  void userUpdatedHisProfile(String jid) {
     updateProfile(jid);
   }
 
@@ -94,7 +93,7 @@ class ContactController extends FullLifeCycleController
   bool get isSearchVisible => !_search.value;
 
   bool get isClearVisible =>
-      _search.value && !isForward.value && isCreateGroup.value;
+      _search.value && lastInputValue.value.isNotEmpty /*&& !isForward.value && isCreateGroup.value*/;
 
   bool get isMenuVisible => !_search.value && !isForward.value;
 
@@ -119,12 +118,12 @@ class ContactController extends FullLifeCycleController
   }
 
   final deBouncer = DeBouncer(milliseconds: 700);
-  String lastInputValue = "";
+  RxString lastInputValue = "".obs;
 
   searchListener(String text) async {
     debugPrint("searching .. ");
-    if (lastInputValue != searchQuery.text.trim()) {
-      lastInputValue = searchQuery.text.trim();
+    if (lastInputValue.value != searchQuery.text.trim()) {
+      lastInputValue(searchQuery.text.trim());
       if (searchQuery.text.trim().isEmpty) {
         _searchText = "";
         pageNum = 1;
@@ -147,6 +146,7 @@ class ContactController extends FullLifeCycleController
     _search.value = false;
     searchQuery.clear();
     _searchText = "";
+    lastInputValue('');
     //if(!_IsSearching){
     //isPageLoading.value=true;
     pageNum = 1;
@@ -195,7 +195,7 @@ class ContactController extends FullLifeCycleController
               pageNum = pageNum + 1;
               scrollable.value = list.length == 20;
             } else {
-              var userlist = mainUsersList.where((p0) => p0.name
+              var userlist = mainUsersList.where((p0) => getName(p0)
                   .toString()
                   .toLowerCase()
                   .contains(_searchText.trim().toLowerCase()));
@@ -222,7 +222,7 @@ class ContactController extends FullLifeCycleController
         } else {
           list.addAll(item.data!);
           if (!SessionManagement.isTrailLicence() && fromSearch) {
-            var userlist = mainUsersList.where((p0) => p0.name
+            var userlist = mainUsersList.where((p0) => getName(p0)
                 .toString()
                 .toLowerCase()
                 .contains(_searchText.trim().toLowerCase()));
@@ -243,7 +243,7 @@ class ContactController extends FullLifeCycleController
               pageNum = pageNum + 1;
               scrollable.value = list.length == 20;
             } else {
-              var userlist = mainUsersList.where((p0) => p0.name
+              var userlist = mainUsersList.where((p0) => getName(p0)
                   .toString()
                   .toLowerCase()
                   .contains(_searchText.trim().toLowerCase()));
@@ -338,12 +338,12 @@ class ContactController extends FullLifeCycleController
       }
     } else {
       mirrorFlyLog("Contact Profile", item.toJson().toString());
-      Get.offNamed(Routes.chat, arguments: item);
+      Get.toNamed(Routes.chat, arguments: item);
     }
   }
 
   unBlock(Profile item) {
-    Helper.showAlert(message: "Unblock ${item.name}?", actions: [
+    Helper.showAlert(message: "Unblock ${getName(item)}?", actions: [
       TextButton(
           onPressed: () {
             Get.back();
@@ -357,8 +357,8 @@ class ContactController extends FullLifeCycleController
               FlyChat.unblockUser(item.jid.checkNull()).then((value) {
                 Helper.hideLoading();
                 if (value != null && value) {
-                  toToast("${item.name} has been Unblocked");
-                  userUpdatedHisProfile(item.jid);
+                  toToast("${getName(item)} has been Unblocked");
+                  userUpdatedHisProfile(item.jid.checkNull());
                 }
               }).catchError((error) {
                 Helper.hideLoading();
@@ -478,5 +478,9 @@ class ContactController extends FullLifeCycleController
         usersList.refresh();
       }
     }
+  }
+
+  void userDeletedHisProfile(String jid) {
+    userUpdatedHisProfile(jid);
   }
 }
