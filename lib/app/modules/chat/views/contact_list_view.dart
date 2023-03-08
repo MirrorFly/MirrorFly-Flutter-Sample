@@ -107,13 +107,15 @@ class ContactListView extends GetView<ContactController> {
                     overflowWidget: InkWell(
                       child: const Text("Refresh"),
                       onTap: (){
+                        Get.back();
                         controller.refreshContacts();
                       },
                     ),
-                    showAsAction: SessionManagement.isTrailLicence() ? ShowAsAction.never : ShowAsAction.gone,
+                    showAsAction: !SessionManagement.isTrailLicence() ? ShowAsAction.never : ShowAsAction.gone,
                     keyValue: 'Refresh',
                     onItemClick: () {
-                      Get.toNamed(Routes.settings);
+                      Get.back();
+                      controller.refreshContacts();
                     },
                   )
                 ],
