@@ -1066,7 +1066,8 @@ extension FlyBaseController : MessageEventsDelegate, ConnectionEventDelegate, Lo
     }
 
     func onMediaStatusUpdated(message : FlyCommon.ChatMessage) {
-        print("Media Status Update--->")
+        print("Media Status--> Upload Status--->\(message.mediaChatMessage?.mediaUploadStatus)")
+        print("Media Status--> Download Status--->\(message.mediaChatMessage?.mediaDownloadStatus)")
         var chatMediaJson = JSONSerializer.toJson(message as Any)
         chatMediaJson = chatMediaJson.replacingOccurrences(of: "{\"some\":", with: "")
         chatMediaJson = chatMediaJson.replacingOccurrences(of: "}}", with: "}")

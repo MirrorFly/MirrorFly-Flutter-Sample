@@ -708,7 +708,7 @@ Widget forMessageTypeIcon(String messageType,[MediaChatMessage? mediaChatMessage
 }
 
 String? forMessageTypeString(String messageType, {String? content}) {
-  mirrorFlyLog("content", content.toString());
+  mirrorFlyLog("Recent Chat content", content.toString());
   switch (messageType.toUpperCase()) {
     case Constants.mImage:
       return content.checkNull().isNotEmpty ? content : "Image";

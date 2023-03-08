@@ -687,14 +687,14 @@ class DashboardView extends GetView<DashboardController> {
                                           forMessageTypeIcon(item.messageType,item.mediaChatMessage),
                                           SizedBox(
                                             width: forMessageTypeString(
-                                                item.messageType,content: item.messageTextContent.checkNull()) !=
+                                                item.messageType,content: item.mediaChatMessage?.mediaCaptionText.checkNull()) !=
                                                 null
                                                 ? 3.0
                                                 : 0.0,
                                           ),
                                           Expanded(
                                             child: forMessageTypeString(
-                                                item.messageType,content: item.messageTextContent.checkNull()) ==
+                                                item.messageType,content: item.mediaChatMessage?.mediaCaptionText.checkNull()) ==
                                                 null
                                                 ? spannableText(
                                               item.messageTextContent
@@ -707,7 +707,7 @@ class DashboardView extends GetView<DashboardController> {
                                             )
                                                 : Text(
                                               forMessageTypeString(
-                                                  item.messageType,content: item.messageTextContent.checkNull()) ??
+                                                  item.messageType,content: item.mediaChatMessage?.mediaCaptionText.checkNull()) ??
                                                   item.messageTextContent
                                                       .toString(),
                                               style: Theme

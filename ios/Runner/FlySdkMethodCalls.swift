@@ -2020,10 +2020,7 @@ import FlyDatabase
         let messageId = args["mid"] as? String ?? ""
         
         var message : ChatMessage? = FlyMessenger.getMessageOfId(messageId: messageId)
-        print("getMessageOfId--> \(message)")
         
-        
-    
         var messageJson = JSONSerializer.toJson(message)
         messageJson = messageJson.replacingOccurrences(of: "{\"some\":", with: "")
         messageJson = messageJson.replacingOccurrences(of: "}}", with: "}")

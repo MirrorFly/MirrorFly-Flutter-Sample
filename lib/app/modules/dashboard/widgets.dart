@@ -205,85 +205,55 @@ class RecentChatItem extends StatelessWidget {
                                                   }))
                                       : Expanded(
                                           child: typingUserid.isEmpty
-                                              ? Row(
-                                                  children: [
-                                                    item
-                                                            .isLastMessageRecalledByUser!
-                                                        ? const SizedBox()
-                                                        : FutureBuilder(
-                                                            future: getMessageOfId(item
-                                                                .lastMessageId
-                                                                .checkNull()),
-                                                            builder: (context,
-                                                                data) {
-                                                              if (data.hasData &&
-                                                                  data.data !=
-                                                                      null && !data.hasError) {
-                                                                return forMessageTypeIcon(
-                                                                    item.lastMessageType ??
-                                                                        "",
-                                                                    data
-                                                                        .data!
-                                                                        .mediaChatMessage);
-                                                              }
-                                                              return const SizedBox();
-                                                            }),
-                                                    SizedBox(
-                                                      width: item
-                                                              .isLastMessageRecalledByUser!
-                                                          ? 0.0
-                                                          : forMessageTypeString(
-                                                                      item.lastMessageType ??
-                                                                          "",
-                                                                      content: item
-                                                                          .lastMessageContent
-                                                                          .checkNull()) !=
-                                                                  null
-                                                              ? 3.0
-                                                              : 0.0,
-                                                    ),
-                                                    Expanded(
-                                                      child: spanTxt.isEmpty
-                                                          ? Text(
-                                                              item.isLastMessageRecalledByUser!
-                                                                  ? setRecalledMessageText(item
+                                              ? item
+                                                      .isLastMessageRecalledByUser!
+                                                  ? const SizedBox()
+                                                  : FutureBuilder(
+                                                      future: getMessageOfId(item
+                                                          .lastMessageId
+                                                          .checkNull()),
+                                                      builder: (context, data) {
+                                                        if (data.hasData && data.data != null && !data.hasError) {
+                                                          return Row(
+                                                            children: [
+                                                              forMessageTypeIcon(item.lastMessageType ?? "", data.data!.mediaChatMessage),
+                                                              SizedBox(
+                                                                width: item.isLastMessageRecalledByUser! ? 0.0 : forMessageTypeString(item.lastMessageType ?? "", content: item.lastMessageContent.checkNull()) != null ? 3.0 : 0.0,
+                                                              ),
+                                                              Expanded(
+                                                                child: spanTxt.isEmpty
+                                                                    ? Text(
+                                                                  item.isLastMessageRecalledByUser!
+                                                                      ? setRecalledMessageText(item
                                                                       .isLastMessageSentByMe!)
-                                                                  : forMessageTypeString(
-                                                                          item.lastMessageType ??
-                                                                              "",
-                                                                          content: item
-                                                                              .lastMessageContent
-                                                                              .checkNull()) ??
-                                                                      item.lastMessageContent
-                                                                          .checkNull(),
-                                                              style: Theme.of(
+                                                                      : forMessageTypeString(
+                                                                      item.lastMessageType ?? "",
+                                                                      content: data.data!.mediaChatMessage?.mediaCaptionText.checkNull()) ?? item.lastMessageContent.checkNull(),
+                                                                  style: Theme.of(
                                                                       context)
-                                                                  .textTheme
-                                                                  .titleSmall,
-                                                              maxLines: 1,
-                                                              overflow:
+                                                                      .textTheme
+                                                                      .titleSmall,
+                                                                  maxLines: 1,
+                                                                  overflow:
                                                                   TextOverflow
                                                                       .ellipsis,
-                                                            )
-                                                          : spannableText(
-                                                              item.isLastMessageRecalledByUser!
-                                                                  ? setRecalledMessageText(item
-                                                                      .isLastMessageSentByMe!)
-                                                                  : forMessageTypeString(
-                                                                          item.lastMessageType
-                                                                              .checkNull(),
-                                                                          content: item
-                                                                              .lastMessageContent
-                                                                              .checkNull()) ??
-                                                                      item.lastMessageContent
-                                                                          .checkNull(),
-                                                              spanTxt,
-                                                              Theme.of(context)
-                                                                  .textTheme
-                                                                  .titleSmall),
-                                                    ),
-                                                  ],
-                                                )
+                                                                )
+                                                                    : spannableText(
+                                                                    item.isLastMessageRecalledByUser!
+                                                                        ? setRecalledMessageText(item.isLastMessageSentByMe!)
+                                                                        : forMessageTypeString(item.lastMessageType.checkNull(), content: data.data!.mediaChatMessage?.mediaCaptionText.checkNull()) ??
+                                                                        item.lastMessageContent
+                                                                            .checkNull(),
+                                                                    spanTxt,
+                                                                    Theme.of(context)
+                                                                        .textTheme
+                                                                        .titleSmall),
+                                                              ),
+                                                            ],
+                                                          );
+                                                        }
+                                                        return const SizedBox();
+                                                      })
                                               : FutureBuilder(
                                                   future: getProfileDetails(
                                                       typingUserid.checkNull()),
@@ -493,6 +463,7 @@ Widget textMessageSpannableText(String message, {int? maxLines}) {
   return Text.rich(
     customTextSpan(message, prevValue, normalStyle, underlineStyle),
     maxLines: maxLines,
+    overflow: TextOverflow.ellipsis,
   );
 }
 

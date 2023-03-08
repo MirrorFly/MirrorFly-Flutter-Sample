@@ -891,8 +891,7 @@ class DocumentMessageView extends StatelessWidget {
                             const TextStyle(
                                 color: Colors.black,
                                 fontWeight: FontWeight.w400),
-                            maxLines:
-                                2), /*Text(
+                            maxLines: 2), /*Text(
                     chatMessage.mediaChatMessage!.mediaFileName,
                     maxLines: 2,
                         style: const TextStyle(fontSize: 12,color: Colors.black,fontWeight: FontWeight.w400),
@@ -1910,6 +1909,7 @@ Widget chatSpannedText(String text, String spannableText, TextStyle? style,
           ],
           style: style),
       maxLines: maxLines,
+      overflow: TextOverflow.ellipsis,
     );
   } else {
     return textMessageSpannableText(text,

@@ -966,11 +966,13 @@ class ChatController extends FullLifeCycleController
       if (isReplying.value) {
         replyMessageId = replyChatMessage.messageId;
       }
+
       isUserTyping(false);
       isReplying(false);
       FlyChat.sendAudioMessage(
               profile.jid!, filePath, isRecorded, duration, replyMessageId)
           .then((value) {
+            mirrorFlyLog("Audio Message sent", value);
         ChatMessageModel chatMessageModel = sendMessageModelFromJson(value);
         chatList.insert(0, chatMessageModel);
         scrollToBottom();
