@@ -43,7 +43,7 @@ class ContactController extends FullLifeCycleController
     }
     scrollController.addListener(_scrollListener);
     //searchQuery.addListener(_searchListener);
-    if (await AppUtils.isNetConnected()) {
+    if (await AppUtils.isNetConnected() || !SessionManagement.isTrailLicence()) {
       isPageLoading(true);
       fetchUsers(false);
     } else {
@@ -167,10 +167,10 @@ class ContactController extends FullLifeCycleController
         return;
       }
     }
-    if (await AppUtils.isNetConnected()) {
+    if (await AppUtils.isNetConnected() || !SessionManagement.isTrailLicence()) {
       var future = (SessionManagement.isTrailLicence())
           ? FlyChat.getUserList(pageNum, _searchText)
-          : FlyChat.getRegisteredUsers(true);
+          : FlyChat.getRegisteredUsers(false);
       future.then((data) async {
         //FlyChat.getUserList(pageNum, _searchText).then((data) async {
         mirrorFlyLog("userlist", data);
@@ -418,14 +418,15 @@ class ContactController extends FullLifeCycleController
   var progressSpinner = false.obs;
 
   refreshContacts() async {
-    mirrorFlyLog('Contact Sync', "[Contact Sync] refreshContacts()");
-    if (await AppUtils.isNetConnected()) {
-      if(!await FlyChat.contactSyncStateValue()) {
-        var contactPermissionHandle = await AppPermission.checkPermission(
-            Permission.contacts, contactPermission,
-            Constants.contactSyncPermission);
-        if (contactPermissionHandle) {
-          progressSpinner(true);
+    if(!SessionManagement.isTrailLicence()) {
+      mirrorFlyLog('Contact Sync', "[Contact Sync] refreshContacts()");
+      if (await AppUtils.isNetConnected()) {
+        if (!await FlyChat.contactSyncStateValue()) {
+          var contactPermissionHandle = await AppPermission.checkPermission(
+              Permission.contacts, contactPermission,
+              Constants.contactSyncPermission);
+          if (contactPermissionHandle) {
+            progressSpinner(true);
             FlyChat.syncContacts(!SessionManagement.isInitialContactSyncDone())
                 .then((value) {
               progressSpinner(false);
@@ -434,7 +435,7 @@ class ContactController extends FullLifeCycleController
               _first = true;
               fetchUsers(_searchText.isNotEmpty);
             });
-        } /* else {
+          } /* else {
       MediaPermissions.requestContactsReadPermission(
       this,
       permissionAlertDialog,
@@ -444,14 +445,15 @@ class ContactController extends FullLifeCycleController
       if (ChatUtils.isContusUser(email))
       EmailContactSyncService.start()
       }*/
+        } else {
+          progressSpinner(true);
+          mirrorFlyLog('Contact Sync',
+              "[Contact Sync] Contact syncing is already in progress");
+        }
       } else {
-        progressSpinner(true);
-        mirrorFlyLog('Contact Sync',
-            "[Contact Sync] Contact syncing is already in progress");
+        // toToast(Constants.noInternetConnection);
+        // viewModel.onContactSyncFinished(false);
       }
-    } else {
-      toToast(Constants.noInternetConnection);
-      // viewModel.onContactSyncFinished(false);
     }
   }
 

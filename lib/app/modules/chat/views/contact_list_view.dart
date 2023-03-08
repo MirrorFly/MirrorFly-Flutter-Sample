@@ -111,7 +111,7 @@ class ContactListView extends GetView<ContactController> {
                         controller.refreshContacts();
                       },
                     ),
-                    showAsAction: !SessionManagement.isTrailLicence() ? ShowAsAction.never : ShowAsAction.gone,
+                    showAsAction: (!SessionManagement.isTrailLicence() && !controller.progressSpinner.value) ? ShowAsAction.never : ShowAsAction.gone,
                     keyValue: 'Refresh',
                     onItemClick: () {
                       Get.back();
