@@ -86,13 +86,18 @@ class ContactSyncController extends GetxController
   }
 
   void navigateToDashboard() {
+    animController.dispose();
     Get.offNamed(Routes.dashboard);
   }
 
   Future<void> networkConnected() async {
     mirrorFlyLog('networkConnected', 'contactSync');
+    textContactSync('');
     if(!await FlyChat.contactSyncStateValue()){
       openContactPermission();
+    }else{
+      syncing(true);
+      textContactSync('Contact sync is in process');
     }
   }
 

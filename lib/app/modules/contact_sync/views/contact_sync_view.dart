@@ -25,12 +25,9 @@ class ContactSyncPage extends GetView<ContactSyncController> {
               textAlign: TextAlign.center,),
             const SizedBox(height: 20,),
             Obx(() {
-              return Visibility(
-                visible: controller.syncing.value,
-                child: Text(controller.textContactSync.value,
-                  style: const TextStyle(fontSize: 16, color: textColor),
-                  textAlign: TextAlign.center,),
-              );
+              return Text(controller.textContactSync.value,
+                style: const TextStyle(fontSize: 16, color: textColor),
+                textAlign: TextAlign.center,);
             }),
             const Spacer(),
             Padding(
