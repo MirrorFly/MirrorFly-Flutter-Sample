@@ -1382,26 +1382,42 @@ class ChatController extends FullLifeCycleController
   clearUserChatHistory() {
     if (chatList.isNotEmpty) {
       Future.delayed(const Duration(milliseconds: 100), () {
+        var starred = chatList.indexWhere((element) => element.isMessageStarred);
         Helper.showAlert(
             message: "Are you sure you want to clear the chat?",
             actions: [
-              TextButton(
-                  onPressed: () {
-                    Get.back();
-                    clearChatHistory(false);
-                  },
-                  child: const Text("CLEAR ALL")),
+              Visibility(
+                visible: !starred.isNegative,
+                child: TextButton(
+                    onPressed: () {
+                      Get.back();
+                      clearChatHistory(false);
+                    },
+                    child: const Text("CLEAR ALL")),
+              ),
               TextButton(
                   onPressed: () {
                     Get.back();
                   },
                   child: const Text("CANCEL")),
-              TextButton(
-                  onPressed: () {
-                    Get.back();
-                    clearChatHistory(true);
-                  },
-                  child: const Text("CLEAR EXCEPT STARRED")),
+              Visibility(
+                visible: starred.isNegative,
+                child: TextButton(
+                    onPressed: () {
+                      Get.back();
+                      clearChatHistory(false);
+                    },
+                    child: const Text("CLEAR")),
+              ),
+              Visibility(
+                visible: !starred.isNegative,
+                child: TextButton(
+                    onPressed: () {
+                      Get.back();
+                      clearChatHistory(true);
+                    },
+                    child: const Text("CLEAR EXCEPT STARRED")),
+              ),
             ]);
       });
     } else {
