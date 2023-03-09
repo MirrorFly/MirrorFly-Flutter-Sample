@@ -3123,4 +3123,17 @@ class FlyChat {
       rethrow;
     }
   }
+  static Future addContact(String number) async {
+    try {
+      await mirrorFlyMethodChannel
+          .invokeMethod('addContact',{'number':number});
+      debugPrint('addContact : $number');
+    } on PlatformException catch (e) {
+      debugPrint("Platform Exception ===> $e");
+      rethrow;
+    } on Exception catch (error) {
+      debugPrint("Exception ==> $error");
+      rethrow;
+    }
+  }
 }

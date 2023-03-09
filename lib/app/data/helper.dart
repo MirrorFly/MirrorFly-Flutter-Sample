@@ -704,7 +704,7 @@ String getName(Profile item) {
         .checkNull()
         .isEmpty) {
       mirrorFlyLog('isUnknownContact', item.isUnknownContact().toString());
-      return item.mobileNumber.checkNull();
+      return item.mobileNumber.checkNull().isNotEmpty ? item.mobileNumber.checkNull() : getMobileNumberFromJid(item.jid.checkNull());
     } else {
       mirrorFlyLog('nickName', item.nickName.toString());
       return item.nickName.checkNull();
@@ -778,7 +778,7 @@ String getMemberName(Member item) {
         .checkNull()
         .isEmpty) {
       mirrorFlyLog('isUnknownContact', item.isUnknownContact().toString());
-      return item.mobileNumber.checkNull();
+      return item.mobileNumber.checkNull().isNotEmpty ? item.mobileNumber.checkNull() : getMobileNumberFromJid(item.jid.checkNull());
     } else {
       mirrorFlyLog('nickName', item.nickName.toString());
       return item.nickName.checkNull();

@@ -10,6 +10,7 @@ import android.media.RingtoneManager
 import android.media.ThumbnailUtils
 import android.net.Uri
 import android.os.*
+import android.provider.ContactsContract
 import android.util.Base64
 import android.webkit.MimeTypeMap
 import android.widget.Toast
@@ -1291,6 +1292,9 @@ open class FlyBaseController(activity: FlutterActivity) : MethodChannel.MethodCa
             }
             call.method.equals("getJidFromPhoneNumber") -> {
                 getJidFromPhoneNumber(call,result)
+            }
+            call.method.equals("addContact") -> {
+                openCreateContact(call)
             }
             else -> {
                 result.notImplemented()
@@ -3334,4 +3338,16 @@ open class FlyBaseController(activity: FlutterActivity) : MethodChannel.MethodCa
         AppNotificationManager.cancelNotifications(mContext)
     }
 
+    private fun openCreateContact(call: MethodCall) {
+        val phone = call.argument("number") ?: ""
+        // Create a new Intent to open the Contacts app with a pre-filled contact form
+        val intent = Intent(Intent.ACTION_INSERT)
+        intent.type = ContactsContract.Contacts.CONTENT_TYPE
+
+        // Set the contact fields using the data provided by the Flutter app
+        intent.putExtra(ContactsContract.Intents.Insert.PHONE, phone)
+
+        // Launch the Contacts app with the pre-filled contact form
+        (mContext as Activity).startActivity(intent)
+    }
 }

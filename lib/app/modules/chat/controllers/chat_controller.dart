@@ -2601,7 +2601,14 @@ class ChatController extends FullLifeCycleController
     }
   }
 
-  void saveContact() {}
+  void saveContact() {
+    var phone = profile.mobileNumber.checkNull().isNotEmpty ? profile.mobileNumber.checkNull() : getMobileNumberFromJid(profile.jid.checkNull());
+    if(phone.isNotEmpty) {
+      FlyChat.addContact(phone.checkNull());
+    }else{
+      mirrorFlyLog('mobile number', phone.toString());
+    }
+  }
 
   void userBlockedMe(String jid) {
     updateProfile(jid);
