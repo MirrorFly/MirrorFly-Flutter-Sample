@@ -299,10 +299,12 @@ class MainController extends FullLifeCycleController with BaseController, FullLi
         }
       }
     }else{
-      FlyChat.revokeContactSync().then((value){
-        onContactSyncComplete(true);
-        mirrorFlyLog("checkContactPermission isSuccess",value.toString());
-      });
+      if(SessionManagement.isInitialContactSyncDone()) {
+        FlyChat.revokeContactSync().then((value) {
+          onContactSyncComplete(true);
+          mirrorFlyLog("checkContactPermission isSuccess", value.toString());
+        });
+      }
     }
   }
 
