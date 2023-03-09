@@ -83,19 +83,24 @@ class ChatInfoView extends GetView<ChatInfoController> {
                       fontSize: 120,
                     ),
                     onTap: () {
-                      Get.toNamed(Routes.imageView, arguments: {
-                      'imageName': getName(controller.profile),
-                        /*'imageName': controller.profile.name
-                            .checkNull()
-                            .isEmpty
-                            ? controller.profile.nickName
-                            .checkNull()
-                            .isEmpty
-                            ? controller.profile.mobileNumber.checkNull()
-                            : controller.profile.nickName.checkNull()
-                            : controller.profile.name.checkNull(),*/
-                        'imageUrl': controller.profile.image.checkNull()
-                      });
+                      if (controller.profile.image!.isNotEmpty && !(controller.profile
+                          .isBlockedMe.checkNull() || controller.profile.isAdminBlocked
+                          .checkNull()) && !(!controller.profile.isItSavedContact
+                          .checkNull() || controller.profile.isDeletedContact())) {
+                        Get.toNamed(Routes.imageView, arguments: {
+                          'imageName': getName(controller.profile),
+                          /*'imageName': controller.profile.name
+                                              .checkNull()
+                                              .isEmpty
+                                              ? controller.profile.nickName
+                                              .checkNull()
+                                              .isEmpty
+                                              ? controller.profile.mobileNumber.checkNull()
+                                              : controller.profile.nickName.checkNull()
+                                              : controller.profile.name.checkNull(),*/
+                          'imageUrl': controller.profile.image.checkNull()
+                        });
+                      }
                     },
                     isGroup: controller.profile.isGroupProfile.checkNull(),
                     blocked: controller.profile.isBlockedMe.checkNull() || controller.profile.isAdminBlocked.checkNull(),

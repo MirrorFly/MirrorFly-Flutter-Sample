@@ -55,7 +55,7 @@ class ReplyingMessageHeader extends StatelessWidget {
                     Padding(
                       padding: const EdgeInsets.only(top: 15.0, left: 15.0),
                       child: getReplyTitle(chatMessage.isMessageSentByMe,
-                          chatMessage.senderNickName),
+                          chatMessage.senderUserName),
                     ),
                     const SizedBox(height: 8),
                     Padding(
@@ -95,13 +95,13 @@ class ReplyingMessageHeader extends StatelessWidget {
   }
 }
 
-getReplyTitle(bool isMessageSentByMe, String senderNickName) {
+getReplyTitle(bool isMessageSentByMe, String senderUserName) {
   return isMessageSentByMe
       ? const Text(
           'You',
           style: TextStyle(fontWeight: FontWeight.bold),
         )
-      : Text(senderNickName,
+      : Text(senderUserName,
           style: const TextStyle(fontWeight: FontWeight.bold));
 }
 
@@ -421,12 +421,12 @@ class SenderHeader extends StatelessWidget {
       child: Padding(
         padding: const EdgeInsets.only(top: 8.0, right: 8.0, left: 8.0),
         child: Text(
-          chatList[index].senderNickName.checkNull(),
+          chatList[index].senderUserName.checkNull(),
           style: TextStyle(
               fontSize: 12,
               fontWeight: FontWeight.w400,
               color: Color(Helper.getColourCode(
-                  chatList[index].senderNickName.checkNull()))),
+                  chatList[index].senderUserName.checkNull()))),
         ),
       ),
     );
