@@ -340,7 +340,7 @@ class ChatController extends FullLifeCycleController
         : false;
     if (!busyStatus.checkNull()) {
       if (await AppUtils.isNetConnected()) {
-        // focusNode.unfocus();
+        focusNode.unfocus();
         showBottomSheetAttachment();
       } else {
         toToast(Constants.noInternetConnection);

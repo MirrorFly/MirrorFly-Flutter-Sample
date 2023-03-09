@@ -10,7 +10,6 @@ import 'package:mirror_fly_demo/app/data/session_management.dart';
 
 import 'package:flysdk/flysdk.dart';
 import 'package:intl/intl.dart';
-import 'package:mirror_fly_demo/app/modules/archived_chats/archived_chat_list_controller.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 import '../../../common/de_bouncer.dart';
@@ -876,10 +875,6 @@ class DashboardController extends FullLifeCycleController
       if (!index.isNegative) {
         typingAndGoneStatus.removeAt(index);
       }
-    }
-    if (Get.isRegistered<ArchivedChatListController>()) {
-      Get.find<ArchivedChatListController>()
-          .setTypingStatus(singleOrgroupJid, userId, typingStatus);
     }
   }
 
