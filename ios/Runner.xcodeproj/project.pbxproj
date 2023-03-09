@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 54;
+	objectVersion = 51;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -15,7 +15,6 @@
 		97C147011CF9000F007C117D /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FF1CF9000F007C117D /* LaunchScreen.storyboard */; };
 		B54A7ECF90B79755092CBFB8 /* Pods_Runner.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7AF2B07DED8838840B9960E9 /* Pods_Runner.framework */; };
 		CE071F24295F09E60035BBAD /* FlyBaseController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE071F23295F09E60035BBAD /* FlyBaseController.swift */; };
-		CE07E9BD29B1BA06001C40FD /* NetworkConnectivityManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE07E9BC29B1BA05001C40FD /* NetworkConnectivityManager.swift */; };
 		CEB9F2DB2948F9E10080BC48 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = CEB9F2DA2948F9E10080BC48 /* GoogleService-Info.plist */; };
 		CED95E0D29472C1600B02558 /* FlyEvents.swift in Sources */ = {isa = PBXBuildFile; fileRef = CED95E0429472C1600B02558 /* FlyEvents.swift */; };
 		CED95E0E29472C1600B02558 /* Commons.swift in Sources */ = {isa = PBXBuildFile; fileRef = CED95E0529472C1600B02558 /* Commons.swift */; };
@@ -55,7 +54,6 @@
 		C469A0252E21302B8CFA84D7 /* Pods-Runner.profile.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.profile.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.profile.xcconfig"; sourceTree = "<group>"; };
 		CD1A6E3E298FC98F498DDD32 /* Pods-Runner.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.debug.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.debug.xcconfig"; sourceTree = "<group>"; };
 		CE071F23295F09E60035BBAD /* FlyBaseController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlyBaseController.swift; sourceTree = "<group>"; };
-		CE07E9BC29B1BA05001C40FD /* NetworkConnectivityManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NetworkConnectivityManager.swift; sourceTree = "<group>"; };
 		CE2582222951A053009D974C /* NotificationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationService.swift; sourceTree = "<group>"; };
 		CE2582242951A053009D974C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		CE25823629523757009D974C /* FlutterNotificationExtnsion.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = FlutterNotificationExtnsion.entitlements; sourceTree = "<group>"; };
@@ -125,7 +123,6 @@
 		97C146F01CF9000F007C117D /* Runner */ = {
 			isa = PBXGroup;
 			children = (
-				CE07E9BC29B1BA05001C40FD /* NetworkConnectivityManager.swift */,
 				CEB9F2DA2948F9E10080BC48 /* GoogleService-Info.plist */,
 				CED95E2229472EC900B02558 /* Runner.entitlements */,
 				CED95E0529472C1600B02558 /* Commons.swift */,
@@ -336,7 +333,6 @@
 				CED95E1229472C1600B02558 /* UserDefaults.swift in Sources */,
 				CE071F24295F09E60035BBAD /* FlyBaseController.swift in Sources */,
 				74858FAF1ED2DC5600515810 /* AppDelegate.swift in Sources */,
-				CE07E9BD29B1BA06001C40FD /* NetworkConnectivityManager.swift in Sources */,
 				CED95E0D29472C1600B02558 /* FlyEvents.swift in Sources */,
 				1498D2341E8E89220040F4C2 /* GeneratedPluginRegistrant.m in Sources */,
 				CED95E0F29472C1600B02558 /* FlySdkMethodCalls.swift in Sources */,

@@ -168,28 +168,28 @@ class FlyBaseController: NSObject{
          ChatManager.disableLocalNotification()
 //         iCloudmanager.iCloudDelegate = self
          
-         NetworkMonitor.shared.startMonitoring()
-         NotificationCenter.default.addObserver(self, selector: #selector(showOfflineDeviceUI(notification:)), name: NSNotification.Name.connectivityStatus, object: nil)
+//         NetworkMonitor.shared.startMonitoring()
+//         NotificationCenter.default.addObserver(self, selector: #selector(showOfflineDeviceUI(notification:)), name: NSNotification.Name.connectivityStatus, object: nil)
         
     }
     
     func applicationWillTerminate(){
-        NetworkMonitor.shared.stopMonitoring()
-        NotificationCenter.default.removeObserver(self, name: NSNotification.Name.connectivityStatus, object: nil)
+//        NetworkMonitor.shared.stopMonitoring()
+//        NotificationCenter.default.removeObserver(self, name: NSNotification.Name.connectivityStatus, object: nil)
     }
-
-    @objc func showOfflineDeviceUI(notification: Notification) {
-        print("AppDelegate Internet listener called")
-            if NetworkMonitor.shared.isConnected {
-//                if(!networkConnected){
-                    print("calling Auto Download")
-                    ChatManager.shared.startAutoDownload()
-//                }
-                networkConnected = true;
-            } else {
-                networkConnected = false;
-            }
-        }
+//
+//    @objc func showOfflineDeviceUI(notification: Notification) {
+//        print("AppDelegate Internet listener called")
+//            if NetworkMonitor.shared.isConnected {
+////                if(!networkConnected){
+//                    print("calling Auto Download")
+//                    ChatManager.shared.startAutoDownload()
+////                }
+//                networkConnected = true;
+//            } else {
+//                networkConnected = false;
+//            }
+//        }
     
      func registerEventChannels(controller: FlutterViewController){
         if (self.messageReceivedStreamHandler == nil) {
@@ -752,12 +752,14 @@ class FlyBaseController: NSObject{
         if Utility.getBoolFromPreference(key: isLoggedIn) && (FlyDefaults.isLoggedIn) {
             print("connecting chat manager")
             ChatManager.connect()
-            ChatManager.shared.startAutoDownload()
+//            ChatManager.shared.startAutoDownload()
         }else{
             print(Utility.getBoolFromPreference(key: isLoggedIn))
             print(FlyDefaults.isLoggedIn)
             print("Unable to connect chat manager")
         }
+//        NetStatus.shared.startMonitoring()
+//        ChatManager.shared.startAutoDownload()
     }
     
     func applicationDidEnterBackground(){

@@ -84,11 +84,15 @@ let googleApiKey = "AIzaSyDnjPEs86MRsnFfW1sVPKvMWjqQRnSa7Ts"
     }
     
     override func applicationDidEnterBackground(_ application: UIApplication) {
-        print("#appDelegate applicationDidEnterBackground")
+        print("Auto Downlaod check ---> Background")
         postNotificationdidEnterBackground = NotificationCenter.default
         postNotificationdidEnterBackground?.post(name: Notification.Name(didEnterBackground), object: nil)
 
         FlyBaseController().applicationDidEnterBackground()
+    }
+    
+    override func applicationWillEnterForeground(_ application: UIApplication) {
+        print("Auto Downlaod check ---> Foreground")
     }
     
 }
