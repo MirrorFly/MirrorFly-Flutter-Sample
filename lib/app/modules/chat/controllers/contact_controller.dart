@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
@@ -43,7 +44,7 @@ class ContactController extends FullLifeCycleController
     }
     scrollController.addListener(_scrollListener);
     //searchQuery.addListener(_searchListener);
-    if (await AppUtils.isNetConnected()) {
+    if (await AppUtils.isNetConnected() || !SessionManagement.isTrailLicence()) {
       isPageLoading(true);
       fetchUsers(false);
     } else {
@@ -59,15 +60,18 @@ class ContactController extends FullLifeCycleController
 
   Future<void> updateProfile(String jid) async {
     if (jid.isNotEmpty) {
-      var userListIndex = usersList.indexWhere((element) => element.jid == jid);
-      var mainListIndex =
-          mainUsersList.indexWhere((element) => element.jid == jid);
       getProfileDetails(jid).then((value) {
+        var userListIndex = usersList.indexWhere((element) => element.jid == jid);
+        var mainListIndex =
+        mainUsersList.indexWhere((element) => element.jid == jid);
+        mirrorFlyLog('value.isBlockedMe', value.isBlockedMe.toString());
         if (!userListIndex.isNegative) {
           usersList[userListIndex] = value;
+          usersList.refresh();
         }
         if (!mainListIndex.isNegative) {
           mainUsersList[mainListIndex] = value;
+          mainUsersList.refresh();
         }
       });
     }
@@ -164,10 +168,10 @@ class ContactController extends FullLifeCycleController
         return;
       }
     }
-    if (await AppUtils.isNetConnected()) {
+    if (await AppUtils.isNetConnected() || !SessionManagement.isTrailLicence()) {
       var future = (SessionManagement.isTrailLicence())
           ? FlyChat.getUserList(pageNum, _searchText)
-          : FlyChat.getRegisteredUsers(true);
+          : FlyChat.getRegisteredUsers(false);
       future.then((data) async {
         //FlyChat.getUserList(pageNum, _searchText).then((data) async {
         mirrorFlyLog("userlist", data);
@@ -415,14 +419,15 @@ class ContactController extends FullLifeCycleController
   var progressSpinner = false.obs;
 
   refreshContacts() async {
-    mirrorFlyLog('Contact Sync', "[Contact Sync] refreshContacts()");
-    if (await AppUtils.isNetConnected()) {
-      if(!await FlyChat.contactSyncStateValue()) {
-        var contactPermissionHandle = await AppPermission.checkPermission(
-            Permission.contacts, contactPermission,
-            Constants.contactSyncPermission);
-        if (contactPermissionHandle) {
-          progressSpinner(true);
+    if(!SessionManagement.isTrailLicence()) {
+      mirrorFlyLog('Contact Sync', "[Contact Sync] refreshContacts()");
+      if (await AppUtils.isNetConnected()) {
+        if (!await FlyChat.contactSyncStateValue()) {
+          var contactPermissionHandle = await AppPermission.checkPermission(
+              Permission.contacts, contactPermission,
+              Constants.contactSyncPermission);
+          if (contactPermissionHandle) {
+            progressSpinner(true);
             FlyChat.syncContacts(!SessionManagement.isInitialContactSyncDone())
                 .then((value) {
               progressSpinner(false);
@@ -431,7 +436,7 @@ class ContactController extends FullLifeCycleController
               _first = true;
               fetchUsers(_searchText.isNotEmpty);
             });
-        } /* else {
+          } /* else {
       MediaPermissions.requestContactsReadPermission(
       this,
       permissionAlertDialog,
@@ -441,14 +446,15 @@ class ContactController extends FullLifeCycleController
       if (ChatUtils.isContusUser(email))
       EmailContactSyncService.start()
       }*/
+        } else {
+          progressSpinner(true);
+          mirrorFlyLog('Contact Sync',
+              "[Contact Sync] Contact syncing is already in progress");
+        }
       } else {
-        progressSpinner(true);
-        mirrorFlyLog('Contact Sync',
-            "[Contact Sync] Contact syncing is already in progress");
+        // toToast(Constants.noInternetConnection);
+        // viewModel.onContactSyncFinished(false);
       }
-    } else {
-      toToast(Constants.noInternetConnection);
-      // viewModel.onContactSyncFinished(false);
     }
   }
 
@@ -467,6 +473,7 @@ class ContactController extends FullLifeCycleController
   @override
   void onPaused() {}
 
+  FocusNode searchFocus = FocusNode();
   @override
   Future<void> onResumed() async {
     if (!SessionManagement.isTrailLicence()) {
@@ -478,9 +485,46 @@ class ContactController extends FullLifeCycleController
         usersList.refresh();
       }
     }
+    if(search) {
+      if (!KeyboardVisibilityController().isVisible) {
+        if (searchFocus.hasFocus) {
+          searchFocus.unfocus();
+          Future.delayed(const Duration(milliseconds: 100), () {
+            searchFocus.requestFocus();
+          });
+        }
+      }
+    }
   }
 
   void userDeletedHisProfile(String jid) {
+    userUpdatedHisProfile(jid);
+  }
+
+  showProfilePopup(Rx<Profile> profile){
+    showQuickProfilePopup(context: Get.context,
+        // chatItem: chatItem,
+        chatTap: () {
+          Get.back();
+          onListItemPressed(profile.value);
+        },
+        callTap: () {},
+        videoTap: () {},
+        infoTap: () {
+          Get.back();
+          if (profile.value.isGroupProfile ?? false) {
+            Get.toNamed(Routes.groupInfo, arguments: profile.value);
+          } else {
+            Get.toNamed(Routes.chatInfo, arguments: profile.value);
+          }
+        },profile: profile);
+  }
+
+  void userBlockedMe(String jid) {
+    userUpdatedHisProfile(jid);
+  }
+
+  void unblockedThisUser(String jid) {
     userUpdatedHisProfile(jid);
   }
 }

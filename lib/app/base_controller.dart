@@ -92,7 +92,11 @@ abstract class BaseController {
       var jid = data["jid"];
       unblockedThisUser(jid);
     });
-    FlyChat.userBlockedMe.listen(userBlockedMe);
+    FlyChat.userBlockedMe.listen((event){
+          var data = json.decode(event.toString());
+          var jid = data["jid"];
+          userBlockedMe(jid.toString());
+        });//{"jid":"919894940560@fly-qa19.mirrorfly.com"}
     FlyChat.userCameOnline.listen((event){
       var data = json.decode(event.toString());
       var jid = data["jid"];
@@ -329,10 +333,25 @@ abstract class BaseController {
     if (Get.isRegistered<GroupInfoController>()) {
       Get.find<GroupInfoController>().unblockedThisUser(jid);
     }
+    if (Get.isRegistered<ContactController>()) {
+      Get.find<ContactController>().unblockedThisUser(jid);
+    }
   }
 
-  void userBlockedMe(result) {
-    mirrorFlyLog('userBlockedMe', result.toString());
+  void userBlockedMe(String jid) {
+    mirrorFlyLog('userBlockedMe', jid.toString());
+    if (Get.isRegistered<ChatController>()) {
+      Get.find<ChatController>().userBlockedMe(jid);
+    }
+    if (Get.isRegistered<ChatInfoController>()) {
+      Get.find<ChatInfoController>().userBlockedMe(jid);
+    }
+    if (Get.isRegistered<GroupInfoController>()) {
+      Get.find<GroupInfoController>().userBlockedMe(jid);
+    }
+    if (Get.isRegistered<ContactController>()) {
+      Get.find<ContactController>().userBlockedMe(jid);
+    }
   }
 
   void userCameOnline(String jid) {
