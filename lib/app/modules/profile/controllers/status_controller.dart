@@ -72,7 +72,7 @@ class StatusListController extends FullLifeCycleController with FullLifeCycleMix
   insertStatus() async{
     if(await AppUtils.isNetConnected()){
       Helper.showLoading();
-        FlyChat.insertNewProfileStatus(addStatusController.text.trim().toString(),)
+        FlyChat.insertNewProfileStatus(addStatusController.text.trim().toString())
             .then((value) {
           selectedStatus.value = addStatusController.text.trim().toString();
           addStatusController.text = addStatusController.text.trim().toString();

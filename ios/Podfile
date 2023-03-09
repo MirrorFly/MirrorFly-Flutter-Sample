@@ -40,7 +40,8 @@ target 'Runner' do
 #   pod 'SocketRocket'
 #   pod 'Socket.IO-Client-Swift'
 #   pod 'GoogleWebRTC'
-  pod 'Mirrorfly-ios-framework', :git => 'https://github.com/MirrorFly/Mirrorfly-ios-framework.git', :branch => 'pod_qa'
+#  pod 'Mirrorfly-ios-framework', :git => 'https://github.com/MirrorFly/Mirrorfly-ios-framework.git', :branch => 'pod_qa'
+  pod 'Mirrorfly-ios-framework', :git => 'https://github.com/MirrorFly/Mirrorfly-ios-framework.git', :branch => 'qa'
   flutter_install_all_ios_pods File.dirname(File.realpath(__FILE__))
 end
 

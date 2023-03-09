@@ -589,14 +589,25 @@ import FlyDatabase
     
     static func insertNewProfileStatus(call: FlutterMethodCall, result: @escaping FlutterResult){
         let args = call.arguments as! Dictionary<String, Any>
-        let status = args["status"] as? String ?? ""
-        print("Insert New Status ---> \(status)")
+        let newStatus = args["status"] as? String ?? ""
+        
+        var isAlreadyExists = false
+        
+        print("Insert New Status ---> \(newStatus)")
         var getAllStatus: [ProfileStatus] = []
         getAllStatus = ChatManager.getAllStatus()
+        
         for status in getAllStatus {
-           ChatManager.updateStatus(statusId: status.id, statusText: status.status, currentStatus: false)
+            if(status.status == newStatus){
+                isAlreadyExists = true
+                ChatManager.updateStatus(statusId: status.id, statusText: status.status, currentStatus: true)
+            }else{
+                ChatManager.updateStatus(statusId: status.id, statusText: status.status, currentStatus: false)
+            }
         }
-        ChatManager.saveProfileStatus(statusText: status, currentStatus: true)
+        if(!isAlreadyExists){
+            ChatManager.saveProfileStatus(statusText: newStatus, currentStatus: true)
+        }
         result("{\"status\" : true }")
         
     }
@@ -1731,7 +1742,9 @@ import FlyDatabase
             chatType = .groupChat
         }
         
-        ChatManager.clearChat(toJid: userJid, chatType: chatType!, clearChatExceptStarred: clearExceptStarred) { (isSuccess, flyerror, resultDict) in
+        let lastMessageId = ChatManager.getLastMessageId(jid: userJid)
+        
+        ChatManager.clearChat(toJid: userJid, chatType: chatType!, clearChatExceptStarred: clearExceptStarred, lastMessageId: lastMessageId) { (isSuccess, flyerror, resultDict) in
             
             if(isSuccess){
                 result(true)
@@ -2009,10 +2022,7 @@ import FlyDatabase
         let messageId = args["mid"] as? String ?? ""
         
         var message : ChatMessage? = FlyMessenger.getMessageOfId(messageId: messageId)
-        print("getMessageOfId--> \(message)")
         
-        
-    
         var messageJson = JSONSerializer.toJson(message)
         messageJson = messageJson.replacingOccurrences(of: "{\"some\":", with: "")
         messageJson = messageJson.replacingOccurrences(of: "}}", with: "}")
