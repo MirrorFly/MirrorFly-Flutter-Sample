@@ -476,6 +476,15 @@ class AudioMessageView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var screenWidth = MediaQuery.of(context).size.width;
+    var currentPos = double.parse(chatMessage
+        .mediaChatMessage!.currentPos
+        .toString());
+    var maxPos = double.parse(chatMessage
+        .mediaChatMessage!.mediaDuration
+        .toString());
+    if(!(currentPos >= 0.0 && currentPos <= maxPos)){
+      currentPos = maxPos;
+    }
     debugPrint(
         "currentPos--> ${double.parse(chatMessage.mediaChatMessage!.currentPos.toString())}");
     debugPrint(
@@ -541,9 +550,9 @@ class AudioMessageView extends StatelessWidget {
                               enabledThumbRadius: 5),
                         ),
                         child: Slider(
-                          value: double.parse(chatMessage
+                          value: currentPos,/*double.parse(chatMessage
                               .mediaChatMessage!.currentPos
-                              .toString()),
+                              .toString()),*/
                           min: 0.0,
                           activeColor: Colors.white,
                           thumbColor: audioColorDark,
@@ -561,10 +570,10 @@ class AudioMessageView extends StatelessWidget {
                         child: Text(
                           Helper.durationToString(Duration(
                               microseconds:
-                                  chatMessage.mediaChatMessage?.currentPos != 0
-                                      ? chatMessage
+                              currentPos != 0.0// chatMessage.mediaChatMessage?.currentPos != 0
+                                      ? currentPos.toInt() /*chatMessage
                                               .mediaChatMessage?.currentPos ??
-                                          0
+                                          0*/
                                       : chatMessage
                                           .mediaChatMessage!.mediaDuration)),
                           style: const TextStyle(

@@ -153,6 +153,7 @@ class ChatController extends FullLifeCycleController
     });
 
     player.onAudioPositionChanged.listen((Duration p) {
+      mirrorFlyLog('p.inMilliseconds', p.inMilliseconds.toString());
       playingChat?.mediaChatMessage!.currentPos = (p.inMilliseconds);
       chatList.refresh();
     });
@@ -741,6 +742,9 @@ class ChatController extends FullLifeCycleController
       }
     } else {
       playingChat = chatMessage;
+    }
+    if (isAudioRecording.value == Constants.audioRecording) {
+      stopRecording();
     }
     if (!playingChat!.mediaChatMessage!.isPlaying) {
       int result = await player.play(
