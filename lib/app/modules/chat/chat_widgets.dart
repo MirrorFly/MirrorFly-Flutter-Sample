@@ -76,6 +76,7 @@ class ReplyingMessageHeader extends StatelessWidget {
                   getReplyImageHolder(
                       context,
                       chatMessage,
+                      null,
                       70, true),
                   GestureDetector(
                     onTap: onCancel,
@@ -211,27 +212,32 @@ getReplyMessage(
 // chatMessage.locationChatMessage,
 getReplyImageHolder(
     BuildContext context,
-    ChatMessageModel chatMessage,
+    ChatMessageModel chatMessageModel,
+    ReplyParentChatMessage? replyParentChatMessage,
     double size, bool isNotChatItem) {
-  debugPrint("reply header--> ${chatMessage.messageType.toUpperCase()}");
-  switch (chatMessage.messageType.toUpperCase()) {
+  var isReply = false;
+  debugPrint("reply header--> ${replyParentChatMessage?.messageType.toUpperCase()}");
+  if(replyParentChatMessage != null){
+    isReply = true;
+  }
+  switch (isReply ? replyParentChatMessage?.messageType.checkNull().toUpperCase() : chatMessageModel.messageType.checkNull().toUpperCase()) {
     case Constants.mImage:
       debugPrint("reply header--> IMAGE");
       return ClipRRect(
         borderRadius: BorderRadius.circular(5),
-        child: imageFromBase64String(chatMessage.mediaChatMessage!.mediaThumbImage, context, size, size),
+        child: imageFromBase64String(isReply ? replyParentChatMessage!.mediaChatMessage!.mediaThumbImage : chatMessageModel.mediaChatMessage!.mediaThumbImage.checkNull(), context, size, size),
       );
     case Constants.mLocation:
-      return getLocationImage(chatMessage.locationChatMessage, size, size);
+      return getLocationImage(isReply ? replyParentChatMessage!.locationChatMessage : chatMessageModel.locationChatMessage, size, size);
     case Constants.mVideo:
       return ClipRRect(
         borderRadius: BorderRadius.circular(5),
-        child: imageFromBase64String(chatMessage.mediaChatMessage!.mediaThumbImage, context, size, size),
+        child: imageFromBase64String(isReply ? replyParentChatMessage!.mediaChatMessage!.mediaThumbImage : chatMessageModel.mediaChatMessage!.mediaThumbImage, context, size, size),
       );
     case Constants.mDocument:
       return isNotChatItem ? SizedBox(height: size) : ClipRRect(
         borderRadius: BorderRadius.circular(5),
-        child: getImageHolder(chatMessage.mediaChatMessage!.mediaFileName.checkNull(), size),
+        child: getImageHolder(isReply ? replyParentChatMessage!.mediaChatMessage!.mediaFileName.checkNull() : chatMessageModel.mediaChatMessage!.mediaFileName, size),
       );
     default:
       debugPrint("reply header--> DEFAULT");
@@ -282,6 +288,7 @@ class ReplyMessageHeader extends StatelessWidget {
           getReplyImageHolder(
               context,
               chatMessage,
+              chatMessage.replyParentChatMessage,
               55, false),
         ],
       ),
@@ -1085,8 +1092,7 @@ class VideoMessageView extends StatelessWidget {
                   ],
                 ),
               ),
-              getImageOverlay(chatMessage,
-                  onVideo: isSelected ? null : onVideoClick),
+              getImageOverlay(chatMessage, onVideo: isSelected ? null : onVideoClick),
               mediaMessage.mediaCaptionText.checkNull().isEmpty
                   ? Positioned(
                       bottom: 8,
@@ -1631,12 +1637,14 @@ uploadView(int mediaDownloadStatus, int mediaFileSize, String messageType) {
               color: playIconColor,
             ))
         : Container(
+      width: 80,
             decoration: const BoxDecoration(
               borderRadius: BorderRadius.all(Radius.circular(5)),
               color: Colors.black45,
             ),
             padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
             child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 SvgPicture.asset(uploadIcon),
                 const SizedBox(
@@ -1706,6 +1714,7 @@ Widget downloadView(
               color: playIconColor,
             ))
         : Container(
+        width: 80,
             decoration: BoxDecoration(
               border: Border.all(
                 color: textColor,
@@ -1715,6 +1724,7 @@ Widget downloadView(
             ),
             padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
             child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 SvgPicture.asset(downloadIcon),
                 const SizedBox(
