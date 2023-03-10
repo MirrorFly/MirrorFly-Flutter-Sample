@@ -94,6 +94,8 @@ class GroupCreationView extends GetView<GroupCreationController> {
                                 'imageUrl':
                                     controller.userImgUrl.value.checkNull()
                               });
+                            }else{
+                              controller.choosePhoto();
                             }
                           },
                         ),
@@ -107,23 +109,7 @@ class GroupCreationView extends GetView<GroupCreationController> {
                           onTap: controller.loading.value
                               ? null
                               : () {
-                            Helper.showAlert(message: "",content:Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisSize: MainAxisSize.min,
-                                children:[
-                              TextButton(
-                                  onPressed: () {
-                                    Get.back();
-                                    controller.imagePick(context);
-                                  },
-                                  child: const Text("Choose from Gallery",style: TextStyle(color: Colors.black),)),
-                              TextButton(
-                                  onPressed: () async{
-                                    Get.back();
-                                    controller.camera();
-                                  },
-                                  child: const Text("Take Photo",style: TextStyle(color: Colors.black))),
-                            ] ));
+                            controller.choosePhoto();
                           },
                           child: Image.asset(
                             'assets/logos/camera_profile_change.png',
