@@ -8,7 +8,7 @@ abstract class Routes {
   static const createGroup = _Paths.createGroup;
   static const groupInfo = _Paths.groupInfo;
   static const viewMedia = _Paths.viewMedia;
-  static const recentSearch = _Paths.recentSearch;
+  // static const recentSearch = _Paths.recentSearch;
   static const login = _Paths.login;
   static const otp = _Paths.otp;
   static const countries = _Paths.countries;
@@ -56,7 +56,7 @@ abstract class _Paths {
   static const createGroup = '/create_group';
   static const groupInfo = '/group_info';
   static const viewMedia = '/view_all_media';
-  static const recentSearch = '/recent_search';
+  // static const recentSearch = '/recent_search';
   static const login = '/login';
   static const otp = '/otp';
   static const countries = '/Countries';
