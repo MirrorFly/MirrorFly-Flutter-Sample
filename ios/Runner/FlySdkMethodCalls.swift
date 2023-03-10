@@ -1744,7 +1744,9 @@ import FlyDatabase
         
         let lastMessageId = ChatManager.getLastMessageId(jid: userJid)
         
-        ChatManager.clearChat(toJid: userJid, chatType: chatType!, clearChatExceptStarred: clearExceptStarred, lastMessageId: lastMessageId) { (isSuccess, flyerror, resultDict) in
+        ChatManager.clearChat(toJid: userJid, chatType: chatType!, clearChatExceptStarred: clearExceptStarred
+                              //, lastMessageId: lastMessageId
+        ) { (isSuccess, flyerror, resultDict) in
             
             if(isSuccess){
                 result(true)

@@ -758,6 +758,7 @@ class FlyBaseController: NSObject{
             print(FlyDefaults.isLoggedIn)
             print("Unable to connect chat manager")
         }
+//        print("Netstatus-> \(NetStatus.shared.isWifi))
 //        NetStatus.shared.startMonitoring()
 //        ChatManager.shared.startAutoDownload()
     }
