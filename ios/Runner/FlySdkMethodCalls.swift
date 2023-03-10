@@ -1576,6 +1576,7 @@ import FlyDatabase
 //                  let lastSeen = timeDifference.lowercased()
 //                  
 //                  print("getUserLastSeenTime response parsed \(lastSeen)")
+                  result("")
                   
               } else{
                   print(data.getMessage() as! String )
