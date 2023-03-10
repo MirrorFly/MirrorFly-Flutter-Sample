@@ -213,6 +213,7 @@ class RecentChatItem extends StatelessWidget {
                                                           .lastMessageId
                                                           .checkNull()),
                                                       builder: (context, data) {
+                                                        mirrorFlyLog('messagetype', data.data!.messageType.toString());
                                                         if (data.hasData && data.data != null && !data.hasError) {
                                                           return Row(
                                                             children: [
@@ -220,6 +221,16 @@ class RecentChatItem extends StatelessWidget {
                                                               SizedBox(
                                                                 width: item.isLastMessageRecalledByUser! ? 0.0 : forMessageTypeString(item.lastMessageType ?? "", content: item.lastMessageContent.checkNull()) != null ? 3.0 : 0.0,
                                                               ),
+                                                              (item.isGroup.checkNull() && !item.isLastMessageSentByMe.checkNull() && (data.data!.messageType!=Constants.mNotification || item.lastMessageContent==" added you")) ? Text(data.data!.senderUserName.checkNull()+":",
+                                                                style: Theme.of(
+                                                                    context)
+                                                                    .textTheme
+                                                                    .titleSmall,
+                                                                maxLines: 1,
+                                                                overflow:
+                                                                TextOverflow
+                                                                    .ellipsis,
+                                                              ) : const SizedBox.shrink(),
                                                               Expanded(
                                                                 child: spanTxt.isEmpty
                                                                     ? Text(
