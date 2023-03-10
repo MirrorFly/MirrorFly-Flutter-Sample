@@ -213,7 +213,6 @@ class RecentChatItem extends StatelessWidget {
                                                           .lastMessageId
                                                           .checkNull()),
                                                       builder: (context, data) {
-                                                        mirrorFlyLog('messagetype', data.data!.messageType.toString());
                                                         if (data.hasData && data.data != null && !data.hasError) {
                                                           return Row(
                                                             children: [

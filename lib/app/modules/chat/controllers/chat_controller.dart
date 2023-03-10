@@ -2635,4 +2635,16 @@ class ChatController extends FullLifeCycleController
   void userBlockedMe(String jid) {
     updateProfile(jid);
   }
+
+  void showHideEmoji(BuildContext context) {
+    if (!showEmoji.value) {
+      focusNode.unfocus();
+    }else{
+      focusNode.requestFocus();
+      return;
+    }
+    Future.delayed(const Duration(milliseconds: 100), () {
+      showEmoji(!showEmoji.value);
+    });
+  }
 }

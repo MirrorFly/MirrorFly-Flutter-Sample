@@ -22,8 +22,9 @@ class GroupCreationView extends GetView<GroupCreationController> {
         ),
         actions: [
           TextButton(
-              onPressed: ()=>controller.goToAddParticipantsPage(),
-              child: const Text("NEXT",style: TextStyle(color: Colors.black),)),
+              onPressed: () => controller.goToAddParticipantsPage(),
+              child: const Text(
+                "NEXT", style: TextStyle(color: Colors.black),)),
         ],
       ),
       body: WillPopScope(
@@ -51,9 +52,10 @@ class GroupCreationView extends GetView<GroupCreationController> {
                         horizontal: 18.0,
                       ),
                       child: Obx(
-                        () => InkWell(
-                          child: controller.imagePath.value.isNotEmpty
-                              ? SizedBox(
+                            () =>
+                            InkWell(
+                              child: controller.imagePath.value.isNotEmpty
+                                  ? SizedBox(
                                   width: 150,
                                   height: 150,
                                   child: ClipOval(
@@ -62,61 +64,62 @@ class GroupCreationView extends GetView<GroupCreationController> {
                                       fit: BoxFit.fill,
                                     ),
                                   ))
-                              : ImageNetwork(
-                                  url: controller.userImgUrl.value.checkNull(),
-                                  width: 150,
-                                  height: 150,
-                                  clipOval: true,
-                                  errorWidget: ClipOval(
-                                    child: Image.asset(groupImg,
-                                        width: 150,
-                                        height: 150,
-                                        fit: BoxFit.cover),
-                                  ),
-                            isGroup: true,
-                            blocked: false,
-                            unknown: false,
+                                  : ImageNetwork(
+                                url: controller.userImgUrl.value.checkNull(),
+                                width: 150,
+                                height: 150,
+                                clipOval: true,
+                                errorWidget: ClipOval(
+                                  child: Image.asset(groupImg,
+                                      width: 150,
+                                      height: 150,
+                                      fit: BoxFit.cover),
                                 ),
-                          onTap: () {
-                            if (controller.imagePath.value
-                                .checkNull()
-                                .isNotEmpty) {
-                              Get.toNamed(Routes.imageView, arguments: {
-                                'imageName': controller.groupName.text,
-                                'imagePath':
+                                isGroup: true,
+                                blocked: false,
+                                unknown: false,
+                              ),
+                              onTap: () {
+                                if (controller.imagePath.value
+                                    .checkNull()
+                                    .isNotEmpty) {
+                                  Get.toNamed(Routes.imageView, arguments: {
+                                    'imageName': controller.groupName.text,
+                                    'imagePath':
                                     controller.imagePath.value.checkNull()
-                              });
-                            } else if (controller.userImgUrl.value
-                                .checkNull()
-                                .isNotEmpty) {
-                              Get.toNamed(Routes.imageView, arguments: {
-                                'imageName': controller.groupName.text,
-                                'imageUrl':
+                                  });
+                                } else if (controller.userImgUrl.value
+                                    .checkNull()
+                                    .isNotEmpty) {
+                                  Get.toNamed(Routes.imageView, arguments: {
+                                    'imageName': controller.groupName.text,
+                                    'imageUrl':
                                     controller.userImgUrl.value.checkNull()
-                              });
-                            }else{
-                              controller.choosePhoto();
-                            }
-                          },
-                        ),
+                                  });
+                                } else {
+                                  controller.choosePhoto();
+                                }
+                              },
+                            ),
                       ),
                     ),
                     Obx(
-                          () => Positioned(
-                        right: 18,
-                        bottom: 18,
-                        child: InkWell(
-                          onTap: controller.loading.value
-                              ? null
-                              : () {
-                            controller.choosePhoto();
-                          },
-                          child: Image.asset(
-                            'assets/logos/camera_profile_change.png',
-                            height: 40,
+                          () =>
+                          Positioned(
+                            right: 18,
+                            bottom: 18,
+                            child: InkWell(
+                              onTap: controller.loading.value
+                                  ? null
+                                  : () {
+                                controller.choosePhoto();
+                              },
+                              child: Image.asset(
+                                'assets/logos/camera_profile_change.png',
+                                height: 40,
+                              ),
+                            ),
                           ),
-                        ),
-                      ),
                     ),
                   ],
                 ),
@@ -130,16 +133,21 @@ class GroupCreationView extends GetView<GroupCreationController> {
                 children: [
                   Expanded(
                     child: Padding(
-                      padding: const EdgeInsets.only(left: 40.0,right: 20),
+                      padding: const EdgeInsets.only(left: 40.0, right: 20),
                       child: TextField(
                         focusNode: controller.focusNode,
                         style:
-                        const TextStyle(fontSize: 14, fontWeight: FontWeight.normal,overflow: TextOverflow.visible),
+                        const TextStyle(fontSize: 14,
+                            fontWeight: FontWeight.normal,
+                            overflow: TextOverflow.visible),
                         onChanged: (_) => controller.onGroupNameChanged(),
                         maxLength: 25,
                         maxLines: 1,
                         controller: controller.groupName,
-                        decoration: const InputDecoration(border: InputBorder.none,counterText:"",hintText: "Type group name here..." ),
+                        decoration: const InputDecoration(
+                            border: InputBorder.none,
+                            counterText: "",
+                            hintText: "Type group name here..."),
                       ),
                     ),
                   ),
@@ -148,28 +156,36 @@ class GroupCreationView extends GetView<GroupCreationController> {
                       padding: const EdgeInsets.all(4.0),
                       child: Center(
                         child: Obx(
-                              ()=> Text(
-                            controller.count.toString(),
-                            style: const TextStyle(fontSize: 14, fontWeight: FontWeight.normal),
-                          ),
+                              () =>
+                              Text(
+                                controller.count.toString(),
+                                style: const TextStyle(fontSize: 14,
+                                    fontWeight: FontWeight.normal),
+                              ),
                         ),
                       )),
-                  IconButton(
-                      onPressed: () {
-                        controller.showHideEmoji(context);
-                      },
-                      icon: SvgPicture.asset(smileIcon,width: 18,height: 18,))
+                  Obx(() {
+                    return IconButton(
+                        onPressed: () {
+                          controller.showHideEmoji(context);
+                        },
+                        icon: controller.showEmoji.value ? const Icon(
+                          Icons.keyboard, color: iconColor,) : SvgPicture.asset(
+                          smileIcon, width: 18, height: 18,));
+                  })
                 ],
               ),
               const AppDivider(),
-              const Text("Provide a Group Name and Icon",style: TextStyle(fontWeight: FontWeight.w500,fontSize: 15),),
+              const Text("Provide a Group Name and Icon",
+                style: TextStyle(fontWeight: FontWeight.w500, fontSize: 15),),
               Expanded(
                 child: Obx(() {
                   if (controller.showEmoji.value) {
                     return EmojiLayout(
-                        textController: controller.groupName,
-                        onBackspacePressed: () => controller.onGroupNameChanged(),
-                        onEmojiSelected : (cat, emoji)=>controller.onGroupNameChanged(),
+                      textController: controller.groupName,
+                      onBackspacePressed: () => controller.onGroupNameChanged(),
+                      onEmojiSelected: (cat, emoji) =>
+                          controller.onGroupNameChanged(),
                     );
                   } else {
                     return const SizedBox.shrink();

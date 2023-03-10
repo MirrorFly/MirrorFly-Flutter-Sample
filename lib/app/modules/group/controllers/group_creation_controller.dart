@@ -57,8 +57,10 @@ class GroupCreationController extends GetxController {
 
   showHideEmoji(BuildContext context){
     if (!showEmoji.value) {
-      FocusScope.of(context).unfocus();
-      focusNode.canRequestFocus = false;
+      focusNode.unfocus();
+    }else{
+      focusNode.requestFocus();
+      return;
     }
     Future.delayed(const Duration(milliseconds: 500), () {
       showEmoji(!showEmoji.value);
