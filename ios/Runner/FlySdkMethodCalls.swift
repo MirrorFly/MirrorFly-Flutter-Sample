@@ -1914,6 +1914,7 @@ import FlyDatabase
         let args = call.arguments as! Dictionary<String, Any>
         let autoDownloadEnable = args["enable"] as? Bool ?? false
         FlyDefaults.autoDownloadEnable = autoDownloadEnable
+        FlyDefaults.autoDownloadLastEnabledTime = autoDownloadEnable ? FlyUtils.getTimeInMillis() : 0
         result(true)
     }
     static func getMediaSetting(call: FlutterMethodCall, result: @escaping FlutterResult){
@@ -1955,24 +1956,61 @@ import FlyDatabase
     static func saveMediaSettings(call: FlutterMethodCall, result: @escaping FlutterResult){
         let args = call.arguments as! Dictionary<String, Any>
         
-        let photos = args["Photos"] as? Bool ?? false
-        let videos = args["Videos"] as? Bool ?? false
-        let audios = args["Audio"] as? Bool ?? false
-        let documents = args["Documents"] as? Bool ?? false
+        let isPhotoEnabled = args["Photos"] as? Bool ?? false
+        let isVideoEnabled = args["Videos"] as? Bool ?? false
+        let isAudioEnabled = args["Audio"] as? Bool ?? false
+        let isDocumentEnalbed = args["Documents"] as? Bool ?? false
         let networkType = args["NetworkType"] as? Int ?? 0
         
-        if (networkType == 0){
-            FlyDefaults.autoDownloadMobile["photo"] = photos
-            FlyDefaults.autoDownloadMobile["videos"] = videos
-            FlyDefaults.autoDownloadMobile["audio"] = audios
-            FlyDefaults.autoDownloadMobile["documents"] = documents
+        var mobiledata = [String : Bool]()
+        var wifi = [String : Bool]()
+        
+//        if (networkType == 0){
+//            FlyDefaults.autoDownloadMobile["photo"] = photos
+//            FlyDefaults.autoDownloadMobile["videos"] = videos
+//            FlyDefaults.autoDownloadMobile["audio"] = audios
+//            FlyDefaults.autoDownloadMobile["documents"] = documents
+//
+//        }else{
+//            FlyDefaults.autoDownloadWifi["photo"] = photos
+//            FlyDefaults.autoDownloadWifi["videos"] = videos
+//            FlyDefaults.autoDownloadWifi["audio"] = audios
+//            FlyDefaults.autoDownloadWifi["documents"] = documents
+//        }
+        
+        if (networkType == 0){//cellular
+            mobiledata["photo"] = isPhotoEnabled
+            FlyDefaults.autoDownloadTimeMobileDataImage = isPhotoEnabled ? FlyUtils.getTimeInMillis() : 0
+
+            mobiledata["videos"]  = isVideoEnabled
+            FlyDefaults.autoDownloadTimeMobileDataVideo = isVideoEnabled ? FlyUtils.getTimeInMillis() : 0
+
+            mobiledata["audio"] = isAudioEnabled
+            FlyDefaults.autoDownloadTimeMobileDataAudio = isAudioEnabled ? FlyUtils.getTimeInMillis() : 0
+
+            mobiledata["documents"] = isDocumentEnalbed
+            FlyDefaults.autoDownloadTimeMobileDataDocument = isDocumentEnalbed ? FlyUtils.getTimeInMillis() : 0
+
+            FlyDefaults.autoDownloadMobile = mobiledata
             
-        }else{
-            FlyDefaults.autoDownloadWifi["photo"] = photos
-            FlyDefaults.autoDownloadWifi["videos"] = videos
-            FlyDefaults.autoDownloadWifi["audio"] = audios
-            FlyDefaults.autoDownloadWifi["documents"] = documents
+        }else{//WIFI
+            wifi["photo"] = isPhotoEnabled
+            FlyDefaults.autoDownloadTimeWifiImage = isPhotoEnabled ? FlyUtils.getTimeInMillis() : 0
+
+            wifi["videos"] = isVideoEnabled
+            FlyDefaults.autoDownloadTimeWifiVideo = isVideoEnabled ? FlyUtils.getTimeInMillis() : 0
+
+            wifi["audio"] = isAudioEnabled
+            FlyDefaults.autoDownloadTimeWifiAudio = isAudioEnabled ? FlyUtils.getTimeInMillis() : 0
+
+            wifi["documents"] = isDocumentEnalbed
+            FlyDefaults.autoDownloadTimeWifiDocument = isDocumentEnalbed ? FlyUtils.getTimeInMillis() : 0
+
+            FlyDefaults.autoDownloadWifi = wifi
+            
         }
+        print("setting auto download  mobile data--> \(mobiledata)")
+        print("setting auto download wifi--> \(wifi)")
         
     }
     

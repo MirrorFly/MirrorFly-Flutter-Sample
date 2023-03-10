@@ -758,7 +758,8 @@ class FlyBaseController: NSObject{
             print(FlyDefaults.isLoggedIn)
             print("Unable to connect chat manager")
         }
-//        print("Netstatus-> \(NetStatus.shared.isWifi))
+        print("Netstatus iswifi-> \(NetStatus.shared.isWifi)")
+        print("Netstatus iscellular-> \(NetStatus.shared.isCellular)")
 //        NetStatus.shared.startMonitoring()
 //        ChatManager.shared.startAutoDownload()
     }
@@ -1085,6 +1086,22 @@ extension FlyBaseController : MessageEventsDelegate, ConnectionEventDelegate, Lo
 
     func onMediaStatusFailed(error: String, messageId: String) {
         print("Media Status Failed--->\(error)")
+        
+        let chatMessage = ChatManager.getMessageOfId(messageId: messageId)
+        print("Message Status Update--->\(String(describing: chatMessage))")
+        
+        print("Media Status--> Upload Status--->\(String(describing: chatMessage!.mediaChatMessage?.mediaUploadStatus))")
+        print("Media Status--> Download Status--->\(String(describing: chatMessage!.mediaChatMessage?.mediaDownloadStatus))")
+        var chatMediaJson = JSONSerializer.toJson(chatMessage as Any)
+        chatMediaJson = chatMediaJson.replacingOccurrences(of: "{\"some\":", with: "")
+        chatMediaJson = chatMediaJson.replacingOccurrences(of: "}}", with: "}")
+        print(chatMediaJson)
+
+        if(mediaStatusUpdatedStreamHandler?.onMediaStatusUpdated != nil){
+            mediaStatusUpdatedStreamHandler?.onMediaStatusUpdated?(chatMediaJson)
+        }else{
+            print("chatMediaJson Stream Handler is Nil")
+        }
     }
 
     func onMediaProgressChanged(message: FlyCommon.ChatMessage, progressPercentage: Float) {
