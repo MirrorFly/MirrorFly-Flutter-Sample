@@ -973,7 +973,7 @@ class DashboardController extends FullLifeCycleController
       searching = true;
       var future = (SessionManagement.isTrailLicence())
           ? FlyChat.getUserList(pageNum, search.text.trim().toString())
-          : FlyChat.getRegisteredUsers(false);
+          : FlyChat.getRegisteredUsers(true);
       future.then((value) {
       // FlyChat.getUserList(pageNum, search.text.trim().toString()).then((value) {
         if (value != null) {
@@ -1211,7 +1211,8 @@ class DashboardController extends FullLifeCycleController
   void onContactSyncComplete(bool result) {
     getRecentChatList();
     getArchivedChatsList();
-    filterUserlist();
+    // filterUserlist();
+    mirrorFlyLog('isSearching.value', isSearching.value.toString());
     if(isSearching.value){
       lastInputValue='';
       onChange(search.text.toString());

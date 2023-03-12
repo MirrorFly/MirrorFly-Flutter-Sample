@@ -295,7 +295,9 @@ class MainController extends FullLifeCycleController with BaseController, FullLi
           !await FlyChat.contactSyncStateValue()) {
         final permission = await Permission.contacts.status;
         if (permission == PermissionStatus.granted) {
-          FlyChat.syncContacts(!SessionManagement.isInitialContactSyncDone());
+          if(SessionManagement.getLogin()) {
+            FlyChat.syncContacts(!SessionManagement.isInitialContactSyncDone());
+          }
         }
       }
     }else{

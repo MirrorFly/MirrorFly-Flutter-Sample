@@ -293,6 +293,7 @@ abstract class BaseController {
 
   void onContactSyncComplete(bool result) {
     mirrorFlyLog("onContactSyncComplete", result.toString());
+    // FlyChat.getRegisteredUsers(true);
     if(result) {
       SessionManagement.setInitialContactSync(true);
       SessionManagement.setSyncDone(true);
