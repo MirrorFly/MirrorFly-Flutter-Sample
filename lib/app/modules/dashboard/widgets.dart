@@ -351,7 +351,7 @@ class RecentChatItem extends StatelessWidget {
                         (data.data!.messageType != Constants.mNotification ||
                             item.lastMessageContent == " added you"))
                     ? Text(
-                        data.data!.senderUserName.checkNull() + ":",
+                        "${data.data!.senderUserName.checkNull()}:",
                         style: Theme.of(context).textTheme.titleSmall,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
