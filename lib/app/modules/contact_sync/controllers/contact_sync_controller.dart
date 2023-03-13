@@ -79,10 +79,12 @@ class ContactSyncController extends GetxController
   }
 
   void onContactSyncComplete(bool result) {
-    FlyChat.getRegisteredUsers(true).then((value) {
-      mirrorFlyLog("registeredUsers", value.toString());
-      navigateToDashboard();
-    });
+    if(Get.currentRoute==Routes.contactSync) {
+      FlyChat.getRegisteredUsers(true).then((value) {
+        mirrorFlyLog("registeredUsers", value.toString());
+        navigateToDashboard();
+      });
+    }
   }
 
   void navigateToDashboard() {

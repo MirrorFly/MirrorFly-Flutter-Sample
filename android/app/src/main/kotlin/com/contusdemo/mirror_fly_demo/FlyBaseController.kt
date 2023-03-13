@@ -601,6 +601,7 @@ open class FlyBaseController(activity: FlutterActivity) : MethodChannel.MethodCa
                 result.success(BuildConfig.IS_TRIAL_LICENSE)
             }
             call.method.equals("syncContacts") -> {
+                //setRegionCode(call)
                 val isFirsttime = call.argument<Boolean>("is_first_time") ?: false
                 FlyCore.syncContacts(isFirsttime){b,_,data->
                     LogMessage.d(TAG, "Contacts Sync contactSyncSuccess:$b and data: ${data}")
@@ -1296,11 +1297,21 @@ open class FlyBaseController(activity: FlutterActivity) : MethodChannel.MethodCa
             call.method.equals("addContact") -> {
                 openCreateContact(call)
             }
+            call.method.equals("setRegionCode") -> {
+                setRegionCode(call)
+            }
             else -> {
                 result.notImplemented()
             }
 
         }
+    }
+
+    private fun setRegionCode(call: MethodCall) {
+        val regionCode = call.argument<String?>("regionCode") ?: "IN"
+        ChatManager.setUserCountryISOCode(regionCode)
+        SharedPreferenceManager.instance.storeString(SharedPreferenceManager.COUNTRY_CODE,regionCode);
+        LogMessage.d("regionCode",ChatManager.getUserCountryISOCode());
     }
 
     private fun setDefaultNotificationSound() {
@@ -2634,6 +2645,8 @@ open class FlyBaseController(activity: FlutterActivity) : MethodChannel.MethodCa
         val server = call.argument<Boolean>("server") ?: false
         FlyCore.getRegisteredUsers(server) { isSuccess, _, data ->
             if (isSuccess) {
+                val profileDetails = data["data"] as MutableList<ProfileDetails>
+                Log.d("profileDetails",profileDetails.toString())
                 //Log.e("RESPONSE_CAPTURE", "===========================")
                 //DebugUtilis.v("FlyCore.getRegisteredUsers", data.tojsonString())
                 result.success(data.tojsonString())
@@ -3160,7 +3173,11 @@ open class FlyBaseController(activity: FlutterActivity) : MethodChannel.MethodCa
 
     override fun onContactSyncComplete(isSuccess: Boolean) {
         Log.d("onContactSyncComplete",isSuccess.toString())
-        onContactSyncCompleteStreamHandler.onContactSyncComplete?.success(isSuccess)
+        FlyCore.getRegisteredUsers(true){ success, _, data ->
+//            val profileDetails = data["data"] as MutableList<ProfileDetails>
+            onContactSyncCompleteStreamHandler.onContactSyncComplete?.success(isSuccess)
+        }
+
     }
 
     override fun onLoggedOut() {

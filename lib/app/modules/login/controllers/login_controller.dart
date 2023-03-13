@@ -29,6 +29,7 @@ class LoginController extends GetxController {
   Duration myDuration = const Duration(seconds: 31);
 
   String? get countryCode => selectedCountry.value.dialCode;
+  String? get regionCode => selectedCountry.value.code;
   var verificationId = "";
   int? resendingToken;
   Rx<bool> timeout = false.obs;
@@ -304,6 +305,7 @@ class LoginController extends GetxController {
           // SessionManagement.setNotificationSound(true);
           // userData.data.
           enableArchive();
+          FlyChat.setRegionCode(regionCode ?? 'IN');///if its not set then error comes in contact sync delete from phonebook.
           SessionManagement.setCountryCode((countryCode ?? "").replaceAll('+', ''));
           setUserJID(userData.data!.username!);
         }

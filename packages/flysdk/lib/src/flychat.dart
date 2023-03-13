@@ -2126,7 +2126,7 @@ class FlyChat {
     try {
       response =
           await mirrorFlyMethodChannel.invokeMethod('getRegisteredUsers',{"server":server});
-      debugPrint("getRegisteredUsers ==> $response");
+      debugPrint("getRegisteredUsers $server ==> $response");
       return response;
     } on PlatformException catch (e) {
       debugPrint("Platform Exception ===> $e");
@@ -3128,6 +3128,19 @@ class FlyChat {
       await mirrorFlyMethodChannel
           .invokeMethod('addContact',{'number':number});
       debugPrint('addContact : $number');
+    } on PlatformException catch (e) {
+      debugPrint("Platform Exception ===> $e");
+      rethrow;
+    } on Exception catch (error) {
+      debugPrint("Exception ==> $error");
+      rethrow;
+    }
+  }
+  static Future setRegionCode(String regionCode) async {
+    try {
+      debugPrint('setRegionCode : $regionCode');
+      await mirrorFlyMethodChannel
+          .invokeMethod('setRegionCode',{'regionCode':regionCode});
     } on PlatformException catch (e) {
       debugPrint("Platform Exception ===> $e");
       rethrow;

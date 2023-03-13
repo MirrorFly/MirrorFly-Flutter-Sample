@@ -72,59 +72,7 @@ class RecentChatItem extends StatelessWidget {
       color: isSelected ? Colors.black12 : Colors.transparent,
       child: Row(
         children: [
-          InkWell(
-            onTap: onAvatarClick,
-            child: Container(
-                margin: const EdgeInsets.only(
-                    left: 19.0, top: 10, bottom: 10, right: 10),
-                child: Stack(
-                  children: [
-                    ImageNetwork(
-                      url: item.profileImage.toString(),
-                      width: 48,
-                      height: 48,
-                      clipOval: true,
-                      errorWidget: item.isGroup!
-                          ? ClipOval(
-                              child: Image.asset(
-                                groupImg,
-                                height: 48,
-                                width: 48,
-                                fit: BoxFit.cover,
-                              ),
-                            )
-                          : ProfileTextImage(
-                              text:getRecentName(item),/* item.profileName.checkNull().isEmpty
-                                  ? item.nickName.checkNull()
-                                  : item.profileName.checkNull(),*/
-                            ),
-                      isGroup: item.isGroup.checkNull(),
-                      blocked: item.isBlockedMe.checkNull() || item.isAdminBlocked.checkNull(),
-                      unknown: (!item.isItSavedContact.checkNull() || item.isDeletedContact()),
-                    ),
-                    item.isConversationUnRead!
-                        ? Positioned(
-                            right: 0,
-                            child: CircleAvatar(
-                              radius: 8,
-                              child: Text(
-                                returnFormattedCount(
-                                            item.unreadMessageCount!) !=
-                                        "0"
-                                    ? returnFormattedCount(
-                                        item.unreadMessageCount!)
-                                    : "",
-                                style: const TextStyle(
-                                    fontSize: 9,
-                                    color: Colors.white,
-                                    fontFamily: 'sf_ui'),
-                              ),
-                            ))
-                        : const SizedBox(),
-                    item.isEmailContact().checkNull() ? Positioned(right:0,bottom:0,child: SvgPicture.asset(emailContactIcon)) : const SizedBox.shrink(),
-                  ],
-                )),
-          ),
+          buildProfileImage(),
           Expanded(
             child: InkWell(
               onLongPress: onLongPress,
@@ -137,227 +85,8 @@ class RecentChatItem extends StatelessWidget {
                   children: [
                     Row(
                       children: [
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              spanTxt.isEmpty
-                                  ? Text(
-                                      getRecentName(item),
-                                      style: titlestyle,
-                                      maxLines: 1,
-                                      overflow: TextOverflow.ellipsis,
-                                    )
-                                  : spannableText(getRecentName(item),//item.profileName.checkNull(),
-                                      spanTxt, titlestyle),
-                              Row(
-                                children: [
-                                  item.isLastMessageSentByMe.checkNull() && !isForwardMessage
-                                      ? Padding(
-                                          padding:
-                                              const EdgeInsets.only(right: 8.0),
-                                          child: getMessageIndicator(
-                                              item.lastMessageStatus
-                                                  .checkNull(),
-                                              item.isLastMessageSentByMe
-                                                  .checkNull(),
-                                              item.lastMessageType
-                                                  .checkNull()) /*CircleAvatar(
-                                            radius: 4,
-                                            backgroundColor: Colors.green,
-                                          )*/
-                                          ,
-                                        )
-                                      : const SizedBox(),
-                                  isForwardMessage
-                                      ? item.isGroup!
-                                          ? Expanded(
-                                              child: FutureBuilder<String>(
-                                                  future:
-                                                      getParticipantsNameAsCsv(
-                                                          item.jid!),
-                                                  builder:
-                                                      (BuildContext context,
-                                                          data) {
-                                                    if (data.hasData) {
-                                                      return Text(
-                                                        data.data ?? "",
-                                                        maxLines: 1,
-                                                        overflow: TextOverflow
-                                                            .ellipsis,
-                                                      );
-                                                    }
-                                                    return const Text("");
-                                                  }),
-                                            )
-                                          : Expanded(
-                                              child: FutureBuilder(
-                                                  future: getProfileDetails(
-                                                      item.jid!),
-                                                  builder:
-                                                      (context, profileData) {
-                                                    if (profileData.hasData) {
-                                                      return Text(profileData
-                                                              .data?.status ??
-                                                          "");
-                                                    }
-                                                    return const Text("");
-                                                  }))
-                                      : Expanded(
-                                          child: typingUserid.isEmpty
-                                              ? item
-                                                      .isLastMessageRecalledByUser!
-                                                  ? const SizedBox()
-                                                  : FutureBuilder(
-                                                      future: getMessageOfId(item
-                                                          .lastMessageId
-                                                          .checkNull()),
-                                                      builder: (context, data) {
-                                                        if (data.hasData && data.data != null && !data.hasError) {
-                                                          return Row(
-                                                            children: [
-                                                              forMessageTypeIcon(item.lastMessageType ?? "", data.data!.mediaChatMessage),
-                                                              SizedBox(
-                                                                width: item.isLastMessageRecalledByUser! ? 0.0 : forMessageTypeString(item.lastMessageType ?? "", content: item.lastMessageContent.checkNull()) != null ? 3.0 : 0.0,
-                                                              ),
-                                                              Expanded(
-                                                                child: spanTxt.isEmpty
-                                                                    ? Text(
-                                                                  item.isLastMessageRecalledByUser!
-                                                                      ? setRecalledMessageText(item
-                                                                      .isLastMessageSentByMe!)
-                                                                      : forMessageTypeString(
-                                                                      item.lastMessageType ?? "",
-                                                                      content: data.data!.mediaChatMessage?.mediaCaptionText.checkNull()) ?? item.lastMessageContent.checkNull(),
-                                                                  style: Theme.of(
-                                                                      context)
-                                                                      .textTheme
-                                                                      .titleSmall,
-                                                                  maxLines: 1,
-                                                                  overflow:
-                                                                  TextOverflow
-                                                                      .ellipsis,
-                                                                )
-                                                                    : spannableText(
-                                                                    item.isLastMessageRecalledByUser!
-                                                                        ? setRecalledMessageText(item.isLastMessageSentByMe!)
-                                                                        : forMessageTypeString(item.lastMessageType.checkNull(), content: data.data!.mediaChatMessage?.mediaCaptionText.checkNull()) ??
-                                                                        item.lastMessageContent
-                                                                            .checkNull(),
-                                                                    spanTxt,
-                                                                    Theme.of(context)
-                                                                        .textTheme
-                                                                        .titleSmall),
-                                                              ),
-                                                            ],
-                                                          );
-                                                        }
-                                                        return const SizedBox();
-                                                      })
-                                              : FutureBuilder(
-                                                  future: getProfileDetails(
-                                                      typingUserid.checkNull()),
-                                                  builder: (context, data) {
-                                                    if (data.hasData) {
-                                                      return Text(
-                                                        "${getName(data.data!).checkNull()} typing...",
-                                                        //"${data.data!.name.checkNull()} typing...",
-                                                        style: typingstyle,
-                                                        maxLines: 1,
-                                                        overflow: TextOverflow
-                                                            .ellipsis,
-                                                      );
-                                                    } else {
-                                                      mirrorFlyLog(
-                                                          "hasError",
-                                                          data.error
-                                                              .toString());
-                                                      return const SizedBox();
-                                                    }
-                                                  }),
-                                        ),
-                                ],
-                              ),
-                            ],
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(
-                              right: 16.0, left: 8, top: 5),
-                          child: Column(
-                            children: [
-                              Visibility(
-                                visible: !isCheckBoxVisible,
-                                child: Text(
-                                  getRecentChatTime(
-                                      context, item.lastMessageTime.toInt()),
-                                  textAlign: TextAlign.end,
-                                  style: TextStyle(
-                                      fontSize: 12.0,
-                                      fontWeight: FontWeight.w600,
-                                      fontFamily: 'sf_ui',
-                                      color: returnFormattedCount(
-                                                  item.unreadMessageCount!) !=
-                                              "0"
-                                          //item.isConversationUnRead!
-                                          ? buttonBgColor
-                                          : textColor),
-                                ),
-                              ),
-                              Visibility(
-                                visible: isCheckBoxVisible,
-                                child: Checkbox(
-                                  value: isChecked,
-                                  onChanged: onchange,
-                                ),
-                              ),
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceAround,
-                                children: [
-                                  Visibility(
-                                      visible: !item.isChatArchived! &&
-                                          item.isChatPinned!,
-                                      child: SvgPicture.asset(
-                                        pin,
-                                        width: 18,
-                                        height: 18,
-                                      )),
-                                  Visibility(
-                                      visible: !archiveEnabled && item.isMuted!,
-                                      child: SvgPicture.asset(
-                                        mute,
-                                        width: 13,
-                                        height: 13,
-                                      )),
-                                  Visibility(
-                                      visible: item.isChatArchived! &&
-                                          archiveVisible,
-                                      child: Container(
-                                        padding: const EdgeInsets.symmetric(
-                                            horizontal: 2.0),
-                                        decoration: BoxDecoration(
-                                            borderRadius:
-                                                BorderRadius.circular(4.0),
-                                            border: Border.all(
-                                                color: buttonBgColor,
-                                                width: 0.8)),
-                                        child: const Text(
-                                          "Archived",
-                                          style:
-                                              TextStyle(color: buttonBgColor),
-                                        ),
-                                      ) /*SvgPicture.asset(
-                                        archive,
-                                        width: 18,
-                                        height: 18,
-                                      )*/
-                                      )
-                                ],
-                              )
-                            ],
-                          ),
-                        )
+                        buildRecentChatMessageDetails(),
+                        buildRecentChatActions(context)
                       ],
                     ),
                     const AppDivider(
@@ -370,6 +99,325 @@ class RecentChatItem extends StatelessWidget {
           )
         ],
       ),
+    );
+  }
+
+  Expanded buildRecentChatMessageDetails() {
+    return Expanded(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          spanTxt.isEmpty
+              ? Text(
+                  getRecentName(item),
+                  style: titlestyle,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                )
+              : spannableText(
+                  getRecentName(item),
+                  //item.profileName.checkNull(),
+                  spanTxt,
+                  titlestyle),
+          Row(
+            children: [
+              item.isLastMessageSentByMe.checkNull() && !isForwardMessage
+                  ? buildMessageIndicator()
+                  : const SizedBox(),
+              isForwardMessage
+                  ? item.isGroup!
+                      ? buildGroupMembers()
+                      : buildProfileStatus()
+                  : Expanded(
+                      child: typingUserid.isEmpty
+                          ? item.isLastMessageRecalledByUser!
+                              ? const SizedBox()
+                              : buildLastMessageItem()
+                          : buildTypingUser(),
+                    ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Padding buildRecentChatActions(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(right: 16.0, left: 8, top: 5),
+      child: Column(
+        children: [
+          buildRecentChatTime(context),
+          Visibility(
+            visible: isCheckBoxVisible,
+            child: Checkbox(
+              value: isChecked,
+              onChanged: onchange,
+            ),
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              buildArchivedIconVisibility(),
+              buildMuteIconVisibility(),
+              buildArchivedTextVisibility()
+            ],
+          )
+        ],
+      ),
+    );
+  }
+
+  Visibility buildRecentChatTime(BuildContext context) {
+    return Visibility(
+      visible: !isCheckBoxVisible,
+      child: Text(
+        getRecentChatTime(context, item.lastMessageTime.toInt()),
+        textAlign: TextAlign.end,
+        style: TextStyle(
+            fontSize: 12.0,
+            fontWeight: FontWeight.w600,
+            fontFamily: 'sf_ui',
+            color: returnFormattedCount(item.unreadMessageCount!) != "0"
+                //item.isConversationUnRead!
+                ? buttonBgColor
+                : textColor),
+      ),
+    );
+  }
+
+  Padding buildMessageIndicator() {
+    return Padding(
+      padding: const EdgeInsets.only(right: 8.0),
+      child: getMessageIndicator(
+          item.lastMessageStatus.checkNull(),
+          item.isLastMessageSentByMe.checkNull(),
+          item.lastMessageType.checkNull())
+      /*CircleAvatar(
+        radius: 4,
+        backgroundColor: Colors.green,
+      )*/
+      ,
+    );
+  }
+
+  InkWell buildProfileImage() {
+    return InkWell(
+      onTap: onAvatarClick,
+      child: Container(
+          margin:
+              const EdgeInsets.only(left: 19.0, top: 10, bottom: 10, right: 10),
+          child: Stack(
+            children: [
+              buildProfileImageView(),
+              item.isConversationUnRead!
+                  ? buildConvReadIcon()
+                  : const SizedBox(),
+              item.isEmailContact().checkNull()
+                  ? buildEmailIcon()
+                  : const SizedBox.shrink(),
+            ],
+          )),
+    );
+  }
+
+  ImageNetwork buildProfileImageView() {
+    return ImageNetwork(
+      url: item.profileImage.toString(),
+      width: 48,
+      height: 48,
+      clipOval: true,
+      errorWidget: item.isGroup!
+          ? ClipOval(
+              child: Image.asset(
+                groupImg,
+                height: 48,
+                width: 48,
+                fit: BoxFit.cover,
+              ),
+            )
+          : ProfileTextImage(
+              text: getRecentName(
+                  item), /* item.profileName.checkNull().isEmpty
+                              ? item.nickName.checkNull()
+                              : item.profileName.checkNull(),*/
+            ),
+      isGroup: item.isGroup.checkNull(),
+      blocked: item.isBlockedMe.checkNull() || item.isAdminBlocked.checkNull(),
+      unknown: (!item.isItSavedContact.checkNull() || item.isDeletedContact()),
+    );
+  }
+
+  Positioned buildConvReadIcon() {
+    return Positioned(
+        right: 0,
+        child: CircleAvatar(
+          radius: 8,
+          child: Text(
+            returnFormattedCount(item.unreadMessageCount!) != "0"
+                ? returnFormattedCount(item.unreadMessageCount!)
+                : "",
+            style: const TextStyle(
+                fontSize: 9, color: Colors.white, fontFamily: 'sf_ui'),
+          ),
+        ));
+  }
+
+  Positioned buildEmailIcon() {
+    return Positioned(
+        right: 0, bottom: 0, child: SvgPicture.asset(emailContactIcon));
+  }
+
+  Visibility buildArchivedTextVisibility() {
+    return Visibility(
+        visible: item.isChatArchived! && archiveVisible,
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 2.0),
+          decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(4.0),
+              border: Border.all(color: buttonBgColor, width: 0.8)),
+          child: const Text(
+            "Archived",
+            style: TextStyle(color: buttonBgColor),
+          ),
+        ) /*SvgPicture.asset(
+                                      archive,
+                                      width: 18,
+                                      height: 18,
+                                    )*/
+        );
+  }
+
+  Visibility buildMuteIconVisibility() {
+    return Visibility(
+        visible: !archiveEnabled && item.isMuted!,
+        child: SvgPicture.asset(
+          mute,
+          width: 13,
+          height: 13,
+        ));
+  }
+
+  Visibility buildArchivedIconVisibility() {
+    return Visibility(
+        visible: !item.isChatArchived! && item.isChatPinned!,
+        child: SvgPicture.asset(
+          pin,
+          width: 18,
+          height: 18,
+        ));
+  }
+
+  FutureBuilder<Profile> buildTypingUser() {
+    return FutureBuilder(
+        future: getProfileDetails(typingUserid.checkNull()),
+        builder: (context, data) {
+          if (data.hasData) {
+            return Text(
+              "${getName(data.data!).checkNull()} typing...",
+              //"${data.data!.name.checkNull()} typing...",
+              style: typingstyle,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            );
+          } else {
+            mirrorFlyLog("hasError", data.error.toString());
+            return const SizedBox();
+          }
+        });
+  }
+
+  FutureBuilder<ChatMessageModel> buildLastMessageItem() {
+    return FutureBuilder(
+        future: getMessageOfId(item.lastMessageId.checkNull()),
+        builder: (context, data) {
+          if (data.hasData && data.data != null && !data.hasError) {
+            return Row(
+              children: [
+                forMessageTypeIcon(
+                    item.lastMessageType ?? "", data.data!.mediaChatMessage),
+                SizedBox(
+                  width: item.isLastMessageRecalledByUser!
+                      ? 0.0
+                      : forMessageTypeString(item.lastMessageType ?? "",
+                                  content:
+                                      item.lastMessageContent.checkNull()) !=
+                              null
+                          ? 3.0
+                          : 0.0,
+                ),
+                (item.isGroup.checkNull() &&
+                        !item.isLastMessageSentByMe.checkNull() &&
+                        (data.data!.messageType != Constants.mNotification ||
+                            item.lastMessageContent == " added you"))
+                    ? Text(
+                        "${data.data!.senderUserName.checkNull()}:",
+                        style: Theme.of(context).textTheme.titleSmall,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      )
+                    : const SizedBox.shrink(),
+                Expanded(
+                  child: spanTxt.isEmpty
+                      ? Text(
+                          item.isLastMessageRecalledByUser!
+                              ? setRecalledMessageText(
+                                  item.isLastMessageSentByMe!)
+                              : forMessageTypeString(item.lastMessageType ?? "",
+                                      content: data.data!.mediaChatMessage
+                                          ?.mediaCaptionText
+                                          .checkNull()) ??
+                                  item.lastMessageContent.checkNull(),
+                          style: Theme.of(context).textTheme.titleSmall,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        )
+                      : spannableText(
+                          item.isLastMessageRecalledByUser!
+                              ? setRecalledMessageText(
+                                  item.isLastMessageSentByMe!)
+                              : forMessageTypeString(
+                                      item.lastMessageType.checkNull(),
+                                      content: data.data!.mediaChatMessage
+                                          ?.mediaCaptionText
+                                          .checkNull()) ??
+                                  item.lastMessageContent.checkNull(),
+                          spanTxt,
+                          Theme.of(context).textTheme.titleSmall),
+                ),
+              ],
+            );
+          }
+          return const SizedBox();
+        });
+  }
+
+  Expanded buildProfileStatus() {
+    return Expanded(
+        child: FutureBuilder(
+            future: getProfileDetails(item.jid!),
+            builder: (context, profileData) {
+              if (profileData.hasData) {
+                return Text(profileData.data?.status ?? "");
+              }
+              return const Text("");
+            }));
+  }
+
+  Expanded buildGroupMembers() {
+    return Expanded(
+      child: FutureBuilder<String>(
+          future: getParticipantsNameAsCsv(item.jid!),
+          builder: (BuildContext context, data) {
+            if (data.hasData) {
+              return Text(
+                data.data ?? "",
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              );
+            }
+            return const Text("");
+          }),
     );
   }
 

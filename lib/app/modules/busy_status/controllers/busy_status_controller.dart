@@ -185,4 +185,16 @@ class BusyStatusController extends FullLifeCycleController with FullLifeCycleMix
       }
     }
   }
+
+  void showHideEmoji(BuildContext context) {
+    if (!showEmoji.value) {
+      focusNode.unfocus();
+    }else{
+      focusNode.requestFocus();
+      return;
+    }
+    Future.delayed(const Duration(milliseconds: 100), () {
+      showEmoji(!showEmoji.value);
+    });
+  }
 }
