@@ -3,6 +3,7 @@
 //     final recentChat = recentChatFromJson(jsonString);
 
 import 'dart:convert';
+import 'dart:io';
 
 RecentChat recentChatFromJson(String str) => RecentChat.fromJson(json.decode(str));
 RecentChatData recentChatDataFromJson(String str) => RecentChatData.fromJson(json.decode(str));
@@ -99,7 +100,7 @@ class RecentChatData {
     jid: json["jid"],
     lastMessageContent: json["lastMessageContent"],
     lastMessageId: json["lastMessageId"],
-    lastMessageStatus: json["lastMessageStatus"],
+    lastMessageStatus: Platform.isAndroid ? json["lastMessageStatus"] : json["lastMessageStatus"] == "acknowledge" ? "A" : json["lastMessageStatus"] == "delivered" ? "D" : json["lastMessageStatus"] == "seen" ? "S" : json["lastMessageStatus"] == "received" ? "R" : "N",//"N" for "sent" in iOS,
     // lastMessageTime: Platform.isAndroid ? json["lastMessageTime"] : json["isGroup"] ? json["lastMessageTime"] * 1000 : json["lastMessageTime"],
     lastMessageTime: json["lastMessageTime"].toInt().toString().length == 13 ? json["lastMessageTime"] * 1000 : json["lastMessageTime"],
     lastMessageType: json["lastMessageType"],

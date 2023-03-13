@@ -315,14 +315,9 @@ class ChatView extends GetView<ChatController> {
         controller.isAudioRecording.value == Constants.audioRecordInitial
             ? InkWell(
             onTap: () {
-              if (!controller.showEmoji.value) {
-                controller.focusNode.unfocus();
-              }
-              Future.delayed(const Duration(milliseconds: 100), () {
-                controller.showEmoji(!controller.showEmoji.value);
-              });
+              controller.showHideEmoji(context);
             },
-            child: SvgPicture.asset('assets/logos/smile.svg'))
+            child: controller.showEmoji.value ? const Icon(Icons.keyboard, color: iconColor,) : SvgPicture.asset(smileIcon))
             : const SizedBox.shrink(),
         controller.isAudioRecording.value == Constants.audioRecordDelete
             ? const Padding(

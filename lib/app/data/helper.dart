@@ -89,6 +89,17 @@ class Helper {
     );
   }
 
+  static void showVerticalButtonAlert(List<Widget> actions) {
+    Get.dialog(
+      Dialog(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: actions,),
+      ),
+    );
+  }
+
   static void showButtonAlert({List<Widget>? actions}) {
     Get.dialog(
       AlertDialog(

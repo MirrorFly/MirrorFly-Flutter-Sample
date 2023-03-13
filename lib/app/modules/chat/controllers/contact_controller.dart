@@ -52,6 +52,7 @@ class ContactController extends FullLifeCycleController
     }
     //FlyChat.syncContacts(true);
     //FlyChat.getRegisteredUsers(true).then((value) => mirrorFlyLog("registeredUsers", value.toString()));
+    progressSpinner(!SessionManagement.isTrailLicence() && await FlyChat.contactSyncStateValue());
   }
 
   void userUpdatedHisProfile(String jid) {
@@ -160,7 +161,7 @@ class ContactController extends FullLifeCycleController
     scrollable(SessionManagement.isTrailLicence());
   }
 
-  fetchUsers(bool fromSearch) async {
+  fetchUsers(bool fromSearch,{bool server=false}) async {
     if(!SessionManagement.isTrailLicence()){
       var granted = await Permission.contacts.isGranted;
       if(!granted){
@@ -461,7 +462,7 @@ class ContactController extends FullLifeCycleController
   void onContactSyncComplete(bool result) {
     progressSpinner(false);
     _first = true;
-    fetchUsers(_searchText.isNotEmpty);
+    fetchUsers(_searchText.isNotEmpty,server: result);
   }
 
   @override

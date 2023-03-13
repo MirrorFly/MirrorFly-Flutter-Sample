@@ -10,7 +10,6 @@ import 'package:mirror_fly_demo/app/data/session_management.dart';
 
 import 'package:flysdk/flysdk.dart';
 import 'package:intl/intl.dart';
-import 'package:mirror_fly_demo/app/modules/archived_chats/archived_chat_list_controller.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 import '../../../common/de_bouncer.dart';
@@ -877,10 +876,6 @@ class DashboardController extends FullLifeCycleController
         typingAndGoneStatus.removeAt(index);
       }
     }
-    if (Get.isRegistered<ArchivedChatListController>()) {
-      Get.find<ArchivedChatListController>()
-          .setTypingStatus(singleOrgroupJid, userId, typingStatus);
-    }
   }
 
   /* //Moved to Base Controller
@@ -978,7 +973,7 @@ class DashboardController extends FullLifeCycleController
       searching = true;
       var future = (SessionManagement.isTrailLicence())
           ? FlyChat.getUserList(pageNum, search.text.trim().toString())
-          : FlyChat.getRegisteredUsers(false);
+          : FlyChat.getRegisteredUsers(true);
       future.then((value) {
       // FlyChat.getUserList(pageNum, search.text.trim().toString()).then((value) {
         if (value != null) {
@@ -1216,7 +1211,8 @@ class DashboardController extends FullLifeCycleController
   void onContactSyncComplete(bool result) {
     getRecentChatList();
     getArchivedChatsList();
-    filterUserlist();
+    // filterUserlist();
+    mirrorFlyLog('isSearching.value', isSearching.value.toString());
     if(isSearching.value){
       lastInputValue='';
       onChange(search.text.toString());

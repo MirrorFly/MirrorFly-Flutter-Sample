@@ -21,7 +21,7 @@ import 'modules/archived_chats/archived_chat_list_controller.dart';
 import 'modules/chat/controllers/forwardchat_controller.dart';
 import 'modules/chatInfo/controllers/chat_info_controller.dart';
 import 'modules/dashboard/controllers/dashboard_controller.dart';
-import 'modules/dashboard/controllers/recent_chat_search_controller.dart';
+// import 'modules/dashboard/controllers/recent_chat_search_controller.dart';
 import 'modules/message_info/controllers/message_info_controller.dart';
 import 'modules/starred_messages/controllers/starred_messages_controller.dart';
 
@@ -293,6 +293,7 @@ abstract class BaseController {
 
   void onContactSyncComplete(bool result) {
     mirrorFlyLog("onContactSyncComplete", result.toString());
+    // FlyChat.getRegisteredUsers(true);
     if(result) {
       SessionManagement.setInitialContactSync(true);
       SessionManagement.setSyncDone(true);
@@ -412,9 +413,9 @@ abstract class BaseController {
     if (Get.isRegistered<ArchivedChatListController>()) {
       Get.find<ArchivedChatListController>().userUpdatedHisProfile(jid);
     }
-    if (Get.isRegistered<RecentChatSearchController>()) {
+    /*if (Get.isRegistered<RecentChatSearchController>()) {
       Get.find<RecentChatSearchController>().userUpdatedHisProfile(jid);
-    }
+    }*/
     if (Get.isRegistered<ContactController>()) {
       Get.find<ContactController>().userUpdatedHisProfile(jid);
     }

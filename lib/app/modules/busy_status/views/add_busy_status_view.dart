@@ -70,25 +70,24 @@ class AddBusyStatusView extends GetView<BusyStatusController> {
                           padding: const EdgeInsets.all(4.0),
                           child: Center(
                             child: Obx(
-                              () => Text(
-                                controller.count.toString(),
-                                style: const TextStyle(
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.normal),
-                              ),
+                                  () =>
+                                  Text(
+                                    controller.count.toString(),
+                                    style: const TextStyle(
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.normal),
+                                  ),
                             ),
                           )),
-                      IconButton(
-                          onPressed: () {
-                            if (!controller.showEmoji.value) {
-                              controller.focusNode.unfocus();
-                            }
-                            Future.delayed(const Duration(milliseconds: 500),
-                                () {
-                              controller.showEmoji(!controller.showEmoji.value);
-                            });
-                          },
-                          icon: SvgPicture.asset(smileIcon))
+                      Obx(() {
+                        return IconButton(
+                            onPressed: () {
+                              controller.showHideEmoji(context);
+                            },
+                            icon: controller.showEmoji.value ? const Icon(
+                              Icons.keyboard, color: iconColor,) : SvgPicture
+                                .asset(smileIcon));
+                      })
                     ],
                   ),
                 ),
@@ -104,7 +103,7 @@ class AddBusyStatusView extends GetView<BusyStatusController> {
                     },
                     style: ElevatedButton.styleFrom(
                         backgroundColor: MaterialStateColor.resolveWith(
-                            (states) => Colors.white),
+                                (states) => Colors.white),
                         shape: const RoundedRectangleBorder(
                             borderRadius: BorderRadius.zero)),
                     child: const Text(
@@ -127,7 +126,7 @@ class AddBusyStatusView extends GetView<BusyStatusController> {
                     },
                     style: ElevatedButton.styleFrom(
                         backgroundColor: MaterialStateColor.resolveWith(
-                            (states) => Colors.white),
+                                (states) => Colors.white),
                         shape: const RoundedRectangleBorder(
                             borderRadius: BorderRadius.zero)),
                     child: const Text(

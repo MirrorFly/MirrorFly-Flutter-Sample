@@ -221,7 +221,7 @@ class MediaChatMessage {
   int currentPos;
 
   factory MediaChatMessage.fromJson(Map<String, dynamic> json) => MediaChatMessage(
-    isAudioRecorded: json["isAudioRecorded"] ?? false,
+    isAudioRecorded: Platform.isAndroid ? json["isAudioRecorded"] ?? false : json["audioType"] == "recording" ? true : false,
     mediaCaptionText: json["mediaCaptionText"] ?? "",
     mediaDownloadStatus: json["mediaDownloadStatus"] == "not_downloaded" ? 5 : json["mediaDownloadStatus"] == "downloading" ? 3 : json["mediaDownloadStatus"] == "downloaded" ? 4 : json["mediaDownloadStatus"] == "not_available" ? 6 : json["mediaDownloadStatus"] == "failed" ? 401 : json["mediaDownloadStatus"],
     mediaDuration: json["mediaDuration"],

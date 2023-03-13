@@ -153,6 +153,7 @@ class ChatController extends FullLifeCycleController
     });
 
     player.onAudioPositionChanged.listen((Duration p) {
+      mirrorFlyLog('p.inMilliseconds', p.inMilliseconds.toString());
       playingChat?.mediaChatMessage!.currentPos = (p.inMilliseconds);
       chatList.refresh();
     });
@@ -339,7 +340,7 @@ class ChatController extends FullLifeCycleController
         : false;
     if (!busyStatus.checkNull()) {
       if (await AppUtils.isNetConnected()) {
-        // focusNode.unfocus();
+        focusNode.unfocus();
         showBottomSheetAttachment();
       } else {
         toToast(Constants.noInternetConnection);
@@ -742,6 +743,9 @@ class ChatController extends FullLifeCycleController
     } else {
       playingChat = chatMessage;
     }
+    if (isAudioRecording.value == Constants.audioRecording) {
+      stopRecording();
+    }
     if (!playingChat!.mediaChatMessage!.isPlaying) {
       int result = await player.play(
           playingChat!.mediaChatMessage!.mediaLocalStoragePath,
@@ -966,11 +970,13 @@ class ChatController extends FullLifeCycleController
       if (isReplying.value) {
         replyMessageId = replyChatMessage.messageId;
       }
+
       isUserTyping(false);
       isReplying(false);
       FlyChat.sendAudioMessage(
               profile.jid!, filePath, isRecorded, duration, replyMessageId)
           .then((value) {
+            mirrorFlyLog("Audio Message sent", value);
         ChatMessageModel chatMessageModel = sendMessageModelFromJson(value);
         chatList.insert(0, chatMessageModel);
         scrollToBottom();
@@ -1378,26 +1384,42 @@ class ChatController extends FullLifeCycleController
   clearUserChatHistory() {
     if (chatList.isNotEmpty) {
       Future.delayed(const Duration(milliseconds: 100), () {
+        var starred = chatList.indexWhere((element) => element.isMessageStarred);
         Helper.showAlert(
             message: "Are you sure you want to clear the chat?",
             actions: [
-              TextButton(
-                  onPressed: () {
-                    Get.back();
-                    clearChatHistory(false);
-                  },
-                  child: const Text("CLEAR ALL")),
+              Visibility(
+                visible: !starred.isNegative,
+                child: TextButton(
+                    onPressed: () {
+                      Get.back();
+                      clearChatHistory(false);
+                    },
+                    child: const Text("CLEAR ALL")),
+              ),
               TextButton(
                   onPressed: () {
                     Get.back();
                   },
                   child: const Text("CANCEL")),
-              TextButton(
-                  onPressed: () {
-                    Get.back();
-                    clearChatHistory(true);
-                  },
-                  child: const Text("CLEAR EXCEPT STARRED")),
+              Visibility(
+                visible: starred.isNegative,
+                child: TextButton(
+                    onPressed: () {
+                      Get.back();
+                      clearChatHistory(false);
+                    },
+                    child: const Text("CLEAR")),
+              ),
+              Visibility(
+                visible: !starred.isNegative,
+                child: TextButton(
+                    onPressed: () {
+                      Get.back();
+                      clearChatHistory(true);
+                    },
+                    child: const Text("CLEAR EXCEPT STARRED")),
+              ),
             ]);
       });
     } else {
@@ -2612,5 +2634,17 @@ class ChatController extends FullLifeCycleController
 
   void userBlockedMe(String jid) {
     updateProfile(jid);
+  }
+
+  void showHideEmoji(BuildContext context) {
+    if (!showEmoji.value) {
+      focusNode.unfocus();
+    }else{
+      focusNode.requestFocus();
+      return;
+    }
+    Future.delayed(const Duration(milliseconds: 100), () {
+      showEmoji(!showEmoji.value);
+    });
   }
 }
