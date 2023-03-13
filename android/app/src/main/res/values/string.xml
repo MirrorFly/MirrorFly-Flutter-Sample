@@ -1,0 +1,13 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <string name="app_name_">MF-Flutter</string>
+    <string name="default_notification_channel_id" translatable="false">fcm_default_channel</string>
+    <string name="channel_name">App Notifications</string>
+    <string name="channel_description">Notification behaviours for the group chat messages</string>
+    <string name="image_emoji" translatable="false">📷</string>
+    <string name="video_emoji" translatable="false">📽️</string>
+    <string name="contact_emoji" translatable="false">👤</string>
+    <string name="audio_emoji" translatable="false">🎵</string>
+    <string name="file_emoji" translatable="false">📄</string>
+    <string name="location_emoji" translatable="false">📌</string>
+    <string name="unseen_message">%1$d unread messages</string>
+</resources>
