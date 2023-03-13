@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>BASE_URL</key>
+	<string>$(BASE_URL)</string>
+	<key>CADisableMinimumFrameDurationOnPhone</key>
+	<true/>
+	<key>CFBundleDevelopmentRegion</key>
+	<string>$(DEVELOPMENT_LANGUAGE)</string>
+	<key>CFBundleDisplayName</key>
+	<string>MirrorFly Flutter</string>
+	<key>CFBundleExecutable</key>
+	<string>$(EXECUTABLE_NAME)</string>
+	<key>CFBundleIdentifier</key>
+	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+	<key>CFBundleName</key>
+	<string>$(APP_NAME)</string>
+	<key>CFBundlePackageType</key>
+	<string>APPL</string>
+	<key>CFBundleShortVersionString</key>
+	<string>$(FLUTTER_BUILD_NAME)</string>
+	<key>CFBundleSignature</key>
+	<string>????</string>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>app-1-695832127329-ios-f8b6b0fab296a800</string>
+			</array>
+		</dict>
+	</array>
+	<key>CFBundleVersion</key>
+	<string>$(FLUTTER_BUILD_NUMBER)</string>
+	<key>LICENSE_KEY</key>
+	<string>$(LICENSE_KEY)</string>
+	<key>LSRequiresIPhoneOS</key>
+	<true/>
+	<key>NSCameraUsageDescription</key>
+	<string>MirrorFly need to access to the Camera to Capture and share the image</string>
+	<key>NSContactsUsageDescription</key>
+	<string>This app relies on read access to your contacts. We require access to this permission to find your contacts in our database and suggest people you know. We will not store any contact info in our database if they are not a part of our platform. For further info read our privacy policy.</string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>MirrorFly need to access to the Location to share the location</string>
+	<key>NSLocationAlwaysUsageDescription</key>
+	<string>MirrorFly need to access to the Location to share the location</string>
+	<key>NSLocationUsageDescription</key>
+	<string>MirrorFly need to access to the Location to share the location</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>MirrorFly need to access to the Location to share the location</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>We need this permission to send recorded voice messages to your friends and to make calls within MirrorFly</string>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>We need this permission to share your photos and videos to your friends from your photo library within MirrorFly</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>We need this permission to share your photos and videos to your friends from your photo library within MirrorFly</string>
+	<key>PHPhotoLibraryPreventAutomaticLimitedAccessAlert</key>
+	<true/>
+	<key>UIApplicationSupportsIndirectInputEvents</key>
+	<true/>
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>audio</string>
+		<string>fetch</string>
+		<string>remote-notification</string>
+	</array>
+	<key>UILaunchStoryboardName</key>
+	<string>LaunchScreen</string>
+	<key>UIMainStoryboardFile</key>
+	<string>Main</string>
+	<key>UISupportedInterfaceOrientations</key>
+	<array>
+		<string>UIInterfaceOrientationPortrait</string>
+		<string>UIInterfaceOrientationLandscapeLeft</string>
+		<string>UIInterfaceOrientationLandscapeRight</string>
+	</array>
+	<key>UISupportedInterfaceOrientations~ipad</key>
+	<array>
+		<string>UIInterfaceOrientationPortrait</string>
+		<string>UIInterfaceOrientationPortraitUpsideDown</string>
+		<string>UIInterfaceOrientationLandscapeLeft</string>
+		<string>UIInterfaceOrientationLandscapeRight</string>
+	</array>
+	<key>UIViewControllerBasedStatusBarAppearance</key>
+	<false/>
+    <key>FirebaseAppDelegateProxyEnabled</key>
+    <false/>
+    <key>LSApplicationQueriesSchemes</key>
+    <array>
+        <string>https</string>
+        <string>http</string>
+        <string>tel</string>
+        <string>mailto</string>
+    </array>
+    <key>NSAppTransportSecurity</key>
+    <dict>
+        <key>NSAllowsArbitraryLoads</key>
+        <true/>
+    </dict>
+</dict>
+</plist>

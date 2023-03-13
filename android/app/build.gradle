@@ -1,0 +1,218 @@
+def localProperties = new Properties()
+def localPropertiesFile = rootProject.file('local.properties')
+if (localPropertiesFile.exists()) {
+    localPropertiesFile.withReader('UTF-8') { reader ->
+        localProperties.load(reader)
+    }
+}
+
+def flutterRoot = localProperties.getProperty('flutter.sdk')
+if (flutterRoot == null) {
+    throw new GradleException("Flutter SDK not found. Define location with flutter.sdk in the local.properties file.")
+}
+
+def flutterVersionCode = localProperties.getProperty('flutter.versionCode')
+if (flutterVersionCode == null) {
+    flutterVersionCode = '1'
+}
+
+def flutterVersionName = localProperties.getProperty('flutter.versionName')
+if (flutterVersionName == null) {
+    flutterVersionName = '1.0'
+}
+
+apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
+apply from: "$flutterRoot/packages/flutter_tools/gradle/flutter.gradle"
+apply plugin: 'kotlin-kapt'
+apply plugin: 'com.google.gms.google-services'
+
+android {
+    compileSdkVersion flutter.compileSdkVersion
+    ndkVersion flutter.ndkVersion
+
+    signingConfigs {
+        config {
+            keyAlias 'UiKit'
+            keyPassword 'contus@uikit'
+            storeFile file('contus_internal_uikit_keystore.jks')
+            storePassword 'contus@uikit'
+        }
+        aaptOptions {
+            noCompress "tflite"
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    kotlinOptions {
+        jvmTarget = '1.8'
+    }
+
+    sourceSets {
+        main.java.srcDirs += 'src/main/kotlin'
+    }
+
+    defaultConfig {
+        applicationId "com.mirrorfly.uikit_flutter.qa"
+        // You can update the following values to match your application needs.
+        // For more information, see: https://docs.flutter.dev/deployment/android#reviewing-the-build-configuration.
+        minSdkVersion flutter.minSdkVersion
+        targetSdkVersion flutter.targetSdkVersion
+        versionCode flutterVersionCode.toInteger()
+        versionName flutterVersionName
+
+        ndk {
+            abiFilters 'arm64-v8a', 'armeabi-v7a', 'x86_64'
+        }
+    }
+
+    buildTypes {
+        debug {
+            /*buildConfigField 'String', 'SDK_BASE_URL', '"https://api-uikit-dev.contus.us/api/v1/"'
+            buildConfigField 'String', 'LICENSE', '"2sdgNtr3sFBSM3bYRa7RKDPEiB38Xo"'
+            buildConfigField 'String', 'WEB_CHAT_LOGIN', '"https://webchat-uikit-dev.contus.us/"'*/
+            /*buildConfigField 'String', 'SDK_BASE_URL', '"https://api-uikit-qa.contus.us/api/v1/"'
+            buildConfigField 'String', 'LICENSE', '"ckIjaccWBoMNvxdbql8LJ2dmKqT5bp"'
+            buildConfigField 'String', 'WEB_CHAT_LOGIN', '"https://webchat-preprod-sandbox.mirrorfly.com/"'
+            buildConfigField "String", "SUPPORT_MAIL", '"contussupport@gmail.com"'*/
+            shrinkResources false
+            debuggable true
+            minifyEnabled false
+            signingConfig signingConfigs.config
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+        release {
+           /* buildConfigField 'Boolean', 'IS_QA_BUILD', 'true'
+            buildConfigField 'String', 'SDK_BASE_URL', '"https://api-uikit-qa.contus.us/api/v1/"'
+            buildConfigField 'String', 'LICENSE', '"ckIjaccWBoMNvxdbql8LJ2dmKqT5bp"'
+            buildConfigField 'String', 'WEB_CHAT_LOGIN', '"https://webchat-preprod-sandbox.mirrorfly.com/"'
+            buildConfigField 'Boolean', 'IS_TRIAL_LICENSE', 'true'
+            buildConfigField "String", "SUPPORT_MAIL", '"contussupport@gmail.com"'
+            resValue("string", "app_name", "MF-Flutter")*/
+            shrinkResources false
+            debuggable true
+            minifyEnabled false
+            signingConfig signingConfigs.config
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    // Specifies one flavor dimension.
+    flavorDimensions "version"
+    productFlavors {
+        dev {
+            dimension "version"
+            applicationId "com.mirrorfly.uikit_flutter.dev"
+            buildConfigField 'Boolean', 'IS_QA_BUILD', 'true'
+            buildConfigField 'String', 'SDK_BASE_URL', '"https://api-uikit-dev.contus.us/api/v1/"'
+            buildConfigField 'String', 'LICENSE', '"2sdgNtr3sFBSM3bYRa7RKDPEiB38Xo"'
+            buildConfigField 'String', 'WEB_CHAT_LOGIN', '"https://webchat-uikit-dev.contus.us/"'
+            buildConfigField 'Boolean', 'IS_TRIAL_LICENSE', 'true'
+            buildConfigField "String", "SUPPORT_MAIL", '"contussupport@gmail.com"'
+            resValue("string", "app_name", "MF-Flutter-Dev")
+        }
+        qa {
+            //Normal
+            /*dimension "version"
+            applicationId "com.mirrorfly.uikit_flutter.qa"
+            buildConfigField 'Boolean', 'IS_QA_BUILD', 'true'
+            buildConfigField 'String', 'SDK_BASE_URL', '"https://api-uikit-qa.contus.us/api/v1/"'
+            buildConfigField 'String', 'LICENSE', '"ckIjaccWBoMNvxdbql8LJ2dmKqT5bp"'
+            buildConfigField 'String', 'WEB_CHAT_LOGIN', '"https://webchat-preprod-sandbox.mirrorfly.com/"'
+            buildConfigField 'Boolean', 'IS_TRIAL_LICENSE', 'true'
+            buildConfigField "String", "SUPPORT_MAIL", '"contussupport@gmail.com"'
+            resValue("string", "app_name", "MF-Flutter-QA")*/
+            //contactSync
+            dimension "version"
+            applicationId "com.mirrorfly.uikit_flutter.qa"
+            buildConfigField "String", "SIGNAL_SERVER", '"https://signal-qa19.mirrorfly.com/"'
+            buildConfigField "String", "JANUS_WEB_SOCKET_SERVER", '"wss://janus.mirrorfly.com"'
+            buildConfigField "String", "SDK_BASE_URL", '"https://api-qa19.mirrorfly.com/api/v1/"'
+            buildConfigField 'String', 'WEB_CHAT_LOGIN', '"https://webchat-preprod-sandbox.mirrorfly.com/"'
+            buildConfigField 'String', 'LICENSE', '"HNNQTJnERZF80L0lxmqC0EINq5su7X"'
+            buildConfigField 'Boolean', 'IS_TRIAL_LICENSE', 'false'
+            buildConfigField "String", "SUPPORT_MAIL", '"contussupport@gmail.com"'
+            resValue("string", "app_name", "MF-Flutter-QA(Sync)")
+        }
+        contactSync {
+            dimension "version"
+            applicationId "com.mirrorfly.uikit_flutter.qa"
+            buildConfigField "String", "SIGNAL_SERVER", '"https://signal-qa19.mirrorfly.com/"'
+            buildConfigField "String", "JANUS_WEB_SOCKET_SERVER", '"wss://janus.mirrorfly.com"'
+            buildConfigField "String", "SDK_BASE_URL", '"https://api-qa19.mirrorfly.com/api/v1/"'
+            buildConfigField 'String', 'LICENSE', '"HNNQTJnERZF80L0lxmqC0EINq5su7X"'
+            buildConfigField 'String', 'WEB_CHAT_LOGIN', '"https://webchat-preprod-sandbox.mirrorfly.com/"'
+            buildConfigField 'Boolean', 'IS_TRIAL_LICENSE', 'false'
+            buildConfigField "String", "SUPPORT_MAIL", '"contussupport@gmail.com"'
+            resValue("string", "app_name", "MF-Flutter-QA(Sync)")
+        }
+        prod {
+            dimension "version"
+            applicationId "com.mirrorfly.uikit_flutter.dev"
+            /*buildConfigField 'Boolean', 'IS_QA_BUILD', 'true'
+            buildConfigField 'String', 'SDK_BASE_URL', '"https://api-uikit-qa.contus.us/api/v1/"'
+            buildConfigField 'String', 'LICENSE', '"ckIjaccWBoMNvxdbql8LJ2dmKqT5bp"'
+            buildConfigField 'String', 'WEB_CHAT_LOGIN', '"https://webchat-preprod-sandbox.mirrorfly.com/"'
+            buildConfigField 'Boolean', 'IS_TRIAL_LICENSE', 'false'
+            buildConfigField "String", "SUPPORT_MAIL", '"contussupport@gmail.com"'
+            resValue("string", "app_name", "MF-Flutter-Prod")*/
+        }
+    }
+
+
+    packagingOptions {
+        exclude 'META-INF/AL2.0'
+        exclude 'META-INF/DEPENDENCIES'
+        exclude 'META-INF/LICENSE'
+        exclude 'META-INF/LICENSE.txt'
+        exclude 'META-INF/license.txt'
+        exclude 'META-INF/NOTICE'
+        exclude 'META-INF/NOTICE.txt'
+        exclude 'META-INF/notice.txt'
+        exclude 'META-INF/ASL2.0'
+        exclude 'META-INF/LGPL2.1'
+        exclude("META-INF/*.kotlin_module")
+    }
+}
+
+flutter {
+    source '../..'
+}
+
+
+dependencies {
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
+    implementation 'androidx.appcompat:appcompat:1.5.1'
+    implementation 'com.google.android.material:material:1.4.0'
+    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
+//    implementation ('com.fly.sdk:appbase:0.0.5')
+    configurations {
+        all {
+            exclude group: 'org.json', module: 'json'
+            exclude group: 'xpp3', module: 'xpp3'
+        }
+    }
+    implementation 'com.mirrorfly.sdk:appbase:0.0.10'
+
+    // Import the Firebase BoM
+    implementation platform('com.google.firebase:firebase-bom:30.2.0')
+
+    // Add the dependency for the Firebase SDK for Google Analytics
+    // When using the BoM, don't specify versions in Firebase dependencies
+    implementation 'com.google.firebase:firebase-analytics'
+    implementation 'com.google.firebase:firebase-messaging'
+
+    //Glide - versions.gradle
+    implementation "com.github.bumptech.glide:glide:4.14.2"
+    kapt "com.github.bumptech.glide:compiler:4.11.0"
+
+    //KTX Depenedency
+    implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.5.1'
+    implementation 'androidx.fragment:fragment-ktx:1.5.5'
+    implementation 'androidx.activity:activity-ktx:1.7.0-alpha02'
+}
+
