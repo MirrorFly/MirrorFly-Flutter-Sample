@@ -1,0 +1,44 @@
+default_platform(:android)
+
+platform :android do
+  # Release Notes Filepath
+    # release_notes = File.read("../releasenote.txt")
+  # Changelogs Filepath
+    # changelogs = File.read("../changelogs.txt")
+  # Production Firebase App ID
+  appID = ""
+   # DEV Firebase App ID
+  appID_DEV = "1:1045831384770:android:cfdf83b6e0ada96911455b"
+  # QA Firebase App ID
+  appID_QA = "1:235373697524:android:8c60557f4f35c990a0c1a1"
+  # UAT Firebase App ID
+  appID_UAT = "1:719522206274:android:df54ba1969d80aeba2d3db"
+
+  # DEV Release Notes
+  change_Log = "bug fixes"
+
+
+  desc "Upload dev version to distributes in firebase"
+  lane :deploy_dev_debug do
+    firebase_app_distribution(
+      app: appID_DEV,
+      groups: "mirrorflydev---flutter",
+      release_notes: change_Log,
+      apk_path: "../build/app/outputs/flutter-apk/app.apk",
+      firebase_cli_path: "/usr/local/bin/firebase",
+      firebase_cli_token: "1//0gca4tG-kR13uCgYIARAAGBASNwF-L9Irt1O8cK62NJe-EO1eh4Vvibu-ThnUDK2jZnz0B-6RZkHC-u34Zvg_E1hnXhgmh2C3KzY"
+    )
+  end
+
+   desc "Upload qa version to distributes in firebase"
+    lane :deploy_qa_debug do
+      firebase_app_distribution(
+        app: appID_QA,
+        groups: " mirrorflyqa-flutter",
+        release_notes: change_Log,
+        apk_path: "../build/app/outputs/flutter-apk/app-qa-debug.apk",
+        firebase_cli_token: "1//0gfTJ_oWJ0mHNCgYIARAAGBASNwF-L9IrYZM4cUIV5EB8gVnSvtMC6Q7aAtgrgG8R1ybhSY1Np_5r5UuZu28N144_weOQDyONcW4",
+      )
+    end
+
+end

@@ -1,0 +1,15 @@
+<svg id="contacts-book-fill" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="100.078" height="103.738" viewBox="0 0 100.078 103.738">
+  <defs>
+    <filter id="Path_9858" x="3.51" y="2.34" width="93.058" height="101.398" filterUnits="userSpaceOnUse">
+      <feOffset dy="3" input="SourceAlpha"/>
+      <feGaussianBlur stdDeviation="3" result="blur"/>
+      <feFlood flood-opacity="0.161"/>
+      <feComposite operator="in" in2="blur"/>
+      <feComposite in="SourceGraphic"/>
+    </filter>
+  </defs>
+  <path id="Path_9857" data-name="Path 9857" d="M0,0H100.078V100.078H0Z" fill="none"/>
+  <g transform="matrix(1, 0, 0, 1, 0, 0)" filter="url(#Path_9858)">
+    <path id="Path_9858-2" data-name="Path 9858" d="M19.68,2V85.4H3V2Zm8.34,0h41.72a8.327,8.327,0,0,1,8.319,8.3V77.1a8.308,8.308,0,0,1-8.319,8.3H28.019ZM53.039,43.7a8.34,8.34,0,1,0-8.34-8.34A8.34,8.34,0,0,0,53.039,43.7Zm-12.51,16.68H65.549a12.51,12.51,0,0,0-25.019,0Z" transform="translate(9.51 6.34)" fill="#197cf5"/>
+  </g>
+</svg>

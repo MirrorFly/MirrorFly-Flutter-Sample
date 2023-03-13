@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <array name="colour_code">
+        <item>#9068BE</item>
+        <item>#E62739</item>
+        <item>#845007</item>
+        <item>#3A4660</item>
+        <item>#1D1E22</item>
+        <item>#BE7D6A</item>
+        <item>#005995</item>
+        <item>#600473</item>
+        <item>#CD5554</item>
+        <item>#00303F</item>
+        <item>#BE4F0C</item>
+        <item>#4ABDAC</item>
+        <item>#FC4A1A</item>
+        <item>#368CBF</item>
+        <item>#7EBC59</item>
+        <item>#201D3A</item>
+        <item>#269CCC</item>
+        <item>#737272</item>
+        <item>#237107</item>
+        <item>#52028E</item>
+        <item>#AF0D74</item>
+        <item>#6CB883</item>
+        <item>#0DAFA4</item>
+        <item>#A71515</item>
+        <item>#157FA7</item>
+        <item>#7E52B1</item>
+        <item>#27956A</item>
+        <item>#9A4B70</item>
+        <item>#FBBE30</item>
+        <item>#ED3533</item>
+        <item>#571C8D</item>
+        <item>#54181C</item>
+        <item>#9B6700</item>
+        <item>#6E8E14</item>
+        <item>#0752A1</item>
+        <item>#BF6421</item>
+        <item>#00A59C</item>
+        <item>#9F0190</item>
+        <item>#AE3A3A</item>
+        <item>#858102</item>
+        <item>#027E02</item>
+        <item>#F66E54</item>
+    </array>
+</resources>
