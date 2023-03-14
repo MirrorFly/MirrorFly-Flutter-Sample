@@ -559,7 +559,7 @@ class ChatView extends GetView<ChatController> {
                           }
                         },
                         onDoubleTap: () {
-                          controller.translateMessage(index);
+                         // controller.translateMessage(index);
                         },
                         child: Obx(() {
                           return Container(
