@@ -35,7 +35,6 @@ android:value="{Please add your google api key}"/>``
 
 <br />
 
-
 ## Run project
 - flutter clean
 - flutter pub get
