@@ -581,10 +581,12 @@ class FlyChat {
     }
   }
 
-  static deleteRecentChat(String jid) async {
+  static Future<bool?> deleteRecentChat(String jid) async {
+    bool? res;
     try {
-      await mirrorFlyMethodChannel
+      res = await mirrorFlyMethodChannel
           .invokeMethod('deleteRecentChat', {"jid": jid});
+      return res;
     } on PlatformException catch (e) {
       debugPrint("Platform Exception ===> $e");
       rethrow;

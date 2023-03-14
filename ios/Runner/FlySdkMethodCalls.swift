@@ -366,7 +366,7 @@ import FlyDatabase
                 print("userlist json after replacing---> \(userlistJson)")
                 result(userlistJson)
             }else{
-                //                result(FlutterError(code: "500", message: flyError?.description, details: nil))
+                result(FlutterError(code: "500", message: flyError?.description, details: nil))
             }
         }
         

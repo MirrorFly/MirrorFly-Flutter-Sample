@@ -692,10 +692,8 @@ class DashboardController extends FullLifeCycleController
   deleteChats() {
     if (selectedChats.length == 1) {
       _itemDelete(0);
-      clearAllChatSelection();
     } else {
       itemsDelete();
-      clearAllChatSelection();
     }
   }
 
@@ -791,18 +789,50 @@ class DashboardController extends FullLifeCycleController
   _itemDelete(int index) {
     var chatIndex = recentChats.indexWhere((element) =>
     selectedChats[index] == element.jid); //selectedChatsPosition[index];
-    recentChats.removeAt(chatIndex);
-    FlyChat.deleteRecentChat(selectedChats[index]);
+    Helper.showAlert(message: "Delete chat with \"${recentChats[chatIndex].profileName}\"?", actions: [
+      TextButton(
+          onPressed: () {
+            Get.back();
+          },
+          child: const Text("No")),
+      TextButton(
+          onPressed: () async {
+            Get.back();
+            FlyChat.deleteRecentChat(selectedChats[index]).then((value){
+              clearAllChatSelection();
+              recentChats.removeAt(chatIndex);
+              updateUnReadChatCount();
+
+            });
+
+          },
+          child: const Text("Yes")),
+    ]);
   }
 
   itemsDelete() {
-    selected(false);
-    FlyChat.deleteRecentChats(selectedChats);
-    for (var element in selectedChatsPosition) {
-      recentChats.removeAt(element);
-    }
-    clearAllChatSelection();
-    updateUnReadChatCount();
+    Helper.showAlert(message: "Delete ${selectedChatsPosition.length} selected chats?", actions: [
+      TextButton(
+          onPressed: () {
+            Get.back();
+          },
+          child: const Text("No")),
+      TextButton(
+          onPressed: () async {
+            Get.back();
+            FlyChat.deleteRecentChats(selectedChats).then((value) {
+              for (var chatItem in selectedChats) {
+                var chatIndex = recentChats.indexWhere((element) => chatItem == element.jid);
+                recentChats.removeAt(chatIndex);
+              }
+              updateUnReadChatCount();
+              clearAllChatSelection();
+            });
+
+          },
+          child: const Text("Yes")),
+    ]);
+
   }
 
   updateUnReadChatCount() {
