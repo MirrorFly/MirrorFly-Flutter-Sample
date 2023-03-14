@@ -1699,6 +1699,7 @@ class ChatController extends FullLifeCycleController
               "result of forward ==> ${(value as Profile).toJson().toString()}");
           profile_.value = value;
           isBlocked(profile.isBlocked);
+          setChatStatus();
           checkAdminBlocked();
           memberOfGroup();
           FlyChat.setOnGoingChatUser(profile.jid!);
