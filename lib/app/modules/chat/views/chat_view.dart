@@ -63,12 +63,13 @@ class ChatView extends GetView<ChatController> {
                   //FocusManager.instance.primaryFocus?.unfocus();
                   controller.focusNode.unfocus();
                 } else if (controller.nJid != null) {
+                  // controller.saveUnsentMessage();
                   Get.offAllNamed(Routes.dashboard);
                   return Future.value(true);
                 } else if (controller.isSelected.value) {
                   controller.clearAllChatSelection();
                 } else {
-                  return Future.value(true);
+                  return Future.value(false);
                 }
                 return Future.value(false);
               },

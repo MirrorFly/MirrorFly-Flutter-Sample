@@ -837,9 +837,6 @@ open class FlyBaseController(activity: FlutterActivity) : MethodChannel.MethodCa
                 val messageIdlist = call.argument<List<String>>("messageidlist") ?: arrayListOf()
                 ChatManager.copyTextMessages(messageIdlist).tojsonString()
             }
-            call.method.equals("saveUnsentMessage") -> {
-                saveUnsentMessage(call, result)
-            }
             call.method.equals("setCustomValue") -> {
                 val mid = call.argument<String>("message_id") ?: ""
                 val key = call.argument<String>("key") ?: ""

@@ -275,7 +275,7 @@ class ChatController extends FullLifeCycleController
   @override
   void onClose() {
     // scrollController.dispose();
-    debugPrint("onClose");
+    debugPrint("saveUnsentMessage onClose");
     saveUnsentMessage();
     FlyChat.setOnGoingChatUser("");
     SessionManagement.setCurrentChatJID("");
@@ -293,6 +293,7 @@ class ChatController extends FullLifeCycleController
 
   clearMessage() {
     if (profile.jid.checkNull().isNotEmpty) {
+      messageController.text = "";
       FlyChat.saveUnsentMessage(profile.jid.checkNull(), '');
       ReplyHashMap.saveReplyId(profile.jid.checkNull(), '');
     }
@@ -625,6 +626,7 @@ class ChatController extends FullLifeCycleController
         return FlyChat.sendImageMessage(
                 profile.jid!, path, caption, replyMessageID)
             .then((value) {
+          clearMessage();
           ChatMessageModel chatMessageModel = sendMessageModelFromJson(value);
           chatList.insert(0, chatMessageModel);
           scrollToBottom();
@@ -718,6 +720,7 @@ class ChatController extends FullLifeCycleController
     return FlyChat.sendVideoMessage(
             profile.jid!, videoPath, caption, replyMessageID)
         .then((value) {
+          clearMessage();
       Platform.isIOS ? Helper.hideLoading() : null;
       ChatMessageModel chatMessageModel = sendMessageModelFromJson(value);
       chatList.insert(0, chatMessageModel);
@@ -2097,17 +2100,20 @@ class ChatController extends FullLifeCycleController
         photo as XFile?;
         if (photo != null) {
           mirrorFlyLog("photo", photo.name.toString());
+          mirrorFlyLog("caption text sending-->", messageController.text);
           if (photo.name.endsWith(".mp4")) {
             Get.toNamed(Routes.videoPreview, arguments: {
               "filePath": photo.path,
               "userName": profile.name!,
-              "profile": profile
+              "profile": profile,
+              "caption": messageController.text
             });
           } else {
             Get.toNamed(Routes.imagePreview, arguments: {
               "filePath": photo.path,
               "userName": profile.name!,
-              "profile": profile
+              "profile": profile,
+              "caption": messageController.text
             });
           }
         }
@@ -2149,7 +2155,7 @@ class ChatController extends FullLifeCycleController
       try {
         // imagePicker();
         Get.toNamed(Routes.galleryPicker,
-            arguments: {"userName": getName(profile), 'profile': profile});
+            arguments: {"userName": getName(profile), 'profile': profile, 'caption': messageController.text});
       } catch (e) {
         debugPrint(e.toString());
       }
@@ -2488,7 +2494,7 @@ class ChatController extends FullLifeCycleController
 
   @override
   void onPaused() {
-    mirrorFlyLog("LifeCycle", "onPaused");
+    mirrorFlyLog("saveUnsentMessage", "onPaused");
     FlyChat.setOnGoingChatUser("");
     SessionManagement.setCurrentChatJID("");
     playerPause();

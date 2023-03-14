@@ -16,6 +16,7 @@ class VideoPreviewController extends GetxController {
   var isPlaying = false.obs;
   var userName = "";
   var videoPath = "";
+  var textMessage = "";
 
   TextEditingController caption = TextEditingController();
 
@@ -25,6 +26,9 @@ class VideoPreviewController extends GetxController {
     super.onInit();
     userName = Get.arguments['userName'];
     videoPath = Get.arguments['filePath'];
+    textMessage = Get.arguments['caption'];
+    debugPrint("caption text received--> $textMessage");
+    caption.text = textMessage;
     videoPlayerController = VideoPlayerController.file(File(Get.arguments['filePath']))
       ..initialize().then((_) {
         // Ensure the first frame is shown after the video is initialized, even before the play button has been pressed.
