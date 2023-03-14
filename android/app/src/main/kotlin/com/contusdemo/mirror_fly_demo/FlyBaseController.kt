@@ -16,6 +16,7 @@ import android.webkit.MimeTypeMap
 import android.widget.Toast
 import androidx.core.content.FileProvider
 import com.contus.flycommons.*
+//import com.contus.flycommons.models.MediaData
 import com.contus.flynetwork.model.verifyfcm.VerifyFcmResponse
 import com.contus.xmpp.chat.listener.TypingStatusListener
 import com.contus.xmpp.chat.models.CreateGroupModel
@@ -1664,6 +1665,17 @@ open class FlyBaseController(activity: FlutterActivity) : MethodChannel.MethodCa
                     }
 
                 })
+            /*object : ChatDeleteActionListener {
+                    override fun onResponse(
+                        isSuccess: Boolean,
+                        message: String,
+                        deletedMessageList: List<String>,
+                        seletedMessageList: List<String>
+                    ) {
+                        result.success(isSuccess)
+                    }
+
+                })*/
         }
     }
 
@@ -1808,7 +1820,6 @@ open class FlyBaseController(activity: FlutterActivity) : MethodChannel.MethodCa
         val messageIDList = call.argument<List<String>>("message_ids")
         if (userJID != null && messageIDList != null && chatType != null) {
             if (isDeleteForEveryOne!!) {
-
                 //Log.e(TAG, "Delete For EveryOne")
                 ChatManager.deleteMessagesForEveryone(
                     userJID,
@@ -1818,7 +1829,6 @@ open class FlyBaseController(activity: FlutterActivity) : MethodChannel.MethodCa
                     object : ChatActionListener {
                         override fun onResponse(isSuccess: Boolean, message: String) {
                             if (isSuccess) {
-
                                 //Log.e("RESPONSE_CAPTURE", "===========================")
                                 //DebugUtilis.v("ChatManager.deleteMessagesForEveryone", message)
                                 result.success(message)
@@ -1828,6 +1838,23 @@ open class FlyBaseController(activity: FlutterActivity) : MethodChannel.MethodCa
                         }
 
                     })
+                /* object : ChatDeleteActionListener {
+                        override fun onResponse(
+                            isSuccess: Boolean,
+                            message: String,
+                            deletedMessageList: List<String>,
+                            seletedMessageList: List<String>
+                        ) {
+                            if (isSuccess) {
+                                //Log.e("RESPONSE_CAPTURE", "===========================")
+                                //DebugUtilis.v("ChatManager.deleteMessagesForEveryone", message)
+                                result.success(message)
+                            } else {
+                                result.error("500", "Unable to Delete the Chat", message)
+                            }
+                        }
+
+                    })*/
             } else {
 
                 //Log.e(TAG, "Delete For Me")
@@ -1942,6 +1969,7 @@ open class FlyBaseController(activity: FlutterActivity) : MethodChannel.MethodCa
         if (audioFile.exists()) {
             if (userJID != null && duration != null && isRecorded != null) {
                 if (audiofileUrl.isNotEmpty()) {
+                    //FlyMessenger.sendAudioMessage(userJID, MediaData(audioFile.name, audioFile.length(),audiofileUrl, filePath, duration = duration),isRecorded,replyMessageID,listener)
                     FlyMessenger.sendAudioMessage(
                         userJID, audioFile.length(), audiofileUrl, filePath, duration, isRecorded,
                         replyMessageID, listener
@@ -2014,6 +2042,8 @@ open class FlyBaseController(activity: FlutterActivity) : MethodChannel.MethodCa
         }
         if (videoFile.exists()) {
             if (videoFileUrl.isNotEmpty() && thumbImageBase64.isNotEmpty() && videoDuration != 0L) {
+                /*FlyMessenger.sendAudioMessage(toJid = userJid,
+                    MediaData(fileName = videoFile.name, fileSize = videoFile.length(), fileUrl = videoFileUrl, base64Thumbnail = thumbImageBase64, fileLocalPath = localFilePath, caption = videoCaption, duration = videoDuration, ),isRecorded = false,replyMessageID,listener)*/
                 FlyMessenger.sendVideoMessage(
                     toJid = userJid,
                     videoFile.name,
@@ -2424,6 +2454,9 @@ open class FlyBaseController(activity: FlutterActivity) : MethodChannel.MethodCa
             }
         }
         if (imageFileUrl.isNotEmpty()) {
+            /*FlyMessenger.sendImageMessage(toJid = userJid,
+                MediaData(fileName = imageFile.name, fileSize = imageFile.length(), fileUrl = imageFileUrl, fileLocalPath = filePath, base64Thumbnail = thumbnailBase64,caption),replyMessageID,listener
+            )*/
             FlyMessenger.sendImageMessage(
                 userJid,
                 imageFile.name,
@@ -3036,7 +3069,7 @@ open class FlyBaseController(activity: FlutterActivity) : MethodChannel.MethodCa
         progressPercentage: Int
     ) {
         //called when the media message progress is updated
-        //Log.e("MirrorFly", "Upload/Download Status Updated")
+        Log.e("MirrorFly", "Upload/Download Status Updated $messageId - $progressPercentage")
         val js = JSONObject()
         js.put("message_id", messageId)
         js.put("progress_percentage", progressPercentage)

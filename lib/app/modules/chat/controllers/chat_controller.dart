@@ -976,7 +976,7 @@ class ChatController extends FullLifeCycleController
       FlyChat.sendAudioMessage(
               profile.jid!, filePath, isRecorded, duration, replyMessageId)
           .then((value) {
-            mirrorFlyLog("Audio Message sent", value);
+        mirrorFlyLog("Audio Message sent", value);
         ChatMessageModel chatMessageModel = sendMessageModelFromJson(value);
         chatList.insert(0, chatMessageModel);
         scrollToBottom();
@@ -1363,7 +1363,7 @@ class ChatController extends FullLifeCycleController
                     Helper.showLoading(message: "Blocking User");
                     FlyChat.blockUser(profile.jid!).then((value) {
                       debugPrint(value);
-                      profile.isBlocked=true;
+                      profile.isBlocked = true;
                       isBlocked(true);
                       saveUnsentMessage();
                       Helper.hideLoading();
@@ -1384,7 +1384,8 @@ class ChatController extends FullLifeCycleController
   clearUserChatHistory() {
     if (chatList.isNotEmpty) {
       Future.delayed(const Duration(milliseconds: 100), () {
-        var starred = chatList.indexWhere((element) => element.isMessageStarred);
+        var starred =
+            chatList.indexWhere((element) => element.isMessageStarred);
         Helper.showAlert(
             message: "Are you sure you want to clear the chat?",
             actions: [
@@ -1442,7 +1443,7 @@ class ChatController extends FullLifeCycleController
                 // Helper.showLoading(message: "Unblocking User");
                 FlyChat.unblockUser(profile.jid!).then((value) {
                   debugPrint(value.toString());
-                  profile.isBlocked=false;
+                  profile.isBlocked = false;
                   isBlocked(false);
                   getUnsentMessageOfAJid();
                   Helper.hideLoading();
@@ -2625,10 +2626,12 @@ class ChatController extends FullLifeCycleController
   }
 
   void saveContact() {
-    var phone = profile.mobileNumber.checkNull().isNotEmpty ? profile.mobileNumber.checkNull() : getMobileNumberFromJid(profile.jid.checkNull());
-    if(phone.isNotEmpty) {
+    var phone = profile.mobileNumber.checkNull().isNotEmpty
+        ? profile.mobileNumber.checkNull()
+        : getMobileNumberFromJid(profile.jid.checkNull());
+    if (phone.isNotEmpty) {
       FlyChat.addContact(phone.checkNull());
-    }else{
+    } else {
       mirrorFlyLog('mobile number', phone.toString());
     }
   }
@@ -2640,12 +2643,26 @@ class ChatController extends FullLifeCycleController
   void showHideEmoji(BuildContext context) {
     if (!showEmoji.value) {
       focusNode.unfocus();
-    }else{
+    } else {
       focusNode.requestFocus();
       return;
     }
     Future.delayed(const Duration(milliseconds: 100), () {
       showEmoji(!showEmoji.value);
     });
+  }
+
+  void onUploadDownloadProgressChanged(
+      String messageId, int progressPercentage) {
+    if (messageId.isNotEmpty) {
+      final index =
+          chatList.indexWhere((message) => message.messageId == messageId);
+      // debugPrint("onUploadDownloadProgressChanged $index $messageId $progressPercentage");
+      if (!index.isNegative) {
+        // chatMessageModel.isSelected=chatList[index].isSelected;
+        chatList[index].mediaChatMessage?.mediaProgressStatus = (progressPercentage);
+        chatList.refresh();
+      }
+    }
   }
 }
