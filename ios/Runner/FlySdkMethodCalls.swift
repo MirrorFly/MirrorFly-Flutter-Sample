@@ -357,11 +357,15 @@ import FlyDatabase
                 
                 let totalPages = userlist["totalPages"] as! Int
                 let message = userlist["message"] as! String
-                var userlistJson = "{\"total_pages\": " + String(totalPages) + ",\"message\" : \"" + message + "\",\"status\" : true,\"data\":" + userData + "}"
-                
+                var userlistJson = ""
+                if(userData.isEmpty){
+                    userlistJson = "{\"total_pages\": " + String(totalPages) + ",\"message\" : \"" + message + "\",\"status\" : true,\"data\":[]}"
+                }else{
+                    userlistJson = "{\"total_pages\": " + String(totalPages) + ",\"message\" : \"" + message + "\",\"status\" : true,\"data\":" + userData + "}"
+                }
+                 
                 userlistJson = userlistJson.replacingOccurrences(of: "{\"some\": {}}", with: "\"\"")
                 userlistJson = userlistJson.replacingOccurrences(of: "\"nickName\": {}", with: "\"nickName\": \"\"")
-                
                 
                 print("userlist json after replacing---> \(userlistJson)")
                 result(userlistJson)

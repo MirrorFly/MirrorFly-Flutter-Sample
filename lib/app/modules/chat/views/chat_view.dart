@@ -69,7 +69,7 @@ class ChatView extends GetView<ChatController> {
                 } else if (controller.isSelected.value) {
                   controller.clearAllChatSelection();
                 } else {
-                  return Future.value(false);
+                  return Future.value(true);
                 }
                 return Future.value(false);
               },
