@@ -3069,7 +3069,7 @@ open class FlyBaseController(activity: FlutterActivity) : MethodChannel.MethodCa
         Log.e("MirrorFly", "Upload/Download Status Updated $messageId - $progressPercentage")
         val js = JSONObject()
         js.put("message_id", messageId)
-        js.put("progress_percentage", progressPercentage)
+        js.put("progress_percentage", progressPercentage.toString())
         UploadDownloadProgressChangedStreamHandler.onUploadDownloadProgressChanged?.success(
             js.toString()
         )
