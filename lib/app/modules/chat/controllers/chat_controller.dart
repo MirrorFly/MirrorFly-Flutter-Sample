@@ -275,7 +275,7 @@ class ChatController extends FullLifeCycleController
   @override
   void onClose() {
     // scrollController.dispose();
-    debugPrint("saveUnsentMessage onClose");
+    debugPrint("onClose");
     saveUnsentMessage();
     FlyChat.setOnGoingChatUser("");
     SessionManagement.setCurrentChatJID("");
@@ -300,8 +300,7 @@ class ChatController extends FullLifeCycleController
   }
 
   saveUnsentMessage() {
-    if (messageController.text.trim().isNotEmpty &&
-        profile.jid.checkNull().isNotEmpty) {
+    if (profile.jid.checkNull().isNotEmpty) {
       FlyChat.saveUnsentMessage(
           profile.jid.checkNull(), messageController.text.toString());
     }
@@ -2494,7 +2493,7 @@ class ChatController extends FullLifeCycleController
 
   @override
   void onPaused() {
-    mirrorFlyLog("saveUnsentMessage", "onPaused");
+    mirrorFlyLog("LifeCycle", "onPaused");
     FlyChat.setOnGoingChatUser("");
     SessionManagement.setCurrentChatJID("");
     playerPause();
