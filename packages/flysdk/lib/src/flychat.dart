@@ -581,10 +581,12 @@ class FlyChat {
     }
   }
 
-  static deleteRecentChat(String jid) async {
+  static Future<bool?> deleteRecentChat(String jid) async {
+    bool? res;
     try {
-      await mirrorFlyMethodChannel
+      res = await mirrorFlyMethodChannel
           .invokeMethod('deleteRecentChat', {"jid": jid});
+      return res;
     } on PlatformException catch (e) {
       debugPrint("Platform Exception ===> $e");
       rethrow;
@@ -1433,6 +1435,9 @@ class FlyChat {
 
   static Stream<dynamic> get onMediaStatusUpdated =>
       mediaStatusUpdatedChannel.receiveBroadcastStream().cast();
+
+  static Stream<dynamic> get onUploadDownloadProgressChanged =>
+      uploadDownloadProgressChangedChannel.receiveBroadcastStream().cast();
 
   static Stream<dynamic> get onGroupProfileFetched =>
       onGroupProfileFetchedChannel.receiveBroadcastStream().cast();
