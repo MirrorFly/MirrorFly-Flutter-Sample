@@ -129,7 +129,7 @@ class DashboardController extends FullLifeCycleController
       await FlyChat.getProfileDetails(jid, false).then((value) {
         if (value != null) {
           Helper.hideLoading();
-          debugPrint("Dashboard Profile===>$value");
+          // debugPrint("Dashboard Profile===>$value");
           var profile = profiledata(value.toString());
           Get.toNamed(Routes.chat, arguments: profile);
         }

@@ -1565,32 +1565,17 @@ import FlyDatabase
         
         let jid = args["jid"] as? String ?? ""
         
-        print("getUserLastSeenTime called")
-        
         ChatManager.getUserLastSeen( for: jid) { isSuccess, flyError, flyData in
               var data  = flyData
             print("getUserLastSeenTime response \(isSuccess)")
             print("getUserLastSeenTime response \(data)")
               if isSuccess {
-                  print(data.getMessage() as! String )
-                  print(data.getData() as! String )
-                  
-//                  let dateReceived = data.getData()
-//                  
-//                  let dateFormat = DateFormatter()
-//                  dateFormat.timeStyle = .short
-//                  dateFormat.dateStyle = .short
-//                  dateFormat.doesRelativeDateFormatting = true
-//                  let dateString = dateFormat.string(from: Date(timeIntervalSinceNow: TimeInterval(-(Int(dateReceived) ?? 0))))
-//                  
-//                  let timeDifference = "\(NSLocalizedString(dateReceived.localized, comment: "")) \(dateString)"
-//                  let lastSeen = timeDifference.lowercased()
-//                  
-//                  print("getUserLastSeenTime response parsed \(lastSeen)")
-                  result("")
-                  
+                  let lastseenSeconds = data.getData() as? String
+                  let sec = lastseenSeconds?.replacingOccurrences(of: "-", with: "")
+                  result(sec)
               } else{
                   print(data.getMessage() as! String )
+                  result(FlutterError(code: "500", message: "Unable to Get User Last seen", details: data.getMessage()))
               }
           }
     }

@@ -366,7 +366,7 @@ Future<Profile> getProfileDetails(String jid) async {
 
 Future<ChatMessageModel> getMessageOfId(String mid) async {
   var value = await FlyChat.getMessageOfId(mid.checkNull());
-  debugPrint("message--> $value");
+  // debugPrint("message--> $value");
   var chatMessage = await compute(sendMessageModelFromJson, value.toString());
   return chatMessage;
 }
@@ -814,6 +814,25 @@ String getMemberName(Member item) {
 String getMobileNumberFromJid(String jid) {
   var str = jid.split('@');
   return str[0];
+}
+
+String convertSecondToLastSeen(String seconds){
+
+  var userLastSeenDate = DateTime.now().subtract(Duration(seconds: double.parse(seconds).toInt()));
+
+  Duration diff = DateTime.now().difference(userLastSeenDate);
+
+  if(int.parse(DateFormat('yyyy').format(userLastSeenDate)) < int.parse(DateFormat('yyyy').format(DateTime.now()))){
+    return 'last seen on ${DateFormat('dd/mm/yyyy')}';
+  }else if(diff.inDays > 1){
+    return 'last seen on ${DateFormat('dd MMMM').format(userLastSeenDate)}';
+  }else if(diff.inDays == 1){
+    return 'last seen on Yesterday';
+  } else if(diff.inHours >= 1 || diff.inMinutes >= 1 || diff.inSeconds >= 1){
+    return 'last seen at ${DateFormat('hh:mm a').format(userLastSeenDate)}';
+  } else {
+    return 'Online';
+  }
 }
 
 String getDisplayImage(RecentChatData recentChat) {

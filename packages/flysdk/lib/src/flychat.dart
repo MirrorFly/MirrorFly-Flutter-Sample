@@ -1609,7 +1609,7 @@ class FlyChat {
     try {
       recentResponse =
           await mirrorFlyMethodChannel.invokeMethod('getRecentChatList');
-      debugPrint("recent Result ==> $recentResponse");
+      // debugPrint("recent Result ==> $recentResponse");
       return recentResponse;
     } on PlatformException catch (e) {
       debugPrint("Platform Exception ===> $e");
@@ -1707,7 +1707,7 @@ class FlyChat {
         "status": status,
         "image": image
       });
-      debugPrint("recent Result ==> $profileResponse");
+      // debugPrint("recent Result ==> $profileResponse");
       return profileResponse;
     } on PlatformException catch (e) {
       debugPrint("Platform Exception ===> $e");
@@ -1743,7 +1743,7 @@ class FlyChat {
     try {
       profileResponse = await mirrorFlyMethodChannel.invokeMethod(
           'getProfileDetails', {"jid": jid, "server": fromServer});
-      debugPrint("getProfileDetails Result ==> $profileResponse");
+      // debugPrint("getProfileDetails Result ==> $profileResponse");
       return profileResponse;
     } on PlatformException catch (e) {
       debugPrint("Platform Exception ===> $e");
@@ -1874,7 +1874,7 @@ class FlyChat {
     try {
       chatResponse = await mirrorFlyMethodChannel
           .invokeMethod('getMessagesOfJid', {"JID": jid});
-      debugPrint("user Chat Result ==> $chatResponse");
+      // debugPrint("user Chat Result ==> $chatResponse");
       // List<ChatMessageModel> chatMessageModel = chatMessageModelFromJson(chatResponse);
       // return chatMessageModel;
       return chatResponse;
@@ -2147,7 +2147,7 @@ class FlyChat {
     try {
       response = await mirrorFlyMethodChannel
           .invokeMethod('getMessageOfId', {"mid": mid});
-      debugPrint("response ==> $response");
+      // debugPrint("response ==> $response");
       return response;
     } on PlatformException catch (e) {
       debugPrint("Platform Exception ===> $e");
