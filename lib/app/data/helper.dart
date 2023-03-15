@@ -850,10 +850,11 @@ void showQuickProfilePopup({required context, required Function() chatTap,
                 child: InkWell(
                   onTap: () {
                     mirrorFlyLog('image click', 'true');
+                    debugPrint("quick profile click--> ${profile.toJson().toString()}");
                     if (profile.value.image!.isNotEmpty && !(profile.value
                         .isBlockedMe.checkNull() || profile.value.isAdminBlocked
-                        .checkNull()) && !(!profile.value.isItSavedContact
-                        .checkNull() || profile.value.isDeletedContact())) {
+                        .checkNull()) && !(//!profile.value.isItSavedContact.checkNull() || //This is commented because Android side received as true and iOS side false
+                        profile.value.isDeletedContact())) {
                       Get.back();
                       Get.toNamed(Routes.imageView, arguments: {
                         'imageName': getName(profile.value),
