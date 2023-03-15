@@ -2658,14 +2658,15 @@ class ChatController extends FullLifeCycleController
   }
 
   void onUploadDownloadProgressChanged(
-      String messageId, int progressPercentage) {
+      String messageId, String progressPercentage) {
     if (messageId.isNotEmpty) {
       final index =
           chatList.indexWhere((message) => message.messageId == messageId);
-      // debugPrint("onUploadDownloadProgressChanged $index $messageId $progressPercentage");
+      // debugPrint("Media Status Onprogress changed---> onUploadDownloadProgressChanged $index $messageId $progressPercentage");
       if (!index.isNegative) {
         // chatMessageModel.isSelected=chatList[index].isSelected;
-        chatList[index].mediaChatMessage?.mediaProgressStatus = (progressPercentage);
+        // debugPrint("Media Status Onprogress changed---> flutter conversion ${int.parse(progressPercentage)}");
+        chatList[index].mediaChatMessage?.mediaProgressStatus = (int.parse(progressPercentage));
         chatList.refresh();
       }
     }

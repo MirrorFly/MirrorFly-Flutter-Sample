@@ -1105,7 +1105,26 @@ extension FlyBaseController : MessageEventsDelegate, ConnectionEventDelegate, Lo
     }
 
     func onMediaProgressChanged(message: FlyCommon.ChatMessage, progressPercentage: Float) {
-        print("Media Status Onprogress changed---> \(progressPercentage)")
+        
+        let progressPercentageString = String(format:"%.0f", progressPercentage)
+        
+        
+//        print("Media Status Onprogress changed---> string conversion\(progressPercentageString)")
+        
+        let jsonObject: NSMutableDictionary = NSMutableDictionary()
+        jsonObject.setValue(message.messageId, forKey: "message_id")
+        jsonObject.setValue(progressPercentageString, forKey: "progress_percentage")
+        let jsonString = Commons.json(from: jsonObject)
+        
+//        print("Media Status Onprogress changed---> \(progressPercentage)")
+//        print("Media Status Onprogress changed---> \(jsonString)")
+        
+        
+        if(uploadDownloadProgressChangedStreamHandler?.onUploadDownloadProgressChanged != nil){
+            uploadDownloadProgressChangedStreamHandler?.onUploadDownloadProgressChanged?(jsonString)
+        }else{
+            print("upload Download Progress Changed Stream Handler is Nil")
+        }
         
     }
 

@@ -33,8 +33,9 @@ abstract class BaseController {
     FlyChat.onMediaStatusUpdated.listen(onMediaStatusUpdated);
     FlyChat.onUploadDownloadProgressChanged.listen((event){
       var data = json.decode(event.toString());
+      // debugPrint("Media Status Onprogress changed---> flutter $data");
       var messageId = data["message_id"] ?? "";
-      var progressPercentage = data["progress_percentage"] ?? 0;
+      var progressPercentage = data["progress_percentage"] ?? "0";
       onUploadDownloadProgressChanged(messageId,progressPercentage);
     });
     FlyChat.onGroupProfileFetched.listen(onGroupProfileFetched);
@@ -198,7 +199,7 @@ abstract class BaseController {
 
   }
 
-  void onUploadDownloadProgressChanged(String messageId, int progressPercentage){
+  void onUploadDownloadProgressChanged(String messageId, String progressPercentage){
     if (Get.isRegistered<ChatController>()) {
       Get.find<ChatController>().onUploadDownloadProgressChanged(messageId,progressPercentage);
     }
