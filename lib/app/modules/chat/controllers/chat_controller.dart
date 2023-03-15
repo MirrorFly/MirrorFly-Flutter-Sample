@@ -1006,9 +1006,11 @@ class ChatController extends FullLifeCycleController
   clearChatHistory(bool isStarredExcluded) {
     FlyChat.clearChat(profile.jid!, "chat", isStarredExcluded).then((value) {
       if (value) {
-        chatList.removeWhere((p0) => p0.isMessageStarred == false);
+        // var chatListrev = chatList.reversed;
+
+        isStarredExcluded ? chatList.removeWhere((p0) => p0.isMessageStarred == false) : chatList.clear();
         cancelReplyMessage();
-        chatList.refresh();
+        // chatList.refresh();
       }
     });
   }
