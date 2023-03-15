@@ -1436,6 +1436,9 @@ class FlyChat {
   static Stream<dynamic> get onMediaStatusUpdated =>
       mediaStatusUpdatedChannel.receiveBroadcastStream().cast();
 
+  static Stream<dynamic> get onUploadDownloadProgressChanged =>
+      uploadDownloadProgressChangedChannel.receiveBroadcastStream().cast();
+
   static Stream<dynamic> get onGroupProfileFetched =>
       onGroupProfileFetchedChannel.receiveBroadcastStream().cast();
 

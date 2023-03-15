@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
+import 'package:flutter_libphonenumber/flutter_libphonenumber.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
@@ -1260,6 +1261,47 @@ class DashboardController extends FullLifeCycleController
 
   void userDeletedHisProfile(String jid) {
     userUpdatedHisProfile(jid);
+  }
+
+  Future<String> getJidFromPhoneNumber(String mobileNumber, String countryCode) async {
+    FlutterLibphonenumber().init();
+    var formatNumberSync = FlutterLibphonenumber().formatNumberSync(mobileNumber);
+    var parse = await FlutterLibphonenumber().parse(formatNumberSync);
+    var format = await FlutterLibphonenumber().format(mobileNumber, countryCode);
+    /*bool? isValid =
+      await PhoneNumberUtil.isValidPhoneNumber(phoneNumber: mobileNumber, isoCode: countryCode);
+  String? normalizedNumber = await PhoneNumberUtil.normalizePhoneNumber(
+      phoneNumber: mobileNumber, isoCode: countryCode);
+  RegionInfo regionInfo =
+      await PhoneNumberUtil.getRegionInfo(phoneNumber: mobileNumber, isoCode: countryCode);
+  String? carrierName =
+      await PhoneNumberUtil.getNameForNumber(phoneNumber: mobileNumber, isoCode: countryCode);*/
+    debugPrint('formatNumberSync : $formatNumberSync');
+    debugPrint('parse : $parse');//{country_code: 971, e164: +971503209773, national: 050 320 9773, type: mobile, international: +971 50 320 9773, national_number: 503209773, region_code: AE}
+    debugPrint('format : $format');//{formatted: +971 50 320 9773}
+    // parse.then((value) => debugPrint('parse : $value'));
+    // format.then((value) => debugPrint('format : $value'));
+
+    // debugPrint('normalizedNumber : $normalizedNumber');
+    // debugPrint('regionInfo.regionPrefix : ${regionInfo.regionPrefix}');
+    // debugPrint('regionInfo.isoCode : ${regionInfo.isoCode}');
+    // debugPrint('regionInfo.formattedPhoneNumber : ${regionInfo.formattedPhoneNumber}');
+    // debugPrint('carrierName : $carrierName');
+
+    /*phoneNumberUtil = PhoneNumberUtil.createInstance(context);
+  if (mobileNumber.startsWith("*")) {
+    LogMessage.d(TAG, "Invalid PhoneNumber:"+mobileNumber);
+    return null;
+  }
+  try {
+    Phonenumber.PhoneNumber phoneNumber = phoneNumberUtil.parse(mobileNumber.replaceAll("^0+", ""), countryCode);
+    String unformattedPhoneNumber = phoneNumberUtil.format(phoneNumber,
+        PhoneNumberUtil.PhoneNumberFormat.E164).replace("+", "");
+    return unformattedPhoneNumber + "@" + Constants.getDomain();
+  } catch (NumberParseException e) {
+  LogMessage.e(TAG, e);
+  }*/
+    return '';
   }
 }
 

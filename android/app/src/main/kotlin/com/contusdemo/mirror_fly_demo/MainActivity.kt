@@ -29,7 +29,7 @@ class MainActivity : FlutterActivity() {
         super.configureFlutterEngine(flutterEngine)
         //GeneratedPluginRegister.registerGeneratedPlugins(flutterEngine)
         FlyBaseController(this).init(flutterEngine,intent);
-
+        FlyBaseController(this).onResume()
         //startService(stickyService)
     }
 
@@ -40,7 +40,7 @@ class MainActivity : FlutterActivity() {
 
     override fun onResume() {
         super.onResume()
-        FlyBaseController(this).onResume()
+//        FlyBaseController(this).onResume()
     }
     override fun onDestroy() {
         super.onDestroy()
