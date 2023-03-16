@@ -8,7 +8,6 @@ import 'package:flysdk/flysdk.dart';
 import 'package:get/get.dart';
 
 import '../../../common/constants.dart';
-import '../../../data/apputils.dart';
 import '../../../data/helper.dart';
 import '../../chat/controllers/chat_controller.dart';
 
@@ -56,7 +55,7 @@ class MediaPreviewController extends FullLifeCycleController with FullLifeCycleM
 
   sendMedia() async {
     debugPrint("send media");
-    if (await AppUtils.isNetConnected()) {
+    // if (await AppUtils.isNetConnected()) {
       try {
         int i = 0;
         Platform.isIOS ? Helper.showLoading(message: "Compressing files") : null;
@@ -88,9 +87,9 @@ class MediaPreviewController extends FullLifeCycleController with FullLifeCycleM
         Get.back();
       }
       // Get.back();
-    } else {
+    /*} else {
       toToast(Constants.noInternetConnection);
-    }
+    }*/
     // debugPrint("caption text-> $captionMessage");
   }
 
