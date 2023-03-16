@@ -265,7 +265,8 @@ class ChatView extends GetView<ChatController> {
                     );
                   }),
                   if (!controller.isTrail) Obx(() {
-                    return !controller.profile.isItSavedContact.checkNull() ? Row(
+                    return !controller.profile.isItSavedContact.checkNull()
+                        ? Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         const SizedBox(width: 8,),
@@ -273,16 +274,18 @@ class ChatView extends GetView<ChatController> {
                           controller.saveContact();
                         }),
                         const SizedBox(width: 8,),
-                        buttonNotSavedContact(text: controller.profile.isBlocked.checkNull() ? 'UnBlock' :'Block', onClick: () {
-                          if(controller.profile.isBlocked.checkNull()){
+                        buttonNotSavedContact(text: controller.profile.isBlocked
+                            .checkNull() ? 'UnBlock' : 'Block', onClick: () {
+                          if (controller.profile.isBlocked.checkNull()) {
                             controller.unBlockUser();
-                          }else {
+                          } else {
                             controller.blockUser();
                           }
                         }),
                         const SizedBox(width: 8,),
                       ],
-                    ) :const SizedBox.shrink();
+                    )
+                        : const SizedBox.shrink();
                   }) else
                     const SizedBox.shrink()
                 ],
@@ -292,7 +295,8 @@ class ChatView extends GetView<ChatController> {
         ));
   }
 
-  Widget buttonNotSavedContact({required String text, required Function()? onClick}) =>
+  Widget buttonNotSavedContact(
+      {required String text, required Function()? onClick}) =>
       Expanded(
         child: InkWell(
           onTap: onClick,
@@ -318,7 +322,8 @@ class ChatView extends GetView<ChatController> {
             onTap: () {
               controller.showHideEmoji(context);
             },
-            child: controller.showEmoji.value ? const Icon(Icons.keyboard, color: iconColor,) : SvgPicture.asset(smileIcon))
+            child: controller.showEmoji.value ? const Icon(
+              Icons.keyboard, color: iconColor,) : SvgPicture.asset(smileIcon))
             : const SizedBox.shrink(),
         controller.isAudioRecording.value == Constants.audioRecordDelete
             ? const Padding(
@@ -681,15 +686,21 @@ class ChatView extends GetView<ChatController> {
                                       ? const SizedBox.shrink()
                                       : ReplyMessageHeader(
                                       chatMessage: chatList[index]),
-                                  MessageContent(
-                                      chatList: chatList,
-                                      index: index,
-                                      onPlayAudio: () {
-                                        controller
-                                            .playAudio(chatList[index]);
-                                      },
-                                      isSelected:
-                                      controller.isSelected.value)
+                                  Obx(() {
+                                    return MessageContent(
+                                        chatList: chatList,
+                                        index: index,
+                                        onPlayAudio: () {
+                                          controller
+                                              .playAudio(chatList[index]);
+                                        },
+                                        onSeekbarChange: (double value) {
+                                          controller.onSeekbarChange(
+                                              value, chatList[index]);
+                                        },
+                                        isSelected:
+                                        controller.isSelected.value);
+                                  })
                                 ],
                               ),
                             ),
