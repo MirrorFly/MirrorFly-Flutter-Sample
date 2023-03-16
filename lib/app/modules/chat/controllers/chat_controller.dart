@@ -1785,7 +1785,7 @@ class ChatController extends FullLifeCycleController
       if (File(filePath!).existsSync()) {
         recordedAudioPath = filePath;
       } else {
-        debugPrint("File Not Found For Image Upload");
+        debugPrint("File Not Found For Audio");
       }
       debugPrint(filePath);
     });

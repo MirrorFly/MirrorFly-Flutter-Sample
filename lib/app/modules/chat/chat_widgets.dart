@@ -649,6 +649,7 @@ class _AudioMessageViewState extends State<AudioMessageView> with WidgetsBinding
                   fit: BoxFit.contain,
                 ),
                 getImageOverlay(widget.chatMessage, onAudio: () {
+                  widget.onPlayAudio();
                   playAudio(widget.chatMessage);
                 }), //widget.onPlayAudio),
                 Expanded(

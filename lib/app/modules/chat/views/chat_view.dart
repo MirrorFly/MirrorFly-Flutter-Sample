@@ -691,8 +691,10 @@ class ChatView extends GetView<ChatController> {
                                         chatList: chatList,
                                         index: index,
                                         onPlayAudio: () {
-                                          controller
-                                              .playAudio(chatList[index]);
+                                          if (controller.isAudioRecording.value == Constants.audioRecording) {
+                                            controller.stopRecording();
+                                          }
+                                          controller.playAudio(chatList[index]);
                                         },
                                         onSeekbarChange: (double value) {
                                           controller.onSeekbarChange(
