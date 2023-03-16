@@ -100,12 +100,12 @@ class MessageInfoController extends GetxController {
       FlyChat.downloadMedia(messageId);
     }
   }
-  @override
+  /*@override
   void onClose(){
     super.onClose();
     // player.stop();
     // player.dispose();
-  }
+  }*/
 
   String currentPostLabel = "00:00";
   var maxDuration = 100.obs;

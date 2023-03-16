@@ -20,11 +20,11 @@ class StarredMessagesController extends GetxController {
   var isListLoading = true.obs;
   var calendar = DateTime.now();
 
-  @override
+ /* @override
   void onInit() {
     super.onInit();
     //getFavouriteMessages();
-    /*player.onPlayerCompletion.listen((event) {
+    player.onPlayerCompletion.listen((event) {
       playingChat!.mediaChatMessage!.isPlaying=false;
       playingChat!.mediaChatMessage!.currentPos=0;
       player.stop();
@@ -35,15 +35,15 @@ class StarredMessagesController extends GetxController {
     player.onAudioPositionChanged.listen((Duration p) {
       playingChat?.mediaChatMessage!.currentPos=(p.inMilliseconds);
       starredChatList.refresh();
-    });*/
-  }
+    });
+  }*/
 
-  @override
+  /*@override
   void onClose(){
     super.onClose();
     // player.stop();
     // player.dispose();
-  }
+  }*/
   getFavouriteMessages() {
     if(!isSelected.value) {
       isListLoading(true);
