@@ -65,7 +65,8 @@ class ReplyingMessageHeader extends StatelessWidget {
                           chatMessage.messageTextContent,
                           chatMessage.contactChatMessage?.contactName,
                           chatMessage.mediaChatMessage?.mediaFileName,
-                          chatMessage.mediaChatMessage),
+                          chatMessage.mediaChatMessage,
+                          true),
                     ),
                   ],
                 ),
@@ -73,7 +74,13 @@ class ReplyingMessageHeader extends StatelessWidget {
               Stack(
                 alignment: Alignment.topRight,
                 children: [
-                  getReplyImageHolder(context, chatMessage, null, 70, true),
+                  getReplyImageHolder(
+                      context,
+                      chatMessage,
+                      chatMessage.mediaChatMessage,
+                      70,
+                      true,
+                      chatMessage.locationChatMessage),
                   GestureDetector(
                     onTap: onCancel,
                     child: const Padding(
@@ -110,9 +117,10 @@ getReplyMessage(
     String? messageTextContent,
     String? contactName,
     String? mediaFileName,
-    MediaChatMessage? mediaChatMessage) {
+    MediaChatMessage? mediaChatMessage,
+    bool isReplying) {
   debugPrint(messageType);
-  debugPrint('mediaChatMessage : '+mediaChatMessage.toString());
+  debugPrint('mediaChatMessage : ' + mediaChatMessage.toString());
   switch (messageType) {
     case Constants.mText:
       return Row(
@@ -144,14 +152,18 @@ getReplyMessage(
     case Constants.mAudio:
       return Row(
         children: [
-          Helper.forMessageTypeIcon(
-              Constants.mAudio,
-              mediaChatMessage != null
-                  ? mediaChatMessage.isAudioRecorded
-                  : true),
-          const SizedBox(
-            width: 5,
-          ),
+          isReplying
+              ? Helper.forMessageTypeIcon(
+                  Constants.mAudio,
+                  mediaChatMessage != null
+                      ? mediaChatMessage.isAudioRecorded
+                      : true)
+              : const SizedBox.shrink(),
+          isReplying
+              ? const SizedBox(
+                  width: 5,
+                )
+              : const SizedBox.shrink(),
           Text(
             Helper.durationToString(Duration(
                 microseconds: mediaChatMessage != null
@@ -216,9 +228,10 @@ getReplyMessage(
 getReplyImageHolder(
     BuildContext context,
     ChatMessageModel chatMessageModel,
-    ReplyParentChatMessage? replyParentChatMessage,
+    MediaChatMessage? replyParentChatMessage,
     double size,
-    bool isNotChatItem) {
+    bool isNotChatItem,
+    LocationChatMessage? locationChatMessage) {
   var isReply = false;
   debugPrint(
       "reply header--> ${replyParentChatMessage?.messageType.toUpperCase()}");
@@ -231,10 +244,11 @@ getReplyImageHolder(
     case Constants.mImage:
       debugPrint("reply header--> IMAGE");
       return ClipRRect(
-        borderRadius: BorderRadius.circular(5),
+        borderRadius: const BorderRadius.only(
+            topRight: Radius.circular(5), bottomRight: Radius.circular(5)),
         child: imageFromBase64String(
             isReply
-                ? replyParentChatMessage!.mediaChatMessage!.mediaThumbImage
+                ? replyParentChatMessage!.mediaThumbImage
                 : chatMessageModel.mediaChatMessage!.mediaThumbImage
                     .checkNull(),
             context,
@@ -243,17 +257,16 @@ getReplyImageHolder(
       );
     case Constants.mLocation:
       return getLocationImage(
-          isReply
-              ? replyParentChatMessage!.locationChatMessage
-              : chatMessageModel.locationChatMessage,
+          isReply ? locationChatMessage : chatMessageModel.locationChatMessage,
           size,
           size);
     case Constants.mVideo:
       return ClipRRect(
-        borderRadius: BorderRadius.circular(5),
+        borderRadius: const BorderRadius.only(
+            topRight: Radius.circular(5), bottomRight: Radius.circular(5)),
         child: imageFromBase64String(
             isReply
-                ? replyParentChatMessage!.mediaChatMessage!.mediaThumbImage
+                ? replyParentChatMessage!.mediaThumbImage
                 : chatMessageModel.mediaChatMessage!.mediaThumbImage,
             context,
             size,
@@ -263,13 +276,37 @@ getReplyImageHolder(
       return isNotChatItem
           ? SizedBox(height: size)
           : ClipRRect(
-              borderRadius: BorderRadius.circular(5),
+              borderRadius: const BorderRadius.only(
+                  topRight: Radius.circular(5),
+                  bottomRight: Radius.circular(5)),
               child: getImageHolder(
                   isReply
-                      ? replyParentChatMessage!.mediaChatMessage!.mediaFileName
-                          .checkNull()
+                      ? replyParentChatMessage!.mediaFileName.checkNull()
                       : chatMessageModel.mediaChatMessage!.mediaFileName,
                   size),
+            );
+    case Constants.mAudio:
+      return isNotChatItem
+          ? SizedBox(height: size)
+          : ClipRRect(
+              borderRadius: const BorderRadius.only(
+                  topRight: Radius.circular(5),
+                  bottomRight: Radius.circular(5)),
+              child: Container(
+                height: size,
+                width: size,
+                color: audioBgColor,
+                child: Center(
+                  child: SvgPicture.asset(
+                    replyParentChatMessage!.isAudioRecorded.checkNull()
+                        ? mAudioRecordIcon
+                        : mAudioIcon,
+                    fit: BoxFit.contain,
+                    color: Colors.white,
+                    height: 18,
+                  ),
+                ),
+              ),
             );
     default:
       debugPrint("reply header--> DEFAULT");
@@ -313,12 +350,18 @@ class ReplyMessageHeader extends StatelessWidget {
                         ?.contactName,
                     chatMessage.replyParentChatMessage?.mediaChatMessage
                         ?.mediaFileName,
-                    chatMessage.mediaChatMessage),
+                    chatMessage.mediaChatMessage,
+                    false),
               ],
             ),
           ),
-          getReplyImageHolder(context, chatMessage,
-              chatMessage.replyParentChatMessage, 55, false),
+          getReplyImageHolder(
+              context,
+              chatMessage,
+              chatMessage.replyParentChatMessage!.mediaChatMessage,
+              55,
+              false,
+              chatMessage.replyParentChatMessage!.locationChatMessage),
         ],
       ),
     );
@@ -440,6 +483,7 @@ class LocationMessageView extends StatelessWidget {
       : super(key: key);
   final ChatMessageModel chatMessage;
   final bool isSelected;
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -514,13 +558,11 @@ class AudioMessageView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var screenWidth = MediaQuery.of(context).size.width;
-    var currentPos = double.parse(chatMessage
-        .mediaChatMessage!.currentPos
-        .toString());
-    var maxPos = double.parse(chatMessage
-        .mediaChatMessage!.mediaDuration
-        .toString());
-    if(!(currentPos >= 0.0 && currentPos <= maxPos)){
+    var currentPos =
+        double.parse(chatMessage.mediaChatMessage!.currentPos.toString());
+    var maxPos =
+        double.parse(chatMessage.mediaChatMessage!.mediaDuration.toString());
+    if (!(currentPos >= 0.0 && currentPos <= maxPos)) {
       currentPos = maxPos;
     }
     debugPrint(
@@ -588,7 +630,8 @@ class AudioMessageView extends StatelessWidget {
                               enabledThumbRadius: 5),
                         ),
                         child: Slider(
-                          value: currentPos,/*double.parse(chatMessage
+                          value: currentPos,
+                          /*double.parse(chatMessage
                               .mediaChatMessage!.currentPos
                               .toString()),*/
                           min: 0.0,
@@ -607,13 +650,14 @@ class AudioMessageView extends StatelessWidget {
                         padding: const EdgeInsets.only(left: 5.0),
                         child: Text(
                           Helper.durationToString(Duration(
-                              microseconds:
-                              currentPos != 0.0// chatMessage.mediaChatMessage?.currentPos != 0
-                                      ? currentPos.toInt() /*chatMessage
+                              microseconds: currentPos !=
+                                      0.0 // chatMessage.mediaChatMessage?.currentPos != 0
+                                  ? currentPos
+                                      .toInt() /*chatMessage
                                               .mediaChatMessage?.currentPos ??
                                           0*/
-                                      : chatMessage
-                                          .mediaChatMessage!.mediaDuration)),
+                                  : chatMessage
+                                      .mediaChatMessage!.mediaDuration)),
                           style: const TextStyle(
                               color: durationTextColor,
                               fontSize: 8,
@@ -678,6 +722,7 @@ class ContactMessageView extends StatelessWidget {
   final ChatMessageModel chatMessage;
   final String search;
   final bool isSelected;
+
   @override
   Widget build(BuildContext context) {
     var screenWidth = MediaQuery.of(context).size.width;
@@ -1071,6 +1116,7 @@ class VideoMessageView extends StatelessWidget {
   final ChatMessageModel chatMessage;
   final String search;
   final bool isSelected;
+
   onVideoClick() {
     switch (chatMessage.isMessageSentByMe
         ? chatMessage.mediaChatMessage?.mediaUploadStatus
@@ -1199,6 +1245,7 @@ class ImageMessageView extends StatelessWidget {
   final ChatMessageModel chatMessage;
   final String search;
   final bool isSelected;
+
   @override
   Widget build(BuildContext context) {
     var mediaMessage = chatMessage.mediaChatMessage!;
@@ -1394,6 +1441,7 @@ class MessageContent extends StatelessWidget {
   final Function() onPlayAudio;
   final String search;
   final bool isSelected;
+
   @override
   Widget build(BuildContext context) {
     var chatMessage = chatList[index];
@@ -1677,7 +1725,8 @@ Widget getImageOverlay(ChatMessageModel chatMessage,
             onTap: () {
               cancelMediaUploadOrDownload(chatMessage.messageId);
             },
-            child: downloadingOrUploadingView(chatMessage.messageType,chatMessage.mediaChatMessage!.mediaProgressStatus));
+            child: downloadingOrUploadingView(chatMessage.messageType,
+                chatMessage.mediaChatMessage!.mediaProgressStatus));
       default:
         return const SizedBox.shrink();
     }
@@ -1800,7 +1849,7 @@ Widget downloadView(
   );
 }
 
-downloadingOrUploadingView(String messageType,int progress) {
+downloadingOrUploadingView(String messageType, int progress) {
   // debugPrint('downloadingOrUploadingView progress $progress');
   if (messageType == "AUDIO" || messageType == "DOCUMENT") {
     return Padding(
@@ -1815,8 +1864,7 @@ downloadingOrUploadingView(String messageType,int progress) {
             borderRadius: const BorderRadius.all(Radius.circular(3)),
             // color: Colors.black45,
           ),
-          child: Stack(
-              alignment: Alignment.center,
+          child: Stack(alignment: Alignment.center,
               // mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 SvgPicture.asset(
@@ -1832,7 +1880,7 @@ downloadingOrUploadingView(String messageType,int progress) {
                       valueColor: const AlwaysStoppedAnimation<Color>(
                         playIconColor,
                       ),
-                      value: (progress/100),
+                      value: (progress / 100),
                       backgroundColor: Colors.transparent,
                       // minHeight: 1,
                     ),
@@ -1848,8 +1896,7 @@ downloadingOrUploadingView(String messageType,int progress) {
           borderRadius: BorderRadius.all(Radius.circular(4)),
           color: Colors.black45,
         ),
-        child: Stack(
-            alignment: Alignment.center,
+        child: Stack(alignment: Alignment.center,
             // mainAxisAlignment: MainAxisAlignment.center,
             children: [
               SvgPicture.asset(
@@ -1864,7 +1911,7 @@ downloadingOrUploadingView(String messageType,int progress) {
                     valueColor: const AlwaysStoppedAnimation<Color>(
                       Colors.white,
                     ),
-                    value:(progress/100),
+                    value: (progress / 100),
                     backgroundColor: Colors.transparent,
                     // minHeight: 1,
                   ),
@@ -2049,7 +2096,9 @@ Widget chatSpannedText(String text, String spannableText, TextStyle? style,
 
 class AudioMessagePlayerController extends GetxController {
   final _obj = ''.obs;
+
   set obj(value) => _obj.value = value;
+
   get obj => _obj.value;
   var maxDuration = 100.obs;
   var currentPos = 0.obs;
@@ -2075,6 +2124,7 @@ class AudioMessagePlayerController extends GetxController {
   }
 
   ChatMessageModel? playingChat;
+
   playAudio(ChatMessageModel chatMessage, String filePath) async {
     if (playingChat != null) {
       if (playingChat?.mediaChatMessage!.messageId != chatMessage.messageId) {
