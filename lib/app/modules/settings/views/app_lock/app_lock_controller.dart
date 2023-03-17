@@ -3,27 +3,28 @@ import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
 import 'package:mirror_fly_demo/app/data/session_management.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
+import 'package:mirror_fly_demo/main.dart';
 
 import '../../../../routes/app_pages.dart';
 
 class AppLockController extends GetxController {
-  final _pinenabled = false.obs;
+  final _pinEnabled = false.obs;
 
-  set pinenabled(value) => _pinenabled.value = value;
+  set pinEnabled(value) => _pinEnabled.value = value;
 
-  get pinenabled => _pinenabled.value;
+  get pinEnabled => _pinEnabled.value;
 
-  final _bioenabled = false.obs;
+  final _bioEnabled = false.obs;
 
-  set bioenabled(value) => _bioenabled.value = value;
+  set bioEnabled(value) => _bioEnabled.value = value;
 
-  get bioenabled => _bioenabled.value;
+  get bioEnabled => _bioEnabled.value;
 
   @override
   void onInit() {
     super.onInit();
-    _pinenabled(SessionManagement.getEnablePin());
-    _bioenabled(SessionManagement.getEnableBio());
+    _pinEnabled(SessionManagement.getEnablePin());
+    _bioEnabled(SessionManagement.getEnableBio());
   }
 
   final modifyPin = false.obs;
@@ -48,10 +49,10 @@ class AppLockController extends GetxController {
       if (SessionManagement.getEnableBio()) {
         //to confirm pin to off bio
         SessionManagement.setEnableBio(false);
-        _bioenabled(false);
+        _bioEnabled(false);
       } else {
         SessionManagement.setEnableBio(true);
-        _bioenabled(true);
+        _bioEnabled(true);
       }
     } else {
       //enable pin to enable bio alert popup
@@ -96,8 +97,8 @@ class AppLockController extends GetxController {
         SessionManagement.setPIN(newPin.text);
         SessionManagement.setEnablePIN(true);
         SessionManagement.setEnableBio(fromBio);
-        _pinenabled(true);
-        _bioenabled(fromBio);
+        _pinEnabled(true);
+        _bioEnabled(fromBio);
         modifyPin(false);
         Get.back();
       } else {
@@ -114,8 +115,8 @@ class AppLockController extends GetxController {
       SessionManagement.setPIN("");
       SessionManagement.setEnablePIN(false);
       SessionManagement.setEnableBio(false);
-      _pinenabled(false);
-      _bioenabled(false);
+      _pinEnabled(false);
+      _bioEnabled(false);
       Get.back();
     }
   }
@@ -149,11 +150,11 @@ class AppLockController extends GetxController {
       } else if (!pin4) {
         _pin4(true);
         text.add(num);
-        validateAndUnlock();
       }
     } else {
       removeClick();
     }
+    validateAndUnlock();
     mirrorFlyLog("add text", text.join().toString());
   }
 
@@ -180,11 +181,15 @@ class AppLockController extends GetxController {
         if (offPin) {
           offPin = false;
           disablePIN();
-        } else if(modifyPin.value){
+        } else if (modifyPin.value) {
           Get.offNamed(Routes.setPin);
-        }
-        else {
-          Get.offAllNamed(getIntialRoute());
+        } else {
+          debugPrint('route ${Get.previousRoute}');
+          if (Get.previousRoute.isEmpty) {
+            Get.offAllNamed(getInitialRoute());
+          } else {
+            Get.back(result: true);
+          }
         }
       } else {
         toToast("Invalid PIN! Try again");
@@ -192,16 +197,29 @@ class AppLockController extends GetxController {
     }
   }
 
-  String getIntialRoute() {
-    if (SessionManagement.getLogin()) {
-      if (SessionManagement.getName().checkNull().isNotEmpty &&
-          SessionManagement.getMobileNumber().checkNull().isNotEmpty) {
-        return AppPages.dashboard;
-      } else {
-        return AppPages.profile;
-      }
-    } else {
-      return AppPages.initial;
-    }
+  void forgetPin() {
+    Get.dialog(AlertDialog(
+      titlePadding: const EdgeInsets.only(top: 20,right: 20,left: 20),
+      contentPadding: EdgeInsets.zero,
+      title: const Text(
+        Constants.forgetPinOTPText,
+        style: TextStyle(fontWeight: FontWeight.normal, fontSize: 16),
+      ),
+      insetPadding: const EdgeInsets.symmetric(horizontal: 20),
+      actions: [
+        TextButton(
+            onPressed: () {},
+            child: const Text(
+              'CANCEL',
+              style: TextStyle(color: buttonBgColor),
+            )),
+        TextButton(
+            onPressed: () {},
+            child: const Text(
+              'GENERATE OTP',
+              style: TextStyle(color: buttonBgColor),
+            )),
+      ],
+    ));
   }
 }

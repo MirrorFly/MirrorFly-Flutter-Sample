@@ -110,6 +110,9 @@ class SessionManagement {
   static void setGoogleTranslationLanguageCode(String languagecode) async {
     await _preferences.setString("LanguageCode", languagecode);
   }
+  static void setAppSessionNow() async {
+    await _preferences.setInt(Constants.appSession, DateTime.now().millisecondsSinceEpoch);
+  }
   static Future clear()async{
     await _preferences.clear();
   }
@@ -167,4 +170,5 @@ class SessionManagement {
   static bool isInitialContactSyncDone() => _preferences.getBool("is_initial_contact_sync_done") ?? false;
   static bool isContactSyncDone() => _preferences.getBool("is_contact_sync_done") ?? false;
   static bool isTrailLicence() => _preferences.getBool("IS_TRIAL_LICENSE") ?? false;
+  static int appLastSession() => _preferences.getInt(Constants.appSession) ?? DateTime.now().millisecondsSinceEpoch;
 }

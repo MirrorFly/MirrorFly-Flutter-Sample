@@ -17,43 +17,45 @@ class SetPinView extends GetView<AppLockController> {
         title: Text(controller.modifyPin.value ? 'Change PIN' : 'PIN Lock'),
         automaticallyImplyLeading: true,
       ),
-      body: Column(
-        children: [
-          Visibility(visible:controller.modifyPin.value,child: passwordField(title: 'Enter old PIN',controller: controller.oldPin,secure: true,eyeTap: (){})),
-          Visibility(
-            visible: controller.modifyPin.value,
-            child: const SizedBox(
-              height: 10,
-            ),
-          ),
-          passwordField(title: 'Enter new PIN',controller:controller.newPin,secure: true,eyeTap: (){}),
-          const SizedBox(
-            height: 10,
-          ),
-          passwordField(title: 'Confirm new PIN',controller: controller.confirmPin,secure: true,eyeTap: (){}),
-          const SizedBox(
-            height: 40,
-          ),
-          Center(
-            child: ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                  backgroundColor: buttonBgColor,
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: 40, vertical: 10),
-                  textStyle: const TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w500),
-                  shape: const StadiumBorder()),
-              onPressed: () {
-                controller.savePin();
-              },
-              child: const Text(
-                'Save',
-                style: TextStyle(fontWeight: FontWeight.w600),
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            Visibility(visible:controller.modifyPin.value,child: passwordField(title: 'Enter old PIN',controller: controller.oldPin,secure: true,eyeTap: (){})),
+            Visibility(
+              visible: controller.modifyPin.value,
+              child: const SizedBox(
+                height: 10,
               ),
             ),
-          ),
-        ],
+            passwordField(title: 'Enter new PIN',controller:controller.newPin,secure: true,eyeTap: (){}),
+            const SizedBox(
+              height: 10,
+            ),
+            passwordField(title: 'Confirm new PIN',controller: controller.confirmPin,secure: true,eyeTap: (){}),
+            const SizedBox(
+              height: 40,
+            ),
+            Center(
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                    backgroundColor: buttonBgColor,
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 40, vertical: 10),
+                    textStyle: const TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500),
+                    shape: const StadiumBorder()),
+                onPressed: () {
+                  controller.savePin();
+                },
+                child: const Text(
+                  'Save',
+                  style: TextStyle(fontWeight: FontWeight.w600),
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

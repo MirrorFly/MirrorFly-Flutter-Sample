@@ -41,6 +41,7 @@ class MainController extends FullLifeCycleController with BaseController, FullLi
   @override
   Future<void> onInit() async {
     super.onInit();
+    //presentPinPage();
     PushNotifications.init();
     initListeners();
     getMediaEndpoint();
@@ -268,22 +269,24 @@ class MainController extends FullLifeCycleController with BaseController, FullLi
 
   @override
   void onDetached() {
-
+    mirrorFlyLog('mainController', 'onDetached');
   }
 
   @override
   void onInactive() {
-
+    mirrorFlyLog('mainController', 'onInactive');
   }
 
   @override
   void onPaused() {
-
+    mirrorFlyLog('mainController', 'onPaused');
+    SessionManagement.setAppSessionNow();
   }
 
   @override
   void onResumed() {
     mirrorFlyLog('mainController', 'onResumed');
+    checkShouldShowPin();
     if(!SessionManagement.isTrailLicence()) {
       syncContacts();
     }
@@ -318,5 +321,27 @@ class MainController extends FullLifeCycleController with BaseController, FullLi
     }
   }
 
-
+  /*
+  *This function used to check time out session for app lock
+  */
+  void checkShouldShowPin(){
+    var lastSession = SessionManagement.appLastSession();
+    var difference = DateTime.now().difference(DateTime.fromMillisecondsSinceEpoch(lastSession));
+    debugPrint('difference days ${difference.inDays}');
+    debugPrint('difference seconds ${difference.inSeconds}');
+    if(Constants.sessionLogoutTime>difference.inDays) {
+      //if 30 days not completed
+      if (Constants.sessionLockTime <= difference.inSeconds) {
+        //Show Pin if App Lock Enabled
+        presentPinPage();
+      }
+    }else if(Constants.sessionLogoutTime==difference.inDays){
+      //31'st day
+    }
+  }
+  void presentPinPage(){
+    if(SessionManagement.getEnablePin() || SessionManagement.getEnableBio() && Get.currentRoute!=Routes.pin){
+      Get.toNamed(Routes.pin,);
+    }
+  }
 }

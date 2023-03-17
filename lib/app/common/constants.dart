@@ -220,6 +220,10 @@ const String contactSyncBg = "assets/logos/contact_sync_bg.png";
 const String contactBookFill = "assets/logos/contacts_book_fill.svg";
 const String emailContactIcon = "assets/logos/emailcontact_icon.svg";
 
+// const String icBioBackground = "assets/logos/ic_bio_background.svg";
+const String icBioBackground = "assets/logos/ic_bio_background.png";
+const String icDeleteIcon = "assets/logos/ic_delete_icon.svg";
+
 
 //About us
 const String titleContactMsg =
@@ -631,6 +635,11 @@ class Constants {
   static const audio = "Audio";
   static const video = "Videos";
   static const document = "Documents";
+
+  static const appSession = 'app_session';
+  static const sessionLockTime = 32;//in Seconds
+  static const sessionLogoutTime = 31;//in Days
+  static const forgetPinOTPText ='Generate OTP to your registered mobile number';
 }
 
 Future<void> launchWeb(String url) async {
