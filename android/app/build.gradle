@@ -117,7 +117,7 @@ android {
         }
         qa {
             //Normal
-            /*dimension "version"
+            dimension "version"
             applicationId "com.mirrorfly.uikit_flutter.qa"
             buildConfigField 'Boolean', 'IS_QA_BUILD', 'true'
             buildConfigField 'String', 'SDK_BASE_URL', '"https://api-uikit-qa.contus.us/api/v1/"'
@@ -125,9 +125,9 @@ android {
             buildConfigField 'String', 'WEB_CHAT_LOGIN', '"https://webchat-preprod-sandbox.mirrorfly.com/"'
             buildConfigField 'Boolean', 'IS_TRIAL_LICENSE', 'true'
             buildConfigField "String", "SUPPORT_MAIL", '"contussupport@gmail.com"'
-            resValue("string", "app_name", "MF-Flutter-QA")*/
+            resValue("string", "app_name", "MF-Flutter-QA")
             //contactSync
-            dimension "version"
+            /*dimension "version"
             applicationId "com.mirrorfly.uikit_flutter.qa"
             buildConfigField "String", "SIGNAL_SERVER", '"https://signal-qa19.mirrorfly.com/"'
             buildConfigField "String", "JANUS_WEB_SOCKET_SERVER", '"wss://janus.mirrorfly.com"'
@@ -136,7 +136,7 @@ android {
             buildConfigField 'String', 'LICENSE', '"HNNQTJnERZF80L0lxmqC0EINq5su7X"'
             buildConfigField 'Boolean', 'IS_TRIAL_LICENSE', 'false'
             buildConfigField "String", "SUPPORT_MAIL", '"contussupport@gmail.com"'
-            resValue("string", "app_name", "MF-Flutter-QA(Sync)")
+            resValue("string", "app_name", "MF-Flutter-QA(Sync)")*/
         }
         contactSync {
             dimension "version"

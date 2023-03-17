@@ -127,7 +127,6 @@ class ImagePreviewView extends GetView<ImagePreviewController> {
                                 controller: controller.caption,
                                 style: const TextStyle(
                                   color: Colors.white,
-                                  fontSize: 17,
                                 ),
                                 maxLines: 6,
                                 minLines: 1,
@@ -136,7 +135,6 @@ class ImagePreviewView extends GetView<ImagePreviewController> {
                                   hintText: "Add Caption....",
                                   hintStyle: TextStyle(
                                     color: Colors.white,
-                                    fontSize: 17,
                                   ),),
                               ),
                             ),

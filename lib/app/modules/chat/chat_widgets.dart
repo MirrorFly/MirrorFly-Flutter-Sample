@@ -1676,7 +1676,7 @@ Widget getImageOverlay(ChatMessageModel chatMessage,
             onTap: () {
               cancelMediaUploadOrDownload(chatMessage.messageId);
             },
-            child: downloadingView(chatMessage.messageType));
+            child: downloadingOrUploadingView(chatMessage.messageType,chatMessage.mediaChatMessage!.mediaProgressStatus));
       default:
         return const SizedBox.shrink();
     }
@@ -1799,7 +1799,8 @@ Widget downloadView(
   );
 }
 
-downloadingView(String messageType) {
+downloadingOrUploadingView(String messageType,int progress) {
+  // debugPrint('downloadingOrUploadingView progress $progress');
   if (messageType == "AUDIO" || messageType == "DOCUMENT") {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 8.0),
@@ -1822,14 +1823,15 @@ downloadingView(String messageType) {
                   fit: BoxFit.contain,
                   color: playIconColor,
                 ),
-                const Align(
+                Align(
                   alignment: Alignment.bottomCenter,
                   child: SizedBox(
                     height: 2,
                     child: LinearProgressIndicator(
-                      valueColor: AlwaysStoppedAnimation<Color>(
+                      valueColor: const AlwaysStoppedAnimation<Color>(
                         playIconColor,
                       ),
+                      value: (progress/100),
                       backgroundColor: Colors.transparent,
                       // minHeight: 1,
                     ),
@@ -1853,14 +1855,15 @@ downloadingView(String messageType) {
                 downloading,
                 fit: BoxFit.contain,
               ),
-              const Align(
+              Align(
                 alignment: Alignment.bottomCenter,
                 child: SizedBox(
                   height: 2,
                   child: LinearProgressIndicator(
-                    valueColor: AlwaysStoppedAnimation<Color>(
+                    valueColor: const AlwaysStoppedAnimation<Color>(
                       Colors.white,
                     ),
+                    value:(progress/100),
                     backgroundColor: Colors.transparent,
                     // minHeight: 1,
                   ),

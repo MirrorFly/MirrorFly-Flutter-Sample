@@ -22,9 +22,8 @@ class MediaPreviewController extends FullLifeCycleController with FullLifeCycleM
   var filePath = [].obs;
 
   var captionMessage = <String>[].obs;
-
+  var textMessage = Get.arguments['caption'];
   var currentPageIndex = 0.obs;
-
   var isFocused = false.obs;
   var showEmoji = false.obs;
 
@@ -37,11 +36,19 @@ class MediaPreviewController extends FullLifeCycleController with FullLifeCycleM
     SchedulerBinding.instance
         .addPostFrameCallback((_) {
           filePath(Get.arguments['filePath']);
+          var index = 0;
           for(var _ in filePath){
-            captionMessage.add("");
+            if(index == 0 && textMessage != null){
+              captionMessage.add(textMessage);
+              index = index + 1;
+            }else {
+              captionMessage.add("");
+            }
           }
     });
-
+    if(textMessage != null){
+      caption.text = textMessage;
+    }
   }
   onChanged() {
     // count(139 - addStatusController.text.length);

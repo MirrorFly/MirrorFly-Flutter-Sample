@@ -72,7 +72,8 @@ class GalleryPickerView extends GetView<GalleryPickerController> {
                                   Get.toNamed(Routes.mediaPreview, arguments: {
                                     "filePath": controller.pickedFile,
                                     "userName": controller.userName,
-                                    'profile': controller.profile
+                                    'profile': controller.profile,
+                                    'caption': controller.textMessage
                                   })?.then((value) {
                                     value != null ? Get.back() : null;
 

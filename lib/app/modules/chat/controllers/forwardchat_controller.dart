@@ -366,7 +366,7 @@ class ForwardChatController extends GetxController {
         }
       } else {
         //show busy status popup
-        //var messageObject = MessageObject(toJid: profile.jid.toString(),replyMessageId: (isReplying.value) ? replyChatMessage.messageId : "", messageType: Constants.mText,textMessage: messageController.text);
+        // var messageObject = MessageObject(toJid: profile.jid.toString(),replyMessageId: (isReplying.value) ? replyChatMessage.messageId : "", messageType: Constants.mText,textMessage: messageController.text);
         //showBusyStatusAlert(disableBusyChatAndSend());
       }
     } else {

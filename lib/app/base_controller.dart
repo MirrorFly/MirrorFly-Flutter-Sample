@@ -31,6 +31,13 @@ abstract class BaseController {
     FlyChat.onMessageReceived.listen(onMessageReceived);
     FlyChat.onMessageStatusUpdated.listen(onMessageStatusUpdated);
     FlyChat.onMediaStatusUpdated.listen(onMediaStatusUpdated);
+    FlyChat.onUploadDownloadProgressChanged.listen((event){
+      var data = json.decode(event.toString());
+      // debugPrint("Media Status Onprogress changed---> flutter $data");
+      var messageId = data["message_id"] ?? "";
+      var progressPercentage = data["progress_percentage"] ?? "0";
+      onUploadDownloadProgressChanged(messageId,progressPercentage);
+    });
     FlyChat.onGroupProfileFetched.listen(onGroupProfileFetched);
     FlyChat.onNewGroupCreated.listen(onNewGroupCreated);
     FlyChat.onGroupProfileUpdated.listen(onGroupProfileUpdated);
@@ -190,6 +197,15 @@ abstract class BaseController {
       Get.find<StarredMessagesController>().onMediaStatusUpdated(chatMessageModel);
     }
 
+  }
+
+  void onUploadDownloadProgressChanged(String messageId, String progressPercentage){
+    if (Get.isRegistered<ChatController>()) {
+      Get.find<ChatController>().onUploadDownloadProgressChanged(messageId,progressPercentage);
+    }
+    /*if (Get.isRegistered<StarredMessagesController>()) {
+      Get.find<StarredMessagesController>().onUploadDownloadProgressChanged(messageId,progressPercentage);
+    }*/
   }
 
   void onGroupProfileFetched(groupJid) {}
