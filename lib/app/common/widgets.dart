@@ -174,14 +174,14 @@ class ImageNetwork extends GetView<MainController> {
         },
         errorWidget: (context, link, error) {
           if(url.isNotEmpty) {
-            mirrorFlyLog("image error", "$error link : $link token : ${controller.authToken.value}");
+            // mirrorFlyLog("image error", "$error link : $link token : ${controller.authToken.value}");
             if (error.toString().contains("401") && url.isNotEmpty) {
               // controller.getAuthToken();
               _deleteImageFromCache(url);
             }
           }
-          debugPrint("image blocked--> $blocked");
-          debugPrint("image unknown--> $unknown");
+          // debugPrint("image blocked--> $blocked");
+          // debugPrint("image unknown--> $unknown");
 
           if(!(blocked || (unknown && !SessionManagement.isTrailLicence()))){
             if(errorWidget !=null){

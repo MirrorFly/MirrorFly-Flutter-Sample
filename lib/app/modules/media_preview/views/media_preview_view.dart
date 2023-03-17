@@ -24,7 +24,7 @@ class MediaPreviewView extends GetView<MediaPreviewController> {
           automaticallyImplyLeading: false,
           leadingWidth: 80,
           leading: InkWell(
-            onTap: (){
+            onTap: () {
               Get.back();
             },
             child: Row(
@@ -33,7 +33,10 @@ class MediaPreviewView extends GetView<MediaPreviewController> {
                 const SizedBox(
                   width: 10,
                 ),
-                const Icon(Icons.arrow_back ,color: Colors.white,),
+                const Icon(
+                  Icons.arrow_back,
+                  color: Colors.white,
+                ),
                 const SizedBox(
                   width: 10,
                 ),
@@ -44,24 +47,26 @@ class MediaPreviewView extends GetView<MediaPreviewController> {
                   clipOval: true,
                   errorWidget: controller.profile.isGroupProfile ?? false
                       ? ClipOval(
-                    child: Image.asset(
-                      groupImg,
-                      height: 35,
-                      width: 35,
-                      fit: BoxFit.cover,
-                    ),
-                  )
+                          child: Image.asset(
+                            groupImg,
+                            height: 35,
+                            width: 35,
+                            fit: BoxFit.cover,
+                          ),
+                        )
                       : ProfileTextImage(
-                    text: controller.profile.name.checkNull().isEmpty
-                        ? controller.profile.nickName.checkNull().isEmpty
-                        ? controller.profile.mobileNumber.checkNull()
-                        : controller.profile.nickName.checkNull()
-                        : controller.profile.name.checkNull(),
-                    radius: 18,
-                  ),
+                          text: controller.profile.name.checkNull().isEmpty
+                              ? controller.profile.nickName.checkNull().isEmpty
+                                  ? controller.profile.mobileNumber.checkNull()
+                                  : controller.profile.nickName.checkNull()
+                              : controller.profile.name.checkNull(),
+                          radius: 18,
+                        ),
                   isGroup: controller.profile.isGroupProfile.checkNull(),
-                  blocked: controller.profile.isBlockedMe.checkNull() || controller.profile.isAdminBlocked.checkNull(),
-                  unknown: (!controller.profile.isItSavedContact.checkNull() || controller.profile.isDeletedContact()),
+                  blocked: controller.profile.isBlockedMe.checkNull() ||
+                      controller.profile.isAdminBlocked.checkNull(),
+                  unknown: (!controller.profile.isItSavedContact.checkNull() ||
+                      controller.profile.isDeletedContact()),
                 ),
               ],
             ),
@@ -198,7 +203,8 @@ class MediaPreviewView extends GetView<MediaPreviewController> {
                               Row(
                                 children: [
                                   Obx(() {
-                                    return controller.isFocused.value || controller.showEmoji.value
+                                    return controller.isFocused.value ||
+                                            controller.showEmoji.value
                                         ? InkWell(
                                             onTap: () {
                                               if (!controller.showEmoji.value) {
@@ -389,8 +395,7 @@ class MediaPreviewView extends GetView<MediaPreviewController> {
       if (controller.showEmoji.value) {
         return EmojiLayout(
             textController: controller.caption,
-            onEmojiSelected : (cat, emoji)=>controller.onChanged()
-        );
+            onEmojiSelected: (cat, emoji) => controller.onChanged());
       } else {
         return const SizedBox.shrink();
       }

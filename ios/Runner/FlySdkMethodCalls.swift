@@ -366,7 +366,7 @@ import FlyDatabase
                 print("userlist json after replacing---> \(userlistJson)")
                 result(userlistJson)
             }else{
-                //                result(FlutterError(code: "500", message: flyError?.description, details: nil))
+                result(FlutterError(code: "500", message: flyError?.description, details: nil))
             }
         }
         
@@ -761,16 +761,23 @@ import FlyDatabase
     }
     
     static func getUnsentMessageOfAJid(call: FlutterMethodCall, result: @escaping FlutterResult){
+        let args = call.arguments as! Dictionary<String, Any>
+        let userjid = args["jid"] as? String ?? ""
         
-        result("")
+        let savedMessage = FlyMessenger.getUnsentMessageOf(id: userjid)
+        result(savedMessage)
         
     }
     
     static func saveUnsentMessage(call: FlutterMethodCall, result: @escaping FlutterResult){
-        
-        result("")
-        
+        let args = call.arguments as! Dictionary<String, Any>
+        let userjid = args["jid"] as? String ?? ""
+        let texMessage = args["texMessage"] as? String ?? ""
+        print("saveUnsentMessage-->")
+        print("saveUnsentMessage-->\(texMessage)")
+        FlyMessenger.saveUnsentMessage(id: userjid, message: texMessage)
     }
+    
     static func getRingtoneName(call: FlutterMethodCall, result: @escaping FlutterResult){
         
         result("[]")

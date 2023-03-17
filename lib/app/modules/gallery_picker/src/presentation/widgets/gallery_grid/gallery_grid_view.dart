@@ -108,37 +108,46 @@ class GalleryGridViewState extends State<GalleryGridView> {
               animation: widget.provider.assetCountNotifier,
               builder: (_, __) => Container(
                 color: widget.gridViewBackgroundColor,
-                child: widget.provider.assetCount > 0 ? GridView.builder(
-                  key: ValueKey(widget.path),
-                  shrinkWrap: true,
-                  padding: widget.padding ?? const EdgeInsets.all(0),
-                  physics: widget.gridViewPhysics ?? const ScrollPhysics(),
-                  controller: widget.gridViewController ?? ScrollController(),
-                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    childAspectRatio: widget.childAspectRatio,
-                    crossAxisCount: widget.crossAxisCount,
-                    mainAxisSpacing: 2.5,
-                    crossAxisSpacing: 2.5,
-                  ),
+                child: widget.provider.assetCount > 0
+                    ? GridView.builder(
+                        key: ValueKey(widget.path),
+                        shrinkWrap: true,
+                        padding: widget.padding ?? const EdgeInsets.all(0),
+                        physics:
+                            widget.gridViewPhysics ?? const ScrollPhysics(),
+                        controller:
+                            widget.gridViewController ?? ScrollController(),
+                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                          childAspectRatio: widget.childAspectRatio,
+                          crossAxisCount: widget.crossAxisCount,
+                          mainAxisSpacing: 2.5,
+                          crossAxisSpacing: 2.5,
+                        ),
 
-                  /// render thumbnail
-                  itemBuilder: (context, index) =>
-                      _buildItem(context, index, widget.provider),
-                  itemCount: widget.provider.assetCount,
-                  addRepaintBoundaries: true,
-                ) : const Center(
-                  child: Text("No Item Found", style: TextStyle(color: Colors.white),),
-                ),
+                        /// render thumbnail
+                        itemBuilder: (context, index) =>
+                            _buildItem(context, index, widget.provider),
+                        itemCount: widget.provider.assetCount,
+                        addRepaintBoundaries: true,
+                      )
+                    : const Center(
+                        child: CircularProgressIndicator(),
+                      ),
               ),
             ),
           )
-        : Container();
+        : const Center(
+            child: Text(
+              "No Item Found",
+              style: TextStyle(color: Colors.white),
+            ),
+          );
   }
 
   Widget _buildItem(
       BuildContext context, index, GalleryMediaPickerController provider) {
-    // debugPrint("index --> $index");
-    // debugPrint("provider--> ${provider.assetCount}");
+    debugPrint("asset build index --> $index");
+    debugPrint("asset build provider--> ${provider.assetCount}");
     return GestureDetector(
       /// on tap thumbnail
       onTap: () async {
@@ -161,7 +170,6 @@ class GalleryGridViewState extends State<GalleryGridView> {
     /// load cache images
     final asset = cacheMap[index];
     if (asset != null) {
-
       return ThumbnailWidget(
         asset: asset,
         provider: provider,
@@ -174,7 +182,6 @@ class GalleryGridViewState extends State<GalleryGridView> {
         selectedCheckBackgroundColor: widget.selectedCheckBackgroundColor,
       );
     } else {
-
       /// read the assets from selected album
       return FutureBuilder<List<AssetEntity>>(
         future: widget.path!.getAssetListRange(start: index, end: index + 1),
