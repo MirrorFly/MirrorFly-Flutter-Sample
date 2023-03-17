@@ -1058,6 +1058,7 @@ class DashboardController extends FullLifeCycleController
   fetchMessageList() async {
     await FlyChat.searchConversation(search.text.trim().toString())
         .then((value) {
+          mirrorFlyLog("flutter search", value);
       var result = chatMessageModelFromJson(value);
       chatMessages(result);
       var mRecentSearchList = <Rx<RecentSearch>>[].obs;

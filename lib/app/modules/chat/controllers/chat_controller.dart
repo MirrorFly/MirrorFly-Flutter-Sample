@@ -2059,6 +2059,7 @@ class ChatController extends FullLifeCycleController
     FlyChat.getGroupMembersList(jid, false).then((value) {
       if (value != null) {
         var str = <String>[];
+        mirrorFlyLog("getGroupMembersList-->", value);
         var groupsMembersProfileList = memberFromJson(value);
         for (var it in groupsMembersProfileList) {
           if (it.jid.checkNull() !=

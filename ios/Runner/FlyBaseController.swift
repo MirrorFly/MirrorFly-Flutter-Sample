@@ -741,6 +741,8 @@ class FlyBaseController: NSObject{
                 FlySdkMethodCalls.exportChatConversationToEmail(call: call, result: result, vc: self.rootViewController!)
             case "getAllGroups":
                 FlySdkMethodCalls.getAllGroups(call: call, result: result)
+            case "searchConversation":
+                FlySdkMethodCalls.searchConversation(call: call, result: result)
             default:
                 result(FlutterMethodNotImplemented)
             }

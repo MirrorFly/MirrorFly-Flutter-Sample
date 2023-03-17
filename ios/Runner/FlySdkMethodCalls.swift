@@ -723,6 +723,7 @@ import FlyDatabase
             var profileDetailJson = JSONSerializer.toJson(groupMember.profileDetail as Any)
             profileDetailJson = profileDetailJson.replacingOccurrences(of: "{\"some\":", with: "")
             profileDetailJson = profileDetailJson.replacingOccurrences(of: "}}", with: "}")
+            profileDetailJson = profileDetailJson.replacingOccurrences(of: "{}", with: "\"\"")
             
             print("profileDetailJson--> \(profileDetailJson)")
              
@@ -1541,13 +1542,43 @@ import FlyDatabase
         print("calling getAllGroups")
         GroupManager.shared.getGroups(fetchFromServer: fetchFromServer) { isSuccess, flyError, flyData in
             var data  = flyData
-            print("GroupManager.shared.getGroups \(data)")
+            
+//            print("GroupManager.shared.getGroups \(JSONSerializer.toJson(data.getData()))")
             if isSuccess {
-                // Update UI
+                result(JSONSerializer.toJson(data.getData()))
             } else{
-                // failure cases
+                result(FlutterError(code: "500", message: "Unable to Get Group List", details: flyError?.localizedDescription))
             }
         }
+    }
+    
+    static func searchConversation(call: FlutterMethodCall, result: @escaping FlutterResult){
+        let args = call.arguments as! Dictionary<String, Any>
+        let searchKey = args["searchKey"] as? String ?? ""
+        let jidForSearch = args["jidForSearch"] as? String ?? ""
+        let globalSearch = args["globalSearch"] as? Bool ?? true
+        
+        var searchedMessages : [SearchMessage] = ChatManager.shared.searchMessage(text: searchKey)
+        
+//        var searchConversationResp = "{\"searchTerm\":\"done\",\"data\":["
+        var searchConversationResp = "["
+        var index = 0;
+        for message in searchedMessages{
+            if(index != 0){
+                searchConversationResp = searchConversationResp + ","
+            }
+            var message : ChatMessage? = FlyMessenger.getMessageOfId(messageId: message.messageId)
+            var messageJson = JSONSerializer.toJson(message)
+            messageJson = messageJson.replacingOccurrences(of: "{\"some\":", with: "")
+            messageJson = messageJson.replacingOccurrences(of: "}}", with: "}")
+            searchConversationResp = searchConversationResp + messageJson
+        }
+        
+//        searchConversationResp = searchConversationResp + "],\"jidToSearch\":\"\"}"
+        searchConversationResp = searchConversationResp + "]"
+       
+        print("searchMessages\(searchConversationResp)")
+        result(searchConversationResp)
     }
     
     static func isMuted(call: FlutterMethodCall, result: @escaping FlutterResult){
