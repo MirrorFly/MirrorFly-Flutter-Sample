@@ -16,9 +16,15 @@ class ImagePreviewController extends GetxController {
 
   var filePath = "".obs;
 
+  var textMessage = "";
+
   @override
   void onInit() {
     super.onInit();
+
+    textMessage = Get.arguments['caption'];
+    debugPrint("caption text received--> $textMessage");
+    caption.text = textMessage;
     SchedulerBinding.instance.addPostFrameCallback((_) => filePath(Get.arguments['filePath']));
   }
 

@@ -84,7 +84,6 @@ class VideoPreviewView extends GetView<VideoPreviewController> {
                                 controller: controller.caption,
                                 style: const TextStyle(
                                   color: Colors.white,
-                                  fontSize: 17,
                                 ),
                                 maxLines: 6,
                                 minLines: 1,
@@ -93,7 +92,6 @@ class VideoPreviewView extends GetView<VideoPreviewController> {
                                   hintText: "Add Caption....",
                                   hintStyle: TextStyle(
                                     color: Colors.white,
-                                    fontSize: 17,
                                   ),),
                               ),
                             ),
