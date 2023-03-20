@@ -1,6 +1,5 @@
 import 'dart:convert';
 
-import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
@@ -21,7 +20,7 @@ class StarredMessagesController extends GetxController {
   var isListLoading = true.obs;
   var calendar = DateTime.now();
 
-  @override
+ /* @override
   void onInit() {
     super.onInit();
     //getFavouriteMessages();
@@ -37,14 +36,14 @@ class StarredMessagesController extends GetxController {
       playingChat?.mediaChatMessage!.currentPos=(p.inMilliseconds);
       starredChatList.refresh();
     });
-  }
+  }*/
 
-  @override
+  /*@override
   void onClose(){
     super.onClose();
-    player.stop();
-    player.dispose();
-  }
+    // player.stop();
+    // player.dispose();
+  }*/
   getFavouriteMessages() {
     if(!isSelected.value) {
       isListLoading(true);
@@ -401,19 +400,10 @@ class StarredMessagesController extends GetxController {
         ]);
   }
 
-  AudioPlayer player = AudioPlayer();
+  // AudioPlayer player = AudioPlayer();
   ChatMessageModel? playingChat;
   playAudio(ChatMessageModel chatMessage) async {
-    if(playingChat!=null){
-      if(playingChat?.mediaChatMessage!.messageId!=chatMessage.messageId){
-        player.stop();
-        playingChat?.mediaChatMessage!.isPlaying=false;
-        playingChat = chatMessage;
-      }
-    }
-    else{
-      playingChat = chatMessage;
-    }
+    /*setPlayingChat(chatMessage);
     if (!playingChat!.mediaChatMessage!.isPlaying) {
       int result = await player.play(playingChat!.mediaChatMessage!.mediaLocalStoragePath,position: Duration(milliseconds:playingChat!.mediaChatMessage!.currentPos), isLocal: true);
       if (result == 1) {
@@ -437,8 +427,31 @@ class StarredMessagesController extends GetxController {
       } else {
         mirrorFlyLog("", "Error on pause audio.");
       }
-    }
+    }*/
   }
+
+  void setPlayingChat(ChatMessageModel chatMessage) {
+    /*if(playingChat!=null){
+      if(playingChat?.mediaChatMessage!.messageId!=chatMessage.messageId){
+        player.stop();
+        playingChat?.mediaChatMessage!.isPlaying=false;
+        playingChat = chatMessage;
+      }
+    }
+    else{
+      playingChat = chatMessage;
+    }*/
+  }
+  void onSeekbarChange(double value,ChatMessageModel chatMessage) {
+   /* debugPrint('onSeekbarChange $value');
+    if (playingChat != null) {
+      player.seek(Duration(milliseconds: value.toInt()));
+    }else{
+      chatMessage.mediaChatMessage?.currentPos=value.toInt();
+      // starredChatList.refresh();
+    }*/
+  }
+
   RxBool canBeForward=false.obs;
   validateForForwardMessage(){
     for (var value in selectedChatList) {

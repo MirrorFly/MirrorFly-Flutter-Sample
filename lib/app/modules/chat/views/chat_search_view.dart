@@ -138,6 +138,9 @@ class ChatSearchView extends GetView<ChatController> {
                                   onPlayAudio: () {
                                     controller.playAudio(chatList[index]);
                                   },
+                                  onSeekbarChange:(value){
+
+                                  },
                                 ),
                               ],
                             ),
