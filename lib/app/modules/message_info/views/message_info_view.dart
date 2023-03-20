@@ -58,6 +58,9 @@ class MessageInfoView extends GetView<MessageInfoController> {
                               index: 0,
                               onPlayAudio: (){
                                 controller.playAudio(controller.chatMessage[0]);
+                              },
+                              onSeekbarChange:(value){
+                                controller.onSeekbarChange(value, controller.chatMessage[0]);
                               },)
                             //MessageHeader(chatList: controller.chatMessage, isTapEnabled: false,),
                             //MessageContent(chatList: controller.chatMessage, isTapEnabled: false,),
