@@ -115,6 +115,8 @@ class StarredMessagesView extends GetView<StarredMessagesController> {
                                       : Border.all(color: chatBorderColor)),
                               child: MessageContent(chatList: starredChatList,index:index, onPlayAudio: (){
                                 controller.playAudio(starredChatList[index]);
+                              },onSeekbarChange:(value){
+
                               },),
                             ),
                           ),

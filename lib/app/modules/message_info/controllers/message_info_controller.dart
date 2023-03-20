@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
@@ -30,7 +29,7 @@ class MessageInfoController extends GetxController {
   void onInit() {
     super.onInit();
     getStatusOfMessage(chatMessage.first.messageId);
-    player.onPlayerCompletion.listen((event) {
+    /*player.onPlayerCompletion.listen((event) {
       playingChat!.mediaChatMessage!.isPlaying=false;
       playingChat!.mediaChatMessage!.currentPos=0;
       player.stop();
@@ -40,7 +39,7 @@ class MessageInfoController extends GetxController {
     player.onAudioPositionChanged.listen((Duration p) {
       playingChat?.mediaChatMessage!.currentPos=(p.inMilliseconds);
       chatMessage.refresh();
-    });
+    });*/
 
   }
 
@@ -101,31 +100,22 @@ class MessageInfoController extends GetxController {
       FlyChat.downloadMedia(messageId);
     }
   }
-  @override
+  /*@override
   void onClose(){
     super.onClose();
-    player.stop();
-    player.dispose();
-  }
+    // player.stop();
+    // player.dispose();
+  }*/
 
   String currentPostLabel = "00:00";
   var maxDuration = 100.obs;
   var currentPos = 0.obs;
   var isPlaying = false.obs;
   var audioPlayed = false.obs;
-  AudioPlayer player = AudioPlayer();
+  // AudioPlayer player = AudioPlayer();
   ChatMessageModel? playingChat;
   playAudio(ChatMessageModel chatMessage) async {
-    if(playingChat!=null){
-      if(playingChat?.mediaChatMessage!.messageId!=chatMessage.messageId){
-        player.stop();
-        playingChat?.mediaChatMessage!.isPlaying=false;
-        playingChat = chatMessage;
-      }
-    }
-    else{
-      playingChat = chatMessage;
-    }
+    /*setPlayingChat(chatMessage);
     if (!playingChat!.mediaChatMessage!.isPlaying) {
       int result = await player.play(playingChat!.mediaChatMessage!.mediaLocalStoragePath,position: Duration(milliseconds:playingChat!.mediaChatMessage!.currentPos), isLocal: true);
       if (result == 1) {
@@ -149,7 +139,30 @@ class MessageInfoController extends GetxController {
       } else {
         mirrorFlyLog("", "Error on pause audio.");
       }
+    }*/
+  }
+
+  void setPlayingChat(ChatMessageModel chatMessage) {
+    /*if(playingChat!=null){
+      if(playingChat?.mediaChatMessage!.messageId!=chatMessage.messageId){
+        player.stop();
+        playingChat?.mediaChatMessage!.isPlaying=false;
+        playingChat = chatMessage;
+      }
     }
+    else{
+      playingChat = chatMessage;
+    }*/
+  }
+
+  void onSeekbarChange(double value,ChatMessageModel chatMessage) {
+    /*debugPrint('onSeekbarChange $value');
+    if (playingChat != null) {
+      player.seek(Duration(milliseconds: value.toInt()));
+    }else{
+      chatMessage.mediaChatMessage?.currentPos=value.toInt();
+      // this.chatMessage.refresh();
+    }*/
   }
 
   var messageDeliveredList = <MessageDeliveredStatus>[].obs;
