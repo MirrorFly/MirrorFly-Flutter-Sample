@@ -59,7 +59,7 @@ class ChatController extends FullLifeCycleController
   double screenHeight = 0.0;
   double screenWidth = 0.0;
 
-  AudioPlayer player = AudioPlayer();
+  // AudioPlayer player = AudioPlayer();
 
   late String audioSavePath;
   late String recordedAudioPath;
@@ -144,7 +144,7 @@ class ChatController extends FullLifeCycleController
     }
     // mirrorFlyLog('savedContact', profile.isItSavedContact.toString());
 
-    player.onPlayerCompletion.listen((event) {
+    /*player.onPlayerCompletion.listen((event) {
       playingChat!.mediaChatMessage!.isPlaying = false;
       playingChat!.mediaChatMessage!.currentPos = 0;
       player.stop();
@@ -156,7 +156,7 @@ class ChatController extends FullLifeCycleController
       mirrorFlyLog('p.inMilliseconds', p.inMilliseconds.toString());
       playingChat?.mediaChatMessage!.currentPos = (p.inMilliseconds);
       chatList.refresh();
-    });
+    });*/
 
     setAudioPath();
 
@@ -280,8 +280,8 @@ class ChatController extends FullLifeCycleController
     FlyChat.setOnGoingChatUser("");
     SessionManagement.setCurrentChatJID("");
     isLive = false;
-    player.stop();
-    player.dispose();
+    // player.stop();
+    // player.dispose();
     super.onClose();
   }
 
@@ -339,12 +339,12 @@ class ChatController extends FullLifeCycleController
         ? await FlyChat.isBusyStatusEnabled()
         : false;
     if (!busyStatus.checkNull()) {
-      if (await AppUtils.isNetConnected()) {
+      //if (await AppUtils.isNetConnected()) {
         focusNode.unfocus();
         showBottomSheetAttachment();
-      } else {
+      /*} else {
         toToast(Constants.noInternetConnection);
-      }
+      }*/
     } else {
       //show busy status popup
       showBusyStatusAlert(showBottomSheetAttachment);
@@ -464,6 +464,9 @@ class ChatController extends FullLifeCycleController
         case Constants.mDocument:
           sendDocumentMessage(
               messageObject!.file!, messageObject!.replyMessageId!);
+          break;
+        case Constants.mVideo:
+          sendVideoMessage(messageObject!.file!, messageObject!.caption!, messageObject!.replyMessageId!);
           break;
       }
     }
@@ -710,22 +713,35 @@ class ChatController extends FullLifeCycleController
     });
   }
 
-  sendVideoMessage(String videoPath, String caption, String replyMessageID) {
-    if (isReplying.value) {
-      replyMessageID = replyChatMessage.messageId;
+  sendVideoMessage(String videoPath, String caption, String replyMessageID) async {
+    var busyStatus = !profile.isGroupProfile.checkNull()
+        ? await FlyChat.isBusyStatusEnabled()
+        : false;
+    if (!busyStatus.checkNull()) {
+      if (isReplying.value) {
+        replyMessageID = replyChatMessage.messageId;
+      }
+      isReplying(false);
+      Platform.isIOS ? Helper.showLoading(message: "Compressing Video") : null;
+      return FlyChat.sendVideoMessage(
+          profile.jid!, videoPath, caption, replyMessageID)
+          .then((value) {
+        clearMessage();
+        Platform.isIOS ? Helper.hideLoading() : null;
+        ChatMessageModel chatMessageModel = sendMessageModelFromJson(value);
+        chatList.insert(0, chatMessageModel);
+        scrollToBottom();
+        return chatMessageModel;
+      });
+    }else{
+      //show busy status popup
+      messageObject = MessageObject(
+          toJid: profile.jid.toString(),
+          replyMessageId: (isReplying.value) ? replyChatMessage.messageId : "",
+          messageType: Constants.mVideo,
+          file: videoPath,caption: caption);
+      showBusyStatusAlert(disableBusyChatAndSend);
     }
-    isReplying(false);
-    Platform.isIOS ? Helper.showLoading(message: "Compressing Video") : null;
-    return FlyChat.sendVideoMessage(
-            profile.jid!, videoPath, caption, replyMessageID)
-        .then((value) {
-          clearMessage();
-      Platform.isIOS ? Helper.hideLoading() : null;
-      ChatMessageModel chatMessageModel = sendMessageModelFromJson(value);
-      chatList.insert(0, chatMessageModel);
-      scrollToBottom();
-      return chatMessageModel;
-    });
   }
 
   checkFile(String mediaLocalStoragePath) {
@@ -736,18 +752,7 @@ class ChatController extends FullLifeCycleController
   ChatMessageModel? playingChat;
 
   playAudio(ChatMessageModel chatMessage) async {
-    if (playingChat != null) {
-      if (playingChat?.mediaChatMessage!.messageId != chatMessage.messageId) {
-        player.stop();
-        playingChat?.mediaChatMessage!.isPlaying = false;
-        playingChat = chatMessage;
-      }
-    } else {
-      playingChat = chatMessage;
-    }
-    if (isAudioRecording.value == Constants.audioRecording) {
-      stopRecording();
-    }
+    /*setPlayingChat(chatMessage);
     if (!playingChat!.mediaChatMessage!.isPlaying) {
       int result = await player.play(
           playingChat!.mediaChatMessage!.mediaLocalStoragePath,
@@ -775,11 +780,36 @@ class ChatController extends FullLifeCycleController
       } else {
         mirrorFlyLog("", "Error on pause audio.");
       }
+    }*/
+  }
+
+  void setPlayingChat(ChatMessageModel chatMessage) {
+    /*if (playingChat != null) {
+      if (playingChat?.mediaChatMessage!.messageId != chatMessage.messageId) {
+        player.stop();
+        playingChat?.mediaChatMessage!.isPlaying = false;
+        playingChat = chatMessage;
+      }
+    } else {
+      playingChat = chatMessage;
     }
+    if (isAudioRecording.value == Constants.audioRecording) {
+      stopRecording();
+    }*/
+  }
+
+  void onSeekbarChange(double value,ChatMessageModel chatMessage) {
+    /*debugPrint('onSeekbarChange $value');
+    if (playingChat != null) {
+      player.seek(Duration(milliseconds: value.toInt()));
+    }else{
+      chatMessage.mediaChatMessage?.currentPos=value.toInt();
+      //chatList.refresh();
+    }*/
   }
 
   Future<void> playerPause() async {
-    if (playingChat != null) {
+   /* if (playingChat != null) {
       if (playingChat!.mediaChatMessage!.isPlaying) {
         int result = await player.pause();
         if (result == 1) {
@@ -789,7 +819,7 @@ class ChatController extends FullLifeCycleController
           mirrorFlyLog("", "Error on pause audio.");
         }
       }
-    }
+    }*/
   }
 
   Future<bool> askContactsPermission() async {
@@ -1715,7 +1745,7 @@ class ChatController extends FullLifeCycleController
     if (playingChat != null) {
       playingChat!.mediaChatMessage!.isPlaying = false;
       playingChat = null;
-      player.stop();
+      // player.stop();
       chatList.refresh();
     }
     var busyStatus = !profile.isGroupProfile.checkNull()
@@ -1757,7 +1787,7 @@ class ChatController extends FullLifeCycleController
       if (File(filePath!).existsSync()) {
         recordedAudioPath = filePath;
       } else {
-        debugPrint("File Not Found For Image Upload");
+        debugPrint("File Not Found For Audio");
       }
       debugPrint(filePath);
     });
@@ -2170,16 +2200,20 @@ class ChatController extends FullLifeCycleController
   // }
 
   onLocationClick() async {
-    if (await AppPermission.checkPermission(Permission.location,
-        locationPinPermission, Constants.locationPermission)) {
-      Get.toNamed(Routes.locationSent)?.then((value) {
-        if (value != null) {
-          value as LatLng;
-          sendLocationMessage(profile, value.latitude, value.longitude);
-        }
-      });
+    if (await AppUtils.isNetConnected()) {
+      if (await AppPermission.checkPermission(Permission.location,
+          locationPinPermission, Constants.locationPermission)) {
+        Get.toNamed(Routes.locationSent)?.then((value) {
+          if (value != null) {
+            value as LatLng;
+            sendLocationMessage(profile, value.latitude, value.longitude);
+          }
+        });
+      } else {
+        // AppPermission.permissionDeniedDialog(content: "Permission is permanently denied. Please enable location permission from settings");
+      }
     } else {
-      // AppPermission.permissionDeniedDialog(content: "Permission is permanently denied. Please enable location permission from settings");
+      toToast(Constants.noInternetConnection);
     }
   }
 
@@ -2633,7 +2667,7 @@ class ChatController extends FullLifeCycleController
     if (messageId.isNotEmpty) {
       final index =
           chatList.indexWhere((message) => message.messageId == messageId);
-      // debugPrint("Media Status Onprogress changed---> onUploadDownloadProgressChanged $index $messageId $progressPercentage");
+      debugPrint("Media Status Onprogress changed---> onUploadDownloadProgressChanged $index $messageId $progressPercentage");
       if (!index.isNegative) {
         // chatMessageModel.isSelected=chatList[index].isSelected;
         // debugPrint("Media Status Onprogress changed---> flutter conversion ${int.parse(progressPercentage)}");

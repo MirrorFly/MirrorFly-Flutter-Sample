@@ -126,10 +126,17 @@ class Helper {
   }
 
   static String durationToString(Duration duration) {
-    return (duration.inMilliseconds / 100)
+    /*final mm = (duration.inMinutes % 60).toString().padLeft(2, '0');
+    final ss = (duration.inSeconds % 60).toString().padLeft(2, '0');
+    return '$mm:$ss';*/
+    //return (duration.inSeconds % 60).toString().padLeft(2, '0');
+    /*return (duration.inMilliseconds /60)
         .toStringAsFixed(2)
         .replaceFirst('.', ':')
-        .padLeft(5, '0');
+        .padLeft(5, '0');*/
+    var seconds = ((duration.inSeconds % 60)).toStringAsFixed(0).padLeft(2,'0');
+    return '${(duration.inMinutes).toStringAsFixed(0).padLeft(2,'0')}:$seconds';
+
   }
 
   static String getMapImageUri(double latitude, double longitude) {
