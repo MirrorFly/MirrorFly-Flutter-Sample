@@ -1242,10 +1242,12 @@ import FlyDatabase
     }
     
     static func deleteUnreadMessageSeparatorOfAConversation(call: FlutterMethodCall, result: @escaping FlutterResult){
-//        let args = call.arguments as! Dictionary<String, Any>
+        let args = call.arguments as! Dictionary<String, Any>
         
-//        let jid = args["jid"] as? String ?? nil
+        let jid = args["jid"] as? String ?? ""
+        FlyMessenger.shared.deleteUnreadMessageSeparatorOfAConversation(jid: jid)
         
+        result(true)
         
     }
     static func getRecalledMessagesOfAConversation(call: FlutterMethodCall, result: @escaping FlutterResult){
@@ -1813,7 +1815,7 @@ import FlyDatabase
         
         let userJid = args["jid"] as? String ?? ""
     
-        let mediaMessages : [ChatMessage] = FlyMessenger.getMediaMessagesOf(jid: userJid)
+        /*let mediaMessages : [ChatMessage] = FlyMessenger.getMediaMessagesOf(jid: userJid)
         
         print("mediaMessages---> \(mediaMessages)")
         if(mediaMessages.isEmpty){
@@ -1827,23 +1829,31 @@ import FlyDatabase
             print(mediaMsgJson)
             
             result(mediaMsgJson)
+        }*/
+        
+        ChatManager.getVedioImageAudioMessageGroupByMonth(jid: userJid) { isSuccess,error,data  in
+
+            print("mediaMessages---> \(data)")
+            var mediaData = data
+            let chatMessages = mediaData.getData() as? [[ChatMessage]]
+        
+            if(chatMessages!.isEmpty){
+                print("getMediaMessages==>\(String(describing: chatMessages))")
+                result(nil)
+            }else{
+                var mediaMsgJson = JSONSerializer.toJson(chatMessages as Any)
+                print("getMediaMessages json==>\(mediaMsgJson)")
+                mediaMsgJson = mediaMsgJson.replacingOccurrences(of: "{\"some\":", with: "")
+                mediaMsgJson = mediaMsgJson.replacingOccurrences(of: "}}", with: "}")
+                mediaMsgJson = mediaMsgJson.replacingOccurrences(of: "\"some\": [[", with: "[")
+                mediaMsgJson = mediaMsgJson.replacingOccurrences(of: "]]", with: "]")
+                
+                print("getMediaMessages==>\(mediaMsgJson)")
+                
+                result(mediaMsgJson)
+            }
+            
         }
-        
-        
-//        ChatManager.getVedioImageAudioMessageGroupByMonth(jid: userJid) { chatMessages in
-//            let mediaMessages : [[ChatMessage]] = chatMessages
-//            print("mediaMessages---> \(mediaMessages)")
-//
-//            var mediaMsgJson = JSONSerializer.toJson(mediaMessages)
-//            mediaMsgJson = mediaMsgJson.replacingOccurrences(of: "{\"some\":", with: "")
-//            mediaMsgJson = mediaMsgJson.replacingOccurrences(of: "}}", with: "}")
-//            mediaMsgJson = mediaMsgJson.replacingOccurrences(of: "[[", with: "[")
-//            mediaMsgJson = mediaMsgJson.replacingOccurrences(of: "]]", with: "]")
-//
-//            print(mediaMsgJson)
-//
-//           result(mediaMsgJson)
-//        }
                
     }
     static func getDocsMessages(call: FlutterMethodCall, result: @escaping FlutterResult){

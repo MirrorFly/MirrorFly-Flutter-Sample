@@ -1,6 +1,4 @@
 import 'package:get/get.dart';
-import 'package:mirror_fly_demo/app/modules/settings/views/chat_settings/datausage/datausage_binding.dart';
-import 'package:mirror_fly_demo/app/modules/settings/views/chat_settings/datausage/datausage_list_view.dart';
 
 import '../modules/admin_blocked/adminblockedview.dart';
 import '../modules/archived_chats/archived_chat_list_binding.dart';
@@ -25,9 +23,7 @@ import '../modules/chatInfo/views/chat_info_view.dart';
 import '../modules/contact_sync/bindings/contact_sync_binding.dart';
 import '../modules/contact_sync/views/contact_sync_view.dart';
 import '../modules/dashboard/bindings/dashboard_binding.dart';
-// import '../modules/dashboard/bindings/recent_search_binding.dart';
 import '../modules/dashboard/views/dashboard_view.dart';
-// import '../modules/dashboard/views/recent_search_view.dart';
 import '../modules/delete_account/bindings/delete_account_binding.dart';
 import '../modules/delete_account/views/delete_account_view.dart';
 import '../modules/delete_account_reason/bindings/delete_account_reason_binding.dart';
@@ -69,6 +65,8 @@ import '../modules/settings/views/blocked/blocked_list_binding.dart';
 import '../modules/settings/views/blocked/blocked_list_view.dart';
 import '../modules/settings/views/chat_settings/chat_settings_binding.dart';
 import '../modules/settings/views/chat_settings/chat_settings_view.dart';
+import '../modules/settings/views/chat_settings/datausage/datausage_binding.dart';
+import '../modules/settings/views/chat_settings/datausage/datausage_list_view.dart';
 import '../modules/settings/views/chat_settings/language/language_binding.dart';
 import '../modules/settings/views/chat_settings/language/language_list_view.dart';
 import '../modules/settings/views/notification/notification_binding.dart';
@@ -82,6 +80,11 @@ import '../modules/video_preview/views/video_player_view.dart';
 import '../modules/video_preview/views/video_preview_view.dart';
 import '../modules/view_all_media/bindings/view_all_media_binding.dart';
 import '../modules/view_all_media/views/view_all_media_view.dart';
+import '../modules/view_all_media_preview/bindings/view_all_media_preview_binding.dart';
+import '../modules/view_all_media_preview/views/view_all_media_preview_view.dart';
+
+// import '../modules/dashboard/bindings/recent_search_binding.dart';
+// import '../modules/dashboard/views/recent_search_view.dart';
 
 part 'app_routes.dart';
 
@@ -309,6 +312,11 @@ class AppPages {
       name: _Paths.contactSync,
       page: () => const ContactSyncPage(),
       binding: ContactSyncBinding(),
+    ),
+    GetPage(
+      name: _Paths.viewAllMediaPreview,
+      page: () => const ViewAllMediaPreviewView(),
+      binding: ViewAllMediaPreviewBinding(),
     ),
   ];
 }

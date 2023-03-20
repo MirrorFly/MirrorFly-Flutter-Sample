@@ -10,7 +10,6 @@ import '../../../common/constants.dart';
 import '../controllers/view_all_media_controller.dart';
 import 'package:flysdk/flysdk.dart';
 
-
 class ViewAllMediaView extends GetView<ViewAllMediaController> {
   const ViewAllMediaView({Key? key}) : super(key: key);
 
@@ -85,10 +84,11 @@ class ViewAllMediaView extends GetView<ViewAllMediaController> {
         itemCount: controller.medialistdata[header]!.length,
         gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: 4,
+          mainAxisSpacing: 2,
         ),
         itemBuilder: (context, gridIndex) {
           var item = controller.medialistdata[header]![gridIndex].chatMessage;
-          return gridItem(item);
+          return gridItem(item, gridIndex);
         });
   }
 
@@ -105,11 +105,13 @@ class ViewAllMediaView extends GetView<ViewAllMediaController> {
     );
   }
 
-  Widget gridItem(ChatMessageModel item) {
+  Widget gridItem(ChatMessageModel item, int gridIndex) {
     return InkWell(
       child: Container(
           margin: const EdgeInsets.only(right: 3),
-          color: item.isAudioMessage() ? const Color(0xff97A5C7) : Colors.transparent,
+          color: item.isAudioMessage()
+              ? const Color(0xff97A5C7)
+              : Colors.transparent,
           child: item.isAudioMessage()
               ? audioItem(item)
               : item.isVideoMessage()
@@ -120,10 +122,10 @@ class ViewAllMediaView extends GetView<ViewAllMediaController> {
                           fit: BoxFit.cover,
                         )
                       : const SizedBox()),
-      onTap: (){
-        if(item.isImageMessage()) {
-          controller.openImage(item.mediaChatMessage!.mediaLocalStoragePath);
-        }else if(item.isAudioMessage()||item.isVideoMessage()){
+      onTap: () {
+        if (item.isImageMessage() || item.isVideoMessage()) {
+          controller.openImage(gridIndex);
+        } else if (item.isAudioMessage()) {
           controller.openFile(item.mediaChatMessage!.mediaLocalStoragePath);
         }
       },
@@ -134,11 +136,7 @@ class ViewAllMediaView extends GetView<ViewAllMediaController> {
     return Stack(
       children: [
         controller.imageFromBase64String(
-            item.mediaChatMessage!.mediaThumbImage, null, null),
-        /*Image.file(
-          File(item.mediaChatMessage!.mediaLocalStoragePath),
-          fit: BoxFit.cover,
-        ),*/
+            item.mediaChatMessage!.mediaThumbImage, null,  null),
         Center(
           child: SvgPicture.asset(videoWhite),
         )
@@ -257,7 +255,8 @@ class ViewAllMediaView extends GetView<ViewAllMediaController> {
       child: Column(
         children: [
           Container(
-            margin: const EdgeInsets.symmetric(horizontal: 15.0, vertical: 10.0),
+            margin:
+                const EdgeInsets.symmetric(horizontal: 15.0, vertical: 10.0),
             decoration: const BoxDecoration(
                 color: Color(0xffE2E8F7),
                 borderRadius: BorderRadius.all(Radius.circular(8))),

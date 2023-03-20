@@ -8,6 +8,7 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
 import 'package:flysdk/flysdk.dart';
+import 'package:open_file_plus/open_file_plus.dart';
 
 import '../../../common/constants.dart';
 import '../../../routes/app_pages.dart';
@@ -29,6 +30,9 @@ class ViewAllMediaController extends GetxController {
   var name = Get.arguments["name"] as String;
   var jid = Get.arguments["jid"] as String;
   var isGroup = Get.arguments["isgroup"] as bool;
+
+
+  var previewMediaList = List<ChatMessageModel>.empty(growable: true).obs;
 
   @override
   void onInit() {
@@ -56,7 +60,7 @@ class ViewAllMediaController extends GetxController {
       if (value != null) {
         mirrorFlyLog("getMediaMessages", value);
         var data = chatMessageModelFromJson(value);
-
+        previewMediaList.addAll(data);
         if (data.isNotEmpty) {
           _medialist(await getMapGroupedMediaList(data, true));
           debugPrint("_media list length--> ${_medialist.length}");
@@ -250,23 +254,28 @@ class ViewAllMediaController extends GetxController {
     Uint8List image = const Base64Decoder().convert(decodedBase64);
     return Image.memory(
       image,
-      width: width,
-      height: height,
+      width: width ?? double.infinity,
+      height: height ?? double.infinity,
       fit: BoxFit.cover,
     );
   }
 
-  openFile(String path){
-    FlyChat.openFile(path).catchError((onError) {
-      Get.snackbar("","No supported application available to open this file format").show();
-    });
+  openFile(String path) async {
+    // FlyChat.openFile(path).catchError((onError) {
+    //   // Get.snackbar("","No supported application available to open this file format").show();
+    //   toToast("No supported application available to open this file format");
+    // });
+    final result = await OpenFile.open(path);
+    debugPrint("file open--> ${result.type} ---> ${result.message}");
   }
 
-  openImage(String path){
-    Get.toNamed(Routes.imageView, arguments: {
-      "imagePath": path,
-      "imageName": "Sent Media"
-    });
+  openImage(int gridIndex){
+    // Get.toNamed(Routes.imageView, arguments: {
+    //   "imagePath": path,
+    //   "imageName": "Sent Media"
+    // });
+
+    Get.toNamed(Routes.viewAllMediaPreview, arguments: {"images" : previewMediaList, "index": gridIndex});
   }
 
 }

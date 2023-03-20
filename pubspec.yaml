@@ -64,6 +64,7 @@ dependencies:
   flutter_inappwebview: ^5.7.2+3 # inapp webview
   flutter_local_notifications: ^13.0.0
   flutter_libphonenumber: ^1.4.0
+  open_file_plus: ^3.4.0
   flysdk:
     path: packages/flysdk
 

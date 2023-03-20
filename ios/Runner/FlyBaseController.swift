@@ -9,6 +9,7 @@ import Foundation
 import Flutter
 import FlyCore
 import FlyCommon
+import QuickLook
 
 
 let MIRRORFLY_METHOD_CHANNEL = "contus.mirrorfly/sdkCall"
