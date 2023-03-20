@@ -749,60 +749,6 @@ class ChatView extends GetView<ChatController> {
     );
   }
 
-  /*handleMediaUploadDownload(
-      int mediaDownloadStatus, ChatMessageModel chatList) {
-    switch (chatList.isMessageSentByMe
-        ? chatList.mediaChatMessage?.mediaUploadStatus
-        : mediaDownloadStatus) {
-      case Constants.mediaDownloaded:
-      case Constants.mediaUploaded:
-        if (chatList.messageType.toUpperCase() == 'VIDEO') {
-          if (controller.checkFile(
-                  chatList.mediaChatMessage!.mediaLocalStoragePath) &&
-              (chatList.mediaChatMessage!.mediaDownloadStatus ==
-                      Constants.mediaDownloaded ||
-                  chatList.mediaChatMessage!.mediaDownloadStatus ==
-                      Constants.mediaUploaded ||
-                  chatList.isMessageSentByMe)) {
-            Get.toNamed(Routes.videoPlay, arguments: {
-              "filePath": chatList.mediaChatMessage!.mediaLocalStoragePath,
-            });
-          }
-        }
-        if (chatList.messageType.toUpperCase() == 'AUDIO') {
-          if (controller.checkFile(
-                  chatList.mediaChatMessage!.mediaLocalStoragePath) &&
-              (chatList.mediaChatMessage!.mediaDownloadStatus ==
-                      Constants.mediaDownloaded ||
-                  chatList.mediaChatMessage!.mediaDownloadStatus ==
-                      Constants.mediaUploaded ||
-                  chatList.isMessageSentByMe)) {
-            debugPrint("audio click1");
-            controller.playAudio(chatList, chatList.mediaChatMessage!.mediaLocalStoragePath);
-          } else {
-            debugPrint("condition failed");
-          }
-        }
-        break;
-      case Constants.mediaDownloadedNotAvailable:
-      case Constants.mediaNotDownloaded:
-        //download
-        debugPrint("Download");
-        debugPrint(chatList.messageId);
-        chatList.mediaChatMessage!.mediaDownloadStatus =
-            Constants.mediaDownloading;
-        controller.downloadMedia(chatList.messageId);
-        break;
-      case Constants.mediaUploadedNotAvailable:
-        //upload
-        break;
-      case Constants.mediaNotUploaded:
-      case Constants.mediaDownloading:
-      case Constants.mediaUploading:
-        //return uploadingView(chatList.messageType);
-      // break;
-    }
-  }*/
 
   selectedAppBar() {
     return AppBar(

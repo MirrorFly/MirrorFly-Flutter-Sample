@@ -1236,7 +1236,8 @@ import FlyDatabase
         let jid = args["jid"] as? String ?? ""
 
         ChatManager.markConversationAsRead(for: [jid])
-//        FlyMessenger.deleteUnreadMessageSeparatorOfAConversation(jid)//not found need to implement here after adding
+        FlyMessenger.shared.deleteUnreadMessageSeparatorOfAConversation(jid: jid)
+        
         result(true)
     }
     
@@ -1558,7 +1559,7 @@ import FlyDatabase
         let jidForSearch = args["jidForSearch"] as? String ?? ""
         let globalSearch = args["globalSearch"] as? Bool ?? true
         
-        var searchedMessages : [SearchMessage] = ChatManager.shared.searchMessage(text: searchKey)
+        let searchedMessages : [SearchMessage] = ChatManager.shared.searchMessage(text: searchKey)
         
 //        var searchConversationResp = "{\"searchTerm\":\"done\",\"data\":["
         var searchConversationResp = "["
@@ -1567,6 +1568,7 @@ import FlyDatabase
             if(index != 0){
                 searchConversationResp = searchConversationResp + ","
             }
+            index = index + 1;
             var message : ChatMessage? = FlyMessenger.getMessageOfId(messageId: message.messageId)
             var messageJson = JSONSerializer.toJson(message)
             messageJson = messageJson.replacingOccurrences(of: "{\"some\":", with: "")

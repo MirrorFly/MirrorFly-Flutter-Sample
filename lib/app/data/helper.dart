@@ -825,7 +825,7 @@ String convertSecondToLastSeen(String seconds){
   if(int.parse(DateFormat('yyyy').format(userLastSeenDate)) < int.parse(DateFormat('yyyy').format(DateTime.now()))){
     return 'last seen on ${DateFormat('dd/mm/yyyy')}';
   }else if(diff.inDays > 1){
-    return 'last seen on ${DateFormat('dd MMMM').format(userLastSeenDate)}';
+    return 'last seen on ${DateFormat('dd MMM').format(userLastSeenDate)}';
   }else if(diff.inDays == 1){
     return 'last seen on Yesterday';
   } else if(diff.inHours >= 1 || diff.inMinutes >= 1 || diff.inSeconds >= 1){
