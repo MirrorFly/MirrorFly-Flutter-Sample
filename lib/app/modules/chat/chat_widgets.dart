@@ -758,11 +758,11 @@ class _AudioMessageViewState extends State<AudioMessageView> with WidgetsBinding
   }
 
   playAudio(ChatMessageModel chatMessage) {
-    /*var maxPos = double.parse(chatMessage
+    var maxPos = double.parse(chatMessage
         .mediaChatMessage!.mediaDuration
         .toString());
-    if(!(currentPos >= 0.0 && currentPos <= maxPos)){
-      currentPos = maxPos;
+    /*if(!(currentPos >= 0.0 && currentPos <= maxPos)){
+      currentPos(maxPos);
     }*/
     Get.dialog(Dialog(
       child: WillPopScope(
@@ -858,7 +858,7 @@ class _AudioMessageViewState extends State<AudioMessageView> with WidgetsBinding
                         ),
                         child: Obx(() {
                           return Slider(
-                            value: currentPos.value, /*double.parse(chatMessage
+                            value: (!(currentPos.value >= 0.0 && currentPos.value <= maxPos)) ? maxPos : currentPos.value, /*double.parse(chatMessage
                                 .mediaChatMessage!.currentPos
                                 .toString()),*/
                             min: 0.0,
