@@ -61,6 +61,7 @@ const String tickRoundBlue = 'assets/logos/tick_round_blue.svg';
 const String blockedIcon = 'assets/logos/blocked_contacts.svg';
 const String archiveIcon = 'assets/logos/Archive_ic_settings.svg';
 const String lockIcon = 'assets/logos/lock.svg';
+const String lockOutlineBlack = 'assets/logos/lock_outline_black.svg';
 const String delete = 'assets/logos/delete_black.svg';
 const String aboutIcon = 'assets/logos/About and Help.svg';
 const String connectionIcon = 'assets/logos/antenna.svg';
@@ -637,9 +638,14 @@ class Constants {
   static const document = "Documents";
 
   static const appSession = 'app_session';
+  static const changedPinAt = 'pin_changed_at';
+  static const alertDate = 'alertDate';
+  static const expiryDate = 'expiryDate';
   static const sessionLockTime = 32;//in Seconds
-  static const sessionLogoutTime = 31;//in Days
+  static const pinExpiry = 31;//in Days
+  static const pinAlert = pinExpiry-5;//in Days
   static const forgetPinOTPText ='Generate OTP to your registered mobile number';
+  static const invalidPinOTPText ='Invalid PIN, Generate OTP to your registered mobile number';
 }
 
 Future<void> launchWeb(String url) async {

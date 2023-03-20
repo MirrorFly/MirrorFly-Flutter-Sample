@@ -55,6 +55,10 @@ class SessionManagement {
   }
   static Future setPIN(String pin) async {
     await _preferences.setString("pin", pin);
+    await _preferences.setInt(Constants.changedPinAt, DateTime.now().millisecondsSinceEpoch);
+  }
+  static Future setChangePinNext(String pin) async {
+    await _preferences.setString("change_pin_next", pin);
   }
   static Future setEnablePIN(bool pin) async {
     await _preferences.setBool("enable_pin", pin);
@@ -113,6 +117,12 @@ class SessionManagement {
   static void setAppSessionNow() async {
     await _preferences.setInt(Constants.appSession, DateTime.now().millisecondsSinceEpoch);
   }
+  static void setLockExpiry(int expiryTimeStamp) async {
+    await _preferences.setInt(Constants.expiryDate, expiryTimeStamp);
+  }
+  static void setLockAlert(int alertTimeStamp) async {
+    await _preferences.setInt(Constants.alertDate, alertTimeStamp);
+  }
   static Future clear()async{
     await _preferences.clear();
   }
@@ -159,6 +169,7 @@ class SessionManagement {
   static bool getVibration() => _preferences.getBool("${Constants.package}vibration") ?? false;
   static bool getMuteNotification() => _preferences.getBool("mute_notification") ?? false;
   static String getPin() => _preferences.getString("pin") ?? "";
+  static String getChangePinNext() => _preferences.getString("change_pin_next") ?? "";
   static bool getEnablePin() => _preferences.getBool("enable_pin") ?? false;
   static bool getEnableBio() => _preferences.getBool("enable_bio") ?? false;
   static bool? synced() => _preferences.getBool("synced");
@@ -171,4 +182,5 @@ class SessionManagement {
   static bool isContactSyncDone() => _preferences.getBool("is_contact_sync_done") ?? false;
   static bool isTrailLicence() => _preferences.getBool("IS_TRIAL_LICENSE") ?? false;
   static int appLastSession() => _preferences.getInt(Constants.appSession) ?? DateTime.now().millisecondsSinceEpoch;
+  static int lastPinChangedAt() => _preferences.getInt(Constants.changedPinAt) ?? DateTime.now().millisecondsSinceEpoch;
 }

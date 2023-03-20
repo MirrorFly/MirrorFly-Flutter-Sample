@@ -326,21 +326,29 @@ class MainController extends FullLifeCycleController with BaseController, FullLi
   */
   void checkShouldShowPin(){
     var lastSession = SessionManagement.appLastSession();
-    var difference = DateTime.now().difference(DateTime.fromMillisecondsSinceEpoch(lastSession));
-    debugPrint('difference days ${difference.inDays}');
-    debugPrint('difference seconds ${difference.inSeconds}');
-    if(Constants.sessionLogoutTime>difference.inDays) {
+    var lastPinChangedAt = SessionManagement.lastPinChangedAt();
+    var sessionDifference = DateTime.now().difference(DateTime.fromMillisecondsSinceEpoch(lastSession));
+    var lockSessionDifference = DateTime.now().difference(DateTime.fromMillisecondsSinceEpoch(lastPinChangedAt));
+    debugPrint('sessionDifference seconds ${sessionDifference.inSeconds}');
+    debugPrint('lockSessionDifference days ${lockSessionDifference.inDays}');
+    if(Constants.pinAlert<=lockSessionDifference.inDays && Constants.pinExpiry>=lockSessionDifference.inDays){
+      //Alert Day
+      debugPrint('Alert Day');
+    } else if(Constants.pinExpiry<lockSessionDifference.inDays) {
+      //Already Expired day
+      debugPrint('Already Expired');
+    }else{
       //if 30 days not completed
-      if (Constants.sessionLockTime <= difference.inSeconds) {
+      debugPrint('Not Expired');
+      if (Constants.sessionLockTime <= sessionDifference.inSeconds) {
         //Show Pin if App Lock Enabled
+        debugPrint('Show Pin');
         presentPinPage();
       }
-    }else if(Constants.sessionLogoutTime==difference.inDays){
-      //31'st day
     }
   }
   void presentPinPage(){
-    if(SessionManagement.getEnablePin() || SessionManagement.getEnableBio() && Get.currentRoute!=Routes.pin){
+    if((SessionManagement.getEnablePin() || SessionManagement.getEnableBio()) && Get.currentRoute!=Routes.pin){
       Get.toNamed(Routes.pin,);
     }
   }
