@@ -135,12 +135,13 @@ class ProfileController extends GetxController {
                         status: profileStatus.value);
                     SessionManagement.setCurrentUser(userProfileData);
                     if (from.value == Routes.login) {
-                      var trail = SessionManagement.isTrailLicence();
-                      if(trail.checkNull()) {
-                        Get.offNamed(Routes.dashboard);
-                      }else{
-                        Get.offNamed(Routes.contactSync);
-                      }
+                      FlyChat.isTrailLicence().then((trail){
+                        if(trail.checkNull()) {
+                          Get.offNamed(Routes.dashboard);
+                        }else{
+                          Get.offNamed(Routes.contactSync);
+                        }
+                      });
                     }
                   }
                 }

@@ -121,7 +121,7 @@ class RecentChatItem extends StatelessWidget {
                   titlestyle),
           Row(
             children: [
-              item.isLastMessageSentByMe.checkNull() && !isForwardMessage
+              item.isLastMessageSentByMe.checkNull() && !isForwardMessage && !item.isLastMessageRecalledByUser.checkNull()
                   ? buildMessageIndicator()
                   : const SizedBox(),
               isForwardMessage
@@ -332,26 +332,27 @@ class RecentChatItem extends StatelessWidget {
         future: getMessageOfId(item.lastMessageId.checkNull()),
         builder: (context, data) {
           if (data.hasData && data.data != null && !data.hasError) {
+            var chat = data.data!;
             return Row(
               children: [
                 forMessageTypeIcon(
-                    item.lastMessageType ?? "", data.data!.mediaChatMessage),
+                    chat.messageType, chat.mediaChatMessage),
                 SizedBox(
-                  width: item.isLastMessageRecalledByUser!
+                  width: chat.isMessageRecalled
                       ? 0.0
-                      : forMessageTypeString(item.lastMessageType ?? "",
+                      : forMessageTypeString(chat.messageType,
                                   content:
-                                      item.lastMessageContent.checkNull()) !=
+                                  chat.messageTextContent.checkNull()) !=
                               null
                           ? 3.0
                           : 0.0,
                 ),
                 (item.isGroup.checkNull() &&
-                        !item.isLastMessageSentByMe.checkNull() &&
-                        (data.data!.messageType != Constants.mNotification ||
-                            item.lastMessageContent == " added you"))
+                        !chat.isMessageSentByMe.checkNull() &&
+                        (chat.messageType != Constants.mNotification ||
+                            chat.messageTextContent == " added you"))
                     ? Text(
-                        "${data.data!.senderUserName.checkNull()}:",
+                        "${chat.senderUserName.checkNull()}:",
                         style: Theme.of(context).textTheme.titleSmall,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
@@ -360,28 +361,28 @@ class RecentChatItem extends StatelessWidget {
                 Expanded(
                   child: spanTxt.isEmpty
                       ? Text(
-                          item.isLastMessageRecalledByUser!
+                    chat.isMessageRecalled
                               ? setRecalledMessageText(
-                                  item.isLastMessageSentByMe!)
-                              : forMessageTypeString(item.lastMessageType ?? "",
-                                      content: data.data!.mediaChatMessage
+                        chat.isMessageSentByMe)
+                              : forMessageTypeString(chat.messageType,
+                                      content: chat.mediaChatMessage
                                           ?.mediaCaptionText
                                           .checkNull()) ??
-                                  item.lastMessageContent.checkNull(),
+                        chat.messageTextContent.checkNull(),
                           style: Theme.of(context).textTheme.titleSmall,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                         )
                       : spannableText(
-                          item.isLastMessageRecalledByUser!
+                      chat.isMessageRecalled
                               ? setRecalledMessageText(
-                                  item.isLastMessageSentByMe!)
+                          chat.isMessageSentByMe)
                               : forMessageTypeString(
-                                      item.lastMessageType.checkNull(),
-                                      content: data.data!.mediaChatMessage
+                          chat.messageType.checkNull(),
+                                      content: chat.mediaChatMessage
                                           ?.mediaCaptionText
                                           .checkNull()) ??
-                                  item.lastMessageContent.checkNull(),
+                          chat.messageTextContent.checkNull(),
                           spanTxt,
                           Theme.of(context).textTheme.titleSmall),
                 ),
