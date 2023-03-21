@@ -353,39 +353,7 @@ class ViewAllMediaView extends GetView<ViewAllMediaController> {
     );
   }
 
-  String getDocAsset(String filename) {
-    if (filename.isEmpty || !filename.contains(".")) {
-      return "";
-    }
-    switch (filename.toLowerCase().substring(filename.lastIndexOf(".") + 1)) {
-      case "csv":
-        return csvImage;
-      case "pdf":
-        return pdfImage;
-      case "doc":
-        return docImage;
-      case "docx":
-        return docxImage;
-      case "txt":
-        return txtImage;
-      case "xls":
-        return xlsImage;
-      case "xlsx":
-        return xlsxImage;
-      case "ppt":
-        return pptImage;
-      case "pptx":
-        return pptxImage;
-      case "zip":
-        return zipImage;
-      case "rar":
-        return rarImage;
-      case "apk":
-        return apkImage;
-      default:
-        return "";
-    }
-  }
+
 
   Widget linksView() {
     return Center(

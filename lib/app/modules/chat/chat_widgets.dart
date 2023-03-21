@@ -1283,55 +1283,9 @@ class DocumentMessageView extends StatelessWidget {
 }
 
 Widget getImageHolder(String mediaFileName, double size) {
-  String result = mediaFileName
-      .split('.')
-      .last;
-  debugPrint("File Type ==> $result");
-  switch (result) {
-    case Constants.pdf:
-      return SvgPicture.asset(
-        pdfImage,
-        width: size,
-        height: size,
-      );
-    case Constants.ppt:
-      return SvgPicture.asset(
-        pptImage,
-        width: size,
-        height: size,
-      );
-    case Constants.xls:
-      return SvgPicture.asset(
-        xlsImage,
-        width: size,
-        height: size,
-      );
-    case Constants.xlsx:
-      return SvgPicture.asset(
-        xlsxImage,
-        width: size,
-        height: size,
-      );
-    case Constants.doc:
-    case Constants.docx:
-      return SvgPicture.asset(
-        docImage,
-        width: 30,
-        height: 30,
-      );
-    case Constants.apk:
-      return SvgPicture.asset(
-        apkImage,
-        width: 30,
-        height: 30,
-      );
-    default:
-      return SvgPicture.asset(
-        docImage,
-        width: 30,
-        height: 30,
-      );
-  }
+
+  return SvgPicture.asset(getDocAsset(mediaFileName), width: size,
+    height: size);
 }
 
 class VideoMessageView extends StatelessWidget {
