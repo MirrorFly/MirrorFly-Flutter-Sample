@@ -797,9 +797,9 @@ class AppLockController extends FullLifeCycleController
   _onVerificationCompleted(PhoneAuthCredential credential) async {
     // need otp so i can autofill in a text box
     if (credential.smsCode != null) {
-      /*timeout(true);
+      timeout(true);
       otpController.set(credential.smsCode!.split(""));
-      verifyOTP();*/
+      verifyOTP();
     }
   }
 }
