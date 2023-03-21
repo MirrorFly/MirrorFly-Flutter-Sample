@@ -64,7 +64,8 @@ class ReplyingMessageHeader extends StatelessWidget {
                           chatMessage.messageTextContent,
                           chatMessage.contactChatMessage?.contactName,
                           chatMessage.mediaChatMessage?.mediaFileName,
-                          chatMessage.mediaChatMessage),
+                          chatMessage.mediaChatMessage,
+                          true),
                     ),
                   ],
                 ),
@@ -72,7 +73,13 @@ class ReplyingMessageHeader extends StatelessWidget {
               Stack(
                 alignment: Alignment.topRight,
                 children: [
-                  getReplyImageHolder(context, chatMessage, null, 70, true),
+                  getReplyImageHolder(
+                      context,
+                      chatMessage,
+                      chatMessage.mediaChatMessage,
+                      70,
+                      true,
+                      chatMessage.locationChatMessage),
                   GestureDetector(
                     onTap: onCancel,
                     child: const Padding(
@@ -108,7 +115,8 @@ getReplyMessage(String messageType,
     String? messageTextContent,
     String? contactName,
     String? mediaFileName,
-    MediaChatMessage? mediaChatMessage) {
+    MediaChatMessage? mediaChatMessage,
+    bool isReplying) {
   debugPrint(messageType);
   switch (messageType) {
     case Constants.mText:
@@ -141,14 +149,18 @@ getReplyMessage(String messageType,
     case Constants.mAudio:
       return Row(
         children: [
-          Helper.forMessageTypeIcon(
-              Constants.mAudio,
-              mediaChatMessage != null
-                  ? mediaChatMessage.isAudioRecorded
-                  : true),
-          const SizedBox(
-            width: 5,
-          ),
+          isReplying
+              ? Helper.forMessageTypeIcon(
+                  Constants.mAudio,
+                  mediaChatMessage != null
+                      ? mediaChatMessage.isAudioRecorded
+                      : true)
+              : const SizedBox.shrink(),
+          isReplying
+              ? const SizedBox(
+                  width: 5,
+                )
+              : const SizedBox.shrink(),
           Text(
             Helper.durationToString(Duration(
                 milliseconds: mediaChatMessage != null
@@ -212,9 +224,10 @@ getReplyMessage(String messageType,
 // chatMessage.locationChatMessage,
 getReplyImageHolder(BuildContext context,
     ChatMessageModel chatMessageModel,
-    ReplyParentChatMessage? replyParentChatMessage,
+    MediaChatMessage? replyParentChatMessage,
     double size,
-    bool isNotChatItem) {
+    bool isNotChatItem,
+    LocationChatMessage? locationChatMessage) {
   var isReply = false;
   debugPrint(
       "reply header--> ${replyParentChatMessage?.messageType.toUpperCase()}");
@@ -227,10 +240,11 @@ getReplyImageHolder(BuildContext context,
     case Constants.mImage:
       debugPrint("reply header--> IMAGE");
       return ClipRRect(
-        borderRadius: BorderRadius.circular(5),
+        borderRadius: const BorderRadius.only(
+            topRight: Radius.circular(5), bottomRight: Radius.circular(5)),
         child: imageFromBase64String(
             isReply
-                ? replyParentChatMessage!.mediaChatMessage!.mediaThumbImage
+                ? replyParentChatMessage!.mediaThumbImage
                 : chatMessageModel.mediaChatMessage!.mediaThumbImage
                 .checkNull(),
             context,
@@ -239,17 +253,16 @@ getReplyImageHolder(BuildContext context,
       );
     case Constants.mLocation:
       return getLocationImage(
-          isReply
-              ? replyParentChatMessage!.locationChatMessage
-              : chatMessageModel.locationChatMessage,
+          isReply ? locationChatMessage : chatMessageModel.locationChatMessage,
           size,
           size);
     case Constants.mVideo:
       return ClipRRect(
-        borderRadius: BorderRadius.circular(5),
+        borderRadius: const BorderRadius.only(
+            topRight: Radius.circular(5), bottomRight: Radius.circular(5)),
         child: imageFromBase64String(
             isReply
-                ? replyParentChatMessage!.mediaChatMessage!.mediaThumbImage
+                ? replyParentChatMessage!.mediaThumbImage
                 : chatMessageModel.mediaChatMessage!.mediaThumbImage,
             context,
             size,
@@ -259,14 +272,38 @@ getReplyImageHolder(BuildContext context,
       return isNotChatItem
           ? SizedBox(height: size)
           : ClipRRect(
-        borderRadius: BorderRadius.circular(5),
+              borderRadius: const BorderRadius.only(
+                  topRight: Radius.circular(5),
+                  bottomRight: Radius.circular(5)),
         child: getImageHolder(
             isReply
-                ? replyParentChatMessage!.mediaChatMessage!.mediaFileName
-                .checkNull()
+                      ? replyParentChatMessage!.mediaFileName.checkNull()
                 : chatMessageModel.mediaChatMessage!.mediaFileName,
             size),
       );
+    case Constants.mAudio:
+      return isNotChatItem
+          ? SizedBox(height: size)
+          : ClipRRect(
+              borderRadius: const BorderRadius.only(
+                  topRight: Radius.circular(5),
+                  bottomRight: Radius.circular(5)),
+              child: Container(
+                height: size,
+                width: size,
+                color: audioBgColor,
+                child: Center(
+                  child: SvgPicture.asset(
+                    replyParentChatMessage!.isAudioRecorded.checkNull()
+                        ? mAudioRecordIcon
+                        : mAudioIcon,
+                    fit: BoxFit.contain,
+                    color: Colors.white,
+                    height: 18,
+                  ),
+                ),
+              ),
+            );
     default:
       debugPrint("reply header--> DEFAULT");
       return SizedBox(
@@ -309,12 +346,18 @@ class ReplyMessageHeader extends StatelessWidget {
                         ?.contactName,
                     chatMessage.replyParentChatMessage?.mediaChatMessage
                         ?.mediaFileName,
-                    chatMessage.mediaChatMessage),
+                    chatMessage.mediaChatMessage,
+                    false),
               ],
             ),
           ),
-          getReplyImageHolder(context, chatMessage,
-              chatMessage.replyParentChatMessage, 55, false),
+          getReplyImageHolder(
+              context,
+              chatMessage,
+              chatMessage.replyParentChatMessage!.mediaChatMessage,
+              55,
+              false,
+              chatMessage.replyParentChatMessage!.locationChatMessage),
         ],
       ),
     );
@@ -442,7 +485,6 @@ class LocationMessageView extends StatelessWidget {
       : super(key: key);
   final ChatMessageModel chatMessage;
   final bool isSelected;
-
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -668,7 +710,7 @@ class _AudioMessageViewState extends State<AudioMessageView> with WidgetsBinding
                                   enabledThumbRadius: 4),
                           ),
                           child: Slider(
-                            value: currentPos, /*double.parse(chatMessage
+                          value: currentPos,/*double.parse(chatMessage
                                 .mediaChatMessage!.currentPos
                                 .toString()),*/
                             min: 0.0,
@@ -941,7 +983,6 @@ class ContactMessageView extends StatelessWidget {
   final ChatMessageModel chatMessage;
   final String search;
   final bool isSelected;
-
   @override
   Widget build(BuildContext context) {
     var screenWidth = MediaQuery
@@ -2356,9 +2397,7 @@ Widget chatSpannedText(String text, String spannableText, TextStyle? style,
 
 class AudioMessagePlayerController extends GetxController {
   final _obj = ''.obs;
-
   set obj(value) => _obj.value = value;
-
   get obj => _obj.value;
   var maxDuration = 100.obs;
   var currentPos = 0.obs;
@@ -2384,7 +2423,6 @@ class AudioMessagePlayerController extends GetxController {
   }
 
   ChatMessageModel? playingChat;
-
   playAudio(ChatMessageModel chatMessage, String filePath) async {
     if (playingChat != null) {
       if (playingChat?.mediaChatMessage!.messageId != chatMessage.messageId) {

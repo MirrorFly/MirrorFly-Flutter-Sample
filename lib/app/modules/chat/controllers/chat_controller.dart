@@ -53,7 +53,7 @@ class ChatController extends FullLifeCycleController
   var isUserTyping = false.obs;
   var isAudioRecording = Constants.audioRecordInitial.obs;
   late Timer? _audioTimer;
-  var timerInit = "00.00".obs;
+  var timerInit = "00:00".obs;
   DateTime? startTime;
 
   double screenHeight = 0.0;
@@ -1045,6 +1045,7 @@ class ChatController extends FullLifeCycleController
       chatItem.isSelected = false;
     }
     selectedChatList.clear();
+    chatList.refresh();
   }
 
   void addChatSelection(ChatMessageModel item) {
@@ -1753,7 +1754,7 @@ class ChatController extends FullLifeCycleController
       if (await askStoragePermission()) {
         if (await Record().hasPermission()) {
           record = Record();
-          timerInit("00.00");
+          timerInit("00:00");
           isAudioRecording(Constants.audioRecording);
           startTimer();
           await record.start(
@@ -1796,7 +1797,7 @@ class ChatController extends FullLifeCycleController
     File(filePath!).delete();
     isUserTyping(false);
     isAudioRecording(Constants.audioRecordInitial);
-    timerInit("00.00");
+    timerInit("00:00");
     record.dispose();
   }
 
@@ -1813,7 +1814,7 @@ class ChatController extends FullLifeCycleController
   }
 
   sendRecordedAudioMessage() {
-    if (timerInit.value != "00.00") {
+    if (timerInit.value != "00:00") {
       final format = DateFormat('mm:ss');
       final dt = format.parse(timerInit.value, true);
       final recordDuration = dt.millisecondsSinceEpoch;
@@ -1823,7 +1824,7 @@ class ChatController extends FullLifeCycleController
     }
     isUserTyping(false);
     isAudioRecording(Constants.audioRecordInitial);
-    timerInit("00.00");
+    timerInit("00:00");
     record.dispose();
   }
 
