@@ -209,8 +209,8 @@ class ViewAllMediaView extends GetView<ViewAllMediaController> {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: SvgPicture.asset(assetName),
+                padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                child: SvgPicture.asset(assetName, width: 20, height: 20,),
               ),
               Expanded(
                 child: Padding(
@@ -240,7 +240,7 @@ class ViewAllMediaView extends GetView<ViewAllMediaController> {
             ],
           ),
           const AppDivider(
-            padding: EdgeInsets.only(top: 8),
+            padding: EdgeInsets.only(top: 8, bottom: 8),
           )
         ],
       ),

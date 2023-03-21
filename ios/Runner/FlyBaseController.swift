@@ -67,6 +67,7 @@ let onGroupTypingStatus_channel = "contus.mirrorfly/onGroupTypingStatus"
 let onFailure_channel = "contus.mirrorfly/onFailure"
 let onProgressChanged_channel = "contus.mirrorfly/onProgressChanged"
 let onSuccess_channel = "contus.mirrorfly/onSuccess"
+let onMessageDeleteForEveryOne_channel = "contus.mirrorfly/onMessageDeleteForEveryOne"
 
 var networkConnected = false;
 
@@ -119,6 +120,8 @@ class FlyBaseController: NSObject{
      var onFailureStreamHandler: OnFailureStreamHandler?
      var onProgressChangedStreamHandler: OnProgressChangedStreamHandler?
      var onSuccessStreamHandler: OnSuccessStreamHandler?
+    
+     var onMessageDeleteForEveryOneStreamHandler: OnMessageDeleteForEveryOneStreamHandler?
     
      var onChatTypingStatusStreamHandler: OnChatTypingStatusStreamHandler?
      var onsetTypingStatusStreamHandler: OnsetTypingStatusStreamHandler?
@@ -446,6 +449,12 @@ class FlyBaseController: NSObject{
           }
         
         FlutterEventChannel(name: connectionSuccess_channel, binaryMessenger: controller.binaryMessenger).setStreamHandler(self.connectionSuccessStreamHandler as? FlutterStreamHandler & NSObjectProtocol)
+         
+        if (self.onMessageDeleteForEveryOneStreamHandler == nil) {
+            self.onMessageDeleteForEveryOneStreamHandler = OnMessageDeleteForEveryOneStreamHandler()
+          }
+        
+        FlutterEventChannel(name: onMessageDeleteForEveryOne_channel, binaryMessenger: controller.binaryMessenger).setStreamHandler(self.onMessageDeleteForEveryOneStreamHandler as? FlutterStreamHandler & NSObjectProtocol)
          
          
         if (self.onWebChatPasswordChangedStreamHandler == nil) {
