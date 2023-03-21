@@ -118,7 +118,6 @@ getReplyMessage(String messageType,
     MediaChatMessage? mediaChatMessage,
     bool isReplying) {
   debugPrint(messageType);
-  debugPrint('mediaChatMessage : ' + mediaChatMessage.toString());
   switch (messageType) {
     case Constants.mText:
       return Row(

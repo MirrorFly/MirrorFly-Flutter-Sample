@@ -151,7 +151,7 @@ class OtpView extends GetView<LoginController> {
                                   child: Padding(
                                     padding: const EdgeInsets.all(8.0),
                                     child: Text(
-                                      controller.timeout.value ? 'Resend OTP' : controller.seconds.value.toString(),
+                                      controller.timeout.value ? 'Resend OTP' : '00:${controller.seconds.value.toStringAsFixed(0).padLeft(2,'0')}',
                                       style: const TextStyle(
                                           color: textHintColor,
                                           fontSize: 14,

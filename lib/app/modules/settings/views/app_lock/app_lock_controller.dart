@@ -36,6 +36,11 @@ class AppLockController extends FullLifeCycleController
     super.onInit();
     _pinEnabled(SessionManagement.getEnablePin());
     _bioEnabled(SessionManagement.getEnableBio());
+  }
+
+  @override
+  void onReady() {
+    super.onReady();
     if (Get.currentRoute == Routes.pin) {
       setUpPinExpiryDialog();
     }
@@ -101,7 +106,11 @@ class AppLockController extends FullLifeCycleController
   changePin() {
     modifyPin(true);
     clearTextViews();
-    Get.toNamed(Routes.setPin);
+    Get.toNamed(Routes.setPin)?.then((value) {
+      Future.delayed(const Duration(milliseconds: 100), () {
+        setUpPinExpiryDialog();
+      });
+    });
   }
 
   savePin() {
@@ -148,7 +157,7 @@ class AppLockController extends FullLifeCycleController
         _pinEnabled(true);
         _bioEnabled(fromBio);
         modifyPin(false);
-        Get.back();
+        Get.back(result: true);
       } else {
         toToast("PIN not Matched");
       }
@@ -210,7 +219,11 @@ class AppLockController extends FullLifeCycleController
       SessionManagement.setEnableBio(false);
       _pinEnabled(false);
       _bioEnabled(false);
-      Get.back();
+      if (Get.previousRoute.isEmpty || Get.previousRoute == Routes.pin) {
+        Get.offNamed(getInitialRoute());
+      } else {
+        Get.back(result: true);
+      }
     }
   }
 
@@ -274,7 +287,7 @@ class AppLockController extends FullLifeCycleController
     if (text.isNotEmpty && text.length == 4) {
       if (SessionManagement.getPin() == text.join()) {
         clearFields();
-        if (offPin) {
+        if (offPin || disablePin) {
           offPin = false;
           disablePIN();
         } else if (modifyPin.value) {
@@ -385,7 +398,10 @@ class AppLockController extends FullLifeCycleController
         Constants.pinExpiry >= lockSessionDifference.inDays) {
       //Alert Day
       debugPrint('Alert Day');
-      showAlertDateDialog(lockSessionDifference.inDays + 1);
+      if(SessionManagement.showAlert()) {
+        showAlertDateDialog(
+            (Constants.pinExpiry - lockSessionDifference.inDays) + 1);
+      }
     } else if (Constants.pinExpiry < lockSessionDifference.inDays) {
       //Already Expired day
       debugPrint('Already Expired');
@@ -413,66 +429,96 @@ class AppLockController extends FullLifeCycleController
         TextButton(
             onPressed: () {
               Get.back();
+              changePin();
             },
             child: const Text(
-              'OK',
+              'Change PIN',
               style: TextStyle(color: buttonBgColor),
             )),
         TextButton(
             onPressed: () {
               Get.back();
-              changePin();
+              SessionManagement.setDontShowAlert();
             },
             child: const Text(
-              'Change pin"',
+              'OK',
               style: TextStyle(color: buttonBgColor),
             )),
       ],
     ));
   }
 
-  var disablePin=false;
+  var disablePin = false;
+
   void showExpiredDialog() {
     Get.dialog(
-      AlertDialog(
-        titlePadding: const EdgeInsets.only(top: 20.0, right: 20, left: 20),
-        contentPadding: EdgeInsets.zero,
-        title: const Text(
-          'Your current PIN has been expired. Please set a new PIN to continue further',
-          style: TextStyle(fontWeight: FontWeight.normal, fontSize: 16),
+        WillPopScope(
+          onWillPop: () async => false,
+          child: AlertDialog(
+            titlePadding: const EdgeInsets.only(top: 20.0, right: 20, left: 20),
+            contentPadding: EdgeInsets.zero,
+            title: const Text(
+              'Your current PIN has been expired. Please set a new PIN to continue further',
+              style: TextStyle(fontWeight: FontWeight.normal, fontSize: 16),
+            ),
+            insetPadding: const EdgeInsets.symmetric(horizontal: 20),
+            actionsAlignment: MainAxisAlignment.center,
+            actions: [
+              Column(
+                children: [
+                  SizedBox(
+                    width: double.infinity,
+                    child: TextButton(
+                        onPressed: () {
+                          toToast(
+                              'Enter Current Pin To Disable Pin And FingerPrint');
+                          disablePin = true;
+                          Get.back();
+                        },
+                        child: const Text(
+                          'Disable PIN',
+                          style: TextStyle(
+                            color: buttonBgColor,
+                            fontSize: 16,
+                          ),
+                        )),
+                  ),
+                  SizedBox(
+                    width: double.infinity,
+                    child: TextButton(
+                        onPressed: () {
+                          Get.back();
+                          changePin();
+                        },
+                        child: const Text(
+                          'Change PIN',
+                          style: TextStyle(
+                            color: buttonBgColor,
+                            fontSize: 16,
+                          ),
+                        )),
+                  ),
+                  SizedBox(
+                    width: double.infinity,
+                    child: TextButton(
+                        onPressed: () {
+                          Get.back();
+                          sendOtp();
+                        },
+                        child: const Text(
+                          'Forgot PIN?',
+                          style: TextStyle(
+                            color: Color(0XFFFF0000),
+                            fontSize: 16,
+                          ),
+                        )),
+                  ),
+                ],
+              ),
+            ],
+          ),
         ),
-        insetPadding: const EdgeInsets.symmetric(horizontal: 20),
-        actions: [
-          TextButton(
-              onPressed: () {
-                toToast('Enter Current Pin To Disable Pin And FingerPrint');
-                disablePin=true;
-                Get.back();
-              },
-              child: const Text(
-                'DISABLE PIN',
-                style: TextStyle(color: buttonBgColor),
-              )),
-          TextButton(
-              onPressed: () {
-                Get.back();
-                changePin();
-              },
-              child: const Text(
-                'Change pin"',
-                style: TextStyle(color: buttonBgColor),
-              )),
-          TextButton(
-              onPressed: () {
-                Get.back();
-              },
-              child: const Text(
-                'Forgot PIN?',
-                style: TextStyle(color: Color(0XFFFF0000)),
-              )),
-        ],
-      ),
-    );
+        barrierDismissible: false);
   }
 
   Future<void> sendOtp({bool fromInvalid = false}) async {
@@ -492,114 +538,131 @@ class AppLockController extends FullLifeCycleController
   RxBool timeout = false.obs;
 
   showOtpView() {
-    showModalBottomSheet(
-        context: Get.context!,
+    if(!Get.isBottomSheetOpen.checkNull()) {
+      Get.bottomSheet(
         isDismissible: false,
         isScrollControlled: true,
-        shape: const RoundedRectangleBorder(
-            borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(30), topRight: Radius.circular(30))),
-        builder: (builder) {
-          return Padding(
-            padding: EdgeInsets.only(
-                top: 16.0,
-                left: 16.0,
-                right: 16.0,
-                bottom: MediaQuery.of(Get.context!).viewInsets.bottom),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const Text(
-                  'Forget PIN ?',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
-                ),
-                const Padding(
-                  padding: EdgeInsets.only(top: 16.0, right: 8, left: 8),
-                  child: Text(
-                    'We have sent you the OTP to the registered mobile number enter the 6 digit verification code below',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                        fontSize: 13,
-                        fontWeight: FontWeight.w300,
-                        color: Color(0Xff737373)),
+        BottomSheet(
+            shape: const RoundedRectangleBorder(
+                borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(30),
+                    topRight: Radius.circular(30))),
+            onClosing: () {},
+            builder: (builder) {
+              return WillPopScope(
+                onWillPop: () async => false,
+                child: Padding(
+                  padding: EdgeInsets.only(
+                      top: 16.0,
+                      left: 16.0,
+                      right: 16.0,
+                      bottom: MediaQuery
+                          .of(Get.context!)
+                          .viewInsets
+                          .bottom),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Text(
+                        'Forget PIN ?',
+                        textAlign: TextAlign.center,
+                        style:
+                        TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
+                      ),
+                      const Padding(
+                        padding: EdgeInsets.only(top: 16.0, right: 8, left: 8),
+                        child: Text(
+                          'We have sent you the OTP to the registered mobile number enter the 6 digit verification code below',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                              fontSize: 13,
+                              fontWeight: FontWeight.w300,
+                              color: Color(0Xff737373)),
+                        ),
+                      ),
+                      const SizedBox(
+                        height: 16,
+                      ),
+                      OTPTextField(
+                          width: MediaQuery
+                              .of(Get.context!)
+                              .size
+                              .width,
+                          controller: otpController,
+                          length: 6,
+                          textFieldAlignment: MainAxisAlignment.center,
+                          margin: const EdgeInsets.all(4),
+                          fieldWidth: 40,
+                          fieldStyle: FieldStyle.box,
+                          outlineBorderRadius: 10,
+                          style: const TextStyle(fontSize: 16),
+                          otpFieldStyle: OtpFieldStyle(),
+                          onChanged: (String pin) {
+                            smsCode = (pin);
+                          }),
+                      Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: Obx(() {
+                          return InkWell(
+                            onTap: () {
+                              if (timeout.value) {
+                                resend();
+                              }
+                            },
+                            child: Text(
+                              timeout.value
+                                  ? 'Resend OTP'
+                                  : '00:${(myDuration.value.inSeconds.remainder(
+                                  60).toStringAsFixed(0).padLeft(2, '0'))}',
+                              style: TextStyle(
+                                  color: timeout.value
+                                      ? const Color(0XFFFF0000)
+                                      : buttonBgColor,
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.w500),
+                            ),
+                          );
+                        }),
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          TextButton(
+                              onPressed: () {
+                                Get.back();
+                              },
+                              child: const Text(
+                                'Cancel',
+                                style: TextStyle(
+                                    color: Color(0XFFFF0000),
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w700),
+                              )),
+                          TextButton(
+                              onPressed: () {
+                                verifyOTP();
+                              },
+                              child: const Text(
+                                'Verify OTP',
+                                style: TextStyle(
+                                    color: buttonBgColor,
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w700),
+                              ))
+                        ],
+                      )
+                    ],
                   ),
                 ),
-                const SizedBox(
-                  height: 16,
-                ),
-                OTPTextField(
-                    width: MediaQuery.of(Get.context!).size.width,
-                    controller: otpController,
-                    length: 6,
-                    textFieldAlignment: MainAxisAlignment.center,
-                    margin: const EdgeInsets.all(4),
-                    fieldWidth: 40,
-                    fieldStyle: FieldStyle.box,
-                    outlineBorderRadius: 10,
-                    style: const TextStyle(fontSize: 16),
-                    otpFieldStyle: OtpFieldStyle(),
-                    onChanged: (String pin) {
-                      smsCode = (pin);
-                    }),
-                Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Obx(() {
-                    return InkWell(
-                      onTap: () {
-                        if (timeout.value) {
-                          resend();
-                        }
-                      },
-                      child: Text(
-                        timeout.value
-                            ? 'Resend OTP'
-                            : '00:${(myDuration.value.inSeconds.remainder(60).toStringAsFixed(2))}',
-                        style: TextStyle(
-                            color: timeout.value
-                                ? const Color(0XFFFF0000)
-                                : buttonBgColor,
-                            fontSize: 15,
-                            fontWeight: FontWeight.w500),
-                      ),
-                    );
-                  }),
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    TextButton(
-                        onPressed: () {
-                          Get.back();
-                        },
-                        child: const Text(
-                          'Cancel',
-                          style: TextStyle(
-                              color: Color(0XFFFF0000),
-                              fontSize: 16,
-                              fontWeight: FontWeight.w700),
-                        )),
-                    TextButton(
-                        onPressed: () {
-                          verifyOTP();
-                        },
-                        child: const Text(
-                          'Verify OTP',
-                          style: TextStyle(
-                              color: buttonBgColor,
-                              fontSize: 16,
-                              fontWeight: FontWeight.w700),
-                        ))
-                  ],
-                )
-              ],
-            ),
-          );
-        });
+              );
+            }),
+      );
+    }
   }
 
   void startTimer() {
+    timeout(false);
     seconds = (31);
     countdownTimer =
         Timer.periodic(const Duration(seconds: 1), (_) => setCountDown());
@@ -635,7 +698,8 @@ class AppLockController extends FullLifeCycleController
   String? verificationId;
 
   Future<void> sendVerificationCode() async {
-    var mobileNumber = '+${SessionManagement.getMobileNumber() ?? ''}';
+    var mobileNumber =
+        '+${(SessionManagement.getCountryCode() ?? '').replaceAll('+', '')}${SessionManagement.getMobileNumber() ?? ''}';
     debugPrint('mobileNumber $mobileNumber');
     /*Future.delayed(const Duration(milliseconds: 500), () {
       hideLoading();
@@ -657,7 +721,8 @@ class AppLockController extends FullLifeCycleController
         verificationFailed: (FirebaseAuthException e) {
           timeout(true);
           mirrorFlyLog("verificationFailed", e.toString());
-          toToast("Please Enter Valid Mobile Number");
+          //verificationFailed==>[firebase_auth/too-many-requests] We have blocked all requests from this device due to unusual activity. Try again later.
+          toToast("OTP sent failed");
           hideLoading();
         },
         codeSent: (String verificationId, int? resendToken) {
@@ -681,14 +746,12 @@ class AppLockController extends FullLifeCycleController
   }
 
   resend() {
-    /*timeout(false);
-    sendVerificationCode();*/
+    sendOtp();
   }
 
   Future<void> verifyOTP() async {
     if (await AppUtils.isNetConnected()) {
       if (smsCode.length == 6) {
-        Get.back(); //for bottomsheetdialog close
         Helper.showLoading(message: 'verifying OTP');
         PhoneAuthCredential credential = PhoneAuthProvider.credential(
             verificationId: verificationId!, smsCode: smsCode);
@@ -710,8 +773,15 @@ class AppLockController extends FullLifeCycleController
         stopTimer();
         mirrorFlyLog("sign in ", value.toString());
         hideLoading();
-        Get.back();
-        Get.toNamed(Routes.setPin);
+        Get.toNamed(Routes.setPin)?.then((value) {
+          if (Get.isBottomSheetOpen.checkNull()) {
+            otpController.clear();
+            Get.back(); //for bottomsheetdialog close
+          }
+          Future.delayed(const Duration(milliseconds: 100), () {
+            setUpPinExpiryDialog();
+          });
+        });
       }).catchError((error) {
         debugPrint("Firebase Verify Error $error");
         toToast("Invalid OTP");
@@ -725,11 +795,11 @@ class AppLockController extends FullLifeCycleController
   }
 
   _onVerificationCompleted(PhoneAuthCredential credential) async {
-    timeout(true);
     // need otp so i can autofill in a text box
     if (credential.smsCode != null) {
+      /*timeout(true);
       otpController.set(credential.smsCode!.split(""));
-      verifyOTP();
+      verifyOTP();*/
     }
   }
 }

@@ -1045,6 +1045,7 @@ class ChatController extends FullLifeCycleController
       chatItem.isSelected = false;
     }
     selectedChatList.clear();
+    chatList.refresh();
   }
 
   void addChatSelection(ChatMessageModel item) {

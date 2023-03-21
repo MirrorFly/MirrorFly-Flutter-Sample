@@ -123,6 +123,9 @@ class SessionManagement {
   static void setLockAlert(int alertTimeStamp) async {
     await _preferences.setInt(Constants.alertDate, alertTimeStamp);
   }
+  static void setDontShowAlert() async {
+    await _preferences.setBool('show_alert', false);
+  }
   static Future clear()async{
     await _preferences.clear();
   }
@@ -183,4 +186,5 @@ class SessionManagement {
   static bool isTrailLicence() => _preferences.getBool("IS_TRIAL_LICENSE") ?? false;
   static int appLastSession() => _preferences.getInt(Constants.appSession) ?? DateTime.now().millisecondsSinceEpoch;
   static int lastPinChangedAt() => _preferences.getInt(Constants.changedPinAt) ?? DateTime.now().millisecondsSinceEpoch;
+  static bool showAlert() => _preferences.getBool('show_alert') ?? true;
 }

@@ -337,6 +337,7 @@ class MainController extends FullLifeCycleController with BaseController, FullLi
     } else if(Constants.pinExpiry<lockSessionDifference.inDays) {
       //Already Expired day
       debugPrint('Already Expired');
+      presentPinPage();
     }else{
       //if 30 days not completed
       debugPrint('Not Expired');
