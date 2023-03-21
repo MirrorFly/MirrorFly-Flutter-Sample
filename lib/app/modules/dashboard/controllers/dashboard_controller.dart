@@ -45,7 +45,7 @@ class DashboardController extends FullLifeCycleController
 
   var archiveSettingEnabled = false.obs;
 
-  @override
+/*@override
   void onInit() {
     super.onInit();
     recentChats.bindStream(recentChats.stream);
@@ -55,6 +55,19 @@ class DashboardController extends FullLifeCycleController
     getRecentChatList();
     getArchivedChatsList();
     checkArchiveSetting();
+    userlistScrollController.addListener(_scrollListener);
+  }*/
+
+  @override
+  void onReady(){
+    super.onReady();
+    recentChats.bindStream(recentChats.stream);
+    ever(recentChats, (callback) => unReadCount());
+    archivedChats.bindStream(archivedChats.stream);
+    ever(archivedChats, (callback) => archivedChatCount());
+    // getRecentChatList();
+    getArchivedChatsList();
+    // checkArchiveSetting();
     userlistScrollController.addListener(_scrollListener);
   }
 

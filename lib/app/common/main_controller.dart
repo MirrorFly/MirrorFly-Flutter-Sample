@@ -41,6 +41,7 @@ class MainController extends FullLifeCycleController with BaseController, FullLi
   @override
   Future<void> onInit() async {
     super.onInit();
+    //presentPinPage();
     PushNotifications.init();
     initListeners();
     getMediaEndpoint();
@@ -268,22 +269,24 @@ class MainController extends FullLifeCycleController with BaseController, FullLi
 
   @override
   void onDetached() {
-
+    mirrorFlyLog('mainController', 'onDetached');
   }
 
   @override
   void onInactive() {
-
+    mirrorFlyLog('mainController', 'onInactive');
   }
 
   @override
   void onPaused() {
-
+    mirrorFlyLog('mainController', 'onPaused');
+    SessionManagement.setAppSessionNow();
   }
 
   @override
   void onResumed() {
     mirrorFlyLog('mainController', 'onResumed');
+    checkShouldShowPin();
     if(!SessionManagement.isTrailLicence()) {
       syncContacts();
     }
@@ -318,5 +321,36 @@ class MainController extends FullLifeCycleController with BaseController, FullLi
     }
   }
 
-
+  /*
+  *This function used to check time out session for app lock
+  */
+  void checkShouldShowPin(){
+    var lastSession = SessionManagement.appLastSession();
+    var lastPinChangedAt = SessionManagement.lastPinChangedAt();
+    var sessionDifference = DateTime.now().difference(DateTime.fromMillisecondsSinceEpoch(lastSession));
+    var lockSessionDifference = DateTime.now().difference(DateTime.fromMillisecondsSinceEpoch(lastPinChangedAt));
+    debugPrint('sessionDifference seconds ${sessionDifference.inSeconds}');
+    debugPrint('lockSessionDifference days ${lockSessionDifference.inDays}');
+    if(Constants.pinAlert<=lockSessionDifference.inDays && Constants.pinExpiry>=lockSessionDifference.inDays){
+      //Alert Day
+      debugPrint('Alert Day');
+    } else if(Constants.pinExpiry<lockSessionDifference.inDays) {
+      //Already Expired day
+      debugPrint('Already Expired');
+      presentPinPage();
+    }else{
+      //if 30 days not completed
+      debugPrint('Not Expired');
+      if (Constants.sessionLockTime <= sessionDifference.inSeconds) {
+        //Show Pin if App Lock Enabled
+        debugPrint('Show Pin');
+        presentPinPage();
+      }
+    }
+  }
+  void presentPinPage(){
+    if((SessionManagement.getEnablePin() || SessionManagement.getEnableBio()) && Get.currentRoute!=Routes.pin){
+      Get.toNamed(Routes.pin,);
+    }
+  }
 }

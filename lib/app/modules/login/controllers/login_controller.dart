@@ -68,6 +68,11 @@ class LoginController extends GetxController {
       debugPrint(seconds.value.toString());
     }
   }
+  @override
+  void onReady() {
+    super.onReady();
+    FlyChat.isTrailLicence().then((value) => SessionManagement.setIsTrailLicence(value.checkNull()));
+  }
 
   @override
   void dispose() {

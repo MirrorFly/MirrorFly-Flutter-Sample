@@ -22,6 +22,7 @@ class DashboardView extends GetView<DashboardController> {
   Widget build(BuildContext context) {
     return FocusDetector(
       onFocusGained: () {
+        debugPrint('onFocusGained');
         // controller.initListeners();
         controller.checkArchiveSetting();
         controller.getRecentChatList();

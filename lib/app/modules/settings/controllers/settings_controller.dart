@@ -13,47 +13,62 @@ import '../../../common/constants.dart';
 import '../../../data/apputils.dart';
 import '../../../data/session_management.dart';
 
-class SettingsController extends GetxController{
-   PackageInfo? packageInfo ;
+class SettingsController extends GetxController {
+  PackageInfo? packageInfo;
+
   @override
   void onInit() {
     super.onInit();
     getPackageInfo();
   }
-  getPackageInfo() async{
+
+  getPackageInfo() async {
     packageInfo.obs.value = await PackageInfo.fromPlatform();
   }
 
-  logout() async {
-    if(await AppUtils.isNetConnected()) {
-      Get.back();
+  logout() {
+    Get.back();
+    if (SessionManagement.getEnablePin()) {
+      Get.toNamed(Routes.pin)?.then((value){
+        if(value!=null && value){
+          logoutFromSDK();
+        }
+      });
+    } else {
+      logoutFromSDK();
+    }
+  }
+
+  logoutFromSDK() async {
+    if (await AppUtils.isNetConnected()) {
       Helper.progressLoading();
       FlyChat.logoutOfChatSDK().then((value) {
         Helper.hideLoading();
-        if(value) {
+        if (value) {
           var token = SessionManagement.getToken().checkNull();
-          SessionManagement.clear().then((value){
+          SessionManagement.clear().then((value) {
             SessionManagement.setToken(token);
             Get.offAllNamed(Routes.login);
           });
-        }else{
+        } else {
           Get.snackbar("Logout", "Logout Failed");
         }
-      }).catchError((er){
+      }).catchError((er) {
         Helper.hideLoading();
-        SessionManagement.clear().then((value){
+        SessionManagement.clear().then((value) {
           // SessionManagement.setToken(token);
           Get.offAllNamed(Routes.login);
         });
       });
-    }else{
+    } else {
       toToast(Constants.noInternetConnection);
     }
   }
 
   getReleaseDate() async {
     var releaseDate = "Nov";
-    String pathToYaml =  join(dirname(Platform.script.toFilePath()), '../pubspec.yaml');
+    String pathToYaml =
+        join(dirname(Platform.script.toFilePath()), '../pubspec.yaml');
     File file = File(pathToYaml);
     file.readAsString().then((String content) {
       Map yaml = loadYaml(content);
@@ -62,5 +77,4 @@ class SettingsController extends GetxController{
     });
     return releaseDate;
   }
-
 }
