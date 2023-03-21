@@ -809,12 +809,13 @@ import FlyDatabase
         
         let server = args["server"] as? Bool ?? false
         let userjid = args["jid"] as? String ?? ""
+        let saveasfriend = args["saveasfriend"] as? Bool ?? false
         //        let JID = FlyDefaults.myXmppUsername + "@" + FlyDefaults.xmppDomain
         
         print("getting user profile from userjid-->\(userjid)")
         print("getting user profile from server-->\(server)")
         do {
-            try ContactManager.shared.getUserProfile(for: userjid, fetchFromServer: false, saveAsFriend: true){ isSuccess, flyError, flyData in
+            try ContactManager.shared.getUserProfile(for: userjid, fetchFromServer: server, saveAsFriend: saveasfriend){ isSuccess, flyError, flyData in
                 var data  = flyData
                 if isSuccess {
                     
