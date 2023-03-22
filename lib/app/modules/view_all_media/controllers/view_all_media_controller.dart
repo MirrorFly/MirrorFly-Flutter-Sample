@@ -178,15 +178,18 @@ class ViewAllMediaController extends GetxController {
   }
 
   List<MapEntry<String, String>> getUrlAndHostList(String text) {
+    RegExp exp = RegExp("\\s+");
     var urls = <MapEntry<String, String>>[];
-    var splitString = text.split("\\s+");
+    var splitString = text.split(exp);
     for (var string in splitString) {
-      try {
-        var item = Uri.parse(string);
-        urls.add(MapEntry(item.host, item.toString()));
-      } catch (ignored) {
-        //No Implementation needed
-      }
+        try {
+          var item = Uri.parse(string);
+          if(item.host.isNotEmpty) {
+            urls.add(MapEntry(item.host, item.toString()));
+          }
+        } catch (ignored) {
+          mirrorFlyLog('$string url exception', ignored.toString());
+        }
     }
     mirrorFlyLog("urls", urls.toString());
     return urls;
