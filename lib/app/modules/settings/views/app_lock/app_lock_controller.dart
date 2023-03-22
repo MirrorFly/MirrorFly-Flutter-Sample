@@ -301,6 +301,7 @@ class AppLockController extends FullLifeCycleController
           }
         }
       } else {
+        wrongPinCount++;
         if (wrongPinCount > 5) {
           forgetPin(fromInvalid: true);
         }
@@ -308,7 +309,6 @@ class AppLockController extends FullLifeCycleController
           toToast("Invalid PIN! Try again");
         }
         clearFields();
-        wrongPinCount++;
       }
     }
   }
