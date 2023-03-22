@@ -219,21 +219,17 @@ class ViewAllMediaController extends GetxController {
   }
 
   List<MapEntry<String, String>> getUrlAndHostList(String text) {
+    RegExp exp = RegExp("\\s+");
     var urls = <MapEntry<String, String>>[];
-    var splitString = text.split(" ");
+    var splitString = text.split(exp);
     for (var string in splitString) {
-      debugPrint("String in Parse--> $string");
       try {
-        if(string.contains("http")) {
-          var item = Uri.parse(string);
+        var item = Uri.parse(string);
+        if(item.host.isNotEmpty) {
           urls.add(MapEntry(item.host, item.toString()));
-        }else{
-          debugPrint("parsed raw string so skipping the add");
         }
       } catch (ignored) {
-        //No Implementation needed
-        debugPrint("view all media uri parse exception---> ${ignored.toString()}");
-
+        mirrorFlyLog('$string url exception', ignored.toString());
       }
     }
     mirrorFlyLog("urls", urls.toString());
