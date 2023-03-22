@@ -1146,6 +1146,29 @@ extension FlyBaseController : MessageEventsDelegate, ConnectionEventDelegate, Lo
 
     func onMessagesDeletedforEveryone(messageIds: Array<String>) {
         print("Message Deleted For Everyone--->")
+        
+        messageIds.forEach { messageId in
+            let chatMessage = ChatManager.getMessageOfId(messageId: messageId)
+            print("Message Status Update--->\(String(describing: chatMessage))")
+            print("getMessageOfId==>", chatMessage?.messageTextContent as Any)
+            
+            if(chatMessage == nil){
+                return
+            }
+            var chatMessageJson = JSONSerializer.toJson(chatMessage as Any)
+
+            chatMessageJson = chatMessageJson.replacingOccurrences(of: "{\"some\":", with: "")
+            chatMessageJson = chatMessageJson.replacingOccurrences(of: "}}", with: "}")
+            print(chatMessageJson)
+
+            if(messageStatusUpdatedStreamHandler?.onMessageStatusUpdated != nil){
+                messageStatusUpdatedStreamHandler?.onMessageStatusUpdated?(chatMessageJson)
+
+            }else{
+                print("Message status Stream Handler is Nil")
+            }
+        }
+        
     }
 
     func showOrUpdateOrCancelNotification() {

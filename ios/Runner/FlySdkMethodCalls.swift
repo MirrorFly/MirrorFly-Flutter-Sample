@@ -1912,7 +1912,10 @@ import FlyDatabase
                 
                 mediaLinkMessages.forEach { mediaLinkMessage in
                     mediaLinkMessage.forEach{ linkChatMessage in
-                        let mediaMsgJson = JSONSerializer.toJson(linkChatMessage.chatMessage)
+                        var mediaMsgJson = JSONSerializer.toJson(linkChatMessage.chatMessage)
+                        
+                        mediaMsgJson = mediaMsgJson.replacingOccurrences(of: "{\"some\":", with: "")
+                        mediaMsgJson = mediaMsgJson.replacingOccurrences(of: "}}", with: "}")
                         
                         viewAllMediaLinkMessages = viewAllMediaLinkMessages + mediaMsgJson + ","
                         print("getLinkMessage--> \(mediaMsgJson)")
@@ -1921,6 +1924,7 @@ import FlyDatabase
                    
                 }
                 viewAllMediaLinkMessages = viewAllMediaLinkMessages.dropLast() + "]"
+                
                 
                 print("getLinkMessages Array--> \(viewAllMediaLinkMessages)")
                 result(viewAllMediaLinkMessages)

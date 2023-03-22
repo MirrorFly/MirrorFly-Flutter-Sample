@@ -54,9 +54,6 @@
 		C469A0252E21302B8CFA84D7 /* Pods-Runner.profile.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.profile.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.profile.xcconfig"; sourceTree = "<group>"; };
 		CD1A6E3E298FC98F498DDD32 /* Pods-Runner.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.debug.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.debug.xcconfig"; sourceTree = "<group>"; };
 		CE071F23295F09E60035BBAD /* FlyBaseController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlyBaseController.swift; sourceTree = "<group>"; };
-		CE2582222951A053009D974C /* NotificationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationService.swift; sourceTree = "<group>"; };
-		CE2582242951A053009D974C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		CE25823629523757009D974C /* FlutterNotificationExtnsion.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = FlutterNotificationExtnsion.entitlements; sourceTree = "<group>"; };
 		CEB9F2DA2948F9E10080BC48 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		CED95E0429472C1600B02558 /* FlyEvents.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FlyEvents.swift; sourceTree = "<group>"; };
 		CED95E0529472C1600B02558 /* Commons.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Commons.swift; sourceTree = "<group>"; };
@@ -105,7 +102,6 @@
 			children = (
 				9740EEB11CF90186004384FC /* Flutter */,
 				97C146F01CF9000F007C117D /* Runner */,
-				CE2582212951A053009D974C /* FlutterNotificationExtnsion */,
 				97C146EF1CF9000F007C117D /* Products */,
 				0DADEE341125B655544B4FAA /* Pods */,
 				CDA1BCEDBD16E15425FC5059 /* Frameworks */,
@@ -149,16 +145,6 @@
 				7AF2B07DED8838840B9960E9 /* Pods_Runner.framework */,
 			);
 			name = Frameworks;
-			sourceTree = "<group>";
-		};
-		CE2582212951A053009D974C /* FlutterNotificationExtnsion */ = {
-			isa = PBXGroup;
-			children = (
-				CE25823629523757009D974C /* FlutterNotificationExtnsion.entitlements */,
-				CE2582222951A053009D974C /* NotificationService.swift */,
-				CE2582242951A053009D974C /* Info.plist */,
-			);
-			path = FlutterNotificationExtnsion;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */

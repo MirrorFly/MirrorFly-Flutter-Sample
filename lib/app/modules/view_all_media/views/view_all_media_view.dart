@@ -21,6 +21,7 @@ class ViewAllMediaView extends GetView<ViewAllMediaController> {
         appBar: AppBar(
           automaticallyImplyLeading: true,
           title: Text(controller.name),
+          centerTitle: false,
           bottom: TabBar(
               indicatorColor: buttonBgColor,
               labelColor: buttonBgColor,
@@ -60,20 +61,30 @@ class ViewAllMediaView extends GetView<ViewAllMediaController> {
   }
 
   Widget mediaView() {
-    return Center(
+    return SafeArea(
       child: Obx(() {
         return controller.medialistdata.isNotEmpty
-            ? ListView.builder(
-                itemCount: controller.medialistdata.length,
-                itemBuilder: (context, index) {
-                  var header = controller.medialistdata.keys.toList()[index];
-                  return Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisSize: MainAxisSize.max,
-                    children: [headerItem(header), gridView(header)],
-                  );
-                })
-            : const Text("No Media Found...!!!");
+            ? SingleChildScrollView(
+              child: Column(
+                children: [
+                  ListView.builder(
+                    shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      itemCount: controller.medialistdata.length,
+                      itemBuilder: (context, index) {
+                        var header = controller.medialistdata.keys.toList()[index];
+                        return Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisSize: MainAxisSize.max,
+                          children: [headerItem(header), gridView(header)],
+                        );
+                      }),
+                  const SizedBox(height: 10,),
+                  Text("${controller.imageCount} Photos, ${controller.videoCount} Videos, ${controller.audioCount} Audios"),
+                ],
+              ),
+            )
+            : const Center(child: Text("No Media Found...!!!"));
       }),
     );
   }
@@ -81,6 +92,7 @@ class ViewAllMediaView extends GetView<ViewAllMediaController> {
   Widget gridView(String header) {
     return GridView.builder(
         shrinkWrap: true,
+        physics: const NeverScrollableScrollPhysics(),
         itemCount: controller.medialistdata[header]!.length,
         gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: 4,
@@ -136,7 +148,7 @@ class ViewAllMediaView extends GetView<ViewAllMediaController> {
     return Stack(
       children: [
         controller.imageFromBase64String(
-            item.mediaChatMessage!.mediaThumbImage, null,  null),
+            item.mediaChatMessage!.mediaThumbImage, null, null),
         Center(
           child: SvgPicture.asset(videoWhite),
         )
@@ -152,7 +164,7 @@ class ViewAllMediaView extends GetView<ViewAllMediaController> {
   }
 
   Widget docsView() {
-    return Center(
+    return SafeArea(
       child: Obx(() {
         return controller.docslistdata.isNotEmpty
             ? listView(controller.docslistdata, true)
@@ -161,38 +173,50 @@ class ViewAllMediaView extends GetView<ViewAllMediaController> {
     );
   }
 
-  ListView listView(Map<String, List<MessageItem>> list, bool doc) {
-    return ListView.builder(
-        itemCount: list.length,
-        itemBuilder: (context, index) {
-          var header = list.keys.toList()[index];
-          return Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.max,
-            children: [
-              headerItem(header),
-              ListView.builder(
-                  itemCount: list[header]!.length,
-                  shrinkWrap: true,
-                  itemBuilder: (context, listIndex) {
-                    var item = list[header]![listIndex].chatMessage;
-                    return doc
-                        ? docTile(
-                            assetName: getDocAsset(
-                                item.mediaChatMessage!.mediaFileName),
-                            title: item.mediaChatMessage!.mediaFileName,
-                            subtitle: getFileSizeText(item
-                                .mediaChatMessage!.mediaFileSize
-                                .toString()),
-                            //item.mediaChatMessage!.mediaFileSize.readableFileSize(base1024: false),
-                            date: getDateFromTimestamp(
-                                item.messageSentTime.toInt(), "d/MM/yy"),
-                            path: item.mediaChatMessage!.mediaLocalStoragePath)
-                        : linkTile(list[header]![listIndex]);
-                  })
-            ],
-          );
-        });
+
+  Widget listView(Map<String, List<MessageItem>> list, bool doc) {
+    return SingleChildScrollView(
+      child: Column(
+        children: [
+          ListView.builder(
+            shrinkWrap: true,
+              itemCount: list.length,
+              physics: const NeverScrollableScrollPhysics(),
+              itemBuilder: (context, index) {
+                var header = list.keys.toList()[index];
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.max,
+                  children: [
+                    headerItem(header),
+                    ListView.builder(
+                        itemCount: list[header]!.length,
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        itemBuilder: (context, listIndex) {
+                          var item = list[header]![listIndex].chatMessage;
+                          return doc
+                              ? docTile(
+                                  assetName: getDocAsset(
+                                      item.mediaChatMessage!.mediaFileName),
+                                  title: item.mediaChatMessage!.mediaFileName,
+                                  subtitle: getFileSizeText(item
+                                      .mediaChatMessage!.mediaFileSize
+                                      .toString()),
+                                  //item.mediaChatMessage!.mediaFileSize.readableFileSize(base1024: false),
+                                  date: getDateFromTimestamp(
+                                      item.messageSentTime.toInt(), "d/MM/yy"),
+                                  path: item.mediaChatMessage!.mediaLocalStoragePath)
+                              : linkTile(list[header]![listIndex]);
+                        }),
+                  ],
+                );
+              }),
+          const SizedBox(height: 10,),
+          doc ? Text("${controller.documentCount} Documents") : Text("${controller.linkCount} Links")
+        ],
+      ),
+    );
   }
 
   Widget docTile(
@@ -210,7 +234,11 @@ class ViewAllMediaView extends GetView<ViewAllMediaController> {
             children: [
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                child: SvgPicture.asset(assetName, width: 20, height: 20,),
+                child: SvgPicture.asset(
+                  assetName,
+                  width: 20,
+                  height: 20,
+                ),
               ),
               Expanded(
                 child: Padding(
@@ -251,19 +279,22 @@ class ViewAllMediaView extends GetView<ViewAllMediaController> {
   }
 
   Widget linkTile(MessageItem item) {
-    return InkWell(
-      child: Column(
-        children: [
-          Container(
-            margin:
-                const EdgeInsets.symmetric(horizontal: 15.0, vertical: 10.0),
-            decoration: const BoxDecoration(
-                color: Color(0xffE2E8F7),
-                borderRadius: BorderRadius.all(Radius.circular(8))),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Container(
+    return Column(
+      children: [
+        Container(
+          margin:
+              const EdgeInsets.symmetric(horizontal: 15.0, vertical: 10.0),
+          decoration: const BoxDecoration(
+              color: Color(0xffE2E8F7),
+              borderRadius: BorderRadius.all(Radius.circular(8))),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              InkWell(
+                onTap: (){
+                  launchWeb(item.linkMap!["url"]);
+                },
+                child: Container(
                   decoration: const BoxDecoration(
                       color: Color(0xffD0D8EB),
                       borderRadius: BorderRadius.all(Radius.circular(8))),
@@ -314,7 +345,12 @@ class ViewAllMediaView extends GetView<ViewAllMediaController> {
                     ],
                   ),
                 ),
-                Padding(
+              ),
+              InkWell(
+                onTap: (){
+                  controller.navigateMessage(item.chatMessage);
+                },
+                child: Padding(
                   padding: const EdgeInsets.symmetric(
                       horizontal: 10.0, vertical: 2.0),
                   child: Row(
@@ -340,27 +376,22 @@ class ViewAllMediaView extends GetView<ViewAllMediaController> {
                       )
                     ],
                   ),
-                )
-              ],
-            ),
+                ),
+              )
+            ],
           ),
-          const AppDivider()
-        ],
-      ),
-      onTap: () {
-        launchWeb(item.linkMap!["url"]);
-      },
+        ),
+        const AppDivider()
+      ],
     );
   }
 
-
-
   Widget linksView() {
-    return Center(
+    return SafeArea(
       child: Obx(() {
         return controller.linklistdata.isNotEmpty
             ? listView(controller.linklistdata, false)
-            : const Text("No Links Found...!!!");
+            : const Center(child: Text("No Links Found...!!!"));
       }),
     );
   }

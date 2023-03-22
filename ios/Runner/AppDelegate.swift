@@ -117,9 +117,9 @@ extension AppDelegate {
     /// This method is used to clear notifications and badge count
     func clearPushNotifications() {
         
-        print("###Clearing push notification")
-        UNUserNotificationCenter.current().removeAllDeliveredNotifications()
-        UNUserNotificationCenter.current().removeAllPendingNotificationRequests()
+//        print("###Clearing push notification")
+//        UNUserNotificationCenter.current().removeAllDeliveredNotifications()
+//        UNUserNotificationCenter.current().removeAllPendingNotificationRequests()
     }
     
     override func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {

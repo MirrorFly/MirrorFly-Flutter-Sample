@@ -2500,7 +2500,7 @@ class ChatController extends FullLifeCycleController
 
   @override
   void onPaused() {
-    mirrorFlyLog("LifeCycle", "onPaused");
+    mirrorFlyLog("chat controller LifeCycle", "onPaused");
     FlyChat.setOnGoingChatUser("");
     SessionManagement.setCurrentChatJID("");
     playerPause();

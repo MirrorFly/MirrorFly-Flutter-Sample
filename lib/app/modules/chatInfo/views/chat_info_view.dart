@@ -58,6 +58,7 @@ class ChatInfoView extends GetView<ChatInfoController> {
                       )),
                 ),
                 flexibleSpace: FlexibleSpaceBar(
+                  centerTitle: false,
                   background: ImageNetwork(
                     url: controller.profile.image.checkNull(),
                     width: MediaQuery

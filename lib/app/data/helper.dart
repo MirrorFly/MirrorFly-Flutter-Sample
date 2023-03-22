@@ -432,6 +432,8 @@ extension ChatmessageParsing on ChatMessageModel {
 
   bool isFileMessage() => messageType == Constants.mDocument;
 
+
+
   bool isNotificationMessage() =>
       messageType.toUpperCase() == Constants.mNotification;
 }
@@ -584,6 +586,9 @@ openDocument(String mediaLocalStoragePath, BuildContext context) async {
   if (mediaLocalStoragePath.isNotEmpty) {
     final result = await OpenFile.open(mediaLocalStoragePath);
     debugPrint(result.message);
+    if(result.message.contains("file does not exist")){
+      toToast("The Selected file Doesn't Exist or Unable to Open");
+    }
 
     /*FlyChat.openFile(mediaLocalStoragePath).catchError((onError) {
       final scaffold = ScaffoldMessenger.of(context);

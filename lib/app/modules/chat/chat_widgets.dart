@@ -451,7 +451,7 @@ class SenderHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    mirrorFlyLog("index", index.toString());
+    // mirrorFlyLog("index", index.toString());
     return Visibility(
       visible: isGroupProfile ?? false
           ? (index == chatList.length - 1 ||
@@ -1664,7 +1664,7 @@ class MessageContent extends StatelessWidget {
   Widget build(BuildContext context) {
     var chatMessage = chatList[index];
     //mirrorFlyLog("message==>", json.encode(chatMessage));
-    debugPrint("Message Type===> ${chatMessage.messageType}");
+    // debugPrint("Message Type===> ${chatMessage.messageType}");
     if (chatList[index].isMessageRecalled) {
       return RecalledMessageView(
         chatMessage: chatMessage,
@@ -1853,8 +1853,8 @@ class RecalledMessageView extends StatelessWidget {
 }
 
 getMessageIndicator(String? messageStatus, bool isSender, String messageType) {
-  debugPrint("Message Status ==>");
-  debugPrint("Message Status ==> $messageStatus");
+  // debugPrint("Message Status ==>");
+  // debugPrint("Message Status ==> $messageStatus");
   if (isSender) {
     if (messageStatus == 'A') {
       return SvgPicture.asset(acknowledgedIcon);
@@ -1874,11 +1874,11 @@ getMessageIndicator(String? messageStatus, bool isSender, String messageType) {
 
 Widget getImageOverlay(ChatMessageModel chatMessage,
     {Function()? onAudio, Function()? onVideo}) {
-  debugPrint(
-      "getImageOverlay checkFile ${checkFile(chatMessage.mediaChatMessage!.mediaLocalStoragePath)}");
-  debugPrint("getImageOverlay messageStatus ${chatMessage.messageStatus}");
-  debugPrint(
-      "getImageOverlay ${(checkFile(chatMessage.mediaChatMessage!.mediaLocalStoragePath) && chatMessage.messageStatus != 'N')}");
+  // debugPrint(
+  //     "getImageOverlay checkFile ${checkFile(chatMessage.mediaChatMessage!.mediaLocalStoragePath)}");
+  // debugPrint("getImageOverlay messageStatus ${chatMessage.messageStatus}");
+  // debugPrint(
+  //     "getImageOverlay ${(checkFile(chatMessage.mediaChatMessage!.mediaLocalStoragePath) && chatMessage.messageStatus != 'N')}");
   if (checkFile(chatMessage.mediaChatMessage!.mediaLocalStoragePath) &&
       chatMessage.messageStatus != 'N') {
     if (chatMessage.messageType.toUpperCase() == 'VIDEO') {
@@ -1910,8 +1910,8 @@ Widget getImageOverlay(ChatMessageModel chatMessage,
       return const SizedBox.shrink();
     }
   } else {
-    debugPrint(
-        "overlay status-->${chatMessage.isMessageSentByMe ? chatMessage.mediaChatMessage!.mediaUploadStatus : chatMessage.mediaChatMessage!.mediaDownloadStatus}");
+    // debugPrint(
+    //     "overlay status-->${chatMessage.isMessageSentByMe ? chatMessage.mediaChatMessage!.mediaUploadStatus : chatMessage.mediaChatMessage!.mediaDownloadStatus}");
     switch (chatMessage.isMessageSentByMe
         ? chatMessage.mediaChatMessage!.mediaUploadStatus
         : chatMessage.mediaChatMessage!.mediaDownloadStatus) {
@@ -2399,9 +2399,9 @@ bool isDateChanged(int position, List<ChatMessageModel> mChatData) {
     return true;
   } else {
     if (prePosition <= size && position <= size) {
-      debugPrint("position $position $size");
-      debugPrint("sentTime ${mChatData[position].messageSentTime}");
-      debugPrint("pre sentTime ${mChatData[prePosition].messageSentTime}");
+      // debugPrint("position $position $size");
+      // debugPrint("sentTime ${mChatData[position].messageSentTime}");
+      // debugPrint("pre sentTime ${mChatData[prePosition].messageSentTime}");
       var currentHeaderId = mChatData[position].messageSentTime.toInt();
       var previousHeaderId = mChatData[prePosition].messageSentTime.toInt();
       return currentHeaderId != previousHeaderId;
@@ -2435,9 +2435,9 @@ String addDateHeaderMessage(ChatMessageModel item) {
   var yesterday =
       "$month ${checkTwoDigitsForDate(yesterdayDate)}, ${calendar.year}";
   // var dateHeaderMessage = ChatMessage()
-  debugPrint("messageDate $messageDate");
-  debugPrint("today $today");
-  debugPrint("yesterday $yesterday");
+  // debugPrint("messageDate $messageDate");
+  // debugPrint("today $today");
+  // debugPrint("yesterday $yesterday");
   if (messageDate.toString() == (today).toString()) {
     return "Today";
     //dateHeaderMessage = createDateHeaderMessageWithDate(date, item)
