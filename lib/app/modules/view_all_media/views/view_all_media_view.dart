@@ -168,7 +168,7 @@ class ViewAllMediaView extends GetView<ViewAllMediaController> {
       child: Obx(() {
         return controller.docslistdata.isNotEmpty
             ? listView(controller.docslistdata, true)
-            : const Text("No Docs Found...!!!");
+            : const Center(child: Text("No Docs Found...!!!"));
       }),
     );
   }

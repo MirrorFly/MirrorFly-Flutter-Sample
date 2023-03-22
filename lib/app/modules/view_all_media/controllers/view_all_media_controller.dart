@@ -80,6 +80,7 @@ class ViewAllMediaController extends GetxController {
       if (value != null) {
         // mirrorFlyLog("getMediaMessages", value);
         var data = chatMessageModelFromJson(value);
+        previewMediaList.clear();
         previewMediaList.addAll(data);
         imageCount(previewMediaList.where((chatItem) => chatItem.isImageMessage()).toList().length);
         videoCount(previewMediaList.where((chatItem) => chatItem.isVideoMessage()).toList().length);
@@ -219,13 +220,20 @@ class ViewAllMediaController extends GetxController {
 
   List<MapEntry<String, String>> getUrlAndHostList(String text) {
     var urls = <MapEntry<String, String>>[];
-    var splitString = text.split("\\s+");
+    var splitString = text.split(" ");
     for (var string in splitString) {
+      debugPrint("String in Parse--> $string");
       try {
-        var item = Uri.parse(string);
-        urls.add(MapEntry(item.host, item.toString()));
+        if(string.contains("http")) {
+          var item = Uri.parse(string);
+          urls.add(MapEntry(item.host, item.toString()));
+        }else{
+          debugPrint("parsed raw string so skipping the add");
+        }
       } catch (ignored) {
         //No Implementation needed
+        debugPrint("view all media uri parse exception---> ${ignored.toString()}");
+
       }
     }
     mirrorFlyLog("urls", urls.toString());
