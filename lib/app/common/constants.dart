@@ -3,13 +3,13 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:flysdk/flysdk.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../data/apputils.dart';
-import 'package:get/get.dart';
 
 //Colors
 const Color appBarColor = Color(0xffF2F2F2);
@@ -241,23 +241,26 @@ const String notificationNotWorkingURL =
     "https://app.mirrorfly.com/notifications/";
 
 toToast(String text) {
-  // Fluttertoast.showToast(
-  //     msg: text,
-  //     toastLength: Toast.LENGTH_SHORT,
-  //     gravity: ToastGravity.BOTTOM,
-  //     timeInSecForIosWeb: 1,
-  //     textColor: Colors.black,
-  //     backgroundColor: Colors.white,
-  //     fontSize: 16.0);
-  Get.showSnackbar(
-    GetSnackBar(
-      message: text,
-      isDismissible: true,
-      // icon: const Icon(Icons.refresh),
-      duration: const Duration(seconds: 5),
-      animationDuration: const Duration(seconds: 1),
-    ),
-  );
+  if(Platform.isIOS) {
+    FocusManager.instance.primaryFocus?.unfocus();
+  }
+  Fluttertoast.showToast(
+      msg: text,
+      toastLength: Toast.LENGTH_SHORT,
+      gravity: ToastGravity.BOTTOM,
+      timeInSecForIosWeb: 1,
+      textColor: Colors.black,
+      backgroundColor: Colors.white,
+      fontSize: 16.0);
+  // Get.showSnackbar(
+  //   GetSnackBar(
+  //     message: text,
+  //     isDismissible: false,
+  //     // icon: const Icon(Icons.refresh),
+  //     duration: const Duration(seconds: 5),
+  //     animationDuration: const Duration(seconds: 1),
+  //   ),
+  // );
 }
 
 mirrorFlyLog(String tag, String msg) {
