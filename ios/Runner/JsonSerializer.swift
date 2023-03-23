@@ -337,7 +337,9 @@ open class JSONSerializer {
                 handledValue = toJson(value)
             }
             else if(propertyName == "messageTextContent" || propertyName == "lastMessageContent") &&  String(describing: value) != "nil" {
-                let convert = String(describing: value).replacingOccurrences(of: "\n", with: "\\n")
+                var convert = String(describing: value).replacingOccurrences(of: "\n", with: "\\n")
+//                convert = convert.utf8EncodedString()
+//                    handledValue =  "\"\(convert)\""
                 handledValue =  "\"\(convert)\""
 //                if !convert.isEmpty {
 //                    handledValue =  #""\#(convert)""#
@@ -454,4 +456,11 @@ open class JSONSerializer {
         return json
     }
     
+}
+extension String{
+    func utf8EncodedString()-> String {
+            let messageData = self.data(using: .nonLossyASCII)
+            let text = String(data: messageData!, encoding: .utf8) ?? ""
+            return text
+        }
 }
