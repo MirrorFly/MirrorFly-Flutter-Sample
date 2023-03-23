@@ -40,7 +40,7 @@ class _LottieAnimationState extends State<LottieAnimation>
             ..duration = composition.duration
             ..forward();
           widget.showRepeat ? controller.repeat() : null;
-          debugPrint("Lottie Duration: ${composition.duration}");
+          // debugPrint("Lottie Duration: ${composition.duration}");
         },
         height: widget.height,
         width: widget.width,

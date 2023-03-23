@@ -130,9 +130,7 @@ class RecentChatItem extends StatelessWidget {
                       : buildProfileStatus()
                   : Expanded(
                       child: typingUserid.isEmpty
-                          ? item.isLastMessageRecalledByUser!
-                              ? const SizedBox()
-                              : buildLastMessageItem()
+                          ? buildLastMessageItem()
                           : buildTypingUser(),
                     ),
             ],

@@ -624,6 +624,19 @@ class OnSuccessStreamHandler: NSObject, FlutterStreamHandler {
         return nil
     }
 }
+class OnMessageDeleteForEveryOneStreamHandler: NSObject, FlutterStreamHandler {
+    public var onMessageDeletedForEveryone: FlutterEventSink?
+    
+    public func onListen(withArguments arguments: Any?, eventSink events: @escaping FlutterEventSink) -> FlutterError? {
+        onMessageDeletedForEveryone = events
+        return nil
+    }
+
+    public func onCancel(withArguments arguments: Any?) -> FlutterError? {
+        onMessageDeletedForEveryone = nil
+        return nil
+    }
+}
 class OnChatTypingStatusStreamHandler: NSObject, FlutterStreamHandler {
     public var onChatTyping: FlutterEventSink?
     

@@ -339,6 +339,12 @@ open class JSONSerializer {
             else if(propertyName == "messageTextContent" || propertyName == "lastMessageContent") &&  String(describing: value) != "nil" {
                 let convert = String(describing: value).replacingOccurrences(of: "\n", with: "\\n")
                 handledValue =  "\"\(convert)\""
+//                if !convert.isEmpty {
+//                    handledValue =  #""\#(convert)""#
+//                } else {
+//                    handledValue = "\"\(value)\""
+//                }
+                
             }
             
             else if (propertyName == "mediaChatMessage") &&  String(describing: value) != "nil" {

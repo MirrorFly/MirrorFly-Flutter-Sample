@@ -357,11 +357,15 @@ import FlyDatabase
                 
                 let totalPages = userlist["totalPages"] as! Int
                 let message = userlist["message"] as! String
-                var userlistJson = "{\"total_pages\": " + String(totalPages) + ",\"message\" : \"" + message + "\",\"status\" : true,\"data\":" + userData + "}"
-                
+                var userlistJson = ""
+                if(userData.isEmpty){
+                    userlistJson = "{\"total_pages\": " + String(totalPages) + ",\"message\" : \"" + message + "\",\"status\" : true,\"data\":[]}"
+                }else{
+                    userlistJson = "{\"total_pages\": " + String(totalPages) + ",\"message\" : \"" + message + "\",\"status\" : true,\"data\":" + userData + "}"
+                }
+                 
                 userlistJson = userlistJson.replacingOccurrences(of: "{\"some\": {}}", with: "\"\"")
                 userlistJson = userlistJson.replacingOccurrences(of: "\"nickName\": {}", with: "\"nickName\": \"\"")
-                
                 
                 print("userlist json after replacing---> \(userlistJson)")
                 result(userlistJson)
@@ -719,6 +723,7 @@ import FlyDatabase
             var profileDetailJson = JSONSerializer.toJson(groupMember.profileDetail as Any)
             profileDetailJson = profileDetailJson.replacingOccurrences(of: "{\"some\":", with: "")
             profileDetailJson = profileDetailJson.replacingOccurrences(of: "}}", with: "}")
+            profileDetailJson = profileDetailJson.replacingOccurrences(of: "{}", with: "\"\"")
             
             print("profileDetailJson--> \(profileDetailJson)")
              
@@ -804,12 +809,13 @@ import FlyDatabase
         
         let server = args["server"] as? Bool ?? false
         let userjid = args["jid"] as? String ?? ""
+        let saveasfriend = args["saveasfriend"] as? Bool ?? false
         //        let JID = FlyDefaults.myXmppUsername + "@" + FlyDefaults.xmppDomain
         
         print("getting user profile from userjid-->\(userjid)")
         print("getting user profile from server-->\(server)")
         do {
-            try ContactManager.shared.getUserProfile(for: userjid, fetchFromServer: false, saveAsFriend: true){ isSuccess, flyError, flyData in
+            try ContactManager.shared.getUserProfile(for: userjid, fetchFromServer: server, saveAsFriend: saveasfriend){ isSuccess, flyError, flyData in
                 var data  = flyData
                 if isSuccess {
                     
@@ -1231,15 +1237,18 @@ import FlyDatabase
         let jid = args["jid"] as? String ?? ""
 
         ChatManager.markConversationAsRead(for: [jid])
-//        FlyMessenger.deleteUnreadMessageSeparatorOfAConversation(jid)//not found need to implement here after adding
+        FlyMessenger.shared.deleteUnreadMessageSeparatorOfAConversation(jid: jid)
+        
         result(true)
     }
     
     static func deleteUnreadMessageSeparatorOfAConversation(call: FlutterMethodCall, result: @escaping FlutterResult){
-//        let args = call.arguments as! Dictionary<String, Any>
+        let args = call.arguments as! Dictionary<String, Any>
         
-//        let jid = args["jid"] as? String ?? nil
+        let jid = args["jid"] as? String ?? ""
+        FlyMessenger.shared.deleteUnreadMessageSeparatorOfAConversation(jid: jid)
         
+        result(true)
         
     }
     static func getRecalledMessagesOfAConversation(call: FlutterMethodCall, result: @escaping FlutterResult){
@@ -1537,13 +1546,44 @@ import FlyDatabase
         print("calling getAllGroups")
         GroupManager.shared.getGroups(fetchFromServer: fetchFromServer) { isSuccess, flyError, flyData in
             var data  = flyData
-            print("GroupManager.shared.getGroups \(data)")
+            
+//            print("GroupManager.shared.getGroups \(JSONSerializer.toJson(data.getData()))")
             if isSuccess {
-                // Update UI
+                result(JSONSerializer.toJson(data.getData()))
             } else{
-                // failure cases
+                result(FlutterError(code: "500", message: "Unable to Get Group List", details: flyError?.localizedDescription))
             }
         }
+    }
+    
+    static func searchConversation(call: FlutterMethodCall, result: @escaping FlutterResult){
+        let args = call.arguments as! Dictionary<String, Any>
+        let searchKey = args["searchKey"] as? String ?? ""
+        let jidForSearch = args["jidForSearch"] as? String ?? ""
+        let globalSearch = args["globalSearch"] as? Bool ?? true
+        
+        let searchedMessages : [SearchMessage] = ChatManager.shared.searchMessage(text: searchKey)
+        
+//        var searchConversationResp = "{\"searchTerm\":\"done\",\"data\":["
+        var searchConversationResp = "["
+        var index = 0;
+        for message in searchedMessages{
+            if(index != 0){
+                searchConversationResp = searchConversationResp + ","
+            }
+            index = index + 1;
+            var message : ChatMessage? = FlyMessenger.getMessageOfId(messageId: message.messageId)
+            var messageJson = JSONSerializer.toJson(message)
+            messageJson = messageJson.replacingOccurrences(of: "{\"some\":", with: "")
+            messageJson = messageJson.replacingOccurrences(of: "}}", with: "}")
+            searchConversationResp = searchConversationResp + messageJson
+        }
+        
+//        searchConversationResp = searchConversationResp + "],\"jidToSearch\":\"\"}"
+        searchConversationResp = searchConversationResp + "]"
+       
+        print("searchMessages\(searchConversationResp)")
+        result(searchConversationResp)
     }
     
     static func isMuted(call: FlutterMethodCall, result: @escaping FlutterResult){
@@ -1561,32 +1601,17 @@ import FlyDatabase
         
         let jid = args["jid"] as? String ?? ""
         
-        print("getUserLastSeenTime called")
-        
         ChatManager.getUserLastSeen( for: jid) { isSuccess, flyError, flyData in
               var data  = flyData
             print("getUserLastSeenTime response \(isSuccess)")
             print("getUserLastSeenTime response \(data)")
               if isSuccess {
-                  print(data.getMessage() as! String )
-                  print(data.getData() as! String )
-                  
-//                  let dateReceived = data.getData()
-//                  
-//                  let dateFormat = DateFormatter()
-//                  dateFormat.timeStyle = .short
-//                  dateFormat.dateStyle = .short
-//                  dateFormat.doesRelativeDateFormatting = true
-//                  let dateString = dateFormat.string(from: Date(timeIntervalSinceNow: TimeInterval(-(Int(dateReceived) ?? 0))))
-//                  
-//                  let timeDifference = "\(NSLocalizedString(dateReceived.localized, comment: "")) \(dateString)"
-//                  let lastSeen = timeDifference.lowercased()
-//                  
-//                  print("getUserLastSeenTime response parsed \(lastSeen)")
-                  result("")
-                  
+                  let lastseenSeconds = data.getData() as? String
+                  let sec = lastseenSeconds?.replacingOccurrences(of: "-", with: "")
+                  result(sec)
               } else{
                   print(data.getMessage() as! String )
+                  result(FlutterError(code: "500", message: "Unable to Get User Last seen", details: data.getMessage()))
               }
           }
     }
@@ -1791,7 +1816,7 @@ import FlyDatabase
         
         let userJid = args["jid"] as? String ?? ""
     
-        let mediaMessages : [ChatMessage] = FlyMessenger.getMediaMessagesOf(jid: userJid)
+        /*let mediaMessages : [ChatMessage] = FlyMessenger.getMediaMessagesOf(jid: userJid)
         
         print("mediaMessages---> \(mediaMessages)")
         if(mediaMessages.isEmpty){
@@ -1805,23 +1830,31 @@ import FlyDatabase
             print(mediaMsgJson)
             
             result(mediaMsgJson)
+        }*/
+        
+        ChatManager.getVedioImageAudioMessageGroupByMonth(jid: userJid) { isSuccess,error,data  in
+
+            print("mediaMessages---> \(data)")
+            var mediaData = data
+            let chatMessages = mediaData.getData() as? [[ChatMessage]]
+        
+            if(chatMessages!.isEmpty){
+                print("getMediaMessages==>\(String(describing: chatMessages))")
+                result(nil)
+            }else{
+                var mediaMsgJson = JSONSerializer.toJson(chatMessages as Any)
+                print("getMediaMessages json==>\(mediaMsgJson)")
+                mediaMsgJson = mediaMsgJson.replacingOccurrences(of: "{\"some\":", with: "")
+                mediaMsgJson = mediaMsgJson.replacingOccurrences(of: "}}", with: "}")
+                mediaMsgJson = mediaMsgJson.replacingOccurrences(of: "\"some\": [[", with: "[")
+                mediaMsgJson = mediaMsgJson.replacingOccurrences(of: "]]", with: "]")
+                
+                print("getMediaMessages==>\(mediaMsgJson)")
+                
+                result(mediaMsgJson)
+            }
+            
         }
-        
-        
-//        ChatManager.getVedioImageAudioMessageGroupByMonth(jid: userJid) { chatMessages in
-//            let mediaMessages : [[ChatMessage]] = chatMessages
-//            print("mediaMessages---> \(mediaMessages)")
-//
-//            var mediaMsgJson = JSONSerializer.toJson(mediaMessages)
-//            mediaMsgJson = mediaMsgJson.replacingOccurrences(of: "{\"some\":", with: "")
-//            mediaMsgJson = mediaMsgJson.replacingOccurrences(of: "}}", with: "}")
-//            mediaMsgJson = mediaMsgJson.replacingOccurrences(of: "[[", with: "[")
-//            mediaMsgJson = mediaMsgJson.replacingOccurrences(of: "]]", with: "]")
-//
-//            print(mediaMsgJson)
-//
-//           result(mediaMsgJson)
-//        }
                
     }
     static func getDocsMessages(call: FlutterMethodCall, result: @escaping FlutterResult){
@@ -1879,7 +1912,10 @@ import FlyDatabase
                 
                 mediaLinkMessages.forEach { mediaLinkMessage in
                     mediaLinkMessage.forEach{ linkChatMessage in
-                        let mediaMsgJson = JSONSerializer.toJson(linkChatMessage.chatMessage)
+                        var mediaMsgJson = JSONSerializer.toJson(linkChatMessage.chatMessage)
+                        
+                        mediaMsgJson = mediaMsgJson.replacingOccurrences(of: "{\"some\":", with: "")
+                        mediaMsgJson = mediaMsgJson.replacingOccurrences(of: "}}", with: "}")
                         
                         viewAllMediaLinkMessages = viewAllMediaLinkMessages + mediaMsgJson + ","
                         print("getLinkMessage--> \(mediaMsgJson)")
@@ -1888,6 +1924,7 @@ import FlyDatabase
                    
                 }
                 viewAllMediaLinkMessages = viewAllMediaLinkMessages.dropLast() + "]"
+                
                 
                 print("getLinkMessages Array--> \(viewAllMediaLinkMessages)")
                 result(viewAllMediaLinkMessages)

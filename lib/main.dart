@@ -54,7 +54,7 @@ Future<void> main() async {
   // var nonchat = await FlyChat.getNonChatUsers();
   // nonChatUsers = json.decode(nonchat.toString());
   FlyChat.isTrailLicence().then((value) => SessionManagement.setIsTrailLicence(value.checkNull()));
-  FlyChat.cancelNotifications();
+  // FlyChat.cancelNotifications();
   if (!kIsWeb) {
      await Firebase.initializeApp();
     // await Firebase.initializeApp(

@@ -9,6 +9,7 @@ import Foundation
 import Flutter
 import FlyCore
 import FlyCommon
+import QuickLook
 
 
 let MIRRORFLY_METHOD_CHANNEL = "contus.mirrorfly/sdkCall"
@@ -66,6 +67,7 @@ let onGroupTypingStatus_channel = "contus.mirrorfly/onGroupTypingStatus"
 let onFailure_channel = "contus.mirrorfly/onFailure"
 let onProgressChanged_channel = "contus.mirrorfly/onProgressChanged"
 let onSuccess_channel = "contus.mirrorfly/onSuccess"
+let onMessageDeleteForEveryOne_channel = "contus.mirrorfly/onMessageDeleteForEveryOne"
 
 var networkConnected = false;
 
@@ -118,6 +120,8 @@ class FlyBaseController: NSObject{
      var onFailureStreamHandler: OnFailureStreamHandler?
      var onProgressChangedStreamHandler: OnProgressChangedStreamHandler?
      var onSuccessStreamHandler: OnSuccessStreamHandler?
+    
+     var onMessageDeleteForEveryOneStreamHandler: OnMessageDeleteForEveryOneStreamHandler?
     
      var onChatTypingStatusStreamHandler: OnChatTypingStatusStreamHandler?
      var onsetTypingStatusStreamHandler: OnsetTypingStatusStreamHandler?
@@ -446,6 +450,12 @@ class FlyBaseController: NSObject{
         
         FlutterEventChannel(name: connectionSuccess_channel, binaryMessenger: controller.binaryMessenger).setStreamHandler(self.connectionSuccessStreamHandler as? FlutterStreamHandler & NSObjectProtocol)
          
+        if (self.onMessageDeleteForEveryOneStreamHandler == nil) {
+            self.onMessageDeleteForEveryOneStreamHandler = OnMessageDeleteForEveryOneStreamHandler()
+          }
+        
+        FlutterEventChannel(name: onMessageDeleteForEveryOne_channel, binaryMessenger: controller.binaryMessenger).setStreamHandler(self.onMessageDeleteForEveryOneStreamHandler as? FlutterStreamHandler & NSObjectProtocol)
+         
          
         if (self.onWebChatPasswordChangedStreamHandler == nil) {
             self.onWebChatPasswordChangedStreamHandler = OnWebChatPasswordChangedStreamHandler()
@@ -741,6 +751,8 @@ class FlyBaseController: NSObject{
                 FlySdkMethodCalls.exportChatConversationToEmail(call: call, result: result, vc: self.rootViewController!)
             case "getAllGroups":
                 FlySdkMethodCalls.getAllGroups(call: call, result: result)
+            case "searchConversation":
+                FlySdkMethodCalls.searchConversation(call: call, result: result)
             default:
                 result(FlutterMethodNotImplemented)
             }
@@ -1134,6 +1146,29 @@ extension FlyBaseController : MessageEventsDelegate, ConnectionEventDelegate, Lo
 
     func onMessagesDeletedforEveryone(messageIds: Array<String>) {
         print("Message Deleted For Everyone--->")
+        
+        messageIds.forEach { messageId in
+            let chatMessage = ChatManager.getMessageOfId(messageId: messageId)
+            print("Message Status Update--->\(String(describing: chatMessage))")
+            print("getMessageOfId==>", chatMessage?.messageTextContent as Any)
+            
+            if(chatMessage == nil){
+                return
+            }
+            var chatMessageJson = JSONSerializer.toJson(chatMessage as Any)
+
+            chatMessageJson = chatMessageJson.replacingOccurrences(of: "{\"some\":", with: "")
+            chatMessageJson = chatMessageJson.replacingOccurrences(of: "}}", with: "}")
+            print(chatMessageJson)
+
+            if(messageStatusUpdatedStreamHandler?.onMessageStatusUpdated != nil){
+                messageStatusUpdatedStreamHandler?.onMessageStatusUpdated?(chatMessageJson)
+
+            }else{
+                print("Message status Stream Handler is Nil")
+            }
+        }
+        
     }
 
     func showOrUpdateOrCancelNotification() {
