@@ -531,10 +531,10 @@ class AppLockController extends FullLifeCycleController
   }
 
   Timer? countdownTimer;
-  var myDuration = const Duration(seconds: 31).obs;
+  var myDuration = const Duration(seconds: 60).obs;
   final OtpFieldController otpController = OtpFieldController();
   String smsCode = '';
-  var seconds = 31;
+  var seconds = 60;
   RxBool timeout = false.obs;
 
   showOtpView() {
@@ -663,7 +663,7 @@ class AppLockController extends FullLifeCycleController
 
   void startTimer() {
     timeout(false);
-    seconds = (31);
+    seconds = (60);
     countdownTimer =
         Timer.periodic(const Duration(seconds: 1), (_) => setCountDown());
   }
