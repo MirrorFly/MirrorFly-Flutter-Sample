@@ -6,6 +6,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get/get.dart';
+import 'package:is_lock_screen/is_lock_screen.dart';
 import 'package:mirror_fly_demo/app/base_controller.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
@@ -277,9 +278,12 @@ class MainController extends FullLifeCycleController with BaseController, FullLi
     mirrorFlyLog('mainController', 'onInactive');
   }
 
+  bool fromLockScreen = false;
   @override
-  void onPaused() {
+  void onPaused() async {
     mirrorFlyLog('mainController', 'onPaused');
+    fromLockScreen = await isLockScreen() ?? false;
+    mirrorFlyLog('isLockScreen', '$fromLockScreen');
     SessionManagement.setAppSessionNow();
   }
 
@@ -341,12 +345,13 @@ class MainController extends FullLifeCycleController with BaseController, FullLi
     }else{
       //if 30 days not completed
       debugPrint('Not Expired');
-      if (Constants.sessionLockTime <= sessionDifference.inSeconds) {
+      if (Constants.sessionLockTime <= sessionDifference.inSeconds || fromLockScreen) {
         //Show Pin if App Lock Enabled
         debugPrint('Show Pin');
         presentPinPage();
       }
     }
+    fromLockScreen=false;
   }
   void presentPinPage(){
     if((SessionManagement.getEnablePin() || SessionManagement.getEnableBio()) && Get.currentRoute!=Routes.pin){
