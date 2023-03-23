@@ -26,6 +26,7 @@ class GroupInfoView extends GetView<GroupInfoController> {
             return <Widget>[
               Obx(() {
                 return SliverAppBar(
+                  centerTitle: false,
                   snap: false,
                   pinned: true,
                   floating: false,

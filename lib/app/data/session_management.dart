@@ -154,7 +154,7 @@ class SessionManagement {
   static bool getLogin() => _preferences.getBool("login") ?? false;
 
   static String? getChatJid() => _preferences.getString("chatJid");
-  static String? getCurrentChatJID() => _preferences.getString("CurrentChatJID");
+  static String getCurrentChatJID() => _preferences.getString("CurrentChatJID") ?? "";
   static String? getName() => _preferences.getString("name");
   static String? getMobileNumber() => _preferences.getString("mobileNumber");
   static String? getCountryCode() => _preferences.getString("country_code") ?? "+91";

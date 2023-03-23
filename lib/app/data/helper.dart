@@ -11,6 +11,7 @@ import 'package:mirror_fly_demo/app/common/constants.dart';
 import 'package:flysdk/flysdk.dart';
 import 'package:mirror_fly_demo/app/data/session_management.dart';
 import 'package:mirror_fly_demo/app/routes/app_pages.dart';
+import 'package:open_file_plus/open_file_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../common/widgets.dart';
@@ -373,7 +374,7 @@ Future<Profile> getProfileDetails(String jid) async {
 
 Future<ChatMessageModel> getMessageOfId(String mid) async {
   var value = await FlyChat.getMessageOfId(mid.checkNull());
-  debugPrint("message--> $value");
+  // debugPrint("message--> $value");
   var chatMessage = await compute(sendMessageModelFromJson, value.toString());
   return chatMessage;
 }
@@ -430,6 +431,8 @@ extension ChatmessageParsing on ChatMessageModel {
   bool isVideoMessage() => messageType == Constants.mVideo;
 
   bool isFileMessage() => messageType == Constants.mDocument;
+
+
 
   bool isNotificationMessage() =>
       messageType.toUpperCase() == Constants.mNotification;
@@ -581,23 +584,13 @@ checkIosFile(String mediaLocalStoragePath) async {
 openDocument(String mediaLocalStoragePath, BuildContext context) async {
   // if (await askStoragePermission()) {
   if (mediaLocalStoragePath.isNotEmpty) {
-    // final _result = await OpenFile.open(mediaLocalStoragePath);
-    // debugPrint(_result.message);
-    // FileView(
-    //   controller: FileViewController.file(File(mediaLocalStoragePath)),
-    // );
-    // Get.toNamed(Routes.FILE_VIEWER, arguments: { "filePath": mediaLocalStoragePath});
-    // final String filePath = testFile.absolute.path;
-    // final Uri uri = Uri.file(mediaLocalStoragePath);
-    //
-    // if (!File(uri.toFilePath()).existsSync()) {
-    //   throw '$uri does not exist!';
-    // }
-    // if (!await launchUrl(uri)) {
-    //   throw 'Could not launch $uri';
-    // }
+    final result = await OpenFile.open(mediaLocalStoragePath);
+    debugPrint(result.message);
+    if(result.message.contains("file does not exist")){
+      toToast("The Selected file Doesn't Exist or Unable to Open");
+    }
 
-    FlyChat.openFile(mediaLocalStoragePath).catchError((onError) {
+    /*FlyChat.openFile(mediaLocalStoragePath).catchError((onError) {
       final scaffold = ScaffoldMessenger.of(context);
       scaffold.showSnackBar(
         SnackBar(
@@ -607,7 +600,8 @@ openDocument(String mediaLocalStoragePath, BuildContext context) async {
               label: 'Ok', onPressed: scaffold.hideCurrentSnackBar),
         ),
       );
-    });
+    });*/
+
   } else {
     debugPrint("media does not exist");
   }
@@ -823,6 +817,25 @@ String getMobileNumberFromJid(String jid) {
   return str[0];
 }
 
+String convertSecondToLastSeen(String seconds){
+
+  var userLastSeenDate = DateTime.now().subtract(Duration(seconds: double.parse(seconds).toInt()));
+
+  Duration diff = DateTime.now().difference(userLastSeenDate);
+
+  if(int.parse(DateFormat('yyyy').format(userLastSeenDate)) < int.parse(DateFormat('yyyy').format(DateTime.now()))){
+    return 'last seen on ${DateFormat('dd/mm/yyyy')}';
+  }else if(diff.inDays > 1){
+    return 'last seen on ${DateFormat('dd MMM').format(userLastSeenDate)}';
+  }else if(diff.inDays == 1){
+    return 'last seen on Yesterday';
+  } else if(diff.inHours >= 1 || diff.inMinutes >= 1 || diff.inSeconds >= 1){
+    return 'last seen at ${DateFormat('hh:mm a').format(userLastSeenDate)}';
+  } else {
+    return 'Online';
+  }
+}
+
 String getDisplayImage(RecentChatData recentChat) {
   var imageUrl = recentChat.profileImage ?? Constants.emptyString;
   if (recentChat.isBlockedMe.checkNull() ||
@@ -857,10 +870,11 @@ void showQuickProfilePopup({required context, required Function() chatTap,
                 child: InkWell(
                   onTap: () {
                     mirrorFlyLog('image click', 'true');
+                    debugPrint("quick profile click--> ${profile.toJson().toString()}");
                     if (profile.value.image!.isNotEmpty && !(profile.value
                         .isBlockedMe.checkNull() || profile.value.isAdminBlocked
-                        .checkNull()) && !(!profile.value.isItSavedContact
-                        .checkNull() || profile.value.isDeletedContact())) {
+                        .checkNull()) && !(//!profile.value.isItSavedContact.checkNull() || //This is commented because Android side received as true and iOS side false
+                        profile.value.isDeletedContact())) {
                       Get.back();
                       Get.toNamed(Routes.imageView, arguments: {
                         'imageName': getName(profile.value),
@@ -973,4 +987,38 @@ void showQuickProfilePopup({required context, required Function() chatTap,
       );
     }),
   );
+}
+
+String getDocAsset(String filename) {
+  if (filename.isEmpty || !filename.contains(".")) {
+    return "";
+  }
+  switch (filename.toLowerCase().substring(filename.lastIndexOf(".") + 1)) {
+    case "csv":
+      return csvImage;
+    case "pdf":
+      return pdfImage;
+    case "doc":
+      return docImage;
+    case "docx":
+      return docxImage;
+    case "txt":
+      return txtImage;
+    case "xls":
+      return xlsImage;
+    case "xlsx":
+      return xlsxImage;
+    case "ppt":
+      return pptImage;
+    case "pptx":
+      return pptxImage;
+    case "zip":
+      return zipImage;
+    case "rar":
+      return rarImage;
+    case "apk":
+      return apkImage;
+    default:
+      return "";
+  }
 }
