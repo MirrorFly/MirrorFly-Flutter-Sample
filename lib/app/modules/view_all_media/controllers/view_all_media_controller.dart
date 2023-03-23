@@ -111,9 +111,7 @@ class ViewAllMediaController extends GetxController {
   //getLinkMessages
   getLinkMessages() {
     FlyChat.getLinkMessages(jid).then((value) async {
-
       if (value != null) {
-        mirrorFlyLog("getLinkMessages", value);
         var data = chatMessageModelFromJson(value);
         linkCount(data.length);
         if (data.isNotEmpty) {
@@ -223,14 +221,14 @@ class ViewAllMediaController extends GetxController {
     var urls = <MapEntry<String, String>>[];
     var splitString = text.split(exp);
     for (var string in splitString) {
-      try {
-        var item = Uri.parse(string);
-        if(item.host.isNotEmpty) {
-          urls.add(MapEntry(item.host, item.toString()));
+        try {
+          var item = Uri.parse(string);
+          if(item.host.isNotEmpty) {
+            urls.add(MapEntry(item.host, item.toString()));
+          }
+        } catch (ignored) {
+          mirrorFlyLog('$string url exception', ignored.toString());
         }
-      } catch (ignored) {
-        mirrorFlyLog('$string url exception', ignored.toString());
-      }
     }
     mirrorFlyLog("urls", urls.toString());
     return urls;
@@ -310,7 +308,5 @@ class ViewAllMediaController extends GetxController {
   openImage(int gridIndex){
     Get.toNamed(Routes.viewAllMediaPreview, arguments: {"images" : previewMediaList, "index": gridIndex});
   }
-
-
 
 }

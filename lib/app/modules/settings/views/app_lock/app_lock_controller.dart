@@ -256,7 +256,9 @@ class AppLockController extends FullLifeCycleController
       } else if (!pin4) {
         _pin4(true);
         text.add(num);
-        validateAndUnlock();
+        Future.delayed(const Duration(milliseconds: 200),(){
+          validateAndUnlock();
+        });
       }
     } else {
       removeClick();
@@ -301,6 +303,7 @@ class AppLockController extends FullLifeCycleController
           }
         }
       } else {
+        wrongPinCount++;
         if (wrongPinCount > 5) {
           forgetPin(fromInvalid: true);
         }
@@ -308,7 +311,6 @@ class AppLockController extends FullLifeCycleController
           toToast("Invalid PIN! Try again");
         }
         clearFields();
-        wrongPinCount++;
       }
     }
   }
@@ -531,10 +533,10 @@ class AppLockController extends FullLifeCycleController
   }
 
   Timer? countdownTimer;
-  var myDuration = const Duration(seconds: 31).obs;
+  var myDuration = const Duration(seconds: 60).obs;
   final OtpFieldController otpController = OtpFieldController();
   String smsCode = '';
-  var seconds = 31;
+  var seconds = 60;
   RxBool timeout = false.obs;
 
   showOtpView() {
@@ -663,7 +665,7 @@ class AppLockController extends FullLifeCycleController
 
   void startTimer() {
     timeout(false);
-    seconds = (31);
+    seconds = (60);
     countdownTimer =
         Timer.periodic(const Duration(seconds: 1), (_) => setCountDown());
   }
@@ -797,7 +799,7 @@ class AppLockController extends FullLifeCycleController
   _onVerificationCompleted(PhoneAuthCredential credential) async {
     // need otp so i can autofill in a text box
     if (credential.smsCode != null) {
-      timeout(true);
+      //timeout(true);
       otpController.set(credential.smsCode!.split(""));
       verifyOTP();
     }
