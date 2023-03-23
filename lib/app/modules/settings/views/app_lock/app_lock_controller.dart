@@ -256,7 +256,9 @@ class AppLockController extends FullLifeCycleController
       } else if (!pin4) {
         _pin4(true);
         text.add(num);
-        validateAndUnlock();
+        Future.delayed(const Duration(milliseconds: 200),(){
+          validateAndUnlock();
+        });
       }
     } else {
       removeClick();
