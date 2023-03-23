@@ -512,7 +512,7 @@ Widget textMessageSpannableText(String message, {int? maxLines}) {
   return Text.rich(
     customTextSpan(message, prevValue, normalStyle, underlineStyle),
     maxLines: maxLines,
-    overflow: TextOverflow.ellipsis,
+    overflow: maxLines==null ? null : TextOverflow.ellipsis,
   );
 }
 
