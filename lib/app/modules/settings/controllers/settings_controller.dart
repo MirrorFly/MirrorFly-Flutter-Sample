@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
-import 'package:flysdk/flysdk.dart';
+import 'package:fly_chat/flysdk.dart';
 import 'package:mirror_fly_demo/app/routes/app_pages.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:path/path.dart';

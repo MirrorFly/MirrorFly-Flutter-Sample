@@ -8,7 +8,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
-import 'package:flysdk/flysdk.dart';
+import 'package:fly_chat/flysdk.dart';
 import 'package:mirror_fly_demo/app/data/session_management.dart';
 import 'package:mirror_fly_demo/app/routes/app_pages.dart';
 import 'package:open_file_plus/open_file_plus.dart';

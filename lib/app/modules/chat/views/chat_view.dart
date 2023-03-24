@@ -19,7 +19,7 @@ import '../../../widgets/custom_action_bar_icons.dart';
 import '../../../widgets/lottie_animation.dart';
 import '../chat_widgets.dart';
 import '../controllers/chat_controller.dart';
-import 'package:flysdk/flysdk.dart';
+import 'package:fly_chat/flysdk.dart';
 
 class ChatView extends GetView<ChatController> {
   const ChatView({Key? key}) : super(key: key);

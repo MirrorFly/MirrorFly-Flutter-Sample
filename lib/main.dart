@@ -5,7 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flysdk/flysdk.dart';
+import 'package:fly_chat/builder.dart';
+import 'package:fly_chat/flysdk.dart';
 
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/common/app_theme.dart';
@@ -39,6 +40,12 @@ bool shouldUseFirebaseEmulator = false;
 Future<void> main() async {
   //Get.put<NetworkManager>(NetworkManager());
 // Require Hybrid Composition mode on Android.
+  FlyChat.init(ChatBuilder(
+      domainBaseUrl: 'https://api-uikit-qa.contus.us/api/v1/',
+      licenseKey: 'ckIjaccWBoMNvxdbql8LJ2dmKqT5bp',
+      groupConfig: GroupConfig(
+          enableGroup: true,
+          maxMembersCount: 250)));
   final GoogleMapsFlutterPlatform mapsImplementation =
       GoogleMapsFlutterPlatform.instance;
   if (mapsImplementation is GoogleMapsFlutterAndroid) {

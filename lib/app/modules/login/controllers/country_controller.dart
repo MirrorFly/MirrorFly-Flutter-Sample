@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
-import 'package:flysdk/flysdk.dart';
+import 'package:fly_chat/flysdk.dart';
 
 class CountryController extends GetxController{
 

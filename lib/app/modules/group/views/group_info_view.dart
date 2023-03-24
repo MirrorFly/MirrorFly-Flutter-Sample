@@ -11,7 +11,7 @@ import 'package:mirror_fly_demo/app/modules/group/controllers/group_info_control
 
 import '../../../common/constants.dart';
 import '../../../routes/app_pages.dart';
-import 'package:flysdk/flysdk.dart';
+import 'package:fly_chat/flysdk.dart';
 
 
 class GroupInfoView extends GetView<GroupInfoController> {

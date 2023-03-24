@@ -6,7 +6,7 @@ import 'package:mirror_fly_demo/app/data/helper.dart';
 
 import '../../common/constants.dart';
 import '../../common/widgets.dart';
-import 'package:flysdk/flysdk.dart';
+import 'package:fly_chat/flysdk.dart';
 
 import '../../data/session_management.dart';
 import '../chat/chat_widgets.dart';

@@ -13,7 +13,7 @@ import 'package:mirror_fly_demo/app/routes/app_pages.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 import '../../../common/crop_image.dart';
-import 'package:flysdk/flysdk.dart';
+import 'package:fly_chat/flysdk.dart';
 
 import '../../../data/apputils.dart';
 import '../../../data/permissions.dart';
@@ -277,7 +277,7 @@ class ProfileController extends GetxController {
 
   static void insertDefaultStatusToUser() async{
     try {
-      await FlyChat.mirrorFlyMethodChannel.invokeMethod('getProfileStatusList').then((value) {
+      await FlyChat.getProfileStatusList().then((value) {
         mirrorFlyLog("status list", "$value");
         if (value != null) {
           var profileStatus = statusDataFromJson(value.toString());

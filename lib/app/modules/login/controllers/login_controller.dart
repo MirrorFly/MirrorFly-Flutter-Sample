@@ -14,7 +14,7 @@ import 'package:otp_text_field/otp_field.dart';
 import '../../../common/constants.dart';
 import '../../../data/apputils.dart';
 import '../../../data/session_management.dart';
-import 'package:flysdk/flysdk.dart';
+import 'package:fly_chat/flysdk.dart';
 import '../../../routes/app_pages.dart';
 
 class LoginController extends GetxController {

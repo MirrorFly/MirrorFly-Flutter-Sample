@@ -4,7 +4,7 @@ import 'package:get/get.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 
 import '../../../common/constants.dart';
-import 'package:flysdk/flysdk.dart';
+import 'package:fly_chat/flysdk.dart';
 
 import '../chat_widgets.dart';
 import '../controllers/chat_controller.dart';

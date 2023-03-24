@@ -1,6 +1,6 @@
 
 import 'package:flutter/material.dart';
-import 'package:flysdk/flysdk.dart';
+import 'package:fly_chat/flysdk.dart';
 import 'package:get/get.dart';
 import 'package:share_plus/share_plus.dart';
 

@@ -28,7 +28,7 @@ import '../../../data/helper.dart';
 import '../../../model/reply_hash_map.dart';
 import '../../../routes/app_pages.dart';
 
-import 'package:flysdk/flysdk.dart';
+import 'package:fly_chat/flysdk.dart';
 
 import '../chat_widgets.dart';
 
