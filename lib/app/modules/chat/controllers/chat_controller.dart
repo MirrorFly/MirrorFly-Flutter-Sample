@@ -861,6 +861,7 @@ class ChatController extends FullLifeCycleController
     }
   }
 
+
   sendContactMessage(List<String> contactList, String contactName) async {
     debugPrint("sendingName--> $contactName");
     var busyStatus = !profile.isGroupProfile.checkNull()
@@ -2029,9 +2030,7 @@ class ChatController extends FullLifeCycleController
             !profile.isAdminBlocked.checkNull()) {
           FlyChat.getUserLastSeenTime(profile.jid.toString()).then((value) {
             debugPrint("date time flutter--->");
-
-            var lastSeen = Platform.isIOS ? convertSecondToLastSeen(value!) : value;
-
+            var lastSeen = convertSecondToLastSeen(value!);
             groupParticipantsName('');
             userPresenceStatus(lastSeen.toString());
           }).catchError((er) {
