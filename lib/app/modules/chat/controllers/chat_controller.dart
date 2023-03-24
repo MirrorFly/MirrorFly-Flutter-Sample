@@ -559,7 +559,7 @@ class ChatController extends FullLifeCycleController
           // mirrorFlyLog("chat parsed history before", value);
           List<ChatMessageModel> chatMessageModel =
               chatMessageModelFromJson(value);
-          //mirrorFlyLog("chat parsed history", chatMessageModelToJson(chatMessageModel));
+          mirrorFlyLog("chat parsed history", chatMessageModelToJson(chatMessageModel));
           chatList(chatMessageModel.reversed.toList());
           Future.delayed(const Duration(milliseconds: 200), () {
             if (starredChatMessageId != null) {

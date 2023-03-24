@@ -126,6 +126,7 @@ class Helper {
   }
 
   static String durationToString(Duration duration) {
+    debugPrint("duration conversion $duration");
     /*final mm = (duration.inMinutes % 60).toString().padLeft(2, '0');
     final ss = (duration.inSeconds % 60).toString().padLeft(2, '0');
     return '$mm:$ss';*/
@@ -135,6 +136,7 @@ class Helper {
         .replaceFirst('.', ':')
         .padLeft(5, '0');*/
     var seconds = ((duration.inSeconds % 60)).toStringAsFixed(0).padLeft(2,'0');
+    // debugPrint("return ")
     return '${(duration.inMinutes).toStringAsFixed(0).padLeft(2,'0')}:$seconds';
 
   }
@@ -993,6 +995,8 @@ String getDocAsset(String filename) {
   if (filename.isEmpty || !filename.contains(".")) {
     return "";
   }
+  debugPrint("helper document--> ${filename.toLowerCase().substring(
+      filename.lastIndexOf(".") + 1)}");
   switch (filename.toLowerCase().substring(filename.lastIndexOf(".") + 1)) {
     case "csv":
       return csvImage;
