@@ -254,12 +254,12 @@ getReplyImageHolder(
             size),
       );
     case Constants.mLocation:
-      debugPrint("location mesg--> ${locationChatMessage?.toJson().toString()}");
+      // debugPrint("location mesg--> ${locationChatMessage?.toJson().toString()}");
       // debugPrint("location mesg--> ${chatMessageModel.locationChatMessage?.toJson().toString()}");
       return getLocationImage(
           isReply ? locationChatMessage : chatMessageModel.locationChatMessage,
           size,
-          size);
+          size, isSelected: true);
     case Constants.mVideo:
       return ClipRRect(
         borderRadius: const BorderRadius.only(
