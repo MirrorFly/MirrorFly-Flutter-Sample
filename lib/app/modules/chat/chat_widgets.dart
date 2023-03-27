@@ -235,8 +235,9 @@ getReplyImageHolder(
   if (mediaChatMessage != null || locationChatMessage != null) {
     isReply = true;
   }
+  debugPrint("mediaChatMessage.messageType--> ${mediaChatMessage?.toJson().toString()}");
   switch (isReply
-      ? mediaChatMessage == null ? "LOCATION" : mediaChatMessage.mediaFileType.checkNull().toUpperCase()
+      ? mediaChatMessage == null ? "LOCATION" : mediaChatMessage.messageType.checkNull().toUpperCase()
       : chatMessageModel.messageType.checkNull().toUpperCase()) {
 
     case Constants.mImage:
@@ -274,6 +275,10 @@ getReplyImageHolder(
       );
     case Constants.mDocument:
       debugPrint("isNotChatItem--> $isNotChatItem");
+      debugPrint("Document --> $isReply");
+      debugPrint("Document --> ${isReply
+          ? mediaChatMessage!.mediaFileName
+          : chatMessageModel.mediaChatMessage!.mediaFileName}");
       return isNotChatItem
           ? SizedBox(height: size)
           : Container(
