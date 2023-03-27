@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
-import 'package:fly_chat/builder.dart';
 import 'package:fly_chat/fly_chat.dart';
 
 import 'package:get/get.dart';
