@@ -51,10 +51,10 @@ Future<void> main() async {
   }
   await SessionManagement.onInit();
   ReplyHashMap.init();
-  FlyChat.getSendData().then((value) {
-    debugPrint("notification value ===> $value");
-    SessionManagement.setChatJid(value.checkNull());
-  });
+  // FlyChat.getSendData().then((value) {
+  //   debugPrint("notification value ===> $value");
+  //   SessionManagement.setChatJid(value.checkNull());
+  // });
   // var nonchat = await FlyChat.getNonChatUsers();
   // nonChatUsers = json.decode(nonchat.toString());
   FlyChat.isTrailLicence().then((value) => SessionManagement.setIsTrailLicence(value.checkNull()));

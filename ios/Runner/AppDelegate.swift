@@ -35,10 +35,8 @@ let googleApiKey = "AIzaSyDnjPEs86MRsnFfW1sVPKvMWjqQRnSa7Ts"
     didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
   ) -> Bool {
       
-      let controller : FlutterViewController = window?.rootViewController as! FlutterViewController
-      
-//      FlyBaseController().initSDK(controller: controller, licenseKey: LICENSE_KEY, isTrial: !IS_LIVE, baseUrl: BASE_URL, containerID: CONTAINER_ID)
-      
+      let _ : FlutterViewController = window?.rootViewController as! FlutterViewController
+           
       GMSServices.provideAPIKey(googleApiKey)
       
       // MARK:- Push Notification
@@ -69,31 +67,7 @@ let googleApiKey = "AIzaSyDnjPEs86MRsnFfW1sVPKvMWjqQRnSa7Ts"
       return super.application(application, didFinishLaunchingWithOptions: launchOptions)
   }
 
-    override func applicationWillResignActive(_ application: UIApplication) {
-        
-    }
-    
-    override func applicationWillTerminate(_ application: UIApplication) {
-        print("#appDelegate app terminated")
-//        FlyBaseController().applicationWillTerminate()
-    }
-    override func applicationDidBecomeActive(_ application: UIApplication) {
-        print("#appDelegate applicationDidBecomeActive")
-//        FlyBaseController().applicationDidBecomeActive()
-        NotificationCenter.default.removeObserver(self, name: NSNotification.Name(didEnterBackground), object: nil)
-    }
-    
-    override func applicationDidEnterBackground(_ application: UIApplication) {
-        print("Auto Downlaod check ---> Background")
-        postNotificationdidEnterBackground = NotificationCenter.default
-        postNotificationdidEnterBackground?.post(name: Notification.Name(didEnterBackground), object: nil)
-
-//        FlyBaseController().applicationDidEnterBackground()
-    }
-    
-    override func applicationWillEnterForeground(_ application: UIApplication) {
-        print("Auto Downlaod check ---> Foreground")
-    }
+   
     
 }
 
@@ -136,7 +110,7 @@ extension AppDelegate {
         print("#token appDelegate \(token)")
         print("#token application DT => \(token)")
 //        VOIPManager.sharedInstance.saveAPNSToken(token: token)
-        Utility.saveInPreference(key: googleToken, value: token)
+//        Utility.saveInPreference(key: googleToken, value: token)
 //        VOIPManager.sharedInstance.updateDeviceToken()
 //        return super.application(application, didRegisterForRemoteNotificationsWithDeviceToken: deviceToken)
     }
@@ -168,7 +142,7 @@ extension AppDelegate {
         let chatId = response.notification.request.content.threadIdentifier
         print("chat ID ---> \(chatId)")
         if let profileDetails = ContactManager.shared.getUserProfileDetails(for: chatId) , chatId != FlyDefaults.myJid{
-            Utility.saveInPreference(key: notificationUserJid, value: profileDetails.jid ?? "")
+//            Utility.saveInPreference(key: notificationUserJid, value: profileDetails.jid ?? "")
             
         }
        
