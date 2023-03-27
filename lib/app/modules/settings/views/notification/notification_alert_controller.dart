@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/data/session_management.dart';
-import 'package:fly_chat/flysdk.dart';
+import 'package:fly_chat/fly_chat.dart';
 
 class NotificationAlertController extends FullLifeCycleController
 with FullLifeCycleMixin {

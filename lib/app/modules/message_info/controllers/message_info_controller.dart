@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
-import 'package:fly_chat/flysdk.dart';
+import 'package:fly_chat/fly_chat.dart';
 import 'package:mirror_fly_demo/app/modules/chat/controllers/chat_controller.dart';
 import 'package:permission_handler/permission_handler.dart';
 

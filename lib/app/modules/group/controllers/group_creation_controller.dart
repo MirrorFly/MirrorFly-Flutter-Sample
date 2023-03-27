@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
-import 'package:fly_chat/flysdk.dart';
+import 'package:fly_chat/fly_chat.dart';
 import 'package:mirror_fly_demo/app/routes/app_pages.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
 

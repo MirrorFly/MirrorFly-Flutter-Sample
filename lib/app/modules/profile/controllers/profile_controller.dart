@@ -13,7 +13,7 @@ import 'package:mirror_fly_demo/app/routes/app_pages.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 import '../../../common/crop_image.dart';
-import 'package:fly_chat/flysdk.dart';
+import 'package:fly_chat/fly_chat.dart';
 
 import '../../../data/apputils.dart';
 import '../../../data/permissions.dart';

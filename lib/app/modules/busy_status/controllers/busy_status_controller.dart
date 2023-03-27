@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
-import 'package:fly_chat/flysdk.dart';
+import 'package:fly_chat/fly_chat.dart';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 

@@ -3,7 +3,7 @@ import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
 
 import '../../../common/constants.dart';
-import 'package:fly_chat/flysdk.dart';
+import 'package:fly_chat/fly_chat.dart';
 import '../../../routes/app_pages.dart';
 
 class ChatInfoController extends GetxController {

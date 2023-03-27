@@ -19,7 +19,7 @@ import 'package:mirror_fly_demo/app/modules/chat/controllers/chat_controller.dar
 import 'package:mirror_fly_demo/app/modules/contact_sync/controllers/contact_sync_controller.dart';
 import 'package:mirror_fly_demo/app/routes/app_pages.dart';
 
-import 'package:fly_chat/flysdk.dart';
+import 'package:fly_chat/fly_chat.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 import '../modules/chatInfo/controllers/chat_info_controller.dart';

@@ -7,7 +7,7 @@ import 'package:get/get.dart';
 import '../../../common/constants.dart';
 import '../../../data/apputils.dart';
 import '../../../data/helper.dart';
-import 'package:fly_chat/flysdk.dart';
+import 'package:fly_chat/fly_chat.dart';
 
 class StatusListController extends FullLifeCycleController with FullLifeCycleMixin{
   var statusList = List<StatusData>.empty(growable: true).obs;

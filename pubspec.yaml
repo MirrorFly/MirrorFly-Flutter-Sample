@@ -66,8 +66,12 @@ dependencies:
   flutter_libphonenumber: ^1.4.0
   open_file_plus: ^3.4.0
   is_lock_screen: ^2.0.0
-  flysdk:
-    path: packages/flysdk
+  fly_chat:
+    git:
+      url: https://github.com/MirrorFly/MirrorFly-Flutter-plugin.git
+      ref: androidcode
+#  flysdk:
+#    path: packages/flysdk
 
 
 dev_dependencies: 
