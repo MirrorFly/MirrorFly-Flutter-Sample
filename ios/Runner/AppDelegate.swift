@@ -37,7 +37,7 @@ let googleApiKey = "AIzaSyDnjPEs86MRsnFfW1sVPKvMWjqQRnSa7Ts"
       
       let controller : FlutterViewController = window?.rootViewController as! FlutterViewController
       
-      FlyBaseController().initSDK(controller: controller, licenseKey: LICENSE_KEY, isTrial: !IS_LIVE, baseUrl: BASE_URL, containerID: CONTAINER_ID)
+//      FlyBaseController().initSDK(controller: controller, licenseKey: LICENSE_KEY, isTrial: !IS_LIVE, baseUrl: BASE_URL, containerID: CONTAINER_ID)
       
       GMSServices.provideAPIKey(googleApiKey)
       
@@ -75,11 +75,11 @@ let googleApiKey = "AIzaSyDnjPEs86MRsnFfW1sVPKvMWjqQRnSa7Ts"
     
     override func applicationWillTerminate(_ application: UIApplication) {
         print("#appDelegate app terminated")
-        FlyBaseController().applicationWillTerminate()
+//        FlyBaseController().applicationWillTerminate()
     }
     override func applicationDidBecomeActive(_ application: UIApplication) {
         print("#appDelegate applicationDidBecomeActive")
-        FlyBaseController().applicationDidBecomeActive()
+//        FlyBaseController().applicationDidBecomeActive()
         NotificationCenter.default.removeObserver(self, name: NSNotification.Name(didEnterBackground), object: nil)
     }
     
@@ -88,7 +88,7 @@ let googleApiKey = "AIzaSyDnjPEs86MRsnFfW1sVPKvMWjqQRnSa7Ts"
         postNotificationdidEnterBackground = NotificationCenter.default
         postNotificationdidEnterBackground?.post(name: Notification.Name(didEnterBackground), object: nil)
 
-        FlyBaseController().applicationDidEnterBackground()
+//        FlyBaseController().applicationDidEnterBackground()
     }
     
     override func applicationWillEnterForeground(_ application: UIApplication) {

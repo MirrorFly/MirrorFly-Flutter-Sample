@@ -219,18 +219,19 @@ import FlyDatabase
         }
         
         FlyMessenger.sendImageMessage(toJid: userJid!, mediaData: media, replyMessageId: replyMessageId){isSuccess,error,message in
-            if isSuccess {
+//            if isSuccess {
                 print("Send Image--->")
-//                print(message as Any)
+                print(message as Any)
                 
                 var response = JSONSerializer.toJson(message as Any)
                 response = response.replacingOccurrences(of: "{\"some\":", with: "")
                 response = response.replacingOccurrences(of: "}}", with: "}")
 //                print(response)
                 result(response)
-            }else{
-                print("<---Send Image Failed--->")
-            }
+//            }else{
+//                print(message as Any)
+//                print("<---Send Image Failed--->")
+//            }
         }
     }
     

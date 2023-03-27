@@ -5,7 +5,7 @@ import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:flysdk/flysdk.dart';
+import 'package:fly_chat/fly_chat.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:mirror_fly_demo/app/common/widgets.dart';
@@ -21,10 +21,11 @@ import '../../routes/app_pages.dart';
 import '../dashboard/widgets.dart';
 
 class ReplyingMessageHeader extends StatelessWidget {
-  const ReplyingMessageHeader({Key? key,
-    required this.chatMessage,
-    required this.onCancel,
-    required this.onClick})
+  const ReplyingMessageHeader(
+      {Key? key,
+      required this.chatMessage,
+      required this.onCancel,
+      required this.onClick})
       : super(key: key);
   final ChatMessageModel chatMessage;
   final Function() onCancel;
@@ -104,14 +105,15 @@ class ReplyingMessageHeader extends StatelessWidget {
 getReplyTitle(bool isMessageSentByMe, String senderUserName) {
   return isMessageSentByMe
       ? const Text(
-    'You',
-    style: TextStyle(fontWeight: FontWeight.bold),
-  )
+          'You',
+          style: TextStyle(fontWeight: FontWeight.bold),
+        )
       : Text(senderUserName,
-      style: const TextStyle(fontWeight: FontWeight.bold));
+          style: const TextStyle(fontWeight: FontWeight.bold));
 }
 
-getReplyMessage(String messageType,
+getReplyMessage(
+    String messageType,
     String? messageTextContent,
     String? contactName,
     String? mediaFileName,
@@ -170,7 +172,7 @@ getReplyMessage(String messageType,
           const SizedBox(
             width: 5,
           ),
-          Text(Helper.capitalize(Constants.mAudio)),
+          // Text(Helper.capitalize(Constants.mAudio)),
         ],
       );
     case Constants.mContact:
@@ -211,7 +213,7 @@ getReplyMessage(String messageType,
           const SizedBox(
             width: 5,
           ),
-          Text(mediaFileName!),
+          Flexible(child: Text(mediaFileName!, overflow: TextOverflow.ellipsis, maxLines: 1,)),
         ],
       );
     default:
@@ -222,21 +224,21 @@ getReplyMessage(String messageType,
 // chatMessage.messageType.toUpperCase(),
 // chatMessage.mediaChatMessage?.mediaThumbImage,
 // chatMessage.locationChatMessage,
-getReplyImageHolder(BuildContext context,
+getReplyImageHolder(
+    BuildContext context,
     ChatMessageModel chatMessageModel,
-    MediaChatMessage? replyParentChatMessage,
+    MediaChatMessage? mediaChatMessage,
     double size,
     bool isNotChatItem,
     LocationChatMessage? locationChatMessage) {
   var isReply = false;
-  debugPrint(
-      "reply header--> ${replyParentChatMessage?.messageType.toUpperCase()}");
-  if (replyParentChatMessage != null) {
+  if (mediaChatMessage != null || locationChatMessage != null) {
     isReply = true;
   }
   switch (isReply
-      ? replyParentChatMessage?.messageType.checkNull().toUpperCase()
+      ? mediaChatMessage == null ? "LOCATION" : mediaChatMessage.mediaFileType.checkNull().toUpperCase()
       : chatMessageModel.messageType.checkNull().toUpperCase()) {
+
     case Constants.mImage:
       debugPrint("reply header--> IMAGE");
       return ClipRRect(
@@ -244,43 +246,50 @@ getReplyImageHolder(BuildContext context,
             topRight: Radius.circular(5), bottomRight: Radius.circular(5)),
         child: imageFromBase64String(
             isReply
-                ? replyParentChatMessage!.mediaThumbImage
+                ? mediaChatMessage!.mediaThumbImage
                 : chatMessageModel.mediaChatMessage!.mediaThumbImage
-                .checkNull(),
+                    .checkNull(),
             context,
             size,
             size),
       );
     case Constants.mLocation:
+      // debugPrint("location mesg--> ${locationChatMessage?.toJson().toString()}");
+      // debugPrint("location mesg--> ${chatMessageModel.locationChatMessage?.toJson().toString()}");
       return getLocationImage(
           isReply ? locationChatMessage : chatMessageModel.locationChatMessage,
           size,
-          size);
+          size, isSelected: true);
     case Constants.mVideo:
       return ClipRRect(
         borderRadius: const BorderRadius.only(
             topRight: Radius.circular(5), bottomRight: Radius.circular(5)),
         child: imageFromBase64String(
             isReply
-                ? replyParentChatMessage!.mediaThumbImage
+                ? mediaChatMessage!.mediaThumbImage
                 : chatMessageModel.mediaChatMessage!.mediaThumbImage,
             context,
             size,
             size),
       );
     case Constants.mDocument:
+      debugPrint("isNotChatItem--> $isNotChatItem");
       return isNotChatItem
           ? SizedBox(height: size)
-          : ClipRRect(
-              borderRadius: const BorderRadius.only(
-                  topRight: Radius.circular(5),
-                  bottomRight: Radius.circular(5)),
-        child: getImageHolder(
-            isReply
-                      ? replyParentChatMessage!.mediaFileName.checkNull()
-                : chatMessageModel.mediaChatMessage!.mediaFileName,
-            size),
-      );
+          : Container(
+        width: size,
+              height: size,
+              decoration: const BoxDecoration(
+                borderRadius: BorderRadius.only(topRight : Radius.circular(10), bottomRight: Radius.circular(10)),
+                color: Colors.white,
+              ),
+              child: Center(
+                child: getImageHolder(
+                    isReply
+                        ? mediaChatMessage!.mediaFileName
+                        : chatMessageModel.mediaChatMessage!.mediaFileName,
+                    30),
+              ));
     case Constants.mAudio:
       return isNotChatItem
           ? SizedBox(height: size)
@@ -294,7 +303,7 @@ getReplyImageHolder(BuildContext context,
                 color: audioBgColor,
                 child: Center(
                   child: SvgPicture.asset(
-                    replyParentChatMessage!.isAudioRecorded.checkNull()
+                    mediaChatMessage!.isAudioRecorded.checkNull()
                         ? mAudioRecordIcon
                         : mAudioIcon,
                     fit: BoxFit.contain,
@@ -346,7 +355,7 @@ class ReplyMessageHeader extends StatelessWidget {
                         ?.contactName,
                     chatMessage.replyParentChatMessage?.mediaChatMessage
                         ?.mediaFileName,
-                    chatMessage.mediaChatMessage,
+                    chatMessage.replyParentChatMessage?.mediaChatMessage,
                     false),
               ],
             ),
@@ -1318,6 +1327,7 @@ class DocumentMessageView extends StatelessWidget {
 }
 
 Widget getImageHolder(String mediaFileName, double size) {
+  debugPrint("mediaFileName--> $mediaFileName");
   return SvgPicture.asset(getDocAsset(mediaFileName),
       width: size, height: size);
 }

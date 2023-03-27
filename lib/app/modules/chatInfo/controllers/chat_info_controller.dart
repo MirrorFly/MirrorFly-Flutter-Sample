@@ -1,11 +1,9 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
 
 import '../../../common/constants.dart';
-import 'package:flysdk/flysdk.dart';
+import 'package:fly_chat/fly_chat.dart';
 import '../../../routes/app_pages.dart';
 
 class ChatInfoController extends GetxController {
@@ -68,7 +66,7 @@ class ChatInfoController extends GetxController {
   getUserLastSeen(){
     if(!profile.isBlockedMe.checkNull() || !profile.isAdminBlocked.checkNull()) {
       FlyChat.getUserLastSeenTime(profile.jid.toString()).then((value) {
-        var lastSeen = Platform.isIOS ? convertSecondToLastSeen(value!) : value;
+        var lastSeen = convertSecondToLastSeen(value!);
         userPresenceStatus(lastSeen.toString());
       }).catchError((er) {
         userPresenceStatus("");

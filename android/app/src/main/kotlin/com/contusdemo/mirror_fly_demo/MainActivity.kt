@@ -27,32 +27,9 @@ class MainActivity : FlutterActivity() {
     @Override
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)
-        //GeneratedPluginRegister.registerGeneratedPlugins(flutterEngine)
-        FlyBaseController(this).init(flutterEngine,intent);
-        FlyBaseController(this).onResume()
-        //startService(stickyService)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        FlyBaseController(this).onActivityResult(requestCode, resultCode, data)
     }
-
-    override fun onResume() {
-        super.onResume()
-//        FlyBaseController(this).onResume()
-    }
-    override fun onDestroy() {
-        super.onDestroy()
-        FlyBaseController(this).onDestroy()
-        //stopService(stickyService)
-    }
-
-    override fun onNewIntent(intent: Intent) {
-        super.onNewIntent(intent)
-        Log.d("newIntent",intent.toString())
-        Log.d("newIntent from",intent.getBooleanExtra("from_notification",false).toString())
-        Log.d("newIntent jid",intent.getStringExtra("jid").toString())
-    }
-
 }

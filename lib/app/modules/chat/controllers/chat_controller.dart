@@ -28,7 +28,7 @@ import '../../../data/helper.dart';
 import '../../../model/reply_hash_map.dart';
 import '../../../routes/app_pages.dart';
 
-import 'package:flysdk/flysdk.dart';
+import 'package:fly_chat/fly_chat.dart';
 
 import '../chat_widgets.dart';
 
@@ -559,7 +559,7 @@ class ChatController extends FullLifeCycleController
           // mirrorFlyLog("chat parsed history before", value);
           List<ChatMessageModel> chatMessageModel =
               chatMessageModelFromJson(value);
-          //mirrorFlyLog("chat parsed history", chatMessageModelToJson(chatMessageModel));
+          mirrorFlyLog("chat parsed history", chatMessageModelToJson(chatMessageModel));
           chatList(chatMessageModel.reversed.toList());
           Future.delayed(const Duration(milliseconds: 200), () {
             if (starredChatMessageId != null) {
@@ -860,6 +860,7 @@ class ChatController extends FullLifeCycleController
         return false;
     }
   }
+
 
   sendContactMessage(List<String> contactList, String contactName) async {
     debugPrint("sendingName--> $contactName");
@@ -2029,9 +2030,7 @@ class ChatController extends FullLifeCycleController
             !profile.isAdminBlocked.checkNull()) {
           FlyChat.getUserLastSeenTime(profile.jid.toString()).then((value) {
             debugPrint("date time flutter--->");
-
-            var lastSeen = Platform.isIOS ? convertSecondToLastSeen(value!) : value;
-
+            var lastSeen = convertSecondToLastSeen(value!);
             groupParticipantsName('');
             userPresenceStatus(lastSeen.toString());
           }).catchError((er) {
