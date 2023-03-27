@@ -235,7 +235,6 @@ getReplyImageHolder(
   if (mediaChatMessage != null || locationChatMessage != null) {
     isReply = true;
   }
-  debugPrint("mediaChatMessage.messageType--> ${mediaChatMessage?.toJson().toString()}");
   switch (isReply
       ? mediaChatMessage == null ? "LOCATION" : mediaChatMessage.messageType.checkNull().toUpperCase()
       : chatMessageModel.messageType.checkNull().toUpperCase()) {
