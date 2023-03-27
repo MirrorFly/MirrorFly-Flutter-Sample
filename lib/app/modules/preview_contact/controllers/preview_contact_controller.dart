@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../common/constants.dart';
-import '../../../data/apputils.dart';
 import '../../../model/local_contact_model.dart';
 import '../../chat/controllers/chat_controller.dart';
 
@@ -80,7 +79,7 @@ class PreviewContactController extends GetxController {
     // }
 
     var contactServerSharing = <ShareContactDetails>[];
-    if (await AppUtils.isNetConnected()) {
+    // if (await AppUtils.isNetConnected()) {
       for (var item in contactList) {
         var contactSharing = <String>[];
         for (var contactItem in item.contactNo) {
@@ -114,9 +113,9 @@ class PreviewContactController extends GetxController {
 
       Get.back();
       Get.back();
-    } else {
-      toToast(Constants.noInternetConnection);
-    }
+    // } else {
+    //   toToast(Constants.noInternetConnection);
+    // }
   }
 
   void changeStatus(ContactDetail phoneItem) {

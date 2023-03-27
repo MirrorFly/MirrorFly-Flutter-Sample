@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 
 import '../../../../common/constants.dart';
@@ -11,58 +13,67 @@ class PinView extends GetView<AppLockController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SafeArea(
-        child: SingleChildScrollView(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
+      body: WillPopScope(
+        onWillPop: (){
+          SystemNavigator.pop();
+          return Future.value(false);
+        },
+        child: SafeArea(
+          child: Stack(
             children: [
-              Padding(
-                padding:
-                const EdgeInsets.symmetric(horizontal: 30.0, vertical: 50),
-                child: Image.asset(icLogo),
+              Image.asset(icBioBackground),
+              Column(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  Padding(
+                    padding:
+                    const EdgeInsets.symmetric(horizontal: 30.0, vertical: 50),
+                    child: Image.asset(icLogo),
+                  ),
+                  const Text("Enter Your PIN",style: TextStyle(fontWeight: FontWeight.w300,color: appbarTextColor,fontSize: 16.0),),
+                  Obx(() {
+                    return Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        pinItem(controller.pin1),
+                        pinItem(controller.pin2),
+                        pinItem(controller.pin3),
+                        pinItem(controller.pin4),
+                      ],
+                    );
+                  }),
+                  Center(
+                    child: SizedBox(
+                      width: 280,
+                      child: GridView.builder(
+                        itemCount: numbers.length,
+                        physics: const NeverScrollableScrollPhysics(),
+                        shrinkWrap: true,
+                        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 3,childAspectRatio: 1.5),
+                        itemBuilder: (BuildContext context, int index) {
+                          var item = numbers[index];
+                          return numberItem(item,!item.isNegative
+                              ? () => controller.numberClick(item)
+                              : null);
+                        },
+                      ),
+                    ),
+                  ),
+                  InkWell(
+                    onTap: (){
+                      controller.forgetPin();
+                    },
+                    child: const Padding(
+                      padding: EdgeInsets.all(8.0),
+                      child: Text(
+                        "Forgot PIN ?",
+                        style: TextStyle(color: Color(0XFFFF0000),fontWeight: FontWeight.normal,fontSize: 14),
+                      ),
+                    ),
+                  )
+                ],
               ),
-              const Padding(
-                padding: EdgeInsets.all(8.0),
-                child: Text("Enter Your PIN"),
-              ),
-              Obx(() {
-                return Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    pinItem(controller.pin1),
-                    pinItem(controller.pin2),
-                    pinItem(controller.pin3),
-                    pinItem(controller.pin4),
-                  ],
-                );
-              }),
-              const SizedBox(
-                height: 20,
-              ),
-              GridView.builder(
-                itemCount: numbers.length,
-                shrinkWrap: true,
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 3, childAspectRatio: 1.8),
-                itemBuilder: (BuildContext context, int index) {
-                  var item = numbers[index];
-                  return InkWell(
-                    onTap: !item.isNegative
-                        ? () => controller.numberClick(item)
-                        : null,
-                    child: numberItem(item),
-                  );
-                },
-              ),
-              /*const SizedBox(
-                height: 20,
-              ),
-              const InkWell(
-                child: Text(
-                  "Forgot PIN?",
-                  style: TextStyle(color: Colors.red),
-                ),
-              )*/
             ],
           ),
         ),
@@ -70,28 +81,28 @@ class PinView extends GetView<AppLockController> {
     );
   }
 
-  Center numberItem(int item) {
+  Center numberItem(int item,Function()? onTap) {
     return Center(
       child: CircleAvatar(
-          radius: 30,
+          radius: 25,
           backgroundColor: (item == 10 || item.isNegative)
               ? Colors.transparent
-              : textColor, //bg color,
-          child: Visibility(
-            visible: !item.isNegative,
-            child: Center(
-                child: item == 10
-                    ? const Icon(
-                  Icons.backspace_rounded,
-                  color: Colors.black,
-                )
-                    : Text(
-                  item.toString(),
-                  style: const TextStyle(
-                      fontSize: 17,
-                      color: Colors.white,
-                      fontWeight: FontWeight.w500),
-                )),
+              : const Color(0Xff989898), //bg color,
+          child: InkWell(
+            onTap: onTap,
+            child: Visibility(
+              visible: !item.isNegative,
+              child: Center(
+                  child: item == 10
+                      ? SvgPicture.asset(icDeleteIcon)
+                      : Text(
+                    item.toString(),
+                    style: const TextStyle(
+                        fontSize: 17,
+                        color: Colors.white,
+                        fontWeight: FontWeight.w500),
+                  )),
+            ),
           )),
     );
   }
@@ -100,7 +111,7 @@ class PinView extends GetView<AppLockController> {
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: CircleAvatar(
-        radius: 10,
+        radius: 12,
         backgroundColor: Colors.black12, //bg color,
         child: Center(
             child: CircleAvatar(

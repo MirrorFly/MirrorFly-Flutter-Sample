@@ -46,6 +46,7 @@ abstract class Routes {
   static const busyStatus = _Paths.busyStatus;
   static const dataUsageSetting = _Paths.dataUsageSetting;
   static const contactSync = _Paths.contactSync;
+  static const viewAllMediaPreview = _Paths.viewAllMediaPreview;
 }
 
 abstract class _Paths {
@@ -94,4 +95,5 @@ abstract class _Paths {
   static const busyStatus = '/busy-status';
   static const dataUsageSetting = '/data_usage_setting';
   static const contactSync = '/contact_sync';
+  static const viewAllMediaPreview = '/view-all-media-preview';
 }

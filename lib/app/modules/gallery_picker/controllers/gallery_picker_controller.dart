@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flysdk/flysdk.dart';
+import 'package:fly_chat/fly_chat.dart';
 import 'package:get/get.dart';
 
 import '../src/data/models/picked_asset_model.dart';

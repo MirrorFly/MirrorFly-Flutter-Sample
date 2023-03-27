@@ -58,6 +58,7 @@ class ChatInfoView extends GetView<ChatInfoController> {
                       )),
                 ),
                 flexibleSpace: FlexibleSpaceBar(
+                  centerTitle: false,
                   background: ImageNetwork(
                     url: controller.profile.image.checkNull(),
                     width: MediaQuery
@@ -211,6 +212,7 @@ class ChatInfoView extends GetView<ChatInfoController> {
                         return Text(controller.profile.email.checkNull(),
                             style: const TextStyle(
                                 fontSize: 13,
+                                color: textColor,
                                 fontWeight: FontWeight.w500));
                       }),
                     ],
@@ -238,6 +240,7 @@ class ChatInfoView extends GetView<ChatInfoController> {
                         return Text(controller.profile.mobileNumber.checkNull(),
                             style: const TextStyle(
                                 fontSize: 13,
+                                color: textColor,
                                 fontWeight: FontWeight.w500));
                       }),
                     ],
@@ -265,6 +268,7 @@ class ChatInfoView extends GetView<ChatInfoController> {
                         return Text(controller.profile.status.checkNull(),
                             style: const TextStyle(
                                 fontSize: 13,
+                                color: textColor,
                                 fontWeight: FontWeight.w500));
                       }),
                     ],

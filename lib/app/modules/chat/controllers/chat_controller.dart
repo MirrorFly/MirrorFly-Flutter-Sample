@@ -28,7 +28,7 @@ import '../../../data/helper.dart';
 import '../../../model/reply_hash_map.dart';
 import '../../../routes/app_pages.dart';
 
-import 'package:flysdk/flysdk.dart';
+import 'package:fly_chat/fly_chat.dart';
 
 import '../chat_widgets.dart';
 
@@ -53,7 +53,7 @@ class ChatController extends FullLifeCycleController
   var isUserTyping = false.obs;
   var isAudioRecording = Constants.audioRecordInitial.obs;
   late Timer? _audioTimer;
-  var timerInit = "00.00".obs;
+  var timerInit = "00:00".obs;
   DateTime? startTime;
 
   double screenHeight = 0.0;
@@ -142,7 +142,7 @@ class ChatController extends FullLifeCycleController
         // initListeners();
       });
     }
-    mirrorFlyLog('savedContact', profile.isItSavedContact.toString());
+    // mirrorFlyLog('savedContact', profile.isItSavedContact.toString());
 
     /*player.onPlayerCompletion.listen((event) {
       playingChat!.mediaChatMessage!.isPlaying = false;
@@ -188,8 +188,8 @@ class ChatController extends FullLifeCycleController
   var showHideRedirectToLatest = false.obs;
 
   void ready() {
-    debugPrint("isBlocked===> ${profile.isBlocked}");
-    debugPrint("profile detail===> ${profile.toJson().toString()}");
+    // debugPrint("isBlocked===> ${profile.isBlocked}");
+    // debugPrint("profile detail===> ${profile.toJson().toString()}");
     getUnsentMessageOfAJid();
     isBlocked(profile.isBlocked);
     controller = AnimationController(
@@ -548,8 +548,8 @@ class ChatController extends FullLifeCycleController
   getChatHistory() {
     chatLoading(true);
     FlyChat.getMessagesOfJid(profile.jid.checkNull()).then((value) {
-      debugPrint("=====chat=====");
-      debugPrint("history--> $value");
+      // debugPrint("=====chat=====");
+      // debugPrint("history--> $value");
 
       if (value == "" || value == null) {
         debugPrint("Chat List is Empty");
@@ -559,7 +559,7 @@ class ChatController extends FullLifeCycleController
           // mirrorFlyLog("chat parsed history before", value);
           List<ChatMessageModel> chatMessageModel =
               chatMessageModelFromJson(value);
-          //mirrorFlyLog("chat parsed history", chatMessageModelToJson(chatMessageModel));
+          // mirrorFlyLog("chat parsed history", chatMessageModelToJson(chatMessageModel));
           chatList(chatMessageModel.reversed.toList());
           Future.delayed(const Duration(milliseconds: 200), () {
             if (starredChatMessageId != null) {
@@ -861,6 +861,7 @@ class ChatController extends FullLifeCycleController
     }
   }
 
+
   sendContactMessage(List<String> contactList, String contactName) async {
     debugPrint("sendingName--> $contactName");
     var busyStatus = !profile.isGroupProfile.checkNull()
@@ -1000,9 +1001,11 @@ class ChatController extends FullLifeCycleController
   clearChatHistory(bool isStarredExcluded) {
     FlyChat.clearChat(profile.jid!, "chat", isStarredExcluded).then((value) {
       if (value) {
-        chatList.removeWhere((p0) => p0.isMessageStarred == false);
+        // var chatListrev = chatList.reversed;
+
+        isStarredExcluded ? chatList.removeWhere((p0) => p0.isMessageStarred == false) : chatList.clear();
         cancelReplyMessage();
-        chatList.refresh();
+        // chatList.refresh();
       }
     });
   }
@@ -1045,6 +1048,7 @@ class ChatController extends FullLifeCycleController
       chatItem.isSelected = false;
     }
     selectedChatList.clear();
+    chatList.refresh();
   }
 
   void addChatSelection(ChatMessageModel item) {
@@ -1529,7 +1533,7 @@ class ChatController extends FullLifeCycleController
   scrollUp() {
     var visiblePos = findLastVisibleItemPosition();
     mirrorFlyLog("visiblePos", visiblePos.toString());
-    mirrorFlyLog("filteredPosition", filteredPosition.join(","));
+    // mirrorFlyLog("filteredPosition", filteredPosition.join(","));
     j = j + 1;
     //_scrollToPosition(getPreviousPosition(visiblePos));
     /*if (searchedPrev != (searchedText.text.toString())) {
@@ -1595,7 +1599,7 @@ class ChatController extends FullLifeCycleController
   var color = Colors.transparent.obs;
 
   _scrollToPosition(int position) {
-    mirrorFlyLog("position", position.toString());
+    // mirrorFlyLog("position", position.toString());
     if (!position.isNegative) {
       var currentPosition =
           filteredPosition[position]; //(chatList.length - (position));
@@ -1753,7 +1757,7 @@ class ChatController extends FullLifeCycleController
       if (await askStoragePermission()) {
         if (await Record().hasPermission()) {
           record = Record();
-          timerInit("00.00");
+          timerInit("00:00");
           isAudioRecording(Constants.audioRecording);
           startTimer();
           await record.start(
@@ -1796,7 +1800,7 @@ class ChatController extends FullLifeCycleController
     File(filePath!).delete();
     isUserTyping(false);
     isAudioRecording(Constants.audioRecordInitial);
-    timerInit("00.00");
+    timerInit("00:00");
     record.dispose();
   }
 
@@ -1813,7 +1817,7 @@ class ChatController extends FullLifeCycleController
   }
 
   sendRecordedAudioMessage() {
-    if (timerInit.value != "00.00") {
+    if (timerInit.value != "00:00") {
       final format = DateFormat('mm:ss');
       final dt = format.parse(timerInit.value, true);
       final recordDuration = dt.millisecondsSinceEpoch;
@@ -1823,7 +1827,7 @@ class ChatController extends FullLifeCycleController
     }
     isUserTyping(false);
     isAudioRecording(Constants.audioRecordInitial);
-    timerInit("00.00");
+    timerInit("00:00");
     record.dispose();
   }
 
@@ -2021,12 +2025,14 @@ class ChatController extends FullLifeCycleController
           getParticipantsNameAsCsv(profile.jid.checkNull());
         }
       } else {
-        debugPrint("value--> show user presence");
+
         if (!profile.isBlockedMe.checkNull() ||
             !profile.isAdminBlocked.checkNull()) {
           FlyChat.getUserLastSeenTime(profile.jid.toString()).then((value) {
+            debugPrint("date time flutter--->");
+            var lastSeen = convertSecondToLastSeen(value!);
             groupParticipantsName('');
-            userPresenceStatus(value.toString());
+            userPresenceStatus(lastSeen.toString());
           }).catchError((er) {
             groupParticipantsName('');
             userPresenceStatus("");
@@ -2047,6 +2053,7 @@ class ChatController extends FullLifeCycleController
     FlyChat.getGroupMembersList(jid, false).then((value) {
       if (value != null) {
         var str = <String>[];
+        mirrorFlyLog("getGroupMembersList-->", value);
         var groupsMembersProfileList = memberFromJson(value);
         for (var it in groupsMembersProfileList) {
           if (it.jid.checkNull() !=
@@ -2492,7 +2499,7 @@ class ChatController extends FullLifeCycleController
 
   @override
   void onPaused() {
-    mirrorFlyLog("LifeCycle", "onPaused");
+    mirrorFlyLog("chat controller LifeCycle", "onPaused");
     FlyChat.setOnGoingChatUser("");
     SessionManagement.setCurrentChatJID("");
     playerPause();

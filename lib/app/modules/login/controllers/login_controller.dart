@@ -14,7 +14,7 @@ import 'package:otp_text_field/otp_field.dart';
 import '../../../common/constants.dart';
 import '../../../data/apputils.dart';
 import '../../../data/session_management.dart';
-import 'package:flysdk/flysdk.dart';
+import 'package:fly_chat/fly_chat.dart';
 import '../../../routes/app_pages.dart';
 
 class LoginController extends GetxController {
@@ -67,6 +67,11 @@ class LoginController extends GetxController {
       myDuration = Duration(seconds: seconds.value);
       debugPrint(seconds.value.toString());
     }
+  }
+  @override
+  void onReady() {
+    super.onReady();
+    FlyChat.isTrailLicence().then((value) => SessionManagement.setIsTrailLicence(value.checkNull()));
   }
 
   @override

@@ -1,4 +1,4 @@
-import 'package:flysdk/flysdk.dart';
+import 'package:fly_chat/fly_chat.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -55,6 +55,10 @@ class SessionManagement {
   }
   static Future setPIN(String pin) async {
     await _preferences.setString("pin", pin);
+    await _preferences.setInt(Constants.changedPinAt, DateTime.now().millisecondsSinceEpoch);
+  }
+  static Future setChangePinNext(String pin) async {
+    await _preferences.setString("change_pin_next", pin);
   }
   static Future setEnablePIN(bool pin) async {
     await _preferences.setBool("enable_pin", pin);
@@ -110,6 +114,18 @@ class SessionManagement {
   static void setGoogleTranslationLanguageCode(String languagecode) async {
     await _preferences.setString("LanguageCode", languagecode);
   }
+  static void setAppSessionNow() async {
+    await _preferences.setInt(Constants.appSession, DateTime.now().millisecondsSinceEpoch);
+  }
+  static void setLockExpiry(int expiryTimeStamp) async {
+    await _preferences.setInt(Constants.expiryDate, expiryTimeStamp);
+  }
+  static void setLockAlert(int alertTimeStamp) async {
+    await _preferences.setInt(Constants.alertDate, alertTimeStamp);
+  }
+  static void setDontShowAlert() async {
+    await _preferences.setBool('show_alert', false);
+  }
   static Future clear()async{
     await _preferences.clear();
   }
@@ -138,7 +154,7 @@ class SessionManagement {
   static bool getLogin() => _preferences.getBool("login") ?? false;
 
   static String? getChatJid() => _preferences.getString("chatJid");
-  static String? getCurrentChatJID() => _preferences.getString("CurrentChatJID");
+  static String getCurrentChatJID() => _preferences.getString("CurrentChatJID") ?? "";
   static String? getName() => _preferences.getString("name");
   static String? getMobileNumber() => _preferences.getString("mobileNumber");
   static String? getCountryCode() => _preferences.getString("country_code") ?? "+91";
@@ -156,6 +172,7 @@ class SessionManagement {
   static bool getVibration() => _preferences.getBool("${Constants.package}vibration") ?? false;
   static bool getMuteNotification() => _preferences.getBool("mute_notification") ?? false;
   static String getPin() => _preferences.getString("pin") ?? "";
+  static String getChangePinNext() => _preferences.getString("change_pin_next") ?? "";
   static bool getEnablePin() => _preferences.getBool("enable_pin") ?? false;
   static bool getEnableBio() => _preferences.getBool("enable_bio") ?? false;
   static bool? synced() => _preferences.getBool("synced");
@@ -167,4 +184,7 @@ class SessionManagement {
   static bool isInitialContactSyncDone() => _preferences.getBool("is_initial_contact_sync_done") ?? false;
   static bool isContactSyncDone() => _preferences.getBool("is_contact_sync_done") ?? false;
   static bool isTrailLicence() => _preferences.getBool("IS_TRIAL_LICENSE") ?? false;
+  static int appLastSession() => _preferences.getInt(Constants.appSession) ?? DateTime.now().millisecondsSinceEpoch;
+  static int lastPinChangedAt() => _preferences.getInt(Constants.changedPinAt) ?? DateTime.now().millisecondsSinceEpoch;
+  static bool showAlert() => _preferences.getBool('show_alert') ?? true;
 }
