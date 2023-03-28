@@ -690,7 +690,8 @@ class DashboardView extends GetView<DashboardController> {
                                               item.isMessageSentByMe.checkNull(),
                                               item.messageType.checkNull()),
                                         ),
-                                        forMessageTypeIcon(item.messageType,item.mediaChatMessage),
+                                        item.isMessageRecalled
+                                            ? const SizedBox.shrink() : forMessageTypeIcon(item.messageType,item.mediaChatMessage),
                                         SizedBox(
                                           width: forMessageTypeString(
                                               item.messageType,content: item.mediaChatMessage?.mediaCaptionText.checkNull()) !=

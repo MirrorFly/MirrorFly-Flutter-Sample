@@ -333,7 +333,8 @@ class RecentChatItem extends StatelessWidget {
             var chat = data.data!;
             return Row(
               children: [
-                forMessageTypeIcon(
+                chat.isMessageRecalled
+                    ? const SizedBox.shrink() : forMessageTypeIcon(
                     chat.messageType, chat.mediaChatMessage),
                 SizedBox(
                   width: chat.isMessageRecalled
