@@ -2447,6 +2447,8 @@ class ChatController extends FullLifeCycleController
       //Report validation
       if (message.isMessageSentByMe) {
         canShowReport(false);
+      }else{
+        canShowReport(true);
       }
     }
   }
