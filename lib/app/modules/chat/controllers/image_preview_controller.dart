@@ -21,7 +21,7 @@ class ImagePreviewController extends GetxController {
     super.onInit();
 
     textMessage = Get.arguments['caption'];
-    debugPrint("caption text received--> $textMessage");
+    // debugPrint("caption text received--> $textMessage");
     caption.text = textMessage;
     SchedulerBinding.instance.addPostFrameCallback((_) => filePath(Get.arguments['filePath']));
   }
@@ -31,7 +31,7 @@ class ImagePreviewController extends GetxController {
       // if(await AppUtils.isNetConnected()) {
         var response = await Get.find<ChatController>().sendImageMessage(
             filePath.value, caption.text, "");
-        debugPrint("Preview View ==> $response");
+        // debugPrint("Preview View ==> $response");
         if (response != null) {
           Get.back();
         }

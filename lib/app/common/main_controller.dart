@@ -6,6 +6,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get/get.dart';
+import 'package:is_lock_screen/is_lock_screen.dart';
 import 'package:mirror_fly_demo/app/base_controller.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
@@ -18,7 +19,7 @@ import 'package:mirror_fly_demo/app/modules/chat/controllers/chat_controller.dar
 import 'package:mirror_fly_demo/app/modules/contact_sync/controllers/contact_sync_controller.dart';
 import 'package:mirror_fly_demo/app/routes/app_pages.dart';
 
-import 'package:flysdk/flysdk.dart';
+import 'package:fly_chat/fly_chat.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 import '../modules/chatInfo/controllers/chat_info_controller.dart';
@@ -41,6 +42,7 @@ class MainController extends FullLifeCycleController with BaseController, FullLi
   @override
   Future<void> onInit() async {
     super.onInit();
+    //presentPinPage();
     PushNotifications.init();
     initListeners();
     getMediaEndpoint();
@@ -268,22 +270,27 @@ class MainController extends FullLifeCycleController with BaseController, FullLi
 
   @override
   void onDetached() {
-
+    mirrorFlyLog('mainController', 'onDetached');
   }
 
   @override
   void onInactive() {
-
+    mirrorFlyLog('mainController', 'onInactive');
   }
 
+  bool fromLockScreen = false;
   @override
-  void onPaused() {
-
+  void onPaused() async {
+    mirrorFlyLog('mainController', 'onPaused');
+    fromLockScreen = await isLockScreen() ?? false;
+    mirrorFlyLog('isLockScreen', '$fromLockScreen');
+    SessionManagement.setAppSessionNow();
   }
 
   @override
   void onResumed() {
     mirrorFlyLog('mainController', 'onResumed');
+    checkShouldShowPin();
     if(!SessionManagement.isTrailLicence()) {
       syncContacts();
     }
@@ -318,5 +325,37 @@ class MainController extends FullLifeCycleController with BaseController, FullLi
     }
   }
 
-
+  /*
+  *This function used to check time out session for app lock
+  */
+  void checkShouldShowPin(){
+    var lastSession = SessionManagement.appLastSession();
+    var lastPinChangedAt = SessionManagement.lastPinChangedAt();
+    var sessionDifference = DateTime.now().difference(DateTime.fromMillisecondsSinceEpoch(lastSession));
+    var lockSessionDifference = DateTime.now().difference(DateTime.fromMillisecondsSinceEpoch(lastPinChangedAt));
+    debugPrint('sessionDifference seconds ${sessionDifference.inSeconds}');
+    debugPrint('lockSessionDifference days ${lockSessionDifference.inDays}');
+    if(Constants.pinAlert<=lockSessionDifference.inDays && Constants.pinExpiry>=lockSessionDifference.inDays){
+      //Alert Day
+      debugPrint('Alert Day');
+    } else if(Constants.pinExpiry<lockSessionDifference.inDays) {
+      //Already Expired day
+      debugPrint('Already Expired');
+      presentPinPage();
+    }else{
+      //if 30 days not completed
+      debugPrint('Not Expired');
+      if (Constants.sessionLockTime <= sessionDifference.inSeconds || fromLockScreen) {
+        //Show Pin if App Lock Enabled
+        debugPrint('Show Pin');
+        presentPinPage();
+      }
+    }
+    fromLockScreen=false;
+  }
+  void presentPinPage(){
+    if((SessionManagement.getEnablePin() || SessionManagement.getEnableBio()) && Get.currentRoute!=Routes.pin){
+      Get.toNamed(Routes.pin,);
+    }
+  }
 }

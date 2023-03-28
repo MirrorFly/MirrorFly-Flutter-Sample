@@ -1,6 +1,6 @@
 import 'package:flutter/animation.dart';
 import 'package:flutter/material.dart';
-import 'package:flysdk/flysdk.dart';
+import 'package:fly_chat/fly_chat.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/routes/app_pages.dart';
 import 'package:permission_handler/permission_handler.dart';

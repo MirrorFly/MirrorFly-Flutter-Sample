@@ -24,7 +24,7 @@ platform :android do
       app: appID_DEV,
       groups: "mirrorflydev---flutter",
       release_notes: change_Log,
-      apk_path: "../build/app/outputs/flutter-apk/app.apk",
+      apk_path: "../build/app/outputs/flutter-apk/app-dev-debug.apk",
       firebase_cli_path: "/usr/local/bin/firebase",
       firebase_cli_token: "1//0gca4tG-kR13uCgYIARAAGBASNwF-L9Irt1O8cK62NJe-EO1eh4Vvibu-ThnUDK2jZnz0B-6RZkHC-u34Zvg_E1hnXhgmh2C3KzY"
     )
