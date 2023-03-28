@@ -6,7 +6,7 @@ import 'package:mirror_fly_demo/app/data/helper.dart';
 
 import '../../common/constants.dart';
 import '../../common/widgets.dart';
-import 'package:flysdk/flysdk.dart';
+import 'package:fly_chat/fly_chat.dart';
 
 import '../../data/session_management.dart';
 import '../chat/chat_widgets.dart';
@@ -130,9 +130,7 @@ class RecentChatItem extends StatelessWidget {
                       : buildProfileStatus()
                   : Expanded(
                       child: typingUserid.isEmpty
-                          ? item.isLastMessageRecalledByUser!
-                              ? const SizedBox()
-                              : buildLastMessageItem()
+                          ? buildLastMessageItem()
                           : buildTypingUser(),
                     ),
             ],
@@ -512,7 +510,7 @@ Widget textMessageSpannableText(String message, {int? maxLines}) {
   return Text.rich(
     customTextSpan(message, prevValue, normalStyle, underlineStyle),
     maxLines: maxLines,
-    overflow: TextOverflow.ellipsis,
+    overflow: maxLines==null ? null : TextOverflow.ellipsis,
   );
 }
 

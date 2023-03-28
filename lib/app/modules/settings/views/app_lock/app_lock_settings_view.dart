@@ -21,9 +21,9 @@ class AppLockSettingsView extends GetView<AppLockController> {
           children: [
             lockItem(title: "Pin Lock",
                 subtitle: "Add more security with 4 digit secret PIN",
-                on: controller.pinenabled,
+                on: controller.pinEnabled,
                 onToggle: (value) => controller.enablePin()),
-            Visibility(visible: controller.pinenabled,
+            Visibility(visible: controller.pinEnabled,
                 child: lockItem(title: "Change PIN",
                     subtitle: "Change 4 digit PIN",
                     trailing: const SizedBox(),
@@ -32,7 +32,7 @@ class AppLockSettingsView extends GetView<AppLockController> {
                     onTap: () => controller.changePin())),
             lockItem(title: "Fingerprint ID",
                 subtitle: "Enable Fingerprint to unlock the app",
-                on: controller.bioenabled,
+                on: controller.bioEnabled,
                 onToggle: (value) => controller.enableBio()),
             const SizedBox(height: 8,),
             Padding(

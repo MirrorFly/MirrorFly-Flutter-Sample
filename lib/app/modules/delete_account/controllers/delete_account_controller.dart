@@ -5,7 +5,7 @@ import '../../../common/constants.dart';
 import '../../../data/apputils.dart';
 import '../../../data/session_management.dart';
 import '../../../data/helper.dart';
-import 'package:flysdk/flysdk.dart';
+import 'package:fly_chat/fly_chat.dart';
 import '../../../routes/app_pages.dart';
 
 class DeleteAccountController extends GetxController {

@@ -4,7 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:flysdk/flysdk.dart';
+import 'package:fly_chat/fly_chat.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -61,6 +61,7 @@ const String tickRoundBlue = 'assets/logos/tick_round_blue.svg';
 const String blockedIcon = 'assets/logos/blocked_contacts.svg';
 const String archiveIcon = 'assets/logos/Archive_ic_settings.svg';
 const String lockIcon = 'assets/logos/lock.svg';
+const String lockOutlineBlack = 'assets/logos/lock_outline_black.svg';
 const String delete = 'assets/logos/delete_black.svg';
 const String aboutIcon = 'assets/logos/About and Help.svg';
 const String connectionIcon = 'assets/logos/antenna.svg';
@@ -220,6 +221,10 @@ const String contactSyncBg = "assets/logos/contact_sync_bg.png";
 const String contactBookFill = "assets/logos/contacts_book_fill.svg";
 const String emailContactIcon = "assets/logos/emailcontact_icon.svg";
 
+// const String icBioBackground = "assets/logos/ic_bio_background.svg";
+const String icBioBackground = "assets/logos/ic_bio_background.png";
+const String icDeleteIcon = "assets/logos/ic_delete_icon.svg";
+
 
 //About us
 const String titleContactMsg =
@@ -236,14 +241,26 @@ const String notificationNotWorkingURL =
     "https://app.mirrorfly.com/notifications/";
 
 toToast(String text) {
+  if(Platform.isIOS) {
+    FocusManager.instance.primaryFocus?.unfocus();
+  }
   Fluttertoast.showToast(
       msg: text,
       toastLength: Toast.LENGTH_SHORT,
-      gravity: ToastGravity.CENTER,
+      gravity: ToastGravity.BOTTOM,
       timeInSecForIosWeb: 1,
       textColor: Colors.black,
       backgroundColor: Colors.white,
       fontSize: 16.0);
+  // Get.showSnackbar(
+  //   GetSnackBar(
+  //     message: text,
+  //     isDismissible: false,
+  //     // icon: const Icon(Icons.refresh),
+  //     duration: const Duration(seconds: 5),
+  //     animationDuration: const Duration(seconds: 1),
+  //   ),
+  // );
 }
 
 mirrorFlyLog(String tag, String msg) {
@@ -411,9 +428,10 @@ class Constants {
   static const String mobilePattern = r'(?:[\\+0-9]{1,4}\\-)?[0-9]{6,12}';
   static const String textPattern = r'[a-zA-Z]';
   static const String countryCodePattern = r'(^(\+?[0-9]{1,4}\-?)$)';
-  static const String websitePattern =
-      r'(?:(?:https?|ftp):\/\/)?[\w/\-?=%.]+\.[\w/\-?=%.]+';
-
+  // static const String websitePattern =
+  //     r'(?:(?:https?|ftp):\/\/)?[\w/\-?=%.]+\.[\w/\-?=%.]+';
+  // final RegExp websitePattern = RegExp(r"^(?:http|https):\/\/[\w\-_]+(?:\.[\w\-_]+)+[\w\-.,@?^=%&:/~\\+#]*$");
+  static const String websitePattern = r'(https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9]+\.[^\s]{2,}|www\.[a-zA-Z0-9]+\.[^\s]{2,})';
   // static const String websitePattern = r'(http|https)://[\w-]+(\.[\w-]+)+([\w.,@?^=%&amp;:/~+#-]*[\w@?^=%&amp;/~+#-])?';
   // static const String websitePattern = r"((https?:www\.)|(https?:\/\/)|(www\.))[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9]{1,6}(\/[-a-zA-Z0-9()@:%_\+.~#?&\/=]*)?";
   // static const String websitePattern = ("^((http?|https?)://)?[-a-zA-Z0-9@:%._\\+~#?&//=]{2,256}\\.[a-z]{2,6}\\b([-a-zA-Z0-9@:%._\\+~#?&//=]*)\$");
@@ -631,6 +649,16 @@ class Constants {
   static const audio = "Audio";
   static const video = "Videos";
   static const document = "Documents";
+
+  static const appSession = 'app_session';
+  static const changedPinAt = 'pin_changed_at';
+  static const alertDate = 'alertDate';
+  static const expiryDate = 'expiryDate';
+  static const sessionLockTime = 32;//in Seconds
+  static const pinExpiry = 31;//in Days
+  static const pinAlert = pinExpiry-5;//in Days
+  static const forgetPinOTPText ='Generate OTP to your registered mobile number';
+  static const invalidPinOTPText ='Invalid PIN, Generate OTP to your registered mobile number';
 }
 
 Future<void> launchWeb(String url) async {

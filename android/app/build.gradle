@@ -196,9 +196,9 @@ dependencies {
             exclude group: 'xpp3', module: 'xpp3'
         }
     }
-    implementation 'com.mirrorfly.sdk:appbase:0.0.10'
+//    implementation 'com.mirrorfly.sdk:appbase:0.0.12'
 
-    // Import the Firebase BoM
+    /*// Import the Firebase BoM
     implementation platform('com.google.firebase:firebase-bom:30.2.0')
 
     // Add the dependency for the Firebase SDK for Google Analytics
@@ -213,6 +213,6 @@ dependencies {
     //KTX Depenedency
     implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.5.1'
     implementation 'androidx.fragment:fragment-ktx:1.5.5'
-    implementation 'androidx.activity:activity-ktx:1.7.0-alpha02'
+    implementation 'androidx.activity:activity-ktx:1.7.0-alpha02'*/
 }
 

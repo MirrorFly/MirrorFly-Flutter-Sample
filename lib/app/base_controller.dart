@@ -3,9 +3,9 @@ import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:fly_chat/fly_chat.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
-import 'package:flysdk/flysdk.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
 import 'package:mirror_fly_demo/app/data/session_management.dart';
 import 'package:mirror_fly_demo/app/modules/chat/controllers/chat_controller.dart';
@@ -24,6 +24,7 @@ import 'modules/dashboard/controllers/dashboard_controller.dart';
 // import 'modules/dashboard/controllers/recent_chat_search_controller.dart';
 import 'modules/message_info/controllers/message_info_controller.dart';
 import 'modules/starred_messages/controllers/starred_messages_controller.dart';
+import 'modules/view_all_media/controllers/view_all_media_controller.dart';
 
 abstract class BaseController {
 
@@ -149,29 +150,42 @@ abstract class BaseController {
   void onMessageReceived(chatMessage) {
     mirrorFlyLog("flutter onMessageReceived", chatMessage.toString());
     ChatMessageModel chatMessageModel = sendMessageModelFromJson(chatMessage);
-    if(SessionManagement.getCurrentChatJID().checkNull() == chatMessageModel.chatUserJid.checkNull()){
+    // debugPrint("")
+    if(SessionManagement.getCurrentChatJID() == chatMessageModel.chatUserJid.checkNull()){
       debugPrint("Message Received user chat screen is in online");
     }else{
      showLocalNotification(chatMessageModel);
     }
 
     if (Get.isRegistered<ChatController>()) {
-      debugPrint("basecontroller ChatController registered");
+      // debugPrint("basecontroller ChatController registered");
       Get.find<ChatController>().onMessageReceived(chatMessageModel);
     }
     if (Get.isRegistered<DashboardController>()) {
-      debugPrint("basecontroller DashboardController registered");
+      // debugPrint("basecontroller DashboardController registered");
       Get.find<DashboardController>().onMessageReceived(chatMessageModel);
     }
     if (Get.isRegistered<ArchivedChatListController>()) {
-      debugPrint("basecontroller ArchivedChatListController registered");
+      // debugPrint("basecontroller ArchivedChatListController registered");
       Get.find<ArchivedChatListController>().onMessageReceived(chatMessageModel);
+    }
+
+    if(Get.isRegistered<ViewAllMediaController>() && chatMessageModel.isTextMessage() && chatMessageModel.messageTextContent!.contains("http")){
+      Get.find<ViewAllMediaController>().onMessageReceived(chatMessageModel);
     }
 
   }
 
   void onMessageStatusUpdated(event) {
     ChatMessageModel chatMessageModel = sendMessageModelFromJson(event);
+
+    if(SessionManagement.getCurrentChatJID() == chatMessageModel.chatUserJid.checkNull()){
+      debugPrint("Message Status updated user chat screen is in online");
+    }else{
+      if(chatMessageModel.isMessageRecalled){
+        showLocalNotification(chatMessageModel);
+      }
+    }
 
     if (Get.isRegistered<ChatController>()) {
       Get.find<ChatController>().onMessageStatusUpdated(chatMessageModel);
@@ -185,6 +199,7 @@ abstract class BaseController {
     if (Get.isRegistered<StarredMessagesController>()) {
       Get.find<StarredMessagesController>().onMessageStatusUpdated(chatMessageModel);
     }
+
   }
 
   void onMediaStatusUpdated(event) {
@@ -195,6 +210,10 @@ abstract class BaseController {
     }
     if (Get.isRegistered<StarredMessagesController>()) {
       Get.find<StarredMessagesController>().onMediaStatusUpdated(chatMessageModel);
+    }
+
+    if(Get.isRegistered<ViewAllMediaController>() && chatMessageModel.isMediaMessage() && (chatMessageModel.isMediaUploaded() || chatMessageModel.isMediaDownloaded())){
+      Get.find<ViewAllMediaController>().onMediaStatusUpdated(chatMessageModel);
     }
 
   }
@@ -513,21 +532,29 @@ abstract class BaseController {
       final UriAndroidNotificationSound uriSound = UriAndroidNotificationSound(
           notificationUri!);
       debugPrint("notificationUri--> $notificationUri");
-      int id = DateTime
-          .now()
-          .millisecond;
-      debugPrint("id--> $id");
+
+      var messageId = chatMessageModel.messageSentTime.toString().substring(chatMessageModel.messageSentTime.toString().length - 5);
+
       AndroidNotificationDetails androidNotificationDetails =
       AndroidNotificationDetails(chatMessageModel.messageId, 'MirrorFly',
           importance: Importance.max,
           priority: Priority.high,
           sound: uriSound,
           styleInformation: const DefaultStyleInformation(true, true));
+      DarwinNotificationDetails iosNotificationDetails =
+      DarwinNotificationDetails(
+        categoryIdentifier: darwinNotificationCategoryPlain,
+        sound: notificationUri,
+        presentSound: true,
+        presentBadge: true,
+        presentAlert: true
+      );
+
       NotificationDetails notificationDetails =
-      NotificationDetails(android: androidNotificationDetails);
+      NotificationDetails(android: androidNotificationDetails, iOS: iosNotificationDetails);
       await flutterLocalNotificationsPlugin.show(
-          id, chatMessageModel.senderUserName,
-          chatMessageModel.messageTextContent, notificationDetails,
+          int.parse(messageId), chatMessageModel.senderUserName,
+          chatMessageModel.isMessageRecalled ? "This message was deleted" : chatMessageModel.messageTextContent, notificationDetails,
           payload: chatMessageModel.chatUserJid);
     }else{
       debugPrint("self sent message don't need notification");
