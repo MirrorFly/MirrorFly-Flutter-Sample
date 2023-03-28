@@ -95,7 +95,34 @@ class StarredMessagesController extends GetxController {
         validateForShareMessage();
       }
     }
+    if(isSearch.value){
+      var selectedIndex = searchedStarredMessageList.indexWhere(
+              (element) => chatMessageModel.messageId == element.messageId);
+      if (!selectedIndex.isNegative) {
+        searchedStarredMessageList[selectedIndex] = chatMessageModel;
+      }
+    }
 
+  }
+
+  void onUploadDownloadProgressChanged(
+      String messageId, String progressPercentage) {
+    if (messageId.isNotEmpty) {
+      final index =
+      starredChatList.indexWhere((message) => message.messageId == messageId);
+      debugPrint("Media Status Onprogress changed---> onUploadDownloadProgressChanged $index $messageId $progressPercentage");
+      if (!index.isNegative) {
+        starredChatList[index].mediaChatMessage?.mediaProgressStatus = (int.parse(progressPercentage));
+        starredChatList.refresh();
+      }
+      if(isSearch.value){
+        var selectedIndex = searchedStarredMessageList.indexWhere(
+                (message) => message.messageId == messageId);
+        if (!selectedIndex.isNegative) {
+          searchedStarredMessageList[selectedIndex].mediaChatMessage?.mediaProgressStatus = (int.parse(progressPercentage));
+        }
+      }
+    }
   }
 
   String getChatTime(context, int? epochTime) {
@@ -270,6 +297,10 @@ class StarredMessagesController extends GetxController {
           item.messageId, item.chatUserJid, !item.isMessageStarred, item.messageChatType);
       starredChatList
           .removeWhere((element) => item.messageId == element.messageId);
+      if(isSearch.value){
+        searchedStarredMessageList
+            .removeWhere((element) => item.messageId == element.messageId);
+      }
     }
     selectedChatList.clear();
     isSelected(false);
@@ -367,6 +398,10 @@ class StarredMessagesController extends GetxController {
                       isMediaDelete.value);
                   starredChatList.removeWhere(
                       (element) => item.messageId == element.messageId);
+                  if(isSearch.value){
+                    searchedStarredMessageList
+                        .removeWhere((element) => item.messageId == element.messageId);
+                  }
                 }
                 isSelected(false);
                 selectedChatList.clear();
@@ -486,18 +521,37 @@ class StarredMessagesController extends GetxController {
   }
 
   var isSearch = false.obs;
+  var clear = false.obs;
   var searchedText = TextEditingController();
   void startSearch(String str){
     if(str.isNotEmpty) {
-      searchedStarredMessageList=(starredChatList);
+      clear(true);
       addSearchedMessagesToList(str);
     }else{
-      starredChatList(searchedStarredMessageList);
+      clear(false);
+      starredChatList.clear();
+      starredChatList.addAll(searchedStarredMessageList);
+      starredChatList.refresh();
+    }
+  }
+
+  onSearchClick(){
+    if (isSearch.value) {
+      isSearch(false);
+    } else {
+      isSearch(true);
+      searchedStarredMessageList.clear();
+      searchedStarredMessageList.addAll(starredChatList);
     }
   }
 
   clearSearch(){
-
+    isSearch(false);
+    searchedText.clear();
+    starredChatList.clear();
+    starredChatList.addAll(searchedStarredMessageList);
+    searchedStarredMessageList.clear();
+    starredChatList.refresh();
   }
 
   var searchedStarredMessageList = <ChatMessageModel>[];
@@ -536,6 +590,8 @@ class StarredMessagesController extends GetxController {
         starredChatList.add(message);
       }
     }
+    debugPrint('starredChatList ${starredChatList.length}');
+    starredChatList.refresh();
     /*starredMessagesAdapterAdapterData!!.setSearch(searchEnabled, searchedText)
   starredMessagesAdapterAdapterData!!.setStarredMessages(searchedStarredMessageList)
   starredMessagesAdapterAdapterData!!.notifyDataSetChanged()*/
@@ -594,7 +650,6 @@ class StarredMessagesController extends GetxController {
   void userDeletedHisProfile(String jid) {
     userUpdatedHisProfile(jid);
   }
-
 
 
 }

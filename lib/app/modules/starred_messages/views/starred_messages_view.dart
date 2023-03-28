@@ -27,6 +27,9 @@ class StarredMessagesView extends GetView<StarredMessagesController> {
           if (controller.isSelected.value) {
             controller.clearAllChatSelection();
             return Future.value(false);
+          }else if(controller.isSearch.value){
+            controller.clearSearch();
+            return Future.value(false);
           }
           return Future.value(true);
         },
@@ -113,11 +116,23 @@ class StarredMessagesView extends GetView<StarredMessagesController> {
                                   border: starredChatList[index].isMessageSentByMe
                                       ? Border.all(color: chatSentBgColor)
                                       : Border.all(color: chatBorderColor)),
-                              child: MessageContent(chatList: starredChatList,index:index, onPlayAudio: (){
-                                controller.playAudio(starredChatList[index]);
-                              },onSeekbarChange:(value){
+                              child: Column(
+                                crossAxisAlignment:
+                                CrossAxisAlignment.start,
+                                children: [
+                                  (starredChatList[index]
+                                      .replyParentChatMessage ==
+                                      null)
+                                      ? const SizedBox.shrink()
+                                      : ReplyMessageHeader(
+                                      chatMessage: starredChatList[index]),
+                                  MessageContent(chatList: starredChatList,search: controller.searchedText.text,index:index, onPlayAudio: (){
+                                    controller.playAudio(starredChatList[index]);
+                                  },onSeekbarChange:(value){
 
-                              },),
+                                  },),
+                                ],
+                              ),
                             ),
                           ),
                         ],
@@ -148,11 +163,7 @@ class StarredMessagesView extends GetView<StarredMessagesController> {
                   fit: BoxFit.contain,
                 ),
                 onPressed: () {
-                  /*if (controller.isSearch.value) {
-                    controller.isSearch(false);
-                  } else {
-                    controller.isSearch(true);
-                  }*/
+                  controller.onSearchClick();
                 },
               ),
             ],
@@ -173,6 +184,14 @@ class StarredMessagesView extends GetView<StarredMessagesController> {
             hintText: "Search...", border: InputBorder.none),
       ),
       iconTheme: const IconThemeData(color: iconColor),
+      actions: [
+        IconButton(
+          icon: const Icon(Icons.close),
+          onPressed: () {
+            controller.clearSearch();
+          },
+        ),
+      ],
     );
   }
 

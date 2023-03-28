@@ -222,9 +222,9 @@ abstract class BaseController {
     if (Get.isRegistered<ChatController>()) {
       Get.find<ChatController>().onUploadDownloadProgressChanged(messageId,progressPercentage);
     }
-    /*if (Get.isRegistered<StarredMessagesController>()) {
+    if (Get.isRegistered<StarredMessagesController>()) {
       Get.find<StarredMessagesController>().onUploadDownloadProgressChanged(messageId,progressPercentage);
-    }*/
+    }
   }
 
   void onGroupProfileFetched(groupJid) {}
