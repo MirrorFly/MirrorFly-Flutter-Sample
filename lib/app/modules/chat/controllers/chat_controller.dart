@@ -30,6 +30,7 @@ import '../../../routes/app_pages.dart';
 
 import 'package:fly_chat/fly_chat.dart';
 
+import '../../gallery_picker/src/data/models/picked_asset_model.dart';
 import '../chat_widgets.dart';
 
 class ChatController extends FullLifeCycleController
@@ -2090,19 +2091,6 @@ class ChatController extends FullLifeCycleController
 
   // final ImagePicker _picker = ImagePicker();
 
-  Future<bool> askCameraPermission() async {
-    final permission = await AppPermission.getCameraPermission();
-    switch (permission) {
-      case PermissionStatus.granted:
-        return true;
-      case PermissionStatus.permanentlyDenied:
-        return false;
-      default:
-        debugPrint("Contact Permission default");
-        return false;
-    }
-  }
-
   onCameraClick() async {
     // if (await AppPermission.askFileCameraAudioPermission()) {
     var cameraPermissionStatus = await AppPermission.checkPermission(
@@ -2114,7 +2102,7 @@ class ChatController extends FullLifeCycleController
         if (photo != null) {
           mirrorFlyLog("photo", photo.name.toString());
           mirrorFlyLog("caption text sending-->", messageController.text);
-          if (photo.name.endsWith(".mp4")) {
+          /*if (photo.name.endsWith(".mp4")) {
             Get.toNamed(Routes.videoPreview, arguments: {
               "filePath": photo.path,
               "userName": profile.name!,
@@ -2128,7 +2116,15 @@ class ChatController extends FullLifeCycleController
               "profile": profile,
               "caption": messageController.text
             });
-          }
+          }*/
+          var file= PickedAssetModel(path: photo.path,type: !photo.name.endsWith(".mp4") ? "image" : "video",);
+          Get.toNamed(Routes.mediaPreview, arguments: {
+            "filePath": [file],
+            "userName": profile.name!,
+            'profile': profile,
+            'caption': messageController.text,
+            'showAdd':false
+          });
         }
       });
     }
