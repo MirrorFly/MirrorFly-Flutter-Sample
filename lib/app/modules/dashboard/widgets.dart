@@ -190,7 +190,7 @@ class RecentChatItem extends StatelessWidget {
       child: getMessageIndicator(
           item.lastMessageStatus.checkNull(),
           item.isLastMessageSentByMe.checkNull(),
-          item.lastMessageType.checkNull())
+          item.lastMessageType.checkNull(),item.isLastMessageRecalledByUser.checkNull())
       /*CircleAvatar(
         radius: 4,
         backgroundColor: Colors.green,

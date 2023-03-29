@@ -516,7 +516,7 @@ class LocationMessageView extends StatelessWidget {
                   width: 5,
                 ),
                 getMessageIndicator(chatMessage.messageStatus,
-                    chatMessage.isMessageSentByMe, chatMessage.messageType),
+                    chatMessage.isMessageSentByMe, chatMessage.messageType,chatMessage.isMessageRecalled),
                 const SizedBox(
                   width: 4,
                 ),
@@ -780,7 +780,7 @@ class _AudioMessageViewState extends State<AudioMessageView>
                 getMessageIndicator(
                     widget.chatMessage.messageStatus,
                     widget.chatMessage.isMessageSentByMe,
-                    widget.chatMessage.messageType),
+                    widget.chatMessage.messageType,widget.chatMessage.isMessageRecalled),
                 const SizedBox(
                   width: 4,
                 ),
@@ -1054,7 +1054,7 @@ class ContactMessageView extends StatelessWidget {
                   width: 5,
                 ),
                 getMessageIndicator(chatMessage.messageStatus,
-                    chatMessage.isMessageSentByMe, chatMessage.messageType),
+                    chatMessage.isMessageSentByMe, chatMessage.messageType,chatMessage.isMessageRecalled),
                 const SizedBox(
                   width: 4,
                 ),
@@ -1302,7 +1302,7 @@ class DocumentMessageView extends StatelessWidget {
                     width: 5,
                   ),
                   getMessageIndicator(chatMessage.messageStatus,
-                      chatMessage.isMessageSentByMe, chatMessage.messageType),
+                      chatMessage.isMessageSentByMe, chatMessage.messageType,chatMessage.isMessageRecalled),
                   const SizedBox(
                     width: 4,
                   ),
@@ -1436,7 +1436,7 @@ class VideoMessageView extends StatelessWidget {
                           getMessageIndicator(
                               chatMessage.messageStatus,
                               chatMessage.isMessageSentByMe,
-                              chatMessage.messageType),
+                              chatMessage.messageType,chatMessage.isMessageRecalled),
                           const SizedBox(
                             width: 4,
                           ),
@@ -1518,7 +1518,7 @@ class ImageMessageView extends StatelessWidget {
                               getMessageIndicator(
                                   chatMessage.messageStatus,
                                   chatMessage.isMessageSentByMe,
-                                  chatMessage.messageType),
+                                  chatMessage.messageType,chatMessage.isMessageRecalled),
                               const SizedBox(
                                 width: 4,
                               ),
@@ -1614,7 +1614,7 @@ Widget setCaptionMessage(MediaChatMessage mediaMessage,
               width: 5,
             ),
             getMessageIndicator(chatMessage.messageStatus,
-                chatMessage.isMessageSentByMe, chatMessage.messageType),
+                chatMessage.isMessageSentByMe, chatMessage.messageType,chatMessage.isMessageRecalled),
             const SizedBox(
               width: 5,
             ),
@@ -1791,7 +1791,7 @@ class TextMessageView extends StatelessWidget {
                 width: 5,
               ),
               getMessageIndicator(chatMessage.messageStatus,
-                  chatMessage.isMessageSentByMe, chatMessage.messageType),
+                  chatMessage.isMessageSentByMe, chatMessage.messageType,chatMessage.isMessageRecalled),
               const SizedBox(
                 width: 5,
               ),
@@ -1866,10 +1866,10 @@ class RecalledMessageView extends StatelessWidget {
   }
 }
 
-getMessageIndicator(String? messageStatus, bool isSender, String messageType) {
+getMessageIndicator(String? messageStatus, bool isSender, String messageType,bool isRecalled) {
   // debugPrint("Message Status ==>");
   // debugPrint("Message Status ==> $messageStatus");
-  if (isSender) {
+  if (isSender && !isRecalled) {
     if (messageStatus == 'A') {
       return SvgPicture.asset(acknowledgedIcon);
     } else if (messageStatus == 'D') {

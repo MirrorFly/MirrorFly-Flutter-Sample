@@ -688,7 +688,7 @@ class DashboardView extends GetView<DashboardController> {
                                           child: getMessageIndicator(
                                               item.messageStatus.checkNull(),
                                               item.isMessageSentByMe.checkNull(),
-                                              item.messageType.checkNull()),
+                                              item.messageType.checkNull(),item.isMessageRecalled),
                                         ),
                                         item.isMessageRecalled
                                             ? const SizedBox.shrink() : forMessageTypeIcon(item.messageType,item.mediaChatMessage),
