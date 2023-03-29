@@ -927,7 +927,9 @@ class DashboardController extends FullLifeCycleController
     if (jid.isNotEmpty) {
       var index = recentChats.indexWhere((element) =>
           element.jid == jid); // { it.jid ?: Constants.EMPTY_STRING == jid }
+      debugPrint("updateRecentChatAdapter $index");
       var recent = await getRecentChatOfJid(jid);
+      debugPrint("updateRecentChatAdapter getRecentChatOfJid ${recent?.toJson().toString()}");
       if (recent != null) {
         if (!index.isNegative) {
           recentChats[index] = recent;
@@ -1168,9 +1170,12 @@ class DashboardController extends FullLifeCycleController
   }
 
   Future<void> updateProfileSearch(String jid) async {
+    debugPrint("updateProfileSearch jid $jid");
     if (jid.isNotEmpty) {
       var userListIndex = _userList.indexWhere((element) => element.jid == jid);
+      debugPrint("userListIndex $userListIndex");
       getProfileDetails(jid).then((value) {
+        debugPrint("get profile detail dashboard $value");
         profile_(value);
         if (!userListIndex.isNegative) {
           _userList[userListIndex] = value;

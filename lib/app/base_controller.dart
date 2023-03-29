@@ -563,26 +563,31 @@ abstract class BaseController {
 
   void onLogout(isLogout) {
     mirrorFlyLog('Get.currentRoute', Get.currentRoute);
-    if(isLogout && Get.currentRoute != Routes.login){
-      Helper.progressLoading();
-      FlyChat.logoutOfChatSDK().then((value) {
-        Helper.hideLoading();
-        if(value) {
-          var token = SessionManagement.getToken().checkNull();
-          SessionManagement.clear().then((value){
-            SessionManagement.setToken(token);
-            Get.offAllNamed(Routes.login);
-          });
-        }else{
-          Get.snackbar("Logout", "Logout Failed");
-        }
-      }).catchError((er){
-        Helper.hideLoading();
-        SessionManagement.clear().then((value){
-          // SessionManagement.setToken(token);
-          Get.offAllNamed(Routes.login);
-        });
+    if(isLogout && Get.currentRoute != Routes.login && SessionManagement.getLogin()){
+      var token = SessionManagement.getToken().checkNull();
+      SessionManagement.clear().then((value) {
+        SessionManagement.setToken(token);
+        Get.offAllNamed(Routes.login);
       });
+      // Helper.progressLoading();
+      // FlyChat.logoutOfChatSDK().then((value) {
+      //   Helper.hideLoading();
+      //   if(value) {
+      //     var token = SessionManagement.getToken().checkNull();
+      //     SessionManagement.clear().then((value){
+      //       SessionManagement.setToken(token);
+      //       Get.offAllNamed(Routes.login);
+      //     });
+      //   }else{
+      //     Get.snackbar("Logout", "Logout Failed");
+      //   }
+      // }).catchError((er){
+      //   Helper.hideLoading();
+      //   SessionManagement.clear().then((value){
+      //     // SessionManagement.setToken(token);
+      //     Get.offAllNamed(Routes.login);
+      //   });
+      // });
     }
   }
 }

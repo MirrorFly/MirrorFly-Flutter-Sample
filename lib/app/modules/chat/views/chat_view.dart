@@ -694,6 +694,7 @@ class ChatView extends GetView<ChatController> {
                                             ? const SizedBox.shrink()
                                             : ReplyMessageHeader(
                                                 chatMessage: chatList[index]),
+
                                         Obx(() {
                                           return MessageContent(
                                               chatList: chatList,
