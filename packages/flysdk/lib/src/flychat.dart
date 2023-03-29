@@ -3123,4 +3123,18 @@ class FlyChat {
       rethrow;
     }
   }
+  static Future<int?> sdkVersion() async {
+    int res;
+    try {
+      res = await mirrorFlyMethodChannel
+          .invokeMethod<int>('sdkVersion') ?? 0;
+      return res;
+    } on PlatformException catch (e) {
+      debugPrint("Platform Exception ===> $e");
+      rethrow;
+    } on Exception catch (error) {
+      debugPrint("Exception ==> $error");
+      rethrow;
+    }
+  }
 }

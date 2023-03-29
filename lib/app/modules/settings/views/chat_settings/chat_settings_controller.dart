@@ -151,12 +151,15 @@ class ChatSettingsController extends GetxController {
 
   void getMyBusyStatus() {
     FlyChat.getMyBusyStatus().then((value) {
-      var userBusyStatus = json.decode(value);
-      debugPrint("Busy Status ${userBusyStatus["status"]}");
-      // var busyStatus = userBusyStatus["status"];
-      // if(busyStatus)
-      busyStatus(userBusyStatus["status"]);
-
+      if(value!=null) {
+        var userBusyStatus = json.decode(value);
+        debugPrint("Busy Status ${userBusyStatus["status"]}");
+        // var busyStatus = userBusyStatus["status"];
+        // if(busyStatus)
+        busyStatus(userBusyStatus["status"]);
+      }else{
+        busyStatus('I am busy');
+      }
     });
   }
 

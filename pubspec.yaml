@@ -20,7 +20,7 @@ dependencies:
   package_info_plus: ^2.0.0 #package info
   image_picker: ^0.8.6
   flutter_profile_picture: ^2.0.0
-  permission_handler: ^10.1.0
+  permission_handler: ^10.2.0
   emoji_picker_flutter: ^1.4.0
   image_cropping: ^0.0.13 #crop image
   path_provider: ^2.0.11 #path provider

@@ -592,6 +592,9 @@ open class FlyBaseController(activity: FlutterActivity) : MethodChannel.MethodCa
             call.method.equals("sendData")-> {
                 result.success(jid)
             }
+            call.method.equals("sdkVersion")-> {
+                result.success(Build.VERSION.SDK_INT)
+            }
             call.method.equals("getNonChatUsers")-> {
                 val nonchatusers = FlyCore.getNonChatUsers();
                 result.success(nonchatusers.tojsonString());
@@ -635,8 +638,20 @@ open class FlyBaseController(activity: FlutterActivity) : MethodChannel.MethodCa
                 result.success(true)
             }
             call.method.equals("getMyBusyStatus") -> {//{"id": null, "status": "", "isCurrentStatus": false}
-                val myBusyStatus: BusyStatus = FlyCore.getMyBusyStatus()!!
-                result.success(myBusyStatus.tojsonString())
+                val myBusyStatus: BusyStatus? = FlyCore.getMyBusyStatus()
+                if(myBusyStatus!=null) {
+                    Log.d("myBusyStatus", "${myBusyStatus.tojsonString()}")
+                    result.success(myBusyStatus.tojsonString())
+                }else{
+                    val defaultStatus = mContext.resources.getStringArray(R.array.default_busy_status_values)
+                    for (statusValue in defaultStatus) {
+                        insertMyBusyStatus(statusValue!!)
+                    }
+                    if (FlyCore.getMyBusyStatus() == null || FlyCore.getMyBusyStatus()!!.status.isEmpty()) {
+                        FlyCore.setMyBusyStatus("I am busy")
+                    }
+                    result.success(FlyCore.getMyBusyStatus()!!.tojsonString())
+                }
             }
             call.method.equals("setMyBusyStatus") -> {
                 val busyStatus = call.argument<String>("status") ?: ""

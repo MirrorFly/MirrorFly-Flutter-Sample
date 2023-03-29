@@ -282,7 +282,9 @@ class MainController extends FullLifeCycleController with BaseController, FullLi
   @override
   void onResumed() {
     mirrorFlyLog('mainController', 'onResumed');
-    syncContacts();
+    if(!SessionManagement.isTrailLicence()) {
+      syncContacts();
+    }
   }
 
   void syncContacts() async {
@@ -295,10 +297,12 @@ class MainController extends FullLifeCycleController with BaseController, FullLi
         }
       }
     }else{
-      FlyChat.revokeContactSync().then((value){
-        onContactSyncComplete(true);
-        mirrorFlyLog("checkContactPermission isSuccess",value.toString());
-      });
+      if(SessionManagement.isInitialContactSyncDone()) {
+        FlyChat.revokeContactSync().then((value) {
+          onContactSyncComplete(true);
+          mirrorFlyLog("checkContactPermission isSuccess", value.toString());
+        });
+      }
     }
   }
 

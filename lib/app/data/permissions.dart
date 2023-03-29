@@ -1,5 +1,8 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:flysdk/flysdk.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -8,13 +11,12 @@ import 'helper.dart';
 
 class AppPermission {
   AppPermission._();
+
   /*static Future<bool> getLocationPermission() async{
     var permission = await Geolocator.requestPermission();
     mirrorFlyLog(permission.name, permission.index.toString());
     return permission.index==2 || permission.index==3;
   }*/
-
-
 
   static Future<PermissionStatus> getContactPermission() async {
     final permission = await Permission.contacts.status;
@@ -36,11 +38,45 @@ class AppPermission {
     }
   }
 
-  static Future<PermissionStatus> getStoragePermission() async {
-    final permission = await Permission.storage.status;
-    if (permission != PermissionStatus.granted &&
-        permission != PermissionStatus.permanentlyDenied) {
-      const newPermission = Permission.storage;
+  static Future<PermissionStatus?> getStoragePermission() async {
+    var sdkVersion = Platform.isAndroid ? await FlyChat.sdkVersion() : 0;
+    debugPrint('sdkVersion : $sdkVersion');
+    if (sdkVersion! < 33) {
+      final permission = await Permission.storage.status;
+      if (permission != PermissionStatus.granted &&
+          permission != PermissionStatus.permanentlyDenied) {
+        const newPermission = Permission.storage;
+        mirrorFlyPermissionDialog(
+            notNowBtn: () {
+              return false;
+            },
+            continueBtn: () async {
+              newPermission.request();
+            },
+            icon: filePermission,
+            content: Constants.filePermission);
+        return newPermission.status;
+      } else {
+        return permission;
+      }
+    } else {
+      return getAndroid13Permission();
+    }
+  }
+
+  static Future<PermissionStatus?> getAndroid13Permission() async {
+    final photos = await Permission.photos.status;
+    final videos = await Permission.videos.status;
+    // final audio = await Permission.audio.status;
+    const newPermission = [
+      Permission.photos,
+      Permission.videos,
+      // Permission.audio
+    ];
+    if ((photos != PermissionStatus.granted &&
+            photos != PermissionStatus.permanentlyDenied) ||
+        (videos != PermissionStatus.granted &&
+            videos != PermissionStatus.permanentlyDenied)) {
       mirrorFlyPermissionDialog(
           notNowBtn: () {
             return false;
@@ -50,9 +86,16 @@ class AppPermission {
           },
           icon: filePermission,
           content: Constants.filePermission);
-      return newPermission.status;
+      var photo = await newPermission[0].status.isGranted;
+      var video = await newPermission[1].isGranted;
+      // var audio = await newPermission[2].isGranted;
+      return (photo && video)
+          ? PermissionStatus.granted
+          : PermissionStatus.denied;
     } else {
-      return permission;
+      return (photos.isGranted && videos.isGranted)
+          ? PermissionStatus.granted
+          : PermissionStatus.denied;
     }
   }
 
@@ -147,18 +190,19 @@ class AppPermission {
     return status1.isGranted;
   }
 
-  static Future<bool> checkPermission(Permission permission, String permissionIcon, String permissionContent) async {
+  static Future<bool> checkPermission(Permission permission,
+      String permissionIcon, String permissionContent) async {
     var status = await permission.status;
     if (status == PermissionStatus.granted) {
       debugPrint("permission granted opening");
       return true;
-    }else if(status == PermissionStatus.permanentlyDenied){
+    } else if (status == PermissionStatus.permanentlyDenied) {
       mirrorFlyLog('permanentlyDenied', 'permission');
       var permissionAlertMessage = "";
       var permissionName = "$permission";
       permissionName = permissionName.replaceAll("Permission.", "");
 
-      switch (permissionName.toLowerCase()){
+      switch (permissionName.toLowerCase()) {
         case "camera":
           permissionAlertMessage = Constants.cameraPermissionDenied;
           break;
@@ -175,49 +219,48 @@ class AppPermission {
           permissionAlertMessage = Constants.locationPermissionDenied;
           break;
         default:
-          permissionAlertMessage = "MirrorFly need the ${permissionName.toUpperCase()} Permission. But they have been permanently denied. Please continue to app settings, select \"Permissions\", and enable \"${permissionName.toUpperCase()}\"";
+          permissionAlertMessage =
+              "MirrorFly need the ${permissionName.toUpperCase()} Permission. But they have been permanently denied. Please continue to app settings, select \"Permissions\", and enable \"${permissionName.toUpperCase()}\"";
       }
 
-      var deniedPopupValue = await customPermissionDialog(icon: permissionIcon,
-          content: permissionAlertMessage);
-      if(deniedPopupValue){
+      var deniedPopupValue = await customPermissionDialog(
+          icon: permissionIcon, content: permissionAlertMessage);
+      if (deniedPopupValue) {
         openAppSettings();
         return false;
-      }else{
+      } else {
         return false;
       }
-    }else{
+    } else {
       mirrorFlyLog('denied', 'permission');
-      var popupValue = await customPermissionDialog(icon: permissionIcon,
-          content: permissionContent);
-      if(popupValue){
-        return AppPermission.requestPermission(permission);/*.then((value) {
+      var popupValue = await customPermissionDialog(
+          icon: permissionIcon, content: permissionContent);
+      if (popupValue) {
+        return AppPermission.requestPermission(
+            permission); /*.then((value) {
           if(value){
             return true;
           }else{
             return false;
           }
         });*/
-      }else{
+      } else {
         return false;
       }
     }
   }
 
-  static permissionDeniedDialog({required String content}){
-    Helper.showAlert(
-        message:
-        content,
-        title: "Permission Denied",
-        actions: [
-          TextButton(
-              onPressed: () {
-                Get.back();
-                openAppSettings();
-              },
-              child: const Text("OK")),
-        ]);
+  static permissionDeniedDialog({required String content}) {
+    Helper.showAlert(message: content, title: "Permission Denied", actions: [
+      TextButton(
+          onPressed: () {
+            Get.back();
+            openAppSettings();
+          },
+          child: const Text("OK")),
+    ]);
   }
+
   static mirrorFlyPermissionDialog(
       {required Function() notNowBtn,
       required Function() continueBtn,
@@ -266,8 +309,7 @@ class AppPermission {
   }
 
   static Future<bool> customPermissionDialog(
-      {required String icon,
-      required String content}) async {
+      {required String icon, required String content}) async {
     return await Get.dialog(AlertDialog(
       contentPadding: EdgeInsets.zero,
       content: Column(

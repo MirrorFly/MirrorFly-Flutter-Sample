@@ -82,8 +82,8 @@ class LoginController extends GetxController {
     if (mobileNumber.text.isEmpty) {
       toToast("Please Enter Mobile Number");
     } else {
-      phoneAuth();
-      //registerAccount();
+      //phoneAuth();
+      registerAccount();
     }
   }
 
