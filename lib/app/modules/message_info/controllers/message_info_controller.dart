@@ -30,18 +30,6 @@ class MessageInfoController extends GetxController {
   void onInit() {
     super.onInit();
     getStatusOfMessage(chatMessage.first.messageId);
-    /*player.onPlayerCompletion.listen((event) {
-      playingChat!.mediaChatMessage!.isPlaying=false;
-      playingChat!.mediaChatMessage!.currentPos=0;
-      player.stop();
-      chatMessage.refresh();
-    });
-
-    player.onAudioPositionChanged.listen((Duration p) {
-      playingChat?.mediaChatMessage!.currentPos=(p.inMilliseconds);
-      chatMessage.refresh();
-    });*/
-
   }
 
   String getChatTime(BuildContext context, int? epochTime) {
