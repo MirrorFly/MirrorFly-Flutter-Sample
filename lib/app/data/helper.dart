@@ -364,7 +364,11 @@ extension MemberParsing on Member {
       !isGroupProfile.checkNull() && isGroupInOfflineMode
           .checkNull(); // for email contact isGroupInOfflineMode will be true
 }
-
+extension MemberProfileParsing on MemberProfileDetails {
+  bool isDeletedContact() {
+    return contactType == "deleted_contact";
+  }
+}
 Future<Profile> getProfileDetails(String jid) async {
   var value = await FlyChat.getProfileDetails(jid.checkNull(), false);
   // profileDataFromJson(value);

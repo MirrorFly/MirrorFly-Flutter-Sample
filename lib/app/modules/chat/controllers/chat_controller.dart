@@ -1292,7 +1292,8 @@ class ChatController extends FullLifeCycleController
       Get.toNamed(Routes.messageInfo, arguments: {
         "messageID": selectedChatList[0].messageId,
         "chatMessage": selectedChatList[0],
-        "isGroupProfile": profile.isGroupProfile
+        "isGroupProfile": profile.isGroupProfile,
+        "jid": profile.jid
       });
       clearChatSelection(selectedChatList[0]);
     });
