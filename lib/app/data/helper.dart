@@ -567,7 +567,7 @@ bool equalsWithToday(DateTime srcDate, String day) {
 var calendar = DateTime.now();
 
 String getChatTime(BuildContext context, int? epochTime) {
-  debugPrint("epochTime--> $epochTime");
+  // debugPrint("epochTime--> $epochTime");
   if (epochTime == null) return "";
   if (epochTime == 0) return "";
   var convertedTime = epochTime;
@@ -576,7 +576,7 @@ String getChatTime(BuildContext context, int? epochTime) {
   var hourTime = manipulateMessageTime(
       context, DateTime.fromMicrosecondsSinceEpoch(convertedTime));
   // calendar = DateTime.fromMicrosecondsSinceEpoch(convertedTime);
-  debugPrint('hourTime $hourTime');
+  //debugPrint('hourTime $hourTime');
   return hourTime;
 }
 

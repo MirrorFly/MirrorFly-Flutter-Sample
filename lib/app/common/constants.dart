@@ -424,8 +424,8 @@ class Constants {
 
   static const String emailPattern =
       ("^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,3})\$");
+  static const String mobilePattern = r'([0-9]{5,9})';
 
-  static const String mobilePattern = r'(?:[\\+0-9]{1,4}\\-)?[0-9]{6,12}';
   static const String textPattern = r'[a-zA-Z]';
   static const String countryCodePattern = r'(^(\+?[0-9]{1,4}\-?)$)';
   // static const String websitePattern =
