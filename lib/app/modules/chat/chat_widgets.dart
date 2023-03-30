@@ -2195,16 +2195,10 @@ class AttachmentsSheetView extends StatelessWidget {
           child: Column(
             children: [
               Row(
-                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   iconCreation(documentImg, "Document", onDocument),
-                  const SizedBox(
-                    width: 50,
-                  ),
                   iconCreation(cameraImg, "Camera", onCamera),
-                  const SizedBox(
-                    width: 50,
-                  ),
                   iconCreation(galleryImg, "Gallery", onGallery),
                 ],
               ),
@@ -2212,16 +2206,10 @@ class AttachmentsSheetView extends StatelessWidget {
                 height: 35,
               ),
               Row(
-                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   iconCreation(audioImg, "Audio", onAudio),
-                  const SizedBox(
-                    width: 50,
-                  ),
                   iconCreation(contactImg, "Contact", onContact),
-                  const SizedBox(
-                    width: 50,
-                  ),
                   iconCreation(locationImg, "Location", onLocation),
                 ],
               ),
