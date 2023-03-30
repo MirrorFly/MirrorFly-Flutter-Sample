@@ -2181,40 +2181,34 @@ class AttachmentsSheetView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var screenWidth = MediaQuery.of(context).size.width;
-    return Container(
-      height: 270,
-      width: screenWidth,
-      margin: const EdgeInsets.only(bottom: 40),
-      child: Card(
-        color: bottomSheetColor,
-        margin: const EdgeInsets.all(18.0),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 20),
-          child: Column(
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  iconCreation(documentImg, "Document", onDocument),
-                  iconCreation(cameraImg, "Camera", onCamera),
-                  iconCreation(galleryImg, "Gallery", onGallery),
-                ],
-              ),
-              const SizedBox(
-                height: 35,
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  iconCreation(audioImg, "Audio", onAudio),
-                  iconCreation(contactImg, "Contact", onContact),
-                  iconCreation(locationImg, "Location", onLocation),
-                ],
-              ),
-            ],
-          ),
+    return Card(
+      color: bottomSheetColor,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 20),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                iconCreation(documentImg, "Document", onDocument),
+                iconCreation(cameraImg, "Camera", onCamera),
+                iconCreation(galleryImg, "Gallery", onGallery),
+              ],
+            ),
+            const SizedBox(
+              height: 35,
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                iconCreation(audioImg, "Audio", onAudio),
+                iconCreation(contactImg, "Contact", onContact),
+                iconCreation(locationImg, "Location", onLocation),
+              ],
+            ),
+          ],
         ),
       ),
     );

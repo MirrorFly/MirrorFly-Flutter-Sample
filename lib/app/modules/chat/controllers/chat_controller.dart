@@ -353,28 +353,32 @@ class ChatController extends FullLifeCycleController
   }
 
   showBottomSheetAttachment() {
-    showModalBottomSheet(
-        backgroundColor: Colors.transparent,
-        context: Get.context!,
-        builder: (builder) => AttachmentsSheetView(onDocument: () {
-              Get.back();
-              documentPickUpload();
-            }, onCamera: () {
-              Get.back();
-              onCameraClick();
-            }, onGallery: () {
-              Get.back();
-              onGalleryClick();
-            }, onAudio: () {
-              Get.back();
-              onAudioClick();
-            }, onContact: () {
-              Get.back();
-              onContactClick();
-            }, onLocation: () {
-              Get.back();
-              onLocationClick();
-            }));
+    Get.bottomSheet(Container(
+      margin: const EdgeInsets.only(right: 18.0,left: 18.0,bottom: 50),
+      child: BottomSheet(
+          onClosing: (){},
+          backgroundColor: Colors.transparent,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+          builder: (builder) => AttachmentsSheetView(onDocument: () {
+                Get.back();
+                documentPickUpload();
+              }, onCamera: () {
+                Get.back();
+                onCameraClick();
+              }, onGallery: () {
+                Get.back();
+                onGalleryClick();
+              }, onAudio: () {
+                Get.back();
+                onAudioClick();
+              }, onContact: () {
+                Get.back();
+                onContactClick();
+              }, onLocation: () {
+                Get.back();
+                onLocationClick();
+              })),
+    ),ignoreSafeArea: true,);
   }
 
   MessageObject? messageObject;
