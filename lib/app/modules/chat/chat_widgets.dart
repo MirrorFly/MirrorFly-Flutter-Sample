@@ -1251,11 +1251,12 @@ class DocumentMessageView extends StatelessWidget {
                   ),
                   Expanded(
                     child: search.isEmpty
-                        ? textMessageSpannableText(
+                        ? Text(chatMessage.mediaChatMessage!.mediaFileName,style: const TextStyle(
+                        fontSize: 12,),maxLines: 2,)/*textMessageSpannableText(
                             chatMessage.mediaChatMessage!.mediaFileName
                                 .checkNull(),
                             maxLines: 2,
-                          )
+                          )*/
                         : chatSpannedText(
                             chatMessage.mediaChatMessage!.mediaFileName
                                 .checkNull(),
@@ -1270,7 +1271,6 @@ class DocumentMessageView extends StatelessWidget {
                         style: const TextStyle(fontSize: 12,color: Colors.black,fontWeight: FontWeight.w400),
                   )*/
                   ),
-                  const Spacer(),
                   getImageOverlay(chatMessage),
                 ],
               ),
