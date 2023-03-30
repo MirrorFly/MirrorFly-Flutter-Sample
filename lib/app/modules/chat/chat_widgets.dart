@@ -516,7 +516,7 @@ class LocationMessageView extends StatelessWidget {
                   width: 5,
                 ),
                 getMessageIndicator(chatMessage.messageStatus,
-                    chatMessage.isMessageSentByMe, chatMessage.messageType),
+                    chatMessage.isMessageSentByMe, chatMessage.messageType,chatMessage.isMessageRecalled),
                 const SizedBox(
                   width: 4,
                 ),
@@ -780,7 +780,7 @@ class _AudioMessageViewState extends State<AudioMessageView>
                 getMessageIndicator(
                     widget.chatMessage.messageStatus,
                     widget.chatMessage.isMessageSentByMe,
-                    widget.chatMessage.messageType),
+                    widget.chatMessage.messageType,widget.chatMessage.isMessageRecalled),
                 const SizedBox(
                   width: 4,
                 ),
@@ -1054,7 +1054,7 @@ class ContactMessageView extends StatelessWidget {
                   width: 5,
                 ),
                 getMessageIndicator(chatMessage.messageStatus,
-                    chatMessage.isMessageSentByMe, chatMessage.messageType),
+                    chatMessage.isMessageSentByMe, chatMessage.messageType,chatMessage.isMessageRecalled),
                 const SizedBox(
                   width: 4,
                 ),
@@ -1251,11 +1251,12 @@ class DocumentMessageView extends StatelessWidget {
                   ),
                   Expanded(
                     child: search.isEmpty
-                        ? textMessageSpannableText(
+                        ? Text(chatMessage.mediaChatMessage!.mediaFileName,style: const TextStyle(
+                        fontSize: 12,),maxLines: 2,)/*textMessageSpannableText(
                             chatMessage.mediaChatMessage!.mediaFileName
                                 .checkNull(),
                             maxLines: 2,
-                          )
+                          )*/
                         : chatSpannedText(
                             chatMessage.mediaChatMessage!.mediaFileName
                                 .checkNull(),
@@ -1270,7 +1271,6 @@ class DocumentMessageView extends StatelessWidget {
                         style: const TextStyle(fontSize: 12,color: Colors.black,fontWeight: FontWeight.w400),
                   )*/
                   ),
-                  const Spacer(),
                   getImageOverlay(chatMessage),
                 ],
               ),
@@ -1302,7 +1302,7 @@ class DocumentMessageView extends StatelessWidget {
                     width: 5,
                   ),
                   getMessageIndicator(chatMessage.messageStatus,
-                      chatMessage.isMessageSentByMe, chatMessage.messageType),
+                      chatMessage.isMessageSentByMe, chatMessage.messageType,chatMessage.isMessageRecalled),
                   const SizedBox(
                     width: 4,
                   ),
@@ -1436,7 +1436,7 @@ class VideoMessageView extends StatelessWidget {
                           getMessageIndicator(
                               chatMessage.messageStatus,
                               chatMessage.isMessageSentByMe,
-                              chatMessage.messageType),
+                              chatMessage.messageType,chatMessage.isMessageRecalled),
                           const SizedBox(
                             width: 4,
                           ),
@@ -1518,7 +1518,7 @@ class ImageMessageView extends StatelessWidget {
                               getMessageIndicator(
                                   chatMessage.messageStatus,
                                   chatMessage.isMessageSentByMe,
-                                  chatMessage.messageType),
+                                  chatMessage.messageType,chatMessage.isMessageRecalled),
                               const SizedBox(
                                 width: 4,
                               ),
@@ -1614,7 +1614,7 @@ Widget setCaptionMessage(MediaChatMessage mediaMessage,
               width: 5,
             ),
             getMessageIndicator(chatMessage.messageStatus,
-                chatMessage.isMessageSentByMe, chatMessage.messageType),
+                chatMessage.isMessageSentByMe, chatMessage.messageType,chatMessage.isMessageRecalled),
             const SizedBox(
               width: 5,
             ),
@@ -1791,7 +1791,7 @@ class TextMessageView extends StatelessWidget {
                 width: 5,
               ),
               getMessageIndicator(chatMessage.messageStatus,
-                  chatMessage.isMessageSentByMe, chatMessage.messageType),
+                  chatMessage.isMessageSentByMe, chatMessage.messageType,chatMessage.isMessageRecalled),
               const SizedBox(
                 width: 5,
               ),
@@ -1866,10 +1866,10 @@ class RecalledMessageView extends StatelessWidget {
   }
 }
 
-getMessageIndicator(String? messageStatus, bool isSender, String messageType) {
+getMessageIndicator(String? messageStatus, bool isSender, String messageType,bool isRecalled) {
   // debugPrint("Message Status ==>");
   // debugPrint("Message Status ==> $messageStatus");
-  if (isSender) {
+  if (isSender && !isRecalled) {
     if (messageStatus == 'A') {
       return SvgPicture.asset(acknowledgedIcon);
     } else if (messageStatus == 'D') {
@@ -2181,52 +2181,34 @@ class AttachmentsSheetView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var screenWidth = MediaQuery.of(context).size.width;
-    return Container(
-      height: 270,
-      width: screenWidth,
-      margin: const EdgeInsets.only(bottom: 40),
-      child: Card(
-        color: bottomSheetColor,
-        margin: const EdgeInsets.all(18.0),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 20),
-          child: Column(
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  iconCreation(documentImg, "Document", onDocument),
-                  const SizedBox(
-                    width: 50,
-                  ),
-                  iconCreation(cameraImg, "Camera", onCamera),
-                  const SizedBox(
-                    width: 50,
-                  ),
-                  iconCreation(galleryImg, "Gallery", onGallery),
-                ],
-              ),
-              const SizedBox(
-                height: 35,
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  iconCreation(audioImg, "Audio", onAudio),
-                  const SizedBox(
-                    width: 50,
-                  ),
-                  iconCreation(contactImg, "Contact", onContact),
-                  const SizedBox(
-                    width: 50,
-                  ),
-                  iconCreation(locationImg, "Location", onLocation),
-                ],
-              ),
-            ],
-          ),
+    return Card(
+      color: bottomSheetColor,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 20),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                iconCreation(documentImg, "Document", onDocument),
+                iconCreation(cameraImg, "Camera", onCamera),
+                iconCreation(galleryImg, "Gallery", onGallery),
+              ],
+            ),
+            const SizedBox(
+              height: 35,
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                iconCreation(audioImg, "Audio", onAudio),
+                iconCreation(contactImg, "Contact", onContact),
+                iconCreation(locationImg, "Location", onLocation),
+              ],
+            ),
+          ],
         ),
       ),
     );

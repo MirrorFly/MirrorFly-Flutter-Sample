@@ -365,6 +365,12 @@ extension MemberParsing on Member {
           .checkNull(); // for email contact isGroupInOfflineMode will be true
 }
 
+extension MemberProfileParsing on MemberProfileDetails {
+  bool isDeletedContact() {
+    return contactType == "deleted_contact";
+  }
+}
+
 Future<Profile> getProfileDetails(String jid) async {
   var value = await FlyChat.getProfileDetails(jid.checkNull(), false);
   // profileDataFromJson(value);
@@ -519,8 +525,8 @@ String manipulateMessageTime(BuildContext context, DateTime messageDate) {
   var format = MediaQuery
       .of(context)
       .alwaysUse24HourFormat ? 24 : 12;
-  var hours = calendar.hour; //calendar[Calendar.HOUR]
   calendar = messageDate;
+  var hours = calendar.hour; //calendar[Calendar.HOUR]
   var dateHourFormat = setDateHourFormat(format, hours);
   return DateFormat(dateHourFormat).format(messageDate);
 }
@@ -569,7 +575,8 @@ String getChatTime(BuildContext context, int? epochTime) {
   // debugPrint("epoch convertedTime---> $convertedTime");
   var hourTime = manipulateMessageTime(
       context, DateTime.fromMicrosecondsSinceEpoch(convertedTime));
-  calendar = DateTime.fromMicrosecondsSinceEpoch(convertedTime);
+  // calendar = DateTime.fromMicrosecondsSinceEpoch(convertedTime);
+  //debugPrint('hourTime $hourTime');
   return hourTime;
 }
 

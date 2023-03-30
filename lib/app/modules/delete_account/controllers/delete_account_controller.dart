@@ -31,9 +31,12 @@ class DeleteAccountController extends GetxController {
       }
       mirrorFlyLog("SessionManagement.getMobileNumber()", SessionManagement.getMobileNumber().toString());
       mirrorFlyLog("SessionManagement.getCountryCode()", SessionManagement.getCountryCode().toString());
+      mirrorFlyLog("SessionManagement.isTrailLicence()", SessionManagement.isTrailLicence().toString());
       mirrorFlyLog("countryCode", countryCode.toString());
+      var mobileNumberWithCountryCode = '${countryCode?.replaceAll('+', '')}${mobileNumber.text.trim()}';
+      mirrorFlyLog("mobileNumberWithCountryCode", mobileNumberWithCountryCode);
       if(SessionManagement.isTrailLicence()) {
-        if (mobileNumber.text.trim() != SessionManagement.getMobileNumber() ||
+        if ((mobileNumber.text.trim() != SessionManagement.getMobileNumber() && mobileNumberWithCountryCode != SessionManagement.getMobileNumber()) ||
             SessionManagement.getCountryCode()?.replaceAll('+', '') !=
                 countryCode?.replaceAll('+', '')) {
           Helper.showAlert(

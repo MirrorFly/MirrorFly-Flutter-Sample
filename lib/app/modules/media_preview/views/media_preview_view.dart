@@ -204,7 +204,7 @@ class MediaPreviewView extends GetView<MediaPreviewController> {
                                 children: [
                                   Obx(() {
                                     return controller.isFocused.value ||
-                                            controller.showEmoji.value
+                                            controller.showEmoji.value || !controller.showAdd
                                         ? InkWell(
                                             onTap: () {
                                               if (!controller.showEmoji.value) {
@@ -220,7 +220,7 @@ class MediaPreviewView extends GetView<MediaPreviewController> {
                                             },
                                             child: SvgPicture.asset(
                                                 'assets/logos/smile.svg'))
-                                        : controller.filePath.length < 10
+                                        : controller.filePath.length < 10 && controller.showAdd
                                             ? InkWell(
                                                 onTap: () {
                                                   Get.back();

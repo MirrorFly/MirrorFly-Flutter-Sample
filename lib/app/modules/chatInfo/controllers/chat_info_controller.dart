@@ -118,14 +118,16 @@ class ChatInfoController extends GetxController {
             TextButton(
                 onPressed: () {
                   Get.back();
-                  Helper.showLoading(message: "Reporting User");
+                  // Helper.showLoading(message: "Reporting User");
                   FlyChat
                       .reportUserOrMessages(profile.jid!, "chat", "")
                       .then((value) {
-                    Helper.hideLoading();
-                    Future.delayed(const Duration(milliseconds: 500), () {
-                      toToast("Report Success");
-                    });
+                    // Helper.hideLoading();
+                    if(value.checkNull()){
+                      toToast("Report sent");
+                    }else{
+                      toToast("There are no messages available");
+                    }
 
                     // debugPrint(value.toString());
                   }).catchError((onError) {

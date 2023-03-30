@@ -130,7 +130,7 @@ class RecentChatItem extends StatelessWidget {
                       : buildProfileStatus()
                   : Expanded(
                       child: typingUserid.isEmpty
-                          ? buildLastMessageItem()
+                          ? item.lastMessageType != null ? buildLastMessageItem() : const SizedBox.shrink()
                           : buildTypingUser(),
                     ),
             ],
@@ -190,7 +190,7 @@ class RecentChatItem extends StatelessWidget {
       child: getMessageIndicator(
           item.lastMessageStatus.checkNull(),
           item.isLastMessageSentByMe.checkNull(),
-          item.lastMessageType.checkNull())
+          item.lastMessageType.checkNull(),item.isLastMessageRecalledByUser.checkNull())
       /*CircleAvatar(
         radius: 4,
         backgroundColor: Colors.green,
@@ -333,7 +333,8 @@ class RecentChatItem extends StatelessWidget {
             var chat = data.data!;
             return Row(
               children: [
-                forMessageTypeIcon(
+                chat.isMessageRecalled
+                    ? const SizedBox.shrink() : forMessageTypeIcon(
                     chat.messageType, chat.mediaChatMessage),
                 SizedBox(
                   width: chat.isMessageRecalled
