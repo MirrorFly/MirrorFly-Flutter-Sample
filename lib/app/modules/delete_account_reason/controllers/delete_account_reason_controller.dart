@@ -15,6 +15,7 @@ class DeleteAccountReasonController extends FullLifeCycleController
   TextEditingController feedback = TextEditingController();
 
   var deleteReasons = [
+    'I am changing my device',
     'I am changing my phone number',
     'MirrorFly is missing a feature',
     'MirrorFly is not working',
@@ -49,6 +50,7 @@ class DeleteAccountReasonController extends FullLifeCycleController
       // Future.delayed(const Duration(milliseconds: 100), () {
        Helper.showLoading(message: "Deleting Account");
       debugPrint("on DeleteAccount");
+      SessionManagement.setLogin(false);
       FlyChat.deleteAccount(reasonValue.value, feedback.text).then((value) {
         debugPrint('DeleteAccount $value');
         Future.delayed(const Duration(milliseconds: 500), ()
@@ -60,6 +62,7 @@ class DeleteAccountReasonController extends FullLifeCycleController
         });
       }).catchError((error) {
         Helper.hideLoading();
+        SessionManagement.setLogin(true);
         toToast("Unable to delete the account");
       });
       // });
