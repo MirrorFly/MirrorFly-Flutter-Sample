@@ -52,7 +52,7 @@ class StatusListController extends FullLifeCycleController with FullLifeCycleMix
     debugPrint("updating item details--> $statusId");
     if(await AppUtils.isNetConnected()) {
       Helper.showLoading();
-      FlyChat.setMyProfileStatus(statusText!, statusId).then((value){
+      FlyChat.setMyProfileStatus(statusText!, statusId!).then((value){
         selectedStatus.value= statusText;
         addStatusController.text= statusText;
         var data = json.decode(value.toString());
