@@ -39,12 +39,10 @@ bool shouldUseFirebaseEmulator = false;
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   FlyChat.init(
-      baseUrl: 'https://api-uikit-dev.contus.us/api/v1/',
-      licenseKey: '2sdgNtr3sFBSM3bYRa7RKDPEiB38Xo',//ckIjaccWBoMNvxdbql8LJ2dmKqT5bp
+      baseUrl: 'https://api-uikit-qa.contus.us/api/v1/',
+      licenseKey: 'ckIjaccWBoMNvxdbql8LJ2dmKqT5bp',//ckIjaccWBoMNvxdbql8LJ2dmKqT5bp//2sdgNtr3sFBSM3bYRa7RKDPEiB38Xo
       isTrialLicenceKey: true,
-      groupConfig: GroupConfig(
-          enableGroup: true,
-          maxMembersCount: 250), iOSContainerID: 'group.com.mirrorfly.qa');
+      iOSContainerID: 'group.com.mirrorfly.qa');
   final GoogleMapsFlutterPlatform mapsImplementation =
       GoogleMapsFlutterPlatform.instance;
   if (mapsImplementation is GoogleMapsFlutterAndroid) {

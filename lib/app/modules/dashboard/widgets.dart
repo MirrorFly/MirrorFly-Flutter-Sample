@@ -479,13 +479,19 @@ String spannableTextType(String text) {
   if (RegExp(Constants.emailPattern, multiLine: false).hasMatch(text)) {
     return "email";
   }
-  if (RegExp(Constants.mobilePattern).hasMatch(text) &&
-      !RegExp(Constants.textPattern).hasMatch(text)) {
+  // if (RegExp(Constants.mobilePattern).hasMatch(text) &&
+  //     !RegExp(Constants.textPattern).hasMatch(text)) {
+  //   return "mobile";
+  // }
+  if(text.isPhoneNumber){
     return "mobile";
   }
-  if (RegExp(Constants.websitePattern).hasMatch(text)) {
+  if(text.isURL){
     return "website";
   }
+  // if (RegExp(Constants.websitePattern).hasMatch(text)) {
+  //   return "website";
+  // }
   // if (Uri.parse(text).isAbsolute) {
   /*if (Uri.parse(text).host.isNotEmpty) {
     return "website";
