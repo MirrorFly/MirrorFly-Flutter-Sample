@@ -8,6 +8,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
+import 'package:flutter_libphonenumber/flutter_libphonenumber.dart';
 import 'package:get/get.dart';
 import 'package:google_cloud_translation/google_cloud_translation.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -1384,6 +1385,7 @@ class ChatController extends FullLifeCycleController
                       debugPrint(value);
                       profile.isBlocked = true;
                       isBlocked(true);
+                      profile_.refresh();
                       saveUnsentMessage();
                       Helper.hideLoading();
                       toToast('${getName(profile)} has been blocked');
@@ -2563,11 +2565,13 @@ class ChatController extends FullLifeCycleController
     if (jid.isNotEmpty && jid == profile.jid) {
       if (!profile.isGroupProfile.checkNull()) {
         getProfileDetails(jid).then((value) {
+          debugPrint("update Profile contact sync $value");
           SessionManagement.setChatJid("");
           profile_(value);
           checkAdminBlocked();
           isBlocked(profile.isBlocked);
           setChatStatus();
+          profile_.refresh();
         });
       } else {
         debugPrint("unable to update profile due to group chat");
@@ -2653,14 +2657,49 @@ class ChatController extends FullLifeCycleController
     }
   }
 
-  void saveContact() {
+  Future<void> saveContact() async {
     var phone = profile.mobileNumber.checkNull().isNotEmpty
         ? profile.mobileNumber.checkNull()
         : getMobileNumberFromJid(profile.jid.checkNull());
+    var userName = profile.nickName.checkNull().isNotEmpty ? profile.nickName.checkNull() : profile.name.checkNull();
     if (phone.isNotEmpty) {
-      FlyChat.addContact(phone.checkNull());
+      FlutterLibphonenumber().init();
+      var formatNumberSync =
+      FlutterLibphonenumber().formatNumberSync(phone);
+      var parse = await FlutterLibphonenumber().parse(formatNumberSync);
+      debugPrint("parse-----> $parse");
+      FlyChat.addContact(parse["international"], userName).then((value) {
+        if(value ?? false){
+          toToast("Contact Saved");
+          if(!SessionManagement.isTrailLicence()) {
+            syncContacts();
+          }
+        }
+      });
     } else {
       mirrorFlyLog('mobile number', phone.toString());
+    }
+  }
+
+  void syncContacts() async {
+    if(await Permission.contacts.isGranted) {
+      if (await AppUtils.isNetConnected() &&
+          !await FlyChat.contactSyncStateValue()) {
+        final permission = await Permission.contacts.status;
+        if (permission == PermissionStatus.granted) {
+          if(SessionManagement.getLogin()) {
+            FlyChat.syncContacts(!SessionManagement.isInitialContactSyncDone());
+          }
+        }
+      }
+    }else{
+      debugPrint("Contact sync permission is not granted");
+      if(SessionManagement.isInitialContactSyncDone()) {
+        FlyChat.revokeContactSync().then((value) {
+          onContactSyncComplete(true);
+          mirrorFlyLog("checkContactPermission isSuccess", value.toString());
+        });
+      }
     }
   }
 

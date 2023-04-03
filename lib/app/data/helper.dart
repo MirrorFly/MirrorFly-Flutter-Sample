@@ -590,13 +590,15 @@ checkIosFile(String mediaLocalStoragePath) async {
   return isExists;
 }
 
-openDocument(String mediaLocalStoragePath, BuildContext context) async {
+openDocument(String mediaLocalStoragePath) async {
   // if (await askStoragePermission()) {
   if (mediaLocalStoragePath.isNotEmpty) {
     final result = await OpenFile.open(mediaLocalStoragePath);
     debugPrint(result.message);
     if(result.message.contains("file does not exist")){
       toToast("The Selected file Doesn't Exist or Unable to Open");
+    }else if(result.message.contains('No APP found to open this file')){
+      toToast('you may not have proper app to view this content');
     }
 
     /*FlyChat.openFile(mediaLocalStoragePath).catchError((onError) {

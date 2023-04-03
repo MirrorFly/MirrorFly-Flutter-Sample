@@ -38,9 +38,9 @@ class StarredMessagesView extends GetView<StarredMessagesController> {
           body: Obx(() {
             return controller.starredChatList.isNotEmpty ?
             SingleChildScrollView(child: favouriteChatListView(controller.starredChatList)) :
-            controller.isListLoading.value ? const Center(child: CircularProgressIndicator(),) : const Center(child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 10.0,vertical: 30),
-              child: Text("No Starred Messages Found"),
+            controller.isListLoading.value ? const Center(child: CircularProgressIndicator(),) : Center(child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 10.0,vertical: 30),
+              child: Text(controller.isSearch.value ? "No result found" : "No Starred Messages Found"),
             ));
           })
         ),
@@ -179,17 +179,21 @@ class StarredMessagesView extends GetView<StarredMessagesController> {
       title: TextField(
         onChanged: (text) => controller.startSearch(text),
         controller: controller.searchedText,
+        focusNode: controller.searchFocus,
         autofocus: true,
         decoration: const InputDecoration(
             hintText: "Search...", border: InputBorder.none),
       ),
       iconTheme: const IconThemeData(color: iconColor),
       actions: [
-        IconButton(
-          icon: const Icon(Icons.close),
-          onPressed: () {
-            controller.clearSearch();
-          },
+        Visibility(
+          visible: controller.clear.value,
+          child: IconButton(
+            icon: const Icon(Icons.close),
+            onPressed: () {
+              controller.clearSearch();
+            },
+          ),
         ),
       ],
     );
