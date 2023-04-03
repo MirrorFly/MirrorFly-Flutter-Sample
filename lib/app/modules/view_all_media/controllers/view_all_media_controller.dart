@@ -8,7 +8,6 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
 import 'package:fly_chat/fly_chat.dart';
-import 'package:open_file_plus/open_file_plus.dart';
 
 import '../../../common/constants.dart';
 import '../../../routes/app_pages.dart';
@@ -299,10 +298,11 @@ class ViewAllMediaController extends GetxController {
   }
 
   openFile(String path) async {
-    final result = await OpenFile.open(path);
+    /*final result = await OpenFile.open(path);
     if(result.message.contains("file does not exist")){
       toToast("The Selected file Doesn't Exist or Unable to Open");
-    }
+    }*/
+    openDocument(path);
   }
 
   openImage(int gridIndex){

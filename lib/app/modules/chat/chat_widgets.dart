@@ -1205,7 +1205,7 @@ class DocumentMessageView extends StatelessWidget {
 
   onDocumentClick() {
     openDocument(
-        chatMessage.mediaChatMessage!.mediaLocalStoragePath, Get.context!);
+        chatMessage.mediaChatMessage!.mediaLocalStoragePath);
   }
 
   @override
@@ -2235,7 +2235,7 @@ Widget iconCreation(String iconPath, String text, VoidCallback onTap) {
 
 Widget chatSpannedText(String text, String spannableText, TextStyle? style,
     {int? maxLines}) {
-  var startIndex = text.toLowerCase().startsWith(spannableText.toLowerCase())
+  var startIndex = text.toLowerCase().contains(spannableText.toLowerCase())
       ? text.toLowerCase().indexOf(spannableText.toLowerCase())
       : -1;
   var endIndex = startIndex + spannableText.length;
