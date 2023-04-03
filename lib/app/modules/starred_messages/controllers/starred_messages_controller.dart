@@ -554,6 +554,7 @@ class StarredMessagesController extends FullLifeCycleController with FullLifeCyc
   clearSearch(){
     lastInputValue='';
     isSearch(false);
+    clear(false);
     searchedText.clear();
     starredChatList.clear();
     starredChatList.addAll(searchedStarredMessageList);

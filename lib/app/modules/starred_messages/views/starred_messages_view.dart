@@ -126,7 +126,7 @@ class StarredMessagesView extends GetView<StarredMessagesController> {
                                       ? const SizedBox.shrink()
                                       : ReplyMessageHeader(
                                       chatMessage: starredChatList[index]),
-                                  MessageContent(chatList: starredChatList,search: controller.searchedText.text,index:index, onPlayAudio: (){
+                                  MessageContent(chatList: starredChatList,search: controller.searchedText.text.trim(),index:index, onPlayAudio: (){
                                     controller.playAudio(starredChatList[index]);
                                   },onSeekbarChange:(value){
 
