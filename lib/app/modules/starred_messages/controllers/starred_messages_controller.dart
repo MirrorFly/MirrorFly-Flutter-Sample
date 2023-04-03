@@ -524,11 +524,16 @@ class StarredMessagesController extends FullLifeCycleController with FullLifeCyc
   var isSearch = false.obs;
   var clear = false.obs;
   var searchedText = TextEditingController();
+  String lastInputValue = "";
   void startSearch(String str){
     if(str.isNotEmpty) {
       clear(true);
-      addSearchedMessagesToList(str);
+      if (lastInputValue != str.trim()) {
+        lastInputValue = str.trim();
+        addSearchedMessagesToList(str.trim());
+      }
     }else{
+      lastInputValue='';
       clear(false);
       starredChatList.clear();
       starredChatList.addAll(searchedStarredMessageList);
@@ -547,6 +552,7 @@ class StarredMessagesController extends FullLifeCycleController with FullLifeCyc
   }
 
   clearSearch(){
+    lastInputValue='';
     isSearch(false);
     searchedText.clear();
     starredChatList.clear();
