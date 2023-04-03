@@ -42,9 +42,7 @@ Future<void> main() async {
       baseUrl: 'https://api-uikit-dev.contus.us/api/v1/',
       licenseKey: '2sdgNtr3sFBSM3bYRa7RKDPEiB38Xo',//ckIjaccWBoMNvxdbql8LJ2dmKqT5bp
       isTrialLicenceKey: true,
-      groupConfig: GroupConfig(
-          enableGroup: true,
-          maxMembersCount: 250), iOSContainerID: 'group.com.mirrorfly.qa');
+      iOSContainerID: 'group.com.mirrorfly.qa');
   final GoogleMapsFlutterPlatform mapsImplementation =
       GoogleMapsFlutterPlatform.instance;
   if (mapsImplementation is GoogleMapsFlutterAndroid) {
