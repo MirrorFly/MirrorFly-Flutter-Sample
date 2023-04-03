@@ -79,13 +79,14 @@ class StarredMessageHeader extends StatelessWidget {
                             decoration: const BoxDecoration(
                               color: statusBarColor,
                               borderRadius:
-                                  BorderRadius.all(Radius.circular(5)),
+                                  BorderRadius.all(Radius.circular(2)),
                             ),
                             margin: const EdgeInsets.all(5),
                             // padding: const EdgeInsets.all(1),
                             child: const Icon(
                               Icons.arrow_left,
                               color: Colors.black,
+                              size: 14,
                             )),
                         const Text("You",
                             style: TextStyle(
@@ -125,12 +126,13 @@ class StarredMessageHeader extends StatelessWidget {
                             decoration: const BoxDecoration(
                               color: statusBarColor,
                               borderRadius:
-                                  BorderRadius.all(Radius.circular(5)),
+                                  BorderRadius.all(Radius.circular(2)),
                             ),
                             margin: const EdgeInsets.all(5),
                             child: const Icon(
                               Icons.arrow_right,
                               color: Colors.black,
+                              size: 14,
                             )),
                         userProfile.isGroupProfile.checkNull()
                             ? Flexible(
