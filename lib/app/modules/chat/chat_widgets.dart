@@ -1205,7 +1205,7 @@ class DocumentMessageView extends StatelessWidget {
 
   onDocumentClick() {
     openDocument(
-        chatMessage.mediaChatMessage!.mediaLocalStoragePath, Get.context!);
+        chatMessage.mediaChatMessage!.mediaLocalStoragePath);
   }
 
   @override
