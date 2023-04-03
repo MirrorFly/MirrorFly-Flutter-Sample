@@ -453,7 +453,7 @@ class ContactController extends FullLifeCycleController
               "[Contact Sync] Contact syncing is already in progress");
         }
       } else {
-        // toToast(Constants.noInternetConnection);
+        toToast(Constants.noInternetConnection);
         // viewModel.onContactSyncFinished(false);
       }
     }

@@ -79,13 +79,12 @@ class ProfileView extends GetView<ProfileController> {
                                       width: 150,
                                       height: 150,
                                       clipOval: true,
-                                      errorWidget: controller.name.value
-                                          .checkNull()
+                                      errorWidget: controller.profileName.text.checkNull()
                                           .isNotEmpty
                                           ? ProfileTextImage(
                                         fontSize: 40,
                                         bgColor: buttonBgColor,
-                                        text: controller.name.value.checkNull(),
+                                        text: controller.profileName.text.checkNull(),
                                         radius: 75,
                                       )
                                           : null,

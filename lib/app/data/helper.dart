@@ -821,6 +821,14 @@ String getMemberName(Member item) {
   }
 }
 
+bool isValidPhoneNumber(String s) {
+if (s.length > 13 || s.length < 6) return false;
+return hasMatch(s, r'^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\s\./0-9]*$');
+}
+bool hasMatch(String? value, String pattern) {
+return (value == null) ? false : RegExp(pattern).hasMatch(value);
+}
+
 String getMobileNumberFromJid(String jid) {
   var str = jid.split('@');
   return str[0];

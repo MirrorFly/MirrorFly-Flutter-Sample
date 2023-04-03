@@ -483,7 +483,7 @@ String spannableTextType(String text) {
   //     !RegExp(Constants.textPattern).hasMatch(text)) {
   //   return "mobile";
   // }
-  if(text.isPhoneNumber){
+  if(isValidPhoneNumber(text)){
     return "mobile";
   }
   if(text.isURL){
