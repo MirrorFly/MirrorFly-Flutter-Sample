@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:fly_chat/fly_chat.dart';
@@ -11,7 +12,7 @@ import 'package:share_plus/share_plus.dart';
 import '../../../common/constants.dart';
 import '../../../routes/app_pages.dart';
 
-class StarredMessagesController extends GetxController {
+class StarredMessagesController extends FullLifeCycleController with FullLifeCycleMixin {
   var starredChatList = List<ChatMessageModel>.empty(growable: true).obs;
   double height = 0.0;
   double width = 0.0;
@@ -649,6 +650,30 @@ class StarredMessagesController extends GetxController {
 
   void userDeletedHisProfile(String jid) {
     userUpdatedHisProfile(jid);
+  }
+
+  @override
+  void onDetached() {}
+
+  @override
+  void onInactive() {}
+
+  @override
+  void onPaused() {}
+
+  FocusNode searchFocus = FocusNode();
+  @override
+  void onResumed() {
+    if(isSearch.value) {
+      if (!KeyboardVisibilityController().isVisible) {
+        if (searchFocus.hasFocus) {
+          searchFocus.unfocus();
+          Future.delayed(const Duration(milliseconds: 100), () {
+            searchFocus.requestFocus();
+          });
+        }
+      }
+    }
   }
 
 
