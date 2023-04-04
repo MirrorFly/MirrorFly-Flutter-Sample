@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
-import 'package:fly_chat/fly_chat.dart';
+import 'package:mirrorfly_plugin/mirrorfly.dart';
 
 import '../../../data/apputils.dart';
 import '../../../data/session_management.dart';
@@ -15,6 +15,7 @@ class DeleteAccountReasonController extends FullLifeCycleController
   TextEditingController feedback = TextEditingController();
 
   var deleteReasons = [
+    'I am changing my device',
     'I am changing my phone number',
     'MirrorFly is missing a feature',
     'MirrorFly is not working',
@@ -49,7 +50,8 @@ class DeleteAccountReasonController extends FullLifeCycleController
       // Future.delayed(const Duration(milliseconds: 100), () {
        Helper.showLoading(message: "Deleting Account");
       debugPrint("on DeleteAccount");
-      FlyChat.deleteAccount(reasonValue.value, feedback.text).then((value) {
+      SessionManagement.setLogin(false);
+      Mirrorfly.deleteAccount(reasonValue.value, feedback.text).then((value) {
         debugPrint('DeleteAccount $value');
         Future.delayed(const Duration(milliseconds: 500), ()
         {
@@ -60,6 +62,7 @@ class DeleteAccountReasonController extends FullLifeCycleController
         });
       }).catchError((error) {
         Helper.hideLoading();
+        SessionManagement.setLogin(true);
         toToast("Unable to delete the account");
       });
       // });

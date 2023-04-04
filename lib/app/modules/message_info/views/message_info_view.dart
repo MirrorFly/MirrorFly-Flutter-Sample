@@ -110,8 +110,7 @@ class MessageInfoView extends GetView<MessageInfoController> {
                         .memberProfileDetails!;
                     return memberItem(name: member.name.checkNull(),
                         image: member.image.checkNull(),
-                        status: controller.chatDate(context,
-                            controller.messageDeliveredList[index]),
+                        status: controller.chatDate(context, controller.messageDeliveredList[index]),
                         onTap: () {},
                       blocked: member.isBlockedMe.checkNull() || member.isAdminBlocked.checkNull(),
                       unknown: (!member.isItSavedContact.checkNull() || member.isDeletedContact()),);

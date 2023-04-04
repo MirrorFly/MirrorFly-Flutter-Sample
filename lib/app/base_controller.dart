@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:fly_chat/fly_chat.dart';
+import 'package:mirrorfly_plugin/mirrorfly.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
@@ -29,20 +29,20 @@ import 'modules/view_all_media/controllers/view_all_media_controller.dart';
 abstract class BaseController {
 
   initListeners() {
-    FlyChat.onMessageReceived.listen(onMessageReceived);
-    FlyChat.onMessageStatusUpdated.listen(onMessageStatusUpdated);
-    FlyChat.onMediaStatusUpdated.listen(onMediaStatusUpdated);
-    FlyChat.onUploadDownloadProgressChanged.listen((event){
+    Mirrorfly.onMessageReceived.listen(onMessageReceived);
+    Mirrorfly.onMessageStatusUpdated.listen(onMessageStatusUpdated);
+    Mirrorfly.onMediaStatusUpdated.listen(onMediaStatusUpdated);
+    Mirrorfly.onUploadDownloadProgressChanged.listen((event){
       var data = json.decode(event.toString());
       // debugPrint("Media Status Onprogress changed---> flutter $data");
       var messageId = data["message_id"] ?? "";
       var progressPercentage = data["progress_percentage"] ?? "0";
       onUploadDownloadProgressChanged(messageId,progressPercentage);
     });
-    FlyChat.onGroupProfileFetched.listen(onGroupProfileFetched);
-    FlyChat.onNewGroupCreated.listen(onNewGroupCreated);
-    FlyChat.onGroupProfileUpdated.listen(onGroupProfileUpdated);
-    FlyChat.onNewMemberAddedToGroup.listen((event){
+    Mirrorfly.onGroupProfileFetched.listen(onGroupProfileFetched);
+    Mirrorfly.onNewGroupCreated.listen(onNewGroupCreated);
+    Mirrorfly.onGroupProfileUpdated.listen(onGroupProfileUpdated);
+    Mirrorfly.onNewMemberAddedToGroup.listen((event){
       if(event!=null){
         var data = json.decode(event.toString());
         var groupJid = data["groupJid"] ?? "";
@@ -51,7 +51,7 @@ abstract class BaseController {
         onNewMemberAddedToGroup(groupJid: groupJid, newMemberJid: newMemberJid,addedByMemberJid: addedByMemberJid);
       }
     });
-    FlyChat.onMemberRemovedFromGroup.listen((event){
+    Mirrorfly.onMemberRemovedFromGroup.listen((event){
       if(event!=null){
         var data = json.decode(event.toString());
         var groupJid = data["groupJid"] ?? "";
@@ -60,11 +60,11 @@ abstract class BaseController {
         onMemberRemovedFromGroup(groupJid: groupJid, removedMemberJid: removedMemberJid,removedByMemberJid: removedByMemberJid);
       }
     });
-    FlyChat.onFetchingGroupMembersCompleted
+    Mirrorfly.onFetchingGroupMembersCompleted
         .listen(onFetchingGroupMembersCompleted);
-    FlyChat.onDeleteGroup.listen(onDeleteGroup);
-    FlyChat.onFetchingGroupListCompleted.listen(onFetchingGroupListCompleted);
-    FlyChat.onMemberMadeAsAdmin.listen((event){
+    Mirrorfly.onDeleteGroup.listen(onDeleteGroup);
+    Mirrorfly.onFetchingGroupListCompleted.listen(onFetchingGroupListCompleted);
+    Mirrorfly.onMemberMadeAsAdmin.listen((event){
       if(event!=null){
         var data = json.decode(event.toString());
         var groupJid = data["groupJid"] ?? "";
@@ -73,8 +73,8 @@ abstract class BaseController {
         onMemberMadeAsAdmin(groupJid: groupJid, newAdminMemberJid: newAdminMemberJid,madeByMemberJid: madeByMemberJid);
       }
     });
-    FlyChat.onMemberRemovedAsAdmin.listen(onMemberRemovedAsAdmin);
-    FlyChat.onLeftFromGroup.listen((event) {
+    Mirrorfly.onMemberRemovedAsAdmin.listen(onMemberRemovedAsAdmin);
+    Mirrorfly.onLeftFromGroup.listen((event) {
       if (event != null) {
         var data = json.decode(event.toString());
         var groupJid = data["groupJid"] ?? "";
@@ -82,69 +82,69 @@ abstract class BaseController {
         onLeftFromGroup(groupJid: groupJid, userJid: leftUserJid);
       }
     });
-    FlyChat.onGroupNotificationMessage.listen(onGroupNotificationMessage);
-    FlyChat.onGroupDeletedLocally.listen(onGroupDeletedLocally);
+    Mirrorfly.onGroupNotificationMessage.listen(onGroupNotificationMessage);
+    Mirrorfly.onGroupDeletedLocally.listen(onGroupDeletedLocally);
 
-    FlyChat.blockedThisUser.listen(blockedThisUser);
-    FlyChat.myProfileUpdated.listen(myProfileUpdated);
-    FlyChat.onAdminBlockedUser.listen((event) {
+    Mirrorfly.blockedThisUser.listen(blockedThisUser);
+    Mirrorfly.myProfileUpdated.listen(myProfileUpdated);
+    Mirrorfly.onAdminBlockedUser.listen((event) {
       var data = json.decode(event.toString());
       var jid = data["jid"];
       var status = data["status"];
       onAdminBlockedUser(jid, status);
     });
-    FlyChat.onContactSyncComplete.listen(onContactSyncComplete);
-    FlyChat.onLoggedOut.listen(onLoggedOut);
-    FlyChat.unblockedThisUser.listen((event){
+    Mirrorfly.onContactSyncComplete.listen(onContactSyncComplete);
+    Mirrorfly.onLoggedOut.listen(onLoggedOut);
+    Mirrorfly.unblockedThisUser.listen((event){
       var data = json.decode(event.toString());
       var jid = data["jid"];
       unblockedThisUser(jid);
     });
-    FlyChat.userBlockedMe.listen((event){
+    Mirrorfly.userBlockedMe.listen((event){
           var data = json.decode(event.toString());
           var jid = data["jid"];
           userBlockedMe(jid.toString());
         });//{"jid":"919894940560@fly-qa19.mirrorfly.com"}
-    FlyChat.userCameOnline.listen((event){
+    Mirrorfly.userCameOnline.listen((event){
       var data = json.decode(event.toString());
       var jid = data["jid"];
       userCameOnline(jid);
     });
-    FlyChat.userDeletedHisProfile.listen(userDeletedHisProfile);
-    FlyChat.userProfileFetched.listen(userProfileFetched);
-    FlyChat.userUnBlockedMe.listen(userUnBlockedMe);
-    FlyChat.userUpdatedHisProfile.listen((event) {
+    Mirrorfly.userDeletedHisProfile.listen(userDeletedHisProfile);
+    Mirrorfly.userProfileFetched.listen(userProfileFetched);
+    Mirrorfly.userUnBlockedMe.listen(userUnBlockedMe);
+    Mirrorfly.userUpdatedHisProfile.listen((event) {
       var data = json.decode(event.toString());
       var jid = data["jid"];
       userUpdatedHisProfile(jid);
     });
-    FlyChat.userWentOffline.listen((event){
+    Mirrorfly.userWentOffline.listen((event){
       var data = json.decode(event.toString());
       var jid = data["jid"];
       userWentOffline(jid);
     });
-    FlyChat.usersIBlockedListFetched.listen(usersIBlockedListFetched);
-    FlyChat.usersWhoBlockedMeListFetched.listen(usersWhoBlockedMeListFetched);
-    FlyChat.onConnected.listen(onConnected);
-    FlyChat.onDisconnected.listen(onDisconnected);
-    FlyChat.onConnectionNotAuthorized.listen(onConnectionNotAuthorized);
-    FlyChat.connectionFailed.listen(connectionFailed);
-    FlyChat.connectionSuccess.listen(connectionSuccess);
-    FlyChat.onWebChatPasswordChanged.listen(onWebChatPasswordChanged);
-    FlyChat.setTypingStatus.listen((event) {
+    Mirrorfly.usersIBlockedListFetched.listen(usersIBlockedListFetched);
+    Mirrorfly.usersWhoBlockedMeListFetched.listen(usersWhoBlockedMeListFetched);
+    Mirrorfly.onConnected.listen(onConnected);
+    Mirrorfly.onDisconnected.listen(onDisconnected);
+    Mirrorfly.onConnectionNotAuthorized.listen(onConnectionNotAuthorized);
+    Mirrorfly.connectionFailed.listen(connectionFailed);
+    Mirrorfly.connectionSuccess.listen(connectionSuccess);
+    Mirrorfly.onWebChatPasswordChanged.listen(onWebChatPasswordChanged);
+    Mirrorfly.setTypingStatus.listen((event) {
       var data = json.decode(event.toString());
       mirrorFlyLog("setTypingStatus", data.toString());
       var singleOrgroupJid = data["singleOrgroupJid"];
-      var userId = data["userId"];
-      var typingStatus = data["composing"];
-      setTypingStatus(singleOrgroupJid, userId, typingStatus);
+      var userJid = data["userJid"];
+      var typingStatus = data["status"];
+      setTypingStatus(singleOrgroupJid, userJid, typingStatus);
     });
-    FlyChat.onChatTypingStatus.listen(onChatTypingStatus);
-    FlyChat.onGroupTypingStatus.listen(onGroupTypingStatus);
-    FlyChat.onFailure.listen(onFailure);
-    FlyChat.onProgressChanged.listen(onProgressChanged);
-    FlyChat.onSuccess.listen(onSuccess);
-    FlyChat.onLoggedOut.listen(onLogout);
+    Mirrorfly.onChatTypingStatus.listen(onChatTypingStatus);
+    Mirrorfly.onGroupTypingStatus.listen(onGroupTypingStatus);
+    Mirrorfly.onFailure.listen(onFailure);
+    Mirrorfly.onProgressChanged.listen(onProgressChanged);
+    Mirrorfly.onSuccess.listen(onSuccess);
+    Mirrorfly.onLoggedOut.listen(onLogout);
   }
 
   void onMessageReceived(chatMessage) {
@@ -222,9 +222,9 @@ abstract class BaseController {
     if (Get.isRegistered<ChatController>()) {
       Get.find<ChatController>().onUploadDownloadProgressChanged(messageId,progressPercentage);
     }
-    /*if (Get.isRegistered<StarredMessagesController>()) {
+    if (Get.isRegistered<StarredMessagesController>()) {
       Get.find<StarredMessagesController>().onUploadDownloadProgressChanged(messageId,progressPercentage);
-    }*/
+    }
   }
 
   void onGroupProfileFetched(groupJid) {}
@@ -328,7 +328,7 @@ abstract class BaseController {
 
   void onContactSyncComplete(bool result) {
     mirrorFlyLog("onContactSyncComplete", result.toString());
-    // FlyChat.getRegisteredUsers(true);
+    // Mirrorfly.getRegisteredUsers(true);
     if(result) {
       SessionManagement.setInitialContactSync(true);
       SessionManagement.setSyncDone(true);
@@ -351,7 +351,7 @@ abstract class BaseController {
     if (Get.isRegistered<ChatInfoController>()) {
       Get.find<ChatInfoController>().onContactSyncComplete(result);
     }
-    //FlyChat.getRegisteredUsers(true).then((value) => mirrorFlyLog("registeredUsers", value.toString()));
+    //Mirrorfly.getRegisteredUsers(true).then((value) => mirrorFlyLog("registeredUsers", value.toString()));
   }
 
   void onLoggedOut(result) {
@@ -521,9 +521,9 @@ abstract class BaseController {
 
   Future<void> showLocalNotification(ChatMessageModel chatMessageModel) async {
     debugPrint("showing local notification");
-    var isUserMuted = await FlyChat.isMuted(chatMessageModel.chatUserJid);
-    var isUserUnArchived = await FlyChat.isUserUnArchived(chatMessageModel.chatUserJid);
-    var isArchivedSettingsEnabled =  await FlyChat.isArchivedSettingsEnabled();
+    var isUserMuted = await Mirrorfly.isMuted(chatMessageModel.chatUserJid);
+    var isUserUnArchived = await Mirrorfly.isUserUnArchived(chatMessageModel.chatUserJid);
+    var isArchivedSettingsEnabled =  await Mirrorfly.isArchivedSettingsEnabled();
 
     var archiveSettings = isArchivedSettingsEnabled.checkNull() ? isUserUnArchived.checkNull() : true;
 
@@ -563,26 +563,31 @@ abstract class BaseController {
 
   void onLogout(isLogout) {
     mirrorFlyLog('Get.currentRoute', Get.currentRoute);
-    if(isLogout && Get.currentRoute != Routes.login){
-      Helper.progressLoading();
-      FlyChat.logoutOfChatSDK().then((value) {
-        Helper.hideLoading();
-        if(value) {
-          var token = SessionManagement.getToken().checkNull();
-          SessionManagement.clear().then((value){
-            SessionManagement.setToken(token);
-            Get.offAllNamed(Routes.login);
-          });
-        }else{
-          Get.snackbar("Logout", "Logout Failed");
-        }
-      }).catchError((er){
-        Helper.hideLoading();
-        SessionManagement.clear().then((value){
-          // SessionManagement.setToken(token);
-          Get.offAllNamed(Routes.login);
-        });
+    if(isLogout && Get.currentRoute != Routes.login && SessionManagement.getLogin()){
+      var token = SessionManagement.getToken().checkNull();
+      SessionManagement.clear().then((value) {
+        SessionManagement.setToken(token);
+        Get.offAllNamed(Routes.login);
       });
+      // Helper.progressLoading();
+      // Mirrorfly.logoutOfChatSDK().then((value) {
+      //   Helper.hideLoading();
+      //   if(value) {
+      //     var token = SessionManagement.getToken().checkNull();
+      //     SessionManagement.clear().then((value){
+      //       SessionManagement.setToken(token);
+      //       Get.offAllNamed(Routes.login);
+      //     });
+      //   }else{
+      //     Get.snackbar("Logout", "Logout Failed");
+      //   }
+      // }).catchError((er){
+      //   Helper.hideLoading();
+      //   SessionManagement.clear().then((value){
+      //     // SessionManagement.setToken(token);
+      //     Get.offAllNamed(Routes.login);
+      //   });
+      // });
     }
   }
 }

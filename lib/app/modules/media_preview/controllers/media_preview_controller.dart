@@ -4,7 +4,7 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
-import 'package:fly_chat/fly_chat.dart';
+import 'package:mirrorfly_plugin/mirrorfly.dart';
 import 'package:get/get.dart';
 
 import '../../../common/constants.dart';
@@ -22,6 +22,7 @@ class MediaPreviewController extends FullLifeCycleController with FullLifeCycleM
 
   var captionMessage = <String>[].obs;
   var textMessage = Get.arguments['caption'];
+  var showAdd = Get.arguments['showAdd'] ?? true;
   var currentPageIndex = 0.obs;
   var isFocused = false.obs;
   var showEmoji = false.obs;
@@ -48,6 +49,11 @@ class MediaPreviewController extends FullLifeCycleController with FullLifeCycleM
     if(textMessage != null){
       caption.text = textMessage;
     }
+    captionFocusNode.addListener(() {
+      if (captionFocusNode.hasFocus) {
+        showEmoji(false);
+      }
+    });
   }
   onChanged() {
     // count(139 - addStatusController.text.length);

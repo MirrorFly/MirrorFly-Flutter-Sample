@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/data/session_management.dart';
-import 'package:fly_chat/fly_chat.dart';
+import 'package:mirrorfly_plugin/mirrorfly.dart';
 
 class NotificationAlertController extends FullLifeCycleController
 with FullLifeCycleMixin {
@@ -59,10 +59,10 @@ with FullLifeCycleMixin {
 
   showCustomTones() {
     // var uri = SessionManagement.getNotificationUri();
-    FlyChat.showCustomTones().then((value) {
+    Mirrorfly.showCustomTones().then((value) {
       if (value != null) {
         debugPrint("Custom tone set --> $value");
-        // FlyChat.setNotificationUri(value);
+        // Mirrorfly.setNotificationUri(value);
         SessionManagement.setNotificationUri(value)
             .then((value) => getRingtoneName());
       }
@@ -72,7 +72,7 @@ with FullLifeCycleMixin {
   getRingtoneName() {
     // var uri = SessionManagement.getNotificationUri();
     // mirrorFlyLog("uri", uri.toString());
-    FlyChat.getRingtoneName().then((value) {
+    Mirrorfly.getRingtoneName().then((value) {
       var jsonNotification = json.decode(value!);
       if (jsonNotification != null) {
         var notificationName = jsonNotification["name"];
@@ -96,7 +96,7 @@ with FullLifeCycleMixin {
 
   notificationSound(){
     SessionManagement.setNotificationSound(!displayNotificationSoundPreference);
-    FlyChat.setNotificationSound(!displayNotificationSoundPreference);
+    Mirrorfly.setNotificationSound(!displayNotificationSoundPreference);
     SessionManagement.setKeyChangeFlag(true);
     _displayNotificationSoundPreference(!displayNotificationSoundPreference);
     checkWhetherMuteEnabled();
@@ -109,7 +109,7 @@ with FullLifeCycleMixin {
   vibration(){
     checkWhetherMuteEnabled();
     SessionManagement.setNotificationVibration(!displayVibrationPreference);
-    FlyChat.setNotificationVibration(!displayVibrationPreference);
+    Mirrorfly.setNotificationVibration(!displayVibrationPreference);
     SessionManagement.setKeyChangeFlag(true);
     _displayVibrationPreference(!displayVibrationPreference);
   }
@@ -120,24 +120,24 @@ with FullLifeCycleMixin {
       enableNotification();
     }
     SessionManagement.setMuteNotification(!displayMuteNotificationPreference);
-    FlyChat.setMuteNotification(!displayMuteNotificationPreference);
+    Mirrorfly.setMuteNotification(!displayMuteNotificationPreference);
     SessionManagement.setKeyChangeFlag(true);
     _displayMuteNotificationPreference(!displayMuteNotificationPreference);
   }
   unSetAlerts(){
     SessionManagement.setNotificationSound(false);
-    FlyChat.setNotificationSound(false);
+    Mirrorfly.setNotificationSound(false);
     SessionManagement.setNotificationPopup(false);
     SessionManagement.setNotificationPopup(false);
     SessionManagement.setNotificationVibration(false);
-    FlyChat.setNotificationVibration(false);
+    Mirrorfly.setNotificationVibration(false);
     _displayNotificationSoundPreference(false);
     _displayNotificationPopupPreference(false);
     _displayVibrationPreference(false);
   }
   enableNotification(){
     SessionManagement.setNotificationSound(true);
-    FlyChat.setNotificationSound(true);
+    Mirrorfly.setNotificationSound(true);
     SessionManagement.setNotificationPopup(true);
     _displayNotificationSoundPreference(true);
     _displayNotificationPopupPreference(true);
@@ -146,9 +146,9 @@ with FullLifeCycleMixin {
   checkWhetherMuteEnabled() {
     if (SessionManagement.getMuteNotification()) {
       SessionManagement.setNotificationSound(true);
-      FlyChat.setNotificationSound(true);
+      Mirrorfly.setNotificationSound(true);
       SessionManagement.setMuteNotification(false);
-      FlyChat.setMuteNotification(false);
+      Mirrorfly.setMuteNotification(false);
       _displayMuteNotificationPreference(false);
       _displayNotificationSoundPreference(true);
     }
@@ -172,7 +172,7 @@ with FullLifeCycleMixin {
   @override
   void onResumed() {
     getRingtoneName();
-    // FlyChat.setNotificationUri(value);
+    // Mirrorfly.setNotificationUri(value);
     // SessionManagement.setNotificationUri(value)
     //     .then((value) => getRingtoneName());
   }

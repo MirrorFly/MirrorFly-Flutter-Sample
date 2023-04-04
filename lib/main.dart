@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
-import 'package:fly_chat/fly_chat.dart';
+import 'package:mirrorfly_plugin/mirrorfly.dart';
 
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/common/app_theme.dart';
@@ -38,12 +38,11 @@ bool shouldUseFirebaseEmulator = false;
 // dynamic nonChatUsers = [];
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  FlyChat.init(ChatBuilder(
-      domainBaseUrl: 'https://api-uikit-qa.contus.us/api/v1/',
-      licenseKey: 'ckIjaccWBoMNvxdbql8LJ2dmKqT5bp',
-      groupConfig: GroupConfig(
-          enableGroup: true,
-          maxMembersCount: 250), iOSContainerID: 'group.com.mirrorfly.qa'));
+  Mirrorfly.init(
+      baseUrl: 'https://api-uikit-qa.contus.us/api/v1/',
+      licenseKey: 'ckIjaccWBoMNvxdbql8LJ2dmKqT5bp',//ckIjaccWBoMNvxdbql8LJ2dmKqT5bp//2sdgNtr3sFBSM3bYRa7RKDPEiB38Xo
+      isTrialLicenceKey: false,
+      iOSContainerID: 'group.com.mirrorfly.qa');
   final GoogleMapsFlutterPlatform mapsImplementation =
       GoogleMapsFlutterPlatform.instance;
   if (mapsImplementation is GoogleMapsFlutterAndroid) {
@@ -51,14 +50,14 @@ Future<void> main() async {
   }
   await SessionManagement.onInit();
   ReplyHashMap.init();
-  // FlyChat.getSendData().then((value) {
+  // Mirrorfly.getSendData().then((value) {
   //   debugPrint("notification value ===> $value");
   //   SessionManagement.setChatJid(value.checkNull());
   // });
-  // var nonchat = await FlyChat.getNonChatUsers();
+  // var nonchat = await Mirrorfly.getNonChatUsers();
   // nonChatUsers = json.decode(nonchat.toString());
-  FlyChat.isTrailLicence().then((value) => SessionManagement.setIsTrailLicence(value.checkNull()));
-  // FlyChat.cancelNotifications();
+  Mirrorfly.isTrailLicence().then((value) => SessionManagement.setIsTrailLicence(value.checkNull()));
+  // Mirrorfly.cancelNotifications();
   if (!kIsWeb) {
      await Firebase.initializeApp();
     // await Firebase.initializeApp(
