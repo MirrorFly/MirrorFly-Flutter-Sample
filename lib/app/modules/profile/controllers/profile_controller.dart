@@ -245,8 +245,8 @@ class ProfileController extends GetxController {
 
               profileEmail.text = data.data!.email ?? "";
               profileStatus.value = data.data!.status.checkNull().isNotEmpty ? data.data!.status.checkNull() : "I am in Mirror Fly";
-              userImgUrl.value =
-                  data.data!.image ?? SessionManagement.getUserImage() ?? "";
+              userImgUrl.value = data.data!.image ?? "";//SessionManagement.getUserImage() ?? "";
+              SessionManagement.setUserImage(Constants.emptyString);
               changed((from.value == Routes.login));
               name(data.data!.name.toString());
               var userProfileData = ProData(
