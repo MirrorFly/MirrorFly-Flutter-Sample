@@ -419,7 +419,7 @@ class ContactController extends FullLifeCycleController
       GlobalKey<RefreshIndicatorState>();
   var progressSpinner = false.obs;
 
-  refreshContacts() async {
+  refreshContacts(bool isNetworkToastNeeded) async {
     if(!SessionManagement.isTrailLicence()) {
       mirrorFlyLog('Contact Sync', "[Contact Sync] refreshContacts()");
       if (await AppUtils.isNetConnected()) {
@@ -453,7 +453,9 @@ class ContactController extends FullLifeCycleController
               "[Contact Sync] Contact syncing is already in progress");
         }
       } else {
-        toToast(Constants.noInternetConnection);
+        if(isNetworkToastNeeded) {
+          toToast(Constants.noInternetConnection);
+        }
         // viewModel.onContactSyncFinished(false);
       }
     }
@@ -480,7 +482,7 @@ class ContactController extends FullLifeCycleController
     if (!SessionManagement.isTrailLicence()) {
       var status = await Permission.contacts.isGranted;
       if(status) {
-        refreshContacts();
+        refreshContacts(false);
       }else{
         usersList.clear();
         usersList.refresh();

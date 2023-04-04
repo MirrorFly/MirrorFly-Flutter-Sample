@@ -946,7 +946,7 @@ void showQuickProfilePopup({required context, required Function() chatTap,
                         child: Text(
                           profile.value.isGroupProfile!
                               ? profile.value.name.checkNull()
-                              : profile.value.mobileNumber.checkNull(),
+                              : SessionManagement.isTrailLicence() ? profile.value.mobileNumber.checkNull() : profile.value.nickName.checkNull(),
                           style: const TextStyle(color: Colors.white),
                         ),
                       ),
