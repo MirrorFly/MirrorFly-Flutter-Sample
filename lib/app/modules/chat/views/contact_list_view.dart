@@ -109,14 +109,14 @@ class ContactListView extends GetView<ContactController> {
                       child: const Text("Refresh"),
                       onTap: (){
                         Get.back();
-                        controller.refreshContacts();
+                        controller.refreshContacts(true);
                       },
                     ),
                     showAsAction: (!SessionManagement.isTrailLicence() && !controller.progressSpinner.value) ? ShowAsAction.never : ShowAsAction.gone,
                     keyValue: 'Refresh',
                     onItemClick: () {
-                      Get.back();
-                      controller.refreshContacts();
+                      // Get.back();
+                      controller.refreshContacts(true);
                     },
                   )
                 ],
@@ -139,7 +139,7 @@ class ContactListView extends GetView<ContactController> {
           return RefreshIndicator(
             key: controller.refreshIndicatorKey,
             onRefresh: (){
-              return Future(()=>controller.refreshContacts());
+              return Future(()=>controller.refreshContacts(true));
             },
             child: SafeArea(
               child: Stack(

@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
-import 'package:fly_chat/fly_chat.dart';
+import 'package:mirrorfly_plugin/mirrorfly.dart';
 
 import '../../../common/constants.dart';
 import '../../../common/widgets.dart';
@@ -43,7 +43,7 @@ class StarredMessageHeader extends StatelessWidget {
   }
 
   Future<Profile> getProfile() async {
-    var value = await FlyChat.getProfileDetails(chatList.chatUserJid, true);
+    var value = await Mirrorfly.getProfileDetails(chatList.chatUserJid, true);
     return Profile.fromJson(json.decode(value.toString()));
   }
 
@@ -79,13 +79,14 @@ class StarredMessageHeader extends StatelessWidget {
                             decoration: const BoxDecoration(
                               color: statusBarColor,
                               borderRadius:
-                                  BorderRadius.all(Radius.circular(5)),
+                                  BorderRadius.all(Radius.circular(2)),
                             ),
                             margin: const EdgeInsets.all(5),
                             // padding: const EdgeInsets.all(1),
                             child: const Icon(
                               Icons.arrow_left,
                               color: Colors.black,
+                              size: 14,
                             )),
                         const Text("You",
                             style: TextStyle(
@@ -125,12 +126,13 @@ class StarredMessageHeader extends StatelessWidget {
                             decoration: const BoxDecoration(
                               color: statusBarColor,
                               borderRadius:
-                                  BorderRadius.all(Radius.circular(5)),
+                                  BorderRadius.all(Radius.circular(2)),
                             ),
                             margin: const EdgeInsets.all(5),
                             child: const Icon(
                               Icons.arrow_right,
                               color: Colors.black,
+                              size: 14,
                             )),
                         userProfile.isGroupProfile.checkNull()
                             ? Flexible(

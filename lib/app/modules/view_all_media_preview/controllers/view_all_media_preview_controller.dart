@@ -1,6 +1,6 @@
 
 import 'package:flutter/material.dart';
-import 'package:fly_chat/fly_chat.dart';
+import 'package:mirrorfly_plugin/mirrorfly.dart';
 import 'package:get/get.dart';
 import 'package:share_plus/share_plus.dart';
 
