@@ -7,7 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
-import 'package:fly_chat/fly_chat.dart';
+import 'package:mirrorfly_plugin/mirrorfly.dart';
 
 import '../../../common/constants.dart';
 import '../../../routes/app_pages.dart';
@@ -75,7 +75,7 @@ class ViewAllMediaController extends GetxController {
   }
 
   getMediaMessages() {
-    FlyChat.getMediaMessages(jid).then((value) async {
+    Mirrorfly.getMediaMessages(jid).then((value) async {
       if (value != null) {
         // mirrorFlyLog("getMediaMessages", value);
         var data = chatMessageModelFromJson(value);
@@ -94,7 +94,7 @@ class ViewAllMediaController extends GetxController {
 
   //getDocsMessages
   getDocsMessages() {
-    FlyChat.getDocsMessages(jid).then((value) async {
+    Mirrorfly.getDocsMessages(jid).then((value) async {
       if (value != null) {
         mirrorFlyLog("get doc before json",value);
         var data = chatMessageModelFromJson(value);
@@ -109,7 +109,7 @@ class ViewAllMediaController extends GetxController {
 
   //getLinkMessages
   getLinkMessages() {
-    FlyChat.getLinkMessages(jid).then((value) async {
+    Mirrorfly.getLinkMessages(jid).then((value) async {
       if (value != null) {
         var data = chatMessageModelFromJson(value);
         linkCount(data.length);

@@ -8,7 +8,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
-import 'package:fly_chat/fly_chat.dart';
+import 'package:mirrorfly_plugin/mirrorfly.dart';
 import 'package:mirror_fly_demo/app/data/session_management.dart';
 import 'package:mirror_fly_demo/app/routes/app_pages.dart';
 import 'package:open_file_plus/open_file_plus.dart';
@@ -340,13 +340,13 @@ extension MemberParsing on Member {
   }
 
   String getUsername() {
-    var value = FlyChat.getProfileDetails(jid.checkNull(), false);
+    var value = Mirrorfly.getProfileDetails(jid.checkNull(), false);
     var str = Profile.fromJson(json.decode(value.toString()));
     return getName(str); //str.name.checkNull();
   }
 
   Future<Profile> getProfileDetails() async {
-    var value = await FlyChat.getProfileDetails(jid.checkNull(), false);
+    var value = await Mirrorfly.getProfileDetails(jid.checkNull(), false);
     var str = Profile.fromJson(json.decode(value.toString()));
     return str;
   }
@@ -372,7 +372,7 @@ extension MemberProfileParsing on MemberProfileDetails {
 }
 
 Future<Profile> getProfileDetails(String jid) async {
-  var value = await FlyChat.getProfileDetails(jid.checkNull(), false);
+  var value = await Mirrorfly.getProfileDetails(jid.checkNull(), false);
   // profileDataFromJson(value);
   debugPrint("update profile--> $value");
   var profile = await compute(profiledata, value.toString());
@@ -381,7 +381,7 @@ Future<Profile> getProfileDetails(String jid) async {
 }
 
 Future<ChatMessageModel> getMessageOfId(String mid) async {
-  var value = await FlyChat.getMessageOfId(mid.checkNull());
+  var value = await Mirrorfly.getMessageOfId(mid.checkNull());
   // debugPrint("message--> $value");
   var chatMessage = await compute(sendMessageModelFromJson, value.toString());
   return chatMessage;
@@ -586,7 +586,7 @@ bool checkFile(String mediaLocalStoragePath) {
 }
 
 checkIosFile(String mediaLocalStoragePath) async {
-  var isExists = await FlyChat.iOSFileExist(mediaLocalStoragePath);
+  var isExists = await Mirrorfly.iOSFileExist(mediaLocalStoragePath);
   return isExists;
 }
 
@@ -601,7 +601,7 @@ openDocument(String mediaLocalStoragePath) async {
       toToast('you may not have proper app to view this content');
     }
 
-    /*FlyChat.openFile(mediaLocalStoragePath).catchError((onError) {
+    /*Mirrorfly.openFile(mediaLocalStoragePath).catchError((onError) {
       final scaffold = ScaffoldMessenger.of(context);
       scaffold.showSnackBar(
         SnackBar(
@@ -693,7 +693,7 @@ class Triple {
 }
 
 Future<RecentChatData?> getRecentChatOfJid(String jid) async {
-  var value = await FlyChat.getRecentChatOf(jid);
+  var value = await Mirrorfly.getRecentChatOf(jid);
   mirrorFlyLog("chat", value.toString());
   if (value != null) {
     var data = recentChatDataFromJson(value);

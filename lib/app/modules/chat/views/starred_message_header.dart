@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
-import 'package:fly_chat/fly_chat.dart';
+import 'package:mirrorfly_plugin/mirrorfly.dart';
 
 import '../../../common/constants.dart';
 import '../../../common/widgets.dart';
@@ -43,7 +43,7 @@ class StarredMessageHeader extends StatelessWidget {
   }
 
   Future<Profile> getProfile() async {
-    var value = await FlyChat.getProfileDetails(chatList.chatUserJid, true);
+    var value = await Mirrorfly.getProfileDetails(chatList.chatUserJid, true);
     return Profile.fromJson(json.decode(value.toString()));
   }
 

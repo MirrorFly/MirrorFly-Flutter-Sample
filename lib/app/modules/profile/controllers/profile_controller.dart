@@ -13,7 +13,7 @@ import 'package:mirror_fly_demo/app/routes/app_pages.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 import '../../../common/crop_image.dart';
-import 'package:fly_chat/fly_chat.dart';
+import 'package:mirrorfly_plugin/mirrorfly.dart';
 
 import '../../../data/apputils.dart';
 import '../../../data/permissions.dart';
@@ -107,7 +107,7 @@ class ProfileController extends GetxController {
         } else {
           if (await AppUtils.isNetConnected()) {
             debugPrint("profile update");
-            FlyChat
+            Mirrorfly
                 .updateMyProfile(
                 profileName.text.toString(),
                 profileEmail.text.toString(),
@@ -135,7 +135,7 @@ class ProfileController extends GetxController {
                         status: profileStatus.value);
                     SessionManagement.setCurrentUser(userProfileData);
                     if (from.value == Routes.login) {
-                      FlyChat.isTrailLicence().then((trail){
+                      Mirrorfly.isTrailLicence().then((trail){
                         if(trail.checkNull()) {
                           Get.offNamed(Routes.dashboard);
                         }else{
@@ -170,7 +170,7 @@ class ProfileController extends GetxController {
 
       // if(checkFileUploadSize(path, Constants.mImage)) {
         showLoader();
-        FlyChat.updateMyProfileImage(path).then((value) {
+        Mirrorfly.updateMyProfileImage(path).then((value) {
           mirrorFlyLog("updateMyProfileImage", value);
           loading.value = false;
           var data = json.decode(value);
@@ -199,7 +199,7 @@ class ProfileController extends GetxController {
     if(await AppUtils.isNetConnected()) {
       showLoader();
       loading.value = true;
-      FlyChat.removeProfileImage().then((value) {
+      Mirrorfly.removeProfileImage().then((value) {
         loading.value = false;
         hideLoader();
         if (value != null) {
@@ -230,7 +230,7 @@ class ProfileController extends GetxController {
       if (jid.isNotEmpty) {
         mirrorFlyLog("jid.isNotEmpty", jid.isNotEmpty.toString());
         loading.value = true;
-        FlyChat.getUserProfile(jid,await AppUtils.isNetConnected()).then((value) {
+        Mirrorfly.getUserProfile(jid,await AppUtils.isNetConnected()).then((value) {
           debugPrint("profile--> $value");
           insertDefaultStatusToUser();
           loading.value = false;
@@ -277,7 +277,7 @@ class ProfileController extends GetxController {
 
   static void insertDefaultStatusToUser() async{
     try {
-      await FlyChat.getProfileStatusList().then((value) {
+      await Mirrorfly.getProfileStatusList().then((value) {
         mirrorFlyLog("status list", "$value");
         if (value != null) {
           var profileStatus = statusDataFromJson(value.toString());
@@ -293,7 +293,7 @@ class ProfileController extends GetxController {
                 }
               }
               if (isStatusNotExist) {
-                FlyChat.insertDefaultStatus(statusValue);
+                Mirrorfly.insertDefaultStatus(statusValue);
               }
             }
           }else{
@@ -407,12 +407,12 @@ class ProfileController extends GetxController {
     var defaultStatus = Constants.defaultStatusList;
 
     for (var statusValue in defaultStatus) {
-      FlyChat.insertDefaultStatus(statusValue);
+      Mirrorfly.insertDefaultStatus(statusValue);
 
     }
-    // FlyChat.getDefaultNotificationUri().then((value) {
+    // Mirrorfly.getDefaultNotificationUri().then((value) {
     //   if (value != null) {
-    //     // FlyChat.setNotificationUri(value);
+    //     // Mirrorfly.setNotificationUri(value);
     //     SessionManagement.setNotificationUri(value);
     //   }
     // });
@@ -423,13 +423,13 @@ class ProfileController extends GetxController {
     SessionManagement.convSound(true);
     SessionManagement.muteAll(false);
 
-    FlyChat.getDefaultNotificationUri().then((value) {
+    Mirrorfly.getDefaultNotificationUri().then((value) {
       debugPrint("getDefaultNotificationUri--> $value");
       if (value != null) {
-        // FlyChat.setNotificationUri(value);
+        // Mirrorfly.setNotificationUri(value);
         SessionManagement.setNotificationUri(value);
-        FlyChat.setNotificationSound(true);
-        FlyChat.setDefaultNotificationSound();
+        Mirrorfly.setNotificationSound(true);
+        Mirrorfly.setDefaultNotificationSound();
         SessionManagement.setNotificationSound(true);
       }
     });

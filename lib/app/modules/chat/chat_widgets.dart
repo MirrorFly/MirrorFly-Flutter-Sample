@@ -5,7 +5,7 @@ import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:fly_chat/fly_chat.dart';
+import 'package:mirrorfly_plugin/mirrorfly.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:mirror_fly_demo/app/common/widgets.dart';
@@ -1087,7 +1087,7 @@ class ContactMessageView extends StatelessWidget {
       debugPrint(
           "contactChatMessage.isChatAppUser[i]--> ${contactChatMessage.isChatAppUser[i]}");
       if (contactChatMessage.isChatAppUser[i]) {
-        return await FlyChat.getJidFromPhoneNumber(
+        return await Mirrorfly.getJidFromPhoneNumber(
             contactChatMessage.contactPhoneNumbers[i],
             (SessionManagement.getCountryCode() ?? "").replaceAll('+', ''));
       }
@@ -2005,12 +2005,12 @@ uploadView(int mediaDownloadStatus, int mediaFileSize, String messageType) {
 }
 
 void cancelMediaUploadOrDownload(String messageId) {
-  FlyChat.cancelMediaUploadOrDownload(messageId);
+  Mirrorfly.cancelMediaUploadOrDownload(messageId);
 }
 
 void uploadMedia(String messageId) async {
   if (await AppUtils.isNetConnected()) {
-    FlyChat.uploadMedia(messageId);
+    Mirrorfly.uploadMedia(messageId);
   } else {
     toToast(Constants.noInternetConnection);
   }
@@ -2022,7 +2022,7 @@ void downloadMedia(String messageId) async {
   if (await AppUtils.isNetConnected()) {
     if (await askStoragePermission()) {
       debugPrint("media permission granted");
-      FlyChat.downloadMedia(messageId);
+      Mirrorfly.downloadMedia(messageId);
     } else {
       debugPrint("storage permission not granted");
     }

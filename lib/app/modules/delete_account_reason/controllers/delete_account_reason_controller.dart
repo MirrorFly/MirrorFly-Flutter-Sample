@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
-import 'package:fly_chat/fly_chat.dart';
+import 'package:mirrorfly_plugin/mirrorfly.dart';
 
 import '../../../data/apputils.dart';
 import '../../../data/session_management.dart';
@@ -51,7 +51,7 @@ class DeleteAccountReasonController extends FullLifeCycleController
        Helper.showLoading(message: "Deleting Account");
       debugPrint("on DeleteAccount");
       SessionManagement.setLogin(false);
-      FlyChat.deleteAccount(reasonValue.value, feedback.text).then((value) {
+      Mirrorfly.deleteAccount(reasonValue.value, feedback.text).then((value) {
         debugPrint('DeleteAccount $value');
         Future.delayed(const Duration(milliseconds: 500), ()
         {

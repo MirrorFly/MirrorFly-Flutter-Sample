@@ -10,7 +10,7 @@ import '../../../widgets/custom_action_bar_icons.dart';
 import '../../chat/chat_widgets.dart';
 import '../../chat/views/starred_message_header.dart';
 import '../controllers/starred_messages_controller.dart';
-import 'package:fly_chat/fly_chat.dart';
+import 'package:mirrorfly_plugin/mirrorfly.dart';
 
 class StarredMessagesView extends GetView<StarredMessagesController> {
   const StarredMessagesView({Key? key}) : super(key: key);

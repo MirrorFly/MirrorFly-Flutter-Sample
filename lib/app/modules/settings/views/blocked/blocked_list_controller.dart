@@ -4,7 +4,7 @@ import 'package:get/get.dart';
 
 import 'package:mirror_fly_demo/app/common/constants.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
-import 'package:fly_chat/fly_chat.dart';
+import 'package:mirrorfly_plugin/mirrorfly.dart';
 
 import '../../../../data/apputils.dart';
 
@@ -21,7 +21,7 @@ class BlockedListController extends GetxController {
   }
 
   getUsersIBlocked(bool server){
-    FlyChat.getUsersIBlocked(server).then((value){
+    Mirrorfly.getUsersIBlocked(server).then((value){
       if(value!=null && value != ""){
         var list = memberFromJson(value);
         list.sort((a, b) => getMemberName(a).checkNull().toString().toLowerCase().compareTo(getMemberName(b).checkNull().toString().toLowerCase()));
@@ -62,7 +62,7 @@ class BlockedListController extends GetxController {
             if(await AppUtils.isNetConnected()) {
               Get.back();
               Helper.progressLoading();
-              FlyChat.unblockUser(item.jid.checkNull()).then((value) {
+              Mirrorfly.unblockUser(item.jid.checkNull()).then((value) {
                 Helper.hideLoading();
                 if(value!=null && value) {
                   toToast("${getMemberName(item)} has been Unblocked");

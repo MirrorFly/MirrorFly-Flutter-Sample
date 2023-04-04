@@ -6,7 +6,7 @@ import 'package:mirror_fly_demo/app/data/helper.dart';
 
 import '../../common/constants.dart';
 import '../../common/widgets.dart';
-import 'package:fly_chat/fly_chat.dart';
+import 'package:mirrorfly_plugin/mirrorfly.dart';
 
 import '../../data/session_management.dart';
 import '../chat/chat_widgets.dart';
@@ -423,7 +423,7 @@ class RecentChatItem extends StatelessWidget {
 
   Future<String> getParticipantsNameAsCsv(String jid) {
     var groupParticipantsName = ''.obs;
-    return FlyChat.getGroupMembersList(jid, false).then((value) {
+    return Mirrorfly.getGroupMembersList(jid, false).then((value) {
       if (value != null) {
         var str = <String>[];
         var groupsMembersProfileList = memberFromJson(value);
