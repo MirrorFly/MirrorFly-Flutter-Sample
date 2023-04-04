@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
-import 'package:fly_chat/fly_chat.dart';
+import 'package:mirrorfly_plugin/mirrorfly.dart';
 import 'package:mirror_fly_demo/app/modules/chat/controllers/chat_controller.dart';
 import 'package:permission_handler/permission_handler.dart';
 
@@ -86,7 +86,7 @@ class MessageInfoController extends GetxController {
 
   downloadMedia(String messageId) async {
     if (await askStoragePermission()) {
-      FlyChat.downloadMedia(messageId);
+      Mirrorfly.downloadMedia(messageId);
     }
   }
   /*@override
@@ -159,8 +159,8 @@ class MessageInfoController extends GetxController {
   var statusCount = 0.obs;
   String chatDate(BuildContext cxt,DeliveredParticipantList item) => getChatTime(cxt, int.parse(item.time.checkNull()));
   getMessageStatus(String messageId) async {
-    // statusCount(await FlyChat.getGroupMessageStatusCount(messageId));
-    var delivered = await FlyChat.getGroupMessageDeliveredToList(messageId, jid);
+    // statusCount(await Mirrorfly.getGroupMessageStatusCount(messageId));
+    var delivered = await Mirrorfly.getGroupMessageDeliveredToList(messageId, jid);
     mirrorFlyLog("deliveredResp", delivered);
     // var deliveredResp = json.decode(delivered);
     // mirrorFlyLog("deliveredResp.deliveredParticipantList", "${deliveredResp["deliveredParticipantList"]}");
@@ -172,7 +172,7 @@ class MessageInfoController extends GetxController {
     messageDeliveredList(item.participantList);
 
 
-    var read = await FlyChat.getGroupMessageReadByList(messageId, jid);
+    var read = await Mirrorfly.getGroupMessageReadByList(messageId, jid);
     // mirrorFlyLog("readResp", read);
     // var readResp = json.decode(read);
     // debugPrint("readResp.seenParticipantList ${readResp["seenParticipantList"]}");
@@ -212,7 +212,7 @@ class MessageInfoController extends GetxController {
   
   getStatusOfMessage(String messageId){
     if(!isGroupProfile) {
-      FlyChat.getMessageStatusOfASingleChatMessage(messageId).then((value) {
+      Mirrorfly.getMessageStatusOfASingleChatMessage(messageId).then((value) {
         var response = json.decode(value);
         readTime(response["seenTime"]);
         deliveredTime(response["deliveredTime"]);

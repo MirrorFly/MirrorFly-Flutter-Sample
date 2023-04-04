@@ -5,7 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
-import 'package:fly_chat/fly_chat.dart';
+import 'package:mirrorfly_plugin/mirrorfly.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
 import 'package:share_plus/share_plus.dart';
 
@@ -48,7 +48,7 @@ class StarredMessagesController extends FullLifeCycleController with FullLifeCyc
   getFavouriteMessages() {
     if(!isSelected.value) {
       isListLoading(true);
-      FlyChat.getFavouriteMessages().then((value) {
+      Mirrorfly.getFavouriteMessages().then((value) {
         List<ChatMessageModel> chatMessageModel = chatMessageModelFromJson(
             value);
         starredChatList(chatMessageModel.toList());
@@ -238,7 +238,7 @@ class StarredMessagesController extends FullLifeCycleController with FullLifeCyc
   }
 
   checkBusyStatusForForward() async {
-    var busyStatus = await FlyChat.isBusyStatusEnabled();
+    var busyStatus = await Mirrorfly.isBusyStatusEnabled();
     if (!busyStatus.checkNull()) {
       forwardMessage();
     } else {
@@ -258,7 +258,7 @@ class StarredMessagesController extends FullLifeCycleController with FullLifeCyc
           TextButton(
               onPressed: () async {
                 Get.back();
-                await FlyChat.enableDisableBusyStatus(false);
+                await Mirrorfly.enableDisableBusyStatus(false);
                 if (function != null) {
                   function();
                 }
@@ -294,7 +294,7 @@ class StarredMessagesController extends FullLifeCycleController with FullLifeCyc
 
   favouriteMessage() {
     for (var item in selectedChatList) {
-      FlyChat.updateFavouriteStatus(
+      Mirrorfly.updateFavouriteStatus(
           item.messageId, item.chatUserJid, !item.isMessageStarred, item.messageChatType);
       starredChatList
           .removeWhere((element) => item.messageId == element.messageId);
@@ -392,7 +392,7 @@ class StarredMessagesController extends FullLifeCycleController with FullLifeCyc
               onPressed: () {
                 Get.back();
                 for (var item in selectedChatList) {
-                  FlyChat.deleteMessagesForMe(
+                  Mirrorfly.deleteMessagesForMe(
                       item.chatUserJid,
                       item.messageChatType,
                       [item.messageId],
@@ -414,7 +414,7 @@ class StarredMessagesController extends FullLifeCycleController with FullLifeCyc
                 Get.back();
                 Helper.showLoading(
                     message: 'Deleting Message for Everyone');
-                */ /*FlyChat.deleteMessagesForEveryone(
+                */ /*Mirrorfly.deleteMessagesForEveryone(
                     profile.jid!,chatType, deleteChatListID, isMediaDelete.value)
                     .then((value) {
                   debugPrint(value.toString());
@@ -634,7 +634,7 @@ class StarredMessagesController extends FullLifeCycleController with FullLifeCyc
             .contains(filterKey.toLowerCase());
   }
   Future<Profile> getProfile(String jid) async {
-    var value = await FlyChat.getProfileDetails(jid, true);
+    var value = await Mirrorfly.getProfileDetails(jid, true);
     return Profile.fromJson(json.decode(value.toString()));
   }
 

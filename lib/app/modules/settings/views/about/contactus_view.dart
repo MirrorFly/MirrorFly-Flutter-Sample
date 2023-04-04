@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:focus_detector/focus_detector.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
-import 'package:fly_chat/fly_chat.dart';
+import 'package:mirrorfly_plugin/mirrorfly.dart';
 
 import '../../../../common/constants.dart';
 
@@ -105,7 +105,7 @@ class ContactusView extends StatelessWidget {
                     onPressed: () {
                       if(title.text.trim().isNotEmpty&&description.text.trim().isNotEmpty) {
                         Helper.progressLoading();
-                        FlyChat.sendContactUsInfo(title.text.trim(),description.text.trim()).then((value){
+                        Mirrorfly.sendContactUsInfo(title.text.trim(),description.text.trim()).then((value){
                           Helper.hideLoading();
                           if(value!=null){
                             if(value){

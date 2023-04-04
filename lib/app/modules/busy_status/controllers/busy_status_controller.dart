@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
-import 'package:fly_chat/fly_chat.dart';
+import 'package:mirrorfly_plugin/mirrorfly.dart';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 
@@ -38,7 +38,7 @@ class BusyStatusController extends FullLifeCycleController with FullLifeCycleMix
   }
 
   void getMyBusyStatus() {
-    FlyChat.getMyBusyStatus().then((value) {
+    Mirrorfly.getMyBusyStatus().then((value) {
       var userBusyStatus = json.decode(value);
       debugPrint("Busy Status ${userBusyStatus["status"]}");
       busyStatus(userBusyStatus["status"]);
@@ -47,7 +47,7 @@ class BusyStatusController extends FullLifeCycleController with FullLifeCycleMix
 
   void getMyBusyStatusList() {
     loading.value = true;
-    FlyChat.getBusyStatusList().then((value) {
+    Mirrorfly.getBusyStatusList().then((value) {
       debugPrint("status list $value");
       loading.value = false;
       if (value != null) {
@@ -104,7 +104,7 @@ class BusyStatusController extends FullLifeCycleController with FullLifeCycleMix
       }
     }
 
-    FlyChat.insertBusyStatus(newBusyStatus).then((value) {
+    Mirrorfly.insertBusyStatus(newBusyStatus).then((value) {
       busyStatus(newBusyStatus);
       setCurrentStatus(newBusyStatus);
     });
@@ -125,7 +125,7 @@ class BusyStatusController extends FullLifeCycleController with FullLifeCycleMix
   }
 
   void setCurrentStatus(String status) {
-    FlyChat.setMyBusyStatus(status).then((value) {
+    Mirrorfly.setMyBusyStatus(status).then((value) {
       debugPrint("status value $value");
       var settingController = Get.find<ChatSettingsController>();
       settingController.busyStatus(status);
@@ -145,7 +145,7 @@ class BusyStatusController extends FullLifeCycleController with FullLifeCycleMix
             if (await AppUtils.isNetConnected()) {
               Get.back();
               Helper.showLoading(message: "Deleting Busy Status");
-              FlyChat.deleteBusyStatus(
+              Mirrorfly.deleteBusyStatus(
                   item.id!, item.status!, item.isCurrentStatus!)
                   .then((value) {
                     busyStatusList.remove(item);

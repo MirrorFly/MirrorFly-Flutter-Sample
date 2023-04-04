@@ -4,7 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:flutter_libphonenumber/flutter_libphonenumber.dart';
-import 'package:fly_chat/fly_chat.dart';
+import 'package:mirrorfly_plugin/mirrorfly.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
@@ -79,7 +79,7 @@ class DashboardController extends FullLifeCycleController
           // isBlocked(profile.isBlocked);
           // checkAdminBlocked();
           // memberOfGroup();
-          // FlyChat.setOnGoingChatUser(profile.jid!);
+          // Mirrorfly.setOnGoingChatUser(profile.jid!);
           // getChatHistory();
           // sendReadReceipt();
         }
@@ -90,12 +90,12 @@ class DashboardController extends FullLifeCycleController
   }
 
   checkArchiveSetting() {
-    FlyChat.isArchivedSettingsEnabled()
+    Mirrorfly.isArchivedSettingsEnabled()
         .then((value) => archiveSettingEnabled(value));
   }
 
   Future<RecentChatData?> getRecentChatOfJid(String jid) async {
-    var value = await FlyChat.getRecentChatOf(jid);
+    var value = await Mirrorfly.getRecentChatOf(jid);
     // mirrorFlyLog("chat", value.toString());
     if (value != null) {
       var data = RecentChatData.fromJson(json.decode(value));
@@ -109,7 +109,7 @@ class DashboardController extends FullLifeCycleController
 
   getRecentChatList() {
     mirrorFlyLog("", "recent chats");
-    FlyChat.getRecentChatList().then((value) async {
+    Mirrorfly.getRecentChatList().then((value) async {
       // String recentList = value.replaceAll('\n', '\\n');
       // debugPrint(recentList);
       var data = await compute(recentChatFromJson, value.toString());
@@ -124,7 +124,7 @@ class DashboardController extends FullLifeCycleController
   }
 
   getArchivedChatsList() async {
-    await FlyChat.getArchivedChatList().then((value) {
+    await Mirrorfly.getArchivedChatList().then((value) {
       mirrorFlyLog("archived", value.toString());
       if (value != null) {
         var data = recentChatFromJson(value);
@@ -138,7 +138,7 @@ class DashboardController extends FullLifeCycleController
   toChatPage(String jid) async {
     if (jid.isNotEmpty) {
       // Helper.progressLoading();
-      await FlyChat.getProfileDetails(jid, false).then((value) {
+      await Mirrorfly.getProfileDetails(jid, false).then((value) {
         if (value != null) {
           Helper.hideLoading();
           // debugPrint("Dashboard Profile===>$value");
@@ -322,7 +322,7 @@ class DashboardController extends FullLifeCycleController
   }
 
   void checkArchiveList(RecentChatData recent) async {
-    FlyChat.isArchivedSettingsEnabled().then((value) {
+    Mirrorfly.isArchivedSettingsEnabled().then((value) {
       if (value.checkNull()) {
         var archiveIndex =
             archivedChats.indexWhere((element) => recent.jid == element.jid);
@@ -350,7 +350,7 @@ class DashboardController extends FullLifeCycleController
   }
 
   Future<ChatMessageModel?> getMessageOfId(String mid) async {
-    var value = await FlyChat.getMessageOfId(mid);
+    var value = await Mirrorfly.getMessageOfId(mid);
     // mirrorFlyLog("getMessageOfId recent", value.toString());
     if (value != null) {
       var data = ChatMessageModel.fromJson(json.decode(value.toString()));
@@ -396,7 +396,7 @@ class DashboardController extends FullLifeCycleController
     var item = recentChats[chatIndex];
     Helper.progressLoading();
     clearAllChatSelection();
-    await FlyChat.getProfileDetails(item.jid.checkNull(), false).then((value) {
+    await Mirrorfly.getProfileDetails(item.jid.checkNull(), false).then((value) {
       if (value != null) {
         Helper.hideLoading();
         var profile = profiledata(value.toString());
@@ -467,7 +467,7 @@ class DashboardController extends FullLifeCycleController
   menuValidationForDeleteIcon() async {
     var selected = recentChats.where((p0) => selectedChats.contains(p0.jid));
     for (var item in selected) {
-      var isMember = await FlyChat.isMemberOfGroup(item.jid.checkNull(), null);
+      var isMember = await Mirrorfly.isMemberOfGroup(item.jid.checkNull(), null);
       if ((item.getChatType() == Constants.typeGroupChat) && isMember!) {
         delete(false);
         return;
@@ -540,7 +540,7 @@ class DashboardController extends FullLifeCycleController
       delete(Constants.typeGroupChat != item.getChatType());
       if (item.getChatType() == Constants.typeGroupChat) {
         mirrorFlyLog("isGroup", item.isGroup!.toString());
-        FlyChat.isMemberOfGroup(item.jid.checkNull(), null)
+        Mirrorfly.isMemberOfGroup(item.jid.checkNull(), null)
             .then((value) => delete(!value!));
       }
     } else {
@@ -705,7 +705,7 @@ class DashboardController extends FullLifeCycleController
   }
 
   _itemPin(int index) {
-    FlyChat.updateRecentChatPinStatus(selectedChats[index], true);
+    Mirrorfly.updateRecentChatPinStatus(selectedChats[index], true);
     var chatIndex = recentChats.indexWhere((element) =>
         selectedChats[index] == element.jid); //selectedChatsPosition[index];
     //recentChats[chatIndex].isChatPinned=(true);
@@ -716,7 +716,7 @@ class DashboardController extends FullLifeCycleController
   }
 
   _itemUnPin(int index) {
-    FlyChat.updateRecentChatPinStatus(selectedChats[index], false);
+    Mirrorfly.updateRecentChatPinStatus(selectedChats[index], false);
     var chatIndex = recentChats.indexWhere((element) =>
         selectedChats[index] == element.jid); //selectedChatsPosition[index];
     //recentChats[chatIndex].isChatPinned=(false);
@@ -731,7 +731,7 @@ class DashboardController extends FullLifeCycleController
   }
 
   _itemMute(int index) {
-    FlyChat.updateChatMuteStatus(selectedChats[index], true);
+    Mirrorfly.updateChatMuteStatus(selectedChats[index], true);
     var chatIndex = recentChats.indexWhere((element) =>
         selectedChats[index] == element.jid); //selectedChatsPosition[index];
     recentChats[chatIndex].isMuted = (true);
@@ -741,20 +741,20 @@ class DashboardController extends FullLifeCycleController
     var chatIndex = recentChats.indexWhere((element) =>
         selectedChats[index] == element.jid); //selectedChatsPosition[index];
     recentChats[chatIndex].isMuted = (false);
-    FlyChat.updateChatMuteStatus(selectedChats[index], false);
+    Mirrorfly.updateChatMuteStatus(selectedChats[index], false);
   }
 
   /*_itemRead(int index){
     var chatIndex = recentChats.indexWhere((element) => selectedChats[index] == element.jid);//selectedChatsPosition[index];
     recentChats[chatIndex].isMuted=(false);
-    FlyChat.markAsRead(selectedChats[index]);
+    Mirrorfly.markAsRead(selectedChats[index]);
     updateUnReadChatCount();
   }*/
 
   itemsRead() async {
     if (await AppUtils.isNetConnected()) {
       selected(false);
-      FlyChat.markConversationAsRead(selectedChats);
+      Mirrorfly.markConversationAsRead(selectedChats);
       var count = selectedChatsPosition.length;
       for (var element in selectedChatsPosition) {
         recentChats[element].isConversationUnRead = false;
@@ -770,7 +770,7 @@ class DashboardController extends FullLifeCycleController
 
   itemsUnRead() {
     selected(false);
-    FlyChat.markConversationAsUnread(selectedChats);
+    Mirrorfly.markConversationAsUnread(selectedChats);
     for (var element in selectedChatsPosition) {
       recentChats[element].isConversationUnRead = true;
     }
@@ -780,7 +780,7 @@ class DashboardController extends FullLifeCycleController
   }
 
   _itemArchive(int index) {
-    FlyChat.updateArchiveUnArchiveChat(selectedChats[index], true);
+    Mirrorfly.updateArchiveUnArchiveChat(selectedChats[index], true);
     var chatIndex = recentChats.indexWhere((element) =>
         selectedChats[index] == element.jid); //selectedChatsPosition[index];
     recentChats[chatIndex].isChatArchived = (true);
@@ -807,7 +807,7 @@ class DashboardController extends FullLifeCycleController
           TextButton(
               onPressed: () async {
                 Get.back();
-                FlyChat.deleteRecentChat(selectedChats[index]).then((value) {
+                Mirrorfly.deleteRecentChat(selectedChats[index]).then((value) {
                   clearAllChatSelection();
                   recentChats.removeAt(chatIndex);
                   updateUnReadChatCount();
@@ -829,7 +829,7 @@ class DashboardController extends FullLifeCycleController
           TextButton(
               onPressed: () async {
                 Get.back();
-                FlyChat.deleteRecentChats(selectedChats).then((value) {
+                Mirrorfly.deleteRecentChats(selectedChats).then((value) {
                   for (var chatItem in selectedChats) {
                     var chatIndex = recentChats
                         .indexWhere((element) => chatItem == element.jid);
@@ -844,7 +844,7 @@ class DashboardController extends FullLifeCycleController
   }
 
   updateUnReadChatCount() {
-    /*FlyChat.getUnreadMessagesCount().then((value){
+    /*Mirrorfly.getUnreadMessagesCount().then((value){
       if(value!=null) {
         _unreadCount(value);
       }
@@ -1002,10 +1002,10 @@ class DashboardController extends FullLifeCycleController
     if (await AppUtils.isNetConnected()) {
       searching = true;
       var future = (SessionManagement.isTrailLicence())
-          ? FlyChat.getUserList(pageNum, search.text.trim().toString())
-          : FlyChat.getRegisteredUsers(true);
+          ? Mirrorfly.getUserList(pageNum, search.text.trim().toString())
+          : Mirrorfly.getRegisteredUsers(true);
       future.then((value) {
-        // FlyChat.getUserList(pageNum, search.text.trim().toString()).then((value) {
+        // Mirrorfly.getUserList(pageNum, search.text.trim().toString()).then((value) {
         if (value != null) {
           var list = userListFromJson(value);
           if (list.data != null) {
@@ -1041,7 +1041,7 @@ class DashboardController extends FullLifeCycleController
 
   fetchRecentChatList() async {
     debugPrint("========fetchRecentChatList======");
-    await FlyChat.getRecentChatListIncludingArchived().then((value) {
+    await Mirrorfly.getRecentChatListIncludingArchived().then((value) {
       var recentChatList = <RecentChatData>[];
       var js = json.decode(value);
       var recentChatListWithArchived =
@@ -1062,7 +1062,7 @@ class DashboardController extends FullLifeCycleController
   }
 
   fetchMessageList() async {
-    await FlyChat.searchConversation(search.text.trim().toString())
+    await Mirrorfly.searchConversation(search.text.trim().toString())
         .then((value) {
       mirrorFlyLog("flutter search", value);
       var result = chatMessageModelFromJson(value);
@@ -1090,8 +1090,8 @@ class DashboardController extends FullLifeCycleController
   Future<Map<Profile?, ChatMessageModel?>?> getProfileAndMessage(
       String jid, String mid) async {
     var value =
-        await getProfileDetails(jid); //FlyChat.getProfileLocal(jid, false);
-    var value2 = await FlyChat.getMessageOfId(mid);
+        await getProfileDetails(jid); //Mirrorfly.getProfileLocal(jid, false);
+    var value2 = await Mirrorfly.getMessageOfId(mid);
     if (value != null && value2 != null) {
       var data = value; //profileDataFromJson(value);
       var data2 = sendMessageModelFromJson(value2);
@@ -1126,7 +1126,7 @@ class DashboardController extends FullLifeCycleController
   Future<void> getUsers() async {
     if (await AppUtils.isNetConnected()) {
       searching = true;
-      FlyChat.getUserList(pageNum, search.text.trim().toString()).then((value) {
+      Mirrorfly.getUserList(pageNum, search.text.trim().toString()).then((value) {
         if (value != null) {
           var list = userListFromJson(value);
           if (list.data != null) {

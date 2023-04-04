@@ -19,7 +19,7 @@ import 'package:mirror_fly_demo/app/modules/chat/controllers/chat_controller.dar
 import 'package:mirror_fly_demo/app/modules/contact_sync/controllers/contact_sync_controller.dart';
 import 'package:mirror_fly_demo/app/routes/app_pages.dart';
 
-import 'package:fly_chat/fly_chat.dart';
+import 'package:mirrorfly_plugin/mirrorfly.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 import '../modules/chatInfo/controllers/chat_info_controller.dart';
@@ -140,7 +140,7 @@ class MainController extends FullLifeCycleController with BaseController, FullLi
       if(payload != null && payload.isNotEmpty){
 
         if (Get.isRegistered<ChatController>()) {
-          FlyChat.getProfileDetails(payload, false).then((value) {
+          Mirrorfly.getProfileDetails(payload, false).then((value) {
             if (value != null) {
               debugPrint("notification group info controller");
               var profile = profiledata(value.toString());
@@ -169,7 +169,7 @@ class MainController extends FullLifeCycleController with BaseController, FullLi
         .getMediaEndPoint()
         .checkNull()
         .isEmpty) {
-      FlyChat.mediaEndPoint().then((value) {
+      Mirrorfly.mediaEndPoint().then((value) {
         mirrorFlyLog("media_endpoint", value.toString());
         if(value!=null) {
           if (value.isNotEmpty) {
@@ -192,7 +192,7 @@ class MainController extends FullLifeCycleController with BaseController, FullLi
             .getPassword()
             .checkNull()
             .isNotEmpty) {
-      await FlyChat.authToken().then((value) {
+      await Mirrorfly.authToken().then((value) {
         mirrorFlyLog("RetryAuth", value.toString());
         if(value!=null) {
           if (value.isNotEmpty) {
@@ -299,17 +299,17 @@ class MainController extends FullLifeCycleController with BaseController, FullLi
   void syncContacts() async {
     if(await Permission.contacts.isGranted) {
       if (await AppUtils.isNetConnected() &&
-          !await FlyChat.contactSyncStateValue()) {
+          !await Mirrorfly.contactSyncStateValue()) {
         final permission = await Permission.contacts.status;
         if (permission == PermissionStatus.granted) {
           if(SessionManagement.getLogin()) {
-            FlyChat.syncContacts(!SessionManagement.isInitialContactSyncDone());
+            Mirrorfly.syncContacts(!SessionManagement.isInitialContactSyncDone());
           }
         }
       }
     }else{
       if(SessionManagement.isInitialContactSyncDone()) {
-        FlyChat.revokeContactSync().then((value) {
+        Mirrorfly.revokeContactSync().then((value) {
           onContactSyncComplete(true);
           mirrorFlyLog("checkContactPermission isSuccess", value.toString());
         });
