@@ -3,7 +3,7 @@ import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
-import 'package:fly_chat/fly_chat.dart';
+import 'package:mirrorfly_plugin/mirrorfly.dart';
 import 'package:mirror_fly_demo/app/data/session_management.dart';
 import 'package:permission_handler/permission_handler.dart';
 
@@ -50,9 +50,9 @@ class ContactController extends FullLifeCycleController
     } else {
       toToast(Constants.noInternetConnection);
     }
-    //FlyChat.syncContacts(true);
-    //FlyChat.getRegisteredUsers(true).then((value) => mirrorFlyLog("registeredUsers", value.toString()));
-    progressSpinner(!SessionManagement.isTrailLicence() && await FlyChat.contactSyncStateValue());
+    //Mirrorfly.syncContacts(true);
+    //Mirrorfly.getRegisteredUsers(true).then((value) => mirrorFlyLog("registeredUsers", value.toString()));
+    progressSpinner(!SessionManagement.isTrailLicence() && await Mirrorfly.contactSyncStateValue());
   }
 
   void userUpdatedHisProfile(String jid) {
@@ -171,17 +171,17 @@ class ContactController extends FullLifeCycleController
     }
     if (await AppUtils.isNetConnected() || !SessionManagement.isTrailLicence()) {
       var future = (SessionManagement.isTrailLicence())
-          ? FlyChat.getUserList(pageNum, _searchText)
-          : FlyChat.getRegisteredUsers(false);
+          ? Mirrorfly.getUserList(pageNum, _searchText)
+          : Mirrorfly.getRegisteredUsers(false);
       future.then((data) async {
-        //FlyChat.getUserList(pageNum, _searchText).then((data) async {
+        //Mirrorfly.getUserList(pageNum, _searchText).then((data) async {
         mirrorFlyLog("userlist", data);
         var item = userListFromJson(data);
         var list = <Profile>[];
 
         if (groupJid.value.checkNull().isNotEmpty) {
           await Future.forEach(item.data!, (it) async {
-            await FlyChat.isMemberOfGroup(
+            await Mirrorfly.isMemberOfGroup(
                     groupJid.value.checkNull(), it.jid.checkNull())
                 .then((value) {
               mirrorFlyLog("item", value.toString());
@@ -285,7 +285,7 @@ class ContactController extends FullLifeCycleController
   Future<List<Profile>> removeGroupMembers(List<Profile> items) async {
     var list = <Profile>[];
     for (var it in items) {
-      var value = await FlyChat.isMemberOfGroup(
+      var value = await Mirrorfly.isMemberOfGroup(
           groupJid.value.checkNull(), it.jid.checkNull());
       mirrorFlyLog("item", value.toString());
       if (value == null || !value) {
@@ -301,7 +301,7 @@ class ContactController extends FullLifeCycleController
     if (imgUrl == null || imgUrl == "") {
       return "";
     }
-    FlyChat.imagePath(imgUrl).then((value) {
+    Mirrorfly.imagePath(imgUrl).then((value) {
       return value ?? "";
     });
     return "";
@@ -322,7 +322,7 @@ class ContactController extends FullLifeCycleController
 
   forwardMessages() async {
     if (await AppUtils.isNetConnected()) {
-      FlyChat.forwardMessagesToMultipleUsers(
+      Mirrorfly.forwardMessagesToMultipleUsers(
               forwardMessageIds, selectedUsersJIDList)
           .then((value) {
         debugPrint(
@@ -359,7 +359,7 @@ class ContactController extends FullLifeCycleController
             if (await AppUtils.isNetConnected()) {
               Get.back();
               Helper.progressLoading();
-              FlyChat.unblockUser(item.jid.checkNull()).then((value) {
+              Mirrorfly.unblockUser(item.jid.checkNull()).then((value) {
                 Helper.hideLoading();
                 if (value != null && value) {
                   toToast("${getName(item)} has been Unblocked");
@@ -419,17 +419,17 @@ class ContactController extends FullLifeCycleController
       GlobalKey<RefreshIndicatorState>();
   var progressSpinner = false.obs;
 
-  refreshContacts() async {
+  refreshContacts(bool isNetworkToastNeeded) async {
     if(!SessionManagement.isTrailLicence()) {
       mirrorFlyLog('Contact Sync', "[Contact Sync] refreshContacts()");
       if (await AppUtils.isNetConnected()) {
-        if (!await FlyChat.contactSyncStateValue()) {
+        if (!await Mirrorfly.contactSyncStateValue()) {
           var contactPermissionHandle = await AppPermission.checkPermission(
               Permission.contacts, contactPermission,
               Constants.contactSyncPermission);
           if (contactPermissionHandle) {
             progressSpinner(true);
-            FlyChat.syncContacts(!SessionManagement.isInitialContactSyncDone())
+            Mirrorfly.syncContacts(!SessionManagement.isInitialContactSyncDone())
                 .then((value) {
               progressSpinner(false);
               // viewModel.onContactSyncFinished(success)
@@ -453,7 +453,9 @@ class ContactController extends FullLifeCycleController
               "[Contact Sync] Contact syncing is already in progress");
         }
       } else {
-        // toToast(Constants.noInternetConnection);
+        if(isNetworkToastNeeded) {
+          toToast(Constants.noInternetConnection);
+        }
         // viewModel.onContactSyncFinished(false);
       }
     }
@@ -480,7 +482,7 @@ class ContactController extends FullLifeCycleController
     if (!SessionManagement.isTrailLicence()) {
       var status = await Permission.contacts.isGranted;
       if(status) {
-        refreshContacts();
+        refreshContacts(false);
       }else{
         usersList.clear();
         usersList.refresh();

@@ -8,7 +8,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
-import 'package:fly_chat/fly_chat.dart';
+import 'package:mirrorfly_plugin/mirrorfly.dart';
 import 'package:mirror_fly_demo/app/data/session_management.dart';
 import 'package:mirror_fly_demo/app/routes/app_pages.dart';
 import 'package:open_file_plus/open_file_plus.dart';
@@ -340,13 +340,13 @@ extension MemberParsing on Member {
   }
 
   String getUsername() {
-    var value = FlyChat.getProfileDetails(jid.checkNull(), false);
+    var value = Mirrorfly.getProfileDetails(jid.checkNull(), false);
     var str = Profile.fromJson(json.decode(value.toString()));
     return getName(str); //str.name.checkNull();
   }
 
   Future<Profile> getProfileDetails() async {
-    var value = await FlyChat.getProfileDetails(jid.checkNull(), false);
+    var value = await Mirrorfly.getProfileDetails(jid.checkNull(), false);
     var str = Profile.fromJson(json.decode(value.toString()));
     return str;
   }
@@ -365,8 +365,14 @@ extension MemberParsing on Member {
           .checkNull(); // for email contact isGroupInOfflineMode will be true
 }
 
+extension MemberProfileParsing on MemberProfileDetails {
+  bool isDeletedContact() {
+    return contactType == "deleted_contact";
+  }
+}
+
 Future<Profile> getProfileDetails(String jid) async {
-  var value = await FlyChat.getProfileDetails(jid.checkNull(), false);
+  var value = await Mirrorfly.getProfileDetails(jid.checkNull(), false);
   // profileDataFromJson(value);
   debugPrint("update profile--> $value");
   var profile = await compute(profiledata, value.toString());
@@ -375,7 +381,7 @@ Future<Profile> getProfileDetails(String jid) async {
 }
 
 Future<ChatMessageModel> getMessageOfId(String mid) async {
-  var value = await FlyChat.getMessageOfId(mid.checkNull());
+  var value = await Mirrorfly.getMessageOfId(mid.checkNull());
   // debugPrint("message--> $value");
   var chatMessage = await compute(sendMessageModelFromJson, value.toString());
   return chatMessage;
@@ -519,8 +525,8 @@ String manipulateMessageTime(BuildContext context, DateTime messageDate) {
   var format = MediaQuery
       .of(context)
       .alwaysUse24HourFormat ? 24 : 12;
-  var hours = calendar.hour; //calendar[Calendar.HOUR]
   calendar = messageDate;
+  var hours = calendar.hour; //calendar[Calendar.HOUR]
   var dateHourFormat = setDateHourFormat(format, hours);
   return DateFormat(dateHourFormat).format(messageDate);
 }
@@ -569,7 +575,8 @@ String getChatTime(BuildContext context, int? epochTime) {
   // debugPrint("epoch convertedTime---> $convertedTime");
   var hourTime = manipulateMessageTime(
       context, DateTime.fromMicrosecondsSinceEpoch(convertedTime));
-  calendar = DateTime.fromMicrosecondsSinceEpoch(convertedTime);
+  // calendar = DateTime.fromMicrosecondsSinceEpoch(convertedTime);
+  //debugPrint('hourTime $hourTime');
   return hourTime;
 }
 
@@ -579,20 +586,22 @@ bool checkFile(String mediaLocalStoragePath) {
 }
 
 checkIosFile(String mediaLocalStoragePath) async {
-  var isExists = await FlyChat.iOSFileExist(mediaLocalStoragePath);
+  var isExists = await Mirrorfly.iOSFileExist(mediaLocalStoragePath);
   return isExists;
 }
 
-openDocument(String mediaLocalStoragePath, BuildContext context) async {
+openDocument(String mediaLocalStoragePath) async {
   // if (await askStoragePermission()) {
   if (mediaLocalStoragePath.isNotEmpty) {
     final result = await OpenFile.open(mediaLocalStoragePath);
     debugPrint(result.message);
     if(result.message.contains("file does not exist")){
       toToast("The Selected file Doesn't Exist or Unable to Open");
+    }else if(result.message.contains('No APP found to open this file')){
+      toToast('you may not have proper app to view this content');
     }
 
-    /*FlyChat.openFile(mediaLocalStoragePath).catchError((onError) {
+    /*Mirrorfly.openFile(mediaLocalStoragePath).catchError((onError) {
       final scaffold = ScaffoldMessenger.of(context);
       scaffold.showSnackBar(
         SnackBar(
@@ -684,7 +693,7 @@ class Triple {
 }
 
 Future<RecentChatData?> getRecentChatOfJid(String jid) async {
-  var value = await FlyChat.getRecentChatOf(jid);
+  var value = await Mirrorfly.getRecentChatOf(jid);
   mirrorFlyLog("chat", value.toString());
   if (value != null) {
     var data = recentChatDataFromJson(value);
@@ -814,6 +823,14 @@ String getMemberName(Member item) {
   }
 }
 
+bool isValidPhoneNumber(String s) {
+if (s.length > 13 || s.length < 6) return false;
+return hasMatch(s, r'^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\s\./0-9]*$');
+}
+bool hasMatch(String? value, String pattern) {
+return (value == null) ? false : RegExp(pattern).hasMatch(value);
+}
+
 String getMobileNumberFromJid(String jid) {
   var str = jid.split('@');
   return str[0];
@@ -929,7 +946,7 @@ void showQuickProfilePopup({required context, required Function() chatTap,
                         child: Text(
                           profile.value.isGroupProfile!
                               ? profile.value.name.checkNull()
-                              : profile.value.mobileNumber.checkNull(),
+                              : SessionManagement.isTrailLicence() ? profile.value.mobileNumber.checkNull() : profile.value.nickName.checkNull(),
                           style: const TextStyle(color: Colors.white),
                         ),
                       ),

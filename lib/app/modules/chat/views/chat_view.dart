@@ -19,7 +19,7 @@ import '../../../widgets/custom_action_bar_icons.dart';
 import '../../../widgets/lottie_animation.dart';
 import '../chat_widgets.dart';
 import '../controllers/chat_controller.dart';
-import 'package:fly_chat/fly_chat.dart';
+import 'package:mirrorfly_plugin/mirrorfly.dart';
 
 class ChatView extends GetView<ChatController> {
   const ChatView({Key? key}) : super(key: key);
@@ -694,6 +694,7 @@ class ChatView extends GetView<ChatController> {
                                             ? const SizedBox.shrink()
                                             : ReplyMessageHeader(
                                                 chatMessage: chatList[index]),
+
                                         Obx(() {
                                           return MessageContent(
                                               chatList: chatList,

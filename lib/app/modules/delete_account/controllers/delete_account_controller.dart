@@ -5,7 +5,7 @@ import '../../../common/constants.dart';
 import '../../../data/apputils.dart';
 import '../../../data/session_management.dart';
 import '../../../data/helper.dart';
-import 'package:fly_chat/fly_chat.dart';
+import 'package:mirrorfly_plugin/mirrorfly.dart';
 import '../../../routes/app_pages.dart';
 
 class DeleteAccountController extends GetxController {
@@ -31,9 +31,12 @@ class DeleteAccountController extends GetxController {
       }
       mirrorFlyLog("SessionManagement.getMobileNumber()", SessionManagement.getMobileNumber().toString());
       mirrorFlyLog("SessionManagement.getCountryCode()", SessionManagement.getCountryCode().toString());
+      mirrorFlyLog("SessionManagement.isTrailLicence()", SessionManagement.isTrailLicence().toString());
       mirrorFlyLog("countryCode", countryCode.toString());
+      var mobileNumberWithCountryCode = '${countryCode?.replaceAll('+', '')}${mobileNumber.text.trim()}';
+      mirrorFlyLog("mobileNumberWithCountryCode", mobileNumberWithCountryCode);
       if(SessionManagement.isTrailLicence()) {
-        if (mobileNumber.text.trim() != SessionManagement.getMobileNumber() ||
+        if ((mobileNumber.text.trim() != SessionManagement.getMobileNumber() && mobileNumberWithCountryCode != SessionManagement.getMobileNumber()) ||
             SessionManagement.getCountryCode()?.replaceAll('+', '') !=
                 countryCode?.replaceAll('+', '')) {
           Helper.showAlert(

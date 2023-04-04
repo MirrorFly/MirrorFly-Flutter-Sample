@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
-import 'package:fly_chat/fly_chat.dart';
+import 'package:mirrorfly_plugin/mirrorfly.dart';
 import 'package:mirror_fly_demo/app/routes/app_pages.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
 
@@ -116,7 +116,7 @@ class GroupCreationController extends GetxController {
     mirrorFlyLog("users", users.toString());
     mirrorFlyLog("group image", imagePath.value);
     Helper.showLoading();
-    FlyChat.createGroup(groupName.text.toString(),users,imagePath.value).then((value){
+    Mirrorfly.createGroup(groupName.text.toString(),users,imagePath.value).then((value){
       Helper.hideLoading();
       if(value!=null) {
         Get.back();

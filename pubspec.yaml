@@ -1,5 +1,5 @@
 name: mirror_fly_demo
-version: 2.3.1+24
+version: 2.3.3+26
 build_release_date: Mar 10
 publish_to: none
 description: A MirrorFly Flutter Sample Application.
@@ -20,7 +20,7 @@ dependencies:
   package_info_plus: ^2.0.0 #package info
   image_picker: ^0.8.6
   flutter_profile_picture: ^2.0.0
-  permission_handler: ^10.1.0
+  permission_handler: ^10.2.0
   emoji_picker_flutter: ^1.4.0
   image_cropping: ^0.0.13 #crop image
   path_provider: ^2.0.11 #path provider
@@ -66,10 +66,12 @@ dependencies:
   flutter_libphonenumber: ^1.4.0
   open_file_plus: ^3.4.0
   is_lock_screen: ^2.0.0
-  fly_chat:
-    git:
-      url: https://github.com/MirrorFly/MirrorFly-Flutter-plugin.git
-      ref: develop
+  mirrorfly_plugin: ^0.0.1
+#  mirrorfly_plugin:
+#    path: ../mirrorfly_plugin
+#    git:
+#      url: https://github.com/MirrorFly/MirrorFly-Flutter-plugin.git
+#      ref: develop
 #  flysdk:
 #    path: packages/flysdk
 

@@ -1,6 +1,6 @@
 import 'package:flutter/animation.dart';
 import 'package:flutter/material.dart';
-import 'package:fly_chat/fly_chat.dart';
+import 'package:mirrorfly_plugin/mirrorfly.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/routes/app_pages.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -50,14 +50,14 @@ class ContactSyncController extends GetxController
   Rx<bool> syncing = false.obs;
   Rx<String> textContactSync = ''.obs;
   openContactPermission() async {
-    if(!await FlyChat.contactSyncStateValue()) {
+    if(!await Mirrorfly.contactSyncStateValue()) {
       var contactPermissionHandle = await AppPermission.checkPermission(
           Permission.contacts, contactPermission,
           Constants.contactPermission);
       if (contactPermissionHandle) {
         syncing(true);
         textContactSync('Contact sync is in process');
-        FlyChat.syncContacts(!SessionManagement.isInitialContactSyncDone());
+        Mirrorfly.syncContacts(!SessionManagement.isInitialContactSyncDone());
         checkContactSync();
       } else {
         Get.offNamed(Routes.dashboard);
@@ -68,7 +68,7 @@ class ContactSyncController extends GetxController
     }
   }
   checkContactSync() async {
-    await FlyChat.contactSyncStateValue();
+    await Mirrorfly.contactSyncStateValue();
     /*if (contactSyncState == null || contactSyncState == Result.InProgress) {
       textContactSync('Contact sync is in process');
     } else {
@@ -80,7 +80,7 @@ class ContactSyncController extends GetxController
 
   void onContactSyncComplete(bool result) {
     if(Get.currentRoute==Routes.contactSync) {
-      FlyChat.getRegisteredUsers(true).then((value) {
+      Mirrorfly.getRegisteredUsers(true).then((value) {
         mirrorFlyLog("registeredUsers", value.toString());
         navigateToDashboard();
       });
@@ -95,7 +95,7 @@ class ContactSyncController extends GetxController
   Future<void> networkConnected() async {
     mirrorFlyLog('networkConnected', 'contactSync');
     textContactSync('');
-    if(!await FlyChat.contactSyncStateValue()){
+    if(!await Mirrorfly.contactSyncStateValue()){
       openContactPermission();
     }else{
       syncing(true);
