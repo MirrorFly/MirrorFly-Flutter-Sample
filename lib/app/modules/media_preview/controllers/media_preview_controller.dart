@@ -62,6 +62,7 @@ class MediaPreviewController extends FullLifeCycleController with FullLifeCycleM
 
   sendMedia() async {
     debugPrint("send media");
+    var previousRoute = Get.previousRoute;
     // if (await AppUtils.isNetConnected()) {
     try {
       int i = 0;
@@ -90,7 +91,7 @@ class MediaPreviewController extends FullLifeCycleController with FullLifeCycleM
       }
     } finally {
       Platform.isIOS ? Helper.hideLoading() : null;
-      if(Get.previousRoute==Routes.galleryPicker){
+      if(previousRoute==Routes.galleryPicker){
         Get.back();
       }
       Get.back();
