@@ -1,16 +1,25 @@
-# mirror_fly_demo
+# [MirrorFly](https://mirrorfly.com) Chat SDK Sample for Flutter
 
-A new Flutter project.
+If you're looking for the fastest way in action with CONTUS TECH [MirrorFly Plugin], then you need to build your app on top of our sample version. Simply download the sample app and commence your app development.
 
-## Getting Started
+## Configuration
 
-This project is a starting point for a Flutter application.
+Replace the licence key with yours in `main.dart` file.
 
-A few resources to get you started if this is your first Flutter project:
+```dart
+  Mirrorfly.init(
+      baseUrl: 'https://api-preprod-sandbox.mirrorfly.com/api/v1/',
+      licenseKey: 'Please enter your License key',
+      iOSContainerID: 'group.com.mirrorfly.qa')
+```
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+## Run project
+- flutter pub get
+- flutter run
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## Getting Help
+
+Check out the Official MirrorFly [Flutter docs](https://www.mirrorfly.com/docs/chat/flutter_plugin/quick-start/) and MirrorFly [Developer Portal](https://www.mirrorfly.com/docs/) for tutorials and videos. If you need any help in resolving any issues or have questions, Drop a mail to (integration@contus.in).
+
+
+
