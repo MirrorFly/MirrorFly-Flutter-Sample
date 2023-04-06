@@ -1560,30 +1560,39 @@ class ChatController extends FullLifeCycleController
   var j = -1;
 
   scrollUp() {
-    var visiblePos = findTopFirstVisibleItemPosition();
-    mirrorFlyLog("visiblePos", visiblePos.toString());
-    mirrorFlyLog("visiblePos2", findBottomLastVisibleItemPosition().toString());
-    var g = getNextPosition(findTopFirstVisibleItemPosition(),
-        findBottomLastVisibleItemPosition(), j);
-    if (g != null) j = g;
-    mirrorFlyLog("scrollUp", g.toString());
-    if (j >= 0 && g != null) {
-      _scrollToPosition(j);
-    } else {
+    if(filteredPosition.isNotEmpty) {
+      var visiblePos = findTopFirstVisibleItemPosition();
+      mirrorFlyLog("visiblePos", visiblePos.toString());
+      mirrorFlyLog(
+          "visiblePos2", findBottomLastVisibleItemPosition().toString());
+      var g = getNextPosition(findTopFirstVisibleItemPosition(),
+          findBottomLastVisibleItemPosition(), j);
+      if (g != null) j = g;
+      mirrorFlyLog("scrollUp", g.toString());
+      if (j >= 0 && g != null) {
+        _scrollToPosition(j);
+      } else {
+        toToast("No Results Found");
+      }
+    }else{
       toToast("No Results Found");
     }
   }
 
   scrollDown() {
-    var visiblePos = findTopFirstVisibleItemPosition();
-    mirrorFlyLog("visiblePos", visiblePos.toString());
-    var g = getPreviousPosition(findTopFirstVisibleItemPosition(),
-        findBottomLastVisibleItemPosition(), j);
-    if (g != null) j = g;
-    mirrorFlyLog("scrollDown", j.toString());
-    if (j >= 0 && g != null) {
-      _scrollToPosition(j);
-    } else {
+    if(filteredPosition.isNotEmpty) {
+      var visiblePos = findTopFirstVisibleItemPosition();
+      mirrorFlyLog("visiblePos", visiblePos.toString());
+      var g = getPreviousPosition(findTopFirstVisibleItemPosition(),
+          findBottomLastVisibleItemPosition(), j);
+      if (g != null) j = g;
+      mirrorFlyLog("scrollDown", j.toString());
+      if (j >= 0 && g != null) {
+        _scrollToPosition(j);
+      } else {
+        toToast("No Results Found");
+      }
+    }else{
       toToast("No Results Found");
     }
   }
