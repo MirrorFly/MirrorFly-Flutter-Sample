@@ -67,7 +67,7 @@ dependencies:
   open_file_plus: ^3.4.0
   is_lock_screen: ^2.0.0
   device_info_plus: ^8.1.0
-  mirrorfly_plugin: ^0.0.2 # our mirrorfly plugin
+  mirrorfly_plugin: ^0.0.3 # our mirrorfly plugin
 
 
 dev_dependencies: 
