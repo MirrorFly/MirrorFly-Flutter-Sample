@@ -2279,7 +2279,7 @@ class ChatController extends FullLifeCycleController
   }*/
 
   Future<void> translateMessage(int index) async {
-    if (SessionManagement.isGoogleTranslationEnable()) {
+    /*if (SessionManagement.isGoogleTranslationEnable()) {
       var text = chatList[index].messageTextContent!;
       debugPrint("customField : ${chatList[index].messageCustomField.isEmpty}");
       if (chatList[index].messageCustomField.isNotEmpty) {
@@ -2300,7 +2300,7 @@ class ChatController extends FullLifeCycleController
           debugPrint("exception : $onError");
         });
       }
-    }
+    }*/
   }
 
   bool forwardMessageVisibility(ChatMessageModel chat) {

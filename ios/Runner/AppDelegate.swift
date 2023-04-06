@@ -8,9 +8,6 @@ import FirebaseAuth
 import Firebase
 
 
-//let googleApiKey = "AIzaSyDnjPEs86MRsnFfW1sVPKvMWjqQRnSa7Ts"
-
-
 @UIApplicationMain
 @objc class AppDelegate: FlutterAppDelegate{
     

@@ -621,8 +621,7 @@ class Constants {
       "Choose Translation Language";
   static const String googleTranslationLanguageDoubleTap =
       "Double Tap the received messages to translate";
-  static const String googleTranslateKey =
-      "AIzaSyCdwzAZR6tx8KB-2dMn0KzSI1V0LpsYdH0";
+  static const String googleTranslateKey = "xxxxxxxxxxxxxxxxxx";
 
   static const String editBusyStatus = "Edit Busy Status Message";
   static const String yourBusyStatus = "Your Busy Status";
