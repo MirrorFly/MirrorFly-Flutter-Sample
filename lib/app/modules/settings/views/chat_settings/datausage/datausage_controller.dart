@@ -1,4 +1,4 @@
-import 'package:flysdk/flysdk.dart';
+import 'package:mirrorfly_plugin/mirrorfly.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
 
@@ -34,15 +34,15 @@ class DataUsageController extends GetxController{
   @override
   void onInit() async{
     super.onInit();
-    _autoDownloadMobilePhoto(await FlyChat.getMediaSetting(0,"Photos"));
-    _autoDownloadMobileVideo(await FlyChat.getMediaSetting(0,"Videos"));
-    _autoDownloadMobileAudio(await FlyChat.getMediaSetting(0,"Audio"));
-    _autoDownloadMobileDocument(await FlyChat.getMediaSetting(0,"Documents"));
+    _autoDownloadMobilePhoto(await Mirrorfly.getMediaSetting(0,"Photos"));
+    _autoDownloadMobileVideo(await Mirrorfly.getMediaSetting(0,"Videos"));
+    _autoDownloadMobileAudio(await Mirrorfly.getMediaSetting(0,"Audio"));
+    _autoDownloadMobileDocument(await Mirrorfly.getMediaSetting(0,"Documents"));
 
-    _autoDownloadWifiPhoto(await FlyChat.getMediaSetting(1,"Photos"));
-    _autoDownloadWifiVideo(await FlyChat.getMediaSetting(1,"Videos"));
-    _autoDownloadWifiAudio(await FlyChat.getMediaSetting(1,"Audio"));
-    _autoDownloadWifiDocument(await FlyChat.getMediaSetting(1,"Documents"));
+    _autoDownloadWifiPhoto(await Mirrorfly.getMediaSetting(1,"Photos"));
+    _autoDownloadWifiVideo(await Mirrorfly.getMediaSetting(1,"Videos"));
+    _autoDownloadWifiAudio(await Mirrorfly.getMediaSetting(1,"Audio"));
+    _autoDownloadWifiDocument(await Mirrorfly.getMediaSetting(1,"Documents"));
   }
 
   void selectMedia(String item){
@@ -131,7 +131,7 @@ class DataUsageController extends GetxController{
   }
 
   saveDataUsageSettings(){
-    FlyChat.saveMediaSettings(autoDownloadMobilePhoto, autoDownloadMobileVideo, autoDownloadMobileAudio, autoDownloadMobileDocument, 0);
-    FlyChat.saveMediaSettings(autoDownloadWifiPhoto, autoDownloadWifiVideo, autoDownloadWifiAudio, autoDownloadWifiDocument, 1);
+    Mirrorfly.saveMediaSettings(autoDownloadMobilePhoto, autoDownloadMobileVideo, autoDownloadMobileAudio, autoDownloadMobileDocument, 0);
+    Mirrorfly.saveMediaSettings(autoDownloadWifiPhoto, autoDownloadWifiVideo, autoDownloadWifiAudio, autoDownloadWifiDocument, 1);
   }
 }

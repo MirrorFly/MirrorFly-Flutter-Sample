@@ -10,6 +10,7 @@ import '../../../common/app_theme.dart';
 import '../../../common/widgets.dart';
 import '../../../routes/app_pages.dart';
 import '../../../widgets/custom_action_bar_icons.dart';
+import '../../chat/chat_widgets.dart';
 import '../../dashboard/controllers/dashboard_controller.dart';
 
 class DashboardView extends GetView<DashboardController> {
@@ -21,6 +22,7 @@ class DashboardView extends GetView<DashboardController> {
   Widget build(BuildContext context) {
     return FocusDetector(
       onFocusGained: () {
+        debugPrint('onFocusGained');
         // controller.initListeners();
         controller.checkArchiveSetting();
         controller.getRecentChatList();
@@ -630,103 +632,107 @@ class DashboardView extends GetView<DashboardController> {
                               ],
                             )),
                         Flexible(
-                          child: Container(
-                            padding: const EdgeInsets.only(top: 16),
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Row(
-                                  children: [
-                                    Expanded(
-                                      child: spannableText(
-                                        getName(profile),//profile.name.toString(),
-                                        controller.search.text,
-                                        const TextStyle(
-                                            fontSize: 16.0,
-                                            fontWeight: FontWeight.w700,
-                                            fontFamily: 'sf_ui',
-                                            color: textHintColor),
-                                      ),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                children: [
+                                  Expanded(
+                                    child: Text(
+                                      getName(profile),//profile.name.toString(),
+                                      style : const TextStyle(
+                                          fontSize: 16.0,
+                                          fontWeight: FontWeight.w700,
+                                          fontFamily: 'sf_ui',
+                                          color: textHintColor),
                                     ),
-                                    Padding(
-                                      padding: const EdgeInsets.only(
-                                          right: 16.0, left: 8),
-                                      child: Text(
-                                        getRecentChatTime(context,
-                                            item.messageSentTime.toInt()),
-                                        textAlign: TextAlign.end,
-                                        style: TextStyle(
-                                            fontSize: 12.0,
-                                            fontWeight: FontWeight.w600,
-                                            fontFamily: 'sf_ui',
-                                            color:
-                                            unreadMessageCount.toString() !=
-                                                "0"
-                                                ? buttonBgColor
-                                                : textColor),
-                                      ),
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.only(
+                                        right: 16.0, left: 8),
+                                    child: Text(
+                                      getRecentChatTime(context,
+                                          item.messageSentTime.toInt()),
+                                      textAlign: TextAlign.end,
+                                      style: TextStyle(
+                                          fontSize: 12.0,
+                                          fontWeight: FontWeight.w600,
+                                          fontFamily: 'sf_ui',
+                                          color:
+                                          unreadMessageCount.toString() !=
+                                              "0"
+                                              ? buttonBgColor
+                                              : textColor),
                                     ),
-                                  ],
-                                ),
-                                Row(
-                                  children: [
-                                    unreadMessageCount.toString() != "0"
-                                        ? const Padding(
-                                      padding:
-                                      EdgeInsets.only(right: 8.0),
-                                      child: CircleAvatar(
-                                        radius: 4,
-                                        backgroundColor: Colors.green,
-                                      ),
-                                    )
-                                        : const SizedBox(),
-                                    Expanded(
-                                      child: Row(
-                                        children: [
-                                          forMessageTypeIcon(item.messageType,item.mediaChatMessage),
-                                          SizedBox(
-                                            width: forMessageTypeString(
-                                                item.messageType,content: item.messageTextContent.checkNull()) !=
-                                                null
-                                                ? 3.0
-                                                : 0.0,
+                                  ),
+                                ],
+                              ),
+                              Row(
+                                children: [
+                                  unreadMessageCount.toString() != "0"
+                                      ? const Padding(
+                                    padding:
+                                    EdgeInsets.only(right: 8.0),
+                                    child: CircleAvatar(
+                                      radius: 4,
+                                      backgroundColor: Colors.green,
+                                    ),
+                                  )
+                                      : const SizedBox(),
+                                  Expanded(
+                                    child: Row(
+                                      children: [
+                                        Padding(
+                                          padding: const EdgeInsets.only(right: 8.0),
+                                          child: getMessageIndicator(
+                                              item.messageStatus.checkNull(),
+                                              item.isMessageSentByMe.checkNull(),
+                                              item.messageType.checkNull(),item.isMessageRecalled),
+                                        ),
+                                        item.isMessageRecalled
+                                            ? const SizedBox.shrink() : forMessageTypeIcon(item.messageType,item.mediaChatMessage),
+                                        SizedBox(
+                                          width: forMessageTypeString(
+                                              item.messageType,content: item.mediaChatMessage?.mediaCaptionText.checkNull()) !=
+                                              null
+                                              ? 3.0
+                                              : 0.0,
+                                        ),
+                                        Expanded(
+                                          child: forMessageTypeString(
+                                              item.messageType,content: item.mediaChatMessage?.mediaCaptionText.checkNull()) ==
+                                              null
+                                              ? spannableText(
+                                            item.messageTextContent
+                                                .toString(),
+                                            controller.search.text,
+                                            Theme
+                                                .of(context)
+                                                .textTheme
+                                                .titleSmall,
+                                          )
+                                              : Text(
+                                            forMessageTypeString(
+                                                item.messageType,content: item.mediaChatMessage?.mediaCaptionText.checkNull()) ??
+                                                item.messageTextContent
+                                                    .toString(),
+                                            style: Theme
+                                                .of(context)
+                                                .textTheme
+                                                .titleSmall,
+                                            maxLines: 1,
+                                            overflow:
+                                            TextOverflow.ellipsis,
                                           ),
-                                          Expanded(
-                                            child: forMessageTypeString(
-                                                item.messageType,content: item.messageTextContent.checkNull()) ==
-                                                null
-                                                ? spannableText(
-                                              item.messageTextContent
-                                                  .toString(),
-                                              controller.search.text,
-                                              Theme
-                                                  .of(context)
-                                                  .textTheme
-                                                  .titleSmall,
-                                            )
-                                                : Text(
-                                              forMessageTypeString(
-                                                  item.messageType,content: item.messageTextContent.checkNull()) ??
-                                                  item.messageTextContent
-                                                      .toString(),
-                                              style: Theme
-                                                  .of(context)
-                                                  .textTheme
-                                                  .titleSmall,
-                                              maxLines: 1,
-                                              overflow:
-                                              TextOverflow.ellipsis,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
+                                        ),
+                                      ],
                                     ),
-                                  ],
-                                ),
-                                const AppDivider()
-                              ],
-                            ),
+                                  ),
+                                ],
+                              ),
+                              const AppDivider()
+                            ],
                           ),
                         )
                       ],

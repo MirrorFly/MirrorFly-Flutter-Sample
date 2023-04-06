@@ -2,10 +2,11 @@ import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
-import 'package:flysdk/flysdk.dart';
+import 'package:mirrorfly_plugin/mirrorfly.dart';
 import 'package:mirror_fly_demo/app/routes/app_pages.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
 
@@ -39,7 +40,7 @@ class GroupCreationController extends GetxController {
   onGroupNameChanged(){
     debugPrint("text changing");
     debugPrint("length--> ${groupName.text.length}");
-    _count((25 - groupName.text.length));
+    _count((25 - groupName.text.characters.length));
   }
   goToAddParticipantsPage(){
     if(groupName.text.trim().isNotEmpty) {
@@ -56,8 +57,10 @@ class GroupCreationController extends GetxController {
 
   showHideEmoji(BuildContext context){
     if (!showEmoji.value) {
-      FocusScope.of(context).unfocus();
-      focusNode.canRequestFocus = false;
+      focusNode.unfocus();
+    }else{
+      focusNode.requestFocus();
+      return;
     }
     Future.delayed(const Duration(milliseconds: 500), () {
       showEmoji(!showEmoji.value);
@@ -113,12 +116,29 @@ class GroupCreationController extends GetxController {
     mirrorFlyLog("users", users.toString());
     mirrorFlyLog("group image", imagePath.value);
     Helper.showLoading();
-    FlyChat.createGroup(groupName.text.toString(),users,imagePath.value).then((value){
+    Mirrorfly.createGroup(groupName.text.toString(),users,imagePath.value).then((value){
       Helper.hideLoading();
       if(value!=null) {
         Get.back();
         toToast('Group created Successfully');
       }
     });
+  }
+
+  void choosePhoto() {
+    Helper.showVerticalButtonAlert([
+      TextButton(
+          onPressed: () {
+            Get.back();
+            imagePick(Get.context!);
+          },
+          child: const Text("Choose from Gallery",style: TextStyle(color: Colors.black),)),
+      TextButton(
+          onPressed: () async{
+            Get.back();
+            camera();
+          },
+          child: const Text("Take Photo",style: TextStyle(color: Colors.black))),
+    ]);
   }
 }

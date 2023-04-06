@@ -3,7 +3,7 @@ import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
 
 import '../../../common/constants.dart';
-import 'package:flysdk/flysdk.dart';
+import 'package:mirrorfly_plugin/mirrorfly.dart';
 import '../../../routes/app_pages.dart';
 
 class ChatInfoController extends GetxController {
@@ -34,7 +34,7 @@ class ChatInfoController extends GetxController {
   }
 
   muteAble() async {
-    muteable(await FlyChat.isUserUnArchived(profile.jid.checkNull()));
+    muteable(await Mirrorfly.isUserUnArchived(profile.jid.checkNull()));
   }
 
   _scrollListener() {
@@ -59,14 +59,15 @@ class ChatInfoController extends GetxController {
     if(muteable.value) {
       mirrorFlyLog("change", value.toString());
       mute(value);
-      FlyChat.updateChatMuteStatus(profile.jid.checkNull(), value);
+      Mirrorfly.updateChatMuteStatus(profile.jid.checkNull(), value);
     }
   }
 
   getUserLastSeen(){
     if(!profile.isBlockedMe.checkNull() || !profile.isAdminBlocked.checkNull()) {
-      FlyChat.getUserLastSeenTime(profile.jid.toString()).then((value) {
-        userPresenceStatus(value.toString());
+      Mirrorfly.getUserLastSeenTime(profile.jid.toString()).then((value) {
+        var lastSeen = convertSecondToLastSeen(value!);
+        userPresenceStatus(lastSeen.toString());
       }).catchError((er) {
         userPresenceStatus("");
       });
@@ -117,14 +118,16 @@ class ChatInfoController extends GetxController {
             TextButton(
                 onPressed: () {
                   Get.back();
-                  Helper.showLoading(message: "Reporting User");
-                  FlyChat
-                      .reportUserOrMessages(profile.jid!, "chat", "")
+                  // Helper.showLoading(message: "Reporting User");
+                  Mirrorfly
+                      .reportUserOrMessages(profile.jid!, "chat")
                       .then((value) {
-                    Helper.hideLoading();
-                    Future.delayed(const Duration(milliseconds: 500), () {
-                      toToast("Report Success");
-                    });
+                    // Helper.hideLoading();
+                    if(value.checkNull()){
+                      toToast("Report sent");
+                    }else{
+                      toToast("There are no messages available");
+                    }
 
                     // debugPrint(value.toString());
                   }).catchError((onError) {
@@ -151,6 +154,14 @@ class ChatInfoController extends GetxController {
   }
 
   void userDeletedHisProfile(String jid) {
+    userUpdatedHisProfile(jid);
+  }
+
+  void unblockedThisUser(String jid) {
+    userUpdatedHisProfile(jid);
+  }
+
+  void userBlockedMe(String jid) {
     userUpdatedHisProfile(jid);
   }
 }

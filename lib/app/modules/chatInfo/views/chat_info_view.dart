@@ -58,6 +58,7 @@ class ChatInfoView extends GetView<ChatInfoController> {
                       )),
                 ),
                 flexibleSpace: FlexibleSpaceBar(
+                  centerTitle: false,
                   background: ImageNetwork(
                     url: controller.profile.image.checkNull(),
                     width: MediaQuery
@@ -83,19 +84,24 @@ class ChatInfoView extends GetView<ChatInfoController> {
                       fontSize: 120,
                     ),
                     onTap: () {
-                      Get.toNamed(Routes.imageView, arguments: {
-                      'imageName': getName(controller.profile),
-                        /*'imageName': controller.profile.name
-                            .checkNull()
-                            .isEmpty
-                            ? controller.profile.nickName
-                            .checkNull()
-                            .isEmpty
-                            ? controller.profile.mobileNumber.checkNull()
-                            : controller.profile.nickName.checkNull()
-                            : controller.profile.name.checkNull(),*/
-                        'imageUrl': controller.profile.image.checkNull()
-                      });
+                      if (controller.profile.image!.isNotEmpty && !(controller.profile
+                          .isBlockedMe.checkNull() || controller.profile.isAdminBlocked
+                          .checkNull()) && !(!controller.profile.isItSavedContact
+                          .checkNull() || controller.profile.isDeletedContact())) {
+                        Get.toNamed(Routes.imageView, arguments: {
+                          'imageName': getName(controller.profile),
+                          /*'imageName': controller.profile.name
+                                              .checkNull()
+                                              .isEmpty
+                                              ? controller.profile.nickName
+                                              .checkNull()
+                                              .isEmpty
+                                              ? controller.profile.mobileNumber.checkNull()
+                                              : controller.profile.nickName.checkNull()
+                                              : controller.profile.name.checkNull(),*/
+                          'imageUrl': controller.profile.image.checkNull()
+                        });
+                      }
                     },
                     isGroup: controller.profile.isGroupProfile.checkNull(),
                     blocked: controller.profile.isBlockedMe.checkNull() || controller.profile.isAdminBlocked.checkNull(),
@@ -206,6 +212,7 @@ class ChatInfoView extends GetView<ChatInfoController> {
                         return Text(controller.profile.email.checkNull(),
                             style: const TextStyle(
                                 fontSize: 13,
+                                color: textColor,
                                 fontWeight: FontWeight.w500));
                       }),
                     ],
@@ -233,6 +240,7 @@ class ChatInfoView extends GetView<ChatInfoController> {
                         return Text(controller.profile.mobileNumber.checkNull(),
                             style: const TextStyle(
                                 fontSize: 13,
+                                color: textColor,
                                 fontWeight: FontWeight.w500));
                       }),
                     ],
@@ -260,6 +268,7 @@ class ChatInfoView extends GetView<ChatInfoController> {
                         return Text(controller.profile.status.checkNull(),
                             style: const TextStyle(
                                 fontSize: 13,
+                                color: textColor,
                                 fontWeight: FontWeight.w500));
                       }),
                     ],

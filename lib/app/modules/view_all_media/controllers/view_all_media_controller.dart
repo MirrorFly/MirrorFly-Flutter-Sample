@@ -7,10 +7,11 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
-import 'package:flysdk/flysdk.dart';
+import 'package:mirrorfly_plugin/mirrorfly.dart';
 
 import '../../../common/constants.dart';
 import '../../../routes/app_pages.dart';
+import '../../chat/controllers/chat_controller.dart';
 
 
 class ViewAllMediaController extends GetxController {
@@ -29,6 +30,15 @@ class ViewAllMediaController extends GetxController {
   var name = Get.arguments["name"] as String;
   var jid = Get.arguments["jid"] as String;
   var isGroup = Get.arguments["isgroup"] as bool;
+
+  var imageCount = 0.obs;
+  var audioCount = 0.obs;
+  var videoCount = 0.obs;
+  var documentCount = 0.obs;
+  var linkCount = 0.obs;
+  var previewMediaList = List<ChatMessageModel>.empty(growable: true).obs;
+  var newLinkMessages = List<ChatMessageModel>.empty(growable: true).obs;
+
 
   @override
   void onInit() {
@@ -51,15 +61,32 @@ class ViewAllMediaController extends GetxController {
     });
   }
 
-  getMediaMessages() {
-    FlyChat.getMediaMessages(jid).then((value) async {
-      if (value != null) {
-        mirrorFlyLog("getMediaMessages", value);
-        var data = chatMessageModelFromJson(value);
+  void onMessageReceived(ChatMessageModel chatMessageModel) {
+    mirrorFlyLog("View All Media Controller", "onMessageReceived");
+    getLinkMessages();
+  }
 
+  void onMediaStatusUpdated(ChatMessageModel chatMessageModel) {
+    if(chatMessageModel.isFileMessage()){
+      getDocsMessages();
+    }else{
+      getMediaMessages();
+    }
+  }
+
+  getMediaMessages() {
+    Mirrorfly.getMediaMessages(jid).then((value) async {
+      if (value != null) {
+        // mirrorFlyLog("getMediaMessages", value);
+        var data = chatMessageModelFromJson(value);
+        previewMediaList.clear();
+        previewMediaList.addAll(data);
+        imageCount(previewMediaList.where((chatItem) => chatItem.isImageMessage()).toList().length);
+        videoCount(previewMediaList.where((chatItem) => chatItem.isVideoMessage()).toList().length);
+        audioCount(previewMediaList.where((chatItem) => chatItem.isAudioMessage()).toList().length);
         if (data.isNotEmpty) {
           _medialist(await getMapGroupedMediaList(data, true));
-          debugPrint("_media list length--> ${_medialist.length}");
+          // debugPrint("_media list length--> ${_medialist.length}");
         }
       }
     });
@@ -67,10 +94,11 @@ class ViewAllMediaController extends GetxController {
 
   //getDocsMessages
   getDocsMessages() {
-    FlyChat.getDocsMessages(jid).then((value) async {
+    Mirrorfly.getDocsMessages(jid).then((value) async {
       if (value != null) {
         mirrorFlyLog("get doc before json",value);
         var data = chatMessageModelFromJson(value);
+        documentCount(data.length);
         mirrorFlyLog("getDocsMessagess",json.encode(data));
         if (data.isNotEmpty) {
           _docslist(await getMapGroupedMediaList(data, false));
@@ -81,9 +109,10 @@ class ViewAllMediaController extends GetxController {
 
   //getLinkMessages
   getLinkMessages() {
-    FlyChat.getLinkMessages(jid).then((value) async {
+    Mirrorfly.getLinkMessages(jid).then((value) async {
       if (value != null) {
         var data = chatMessageModelFromJson(value);
+        linkCount(data.length);
         if (data.isNotEmpty) {
           _linklist(await getMapGroupedMediaList(data, false, true));
         }
@@ -91,10 +120,19 @@ class ViewAllMediaController extends GetxController {
     });
   }
 
+  navigateMessage(ChatMessageModel linkChatItem) {
+    // Get.toNamed(Routes.chat,parameters: {'isFromStarred':'true',"userJid":linkChatItem.chatUserJid,"messageId":linkChatItem.messageId});
+    Get.back();
+    Get.back();
+    if (Get.isRegistered<ChatController>()) {
+      Get.find<ChatController>().navigateToMessage(linkChatItem);
+    }
+  }
+
   Future<Map<String,List<MessageItem>>> getMapGroupedMediaList(
       List<ChatMessageModel> mediaMessages, bool isMedia,
       [bool isLinkMedia = false]) async {
-    debugPrint("media message length--> ${mediaMessages.length}");
+    // debugPrint("media message length--> ${mediaMessages.length}");
     var calendarInstance = DateTime.now();
     var currentYear = calendarInstance.year;
     var currentMonth = calendarInstance.month;
@@ -114,15 +152,15 @@ class ViewAllMediaController extends GetxController {
       month = calendar.month;
       day = calendar.day;
 
-      debugPrint("year--> $year");
-      debugPrint("month--> $month");
-      debugPrint("day--> $day");
-      debugPrint("dateSymbols--> $dateSymbols");
+      // debugPrint("year--> $year");
+      // debugPrint("month--> $month");
+      // debugPrint("day--> $day");
+      // debugPrint("dateSymbols--> $dateSymbols");
 
       var category = getCategoryName(
           dateSymbols, currentDay, currentMonth, currentYear, day, month, year);
 
-      debugPrint("getMapGroupedMediaList category--> $category");
+      // debugPrint("getMapGroupedMediaList category--> $category");
       if (isLinkMedia) {
         if (previousCategoryType != category.key) {
           messages=[];
@@ -130,21 +168,21 @@ class ViewAllMediaController extends GetxController {
         previousCategoryType = category.key;
         mapMediaList[category.value]=getMapMessageWithURLList(messages,chatMessage);
       } else {
-        debugPrint("getMapGroupedMediaList isMessage Recalled--> ${chatMessage.isMessageRecalled}");
-        debugPrint("getMapGroupedMediaList isMediaDownloaded--> ${chatMessage.isMediaDownloaded()}");
-        debugPrint("getMapGroupedMediaList isMediaUploaded--> ${chatMessage.isMediaUploaded()}");
+        // debugPrint("getMapGroupedMediaList isMessage Recalled--> ${chatMessage.isMessageRecalled}");
+        // debugPrint("getMapGroupedMediaList isMediaDownloaded--> ${chatMessage.isMediaDownloaded()}");
+        // debugPrint("getMapGroupedMediaList isMediaUploaded--> ${chatMessage.isMediaUploaded()}");
         if (!chatMessage.isMessageRecalled &&
             (chatMessage.isMediaDownloaded() ||
                 chatMessage.isMediaUploaded()) &&
             await isMediaAvailable(chatMessage, isMedia)) {
-          debugPrint("getMapGroupedMediaList isMediaAvailable --> true");
+          // debugPrint("getMapGroupedMediaList isMediaAvailable --> true");
           if (previousCategoryType != category.key) {
-            debugPrint("getMapGroupedMediaList previousCategoryType check --->${previousCategoryType != category.key}");
+            // debugPrint("getMapGroupedMediaList previousCategoryType check --->${previousCategoryType != category.key}");
             messages=[];
           }
-          debugPrint("getMapGroupedMediaList messages add--> ${chatMessage.toJson()}");
+          // debugPrint("getMapGroupedMediaList messages add--> ${chatMessage.toJson()}");
           messages.add(MessageItem(chatMessage));
-          debugPrint("getMapGroupedMediaList category value--> ${category.value}");
+          // debugPrint("getMapGroupedMediaList category value--> ${category.value}");
           mapMediaList[category.value]=messages;
           previousCategoryType = category.key;
         }else{
@@ -152,7 +190,7 @@ class ViewAllMediaController extends GetxController {
         }
       }
     }
-    debugPrint("getMapGroupedMediaList Return map list--> ${mapMediaList.length.toString()}");
+    // debugPrint("getMapGroupedMediaList Return map list--> ${mapMediaList.length.toString()}");
     return mapMediaList;//viewAllMediaList;
   }
 
@@ -178,15 +216,18 @@ class ViewAllMediaController extends GetxController {
   }
 
   List<MapEntry<String, String>> getUrlAndHostList(String text) {
+    RegExp exp = RegExp("\\s+");
     var urls = <MapEntry<String, String>>[];
-    var splitString = text.split("\\s+");
+    var splitString = text.split(exp);
     for (var string in splitString) {
-      try {
-        var item = Uri.parse(string);
-        urls.add(MapEntry(item.host, item.toString()));
-      } catch (ignored) {
-        //No Implementation needed
-      }
+        try {
+          var item = Uri.parse(string);
+          if(item.host.isNotEmpty) {
+            urls.add(MapEntry(item.host, item.toString()));
+          }
+        } catch (ignored) {
+          mirrorFlyLog('$string url exception', ignored.toString());
+        }
     }
     mirrorFlyLog("urls", urls.toString());
     return urls;
@@ -196,15 +237,15 @@ class ViewAllMediaController extends GetxController {
       ChatMessageModel chatMessage, bool isMedia) async {
     var mediaExist = await isMediaExists(
         chatMessage.mediaChatMessage!.mediaLocalStoragePath);
-    debugPrint("mediaLocalStoragePath---> ${chatMessage.mediaChatMessage!.mediaLocalStoragePath}");
-    debugPrint("isMediaAvailable---> ${mediaExist.toString()}");
+    // debugPrint("mediaLocalStoragePath---> ${chatMessage.mediaChatMessage!.mediaLocalStoragePath}");
+    // debugPrint("isMediaAvailable---> ${mediaExist.toString()}");
     return (!isMedia || mediaExist);
   }
 
   Future<bool> isMediaExists(String filePath) async {
     io.File file = io.File(filePath);
     var fileExists = file.absolute.existsSync();
-    debugPrint("file path---> $filePath");
+    // debugPrint("file path---> $filePath");
     debugPrint("file exists---> ${fileExists.toString()}");
     var fileExists1 =
         File(filePath).existsSync() ||
@@ -250,23 +291,22 @@ class ViewAllMediaController extends GetxController {
     Uint8List image = const Base64Decoder().convert(decodedBase64);
     return Image.memory(
       image,
-      width: width,
-      height: height,
+      width: width ?? double.infinity,
+      height: height ?? double.infinity,
       fit: BoxFit.cover,
     );
   }
 
-  openFile(String path){
-    FlyChat.openFile(path).catchError((onError) {
-      Get.snackbar("","No supported application available to open this file format").show();
-    });
+  openFile(String path) async {
+    /*final result = await OpenFile.open(path);
+    if(result.message.contains("file does not exist")){
+      toToast("The Selected file Doesn't Exist or Unable to Open");
+    }*/
+    openDocument(path);
   }
 
-  openImage(String path){
-    Get.toNamed(Routes.imageView, arguments: {
-      "imagePath": path,
-      "imageName": "Sent Media"
-    });
+  openImage(int gridIndex){
+    Get.toNamed(Routes.viewAllMediaPreview, arguments: {"images" : previewMediaList, "index": gridIndex});
   }
 
 }

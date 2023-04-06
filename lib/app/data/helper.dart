@@ -8,10 +8,13 @@ import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
-import 'package:flysdk/flysdk.dart';
+import 'package:mirrorfly_plugin/mirrorfly.dart';
 import 'package:mirror_fly_demo/app/data/session_management.dart';
+import 'package:mirror_fly_demo/app/routes/app_pages.dart';
+import 'package:open_file_plus/open_file_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../common/widgets.dart';
 import 'apputils.dart';
 
 class Helper {
@@ -59,18 +62,17 @@ class Helper {
         barrierColor: Colors.transparent);
   }
 
-  static void showAlert(
-      {String? title,
-      required String message,
-      List<Widget>? actions,
-      Widget? content}) {
+  static void showAlert({String? title,
+    required String message,
+    List<Widget>? actions,
+    Widget? content}) {
     Get.dialog(
       AlertDialog(
         title: title != null
             ? Text(
-                title,
-                style: const TextStyle(fontSize: 17),
-              )
+          title,
+          style: const TextStyle(fontSize: 17),
+        )
             : const SizedBox.shrink(),
         contentPadding: title != null
             ? const EdgeInsets.only(top: 15, right: 25, left: 25, bottom: 0)
@@ -82,8 +84,19 @@ class Helper {
                   color: textHintColor, fontWeight: FontWeight.normal),
             ),
         contentTextStyle:
-            const TextStyle(color: textHintColor, fontWeight: FontWeight.w500),
+        const TextStyle(color: textHintColor, fontWeight: FontWeight.w500),
         actions: actions,
+      ),
+    );
+  }
+
+  static void showVerticalButtonAlert(List<Widget> actions) {
+    Get.dialog(
+      Dialog(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: actions,),
       ),
     );
   }
@@ -113,10 +126,19 @@ class Helper {
   }
 
   static String durationToString(Duration duration) {
-    return (duration.inMilliseconds / 100)
+    debugPrint("duration conversion $duration");
+    /*final mm = (duration.inMinutes % 60).toString().padLeft(2, '0');
+    final ss = (duration.inSeconds % 60).toString().padLeft(2, '0');
+    return '$mm:$ss';*/
+    //return (duration.inSeconds % 60).toString().padLeft(2, '0');
+    /*return (duration.inMilliseconds /60)
         .toStringAsFixed(2)
         .replaceFirst('.', ':')
-        .padLeft(5, '0');
+        .padLeft(5, '0');*/
+    var seconds = ((duration.inSeconds % 60)).toStringAsFixed(0).padLeft(2,'0');
+    // debugPrint("return ")
+    return '${(duration.inMinutes).toStringAsFixed(0).padLeft(2,'0')}:$seconds';
+
   }
 
   static String getMapImageUri(double latitude, double longitude) {
@@ -221,8 +243,8 @@ bool checkFileUploadSize(String path, String mediaType) {
   if (mediaType == Constants.mImage && sizeInMb < 10) {
     return true;
   } else if ((mediaType == Constants.mAudio ||
-          mediaType == Constants.mVideo ||
-          mediaType == Constants.mDocument) &&
+      mediaType == Constants.mVideo ||
+      mediaType == Constants.mDocument) &&
       sizeInMb < 20) {
     return true;
   } else {
@@ -259,7 +281,8 @@ extension FileFormatter on num {
     if (this <= 0) return "0";
     final units = ["bytes", "KB", "MB", "GB", "TB"];
     int digitGroups = (log(this) / log(base)).round();
-    return "${NumberFormat("#,##0.#").format(this / pow(base, digitGroups))} ${units[digitGroups]}";
+    return "${NumberFormat("#,##0.#").format(
+        this / pow(base, digitGroups))} ${units[digitGroups]}";
   }
 }
 
@@ -315,28 +338,41 @@ extension MemberParsing on Member {
   bool isDeletedContact() {
     return contactType == "deleted_contact";
   }
+
   String getUsername() {
-    var value = FlyChat.getProfileDetails(jid.checkNull(), false);
+    var value = Mirrorfly.getProfileDetails(jid.checkNull(), false);
     var str = Profile.fromJson(json.decode(value.toString()));
-    return getName(str);//str.name.checkNull();
+    return getName(str); //str.name.checkNull();
   }
 
   Future<Profile> getProfileDetails() async {
-    var value = await FlyChat.getProfileDetails(jid.checkNull(), false);
+    var value = await Mirrorfly.getProfileDetails(jid.checkNull(), false);
     var str = Profile.fromJson(json.decode(value.toString()));
     return str;
   }
-  bool isItSavedContact(){
+
+  bool isItSavedContact() {
     return contactType == 'live_contact';
   }
-  bool isUnknownContact(){
-    return !isDeletedContact() && !isItSavedContact() && !isGroupProfile.checkNull();
+
+  bool isUnknownContact() {
+    return !isDeletedContact() && !isItSavedContact() &&
+        !isGroupProfile.checkNull();
   }
-  bool isEmailContact() => !isGroupProfile.checkNull() && isGroupInOfflineMode.checkNull(); // for email contact isGroupInOfflineMode will be true
+
+  bool isEmailContact() =>
+      !isGroupProfile.checkNull() && isGroupInOfflineMode
+          .checkNull(); // for email contact isGroupInOfflineMode will be true
+}
+
+extension MemberProfileParsing on MemberProfileDetails {
+  bool isDeletedContact() {
+    return contactType == "deleted_contact";
+  }
 }
 
 Future<Profile> getProfileDetails(String jid) async {
-  var value = await FlyChat.getProfileDetails(jid.checkNull(), false);
+  var value = await Mirrorfly.getProfileDetails(jid.checkNull(), false);
   // profileDataFromJson(value);
   debugPrint("update profile--> $value");
   var profile = await compute(profiledata, value.toString());
@@ -345,8 +381,8 @@ Future<Profile> getProfileDetails(String jid) async {
 }
 
 Future<ChatMessageModel> getMessageOfId(String mid) async {
-  var value = await FlyChat.getMessageOfId(mid.checkNull());
-  debugPrint("message--> $value");
+  var value = await Mirrorfly.getMessageOfId(mid.checkNull());
+  // debugPrint("message--> $value");
   var chatMessage = await compute(sendMessageModelFromJson, value.toString());
   return chatMessage;
 }
@@ -361,13 +397,19 @@ extension ProfileParesing on Profile {
         ? Constants.typeGroupChat
         : Constants.typeChat;
   }
-  bool isItSavedContact(){
+
+  bool isItSavedContact() {
     return contactType == 'live_contact';
   }
-  bool isUnknownContact(){
-    return !isDeletedContact() && !isItSavedContact() && !isGroupProfile.checkNull();
+
+  bool isUnknownContact() {
+    return !isDeletedContact() && !isItSavedContact() &&
+        !isGroupProfile.checkNull();
   }
-  bool isEmailContact() => !isGroupProfile.checkNull() && isGroupInOfflineMode.checkNull(); // for email contact isGroupInOfflineMode will be true
+
+  bool isEmailContact() =>
+      !isGroupProfile.checkNull() && isGroupInOfflineMode
+          .checkNull(); // for email contact isGroupInOfflineMode will be true
 
 }
 
@@ -382,10 +424,11 @@ extension ChatmessageParsing on ChatMessageModel {
         (mediaChatMessage?.mediaUploadStatus == Constants.mediaUploaded);
   }
 
-  bool isMediaMessage() => (isAudioMessage() ||
-      isVideoMessage() ||
-      isImageMessage() ||
-      isFileMessage());
+  bool isMediaMessage() =>
+      (isAudioMessage() ||
+          isVideoMessage() ||
+          isImageMessage() ||
+          isFileMessage());
 
   bool isTextMessage() => messageType == Constants.mText;
 
@@ -397,6 +440,8 @@ extension ChatmessageParsing on ChatMessageModel {
 
   bool isFileMessage() => messageType == Constants.mDocument;
 
+
+
   bool isNotificationMessage() =>
       messageType.toUpperCase() == Constants.mNotification;
 }
@@ -406,31 +451,35 @@ extension RecentChatParsing on RecentChatData {
     return (isGroup.checkNull())
         ? Constants.typeGroupChat
         : (isBroadCast.checkNull())
-            ? Constants.typeBroadcastChat
-            : Constants.typeChat;
+        ? Constants.typeBroadcastChat
+        : Constants.typeChat;
   }
+
   bool isDeletedContact() {
     return contactType == "deleted_contact";
   }
 
-  bool isItSavedContact(){
+  bool isItSavedContact() {
     return contactType == 'live_contact';
   }
-  bool isUnknownContact(){
+
+  bool isUnknownContact() {
     return !isDeletedContact() && !isItSavedContact() && !isGroup.checkNull();
   }
-  bool isEmailContact() => !isGroup.checkNull() && isGroupInOfflineMode.checkNull(); // for email contact isGroupInOfflineMode will be true
+
+  bool isEmailContact() =>
+      !isGroup.checkNull() && isGroupInOfflineMode
+          .checkNull(); // for email contact isGroupInOfflineMode will be true
 }
 
 String returnFormattedCount(int count) {
   return (count > 99) ? "99+" : count.toString();
 }
 
-InkWell listItem(
-    {Widget? leading,
-    required Widget title,
-    Widget? trailing,
-    required Function() onTap}) {
+InkWell listItem({Widget? leading,
+  required Widget title,
+  Widget? trailing,
+  required Function() onTap}) {
   return InkWell(
     onTap: onTap,
     child: Padding(
@@ -439,7 +488,7 @@ InkWell listItem(
         children: [
           leading != null
               ? Padding(
-                  padding: const EdgeInsets.only(right: 16.0), child: leading)
+              padding: const EdgeInsets.only(right: 16.0), child: leading)
               : const SizedBox(),
           Expanded(
             child: title,
@@ -458,7 +507,9 @@ String getRecentChatTime(BuildContext context, int? epochTime) {
   //messageDate.time = convertedTime
   var hourTime = manipulateMessageTime(
       context, DateTime.fromMicrosecondsSinceEpoch(convertedTime));
-  var currentYear = DateTime.now().year;
+  var currentYear = DateTime
+      .now()
+      .year;
   var calendar = DateTime.fromMicrosecondsSinceEpoch(convertedTime);
   var time = (currentYear == calendar.year)
       ? DateFormat("dd-MMM").format(calendar)
@@ -466,14 +517,16 @@ String getRecentChatTime(BuildContext context, int? epochTime) {
   return (equalsWithYesterday(calendar, Constants.today))
       ? hourTime
       : (equalsWithYesterday(calendar, Constants.yesterday))
-          ? Constants.yesterdayUpper
-          : time;
+      ? Constants.yesterdayUpper
+      : time;
 }
 
 String manipulateMessageTime(BuildContext context, DateTime messageDate) {
-  var format = MediaQuery.of(context).alwaysUse24HourFormat ? 24 : 12;
-  var hours = calendar.hour; //calendar[Calendar.HOUR]
+  var format = MediaQuery
+      .of(context)
+      .alwaysUse24HourFormat ? 24 : 12;
   calendar = messageDate;
+  var hours = calendar.hour; //calendar[Calendar.HOUR]
   var dateHourFormat = setDateHourFormat(format, hours);
   return DateFormat(dateHourFormat).format(messageDate);
 }
@@ -481,11 +534,11 @@ String manipulateMessageTime(BuildContext context, DateTime messageDate) {
 String setDateHourFormat(int format, int hours) {
   var dateHourFormat = (format == 12)
       ? (hours < 10)
-          ? "hh:mm aa"
-          : "h:mm aa"
+      ? "hh:mm aa"
+      : "h:mm aa"
       : (hours < 10)
-          ? "HH:mm"
-          : "H:mm";
+      ? "HH:mm"
+      : "H:mm";
   return dateHourFormat;
 }
 
@@ -494,7 +547,11 @@ bool equalsWithYesterday(DateTime srcDate, String day) {
     var messageDate = DateFormat('yyyy/MM/dd').format(srcDate);
     var yesterdayDate = DateFormat('yyyy/MM/dd').format(DateTime.now().subtract(
         const Duration(
-            days: 1, hours: 0, minutes: 0, seconds: 0, milliseconds: 0)));
+            days: 1,
+            hours: 0,
+            minutes: 0,
+            seconds: 0,
+            milliseconds: 0)));
     return yesterdayDate == messageDate;
   } else {
     return equalsWithToday(srcDate, day);
@@ -518,7 +575,8 @@ String getChatTime(BuildContext context, int? epochTime) {
   // debugPrint("epoch convertedTime---> $convertedTime");
   var hourTime = manipulateMessageTime(
       context, DateTime.fromMicrosecondsSinceEpoch(convertedTime));
-  calendar = DateTime.fromMicrosecondsSinceEpoch(convertedTime);
+  // calendar = DateTime.fromMicrosecondsSinceEpoch(convertedTime);
+  //debugPrint('hourTime $hourTime');
   return hourTime;
 }
 
@@ -528,30 +586,22 @@ bool checkFile(String mediaLocalStoragePath) {
 }
 
 checkIosFile(String mediaLocalStoragePath) async {
-  var isExists = await FlyChat.iOSFileExist(mediaLocalStoragePath);
+  var isExists = await Mirrorfly.iOSFileExist(mediaLocalStoragePath);
   return isExists;
 }
 
-openDocument(String mediaLocalStoragePath, BuildContext context) async {
+openDocument(String mediaLocalStoragePath) async {
   // if (await askStoragePermission()) {
   if (mediaLocalStoragePath.isNotEmpty) {
-    // final _result = await OpenFile.open(mediaLocalStoragePath);
-    // debugPrint(_result.message);
-    // FileView(
-    //   controller: FileViewController.file(File(mediaLocalStoragePath)),
-    // );
-    // Get.toNamed(Routes.FILE_VIEWER, arguments: { "filePath": mediaLocalStoragePath});
-    // final String filePath = testFile.absolute.path;
-    // final Uri uri = Uri.file(mediaLocalStoragePath);
-    //
-    // if (!File(uri.toFilePath()).existsSync()) {
-    //   throw '$uri does not exist!';
-    // }
-    // if (!await launchUrl(uri)) {
-    //   throw 'Could not launch $uri';
-    // }
+    final result = await OpenFile.open(mediaLocalStoragePath);
+    debugPrint(result.message);
+    if(result.message.contains("file does not exist")){
+      toToast("The Selected file Doesn't Exist or Unable to Open");
+    }else if(result.message.contains('No APP found to open this file')){
+      toToast('you may not have proper app to view this content');
+    }
 
-    FlyChat.openFile(mediaLocalStoragePath).catchError((onError) {
+    /*Mirrorfly.openFile(mediaLocalStoragePath).catchError((onError) {
       final scaffold = ScaffoldMessenger.of(context);
       scaffold.showSnackBar(
         SnackBar(
@@ -561,7 +611,8 @@ openDocument(String mediaLocalStoragePath, BuildContext context) async {
               label: 'Ok', onPressed: scaffold.hideCurrentSnackBar),
         ),
       );
-    });
+    });*/
+
   } else {
     debugPrint("media does not exist");
   }
@@ -642,7 +693,7 @@ class Triple {
 }
 
 Future<RecentChatData?> getRecentChatOfJid(String jid) async {
-  var value = await FlyChat.getRecentChatOf(jid);
+  var value = await Mirrorfly.getRecentChatOf(jid);
   mirrorFlyLog("chat", value.toString());
   if (value != null) {
     var data = recentChatDataFromJson(value);
@@ -651,29 +702,36 @@ Future<RecentChatData?> getRecentChatOfJid(String jid) async {
     return null;
   }
 }
+
 String getName(Profile item) {
   if (SessionManagement.isTrailLicence()) {
     /*return item.name.toString().checkNull().isEmpty
         ? item.nickName.toString()
         : item.name.toString();*/
-    return item.name.checkNull().isEmpty
-        ? (item.nickName.checkNull().isEmpty
-            ? item.mobileNumber.checkNull()
-            : item.nickName.checkNull())
+    return item.name
+        .checkNull()
+        .isEmpty
+        ? (item.nickName
+        .checkNull()
+        .isEmpty
+        ? item.mobileNumber.checkNull()
+        : item.nickName.checkNull())
         : item.name.checkNull();
   } else {
-   if(item.jid.checkNull()==SessionManagement.getUserJID()){
-     return Constants.you;
-   }else if(item.isDeletedContact()){
-     mirrorFlyLog('isDeletedContact', item.isDeletedContact().toString());
-     return Constants.deletedUser;
-   }else if(item.isUnknownContact() || item.nickName.checkNull().isEmpty){
-     mirrorFlyLog('isUnknownContact', item.isUnknownContact().toString());
-     return item.mobileNumber.checkNull();
-   }else{
-     mirrorFlyLog('nickName', item.nickName.toString());
-     return item.nickName.checkNull();
-   }
+    if (item.jid.checkNull() == SessionManagement.getUserJID()) {
+      return Constants.you;
+    } else if (item.isDeletedContact()) {
+      mirrorFlyLog('isDeletedContact', item.isDeletedContact().toString());
+      return Constants.deletedUser;
+    } else if (item.isUnknownContact() || item.nickName
+        .checkNull()
+        .isEmpty) {
+      mirrorFlyLog('isUnknownContact', item.isUnknownContact().toString());
+      return item.mobileNumber.checkNull().isNotEmpty ? item.mobileNumber.checkNull() : getMobileNumberFromJid(item.jid.checkNull());
+    } else {
+      mirrorFlyLog('nickName', item.nickName.toString());
+      return item.nickName.checkNull();
+    }
     /*var status = true;
     if(status) {
       return item.nickName
@@ -696,19 +754,23 @@ String getRecentName(RecentChatData item) {
     /*return item.name.toString().checkNull().isEmpty
         ? item.nickName.toString()
         : item.name.toString();*/
-    return item.profileName.checkNull().isEmpty
+    return item.profileName
+        .checkNull()
+        .isEmpty
         ? item.nickName.checkNull()
         : item.profileName.checkNull();
   } else {
-    if(item.jid.checkNull()==SessionManagement.getUserJID()){
+    if (item.jid.checkNull() == SessionManagement.getUserJID()) {
       return Constants.you;
-    }else if(item.isDeletedContact()){
+    } else if (item.isDeletedContact()) {
       mirrorFlyLog('isDeletedContact', item.isDeletedContact().toString());
       return Constants.deletedUser;
-    }else if(item.isUnknownContact() || item.nickName.checkNull().isEmpty){
+    } else if (item.isUnknownContact() || item.nickName
+        .checkNull()
+        .isEmpty) {
       mirrorFlyLog('isUnknownContact', item.jid.toString());
       return getMobileNumberFromJid(item.jid.checkNull());
-    }else{
+    } else {
       mirrorFlyLog('nickName', item.nickName.toString());
       return item.nickName.checkNull();
     }
@@ -720,21 +782,27 @@ String getMemberName(Member item) {
     /*return item.name.toString().checkNull().isEmpty
         ? item.nickName.toString()
         : item.name.toString();*/
-    return item.name.checkNull().isEmpty
-        ? (item.nickName.checkNull().isEmpty
+    return item.name
+        .checkNull()
+        .isEmpty
+        ? (item.nickName
+        .checkNull()
+        .isEmpty
         ? item.mobileNumber.checkNull()
         : item.nickName.checkNull())
         : item.name.checkNull();
   } else {
-    if(item.jid.checkNull()==SessionManagement.getUserJID()){
+    if (item.jid.checkNull() == SessionManagement.getUserJID()) {
       return Constants.you;
-    }else if(item.isDeletedContact()){
+    } else if (item.isDeletedContact()) {
       mirrorFlyLog('isDeletedContact', item.isDeletedContact().toString());
       return Constants.deletedUser;
-    }else if(item.isUnknownContact() || item.nickName.checkNull().isEmpty){
+    } else if (item.isUnknownContact() || item.nickName
+        .checkNull()
+        .isEmpty) {
       mirrorFlyLog('isUnknownContact', item.isUnknownContact().toString());
-      return item.mobileNumber.checkNull();
-    }else{
+      return item.mobileNumber.checkNull().isNotEmpty ? item.mobileNumber.checkNull() : getMobileNumberFromJid(item.jid.checkNull());
+    } else {
       mirrorFlyLog('nickName', item.nickName.toString());
       return item.nickName.checkNull();
     }
@@ -754,9 +822,37 @@ String getMemberName(Member item) {
     }*/
   }
 }
-String getMobileNumberFromJid(String jid){
+
+bool isValidPhoneNumber(String s) {
+if (s.length > 13 || s.length < 6) return false;
+return hasMatch(s, r'^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\s\./0-9]*$');
+}
+bool hasMatch(String? value, String pattern) {
+return (value == null) ? false : RegExp(pattern).hasMatch(value);
+}
+
+String getMobileNumberFromJid(String jid) {
   var str = jid.split('@');
   return str[0];
+}
+
+String convertSecondToLastSeen(String seconds){
+
+  var userLastSeenDate = DateTime.now().subtract(Duration(seconds: double.parse(seconds).toInt()));
+
+  Duration diff = DateTime.now().difference(userLastSeenDate);
+
+  if(int.parse(DateFormat('yyyy').format(userLastSeenDate)) < int.parse(DateFormat('yyyy').format(DateTime.now()))){
+    return 'last seen on ${DateFormat('dd/mm/yyyy')}';
+  }else if(diff.inDays > 1){
+    return 'last seen on ${DateFormat('dd MMM').format(userLastSeenDate)}';
+  }else if(diff.inDays == 1){
+    return 'last seen on Yesterday';
+  } else if(diff.inHours >= 1 || diff.inMinutes >= 1 || diff.inSeconds >= 1){
+    return 'last seen at ${DateFormat('hh:mm a').format(userLastSeenDate)}';
+  } else {
+    return 'Online';
+  }
 }
 
 String getDisplayImage(RecentChatData recentChat) {
@@ -771,4 +867,179 @@ String getDisplayImage(RecentChatData recentChat) {
     // drawable = CustomDrawable(context).getDefaultDrawable(recentChat)
   }
   return imageUrl;
+}
+
+void showQuickProfilePopup({required context, required Function() chatTap,
+  required Function() callTap, required Function() videoTap, required Function() infoTap, required Rx<
+      Profile> profile}) {
+  Get.dialog(
+    Obx(() {
+      return Dialog(
+        shape: const RoundedRectangleBorder(
+            borderRadius: BorderRadius.all(Radius.circular(20.0))),
+        child: SizedBox(
+          width: MediaQuery
+              .of(context)
+              .size
+              .width * 0.7,
+          height: 300,
+          child: Column(
+            children: [
+              Expanded(
+                child: InkWell(
+                  onTap: () {
+                    mirrorFlyLog('image click', 'true');
+                    debugPrint("quick profile click--> ${profile.toJson().toString()}");
+                    if (profile.value.image!.isNotEmpty && !(profile.value
+                        .isBlockedMe.checkNull() || profile.value.isAdminBlocked
+                        .checkNull()) && !(//!profile.value.isItSavedContact.checkNull() || //This is commented because Android side received as true and iOS side false
+                        profile.value.isDeletedContact())) {
+                      Get.back();
+                      Get.toNamed(Routes.imageView, arguments: {
+                        'imageName': getName(profile.value),
+                        'imageUrl': profile.value.image.checkNull()
+                      });
+                    }
+                  },
+                  child: Stack(
+                    fit: StackFit.expand,
+                    children: [
+                      ClipRRect(
+                          borderRadius: const BorderRadius.only(
+                              topLeft: Radius.circular(20),
+                              topRight: Radius.circular(20)),
+                          child: ImageNetwork(
+                            url: profile.value.image.toString(),
+                            width: MediaQuery
+                                .of(context)
+                                .size
+                                .width * 0.7,
+                            height: 250,
+                            clipOval: false,
+                            errorWidget: profile.value.isGroupProfile!
+                                ? Image.asset(
+                              groupImg,
+                              height: 250,
+                              width: MediaQuery
+                                  .of(context)
+                                  .size
+                                  .width * 0.72,
+                              fit: BoxFit.cover,
+                            )
+                                : ProfileTextImage(
+                              text: getName(profile.value),
+                              fontSize: 75,
+                              radius: 0,
+                            ),
+                            isGroup: profile.value.isGroupProfile.checkNull(),
+                            blocked: profile.value.isBlockedMe.checkNull() ||
+                                profile.value.isAdminBlocked.checkNull(),
+                            unknown: (!profile.value.isItSavedContact
+                                .checkNull() ||
+                                profile.value.isDeletedContact()),
+                          )
+                      ),
+                      Padding(
+                        padding:
+                        const EdgeInsets.symmetric(
+                            vertical: 10.0, horizontal: 20),
+                        child: Text(
+                          profile.value.isGroupProfile!
+                              ? profile.value.name.checkNull()
+                              : SessionManagement.isTrailLicence() ? profile.value.mobileNumber.checkNull() : profile.value.nickName.checkNull(),
+                          style: const TextStyle(color: Colors.white),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              SizedBox(
+                height: 50,
+                child: Row(
+                  // mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Expanded(
+                      child: InkWell(
+                        onTap: chatTap,
+                        child: SvgPicture.asset(
+                          quickMessage,
+                          fit: BoxFit.contain,
+                          width: 30,
+                          height: 30,
+                        ),
+                      ),
+                    ),
+                    !profile.value.isGroupProfile.checkNull() ? Expanded(
+                      child: InkWell(
+                        onTap: callTap,
+                        child: SvgPicture.asset(
+                          quickCall,
+                          fit: BoxFit.contain,
+                        ),
+                      ),
+                    ) : const SizedBox.shrink(),
+                    !profile.value.isGroupProfile.checkNull() ? Expanded(
+                      child: InkWell(
+                        onTap: videoTap,
+                        child: SvgPicture.asset(
+                          quickVideo,
+                          fit: BoxFit.contain,
+                        ),
+                      ),
+                    ) : const SizedBox.shrink(),
+
+                    Expanded(
+                      child: InkWell(onTap: infoTap,
+                        child: SvgPicture.asset(
+                          quickInfo,
+                          fit: BoxFit.contain,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+    }),
+  );
+}
+
+String getDocAsset(String filename) {
+  if (filename.isEmpty || !filename.contains(".")) {
+    return "";
+  }
+  debugPrint("helper document--> ${filename.toLowerCase().substring(
+      filename.lastIndexOf(".") + 1)}");
+  switch (filename.toLowerCase().substring(filename.lastIndexOf(".") + 1)) {
+    case "csv":
+      return csvImage;
+    case "pdf":
+      return pdfImage;
+    case "doc":
+      return docImage;
+    case "docx":
+      return docxImage;
+    case "txt":
+      return txtImage;
+    case "xls":
+      return xlsImage;
+    case "xlsx":
+      return xlsxImage;
+    case "ppt":
+      return pptImage;
+    case "pptx":
+      return pptxImage;
+    case "zip":
+      return zipImage;
+    case "rar":
+      return rarImage;
+    case "apk":
+      return apkImage;
+    default:
+      return "";
+  }
 }

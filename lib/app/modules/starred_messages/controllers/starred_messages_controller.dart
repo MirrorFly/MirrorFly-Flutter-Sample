@@ -1,18 +1,18 @@
 import 'dart:convert';
 
-import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
-import 'package:flysdk/flysdk.dart';
+import 'package:mirrorfly_plugin/mirrorfly.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
 import 'package:share_plus/share_plus.dart';
 
 import '../../../common/constants.dart';
 import '../../../routes/app_pages.dart';
 
-class StarredMessagesController extends GetxController {
+class StarredMessagesController extends FullLifeCycleController with FullLifeCycleMixin {
   var starredChatList = List<ChatMessageModel>.empty(growable: true).obs;
   double height = 0.0;
   double width = 0.0;
@@ -21,7 +21,7 @@ class StarredMessagesController extends GetxController {
   var isListLoading = true.obs;
   var calendar = DateTime.now();
 
-  @override
+ /* @override
   void onInit() {
     super.onInit();
     //getFavouriteMessages();
@@ -37,18 +37,18 @@ class StarredMessagesController extends GetxController {
       playingChat?.mediaChatMessage!.currentPos=(p.inMilliseconds);
       starredChatList.refresh();
     });
-  }
+  }*/
 
-  @override
+  /*@override
   void onClose(){
     super.onClose();
-    player.stop();
-    player.dispose();
-  }
+    // player.stop();
+    // player.dispose();
+  }*/
   getFavouriteMessages() {
     if(!isSelected.value) {
       isListLoading(true);
-      FlyChat.getFavouriteMessages().then((value) {
+      Mirrorfly.getFavouriteMessages().then((value) {
         List<ChatMessageModel> chatMessageModel = chatMessageModelFromJson(
             value);
         starredChatList(chatMessageModel.toList());
@@ -96,7 +96,34 @@ class StarredMessagesController extends GetxController {
         validateForShareMessage();
       }
     }
+    if(isSearch.value){
+      var selectedIndex = searchedStarredMessageList.indexWhere(
+              (element) => chatMessageModel.messageId == element.messageId);
+      if (!selectedIndex.isNegative) {
+        searchedStarredMessageList[selectedIndex] = chatMessageModel;
+      }
+    }
 
+  }
+
+  void onUploadDownloadProgressChanged(
+      String messageId, String progressPercentage) {
+    if (messageId.isNotEmpty) {
+      final index =
+      starredChatList.indexWhere((message) => message.messageId == messageId);
+      debugPrint("Media Status Onprogress changed---> onUploadDownloadProgressChanged $index $messageId $progressPercentage");
+      if (!index.isNegative) {
+        starredChatList[index].mediaChatMessage?.mediaProgressStatus = (int.parse(progressPercentage));
+        starredChatList.refresh();
+      }
+      if(isSearch.value){
+        var selectedIndex = searchedStarredMessageList.indexWhere(
+                (message) => message.messageId == messageId);
+        if (!selectedIndex.isNegative) {
+          searchedStarredMessageList[selectedIndex].mediaChatMessage?.mediaProgressStatus = (int.parse(progressPercentage));
+        }
+      }
+    }
   }
 
   String getChatTime(context, int? epochTime) {
@@ -211,7 +238,7 @@ class StarredMessagesController extends GetxController {
   }
 
   checkBusyStatusForForward() async {
-    var busyStatus = await FlyChat.isBusyStatusEnabled();
+    var busyStatus = await Mirrorfly.isBusyStatusEnabled();
     if (!busyStatus.checkNull()) {
       forwardMessage();
     } else {
@@ -231,7 +258,7 @@ class StarredMessagesController extends GetxController {
           TextButton(
               onPressed: () async {
                 Get.back();
-                await FlyChat.enableDisableBusyStatus(false);
+                await Mirrorfly.enableDisableBusyStatus(false);
                 if (function != null) {
                   function();
                 }
@@ -267,10 +294,14 @@ class StarredMessagesController extends GetxController {
 
   favouriteMessage() {
     for (var item in selectedChatList) {
-      FlyChat.updateFavouriteStatus(
+      Mirrorfly.updateFavouriteStatus(
           item.messageId, item.chatUserJid, !item.isMessageStarred, item.messageChatType);
       starredChatList
           .removeWhere((element) => item.messageId == element.messageId);
+      if(isSearch.value){
+        searchedStarredMessageList
+            .removeWhere((element) => item.messageId == element.messageId);
+      }
     }
     selectedChatList.clear();
     isSelected(false);
@@ -361,13 +392,17 @@ class StarredMessagesController extends GetxController {
               onPressed: () {
                 Get.back();
                 for (var item in selectedChatList) {
-                  FlyChat.deleteMessagesForMe(
+                  Mirrorfly.deleteMessagesForMe(
                       item.chatUserJid,
                       item.messageChatType,
                       [item.messageId],
                       isMediaDelete.value);
                   starredChatList.removeWhere(
                       (element) => item.messageId == element.messageId);
+                  if(isSearch.value){
+                    searchedStarredMessageList
+                        .removeWhere((element) => item.messageId == element.messageId);
+                  }
                 }
                 isSelected(false);
                 selectedChatList.clear();
@@ -379,7 +414,7 @@ class StarredMessagesController extends GetxController {
                 Get.back();
                 Helper.showLoading(
                     message: 'Deleting Message for Everyone');
-                */ /*FlyChat.deleteMessagesForEveryone(
+                */ /*Mirrorfly.deleteMessagesForEveryone(
                     profile.jid!,chatType, deleteChatListID, isMediaDelete.value)
                     .then((value) {
                   debugPrint(value.toString());
@@ -401,19 +436,10 @@ class StarredMessagesController extends GetxController {
         ]);
   }
 
-  AudioPlayer player = AudioPlayer();
+  // AudioPlayer player = AudioPlayer();
   ChatMessageModel? playingChat;
   playAudio(ChatMessageModel chatMessage) async {
-    if(playingChat!=null){
-      if(playingChat?.mediaChatMessage!.messageId!=chatMessage.messageId){
-        player.stop();
-        playingChat?.mediaChatMessage!.isPlaying=false;
-        playingChat = chatMessage;
-      }
-    }
-    else{
-      playingChat = chatMessage;
-    }
+    /*setPlayingChat(chatMessage);
     if (!playingChat!.mediaChatMessage!.isPlaying) {
       int result = await player.play(playingChat!.mediaChatMessage!.mediaLocalStoragePath,position: Duration(milliseconds:playingChat!.mediaChatMessage!.currentPos), isLocal: true);
       if (result == 1) {
@@ -437,8 +463,31 @@ class StarredMessagesController extends GetxController {
       } else {
         mirrorFlyLog("", "Error on pause audio.");
       }
-    }
+    }*/
   }
+
+  void setPlayingChat(ChatMessageModel chatMessage) {
+    /*if(playingChat!=null){
+      if(playingChat?.mediaChatMessage!.messageId!=chatMessage.messageId){
+        player.stop();
+        playingChat?.mediaChatMessage!.isPlaying=false;
+        playingChat = chatMessage;
+      }
+    }
+    else{
+      playingChat = chatMessage;
+    }*/
+  }
+  void onSeekbarChange(double value,ChatMessageModel chatMessage) {
+   /* debugPrint('onSeekbarChange $value');
+    if (playingChat != null) {
+      player.seek(Duration(milliseconds: value.toInt()));
+    }else{
+      chatMessage.mediaChatMessage?.currentPos=value.toInt();
+      // starredChatList.refresh();
+    }*/
+  }
+
   RxBool canBeForward=false.obs;
   validateForForwardMessage(){
     for (var value in selectedChatList) {
@@ -473,18 +522,44 @@ class StarredMessagesController extends GetxController {
   }
 
   var isSearch = false.obs;
+  var clear = false.obs;
   var searchedText = TextEditingController();
+  String lastInputValue = "";
   void startSearch(String str){
     if(str.isNotEmpty) {
-      searchedStarredMessageList=(starredChatList);
-      addSearchedMessagesToList(str);
+      clear(true);
+      if (lastInputValue != str.trim()) {
+        lastInputValue = str.trim();
+        addSearchedMessagesToList(str.trim());
+      }
     }else{
-      starredChatList(searchedStarredMessageList);
+      lastInputValue='';
+      clear(false);
+      starredChatList.clear();
+      starredChatList.addAll(searchedStarredMessageList);
+      starredChatList.refresh();
+    }
+  }
+
+  onSearchClick(){
+    if (isSearch.value) {
+      isSearch(false);
+    } else {
+      isSearch(true);
+      searchedStarredMessageList.clear();
+      searchedStarredMessageList.addAll(starredChatList);
     }
   }
 
   clearSearch(){
-
+    lastInputValue='';
+    isSearch(false);
+    clear(false);
+    searchedText.clear();
+    starredChatList.clear();
+    starredChatList.addAll(searchedStarredMessageList);
+    searchedStarredMessageList.clear();
+    starredChatList.refresh();
   }
 
   var searchedStarredMessageList = <ChatMessageModel>[];
@@ -523,6 +598,8 @@ class StarredMessagesController extends GetxController {
         starredChatList.add(message);
       }
     }
+    debugPrint('starredChatList ${starredChatList.length}');
+    starredChatList.refresh();
     /*starredMessagesAdapterAdapterData!!.setSearch(searchEnabled, searchedText)
   starredMessagesAdapterAdapterData!!.setStarredMessages(searchedStarredMessageList)
   starredMessagesAdapterAdapterData!!.notifyDataSetChanged()*/
@@ -557,7 +634,7 @@ class StarredMessagesController extends GetxController {
             .contains(filterKey.toLowerCase());
   }
   Future<Profile> getProfile(String jid) async {
-    var value = await FlyChat.getProfileDetails(jid, true);
+    var value = await Mirrorfly.getProfileDetails(jid, true);
     return Profile.fromJson(json.decode(value.toString()));
   }
 
@@ -582,6 +659,29 @@ class StarredMessagesController extends GetxController {
     userUpdatedHisProfile(jid);
   }
 
+  @override
+  void onDetached() {}
+
+  @override
+  void onInactive() {}
+
+  @override
+  void onPaused() {}
+
+  FocusNode searchFocus = FocusNode();
+  @override
+  void onResumed() {
+    if(isSearch.value) {
+      if (!KeyboardVisibilityController().isVisible) {
+        if (searchFocus.hasFocus) {
+          searchFocus.unfocus();
+          Future.delayed(const Duration(milliseconds: 100), () {
+            searchFocus.requestFocus();
+          });
+        }
+      }
+    }
+  }
 
 
 }

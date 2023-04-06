@@ -18,6 +18,7 @@ class ImageViewView extends GetView<ImageViewController> {
     return Scaffold(
       appBar: AppBar(
         title: Text(controller.imageName.value),
+        centerTitle: false,
       ),
       body: SafeArea(
         child: Obx(() {

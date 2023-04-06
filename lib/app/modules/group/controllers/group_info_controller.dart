@@ -7,7 +7,7 @@ import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
-import 'package:flysdk/flysdk.dart';
+import 'package:mirrorfly_plugin/mirrorfly.dart';
 
 import '../../../common/crop_image.dart';
 import '../../../data/apputils.dart';
@@ -52,14 +52,14 @@ class GroupInfoController extends GetxController {
     nameController.text=profile.nickName.checkNull();
   }
   muteAble() async {
-    muteable(await FlyChat.isUserUnArchived(profile.jid.checkNull()));
+    muteable(await Mirrorfly.isUserUnArchived(profile.jid.checkNull()));
   }
 
   void onGroupProfileUpdated(String groupJid) {
     if (groupJid.checkNull().isNotEmpty) {
       if (profile.jid.checkNull() == groupJid.toString()) {
         mirrorFlyLog("group info", groupJid.toString());
-        FlyChat.getProfileDetails(profile.jid.checkNull(), false).then((value) {
+        Mirrorfly.getProfileDetails(profile.jid.checkNull(), false).then((value) {
           if (value != null) {
             var member = Profile.fromJson(json.decode(value.toString()));
             profile_(member);
@@ -155,14 +155,14 @@ class GroupInfoController extends GetxController {
     }
   }
   groupAdmin(){
-    FlyChat.isAdmin(SessionManagement.getUserJID()! ,profile.jid.checkNull()).then((bool? value){
+    Mirrorfly.isAdmin(SessionManagement.getUserJID()! ,profile.jid.checkNull()).then((bool? value){
       if(value!=null){
         _isAdmin(value);
       }
     });
   }
   memberOfGroup(){
-    FlyChat.isMemberOfGroup(profile.jid.checkNull(),null).then((bool? value){
+    Mirrorfly.isMemberOfGroup(profile.jid.checkNull(),null).then((bool? value){
       if(value!=null){
         _isMemberOfGroup(value);
       }
@@ -172,12 +172,12 @@ class GroupInfoController extends GetxController {
     if(muteable.value) {
       mirrorFlyLog("change", value.toString());
       _mute(value);
-      FlyChat.updateChatMuteStatus(profile.jid.checkNull(), value);
+      Mirrorfly.updateChatMuteStatus(profile.jid.checkNull(), value);
     }
   }
 
   getGroupMembers(bool? server){
-    FlyChat.getGroupMembersList(profile.jid.checkNull(),server).then((value) {
+    Mirrorfly.getGroupMembersList(profile.jid.checkNull(),server).then((value) {
       mirrorFlyLog("getGroupMembersList", value);
       if(value!=null){
         var list = profileFromJson(value);
@@ -198,7 +198,7 @@ class GroupInfoController extends GetxController {
           onPressed: () {
             Get.back();
             Helper.progressLoading();
-            FlyChat.reportUserOrMessages(profile.jid.checkNull(),Constants.typeGroupChat, "").then((value) {
+            Mirrorfly.reportUserOrMessages(profile.jid.checkNull(),Constants.typeGroupChat, "").then((value) {
               Helper.hideLoading();
               if(value!=null){
                 if(value){
@@ -241,7 +241,7 @@ class GroupInfoController extends GetxController {
   exitFromGroup()async{
     if(await AppUtils.isNetConnected()) {
       Helper.progressLoading();
-      FlyChat.leaveFromGroup(SessionManagement.getUserJID() ,profile.jid.checkNull()).then((value) {
+      Mirrorfly.leaveFromGroup(SessionManagement.getUserJID() ,profile.jid.checkNull()).then((value) {
         Helper.hideLoading();
         if(value!=null){
           if(value){
@@ -267,7 +267,7 @@ class GroupInfoController extends GetxController {
             if(await AppUtils.isNetConnected()) {
               Get.back();
               Helper.progressLoading();
-              FlyChat.deleteGroup(profile.jid.checkNull()).then((value) {
+              Mirrorfly.deleteGroup(profile.jid.checkNull()).then((value) {
                 Helper.hideLoading();
                 if(value!=null){
                   if(value){
@@ -336,7 +336,7 @@ class GroupInfoController extends GetxController {
 
   updateGroupProfileImage(String path){
     showLoader();
-    FlyChat.updateGroupProfileImage(profile.jid.checkNull(),path).then((bool? value){
+    Mirrorfly.updateGroupProfileImage(profile.jid.checkNull(),path).then((bool? value){
       hideLoader();
       if(value!=null){
         if(value){
@@ -349,7 +349,7 @@ class GroupInfoController extends GetxController {
 
   updateGroupName(String name){
     showLoader();
-    FlyChat.updateGroupName(profile.jid.checkNull(),name).then((bool? value){
+    Mirrorfly.updateGroupName(profile.jid.checkNull(),name).then((bool? value){
       hideLoader();
       if(value!=null){
         if(value){
@@ -380,7 +380,7 @@ class GroupInfoController extends GetxController {
   revokeAccessForProfileImage()async{
     if(await AppUtils.isNetConnected()) {
       showLoader();
-      FlyChat.removeGroupProfileImage(profile.jid.checkNull()).then((bool? value) {
+      Mirrorfly.removeGroupProfileImage(profile.jid.checkNull()).then((bool? value) {
         hideLoader();
         if (value != null) {
           if(value){
@@ -414,7 +414,7 @@ class GroupInfoController extends GetxController {
   addUsers(dynamic value)async{
     if(await AppUtils.isNetConnected()) {
       showLoader();
-      FlyChat.addUsersToGroup(profile.jid.checkNull(),value as List<String>).then((value){
+      Mirrorfly.addUsersToGroup(profile.jid.checkNull(),value as List<String>).then((value){
         hideLoader();
         if(value!=null && value){
           //getGroupMembers(false);
@@ -435,7 +435,7 @@ class GroupInfoController extends GetxController {
     if(isMemberOfGroup){
       if(await AppUtils.isNetConnected()) {
         showLoader();
-        FlyChat.removeMemberFromGroup(profile.jid.checkNull(), userJid).then((value){
+        Mirrorfly.removeMemberFromGroup(profile.jid.checkNull(), userJid).then((value){
           hideLoader();
           if(value!=null && value){
             //getGroupMembers(false);
@@ -453,7 +453,7 @@ class GroupInfoController extends GetxController {
     if(isMemberOfGroup){
       if(await AppUtils.isNetConnected()) {
         showLoader();
-        FlyChat.makeAdmin(profile.jid.checkNull(), userJid).then((value){
+        Mirrorfly.makeAdmin(profile.jid.checkNull(), userJid).then((value){
           hideLoader();
           if(value!=null && value){
             //getGroupMembers(false);
@@ -494,5 +494,13 @@ class GroupInfoController extends GetxController {
 
   void loadGroupExistence() {
     memberOfGroup();
+  }
+
+  void unblockedThisUser(String jid) {
+    userUpdatedHisProfile(jid);
+  }
+
+  void userBlockedMe(String jid) {
+    userUpdatedHisProfile(jid);
   }
 }

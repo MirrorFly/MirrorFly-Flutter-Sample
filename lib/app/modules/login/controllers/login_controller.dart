@@ -14,7 +14,7 @@ import 'package:otp_text_field/otp_field.dart';
 import '../../../common/constants.dart';
 import '../../../data/apputils.dart';
 import '../../../data/session_management.dart';
-import 'package:flysdk/flysdk.dart';
+import 'package:mirrorfly_plugin/mirrorfly.dart';
 import '../../../routes/app_pages.dart';
 
 class LoginController extends GetxController {
@@ -29,6 +29,7 @@ class LoginController extends GetxController {
   Duration myDuration = const Duration(seconds: 31);
 
   String? get countryCode => selectedCountry.value.dialCode;
+  String? get regionCode => selectedCountry.value.code;
   var verificationId = "";
   int? resendingToken;
   Rx<bool> timeout = false.obs;
@@ -67,6 +68,11 @@ class LoginController extends GetxController {
       debugPrint(seconds.value.toString());
     }
   }
+  @override
+  void onReady() {
+    super.onReady();
+    Mirrorfly.isTrailLicence().then((value) => SessionManagement.setIsTrailLicence(value.checkNull()));
+  }
 
   @override
   void dispose() {
@@ -82,14 +88,14 @@ class LoginController extends GetxController {
     if (mobileNumber.text.isEmpty) {
       toToast("Please Enter Mobile Number");
     } else {
-      //phoneAuth();
+      // phoneAuth();
       registerAccount();
     }
   }
 
   setUserJID(String username) {
-    FlyChat.getAllGroups(true);
-    FlyChat.getJid(username).then((value) {
+    Mirrorfly.getAllGroups(true);
+    Mirrorfly.getJid(username).then((value) {
       if (value != null) {
         SessionManagement.setUserJID(value);
         Helper.hideLoading();
@@ -241,7 +247,7 @@ class LoginController extends GetxController {
     if(await AppUtils.isNetConnected()) {
       var userName = (countryCode!.replaceAll('+', '') + mobileNumber.text.toString()).replaceAll("+", "");
       //make api call
-      FlyChat.verifyToken(userName, token).then((value) {
+      Mirrorfly.verifyToken(userName, token).then((value) {
         if (value != null) {
           validateDeviceToken(value);
         } else {
@@ -293,17 +299,18 @@ class LoginController extends GetxController {
   registerAccount() async {
     if (await AppUtils.isNetConnected()) {
       showLoading();
-      FlyChat.registerUser(
+      Mirrorfly.registerUser(
         countryCode!.replaceAll('+', '') + mobileNumber.text, token:SessionManagement.getToken().checkNull())
           .then((value) {
         if (value.contains("data")) {
           var userData = registerModelFromJson(value); //message
           SessionManagement.setLogin(userData.data!.username!.isNotEmpty);
           SessionManagement.setUser(userData.data!);
-          // FlyChat.setNotificationSound(true);
+          // Mirrorfly.setNotificationSound(true);
           // SessionManagement.setNotificationSound(true);
           // userData.data.
           enableArchive();
+          Mirrorfly.setRegionCode(regionCode ?? 'IN');///if its not set then error comes in contact sync delete from phonebook.
           SessionManagement.setCountryCode((countryCode ?? "").replaceAll('+', ''));
           setUserJID(userData.data!.username!);
         }
@@ -323,7 +330,7 @@ class LoginController extends GetxController {
   }
   void enableArchive() async{
     if(await AppUtils.isNetConnected()) {
-      FlyChat.enableDisableArchivedSettings(true);
+      Mirrorfly.enableDisableArchivedSettings(true);
     }else{
       toToast(Constants.noInternetConnection);
     }
