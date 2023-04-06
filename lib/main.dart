@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flysdk/flysdk.dart';
+import 'package:mirrorfly_plugin/mirrorfly.dart';
 
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/common/app_theme.dart';
@@ -27,34 +27,29 @@ import 'package:google_maps_flutter_platform_interface/google_maps_flutter_platf
 
 
 
-// Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-//   // If you're going to use other Firebase services in the background, such as Firestore,
-//   // make sure you call `initializeApp` before using other Firebase services.
-//   //await Firebase.initializeApp();
-//   debugPrint("Handling a background message: ${message.messageId}");
-//   PushNotifications.onMessage(message);
-// }
 bool shouldUseFirebaseEmulator = false;
 // dynamic nonChatUsers = [];
 Future<void> main() async {
-  //Get.put<NetworkManager>(NetworkManager());
-// Require Hybrid Composition mode on Android.
+  WidgetsFlutterBinding.ensureInitialized();
+  Mirrorfly.init(
+      baseUrl: 'https://api-preprod-sandbox.mirrorfly.com/api/v1/',
+      licenseKey: 'Please enter your License key',
+      iOSContainerID: 'group.com.mirrorfly.qa');
   final GoogleMapsFlutterPlatform mapsImplementation =
       GoogleMapsFlutterPlatform.instance;
   if (mapsImplementation is GoogleMapsFlutterAndroid) {
     mapsImplementation.useAndroidViewSurface = true;
   }
-  WidgetsFlutterBinding.ensureInitialized();
   await SessionManagement.onInit();
   ReplyHashMap.init();
-  FlyChat.getSendData().then((value) {
-    debugPrint("notification value ===> $value");
-    SessionManagement.setChatJid(value.checkNull());
-  });
-  // var nonchat = await FlyChat.getNonChatUsers();
+  // Mirrorfly.getSendData().then((value) {
+  //   debugPrint("notification value ===> $value");
+  //   SessionManagement.setChatJid(value.checkNull());
+  // });
+  // var nonchat = await Mirrorfly.getNonChatUsers();
   // nonChatUsers = json.decode(nonchat.toString());
-  FlyChat.isTrailLicence().then((value) => SessionManagement.setIsTrailLicence(value.checkNull()));
-  FlyChat.cancelNotifications();
+  Mirrorfly.isTrailLicence().then((value) => SessionManagement.setIsTrailLicence(value.checkNull()));
+  // Mirrorfly.cancelNotifications();
   if (!kIsWeb) {
      await Firebase.initializeApp();
     // await Firebase.initializeApp(

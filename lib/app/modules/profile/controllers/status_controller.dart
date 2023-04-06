@@ -7,7 +7,7 @@ import 'package:get/get.dart';
 import '../../../common/constants.dart';
 import '../../../data/apputils.dart';
 import '../../../data/helper.dart';
-import 'package:flysdk/flysdk.dart';
+import 'package:mirrorfly_plugin/mirrorfly.dart';
 
 class StatusListController extends FullLifeCycleController with FullLifeCycleMixin{
   var statusList = List<StatusData>.empty(growable: true).obs;
@@ -35,7 +35,7 @@ class StatusListController extends FullLifeCycleController with FullLifeCycleMix
   }
   getStatusList(){
     loading.value=true;
-    FlyChat.getProfileStatusList().then((value){
+    Mirrorfly.getProfileStatusList().then((value){
       loading.value=false;
       if(value!=null){
         statusList.clear();
@@ -52,7 +52,7 @@ class StatusListController extends FullLifeCycleController with FullLifeCycleMix
     debugPrint("updating item details--> $statusId");
     if(await AppUtils.isNetConnected()) {
       Helper.showLoading();
-      FlyChat.setMyProfileStatus(statusText!, statusId).then((value){
+      Mirrorfly.setMyProfileStatus(statusText!, statusId!).then((value){
         selectedStatus.value= statusText;
         addStatusController.text= statusText;
         var data = json.decode(value.toString());
@@ -72,7 +72,7 @@ class StatusListController extends FullLifeCycleController with FullLifeCycleMix
   insertStatus() async{
     if(await AppUtils.isNetConnected()){
       Helper.showLoading();
-        FlyChat.insertNewProfileStatus(addStatusController.text.trim().toString(),)
+        Mirrorfly.insertNewProfileStatus(addStatusController.text.trim().toString())
             .then((value) {
           selectedStatus.value = addStatusController.text.trim().toString();
           addStatusController.text = addStatusController.text.trim().toString();
@@ -162,7 +162,7 @@ class StatusListController extends FullLifeCycleController with FullLifeCycleMix
             if (await AppUtils.isNetConnected()) {
               Get.back();
               Helper.showLoading(message: "Deleting Status");
-              FlyChat.deleteProfileStatus(item.id!, item.status!, item.isCurrentStatus!)
+              Mirrorfly.deleteProfileStatus(item.id!, item.status!, item.isCurrentStatus!)
                   .then((value) {
                 statusList.remove(item);
                 Helper.hideLoading();

@@ -8,18 +8,6 @@ import FirebaseAuth
 import Firebase
 
 
-
-let BASE_URL = "https://api-preprod-sandbox.mirrorfly.com/api/v1/"
-    let LICENSE_KEY = "Please enter your License key"
-    let CONTAINER_ID = "group.com.mirrorfly.qa"
-    let ENABLE_CONTACT_SYNC = false
-    let IS_LIVE = false
-    let WEB_LOGIN_URL = "https://webchat-preprod-sandbox.mirrorfly.com/"
-    let IS_MOBILE_NUMBER_LOGIN = false
-
-let googleApiKey = "Please add your google api key"
-
-
 @UIApplicationMain
 @objc class AppDelegate: FlutterAppDelegate{
     
@@ -32,11 +20,9 @@ let googleApiKey = "Please add your google api key"
     didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
   ) -> Bool {
       
-      let controller : FlutterViewController = window?.rootViewController as! FlutterViewController
-      
-      FlyBaseController().initSDK(controller: controller, licenseKey: LICENSE_KEY, isTrial: !IS_LIVE, baseUrl: BASE_URL, containerID: CONTAINER_ID)
-      
-      GMSServices.provideAPIKey(googleApiKey)
+      let _ : FlutterViewController = window?.rootViewController as! FlutterViewController
+           
+//      GMSServices.provideAPIKey(googleApiKey)
       
       // MARK:- Push Notification
 //      clearPushNotifications()
@@ -66,27 +52,7 @@ let googleApiKey = "Please add your google api key"
       return super.application(application, didFinishLaunchingWithOptions: launchOptions)
   }
 
-    override func applicationWillResignActive(_ application: UIApplication) {
-        
-    }
-    
-    override func applicationWillTerminate(_ application: UIApplication) {
-        print("#appDelegate app terminated")
-        FlyBaseController().applicationWillTerminate()
-    }
-    override func applicationDidBecomeActive(_ application: UIApplication) {
-        print("#appDelegate applicationDidBecomeActive")
-        FlyBaseController().applicationDidBecomeActive()
-        NotificationCenter.default.removeObserver(self, name: NSNotification.Name(didEnterBackground), object: nil)
-    }
-    
-    override func applicationDidEnterBackground(_ application: UIApplication) {
-        print("#appDelegate applicationDidEnterBackground")
-        postNotificationdidEnterBackground = NotificationCenter.default
-        postNotificationdidEnterBackground?.post(name: Notification.Name(didEnterBackground), object: nil)
-
-        FlyBaseController().applicationDidEnterBackground()
-    }
+   
     
 }
 
@@ -101,7 +67,7 @@ extension AppDelegate {
                 self.getNotificationSettings()
                 DispatchQueue.main.async {
                     UIApplication.shared.registerForRemoteNotifications()
-                    FlyUtils.setBaseUrl(BASE_URL)
+//                    FlyUtils.setBaseUrl(BASE_URL)
                 }
             }
         }
@@ -110,9 +76,9 @@ extension AppDelegate {
     /// This method is used to clear notifications and badge count
     func clearPushNotifications() {
         
-        print("###Clearing push notification")
-        UNUserNotificationCenter.current().removeAllDeliveredNotifications()
-        UNUserNotificationCenter.current().removeAllPendingNotificationRequests()
+//        print("###Clearing push notification")
+//        UNUserNotificationCenter.current().removeAllDeliveredNotifications()
+//        UNUserNotificationCenter.current().removeAllPendingNotificationRequests()
     }
     
     override func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
@@ -129,7 +95,7 @@ extension AppDelegate {
         print("#token appDelegate \(token)")
         print("#token application DT => \(token)")
 //        VOIPManager.sharedInstance.saveAPNSToken(token: token)
-        Utility.saveInPreference(key: googleToken, value: token)
+//        Utility.saveInPreference(key: googleToken, value: token)
 //        VOIPManager.sharedInstance.updateDeviceToken()
 //        return super.application(application, didRegisterForRemoteNotificationsWithDeviceToken: deviceToken)
     }
@@ -161,7 +127,7 @@ extension AppDelegate {
         let chatId = response.notification.request.content.threadIdentifier
         print("chat ID ---> \(chatId)")
         if let profileDetails = ContactManager.shared.getUserProfileDetails(for: chatId) , chatId != FlyDefaults.myJid{
-            Utility.saveInPreference(key: notificationUserJid, value: profileDetails.jid ?? "")
+//            Utility.saveInPreference(key: notificationUserJid, value: profileDetails.jid ?? "")
             
         }
        

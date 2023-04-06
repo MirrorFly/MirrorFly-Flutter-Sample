@@ -19,7 +19,7 @@ import '../../../widgets/custom_action_bar_icons.dart';
 import '../../../widgets/lottie_animation.dart';
 import '../chat_widgets.dart';
 import '../controllers/chat_controller.dart';
-import 'package:flysdk/flysdk.dart';
+import 'package:mirrorfly_plugin/mirrorfly.dart';
 
 class ChatView extends GetView<ChatController> {
   const ChatView({Key? key}) : super(key: key);
@@ -50,6 +50,7 @@ class ChatView extends GetView<ChatController> {
                   //FocusManager.instance.primaryFocus?.unfocus();
                   controller.focusNode.unfocus();
                 } else if (controller.nJid != null) {
+                  // controller.saveUnsentMessage();
                   Get.offAllNamed(Routes.dashboard);
                   return Future.value(true);
                 } else if (controller.isSelected.value) {
@@ -220,16 +221,19 @@ class ChatView extends GetView<ChatController> {
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            controller.unreadCount.value != 0 ? CircleAvatar(
-                              radius: 8,
-                              child: Text(
-                                returnFormattedCount(controller.unreadCount.value),
-                                style: const TextStyle(
-                                    fontSize: 9,
-                                    color: Colors.white,
-                                    fontFamily: 'sf_ui'),
-                              ),
-                            ) : const SizedBox.shrink(),
+                            controller.unreadCount.value != 0
+                                ? CircleAvatar(
+                                    radius: 8,
+                                    child: Text(
+                                      returnFormattedCount(
+                                          controller.unreadCount.value),
+                                      style: const TextStyle(
+                                          fontSize: 9,
+                                          color: Colors.white,
+                                          fontFamily: 'sf_ui'),
+                                    ),
+                                  )
+                                : const SizedBox.shrink(),
                             IconButton(
                               icon: Image.asset(
                                 redirectLastMessage,
@@ -245,13 +249,69 @@ class ChatView extends GetView<ChatController> {
                         ),
                       ),
                     );
-                  })
+                  }),
+                  if (!controller.isTrail)
+                    Obx(() {
+                      return !controller.profile.isItSavedContact.checkNull()
+                          ? Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                const SizedBox(
+                                  width: 8,
+                                ),
+                                buttonNotSavedContact(
+                                    text: 'Add',
+                                    onClick: () {
+                                      controller.saveContact();
+                                    }),
+                                const SizedBox(
+                                  width: 8,
+                                ),
+                                buttonNotSavedContact(
+                                    text:
+                                        controller.profile.isBlocked.checkNull()
+                                            ? 'UnBlock'
+                                            : 'Block',
+                                    onClick: () {
+                                      if (controller.profile.isBlocked
+                                          .checkNull()) {
+                                        controller.unBlockUser();
+                                      } else {
+                                        controller.blockUser();
+                                      }
+                                    }),
+                                const SizedBox(
+                                  width: 8,
+                                ),
+                              ],
+                            )
+                          : const SizedBox.shrink();
+                    })
+                  else
+                    const SizedBox.shrink()
                 ],
               ),
             ),
           ),
         ));
   }
+
+  Widget buttonNotSavedContact(
+          {required String text, required Function()? onClick}) =>
+      Expanded(
+        child: InkWell(
+          onTap: onClick,
+          child: Container(
+            margin: const EdgeInsets.symmetric(vertical: 8.0),
+            padding: const EdgeInsets.all(8.0),
+            color: Colors.grey,
+            child: Text(
+              text,
+              textAlign: TextAlign.center,
+            ),
+          ),
+        ),
+      );
 
   messageTypingView(BuildContext context) {
     return Row(
@@ -264,14 +324,14 @@ class ChatView extends GetView<ChatController> {
         controller.isAudioRecording.value == Constants.audioRecordInitial
             ? InkWell(
                 onTap: () {
-                  if (!controller.showEmoji.value) {
-                    controller.focusNode.unfocus();
-                  }
-                  Future.delayed(const Duration(milliseconds: 100), () {
-                    controller.showEmoji(!controller.showEmoji.value);
-                  });
+                  controller.showHideEmoji(context);
                 },
-                child: SvgPicture.asset('assets/logos/smile.svg'))
+                child: controller.showEmoji.value
+                    ? const Icon(
+                        Icons.keyboard,
+                        color: iconColor,
+                      )
+                    : SvgPicture.asset(smileIcon))
             : const SizedBox.shrink(),
         controller.isAudioRecording.value == Constants.audioRecordDelete
             ? const Padding(
@@ -399,12 +459,17 @@ class ChatView extends GetView<ChatController> {
                 overflow: TextOverflow.ellipsis,
                 style: TextStyle(fontSize: 15),
               ),
-              const SizedBox(width: 5,),
+              const SizedBox(
+                width: 5,
+              ),
               Flexible(
-                child: Text(getName(controller.profile),//controller.profile.name.checkNull(),
+                child: Text(
+                  getName(controller.profile),
+                  //controller.profile.name.checkNull(),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(fontSize: 15),),
+                  style: const TextStyle(fontSize: 15),
+                ),
               ),
               const SizedBox(
                 width: 10,
@@ -559,7 +624,7 @@ class ChatView extends GetView<ChatController> {
                           }
                         },
                         onDoubleTap: () {
-                         // controller.translateMessage(index);
+                          controller.translateMessage(index);
                         },
                         child: Obx(() {
                           return Container(
@@ -629,15 +694,27 @@ class ChatView extends GetView<ChatController> {
                                             ? const SizedBox.shrink()
                                             : ReplyMessageHeader(
                                                 chatMessage: chatList[index]),
-                                        MessageContent(
-                                            chatList: chatList,
-                                            index: index,
-                                            onPlayAudio: () {
-                                              controller
-                                                  .playAudio(chatList[index]);
-                                            },
-                                            isSelected:
-                                                controller.isSelected.value)
+
+                                        Obx(() {
+                                          return MessageContent(
+                                              chatList: chatList,
+                                              index: index,
+                                              onPlayAudio: () {
+                                                if (controller.isAudioRecording
+                                                        .value ==
+                                                    Constants.audioRecording) {
+                                                  controller.stopRecording();
+                                                }
+                                                controller
+                                                    .playAudio(chatList[index]);
+                                              },
+                                              onSeekbarChange: (double value) {
+                                                controller.onSeekbarChange(
+                                                    value, chatList[index]);
+                                              },
+                                              isSelected:
+                                                  controller.isSelected.value);
+                                        })
                                       ],
                                     ),
                                   ),
@@ -758,13 +835,15 @@ class ChatView extends GetView<ChatController> {
               // controller.getOptionStatus('Reply')
               CustomAction(
                 visibleWidget: IconButton(
-                    onPressed: () {
-                      controller.handleReplyChatMessage(
-                          controller.selectedChatList[0]);
-                      controller
-                          .clearChatSelection(controller.selectedChatList[0]);
-                    },
-                    icon: SvgPicture.asset(replyIcon),tooltip: 'Reply',),
+                  onPressed: () {
+                    controller
+                        .handleReplyChatMessage(controller.selectedChatList[0]);
+                    controller
+                        .clearChatSelection(controller.selectedChatList[0]);
+                  },
+                  icon: SvgPicture.asset(replyIcon),
+                  tooltip: 'Reply',
+                ),
                 overflowWidget: const Text("Reply"),
                 showAsAction: controller.canBeReplied.value
                     ? ShowAsAction.always
@@ -779,10 +858,12 @@ class ChatView extends GetView<ChatController> {
               ),
               CustomAction(
                 visibleWidget: IconButton(
-                    onPressed: () {
-                      controller.checkBusyStatusForForward();
-                    },
-                    icon: SvgPicture.asset(forwardIcon),tooltip: 'Forward',),
+                  onPressed: () {
+                    controller.checkBusyStatusForForward();
+                  },
+                  icon: SvgPicture.asset(forwardIcon),
+                  tooltip: 'Forward',
+                ),
                 overflowWidget: const Text("Forward"),
                 showAsAction: controller.canBeForwarded.value
                     ? ShowAsAction.always
@@ -798,12 +879,14 @@ class ChatView extends GetView<ChatController> {
                   : customEmptyAction(),*/
               CustomAction(
                 visibleWidget: IconButton(
-                    onPressed: () {
-                      controller.favouriteMessage();
-                    },
-                    // icon: controller.getOptionStatus('Favourite') ? const Icon(Icons.star_border_outlined)
-                    // icon: controller.selectedChatList[0].isMessageStarred
-                    icon: SvgPicture.asset(favouriteIcon),tooltip: 'Favourite',),
+                  onPressed: () {
+                    controller.favouriteMessage();
+                  },
+                  // icon: controller.getOptionStatus('Favourite') ? const Icon(Icons.star_border_outlined)
+                  // icon: controller.selectedChatList[0].isMessageStarred
+                  icon: SvgPicture.asset(favouriteIcon),
+                  tooltip: 'Favourite',
+                ),
                 overflowWidget: const Text("Favourite"),
                 showAsAction: controller.canBeStarred.value
                     ? ShowAsAction.always
@@ -816,12 +899,14 @@ class ChatView extends GetView<ChatController> {
               ),
               CustomAction(
                 visibleWidget: IconButton(
-                    onPressed: () {
-                      controller.favouriteMessage();
-                    },
-                    // icon: controller.getOptionStatus('Favourite') ? const Icon(Icons.star_border_outlined)
-                    // icon: controller.selectedChatList[0].isMessageStarred
-                    icon: SvgPicture.asset(unFavouriteIcon),tooltip: 'unFavourite',),
+                  onPressed: () {
+                    controller.favouriteMessage();
+                  },
+                  // icon: controller.getOptionStatus('Favourite') ? const Icon(Icons.star_border_outlined)
+                  // icon: controller.selectedChatList[0].isMessageStarred
+                  icon: SvgPicture.asset(unFavouriteIcon),
+                  tooltip: 'unFavourite',
+                ),
                 overflowWidget: const Text("unFavourite"),
                 showAsAction: controller.canBeUnStarred.value
                     ? ShowAsAction.always
@@ -834,10 +919,12 @@ class ChatView extends GetView<ChatController> {
               ),
               CustomAction(
                 visibleWidget: IconButton(
-                    onPressed: () {
-                      controller.deleteMessages();
-                    },
-                    icon: SvgPicture.asset(deleteIcon),tooltip: 'Delete',),
+                  onPressed: () {
+                    controller.deleteMessages();
+                  },
+                  icon: SvgPicture.asset(deleteIcon),
+                  tooltip: 'Delete',
+                ),
                 overflowWidget: const Text("Delete"),
                 showAsAction: ShowAsAction.always,
                 keyValue: 'Delete',
@@ -922,7 +1009,10 @@ class ChatView extends GetView<ChatController> {
                   : customEmptyAction(),*/
               CustomAction(
                 visibleWidget: IconButton(
-                    onPressed: () {}, icon: SvgPicture.asset(shareIcon),tooltip: 'Share',),
+                  onPressed: () {},
+                  icon: SvgPicture.asset(shareIcon),
+                  tooltip: 'Share',
+                ),
                 overflowWidget: const Text("Share"),
                 showAsAction: controller.canBeShared.value
                     ? ShowAsAction.never
@@ -979,15 +1069,18 @@ class ChatView extends GetView<ChatController> {
                         ),
                       )
                     : ProfileTextImage(
-                        text: getName(controller.profile),/*controller.profile.name.checkNull().isEmpty
+                        text: getName(controller.profile),
+                        /*controller.profile.name.checkNull().isEmpty
                             ? controller.profile.nickName.checkNull().isEmpty
                                 ? controller.profile.mobileNumber.checkNull()
                                 : controller.profile.nickName.checkNull()
                             : controller.profile.name.checkNull(),*/
                         radius: 18,
                       ),
-                blocked: controller.profile.isBlockedMe.checkNull() || controller.profile.isAdminBlocked.checkNull(),
-                unknown: (!controller.profile.isItSavedContact.checkNull() || controller.profile.isDeletedContact()),
+                blocked: controller.profile.isBlockedMe.checkNull() ||
+                    controller.profile.isAdminBlocked.checkNull(),
+                unknown: (!controller.profile.isItSavedContact.checkNull() ||
+                    controller.profile.isDeletedContact()),
               ),
             ],
           ),
@@ -1001,7 +1094,8 @@ class ChatView extends GetView<ChatController> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  getName(controller.profile),/*controller.profile.name.checkNull().isEmpty
+                  getName(controller.profile),
+                  /*controller.profile.name.checkNull().isEmpty
                       ? controller.profile.nickName.checkNull()
                       : controller.profile.name.checkNull(),*/
                   overflow: TextOverflow.fade,
@@ -1012,7 +1106,8 @@ class ChatView extends GetView<ChatController> {
                           width: (controller.screenWidth) * 0.90,
                           height: 15,
                           child: Marquee(
-                              text: "${controller.groupParticipantsName}       ",
+                              text:
+                                  "${controller.groupParticipantsName}       ",
                               style: const TextStyle(fontSize: 12)))
                       : controller.subtitle.isNotEmpty
                           ? Text(
@@ -1080,7 +1175,7 @@ class ChatView extends GetView<ChatController> {
                       showAsAction: ShowAsAction.never,
                       keyValue: 'Unblock',
                       onItemClick: () {
-                        controller.closeKeyBoard();
+                        debugPrint('onItemClick unblock');
                         controller.unBlockUser();
                       },
                     )

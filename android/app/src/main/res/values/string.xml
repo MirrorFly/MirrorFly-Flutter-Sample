@@ -10,10 +10,4 @@
     <string name="file_emoji" translatable="false">📄</string>
     <string name="location_emoji" translatable="false">📌</string>
     <string name="unseen_message">%1$d unread messages</string>
-    <string-array name="default_busy_status_values">
-        <item>Driving car. Text you later</item>
-        <item>Please call me if anything important</item>
-        <item>Sleeping</item>
-        <item>In meeting</item>
-    </string-array>
 </resources>

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flysdk/flysdk.dart';
+import 'package:mirrorfly_plugin/mirrorfly.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
 import 'package:mirror_fly_demo/app/modules/dashboard/controllers/dashboard_controller.dart';
@@ -23,11 +23,11 @@ class ArchivedChatListController extends GetxController {
   }
   final archiveEnabled = true.obs;
   Future<void> getArchivedSettingsEnabled() async {
-    await FlyChat.isArchivedSettingsEnabled().then((value) => archiveEnabled(value));
+    await Mirrorfly.isArchivedSettingsEnabled().then((value) => archiveEnabled(value));
   }
 
   getArchivedChatsList() async {
-    await FlyChat.getArchivedChatList().then((value) {
+    await Mirrorfly.getArchivedChatList().then((value) {
       mirrorFlyLog("archived response", value.toString());
       if(value != null) {
         var data = recentChatFromJson(value);
@@ -126,7 +126,7 @@ class ArchivedChatListController extends GetxController {
   toChatPage(String jid) async {
     if (jid.isNotEmpty) {
       // Helper.progressLoading();
-      await FlyChat.getProfileDetails(jid, false).then((value) {
+      await Mirrorfly.getProfileDetails(jid, false).then((value) {
         if (value != null) {
           Helper.hideLoading();
           var profile = profiledata(value.toString());
@@ -139,7 +139,7 @@ class ArchivedChatListController extends GetxController {
   }
 
   _itemUnArchive(int index) {
-    FlyChat.updateArchiveUnArchiveChat(selectedChats[index], false);
+    Mirrorfly.updateArchiveUnArchiveChat(selectedChats[index], false);
     var chatIndex = archivedChats.indexWhere((element) =>
         selectedChats[index] == element.jid); //selectedChatsPosition[index];
     archivedChats[chatIndex].isChatArchived = (false);
@@ -167,7 +167,7 @@ class ArchivedChatListController extends GetxController {
   }
 
   void checkArchiveList(RecentChatData recent) async {
-    FlyChat.isArchivedSettingsEnabled().then((value) {
+    Mirrorfly.isArchivedSettingsEnabled().then((value) {
       if (value.checkNull()) {
         var archiveIndex =
             archivedChats.indexWhere((element) => recent.jid == element.jid);
@@ -212,7 +212,7 @@ class ArchivedChatListController extends GetxController {
   }
 
   Future<RecentChatData?> getRecentChatOfJid(String jid) async {
-    var value = await FlyChat.getRecentChatOf(jid);
+    var value = await Mirrorfly.getRecentChatOf(jid);
     mirrorFlyLog("chat", value.toString());
     if (value != null) {
       var data = recentChatDataFromJson(value);
@@ -264,7 +264,7 @@ class ArchivedChatListController extends GetxController {
   menuValidationForDeleteIcon() async {
     var selected = archivedChats.where((p0) => selectedChats.contains(p0.jid));
     for (var item in selected) {
-      var isMember = await FlyChat.isMemberOfGroup(item.jid.checkNull(), null);
+      var isMember = await Mirrorfly.isMemberOfGroup(item.jid.checkNull(), null);
       if ((item.getChatType() == Constants.typeGroupChat) && isMember!) {
         delete(false);
         return;
@@ -326,7 +326,7 @@ class ArchivedChatListController extends GetxController {
   }
 
   _itemMute(int index) {
-    FlyChat.updateChatMuteStatus(selectedChats[index], true);
+    Mirrorfly.updateChatMuteStatus(selectedChats[index], true);
     var chatIndex = archivedChats.indexWhere((element) =>
     selectedChats[index] == element.jid); //selectedChatsPosition[index];
     archivedChats[chatIndex].isMuted = (true);
@@ -336,7 +336,7 @@ class ArchivedChatListController extends GetxController {
     var chatIndex = archivedChats.indexWhere((element) =>
     selectedChats[index] == element.jid); //selectedChatsPosition[index];
     archivedChats[chatIndex].isMuted = (false);
-    FlyChat.updateChatMuteStatus(selectedChats[index], false);
+    Mirrorfly.updateChatMuteStatus(selectedChats[index], false);
   }
 
   deleteChats() {
@@ -372,14 +372,14 @@ class ArchivedChatListController extends GetxController {
     var chatIndex = archivedChats.indexWhere((element) =>
         selectedChats[index] == element.jid); //selectedChatsPosition[index];
     archivedChats.removeAt(chatIndex);
-    FlyChat.deleteRecentChat(selectedChats[index]);
-    //FlyChat.updateArchiveUnArchiveChat(selectedChats[index], false);
+    Mirrorfly.deleteRecentChat(selectedChats[index]);
+    //Mirrorfly.updateArchiveUnArchiveChat(selectedChats[index], false);
     clearAllChatSelection();
   }
 
   itemsDelete() {
     // debugPrint('selectedChatsPosition : ${selectedChatsPosition.join(',')}');
-    FlyChat.deleteRecentChats(selectedChats);
+    Mirrorfly.deleteRecentChats(selectedChats);
     for (var element in selectedChats) {
       archivedChats.removeWhere((e) => e.jid == element);
     }

@@ -33,11 +33,38 @@ target 'Runner' do
   
   use_modular_headers!
 
-
-  pod 'Mirrorfly-ios-framework', :git => 'https://github.com/MirrorFly/Mirrorfly-ios-framework.git', :branch => 'pod_qa'
+#   pod 'libPhoneNumber-iOS'
+#   pod 'Alamofire'
+#   pod 'RealmSwift', '10.20.1'
+#   pod 'XMPPFramework/Swift'
+#   pod 'SocketRocket'
+#   pod 'Socket.IO-Client-Swift'
+#   pod 'GoogleWebRTC'
+#  pod 'Mirrorfly-ios-framework', :git => 'https://github.com/MirrorFly/Mirrorfly-ios-framework.git', :branch => 'pod_qa'
+#  pod 'Mirrorfly-ios-framework', :git => 'https://github.com/MirrorFly/Mirrorfly-ios-framework.git', :branch => 'qa'
   flutter_install_all_ios_pods File.dirname(File.realpath(__FILE__))
 end
 
+#def notification_pods
+#
+##  pod 'Mirrorfly-ios-framework', :git => 'https://github.com/MirrorFly/Mirrorfly-ios-framework.git', :tag => '0.0.5'
+#  pod 'libPhoneNumber-iOS' #, '~> 0.8'
+#   pod 'Alamofire' #, '~> 5.3'
+#    #Pods for FlyCall
+#   pod 'SocketRocket'
+#   pod 'Socket.IO-Client-Swift' # To communicte Socket I/O server
+#   pod 'GoogleWebRTC' # WebRTC for Calls
+#   pod 'RealmSwift', '10.20.1'
+#   pod 'XMPPFramework/Swift'
+##  pod 'Mirrorfly-ios-framework', :git => 'https://github.com/MirrorFly/Mirrorfly-ios-framework.git', :branch => 'master'
+##  flutter_install_all_ios_pods File.dirname(File.realpath(__FILE__))
+#
+#
+#end
+#
+#target 'FlutterNotificationExtnsion' do
+#  notification_pods
+#end
 
 post_install do |installer|
   installer.pods_project.targets.each do |target|

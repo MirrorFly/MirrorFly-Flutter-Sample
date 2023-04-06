@@ -6,6 +6,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get/get.dart';
+import 'package:is_lock_screen/is_lock_screen.dart';
 import 'package:mirror_fly_demo/app/base_controller.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
@@ -18,7 +19,7 @@ import 'package:mirror_fly_demo/app/modules/chat/controllers/chat_controller.dar
 import 'package:mirror_fly_demo/app/modules/contact_sync/controllers/contact_sync_controller.dart';
 import 'package:mirror_fly_demo/app/routes/app_pages.dart';
 
-import 'package:flysdk/flysdk.dart';
+import 'package:mirrorfly_plugin/mirrorfly.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 import '../modules/chatInfo/controllers/chat_info_controller.dart';
@@ -41,6 +42,7 @@ class MainController extends FullLifeCycleController with BaseController, FullLi
   @override
   Future<void> onInit() async {
     super.onInit();
+    //presentPinPage();
     PushNotifications.init();
     initListeners();
     getMediaEndpoint();
@@ -138,7 +140,7 @@ class MainController extends FullLifeCycleController with BaseController, FullLi
       if(payload != null && payload.isNotEmpty){
 
         if (Get.isRegistered<ChatController>()) {
-          FlyChat.getProfileDetails(payload, false).then((value) {
+          Mirrorfly.getProfileDetails(payload, false).then((value) {
             if (value != null) {
               debugPrint("notification group info controller");
               var profile = profiledata(value.toString());
@@ -167,7 +169,7 @@ class MainController extends FullLifeCycleController with BaseController, FullLi
         .getMediaEndPoint()
         .checkNull()
         .isEmpty) {
-      FlyChat.mediaEndPoint().then((value) {
+      Mirrorfly.mediaEndPoint().then((value) {
         mirrorFlyLog("media_endpoint", value.toString());
         if(value!=null) {
           if (value.isNotEmpty) {
@@ -190,7 +192,7 @@ class MainController extends FullLifeCycleController with BaseController, FullLi
             .getPassword()
             .checkNull()
             .isNotEmpty) {
-      await FlyChat.authToken().then((value) {
+      await Mirrorfly.authToken().then((value) {
         mirrorFlyLog("RetryAuth", value.toString());
         if(value!=null) {
           if (value.isNotEmpty) {
@@ -231,6 +233,7 @@ class MainController extends FullLifeCycleController with BaseController, FullLi
         switch (status) {
           case InternetConnectionStatus.connected:
             mirrorFlyLog("network",'Data connection is available.');
+            networkConnected();
             if (Get.isRegistered<ChatController>()) {
               Get.find<ChatController>().networkConnected();
             }
@@ -243,6 +246,7 @@ class MainController extends FullLifeCycleController with BaseController, FullLi
             break;
           case InternetConnectionStatus.disconnected:
             mirrorFlyLog("network",'You are disconnected from the internet.');
+            networkDisconnected();
             if (Get.isRegistered<ChatController>()) {
               Get.find<ChatController>().networkDisconnected();
             }
@@ -266,22 +270,27 @@ class MainController extends FullLifeCycleController with BaseController, FullLi
 
   @override
   void onDetached() {
-
+    mirrorFlyLog('mainController', 'onDetached');
   }
 
   @override
   void onInactive() {
-
+    mirrorFlyLog('mainController', 'onInactive');
   }
 
+  bool fromLockScreen = false;
   @override
-  void onPaused() {
-
+  void onPaused() async {
+    mirrorFlyLog('mainController', 'onPaused');
+    fromLockScreen = await isLockScreen() ?? false;
+    mirrorFlyLog('isLockScreen', '$fromLockScreen');
+    SessionManagement.setAppSessionNow();
   }
 
   @override
   void onResumed() {
     mirrorFlyLog('mainController', 'onResumed');
+    checkShouldShowPin();
     if(!SessionManagement.isTrailLicence()) {
       syncContacts();
     }
@@ -290,15 +299,17 @@ class MainController extends FullLifeCycleController with BaseController, FullLi
   void syncContacts() async {
     if(await Permission.contacts.isGranted) {
       if (await AppUtils.isNetConnected() &&
-          !await FlyChat.contactSyncStateValue()) {
+          !await Mirrorfly.contactSyncStateValue()) {
         final permission = await Permission.contacts.status;
         if (permission == PermissionStatus.granted) {
-          FlyChat.syncContacts(!SessionManagement.isInitialContactSyncDone());
+          if(SessionManagement.getLogin()) {
+            Mirrorfly.syncContacts(!SessionManagement.isInitialContactSyncDone());
+          }
         }
       }
     }else{
       if(SessionManagement.isInitialContactSyncDone()) {
-        FlyChat.revokeContactSync().then((value) {
+        Mirrorfly.revokeContactSync().then((value) {
           onContactSyncComplete(true);
           mirrorFlyLog("checkContactPermission isSuccess", value.toString());
         });
@@ -306,5 +317,45 @@ class MainController extends FullLifeCycleController with BaseController, FullLi
     }
   }
 
+  void networkDisconnected() {}
 
+  void networkConnected() {
+    if(!SessionManagement.isTrailLicence()) {
+      syncContacts();
+    }
+  }
+
+  /*
+  *This function used to check time out session for app lock
+  */
+  void checkShouldShowPin(){
+    var lastSession = SessionManagement.appLastSession();
+    var lastPinChangedAt = SessionManagement.lastPinChangedAt();
+    var sessionDifference = DateTime.now().difference(DateTime.fromMillisecondsSinceEpoch(lastSession));
+    var lockSessionDifference = DateTime.now().difference(DateTime.fromMillisecondsSinceEpoch(lastPinChangedAt));
+    debugPrint('sessionDifference seconds ${sessionDifference.inSeconds}');
+    debugPrint('lockSessionDifference days ${lockSessionDifference.inDays}');
+    if(Constants.pinAlert<=lockSessionDifference.inDays && Constants.pinExpiry>=lockSessionDifference.inDays){
+      //Alert Day
+      debugPrint('Alert Day');
+    } else if(Constants.pinExpiry<lockSessionDifference.inDays) {
+      //Already Expired day
+      debugPrint('Already Expired');
+      presentPinPage();
+    }else{
+      //if 30 days not completed
+      debugPrint('Not Expired');
+      if (Constants.sessionLockTime <= sessionDifference.inSeconds || fromLockScreen) {
+        //Show Pin if App Lock Enabled
+        debugPrint('Show Pin');
+        presentPinPage();
+      }
+    }
+    fromLockScreen=false;
+  }
+  void presentPinPage(){
+    if((SessionManagement.getEnablePin() || SessionManagement.getEnableBio()) && Get.currentRoute!=Routes.pin){
+      Get.toNamed(Routes.pin,);
+    }
+  }
 }

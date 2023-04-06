@@ -10,7 +10,7 @@ import '../../../widgets/custom_action_bar_icons.dart';
 import '../../chat/chat_widgets.dart';
 import '../../chat/views/starred_message_header.dart';
 import '../controllers/starred_messages_controller.dart';
-import 'package:flysdk/flysdk.dart';
+import 'package:mirrorfly_plugin/mirrorfly.dart';
 
 class StarredMessagesView extends GetView<StarredMessagesController> {
   const StarredMessagesView({Key? key}) : super(key: key);
@@ -27,6 +27,9 @@ class StarredMessagesView extends GetView<StarredMessagesController> {
           if (controller.isSelected.value) {
             controller.clearAllChatSelection();
             return Future.value(false);
+          }else if(controller.isSearch.value){
+            controller.clearSearch();
+            return Future.value(false);
           }
           return Future.value(true);
         },
@@ -35,9 +38,9 @@ class StarredMessagesView extends GetView<StarredMessagesController> {
           body: Obx(() {
             return controller.starredChatList.isNotEmpty ?
             SingleChildScrollView(child: favouriteChatListView(controller.starredChatList)) :
-            controller.isListLoading.value ? const Center(child: CircularProgressIndicator(),) : const Center(child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 10.0,vertical: 30),
-              child: Text("No Starred Messages Found"),
+            controller.isListLoading.value ? const Center(child: CircularProgressIndicator(),) : Center(child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 10.0,vertical: 30),
+              child: Text(controller.isSearch.value ? "No result found" : "No Starred Messages Found"),
             ));
           })
         ),
@@ -113,9 +116,23 @@ class StarredMessagesView extends GetView<StarredMessagesController> {
                                   border: starredChatList[index].isMessageSentByMe
                                       ? Border.all(color: chatSentBgColor)
                                       : Border.all(color: chatBorderColor)),
-                              child: MessageContent(chatList: starredChatList,index:index, onPlayAudio: (){
-                                controller.playAudio(starredChatList[index]);
-                              },),
+                              child: Column(
+                                crossAxisAlignment:
+                                CrossAxisAlignment.start,
+                                children: [
+                                  (starredChatList[index]
+                                      .replyParentChatMessage ==
+                                      null)
+                                      ? const SizedBox.shrink()
+                                      : ReplyMessageHeader(
+                                      chatMessage: starredChatList[index]),
+                                  MessageContent(chatList: starredChatList,search: controller.searchedText.text.trim(),index:index, onPlayAudio: (){
+                                    controller.playAudio(starredChatList[index]);
+                                  },onSeekbarChange:(value){
+
+                                  },),
+                                ],
+                              ),
                             ),
                           ),
                         ],
@@ -146,11 +163,7 @@ class StarredMessagesView extends GetView<StarredMessagesController> {
                   fit: BoxFit.contain,
                 ),
                 onPressed: () {
-                  /*if (controller.isSearch.value) {
-                    controller.isSearch(false);
-                  } else {
-                    controller.isSearch(true);
-                  }*/
+                  controller.onSearchClick();
                 },
               ),
             ],
@@ -166,11 +179,23 @@ class StarredMessagesView extends GetView<StarredMessagesController> {
       title: TextField(
         onChanged: (text) => controller.startSearch(text),
         controller: controller.searchedText,
+        focusNode: controller.searchFocus,
         autofocus: true,
         decoration: const InputDecoration(
             hintText: "Search...", border: InputBorder.none),
       ),
       iconTheme: const IconThemeData(color: iconColor),
+      actions: [
+        Visibility(
+          visible: controller.clear.value,
+          child: IconButton(
+            icon: const Icon(Icons.close),
+            onPressed: () {
+              controller.clearSearch();
+            },
+          ),
+        ),
+      ],
     );
   }
 

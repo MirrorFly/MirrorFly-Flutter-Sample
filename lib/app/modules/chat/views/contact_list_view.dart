@@ -35,6 +35,7 @@ class ContactListView extends GetView<ContactController> {
                   onChanged: (text) {
                     controller.searchListener(text);
                   },
+            focusNode: controller.searchFocus,
                   style: const TextStyle(fontSize: 16),
                   controller: controller.searchQuery,
                   autofocus: true,
@@ -107,13 +108,15 @@ class ContactListView extends GetView<ContactController> {
                     overflowWidget: InkWell(
                       child: const Text("Refresh"),
                       onTap: (){
-                        controller.refreshContacts();
+                        Get.back();
+                        controller.refreshContacts(true);
                       },
                     ),
-                    showAsAction: SessionManagement.isTrailLicence() ? ShowAsAction.never : ShowAsAction.gone,
+                    showAsAction: (!SessionManagement.isTrailLicence() && !controller.progressSpinner.value) ? ShowAsAction.never : ShowAsAction.gone,
                     keyValue: 'Refresh',
                     onItemClick: () {
-                      Get.toNamed(Routes.settings);
+                      // Get.back();
+                      controller.refreshContacts(true);
                     },
                   )
                 ],
@@ -136,7 +139,7 @@ class ContactListView extends GetView<ContactController> {
           return RefreshIndicator(
             key: controller.refreshIndicatorKey,
             onRefresh: (){
-              return Future(()=>controller.refreshContacts());
+              return Future(()=>controller.refreshContacts(true));
             },
             child: SafeArea(
               child: Stack(
@@ -171,42 +174,47 @@ class ContactListView extends GetView<ContactController> {
                                 child: InkWell(
                                   child: Row(
                                     children: [
-                                      Container(
-                                          margin: const EdgeInsets.only(
-                                              left: 19.0,
-                                              top: 10,
-                                              bottom: 10,
-                                              right: 10),
-                                          width: 50,
-                                          height: 50,
-                                          decoration: BoxDecoration(
-                                            color: item.image.checkNull().isEmpty
-                                                ? iconBgColor
-                                                : buttonBgColor,
-                                            shape: BoxShape.circle,
-                                          ),
-                                          child: ImageNetwork(
-                                            url: item.image.toString(),
-                                            width: 48,
-                                            height: 48,
-                                            clipOval: true,
-                                            errorWidget: getName(item)//item.nickName
-                                                    .checkNull()
-                                                    .isNotEmpty
-                                                ? ProfileTextImage(
-                                                    text:
-                                                        getName(item)/*item.nickName.checkNull().isEmpty
-                                                            ? item.mobileNumber
-                                                                .checkNull()
-                                                            : item.nickName.checkNull()*/,
-                                                  )
-                                                : const Icon(
-                                                    Icons.person,
-                                                    color: Colors.white,
-                                                  ),
-                                            blocked: item.isBlockedMe.checkNull() || item.isAdminBlocked.checkNull(),
-                                            unknown: (!item.isItSavedContact.checkNull() || item.isDeletedContact()),isGroup: item.isGroupProfile.checkNull(),
-                                          )),
+                                      InkWell(
+                                        child: Container(
+                                            margin: const EdgeInsets.only(
+                                                left: 19.0,
+                                                top: 10,
+                                                bottom: 10,
+                                                right: 10),
+                                            width: 50,
+                                            height: 50,
+                                            decoration: BoxDecoration(
+                                              color: item.image.checkNull().isEmpty
+                                                  ? iconBgColor
+                                                  : buttonBgColor,
+                                              shape: BoxShape.circle,
+                                            ),
+                                            child: ImageNetwork(
+                                              url: item.image.toString(),
+                                              width: 48,
+                                              height: 48,
+                                              clipOval: true,
+                                              errorWidget: getName(item)//item.nickName
+                                                      .checkNull()
+                                                      .isNotEmpty
+                                                  ? ProfileTextImage(
+                                                      text:
+                                                          getName(item)/*item.nickName.checkNull().isEmpty
+                                                              ? item.mobileNumber
+                                                                  .checkNull()
+                                                              : item.nickName.checkNull()*/,
+                                                    )
+                                                  : const Icon(
+                                                      Icons.person,
+                                                      color: Colors.white,
+                                                    ),
+                                              blocked: item.isBlockedMe.checkNull() || item.isAdminBlocked.checkNull(),
+                                              unknown: (!item.isItSavedContact.checkNull() || item.isDeletedContact()),isGroup: item.isGroupProfile.checkNull(),
+                                            )),
+                                        onTap: (){
+                                          controller.showProfilePopup(item.obs);
+                                        },
+                                      ),
                                       Expanded(
                                         child: Column(
                                           crossAxisAlignment:

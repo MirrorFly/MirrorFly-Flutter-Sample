@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:flysdk/flysdk.dart';
+import 'package:mirrorfly_plugin/mirrorfly.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
 import 'package:mirror_fly_demo/app/data/session_management.dart';
@@ -35,26 +35,26 @@ class ChatSettingsController extends GetxController {
     getArchivedSettingsEnabled();
     _translationEnabled(SessionManagement.isGoogleTranslationEnable());
     _translationLanguage(SessionManagement.getTranslationLanguage());
-    _autoDownloadEnabled(await FlyChat.getMediaAutoDownload());
+    _autoDownloadEnabled(await Mirrorfly.getMediaAutoDownload());
     getLastSeenSettingsEnabled();
     getBusyStatusPreference();
     getMyBusyStatus();
 
   }
   Future<void> getArchivedSettingsEnabled() async {
-    await FlyChat.isArchivedSettingsEnabled().then((value) => _archiveEnabled(value));
+    await Mirrorfly.isArchivedSettingsEnabled().then((value) => _archiveEnabled(value));
 
   }
 
   Future<void> getLastSeenSettingsEnabled() async {
     // boolean lastSeenStatus = FlyCore.isHideLastSeenEnabled();
-    await FlyChat.isHideLastSeenEnabled().then((value) => lastSeenPreference(value));
+    await Mirrorfly.isHideLastSeenEnabled().then((value) => lastSeenPreference(value));
   }
 
 
   void enableArchive() async{
     if(await AppUtils.isNetConnected()) {
-      FlyChat.enableDisableArchivedSettings(!archiveEnabled);
+      Mirrorfly.enableDisableArchivedSettings(!archiveEnabled);
       _archiveEnabled(!archiveEnabled);
     }else{
       toToast(Constants.noInternetConnection);
@@ -64,7 +64,7 @@ class ChatSettingsController extends GetxController {
   Future<void> enableDisableAutoDownload() async {
     if (await askStoragePermission()) {
       var enable = !_autoDownloadEnabled.value;//SessionManagement.isAutoDownloadEnable();
-        FlyChat.setMediaAutoDownload(enable);
+        Mirrorfly.setMediaAutoDownload(enable);
         _autoDownloadEnabled(enable);
     }
   }
@@ -118,7 +118,7 @@ class ChatSettingsController extends GetxController {
 
   Future<void> clearAllConv() async {
     if (await AppUtils.isNetConnected()) {
-      var result = await FlyChat.clearAllConversation();
+      var result = await Mirrorfly.clearAllConversation();
       if(result.checkNull()){
         toToast('All your conversation are cleared');
       }else{
@@ -131,7 +131,7 @@ class ChatSettingsController extends GetxController {
 
   lastSeenEnableDisable() async{
     if(await AppUtils.isNetConnected()) {
-      FlyChat.enableDisableHideLastSeen(!lastSeenPreference.value).then((value) {
+      Mirrorfly.enableDisableHideLastSeen(!lastSeenPreference.value).then((value) {
         debugPrint("enableDisableHideLastSeen--> $value");
         if(value != null && value) {
           lastSeenPreference(!lastSeenPreference.value);
@@ -146,25 +146,22 @@ class ChatSettingsController extends GetxController {
     bool busyStatusVal = !busyStatusPreference.value;
     debugPrint("busy_status_val ${busyStatusVal.toString()}");
     busyStatusPreference(busyStatusVal);
-    await FlyChat.enableDisableBusyStatus(busyStatusVal).then((value) => getMyBusyStatus());
+    await Mirrorfly.enableDisableBusyStatus(busyStatusVal).then((value) => getMyBusyStatus());
   }
 
   void getMyBusyStatus() {
-    FlyChat.getMyBusyStatus().then((value) {
-      if(value!=null) {
-        var userBusyStatus = json.decode(value);
-        debugPrint("Busy Status ${userBusyStatus["status"]}");
-        // var busyStatus = userBusyStatus["status"];
-        // if(busyStatus)
-        busyStatus(userBusyStatus["status"]);
-      }else{
-        busyStatus('I am busy');
-      }
+    Mirrorfly.getMyBusyStatus().then((value) {
+      var userBusyStatus = json.decode(value);
+      debugPrint("Busy Status ${userBusyStatus["status"]}");
+      // var busyStatus = userBusyStatus["status"];
+      // if(busyStatus)
+      busyStatus(userBusyStatus["status"]);
+
     });
   }
 
   Future<void> getBusyStatusPreference() async {
-    bool? busyStatusPref = await FlyChat.isBusyStatusEnabled();
+    bool? busyStatusPref = await Mirrorfly.isBusyStatusEnabled();
     busyStatusPreference(busyStatusPref);
     debugPrint("busyStatusPref ${busyStatusPref.toString()}");
   }

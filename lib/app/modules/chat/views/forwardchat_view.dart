@@ -64,7 +64,7 @@ class ForwardChatView extends GetView<ForwardChatController> {
                         Visibility(
                           visible: controller.recentChats.isNotEmpty,
                           child: searchHeader("Recent Chat",
-                              controller.recentChats.length.toString(), context),
+                              "", context),
                         ),
                         ListView.builder(
                             itemCount: controller.recentChats.length,
@@ -92,8 +92,7 @@ class ForwardChatView extends GetView<ForwardChatController> {
                             }),
                         Visibility(
                           visible: controller.groupList.isNotEmpty,
-                          child: searchHeader("Groups",
-                              controller.groupList.length.toString(), context),
+                          child: searchHeader("Groups","", context),
                         ),
                         ListView.builder(
                             itemCount: controller.groupList.length,
@@ -139,8 +138,7 @@ class ForwardChatView extends GetView<ForwardChatController> {
                             }),
                         Visibility(
                           visible: controller.userList.isNotEmpty,
-                          child: searchHeader("Contacts",
-                              controller.userList.isNotEmpty ? controller.userList.length.toString() : "", context),
+                          child: searchHeader("Contacts", "", context),
                         ),
                         Visibility(
                           visible: controller.searchLoading.value || controller.contactLoading.value,

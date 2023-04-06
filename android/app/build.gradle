@@ -32,7 +32,6 @@ android {
     ndkVersion flutter.ndkVersion
 
 
-
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
@@ -62,36 +61,22 @@ android {
 
     buildTypes {
         debug {
-            buildConfigField 'Boolean', 'IS_QA_BUILD', 'true'
-            buildConfigField 'String', 'SDK_BASE_URL', '"https://api-preprod-sandbox.mirrorfly.com/api/v1/"'
-            buildConfigField 'String', 'LICENSE', '"Please enter your License key"'
-            buildConfigField 'String', 'WEB_CHAT_LOGIN', '"https://webchat-preprod-sandbox.mirrorfly.com/"'
-            buildConfigField 'Boolean', 'IS_TRIAL_LICENSE', 'true'
-            buildConfigField "String", "SUPPORT_MAIL", '"contussupport@gmail.com"'
-            resValue("string", "app_name", "UI Kit")
+            resValue("string", "app_name", "Mirrorfly Flutter")
             shrinkResources false
             debuggable true
             minifyEnabled false
             signingConfig signingConfigs.debug
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
-
         release {
-            buildConfigField 'Boolean', 'IS_QA_BUILD', 'true'
-            buildConfigField 'String', 'SDK_BASE_URL', '"https://api-preprod-sandbox.mirrorfly.com/api/v1/"'
-            buildConfigField 'String', 'LICENSE', '"Please enter your License key"'
-            buildConfigField 'String', 'WEB_CHAT_LOGIN', '"https://webchat-preprod-sandbox.mirrorfly.com/"'
-            buildConfigField 'Boolean', 'IS_TRIAL_LICENSE', 'true'
-            buildConfigField "String", "SUPPORT_MAIL", '"contussupport@gmail.com"'
-            resValue("string", "app_name", "UI Kit")
+            resValue("string", "app_name", "Mirrorfly Flutter")
             shrinkResources false
-            debuggable false
+            debuggable true
             minifyEnabled false
             signingConfig signingConfigs.debug
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
-
 
 
     packagingOptions {
@@ -119,16 +104,16 @@ dependencies {
     implementation 'androidx.appcompat:appcompat:1.5.1'
     implementation 'com.google.android.material:material:1.4.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
-
+//    implementation ('com.fly.sdk:appbase:0.0.5')
     configurations {
         all {
             exclude group: 'org.json', module: 'json'
             exclude group: 'xpp3', module: 'xpp3'
         }
     }
-    implementation 'com.mirrorfly.sdk:appbase:0.0.10'
+//    implementation 'com.mirrorfly.sdk:appbase:0.0.12'
 
-    // Import the Firebase BoM
+    /*// Import the Firebase BoM
     implementation platform('com.google.firebase:firebase-bom:30.2.0')
 
     // Add the dependency for the Firebase SDK for Google Analytics
@@ -143,6 +128,6 @@ dependencies {
     //KTX Depenedency
     implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.5.1'
     implementation 'androidx.fragment:fragment-ktx:1.5.5'
-    implementation 'androidx.activity:activity-ktx:1.7.0-alpha02'
+    implementation 'androidx.activity:activity-ktx:1.7.0-alpha02'*/
 }
 

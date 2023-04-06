@@ -6,7 +6,7 @@ import 'package:mirror_fly_demo/app/data/session_management.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 
-import 'package:flysdk/flysdk.dart';
+import 'package:mirrorfly_plugin/mirrorfly.dart';
 import '../../data/apputils.dart';
 import '../../routes/app_pages.dart';
 
@@ -54,7 +54,7 @@ class ScannerController extends GetxController {
     if (barcode != null) {
       if(await AppUtils.isNetConnected()) {
         controller!.pauseCamera();
-        FlyChat.loginWebChatViaQRCode(barcode).then((value) {
+        Mirrorfly.loginWebChatViaQRCode(barcode).then((value) {
           if (value != null) {
             SessionManagement.setWebChatLogin(value);
             Get.back();
@@ -74,8 +74,8 @@ class ScannerController extends GetxController {
   logoutWebUser() async {
     if(await AppUtils.isNetConnected()) {
       Helper.progressLoading();
-      FlyChat.webLoginDetailsCleared();
-      FlyChat.logoutWebUser(loginQr).then((value) {
+      Mirrorfly.webLoginDetailsCleared();
+      Mirrorfly.logoutWebUser(loginQr).then((value) {
         Helper.hideLoading();
         if (value != null && value) {
           SessionManagement.setWebChatLogin(false);
@@ -88,7 +88,7 @@ class ScannerController extends GetxController {
   }
 
   webLoginDetailsCleared() {
-    FlyChat.webLoginDetailsCleared().then((value) {
+    Mirrorfly.webLoginDetailsCleared().then((value) {
       if (value != null && value) {
         //SessionManagement.setWebChatLogin(false);
       }
@@ -97,7 +97,7 @@ class ScannerController extends GetxController {
 
   getWebLoginDetails() {
     loginQr.clear();
-    FlyChat.getWebLoginDetails().then((value) {
+    Mirrorfly.getWebLoginDetails().then((value) {
       if (value != null) {
         var list = webLoginFromJson(value);
         _webLogins(list);
@@ -130,7 +130,7 @@ class ScannerController extends GetxController {
   }
 
   addLogin() {
-    FlyChat.webLoginDetailsCleared();
+    Mirrorfly.webLoginDetailsCleared();
     Get.toNamed(Routes.scanner)?.then((value) {
       getWebLoginDetails();
     });

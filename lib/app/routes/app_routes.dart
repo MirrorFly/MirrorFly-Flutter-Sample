@@ -8,7 +8,7 @@ abstract class Routes {
   static const createGroup = _Paths.createGroup;
   static const groupInfo = _Paths.groupInfo;
   static const viewMedia = _Paths.viewMedia;
-  static const recentSearch = _Paths.recentSearch;
+  // static const recentSearch = _Paths.recentSearch;
   static const login = _Paths.login;
   static const otp = _Paths.otp;
   static const countries = _Paths.countries;
@@ -46,6 +46,7 @@ abstract class Routes {
   static const busyStatus = _Paths.busyStatus;
   static const dataUsageSetting = _Paths.dataUsageSetting;
   static const contactSync = _Paths.contactSync;
+  static const viewAllMediaPreview = _Paths.viewAllMediaPreview;
 }
 
 abstract class _Paths {
@@ -56,7 +57,7 @@ abstract class _Paths {
   static const createGroup = '/create_group';
   static const groupInfo = '/group_info';
   static const viewMedia = '/view_all_media';
-  static const recentSearch = '/recent_search';
+  // static const recentSearch = '/recent_search';
   static const login = '/login';
   static const otp = '/otp';
   static const countries = '/Countries';
@@ -94,4 +95,5 @@ abstract class _Paths {
   static const busyStatus = '/busy-status';
   static const dataUsageSetting = '/data_usage_setting';
   static const contactSync = '/contact_sync';
+  static const viewAllMediaPreview = '/view-all-media-preview';
 }
