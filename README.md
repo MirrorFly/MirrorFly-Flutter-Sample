@@ -1,10 +1,10 @@
-# [MirrorFly](https://mirrorfly.com) Chat SDK Sample for Flutter
+# [MirrorFly](https://mirrorfly.com) Chat App Sample for Flutter
 
-If you're looking for the fastest way in action with CONTUS TECH [MirrorFly Plugin], then you need to build your app on top of our sample version. Simply download the sample app and commence your app development.
+If you're looking for the fastest way in action with CONTUS TECH [MirrorFly Plugin](https://pub.dev/packages/mirrorfly_plugin), then you need to build your app on top of our sample version. Simply download the sample app and commence your app development.
 
 ## Configuration
 
-Replace the licence key with yours in `main.dart` file.
+Replace the `licence key` with yours in `main.dart` file.
 
 ```dart
   Mirrorfly.init(
