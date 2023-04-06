@@ -9,6 +9,7 @@ import 'package:get/get.dart';
 
 import '../../../common/constants.dart';
 import '../../../data/helper.dart';
+import '../../../routes/app_pages.dart';
 import '../../chat/controllers/chat_controller.dart';
 
 class MediaPreviewController extends FullLifeCycleController with FullLifeCycleMixin {
@@ -89,7 +90,9 @@ class MediaPreviewController extends FullLifeCycleController with FullLifeCycleM
         }
       } finally {
         Platform.isIOS ? Helper.hideLoading() : null;
-        Get.back();
+        if(Get.previousRoute==Routes.galleryPicker){
+          Get.back();
+        }
         Get.back();
       }
       // Get.back();
