@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:mirrorfly_plugin/mirrorfly.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -14,7 +15,14 @@ class SessionManagement {
     }
   }
   static Future onInit() async {
-    _preferences = await SharedPreferences.getInstance();
+    try{
+      _preferences = await SharedPreferences.getInstance();
+    }catch(e){
+      debugPrint("shared Pref exception $e");
+      SharedPreferences.setMockInitialValues({});
+      _preferences = await SharedPreferences.getInstance();
+    }
+
   }
 
   static Future setLogin(bool val) async {
