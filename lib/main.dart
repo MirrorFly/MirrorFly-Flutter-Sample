@@ -1,5 +1,6 @@
 // import 'package:firebase_messaging/firebase_messaging.dart';
 
+
 import 'package:flutter/material.dart';
 
 import 'package:firebase_auth/firebase_auth.dart';
@@ -36,13 +37,14 @@ import 'package:google_maps_flutter_platform_interface/google_maps_flutter_platf
 // }
 bool shouldUseFirebaseEmulator = false;
 // dynamic nonChatUsers = [];
+
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   Mirrorfly.init(
       baseUrl: 'https://api-uikit-qa.contus.us/api/v1/',
       licenseKey: 'ckIjaccWBoMNvxdbql8LJ2dmKqT5bp',//ckIjaccWBoMNvxdbql8LJ2dmKqT5bp//2sdgNtr3sFBSM3bYRa7RKDPEiB38Xo
-      isTrialLicenceKey: false,
-      iOSContainerID: 'group.com.mirrorfly.qa');
+      isTrialLicenceKey: true,
+      iOSContainerID: 'group.com.mirrorfly.flutter');
   final GoogleMapsFlutterPlatform mapsImplementation =
       GoogleMapsFlutterPlatform.instance;
   if (mapsImplementation is GoogleMapsFlutterAndroid) {

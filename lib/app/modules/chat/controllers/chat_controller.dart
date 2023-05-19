@@ -1134,7 +1134,7 @@ class ChatController extends FullLifeCycleController
                             chatMessage?.messageId ?? "")
                         .then((value) {
                       //report success
-                      debugPrint(value.toString());
+                      // debugPrint(value.toString());
                       if(value.checkNull()){
                         toToast("Report sent");
                       }else{

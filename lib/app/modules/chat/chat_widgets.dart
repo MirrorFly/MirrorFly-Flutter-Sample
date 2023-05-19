@@ -1867,8 +1867,8 @@ class RecalledMessageView extends StatelessWidget {
 }
 
 getMessageIndicator(String? messageStatus, bool isSender, String messageType,bool isRecalled) {
-  // debugPrint("Message Status ==>");
-  // debugPrint("Message Status ==> $messageStatus");
+  debugPrint("Message Status ==>");
+  debugPrint("Message Status ==> $messageStatus");
   if (isSender && !isRecalled) {
     if (messageStatus == 'A') {
       return SvgPicture.asset(acknowledgedIcon);
