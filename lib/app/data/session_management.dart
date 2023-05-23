@@ -14,7 +14,12 @@ class SessionManagement {
     }
   }
   static Future onInit() async {
-    _preferences = await SharedPreferences.getInstance();
+    try {
+      _preferences = await SharedPreferences.getInstance();
+    }catch(e){
+      SharedPreferences.setMockInitialValues({});
+      _preferences = await SharedPreferences.getInstance();
+    }
   }
 
   static Future setLogin(bool val) async {

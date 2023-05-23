@@ -100,7 +100,7 @@ class LoginView extends GetView<LoginController> {
                                   keyboardType: TextInputType.phone,
                                   inputFormatters: <TextInputFormatter>[
                                     FilteringTextInputFormatter.digitsOnly,
-                                    LengthLimitingTextInputFormatter(10)
+                                    LengthLimitingTextInputFormatter(13)
                                   ],
                                   decoration: const InputDecoration(
                                     border: InputBorder.none,

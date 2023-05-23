@@ -75,7 +75,7 @@ post_install do |installer|
       config.build_settings['APPLICATION_EXTENSION_API_ONLY'] = 'No'
       config.build_settings['BUILD_LIBRARY_FOR_DISTRIBUTION'] = 'YES'
       config.build_settings["EXCLUDED_ARCHS[sdk=iphonesimulator*]"] = "arm64"
-#      flutter_additional_ios_build_settings(target)
+#       flutter_additional_ios_build_settings(target)
       config.build_settings['GCC_PREPROCESSOR_DEFINITIONS'] ||= [
               '$(inherited)',
         ## dart: PermissionGroup.contacts
@@ -87,6 +87,18 @@ post_install do |installer|
       ## dart: PermissionGroup.mediaLibrary
         'PERMISSION_MEDIA_LIBRARY=1',
       ]
+#      for build Archive issues in Xocde 14.3
+      shell_script_path = "Pods/Target Support Files/#{target.name}/#{target.name}-frameworks.sh"
+            if File::exist?(shell_script_path)
+              shell_script_input_lines = File.readlines(shell_script_path)
+              shell_script_output_lines = shell_script_input_lines.map { |line| line.sub("source=\"$(readlink \"${source}\")\"", "source=\"$(readlink -f \"${source}\")\"") }
+              File.open(shell_script_path, 'w') do |f|
+                shell_script_output_lines.each do |line|
+                  f.write line
+                end
+              end
+            end
+#       for build Archive issues in Xocde 14.3
      end
   end
 end

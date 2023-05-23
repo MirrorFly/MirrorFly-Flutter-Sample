@@ -46,7 +46,7 @@ class CountryListView extends GetView<CountryController> {
                   ),
           ],
         ),
-        body: ListView.builder(
+        body: controller.countryList.isNotEmpty ? ListView.builder(
               itemCount: controller.countryList.length,
               physics: const AlwaysScrollableScrollPhysics(),
               itemBuilder: (BuildContext context, int index) {
@@ -65,7 +65,7 @@ class CountryListView extends GetView<CountryController> {
                     Get.back(result: item);
                   },
                 );
-              })
+              }) : const Center(child: Text("No Country Found"),)
       ),
     );
   }
