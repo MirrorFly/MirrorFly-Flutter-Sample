@@ -1,3 +1,6 @@
+import 'dart:io';
+
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
@@ -37,10 +40,49 @@ class AppPermission {
   }
 
   static Future<PermissionStatus> getStoragePermission() async {
-    final permission = await Permission.storage.status;
-    if (permission != PermissionStatus.granted &&
-        permission != PermissionStatus.permanentlyDenied) {
-      const newPermission = Permission.storage;
+    var sdkVersion=0;
+    if (Platform.isAndroid) {
+      var sdk =  await DeviceInfoPlugin().androidInfo;
+      sdkVersion=sdk.version.sdkInt;
+    } else {
+      sdkVersion = 0;
+    }
+    if (sdkVersion < 33) {
+      final permission = await Permission.storage.status;
+      if (permission != PermissionStatus.granted &&
+          permission != PermissionStatus.permanentlyDenied) {
+        const newPermission = Permission.storage;
+        mirrorFlyPermissionDialog(
+            notNowBtn: () {
+              return false;
+            },
+            continueBtn: () async {
+              newPermission.request();
+            },
+            icon: filePermission,
+            content: Constants.filePermission);
+        return newPermission.status;
+      } else {
+        return permission;
+      }
+    } else {
+      return getAndroid13Permission();
+    }
+  }
+
+  static Future<PermissionStatus> getAndroid13Permission() async {
+    final photos = await Permission.photos.status;
+    final videos = await Permission.videos.status;
+    // final audio = await Permission.audio.status;
+    const newPermission = [
+      Permission.photos,
+      Permission.videos,
+      // Permission.audio
+    ];
+    if ((photos != PermissionStatus.granted &&
+        photos != PermissionStatus.permanentlyDenied) ||
+        (videos != PermissionStatus.granted &&
+            videos != PermissionStatus.permanentlyDenied)) {
       mirrorFlyPermissionDialog(
           notNowBtn: () {
             return false;
@@ -50,9 +92,16 @@ class AppPermission {
           },
           icon: filePermission,
           content: Constants.filePermission);
-      return newPermission.status;
+      var photo = await newPermission[0].status.isGranted;
+      var video = await newPermission[1].isGranted;
+      // var audio = await newPermission[2].isGranted;
+      return (photo && video)
+          ? PermissionStatus.granted
+          : PermissionStatus.denied;
     } else {
-      return permission;
+      return (photos.isGranted && videos.isGranted)
+          ? PermissionStatus.granted
+          : PermissionStatus.denied;
     }
   }
 

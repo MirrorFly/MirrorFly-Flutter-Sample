@@ -1,20 +1,18 @@
 import UIKit
 import Flutter
-import FlyCore
-import FlyCommon
+//import FlyCore
+//import FlyCommon
 import GoogleMaps
 import UserNotifications
 import FirebaseAuth
 import Firebase
 
 
-//let googleApiKey = "AIzaSyDnjPEs86MRsnFfW1sVPKvMWjqQRnSa7Ts"
-
 
 @UIApplicationMain
 @objc class AppDelegate: FlutterAppDelegate{
     
-    
+    let googleApiKey = "AIzaSyDnjPEs86MRsnFfW1sVPKvMWjqQRnSa7Ts"
    
     var postNotificationdidEnterBackground : NotificationCenter? = nil
     
@@ -25,7 +23,7 @@ import Firebase
       
       let _ : FlutterViewController = window?.rootViewController as! FlutterViewController
            
-//      GMSServices.provideAPIKey(googleApiKey)
+      GMSServices.provideAPIKey(googleApiKey)
       
       // MARK:- Push Notification
 //      clearPushNotifications()
@@ -129,10 +127,10 @@ extension AppDelegate {
         print("###userNotificationCenter withCompletionHandler")
         let chatId = response.notification.request.content.threadIdentifier
         print("chat ID ---> \(chatId)")
-        if let profileDetails = ContactManager.shared.getUserProfileDetails(for: chatId) , chatId != FlyDefaults.myJid{
+//        if let profileDetails = ContactManager.shared.getUserProfileDetails(for: chatId) , chatId != FlyDefaults.myJid{
 //            Utility.saveInPreference(key: notificationUserJid, value: profileDetails.jid ?? "")
             
-        }
+//        }
        
 //        if response.notification.request.content.threadIdentifier.contains(XMPP_DOMAIN){
 //            if FlyDefaults.isBlockedByAdmin {
