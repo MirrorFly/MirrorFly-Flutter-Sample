@@ -94,7 +94,7 @@ android {
             buildConfigField "String", "SUPPORT_MAIL", '"contussupport@gmail.com"'
             resValue("string", "app_name", "MF-Flutter")*/
             shrinkResources false
-            debuggable true
+            debuggable false
             minifyEnabled false
             signingConfig signingConfigs.config
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
@@ -164,7 +164,7 @@ android {
     }
 
 
-    packagingOptions {
+    /*packagingOptions {
         exclude 'META-INF/AL2.0'
         exclude 'META-INF/DEPENDENCIES'
         exclude 'META-INF/LICENSE'
@@ -176,7 +176,7 @@ android {
         exclude 'META-INF/ASL2.0'
         exclude 'META-INF/LGPL2.1'
         exclude("META-INF/*.kotlin_module")
-    }
+    }*/
 }
 
 flutter {

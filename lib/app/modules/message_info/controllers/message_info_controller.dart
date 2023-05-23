@@ -159,26 +159,15 @@ class MessageInfoController extends GetxController {
   var statusCount = 0.obs;
   String chatDate(BuildContext cxt,DeliveredParticipantList item) => getChatTime(cxt, int.parse(item.time.checkNull()));
   getMessageStatus(String messageId) async {
-    // statusCount(await Mirrorfly.getGroupMessageStatusCount(messageId));
     var delivered = await Mirrorfly.getGroupMessageDeliveredToList(messageId, jid);
     mirrorFlyLog("deliveredResp", delivered);
-    // var deliveredResp = json.decode(delivered);
-    // mirrorFlyLog("deliveredResp.deliveredParticipantList", "${deliveredResp["deliveredParticipantList"]}");
-    // messageDeliveredList(messageDeliveredStatusFromJson(deliveredResp["deliveredParticipantList"].toString()));
-    // deliveredStatusCount(deliveredResp["deliveredCount"]);
-    // deliveredTotalCount(deliveredResp["totalParticipatCount"]);
     var item = MessageDeliveredStatus.fromJson(json.decode(delivered), "delivered");
     statusCount(item.totalParticipatCount!);
     messageDeliveredList(item.participantList);
 
 
     var read = await Mirrorfly.getGroupMessageReadByList(messageId, jid);
-    // mirrorFlyLog("readResp", read);
-    // var readResp = json.decode(read);
-    // debugPrint("readResp.seenParticipantList ${readResp["seenParticipantList"]}");
-    // messageReadList(messageDeliveredStatusFromJson(readResp["seenParticipantList"].toString()));
-    // participantStatusCount(readResp["seenCount"]);
-    // participantTotalCount(readResp["totalParticipatCount"]);
+    mirrorFlyLog("readResp", read);
     var readItem = MessageDeliveredStatus.fromJson(json.decode(read), "read");
     messageReadList(readItem.participantList);
   }

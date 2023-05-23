@@ -73,7 +73,8 @@ class GalleryPickerView extends GetView<GalleryPickerController> {
                                     "filePath": controller.pickedFile,
                                     "userName": controller.userName,
                                     'profile': controller.profile,
-                                    'caption': controller.textMessage
+                                    'caption': controller.textMessage,
+                                    'from': 'gallery_pick'
                                   })?.then((value) {
                                     value != null ? Get.back() : null;
 

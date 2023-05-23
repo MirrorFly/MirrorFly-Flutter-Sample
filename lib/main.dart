@@ -41,22 +41,15 @@ Future<void> main() async {
   Mirrorfly.init(
       baseUrl: 'https://api-uikit-qa.contus.us/api/v1/',
       licenseKey: 'ckIjaccWBoMNvxdbql8LJ2dmKqT5bp',//ckIjaccWBoMNvxdbql8LJ2dmKqT5bp//2sdgNtr3sFBSM3bYRa7RKDPEiB38Xo
-      isTrialLicenceKey: false,
-      iOSContainerID: 'group.com.mirrorfly.qa');
+      iOSContainerID: 'group.com.mirrorfly.flutter');
   final GoogleMapsFlutterPlatform mapsImplementation =
       GoogleMapsFlutterPlatform.instance;
   if (mapsImplementation is GoogleMapsFlutterAndroid) {
     mapsImplementation.useAndroidViewSurface = true;
   }
-  await SessionManagement.onInit();
-  ReplyHashMap.init();
-  // Mirrorfly.getSendData().then((value) {
-  //   debugPrint("notification value ===> $value");
-  //   SessionManagement.setChatJid(value.checkNull());
-  // });
-  // var nonchat = await Mirrorfly.getNonChatUsers();
-  // nonChatUsers = json.decode(nonchat.toString());
-  Mirrorfly.isTrailLicence().then((value) => SessionManagement.setIsTrailLicence(value.checkNull()));
+  // await SessionManagement.onInit();
+  // ReplyHashMap.init();
+  // Mirrorfly.isTrailLicence().then((value) => SessionManagement.setIsTrailLicence(value.checkNull()));
   // Mirrorfly.cancelNotifications();
   if (!kIsWeb) {
      await Firebase.initializeApp();
@@ -69,8 +62,8 @@ Future<void> main() async {
   if (shouldUseFirebaseEmulator) {
     await FirebaseAuth.instance.useAuthEmulator('localhost', 5050);
   }
-
-  Get.put<MainController>(MainController());
+  await SessionManagement.onInit();
+  // Get.put<MainController>(MainController());
   runApp(const MyApp());
 }
 
@@ -84,6 +77,11 @@ class MyApp extends StatelessWidget{
       title: "MirrorFly",
       theme: MirrorFlyAppTheme.theme,
       debugShowCheckedModeBanner: false,
+      onInit: () {
+        ReplyHashMap.init();
+        Mirrorfly.isTrailLicence().then((value) => SessionManagement.setIsTrailLicence(value.checkNull()));
+        Get.put<MainController>(MainController());
+      },
       //initialBinding: getBinding(),
       initialRoute: SessionManagement.getEnablePin() ? Routes.pin : getInitialRoute(),
       //initialRoute: AppPages.INITIAL,
