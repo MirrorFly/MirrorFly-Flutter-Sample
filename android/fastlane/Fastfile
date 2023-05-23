@@ -30,6 +30,18 @@ platform :android do
     )
   end
 
+  desc "Upload dev version to distributes in firebase"
+  lane :deploy_dev_release do
+      firebase_app_distribution(
+        app: appID_DEV,
+        groups: "mirrorflydev---flutter",
+        release_notes: change_Log,
+        apk_path: "../build/app/outputs/flutter-apk/app-dev-release.apk",
+        firebase_cli_path: "/usr/local/bin/firebase",
+        firebase_cli_token: "1//0gca4tG-kR13uCgYIARAAGBASNwF-L9Irt1O8cK62NJe-EO1eh4Vvibu-ThnUDK2jZnz0B-6RZkHC-u34Zvg_E1hnXhgmh2C3KzY"
+      )
+    end
+
    desc "Upload qa version to distributes in firebase"
     lane :deploy_qa_debug do
       firebase_app_distribution(
@@ -40,5 +52,16 @@ platform :android do
         firebase_cli_token: "1//0gfTJ_oWJ0mHNCgYIARAAGBASNwF-L9IrYZM4cUIV5EB8gVnSvtMC6Q7aAtgrgG8R1ybhSY1Np_5r5UuZu28N144_weOQDyONcW4",
       )
     end
+
+    desc "Upload qa version to distributes in firebase"
+        lane :deploy_qa_release do
+          firebase_app_distribution(
+            app: appID_QA,
+            groups: " mirrorflyqa-flutter",
+            release_notes: change_Log,
+            apk_path: "../build/app/outputs/flutter-apk/app-qa-release.apk",
+            firebase_cli_token: "1//0gfTJ_oWJ0mHNCgYIARAAGBASNwF-L9IrYZM4cUIV5EB8gVnSvtMC6Q7aAtgrgG8R1ybhSY1Np_5r5UuZu28N144_weOQDyONcW4",
+          )
+        end
 
 end

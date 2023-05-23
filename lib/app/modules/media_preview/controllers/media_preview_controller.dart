@@ -9,6 +9,7 @@ import 'package:get/get.dart';
 
 import '../../../common/constants.dart';
 import '../../../data/helper.dart';
+import '../../../routes/app_pages.dart';
 import '../../chat/controllers/chat_controller.dart';
 
 class MediaPreviewController extends FullLifeCycleController with FullLifeCycleMixin {
@@ -22,6 +23,7 @@ class MediaPreviewController extends FullLifeCycleController with FullLifeCycleM
 
   var captionMessage = <String>[].obs;
   var textMessage = Get.arguments['caption'];
+  var from = Get.arguments['from'];
   var showAdd = Get.arguments['showAdd'] ?? true;
   var currentPageIndex = 0.obs;
   var isFocused = false.obs;
@@ -35,16 +37,16 @@ class MediaPreviewController extends FullLifeCycleController with FullLifeCycleM
     super.onInit();
     SchedulerBinding.instance
         .addPostFrameCallback((_) {
-          filePath(Get.arguments['filePath']);
-          var index = 0;
-          for(var _ in filePath){
-            if(index == 0 && textMessage != null){
-              captionMessage.add(textMessage);
-              index = index + 1;
-            }else {
-              captionMessage.add("");
-            }
-          }
+      filePath(Get.arguments['filePath']);
+      var index = 0;
+      for(var _ in filePath){
+        if(index == 0 && textMessage != null){
+          captionMessage.add(textMessage);
+          index = index + 1;
+        }else {
+          captionMessage.add("");
+        }
+      }
     });
     if(textMessage != null){
       caption.text = textMessage;
@@ -61,38 +63,41 @@ class MediaPreviewController extends FullLifeCycleController with FullLifeCycleM
 
   sendMedia() async {
     debugPrint("send media");
+    var previousRoute = Get.previousRoute;
     // if (await AppUtils.isNetConnected()) {
-      try {
-        int i = 0;
-        Platform.isIOS ? Helper.showLoading(message: "Compressing files") : null;
-        for (var data in filePath) {
-          /// show image
-          debugPrint(data.type);
-          if (data.type == 'image') {
-            debugPrint("sending image");
-            var response = await Get.find<ChatController>()
-                .sendImageMessage(data.path, captionMessage[i], "");
-            debugPrint("Preview View ==> $response");
-            if (response != null) {
-              debugPrint("Image send Success");
-            }
-          } else if (data.type == 'video') {
-            debugPrint("sending video");
-            var response = await Get.find<ChatController>()
-                .sendVideoMessage(data.path, captionMessage[i], "");
-            debugPrint("Preview View ==> $response");
-            if (response != null) {
-              debugPrint("Video send Success");
-            }
+    try {
+      int i = 0;
+      Platform.isIOS ? Helper.showLoading(message: "Compressing files") : null;
+      for (var data in filePath) {
+        /// show image
+        debugPrint(data.type);
+        if (data.type == 'image') {
+          debugPrint("sending image");
+          var response = await Get.find<ChatController>()
+              .sendImageMessage(data.path, captionMessage[i], "");
+          debugPrint("Preview View ==> $response");
+          if (response != null) {
+            debugPrint("Image send Success");
           }
-          i++;
+        } else if (data.type == 'video') {
+          debugPrint("sending video");
+          var response = await Get.find<ChatController>()
+              .sendVideoMessage(data.path, captionMessage[i], "");
+          debugPrint("Preview View ==> $response");
+          if (response != null) {
+            debugPrint("Video send Success");
+          }
         }
-      } finally {
-        Platform.isIOS ? Helper.hideLoading() : null;
-        Get.back();
+        i++;
+      }
+    } finally {
+      Platform.isIOS ? Helper.hideLoading() : null;
+      if(previousRoute==Routes.galleryPicker){
         Get.back();
       }
-      // Get.back();
+      Get.back();
+    }
+    // Get.back();
     /*} else {
       toToast(Constants.noInternetConnection);
     }*/

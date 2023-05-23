@@ -47,6 +47,11 @@ class StarredMessageHeader extends StatelessWidget {
     return Profile.fromJson(json.decode(value.toString()));
   }
 
+  Future<Profile> getStarredProfile() async {
+    var value = await Mirrorfly.getProfileDetails(chatList.senderUserJid, true);
+    return Profile.fromJson(json.decode(value.toString()));
+  }
+
   getHeader(ChatMessageModel chatList, BuildContext context) {
     return FutureBuilder(
         future: getProfile(),
