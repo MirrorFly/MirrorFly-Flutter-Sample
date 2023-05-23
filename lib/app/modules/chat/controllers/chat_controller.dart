@@ -224,6 +224,10 @@ class ChatController extends FullLifeCycleController
         showHideRedirectToLatest(true);
       }
     });*/
+    itemPositionsListener.itemPositions.addListener(() {
+      debugPrint('scrolled : ${findTopFirstVisibleItemPosition()}');
+      // j=findLastVisibleItemPosition();
+    });
     newitemPositionsListener.itemPositions.addListener(() {
       var pos = findLastVisibleItemPositionForChat();
       if (pos >= 1) {
@@ -354,32 +358,36 @@ class ChatController extends FullLifeCycleController
   }
 
   showBottomSheetAttachment() {
-    Get.bottomSheet(Container(
-      margin: const EdgeInsets.only(right: 18.0,left: 18.0,bottom: 50),
-      child: BottomSheet(
-          onClosing: (){},
-          backgroundColor: Colors.transparent,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-          builder: (builder) => AttachmentsSheetView(onDocument: () {
-                Get.back();
-                documentPickUpload();
-              }, onCamera: () {
-                Get.back();
-                onCameraClick();
-              }, onGallery: () {
-                Get.back();
-                onGalleryClick();
-              }, onAudio: () {
-                Get.back();
-                onAudioClick();
-              }, onContact: () {
-                Get.back();
-                onContactClick();
-              }, onLocation: () {
-                Get.back();
-                onLocationClick();
-              })),
-    ),ignoreSafeArea: true,);
+    Get.bottomSheet(
+      Container(
+        margin: const EdgeInsets.only(right: 18.0, left: 18.0, bottom: 50),
+        child: BottomSheet(
+            onClosing: () {},
+            backgroundColor: Colors.transparent,
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+            builder: (builder) => AttachmentsSheetView(onDocument: () {
+                  Get.back();
+                  documentPickUpload();
+                }, onCamera: () {
+                  Get.back();
+                  onCameraClick();
+                }, onGallery: () {
+                  Get.back();
+                  onGalleryClick();
+                }, onAudio: () {
+                  Get.back();
+                  onAudioClick();
+                }, onContact: () {
+                  Get.back();
+                  onContactClick();
+                }, onLocation: () {
+                  Get.back();
+                  onLocationClick();
+                })),
+      ),
+      ignoreSafeArea: true,
+    );
   }
 
   MessageObject? messageObject;
@@ -1134,10 +1142,10 @@ class ChatController extends FullLifeCycleController
                             chatMessage?.messageId ?? "")
                         .then((value) {
                       //report success
-                      // debugPrint(value.toString());
+                      debugPrint(value.toString());
                       if(value.checkNull()){
                         toToast("Report sent");
-                      }else{
+                      } else {
                         toToast("There are no messages available");
                       }
                     }).catchError((onError) {
@@ -1552,69 +1560,41 @@ class ChatController extends FullLifeCycleController
   var j = -1;
 
   scrollUp() {
-    var visiblePos = findLastVisibleItemPosition();
-    mirrorFlyLog("visiblePos", visiblePos.toString());
-    // mirrorFlyLog("filteredPosition", filteredPosition.join(","));
-    j = j + 1;
-    //_scrollToPosition(getPreviousPosition(visiblePos));
-    /*if (searchedPrev != (searchedText.text.toString())) {
-      j = getPreviousPosition(visiblePos);
-      //lastPosition.value = pre;
-      searchedPrev = searchedText.text;
-      searchedNxt = searchedText.text;
-    } else if (filteredPosition.isNotEmpty) {
-      j = max(j-1, -1);
-      //lastPosition.value = max(lastPosition.value - 1, (-1));
-    } else {
-      j = -1;
-      //lastPosition.value = -1;
-    }*/
-    mirrorFlyLog("scrollUp", j.toString());
-    if (j > -1 && j < filteredPosition.length) {
-      _scrollToPosition(j);
-    } else {
+    if(filteredPosition.isNotEmpty) {
+      var visiblePos = findTopFirstVisibleItemPosition();
+      mirrorFlyLog("visiblePos", visiblePos.toString());
+      mirrorFlyLog(
+          "visiblePos2", findBottomLastVisibleItemPosition().toString());
+      var g = getNextPosition(findTopFirstVisibleItemPosition(),
+          findBottomLastVisibleItemPosition(), j);
+      if (g != null) j = g;
+      mirrorFlyLog("scrollUp", g.toString());
+      if (j >= 0 && g != null) {
+        _scrollToPosition(j);
+      } else {
+        toToast("No Results Found");
+      }
+    }else{
       toToast("No Results Found");
     }
-    /*if (lastPosition.value > -1 &&
-        lastPosition.value <= filteredPosition.length) {
-      var po = filteredPosition;
-      _scrollToPosition(po[lastPosition.value] + 1);
-    } else {
-      toToast("No Results Found");
-      searchedNxt = "";
-    }*/
   }
 
   scrollDown() {
-    var visiblePos = findLastVisibleItemPosition();
-    mirrorFlyLog("visiblePos", visiblePos.toString());
-    j = j - 1;
-    /*if (searchedNxt != searchedText.text.toString()) {
-      j = getNextPosition(visiblePos);
-      //lastPosition.value = nex;
-      searchedNxt = searchedText.text;
-      searchedPrev = searchedText.text;
-    } else if (filteredPosition.isNotEmpty) {
-      j = min(j + 1, filteredPosition.length);
-      //lastPosition.value = min(j + 1, filteredPosition.length);
-    } else {
-      j=-1;
-      //lastPosition.value = -1;
-    }*/
-    mirrorFlyLog("scrollDown", j.toString());
-    if (j > -1 && j < filteredPosition.length) {
-      _scrollToPosition(j);
-    } else {
+    if(filteredPosition.isNotEmpty) {
+      var visiblePos = findTopFirstVisibleItemPosition();
+      mirrorFlyLog("visiblePos", visiblePos.toString());
+      var g = getPreviousPosition(findTopFirstVisibleItemPosition(),
+          findBottomLastVisibleItemPosition(), j);
+      if (g != null) j = g;
+      mirrorFlyLog("scrollDown", j.toString());
+      if (j >= 0 && g != null) {
+        _scrollToPosition(j);
+      } else {
+        toToast("No Results Found");
+      }
+    }else{
       toToast("No Results Found");
     }
-    /* if (lastPosition.value > -1 &&
-        lastPosition.value <= filteredPosition.length) {
-      var po = filteredPosition.reversed.toList();
-      _scrollToPosition(po[lastPosition.value] + 1);
-    } else {
-      toToast("No Results Found");
-      searchedPrev = "";
-    }*/
   }
 
   var color = Colors.transparent.obs;
@@ -1622,8 +1602,9 @@ class ChatController extends FullLifeCycleController
   _scrollToPosition(int position) {
     // mirrorFlyLog("position", position.toString());
     if (!position.isNegative) {
-      var currentPosition =
-          filteredPosition[position]; //(chatList.length - (position));
+      var currentPosition = position;
+      // filteredPosition[position]; //(chatList.length - (position));
+      mirrorFlyLog("currentPosition", currentPosition.toString());
       chatList[currentPosition].isSelected = true;
       searchScrollController.jumpTo(index: currentPosition);
       Future.delayed(const Duration(milliseconds: 800), () {
@@ -1636,27 +1617,50 @@ class ChatController extends FullLifeCycleController
     }
   }
 
-  int getPreviousPosition(int visiblePos) {
-    for (var i = 0; i < filteredPosition.length; i++) {
-      var po = filteredPosition.toList(); //reversed
-      if (visiblePos > po.toList()[i]) {
-        return filteredPosition.indexOf(po.toList()[i]);
-        // break;
-      }
-      // return filteredPosition.indexOf(po.toList()[i]);
+  int? getPreviousPosition(int end, int start, int previousPos) {
+    var previousClicked =
+        previousPos; //!previousPos.isNegative ? filteredPosition[previousPos] : -1;
+    debugPrint(
+        'start : $start end : $end previousClickedPos : $previousClicked');
+    debugPrint('previousPos : $previousPos');
+    var isNotInTheView = (previousClicked <= end && previousClicked >= start);
+    if (previousClicked == filteredPosition.first && isNotInTheView) {
+      return null;
     }
-    return -1;
+    var reversedList = filteredPosition.reversed.toList();
+    var findBetweenOrBelow = reversedList.firstWhere((y) =>
+        ((y <= end && y >= start) && !previousClicked.isNegative
+            ? (previousClicked != y)
+            : true) &&
+        start > y);
+    if (!findBetweenOrBelow.isNegative) {
+      debugPrint('findBetweenOrBelow : $findBetweenOrBelow}');
+    }
+    debugPrint('filteredPosition : ${reversedList.join(',')}');
+    return findBetweenOrBelow;
   }
 
-  int getNextPosition(int visiblePos) {
-    for (var i = 0; i < filteredPosition.length; i++) {
-      if (visiblePos <= filteredPosition[i]) {
-        return i;
-        // break;
-      }
-      // return i;
+  //returns the position of filtered position
+  int? getNextPosition(int end, int start, int previousPos) {
+    var previousClicked =
+        previousPos; //!previousPos.isNegative ? filteredPosition[previousPos] : -1;
+    debugPrint(
+        'start : $start end : $end previousClickedPos : $previousClicked');
+    debugPrint('previousPos : $previousPos');
+    var isNotInTheView = (previousClicked <= end && previousClicked >= start);
+    if (previousClicked == filteredPosition.last && isNotInTheView) {
+      return null;
     }
-    return -1;
+    var findBetweenOrAbove = filteredPosition.firstWhere((y) =>
+        ((y >= end && y <= start) && !previousClicked.isNegative
+            ? (previousClicked != y)
+            : true) &&
+        start < y);
+    if (!findBetweenOrAbove.isNegative) {
+      debugPrint('findbetweenorabove : $findBetweenOrAbove');
+    }
+    debugPrint('filteredPosition : ${filteredPosition.join(',')}');
+    return findBetweenOrAbove;
   }
 
   final ItemPositionsListener itemPositionsListener =
@@ -1671,13 +1675,22 @@ class ChatController extends FullLifeCycleController
     return r<chatList.length ? r+1 : r;
   }*/
 
-  int findLastVisibleItemPosition() {
+  int findTopFirstVisibleItemPosition() {
     var r = itemPositionsListener.itemPositions.value
         .where((ItemPosition position) => position.itemTrailingEdge < 1)
         .reduce((ItemPosition min, ItemPosition position) =>
             position.itemTrailingEdge > min.itemTrailingEdge ? position : min)
         .index;
-    return r < chatList.length ? r + 1 : r;
+    return r; //< chatList.length ? r + 1 : r;
+  }
+
+  int findBottomLastVisibleItemPosition() {
+    var r = itemPositionsListener.itemPositions.value
+        .where((ItemPosition position) => position.itemTrailingEdge < 1)
+        .reduce((ItemPosition min, ItemPosition position) =>
+            position.itemTrailingEdge < min.itemTrailingEdge ? position : min)
+        .index;
+    return r; // < chatList.length ? r + 1 : r;
   }
 
   exportChat() async {
@@ -2124,7 +2137,10 @@ class ChatController extends FullLifeCycleController
               "caption": messageController.text
             });
           }*/
-          var file= PickedAssetModel(path: photo.path,type: !photo.name.endsWith(".mp4") ? "image" : "video",);
+          var file = PickedAssetModel(
+            path: photo.path,
+            type: !photo.name.endsWith(".mp4") ? "image" : "video",
+          );
           Get.toNamed(Routes.mediaPreview, arguments: {
             "filePath": [file],
             "userName": profile.name!,
@@ -2662,17 +2678,18 @@ class ChatController extends FullLifeCycleController
     var phone = profile.mobileNumber.checkNull().isNotEmpty
         ? profile.mobileNumber.checkNull()
         : getMobileNumberFromJid(profile.jid.checkNull());
-    var userName = profile.nickName.checkNull().isNotEmpty ? profile.nickName.checkNull() : profile.name.checkNull();
+    var userName = profile.nickName.checkNull().isNotEmpty
+        ? profile.nickName.checkNull()
+        : profile.name.checkNull();
     if (phone.isNotEmpty) {
       FlutterLibphonenumber().init();
-      var formatNumberSync =
-      FlutterLibphonenumber().formatNumberSync(phone);
+      var formatNumberSync = FlutterLibphonenumber().formatNumberSync(phone);
       var parse = await FlutterLibphonenumber().parse(formatNumberSync);
       debugPrint("parse-----> $parse");
       Mirrorfly.addContact(parse["international"], userName).then((value) {
-        if(value ?? false){
+        if (value ?? false) {
           toToast("Contact Saved");
-          if(!SessionManagement.isTrailLicence()) {
+          if (!SessionManagement.isTrailLicence()) {
             syncContacts();
           }
         }
@@ -2683,19 +2700,20 @@ class ChatController extends FullLifeCycleController
   }
 
   void syncContacts() async {
-    if(await Permission.contacts.isGranted) {
+    if (await Permission.contacts.isGranted) {
       if (await AppUtils.isNetConnected() &&
           !await Mirrorfly.contactSyncStateValue()) {
         final permission = await Permission.contacts.status;
         if (permission == PermissionStatus.granted) {
-          if(SessionManagement.getLogin()) {
-            Mirrorfly.syncContacts(!SessionManagement.isInitialContactSyncDone());
+          if (SessionManagement.getLogin()) {
+            Mirrorfly.syncContacts(
+                !SessionManagement.isInitialContactSyncDone());
           }
         }
       }
-    }else{
+    } else {
       debugPrint("Contact sync permission is not granted");
-      if(SessionManagement.isInitialContactSyncDone()) {
+      if (SessionManagement.isInitialContactSyncDone()) {
         Mirrorfly.revokeContactSync().then((value) {
           onContactSyncComplete(true);
           mirrorFlyLog("checkContactPermission isSuccess", value.toString());

@@ -11,7 +11,7 @@ dependencies:
   get: 4.6.5
   flutter: 
     sdk: flutter
-  shared_preferences: ^2.0.15
+  shared_preferences: ^2.1.0
   flutter_svg: ^1.1.5
   cached_network_image: ^3.2.2
   file_picker: ^5.2.0+1 #file picker
@@ -38,7 +38,7 @@ dependencies:
   focus_detector: ^2.0.1 #focus detector
   record: ^3.0.0
   swipe_to: ^1.0.2
-  flutter_cache_manager: ^3.3.0
+#  flutter_cache_manager: ^3.3.0
   flutter_keyboard_visibility: ^5.4.0
   keyboard_dismisser: ^3.0.0
   scrollable_positioned_list: ^0.3.5 #scrollable position
@@ -66,6 +66,9 @@ dependencies:
   flutter_libphonenumber: ^1.4.0
   open_file_plus: ^3.4.0
   is_lock_screen: ^2.0.0
+  device_info_plus: ^8.1.0
+#  mirrorfly_plugin:
+#    path: ../mirrorfly_plugin
 #  mirrorfly_plugin: ^0.0.2
   mirrorfly_plugin:
     path: p078-mirrorfly-flutter-plugin
