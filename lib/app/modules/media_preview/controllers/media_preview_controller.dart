@@ -22,6 +22,7 @@ class MediaPreviewController extends FullLifeCycleController with FullLifeCycleM
 
   var captionMessage = <String>[].obs;
   var textMessage = Get.arguments['caption'];
+  var from = Get.arguments['from'];
   var showAdd = Get.arguments['showAdd'] ?? true;
   var currentPageIndex = 0.obs;
   var isFocused = false.obs;
@@ -89,7 +90,9 @@ class MediaPreviewController extends FullLifeCycleController with FullLifeCycleM
         }
       } finally {
         Platform.isIOS ? Helper.hideLoading() : null;
-        Get.back();
+        if(from == "gallery_pick") {
+          Get.back();
+        }
         Get.back();
       }
       // Get.back();

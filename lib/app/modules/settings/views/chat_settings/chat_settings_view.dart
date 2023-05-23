@@ -14,7 +14,7 @@ class ChatSettingsView extends GetView<ChatSettingsController> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Chat'),
+        title: const Text('Chats'),
         automaticallyImplyLeading: true,
       ),
       body: Obx(() {

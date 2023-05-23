@@ -103,6 +103,8 @@ class ReplyingMessageHeader extends StatelessWidget {
 }
 
 getReplyTitle(bool isMessageSentByMe, String senderUserName) {
+  debugPrint("issentby me $isMessageSentByMe");
+  debugPrint("senderUserName $senderUserName");
   return isMessageSentByMe
       ? const Text(
           'You',
@@ -125,7 +127,9 @@ getReplyMessage(
       return Row(
         children: [
           Helper.forMessageTypeIcon(Constants.mText),
-          Text(messageTextContent!),
+          // Text(messageTextContent!),
+          Expanded(child: Text(messageTextContent!, maxLines: 1,overflow: TextOverflow.ellipsis)),
+
         ],
       );
     case Constants.mImage:

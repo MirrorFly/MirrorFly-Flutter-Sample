@@ -2130,7 +2130,8 @@ class ChatController extends FullLifeCycleController
             "userName": profile.name!,
             'profile': profile,
             'caption': messageController.text,
-            'showAdd':false
+            'showAdd':false,
+            'from': 'camera_pick'
           });
         }
       });
