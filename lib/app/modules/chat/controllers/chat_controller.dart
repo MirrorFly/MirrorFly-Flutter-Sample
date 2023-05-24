@@ -1144,7 +1144,7 @@ class ChatController extends FullLifeCycleController
                         .then((value) {
                       //report success
                       debugPrint(value.toString());
-                      if (value.checkNull()) {
+                      if(value.checkNull()){
                         toToast("Report sent");
                       } else {
                         toToast("There are no messages available");
@@ -2153,7 +2153,8 @@ class ChatController extends FullLifeCycleController
             "userName": profile.name!,
             'profile': profile,
             'caption': messageController.text,
-            'showAdd': false
+            'showAdd':false,
+            'from': 'camera_pick'
           });
         }
       });

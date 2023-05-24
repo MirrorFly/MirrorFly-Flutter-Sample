@@ -1,5 +1,5 @@
 name: mirror_fly_demo
-version: 2.3.3+26
+version: 2.3.5+28
 build_release_date: Mar 10
 publish_to: none
 description: A MirrorFly Flutter Sample Application.
@@ -67,9 +67,11 @@ dependencies:
   open_file_plus: ^3.4.0
   is_lock_screen: ^2.0.0
   device_info_plus: ^8.1.0
-  mirrorfly_plugin: ^0.0.2
 #  mirrorfly_plugin:
 #    path: ../mirrorfly_plugin
+#  mirrorfly_plugin: ^0.0.2
+  mirrorfly_plugin:
+    path: p078-mirrorfly-flutter-plugin
 #    git:
 #      url: https://github.com/MirrorFly/MirrorFly-Flutter-plugin.git
 #      ref: develop
@@ -81,7 +83,6 @@ dev_dependencies:
   flutter_lints: 2.0.1
   flutter_test: 
     sdk: flutter
-    
 
 flutter:
   uses-material-design: true
