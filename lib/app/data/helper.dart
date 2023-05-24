@@ -8,13 +8,14 @@ import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
-import 'package:mirrorfly_plugin/mirrorfly.dart';
+import 'package:mirrorfly_plugin/mirrorflychat.dart';
 import 'package:mirror_fly_demo/app/data/session_management.dart';
 import 'package:mirror_fly_demo/app/routes/app_pages.dart';
 import 'package:open_file_plus/open_file_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../common/widgets.dart';
+import '../model/chat_message_model.dart';
 import 'apputils.dart';
 
 class Helper {
@@ -295,6 +296,10 @@ extension StringParsing on String? {
   //check null
   String checkNull() {
     return this ?? "";
+  }
+
+  bool toBool(){
+    return this != null ? this!.toLowerCase() == "true" : false;
   }
 
   int checkIndexes(String searchedKey) {

@@ -4,7 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:flutter_libphonenumber/flutter_libphonenumber.dart';
-import 'package:mirrorfly_plugin/mirrorfly.dart';
+import 'package:mirrorfly_plugin/mirrorflychat.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
@@ -16,6 +16,7 @@ import 'package:permission_handler/permission_handler.dart';
 import '../../../common/de_bouncer.dart';
 import '../../../data/apputils.dart';
 import '../../../data/permissions.dart';
+import '../../../model/chat_message_model.dart';
 import '../../../routes/app_pages.dart';
 
 class DashboardController extends FullLifeCycleController
@@ -864,7 +865,7 @@ class DashboardController extends FullLifeCycleController
     debugPrint("Message Status Update index of search $index");
     if (!index.isNegative) {
       // updateRecentChat(chatMessageModel.chatUserJid);
-      recentChats[index].lastMessageStatus = chatMessageModel.messageStatus;
+      recentChats[index].lastMessageStatus = chatMessageModel.messageStatus.value;
       recentChats.refresh();
     }
   }

@@ -5,11 +5,12 @@ import 'package:flutter/services.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
-import 'package:mirrorfly_plugin/mirrorfly.dart';
+import 'package:mirrorfly_plugin/mirrorflychat.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
 import 'package:share_plus/share_plus.dart';
 
 import '../../../common/constants.dart';
+import '../../../model/chat_message_model.dart';
 import '../../../routes/app_pages.dart';
 
 class StarredMessagesController extends FullLifeCycleController with FullLifeCycleMixin {
@@ -88,8 +89,7 @@ class StarredMessagesController extends FullLifeCycleController with FullLifeCyc
       var selectedIndex = selectedChatList.indexWhere(
               (element) => chatMessageModel.messageId == element.messageId);
       if (!selectedIndex.isNegative) {
-        chatMessageModel.isSelected =
-        true; //selectedChatList[selectedIndex].isSelected;
+        chatMessageModel.isSelected(true); //selectedChatList[selectedIndex].isSelected;
         selectedChatList[selectedIndex] = chatMessageModel;
         selectedChatList.refresh();
         validateForForwardMessage();
@@ -113,14 +113,14 @@ class StarredMessagesController extends FullLifeCycleController with FullLifeCyc
       starredChatList.indexWhere((message) => message.messageId == messageId);
       debugPrint("Media Status Onprogress changed---> onUploadDownloadProgressChanged $index $messageId $progressPercentage");
       if (!index.isNegative) {
-        starredChatList[index].mediaChatMessage?.mediaProgressStatus = (int.parse(progressPercentage));
+        starredChatList[index].mediaChatMessage?.mediaProgressStatus (int.parse(progressPercentage));
         starredChatList.refresh();
       }
       if(isSearch.value){
         var selectedIndex = searchedStarredMessageList.indexWhere(
                 (message) => message.messageId == messageId);
         if (!selectedIndex.isNegative) {
-          searchedStarredMessageList[selectedIndex].mediaChatMessage?.mediaProgressStatus = (int.parse(progressPercentage));
+          searchedStarredMessageList[selectedIndex].mediaChatMessage?.mediaProgressStatus(int.parse(progressPercentage));
         }
       }
     }
@@ -165,7 +165,7 @@ class StarredMessagesController extends FullLifeCycleController with FullLifeCyc
   void addChatSelection(ChatMessageModel item) {
     if (item.messageType.toUpperCase() != Constants.mNotification) {
       selectedChatList.add(item);
-      item.isSelected = true;
+      item.isSelected (true);
       starredChatList.refresh();
       validateForForwardMessage();
       validateForShareMessage();
@@ -176,7 +176,7 @@ class StarredMessagesController extends FullLifeCycleController with FullLifeCyc
 
   clearChatSelection(ChatMessageModel item) {
     selectedChatList.remove(item);
-    item.isSelected = false;
+    item.isSelected (false);
     if (selectedChatList.isEmpty) {
       isSelected(false);
       selectedChatList.clear();
@@ -189,7 +189,7 @@ class StarredMessagesController extends FullLifeCycleController with FullLifeCyc
   clearAllChatSelection() {
     isSelected(false);
     for (var chatItem in selectedChatList) {
-      chatItem.isSelected = false;
+      chatItem.isSelected(false);
     }
     selectedChatList.clear();
   }
@@ -295,7 +295,7 @@ class StarredMessagesController extends FullLifeCycleController with FullLifeCyc
   favouriteMessage() {
     for (var item in selectedChatList) {
       Mirrorfly.updateFavouriteStatus(
-          item.messageId, item.chatUserJid, !item.isMessageStarred, item.messageChatType);
+          item.messageId, item.chatUserJid, !item.isMessageStarred.value, item.messageChatType);
       starredChatList
           .removeWhere((element) => item.messageId == element.messageId);
       if(isSearch.value){
@@ -320,10 +320,10 @@ class StarredMessagesController extends FullLifeCycleController with FullLifeCyc
     return {
       selectedChatList.any((element) =>
               element.isMessageSentByMe &&
-              !element.isMessageRecalled &&
+              !element.isMessageRecalled.value &&
               (element.messageSentTime > recallTimeDifference)):
           selectedChatList.any((element) =>
-              !element.isMessageRecalled &&
+              !element.isMessageRecalled.value &&
               (element.isMediaMessage() &&
                   element.mediaChatMessage!.mediaLocalStoragePath
                       .checkNull()

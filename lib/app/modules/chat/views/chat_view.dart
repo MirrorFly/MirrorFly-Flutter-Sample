@@ -15,11 +15,11 @@ import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:swipe_to/swipe_to.dart';
 
 import '../../../common/constants.dart';
+import '../../../model/chat_message_model.dart';
 import '../../../widgets/custom_action_bar_icons.dart';
 import '../../../widgets/lottie_animation.dart';
 import '../chat_widgets.dart';
 import '../controllers/chat_controller.dart';
-import 'package:mirrorfly_plugin/mirrorfly.dart';
 
 class ChatView extends GetView<ChatController> {
   const ChatView({Key? key}) : super(key: key);
@@ -576,10 +576,10 @@ class ChatView extends GetView<ChatController> {
                   ? SwipeTo(
                       key: ValueKey(chatList[index].messageId),
                       onRightSwipe: () {
-                        if (!chatList[index].isMessageRecalled &&
+                        if (!chatList[index].isMessageRecalled.value &&
                             !chatList[index].isMessageDeleted &&
                             chatList[index]
-                                    .messageStatus
+                                    .messageStatus.value
                                     .checkNull()
                                     .toString() !=
                                 "N") {
@@ -629,7 +629,7 @@ class ChatView extends GetView<ChatController> {
                         child: Obx(() {
                           return Container(
                             key: Key(chatList[index].messageId),
-                            color: chatList[index].isSelected
+                            color: chatList[index].isSelected.value
                                 ? chatReplyContainerColor
                                 : Colors.transparent,
                             margin: const EdgeInsets.only(

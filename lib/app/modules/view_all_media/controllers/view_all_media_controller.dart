@@ -7,9 +7,11 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
-import 'package:mirrorfly_plugin/mirrorfly.dart';
+import 'package:mirrorfly_plugin/mirrorflychat.dart';
 
 import '../../../common/constants.dart';
+import '../../../model/chat_message_model.dart';
+import '../../../model/group_media_model.dart';
 import '../../../routes/app_pages.dart';
 import '../../chat/controllers/chat_controller.dart';
 
@@ -171,7 +173,7 @@ class ViewAllMediaController extends GetxController {
         // debugPrint("getMapGroupedMediaList isMessage Recalled--> ${chatMessage.isMessageRecalled}");
         // debugPrint("getMapGroupedMediaList isMediaDownloaded--> ${chatMessage.isMediaDownloaded()}");
         // debugPrint("getMapGroupedMediaList isMediaUploaded--> ${chatMessage.isMediaUploaded()}");
-        if (!chatMessage.isMessageRecalled &&
+        if (!chatMessage.isMessageRecalled.value &&
             (chatMessage.isMediaDownloaded() ||
                 chatMessage.isMediaUploaded()) &&
             await isMediaAvailable(chatMessage, isMedia)) {
