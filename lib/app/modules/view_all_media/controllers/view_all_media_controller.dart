@@ -101,7 +101,7 @@ class ViewAllMediaController extends GetxController {
         mirrorFlyLog("get doc before json",value);
         var data = chatMessageModelFromJson(value);
         documentCount(data.length);
-        mirrorFlyLog("getDocsMessagess",json.encode(data));
+        // mirrorFlyLog("getDocsMessagess",json.encode(data));
         if (data.isNotEmpty) {
           _docslist(await getMapGroupedMediaList(data, false));
         }
