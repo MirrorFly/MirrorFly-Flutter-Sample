@@ -269,7 +269,7 @@ class RecentChatItem extends StatelessWidget {
 
   Visibility buildArchivedTextVisibility() {
     return Visibility(
-        visible: item.isChatArchived! && archiveVisible,
+        visible: item.isChatArchived! && archiveVisible && !isForwardMessage,
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 2.0),
           decoration: BoxDecoration(
@@ -289,7 +289,7 @@ class RecentChatItem extends StatelessWidget {
 
   Visibility buildMuteIconVisibility() {
     return Visibility(
-        visible: !archiveEnabled && item.isMuted!,
+        visible: !archiveEnabled && item.isMuted! && !isForwardMessage,
         child: SvgPicture.asset(
           mute,
           width: 13,
@@ -299,7 +299,7 @@ class RecentChatItem extends StatelessWidget {
 
   Visibility buildArchivedIconVisibility() {
     return Visibility(
-        visible: !item.isChatArchived! && item.isChatPinned!,
+        visible: !item.isChatArchived! && item.isChatPinned! && !isForwardMessage,
         child: SvgPicture.asset(
           pin,
           width: 18,
