@@ -1944,7 +1944,7 @@ Widget getImageOverlay(ChatMessageModel chatMessage,
   // debugPrint(
   //     "getImageOverlay ${(checkFile(chatMessage.mediaChatMessage!.mediaLocalStoragePath) && chatMessage.messageStatus != 'N')}");
   if (checkFile(chatMessage.mediaChatMessage!.mediaLocalStoragePath) &&
-      chatMessage.messageStatus != 'N') {
+      chatMessage.messageStatus.value != 'N') {
     if (chatMessage.messageType.toUpperCase() == 'VIDEO') {
       return FloatingActionButton.small(
         onPressed: onVideo,

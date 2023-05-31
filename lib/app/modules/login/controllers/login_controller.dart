@@ -68,11 +68,11 @@ class LoginController extends GetxController {
       debugPrint(seconds.value.toString());
     }
   }
-  @override
+  /*@override
   void onReady() {
     super.onReady();
     // Mirrorfly.isTrailLicence().then((value) => SessionManagement.setIsTrailLicence(value.checkNull()));
-  }
+  }*/
 
   @override
   void dispose() {

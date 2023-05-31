@@ -430,7 +430,7 @@ class ProfileController extends GetxController {
         return false;
       }
     }catch(e){
-      debugPrint('validMobileNumber ${e}');
+      debugPrint('validMobileNumber $e');
       return false;
     }
   }
