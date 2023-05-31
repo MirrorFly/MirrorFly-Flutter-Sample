@@ -4,8 +4,8 @@ import 'package:get/get.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 
 import '../../../common/constants.dart';
-import 'package:mirrorfly_plugin/mirrorfly.dart';
 
+import '../../../model/chat_message_model.dart';
 import '../chat_widgets.dart';
 import '../controllers/chat_controller.dart';
 
@@ -76,7 +76,7 @@ class ChatSearchView extends GetView<ChatController> {
             (chatList[index].messageType.toUpperCase() !=
                     Constants.mNotification)
                 ? Container(
-                    color: chatList[index].isSelected
+                    color: chatList[index].isSelected.value
                         ? chatReplyContainerColor
                         : Colors.transparent,
                     margin: const EdgeInsets.only(

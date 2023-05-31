@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:mirrorfly_plugin/mirrorfly.dart';
+import 'package:mirrorfly_plugin/mirrorflychat.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
 import 'package:mirror_fly_demo/app/modules/dashboard/controllers/dashboard_controller.dart';
 
 import '../../data/apputils.dart';
 import '../../data/helper.dart';
+import '../../model/chat_message_model.dart';
 import '../../routes/app_pages.dart';
 
 class ArchivedChatListController extends GetxController {
@@ -206,7 +207,7 @@ class ArchivedChatListController extends GetxController {
         (message) => message.lastMessageId == chatMessageModel.messageId);
     debugPrint("Message Status Update index of search $index");
     if (!index.isNegative) {
-      archivedChats[index].lastMessageStatus = chatMessageModel.messageStatus;
+      archivedChats[index].lastMessageStatus = chatMessageModel.messageStatus.value;
       archivedChats.refresh();
     }
   }

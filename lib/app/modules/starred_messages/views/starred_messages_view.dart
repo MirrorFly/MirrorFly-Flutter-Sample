@@ -6,11 +6,11 @@ import 'package:get/get.dart';
 
 import '../../../common/constants.dart';
 import '../../../common/widgets.dart';
+import '../../../model/chat_message_model.dart';
 import '../../../widgets/custom_action_bar_icons.dart';
 import '../../chat/chat_widgets.dart';
 import '../../chat/views/starred_message_header.dart';
 import '../controllers/starred_messages_controller.dart';
-import 'package:mirrorfly_plugin/mirrorfly.dart';
 
 class StarredMessagesView extends GetView<StarredMessagesController> {
   const StarredMessagesView({Key? key}) : super(key: key);
@@ -80,7 +80,7 @@ class StarredMessagesView extends GetView<StarredMessagesController> {
                     Container(
                       key: Key(starredChatList[index].messageId),
                       color: controller.isSelected.value &&
-                          (starredChatList[index].isSelected) &&
+                          (starredChatList[index].isSelected.value) &&
                           controller.starredChatList.isNotEmpty
                           ? chatReplyContainerColor
                           : Colors.transparent,

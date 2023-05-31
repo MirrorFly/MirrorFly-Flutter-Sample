@@ -5,13 +5,14 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
-import 'package:mirrorfly_plugin/mirrorfly.dart';
+import 'package:mirrorfly_plugin/mirrorflychat.dart';
 import 'package:mirror_fly_demo/app/modules/chat/controllers/chat_controller.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 import '../../../common/constants.dart';
 import '../../../data/helper.dart';
 import '../../../data/permissions.dart';
+import '../../../model/chat_message_model.dart';
 
 class MessageInfoController extends GetxController {
   var chatController = Get.find<ChatController>();

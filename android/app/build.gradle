@@ -64,7 +64,7 @@ android {
         targetSdkVersion flutter.targetSdkVersion
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
-
+//        consumerProguardFiles "consumer-rules.pro"
         ndk {
             abiFilters 'arm64-v8a', 'armeabi-v7a', 'x86_64'
         }
@@ -83,7 +83,7 @@ android {
             debuggable true
             minifyEnabled false
             signingConfig signingConfigs.config
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+//            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
         release {
            /* buildConfigField 'Boolean', 'IS_QA_BUILD', 'true'
@@ -97,7 +97,7 @@ android {
             debuggable false
             minifyEnabled false
             signingConfig signingConfigs.config
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+//            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
 
@@ -189,6 +189,7 @@ dependencies {
     implementation 'androidx.appcompat:appcompat:1.5.1'
     implementation 'com.google.android.material:material:1.4.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
+//    implementation 'androidx.security:security-crypto:1.1.0-alpha01'
 //    implementation ('com.fly.sdk:appbase:0.0.5')
     configurations {
         all {

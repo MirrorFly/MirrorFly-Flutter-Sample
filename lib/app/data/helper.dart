@@ -8,13 +8,14 @@ import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
-import 'package:mirrorfly_plugin/mirrorfly.dart';
+import 'package:mirrorfly_plugin/mirrorflychat.dart';
 import 'package:mirror_fly_demo/app/data/session_management.dart';
 import 'package:mirror_fly_demo/app/routes/app_pages.dart';
 import 'package:open_file_plus/open_file_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../common/widgets.dart';
+import '../model/chat_message_model.dart';
 import 'apputils.dart';
 
 class Helper {
@@ -295,6 +296,10 @@ extension StringParsing on String? {
   //check null
   String checkNull() {
     return this ?? "";
+  }
+
+  bool toBool(){
+    return this != null ? this!.toLowerCase() == "true" : false;
   }
 
   int checkIndexes(String searchedKey) {
@@ -704,7 +709,7 @@ Future<RecentChatData?> getRecentChatOfJid(String jid) async {
 }
 
 String getName(Profile item) {
-  if (SessionManagement.isTrailLicence()) {
+  if (Mirrorfly.isTrialLicence) {
     /*return item.name.toString().checkNull().isEmpty
         ? item.nickName.toString()
         : item.name.toString();*/
@@ -750,7 +755,7 @@ String getName(Profile item) {
 }
 
 String getRecentName(RecentChatData item) {
-  if (SessionManagement.isTrailLicence()) {
+  if (Mirrorfly.isTrialLicence) {
     /*return item.name.toString().checkNull().isEmpty
         ? item.nickName.toString()
         : item.name.toString();*/
@@ -778,7 +783,7 @@ String getRecentName(RecentChatData item) {
 }
 
 String getMemberName(Member item) {
-  if (SessionManagement.isTrailLicence()) {
+  if (Mirrorfly.isTrialLicence) {
     /*return item.name.toString().checkNull().isEmpty
         ? item.nickName.toString()
         : item.name.toString();*/
@@ -946,7 +951,7 @@ void showQuickProfilePopup({required context, required Function() chatTap,
                         child: Text(
                           profile.value.isGroupProfile!
                               ? profile.value.name.checkNull()
-                              : SessionManagement.isTrailLicence() ? profile.value.mobileNumber.checkNull() : profile.value.nickName.checkNull(),
+                              : Mirrorfly.isTrialLicence ? profile.value.mobileNumber.checkNull() : profile.value.nickName.checkNull(),
                           style: const TextStyle(color: Colors.white),
                         ),
                       ),
