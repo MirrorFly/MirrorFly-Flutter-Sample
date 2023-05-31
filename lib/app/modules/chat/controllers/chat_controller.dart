@@ -1030,7 +1030,8 @@ class ChatController extends FullLifeCycleController
   }
 
   void handleReplyChatMessage(ChatMessageModel chatListItem) {
-    if (!chatListItem.isMessageRecalled.value && !chatListItem.isMessageDeleted) {
+    if (!chatListItem.isMessageRecalled.value &&
+        !chatListItem.isMessageDeleted) {
       debugPrint(chatListItem.messageType);
       if (isReplying.value) {
         isReplying(false);
@@ -1144,7 +1145,7 @@ class ChatController extends FullLifeCycleController
                         .then((value) {
                       //report success
                       debugPrint(value.toString());
-                      if(value.checkNull()){
+                      if (value.checkNull()) {
                         toToast("Report sent");
                       } else {
                         toToast("There are no messages available");
@@ -1299,7 +1300,7 @@ class ChatController extends FullLifeCycleController
                           // this.chatList.refresh();
                         }
                       }
-                      if(!value) {
+                      if (!value) {
                         toToast("Unable to delete the selected Messages");
                         for (var chatList in selectedChatList) {
                           chatList.isSelected(false);
@@ -1568,7 +1569,7 @@ class ChatController extends FullLifeCycleController
   var j = -1;
 
   scrollUp() {
-    if(filteredPosition.isNotEmpty) {
+    if (filteredPosition.isNotEmpty) {
       var visiblePos = findTopFirstVisibleItemPosition();
       mirrorFlyLog("visiblePos", visiblePos.toString());
       mirrorFlyLog(
@@ -1582,13 +1583,13 @@ class ChatController extends FullLifeCycleController
       } else {
         toToast("No Results Found");
       }
-    }else{
+    } else {
       toToast("No Results Found");
     }
   }
 
   scrollDown() {
-    if(filteredPosition.isNotEmpty) {
+    if (filteredPosition.isNotEmpty) {
       var visiblePos = findTopFirstVisibleItemPosition();
       mirrorFlyLog("visiblePos", visiblePos.toString());
       var g = getPreviousPosition(findTopFirstVisibleItemPosition(),
@@ -1600,7 +1601,7 @@ class ChatController extends FullLifeCycleController
       } else {
         toToast("No Results Found");
       }
-    }else{
+    } else {
       toToast("No Results Found");
     }
   }
@@ -1704,7 +1705,21 @@ class ChatController extends FullLifeCycleController
   exportChat() async {
     if (chatList.isNotEmpty) {
       if (await askStoragePermission()) {
-        Mirrorfly.exportChatConversationToEmail(profile.jid.checkNull());
+        Mirrorfly.exportChatConversationToEmail(profile.jid.checkNull())
+            .then((value) async {
+          debugPrint("exportChatConversationToEmail $value");
+          var data = exportModelFromJson(value);
+          if (data.mediaAttachmentsUrl != null) {
+            if (data.mediaAttachmentsUrl!.isNotEmpty) {
+              var xfiles = <XFile>[];
+              data.mediaAttachmentsUrl
+                  ?.forEach((element) => xfiles.add(XFile(element)));
+              await Share.shareXFiles(xfiles);
+            }
+          }
+        });
+      } else {
+        toToast("permission denid");
       }
     } else {
       toToast("There is no conversation.");
@@ -1958,7 +1973,8 @@ class ChatController extends FullLifeCycleController
       var selectedIndex = selectedChatList.indexWhere(
           (element) => chatMessageModel.messageId == element.messageId);
       if (!selectedIndex.isNegative) {
-        chatMessageModel.isSelected(true); //selectedChatList[selectedIndex].isSelected;
+        chatMessageModel
+            .isSelected(true); //selectedChatList[selectedIndex].isSelected;
         selectedChatList[selectedIndex] = chatMessageModel;
         selectedChatList.refresh();
         getMessageActions();
@@ -2153,7 +2169,7 @@ class ChatController extends FullLifeCycleController
             "userName": profile.name!,
             'profile': profile,
             'caption': messageController.text,
-            'showAdd':false,
+            'showAdd': false,
             'from': 'camera_pick'
           });
         }
@@ -2321,7 +2337,8 @@ class ChatController extends FullLifeCycleController
           return true;
         }
       } else {
-        if (chat.messageType == Constants.mLocation) {
+        if (chat.messageType == Constants.mLocation ||
+            chat.messageType == Constants.mContact) {
           return true;
         }
       }
@@ -2534,6 +2551,8 @@ class ChatController extends FullLifeCycleController
                 .isNotEmpty) {
           mediaPaths.add(
               XFile(item.mediaChatMessage!.mediaLocalStoragePath.checkNull()));
+          debugPrint(
+              "mediaPaths ${item.mediaChatMessage!.mediaLocalStoragePath.checkNull()}");
         }
       }
     }
@@ -2755,8 +2774,9 @@ class ChatController extends FullLifeCycleController
       if (!index.isNegative) {
         // chatMessageModel.isSelected=chatList[index].isSelected;
         // debugPrint("Media Status Onprogress changed---> flutter conversion ${int.parse(progressPercentage)}");
-        chatList[index].mediaChatMessage?.mediaProgressStatus
-            (int.parse(progressPercentage));
+        chatList[index]
+            .mediaChatMessage
+            ?.mediaProgressStatus(int.parse(progressPercentage));
         // chatList.refresh();
       }
     }
