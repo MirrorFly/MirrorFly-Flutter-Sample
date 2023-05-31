@@ -1023,7 +1023,7 @@ class ChatController extends FullLifeCycleController
         // var chatListrev = chatList.reversed;
 
         isStarredExcluded
-            ? chatList.removeWhere((p0) => p0.isMessageStarred == false)
+            ? chatList.removeWhere((p0) => p0.isMessageStarred.value == false)
             : chatList.clear();
         cancelReplyMessage();
         // chatList.refresh();
@@ -2426,7 +2426,7 @@ class ChatController extends FullLifeCycleController
   setMessageActionValidations(ChatMessageModel message) {
     //Forward Validation - can be added for forwarding more than one messages
     if (!canBeForwardedSet &&
-        ((message.isMessageSentByMe && message.messageStatus == "N") ||
+        ((message.isMessageSentByMe && message.messageStatus.value == "N") ||
             (message.isMediaMessage() &&
                 !checkFile(message.mediaChatMessage!.mediaLocalStoragePath)))) {
       canBeForwarded(false);
@@ -2494,12 +2494,12 @@ class ChatController extends FullLifeCycleController
   setMenuItemsValidations(ChatMessageModel message) {
     if (!containsRecalled.value) {
       //Reply Validation
-      if (message.isMessageSentByMe && message.messageStatus == "N") {
+      if (message.isMessageSentByMe && message.messageStatus.value == "N") {
         canBeReplied(false);
       }
       //Info Validation
       if (!message.isMessageSentByMe ||
-          message.messageStatus == "N" ||
+          message.messageStatus.value == "N" ||
           message.isMessageRecalled.value ||
           (message.isMediaMessage() &&
               !checkFile(message.mediaChatMessage!.mediaLocalStoragePath))) {
