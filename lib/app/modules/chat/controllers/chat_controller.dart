@@ -586,6 +586,8 @@ class ChatController extends FullLifeCycleController
               if (!chat.isNegative) {
                 navigateToMessage(chatList[chat]);
                 starredChatMessageId = null;
+              } else {
+                toToast('Message not found');
               }
             }
             getUnsentReplyMessage();
