@@ -128,7 +128,8 @@ abstract class BaseController {
     Mirrorfly.usersWhoBlockedMeListFetched.listen(usersWhoBlockedMeListFetched);
     Mirrorfly.onConnected.listen(onConnected);
     Mirrorfly.onDisconnected.listen(onDisconnected);
-    Mirrorfly.onConnectionNotAuthorized.listen(onConnectionNotAuthorized);
+    // Mirrorfly.onConnectionNotAuthorized.listen(onConnectionNotAuthorized);
+    Mirrorfly.onConnectionFailed.listen(onConnectionFailed);
     Mirrorfly.connectionFailed.listen(connectionFailed);
     Mirrorfly.connectionSuccess.listen(connectionSuccess);
     Mirrorfly.onWebChatPasswordChanged.listen(onWebChatPasswordChanged);
@@ -488,7 +489,8 @@ abstract class BaseController {
     mirrorFlyLog('onDisconnected', result.toString());
   }
 
-  void onConnectionNotAuthorized(result) {}
+  // void onConnectionNotAuthorized(result) {}
+  void onConnectionFailed(result) {}
 
   void connectionFailed(result) {}
 

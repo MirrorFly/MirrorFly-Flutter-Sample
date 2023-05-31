@@ -135,13 +135,13 @@ class ProfileController extends GetxController {
                         status: profileStatus.value);
                     SessionManagement.setCurrentUser(userProfileData);
                     if (from.value == Routes.login) {
-                      Mirrorfly.isTrailLicence().then((trail){
-                        if(trail.checkNull()) {
+                      // Mirrorfly.isTrailLicence().then((trail){
+                        if(Mirrorfly.isTrialLicence) {
                           Get.offNamed(Routes.dashboard);
                         }else{
                           Get.offNamed(Routes.contactSync);
                         }
-                      });
+                      // });
                     }
                   }
                 }

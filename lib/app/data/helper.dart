@@ -709,7 +709,7 @@ Future<RecentChatData?> getRecentChatOfJid(String jid) async {
 }
 
 String getName(Profile item) {
-  if (SessionManagement.isTrailLicence()) {
+  if (Mirrorfly.isTrialLicence) {
     /*return item.name.toString().checkNull().isEmpty
         ? item.nickName.toString()
         : item.name.toString();*/
@@ -755,7 +755,7 @@ String getName(Profile item) {
 }
 
 String getRecentName(RecentChatData item) {
-  if (SessionManagement.isTrailLicence()) {
+  if (Mirrorfly.isTrialLicence) {
     /*return item.name.toString().checkNull().isEmpty
         ? item.nickName.toString()
         : item.name.toString();*/
@@ -783,7 +783,7 @@ String getRecentName(RecentChatData item) {
 }
 
 String getMemberName(Member item) {
-  if (SessionManagement.isTrailLicence()) {
+  if (Mirrorfly.isTrialLicence) {
     /*return item.name.toString().checkNull().isEmpty
         ? item.nickName.toString()
         : item.name.toString();*/
@@ -951,7 +951,7 @@ void showQuickProfilePopup({required context, required Function() chatTap,
                         child: Text(
                           profile.value.isGroupProfile!
                               ? profile.value.name.checkNull()
-                              : SessionManagement.isTrailLicence() ? profile.value.mobileNumber.checkNull() : profile.value.nickName.checkNull(),
+                              : Mirrorfly.isTrialLicence ? profile.value.mobileNumber.checkNull() : profile.value.nickName.checkNull(),
                           style: const TextStyle(color: Colors.white),
                         ),
                       ),

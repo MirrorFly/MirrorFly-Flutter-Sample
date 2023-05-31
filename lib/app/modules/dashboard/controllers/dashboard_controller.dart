@@ -951,7 +951,7 @@ class DashboardController extends FullLifeCycleController
   RxBool clearVisible = false.obs;
   final _mainuserList = <Profile>[];
   var userlistScrollController = ScrollController();
-  var scrollable = SessionManagement.isTrailLicence().obs;
+  var scrollable = Mirrorfly.isTrialLicence.obs;
   var isPageLoading = false.obs;
   final _userList = <Profile>[].obs;
 
@@ -1002,7 +1002,7 @@ class DashboardController extends FullLifeCycleController
   Future<void> filterUserList() async {
     if (await AppUtils.isNetConnected()) {
       searching = true;
-      var future = (SessionManagement.isTrailLicence())
+      var future = (Mirrorfly.isTrialLicence)
           ? Mirrorfly.getUserList(pageNum, search.text.trim().toString())
           : Mirrorfly.getRegisteredUsers(true);
       future.then((value) {
@@ -1010,7 +1010,7 @@ class DashboardController extends FullLifeCycleController
         if (value != null) {
           var list = userListFromJson(value);
           if (list.data != null) {
-            if (SessionManagement.isTrailLicence()) {
+            if (Mirrorfly.isTrialLicence) {
               scrollable(list.data!.length == 20);
 
               list.data!.removeWhere((element){
@@ -1233,7 +1233,7 @@ class DashboardController extends FullLifeCycleController
   }
 
   Future<void> gotoContacts() async {
-    if (SessionManagement.isTrailLicence()) {
+    if (Mirrorfly.isTrialLicence) {
       Get.toNamed(Routes.contacts,
           arguments: {"forward": false, "group": false, "groupJid": ""});
     } else {

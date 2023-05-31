@@ -106,7 +106,7 @@ class ChatController extends FullLifeCycleController
   String? nJid;
   String? starredChatMessageId;
 
-  bool get isTrail => SessionManagement.isTrailLicence();
+  bool get isTrail => Mirrorfly.isTrialLicence;
 
   @override
   void onInit() async {
@@ -2696,7 +2696,7 @@ class ChatController extends FullLifeCycleController
       Mirrorfly.addContact(parse["international"], userName).then((value) {
         if (value ?? false) {
           toToast("Contact Saved");
-          if (!SessionManagement.isTrailLicence()) {
+          if (!Mirrorfly.isTrialLicence) {
             syncContacts();
           }
         }

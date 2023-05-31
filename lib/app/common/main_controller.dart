@@ -11,7 +11,6 @@ import 'package:mirror_fly_demo/app/base_controller.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
 import 'package:mirror_fly_demo/app/common/received_notification.dart';
-import 'package:mirror_fly_demo/app/data/apputils.dart';
 import 'package:mirror_fly_demo/app/data/pushnotification.dart';
 import 'package:mirror_fly_demo/app/data/session_management.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
@@ -20,7 +19,6 @@ import 'package:mirror_fly_demo/app/modules/contact_sync/controllers/contact_syn
 import 'package:mirror_fly_demo/app/routes/app_pages.dart';
 
 import 'package:mirrorfly_plugin/mirrorfly.dart';
-import 'package:permission_handler/permission_handler.dart';
 
 import '../modules/chatInfo/controllers/chat_info_controller.dart';
 import 'notification_service.dart';
@@ -291,13 +289,13 @@ class MainController extends FullLifeCycleController with BaseController, FullLi
   void onResumed() {
     mirrorFlyLog('mainController', 'onResumed');
     checkShouldShowPin();
-    if(!SessionManagement.isTrailLicence()) {
+    if(!Mirrorfly.isTrialLicence) {
       syncContacts();
     }
   }
 
   void syncContacts() async {
-    if(await Permission.contacts.isGranted) {
+    /*if(await Permission.contacts.isGranted) {
       if (await AppUtils.isNetConnected() &&
           !await Mirrorfly.contactSyncStateValue()) {
         final permission = await Permission.contacts.status;
@@ -314,13 +312,13 @@ class MainController extends FullLifeCycleController with BaseController, FullLi
           mirrorFlyLog("checkContactPermission isSuccess", value.toString());
         });
       }
-    }
+    }*/
   }
 
   void networkDisconnected() {}
 
   void networkConnected() {
-    if(!SessionManagement.isTrailLicence()) {
+    if(!Mirrorfly.isTrialLicence) {
       syncContacts();
     }
   }
