@@ -406,5 +406,52 @@ class ArchivedChatListController extends GetxController {
 
   void userDeletedHisProfile(String jid) {
     userUpdatedHisProfile(jid);
+    updateProfile(jid);
+  }
+  var profile_ = Profile().obs;
+  void getProfileDetail(context, RecentChatData chatItem, int index) {
+    getProfileDetails(chatItem.jid.checkNull()).then((value) {
+      profile_(value);
+      debugPrint("dashboard controller profile update received");
+      showQuickProfilePopup(
+          context: context,
+          // chatItem: chatItem,
+          chatTap: () {
+            Get.back();
+            toChatPage(chatItem.jid.checkNull());
+          },
+          callTap: () {},
+          videoTap: () {},
+          infoTap: () {
+            Get.back();
+            infoPage(value);
+          },
+          profile: profile_);
+    });
+  }
+  void updateProfile(String jid){
+    if(profile_.value.jid != null && profile_.value.jid.toString()==jid.toString()) {
+      getProfileDetails(jid).then((value) {
+        debugPrint("get profile detail archived $value");
+        profile_(value);
+      });
+    }
+  }
+  infoPage(Profile profile) {
+    if (profile.isGroupProfile ?? false) {
+      Get.toNamed(Routes.groupInfo, arguments: profile)?.then((value) {
+        if (value != null) {
+          // profile_(value as Profile);
+          // isBlocked(profile.isBlocked);
+          // checkAdminBlocked();
+          // memberOfGroup();
+          // Mirrorfly.setOnGoingChatUser(profile.jid!);
+          // getChatHistory();
+          // sendReadReceipt();
+        }
+      });
+    } else {
+      Get.toNamed(Routes.chatInfo, arguments: profile)?.then((value) {});
+    }
   }
 }
