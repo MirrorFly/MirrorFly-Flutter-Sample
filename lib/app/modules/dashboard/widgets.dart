@@ -251,13 +251,13 @@ class RecentChatItem extends StatelessWidget {
     return Positioned(
         right: 0,
         child: CircleAvatar(
-          radius: 8,
+          radius: 9,
           child: Text(
             returnFormattedCount(item.unreadMessageCount!) != "0"
                 ? returnFormattedCount(item.unreadMessageCount!)
                 : "",
             style: const TextStyle(
-                fontSize: 9, color: Colors.white, fontFamily: 'sf_ui'),
+                fontSize: 8, color: Colors.white, fontFamily: 'sf_ui'),
           ),
         ));
   }
