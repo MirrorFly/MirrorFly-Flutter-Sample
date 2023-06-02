@@ -41,9 +41,9 @@ class ProfileView extends GetView<ProfileController> {
               style: TextStyle(color: appbarTextColor),
             ),
             centerTitle: true,
-            automaticallyImplyLeading: controller.from.value == Routes.login
-                ? false
-                : true,
+            automaticallyImplyLeading: Get.previousRoute != Routes.login//controller.from.value == Routes.login
+                // ? false
+                // : true,
           ),
           body: SafeArea(
             child: SingleChildScrollView(
@@ -278,7 +278,7 @@ class ProfileView extends GetView<ProfileController> {
                               }
                                   : null,
                               child: Text(
-                                controller.from.value == Routes.login
+                                controller.from == Routes.login
                                     ? 'Save'
                                     : controller.changed.value
                                     ? 'Update & Continue'
