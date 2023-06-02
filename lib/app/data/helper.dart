@@ -241,12 +241,13 @@ bool checkFileUploadSize(String path, String mediaType) {
 
   // debugPrint(getFileSizeText(sizeInBytes.toString()));
 
-  if (mediaType == Constants.mImage && sizeInMb < 10) {
+  if (mediaType == Constants.mImage && sizeInMb <= Constants.maxImageFileSize) {
     return true;
-  } else if ((mediaType == Constants.mAudio ||
-      mediaType == Constants.mVideo ||
-      mediaType == Constants.mDocument) &&
-      sizeInMb < 20) {
+  } else if (mediaType == Constants.mAudio && sizeInMb <= Constants.maxAudioFileSize) {
+    return true;
+  } else if (mediaType == Constants.mVideo && sizeInMb <= Constants.maxVideoFileSize) {
+    return true;
+  } else if (mediaType == Constants.mDocument && sizeInMb <= Constants.maxDocFileSize) {
     return true;
   } else {
     return false;

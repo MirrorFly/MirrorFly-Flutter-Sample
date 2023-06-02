@@ -719,7 +719,7 @@ class ChatController extends FullLifeCycleController
           filePath.value = (result.files.single.path!);
           sendDocumentMessage(filePath.value, "");
         } else {
-          toToast("File Size should not exceed 20 MB");
+          toToast("File Size should not exceed ${Constants.maxDocFileSize} MB");
         }
       } else {
         // User canceled the picker
@@ -945,7 +945,7 @@ class ChatController extends FullLifeCycleController
               filePath.value, false, duration.inMilliseconds.toString());
         });
       } else {
-        toToast("File Size should not exceed 20 MB");
+        toToast("File Size should not exceed ${Constants.maxAudioFileSize} MB");
       }
     } else {
       // User canceled the picker
