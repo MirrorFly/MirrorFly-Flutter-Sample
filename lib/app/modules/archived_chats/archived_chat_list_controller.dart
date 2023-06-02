@@ -201,16 +201,9 @@ class ArchivedChatListController extends GetxController {
     updateArchiveRecentChat(chatMessage.chatUserJid);
   }
 
-  void onMessageStatusUpdated(event) {
+  void onMessageStatusUpdated(ChatMessageModel chatMessageModel) {
     // mirrorFlyLog("MESSAGE STATUS UPDATED", event);
-    ChatMessageModel chatMessageModel = sendMessageModelFromJson(event);
-    final index = archivedChats.indexWhere(
-        (message) => message.lastMessageId == chatMessageModel.messageId);
-    debugPrint("Message Status Update index of search $index");
-    if (!index.isNegative) {
-      archivedChats[index].lastMessageStatus = chatMessageModel.messageStatus.value;
-      archivedChats.refresh();
-    }
+    updateArchiveRecentChat(chatMessageModel.chatUserJid);
   }
 
   Future<RecentChatData?> getRecentChatOfJid(String jid) async {
