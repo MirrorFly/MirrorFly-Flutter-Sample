@@ -806,7 +806,7 @@ class DashboardController extends FullLifeCycleController
               },
               child: const Text("No")),
           TextButton(
-              onPressed: () async {
+              onPressed: () {
                 Get.back();
                 Mirrorfly.deleteRecentChat(selectedChats[index]).then((value) {
                   clearAllChatSelection();

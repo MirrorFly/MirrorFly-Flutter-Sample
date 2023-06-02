@@ -704,7 +704,8 @@ class ChatController extends FullLifeCycleController
   }
 
   documentPickUpload() async {
-    if (await askStoragePermission()) {
+    var permission = await AppPermission.getStoragePermission();
+    if (permission) {
       FilePickerResult? result = await FilePicker.platform.pickFiles(
         allowMultiple: false,
         type: FileType.custom,
@@ -851,32 +852,6 @@ class ChatController extends FullLifeCycleController
         return false;
       default:
         debugPrint("Contact Permission default");
-        return false;
-    }
-  }
-
-  Future<bool> askStoragePermission() async {
-    final permission = await AppPermission.getStoragePermission();
-    switch (permission) {
-      case PermissionStatus.granted:
-        return true;
-      case PermissionStatus.permanentlyDenied:
-        return false;
-      default:
-        debugPrint("Permission default");
-        return false;
-    }
-  }
-
-  Future<bool> askManageStoragePermission() async {
-    final permission = await AppPermission.getManageStoragePermission();
-    switch (permission) {
-      case PermissionStatus.granted:
-        return true;
-      case PermissionStatus.permanentlyDenied:
-        return false;
-      default:
-        debugPrint("Permission default");
         return false;
     }
   }
@@ -1224,7 +1199,7 @@ class ChatController extends FullLifeCycleController
           mainAxisSize: MainAxisSize.min,
           children: [
             Text(
-                "Are you sure you want to delete selected Message${selectedChatList.length > 1 ? "s" : ""}"),
+                "Are you sure you want to delete selected Message${selectedChatList.length > 1 ? "s" : ""}?"),
             isCheckBoxShown
                 ? Column(
                     mainAxisSize: MainAxisSize.min,
@@ -1706,7 +1681,8 @@ class ChatController extends FullLifeCycleController
 
   exportChat() async {
     if (chatList.isNotEmpty) {
-      if (await askStoragePermission()) {
+      var permission = await AppPermission.getStoragePermission();
+      if (permission) {
         Mirrorfly.exportChatConversationToEmail(profile.jid.checkNull())
             .then((value) async {
           debugPrint("exportChatConversationToEmail $value");
@@ -1813,7 +1789,8 @@ class ChatController extends FullLifeCycleController
         ? await Mirrorfly.isBusyStatusEnabled()
         : false;
     if (!busyStatus.checkNull()) {
-      if (await askStoragePermission()) {
+      var permission = await AppPermission.getStoragePermission();
+      if (permission) {
         if (await Record().hasPermission()) {
           record = Record();
           timerInit("00:00");
@@ -2198,18 +2175,15 @@ class ChatController extends FullLifeCycleController
   // }
 
   onAudioClick() async {
-    // Get.back();
-    // if (await askMicrophonePermission()) {
-    if (await AppPermission.checkPermission(
-        Permission.storage, filePermission, Constants.filePermission)) {
+    var permission = await AppPermission.getStoragePermission();
+    if (permission) {
       pickAudio();
     }
   }
 
   onGalleryClick() async {
-    // if (await askStoragePermission()) {
-    if (await AppPermission.checkPermission(
-        Permission.storage, filePermission, Constants.filePermission)) {
+    var permission = await AppPermission.getStoragePermission();
+    if (permission) {
       try {
         // imagePicker();
         Get.toNamed(Routes.galleryPicker, arguments: {
