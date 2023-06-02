@@ -71,6 +71,7 @@ class ChatController extends FullLifeCycleController
   TextEditingController messageController = TextEditingController();
 
   FocusNode focusNode = FocusNode();
+  FocusNode searchfocusNode = FocusNode();
 
   var calendar = DateTime.now();
   var profile_ = Profile().obs;
@@ -2555,6 +2556,12 @@ class ChatController extends FullLifeCycleController
         focusNode.unfocus();
         Future.delayed(const Duration(milliseconds: 100), () {
           focusNode.requestFocus();
+        });
+      }
+      if(searchfocusNode.hasFocus){
+        searchfocusNode.unfocus();
+        Future.delayed(const Duration(milliseconds: 100), () {
+          searchfocusNode.requestFocus();
         });
       }
     }
