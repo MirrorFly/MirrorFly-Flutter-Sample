@@ -102,7 +102,7 @@ class ProfileController extends GetxController {
                 .updateMyProfile(
                 profileName.text.toString(),
                 profileEmail.text.toString(),
-                profileMobile.text.toString(),
+                profileMobile.text.replaceAll(" ", "").replaceAll("+", "").toString(),
                 profileStatus.value.toString(),
                 userImgUrl.value.isEmpty ? null : userImgUrl.value
             )
@@ -120,7 +120,7 @@ class ProfileController extends GetxController {
                     var userProfileData = ProData(
                         email: profileEmail.text.toString(),
                         image: userImgUrl.value,
-                        mobileNumber: profileMobile.text,
+                        mobileNumber: profileMobile.text.replaceAll(" ", "").replaceAll("+", ""),
                         nickName: profileName.text,
                         name: profileName.text,
                         status: profileStatus.value);
@@ -413,7 +413,7 @@ class ProfileController extends GetxController {
       //{country_code: 91, e164: +91xxxxxxxxxx, national: 0xxxxx xxxxx, type: mobile, international: +91 xxxxx xxxxx, national_number: xxxxxxxxxx, region_code: IN}
       if (parse.isNotEmpty) {
         var formatted = parse['international'].replaceAll("+", '');
-        profileMobile.text = (formatted.toString());
+        profileMobile.text = "+$formatted";
         return true;
       } else {
         return false;
