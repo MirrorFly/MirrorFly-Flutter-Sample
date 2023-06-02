@@ -843,20 +843,28 @@ String getMobileNumberFromJid(String jid) {
 
 String convertSecondToLastSeen(String seconds){
 
-  var userLastSeenDate = DateTime.now().subtract(Duration(seconds: double.parse(seconds).toInt()));
+  if(seconds.isNotEmpty) {
+    if(seconds=="0") return "Online";
+    // var userLastSeenDate = DateTime.now().subtract(Duration(milliseconds: double.parse(seconds).toInt()));
+    DateTime lastSeen = DateTime.fromMillisecondsSinceEpoch(
+        double.parse(seconds).toInt());
+    Duration diff = DateTime.now().difference(lastSeen);
 
-  Duration diff = DateTime.now().difference(userLastSeenDate);
-
-  if(int.parse(DateFormat('yyyy').format(userLastSeenDate)) < int.parse(DateFormat('yyyy').format(DateTime.now()))){
-    return 'last seen on ${DateFormat('dd/mm/yyyy')}';
-  }else if(diff.inDays > 1){
-    return 'last seen on ${DateFormat('dd MMM').format(userLastSeenDate)}';
-  }else if(diff.inDays == 1){
-    return 'last seen on Yesterday';
-  } else if(diff.inHours >= 1 || diff.inMinutes >= 1 || diff.inSeconds >= 1){
-    return 'last seen at ${DateFormat('hh:mm a').format(userLastSeenDate)}';
-  } else {
-    return 'Online';
+    if (int.parse(DateFormat('yyyy').format(lastSeen)) <
+        int.parse(DateFormat('yyyy').format(DateTime.now()))) {
+      return 'last seen on ${DateFormat('dd/mm/yyyy')}';
+    } else if (diff.inDays > 1) {
+      return 'last seen on ${DateFormat('dd MMM').format(lastSeen)}';
+    } else if (diff.inDays == 1) {
+      return 'last seen on Yesterday';
+    } else
+    if (diff.inHours >= 1 || diff.inMinutes >= 1 || diff.inSeconds >= 1) {
+      return 'last seen at ${DateFormat('hh:mm a').format(lastSeen)}';
+    } else {
+      return 'Online';
+    }
+  }else{
+    return "";
   }
 }
 
