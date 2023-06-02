@@ -61,6 +61,10 @@ class StarredMessagesController extends FullLifeCycleController with FullLifeCyc
           starredChatList(list);
         }
         isListLoading(false);
+        if(isSearch.value){
+          lastInputValue="";
+          startSearch(searchedText.text.toString());
+        }
       });
     }
   }
