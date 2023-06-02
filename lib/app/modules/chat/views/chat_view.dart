@@ -403,6 +403,7 @@ class ChatView extends GetView<ChatController> {
                   onChanged: (text) {
                     controller.isTyping(text);
                   },
+                  style: const TextStyle(fontWeight: FontWeight.w400),
                   keyboardType: TextInputType.multiline,
                   minLines: 1,
                   maxLines: 5,

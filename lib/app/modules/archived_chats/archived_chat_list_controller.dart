@@ -65,11 +65,12 @@ class ArchivedChatListController extends GetxController {
   }
 
   menuValidationForItem() {
-    delete(false);
+    // delete(false);
     if (selectedChats.length == 1) {
       var item = archivedChats
           .firstWhere((element) => selectedChats.first == element.jid);
-      delete(Constants.typeGroupChat != item.getChatType());
+      // delete(Constants.typeGroupChat != item.getChatType());
+      menuValidationForDeleteIcon();
       if ((Constants.typeBroadcastChat != item.getChatType()&& !archiveEnabled.value)) {
         unMute(item.isMuted!);
         mute(!item.isMuted!);
