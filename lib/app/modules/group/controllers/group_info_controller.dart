@@ -91,8 +91,13 @@ class GroupInfoController extends GetxController {
         var index = groupMembers.indexWhere((element) => element.jid == userJid);
         if(!index.isNegative) {
           debugPrint('user left ${groupMembers[index].name}');
+          var isAdmin = groupMembers[index].isGroupAdmin;
           groupMembers.removeAt(index);
-          groupMembers.refresh();
+          if(isAdmin.checkNull()){
+            getGroupMembers(false);
+          }else {
+            groupMembers.refresh();
+          }
         }
       }
     }
