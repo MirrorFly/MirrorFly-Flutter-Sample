@@ -98,11 +98,12 @@ class ProfileController extends GetxController {
         } else {
           if (await AppUtils.isNetConnected()) {
             debugPrint("profile update");
+            var unformatted = profileMobile.text.replaceAll(" ", "").replaceAll("+", "");
             Mirrorfly
                 .updateMyProfile(
                 profileName.text.toString(),
                 profileEmail.text.toString(),
-                profileMobile.text.replaceAll(" ", "").replaceAll("+", "").toString(),
+                unformatted,
                 profileStatus.value.toString(),
                 userImgUrl.value.isEmpty ? null : userImgUrl.value
             )
@@ -120,7 +121,7 @@ class ProfileController extends GetxController {
                     var userProfileData = ProData(
                         email: profileEmail.text.toString(),
                         image: userImgUrl.value,
-                        mobileNumber: profileMobile.text.replaceAll(" ", "").replaceAll("+", ""),
+                        mobileNumber: unformatted,
                         nickName: profileName.text,
                         name: profileName.text,
                         status: profileStatus.value);
@@ -406,14 +407,14 @@ class ProfileController extends GetxController {
 
   Future<bool> validMobileNumber(String text)async{
     FlutterLibphonenumber().init();
-    var formatNumberSync = FlutterLibphonenumber().formatNumberSync("+$text");
+    var formatNumberSync = FlutterLibphonenumber().formatNumberSync("$text");
     try {
       var parse = await FlutterLibphonenumber().parse(formatNumberSync);
       debugPrint("parse-----> $parse");
       //{country_code: 91, e164: +91xxxxxxxxxx, national: 0xxxxx xxxxx, type: mobile, international: +91 xxxxx xxxxx, national_number: xxxxxxxxxx, region_code: IN}
       if (parse.isNotEmpty) {
-        var formatted = parse['international'].replaceAll("+", '');
-        profileMobile.text = "+$formatted";
+        var formatted = parse['international'];//.replaceAll("+", '');
+        profileMobile.text = formatted;
         return true;
       } else {
         return false;
