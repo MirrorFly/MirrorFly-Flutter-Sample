@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
@@ -59,9 +58,9 @@ class GroupInfoController extends GetxController {
     if (groupJid.checkNull().isNotEmpty) {
       if (profile.jid.checkNull() == groupJid.toString()) {
         mirrorFlyLog("group info", groupJid.toString());
-        Mirrorfly.getProfileDetails(profile.jid.checkNull(), false).then((value) {
-          if (value != null) {
-            var member = Profile.fromJson(json.decode(value.toString()));
+        getProfileDetails(profile.jid.checkNull()).then((value) {
+          if (value.jid != null) {
+            var member = value;//Profile.fromJson(json.decode(value.toString()));
             profile_(member);
             _mute(profile.isMuted!);
             nameController.text=profile.nickName.checkNull();

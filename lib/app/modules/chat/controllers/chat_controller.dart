@@ -1987,9 +1987,9 @@ class ChatController extends FullLifeCycleController
 
   void onGroupProfileUpdated(groupJid) {
     if (profile.jid.checkNull() == groupJid.toString()) {
-      Mirrorfly.getProfileDetails(profile.jid.checkNull(), false).then((value) {
-        if (value != null) {
-          var member = Profile.fromJson(json.decode(value.toString()));
+      getProfileDetails(profile.jid.checkNull()).then((value) {
+        if (value.jid != null) {
+          var member = value;//Profile.fromJson(json.decode(value.toString()));
           profile_.value = member;
           profile_.refresh();
           checkAdminBlocked();

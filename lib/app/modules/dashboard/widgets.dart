@@ -131,7 +131,7 @@ class RecentChatItem extends StatelessWidget {
                       : buildProfileStatus()
                   : Expanded(
                       child: typingUserid.isEmpty
-                          ? item.lastMessageType != null ? buildLastMessageItem() : const SizedBox.shrink()
+                          ? item.lastMessageType != null ? buildLastMessageItem() : const SizedBox(height: 15,)
                           : buildTypingUser(),
                     ),
             ],
@@ -334,19 +334,6 @@ class RecentChatItem extends StatelessWidget {
             var chat = data.data!;
             return Row(
               children: [
-                chat.isMessageRecalled.value
-                    ? const SizedBox.shrink() : forMessageTypeIcon(
-                    chat.messageType, chat.mediaChatMessage),
-                SizedBox(
-                  width: chat.isMessageRecalled.value
-                      ? 0.0
-                      : forMessageTypeString(chat.messageType,
-                                  content:
-                                  chat.messageTextContent.checkNull()) !=
-                              null
-                          ? 3.0
-                          : 0.0,
-                ),
                 (item.isGroup.checkNull() &&
                         !chat.isMessageSentByMe.checkNull() &&
                         (chat.messageType != Constants.mNotification ||
@@ -358,6 +345,19 @@ class RecentChatItem extends StatelessWidget {
                         overflow: TextOverflow.ellipsis,
                       )
                     : const SizedBox.shrink(),
+                chat.isMessageRecalled.value
+                    ? const SizedBox.shrink() : forMessageTypeIcon(
+                    chat.messageType, chat.mediaChatMessage),
+                SizedBox(
+                  width: chat.isMessageRecalled.value
+                      ? 0.0
+                      : forMessageTypeString(chat.messageType,
+                      content:
+                      chat.messageTextContent.checkNull()) !=
+                      null
+                      ? 3.0
+                      : 0.0,
+                ),
                 Expanded(
                   child: spanTxt.isEmpty
                       ? Text(

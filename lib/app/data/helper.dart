@@ -346,13 +346,13 @@ extension MemberParsing on Member {
   }
 
   String getUsername() {
-    var value = Mirrorfly.getProfileDetails(jid.checkNull(), false);
+    var value = Mirrorfly.getProfileDetails(jid.checkNull());
     var str = Profile.fromJson(json.decode(value.toString()));
     return getName(str); //str.name.checkNull();
   }
 
   Future<Profile> getProfileDetails() async {
-    var value = await Mirrorfly.getProfileDetails(jid.checkNull(), false);
+    var value = await Mirrorfly.getProfileDetails(jid.checkNull());
     var str = Profile.fromJson(json.decode(value.toString()));
     return str;
   }
@@ -378,7 +378,7 @@ extension MemberProfileParsing on MemberProfileDetails {
 }
 
 Future<Profile> getProfileDetails(String jid) async {
-  var value = await Mirrorfly.getProfileDetails(jid.checkNull(), false);
+  var value = await Mirrorfly.getProfileDetails(jid.checkNull());
   // profileDataFromJson(value);
   debugPrint("update profile--> $value");
   var profile = await compute(profiledata, value.toString());

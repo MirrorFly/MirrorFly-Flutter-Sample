@@ -138,12 +138,12 @@ class MainController extends FullLifeCycleController with BaseController, FullLi
       if(payload != null && payload.isNotEmpty){
 
         if (Get.isRegistered<ChatController>()) {
-          Mirrorfly.getProfileDetails(payload, false).then((value) {
-            if (value != null) {
+          getProfileDetails(payload).then((value) {
+            if (value.jid != null) {
               debugPrint("notification group info controller");
-              var profile = profiledata(value.toString());
+              // var profile = profiledata(value.toString());
               // Get.toNamed(Routes.chat, arguments: profile);
-              Get.back(result: profile);
+              Get.back(result: value);
             }
           });
         }else {
