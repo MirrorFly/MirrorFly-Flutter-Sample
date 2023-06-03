@@ -406,8 +406,9 @@ class ProfileController extends GetxController {
   }
 
   Future<bool> validMobileNumber(String text)async{
+    var m = text.contains("+") ? text : "+$text";
     FlutterLibphonenumber().init();
-    var formatNumberSync = FlutterLibphonenumber().formatNumberSync("$text");
+    var formatNumberSync = FlutterLibphonenumber().formatNumberSync(m);
     try {
       var parse = await FlutterLibphonenumber().parse(formatNumberSync);
       debugPrint("parse-----> $parse");
