@@ -1,11 +1,11 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
 import 'package:mirrorfly_plugin/mirrorfly.dart';
 import 'package:mirror_fly_demo/app/routes/app_pages.dart';
-import 'package:package_info_plus/package_info_plus.dart';
 import 'package:path/path.dart';
 import 'package:yaml/yaml.dart';
 
@@ -14,16 +14,24 @@ import '../../../data/apputils.dart';
 import '../../../data/session_management.dart';
 
 class SettingsController extends GetxController {
-  PackageInfo? packageInfo;
-
+  // PackageInfo? packageInfo;
+  RxString version = "".obs;
+  RxString releaseDate = "".obs;
   @override
   void onInit() {
     super.onInit();
     getPackageInfo();
+    getReleaseDate();
   }
 
   getPackageInfo() async {
-    packageInfo.obs.value = await PackageInfo.fromPlatform();
+    // var packageInfo = await PackageInfo.fromPlatform();
+    String yamlContent = await rootBundle.loadString('pubspec.yaml');
+    YamlMap yamlMap = loadYaml(yamlContent);
+    String buildVersion = yamlMap['version'];
+    String buildReleaseDate = yamlMap['build_release_date'];
+    version(buildVersion);
+    releaseDate(buildReleaseDate);
   }
 
   logout() {
@@ -66,7 +74,7 @@ class SettingsController extends GetxController {
   }
 
   getReleaseDate() async {
-    var releaseDate = "Nov";
+    var releaseDate = "";
     String pathToYaml =
         join(dirname(Platform.script.toFilePath()), '../pubspec.yaml');
     File file = File(pathToYaml);

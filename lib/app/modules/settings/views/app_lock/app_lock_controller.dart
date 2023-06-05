@@ -17,7 +17,7 @@ import '../../../../data/apputils.dart';
 import '../../../../routes/app_pages.dart';
 
 class AppLockController extends FullLifeCycleController
-    with FullLifeCycleMixin {
+    with FullLifeCycleMixin,GetTickerProviderStateMixin {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final _pinEnabled = false.obs;
 
@@ -545,6 +545,8 @@ class AppLockController extends FullLifeCycleController
         isDismissible: false,
         isScrollControlled: true,
         BottomSheet(
+            enableDrag: true,
+            animationController: BottomSheet.createAnimationController(this),
             shape: const RoundedRectangleBorder(
                 borderRadius: BorderRadius.only(
                     topLeft: Radius.circular(30),
@@ -553,108 +555,110 @@ class AppLockController extends FullLifeCycleController
             builder: (builder) {
               return WillPopScope(
                 onWillPop: () async => false,
-                child: Padding(
-                  padding: EdgeInsets.only(
-                      top: 16.0,
-                      left: 16.0,
-                      right: 16.0,
-                      bottom: MediaQuery
-                          .of(Get.context!)
-                          .viewInsets
-                          .bottom),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      const Text(
-                        'Forget PIN ?',
-                        textAlign: TextAlign.center,
-                        style:
-                        TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
-                      ),
-                      const Padding(
-                        padding: EdgeInsets.only(top: 16.0, right: 8, left: 8),
-                        child: Text(
-                          'We have sent you the OTP to the registered mobile number enter the 6 digit verification code below',
+                child: SafeArea(
+                  child: Padding(
+                    padding: EdgeInsets.only(
+                        top: 16.0,
+                        left: 16.0,
+                        right: 16.0,
+                        bottom: MediaQuery
+                            .of(Get.context!)
+                            .viewInsets
+                            .bottom),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Text(
+                          'Forget PIN ?',
                           textAlign: TextAlign.center,
-                          style: TextStyle(
-                              fontSize: 13,
-                              fontWeight: FontWeight.w300,
-                              color: Color(0Xff737373)),
+                          style:
+                          TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
                         ),
-                      ),
-                      const SizedBox(
-                        height: 16,
-                      ),
-                      OTPTextField(
-                          width: MediaQuery
-                              .of(Get.context!)
-                              .size
-                              .width,
-                          controller: otpController,
-                          length: 6,
-                          textFieldAlignment: MainAxisAlignment.center,
-                          margin: const EdgeInsets.all(4),
-                          fieldWidth: 40,
-                          fieldStyle: FieldStyle.box,
-                          outlineBorderRadius: 10,
-                          style: const TextStyle(fontSize: 16),
-                          otpFieldStyle: OtpFieldStyle(),
-                          onChanged: (String pin) {
-                            smsCode = (pin);
+                        const Padding(
+                          padding: EdgeInsets.only(top: 16.0, right: 8, left: 8),
+                          child: Text(
+                            'We have sent you the OTP to the registered mobile number enter the 6 digit verification code below',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                                fontSize: 13,
+                                fontWeight: FontWeight.w300,
+                                color: Color(0Xff737373)),
+                          ),
+                        ),
+                        const SizedBox(
+                          height: 16,
+                        ),
+                        OTPTextField(
+                            width: MediaQuery
+                                .of(Get.context!)
+                                .size
+                                .width,
+                            controller: otpController,
+                            length: 6,
+                            textFieldAlignment: MainAxisAlignment.center,
+                            margin: const EdgeInsets.all(4),
+                            fieldWidth: 40,
+                            fieldStyle: FieldStyle.box,
+                            outlineBorderRadius: 10,
+                            style: const TextStyle(fontSize: 16),
+                            otpFieldStyle: OtpFieldStyle(),
+                            onChanged: (String pin) {
+                              smsCode = (pin);
+                            }),
+                        Padding(
+                          padding: const EdgeInsets.all(16.0),
+                          child: Obx(() {
+                            return InkWell(
+                              onTap: () {
+                                if (timeout.value) {
+                                  resend();
+                                }
+                              },
+                              child: Text(
+                                timeout.value
+                                    ? 'Resend OTP'
+                                    : '00:${(myDuration.value.inSeconds.remainder(
+                                    60).toStringAsFixed(0).padLeft(2, '0'))}',
+                                style: TextStyle(
+                                    color: timeout.value
+                                        ? const Color(0XFFFF0000)
+                                        : buttonBgColor,
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.w500),
+                              ),
+                            );
                           }),
-                      Padding(
-                        padding: const EdgeInsets.all(16.0),
-                        child: Obx(() {
-                          return InkWell(
-                            onTap: () {
-                              if (timeout.value) {
-                                resend();
-                              }
-                            },
-                            child: Text(
-                              timeout.value
-                                  ? 'Resend OTP'
-                                  : '00:${(myDuration.value.inSeconds.remainder(
-                                  60).toStringAsFixed(0).padLeft(2, '0'))}',
-                              style: TextStyle(
-                                  color: timeout.value
-                                      ? const Color(0XFFFF0000)
-                                      : buttonBgColor,
-                                  fontSize: 15,
-                                  fontWeight: FontWeight.w500),
-                            ),
-                          );
-                        }),
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          TextButton(
-                              onPressed: () {
-                                Get.back();
-                              },
-                              child: const Text(
-                                'Cancel',
-                                style: TextStyle(
-                                    color: Color(0XFFFF0000),
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w700),
-                              )),
-                          TextButton(
-                              onPressed: () {
-                                verifyOTP();
-                              },
-                              child: const Text(
-                                'Verify OTP',
-                                style: TextStyle(
-                                    color: buttonBgColor,
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w700),
-                              ))
-                        ],
-                      )
-                    ],
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            TextButton(
+                                onPressed: () {
+                                  Get.back();
+                                },
+                                child: const Text(
+                                  'Cancel',
+                                  style: TextStyle(
+                                      color: Color(0XFFFF0000),
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w700),
+                                )),
+                            TextButton(
+                                onPressed: () {
+                                  verifyOTP();
+                                },
+                                child: const Text(
+                                  'Verify OTP',
+                                  style: TextStyle(
+                                      color: buttonBgColor,
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w700),
+                                ))
+                          ],
+                        )
+                      ],
+                    ),
                   ),
                 ),
               );
@@ -701,7 +705,7 @@ class AppLockController extends FullLifeCycleController
 
   Future<void> sendVerificationCode() async {
     var mobileNumber =
-        '+${(SessionManagement.getCountryCode() ?? '').replaceAll('+', '')}${SessionManagement.getMobileNumber() ?? ''}';
+    /*${(SessionManagement.getCountryCode() ?? '').replaceAll('+', '')}*/'+${SessionManagement.getMobileNumber() ?? ''}';
     debugPrint('mobileNumber $mobileNumber');
     /*Future.delayed(const Duration(milliseconds: 500), () {
       hideLoading();

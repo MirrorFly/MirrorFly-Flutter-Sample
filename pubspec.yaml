@@ -1,6 +1,6 @@
 name: mirror_fly_demo
-version: 2.3.6+29
-build_release_date: Mar 10
+version: 2.3.7+30
+build_release_date: Jun 2023
 publish_to: none
 description: A MirrorFly Flutter Sample Application.
 environment: 
@@ -52,7 +52,7 @@ dependencies:
   qr_code_scanner: ^1.0.1 #qr scanner
   yaml: ^3.1.1
   path: ^1.8.2
-  camera: ^0.10.0+4
+  camera: ^0.10.5+2
   better_video_player: ^1.2.8
   internet_connection_checker: ^1.0.0+1 # connectivity check
   provider: ^6.0.3

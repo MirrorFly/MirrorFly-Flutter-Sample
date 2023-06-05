@@ -376,7 +376,7 @@ class DashboardView extends GetView<DashboardController> {
         Obx(() {
           return Visibility(
               visible: !controller.recentChatLoding.value &&
-                  controller.recentChats.isEmpty,
+                  controller.recentChats.isEmpty && controller.archivedChats.isEmpty,
               child: emptyChat(context));
         }),
         Column(

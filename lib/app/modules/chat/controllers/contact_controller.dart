@@ -394,7 +394,7 @@ class ContactController extends FullLifeCycleController
         if (selectedUsersJIDList.isNotEmpty) {
           Get.back(result: selectedUsersJIDList);
         } else {
-          toToast("Add at least two contacts");
+          toToast("Select any contacts");
         }
       }
     } else {

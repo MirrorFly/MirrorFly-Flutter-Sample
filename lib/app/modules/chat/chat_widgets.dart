@@ -9,7 +9,6 @@ import 'package:mirrorfly_plugin/mirrorflychat.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:mirror_fly_demo/app/common/widgets.dart';
-import 'package:permission_handler/permission_handler.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../common/constants.dart';
@@ -2072,7 +2071,8 @@ void downloadMedia(String messageId) async {
   debugPrint("media download click");
   debugPrint("media download click--> $messageId");
   if (await AppUtils.isNetConnected()) {
-    if (await askStoragePermission()) {
+    var permission = await AppPermission.getStoragePermission();
+    if (permission) {
       debugPrint("media permission granted");
       Mirrorfly.downloadMedia(messageId);
     } else {
@@ -2080,19 +2080,6 @@ void downloadMedia(String messageId) async {
     }
   } else {
     toToast(Constants.noInternetConnection);
-  }
-}
-
-Future<bool> askStoragePermission() async {
-  final permission = await AppPermission.getStoragePermission();
-  switch (permission) {
-    case PermissionStatus.granted:
-      return true;
-    case PermissionStatus.permanentlyDenied:
-      return false;
-    default:
-      debugPrint("Permission default");
-      return false;
   }
 }
 

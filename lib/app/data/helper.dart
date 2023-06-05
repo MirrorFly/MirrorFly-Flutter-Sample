@@ -241,12 +241,13 @@ bool checkFileUploadSize(String path, String mediaType) {
 
   // debugPrint(getFileSizeText(sizeInBytes.toString()));
 
-  if (mediaType == Constants.mImage && sizeInMb < 10) {
+  if (mediaType == Constants.mImage && sizeInMb <= Constants.maxImageFileSize) {
     return true;
-  } else if ((mediaType == Constants.mAudio ||
-      mediaType == Constants.mVideo ||
-      mediaType == Constants.mDocument) &&
-      sizeInMb < 20) {
+  } else if (mediaType == Constants.mAudio && sizeInMb <= Constants.maxAudioFileSize) {
+    return true;
+  } else if (mediaType == Constants.mVideo && sizeInMb <= Constants.maxVideoFileSize) {
+    return true;
+  } else if (mediaType == Constants.mDocument && sizeInMb <= Constants.maxDocFileSize) {
     return true;
   } else {
     return false;
@@ -345,13 +346,13 @@ extension MemberParsing on Member {
   }
 
   String getUsername() {
-    var value = Mirrorfly.getProfileDetails(jid.checkNull(), false);
+    var value = Mirrorfly.getProfileDetails(jid.checkNull());
     var str = Profile.fromJson(json.decode(value.toString()));
     return getName(str); //str.name.checkNull();
   }
 
   Future<Profile> getProfileDetails() async {
-    var value = await Mirrorfly.getProfileDetails(jid.checkNull(), false);
+    var value = await Mirrorfly.getProfileDetails(jid.checkNull());
     var str = Profile.fromJson(json.decode(value.toString()));
     return str;
   }
@@ -377,7 +378,7 @@ extension MemberProfileParsing on MemberProfileDetails {
 }
 
 Future<Profile> getProfileDetails(String jid) async {
-  var value = await Mirrorfly.getProfileDetails(jid.checkNull(), false);
+  var value = await Mirrorfly.getProfileDetails(jid.checkNull());
   // profileDataFromJson(value);
   debugPrint("update profile--> $value");
   var profile = await compute(profiledata, value.toString());
@@ -843,20 +844,28 @@ String getMobileNumberFromJid(String jid) {
 
 String convertSecondToLastSeen(String seconds){
 
-  var userLastSeenDate = DateTime.now().subtract(Duration(seconds: double.parse(seconds).toInt()));
+  if(seconds.isNotEmpty) {
+    if(seconds=="0") return "Online";
+    // var userLastSeenDate = DateTime.now().subtract(Duration(milliseconds: double.parse(seconds).toInt()));
+    DateTime lastSeen = DateTime.fromMillisecondsSinceEpoch(
+        double.parse(seconds).toInt());
+    Duration diff = DateTime.now().difference(lastSeen);
 
-  Duration diff = DateTime.now().difference(userLastSeenDate);
-
-  if(int.parse(DateFormat('yyyy').format(userLastSeenDate)) < int.parse(DateFormat('yyyy').format(DateTime.now()))){
-    return 'last seen on ${DateFormat('dd/mm/yyyy')}';
-  }else if(diff.inDays > 1){
-    return 'last seen on ${DateFormat('dd MMM').format(userLastSeenDate)}';
-  }else if(diff.inDays == 1){
-    return 'last seen on Yesterday';
-  } else if(diff.inHours >= 1 || diff.inMinutes >= 1 || diff.inSeconds >= 1){
-    return 'last seen at ${DateFormat('hh:mm a').format(userLastSeenDate)}';
-  } else {
-    return 'Online';
+    if (int.parse(DateFormat('yyyy').format(lastSeen)) <
+        int.parse(DateFormat('yyyy').format(DateTime.now()))) {
+      return 'last seen on ${DateFormat('dd/mm/yyyy')}';
+    } else if (diff.inDays > 1) {
+      return 'last seen on ${DateFormat('dd MMM').format(lastSeen)}';
+    } else if (diff.inDays == 1) {
+      return 'last seen on Yesterday';
+    } else
+    if (diff.inHours >= 1 || diff.inMinutes >= 1 || diff.inSeconds >= 1) {
+      return 'last seen at ${DateFormat('hh:mm a').format(lastSeen)}';
+    } else {
+      return 'Online';
+    }
+  }else{
+    return "";
   }
 }
 

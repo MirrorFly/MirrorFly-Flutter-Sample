@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -61,6 +60,10 @@ class StarredMessagesController extends FullLifeCycleController with FullLifeCyc
           starredChatList(list);
         }
         isListLoading(false);
+        if(isSearch.value){
+          lastInputValue="";
+          startSearch(searchedText.text.toString());
+        }
       });
     }
   }
@@ -536,6 +539,7 @@ class StarredMessagesController extends FullLifeCycleController with FullLifeCyc
     if(str.isNotEmpty) {
       clear(true);
       if (lastInputValue != str.trim()) {
+        starredChatList.clear();
         lastInputValue = str.trim();
         addSearchedMessagesToList(str.trim());
       }
@@ -571,42 +575,79 @@ class StarredMessagesController extends FullLifeCycleController with FullLifeCyc
 
   var searchedStarredMessageList = <ChatMessageModel>[];
   Future<void> addSearchedMessagesToList(String filterKey) async {
-    starredChatList.clear();
-    for (var message in searchedStarredMessageList) {
-      var name = await getProfile(message.chatUserJid.checkNull());
-      if (isTextMessageContainsFilterKey(message, filterKey)) {
-        starredChatList.add(message);
-      } else if (isImageCaptionContainsFilterKey(message, filterKey)) {
-        starredChatList.add(message);
-      } else if (isVideoCaptionContainsFilterKey(message, filterKey)) {
-        starredChatList.add(message);
-      } else if (Constants.mDocument == message.messageType &&
-          message.mediaChatMessage!.mediaFileName.checkNull().isNotEmpty &&
-          message.mediaChatMessage!.mediaFileName
-              .toLowerCase()
-              .contains(filterKey.toLowerCase())) {
-        starredChatList.add(message);
-      } else if (Constants.mContact == message.messageType &&
-          message.contactChatMessage!.contactName.checkNull().isNotEmpty &&
-          message.contactChatMessage!.contactName
-              .toLowerCase()
-              .contains(filterKey.toLowerCase())) {
-        starredChatList.add(message);
-      } else if (message.senderUserName.checkNull().isNotEmpty &&
-          message.senderUserName
-              .toLowerCase()
-              .contains(filterKey.toLowerCase())) {
-        starredChatList.add(message);
-      } else if (message.isMessageSentByMe &&
-          "You".toLowerCase().contains(filterKey.toLowerCase())) {
-        starredChatList.add(message);
-      } else if ((message.messageChatType== Constants.typeGroupChat)&&
-          name.name.checkNull().contains(filterKey.toLowerCase())) {
-        starredChatList.add(message);
+    if(starredChatList.isEmpty) {
+      for (var message in searchedStarredMessageList) {
+        if (isTextMessageContainsFilterKey(message, filterKey)) {
+          if(starredChatList.indexWhere((element) => element.messageId==message.messageId).isNegative) {
+            starredChatList.add(message);
+            debugPrint('starredChatList ${message.messageId}text');
+          }
+        } else if (isImageCaptionContainsFilterKey(message, filterKey)) {
+          if(starredChatList.indexWhere((element) => element.messageId==message.messageId).isNegative) {
+            starredChatList.add(message);
+            debugPrint('starredChatList ${message.messageId}image');
+          }
+        } else if (isVideoCaptionContainsFilterKey(message, filterKey)) {
+          if(starredChatList.indexWhere((element) => element.messageId==message.messageId).isNegative) {
+            starredChatList.add(message);
+            debugPrint('starredChatList ${message.messageId}video');
+          }
+        } else if (Constants.mDocument == message.messageType &&
+            message.mediaChatMessage!
+                .mediaFileName
+                .checkNull()
+                .isNotEmpty &&
+            message.mediaChatMessage!.mediaFileName
+                .toLowerCase()
+                .contains(filterKey.toLowerCase())) {
+          if(starredChatList.indexWhere((element) => element.messageId==message.messageId).isNegative) {
+            starredChatList.add(message);
+            debugPrint('starredChatList ${message.messageId}doc');
+          }
+        } else if (Constants.mContact == message.messageType &&
+            message.contactChatMessage!
+                .contactName
+                .checkNull()
+                .isNotEmpty &&
+            message.contactChatMessage!.contactName
+                .toLowerCase()
+                .contains(filterKey.toLowerCase())) {
+          if(starredChatList.indexWhere((element) => element.messageId==message.messageId).isNegative) {
+            starredChatList.add(message);
+            debugPrint('starredChatList ${message.messageId}contact');
+          }
+        } else if (message.senderUserName
+            .checkNull()
+            .isNotEmpty &&
+            message.senderUserName
+                .toLowerCase()
+                .contains(filterKey.toLowerCase())) {
+          if(starredChatList.indexWhere((element) => element.messageId==message.messageId).isNegative) {
+            starredChatList.add(message);
+            debugPrint('starredChatList ${message.messageId}sender');
+          }
+        } else if (message.isMessageSentByMe &&
+            "You".toLowerCase().contains(filterKey.toLowerCase())) {
+          if(starredChatList.indexWhere((element) => element.messageId==message.messageId).isNegative) {
+            starredChatList.add(message);
+            debugPrint('starredChatList ${message.messageId}you');
+          }
+        } else if ((message.messageChatType == Constants.typeGroupChat)){
+          var name = await getProfileDetails(message.chatUserJid.checkNull());
+            if(name.name.checkNull().contains(filterKey.toLowerCase())) {
+              if(starredChatList.indexWhere((element) => element.messageId==message.messageId).isNegative) {
+                starredChatList.add(message);
+                debugPrint('starredChatList ${message.messageId} : group');
+              }
+            }
+        }
+        starredChatList.refresh();
       }
+    }else{
+      starredChatList([]);
+      addSearchedMessagesToList(filterKey);
     }
     debugPrint('starredChatList ${starredChatList.length}');
-    starredChatList.refresh();
     /*starredMessagesAdapterAdapterData!!.setSearch(searchEnabled, searchedText)
   starredMessagesAdapterAdapterData!!.setStarredMessages(searchedStarredMessageList)
   starredMessagesAdapterAdapterData!!.notifyDataSetChanged()*/
@@ -639,10 +680,6 @@ class StarredMessagesController extends FullLifeCycleController with FullLifeCyc
             .checkNull()
             .toLowerCase()
             .contains(filterKey.toLowerCase());
-  }
-  Future<Profile> getProfile(String jid) async {
-    var value = await Mirrorfly.getProfileDetails(jid, true);
-    return Profile.fromJson(json.decode(value.toString()));
   }
 
   navigateMessage(ChatMessageModel starredChat) {

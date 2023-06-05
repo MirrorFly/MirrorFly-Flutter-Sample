@@ -27,6 +27,7 @@ class ChatSearchView extends GetView<ChatController> {
           title: TextField(
             onChanged: (text) => controller.setSearch(text),
             controller: controller.searchedText,
+            focusNode: controller.searchfocusNode,
             autofocus: true,
             decoration: const InputDecoration(
                 hintText: "Search...", border: InputBorder.none),

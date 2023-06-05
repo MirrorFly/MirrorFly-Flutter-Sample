@@ -71,6 +71,7 @@ class ChatController extends FullLifeCycleController
   TextEditingController messageController = TextEditingController();
 
   FocusNode focusNode = FocusNode();
+  FocusNode searchfocusNode = FocusNode();
 
   var calendar = DateTime.now();
   var profile_ = Profile().obs;
@@ -704,7 +705,8 @@ class ChatController extends FullLifeCycleController
   }
 
   documentPickUpload() async {
-    if (await askStoragePermission()) {
+    var permission = await AppPermission.getStoragePermission();
+    if (permission) {
       FilePickerResult? result = await FilePicker.platform.pickFiles(
         allowMultiple: false,
         type: FileType.custom,
@@ -717,7 +719,7 @@ class ChatController extends FullLifeCycleController
           filePath.value = (result.files.single.path!);
           sendDocumentMessage(filePath.value, "");
         } else {
-          toToast("File Size should not exceed 20 MB");
+          toToast("File Size should not exceed ${Constants.maxDocFileSize} MB");
         }
       } else {
         // User canceled the picker
@@ -855,32 +857,6 @@ class ChatController extends FullLifeCycleController
     }
   }
 
-  Future<bool> askStoragePermission() async {
-    final permission = await AppPermission.getStoragePermission();
-    switch (permission) {
-      case PermissionStatus.granted:
-        return true;
-      case PermissionStatus.permanentlyDenied:
-        return false;
-      default:
-        debugPrint("Permission default");
-        return false;
-    }
-  }
-
-  Future<bool> askManageStoragePermission() async {
-    final permission = await AppPermission.getManageStoragePermission();
-    switch (permission) {
-      case PermissionStatus.granted:
-        return true;
-      case PermissionStatus.permanentlyDenied:
-        return false;
-      default:
-        debugPrint("Permission default");
-        return false;
-    }
-  }
-
   sendContactMessage(List<String> contactList, String contactName) async {
     debugPrint("sendingName--> $contactName");
     var busyStatus = !profile.isGroupProfile.checkNull()
@@ -969,7 +945,7 @@ class ChatController extends FullLifeCycleController
               filePath.value, false, duration.inMilliseconds.toString());
         });
       } else {
-        toToast("File Size should not exceed 20 MB");
+        toToast("File Size should not exceed ${Constants.maxAudioFileSize} MB");
       }
     } else {
       // User canceled the picker
@@ -1224,7 +1200,7 @@ class ChatController extends FullLifeCycleController
           mainAxisSize: MainAxisSize.min,
           children: [
             Text(
-                "Are you sure you want to delete selected Message${selectedChatList.length > 1 ? "s" : ""}"),
+                "Are you sure you want to delete selected Message${selectedChatList.length > 1 ? "s" : ""}?",style: const TextStyle(fontSize: 18,color: textColor),),
             isCheckBoxShown
                 ? Column(
                     mainAxisSize: MainAxisSize.min,
@@ -1262,14 +1238,9 @@ class ChatController extends FullLifeCycleController
           TextButton(
               onPressed: () {
                 Get.back();
-              },
-              child: const Text("CANCEL")),
-          TextButton(
-              onPressed: () {
-                Get.back();
                 //Helper.showLoading(message: 'Deleting Message');
                 Mirrorfly.deleteMessagesForMe(profile.jid!, chatType,
-                        deleteChatListID, isMediaDelete.value)
+                    deleteChatListID, isMediaDelete.value)
                     .then((value) {
                   debugPrint(value.toString());
                   //Helper.hideLoading();
@@ -1284,6 +1255,11 @@ class ChatController extends FullLifeCycleController
                 selectedChatList.clear();
               },
               child: const Text("DELETE FOR ME")),
+          TextButton(
+              onPressed: () {
+                Get.back();
+              },
+              child: const Text("CANCEL")),
           isRecallAvailable
               ? TextButton(
                   onPressed: () {
@@ -1706,7 +1682,8 @@ class ChatController extends FullLifeCycleController
 
   exportChat() async {
     if (chatList.isNotEmpty) {
-      if (await askStoragePermission()) {
+      var permission = await AppPermission.getStoragePermission();
+      if (permission) {
         Mirrorfly.exportChatConversationToEmail(profile.jid.checkNull())
             .then((value) async {
           debugPrint("exportChatConversationToEmail $value");
@@ -1813,7 +1790,8 @@ class ChatController extends FullLifeCycleController
         ? await Mirrorfly.isBusyStatusEnabled()
         : false;
     if (!busyStatus.checkNull()) {
-      if (await askStoragePermission()) {
+      var permission = await AppPermission.getStoragePermission();
+      if (permission) {
         if (await Record().hasPermission()) {
           record = Record();
           timerInit("00:00");
@@ -2009,9 +1987,9 @@ class ChatController extends FullLifeCycleController
 
   void onGroupProfileUpdated(groupJid) {
     if (profile.jid.checkNull() == groupJid.toString()) {
-      Mirrorfly.getProfileDetails(profile.jid.checkNull(), false).then((value) {
-        if (value != null) {
-          var member = Profile.fromJson(json.decode(value.toString()));
+      getProfileDetails(profile.jid.checkNull()).then((value) {
+        if (value.jid != null) {
+          var member = value;//Profile.fromJson(json.decode(value.toString()));
           profile_.value = member;
           profile_.refresh();
           checkAdminBlocked();
@@ -2198,18 +2176,15 @@ class ChatController extends FullLifeCycleController
   // }
 
   onAudioClick() async {
-    // Get.back();
-    // if (await askMicrophonePermission()) {
-    if (await AppPermission.checkPermission(
-        Permission.storage, filePermission, Constants.filePermission)) {
+    var permission = await AppPermission.getStoragePermission();
+    if (permission) {
       pickAudio();
     }
   }
 
   onGalleryClick() async {
-    // if (await askStoragePermission()) {
-    if (await AppPermission.checkPermission(
-        Permission.storage, filePermission, Constants.filePermission)) {
+    var permission = await AppPermission.getStoragePermission();
+    if (permission) {
       try {
         // imagePicker();
         Get.toNamed(Routes.galleryPicker, arguments: {
@@ -2581,6 +2556,12 @@ class ChatController extends FullLifeCycleController
         focusNode.unfocus();
         Future.delayed(const Duration(milliseconds: 100), () {
           focusNode.requestFocus();
+        });
+      }
+      if(searchfocusNode.hasFocus){
+        searchfocusNode.unfocus();
+        Future.delayed(const Duration(milliseconds: 100), () {
+          searchfocusNode.requestFocus();
         });
       }
     }

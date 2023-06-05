@@ -477,6 +477,11 @@ class Constants {
   static const String privacyPolicy =
       "https://www.mirrorfly.com/privacy-policy.php";
 
+  static const maxAudioFileSize = 30;
+  static const maxVideoFileSize = 30;
+  static const maxImageFileSize = 10;
+  static const maxDocFileSize = 20;
+
   static const List<String> defaultStatusList = [
     "Available",
     "Sleeping...",

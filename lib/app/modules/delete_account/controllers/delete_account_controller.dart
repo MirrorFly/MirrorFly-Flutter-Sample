@@ -29,7 +29,7 @@ class DeleteAccountController extends GetxController {
         ]);
         return;
       }
-      mirrorFlyLog("SessionManagement.getMobileNumber()", SessionManagement.getMobileNumber().toString());
+      mirrorFlyLog("SessionManagement.getMobileNumber()", SessionManagement.getMobileNumber().toString().trim());
       mirrorFlyLog("SessionManagement.getCountryCode()", SessionManagement.getCountryCode().toString());
       mirrorFlyLog("Mirrorfly.isTrialLicence", Mirrorfly.isTrialLicence.toString());
       mirrorFlyLog("countryCode", countryCode.toString());
