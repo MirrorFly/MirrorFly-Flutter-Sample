@@ -1200,7 +1200,7 @@ class ChatController extends FullLifeCycleController
           mainAxisSize: MainAxisSize.min,
           children: [
             Text(
-                "Are you sure you want to delete selected Message${selectedChatList.length > 1 ? "s" : ""}?"),
+                "Are you sure you want to delete selected Message${selectedChatList.length > 1 ? "s" : ""}?",style: const TextStyle(fontSize: 18,color: textColor),),
             isCheckBoxShown
                 ? Column(
                     mainAxisSize: MainAxisSize.min,
@@ -1238,14 +1238,9 @@ class ChatController extends FullLifeCycleController
           TextButton(
               onPressed: () {
                 Get.back();
-              },
-              child: const Text("CANCEL")),
-          TextButton(
-              onPressed: () {
-                Get.back();
                 //Helper.showLoading(message: 'Deleting Message');
                 Mirrorfly.deleteMessagesForMe(profile.jid!, chatType,
-                        deleteChatListID, isMediaDelete.value)
+                    deleteChatListID, isMediaDelete.value)
                     .then((value) {
                   debugPrint(value.toString());
                   //Helper.hideLoading();
@@ -1260,6 +1255,11 @@ class ChatController extends FullLifeCycleController
                 selectedChatList.clear();
               },
               child: const Text("DELETE FOR ME")),
+          TextButton(
+              onPressed: () {
+                Get.back();
+              },
+              child: const Text("CANCEL")),
           isRecallAvailable
               ? TextButton(
                   onPressed: () {
