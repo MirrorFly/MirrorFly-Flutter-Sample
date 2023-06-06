@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:mirrorfly_plugin/mirrorfly.dart';
+import 'package:mirrorfly_plugin/mirrorflychat.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
@@ -17,6 +17,7 @@ import 'package:mirror_fly_demo/app/routes/app_pages.dart';
 
 import 'common/main_controller.dart';
 import 'common/notification_service.dart';
+import 'model/chat_message_model.dart';
 import 'modules/archived_chats/archived_chat_list_controller.dart';
 import 'modules/chat/controllers/forwardchat_controller.dart';
 import 'modules/chatInfo/controllers/chat_info_controller.dart';
@@ -34,10 +35,10 @@ abstract class BaseController {
     Mirrorfly.onMediaStatusUpdated.listen(onMediaStatusUpdated);
     Mirrorfly.onUploadDownloadProgressChanged.listen((event){
       var data = json.decode(event.toString());
-      // debugPrint("Media Status Onprogress changed---> flutter $data");
+      debugPrint("Media Status Onprogress changed---> flutter $data");
       var messageId = data["message_id"] ?? "";
-      var progressPercentage = data["progress_percentage"] ?? "0";
-      onUploadDownloadProgressChanged(messageId,progressPercentage);
+      var progressPercentage = data["progress_percentage"] ?? 0;
+      onUploadDownloadProgressChanged(messageId,progressPercentage.toString());
     });
     Mirrorfly.onGroupProfileFetched.listen(onGroupProfileFetched);
     Mirrorfly.onNewGroupCreated.listen(onNewGroupCreated);
@@ -127,7 +128,8 @@ abstract class BaseController {
     Mirrorfly.usersWhoBlockedMeListFetched.listen(usersWhoBlockedMeListFetched);
     Mirrorfly.onConnected.listen(onConnected);
     Mirrorfly.onDisconnected.listen(onDisconnected);
-    Mirrorfly.onConnectionNotAuthorized.listen(onConnectionNotAuthorized);
+    // Mirrorfly.onConnectionNotAuthorized.listen(onConnectionNotAuthorized);
+    Mirrorfly.onConnectionFailed.listen(onConnectionFailed);
     Mirrorfly.connectionFailed.listen(connectionFailed);
     Mirrorfly.connectionSuccess.listen(connectionSuccess);
     Mirrorfly.onWebChatPasswordChanged.listen(onWebChatPasswordChanged);
@@ -182,13 +184,16 @@ abstract class BaseController {
     if(SessionManagement.getCurrentChatJID() == chatMessageModel.chatUserJid.checkNull()){
       debugPrint("Message Status updated user chat screen is in online");
     }else{
-      if(chatMessageModel.isMessageRecalled){
+      if(chatMessageModel.isMessageRecalled.value){
         showLocalNotification(chatMessageModel);
       }
     }
 
     if (Get.isRegistered<ChatController>()) {
       Get.find<ChatController>().onMessageStatusUpdated(chatMessageModel);
+    }
+    if (Get.isRegistered<ArchivedChatListController>()) {
+      Get.find<ArchivedChatListController>().onMessageStatusUpdated(chatMessageModel);
     }
     if (Get.isRegistered<DashboardController>()) {
       Get.find<DashboardController>().onMessageStatusUpdated(chatMessageModel);
@@ -487,7 +492,8 @@ abstract class BaseController {
     mirrorFlyLog('onDisconnected', result.toString());
   }
 
-  void onConnectionNotAuthorized(result) {}
+  // void onConnectionNotAuthorized(result) {}
+  void onConnectionFailed(result) {}
 
   void connectionFailed(result) {}
 
@@ -554,7 +560,7 @@ abstract class BaseController {
       NotificationDetails(android: androidNotificationDetails, iOS: iosNotificationDetails);
       await flutterLocalNotificationsPlugin.show(
           int.parse(messageId), chatMessageModel.senderUserName,
-          chatMessageModel.isMessageRecalled ? "This message was deleted" : chatMessageModel.messageTextContent, notificationDetails,
+          chatMessageModel.isMessageRecalled.value ? "This message was deleted" : chatMessageModel.messageTextContent, notificationDetails,
           payload: chatMessageModel.chatUserJid);
     }else{
       debugPrint("self sent message don't need notification");
