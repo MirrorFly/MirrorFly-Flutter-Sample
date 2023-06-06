@@ -3,8 +3,8 @@ import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
-import 'package:mirror_fly_demo/app/data/session_management.dart';
 import 'package:mirror_fly_demo/app/modules/chat/controllers/contact_controller.dart';
+import 'package:mirrorfly_plugin/mirrorfly.dart';
 
 import '../../../common/widgets.dart';
 import '../../../routes/app_pages.dart';
@@ -112,7 +112,7 @@ class ContactListView extends GetView<ContactController> {
                         controller.refreshContacts(true);
                       },
                     ),
-                    showAsAction: (!SessionManagement.isTrailLicence() && !controller.progressSpinner.value) ? ShowAsAction.never : ShowAsAction.gone,
+                    showAsAction: (!Mirrorfly.isTrialLicence && !controller.progressSpinner.value) ? ShowAsAction.never : ShowAsAction.gone,
                     keyValue: 'Refresh',
                     onItemClick: () {
                       // Get.back();

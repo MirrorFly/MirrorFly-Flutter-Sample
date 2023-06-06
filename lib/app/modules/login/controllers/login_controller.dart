@@ -68,11 +68,11 @@ class LoginController extends GetxController {
       debugPrint(seconds.value.toString());
     }
   }
-  @override
+  /*@override
   void onReady() {
     super.onReady();
-    Mirrorfly.isTrailLicence().then((value) => SessionManagement.setIsTrailLicence(value.checkNull()));
-  }
+    // Mirrorfly.isTrailLicence().then((value) => SessionManagement.setIsTrailLicence(value.checkNull()));
+  }*/
 
   @override
   void dispose() {
@@ -209,7 +209,7 @@ class LoginController extends GetxController {
     showLoading();
     try {
       await _auth.signInWithCredential(credential).then((value) {
-        if(SessionManagement.isTrailLicence()) {
+        if(Mirrorfly.isTrialLicence) {
           sendTokenToServer(); // for Mirrorfly user list purpose verify the user
         }else{
           validateDeviceToken('');

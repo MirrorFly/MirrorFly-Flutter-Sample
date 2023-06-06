@@ -24,22 +24,26 @@ class AppPermission {
     if (permission != PermissionStatus.granted &&
         permission != PermissionStatus.permanentlyDenied) {
       const newPermission = Permission.contacts;
-      mirrorFlyPermissionDialog(
+      var deniedPopupValue = await mirrorFlyPermissionDialog(
           notNowBtn: () {
             return false;
           },
           continueBtn: () async {
-            newPermission.request();
+            // newPermission.request();
           },
           icon: contactPermission,
           content: Constants.contactPermission);
-      return newPermission.status;
+      if(deniedPopupValue) {
+        return await newPermission.request();
+      }else {
+        return newPermission.status;
+      }
     } else {
       return permission;
     }
   }
 
-  static Future<PermissionStatus> getStoragePermission() async {
+  static Future<bool> getStoragePermission() async {
     var sdkVersion=0;
     if (Platform.isAndroid) {
       var sdk =  await DeviceInfoPlugin().androidInfo;
@@ -52,25 +56,29 @@ class AppPermission {
       if (permission != PermissionStatus.granted &&
           permission != PermissionStatus.permanentlyDenied) {
         const newPermission = Permission.storage;
-        mirrorFlyPermissionDialog(
+        var deniedPopupValue = await mirrorFlyPermissionDialog(
             notNowBtn: () {
               return false;
             },
             continueBtn: () async {
-              newPermission.request();
+              // newPermission.request();
             },
             icon: filePermission,
             content: Constants.filePermission);
-        return newPermission.status;
+        if(deniedPopupValue) {
+          return await newPermission.request().isGranted;
+        }else{
+          return newPermission.status.isGranted;
+        }
       } else {
-        return permission;
+        return permission.isGranted;
       }
     } else {
       return getAndroid13Permission();
     }
   }
 
-  static Future<PermissionStatus> getAndroid13Permission() async {
+  static Future<bool> getAndroid13Permission() async {
     final photos = await Permission.photos.status;
     final videos = await Permission.videos.status;
     // final audio = await Permission.audio.status;
@@ -83,25 +91,32 @@ class AppPermission {
         photos != PermissionStatus.permanentlyDenied) ||
         (videos != PermissionStatus.granted &&
             videos != PermissionStatus.permanentlyDenied)) {
-      mirrorFlyPermissionDialog(
+      mirrorFlyLog("showing mirrorfly popup", "");
+      var deniedPopupValue = await mirrorFlyPermissionDialog(
           notNowBtn: () {
             return false;
           },
-          continueBtn: () async {
-            newPermission.request();
+          continueBtn: () {
+            // newPermission.request();
           },
           icon: filePermission,
           content: Constants.filePermission);
-      var photo = await newPermission[0].status.isGranted;
-      var video = await newPermission[1].isGranted;
-      // var audio = await newPermission[2].isGranted;
-      return (photo && video)
-          ? PermissionStatus.granted
-          : PermissionStatus.denied;
+      if(deniedPopupValue) {
+        var newp = await newPermission.request();
+        PermissionStatus? photo = newp[Permission.photos];
+        PermissionStatus? video = newp[Permission.videos];
+        // var audio = await newPermission[2].isGranted;
+        return (photo!.isGranted && video!.isGranted);
+            // ? PermissionStatus.granted
+            // : PermissionStatus.denied;
+      }else{
+        return false;//PermissionStatus.denied;
+      }
     } else {
-      return (photos.isGranted && videos.isGranted)
-          ? PermissionStatus.granted
-          : PermissionStatus.denied;
+      mirrorFlyLog("showing mirrorfly popup", "${photos.isGranted} ${videos.isGranted}");
+      return (photos.isGranted && videos.isGranted);
+          // ? photos
+          // : photos;
     }
   }
 
@@ -116,6 +131,7 @@ class AppPermission {
     }
   }
 
+//not used so var deniedPopupValue = await not imple
   static Future<PermissionStatus> getCameraPermission() async {
     final permission = await Permission.camera.status;
     if (permission != PermissionStatus.granted &&
@@ -136,6 +152,7 @@ class AppPermission {
     }
   }
 
+//not used so var deniedPopupValue = await not imple
   static Future<PermissionStatus> getAudioPermission() async {
     final permission = await Permission.microphone.status;
     if (permission != PermissionStatus.granted &&
@@ -156,6 +173,7 @@ class AppPermission {
     }
   }
 
+  //not used so var deniedPopupValue = await not imple
   static Future<bool> askFileCameraAudioPermission() async {
     var filePermission = Permission.storage;
     var camerapermission = Permission.camera;
@@ -267,12 +285,12 @@ class AppPermission {
               child: const Text("OK")),
         ]);
   }
-  static mirrorFlyPermissionDialog(
+  static Future<bool> mirrorFlyPermissionDialog(
       {required Function() notNowBtn,
       required Function() continueBtn,
       required String icon,
-      required String content}) {
-    Get.dialog(AlertDialog(
+      required String content}) async {
+    return await Get.dialog(AlertDialog(
       contentPadding: EdgeInsets.zero,
       content: Column(
         mainAxisSize: MainAxisSize.min,
@@ -294,7 +312,7 @@ class AppPermission {
       actions: [
         TextButton(
             onPressed: () {
-              Get.back(result: "no");
+              Get.back(result: false);
               notNowBtn();
             },
             child: const Text(
@@ -303,7 +321,7 @@ class AppPermission {
             )),
         TextButton(
             onPressed: () {
-              Get.back(result: "yes");
+              Get.back(result: true);
               continueBtn();
             },
             child: const Text(

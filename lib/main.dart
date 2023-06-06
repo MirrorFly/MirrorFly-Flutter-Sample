@@ -79,7 +79,7 @@ class MyApp extends StatelessWidget{
       debugShowCheckedModeBanner: false,
       onInit: () {
         ReplyHashMap.init();
-        Mirrorfly.isTrailLicence().then((value) => SessionManagement.setIsTrailLicence(value.checkNull()));
+        // Mirrorfly.isTrailLicence().then((value) => SessionManagement.setIsTrailLicence(value.checkNull()));
         Get.put<MainController>(MainController());
       },
       //initialBinding: getBinding(),
@@ -117,7 +117,7 @@ String getInitialRoute() {
             .getChatJid()
             .checkNull()
             .isEmpty) {
-          if(!SessionManagement.isTrailLicence()) {
+          if(!Mirrorfly.isTrialLicence) {
               // mirrorFlyLog("nonChatUsers", nonChatUsers.toString());
               mirrorFlyLog("SessionManagement.isContactSyncDone()", SessionManagement.isContactSyncDone().toString());
               if (!SessionManagement.isContactSyncDone() /*|| nonChatUsers.isEmpty*/) {
@@ -126,6 +126,11 @@ String getInitialRoute() {
                 return AppPages.dashboard;
               }
           }else{
+            mirrorFlyLog("login", "${SessionManagement
+                .getChatJid()
+                .checkNull()
+                .isEmpty}");
+            mirrorFlyLog("SessionManagement.getLogin()", "${SessionManagement.getLogin()}");
             return AppPages.dashboard;
           }
         } else {

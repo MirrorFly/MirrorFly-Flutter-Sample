@@ -137,7 +137,7 @@ class MediaPreviewView extends GetView<MediaPreviewController> {
                                   if (data.type == 'image') {
                                     return Center(
                                         child: PhotoView(
-                                      imageProvider: FileImage(File(data.path)),
+                                      imageProvider: FileImage(File(data.path!)),
                                       // Contained = the smallest possible size to fit one dimension of the screen
                                       minScale:
                                           PhotoViewComputedScale.contained * 1,
@@ -179,7 +179,7 @@ class MediaPreviewView extends GetView<MediaPreviewController> {
                                             BetterVideoPlayerController(),
                                         dataSource: BetterVideoPlayerDataSource(
                                           BetterVideoPlayerDataSourceType.file,
-                                          data.path,
+                                          data.path!,
                                         ),
                                       ),
                                     );
@@ -344,7 +344,7 @@ class MediaPreviewView extends GetView<MediaPreviewController> {
                                                       .symmetric(horizontal: 1),
                                                   child: Image.memory(controller
                                                       .filePath[index]
-                                                      .thumbnail),
+                                                      .thumbnail!),
                                                 ),
                                               );
                                             }),

@@ -6,6 +6,7 @@ import android.os.Build
 import android.os.Build.VERSION.SDK_INT
 import android.os.Bundle
 import android.util.Log
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.WindowCompat
 import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.engine.FlutterEngine
@@ -16,10 +17,11 @@ class MainActivity : FlutterActivity() {
     //protected val stickyService: Intent by lazy { Intent(this, AndroidPlugin::class.java) }
     override fun onCreate(savedInstanceState: Bundle?) {
         WindowCompat.setDecorFitsSystemWindows(window, false)
-
-        if (SDK_INT >= Build.VERSION_CODES.S) {
-            splashScreen.setOnExitAnimationListener { splashScreenView -> splashScreenView.remove() }
-        }
+        // Handle the splash screen transition.
+        val splashScreen = installSplashScreen()
+//        if (SDK_INT >= Build.VERSION_CODES.S) {
+//            splashScreen.setOnExitAnimationListener { splashScreenView -> splashScreenView.remove() }
+//        }
 
         super.onCreate(savedInstanceState)
     }
