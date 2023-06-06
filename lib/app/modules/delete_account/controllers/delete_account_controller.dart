@@ -29,13 +29,13 @@ class DeleteAccountController extends GetxController {
         ]);
         return;
       }
-      mirrorFlyLog("SessionManagement.getMobileNumber()", SessionManagement.getMobileNumber().toString());
+      mirrorFlyLog("SessionManagement.getMobileNumber()", SessionManagement.getMobileNumber().toString().trim());
       mirrorFlyLog("SessionManagement.getCountryCode()", SessionManagement.getCountryCode().toString());
-      mirrorFlyLog("SessionManagement.isTrailLicence()", SessionManagement.isTrailLicence().toString());
+      mirrorFlyLog("Mirrorfly.isTrialLicence", Mirrorfly.isTrialLicence.toString());
       mirrorFlyLog("countryCode", countryCode.toString());
       var mobileNumberWithCountryCode = '${countryCode?.replaceAll('+', '')}${mobileNumber.text.trim()}';
       mirrorFlyLog("mobileNumberWithCountryCode", mobileNumberWithCountryCode);
-      if(SessionManagement.isTrailLicence()) {
+      if(Mirrorfly.isTrialLicence) {
         if ((mobileNumber.text.trim() != SessionManagement.getMobileNumber() && mobileNumberWithCountryCode != SessionManagement.getMobileNumber()) ||
             SessionManagement.getCountryCode()?.replaceAll('+', '') !=
                 countryCode?.replaceAll('+', '')) {

@@ -15,11 +15,11 @@ import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:swipe_to/swipe_to.dart';
 
 import '../../../common/constants.dart';
+import '../../../model/chat_message_model.dart';
 import '../../../widgets/custom_action_bar_icons.dart';
 import '../../../widgets/lottie_animation.dart';
 import '../chat_widgets.dart';
 import '../controllers/chat_controller.dart';
-import 'package:mirrorfly_plugin/mirrorfly.dart';
 
 class ChatView extends GetView<ChatController> {
   const ChatView({Key? key}) : super(key: key);
@@ -78,135 +78,135 @@ class ChatView extends GetView<ChatController> {
                             color: Colors.white,
                             child: controller.isBlocked.value
                                 ? userBlocked()
-                                : !controller.isMemberOfGroup
-                                    ? userNoLonger()
-                                    : Column(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.end,
-                                        children: [
-                                          Obx(() {
-                                            if (controller.isReplying.value) {
-                                              return ReplyingMessageHeader(
-                                                chatMessage:
-                                                    controller.replyChatMessage,
-                                                onCancel: () => controller
-                                                    .cancelReplyMessage(),
-                                                onClick: () {
-                                                  controller.navigateToMessage(
-                                                      controller
-                                                          .replyChatMessage);
-                                                },
-                                              );
-                                            } else {
-                                              return const SizedBox.shrink();
-                                            }
-                                          }),
-                                          const Divider(
-                                            height: 1,
-                                            thickness: 0.29,
-                                            color: textBlackColor,
-                                          ),
-                                          const SizedBox(
-                                            height: 10,
-                                          ),
-                                          IntrinsicHeight(
-                                            child: Row(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.stretch,
-                                              children: [
-                                                Flexible(
-                                                  child: Container(
-                                                    padding:
-                                                        const EdgeInsets.only(
-                                                            left: 10),
-                                                    margin:
-                                                        const EdgeInsets.only(
-                                                            left: 10,
-                                                            right: 10,
-                                                            bottom: 10),
-                                                    width: double.infinity,
-                                                    decoration: BoxDecoration(
-                                                      border: Border.all(
-                                                        color: textColor,
-                                                      ),
-                                                      borderRadius:
-                                                          const BorderRadius
-                                                                  .all(
-                                                              Radius.circular(
-                                                                  40)),
-                                                      color: Colors.white,
-                                                    ),
-                                                    child: Obx(() {
-                                                      return messageTypingView(
-                                                          context);
-                                                    }),
-                                                  ),
-                                                ),
-                                                Obx(() {
-                                                  return controller
-                                                          .isUserTyping.value
-                                                      ? InkWell(
-                                                          onTap: () {
-                                                            controller
-                                                                        .isAudioRecording
-                                                                        .value ==
-                                                                    Constants
-                                                                        .audioRecordDone
-                                                                ? controller
-                                                                    .sendRecordedAudioMessage()
-                                                                : controller
-                                                                    .sendMessage(
-                                                                        controller
-                                                                            .profile);
-                                                          },
-                                                          child: Padding(
-                                                            padding:
-                                                                const EdgeInsets
-                                                                        .only(
-                                                                    left: 8.0,
-                                                                    right: 8.0,
-                                                                    bottom: 8),
-                                                            child: SvgPicture.asset(
-                                                                'assets/logos/send.svg'),
-                                                          ))
-                                                      : const SizedBox.shrink();
-                                                }),
-                                                Obx(() {
-                                                  return controller
-                                                              .isAudioRecording
-                                                              .value ==
-                                                          Constants
-                                                              .audioRecording
-                                                      ? InkWell(
-                                                          onTap: () {
-                                                            controller
-                                                                .stopRecording();
-                                                          },
-                                                          child: const Padding(
-                                                            padding:
-                                                                EdgeInsets.only(
-                                                                    bottom:
-                                                                        8.0),
-                                                            child:
-                                                                LottieAnimation(
-                                                              lottieJson:
-                                                                  audioJson1,
-                                                              showRepeat: true,
-                                                              width: 54,
-                                                              height: 54,
-                                                            ),
-                                                          ))
-                                                      : const SizedBox.shrink();
-                                                }),
-                                                const SizedBox(
-                                                  width: 5,
-                                                ),
-                                              ],
+                                : controller.isMemberOfGroup
+                                    ? Column(
+                              mainAxisAlignment:
+                              MainAxisAlignment.end,
+                              children: [
+                                Obx(() {
+                                  if (controller.isReplying.value) {
+                                    return ReplyingMessageHeader(
+                                      chatMessage:
+                                      controller.replyChatMessage,
+                                      onCancel: () => controller
+                                          .cancelReplyMessage(),
+                                      onClick: () {
+                                        controller.navigateToMessage(
+                                            controller
+                                                .replyChatMessage);
+                                      },
+                                    );
+                                  } else {
+                                    return const SizedBox.shrink();
+                                  }
+                                }),
+                                const Divider(
+                                  height: 1,
+                                  thickness: 0.29,
+                                  color: textBlackColor,
+                                ),
+                                const SizedBox(
+                                  height: 10,
+                                ),
+                                IntrinsicHeight(
+                                  child: Row(
+                                    crossAxisAlignment:
+                                    CrossAxisAlignment.stretch,
+                                    children: [
+                                      Flexible(
+                                        child: Container(
+                                          padding:
+                                          const EdgeInsets.only(
+                                              left: 10),
+                                          margin:
+                                          const EdgeInsets.only(
+                                              left: 10,
+                                              right: 10,
+                                              bottom: 10),
+                                          width: double.infinity,
+                                          decoration: BoxDecoration(
+                                            border: Border.all(
+                                              color: textColor,
                                             ),
+                                            borderRadius:
+                                            const BorderRadius
+                                                .all(
+                                                Radius.circular(
+                                                    40)),
+                                            color: Colors.white,
                                           ),
-                                          emojiLayout(),
-                                        ],
+                                          child: Obx(() {
+                                            return messageTypingView(
+                                                context);
+                                          }),
+                                        ),
                                       ),
+                                      Obx(() {
+                                        return controller
+                                            .isUserTyping.value
+                                            ? InkWell(
+                                            onTap: () {
+                                              controller
+                                                  .isAudioRecording
+                                                  .value ==
+                                                  Constants
+                                                      .audioRecordDone
+                                                  ? controller
+                                                  .sendRecordedAudioMessage()
+                                                  : controller
+                                                  .sendMessage(
+                                                  controller
+                                                      .profile);
+                                            },
+                                            child: Padding(
+                                              padding:
+                                              const EdgeInsets
+                                                  .only(
+                                                  left: 8.0,
+                                                  right: 8.0,
+                                                  bottom: 8),
+                                              child: SvgPicture.asset(
+                                                  'assets/logos/send.svg'),
+                                            ))
+                                            : const SizedBox.shrink();
+                                      }),
+                                      Obx(() {
+                                        return controller
+                                            .isAudioRecording
+                                            .value ==
+                                            Constants
+                                                .audioRecording
+                                            ? InkWell(
+                                            onTap: () {
+                                              controller
+                                                  .stopRecording();
+                                            },
+                                            child: const Padding(
+                                              padding:
+                                              EdgeInsets.only(
+                                                  bottom:
+                                                  8.0),
+                                              child:
+                                              LottieAnimation(
+                                                lottieJson:
+                                                audioJson1,
+                                                showRepeat: true,
+                                                width: 54,
+                                                height: 54,
+                                              ),
+                                            ))
+                                            : const SizedBox.shrink();
+                                      }),
+                                      const SizedBox(
+                                        width: 5,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                emojiLayout(),
+                              ],
+                            )
+                                    : userNoLonger(),
                           );
                         }),
                       ),
@@ -403,6 +403,7 @@ class ChatView extends GetView<ChatController> {
                   onChanged: (text) {
                     controller.isTyping(text);
                   },
+                  style: const TextStyle(fontWeight: FontWeight.w400),
                   keyboardType: TextInputType.multiline,
                   minLines: 1,
                   maxLines: 5,
@@ -576,10 +577,10 @@ class ChatView extends GetView<ChatController> {
                   ? SwipeTo(
                       key: ValueKey(chatList[index].messageId),
                       onRightSwipe: () {
-                        if (!chatList[index].isMessageRecalled &&
+                        if (!chatList[index].isMessageRecalled.value &&
                             !chatList[index].isMessageDeleted &&
                             chatList[index]
-                                    .messageStatus
+                                    .messageStatus.value
                                     .checkNull()
                                     .toString() !=
                                 "N") {
@@ -629,7 +630,7 @@ class ChatView extends GetView<ChatController> {
                         child: Obx(() {
                           return Container(
                             key: Key(chatList[index].messageId),
-                            color: chatList[index].isSelected
+                            color: chatList[index].isSelected.value
                                 ? chatReplyContainerColor
                                 : Colors.transparent,
                             margin: const EdgeInsets.only(

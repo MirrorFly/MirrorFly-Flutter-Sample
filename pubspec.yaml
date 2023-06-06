@@ -1,6 +1,6 @@
 name: mirror_fly_demo
-version: 2.3.5+28
-build_release_date: Mar 10
+version: 2.3.7+30
+build_release_date: Jun 2023
 publish_to: none
 description: A MirrorFly Flutter Sample Application.
 environment: 
@@ -17,7 +17,7 @@ dependencies:
   file_picker: ^5.2.0+1 #file picker
   fluttertoast: ^8.0.7 #toast
   intl: ^0.17.0 #datetime
-  package_info_plus: ^2.0.0 #package info
+  package_info_plus: ^4.0.2 #package info
   image_picker: ^0.8.6
   flutter_profile_picture: ^2.0.0
   permission_handler: ^10.2.0
@@ -52,7 +52,7 @@ dependencies:
   qr_code_scanner: ^1.0.1 #qr scanner
   yaml: ^3.1.1
   path: ^1.8.2
-  camera: ^0.10.0+4
+  camera: ^0.10.5+2
   better_video_player: ^1.2.8
   internet_connection_checker: ^1.0.0+1 # connectivity check
   provider: ^6.0.3
@@ -60,7 +60,7 @@ dependencies:
   oktoast: ^3.3.1
   google_cloud_translation: ^0.0.3 # Google Translator
   grouped_list: ^5.1.2
-  share_plus: ^6.3.0
+  share_plus: ^7.0.2
   flutter_inappwebview: ^5.7.2+3 # inapp webview
   flutter_local_notifications: ^13.0.0
   flutter_libphonenumber: ^1.4.0

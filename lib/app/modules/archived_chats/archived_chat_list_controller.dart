@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:mirrorfly_plugin/mirrorfly.dart';
+import 'package:mirrorfly_plugin/mirrorflychat.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
 import 'package:mirror_fly_demo/app/modules/dashboard/controllers/dashboard_controller.dart';
 
 import '../../data/apputils.dart';
 import '../../data/helper.dart';
+import '../../model/chat_message_model.dart';
 import '../../routes/app_pages.dart';
 
 class ArchivedChatListController extends GetxController {
@@ -64,11 +65,12 @@ class ArchivedChatListController extends GetxController {
   }
 
   menuValidationForItem() {
-    delete(false);
+    // delete(false);
     if (selectedChats.length == 1) {
       var item = archivedChats
           .firstWhere((element) => selectedChats.first == element.jid);
-      delete(Constants.typeGroupChat != item.getChatType());
+      // delete(Constants.typeGroupChat != item.getChatType());
+      menuValidationForDeleteIcon();
       if ((Constants.typeBroadcastChat != item.getChatType()&& !archiveEnabled.value)) {
         unMute(item.isMuted!);
         mute(!item.isMuted!);
@@ -123,13 +125,13 @@ class ArchivedChatListController extends GetxController {
     }
   }
 
-  toChatPage(String jid) async {
+  toChatPage(String jid) {
     if (jid.isNotEmpty) {
       // Helper.progressLoading();
-      await Mirrorfly.getProfileDetails(jid, false).then((value) {
-        if (value != null) {
+      getProfileDetails(jid).then((value) {
+        if (value.jid != null) {
           Helper.hideLoading();
-          var profile = profiledata(value.toString());
+          var profile = value;//profiledata(value.toString());
           Get.toNamed(Routes.chat, arguments: profile);
         }
       });
@@ -199,16 +201,9 @@ class ArchivedChatListController extends GetxController {
     updateArchiveRecentChat(chatMessage.chatUserJid);
   }
 
-  void onMessageStatusUpdated(event) {
+  void onMessageStatusUpdated(ChatMessageModel chatMessageModel) {
     // mirrorFlyLog("MESSAGE STATUS UPDATED", event);
-    ChatMessageModel chatMessageModel = sendMessageModelFromJson(event);
-    final index = archivedChats.indexWhere(
-        (message) => message.lastMessageId == chatMessageModel.messageId);
-    debugPrint("Message Status Update index of search $index");
-    if (!index.isNegative) {
-      archivedChats[index].lastMessageStatus = chatMessageModel.messageStatus;
-      archivedChats.refresh();
-    }
+    updateArchiveRecentChat(chatMessageModel.chatUserJid);
   }
 
   Future<RecentChatData?> getRecentChatOfJid(String jid) async {
@@ -405,5 +400,52 @@ class ArchivedChatListController extends GetxController {
 
   void userDeletedHisProfile(String jid) {
     userUpdatedHisProfile(jid);
+    updateProfile(jid);
+  }
+  var profile_ = Profile().obs;
+  void getProfileDetail(context, RecentChatData chatItem, int index) {
+    getProfileDetails(chatItem.jid.checkNull()).then((value) {
+      profile_(value);
+      debugPrint("dashboard controller profile update received");
+      showQuickProfilePopup(
+          context: context,
+          // chatItem: chatItem,
+          chatTap: () {
+            Get.back();
+            toChatPage(chatItem.jid.checkNull());
+          },
+          callTap: () {},
+          videoTap: () {},
+          infoTap: () {
+            Get.back();
+            infoPage(value);
+          },
+          profile: profile_);
+    });
+  }
+  void updateProfile(String jid){
+    if(profile_.value.jid != null && profile_.value.jid.toString()==jid.toString()) {
+      getProfileDetails(jid).then((value) {
+        debugPrint("get profile detail archived $value");
+        profile_(value);
+      });
+    }
+  }
+  infoPage(Profile profile) {
+    if (profile.isGroupProfile ?? false) {
+      Get.toNamed(Routes.groupInfo, arguments: profile)?.then((value) {
+        if (value != null) {
+          // profile_(value as Profile);
+          // isBlocked(profile.isBlocked);
+          // checkAdminBlocked();
+          // memberOfGroup();
+          // Mirrorfly.setOnGoingChatUser(profile.jid!);
+          // getChatHistory();
+          // sendReadReceipt();
+        }
+      });
+    } else {
+      Get.toNamed(Routes.chatInfo, arguments: profile)?.then((value) {});
+    }
   }
 }

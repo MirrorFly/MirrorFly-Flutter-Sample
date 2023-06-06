@@ -7,7 +7,6 @@ import 'package:permission_handler/permission_handler.dart';
 
 import '../../../common/de_bouncer.dart';
 import '../../../data/apputils.dart';
-import '../../../data/session_management.dart';
 
 class ForwardChatController extends GetxController {
   //main list
@@ -28,7 +27,7 @@ class ForwardChatController extends GetxController {
   List<Profile> get groupList => _groupList.value.take(6).toList();
 
   var userlistScrollController = ScrollController();
-  var scrollable = SessionManagement.isTrailLicence().obs;
+  var scrollable = Mirrorfly.isTrialLicence.obs;
   var isPageLoading = false.obs;
   final _userList = <Profile>[].obs;
 
@@ -157,7 +156,7 @@ class ForwardChatController extends GetxController {
     if (await AppUtils.isNetConnected()) {
       if(!bottom)contactLoading(true);
       searching = true;
-      var future = (SessionManagement.isTrailLicence())
+      var future = (Mirrorfly.isTrialLicence)
           ? Mirrorfly.getUserList(pageNum, searchQuery.text.trim().toString())
           : Mirrorfly.getRegisteredUsers(false);
       future
@@ -222,7 +221,7 @@ class ForwardChatController extends GetxController {
       _userList.clear();
       searching = true;
       searchLoading(true);
-      var future = (SessionManagement.isTrailLicence())
+      var future = (Mirrorfly.isTrialLicence)
           ? Mirrorfly.getUserList(pageNum, searchQuery.text.trim().toString())
           : Mirrorfly.getRegisteredUsers(false);
       future
@@ -231,8 +230,8 @@ class ForwardChatController extends GetxController {
         if (value != null) {
           var list = userListFromJson(value);
           if (list.data != null) {
-            scrollable((list.data!.length == 20 && SessionManagement.isTrailLicence()));
-            if(SessionManagement.isTrailLicence()) {
+            scrollable((list.data!.length == 20 && Mirrorfly.isTrialLicence));
+            if(Mirrorfly.isTrialLicence) {
               _userList(list.data);
             }else{
               _userList(list.data!.where((element) => element.nickName.checkNull().toLowerCase().contains(searchQuery.text.trim().toString().toLowerCase())).toList());
@@ -340,7 +339,7 @@ class ForwardChatController extends GetxController {
     pageNum = 1;
     searchQuery.clear();
     _isSearchVisible(true);
-    scrollable((_mainuserList.length == 20 && SessionManagement.isTrailLicence()));
+    scrollable((_mainuserList.length == 20 && Mirrorfly.isTrialLicence));
     _recentChats(_mainrecentChats);
     _groupList(_maingroupList);
     _userList(_mainuserList);
@@ -355,11 +354,11 @@ class ForwardChatController extends GetxController {
                   forwardMessageIds, selectedJids.value)
               .then((values) {
             // debugPrint("to chat profile ==> ${selectedUsersList[0].toJson().toString()}");
-            Mirrorfly.getProfileDetails(selectedJids.value.last, false)
+            getProfileDetails(selectedJids.value.last)
                 .then((value) {
-              if (value != null) {
-                var str = profiledata(value.toString());
-                Get.back(result: str);
+              if (value.jid != null) {
+                // var str = profiledata(value.toString());
+                Get.back(result: value);
               }
             });
           });
