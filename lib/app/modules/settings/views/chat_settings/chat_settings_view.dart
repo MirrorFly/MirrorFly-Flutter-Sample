@@ -63,9 +63,9 @@ class ChatSettingsView extends GetView<ChatSettingsController> {
               Visibility(
                 visible: controller.autoDownloadEnabled,
                   child: chatListItem(
-                Column(
+                const Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
-                  children: const [
+                  children: [
                     Text(Constants.dataUsageSettings,
                         style: TextStyle(
                             fontSize: 14,
