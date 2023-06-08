@@ -10,7 +10,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:flutter_libphonenumber/flutter_libphonenumber.dart';
 import 'package:get/get.dart';
-import 'package:google_cloud_translation/google_cloud_translation.dart';
+// import 'package:google_cloud_translation/google_cloud_translation.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:mirror_fly_demo/app/common/de_bouncer.dart';
@@ -37,7 +37,7 @@ import '../chat_widgets.dart';
 
 class ChatController extends FullLifeCycleController
     with FullLifeCycleMixin, GetTickerProviderStateMixin {
-  final translator = Translation(apiKey: Constants.googleTranslateKey);
+  // final translator = Translation(apiKey: Constants.googleTranslateKey);
 
   var chatList = List<ChatMessageModel>.empty(growable: true).obs;
   late AnimationController controller;
@@ -2280,7 +2280,7 @@ class ChatController extends FullLifeCycleController
   }*/
 
   Future<void> translateMessage(int index) async {
-    if (SessionManagement.isGoogleTranslationEnable()) {
+    /*if (SessionManagement.isGoogleTranslationEnable()) {
       var text = chatList[index].messageTextContent!;
       debugPrint("customField : ${chatList[index].messageCustomField.isEmpty}");
       if (chatList[index].messageCustomField.isNotEmpty) {
@@ -2301,7 +2301,7 @@ class ChatController extends FullLifeCycleController
           debugPrint("exception : $onError");
         });
       }
-    }
+    }*/
   }
 
   bool forwardMessageVisibility(ChatMessageModel chat) {

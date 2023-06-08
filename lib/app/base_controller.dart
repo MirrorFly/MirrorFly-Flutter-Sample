@@ -129,7 +129,7 @@ abstract class BaseController {
     Mirrorfly.onConnected.listen(onConnected);
     Mirrorfly.onDisconnected.listen(onDisconnected);
     // Mirrorfly.onConnectionNotAuthorized.listen(onConnectionNotAuthorized);
-    Mirrorfly.onConnectionFailed.listen(onConnectionFailed);
+    // Mirrorfly.onConnectionFailed.listen(onConnectionFailed);
     Mirrorfly.connectionFailed.listen(connectionFailed);
     Mirrorfly.connectionSuccess.listen(connectionSuccess);
     Mirrorfly.onWebChatPasswordChanged.listen(onWebChatPasswordChanged);
@@ -493,7 +493,7 @@ abstract class BaseController {
   }
 
   // void onConnectionNotAuthorized(result) {}
-  void onConnectionFailed(result) {}
+  // void onConnectionFailed(result) {}
 
   void connectionFailed(result) {}
 
