@@ -81,16 +81,18 @@ class AppPermission {
   static Future<bool> getAndroid13Permission() async {
     final photos = await Permission.photos.status;
     final videos = await Permission.videos.status;
+    final mediaLibrary = await Permission.mediaLibrary.status;
     // final audio = await Permission.audio.status;
     const newPermission = [
       Permission.photos,
       Permission.videos,
+      Permission.mediaLibrary,
       // Permission.audio
     ];
-    if ((photos != PermissionStatus.granted &&
-        photos != PermissionStatus.permanentlyDenied) ||
-        (videos != PermissionStatus.granted &&
-            videos != PermissionStatus.permanentlyDenied)) {
+    if ((photos != PermissionStatus.granted && photos != PermissionStatus.permanentlyDenied) ||
+        (videos != PermissionStatus.granted && videos != PermissionStatus.permanentlyDenied) ||
+        (mediaLibrary != PermissionStatus.granted && mediaLibrary != PermissionStatus.permanentlyDenied)
+    ) {
       mirrorFlyLog("showing mirrorfly popup", "");
       var deniedPopupValue = await mirrorFlyPermissionDialog(
           notNowBtn: () {
@@ -105,16 +107,17 @@ class AppPermission {
         var newp = await newPermission.request();
         PermissionStatus? photo = newp[Permission.photos];
         PermissionStatus? video = newp[Permission.videos];
+        PermissionStatus? mediaLibrary = newp[Permission.mediaLibrary];
         // var audio = await newPermission[2].isGranted;
-        return (photo!.isGranted && video!.isGranted);
+        return (photo!.isGranted && video!.isGranted && mediaLibrary!.isGranted);
             // ? PermissionStatus.granted
             // : PermissionStatus.denied;
       }else{
         return false;//PermissionStatus.denied;
       }
     } else {
-      mirrorFlyLog("showing mirrorfly popup", "${photos.isGranted} ${videos.isGranted}");
-      return (photos.isGranted && videos.isGranted);
+      mirrorFlyLog("showing mirrorfly popup", "${photos.isGranted} ${videos.isGranted} ${mediaLibrary.isGranted}");
+      return (photos.isGranted && videos.isGranted && mediaLibrary.isGranted);
           // ? photos
           // : photos;
     }

@@ -31,12 +31,11 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
       });
     _initializeVideoPlayerFuture = _controller.initialize().then((_) {
       setState(() {
-        _controller.play();
+        // _controller.play();
         _controller.setLooping(false);
         _controller.setVolume(1.0);
         _controller.setPlaybackSpeed(1.0);
 
-        _isPlaying = true;
       });
     });
   }
@@ -123,11 +122,7 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         const Spacer(),
-        IconButton(
-          onPressed: _rewind,
-          icon: const Icon(Icons.replay_10),
-        ),
-        const SizedBox(height: 16),
+
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
