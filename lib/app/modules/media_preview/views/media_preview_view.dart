@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:better_video_player/better_video_player.dart';
+// import 'package:better_video_player/better_video_player.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
@@ -10,6 +10,7 @@ import 'package:mirror_fly_demo/app/data/helper.dart';
 import 'package:photo_view/photo_view.dart';
 
 import '../../../common/widgets.dart';
+import '../../../widgets/video_player_widget.dart';
 import '../controllers/media_preview_controller.dart';
 
 class MediaPreviewView extends GetView<MediaPreviewController> {
@@ -137,7 +138,7 @@ class MediaPreviewView extends GetView<MediaPreviewController> {
                                   if (data.type == 'image') {
                                     return Center(
                                         child: PhotoView(
-                                      imageProvider: FileImage(File(data.path)),
+                                      imageProvider: FileImage(File(data.path!)),
                                       // Contained = the smallest possible size to fit one dimension of the screen
                                       minScale:
                                           PhotoViewComputedScale.contained * 1,
@@ -165,23 +166,26 @@ class MediaPreviewView extends GetView<MediaPreviewController> {
 
                                   /// show video
                                   else {
-                                    return AspectRatio(
-                                      aspectRatio: 16.0 / 9.0,
-                                      child: BetterVideoPlayer(
-                                        configuration:
-                                            const BetterVideoPlayerConfiguration(
-                                          looping: false,
-                                          autoPlay: false,
-                                          allowedScreenSleep: false,
-                                          autoPlayWhenResume: false,
-                                        ),
-                                        controller:
-                                            BetterVideoPlayerController(),
-                                        dataSource: BetterVideoPlayerDataSource(
-                                          BetterVideoPlayerDataSourceType.file,
-                                          data.path,
-                                        ),
-                                      ),
+                                    // return AspectRatio(
+                                    //   aspectRatio: 16.0 / 9.0,
+                                    //   child: BetterVideoPlayer(
+                                    //     configuration:
+                                    //         const BetterVideoPlayerConfiguration(
+                                    //       looping: false,
+                                    //       autoPlay: false,
+                                    //       allowedScreenSleep: false,
+                                    //       autoPlayWhenResume: false,
+                                    //     ),
+                                    //     controller:
+                                    //         BetterVideoPlayerController(),
+                                    //     dataSource: BetterVideoPlayerDataSource(
+                                    //       BetterVideoPlayerDataSourceType.file,
+                                    //       data.path!,
+                                    //     ),
+                                    //   ),
+                                    // );
+                                    return VideoPlayerWidget(
+                                      videoPath: data.path ?? "", videoTitle: data.title ?? "Video",
                                     );
                                   }
                                 })
@@ -344,7 +348,7 @@ class MediaPreviewView extends GetView<MediaPreviewController> {
                                                       .symmetric(horizontal: 1),
                                                   child: Image.memory(controller
                                                       .filePath[index]
-                                                      .thumbnail),
+                                                      .thumbnail!),
                                                 ),
                                               );
                                             }),

@@ -4,13 +4,13 @@ import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_libphonenumber/flutter_libphonenumber.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
 import 'package:mirror_fly_demo/app/data/session_management.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
 import 'package:mirror_fly_demo/app/routes/app_pages.dart';
-import 'package:permission_handler/permission_handler.dart';
 
 import '../../../common/crop_image.dart';
 import 'package:mirrorfly_plugin/mirrorfly.dart';
@@ -32,11 +32,12 @@ class ProfileController extends GetxController {
   var changed = false.obs;
 
   dynamic imageBytes;
-  var from = Routes.login.obs;
+  var from = Get.previousRoute;//Routes.login.obs;
 
   var name = "".obs;
 
   bool get emailEditAccess => true;//Get.previousRoute!=Routes.settings;
+  RxBool mobileEditAccess = false.obs;//Get.previousRoute!=Routes.settings;
 
   var userNameFocus= FocusNode();
   var emailFocus= FocusNode();
@@ -46,14 +47,14 @@ class ProfileController extends GetxController {
     userImgUrl.value = SessionManagement.getUserImage() ?? "";
     mirrorFlyLog("auth : ", SessionManagement.getAuthToken().toString());
     if (Get.arguments != null) {
-      from(Get.arguments["from"]);
-      if (from.value == Routes.login) {
+      // from(Get.arguments["from"]);
+      if (from == Routes.login) {
         profileMobile.text = Get.arguments['mobile'] ?? "";
       }
     } else {
       profileMobile.text = "";
     }
-    if (from.value == Routes.login) {
+    if (from == Routes.login) {
       if(await AppUtils.isNetConnected()) {
         getProfile();
       }else{
@@ -64,24 +65,14 @@ class ProfileController extends GetxController {
       getProfile();
     }
     //profileStatus.value="I'm Mirror fly user";
-    await askStoragePermission();
+    // await askStoragePermission();
+    await AppPermission.getStoragePermission();
   }
 
-  Future<bool> askStoragePermission() async {
-    final permission = await AppPermission.getStoragePermission();
-    switch (permission) {
-      case PermissionStatus.granted:
-        return true;
-      case PermissionStatus.permanentlyDenied:
-        return false;
-      default:
-        debugPrint("Permission default");
-        return false;
-    }
-  }
 
   Future<void> save({bool frmImage=false}) async {
-    if (await askStoragePermission()) {
+    var permission = await AppPermission.getStoragePermission();
+    if (permission) {
       if (profileName.text
           .trim()
           .isEmpty) {
@@ -107,11 +98,12 @@ class ProfileController extends GetxController {
         } else {
           if (await AppUtils.isNetConnected()) {
             debugPrint("profile update");
+            var unformatted = profileMobile.text.replaceAll(" ", "").replaceAll("+", "");
             Mirrorfly
                 .updateMyProfile(
                 profileName.text.toString(),
                 profileEmail.text.toString(),
-                profileMobile.text.toString(),
+                unformatted,
                 profileStatus.value.toString(),
                 userImgUrl.value.isEmpty ? null : userImgUrl.value
             )
@@ -129,19 +121,19 @@ class ProfileController extends GetxController {
                     var userProfileData = ProData(
                         email: profileEmail.text.toString(),
                         image: userImgUrl.value,
-                        mobileNumber: profileMobile.text,
+                        mobileNumber: unformatted,
                         nickName: profileName.text,
                         name: profileName.text,
                         status: profileStatus.value);
                     SessionManagement.setCurrentUser(userProfileData);
-                    if (from.value == Routes.login) {
-                      Mirrorfly.isTrailLicence().then((trail){
-                        if(trail.checkNull()) {
+                    if (from == Routes.login) {
+                      // Mirrorfly.isTrailLicence().then((trail){
+                        if(Mirrorfly.isTrialLicence) {
                           Get.offNamed(Routes.dashboard);
                         }else{
                           Get.offNamed(Routes.contactSync);
                         }
-                      });
+                      // });
                     }
                   }
                 }
@@ -207,7 +199,7 @@ class ProfileController extends GetxController {
           isImageSelected.value = false;
           isUserProfileRemoved.value = true;
           userImgUrl(Constants.emptyString);
-          if (from.value == Routes.login) {
+          if (from == Routes.login) {
             changed(true);
           } else {
             save(frmImage: true);
@@ -239,20 +231,25 @@ class ProfileController extends GetxController {
             if (data.data != null) {
               profileName.text = data.data!.name ?? "";
               if (data.data!.mobileNumber.checkNull().isNotEmpty) {
-              //if (from.value != Routes.login) {
-                profileMobile.text = data.data!.mobileNumber ?? "";
+                //if (from.value != Routes.login) {
+                validMobileNumber(data.data!.mobileNumber.checkNull()).then((valid) {
+                  // if(valid) profileMobile.text = data.data!.mobileNumber.checkNull();
+                  mobileEditAccess(!valid);
+                });
+              }else {
+                mobileEditAccess(true);
               }
 
               profileEmail.text = data.data!.email ?? "";
               profileStatus.value = data.data!.status.checkNull().isNotEmpty ? data.data!.status.checkNull() : "I am in Mirror Fly";
               userImgUrl.value = data.data!.image ?? "";//SessionManagement.getUserImage() ?? "";
               SessionManagement.setUserImage(Constants.emptyString);
-              changed((from.value == Routes.login));
+              changed((from == Routes.login));
               name(data.data!.name.toString());
               var userProfileData = ProData(
                   email: profileEmail.text.toString(),
                   image: userImgUrl.value,
-                  mobileNumber: profileMobile.text,
+                  mobileNumber: data.data!.mobileNumber.checkNull(),
                   nickName: profileName.text,
                   name: profileName.text,
                   status: profileStatus.value);
@@ -326,14 +323,14 @@ class ProfileController extends GetxController {
                 .now()
                 .millisecondsSinceEpoch}.jpg";
             writeImageTemp(value.bytes, name).then((value) {
-              if (from.value == Routes.login) {
+              if (from == Routes.login) {
                 imagePath(value.path);
                 changed(true);
                 update();
               } else {
                 imagePath(value.path);
-                changed(true);
-                updateProfileImage(value.path, update: true);
+                // changed(true);
+                updateProfileImage(value.path, update: false);
               }
             });
           });
@@ -363,13 +360,13 @@ class ProfileController extends GetxController {
           imageBytes = value.bytes;
           var name = "${DateTime.now().millisecondsSinceEpoch}.jpg";
           writeImageTemp(value.bytes, name).then((value) {
-            if (from.value == Routes.login) {
+            if (from == Routes.login) {
               imagePath(value.path);
               changed(true);
             } else {
               imagePath(value.path);
-              changed(true);
-              updateProfileImage(value.path, update: true);
+              // changed(true);
+              updateProfileImage(value.path, update: false);
             }
           });
         });
@@ -400,6 +397,33 @@ class ProfileController extends GetxController {
   onEmailChange(String text) {
     changed(true);
     update();
+  }
+
+  onMobileChange(String text){
+    changed(true);
+    validMobileNumber(text);
+    update();
+  }
+
+  Future<bool> validMobileNumber(String text)async{
+    var m = text.contains("+") ? text : "+$text";
+    FlutterLibphonenumber().init();
+    var formatNumberSync = FlutterLibphonenumber().formatNumberSync(m);
+    try {
+      var parse = await FlutterLibphonenumber().parse(formatNumberSync);
+      debugPrint("parse-----> $parse");
+      //{country_code: 91, e164: +91xxxxxxxxxx, national: 0xxxxx xxxxx, type: mobile, international: +91 xxxxx xxxxx, national_number: xxxxxxxxxx, region_code: IN}
+      if (parse.isNotEmpty) {
+        var formatted = parse['international'];//.replaceAll("+", '');
+        profileMobile.text = formatted;
+        return true;
+      } else {
+        return false;
+      }
+    }catch(e){
+      debugPrint('validMobileNumber $e');
+      return false;
+    }
   }
 
   static void insertStatus() {

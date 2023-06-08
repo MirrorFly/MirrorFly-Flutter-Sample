@@ -46,7 +46,7 @@ class GalleryFunctions {
                   animationController: animationController,
                   builder: builder),
             ));
-    Overlay.of(context)?.insert(entry);
+    Overlay.of(context).insert(entry);
     animationController.animateTo(1);
     return FeatureController(
       completer,
@@ -64,10 +64,10 @@ class GalleryFunctions {
 
   static getPermission(setState, GalleryMediaPickerController provider) async {
     /// request for device permission
-    var result = await PhotoManager.requestPermissionExtend(
+    /*var result = await PhotoManager.requestPermissionExtend(
         requestOption: const PermissionRequestOption(
             iosAccessLevel: IosAccessLevel.readWrite));
-    if (result.isAuth) {
+    if (result.isAuth) {*/
       /// load "recent" album
       provider.setAssetCount();
       PhotoManager.startChangeNotify();
@@ -78,11 +78,11 @@ class GalleryFunctions {
       if (provider.pathList.isEmpty) {
         _refreshPathList(setState, provider);
       }
-    } else {
+    /*} else {
       /// if result is fail, you can call `PhotoManager.openSetting();`
       /// to open android/ios application's setting to get permission
       PhotoManager.openSetting();
-    }
+    }*/
   }
 
   static _refreshPathList(setState, GalleryMediaPickerController provider) {

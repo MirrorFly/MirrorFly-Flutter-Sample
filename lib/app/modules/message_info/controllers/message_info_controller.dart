@@ -5,13 +5,13 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
-import 'package:mirrorfly_plugin/mirrorfly.dart';
+import 'package:mirrorfly_plugin/mirrorflychat.dart';
 import 'package:mirror_fly_demo/app/modules/chat/controllers/chat_controller.dart';
-import 'package:permission_handler/permission_handler.dart';
 
 import '../../../common/constants.dart';
 import '../../../data/helper.dart';
 import '../../../data/permissions.dart';
+import '../../../model/chat_message_model.dart';
 
 class MessageInfoController extends GetxController {
   var chatController = Get.find<ChatController>();
@@ -71,21 +71,10 @@ class MessageInfoController extends GetxController {
         File(mediaLocalStoragePath).existsSync();
   }
 
-  Future<bool> askStoragePermission() async {
-    final permission = await AppPermission.getStoragePermission();
-    switch (permission) {
-      case PermissionStatus.granted:
-        return true;
-      case PermissionStatus.permanentlyDenied:
-        return false;
-      default:
-        debugPrint("Permission default");
-        return false;
-    }
-  }
 
   downloadMedia(String messageId) async {
-    if (await askStoragePermission()) {
+    var permission = await AppPermission.getStoragePermission();
+    if (permission) {
       Mirrorfly.downloadMedia(messageId);
     }
   }
@@ -159,26 +148,15 @@ class MessageInfoController extends GetxController {
   var statusCount = 0.obs;
   String chatDate(BuildContext cxt,DeliveredParticipantList item) => getChatTime(cxt, int.parse(item.time.checkNull()));
   getMessageStatus(String messageId) async {
-    // statusCount(await Mirrorfly.getGroupMessageStatusCount(messageId));
     var delivered = await Mirrorfly.getGroupMessageDeliveredToList(messageId, jid);
     mirrorFlyLog("deliveredResp", delivered);
-    // var deliveredResp = json.decode(delivered);
-    // mirrorFlyLog("deliveredResp.deliveredParticipantList", "${deliveredResp["deliveredParticipantList"]}");
-    // messageDeliveredList(messageDeliveredStatusFromJson(deliveredResp["deliveredParticipantList"].toString()));
-    // deliveredStatusCount(deliveredResp["deliveredCount"]);
-    // deliveredTotalCount(deliveredResp["totalParticipatCount"]);
     var item = MessageDeliveredStatus.fromJson(json.decode(delivered), "delivered");
     statusCount(item.totalParticipatCount!);
     messageDeliveredList(item.participantList);
 
 
     var read = await Mirrorfly.getGroupMessageReadByList(messageId, jid);
-    // mirrorFlyLog("readResp", read);
-    // var readResp = json.decode(read);
-    // debugPrint("readResp.seenParticipantList ${readResp["seenParticipantList"]}");
-    // messageReadList(messageDeliveredStatusFromJson(readResp["seenParticipantList"].toString()));
-    // participantStatusCount(readResp["seenCount"]);
-    // participantTotalCount(readResp["totalParticipatCount"]);
+    mirrorFlyLog("readResp", read);
     var readItem = MessageDeliveredStatus.fromJson(json.decode(read), "read");
     messageReadList(readItem.participantList);
   }

@@ -376,7 +376,7 @@ class DashboardView extends GetView<DashboardController> {
         Obx(() {
           return Visibility(
               visible: !controller.recentChatLoding.value &&
-                  controller.recentChats.isEmpty,
+                  controller.recentChats.isEmpty && controller.archivedChats.isEmpty,
               child: emptyChat(context));
         }),
         Column(
@@ -686,11 +686,11 @@ class DashboardView extends GetView<DashboardController> {
                                         Padding(
                                           padding: const EdgeInsets.only(right: 8.0),
                                           child: getMessageIndicator(
-                                              item.messageStatus.checkNull(),
+                                              item.messageStatus.value.checkNull(),
                                               item.isMessageSentByMe.checkNull(),
-                                              item.messageType.checkNull(),item.isMessageRecalled),
+                                              item.messageType.checkNull(),item.isMessageRecalled.value),
                                         ),
-                                        item.isMessageRecalled
+                                        item.isMessageRecalled.value
                                             ? const SizedBox.shrink() : forMessageTypeIcon(item.messageType,item.mediaChatMessage),
                                         SizedBox(
                                           width: forMessageTypeString(

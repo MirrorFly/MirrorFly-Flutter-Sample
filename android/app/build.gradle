@@ -25,7 +25,6 @@ apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply from: "$flutterRoot/packages/flutter_tools/gradle/flutter.gradle"
 apply plugin: 'kotlin-kapt'
-apply plugin: 'com.google.gms.google-services'
 
 android {
     compileSdkVersion flutter.compileSdkVersion
@@ -49,7 +48,7 @@ android {
         applicationId "com.mirrorfly.uikit_flutter.qa"
         // You can update the following values to match your application needs.
         // For more information, see: https://docs.flutter.dev/deployment/android#reviewing-the-build-configuration.
-        minSdkVersion flutter.minSdkVersion
+        minSdkVersion 21
         targetSdkVersion flutter.targetSdkVersion
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
@@ -104,30 +103,11 @@ dependencies {
     implementation 'androidx.appcompat:appcompat:1.5.1'
     implementation 'com.google.android.material:material:1.4.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
-//    implementation ('com.fly.sdk:appbase:0.0.5')
     configurations {
         all {
             exclude group: 'org.json', module: 'json'
             exclude group: 'xpp3', module: 'xpp3'
         }
     }
-//    implementation 'com.mirrorfly.sdk:appbase:0.0.12'
-
-    /*// Import the Firebase BoM
-    implementation platform('com.google.firebase:firebase-bom:30.2.0')
-
-    // Add the dependency for the Firebase SDK for Google Analytics
-    // When using the BoM, don't specify versions in Firebase dependencies
-    implementation 'com.google.firebase:firebase-analytics'
-    implementation 'com.google.firebase:firebase-messaging'
-
-    //Glide - versions.gradle
-    implementation "com.github.bumptech.glide:glide:4.14.2"
-    kapt "com.github.bumptech.glide:compiler:4.11.0"
-
-    //KTX Depenedency
-    implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.5.1'
-    implementation 'androidx.fragment:fragment-ktx:1.5.5'
-    implementation 'androidx.activity:activity-ktx:1.7.0-alpha02'*/
 }
 

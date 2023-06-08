@@ -6,9 +6,10 @@ import 'package:mirror_fly_demo/app/data/helper.dart';
 
 import '../../common/constants.dart';
 import '../../common/widgets.dart';
-import 'package:mirrorfly_plugin/mirrorfly.dart';
+import 'package:mirrorfly_plugin/mirrorflychat.dart';
 
 import '../../data/session_management.dart';
+import '../../model/chat_message_model.dart';
 import '../chat/chat_widgets.dart';
 
 Widget searchHeader(String? type, String count, BuildContext context) {
@@ -130,7 +131,7 @@ class RecentChatItem extends StatelessWidget {
                       : buildProfileStatus()
                   : Expanded(
                       child: typingUserid.isEmpty
-                          ? item.lastMessageType != null ? buildLastMessageItem() : const SizedBox.shrink()
+                          ? item.lastMessageType != null ? buildLastMessageItem() : const SizedBox(height: 15,)
                           : buildTypingUser(),
                     ),
             ],
@@ -250,13 +251,13 @@ class RecentChatItem extends StatelessWidget {
     return Positioned(
         right: 0,
         child: CircleAvatar(
-          radius: 8,
+          radius: 9,
           child: Text(
             returnFormattedCount(item.unreadMessageCount!) != "0"
                 ? returnFormattedCount(item.unreadMessageCount!)
                 : "",
             style: const TextStyle(
-                fontSize: 9, color: Colors.white, fontFamily: 'sf_ui'),
+                fontSize: 8, color: Colors.white, fontFamily: 'sf_ui'),
           ),
         ));
   }
@@ -268,7 +269,7 @@ class RecentChatItem extends StatelessWidget {
 
   Visibility buildArchivedTextVisibility() {
     return Visibility(
-        visible: item.isChatArchived! && archiveVisible,
+        visible: item.isChatArchived! && archiveVisible && !isForwardMessage,
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 2.0),
           decoration: BoxDecoration(
@@ -288,7 +289,7 @@ class RecentChatItem extends StatelessWidget {
 
   Visibility buildMuteIconVisibility() {
     return Visibility(
-        visible: !archiveEnabled && item.isMuted!,
+        visible: !archiveEnabled && item.isMuted! && !isForwardMessage,
         child: SvgPicture.asset(
           mute,
           width: 13,
@@ -298,7 +299,7 @@ class RecentChatItem extends StatelessWidget {
 
   Visibility buildArchivedIconVisibility() {
     return Visibility(
-        visible: !item.isChatArchived! && item.isChatPinned!,
+        visible: !item.isChatArchived! && item.isChatPinned! && !isForwardMessage,
         child: SvgPicture.asset(
           pin,
           width: 18,
@@ -333,19 +334,6 @@ class RecentChatItem extends StatelessWidget {
             var chat = data.data!;
             return Row(
               children: [
-                chat.isMessageRecalled
-                    ? const SizedBox.shrink() : forMessageTypeIcon(
-                    chat.messageType, chat.mediaChatMessage),
-                SizedBox(
-                  width: chat.isMessageRecalled
-                      ? 0.0
-                      : forMessageTypeString(chat.messageType,
-                                  content:
-                                  chat.messageTextContent.checkNull()) !=
-                              null
-                          ? 3.0
-                          : 0.0,
-                ),
                 (item.isGroup.checkNull() &&
                         !chat.isMessageSentByMe.checkNull() &&
                         (chat.messageType != Constants.mNotification ||
@@ -357,10 +345,23 @@ class RecentChatItem extends StatelessWidget {
                         overflow: TextOverflow.ellipsis,
                       )
                     : const SizedBox.shrink(),
+                chat.isMessageRecalled.value
+                    ? const SizedBox.shrink() : forMessageTypeIcon(
+                    chat.messageType, chat.mediaChatMessage),
+                SizedBox(
+                  width: chat.isMessageRecalled.value
+                      ? 0.0
+                      : forMessageTypeString(chat.messageType,
+                      content:
+                      chat.messageTextContent.checkNull()) !=
+                      null
+                      ? 3.0
+                      : 0.0,
+                ),
                 Expanded(
                   child: spanTxt.isEmpty
                       ? Text(
-                    chat.isMessageRecalled
+                    chat.isMessageRecalled.value
                               ? setRecalledMessageText(
                         chat.isMessageSentByMe)
                               : forMessageTypeString(chat.messageType,
@@ -373,7 +374,7 @@ class RecentChatItem extends StatelessWidget {
                           overflow: TextOverflow.ellipsis,
                         )
                       : spannableText(
-                      chat.isMessageRecalled
+                      chat.isMessageRecalled.value
                               ? setRecalledMessageText(
                           chat.isMessageSentByMe)
                               : forMessageTypeString(
