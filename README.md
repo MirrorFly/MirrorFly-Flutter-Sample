@@ -4,13 +4,33 @@ If you're looking for the fastest way in action with CONTUS TECH [MirrorFly Plug
 
 ## Configuration
 
-Replace the `licence key` with yours in `main.dart` file.
+Replace the `licence key` , `ios Container ID` with yours in `main.dart` file.
 
 ```dart
   Mirrorfly.init(
       baseUrl: 'https://api-preprod-sandbox.mirrorfly.com/api/v1/',
       licenseKey: 'Please enter your License key',
-      iOSContainerID: 'group.com.mirrorfly.qa')
+      iOSContainerID: 'Please enter your Container ID') //Container ID should be same as App Groups 
+```
+## Google Services
+
+If you are going to check Location sharing feature,
+
+# Android
+Specify your API key in the application manifest android/app/src/main/AndroidManifest.xml:
+```dart
+    <meta-data android:name="com.google.android.geo.API_KEY"
+    android:value="YOUR GOOGLE KEY HERE"/>
+```
+Specify your API key in the application Constant dart file lib/app/common/constants.dart
+```dart
+  static const String googleMapKey = "YOUR GOOGLE KEY HERE";
+```
+# iOS
+Specify your API key in the AppDelegate.swift
+
+```dart
+  GMSServices.provideAPIKey("YOUR GOOGLE KEY HERE")
 ```
 
 ## Run project

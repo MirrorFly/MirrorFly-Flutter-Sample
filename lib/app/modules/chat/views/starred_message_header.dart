@@ -1,12 +1,12 @@
-import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
-import 'package:mirrorfly_plugin/mirrorfly.dart';
+import 'package:mirrorfly_plugin/mirrorflychat.dart';
 
 import '../../../common/constants.dart';
 import '../../../common/widgets.dart';
+import '../../../model/chat_message_model.dart';
 import '../../starred_messages/controllers/starred_messages_controller.dart';
 
 /*
@@ -43,8 +43,9 @@ class StarredMessageHeader extends StatelessWidget {
   }
 
   Future<Profile> getProfile() async {
-    var value = await Mirrorfly.getProfileDetails(chatList.chatUserJid, true);
-    return Profile.fromJson(json.decode(value.toString()));
+    /*var value = await Mirrorfly.getProfileDetails(chatList.chatUserJid);
+    return Profile.fromJson(json.decode(value.toString()));*/
+    return await getProfileDetails(chatList.chatUserJid);
   }
 
   getHeader(ChatMessageModel chatList, BuildContext context) {

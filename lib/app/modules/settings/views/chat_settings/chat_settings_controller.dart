@@ -5,7 +5,6 @@ import 'package:mirrorfly_plugin/mirrorfly.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
 import 'package:mirror_fly_demo/app/data/session_management.dart';
-import 'package:permission_handler/permission_handler.dart';
 
 import '../../../../data/apputils.dart';
 import '../../../../data/helper.dart';
@@ -62,22 +61,11 @@ class ChatSettingsController extends GetxController {
   }
 
   Future<void> enableDisableAutoDownload() async {
-    if (await askStoragePermission()) {
+    var permission = await AppPermission.getStoragePermission();
+    if (permission) {
       var enable = !_autoDownloadEnabled.value;//SessionManagement.isAutoDownloadEnable();
         Mirrorfly.setMediaAutoDownload(enable);
         _autoDownloadEnabled(enable);
-    }
-  }
-  Future<bool> askStoragePermission() async {
-    final permission = await AppPermission.getStoragePermission();
-    switch (permission) {
-      case PermissionStatus.granted:
-        return true;
-      case PermissionStatus.permanentlyDenied:
-        return false;
-      default:
-        debugPrint("Contact Permission default");
-        return false;
     }
   }
 

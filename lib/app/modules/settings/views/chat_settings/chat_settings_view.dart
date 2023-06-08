@@ -14,7 +14,7 @@ class ChatSettingsView extends GetView<ChatSettingsController> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Chat'),
+        title: const Text('Chats'),
         automaticallyImplyLeading: true,
       ),
       body: Obx(() {
@@ -63,9 +63,9 @@ class ChatSettingsView extends GetView<ChatSettingsController> {
               Visibility(
                 visible: controller.autoDownloadEnabled,
                   child: chatListItem(
-                Column(
+                const Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
-                  children: const [
+                  children: [
                     Text(Constants.dataUsageSettings,
                         style: TextStyle(
                             fontSize: 14,

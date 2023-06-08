@@ -1,15 +1,16 @@
-import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
-import 'package:mirrorfly_plugin/mirrorfly.dart';
+import 'package:mirrorfly_plugin/mirrorflychat.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
 import 'package:share_plus/share_plus.dart';
 
 import '../../../common/constants.dart';
+import '../../../model/chat_message_model.dart';
 import '../../../routes/app_pages.dart';
 
 class StarredMessagesController extends FullLifeCycleController with FullLifeCycleMixin {
@@ -51,8 +52,18 @@ class StarredMessagesController extends FullLifeCycleController with FullLifeCyc
       Mirrorfly.getFavouriteMessages().then((value) {
         List<ChatMessageModel> chatMessageModel = chatMessageModelFromJson(
             value);
-        starredChatList(chatMessageModel.toList());
+        // starredChatList(chatMessageModel.toList());
+        if(Platform.isAndroid){
+          starredChatList(chatMessageModel.toList());
+        }else{
+          var list = chatMessageModel.toList().reversed.toList();
+          starredChatList(list);
+        }
         isListLoading(false);
+        if(isSearch.value){
+          lastInputValue="";
+          startSearch(searchedText.text.toString());
+        }
       });
     }
   }
@@ -88,8 +99,7 @@ class StarredMessagesController extends FullLifeCycleController with FullLifeCyc
       var selectedIndex = selectedChatList.indexWhere(
               (element) => chatMessageModel.messageId == element.messageId);
       if (!selectedIndex.isNegative) {
-        chatMessageModel.isSelected =
-        true; //selectedChatList[selectedIndex].isSelected;
+        chatMessageModel.isSelected(true); //selectedChatList[selectedIndex].isSelected;
         selectedChatList[selectedIndex] = chatMessageModel;
         selectedChatList.refresh();
         validateForForwardMessage();
@@ -113,14 +123,14 @@ class StarredMessagesController extends FullLifeCycleController with FullLifeCyc
       starredChatList.indexWhere((message) => message.messageId == messageId);
       debugPrint("Media Status Onprogress changed---> onUploadDownloadProgressChanged $index $messageId $progressPercentage");
       if (!index.isNegative) {
-        starredChatList[index].mediaChatMessage?.mediaProgressStatus = (int.parse(progressPercentage));
+        starredChatList[index].mediaChatMessage?.mediaProgressStatus (int.parse(progressPercentage));
         starredChatList.refresh();
       }
       if(isSearch.value){
         var selectedIndex = searchedStarredMessageList.indexWhere(
                 (message) => message.messageId == messageId);
         if (!selectedIndex.isNegative) {
-          searchedStarredMessageList[selectedIndex].mediaChatMessage?.mediaProgressStatus = (int.parse(progressPercentage));
+          searchedStarredMessageList[selectedIndex].mediaChatMessage?.mediaProgressStatus(int.parse(progressPercentage));
         }
       }
     }
@@ -165,7 +175,7 @@ class StarredMessagesController extends FullLifeCycleController with FullLifeCyc
   void addChatSelection(ChatMessageModel item) {
     if (item.messageType.toUpperCase() != Constants.mNotification) {
       selectedChatList.add(item);
-      item.isSelected = true;
+      item.isSelected (true);
       starredChatList.refresh();
       validateForForwardMessage();
       validateForShareMessage();
@@ -176,7 +186,7 @@ class StarredMessagesController extends FullLifeCycleController with FullLifeCyc
 
   clearChatSelection(ChatMessageModel item) {
     selectedChatList.remove(item);
-    item.isSelected = false;
+    item.isSelected (false);
     if (selectedChatList.isEmpty) {
       isSelected(false);
       selectedChatList.clear();
@@ -189,7 +199,7 @@ class StarredMessagesController extends FullLifeCycleController with FullLifeCyc
   clearAllChatSelection() {
     isSelected(false);
     for (var chatItem in selectedChatList) {
-      chatItem.isSelected = false;
+      chatItem.isSelected(false);
     }
     selectedChatList.clear();
   }
@@ -295,7 +305,7 @@ class StarredMessagesController extends FullLifeCycleController with FullLifeCyc
   favouriteMessage() {
     for (var item in selectedChatList) {
       Mirrorfly.updateFavouriteStatus(
-          item.messageId, item.chatUserJid, !item.isMessageStarred, item.messageChatType);
+          item.messageId, item.chatUserJid, !item.isMessageStarred.value, item.messageChatType);
       starredChatList
           .removeWhere((element) => item.messageId == element.messageId);
       if(isSearch.value){
@@ -309,7 +319,7 @@ class StarredMessagesController extends FullLifeCycleController with FullLifeCyc
 
   copyTextMessages() {
     Clipboard.setData(
-        ClipboardData(text: selectedChatList[0].messageTextContent));
+        ClipboardData(text: selectedChatList[0].messageTextContent ?? ""));
     clearChatSelection(selectedChatList[0]);
     toToast("1 Text Copied Successfully to the clipboard");
   }
@@ -320,10 +330,10 @@ class StarredMessagesController extends FullLifeCycleController with FullLifeCyc
     return {
       selectedChatList.any((element) =>
               element.isMessageSentByMe &&
-              !element.isMessageRecalled &&
+              !element.isMessageRecalled.value &&
               (element.messageSentTime > recallTimeDifference)):
           selectedChatList.any((element) =>
-              !element.isMessageRecalled &&
+              !element.isMessageRecalled.value &&
               (element.isMediaMessage() &&
                   element.mediaChatMessage!.mediaLocalStoragePath
                       .checkNull()
@@ -529,6 +539,7 @@ class StarredMessagesController extends FullLifeCycleController with FullLifeCyc
     if(str.isNotEmpty) {
       clear(true);
       if (lastInputValue != str.trim()) {
+        starredChatList.clear();
         lastInputValue = str.trim();
         addSearchedMessagesToList(str.trim());
       }
@@ -564,42 +575,79 @@ class StarredMessagesController extends FullLifeCycleController with FullLifeCyc
 
   var searchedStarredMessageList = <ChatMessageModel>[];
   Future<void> addSearchedMessagesToList(String filterKey) async {
-    starredChatList.clear();
-    for (var message in searchedStarredMessageList) {
-      var name = await getProfile(message.chatUserJid.checkNull());
-      if (isTextMessageContainsFilterKey(message, filterKey)) {
-        starredChatList.add(message);
-      } else if (isImageCaptionContainsFilterKey(message, filterKey)) {
-        starredChatList.add(message);
-      } else if (isVideoCaptionContainsFilterKey(message, filterKey)) {
-        starredChatList.add(message);
-      } else if (Constants.mDocument == message.messageType &&
-          message.mediaChatMessage!.mediaFileName.checkNull().isNotEmpty &&
-          message.mediaChatMessage!.mediaFileName
-              .toLowerCase()
-              .contains(filterKey.toLowerCase())) {
-        starredChatList.add(message);
-      } else if (Constants.mContact == message.messageType &&
-          message.contactChatMessage!.contactName.checkNull().isNotEmpty &&
-          message.contactChatMessage!.contactName
-              .toLowerCase()
-              .contains(filterKey.toLowerCase())) {
-        starredChatList.add(message);
-      } else if (message.senderUserName.checkNull().isNotEmpty &&
-          message.senderUserName
-              .toLowerCase()
-              .contains(filterKey.toLowerCase())) {
-        starredChatList.add(message);
-      } else if (message.isMessageSentByMe &&
-          "You".toLowerCase().contains(filterKey.toLowerCase())) {
-        starredChatList.add(message);
-      } else if ((message.messageChatType== Constants.typeGroupChat)&&
-          name.name.checkNull().contains(filterKey.toLowerCase())) {
-        starredChatList.add(message);
+    if(starredChatList.isEmpty) {
+      for (var message in searchedStarredMessageList) {
+        if (isTextMessageContainsFilterKey(message, filterKey)) {
+          if(starredChatList.indexWhere((element) => element.messageId==message.messageId).isNegative) {
+            starredChatList.add(message);
+            debugPrint('starredChatList ${message.messageId}text');
+          }
+        } else if (isImageCaptionContainsFilterKey(message, filterKey)) {
+          if(starredChatList.indexWhere((element) => element.messageId==message.messageId).isNegative) {
+            starredChatList.add(message);
+            debugPrint('starredChatList ${message.messageId}image');
+          }
+        } else if (isVideoCaptionContainsFilterKey(message, filterKey)) {
+          if(starredChatList.indexWhere((element) => element.messageId==message.messageId).isNegative) {
+            starredChatList.add(message);
+            debugPrint('starredChatList ${message.messageId}video');
+          }
+        } else if (Constants.mDocument == message.messageType &&
+            message.mediaChatMessage!
+                .mediaFileName
+                .checkNull()
+                .isNotEmpty &&
+            message.mediaChatMessage!.mediaFileName
+                .toLowerCase()
+                .contains(filterKey.toLowerCase())) {
+          if(starredChatList.indexWhere((element) => element.messageId==message.messageId).isNegative) {
+            starredChatList.add(message);
+            debugPrint('starredChatList ${message.messageId}doc');
+          }
+        } else if (Constants.mContact == message.messageType &&
+            message.contactChatMessage!
+                .contactName
+                .checkNull()
+                .isNotEmpty &&
+            message.contactChatMessage!.contactName
+                .toLowerCase()
+                .contains(filterKey.toLowerCase())) {
+          if(starredChatList.indexWhere((element) => element.messageId==message.messageId).isNegative) {
+            starredChatList.add(message);
+            debugPrint('starredChatList ${message.messageId}contact');
+          }
+        } else if (message.senderUserName
+            .checkNull()
+            .isNotEmpty &&
+            message.senderUserName
+                .toLowerCase()
+                .contains(filterKey.toLowerCase())) {
+          if(starredChatList.indexWhere((element) => element.messageId==message.messageId).isNegative) {
+            starredChatList.add(message);
+            debugPrint('starredChatList ${message.messageId}sender');
+          }
+        } else if (message.isMessageSentByMe &&
+            "You".toLowerCase().contains(filterKey.toLowerCase())) {
+          if(starredChatList.indexWhere((element) => element.messageId==message.messageId).isNegative) {
+            starredChatList.add(message);
+            debugPrint('starredChatList ${message.messageId}you');
+          }
+        } else if ((message.messageChatType == Constants.typeGroupChat)){
+          var name = await getProfileDetails(message.chatUserJid.checkNull());
+            if(name.name.checkNull().contains(filterKey.toLowerCase())) {
+              if(starredChatList.indexWhere((element) => element.messageId==message.messageId).isNegative) {
+                starredChatList.add(message);
+                debugPrint('starredChatList ${message.messageId} : group');
+              }
+            }
+        }
+        starredChatList.refresh();
       }
+    }else{
+      starredChatList([]);
+      addSearchedMessagesToList(filterKey);
     }
     debugPrint('starredChatList ${starredChatList.length}');
-    starredChatList.refresh();
     /*starredMessagesAdapterAdapterData!!.setSearch(searchEnabled, searchedText)
   starredMessagesAdapterAdapterData!!.setStarredMessages(searchedStarredMessageList)
   starredMessagesAdapterAdapterData!!.notifyDataSetChanged()*/
@@ -632,10 +680,6 @@ class StarredMessagesController extends FullLifeCycleController with FullLifeCyc
             .checkNull()
             .toLowerCase()
             .contains(filterKey.toLowerCase());
-  }
-  Future<Profile> getProfile(String jid) async {
-    var value = await Mirrorfly.getProfileDetails(jid, true);
-    return Profile.fromJson(json.decode(value.toString()));
   }
 
   navigateMessage(ChatMessageModel starredChat) {

@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:better_video_player/better_video_player.dart';
+// import 'package:better_video_player/better_video_player.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
@@ -8,6 +8,7 @@ import 'package:get/get.dart';
 import 'package:photo_view/photo_view.dart';
 
 import '../../../common/constants.dart';
+import '../../../widgets/video_player_widget.dart';
 import '../controllers/view_all_media_preview_controller.dart';
 
 class ViewAllMediaPreviewView extends GetView<ViewAllMediaPreviewController> {
@@ -61,23 +62,26 @@ class ViewAllMediaPreviewView extends GetView<ViewAllMediaPreviewController> {
 
               /// show video
               else {
-                return AspectRatio(
-                  aspectRatio: 2,
-                  child: BetterVideoPlayer(
-                    configuration:
-                    const BetterVideoPlayerConfiguration(
-                      looping: false,
-                      autoPlay: false,
-                      allowedScreenSleep: false,
-                      autoPlayWhenResume: false,
-                    ),
-                    controller:
-                    BetterVideoPlayerController(),
-                    dataSource: BetterVideoPlayerDataSource(
-                      BetterVideoPlayerDataSourceType.file,
-                      data.mediaChatMessage!.mediaLocalStoragePath,
-                    ),
-                  ),
+                // return AspectRatio(
+                //   aspectRatio: 2,
+                //   child: BetterVideoPlayer(
+                //     configuration:
+                //     const BetterVideoPlayerConfiguration(
+                //       looping: false,
+                //       autoPlay: false,
+                //       allowedScreenSleep: false,
+                //       autoPlayWhenResume: false,
+                //     ),
+                //     controller:
+                //     BetterVideoPlayerController(),
+                //     dataSource: BetterVideoPlayerDataSource(
+                //       BetterVideoPlayerDataSourceType.file,
+                //       data.mediaChatMessage!.mediaLocalStoragePath,
+                //     ),
+                //   ),
+                // );
+                return VideoPlayerWidget(
+                  videoPath: data.mediaChatMessage?.mediaLocalStoragePath ?? "", videoTitle: data.mediaChatMessage?.mediaFileName ?? "Video",
                 );
               }
             })

@@ -10,9 +10,9 @@ import 'about/about_and_help_view.dart';
 
 class SettingsView extends GetView<SettingsController> {
   const SettingsView({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
       appBar: AppBar(
         title: const Text('Settings'),
@@ -22,20 +22,26 @@ class SettingsView extends GetView<SettingsController> {
         child: Column(
           children: [
             settingListItem("Profile", profileIcon, rightArrowIcon,
-                () => Get.toNamed(Routes.profile,arguments: {"from":Routes.settings})),
+                    () =>
+                    Get.toNamed(
+                        Routes.profile, arguments: {"from": Routes.settings})),
             settingListItem("Chats", chatIcon, rightArrowIcon, () {
               Get.toNamed(Routes.chatSettings);
             }),
             settingListItem(
                 "Starred Messages", staredMsgIcon, rightArrowIcon, () {
-                  Get.toNamed(Routes.starredMessages);
+              Get.toNamed(Routes.starredMessages);
             }),
             settingListItem(
-                "Notifications", notificationIcon, rightArrowIcon, ()=>Get.toNamed(Routes.notification)),
+                "Notifications", notificationIcon, rightArrowIcon, () =>
+                Get.toNamed(Routes.notification)),
             settingListItem(
-                "Blocked Contacts", blockedIcon, rightArrowIcon, ()=>Get.toNamed(Routes.blockedList)),
-            settingListItem("App Lock", lockIcon, rightArrowIcon, ()=>Get.toNamed(Routes.appLock)),
-            settingListItem("About and Help", aboutIcon, rightArrowIcon, () =>Get.to(const AboutAndHelpView())),
+                "Blocked Contacts", blockedIcon, rightArrowIcon, () =>
+                Get.toNamed(Routes.blockedList)),
+            // settingListItem("App Lock", lockIcon, rightArrowIcon, () =>
+            //     Get.toNamed(Routes.appLock)),
+            settingListItem("About and Help", aboutIcon, rightArrowIcon, () =>
+                Get.to(const AboutAndHelpView())),
             settingListItem(
                 "Connection Label", connectionIcon, toggleOffIcon, () {}),
             settingListItem("Delete My Account", delete, rightArrowIcon, () {
@@ -58,34 +64,34 @@ class SettingsView extends GetView<SettingsController> {
                         child: const Text("YES"))
                   ]);
             }),
-        Padding(
+            Padding(
               padding: const EdgeInsets.all(20.0),
-              child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    RichText(
-                      text: const TextSpan(
-                          text: "Released On: ",
-                          style: TextStyle(color: textColor),
-                          children: [
-                            TextSpan(
-                                text: "March 2023",
-                                style: TextStyle(color: textHintColor))
-                          ]),
-                    ),
-                    RichText(
+              child: Obx(() {
+                return Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      RichText(
+                        text: TextSpan(
+                            text: "Released On: ",
+                            style: const TextStyle(color: textColor),
+                            children: [
+                              TextSpan(
+                                  text: controller.releaseDate.value,
+                                  style: const TextStyle(color: textHintColor))
+                            ]),
+                      ),
+                      RichText(
                         text: TextSpan(
                             text: "Version ",
                             style: const TextStyle(color: textColor),
                             children: [
                               TextSpan(
-                                  text: controller.packageInfo != null
-                                      ? controller.packageInfo!.version
-                                      : "",
+                                  text: controller.version.value,
                                   style: const TextStyle(color: textHintColor))
                             ]),
                       ),
-                  ]),
+                    ]);
+              }),
             )
           ],
         ),

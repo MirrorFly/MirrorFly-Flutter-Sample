@@ -14,7 +14,12 @@ class SessionManagement {
     }
   }
   static Future onInit() async {
-    _preferences = await SharedPreferences.getInstance();
+    try {
+      _preferences = await SharedPreferences.getInstance();
+    }catch(e){
+      SharedPreferences.setMockInitialValues({});
+      _preferences = await SharedPreferences.getInstance();
+    }
   }
 
   static Future setLogin(bool val) async {
@@ -183,7 +188,7 @@ class SessionManagement {
   static String getTranslationLanguageCode() => _preferences.getString("LanguageCode") ?? "en";
   static bool isInitialContactSyncDone() => _preferences.getBool("is_initial_contact_sync_done") ?? false;
   static bool isContactSyncDone() => _preferences.getBool("is_contact_sync_done") ?? false;
-  static bool isTrailLicence() => _preferences.getBool("IS_TRIAL_LICENSE") ?? false;
+  static bool isTrailLicence() => _preferences.getBool("IS_TRIAL_LICENSE") ?? true;
   static int appLastSession() => _preferences.getInt(Constants.appSession) ?? DateTime.now().millisecondsSinceEpoch;
   static int lastPinChangedAt() => _preferences.getInt(Constants.changedPinAt) ?? DateTime.now().millisecondsSinceEpoch;
   static bool showAlert() => _preferences.getBool('show_alert') ?? true;

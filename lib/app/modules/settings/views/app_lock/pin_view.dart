@@ -13,12 +13,12 @@ class PinView extends GetView<AppLockController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: WillPopScope(
-        onWillPop: (){
-          SystemNavigator.pop();
-          return Future.value(false);
-        },
-        child: SafeArea(
+      body: SafeArea(
+        child: WillPopScope(
+          onWillPop: (){
+            SystemNavigator.pop();
+            return Future.value(false);
+          },
           child: Stack(
             children: [
               Image.asset(icBioBackground),

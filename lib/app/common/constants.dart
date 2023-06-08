@@ -4,12 +4,12 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:mirrorfly_plugin/mirrorfly.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../data/apputils.dart';
+import '../model/chat_message_model.dart';
 
 //Colors
 const Color appBarColor = Color(0xffF2F2F2);
@@ -277,7 +277,7 @@ class Constants {
   static const String package = 'com.mirrorfly.uikit_flutter';
   static const String webChatLogin = 'https://webchat-uikit-qa.contus.us/';
   static const String tag = 'Contus Fly';
-  static const String googleMapKey = "AIzaSyBaKkrQnLT4nacpKblIE5d4QK6GpaX5luQ";
+  static const String googleMapKey = "YOUR GOOGLE KEY HERE";
   static const String googleMapPackageName = "com.google.android.apps.maps";
   static const String packageName = "com.contus.flycommons.";
 
@@ -477,6 +477,11 @@ class Constants {
   static const String privacyPolicy =
       "https://www.mirrorfly.com/privacy-policy.php";
 
+  static const maxAudioFileSize = 30;
+  static const maxVideoFileSize = 30;
+  static const maxImageFileSize = 10;
+  static const maxDocFileSize = 20;
+
   static const List<String> defaultStatusList = [
     "Available",
     "Sleeping...",
@@ -621,7 +626,7 @@ class Constants {
       "Choose Translation Language";
   static const String googleTranslationLanguageDoubleTap =
       "Double Tap the received messages to translate";
-  static const String googleTranslateKey = "xxxxxxxxxxxxxxxxxx";
+  static const String googleTranslateKey = "";
 
   static const String editBusyStatus = "Edit Busy Status Message";
   static const String yourBusyStatus = "Your Busy Status";
