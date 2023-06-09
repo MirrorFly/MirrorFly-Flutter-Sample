@@ -5,7 +5,7 @@ import '../../../common/constants.dart';
 import '../../../data/apputils.dart';
 import '../../../data/session_management.dart';
 import '../../../data/helper.dart';
-import 'package:mirrorfly_plugin/mirrorfly.dart';
+import 'package:mirrorfly_chat/mirrorfly.dart';
 import '../../../routes/app_pages.dart';
 
 class DeleteAccountController extends GetxController {

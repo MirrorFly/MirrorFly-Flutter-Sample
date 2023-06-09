@@ -4,7 +4,7 @@ import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
 import 'package:mirror_fly_demo/app/modules/chat/controllers/contact_controller.dart';
-import 'package:mirrorfly_plugin/mirrorfly.dart';
+import 'package:mirrorfly_chat/mirrorfly.dart';
 
 import '../../../common/widgets.dart';
 import '../../../routes/app_pages.dart';

@@ -30,7 +30,7 @@ import '../../../model/chat_message_model.dart';
 import '../../../model/reply_hash_map.dart';
 import '../../../routes/app_pages.dart';
 
-import 'package:mirrorfly_plugin/mirrorflychat.dart';
+import 'package:mirrorfly_chat/mirrorflychat.dart';
 
 import '../../gallery_picker/src/data/models/picked_asset_model.dart';
 import '../chat_widgets.dart';
