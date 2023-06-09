@@ -47,6 +47,9 @@ abstract class Routes {
   static const dataUsageSetting = _Paths.dataUsageSetting;
   static const contactSync = _Paths.contactSync;
   static const viewAllMediaPreview = _Paths.viewAllMediaPreview;
+
+  //call
+  static const outGoingCallView = _Paths.outGoingCallView;
 }
 
 abstract class _Paths {
@@ -96,4 +99,7 @@ abstract class _Paths {
   static const dataUsageSetting = '/data_usage_setting';
   static const contactSync = '/contact_sync';
   static const viewAllMediaPreview = '/view-all-media-preview';
+
+  //call
+  static const outGoingCallView = '/outGoingCallView';
 }

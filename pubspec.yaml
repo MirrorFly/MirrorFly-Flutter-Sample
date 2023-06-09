@@ -71,7 +71,7 @@ dependencies:
 #    path: ../mirrorfly_plugin
 #  mirrorfly_plugin: ^0.0.2
   mirrorfly_plugin:
-    path: p078-mirrorfly-flutter-plugin
+    path: ../p078-mirrorfly-flutter-plugin
 #    git:
 #      url: https://github.com/MirrorFly/MirrorFly-Flutter-plugin.git
 #      ref: develop
@@ -91,6 +91,7 @@ flutter:
     - assets/countries.txt
     - assets/languages.txt
     - assets/logos/
+    - assets/calls/
     - assets/animation/
     - pubspec.yaml
 

@@ -42,6 +42,25 @@ const Color durationTextColor = Color(0xff455E93);
 const Color chatBgColor = Color(0xffD0D8EB);
 const Color previewTextColor = Color(0xff7f7f7f);
 
+class AppColors{
+  static const Color callerBackground = Color(0xff152134);
+  static const Color colorBlackTransparent = Color(0x80000000);
+  static const Color callerStatus = Color(0xffDEDEDE);
+  static const Color callerName = Color(0xffffffff);
+  static const Color endButton = Color(0xffff4d67);
+}
+//call Assets
+const String callEndButton = 'assets/calls/call_end_button.svg';
+const String speakerInactive = 'assets/calls/speaker_inactive.svg';
+const String speakerActive = 'assets/calls/speaker_active.svg';
+const String videoInactive = 'assets/calls/video_inactive.svg';
+const String videoActive = 'assets/calls/video_active.svg';
+const String muteActive = 'assets/calls/mute_active.svg';
+const String muteInactive = 'assets/calls/mute_inactive.svg';
+const String cameraSwitchInactive = 'assets/calls/camera_switch_inactive.svg';
+const String cameraSwitchActive = 'assets/calls/camera_switch_active.svg';
+const String callOptionsUpArrow = 'assets/calls/call_options_up_arrow.svg';
+
 //Assets
 const String registerIcon = 'assets/logos/register_logo.svg';
 const String statusIcon = 'assets/logos/status.svg';

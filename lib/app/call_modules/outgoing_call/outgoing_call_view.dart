@@ -1,0 +1,208 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
+import 'package:get/get.dart';
+import 'package:mirror_fly_demo/app/call_modules/outgoing_call/call_controller.dart';
+import 'package:mirror_fly_demo/app/call_modules/ripple_animation_view.dart';
+import 'package:mirror_fly_demo/app/common/widgets.dart';
+import 'package:mirror_fly_demo/app/data/helper.dart';
+import 'package:mirrorfly_plugin/mirrorfly.dart';
+
+import '../../common/constants.dart';
+
+class OutGoingCallView extends GetView<CallController> {
+  const OutGoingCallView({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: AppColors.callerBackground,
+      body: SafeArea(
+        child: InkWell(
+          splashColor: Colors.transparent,
+          highlightColor: Colors.transparent,
+          onTap: () {
+            debugPrint("clicked");
+            controller.isVisible(!controller.isVisible.value);
+          },
+          child: Stack(
+            children: [
+              Column(
+                children: [
+                  Expanded(child: Column(children: [
+                    const SizedBox(
+                      height: 10,
+                    ),
+                    const Text(
+                      "Ringing",
+                      style: TextStyle(
+                          color: AppColors.callerStatus,
+                          fontWeight: FontWeight.w100,
+                          fontSize: 14),
+                    ),
+                    const SizedBox(
+                      height: 16,
+                    ),
+                    const Text(
+                      "Saravanakumar",
+                      style: TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.w500,
+                          fontSize: 18),
+                    ),
+                    RipplesAnimation(
+                      onPressed: () {},
+                      child: buildProfileImage(Profile(
+                          name: "SaravanaKumar",
+                          nickName: "",
+                          isGroupProfile: false,
+                          image: '',
+                          isBlockedMe: false,
+                          isAdminBlocked: false,
+                          isItSavedContact: true)),
+                    ),
+                  ],)),
+                  Obx(() {
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 50),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.max,
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          controller.muted.value
+                              ? FloatingActionButton(
+                            heroTag: "mute",
+                            elevation: 0,
+                            backgroundColor: Colors.white,
+                            onPressed: () => controller.muteAudio(),
+                            child: SvgPicture.asset(
+                              muteActive,
+                            ),
+                          )
+                              : FloatingActionButton(
+                            heroTag: "mute",
+                            elevation: 0,
+                            backgroundColor: Colors.white.withOpacity(0.3),
+                            onPressed: () => controller.muteAudio(),
+                            child: SvgPicture.asset(
+                              muteInactive,
+                            ),
+                          ),
+                          FloatingActionButton(
+                            heroTag: "speaker",
+                            elevation: 0,
+                            backgroundColor: controller.videoMuted.value
+                                ? Colors.white
+                                : Colors.white.withOpacity(0.3),
+                            onPressed: () => controller.videoMute(),
+                            child: controller.videoMuted.value
+                                ? SvgPicture.asset(videoInactive)
+                                : SvgPicture.asset(videoActive),
+                          ),
+                          FloatingActionButton(
+                            heroTag: "speaker",
+                            elevation: 0,
+                            backgroundColor: controller.speakerOff.value
+                                ? Colors.white.withOpacity(0.3)
+                                : Colors.white,
+                            onPressed: () => controller.changeSpeaker(),
+                            child: controller.speakerOff.value
+                                ? SvgPicture.asset(speakerInactive)
+                                : SvgPicture.asset(speakerActive),
+                          ),
+                        ],
+                      ),
+                    );
+                  }),
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 10.0, top: 20.0),
+                    child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                            padding: EdgeInsets.zero,
+                            maximumSize: const Size(200, 50),
+                            shape: const StadiumBorder(),
+                            backgroundColor: AppColors.endButton),
+                        onPressed: () {
+                          // controller.declineCall();
+                        },
+                        child: SvgPicture.asset(
+                          callEndButton,
+                        )),
+                  ),
+                ],
+              ),
+              Obx(() {
+                return AnimatedPositioned(
+                  duration: const Duration(milliseconds: 500),
+                  curve: Curves.easeInOut,
+                  bottom: controller.isVisible.value ? 0.0 : -200,
+                  left: 0.0,
+                  right: 0.0,
+                  height: 200,
+                  child: Container(
+                    color: Colors.blue,
+                    child: const Center(
+                      child: Text(
+                        'Slide Animation',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 20.0,
+                        ),
+                      ),
+                    ),
+                  ),
+                );
+              }),
+              Obx(() {
+                return AnimatedPositioned(
+                  duration: const Duration(milliseconds: 500),
+                  curve: Curves.easeInOut,
+                  top: controller.isVisible.value ? 0.0 : -72,
+                  left: 0.0,
+                  right: 0.0,
+                  height: 72,
+                  child: Container(
+                    color: Colors.blue,
+                    child: const Center(
+                      child: Text(
+                        'Slide Animation',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 20.0,
+                        ),
+                      ),
+                    ),
+                  ),
+                );
+              }),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget buildProfileImage(Profile item) {
+    return ImageNetwork(
+      url: item.image.toString(),
+      width: 105,
+      height: 105,
+      clipOval: true,
+      errorWidget: item.isGroupProfile!
+          ? ClipOval(
+        child: Image.asset(
+          groupImg,
+          height: 48,
+          width: 48,
+          fit: BoxFit.cover,
+        ),
+      )
+          : ProfileTextImage(
+        text: item.getName(),
+        radius: 50,
+      ),
+      isGroup: item.isGroupProfile.checkNull(),
+      blocked: item.isBlockedMe.checkNull() || item.isAdminBlocked.checkNull(),
+      unknown: (!item.isItSavedContact.checkNull() || item.isDeletedContact()),
+    );
+  }
+}

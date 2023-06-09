@@ -1,4 +1,6 @@
 import 'package:get/get.dart';
+import 'package:mirror_fly_demo/app/call_modules/outgoing_call/outgoing_call_binding.dart';
+import 'package:mirror_fly_demo/app/call_modules/outgoing_call/outgoing_call_view.dart';
 
 import '../modules/admin_blocked/adminblockedview.dart';
 import '../modules/archived_chats/archived_chat_list_binding.dart';
@@ -317,6 +319,13 @@ class AppPages {
       name: _Paths.viewAllMediaPreview,
       page: () => const ViewAllMediaPreviewView(),
       binding: ViewAllMediaPreviewBinding(),
+    ),
+
+    //calls
+    GetPage(
+      name: _Paths.outGoingCallView,
+      page: () => const OutGoingCallView(),
+      binding: OutGoingCallBinding(),
     ),
   ];
 }

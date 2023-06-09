@@ -417,6 +417,34 @@ extension ProfileParesing on Profile {
       !isGroupProfile.checkNull() && isGroupInOfflineMode
           .checkNull(); // for email contact isGroupInOfflineMode will be true
 
+  String getName(){
+    if (Mirrorfly.isTrialLicence) {
+      /*return item.name.toString().checkNull().isEmpty
+        ? item.nickName.toString()
+        : item.name.toString();*/
+      return this.name
+          .checkNull()
+          .isEmpty
+          ? nickName.checkNull()
+          : name.checkNull();
+    } else {
+      if (jid.checkNull() == SessionManagement.getUserJID()) {
+        return Constants.you;
+      } else if (isDeletedContact()) {
+        mirrorFlyLog('isDeletedContact', isDeletedContact().toString());
+        return Constants.deletedUser;
+      } else if (isUnknownContact() || nickName
+          .checkNull()
+          .isEmpty) {
+        mirrorFlyLog('isUnknownContact', jid.toString());
+        return getMobileNumberFromJid(jid.checkNull());
+      } else {
+        mirrorFlyLog('nickName', nickName.toString());
+        return nickName.checkNull();
+      }
+    }
+  }
+
 }
 
 extension ChatmessageParsing on ChatMessageModel {
