@@ -422,7 +422,7 @@ extension ProfileParesing on Profile {
       /*return item.name.toString().checkNull().isEmpty
         ? item.nickName.toString()
         : item.name.toString();*/
-      return this.name
+      return name
           .checkNull()
           .isEmpty
           ? nickName.checkNull()
