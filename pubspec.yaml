@@ -71,7 +71,7 @@ dependencies:
 #    path: ../mirrorfly_plugin
 #  mirrorfly_plugin: ^0.0.2
   mirrorfly_chat:
-    path: ../p078-mirrorfly-flutter-plugin
+    path: p078-mirrorfly-flutter-plugin
 #    git:
 #      url: https://github.com/MirrorFly/MirrorFly-Flutter-plugin.git
 #      ref: develop
