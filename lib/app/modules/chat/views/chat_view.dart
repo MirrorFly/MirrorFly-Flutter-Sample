@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
 import 'package:get/get.dart';
-import 'package:grouped_list/grouped_list.dart';
+// import 'package:grouped_list/grouped_list.dart';
 import 'package:marquee/marquee.dart';
 import 'package:mirror_fly_demo/app/common/widgets.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
@@ -491,8 +491,8 @@ class ChatView extends GetView<ChatController> {
   }
 
   Widget userNoLonger() {
-    return Column(
-      children: const [
+    return const Column(
+      children: [
         Divider(
           height: 1,
           thickness: 0.29,
@@ -747,75 +747,6 @@ class ChatView extends GetView<ChatController> {
     );
   }
 
-  Widget chatGroupedListView(List<ChatMessageModel> chatList) {
-    return GroupedListView<dynamic, String>(
-      elements: chatList,
-      groupBy: (element) => element['group'],
-      groupSeparatorBuilder: (String groupByValue) => Text(groupByValue),
-      itemBuilder: (context, dynamic element) => Text(element['name']),
-      // itemComparator: (item1, item2) => item1['name'].compareTo(item2['name']), // optional
-      useStickyGroupSeparators: true,
-      // optional
-      floatingHeader: true,
-      // optional
-      order: GroupedListOrder.ASC, // optional
-    );
-  }
-
-  /*handleMediaUploadDownload(
-      int mediaDownloadStatus, ChatMessageModel chatList) {
-    switch (chatList.isMessageSentByMe
-        ? chatList.mediaChatMessage?.mediaUploadStatus
-        : mediaDownloadStatus) {
-      case Constants.mediaDownloaded:
-      case Constants.mediaUploaded:
-        if (chatList.messageType.toUpperCase() == 'VIDEO') {
-          if (controller.checkFile(
-                  chatList.mediaChatMessage!.mediaLocalStoragePath) &&
-              (chatList.mediaChatMessage!.mediaDownloadStatus ==
-                      Constants.mediaDownloaded ||
-                  chatList.mediaChatMessage!.mediaDownloadStatus ==
-                      Constants.mediaUploaded ||
-                  chatList.isMessageSentByMe)) {
-            Get.toNamed(Routes.videoPlay, arguments: {
-              "filePath": chatList.mediaChatMessage!.mediaLocalStoragePath,
-            });
-          }
-        }
-        if (chatList.messageType.toUpperCase() == 'AUDIO') {
-          if (controller.checkFile(
-                  chatList.mediaChatMessage!.mediaLocalStoragePath) &&
-              (chatList.mediaChatMessage!.mediaDownloadStatus ==
-                      Constants.mediaDownloaded ||
-                  chatList.mediaChatMessage!.mediaDownloadStatus ==
-                      Constants.mediaUploaded ||
-                  chatList.isMessageSentByMe)) {
-            debugPrint("audio click1");
-            controller.playAudio(chatList, chatList.mediaChatMessage!.mediaLocalStoragePath);
-          } else {
-            debugPrint("condition failed");
-          }
-        }
-        break;
-      case Constants.mediaDownloadedNotAvailable:
-      case Constants.mediaNotDownloaded:
-        //download
-        debugPrint("Download");
-        debugPrint(chatList.messageId);
-        chatList.mediaChatMessage!.mediaDownloadStatus =
-            Constants.mediaDownloading;
-        controller.downloadMedia(chatList.messageId);
-        break;
-      case Constants.mediaUploadedNotAvailable:
-        //upload
-        break;
-      case Constants.mediaNotUploaded:
-      case Constants.mediaDownloading:
-      case Constants.mediaUploading:
-        //return uploadingView(chatList.messageType);
-      // break;
-    }
-  }*/
 
   selectedAppBar() {
     return AppBar(

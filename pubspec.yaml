@@ -19,26 +19,23 @@ dependencies:
   intl: ^0.17.0 #datetime
   package_info_plus: ^4.0.2 #package info
   image_picker: ^0.8.6
-  flutter_profile_picture: ^2.0.0
   permission_handler: ^10.2.0
   emoji_picker_flutter: ^1.4.0
   image_cropping: ^0.0.13 #crop image
   path_provider: ^2.0.11 #path provider
-  video_player: ^2.4.7
+
   lottie: ^1.4.3
   url_launcher: ^6.1.6 #url Launcher
   custom_image_crop: ^0.0.4 #crop image
   photo_view: ^0.14.0
-  fluttercontactpicker: ^4.7.0
   audioplayers: ^0.20.1
   contacts_service: ^0.6.3
-  google_maps_flutter: ^2.2.1 #google map
+  google_maps_flutter: ^2.3.0 #google map
   geolocator: ^9.0.2 #geolocator
   geocoding: ^2.0.5 #geocoder for address
   focus_detector: ^2.0.1 #focus detector
   record: ^3.0.0
   swipe_to: ^1.0.2
-#  flutter_cache_manager: ^3.3.0
   flutter_keyboard_visibility: ^5.4.0
   keyboard_dismisser: ^3.0.0
   scrollable_positioned_list: ^0.3.5 #scrollable position
@@ -46,20 +43,19 @@ dependencies:
   firebase_core: ^2.3.0 #firebase core
   firebase_auth: ^4.1.4 #firebas authentication
   firebase_app_installations: ^0.2.1+5 #firebase installations
-  firebase_messaging: ^14.1.2 #firebase messaging
+  firebase_messaging: ^14.6.2 #firebase messaging
   flutter_switch: ^0.3.2 #switchbox
   marquee: ^2.2.0 # marquee text
   qr_code_scanner: ^1.0.1 #qr scanner
   yaml: ^3.1.1
   path: ^1.8.2
   camera: ^0.10.5+2
-  better_video_player: ^1.2.8
+  video_player: ^2.6.1
   internet_connection_checker: ^1.0.0+1 # connectivity check
   provider: ^6.0.3
-  photo_manager: ^2.5.2
+  photo_manager: ^2.6.0
   oktoast: ^3.3.1
-  google_cloud_translation: ^0.0.3 # Google Translator
-  grouped_list: ^5.1.2
+#  google_cloud_translation: ^0.0.3 # Google Translator
   share_plus: ^7.0.2
   flutter_inappwebview: ^5.7.2+3 # inapp webview
   flutter_local_notifications: ^13.0.0
@@ -67,16 +63,9 @@ dependencies:
   open_file_plus: ^3.4.0
   is_lock_screen: ^2.0.0
   device_info_plus: ^8.1.0
-#  mirrorfly_plugin:
-#    path: ../mirrorfly_plugin
 #  mirrorfly_plugin: ^0.0.2
   mirrorfly_chat:
     path: p078-mirrorfly-flutter-plugin
-#    git:
-#      url: https://github.com/MirrorFly/MirrorFly-Flutter-plugin.git
-#      ref: develop
-#  flysdk:
-#    path: packages/flysdk
 
 
 dev_dependencies: 
