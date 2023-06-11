@@ -491,8 +491,8 @@ class ChatView extends GetView<ChatController> {
   }
 
   Widget userNoLonger() {
-    return const Column(
-      children: [
+    return Column(
+      children: const [
         Divider(
           height: 1,
           thickness: 0.29,
