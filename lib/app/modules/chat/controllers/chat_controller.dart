@@ -2764,4 +2764,9 @@ class ChatController extends FullLifeCycleController
       }
     }
   }
+
+  void makeVoiceCall() {
+    debugPrint("#FLY CALL VIDEO CALL CALLING");
+    Mirrorfly.makeVideoCall();
+  }
 }
