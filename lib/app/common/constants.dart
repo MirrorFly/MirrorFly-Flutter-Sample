@@ -44,6 +44,7 @@ const Color previewTextColor = Color(0xff7f7f7f);
 
 class AppColors{
   static const Color callerBackground = Color(0xff152134);
+  static const Color audioCallBackground = Color(0xff0B111C);
   static const Color colorBlackTransparent = Color(0x80000000);
   static const Color callerStatus = Color(0xffDEDEDE);
   static const Color callerName = Color(0xffffffff);
@@ -57,9 +58,15 @@ const String videoInactive = 'assets/calls/video_inactive.svg';
 const String videoActive = 'assets/calls/video_active.svg';
 const String muteActive = 'assets/calls/mute_active.svg';
 const String muteInactive = 'assets/calls/mute_inactive.svg';
+const String addUserCall = 'assets/calls/ic_add_user.svg';
+const String audioMute = 'assets/calls/ic_audio_mute.svg';
+const String moreMenu = 'assets/calls/ic_call_more_menu.svg';
+const String unpinUser = 'assets/calls/ic_unpin_user.svg';
 const String cameraSwitchInactive = 'assets/calls/camera_switch_inactive.svg';
 const String cameraSwitchActive = 'assets/calls/camera_switch_active.svg';
 const String callOptionsUpArrow = 'assets/calls/call_options_up_arrow.svg';
+const String callOptionsBottomBg = 'assets/calls/ic_group_user_info_layout.png';
+const String callOptionsToolbarBg = 'assets/calls/ic_call_header_overlay.png';
 
 //Assets
 const String registerIcon = 'assets/logos/register_logo.svg';

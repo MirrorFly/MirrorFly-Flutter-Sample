@@ -50,6 +50,7 @@ abstract class Routes {
 
   //call
   static const outGoingCallView = _Paths.outGoingCallView;
+  static const onGoingCallView = _Paths.onGoingCallView;
 }
 
 abstract class _Paths {
@@ -102,4 +103,5 @@ abstract class _Paths {
 
   //call
   static const outGoingCallView = '/outGoingCallView';
+  static const onGoingCallView = '/onGoingCallView';
 }
