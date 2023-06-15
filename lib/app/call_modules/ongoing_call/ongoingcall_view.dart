@@ -1,0 +1,313 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
+import 'package:get/get.dart';
+import 'package:mirror_fly_demo/app/call_modules/outgoing_call/call_controller.dart';
+
+import '../../common/constants.dart';
+import '../../common/widgets.dart';
+
+class OnGoingCallView extends GetView<CallController> {
+  const OnGoingCallView({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: AppColors.callerBackground,
+      body: SafeArea(
+        child: InkWell(
+          splashColor: Colors.transparent,
+          highlightColor: Colors.transparent,
+          onTap: () {
+            controller.isVisible(!controller.isVisible.value);
+          },
+          child: Stack(
+            children: [
+              Obx(() {
+                return AnimatedPositioned(
+                  duration: const Duration(milliseconds: 500),
+                  curve: Curves.easeInOut,
+                  top: controller.isVisible.value ? 0.0 : -72,
+                  left: 0.0,
+                  right: 0.0,
+                  height: 72,
+                  child: buildToolbar(),
+                );
+              }),
+              controller.layoutSwitch.value ? GridView.builder(
+                  gridDelegate:
+                  const SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 1,
+                      /*controller.remoteUsers.length <= 2
+                        ? 1
+                        : 2,*/
+                      crossAxisSpacing: 4.0,
+                      mainAxisSpacing: 4.0,
+                      childAspectRatio: 1.3
+                    // controller.remoteUsers.length <= 2
+                    //     ? 1.3
+                    //     : 2 / 3,
+                  ),
+                  itemCount: 2, //controller.remoteUsers.length,
+                  itemBuilder: (con, index) {
+                    return buildProfileView();
+                    /*return MirrorFlyView(
+                      isLocalUser:
+                      controller.remoteUsers[index].value ==
+                          "local",
+                      remoteUserJid:
+                      controller.remoteUsers[index].value,
+                    ).setBorderRadius(
+                        const BorderRadius.all(Radius.circular(10)));*/
+                  }) : buildProfileView(),
+              Obx(() {
+                return AnimatedPositioned(
+                  duration: const Duration(milliseconds: 500),
+                  curve: Curves.easeInOut,
+                  left: 0,
+                  right: 0,
+                  bottom: controller.isVisible.value ? 200 : 0,
+                  child: Align(
+                    alignment: Alignment.bottomRight,
+                    child: SizedBox(
+                      height: 170,
+                      child: buildListViewHorizontal(),
+                    ),
+                  ),
+                );
+              }),
+              Obx(() {
+                return AnimatedPositioned(
+                  duration: const Duration(milliseconds: 500),
+                  curve: Curves.easeInOut,
+                  bottom: controller.isVisible.value ? 0.0 : -200,
+                  left: 0.0,
+                  right: 0.0,
+                  child: buildCallOptions(),
+                );
+              }),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget buildProfileView() {
+    return Center(
+      child: FutureBuilder(
+        // future: getProfileDetails(""),
+          builder: (cxt, data) {
+            return Column(
+              mainAxisSize: MainAxisSize.min,
+              children: const [
+                ProfileTextImage(
+                  text: "Saravanakumar",
+                ),
+                SizedBox(height: 4,),
+                Text("Saravanakumar", style: TextStyle(color: Colors.white),)
+              ],
+            );
+          }),
+    );
+  }
+
+  Widget buildToolbar() {
+    return Container(
+      height: 180,
+      decoration: const BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage(callOptionsToolbarBg,), fit: BoxFit.fill,)
+      ),
+      child: Column(
+        children: [
+          Stack(
+            children: [
+              Positioned(
+                  left: 0,
+                  child: IconButton(
+                    onPressed: () {},
+                    icon: const Icon(
+                      Icons.keyboard_arrow_down, color: Colors.white,),
+                  )),
+              Row(
+                mainAxisSize: MainAxisSize.max,
+                children: [
+                  Expanded(
+                    child: Column(
+                      children: const [
+                        Padding(
+                          padding: EdgeInsets.only(
+                              right: 16, left: 16, bottom: 10),
+                          child: Text(
+                            'You and Mani',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.w500,
+                              fontSize: 12.0,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
+                        Text(
+                          '00:20',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.w400,
+                            fontSize: 12.0,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+              Positioned(
+                right: 0,
+                child: Row(
+                  children: [
+                    IconButton(
+                      onPressed: () {},
+                      icon: SvgPicture.asset(addUserCall),
+                    ),
+                    IconButton(
+                      onPressed: () {},
+                      icon: SvgPicture.asset(moreMenu),
+                    ),
+                  ],
+                ),
+              )
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget buildCallOptions() {
+    return Obx(() {
+      return Container(
+        decoration: const BoxDecoration(
+            image: DecorationImage(
+                image: AssetImage(callOptionsBottomBg), fit: BoxFit.fill)
+        ),
+        child: Column(
+          children: [
+            InkWell(
+              onTap: () {
+                controller.showCallOptions();
+              },
+              child: Padding(
+                padding: const EdgeInsets.all(10.0),
+                child: SvgPicture.asset(
+                  callOptionsUpArrow,
+                  width: 30,
+                ),
+              ),
+            ),
+            const SizedBox(height: 8,),
+            Row(
+              mainAxisSize: MainAxisSize.max,
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                FloatingActionButton(
+                  heroTag: "mute",
+                  elevation: 0,
+                  backgroundColor: controller.muted.value
+                      ? Colors.white
+                      : Colors.white.withOpacity(0.3),
+                  onPressed: () => controller.muteAudio(),
+                  child: controller.muted.value
+                      ? SvgPicture.asset(
+                    muteActive,
+                  )
+                      : SvgPicture.asset(
+                    muteInactive,
+                  ),
+                ),
+                FloatingActionButton(
+                  heroTag: "switchCamera",
+                  elevation: 0,
+                  backgroundColor: controller.cameraSwitch.value
+                      ? Colors.white
+                      : Colors.white.withOpacity(0.3),
+                  onPressed: () => controller.videoMute(),
+                  child: controller.cameraSwitch.value
+                      ? SvgPicture.asset(cameraSwitchActive)
+                      : SvgPicture.asset(cameraSwitchInactive),
+                ),
+                FloatingActionButton(
+                  heroTag: "videoMute",
+                  elevation: 0,
+                  backgroundColor: controller.videoMuted.value
+                      ? Colors.white
+                      : Colors.white.withOpacity(0.3),
+                  onPressed: () => controller.videoMute(),
+                  child: controller.videoMuted.value
+                      ? SvgPicture.asset(videoInactive)
+                      : SvgPicture.asset(videoActive),
+                ),
+                FloatingActionButton(
+                  heroTag: "speaker",
+                  elevation: 0,
+                  backgroundColor: controller.speakerOff.value
+                      ? Colors.white.withOpacity(0.3)
+                      : Colors.white,
+                  onPressed: () => controller.changeSpeaker(),
+                  child: controller.speakerOff.value
+                      ? SvgPicture.asset(speakerInactive)
+                      : SvgPicture.asset(speakerActive),
+                ),
+              ],
+            ),
+            Visibility(
+              visible: controller.isVisible.value,
+              child: Padding(
+                padding: const EdgeInsets.only(bottom: 10.0, top: 20.0),
+                child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                        padding: EdgeInsets.zero,
+                        maximumSize: const Size(200, 50),
+                        shape: const StadiumBorder(),
+                        backgroundColor: AppColors.endButton),
+                    onPressed: () {
+                      // controller.declineCall();
+                    },
+                    child: SvgPicture.asset(
+                      callEndButton,
+                    )),
+              ),
+            )
+          ],
+        ),
+      );
+    });
+  }
+
+  Widget buildListViewHorizontal() {
+    return ListView.builder(
+        shrinkWrap: true,
+        physics: const AlwaysScrollableScrollPhysics(),
+        scrollDirection: Axis.horizontal,
+        itemCount: 6,
+        itemBuilder: (cxt, index) {
+          return /*controller.callUsers.first !=
+              controller.remoteUsers[index].value
+              ? Container(
+            height: 200,
+            width: 150,
+            padding: const EdgeInsets.all(8),
+            child: controller.mutedUsers.contains(controller.remoteUsers[index])
+                ? */Container(
+            margin: const EdgeInsets.only(right: 4),
+            color: AppColors.audioCallBackground,
+              padding: const EdgeInsets.all(4),
+              child: buildProfileView());
+          /*: MirrorFlyView(
+              isLocalUser: controller.remoteUsers[index].value == "local",
+              remoteUserJid: controller.remoteUsers[index].value,
+            ).setBorderRadius(const BorderRadius.all(Radius.circular(10))),
+          )
+              : Container();*/
+        });
+  }
+}
