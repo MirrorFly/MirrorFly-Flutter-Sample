@@ -1176,13 +1176,27 @@ class ChatView extends GetView<ChatController> {
               CustomAction(
                 visibleWidget: IconButton(
                   onPressed: () {
+                    controller.makeVideoCall();
+                  },
+                  icon: const Icon(Icons.videocam_sharp, size: 20,),
+                ),
+                overflowWidget: const Text("Video Call"),
+                showAsAction: ShowAsAction.always,
+                keyValue: 'Video Call',
+                onItemClick: () {
+                  controller.makeVoiceCall();
+                },
+              ),
+              CustomAction(
+                visibleWidget: IconButton(
+                  onPressed: () {
                     controller.makeVoiceCall();
                   },
-                  icon: const Icon(Icons.call),
+                  icon: const Icon(Icons.call, size: 20,),
                 ),
                 overflowWidget: const Text("Call"),
                 showAsAction: ShowAsAction.always,
-                keyValue: 'Shortcut',
+                keyValue: 'Audio Call',
                 onItemClick: () {
                   controller.makeVoiceCall();
                 },

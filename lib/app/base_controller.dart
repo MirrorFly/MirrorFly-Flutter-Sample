@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:mirror_fly_demo/app/call_modules/outgoing_call/call_controller.dart';
 import 'package:mirrorfly_chat/mirrorflychat.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
@@ -164,9 +165,9 @@ abstract class BaseController {
       debugPrint("#MirroflyCall onCallStatusUpdated --> $event");
 
       var statusUpdateReceived = jsonDecode(event);
-      // var callMode = statusUpdateReceived["callMode"].toString();
-      // var userJid = statusUpdateReceived["userJid"].toString();
-      // var callType = statusUpdateReceived["callType"].toString();
+      var callMode = statusUpdateReceived["callMode"].toString();
+      var userJid = statusUpdateReceived["userJid"].toString();
+      var callType = statusUpdateReceived["callType"].toString();
       var callStatus = statusUpdateReceived["callStatus"].toString();
 
       switch (callStatus){
@@ -178,6 +179,12 @@ abstract class BaseController {
           break;
 
         case Constants.disconnected:
+          if (Get.isRegistered<CallController>()) {
+            Get.find<CallController>().callDisconnected(
+                callMode, userJid, callType, callStatus);
+          }else{
+            debugPrint("#Mirrorfly call call controller not registered for disconnect event");
+          }
         // remoteUsers.remove(userJid);
         // if(remoteUsers.length == 1){
         //   sdk.invokeMethod("declineCall");
