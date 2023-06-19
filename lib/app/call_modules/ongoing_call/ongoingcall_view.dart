@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/call_modules/outgoing_call/call_controller.dart';
+import 'package:mirrorfly_chat/mirrorfly_view.dart';
 
 import '../../common/constants.dart';
 import '../../common/widgets.dart';
@@ -33,33 +34,34 @@ class OnGoingCallView extends GetView<CallController> {
                   child: buildToolbar(),
                 );
               }),
-              controller.layoutSwitch.value ? GridView.builder(
-                  gridDelegate:
-                  const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 1,
-                      /*controller.remoteUsers.length <= 2
-                        ? 1
-                        : 2,*/
-                      crossAxisSpacing: 4.0,
-                      mainAxisSpacing: 4.0,
-                      childAspectRatio: 1.3
-                    // controller.remoteUsers.length <= 2
-                    //     ? 1.3
-                    //     : 2 / 3,
-                  ),
-                  itemCount: 2, //controller.remoteUsers.length,
-                  itemBuilder: (con, index) {
-                    return buildProfileView();
-                    /*return MirrorFlyView(
-                      isLocalUser:
-                      controller.remoteUsers[index].value ==
-                          "local",
-                      remoteUserJid:
-                      controller.remoteUsers[index].value,
-                    ).setBorderRadius(
-                        const BorderRadius.all(Radius.circular(10)));*/
-                  }) : buildProfileView(),
-              Obx(() {
+              // controller.layoutSwitch.value ?
+          Obx(() {
+              return Expanded(
+                child: GridView.builder(
+                    gridDelegate:
+                    const SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 1,
+                        /*controller.remoteUsers.length <= 2
+                          ? 1
+                          : 2,*/
+                        // crossAxisSpacing: 4.0,
+                        // mainAxisSpacing: 4.0,
+                        // childAspectRatio: 1.3
+                      // controller.remoteUsers.length <= 2
+                      //     ? 1.3
+                      //     : 2 / 3,
+                    ),
+                    itemCount: controller.callList.length,
+                    itemBuilder: (con, index) {
+                      // return buildProfileView();
+                      var user = controller.callList[index];
+                      debugPrint("#Mirrorfly call --> $user");
+                      return MirrorFlyView(userJid: user.userJid ?? "").setBorderRadius(
+                          const BorderRadius.all(Radius.circular(10)));
+                    }),
+              );  }),
+                  // : buildProfileView(),
+              /*Obx(() {
                 return AnimatedPositioned(
                   duration: const Duration(milliseconds: 500),
                   curve: Curves.easeInOut,
@@ -74,7 +76,7 @@ class OnGoingCallView extends GetView<CallController> {
                     ),
                   ),
                 );
-              }),
+              }),*/
               Obx(() {
                 return AnimatedPositioned(
                   duration: const Duration(milliseconds: 500),

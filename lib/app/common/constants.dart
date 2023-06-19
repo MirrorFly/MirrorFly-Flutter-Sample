@@ -690,6 +690,28 @@ class Constants {
   static const pinAlert = pinExpiry-5;//in Days
   static const forgetPinOTPText ='Generate OTP to your registered mobile number';
   static const invalidPinOTPText ='Invalid PIN, Generate OTP to your registered mobile number';
+
+
+  //Call Feature Constants
+  static const String connecting = "Connecting";
+  static const String ringing = "Ringing";
+  static const String attended = "Attended";
+  static const String connected = "Connected";
+  static const String disconnected = "Disconnected";
+  static const String onHold = "Call on hold";
+  static const String onResume = "ON_RESUME";
+  static const String userJoined = "User_Joined";
+  static const String userLeft = "User_Left";
+  static const String inviteCallTimeout = "Invite call timeout";
+  static const String callTimeout = "CALL TIME OUTt";
+  static const String reconnecting = "Reconnecting";
+  static const String reconnected = "Reconnected";
+  static const String calling = "Trying to Connect";
+  static const String calling10s = "Calling... \n Trying to Connect";
+  static const String callingAfter10s = "User Seems to be Offline, Trying to Connect";
+
+  static const String oneToOne = "OneToOne";
+  static const String groupCall = "GroupCall";
 }
 
 Future<void> launchWeb(String url) async {

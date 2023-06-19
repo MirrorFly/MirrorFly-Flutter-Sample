@@ -147,6 +147,62 @@ abstract class BaseController {
     Mirrorfly.onProgressChanged.listen(onProgressChanged);
     Mirrorfly.onSuccess.listen(onSuccess);
     Mirrorfly.onLoggedOut.listen(onLogout);
+    Mirrorfly.onCallReceiving.listen((event) {
+
+    });
+    Mirrorfly.onLocalVideoTrackAdded.listen((event) {
+
+    });
+    Mirrorfly.onRemoteVideoTrackAdded.listen((event) {
+
+    });
+    Mirrorfly.onTrackAdded.listen((event) {
+      debugPrint("#Mirrofly Call track added --> $event");
+    });
+    Mirrorfly.onCallStatusUpdated.listen((event) {
+      // {"callMode":"OneToOne","userJid":"","callType":"video","callStatus":"Attended"}
+      debugPrint("#MirroflyCall onCallStatusUpdated --> $event");
+
+      var statusUpdateReceived = jsonDecode(event);
+      // var callMode = statusUpdateReceived["callMode"].toString();
+      // var userJid = statusUpdateReceived["userJid"].toString();
+      // var callType = statusUpdateReceived["callType"].toString();
+      var callStatus = statusUpdateReceived["callStatus"].toString();
+
+      switch (callStatus){
+        case Constants.connecting:
+          break;
+        case Constants.attended:
+          debugPrint("***opening video page");
+          Get.toNamed(Routes.onGoingCallView);
+          break;
+
+        case Constants.disconnected:
+        // remoteUsers.remove(userJid);
+        // if(remoteUsers.length == 1){
+        //   sdk.invokeMethod("declineCall");
+        // }
+        // Get.back();
+          break;
+
+        default:
+          debugPrint("onCall status updated error: $callStatus");
+      }
+
+
+    });
+    Mirrorfly.onCallAction.listen((event) {
+
+    });
+    Mirrorfly.onMuteStatusUpdated.listen((event) {
+
+    });
+    Mirrorfly.onUserSpeaking.listen((event) {
+
+    });
+    Mirrorfly.onUserStoppedSpeaking.listen((event) {
+
+    });
   }
 
   void onMessageReceived(chatMessage) {
