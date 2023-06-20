@@ -25,16 +25,31 @@ class CallController extends GetxController {
 
   var callType = "".obs;
 
+  var calleeName = "".obs;
+  var callStatus = "".obs;
+
   @override
   Future<void> onInit() async {
     super.onInit();
-
-    Mirrorfly.getCallUsersList().then((value) {
-      // [{"userJid":"919789482015@xmpp-uikit-qa.contus.us","callStatus":"Trying to Connect"},{"userJid":"919894940560@xmpp-uikit-qa.contus.us","callStatus":"Trying to Connect"},{"userJid":"917010279986@xmpp-uikit-qa.contus.us","callStatus":"Connected"}]
-      debugPrint("#Mirrorfly call get users --> $value");
-      final callUserList = callUserListFromJson(value);
-      callList.addAll(callUserList);
-      getNames();
+    debugPrint("#Mirrorfly Call Controller onInit");
+    await Mirrorfly.getCallDirection().then((value) async {
+      debugPrint("#Mirrorfly Call Direction $value");
+      if(value == "Incoming"){
+        Mirrorfly.getCallUsersList().then((value) {
+          // [{"userJid":"919789482015@xmpp-uikit-qa.contus.us","callStatus":"Trying to Connect"},{"userJid":"919894940560@xmpp-uikit-qa.contus.us","callStatus":"Trying to Connect"},{"userJid":"917010279986@xmpp-uikit-qa.contus.us","callStatus":"Connected"}]
+          debugPrint("#Mirrorfly call get users --> $value");
+          final callUserList = callUserListFromJson(value);
+          callList.addAll(callUserList);
+          getNames();
+        });
+      }else{
+        debugPrint("#Mirrorfly Call Direction outgoing");
+        var userJid = Get.arguments["userJid"];
+        debugPrint("#Mirrorfly Call UserJid $userJid");
+        var profile = await Mirrorfly.getUserProfile(userJid);
+        var data = profileDataFromJson(profile);
+        calleeName(data.data?.name);
+      }
     });
 
     await Mirrorfly.getCallType().then((value) => callType(value));
@@ -125,4 +140,29 @@ class CallController extends GetxController {
       Get.back();
     }
   }
+
+  void calling(String callMode, String userJid, String callType, String callStatus) {
+    this.callStatus(callStatus);
+  }
+
+  void reconnected(String callMode, String userJid, String callType, String callStatus) {
+    this.callStatus(callStatus);
+
+  }
+
+  void ringing(String callMode, String userJid, String callType, String callStatus) {
+
+    this.callStatus(callStatus);
+  }
+
+  void onHold(String callMode, String userJid, String callType, String callStatus) {
+
+    this.callStatus(callStatus);
+  }
+
+  void connected(String callMode, String userJid, String callType, String callStatus) {
+    this.callStatus(callStatus);
+
+  }
+
 }

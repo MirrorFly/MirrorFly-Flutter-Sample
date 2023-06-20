@@ -170,6 +170,8 @@ abstract class BaseController {
       var callType = statusUpdateReceived["callType"].toString();
       var callStatus = statusUpdateReceived["callStatus"].toString();
 
+
+
       switch (callStatus){
         case Constants.connecting:
           break;
@@ -185,11 +187,53 @@ abstract class BaseController {
           }else{
             debugPrint("#Mirrorfly call call controller not registered for disconnect event");
           }
+
         // remoteUsers.remove(userJid);
         // if(remoteUsers.length == 1){
         //   sdk.invokeMethod("declineCall");
         // }
         // Get.back();
+          break;
+
+        case Constants.calling:
+          if (Get.isRegistered<CallController>()) {
+            Get.find<CallController>().calling(
+                callMode, userJid, callType, callStatus);
+          }else{
+            debugPrint("#Mirrorfly call call controller not registered for disconnect event");
+          }
+          break;
+        case Constants.reconnected:
+          if (Get.isRegistered<CallController>()) {
+            Get.find<CallController>().reconnected(
+                callMode, userJid, callType, callStatus);
+          }else{
+            debugPrint("#Mirrorfly call call controller not registered for disconnect event");
+          }
+          break;
+        case Constants.ringing:
+          if (Get.isRegistered<CallController>()) {
+            Get.find<CallController>().ringing(
+                callMode, userJid, callType, callStatus);
+          }else{
+            debugPrint("#Mirrorfly call call controller not registered for disconnect event");
+          }
+          break;
+        case Constants.onHold:
+          if (Get.isRegistered<CallController>()) {
+            Get.find<CallController>().onHold(
+                callMode, userJid, callType, callStatus);
+          }else{
+            debugPrint("#Mirrorfly call call controller not registered for disconnect event");
+          }
+          break;
+        case Constants.connected:
+          if (Get.isRegistered<CallController>()) {
+            Get.find<CallController>().connected(
+                callMode, userJid, callType, callStatus);
+          }else{
+            debugPrint("#Mirrorfly call call controller not registered for disconnect event");
+          }
           break;
 
         default:

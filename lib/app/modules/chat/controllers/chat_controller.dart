@@ -2769,7 +2769,8 @@ class ChatController extends FullLifeCycleController
     debugPrint("#FLY CALL VIDEO CALL CALLING");
     Mirrorfly.makeVoiceCall(profile.jid.checkNull()).then((value) {
       if(value){
-        Get.toNamed(Routes.outGoingCallView);
+        debugPrint("#Mirrorfly Call userjid ${profile.jid}");
+        Get.toNamed(Routes.outGoingCallView, arguments: { "userJid": profile.jid});
       }
     });
   }
@@ -2777,7 +2778,7 @@ class ChatController extends FullLifeCycleController
   void makeVideoCall() {
     Mirrorfly.makeVideoCall(profile.jid.checkNull()).then((value) {
       if(value){
-        Get.toNamed(Routes.outGoingCallView);
+        Get.toNamed(Routes.outGoingCallView, arguments: { "userJid": profile.jid});
       }
     });
   }
