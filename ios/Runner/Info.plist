@@ -82,6 +82,7 @@
 		<string>audio</string>
 		<string>fetch</string>
 		<string>remote-notification</string>
+        <string>voip</string>
 	</array>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
@@ -102,5 +103,9 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
+    <key>NSBonjourServices</key>
+    <array>
+        <string>_dartVmService._tcp</string>
+    </array>
 </dict>
 </plist>

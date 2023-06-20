@@ -29,38 +29,46 @@ class OutGoingCallView extends GetView<CallController> {
               Column(
                 children: [
                   Expanded(child: Column(children: [
+
                     const SizedBox(
                       height: 10,
                     ),
-                    const Text(
-                      "Ringing",
-                      style: TextStyle(
-                          color: AppColors.callerStatus,
-                          fontWeight: FontWeight.w100,
-                          fontSize: 14),
-                    ),
+                    Obx(() {
+                      return Text(
+                        controller.callStatus.value,
+                        style: const TextStyle(
+                            color: AppColors.callerStatus,
+                            fontWeight: FontWeight.w100,
+                            fontSize: 14),
+                      );
+                    }),
                     const SizedBox(
                       height: 16,
                     ),
-                    const Text(
-                      "Saravanakumar",
-                      style: TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.w500,
-                          fontSize: 18),
-                    ),
-                    RipplesAnimation(
-                      onPressed: () {},
-                      child: buildProfileImage(Profile(
-                          name: "SaravanaKumar",
-                          nickName: "",
-                          isGroupProfile: false,
-                          image: '',
-                          isBlockedMe: false,
-                          isAdminBlocked: false,
-                          isItSavedContact: true)),
-                    ),
-                  ],)),
+                    Obx(() {
+                      return Text(
+                        controller.calleeName.value,
+                        style: const TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.w500,
+                            fontSize: 18),
+                      );
+                    }),
+                    Obx(() {
+                      return RipplesAnimation(
+                        onPressed: () {},
+                        child: buildProfileImage(Profile(
+                            name: controller.calleeName.value,
+                            nickName: "",
+                            isGroupProfile: false,
+                            image: '',
+                            isBlockedMe: false,
+                            isAdminBlocked: false,
+                            isItSavedContact: true)),
+                      );
+                    }),
+                  ],
+                  )),
                   Obx(() {
                     return Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 50),
@@ -81,7 +89,8 @@ class OutGoingCallView extends GetView<CallController> {
                               : FloatingActionButton(
                             heroTag: "mute",
                             elevation: 0,
-                            backgroundColor: Colors.white.withOpacity(0.3),
+                            backgroundColor:
+                            Colors.white.withOpacity(0.3),
                             onPressed: () => controller.muteAudio(),
                             child: SvgPicture.asset(
                               muteInactive,

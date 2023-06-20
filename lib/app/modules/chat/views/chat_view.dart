@@ -541,7 +541,7 @@ class ChatView extends GetView<ChatController> {
               skinToneDialogBgColor: Colors.white,
               skinToneIndicatorColor: Colors.grey,
               enableSkinTones: true,
-              showRecentsTab: true,
+              // showRecentsTab: true,
               recentsLimit: 28,
               tabIndicatorAnimDuration: kTabScrollDuration,
               categoryIcons: const CategoryIcons(),
@@ -1173,18 +1173,34 @@ class ChatView extends GetView<ChatController> {
                   controller.closeKeyBoard();
                 },
               ),
-              /*CustomAction(
+              CustomAction(
                 visibleWidget: IconButton(
-                  onPressed: () {},
-                  icon: const Icon(Icons.call),
+                  onPressed: () {
+                    controller.makeVideoCall();
+                  },
+                  icon: const Icon(Icons.videocam_sharp, size: 20,),
                 ),
-                overflowWidget: const Text("Call"),
+                overflowWidget: const Text("Video Call"),
                 showAsAction: ShowAsAction.always,
-                keyValue: 'Shortcut',
+                keyValue: 'Video Call',
                 onItemClick: () {
                   controller.makeVoiceCall();
                 },
-              ),*/
+              ),
+              CustomAction(
+                visibleWidget: IconButton(
+                  onPressed: () {
+                    controller.makeVoiceCall();
+                  },
+                  icon: const Icon(Icons.call, size: 20,),
+                ),
+                overflowWidget: const Text("Call"),
+                showAsAction: ShowAsAction.always,
+                keyValue: 'Audio Call',
+                onItemClick: () {
+                  controller.makeVoiceCall();
+                },
+              ),
             ],
           ),
         ],

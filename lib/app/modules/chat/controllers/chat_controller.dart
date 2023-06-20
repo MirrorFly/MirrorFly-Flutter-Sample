@@ -2764,4 +2764,22 @@ class ChatController extends FullLifeCycleController
       }
     }
   }
+
+  void makeVoiceCall() {
+    debugPrint("#FLY CALL VIDEO CALL CALLING");
+    Mirrorfly.makeVoiceCall(profile.jid.checkNull()).then((value) {
+      if(value){
+        debugPrint("#Mirrorfly Call userjid ${profile.jid}");
+        Get.toNamed(Routes.outGoingCallView, arguments: { "userJid": profile.jid});
+      }
+    });
+  }
+
+  void makeVideoCall() {
+    Mirrorfly.makeVideoCall(profile.jid.checkNull()).then((value) {
+      if(value){
+        Get.toNamed(Routes.outGoingCallView, arguments: { "userJid": profile.jid});
+      }
+    });
+  }
 }
