@@ -123,6 +123,30 @@ class AppPermission {
     }
   }
 
+  static Future<bool> askCallPermissions() async {
+    final audio = await Permission.audio.status;
+    final phone = await Permission.phone.status;
+    final bluetooth = await Permission.bluetoothConnect.status;
+    const newPermission = [
+      Permission.audio,
+      Permission.phone,
+      Permission.bluetoothConnect,
+    ];
+    if(
+    (audio != PermissionStatus.granted  && audio != PermissionStatus.permanentlyDenied) ||
+    (phone != PermissionStatus.granted  && phone != PermissionStatus.permanentlyDenied) ||
+    (bluetooth != PermissionStatus.granted  && bluetooth != PermissionStatus.permanentlyDenied)
+    ){
+      var newp = await newPermission.request();
+      PermissionStatus? audio_ = newp[Permission.audio];
+      PermissionStatus? phone_ = newp[Permission.phone];
+      PermissionStatus? bluetoothConnect_ = newp[Permission.bluetoothConnect];
+      // var audio = await newPermission[2].isGranted;
+      return (audio_!.isGranted && phone_!.isGranted && bluetoothConnect_!.isGranted);
+    }
+    return false;
+  }
+
   static Future<PermissionStatus> getManageStoragePermission() async {
     final permission = await Permission.manageExternalStorage.status;
     if (permission != PermissionStatus.granted &&
