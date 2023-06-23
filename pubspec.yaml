@@ -43,7 +43,7 @@ dependencies:
   firebase_core: ^2.3.0 #firebase core
   firebase_auth: ^4.1.4 #firebas authentication
   firebase_app_installations: ^0.2.1+5 #firebase installations
-  firebase_messaging: ^14.6.2 #firebase messaging
+  firebase_messaging: ^14.6.3 #firebase messaging
   flutter_switch: ^0.3.2 #switchbox
   marquee: ^2.2.0 # marquee text
   qr_code_scanner: ^1.0.1 #qr scanner

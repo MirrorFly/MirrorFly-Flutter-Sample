@@ -2,7 +2,7 @@
 // ignore_for_file: lines_longer_than_80_chars, avoid_classes_with_only_static_members
 import 'package:firebase_core/firebase_core.dart' show FirebaseOptions;
 import 'package:flutter/foundation.dart'
-    show defaultTargetPlatform, kIsWeb, TargetPlatform;
+    show defaultTargetPlatform, TargetPlatform;
 
 /// Default [FirebaseOptions] for use with your Firebase apps.
 ///
@@ -16,9 +16,9 @@ import 'package:flutter/foundation.dart'
 /// ```
 class DefaultFirebaseOptions {
   static FirebaseOptions get currentPlatform {
-    if (kIsWeb) {
+    /*if (kIsWeb) {
       return web;
-    }
+    }*/
     switch (defaultTargetPlatform) {
       case TargetPlatform.android:
         return android;
@@ -43,15 +43,15 @@ class DefaultFirebaseOptions {
     }
   }
 
-  static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'AIzaSyBWEnaT0dt9pamuZXVnZEcI49IpxF8IvJo',
-    appId: '1:1045831384770:web:c1330bd3bb01968c11455b',
-    messagingSenderId: '1045831384770',
-    projectId: 'mirrorfly-uikit-dev',
-    authDomain: 'mirrorfly-uikit-dev.firebaseapp.com',
-    storageBucket: 'mirrorfly-uikit-dev.appspot.com',
-    measurementId: 'G-SP1SE77CZT',
-  );
+  // static const FirebaseOptions web = FirebaseOptions(
+  //   apiKey: 'AIzaSyBWEnaT0dt9pamuZXVnZEcI49IpxF8IvJo',
+  //   appId: '1:1045831384770:web:c1330bd3bb01968c11455b',
+  //   messagingSenderId: '1045831384770',
+  //   projectId: 'mirrorfly-uikit-dev',
+  //   authDomain: 'mirrorfly-uikit-dev.firebaseapp.com',
+  //   storageBucket: 'mirrorfly-uikit-dev.appspot.com',
+  //   measurementId: 'G-SP1SE77CZT',
+  // );
 
   static const FirebaseOptions android = FirebaseOptions(
     apiKey: 'AIzaSyDfIqmrHFXEvJgE29tWr3Ps1bFJ-sOd2Go',
@@ -73,14 +73,14 @@ class DefaultFirebaseOptions {
   //   iosBundleId: 'com.mirrorfly.uikitflutter.dev',
   // );
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyDsUcOmi4zG9eJfNyDLgmACZICvieFJJDo',
-    appId: '1:235373697524:ios:2d40908026b55394a0c1a1',
-    messagingSenderId: '235373697524',
-    projectId: 'mirrorfly-uikit-qa',
-    storageBucket: 'mirrorfly-uikit-qa.appspot.com',
+    apiKey: 'AIzaSyAxttXFA9DphtzgQFyLIqEUKarO9j3C9sM',
+    appId: '1:695832127329:ios:f8b6b0fab296a800',
+    messagingSenderId: '695832127329',
+    projectId: 'mirror-fly-qa',
+    storageBucket: 'mirrorfly-qa.appspot.com',
     androidClientId: '235373697524-aa561p9dbh0467tsg3395ufeleu162k4.apps.googleusercontent.com',
     iosClientId: '780821286585-j79p55tl4abuskv43vikijnlc36hbv2p.apps.googleusercontent.com',
-    iosBundleId: 'com.mirrorfly.uikitflutter.qa',
+    iosBundleId: 'com.mirrorfly.qa',
   );
 
   static const FirebaseOptions macos = FirebaseOptions(
