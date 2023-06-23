@@ -63,7 +63,8 @@ dependencies:
   open_file_plus: ^3.4.0
   is_lock_screen: ^2.0.0
   device_info_plus: ^8.1.0
-#  mirrorfly_plugin: ^0.0.2
+  http: ^0.13.4 #http
+  #  mirrorfly_plugin: ^0.0.2
   mirrorfly_plugin:
     path: p078-mirrorfly-flutter-plugin
 
