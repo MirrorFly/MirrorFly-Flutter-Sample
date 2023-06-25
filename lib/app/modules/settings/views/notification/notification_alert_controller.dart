@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/data/session_management.dart';
-import 'package:mirrorfly_chat/mirrorfly.dart';
+import 'package:mirrorfly_plugin/mirrorfly.dart';
 
 class NotificationAlertController extends FullLifeCycleController
 with FullLifeCycleMixin {

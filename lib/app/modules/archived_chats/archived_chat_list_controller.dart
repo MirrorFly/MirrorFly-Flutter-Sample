@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:mirrorfly_chat/mirrorflychat.dart';
+import 'package:mirrorfly_plugin/mirrorflychat.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
 import 'package:mirror_fly_demo/app/modules/dashboard/controllers/dashboard_controller.dart';

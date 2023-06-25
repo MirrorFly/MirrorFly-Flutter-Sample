@@ -7,7 +7,7 @@ import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
 
 import 'package:mirror_fly_demo/app/modules/dashboard/widgets.dart';
-import 'package:mirrorfly_chat/mirrorfly.dart';
+import 'package:mirrorfly_plugin/mirrorfly.dart';
 import 'constants.dart';
 import 'main_controller.dart';
 

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/call_modules/outgoing_call/call_controller.dart';
-import 'package:mirrorfly_chat/mirrorfly_view.dart';
+import 'package:mirrorfly_plugin/mirrorfly_view.dart';
 
 import '../../common/constants.dart';
 import '../../common/widgets.dart';
@@ -192,7 +192,7 @@ class OnGoingCallView extends GetView<CallController> {
               children: [
                 Text(
                   controller.callList.isNotEmpty ? controller.callTitle : "",
-                  style: TextStyle(
+                  style: const TextStyle(
                     color: Colors.white,
                     fontWeight: FontWeight.w500,
                     fontSize: 12.0,
@@ -201,7 +201,7 @@ class OnGoingCallView extends GetView<CallController> {
                 ),
                 Text(
                   controller.callTimer.value,
-                  style: TextStyle(
+                  style: const TextStyle(
                     color: Colors.white,
                     fontWeight: FontWeight.w400,
                     fontSize: 12.0,

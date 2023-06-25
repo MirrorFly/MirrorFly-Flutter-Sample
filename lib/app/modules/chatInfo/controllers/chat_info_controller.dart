@@ -3,7 +3,7 @@ import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
 
 import '../../../common/constants.dart';
-import 'package:mirrorfly_chat/mirrorfly.dart';
+import 'package:mirrorfly_plugin/mirrorfly.dart';
 import '../../../routes/app_pages.dart';
 
 class ChatInfoController extends GetxController {

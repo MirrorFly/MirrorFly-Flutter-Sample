@@ -13,7 +13,7 @@ import 'package:mirror_fly_demo/app/data/helper.dart';
 import 'package:mirror_fly_demo/app/routes/app_pages.dart';
 
 import '../../../common/crop_image.dart';
-import 'package:mirrorfly_chat/mirrorfly.dart';
+import 'package:mirrorfly_plugin/mirrorfly.dart';
 
 import '../../../data/apputils.dart';
 import '../../../data/permissions.dart';

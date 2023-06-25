@@ -65,8 +65,8 @@ dependencies:
   is_lock_screen: ^2.0.0
   device_info_plus: ^8.1.0
 #  mirrorfly_plugin: ^0.0.2
-  mirrorfly_chat:
-    path: ../p078-mirrorfly-flutter-plugin
+  mirrorfly_plugin:
+    path: p078-mirrorfly-flutter-plugin
 
 
 dev_dependencies: 

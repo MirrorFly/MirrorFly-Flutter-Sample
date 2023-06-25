@@ -9,6 +9,7 @@
 import 'package:audioplayers/web/audioplayers_web.dart';
 import 'package:camera_web/camera_web.dart';
 import 'package:device_info_plus/src/device_info_plus_web.dart';
+import 'package:emoji_picker_flutter/emoji_picker_flutter_web.dart';
 import 'package:file_picker/_internal/file_picker_web.dart';
 import 'package:firebase_app_installations_web/firebase_app_installations_web.dart';
 import 'package:firebase_auth_web/firebase_auth_web.dart';
@@ -32,6 +33,7 @@ void registerPlugins([final Registrar? pluginRegistrar]) {
   AudioplayersPlugin.registerWith(registrar);
   CameraPlugin.registerWith(registrar);
   DeviceInfoPlusWebPlugin.registerWith(registrar);
+  EmojiPickerFlutterPluginWeb.registerWith(registrar);
   FilePickerWeb.registerWith(registrar);
   FirebaseAppInstallationsWeb.registerWith(registrar);
   FirebaseAuthWeb.registerWith(registrar);
