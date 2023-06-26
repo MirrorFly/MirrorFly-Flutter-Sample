@@ -11,6 +11,7 @@ import 'package:mirrorfly_plugin/mirrorfly.dart';
 import '../common/constants.dart';
 import '../common/notification_service.dart';
 import '../model/notification_message_model.dart';
+import '../modules/notification/notification_builder.dart';
 
 class PushNotifications {
   PushNotifications._();
@@ -105,7 +106,7 @@ class PushNotifications {
   }
 
   static Future<void> onMessage(RemoteMessage message) async {
-    debugPrint('RemoteMessage ${message.data}');
+    debugPrint('RemoteMessage ${message.toMap()}');
     debugPrint('Message data: ${message.data}');
     if (message.notification != null) {
       debugPrint('Message also contained a notification: ${message.notification}');
@@ -164,12 +165,15 @@ class PushNotifications {
       await Mirrorfly.handleReceivedMessage(notificationData).then((value) async {
         mirrorFlyLog("notification message", value.toString());
         var data = notificationModelFromJson(value.toString());
+        if(data.chatMessage!=null) {
+          NotificationBuilder.createNotification(data.chatMessage!);
+        }
         /*var data = json.decode(value.toString());
         var groupJid = data["groupJid"].toString();
         var titleContent = data["titleContent"].toString();
         var chatMessage = data["chatMessage"].toString();
         var cancel = data["cancel"].toString();*/
-         var channel = AndroidNotificationChannel("id", "name", description: "");
+        /* var channel = AndroidNotificationChannel("id", "name", description: "");
         var bigtextstyleinfo = BigTextStyleInformation(
             data.chatMessage!.messageTextContent.toString(), htmlFormatBigText: true,
             contentTitle: data.titleContent,
@@ -190,7 +194,7 @@ class PushNotifications {
             channel);
         await flutterLocalNotificationsPlugin.show(
             0, data.titleContent, data.chatMessage!.messageTextContent, notificationDetails,
-            payload: data.chatMessage!.chatUserJid);
+            payload: data.chatMessage!.chatUserJid);*/
       });
     }
   }

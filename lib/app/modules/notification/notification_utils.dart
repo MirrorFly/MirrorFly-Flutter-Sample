@@ -1,4 +1,5 @@
 import 'package:mirror_fly_demo/app/common/constants.dart';
+import 'package:mirror_fly_demo/app/data/helper.dart';
 import 'package:mirror_fly_demo/app/model/notification_message_model.dart';
 
 class NotificationUtils{
@@ -17,7 +18,7 @@ class NotificationUtils{
   * */
   static String getMessageSummary(ChatMessage message){
     if(Constants.mText == message.messageType || Constants.mNotification == message.messageType) {
-      if (message.isMessageRecalled ?? false) {
+      if (message.isMessageRecalled.checkNull()) {
         return deletedMessage;
       } else {
         var lastMessageMentionContent = message.messageTextContent ?? '';
@@ -26,7 +27,7 @@ class NotificationUtils{
         }
         return lastMessageMentionContent;
       }
-    }else if(message.isMessageRecalled ?? false){
+    }else if(message.isMessageRecalled.checkNull()){
       return deletedMessage;
     }else{
       return getMediaMessageContent(message);
