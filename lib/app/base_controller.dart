@@ -158,11 +158,11 @@ abstract class BaseController {
 
     });
     Mirrorfly.onTrackAdded.listen((event) {
-      debugPrint("#Mirrofly Call track added --> $event");
+      debugPrint("#Mirrorfly Call track added --> $event");
     });
     Mirrorfly.onCallStatusUpdated.listen((event) {
       // {"callMode":"OneToOne","userJid":"","callType":"video","callStatus":"Attended"}
-      debugPrint("#MirroflyCall onCallStatusUpdated --> $event");
+      debugPrint("#MirrorflyCall onCallStatusUpdated --> $event");
 
       var statusUpdateReceived = jsonDecode(event);
       var callMode = statusUpdateReceived["callMode"].toString();
@@ -230,6 +230,15 @@ abstract class BaseController {
         case Constants.connected:
           if (Get.isRegistered<CallController>()) {
             Get.find<CallController>().connected(
+                callMode, userJid, callType, callStatus);
+          }else{
+            debugPrint("#Mirrorfly call call controller not registered for disconnect event");
+          }
+          break;
+
+        case Constants.callTimeout:
+          if (Get.isRegistered<CallController>()) {
+            Get.find<CallController>().timeout(
                 callMode, userJid, callType, callStatus);
           }else{
             debugPrint("#Mirrorfly call call controller not registered for disconnect event");

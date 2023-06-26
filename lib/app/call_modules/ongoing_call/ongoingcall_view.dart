@@ -4,7 +4,6 @@ import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/call_modules/outgoing_call/call_controller.dart';
 import 'package:mirrorfly_plugin/mirrorfly_view.dart';
 
-
 import '../../common/constants.dart';
 import '../../common/widgets.dart';
 
@@ -40,21 +39,15 @@ class OnGoingCallView extends GetView<CallController> {
               Obx(() {
                 return controller.callList.length > 1
                     ? SizedBox(
-                  width: MediaQuery
-                      .of(context)
-                      .size
-                      .width,
-                  height: MediaQuery
-                      .of(context)
-                      .size
-                      .height,
-                  child: Expanded(
-                      child: MirrorFlyView(
-                          userJid:
-                          controller.callList[0].userJid ?? "")
-                          .setBorderRadius(const BorderRadius.all(
-                          Radius.circular(10)))),
-                )
+                        width: MediaQuery.of(context).size.width,
+                        height: MediaQuery.of(context).size.height,
+                        child: Expanded(
+                            child: MirrorFlyView(
+                                    userJid:
+                                        controller.callList[1].userJid ?? "")
+                                .setBorderRadius(const BorderRadius.all(
+                                    Radius.circular(10)))),
+                      )
                     : const SizedBox.shrink();
               }),
 
@@ -68,20 +61,22 @@ class OnGoingCallView extends GetView<CallController> {
                     Obx(() {
                       return controller.callList.length > 1
                           ? Align(
-                        alignment: Alignment.topRight,
-                        child: SizedBox(
-                          width: 130,
-                          height: 180,
-                          child: MirrorFlyView(
-                            userJid: controller.callList[1].userJid ?? "",
-                            viewBgColor: Colors.blueGrey,
-                          ).setBorderRadius(
-                              const BorderRadius.all(Radius.circular(10))),
-                        ),
-                      )
+                              alignment: Alignment.topRight,
+                              child: SizedBox(
+                                width: 130,
+                                height: 180,
+                                child: MirrorFlyView(
+                                  userJid: controller.callList[0].userJid ?? "",
+                                  viewBgColor: Colors.blueGrey,
+                                ).setBorderRadius(const BorderRadius.all(
+                                    Radius.circular(10))),
+                              ),
+                            )
                           : const SizedBox.shrink();
                     }),
-                    const SizedBox(height: 10,),
+                    const SizedBox(
+                      height: 10,
+                    ),
                     buildCallOptions(),
                   ],
                 ),
@@ -139,11 +134,7 @@ class OnGoingCallView extends GetView<CallController> {
                   child: buildCallOptions(),
                 );*/
               // return
-              Positioned(
-                  top: 5,
-                  left: 0,
-                  right: 0,
-                  child: buildToolbar()),
+              Positioned(top: 5, left: 0, right: 0, child: buildToolbar()),
               // }),
             ],
           ),
@@ -155,24 +146,24 @@ class OnGoingCallView extends GetView<CallController> {
   Widget buildProfileView() {
     return Center(
       child: FutureBuilder(
-        // future: getProfileDetails(""),
+          // future: getProfileDetails(""),
           builder: (cxt, data) {
-            return Column(
-              mainAxisSize: MainAxisSize.min,
-              children: const [
-                ProfileTextImage(
-                  text: "Saravanakumar",
-                ),
-                SizedBox(
-                  height: 4,
-                ),
-                Text(
-                  "Saravanakumar",
-                  style: TextStyle(color: Colors.white),
-                )
-              ],
-            );
-          }),
+        return Column(
+          mainAxisSize: MainAxisSize.min,
+          children: const [
+            ProfileTextImage(
+              text: "Saravanakumar",
+            ),
+            SizedBox(
+              height: 4,
+            ),
+            Text(
+              "Saravanakumar",
+              style: TextStyle(color: Colors.white),
+            )
+          ],
+        );
+      }),
     );
   }
 
@@ -225,6 +216,8 @@ class OnGoingCallView extends GetView<CallController> {
   }
 
   Widget buildCallOptions() {
+    double rightSideWidth = 15;
+    controller.callType.value == 'video' ? rightSideWidth = 20 : rightSideWidth = 30;
     return Obx(() {
       return Column(
         children: [
@@ -244,7 +237,7 @@ class OnGoingCallView extends GetView<CallController> {
             height: 8,
           ),
           Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
               FloatingActionButton(
                 heroTag: "mute",
@@ -255,23 +248,25 @@ class OnGoingCallView extends GetView<CallController> {
                 onPressed: () => controller.muteAudio(),
                 child: controller.muted.value
                     ? SvgPicture.asset(
-                  muteActive,
-                )
+                        muteActive,
+                      )
                     : SvgPicture.asset(
-                  muteInactive,
-                ),
+                        muteInactive,
+                      ),
               ),
+              SizedBox(width: rightSideWidth),
               controller.callType.value == 'video' ? FloatingActionButton(
-                  heroTag: "switchCamera",
-                  elevation: 0,
-                  backgroundColor: controller.cameraSwitch.value
-                      ? Colors.white
-                      : Colors.white.withOpacity(0.3),
-                  onPressed: () => controller.switchCamera(),
-                  child: controller.cameraSwitch.value
-                      ? SvgPicture.asset(cameraSwitchActive)
-                      : SvgPicture.asset(cameraSwitchInactive),
-                ) : Container(),
+                      heroTag: "switchCamera",
+                      elevation: 0,
+                      backgroundColor: controller.cameraSwitch.value
+                          ? Colors.white
+                          : Colors.white.withOpacity(0.3),
+                      onPressed: () => controller.switchCamera(),
+                      child: controller.cameraSwitch.value
+                          ? SvgPicture.asset(cameraSwitchActive)
+                          : SvgPicture.asset(cameraSwitchInactive),
+                    ): const SizedBox.shrink(),
+              controller.callType.value == 'video' ? SizedBox(width: rightSideWidth): const SizedBox.shrink(),
               FloatingActionButton(
                 heroTag: "videoMute",
                 elevation: 0,
@@ -283,6 +278,7 @@ class OnGoingCallView extends GetView<CallController> {
                     ? SvgPicture.asset(videoInactive)
                     : SvgPicture.asset(videoActive),
               ),
+              SizedBox(width: rightSideWidth,),
               FloatingActionButton(
                 heroTag: "speaker",
                 elevation: 0,
@@ -335,11 +331,11 @@ class OnGoingCallView extends GetView<CallController> {
             padding: const EdgeInsets.all(8),
             child: controller.mutedUsers.contains(controller.remoteUsers[index])
                 ? */
-            Container(
-                margin: const EdgeInsets.only(right: 4),
-                color: AppColors.audioCallBackground,
-                padding: const EdgeInsets.all(4),
-                child: buildProfileView());
+              Container(
+                  margin: const EdgeInsets.only(right: 4),
+                  color: AppColors.audioCallBackground,
+                  padding: const EdgeInsets.all(4),
+                  child: buildProfileView());
           /*: MirrorFlyView(
               isLocalUser: controller.remoteUsers[index].value == "local",
               remoteUserJid: controller.remoteUsers[index].value,

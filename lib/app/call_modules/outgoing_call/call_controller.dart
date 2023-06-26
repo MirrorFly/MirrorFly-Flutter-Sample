@@ -6,6 +6,9 @@ import 'package:mirror_fly_demo/app/model/call_user_list.dart';
 import 'package:mirrorfly_plugin/flychat.dart';
 import 'package:mirrorfly_plugin/model/profile_model.dart';
 
+import '../../data/session_management.dart';
+import '../../routes/app_pages.dart';
+
 class CallController extends GetxController {
 
   final RxBool isVisible = false.obs;
@@ -26,7 +29,7 @@ class CallController extends GetxController {
   var callType = "".obs;
 
   var calleeName = "".obs;
-  var callStatus = "".obs;
+  var callStatus = "Trying to Connect".obs;
 
   @override
   Future<void> onInit() async {
@@ -45,10 +48,21 @@ class CallController extends GetxController {
       }else{
         debugPrint("#Mirrorfly Call Direction outgoing");
         var userJid = Get.arguments["userJid"];
-        debugPrint("#Mirrorfly Call UserJid $userJid");
-        var profile = await Mirrorfly.getUserProfile(userJid);
-        var data = profileDataFromJson(profile);
-        calleeName(data.data?.name);
+        if(userJid != null && userJid != "") {
+          debugPrint("#Mirrorfly Call UserJid $userJid");
+          var profile = await Mirrorfly.getUserProfile(userJid);
+          var data = profileDataFromJson(profile);
+          calleeName(data.data?.name);
+        }
+        debugPrint("#Mirrorfly Call getCallUsersList");
+        Mirrorfly.getCallUsersList().then((value) {
+          debugPrint("#Mirrorfly call get users --> $value");
+          callList.clear();
+          final callUserList = callUserListFromJson(value);
+          callList.addAll(callUserList);
+          getNames();
+        });
+
       }
     });
 
@@ -100,12 +114,19 @@ class CallController extends GetxController {
 
   getNames() async {
     startTimer();
-    for (var users in callList) {
-      var profile = await Mirrorfly.getUserProfile(users.userJid!);
-      var data = profileDataFromJson(profile);
-      var userName = data.data?.name;
-      callTitle = "$callTitle ${userName!} & ";
-    }
+    callList.asMap().forEach((index, users) async {
+      if(users.userJid == SessionManagement.getUserJID()){
+        callTitle = "$callTitle You";
+      }else {
+        var profile = await Mirrorfly.getUserProfile(users.userJid!);
+        var data = profileDataFromJson(profile);
+        var userName = data.data?.name;
+        callTitle = "$callTitle ${userName!}";
+      }
+      if(index == 0){
+        callTitle = "$callTitle and ";
+      }
+    });
   }
   void startTimer() {
     const oneSec = Duration(seconds: 1);
@@ -162,7 +183,13 @@ class CallController extends GetxController {
 
   void connected(String callMode, String userJid, String callType, String callStatus) {
     this.callStatus(callStatus);
+    Get.offNamed(Routes.onGoingCallView, arguments: { "userJid": null});
 
+  }
+
+  void timeout(String callMode, String userJid, String callType, String callStatus) {
+    this.callStatus("Disconnected");
+    Get.back();
   }
 
 }
