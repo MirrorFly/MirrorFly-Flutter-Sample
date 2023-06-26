@@ -6,7 +6,7 @@ import 'package:mirror_fly_demo/app/data/helper.dart';
 
 import '../../common/constants.dart';
 import '../../common/widgets.dart';
-import 'package:mirrorfly_chat/mirrorflychat.dart';
+import 'package:mirrorfly_plugin/mirrorflychat.dart';
 
 import '../../data/session_management.dart';
 import '../../model/chat_message_model.dart';

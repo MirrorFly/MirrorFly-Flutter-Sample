@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/call_modules/outgoing_call/call_controller.dart';
-import 'package:mirrorfly_chat/mirrorfly_view.dart';
+import 'package:mirrorfly_plugin/mirrorfly_view.dart';
+
 
 import '../../common/constants.dart';
 import '../../common/widgets.dart';

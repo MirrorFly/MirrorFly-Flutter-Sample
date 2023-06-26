@@ -3,8 +3,8 @@ import 'dart:async';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/model/call_user_list.dart';
-import 'package:mirrorfly_chat/flychat.dart';
-import 'package:mirrorfly_chat/model/profile_model.dart';
+import 'package:mirrorfly_plugin/flychat.dart';
+import 'package:mirrorfly_plugin/model/profile_model.dart';
 
 class CallController extends GetxController {
 

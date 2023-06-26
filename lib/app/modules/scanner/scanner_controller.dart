@@ -6,7 +6,7 @@ import 'package:mirror_fly_demo/app/data/session_management.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 
-import 'package:mirrorfly_chat/mirrorfly.dart';
+import 'package:mirrorfly_plugin/mirrorfly.dart';
 import '../../data/apputils.dart';
 import '../../routes/app_pages.dart';
 

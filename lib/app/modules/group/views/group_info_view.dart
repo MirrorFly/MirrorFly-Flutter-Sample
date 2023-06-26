@@ -11,7 +11,7 @@ import 'package:mirror_fly_demo/app/modules/group/controllers/group_info_control
 
 import '../../../common/constants.dart';
 import '../../../routes/app_pages.dart';
-import 'package:mirrorfly_chat/mirrorfly.dart';
+import 'package:mirrorfly_plugin/mirrorfly.dart';
 
 
 class GroupInfoView extends GetView<GroupInfoController> {
