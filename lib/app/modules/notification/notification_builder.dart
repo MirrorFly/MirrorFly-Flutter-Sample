@@ -41,9 +41,10 @@ class NotificationBuilder {
     var isMessageRecalled = message.isMessageRecalled.checkNull();
 
     if (notificationModel != null) {
-      mirrorFlyLog("notificationModel", "not null");
+      // notificationModel.messages?.forEach((element) { mirrorFlyLog("notificationModel", "${element.messageId}");});
       if (isMessageRecalled) { // if message was recalled then rebuild the message style
-        var oldMessages = notificationModel.messages!;
+        List<ChatMessage> oldMessages = [];
+        oldMessages.addAll(notificationModel.messages!);
         chatNotifications[notificationId]?.messages?.clear();
         mirrorFlyLog("oldMessages", oldMessages.length.toString());
         for (var chatMessage in oldMessages) {
