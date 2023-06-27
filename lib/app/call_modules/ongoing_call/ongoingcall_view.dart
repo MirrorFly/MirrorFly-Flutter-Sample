@@ -282,13 +282,14 @@ class OnGoingCallView extends GetView<CallController> {
               FloatingActionButton(
                 heroTag: "speaker",
                 elevation: 0,
-                backgroundColor: controller.speakerOff.value
+                backgroundColor: controller.audioOutputType.value == Constants.receiver
                     ? Colors.white.withOpacity(0.3)
                     : Colors.white,
                 onPressed: () => controller.changeSpeaker(),
-                child: controller.speakerOff.value
-                    ? SvgPicture.asset(speakerInactive)
-                    : SvgPicture.asset(speakerActive),
+                child: controller.audioOutputType.value == Constants.receiver ? SvgPicture.asset(speakerInactive)
+                    : controller.audioOutputType.value == Constants.speaker ? SvgPicture.asset(speakerActive)
+                    : controller.audioOutputType.value == Constants.bluetooth ? const Icon(Icons.bluetooth)
+                    : controller.audioOutputType.value == Constants.headset ? const Icon(Icons.headphones_sharp) : const Icon(Icons.speaker_phone),
               ),
             ],
           ),
