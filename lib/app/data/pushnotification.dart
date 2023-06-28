@@ -160,6 +160,9 @@ class PushNotifications {
     data["chat_type"]="chat";
     var notificationData = data;*/
     var notificationData = remoteMessage.data;
+    if(!remoteMessage.data.containsKey("message_id")){
+      notificationData["message_id"]=remoteMessage.messageId;
+    }
     if(notificationData.isNotEmpty) {
       WidgetsFlutterBinding.ensureInitialized();
       await Mirrorfly.handleReceivedMessage(notificationData).then((value) async {

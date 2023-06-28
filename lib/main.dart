@@ -27,12 +27,16 @@ import 'package:google_maps_flutter_platform_interface/google_maps_flutter_platf
 
 
 
-
+@pragma('vm:entry-point')
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   // If you're going to use other Firebase services in the background, such as Firestore,
   // make sure you call `initializeApp` before using other Firebase services.
-  //await Firebase.initializeApp();
+  await Firebase.initializeApp();
   SessionManagement.onInit();
+  Mirrorfly.init(
+      baseUrl: 'https://api-uikit-qa.contus.us/api/v1/',
+      licenseKey: 'ckIjaccWBoMNvxdbql8LJ2dmKqT5bp',//ckIjaccWBoMNvxdbql8LJ2dmKqT5bp//2sdgNtr3sFBSM3bYRa7RKDPEiB38Xo
+      iOSContainerID: 'group.com.mirrorfly.qa');
   debugPrint("Handling a background message: ${message.messageId}");
   PushNotifications.onMessage(message);
 }
@@ -40,10 +44,18 @@ bool shouldUseFirebaseEmulator = false;
 // dynamic nonChatUsers = [];
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  if (!kIsWeb) {
+    await Firebase.initializeApp();
+    // await Firebase.initializeApp(
+    //   options: DefaultFirebaseOptions.currentPlatform,
+    // );
+    FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+    PushNotifications.setupInteractedMessage();
+  }
   Mirrorfly.init(
       baseUrl: 'https://api-uikit-qa.contus.us/api/v1/',
       licenseKey: 'ckIjaccWBoMNvxdbql8LJ2dmKqT5bp',//ckIjaccWBoMNvxdbql8LJ2dmKqT5bp//2sdgNtr3sFBSM3bYRa7RKDPEiB38Xo
-      iOSContainerID: 'group.com.mirrorfly.flutter');
+      iOSContainerID: 'group.com.mirrorfly.qa');
   final GoogleMapsFlutterPlatform mapsImplementation =
       GoogleMapsFlutterPlatform.instance;
   if (mapsImplementation is GoogleMapsFlutterAndroid) {
@@ -53,14 +65,6 @@ Future<void> main() async {
   // ReplyHashMap.init();
   // Mirrorfly.isTrailLicence().then((value) => SessionManagement.setIsTrailLicence(value.checkNull()));
   // Mirrorfly.cancelNotifications();
-  if (!kIsWeb) {
-     await Firebase.initializeApp();
-    // await Firebase.initializeApp(
-    //   options: DefaultFirebaseOptions.currentPlatform,
-    // );
-    FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
-    PushNotifications.setupInteractedMessage();
-  }
   if (shouldUseFirebaseEmulator) {
     await FirebaseAuth.instance.useAuthEmulator('localhost', 5050);
   }

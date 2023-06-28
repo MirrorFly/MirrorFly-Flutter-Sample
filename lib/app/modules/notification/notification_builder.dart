@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'dart:math';
 import 'dart:typed_data';
 import 'dart:ui';
@@ -28,6 +29,7 @@ class NotificationBuilder {
     var chatJid = message.chatUserJid;
     var lastMessageContent = StringBuffer();
     var notificationId = chatJid.hashCode;
+    var messageId = message.messageId.hashCode;
     var profileDetails = await getProfileDetails(chatJid!);
     if (profileDetails.isMuted == true) {
       return;
@@ -73,7 +75,7 @@ class NotificationBuilder {
           .length > 13) ? (message.messageSentTime / 1000).toInt() : message
           .messageSentTime;
     }
-    displayMessageNotification(notificationId, profileDetails, messagingStyle,
+    displayMessageNotification(notificationId,messageId, profileDetails, messagingStyle,
         lastMessageContent.toString(), lastMessageTime);
   }
 
@@ -83,27 +85,30 @@ class NotificationBuilder {
    /// * @parameter message Instance on ChatMessage in NotificationMessageModel
   static appendChatMessageInMessageStyle(StringBuffer messageContent,
       MessagingStyleInformation messagingStyle, ChatMessage message) async {
-    var userProfile = await getProfileDetails(message.senderUserJid!);
-    var name = userProfile.name ?? '';
+
     var contentBuilder = StringBuffer();
     contentBuilder.write(NotificationUtils.getMessageSummary(message));
     messageContent.write(contentBuilder);
 
-    var userProfileImage = await getUserProfileImage(userProfile);
-    if (userProfileImage!=null) {
-     var image =  ByteArrayAndroidIcon(userProfileImage);
-      messagingStyle.messages?.add(Message(
-          contentBuilder.toString(), DateTime.fromMillisecondsSinceEpoch(message.messageSentTime), Person(
-          name: name, icon: image)));
-      mirrorFlyLog('image', 'not empty');
-    } else {
-      messagingStyle.messages?.add(Message(
-          contentBuilder.toString(), DateTime.fromMillisecondsSinceEpoch(message.messageSentTime), Person(
-          name: name,
-          icon: const FlutterBitmapAssetAndroidIcon(profileImg))));
-      mirrorFlyLog('image ', 'empty');
+    if(Platform.isAndroid) {
+      var userProfile = await getProfileDetails(message.senderUserJid!);
+      var name = userProfile.name ?? '';
+      var userProfileImage = await getUserProfileImage(userProfile);
+      if (userProfileImage != null) {
+        var image = ByteArrayAndroidIcon(userProfileImage);
+        messagingStyle.messages?.add(Message(
+            contentBuilder.toString(), DateTime.fromMillisecondsSinceEpoch(message.messageSentTime), Person(
+            name: name, icon: image)));
+        mirrorFlyLog('image', 'not empty');
+      } else {
+        messagingStyle.messages?.add(Message(
+            contentBuilder.toString(), DateTime.fromMillisecondsSinceEpoch(message.messageSentTime), Person(
+            name: name,
+            icon: const FlutterBitmapAssetAndroidIcon(profileImg))));
+        mirrorFlyLog('image ', 'empty');
+      }
+      mirrorFlyLog("append messagingStyle", messagingStyle.messages.toString());
     }
-    mirrorFlyLog("append messagingStyle", messagingStyle.messages.toString());
   }
 
   /// get Profile Image using instance of Profile
@@ -172,7 +177,7 @@ class NotificationBuilder {
    /// * @parameter messagingStyle Unique MessagingStyle of the conversation
    /// * @parameter lastMessageContent Last message of the conversation
    /// * @parameter lastMessageTime Time of the last message
-  static displayMessageNotification(int notificationId, Profile profileDetails,
+  static displayMessageNotification(int notificationId,int messageId, Profile profileDetails,
       MessagingStyleInformation messagingStyle, String lastMessageContent,
       int lastMessageTime) async {
     var title = profileDetails.name.checkNull();
@@ -211,9 +216,13 @@ class NotificationBuilder {
             ? getDefaultVibrate()
             : null,
         playSound: true);
+    final String? notificationUri = SessionManagement.getNotificationUri();
     var iosNotificationDetail = DarwinNotificationDetails(
+        categoryIdentifier: darwinNotificationCategoryPlain,
+        sound: notificationUri,
         presentBadge: true,
         badgeNumber: unReadMessageCount,
+        threadIdentifier: messageId.toString(),
         presentSound: true
     );
 
@@ -226,7 +235,7 @@ class NotificationBuilder {
         ?.createNotificationChannel(
         channel);
     await flutterLocalNotificationsPlugin.show(
-        0, title, lastMessageContent, notificationDetails,
+        notificationId, title, lastMessageContent, notificationDetails,
         payload: chatJid);
   }
 
