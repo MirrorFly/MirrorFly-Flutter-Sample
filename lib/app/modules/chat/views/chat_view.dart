@@ -541,7 +541,7 @@ class ChatView extends GetView<ChatController> {
               skinToneDialogBgColor: Colors.white,
               skinToneIndicatorColor: Colors.grey,
               enableSkinTones: true,
-              showRecentsTab: true,
+              // showRecentsTab: true,
               recentsLimit: 28,
               tabIndicatorAnimDuration: kTabScrollDuration,
               categoryIcons: const CategoryIcons(),

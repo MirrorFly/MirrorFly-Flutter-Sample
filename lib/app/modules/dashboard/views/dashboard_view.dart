@@ -32,7 +32,7 @@ class DashboardView extends GetView<DashboardController> {
           if (controller.selected.value) {
             controller.clearAllChatSelection();
             return Future.value(false);
-          }else if(controller.isSearching.value){
+          } else if (controller.isSearching.value) {
             controller.getBackFromSearch();
             return Future.value(false);
           }
@@ -47,7 +47,7 @@ class DashboardView extends GetView<DashboardController> {
                     : FloatingActionButton(
                   tooltip: "New Chat",
                   onPressed: () {
-                   controller.gotoContacts();
+                    controller.gotoContacts();
                   },
                   backgroundColor: buttonBgColor,
                   child: SvgPicture.asset(
@@ -68,31 +68,40 @@ class DashboardView extends GetView<DashboardController> {
                           floating: !controller.selected.value ||
                               !controller.isSearching.value,
                           automaticallyImplyLeading: false,
-                          leading: controller.selected.value ? IconButton(
+                          leading: controller.selected.value
+                              ? IconButton(
                             icon: const Icon(Icons.clear),
                             onPressed: () {
                               controller.clearAllChatSelection();
                             },
-                          ) : controller.isSearching.value ? IconButton(
-                            icon: const Icon(
-                                Icons.arrow_back, color: iconColor),
+                          )
+                              : controller.isSearching.value
+                              ? IconButton(
+                            icon: const Icon(Icons.arrow_back,
+                                color: iconColor),
                             onPressed: () {
                               controller.getBackFromSearch();
                             },
-                          ) : null,
+                          )
+                              : null,
                           title: controller.selected.value
                               ? Text(
                               (controller.selectedChats.length).toString())
-                              : controller.isSearching.value ? TextField(
+                              : controller.isSearching.value
+                              ? TextField(
                             focusNode: controller.searchFocusNode,
-                            onChanged: (text) => controller.onChange(text),
+                            onChanged: (text) =>
+                                controller.onChange(text),
                             controller: controller.search,
                             autofocus: true,
                             decoration: const InputDecoration(
                                 hintText: "Search...",
                                 border: InputBorder.none),
-                          ) : null,
-                          bottom: controller.isSearching.value ? null : TabBar(
+                          )
+                              : null,
+                          bottom: controller.isSearching.value
+                              ? null
+                              : TabBar(
                               indicatorColor: buttonBgColor,
                               labelColor: buttonBgColor,
                               unselectedLabelColor: appbarTextColor,
@@ -100,13 +109,15 @@ class DashboardView extends GetView<DashboardController> {
                                 Obx(() {
                                   return tabItem(
                                       title: "CHATS",
-                                      count: controller.unreadCountString);
+                                      count:
+                                      controller.unreadCountString);
                                 }),
                                 tabItem(title: "CALLS", count: "0")
                               ]),
                           actions: [
                             CustomActionBarIcons(
-                                availableWidth: MediaQuery
+                                availableWidth:
+                                MediaQuery
                                     .of(context)
                                     .size
                                     .width * 0.80,
@@ -120,7 +131,8 @@ class DashboardView extends GetView<DashboardController> {
                                         controller.chatInfo();
                                       },
                                       icon: SvgPicture.asset(infoIcon),
-                                      tooltip: 'Info',),
+                                      tooltip: 'Info',
+                                    ),
                                     overflowWidget: const Text("Info"),
                                     showAsAction: controller.info.value
                                         ? ShowAsAction.always
@@ -136,7 +148,8 @@ class DashboardView extends GetView<DashboardController> {
                                         controller.deleteChats();
                                       },
                                       icon: SvgPicture.asset(delete),
-                                      tooltip: 'Delete',),
+                                      tooltip: 'Delete',
+                                    ),
                                     overflowWidget: const Text("Delete"),
                                     showAsAction: controller.delete.value
                                         ? ShowAsAction.always
@@ -152,7 +165,8 @@ class DashboardView extends GetView<DashboardController> {
                                         controller.pinChats();
                                       },
                                       icon: SvgPicture.asset(pin),
-                                      tooltip: 'Pin',),
+                                      tooltip: 'Pin',
+                                    ),
                                     overflowWidget: const Text("Pin"),
                                     showAsAction: controller.pin.value
                                         ? ShowAsAction.always
@@ -168,7 +182,8 @@ class DashboardView extends GetView<DashboardController> {
                                         controller.unPinChats();
                                       },
                                       icon: SvgPicture.asset(unpin),
-                                      tooltip: 'UnPin',),
+                                      tooltip: 'UnPin',
+                                    ),
                                     overflowWidget: const Text("UnPin"),
                                     showAsAction: controller.unpin.value
                                         ? ShowAsAction.always
@@ -184,7 +199,8 @@ class DashboardView extends GetView<DashboardController> {
                                         controller.muteChats();
                                       },
                                       icon: SvgPicture.asset(mute),
-                                      tooltip: 'Mute',),
+                                      tooltip: 'Mute',
+                                    ),
                                     overflowWidget: const Text("Mute"),
                                     showAsAction: controller.mute.value
                                         ? ShowAsAction.always
@@ -200,7 +216,8 @@ class DashboardView extends GetView<DashboardController> {
                                         controller.unMuteChats();
                                       },
                                       icon: SvgPicture.asset(unMute),
-                                      tooltip: 'UnMute',),
+                                      tooltip: 'UnMute',
+                                    ),
                                     overflowWidget: const Text("UnMute"),
                                     showAsAction: controller.unmute.value
                                         ? ShowAsAction.always
@@ -216,7 +233,8 @@ class DashboardView extends GetView<DashboardController> {
                                         controller.archiveChats();
                                       },
                                       icon: SvgPicture.asset(archive),
-                                      tooltip: 'Archive',),
+                                      tooltip: 'Archive',
+                                    ),
                                     overflowWidget: const Text("Archived"),
                                     showAsAction: controller.archive.value
                                         ? ShowAsAction.always
@@ -227,8 +245,8 @@ class DashboardView extends GetView<DashboardController> {
                                     },
                                   ),
                                   CustomAction(
-                                    visibleWidget: const Icon(
-                                        Icons.mark_chat_read),
+                                    visibleWidget:
+                                    const Icon(Icons.mark_chat_read),
                                     overflowWidget: const Text("Mark as read"),
                                     showAsAction: controller.read.value
                                         ? ShowAsAction.never
@@ -239,10 +257,10 @@ class DashboardView extends GetView<DashboardController> {
                                     },
                                   ),
                                   CustomAction(
-                                    visibleWidget: const Icon(
-                                        Icons.mark_chat_unread),
-                                    overflowWidget: const Text(
-                                        "Mark as unread"),
+                                    visibleWidget:
+                                    const Icon(Icons.mark_chat_unread),
+                                    overflowWidget:
+                                    const Text("Mark as unread"),
                                     showAsAction: controller.unread.value
                                         ? ShowAsAction.never
                                         : ShowAsAction.gone,
@@ -290,8 +308,8 @@ class DashboardView extends GetView<DashboardController> {
                                   ),
                                   CustomAction(
                                     visibleWidget: const Icon(Icons.group_add),
-                                    overflowWidget: const Text(
-                                        "New Group     "),
+                                    overflowWidget:
+                                    const Text("New Group     "),
                                     showAsAction: controller.selected.value ||
                                         controller.isSearching.value
                                         ? ShowAsAction.gone
@@ -329,10 +347,12 @@ class DashboardView extends GetView<DashboardController> {
                       }),
                     ];
                   },
-                  body: TabBarView(
-                      children: [Obx(() {
-                        return chatView(context);
-                      }), callsView(context)]),
+                  body: TabBarView(children: [
+                    Obx(() {
+                      return chatView(context);
+                    }),
+                    callsView(context)
+                  ]),
                 )),
           ),
         ),
@@ -371,12 +391,15 @@ class DashboardView extends GetView<DashboardController> {
   }
 
   Widget chatView(BuildContext context) {
-    return controller.clearVisible.value ? recentSearchView(context) : Stack(
+    return controller.clearVisible.value
+        ? recentSearchView(context)
+        : Stack(
       children: [
         Obx(() {
           return Visibility(
-              visible: !controller.recentChatLoding.value &&
-                  controller.recentChats.isEmpty && controller.archivedChats.isEmpty,
+              visible: !controller.recentChatLoading.value &&
+                  controller.recentChats.isEmpty &&
+                  controller.archivedChats.isEmpty,
               child: emptyChat(context));
         }),
         Column(
@@ -395,10 +418,12 @@ class DashboardView extends GetView<DashboardController> {
                     "Archived",
                     style: TextStyle(fontWeight: FontWeight.w500),
                   ),
-                  trailing: controller.archivedCount != "0" ? Text(
+                  trailing: controller.archivedCount != "0"
+                      ? Text(
                     controller.archivedCount,
                     style: const TextStyle(color: buttonBgColor),
-                  ) : null,
+                  )
+                      : null,
                   dividerPadding: EdgeInsets.zero,
                   onTap: () {
                     Get.toNamed(Routes.archivedChats);
@@ -411,13 +436,16 @@ class DashboardView extends GetView<DashboardController> {
                   future: controller.getRecentChatList(),
                   builder: (c, d) {*/
                 Obx(() {
-                  return controller.recentChatLoding.value ? const Center(
-                    child: CircularProgressIndicator(),) :
-                  ListView.builder(
+                  return controller.recentChatLoading.value
+                      ? const Center(
+                    child: CircularProgressIndicator(),
+                  )
+                      : ListView.builder(
                       padding: EdgeInsets.zero,
-                      physics: const NeverScrollableScrollPhysics(),
-                      itemCount: controller.recentChats.length + 1,
+                      physics: const AlwaysScrollableScrollPhysics(),
+                      itemCount: controller.recentChats.length + 2,
                       shrinkWrap: true,
+                      controller: controller.historyScrollController,
                       itemBuilder: (BuildContext context, int index) {
                         if (index < controller.recentChats.length) {
                           var item = controller.recentChats[index];
@@ -425,32 +453,46 @@ class DashboardView extends GetView<DashboardController> {
                             return RecentChatItem(
                               item: item,
                               isSelected: controller.isSelected(index),
-                              typingUserid: controller.typingUser(
-                                  item.jid.checkNull()),
+                              typingUserid: controller
+                                  .typingUser(item.jid.checkNull()),
                               onTap: () {
                                 if (controller.selected.value) {
-                                  controller.selectOrRemoveChatfromList(
-                                      index);
+                                  controller
+                                      .selectOrRemoveChatfromList(index);
                                 } else {
-                                  controller.toChatPage(
-                                      item.jid.checkNull());
+                                  controller
+                                      .toChatPage(item.jid.checkNull());
                                 }
                               },
                               onLongPress: () {
                                 controller.selected(true);
-                                controller.selectOrRemoveChatfromList(
-                                    index);
+                                controller
+                                    .selectOrRemoveChatfromList(index);
                               },
-                              onAvatarClick: (){
-                                controller.getProfileDetail(context, item, index);
-
+                              onAvatarClick: () {
+                                controller.getProfileDetail(
+                                    context, item, index);
                               },
                             );
+                          });
+                        } else if (index == controller.recentChats.length) {
+                          // Display loading indicator
+                          return Obx(() {
+                            return controller.isRecentHistoryLoading.value ? const Padding(
+                              padding: EdgeInsets.all(8.0),
+                              child: Center(
+                                child: SizedBox(
+                                    width: 24,
+                                    height: 24,
+                                    child: CircularProgressIndicator()),
+                              ),
+                            ) : const SizedBox.shrink();
                           });
                         } else {
                           return Obx(() {
                             return Visibility(
-                              visible: controller.archivedChats.isNotEmpty &&
+                              visible: controller
+                                  .archivedChats.isNotEmpty &&
                                   !controller.archiveSettingEnabled
                                       .value /*&& controller.archivedCount.isNotEmpty*/,
                               child: ListItem(
@@ -461,12 +503,16 @@ class DashboardView extends GetView<DashboardController> {
                                 ),
                                 title: const Text(
                                   "Archived",
-                                  style: TextStyle(fontWeight: FontWeight.w500),
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.w500),
                                 ),
-                                trailing: controller.archivedChats.isNotEmpty
+                                trailing: controller
+                                    .archivedChats.isNotEmpty
                                     ? Text(
-                                  controller.archivedChats.length.toString(),
-                                  style: const TextStyle(color: buttonBgColor),
+                                  controller.archivedChats.length
+                                      .toString(),
+                                  style: const TextStyle(
+                                      color: buttonBgColor),
                                 )
                                     : null,
                                 dividerPadding: EdgeInsets.zero,
@@ -487,7 +533,6 @@ class DashboardView extends GetView<DashboardController> {
     );
   }
 
-
   Widget recentSearchView(BuildContext context) {
     return ListView(
       controller: controller.userlistScrollController,
@@ -497,20 +542,17 @@ class DashboardView extends GetView<DashboardController> {
           return Column(
             children: [
               Visibility(
-                visible: controller.filteredRecentChatList
-                    .isNotEmpty,
+                visible: controller.filteredRecentChatList.isNotEmpty,
                 child: searchHeader(
                     Constants.typeSearchRecent,
-                    controller.filteredRecentChatList.length
-                        .toString(),
+                    controller.filteredRecentChatList.length.toString(),
                     context),
               ),
               recentChatListView(),
               Visibility(
                 visible: controller.chatMessages.isNotEmpty,
                 child: searchHeader(Constants.typeSearchMessage,
-                    controller.chatMessages.length.toString(),
-                    context),
+                    controller.chatMessages.length.toString(), context),
               ),
               filteredMessageListView(),
               Visibility(
@@ -519,7 +561,8 @@ class DashboardView extends GetView<DashboardController> {
                 child: searchHeader(Constants.typeSearchContact,
                     controller.userList.length.toString(), context),
               ),
-              Visibility(visible: controller.searchLoading.value,
+              Visibility(
+                  visible: controller.searchLoading.value,
                   child: const Center(
                     child: CircularProgressIndicator(),
                   )),
@@ -569,8 +612,10 @@ class DashboardView extends GetView<DashboardController> {
               },
               isCheckBoxVisible: false,
               isGroup: item.isGroupProfile.checkNull(),
-              blocked: item.isBlockedMe.checkNull() || item.isAdminBlocked.checkNull(),
-              unknown: (!item.isItSavedContact.checkNull() || item.isDeletedContact()),
+              blocked: item.isBlockedMe.checkNull() ||
+                  item.isAdminBlocked.checkNull(),
+              unknown: (!item.isItSavedContact.checkNull() ||
+                  item.isDeletedContact()),
             );
           }
         });
@@ -605,15 +650,19 @@ class DashboardView extends GetView<DashboardController> {
                                   height: 48,
                                   clipOval: true,
                                   errorWidget: ProfileTextImage(
-                                    text: getName(profile)/*profile.name
+                                      text: getName(
+                                          profile) /*profile.name
                                         .checkNull()
                                         .isEmpty
                                         ? profile.nickName.checkNull()
                                         : profile.name.checkNull(),*/
                                   ),
                                   isGroup: profile.isGroupProfile.checkNull(),
-                                  blocked: profile.isBlockedMe.checkNull() || profile.isAdminBlocked.checkNull(),
-                                  unknown: (!profile.isItSavedContact.checkNull() || profile.isDeletedContact()),
+                                  blocked: profile.isBlockedMe.checkNull() ||
+                                      profile.isAdminBlocked.checkNull(),
+                                  unknown:
+                                  (!profile.isItSavedContact.checkNull() ||
+                                      profile.isDeletedContact()),
                                 ),
                                 unreadMessageCount.toString() != "0"
                                     ? Positioned(
@@ -640,8 +689,9 @@ class DashboardView extends GetView<DashboardController> {
                                 children: [
                                   Expanded(
                                     child: Text(
-                                      getName(profile),//profile.name.toString(),
-                                      style : const TextStyle(
+                                      getName(
+                                          profile), //profile.name.toString(),
+                                      style: const TextStyle(
                                           fontSize: 16.0,
                                           fontWeight: FontWeight.w700,
                                           fontFamily: 'sf_ui',
@@ -672,8 +722,7 @@ class DashboardView extends GetView<DashboardController> {
                                 children: [
                                   unreadMessageCount.toString() != "0"
                                       ? const Padding(
-                                    padding:
-                                    EdgeInsets.only(right: 8.0),
+                                    padding: EdgeInsets.only(right: 8.0),
                                     child: CircleAvatar(
                                       radius: 4,
                                       backgroundColor: Colors.green,
@@ -684,24 +733,39 @@ class DashboardView extends GetView<DashboardController> {
                                     child: Row(
                                       children: [
                                         Padding(
-                                          padding: const EdgeInsets.only(right: 8.0),
+                                          padding:
+                                          const EdgeInsets.only(right: 8.0),
                                           child: getMessageIndicator(
-                                              item.messageStatus.value.checkNull(),
-                                              item.isMessageSentByMe.checkNull(),
-                                              item.messageType.checkNull(),item.isMessageRecalled.value),
+                                              item.messageStatus.value
+                                                  .checkNull(),
+                                              item.isMessageSentByMe
+                                                  .checkNull(),
+                                              item.messageType.checkNull(),
+                                              item.isMessageRecalled.value),
                                         ),
                                         item.isMessageRecalled.value
-                                            ? const SizedBox.shrink() : forMessageTypeIcon(item.messageType,item.mediaChatMessage),
+                                            ? const SizedBox.shrink()
+                                            : forMessageTypeIcon(
+                                            item.messageType,
+                                            item.mediaChatMessage),
                                         SizedBox(
                                           width: forMessageTypeString(
-                                              item.messageType,content: item.mediaChatMessage?.mediaCaptionText.checkNull()) !=
+                                              item.messageType,
+                                              content: item
+                                                  .mediaChatMessage
+                                                  ?.mediaCaptionText
+                                                  .checkNull()) !=
                                               null
                                               ? 3.0
                                               : 0.0,
                                         ),
                                         Expanded(
                                           child: forMessageTypeString(
-                                              item.messageType,content: item.mediaChatMessage?.mediaCaptionText.checkNull()) ==
+                                              item.messageType,
+                                              content: item
+                                                  .mediaChatMessage
+                                                  ?.mediaCaptionText
+                                                  .checkNull()) ==
                                               null
                                               ? spannableText(
                                             item.messageTextContent
@@ -714,7 +778,11 @@ class DashboardView extends GetView<DashboardController> {
                                           )
                                               : Text(
                                             forMessageTypeString(
-                                                item.messageType,content: item.mediaChatMessage?.mediaCaptionText.checkNull()) ??
+                                                item.messageType,
+                                                content: item
+                                                    .mediaChatMessage
+                                                    ?.mediaCaptionText
+                                                    .checkNull()) ??
                                                 item.messageTextContent
                                                     .toString(),
                                             style: Theme
@@ -809,9 +877,7 @@ class DashboardView extends GetView<DashboardController> {
 
   Stack callsView(BuildContext context) {
     return Stack(
-      children: [
-        emptyCalls(context)
-      ],
+      children: [emptyCalls(context)],
     );
   }
 

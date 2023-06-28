@@ -46,6 +46,12 @@ class DashboardController extends FullLifeCycleController
 
   var archiveSettingEnabled = false.obs;
 
+
+  ScrollController historyScrollController = ScrollController();
+
+  RxBool isRecentHistoryLoading = false.obs;
+  int recentChatPage = 1;
+
 /*@override
   void onInit() {
     super.onInit();
@@ -57,6 +63,11 @@ class DashboardController extends FullLifeCycleController
     getArchivedChatsList();
     checkArchiveSetting();
     userlistScrollController.addListener(_scrollListener);
+  }*/
+  /*@override
+  void onInit(){
+    super.onInit();
+    historyScrollController.addListener(historyScrollListener);
   }*/
 
   @override
@@ -70,6 +81,8 @@ class DashboardController extends FullLifeCycleController
     getArchivedChatsList();
     // checkArchiveSetting();
     userlistScrollController.addListener(_scrollListener);
+    historyScrollController.addListener(historyScrollListener);
+
   }
 
   infoPage(Profile profile) {
@@ -106,21 +119,21 @@ class DashboardController extends FullLifeCycleController
     }
   }
 
-  var recentChatLoding = true.obs;
+  var recentChatLoading = true.obs;
 
   getRecentChatList() {
     mirrorFlyLog("", "recent chats");
-    Mirrorfly.getRecentChatList().then((value) async {
+    Mirrorfly.getRecentChatListHistory(pageNo: recentChatPage).then((value) async {
       // String recentList = value.replaceAll('\n', '\\n');
       // debugPrint(recentList);
       var data = await compute(recentChatFromJson, value.toString());
       //recentChats.clear();
       recentChats(data.data!);
       recentChats.refresh();
-      recentChatLoding(false);
+      recentChatLoading(false);
     }).catchError((error) {
       debugPrint("recent chat issue===> $error");
-      recentChatLoding(false);
+      recentChatLoading(false);
     });
   }
 
@@ -959,6 +972,9 @@ class DashboardController extends FullLifeCycleController
 
   List<Profile> get userList => _userList;
 
+
+
+
   onChange(String inputValue) {
     if (search.text.trim().isNotEmpty) {
       clearVisible(true);
@@ -1315,5 +1331,36 @@ class DashboardController extends FullLifeCycleController
   LogMessage.e(TAG, e);
   }*/
     return '';
+  }
+
+  historyScrollListener() {
+    // scrollController.position.pixels >=
+    //     scrollController.position.maxScrollExtent - 200 //uncomment for data to be populated before certain items
+    if (historyScrollController.position.pixels ==
+        historyScrollController.position.maxScrollExtent) {
+      // User has reached the bottom of the list
+      // Show loading screen and load more data
+      // loadMoreData();
+      debugPrint("load next set of data");
+      if(!isRecentHistoryLoading.value) {
+        recentChatPage++;
+        isRecentHistoryLoading(true);
+        debugPrint("calling page no $recentChatPage");
+        Mirrorfly.getRecentChatListHistory(pageNo: recentChatPage).then((value) async {
+          debugPrint("getRecentChatListHistory next data $value");
+          var data = await compute(recentChatFromJson, value.toString());
+          recentChats.addAll(data.data!);
+          recentChats.refresh();
+          isRecentHistoryLoading(false);
+
+        }).catchError((error) {
+          debugPrint("recent chat issue===> $error");
+          isRecentHistoryLoading(false);
+        });
+      }
+
+
+    }
+
   }
 }
