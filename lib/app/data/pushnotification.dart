@@ -2,6 +2,8 @@
 // import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 
+import 'dart:io';
+
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -118,8 +120,12 @@ class PushNotifications {
 
   static void notificationPermission() async{
     FirebaseMessaging messaging = FirebaseMessaging.instance;
-   // var permission = await flutterLocalNotificationsPlugin.resolvePlatformSpecificImplementation<
-   //      AndroidFlutterLocalNotificationsPlugin>()!.requestPermission();
+    if(Platform.isAndroid) {
+      var permission = await flutterLocalNotificationsPlugin
+          .resolvePlatformSpecificImplementation<
+          AndroidFlutterLocalNotificationsPlugin>()!.requestPermission();
+      debugPrint("permission :$permission");
+    }
     NotificationSettings settings = await messaging.requestPermission(
       alert: true,
       announcement: false,
@@ -137,7 +143,6 @@ class PushNotifications {
     } else {
       debugPrint('User declined or has not accepted permission');
     }
-    // debugPrint("permission :$permission");
   }
 
   static void onDidReceiveLocalNotification(

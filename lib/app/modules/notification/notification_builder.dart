@@ -3,6 +3,7 @@ import 'dart:math';
 import 'dart:typed_data';
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -11,6 +12,7 @@ import 'package:mirror_fly_demo/app/data/apputils.dart';
 import 'package:mirror_fly_demo/app/data/session_management.dart';
 import 'package:mirror_fly_demo/app/modules/notification/notification_utils.dart';
 import 'package:mirrorfly_plugin/mirrorflychat.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 
 import '../../common/notification_service.dart';
 import '../../data/helper.dart';
@@ -20,6 +22,9 @@ class NotificationBuilder {
   NotificationBuilder._();
   static var chatNotifications = <int, NotificationModel>{};
   static var secureNotificationChannelId = 0;
+  static var summaryId = 0;
+  static var summaryChannelName = "Chat Summary";
+  static var groupKeyMessage = "${Constants.packageName}.MESSAGE";
   static var defaultVibrate = 250;
 
   /// * Create notification when new chat message received
@@ -77,6 +82,8 @@ class NotificationBuilder {
     }
     displayMessageNotification(notificationId,messageId, profileDetails, messagingStyle,
         lastMessageContent.toString(), lastMessageTime);
+
+    displaySummaryNotification(lastMessageContent);
   }
 
    /// Append [ChatMessage] content to the provided [MessagingStyleInformation]
@@ -196,22 +203,28 @@ class NotificationBuilder {
         "NotificationBuilder", "unReadMessageCount $unReadMessageCount");
     chatNotifications[notificationId]?.unReadMessageCount = unReadMessageCount;
 
-
+    var notificationSounUri = SessionManagement.getNotificationUri();
+    // var isVibrate = SessionManagement.getVibration();
+    // var isRing = SessionManagement.getNotificationSound();
+    debugPrint("notificationUri--> $notificationSounUri");
     var androidNotificationDetails = AndroidNotificationDetails(
         channel.id, channel.name, channelDescription: channel.description,
-        importance: Importance.high,
+        importance: Importance.max,
         styleInformation: messagingStyle,
         autoCancel: true,
         icon: 'ic_notification_blue',
         color: buttonBgColor,
-        groupKey: "${Constants.packageName}.MESSAGE",
+        groupKey: groupKeyMessage,
         number: unReadMessageCount,
-        groupAlertBehavior: GroupAlertBehavior.summary,
+        groupAlertBehavior: GroupAlertBehavior.all,
         category: AndroidNotificationCategory.message,
         priority: Priority.high,
         visibility: NotificationVisibility.public,
-        // largeIcon: Fi,
+        largeIcon: const DrawableResourceAndroidBitmap('ic_notification_blue'),
         when: (lastMessageTime > 0) ? lastMessageTime : null,
+        /*sound: isRing && notificationSounUri.checkNull().isNotEmpty ? UriAndroidNotificationSound(
+            notificationSounUri!) : null,
+        vibrationPattern: (isVibrate *//*|| getDeviceVibrateMode()*//*) ? getDefaultVibrate() : null,*/
         vibrationPattern: (SessionManagement.getVibration())
             ? getDefaultVibrate()
             : null,
@@ -223,7 +236,8 @@ class NotificationBuilder {
         presentBadge: true,
         badgeNumber: unReadMessageCount,
         threadIdentifier: messageId.toString(),
-        presentSound: true
+        presentSound: true,
+        presentAlert: true
     );
 
     var notificationDetails = NotificationDetails(
@@ -238,7 +252,83 @@ class NotificationBuilder {
         notificationId, title, lastMessageContent, notificationDetails,
         payload: chatJid);
   }
+  
+   // * Create [Notification] and display summary of the multiple chat conversations
+   // * @param lastMessageContent Last message of the conversation
+  static displaySummaryNotification(StringBuffer lastMessageContent) async {
+    var summaryText = StringBuffer();
+    final info = await PackageInfo.fromPlatform();
+    var appTitle = info.appName;
+    summaryText.write("${getMessagesCount()} messages from ${chatNotifications.length} chats");
+    var inlineMessages = <String>[];
+    chatNotifications.forEach((key, value) { inlineMessages.add("notificationInlineMessage");});
+    var inboxStyle = InboxStyleInformation(inlineMessages,summaryText: summaryText.toString(),contentTitle: appTitle);
 
+    var channel = buildNotificationChannel(Constants.emptyString, summaryChannelName, true);
+    
+    var notificationSounUri = SessionManagement.getNotificationUri();
+    // var isVibrate = SessionManagement.getVibration();
+    // var isRing = SessionManagement.getNotificationSound();
+    debugPrint("notificationUri--> $notificationSounUri");
+    var androidNotificationDetails = AndroidNotificationDetails(
+        channel.id, channel.name, channelDescription: channel.description,
+        importance: Importance.max,
+        styleInformation: inboxStyle,
+        autoCancel: true,
+        icon: 'ic_notification_blue',
+        color: buttonBgColor,
+        groupKey: groupKeyMessage,
+        number: chatNotifications.length,
+        // groupAlertBehavior: GroupAlertBehavior.summary,
+        setAsGroupSummary: true,
+        category: AndroidNotificationCategory.message,
+        priority: Priority.high,
+        visibility: NotificationVisibility.public,
+        largeIcon: const DrawableResourceAndroidBitmap('ic_notification_blue'),
+        /*sound: isRing && notificationSounUri.checkNull().isNotEmpty ? UriAndroidNotificationSound(
+            notificationSounUri!) : null,
+        vibrationPattern: (isVibrate *//*|| getDeviceVibrateMode()*//*) ? getDefaultVibrate() : null,*/
+        vibrationPattern: (SessionManagement.getVibration())
+            ? getDefaultVibrate()
+            : null,
+        playSound: true);
+    final String? notificationUri = SessionManagement.getNotificationUri();
+    var iosNotificationDetail = DarwinNotificationDetails(
+        categoryIdentifier: darwinNotificationCategoryPlain,
+        sound: notificationUri,
+        presentBadge: true,
+        badgeNumber: chatNotifications.length,
+        threadIdentifier: channel.id.toString(),
+        presentSound: true,
+        presentAlert: true
+    );
+
+    if(chatNotifications.isNotEmpty) {
+      var notificationDetails = NotificationDetails(
+          android: androidNotificationDetails,
+          iOS: iosNotificationDetail);
+      await flutterLocalNotificationsPlugin
+          .resolvePlatformSpecificImplementation<
+          AndroidFlutterLocalNotificationsPlugin>()
+          ?.createNotificationChannel(
+          channel);
+      await flutterLocalNotificationsPlugin.show(
+        summaryId, appTitle, lastMessageContent.toString(),
+        notificationDetails,);
+    }
+  }
+  
+   // * Get total unread messages count showing in the Push
+   // * @return total unread messages count
+  
+  static int getMessagesCount() {
+      var totalMessagesCount = 0;
+      chatNotifications.forEach((key, value) {
+        totalMessagesCount += value.messages!.length;
+      });
+    return totalMessagesCount;
+  }
+  
   static int getTotalUnReadMessageCount(int notificationId) {
     // return if (CallNotificationUtils.unReadCallCount == 0) FlyMessenger.getUnreadMessageCountExceptMutedChat() + CallLogManager.getUnreadMissedCallCount() else chatNotifications[notificationId]?.unReadMessageCount ?: 1
     return 0;
@@ -247,6 +337,9 @@ class NotificationBuilder {
   static Future<Uint8List?> downloadAndSaveFile(String url, String fileName) async {
     // final Directory directory = await getApplicationDocumentsDirectory();
     // final String filePath = '${directory.path}/$fileName';
+    if(!url.isURL) {
+      return null;
+    }
     final http.Response response = await http.get(Uri.parse(url),headers: {"Authorization": SessionManagement.getAuthToken().checkNull()});
     // final File file = File(filePath);
     // await file.writeAsBytes(response.bodyBytes);
@@ -283,7 +376,7 @@ class NotificationBuilder {
       description: channelDescription,
       enableLights: true,
       ledColor: Colors.green,
-      vibrationPattern: (isVibrate /*|| getDeviceVibrateMode()*/) ? getDefaultVibrate() : null);
+      vibrationPattern: (isVibrate /*|| getDeviceVibrateMode()*/) ? getDefaultVibrate() : null,playSound: true);
     }else if(isVibrate){
       return AndroidNotificationChannel(
           channelId, channelName, importance: vibrateImportance,
@@ -292,14 +385,13 @@ class NotificationBuilder {
           description: channelDescription,
           enableLights: true,
           ledColor: Colors.green,
-          vibrationPattern: (isVibrate /*|| getDeviceVibrateMode()*/) ? getDefaultVibrate() : null);
+          vibrationPattern: (isVibrate /*|| getDeviceVibrateMode()*/) ? getDefaultVibrate() : null,playSound: false);
     }else{
       return AndroidNotificationChannel(
           channelId, channelName, importance: ringImportance,
-          sound: null,
           description: channelDescription,
           enableLights: true,
-          ledColor: Colors.green);
+          ledColor: Colors.green,playSound: true);
     }
   }
 
@@ -312,7 +404,7 @@ class NotificationBuilder {
       SessionManagement.setSummaryChannelId(summaryChannelId);
       channelId = summaryChannelId;
     } else {
-      channelId = randomNumberGenerator.nextInt(1000).toString();
+      channelId = chatChannelId.checkNull().isNotEmpty ? chatChannelId : randomNumberGenerator.nextInt(1000).toString();
     }
     return channelId;
   }
