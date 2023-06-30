@@ -72,6 +72,14 @@ class PushNotifications {
     }).catchError((er){
       mirrorFlyLog("FirebaseMessaging", er.toString());
     });
+    FirebaseMessaging.instance.onTokenRefresh
+        .listen((fcmToken) {
+      mirrorFlyLog("onTokenRefresh", fcmToken.toString());
+      SessionManagement.setToken(fcmToken);
+    }).onError((err) {
+      // Error getting token.
+      mirrorFlyLog("onTokenRefresh", err.toString());
+    });
   }
   static void initInfo(){
     var androidInitialize = const AndroidInitializationSettings('@mipmap/ic_launcher');
@@ -107,7 +115,7 @@ class PushNotifications {
     FirebaseMessaging.onMessageOpenedApp.listen(onMessage);
   }
 
-  static Future<void> onMessage(RemoteMessage message) async {
+  static void onMessage(RemoteMessage message) {
     debugPrint('RemoteMessage ${message.toMap()}');
     debugPrint('Message data: ${message.data}');
     if (message.notification != null) {
