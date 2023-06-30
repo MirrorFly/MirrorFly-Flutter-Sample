@@ -83,7 +83,9 @@ class NotificationBuilder {
     displayMessageNotification(notificationId,messageId, profileDetails, messagingStyle,
         lastMessageContent.toString(), lastMessageTime);
 
-    displaySummaryNotification(lastMessageContent);
+    if(Platform.isAndroid){
+      displaySummaryNotification(lastMessageContent);
+    }
   }
 
    /// Append [ChatMessage] content to the provided [MessagingStyleInformation]
