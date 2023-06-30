@@ -122,12 +122,13 @@ class DashboardController extends FullLifeCycleController
   var recentChatLoading = true.obs;
 
   getRecentChatList() {
+    recentChatPage = 1;
     mirrorFlyLog("", "recent chats");
     Mirrorfly.getRecentChatListHistory(pageNo: recentChatPage).then((value) async {
       // String recentList = value.replaceAll('\n', '\\n');
       // debugPrint(recentList);
       var data = await compute(recentChatFromJson, value.toString());
-      //recentChats.clear();
+      recentChats.clear();
       recentChats(data.data!);
       recentChats.refresh();
       recentChatLoading(false);
