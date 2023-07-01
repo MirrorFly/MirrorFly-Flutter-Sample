@@ -131,6 +131,7 @@ class DashboardController extends FullLifeCycleController
       recentChats.clear();
       recentChats(data.data!);
       recentChats.refresh();
+      isRecentHistoryLoading(false);
       recentChatLoading(false);
     }).catchError((error) {
       debugPrint("recent chat issue===> $error");
