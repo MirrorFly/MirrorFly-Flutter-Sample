@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
-import 'package:flutter_libphonenumber/flutter_libphonenumber.dart';
 import 'package:mirrorfly_plugin/mirrorflychat.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
@@ -1290,7 +1289,8 @@ class DashboardController extends FullLifeCycleController
     userUpdatedHisProfile(jid);
   }
 
-  Future<String> getJidFromPhoneNumber(
+  ///Commenting this as this method is not used anywhere
+  /*Future<String> getJidFromPhoneNumber(
       String mobileNumber, String countryCode) async {
     FlutterLibphonenumber().init();
     var formatNumberSync =
@@ -1298,14 +1298,14 @@ class DashboardController extends FullLifeCycleController
     var parse = await FlutterLibphonenumber().parse(formatNumberSync);
     var format =
         await FlutterLibphonenumber().format(mobileNumber, countryCode);
-    /*bool? isValid =
+    *//*bool? isValid =
       await PhoneNumberUtil.isValidPhoneNumber(phoneNumber: mobileNumber, isoCode: countryCode);
   String? normalizedNumber = await PhoneNumberUtil.normalizePhoneNumber(
       phoneNumber: mobileNumber, isoCode: countryCode);
   RegionInfo regionInfo =
       await PhoneNumberUtil.getRegionInfo(phoneNumber: mobileNumber, isoCode: countryCode);
   String? carrierName =
-      await PhoneNumberUtil.getNameForNumber(phoneNumber: mobileNumber, isoCode: countryCode);*/
+      await PhoneNumberUtil.getNameForNumber(phoneNumber: mobileNumber, isoCode: countryCode);*//*
     debugPrint('formatNumberSync : $formatNumberSync');
     debugPrint(
         'parse : $parse'); //{country_code: 971, e164: +971503209773, national: 050 320 9773, type: mobile, international: +971 50 320 9773, national_number: 503209773, region_code: AE}
@@ -1319,7 +1319,7 @@ class DashboardController extends FullLifeCycleController
     // debugPrint('regionInfo.formattedPhoneNumber : ${regionInfo.formattedPhoneNumber}');
     // debugPrint('carrierName : $carrierName');
 
-    /*phoneNumberUtil = PhoneNumberUtil.createInstance(context);
+    *//*phoneNumberUtil = PhoneNumberUtil.createInstance(context);
   if (mobileNumber.startsWith("*")) {
     LogMessage.d(TAG, "Invalid PhoneNumber:"+mobileNumber);
     return null;
@@ -1331,9 +1331,9 @@ class DashboardController extends FullLifeCycleController
     return unformattedPhoneNumber + "@" + Constants.getDomain();
   } catch (NumberParseException e) {
   LogMessage.e(TAG, e);
-  }*/
+  }*//*
     return '';
-  }
+  }*/
 
   historyScrollListener() {
     // scrollController.position.pixels >=

@@ -45,18 +45,18 @@ class DashboardView extends GetView<DashboardController> {
                 floatingActionButton: controller.isSearching.value
                     ? null
                     : FloatingActionButton(
-                  tooltip: "New Chat",
-                  onPressed: () {
-                    controller.gotoContacts();
-                  },
-                  backgroundColor: buttonBgColor,
-                  child: SvgPicture.asset(
-                    chatFabIcon,
-                    width: 18,
-                    height: 18,
-                    fit: BoxFit.contain,
-                  ),
-                ),
+                        tooltip: "New Chat",
+                        onPressed: () {
+                          controller.gotoContacts();
+                        },
+                        backgroundColor: buttonBgColor,
+                        child: SvgPicture.asset(
+                          chatFabIcon,
+                          width: 18,
+                          height: 18,
+                          fit: BoxFit.contain,
+                        ),
+                      ),
                 body: NestedScrollView(
                   headerSliverBuilder:
                       (BuildContext context, bool innerBoxIsScrolled) {
@@ -70,57 +70,54 @@ class DashboardView extends GetView<DashboardController> {
                           automaticallyImplyLeading: false,
                           leading: controller.selected.value
                               ? IconButton(
-                            icon: const Icon(Icons.clear),
-                            onPressed: () {
-                              controller.clearAllChatSelection();
-                            },
-                          )
+                                  icon: const Icon(Icons.clear),
+                                  onPressed: () {
+                                    controller.clearAllChatSelection();
+                                  },
+                                )
                               : controller.isSearching.value
-                              ? IconButton(
-                            icon: const Icon(Icons.arrow_back,
-                                color: iconColor),
-                            onPressed: () {
-                              controller.getBackFromSearch();
-                            },
-                          )
-                              : null,
+                                  ? IconButton(
+                                      icon: const Icon(Icons.arrow_back,
+                                          color: iconColor),
+                                      onPressed: () {
+                                        controller.getBackFromSearch();
+                                      },
+                                    )
+                                  : null,
                           title: controller.selected.value
                               ? Text(
-                              (controller.selectedChats.length).toString())
+                                  (controller.selectedChats.length).toString())
                               : controller.isSearching.value
-                              ? TextField(
-                            focusNode: controller.searchFocusNode,
-                            onChanged: (text) =>
-                                controller.onChange(text),
-                            controller: controller.search,
-                            autofocus: true,
-                            decoration: const InputDecoration(
-                                hintText: "Search...",
-                                border: InputBorder.none),
-                          )
-                              : null,
+                                  ? TextField(
+                                      focusNode: controller.searchFocusNode,
+                                      onChanged: (text) =>
+                                          controller.onChange(text),
+                                      controller: controller.search,
+                                      autofocus: true,
+                                      decoration: const InputDecoration(
+                                          hintText: "Search...",
+                                          border: InputBorder.none),
+                                    )
+                                  : null,
                           bottom: controller.isSearching.value
                               ? null
                               : TabBar(
-                              indicatorColor: buttonBgColor,
-                              labelColor: buttonBgColor,
-                              unselectedLabelColor: appbarTextColor,
-                              tabs: [
-                                Obx(() {
-                                  return tabItem(
-                                      title: "CHATS",
-                                      count:
-                                      controller.unreadCountString);
-                                }),
-                                tabItem(title: "CALLS", count: "0")
-                              ]),
+                                  indicatorColor: buttonBgColor,
+                                  labelColor: buttonBgColor,
+                                  unselectedLabelColor: appbarTextColor,
+                                  tabs: [
+                                      Obx(() {
+                                        return tabItem(
+                                            title: "CHATS",
+                                            count:
+                                                controller.unreadCountString);
+                                      }),
+                                      tabItem(title: "CALLS", count: "0")
+                                    ]),
                           actions: [
                             CustomActionBarIcons(
                                 availableWidth:
-                                MediaQuery
-                                    .of(context)
-                                    .size
-                                    .width * 0.80,
+                                    MediaQuery.of(context).size.width * 0.80,
                                 // 80 percent of the screen width
                                 actionWidth: 48,
                                 // default for IconButtons
@@ -246,7 +243,7 @@ class DashboardView extends GetView<DashboardController> {
                                   ),
                                   CustomAction(
                                     visibleWidget:
-                                    const Icon(Icons.mark_chat_read),
+                                        const Icon(Icons.mark_chat_read),
                                     overflowWidget: const Text("Mark as read"),
                                     showAsAction: controller.read.value
                                         ? ShowAsAction.never
@@ -258,9 +255,9 @@ class DashboardView extends GetView<DashboardController> {
                                   ),
                                   CustomAction(
                                     visibleWidget:
-                                    const Icon(Icons.mark_chat_unread),
+                                        const Icon(Icons.mark_chat_unread),
                                     overflowWidget:
-                                    const Text("Mark as unread"),
+                                        const Text("Mark as unread"),
                                     showAsAction: controller.unread.value
                                         ? ShowAsAction.never
                                         : ShowAsAction.gone,
@@ -284,7 +281,7 @@ class DashboardView extends GetView<DashboardController> {
                                     ),
                                     overflowWidget: const Text("Search"),
                                     showAsAction: controller.selected.value ||
-                                        controller.isSearching.value
+                                            controller.isSearching.value
                                         ? ShowAsAction.gone
                                         : ShowAsAction.always,
                                     keyValue: 'Search',
@@ -309,9 +306,9 @@ class DashboardView extends GetView<DashboardController> {
                                   CustomAction(
                                     visibleWidget: const Icon(Icons.group_add),
                                     overflowWidget:
-                                    const Text("New Group     "),
+                                        const Text("New Group     "),
                                     showAsAction: controller.selected.value ||
-                                        controller.isSearching.value
+                                            controller.isSearching.value
                                         ? ShowAsAction.gone
                                         : ShowAsAction.never,
                                     keyValue: 'New Group',
@@ -323,7 +320,7 @@ class DashboardView extends GetView<DashboardController> {
                                     visibleWidget: const Icon(Icons.settings),
                                     overflowWidget: const Text("Settings"),
                                     showAsAction: controller.selected.value ||
-                                        controller.isSearching.value
+                                            controller.isSearching.value
                                         ? ShowAsAction.gone
                                         : ShowAsAction.never,
                                     keyValue: 'Settings',
@@ -335,7 +332,7 @@ class DashboardView extends GetView<DashboardController> {
                                     visibleWidget: const Icon(Icons.web),
                                     overflowWidget: const Text("Web"),
                                     showAsAction: controller.selected.value ||
-                                        controller.isSearching.value
+                                            controller.isSearching.value
                                         ? ShowAsAction.gone
                                         : ShowAsAction.never,
                                     keyValue: 'Web',
@@ -372,18 +369,18 @@ class DashboardView extends GetView<DashboardController> {
           ),
           count != "0"
               ? Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 4.0),
-            child: CircleAvatar(
-              radius: 9,
-              child: Text(
-                count.toString(),
-                style: const TextStyle(
-                    fontSize: 12,
-                    color: Colors.white,
-                    fontFamily: 'sf_ui'),
-              ),
-            ),
-          )
+                  padding: const EdgeInsets.symmetric(horizontal: 4.0),
+                  child: CircleAvatar(
+                    radius: 9,
+                    child: Text(
+                      count.toString(),
+                      style: const TextStyle(
+                          fontSize: 12,
+                          color: Colors.white,
+                          fontFamily: 'sf_ui'),
+                    ),
+                  ),
+                )
               : const SizedBox.shrink()
         ],
       ),
@@ -394,143 +391,147 @@ class DashboardView extends GetView<DashboardController> {
     return controller.clearVisible.value
         ? recentSearchView(context)
         : Stack(
-      children: [
-        Obx(() {
-          return Visibility(
-              visible: !controller.recentChatLoading.value &&
-                  controller.recentChats.isEmpty &&
-                  controller.archivedChats.isEmpty,
-              child: emptyChat(context));
-        }),
-        Column(
-          children: [
-            Obx(() {
-              return Visibility(
-                visible: controller.archivedChats.isNotEmpty &&
-                    controller.archiveSettingEnabled
-                        .value /*&& controller.archivedCount.isNotEmpty*/,
-                child: ListItem(
-                  leading: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                    child: SvgPicture.asset(archive),
-                  ),
-                  title: const Text(
-                    "Archived",
-                    style: TextStyle(fontWeight: FontWeight.w500),
-                  ),
-                  trailing: controller.archivedCount != "0"
-                      ? Text(
-                    controller.archivedCount,
-                    style: const TextStyle(color: buttonBgColor),
-                  )
-                      : null,
-                  dividerPadding: EdgeInsets.zero,
-                  onTap: () {
-                    Get.toNamed(Routes.archivedChats);
-                  },
-                ),
-              );
-            }),
-            Expanded(
-                child: /*FutureBuilder(
+            children: [
+              Obx(() {
+                return Visibility(
+                    visible: !controller.recentChatLoading.value &&
+                        controller.recentChats.isEmpty &&
+                        controller.archivedChats.isEmpty,
+                    child: emptyChat(context));
+              }),
+              Column(
+                children: [
+                  Obx(() {
+                    return Visibility(
+                      visible: controller.archivedChats.isNotEmpty &&
+                          controller.archiveSettingEnabled
+                              .value /*&& controller.archivedCount.isNotEmpty*/,
+                      child: ListItem(
+                        leading: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                          child: SvgPicture.asset(archive),
+                        ),
+                        title: const Text(
+                          "Archived",
+                          style: TextStyle(fontWeight: FontWeight.w500),
+                        ),
+                        trailing: controller.archivedCount != "0"
+                            ? Text(
+                                controller.archivedCount,
+                                style: const TextStyle(color: buttonBgColor),
+                              )
+                            : null,
+                        dividerPadding: EdgeInsets.zero,
+                        onTap: () {
+                          Get.toNamed(Routes.archivedChats);
+                        },
+                      ),
+                    );
+                  }),
+                  Expanded(
+                      child: /*FutureBuilder(
                   future: controller.getRecentChatList(),
                   builder: (c, d) {*/
-                Obx(() {
-                  return controller.recentChatLoading.value
-                      ? const Center(
-                    child: CircularProgressIndicator(),
-                  )
-                      : ListView.builder(
-                      padding: EdgeInsets.zero,
-                      physics: const AlwaysScrollableScrollPhysics(),
-                      itemCount: controller.recentChats.length + 2,
-                      shrinkWrap: true,
-                      controller: controller.historyScrollController,
-                      itemBuilder: (BuildContext context, int index) {
-                        if (index < controller.recentChats.length) {
-                          var item = controller.recentChats[index];
-                          return Obx(() {
-                            return RecentChatItem(
-                              item: item,
-                              isSelected: controller.isSelected(index),
-                              typingUserid: controller
-                                  .typingUser(item.jid.checkNull()),
-                              onTap: () {
-                                if (controller.selected.value) {
-                                  controller
-                                      .selectOrRemoveChatfromList(index);
-                                } else {
-                                  controller
-                                      .toChatPage(item.jid.checkNull());
-                                }
-                              },
-                              onLongPress: () {
-                                controller.selected(true);
-                                controller
-                                    .selectOrRemoveChatfromList(index);
-                              },
-                              onAvatarClick: () {
-                                controller.getProfileDetail(
-                                    context, item, index);
-                              },
-                            );
-                          });
-                        } else if (index == controller.recentChats.length) {
-                          // Display loading indicator
-                          return Obx(() {
-                            return controller.isRecentHistoryLoading.value ? const Padding(
-                              padding: EdgeInsets.all(8.0),
-                              child: Center(
-                                child: SizedBox(
-                                    width: 24,
-                                    height: 24,
-                                    child: CircularProgressIndicator()),
-                              ),
-                            ) : const SizedBox.shrink();
-                          });
-                        } else {
-                          return Obx(() {
-                            return Visibility(
-                              visible: controller
-                                  .archivedChats.isNotEmpty &&
-                                  !controller.archiveSettingEnabled
-                                      .value /*&& controller.archivedCount.isNotEmpty*/,
-                              child: ListItem(
-                                leading: Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 16.0),
-                                  child: SvgPicture.asset(archive),
-                                ),
-                                title: const Text(
-                                  "Archived",
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.w500),
-                                ),
-                                trailing: controller
-                                    .archivedChats.isNotEmpty
-                                    ? Text(
-                                  controller.archivedChats.length
-                                      .toString(),
-                                  style: const TextStyle(
-                                      color: buttonBgColor),
-                                )
-                                    : null,
-                                dividerPadding: EdgeInsets.zero,
-                                onTap: () {
-                                  Get.toNamed(Routes.archivedChats);
-                                },
-                              ),
-                            );
-                          });
-                        }
-                      });
-                })
-              // }),
-            ),
-          ],
-        )
-      ],
-    );
+                          Obx(() {
+                    return controller.recentChatLoading.value
+                        ? const Center(
+                            child: CircularProgressIndicator(),
+                          )
+                        : ListView.builder(
+                            padding: EdgeInsets.zero,
+                            physics: const AlwaysScrollableScrollPhysics(),
+                            itemCount: controller.recentChats.length + 2,
+                            shrinkWrap: true,
+                            controller: controller.historyScrollController,
+                            itemBuilder: (BuildContext context, int index) {
+                              if (index < controller.recentChats.length) {
+                                var item = controller.recentChats[index];
+                                return Obx(() {
+                                  return RecentChatItem(
+                                    item: item,
+                                    isSelected: controller.isSelected(index),
+                                    typingUserid: controller
+                                        .typingUser(item.jid.checkNull()),
+                                    onTap: () {
+                                      if (controller.selected.value) {
+                                        controller
+                                            .selectOrRemoveChatfromList(index);
+                                      } else {
+                                        controller
+                                            .toChatPage(item.jid.checkNull());
+                                      }
+                                    },
+                                    onLongPress: () {
+                                      controller.selected(true);
+                                      controller
+                                          .selectOrRemoveChatfromList(index);
+                                    },
+                                    onAvatarClick: () {
+                                      controller.getProfileDetail(
+                                          context, item, index);
+                                    },
+                                  );
+                                });
+                              } else if (index ==
+                                  controller.recentChats.length) {
+                                // Display loading indicator
+                                return Obx(() {
+                                  return controller.isRecentHistoryLoading.value
+                                      ? const Padding(
+                                          padding: EdgeInsets.all(8.0),
+                                          child: Center(
+                                            child: SizedBox(
+                                                width: 24,
+                                                height: 24,
+                                                child:
+                                                    CircularProgressIndicator()),
+                                          ),
+                                        )
+                                      : const SizedBox.shrink();
+                                });
+                              } else {
+                                return Obx(() {
+                                  return Visibility(
+                                    visible: controller
+                                            .archivedChats.isNotEmpty &&
+                                        !controller.archiveSettingEnabled
+                                            .value /*&& controller.archivedCount.isNotEmpty*/,
+                                    child: ListItem(
+                                      leading: Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 16.0),
+                                        child: SvgPicture.asset(archive),
+                                      ),
+                                      title: const Text(
+                                        "Archived",
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.w500),
+                                      ),
+                                      trailing: controller
+                                              .archivedChats.isNotEmpty
+                                          ? Text(
+                                              controller.archivedChats.length
+                                                  .toString(),
+                                              style: const TextStyle(
+                                                  color: buttonBgColor),
+                                            )
+                                          : null,
+                                      dividerPadding: EdgeInsets.zero,
+                                      onTap: () {
+                                        Get.toNamed(Routes.archivedChats);
+                                      },
+                                    ),
+                                  );
+                                });
+                              }
+                            });
+                  })
+                      // }),
+                      ),
+                ],
+              )
+            ],
+          );
   }
 
   Widget recentSearchView(BuildContext context) {
@@ -656,27 +657,27 @@ class DashboardView extends GetView<DashboardController> {
                                         .isEmpty
                                         ? profile.nickName.checkNull()
                                         : profile.name.checkNull(),*/
-                                  ),
+                                      ),
                                   isGroup: profile.isGroupProfile.checkNull(),
                                   blocked: profile.isBlockedMe.checkNull() ||
                                       profile.isAdminBlocked.checkNull(),
                                   unknown:
-                                  (!profile.isItSavedContact.checkNull() ||
-                                      profile.isDeletedContact()),
+                                      (!profile.isItSavedContact.checkNull() ||
+                                          profile.isDeletedContact()),
                                 ),
                                 unreadMessageCount.toString() != "0"
                                     ? Positioned(
-                                    right: 0,
-                                    child: CircleAvatar(
-                                      radius: 8,
-                                      child: Text(
-                                        unreadMessageCount.toString(),
-                                        style: const TextStyle(
-                                            fontSize: 9,
-                                            color: Colors.white,
-                                            fontFamily: 'sf_ui'),
-                                      ),
-                                    ))
+                                        right: 0,
+                                        child: CircleAvatar(
+                                          radius: 8,
+                                          child: Text(
+                                            unreadMessageCount.toString(),
+                                            style: const TextStyle(
+                                                fontSize: 9,
+                                                color: Colors.white,
+                                                fontFamily: 'sf_ui'),
+                                          ),
+                                        ))
                                     : const SizedBox(),
                               ],
                             )),
@@ -710,10 +711,10 @@ class DashboardView extends GetView<DashboardController> {
                                           fontWeight: FontWeight.w600,
                                           fontFamily: 'sf_ui',
                                           color:
-                                          unreadMessageCount.toString() !=
-                                              "0"
-                                              ? buttonBgColor
-                                              : textColor),
+                                              unreadMessageCount.toString() !=
+                                                      "0"
+                                                  ? buttonBgColor
+                                                  : textColor),
                                     ),
                                   ),
                                 ],
@@ -722,19 +723,19 @@ class DashboardView extends GetView<DashboardController> {
                                 children: [
                                   unreadMessageCount.toString() != "0"
                                       ? const Padding(
-                                    padding: EdgeInsets.only(right: 8.0),
-                                    child: CircleAvatar(
-                                      radius: 4,
-                                      backgroundColor: Colors.green,
-                                    ),
-                                  )
+                                          padding: EdgeInsets.only(right: 8.0),
+                                          child: CircleAvatar(
+                                            radius: 4,
+                                            backgroundColor: Colors.green,
+                                          ),
+                                        )
                                       : const SizedBox(),
                                   Expanded(
                                     child: Row(
                                       children: [
                                         Padding(
                                           padding:
-                                          const EdgeInsets.only(right: 8.0),
+                                              const EdgeInsets.only(right: 8.0),
                                           child: getMessageIndicator(
                                               item.messageStatus.value
                                                   .checkNull(),
@@ -746,53 +747,51 @@ class DashboardView extends GetView<DashboardController> {
                                         item.isMessageRecalled.value
                                             ? const SizedBox.shrink()
                                             : forMessageTypeIcon(
-                                            item.messageType,
-                                            item.mediaChatMessage),
+                                                item.messageType,
+                                                item.mediaChatMessage),
                                         SizedBox(
                                           width: forMessageTypeString(
-                                              item.messageType,
-                                              content: item
-                                                  .mediaChatMessage
-                                                  ?.mediaCaptionText
-                                                  .checkNull()) !=
-                                              null
+                                                      item.messageType,
+                                                      content: item
+                                                          .mediaChatMessage
+                                                          ?.mediaCaptionText
+                                                          .checkNull()) !=
+                                                  null
                                               ? 3.0
                                               : 0.0,
                                         ),
                                         Expanded(
                                           child: forMessageTypeString(
-                                              item.messageType,
-                                              content: item
-                                                  .mediaChatMessage
-                                                  ?.mediaCaptionText
-                                                  .checkNull()) ==
-                                              null
+                                                      item.messageType,
+                                                      content: item
+                                                          .mediaChatMessage
+                                                          ?.mediaCaptionText
+                                                          .checkNull()) ==
+                                                  null
                                               ? spannableText(
-                                            item.messageTextContent
-                                                .toString(),
-                                            controller.search.text,
-                                            Theme
-                                                .of(context)
-                                                .textTheme
-                                                .titleSmall,
-                                          )
+                                                  item.messageTextContent
+                                                      .toString(),
+                                                  controller.search.text,
+                                                  Theme.of(context)
+                                                      .textTheme
+                                                      .titleSmall,
+                                                )
                                               : Text(
-                                            forMessageTypeString(
-                                                item.messageType,
-                                                content: item
-                                                    .mediaChatMessage
-                                                    ?.mediaCaptionText
-                                                    .checkNull()) ??
-                                                item.messageTextContent
-                                                    .toString(),
-                                            style: Theme
-                                                .of(context)
-                                                .textTheme
-                                                .titleSmall,
-                                            maxLines: 1,
-                                            overflow:
-                                            TextOverflow.ellipsis,
-                                          ),
+                                                  forMessageTypeString(
+                                                          item.messageType,
+                                                          content: item
+                                                              .mediaChatMessage
+                                                              ?.mediaCaptionText
+                                                              .checkNull()) ??
+                                                      item.messageTextContent
+                                                          .toString(),
+                                                  style: Theme.of(context)
+                                                      .textTheme
+                                                      .titleSmall,
+                                                  maxLines: 1,
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                ),
                                         ),
                                       ],
                                     ),
@@ -830,12 +829,12 @@ class DashboardView extends GetView<DashboardController> {
                 var item = snapshot.data;
                 return item != null
                     ? RecentChatItem(
-                  item: item,
-                  spanTxt: controller.search.text,
-                  onTap: () {
-                    controller.toChatPage(item.jid.checkNull());
-                  },
-                )
+                        item: item,
+                        spanTxt: controller.search.text,
+                        onTap: () {
+                          controller.toChatPage(item.jid.checkNull());
+                        },
+                      )
                     : const SizedBox();
               });
         });
@@ -854,10 +853,7 @@ class DashboardView extends GetView<DashboardController> {
           Text(
             'No new messages',
             textAlign: TextAlign.center,
-            style: Theme
-                .of(context)
-                .textTheme
-                .titleMedium,
+            style: Theme.of(context).textTheme.titleMedium,
           ),
           const SizedBox(
             height: 8,
@@ -865,10 +861,7 @@ class DashboardView extends GetView<DashboardController> {
           Text(
             'Any new messages will appear here',
             textAlign: TextAlign.center,
-            style: Theme
-                .of(context)
-                .textTheme
-                .titleSmall,
+            style: Theme.of(context).textTheme.titleSmall,
           ),
         ],
       ),
@@ -894,10 +887,7 @@ class DashboardView extends GetView<DashboardController> {
           Text(
             'No call log history found',
             textAlign: TextAlign.center,
-            style: Theme
-                .of(context)
-                .textTheme
-                .titleMedium,
+            style: Theme.of(context).textTheme.titleMedium,
           ),
           const SizedBox(
             height: 8,
@@ -905,10 +895,7 @@ class DashboardView extends GetView<DashboardController> {
           Text(
             'Any new calls will appear here',
             textAlign: TextAlign.center,
-            style: Theme
-                .of(context)
-                .textTheme
-                .titleSmall,
+            style: Theme.of(context).textTheme.titleSmall,
           ),
         ],
       ),

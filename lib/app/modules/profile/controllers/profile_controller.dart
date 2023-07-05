@@ -407,6 +407,20 @@ class ProfileController extends GetxController {
 
   Future<bool> validMobileNumber(String text)async{
     var m = text.contains("+") ? text : "+$text";
+    /*var formattingMobileNumber = text;
+    ///Added this function, due to the mobile number is Android and iOS is receiving without Country Code in Response
+    if (text.startsWith("+") && text.substring(1).startsWith(SessionManagement.getCountryCode() ?? "")) {
+      ///No need to append anything as the input contains Mobile Number with Country Code
+      formattingMobileNumber = formattingMobileNumber.replaceFirst("+${SessionManagement.getCountryCode()}", "");
+    }else{
+      if (text.substring(0).startsWith(SessionManagement.getCountryCode() ?? "")) {
+        ///if input have country code and mobile number and doesn't contain (+), we are appending it here
+        formattingMobileNumber = formattingMobileNumber.replaceFirst("${SessionManagement.getCountryCode()}", "");
+      } else {
+        ///Else we are appending both (+) and Country Code with the input
+        formattingMobileNumber = text;
+      }
+    }*/
     FlutterLibphonenumber().init();
     var formatNumberSync = FlutterLibphonenumber().formatNumberSync(m);
     try {
