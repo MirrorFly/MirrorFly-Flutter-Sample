@@ -209,6 +209,8 @@ class NotificationBuilder {
     // var isVibrate = SessionManagement.getVibration();
     // var isRing = SessionManagement.getNotificationSound();
     debugPrint("notificationUri--> $notificationSounUri");
+    debugPrint("notificationId--> $notificationId");
+    debugPrint("messageId.hashCode--> ${messageId.hashCode}");
     var androidNotificationDetails = AndroidNotificationDetails(
         channel.id, channel.name, channelDescription: channel.description,
         importance: Importance.max,
@@ -237,7 +239,6 @@ class NotificationBuilder {
         sound: notificationUri,
         presentBadge: true,
         badgeNumber: unReadMessageCount,
-        threadIdentifier: messageId.toString(),
         presentSound: true,
         presentAlert: true
     );
@@ -251,7 +252,7 @@ class NotificationBuilder {
         ?.createNotificationChannel(
         channel);
     await flutterLocalNotificationsPlugin.show(
-        notificationId, title, lastMessageContent, notificationDetails,
+        messageId.hashCode, title, lastMessageContent, notificationDetails,
         payload: chatJid);
   }
   

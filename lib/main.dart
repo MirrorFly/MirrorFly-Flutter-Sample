@@ -1,5 +1,6 @@
 // import 'package:firebase_messaging/firebase_messaging.dart';
 
+
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 
@@ -39,6 +40,19 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
       iOSContainerID: 'group.com.mirrorfly.qa');
   debugPrint("Handling a background message: ${message.messageId}");
   PushNotifications.onMessage(message);
+  // var iosNotificationDetail = const DarwinNotificationDetails(
+  //     categoryIdentifier: darwinNotificationCategoryPlain,
+  //     presentBadge: true,
+  //     badgeNumber: 2,
+  //     presentSound: true,
+  //     presentAlert: true
+  // );
+  //
+  // var notificationDetails = NotificationDetails(
+  //     iOS: iosNotificationDetail);
+  // await flutterLocalNotificationsPlugin.show(
+  //     Random().nextInt(1000), "title", "lastMessageContent", notificationDetails,
+  //     payload: "chatJid");
 }
 bool shouldUseFirebaseEmulator = false;
 // dynamic nonChatUsers = [];

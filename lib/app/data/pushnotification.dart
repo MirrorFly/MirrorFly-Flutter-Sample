@@ -67,6 +67,7 @@ class PushNotifications {
     FirebaseMessaging.instance.getToken().then((value) {
       if(value!=null) {
         mirrorFlyLog("firebase_token", value);
+        print("firebase_token_1 $value");
         SessionManagement.setToken(value);
       }
     }).catchError((er){
@@ -116,10 +117,10 @@ class PushNotifications {
   }
 
   static void onMessage(RemoteMessage message) {
-    debugPrint('RemoteMessage ${message.toMap()}');
-    debugPrint('Message data: ${message.data}');
+    print('#Mirrorfly Notification ->  RemoteMessage ${message.toMap()}');
+    print('#Mirrorfly Notification ->  Message data: ${message.data}');
     if (message.notification != null) {
-      debugPrint('Message also contained a notification: ${message.notification}');
+      print('#Mirrorfly Notification ->  Message also contained a notification: ${message.notification}');
     }
     // If `onMessage` is triggered with a notification, construct our own
     // local notification to show to users using the created channel.
@@ -179,7 +180,7 @@ class PushNotifications {
     if(notificationData.isNotEmpty) {
       WidgetsFlutterBinding.ensureInitialized();
       await Mirrorfly.handleReceivedMessage(notificationData).then((value) async {
-        mirrorFlyLog("notification message", value.toString());
+        mirrorFlyLog("#Mirrorfly Notification -> notification message", value.toString());
         var data = notificationModelFromJson(value.toString());
         if(data.chatMessage!=null) {
           NotificationBuilder.createNotification(data.chatMessage!);

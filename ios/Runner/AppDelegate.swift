@@ -52,6 +52,12 @@ import Firebase
       
       return super.application(application, didFinishLaunchingWithOptions: launchOptions)
   }
+//    override func application(_ application: UIApplication, performFetchWithCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
+//        // Process any pending logs or perform necessary tasks
+//        // ...
+//        
+//        completionHandler(.noData)
+//    }
 
    
     
@@ -84,7 +90,7 @@ extension AppDelegate {
 //
 //    override func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
 //        //Mark:- Added for swizzling
-//        Auth.auth().setAPNSToken(deviceToken, type: .unknown)
+////        Auth.auth().setAPNSToken(deviceToken, type: .unknown)
 //
 //        print("###didRegisterForRemoteNotificationsWithDeviceToken")
 //
@@ -95,6 +101,7 @@ extension AppDelegate {
 //        }
 //        print("#token appDelegate \(token)")
 //        print("#token application DT => \(token)")
+//        NSLog("Push token --> \(token)")
 ////        VOIPManager.sharedInstance.saveAPNSToken(token: token)
 ////        Utility.saveInPreference(key: googleToken, value: token)
 ////        VOIPManager.sharedInstance.updateDeviceToken()
