@@ -717,6 +717,7 @@ class Constants {
   static const String groupCall = "GroupCall";
 
 
+  static const String none = "none";
   static const String receiver = "receiver";
   static const String speaker = "speaker";
   static const String headset = "headset";

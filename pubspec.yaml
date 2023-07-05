@@ -19,7 +19,7 @@ dependencies:
   intl: ^0.17.0 #datetime
   package_info_plus: ^4.0.2 #package info
   image_picker: ^0.8.6
-  permission_handler: ^10.2.0
+  permission_handler: ^10.4.1
 #  emoji_picker_flutter: ^1.4.0
   emoji_picker_flutter: ^1.6.1
   image_cropping: ^0.0.13 #crop image
@@ -66,7 +66,7 @@ dependencies:
   device_info_plus: ^8.1.0
 #  mirrorfly_plugin: ^0.0.2
   mirrorfly_plugin:
-    path: ../p078-mirrorfly-flutter-plugin
+    path: p078-mirrorfly-flutter-plugin
 
 
 dev_dependencies: 

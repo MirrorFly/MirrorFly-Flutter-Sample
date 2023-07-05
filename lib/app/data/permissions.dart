@@ -123,26 +123,55 @@ class AppPermission {
     }
   }
 
-  static Future<bool> askCallPermissions() async {
-    final audio = await Permission.audio.status;
-    final phone = await Permission.phone.status;
-    final bluetooth = await Permission.bluetoothConnect.status;
+  static Future<bool> askAudioCallPermissions() async {
+    final speech = await Permission.speech.status;//RECORD_AUDIO
+    final phone = await Permission.phone.status;//READ_PHONE_STATE
+    final bluetoothConnect = await Permission.bluetoothConnect.status;//BLUETOOTH_CONNECT
     const newPermission = [
-      Permission.audio,
+      Permission.speech,
       Permission.phone,
       Permission.bluetoothConnect,
     ];
     if(
-    (audio != PermissionStatus.granted  && audio != PermissionStatus.permanentlyDenied) ||
+    (speech != PermissionStatus.granted  && speech != PermissionStatus.permanentlyDenied) ||
     (phone != PermissionStatus.granted  && phone != PermissionStatus.permanentlyDenied) ||
-    (bluetooth != PermissionStatus.granted  && bluetooth != PermissionStatus.permanentlyDenied)
+    (bluetoothConnect != PermissionStatus.granted  && bluetoothConnect != PermissionStatus.permanentlyDenied)
     ){
       var newp = await newPermission.request();
-      PermissionStatus? audio_ = newp[Permission.audio];
+      PermissionStatus? speech_ = newp[Permission.speech];
       PermissionStatus? phone_ = newp[Permission.phone];
       PermissionStatus? bluetoothConnect_ = newp[Permission.bluetoothConnect];
       // var audio = await newPermission[2].isGranted;
-      return (audio_!.isGranted && phone_!.isGranted && bluetoothConnect_!.isGranted);
+      return (speech_!.isGranted && phone_!.isGranted && bluetoothConnect_!.isGranted);
+    }else{
+      return (speech.isGranted && phone.isGranted && bluetoothConnect.isGranted);
+    }
+  }
+
+  static Future<bool> askVideoCallPermissions() async {
+    final speech = await Permission.speech.status;//RECORD_AUDIO
+    final phone = await Permission.phone.status;//READ_PHONE_STATE
+    final bluetooth = await Permission.bluetoothConnect.status;//BLUETOOTH_CONNECT
+    final camera = await Permission.camera.status;//BLUETOOTH_CONNECT
+    const newPermission = [
+      Permission.speech,
+      Permission.phone,
+      Permission.camera,
+      Permission.bluetoothConnect,
+    ];
+    if(
+    (speech != PermissionStatus.granted  && speech != PermissionStatus.permanentlyDenied) ||
+        (phone != PermissionStatus.granted  && phone != PermissionStatus.permanentlyDenied) ||
+        (camera != PermissionStatus.granted  && camera != PermissionStatus.permanentlyDenied) ||
+        (bluetooth != PermissionStatus.granted  && bluetooth != PermissionStatus.permanentlyDenied)
+    ){
+      var newp = await newPermission.request();
+      PermissionStatus? speech_ = newp[Permission.speech];
+      PermissionStatus? phone_ = newp[Permission.phone];
+      PermissionStatus? camera_ = newp[Permission.camera];
+      PermissionStatus? bluetoothConnect_ = newp[Permission.bluetoothConnect];
+      // var audio = await newPermission[2].isGranted;
+      return (speech_!.isGranted && phone_!.isGranted &&camera_!.isGranted && bluetoothConnect_!.isGranted);
     }
     return false;
   }
