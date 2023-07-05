@@ -5,7 +5,7 @@ import 'package:mirror_fly_demo/app/call_modules/outgoing_call/call_controller.d
 import 'package:mirror_fly_demo/app/call_modules/ripple_animation_view.dart';
 import 'package:mirror_fly_demo/app/common/widgets.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
-import 'package:mirrorfly_plugin/mirrorfly.dart';
+import 'package:mirrorfly_plugin/model/user_list_model.dart';
 
 import '../../common/constants.dart';
 
@@ -28,48 +28,50 @@ class OutGoingCallView extends GetView<CallController> {
             children: [
               Column(
                 children: [
-                  Expanded(child: Column(children: [
-
-                    const SizedBox(
-                      height: 10,
-                    ),
-                    Obx(() {
-                      return Text(
-                        controller.callStatus.value,
-                        style: const TextStyle(
-                            color: AppColors.callerStatus,
-                            fontWeight: FontWeight.w100,
-                            fontSize: 14),
-                      );
-                    }),
-                    const SizedBox(
-                      height: 16,
-                    ),
-                    Obx(() {
-                      return Text(
-                        controller.calleeName.value,
-                        style: const TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.w500,
-                            fontSize: 18),
-                      );
-                    }),
-                    Obx(() {
-                      return RipplesAnimation(
-                        onPressed: () {},
-                        child: buildProfileImage(Profile(
-                            name: controller.calleeName.value,
-                            nickName: "",
-                            isGroupProfile: false,
-                            image: '',
-                            isBlockedMe: false,
-                            isAdminBlocked: false,
-                            isItSavedContact: true)),
-                      );
-                    }),
-                  ],
+                  Expanded(
+                      child: Column(
+                    children: [
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      Obx(() {
+                        return Text(
+                          controller.callStatus.value,
+                          style: const TextStyle(
+                              color: AppColors.callerStatus,
+                              fontWeight: FontWeight.w100,
+                              fontSize: 14),
+                        );
+                      }),
+                      const SizedBox(
+                        height: 16,
+                      ),
+                      Obx(() {
+                        return Text(
+                          controller.calleeName.value,
+                          style: const TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.w500,
+                              fontSize: 18),
+                        );
+                      }),
+                      Obx(() {
+                        return RipplesAnimation(
+                          onPressed: () {},
+                          child: buildProfileImage(Profile(
+                              name: controller.calleeName.value,
+                              nickName: "",
+                              isGroupProfile: false,
+                              image: '',
+                              isBlockedMe: false,
+                              isAdminBlocked: false,
+                              isItSavedContact: true)),
+                        );
+                      }),
+                    ],
                   )),
                   Obx(() {
+                    debugPrint("audio item changed ${controller.audioOutputType.value}");
                     return Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 50),
                       child: Row(
@@ -78,26 +80,26 @@ class OutGoingCallView extends GetView<CallController> {
                         children: [
                           controller.muted.value
                               ? FloatingActionButton(
-                            heroTag: "mute",
-                            elevation: 0,
-                            backgroundColor: Colors.white,
-                            onPressed: () => controller.muteAudio(),
-                            child: SvgPicture.asset(
-                              muteActive,
-                            ),
-                          )
+                                  heroTag: "mute",
+                                  elevation: 0,
+                                  backgroundColor: Colors.white,
+                                  onPressed: () => controller.muteAudio(),
+                                  child: SvgPicture.asset(
+                                    muteActive,
+                                  ),
+                                )
                               : FloatingActionButton(
-                            heroTag: "mute",
-                            elevation: 0,
-                            backgroundColor:
-                            Colors.white.withOpacity(0.3),
-                            onPressed: () => controller.muteAudio(),
-                            child: SvgPicture.asset(
-                              muteInactive,
-                            ),
-                          ),
+                                  heroTag: "mute",
+                                  elevation: 0,
+                                  backgroundColor:
+                                      Colors.white.withOpacity(0.3),
+                                  onPressed: () => controller.muteAudio(),
+                                  child: SvgPicture.asset(
+                                    muteInactive,
+                                  ),
+                                ),
                           FloatingActionButton(
-                            heroTag: "speaker",
+                            heroTag: "video",
                             elevation: 0,
                             backgroundColor: controller.videoMuted.value
                                 ? Colors.white
@@ -110,13 +112,14 @@ class OutGoingCallView extends GetView<CallController> {
                           FloatingActionButton(
                             heroTag: "speaker",
                             elevation: 0,
-                            backgroundColor: controller.speakerOff.value
+                            backgroundColor: controller.audioOutputType.value == Constants.receiver
                                 ? Colors.white.withOpacity(0.3)
                                 : Colors.white,
                             onPressed: () => controller.changeSpeaker(),
-                            child: controller.speakerOff.value
-                                ? SvgPicture.asset(speakerInactive)
-                                : SvgPicture.asset(speakerActive),
+                            child: controller.audioOutputType.value == Constants.receiver ? SvgPicture.asset(speakerInactive)
+                                : controller.audioOutputType.value == Constants.speaker ? SvgPicture.asset(speakerActive)
+                                : controller.audioOutputType.value == Constants.bluetooth ? const Icon(Icons.bluetooth)
+                                : controller.audioOutputType.value == Constants.headset ? const Icon(Icons.headphones_sharp) : const Icon(Icons.speaker_phone),
                           ),
                         ],
                       ),
@@ -131,7 +134,7 @@ class OutGoingCallView extends GetView<CallController> {
                             shape: const StadiumBorder(),
                             backgroundColor: AppColors.endButton),
                         onPressed: () {
-                          // controller.declineCall();
+                          controller.declineCall();
                         },
                         child: SvgPicture.asset(
                           callEndButton,
@@ -198,17 +201,17 @@ class OutGoingCallView extends GetView<CallController> {
       clipOval: true,
       errorWidget: item.isGroupProfile!
           ? ClipOval(
-        child: Image.asset(
-          groupImg,
-          height: 48,
-          width: 48,
-          fit: BoxFit.cover,
-        ),
-      )
+              child: Image.asset(
+                groupImg,
+                height: 48,
+                width: 48,
+                fit: BoxFit.cover,
+              ),
+            )
           : ProfileTextImage(
-        text: item.getName(),
-        radius: 50,
-      ),
+              text: item.getName(),
+              radius: 50,
+            ),
       isGroup: item.isGroupProfile.checkNull(),
       blocked: item.isBlockedMe.checkNull() || item.isAdminBlocked.checkNull(),
       unknown: (!item.isItSavedContact.checkNull() || item.isDeletedContact()),

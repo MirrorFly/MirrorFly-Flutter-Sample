@@ -100,6 +100,7 @@ class AppPages {
   static const contactSync = Routes.contactSync;
   static const chat = Routes.chat;
   static const adminBlocked = Routes.adminBlocked;
+  static const outgoingCall = Routes.outGoingCallView;
 
   static final routes = [
     GetPage(

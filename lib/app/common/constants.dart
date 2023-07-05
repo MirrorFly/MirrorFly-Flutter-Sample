@@ -54,6 +54,9 @@ class AppColors{
 const String callEndButton = 'assets/calls/call_end_button.svg';
 const String speakerInactive = 'assets/calls/speaker_inactive.svg';
 const String speakerActive = 'assets/calls/speaker_active.svg';
+const String speakerBluetooth = 'assets/calls/speaker_active.svg';
+const String speakerHeadset = 'assets/calls/speaker_active.svg';
+
 const String videoInactive = 'assets/calls/video_inactive.svg';
 const String videoActive = 'assets/calls/video_active.svg';
 const String muteActive = 'assets/calls/mute_active.svg';
@@ -712,6 +715,14 @@ class Constants {
 
   static const String oneToOne = "OneToOne";
   static const String groupCall = "GroupCall";
+
+
+  static const String receiver = "receiver";
+  static const String speaker = "speaker";
+  static const String headset = "headset";
+  static const String bluetooth = "bluetooth";
+
+
 }
 
 Future<void> launchWeb(String url) async {
