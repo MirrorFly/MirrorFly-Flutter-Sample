@@ -55,8 +55,18 @@
         <meta-data
             android:name="flutterEmbedding"
             android:value="2" />
-       <meta-data android:name="com.google.android.geo.API_KEY"
-           android:value="AIzaSyCfG5u1-XDZhWD8vOZGK5hTKyqsVOjHSSM"/>
+       <!--<meta-data android:name="com.google.android.geo.API_KEY"
+           android:value="AIzaSyCfG5u1-XDZhWD8vOZGK5hTKyqsVOjHSSM"/>-->
+       <meta-data
+           android:name="com.google.android.geo.API_KEY"
+           android:value="AIzaSyCe4m08a3eMvInU8LBxAjAyEIyG-Kj_Ayw" />
+
+       <meta-data
+           android:name="com.google.android.geo.API_THUMP_KEY"
+           android:value="AIzaSyBaKkrQnLT4nacpKblIE5d4QK6GpaX5luQ" />
+       <meta-data
+           android:name="com.google.android.geo.API_TRANSLATE_KEY"
+           android:value="AIzaSyCdwzAZR6tx8KB-2dMn0KzSI1V0LpsYdH0" />
        <meta-data
            android:name="io.flutter.app.android.SplashScreenUntilFirstFrame"
            android:value="true" />
