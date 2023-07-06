@@ -153,15 +153,17 @@ class DashboardController extends FullLifeCycleController
 
   toChatPage(String jid) {
     if (jid.isNotEmpty) {
+      Get.toNamed(Routes.chat, parameters: {"chatJid":jid});
       // Helper.progressLoading();
-      getProfileDetails(jid).then((value) {
+      /*getProfileDetails(jid).then((value) {
         if (value.jid != null) {
           Helper.hideLoading();
+          // recentChats.firstWhere((element) => element.jid==jid).isConversationUnRead=false;
           // debugPrint("Dashboard Profile===>$value");
           var profile = value;//profiledata(value.toString());
           Get.toNamed(Routes.chat, arguments: profile);
         }
-      });
+      });*/
       // SessionManagement.setChatJid(jid);
       // Get.toNamed(Routes.chat);
     }

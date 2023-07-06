@@ -132,6 +132,9 @@ class ChatController extends FullLifeCycleController
         starredChatMessageId = Get.parameters['messageId'] as String;
       }
     }
+    if(Get.parameters['chatJid'] != null){
+      userJid = Get.parameters['chatJid'] as String;
+    }
     if (userJid.isEmpty) {
       var profileDetail = Get.arguments as Profile;
       profile_(profileDetail);
