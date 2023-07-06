@@ -65,7 +65,7 @@ dependencies:
   device_info_plus: ^8.1.0
 #  mirrorfly_plugin: ^0.0.2
   mirrorfly_plugin:
-    path: ../p078-mirrorfly-flutter-plugin
+    path: p078-mirrorfly-flutter-plugin
 
 
 dev_dependencies: 
