@@ -143,8 +143,8 @@ class Helper {
   }
 
   static String getMapImageUri(double latitude, double longitude) {
-    var key = Constants.googleMapKey;
-    return ("https://maps.googleapis.com/maps/api/staticmap?center=$latitude,$longitude&zoom=13&size=300x200&markers=color:red|$latitude,$longitude&key=$key");
+    var googleMapKey = "AIzaSyBaKkrQnLT4nacpKblIE5d4QK6GpaX5luQ";//Env.googleMapKey;//Constants.googleMapKey;
+    return ("https://maps.googleapis.com/maps/api/staticmap?center=$latitude,$longitude&zoom=13&size=300x200&markers=color:red|$latitude,$longitude&key=$googleMapKey");
   }
 
   static int getColourCode(String name) {
