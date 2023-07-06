@@ -277,7 +277,7 @@ class Constants {
   static const String package = 'com.mirrorfly.uikit_flutter';
   static const String webChatLogin = 'https://webchat-uikit-qa.contus.us/';
   static const String tag = 'Contus Fly';
-  static const String googleMapKey = "AIzaSyBaKkrQnLT4nacpKblIE5d4QK6GpaX5luQ";
+  static const String googleMapKey = "AIzaSyBaKkrQnLT4nacpKblIE5d4QK6GpaX5luQ";//NOSONAR
   static const String googleMapPackageName = "com.google.android.apps.maps";
   static const String packageName = "com.contus.flycommons.";
 
@@ -627,7 +627,7 @@ class Constants {
   static const String googleTranslationLanguageDoubleTap =
       "Double Tap the received messages to translate";
   static const String googleTranslateKey =
-      "AIzaSyCdwzAZR6tx8KB-2dMn0KzSI1V0LpsYdH0";
+      "AIzaSyCdwzAZR6tx8KB-2dMn0KzSI1V0LpsYdH0";//NOSONAR
 
   static const String editBusyStatus = "Edit Busy Status Message";
   static const String yourBusyStatus = "Your Busy Status";
