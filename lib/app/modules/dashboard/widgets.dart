@@ -338,7 +338,7 @@ class RecentChatItem extends StatelessWidget {
                 (item.isGroup.checkNull() &&
                         !chat.isMessageSentByMe.checkNull() &&
                         (chat.messageType != Constants.mNotification ||
-                            chat.messageTextContent == " added you") && forMessageTypeString(chat.messageType,
+                            chat.messageTextContent == " added you") || forMessageTypeString(chat.messageType,
                     content: chat.messageTextContent.checkNull()).checkNull().isNotEmpty)
                     ? Text(
                         "${chat.senderUserName.checkNull()}:",
