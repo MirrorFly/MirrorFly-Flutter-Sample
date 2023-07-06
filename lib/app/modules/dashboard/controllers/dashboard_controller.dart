@@ -76,7 +76,7 @@ class DashboardController extends FullLifeCycleController
     ever(recentChats, (callback) => unReadCount());
     archivedChats.bindStream(archivedChats.stream);
     ever(archivedChats, (callback) => archivedChatCount());
-    // getRecentChatList();
+    getRecentChatList();
     getArchivedChatsList();
     // checkArchiveSetting();
     userlistScrollController.addListener(_scrollListener);
@@ -126,6 +126,7 @@ class DashboardController extends FullLifeCycleController
     Mirrorfly.getRecentChatListHistory(pageNo: recentChatPage).then((value) async {
       // String recentList = value.replaceAll('\n', '\\n');
       // debugPrint(recentList);
+      mirrorFlyLog("getRecentChatListHistory", value);
       var data = await compute(recentChatFromJson, value.toString());
       recentChats.clear();
       recentChats(data.data!);
@@ -881,6 +882,19 @@ class DashboardController extends FullLifeCycleController
       // updateRecentChat(chatMessageModel.chatUserJid);
       recentChats[index].lastMessageStatus = chatMessageModel.messageStatus.value;
       recentChats.refresh();
+    }else{
+      updateRecentChat(chatMessageModel.chatUserJid);
+    }
+  }
+
+  void setConversationAsRead(String jid){
+    mirrorFlyLog("setConversationAsRead", "setConversationAsRead");
+    var index = recentChats.indexWhere((element) => element.jid==jid);
+    if(!index.isNegative) {
+      if (recentChats[index].isConversationUnRead.checkNull()) {
+        recentChats[index].isConversationUnRead = false;
+        recentChats.refresh();
+      }
     }
   }
 

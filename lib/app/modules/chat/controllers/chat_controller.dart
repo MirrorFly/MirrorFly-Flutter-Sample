@@ -14,6 +14,7 @@ import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:mirror_fly_demo/app/common/de_bouncer.dart';
+import 'package:mirror_fly_demo/app/common/main_controller.dart';
 import 'package:mirror_fly_demo/app/data/session_management.dart';
 import 'package:mirror_fly_demo/app/data/permissions.dart';
 import 'package:path_provider/path_provider.dart';
@@ -241,6 +242,7 @@ class ChatController extends FullLifeCycleController
     });
 
     Mirrorfly.setOnGoingChatUser(profile.jid!);
+    setMarkConversationRead();
     SessionManagement.setCurrentChatJID(profile.jid.checkNull());
     getChatHistory();
     // compute(getChatHistory, profile.jid);
@@ -1740,6 +1742,7 @@ class ChatController extends FullLifeCycleController
           checkAdminBlocked();
           memberOfGroup();
           Mirrorfly.setOnGoingChatUser(profile.jid!);
+          setMarkConversationRead();
           SessionManagement.setCurrentChatJID(profile.jid.checkNull());
           getChatHistory();
           sendReadReceipt();
@@ -1879,6 +1882,7 @@ class ChatController extends FullLifeCycleController
           checkAdminBlocked();
           memberOfGroup();
           Mirrorfly.setOnGoingChatUser(profile.jid!);
+          setMarkConversationRead();
           SessionManagement.setCurrentChatJID(profile.jid.checkNull());
           getChatHistory();
           sendReadReceipt();
@@ -2340,6 +2344,7 @@ class ChatController extends FullLifeCycleController
         checkAdminBlocked();
         memberOfGroup();
         Mirrorfly.setOnGoingChatUser(profile.jid!);
+        setMarkConversationRead();
         SessionManagement.setCurrentChatJID(profile.jid.checkNull());
         getChatHistory();
         sendReadReceipt();
@@ -2566,7 +2571,13 @@ class ChatController extends FullLifeCycleController
       }
     }
     Mirrorfly.setOnGoingChatUser(profile.jid.checkNull());
+    setMarkConversationRead();
     SessionManagement.setCurrentChatJID(profile.jid.checkNull());
+  }
+
+  void setMarkConversationRead(){
+    mirrorFlyLog("setConversationAsRead", "chat");
+    Get.find<MainController>().setConversationAsRead(profile.jid.checkNull());
   }
 
   @override

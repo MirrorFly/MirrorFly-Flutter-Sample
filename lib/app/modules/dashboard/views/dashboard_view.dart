@@ -25,7 +25,7 @@ class DashboardView extends GetView<DashboardController> {
         debugPrint('onFocusGained');
         // controller.initListeners();
         controller.checkArchiveSetting();
-        controller.getRecentChatList();
+        // controller.getRecentChatList();
       },
       child: WillPopScope(
         onWillPop: () {

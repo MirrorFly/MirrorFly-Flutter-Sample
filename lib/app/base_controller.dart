@@ -207,6 +207,12 @@ abstract class BaseController {
 
   }
 
+  void setConversationAsRead(String jid) {
+    if (Get.isRegistered<DashboardController>()) {
+      Get.find<DashboardController>().setConversationAsRead(jid);
+    }
+  }
+
   void onMediaStatusUpdated(event) {
     ChatMessageModel chatMessageModel = sendMessageModelFromJson(event);
 
