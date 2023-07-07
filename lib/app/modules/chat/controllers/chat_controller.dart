@@ -426,7 +426,7 @@ class ChatController extends FullLifeCycleController
                   "value is null");
           // chatList.insert(0, chatMessageModel);
           scrollToBottom();
-          insertMyMessageOnChatList(value);
+          updateLastMessage(value);
         });
       }
     } else {
@@ -514,7 +514,7 @@ class ChatController extends FullLifeCycleController
         // ChatMessageModel chatMessageModel = sendMessageModelFromJson(value);
         // chatList.insert(0, chatMessageModel);
         scrollToBottom();
-        insertMyMessageOnChatList(value);
+        updateLastMessage(value);
       });
     } else {
       //show busy status popup
@@ -658,7 +658,7 @@ class ChatController extends FullLifeCycleController
           ChatMessageModel chatMessageModel = sendMessageModelFromJson(value);
           // chatList.insert(0, chatMessageModel);
           scrollToBottom();
-          insertMyMessageOnChatList(value);
+          updateLastMessage(value);
           return chatMessageModel;
         });
       } else {
@@ -760,7 +760,7 @@ class ChatController extends FullLifeCycleController
         ChatMessageModel chatMessageModel = sendMessageModelFromJson(value);
         // chatList.insert(0, chatMessageModel);
         scrollToBottom();
-        insertMyMessageOnChatList(value);
+        updateLastMessage(value);
         return chatMessageModel;
       });
     } else {
@@ -887,7 +887,7 @@ class ChatController extends FullLifeCycleController
         ChatMessageModel chatMessageModel = sendMessageModelFromJson(value);
         // chatList.insert(0, chatMessageModel);
         scrollToBottom();
-        insertMyMessageOnChatList(value);
+        updateLastMessage(value);
         return chatMessageModel;
       });
     } else {
@@ -916,7 +916,7 @@ class ChatController extends FullLifeCycleController
         ChatMessageModel chatMessageModel = sendMessageModelFromJson(value);
         // chatList.insert(0, chatMessageModel);
         scrollToBottom();
-        insertMyMessageOnChatList(value);
+        updateLastMessage(value);
         return chatMessageModel;
       });
     } else {
@@ -983,7 +983,7 @@ class ChatController extends FullLifeCycleController
         ChatMessageModel chatMessageModel = sendMessageModelFromJson(value);
         // chatList.insert(0, chatMessageModel);
         scrollToBottom();
-        insertMyMessageOnChatList(value);
+        updateLastMessage(value);
         return chatMessageModel;
       });
     } else {
@@ -1015,6 +1015,7 @@ class ChatController extends FullLifeCycleController
             : chatList.clear();
         cancelReplyMessage();
         // chatList.refresh();
+        onMessageDeleteNotifyUI(profile.jid.checkNull());
       }
     });
   }
@@ -1251,6 +1252,7 @@ class ChatController extends FullLifeCycleController
               onPressed: () {
                 Get.back();
                 //Helper.showLoading(message: 'Deleting Message');
+                var chatJid = selectedChatList.last.chatUserJid;
                 Mirrorfly.deleteMessagesForMe(profile.jid!, chatType,
                     deleteChatListID, isMediaDelete.value)
                     .then((value) {
@@ -1261,6 +1263,8 @@ class ChatController extends FullLifeCycleController
                 }
                 isSelected(false);
                 selectedChatList.clear();*/
+
+                    onMessageDeleteNotifyUI(chatJid);
                 });
                 removeChatList(selectedChatList);
                 isSelected(false);
@@ -1288,6 +1292,9 @@ class ChatController extends FullLifeCycleController
                           chatList.isMessageRecalled(true);
                           chatList.isSelected(false);
                           // this.chatList.refresh();
+                          if(selectedChatList.last.messageId==chatList.messageId) {
+                            onMessageDeleteNotifyUI(chatList.chatUserJid);
+                          }
                         }
                       }
                       if (!value) {
@@ -1295,6 +1302,9 @@ class ChatController extends FullLifeCycleController
                         for (var chatList in selectedChatList) {
                           chatList.isSelected(false);
                           // this.chatList.refresh();
+                          if(selectedChatList.last.messageId==chatList.messageId) {
+                            onMessageDeleteNotifyUI(chatList.chatUserJid);
+                          }
                         }
                       }
                       isSelected(false);
@@ -2787,6 +2797,10 @@ class ChatController extends FullLifeCycleController
   }
 }
 
-void insertMyMessageOnChatList(dynamic chatMessageModel) {
+void onMessageDeleteNotifyUI(String chatUserJid) {
+  Get.find<MainController>().onMessageDeleteNotifyUI(chatUserJid);
+}
+
+void updateLastMessage(dynamic chatMessageModel) {
   Get.find<MainController>().onMessageStatusUpdated(chatMessageModel);
 }

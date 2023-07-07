@@ -178,6 +178,18 @@ abstract class BaseController {
 
   }
 
+  void onMessageDeleteNotifyUI(String chatJid){
+    if (Get.isRegistered<DashboardController>()) {
+      Get.find<DashboardController>().updateRecentChat(chatJid);
+    }
+  }
+
+  void clearAllConvRecentChatUI(){
+    if (Get.isRegistered<DashboardController>()) {
+      Get.find<DashboardController>().getRecentChatList();
+    }
+  }
+
   void onMessageStatusUpdated(event) {
     ChatMessageModel chatMessageModel = sendMessageModelFromJson(event);
 
