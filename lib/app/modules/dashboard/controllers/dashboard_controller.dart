@@ -133,6 +133,7 @@ class DashboardController extends FullLifeCycleController
       recentChats.refresh();
       isRecentHistoryLoading(false);
       recentChatLoading(false);
+      getArchivedChatsList();
     }).catchError((error) {
       debugPrint("recent chat issue===> $error");
       recentChatLoading(false);
@@ -1229,6 +1230,7 @@ class DashboardController extends FullLifeCycleController
 
   @override
   void onResumed() {
+    getArchivedChatsList();
     if (!KeyboardVisibilityController().isVisible) {
       if (searchFocusNode.hasFocus) {
         searchFocusNode.unfocus();
@@ -1352,10 +1354,10 @@ class DashboardController extends FullLifeCycleController
   }*/
 
   historyScrollListener() {
+    mirrorFlyLog("historyScrollListener", historyScrollController.position.extentAfter.toString());
     // scrollController.position.pixels >=
     //     scrollController.position.maxScrollExtent - 200 //uncomment for data to be populated before certain items
-    if (historyScrollController.position.pixels ==
-        historyScrollController.position.maxScrollExtent) {
+    if (historyScrollController.position.extentAfter <= 0.0) {
       // User has reached the bottom of the list
       // Show loading screen and load more data
       // loadMoreData();
@@ -1370,7 +1372,7 @@ class DashboardController extends FullLifeCycleController
           recentChats.addAll(data.data!);
           recentChats.refresh();
           isRecentHistoryLoading(false);
-
+          getArchivedChatsList();
         }).catchError((error) {
           debugPrint("recent chat issue===> $error");
           isRecentHistoryLoading(false);
