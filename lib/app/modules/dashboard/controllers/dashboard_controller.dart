@@ -20,6 +20,7 @@ import '../../../routes/app_pages.dart';
 
 class DashboardController extends FullLifeCycleController
     with FullLifeCycleMixin, GetTickerProviderStateMixin {
+  var chatLimit = 20;
   var recentChats = <RecentChatData>[].obs;
   var archivedChats = <RecentChatData>[].obs;
   var calendar = DateTime.now();
@@ -122,8 +123,7 @@ class DashboardController extends FullLifeCycleController
 
   getRecentChatList() {
     recentChatPage = 1;
-    mirrorFlyLog("", "recent chats");
-    Mirrorfly.getRecentChatListHistory(pageNo: recentChatPage).then((value) async {
+    Mirrorfly.getRecentChatListHistory(firstSet: recentChatPage==1,limit: chatLimit).then((value) async {
       // String recentList = value.replaceAll('\n', '\\n');
       // debugPrint(recentList);
       mirrorFlyLog("getRecentChatListHistory", value);
@@ -890,7 +890,7 @@ class DashboardController extends FullLifeCycleController
     }
   }
 
-  void setConversationAsRead(String jid){
+  void markConversationReadNotifyUI(String jid){
     mirrorFlyLog("setConversationAsRead", "setConversationAsRead");
     var index = recentChats.indexWhere((element) => element.jid==jid);
     if(!index.isNegative) {
@@ -1354,7 +1354,7 @@ class DashboardController extends FullLifeCycleController
   }*/
 
   historyScrollListener() {
-    mirrorFlyLog("historyScrollListener", historyScrollController.position.extentAfter.toString());
+    // mirrorFlyLog("historyScrollListener", historyScrollController.position.extentAfter.toString());
     // scrollController.position.pixels >=
     //     scrollController.position.maxScrollExtent - 200 //uncomment for data to be populated before certain items
     if (historyScrollController.position.extentAfter <= 0.0) {
@@ -1366,7 +1366,7 @@ class DashboardController extends FullLifeCycleController
         recentChatPage++;
         isRecentHistoryLoading(true);
         debugPrint("calling page no $recentChatPage");
-        Mirrorfly.getRecentChatListHistory(pageNo: recentChatPage).then((value) async {
+        Mirrorfly.getRecentChatListHistory(firstSet: recentChatPage==1,limit: chatLimit).then((value) async {
           debugPrint("getRecentChatListHistory next data $value");
           var data = await compute(recentChatFromJson, value.toString());
           recentChats.addAll(data.data!);

@@ -219,9 +219,9 @@ abstract class BaseController {
 
   }
 
-  void setConversationAsRead(String jid) {
+  void markConversationReadNotifyUI(String jid) {
     if (Get.isRegistered<DashboardController>()) {
-      Get.find<DashboardController>().setConversationAsRead(jid);
+      Get.find<DashboardController>().markConversationReadNotifyUI(jid);
     }
   }
 
