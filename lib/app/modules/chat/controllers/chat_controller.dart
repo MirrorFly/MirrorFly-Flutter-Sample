@@ -424,7 +424,7 @@ class ChatController extends FullLifeCycleController
               "inserting chat message",
               chatMessageModel.replyParentChatMessage?.messageType ??
                   "value is null");
-          chatList.insert(0, chatMessageModel);
+          // chatList.insert(0, chatMessageModel);
           scrollToBottom();
           insertMyMessageOnChatList(value);
         });
@@ -511,8 +511,8 @@ class ChatController extends FullLifeCycleController
               profile.jid.toString(), latitude, longitude, replyMessageId)
           .then((value) {
         mirrorFlyLog("Location_msg", value.toString());
-        ChatMessageModel chatMessageModel = sendMessageModelFromJson(value);
-        chatList.insert(0, chatMessageModel);
+        // ChatMessageModel chatMessageModel = sendMessageModelFromJson(value);
+        // chatList.insert(0, chatMessageModel);
         scrollToBottom();
         insertMyMessageOnChatList(value);
       });
@@ -656,7 +656,7 @@ class ChatController extends FullLifeCycleController
             .then((value) {
           clearMessage();
           ChatMessageModel chatMessageModel = sendMessageModelFromJson(value);
-          chatList.insert(0, chatMessageModel);
+          // chatList.insert(0, chatMessageModel);
           scrollToBottom();
           insertMyMessageOnChatList(value);
           return chatMessageModel;
@@ -758,7 +758,7 @@ class ChatController extends FullLifeCycleController
         clearMessage();
         Platform.isIOS ? Helper.hideLoading() : null;
         ChatMessageModel chatMessageModel = sendMessageModelFromJson(value);
-        chatList.insert(0, chatMessageModel);
+        // chatList.insert(0, chatMessageModel);
         scrollToBottom();
         insertMyMessageOnChatList(value);
         return chatMessageModel;
@@ -885,7 +885,7 @@ class ChatController extends FullLifeCycleController
           .then((value) {
         debugPrint("response--> $value");
         ChatMessageModel chatMessageModel = sendMessageModelFromJson(value);
-        chatList.insert(0, chatMessageModel);
+        // chatList.insert(0, chatMessageModel);
         scrollToBottom();
         insertMyMessageOnChatList(value);
         return chatMessageModel;
@@ -914,7 +914,7 @@ class ChatController extends FullLifeCycleController
       Mirrorfly.sendDocumentMessage(profile.jid!, documentPath, replyMessageId)
           .then((value) {
         ChatMessageModel chatMessageModel = sendMessageModelFromJson(value);
-        chatList.insert(0, chatMessageModel);
+        // chatList.insert(0, chatMessageModel);
         scrollToBottom();
         insertMyMessageOnChatList(value);
         return chatMessageModel;
@@ -981,7 +981,7 @@ class ChatController extends FullLifeCycleController
           .then((value) {
         mirrorFlyLog("Audio Message sent", value);
         ChatMessageModel chatMessageModel = sendMessageModelFromJson(value);
-        chatList.insert(0, chatMessageModel);
+        // chatList.insert(0, chatMessageModel);
         scrollToBottom();
         insertMyMessageOnChatList(value);
         return chatMessageModel;
