@@ -426,6 +426,7 @@ class ChatController extends FullLifeCycleController
                   "value is null");
           chatList.insert(0, chatMessageModel);
           scrollToBottom();
+          insertMyMessageOnChatList(value);
         });
       }
     } else {
@@ -513,6 +514,7 @@ class ChatController extends FullLifeCycleController
         ChatMessageModel chatMessageModel = sendMessageModelFromJson(value);
         chatList.insert(0, chatMessageModel);
         scrollToBottom();
+        insertMyMessageOnChatList(value);
       });
     } else {
       //show busy status popup
@@ -656,6 +658,7 @@ class ChatController extends FullLifeCycleController
           ChatMessageModel chatMessageModel = sendMessageModelFromJson(value);
           chatList.insert(0, chatMessageModel);
           scrollToBottom();
+          insertMyMessageOnChatList(value);
           return chatMessageModel;
         });
       } else {
@@ -757,6 +760,7 @@ class ChatController extends FullLifeCycleController
         ChatMessageModel chatMessageModel = sendMessageModelFromJson(value);
         chatList.insert(0, chatMessageModel);
         scrollToBottom();
+        insertMyMessageOnChatList(value);
         return chatMessageModel;
       });
     } else {
@@ -883,6 +887,7 @@ class ChatController extends FullLifeCycleController
         ChatMessageModel chatMessageModel = sendMessageModelFromJson(value);
         chatList.insert(0, chatMessageModel);
         scrollToBottom();
+        insertMyMessageOnChatList(value);
         return chatMessageModel;
       });
     } else {
@@ -911,6 +916,7 @@ class ChatController extends FullLifeCycleController
         ChatMessageModel chatMessageModel = sendMessageModelFromJson(value);
         chatList.insert(0, chatMessageModel);
         scrollToBottom();
+        insertMyMessageOnChatList(value);
         return chatMessageModel;
       });
     } else {
@@ -977,6 +983,7 @@ class ChatController extends FullLifeCycleController
         ChatMessageModel chatMessageModel = sendMessageModelFromJson(value);
         chatList.insert(0, chatMessageModel);
         scrollToBottom();
+        insertMyMessageOnChatList(value);
         return chatMessageModel;
       });
     } else {
@@ -2778,4 +2785,8 @@ class ChatController extends FullLifeCycleController
       }
     }
   }
+}
+
+void insertMyMessageOnChatList(dynamic chatMessageModel) {
+  Get.find<MainController>().onMessageStatusUpdated(chatMessageModel);
 }
