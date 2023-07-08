@@ -102,5 +102,7 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
+    <key>API_THUMP_KEY</key>
+    <string>AIzaSyBaKkrQnLT4nacpKblIE5d4QK6GpaX5luQ</string>
 </dict>
 </plist>
