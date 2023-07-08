@@ -129,7 +129,7 @@ abstract class BaseController {
     Mirrorfly.onConnected.listen(onConnected);
     Mirrorfly.onDisconnected.listen(onDisconnected);
     // Mirrorfly.onConnectionNotAuthorized.listen(onConnectionNotAuthorized);
-    Mirrorfly.onConnectionFailed.listen(onConnectionFailed);
+    // Mirrorfly.onConnectionFailed.listen(onConnectionFailed);
     Mirrorfly.connectionFailed.listen(connectionFailed);
     Mirrorfly.connectionSuccess.listen(connectionSuccess);
     Mirrorfly.onWebChatPasswordChanged.listen(onWebChatPasswordChanged);
@@ -178,6 +178,18 @@ abstract class BaseController {
 
   }
 
+  void onMessageDeleteNotifyUI(String chatJid){
+    if (Get.isRegistered<DashboardController>()) {
+      Get.find<DashboardController>().updateRecentChat(chatJid);
+    }
+  }
+
+  void clearAllConvRecentChatUI(){
+    if (Get.isRegistered<DashboardController>()) {
+      Get.find<DashboardController>().getRecentChatList();
+    }
+  }
+
   void onMessageStatusUpdated(event) {
     ChatMessageModel chatMessageModel = sendMessageModelFromJson(event);
 
@@ -205,6 +217,12 @@ abstract class BaseController {
       Get.find<StarredMessagesController>().onMessageStatusUpdated(chatMessageModel);
     }
 
+  }
+
+  void markConversationReadNotifyUI(String jid) {
+    if (Get.isRegistered<DashboardController>()) {
+      Get.find<DashboardController>().markConversationReadNotifyUI(jid);
+    }
   }
 
   void onMediaStatusUpdated(event) {
@@ -493,7 +511,7 @@ abstract class BaseController {
   }
 
   // void onConnectionNotAuthorized(result) {}
-  void onConnectionFailed(result) {}
+  // void onConnectionFailed(result) {}
 
   void connectionFailed(result) {}
 

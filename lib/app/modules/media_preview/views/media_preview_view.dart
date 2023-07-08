@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:better_video_player/better_video_player.dart';
+// import 'package:better_video_player/better_video_player.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
@@ -10,6 +10,7 @@ import 'package:mirror_fly_demo/app/data/helper.dart';
 import 'package:photo_view/photo_view.dart';
 
 import '../../../common/widgets.dart';
+import '../../../widgets/video_player_widget.dart';
 import '../controllers/media_preview_controller.dart';
 
 class MediaPreviewView extends GetView<MediaPreviewController> {
@@ -165,23 +166,26 @@ class MediaPreviewView extends GetView<MediaPreviewController> {
 
                                   /// show video
                                   else {
-                                    return AspectRatio(
-                                      aspectRatio: 16.0 / 9.0,
-                                      child: BetterVideoPlayer(
-                                        configuration:
-                                            const BetterVideoPlayerConfiguration(
-                                          looping: false,
-                                          autoPlay: false,
-                                          allowedScreenSleep: false,
-                                          autoPlayWhenResume: false,
-                                        ),
-                                        controller:
-                                            BetterVideoPlayerController(),
-                                        dataSource: BetterVideoPlayerDataSource(
-                                          BetterVideoPlayerDataSourceType.file,
-                                          data.path!,
-                                        ),
-                                      ),
+                                    // return AspectRatio(
+                                    //   aspectRatio: 16.0 / 9.0,
+                                    //   child: BetterVideoPlayer(
+                                    //     configuration:
+                                    //         const BetterVideoPlayerConfiguration(
+                                    //       looping: false,
+                                    //       autoPlay: false,
+                                    //       allowedScreenSleep: false,
+                                    //       autoPlayWhenResume: false,
+                                    //     ),
+                                    //     controller:
+                                    //         BetterVideoPlayerController(),
+                                    //     dataSource: BetterVideoPlayerDataSource(
+                                    //       BetterVideoPlayerDataSourceType.file,
+                                    //       data.path!,
+                                    //     ),
+                                    //   ),
+                                    // );
+                                    return VideoPlayerWidget(
+                                      videoPath: data.path ?? "", videoTitle: data.title ?? "Video",
                                     );
                                   }
                                 })

@@ -19,7 +19,7 @@ allprojects {
         mavenCentral()
         jcenter()
         maven {
-            url "https://repo.mirrorfly.com/snapshot"
+            url "https://repo.mirrorfly.com/internal"
         }
 //        mavenLocal()
     }
@@ -33,6 +33,6 @@ subprojects {
     project.evaluationDependsOn(':app')
 }
 
-task clean(type: Delete) {
+tasks.register("clean", Delete) {
     delete rootProject.buildDir
 }

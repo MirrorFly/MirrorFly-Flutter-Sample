@@ -1,19 +1,21 @@
 
 
 
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:video_player/video_player.dart';
+// import 'package:video_player/video_player.dart';
 
 class VideoPlayController extends GetxController{
 
   var videoPath = "".obs;
-  late VideoPlayerController videoPlayerController;
+  // late VideoPlayerController videoPlayerController;
   var isInitialized = false.obs;
   var isPlaying = false.obs;
   @override
   void onInit() {
     super.onInit();
     videoPath(Get.arguments['filePath']);
+    debugPrint("##path ${videoPath.value}");
     // videoPlayerController = VideoPlayerController.file(File(Get.arguments['filePath']))
     //   ..initialize().then((_) {
     //     // Ensure the first frame is shown after the video is initialized, even before the play button has been pressed.
@@ -24,19 +26,20 @@ class VideoPlayController extends GetxController{
   @override
   void onClose() {
     super.onClose();
-    isInitialized(false);
+    // isInitialized(false);
+    videoPath("");
     // videoPlayerController.dispose();
   }
 
-  togglePlay() {
-    if(videoPlayerController.value.isPlaying){
-      // videoPlayerController.pause();
-      isPlaying(false);
-    }else{
-
-      isPlaying(true);
-      // videoPlayerController.play();
-
-    }
-  }
+  // togglePlay() {
+  //   if(videoPlayerController.value.isPlaying){
+  //     // videoPlayerController.pause();
+  //     isPlaying(false);
+  //   }else{
+  //
+  //     isPlaying(true);
+  //     // videoPlayerController.play();
+  //
+  //   }
+  // }
 }
