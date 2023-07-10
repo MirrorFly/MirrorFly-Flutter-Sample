@@ -10,11 +10,12 @@ import Firebase
 
 
 @UIApplicationMain
-@objc class AppDelegate: FlutterAppDelegate{
+@objc class AppDelegate: FlutterAppDelegate {
     
     let googleApiKey = "AIzaSyDnjPEs86MRsnFfW1sVPKvMWjqQRnSa7Ts"
    
     var postNotificationdidEnterBackground : NotificationCenter? = nil
+    
     
   override func application(
     _ application: UIApplication,
@@ -25,33 +26,91 @@ import Firebase
            
       GMSServices.provideAPIKey(googleApiKey)
       
+//      try? AVAudioSession.sharedInstance().setCategory(.playback, mode: .default, options: [.mixWithOthers, .allowAirPlay])
+//      try? AVAudioSession.sharedInstance().setActive(true)
+      
 //      // MARK:- Push Notification
 ////      clearPushNotifications()
 ////      registerForPushNotifications()
 //
 //      FirebaseApp.configure()
-//      if #available(iOS 10.0, *) {
-//          // For iOS 10 display notification (sent via APNS)
-//          UNUserNotificationCenter.current().delegate = self
-//
+//      Messaging.messaging().delegate = self
+      if #available(iOS 10.0, *) {
+          // For iOS 10 display notification (sent via APNS)
+          UNUserNotificationCenter.current().delegate = self as? UNUserNotificationCenterDelegate
+
 //          let authOptions: UNAuthorizationOptions = [.alert, .badge, .sound]
 //          UNUserNotificationCenter.current().requestAuthorization(
 //              options: authOptions,
 //              completionHandler: { val, error in
 //              }
 //          )
-//      } else {
+      }
+//      else {
 //          let settings: UIUserNotificationSettings =
 //          UIUserNotificationSettings(types: [.alert, .badge, .sound], categories: nil)
 //          application.registerUserNotificationSettings(settings)
 //      }
-//
+
 //      application.registerForRemoteNotifications()
       
       GeneratedPluginRegistrant.register(with: self)
       
       return super.application(application, didFinishLaunchingWithOptions: launchOptions)
   }
+    
+//    override func application(
+//        _ application: UIApplication,
+//        didReceiveRemoteNotification userInfo: [AnyHashable: Any],
+//        fetchCompletionHandler completionHandler:
+//          @escaping (UIBackgroundFetchResult) -> Void
+//      ) {
+//          print("#Mirrorfly Notification -> Message Received")
+//        // Handle the received notification
+//        if let messageID = userInfo["gcm.message_id"] {
+//          print("#Mirrorfly Notification -> Message ID: \(messageID)")
+//        }
+//
+//          // Handle the received notification
+//             if let messageID = userInfo["gcm.message_id"] {
+//               print("#Mirrorfly Notification -> Message ID: \(messageID)")
+//             }
+//
+//             // Call the necessary method from the FlutterFirebaseMessagingPlugin to handle the notification
+//          let flutterChannel = FlutterMethodChannel(name: "plugins.flutter.io/firebase_messaging", binaryMessenger: window.rootViewController as! FlutterViewController as! FlutterBinaryMessenger)
+//             flutterChannel.invokeMethod("onMessage", arguments: userInfo)
+//
+//             completionHandler(UIBackgroundFetchResult.newData)
+////        completionHandler(UIBackgroundFetchResult.newData)
+//      }
+    
+//    override func applicationDidEnterBackground(_ application: UIApplication) {
+//           self.backgroundTaskID = application.beginBackgroundTask(expirationHandler: nil)
+//       }
+//
+//    override func applicationWillEnterForeground(_ application: UIApplication) {
+//           if self.backgroundTaskID != .invalid {
+//               application.endBackgroundTask(self.backgroundTaskID)
+//               self.backgroundTaskID = .invalid
+//           }
+//       }
+//     func messaging(_ messaging: Messaging, didReceiveRegistrationToken fcmToken: String?) {
+//        NSLog("#Mirrorfly Appdelegate token \(fcmToken)")
+//    }
+//
+////    override func messaging(_ messaging: Messaging, didReceiveRegistrationToken fcmToken: String) {
+////            // Receive the FCM registration token if needed
+////        NSLog("#Mirrorfly Appdelegate token \(fcmToken)")
+////        }
+//
+//    override func application(_ application: UIApplication, didReceiveRemoteNotification notification: [AnyHashable : Any], fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
+//            // Handle the silent push notification and perform necessary tasks in the background
+//            NSLog("#Mirrorfly Appdelegate didReceiveRemoteNotification \(notification)")
+//            // Call the completion handler when finished processing the notification
+//            completionHandler(.newData)
+//        }
+
+    
 //    override func application(_ application: UIApplication, performFetchWithCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
 //        // Process any pending logs or perform necessary tasks
 //        // ...
@@ -63,7 +122,7 @@ import Firebase
     
 }
 
-extension AppDelegate {
+//extension AppDelegate {
     /// Register for APNS Notifications
 //    func registerForPushNotifications() {
 //        print("###Registering push notification")
@@ -148,6 +207,6 @@ extension AppDelegate {
 ////        }
 //    }
     
-}
+//}
 
 

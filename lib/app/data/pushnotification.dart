@@ -19,9 +19,9 @@ class PushNotifications {
   PushNotifications._();
   // static final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
   static void init(){
+    print("#Mirrorfly Notification -> init method");
     notificationPermission();
-    getToken();
-    initInfo();
+
     FirebaseMessaging.onMessage.listen((message){
       debugPrint('Got a message whilst in the foreground!');
       onMessage(message);
@@ -67,7 +67,7 @@ class PushNotifications {
     FirebaseMessaging.instance.getToken().then((value) {
       if(value!=null) {
         mirrorFlyLog("firebase_token", value);
-        print("firebase_token_1 $value");
+        print("#Mirrorfly Notification -> firebase_token_1 $value");
         SessionManagement.setToken(value);
       }
     }).catchError((er){
@@ -124,7 +124,10 @@ class PushNotifications {
     }
     // If `onMessage` is triggered with a notification, construct our own
     // local notification to show to users using the created channel.
-    showNotification(message);
+    Future.delayed(const Duration(milliseconds: 500), () {
+      showNotification(message);
+    });
+
   }
 
   static void notificationPermission() async{
@@ -140,15 +143,19 @@ class PushNotifications {
       announcement: false,
       badge: true,
       carPlay: false,
-      criticalAlert: false,
+      criticalAlert: true,
       provisional: false,
       sound: true,
     );
 
     if (settings.authorizationStatus == AuthorizationStatus.authorized) {
-      debugPrint('User granted permission');
+      debugPrint('#Mirrorfly Notification -> User granted permission');
+      getToken();
+      initInfo();
     } else if (settings.authorizationStatus == AuthorizationStatus.provisional) {
-      debugPrint('User granted provisional permission');
+      debugPrint('#Mirrorfly Notification -> User granted provisional permission');
+      getToken();
+      initInfo();
     } else {
       debugPrint('User declined or has not accepted permission');
     }
