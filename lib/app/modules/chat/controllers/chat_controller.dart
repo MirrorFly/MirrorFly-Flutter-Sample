@@ -2799,6 +2799,34 @@ class ChatController extends FullLifeCycleController
       }
     }
   }
+
+  void makeVoiceCall() async {
+    debugPrint("#FLY CALL VOICE CALL CALLING");
+    if(await AppPermission.askAudioCallPermissions()) {
+      Mirrorfly.makeVoiceCall(profile.jid.checkNull()).then((value) {
+        if (value) {
+          debugPrint("#Mirrorfly Call userjid ${profile.jid}");
+          Get.toNamed(
+              Routes.outGoingCallView, arguments: { "userJid": profile.jid});
+        }
+      }).catchError((e) {
+        debugPrint("#Mirrorfly Call $e");
+      });
+    }
+  }
+
+  void makeVideoCall() async {
+    if(await AppPermission.askVideoCallPermissions()) {
+      Mirrorfly.makeVideoCall(profile.jid.checkNull()).then((value) {
+        if (value) {
+          Get.toNamed(
+              Routes.outGoingCallView, arguments: { "userJid": profile.jid});
+        }
+      }).catchError((e) {
+        debugPrint("#Mirrorfly Call $e");
+      });
+    }
+  }
 }
 
 void onMessageDeleteNotifyUI(String chatUserJid) {

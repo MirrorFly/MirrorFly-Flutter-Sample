@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:mirror_fly_demo/app/call_modules/outgoing_call/call_controller.dart';
 import 'package:mirrorfly_plugin/mirrorflychat.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
@@ -147,6 +148,121 @@ abstract class BaseController {
     Mirrorfly.onProgressChanged.listen(onProgressChanged);
     Mirrorfly.onSuccess.listen(onSuccess);
     Mirrorfly.onLoggedOut.listen(onLogout);
+    Mirrorfly.onCallReceiving.listen((event) {
+
+    });
+    Mirrorfly.onLocalVideoTrackAdded.listen((event) {
+
+    });
+    Mirrorfly.onRemoteVideoTrackAdded.listen((event) {
+
+    });
+    Mirrorfly.onTrackAdded.listen((event) {
+      debugPrint("#Mirrorfly Call track added --> $event");
+    });
+    Mirrorfly.onCallStatusUpdated.listen((event) {
+      // {"callMode":"OneToOne","userJid":"","callType":"video","callStatus":"Attended"}
+      debugPrint("#MirrorflyCall onCallStatusUpdated --> $event");
+
+      var statusUpdateReceived = jsonDecode(event);
+      var callMode = statusUpdateReceived["callMode"].toString();
+      var userJid = statusUpdateReceived["userJid"].toString();
+      var callType = statusUpdateReceived["callType"].toString();
+      var callStatus = statusUpdateReceived["callStatus"].toString();
+
+
+
+      switch (callStatus){
+        case Constants.connecting:
+          break;
+        case Constants.attended:
+          debugPrint("***opening video page");
+          Get.toNamed(Routes.onGoingCallView);
+          break;
+
+        case Constants.disconnected:
+          if (Get.isRegistered<CallController>()) {
+            Get.find<CallController>().callDisconnected(
+                callMode, userJid, callType, callStatus);
+          }else{
+            debugPrint("#Mirrorfly call call controller not registered for disconnect event");
+          }
+
+        // remoteUsers.remove(userJid);
+        // if(remoteUsers.length == 1){
+        //   sdk.invokeMethod("declineCall");
+        // }
+        // Get.back();
+          break;
+
+        case Constants.calling:
+          if (Get.isRegistered<CallController>()) {
+            Get.find<CallController>().calling(
+                callMode, userJid, callType, callStatus);
+          }else{
+            debugPrint("#Mirrorfly call call controller not registered for disconnect event");
+          }
+          break;
+        case Constants.reconnected:
+          if (Get.isRegistered<CallController>()) {
+            Get.find<CallController>().reconnected(
+                callMode, userJid, callType, callStatus);
+          }else{
+            debugPrint("#Mirrorfly call call controller not registered for disconnect event");
+          }
+          break;
+        case Constants.ringing:
+          if (Get.isRegistered<CallController>()) {
+            Get.find<CallController>().ringing(
+                callMode, userJid, callType, callStatus);
+          }else{
+            debugPrint("#Mirrorfly call call controller not registered for disconnect event");
+          }
+          break;
+        case Constants.onHold:
+          if (Get.isRegistered<CallController>()) {
+            Get.find<CallController>().onHold(
+                callMode, userJid, callType, callStatus);
+          }else{
+            debugPrint("#Mirrorfly call call controller not registered for disconnect event");
+          }
+          break;
+        case Constants.connected:
+          if (Get.isRegistered<CallController>()) {
+            Get.find<CallController>().connected(
+                callMode, userJid, callType, callStatus);
+          }else{
+            debugPrint("#Mirrorfly call call controller not registered for disconnect event");
+          }
+          break;
+
+        case Constants.callTimeout:
+          if (Get.isRegistered<CallController>()) {
+            Get.find<CallController>().timeout(
+                callMode, userJid, callType, callStatus);
+          }else{
+            debugPrint("#Mirrorfly call call controller not registered for disconnect event");
+          }
+          break;
+
+        default:
+          debugPrint("onCall status updated error: $callStatus");
+      }
+
+
+    });
+    Mirrorfly.onCallAction.listen((event) {
+
+    });
+    Mirrorfly.onMuteStatusUpdated.listen((event) {
+
+    });
+    Mirrorfly.onUserSpeaking.listen((event) {
+
+    });
+    Mirrorfly.onUserStoppedSpeaking.listen((event) {
+
+    });
   }
 
   void onMessageReceived(chatMessage) {
