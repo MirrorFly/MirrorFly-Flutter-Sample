@@ -26,6 +26,7 @@ import 'notification_service.dart';
 class MainController extends FullLifeCycleController with BaseController, FullLifeCycleMixin
     /*with FullLifeCycleMixin */{
   var authToken = "".obs;
+  var googleMapKey = "";
   Rx<String> uploadEndpoint = "".obs;
   var maxDuration = 100.obs;
   var currentPos = 0.obs;
@@ -40,6 +41,10 @@ class MainController extends FullLifeCycleController with BaseController, FullLi
   @override
   Future<void> onInit() async {
     super.onInit();
+    Mirrorfly.getValueFromManifestOrInfoPlist(androidManifestKey: "com.google.android.geo.API_THUMP_KEY",iOSPlistKey: "API_THUMP_KEY").then((value){
+      googleMapKey = value;
+      mirrorFlyLog("com.google.android.geo.API_THUMP_KEY", googleMapKey);
+    });
     //presentPinPage();
     PushNotifications.init();
     initListeners();

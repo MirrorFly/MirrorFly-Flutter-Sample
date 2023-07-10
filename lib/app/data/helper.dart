@@ -8,6 +8,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
+import 'package:mirror_fly_demo/app/common/main_controller.dart';
 import 'package:mirrorfly_plugin/mirrorflychat.dart';
 import 'package:mirror_fly_demo/app/data/session_management.dart';
 import 'package:mirror_fly_demo/app/routes/app_pages.dart';
@@ -143,8 +144,8 @@ class Helper {
   }
 
   static String getMapImageUri(double latitude, double longitude) {
-    var key = Constants.googleMapKey;
-    return ("https://maps.googleapis.com/maps/api/staticmap?center=$latitude,$longitude&zoom=13&size=300x200&markers=color:red|$latitude,$longitude&key=$key");
+    var googleMapKey =  Get.find<MainController>().googleMapKey;//Env.googleMapKey;//Constants.googleMapKey;
+    return ("https://maps.googleapis.com/maps/api/staticmap?center=$latitude,$longitude&zoom=13&size=300x200&markers=color:red|$latitude,$longitude&key=$googleMapKey");
   }
 
   static int getColourCode(String name) {
