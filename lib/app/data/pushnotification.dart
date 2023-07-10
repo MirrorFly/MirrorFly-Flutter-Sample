@@ -19,7 +19,7 @@ class PushNotifications {
   PushNotifications._();
   // static final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
   static void init(){
-    print("#Mirrorfly Notification -> init method");
+    debugPrint("#Mirrorfly Notification -> init method");
     notificationPermission();
 
     FirebaseMessaging.onMessage.listen((message){
@@ -67,7 +67,7 @@ class PushNotifications {
     FirebaseMessaging.instance.getToken().then((value) {
       if(value!=null) {
         mirrorFlyLog("firebase_token", value);
-        print("#Mirrorfly Notification -> firebase_token_1 $value");
+        debugPrint("#Mirrorfly Notification -> firebase_token_1 $value");
         SessionManagement.setToken(value);
       }
     }).catchError((er){
@@ -117,10 +117,10 @@ class PushNotifications {
   }
 
   static void onMessage(RemoteMessage message) {
-    print('#Mirrorfly Notification ->  RemoteMessage ${message.toMap()}');
-    print('#Mirrorfly Notification ->  Message data: ${message.data}');
+    debugPrint('#Mirrorfly Notification ->  RemoteMessage ${message.toMap()}');
+    debugPrint('#Mirrorfly Notification ->  Message data: ${message.data}');
     if (message.notification != null) {
-      print('#Mirrorfly Notification ->  Message also contained a notification: ${message.notification}');
+      debugPrint('#Mirrorfly Notification ->  Message also contained a notification: ${message.notification}');
     }
     // If `onMessage` is triggered with a notification, construct our own
     // local notification to show to users using the created channel.

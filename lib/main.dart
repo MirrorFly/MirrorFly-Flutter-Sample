@@ -38,7 +38,7 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
       baseUrl: 'https://api-uikit-qa.contus.us/api/v1/',
       licenseKey: 'ckIjaccWBoMNvxdbql8LJ2dmKqT5bp',//ckIjaccWBoMNvxdbql8LJ2dmKqT5bp//2sdgNtr3sFBSM3bYRa7RKDPEiB38Xo
       iOSContainerID: 'group.com.mirrorfly.qa');
-  print("#Mirrorfly Notification -> Handling a background message: ${message.messageId}");
+  debugPrint("#Mirrorfly Notification -> Handling a background message: ${message.messageId}");
   PushNotifications.onMessage(message);
   // final dio = Dio();
   // final response = await dio.get('https://gorest.co.in/public/v2/users');
@@ -72,9 +72,9 @@ Future<void> main() async {
   Mirrorfly.init(
       baseUrl: 'https://api-uikit-qa.contus.us/api/v1/',
       licenseKey: 'ckIjaccWBoMNvxdbql8LJ2dmKqT5bp',//ckIjaccWBoMNvxdbql8LJ2dmKqT5bp//2sdgNtr3sFBSM3bYRa7RKDPEiB38Xo
-      iOSContainerID: 'group.com.mirrorfly.qa');
+      iOSContainerID: 'group.com.mirrorfly.qa',//group.com.mirrorfly.flutter
       chatHistoryEnable: true,
-      iOSContainerID: 'group.com.mirrorfly.flutter',enableDebugLog: true);
+      enableDebugLog: true);
   final GoogleMapsFlutterPlatform mapsImplementation =
       GoogleMapsFlutterPlatform.instance;
   if (mapsImplementation is GoogleMapsFlutterAndroid) {
