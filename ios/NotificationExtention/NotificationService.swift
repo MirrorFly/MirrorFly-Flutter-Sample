@@ -114,12 +114,6 @@ class NotificationService: UNNotificationServiceExtension {
                 FlyDefaults.lastNotificationId = request.identifier
             })
         }
-//        if let bestAttemptContent = bestAttemptContent {
-//            // Modify the notification content here...
-//            bestAttemptContent.title = "\(bestAttemptContent.title) [modified]"
-//
-//            contentHandler(bestAttemptContent)
-//        }
     }
     
     func convertMentionUser(message: String, mentionedUsersIds: [String]) -> String {

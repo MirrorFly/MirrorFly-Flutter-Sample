@@ -39,7 +39,7 @@ end
 target 'NotificationExtention' do
   # Comment the next line if you don't want to use dynamic frameworks
   use_frameworks!
-  pod 'MirrorFlySDK', '5.9.9'
+  pod 'MirrorFlySDK', '5.10.0'
   # Pods for RunnerNotification
   pod 'Firebase/Messaging'
 end
