@@ -2,6 +2,8 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>API_THUMP_KEY</key>
+	<string>AIzaSyBaKkrQnLT4nacpKblIE5d4QK6GpaX5luQ</string>
 	<key>BASE_URL</key>
 	<string>$(BASE_URL)</string>
 	<key>CADisableMinimumFrameDurationOnPhone</key>
@@ -107,7 +109,5 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
-    <key>API_THUMP_KEY</key>
-    <string>AIzaSyBaKkrQnLT4nacpKblIE5d4QK6GpaX5luQ</string>
 </dict>
 </plist>

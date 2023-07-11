@@ -18,7 +18,7 @@ class NotificationService: UNNotificationServiceExtension {
     override func didReceive(_ request: UNNotificationRequest, withContentHandler contentHandler: @escaping (UNNotificationContent) -> Void) {
         self.contentHandler = contentHandler
         bestAttemptContent = (request.content.mutableCopy() as? UNMutableNotificationContent)
-        
+        NSLog("#Mirrorfly Notification Received")
         let payloadType = bestAttemptContent?.userInfo["type"] as? String
         try? ChatSDK.Builder.setAppGroupContainerID(containerID: "group.com.mirrorfly.qa")
             .isTrialLicense(isTrial: true)
@@ -27,6 +27,7 @@ class NotificationService: UNNotificationServiceExtension {
             .buildAndInitialize()
         print("#push-api withContentHandler received")
         if payloadType == "media_call" {
+            print("#Mirrorfly Media Call")
             NotificationExtensionSupport.shared.didReceiveNotificationRequest(request.content.mutableCopy() as? UNMutableNotificationContent, appName: FlyDefaults.appName, onCompletion: { [self] bestAttemptContent in
                 if FlyDefaults.hideNotificationContent{
                     bestAttemptContent?.title = FlyDefaults.appName
@@ -40,11 +41,13 @@ class NotificationService: UNNotificationServiceExtension {
                 contentHandler(self.bestAttemptContent!)
             })
         } else if payloadType == "adminblock" {
+            NSLog("#Mirrorfly Admin Block")
             ChatSDK.Builder.initializeDelegate()
             NotificationMessageSupport.shared.handleAdminBlockNotification(request.content.mutableCopy() as? UNMutableNotificationContent) {  bestAttemptContent in
                 contentHandler(bestAttemptContent!)
             }
         } else {
+            NSLog("#Mirrorfly Handle Push")
             /// Handle Push messages
             ChatSDK.Builder.initializeDelegate()
             NotificationMessageSupport.shared.didReceiveNotificationRequest(request.content.mutableCopy() as? UNMutableNotificationContent, onCompletion: { [self] bestAttemptContents in

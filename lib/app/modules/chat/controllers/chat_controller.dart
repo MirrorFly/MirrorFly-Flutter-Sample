@@ -8,7 +8,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
-import 'package:flutter_libphonenumber/flutter_libphonenumber.dart';
+// import 'package:flutter_libphonenumber/flutter_libphonenumber.dart';
 import 'package:get/get.dart';
 // import 'package:google_cloud_translation/google_cloud_translation.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -2726,11 +2726,11 @@ class ChatController extends FullLifeCycleController
         ? profile.nickName.checkNull()
         : profile.name.checkNull();
     if (phone.isNotEmpty) {
-      FlutterLibphonenumber().init();
-      var formatNumberSync = FlutterLibphonenumber().formatNumberSync(phone);
-      var parse = await FlutterLibphonenumber().parse(formatNumberSync);
-      debugPrint("parse-----> $parse");
-      Mirrorfly.addContact(parse["international"], userName).then((value) {
+      // await init();
+      // var formattedNumber = await parse(phone);
+      // debugPrint("parse-----> $formattedNumber");
+      // Mirrorfly.addContact(formattedNumber["international"], userName).then((value) {
+      Mirrorfly.addContact(phone, userName).then((value) {
         if (value ?? false) {
           toToast("Contact Saved");
           if (!Mirrorfly.isTrialLicence) {

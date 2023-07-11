@@ -4,7 +4,7 @@ import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_libphonenumber/flutter_libphonenumber.dart';
+// import 'package:flutter_libphonenumber/flutter_libphonenumber.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
@@ -98,9 +98,10 @@ class ProfileController extends GetxController {
         } else {
           if (await AppUtils.isNetConnected()) {
             debugPrint("profile update");
-            var parse = await FlutterLibphonenumber().parse(profileMobile.text);
-            debugPrint("parse-----> $parse");
-            var unformatted = parse['national_number'];//profileMobile.text.replaceAll(" ", "").replaceAll("+", "");
+            // var formattedNumber = await parse(profileMobile.text);
+            // debugPrint("parse-----> $formattedNumber");
+            // var unformatted = formattedNumber['national_number'];//profileMobile.text.replaceAll(" ", "").replaceAll("+", "");
+            var unformatted = profileMobile.text;
             Mirrorfly
                 .updateMyProfile(
                 profileName.text.toString(),
@@ -408,12 +409,12 @@ class ProfileController extends GetxController {
   }
 
   Future<bool> validMobileNumber(String text)async{
-    var coded = text;
+    // var coded = text;
     if(!text.startsWith(SessionManagement.getCountryCode().toString())){
       mirrorFlyLog("SessionManagement.getCountryCode()", SessionManagement.getCountryCode().toString());
-      coded = SessionManagement.getCountryCode().checkNull()+text;
+      // coded = SessionManagement.getCountryCode().checkNull()+text;
     }
-    var m = coded.contains("+") ? coded : "+$coded";
+    // var m = coded.contains("+") ? coded : "+$coded";
     /*var formattingMobileNumber = text;
     ///Added this function, due to the mobile number is Android and iOS is receiving without Country Code in Response
     if (text.startsWith("+") && text.substring(1).startsWith(SessionManagement.getCountryCode() ?? "")) {
@@ -428,8 +429,20 @@ class ProfileController extends GetxController {
         formattingMobileNumber = text;
       }
     }*/
-    FlutterLibphonenumber().init();
-    var formatNumberSync = FlutterLibphonenumber().formatNumberSync(m);
+    try {
+      // await init();
+      // final formattedNumber = formatNumberSync(m);
+      // final formattedNumber = await parse(text, region: SessionManagement.getCountryCode().toString());
+      // profileMobile.text = formattedNumber['international'];
+      profileMobile.text = text;
+      return true;
+    }catch(e){
+      debugPrint('validMobileNumber $e');
+      return false;
+    }
+
+    // FlutterLibphonenumber().init();
+    /*var formatNumberSync = FlutterLibphonenumber().formatNumberSync(m);
     try {
       var parse = await FlutterLibphonenumber().parse(formatNumberSync);
       debugPrint("parse-----> $parse");
@@ -444,7 +457,7 @@ class ProfileController extends GetxController {
     }catch(e){
       debugPrint('validMobileNumber $e');
       return false;
-    }
+    }*/
   }
 
   static void insertStatus() {
