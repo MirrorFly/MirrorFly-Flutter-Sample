@@ -1541,26 +1541,26 @@ class ImageMessageView extends StatelessWidget {
                   ? Positioned(
                 bottom: 8,
                 right: 10,
-                child: Stack(
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
                   children: [
-                    SvgPicture.asset(mediaBg),
-                    Row(
-                      mainAxisSize: MainAxisSize.min,
+                    chatMessage.isMessageStarred.value
+                        ? SvgPicture.asset(starSmallIcon)
+                        : const SizedBox.shrink(),
+                    const SizedBox(
+                      width: 5,
+                    ),
+                    getMessageIndicator(
+                        chatMessage.messageStatus.value,
+                        chatMessage.isMessageSentByMe,
+                        chatMessage.messageType,
+                        chatMessage.isMessageRecalled.value),
+                    const SizedBox(
+                      width: 4,
+                    ),
+                    Stack(
                       children: [
-                        chatMessage.isMessageStarred.value
-                            ? SvgPicture.asset(starSmallIcon)
-                            : const SizedBox.shrink(),
-                        const SizedBox(
-                          width: 5,
-                        ),
-                        getMessageIndicator(
-                            chatMessage.messageStatus.value,
-                            chatMessage.isMessageSentByMe,
-                            chatMessage.messageType,
-                            chatMessage.isMessageRecalled.value),
-                        const SizedBox(
-                          width: 4,
-                        ),
+                        // Image.asset(cornerShadow,width: 40,height: 20,fit: BoxFit.fitHeight,),
                         Text(
                           getChatTime(context,
                               chatMessage.messageSentTime.toInt()),

@@ -242,23 +242,13 @@ class ChatController extends FullLifeCycleController
         showHideRedirectToLatest(false);
         unreadCount(0);
       }
-      debugPrint("pos --> $pos");
-      debugPrint("first index --> ${itemPositionsListener.itemPositions.value
-          .first.index.toString()}");
-      debugPrint("last index --> ${itemPositionsListener.itemPositions.value
-          .last.index.toString()}");
-      if(itemPositionsListener.itemPositions.value.first.index == 0){
-        debugPrint("List Reached Top");
-      }
-      if(itemPositionsListener.itemPositions.value.last.index == -1){
-        debugPrint("List Reached Bottom");
-      }
     });
 
     Mirrorfly.setOnGoingChatUser(profile.jid!);
     markConversationReadNotifyUI();
     SessionManagement.setCurrentChatJID(profile.jid.checkNull());
-    getChatHistory();
+    // getChatHistory();
+    _loadMessages();
     // compute(getChatHistory, profile.jid);
     debugPrint("==================");
     debugPrint(profile.image);
@@ -580,7 +570,7 @@ class ChatController extends FullLifeCycleController
 
   RxBool chatLoading = false.obs;
 
-  loadMessages() {
+  void _loadMessages() {
     chatLoading(true);
     Mirrorfly.initializeMessageList(userJid: profile.jid.checkNull(), limit: 25).then((value) {
       value ? Mirrorfly.loadMessages().then((value) {
@@ -616,7 +606,7 @@ class ChatController extends FullLifeCycleController
     });
   }
 
-  loadPreviousMessages() {
+  void _loadPreviousMessages() {
     chatLoading(true);
     Mirrorfly.loadPreviousMessages().then((value) {
       if (value == "" || value == null) {
@@ -650,7 +640,7 @@ class ChatController extends FullLifeCycleController
     });
   }
 
-  loadNextMessages() {
+  void _loadNextMessages() {
     chatLoading(true);
     Mirrorfly.loadNextMessages().then((value) {
       if (value == "" || value == null) {
@@ -1880,7 +1870,8 @@ class ChatController extends FullLifeCycleController
           Mirrorfly.setOnGoingChatUser(profile.jid!);
           markConversationReadNotifyUI();
           SessionManagement.setCurrentChatJID(profile.jid.checkNull());
-          getChatHistory();
+          // getChatHistory();
+          _loadMessages();
           sendReadReceipt();
         }
       });
@@ -2020,7 +2011,8 @@ class ChatController extends FullLifeCycleController
           Mirrorfly.setOnGoingChatUser(profile.jid!);
           markConversationReadNotifyUI();
           SessionManagement.setCurrentChatJID(profile.jid.checkNull());
-          getChatHistory();
+          // getChatHistory();
+          _loadMessages();
           sendReadReceipt();
           setChatStatus();
           debugPrint("value--> ${profile.isGroupProfile}");
@@ -2482,7 +2474,8 @@ class ChatController extends FullLifeCycleController
         Mirrorfly.setOnGoingChatUser(profile.jid!);
         markConversationReadNotifyUI();
         SessionManagement.setCurrentChatJID(profile.jid.checkNull());
-        getChatHistory();
+        // getChatHistory();
+        _loadMessages();
         sendReadReceipt();
       }
     });
