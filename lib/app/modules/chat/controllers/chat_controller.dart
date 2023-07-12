@@ -580,6 +580,110 @@ class ChatController extends FullLifeCycleController
 
   RxBool chatLoading = false.obs;
 
+  loadMessages() {
+    chatLoading(true);
+    Mirrorfly.initializeMessageList(userJid: profile.jid.checkNull(), limit: 25).then((value) {
+      value ? Mirrorfly.loadMessages().then((value) {
+        if (value == "" || value == null) {
+          debugPrint("Chat List is Empty");
+        }else{
+          try {
+            List<ChatMessageModel> chatMessageModel = chatMessageModelFromJson(value);
+            chatList(chatMessageModel.reversed.toList());
+            Future.delayed(const Duration(milliseconds: 200), () {
+              if (starredChatMessageId != null) {
+                debugPrint('starredChatMessageId $starredChatMessageId');
+                var chat = chatList.indexWhere(
+                        (element) => element.messageId == starredChatMessageId);
+                debugPrint('chat $chat');
+                if (!chat.isNegative) {
+                  navigateToMessage(chatList[chat]);
+                  starredChatMessageId = null;
+                } else {
+                  toToast('Message not found');
+                }
+              }
+              getUnsentReplyMessage();
+            });
+          } catch (error) {
+            debugPrint("chatHistory parsing error--> $error");
+          }
+        }
+        chatLoading(false);
+      }).catchError((e) {
+        chatLoading(false);
+      }) : toToast("Chat History Not Initialized");
+    });
+  }
+
+  loadPreviousMessages() {
+    chatLoading(true);
+    Mirrorfly.loadPreviousMessages().then((value) {
+      if (value == "" || value == null) {
+        debugPrint("Chat List is Empty");
+      }else{
+        try {
+          List<ChatMessageModel> chatMessageModel = chatMessageModelFromJson(value);
+          chatList.insertAll(0,chatMessageModel.toList());
+          Future.delayed(const Duration(milliseconds: 200), () {
+            if (starredChatMessageId != null) {
+              debugPrint('starredChatMessageId $starredChatMessageId');
+              var chat = chatList.indexWhere(
+                      (element) => element.messageId == starredChatMessageId);
+              debugPrint('chat $chat');
+              if (!chat.isNegative) {
+                navigateToMessage(chatList[chat]);
+                starredChatMessageId = null;
+              } else {
+                toToast('Message not found');
+              }
+            }
+            getUnsentReplyMessage();
+          });
+        } catch (error) {
+          debugPrint("chatHistory parsing error--> $error");
+        }
+      }
+      chatLoading(false);
+    }).catchError((e) {
+      chatLoading(false);
+    });
+  }
+
+  loadNextMessages() {
+    chatLoading(true);
+    Mirrorfly.loadNextMessages().then((value) {
+      if (value == "" || value == null) {
+        debugPrint("Chat List is Empty");
+      }else{
+        try {
+          List<ChatMessageModel> chatMessageModel = chatMessageModelFromJson(value);
+          chatList.insertAll(chatList.length,chatMessageModel.toList());
+          Future.delayed(const Duration(milliseconds: 200), () {
+            if (starredChatMessageId != null) {
+              debugPrint('starredChatMessageId $starredChatMessageId');
+              var chat = chatList.indexWhere(
+                      (element) => element.messageId == starredChatMessageId);
+              debugPrint('chat $chat');
+              if (!chat.isNegative) {
+                navigateToMessage(chatList[chat]);
+                starredChatMessageId = null;
+              } else {
+                toToast('Message not found');
+              }
+            }
+            getUnsentReplyMessage();
+          });
+        } catch (error) {
+          debugPrint("chatHistory parsing error--> $error");
+        }
+      }
+      chatLoading(false);
+    }).catchError((e) {
+      chatLoading(false);
+    });
+  }
+
   getChatHistory() {
     chatLoading(true);
     Mirrorfly.getMessagesOfJid(profile.jid.checkNull()).then((value) {
