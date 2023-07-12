@@ -110,6 +110,9 @@ class ChatController extends FullLifeCycleController
 
   bool get isTrail => Mirrorfly.isTrialLicence;
 
+  var loadPreviousData = false.obs;
+  var loadNextData = false.obs;
+
   @override
   void onInit() async {
     super.onInit();
@@ -574,6 +577,8 @@ class ChatController extends FullLifeCycleController
     chatLoading(true);
     Mirrorfly.initializeMessageList(userJid: profile.jid.checkNull(), limit: 25).then((value) {
       value ? Mirrorfly.loadMessages().then((value) {
+        loadPreviousData(false);
+        loadNextData(false);
         if (value == "" || value == null) {
           debugPrint("Chat List is Empty");
         }else{
@@ -609,6 +614,8 @@ class ChatController extends FullLifeCycleController
   void _loadPreviousMessages() {
     chatLoading(true);
     Mirrorfly.loadPreviousMessages().then((value) {
+      loadPreviousData(false);
+      loadNextData(false);
       if (value == "" || value == null) {
         debugPrint("Chat List is Empty");
       }else{
@@ -643,6 +650,8 @@ class ChatController extends FullLifeCycleController
   void _loadNextMessages() {
     chatLoading(true);
     Mirrorfly.loadNextMessages().then((value) {
+      loadPreviousData(false);
+      loadNextData(false);
       if (value == "" || value == null) {
         debugPrint("Chat List is Empty");
       }else{
@@ -2905,6 +2914,23 @@ class ChatController extends FullLifeCycleController
             ?.mediaProgressStatus(int.parse(progressPercentage));
         // chatList.refresh();
       }
+    }
+  }
+
+  void loadNextChatHistory() {
+    if (newitemPositionsListener.itemPositions.value.first.index == 0) {
+      debugPrint("reached bottom");
+      loadPreviousData(false);
+      loadNextData(true);
+      _loadNextMessages();
+    }
+
+    if (newitemPositionsListener.itemPositions.value.last.index ==
+        chatList.length - 1) {
+      debugPrint("reached top");
+      loadPreviousData(true);
+      loadNextData(false);
+      _loadPreviousMessages();
     }
   }
 }
