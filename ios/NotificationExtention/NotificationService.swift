@@ -6,9 +6,8 @@
 //
 
 import UserNotifications
-import Firebase
+//import Firebase
 import MirrorFlySDK
-
 
 class NotificationService: UNNotificationServiceExtension {
 
@@ -48,6 +47,7 @@ class NotificationService: UNNotificationServiceExtension {
             }
         } else {
             NSLog("#Mirrorfly Handle Push")
+
             /// Handle Push messages
             ChatSDK.Builder.initializeDelegate()
             NotificationMessageSupport.shared.didReceiveNotificationRequest(request.content.mutableCopy() as? UNMutableNotificationContent, onCompletion: { [self] bestAttemptContents in
@@ -112,7 +112,7 @@ class NotificationService: UNNotificationServiceExtension {
                 if let message = ChatManager.getMessageOfId(messageId: messageId), !message.mentionedUsersIds.isEmpty {
                     self.bestAttemptContent?.body = convertMentionUser(message: message.messageTextContent, mentionedUsersIds: message.mentionedUsersIds)
                 }
-                
+
                 contentHandler(self.bestAttemptContent!)
                 FlyDefaults.lastNotificationId = request.identifier
             })

@@ -41,8 +41,10 @@ target 'NotificationExtention' do
   use_frameworks!
   pod 'MirrorFlySDK', '5.10.0'
   # Pods for RunnerNotification
-  pod 'Firebase/Messaging'
+#  pod 'Firebase/Messaging'
+#  flutter_install_all_ios_pods File.dirname(File.realpath(__FILE__))
 end
+
 post_install do |installer|
   installer.pods_project.targets.each do |target|
     flutter_additional_ios_build_settings(target)
