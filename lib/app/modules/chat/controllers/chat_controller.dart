@@ -2918,19 +2918,23 @@ class ChatController extends FullLifeCycleController
   }
 
   void loadNextChatHistory() {
-    if (newitemPositionsListener.itemPositions.value.first.index == 0) {
-      debugPrint("reached bottom");
+    debugPrint("reached ${newitemPositionsListener.itemPositions.value.first
+        .index}");
+    if (newitemPositionsListener.itemPositions.value.first.index <= 2) {
+      debugPrint("reached Bottom");
       loadPreviousData(false);
       loadNextData(true);
-      _loadNextMessages();
+      // _loadNextMessages();
     }
 
+    debugPrint("reached last.index ${newitemPositionsListener.itemPositions.value.last.index}");
+    debugPrint("reached length ${chatList.length}");
     if (newitemPositionsListener.itemPositions.value.last.index ==
-        chatList.length - 1) {
+        chatList.length) {
       debugPrint("reached top");
       loadPreviousData(true);
       loadNextData(false);
-      _loadPreviousMessages();
+      // _loadPreviousMessages();
     }
   }
 }
