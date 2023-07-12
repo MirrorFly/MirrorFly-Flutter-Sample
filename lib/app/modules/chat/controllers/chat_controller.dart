@@ -242,6 +242,17 @@ class ChatController extends FullLifeCycleController
         showHideRedirectToLatest(false);
         unreadCount(0);
       }
+      debugPrint("pos --> $pos");
+      debugPrint("first index --> ${itemPositionsListener.itemPositions.value
+          .first.index.toString()}");
+      debugPrint("last index --> ${itemPositionsListener.itemPositions.value
+          .last.index.toString()}");
+      if(itemPositionsListener.itemPositions.value.first.index == 0){
+        debugPrint("List Reached Top");
+      }
+      if(itemPositionsListener.itemPositions.value.last.index == -1){
+        debugPrint("List Reached Bottom");
+      }
     });
 
     Mirrorfly.setOnGoingChatUser(profile.jid!);
