@@ -569,25 +569,24 @@ class ChatView extends GetView<ChatController> {
         child: ScrollablePositionedList.builder(
           itemScrollController: controller.newScrollController,
           itemPositionsListener: controller.newitemPositionsListener,
-          itemCount: chatList.length + 2,
+          itemCount: chatList.length,
           shrinkWrap: true,
           reverse: true,
           itemBuilder: (context, pos) {
-            if (pos == 0) {
-              debugPrint("index value 0");
-              return Obx(() {
-                return controller.loadNextData.value
-                    ? const Center(
-                        child: Text("Bottom"),
-                      )
-                    : const SizedBox.shrink();
-              });
-            } else if (pos < chatList.length + 1) {
-              debugPrint("index value middle --> ${chatList.length - 1}");
-              var index= pos-1;
+            if (pos >= 0) {
+              debugPrint("index value $pos");
+
+            // } else if (pos < chatList.length + 1) {
+            //   debugPrint("index value middle --> ${chatList.length - 1}");
+              var index= pos;
               return Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
+                  Visibility(
+                      visible: (controller.loadNextData.value && pos==chatList.length-1) ,//|| (controller.loadPreviousData.value && pos==chatList.length-1) ,
+                      child: const Center(
+                        child: CircularProgressIndicator()
+                      )),
                   groupedDateMessage(index, chatList) != null
                       ? NotificationMessageView(
                           chatMessage: groupedDateMessage(index, chatList))
@@ -775,15 +774,22 @@ class ChatView extends GetView<ChatController> {
                         )
                       : NotificationMessageView(
                           chatMessage: chatList[index].messageTextContent),
+                  Visibility(
+                      visible: (controller.loadPreviousData.value && pos==0) ,
+                      child: const Center(
+                        child: CircularProgressIndicator(),
+                      )),
                 ],
               );
             } else if (pos == chatList.length + 1) {
               debugPrint("index value last --> ${chatList.length}");
-              return controller.loadPreviousData.value
-                  ? const Center(
+              return Obx(() {
+                return Visibility(
+                    visible: controller.loadPreviousData.value,
+                    child: const Center(
                       child: Text("Top"),
-                    )
-                  : const SizedBox.shrink();
+                    ));
+              });
             } else {
               return const SizedBox.shrink();
             }
