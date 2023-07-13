@@ -2895,7 +2895,7 @@ class ChatController extends FullLifeCycleController
 
   void loadNextChatHistory() {
     // debugPrint("reached ${newitemPositionsListener.itemPositions.value.first.index}");
-    // debugPrint("reached last.index ${newitemPositionsListener.itemPositions.value.last.index}");
+    debugPrint("reached last.index ${newitemPositionsListener.itemPositions.value.last.index}");
     // debugPrint("reached length ${chatList.length}");
     var bottom = newitemPositionsListener.itemPositions.value
         .where((ItemPosition position) => position.itemTrailingEdge < 1)
@@ -2904,7 +2904,7 @@ class ChatController extends FullLifeCycleController
         .index;
     if (newitemPositionsListener.itemPositions.value.first.index == 0 && (bottom==0)) {
       debugPrint("reached bottom $bottom");
-      _loadPreviousMessages();
+      _loadNextMessages();
     }
 
     var top = newitemPositionsListener.itemPositions.value
@@ -2912,9 +2912,10 @@ class ChatController extends FullLifeCycleController
         .reduce((ItemPosition min, ItemPosition position) =>
     position.itemTrailingEdge > min.itemTrailingEdge ? position : min)
         .index;
-    if (newitemPositionsListener.itemPositions.value.last.index == top && top <= chatList.length+1) {
+    debugPrint("reached top  $top");
+    if (newitemPositionsListener.itemPositions.value.last.index == top || top <= chatList.length+1) {
       debugPrint("reached top  $top");
-      _loadNextMessages();
+      _loadPreviousMessages();
     }
   }
 }
