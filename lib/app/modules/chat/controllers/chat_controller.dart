@@ -41,6 +41,7 @@ class ChatController extends FullLifeCycleController
   // final translator = Translation(apiKey: Constants.googleTranslateKey);
 
   var chatList = List<ChatMessageModel>.empty(growable: true).obs;
+  // var chatList = <ChatMessageModel>[].obs;
   late AnimationController controller;
 
   // ScrollController scrollController = ScrollController();
@@ -604,17 +605,12 @@ class ChatController extends FullLifeCycleController
         debugPrint("Chat List is Empty");
       }else{
         try {
-          List<ChatMessageModel> chatMessageModel = chatMessageModelFromJson(value);
+          var chatMessageModel = List<ChatMessageModel>.empty(growable: true).obs;
+          chatMessageModel.addAll(chatMessageModelFromJson(value));
           if(chatMessageModel.toList().isNotEmpty) {
-            // chatList.insertAll(0, chatMessageModel.toList());
-            debugPrint("before insert ${chatList.length}");
-            debugPrint("inserting previous msgs at ${chatList.length}");
-            debugPrint("message at ${chatList.length} ${chatList[chatList.length].messageTextContent}");
             chatList.insertAll(chatList.length, chatMessageModel.reversed.toList());
-            debugPrint("after insert ${chatList.length}");
-            chatList.refresh();
           }else{
-            debugPrint("chat list is emptty");
+            debugPrint("chat list is empty");
           }
           showStarredMessage();
         } catch (error) {
@@ -636,8 +632,7 @@ class ChatController extends FullLifeCycleController
         try {
           List<ChatMessageModel> chatMessageModel = chatMessageModelFromJson(value);
           if(chatMessageModel.isNotEmpty) {
-            // chatList.insertAll(chatList.length, chatMessageModel.toList());
-            debugPrint("inserting next msgs at ${chatList.length}");
+            chatList.insertAll(0, chatMessageModel.reversed.toList());
           }
           showStarredMessage();
         } catch (error) {
