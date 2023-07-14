@@ -578,8 +578,8 @@ class ChatController extends FullLifeCycleController
     chatLoading(true);
     Mirrorfly.initializeMessageList(userJid: profile.jid.checkNull(), limit: 25, ascendingOrder: true).then((value) {
       value ? Mirrorfly.loadMessages().then((value) {
-        // loadPreviousData(false);
-        // loadNextData(false);
+        loadPreviousData(false);
+        loadNextData(false);
         if (value == "" || value == null) {
           debugPrint("Chat List is Empty");
         }else{
@@ -599,7 +599,7 @@ class ChatController extends FullLifeCycleController
   }
 
   void _loadPreviousMessages() {
-    loadPreviousData(true);
+    loadNextData(true);
     Mirrorfly.loadPreviousMessages().then((value) {
       if (value == "" || value == null) {
         debugPrint("Chat List is Empty");
@@ -617,14 +617,14 @@ class ChatController extends FullLifeCycleController
           debugPrint("chatHistory parsing error--> $error");
         }
       }
-      loadPreviousData(false);
+      loadNextData(false);
     }).catchError((e) {
-      loadPreviousData(false);
+      loadNextData(false);
     });
   }
 
   void _loadNextMessages() {
-    loadNextData(true);
+    loadPreviousData(true);
     Mirrorfly.loadNextMessages().then((value) {
       if (value == "" || value == null) {
         debugPrint("Chat List is Empty");
@@ -639,9 +639,9 @@ class ChatController extends FullLifeCycleController
           debugPrint("chatHistory parsing error--> $error");
         }
       }
-      loadNextData(false);
+      loadPreviousData(false);
     }).catchError((e) {
-      loadNextData(false);
+      loadPreviousData(false);
     });
   }
 
@@ -2629,7 +2629,30 @@ class ChatController extends FullLifeCycleController
         chatList[chatIndex].isSelected(false);
         chatList.refresh();
       });
+    }else{
+      getMessageFromServerAndNavigateToMessage(chatMessage, index);
     }
+  }
+  void getMessageFromServerAndNavigateToMessage(ChatMessageModel chatMessage, int? index) {
+    Mirrorfly.loadMessages().then((value) {
+      loadPreviousData(false);
+      loadNextData(false);
+      if (value == "" || value == null) {
+        debugPrint("Chat List is Empty");
+      }else{
+        try {
+          chatList.clear();
+          List<ChatMessageModel> chatMessageModel = chatMessageModelFromJson(value);
+          chatList(chatMessageModel.reversed.toList());
+          navigateToMessage(chatMessage, index: index);
+        } catch (error) {
+          debugPrint("chatHistory parsing error--> $error");
+        }
+      }
+      chatLoading(false);
+    }).catchError((e) {
+      chatLoading(false);
+    });
   }
 
   int findLastVisibleItemPositionForChat() {
@@ -2923,6 +2946,8 @@ class ChatController extends FullLifeCycleController
       }
     }
   }
+
+
 
   /*void loadNextChatHistory() {
     // debugPrint("reached ${newitemPositionsListener.itemPositions.value.first.index}");
