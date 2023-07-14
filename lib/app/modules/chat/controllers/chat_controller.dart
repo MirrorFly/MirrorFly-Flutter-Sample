@@ -575,7 +575,7 @@ class ChatController extends FullLifeCycleController
 
   void _loadMessages() {
     chatLoading(true);
-    Mirrorfly.initializeMessageList(userJid: profile.jid.checkNull(), limit: 50).then((value) {
+    Mirrorfly.initializeMessageList(userJid: profile.jid.checkNull(), limit: 25, ascendingOrder: true).then((value) {
       value ? Mirrorfly.loadMessages().then((value) {
         // loadPreviousData(false);
         // loadNextData(false);
@@ -584,7 +584,7 @@ class ChatController extends FullLifeCycleController
         }else{
           try {
             List<ChatMessageModel> chatMessageModel = chatMessageModelFromJson(value);
-            chatList(chatMessageModel);
+            chatList(chatMessageModel.reversed.toList());
             showStarredMessage();
           } catch (error) {
             debugPrint("chatHistory parsing error--> $error");
@@ -606,7 +606,15 @@ class ChatController extends FullLifeCycleController
         try {
           List<ChatMessageModel> chatMessageModel = chatMessageModelFromJson(value);
           if(chatMessageModel.toList().isNotEmpty) {
-            chatList.insertAll(0, chatMessageModel.toList());
+            // chatList.insertAll(0, chatMessageModel.toList());
+            debugPrint("before insert ${chatList.length}");
+            debugPrint("inserting previous msgs at ${chatList.length}");
+            debugPrint("message at ${chatList.length} ${chatList[chatList.length].messageTextContent}");
+            chatList.insertAll(chatList.length, chatMessageModel.reversed.toList());
+            debugPrint("after insert ${chatList.length}");
+            chatList.refresh();
+          }else{
+            debugPrint("chat list is emptty");
           }
           showStarredMessage();
         } catch (error) {
@@ -628,7 +636,8 @@ class ChatController extends FullLifeCycleController
         try {
           List<ChatMessageModel> chatMessageModel = chatMessageModelFromJson(value);
           if(chatMessageModel.isNotEmpty) {
-            chatList.insertAll(chatList.length, chatMessageModel.toList());
+            // chatList.insertAll(chatList.length, chatMessageModel.toList());
+            debugPrint("inserting next msgs at ${chatList.length}");
           }
           showStarredMessage();
         } catch (error) {
@@ -675,6 +684,7 @@ class ChatController extends FullLifeCycleController
               chatMessageModelFromJson(value);
           // mirrorFlyLog("chat parsed history", chatMessageModelToJson(chatMessageModel));
           chatList(chatMessageModel.reversed.toList());
+          // chatList(chatMessageModel);
           Future.delayed(const Duration(milliseconds: 200), () {
             if (starredChatMessageId != null) {
               debugPrint('starredChatMessageId $starredChatMessageId');
@@ -2893,7 +2903,33 @@ class ChatController extends FullLifeCycleController
     }
   }
 
-  void loadNextChatHistory() {
+  void loadNextChatHistory(){
+    final itemPositions = newitemPositionsListener.itemPositions.value;
+
+    if (itemPositions.isNotEmpty) {
+      final firstVisibleItemIndex = itemPositions.first.index;
+
+      debugPrint("reached length ${itemPositions.first.itemLeadingEdge}");
+      debugPrint("reached firstItemIndex $firstVisibleItemIndex");
+      debugPrint("reached itemPositions.length ${itemPositions.length}");
+      debugPrint("reached bottom check ${firstVisibleItemIndex + itemPositions.length >= chatList.length}");
+      ///This is the top constraint changing to bottom constraint and calling nextMessages bcz reversing the list view in display
+      if (firstVisibleItemIndex <= 1 && itemPositions.first.itemLeadingEdge <= 0) {
+        // Scrolled to the top
+        debugPrint("reached Top yes load next messages");
+        _loadNextMessages();
+        // _loadPreviousMessages();
+        ///This is the bottom constraint changing to Top constraint and calling prevMessages bcz reversing the list view in display
+      } else if (firstVisibleItemIndex + itemPositions.length >= chatList.length) {
+        // Scrolled to the bottom
+        // _loadNextMessages();
+        _loadPreviousMessages();
+        debugPrint("reached Bottom yes load previous msgs");
+      }
+    }
+  }
+
+  /*void loadNextChatHistory() {
     // debugPrint("reached ${newitemPositionsListener.itemPositions.value.first.index}");
     debugPrint("reached last.index ${newitemPositionsListener.itemPositions.value.last.index}");
     // debugPrint("reached length ${chatList.length}");
@@ -2902,9 +2938,11 @@ class ChatController extends FullLifeCycleController
         .reduce((ItemPosition min, ItemPosition position) =>
     position.itemTrailingEdge < min.itemTrailingEdge ? position : min)
         .index;
+    debugPrint("reached bottom $bottom");
+    debugPrint("reached first.index ${newitemPositionsListener.itemPositions.value.first.index}");
     if (newitemPositionsListener.itemPositions.value.first.index == 0 && (bottom==0)) {
-      debugPrint("reached bottom $bottom");
-      _loadNextMessages();
+      debugPrint("reached bottom if $bottom");
+      // _loadNextMessages();
     }
 
     var top = newitemPositionsListener.itemPositions.value
@@ -2913,11 +2951,12 @@ class ChatController extends FullLifeCycleController
     position.itemTrailingEdge > min.itemTrailingEdge ? position : min)
         .index;
     debugPrint("reached top  $top");
+    debugPrint("reached last.index ${newitemPositionsListener.itemPositions.value.last.index}");
     if (newitemPositionsListener.itemPositions.value.last.index == top || top <= chatList.length+1) {
-      debugPrint("reached top  $top");
-      _loadPreviousMessages();
+      debugPrint("reached top if  $top");
+      // _loadPreviousMessages();
     }
-  }
+  }*/
 }
 
 void onMessageDeleteNotifyUI(String chatUserJid) {

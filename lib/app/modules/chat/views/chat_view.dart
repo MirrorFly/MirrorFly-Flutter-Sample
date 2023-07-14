@@ -781,15 +781,6 @@ class ChatView extends GetView<ChatController> {
                       )),
                 ],
               );
-            } else if (pos == chatList.length + 1) {
-              debugPrint("index value last --> ${chatList.length}");
-              return Obx(() {
-                return Visibility(
-                    visible: controller.loadPreviousData.value,
-                    child: const Center(
-                      child: Text("Top"),
-                    ));
-              });
             } else {
               return const SizedBox.shrink();
             }
