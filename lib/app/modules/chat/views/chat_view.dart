@@ -719,7 +719,7 @@ class ChatView extends GetView<ChatController> {
                                                 chatList: chatList,
                                                 index: index),
                                             chatList[index].isThisAReplyMessage ? chatList[index].replyParentChatMessage == null
-                                                ? const Text("The Original Message is not Available")
+                                                ? messageNotAvailableWidget(chatList[index])
                                                 : ReplyMessageHeader(
                                                     chatMessage:
                                                         chatList[index]) : const SizedBox.shrink(),

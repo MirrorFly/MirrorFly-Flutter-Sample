@@ -121,7 +121,7 @@ class StarredMessagesView extends GetView<StarredMessagesController> {
                                 CrossAxisAlignment.start,
                                 children: [
                                   starredChatList[index].isThisAReplyMessage ? starredChatList[index].replyParentChatMessage == null
-                                      ? const Text("The Original Message is not Available")
+                                      ? messageNotAvailableWidget(starredChatList[index])
                                       : ReplyMessageHeader(
                                       chatMessage: starredChatList[index]) : const SizedBox.shrink(),
                                   MessageContent(chatList: starredChatList,search: controller.searchedText.text.trim(),index:index, onPlayAudio: (){

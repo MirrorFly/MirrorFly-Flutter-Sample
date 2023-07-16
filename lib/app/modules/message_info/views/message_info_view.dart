@@ -45,7 +45,7 @@ class MessageInfoView extends GetView<MessageInfoController> {
                         return Column(
                           children: [
                             controller.chatMessage[0].isThisAReplyMessage ? controller.chatMessage[0].replyParentChatMessage == null
-                                ? const Text("The Original Message is not Available")
+                                ? messageNotAvailableWidget(controller.chatMessage[0])
                                 : ReplyMessageHeader(
                                 chatMessage: controller.chatMessage[0],) : const SizedBox.shrink(),
                             SenderHeader(
