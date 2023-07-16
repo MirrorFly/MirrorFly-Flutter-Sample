@@ -36,10 +36,10 @@ target 'Runner' do
   # Pods for Runner
 end
 
-target 'NotificationExtention' do
+target 'NotificationService' do
   # Comment the next line if you don't want to use dynamic frameworks
   use_frameworks!
-  pod 'MirrorFlySDK', '5.10.0'
+  #pod 'MirrorFlySDK', '5.10.0'
   # Pods for RunnerNotification
 #  pod 'Firebase/Messaging'
 #  flutter_install_all_ios_pods File.dirname(File.realpath(__FILE__))

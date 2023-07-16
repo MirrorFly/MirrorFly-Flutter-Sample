@@ -1,13 +1,14 @@
 //
 //  NotificationService.swift
-//  NotificationExtention
+//  NotificationService
 //
-//  Created by Mani Vendhan on 09/07/23.
+//  Created by Mani Vendhan on 16/07/23.
 //
 
 import UserNotifications
 //import Firebase
 import MirrorFlySDK
+
 
 class NotificationService: UNNotificationServiceExtension {
 
@@ -19,6 +20,7 @@ class NotificationService: UNNotificationServiceExtension {
         bestAttemptContent = (request.content.mutableCopy() as? UNMutableNotificationContent)
         NSLog("#Mirrorfly Notification Received")
         let payloadType = bestAttemptContent?.userInfo["type"] as? String
+        
         try? ChatSDK.Builder.setAppGroupContainerID(containerID: "group.com.mirrorfly.qa")
             .isTrialLicense(isTrial: true)
             .setLicenseKey(key: "ckIjaccWBoMNvxdbql8LJ2dmKqT5bp")
