@@ -44,11 +44,10 @@ class MessageInfoView extends GetView<MessageInfoController> {
                       child: Obx(() {
                         return Column(
                           children: [
-                            (controller.chatMessage[0].replyParentChatMessage ==
-                                null)
-                                ? const SizedBox.shrink()
+                            controller.chatMessage[0].isThisAReplyMessage ? controller.chatMessage[0].replyParentChatMessage == null
+                                ? const Text("The Original Message is not Available")
                                 : ReplyMessageHeader(
-                                chatMessage: controller.chatMessage[0],),
+                                chatMessage: controller.chatMessage[0],) : const SizedBox.shrink(),
                             SenderHeader(
                                 isGroupProfile: controller.isGroupProfile,
                                 chatList: controller.chatMessage,

@@ -718,13 +718,11 @@ class ChatView extends GetView<ChatController> {
                                                     .profile.isGroupProfile,
                                                 chatList: chatList,
                                                 index: index),
-                                            (chatList[index]
-                                                        .replyParentChatMessage ==
-                                                    null)
-                                                ? const SizedBox.shrink()
+                                            chatList[index].isThisAReplyMessage ? chatList[index].replyParentChatMessage == null
+                                                ? const Text("The Original Message is not Available")
                                                 : ReplyMessageHeader(
                                                     chatMessage:
-                                                        chatList[index]),
+                                                        chatList[index]) : const SizedBox.shrink(),
                                             Obx(() {
                                               return MessageContent(
                                                   chatList: chatList,
