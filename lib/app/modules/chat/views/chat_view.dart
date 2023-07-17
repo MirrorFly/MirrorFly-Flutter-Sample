@@ -573,11 +573,6 @@ class ChatView extends GetView<ChatController> {
           shrinkWrap: true,
           reverse: true,
           itemBuilder: (context, pos) {
-            if (pos >= 0) {
-              debugPrint("index value $pos");
-
-            // } else if (pos < chatList.length + 1) {
-            //   debugPrint("index value middle --> ${chatList.length - 1}");
               var index= pos;
               return Column(
                 mainAxisSize: MainAxisSize.min,
@@ -779,9 +774,6 @@ class ChatView extends GetView<ChatController> {
                       )),
                 ],
               );
-            } else {
-              return const SizedBox.shrink();
-            }
           },
         ),
       ),
