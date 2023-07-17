@@ -38,7 +38,7 @@ class DeleteAccountView extends GetView<DeleteAccountController> {
                   ],
                 ),
                 const SizedBox(height: 10,),
-                const Row(
+                Row(
                   children: [
                     SizedBox(width: 30,),
                     Text(Constants.bulletPoint, style: TextStyle(fontSize: 12),),
@@ -46,7 +46,7 @@ class DeleteAccountView extends GetView<DeleteAccountController> {
                   ],
                 ),
                 const SizedBox(height: 10,),
-                const Row(
+                Row(
                   children: [
                     SizedBox(width: 30,),
                     Text(Constants.bulletPoint, style: TextStyle(fontSize: 12),),
@@ -54,7 +54,7 @@ class DeleteAccountView extends GetView<DeleteAccountController> {
                   ],
                 ),
                 const SizedBox(height: 10,),
-                const Row(
+                Row(
                   children: [
                     SizedBox(width: 30,),
                     Text(Constants.bulletPoint, style: TextStyle(fontSize: 12),),
