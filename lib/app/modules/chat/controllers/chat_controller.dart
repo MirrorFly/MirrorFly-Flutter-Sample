@@ -576,7 +576,7 @@ class ChatController extends FullLifeCycleController
 
   void _loadMessages() {
     chatLoading(true);
-    Mirrorfly.initializeMessageList(userJid: profile.jid.checkNull(), limit: 25, ascendingOrder: true).then((value) {
+    Mirrorfly.initializeMessageList(userJid: profile.jid.checkNull(), limit: 25).then((value) {
       value ? Mirrorfly.loadMessages().then((value) {
         loadPreviousData(false);
         loadNextData(false);
