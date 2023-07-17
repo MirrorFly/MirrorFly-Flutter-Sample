@@ -1921,19 +1921,23 @@ getMessageIndicator(
     String? messageStatus, bool isSender, String messageType, bool isRecalled) {
   // debugPrint("Message Status ==>");
   // debugPrint("Message Status ==> $messageStatus");
-  if (isSender && !isRecalled) {
-    if (messageStatus == 'A') {
-      return SvgPicture.asset(acknowledgedIcon);
-    } else if (messageStatus == 'D') {
-      return SvgPicture.asset(deliveredIcon);
-    } else if (messageStatus == 'S') {
-      return SvgPicture.asset(seenIcon);
-    } else if (messageStatus == 'N') {
-      return SvgPicture.asset(unSendIcon);
+  if(messageType.toUpperCase() != Constants.mNotification) {
+    if (isSender && !isRecalled) {
+      if (messageStatus == 'A') {
+        return SvgPicture.asset(acknowledgedIcon);
+      } else if (messageStatus == 'D') {
+        return SvgPicture.asset(deliveredIcon);
+      } else if (messageStatus == 'S') {
+        return SvgPicture.asset(seenIcon);
+      } else if (messageStatus == 'N') {
+        return SvgPicture.asset(unSendIcon);
+      } else {
+        return const SizedBox.shrink();
+      }
     } else {
       return const SizedBox.shrink();
     }
-  } else {
+  }else{
     return const SizedBox.shrink();
   }
 }
