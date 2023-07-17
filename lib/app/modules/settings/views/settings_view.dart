@@ -38,8 +38,8 @@ class SettingsView extends GetView<SettingsController> {
             settingListItem(
                 "Blocked Contacts", blockedIcon, rightArrowIcon, () =>
                 Get.toNamed(Routes.blockedList)),
-            // settingListItem("App Lock", lockIcon, rightArrowIcon, () =>
-            //     Get.toNamed(Routes.appLock)),
+            settingListItem("App Lock", lockIcon, rightArrowIcon, () =>
+                Get.toNamed(Routes.appLock)),
             settingListItem("About and Help", aboutIcon, rightArrowIcon, () =>
                 Get.to(const AboutAndHelpView())),
             settingListItem(

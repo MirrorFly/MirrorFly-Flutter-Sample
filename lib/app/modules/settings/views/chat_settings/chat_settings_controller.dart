@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:mirror_fly_demo/app/common/main_controller.dart';
 import 'package:mirrorfly_plugin/mirrorfly.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
@@ -108,6 +109,7 @@ class ChatSettingsController extends GetxController {
     if (await AppUtils.isNetConnected()) {
       var result = await Mirrorfly.clearAllConversation();
       if(result.checkNull()){
+        clearAllConvRecentChatUI();
         toToast('All your conversation are cleared');
       }else{
         toToast('Server error, kindly try again later');
@@ -152,5 +154,9 @@ class ChatSettingsController extends GetxController {
     bool? busyStatusPref = await Mirrorfly.isBusyStatusEnabled();
     busyStatusPreference(busyStatusPref);
     debugPrint("busyStatusPref ${busyStatusPref.toString()}");
+  }
+
+  void clearAllConvRecentChatUI() {
+    Get.find<MainController>().clearAllConvRecentChatUI();
   }
 }

@@ -102,5 +102,7 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
+	<key>API_THUMP_KEY</key>
+    <string>YOUR GOOGLE KEY HERE</string>
 </dict>
 </plist>

@@ -21,16 +21,20 @@ Specify your API key in the application manifest android/app/src/main/AndroidMan
 ```dart
     <meta-data android:name="com.google.android.geo.API_KEY"
     android:value="YOUR GOOGLE KEY HERE"/>
+
+    <meta-data android:name="com.google.android.geo.API_THUMP_KEY"
+    android:value="YOUR GOOGLE KEY HERE"/>
 ```
-Specify your API key in the application Constant dart file lib/app/common/constants.dart
-```dart
-  static const String googleMapKey = "YOUR GOOGLE KEY HERE";
-```
+
 # iOS
-Specify your API key in the AppDelegate.swift
+Specify your API key in the AppDelegate.swift and info.plist
 
 ```dart
   GMSServices.provideAPIKey("YOUR GOOGLE KEY HERE")
+```
+```dart
+  <key>API_THUMP_KEY</key>
+  <string>YOUR GOOGLE KEY HERE</string>
 ```
 
 ## Run project

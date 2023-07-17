@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
-import 'package:flutter_libphonenumber/flutter_libphonenumber.dart';
 import 'package:mirrorfly_plugin/mirrorflychat.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
@@ -21,6 +20,7 @@ import '../../../routes/app_pages.dart';
 
 class DashboardController extends FullLifeCycleController
     with FullLifeCycleMixin, GetTickerProviderStateMixin {
+  var chatLimit = 20;
   var recentChats = <RecentChatData>[].obs;
   var archivedChats = <RecentChatData>[].obs;
   var calendar = DateTime.now();
@@ -46,6 +46,12 @@ class DashboardController extends FullLifeCycleController
 
   var archiveSettingEnabled = false.obs;
 
+
+  ScrollController historyScrollController = ScrollController();
+
+  RxBool isRecentHistoryLoading = false.obs;
+  int recentChatPage = 1;
+
 /*@override
   void onInit() {
     super.onInit();
@@ -58,6 +64,11 @@ class DashboardController extends FullLifeCycleController
     checkArchiveSetting();
     userlistScrollController.addListener(_scrollListener);
   }*/
+  /*@override
+  void onInit(){
+    super.onInit();
+    historyScrollController.addListener(historyScrollListener);
+  }*/
 
   @override
   void onReady(){
@@ -66,10 +77,12 @@ class DashboardController extends FullLifeCycleController
     ever(recentChats, (callback) => unReadCount());
     archivedChats.bindStream(archivedChats.stream);
     ever(archivedChats, (callback) => archivedChatCount());
-    // getRecentChatList();
+    getRecentChatList();
     getArchivedChatsList();
     // checkArchiveSetting();
     userlistScrollController.addListener(_scrollListener);
+    historyScrollController.addListener(historyScrollListener);
+
   }
 
   infoPage(Profile profile) {
@@ -106,21 +119,24 @@ class DashboardController extends FullLifeCycleController
     }
   }
 
-  var recentChatLoding = true.obs;
+  var recentChatLoading = true.obs;
 
   getRecentChatList() {
-    mirrorFlyLog("", "recent chats");
-    Mirrorfly.getRecentChatList().then((value) async {
+    recentChatPage = 1;
+    Mirrorfly.getRecentChatListHistory(firstSet: recentChatPage==1,limit: chatLimit).then((value) async {
       // String recentList = value.replaceAll('\n', '\\n');
       // debugPrint(recentList);
+      mirrorFlyLog("getRecentChatListHistory", value);
       var data = await compute(recentChatFromJson, value.toString());
-      //recentChats.clear();
+      recentChats.clear();
       recentChats(data.data!);
       recentChats.refresh();
-      recentChatLoding(false);
+      isRecentHistoryLoading(false);
+      recentChatLoading(false);
+      getArchivedChatsList();
     }).catchError((error) {
       debugPrint("recent chat issue===> $error");
-      recentChatLoding(false);
+      recentChatLoading(false);
     });
   }
 
@@ -138,15 +154,17 @@ class DashboardController extends FullLifeCycleController
 
   toChatPage(String jid) {
     if (jid.isNotEmpty) {
+      Get.toNamed(Routes.chat, parameters: {"chatJid":jid});
       // Helper.progressLoading();
-      getProfileDetails(jid).then((value) {
+      /*getProfileDetails(jid).then((value) {
         if (value.jid != null) {
           Helper.hideLoading();
+          // recentChats.firstWhere((element) => element.jid==jid).isConversationUnRead=false;
           // debugPrint("Dashboard Profile===>$value");
           var profile = value;//profiledata(value.toString());
           Get.toNamed(Routes.chat, arguments: profile);
         }
-      });
+      });*/
       // SessionManagement.setChatJid(jid);
       // Get.toNamed(Routes.chat);
     }
@@ -867,6 +885,19 @@ class DashboardController extends FullLifeCycleController
       // updateRecentChat(chatMessageModel.chatUserJid);
       recentChats[index].lastMessageStatus = chatMessageModel.messageStatus.value;
       recentChats.refresh();
+    }else{
+      updateRecentChat(chatMessageModel.chatUserJid);
+    }
+  }
+
+  void markConversationReadNotifyUI(String jid){
+    mirrorFlyLog("setConversationAsRead", "setConversationAsRead");
+    var index = recentChats.indexWhere((element) => element.jid==jid);
+    if(!index.isNegative) {
+      if (recentChats[index].isConversationUnRead.checkNull()) {
+        recentChats[index].isConversationUnRead = false;
+        recentChats.refresh();
+      }
     }
   }
 
@@ -958,6 +989,9 @@ class DashboardController extends FullLifeCycleController
   set userList(List<Profile> value) => _userList.value = value;
 
   List<Profile> get userList => _userList;
+
+
+
 
   onChange(String inputValue) {
     if (search.text.trim().isNotEmpty) {
@@ -1196,6 +1230,7 @@ class DashboardController extends FullLifeCycleController
 
   @override
   void onResumed() {
+    getArchivedChatsList();
     if (!KeyboardVisibilityController().isVisible) {
       if (searchFocusNode.hasFocus) {
         searchFocusNode.unfocus();
@@ -1272,7 +1307,8 @@ class DashboardController extends FullLifeCycleController
     userUpdatedHisProfile(jid);
   }
 
-  Future<String> getJidFromPhoneNumber(
+  ///Commenting this as this method is not used anywhere
+  /*Future<String> getJidFromPhoneNumber(
       String mobileNumber, String countryCode) async {
     FlutterLibphonenumber().init();
     var formatNumberSync =
@@ -1280,14 +1316,14 @@ class DashboardController extends FullLifeCycleController
     var parse = await FlutterLibphonenumber().parse(formatNumberSync);
     var format =
         await FlutterLibphonenumber().format(mobileNumber, countryCode);
-    /*bool? isValid =
+    *//*bool? isValid =
       await PhoneNumberUtil.isValidPhoneNumber(phoneNumber: mobileNumber, isoCode: countryCode);
   String? normalizedNumber = await PhoneNumberUtil.normalizePhoneNumber(
       phoneNumber: mobileNumber, isoCode: countryCode);
   RegionInfo regionInfo =
       await PhoneNumberUtil.getRegionInfo(phoneNumber: mobileNumber, isoCode: countryCode);
   String? carrierName =
-      await PhoneNumberUtil.getNameForNumber(phoneNumber: mobileNumber, isoCode: countryCode);*/
+      await PhoneNumberUtil.getNameForNumber(phoneNumber: mobileNumber, isoCode: countryCode);*//*
     debugPrint('formatNumberSync : $formatNumberSync');
     debugPrint(
         'parse : $parse'); //{country_code: 971, e164: +971503209773, national: 050 320 9773, type: mobile, international: +971 50 320 9773, national_number: 503209773, region_code: AE}
@@ -1301,7 +1337,7 @@ class DashboardController extends FullLifeCycleController
     // debugPrint('regionInfo.formattedPhoneNumber : ${regionInfo.formattedPhoneNumber}');
     // debugPrint('carrierName : $carrierName');
 
-    /*phoneNumberUtil = PhoneNumberUtil.createInstance(context);
+    *//*phoneNumberUtil = PhoneNumberUtil.createInstance(context);
   if (mobileNumber.startsWith("*")) {
     LogMessage.d(TAG, "Invalid PhoneNumber:"+mobileNumber);
     return null;
@@ -1313,7 +1349,38 @@ class DashboardController extends FullLifeCycleController
     return unformattedPhoneNumber + "@" + Constants.getDomain();
   } catch (NumberParseException e) {
   LogMessage.e(TAG, e);
-  }*/
+  }*//*
     return '';
+  }*/
+
+  historyScrollListener() {
+    // mirrorFlyLog("historyScrollListener", historyScrollController.position.extentAfter.toString());
+    // scrollController.position.pixels >=
+    //     scrollController.position.maxScrollExtent - 200 //uncomment for data to be populated before certain items
+    if (historyScrollController.position.extentAfter <= 0.0) {
+      // User has reached the bottom of the list
+      // Show loading screen and load more data
+      // loadMoreData();
+      debugPrint("load next set of data");
+      if(!isRecentHistoryLoading.value) {
+        recentChatPage++;
+        isRecentHistoryLoading(true);
+        debugPrint("calling page no $recentChatPage");
+        Mirrorfly.getRecentChatListHistory(firstSet: recentChatPage==1,limit: chatLimit).then((value) async {
+          debugPrint("getRecentChatListHistory next data $value");
+          var data = await compute(recentChatFromJson, value.toString());
+          recentChats.addAll(data.data!);
+          recentChats.refresh();
+          isRecentHistoryLoading(false);
+          getArchivedChatsList();
+        }).catchError((error) {
+          debugPrint("recent chat issue===> $error");
+          isRecentHistoryLoading(false);
+        });
+      }
+
+
+    }
+
   }
 }

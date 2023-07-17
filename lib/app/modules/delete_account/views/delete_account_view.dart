@@ -39,7 +39,7 @@ class DeleteAccountView extends GetView<DeleteAccountController> {
                 ),
                 const SizedBox(height: 10,),
                 Row(
-                  children: [
+                  children: const [
                     SizedBox(width: 30,),
                     Text(Constants.bulletPoint, style: TextStyle(fontSize: 12),),
                     Text("Delete your account from MirrorFly",style: TextStyle(color: textColor),),
@@ -47,7 +47,7 @@ class DeleteAccountView extends GetView<DeleteAccountController> {
                 ),
                 const SizedBox(height: 10,),
                 Row(
-                  children: [
+                  children: const [
                     SizedBox(width: 30,),
                     Text(Constants.bulletPoint, style: TextStyle(fontSize: 12),),
                     Text("Erase your message history",style: TextStyle(color: textColor),),
@@ -55,7 +55,7 @@ class DeleteAccountView extends GetView<DeleteAccountController> {
                 ),
                 const SizedBox(height: 10,),
                 Row(
-                  children: [
+                  children: const [
                     SizedBox(width: 30,),
                     Text(Constants.bulletPoint, style: TextStyle(fontSize: 12),),
                     Text("Delete you from all of your MirrorFly groups",style: TextStyle(color: textColor),),

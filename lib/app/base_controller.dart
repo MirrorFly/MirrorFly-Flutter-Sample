@@ -178,6 +178,18 @@ abstract class BaseController {
 
   }
 
+  void onMessageDeleteNotifyUI(String chatJid){
+    if (Get.isRegistered<DashboardController>()) {
+      Get.find<DashboardController>().updateRecentChat(chatJid);
+    }
+  }
+
+  void clearAllConvRecentChatUI(){
+    if (Get.isRegistered<DashboardController>()) {
+      Get.find<DashboardController>().getRecentChatList();
+    }
+  }
+
   void onMessageStatusUpdated(event) {
     ChatMessageModel chatMessageModel = sendMessageModelFromJson(event);
 
@@ -205,6 +217,12 @@ abstract class BaseController {
       Get.find<StarredMessagesController>().onMessageStatusUpdated(chatMessageModel);
     }
 
+  }
+
+  void markConversationReadNotifyUI(String jid) {
+    if (Get.isRegistered<DashboardController>()) {
+      Get.find<DashboardController>().markConversationReadNotifyUI(jid);
+    }
   }
 
   void onMediaStatusUpdated(event) {
