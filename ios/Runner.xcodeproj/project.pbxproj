@@ -874,16 +874,6 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		CE0B8FFE2A5B31EB0030DE60 /* Build configuration list for PBXNativeTarget "NotificationExtention" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				CE0B8FFF2A5B31EB0030DE60 /* Debug */,
-				CE0B90002A5B31EB0030DE60 /* Release */,
-				CE0B90012A5B31EB0030DE60 /* Profile */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
 /* End XCConfigurationList section */
 	};
 	rootObject = 97C146E61CF9000F007C117D /* Project object */;
