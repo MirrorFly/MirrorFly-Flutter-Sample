@@ -51,9 +51,9 @@ class WebLoginResultView extends GetView<ScannerController> {
                         });
                   });
                 }),
-            ListTile(contentPadding: EdgeInsets.zero, title: const Row(
+            ListTile(contentPadding: EdgeInsets.zero, title: Row(
               mainAxisAlignment: MainAxisAlignment.center,
-              children: [
+              children: const [
                 Icon(Icons.power_settings_new_rounded),
                 SizedBox(width: 8,),
                 Text("LOGOUT FROM ALL COMPUTERS"),

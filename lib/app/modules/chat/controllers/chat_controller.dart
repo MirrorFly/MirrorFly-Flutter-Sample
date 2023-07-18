@@ -14,6 +14,7 @@ import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:mirror_fly_demo/app/common/de_bouncer.dart';
+import 'package:mirror_fly_demo/app/common/main_controller.dart';
 import 'package:mirror_fly_demo/app/data/session_management.dart';
 import 'package:mirror_fly_demo/app/data/permissions.dart';
 import 'package:path_provider/path_provider.dart';
@@ -40,6 +41,7 @@ class ChatController extends FullLifeCycleController
   // final translator = Translation(apiKey: Constants.googleTranslateKey);
 
   var chatList = List<ChatMessageModel>.empty(growable: true).obs;
+  // var chatList = <ChatMessageModel>[].obs;
   late AnimationController controller;
 
   // ScrollController scrollController = ScrollController();
@@ -109,6 +111,9 @@ class ChatController extends FullLifeCycleController
 
   bool get isTrail => Mirrorfly.isTrialLicence;
 
+  var loadPreviousData = false.obs;
+  var loadNextData = false.obs;
+
   @override
   void onInit() async {
     super.onInit();
@@ -130,6 +135,9 @@ class ChatController extends FullLifeCycleController
       if (Get.parameters['messageId'] != null) {
         starredChatMessageId = Get.parameters['messageId'] as String;
       }
+    }
+    if(Get.parameters['chatJid'] != null){
+      userJid = Get.parameters['chatJid'] as String;
     }
     if (userJid.isEmpty) {
       var profileDetail = Get.arguments as Profile;
@@ -241,8 +249,10 @@ class ChatController extends FullLifeCycleController
     });
 
     Mirrorfly.setOnGoingChatUser(profile.jid!);
+    markConversationReadNotifyUI();
     SessionManagement.setCurrentChatJID(profile.jid.checkNull());
-    getChatHistory();
+    // getChatHistory();
+    _loadMessages();
     // compute(getChatHistory, profile.jid);
     debugPrint("==================");
     debugPrint(profile.image);
@@ -419,8 +429,9 @@ class ChatController extends FullLifeCycleController
               "inserting chat message",
               chatMessageModel.replyParentChatMessage?.messageType ??
                   "value is null");
-          chatList.insert(0, chatMessageModel);
+          // chatList.insert(0, chatMessageModel);
           scrollToBottom();
+          updateLastMessage(value);
         });
       }
     } else {
@@ -505,9 +516,10 @@ class ChatController extends FullLifeCycleController
               profile.jid.toString(), latitude, longitude, replyMessageId)
           .then((value) {
         mirrorFlyLog("Location_msg", value.toString());
-        ChatMessageModel chatMessageModel = sendMessageModelFromJson(value);
-        chatList.insert(0, chatMessageModel);
+        // ChatMessageModel chatMessageModel = sendMessageModelFromJson(value);
+        // chatList.insert(0, chatMessageModel);
         scrollToBottom();
+        updateLastMessage(value);
       });
     } else {
       //show busy status popup
@@ -562,6 +574,95 @@ class ChatController extends FullLifeCycleController
 
   RxBool chatLoading = false.obs;
 
+  void _loadMessages() {
+    chatLoading(true);
+    Mirrorfly.initializeMessageList(userJid: profile.jid.checkNull(), limit: 25).then((value) {
+      value ? Mirrorfly.loadMessages().then((value) {
+        loadPreviousData(false);
+        loadNextData(false);
+        if (value == "" || value == null) {
+          debugPrint("Chat List is Empty");
+        }else{
+          try {
+            List<ChatMessageModel> chatMessageModel = chatMessageModelFromJson(value);
+            chatList(chatMessageModel.reversed.toList());
+            showStarredMessage();
+          } catch (error) {
+            debugPrint("chatHistory parsing error--> $error");
+          }
+        }
+        chatLoading(false);
+      }).catchError((e) {
+        chatLoading(false);
+      }) : toToast("Chat History Not Initialized");
+    });
+  }
+
+  void _loadPreviousMessages() {
+    loadNextData(true);
+    Mirrorfly.loadPreviousMessages().then((value) {
+      if (value == "" || value == null) {
+        debugPrint("Chat List is Empty");
+      }else{
+        try {
+          var chatMessageModel = List<ChatMessageModel>.empty(growable: true).obs;
+          chatMessageModel.addAll(chatMessageModelFromJson(value));
+          if(chatMessageModel.toList().isNotEmpty) {
+            chatList.insertAll(chatList.length, chatMessageModel.reversed.toList());
+          }else{
+            debugPrint("chat list is empty");
+          }
+          showStarredMessage();
+        } catch (error) {
+          debugPrint("chatHistory parsing error--> $error");
+        }
+      }
+      loadNextData(false);
+    }).catchError((e) {
+      loadNextData(false);
+    });
+  }
+
+  void _loadNextMessages() {
+    loadPreviousData(true);
+    Mirrorfly.loadNextMessages().then((value) {
+      if (value == "" || value == null) {
+        debugPrint("Chat List is Empty");
+      }else{
+        try {
+          List<ChatMessageModel> chatMessageModel = chatMessageModelFromJson(value);
+          if(chatMessageModel.isNotEmpty) {
+            chatList.insertAll(0, chatMessageModel.reversed.toList());
+          }
+          showStarredMessage();
+        } catch (error) {
+          debugPrint("chatHistory parsing error--> $error");
+        }
+      }
+      loadPreviousData(false);
+    }).catchError((e) {
+      loadPreviousData(false);
+    });
+  }
+
+  showStarredMessage(){
+    Future.delayed(const Duration(milliseconds: 200), () {
+      if (starredChatMessageId != null) {
+        debugPrint('starredChatMessageId $starredChatMessageId');
+        var chat = chatList.indexWhere(
+                (element) => element.messageId == starredChatMessageId);
+        debugPrint('chat $chat');
+        if (!chat.isNegative) {
+          navigateToMessage(chatList[chat]);
+          starredChatMessageId = null;
+        } else {
+          toToast('Message not found');
+        }
+      }
+      getUnsentReplyMessage();
+    });
+  }
+
   getChatHistory() {
     chatLoading(true);
     Mirrorfly.getMessagesOfJid(profile.jid.checkNull()).then((value) {
@@ -578,6 +679,7 @@ class ChatController extends FullLifeCycleController
               chatMessageModelFromJson(value);
           // mirrorFlyLog("chat parsed history", chatMessageModelToJson(chatMessageModel));
           chatList(chatMessageModel.reversed.toList());
+          // chatList(chatMessageModel);
           Future.delayed(const Duration(milliseconds: 200), () {
             if (starredChatMessageId != null) {
               debugPrint('starredChatMessageId $starredChatMessageId');
@@ -649,8 +751,9 @@ class ChatController extends FullLifeCycleController
             .then((value) {
           clearMessage();
           ChatMessageModel chatMessageModel = sendMessageModelFromJson(value);
-          chatList.insert(0, chatMessageModel);
+          // chatList.insert(0, chatMessageModel);
           scrollToBottom();
+          updateLastMessage(value);
           return chatMessageModel;
         });
       } else {
@@ -728,6 +831,7 @@ class ChatController extends FullLifeCycleController
   }
 
   sendReadReceipt() {
+    markConversationReadNotifyUI();
     Mirrorfly.markAsReadDeleteUnreadSeparator(profile.jid!).then((value) {
       debugPrint("Chat Read Receipt Response ==> $value");
     });
@@ -750,8 +854,9 @@ class ChatController extends FullLifeCycleController
         clearMessage();
         Platform.isIOS ? Helper.hideLoading() : null;
         ChatMessageModel chatMessageModel = sendMessageModelFromJson(value);
-        chatList.insert(0, chatMessageModel);
+        // chatList.insert(0, chatMessageModel);
         scrollToBottom();
+        updateLastMessage(value);
         return chatMessageModel;
       });
     } else {
@@ -876,8 +981,9 @@ class ChatController extends FullLifeCycleController
           .then((value) {
         debugPrint("response--> $value");
         ChatMessageModel chatMessageModel = sendMessageModelFromJson(value);
-        chatList.insert(0, chatMessageModel);
+        // chatList.insert(0, chatMessageModel);
         scrollToBottom();
+        updateLastMessage(value);
         return chatMessageModel;
       });
     } else {
@@ -904,8 +1010,9 @@ class ChatController extends FullLifeCycleController
       Mirrorfly.sendDocumentMessage(profile.jid!, documentPath, replyMessageId)
           .then((value) {
         ChatMessageModel chatMessageModel = sendMessageModelFromJson(value);
-        chatList.insert(0, chatMessageModel);
+        // chatList.insert(0, chatMessageModel);
         scrollToBottom();
+        updateLastMessage(value);
         return chatMessageModel;
       });
     } else {
@@ -970,8 +1077,9 @@ class ChatController extends FullLifeCycleController
           .then((value) {
         mirrorFlyLog("Audio Message sent", value);
         ChatMessageModel chatMessageModel = sendMessageModelFromJson(value);
-        chatList.insert(0, chatMessageModel);
+        // chatList.insert(0, chatMessageModel);
         scrollToBottom();
+        updateLastMessage(value);
         return chatMessageModel;
       });
     } else {
@@ -1003,6 +1111,7 @@ class ChatController extends FullLifeCycleController
             : chatList.clear();
         cancelReplyMessage();
         // chatList.refresh();
+        onMessageDeleteNotifyUI(profile.jid.checkNull());
       }
     });
   }
@@ -1239,6 +1348,7 @@ class ChatController extends FullLifeCycleController
               onPressed: () {
                 Get.back();
                 //Helper.showLoading(message: 'Deleting Message');
+                var chatJid = selectedChatList.last.chatUserJid;
                 Mirrorfly.deleteMessagesForMe(profile.jid!, chatType,
                     deleteChatListID, isMediaDelete.value)
                     .then((value) {
@@ -1249,6 +1359,8 @@ class ChatController extends FullLifeCycleController
                 }
                 isSelected(false);
                 selectedChatList.clear();*/
+
+                    onMessageDeleteNotifyUI(chatJid);
                 });
                 removeChatList(selectedChatList);
                 isSelected(false);
@@ -1276,6 +1388,9 @@ class ChatController extends FullLifeCycleController
                           chatList.isMessageRecalled(true);
                           chatList.isSelected(false);
                           // this.chatList.refresh();
+                          if(selectedChatList.last.messageId==chatList.messageId) {
+                            onMessageDeleteNotifyUI(chatList.chatUserJid);
+                          }
                         }
                       }
                       if (!value) {
@@ -1283,6 +1398,9 @@ class ChatController extends FullLifeCycleController
                         for (var chatList in selectedChatList) {
                           chatList.isSelected(false);
                           // this.chatList.refresh();
+                          if(selectedChatList.last.messageId==chatList.messageId) {
+                            onMessageDeleteNotifyUI(chatList.chatUserJid);
+                          }
                         }
                       }
                       isSelected(false);
@@ -1740,8 +1858,10 @@ class ChatController extends FullLifeCycleController
           checkAdminBlocked();
           memberOfGroup();
           Mirrorfly.setOnGoingChatUser(profile.jid!);
+          markConversationReadNotifyUI();
           SessionManagement.setCurrentChatJID(profile.jid.checkNull());
-          getChatHistory();
+          // getChatHistory();
+          _loadMessages();
           sendReadReceipt();
         }
       });
@@ -1879,8 +1999,10 @@ class ChatController extends FullLifeCycleController
           checkAdminBlocked();
           memberOfGroup();
           Mirrorfly.setOnGoingChatUser(profile.jid!);
+          markConversationReadNotifyUI();
           SessionManagement.setCurrentChatJID(profile.jid.checkNull());
-          getChatHistory();
+          // getChatHistory();
+          _loadMessages();
           sendReadReceipt();
           setChatStatus();
           debugPrint("value--> ${profile.isGroupProfile}");
@@ -1931,12 +2053,11 @@ class ChatController extends FullLifeCycleController
   }
 
   void onMessageStatusUpdated(ChatMessageModel chatMessageModel) {
-    debugPrint("#mirrorfly chat ${chatMessageModel.toJson()}");
     if (chatMessageModel.chatUserJid == profile.jid) {
       final index = chatList.indexWhere(
           (message) => message.messageId == chatMessageModel.messageId);
       debugPrint("ChatScreen Message Status Update index of search $index");
-      debugPrint("messageID--> ${chatMessageModel.messageId}");
+      debugPrint("messageID--> $index");
       if (!index.isNegative) {
         debugPrint("messageID--> replacing the value");
         // Helper.hideLoading();
@@ -2341,8 +2462,10 @@ class ChatController extends FullLifeCycleController
         checkAdminBlocked();
         memberOfGroup();
         Mirrorfly.setOnGoingChatUser(profile.jid!);
+        markConversationReadNotifyUI();
         SessionManagement.setCurrentChatJID(profile.jid.checkNull());
-        getChatHistory();
+        // getChatHistory();
+        _loadMessages();
         sendReadReceipt();
       }
     });
@@ -2506,7 +2629,30 @@ class ChatController extends FullLifeCycleController
         chatList[chatIndex].isSelected(false);
         chatList.refresh();
       });
+    }else{
+      getMessageFromServerAndNavigateToMessage(chatMessage, index);
     }
+  }
+  void getMessageFromServerAndNavigateToMessage(ChatMessageModel chatMessage, int? index) {
+    Mirrorfly.loadMessages().then((value) {
+      loadPreviousData(false);
+      loadNextData(false);
+      if (value == "" || value == null) {
+        debugPrint("Chat List is Empty");
+      }else{
+        try {
+          chatList.clear();
+          List<ChatMessageModel> chatMessageModel = chatMessageModelFromJson(value);
+          chatList(chatMessageModel.reversed.toList());
+          navigateToMessage(chatMessage, index: index);
+        } catch (error) {
+          debugPrint("chatHistory parsing error--> $error");
+        }
+      }
+      chatLoading(false);
+    }).catchError((e) {
+      chatLoading(false);
+    });
   }
 
   int findLastVisibleItemPositionForChat() {
@@ -2516,7 +2662,7 @@ class ChatController extends FullLifeCycleController
             position.itemTrailingEdge < min.itemTrailingEdge ? position : min)
         .index;
     return r < chatList.length ? r + 1 : r;*/
-    return newitemPositionsListener.itemPositions.value.first.index;
+    return newitemPositionsListener.itemPositions.value.first.index-1;
   }
 
   void share() {
@@ -2567,7 +2713,16 @@ class ChatController extends FullLifeCycleController
       }
     }
     Mirrorfly.setOnGoingChatUser(profile.jid.checkNull());
+    markConversationReadNotifyUI();
     SessionManagement.setCurrentChatJID(profile.jid.checkNull());
+  }
+
+  void markConversationReadNotifyUI(){
+    mirrorFlyLog("setConversationAsRead", "chat");
+    if (Get.isRegistered<MainController>()) {
+      Get.find<MainController>().markConversationReadNotifyUI(
+          profile.jid.checkNull());
+    }
   }
 
   @override
@@ -2765,4 +2920,69 @@ class ChatController extends FullLifeCycleController
       }
     }
   }
+
+  void loadNextChatHistory(){
+    final itemPositions = newitemPositionsListener.itemPositions.value;
+
+    if (itemPositions.isNotEmpty) {
+      final firstVisibleItemIndex = itemPositions.first.index;
+
+      debugPrint("reached length ${itemPositions.first.itemLeadingEdge}");
+      debugPrint("reached firstItemIndex $firstVisibleItemIndex");
+      debugPrint("reached itemPositions.length ${itemPositions.length}");
+      debugPrint("reached bottom check ${firstVisibleItemIndex + itemPositions.length >= chatList.length}");
+      ///This is the top constraint changing to bottom constraint and calling nextMessages bcz reversing the list view in display
+      if (firstVisibleItemIndex <= 1 && itemPositions.first.itemLeadingEdge <= 0) {
+        // Scrolled to the top
+        debugPrint("reached Top yes load next messages");
+        _loadNextMessages();
+        // _loadPreviousMessages();
+        ///This is the bottom constraint changing to Top constraint and calling prevMessages bcz reversing the list view in display
+      } else if (firstVisibleItemIndex + itemPositions.length >= chatList.length) {
+        // Scrolled to the bottom
+        // _loadNextMessages();
+        _loadPreviousMessages();
+        debugPrint("reached Bottom yes load previous msgs");
+      }
+    }
+  }
+
+
+
+  /*void loadNextChatHistory() {
+    // debugPrint("reached ${newitemPositionsListener.itemPositions.value.first.index}");
+    debugPrint("reached last.index ${newitemPositionsListener.itemPositions.value.last.index}");
+    // debugPrint("reached length ${chatList.length}");
+    var bottom = newitemPositionsListener.itemPositions.value
+        .where((ItemPosition position) => position.itemTrailingEdge < 1)
+        .reduce((ItemPosition min, ItemPosition position) =>
+    position.itemTrailingEdge < min.itemTrailingEdge ? position : min)
+        .index;
+    debugPrint("reached bottom $bottom");
+    debugPrint("reached first.index ${newitemPositionsListener.itemPositions.value.first.index}");
+    if (newitemPositionsListener.itemPositions.value.first.index == 0 && (bottom==0)) {
+      debugPrint("reached bottom if $bottom");
+      // _loadNextMessages();
+    }
+
+    var top = newitemPositionsListener.itemPositions.value
+        .where((ItemPosition position) => position.itemTrailingEdge < 1)
+        .reduce((ItemPosition min, ItemPosition position) =>
+    position.itemTrailingEdge > min.itemTrailingEdge ? position : min)
+        .index;
+    debugPrint("reached top  $top");
+    debugPrint("reached last.index ${newitemPositionsListener.itemPositions.value.last.index}");
+    if (newitemPositionsListener.itemPositions.value.last.index == top || top <= chatList.length+1) {
+      debugPrint("reached top if  $top");
+      // _loadPreviousMessages();
+    }
+  }*/
+}
+
+void onMessageDeleteNotifyUI(String chatUserJid) {
+  Get.find<MainController>().onMessageDeleteNotifyUI(chatUserJid);
+}
+
+void updateLastMessage(dynamic chatMessageModel) {
+  Get.find<MainController>().onMessageStatusUpdated(chatMessageModel);
 }

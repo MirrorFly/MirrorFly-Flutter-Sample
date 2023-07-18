@@ -87,12 +87,12 @@ String getInitialRoute() {
             .checkNull()
             .isEmpty) {
           if(!Mirrorfly.isTrialLicence) {
-              mirrorFlyLog("SessionManagement.isContactSyncDone()", SessionManagement.isContactSyncDone().toString());
-              if (!SessionManagement.isContactSyncDone()) {
-                return AppPages.contactSync;
-              }else{
-                return AppPages.dashboard;
-              }
+            mirrorFlyLog("SessionManagement.isContactSyncDone()", SessionManagement.isContactSyncDone().toString());
+            if (!SessionManagement.isContactSyncDone()) {
+              return AppPages.contactSync;
+            }else{
+              return AppPages.dashboard;
+            }
           }else{
             mirrorFlyLog("login", "${SessionManagement
                 .getChatJid()
