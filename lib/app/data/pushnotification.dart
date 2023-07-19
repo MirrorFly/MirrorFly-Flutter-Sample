@@ -124,10 +124,7 @@ class PushNotifications {
     }
     // If `onMessage` is triggered with a notification, construct our own
     // local notification to show to users using the created channel.
-    Future.delayed(const Duration(milliseconds: 500), () {
-      showNotification(message);
-    });
-
+    showNotification(message);
   }
 
   static void notificationPermission() async{
@@ -188,37 +185,10 @@ class PushNotifications {
       WidgetsFlutterBinding.ensureInitialized();
       await Mirrorfly.handleReceivedMessage(notificationData).then((value) async {
         mirrorFlyLog("#Mirrorfly Notification -> notification message", value.toString());
-        var data = notificationModelFromJson(value.toString());
-        if(data.chatMessage!=null) {
-          NotificationBuilder.createNotification(data.chatMessage!);
+        var data = chatMessageFromJson(value.toString());
+        if(data.messageId!=null) {
+          NotificationBuilder.createNotification(data);
         }
-        /*var data = json.decode(value.toString());
-        var groupJid = data["groupJid"].toString();
-        var titleContent = data["titleContent"].toString();
-        var chatMessage = data["chatMessage"].toString();
-        var cancel = data["cancel"].toString();*/
-        /* var channel = AndroidNotificationChannel("id", "name", description: "");
-        var bigtextstyleinfo = BigTextStyleInformation(
-            data.chatMessage!.messageTextContent.toString(), htmlFormatBigText: true,
-            contentTitle: data.titleContent,
-            htmlFormatContentTitle: true);
-        var androidnotificationdetails = AndroidNotificationDetails(
-            channel.id, channel.name, channelDescription: channel.description,
-            importance: Importance.high,
-            styleInformation: bigtextstyleinfo,
-            priority: Priority.high,
-            playSound: true);
-        var notificationDetails = NotificationDetails(
-            android: androidnotificationdetails,
-            iOS: const DarwinNotificationDetails());
-        await flutterLocalNotificationsPlugin
-            .resolvePlatformSpecificImplementation<
-            AndroidFlutterLocalNotificationsPlugin>()
-            ?.createNotificationChannel(
-            channel);
-        await flutterLocalNotificationsPlugin.show(
-            0, data.titleContent, data.chatMessage!.messageTextContent, notificationDetails,
-            payload: data.chatMessage!.chatUserJid);*/
       });
     }
   }
