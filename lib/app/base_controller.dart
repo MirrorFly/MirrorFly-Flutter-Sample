@@ -19,12 +19,14 @@ import 'package:mirror_fly_demo/app/routes/app_pages.dart';
 import 'common/main_controller.dart';
 import 'common/notification_service.dart';
 import 'model/chat_message_model.dart';
+import 'model/notification_message_model.dart';
 import 'modules/archived_chats/archived_chat_list_controller.dart';
 import 'modules/chat/controllers/forwardchat_controller.dart';
 import 'modules/chatInfo/controllers/chat_info_controller.dart';
 import 'modules/dashboard/controllers/dashboard_controller.dart';
 // import 'modules/dashboard/controllers/recent_chat_search_controller.dart';
 import 'modules/message_info/controllers/message_info_controller.dart';
+import 'modules/notification/notification_builder.dart';
 import 'modules/starred_messages/controllers/starred_messages_controller.dart';
 import 'modules/view_all_media/controllers/view_all_media_controller.dart';
 
@@ -272,7 +274,11 @@ abstract class BaseController {
     if(SessionManagement.getCurrentChatJID() == chatMessageModel.chatUserJid.checkNull()){
       debugPrint("Message Received user chat screen is in online");
     }else{
-     showLocalNotification(chatMessageModel);
+      var data = chatMessageFromJson(chatMessage.toString());
+      if(data.messageId!=null) {
+        NotificationBuilder.createNotification(data);
+      }
+     // showLocalNotification(chatMessageModel);
     }
 
     if (Get.isRegistered<ChatController>()) {
@@ -312,9 +318,11 @@ abstract class BaseController {
     if(SessionManagement.getCurrentChatJID() == chatMessageModel.chatUserJid.checkNull()){
       debugPrint("Message Status updated user chat screen is in online");
     }else{
-      if(chatMessageModel.isMessageRecalled.value){
-        showLocalNotification(chatMessageModel);
-      }
+        var data = chatMessageFromJson(event.toString());
+        if(data.isMessageRecalled.checkNull()) {
+          NotificationBuilder.createNotification(data);
+        }
+        // showLocalNotification(chatMessageModel);
     }
 
     if (Get.isRegistered<ChatController>()) {
