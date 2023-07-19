@@ -165,10 +165,10 @@ packages:
     dependency: transitive
     description:
       name: csslib
-      sha256: b36c7f7e24c0bdf1bf9a3da461c837d1de64b9f8beb190c9011d8c72a3dfd745
+      sha256: "831883fb353c8bdc1d71979e5b342c7d88acfbc643113c14ae51e2442ea0f20f"
       url: "https://pub.dev"
     source: hosted
-    version: "0.17.2"
+    version: "0.17.3"
   cupertino_icons:
     dependency: "direct main"
     description:
@@ -438,14 +438,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.0.0"
-  flutter_libphonenumber:
-    dependency: "direct main"
-    description:
-      name: flutter_libphonenumber
-      sha256: "3cb0d5bde8efbf47f2c3dec84c77a4abcd9002adc7a457464ebb9e61d449b10d"
-      url: "https://pub.dev"
-    source: hosted
-    version: "1.4.0"
   flutter_lints:
     dependency: "direct dev"
     description:
@@ -843,10 +835,11 @@ packages:
   mirrorfly_plugin:
     dependency: "direct main"
     description:
-      path: "../p078-mirrorfly-flutter-plugin"
-      relative: true
-    source: path
-    version: "0.0.1"
+      name: mirrorfly_plugin
+      sha256: "0ec32953ac8a0c2ee32d97d4d2276363a28069f3525b8abfbb80172be1edada3"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.0.9"
   nested:
     dependency: transitive
     description:
@@ -1203,10 +1196,10 @@ packages:
     dependency: transitive
     description:
       name: shared_preferences_platform_interface
-      sha256: fb5cf25c0235df2d0640ac1b1174f6466bd311f621574997ac59018a6664548d
+      sha256: "23b052f17a25b90ff2b61aad4cc962154da76fb62848a9ce088efe30d7c50ab1"
       url: "https://pub.dev"
     source: hosted
-    version: "2.2.0"
+    version: "2.3.0"
   shared_preferences_web:
     dependency: transitive
     description:
@@ -1493,5 +1486,5 @@ packages:
     source: hosted
     version: "3.1.1"
 sdks:
-  dart: ">=3.0.0-0 <4.0.0"
-  flutter: ">=3.3.0"
+  dart: ">=3.0.0 <4.0.0"
+  flutter: ">=3.10.0"
