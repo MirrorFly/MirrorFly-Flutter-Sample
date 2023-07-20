@@ -233,7 +233,7 @@ class LoginController extends GetxController {
     var mUser = FirebaseAuth.instance.currentUser;
     if (mUser != null) {
       await mUser.getIdToken(true).then((value) {
-        verifyTokenWithServer(value);
+        verifyTokenWithServer(value!);
       }).catchError((er) {
         mirrorFlyLog("sendTokenToServer", er.toString());
         hideLoading();
