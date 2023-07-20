@@ -578,7 +578,12 @@ abstract class BaseController {
 
   void userProfileFetched(result) {}
 
-  void userUnBlockedMe(result) {}
+  void userUnBlockedMe(result) {
+    mirrorFlyLog("userUnBlockedMe", result);
+    var data = json.decode(result.toString());
+    var jid = data["jid"];
+    unblockedThisUser(jid);
+  }
 
   void userUpdatedHisProfile(String jid) {
     mirrorFlyLog("userUpdatedHisProfile", jid.toString());
