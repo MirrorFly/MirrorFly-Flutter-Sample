@@ -1,8 +1,9 @@
-import 'package:mirrorfly_plugin/mirrorfly.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
+import 'package:mirrorfly_plugin/model/profile_update.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../common/constants.dart';
+import '../model/register_model.dart';
 
 
 class SessionManagement {

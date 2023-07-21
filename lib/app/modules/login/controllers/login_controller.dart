@@ -13,6 +13,7 @@ import '../../../common/constants.dart';
 import '../../../data/apputils.dart';
 import '../../../data/session_management.dart';
 import 'package:mirrorfly_plugin/mirrorfly.dart';
+import '../../../model/register_model.dart' as registermodel;
 import '../../../routes/app_pages.dart';
 
 class LoginController extends GetxController {
@@ -310,18 +311,21 @@ class LoginController extends GetxController {
           countryCode!.replaceAll('+', '') + mobileNumber.text, token: SessionManagement.getToken().checkNull())
           .then((value) {
         if (value.contains("data")) {
-          var userData = registerModelFromJson(value); //message
-          SessionManagement.setLogin(userData.data!.username!.isNotEmpty);
-          SessionManagement.setUser(userData.data!);
-          // Mirrorfly.setNotificationSound(true);
-          // SessionManagement.setNotificationSound(true);
-          // userData.data.
-          enableArchive();
-          Mirrorfly.setRegionCode(regionCode ?? 'IN');
+          var userData = registermodel.registerModelFromJson(value); //message
+          if(userData.data!=null) {
+            SessionManagement.setLogin(userData.data!.username!.isNotEmpty);
+            SessionManagement.setUser(userData.data!);
+            // Mirrorfly.setNotificationSound(true);
+            // SessionManagement.setNotificationSound(true);
+            // userData.data.
+            enableArchive();
+            Mirrorfly.setRegionCode(regionCode ?? 'IN');
 
-          ///if its not set then error comes in contact sync delete from phonebook.
-          SessionManagement.setCountryCode((countryCode ?? "").replaceAll('+', ''));
-          setUserJID(userData.data!.username!);
+            ///if its not set then error comes in contact sync delete from phonebook.
+            SessionManagement.setCountryCode(
+                (countryCode ?? "").replaceAll('+', ''));
+            setUserJID(userData.data!.username!);
+          }
         }
       }).catchError((error) {
         debugPrint("issue===> $error");
