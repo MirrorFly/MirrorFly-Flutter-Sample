@@ -26,7 +26,7 @@ dependencies:
 #  emoji_picker_flutter: ^1.4.0
   emoji_picker_flutter: ^1.6.1
   image_cropping: ^0.0.13 #crop image
-  path_provider: ^2.0.11 #path provider
+  path_provider: ^2.0.15 #path provider
 
   lottie: ^1.4.3
   url_launcher: ^6.1.6 #url Launcher
