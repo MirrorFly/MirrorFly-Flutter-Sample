@@ -37,7 +37,9 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   Mirrorfly.init(
       baseUrl: 'https://api-uikit-qa.contus.us/api/v1/',
       licenseKey: 'ckIjaccWBoMNvxdbql8LJ2dmKqT5bp',//ckIjaccWBoMNvxdbql8LJ2dmKqT5bp//2sdgNtr3sFBSM3bYRa7RKDPEiB38Xo
-      iOSContainerID: 'group.com.mirrorfly.qa');
+      iOSContainerID: 'group.com.mirrorfly.qa',
+      chatHistoryEnable: true,
+      enableDebugLog: true);
   debugPrint("#Mirrorfly Notification -> Handling a background message: ${message.messageId}");
   PushNotifications.onMessage(message);
   // final dio = Dio();
@@ -58,6 +60,7 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   //     payload: "chatJid");
 }
 bool shouldUseFirebaseEmulator = false;
+bool isOnGoingCall = false;
 // dynamic nonChatUsers = [];
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();

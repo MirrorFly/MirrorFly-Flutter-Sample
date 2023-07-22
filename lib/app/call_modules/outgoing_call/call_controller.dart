@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
+import 'package:mirror_fly_demo/app/data/helper.dart';
 import 'package:mirror_fly_demo/app/model/call_user_list.dart';
 import 'package:mirrorfly_plugin/mirrorfly.dart';
 import 'package:mirrorfly_plugin/model/audio_devices.dart';
@@ -147,10 +148,13 @@ debugPrint("availableAudioList.length ${availableAudioList.length}");
     layoutSwitch(!layoutSwitch.value);
   }
 
-  Future<void> declineCall() async {
-    Mirrorfly.declineCall();
-    callList.clear();
-    Get.back();
+  void disconnectCall() {
+    Mirrorfly.disconnectCall().then((value){
+      if(value.checkNull()){
+        callList.clear();
+        Get.back();
+      }
+    });
   }
 
   getNames() async {
@@ -205,8 +209,8 @@ debugPrint("availableAudioList.length ${availableAudioList.length}");
       debugPrint("#Mirrorflycall participant jid is not in the list");
     }
     if (callList.length == 1) {
-      callList.clear();
-      Mirrorfly.declineCall();
+      // if there is an single user in that call and if he [disconnected] no need to disconnect the call from our side Observed in Android
+      // disconnectCall();
       Get.back();
     }
   }
@@ -240,6 +244,12 @@ debugPrint("availableAudioList.length ${availableAudioList.length}");
   void timeout(String callMode, String userJid, String callType,
       String callStatus) {
     this.callStatus("Disconnected");
+    Get.back();
+  }
+
+  void declineCall() {
+    Mirrorfly.declineCall();
+    callList.clear();
     Get.back();
   }
 

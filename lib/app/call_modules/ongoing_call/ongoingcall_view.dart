@@ -305,7 +305,7 @@ class OnGoingCallView extends GetView<CallController> {
                     shape: const StadiumBorder(),
                     backgroundColor: AppColors.endButton),
                 onPressed: () {
-                  controller.declineCall();
+                  controller.disconnectCall();
                 },
                 child: SvgPicture.asset(
                   callEndButton,
