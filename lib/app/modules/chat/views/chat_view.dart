@@ -1178,7 +1178,7 @@ class ChatView extends GetView<ChatController> {
                   onPressed: () {
                     controller.makeVideoCall();
                   },
-                  icon: const Icon(Icons.videocam_sharp, size: 20,),
+                  icon: SvgPicture.asset(videoCallIcon),
                 ),
                 overflowWidget: const Text("Video Call"),
                 showAsAction: controller.profile.isGroupProfile.checkNull() ? ShowAsAction.gone : ShowAsAction.always,
@@ -1192,7 +1192,7 @@ class ChatView extends GetView<ChatController> {
                   onPressed: () {
                     controller.makeVoiceCall();
                   },
-                  icon: const Icon(Icons.call, size: 20,),
+                  icon: SvgPicture.asset(audioCallIcon),
                 ),
                 overflowWidget: const Text("Call"),
                 showAsAction: controller.profile.isGroupProfile.checkNull() ? ShowAsAction.gone : ShowAsAction.always,

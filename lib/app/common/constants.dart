@@ -54,8 +54,11 @@ class AppColors{
 const String callEndButton = 'assets/calls/call_end_button.svg';
 const String speakerInactive = 'assets/calls/speaker_inactive.svg';
 const String speakerActive = 'assets/calls/speaker_active.svg';
-const String speakerBluetooth = 'assets/calls/speaker_active.svg';
-const String speakerHeadset = 'assets/calls/speaker_active.svg';
+const String speakerBluetooth = 'assets/calls/bluetooth.svg';
+const String speakerHeadset = 'assets/calls/head_set.svg';
+
+const String audioCallIcon = 'assets/calls/audiocall.svg';
+const String videoCallIcon = 'assets/calls/videocall.svg';
 
 const String videoInactive = 'assets/calls/video_inactive.svg';
 const String videoActive = 'assets/calls/video_active.svg';

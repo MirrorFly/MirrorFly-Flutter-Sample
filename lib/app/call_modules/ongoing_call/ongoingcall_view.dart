@@ -288,8 +288,8 @@ class OnGoingCallView extends GetView<CallController> {
                 onPressed: () => controller.changeSpeaker(),
                 child: controller.audioOutputType.value == Constants.receiver ? SvgPicture.asset(speakerInactive)
                     : controller.audioOutputType.value == Constants.speaker ? SvgPicture.asset(speakerActive)
-                    : controller.audioOutputType.value == Constants.bluetooth ? const Icon(Icons.bluetooth)
-                    : controller.audioOutputType.value == Constants.headset ? const Icon(Icons.headphones_sharp) : const Icon(Icons.speaker_phone),
+                    : controller.audioOutputType.value == Constants.bluetooth ? SvgPicture.asset(speakerBluetooth)
+                    : controller.audioOutputType.value == Constants.headset ? SvgPicture.asset(speakerHeadset) : SvgPicture.asset(speakerActive),
               ),
             ],
           ),
