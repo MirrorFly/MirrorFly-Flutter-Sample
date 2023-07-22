@@ -83,6 +83,7 @@ Future<void> main() async {
   if (mapsImplementation is GoogleMapsFlutterAndroid) {
     mapsImplementation.useAndroidViewSurface = true;
   }
+  isOnGoingCall = (await Mirrorfly.isOnGoingCall()).checkNull();
   // await SessionManagement.onInit();
   // ReplyHashMap.init();
   // Mirrorfly.isTrailLicence().then((value) => SessionManagement.setIsTrailLicence(value.checkNull()));
@@ -130,6 +131,10 @@ Bindings? getBinding(){
 }
 
 String getInitialRoute() {
+  if(isOnGoingCall){
+    isOnGoingCall=false;
+    return AppPages.onGoingCall;
+  }
   if(!SessionManagement.adminBlocked()) {
     if (SessionManagement.getLogin()) {
       if (SessionManagement

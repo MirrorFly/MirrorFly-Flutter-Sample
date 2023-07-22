@@ -150,9 +150,7 @@ abstract class BaseController {
     Mirrorfly.onProgressChanged.listen(onProgressChanged);
     Mirrorfly.onSuccess.listen(onSuccess);
     Mirrorfly.onLoggedOut.listen(onLogout);
-    Mirrorfly.onCallReceiving.listen((event) {
 
-    });
     Mirrorfly.onLocalVideoTrackAdded.listen((event) {
 
     });
@@ -254,16 +252,16 @@ abstract class BaseController {
 
     });
     Mirrorfly.onCallAction.listen((event) {
-
+      mirrorFlyLog("onCallAction", "$event");
     });
     Mirrorfly.onMuteStatusUpdated.listen((event) {
-
+      mirrorFlyLog("onMuteStatusUpdated", "$event");
     });
     Mirrorfly.onUserSpeaking.listen((event) {
-
+      mirrorFlyLog("onUserSpeaking", "$event");
     });
     Mirrorfly.onUserStoppedSpeaking.listen((event) {
-
+      mirrorFlyLog("onUserSpeaking", "$event");
     });
   }
 
