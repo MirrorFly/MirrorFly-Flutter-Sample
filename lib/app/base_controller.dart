@@ -471,10 +471,10 @@ abstract class BaseController {
 
   }
 
-  void onContactSyncComplete(bool result) {
+  void onContactSyncComplete(dynamic result) {
     mirrorFlyLog("onContactSyncComplete", result.toString());
     // Mirrorfly.getRegisteredUsers(true);
-    if(result) {
+    if(result as bool) {
       SessionManagement.setInitialContactSync(true);
       SessionManagement.setSyncDone(true);
     }
@@ -544,33 +544,33 @@ abstract class BaseController {
     }
   }
 
-  void userDeletedHisProfile(String jid) {
+  void userDeletedHisProfile(dynamic jid) {
     if (Get.isRegistered<DashboardController>()) {
-      Get.find<DashboardController>().userDeletedHisProfile(jid);
+      Get.find<DashboardController>().userDeletedHisProfile(jid.toString());
     }
     if (Get.isRegistered<ChatController>()) {
-      Get.find<ChatController>().userDeletedHisProfile(jid);
+      Get.find<ChatController>().userDeletedHisProfile(jid.toString());
     }
     if (Get.isRegistered<ArchivedChatListController>()) {
-      Get.find<ArchivedChatListController>().userDeletedHisProfile(jid);
+      Get.find<ArchivedChatListController>().userDeletedHisProfile(jid.toString());
     }
     if (Get.isRegistered<ContactController>()) {
-      Get.find<ContactController>().userDeletedHisProfile(jid);
+      Get.find<ContactController>().userDeletedHisProfile(jid.toString());
     }
     if (Get.isRegistered<BlockedListController>()) {
-      Get.find<BlockedListController>().userDeletedHisProfile(jid);
+      Get.find<BlockedListController>().userDeletedHisProfile(jid.toString());
     }
     if (Get.isRegistered<ForwardChatController>()) {
-      Get.find<ForwardChatController>().userDeletedHisProfile(jid);
+      Get.find<ForwardChatController>().userDeletedHisProfile(jid.toString());
     }
     if (Get.isRegistered<ChatInfoController>()) {
-      Get.find<ChatInfoController>().userDeletedHisProfile(jid);
+      Get.find<ChatInfoController>().userDeletedHisProfile(jid.toString());
     }
     if (Get.isRegistered<GroupInfoController>()) {
-      Get.find<GroupInfoController>().userDeletedHisProfile(jid);
+      Get.find<GroupInfoController>().userDeletedHisProfile(jid.toString());
     }
     if (Get.isRegistered<StarredMessagesController>()) {
-      Get.find<StarredMessagesController>().userDeletedHisProfile(jid);
+      Get.find<StarredMessagesController>().userDeletedHisProfile(jid.toString());
     }
   }
 
