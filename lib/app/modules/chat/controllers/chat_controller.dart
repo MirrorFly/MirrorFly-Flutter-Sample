@@ -315,7 +315,7 @@ class ChatController extends FullLifeCycleController
   saveUnsentMessage() {
     if (profile.jid.checkNull().isNotEmpty) {
       Mirrorfly.saveUnsentMessage(
-          profile.jid.checkNull(), messageController.text.toString());
+          profile.jid.checkNull(), messageController.text.trim().toString());
     }
     if (isReplying.value) {
       ReplyHashMap.saveReplyId(
@@ -413,7 +413,7 @@ class ChatController extends FullLifeCycleController
       isReplying(false);
       if (messageController.text.trim().isNotEmpty) {
         Mirrorfly.sendTextMessage(
-                messageController.text, profile.jid.toString(), replyMessageId)
+                messageController.text.trim(), profile.jid.toString(), replyMessageId)
             .then((value) {
           mirrorFlyLog("text message", value);
           messageController.text = "";
@@ -435,7 +435,7 @@ class ChatController extends FullLifeCycleController
           toJid: profile.jid.toString(),
           replyMessageId: (isReplying.value) ? replyChatMessage.messageId : "",
           messageType: Constants.mText,
-          textMessage: messageController.text);
+          textMessage: messageController.text.trim());
       showBusyStatusAlert(disableBusyChatAndSend);
     }
   }
@@ -1001,7 +1001,7 @@ class ChatController extends FullLifeCycleController
   }
 
   void isTyping([String? typingText]) {
-    messageController.text.isNotEmpty
+    messageController.text.trim().isNotEmpty
         ? isUserTyping(true)
         : isUserTyping(false);
   }
@@ -2173,7 +2173,7 @@ class ChatController extends FullLifeCycleController
             "filePath": [file],
             "userName": profile.name!,
             'profile': profile,
-            'caption': messageController.text,
+            'caption': messageController.text.trim(),
             'showAdd': false,
             'from': 'camera_pick'
           });
@@ -2215,7 +2215,7 @@ class ChatController extends FullLifeCycleController
         Get.toNamed(Routes.galleryPicker, arguments: {
           "userName": getName(profile),
           'profile': profile,
-          'caption': messageController.text
+          'caption': messageController.text.trim()
         });
       } catch (e) {
         debugPrint(e.toString());
