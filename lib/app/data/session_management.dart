@@ -83,6 +83,9 @@ class SessionManagement {
   static Future setNotificationUri(String notificationUri) async {
     await _preferences.setString("notification_uri", notificationUri);
   }
+  static Future setSummaryChannelId(String summayChannelId) async {
+    await _preferences.setString("${Constants.packageName}summary_channel.id", summayChannelId);
+  }
   static Future setNotificationSound(bool sound) async {
     await _preferences.setBool("${Constants.package}notification_sound", sound);
   }
@@ -171,6 +174,7 @@ class SessionManagement {
   static String? getAuthToken() => _preferences.getString("token");
   static String? getMediaEndPoint() => _preferences.getString("media_endpoint");
   static String? getNotificationUri() => _preferences.getString("notification_uri");
+  static String? getSummaryChannelId() => _preferences.getString("${Constants.packageName}summary_channel.id");
   static bool getWebLogin() => _preferences.getBool("web_chat_login") ?? false;
   static bool getNotificationSound() => _preferences.getBool("${Constants.package}notification_sound") ?? true;
   static bool getNotificationPopup() => _preferences.getBool("${Constants.package}notification_popup") ?? false;

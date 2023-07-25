@@ -1,6 +1,6 @@
 name: mirror_fly_demo
-version: 2.3.7+30
-build_release_date: Jun 2023
+version: 2.3.9+32
+build_release_date: Jul 2023
 publish_to: none
 description: A MirrorFly Flutter Sample Application.
 environment: 
@@ -11,6 +11,7 @@ dependencies:
   get: 4.6.5
   flutter: 
     sdk: flutter
+
   shared_preferences: ^2.1.0
   flutter_svg: ^1.1.5
   cached_network_image: ^3.2.2
@@ -19,10 +20,11 @@ dependencies:
   intl: ^0.17.0 #datetime
   package_info_plus: ^4.0.2 #package info
   image_picker: ^0.8.6
-  permission_handler: ^10.2.0
-  emoji_picker_flutter: ^1.4.0
+  permission_handler: ^10.4.1
+#  emoji_picker_flutter: ^1.4.0
+  emoji_picker_flutter: ^1.6.1
   image_cropping: ^0.0.13 #crop image
-  path_provider: ^2.0.11 #path provider
+  path_provider: ^2.0.15 #path provider
 
   lottie: ^1.4.3
   url_launcher: ^6.1.6 #url Launcher
@@ -40,10 +42,10 @@ dependencies:
   keyboard_dismisser: ^3.0.0
   scrollable_positioned_list: ^0.3.5 #scrollable position
   otp_text_field: ^1.1.3 #otp field
-  firebase_core: ^2.3.0 #firebase core
+  firebase_core: ^2.14.0 #firebase core
   firebase_auth: ^4.1.4 #firebas authentication
   firebase_app_installations: ^0.2.1+5 #firebase installations
-  firebase_messaging: ^14.6.2 #firebase messaging
+  firebase_messaging: ^14.6.4 #firebase messaging
   flutter_switch: ^0.3.2 #switchbox
   marquee: ^2.2.0 # marquee text
   qr_code_scanner: ^1.0.1 #qr scanner
@@ -59,13 +61,16 @@ dependencies:
   share_plus: ^7.0.2
   flutter_inappwebview: ^5.7.2+3 # inapp webview
   flutter_local_notifications: ^13.0.0
-  flutter_libphonenumber: ^1.4.0
+
   open_file_plus: ^3.4.0
   is_lock_screen: ^2.0.0
   device_info_plus: ^8.1.0
-#  mirrorfly_plugin: ^0.0.2
+  http: ^0.13.4 #http
+  #  mirrorfly_plugin: ^0.0.2
   mirrorfly_plugin:
     path: p078-mirrorfly-flutter-plugin
+
+#  flutter_libphonenumber: ^2.1.0
 
 
 dev_dependencies: 
@@ -80,6 +85,7 @@ flutter:
     - assets/countries.txt
     - assets/languages.txt
     - assets/logos/
+    - assets/calls/
     - assets/animation/
     - pubspec.yaml
 

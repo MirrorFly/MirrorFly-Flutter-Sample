@@ -41,7 +41,12 @@ class MainController extends FullLifeCycleController with BaseController, FullLi
   @override
   Future<void> onInit() async {
     super.onInit();
-    Mirrorfly.getManifestKey("com.google.android.geo.API_THUMP_KEY").then((value){
+    /*Mirrorfly.isOnGoingCall().then((value){
+      if(value.checkNull()){
+        Get.toNamed(Routes.onGoingCallView);
+      }
+    });*/
+    Mirrorfly.getValueFromManifestOrInfoPlist(androidManifestKey: "com.google.android.geo.API_THUMP_KEY",iOSPlistKey: "API_THUMP_KEY").then((value){
       googleMapKey = value;
       mirrorFlyLog("com.google.android.geo.API_THUMP_KEY", googleMapKey);
     });

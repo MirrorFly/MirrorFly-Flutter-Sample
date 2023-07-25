@@ -7,14 +7,13 @@ import UserNotifications
 import FirebaseAuth
 import Firebase
 
-
-
 @UIApplicationMain
-@objc class AppDelegate: FlutterAppDelegate{
+@objc class AppDelegate: FlutterAppDelegate {
     
     let googleApiKey = "AIzaSyDnjPEs86MRsnFfW1sVPKvMWjqQRnSa7Ts"
    
     var postNotificationdidEnterBackground : NotificationCenter? = nil
+    
     
   override func application(
     _ application: UIApplication,
@@ -25,122 +24,187 @@ import Firebase
            
       GMSServices.provideAPIKey(googleApiKey)
       
-      // MARK:- Push Notification
-//      clearPushNotifications()
-//      registerForPushNotifications()
+//      try? AVAudioSession.sharedInstance().setCategory(.playback, mode: .default, options: [.mixWithOthers, .allowAirPlay])
+//      try? AVAudioSession.sharedInstance().setActive(true)
       
-      FirebaseApp.configure()
+//      // MARK:- Push Notification
+////      clearPushNotifications()
+////      registerForPushNotifications()
+//
+//      FirebaseApp.configure()
+//      Messaging.messaging().delegate = self
       if #available(iOS 10.0, *) {
           // For iOS 10 display notification (sent via APNS)
-          UNUserNotificationCenter.current().delegate = self
-          
-          let authOptions: UNAuthorizationOptions = [.alert, .badge, .sound]
-          UNUserNotificationCenter.current().requestAuthorization(
-              options: authOptions,
-              completionHandler: { val, error in
-              }
-          )
-      } else {
-          let settings: UIUserNotificationSettings =
-          UIUserNotificationSettings(types: [.alert, .badge, .sound], categories: nil)
-          application.registerUserNotificationSettings(settings)
+          UNUserNotificationCenter.current().delegate = self as? UNUserNotificationCenterDelegate
+
+//          let authOptions: UNAuthorizationOptions = [.alert, .badge, .sound]
+//          UNUserNotificationCenter.current().requestAuthorization(
+//              options: authOptions,
+//              completionHandler: { val, error in
+//              }
+//          )
       }
-      
-      application.registerForRemoteNotifications()
+//      else {
+//          let settings: UIUserNotificationSettings =
+//          UIUserNotificationSettings(types: [.alert, .badge, .sound], categories: nil)
+//          application.registerUserNotificationSettings(settings)
+//      }
+
+//      application.registerForRemoteNotifications()
       
       GeneratedPluginRegistrant.register(with: self)
       
       return super.application(application, didFinishLaunchingWithOptions: launchOptions)
   }
+    
+//    override func application(
+//        _ application: UIApplication,
+//        didReceiveRemoteNotification userInfo: [AnyHashable: Any],
+//        fetchCompletionHandler completionHandler:
+//          @escaping (UIBackgroundFetchResult) -> Void
+//      ) {
+//          print("#Mirrorfly Notification -> Message Received")
+//        // Handle the received notification
+//        if let messageID = userInfo["gcm.message_id"] {
+//          print("#Mirrorfly Notification -> Message ID: \(messageID)")
+//        }
+//
+//          // Handle the received notification
+//             if let messageID = userInfo["gcm.message_id"] {
+//               print("#Mirrorfly Notification -> Message ID: \(messageID)")
+//             }
+//
+//             // Call the necessary method from the FlutterFirebaseMessagingPlugin to handle the notification
+//          let flutterChannel = FlutterMethodChannel(name: "plugins.flutter.io/firebase_messaging", binaryMessenger: window.rootViewController as! FlutterViewController as! FlutterBinaryMessenger)
+//             flutterChannel.invokeMethod("onMessage", arguments: userInfo)
+//
+//             completionHandler(UIBackgroundFetchResult.newData)
+////        completionHandler(UIBackgroundFetchResult.newData)
+//      }
+    
+//    override func applicationDidEnterBackground(_ application: UIApplication) {
+//           self.backgroundTaskID = application.beginBackgroundTask(expirationHandler: nil)
+//       }
+//
+//    override func applicationWillEnterForeground(_ application: UIApplication) {
+//           if self.backgroundTaskID != .invalid {
+//               application.endBackgroundTask(self.backgroundTaskID)
+//               self.backgroundTaskID = .invalid
+//           }
+//       }
+//     func messaging(_ messaging: Messaging, didReceiveRegistrationToken fcmToken: String?) {
+//        NSLog("#Mirrorfly Appdelegate token \(fcmToken)")
+//    }
+//
+////    override func messaging(_ messaging: Messaging, didReceiveRegistrationToken fcmToken: String) {
+////            // Receive the FCM registration token if needed
+////        NSLog("#Mirrorfly Appdelegate token \(fcmToken)")
+////        }
+//
+//    override func application(_ application: UIApplication, didReceiveRemoteNotification notification: [AnyHashable : Any], fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
+//            // Handle the silent push notification and perform necessary tasks in the background
+//            NSLog("#Mirrorfly Appdelegate didReceiveRemoteNotification \(notification)")
+//            // Call the completion handler when finished processing the notification
+//            completionHandler(.newData)
+//        }
+
+    
+//    override func application(_ application: UIApplication, performFetchWithCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
+//        // Process any pending logs or perform necessary tasks
+//        // ...
+//        
+//        completionHandler(.noData)
+//    }
 
    
     
 }
 
-extension AppDelegate {
+//extension AppDelegate {
     /// Register for APNS Notifications
-    func registerForPushNotifications() {
-        print("###Registering push notification")
-        UNUserNotificationCenter.current().delegate = self
-        let authOptions: UNAuthorizationOptions = [.alert, .badge, .sound]
-        UNUserNotificationCenter.current().requestAuthorization(options: authOptions) { granted, error in
-            if granted {
-                self.getNotificationSettings()
-                DispatchQueue.main.async {
-                    UIApplication.shared.registerForRemoteNotifications()
-//                    FlyUtils.setBaseUrl(BASE_URL)
-                }
-            }
-        }
-//        registerForVOIPNotifications()
-    }
-    /// This method is used to clear notifications and badge count
-    func clearPushNotifications() {
-        
-//        print("###Clearing push notification")
-//        UNUserNotificationCenter.current().removeAllDeliveredNotifications()
-//        UNUserNotificationCenter.current().removeAllPendingNotificationRequests()
-    }
-    
-    override func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
-        //Mark:- Added for swizzling
-        Auth.auth().setAPNSToken(deviceToken, type: .unknown)
-        
-        print("###didRegisterForRemoteNotificationsWithDeviceToken")
-        
-        let token = deviceToken.map { String(format: "%.2hhx", $0) }.joined()
-        if token.count == 0 {
-            print("Push Status Credentials APNS:")
-            return;
-        }
-        print("#token appDelegate \(token)")
-        print("#token application DT => \(token)")
-//        VOIPManager.sharedInstance.saveAPNSToken(token: token)
-//        Utility.saveInPreference(key: googleToken, value: token)
-//        VOIPManager.sharedInstance.updateDeviceToken()
-//        return super.application(application, didRegisterForRemoteNotificationsWithDeviceToken: deviceToken)
-    }
-    
-    override func application(_ application: UIApplication, didFailToRegisterForRemoteNotificationsWithError error: Error) {
-        print("###didFailToRegisterForRemoteNotificationsWithError")
-        print("Push didFailToRegisterForRemoteNotificationsWithError)")
-    }
-    override func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
-        completionHandler([.alert, .sound])
-    }
-    override func application(_ application: UIApplication, didReceiveRemoteNotification notification: [AnyHashable : Any], fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
-        print("Push userInfo \(notification)")
-            if Auth.auth().canHandleNotification(notification) {
-                completionHandler(.noData)
-                return
-            }else{
-                print("###canHandleNotification issue")
-            }
-
-    }
-    func getNotificationSettings() {
-          UNUserNotificationCenter.current().getNotificationSettings { settings in
-            print("Notification settings: \(settings)")
-          }
-        }
-    override func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
-        print("###userNotificationCenter withCompletionHandler")
-        let chatId = response.notification.request.content.threadIdentifier
-        print("chat ID ---> \(chatId)")
-//        if let profileDetails = ContactManager.shared.getUserProfileDetails(for: chatId) , chatId != FlyDefaults.myJid{
-//            Utility.saveInPreference(key: notificationUserJid, value: profileDetails.jid ?? "")
-            
-//        }
-       
-//        if response.notification.request.content.threadIdentifier.contains(XMPP_DOMAIN){
-//            if FlyDefaults.isBlockedByAdmin {
-//                navigateToBlockedScreen()
-//            } else {
-//                navigateToChatScreen(chatId: response.notification.request.content.threadIdentifier, completionHandler: completionHandler)
+//    func registerForPushNotifications() {
+//        print("###Registering push notification")
+//        UNUserNotificationCenter.current().delegate = self
+//        let authOptions: UNAuthorizationOptions = [.alert, .badge, .sound]
+//        UNUserNotificationCenter.current().requestAuthorization(options: authOptions) { granted, error in
+//            if granted {
+//                self.getNotificationSettings()
+//                DispatchQueue.main.async {
+//                    UIApplication.shared.registerForRemoteNotifications()
+////                    FlyUtils.setBaseUrl(BASE_URL)
+//                }
 //            }
 //        }
-    }
+////        registerForVOIPNotifications()
+//    }
+//    /// This method is used to clear notifications and badge count
+//    func clearPushNotifications() {
+//
+////        print("###Clearing push notification")
+////        UNUserNotificationCenter.current().removeAllDeliveredNotifications()
+////        UNUserNotificationCenter.current().removeAllPendingNotificationRequests()
+//    }
+//
+//    override func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
+//        //Mark:- Added for swizzling
+////        Auth.auth().setAPNSToken(deviceToken, type: .unknown)
+//
+//        print("###didRegisterForRemoteNotificationsWithDeviceToken")
+//
+//        let token = deviceToken.map { String(format: "%.2hhx", $0) }.joined()
+//        if token.count == 0 {
+//            print("Push Status Credentials APNS:")
+//            return;
+//        }
+//        print("#token appDelegate \(token)")
+//        print("#token application DT => \(token)")
+//        NSLog("Push token --> \(token)")
+////        VOIPManager.sharedInstance.saveAPNSToken(token: token)
+////        Utility.saveInPreference(key: googleToken, value: token)
+////        VOIPManager.sharedInstance.updateDeviceToken()
+////        return super.application(application, didRegisterForRemoteNotificationsWithDeviceToken: deviceToken)
+//    }
+//
+//    override func application(_ application: UIApplication, didFailToRegisterForRemoteNotificationsWithError error: Error) {
+//        print("###didFailToRegisterForRemoteNotificationsWithError")
+//        print("Push didFailToRegisterForRemoteNotificationsWithError)")
+//    }
+//    override func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
+//        completionHandler([.alert, .sound])
+//    }
+//    override func application(_ application: UIApplication, didReceiveRemoteNotification notification: [AnyHashable : Any], fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
+//        print("Push userInfo \(notification)")
+//            if Auth.auth().canHandleNotification(notification) {
+//                completionHandler(.noData)
+//                return
+//            }else{
+//                print("###canHandleNotification issue")
+//            }
+//
+//    }
+//    func getNotificationSettings() {
+//          UNUserNotificationCenter.current().getNotificationSettings { settings in
+//            print("Notification settings: \(settings)")
+//          }
+//        }
+//    override func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
+//        print("###userNotificationCenter withCompletionHandler")
+//        let chatId = response.notification.request.content.threadIdentifier
+//        print("chat ID ---> \(chatId)")
+////        if let profileDetails = ContactManager.shared.getUserProfileDetails(for: chatId) , chatId != FlyDefaults.myJid{
+////            Utility.saveInPreference(key: notificationUserJid, value: profileDetails.jid ?? "")
+//
+////        }
+//
+////        if response.notification.request.content.threadIdentifier.contains(XMPP_DOMAIN){
+////            if FlyDefaults.isBlockedByAdmin {
+////                navigateToBlockedScreen()
+////            } else {
+////                navigateToChatScreen(chatId: response.notification.request.content.threadIdentifier, completionHandler: completionHandler)
+////            }
+////        }
+//    }
     
-}
+//}
 
 

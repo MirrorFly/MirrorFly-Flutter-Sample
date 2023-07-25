@@ -42,6 +42,38 @@ const Color durationTextColor = Color(0xff455E93);
 const Color chatBgColor = Color(0xffD0D8EB);
 const Color previewTextColor = Color(0xff7f7f7f);
 
+class AppColors{
+  static const Color callerBackground = Color(0xff152134);
+  static const Color audioCallBackground = Color(0xff0B111C);
+  static const Color colorBlackTransparent = Color(0x80000000);
+  static const Color callerStatus = Color(0xffDEDEDE);
+  static const Color callerName = Color(0xffffffff);
+  static const Color endButton = Color(0xffff4d67);
+}
+//call Assets
+const String callEndButton = 'assets/calls/call_end_button.svg';
+const String speakerInactive = 'assets/calls/speaker_inactive.svg';
+const String speakerActive = 'assets/calls/speaker_active.svg';
+const String speakerBluetooth = 'assets/calls/bluetooth.svg';
+const String speakerHeadset = 'assets/calls/head_set.svg';
+
+const String audioCallIcon = 'assets/calls/audiocall.svg';
+const String videoCallIcon = 'assets/calls/videocall.svg';
+
+const String videoInactive = 'assets/calls/video_inactive.svg';
+const String videoActive = 'assets/calls/video_active.svg';
+const String muteActive = 'assets/calls/mute_active.svg';
+const String muteInactive = 'assets/calls/mute_inactive.svg';
+const String addUserCall = 'assets/calls/ic_add_user.svg';
+const String audioMute = 'assets/calls/ic_audio_mute.svg';
+const String moreMenu = 'assets/calls/ic_call_more_menu.svg';
+const String unpinUser = 'assets/calls/ic_unpin_user.svg';
+const String cameraSwitchInactive = 'assets/calls/camera_switch_inactive.svg';
+const String cameraSwitchActive = 'assets/calls/camera_switch_active.svg';
+const String callOptionsUpArrow = 'assets/calls/call_options_up_arrow.svg';
+const String callOptionsBottomBg = 'assets/calls/ic_group_user_info_layout.png';
+const String callOptionsToolbarBg = 'assets/calls/ic_call_header_overlay.png';
+
 //Assets
 const String registerIcon = 'assets/logos/register_logo.svg';
 const String statusIcon = 'assets/logos/status.svg';
@@ -661,6 +693,37 @@ class Constants {
   static const pinAlert = pinExpiry-5;//in Days
   static const forgetPinOTPText ='Generate OTP to your registered mobile number';
   static const invalidPinOTPText ='Invalid PIN, Generate OTP to your registered mobile number';
+
+
+  //Call Feature Constants
+  static const String connecting = "Connecting";
+  static const String ringing = "Ringing";
+  static const String attended = "Attended";
+  static const String connected = "Connected";
+  static const String disconnected = "Disconnected";
+  static const String onHold = "Call on hold";
+  static const String onResume = "ON_RESUME";
+  static const String userJoined = "User_Joined";
+  static const String userLeft = "User_Left";
+  static const String inviteCallTimeout = "Invite call timeout";
+  static const String callTimeout = "CALL TIME OUTt";
+  static const String reconnecting = "Reconnecting";
+  static const String reconnected = "Reconnected";
+  static const String calling = "Trying to Connect";
+  static const String calling10s = "Calling... \n Trying to Connect";
+  static const String callingAfter10s = "User Seems to be Offline, Trying to Connect";
+
+  static const String oneToOne = "OneToOne";
+  static const String groupCall = "GroupCall";
+
+
+  static const String none = "none";
+  static const String receiver = "receiver";
+  static const String speaker = "speaker";
+  static const String headset = "headset";
+  static const String bluetooth = "bluetooth";
+
+
 }
 
 Future<void> launchWeb(String url) async {
