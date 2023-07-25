@@ -1184,7 +1184,7 @@ class ChatView extends GetView<ChatController> {
                 showAsAction: controller.profile.isGroupProfile.checkNull() ? ShowAsAction.gone : ShowAsAction.always,
                 keyValue: 'Video Call',
                 onItemClick: () {
-                  controller.makeVoiceCall();
+                  controller.makeVideoCall();
                 },
               ),
               CustomAction(

@@ -14,7 +14,7 @@ import '../../routes/app_pages.dart';
 
 class CallController extends GetxController {
 
-  final RxBool isVisible = false.obs;
+  final RxBool isVisible = true.obs;
   final RxBool muted = false.obs;
   final RxBool speakerOff = true.obs;
   final RxBool cameraSwitch = true.obs;
@@ -132,6 +132,7 @@ debugPrint("availableAudioList.length ${availableAudioList.length}");
 
   videoMute() {
     if (callType.value != 'audio') {
+      Mirrorfly.muteVideo(!videoMuted.value);
       videoMuted(!videoMuted.value);
     }
   }

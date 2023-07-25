@@ -69,6 +69,7 @@ class PushNotifications {
         mirrorFlyLog("firebase_token", value);
         debugPrint("#Mirrorfly Notification -> firebase_token_1 $value");
         SessionManagement.setToken(value);
+        Mirrorfly.updateFcmToken(value);
       }
     }).catchError((er){
       mirrorFlyLog("FirebaseMessaging", er.toString());

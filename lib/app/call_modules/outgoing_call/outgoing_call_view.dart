@@ -142,7 +142,7 @@ class OutGoingCallView extends GetView<CallController> {
                   ),
                 ],
               ),
-              Obx(() {
+              /*Obx(() {
                 return AnimatedPositioned(
                   duration: const Duration(milliseconds: 500),
                   curve: Curves.easeInOut,
@@ -185,7 +185,7 @@ class OutGoingCallView extends GetView<CallController> {
                     ),
                   ),
                 );
-              }),
+              }),*/
             ],
           ),
         ),
