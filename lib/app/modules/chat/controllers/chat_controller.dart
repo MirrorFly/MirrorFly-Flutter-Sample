@@ -677,41 +677,6 @@ class ChatController extends FullLifeCycleController
     }
   }
 
-  Future imagePicker() async {
-    FilePickerResult? result = await FilePicker.platform.pickFiles(
-      allowMultiple: false,
-      type: FileType.custom,
-      allowedExtensions: ['jpg', 'png', 'mp4', 'mov', 'wmv', 'mkv'],
-    );
-    if (result != null && File(result.files.single.path!).existsSync()) {
-      debugPrint(result.files.first.extension);
-      if (result.files.first.extension == 'jpg' ||
-          result.files.first.extension == 'JPEG' ||
-          result.files.first.extension == 'png') {
-        debugPrint("Picked Image File");
-        imagePath.value = (result.files.single.path!);
-        Get.toNamed(Routes.imagePreview, arguments: {
-          "filePath": imagePath.value,
-          "userName": getName(profile),
-          "profile": profile
-        });
-      } else if (result.files.first.extension == 'mp4' ||
-          result.files.first.extension == 'MP4' ||
-          result.files.first.extension == 'mov' ||
-          result.files.first.extension == 'mkv') {
-        debugPrint("Picked Video File");
-        imagePath.value = (result.files.single.path!);
-        Get.toNamed(Routes.videoPreview, arguments: {
-          "filePath": imagePath.value,
-          "userName": getName(profile),
-          "profile": profile
-        });
-      }
-    } else {
-      // User canceled the picker
-      debugPrint("======User Cancelled=====");
-    }
-  }
 
   documentPickUpload() async {
     var permission = await AppPermission.getStoragePermission();

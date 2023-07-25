@@ -66,13 +66,13 @@ class ProfileController extends GetxController {
     }
     //profileStatus.value="I'm Mirror fly user";
     // await askStoragePermission();
-    await AppPermission.getStoragePermission();
+
   }
 
 
   Future<void> save({bool frmImage=false}) async {
-    var permission = await AppPermission.getStoragePermission();
-    if (permission) {
+    // var permission = await AppPermission.getStoragePermission();
+    // if (permission) {
       if (profileName.text
           .trim()
           .isEmpty) {
@@ -156,7 +156,7 @@ class ProfileController extends GetxController {
           }
         }
       }
-    }
+    // }
   }
 
   updateProfileImage(String path, {bool update = false}) async {
@@ -311,41 +311,44 @@ class ProfileController extends GetxController {
   }
 
   Future imagePicker(BuildContext context) async {
-    if(await AppUtils.isNetConnected()) {
-      FilePickerResult? result = await FilePicker.platform
-          .pickFiles(allowMultiple: false, type: FileType.image);
-      if (result != null) {
-        if(checkFileUploadSize(result.files.single.path!, Constants.mImage)) {
-          isImageSelected.value = true;
-          Get.to(CropImage(
-            imageFile: File(result.files.single.path!),
-          ))?.then((value) {
-            value as MemoryImage;
-            imageBytes = value.bytes;
-            var name = "${DateTime
-                .now()
-                .millisecondsSinceEpoch}.jpg";
-            writeImageTemp(value.bytes, name).then((value) {
-              if (from == Routes.login) {
-                imagePath(value.path);
-                changed(true);
-                update();
-              } else {
-                imagePath(value.path);
-                // changed(true);
-                updateProfileImage(value.path, update: false);
-              }
+    if(await AppPermission.getStoragePermission()) {
+      if (await AppUtils.isNetConnected()) {
+        FilePickerResult? result = await FilePicker.platform
+            .pickFiles(allowMultiple: false, type: FileType.image);
+        if (result != null) {
+          if (checkFileUploadSize(
+              result.files.single.path!, Constants.mImage)) {
+            isImageSelected.value = true;
+            Get.to(CropImage(
+              imageFile: File(result.files.single.path!),
+            ))?.then((value) {
+              value as MemoryImage;
+              imageBytes = value.bytes;
+              var name = "${DateTime
+                  .now()
+                  .millisecondsSinceEpoch}.jpg";
+              writeImageTemp(value.bytes, name).then((value) {
+                if (from == Routes.login) {
+                  imagePath(value.path);
+                  changed(true);
+                  update();
+                } else {
+                  imagePath(value.path);
+                  // changed(true);
+                  updateProfileImage(value.path, update: false);
+                }
+              });
             });
-          });
-        }else{
-          toToast("Please select Image less than 10MB");
+          } else {
+            toToast("Please select Image less than 10MB");
+          }
+        } else {
+          // User canceled the picker
+          isImageSelected.value = false;
         }
       } else {
-        // User canceled the picker
-        isImageSelected.value = false;
+        toToast(Constants.noInternetConnection);
       }
-    }else{
-      toToast(Constants.noInternetConnection);
     }
   }
 
