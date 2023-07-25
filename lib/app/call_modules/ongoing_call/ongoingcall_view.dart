@@ -17,6 +17,7 @@ class OnGoingCallView extends GetView<CallController> {
       child: Scaffold(
         backgroundColor: AppColors.callerBackground,
         body: Stack(
+          fit: StackFit.expand,
           children: [
             // controller.layoutSwitch.value ?
             Obx(() {
@@ -25,11 +26,10 @@ class OnGoingCallView extends GetView<CallController> {
                   ? SizedBox(
                       width: MediaQuery.of(context).size.width,
                       height: MediaQuery.of(context).size.height,
-                      child: Expanded(
-                          child: MirrorFlyView(
-                                  userJid: controller.callList[1].userJid ?? "")
-                              .setBorderRadius(
-                                  const BorderRadius.all(Radius.circular(10)))),
+                      child: MirrorFlyView(
+                              userJid: controller.callList[1].userJid ?? "")
+                          .setBorderRadius(
+                              const BorderRadius.all(Radius.circular(10))),
                     )
                   : const SizedBox.shrink();
             }),
