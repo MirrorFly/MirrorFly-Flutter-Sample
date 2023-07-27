@@ -55,6 +55,9 @@ class SessionManagement {
   static Future setUserJID(String jid) async {
     await _preferences.setString("user_jid", jid);
   }
+  static Future setUserIdentifier(String userIdentifier) async {
+    await _preferences.setString("userIdentifier", userIdentifier);
+  }
   static Future setUserImage(String image) async {
     await _preferences.setString("image", image);
   }
@@ -161,6 +164,7 @@ class SessionManagement {
 
   static bool getLogin() => _preferences.getBool("login") ?? false;
 
+  static String getUserIdentifier() => _preferences.getString("userIdentifier") ?? "";
   static String? getChatJid() => _preferences.getString("chatJid");
   static String getCurrentChatJID() => _preferences.getString("CurrentChatJID") ?? "";
   static String? getName() => _preferences.getString("name");

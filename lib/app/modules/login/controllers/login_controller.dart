@@ -308,6 +308,7 @@ class LoginController extends GetxController {
       }
       // if(mobileNumber.text.length > 9) {
         showLoading();
+      var userIdentifier =countryCode!.replaceAll('+', '') + mobileNumber.text;
         Mirrorfly.registerUser(
             countryCode!.replaceAll('+', '') + mobileNumber.text, token: SessionManagement.getToken().checkNull())
             .then((value) {
@@ -315,6 +316,7 @@ class LoginController extends GetxController {
             var userData = registerModelFromJson(value); //message
             SessionManagement.setLogin(userData.data!.username!.isNotEmpty);
             SessionManagement.setUser(userData.data!);
+            SessionManagement.setUserIdentifier(userIdentifier);
             // Mirrorfly.setNotificationSound(true);
             // SessionManagement.setNotificationSound(true);
             // userData.data.

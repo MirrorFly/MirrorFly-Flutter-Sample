@@ -70,7 +70,7 @@ dependencies:
   mirrorfly_plugin:
     path: p078-mirrorfly-flutter-plugin
 
-#  flutter_libphonenumber: ^2.1.0
+  flutter_libphonenumber: ^2.1.5
 
 
 dev_dependencies: 
