@@ -317,7 +317,7 @@ class NotificationBuilder {
           channel);
       await flutterLocalNotificationsPlugin.show(
         summaryId, appTitle, lastMessageContent.toString(),
-        notificationDetails,);
+          notificationDetails,payload: chatNotifications.values.first.messages?.first.chatUserJid);
     }
   }
   

@@ -20,6 +20,7 @@ class SessionManagement {
       SharedPreferences.setMockInitialValues({});
       _preferences = await SharedPreferences.getInstance();
     }
+    SessionManagement.setCurrentChatJID("");
   }
 
   static Future setLogin(bool val) async {

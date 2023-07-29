@@ -46,7 +46,7 @@ void notificationTapBackground(NotificationResponse notificationResponse) {
 
 class NotificationService {
 
-  Future<void> init() async {
+  static Future<void> init() async {
 
     // await _configureLocalTimeZone();
 
