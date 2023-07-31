@@ -248,7 +248,7 @@ debugPrint("availableAudioList.length ${availableAudioList.length}");
   void connected(String callMode, String userJid, String callType,
       String callStatus) {
     this.callStatus(callStatus);
-    Get.offNamed(Routes.onGoingCallView, arguments: { "userJid": null});
+    Get.offNamed(Routes.onGoingCallView, arguments: { "userJid": userJid});
   }
 
   void timeout(String callMode, String userJid, String callType,

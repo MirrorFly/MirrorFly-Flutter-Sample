@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/call_modules/outgoing_call/call_controller.dart';
 import 'package:mirror_fly_demo/app/model/call_user_list.dart';
 import 'package:mirrorfly_plugin/mirrorfly_view.dart';
+import 'package:mirrorfly_plugin/mirrorflychat.dart';
 
 import '../../common/constants.dart';
 import '../../common/widgets.dart';
@@ -298,19 +299,19 @@ class OnGoingCallView extends GetView<CallController> {
                 heroTag: "speaker",
                 elevation: 0,
                 backgroundColor:
-                    controller.audioOutputType.value == Constants.receiver
+                    controller.audioOutputType.value == AudioDeviceType.receiver
                         ? Colors.white.withOpacity(0.3)
                         : Colors.white,
                 onPressed: () => controller.changeSpeaker(),
-                child: controller.audioOutputType.value == Constants.receiver
+                child: controller.audioOutputType.value == AudioDeviceType.receiver
                     ? SvgPicture.asset(speakerInactive)
-                    : controller.audioOutputType.value == Constants.speaker
+                    : controller.audioOutputType.value == AudioDeviceType.speaker
                         ? SvgPicture.asset(speakerActive)
                         : controller.audioOutputType.value ==
-                                Constants.bluetooth
+                    AudioDeviceType.bluetooth
                             ? SvgPicture.asset(speakerBluetooth)
                             : controller.audioOutputType.value ==
-                                    Constants.headset
+                    AudioDeviceType.headset
                                 ? SvgPicture.asset(speakerHeadset)
                                 : SvgPicture.asset(speakerActive),
               ),
