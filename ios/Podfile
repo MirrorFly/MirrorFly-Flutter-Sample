@@ -37,7 +37,7 @@ target 'Runner' do
 end
 
 target 'NotificationService' do
-#   pod 'MirrorFlySDK', '5.10.0'
+  pod 'MirrorFlySDK', '5.10.2'
   pod 'Firebase/Messaging'
 end
 
