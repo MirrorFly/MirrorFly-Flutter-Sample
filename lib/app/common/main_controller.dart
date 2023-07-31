@@ -41,6 +41,11 @@ class MainController extends FullLifeCycleController with BaseController, FullLi
   @override
   Future<void> onInit() async {
     super.onInit();
+    /*Mirrorfly.isOnGoingCall().then((value){
+      if(value.checkNull()){
+        Get.toNamed(Routes.onGoingCallView);
+      }
+    });*/
     Mirrorfly.getValueFromManifestOrInfoPlist(androidManifestKey: "com.google.android.geo.API_THUMP_KEY",iOSPlistKey: "API_THUMP_KEY").then((value){
       googleMapKey = value;
       mirrorFlyLog("com.google.android.geo.API_THUMP_KEY", googleMapKey);
@@ -54,8 +59,8 @@ class MainController extends FullLifeCycleController with BaseController, FullLi
     getAuthToken();
     startNetworkListen();
 
-    NotificationService notificationService = NotificationService();
-    await notificationService.init();
+    // NotificationService notificationService = NotificationService();
+    await NotificationService.init();
     _isAndroidPermissionGranted();
     _requestPermissions();
     _configureDidReceiveLocalNotificationSubject();

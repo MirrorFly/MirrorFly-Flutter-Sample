@@ -128,7 +128,7 @@ class NotificationBuilder {
     var imgUrl = profileDetails.image.checkNull();
     if (imgUrl.isNotEmpty) {
       // return const FlutterBitmapAssetAndroidIcon(profileImg);
-      return await downloadAndSaveFile(imgUrl,profileDetails.name.checkNull());
+      return await downloadAndShow(SessionManagement.getMediaEndPoint().checkNull()+imgUrl,profileDetails.name.checkNull());
     }else{
       if(getName(profileDetails).isNotEmpty) {
         var uInt = await profileTextImage(
@@ -252,7 +252,7 @@ class NotificationBuilder {
         ?.createNotificationChannel(
         channel);
     await flutterLocalNotificationsPlugin.show(
-        messageId.hashCode, title, lastMessageContent, notificationDetails,
+        notificationId, title, lastMessageContent, notificationDetails,
         payload: chatJid);
   }
   
@@ -317,7 +317,7 @@ class NotificationBuilder {
           channel);
       await flutterLocalNotificationsPlugin.show(
         summaryId, appTitle, lastMessageContent.toString(),
-        notificationDetails,);
+          notificationDetails,payload: chatNotifications.values.first.messages?.first.chatUserJid);
     }
   }
   
@@ -337,9 +337,10 @@ class NotificationBuilder {
     return 0;
   }
 
-  static Future<Uint8List?> downloadAndSaveFile(String url, String fileName) async {
+  static Future<Uint8List?> downloadAndShow(String url, String fileName) async {
     // final Directory directory = await getApplicationDocumentsDirectory();
     // final String filePath = '${directory.path}/$fileName';
+    mirrorFlyLog("url", url);
     if(!url.isURL) {
       return null;
     }
@@ -347,8 +348,10 @@ class NotificationBuilder {
     // final File file = File(filePath);
     // await file.writeAsBytes(response.bodyBytes);
     mirrorFlyLog("response.statusCode", response.statusCode.toString());
+    mirrorFlyLog("response.headers", response.headers.toString());
+    mirrorFlyLog("response.reasonPhrase", response.reasonPhrase.toString());
     if(response.statusCode==200) {
-      return response.bodyBytes;
+      return response.bodyBytes.buffer.asUint8List();
     }else{
       return null;
     }

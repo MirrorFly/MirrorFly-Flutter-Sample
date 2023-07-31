@@ -17,6 +17,7 @@ import 'package:mirror_fly_demo/app/common/de_bouncer.dart';
 import 'package:mirror_fly_demo/app/common/main_controller.dart';
 import 'package:mirror_fly_demo/app/data/session_management.dart';
 import 'package:mirror_fly_demo/app/data/permissions.dart';
+import 'package:mirrorfly_plugin/logmessage.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
@@ -315,7 +316,7 @@ class ChatController extends FullLifeCycleController
   saveUnsentMessage() {
     if (profile.jid.checkNull().isNotEmpty) {
       Mirrorfly.saveUnsentMessage(
-          profile.jid.checkNull(), messageController.text.toString());
+          profile.jid.checkNull(), messageController.text.trim().toString());
     }
     if (isReplying.value) {
       ReplyHashMap.saveReplyId(
@@ -413,7 +414,7 @@ class ChatController extends FullLifeCycleController
       isReplying(false);
       if (messageController.text.trim().isNotEmpty) {
         Mirrorfly.sendTextMessage(
-                messageController.text, profile.jid.toString(), replyMessageId)
+                messageController.text.trim(), profile.jid.toString(), replyMessageId)
             .then((value) {
           mirrorFlyLog("text message", value);
           messageController.text = "";
@@ -435,7 +436,7 @@ class ChatController extends FullLifeCycleController
           toJid: profile.jid.toString(),
           replyMessageId: (isReplying.value) ? replyChatMessage.messageId : "",
           messageType: Constants.mText,
-          textMessage: messageController.text);
+          textMessage: messageController.text.trim());
       showBusyStatusAlert(disableBusyChatAndSend);
     }
   }
@@ -676,41 +677,6 @@ class ChatController extends FullLifeCycleController
     }
   }
 
-  Future imagePicker() async {
-    FilePickerResult? result = await FilePicker.platform.pickFiles(
-      allowMultiple: false,
-      type: FileType.custom,
-      allowedExtensions: ['jpg', 'png', 'mp4', 'mov', 'wmv', 'mkv'],
-    );
-    if (result != null && File(result.files.single.path!).existsSync()) {
-      debugPrint(result.files.first.extension);
-      if (result.files.first.extension == 'jpg' ||
-          result.files.first.extension == 'JPEG' ||
-          result.files.first.extension == 'png') {
-        debugPrint("Picked Image File");
-        imagePath.value = (result.files.single.path!);
-        Get.toNamed(Routes.imagePreview, arguments: {
-          "filePath": imagePath.value,
-          "userName": getName(profile),
-          "profile": profile
-        });
-      } else if (result.files.first.extension == 'mp4' ||
-          result.files.first.extension == 'MP4' ||
-          result.files.first.extension == 'mov' ||
-          result.files.first.extension == 'mkv') {
-        debugPrint("Picked Video File");
-        imagePath.value = (result.files.single.path!);
-        Get.toNamed(Routes.videoPreview, arguments: {
-          "filePath": imagePath.value,
-          "userName": getName(profile),
-          "profile": profile
-        });
-      }
-    } else {
-      // User canceled the picker
-      debugPrint("======User Cancelled=====");
-    }
-  }
 
   documentPickUpload() async {
     var permission = await AppPermission.getStoragePermission();
@@ -1001,7 +967,7 @@ class ChatController extends FullLifeCycleController
   }
 
   void isTyping([String? typingText]) {
-    messageController.text.isNotEmpty
+    messageController.text.trim().isNotEmpty
         ? isUserTyping(true)
         : isUserTyping(false);
   }
@@ -2173,7 +2139,7 @@ class ChatController extends FullLifeCycleController
             "filePath": [file],
             "userName": profile.name!,
             'profile': profile,
-            'caption': messageController.text,
+            'caption': messageController.text.trim(),
             'showAdd': false,
             'from': 'camera_pick'
           });
@@ -2215,7 +2181,7 @@ class ChatController extends FullLifeCycleController
         Get.toNamed(Routes.galleryPicker, arguments: {
           "userName": getName(profile),
           'profile': profile,
-          'caption': messageController.text
+          'caption': messageController.text.trim()
         });
       } catch (e) {
         debugPrint(e.toString());
@@ -2829,6 +2795,8 @@ class ChatController extends FullLifeCycleController
       }).catchError((e) {
         debugPrint("#Mirrorfly Call $e");
       });
+    }else{
+      LogMessage.d("askVideoCallPermissions", "false");
     }
   }
 }

@@ -174,8 +174,9 @@ class AppPermission {
       PermissionStatus? bluetoothConnect_ = newp[Permission.bluetoothConnect];
       // var audio = await newPermission[2].isGranted;
       return (speech_!.isGranted && phone_!.isGranted &&camera_!.isGranted && bluetoothConnect_!.isGranted);
+    }else{
+      return (speech.isGranted && phone.isGranted && camera.isGranted && bluetooth.isGranted);
     }
-    return false;
   }
 
   static Future<PermissionStatus> getManageStoragePermission() async {

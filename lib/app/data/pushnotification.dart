@@ -69,6 +69,7 @@ class PushNotifications {
         mirrorFlyLog("firebase_token", value);
         debugPrint("#Mirrorfly Notification -> firebase_token_1 $value");
         SessionManagement.setToken(value);
+        Mirrorfly.updateFcmToken(value);
       }
     }).catchError((er){
       mirrorFlyLog("FirebaseMessaging", er.toString());
@@ -77,13 +78,15 @@ class PushNotifications {
         .listen((fcmToken) {
       mirrorFlyLog("onTokenRefresh", fcmToken.toString());
       SessionManagement.setToken(fcmToken);
+      Mirrorfly.updateFcmToken(fcmToken);
     }).onError((err) {
       // Error getting token.
       mirrorFlyLog("onTokenRefresh", err.toString());
     });
   }
   static void initInfo(){
-    var androidInitialize = const AndroidInitializationSettings('@mipmap/ic_launcher');
+    NotificationService.init();
+    /*var androidInitialize = const AndroidInitializationSettings('@mipmap/ic_launcher');
     var iosInitialize = const DarwinInitializationSettings();
     var initalizationSettings = InitializationSettings(android: androidInitialize,iOS: iosInitialize);
     flutterLocalNotificationsPlugin.initialize(initalizationSettings,onDidReceiveNotificationResponse: (NotificationResponse response){
@@ -96,7 +99,7 @@ class PushNotifications {
         mirrorFlyLog("error", e.toString());
         return;
       }
-    });
+    });*/
   }
   // It is assumed that all messages contain a data field with the key 'type'
   static Future<void> setupInteractedMessage() async {
@@ -124,10 +127,7 @@ class PushNotifications {
     }
     // If `onMessage` is triggered with a notification, construct our own
     // local notification to show to users using the created channel.
-    Future.delayed(const Duration(milliseconds: 500), () {
-      showNotification(message);
-    });
-
+    showNotification(message);
   }
 
   static void notificationPermission() async{
@@ -168,18 +168,6 @@ class PushNotifications {
   }
 
   static void showNotification(RemoteMessage remoteMessage) async {
-    /*Map<String,String> data = {};
-    data["message_id"]="40e6e723-b4fc-469f-a072-0afe1d797a47";
-    data["message_time"]="1669639607745126";
-    data["to_jid"]="9638527410@xmpp-uikit-dev.contus.us";
-    data["user_jid"]="919894940560@xmpp-uikit-dev.contus.us";
-    data["message_content"]="Text";
-    data["push_from"]="MirrorFly";
-    data["type"]="text";
-    data["title"]="Text";
-    data["sent_from"]="919894940560@xmpp-uikit-dev.contus.us";
-    data["chat_type"]="chat";
-    var notificationData = data;*/
     var notificationData = remoteMessage.data;
     if(!remoteMessage.data.containsKey("message_id")){
       notificationData["message_id"]=remoteMessage.messageId;
@@ -188,37 +176,10 @@ class PushNotifications {
       WidgetsFlutterBinding.ensureInitialized();
       await Mirrorfly.handleReceivedMessage(notificationData).then((value) async {
         mirrorFlyLog("#Mirrorfly Notification -> notification message", value.toString());
-        var data = notificationModelFromJson(value.toString());
-        if(data.chatMessage!=null) {
-          NotificationBuilder.createNotification(data.chatMessage!);
+        var data = chatMessageFromJson(value.toString());
+        if(data.messageId!=null) {
+          NotificationBuilder.createNotification(data);
         }
-        /*var data = json.decode(value.toString());
-        var groupJid = data["groupJid"].toString();
-        var titleContent = data["titleContent"].toString();
-        var chatMessage = data["chatMessage"].toString();
-        var cancel = data["cancel"].toString();*/
-        /* var channel = AndroidNotificationChannel("id", "name", description: "");
-        var bigtextstyleinfo = BigTextStyleInformation(
-            data.chatMessage!.messageTextContent.toString(), htmlFormatBigText: true,
-            contentTitle: data.titleContent,
-            htmlFormatContentTitle: true);
-        var androidnotificationdetails = AndroidNotificationDetails(
-            channel.id, channel.name, channelDescription: channel.description,
-            importance: Importance.high,
-            styleInformation: bigtextstyleinfo,
-            priority: Priority.high,
-            playSound: true);
-        var notificationDetails = NotificationDetails(
-            android: androidnotificationdetails,
-            iOS: const DarwinNotificationDetails());
-        await flutterLocalNotificationsPlugin
-            .resolvePlatformSpecificImplementation<
-            AndroidFlutterLocalNotificationsPlugin>()
-            ?.createNotificationChannel(
-            channel);
-        await flutterLocalNotificationsPlugin.show(
-            0, data.titleContent, data.chatMessage!.messageTextContent, notificationDetails,
-            payload: data.chatMessage!.chatUserJid);*/
       });
     }
   }

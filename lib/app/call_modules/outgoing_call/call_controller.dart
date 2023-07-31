@@ -3,16 +3,18 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
+import 'package:mirror_fly_demo/app/data/helper.dart';
 import 'package:mirror_fly_demo/app/model/call_user_list.dart';
 import 'package:mirrorfly_plugin/mirrorfly.dart';
 import 'package:mirrorfly_plugin/model/audio_devices.dart';
 
+import '../../../main.dart';
 import '../../data/session_management.dart';
 import '../../routes/app_pages.dart';
 
 class CallController extends GetxController {
 
-  final RxBool isVisible = false.obs;
+  final RxBool isVisible = true.obs;
   final RxBool muted = false.obs;
   final RxBool speakerOff = true.obs;
   final RxBool cameraSwitch = true.obs;
@@ -130,6 +132,7 @@ debugPrint("availableAudioList.length ${availableAudioList.length}");
 
   videoMute() {
     if (callType.value != 'audio') {
+      Mirrorfly.muteVideo(!videoMuted.value);
       videoMuted(!videoMuted.value);
     }
   }
@@ -147,10 +150,17 @@ debugPrint("availableAudioList.length ${availableAudioList.length}");
     layoutSwitch(!layoutSwitch.value);
   }
 
-  Future<void> declineCall() async {
-    Mirrorfly.declineCall();
-    callList.clear();
-    Get.back();
+  void disconnectCall() {
+    Mirrorfly.disconnectCall().then((value){
+      if(value.checkNull()){
+        callList.clear();
+        if(Get.previousRoute.isNotEmpty) {
+          Get.back();
+        }else{
+          Get.offNamed(getInitialRoute());
+        }
+      }
+    });
   }
 
   getNames() async {
@@ -205,9 +215,13 @@ debugPrint("availableAudioList.length ${availableAudioList.length}");
       debugPrint("#Mirrorflycall participant jid is not in the list");
     }
     if (callList.length == 1) {
-      callList.clear();
-      Mirrorfly.declineCall();
-      Get.back();
+      // if there is an single user in that call and if he [disconnected] no need to disconnect the call from our side Observed in Android
+      // disconnectCall();
+      if(Get.previousRoute.isNotEmpty) {
+        Get.back();
+      }else{
+        Get.offNamed(getInitialRoute());
+      }
     }
   }
 
@@ -240,6 +254,12 @@ debugPrint("availableAudioList.length ${availableAudioList.length}");
   void timeout(String callMode, String userJid, String callType,
       String callStatus) {
     this.callStatus("Disconnected");
+    Get.back();
+  }
+
+  void declineCall() {
+    Mirrorfly.declineCall();
+    callList.clear();
     Get.back();
   }
 

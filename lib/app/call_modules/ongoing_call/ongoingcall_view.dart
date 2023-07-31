@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/call_modules/outgoing_call/call_controller.dart';
+import 'package:mirror_fly_demo/app/model/call_user_list.dart';
 import 'package:mirrorfly_plugin/mirrorfly_view.dart';
 
 import '../../common/constants.dart';
@@ -12,132 +13,137 @@ class OnGoingCallView extends GetView<CallController> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.callerBackground,
-      body: SafeArea(
-        child: InkWell(
-          splashColor: Colors.transparent,
-          highlightColor: Colors.transparent,
-          onTap: () {
-            controller.isVisible(!controller.isVisible.value);
-          },
-          child: Stack(
-            children: [
-              // Obx(() {
-              /*return AnimatedPositioned(
-                  duration: const Duration(milliseconds: 500),
-                  curve: Curves.easeInOut,
-                  top: controller.isVisible.value ? 0.0 : -72,
-                  left: 0.0,
-                  right: 0.0,
-                  height: 72,
-                  child: buildToolbar(),
-                );*/
+    return SafeArea(
+      child: Scaffold(
+        backgroundColor: AppColors.callerBackground,
+        body: Stack(
+          fit: StackFit.expand,
+          children: [
+            // controller.layoutSwitch.value ?
+            Obx(() {
+              return controller.callList.length > 1 &&
+                      controller.layoutSwitch.value
+                  ? SizedBox(
+                      width: MediaQuery.of(context).size.width,
+                      height: MediaQuery.of(context).size.height,
+                      child: MirrorFlyView(
+                              userJid: controller.callList[1].userJid ?? "")
+                          .setBorderRadius(
+                              const BorderRadius.all(Radius.circular(10))),
+                    )
+                  : const SizedBox.shrink();
+            }),
 
-              // }),
-              // controller.layoutSwitch.value ?
-              Obx(() {
-                return controller.callList.length > 1
-                    ? SizedBox(
-                        width: MediaQuery.of(context).size.width,
-                        height: MediaQuery.of(context).size.height,
-                        child: Expanded(
-                            child: MirrorFlyView(
-                                    userJid:
-                                        controller.callList[1].userJid ?? "")
-                                .setBorderRadius(const BorderRadius.all(
-                                    Radius.circular(10)))),
-                      )
-                    : const SizedBox.shrink();
-              }),
+            /*Positioned(
+              bottom: 5,
+              left: 0,
+              right: 0,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Obx(() {
+                    return controller.callList.length > 1
+                        ? Align(
+                            alignment: Alignment.topRight,
+                            child: SizedBox(
+                              width: 130,
+                              height: 180,
+                              child: MirrorFlyView(
+                                userJid: controller.callList[0].userJid ?? "",
+                                viewBgColor: Colors.blueGrey,
+                              ).setBorderRadius(const BorderRadius.all(
+                                  Radius.circular(10))),
+                            ),
+                          )
+                        : const SizedBox.shrink();
+                  }),
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  buildCallOptions(),
+                ],
+              ),
+            ),*/
 
-              Positioned(
-                bottom: 5,
+            /*Obx(() {
+            return Expanded(
+              child: GridView.builder(
+                  gridDelegate:
+                  SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: //1,
+                       controller.callList.length <= 2
+                        ? 1
+                        : 2,
+                      crossAxisSpacing: 4.0,
+                      mainAxisSpacing: 4.0,
+                      childAspectRatio: //1.3
+                    controller.callList.length <= 2
+                        ? 1.3
+                        : 2 / 3,
+                  ),
+                  itemCount: controller.callList.length,
+                  itemBuilder: (con, index) {
+                    // return buildProfileView();
+                    var user = controller.callList[index];
+                    debugPrint("#Mirrorfly call --> $user");
+                    return MirrorFlyView(userJid: user.userJid ?? "").setBorderRadius(
+                        const BorderRadius.all(Radius.circular(10)));
+                  }),
+            );  }),*/
+
+            Obx(() {
+              return controller.callList.isNotEmpty ? AnimatedPositioned(
+                duration: const Duration(milliseconds: 500),
+                curve: Curves.easeInOut,
                 left: 0,
                 right: 0,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    Obx(() {
-                      return controller.callList.length > 1
-                          ? Align(
-                              alignment: Alignment.topRight,
-                              child: SizedBox(
-                                width: 130,
-                                height: 180,
-                                child: MirrorFlyView(
-                                  userJid: controller.callList[0].userJid ?? "",
-                                  viewBgColor: Colors.blueGrey,
-                                ).setBorderRadius(const BorderRadius.all(
-                                    Radius.circular(10))),
-                              ),
-                            )
-                          : const SizedBox.shrink();
-                    }),
-                    const SizedBox(
-                      height: 10,
-                    ),
-                    buildCallOptions(),
-                  ],
-                ),
-              ),
-
-              /* Obx(() {
-              return Expanded(
-                child: GridView.builder(
-                    gridDelegate:
-                    const SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 1,
-                        */ /*controller.remoteUsers.length <= 2
-                          ? 1
-                          : 2,*/ /*
-                        // crossAxisSpacing: 4.0,
-                        // mainAxisSpacing: 4.0,
-                        // childAspectRatio: 1.3
-                      // controller.remoteUsers.length <= 2
-                      //     ? 1.3
-                      //     : 2 / 3,
-                    ),
-                    itemCount: controller.callList.length,
-                    itemBuilder: (con, index) {
-                      // return buildProfileView();
-                      var user = controller.callList[index];
-                      debugPrint("#Mirrorfly call --> $user");
-                      return MirrorFlyView(userJid: user.userJid ?? "").setBorderRadius(
-                          const BorderRadius.all(Radius.circular(10)));
-                    }),
-              );  }),*/
-
-              /*Obx(() {
-                return AnimatedPositioned(
-                  duration: const Duration(milliseconds: 500),
-                  curve: Curves.easeInOut,
-                  left: 0,
-                  right: 0,
-                  bottom: controller.isVisible.value ? 200 : 0,
-                  child: Align(
-                    alignment: Alignment.bottomRight,
-                    child: SizedBox(
-                      height: 170,
-                      child: buildListViewHorizontal(),
-                    ),
+                bottom: controller.isVisible.value ? 200 : 0,
+                child: Align(
+                  alignment: Alignment.bottomRight,
+                  child: SizedBox(
+                    height: 180,
+                    width: 130,
+                    child: MirrorFlyView(
+                      userJid: controller.callList[0].userJid ?? "",
+                      viewBgColor: Colors.blueGrey,
+                    ).setBorderRadius(
+                        const BorderRadius.all(Radius.circular(10))),
                   ),
-                );
-              }),*/
-              // Obx(() {
-              /*return AnimatedPositioned(
-                  duration: const Duration(milliseconds: 500),
-                  curve: Curves.easeInOut,
-                  bottom: controller.isVisible.value ? 0.0 : -200,
-                  left: 0.0,
-                  right: 0.0,
-                  child: buildCallOptions(),
-                );*/
+                ),
+              ) : const SizedBox.shrink();
+            }),
+            InkWell(
+              splashColor: Colors.transparent,
+              highlightColor: Colors.transparent,
+              onTap: () {
+                debugPrint("InkWell");
+                controller.isVisible(!controller.isVisible.value);
+              },
+            ),
+            Obx(() {
+              return AnimatedPositioned(
+                duration: const Duration(milliseconds: 500),
+                curve: Curves.easeInOut,
+                bottom: controller.isVisible.value ? 0.0 : -200,
+                left: 0.0,
+                right: 0.0,
+                child: buildCallOptions(),
+              );
               // return
-              Positioned(top: 5, left: 0, right: 0, child: buildToolbar()),
-              // }),
-            ],
-          ),
+              // Positioned(top: 5, left: 0, right: 0, child: buildToolbar()),
+            }),
+            Obx(() {
+              return AnimatedPositioned(
+                duration: const Duration(milliseconds: 500),
+                curve: Curves.easeInOut,
+                top: controller.isVisible.value ? 0.0 : -72,
+                left: 0.0,
+                right: 0.0,
+                height: 72,
+                child: buildToolbar(),
+              );
+            }),
+          ],
         ),
       ),
     );
@@ -152,13 +158,13 @@ class OnGoingCallView extends GetView<CallController> {
           mainAxisSize: MainAxisSize.min,
           children: const [
             ProfileTextImage(
-              text: "Saravanakumar",
+              text: "Name",
             ),
             SizedBox(
               height: 4,
             ),
             Text(
-              "Saravanakumar",
+              "Name",
               style: TextStyle(color: Colors.white),
             )
           ],
@@ -181,6 +187,7 @@ class OnGoingCallView extends GetView<CallController> {
         Obx(() {
           return Expanded(
             child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
                   controller.callList.isNotEmpty ? controller.callTitle : "",
@@ -217,22 +224,24 @@ class OnGoingCallView extends GetView<CallController> {
 
   Widget buildCallOptions() {
     double rightSideWidth = 15;
-    controller.callType.value == 'video' ? rightSideWidth = 20 : rightSideWidth = 30;
+    controller.callType.value == 'video'
+        ? rightSideWidth = 20
+        : rightSideWidth = 30;
     return Obx(() {
       return Column(
         children: [
-          // InkWell(
-          //   onTap: () {
-          //     controller.showCallOptions();
-          //   },
-          //   child: Padding(
-          //     padding: const EdgeInsets.all(10.0),
-          //     child: SvgPicture.asset(
-          //       callOptionsUpArrow,
-          //       width: 30,
-          //     ),
-          //   ),
-          // ),
+          InkWell(
+            onTap: () {
+              controller.showCallOptions();
+            },
+            child: Padding(
+              padding: const EdgeInsets.all(10.0),
+              child: SvgPicture.asset(
+                callOptionsUpArrow,
+                width: 30,
+              ),
+            ),
+          ),
           const SizedBox(
             height: 8,
           ),
@@ -255,7 +264,8 @@ class OnGoingCallView extends GetView<CallController> {
                       ),
               ),
               SizedBox(width: rightSideWidth),
-              controller.callType.value == 'video' ? FloatingActionButton(
+              controller.callType.value == 'video'
+                  ? FloatingActionButton(
                       heroTag: "switchCamera",
                       elevation: 0,
                       backgroundColor: controller.cameraSwitch.value
@@ -265,8 +275,11 @@ class OnGoingCallView extends GetView<CallController> {
                       child: controller.cameraSwitch.value
                           ? SvgPicture.asset(cameraSwitchActive)
                           : SvgPicture.asset(cameraSwitchInactive),
-                    ): const SizedBox.shrink(),
-              controller.callType.value == 'video' ? SizedBox(width: rightSideWidth): const SizedBox.shrink(),
+                    )
+                  : const SizedBox.shrink(),
+              controller.callType.value == 'video'
+                  ? SizedBox(width: rightSideWidth)
+                  : const SizedBox.shrink(),
               FloatingActionButton(
                 heroTag: "videoMute",
                 elevation: 0,
@@ -278,18 +291,28 @@ class OnGoingCallView extends GetView<CallController> {
                     ? SvgPicture.asset(videoInactive)
                     : SvgPicture.asset(videoActive),
               ),
-              SizedBox(width: rightSideWidth,),
+              SizedBox(
+                width: rightSideWidth,
+              ),
               FloatingActionButton(
                 heroTag: "speaker",
                 elevation: 0,
-                backgroundColor: controller.audioOutputType.value == Constants.receiver
-                    ? Colors.white.withOpacity(0.3)
-                    : Colors.white,
+                backgroundColor:
+                    controller.audioOutputType.value == Constants.receiver
+                        ? Colors.white.withOpacity(0.3)
+                        : Colors.white,
                 onPressed: () => controller.changeSpeaker(),
-                child: controller.audioOutputType.value == Constants.receiver ? SvgPicture.asset(speakerInactive)
-                    : controller.audioOutputType.value == Constants.speaker ? SvgPicture.asset(speakerActive)
-                    : controller.audioOutputType.value == Constants.bluetooth ? const Icon(Icons.bluetooth)
-                    : controller.audioOutputType.value == Constants.headset ? const Icon(Icons.headphones_sharp) : const Icon(Icons.speaker_phone),
+                child: controller.audioOutputType.value == Constants.receiver
+                    ? SvgPicture.asset(speakerInactive)
+                    : controller.audioOutputType.value == Constants.speaker
+                        ? SvgPicture.asset(speakerActive)
+                        : controller.audioOutputType.value ==
+                                Constants.bluetooth
+                            ? SvgPicture.asset(speakerBluetooth)
+                            : controller.audioOutputType.value ==
+                                    Constants.headset
+                                ? SvgPicture.asset(speakerHeadset)
+                                : SvgPicture.asset(speakerActive),
               ),
             ],
           ),
@@ -305,7 +328,7 @@ class OnGoingCallView extends GetView<CallController> {
                     shape: const StadiumBorder(),
                     backgroundColor: AppColors.endButton),
                 onPressed: () {
-                  controller.declineCall();
+                  controller.disconnectCall();
                 },
                 child: SvgPicture.asset(
                   callEndButton,
@@ -317,27 +340,31 @@ class OnGoingCallView extends GetView<CallController> {
     });
   }
 
-  Widget buildListViewHorizontal() {
+  Widget buildListViewHorizontal(List<CallUserList> users) {
     return ListView.builder(
         shrinkWrap: true,
         physics: const AlwaysScrollableScrollPhysics(),
         scrollDirection: Axis.horizontal,
-        itemCount: 6,
+        itemCount: users.length,
         itemBuilder: (cxt, index) {
-          return /*controller.callUsers.first !=
+          return MirrorFlyView(
+            userJid: users[index].userJid ?? "",
+            viewBgColor: Colors.blueGrey,
+          ).setBorderRadius(const BorderRadius.all(Radius.circular(
+              10))); /*controller.callUsers.first !=
               controller.remoteUsers[index].value
               ? Container(
             height: 200,
             width: 150,
             padding: const EdgeInsets.all(8),
             child: controller.mutedUsers.contains(controller.remoteUsers[index])
-                ? */
+                ?
               Container(
                   margin: const EdgeInsets.only(right: 4),
                   color: AppColors.audioCallBackground,
                   padding: const EdgeInsets.all(4),
                   child: buildProfileView());
-          /*: MirrorFlyView(
+          : MirrorFlyView(
               isLocalUser: controller.remoteUsers[index].value == "local",
               remoteUserJid: controller.remoteUsers[index].value,
             ).setBorderRadius(const BorderRadius.all(Radius.circular(10))),

@@ -101,6 +101,7 @@ class AppPages {
   static const chat = Routes.chat;
   static const adminBlocked = Routes.adminBlocked;
   static const outgoingCall = Routes.outGoingCallView;
+  static const onGoingCall = Routes.onGoingCallView;
 
   static final routes = [
     GetPage(
