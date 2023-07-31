@@ -8,7 +8,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
-// import 'package:flutter_libphonenumber/flutter_libphonenumber.dart';
+import 'package:flutter_libphonenumber/flutter_libphonenumber.dart';
 import 'package:get/get.dart';
 // import 'package:google_cloud_translation/google_cloud_translation.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -110,6 +110,9 @@ class ChatController extends FullLifeCycleController
   String? starredChatMessageId;
 
   bool get isTrail => Mirrorfly.isTrialLicence;
+
+  var loadPreviousData = false.obs;
+  var loadNextData = false.obs;
 
   @override
   void onInit() async {
@@ -248,7 +251,8 @@ class ChatController extends FullLifeCycleController
     Mirrorfly.setOnGoingChatUser(profile.jid!);
     markConversationReadNotifyUI();
     SessionManagement.setCurrentChatJID(profile.jid.checkNull());
-    getChatHistory();
+    // getChatHistory();
+    _loadMessages();
     // compute(getChatHistory, profile.jid);
     debugPrint("==================");
     debugPrint(profile.image);
@@ -569,6 +573,95 @@ class ChatController extends FullLifeCycleController
   }
 
   RxBool chatLoading = false.obs;
+
+  void _loadMessages() {
+    chatLoading(true);
+    Mirrorfly.initializeMessageList(userJid: profile.jid.checkNull(), limit: 25).then((value) {
+      value ? Mirrorfly.loadMessages().then((value) {
+        loadPreviousData(false);
+        loadNextData(false);
+        if (value == "" || value == null) {
+          debugPrint("Chat List is Empty");
+        }else{
+          try {
+            List<ChatMessageModel> chatMessageModel = chatMessageModelFromJson(value);
+            chatList(chatMessageModel.reversed.toList());
+            showStarredMessage();
+          } catch (error) {
+            debugPrint("chatHistory parsing error--> $error");
+          }
+        }
+        chatLoading(false);
+      }).catchError((e) {
+        chatLoading(false);
+      }) : toToast("Chat History Not Initialized");
+    });
+  }
+
+  void _loadPreviousMessages() {
+    loadNextData(true);
+    Mirrorfly.loadPreviousMessages().then((value) {
+      if (value == "" || value == null) {
+        debugPrint("Chat List is Empty");
+      }else{
+        try {
+          var chatMessageModel = List<ChatMessageModel>.empty(growable: true).obs;
+          chatMessageModel.addAll(chatMessageModelFromJson(value));
+          if(chatMessageModel.toList().isNotEmpty) {
+            chatList.insertAll(chatList.length, chatMessageModel.reversed.toList());
+          }else{
+            debugPrint("chat list is empty");
+          }
+          showStarredMessage();
+        } catch (error) {
+          debugPrint("chatHistory parsing error--> $error");
+        }
+      }
+      loadNextData(false);
+    }).catchError((e) {
+      loadNextData(false);
+    });
+  }
+
+  void _loadNextMessages() {
+    loadPreviousData(true);
+    Mirrorfly.loadNextMessages().then((value) {
+      if (value == "" || value == null) {
+        debugPrint("Chat List is Empty");
+      }else{
+        try {
+          List<ChatMessageModel> chatMessageModel = chatMessageModelFromJson(value);
+          if(chatMessageModel.isNotEmpty) {
+            chatList.insertAll(0, chatMessageModel.reversed.toList());
+          }
+          showStarredMessage();
+        } catch (error) {
+          debugPrint("chatHistory parsing error--> $error");
+        }
+      }
+      loadPreviousData(false);
+    }).catchError((e) {
+      loadPreviousData(false);
+    });
+  }
+
+  showStarredMessage(){
+    Future.delayed(const Duration(milliseconds: 200), () {
+      if (starredChatMessageId != null) {
+        debugPrint('starredChatMessageId $starredChatMessageId');
+        var chat = chatList.indexWhere(
+                (element) => element.messageId == starredChatMessageId);
+        debugPrint('chat $chat');
+        if (!chat.isNegative) {
+          navigateToMessage(chatList[chat]);
+          starredChatMessageId = null;
+        } else {
+          toToast('Message not found');
+        }
+      }
+      getUnsentReplyMessage();
+    });
+  }
 
   getChatHistory() {
     chatLoading(true);
@@ -1731,7 +1824,8 @@ class ChatController extends FullLifeCycleController
           Mirrorfly.setOnGoingChatUser(profile.jid!);
           markConversationReadNotifyUI();
           SessionManagement.setCurrentChatJID(profile.jid.checkNull());
-          getChatHistory();
+          // getChatHistory();
+          _loadMessages();
           sendReadReceipt();
         }
       });
@@ -1871,7 +1965,8 @@ class ChatController extends FullLifeCycleController
           Mirrorfly.setOnGoingChatUser(profile.jid!);
           markConversationReadNotifyUI();
           SessionManagement.setCurrentChatJID(profile.jid.checkNull());
-          getChatHistory();
+          // getChatHistory();
+          _loadMessages();
           sendReadReceipt();
           setChatStatus();
           debugPrint("value--> ${profile.isGroupProfile}");
@@ -2333,7 +2428,8 @@ class ChatController extends FullLifeCycleController
         Mirrorfly.setOnGoingChatUser(profile.jid!);
         markConversationReadNotifyUI();
         SessionManagement.setCurrentChatJID(profile.jid.checkNull());
-        getChatHistory();
+        // getChatHistory();
+        _loadMessages();
         sendReadReceipt();
       }
     });
@@ -2497,7 +2593,30 @@ class ChatController extends FullLifeCycleController
         chatList[chatIndex].isSelected(false);
         chatList.refresh();
       });
+    }else{
+      getMessageFromServerAndNavigateToMessage(chatMessage, index);
     }
+  }
+  void getMessageFromServerAndNavigateToMessage(ChatMessageModel chatMessage, int? index) {
+    Mirrorfly.loadMessages().then((value) {
+      loadPreviousData(false);
+      loadNextData(false);
+      if (value == "" || value == null) {
+        debugPrint("Chat List is Empty");
+      }else{
+        try {
+          chatList.clear();
+          List<ChatMessageModel> chatMessageModel = chatMessageModelFromJson(value);
+          chatList(chatMessageModel.reversed.toList());
+          navigateToMessage(chatMessage, index: index);
+        } catch (error) {
+          debugPrint("chatHistory parsing error--> $error");
+        }
+      }
+      chatLoading(false);
+    }).catchError((e) {
+      chatLoading(false);
+    });
   }
 
   int findLastVisibleItemPositionForChat() {
@@ -2507,7 +2626,7 @@ class ChatController extends FullLifeCycleController
             position.itemTrailingEdge < min.itemTrailingEdge ? position : min)
         .index;
     return r < chatList.length ? r + 1 : r;*/
-    return newitemPositionsListener.itemPositions.value.first.index;
+    return newitemPositionsListener.itemPositions.value.first.index-1;
   }
 
   void share() {
@@ -2692,11 +2811,11 @@ class ChatController extends FullLifeCycleController
         ? profile.nickName.checkNull()
         : profile.name.checkNull();
     if (phone.isNotEmpty) {
-      // await init();
-      // var formattedNumber = await parse(phone);
-      // debugPrint("parse-----> $formattedNumber");
-      // Mirrorfly.addContact(formattedNumber["international"], userName).then((value) {
-      Mirrorfly.addContact(phone, userName).then((value) {
+      FlutterLibphonenumber().init();
+      var formatNumberSync = FlutterLibphonenumber().formatNumberSync(phone);
+      var parse = await FlutterLibphonenumber().parse(formatNumberSync);
+      debugPrint("parse-----> $parse");
+      Mirrorfly.addContact(parse["international"], userName).then((value) {
         if (value ?? false) {
           toToast("Contact Saved");
           if (!Mirrorfly.isTrialLicence) {
@@ -2799,6 +2918,63 @@ class ChatController extends FullLifeCycleController
       LogMessage.d("askVideoCallPermissions", "false");
     }
   }
+
+  void loadNextChatHistory(){
+    final itemPositions = newitemPositionsListener.itemPositions.value;
+
+    if (itemPositions.isNotEmpty) {
+      final firstVisibleItemIndex = itemPositions.first.index;
+
+      debugPrint("reached length ${itemPositions.first.itemLeadingEdge}");
+      debugPrint("reached firstItemIndex $firstVisibleItemIndex");
+      debugPrint("reached itemPositions.length ${itemPositions.length}");
+      debugPrint("reached bottom check ${firstVisibleItemIndex + itemPositions.length >= chatList.length}");
+      ///This is the top constraint changing to bottom constraint and calling nextMessages bcz reversing the list view in display
+      if (firstVisibleItemIndex <= 1 && itemPositions.first.itemLeadingEdge <= 0) {
+        // Scrolled to the top
+        debugPrint("reached Top yes load next messages");
+        _loadNextMessages();
+        // _loadPreviousMessages();
+        ///This is the bottom constraint changing to Top constraint and calling prevMessages bcz reversing the list view in display
+      } else if (firstVisibleItemIndex + itemPositions.length >= chatList.length) {
+        // Scrolled to the bottom
+        // _loadNextMessages();
+        _loadPreviousMessages();
+        debugPrint("reached Bottom yes load previous msgs");
+      }
+    }
+  }
+
+
+
+  /*void loadNextChatHistory() {
+    // debugPrint("reached ${newitemPositionsListener.itemPositions.value.first.index}");
+    debugPrint("reached last.index ${newitemPositionsListener.itemPositions.value.last.index}");
+    // debugPrint("reached length ${chatList.length}");
+    var bottom = newitemPositionsListener.itemPositions.value
+        .where((ItemPosition position) => position.itemTrailingEdge < 1)
+        .reduce((ItemPosition min, ItemPosition position) =>
+    position.itemTrailingEdge < min.itemTrailingEdge ? position : min)
+        .index;
+    debugPrint("reached bottom $bottom");
+    debugPrint("reached first.index ${newitemPositionsListener.itemPositions.value.first.index}");
+    if (newitemPositionsListener.itemPositions.value.first.index == 0 && (bottom==0)) {
+      debugPrint("reached bottom if $bottom");
+      // _loadNextMessages();
+    }
+
+    var top = newitemPositionsListener.itemPositions.value
+        .where((ItemPosition position) => position.itemTrailingEdge < 1)
+        .reduce((ItemPosition min, ItemPosition position) =>
+    position.itemTrailingEdge > min.itemTrailingEdge ? position : min)
+        .index;
+    debugPrint("reached top  $top");
+    debugPrint("reached last.index ${newitemPositionsListener.itemPositions.value.last.index}");
+    if (newitemPositionsListener.itemPositions.value.last.index == top || top <= chatList.length+1) {
+      debugPrint("reached top if  $top");
+      // _loadPreviousMessages();
+    }
+  }*/
 }
 
 void onMessageDeleteNotifyUI(String chatUserJid) {
