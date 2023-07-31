@@ -8,7 +8,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
-import 'package:flutter_libphonenumber/flutter_libphonenumber.dart';
+import 'package:flutter_libphonenumber/flutter_libphonenumber.dart' as lib_phone_number;
 import 'package:get/get.dart';
 // import 'package:google_cloud_translation/google_cloud_translation.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -2811,9 +2811,9 @@ class ChatController extends FullLifeCycleController
         ? profile.nickName.checkNull()
         : profile.name.checkNull();
     if (phone.isNotEmpty) {
-      FlutterLibphonenumber().init();
-      var formatNumberSync = FlutterLibphonenumber().formatNumberSync(phone);
-      var parse = await FlutterLibphonenumber().parse(formatNumberSync);
+      lib_phone_number.init();
+      var formatNumberSync = lib_phone_number.formatNumberSync(phone);
+      var parse = await lib_phone_number.parse(formatNumberSync);
       debugPrint("parse-----> $parse");
       Mirrorfly.addContact(parse["international"], userName).then((value) {
         if (value ?? false) {
@@ -2886,10 +2886,10 @@ class ChatController extends FullLifeCycleController
   }
 
   void makeVoiceCall() async {
-    print("#VOIP #FLY CALL VOICE CALL CALLING");
+    debugPrint("#VOIP #FLY CALL VOICE CALL CALLING");
     // if(await AppPermission.askAudioCallPermissions()) {
       Mirrorfly.makeVoiceCall(profile.jid.checkNull()).then((value) {
-        print("#VOIP callback $value");
+        debugPrint("#VOIP callback $value");
         if (value) {
           debugPrint("#Mirrorfly Call userjid ${profile.jid}");
           Get.toNamed(
@@ -2897,7 +2897,7 @@ class ChatController extends FullLifeCycleController
         }
       }).catchError((e) {
         debugPrint("#Mirrorfly Call $e");
-        print("#VOIP voice call exception $e");
+        debugPrint("#VOIP voice call exception $e");
       });
     // }else{
     //   print("#VOIP Voice call permission deinied");
@@ -2945,36 +2945,6 @@ class ChatController extends FullLifeCycleController
     }
   }
 
-
-
-  /*void loadNextChatHistory() {
-    // debugPrint("reached ${newitemPositionsListener.itemPositions.value.first.index}");
-    debugPrint("reached last.index ${newitemPositionsListener.itemPositions.value.last.index}");
-    // debugPrint("reached length ${chatList.length}");
-    var bottom = newitemPositionsListener.itemPositions.value
-        .where((ItemPosition position) => position.itemTrailingEdge < 1)
-        .reduce((ItemPosition min, ItemPosition position) =>
-    position.itemTrailingEdge < min.itemTrailingEdge ? position : min)
-        .index;
-    debugPrint("reached bottom $bottom");
-    debugPrint("reached first.index ${newitemPositionsListener.itemPositions.value.first.index}");
-    if (newitemPositionsListener.itemPositions.value.first.index == 0 && (bottom==0)) {
-      debugPrint("reached bottom if $bottom");
-      // _loadNextMessages();
-    }
-
-    var top = newitemPositionsListener.itemPositions.value
-        .where((ItemPosition position) => position.itemTrailingEdge < 1)
-        .reduce((ItemPosition min, ItemPosition position) =>
-    position.itemTrailingEdge > min.itemTrailingEdge ? position : min)
-        .index;
-    debugPrint("reached top  $top");
-    debugPrint("reached last.index ${newitemPositionsListener.itemPositions.value.last.index}");
-    if (newitemPositionsListener.itemPositions.value.last.index == top || top <= chatList.length+1) {
-      debugPrint("reached top if  $top");
-      // _loadPreviousMessages();
-    }
-  }*/
 }
 
 void onMessageDeleteNotifyUI(String chatUserJid) {

@@ -362,6 +362,36 @@
       "languageVersion": "2.12"
     },
     {
+      "name": "flutter_libphonenumber",
+      "rootUri": "file:///Users/user/.pub-cache/hosted/pub.dev/flutter_libphonenumber-2.1.5",
+      "packageUri": "lib/",
+      "languageVersion": "2.19"
+    },
+    {
+      "name": "flutter_libphonenumber_android",
+      "rootUri": "file:///Users/user/.pub-cache/hosted/pub.dev/flutter_libphonenumber_android-1.0.1",
+      "packageUri": "lib/",
+      "languageVersion": "2.19"
+    },
+    {
+      "name": "flutter_libphonenumber_ios",
+      "rootUri": "file:///Users/user/.pub-cache/hosted/pub.dev/flutter_libphonenumber_ios-1.1.4",
+      "packageUri": "lib/",
+      "languageVersion": "2.19"
+    },
+    {
+      "name": "flutter_libphonenumber_platform_interface",
+      "rootUri": "file:///Users/user/.pub-cache/hosted/pub.dev/flutter_libphonenumber_platform_interface-1.0.0",
+      "packageUri": "lib/",
+      "languageVersion": "2.19"
+    },
+    {
+      "name": "flutter_libphonenumber_web",
+      "rootUri": "file:///Users/user/.pub-cache/hosted/pub.dev/flutter_libphonenumber_web-1.0.0",
+      "packageUri": "lib/",
+      "languageVersion": "2.19"
+    },
+    {
       "name": "flutter_lints",
       "rootUri": "file:///Users/user/.pub-cache/hosted/pub.dev/flutter_lints-2.0.1",
       "packageUri": "lib/",
@@ -1184,7 +1214,7 @@
       "languageVersion": "2.19"
     }
   ],
-  "generated": "2023-07-28T19:43:23.580059Z",
+  "generated": "2023-07-31T06:08:22.447766Z",
   "generator": "pub",
   "generatorVersion": "3.0.3"
 }
