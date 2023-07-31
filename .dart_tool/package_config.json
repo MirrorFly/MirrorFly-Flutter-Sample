@@ -801,7 +801,7 @@
     },
     {
       "name": "permission_handler_android",
-      "rootUri": "file:///Users/user/.pub-cache/hosted/pub.dev/permission_handler_android-10.3.2",
+      "rootUri": "file:///Users/user/.pub-cache/hosted/pub.dev/permission_handler_android-10.3.3",
       "packageUri": "lib/",
       "languageVersion": "2.15"
     },
@@ -849,9 +849,9 @@
     },
     {
       "name": "plugin_platform_interface",
-      "rootUri": "file:///Users/user/.pub-cache/hosted/pub.dev/plugin_platform_interface-2.1.4",
+      "rootUri": "file:///Users/user/.pub-cache/hosted/pub.dev/plugin_platform_interface-2.1.5",
       "packageUri": "lib/",
-      "languageVersion": "2.17"
+      "languageVersion": "2.18"
     },
     {
       "name": "pointycastle",
@@ -1065,7 +1065,7 @@
     },
     {
       "name": "url_launcher_android",
-      "rootUri": "file:///Users/user/.pub-cache/hosted/pub.dev/url_launcher_android-6.0.36",
+      "rootUri": "file:///Users/user/.pub-cache/hosted/pub.dev/url_launcher_android-6.0.37",
       "packageUri": "lib/",
       "languageVersion": "2.18"
     },
@@ -1184,7 +1184,7 @@
       "languageVersion": "2.19"
     }
   ],
-  "generated": "2023-07-20T12:17:01.485322Z",
+  "generated": "2023-07-28T19:43:23.580059Z",
   "generator": "pub",
   "generatorVersion": "3.0.3"
 }

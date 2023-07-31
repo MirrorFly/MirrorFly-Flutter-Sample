@@ -1180,7 +1180,7 @@ class ChatView extends GetView<ChatController> {
                   },
                   icon: const Icon(Icons.videocam_sharp, size: 20,),
                 ),
-                overflowWidget: const Text("Video Call"),
+                overflowWidget: const  Text("Video Call"),
                 showAsAction: controller.profile.isGroupProfile.checkNull() ? ShowAsAction.gone : ShowAsAction.always,
                 keyValue: 'Video Call',
                 onItemClick: () {

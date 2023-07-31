@@ -124,27 +124,29 @@ class AppPermission {
   }
 
   static Future<bool> askAudioCallPermissions() async {
-    final speech = await Permission.speech.status;//RECORD_AUDIO
-    final phone = await Permission.phone.status;//READ_PHONE_STATE
-    final bluetoothConnect = await Permission.bluetoothConnect.status;//BLUETOOTH_CONNECT
+    final speech = await Permission.microphone.status;//RECORD_AUDIO
+    // final phone = await Permission.phone.status;//READ_PHONE_STATE
+    // final bluetoothConnect = await Permission.bluetoothConnect.status;//BLUETOOTH_CONNECT
     const newPermission = [
-      Permission.speech,
-      Permission.phone,
-      Permission.bluetoothConnect,
+      Permission.microphone,
+      // Permission.phone,
+      // Permission.bluetoothConnect,
     ];
     if(
-    (speech != PermissionStatus.granted  && speech != PermissionStatus.permanentlyDenied) ||
-    (phone != PermissionStatus.granted  && phone != PermissionStatus.permanentlyDenied) ||
-    (bluetoothConnect != PermissionStatus.granted  && bluetoothConnect != PermissionStatus.permanentlyDenied)
+    (speech != PermissionStatus.granted  && speech != PermissionStatus.permanentlyDenied) //||
+    // (phone != PermissionStatus.granted  && phone != PermissionStatus.permanentlyDenied) ||
+    // (bluetoothConnect != PermissionStatus.granted  && bluetoothConnect != PermissionStatus.permanentlyDenied)
     ){
       var newp = await newPermission.request();
-      PermissionStatus? speech_ = newp[Permission.speech];
-      PermissionStatus? phone_ = newp[Permission.phone];
-      PermissionStatus? bluetoothConnect_ = newp[Permission.bluetoothConnect];
+      PermissionStatus? speech_ = newp[Permission.microphone];
+      // PermissionStatus? phone_ = newp[Permission.phone];
+      // PermissionStatus? bluetoothConnect_ = newp[Permission.bluetoothConnect];
       // var audio = await newPermission[2].isGranted;
-      return (speech_!.isGranted && phone_!.isGranted && bluetoothConnect_!.isGranted);
+      // return (speech_!.isGranted && phone_!.isGranted && bluetoothConnect_!.isGranted);
+      return speech_!.isGranted;
     }else{
-      return (speech.isGranted && phone.isGranted && bluetoothConnect.isGranted);
+      return speech.isGranted;
+      // return (speech.isGranted && phone.isGranted && bluetoothConnect.isGranted);
     }
   }
 

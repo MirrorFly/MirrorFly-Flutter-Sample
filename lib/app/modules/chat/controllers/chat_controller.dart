@@ -2801,9 +2801,10 @@ class ChatController extends FullLifeCycleController
   }
 
   void makeVoiceCall() async {
-    debugPrint("#FLY CALL VOICE CALL CALLING");
-    if(await AppPermission.askAudioCallPermissions()) {
+    print("#VOIP #FLY CALL VOICE CALL CALLING");
+    // if(await AppPermission.askAudioCallPermissions()) {
       Mirrorfly.makeVoiceCall(profile.jid.checkNull()).then((value) {
+        print("#VOIP callback $value");
         if (value) {
           debugPrint("#Mirrorfly Call userjid ${profile.jid}");
           Get.toNamed(
@@ -2811,8 +2812,11 @@ class ChatController extends FullLifeCycleController
         }
       }).catchError((e) {
         debugPrint("#Mirrorfly Call $e");
+        print("#VOIP voice call exception $e");
       });
-    }
+    // }else{
+    //   print("#VOIP Voice call permission deinied");
+    // }
   }
 
   void makeVideoCall() async {

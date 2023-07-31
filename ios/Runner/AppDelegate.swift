@@ -1,4 +1,5 @@
 import UIKit
+import PushKit
 import Flutter
 //import FlyCore
 //import FlyCommon
@@ -6,6 +7,17 @@ import GoogleMaps
 import UserNotifications
 import FirebaseAuth
 import Firebase
+import MirrorFlySDK
+import mirrorfly_plugin
+
+import CallKit
+
+
+#if DEBUG
+    let ISEXPORT = false
+#else
+    let ISEXPORT = true
+#endif
 
 @UIApplicationMain
 @objc class AppDelegate: FlutterAppDelegate {
@@ -13,6 +25,12 @@ import Firebase
     let googleApiKey = "AIzaSyDnjPEs86MRsnFfW1sVPKvMWjqQRnSa7Ts"
    
     var postNotificationdidEnterBackground : NotificationCenter? = nil
+    
+    let XMPP_DOMAIN = "xmpp-uikit-qa.contus.us"
+    
+    let tag = "#Mirrorfly call"
+    var voipRegistry:PKPushRegistry?
+//    var voipRegister = PKPushRegistry.init(queue: .main)
     
     
   override func application(
@@ -23,188 +41,141 @@ import Firebase
       let _ : FlutterViewController = window?.rootViewController as! FlutterViewController
            
       GMSServices.provideAPIKey(googleApiKey)
-      
-//      try? AVAudioSession.sharedInstance().setCategory(.playback, mode: .default, options: [.mixWithOthers, .allowAirPlay])
-//      try? AVAudioSession.sharedInstance().setActive(true)
-      
-//      // MARK:- Push Notification
-////      clearPushNotifications()
-////      registerForPushNotifications()
-//
-//      FirebaseApp.configure()
-//      Messaging.messaging().delegate = self
-      if #available(iOS 10.0, *) {
-          // For iOS 10 display notification (sent via APNS)
-          UNUserNotificationCenter.current().delegate = self as? UNUserNotificationCenterDelegate
+    
 
-//          let authOptions: UNAuthorizationOptions = [.alert, .badge, .sound]
-//          UNUserNotificationCenter.current().requestAuthorization(
-//              options: authOptions,
-//              completionHandler: { val, error in
-//              }
-//          )
-      }
-//      else {
-//          let settings: UIUserNotificationSettings =
-//          UIUserNotificationSettings(types: [.alert, .badge, .sound], categories: nil)
-//          application.registerUserNotificationSettings(settings)
+//      registerForVOIPNotifications()
+      
+//      UNUserNotificationCenter.current().delegate = self
+//      if #available(iOS 10, *) {
+//         UNUserNotificationCenter.current().requestAuthorization(options:[.badge, .alert, .sound]){ granted, error in }
+//      } else {
+//         application.registerUserNotificationSettings(UIUserNotificationSettings(types: [.badge, .sound, .alert], categories: nil))
 //      }
+      
+      if #available(iOS 10.0, *) {
+             // For iOS 10 display notification (sent via APNS)
+             UNUserNotificationCenter.current().delegate = self as? UNUserNotificationCenterDelegate
 
+
+         }
 //      application.registerForRemoteNotifications()
+      
+      VOIPManager.sharedInstance.updateDeviceToken()
       
       GeneratedPluginRegistrant.register(with: self)
       
       return super.application(application, didFinishLaunchingWithOptions: launchOptions)
   }
-    
-//    override func application(
-//        _ application: UIApplication,
-//        didReceiveRemoteNotification userInfo: [AnyHashable: Any],
-//        fetchCompletionHandler completionHandler:
-//          @escaping (UIBackgroundFetchResult) -> Void
-//      ) {
-//          print("#Mirrorfly Notification -> Message Received")
-//        // Handle the received notification
-//        if let messageID = userInfo["gcm.message_id"] {
-//          print("#Mirrorfly Notification -> Message ID: \(messageID)")
+//    override func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
+//        if response.notification.request.content.threadIdentifier.contains(XMPP_DOMAIN){
+//            NSLog("#MirrorFlyCall AppDelegate XMPP Push received")
+//        }else if response.notification.request.content.threadIdentifier == "media-call" {
+////            pushChatId = "media-call"
+//            NSLog("#MirrorFlyCall AppDelegate Push received")
+//            if FlyDefaults.isBlockedByAdmin {
+////                navigateToBlockedScreen()
+//                NSLog("#MirrorFlyCall AppDelegate Blocked received")
+//            } else {
+//                NSLog("#MirrorFlyCall AppDelegate Push received 2")
+//            }
+//
 //        }
-//
-//          // Handle the received notification
-//             if let messageID = userInfo["gcm.message_id"] {
-//               print("#Mirrorfly Notification -> Message ID: \(messageID)")
-//             }
-//
-//             // Call the necessary method from the FlutterFirebaseMessagingPlugin to handle the notification
-//          let flutterChannel = FlutterMethodChannel(name: "plugins.flutter.io/firebase_messaging", binaryMessenger: window.rootViewController as! FlutterViewController as! FlutterBinaryMessenger)
-//             flutterChannel.invokeMethod("onMessage", arguments: userInfo)
-//
-//             completionHandler(UIBackgroundFetchResult.newData)
-////        completionHandler(UIBackgroundFetchResult.newData)
-//      }
-    
-//    override func applicationDidEnterBackground(_ application: UIApplication) {
-//           self.backgroundTaskID = application.beginBackgroundTask(expirationHandler: nil)
-//       }
-//
-//    override func applicationWillEnterForeground(_ application: UIApplication) {
-//           if self.backgroundTaskID != .invalid {
-//               application.endBackgroundTask(self.backgroundTaskID)
-//               self.backgroundTaskID = .invalid
-//           }
-//       }
-//     func messaging(_ messaging: Messaging, didReceiveRegistrationToken fcmToken: String?) {
-//        NSLog("#Mirrorfly Appdelegate token \(fcmToken)")
 //    }
-//
-////    override func messaging(_ messaging: Messaging, didReceiveRegistrationToken fcmToken: String) {
-////            // Receive the FCM registration token if needed
-////        NSLog("#Mirrorfly Appdelegate token \(fcmToken)")
-////        }
+//9788933954
+    //8526697581
 //
 //    override func application(_ application: UIApplication, didReceiveRemoteNotification notification: [AnyHashable : Any], fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
 //            // Handle the silent push notification and perform necessary tasks in the background
 //            NSLog("#Mirrorfly Appdelegate didReceiveRemoteNotification \(notification)")
 //            // Call the completion handler when finished processing the notification
-//            completionHandler(.newData)
+//            completionHandler(.noData)
 //        }
 
     
-//    override func application(_ application: UIApplication, performFetchWithCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
-//        // Process any pending logs or perform necessary tasks
-//        // ...
-//        
-//        completionHandler(.noData)
-//    }
+    override func applicationWillTerminate(_ application: UIApplication) {
+        NSLog("#Voip Fly Defaults \(FlyDefaults.myJid)")
+    }
 
    
     
 }
 
 //extension AppDelegate {
-    /// Register for APNS Notifications
-//    func registerForPushNotifications() {
-//        print("###Registering push notification")
-//        UNUserNotificationCenter.current().delegate = self
-//        let authOptions: UNAuthorizationOptions = [.alert, .badge, .sound]
-//        UNUserNotificationCenter.current().requestAuthorization(options: authOptions) { granted, error in
-//            if granted {
-//                self.getNotificationSettings()
-//                DispatchQueue.main.async {
-//                    UIApplication.shared.registerForRemoteNotifications()
-////                    FlyUtils.setBaseUrl(BASE_URL)
-//                }
-//            }
-//        }
-////        registerForVOIPNotifications()
-//    }
-//    /// This method is used to clear notifications and badge count
-//    func clearPushNotifications() {
-//
-////        print("###Clearing push notification")
-////        UNUserNotificationCenter.current().removeAllDeliveredNotifications()
-////        UNUserNotificationCenter.current().removeAllPendingNotificationRequests()
-//    }
-//
 //    override func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
-//        //Mark:- Added for swizzling
-////        Auth.auth().setAPNSToken(deviceToken, type: .unknown)
+//            //Mark:- Added for swizzling
+//    //        Auth.auth().setAPNSToken(deviceToken, type: .unknown)
 //
-//        print("###didRegisterForRemoteNotificationsWithDeviceToken")
+//        NSLog("\(tag) ###didRegisterForRemoteNotificationsWithDeviceToken")
 //
-//        let token = deviceToken.map { String(format: "%.2hhx", $0) }.joined()
-//        if token.count == 0 {
-//            print("Push Status Credentials APNS:")
-//            return;
-//        }
-//        print("#token appDelegate \(token)")
-//        print("#token application DT => \(token)")
-//        NSLog("Push token --> \(token)")
-////        VOIPManager.sharedInstance.saveAPNSToken(token: token)
-////        Utility.saveInPreference(key: googleToken, value: token)
-////        VOIPManager.sharedInstance.updateDeviceToken()
-////        return super.application(application, didRegisterForRemoteNotificationsWithDeviceToken: deviceToken)
-//    }
-//
-//    override func application(_ application: UIApplication, didFailToRegisterForRemoteNotificationsWithError error: Error) {
-//        print("###didFailToRegisterForRemoteNotificationsWithError")
-//        print("Push didFailToRegisterForRemoteNotificationsWithError)")
-//    }
-//    override func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
-//        completionHandler([.alert, .sound])
-//    }
-//    override func application(_ application: UIApplication, didReceiveRemoteNotification notification: [AnyHashable : Any], fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
-//        print("Push userInfo \(notification)")
-//            if Auth.auth().canHandleNotification(notification) {
-//                completionHandler(.noData)
-//                return
-//            }else{
-//                print("###canHandleNotification issue")
+//            let token = deviceToken.map { String(format: "%.2hhx", $0) }.joined()
+//            if token.count == 0 {
+//                NSLog("Push Status Credentials APNS:")
+//                return;
 //            }
+//        NSLog("\(tag) #token appDelegate \(token)")
+//        NSLog("\(tag) #token application DT => \(token)")
+//            NSLog("\(tag) Push token --> \(token)")
 //
-//    }
-//    func getNotificationSettings() {
-//          UNUserNotificationCenter.current().getNotificationSettings { settings in
-//            print("Notification settings: \(settings)")
-//          }
+//        VOIPManager.sharedInstance.savePushToken(token: token)
+//            Utility.saveInPreference(key: "googleToken", value: token)
+//            VOIPManager.sharedInstance.updateDeviceToken()
 //        }
-//    override func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
-//        print("###userNotificationCenter withCompletionHandler")
-//        let chatId = response.notification.request.content.threadIdentifier
-//        print("chat ID ---> \(chatId)")
-////        if let profileDetails = ContactManager.shared.getUserProfileDetails(for: chatId) , chatId != FlyDefaults.myJid{
-////            Utility.saveInPreference(key: notificationUserJid, value: profileDetails.jid ?? "")
 //
+//    override func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
+//            completionHandler([.alert, .sound])
+//        }
+////    override func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
+////            print("###userNotificationCenter withCompletionHandler")
+////            let chatId = response.notification.request.content.threadIdentifier
+////            print("chat ID ---> \(chatId)")
+////
 ////        }
-//
-////        if response.notification.request.content.threadIdentifier.contains(XMPP_DOMAIN){
-////            if FlyDefaults.isBlockedByAdmin {
-////                navigateToBlockedScreen()
-////            } else {
-////                navigateToChatScreen(chatId: response.notification.request.content.threadIdentifier, completionHandler: completionHandler)
-////            }
-////        }
-//    }
-    
 //}
 
+//extension AppDelegate : PKPushRegistryDelegate{
+//    func registerForVOIPNotifications() {
+//        NSLog("\(tag) Registering Voip Notification")
+//
+//        voipRegistry = PKPushRegistry(queue: .main)
+//        DispatchQueue.main.async {
+//            self.voipRegistry?.delegate = self
+//        }
+//
+//        voipRegistry?.desiredPushTypes = [.voIP]
+//    }
+//
+//    func pushRegistry(_ registry: PKPushRegistry, didUpdate pushCredentials: PKPushCredentials, for type: PKPushType) {
+//
+//        NSLog("\(tag) VoIP Token: \(pushCredentials)")
+//        let deviceTokenString = pushCredentials.token.reduce("") { $0 + String(format: "%02X", $1) }
+//        NSLog("\(tag) #token pushRegistry VT => \(deviceTokenString)")
+//        VOIPManager.sharedInstance.saveVOIPToken(token: deviceTokenString)
+//        FlyCallUtils.sharedInstance.setConfigUserDefaults(deviceTokenString, withKey: "updatedTokenVOIP")
+//        Utility.saveInPreference(key: "voipToken", value: deviceTokenString)
+//        VOIPManager.sharedInstance.updateDeviceToken()
+//    }
+//
+//    func pushRegistry(_ registry: PKPushRegistry, didReceiveIncomingPushWith payload: PKPushPayload, for type: PKPushType, completion: @escaping () -> Void) {
+////        try? ChatSDK.Builder.setAppGroupContainerID(containerID: "group.com.mirrorfly.qa")
+////                    .isTrialLicense(isTrial: true)
+////                    .setLicenseKey(key: "ckIjaccWBoMNvxdbql8LJ2dmKqT5bp")
+////                    .setDomainBaseUrl(baseUrl: "https://api-uikit-qa.contus.us/api/v1/")
+////                    .buildAndInitialize()
+//
+//        NSLog("\(tag) Push VOIP Received with Payload - %@",payload.dictionaryPayload)
+//        NSLog("\(tag) #callopt \(FlyUtils.printTime()) pushRegistry voip received")
+//
+//        NSLog("#VOIP myjid ***\(FlyDefaults.myJid)")
+//        NSLog("#VOIP myjid Count ***\(FlyDefaults.myJid.count)")
+//        NSLog("#VOIP myjid Count ***\(try? FlyUtils.getMyJid())")
+//        NSLog("#VOIP isLogged In \(FlyDefaults.isLoggedIn)")
+//
+//
+//        VOIPManager.sharedInstance.processPayload(payload.dictionaryPayload)
+//        NSLog("\(tag) After Voip Complete")
+//        completion()
+//
+//    }
+//
+//}
 
