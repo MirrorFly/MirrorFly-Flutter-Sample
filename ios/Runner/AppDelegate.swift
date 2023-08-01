@@ -49,6 +49,13 @@ import CallKit
          application.registerUserNotificationSettings(UIUserNotificationSettings(types: [.badge, .sound, .alert], categories: nil))
       }
       application.registerForRemoteNotifications()
+      
+      
+      let licenseKey = Utility.getStringFromPreference(key: "licenseKey")
+      let containerID = Utility.getStringFromPreference(key: "containerID")
+
+      NSLog("#Mirrorfly licenseKey \(licenseKey)")
+      NSLog("#Mirrorfly containerID \(containerID)")
 
 //      if #available(iOS 10.0, *) {
 //        UNUserNotificationCenter.current().delegate = self as? UNUserNotificationCenterDelegate

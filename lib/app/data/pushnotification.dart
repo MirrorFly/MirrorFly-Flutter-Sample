@@ -172,7 +172,7 @@ class PushNotifications {
     if(!remoteMessage.data.containsKey("message_id")){
       notificationData["message_id"]=remoteMessage.messageId;
     }
-    if(notificationData.isNotEmpty) {
+    if(notificationData.isNotEmpty && Platform.isAndroid) {
       WidgetsFlutterBinding.ensureInitialized();
       await Mirrorfly.handleReceivedMessage(notificationData).then((value) async {
         mirrorFlyLog("#Mirrorfly Notification -> notification message", value.toString());

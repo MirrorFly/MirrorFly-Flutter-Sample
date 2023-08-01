@@ -192,8 +192,6 @@ class NotificationBuilder {
     var title = profileDetails.name.checkNull();
     var chatJid = profileDetails.jid.checkNull();
 
-    // var requesId = DateTime.now();
-
     if (Platform.isIOS) {
       notificationId = int.parse(lastMessageTime.toString().substring(lastMessageTime.toString().length - 5));
     }
@@ -258,7 +256,7 @@ class NotificationBuilder {
         ?.createNotificationChannel(
         channel);
     await flutterLocalNotificationsPlugin.show(
-        Platform.isAndroid ? notificationId : 12345, title, lastMessageContent, notificationDetails,
+        notificationId, title, lastMessageContent, notificationDetails,
         payload: chatJid);
   }
   

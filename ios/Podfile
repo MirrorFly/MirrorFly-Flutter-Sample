@@ -50,6 +50,8 @@ end
 target 'NotificationExtension' do
   use_frameworks!
     pod 'Firebase/Messaging'
+#    pod 'MirrorFlySDK', '5.10.2'
+    pod 'mirrorfly_plugin', :path => '.symlinks/plugins/mirrorfly_plugin/ios'
 end
 
 post_install do |installer|
