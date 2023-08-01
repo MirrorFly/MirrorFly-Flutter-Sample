@@ -170,7 +170,9 @@ abstract class BaseController {
       var callType = statusUpdateReceived["callType"].toString();
       var callStatus = statusUpdateReceived["callStatus"].toString();
 
-
+      if (Get.isRegistered<CallController>()) {
+        Get.find<CallController>().statusUpdate(callStatus);
+      }
 
       switch (callStatus){
         case CallStatus.connecting:

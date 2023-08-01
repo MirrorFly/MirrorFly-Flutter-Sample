@@ -34,7 +34,7 @@ class CallController extends GetxController {
 
   var calleeName = "".obs;
   var audioOutputType = "receiver".obs;
-  var callStatus = "Trying to Connect".obs;
+  var callStatus = CallStatus.calling.obs;
 
   @override
   Future<void> onInit() async {
@@ -227,33 +227,33 @@ debugPrint("availableAudioList.length ${availableAudioList.length}");
 
   void calling(String callMode, String userJid, String callType,
       String callStatus) {
-    this.callStatus(callStatus);
+    // this.callStatus(callStatus);
   }
 
   void reconnected(String callMode, String userJid, String callType,
       String callStatus) {
-    this.callStatus(callStatus);
+    // this.callStatus(callStatus);
   }
 
   void ringing(String callMode, String userJid, String callType,
       String callStatus) {
-    this.callStatus(callStatus);
+    // this.callStatus(callStatus);
   }
 
   void onHold(String callMode, String userJid, String callType,
       String callStatus) {
-    this.callStatus(callStatus);
+    // this.callStatus(callStatus);
   }
 
   void connected(String callMode, String userJid, String callType,
       String callStatus) {
-    this.callStatus(callStatus);
+    // this.callStatus(callStatus);
     Get.offNamed(Routes.onGoingCallView, arguments: { "userJid": userJid});
   }
 
   void timeout(String callMode, String userJid, String callType,
       String callStatus) {
-    this.callStatus("Disconnected");
+    // this.callStatus("Disconnected");
     Get.back();
   }
 
@@ -263,4 +263,40 @@ debugPrint("availableAudioList.length ${availableAudioList.length}");
     Get.back();
   }
 
+  void statusUpdate(String callStatus){
+    var displayStatus = CallStatus.calling;
+    switch(callStatus){
+      case CallStatus.connecting:
+      case CallStatus.connected:
+      case CallStatus.ringing:
+        displayStatus = CallStatus.ringing;
+        break;
+      case CallStatus.callTimeout:
+        displayStatus = "Unavailable, Try again later";
+        break;
+      case CallStatus.disconnected:
+      case CallStatus.calling:
+        displayStatus = CallStatus.calling;
+        break;
+      case CallStatus.attended:
+      case CallStatus.onHold:
+      case CallStatus.inviteCallTimeout:
+        displayStatus = CallStatus.calling;
+        break;
+      case CallStatus.reconnecting:
+        displayStatus = "Reconnecting…";
+        break;
+      case CallStatus.onResume:
+        displayStatus = "Call on Resume";
+        break;
+      case CallStatus.userJoined:
+      case CallStatus.userLeft:
+      case CallStatus.reconnected:
+      case CallStatus.calling10s:
+      case CallStatus.callingAfter10s:
+        displayStatus = callStatus;
+        break;
+    }
+    this.callStatus(displayStatus);
+  }
 }

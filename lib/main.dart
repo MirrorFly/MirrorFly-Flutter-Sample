@@ -36,12 +36,12 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   // make sure you call `initializeApp` before using other Firebase services.
   await Firebase.initializeApp();
   SessionManagement.onInit();
-  Mirrorfly.init(
+  /*Mirrorfly.init(
       baseUrl: 'https://api-uikit-qa.contus.us/api/v1/',
       licenseKey: 'ckIjaccWBoMNvxdbql8LJ2dmKqT5bp',//ckIjaccWBoMNvxdbql8LJ2dmKqT5bp//2sdgNtr3sFBSM3bYRa7RKDPEiB38Xo
       iOSContainerID: 'group.com.mirrorfly.qa',
       chatHistoryEnable: true,
-      enableDebugLog: true);
+      enableDebugLog: true);*/
   debugPrint("#Mirrorfly Notification -> Handling a background message: ${message.messageId}");
   PushNotifications.onMessage(message);
   // final dio = Dio();
