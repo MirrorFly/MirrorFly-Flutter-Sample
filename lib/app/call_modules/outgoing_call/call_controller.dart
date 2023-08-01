@@ -180,12 +180,14 @@ debugPrint("availableAudioList.length ${availableAudioList.length}");
     });
   }
 
+  Timer? timer;
   void startTimer() {
     const oneSec = Duration(seconds: 1);
     startTime = DateTime.now();
     Timer.periodic(
       oneSec,
           (Timer timer) {
+            this.timer=timer;
         final minDur = DateTime
             .now()
             .difference(startTime!)
@@ -208,7 +210,7 @@ debugPrint("availableAudioList.length ${availableAudioList.length}");
   void callDisconnected(String callMode, String userJid, String callType,
       String callStatus) {
     var index = callList.indexWhere((user) => user.userJid == userJid);
-    debugPrint("#Mirrorfly call disconnected user Index $index");
+    debugPrint("#Mirrorfly call disconnected user Index $index ${Get.currentRoute}");
     if (!index.isNegative) {
       callList.removeAt(index);
     } else {
@@ -218,11 +220,27 @@ debugPrint("availableAudioList.length ${availableAudioList.length}");
       // if there is an single user in that call and if he [disconnected] no need to disconnect the call from our side Observed in Android
       // disconnectCall();
       if(Get.previousRoute.isNotEmpty) {
-        Get.back();
+        if(Get.currentRoute==Routes.onGoingCallView) {
+          timer?.cancel();
+          callTimer("Disconnected");
+          Future.delayed(const Duration(seconds: 1),(){
+            Get.back();
+          });
+        }else {
+          Get.back();
+        }
       }else{
         Get.offNamed(getInitialRoute());
       }
     }
+  }
+
+  void remoteBusy(String callMode, String userJid, String callType, String callAction){
+    declineCall();
+  }
+
+  void remoteHangup(String callMode, String userJid, String callType, String callAction){
+
   }
 
   void calling(String callMode, String userJid, String callType,

@@ -191,7 +191,7 @@ class OnGoingCallView extends GetView<CallController> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
-                  controller.callList.isNotEmpty ? controller.callTitle : "",
+                  controller.callTitle,
                   style: const TextStyle(
                     color: Colors.white,
                     fontWeight: FontWeight.w500,
@@ -199,6 +199,7 @@ class OnGoingCallView extends GetView<CallController> {
                   ),
                   textAlign: TextAlign.center,
                 ),
+                const SizedBox(height: 8,),
                 Text(
                   controller.callTimer.value,
                   style: const TextStyle(

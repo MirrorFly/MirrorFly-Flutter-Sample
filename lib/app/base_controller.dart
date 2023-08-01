@@ -270,18 +270,20 @@ abstract class BaseController {
       var callMode = actionReceived["callMode"].toString();
       var callType = actionReceived["callType"].toString();
       switch(callAction){
+        //if we called on user B, the user B is decline the call then this will be triggered in Android
         case CallAction.remoteBusy:{
           toToast("User is Busy");
           if (Get.isRegistered<CallController>()) {
-            Get.find<CallController>().callDisconnected(
-                callMode, userJid, callType, CallStatus.disconnected);
+            Get.find<CallController>().remoteBusy(
+                callMode, userJid, callType, callAction);
           }
           break;
         }
+      //if we called on user B, the user B is disconnect the call after connect then this will be triggered in Android
         case CallAction.remoteHangup:{
           if (Get.isRegistered<CallController>()) {
-            Get.find<CallController>().callDisconnected(
-                callMode, userJid, callType, CallStatus.disconnected);
+            Get.find<CallController>().remoteHangup(
+                callMode, userJid, callType, callAction);
           }
           break;
         }
