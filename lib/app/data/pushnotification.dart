@@ -85,7 +85,7 @@ class PushNotifications {
     });
   }
   static void initInfo(){
-    NotificationService.init();
+    NotificationService().init();
     /*var androidInitialize = const AndroidInitializationSettings('@mipmap/ic_launcher');
     var iosInitialize = const DarwinInitializationSettings();
     var initalizationSettings = InitializationSettings(android: androidInitialize,iOS: iosInitialize);

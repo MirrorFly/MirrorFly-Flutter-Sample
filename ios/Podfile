@@ -36,9 +36,20 @@ target 'Runner' do
   # Pods for Runner
 end
 
-target 'NotificationService' do
-  pod 'MirrorFlySDK', '5.10.2'
-  pod 'Firebase/Messaging'
+#target 'NotificationService' do
+#
+##  use_frameworks!
+#
+#  pod 'Firebase/Messaging'
+##  pod 'mirrorfly_plugin', :path => '.symlinks/plugins/mirrorfly_plugin/ios'
+#  pod 'MirrorFlySDK', '5.10.2'
+##  pod 'Firebase/Messaging'
+##  flutter_install_all_ios_pods File.dirname(File.realpath(__FILE__))
+#end
+
+target 'NotificationExtension' do
+  use_frameworks!
+    pod 'Firebase/Messaging'
 end
 
 post_install do |installer|

@@ -194,6 +194,12 @@ class NotificationBuilder {
 
     // var requesId = DateTime.now();
 
+    if (Platform.isIOS) {
+      notificationId = int.parse(lastMessageTime.toString().substring(lastMessageTime.toString().length - 5));
+    }
+
+    debugPrint("local notification id $notificationId");
+
     var channel = buildNotificationChannel(notificationId.toString(), null, false);
 
     chatNotifications[notificationId]?.unReadMessageCount =
@@ -252,7 +258,7 @@ class NotificationBuilder {
         ?.createNotificationChannel(
         channel);
     await flutterLocalNotificationsPlugin.show(
-        notificationId, title, lastMessageContent, notificationDetails,
+        Platform.isAndroid ? notificationId : 12345, title, lastMessageContent, notificationDetails,
         payload: chatJid);
   }
   

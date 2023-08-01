@@ -685,7 +685,7 @@ abstract class BaseController {
       debugPrint("notificationUri--> $notificationUri");
 
       var messageId = chatMessageModel.messageSentTime.toString().substring(chatMessageModel.messageSentTime.toString().length - 5);
-
+      debugPrint("Mani Message ID $messageId");
       AndroidNotificationDetails androidNotificationDetails =
       AndroidNotificationDetails(chatMessageModel.messageId, 'MirrorFly',
           importance: Importance.max,
@@ -704,7 +704,7 @@ abstract class BaseController {
       NotificationDetails notificationDetails =
       NotificationDetails(android: androidNotificationDetails, iOS: iosNotificationDetails);
       await flutterLocalNotificationsPlugin.show(
-          int.parse(messageId), chatMessageModel.senderUserName,
+          12345, chatMessageModel.senderUserName,
           chatMessageModel.isMessageRecalled.value ? "This message was deleted" : chatMessageModel.messageTextContent, notificationDetails,
           payload: chatMessageModel.chatUserJid);
     }else{

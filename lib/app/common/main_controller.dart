@@ -59,8 +59,8 @@ class MainController extends FullLifeCycleController with BaseController, FullLi
     getAuthToken();
     startNetworkListen();
 
-    // NotificationService notificationService = NotificationService();
-    await NotificationService.init();
+    NotificationService notificationService = NotificationService();
+    await notificationService.init();
     _isAndroidPermissionGranted();
     _requestPermissions();
     _configureDidReceiveLocalNotificationSubject();
