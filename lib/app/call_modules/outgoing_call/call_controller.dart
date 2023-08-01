@@ -155,7 +155,15 @@ debugPrint("availableAudioList.length ${availableAudioList.length}");
       if(value.checkNull()){
         callList.clear();
         if(Get.previousRoute.isNotEmpty) {
-          Get.back();
+          if(Get.currentRoute==Routes.onGoingCallView) {
+            timer?.cancel();
+            callTimer("Disconnected");
+            Future.delayed(const Duration(seconds: 1),(){
+              Get.back();
+            });
+          }else {
+            Get.back();
+          }
         }else{
           Get.offNamed(getInitialRoute());
         }
