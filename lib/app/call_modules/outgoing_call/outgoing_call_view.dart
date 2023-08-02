@@ -54,6 +54,7 @@ class OutGoingCallView extends GetView<CallController> {
                               color: Colors.white,
                               fontWeight: FontWeight.w500,
                               fontSize: 18),
+                          overflow: TextOverflow.ellipsis,
                         );
                       }),
                       Obx(() {

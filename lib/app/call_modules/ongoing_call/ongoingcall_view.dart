@@ -190,14 +190,18 @@ class OnGoingCallView extends GetView<CallController> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text(
-                  controller.callTitle,
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.w500,
-                    fontSize: 12.0,
+                SizedBox(
+                  width: 200,
+                  child: Text(
+                    controller.callTitle,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w500,
+                      fontSize: 12.0,
+                    ),
+                    textAlign: TextAlign.center,
+                    overflow: TextOverflow.ellipsis,
                   ),
-                  textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 8,),
                 Text(
