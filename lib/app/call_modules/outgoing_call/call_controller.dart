@@ -341,4 +341,8 @@ class CallController extends GetxController {
   void audioDeviceChanged() {
     Mirrorfly.selectedAudioDevice().then((value) => audioOutputType(value));
   }
+
+  void remoteEngaged() {
+    declineCall();
+  }
 }

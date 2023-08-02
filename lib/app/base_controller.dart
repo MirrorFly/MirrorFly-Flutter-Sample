@@ -287,6 +287,13 @@ abstract class BaseController {
           }
           break;
         }
+        //if we called on user B, the user B is on another call then this will triggered
+        case CallAction.remoteEngaged:{
+          if (Get.isRegistered<CallController>()) {
+            Get.find<CallController>().remoteEngaged();
+          }
+          break;
+        }
         case CallAction.audioDeviceChanged:{
           if (Get.isRegistered<CallController>()) {
             Get.find<CallController>().audioDeviceChanged();
