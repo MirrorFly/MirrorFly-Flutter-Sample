@@ -113,14 +113,22 @@ class OutGoingCallView extends GetView<CallController> {
                           FloatingActionButton(
                             heroTag: "speaker",
                             elevation: 0,
-                            backgroundColor: controller.audioOutputType.value == AudioDeviceType.receiver
+                            backgroundColor:
+                            controller.audioOutputType.value == AudioDeviceType.receiver
                                 ? Colors.white.withOpacity(0.3)
                                 : Colors.white,
                             onPressed: () => controller.changeSpeaker(),
-                            child: controller.audioOutputType.value == AudioDeviceType.receiver ? SvgPicture.asset(speakerInactive)
-                                : controller.audioOutputType.value == AudioDeviceType.speaker ? SvgPicture.asset(speakerActive)
-                                : controller.audioOutputType.value == AudioDeviceType.bluetooth ? const Icon(Icons.bluetooth)
-                                : controller.audioOutputType.value == AudioDeviceType.headset ? const Icon(Icons.headphones_sharp) : const Icon(Icons.speaker_phone),
+                            child: controller.audioOutputType.value == AudioDeviceType.receiver
+                                ? SvgPicture.asset(speakerInactive)
+                                : controller.audioOutputType.value == AudioDeviceType.speaker
+                                ? SvgPicture.asset(speakerActive)
+                                : controller.audioOutputType.value ==
+                                AudioDeviceType.bluetooth
+                                ? SvgPicture.asset(speakerBluetooth)
+                                : controller.audioOutputType.value ==
+                                AudioDeviceType.headset
+                                ? SvgPicture.asset(speakerHeadset)
+                                : SvgPicture.asset(speakerActive),
                           ),
                         ],
                       ),

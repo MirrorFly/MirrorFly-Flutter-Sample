@@ -39,6 +39,7 @@ class CallController extends GetxController {
   Future<void> onInit() async {
     super.onInit();
     debugPrint("#Mirrorfly Call Controller onInit");
+    audioDeviceChanged();
     Mirrorfly.getAllAvailableAudioInput().then((value) {
       final availableList = audioDevicesFromJson(value);
       availableAudioList.addAll(availableList);
@@ -335,5 +336,9 @@ class CallController extends GetxController {
         break;
     }
     this.callStatus(displayStatus);
+  }
+
+  void audioDeviceChanged() {
+    Mirrorfly.selectedAudioDevice().then((value) => audioOutputType(value));
   }
 }

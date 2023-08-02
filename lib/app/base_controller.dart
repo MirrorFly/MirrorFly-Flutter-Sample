@@ -287,6 +287,12 @@ abstract class BaseController {
           }
           break;
         }
+        case CallAction.audioDeviceChanged:{
+          if (Get.isRegistered<CallController>()) {
+            Get.find<CallController>().audioDeviceChanged();
+          }
+          break;
+        }
       }
     });
     Mirrorfly.onMuteStatusUpdated.listen((event) {
