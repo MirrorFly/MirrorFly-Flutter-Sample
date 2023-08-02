@@ -80,9 +80,12 @@ class CallController extends GetxController {
 
     debugPrint("#Mirrorfly call type ${callType.value}");
     if (callType.value == 'audio') {
+      Mirrorfly.isUserAudioMuted().then((value) => muted(value));
       videoMuted(true);
     } else {
-      videoMuted(false);
+      Mirrorfly.isUserAudioMuted().then((value) => muted(value));
+      Mirrorfly.isUserVideoMuted().then((value) => videoMuted(value));
+      // videoMuted(false);
     }
   }
 
