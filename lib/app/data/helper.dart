@@ -382,8 +382,8 @@ Future<Profile> getProfileDetails(String jid) async {
   var value = await Mirrorfly.getProfileDetails(jid.checkNull());
   // profileDataFromJson(value);
   debugPrint("getProfileDetails--> $value");
-  var profile = await compute(profiledata, value.toString());
-  // var str = Profile.fromJson(json.decode(value.toString()));
+  // var profile = await compute(profiledata, value.toString());
+  var profile = Profile.fromJson(json.decode(value.toString()));
   return profile;
 }
 

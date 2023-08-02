@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:mirrorfly_plugin/mirrorfly.dart';
 
 import 'package:get/get.dart';
@@ -17,6 +18,7 @@ import 'package:mirror_fly_demo/app/data/helper.dart';
 import 'package:mirror_fly_demo/app/data/pushnotification.dart';
 import 'package:mirror_fly_demo/app/modules/dashboard/bindings/dashboard_binding.dart';
 import 'package:mirror_fly_demo/app/modules/login/bindings/login_binding.dart';
+import 'app/common/notification_service.dart';
 import 'app/data/session_management.dart';
 import 'app/model/reply_hash_map.dart';
 import 'app/modules/profile/bindings/profile_binding.dart';
@@ -60,6 +62,9 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   //     payload: "chatJid");
 }
 bool shouldUseFirebaseEmulator = false;
+//check app opened from notification
+NotificationAppLaunchDetails? notificationAppLaunchDetails;
+//check is on going call
 bool isOnGoingCall = false;
 // dynamic nonChatUsers = [];
 Future<void> main() async {
@@ -83,11 +88,11 @@ Future<void> main() async {
   if (mapsImplementation is GoogleMapsFlutterAndroid) {
     mapsImplementation.useAndroidViewSurface = true;
   }
+  //check app opened from notification
+  notificationAppLaunchDetails = await flutterLocalNotificationsPlugin.getNotificationAppLaunchDetails();
+
+  //check is on going call
   isOnGoingCall = (await Mirrorfly.isOnGoingCall()).checkNull();
-  // await SessionManagement.onInit();
-  // ReplyHashMap.init();
-  // Mirrorfly.isTrailLicence().then((value) => SessionManagement.setIsTrailLicence(value.checkNull()));
-  // Mirrorfly.cancelNotifications();
   if (shouldUseFirebaseEmulator) {
     await FirebaseAuth.instance.useAuthEmulator('localhost', 5050);
   }
@@ -131,9 +136,16 @@ Bindings? getBinding(){
 }
 
 String getInitialRoute() {
+  var didNotificationLaunchApp = notificationAppLaunchDetails?.didNotificationLaunchApp ?? false;
+  var didNotificationLaunchResponse = notificationAppLaunchDetails?.notificationResponse?.payload;
+  debugPrint("didNotificationLaunchApp $didNotificationLaunchApp");
+  debugPrint("didNotificationLaunchResponse $didNotificationLaunchResponse");
   if(isOnGoingCall){
     isOnGoingCall=false;
     return AppPages.onGoingCall;
+  }else if(didNotificationLaunchApp){
+    notificationAppLaunchDetails = null;
+    return "${AppPages.chat}?jid=${didNotificationLaunchResponse.checkNull()}&from_notification=$didNotificationLaunchApp";
   }
   if(!SessionManagement.adminBlocked()) {
     if (SessionManagement.getLogin()) {

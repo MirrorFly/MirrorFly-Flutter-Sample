@@ -4,7 +4,7 @@ import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-// import 'package:flutter_libphonenumber/flutter_libphonenumber.dart';
+ import 'package:flutter_libphonenumber/flutter_libphonenumber.dart' as libphonenumber;
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
@@ -98,10 +98,10 @@ class ProfileController extends GetxController {
         } else {
           if (await AppUtils.isNetConnected()) {
             debugPrint("profile update");
-            // var formattedNumber = await parse(profileMobile.text);
-            // debugPrint("parse-----> $formattedNumber");
-            // var unformatted = formattedNumber['national_number'];//profileMobile.text.replaceAll(" ", "").replaceAll("+", "");
-            var unformatted = profileMobile.text;
+            var formattedNumber = await libphonenumber.parse(profileMobile.text);
+            debugPrint("parse-----> $formattedNumber");
+            var unformatted = formattedNumber['national_number'];//profileMobile.text.replaceAll(" ", "").replaceAll("+", "");
+            // var unformatted = profileMobile.text;
             Mirrorfly
                 .updateMyProfile(
                 profileName.text.toString(),
@@ -240,7 +240,9 @@ class ProfileController extends GetxController {
                   mobileEditAccess(!valid);
                 });
               }else {
-                mobileEditAccess(true);
+                var userIdentifier = SessionManagement.getUserIdentifier();
+                validMobileNumber(userIdentifier).then((value) => mobileEditAccess(value));
+                // mobileEditAccess(true);
               }
 
               profileEmail.text = data.data!.email ?? "";
@@ -407,52 +409,26 @@ class ProfileController extends GetxController {
 
   onMobileChange(String text){
     changed(true);
-    validMobileNumber(text);
+    validMobileNumber(text.replaceAll("+", ""));
     update();
   }
 
   Future<bool> validMobileNumber(String text)async{
-    // var coded = text;
-    if(!text.startsWith(SessionManagement.getCountryCode().toString())){
+    var coded = text;
+    if(!text.startsWith(SessionManagement.getCountryCode().checkNull().replaceAll("+", "").toString())){
       mirrorFlyLog("SessionManagement.getCountryCode()", SessionManagement.getCountryCode().toString());
-      // coded = SessionManagement.getCountryCode().checkNull()+text;
+      coded = SessionManagement.getCountryCode().checkNull()+text;
     }
-    // var m = coded.contains("+") ? coded : "+$coded";
-    /*var formattingMobileNumber = text;
-    ///Added this function, due to the mobile number is Android and iOS is receiving without Country Code in Response
-    if (text.startsWith("+") && text.substring(1).startsWith(SessionManagement.getCountryCode() ?? "")) {
-      ///No need to append anything as the input contains Mobile Number with Country Code
-      formattingMobileNumber = formattingMobileNumber.replaceFirst("+${SessionManagement.getCountryCode()}", "");
-    }else{
-      if (text.substring(0).startsWith(SessionManagement.getCountryCode() ?? "")) {
-        ///if input have country code and mobile number and doesn't contain (+), we are appending it here
-        formattingMobileNumber = formattingMobileNumber.replaceFirst("${SessionManagement.getCountryCode()}", "");
-      } else {
-        ///Else we are appending both (+) and Country Code with the input
-        formattingMobileNumber = text;
-      }
-    }*/
+    var m = coded.contains("+") ? coded : "+$coded";
+    libphonenumber.init();
+    var formatNumberSync = libphonenumber.formatNumberSync(m);
     try {
-      // await init();
-      // final formattedNumber = formatNumberSync(m);
-      // final formattedNumber = await parse(text, region: SessionManagement.getCountryCode().toString());
-      // profileMobile.text = formattedNumber['international'];
-      profileMobile.text = text;
-      return true;
-    }catch(e){
-      debugPrint('validMobileNumber $e');
-      return false;
-    }
-
-    // FlutterLibphonenumber().init();
-    /*var formatNumberSync = FlutterLibphonenumber().formatNumberSync(m);
-    try {
-      var parse = await FlutterLibphonenumber().parse(formatNumberSync);
+      var parse = await libphonenumber.parse(formatNumberSync);
       debugPrint("parse-----> $parse");
       //{country_code: 91, e164: +91xxxxxxxxxx, national: 0xxxxx xxxxx, type: mobile, international: +91 xxxxx xxxxx, national_number: xxxxxxxxxx, region_code: IN}
       if (parse.isNotEmpty) {
         var formatted = parse['international'];//.replaceAll("+", '');
-        profileMobile.text = formatted;
+        profileMobile.text = (formatted.toString());
         return true;
       } else {
         return false;
@@ -460,7 +436,7 @@ class ProfileController extends GetxController {
     }catch(e){
       debugPrint('validMobileNumber $e');
       return false;
-    }*/
+    }
   }
 
   static void insertStatus() {

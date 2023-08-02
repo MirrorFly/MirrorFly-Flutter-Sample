@@ -15,9 +15,9 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "CE47F0A72A6453CA0098BB6C"
-               BuildableName = "NotificationService.appex"
-               BlueprintName = "NotificationService"
+               BlueprintIdentifier = "CE0B8FF52A5B31EB0030DE60"
+               BuildableName = "NotificationExtention.appex"
+               BlueprintName = "NotificationExtention"
                ReferencedContainer = "container:Runner.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -45,7 +45,7 @@
       shouldAutocreateTestPlan = "YES">
    </TestAction>
    <LaunchAction
-      buildConfiguration = "Debug"
+      buildConfiguration = "Release"
       selectedDebuggerIdentifier = ""
       selectedLauncherIdentifier = "Xcode.IDEFoundation.Launcher.PosixSpawn"
       launchStyle = "0"
