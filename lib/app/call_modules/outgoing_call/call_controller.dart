@@ -16,7 +16,7 @@ class CallController extends GetxController {
   final RxBool isVisible = true.obs;
   final RxBool muted = false.obs;
   final RxBool speakerOff = true.obs;
-  final RxBool cameraSwitch = true.obs;
+  final RxBool cameraSwitch = false.obs;
   final RxBool videoMuted = false.obs;
   final RxBool layoutSwitch = true.obs;
 
