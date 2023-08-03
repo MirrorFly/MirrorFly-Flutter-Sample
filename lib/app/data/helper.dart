@@ -383,7 +383,7 @@ Future<Profile> getProfileDetails(String jid) async {
   // profileDataFromJson(value);
   debugPrint("getProfileDetails--> $value");
   // var profile = await compute(profiledata, value.toString());
-  var profile = profiledata((value.toString()));
+  var profile = Profile.fromJson(json.decode(value.toString()));
   return profile;
 }
 

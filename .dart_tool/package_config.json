@@ -63,7 +63,7 @@
     },
     {
       "name": "camera_android",
-      "rootUri": "file:///Users/user/.pub-cache/hosted/pub.dev/camera_android-0.10.8+4",
+      "rootUri": "file:///Users/user/.pub-cache/hosted/pub.dev/camera_android-0.10.8+5",
       "packageUri": "lib/",
       "languageVersion": "2.18"
     },
@@ -81,7 +81,7 @@
     },
     {
       "name": "camera_web",
-      "rootUri": "file:///Users/user/.pub-cache/hosted/pub.dev/camera_web-0.3.1+4",
+      "rootUri": "file:///Users/user/.pub-cache/hosted/pub.dev/camera_web-0.3.2",
       "packageUri": "lib/",
       "languageVersion": "2.18"
     },
@@ -249,19 +249,19 @@
     },
     {
       "name": "firebase_auth",
-      "rootUri": "file:///Users/user/.pub-cache/hosted/pub.dev/firebase_auth-4.7.1",
+      "rootUri": "file:///Users/user/.pub-cache/hosted/pub.dev/firebase_auth-4.7.2",
       "packageUri": "lib/",
       "languageVersion": "2.18"
     },
     {
       "name": "firebase_auth_platform_interface",
-      "rootUri": "file:///Users/user/.pub-cache/hosted/pub.dev/firebase_auth_platform_interface-6.16.0",
+      "rootUri": "file:///Users/user/.pub-cache/hosted/pub.dev/firebase_auth_platform_interface-6.16.1",
       "packageUri": "lib/",
       "languageVersion": "2.18"
     },
     {
       "name": "firebase_auth_web",
-      "rootUri": "file:///Users/user/.pub-cache/hosted/pub.dev/firebase_auth_web-5.6.1",
+      "rootUri": "file:///Users/user/.pub-cache/hosted/pub.dev/firebase_auth_web-5.6.2",
       "packageUri": "lib/",
       "languageVersion": "2.18"
     },
@@ -362,6 +362,36 @@
       "languageVersion": "2.12"
     },
     {
+      "name": "flutter_libphonenumber",
+      "rootUri": "file:///Users/user/.pub-cache/hosted/pub.dev/flutter_libphonenumber-2.1.5",
+      "packageUri": "lib/",
+      "languageVersion": "2.19"
+    },
+    {
+      "name": "flutter_libphonenumber_android",
+      "rootUri": "file:///Users/user/.pub-cache/hosted/pub.dev/flutter_libphonenumber_android-1.0.1",
+      "packageUri": "lib/",
+      "languageVersion": "2.19"
+    },
+    {
+      "name": "flutter_libphonenumber_ios",
+      "rootUri": "file:///Users/user/.pub-cache/hosted/pub.dev/flutter_libphonenumber_ios-1.1.4",
+      "packageUri": "lib/",
+      "languageVersion": "2.19"
+    },
+    {
+      "name": "flutter_libphonenumber_platform_interface",
+      "rootUri": "file:///Users/user/.pub-cache/hosted/pub.dev/flutter_libphonenumber_platform_interface-1.0.0",
+      "packageUri": "lib/",
+      "languageVersion": "2.19"
+    },
+    {
+      "name": "flutter_libphonenumber_web",
+      "rootUri": "file:///Users/user/.pub-cache/hosted/pub.dev/flutter_libphonenumber_web-1.0.0",
+      "packageUri": "lib/",
+      "languageVersion": "2.19"
+    },
+    {
       "name": "flutter_lints",
       "rootUri": "file:///Users/user/.pub-cache/hosted/pub.dev/flutter_lints-2.0.1",
       "packageUri": "lib/",
@@ -459,7 +489,7 @@
     },
     {
       "name": "geolocator_android",
-      "rootUri": "file:///Users/user/.pub-cache/hosted/pub.dev/geolocator_android-4.2.0",
+      "rootUri": "file:///Users/user/.pub-cache/hosted/pub.dev/geolocator_android-4.2.1",
       "packageUri": "lib/",
       "languageVersion": "2.15"
     },
@@ -507,7 +537,7 @@
     },
     {
       "name": "google_maps_flutter",
-      "rootUri": "file:///Users/user/.pub-cache/hosted/pub.dev/google_maps_flutter-2.3.1",
+      "rootUri": "file:///Users/user/.pub-cache/hosted/pub.dev/google_maps_flutter-2.4.0",
       "packageUri": "lib/",
       "languageVersion": "3.0"
     },
@@ -531,7 +561,7 @@
     },
     {
       "name": "google_maps_flutter_web",
-      "rootUri": "file:///Users/user/.pub-cache/hosted/pub.dev/google_maps_flutter_web-0.5.1",
+      "rootUri": "file:///Users/user/.pub-cache/hosted/pub.dev/google_maps_flutter_web-0.5.3",
       "packageUri": "lib/",
       "languageVersion": "2.18"
     },
@@ -783,9 +813,9 @@
     },
     {
       "name": "path_provider_platform_interface",
-      "rootUri": "file:///Users/user/.pub-cache/hosted/pub.dev/path_provider_platform_interface-2.0.6",
+      "rootUri": "file:///Users/user/.pub-cache/hosted/pub.dev/path_provider_platform_interface-2.1.0",
       "packageUri": "lib/",
-      "languageVersion": "2.12"
+      "languageVersion": "2.18"
     },
     {
       "name": "path_provider_windows",
@@ -801,7 +831,7 @@
     },
     {
       "name": "permission_handler_android",
-      "rootUri": "file:///Users/user/.pub-cache/hosted/pub.dev/permission_handler_android-10.3.2",
+      "rootUri": "file:///Users/user/.pub-cache/hosted/pub.dev/permission_handler_android-10.3.3",
       "packageUri": "lib/",
       "languageVersion": "2.15"
     },
@@ -831,7 +861,7 @@
     },
     {
       "name": "photo_manager",
-      "rootUri": "file:///Users/user/.pub-cache/hosted/pub.dev/photo_manager-2.6.0",
+      "rootUri": "file:///Users/user/.pub-cache/hosted/pub.dev/photo_manager-2.7.0",
       "packageUri": "lib/",
       "languageVersion": "2.13"
     },
@@ -849,9 +879,9 @@
     },
     {
       "name": "plugin_platform_interface",
-      "rootUri": "file:///Users/user/.pub-cache/hosted/pub.dev/plugin_platform_interface-2.1.4",
+      "rootUri": "file:///Users/user/.pub-cache/hosted/pub.dev/plugin_platform_interface-2.1.5",
       "packageUri": "lib/",
-      "languageVersion": "2.17"
+      "languageVersion": "2.18"
     },
     {
       "name": "pointycastle",
@@ -987,15 +1017,15 @@
     },
     {
       "name": "sqflite",
-      "rootUri": "file:///Users/user/.pub-cache/hosted/pub.dev/sqflite-2.2.8+4",
+      "rootUri": "file:///Users/user/.pub-cache/hosted/pub.dev/sqflite-2.3.0",
       "packageUri": "lib/",
-      "languageVersion": "2.18"
+      "languageVersion": "3.0"
     },
     {
       "name": "sqflite_common",
-      "rootUri": "file:///Users/user/.pub-cache/hosted/pub.dev/sqflite_common-2.4.5+1",
+      "rootUri": "file:///Users/user/.pub-cache/hosted/pub.dev/sqflite_common-2.5.0",
       "packageUri": "lib/",
-      "languageVersion": "2.18"
+      "languageVersion": "3.0"
     },
     {
       "name": "stack_trace",
@@ -1065,7 +1095,7 @@
     },
     {
       "name": "url_launcher_android",
-      "rootUri": "file:///Users/user/.pub-cache/hosted/pub.dev/url_launcher_android-6.0.36",
+      "rootUri": "file:///Users/user/.pub-cache/hosted/pub.dev/url_launcher_android-6.0.37",
       "packageUri": "lib/",
       "languageVersion": "2.18"
     },
@@ -1184,7 +1214,7 @@
       "languageVersion": "2.19"
     }
   ],
-  "generated": "2023-07-20T12:17:01.485322Z",
+  "generated": "2023-08-01T14:16:53.631993Z",
   "generator": "pub",
   "generatorVersion": "3.0.3"
 }

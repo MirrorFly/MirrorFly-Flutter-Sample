@@ -192,7 +192,11 @@ class NotificationBuilder {
     var title = profileDetails.name.checkNull();
     var chatJid = profileDetails.jid.checkNull();
 
-    // var requesId = DateTime.now();
+    if (Platform.isIOS) {
+      notificationId = int.parse(lastMessageTime.toString().substring(lastMessageTime.toString().length - 5));
+    }
+
+    debugPrint("local notification id $notificationId");
 
     var channel = buildNotificationChannel(notificationId.toString(), null, false);
 
