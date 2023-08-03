@@ -295,6 +295,7 @@ abstract class BaseController {
           break;
         }
         case CallAction.audioDeviceChanged:{
+          debugPrint("call action audioDeviceChanged");
           if (Get.isRegistered<CallController>()) {
             Get.find<CallController>().audioDeviceChanged();
           }

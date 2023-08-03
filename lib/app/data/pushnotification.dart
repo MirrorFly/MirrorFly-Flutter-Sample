@@ -144,7 +144,7 @@ class PushNotifications {
       badge: true,
       carPlay: false,
       criticalAlert: true,
-      provisional: false,
+      provisional: true,
       sound: true,
     );
 
