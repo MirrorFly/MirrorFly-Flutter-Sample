@@ -626,6 +626,12 @@ class Constants {
   static const String audioPermission =
       "To send audio messages, allow MirrorFly access to your Microphone.";
 
+  static const String audioCallPermission =
+      "MirrorFly need the Microphone Permissions in order to call Family";
+
+  static const String videoCallPermission =
+      "MirrorFly need the Microphone and Camera Permissions in order to call Family";
+
   static const String contactPermissionDenied =
       "MirrorFly need the Contacts Permission in order to help you connect with friends and family, but they have been permanently denied. Please continue to app settings, select \"Permissions\", and enable \"Contacts\"";
   static const String locationPermissionDenied =

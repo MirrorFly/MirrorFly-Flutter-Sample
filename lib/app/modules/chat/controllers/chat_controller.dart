@@ -820,19 +820,6 @@ class ChatController extends FullLifeCycleController
     }*/
   }
 
-  Future<bool> askContactsPermission() async {
-    final permission = await AppPermission.getContactPermission();
-    switch (permission) {
-      case PermissionStatus.granted:
-        return true;
-      case PermissionStatus.permanentlyDenied:
-        return false;
-      default:
-        debugPrint("Contact Permission default");
-        return false;
-    }
-  }
-
   sendContactMessage(List<String> contactList, String contactName) async {
     debugPrint("sendingName--> $contactName");
     var busyStatus = !profile.isGroupProfile.checkNull()

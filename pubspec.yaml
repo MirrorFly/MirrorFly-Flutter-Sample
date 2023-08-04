@@ -20,7 +20,7 @@ dependencies:
   intl: ^0.17.0 #datetime
   package_info_plus: ^4.0.2 #package info
   image_picker: ^0.8.6
-  permission_handler: ^10.4.1
+  permission_handler: ^10.4.3
 #  emoji_picker_flutter: ^1.4.0
   emoji_picker_flutter: ^1.6.1
   image_cropping: ^0.0.13 #crop image
