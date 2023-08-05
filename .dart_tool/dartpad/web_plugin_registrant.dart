@@ -16,6 +16,7 @@ import 'package:firebase_auth_web/firebase_auth_web.dart';
 import 'package:firebase_core_web/firebase_core_web.dart';
 import 'package:firebase_messaging_web/firebase_messaging_web.dart';
 import 'package:flutter_keyboard_visibility_web/flutter_keyboard_visibility_web.dart';
+import 'package:flutter_libphonenumber_web/flutter_libphonenumber_web.dart';
 import 'package:fluttertoast/fluttertoast_web.dart';
 import 'package:geolocator_web/geolocator_web.dart';
 import 'package:google_maps_flutter_web/google_maps_flutter_web.dart';
@@ -40,6 +41,7 @@ void registerPlugins([final Registrar? pluginRegistrar]) {
   FirebaseCoreWeb.registerWith(registrar);
   FirebaseMessagingWeb.registerWith(registrar);
   FlutterKeyboardVisibilityPlugin.registerWith(registrar);
+  FlutterLibphonenumberPlugin.registerWith(registrar);
   FluttertoastWebPlugin.registerWith(registrar);
   GeolocatorPlugin.registerWith(registrar);
   GoogleMapsPlugin.registerWith(registrar);

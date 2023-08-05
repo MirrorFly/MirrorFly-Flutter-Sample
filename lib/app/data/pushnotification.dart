@@ -85,7 +85,7 @@ class PushNotifications {
     });
   }
   static void initInfo(){
-    NotificationService.init();
+    NotificationService().init();
     /*var androidInitialize = const AndroidInitializationSettings('@mipmap/ic_launcher');
     var iosInitialize = const DarwinInitializationSettings();
     var initalizationSettings = InitializationSettings(android: androidInitialize,iOS: iosInitialize);
@@ -144,7 +144,7 @@ class PushNotifications {
       badge: true,
       carPlay: false,
       criticalAlert: true,
-      provisional: false,
+      provisional: true,
       sound: true,
     );
 
@@ -172,7 +172,7 @@ class PushNotifications {
     if(!remoteMessage.data.containsKey("message_id")){
       notificationData["message_id"]=remoteMessage.messageId;
     }
-    if(notificationData.isNotEmpty) {
+    if(notificationData.isNotEmpty && Platform.isAndroid) {
       WidgetsFlutterBinding.ensureInitialized();
       await Mirrorfly.handleReceivedMessage(notificationData).then((value) async {
         mirrorFlyLog("#Mirrorfly Notification -> notification message", value.toString());

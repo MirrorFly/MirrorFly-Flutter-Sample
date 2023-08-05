@@ -338,8 +338,8 @@ class RecentChatItem extends StatelessWidget {
                 (item.isGroup.checkNull() &&
                         !chat.isMessageSentByMe.checkNull() &&
                         (chat.messageType != Constants.mNotification ||
-                            chat.messageTextContent == " added you") || forMessageTypeString(chat.messageType,
-                    content: chat.messageTextContent.checkNull()).checkNull().isNotEmpty)
+                            chat.messageTextContent == " added you") || (item.isGroup.checkNull() && (forMessageTypeString(chat.messageType,
+                    content: chat.messageTextContent.checkNull()).checkNull().isNotEmpty)))
                     ? Text(
                         "${chat.senderUserName.checkNull()}:",
                         style: Theme.of(context).textTheme.titleSmall,
