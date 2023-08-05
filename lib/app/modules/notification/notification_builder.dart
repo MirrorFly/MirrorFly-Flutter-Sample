@@ -11,6 +11,7 @@ import 'package:mirror_fly_demo/app/common/constants.dart';
 import 'package:mirror_fly_demo/app/data/apputils.dart';
 import 'package:mirror_fly_demo/app/data/session_management.dart';
 import 'package:mirror_fly_demo/app/modules/notification/notification_utils.dart';
+import 'package:mirrorfly_plugin/logmessage.dart';
 import 'package:mirrorfly_plugin/mirrorflychat.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
@@ -84,7 +85,7 @@ class NotificationBuilder {
         lastMessageContent.toString(), lastMessageTime);
 
     if(Platform.isAndroid){
-      displaySummaryNotification(lastMessageContent);
+      //displaySummaryNotification(lastMessageContent);
     }
   }
 
@@ -419,13 +420,21 @@ class NotificationBuilder {
     return channelId;
   }
 
-  static cancelNotifications(){
+  static cancelNotifications() async {
     chatNotifications.clear();
     secureNotificationChannelId = 0;
     flutterLocalNotificationsPlugin.cancelAll();
+    var barNotifications = await flutterLocalNotificationsPlugin.getActiveNotifications();
+    for(var y in barNotifications){
+      flutterLocalNotificationsPlugin.cancel(y.id);
+    }
   }
 
+  ///[id] indicates notification id
+  ///in [Android] chat jid hashcode as Notification id (Code line 34)
   static cancelNotification(int id){
+    LogMessage.d("cancelNotification", id);
+    chatNotifications.removeWhere((key, value) => key==id);
     flutterLocalNotificationsPlugin.cancel(id);
   }
 

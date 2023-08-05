@@ -17,6 +17,7 @@ import 'package:mirror_fly_demo/app/common/de_bouncer.dart';
 import 'package:mirror_fly_demo/app/common/main_controller.dart';
 import 'package:mirror_fly_demo/app/data/session_management.dart';
 import 'package:mirror_fly_demo/app/data/permissions.dart';
+import 'package:mirror_fly_demo/app/modules/notification/notification_builder.dart';
 import 'package:mirrorfly_plugin/logmessage.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -200,6 +201,7 @@ class ChatController extends FullLifeCycleController
   var showHideRedirectToLatest = false.obs;
 
   void ready() {
+    cancelNotification();
     // debugPrint("isBlocked===> ${profile.isBlocked}");
     // debugPrint("profile detail===> ${profile.toJson().toString()}");
     getUnsentMessageOfAJid();
@@ -2648,6 +2650,7 @@ class ChatController extends FullLifeCycleController
   @override
   void onResumed() {
     mirrorFlyLog("LifeCycle", "onResumed");
+    cancelNotification();
     setChatStatus();
     if (!KeyboardVisibilityController().isVisible) {
       if (focusNode.hasFocus) {
@@ -2875,7 +2878,7 @@ class ChatController extends FullLifeCycleController
   void makeVoiceCall() async {
     debugPrint("#FLY CALL VOICE CALL CALLING");
     if (await AppUtils.isNetConnected()) {
-      // if (await AppPermission.askAudioCallPermissions()) {
+      if (await AppPermission.askAudioCallPermissions()) {
         Mirrorfly.makeVoiceCall(profile.jid.checkNull()).then((value) {
           if (value) {
             debugPrint("#Mirrorfly Call userjid ${profile.jid}");
@@ -2885,7 +2888,7 @@ class ChatController extends FullLifeCycleController
         }).catchError((e) {
           debugPrint("#Mirrorfly Call $e");
         });
-      // }
+      }
     }else{
       toToast(Constants.noInternetConnection);
     }
@@ -2934,6 +2937,10 @@ class ChatController extends FullLifeCycleController
         debugPrint("reached Bottom yes load previous msgs");
       }
     }
+  }
+
+  void cancelNotification() {
+    NotificationBuilder.cancelNotification(profile.jid.hashCode);
   }
 
 }
