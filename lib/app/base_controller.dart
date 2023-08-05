@@ -494,6 +494,15 @@ abstract class BaseController {
   void onGroupNotificationMessage(event) {
     debugPrint('onGroupNotificationMessage $event');
     ChatMessageModel chatMessageModel = sendMessageModelFromJson(event);
+    if(SessionManagement.getCurrentChatJID() == chatMessageModel.chatUserJid.checkNull()){
+      debugPrint("Message Received group chat screen is in online");
+    }else{
+      var data = chatMessageFromJson(event.toString());
+      if(data.messageId!=null) {
+        NotificationBuilder.createNotification(data);
+      }
+      // showLocalNotification(chatMessageModel);
+    }
     if (Get.isRegistered<DashboardController>()) {
       Get.find<DashboardController>().onMessageReceived(chatMessageModel);
     }
