@@ -53,11 +53,7 @@ class SettingsController extends GetxController {
       Mirrorfly.logoutOfChatSDK().then((value) {
         Helper.hideLoading();
         if (value) {
-          var token = SessionManagement.getToken().checkNull();
-          SessionManagement.clear().then((value) {
-            SessionManagement.setToken(token);
-            Get.offAllNamed(Routes.login);
-          });
+          clearAllPreferences();
         } else {
           Get.snackbar("Logout", "Logout Failed");
         }
@@ -71,6 +67,22 @@ class SettingsController extends GetxController {
     } else {
       toToast(Constants.noInternetConnection);
     }
+  }
+
+  void clearAllPreferences(){
+    var token = SessionManagement.getToken().checkNull();
+    var cameraPermissionAsked = SessionManagement.getBool(Constants.cameraPermissionAsked);
+    var audioRecordPermissionAsked = SessionManagement.getBool(Constants.audioRecordPermissionAsked);
+    var readPhoneStatePermissionAsked = SessionManagement.getBool(Constants.readPhoneStatePermissionAsked);
+    var bluetoothPermissionAsked = SessionManagement.getBool(Constants.bluetoothPermissionAsked);
+    SessionManagement.clear().then((value) {
+      SessionManagement.setToken(token);
+      SessionManagement.setBool(Constants.cameraPermissionAsked, cameraPermissionAsked);
+      SessionManagement.setBool(Constants.audioRecordPermissionAsked, audioRecordPermissionAsked);
+      SessionManagement.setBool(Constants.readPhoneStatePermissionAsked, readPhoneStatePermissionAsked);
+      SessionManagement.setBool(Constants.bluetoothPermissionAsked, bluetoothPermissionAsked);
+      Get.offAllNamed(Routes.login);
+    });
   }
 
   getReleaseDate() async {

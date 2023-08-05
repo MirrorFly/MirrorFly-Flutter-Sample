@@ -701,6 +701,17 @@ class Constants {
   static const invalidPinOTPText ='Invalid PIN, Generate OTP to your registered mobile number';
 
 
+  //asked permission
+  static const locationPermissionAsked = "location_permission_asked_before";
+  static const contactPermissionAsked = "contact_permission_asked_before";
+  static const contactSavePermissionAsked = "contact_save_permission_asked_before";
+  static const storagePermissionAsked = "storage_permission_asked_before";
+  static const notificationPermissionAsked = "notification_permission_asked_before";
+
+  static const audioRecordPermissionAsked = "audio_record_permission_asked_before";
+  static const cameraPermissionAsked = "camera_permission_asked_before";
+  static const readPhoneStatePermissionAsked = "read_phone_state_asked_before";
+  static const bluetoothPermissionAsked = "bluetooth_permission_asked_before";
 }
 
 Future<void> launchWeb(String url) async {
