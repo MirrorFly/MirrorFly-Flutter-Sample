@@ -139,6 +139,7 @@ class ChatController extends FullLifeCycleController
     }
     if(Get.parameters['chatJid'] != null){
       userJid = Get.parameters['chatJid'] as String;
+      LogMessage.d("chatJid", userJid);
     }
     if (userJid.isEmpty) {
       var profileDetail = Get.arguments as Profile;
@@ -577,7 +578,8 @@ class ChatController extends FullLifeCycleController
   RxBool chatLoading = false.obs;
 
   void _loadMessages() {
-    chatLoading(true);
+    getChatHistory();
+    /*chatLoading(true);
     Mirrorfly.initializeMessageList(userJid: profile.jid.checkNull(), limit: 25).then((value) {
       value ? Mirrorfly.loadMessages().then((value) {
         loadPreviousData(false);
@@ -597,11 +599,11 @@ class ChatController extends FullLifeCycleController
       }).catchError((e) {
         chatLoading(false);
       }) : toToast("Chat History Not Initialized");
-    });
+    });*/
   }
 
   void _loadPreviousMessages() {
-    loadNextData(true);
+    /*loadNextData(true);
     Mirrorfly.loadPreviousMessages().then((value) {
       if (value == "" || value == null) {
         debugPrint("Chat List is Empty");
@@ -622,11 +624,11 @@ class ChatController extends FullLifeCycleController
       loadNextData(false);
     }).catchError((e) {
       loadNextData(false);
-    });
+    });*/
   }
 
   void _loadNextMessages() {
-    loadPreviousData(true);
+    /*loadPreviousData(true);
     Mirrorfly.loadNextMessages().then((value) {
       if (value == "" || value == null) {
         debugPrint("Chat List is Empty");
@@ -644,7 +646,7 @@ class ChatController extends FullLifeCycleController
       loadPreviousData(false);
     }).catchError((e) {
       loadPreviousData(false);
-    });
+    });*/
   }
 
   showStarredMessage(){
@@ -1372,6 +1374,8 @@ class ChatController extends FullLifeCycleController
   }
 
   messageInfo() {
+    Mirrorfly.setOnGoingChatUser("");
+    SessionManagement.setCurrentChatJID("");
     Future.delayed(const Duration(milliseconds: 100), () {
       debugPrint("sending mid ===> ${selectedChatList[0].messageId}");
       Get.toNamed(Routes.messageInfo, arguments: {
@@ -1379,6 +1383,11 @@ class ChatController extends FullLifeCycleController
         "chatMessage": selectedChatList[0],
         "isGroupProfile": profile.isGroupProfile,
         "jid": profile.jid
+      })?.then((value){
+        Mirrorfly.setOnGoingChatUser(profile.jid.checkNull());
+        SessionManagement.setCurrentChatJID(profile.jid.checkNull());
+        sendReadReceipt();
+        markConversationReadNotifyUI();
       });
       clearChatSelection(selectedChatList[0]);
     });
@@ -1942,8 +1951,8 @@ class ChatController extends FullLifeCycleController
   }
 
   infoPage() {
-    // Mirrorfly.setOnGoingChatUser("");
-    // SessionManagement.setCurrentChatJID("");
+    Mirrorfly.setOnGoingChatUser("");
+    SessionManagement.setCurrentChatJID("");
     if (profile.isGroupProfile ?? false) {
       Get.toNamed(Routes.groupInfo, arguments: profile)?.then((value) {
         if (value != null) {
@@ -1951,21 +1960,24 @@ class ChatController extends FullLifeCycleController
           isBlocked(profile.isBlocked);
           checkAdminBlocked();
           memberOfGroup();
-          Mirrorfly.setOnGoingChatUser(profile.jid!);
-          markConversationReadNotifyUI();
-          SessionManagement.setCurrentChatJID(profile.jid.checkNull());
           // getChatHistory();
           _loadMessages();
           sendReadReceipt();
           setChatStatus();
           debugPrint("value--> ${profile.isGroupProfile}");
         }
+        sendReadReceipt();
+        markConversationReadNotifyUI();
+        Mirrorfly.setOnGoingChatUser(profile.jid!);
+        SessionManagement.setCurrentChatJID(profile.jid.checkNull());
       });
     } else {
       Get.toNamed(Routes.chatInfo, arguments: profile)?.then((value) {
         debugPrint("chat info-->$value");
-        // Mirrorfly.setOnGoingChatUser(profile.jid!);
-        // SessionManagement.setCurrentChatJID(profile.jid.checkNull());
+        sendReadReceipt();
+        markConversationReadNotifyUI();
+        Mirrorfly.setOnGoingChatUser(profile.jid!);
+        SessionManagement.setCurrentChatJID(profile.jid.checkNull());
       });
     }
   }
