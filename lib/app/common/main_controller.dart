@@ -144,21 +144,24 @@ class MainController extends FullLifeCycleController with BaseController, FullLi
       // await Navigator.of(context).push(MaterialPageRoute<void>(
       //   builder: (BuildContext context) => SecondPage(payload),
       // ));
-      debugPrint("opening chat page--> $payload");
+      debugPrint("opening chat page--> $payload ${Get.currentRoute}");
       if(payload != null && payload.isNotEmpty){
-
         if (Get.isRegistered<ChatController>()) {
-          getProfileDetails(payload).then((value) {
-            if (value.jid != null) {
-              debugPrint("notification group info controller");
-              // var profile = profiledata(value.toString());
-              // Get.toNamed(Routes.chat, arguments: profile);
-              Get.back(result: value);
-            }
-          });
+          debugPrint("already chat page");
+          if(Get.currentRoute == Routes.forwardChat || Get.currentRoute == Routes.chatInfo || Get.currentRoute == Routes.groupInfo || Get.currentRoute == Routes.messageInfo){
+            Get.back();
+          }
+          if(Get.currentRoute.contains("from_notification=true")){
+            LogMessage.d("previously app opened from notification", "so we have to maintain that");
+            Get.offAllNamed("${AppPages.chat}?jid=$payload&from_notification=true");
+          }else {
+            Get.offNamed(Routes.chat,
+                parameters: {"chatJid": payload});
+          }
         }else {
+          debugPrint("not chat page");
           Get.toNamed(Routes.chat,
-              parameters: {'isFromStarred': 'true', "userJid": payload});
+              parameters: {"chatJid": payload});
         }
       }
     });
