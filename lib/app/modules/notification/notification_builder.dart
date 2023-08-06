@@ -68,7 +68,24 @@ class NotificationBuilder {
         mirrorFlyLog("messagingStyle", messagingStyle.messages!.length.toString());
         notificationModel.messagingStyle = messagingStyle;
       } else {
-        messagingStyle = notificationModel.messagingStyle!;
+        //if username or profile image are changed
+        List<ChatMessage> oldMessages = [];
+        oldMessages.addAll(notificationModel.messages!);
+        chatNotifications[notificationId]?.messages?.clear();
+        mirrorFlyLog("oldMessages", oldMessages.length.toString());
+        for (var chatMessage in oldMessages) {
+          notificationModel.messages?.add(
+              chatMessage.messageId == message.messageId
+                  ? message
+                  : chatMessage);
+          await appendChatMessageInMessageStyle(lastMessageContent, messagingStyle,
+              (chatMessage.messageId == message.messageId)
+                  ? message
+                  : chatMessage);
+        }
+        mirrorFlyLog("messagingStyle", messagingStyle.messages!.length.toString());
+        // messagingStyle = notificationModel.messagingStyle!;
+        notificationModel.messagingStyle = messagingStyle;
         notificationModel.messages?.add(message);
         await appendChatMessageInMessageStyle(
             lastMessageContent, messagingStyle, message);
