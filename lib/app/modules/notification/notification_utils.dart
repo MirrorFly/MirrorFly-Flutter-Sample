@@ -71,7 +71,20 @@ class NotificationUtils{
   * */
   static String getMentionMediaCaptionTextFormat(ChatMessage message){
     var mediaCaption = (message.mediaChatMessage != null && message.mediaChatMessage?.mediaCaptionText !=null && message.mediaChatMessage!.mediaCaptionText.toString().isNotEmpty)
-        ? message.mediaChatMessage!.mediaCaptionText!.toString() : message.messageType.toString().toUpperCase();
+        ? message.mediaChatMessage!.mediaCaptionText!.toString() : getMessageTypeText(message.messageType.toString().toUpperCase());
     return mediaCaption;
+  }
+
+  static String getMessageTypeText(String messageType){
+    switch(messageType){
+      case Constants.mImage: return "Image";
+      case Constants.mFile: return "File";
+      case Constants.mAudio: return "Audio";
+      case Constants.mVideo: return "Video";
+      case Constants.mDocument: return "Document";
+      case Constants.mContact: return "Contact";
+      case Constants.mLocation: return "Location";
+      default: return messageType;
+    }
   }
 }
