@@ -493,7 +493,8 @@ class NotificationBuilder {
   ///in [Android] chat jid hashcode as Notification id (Code line 34)
   static cancelNotification(int id){
     LogMessage.d("cancelNotification", id);
-    if (NotificationBuilder.chatNotifications.length == 1) {
+    var contain = NotificationBuilder.chatNotifications.containsKey(id);
+    if (NotificationBuilder.chatNotifications.length == 1 && contain) {
       cancelNotifications();
     }else {
       chatNotifications.removeWhere((key, value) => key==id);
@@ -503,23 +504,26 @@ class NotificationBuilder {
 
   static Future<void> clearConversationOnNotification(String jid) async {
     var id = jid.hashCode;
-    if (NotificationBuilder.chatNotifications.length > 1) {
-      // var notification = NotificationBuilder.chatNotifications[id];
-      // notification?.messagingStyle?.messages?.clear();
-      // notification?.messages?.clear();
-      // notification?.messagingStyle =MessagingStyleInformation(const Person());
-      if(NotificationBuilder.chatNotifications.length == 1){
-        cancelNotifications();
-      }else {
-        var barNotifications = await flutterLocalNotificationsPlugin.getActiveNotifications();
-        for (var notification in barNotifications) {
-          if (notification.id == id) flutterLocalNotificationsPlugin.cancel(notification.id);
+    var contain = NotificationBuilder.chatNotifications.containsKey(id);
+    if(contain) {
+      if (NotificationBuilder.chatNotifications.length > 1) {
+        // var notification = NotificationBuilder.chatNotifications[id];
+        // notification?.messagingStyle?.messages?.clear();
+        // notification?.messages?.clear();
+        // notification?.messagingStyle =MessagingStyleInformation(const Person());
+        if (NotificationBuilder.chatNotifications.length == 1 && contain) {
+          cancelNotifications();
+        } else {
+          var barNotifications = await flutterLocalNotificationsPlugin.getActiveNotifications();
+          for (var notification in barNotifications) {
+            if (notification.id == id) flutterLocalNotificationsPlugin.cancel(notification.id);
+          }
+          NotificationBuilder.chatNotifications.remove(id);
         }
-        NotificationBuilder.chatNotifications.remove(id);
+      } else {
+        // flutterLocalNotificationsPlugin.cancel(Constants.NOTIFICATION_ID);
+        flutterLocalNotificationsPlugin.cancelAll();
       }
-    } else {
-      // flutterLocalNotificationsPlugin.cancel(Constants.NOTIFICATION_ID);
-      flutterLocalNotificationsPlugin.cancelAll();
     }
   }
 
