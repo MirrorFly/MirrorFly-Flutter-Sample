@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
+import 'package:mirror_fly_demo/app/modules/notification/notification_builder.dart';
 import 'package:mirrorfly_plugin/mirrorflychat.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
@@ -791,6 +792,8 @@ class DashboardController extends FullLifeCycleController
       for (var element in selectedChatsPosition) {
         recentChats[element].isConversationUnRead = false;
         recentChats[element].unreadMessageCount = 0;
+        var jid = recentChats[element].jid;
+        NotificationBuilder.clearConversationOnNotification(jid.checkNull());
       }
       clearAllChatSelection();
       updateUnReadChatCount();
