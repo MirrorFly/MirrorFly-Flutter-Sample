@@ -91,18 +91,20 @@ class NotificationBuilder {
             lastMessageContent, messagingStyle, message);
       }
 
-      setConversationTitleMessagingStyle(
+      var newMessageStyle = setConversationTitleMessagingStyle(
           profileDetails, notificationModel.messages!.length, messagingStyle);
       lastMessageTime = (message.messageSentTime
           .toString()
           .length > 13) ? (message.messageSentTime / 1000).toInt() : message
           .messageSentTime;
+      notificationModel.messagingStyle = newMessageStyle;
+      messagingStyle = newMessageStyle;
     }
     displayMessageNotification(notificationId,messageId, profileDetails, messagingStyle,
         lastMessageContent.toString(), lastMessageTime);
 
     if(Platform.isAndroid){
-      //displaySummaryNotification(lastMessageContent);
+      displaySummaryNotification(lastMessageContent);
     }
   }
 
@@ -162,30 +164,35 @@ class NotificationBuilder {
    /// * @parameter profileDetails ProfileDetails of the conversation
    /// * @parameter messagingStyle Unique messaging style of the conversation
    /// * @parameter messagesCount total unread messages count of the conversation
-  static void setConversationTitleMessagingStyle(Profile profileDetails,
+  static MessagingStyleInformation setConversationTitleMessagingStyle(Profile profileDetails,
       int messageCount, MessagingStyleInformation messagingStyle) {
     var title = profileDetails.name ?? '';
     if (messageCount > 1) {
       var appendMessageLable = " messages)";
       String modifiedTitle;
       if (profileDetails.isGroupProfile ?? false) {
+        LogMessage.d("newMessagingStyle", messagingStyle);
         modifiedTitle = "$title ($messageCount$appendMessageLable";
         var newMessageStyle = MessagingStyleInformation(
             messagingStyle.person, groupConversation: true,
-            conversationTitle: modifiedTitle);
+            conversationTitle: modifiedTitle,messages: messagingStyle.messages);
         messagingStyle = newMessageStyle;
       } else if (chatNotifications.length <= 1) {
+        LogMessage.d("newMessagingStyle", "notification <= 1");
         modifiedTitle = " ($messageCount$appendMessageLable";
         var newMessageStyle = MessagingStyleInformation(
-            messagingStyle.person, conversationTitle: modifiedTitle);
+            messagingStyle.person, conversationTitle: modifiedTitle,messages: messagingStyle.messages);
         messagingStyle = newMessageStyle;
       }
     } else if (profileDetails.isGroupProfile.checkNull()) {
+      LogMessage.d("newMessagingStyle", "group");
       var newMessageStyle = MessagingStyleInformation(
           messagingStyle.person, groupConversation: true,
-          conversationTitle: title);
+          conversationTitle: title,messages: messagingStyle.messages);
       messagingStyle = newMessageStyle;
     }
+    LogMessage.d("newMessagingStyle", messagingStyle.conversationTitle);
+    return messagingStyle;
   }
 
   static Int64List getDefaultVibrate(){
@@ -207,7 +214,7 @@ class NotificationBuilder {
   static displayMessageNotification(int notificationId,int messageId, Profile profileDetails,
       MessagingStyleInformation messagingStyle, String lastMessageContent,
       int lastMessageTime) async {
-    var title = profileDetails.name.checkNull();
+    var title = profileDetails.getName().checkNull();
     var chatJid = profileDetails.jid.checkNull();
 
     if (Platform.isIOS) {
@@ -215,7 +222,8 @@ class NotificationBuilder {
     }
 
     debugPrint("local notification id $notificationId");
-
+    LogMessage.d("newMessagingStyle", messagingStyle.conversationTitle);
+    LogMessage.d("messagingStyle", messagingStyle.messages!.length.toString());
     var channel = buildNotificationChannel(notificationId.toString(), null, false);
 
     chatNotifications[notificationId]?.unReadMessageCount =
@@ -242,7 +250,7 @@ class NotificationBuilder {
         color: buttonBgColor,
         groupKey: groupKeyMessage,
         number: unReadMessageCount,
-        groupAlertBehavior: GroupAlertBehavior.all,
+        groupAlertBehavior: GroupAlertBehavior.summary,
         category: AndroidNotificationCategory.message,
         priority: Priority.high,
         visibility: NotificationVisibility.public,
@@ -304,9 +312,8 @@ class NotificationBuilder {
         color: buttonBgColor,
         groupKey: groupKeyMessage,
         number: chatNotifications.length,
-        // groupAlertBehavior: GroupAlertBehavior.summary,
         setAsGroupSummary: true,
-        category: AndroidNotificationCategory.message,
+        // category: AndroidNotificationCategory.message,
         priority: Priority.high,
         visibility: NotificationVisibility.public,
         largeIcon: const DrawableResourceAndroidBitmap('ic_notification_blue'),
@@ -339,13 +346,20 @@ class NotificationBuilder {
           channel);
       await flutterLocalNotificationsPlugin.show(
         summaryId, appTitle, lastMessageContent.toString(),
-          notificationDetails,payload: chatNotifications.values.first.messages?.first.chatUserJid);
+          notificationDetails,payload: "");
     }
   }
-  
+
+  static Future<AndroidBitmap<Uint8List>?> getLargeUserOrGroupImage(Profile userProfile) async {
+    var userProfileImage = await getUserProfileImage(userProfile);
+    if (userProfileImage != null) {
+      return ByteArrayAndroidBitmap(userProfileImage);
+    }
+    return null;
+  }
+
    // * Get total unread messages count showing in the Push
    // * @return total unread messages count
-  
   static int getMessagesCount() {
       var totalMessagesCount = 0;
       chatNotifications.forEach((key, value) {
@@ -438,6 +452,7 @@ class NotificationBuilder {
   }
 
   static cancelNotifications() async {
+    LogMessage.d("cancelNotification", "All");
     chatNotifications.clear();
     secureNotificationChannelId = 0;
     flutterLocalNotificationsPlugin.cancelAll();
@@ -451,8 +466,34 @@ class NotificationBuilder {
   ///in [Android] chat jid hashcode as Notification id (Code line 34)
   static cancelNotification(int id){
     LogMessage.d("cancelNotification", id);
-    chatNotifications.removeWhere((key, value) => key==id);
-    flutterLocalNotificationsPlugin.cancel(id);
+    if (NotificationBuilder.chatNotifications.length == 1) {
+      cancelNotifications();
+    }else {
+      chatNotifications.removeWhere((key, value) => key==id);
+      flutterLocalNotificationsPlugin.cancel(id);
+    }
+  }
+
+  static Future<void> clearConversationOnNotification(String jid) async {
+    var id = jid.hashCode;
+    if (NotificationBuilder.chatNotifications.length > 1) {
+      // var notification = NotificationBuilder.chatNotifications[id];
+      // notification?.messagingStyle?.messages?.clear();
+      // notification?.messages?.clear();
+      // notification?.messagingStyle =MessagingStyleInformation(const Person());
+      if(NotificationBuilder.chatNotifications.length == 1){
+        cancelNotifications();
+      }else {
+        var barNotifications = await flutterLocalNotificationsPlugin.getActiveNotifications();
+        for (var notification in barNotifications) {
+          if (notification.id == id) flutterLocalNotificationsPlugin.cancel(notification.id);
+        }
+        NotificationBuilder.chatNotifications.remove(id);
+      }
+    } else {
+      // flutterLocalNotificationsPlugin.cancel(Constants.NOTIFICATION_ID);
+      flutterLocalNotificationsPlugin.cancelAll();
+    }
   }
 
   /// * get Uint8List from given profileTextImage
