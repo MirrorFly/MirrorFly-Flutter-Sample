@@ -2889,6 +2889,7 @@ class ChatController extends FullLifeCycleController
 
   void makeVoiceCall() async {
     debugPrint("#FLY CALL VOICE CALL CALLING");
+    closeKeyBoard();
     if (await AppUtils.isNetConnected()) {
       if (await AppPermission.askAudioCallPermissions()) {
         Mirrorfly.makeVoiceCall(profile.jid.checkNull()).then((value) {
@@ -2907,6 +2908,7 @@ class ChatController extends FullLifeCycleController
   }
 
   void makeVideoCall() async {
+    closeKeyBoard();
     if (await AppUtils.isNetConnected()) {
       if (await AppPermission.askVideoCallPermissions()) {
         Mirrorfly.makeVideoCall(profile.jid.checkNull()).then((value) {
