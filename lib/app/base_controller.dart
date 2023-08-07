@@ -305,6 +305,15 @@ abstract class BaseController {
     });
     Mirrorfly.onMuteStatusUpdated.listen((event) {
       mirrorFlyLog("onMuteStatusUpdated", "$event");
+      var muteStatus = jsonDecode(event);
+      var muteEvent = muteStatus["muteEvent"].toString();
+      var userJid = muteStatus["userJid"].toString();
+      if(Get.isRegistered<CallController>()){
+        if(muteEvent == MuteStatus.remoteAudioMute || muteEvent == MuteStatus.remoteAudioUnMute) {
+          Get.find<CallController>().audioMuteStatusChanged(muteEvent, userJid);
+        }
+      }
+
     });
     Mirrorfly.onUserSpeaking.listen((event) {
       mirrorFlyLog("onUserSpeaking", "$event");

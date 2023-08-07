@@ -2888,7 +2888,7 @@ class ChatController extends FullLifeCycleController
   void makeVoiceCall() async {
     debugPrint("#FLY CALL VOICE CALL CALLING");
     if (await AppUtils.isNetConnected()) {
-      // if (await AppPermission.askAudioCallPermissions()) {
+      if (await AppPermission.askAudioCallPermissions()) {
         Mirrorfly.makeVoiceCall(profile.jid.checkNull()).then((value) {
           if (value) {
             debugPrint("#Mirrorfly Call userjid ${profile.jid}");
@@ -2898,7 +2898,7 @@ class ChatController extends FullLifeCycleController
         }).catchError((e) {
           debugPrint("#Mirrorfly Call $e");
         });
-      // }
+      }
     }else{
       toToast(Constants.noInternetConnection);
     }
