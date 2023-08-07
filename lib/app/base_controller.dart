@@ -98,7 +98,6 @@ abstract class BaseController {
       onAdminBlockedUser(jid, status);
     });
     Mirrorfly.onContactSyncComplete.listen(onContactSyncComplete);
-    Mirrorfly.onLoggedOut.listen(onLoggedOut);
     Mirrorfly.unblockedThisUser.listen((event){
       var data = json.decode(event.toString());
       var jid = data["jid"];
@@ -555,10 +554,6 @@ abstract class BaseController {
       Get.find<ChatInfoController>().onContactSyncComplete(result);
     }
     //Mirrorfly.getRegisteredUsers(true).then((value) => mirrorFlyLog("registeredUsers", value.toString()));
-  }
-
-  void onLoggedOut(result) {
-    mirrorFlyLog('logout called', result.toString());
   }
 
   void unblockedThisUser(String jid) {
