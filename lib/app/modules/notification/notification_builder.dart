@@ -146,14 +146,20 @@ class NotificationBuilder {
   static Future<Uint8List?> getUserProfileImage(Profile profileDetails) async {
     // AndroidBitmap? bitmapUserProfile;
     var imgUrl = profileDetails.image.checkNull();
+    LogMessage.d("profileDetails.isGroupProfile", profileDetails.getName());
+    LogMessage.d("profileDetails.isGroupProfile", profileDetails.isGroupProfile);
     if (imgUrl.isNotEmpty) {
       // return const FlutterBitmapAssetAndroidIcon(profileImg);
       return await downloadAndShow(SessionManagement.getMediaEndPoint().checkNull()+imgUrl,profileDetails.name.checkNull());
     }else{
-      if(getName(profileDetails).isNotEmpty) {
-        var uInt = await profileTextImage(
-            getName(profileDetails), const Size(50, 50));
-        return uInt!;
+      if(!profileDetails.isGroupProfile.checkNull()) {
+        if (getName(profileDetails).isNotEmpty) {
+          var uInt = await profileTextImage(
+              getName(profileDetails), const Size(50, 50));
+          return uInt!;
+        } else {
+          return null;
+        }
       }else{
         return null;
       }
@@ -238,6 +244,7 @@ class NotificationBuilder {
     var notificationSounUri = SessionManagement.getNotificationUri();
     // var isVibrate = SessionManagement.getVibration();
     // var isRing = SessionManagement.getNotificationSound();
+    var largeIcon = await getLargeUserOrGroupImage(profileDetails);
     debugPrint("notificationUri--> $notificationSounUri");
     debugPrint("notificationId--> $notificationId");
     debugPrint("messageId.hashCode--> ${messageId.hashCode}");
@@ -254,7 +261,7 @@ class NotificationBuilder {
         category: AndroidNotificationCategory.message,
         priority: Priority.high,
         visibility: NotificationVisibility.public,
-        largeIcon: const DrawableResourceAndroidBitmap('ic_notification_blue'),
+        largeIcon: largeIcon,//const DrawableResourceAndroidBitmap('ic_notification_blue'),
         when: (lastMessageTime > 0) ? lastMessageTime : null,
         /*sound: isRing && notificationSounUri.checkNull().isNotEmpty ? UriAndroidNotificationSound(
             notificationSounUri!) : null,
@@ -350,13 +357,33 @@ class NotificationBuilder {
     }
   }
 
-  static Future<AndroidBitmap<Uint8List>?> getLargeUserOrGroupImage(Profile userProfile) async {
+  static Future<AndroidBitmap<Object>?> getLargeUserOrGroupImage(Profile userProfile) async {
     var userProfileImage = await getUserProfileImage(userProfile);
     if (userProfileImage != null) {
       return ByteArrayAndroidBitmap(userProfileImage);
+    }else{
+      LogMessage.d("userProfileImage", "ic_grp_bg");
+      if(userProfile.isGroupProfile.checkNull()) {
+        return const DrawableResourceAndroidBitmap('ic_grp_bg');
+      }else{
+        return const DrawableResourceAndroidBitmap('profile_img_bg');
+      }
     }
-    return null;
   }
+
+  /*static Future<Uint8List?> _readFileByte(String filePath) async {
+    Uri myUri = Uri.parse(filePath);
+    File audioFile = File.fromUri(myUri);
+    Uint8List? bytes;
+    await audioFile.readAsBytes().then((value) {
+      bytes = Uint8List.fromList(value);
+      LogMessage.d('reading of bytes is completed','');
+    }).catchError((onError) {
+      LogMessage.d('Exception Error while reading audio from path:' ,
+          onError.toString());
+    });
+    return bytes;
+  }*/
 
    // * Get total unread messages count showing in the Push
    // * @return total unread messages count
