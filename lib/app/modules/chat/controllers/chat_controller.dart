@@ -578,8 +578,8 @@ class ChatController extends FullLifeCycleController
   RxBool chatLoading = false.obs;
 
   void _loadMessages() {
-    getChatHistory();
-    /*chatLoading(true);
+    // getChatHistory();
+    chatLoading(true);
     Mirrorfly.initializeMessageList(userJid: profile.jid.checkNull(), limit: 25).then((value) {
       value ? Mirrorfly.loadMessages().then((value) {
         loadPreviousData(false);
@@ -599,11 +599,11 @@ class ChatController extends FullLifeCycleController
       }).catchError((e) {
         chatLoading(false);
       }) : toToast("Chat History Not Initialized");
-    });*/
+    });
   }
 
   void _loadPreviousMessages() {
-    /*loadNextData(true);
+    loadNextData(true);
     Mirrorfly.loadPreviousMessages().then((value) {
       if (value == "" || value == null) {
         debugPrint("Chat List is Empty");
@@ -624,11 +624,11 @@ class ChatController extends FullLifeCycleController
       loadNextData(false);
     }).catchError((e) {
       loadNextData(false);
-    });*/
+    });
   }
 
   void _loadNextMessages() {
-    /*loadPreviousData(true);
+    loadPreviousData(true);
     Mirrorfly.loadNextMessages().then((value) {
       if (value == "" || value == null) {
         debugPrint("Chat List is Empty");
@@ -646,7 +646,7 @@ class ChatController extends FullLifeCycleController
       loadPreviousData(false);
     }).catchError((e) {
       loadPreviousData(false);
-    });*/
+    });
   }
 
   showStarredMessage(){

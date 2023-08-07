@@ -138,6 +138,19 @@ class DashboardController extends FullLifeCycleController
       debugPrint("recent chat issue===> $error");
       recentChatLoading(false);
     });
+    /*mirrorFlyLog("", "recent chats");
+    Mirrorfly.getRecentChatList().then((value) async {
+      // String recentList = value.replaceAll('\n', '\\n');
+      // debugPrint(recentList);
+      var data = await compute(recentChatFromJson, value.toString());
+      //recentChats.clear();
+      recentChats(data.data!);
+      recentChats.refresh();
+      recentChatLoading(false);
+    }).catchError((error) {
+      debugPrint("recent chat issue===> $error");
+      recentChatLoading(false);
+    });*/
   }
 
   getArchivedChatsList() async {
