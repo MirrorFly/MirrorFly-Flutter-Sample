@@ -151,12 +151,12 @@ class AppPermission {
   }
 
   static Future<bool> askVideoCallPermissions() async {
-    final speech = await Permission.speech.status;//RECORD_AUDIO
+    final speech = await Permission.microphone.status;//RECORD_AUDIO
     final phone = await Permission.phone.status;//READ_PHONE_STATE
     final bluetooth = await Permission.bluetoothConnect.status;//BLUETOOTH_CONNECT
     final camera = await Permission.camera.status;//BLUETOOTH_CONNECT
     const newPermission = [
-      Permission.speech,
+      Permission.microphone,
       Permission.phone,
       Permission.camera,
       Permission.bluetoothConnect,
@@ -168,7 +168,7 @@ class AppPermission {
         (bluetooth != PermissionStatus.granted  && bluetooth != PermissionStatus.permanentlyDenied)
     ){
       var newp = await newPermission.request();
-      PermissionStatus? speech_ = newp[Permission.speech];
+      PermissionStatus? speech_ = newp[Permission.microphone];
       PermissionStatus? phone_ = newp[Permission.phone];
       PermissionStatus? camera_ = newp[Permission.camera];
       PermissionStatus? bluetoothConnect_ = newp[Permission.bluetoothConnect];
@@ -176,6 +176,25 @@ class AppPermission {
       return (speech_!.isGranted && phone_!.isGranted &&camera_!.isGranted && bluetoothConnect_!.isGranted);
     }else{
       return (speech.isGranted && phone.isGranted && camera.isGranted && bluetooth.isGranted);
+    }
+  }
+  static Future<bool> askiOSVideoCallPermissions() async {
+    final speech = await Permission.microphone.status;//RECORD_AUDIO
+    final camera = await Permission.camera.status;
+    const newPermission = [
+      Permission.microphone,
+      Permission.camera,
+    ];
+    if(
+    (speech != PermissionStatus.granted  && speech != PermissionStatus.permanentlyDenied) ||
+        (camera != PermissionStatus.granted  && camera != PermissionStatus.permanentlyDenied)
+    ){
+      var newp = await newPermission.request();
+      PermissionStatus? speech_ = newp[Permission.microphone];
+      PermissionStatus? camera_ = newp[Permission.camera];
+      return (speech_!.isGranted &&camera_!.isGranted);
+    }else{
+      return (speech.isGranted && camera.isGranted);
     }
   }
 

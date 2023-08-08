@@ -2898,6 +2898,8 @@ class ChatController extends FullLifeCycleController
         }).catchError((e) {
           debugPrint("#Mirrorfly Call $e");
         });
+      }else{
+        debugPrint("permission not given");
       }
     }else{
       toToast(Constants.noInternetConnection);
@@ -2906,7 +2908,7 @@ class ChatController extends FullLifeCycleController
 
   void makeVideoCall() async {
     if (await AppUtils.isNetConnected()) {
-      if (await AppPermission.askVideoCallPermissions()) {
+      if (Platform.isAndroid ? await AppPermission.askVideoCallPermissions() : await AppPermission.askiOSVideoCallPermissions()) {
         Mirrorfly.makeVideoCall(profile.jid.checkNull()).then((value) {
           if (value) {
             Get.toNamed(
