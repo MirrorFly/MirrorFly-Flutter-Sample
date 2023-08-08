@@ -182,9 +182,9 @@ class OnGoingCallView extends GetView<CallController> {
       child: FutureBuilder(
         // future: getProfileDetails(""),
           builder: (cxt, data) {
-            return const Column(
+            return Column(
               mainAxisSize: MainAxisSize.min,
-              children: [
+              children: const [
                 ProfileTextImage(
                   text: "Name",
                 ),
