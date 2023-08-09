@@ -17,6 +17,7 @@ import 'package:mirror_fly_demo/app/common/de_bouncer.dart';
 import 'package:mirror_fly_demo/app/common/main_controller.dart';
 import 'package:mirror_fly_demo/app/data/session_management.dart';
 import 'package:mirror_fly_demo/app/data/permissions.dart';
+import 'package:mirror_fly_demo/app/modules/notification/notification_builder.dart';
 import 'package:mirrorfly_plugin/logmessage.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -138,6 +139,7 @@ class ChatController extends FullLifeCycleController
     }
     if(Get.parameters['chatJid'] != null){
       userJid = Get.parameters['chatJid'] as String;
+      LogMessage.d("chatJid", userJid);
     }
     if (userJid.isEmpty) {
       var profileDetail = Get.arguments as Profile;
@@ -200,6 +202,7 @@ class ChatController extends FullLifeCycleController
   var showHideRedirectToLatest = false.obs;
 
   void ready() {
+    cancelNotification();
     // debugPrint("isBlocked===> ${profile.isBlocked}");
     // debugPrint("profile detail===> ${profile.toJson().toString()}");
     getUnsentMessageOfAJid();
@@ -575,6 +578,7 @@ class ChatController extends FullLifeCycleController
   RxBool chatLoading = false.obs;
 
   void _loadMessages() {
+    // getChatHistory();
     chatLoading(true);
     Mirrorfly.initializeMessageList(userJid: profile.jid.checkNull(), limit: 25).then((value) {
       value ? Mirrorfly.loadMessages().then((value) {
@@ -911,19 +915,6 @@ class ChatController extends FullLifeCycleController
         }
       }
     }*/
-  }
-
-  Future<bool> askContactsPermission() async {
-    final permission = await AppPermission.getContactPermission();
-    switch (permission) {
-      case PermissionStatus.granted:
-        return true;
-      case PermissionStatus.permanentlyDenied:
-        return false;
-      default:
-        debugPrint("Contact Permission default");
-        return false;
-    }
   }
 
   sendContactMessage(List<String> contactList, String contactName) async {
@@ -1383,6 +1374,8 @@ class ChatController extends FullLifeCycleController
   }
 
   messageInfo() {
+    Mirrorfly.setOnGoingChatUser("");
+    SessionManagement.setCurrentChatJID("");
     Future.delayed(const Duration(milliseconds: 100), () {
       debugPrint("sending mid ===> ${selectedChatList[0].messageId}");
       Get.toNamed(Routes.messageInfo, arguments: {
@@ -1390,6 +1383,11 @@ class ChatController extends FullLifeCycleController
         "chatMessage": selectedChatList[0],
         "isGroupProfile": profile.isGroupProfile,
         "jid": profile.jid
+      })?.then((value){
+        Mirrorfly.setOnGoingChatUser(profile.jid.checkNull());
+        SessionManagement.setCurrentChatJID(profile.jid.checkNull());
+        sendReadReceipt();
+        markConversationReadNotifyUI();
       });
       clearChatSelection(selectedChatList[0]);
     });
@@ -1825,7 +1823,8 @@ class ChatController extends FullLifeCycleController
           markConversationReadNotifyUI();
           SessionManagement.setCurrentChatJID(profile.jid.checkNull());
           // getChatHistory();
-          _loadMessages();
+          /// we loading next messages instead of load message because the new messages received will be available in load next message
+          _loadNextMessages();
           sendReadReceipt();
         }
       });
@@ -1953,8 +1952,8 @@ class ChatController extends FullLifeCycleController
   }
 
   infoPage() {
-    // Mirrorfly.setOnGoingChatUser("");
-    // SessionManagement.setCurrentChatJID("");
+    Mirrorfly.setOnGoingChatUser("");
+    SessionManagement.setCurrentChatJID("");
     if (profile.isGroupProfile ?? false) {
       Get.toNamed(Routes.groupInfo, arguments: profile)?.then((value) {
         if (value != null) {
@@ -1962,21 +1961,25 @@ class ChatController extends FullLifeCycleController
           isBlocked(profile.isBlocked);
           checkAdminBlocked();
           memberOfGroup();
-          Mirrorfly.setOnGoingChatUser(profile.jid!);
-          markConversationReadNotifyUI();
-          SessionManagement.setCurrentChatJID(profile.jid.checkNull());
           // getChatHistory();
-          _loadMessages();
+          /// we loading next messages instead of load message because the new messages received will be available in load next message
+          _loadNextMessages();
           sendReadReceipt();
           setChatStatus();
           debugPrint("value--> ${profile.isGroupProfile}");
         }
+        sendReadReceipt();
+        markConversationReadNotifyUI();
+        Mirrorfly.setOnGoingChatUser(profile.jid!);
+        SessionManagement.setCurrentChatJID(profile.jid.checkNull());
       });
     } else {
       Get.toNamed(Routes.chatInfo, arguments: profile)?.then((value) {
         debugPrint("chat info-->$value");
-        // Mirrorfly.setOnGoingChatUser(profile.jid!);
-        // SessionManagement.setCurrentChatJID(profile.jid.checkNull());
+        sendReadReceipt();
+        markConversationReadNotifyUI();
+        Mirrorfly.setOnGoingChatUser(profile.jid!);
+        SessionManagement.setCurrentChatJID(profile.jid.checkNull());
       });
     }
   }
@@ -2429,7 +2432,8 @@ class ChatController extends FullLifeCycleController
         markConversationReadNotifyUI();
         SessionManagement.setCurrentChatJID(profile.jid.checkNull());
         // getChatHistory();
-        _loadMessages();
+        /// we loading next messages instead of load message because the new messages received will be available in load next message
+        _loadNextMessages();
         sendReadReceipt();
       }
     });
@@ -2661,7 +2665,10 @@ class ChatController extends FullLifeCycleController
   @override
   void onResumed() {
     mirrorFlyLog("LifeCycle", "onResumed");
+    cancelNotification();
     setChatStatus();
+    /// we loading next messages instead of load message because the new messages received will be available in load next message
+    _loadNextMessages();
     if (!KeyboardVisibilityController().isVisible) {
       if (focusNode.hasFocus) {
         focusNode.unfocus();
@@ -2886,36 +2893,44 @@ class ChatController extends FullLifeCycleController
   }
 
   void makeVoiceCall() async {
-    debugPrint("#VOIP #FLY CALL VOICE CALL CALLING");
-    // if(await AppPermission.askAudioCallPermissions()) {
-      Mirrorfly.makeVoiceCall(profile.jid.checkNull()).then((value) {
-        debugPrint("#VOIP callback $value");
-        if (value) {
-          debugPrint("#Mirrorfly Call userjid ${profile.jid}");
-          Get.toNamed(
-              Routes.outGoingCallView, arguments: { "userJid": profile.jid});
-        }
-      }).catchError((e) {
-        debugPrint("#Mirrorfly Call $e");
-        debugPrint("#VOIP voice call exception $e");
-      });
-    // }else{
-    //   print("#VOIP Voice call permission deinied");
-    // }
+    debugPrint("#FLY CALL VOICE CALL CALLING");
+    closeKeyBoard();
+    if (await AppUtils.isNetConnected()) {
+      if (await AppPermission.askAudioCallPermissions()) {
+        Mirrorfly.makeVoiceCall(profile.jid.checkNull()).then((value) {
+          if (value) {
+            debugPrint("#Mirrorfly Call userjid ${profile.jid}");
+            Get.toNamed(
+                Routes.outGoingCallView, arguments: { "userJid": profile.jid});
+          }
+        }).catchError((e) {
+          debugPrint("#Mirrorfly Call $e");
+        });
+      }else{
+        debugPrint("permission not given");
+      }
+    }else{
+      toToast(Constants.noInternetConnection);
+    }
   }
 
   void makeVideoCall() async {
-    if(await AppPermission.askVideoCallPermissions()) {
-      Mirrorfly.makeVideoCall(profile.jid.checkNull()).then((value) {
-        if (value) {
-          Get.toNamed(
-              Routes.outGoingCallView, arguments: { "userJid": profile.jid});
-        }
-      }).catchError((e) {
-        debugPrint("#Mirrorfly Call $e");
-      });
+    closeKeyBoard();
+    if (await AppUtils.isNetConnected()) {
+      if (Platform.isAndroid ? await AppPermission.askVideoCallPermissions() : await AppPermission.askiOSVideoCallPermissions()) {
+        Mirrorfly.makeVideoCall(profile.jid.checkNull()).then((value) {
+          if (value) {
+            Get.toNamed(
+                Routes.outGoingCallView, arguments: { "userJid": profile.jid});
+          }
+        }).catchError((e) {
+          debugPrint("#Mirrorfly Call $e");
+        });
+      } else {
+        LogMessage.d("askVideoCallPermissions", "false");
+      }
     }else{
-      LogMessage.d("askVideoCallPermissions", "false");
+      toToast(Constants.noInternetConnection);
     }
   }
 
@@ -2943,6 +2958,10 @@ class ChatController extends FullLifeCycleController
         debugPrint("reached Bottom yes load previous msgs");
       }
     }
+  }
+
+  void cancelNotification() {
+    NotificationBuilder.cancelNotification(profile.jid.hashCode);
   }
 
 }

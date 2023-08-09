@@ -163,6 +163,12 @@ class SessionManagement {
     });
   }
 
+  static Future setBool(String key, bool value) async => await _preferences.setBool(key,value);
+  static Future setString(String key,String value) async => await _preferences.setString(key,value);
+
+  static bool getBool(String key) => _preferences.getBool(key) ?? false;
+  static String getString(String key) => _preferences.getString(key) ?? "";
+
   static bool getLogin() => _preferences.getBool("login") ?? false;
 
   static String getUserIdentifier() => _preferences.getString("userIdentifier") ?? "";

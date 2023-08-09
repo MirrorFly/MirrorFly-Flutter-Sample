@@ -5,6 +5,7 @@ import 'package:mirror_fly_demo/app/call_modules/outgoing_call/call_controller.d
 import 'package:mirror_fly_demo/app/call_modules/ripple_animation_view.dart';
 import 'package:mirror_fly_demo/app/common/widgets.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
+import 'package:mirrorfly_plugin/mirrorflychat.dart';
 import 'package:mirrorfly_plugin/model/user_list_model.dart';
 
 import '../../common/constants.dart';
@@ -53,6 +54,7 @@ class OutGoingCallView extends GetView<CallController> {
                               color: Colors.white,
                               fontWeight: FontWeight.w500,
                               fontSize: 18),
+                          overflow: TextOverflow.ellipsis,
                         );
                       }),
                       Obx(() {
@@ -112,14 +114,22 @@ class OutGoingCallView extends GetView<CallController> {
                           FloatingActionButton(
                             heroTag: "speaker",
                             elevation: 0,
-                            backgroundColor: controller.audioOutputType.value == Constants.receiver
+                            backgroundColor:
+                            controller.audioOutputType.value == AudioDeviceType.receiver
                                 ? Colors.white.withOpacity(0.3)
                                 : Colors.white,
                             onPressed: () => controller.changeSpeaker(),
-                            child: controller.audioOutputType.value == Constants.receiver ? SvgPicture.asset(speakerInactive)
-                                : controller.audioOutputType.value == Constants.speaker ? SvgPicture.asset(speakerActive)
-                                : controller.audioOutputType.value == Constants.bluetooth ? const Icon(Icons.bluetooth)
-                                : controller.audioOutputType.value == Constants.headset ? const Icon(Icons.headphones_sharp) : const Icon(Icons.speaker_phone),
+                            child: controller.audioOutputType.value == AudioDeviceType.receiver
+                                ? SvgPicture.asset(speakerInactive)
+                                : controller.audioOutputType.value == AudioDeviceType.speaker
+                                ? SvgPicture.asset(speakerActive)
+                                : controller.audioOutputType.value ==
+                                AudioDeviceType.bluetooth
+                                ? SvgPicture.asset(speakerBluetooth)
+                                : controller.audioOutputType.value ==
+                                AudioDeviceType.headset
+                                ? SvgPicture.asset(speakerHeadset)
+                                : SvgPicture.asset(speakerActive),
                           ),
                         ],
                       ),

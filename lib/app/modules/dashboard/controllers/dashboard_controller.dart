@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
+import 'package:mirror_fly_demo/app/modules/notification/notification_builder.dart';
 import 'package:mirrorfly_plugin/mirrorflychat.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
@@ -138,6 +139,19 @@ class DashboardController extends FullLifeCycleController
       debugPrint("recent chat issue===> $error");
       recentChatLoading(false);
     });
+    /*mirrorFlyLog("", "recent chats");
+    Mirrorfly.getRecentChatList().then((value) async {
+      // String recentList = value.replaceAll('\n', '\\n');
+      // debugPrint(recentList);
+      var data = await compute(recentChatFromJson, value.toString());
+      //recentChats.clear();
+      recentChats(data.data!);
+      recentChats.refresh();
+      recentChatLoading(false);
+    }).catchError((error) {
+      debugPrint("recent chat issue===> $error");
+      recentChatLoading(false);
+    });*/
   }
 
   getArchivedChatsList() async {
@@ -778,6 +792,8 @@ class DashboardController extends FullLifeCycleController
       for (var element in selectedChatsPosition) {
         recentChats[element].isConversationUnRead = false;
         recentChats[element].unreadMessageCount = 0;
+        var jid = recentChats[element].jid;
+        NotificationBuilder.clearConversationOnNotification(jid.checkNull());
       }
       clearAllChatSelection();
       updateUnReadChatCount();

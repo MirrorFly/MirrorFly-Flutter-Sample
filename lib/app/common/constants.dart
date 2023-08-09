@@ -626,6 +626,12 @@ class Constants {
   static const String audioPermission =
       "To send audio messages, allow MirrorFly access to your Microphone.";
 
+  static const String audioCallPermission =
+      "MirrorFly need the Microphone Permissions in order to call Family";
+
+  static const String videoCallPermission =
+      "MirrorFly need the Microphone and Camera Permissions in order to call Family";
+
   static const String contactPermissionDenied =
       "MirrorFly need the Contacts Permission in order to help you connect with friends and family, but they have been permanently denied. Please continue to app settings, select \"Permissions\", and enable \"Contacts\"";
   static const String locationPermissionDenied =
@@ -695,35 +701,17 @@ class Constants {
   static const invalidPinOTPText ='Invalid PIN, Generate OTP to your registered mobile number';
 
 
-  //Call Feature Constants
-  static const String connecting = "Connecting";
-  static const String ringing = "Ringing";
-  static const String attended = "Attended";
-  static const String connected = "Connected";
-  static const String disconnected = "Disconnected";
-  static const String onHold = "Call on hold";
-  static const String onResume = "ON_RESUME";
-  static const String userJoined = "User_Joined";
-  static const String userLeft = "User_Left";
-  static const String inviteCallTimeout = "Invite call timeout";
-  static const String callTimeout = "CALL TIME OUTt";
-  static const String reconnecting = "Reconnecting";
-  static const String reconnected = "Reconnected";
-  static const String calling = "Trying to Connect";
-  static const String calling10s = "Calling... \n Trying to Connect";
-  static const String callingAfter10s = "User Seems to be Offline, Trying to Connect";
+  //asked permission
+  static const locationPermissionAsked = "location_permission_asked_before";
+  static const contactPermissionAsked = "contact_permission_asked_before";
+  static const contactSavePermissionAsked = "contact_save_permission_asked_before";
+  static const storagePermissionAsked = "storage_permission_asked_before";
+  static const notificationPermissionAsked = "notification_permission_asked_before";
 
-  static const String oneToOne = "OneToOne";
-  static const String groupCall = "GroupCall";
-
-
-  static const String none = "none";
-  static const String receiver = "receiver";
-  static const String speaker = "speaker";
-  static const String headset = "headset";
-  static const String bluetooth = "bluetooth";
-
-
+  static const audioRecordPermissionAsked = "audio_record_permission_asked_before";
+  static const cameraPermissionAsked = "camera_permission_asked_before";
+  static const readPhoneStatePermissionAsked = "read_phone_state_asked_before";
+  static const bluetoothPermissionAsked = "bluetooth_permission_asked_before";
 }
 
 Future<void> launchWeb(String url) async {
