@@ -298,6 +298,25 @@ class AppPermission {
       return false;
     }
   }
+  static Future<bool> askiOSVideoCallPermissions() async {
+    final speech = await Permission.microphone.status;//RECORD_AUDIO
+    final camera = await Permission.camera.status;
+    const newPermission = [
+      Permission.microphone,
+      Permission.camera,
+    ];
+    if(
+    (speech != PermissionStatus.granted  && speech != PermissionStatus.permanentlyDenied) ||
+        (camera != PermissionStatus.granted  && camera != PermissionStatus.permanentlyDenied)
+    ){
+      var newp = await newPermission.request();
+      PermissionStatus? speech_ = newp[Permission.microphone];
+      PermissionStatus? camera_ = newp[Permission.camera];
+      return (speech_!.isGranted &&camera_!.isGranted);
+    }else{
+      return (speech.isGranted && camera.isGranted);
+    }
+  }
 
   static Future<PermissionStatus> getManageStoragePermission() async {
     final permission = await Permission.manageExternalStorage.status;

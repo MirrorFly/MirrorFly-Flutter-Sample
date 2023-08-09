@@ -14,30 +14,50 @@ class OnGoingCallView extends GetView<CallController> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: WillPopScope(
-        onWillPop: () {
-          return Future.value(false);
-        },
-        child: Scaffold(
-          backgroundColor: AppColors.callerBackground,
-          body: Stack(
+    return WillPopScope(
+      onWillPop: () {
+        return Future.value(false);
+      },
+      child: Scaffold(
+        backgroundColor: AppColors.callerBackground,
+        body: SafeArea(
+          child: Stack(
             fit: StackFit.expand,
             children: [
               // controller.layoutSwitch.value ?
-              Obx(() {
-                return controller.callList.length > 1 &&
-                        controller.layoutSwitch.value
-                    ? SizedBox(
-                        width: MediaQuery.of(context).size.width,
-                        height: MediaQuery.of(context).size.height,
-                        child: MirrorFlyView(
-                                userJid: controller.callList[1].userJid ?? "")
+
+              SizedBox(
+                  width: MediaQuery
+                      .of(context)
+                      .size
+                      .width,
+                  height: MediaQuery
+                      .of(context)
+                      .size
+                      .height,
+                  child: Stack(
+                    children: [
+                      Obx(() {
+                        return controller.callList.length > 1 &&
+                            controller.layoutSwitch.value
+                            ? MirrorFlyView(
+                            userJid:
+                            controller.callList[1].userJid ?? "",
+                            alignProfilePictureCenter: false,
+                            profileSize: 100)
                             .setBorderRadius(
-                                const BorderRadius.all(Radius.circular(10))),
-                      )
-                    : const SizedBox.shrink();
-              }),
+                            const BorderRadius.all(Radius.circular(10)))
+                            : const SizedBox.shrink();
+                      }),
+                      Obx(() {
+                        return Align(
+                            alignment: Alignment.center,
+                            child: controller.callList.length > 1 && controller.callList[1].isAudioMuted.value
+                                ? const CircleAvatar(backgroundColor: Colors.black45, child: Icon(Icons.mic_off),)
+                                : const SizedBox.shrink());
+                      }),
+                    ],
+                  )),
 
               /*Positioned(
                 bottom: 5,
@@ -97,7 +117,8 @@ class OnGoingCallView extends GetView<CallController> {
               );  }),*/
 
               Obx(() {
-                return controller.callList.isNotEmpty ? AnimatedPositioned(
+                return controller.callList.isNotEmpty
+                    ? AnimatedPositioned(
                   duration: const Duration(milliseconds: 500),
                   curve: Curves.easeInOut,
                   left: 0,
@@ -115,7 +136,8 @@ class OnGoingCallView extends GetView<CallController> {
                           const BorderRadius.all(Radius.circular(10))),
                     ),
                   ),
-                ) : const SizedBox.shrink();
+                )
+                    : const SizedBox.shrink();
               }),
               InkWell(
                 splashColor: Colors.transparent,
@@ -158,24 +180,24 @@ class OnGoingCallView extends GetView<CallController> {
   Widget buildProfileView() {
     return Center(
       child: FutureBuilder(
-          // future: getProfileDetails(""),
+        // future: getProfileDetails(""),
           builder: (cxt, data) {
-        return Column(
-          mainAxisSize: MainAxisSize.min,
-          children: const [
-            ProfileTextImage(
-              text: "Name",
-            ),
-            SizedBox(
-              height: 4,
-            ),
-            Text(
-              "Name",
-              style: TextStyle(color: Colors.white),
-            )
-          ],
-        );
-      }),
+            return Column(
+              mainAxisSize: MainAxisSize.min,
+              children: const [
+                ProfileTextImage(
+                  text: "Name",
+                ),
+                SizedBox(
+                  height: 4,
+                ),
+                Text(
+                  "Name",
+                  style: TextStyle(color: Colors.white),
+                )
+              ],
+            );
+          }),
     );
   }
 
@@ -208,7 +230,9 @@ class OnGoingCallView extends GetView<CallController> {
                     overflow: TextOverflow.ellipsis,
                   ),
                 ),
-                const SizedBox(height: 8,),
+                const SizedBox(
+                  height: 8,
+                ),
                 Text(
                   controller.callTimer.value,
                   style: const TextStyle(
@@ -268,27 +292,29 @@ class OnGoingCallView extends GetView<CallController> {
                 onPressed: () => controller.muteAudio(),
                 child: controller.muted.value
                     ? SvgPicture.asset(
-                        muteActive,
-                      )
+                  muteActive,
+                )
                     : SvgPicture.asset(
-                        muteInactive,
-                      ),
+                  muteInactive,
+                ),
               ),
               SizedBox(width: rightSideWidth),
-              controller.callType.value == 'video' && !controller.videoMuted.value
+              controller.callType.value == 'video' &&
+                  !controller.videoMuted.value
                   ? FloatingActionButton(
-                      heroTag: "switchCamera",
-                      elevation: 0,
-                      backgroundColor: controller.cameraSwitch.value
-                          ? Colors.white
-                          : Colors.white.withOpacity(0.3),
-                      onPressed: () => controller.switchCamera(),
-                      child: controller.cameraSwitch.value
-                          ? SvgPicture.asset(cameraSwitchActive)
-                          : SvgPicture.asset(cameraSwitchInactive),
-                    )
+                heroTag: "switchCamera",
+                elevation: 0,
+                backgroundColor: controller.cameraSwitch.value
+                    ? Colors.white
+                    : Colors.white.withOpacity(0.3),
+                onPressed: () => controller.switchCamera(),
+                child: controller.cameraSwitch.value
+                    ? SvgPicture.asset(cameraSwitchActive)
+                    : SvgPicture.asset(cameraSwitchInactive),
+              )
                   : const SizedBox.shrink(),
-              controller.callType.value == 'video'  && !controller.videoMuted.value
+              controller.callType.value == 'video' &&
+                  !controller.videoMuted.value
                   ? SizedBox(width: rightSideWidth)
                   : const SizedBox.shrink(),
               FloatingActionButton(
@@ -309,21 +335,23 @@ class OnGoingCallView extends GetView<CallController> {
                 heroTag: "speaker",
                 elevation: 0,
                 backgroundColor:
-                    controller.audioOutputType.value == AudioDeviceType.receiver
-                        ? Colors.white.withOpacity(0.3)
-                        : Colors.white,
+                controller.audioOutputType.value == AudioDeviceType.receiver
+                    ? Colors.white.withOpacity(0.3)
+                    : Colors.white,
                 onPressed: () => controller.changeSpeaker(),
-                child: controller.audioOutputType.value == AudioDeviceType.receiver
+                child:
+                controller.audioOutputType.value == AudioDeviceType.receiver
                     ? SvgPicture.asset(speakerInactive)
-                    : controller.audioOutputType.value == AudioDeviceType.speaker
-                        ? SvgPicture.asset(speakerActive)
-                        : controller.audioOutputType.value ==
+                    : controller.audioOutputType.value ==
+                    AudioDeviceType.speaker
+                    ? SvgPicture.asset(speakerActive)
+                    : controller.audioOutputType.value ==
                     AudioDeviceType.bluetooth
-                            ? SvgPicture.asset(speakerBluetooth)
-                            : controller.audioOutputType.value ==
+                    ? SvgPicture.asset(speakerBluetooth)
+                    : controller.audioOutputType.value ==
                     AudioDeviceType.headset
-                                ? SvgPicture.asset(speakerHeadset)
-                                : SvgPicture.asset(speakerActive),
+                    ? SvgPicture.asset(speakerHeadset)
+                    : SvgPicture.asset(speakerActive),
               ),
             ],
           ),
