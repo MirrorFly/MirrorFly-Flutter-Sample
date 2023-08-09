@@ -26,7 +26,7 @@ class CallController extends GetxController {
   var callList = List<CallUserList>.empty(growable: true).obs;
   var availableAudioList = List<AudioDevices>.empty(growable: true).obs;
 
-  var callTitle = "";
+  var callTitle = "".obs;
 
   var callType = "".obs;
 
@@ -39,6 +39,9 @@ class CallController extends GetxController {
     super.onInit();
     debugPrint("#Mirrorfly Call Controller onInit");
     audioDeviceChanged();
+    if(Get.currentRoute==Routes.onGoingCallView) {
+      startTimer();
+    }
     Mirrorfly.getAllAvailableAudioInput().then((value) {
       final availableList = audioDevicesFromJson(value);
       availableAudioList.addAll(availableList);
@@ -196,20 +199,25 @@ class CallController extends GetxController {
 
   getNames() async {
     debugPrint("starting timer");
-    startTimer();
     callList.asMap().forEach((index, users) async {
       if (users.userJid == SessionManagement.getUserJID()) {
-        callTitle = "$callTitle You";
+        callTitle("$callTitle You");
       } else {
         var profile = await Mirrorfly.getUserProfile(users.userJid!);
         var data = profileDataFromJson(profile);
         var userName = data.data?.name;
-        callTitle = "$callTitle ${userName!}";
+        callTitle("$callTitle ${userName!}");
       }
       if (index == 0) {
-        callTitle = "$callTitle and ";
+        callTitle("$callTitle and ");
       }
     });
+  }
+
+  @override
+  void dispose() {
+    timer?.cancel();
+    super.dispose();
   }
 
   Timer? timer;
@@ -301,7 +309,8 @@ class CallController extends GetxController {
   void connected(
       String callMode, String userJid, String callType, String callStatus) {
     // this.callStatus(callStatus);
-    getNames();
+    // getNames();
+    startTimer();
     Future.delayed(const Duration(milliseconds: 500), () {
       Get.offNamed(Routes.onGoingCallView, arguments: {"userJid": userJid});
     });
