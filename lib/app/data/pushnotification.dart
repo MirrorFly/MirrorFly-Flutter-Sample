@@ -69,7 +69,7 @@ class PushNotifications {
         mirrorFlyLog("firebase_token", value);
         debugPrint("#Mirrorfly Notification -> firebase_token_1 $value");
         SessionManagement.setToken(value);
-        Mirrorfly.updateFcmToken(value);
+        Mirrorfly.updateFcmToken(value).then((value) => LogMessage.d("updateFcmToken", value));
       }
     }).catchError((er){
       mirrorFlyLog("FirebaseMessaging", er.toString());
@@ -78,7 +78,7 @@ class PushNotifications {
         .listen((fcmToken) {
       mirrorFlyLog("onTokenRefresh", fcmToken.toString());
       SessionManagement.setToken(fcmToken);
-      Mirrorfly.updateFcmToken(fcmToken);
+      Mirrorfly.updateFcmToken(fcmToken).then((value) => LogMessage.d("updateFcmToken", value));
     }).onError((err) {
       // Error getting token.
       mirrorFlyLog("onTokenRefresh", err.toString());

@@ -493,8 +493,8 @@ class NotificationBuilder {
   ///in [Android] chat jid hashcode as Notification id (Code line 34)
   static cancelNotification(int id){
     LogMessage.d("cancelNotification", id);
-    var contain = NotificationBuilder.chatNotifications.containsKey(id);
-    if (NotificationBuilder.chatNotifications.length == 1 && contain) {
+    var contain = chatNotifications.containsKey(id);
+    if (chatNotifications.length == 1 && contain) {
       cancelNotifications();
     }else {
       chatNotifications.removeWhere((key, value) => key==id);
