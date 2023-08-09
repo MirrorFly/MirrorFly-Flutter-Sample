@@ -220,7 +220,7 @@ class OnGoingCallView extends GetView<CallController> {
                 SizedBox(
                   width: 200,
                   child: Text(
-                    controller.callTitle,
+                    controller.callTitle.value,
                     style: const TextStyle(
                       color: Colors.white,
                       fontWeight: FontWeight.w500,
