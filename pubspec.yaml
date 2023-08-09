@@ -1,6 +1,6 @@
 name: mirror_fly_demo
 version: 2.4.1+36
-build_release_date: Jul 2023
+build_release_date: Aug 2023
 publish_to: none
 description: A MirrorFly Flutter Sample Application.
 environment: 
