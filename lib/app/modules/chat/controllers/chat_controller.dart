@@ -1823,7 +1823,8 @@ class ChatController extends FullLifeCycleController
           markConversationReadNotifyUI();
           SessionManagement.setCurrentChatJID(profile.jid.checkNull());
           // getChatHistory();
-          _loadMessages();
+          /// we loading next messages instead of load message because the new messages received will be available in load next message
+          _loadNextMessages();
           sendReadReceipt();
         }
       });
@@ -1961,7 +1962,8 @@ class ChatController extends FullLifeCycleController
           checkAdminBlocked();
           memberOfGroup();
           // getChatHistory();
-          _loadMessages();
+          /// we loading next messages instead of load message because the new messages received will be available in load next message
+          _loadNextMessages();
           sendReadReceipt();
           setChatStatus();
           debugPrint("value--> ${profile.isGroupProfile}");
@@ -2430,7 +2432,8 @@ class ChatController extends FullLifeCycleController
         markConversationReadNotifyUI();
         SessionManagement.setCurrentChatJID(profile.jid.checkNull());
         // getChatHistory();
-        _loadMessages();
+        /// we loading next messages instead of load message because the new messages received will be available in load next message
+        _loadNextMessages();
         sendReadReceipt();
       }
     });
@@ -2664,6 +2667,8 @@ class ChatController extends FullLifeCycleController
     mirrorFlyLog("LifeCycle", "onResumed");
     cancelNotification();
     setChatStatus();
+    /// we loading next messages instead of load message because the new messages received will be available in load next message
+    _loadNextMessages();
     if (!KeyboardVisibilityController().isVisible) {
       if (focusNode.hasFocus) {
         focusNode.unfocus();
