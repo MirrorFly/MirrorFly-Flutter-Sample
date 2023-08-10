@@ -39,12 +39,12 @@ class CallController extends GetxController {
     super.onInit();
     debugPrint("#Mirrorfly Call Controller onInit");
     audioDeviceChanged();
-    if(Get.currentRoute==Routes.onGoingCallView) {
+    if (Get.currentRoute == Routes.onGoingCallView) {
       startTimer();
     }
     Mirrorfly.getAllAvailableAudioInput().then((value) {
       final availableList = audioDevicesFromJson(value);
-      availableAudioList.addAll(availableList);
+      availableAudioList(availableList);
       debugPrint(
           "${Constants.tag} flutter getAllAvailableAudioInput $availableList");
     });
@@ -91,7 +91,7 @@ class CallController extends GetxController {
     }
   }
 
-  
+
   muteAudio() async {
     debugPrint("#Mirrorfly muteAudio ${muted.value}");
     await Mirrorfly.muteAudio(!muted.value)
@@ -104,24 +104,27 @@ class CallController extends GetxController {
     debugPrint("availableAudioList.length ${availableAudioList.length}");
     //if connected other audio devices
     // if (availableAudioList.length > 2) {
-      Get.dialog(
-        Dialog(
-          child: WillPopScope(
-            onWillPop: () {
-              return Future.value(true);
-            },
-            child: Obx(() {
-              return ListView.builder(
-                  shrinkWrap: true,
-                  itemCount: availableAudioList.length,
-                  itemBuilder: (context, index) {
-                    var audioItem = availableAudioList[index];
-                    debugPrint("audio item name ${audioItem.name}");
+    Get.dialog(
+      Dialog(
+        child: WillPopScope(
+          onWillPop: () {
+            return Future.value(true);
+          },
+          child: Obx(() {
+            return ListView.builder(
+                shrinkWrap: true,
+                itemCount: availableAudioList.length,
+                itemBuilder: (context, index) {
+                  var audioItem = availableAudioList[index];
+                  debugPrint("audio item name ${audioItem.name}");
+                  return Obx(() {
                     return ListTile(
                       contentPadding: const EdgeInsets.only(left: 10),
                       title: Text(audioItem.name ?? "",
                           style: const TextStyle(
                               fontSize: 14, fontWeight: FontWeight.normal)),
+                      trailing: audioItem.type == audioOutputType.value ? const Icon(Icons.check_outlined,
+                        color: Colors.green,) : const SizedBox.shrink(),
                       onTap: () {
                         Get.back();
                         debugPrint("selected audio item ${audioItem.type}");
@@ -130,10 +133,11 @@ class CallController extends GetxController {
                       },
                     );
                   });
-            }),
-          ),
+                });
+          }),
         ),
-      );
+      ),
+    );
     // }else{
     //   //speaker or ear-piece option only available then change accordingly
     //   var speaker = availableAudioList[0];
@@ -223,7 +227,7 @@ class CallController extends GetxController {
   Timer? timer;
 
   void startTimer() {
-    if(timer == null) {
+    if (timer == null) {
       const oneSec = Duration(seconds: 1);
       startTime = DateTime.now();
       Timer.periodic(
@@ -246,8 +250,7 @@ class CallController extends GetxController {
     }
   }
 
-  void callDisconnected(
-      String callMode, String userJid, String callType, String callStatus) {
+  void callDisconnected(String callMode, String userJid, String callType, String callStatus) {
     var index = callList.indexWhere((user) => user.userJid == userJid);
     debugPrint(
         "#Mirrorfly call disconnected user Index $index ${Get.currentRoute}");
@@ -266,7 +269,6 @@ class CallController extends GetxController {
           Future.delayed(const Duration(seconds: 1), () {
             Get.back();
           });
-
         } else {
           Get.back();
         }
@@ -276,38 +278,31 @@ class CallController extends GetxController {
     }
   }
 
-  void remoteBusy(
-      String callMode, String userJid, String callType, String callAction) {
+  void remoteBusy(String callMode, String userJid, String callType, String callAction) {
     declineCall();
   }
 
-  void remoteHangup(
-      String callMode, String userJid, String callType, String callAction) {
+  void remoteHangup(String callMode, String userJid, String callType, String callAction) {
     disconnectCall();
   }
 
-  void calling(
-      String callMode, String userJid, String callType, String callStatus) {
+  void calling(String callMode, String userJid, String callType, String callStatus) {
     // this.callStatus(callStatus);
   }
 
-  void reconnected(
-      String callMode, String userJid, String callType, String callStatus) {
+  void reconnected(String callMode, String userJid, String callType, String callStatus) {
     // this.callStatus(callStatus);
   }
 
-  void ringing(
-      String callMode, String userJid, String callType, String callStatus) {
+  void ringing(String callMode, String userJid, String callType, String callStatus) {
     // this.callStatus(callStatus);
   }
 
-  void onHold(
-      String callMode, String userJid, String callType, String callStatus) {
+  void onHold(String callMode, String userJid, String callType, String callStatus) {
     // this.callStatus(callStatus);
   }
 
-  void connected(
-      String callMode, String userJid, String callType, String callStatus) {
+  void connected(String callMode, String userJid, String callType, String callStatus) {
     // this.callStatus(callStatus);
     // getNames();
     startTimer();
@@ -316,8 +311,7 @@ class CallController extends GetxController {
     });
   }
 
-  void timeout(
-      String callMode, String userJid, String callType, String callStatus) {
+  void timeout(String callMode, String userJid, String callType, String callStatus) {
     // this.callStatus("Disconnected");
     Get.back();
   }
@@ -328,7 +322,7 @@ class CallController extends GetxController {
     Get.back();
   }
 
-  void statusUpdate(String callStatus) {
+  void statusUpdate(String userJid, String callStatus) {
     var displayStatus = CallStatus.calling;
     switch (callStatus) {
       case CallStatus.connected:
@@ -363,12 +357,34 @@ class CallController extends GetxController {
       case CallStatus.callingAfter10s:
         displayStatus = callStatus;
         break;
+      default :
+        displayStatus = '';
+        break;
     }
     this.callStatus(displayStatus);
+
+    ///update the status of the user in call user list
+    var indexOfItem = callList.indexWhere((element) => element.userJid == userJid);
+
+    /// check the index is valid or not
+    if (!indexOfItem.isNegative) {
+      /// update the current status of the user in the list
+      callList[indexOfItem].callStatus = (displayStatus);
+    }
   }
 
   void audioDeviceChanged() {
+    getAudioDevices();
     Mirrorfly.selectedAudioDevice().then((value) => audioOutputType(value));
+  }
+
+  void getAudioDevices() {
+    Mirrorfly.getAllAvailableAudioInput().then((value) {
+      final availableList = audioDevicesFromJson(value);
+      availableAudioList(availableList);
+      debugPrint(
+          "${Constants.tag} flutter getAllAvailableAudioInput $availableList");
+    });
   }
 
   void remoteEngaged() {
