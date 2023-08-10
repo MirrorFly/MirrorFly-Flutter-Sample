@@ -253,15 +253,12 @@ class ChatController extends FullLifeCycleController
       }
     });
 
-    Mirrorfly.setOnGoingChatUser(profile.jid!);
-    markConversationReadNotifyUI();
-    SessionManagement.setCurrentChatJID(profile.jid.checkNull());
+    setOnGoingUserAvail();
     // getChatHistory();
     _loadMessages();
     // compute(getChatHistory, profile.jid);
     debugPrint("==================");
     debugPrint(profile.image);
-    sendReadReceipt();
   }
 
   scrollToBottom() {
@@ -300,8 +297,7 @@ class ChatController extends FullLifeCycleController
     // scrollController.dispose();
     debugPrint("onClose");
     saveUnsentMessage();
-    Mirrorfly.setOnGoingChatUser("");
-    SessionManagement.setCurrentChatJID("");
+    setOnGoingUserGone();
     // isLive = false;
     // player.stop();
     // player.dispose();
@@ -780,6 +776,7 @@ class ChatController extends FullLifeCycleController
   documentPickUpload() async {
     var permission = await AppPermission.getStoragePermission();
     if (permission) {
+      setOnGoingUserGone();
       FilePickerResult? result = await FilePicker.platform.pickFiles(
         allowMultiple: false,
         type: FileType.custom,
@@ -794,8 +791,10 @@ class ChatController extends FullLifeCycleController
         } else {
           toToast("File Size should not exceed ${Constants.maxDocFileSize} MB");
         }
+        setOnGoingUserAvail();
       } else {
         // User canceled the picker
+        setOnGoingUserAvail();
       }
     }
   }
@@ -984,18 +983,9 @@ class ChatController extends FullLifeCycleController
   }
 
   pickAudio() async {
+    setOnGoingUserGone();
     FilePickerResult? result = await FilePicker.platform.pickFiles(
-      type: FileType.custom,
-      allowedExtensions: [
-        'wav',
-        'aiff',
-        'alac',
-        'flac',
-        'mp3',
-        'aac',
-        'wma',
-        'ogg'
-      ],
+      type: FileType.audio,
     );
     if (result != null && File(result.files.single.path!).existsSync()) {
       debugPrint(result.files.first.extension);
@@ -1011,8 +1001,10 @@ class ChatController extends FullLifeCycleController
       } else {
         toToast("File Size should not exceed ${Constants.maxAudioFileSize} MB");
       }
+      setOnGoingUserAvail();
     } else {
       // User canceled the picker
+      setOnGoingUserAvail();
     }
   }
 
@@ -1376,8 +1368,7 @@ class ChatController extends FullLifeCycleController
   }
 
   messageInfo() {
-    Mirrorfly.setOnGoingChatUser("");
-    SessionManagement.setCurrentChatJID("");
+    setOnGoingUserGone();
     Future.delayed(const Duration(milliseconds: 100), () {
       debugPrint("sending mid ===> ${selectedChatList[0].messageId}");
       Get.toNamed(Routes.messageInfo, arguments: {
@@ -1386,10 +1377,7 @@ class ChatController extends FullLifeCycleController
         "isGroupProfile": profile.isGroupProfile,
         "jid": profile.jid
       })?.then((value){
-        Mirrorfly.setOnGoingChatUser(profile.jid.checkNull());
-        SessionManagement.setCurrentChatJID(profile.jid.checkNull());
-        sendReadReceipt();
-        markConversationReadNotifyUI();
+        setOnGoingUserAvail();
       });
       clearChatSelection(selectedChatList[0]);
     });
@@ -1806,6 +1794,7 @@ class ChatController extends FullLifeCycleController
       debugPrint(selectedChatList.length.toString());
     }
     if (messageIds.length == selectedChatList.length) {
+      setOnGoingUserGone();
       clearAllChatSelection();
       Get.toNamed(Routes.forwardChat, arguments: {
         "forward": true,
@@ -1818,17 +1807,11 @@ class ChatController extends FullLifeCycleController
               "result of forward ==> ${(value as Profile).toJson().toString()}");
           profile_.value = value;
           isBlocked(profile.isBlocked);
-          setChatStatus();
-          checkAdminBlocked();
-          memberOfGroup();
-          Mirrorfly.setOnGoingChatUser(profile.jid!);
-          markConversationReadNotifyUI();
-          SessionManagement.setCurrentChatJID(profile.jid.checkNull());
-          // getChatHistory();
-          /// we loading next messages instead of load message because the new messages received will be available in load next message
-          _loadNextMessages();
-          sendReadReceipt();
         }
+        setChatStatus();
+        checkAdminBlocked();
+        memberOfGroup();
+        setOnGoingUserAvail();
       });
     }
   }
@@ -1954,34 +1937,23 @@ class ChatController extends FullLifeCycleController
   }
 
   infoPage() {
-    Mirrorfly.setOnGoingChatUser("");
-    SessionManagement.setCurrentChatJID("");
+    setOnGoingUserGone();
     if (profile.isGroupProfile ?? false) {
       Get.toNamed(Routes.groupInfo, arguments: profile)?.then((value) {
         if (value != null) {
           profile_(value as Profile);
           isBlocked(profile.isBlocked);
-          checkAdminBlocked();
-          memberOfGroup();
-          // getChatHistory();
-          /// we loading next messages instead of load message because the new messages received will be available in load next message
-          _loadNextMessages();
-          sendReadReceipt();
-          setChatStatus();
           debugPrint("value--> ${profile.isGroupProfile}");
         }
-        sendReadReceipt();
-        markConversationReadNotifyUI();
-        Mirrorfly.setOnGoingChatUser(profile.jid!);
-        SessionManagement.setCurrentChatJID(profile.jid.checkNull());
+        checkAdminBlocked();
+        memberOfGroup();
+        setChatStatus();
+        setOnGoingUserAvail();
       });
     } else {
       Get.toNamed(Routes.chatInfo, arguments: profile)?.then((value) {
         debugPrint("chat info-->$value");
-        sendReadReceipt();
-        markConversationReadNotifyUI();
-        Mirrorfly.setOnGoingChatUser(profile.jid!);
-        SessionManagement.setCurrentChatJID(profile.jid.checkNull());
+        setOnGoingUserAvail();
       });
     }
   }
@@ -2017,9 +1989,8 @@ class ChatController extends FullLifeCycleController
       //scrollToBottom();
       // if (isLive) {
       if(SessionManagement.getCurrentChatJID() != ""){
-        sendReadReceipt();
+        setOnGoingUserAvail();
       }
-
       // }
     }
   }
@@ -2214,6 +2185,7 @@ class ChatController extends FullLifeCycleController
         Permission.camera, cameraPermission, Constants.cameraPermission);
     debugPrint("Camera Permission Status---> $cameraPermissionStatus");
     if (cameraPermissionStatus) {
+      setOnGoingUserGone();
       Get.toNamed(Routes.cameraPick)?.then((photo) {
         photo as XFile?;
         if (photo != null) {
@@ -2245,7 +2217,9 @@ class ChatController extends FullLifeCycleController
             'caption': messageController.text.trim(),
             'showAdd': false,
             'from': 'camera_pick'
-          });
+          })?.then((value) => setOnGoingUserAvail());
+        }else{
+          setOnGoingUserAvail();
         }
       });
     }
@@ -2281,11 +2255,12 @@ class ChatController extends FullLifeCycleController
     if (permission) {
       try {
         // imagePicker();
+        setOnGoingUserGone();
         Get.toNamed(Routes.galleryPicker, arguments: {
           "userName": getName(profile),
           'profile': profile,
           'caption': messageController.text.trim()
-        });
+        })?.then((value) => setOnGoingUserAvail());
       } catch (e) {
         debugPrint(e.toString());
       }
@@ -2296,7 +2271,8 @@ class ChatController extends FullLifeCycleController
     // if (await askContactsPermission()) {
     if (await AppPermission.checkPermission(
         Permission.contacts, contactPermission, Constants.contactPermission)) {
-      Get.toNamed(Routes.localContact);
+      setOnGoingUserGone();
+      Get.toNamed(Routes.localContact)?.then((value) => setOnGoingUserAvail());
     } else {
       // AppPermission.permissionDeniedDialog(content: "Permission is permanently denied. Please enable Contact permission from settings");
     }
@@ -2332,14 +2308,14 @@ class ChatController extends FullLifeCycleController
     if (await AppUtils.isNetConnected()) {
       if (await AppPermission.checkPermission(Permission.location,
           locationPinPermission, Constants.locationPermission)) {
+        setOnGoingUserGone();
         Get.toNamed(Routes.locationSent)?.then((value) {
           if (value != null) {
             value as LatLng;
             sendLocationMessage(profile, value.latitude, value.longitude);
           }
+          setOnGoingUserAvail();
         });
-      } else {
-        // AppPermission.permissionDeniedDialog(content: "Permission is permanently denied. Please enable location permission from settings");
       }
     } else {
       toToast(Constants.noInternetConnection);
@@ -2418,6 +2394,7 @@ class ChatController extends FullLifeCycleController
   }
 
   forwardSingleMessage(String messageId) {
+    setOnGoingUserGone();
     var messageIds = <String>[];
     messageIds.add(messageId);
     Get.toNamed(Routes.forwardChat, arguments: {
@@ -2427,20 +2404,13 @@ class ChatController extends FullLifeCycleController
       "messageIds": messageIds
     })?.then((value) {
       if (value != null) {
-        debugPrint(
-            "result of forward ==> ${(value as Profile).toJson().toString()}");
+        debugPrint("result of forward ==> ${(value as Profile).toJson().toString()}");
         profile_.value = value;
         isBlocked(profile.isBlocked);
-        checkAdminBlocked();
-        memberOfGroup();
-        Mirrorfly.setOnGoingChatUser(profile.jid!);
-        markConversationReadNotifyUI();
-        SessionManagement.setCurrentChatJID(profile.jid.checkNull());
-        // getChatHistory();
-        /// we loading next messages instead of load message because the new messages received will be available in load next message
-        _loadNextMessages();
-        sendReadReceipt();
       }
+      checkAdminBlocked();
+      memberOfGroup();
+      setOnGoingUserAvail();
     });
   }
 
@@ -2660,8 +2630,7 @@ class ChatController extends FullLifeCycleController
   @override
   void onPaused() {
     mirrorFlyLog("chat controller LifeCycle", "onPaused");
-    Mirrorfly.setOnGoingChatUser("");
-    SessionManagement.setCurrentChatJID("");
+    setOnGoingUserGone();
     playerPause();
     saveUnsentMessage();
     sendUserTypingGoneStatus();
@@ -2688,9 +2657,7 @@ class ChatController extends FullLifeCycleController
         });
       }
     }
-    Mirrorfly.setOnGoingChatUser(profile.jid.checkNull());
-    markConversationReadNotifyUI();
-    SessionManagement.setCurrentChatJID(profile.jid.checkNull());
+    setOnGoingUserAvail();
   }
 
   void markConversationReadNotifyUI(){
@@ -2905,8 +2872,9 @@ class ChatController extends FullLifeCycleController
         Mirrorfly.makeVoiceCall(profile.jid.checkNull()).then((value) {
           if (value) {
             debugPrint("#Mirrorfly Call userjid ${profile.jid}");
+            setOnGoingUserGone();
             Get.toNamed(
-                Routes.outGoingCallView, arguments: { "userJid": profile.jid});
+                Routes.outGoingCallView, arguments: { "userJid": profile.jid})?.then((value) => setOnGoingUserAvail());
           }
         }).catchError((e) {
           debugPrint("#Mirrorfly Call $e");
@@ -2925,8 +2893,9 @@ class ChatController extends FullLifeCycleController
       if (Platform.isAndroid ? await AppPermission.askVideoCallPermissions() : await AppPermission.askiOSVideoCallPermissions()) {
         Mirrorfly.makeVideoCall(profile.jid.checkNull()).then((value) {
           if (value) {
+            setOnGoingUserGone();
             Get.toNamed(
-                Routes.outGoingCallView, arguments: { "userJid": profile.jid});
+                Routes.outGoingCallView, arguments: { "userJid": profile.jid})?.then((value) => setOnGoingUserAvail());
           }
         }).catchError((e) {
           debugPrint("#Mirrorfly Call $e");
@@ -2969,6 +2938,18 @@ class ChatController extends FullLifeCycleController
     NotificationBuilder.cancelNotification(profile.jid.hashCode);
   }
 
+  void setOnGoingUserGone(){
+    Mirrorfly.setOnGoingChatUser("");
+    SessionManagement.setCurrentChatJID("");
+  }
+  void setOnGoingUserAvail(){
+    Mirrorfly.setOnGoingChatUser(profile.jid.checkNull());
+    SessionManagement.setCurrentChatJID(profile.jid.checkNull());
+    sendReadReceipt();
+    markConversationReadNotifyUI();
+    cancelNotification();
+  }
+
 }
 
 void onMessageDeleteNotifyUI(String chatUserJid) {
@@ -2978,3 +2959,4 @@ void onMessageDeleteNotifyUI(String chatUserJid) {
 void updateLastMessage(dynamic chatMessageModel) {
   Get.find<MainController>().onMessageStatusUpdated(chatMessageModel);
 }
+
