@@ -10,7 +10,6 @@ import 'package:is_lock_screen/is_lock_screen.dart';
 import 'package:mirror_fly_demo/app/base_controller.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
-import 'package:mirror_fly_demo/app/common/received_notification.dart';
 import 'package:mirror_fly_demo/app/data/pushnotification.dart';
 import 'package:mirror_fly_demo/app/data/session_management.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
@@ -63,7 +62,7 @@ class MainController extends FullLifeCycleController with BaseController, FullLi
     await notificationService.init();
     _isAndroidPermissionGranted();
     _requestPermissions();
-    _configureDidReceiveLocalNotificationSubject();
+    // _configureDidReceiveLocalNotificationSubject();
     _configureSelectNotificationSubject();
   }
 
@@ -113,31 +112,7 @@ class MainController extends FullLifeCycleController with BaseController, FullLi
     }
   }
 
-  void _configureDidReceiveLocalNotificationSubject() {
-    didReceiveLocalNotificationStream.stream
-        .listen((ReceivedNotification receivedNotification) async {
-      await showDialog(
-        context: Get.context!,
-        builder: (BuildContext context) => CupertinoAlertDialog(
-          title: receivedNotification.title != null
-              ? Text(receivedNotification.title!)
-              : null,
-          content: receivedNotification.body != null
-              ? Text(receivedNotification.body!)
-              : null,
-          actions: <Widget>[
-            CupertinoDialogAction(
-              isDefaultAction: true,
-              onPressed: () async {
 
-              },
-              child: const Text('Ok'),
-            )
-          ],
-        ),
-      );
-    });
-  }
 
   void _configureSelectNotificationSubject() {
     selectNotificationStream.stream.listen((String? payload) async {
