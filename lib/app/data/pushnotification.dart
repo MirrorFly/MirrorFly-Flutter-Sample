@@ -105,14 +105,13 @@ class PushNotifications {
   static Future<void> setupInteractedMessage() async {
     // Get any messages which caused the application to open from
     // a terminated state.
-    // RemoteMessage? initialMessage =
-    // await FirebaseMessaging.instance.getInitialMessage();
+    RemoteMessage? initialMessage = await FirebaseMessaging.instance.getInitialMessage();
 
     // If the message also contains a data property with a "type" of "chat",
     // navigate to a chat screen
-    // if (initialMessage != null) {
-    //   onMessage(initialMessage);
-    // }
+    if (initialMessage != null) {
+      onMessage(initialMessage);
+    }
 
     // Also handle any interaction when the app is in the background via a
     // Stream listener
@@ -120,10 +119,10 @@ class PushNotifications {
   }
 
   static void onMessage(RemoteMessage message) {
-    debugPrint('#Mirrorfly Notification ->  RemoteMessage ${message.toMap()}');
-    debugPrint('#Mirrorfly Notification ->  Message data: ${message.data}');
+    print('#Mirrorfly Notification ->  RemoteMessage ${message.toMap()}');
+    print('#Mirrorfly Notification ->  Message data: ${message.data}');
     if (message.notification != null) {
-      debugPrint('#Mirrorfly Notification ->  Message also contained a notification: ${message.notification}');
+      print('#Mirrorfly Notification ->  Message also contained a notification: ${message.notification}');
     }
     // If `onMessage` is triggered with a notification, construct our own
     // local notification to show to users using the created channel.

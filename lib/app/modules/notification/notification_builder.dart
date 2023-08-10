@@ -101,7 +101,7 @@ class NotificationBuilder {
       messagingStyle = newMessageStyle;
     }
     displayMessageNotification(notificationId,messageId, profileDetails, messagingStyle,
-        lastMessageContent.toString(), lastMessageTime);
+        lastMessageContent.toString(), lastMessageTime, message.senderUserJid!);
 
     if(Platform.isAndroid){
       displaySummaryNotification(lastMessageContent);
@@ -219,12 +219,19 @@ class NotificationBuilder {
    /// * @parameter lastMessageTime Time of the last message
   static displayMessageNotification(int notificationId,int messageId, Profile profileDetails,
       MessagingStyleInformation messagingStyle, String lastMessageContent,
-      int lastMessageTime) async {
+      int lastMessageTime, String senderChatJID) async {
     var title = profileDetails.getName().checkNull();
     var chatJid = profileDetails.jid.checkNull();
 
     if (Platform.isIOS) {
       notificationId = int.parse(lastMessageTime.toString().substring(lastMessageTime.toString().length - 5));
+
+      var isGroup = profileDetails.isGroupProfile ?? false;
+
+      var userProfile = await getProfileDetails(senderChatJID);
+      var name = userProfile.name ?? '';
+
+      title = isGroup ? "$title@$name" : title;
     }
 
     debugPrint("local notification id $notificationId");
@@ -288,6 +295,7 @@ class NotificationBuilder {
         AndroidFlutterLocalNotificationsPlugin>()
         ?.createNotificationChannel(
         channel);
+
     await flutterLocalNotificationsPlugin.show(
         notificationId, title, lastMessageContent, notificationDetails,
         payload: chatJid);
