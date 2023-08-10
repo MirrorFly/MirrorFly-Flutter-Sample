@@ -170,7 +170,7 @@ abstract class BaseController {
       var callStatus = statusUpdateReceived["callStatus"].toString();
 
       if (Get.isRegistered<CallController>()) {
-        Get.find<CallController>().statusUpdate(callStatus);
+        Get.find<CallController>().statusUpdate(userJid,callStatus);
       }
 
       switch (callStatus){
