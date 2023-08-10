@@ -86,7 +86,9 @@ class ChatController extends FullLifeCycleController
 
   var showEmoji = false.obs;
 
-  var isLive = false;
+  ///Commenting this and handled this using SessionManagement.getCurrentChatJID() != ""
+  ///in iOS onClose function is not called when we navigate to Info Screen
+  // var isLive = false;
 
   var isSelected = false.obs;
 
@@ -216,7 +218,7 @@ class ChatController extends FullLifeCycleController
         .then((value) => profileDetail = value);
     memberOfGroup();
     setChatStatus();
-    isLive = true;
+    // isLive = true;
     focusNode.addListener(() {
       if (focusNode.hasFocus) {
         showEmoji(false);
@@ -300,7 +302,7 @@ class ChatController extends FullLifeCycleController
     saveUnsentMessage();
     Mirrorfly.setOnGoingChatUser("");
     SessionManagement.setCurrentChatJID("");
-    isLive = false;
+    // isLive = false;
     // player.stop();
     // player.dispose();
     super.onClose();
@@ -2013,9 +2015,12 @@ class ChatController extends FullLifeCycleController
       chatList.insert(0, chatMessageModel);
       unreadCount.value++;
       //scrollToBottom();
-      if (isLive) {
+      // if (isLive) {
+      if(SessionManagement.getCurrentChatJID() != ""){
         sendReadReceipt();
       }
+
+      // }
     }
   }
 
