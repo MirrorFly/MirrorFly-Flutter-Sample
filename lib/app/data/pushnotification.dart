@@ -119,10 +119,10 @@ class PushNotifications {
   }
 
   static void onMessage(RemoteMessage message) {
-    print('#Mirrorfly Notification ->  RemoteMessage ${message.toMap()}');
-    print('#Mirrorfly Notification ->  Message data: ${message.data}');
+    debugPrint('#Mirrorfly Notification ->  RemoteMessage ${message.toMap()}');
+    debugPrint('#Mirrorfly Notification ->  Message data: ${message.data}');
     if (message.notification != null) {
-      print('#Mirrorfly Notification ->  Message also contained a notification: ${message.notification}');
+      debugPrint('#Mirrorfly Notification ->  Message also contained a notification: ${message.notification}');
     }
     // If `onMessage` is triggered with a notification, construct our own
     // local notification to show to users using the created channel.
