@@ -2000,7 +2000,7 @@ class ChatController extends FullLifeCycleController
       final index = chatList.indexWhere(
           (message) => message.messageId == chatMessageModel.messageId);
       debugPrint("ChatScreen Message Status Update index of search $index");
-      debugPrint("messageID--> $index");
+      debugPrint("messageID--> $index  ${chatMessageModel.messageId}");
       if (!index.isNegative) {
         debugPrint("messageID--> replacing the value");
         // Helper.hideLoading();
@@ -2010,6 +2010,7 @@ class ChatController extends FullLifeCycleController
       } else {
         debugPrint("messageID--> Inserting the value");
         chatList.insert(0, chatMessageModel);
+        chatList.refresh();
         unreadCount.value++;
         // scrollToBottom();
       }

@@ -36,30 +36,8 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   // make sure you call `initializeApp` before using other Firebase services.
   await Firebase.initializeApp();
   SessionManagement.onInit();
-  /*Mirrorfly.init(
-      baseUrl: 'https://api-uikit-qa.contus.us/api/v1/',
-      licenseKey: 'ckIjaccWBoMNvxdbql8LJ2dmKqT5bp',//ckIjaccWBoMNvxdbql8LJ2dmKqT5bp//2sdgNtr3sFBSM3bYRa7RKDPEiB38Xo
-      iOSContainerID: 'group.com.mirrorfly.qa',
-      chatHistoryEnable: true,
-      enableDebugLog: true);*/
   debugPrint("#Mirrorfly Notification -> Handling a background message: ${message.messageId}");
   PushNotifications.onMessage(message);
-  // final dio = Dio();
-  // final response = await dio.get('https://gorest.co.in/public/v2/users');
-  // print("#Mirrorfly flutter api call ${response.data}");
-  // var iosNotificationDetail = const DarwinNotificationDetails(
-  //     categoryIdentifier: darwinNotificationCategoryPlain,
-  //     presentBadge: true,
-  //     badgeNumber: 2,
-  //     presentSound: true,
-  //     presentAlert: true
-  // );
-  //
-  // var notificationDetails = NotificationDetails(
-  //     iOS: iosNotificationDetail);
-  // await flutterLocalNotificationsPlugin.show(
-  //     Random().nextInt(1000), "title", "lastMessageContent", notificationDetails,
-  //     payload: "chatJid");
 }
 bool shouldUseFirebaseEmulator = false;
 //check app opened from notification
@@ -81,7 +59,7 @@ Future<void> main() async {
       baseUrl: 'https://api-uikit-qa.contus.us/api/v1/',
       licenseKey: 'ckIjaccWBoMNvxdbql8LJ2dmKqT5bp',//ckIjaccWBoMNvxdbql8LJ2dmKqT5bp//2sdgNtr3sFBSM3bYRa7RKDPEiB38Xo
       iOSContainerID: 'group.com.mirrorfly.qa',//group.com.mirrorfly.flutter
-      chatHistoryEnable: true,
+      chatHistoryEnable: false,
       enableDebugLog: true);
   final GoogleMapsFlutterPlatform mapsImplementation =
       GoogleMapsFlutterPlatform.instance;
