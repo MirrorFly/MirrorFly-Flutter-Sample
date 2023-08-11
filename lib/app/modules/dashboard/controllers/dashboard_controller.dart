@@ -907,11 +907,11 @@ class DashboardController extends FullLifeCycleController
   }
 
   void markConversationReadNotifyUI(String jid){
-    mirrorFlyLog("setConversationAsRead", "setConversationAsRead");
     var index = recentChats.indexWhere((element) => element.jid==jid);
     if(!index.isNegative) {
       if (recentChats[index].isConversationUnRead.checkNull()) {
         recentChats[index].isConversationUnRead = false;
+        recentChats[index].unreadMessageCount = 0;
         recentChats.refresh();
       }
     }
