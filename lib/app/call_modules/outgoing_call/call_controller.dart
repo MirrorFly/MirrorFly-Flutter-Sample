@@ -129,10 +129,14 @@ class CallController extends GetxController {
                       trailing: audioItem.type == audioOutputType.value ? const Icon(Icons.check_outlined,
                         color: Colors.green,) : const SizedBox.shrink(),
                       onTap: () {
-                        Get.back();
-                        debugPrint("selected audio item ${audioItem.type}");
-                        audioOutputType(audioItem.type);
-                        Mirrorfly.routeAudioTo(routeType: audioItem.type ?? "");
+                        if(audioOutputType.value != audioItem.type) {
+                          Get.back();
+                          debugPrint("selected audio item ${audioItem.type}");
+                          audioOutputType(audioItem.type);
+                          Mirrorfly.routeAudioTo(routeType: audioItem.type ?? "");
+                        }else{
+                          LogMessage.d("routeAudioOption", "clicked on same audio type selected");
+                        }
                       },
                     );
                   });
