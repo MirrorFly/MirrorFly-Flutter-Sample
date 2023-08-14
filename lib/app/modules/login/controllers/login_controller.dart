@@ -338,7 +338,7 @@ class LoginController extends GetxController {
           }
         });
       }else{
-        toToast("Mobile Number too short");
+        toToast(Constants.noInternetConnection);
       }
     // } else {
     //   toToast(Constants.noInternetConnection);
