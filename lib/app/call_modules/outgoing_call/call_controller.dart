@@ -263,7 +263,9 @@ class CallController extends GetxController {
   }
 
   void remoteHangup(String callMode, String userJid, String callType, String callAction) {
-    disconnectCall();
+    // if(callList.isNotEmpty) {
+    //   disconnectCall();
+    // }
   }
 
   void calling(String callMode, String userJid, String callType, String callStatus) {
