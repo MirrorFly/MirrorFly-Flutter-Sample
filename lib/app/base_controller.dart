@@ -271,7 +271,8 @@ abstract class BaseController {
       switch(callAction){
         //if we called on user B, the user B is decline the call then this will be triggered in Android
         case CallAction.remoteBusy:{
-          toToast("User is Busy");
+          //in Android, showing this toast inside SDK
+          //toToast("User is Busy");
           if (Get.isRegistered<CallController>()) {
             Get.find<CallController>().remoteBusy(
                 callMode, userJid, callType, callAction);
