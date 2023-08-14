@@ -10,7 +10,7 @@ Widget buildProfileImage(Profile item) {
     width: 105,
     height: 105,
     clipOval: true,
-    errorWidget: item.isGroupProfile!
+    errorWidget: item.isGroupProfile.checkNull()
         ? ClipOval(
       child: Image.asset(
         groupImg,

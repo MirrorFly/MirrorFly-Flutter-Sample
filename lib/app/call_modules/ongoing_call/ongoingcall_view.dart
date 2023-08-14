@@ -233,14 +233,16 @@ class OnGoingCallView extends GetView<CallController> {
                 const SizedBox(
                   height: 8,
                 ),
-                Text(
-                  controller.callTimer.value,
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.w400,
-                    fontSize: 12.0,
-                  ),
-                ),
+                Obx(() {
+                  return Text(
+                    controller.callTimer.value,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w400,
+                      fontSize: 12.0,
+                    ),
+                  );
+                }),
               ],
             ),
           );
