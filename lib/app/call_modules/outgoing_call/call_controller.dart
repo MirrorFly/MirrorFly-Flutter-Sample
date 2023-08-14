@@ -30,6 +30,7 @@ class CallController extends GetxController {
 
   var callType = "".obs;
 
+  Rx<Profile> profile = Profile().obs;
   var calleeName = "".obs;
   var audioOutputType = "receiver".obs;
   var callStatus = CallStatus.calling.obs;
@@ -38,6 +39,15 @@ class CallController extends GetxController {
   Future<void> onInit() async {
     super.onInit();
     debugPrint("#Mirrorfly Call Controller onInit");
+    var userJid = Get.arguments["userJid"];
+    if (userJid != null && userJid != "") {
+      debugPrint("#Mirrorfly Call UserJid $userJid");
+      // var profile = await Mirrorfly.getUserProfile(userJid);
+      // var data = profileDataFromJson(profile);
+      var data = await getProfileDetails(userJid);
+      profile(data);
+      calleeName(data.getName());
+    }
     audioDeviceChanged();
     if (Get.currentRoute == Routes.onGoingCallView) {
       startTimer();
@@ -60,13 +70,6 @@ class CallController extends GetxController {
         });
       } else {
         debugPrint("#Mirrorfly Call Direction outgoing");
-        var userJid = Get.arguments["userJid"];
-        if (userJid != null && userJid != "") {
-          debugPrint("#Mirrorfly Call UserJid $userJid");
-          var profile = await Mirrorfly.getUserProfile(userJid);
-          var data = profileDataFromJson(profile);
-          calleeName(data.data?.name);
-        }
         debugPrint("#Mirrorfly Call getCallUsersList");
         Mirrorfly.getCallUsersList().then((value) {
           debugPrint("#Mirrorfly call get users --> $value");
