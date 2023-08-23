@@ -984,27 +984,51 @@ class ChatController extends FullLifeCycleController
 
   pickAudio() async {
     setOnGoingUserGone();
-    FilePickerResult? result = await FilePicker.platform.pickFiles(
-      type: FileType.audio,
-    );
-    if (result != null && File(result.files.single.path!).existsSync()) {
-      debugPrint(result.files.first.extension);
-      if (checkFileUploadSize(result.files.single.path!, Constants.mAudio)) {
-        AudioPlayer player = AudioPlayer();
-        player.setUrl(result.files.single.path!);
-        player.onDurationChanged.listen((Duration duration) {
-          mirrorFlyLog("", 'max duration: ${duration.inMilliseconds}');
-          filePath.value = (result.files.single.path!);
-          sendAudioMessage(
-              filePath.value, false, duration.inMilliseconds.toString());
-        });
+    if(Platform.isIOS) {
+      FilePickerResult? result = await FilePicker.platform.pickFiles(
+        type: FileType.audio,
+      );
+      if (result != null && File(result.files.single.path!).existsSync()) {
+        debugPrint(result.files.first.extension);
+        if (checkFileUploadSize(result.files.single.path!, Constants.mAudio)) {
+          AudioPlayer player = AudioPlayer();
+          player.setUrl(result.files.single.path!);
+          player.onDurationChanged.listen((Duration duration) {
+            mirrorFlyLog("", 'max duration: ${duration.inMilliseconds}');
+            filePath.value = (result.files.single.path!);
+            sendAudioMessage(
+                filePath.value, false, duration.inMilliseconds.toString());
+          });
+        } else {
+          toToast("File Size should not exceed ${Constants.maxAudioFileSize} MB");
+        }
+        setOnGoingUserAvail();
       } else {
-        toToast("File Size should not exceed ${Constants.maxAudioFileSize} MB");
+        // User canceled the picker
+        setOnGoingUserAvail();
       }
-      setOnGoingUserAvail();
-    } else {
-      // User canceled the picker
-      setOnGoingUserAvail();
+    }else{
+      await Mirrorfly.openAudioFilePicker().then((value) {
+        if(value!=null){
+          if (checkFileUploadSize(value, Constants.mAudio)) {
+            AudioPlayer player = AudioPlayer();
+            player.setUrl(value);
+            player.onDurationChanged.listen((Duration duration) {
+              mirrorFlyLog("", 'max duration: ${duration.inMilliseconds}');
+              filePath.value = (value);
+              sendAudioMessage(
+                  filePath.value, false, duration.inMilliseconds.toString());
+            });
+          } else {
+            toToast("File Size should not exceed ${Constants.maxAudioFileSize} MB");
+          }
+        }else{
+          setOnGoingUserAvail();
+        }
+      }).catchError((onError){
+        LogMessage.d("openAudioFilePicker",onError);
+        setOnGoingUserAvail();
+      });
     }
   }
 
