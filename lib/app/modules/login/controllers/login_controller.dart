@@ -94,7 +94,7 @@ class LoginController extends GetxController {
   }
 
   setUserJID(String username) {
-    // Mirrorfly.getAllGroups(true); // chat history enabled so this no longer need
+    Mirrorfly.getAllGroups(true); // chat history enabled so this no longer need
     Mirrorfly.getJid(username).then((value) {
       if (value != null) {
         SessionManagement.setUserJID(value);

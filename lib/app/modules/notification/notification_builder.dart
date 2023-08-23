@@ -10,6 +10,7 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
 import 'package:mirror_fly_demo/app/data/apputils.dart';
 import 'package:mirror_fly_demo/app/data/session_management.dart';
+import 'package:mirror_fly_demo/app/modules/notification/notification_model.dart';
 import 'package:mirror_fly_demo/app/modules/notification/notification_utils.dart';
 import 'package:mirrorfly_plugin/logmessage.dart';
 import 'package:mirrorfly_plugin/mirrorflychat.dart';
@@ -48,7 +49,7 @@ class NotificationBuilder {
     }
     var notificationModel = chatNotifications[notificationId];
     var isMessageRecalled = message.isMessageRecalled.checkNull();
-
+    LogMessage.d("NotificationBuilder map ",notificationModel?.toMap());
     if (notificationModel != null) {
       debugPrint("inside if notification");
       // notificationModel.messages?.forEach((element) { mirrorFlyLog("notificationModel", "${element.messageId}");});
@@ -63,7 +64,7 @@ class NotificationBuilder {
           List<ChatMessage> oldMessages = [];
           oldMessages.addAll(notificationModel.messages!);
           chatNotifications[notificationId]?.messages?.clear();
-          mirrorFlyLog("oldMessages", oldMessages.length.toString());
+          debugPrint("oldMessages ${oldMessages.length}");
           for (var chatMessage in oldMessages) {
             notificationModel.messages?.add(
                 chatMessage.messageId == message.messageId
@@ -76,8 +77,8 @@ class NotificationBuilder {
                     ? message
                     : chatMessage);
           }
-          mirrorFlyLog(
-              "messagingStyle", messagingStyle.messages!.length.toString());
+          debugPrint(
+              "messagingStyle ${messagingStyle.messages!.length}");
           notificationModel.messagingStyle = messagingStyle;
         } else {
           debugPrint("inside else notification");
@@ -85,7 +86,9 @@ class NotificationBuilder {
           List<ChatMessage> oldMessages = [];
           oldMessages.addAll(notificationModel.messages!);
           chatNotifications[notificationId]?.messages?.clear();
-          mirrorFlyLog("oldMessages", oldMessages.length.toString());
+          debugPrint("oldMessages ${oldMessages.length}");
+          debugPrint("notificationModel2 messages ${chatNotifications[notificationId]?.messages}");
+          debugPrint("notificationModel2 $chatNotifications");
           for (var chatMessage in oldMessages) {
             notificationModel.messages?.add(
                 chatMessage.messageId == message.messageId
@@ -98,8 +101,8 @@ class NotificationBuilder {
                     ? message
                     : chatMessage);
           }
-          mirrorFlyLog(
-              "messagingStyle", messagingStyle.messages!.length.toString());
+          debugPrint(
+              "messagingStyle ${messagingStyle.messages!.length}");
           // messagingStyle = notificationModel.messagingStyle!;
           notificationModel.messagingStyle = messagingStyle;
           notificationModel.messages?.add(message);
@@ -116,7 +119,7 @@ class NotificationBuilder {
         messagingStyle = newMessageStyle;
       }
     }
-    displayMessageNotification(
+    await displayMessageNotification(
         notificationId,
         messageId,
         profileDetails,
@@ -264,6 +267,7 @@ class NotificationBuilder {
     var chatJid = profileDetails.jid.checkNull();
 
     debugPrint("notificationId $notificationId");
+    debugPrint("notificationId $chatJid");
     if (Platform.isIOS) {
       debugPrint("lastMessageTime $lastMessageTime");
       notificationId = int.parse(lastMessageTime.toString().substring(lastMessageTime.toString().length - 5));
@@ -568,6 +572,7 @@ class NotificationBuilder {
   ///in [Android] chat jid hashcode as Notification id (Code line 34)
   static cancelNotification(int id) {
     LogMessage.d("cancelNotification", id);
+    LogMessage.d("chatNotifications", chatNotifications);
     var contain = chatNotifications.containsKey(id);
     if (chatNotifications.length == 1 && contain) {
       cancelNotifications();
@@ -579,14 +584,14 @@ class NotificationBuilder {
 
   static Future<void> clearConversationOnNotification(String jid) async {
     var id = jid.hashCode;
-    var contain = NotificationBuilder.chatNotifications.containsKey(id);
+    var contain = chatNotifications.containsKey(id);
     if (contain) {
-      if (NotificationBuilder.chatNotifications.length > 1) {
+      if (chatNotifications.length > 1) {
         // var notification = NotificationBuilder.chatNotifications[id];
         // notification?.messagingStyle?.messages?.clear();
         // notification?.messages?.clear();
         // notification?.messagingStyle =MessagingStyleInformation(const Person());
-        if (NotificationBuilder.chatNotifications.length == 1 && contain) {
+        if (chatNotifications.length == 1 && contain) {
           cancelNotifications();
         } else {
           var barNotifications =
@@ -596,7 +601,7 @@ class NotificationBuilder {
               flutterLocalNotificationsPlugin.cancel(notification.id);
             }
           }
-          NotificationBuilder.chatNotifications.remove(id);
+          chatNotifications.remove(id);
         }
       } else {
         // flutterLocalNotificationsPlugin.cancel(Constants.NOTIFICATION_ID);
@@ -652,13 +657,4 @@ class NotificationBuilder {
     final byteData = await image.toByteData(format: ImageByteFormat.png);
     return byteData?.buffer.asUint8List();
   }
-}
-
-class NotificationModel {
-  MessagingStyleInformation? messagingStyle;
-  List<ChatMessage>? messages;
-  int? unReadMessageCount;
-
-  NotificationModel(
-      {this.messagingStyle, this.messages, this.unReadMessageCount});
 }
