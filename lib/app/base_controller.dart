@@ -384,7 +384,7 @@ abstract class BaseController {
     }else{
         var data = chatMessageFromJson(event.toString());
         if(data.isMessageRecalled.checkNull()) {
-          NotificationBuilder.createNotification(data);
+          // NotificationBuilder.createNotification(data);
         }
         // showLocalNotification(chatMessageModel);
     }
@@ -515,7 +515,9 @@ abstract class BaseController {
       debugPrint("Message Received group chat screen is in online");
     }else{
       var data = chatMessageFromJson(event.toString());
-      if(data.messageId!=null) {
+      debugPrint("notificationMadeByME ${notificationMadeByME(data)}");
+      //checked own notification for (if group notification made by me like group member add,remove)
+      if(data.messageId!=null && !notificationMadeByME(data)) {
         NotificationBuilder.createNotification(data);
       }
       // showLocalNotification(chatMessageModel);
@@ -529,6 +531,10 @@ abstract class BaseController {
     if (Get.isRegistered<ChatController>()) {
       Get.find<ChatController>().onMessageReceived(chatMessageModel);
     }
+  }
+
+  bool notificationMadeByME(ChatMessage data){
+    return data.messageTextContent.checkNull().startsWith("You added") || data.messageTextContent.checkNull().startsWith("You removed") || data.messageTextContent.checkNull().startsWith("You created");
   }
 
   void onGroupDeletedLocally(groupJid) {
