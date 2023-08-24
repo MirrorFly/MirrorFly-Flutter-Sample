@@ -198,7 +198,7 @@ abstract class BaseController {
           stopTimer();
           if (Get.isRegistered<CallController>()) {
             Get.find<CallController>().callDisconnected(
-                callMode, userJid, callType, callStatus);
+                callMode, userJid, callType);
           }else{
             debugPrint("#Mirrorfly call call controller not registered for disconnect event");
           }
@@ -275,6 +275,11 @@ abstract class BaseController {
       switch(callAction){
         case CallAction.localHangup:{
           stopTimer();
+          if (Get.isRegistered<CallController>()) {
+            //if user hangup the call from background notification
+            Get.find<CallController>().localHangup(
+                callMode, userJid, callType, callAction);
+          }
           break;
         }
         //if we called on user B, the user B is decline the call then this will be triggered in Android

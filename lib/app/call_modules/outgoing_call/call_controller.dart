@@ -235,7 +235,7 @@ class CallController extends GetxController {
     super.onClose();
   }
 
-  void callDisconnected(String callMode, String userJid, String callType, String callStatus) {
+  void callDisconnected(String callMode, String userJid, String callType) {
     var index = callList.indexWhere((user) => user.userJid == userJid);
     debugPrint(
         "#Mirrorfly call disconnected user Index $index ${Get.currentRoute}");
@@ -264,6 +264,10 @@ class CallController extends GetxController {
 
   void remoteBusy(String callMode, String userJid, String callType, String callAction) {
     declineCall();
+  }
+
+  void localHangup(String callMode, String userJid, String callType, String callAction) {
+    callDisconnected(callMode, userJid, callType);
   }
 
   void remoteHangup(String callMode, String userJid, String callType, String callAction) {
