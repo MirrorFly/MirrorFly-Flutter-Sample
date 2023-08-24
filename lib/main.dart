@@ -109,7 +109,6 @@ class _MyAppState extends State<MyApp> {
         ReplyHashMap.init();
         NotificationBuilder.cancelNotifications();
         // Mirrorfly.isTrailLicence().then((value) => SessionManagement.setIsTrailLicence(value.checkNull()));
-        print("#Mirrorfly Notification main init");
         Get.put<MainController>(MainController());
       },
       //initialBinding: getBinding(),
