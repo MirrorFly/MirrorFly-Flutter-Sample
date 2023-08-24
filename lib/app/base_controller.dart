@@ -1,9 +1,11 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:mirror_fly_demo/app/call_modules/outgoing_call/call_controller.dart';
+import 'package:mirrorfly_plugin/logmessage.dart';
 import 'package:mirrorfly_plugin/mirrorflychat.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
@@ -193,6 +195,7 @@ abstract class BaseController {
           break;
 
         case CallStatus.disconnected:
+          stopTimer();
           if (Get.isRegistered<CallController>()) {
             Get.find<CallController>().callDisconnected(
                 callMode, userJid, callType, callStatus);
@@ -237,6 +240,7 @@ abstract class BaseController {
           }
           break;
         case CallStatus.connected:
+          startTimer();
           if (Get.isRegistered<CallController>()) {
             Get.find<CallController>().connected(
                 callMode, userJid, callType, callStatus);
@@ -269,9 +273,14 @@ abstract class BaseController {
       var callMode = actionReceived["callMode"].toString();
       var callType = actionReceived["callType"].toString();
       switch(callAction){
+        case CallAction.localHangup:{
+          stopTimer();
+          break;
+        }
         //if we called on user B, the user B is decline the call then this will be triggered in Android
         case CallAction.remoteBusy:{
-          toToast("User is Busy");
+          //in Android, showing this toast inside SDK
+          //toToast("User is Busy");
           if (Get.isRegistered<CallController>()) {
             Get.find<CallController>().remoteBusy(
                 callMode, userJid, callType, callAction);
@@ -375,7 +384,7 @@ abstract class BaseController {
     }else{
         var data = chatMessageFromJson(event.toString());
         if(data.isMessageRecalled.checkNull()) {
-          NotificationBuilder.createNotification(data);
+          // NotificationBuilder.createNotification(data);
         }
         // showLocalNotification(chatMessageModel);
     }
@@ -506,7 +515,9 @@ abstract class BaseController {
       debugPrint("Message Received group chat screen is in online");
     }else{
       var data = chatMessageFromJson(event.toString());
-      if(data.messageId!=null) {
+      debugPrint("notificationMadeByME ${notificationMadeByME(data)}");
+      //checked own notification for (if group notification made by me like group member add,remove)
+      if(data.messageId!=null && !notificationMadeByME(data)) {
         NotificationBuilder.createNotification(data);
       }
       // showLocalNotification(chatMessageModel);
@@ -520,6 +531,10 @@ abstract class BaseController {
     if (Get.isRegistered<ChatController>()) {
       Get.find<ChatController>().onMessageReceived(chatMessageModel);
     }
+  }
+
+  bool notificationMadeByME(ChatMessage data){
+    return data.messageTextContent.checkNull().startsWith("You added") || data.messageTextContent.checkNull().startsWith("You removed") || data.messageTextContent.checkNull().startsWith("You created");
   }
 
   void onGroupDeletedLocally(groupJid) {
@@ -802,5 +817,38 @@ abstract class BaseController {
       //   });
       // });
     }
+  }
+
+  Timer? timer;
+  void startTimer() {
+    // if (timer == null) {
+    timer = null;
+      const oneSec = Duration(seconds: 1);
+      var startTime = DateTime.now();
+      timer = Timer.periodic(
+        oneSec,
+            (Timer timer) {
+          final minDur = DateTime
+              .now()
+              .difference(startTime)
+              .inMinutes;
+          final secDur = DateTime
+              .now()
+              .difference(startTime)
+              .inSeconds % 60;
+          String min = minDur < 10 ? "0$minDur" : minDur.toString();
+          String sec = secDur < 10 ? "0$secDur" : secDur.toString();
+          var time = "$min:$sec";
+          LogMessage.d("callTimer", time);
+          if (Get.isRegistered<CallController>()) {
+            Get.find<CallController>().callDuration(time);
+          }
+        },
+      );
+    // }
+  }
+  void stopTimer(){
+    timer?.cancel();
+    timer=null;
   }
 }

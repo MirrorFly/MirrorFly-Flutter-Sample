@@ -749,7 +749,7 @@ String getName(Profile item) {
         ? (item.nickName
         .checkNull()
         .isEmpty
-        ? item.mobileNumber.checkNull()
+        ? getMobileNumberFromJid(item.jid.checkNull())
         : item.nickName.checkNull())
         : item.name.checkNull();
   } else {
@@ -792,7 +792,7 @@ String getRecentName(RecentChatData item) {
     return item.profileName
         .checkNull()
         .isEmpty
-        ? item.nickName.checkNull()
+        ? item.nickName.checkNull().isNotEmpty ? item.nickName.checkNull() : getMobileNumberFromJid(item.jid.checkNull())
         : item.profileName.checkNull();
   } else {
     if (item.jid.checkNull() == SessionManagement.getUserJID()) {
@@ -823,7 +823,7 @@ String getMemberName(Member item) {
         ? (item.nickName
         .checkNull()
         .isEmpty
-        ? item.mobileNumber.checkNull()
+        ? getMobileNumberFromJid(item.jid.checkNull())
         : item.nickName.checkNull())
         : item.name.checkNull();
   } else {

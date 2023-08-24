@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
+import 'package:mirror_fly_demo/app/call_modules/call_widgets.dart';
 import 'package:mirror_fly_demo/app/call_modules/outgoing_call/call_controller.dart';
 import 'package:mirror_fly_demo/app/call_modules/ripple_animation_view.dart';
-import 'package:mirror_fly_demo/app/common/widgets.dart';
-import 'package:mirror_fly_demo/app/data/helper.dart';
 import 'package:mirrorfly_plugin/mirrorflychat.dart';
-import 'package:mirrorfly_plugin/model/user_list_model.dart';
 
 import '../../common/constants.dart';
 
@@ -60,14 +58,7 @@ class OutGoingCallView extends GetView<CallController> {
                       Obx(() {
                         return RipplesAnimation(
                           onPressed: () {},
-                          child: buildProfileImage(Profile(
-                              name: controller.calleeName.value,
-                              nickName: "",
-                              isGroupProfile: false,
-                              image: '',
-                              isBlockedMe: false,
-                              isAdminBlocked: false,
-                              isItSavedContact: true)),
+                          child: buildProfileImage(controller.profile.value),
                         );
                       }),
                     ],
@@ -200,31 +191,6 @@ class OutGoingCallView extends GetView<CallController> {
           ),
         ),
       ),
-    );
-  }
-
-  Widget buildProfileImage(Profile item) {
-    return ImageNetwork(
-      url: item.image.toString(),
-      width: 105,
-      height: 105,
-      clipOval: true,
-      errorWidget: item.isGroupProfile!
-          ? ClipOval(
-              child: Image.asset(
-                groupImg,
-                height: 48,
-                width: 48,
-                fit: BoxFit.cover,
-              ),
-            )
-          : ProfileTextImage(
-              text: item.getName(),
-              radius: 50,
-            ),
-      isGroup: item.isGroupProfile.checkNull(),
-      blocked: item.isBlockedMe.checkNull() || item.isAdminBlocked.checkNull(),
-      unknown: (!item.isItSavedContact.checkNull() || item.isDeletedContact()),
     );
   }
 }

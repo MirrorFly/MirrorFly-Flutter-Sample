@@ -7,6 +7,7 @@ import 'dart:io';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/data/session_management.dart';
 import 'package:mirrorfly_plugin/mirrorfly.dart';
 
@@ -14,6 +15,7 @@ import '../common/constants.dart';
 import '../common/notification_service.dart';
 import '../model/notification_message_model.dart';
 import '../modules/notification/notification_builder.dart';
+import '../routes/app_pages.dart';
 
 class PushNotifications {
   PushNotifications._();
@@ -23,7 +25,7 @@ class PushNotifications {
     notificationPermission();
 
     FirebaseMessaging.onMessage.listen((message){
-      debugPrint('Got a message whilst in the foreground!');
+      debugPrint('#Mirrorfly Notification -> Got a message whilst in the foreground!');
       onMessage(message);
     });
   }
@@ -105,18 +107,27 @@ class PushNotifications {
   static Future<void> setupInteractedMessage() async {
     // Get any messages which caused the application to open from
     // a terminated state.
-    // RemoteMessage? initialMessage =
-    // await FirebaseMessaging.instance.getInitialMessage();
-
+    RemoteMessage? initialMessage = await FirebaseMessaging.instance.getInitialMessage();
+    debugPrint("#Mirrorfly Notification setupInteractedMessage $initialMessage");
     // If the message also contains a data property with a "type" of "chat",
     // navigate to a chat screen
-    // if (initialMessage != null) {
-    //   onMessage(initialMessage);
-    // }
+    if (initialMessage != null) {
+      debugPrint("#Mirrorfly Notification setupInteractedMessage message opened from notification click terminated");
+      // onMessage(initialMessage);
+      debugPrint("#Mirrorfly Notification message received for ${initialMessage.data["to_user"]}");
+      debugPrint("#Mirrorfly Notification message received for ${initialMessage.data}");
+      Get.offAllNamed("${AppPages.chat}?jid=${initialMessage.data["from_user"]}&from_notification=true");
+    }else{
+      debugPrint("#Mirrorfly Notification setupInteractedMessage else");
+    }
 
     // Also handle any interaction when the app is in the background via a
     // Stream listener
-    FirebaseMessaging.onMessageOpenedApp.listen(onMessage);
+    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message){
+      debugPrint("#Mirrorfly Notification message opened from notification click background");
+      Get.offAllNamed("${AppPages.chat}?jid=${message.data["from_user"]}&from_notification=true");
+
+    });
   }
 
   static void onMessage(RemoteMessage message) {
@@ -178,7 +189,7 @@ class PushNotifications {
         mirrorFlyLog("#Mirrorfly Notification -> notification message", value.toString());
         var data = chatMessageFromJson(value.toString());
         if(data.messageId!=null) {
-          NotificationBuilder.createNotification(data);
+          NotificationBuilder.createNotification(data,autoCancel: false);
         }
       });
     }

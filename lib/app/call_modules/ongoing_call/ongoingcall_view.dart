@@ -202,57 +202,66 @@ class OnGoingCallView extends GetView<CallController> {
   }
 
   Widget buildToolbar() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    return Stack(
       children: [
-        IconButton(
-          onPressed: () {},
-          icon: const Icon(
-            Icons.keyboard_arrow_down,
-            color: Colors.white,
-          ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            IconButton(
+              onPressed: () {},
+              icon: const Icon(
+                Icons.keyboard_arrow_down,
+                color: Colors.white,
+              ),
+            ),
+            const Spacer(),
+            IconButton(
+              onPressed: () {},
+              icon: SvgPicture.asset(addUserCall),
+            ),
+            IconButton(
+              onPressed: () {},
+              icon: SvgPicture.asset(moreMenu),
+            )
+          ],
         ),
         Obx(() {
-          return Expanded(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                SizedBox(
-                  width: 200,
-                  child: Text(
-                    controller.callTitle.value,
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.w500,
-                      fontSize: 12.0,
+          return Center(
+            child: Expanded(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  SizedBox(
+                    width: 200,
+                    child: Text(
+                      controller.callTitle.value,
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w500,
+                        fontSize: 12.0,
+                      ),
+                      textAlign: TextAlign.center,
+                      overflow: TextOverflow.ellipsis,
                     ),
-                    textAlign: TextAlign.center,
-                    overflow: TextOverflow.ellipsis,
                   ),
-                ),
-                const SizedBox(
-                  height: 8,
-                ),
-                Text(
-                  controller.callTimer.value,
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.w400,
-                    fontSize: 12.0,
+                  const SizedBox(
+                    height: 8,
                   ),
-                ),
-              ],
+                  Obx(() {
+                    return Text(
+                      controller.callTimer.value,
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w400,
+                        fontSize: 12.0,
+                      ),
+                    );
+                  }),
+                ],
+              ),
             ),
           );
         }),
-        IconButton(
-          onPressed: () {},
-          icon: SvgPicture.asset(addUserCall),
-        ),
-        IconButton(
-          onPressed: () {},
-          icon: SvgPicture.asset(moreMenu),
-        )
       ],
     );
   }

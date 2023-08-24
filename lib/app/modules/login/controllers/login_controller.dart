@@ -94,7 +94,7 @@ class LoginController extends GetxController {
   }
 
   setUserJID(String username) {
-    // Mirrorfly.getAllGroups(true); // chat history enabled so this no longer need
+    Mirrorfly.getAllGroups(true); // chat history enabled so this no longer need
     Mirrorfly.getJid(username).then((value) {
       if (value != null) {
         SessionManagement.setUserJID(value);
@@ -338,7 +338,7 @@ class LoginController extends GetxController {
           }
         });
       }else{
-        toToast("Mobile Number too short");
+        toToast(Constants.noInternetConnection);
       }
     // } else {
     //   toToast(Constants.noInternetConnection);

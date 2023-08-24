@@ -66,10 +66,6 @@ import CallKit
             completionHandler(.newData)
     }
 
-    
-    override func applicationWillTerminate(_ application: UIApplication) {
-        NSLog("#Voip Fly Defaults \(FlyDefaults.myJid)")
-    }
 
 }
 

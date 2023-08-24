@@ -8,8 +8,8 @@ buildscript {
 
     dependencies {
         classpath 'com.android.tools.build:gradle:7.2.2'
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.7.10"
-        classpath 'com.google.gms:google-services:4.3.14'
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.8.0"
+        classpath 'com.google.gms:google-services:4.3.15'
     }
 }
 
@@ -19,7 +19,7 @@ allprojects {
         mavenCentral()
         jcenter()
         maven {
-            url "https://repo.mirrorfly.com/internal"
+            url "https://repo.mirrorfly.com/release"
         }
 //        mavenLocal()
     }
