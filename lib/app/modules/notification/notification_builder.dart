@@ -126,7 +126,6 @@ class NotificationBuilder {
         categoryIdentifier: darwinNotificationCategoryPlain,
         sound: notificationUri,
         presentBadge: true,
-        badgeNumber: unReadMessageCount,
         presentSound: true,
         presentAlert: true);
 

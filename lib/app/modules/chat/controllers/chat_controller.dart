@@ -3003,7 +3003,7 @@ class ChatController extends FullLifeCycleController
   }
 
   void cancelNotification() {
-    NotificationBuilder.cancelNotification(profile.jid.hashCode);
+    NotificationBuilder.cancelNotifications();
   }
 
   void setOnGoingUserGone() {

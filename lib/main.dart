@@ -8,6 +8,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:mirror_fly_demo/app/modules/notification/notification_builder.dart';
 import 'package:mirrorfly_plugin/mirrorfly.dart';
 
 import 'package:get/get.dart';
@@ -106,6 +107,7 @@ class _MyAppState extends State<MyApp> {
       debugShowCheckedModeBanner: false,
       onInit: () {
         ReplyHashMap.init();
+        NotificationBuilder.cancelNotifications();
         // Mirrorfly.isTrailLicence().then((value) => SessionManagement.setIsTrailLicence(value.checkNull()));
         print("#Mirrorfly Notification main init");
         Get.put<MainController>(MainController());
