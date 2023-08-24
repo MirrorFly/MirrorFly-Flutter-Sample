@@ -189,7 +189,7 @@ class PushNotifications {
         mirrorFlyLog("#Mirrorfly Notification -> notification message", value.toString());
         var data = chatMessageFromJson(value.toString());
         if(data.messageId!=null) {
-          NotificationBuilder.createNotification(data);
+          NotificationBuilder.createNotification(data,autoCancel: false);
         }
       });
     }
