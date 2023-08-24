@@ -91,8 +91,6 @@ class NotificationBuilder {
     //}
 
     debugPrint("local notification id $notificationId");
-    LogMessage.d("newMessagingStyle", messagingStyle.conversationTitle);
-    LogMessage.d("messagingStyle", messagingStyle.messages!.length.toString());
     var channel =
         buildNotificationChannel(notificationId.toString(), null, false);
 
