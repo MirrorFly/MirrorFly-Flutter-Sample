@@ -39,7 +39,7 @@ class CallController extends GetxController {
   Future<void> onInit() async {
     super.onInit();
     debugPrint("#Mirrorfly Call Controller onInit");
-    var userJid = Get.arguments["userJid"];
+    var userJid = Get.arguments?["userJid"];
     if (userJid != null && userJid != "") {
       debugPrint("#Mirrorfly Call UserJid $userJid");
       // var profile = await Mirrorfly.getUserProfile(userJid);
