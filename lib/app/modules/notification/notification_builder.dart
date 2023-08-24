@@ -158,7 +158,7 @@ class NotificationBuilder {
       String? chatChannelName,
       bool isSummaryNotification) {
     // AndroidNotificationChannel createdChannel;
-    var notificationSounUri = SessionManagement.getNotificationUri();
+    var notificationSoundUri = SessionManagement.getNotificationUri();
     var isVibrate = SessionManagement.getVibration();
     var isRing = SessionManagement.getNotificationSound();
     var channelName = chatChannelName ?? "App Notifications";
@@ -172,8 +172,8 @@ class NotificationBuilder {
       return AndroidNotificationChannel(channelId, channelName,
           importance: ringImportance,
           showBadge: true,
-          sound: notificationSounUri != null
-              ? UriAndroidNotificationSound(notificationSounUri)
+          sound: notificationSoundUri != null
+              ? UriAndroidNotificationSound(notificationSoundUri)
               : null,
           description: channelDescription,
           enableLights: true,
