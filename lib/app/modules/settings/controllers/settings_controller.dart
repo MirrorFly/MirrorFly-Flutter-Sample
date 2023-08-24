@@ -1,12 +1,9 @@
-import 'dart:io';
 
-import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
 import 'package:mirrorfly_plugin/mirrorfly.dart';
 import 'package:mirror_fly_demo/app/routes/app_pages.dart';
-import 'package:path/path.dart';
 import 'package:yaml/yaml.dart';
 
 import '../../../common/constants.dart';
@@ -21,7 +18,7 @@ class SettingsController extends GetxController {
   void onInit() {
     super.onInit();
     getPackageInfo();
-    getReleaseDate();
+    // getReleaseDate();
   }
 
   getPackageInfo() async {
@@ -85,16 +82,16 @@ class SettingsController extends GetxController {
     });
   }
 
-  getReleaseDate() async {
-    var releaseDate = "";
-    String pathToYaml =
-        join(dirname(Platform.script.toFilePath()), '../pubspec.yaml');
-    File file = File(pathToYaml);
-    file.readAsString().then((String content) {
-      Map yaml = loadYaml(content);
-      debugPrint(yaml['build_release_date']);
-      releaseDate = yaml['build_release_date'];
-    });
-    return releaseDate;
-  }
+  // getReleaseDate() async {
+  //   var releaseDate = "";
+  //   String pathToYaml =
+  //       join(dirname(Platform.script.toFilePath()), '../pubspec.yaml');
+  //   File file = File(pathToYaml);
+  //   file.readAsString().then((String content) {
+  //     Map yaml = loadYaml(content);
+  //     debugPrint(yaml['build_release_date']);
+  //     releaseDate = yaml['build_release_date'];
+  //   });
+  //   return releaseDate;
+  // }
 }

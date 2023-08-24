@@ -1,5 +1,5 @@
-// import 'package:firebase_messaging/firebase_messaging.dart';
 
+import 'dart:io';
 
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
@@ -37,29 +37,31 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   await Firebase.initializeApp();
   SessionManagement.onInit();
   debugPrint("#Mirrorfly Notification -> Handling a background message: ${message.messageId}");
-  PushNotifications.onMessage(message);
+  if (Platform.isAndroid) {
+    PushNotifications.onMessage(message);
+  }
 }
 bool shouldUseFirebaseEmulator = false;
 //check app opened from notification
 NotificationAppLaunchDetails? notificationAppLaunchDetails;
 //check is on going call
 bool isOnGoingCall = false;
-// dynamic nonChatUsers = [];
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  debugPrint("#Mirrorfly Notification main function init");
   if (!kIsWeb) {
     await Firebase.initializeApp();
-    // await Firebase.initializeApp(
-    //   options: DefaultFirebaseOptions.currentPlatform,
-    // );
-    FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
-    PushNotifications.setupInteractedMessage();
+    if (Platform.isAndroid) {
+      FirebaseMessaging.onBackgroundMessage(
+          _firebaseMessagingBackgroundHandler);
+    }
+
   }
   Mirrorfly.init(
       baseUrl: 'https://api-uikit-qa.contus.us/api/v1/',
       licenseKey: 'ckIjaccWBoMNvxdbql8LJ2dmKqT5bp',//ckIjaccWBoMNvxdbql8LJ2dmKqT5bp//2sdgNtr3sFBSM3bYRa7RKDPEiB38Xo
       iOSContainerID: 'group.com.mirrorfly.qa',//group.com.mirrorfly.flutter
-      chatHistoryEnable: false,
+      chatHistoryEnable: true,
       enableDebugLog: true);
   final GoogleMapsFlutterPlatform mapsImplementation =
       GoogleMapsFlutterPlatform.instance;
@@ -79,10 +81,23 @@ Future<void> main() async {
   runApp(const MyApp());
 }
 
-class MyApp extends StatelessWidget{
+class MyApp extends StatefulWidget{
   const MyApp({super.key});
 
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
   // This widget is the root of your application.
+  @override
+  void initState() {
+    super.initState();
+    Future.delayed(const Duration(milliseconds: 1000)).then((value) {
+      PushNotifications.setupInteractedMessage();
+    });
+
+  }
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
@@ -92,6 +107,7 @@ class MyApp extends StatelessWidget{
       onInit: () {
         ReplyHashMap.init();
         // Mirrorfly.isTrailLicence().then((value) => SessionManagement.setIsTrailLicence(value.checkNull()));
+        print("#Mirrorfly Notification main init");
         Get.put<MainController>(MainController());
       },
       //initialBinding: getBinding(),

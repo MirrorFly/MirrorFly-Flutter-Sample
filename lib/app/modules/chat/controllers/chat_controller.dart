@@ -636,7 +636,7 @@ class ChatController extends FullLifeCycleController
           chatMessageModel.addAll(chatMessageModelFromJson(value));
           if (chatMessageModel.toList().isNotEmpty) {
             chatList.insertAll(
-                chatList.length, chatMessageModel.reversed.toList());
+                chatList.length, chatMessageModel.toList());
           } else {
             debugPrint("chat list is empty");
           }
@@ -661,7 +661,7 @@ class ChatController extends FullLifeCycleController
           List<ChatMessageModel> chatMessageModel =
               chatMessageModelFromJson(value);
           if (chatMessageModel.isNotEmpty) {
-            chatList.insertAll(0, chatMessageModel.reversed.toList());
+            chatList.insertAll(0, chatMessageModel.toList());
           }
           showStarredMessage();
         } catch (error) {

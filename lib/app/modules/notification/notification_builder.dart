@@ -273,7 +273,7 @@ class NotificationBuilder {
       var userProfile = await getProfileDetails(senderChatJID);
       var name = userProfile.name ?? '';
 
-      title = isGroup ? "$title@$name" : title;
+      title = isGroup ? "$name @ $title" : title;
     }
 
     debugPrint("local notification id $notificationId");
@@ -326,7 +326,7 @@ class NotificationBuilder {
         categoryIdentifier: darwinNotificationCategoryPlain,
         sound: notificationUri,
         presentBadge: true,
-        badgeNumber: unReadMessageCount,
+        // badgeNumber: unReadMessageCount,
         presentSound: true,
         presentAlert: true);
 

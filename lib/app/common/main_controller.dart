@@ -50,6 +50,7 @@ class MainController extends FullLifeCycleController with BaseController, FullLi
       mirrorFlyLog("com.google.android.geo.API_THUMP_KEY", googleMapKey);
     });
     //presentPinPage();
+    debugPrint("#Mirrorfly Notification -> Main Controller push init");
     PushNotifications.init();
     initListeners();
     getMediaEndpoint();
@@ -119,15 +120,15 @@ class MainController extends FullLifeCycleController with BaseController, FullLi
       // await Navigator.of(context).push(MaterialPageRoute<void>(
       //   builder: (BuildContext context) => SecondPage(payload),
       // ));
-      debugPrint("opening chat page--> $payload ${Get.currentRoute}");
+      debugPrint("#Mirrorfly Notification -> opening chat page--> $payload ${Get.currentRoute}");
       if(payload != null && payload.isNotEmpty){
         if (Get.isRegistered<ChatController>()) {
-          debugPrint("already chat page");
+          debugPrint("#Mirrorfly Notification -> already chat page");
           if(Get.currentRoute == Routes.forwardChat || Get.currentRoute == Routes.chatInfo || Get.currentRoute == Routes.groupInfo || Get.currentRoute == Routes.messageInfo){
             Get.back();
           }
           if(Get.currentRoute.contains("from_notification=true")){
-            LogMessage.d("previously app opened from notification", "so we have to maintain that");
+            LogMessage.d("#Mirrorfly Notification -> previously app opened from notification", "so we have to maintain that");
             Get.offAllNamed("${AppPages.chat}?jid=$payload&from_notification=true");
           }else {
             Get.offNamed(Routes.chat,
