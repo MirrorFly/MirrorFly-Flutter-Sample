@@ -15,6 +15,7 @@ import 'package:mirror_fly_demo/app/data/session_management.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
 import 'package:mirror_fly_demo/app/modules/chat/controllers/chat_controller.dart';
 import 'package:mirror_fly_demo/app/modules/contact_sync/controllers/contact_sync_controller.dart';
+import 'package:mirror_fly_demo/app/modules/notification/notification_builder.dart';
 import 'package:mirror_fly_demo/app/routes/app_pages.dart';
 
 import 'package:mirrorfly_plugin/mirrorfly.dart';
@@ -277,6 +278,7 @@ class MainController extends FullLifeCycleController with BaseController, FullLi
   @override
   void onResumed() {
     mirrorFlyLog('mainController', 'onResumed');
+    NotificationBuilder.cancelNotifications();
     checkShouldShowPin();
     if(!Mirrorfly.isTrialLicence) {
       syncContacts();
