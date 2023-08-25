@@ -59,7 +59,7 @@ dependencies:
 #  google_cloud_translation: ^0.0.3 # Google Translator
   share_plus: ^7.0.2
   flutter_inappwebview: ^5.7.2+3 # inapp webview
-  flutter_local_notifications: ^13.0.0
+  flutter_local_notifications: ^15.1.1
 
   open_file_plus: ^3.4.0
   is_lock_screen: ^2.0.0

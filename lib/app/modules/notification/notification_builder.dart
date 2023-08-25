@@ -226,7 +226,7 @@ class NotificationBuilder {
     var barNotifications =
         await flutterLocalNotificationsPlugin.getActiveNotifications();
     for (var y in barNotifications) {
-      flutterLocalNotificationsPlugin.cancel(y.id);
+      flutterLocalNotificationsPlugin.cancel(y.id!);
     }
   }
 
@@ -243,7 +243,7 @@ class NotificationBuilder {
         await flutterLocalNotificationsPlugin.getActiveNotifications();
     for (var notification in barNotifications) {
       if (notification.id == id) {
-        flutterLocalNotificationsPlugin.cancel(notification.id);
+        flutterLocalNotificationsPlugin.cancel(notification.id!);
       }
     }
   }
