@@ -180,7 +180,7 @@ class MainController extends FullLifeCycleController with BaseController, FullLi
             .getPassword()
             .checkNull()
             .isNotEmpty) {
-      await Mirrorfly.authToken().then((value) {
+      await Mirrorfly.refreshAndGetAuthToken().then((value) {
         mirrorFlyLog("RetryAuth", value.toString());
         if(value!=null) {
           if (value.isNotEmpty) {
