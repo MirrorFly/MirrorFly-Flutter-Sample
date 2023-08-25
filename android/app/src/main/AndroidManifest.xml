@@ -72,6 +72,12 @@
        <meta-data
            android:name="io.flutter.app.android.SplashScreenUntilFirstFrame"
            android:value="true" />
+       <meta-data
+           android:name="com.google.firebase.messaging.default_notification_icon"
+           android:resource="@drawable/ic_notification_blue" />
+       <meta-data
+           android:name="com.google.firebase.messaging.default_notification_color"
+           android:resource="@color/colorAccent" />
        <provider
            android:name="androidx.core.content.FileProvider"
            android:authorities="${applicationId}.fileProvider"

@@ -1012,7 +1012,7 @@ class ChatController extends FullLifeCycleController
     setOnGoingUserGone();
     if(Platform.isIOS) {
       FilePickerResult? result = await FilePicker.platform.pickFiles(
-        type: FileType.audio,
+        type: FileType.custom,  allowedExtensions: [    'wav',    'aiff',    'alac',    'flac',    'mp3',    'aac',    'wma',    'ogg'  ],
       );
       if (result != null && File(result.files.single.path!).existsSync()) {
         debugPrint(result.files.first.extension);

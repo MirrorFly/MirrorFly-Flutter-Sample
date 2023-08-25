@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'dart:math';
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
@@ -80,7 +81,7 @@ class NotificationBuilder {
     debugPrint("notificationId $chatJid");
     // if (Platform.isIOS) {
       debugPrint("lastMessageTime $lastMessageTime");
-      notificationId = int.parse(lastMessageTime.toString().substring(lastMessageTime.toString().length - 5));
+      notificationId = (Platform.isIOS) ? int.parse(lastMessageTime.toString().substring(lastMessageTime.toString().length - 5)) : messageId;
       debugPrint("ios notification id $notificationId");
       var isGroup = profileDetails.isGroupProfile ?? false;
 
@@ -226,7 +227,7 @@ class NotificationBuilder {
     var barNotifications =
         await flutterLocalNotificationsPlugin.getActiveNotifications();
     for (var y in barNotifications) {
-      flutterLocalNotificationsPlugin.cancel(y.id);
+      flutterLocalNotificationsPlugin.cancel(y.id!);
     }
   }
 
@@ -243,7 +244,7 @@ class NotificationBuilder {
         await flutterLocalNotificationsPlugin.getActiveNotifications();
     for (var notification in barNotifications) {
       if (notification.id == id) {
-        flutterLocalNotificationsPlugin.cancel(notification.id);
+        flutterLocalNotificationsPlugin.cancel(notification.id!);
       }
     }
   }
