@@ -212,7 +212,7 @@ abstract class BaseController {
             Get.find<CallController>().calling(
                 callMode, userJid, callType, callStatus);
           }else{
-            debugPrint("#Mirrorfly call call controller not registered for disconnect event");
+            debugPrint("#Mirrorfly call call controller not registered for calling event");
           }
           break;
         case CallStatus.reconnected:
@@ -220,7 +220,7 @@ abstract class BaseController {
             Get.find<CallController>().reconnected(
                 callMode, userJid, callType, callStatus);
           }else{
-            debugPrint("#Mirrorfly call call controller not registered for disconnect event");
+            debugPrint("#Mirrorfly call call controller not registered for reconnected event");
           }
           break;
         case CallStatus.ringing:
@@ -228,7 +228,7 @@ abstract class BaseController {
             Get.find<CallController>().ringing(
                 callMode, userJid, callType, callStatus);
           }else{
-            debugPrint("#Mirrorfly call call controller not registered for disconnect event");
+            debugPrint("#Mirrorfly call call controller not registered for ringing event");
           }
           break;
         case CallStatus.onHold:
@@ -236,7 +236,7 @@ abstract class BaseController {
             Get.find<CallController>().onHold(
                 callMode, userJid, callType, callStatus);
           }else{
-            debugPrint("#Mirrorfly call call controller not registered for disconnect event");
+            debugPrint("#Mirrorfly call call controller not registered for onHold event");
           }
           break;
         case CallStatus.connected:
@@ -245,7 +245,7 @@ abstract class BaseController {
             Get.find<CallController>().connected(
                 callMode, userJid, callType, callStatus);
           }else{
-            debugPrint("#Mirrorfly call call controller not registered for disconnect event");
+            debugPrint("#Mirrorfly call call controller not registered for connected event");
           }
           break;
 
@@ -254,7 +254,7 @@ abstract class BaseController {
             Get.find<CallController>().timeout(
                 callMode, userJid, callType, callStatus);
           }else{
-            debugPrint("#Mirrorfly call call controller not registered for disconnect event");
+            debugPrint("#Mirrorfly call call controller not registered for timeout event");
           }
           break;
 

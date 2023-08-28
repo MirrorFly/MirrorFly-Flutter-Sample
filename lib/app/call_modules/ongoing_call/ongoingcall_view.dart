@@ -225,13 +225,12 @@ class OnGoingCallView extends GetView<CallController> {
             )
           ],
         ),
-        Obx(() {
-          return Center(
-            child: Expanded(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  SizedBox(
+        Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Obx(() {
+                  return SizedBox(
                     width: 200,
                     child: Text(
                       controller.callTitle.value,
@@ -243,25 +242,24 @@ class OnGoingCallView extends GetView<CallController> {
                       textAlign: TextAlign.center,
                       overflow: TextOverflow.ellipsis,
                     ),
-                  ),
-                  const SizedBox(
-                    height: 8,
-                  ),
-                  Obx(() {
-                    return Text(
-                      controller.callTimer.value,
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.w400,
-                        fontSize: 12.0,
-                      ),
-                    );
-                  }),
-                ],
-              ),
+                  );
+                }),
+                const SizedBox(
+                  height: 8,
+                ),
+                Obx(() {
+                  return Text(
+                    controller.callTimer.value,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w400,
+                      fontSize: 12.0,
+                    ),
+                  );
+                }),
+              ],
             ),
-          );
-        }),
+          )
       ],
     );
   }
