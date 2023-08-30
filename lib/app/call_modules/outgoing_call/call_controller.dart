@@ -377,7 +377,9 @@ class CallController extends GetxController {
     });
   }
 
-  void remoteEngaged() {
+  Future<void> remoteEngaged(String userJid) async {
+    var data = await getProfileDetails(userJid);
+    toToast(data.getName() + Constants.remoteEngagedToast);
     declineCall();
   }
 

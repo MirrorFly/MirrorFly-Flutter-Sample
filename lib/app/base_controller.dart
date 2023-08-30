@@ -303,7 +303,7 @@ abstract class BaseController {
         //if we called on user B, the user B is on another call then this will triggered
         case CallAction.remoteEngaged:{
           if (Get.isRegistered<CallController>()) {
-            Get.find<CallController>().remoteEngaged();
+            Get.find<CallController>().remoteEngaged(userJid);
           }
           break;
         }
