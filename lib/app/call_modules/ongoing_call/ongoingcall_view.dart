@@ -52,9 +52,17 @@ class OnGoingCallView extends GetView<CallController> {
                       Obx(() {
                         return Align(
                             alignment: Alignment.center,
-                            child: controller.callList.length > 1 && controller.callList[1].isAudioMuted.value
-                                ? const CircleAvatar(backgroundColor: Colors.black45, child: Icon(Icons.mic_off),)
-                                : const SizedBox.shrink());
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                controller.callStatus.contains(CallStatus.reconnecting) ? const Text("${CallStatus.reconnecting}...", style: TextStyle(color: Colors.white),) : const SizedBox.shrink(),
+                                controller.callStatus.contains(CallStatus.reconnecting) ? const SizedBox(height: 10,) :  const SizedBox.shrink(),
+                                controller.callList.length > 1 && controller.callList[1].isAudioMuted.value
+                                    ? const CircleAvatar(backgroundColor: Colors.black45, child: Icon(Icons.mic_off),)
+                                    : const SizedBox.shrink(),
+
+                              ],
+                            ));
                       }),
                     ],
                   )),
