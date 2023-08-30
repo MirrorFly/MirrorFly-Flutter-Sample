@@ -126,18 +126,18 @@ class AppPermission {
     if(!microphone.isGranted && !SessionManagement.getBool(Constants.audioRecordPermissionAsked)){
       permissions.add(Permission.microphone);
     }
-    if(!phone.isGranted && !SessionManagement.getBool(Constants.readPhoneStatePermissionAsked)){
+    if(!phone.isGranted && !SessionManagement.getBool(Constants.readPhoneStatePermissionAsked) && Platform.isAndroid){
       permissions.add(Permission.phone);
     }
-    if(!bluetoothConnect.isGranted && !SessionManagement.getBool(Constants.bluetoothPermissionAsked)){
+    if(!bluetoothConnect.isGranted && !SessionManagement.getBool(Constants.bluetoothPermissionAsked) && Platform.isAndroid){
       permissions.add(Permission.bluetoothConnect);
     }
     LogMessage.d("microphone", microphone.isGranted);
     LogMessage.d("phone", phone.isGranted);
     LogMessage.d("bluetoothConnect", bluetoothConnect.isGranted);
     if ((!microphone.isGranted) ||
-        (!phone.isGranted) ||
-        (!bluetoothConnect.isGranted)) {
+        (Platform.isAndroid ? !phone.isGranted : false) ||
+        (Platform.isAndroid ? !bluetoothConnect.isGranted : false)) {
       var shouldShowRequestRationale = ((await Permission.microphone.shouldShowRequestRationale)
           || (await Permission.phone.shouldShowRequestRationale) ||
           (await Permission.bluetoothConnect.shouldShowRequestRationale));
@@ -299,22 +299,37 @@ class AppPermission {
     }
   }
   static Future<bool> askiOSVideoCallPermissions() async {
-    final speech = await Permission.microphone.status;//RECORD_AUDIO
+    final microphone = await Permission.microphone.status;//RECORD_AUDIO
     final camera = await Permission.camera.status;
     const newPermission = [
       Permission.microphone,
       Permission.camera,
     ];
-    if(
-    (speech != PermissionStatus.granted  && speech != PermissionStatus.permanentlyDenied) ||
-        (camera != PermissionStatus.granted  && camera != PermissionStatus.permanentlyDenied)
-    ){
-      var newp = await newPermission.request();
-      PermissionStatus? speech_ = newp[Permission.microphone];
-      PermissionStatus? camera_ = newp[Permission.camera];
-      return (speech_!.isGranted &&camera_!.isGranted);
-    }else{
-      return (speech.isGranted && camera.isGranted);
+    if((microphone != PermissionStatus.granted && microphone != PermissionStatus.permanentlyDenied) || (camera != PermissionStatus.granted && camera != PermissionStatus.permanentlyDenied)){
+      var permissionPopupValue = await mirrorFlyPermissionDialog(
+          icon: recordAudioVideoPermission,
+          content: Constants.videoCallPermission);
+      if (permissionPopupValue) {
+        var newp = await newPermission.request();
+        PermissionStatus? speech_ = newp[Permission.microphone];
+        PermissionStatus? camera_ = newp[Permission.camera];
+        return (speech_!.isGranted &&camera_!.isGranted);
+      }else{
+        toToast("Need Camera and Microphone Permission to Make Video Call");
+        return false;
+      }
+    }else if ((microphone == PermissionStatus.permanentlyDenied) || (camera == PermissionStatus.permanentlyDenied)){
+      var popupValue = await customPermissionDialog(
+          icon: audioPermission,
+          content: getPermissionAlertMessage("audio_call"));
+      if (popupValue) {
+        openAppSettings();
+        return false;
+      } else {
+        return false;
+      }
+    } else{
+      return (microphone.isGranted && camera.isGranted);
     }
   }
 
