@@ -4,6 +4,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:mirror_fly_demo/app/modules/notification/notification_builder.dart';
+import 'package:mirror_fly_demo/main.dart';
+import 'package:mirrorfly_plugin/logmessage.dart';
 import 'package:mirrorfly_plugin/mirrorflychat.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
@@ -11,6 +13,7 @@ import 'package:mirror_fly_demo/app/data/helper.dart';
 import 'package:mirror_fly_demo/app/data/session_management.dart';
 
 import 'package:intl/intl.dart';
+import 'package:mirrorfly_plugin/model/topic_metadata.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 import '../../../common/de_bouncer.dart';
@@ -74,6 +77,7 @@ class DashboardController extends FullLifeCycleController
   @override
   void onReady(){
     super.onReady();
+    createTopic();
     recentChats.bindStream(recentChats.stream);
     ever(recentChats, (callback) => unReadCount());
     archivedChats.bindStream(archivedChats.stream);
@@ -124,7 +128,8 @@ class DashboardController extends FullLifeCycleController
 
   getRecentChatList() {
     recentChatPage = 1;
-    Mirrorfly.getRecentChatListHistory(firstSet: recentChatPage==1,limit: chatLimit).then((value) async {
+    var fetchFrom = enableTopic ? Mirrorfly.getRecentChatListHistoryByTopic(firstSet: recentChatPage==1,limit: chatLimit,topicId: SessionManagement.getTopicId()) :  Mirrorfly.getRecentChatListHistory(firstSet: recentChatPage==1,limit: chatLimit);
+    fetchFrom.then((value) async {
       // String recentList = value.replaceAll('\n', '\\n');
       // debugPrint(recentList);
       mirrorFlyLog("getRecentChatListHistory", value);
@@ -1382,7 +1387,8 @@ class DashboardController extends FullLifeCycleController
         recentChatPage++;
         isRecentHistoryLoading(true);
         debugPrint("calling page no $recentChatPage");
-        Mirrorfly.getRecentChatListHistory(firstSet: recentChatPage==1,limit: chatLimit).then((value) async {
+        var fetchFrom = enableTopic ? Mirrorfly.getRecentChatListHistoryByTopic(firstSet: recentChatPage==1,limit: chatLimit,topicId: SessionManagement.getTopicId()) : Mirrorfly.getRecentChatListHistory(firstSet: recentChatPage==1,limit: chatLimit);
+        fetchFrom.then((value) async {
           debugPrint("getRecentChatListHistory next data $value");
           var data = await compute(recentChatFromJson, value.toString());
           recentChats.addAll(data.data!);
@@ -1394,9 +1400,27 @@ class DashboardController extends FullLifeCycleController
           isRecentHistoryLoading(false);
         });
       }
-
-
     }
 
+  }
+
+  void createTopic() async {
+    var topicId = SessionManagement.getTopicId();
+    LogMessage.d("topicId", topicId);
+    if(topicId.isEmpty && enableTopic) {
+      await Mirrorfly.createTopic(
+          topicName: "Mirrorfly", metaData: [TopicMetaData(key: "description", value: "This Topic about Mirrorfly")]).then((value) {
+        if (value != null) {
+          SessionManagement.setString("topicId", value);
+        }
+      });
+    }else{
+      await Mirrorfly.getTopics(topicIds: [topicId]).then((value) {
+        var topics = topicsFromJson(value.toString());
+        //"a00251d7-d388-4f47-8672-553f8afc7e11","c640d387-8dfc-4252-b20a-d2901ebe3197","f5dc3456-cd2a-4e64-ad91-79373a867aa3","0075fe28-ec93-45c6-be3a-85004bf860a1","da757122-1a74-40ae-9c7d-0e4c2757e6bd","5d3788c1-78ef-4158-a92b-a48f092da0b9"
+        LogMessage.d("getTopics by Id", value);
+        LogMessage.d("getTopics [0] meta", "${topics[0].metaData}");
+      });
+    }
   }
 }

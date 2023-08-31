@@ -539,7 +539,7 @@ abstract class BaseController {
   }
 
   bool notificationMadeByME(ChatMessage data){
-    return data.messageTextContent.checkNull().startsWith("You added") || data.messageTextContent.checkNull().startsWith("You removed") || data.messageTextContent.checkNull().startsWith("You created");
+    return data.messageTextContent.checkNull().startsWith("You added") || data.messageTextContent.checkNull().startsWith("You left") || data.messageTextContent.checkNull().startsWith("You removed") || data.messageTextContent.checkNull().startsWith("You created");
   }
 
   void onGroupDeletedLocally(groupJid) {

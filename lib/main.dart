@@ -47,6 +47,7 @@ bool shouldUseFirebaseEmulator = false;
 NotificationAppLaunchDetails? notificationAppLaunchDetails;
 //check is on going call
 bool isOnGoingCall = false;
+bool enableTopic = true;
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   debugPrint("#Mirrorfly Notification main function init");
