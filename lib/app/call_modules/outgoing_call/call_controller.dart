@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -378,8 +379,10 @@ class CallController extends GetxController {
   }
 
   Future<void> remoteEngaged(String userJid) async {
-    var data = await getProfileDetails(userJid);
-    toToast(data.getName() + Constants.remoteEngagedToast);
+    if (Platform.isIOS) {
+      var data = await getProfileDetails(userJid);
+      toToast(data.getName() + Constants.remoteEngagedToast);
+    }
     declineCall();
   }
 

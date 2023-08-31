@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -285,7 +286,9 @@ abstract class BaseController {
         //if we called on user B, the user B is decline the call then this will be triggered in Android
         case CallAction.remoteBusy:{
           //in Android, showing this user is busy toast inside SDK
-          //toToast("User is Busy");
+          if (Platform.isIOS){
+            toToast("User is Busy");
+          }
           if (Get.isRegistered<CallController>()) {
             Get.find<CallController>().remoteBusy(
                 callMode, userJid, callType, callAction);
