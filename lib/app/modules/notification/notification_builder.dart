@@ -30,6 +30,7 @@ class NotificationBuilder {
     var lastMessageContent = StringBuffer();
     var notificationId = chatJid.hashCode;
     var messageId = message.messageId.hashCode;
+    var topicId = message.topicId;
     var profileDetails = await getProfileDetails(chatJid!);
     if (profileDetails.isMuted == true) {
       return;
@@ -46,7 +47,7 @@ class NotificationBuilder {
         profileDetails,
         lastMessageContent.toString(),
         lastMessageTime,
-        message.senderUserJid!,autoCancel);
+        message.senderUserJid!,autoCancel,topicId.checkNull());
 
   }
 
@@ -73,7 +74,7 @@ class NotificationBuilder {
       Profile profileDetails,
       String lastMessageContent,
       int lastMessageTime,
-      String senderChatJID,bool autoCancel) async {
+      String senderChatJID,bool autoCancel,String topicId) async {
     var title = profileDetails.getName().checkNull();
     var chatJid = profileDetails.jid.checkNull();
 
@@ -139,7 +140,7 @@ class NotificationBuilder {
 
     await flutterLocalNotificationsPlugin.show(
         notificationId, title, lastMessageContent, notificationDetails,
-        payload: chatJid);
+        payload: "$chatJid,$topicId");
 
     ///Cancelling the notification shown for iOS, inorder to remove from notification tray.
     ///For Push Notification from Server, will be handled at Notification service extension.

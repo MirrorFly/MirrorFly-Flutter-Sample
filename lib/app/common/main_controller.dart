@@ -57,7 +57,7 @@ class MainController extends FullLifeCycleController with BaseController, FullLi
     getMediaEndpoint();
     uploadEndpoint(SessionManagement.getMediaEndPoint().checkNull());
     authToken(SessionManagement.getAuthToken().checkNull());
-    getAuthToken();
+    //getAuthToken();
     startNetworkListen();
 
     NotificationService notificationService = NotificationService();
@@ -123,6 +123,8 @@ class MainController extends FullLifeCycleController with BaseController, FullLi
       // ));
       debugPrint("#Mirrorfly Notification -> opening chat page--> $payload ${Get.currentRoute}");
       if(payload != null && payload.isNotEmpty){
+        var chatJid = payload.checkNull().split(",")[0];
+        var topicId = payload.checkNull().split(",")[1];
         if (Get.isRegistered<ChatController>()) {
           debugPrint("#Mirrorfly Notification -> already chat page");
           if(Get.currentRoute == Routes.forwardChat || Get.currentRoute == Routes.chatInfo || Get.currentRoute == Routes.groupInfo || Get.currentRoute == Routes.messageInfo){
@@ -130,15 +132,15 @@ class MainController extends FullLifeCycleController with BaseController, FullLi
           }
           if(Get.currentRoute.contains("from_notification=true")){
             LogMessage.d("#Mirrorfly Notification -> previously app opened from notification", "so we have to maintain that");
-            Get.offAllNamed("${AppPages.chat}?jid=$payload&from_notification=true");
+            Get.offAllNamed("${AppPages.chat}?jid=$chatJid&from_notification=true&topicId=$topicId");
           }else {
             Get.offNamed(Routes.chat,
-                parameters: {"chatJid": payload});
+                parameters: {"chatJid": chatJid,"topicId":topicId});
           }
         }else {
           debugPrint("not chat page");
           Get.toNamed(Routes.chat,
-              parameters: {"chatJid": payload});
+              parameters: {"chatJid": chatJid,"topicId":topicId});
         }
       }
     });

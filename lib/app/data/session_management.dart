@@ -1,4 +1,3 @@
-import 'package:mirror_fly_demo/main.dart';
 import 'package:mirrorfly_plugin/mirrorfly.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -218,5 +217,5 @@ class SessionManagement {
   static int appLastSession() => _preferences.getInt("$prefix${Constants.appSession}") ?? DateTime.now().millisecondsSinceEpoch;
   static int lastPinChangedAt() => _preferences.getInt("$prefix${Constants.changedPinAt}") ?? DateTime.now().millisecondsSinceEpoch;
   static bool showAlert() => _preferences.getBool('${prefix}show_alert') ?? true;
-  static String getTopicId() => enableTopic ? _preferences.getString('${prefix}topicId') ?? ("5d3788c1-78ef-4158-a92b-a48f092da0b9") : "";//Mirrorfly Topic
+  // static String getTopicId() =>  Constants.enableTopic ? Constants.topicId/*_preferences.getString('${prefix}topicId')*/ ?? ("5d3788c1-78ef-4158-a92b-a48f092da0b9") : "";//Mirrorfly Topic
 }

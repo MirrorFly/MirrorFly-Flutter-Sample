@@ -121,6 +121,7 @@ class ChatController extends FullLifeCycleController
 
   final deBouncer = DeBouncer(milliseconds: 1000);
 
+  var topicId = Constants.topicId;
   @override
   void onInit() async {
     super.onInit();
@@ -128,6 +129,10 @@ class ChatController extends FullLifeCycleController
     // var profileDetail = Get.arguments as Profile;
     // profile_.value = profileDetail;
     // if(profile_.value.jid == null){
+    if(Get.parameters['topicId']!=null){
+      topicId = Get.parameters['topicId'].toString();
+      getTopicDetail();
+    }
     var userJid = SessionManagement.getChatJid().checkNull();
     if (Get.parameters['jid'] != null) {
       nJid = Get.parameters['jid'];
@@ -455,7 +460,7 @@ class ChatController extends FullLifeCycleController
           .trim()
           .isNotEmpty) {
         Mirrorfly.sendTextMessage(messageController.text.trim(),
-            profile.jid.toString(),replyMessageId,topicId: SessionManagement.getTopicId())
+            profile.jid.toString(),replyMessageId,topicId: topicId)
             .then((value) {
           mirrorFlyLog("text message", value);
           messageController.text = "";
@@ -549,7 +554,7 @@ class ChatController extends FullLifeCycleController
       isReplying(false);
 
       Mirrorfly.sendLocationMessage(
-          profile.jid.toString(), latitude, longitude, replyMessageId,topicId: SessionManagement.getTopicId())
+          profile.jid.toString(), latitude, longitude, replyMessageId,topicId: topicId)
           .then((value) {
         mirrorFlyLog("Location_msg", value.toString());
         // ChatMessageModel chatMessageModel = sendMessageModelFromJson(value);
@@ -615,7 +620,7 @@ class ChatController extends FullLifeCycleController
   void _loadMessages() {
     // getChatHistory();
     chatLoading(true);
-    Mirrorfly.initializeMessageList(userJid: profile.jid.checkNull(), limit: 25,topicId: SessionManagement.getTopicId())
+    Mirrorfly.initializeMessageList(userJid: profile.jid.checkNull(), limit: 25,topicId: topicId)
         .then((value) {
       value
           ? Mirrorfly.loadMessages().then((value) {
@@ -799,7 +804,7 @@ class ChatController extends FullLifeCycleController
       isReplying(false);
       if (File(path!).existsSync()) {
         return Mirrorfly.sendImageMessage(
-            profile.jid!, path, caption, replyMessageID,topicId: SessionManagement.getTopicId())
+            profile.jid!, path, caption, replyMessageID,topicId: topicId)
             .then((value) {
           clearMessage();
           ChatMessageModel chatMessageModel = sendMessageModelFromJson(value);
@@ -867,7 +872,7 @@ class ChatController extends FullLifeCycleController
       isReplying(false);
       Platform.isIOS ? Helper.showLoading(message: "Compressing Video") : null;
       return Mirrorfly.sendVideoMessage(
-          profile.jid!, videoPath, caption, replyMessageID,topicId: SessionManagement.getTopicId())
+          profile.jid!, videoPath, caption, replyMessageID,topicId: topicId)
           .then((value) {
         clearMessage();
         Platform.isIOS ? Helper.hideLoading() : null;
@@ -982,7 +987,7 @@ class ChatController extends FullLifeCycleController
       }
       isReplying(false);
       return Mirrorfly.sendContactMessage(
-          contactList, profile.jid!, contactName, replyMessageId,topicId: SessionManagement.getTopicId())
+          contactList, profile.jid!, contactName, replyMessageId,topicId: topicId)
           .then((value) {
         debugPrint("response--> $value");
         ChatMessageModel chatMessageModel = sendMessageModelFromJson(value);
@@ -1012,7 +1017,7 @@ class ChatController extends FullLifeCycleController
         replyMessageId = replyChatMessage.messageId;
       }
       isReplying(false);
-      Mirrorfly.sendDocumentMessage(profile.jid!, documentPath, replyMessageId,topicId: SessionManagement.getTopicId())
+      Mirrorfly.sendDocumentMessage(profile.jid!, documentPath, replyMessageId,topicId: topicId)
           .then((value) {
         ChatMessageModel chatMessageModel = sendMessageModelFromJson(value);
         // chatList.insert(0, chatMessageModel);
@@ -1105,7 +1110,7 @@ class ChatController extends FullLifeCycleController
       isUserTyping(false);
       isReplying(false);
       Mirrorfly.sendAudioMessage(
-          profile.jid!, filePath, isRecorded, duration, replyMessageId,topicId: SessionManagement.getTopicId())
+          profile.jid!, filePath, isRecorded, duration, replyMessageId,topicId: topicId)
           .then((value) {
         mirrorFlyLog("Audio Message sent", value);
         ChatMessageModel chatMessageModel = sendMessageModelFromJson(value);
@@ -3076,5 +3081,20 @@ class ChatController extends FullLifeCycleController
 
   void updateLastMessage(dynamic chatMessageModel) {
     Get.find<MainController>().onMessageStatusUpdated(chatMessageModel);
+  }
+
+  var topic = Topics().obs;
+  void getTopicDetail() async {
+    if(topicId.isNotEmpty) {
+      await Mirrorfly.getTopics(topicIds: [topicId]).then((value) {
+        var topics = topicsFromJson(value.toString());
+        topic(topics.isNotEmpty ? topics[0] : null);
+        //"a00251d7-d388-4f47-8672-553f8afc7e11","c640d387-8dfc-4252-b20a-d2901ebe3197","f5dc3456-cd2a-4e64-ad91-79373a867aa3","0075fe28-ec93-45c6-be3a-85004bf860a1","da757122-1a74-40ae-9c7d-0e4c2757e6bd","5d3788c1-78ef-4158-a92b-a48f092da0b9","4d83dfad-79a8-43fd-98b8-7eb8943dc8ca","0b290e7f-b05c-4859-a72d-100c48f73c8d","1ab018d1-1068-4988-8b28-fe1079e07ab2"
+        LogMessage.d("getTopics by Id", value);
+        LogMessage.d("getTopics [0] meta", "${topics[0].metaData}");
+      }).catchError((onError) {
+        LogMessage.d("getTopics error", onError);
+      });
+    }
   }
 }
