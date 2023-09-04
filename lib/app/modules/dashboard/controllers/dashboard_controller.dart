@@ -74,6 +74,7 @@ class DashboardController extends FullLifeCycleController
   @override
   void onReady(){
     super.onReady();
+    debugPrint("DashboardController onReady");
     recentChats.bindStream(recentChats.stream);
     ever(recentChats, (callback) => unReadCount());
     archivedChats.bindStream(archivedChats.stream);
@@ -83,6 +84,7 @@ class DashboardController extends FullLifeCycleController
     // checkArchiveSetting();
     userlistScrollController.addListener(_scrollListener);
     historyScrollController.addListener(historyScrollListener);
+    getAvailableFeatures();
 
   }
 
@@ -1398,5 +1400,13 @@ class DashboardController extends FullLifeCycleController
 
     }
 
+  }
+
+  void getAvailableFeatures() {
+    Mirrorfly.getAvailableFeatures().then((features) {
+      debugPrint("getAvailableFeatures $features");
+      var availableFeature = availableFeaturesFromJson(features);
+      debugPrint("availableFeature ${availableFeature.isClearChatAvailable}");
+    });
   }
 }
