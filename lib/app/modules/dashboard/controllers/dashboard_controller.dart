@@ -1416,7 +1416,7 @@ class DashboardController extends FullLifeCycleController
           //SessionManagement.setString("topicId", value);
         }
       });
-    }else{
+    }else if(Constants.enableTopic){
       // if(topicId.isNotEmpty) {
         //c47cdeec-32a0-4abb-a318-ab60048df577,a8f8877b-52c0-47cc-83d1-6e0292876daa,b7ba6a95-56f4-4354-a40c-b9a03b0cf470
         //Walkie Talkie,Macbook Pro,Macbook Air
