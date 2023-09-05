@@ -19,6 +19,7 @@ import 'package:mirror_fly_demo/app/modules/notification/notification_builder.da
 import 'package:mirror_fly_demo/app/routes/app_pages.dart';
 
 import 'package:mirrorfly_plugin/mirrorfly.dart';
+import 'package:mirrorfly_plugin/model/available_features.dart';
 
 import '../modules/chatInfo/controllers/chat_info_controller.dart';
 import 'notification_service.dart';
@@ -37,6 +38,8 @@ class MainController extends FullLifeCycleController with BaseController, FullLi
   bool _notificationsEnabled = false;
   //network listener
   static StreamSubscription<InternetConnectionStatus>? listener;
+
+  var availableFeature = AvailableFeatures().obs;
 
   @override
   Future<void> onInit() async {
@@ -59,6 +62,8 @@ class MainController extends FullLifeCycleController with BaseController, FullLi
     authToken(SessionManagement.getAuthToken().checkNull());
     getAuthToken();
     startNetworkListen();
+
+    getAvailableFeatures();
 
     NotificationService notificationService = NotificationService();
     await notificationService.init();
@@ -346,5 +351,13 @@ class MainController extends FullLifeCycleController with BaseController, FullLi
     if((SessionManagement.getEnablePin() || SessionManagement.getEnableBio()) && Get.currentRoute!=Routes.pin){
       Get.toNamed(Routes.pin,);
     }
+  }
+
+  void getAvailableFeatures() {
+    Mirrorfly.getAvailableFeatures().then((features) {
+      debugPrint("getAvailableFeatures $features");
+      var featureAvailable = availableFeaturesFromJson(features);
+      availableFeature(featureAvailable);
+    });
   }
 }

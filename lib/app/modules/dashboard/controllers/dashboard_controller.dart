@@ -84,7 +84,6 @@ class DashboardController extends FullLifeCycleController
     // checkArchiveSetting();
     userlistScrollController.addListener(_scrollListener);
     historyScrollController.addListener(historyScrollListener);
-    getAvailableFeatures();
 
   }
 
@@ -1396,17 +1395,8 @@ class DashboardController extends FullLifeCycleController
           isRecentHistoryLoading(false);
         });
       }
-
-
     }
-
   }
 
-  void getAvailableFeatures() {
-    Mirrorfly.getAvailableFeatures().then((features) {
-      debugPrint("getAvailableFeatures $features");
-      var availableFeature = availableFeaturesFromJson(features);
-      debugPrint("availableFeature ${availableFeature.isClearChatAvailable}");
-    });
-  }
+
 }
