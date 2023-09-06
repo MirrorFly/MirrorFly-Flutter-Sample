@@ -106,7 +106,7 @@ class OtpView extends GetView<LoginController> {
                                         fontWeight: FontWeight.w500),
                                     shape: const StadiumBorder()),
                                 onPressed: () {
-                                  // controller.verifyOTP();
+                                  controller.verifyOTP();
                                 },
                                 child: const Text(
                                   'Verify OTP',

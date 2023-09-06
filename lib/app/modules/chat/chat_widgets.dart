@@ -408,7 +408,6 @@ Image imageFromBase64String(
     String base64String, BuildContext context, double? width, double? height) {
   var decodedBase64 = base64String.replaceAll("\n", "");
   Uint8List image = const Base64Decoder().convert(decodedBase64);
-  debugPrint("image Base64Decoder $image");
   return Image.memory(
     image,
     width: width ?? MediaQuery.of(context).size.width * 0.60,
@@ -1598,7 +1597,6 @@ class ImageMessageView extends StatelessWidget {
       BuildContext context, String mediaFileName, bool isSelected) {
     var screenHeight = MediaQuery.of(context).size.height;
     var screenWidth = MediaQuery.of(context).size.width;
-    debugPrint("mediaLocalStoragePath $mediaLocalStoragePath");
     if (checkFile(mediaLocalStoragePath)) {
       return InkWell(
           onTap: isSelected

@@ -10,12 +10,12 @@ import 'package:is_lock_screen/is_lock_screen.dart';
 import 'package:mirror_fly_demo/app/base_controller.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
-import 'package:mirror_fly_demo/app/common/received_notification.dart';
 import 'package:mirror_fly_demo/app/data/pushnotification.dart';
 import 'package:mirror_fly_demo/app/data/session_management.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
 import 'package:mirror_fly_demo/app/modules/chat/controllers/chat_controller.dart';
 import 'package:mirror_fly_demo/app/modules/contact_sync/controllers/contact_sync_controller.dart';
+import 'package:mirror_fly_demo/app/modules/notification/notification_builder.dart';
 import 'package:mirror_fly_demo/app/routes/app_pages.dart';
 
 import 'package:mirrorfly_plugin/mirrorfly.dart';
@@ -41,24 +41,30 @@ class MainController extends FullLifeCycleController with BaseController, FullLi
   @override
   Future<void> onInit() async {
     super.onInit();
+    /*Mirrorfly.isOnGoingCall().then((value){
+      if(value.checkNull()){
+        Get.toNamed(Routes.onGoingCallView);
+      }
+    });*/
     Mirrorfly.getValueFromManifestOrInfoPlist(androidManifestKey: "com.google.android.geo.API_THUMP_KEY",iOSPlistKey: "API_THUMP_KEY").then((value){
       googleMapKey = value;
       mirrorFlyLog("com.google.android.geo.API_THUMP_KEY", googleMapKey);
     });
     //presentPinPage();
+    debugPrint("#Mirrorfly Notification -> Main Controller push init");
     PushNotifications.init();
     initListeners();
     getMediaEndpoint();
     uploadEndpoint(SessionManagement.getMediaEndPoint().checkNull());
     authToken(SessionManagement.getAuthToken().checkNull());
-    getAuthToken();
+    //getAuthToken();
     startNetworkListen();
 
     NotificationService notificationService = NotificationService();
     await notificationService.init();
     _isAndroidPermissionGranted();
     _requestPermissions();
-    _configureDidReceiveLocalNotificationSubject();
+    // _configureDidReceiveLocalNotificationSubject();
     _configureSelectNotificationSubject();
   }
 
@@ -108,52 +114,33 @@ class MainController extends FullLifeCycleController with BaseController, FullLi
     }
   }
 
-  void _configureDidReceiveLocalNotificationSubject() {
-    didReceiveLocalNotificationStream.stream
-        .listen((ReceivedNotification receivedNotification) async {
-      await showDialog(
-        context: Get.context!,
-        builder: (BuildContext context) => CupertinoAlertDialog(
-          title: receivedNotification.title != null
-              ? Text(receivedNotification.title!)
-              : null,
-          content: receivedNotification.body != null
-              ? Text(receivedNotification.body!)
-              : null,
-          actions: <Widget>[
-            CupertinoDialogAction(
-              isDefaultAction: true,
-              onPressed: () async {
 
-              },
-              child: const Text('Ok'),
-            )
-          ],
-        ),
-      );
-    });
-  }
 
   void _configureSelectNotificationSubject() {
     selectNotificationStream.stream.listen((String? payload) async {
       // await Navigator.of(context).push(MaterialPageRoute<void>(
       //   builder: (BuildContext context) => SecondPage(payload),
       // ));
-      debugPrint("opening chat page--> $payload");
+      debugPrint("#Mirrorfly Notification -> opening chat page--> $payload ${Get.currentRoute}");
       if(payload != null && payload.isNotEmpty){
-
+        var chatJid = payload.checkNull().split(",")[0];
+        var topicId = payload.checkNull().split(",")[1];
         if (Get.isRegistered<ChatController>()) {
-          getProfileDetails(payload).then((value) {
-            if (value.jid != null) {
-              debugPrint("notification group info controller");
-              // var profile = profiledata(value.toString());
-              // Get.toNamed(Routes.chat, arguments: profile);
-              Get.back(result: value);
-            }
-          });
+          debugPrint("#Mirrorfly Notification -> already chat page");
+          if(Get.currentRoute == Routes.forwardChat || Get.currentRoute == Routes.chatInfo || Get.currentRoute == Routes.groupInfo || Get.currentRoute == Routes.messageInfo){
+            Get.back();
+          }
+          if(Get.currentRoute.contains("from_notification=true")){
+            LogMessage.d("#Mirrorfly Notification -> previously app opened from notification", "so we have to maintain that");
+            Get.offAllNamed("${AppPages.chat}?jid=$chatJid&from_notification=true&topicId=$topicId");
+          }else {
+            Get.offNamed(Routes.chat,
+                parameters: {"chatJid": chatJid,"topicId":topicId});
+          }
         }else {
+          debugPrint("not chat page");
           Get.toNamed(Routes.chat,
-              parameters: {'isFromStarred': 'true', "userJid": payload});
+              parameters: {"chatJid": chatJid,"topicId":topicId});
         }
       }
     });
@@ -195,7 +182,7 @@ class MainController extends FullLifeCycleController with BaseController, FullLi
             .getPassword()
             .checkNull()
             .isNotEmpty) {
-      await Mirrorfly.authToken().then((value) {
+      await Mirrorfly.refreshAndGetAuthToken().then((value) {
         mirrorFlyLog("RetryAuth", value.toString());
         if(value!=null) {
           if (value.isNotEmpty) {
@@ -293,6 +280,7 @@ class MainController extends FullLifeCycleController with BaseController, FullLi
   @override
   void onResumed() {
     mirrorFlyLog('mainController', 'onResumed');
+    NotificationBuilder.cancelNotifications();
     checkShouldShowPin();
     if(!Mirrorfly.isTrialLicence) {
       syncContacts();

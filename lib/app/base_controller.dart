@@ -1,8 +1,11 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:mirror_fly_demo/app/call_modules/outgoing_call/call_controller.dart';
+import 'package:mirrorfly_plugin/logmessage.dart';
 import 'package:mirrorfly_plugin/mirrorflychat.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
@@ -18,12 +21,14 @@ import 'package:mirror_fly_demo/app/routes/app_pages.dart';
 import 'common/main_controller.dart';
 import 'common/notification_service.dart';
 import 'model/chat_message_model.dart';
+import 'model/notification_message_model.dart';
 import 'modules/archived_chats/archived_chat_list_controller.dart';
 import 'modules/chat/controllers/forwardchat_controller.dart';
 import 'modules/chatInfo/controllers/chat_info_controller.dart';
 import 'modules/dashboard/controllers/dashboard_controller.dart';
 // import 'modules/dashboard/controllers/recent_chat_search_controller.dart';
 import 'modules/message_info/controllers/message_info_controller.dart';
+import 'modules/notification/notification_builder.dart';
 import 'modules/starred_messages/controllers/starred_messages_controller.dart';
 import 'modules/view_all_media/controllers/view_all_media_controller.dart';
 
@@ -95,7 +100,6 @@ abstract class BaseController {
       onAdminBlockedUser(jid, status);
     });
     Mirrorfly.onContactSyncComplete.listen(onContactSyncComplete);
-    Mirrorfly.onLoggedOut.listen(onLoggedOut);
     Mirrorfly.unblockedThisUser.listen((event){
       var data = json.decode(event.toString());
       var jid = data["jid"];
@@ -147,6 +151,189 @@ abstract class BaseController {
     Mirrorfly.onProgressChanged.listen(onProgressChanged);
     Mirrorfly.onSuccess.listen(onSuccess);
     Mirrorfly.onLoggedOut.listen(onLogout);
+
+    Mirrorfly.onLocalVideoTrackAdded.listen((event) {
+
+    });
+    Mirrorfly.onRemoteVideoTrackAdded.listen((event) {
+
+    });
+    Mirrorfly.onTrackAdded.listen((event) {
+      debugPrint("#Mirrorfly Call track added --> $event");
+    });
+    Mirrorfly.onCallStatusUpdated.listen((event) {
+      // {"callMode":"OneToOne","userJid":"","callType":"video","callStatus":"Attended"}
+      debugPrint("#MirrorflyCall onCallStatusUpdated --> $event");
+
+      var statusUpdateReceived = jsonDecode(event);
+      var callMode = statusUpdateReceived["callMode"].toString();
+      var userJid = statusUpdateReceived["userJid"].toString();
+      var callType = statusUpdateReceived["callType"].toString();
+      var callStatus = statusUpdateReceived["callStatus"].toString();
+
+      if (Get.isRegistered<CallController>()) {
+        Get.find<CallController>().statusUpdate(userJid,callStatus);
+      }
+
+      switch (callStatus){
+        case CallStatus.connecting:
+          break;
+        case CallStatus.onResume:
+          break;
+        case CallStatus.userJoined:
+          break;
+        case CallStatus.userLeft:
+          break;
+        case CallStatus.inviteCallTimeout:
+          break;
+        case CallStatus.attended:
+          if(Get.currentRoute!=Routes.onGoingCallView) {
+            debugPrint("***opening cal page");
+            Get.toNamed(
+                Routes.onGoingCallView, arguments: { "userJid": userJid});
+          }
+          break;
+
+        case CallStatus.disconnected:
+          stopTimer();
+          if (Get.isRegistered<CallController>()) {
+            Get.find<CallController>().callDisconnected(
+                callMode, userJid, callType);
+          }else{
+            debugPrint("#Mirrorfly call call controller not registered for disconnect event");
+          }
+          break;
+        case CallStatus.calling10s:
+          break;
+        case CallStatus.callingAfter10s:
+          break;
+        case CallStatus.calling:
+          if (Get.isRegistered<CallController>()) {
+            Get.find<CallController>().calling(
+                callMode, userJid, callType, callStatus);
+          }else{
+            debugPrint("#Mirrorfly call call controller not registered for calling event");
+          }
+          break;
+        case CallStatus.reconnected:
+          if (Get.isRegistered<CallController>()) {
+            Get.find<CallController>().reconnected(
+                callMode, userJid, callType, callStatus);
+          }else{
+            debugPrint("#Mirrorfly call call controller not registered for reconnected event");
+          }
+          break;
+        case CallStatus.ringing:
+          if (Get.isRegistered<CallController>()) {
+            Get.find<CallController>().ringing(
+                callMode, userJid, callType, callStatus);
+          }else{
+            debugPrint("#Mirrorfly call call controller not registered for ringing event");
+          }
+          break;
+        case CallStatus.onHold:
+          if (Get.isRegistered<CallController>()) {
+            Get.find<CallController>().onHold(
+                callMode, userJid, callType, callStatus);
+          }else{
+            debugPrint("#Mirrorfly call call controller not registered for onHold event");
+          }
+          break;
+        case CallStatus.connected:
+          startTimer();
+          if (Get.isRegistered<CallController>()) {
+            Get.find<CallController>().connected(
+                callMode, userJid, callType, callStatus);
+          }else{
+            debugPrint("#Mirrorfly call call controller not registered for connected event");
+          }
+          break;
+
+        case CallStatus.callTimeout:
+          if (Get.isRegistered<CallController>()) {
+            Get.find<CallController>().timeout(
+                callMode, userJid, callType, callStatus);
+          }else{
+            debugPrint("#Mirrorfly call call controller not registered for timeout event");
+          }
+          break;
+
+        default:
+          debugPrint("onCall status updated error: $callStatus");
+      }
+
+
+    });
+    Mirrorfly.onCallAction.listen((event) {
+      // {"callAction":"REMOTE_HANGUP","userJid":""}
+      mirrorFlyLog("onCallAction", "$event");
+      var actionReceived = jsonDecode(event);
+      var callAction = actionReceived["callAction"].toString();
+      var userJid = actionReceived["userJid"].toString();
+      var callMode = actionReceived["callMode"].toString();
+      var callType = actionReceived["callType"].toString();
+      switch(callAction){
+        case CallAction.localHangup:{
+          stopTimer();
+          if (Get.isRegistered<CallController>()) {
+            //if user hangup the call from background notification
+            Get.find<CallController>().localHangup(
+                callMode, userJid, callType, callAction);
+          }
+          break;
+        }
+        //if we called on user B, the user B is decline the call then this will be triggered in Android
+        case CallAction.remoteBusy:{
+          //in Android, showing this user is busy toast inside SDK
+          //toToast("User is Busy");
+          if (Get.isRegistered<CallController>()) {
+            Get.find<CallController>().remoteBusy(
+                callMode, userJid, callType, callAction);
+          }
+          break;
+        }
+      //if we called on user B, the user B is disconnect the call after connect then this will be triggered in Android
+        case CallAction.remoteHangup:{
+          if (Get.isRegistered<CallController>()) {
+            Get.find<CallController>().remoteHangup(
+                callMode, userJid, callType, callAction);
+          }
+          break;
+        }
+        //if we called on user B, the user B is on another call then this will triggered
+        case CallAction.remoteEngaged:{
+          if (Get.isRegistered<CallController>()) {
+            Get.find<CallController>().remoteEngaged();
+          }
+          break;
+        }
+        case CallAction.audioDeviceChanged:{
+          debugPrint("call action audioDeviceChanged");
+          if (Get.isRegistered<CallController>()) {
+            Get.find<CallController>().audioDeviceChanged();
+          }
+          break;
+        }
+      }
+    });
+    Mirrorfly.onMuteStatusUpdated.listen((event) {
+      mirrorFlyLog("onMuteStatusUpdated", "$event");
+      var muteStatus = jsonDecode(event);
+      var muteEvent = muteStatus["muteEvent"].toString();
+      var userJid = muteStatus["userJid"].toString();
+      if(Get.isRegistered<CallController>()){
+        if(muteEvent == MuteStatus.remoteAudioMute || muteEvent == MuteStatus.remoteAudioUnMute) {
+          Get.find<CallController>().audioMuteStatusChanged(muteEvent, userJid);
+        }
+      }
+
+    });
+    Mirrorfly.onUserSpeaking.listen((event) {
+      mirrorFlyLog("onUserSpeaking", "$event");
+    });
+    Mirrorfly.onUserStoppedSpeaking.listen((event) {
+      mirrorFlyLog("onUserSpeaking", "$event");
+    });
   }
 
   void onMessageReceived(chatMessage) {
@@ -156,7 +343,11 @@ abstract class BaseController {
     if(SessionManagement.getCurrentChatJID() == chatMessageModel.chatUserJid.checkNull()){
       debugPrint("Message Received user chat screen is in online");
     }else{
-     showLocalNotification(chatMessageModel);
+      var data = chatMessageFromJson(chatMessage.toString());
+      if(data.messageId!=null) {
+        NotificationBuilder.createNotification(data);
+      }
+     // showLocalNotification(chatMessageModel);
     }
 
     if (Get.isRegistered<ChatController>()) {
@@ -196,9 +387,11 @@ abstract class BaseController {
     if(SessionManagement.getCurrentChatJID() == chatMessageModel.chatUserJid.checkNull()){
       debugPrint("Message Status updated user chat screen is in online");
     }else{
-      if(chatMessageModel.isMessageRecalled.value){
-        showLocalNotification(chatMessageModel);
-      }
+        var data = chatMessageFromJson(event.toString());
+        if(data.isMessageRecalled.checkNull()) {
+          // NotificationBuilder.createNotification(data);
+        }
+        // showLocalNotification(chatMessageModel);
     }
 
     if (Get.isRegistered<ChatController>()) {
@@ -323,6 +516,17 @@ abstract class BaseController {
   void onGroupNotificationMessage(event) {
     debugPrint('onGroupNotificationMessage $event');
     ChatMessageModel chatMessageModel = sendMessageModelFromJson(event);
+    if(SessionManagement.getCurrentChatJID() == chatMessageModel.chatUserJid.checkNull()){
+      debugPrint("Message Received group chat screen is in online");
+    }else{
+      var data = chatMessageFromJson(event.toString());
+      debugPrint("notificationMadeByME ${notificationMadeByME(data)}");
+      //checked own notification for (if group notification made by me like group member add,remove)
+      if(data.messageId!=null && !notificationMadeByME(data)) {
+        NotificationBuilder.createNotification(data);
+      }
+      // showLocalNotification(chatMessageModel);
+    }
     if (Get.isRegistered<DashboardController>()) {
       Get.find<DashboardController>().onMessageReceived(chatMessageModel);
     }
@@ -332,6 +536,10 @@ abstract class BaseController {
     if (Get.isRegistered<ChatController>()) {
       Get.find<ChatController>().onMessageReceived(chatMessageModel);
     }
+  }
+
+  bool notificationMadeByME(ChatMessage data){
+    return data.messageTextContent.checkNull().startsWith("You added") || data.messageTextContent.checkNull().startsWith("You left") || data.messageTextContent.checkNull().startsWith("You removed") || data.messageTextContent.checkNull().startsWith("You created");
   }
 
   void onGroupDeletedLocally(groupJid) {
@@ -349,10 +557,10 @@ abstract class BaseController {
 
   }
 
-  void onContactSyncComplete(bool result) {
+  void onContactSyncComplete(dynamic result) {
     mirrorFlyLog("onContactSyncComplete", result.toString());
     // Mirrorfly.getRegisteredUsers(true);
-    if(result) {
+    if(result as bool) {
       SessionManagement.setInitialContactSync(true);
       SessionManagement.setSyncDone(true);
     }
@@ -375,10 +583,6 @@ abstract class BaseController {
       Get.find<ChatInfoController>().onContactSyncComplete(result);
     }
     //Mirrorfly.getRegisteredUsers(true).then((value) => mirrorFlyLog("registeredUsers", value.toString()));
-  }
-
-  void onLoggedOut(result) {
-    mirrorFlyLog('logout called', result.toString());
   }
 
   void unblockedThisUser(String jid) {
@@ -422,39 +626,44 @@ abstract class BaseController {
     }
   }
 
-  void userDeletedHisProfile(String jid) {
+  void userDeletedHisProfile(dynamic jid) {
     if (Get.isRegistered<DashboardController>()) {
-      Get.find<DashboardController>().userDeletedHisProfile(jid);
+      Get.find<DashboardController>().userDeletedHisProfile(jid.toString());
     }
     if (Get.isRegistered<ChatController>()) {
-      Get.find<ChatController>().userDeletedHisProfile(jid);
+      Get.find<ChatController>().userDeletedHisProfile(jid.toString());
     }
     if (Get.isRegistered<ArchivedChatListController>()) {
-      Get.find<ArchivedChatListController>().userDeletedHisProfile(jid);
+      Get.find<ArchivedChatListController>().userDeletedHisProfile(jid.toString());
     }
     if (Get.isRegistered<ContactController>()) {
-      Get.find<ContactController>().userDeletedHisProfile(jid);
+      Get.find<ContactController>().userDeletedHisProfile(jid.toString());
     }
     if (Get.isRegistered<BlockedListController>()) {
-      Get.find<BlockedListController>().userDeletedHisProfile(jid);
+      Get.find<BlockedListController>().userDeletedHisProfile(jid.toString());
     }
     if (Get.isRegistered<ForwardChatController>()) {
-      Get.find<ForwardChatController>().userDeletedHisProfile(jid);
+      Get.find<ForwardChatController>().userDeletedHisProfile(jid.toString());
     }
     if (Get.isRegistered<ChatInfoController>()) {
-      Get.find<ChatInfoController>().userDeletedHisProfile(jid);
+      Get.find<ChatInfoController>().userDeletedHisProfile(jid.toString());
     }
     if (Get.isRegistered<GroupInfoController>()) {
-      Get.find<GroupInfoController>().userDeletedHisProfile(jid);
+      Get.find<GroupInfoController>().userDeletedHisProfile(jid.toString());
     }
     if (Get.isRegistered<StarredMessagesController>()) {
-      Get.find<StarredMessagesController>().userDeletedHisProfile(jid);
+      Get.find<StarredMessagesController>().userDeletedHisProfile(jid.toString());
     }
   }
 
   void userProfileFetched(result) {}
 
-  void userUnBlockedMe(result) {}
+  void userUnBlockedMe(result) {
+    mirrorFlyLog("userUnBlockedMe", result);
+    var data = json.decode(result.toString());
+    var jid = data["jid"];
+    unblockedThisUser(jid);
+  }
 
   void userUpdatedHisProfile(String jid) {
     mirrorFlyLog("userUpdatedHisProfile", jid.toString());
@@ -558,7 +767,7 @@ abstract class BaseController {
       debugPrint("notificationUri--> $notificationUri");
 
       var messageId = chatMessageModel.messageSentTime.toString().substring(chatMessageModel.messageSentTime.toString().length - 5);
-
+      debugPrint("Mani Message ID $messageId");
       AndroidNotificationDetails androidNotificationDetails =
       AndroidNotificationDetails(chatMessageModel.messageId, 'MirrorFly',
           importance: Importance.max,
@@ -577,7 +786,7 @@ abstract class BaseController {
       NotificationDetails notificationDetails =
       NotificationDetails(android: androidNotificationDetails, iOS: iosNotificationDetails);
       await flutterLocalNotificationsPlugin.show(
-          int.parse(messageId), chatMessageModel.senderUserName,
+          12345, chatMessageModel.senderUserName,
           chatMessageModel.isMessageRecalled.value ? "This message was deleted" : chatMessageModel.messageTextContent, notificationDetails,
           payload: chatMessageModel.chatUserJid);
     }else{
@@ -613,5 +822,38 @@ abstract class BaseController {
       //   });
       // });
     }
+  }
+
+  Timer? timer;
+  void startTimer() {
+    // if (timer == null) {
+    timer = null;
+      const oneSec = Duration(seconds: 1);
+      var startTime = DateTime.now();
+      timer = Timer.periodic(
+        oneSec,
+            (Timer timer) {
+          final minDur = DateTime
+              .now()
+              .difference(startTime)
+              .inMinutes;
+          final secDur = DateTime
+              .now()
+              .difference(startTime)
+              .inSeconds % 60;
+          String min = minDur < 10 ? "0$minDur" : minDur.toString();
+          String sec = secDur < 10 ? "0$secDur" : secDur.toString();
+          var time = "$min:$sec";
+          LogMessage.d("callTimer", time);
+          if (Get.isRegistered<CallController>()) {
+            Get.find<CallController>().callDuration(time);
+          }
+        },
+      );
+    // }
+  }
+  void stopTimer(){
+    timer?.cancel();
+    timer=null;
   }
 }

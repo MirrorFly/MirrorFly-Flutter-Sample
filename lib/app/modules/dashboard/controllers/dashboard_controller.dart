@@ -3,6 +3,8 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
+import 'package:mirror_fly_demo/app/modules/notification/notification_builder.dart';
+import 'package:mirrorfly_plugin/logmessage.dart';
 import 'package:mirrorfly_plugin/mirrorflychat.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
@@ -73,11 +75,14 @@ class DashboardController extends FullLifeCycleController
   @override
   void onReady(){
     super.onReady();
+    createTopic();
     recentChats.bindStream(recentChats.stream);
     ever(recentChats, (callback) => unReadCount());
     archivedChats.bindStream(archivedChats.stream);
     ever(archivedChats, (callback) => archivedChatCount());
-    getRecentChatList();
+    if(!Constants.enableTopic) {
+      getRecentChatList();
+    }
     getArchivedChatsList();
     // checkArchiveSetting();
     userlistScrollController.addListener(_scrollListener);
@@ -123,7 +128,8 @@ class DashboardController extends FullLifeCycleController
 
   getRecentChatList() {
     recentChatPage = 1;
-    Mirrorfly.getRecentChatListHistory(firstSet: recentChatPage==1,limit: chatLimit).then((value) async {
+    var fetchFrom =  Constants.enableTopic ? Mirrorfly.getRecentChatListHistoryByTopic(firstSet: recentChatPage==1,limit: chatLimit,topicId: topicId.value) :  Mirrorfly.getRecentChatListHistory(firstSet: recentChatPage==1,limit: chatLimit);
+    fetchFrom.then((value) async {
       // String recentList = value.replaceAll('\n', '\\n');
       // debugPrint(recentList);
       mirrorFlyLog("getRecentChatListHistory", value);
@@ -138,6 +144,19 @@ class DashboardController extends FullLifeCycleController
       debugPrint("recent chat issue===> $error");
       recentChatLoading(false);
     });
+    /*mirrorFlyLog("", "recent chats");
+    Mirrorfly.getRecentChatList().then((value) async {
+      // String recentList = value.replaceAll('\n', '\\n');
+      // debugPrint(recentList);
+      var data = await compute(recentChatFromJson, value.toString());
+      //recentChats.clear();
+      recentChats(data.data!);
+      recentChats.refresh();
+      recentChatLoading(false);
+    }).catchError((error) {
+      debugPrint("recent chat issue===> $error");
+      recentChatLoading(false);
+    });*/
   }
 
   getArchivedChatsList() async {
@@ -154,7 +173,7 @@ class DashboardController extends FullLifeCycleController
 
   toChatPage(String jid) {
     if (jid.isNotEmpty) {
-      Get.toNamed(Routes.chat, parameters: {"chatJid":jid});
+      Get.toNamed(Routes.chat, parameters: {"chatJid":jid,"topicId":topicId.value});
       // Helper.progressLoading();
       /*getProfileDetails(jid).then((value) {
         if (value.jid != null) {
@@ -778,6 +797,8 @@ class DashboardController extends FullLifeCycleController
       for (var element in selectedChatsPosition) {
         recentChats[element].isConversationUnRead = false;
         recentChats[element].unreadMessageCount = 0;
+        var jid = recentChats[element].jid;
+        NotificationBuilder.clearConversationOnNotification(jid.checkNull());
       }
       clearAllChatSelection();
       updateUnReadChatCount();
@@ -891,11 +912,11 @@ class DashboardController extends FullLifeCycleController
   }
 
   void markConversationReadNotifyUI(String jid){
-    mirrorFlyLog("setConversationAsRead", "setConversationAsRead");
     var index = recentChats.indexWhere((element) => element.jid==jid);
     if(!index.isNegative) {
       if (recentChats[index].isConversationUnRead.checkNull()) {
         recentChats[index].isConversationUnRead = false;
+        recentChats[index].unreadMessageCount = 0;
         recentChats.refresh();
       }
     }
@@ -1270,7 +1291,7 @@ class DashboardController extends FullLifeCycleController
   Future<void> gotoContacts() async {
     if (Mirrorfly.isTrialLicence) {
       Get.toNamed(Routes.contacts,
-          arguments: {"forward": false, "group": false, "groupJid": ""});
+          arguments: {"forward": false, "group": false, "groupJid": ""},parameters: {"topicId":topicId.value});
     } else {
       var contactPermissionHandle = await AppPermission.checkPermission(
           Permission.contacts,
@@ -1278,7 +1299,7 @@ class DashboardController extends FullLifeCycleController
           Constants.contactSyncPermission);
       if (contactPermissionHandle) {
         Get.toNamed(Routes.contacts,
-            arguments: {"forward": false, "group": false, "groupJid": ""});
+            arguments: {"forward": false, "group": false, "groupJid": ""},parameters: {"topicId":topicId.value});
       }
     }
   }
@@ -1366,7 +1387,8 @@ class DashboardController extends FullLifeCycleController
         recentChatPage++;
         isRecentHistoryLoading(true);
         debugPrint("calling page no $recentChatPage");
-        Mirrorfly.getRecentChatListHistory(firstSet: recentChatPage==1,limit: chatLimit).then((value) async {
+        var fetchFrom =  Constants.enableTopic ? Mirrorfly.getRecentChatListHistoryByTopic(firstSet: recentChatPage==1,limit: chatLimit,topicId: topicId.value) : Mirrorfly.getRecentChatListHistory(firstSet: recentChatPage==1,limit: chatLimit);
+        fetchFrom.then((value) async {
           debugPrint("getRecentChatListHistory next data $value");
           var data = await compute(recentChatFromJson, value.toString());
           recentChats.addAll(data.data!);
@@ -1378,9 +1400,45 @@ class DashboardController extends FullLifeCycleController
           isRecentHistoryLoading(false);
         });
       }
-
-
     }
 
+  }
+
+  var topicId = Constants.topicId.obs;
+  var topics = <Topics>[].obs;
+  void createTopic() async {
+    var topicId = Constants.topicId;
+    LogMessage.d("topicId", topicId);
+    if(topicId.isEmpty && Constants.enableTopic) {
+      await Mirrorfly.createTopic(
+          topicName: "Topic name", metaData: [TopicMetaData(key: "description", value: "Topic Description")]).then((value) {
+        if (value != null) {
+          //SessionManagement.setString("topicId", value);
+        }
+      });
+    }else if(Constants.enableTopic){
+      // if(topicId.isNotEmpty) {
+        await Mirrorfly.getTopics(topicIds: [topicId]).then((value) {
+          var topics = topicsFromJson(value.toString());
+          this.topics(topics);
+          LogMessage.d("getTopics by Id", value);
+          LogMessage.d("getTopics [0] meta", "${topics[0].metaData}");
+          if(topics.isNotEmpty){
+            if(topics[0].topicId!=null) {
+              this.topicId(topics[0].topicId.checkNull());
+              getRecentChatList();
+            }
+          }
+        }).catchError((onError) {
+          LogMessage.d("getTopics error", onError);
+          //807 for invalid topic id
+        });
+      // }
+    }
+  }
+
+  void onTopicsTap(int index) {
+    topicId(topics[index].topicId);
+    getRecentChatList();
   }
 }

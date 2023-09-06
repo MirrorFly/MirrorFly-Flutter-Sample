@@ -25,11 +25,23 @@ apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply from: "$flutterRoot/packages/flutter_tools/gradle/flutter.gradle"
 apply plugin: 'kotlin-kapt'
+apply plugin: 'com.google.gms.google-services'
 
 android {
     compileSdkVersion flutter.compileSdkVersion
     ndkVersion flutter.ndkVersion
 
+    signingConfigs {
+        config {
+            keyAlias 'UiKit'
+            keyPassword 'contus@uikit'
+            storeFile file('contus_internal_uikit_keystore.jks')
+            storePassword 'contus@uikit'
+        }
+        aaptOptions {
+            noCompress "tflite"
+        }
+    }
 
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
@@ -64,15 +76,15 @@ android {
             shrinkResources false
             debuggable true
             minifyEnabled false
-            signingConfig signingConfigs.debug
+            signingConfig signingConfigs.config
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
         release {
             resValue("string", "app_name", "Mirrorfly Flutter")
-            shrinkResources false
-            debuggable true
-            minifyEnabled false
-            signingConfig signingConfigs.debug
+            shrinkResources true
+//            debuggable true //do not un comment this Dart init error
+            minifyEnabled true
+            signingConfig signingConfigs.config
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
@@ -103,6 +115,8 @@ dependencies {
     implementation 'androidx.appcompat:appcompat:1.5.1'
     implementation 'com.google.android.material:material:1.4.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
+    implementation 'androidx.core:core-splashscreen:1.1.0-alpha01'
+    implementation(platform("org.jetbrains.kotlin:kotlin-bom:1.8.0"))
     configurations {
         all {
             exclude group: 'org.json', module: 'json'

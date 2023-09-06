@@ -418,6 +418,34 @@ extension ProfileParesing on Profile {
       !isGroupProfile.checkNull() && isGroupInOfflineMode
           .checkNull(); // for email contact isGroupInOfflineMode will be true
 
+  String getName(){
+    if (Mirrorfly.isTrialLicence) {
+      /*return item.name.toString().checkNull().isEmpty
+        ? item.nickName.toString()
+        : item.name.toString();*/
+      return name
+          .checkNull()
+          .isEmpty
+          ? nickName.checkNull()
+          : name.checkNull();
+    } else {
+      if (jid.checkNull() == SessionManagement.getUserJID()) {
+        return Constants.you;
+      } else if (isDeletedContact()) {
+        mirrorFlyLog('isDeletedContact', isDeletedContact().toString());
+        return Constants.deletedUser;
+      } else if (isUnknownContact() || nickName
+          .checkNull()
+          .isEmpty) {
+        mirrorFlyLog('isUnknownContact', jid.toString());
+        return getMobileNumberFromJid(jid.checkNull());
+      } else {
+        mirrorFlyLog('nickName', nickName.toString());
+        return nickName.checkNull();
+      }
+    }
+  }
+
 }
 
 extension ChatmessageParsing on ChatMessageModel {
@@ -721,7 +749,7 @@ String getName(Profile item) {
         ? (item.nickName
         .checkNull()
         .isEmpty
-        ? item.mobileNumber.checkNull()
+        ? getMobileNumberFromJid(item.jid.checkNull())
         : item.nickName.checkNull())
         : item.name.checkNull();
   } else {
@@ -764,7 +792,7 @@ String getRecentName(RecentChatData item) {
     return item.profileName
         .checkNull()
         .isEmpty
-        ? item.nickName.checkNull()
+        ? item.nickName.checkNull().isNotEmpty ? item.nickName.checkNull() : getMobileNumberFromJid(item.jid.checkNull())
         : item.profileName.checkNull();
   } else {
     if (item.jid.checkNull() == SessionManagement.getUserJID()) {
@@ -795,7 +823,7 @@ String getMemberName(Member item) {
         ? (item.nickName
         .checkNull()
         .isEmpty
-        ? item.mobileNumber.checkNull()
+        ? getMobileNumberFromJid(item.jid.checkNull())
         : item.nickName.checkNull())
         : item.name.checkNull();
   } else {

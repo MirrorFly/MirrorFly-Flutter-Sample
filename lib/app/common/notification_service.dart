@@ -30,16 +30,16 @@ const String darwinNotificationCategoryText = 'textCategory';
 /// Defines a iOS/MacOS notification category for plain actions.
 const String darwinNotificationCategoryPlain = 'plainCategory';
 
-@pragma('vm:entry-point')
+// @pragma('vm:entry-point')
 void notificationTapBackground(NotificationResponse notificationResponse) {
   // ignore: avoid_print
-  print('notification(${notificationResponse.id}) action tapped: '
+  debugPrint('#Mirrorfly Notification(${notificationResponse.id}) action tapped: '
       '${notificationResponse.actionId} with'
       ' payload: ${notificationResponse.payload}');
   if (notificationResponse.input?.isNotEmpty ?? false) {
     // ignore: avoid_print
-    print(
-        'notification action tapped with input: ${notificationResponse.input}');
+    debugPrint(
+        '#Mirrorfly Notification action tapped with input: ${notificationResponse.input}');
   }
 }
 
