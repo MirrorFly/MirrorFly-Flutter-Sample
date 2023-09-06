@@ -93,8 +93,12 @@ class CallController extends GetxController {
       Mirrorfly.isUserVideoMuted().then((value) => videoMuted(value));
       // videoMuted(false);
     }
-  }
 
+    ever(callList, (callback) {
+      debugPrint("#Mirrorfly call list is changed ******");
+      debugPrint("#Mirrorfly call list $callList");
+    });
+  }
 
   muteAudio() async {
     debugPrint("#Mirrorfly muteAudio ${muted.value}");
@@ -127,16 +131,22 @@ class CallController extends GetxController {
                       title: Text(audioItem.name ?? "",
                           style: const TextStyle(
                               fontSize: 14, fontWeight: FontWeight.normal)),
-                      trailing: audioItem.type == audioOutputType.value ? const Icon(Icons.check_outlined,
-                        color: Colors.green,) : const SizedBox.shrink(),
+                      trailing: audioItem.type == audioOutputType.value
+                          ? const Icon(
+                              Icons.check_outlined,
+                              color: Colors.green,
+                            )
+                          : const SizedBox.shrink(),
                       onTap: () {
-                        if(audioOutputType.value != audioItem.type) {
+                        if (audioOutputType.value != audioItem.type) {
                           Get.back();
                           debugPrint("selected audio item ${audioItem.type}");
                           audioOutputType(audioItem.type);
-                          Mirrorfly.routeAudioTo(routeType: audioItem.type ?? "");
-                        }else{
-                          LogMessage.d("routeAudioOption", "clicked on same audio type selected");
+                          Mirrorfly.routeAudioTo(
+                              routeType: audioItem.type ?? "");
+                        } else {
+                          LogMessage.d("routeAudioOption",
+                              "clicked on same audio type selected");
                         }
                       },
                     );
@@ -188,7 +198,9 @@ class CallController extends GetxController {
       debugPrint("#Disconnect call disconnect value $value");
       if (value.checkNull()) {
         debugPrint("#Disconnect call disconnect list size ${callList.length}");
-        callList.clear();
+        if (callList.isNotEmpty) {
+          callList.clear();
+        }
         if (Get.previousRoute.isNotEmpty) {
           debugPrint("#Disconnect previous route is not empty");
           if (Get.currentRoute == Routes.onGoingCallView) {
@@ -237,6 +249,11 @@ class CallController extends GetxController {
   }
 
   void callDisconnected(String callMode, String userJid, String callType) {
+    debugPrint("#Mirrorfly call call disconnect called ${callList.length}");
+    debugPrint("#Mirrorfly call call disconnect called $callList");
+    if (callList.isEmpty) {
+      return;
+    }
     var index = callList.indexWhere((user) => user.userJid == userJid);
     debugPrint(
         "#Mirrorfly call disconnected user Index $index ${Get.currentRoute}");
@@ -247,53 +264,65 @@ class CallController extends GetxController {
     }
     if (callList.length == 1) {
       // if there is an single user in that call and if he [disconnected] no need to disconnect the call from our side Observed in Android
-      // disconnectCall();
-      if (Get.previousRoute.isNotEmpty) {
-        if (Get.currentRoute == Routes.onGoingCallView) {
-          callTimer("Disconnected");
-          Future.delayed(const Duration(seconds: 1), () {
+      if(Platform.isIOS){
+        // in iOS needs to call disconnect.
+        disconnectCall();
+      }
+        if (Get.previousRoute.isNotEmpty) {
+          if (Get.currentRoute == Routes.onGoingCallView) {
+            callTimer("Disconnected");
+            Future.delayed(const Duration(seconds: 1), () {
+              Get.back();
+            });
+          } else {
             Get.back();
-          });
+          }
         } else {
-          Get.back();
+          Get.offNamed(getInitialRoute());
         }
-      } else {
-        Get.offNamed(getInitialRoute());
       }
     }
-  }
 
-  void remoteBusy(String callMode, String userJid, String callType, String callAction) {
+  void remoteBusy(
+      String callMode, String userJid, String callType, String callAction) {
     declineCall();
   }
 
-  void localHangup(String callMode, String userJid, String callType, String callAction) {
-    callDisconnected(callMode, userJid, callType);
+  void localHangup(
+      String callMode, String userJid, String callType, String callAction) {
+    //Commenting to check iOS Crash.
+    // callDisconnected(callMode, userJid, callType);
   }
 
-  void remoteHangup(String callMode, String userJid, String callType, String callAction) {
+  void remoteHangup(
+      String callMode, String userJid, String callType, String callAction) {
     // if(callList.isNotEmpty) {
     //   disconnectCall();
     // }
   }
 
-  void calling(String callMode, String userJid, String callType, String callStatus) {
+  void calling(
+      String callMode, String userJid, String callType, String callStatus) {
     // this.callStatus(callStatus);
   }
 
-  void reconnected(String callMode, String userJid, String callType, String callStatus) {
+  void reconnected(
+      String callMode, String userJid, String callType, String callStatus) {
     // this.callStatus(callStatus);
   }
 
-  void ringing(String callMode, String userJid, String callType, String callStatus) {
+  void ringing(
+      String callMode, String userJid, String callType, String callStatus) {
     // this.callStatus(callStatus);
   }
 
-  void onHold(String callMode, String userJid, String callType, String callStatus) {
+  void onHold(
+      String callMode, String userJid, String callType, String callStatus) {
     // this.callStatus(callStatus);
   }
 
-  void connected(String callMode, String userJid, String callType, String callStatus) {
+  void connected(
+      String callMode, String userJid, String callType, String callStatus) {
     // this.callStatus(callStatus);
     // getNames();
     // startTimer();
@@ -302,7 +331,8 @@ class CallController extends GetxController {
     });
   }
 
-  void timeout(String callMode, String userJid, String callType, String callStatus) {
+  void timeout(
+      String callMode, String userJid, String callType, String callStatus) {
     // this.callStatus("Disconnected");
     Get.back();
   }
@@ -348,17 +378,18 @@ class CallController extends GetxController {
       case CallStatus.callingAfter10s:
         displayStatus = callStatus;
         break;
-      default :
+      default:
         displayStatus = '';
         break;
     }
     this.callStatus(displayStatus);
 
     ///update the status of the user in call user list
-    var indexOfItem = callList.indexWhere((element) => element.userJid == userJid);
+    var indexOfItem =
+        callList.indexWhere((element) => element.userJid == userJid);
 
     /// check the index is valid or not
-    if (!indexOfItem.isNegative) {
+    if (!indexOfItem.isNegative && callStatus != CallStatus.disconnected) {
       /// update the current status of the user in the list
       callList[indexOfItem].callStatus = (displayStatus);
     }
@@ -387,18 +418,18 @@ class CallController extends GetxController {
   }
 
   void audioMuteStatusChanged(String muteEvent, String userJid) {
-    var callUserIndex = callList.indexWhere((element) =>
-    element.userJid == userJid);
+    var callUserIndex =
+        callList.indexWhere((element) => element.userJid == userJid);
     if (!callUserIndex.isNegative) {
       debugPrint("index $callUserIndex");
-      callList[callUserIndex].isAudioMuted(
-          muteEvent == MuteStatus.remoteAudioMute);
+      callList[callUserIndex]
+          .isAudioMuted(muteEvent == MuteStatus.remoteAudioMute);
     } else {
       debugPrint("#Mirrorfly call User Not Found in list to mute the status");
     }
   }
 
-  void callDuration(String timer){
+  void callDuration(String timer) {
     callTimer(timer);
   }
 }

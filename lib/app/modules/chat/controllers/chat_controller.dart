@@ -128,6 +128,7 @@ class ChatController extends FullLifeCycleController
     // var profileDetail = Get.arguments as Profile;
     // profile_.value = profileDetail;
     // if(profile_.value.jid == null){
+    debugPrint("Chat controller onInit");
     var userJid = SessionManagement.getChatJid().checkNull();
     if (Get.parameters['jid'] != null) {
       nJid = Get.parameters['jid'];
@@ -224,6 +225,7 @@ class ChatController extends FullLifeCycleController
   var showHideRedirectToLatest = false.obs;
 
   void ready() {
+    debugPrint("Chat controller ready");
     cancelNotification();
     // debugPrint("isBlocked===> ${profile.isBlocked}");
     // debugPrint("profile detail===> ${profile.toJson().toString()}");
