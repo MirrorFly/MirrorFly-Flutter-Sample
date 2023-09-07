@@ -1423,7 +1423,7 @@ class DashboardController extends FullLifeCycleController
       // if(topicId.isNotEmpty) {
         //c47cdeec-32a0-4abb-a318-ab60048df577,a8f8877b-52c0-47cc-83d1-6e0292876daa,b7ba6a95-56f4-4354-a40c-b9a03b0cf470
         //Walkie Talkie,Macbook Pro,Macbook Air
-        await Mirrorfly.getTopics(topicIds: []).then((value) {
+        await Mirrorfly.getTopics(topicIds: ["c47cdeec-32a0-4abb-a318-ab60048df577","a8f8877b-52c0-47cc-83d1-6e0292876daa","b7ba6a95-56f4-4354-a40c-b9a03b0cf470"]).then((value) {
           var topics = topicsFromJson(value.toString());
           this.topics(topics);
           //"a00251d7-d388-4f47-8672-553f8afc7e11","c640d387-8dfc-4252-b20a-d2901ebe3197","f5dc3456-cd2a-4e64-ad91-79373a867aa3","0075fe28-ec93-45c6-be3a-85004bf860a1","da757122-1a74-40ae-9c7d-0e4c2757e6bd","5d3788c1-78ef-4158-a92b-a48f092da0b9","4d83dfad-79a8-43fd-98b8-7eb8943dc8ca","0b290e7f-b05c-4859-a72d-100c48f73c8d","1ab018d1-1068-4988-8b28-fe1079e07ab2"
