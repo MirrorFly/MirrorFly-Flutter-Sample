@@ -108,7 +108,7 @@ class ChatController extends FullLifeCycleController
   bool get isMemberOfGroup =>
       profile.isGroupProfile ?? false ? _isMemberOfGroup.value : true;
 
-  var profileDetail = Profile();
+  // var profileDetail = Profile();
 
   String? nJid;
   String? starredChatMessageId;
@@ -237,9 +237,9 @@ class ChatController extends FullLifeCycleController
       vsync: this,
       duration: const Duration(milliseconds: 600),
     );
-    Member(jid: profile.jid.checkNull())
+    /*Member(jid: profile.jid.checkNull())
         .getProfileDetails()
-        .then((value) => profileDetail = value);
+        .then((value) => profileDetail = value);*/
     memberOfGroup();
     setChatStatus();
     // isLive = true;
