@@ -306,7 +306,7 @@ mirrorFlyLog(String tag, String msg) {
 }
 
 class Constants {
-  static const bool enableTopic = false;
+  static const bool enableTopic = true;
   static const String topicId = enableTopic ? "d179612c-f99b-4f6d-8498-f17262523820" : "";//Mirrorfly Topic id
   static const String package = 'com.mirrorfly.uikit_flutter';
   static const String webChatLogin = 'https://webchat-uikit-qa.contus.us/';

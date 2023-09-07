@@ -61,7 +61,7 @@ Future<void> main() async {
   Mirrorfly.init(
       baseUrl: 'https://api-preprod-sandbox.mirrorfly.com/api/v1/',
       licenseKey: 'Your License Key Here',
-      iOSContainerID: 'group.com.mirrorfly.flutter',
+      iOSContainerID: 'group.com.mirrorfly.qa',
       chatHistoryEnable: true);
   final GoogleMapsFlutterPlatform mapsImplementation =
       GoogleMapsFlutterPlatform.instance;
