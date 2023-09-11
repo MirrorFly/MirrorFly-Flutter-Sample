@@ -334,6 +334,19 @@ abstract class BaseController {
     Mirrorfly.onUserStoppedSpeaking.listen((event) {
       mirrorFlyLog("onUserSpeaking", "$event");
     });
+
+    Mirrorfly.onAvailableFeaturesUpdated.listen(onAvailableFeaturesUpdated);
+  }
+
+  void onAvailableFeaturesUpdated(dynamic value){
+    LogMessage.d("onAvailableFeaturesUpdated", value);
+    var features = availableFeaturesFromJson(value.toString());
+    if (Get.isRegistered<MainController>()) {
+      Get.find<MainController>().onAvailableFeatures(features);
+    }
+    if (Get.isRegistered<ChatController>()) {
+      Get.find<ChatController>().onAvailableFeaturesUpdated(features);
+    }
   }
 
   void onMessageReceived(chatMessage) {

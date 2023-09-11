@@ -3035,12 +3035,18 @@ class ChatController extends FullLifeCycleController
     markConversationReadNotifyUI();
     cancelNotification();
   }
+
+  void onMessageDeleteNotifyUI(String chatUserJid) {
+    Get.find<MainController>().onMessageDeleteNotifyUI(chatUserJid);
+  }
+
+  void updateLastMessage(dynamic chatMessageModel) {
+    Get.find<MainController>().onMessageStatusUpdated(chatMessageModel);
+  }
+
+  void onAvailableFeaturesUpdated(AvailableFeatures features){
+    availableFeatures(features);
+  }
 }
 
-void onMessageDeleteNotifyUI(String chatUserJid) {
-  Get.find<MainController>().onMessageDeleteNotifyUI(chatUserJid);
-}
 
-void updateLastMessage(dynamic chatMessageModel) {
-  Get.find<MainController>().onMessageStatusUpdated(chatMessageModel);
-}

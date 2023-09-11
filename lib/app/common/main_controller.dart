@@ -360,4 +360,8 @@ class MainController extends FullLifeCycleController with BaseController, FullLi
       availableFeature(featureAvailable);
     });
   }
+
+  void onAvailableFeatures(AvailableFeatures features){
+    availableFeature(features);
+  }
 }
