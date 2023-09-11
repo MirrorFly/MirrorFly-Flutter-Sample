@@ -29,6 +29,7 @@ class ChatView extends GetView<ChatController> {
   Widget build(BuildContext context) {
     controller.screenHeight = MediaQuery.of(context).size.height;
     controller.screenWidth = MediaQuery.of(context).size.width;
+
     return Scaffold(
         appBar: getAppBar(),
         body: SafeArea(

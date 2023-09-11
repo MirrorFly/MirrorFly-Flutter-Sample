@@ -20,6 +20,7 @@ import 'package:mirror_fly_demo/app/data/session_management.dart';
 import 'package:mirror_fly_demo/app/data/permissions.dart';
 import 'package:mirror_fly_demo/app/modules/notification/notification_builder.dart';
 import 'package:mirrorfly_plugin/logmessage.dart';
+import 'package:mirrorfly_plugin/model/available_features.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
@@ -121,6 +122,8 @@ class ChatController extends FullLifeCycleController
 
   final deBouncer = DeBouncer(milliseconds: 1000);
 
+  var availableFeatures = AvailableFeatures().obs;
+
   @override
   void onInit() async {
     super.onInit();
@@ -219,6 +222,10 @@ class ChatController extends FullLifeCycleController
       });
 
     });
+
+    if (Get.isRegistered<MainController>()) {
+      availableFeatures(Get.find<MainController>().availableFeature.value);
+    }
   }
 
   var showHideRedirectToLatest = false.obs;
