@@ -252,8 +252,10 @@ class CallController extends GetxController {
     debugPrint("#Mirrorfly call call disconnect called ${callList.length}");
     debugPrint("#Mirrorfly call call disconnect called $callList");
     if (callList.isEmpty) {
+      debugPrint("call list is empty returning");
       return;
     }
+    debugPrint("call list is not empty");
     var index = callList.indexWhere((user) => user.userJid == userJid);
     debugPrint(
         "#Mirrorfly call disconnected user Index $index ${Get.currentRoute}");
@@ -264,10 +266,10 @@ class CallController extends GetxController {
     }
     if (callList.length == 1) {
       // if there is an single user in that call and if he [disconnected] no need to disconnect the call from our side Observed in Android
-      if(Platform.isIOS){
+      if (Platform.isIOS) {
         // in iOS needs to call disconnect.
         disconnectCall();
-      }
+      } else {
         if (Get.previousRoute.isNotEmpty) {
           if (Get.currentRoute == Routes.onGoingCallView) {
             callTimer("Disconnected");
@@ -282,6 +284,7 @@ class CallController extends GetxController {
         }
       }
     }
+  }
 
   void remoteBusy(
       String callMode, String userJid, String callType, String callAction) {
