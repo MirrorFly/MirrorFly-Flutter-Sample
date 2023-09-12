@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:mirror_fly_demo/app/modules/notification/notification_builder.dart';
+import 'package:mirrorfly_plugin/logmessage.dart';
 import 'package:mirrorfly_plugin/mirrorflychat.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
@@ -14,6 +15,7 @@ import 'package:intl/intl.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 import '../../../common/de_bouncer.dart';
+import '../../../common/main_controller.dart';
 import '../../../data/apputils.dart';
 import '../../../data/permissions.dart';
 import '../../../model/chat_message_model.dart';
@@ -21,6 +23,7 @@ import '../../../routes/app_pages.dart';
 
 class DashboardController extends FullLifeCycleController
     with FullLifeCycleMixin, GetTickerProviderStateMixin {
+  var availableFeatures = Get.find<MainController>().availableFeature;
   var chatLimit = 20;
   var recentChats = <RecentChatData>[].obs;
   var archivedChats = <RecentChatData>[].obs;
@@ -74,6 +77,7 @@ class DashboardController extends FullLifeCycleController
   @override
   void onReady(){
     super.onReady();
+    getAvailableFeatures();
     debugPrint("DashboardController onReady");
     recentChats.bindStream(recentChats.stream);
     ever(recentChats, (callback) => unReadCount());
@@ -85,6 +89,14 @@ class DashboardController extends FullLifeCycleController
     userlistScrollController.addListener(_scrollListener);
     historyScrollController.addListener(historyScrollListener);
 
+  }
+  void getAvailableFeatures(){
+    Mirrorfly.getAvailableFeatures().then((features) {
+      debugPrint("getAvailableFeatures $features");
+      var featureAvailable = availableFeaturesFromJson(features);
+      availableFeatures(featureAvailable);
+      availableFeatures.refresh();
+    });
   }
 
   infoPage(Profile profile) {
@@ -502,7 +514,7 @@ class DashboardController extends FullLifeCycleController
     var selected = recentChats.where((p0) => selectedChats.contains(p0.jid));
     for (var item in selected) {
       var isMember = await Mirrorfly.isMemberOfGroup(item.jid.checkNull(), null);
-      if ((item.getChatType() == Constants.typeGroupChat) && isMember!) {
+      if ((item.getChatType() == Constants.typeGroupChat) && isMember! && availableFeatures.value.isGroupChatAvailable.checkNull()) {
         delete(false);
         return;
         //return false;
@@ -830,6 +842,10 @@ class DashboardController extends FullLifeCycleController
   }
 
   _itemDelete(int index) {
+    if(!availableFeatures.value.isDeleteChatAvailable.checkNull()){
+      Helper.showFeatureUnavailable();
+      return;
+    }
     var chatIndex = recentChats.indexWhere((element) =>
         selectedChats[index] == element.jid); //selectedChatsPosition[index];
     Helper.showAlert(
@@ -843,6 +859,10 @@ class DashboardController extends FullLifeCycleController
           TextButton(
               onPressed: () {
                 Get.back();
+                if(!availableFeatures.value.isDeleteChatAvailable.checkNull()){
+                  Helper.showFeatureUnavailable();
+                  return;
+                }
                 Mirrorfly.deleteRecentChat(selectedChats[index]).then((value) {
                   clearAllChatSelection();
                   recentChats.removeAt(chatIndex);
@@ -1398,5 +1418,12 @@ class DashboardController extends FullLifeCycleController
     }
   }
 
+  void onAvailableFeaturesUpdated(AvailableFeatures features) {
+    LogMessage.d("DashboardView", "onAvailableFeaturesUpdated ${features.toJson()}");
+    availableFeatures(features);
+    if (selectedChats.isNotEmpty) {
+      menuValidationForItem();
+    }
+  }
 
 }

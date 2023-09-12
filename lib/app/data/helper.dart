@@ -120,6 +120,16 @@ class Helper {
     }
   }
 
+  static void showFeatureUnavailable(){
+    Helper.showAlert(message: "Feature unavailable for your plan", actions: [
+      TextButton(
+          onPressed: () {
+            Get.back();
+          },
+          child: const Text("Ok")),
+    ]);
+  }
+
   static String formatBytes(int bytes, int decimals) {
     if (bytes <= 0) return "0 B";
     const suffixes = ["B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"];

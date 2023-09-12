@@ -148,9 +148,9 @@ class DashboardView extends GetView<DashboardController> {
                                       tooltip: 'Delete',
                                     ),
                                     overflowWidget: const Text("Delete"),
-                                    showAsAction: controller.delete.value
+                                    showAsAction: controller.availableFeatures.value.isDeleteChatAvailable.checkNull() ? controller.delete.value
                                         ? ShowAsAction.always
-                                        : ShowAsAction.gone,
+                                        : ShowAsAction.gone : ShowAsAction.gone,
                                     keyValue: 'Delete',
                                     onItemClick: () {
                                       controller.deleteChats();
@@ -280,10 +280,10 @@ class DashboardView extends GetView<DashboardController> {
                                       tooltip: 'Search',
                                     ),
                                     overflowWidget: const Text("Search"),
-                                    showAsAction: controller.selected.value ||
+                                    showAsAction: controller.availableFeatures.value.isRecentChatSearchAvailable.checkNull() ? controller.selected.value ||
                                             controller.isSearching.value
                                         ? ShowAsAction.gone
-                                        : ShowAsAction.always,
+                                        : ShowAsAction.always : ShowAsAction.gone,
                                     keyValue: 'Search',
                                     onItemClick: () {
                                       controller.gotoSearch();
@@ -307,10 +307,10 @@ class DashboardView extends GetView<DashboardController> {
                                     visibleWidget: const Icon(Icons.group_add),
                                     overflowWidget:
                                         const Text("New Group     "),
-                                    showAsAction: controller.selected.value ||
+                                    showAsAction: controller.availableFeatures.value.isGroupChatAvailable.checkNull() ? controller.selected.value ||
                                             controller.isSearching.value
                                         ? ShowAsAction.gone
-                                        : ShowAsAction.never,
+                                        : ShowAsAction.never : ShowAsAction.gone,
                                     keyValue: 'New Group',
                                     onItemClick: () {
                                       controller.gotoCreateGroup();

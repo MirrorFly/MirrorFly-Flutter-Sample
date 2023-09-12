@@ -420,7 +420,7 @@ class ChatView extends GetView<ChatController> {
                 ),
               )
             : const SizedBox.shrink(),
-        controller.isAudioRecording.value == Constants.audioRecordInitial
+        (controller.isAudioRecording.value == Constants.audioRecordInitial && controller.availableFeatures.value.isAttachmentAvailable.checkNull())
             ? IconButton(
                 onPressed: () {
                   controller.showAttachmentsView(context);
@@ -810,7 +810,7 @@ class ChatView extends GetView<ChatController> {
                   tooltip: 'Reply',
                 ),
                 overflowWidget: const Text("Reply"),
-                showAsAction: controller.canBeReplied.value
+                showAsAction: (controller.canBeReplied.value && controller.availableFeatures.value.isClearChatAvailable.checkNull())
                     ? ShowAsAction.always
                     : ShowAsAction.gone,
                 keyValue: 'Reply',
@@ -891,7 +891,7 @@ class ChatView extends GetView<ChatController> {
                   tooltip: 'Delete',
                 ),
                 overflowWidget: const Text("Delete"),
-                showAsAction: ShowAsAction.always,
+                showAsAction: controller.availableFeatures.value.isDeleteMessageAvailable.checkNull() ? ShowAsAction.always : ShowAsAction.gone,
                 keyValue: 'Delete',
                 onItemClick: () {
                   controller.closeKeyBoard();
@@ -1097,14 +1097,8 @@ class ChatView extends GetView<ChatController> {
             actionWidth: 48, // default for IconButtons
             actions: [
               CustomAction(
-                visibleWidget: IconButton(
-                  onPressed: () {
-                    controller.clearUserChatHistory();
-                  },
-                  icon: const Icon(Icons.cancel),
-                ),
                 overflowWidget: const Text("Clear Chat"),
-                showAsAction: ShowAsAction.never,
+                showAsAction: controller.availableFeatures.value.isClearChatAvailable.checkNull() ? ShowAsAction.never : ShowAsAction.gone,
                 keyValue: 'Clear Chat',
                 onItemClick: () {
                   controller.closeKeyBoard();
@@ -1214,7 +1208,7 @@ class ChatView extends GetView<ChatController> {
                   icon: SvgPicture.asset(videoCallIcon),
                 ),
                 overflowWidget: const  Text("Video Call"),
-                showAsAction: controller.profile.isGroupProfile.checkNull() ? ShowAsAction.gone : ShowAsAction.always,
+                showAsAction: controller.availableFeatures.value.isOneToOneCallAvailable.checkNull() ? controller.profile.isGroupProfile.checkNull() ? ShowAsAction.gone : ShowAsAction.always : ShowAsAction.gone,
                 keyValue: 'Video Call',
                 onItemClick: () {
                   controller.makeVideoCall();
@@ -1228,7 +1222,7 @@ class ChatView extends GetView<ChatController> {
                   icon: SvgPicture.asset(audioCallIcon),
                 ),
                 overflowWidget: const Text("Call"),
-                showAsAction: controller.profile.isGroupProfile.checkNull() ? ShowAsAction.gone : ShowAsAction.always,
+                showAsAction: controller.availableFeatures.value.isOneToOneCallAvailable.checkNull() ? controller.profile.isGroupProfile.checkNull() ? ShowAsAction.gone : ShowAsAction.always : ShowAsAction.gone,
                 keyValue: 'Audio Call',
                 onItemClick: () {
                   controller.makeVoiceCall();
