@@ -95,7 +95,6 @@ class DashboardController extends FullLifeCycleController
       debugPrint("getAvailableFeatures $features");
       var featureAvailable = availableFeaturesFromJson(features);
       availableFeatures(featureAvailable);
-      availableFeatures.refresh();
     });
   }
 
