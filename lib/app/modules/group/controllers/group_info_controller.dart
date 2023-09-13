@@ -176,10 +176,12 @@ class GroupInfoController extends GetxController {
     });
   }
   onToggleChange(bool value){
-    if(muteable.value) {
-      mirrorFlyLog("change", value.toString());
-      _mute(value);
-      Mirrorfly.updateChatMuteStatus(profile.jid.checkNull(), value);
+    if (_isMemberOfGroup.value) {
+      if (muteable.value) {
+        mirrorFlyLog("change", value.toString());
+        _mute(value);
+        Mirrorfly.updateChatMuteStatus(profile.jid.checkNull(), value);
+      }
     }
   }
 
@@ -195,6 +197,10 @@ class GroupInfoController extends GetxController {
   }
 
   reportGroup(){
+    if(!availableFeatures.value.isGroupChatAvailable.checkNull()){
+      Helper.showFeatureUnavailable();
+      return;
+    }
     Helper.showAlert(title: "Report this group?",message: "The last 5 messages from this group will be forwarded to admin. No one in this group will be notified.",actions: [
       TextButton(
           onPressed: () {
@@ -443,6 +449,10 @@ class GroupInfoController extends GetxController {
   }
 
   gotoAddParticipants(){
+    if(!availableFeatures.value.isGroupChatAvailable.checkNull()){
+      Helper.showFeatureUnavailable();
+      return;
+    }
     Get.toNamed(Routes.contacts, arguments: {"forward" : false,"group":true,"groupJid":profile.jid })?.then((value){
       if(value!=null){
         addUsers(value);
@@ -556,7 +566,7 @@ class GroupInfoController extends GetxController {
   }
 
   void onAvailableFeaturesUpdated(AvailableFeatures features) {
-    LogMessage.d("DashboardView", "onAvailableFeaturesUpdated ${features.toJson()}");
+    LogMessage.d("GroupInfo", "onAvailableFeaturesUpdated ${features.toJson()}");
     availableFeatures(features);
     loadGroupExistence();
   }

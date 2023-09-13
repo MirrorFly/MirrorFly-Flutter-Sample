@@ -194,14 +194,10 @@ class GroupInfoView extends GetView<GroupInfoController> {
                   ),
                   value: controller.mute,
                   onToggle: (value) {
-                    if (controller.isMemberOfGroup) {
                       controller.onToggleChange(value);
-                    }
                   },
                 ), onTap: () {
-                  if (controller.isMemberOfGroup) {
                     controller.onToggleChange(!controller.mute);
-                  }
                 });
               }),
               Obx(() =>

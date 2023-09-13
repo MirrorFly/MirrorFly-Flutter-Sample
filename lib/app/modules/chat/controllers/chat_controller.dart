@@ -1308,6 +1308,10 @@ class ChatController extends FullLifeCycleController
 
   reportChatOrUser() {
     Future.delayed(const Duration(milliseconds: 100), () async {
+      if((profile.isGroupProfile.checkNull() && !availableFeatures.value.isGroupChatAvailable.checkNull()) || !availableFeatures.value.isReportAvailable.checkNull()){
+        Helper.showFeatureUnavailable();
+        return;
+      }
       var chatMessage =
       selectedChatList.isNotEmpty ? selectedChatList[0] : null;
       Helper.showAlert(
@@ -1955,6 +1959,10 @@ class ChatController extends FullLifeCycleController
   }
 
   forwardMessage() {
+    if(profile.isGroupProfile.checkNull() && !availableFeatures.value.isGroupChatAvailable.checkNull()){
+      Helper.showFeatureUnavailable();
+      return;
+    }
     var messageIds = List<String>.empty(growable: true);
     for (var chatItem in selectedChatList) {
       messageIds.add(chatItem.messageId);
@@ -2591,6 +2599,10 @@ class ChatController extends FullLifeCycleController
   }
 
   forwardSingleMessage(String messageId) {
+    if(profile.isGroupProfile.checkNull() && !availableFeatures.value.isGroupChatAvailable.checkNull()){
+      Helper.showFeatureUnavailable();
+      return;
+    }
     setOnGoingUserGone();
     var messageIds = <String>[];
     messageIds.add(messageId);

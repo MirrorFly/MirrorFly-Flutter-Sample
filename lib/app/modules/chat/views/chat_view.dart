@@ -208,7 +208,7 @@ class ChatView extends GetView<ChatController> {
                                           emojiLayout(),
                                         ],
                                       )
-                                    : userNoLonger(),
+                                    : !controller.availableFeatures.value.isGroupChatAvailable.checkNull() ? featureNotAvailable() : userNoLonger(),
                           );
                         }),
                       ),
@@ -504,6 +504,28 @@ class ChatView extends GetView<ChatController> {
           padding: EdgeInsets.only(top: 15.0, bottom: 15.0),
           child: Text(
             "You can't send messages to this group because you're no longer a participant.",
+            style: TextStyle(
+              fontSize: 15,
+            ),
+            textAlign: TextAlign.center,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget featureNotAvailable() {
+    return Column(
+      children: const [
+        Divider(
+          height: 1,
+          thickness: 0.29,
+          color: textBlackColor,
+        ),
+        Padding(
+          padding: EdgeInsets.only(top: 15.0, bottom: 15.0),
+          child: Text(
+            "You can't send messages to this group because Feature unavailable for your plan.",
             style: TextStyle(
               fontSize: 15,
             ),
@@ -1194,7 +1216,7 @@ class ChatView extends GetView<ChatController> {
                   icon: const Icon(Icons.shortcut),
                 ),
                 overflowWidget: const Text("Add Chat Shortcut"),
-                showAsAction: ShowAsAction.never,
+                showAsAction: ShowAsAction.gone,
                 keyValue: 'Shortcut',
                 onItemClick: () {
                   controller.closeKeyBoard();
