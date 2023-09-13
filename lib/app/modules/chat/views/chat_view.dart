@@ -428,7 +428,7 @@ class ChatView extends GetView<ChatController> {
                 icon: SvgPicture.asset('assets/logos/attach.svg'),
               )
             : const SizedBox.shrink(),
-        controller.isAudioRecording.value == Constants.audioRecordInitial
+        (controller.isAudioRecording.value == Constants.audioRecordInitial && controller.availableFeatures.value.isAudioAttachmentAvailable.checkNull())
             ? IconButton(
                 onPressed: () {
                   controller.startRecording();
