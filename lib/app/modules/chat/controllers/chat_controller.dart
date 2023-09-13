@@ -21,7 +21,6 @@ import 'package:mirror_fly_demo/app/data/session_management.dart';
 import 'package:mirror_fly_demo/app/data/permissions.dart';
 import 'package:mirror_fly_demo/app/modules/notification/notification_builder.dart';
 import 'package:mirrorfly_plugin/logmessage.dart';
-import 'package:mirrorfly_plugin/model/available_features.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
@@ -871,8 +870,10 @@ class ChatController extends FullLifeCycleController
         if (checkFileUploadSize(
             result.files.single.path!, Constants.mDocument)) {
           debugPrint("sendDoc ${result.files.first.extension}");
-          filePath.value = (result.files.single.path!);
-          sendDocumentMessage(filePath.value, "");
+          Future.delayed(const Duration(seconds: 1), () {
+            filePath.value = (result.files.single.path!);
+            sendDocumentMessage(filePath.value, "");
+          });
         } else {
           toToast("File Size should not exceed ${Constants.maxDocFileSize} MB");
         }
@@ -1101,9 +1102,11 @@ class ChatController extends FullLifeCycleController
           player.setUrl(result.files.single.path!);
           player.onDurationChanged.listen((Duration duration) {
             mirrorFlyLog("", 'max duration: ${duration.inMilliseconds}');
-            filePath.value = (result.files.single.path!);
-            sendAudioMessage(
-                filePath.value, false, duration.inMilliseconds.toString());
+            Future.delayed(const Duration(seconds: 1), () {
+              filePath.value = (result.files.single.path!);
+              sendAudioMessage(
+                  filePath.value, false, duration.inMilliseconds.toString());
+            });
           });
         } else {
           toToast("File Size should not exceed ${Constants.maxAudioFileSize} MB");
@@ -1121,9 +1124,11 @@ class ChatController extends FullLifeCycleController
             player.setUrl(value);
             player.onDurationChanged.listen((Duration duration) {
               mirrorFlyLog("", 'max duration: ${duration.inMilliseconds}');
-              filePath.value = (value);
-              sendAudioMessage(
-                  filePath.value, false, duration.inMilliseconds.toString());
+              Future.delayed(const Duration(seconds: 1), () {
+                filePath.value = (value);
+                sendAudioMessage(
+                    filePath.value, false, duration.inMilliseconds.toString());
+              });
             });
           } else {
             toToast("File Size should not exceed ${Constants.maxAudioFileSize} MB");
