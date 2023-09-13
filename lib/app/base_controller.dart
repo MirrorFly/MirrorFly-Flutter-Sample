@@ -354,6 +354,9 @@ abstract class BaseController {
     if (Get.isRegistered<MediaPreviewController>()) {
       Get.find<MediaPreviewController>().onAvailableFeaturesUpdated(features);
     }
+    if (Get.isRegistered<ForwardChatController>()) {
+      Get.find<ForwardChatController>().onAvailableFeaturesUpdated(features);
+    }
     if (Get.isRegistered<GroupInfoController>()) {
       Get.find<GroupInfoController>().onAvailableFeaturesUpdated(features);
     }
