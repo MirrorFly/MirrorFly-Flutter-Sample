@@ -31,9 +31,14 @@ class ContactController extends FullLifeCycleController
   var isCreateGroup = false.obs;
   var groupJid = "".obs;
 
+  var topicId = "";
   @override
   Future<void> onInit() async {
     super.onInit();
+    debugPrint("Get.parameters['topicId'] ${Get.parameters['topicId']}");
+    if(Get.parameters['topicId']!=null){
+      topicId = Get.parameters['topicId'].toString();
+    }
     isForward(Get.arguments["forward"]);
     if (isForward.value) {
       isCreateGroup(false);
@@ -343,7 +348,7 @@ class ContactController extends FullLifeCycleController
       }
     } else {
       mirrorFlyLog("Contact Profile", item.toJson().toString());
-      Get.toNamed(Routes.chat, arguments: item);
+      Get.toNamed(Routes.chat, arguments: item,parameters: {"topicId":topicId});
     }
   }
 

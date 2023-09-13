@@ -5,8 +5,10 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
+import 'package:mirror_fly_demo/app/common/main_controller.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
 import 'package:mirrorfly_plugin/mirrorfly.dart';
+import 'package:mirrorfly_plugin/model/available_features.dart';
 
 import '../../../common/crop_image.dart';
 import '../../../data/apputils.dart';
@@ -15,6 +17,7 @@ import '../../../routes/app_pages.dart';
 import '../views/name_change_view.dart';
 
 class GroupInfoController extends GetxController {
+  var availableFeatures = Get.find<MainController>().availableFeature;
   ScrollController scrollController = ScrollController();
   var groupMembers = <Profile>[].obs;
   final _mute = false.obs;
@@ -26,8 +29,8 @@ class GroupInfoController extends GetxController {
   bool get isAdmin => _isAdmin.value;
 
   final _isMemberOfGroup = true.obs;
-  set isMemberOfGroup(value) => _isMemberOfGroup.value=value;
-  bool get isMemberOfGroup => _isMemberOfGroup.value;
+  set isMemberOfGroup(value) => _isMemberOfGroup.value = value;
+  bool get isMemberOfGroup => availableFeatures.value.isGroupChatAvailable.checkNull() && _isMemberOfGroup.value;
 
   var profile_ = Profile().obs;
   //set profile(value) => _profile.value = value;
@@ -44,7 +47,7 @@ class GroupInfoController extends GetxController {
     _mute(profile.isMuted!);
     scrollController.addListener(_scrollListener);
     getGroupMembers(false);
-    getGroupMembers(null);
+    availableFeatures.value.isGroupChatAvailable.checkNull() ? getGroupMembers(null) : null;
     groupAdmin();
     memberOfGroup();
     muteAble();
@@ -173,10 +176,14 @@ class GroupInfoController extends GetxController {
     });
   }
   onToggleChange(bool value){
-    if(muteable.value) {
-      mirrorFlyLog("change", value.toString());
-      _mute(value);
-      Mirrorfly.updateChatMuteStatus(profile.jid.checkNull(), value);
+    if (isMemberOfGroup) {
+      if (muteable.value) {
+        mirrorFlyLog("change", value.toString());
+        _mute(value);
+        Mirrorfly.updateChatMuteStatus(profile.jid.checkNull(), value);
+      }
+    }else{
+      toToast("You're no longer a participant in this group");
     }
   }
 
@@ -192,6 +199,10 @@ class GroupInfoController extends GetxController {
   }
 
   reportGroup(){
+    if(!availableFeatures.value.isGroupChatAvailable.checkNull()){
+      Helper.showFeatureUnavailable();
+      return;
+    }
     Helper.showAlert(title: "Report this group?",message: "The last 5 messages from this group will be forwarded to admin. No one in this group will be notified.",actions: [
       TextButton(
           onPressed: () {
@@ -228,6 +239,10 @@ class GroupInfoController extends GetxController {
     }
   }
   leaveGroup(){
+    if(!availableFeatures.value.isGroupChatAvailable.checkNull()){
+      Helper.showFeatureUnavailable();
+      return;
+    }
     Helper.showAlert(message: "Are you sure you want to leave from group?.",actions: [
       TextButton(
           onPressed: () {
@@ -243,6 +258,10 @@ class GroupInfoController extends GetxController {
     ]);
   }
   exitFromGroup()async{
+    if(!availableFeatures.value.isGroupChatAvailable.checkNull()){
+      Helper.showFeatureUnavailable();
+      return;
+    }
     if(await AppUtils.isNetConnected()) {
       Helper.progressLoading();
       Mirrorfly.leaveFromGroup(SessionManagement.getUserJID() ,profile.jid.checkNull()).then((value) {
@@ -260,6 +279,10 @@ class GroupInfoController extends GetxController {
     }
   }
   deleteGroup(){
+    if(!availableFeatures.value.isGroupChatAvailable.checkNull()){
+      Helper.showFeatureUnavailable();
+      return;
+    }
     Helper.showAlert(message: "Are you sure you want to delete this group?.",actions: [
       TextButton(
           onPressed: () {
@@ -270,6 +293,10 @@ class GroupInfoController extends GetxController {
           onPressed: () async {
             if(await AppUtils.isNetConnected()) {
               Get.back();
+              if(!availableFeatures.value.isGroupChatAvailable.checkNull()){
+                Helper.showFeatureUnavailable();
+                return;
+              }
               Helper.progressLoading();
               Mirrorfly.deleteGroup(profile.jid.checkNull()).then((value) {
                 Helper.hideLoading();
@@ -316,6 +343,10 @@ class GroupInfoController extends GetxController {
 
   final ImagePicker _picker = ImagePicker();
   camera() async {
+    if(!availableFeatures.value.isGroupChatAvailable.checkNull()){
+      Helper.showFeatureUnavailable();
+      return;
+    }
     if(await AppUtils.isNetConnected()) {
       final XFile? photo = await _picker.pickImage(
           source: ImageSource.camera);
@@ -339,6 +370,10 @@ class GroupInfoController extends GetxController {
   }
 
   updateGroupProfileImage(String path){
+    if(!availableFeatures.value.isGroupChatAvailable.checkNull()){
+      Helper.showFeatureUnavailable();
+      return;
+    }
     showLoader();
     Mirrorfly.updateGroupProfileImage(profile.jid.checkNull(),path).then((bool? value){
       hideLoader();
@@ -352,6 +387,10 @@ class GroupInfoController extends GetxController {
   }
 
   updateGroupName(String name){
+    if(!availableFeatures.value.isGroupChatAvailable.checkNull()){
+      Helper.showFeatureUnavailable();
+      return;
+    }
     showLoader();
     Mirrorfly.updateGroupName(profile.jid.checkNull(),name).then((bool? value){
       hideLoader();
@@ -382,6 +421,10 @@ class GroupInfoController extends GetxController {
   }
 
   revokeAccessForProfileImage()async{
+    if(!availableFeatures.value.isGroupChatAvailable.checkNull()){
+      Helper.showFeatureUnavailable();
+      return;
+    }
     if(await AppUtils.isNetConnected()) {
       showLoader();
       Mirrorfly.removeGroupProfileImage(profile.jid.checkNull()).then((bool? value) {
@@ -408,6 +451,10 @@ class GroupInfoController extends GetxController {
   }
 
   gotoAddParticipants(){
+    if(!availableFeatures.value.isGroupChatAvailable.checkNull()){
+      Helper.showFeatureUnavailable();
+      return;
+    }
     Get.toNamed(Routes.contacts, arguments: {"forward" : false,"group":true,"groupJid":profile.jid })?.then((value){
       if(value!=null){
         addUsers(value);
@@ -436,6 +483,10 @@ class GroupInfoController extends GetxController {
   }
 
   removeUser(String userJid) async {
+    if(!availableFeatures.value.isGroupChatAvailable.checkNull()){
+      Helper.showFeatureUnavailable();
+      return;
+    }
     if(isMemberOfGroup){
       if(await AppUtils.isNetConnected()) {
         showLoader();
@@ -450,10 +501,16 @@ class GroupInfoController extends GetxController {
       }else{
         toToast(Constants.noInternetConnection);
       }
+    }else{
+      toToast("You're no longer a participant in this group");
     }
   }
 
   makeAdmin(String userJid) async {
+    if(!availableFeatures.value.isGroupChatAvailable.checkNull()){
+      Helper.showFeatureUnavailable();
+      return;
+    }
     if(isMemberOfGroup){
       if(await AppUtils.isNetConnected()) {
         showLoader();
@@ -468,11 +525,17 @@ class GroupInfoController extends GetxController {
       }else{
         toToast(Constants.noInternetConnection);
       }
+    }else{
+      toToast("You're no longer a participant in this group");
     }
   }
 
   //New Name Change
   gotoNameEdit(){
+    if(!availableFeatures.value.isGroupChatAvailable.checkNull()){
+      Helper.showFeatureUnavailable();
+      return;
+    }
     if(isMemberOfGroup) {
       Get.to(const NameChangeView())?.then((value) {
         if (value != null) {
@@ -506,5 +569,11 @@ class GroupInfoController extends GetxController {
 
   void userBlockedMe(String jid) {
     userUpdatedHisProfile(jid);
+  }
+
+  void onAvailableFeaturesUpdated(AvailableFeatures features) {
+    LogMessage.d("GroupInfo", "onAvailableFeaturesUpdated ${features.toJson()}");
+    availableFeatures(features);
+    loadGroupExistence();
   }
 }

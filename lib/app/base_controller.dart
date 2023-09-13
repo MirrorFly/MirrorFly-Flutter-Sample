@@ -5,6 +5,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:mirror_fly_demo/app/call_modules/outgoing_call/call_controller.dart';
+import 'package:mirror_fly_demo/app/modules/media_preview/controllers/media_preview_controller.dart';
 import 'package:mirrorfly_plugin/logmessage.dart';
 import 'package:mirrorfly_plugin/mirrorflychat.dart';
 import 'package:get/get.dart';
@@ -334,6 +335,31 @@ abstract class BaseController {
     Mirrorfly.onUserStoppedSpeaking.listen((event) {
       mirrorFlyLog("onUserSpeaking", "$event");
     });
+
+    Mirrorfly.onAvailableFeaturesUpdated.listen(onAvailableFeaturesUpdated);
+  }
+
+  void onAvailableFeaturesUpdated(dynamic value){
+    LogMessage.d("onAvailableFeaturesUpdated", value);
+    var features = availableFeaturesFromJson(value.toString());
+    if (Get.isRegistered<MainController>()) {
+      Get.find<MainController>().onAvailableFeatures(features);
+    }
+    if (Get.isRegistered<DashboardController>()) {
+      Get.find<DashboardController>().onAvailableFeaturesUpdated(features);
+    }
+    if (Get.isRegistered<ChatController>()) {
+      Get.find<ChatController>().onAvailableFeaturesUpdated(features);
+    }
+    if (Get.isRegistered<MediaPreviewController>()) {
+      Get.find<MediaPreviewController>().onAvailableFeaturesUpdated(features);
+    }
+    if (Get.isRegistered<ForwardChatController>()) {
+      Get.find<ForwardChatController>().onAvailableFeaturesUpdated(features);
+    }
+    if (Get.isRegistered<GroupInfoController>()) {
+      Get.find<GroupInfoController>().onAvailableFeaturesUpdated(features);
+    }
   }
 
   void onMessageReceived(chatMessage) {
@@ -539,7 +565,7 @@ abstract class BaseController {
   }
 
   bool notificationMadeByME(ChatMessage data){
-    return data.messageTextContent.checkNull().startsWith("You added") || data.messageTextContent.checkNull().startsWith("You removed") || data.messageTextContent.checkNull().startsWith("You created");
+    return data.messageTextContent.checkNull().startsWith("You added") || data.messageTextContent.checkNull().startsWith("You left") || data.messageTextContent.checkNull().startsWith("You removed") || data.messageTextContent.checkNull().startsWith("You created");
   }
 
   void onGroupDeletedLocally(groupJid) {
