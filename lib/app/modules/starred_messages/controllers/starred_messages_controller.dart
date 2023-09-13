@@ -683,7 +683,7 @@ class StarredMessagesController extends FullLifeCycleController with FullLifeCyc
   }
 
   navigateMessage(ChatMessageModel starredChat) {
-    Get.toNamed(Routes.chat,parameters: {'isFromStarred':'true',"userJid":starredChat.chatUserJid,"messageId":starredChat.messageId});
+    Get.toNamed(Routes.chat,parameters: {'isFromStarred':'true',"userJid":starredChat.chatUserJid,"messageId":starredChat.messageId,"topicId":starredChat.topicId.checkNull()});
   }
 
   void share() {

@@ -79,11 +79,23 @@ class ChatView extends GetView<ChatController> {
                 children: [
                   Column(
                     children: [
+                      Obx(() {
+                        return Visibility(
+                            visible: controller.topic.value.topicName != null,
+                            child: Container(
+                                width: Get.width,
+                                decoration: const BoxDecoration(
+                                  color:Color(0xffff9f00),
+                                    borderRadius: BorderRadius.only(bottomLeft:Radius.circular(8),bottomRight:Radius.circular(8)),
+                                ),
+                                padding: const EdgeInsets.all(2),
+                                child: Text(controller.topic.value.topicName.checkNull(),textAlign: TextAlign.center,)));
+                      }),
                       Expanded(child: Obx(() {
                         return controller.chatLoading.value
                             ? const Center(
-                          child: CircularProgressIndicator(),
-                        )
+                                child: CircularProgressIndicator(),
+                              )
                             : chatListView(controller.chatList);
                       })),
                       Align(
@@ -306,7 +318,7 @@ class ChatView extends GetView<ChatController> {
                           : const SizedBox.shrink();
                     })
                   else
-                    const SizedBox.shrink()
+                    const SizedBox.shrink(),
                 ],
               ),
             ),

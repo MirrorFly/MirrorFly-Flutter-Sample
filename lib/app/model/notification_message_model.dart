@@ -87,6 +87,7 @@ class ChatMessage {
     this.contactChatMessage, //
     this.mediaChatMessage, //
     this.locationChatMessage, //
+    this.topicId, //
   });
 
   String? chatUserJid;
@@ -114,6 +115,7 @@ class ChatMessage {
   ContactChatMessage? contactChatMessage;
   MediaChatMessage? mediaChatMessage;
   LocationChatMessage? locationChatMessage;
+  String? topicId;
 
   factory ChatMessage.fromJson(Map<String, dynamic> json) => ChatMessage(
         chatUserJid: json["chatUserJid"] ?? "",
@@ -180,6 +182,7 @@ class ChatMessage {
         locationChatMessage: json["locationChatMessage"] == null
             ? null
             : LocationChatMessage.fromJson(json["locationChatMessage"]),
+        topicId: Platform.isIOS ? json["topicID"] : json["topicId"]
       );
 
   Map<String, dynamic> toJson() => {
@@ -214,6 +217,7 @@ class ChatMessage {
             mediaChatMessage == null ? null : mediaChatMessage!.toJson(),
         "locationChatMessage":
             locationChatMessage == null ? null : locationChatMessage!.toJson(),
+        "topicId": topicId
       };
 }
 
