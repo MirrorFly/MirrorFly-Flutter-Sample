@@ -176,12 +176,14 @@ class GroupInfoController extends GetxController {
     });
   }
   onToggleChange(bool value){
-    if (_isMemberOfGroup.value) {
+    if (isMemberOfGroup) {
       if (muteable.value) {
         mirrorFlyLog("change", value.toString());
         _mute(value);
         Mirrorfly.updateChatMuteStatus(profile.jid.checkNull(), value);
       }
+    }else{
+      toToast("You're no longer a participant in this group");
     }
   }
 
@@ -499,6 +501,8 @@ class GroupInfoController extends GetxController {
       }else{
         toToast(Constants.noInternetConnection);
       }
+    }else{
+      toToast("You're no longer a participant in this group");
     }
   }
 
@@ -521,6 +525,8 @@ class GroupInfoController extends GetxController {
       }else{
         toToast(Constants.noInternetConnection);
       }
+    }else{
+      toToast("You're no longer a participant in this group");
     }
   }
 
