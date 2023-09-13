@@ -11,7 +11,7 @@ class CustomActionBarIcons extends StatefulWidget {
   final double actionWidth;
   final List<CustomAction> actions;
 
-  CustomActionBarIcons({
+  const CustomActionBarIcons({
     super.key,
     required this.availableWidth,
     required this.actionWidth,
@@ -125,7 +125,7 @@ class _CustomActionBarIconsState extends State<CustomActionBarIcons> with Widget
               itemBuilder: (BuildContext context) {
                 _context = context;
                 for (CustomAction customAction in overflow) {
-                  LogMessage.d("PopupMenuButton", "${customAction.keyValue}");
+                  LogMessage.d("PopupMenuButton", customAction.keyValue);
                 }
                 return [
                   for (CustomAction customAction in overflow)
