@@ -199,14 +199,14 @@ class CallController extends GetxController {
       debugPrint("#Disconnect call disconnect value $value");
       if (value.checkNull()) {
         debugPrint("#Disconnect call disconnect list size ${callList.length}");
-        if (callList.isNotEmpty) {
-          callList.clear();
-        }
+        //Commenting for iOS crash. everytime during initialisation, list is created newly. so no issues
+        // if (callList.isNotEmpty) {
+        //   callList.clear();
+        // }
         if (Get.previousRoute.isNotEmpty) {
           debugPrint("#Disconnect previous route is not empty");
           if (Get.currentRoute == Routes.onGoingCallView) {
             debugPrint("#Disconnect current route is ongoing call view");
-            callTimer("Disconnected");
             Future.delayed(const Duration(seconds: 1), () {
               debugPrint("#Disconnect call controller back called");
               Get.back();
@@ -347,6 +347,11 @@ class CallController extends GetxController {
   }
 
   void statusUpdate(String userJid, String callStatus) {
+    if(callList.isEmpty){
+      debugPrint("skipping statusUpdate as list is empty");
+      return;
+    }
+    debugPrint("statusUpdate $callStatus");
     var displayStatus = CallStatus.calling;
     switch (callStatus) {
       case CallStatus.connected:
