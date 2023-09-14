@@ -194,6 +194,7 @@ class CallController extends GetxController {
   }
 
   void disconnectCall() {
+    callTimer("Disconnected");
     Mirrorfly.disconnectCall().then((value) {
       debugPrint("#Disconnect call disconnect value $value");
       if (value.checkNull()) {
@@ -264,7 +265,7 @@ class CallController extends GetxController {
     } else {
       debugPrint("#Mirrorflycall participant jid is not in the list");
     }
-    if (callList.length == 1) {
+    if (callList.length <= 1) {
       // if there is an single user in that call and if he [disconnected] no need to disconnect the call from our side Observed in Android
       if (Platform.isIOS) {
         // in iOS needs to call disconnect.
@@ -293,8 +294,7 @@ class CallController extends GetxController {
 
   void localHangup(
       String callMode, String userJid, String callType, String callAction) {
-    //Commenting to check iOS Crash.
-    // callDisconnected(callMode, userJid, callType);
+    callDisconnected(callMode, userJid, callType);
   }
 
   void remoteHangup(
