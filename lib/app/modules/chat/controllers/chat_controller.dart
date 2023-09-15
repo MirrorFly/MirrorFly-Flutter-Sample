@@ -2272,7 +2272,7 @@ class ChatController extends FullLifeCycleController
 
   memberOfGroup() {
     if (profile.isGroupProfile ?? false) {
-      Mirrorfly.isMemberOfGroup(profile.jid.checkNull(), null)
+      Mirrorfly.isMemberOfGroup(profile.jid.checkNull(), SessionManagement.getUserJID())
           .then((bool? value) {
         if (value != null) {
           _isMemberOfGroup(value);

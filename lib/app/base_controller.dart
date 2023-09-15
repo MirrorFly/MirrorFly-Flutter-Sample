@@ -531,6 +531,7 @@ abstract class BaseController {
   }
 
   void onLeftFromGroup({required String groupJid, required String userJid}) {
+    debugPrint('onLeftFromGroup $groupJid $userJid');
     if (Get.isRegistered<ChatController>()) {
       Get.find<ChatController>().onLeftFromGroup(groupJid: groupJid, userJid : userJid);
     }

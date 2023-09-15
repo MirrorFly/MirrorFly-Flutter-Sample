@@ -8,7 +8,6 @@ import 'package:mirror_fly_demo/app/common/constants.dart';
 import 'package:mirror_fly_demo/app/common/main_controller.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
 import 'package:mirrorfly_plugin/mirrorfly.dart';
-import 'package:mirrorfly_plugin/model/available_features.dart';
 
 import '../../../common/crop_image.dart';
 import '../../../data/apputils.dart';
@@ -47,7 +46,9 @@ class GroupInfoController extends GetxController {
     _mute(profile.isMuted!);
     scrollController.addListener(_scrollListener);
     getGroupMembers(false);
-    availableFeatures.value.isGroupChatAvailable.checkNull() ? getGroupMembers(null) : null;
+    if(availableFeatures.value.isGroupChatAvailable.checkNull()){
+      getGroupMembers(null);
+    }
     groupAdmin();
     memberOfGroup();
     muteAble();
@@ -169,7 +170,7 @@ class GroupInfoController extends GetxController {
     });
   }
   memberOfGroup(){
-    Mirrorfly.isMemberOfGroup(profile.jid.checkNull(),null).then((bool? value){
+    Mirrorfly.isMemberOfGroup(profile.jid.checkNull(),SessionManagement.getUserJID()).then((bool? value){
       if(value!=null){
         _isMemberOfGroup(value);
       }
@@ -257,6 +258,7 @@ class GroupInfoController extends GetxController {
           child: const Text("LEAVE")),
     ]);
   }
+  var leavedGroup = false.obs;
   exitFromGroup()async{
     if(!availableFeatures.value.isGroupChatAvailable.checkNull()){
       Helper.showFeatureUnavailable();
@@ -269,6 +271,7 @@ class GroupInfoController extends GetxController {
         if(value!=null){
           if(value){
             _isMemberOfGroup(!value);
+            leavedGroup(value);
           }
         }
       }).catchError((error) {
@@ -279,7 +282,7 @@ class GroupInfoController extends GetxController {
     }
   }
   deleteGroup(){
-    if(!availableFeatures.value.isGroupChatAvailable.checkNull()){
+    if(!availableFeatures.value.isGroupChatAvailable.checkNull() || !availableFeatures.value.isDeleteChatAvailable.checkNull()){
       Helper.showFeatureUnavailable();
       return;
     }
@@ -293,7 +296,7 @@ class GroupInfoController extends GetxController {
           onPressed: () async {
             if(await AppUtils.isNetConnected()) {
               Get.back();
-              if(!availableFeatures.value.isGroupChatAvailable.checkNull()){
+              if(!availableFeatures.value.isGroupChatAvailable.checkNull() || !availableFeatures.value.isDeleteChatAvailable.checkNull()){
                 Helper.showFeatureUnavailable();
                 return;
               }
@@ -574,6 +577,7 @@ class GroupInfoController extends GetxController {
   void onAvailableFeaturesUpdated(AvailableFeatures features) {
     LogMessage.d("GroupInfo", "onAvailableFeaturesUpdated ${features.toJson()}");
     availableFeatures(features);
-    loadGroupExistence();
+    _isMemberOfGroup.refresh();
+    // loadGroupExistence();
   }
 }
