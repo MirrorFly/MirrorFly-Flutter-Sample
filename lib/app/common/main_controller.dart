@@ -19,6 +19,7 @@ import 'package:mirror_fly_demo/app/modules/notification/notification_builder.da
 import 'package:mirror_fly_demo/app/routes/app_pages.dart';
 
 import 'package:mirrorfly_plugin/mirrorfly.dart';
+import 'package:mirrorfly_plugin/model/available_features.dart';
 
 import '../modules/chatInfo/controllers/chat_info_controller.dart';
 import 'notification_service.dart';
@@ -37,6 +38,8 @@ class MainController extends FullLifeCycleController with BaseController, FullLi
   bool _notificationsEnabled = false;
   //network listener
   static StreamSubscription<InternetConnectionStatus>? listener;
+
+  var availableFeature = AvailableFeatures().obs;
 
   @override
   Future<void> onInit() async {
@@ -57,8 +60,10 @@ class MainController extends FullLifeCycleController with BaseController, FullLi
     getMediaEndpoint();
     uploadEndpoint(SessionManagement.getMediaEndPoint().checkNull());
     authToken(SessionManagement.getAuthToken().checkNull());
-    getAuthToken();
+    //getAuthToken();
     startNetworkListen();
+
+    getAvailableFeatures();
 
     NotificationService notificationService = NotificationService();
     await notificationService.init();
@@ -123,6 +128,8 @@ class MainController extends FullLifeCycleController with BaseController, FullLi
       // ));
       debugPrint("#Mirrorfly Notification -> opening chat page--> $payload ${Get.currentRoute}");
       if(payload != null && payload.isNotEmpty){
+        var chatJid = payload.checkNull().split(",")[0];
+        var topicId = payload.checkNull().split(",")[1];
         if (Get.isRegistered<ChatController>()) {
           debugPrint("#Mirrorfly Notification -> already chat page");
           if(Get.currentRoute == Routes.forwardChat || Get.currentRoute == Routes.chatInfo || Get.currentRoute == Routes.groupInfo || Get.currentRoute == Routes.messageInfo){
@@ -130,15 +137,15 @@ class MainController extends FullLifeCycleController with BaseController, FullLi
           }
           if(Get.currentRoute.contains("from_notification=true")){
             LogMessage.d("#Mirrorfly Notification -> previously app opened from notification", "so we have to maintain that");
-            Get.offAllNamed("${AppPages.chat}?jid=$payload&from_notification=true");
+            Get.offAllNamed("${AppPages.chat}?jid=$chatJid&from_notification=true&topicId=$topicId");
           }else {
             Get.offNamed(Routes.chat,
-                parameters: {"chatJid": payload});
+                parameters: {"chatJid": chatJid,"topicId":topicId});
           }
         }else {
           debugPrint("not chat page");
           Get.toNamed(Routes.chat,
-              parameters: {"chatJid": payload});
+              parameters: {"chatJid": chatJid,"topicId":topicId});
         }
       }
     });
@@ -346,5 +353,17 @@ class MainController extends FullLifeCycleController with BaseController, FullLi
     if((SessionManagement.getEnablePin() || SessionManagement.getEnableBio()) && Get.currentRoute!=Routes.pin){
       Get.toNamed(Routes.pin,);
     }
+  }
+
+  void getAvailableFeatures() {
+    Mirrorfly.getAvailableFeatures().then((features) {
+      debugPrint("getAvailableFeatures $features");
+      var featureAvailable = availableFeaturesFromJson(features);
+      availableFeature(featureAvailable);
+    });
+  }
+
+  void onAvailableFeatures(AvailableFeatures features){
+    availableFeature(features);
   }
 }

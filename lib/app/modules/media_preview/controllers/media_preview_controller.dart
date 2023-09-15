@@ -6,8 +6,10 @@ import 'package:flutter/scheduler.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:mirrorfly_plugin/mirrorfly.dart';
 import 'package:get/get.dart';
+import 'package:mirrorfly_plugin/model/available_features.dart';
 
 import '../../../common/constants.dart';
+import '../../../common/main_controller.dart';
 import '../../../data/helper.dart';
 import '../../../routes/app_pages.dart';
 import '../../chat/controllers/chat_controller.dart';
@@ -66,6 +68,7 @@ class MediaPreviewController extends FullLifeCycleController with FullLifeCycleM
     debugPrint("send media");
     var previousRoute = Get.previousRoute;
     // if (await AppUtils.isNetConnected()) {
+    var featureNotAvailable = false;
     try {
       int i = 0;
       Platform.isIOS ? Helper.showLoading(message: "Compressing files") : null;
@@ -73,6 +76,10 @@ class MediaPreviewController extends FullLifeCycleController with FullLifeCycleM
         /// show image
         debugPrint(data.type);
         if (data.type == 'image') {
+          if(!availableFeatures.value.isImageAttachmentAvailable.checkNull()){
+            featureNotAvailable=true;
+            break;
+          }
           debugPrint("sending image");
           var response = await Get.find<ChatController>()
               .sendImageMessage(data.path, captionMessage[i], "");
@@ -81,6 +88,10 @@ class MediaPreviewController extends FullLifeCycleController with FullLifeCycleM
             debugPrint("Image send Success");
           }
         } else if (data.type == 'video') {
+          if(!availableFeatures.value.isVideoAttachmentAvailable.checkNull()){
+            featureNotAvailable = true;
+            break;
+          }
           debugPrint("sending video");
           var response = await Get.find<ChatController>()
               .sendVideoMessage(data.path!, captionMessage[i], "");
@@ -92,11 +103,16 @@ class MediaPreviewController extends FullLifeCycleController with FullLifeCycleM
         i++;
       }
     } finally {
+      debugPrint("finally $featureNotAvailable");
       Platform.isIOS ? Helper.hideLoading() : null;
-      if(previousRoute==Routes.galleryPicker){
+      if(!featureNotAvailable) {
+        if (previousRoute == Routes.galleryPicker) {
+          Get.back();
+        }
         Get.back();
+      }else{
+        Helper.showFeatureUnavailable();
       }
-      Get.back();
     }
     // Get.back();
     /*} else {
@@ -139,4 +155,10 @@ class MediaPreviewController extends FullLifeCycleController with FullLifeCycleM
 
   @override
   void onInactive() {}
+
+  var availableFeatures = Get.find<MainController>().availableFeature;
+  void onAvailableFeaturesUpdated(AvailableFeatures features) {
+    LogMessage.d("MediaPreview", "onAvailableFeaturesUpdated ${features.toJson()}");
+    availableFeatures(features);
+  }
 }
