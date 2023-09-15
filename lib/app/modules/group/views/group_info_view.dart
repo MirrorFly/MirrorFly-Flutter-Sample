@@ -254,16 +254,20 @@ class GroupInfoView extends GetView<GroupInfoController> {
                 onTap: () => controller.reportGroup(),
               ),
               Obx(() {
-                return ListItem(
-                  leading: SvgPicture.asset(leaveGroup, width: 18,),
-                  title: Text(!controller.isMemberOfGroup
-                      ? "Delete Group"
-                      : "Leave Group",
-                      style: const TextStyle(
-                          color: Colors.red,
-                          fontSize: 14,
-                          fontWeight: FontWeight.w500)),
-                  onTap: () => controller.exitOrDeleteGroup(),
+                LogMessage.d("Delete or Leave", "${controller.isMemberOfGroup} ${controller.availableFeatures.value.isDeleteChatAvailable.checkNull()} ${controller.isMemberOfGroup} ${controller.leavedGroup.value}");
+                return Visibility(
+                  visible: !controller.isMemberOfGroup ? controller.availableFeatures.value.isDeleteChatAvailable.checkNull() : (controller.isMemberOfGroup && !controller.leavedGroup.value),
+                  child: ListItem(
+                    leading: SvgPicture.asset(leaveGroup, width: 18,),
+                    title: Text(!controller.isMemberOfGroup
+                        ? "Delete Group"
+                        : "Leave Group",
+                        style: const TextStyle(
+                            color: Colors.red,
+                            fontSize: 14,
+                            fontWeight: FontWeight.w500)),
+                    onTap: () => controller.exitOrDeleteGroup(),
+                  ),
                 );
               }),
             ],
