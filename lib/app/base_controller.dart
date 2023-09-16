@@ -153,6 +153,17 @@ abstract class BaseController {
     Mirrorfly.onSuccess.listen(onSuccess);
     Mirrorfly.onLoggedOut.listen(onLogout);
 
+    Mirrorfly.onMissedCall.listen((event){
+      LogMessage.d("onMissedCall", event);
+      var data = json.decode(event.toString());
+      var isOneToOneCall = data["isOneToOneCall"];
+      var userJid = data["userJid"];
+      var groupId = data["groupId"];
+      var callType = data["callType"];
+      var userList = data["userList"].toString().split(",");
+      onMissedCall(isOneToOneCall, userJid, groupId, callType, userList);
+    });
+
     Mirrorfly.onLocalVideoTrackAdded.listen((event) {
 
     });
@@ -819,6 +830,56 @@ abstract class BaseController {
     }else{
       debugPrint("self sent message don't need notification");
     }
+  }
+
+  Future<void> onMissedCall(bool isOneToOneCall, String userJid, String groupId, String callType, List<String> userList) async {
+    //show MissedCall Notification
+    var missedCallTitleContent = await getMissedCallNotificationContent(isOneToOneCall, userJid, groupId, callType, userList);
+    LogMessage.d("onMissedCall","${missedCallTitleContent.first} ${missedCallTitleContent.last}");
+  }
+
+  Future<List<String>> getMissedCallNotificationContent( bool isOneToOneCall, String userJid, String groupId, String callType, List<String> userList) async {
+    String messageContent;
+    StringBuffer missedCallTitle = StringBuffer();
+    missedCallTitle.write("You missed ");
+    if (isOneToOneCall && groupId.isNotEmpty) {
+      if (callType == CallType.audio) {
+        missedCallTitle.write("an ");
+      } else {
+        missedCallTitle.write("a ");
+      }
+      missedCallTitle.write(callType);
+      missedCallTitle.write(" call");
+      messageContent = await getDisplayName(userJid);
+    } else {
+        missedCallTitle.write("a group $callType call");
+       if (groupId.isNotEmpty) {
+         messageContent = await getDisplayName(groupId);
+       } else {
+         messageContent = await getCallUsersName(userList);
+      }
+    }
+    return [missedCallTitle.toString(), messageContent];
+  }
+
+  Future<String> getCallUsersName(List<String> callUsers) async {
+    var name = StringBuffer("");
+    for (var i = 0; i<=callUsers.length; i++) {
+      var displayName = await getDisplayName(callUsers[i]);
+      if (i == 2) {
+        name.write(" and (+${callUsers.length - i})");
+        break;
+      } else if (i == 1) {
+        name.write(", $displayName");
+      } else {
+        name = StringBuffer(getDisplayName(callUsers[i]));
+      }
+    }
+    return name.toString();
+  }
+
+  Future<String> getDisplayName(String jid) async {
+    return (await getProfileDetails(jid)).getName();
   }
 
   void onLogout(isLogout) {
