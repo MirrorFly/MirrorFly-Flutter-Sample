@@ -90,6 +90,13 @@ abstract class BaseController {
       }
     });
     Mirrorfly.onGroupNotificationMessage.listen(onGroupNotificationMessage);
+    Mirrorfly.showOrUpdateOrCancelNotification.listen((event){
+      LogMessage.d("showOrUpdateOrCancelNotification",event);
+      var data  = json.decode(event.toString());
+      var jid = data["jid"];
+      var chatMessage = chatMessageFromJson(data["chatMessage"]);
+      showOrUpdateOrCancelNotification(jid,chatMessage);
+    });
     Mirrorfly.onGroupDeletedLocally.listen(onGroupDeletedLocally);
 
     Mirrorfly.blockedThisUser.listen(blockedThisUser);
@@ -382,7 +389,7 @@ abstract class BaseController {
     }else{
       var data = chatMessageFromJson(chatMessage.toString());
       if(data.messageId!=null) {
-        NotificationBuilder.createNotification(data);
+        // NotificationBuilder.createNotification(data);
       }
      // showLocalNotification(chatMessageModel);
     }
@@ -561,7 +568,7 @@ abstract class BaseController {
       debugPrint("notificationMadeByME ${notificationMadeByME(data)}");
       //checked own notification for (if group notification made by me like group member add,remove)
       if(data.messageId!=null && !notificationMadeByME(data)) {
-        NotificationBuilder.createNotification(data);
+        // NotificationBuilder.createNotification(data);
       }
       // showLocalNotification(chatMessageModel);
     }
@@ -573,6 +580,16 @@ abstract class BaseController {
     }
     if (Get.isRegistered<ChatController>()) {
       Get.find<ChatController>().onMessageReceived(chatMessageModel);
+    }
+  }
+
+  Future<void> showOrUpdateOrCancelNotification(String jid, ChatMessage chatMesssage) async {
+    var profileDetails = await getProfileDetails(jid);
+    if (profileDetails.isMuted == true) {
+      return;
+    }
+    if(chatMesssage.messageId!=null) {
+      NotificationBuilder.createNotification(chatMesssage);
     }
   }
 
