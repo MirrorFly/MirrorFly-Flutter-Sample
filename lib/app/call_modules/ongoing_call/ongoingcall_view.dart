@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
+import 'package:mirror_fly_demo/app/call_modules/call_widgets.dart';
 import 'package:mirror_fly_demo/app/call_modules/outgoing_call/call_controller.dart';
 import 'package:mirror_fly_demo/app/model/call_user_list.dart';
 import 'package:mirrorfly_plugin/mirrorfly_view.dart';
@@ -56,6 +57,9 @@ class OnGoingCallView extends GetView<CallController> {
                                 ? const CircleAvatar(backgroundColor: Colors.black45, child: Icon(Icons.mic_off),)
                                 : const SizedBox.shrink());
                       }),
+                      /*Obx((){
+                        return const SoundWave(amplitudes: [0.0, 20.0, 10.0, 30.0, 15.0, 25.0, 5.0, 35.0, 0.0], waveColor: Colors.green);
+                      })*/
                     ],
                   )),
 
@@ -129,11 +133,24 @@ class OnGoingCallView extends GetView<CallController> {
                     child: SizedBox(
                       height: 180,
                       width: 130,
-                      child: MirrorFlyView(
-                        userJid: controller.callList[0].userJid ?? "",
-                        viewBgColor: Colors.blueGrey,
-                      ).setBorderRadius(
-                          const BorderRadius.all(Radius.circular(10))),
+                      child: Stack(
+                        children: [
+                          MirrorFlyView(
+                            userJid: controller.callList[0].userJid ?? "",
+                            viewBgColor: Colors.blueGrey,
+                          ).setBorderRadius(
+                              const BorderRadius.all(Radius.circular(10))),
+                          Obx(() => Visibility(
+                            visible: !controller.speakingUsers.indexWhere((element) => element.userJid == controller.callList[0].userJid).isNegative,
+                            child: Positioned(
+                                top: 8,
+                                right: 8,
+                                child: SoundWave(
+                                  audioLevel: controller.speakingUsers[controller.speakingUsers.indexWhere((element) => element.userJid == controller.callList[0].userJid)].audioLevel.value,
+                                  bgColor: const Color(0xff3abf87),)),
+                          )),
+                        ],
+                      )
                     ),
                   ),
                 )

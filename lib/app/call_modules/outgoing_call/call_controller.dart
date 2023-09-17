@@ -244,7 +244,7 @@ class CallController extends GetxController {
     } else {
       debugPrint("#Mirrorflycall participant jid is not in the list");
     }
-    if (callList.length == 1) {
+    if (callList.length <= 1) {
       // if there is an single user in that call and if he [disconnected] no need to disconnect the call from our side Observed in Android
       // disconnectCall();
       if (Get.previousRoute.isNotEmpty) {
@@ -395,5 +395,15 @@ class CallController extends GetxController {
 
   void callDuration(String timer){
     callTimer(timer);
+  }
+
+  var speakingUsers = <SpeakingUsers>[].obs;
+  void onUserSpeaking(userJid, audioLevel) {
+    var index = speakingUsers.indexWhere((element) => element.userJid==userJid);
+    if(index.isNegative) {
+      speakingUsers.add(SpeakingUsers(userJid: userJid, audioLevel: audioLevel));
+    }else{
+      speakingUsers[index].audioLevel(audioLevel);
+    }
   }
 }

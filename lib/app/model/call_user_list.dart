@@ -33,3 +33,9 @@ class CallUserList {
     "isAudioMuted": isAudioMuted.value,
   };
 }
+
+class SpeakingUsers{
+  String? userJid;
+  RxInt audioLevel = RxInt(0);
+  SpeakingUsers({required userJid,required audioLevel});
+}
