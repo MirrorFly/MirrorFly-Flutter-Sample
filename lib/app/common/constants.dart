@@ -715,6 +715,8 @@ class Constants {
   static const cameraPermissionAsked = "camera_permission_asked_before";
   static const readPhoneStatePermissionAsked = "read_phone_state_asked_before";
   static const bluetoothPermissionAsked = "bluetooth_permission_asked_before";
+
+  static const remoteEngagedToast = "is on another call";
 }
 
 Future<void> launchWeb(String url) async {

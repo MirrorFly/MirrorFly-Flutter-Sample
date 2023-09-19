@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -286,7 +287,9 @@ abstract class BaseController {
         //if we called on user B, the user B is decline the call then this will be triggered in Android
         case CallAction.remoteBusy:{
           //in Android, showing this user is busy toast inside SDK
-          //toToast("User is Busy");
+          if (Platform.isIOS){
+            toToast("User is Busy");
+          }
           if (Get.isRegistered<CallController>()) {
             Get.find<CallController>().remoteBusy(
                 callMode, userJid, callType, callAction);
@@ -304,7 +307,7 @@ abstract class BaseController {
         //if we called on user B, the user B is on another call then this will triggered
         case CallAction.remoteEngaged:{
           if (Get.isRegistered<CallController>()) {
-            Get.find<CallController>().remoteEngaged();
+            Get.find<CallController>().remoteEngaged(userJid);
           }
           break;
         }
@@ -871,7 +874,7 @@ abstract class BaseController {
           String min = minDur < 10 ? "0$minDur" : minDur.toString();
           String sec = secDur < 10 ? "0$secDur" : secDur.toString();
           var time = "$min:$sec";
-          LogMessage.d("callTimer", time);
+          // LogMessage.d("callTimer", time);
           if (Get.isRegistered<CallController>()) {
             Get.find<CallController>().callDuration(time);
           }
