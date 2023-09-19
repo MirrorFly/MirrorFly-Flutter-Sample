@@ -358,6 +358,9 @@ abstract class BaseController {
     });
     Mirrorfly.onUserStoppedSpeaking.listen((event) {
       mirrorFlyLog("onUserSpeaking", "$event");
+      if(Get.isRegistered<CallController>()){
+        Get.find<CallController>().onUserStoppedSpeaking(event.toString());
+      }
     });
 
     Mirrorfly.onAvailableFeaturesUpdated.listen(onAvailableFeaturesUpdated);

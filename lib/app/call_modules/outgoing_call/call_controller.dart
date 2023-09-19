@@ -398,12 +398,31 @@ class CallController extends GetxController {
   }
 
   var speakingUsers = <SpeakingUsers>[].obs;
-  void onUserSpeaking(userJid, audioLevel) {
-    var index = speakingUsers.indexWhere((element) => element.userJid==userJid);
+  void onUserSpeaking(String userJid, int audioLevel) {
+    LogMessage.d("speakingUsers", "${speakingUsers.length}");
+    var index = speakingUsers.indexWhere((element) => element.userJid.toString() == userJid.toString());
+    LogMessage.d("speakingUsers indexWhere", "$index");
     if(index.isNegative) {
-      speakingUsers.add(SpeakingUsers(userJid: userJid, audioLevel: audioLevel));
+      speakingUsers.add(SpeakingUsers(userJid: userJid, audioLevel: audioLevel.obs));
+      LogMessage.d("speakingUsers", "added");
     }else{
       speakingUsers[index].audioLevel(audioLevel);
+      LogMessage.d("speakingUsers", "updated");
     }
+  }
+
+  int audioLevel(userJid) {
+    var index = speakingUsers.indexWhere((element) => element.userJid == userJid);
+    return index.isNegative ? -1 : speakingUsers[speakingUsers.indexWhere((element) => element.userJid == userJid)].audioLevel.value;
+  }
+  void onUserStoppedSpeaking(String userJid){
+    //adding delay to show better ui
+    Future.delayed(const Duration(milliseconds: 300),(){
+      var index = speakingUsers.indexWhere((element) => element.userJid==userJid);
+      if(!index.isNegative) {
+        speakingUsers.removeAt(index);
+      }
+    });
+
   }
 }

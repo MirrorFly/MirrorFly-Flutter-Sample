@@ -35,7 +35,7 @@ class CallUserList {
 }
 
 class SpeakingUsers{
-  String? userJid;
+  String userJid;
   RxInt audioLevel = RxInt(0);
-  SpeakingUsers({required userJid,required audioLevel});
+  SpeakingUsers({required this.userJid,required this.audioLevel});
 }

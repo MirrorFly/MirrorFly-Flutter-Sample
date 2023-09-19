@@ -140,15 +140,12 @@ class OnGoingCallView extends GetView<CallController> {
                             viewBgColor: Colors.blueGrey,
                           ).setBorderRadius(
                               const BorderRadius.all(Radius.circular(10))),
-                          Obx(() => Visibility(
-                            visible: !controller.speakingUsers.indexWhere((element) => element.userJid == controller.callList[0].userJid).isNegative,
-                            child: Positioned(
-                                top: 8,
-                                right: 8,
-                                child: SoundWave(
-                                  audioLevel: controller.speakingUsers[controller.speakingUsers.indexWhere((element) => element.userJid == controller.callList[0].userJid)].audioLevel.value,
-                                  bgColor: const Color(0xff3abf87),)),
-                          )),
+                          Obx(() => controller.speakingUsers.isNotEmpty && !controller.audioLevel(controller.callList[0].userJid).isNegative ? Positioned(
+                              top: 8,
+                              right: 8,
+                              child: SpeakingDots(
+                                audioLevel: controller.audioLevel(controller.callList[0].userJid),
+                                bgColor: const Color(0xff3abf87),)) : const SizedBox.shrink()),
                         ],
                       )
                     ),

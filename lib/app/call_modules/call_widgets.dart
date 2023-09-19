@@ -30,20 +30,25 @@ Widget buildProfileImage(Profile item) {
   );
 }
 
-class SoundWave extends StatelessWidget {
-  const SoundWave({Key? key, required this.audioLevel, required this.bgColor}) : super(key: key);
+class SpeakingDots extends StatefulWidget {
+  const SpeakingDots({Key? key, required this.audioLevel, required this.bgColor}) : super(key: key);
   final int audioLevel;
   final Color bgColor;
 
   @override
+  State<SpeakingDots> createState() => _SpeakingDotsState();
+}
+
+class _SpeakingDotsState extends State<SpeakingDots> {
+  @override
   Widget build(BuildContext context) {
     return CircleAvatar(
-      backgroundColor: bgColor,
+      backgroundColor: widget.bgColor,
       radius: 13,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         mainAxisSize: MainAxisSize.min,
-        children: showAudioLevel(audioLevel),
+        children: showAudioLevel(widget.audioLevel),
       ),
     );
   }
