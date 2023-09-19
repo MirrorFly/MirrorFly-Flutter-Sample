@@ -36,16 +36,18 @@ class CallController extends GetxController {
   var audioOutputType = "receiver".obs;
   var callStatus = CallStatus.calling.obs;
 
+  var userJID = "".obs;
+
   @override
   Future<void> onInit() async {
     super.onInit();
     debugPrint("#Mirrorfly Call Controller onInit");
-    var userJid = Get.arguments?["userJid"];
-    if (userJid != null && userJid != "") {
-      debugPrint("#Mirrorfly Call UserJid $userJid");
+    userJID.value = Get.arguments?["userJid"];
+    if (userJID.value != "") {
+      debugPrint("#Mirrorfly Call UserJid $userJID");
       // var profile = await Mirrorfly.getUserProfile(userJid);
       // var data = profileDataFromJson(profile);
-      var data = await getProfileDetails(userJid);
+      var data = await getProfileDetails(userJID.value);
       profile(data);
       calleeName(data.getName());
     }
@@ -66,7 +68,7 @@ class CallController extends GetxController {
           // [{"userJid":"919789482015@xmpp-uikit-qa.contus.us","callStatus":"Trying to Connect"},{"userJid":"919894940560@xmpp-uikit-qa.contus.us","callStatus":"Trying to Connect"},{"userJid":"917010279986@xmpp-uikit-qa.contus.us","callStatus":"Connected"}]
           debugPrint("#Mirrorfly call get users --> $value");
           final callUserList = callUserListFromJson(value);
-          callList.addAll(callUserList);
+          callList(callUserList);
           getNames();
         });
       } else {
@@ -74,9 +76,9 @@ class CallController extends GetxController {
         debugPrint("#Mirrorfly Call getCallUsersList");
         Mirrorfly.getCallUsersList().then((value) {
           debugPrint("#Mirrorfly call get users --> $value");
-          callList.clear();
+          // callList.clear();
           final callUserList = callUserListFromJson(value);
-          callList.addAll(callUserList);
+          callList(callUserList);
           getNames();
         });
       }
@@ -339,7 +341,7 @@ class CallController extends GetxController {
     // this.callStatus("Disconnected");
     // Get.back();
     debugPrint("#Mirrorfly Call timeout callMode : $callMode -- userJid : $userJid -- callType $callType -- callStatus $callStatus");
-    Get.offNamed(Routes.callTimeOutView);
+    Get.offNamed(Routes.callTimeOutView, arguments: {"callType": callType, "callMode": callMode, "userJid": userJID.value, "calleeName": calleeName.value});
   }
 
   void declineCall() {

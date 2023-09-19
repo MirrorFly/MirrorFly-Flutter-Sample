@@ -3150,6 +3150,7 @@ class ChatController extends FullLifeCycleController
   }
 
   void setOnGoingUserAvail() {
+    debugPrint("setOnGoingUserAvail");
     Mirrorfly.setOnGoingChatUser(profile.jid.checkNull());
     SessionManagement.setCurrentChatJID(profile.jid.checkNull());
     sendReadReceipt();
