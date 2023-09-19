@@ -303,7 +303,9 @@ class CallController extends GetxController {
 
   void timeout(String callMode, String userJid, String callType, String callStatus) {
     // this.callStatus("Disconnected");
-    Get.back();
+    // Get.back();
+    debugPrint("#Mirrorfly Call timeout callMode : $callMode -- userJid : $userJid -- callType $callType -- callStatus $callStatus");
+    Get.offNamed(Routes.callTimeOutView);
   }
 
   void declineCall() {

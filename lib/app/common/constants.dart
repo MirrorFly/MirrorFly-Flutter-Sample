@@ -44,6 +44,7 @@ const Color previewTextColor = Color(0xff7f7f7f);
 
 class AppColors{
   static const Color callerBackground = Color(0xff152134);
+  static const Color bottomCallOptionBackground = Color(0xff162337);
   static const Color audioCallBackground = Color(0xff0B111C);
   static const Color colorBlackTransparent = Color(0x80000000);
   static const Color callerStatus = Color(0xffDEDEDE);
