@@ -8,7 +8,6 @@ import 'package:mirrorfly_plugin/mirrorfly_view.dart';
 import 'package:mirrorfly_plugin/mirrorflychat.dart';
 
 import '../../common/constants.dart';
-import '../../common/widgets.dart';
 
 class OnGoingCallView extends GetView<CallController> {
   const OnGoingCallView({super.key});
@@ -45,6 +44,7 @@ class OnGoingCallView extends GetView<CallController> {
                             userJid:
                             controller.callList[1].userJid ?? "",
                             alignProfilePictureCenter: false,
+                            showSpeakingRipple: true,
                             profileSize: 100)
                             .setBorderRadius(
                             const BorderRadius.all(Radius.circular(10)))
@@ -188,30 +188,6 @@ class OnGoingCallView extends GetView<CallController> {
           ),
         ),
       ),
-    );
-  }
-
-  Widget buildProfileView() {
-    return Center(
-      child: FutureBuilder(
-        // future: getProfileDetails(""),
-          builder: (cxt, data) {
-            return Column(
-              mainAxisSize: MainAxisSize.min,
-              children: const [
-                ProfileTextImage(
-                  text: "Name",
-                ),
-                SizedBox(
-                  height: 4,
-                ),
-                Text(
-                  "Name",
-                  style: TextStyle(color: Colors.white),
-                )
-              ],
-            );
-          }),
     );
   }
 
