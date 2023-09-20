@@ -4,6 +4,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 
 import '../../../common/constants.dart';
+import '../../call_widgets.dart';
 import '../controllers/call_timeout_controller.dart';
 
 class CallTimeoutView extends GetView<CallTimeoutController> {
@@ -33,14 +34,17 @@ class CallTimeoutView extends GetView<CallTimeoutController> {
                         style: const TextStyle(fontSize: 18, color: Colors.white),);
                     }),
                     const SizedBox(height: 13,),
-                    ClipOval(
+                    Obx(() {
+                      return buildProfileImage(controller.profile.value);
+                    }),
+                    /*ClipOval(
                       child: Image.asset(
                         groupImg,
                         height: 100,
                         width: 100,
                         fit: BoxFit.cover,
                       ),
-                    ),
+                    ),*/
                   ],
                 ),
               ),

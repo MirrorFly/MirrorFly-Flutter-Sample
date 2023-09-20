@@ -38,7 +38,7 @@ class OnGoingCallView extends GetView<CallController> {
                                     userJid:
                                         controller.callList[1].userJid ?? "",
                                     alignProfilePictureCenter: false,
-                            showSpeakingRipple: true,
+                                    showSpeakingRipple: true,
                                     profileSize: 100)
                                 .setBorderRadius(
                                     const BorderRadius.all(Radius.circular(10)))

@@ -2,8 +2,10 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:mirror_fly_demo/app/data/helper.dart';
 import 'package:mirrorfly_plugin/flychat.dart';
 import 'package:mirrorfly_plugin/logmessage.dart';
+import 'package:mirrorfly_plugin/mirrorflychat.dart';
 
 import '../../../common/constants.dart';
 import '../../../data/apputils.dart';
@@ -15,14 +17,17 @@ class CallTimeoutController extends GetxController {
   var callMode = ''.obs;
   var userJID = ''.obs;
   var calleeName = ''.obs;
+  Rx<Profile> profile = Profile().obs;
 
   @override
-  void onInit() {
+  Future<void> onInit() async {
     super.onInit();
     callType(Get.arguments["callType"]);
     callMode(Get.arguments["callMode"]);
     userJID(Get.arguments["userJid"]);
     calleeName(Get.arguments["calleeName"]);
+    var data = await getProfileDetails(userJID.value);
+    profile(data);
   }
 
   void cancelCallTimeout() {
