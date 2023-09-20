@@ -27,35 +27,52 @@ class OnGoingCallView extends GetView<CallController> {
               // controller.layoutSwitch.value ?
 
               SizedBox(
-                  width: MediaQuery
-                      .of(context)
-                      .size
-                      .width,
-                  height: MediaQuery
-                      .of(context)
-                      .size
-                      .height,
+                  width: MediaQuery.of(context).size.width,
+                  height: MediaQuery.of(context).size.height,
                   child: Stack(
                     children: [
                       Obx(() {
                         return controller.callList.length > 1 &&
-                            controller.layoutSwitch.value
+                                controller.layoutSwitch.value
                             ? MirrorFlyView(
-                            userJid:
-                            controller.callList[1].userJid ?? "",
-                            alignProfilePictureCenter: false,
+                                    userJid:
+                                        controller.callList[1].userJid ?? "",
+                                    alignProfilePictureCenter: false,
                             showSpeakingRipple: true,
-                            profileSize: 100)
-                            .setBorderRadius(
-                            const BorderRadius.all(Radius.circular(10)))
+                                    profileSize: 100)
+                                .setBorderRadius(
+                                    const BorderRadius.all(Radius.circular(10)))
                             : const SizedBox.shrink();
                       }),
                       Obx(() {
                         return Align(
                             alignment: Alignment.center,
-                            child: controller.callList.length > 1 && controller.callList[1].isAudioMuted.value
-                                ? const CircleAvatar(backgroundColor: Colors.black45, child: Icon(Icons.mic_off),)
-                                : const SizedBox.shrink());
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                controller.callStatus
+                                        .contains(CallStatus.reconnecting)
+                                    ? const Text(
+                                        "${CallStatus.reconnecting}...",
+                                        style: TextStyle(color: Colors.white),
+                                      )
+                                    : const SizedBox.shrink(),
+                                controller.callStatus
+                                        .contains(CallStatus.reconnecting)
+                                    ? const SizedBox(
+                                        height: 10,
+                                      )
+                                    : const SizedBox.shrink(),
+                                controller.callList.length > 1 &&
+                                        controller
+                                            .callList[1].isAudioMuted.value
+                                    ? const CircleAvatar(
+                                        backgroundColor: Colors.black45,
+                                        child: Icon(Icons.mic_off),
+                                      )
+                                    : const SizedBox.shrink(),
+                              ],
+                            ));
                       }),
                       /*Obx((){
                         return const SoundWave(amplitudes: [0.0, 20.0, 10.0, 30.0, 15.0, 25.0, 5.0, 35.0, 0.0], waveColor: Colors.green);
@@ -216,40 +233,40 @@ class OnGoingCallView extends GetView<CallController> {
           ],
         ),
         Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Obx(() {
-                  return SizedBox(
-                    width: 200,
-                    child: Text(
-                      controller.callTitle.value,
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.w500,
-                        fontSize: 12.0,
-                      ),
-                      textAlign: TextAlign.center,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  );
-                }),
-                const SizedBox(
-                  height: 8,
-                ),
-                Obx(() {
-                  return Text(
-                    controller.callTimer.value,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Obx(() {
+                return SizedBox(
+                  width: 200,
+                  child: Text(
+                    controller.callTitle.value,
                     style: const TextStyle(
                       color: Colors.white,
-                      fontWeight: FontWeight.w400,
+                      fontWeight: FontWeight.w500,
                       fontSize: 12.0,
                     ),
-                  );
-                }),
-              ],
-            ),
-          )
+                    textAlign: TextAlign.center,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                );
+              }),
+              const SizedBox(
+                height: 8,
+              ),
+              Obx(() {
+                return Text(
+                  controller.callTimer.value,
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.w400,
+                    fontSize: 12.0,
+                  ),
+                );
+              }),
+            ],
+          ),
+        )
       ],
     );
   }
@@ -289,29 +306,29 @@ class OnGoingCallView extends GetView<CallController> {
                 onPressed: () => controller.muteAudio(),
                 child: controller.muted.value
                     ? SvgPicture.asset(
-                  muteActive,
-                )
+                        muteActive,
+                      )
                     : SvgPicture.asset(
-                  muteInactive,
-                ),
+                        muteInactive,
+                      ),
               ),
               SizedBox(width: rightSideWidth),
               controller.callType.value == 'video' &&
-                  !controller.videoMuted.value
+                      !controller.videoMuted.value
                   ? FloatingActionButton(
-                heroTag: "switchCamera",
-                elevation: 0,
-                backgroundColor: controller.cameraSwitch.value
-                    ? Colors.white
-                    : Colors.white.withOpacity(0.3),
-                onPressed: () => controller.switchCamera(),
-                child: controller.cameraSwitch.value
-                    ? SvgPicture.asset(cameraSwitchActive)
-                    : SvgPicture.asset(cameraSwitchInactive),
-              )
+                      heroTag: "switchCamera",
+                      elevation: 0,
+                      backgroundColor: controller.cameraSwitch.value
+                          ? Colors.white
+                          : Colors.white.withOpacity(0.3),
+                      onPressed: () => controller.switchCamera(),
+                      child: controller.cameraSwitch.value
+                          ? SvgPicture.asset(cameraSwitchActive)
+                          : SvgPicture.asset(cameraSwitchInactive),
+                    )
                   : const SizedBox.shrink(),
               controller.callType.value == 'video' &&
-                  !controller.videoMuted.value
+                      !controller.videoMuted.value
                   ? SizedBox(width: rightSideWidth)
                   : const SizedBox.shrink(),
               FloatingActionButton(
@@ -332,23 +349,23 @@ class OnGoingCallView extends GetView<CallController> {
                 heroTag: "speaker",
                 elevation: 0,
                 backgroundColor:
-                controller.audioOutputType.value == AudioDeviceType.receiver
-                    ? Colors.white.withOpacity(0.3)
-                    : Colors.white,
+                    controller.audioOutputType.value == AudioDeviceType.receiver
+                        ? Colors.white.withOpacity(0.3)
+                        : Colors.white,
                 onPressed: () => controller.changeSpeaker(),
                 child:
-                controller.audioOutputType.value == AudioDeviceType.receiver
-                    ? SvgPicture.asset(speakerInactive)
-                    : controller.audioOutputType.value ==
-                    AudioDeviceType.speaker
-                    ? SvgPicture.asset(speakerActive)
-                    : controller.audioOutputType.value ==
-                    AudioDeviceType.bluetooth
-                    ? SvgPicture.asset(speakerBluetooth)
-                    : controller.audioOutputType.value ==
-                    AudioDeviceType.headset
-                    ? SvgPicture.asset(speakerHeadset)
-                    : SvgPicture.asset(speakerActive),
+                    controller.audioOutputType.value == AudioDeviceType.receiver
+                        ? SvgPicture.asset(speakerInactive)
+                        : controller.audioOutputType.value ==
+                                AudioDeviceType.speaker
+                            ? SvgPicture.asset(speakerActive)
+                            : controller.audioOutputType.value ==
+                                    AudioDeviceType.bluetooth
+                                ? SvgPicture.asset(speakerBluetooth)
+                                : controller.audioOutputType.value ==
+                                        AudioDeviceType.headset
+                                    ? SvgPicture.asset(speakerHeadset)
+                                    : SvgPicture.asset(speakerActive),
               ),
             ],
           ),
