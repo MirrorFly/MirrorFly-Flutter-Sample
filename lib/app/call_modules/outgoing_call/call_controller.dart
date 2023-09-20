@@ -43,6 +43,7 @@ class CallController extends GetxController {
     super.onInit();
     debugPrint("#Mirrorfly Call Controller onInit");
     userJID.value = Get.arguments?["userJid"];
+    // callType.value = Get.arguments["callType"];
     if (userJID.value != "") {
       debugPrint("#Mirrorfly Call UserJid $userJID");
       // var profile = await Mirrorfly.getUserProfile(userJid);
@@ -202,9 +203,9 @@ class CallController extends GetxController {
       if (value.checkNull()) {
         debugPrint("#Disconnect call disconnect list size ${callList.length}");
         //Commenting for iOS crash. everytime during initialisation, list is created newly. so no issues
-        // if (callList.isNotEmpty) {
-        //   callList.clear();
-        // }
+        if (callList.isNotEmpty) {
+          callList.clear();
+        }
         if (Get.previousRoute.isNotEmpty) {
           debugPrint("#Disconnect previous route is not empty");
           if (Get.currentRoute == Routes.onGoingCallView) {
@@ -220,6 +221,7 @@ class CallController extends GetxController {
           Get.offNamed(getInitialRoute());
         }
       }
+      // Get.back();
     });
   }
 
@@ -345,9 +347,10 @@ class CallController extends GetxController {
   }
 
   void declineCall() {
-    Mirrorfly.declineCall();
-    callList.clear();
-    Get.back();
+    Mirrorfly.declineCall().then((value) {
+      callList.clear();
+      Get.back();
+    });
   }
 
   void statusUpdate(String userJid, String callStatus) {

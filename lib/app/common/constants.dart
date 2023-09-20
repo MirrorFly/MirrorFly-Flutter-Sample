@@ -727,6 +727,10 @@ class Constants {
   static const unavailableTryAgain = "Unavailable, Try again later";
   static const cancel = "Cancel";
   static const callAgain = "Call Again";
+
+  //Call Types
+  static const audioCall = "audio";
+  static const videoCall = "video";
 }
 
 Future<void> launchWeb(String url) async {

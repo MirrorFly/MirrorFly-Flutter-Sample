@@ -86,8 +86,7 @@ class CallTimeoutView extends GetView<CallTimeoutController> {
                                 elevation: 0,
                                 backgroundColor: AppColors.callAgainButtonBackground,
                                 onPressed: () { controller.callAgain(); },
-                                child: controller.callType.value.toUpperCase() ==
-                                    Constants.mAudio ?
+                                child: controller.callType.value == Constants.audioCall ?
                                 SvgPicture.asset(audioCallAgain) : SvgPicture
                                     .asset(videoCallAgain),
                               ),
