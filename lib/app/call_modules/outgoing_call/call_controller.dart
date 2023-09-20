@@ -241,6 +241,14 @@ class CallController extends GetxController {
     });
   }
 
+  Future<String> getNameOfJid(String jid) async {
+    if (jid == SessionManagement.getUserJID()){
+      return "You";
+    }
+    var profile = await getProfileDetails(jid);
+    return profile.getName();
+  }
+
   @override
   void dispose() {
     LogMessage.d("callController", " callController dispose");

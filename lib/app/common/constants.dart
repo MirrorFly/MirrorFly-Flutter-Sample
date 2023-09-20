@@ -48,6 +48,8 @@ class AppColors{
   static const Color callOptionBackground = Color(0xff10294d);
   static const Color callAgainButtonBackground = Color(0xff009f46);
   static const Color audioCallBackground = Color(0xff0B111C);
+  static const Color audioCallerBackground = Color(0xff0D2852);
+  static const Color callerTitleBackground = Color(0xff151F32);
   static const Color colorBlackTransparent = Color(0x80000000);
   static const Color callerStatus = Color(0xffDEDEDE);
   static const Color callerName = Color(0xffffffff);
