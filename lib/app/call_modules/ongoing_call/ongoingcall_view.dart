@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
+import 'package:mirror_fly_demo/app/call_modules/call_widgets.dart';
 import 'package:mirror_fly_demo/app/call_modules/outgoing_call/call_controller.dart';
 import 'package:mirror_fly_demo/app/model/call_user_list.dart';
 import 'package:mirrorfly_plugin/mirrorfly_view.dart';
@@ -73,6 +74,9 @@ class OnGoingCallView extends GetView<CallController> {
                               ],
                             ));
                       }),
+                      /*Obx((){
+                        return const SoundWave(amplitudes: [0.0, 20.0, 10.0, 30.0, 15.0, 25.0, 5.0, 35.0, 0.0], waveColor: Colors.green);
+                      })*/
                     ],
                   )),
 
@@ -136,24 +140,34 @@ class OnGoingCallView extends GetView<CallController> {
               Obx(() {
                 return controller.callList.isNotEmpty
                     ? AnimatedPositioned(
-                        duration: const Duration(milliseconds: 500),
-                        curve: Curves.easeInOut,
-                        left: 0,
-                        right: 0,
-                        bottom: controller.isVisible.value ? 200 : 0,
-                        child: Align(
-                          alignment: Alignment.bottomRight,
-                          child: SizedBox(
-                            height: 180,
-                            width: 130,
-                            child: MirrorFlyView(
-                              userJid: controller.callList[0].userJid ?? "",
-                              viewBgColor: Colors.blueGrey,
-                            ).setBorderRadius(
-                                const BorderRadius.all(Radius.circular(10))),
-                          ),
-                        ),
+                  duration: const Duration(milliseconds: 500),
+                  curve: Curves.easeInOut,
+                  left: 0,
+                  right: 0,
+                  bottom: controller.isVisible.value ? 200 : 0,
+                  child: Align(
+                    alignment: Alignment.bottomRight,
+                    child: SizedBox(
+                      height: 180,
+                      width: 130,
+                      child: Stack(
+                        children: [
+                          MirrorFlyView(
+                            userJid: controller.callList[0].userJid ?? "",
+                            viewBgColor: Colors.blueGrey,
+                          ).setBorderRadius(
+                              const BorderRadius.all(Radius.circular(10))),
+                          Obx(() => controller.speakingUsers.isNotEmpty && !controller.audioLevel(controller.callList[0].userJid).isNegative ? Positioned(
+                              top: 8,
+                              right: 8,
+                              child: SpeakingDots(
+                                audioLevel: controller.audioLevel(controller.callList[0].userJid),
+                                bgColor: const Color(0xff3abf87),)) : const SizedBox.shrink()),
+                        ],
                       )
+                    ),
+                  ),
+                )
                     : const SizedBox.shrink();
               }),
               InkWell(
