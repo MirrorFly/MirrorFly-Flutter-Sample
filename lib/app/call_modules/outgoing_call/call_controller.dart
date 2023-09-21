@@ -202,7 +202,6 @@ class CallController extends GetxController {
       debugPrint("#Disconnect call disconnect value $value");
       if (value.checkNull()) {
         debugPrint("#Disconnect call disconnect list size ${callList.length}");
-        //Commenting for iOS crash. everytime during initialisation, list is created newly. so no issues
         if (callList.isNotEmpty) {
           callList.clear();
         }
@@ -221,7 +220,6 @@ class CallController extends GetxController {
           Get.offNamed(getInitialRoute());
         }
       }
-      // Get.back();
     });
   }
 
