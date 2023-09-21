@@ -61,10 +61,10 @@ class OnGoingCallView extends GetView<CallController> {
                                       )
                                     : const SizedBox.shrink(),
                                 controller.callList.length > 1 && controller.callList[1].isAudioMuted.value
-                                    ? const CircleAvatar(
-                                        backgroundColor: Colors.black45,
-                                        child: Icon(Icons.mic_off),
-                                      )
+                                    ? CircleAvatar(
+                                  backgroundColor: AppColors.audioMutedIconBgColor,
+                                  child: SvgPicture.asset(callMutedIcon),
+                                )
                                     : const SizedBox.shrink(),
                               ],
                             ));

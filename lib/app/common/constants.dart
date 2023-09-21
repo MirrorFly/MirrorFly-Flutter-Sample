@@ -54,8 +54,10 @@ class AppColors{
   static const Color callerStatus = Color(0xffDEDEDE);
   static const Color callerName = Color(0xffffffff);
   static const Color endButton = Color(0xffff4d67);
+  static const Color audioMutedIconBgColor = Color(0x80000000);
 }
 //call Assets
+const String callMutedIcon = 'assets/calls/call_muted_icon.svg';
 const String callEndButton = 'assets/calls/call_end_button.svg';
 const String speakerInactive = 'assets/calls/speaker_inactive.svg';
 const String speakerActive = 'assets/calls/speaker_active.svg';
