@@ -33,7 +33,7 @@ class OutGoingCallView extends GetView<CallController> {
                 MirrorFlyView(
                   userJid: SessionManagement.getUserJID().checkNull(),
                   viewBgColor: Colors.blueGrey,
-                  // hideProfileView: true,
+                  hideProfileView: true,
                 ) :
                 const SizedBox.shrink();
               }),
