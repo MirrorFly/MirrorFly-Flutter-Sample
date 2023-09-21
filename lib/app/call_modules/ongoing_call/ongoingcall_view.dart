@@ -291,7 +291,7 @@ class OnGoingCallView extends GetView<CallController> {
 
   Widget buildCallOptions() {
     double rightSideWidth = 15;
-    controller.callType.value == 'video' ? rightSideWidth = 20 : rightSideWidth = 30;
+    controller.callType.value == CallType.video ? rightSideWidth = 20 : rightSideWidth = 30;
     return Obx(() {
       return Column(
         children: [
@@ -327,7 +327,7 @@ class OnGoingCallView extends GetView<CallController> {
                       ),
               ),
               SizedBox(width: rightSideWidth),
-              controller.callType.value == 'video' && !controller.videoMuted.value
+              controller.callType.value == CallType.video && !controller.videoMuted.value
                   ? FloatingActionButton(
                       heroTag: "switchCamera",
                       elevation: 0,
@@ -338,7 +338,7 @@ class OnGoingCallView extends GetView<CallController> {
                           : SvgPicture.asset(cameraSwitchInactive),
                     )
                   : const SizedBox.shrink(),
-              controller.callType.value == 'video' && !controller.videoMuted.value
+              controller.callType.value == CallType.video && !controller.videoMuted.value
                   ? SizedBox(width: rightSideWidth)
                   : const SizedBox.shrink(),
               FloatingActionButton(

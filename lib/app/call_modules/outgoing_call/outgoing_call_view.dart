@@ -29,7 +29,7 @@ class OutGoingCallView extends GetView<CallController> {
           child: Stack(
             children: [
               Obx(() {
-                return controller.callType.value == Constants.videoCall ?
+                return controller.callType.value == CallType.video ?
                 MirrorFlyView(
                   userJid: SessionManagement.getUserJID().checkNull(),
                   viewBgColor: AppColors.callerBackground,
@@ -96,11 +96,11 @@ class OutGoingCallView extends GetView<CallController> {
                               muteInactive,
                             ),
                           ),
-                          controller.callType.value == 'video' && !controller.videoMuted.value
+                          controller.callType.value == CallType.video && !controller.videoMuted.value
                               ? const SizedBox(width: 15)
                               : const SizedBox.shrink(),
 
-                          controller.callType.value == 'video' && !controller.videoMuted.value
+                          controller.callType.value == CallType.video && !controller.videoMuted.value
                               ? FloatingActionButton(
                             heroTag: "switchCamera",
                             elevation: 0,
@@ -111,7 +111,7 @@ class OutGoingCallView extends GetView<CallController> {
                                 : SvgPicture.asset(cameraSwitchInactive),
                           )
                               : const SizedBox.shrink(),
-                          controller.callType.value == 'video' && !controller.videoMuted.value
+                          controller.callType.value == CallType.video && !controller.videoMuted.value
                               ? const SizedBox(width: 15)
                               : const SizedBox.shrink(),
 

@@ -344,6 +344,14 @@ abstract class BaseController {
           }
           break;
         }
+        case CallAction.cameraSwitchSuccess:{
+          debugPrint("call action switchCamera");
+          // local user deny the call
+          if (Get.isRegistered<CallController>()) {
+            Get.find<CallController>().onCameraSwitch();
+          }
+          break;
+        }
       }
     });
     Mirrorfly.onMuteStatusUpdated.listen((event) {
