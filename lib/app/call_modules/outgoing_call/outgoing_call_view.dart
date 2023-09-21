@@ -96,12 +96,34 @@ class OutGoingCallView extends GetView<CallController> {
                               muteInactive,
                             ),
                           ),
+                          controller.callType.value == 'video' && !controller.videoMuted.value
+                              ? const SizedBox(width: 15)
+                              : const SizedBox.shrink(),
+
+                          controller.callType.value == 'video' && !controller.videoMuted.value
+                              ? FloatingActionButton(
+                            heroTag: "switchCamera",
+                            elevation: 0,
+                            backgroundColor: controller.cameraSwitch.value ? Colors.white : Colors.white.withOpacity(0.3),
+                            onPressed: () => controller.switchCamera(),
+                            child: controller.cameraSwitch.value
+                                ? SvgPicture.asset(cameraSwitchActive)
+                                : SvgPicture.asset(cameraSwitchInactive),
+                          )
+                              : const SizedBox.shrink(),
+                          controller.callType.value == 'video' && !controller.videoMuted.value
+                              ? const SizedBox(width: 15)
+                              : const SizedBox.shrink(),
+
                           FloatingActionButton(
                             heroTag: "video",
                             elevation: 0,
                             backgroundColor: controller.videoMuted.value ? Colors.white : Colors.white.withOpacity(0.3),
                             onPressed: () => controller.videoMute(),
                             child: controller.videoMuted.value ? SvgPicture.asset(videoInactive) : SvgPicture.asset(videoActive),
+                          ),
+                          const SizedBox(
+                            width: 15,
                           ),
                           FloatingActionButton(
                             heroTag: "speaker",
