@@ -484,4 +484,11 @@ class CallController extends GetxController {
     });
 
   }
+
+  void denyCall(){
+    LogMessage.d("denyCall", Get.currentRoute);
+    if(Get.currentRoute==Routes.outGoingCallView){
+      Get.back();
+    }
+  }
 }

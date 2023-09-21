@@ -32,8 +32,8 @@ class OutGoingCallView extends GetView<CallController> {
                 return controller.callType.value == Constants.videoCall ?
                 MirrorFlyView(
                   userJid: SessionManagement.getUserJID().checkNull(),
-                  viewBgColor: Colors.blueGrey,
-                  // hideProfileView: true,
+                  viewBgColor: AppColors.callerBackground,
+                  hideProfileView: true,
                 ) :
                 const SizedBox.shrink();
               }),

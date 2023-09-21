@@ -336,6 +336,14 @@ abstract class BaseController {
           }
           break;
         }
+        case CallAction.denyCall:{
+          debugPrint("call action denyCall");
+          // local user deny the call
+          if (Get.isRegistered<CallController>()) {
+            Get.find<CallController>().denyCall();
+          }
+          break;
+        }
       }
     });
     Mirrorfly.onMuteStatusUpdated.listen((event) {
