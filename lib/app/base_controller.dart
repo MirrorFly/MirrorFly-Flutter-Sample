@@ -884,6 +884,7 @@ abstract class BaseController {
     //show MissedCall Notification
     var missedCallTitleContent = await getMissedCallNotificationContent(isOneToOneCall, userJid, groupId, callType, userList);
     LogMessage.d("onMissedCallContent","${missedCallTitleContent.first} ${missedCallTitleContent.last}");
+    NotificationBuilder.createCallNotification(missedCallTitleContent.first,missedCallTitleContent.last);
   }
 
   Future<List<String>> getMissedCallNotificationContent( bool isOneToOneCall, String userJid, String groupId, String callType, List<String> userList) async {
