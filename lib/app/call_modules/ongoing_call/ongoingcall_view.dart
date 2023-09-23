@@ -37,7 +37,7 @@ class OnGoingCallView extends GetView<CallController> {
                             ? MirrorFlyView(
                                     userJid: controller.callList[1].userJid ?? "",
                                     alignProfilePictureCenter: false,
-                                    showSpeakingRipple: controller.callType.value == 'audio',
+                                    showSpeakingRipple: controller.callType.value == CallType.audio,
                                     viewBgColor: AppColors.audioCallerBackground,
                                     profileSize: 100)
                                 .setBorderRadius(const BorderRadius.all(Radius.circular(10)))
@@ -143,13 +143,14 @@ class OnGoingCallView extends GetView<CallController> {
                         child: Align(
                           alignment: Alignment.bottomRight,
                           child: SizedBox(
-                              height: 180,
-                              width: 130,
+                              height: 160,
+                              width: 125,
                               child: Stack(
                                 children: [
                                   MirrorFlyView(
                                     userJid: controller.callList[0].userJid ?? "",
                                     viewBgColor: AppColors.callerTitleBackground,
+                                    profileSize: 50,
                                   ).setBorderRadius(const BorderRadius.all(Radius.circular(10))),
                                   Obx(() => controller.speakingUsers.isNotEmpty &&
                                           !controller.audioLevel(controller.callList[0].userJid).isNegative

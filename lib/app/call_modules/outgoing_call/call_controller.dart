@@ -358,7 +358,7 @@ class CallController extends GetxController {
   void declineCall() {
     Mirrorfly.declineCall().then((value) {
       callList.clear();
-      Get.back();
+      //Get.back();
     });
   }
 

@@ -880,7 +880,7 @@ abstract class BaseController {
   Future<void> onMissedCall(bool isOneToOneCall, String userJid, String groupId, String callType, List<String> userList) async {
     //show MissedCall Notification
     var missedCallTitleContent = await getMissedCallNotificationContent(isOneToOneCall, userJid, groupId, callType, userList);
-    LogMessage.d("onMissedCall","${missedCallTitleContent.first} ${missedCallTitleContent.last}");
+    LogMessage.d("onMissedCallContent","${missedCallTitleContent.first} ${missedCallTitleContent.last}");
   }
 
   Future<List<String>> getMissedCallNotificationContent( bool isOneToOneCall, String userJid, String groupId, String callType, List<String> userList) async {
@@ -909,7 +909,7 @@ abstract class BaseController {
 
   Future<String> getCallUsersName(List<String> callUsers) async {
     var name = StringBuffer("");
-    for (var i = 0; i<=callUsers.length; i++) {
+    for (var i = 0; i<callUsers.length; i++) {
       var displayName = await getDisplayName(callUsers[i]);
       if (i == 2) {
         name.write(" and (+${callUsers.length - i})");
@@ -917,7 +917,7 @@ abstract class BaseController {
       } else if (i == 1) {
         name.write(", $displayName");
       } else {
-        name = StringBuffer(getDisplayName(callUsers[i]));
+        name = StringBuffer(await getDisplayName(callUsers[i]));
       }
     }
     return name.toString();
