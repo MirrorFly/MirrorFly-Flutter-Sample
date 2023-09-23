@@ -612,6 +612,9 @@ abstract class BaseController {
   }
 
   Future<void> showOrUpdateOrCancelNotification(String jid, ChatMessage chatMesssage) async {
+    if(SessionManagement.getCurrentChatJID() == chatMesssage.chatUserJid.checkNull()){
+      return;
+    }
     var profileDetails = await getProfileDetails(jid);
     if (profileDetails.isMuted == true) {
       return;
