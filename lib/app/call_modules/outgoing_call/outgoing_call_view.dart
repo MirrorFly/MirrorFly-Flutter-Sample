@@ -4,9 +4,12 @@ import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/call_modules/call_widgets.dart';
 import 'package:mirror_fly_demo/app/call_modules/outgoing_call/call_controller.dart';
 import 'package:mirror_fly_demo/app/call_modules/ripple_animation_view.dart';
+import 'package:mirror_fly_demo/app/data/helper.dart';
+import 'package:mirrorfly_plugin/mirrorfly_view.dart';
 import 'package:mirrorfly_plugin/mirrorflychat.dart';
 
 import '../../common/constants.dart';
+import '../../data/session_management.dart';
 
 class OutGoingCallView extends GetView<CallController> {
   const OutGoingCallView({Key? key}) : super(key: key);
@@ -25,10 +28,19 @@ class OutGoingCallView extends GetView<CallController> {
           },
           child: Stack(
             children: [
+              Obx(() {
+                return controller.callType.value == CallType.video ?
+                MirrorFlyView(
+                  userJid: SessionManagement.getUserJID().checkNull(),
+                  viewBgColor: AppColors.callerBackground,
+                  hideProfileView: true,
+                ) :
+                const SizedBox.shrink();
+              }),
+
               Column(
                 children: [
-                  Expanded(
-                      child: Column(
+                  Expanded(child: Column(
                     children: [
                       const SizedBox(
                         height: 10,
@@ -36,10 +48,7 @@ class OutGoingCallView extends GetView<CallController> {
                       Obx(() {
                         return Text(
                           controller.callStatus.value,
-                          style: const TextStyle(
-                              color: AppColors.callerStatus,
-                              fontWeight: FontWeight.w100,
-                              fontSize: 14),
+                          style: const TextStyle(color: AppColors.callerStatus, fontWeight: FontWeight.w100, fontSize: 14),
                         );
                       }),
                       const SizedBox(
@@ -48,10 +57,7 @@ class OutGoingCallView extends GetView<CallController> {
                       Obx(() {
                         return Text(
                           controller.calleeName.value,
-                          style: const TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.w500,
-                              fontSize: 18),
+                          style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w500, fontSize: 18),
                           overflow: TextOverflow.ellipsis,
                         );
                       }),
@@ -73,52 +79,65 @@ class OutGoingCallView extends GetView<CallController> {
                         children: [
                           controller.muted.value
                               ? FloatingActionButton(
-                                  heroTag: "mute",
-                                  elevation: 0,
-                                  backgroundColor: Colors.white,
-                                  onPressed: () => controller.muteAudio(),
-                                  child: SvgPicture.asset(
-                                    muteActive,
-                                  ),
-                                )
+                            heroTag: "mute",
+                            elevation: 0,
+                            backgroundColor: Colors.white,
+                            onPressed: () => controller.muteAudio(),
+                            child: SvgPicture.asset(
+                              muteActive,
+                            ),
+                          )
                               : FloatingActionButton(
-                                  heroTag: "mute",
-                                  elevation: 0,
-                                  backgroundColor:
-                                      Colors.white.withOpacity(0.3),
-                                  onPressed: () => controller.muteAudio(),
-                                  child: SvgPicture.asset(
-                                    muteInactive,
-                                  ),
-                                ),
+                            heroTag: "mute",
+                            elevation: 0,
+                            backgroundColor: Colors.white.withOpacity(0.3),
+                            onPressed: () => controller.muteAudio(),
+                            child: SvgPicture.asset(
+                              muteInactive,
+                            ),
+                          ),
+                          controller.callType.value == CallType.video && !controller.videoMuted.value
+                              ? const SizedBox(width: 15)
+                              : const SizedBox.shrink(),
+
+                          controller.callType.value == CallType.video && !controller.videoMuted.value
+                              ? FloatingActionButton(
+                            heroTag: "switchCamera",
+                            elevation: 0,
+                            backgroundColor: controller.cameraSwitch.value ? Colors.white : Colors.white.withOpacity(0.3),
+                            onPressed: () => controller.switchCamera(),
+                            child: controller.cameraSwitch.value
+                                ? SvgPicture.asset(cameraSwitchActive)
+                                : SvgPicture.asset(cameraSwitchInactive),
+                          )
+                              : const SizedBox.shrink(),
+                          controller.callType.value == CallType.video && !controller.videoMuted.value
+                              ? const SizedBox(width: 15)
+                              : const SizedBox.shrink(),
+
                           FloatingActionButton(
                             heroTag: "video",
                             elevation: 0,
-                            backgroundColor: controller.videoMuted.value
-                                ? Colors.white
-                                : Colors.white.withOpacity(0.3),
+                            backgroundColor: controller.videoMuted.value ? Colors.white : Colors.white.withOpacity(0.3),
                             onPressed: () => controller.videoMute(),
-                            child: controller.videoMuted.value
-                                ? SvgPicture.asset(videoInactive)
-                                : SvgPicture.asset(videoActive),
+                            child: controller.videoMuted.value ? SvgPicture.asset(videoInactive) : SvgPicture.asset(videoActive),
+                          ),
+                          const SizedBox(
+                            width: 15,
                           ),
                           FloatingActionButton(
                             heroTag: "speaker",
                             elevation: 0,
                             backgroundColor:
-                            controller.audioOutputType.value == AudioDeviceType.receiver
-                                ? Colors.white.withOpacity(0.3)
-                                : Colors.white,
+                            controller.audioOutputType.value == AudioDeviceType.receiver ? Colors.white.withOpacity(0.3) : Colors.white,
                             onPressed: () => controller.changeSpeaker(),
                             child: controller.audioOutputType.value == AudioDeviceType.receiver
                                 ? SvgPicture.asset(speakerInactive)
                                 : controller.audioOutputType.value == AudioDeviceType.speaker
                                 ? SvgPicture.asset(speakerActive)
-                                : controller.audioOutputType.value ==
-                                AudioDeviceType.bluetooth
+                                : controller.audioOutputType.value == AudioDeviceType.bluetooth
                                 ? SvgPicture.asset(speakerBluetooth)
-                                : controller.audioOutputType.value ==
-                                AudioDeviceType.headset
+                                : controller.audioOutputType.value == AudioDeviceType.headset
                                 ? SvgPicture.asset(speakerHeadset)
                                 : SvgPicture.asset(speakerActive),
                           ),

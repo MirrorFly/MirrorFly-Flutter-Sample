@@ -44,18 +44,28 @@ const Color previewTextColor = Color(0xff7f7f7f);
 
 class AppColors{
   static const Color callerBackground = Color(0xff152134);
+  static const Color bottomCallOptionBackground = Color(0xff162337);
+  static const Color callOptionBackground = Color(0xff10294d);
+  static const Color callAgainButtonBackground = Color(0xff009f46);
   static const Color audioCallBackground = Color(0xff0B111C);
+  static const Color audioCallerBackground = Color(0xff0D2852);
+  static const Color callerTitleBackground = Color(0xff151F32);
   static const Color colorBlackTransparent = Color(0x80000000);
   static const Color callerStatus = Color(0xffDEDEDE);
   static const Color callerName = Color(0xffffffff);
   static const Color endButton = Color(0xffff4d67);
+  static const Color audioMutedIconBgColor = Color(0x80000000);
 }
 //call Assets
+const String callMutedIcon = 'assets/calls/call_muted_icon.svg';
 const String callEndButton = 'assets/calls/call_end_button.svg';
 const String speakerInactive = 'assets/calls/speaker_inactive.svg';
 const String speakerActive = 'assets/calls/speaker_active.svg';
 const String speakerBluetooth = 'assets/calls/bluetooth.svg';
 const String speakerHeadset = 'assets/calls/head_set.svg';
+const String audioCallAgain = 'assets/calls/call_icon.svg';
+const String videoCallAgain = 'assets/calls/video_call.svg';
+const String callCancel = 'assets/calls/cancel_icon.svg';
 
 const String audioCallIcon = 'assets/calls/audiocall.svg';
 const String videoCallIcon = 'assets/calls/videocall.svg';
@@ -714,6 +724,17 @@ class Constants {
   static const cameraPermissionAsked = "camera_permission_asked_before";
   static const readPhoneStatePermissionAsked = "read_phone_state_asked_before";
   static const bluetoothPermissionAsked = "bluetooth_permission_asked_before";
+
+  static const remoteEngagedToast = "is on another call";
+
+  //Call
+  static const unavailableTryAgain = "Unavailable, Try again later";
+  static const cancel = "Cancel";
+  static const callAgain = "Call Again";
+
+  //Call Types
+  static const audioCall = "audio";
+  static const videoCall = "video";
 }
 
 Future<void> launchWeb(String url) async {

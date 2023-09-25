@@ -9,7 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:flutter_libphonenumber/flutter_libphonenumber.dart'
-as lib_phone_number;
+    as lib_phone_number;
 import 'package:get/get.dart';
 
 // import 'package:google_cloud_translation/google_cloud_translation.dart';
@@ -51,7 +51,7 @@ class ChatController extends FullLifeCycleController
 
   ItemScrollController newScrollController = ItemScrollController();
   ItemPositionsListener newitemPositionsListener =
-  ItemPositionsListener.create();
+      ItemPositionsListener.create();
   ItemScrollController searchScrollController = ItemScrollController();
 
   late ChatMessageModel replyChatMessage;
@@ -247,6 +247,7 @@ class ChatController extends FullLifeCycleController
   var showHideRedirectToLatest = false.obs;
 
   void ready() {
+    debugPrint("Chat controller ready");
     cancelNotification();
     // debugPrint("isBlocked===> ${profile.isBlocked}");
     // debugPrint("profile detail===> ${profile.toJson().toString()}");
@@ -3071,7 +3072,7 @@ class ChatController extends FullLifeCycleController
             debugPrint("#Mirrorfly Call userjid ${profile.jid}");
             setOnGoingUserGone();
             Get.toNamed(Routes.outGoingCallView,
-                arguments: {"userJid": profile.jid})
+                arguments: {"userJid": profile.jid, "callType": CallType.audio})
                 ?.then((value) => setOnGoingUserAvail());
           }
         }).catchError((e) {
@@ -3095,7 +3096,7 @@ class ChatController extends FullLifeCycleController
           if (value) {
             setOnGoingUserGone();
             Get.toNamed(Routes.outGoingCallView,
-                arguments: {"userJid": profile.jid})
+                arguments: {"userJid": profile.jid, "callType": CallType.video})
                 ?.then((value) => setOnGoingUserAvail());
           }
         }).catchError((e) {
@@ -3149,6 +3150,7 @@ class ChatController extends FullLifeCycleController
   }
 
   void setOnGoingUserAvail() {
+    debugPrint("setOnGoingUserAvail");
     Mirrorfly.setOnGoingChatUser(profile.jid.checkNull());
     SessionManagement.setCurrentChatJID(profile.jid.checkNull());
     sendReadReceipt();

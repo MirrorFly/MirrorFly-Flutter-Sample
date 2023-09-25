@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -94,7 +95,8 @@ class LoginController extends GetxController {
   }
 
   setUserJID(String username) {
-    if(!Mirrorfly.isChatHistoryEnabled) {
+    if(!Mirrorfly.isChatHistoryEnabled && Platform.isAndroid) {
+      debugPrint("recentChatList Calling getAllGroups");
       Mirrorfly.getAllGroups(true); // chat history enabled so this no longer need
     }
     Mirrorfly.getJid(username).then((value) {
