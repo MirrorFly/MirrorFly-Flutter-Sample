@@ -944,6 +944,9 @@ abstract class BaseController {
   Timer? timer;
   void startTimer() {
     // if (timer == null) {
+    if(timer!= null){
+      timer?.cancel();
+    }
     timer = null;
       const oneSec = Duration(seconds: 1);
       var startTime = DateTime.now();

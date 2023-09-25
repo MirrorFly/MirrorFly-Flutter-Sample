@@ -197,14 +197,15 @@ class CallController extends GetxController {
   }
 
   void disconnectCall() {
+
     callTimer("Disconnected");
+    if (callList.isNotEmpty) {
+      callList.clear();
+    }
     Mirrorfly.disconnectCall().then((value) {
       debugPrint("#Disconnect call disconnect value $value");
       if (value.checkNull()) {
         debugPrint("#Disconnect call disconnect list size ${callList.length}");
-        if (callList.isNotEmpty) {
-          callList.clear();
-        }
         if (Get.previousRoute.isNotEmpty) {
           debugPrint("#Disconnect previous route is not empty");
           if (Get.currentRoute == Routes.onGoingCallView) {
@@ -470,7 +471,9 @@ class CallController extends GetxController {
 
   int audioLevel(userJid) {
     var index = speakingUsers.indexWhere((element) => element.userJid == userJid);
-    return index.isNegative ? -1 : speakingUsers[speakingUsers.indexWhere((element) => element.userJid == userJid)].audioLevel.value;
+    var value = index.isNegative ? -1 : speakingUsers[speakingUsers.indexWhere((element) => element.userJid == userJid)].audioLevel.value;
+    debugPrint("speakingUsers Audio level $value");
+    return value;
   }
   void onUserStoppedSpeaking(String userJid){
     //adding delay to show better ui
