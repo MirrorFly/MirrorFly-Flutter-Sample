@@ -15,6 +15,7 @@ import 'package:mirror_fly_demo/app/data/session_management.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
 import 'package:mirror_fly_demo/app/modules/chat/controllers/chat_controller.dart';
 import 'package:mirror_fly_demo/app/modules/contact_sync/controllers/contact_sync_controller.dart';
+import 'package:mirror_fly_demo/app/modules/dashboard/controllers/dashboard_controller.dart';
 import 'package:mirror_fly_demo/app/modules/notification/notification_builder.dart';
 import 'package:mirror_fly_demo/app/routes/app_pages.dart';
 
@@ -127,7 +128,7 @@ class MainController extends FullLifeCycleController with BaseController, FullLi
       //   builder: (BuildContext context) => SecondPage(payload),
       // ));
       debugPrint("#Mirrorfly Notification -> opening chat page--> $payload ${Get.currentRoute}");
-      if(payload != null && payload.isNotEmpty){
+      if(payload != null && payload.isNotEmpty && payload.toString()!="124"){
         var chatJid = payload.checkNull().split(",")[0];
         var topicId = payload.checkNull().split(",")[1];
         if (Get.isRegistered<ChatController>()) {
@@ -146,6 +147,10 @@ class MainController extends FullLifeCycleController with BaseController, FullLi
           debugPrint("not chat page");
           Get.toNamed(Routes.chat,
               parameters: {"chatJid": chatJid,"topicId":topicId});
+        }
+      }else{
+        if(Get.isRegistered<DashboardController>()){
+          Get.find<DashboardController>().tabController?.animateTo(1);
         }
       }
     });

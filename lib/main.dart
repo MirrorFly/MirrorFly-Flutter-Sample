@@ -47,6 +47,7 @@ bool shouldUseFirebaseEmulator = false;
 NotificationAppLaunchDetails? notificationAppLaunchDetails;
 //check is on going call
 bool isOnGoingCall = false;
+bool fromMissedCall = false;
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   debugPrint("#Mirrorfly Notification main function init");
@@ -74,6 +75,7 @@ Future<void> main() async {
 
   //check is on going call
   isOnGoingCall = (await Mirrorfly.isOnGoingCall()).checkNull();
+  fromMissedCall = (await Mirrorfly.appLaunchedFromMissedCall()).checkNull();
   if (shouldUseFirebaseEmulator) {
     await FirebaseAuth.instance.useAuthEmulator('localhost', 5050);
   }
@@ -163,7 +165,7 @@ String getInitialRoute() {
               if (!SessionManagement.isContactSyncDone() /*|| nonChatUsers.isEmpty*/) {
                 return AppPages.contactSync;
               }else{
-                return AppPages.dashboard;
+                return "${AppPages.dashboard}?fromMissedCall=$fromMissedCall";
               }
           }else{
             mirrorFlyLog("login", "${SessionManagement
@@ -171,7 +173,7 @@ String getInitialRoute() {
                 .checkNull()
                 .isEmpty}");
             mirrorFlyLog("SessionManagement.getLogin()", "${SessionManagement.getLogin()}");
-            return AppPages.dashboard;
+            return "${AppPages.dashboard}?fromMissedCall=$fromMissedCall";
           }
         } else {
           return "${AppPages.chat}?jid=${SessionManagement.getChatJid()

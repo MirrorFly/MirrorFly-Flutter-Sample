@@ -169,7 +169,9 @@ abstract class BaseController {
       var groupId = data["groupId"];
       var callType = data["callType"];
       var userList = data["userList"].toString().split(",");
-      onMissedCall(isOneToOneCall, userJid, groupId, callType, userList);
+      Future.delayed(const Duration(seconds: 2),(){// for same user chat page is opened
+        onMissedCall(isOneToOneCall, userJid, groupId, callType, userList);
+      });
     });
 
     Mirrorfly.onLocalVideoTrackAdded.listen((event) {
@@ -881,6 +883,9 @@ abstract class BaseController {
   }
 
   Future<void> onMissedCall(bool isOneToOneCall, String userJid, String groupId, String callType, List<String> userList) async {
+    if(SessionManagement.getCurrentChatJID() == userJid.checkNull()){
+      return;
+    }
     //show MissedCall Notification
     var missedCallTitleContent = await getMissedCallNotificationContent(isOneToOneCall, userJid, groupId, callType, userList);
     LogMessage.d("onMissedCallContent","${missedCallTitleContent.first} ${missedCallTitleContent.last}");
@@ -891,7 +896,7 @@ abstract class BaseController {
     String messageContent;
     StringBuffer missedCallTitle = StringBuffer();
     missedCallTitle.write("You missed ");
-    if (isOneToOneCall && groupId.isNotEmpty) {
+    if (isOneToOneCall && groupId.isEmpty) {
       if (callType == CallType.audio) {
         missedCallTitle.write("an ");
       } else {

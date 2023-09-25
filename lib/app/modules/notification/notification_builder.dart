@@ -108,7 +108,7 @@ class NotificationBuilder {
         channelDescription: channel.description,
         importance: Importance.max,
         autoCancel: true,
-        icon: 'ic_notification_blue',
+        icon: 'ic_notification',
         color: buttonBgColor,
         groupKey: groupKeyMessage,
         number: unReadMessageCount,
@@ -262,7 +262,7 @@ class NotificationBuilder {
         channelDescription: channel.description,
         importance: Importance.max,
         autoCancel: true,
-        icon: 'ic_notification_blue',
+        icon: 'ic_notification',
         color: buttonBgColor,
         number: unReadCallCount,
         category: AndroidNotificationCategory.missedCall,);

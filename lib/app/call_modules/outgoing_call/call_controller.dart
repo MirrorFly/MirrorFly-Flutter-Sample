@@ -44,8 +44,10 @@ class CallController extends GetxController {
   Future<void> onInit() async {
     super.onInit();
     debugPrint("#Mirrorfly Call Controller onInit");
-    userJID.value = Get.arguments?["userJid"];
-    cameraSwitch(Get.arguments?["cameraSwitch"]);
+    if(Get.arguments!=null) {
+      userJID.value = Get.arguments?["userJid"];
+      cameraSwitch(Get.arguments?["cameraSwitch"]);
+    }
     // callType.value = Get.arguments["callType"];
     if (userJID.value != "") {
       debugPrint("#Mirrorfly Call UserJid $userJID");

@@ -74,6 +74,19 @@ class DashboardController extends FullLifeCycleController
     historyScrollController.addListener(historyScrollListener);
   }*/
 
+  TabController? tabController ;
+  @override
+  void onInit() {
+    tabController = TabController(length: 2, vsync: this);
+    if(Get.parameters['fromMissedCall']!=null){
+      var fromMissedCall = Get.parameters['fromMissedCall'];
+      debugPrint("fromMissedCall ${fromMissedCall}");
+      if(fromMissedCall.toString()=="true") {
+        tabController?.animateTo(1);
+      }
+    }
+    super.onInit();
+  }
   @override
   void onReady(){
     super.onReady();
