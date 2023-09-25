@@ -108,7 +108,7 @@ class NotificationBuilder {
         channelDescription: channel.description,
         importance: Importance.max,
         autoCancel: true,
-        icon: 'ic_notification_blue',
+        icon: 'ic_notification',
         color: buttonBgColor,
         groupKey: groupKeyMessage,
         number: unReadMessageCount,
@@ -248,5 +248,89 @@ class NotificationBuilder {
         flutterLocalNotificationsPlugin.cancel(notification.id!);
       }
     }
+  }
+
+  //Call Notification
+  static var unReadCallCount = 0;
+  static var callNotificationId = 124;
+  static createCallNotification(String title,String messageContent) async {
+    unReadCallCount += 1;
+    unReadCallCount += await getTotalUnReadCount();
+    var channel = buildCallNotificationChannel();
+    var androidNotificationDetails = AndroidNotificationDetails(
+        channel.id, channel.name,
+        channelDescription: channel.description,
+        importance: Importance.max,
+        autoCancel: true,
+        icon: 'ic_notification',
+        color: buttonBgColor,
+        number: unReadCallCount,
+        category: AndroidNotificationCategory.missedCall,);
+    final String? notificationUri = SessionManagement.getNotificationUri();
+    var iosNotificationDetail = DarwinNotificationDetails(
+        categoryIdentifier: darwinNotificationCategoryPlain,
+        sound: notificationUri,
+        presentBadge: true,
+        presentSound: true,
+        presentAlert: true);
+
+    var notificationDetails = NotificationDetails(
+        android: androidNotificationDetails, iOS: iosNotificationDetail);
+    await flutterLocalNotificationsPlugin
+        .resolvePlatformSpecificImplementation<
+        AndroidFlutterLocalNotificationsPlugin>()
+        ?.createNotificationChannel(channel);
+
+    await flutterLocalNotificationsPlugin.show(
+        callNotificationId, title, messageContent, notificationDetails,
+        payload: "$callNotificationId");
+  }
+
+  static AndroidNotificationChannel buildCallNotificationChannel(){
+// AndroidNotificationChannel createdChannel;
+    var notificationSoundUri = SessionManagement.getNotificationUri();
+    var isVibrate = SessionManagement.getVibration();
+    var isRing = SessionManagement.getNotificationSound();
+    var channelName = "App Call Notifications";
+    var channelId = getCallNotificationChannelId();
+    // var vibrateImportance = (isVibrate) ? Importance.high : Importance.low;
+    // var ringImportance = (isRing) ? Importance.high : Importance.low;
+    var channelImportance = (isRing || isVibrate) ? Importance.high : Importance.low;
+    if (isRing) {
+      return AndroidNotificationChannel(channelId, channelName,
+          importance: channelImportance,
+          showBadge: true,
+          sound: notificationSoundUri != null
+              ? UriAndroidNotificationSound(notificationSoundUri)
+              : null,
+          vibrationPattern: (isVibrate)
+              ? getDefaultVibrate()
+              : null,
+          playSound: true);
+    } else if (isVibrate) {
+      return AndroidNotificationChannel(channelId, channelName,
+          importance: channelImportance,
+          showBadge: true,
+          sound: null,
+          vibrationPattern: (isVibrate)
+              ? getDefaultVibrate()
+              : null,
+          playSound: false);
+    } else {
+      return AndroidNotificationChannel(channelId, channelName,
+          importance: channelImportance,
+          playSound: true);
+    }
+  }
+
+  static String getCallNotificationChannelId() {
+    var randomNumberGenerator = Random();
+    return randomNumberGenerator.nextInt(1000).toString();
+  }
+  static Future<int> getTotalUnReadCount() async {
+    // return if (NotificationBuilder.chatNotifications.size == 0) FlyMessenger.getUnreadMessageCountExceptMutedChat() + CallLogManager.getUnreadMissedCallCount() else 1
+    var unReadMessageCount = await Mirrorfly.getUnreadMessageCountExceptMutedChat();
+    var unReadCallCount = await Mirrorfly.getUnreadMissedCallCount();
+    return (unReadMessageCount ?? 0) + (unReadCallCount ?? 0);
   }
 }

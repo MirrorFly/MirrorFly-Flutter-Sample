@@ -169,7 +169,9 @@ abstract class BaseController {
       var groupId = data["groupId"];
       var callType = data["callType"];
       var userList = data["userList"].toString().split(",");
-      onMissedCall(isOneToOneCall, userJid, groupId, callType, userList);
+      Future.delayed(const Duration(seconds: 2),(){// for same user chat page is opened
+        onMissedCall(isOneToOneCall, userJid, groupId, callType, userList);
+      });
     });
 
     Mirrorfly.onLocalVideoTrackAdded.listen((event) {
@@ -333,6 +335,22 @@ abstract class BaseController {
           debugPrint("call action audioDeviceChanged");
           if (Get.isRegistered<CallController>()) {
             Get.find<CallController>().audioDeviceChanged();
+          }
+          break;
+        }
+        case CallAction.denyCall:{
+          debugPrint("call action denyCall");
+          // local user deny the call
+          if (Get.isRegistered<CallController>()) {
+            Get.find<CallController>().denyCall();
+          }
+          break;
+        }
+        case CallAction.cameraSwitchSuccess:{
+          debugPrint("call action switchCamera");
+          // local user deny the call
+          if (Get.isRegistered<CallController>()) {
+            Get.find<CallController>().onCameraSwitch();
           }
           break;
         }
@@ -596,6 +614,9 @@ abstract class BaseController {
   }
 
   Future<void> showOrUpdateOrCancelNotification(String jid, ChatMessage chatMesssage) async {
+    if(SessionManagement.getCurrentChatJID() == chatMesssage.chatUserJid.checkNull()){
+      return;
+    }
     var profileDetails = await getProfileDetails(jid);
     if (profileDetails.isMuted == true) {
       return;
@@ -862,16 +883,20 @@ abstract class BaseController {
   }
 
   Future<void> onMissedCall(bool isOneToOneCall, String userJid, String groupId, String callType, List<String> userList) async {
+    if(SessionManagement.getCurrentChatJID() == userJid.checkNull()){
+      return;
+    }
     //show MissedCall Notification
     var missedCallTitleContent = await getMissedCallNotificationContent(isOneToOneCall, userJid, groupId, callType, userList);
-    LogMessage.d("onMissedCall","${missedCallTitleContent.first} ${missedCallTitleContent.last}");
+    LogMessage.d("onMissedCallContent","${missedCallTitleContent.first} ${missedCallTitleContent.last}");
+    NotificationBuilder.createCallNotification(missedCallTitleContent.first,missedCallTitleContent.last);
   }
 
   Future<List<String>> getMissedCallNotificationContent( bool isOneToOneCall, String userJid, String groupId, String callType, List<String> userList) async {
     String messageContent;
     StringBuffer missedCallTitle = StringBuffer();
     missedCallTitle.write("You missed ");
-    if (isOneToOneCall && groupId.isNotEmpty) {
+    if (isOneToOneCall && groupId.isEmpty) {
       if (callType == CallType.audio) {
         missedCallTitle.write("an ");
       } else {
@@ -893,7 +918,7 @@ abstract class BaseController {
 
   Future<String> getCallUsersName(List<String> callUsers) async {
     var name = StringBuffer("");
-    for (var i = 0; i<=callUsers.length; i++) {
+    for (var i = 0; i<callUsers.length; i++) {
       var displayName = await getDisplayName(callUsers[i]);
       if (i == 2) {
         name.write(" and (+${callUsers.length - i})");
@@ -901,7 +926,7 @@ abstract class BaseController {
       } else if (i == 1) {
         name.write(", $displayName");
       } else {
-        name = StringBuffer(getDisplayName(callUsers[i]));
+        name = StringBuffer(await getDisplayName(callUsers[i]));
       }
     }
     return name.toString();

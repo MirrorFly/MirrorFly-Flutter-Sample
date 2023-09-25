@@ -30,6 +30,8 @@ class CallController extends GetxController {
   var callTitle = "".obs;
 
   var callType = "".obs;
+  get isAudioCall => callType.value==CallType.audio;
+  get isVideoCall => callType.value==CallType.video;
 
   Rx<Profile> profile = Profile().obs;
   var calleeName = "".obs;
@@ -42,7 +44,10 @@ class CallController extends GetxController {
   Future<void> onInit() async {
     super.onInit();
     debugPrint("#Mirrorfly Call Controller onInit");
-    userJID.value = Get.arguments?["userJid"];
+    if(Get.arguments!=null) {
+      userJID.value = Get.arguments?["userJid"];
+      cameraSwitch(Get.arguments?["cameraSwitch"]);
+    }
     // callType.value = Get.arguments["callType"];
     if (userJID.value != "") {
       debugPrint("#Mirrorfly Call UserJid $userJID");
@@ -184,7 +189,7 @@ class CallController extends GetxController {
   }
 
   switchCamera() async {
-    cameraSwitch(!cameraSwitch.value);
+    // cameraSwitch(!cameraSwitch.value);
     await Mirrorfly.switchCamera();
   }
 
@@ -341,7 +346,7 @@ class CallController extends GetxController {
     // getNames();
     // startTimer();
     Future.delayed(const Duration(milliseconds: 500), () {
-      Get.offNamed(Routes.onGoingCallView, arguments: {"userJid": userJid});
+      Get.offNamed(Routes.onGoingCallView, arguments: {"userJid": userJid,"cameraSwitch": cameraSwitch.value});
     });
   }
 
@@ -356,7 +361,7 @@ class CallController extends GetxController {
   void declineCall() {
     Mirrorfly.declineCall().then((value) {
       callList.clear();
-      Get.back();
+      //Get.back();
     });
   }
 
@@ -484,5 +489,16 @@ class CallController extends GetxController {
       }
     });
 
+  }
+
+  void denyCall(){
+    LogMessage.d("denyCall", Get.currentRoute);
+    if(Get.currentRoute==Routes.outGoingCallView){
+      Get.back();
+    }
+  }
+  void onCameraSwitch(){
+    LogMessage.d("onCameraSwitch", cameraSwitch.value);
+    cameraSwitch(!cameraSwitch.value);
   }
 }

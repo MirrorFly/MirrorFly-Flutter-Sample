@@ -37,7 +37,7 @@ class OnGoingCallView extends GetView<CallController> {
                             ? MirrorFlyView(
                                     userJid: controller.callList[1].userJid ?? "",
                                     alignProfilePictureCenter: false,
-                                    showSpeakingRipple: controller.callType.value == 'audio',
+                                    showSpeakingRipple: controller.callType.value == CallType.audio,
                                     viewBgColor: AppColors.audioCallerBackground,
                                     profileSize: 100)
                                 .setBorderRadius(const BorderRadius.all(Radius.circular(10)))
@@ -61,10 +61,10 @@ class OnGoingCallView extends GetView<CallController> {
                                       )
                                     : const SizedBox.shrink(),
                                 controller.callList.length > 1 && controller.callList[1].isAudioMuted.value
-                                    ? const CircleAvatar(
-                                        backgroundColor: Colors.black45,
-                                        child: Icon(Icons.mic_off),
-                                      )
+                                    ? CircleAvatar(
+                                  backgroundColor: AppColors.audioMutedIconBgColor,
+                                  child: SvgPicture.asset(callMutedIcon),
+                                )
                                     : const SizedBox.shrink(),
                               ],
                             ));
@@ -143,13 +143,14 @@ class OnGoingCallView extends GetView<CallController> {
                         child: Align(
                           alignment: Alignment.bottomRight,
                           child: SizedBox(
-                              height: 180,
-                              width: 130,
+                              height: 160,
+                              width: 125,
                               child: Stack(
                                 children: [
                                   MirrorFlyView(
                                     userJid: controller.callList[0].userJid ?? "",
                                     viewBgColor: AppColors.callerTitleBackground,
+                                    profileSize: 50,
                                   ).setBorderRadius(const BorderRadius.all(Radius.circular(10))),
                                   Obx(() => controller.speakingUsers.isNotEmpty &&
                                           !controller.audioLevel(controller.callList[0].userJid).isNegative
@@ -291,7 +292,7 @@ class OnGoingCallView extends GetView<CallController> {
 
   Widget buildCallOptions() {
     double rightSideWidth = 15;
-    controller.callType.value == 'video' ? rightSideWidth = 20 : rightSideWidth = 30;
+    controller.callType.value == CallType.video ? rightSideWidth = 20 : rightSideWidth = 30;
     return Obx(() {
       return Column(
         children: [
@@ -327,7 +328,7 @@ class OnGoingCallView extends GetView<CallController> {
                       ),
               ),
               SizedBox(width: rightSideWidth),
-              controller.callType.value == 'video' && !controller.videoMuted.value
+              controller.callType.value == CallType.video && !controller.videoMuted.value
                   ? FloatingActionButton(
                       heroTag: "switchCamera",
                       elevation: 0,
@@ -338,7 +339,7 @@ class OnGoingCallView extends GetView<CallController> {
                           : SvgPicture.asset(cameraSwitchInactive),
                     )
                   : const SizedBox.shrink(),
-              controller.callType.value == 'video' && !controller.videoMuted.value
+              controller.callType.value == CallType.video && !controller.videoMuted.value
                   ? SizedBox(width: rightSideWidth)
                   : const SizedBox.shrink(),
               FloatingActionButton(
