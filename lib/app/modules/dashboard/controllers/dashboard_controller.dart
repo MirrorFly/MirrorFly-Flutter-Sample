@@ -80,7 +80,7 @@ class DashboardController extends FullLifeCycleController
     tabController = TabController(length: 2, vsync: this);
     if(Get.parameters['fromMissedCall']!=null){
       var fromMissedCall = Get.parameters['fromMissedCall'];
-      debugPrint("fromMissedCall ${fromMissedCall}");
+      debugPrint("fromMissedCall $fromMissedCall");
       if(fromMissedCall.toString()=="true") {
         tabController?.animateTo(1);
       }
