@@ -518,7 +518,7 @@ class CallController extends GetxController {
                 onPressed: () {
                   Get.back();
                 },
-                child: const Text("NO")),
+                child: const Text("CANCEL")),
             TextButton(
                 onPressed: () {
                   Mirrorfly.requestVideoCallSwitch().then((value) {
@@ -533,6 +533,15 @@ class CallController extends GetxController {
           barrierDismissible: false);
     }else{
       toToast("Video Permission Needed to switch the call");
+    }
+  }
+
+  // when request was canceled from requester side
+  void videoCallConversionCancel(){
+    if (isVideoCallRequested) {
+      isVideoCallRequested = false;
+      //To Close the Request Popup
+      Get.back();
     }
   }
 

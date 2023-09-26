@@ -362,6 +362,14 @@ abstract class BaseController {
           }
           break;
         }
+        case CallAction.videoCallConversionCancel:{
+          debugPrint("#Mirrorfly call videoCallConversionCancel");
+          // local user deny the call
+          if (Get.isRegistered<CallController>()) {
+            Get.find<CallController>().videoCallConversionCancel();
+          }
+          break;
+        }
         case CallAction.videoCallConversionRequest:{
           debugPrint("#Mirrorfly call videoCallConversionRequest");
           // local user deny the call
