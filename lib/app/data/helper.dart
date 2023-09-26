@@ -67,7 +67,7 @@ class Helper {
   static void showAlert({String? title,
     required String message,
     List<Widget>? actions,
-    Widget? content}) {
+    Widget? content, bool? barrierDismissible}) {
     Get.dialog(
       AlertDialog(
         title: title != null
@@ -89,6 +89,7 @@ class Helper {
         const TextStyle(color: textHintColor, fontWeight: FontWeight.w500),
         actions: actions,
       ),
+      barrierDismissible: barrierDismissible ?? true
     );
   }
 

@@ -498,10 +498,14 @@ class CallController extends GetxController {
     videoMuted(true);
 
     //***Added for iOS. Sometimes this gets triggered when the timeout occurs at remote Android user but only after Rejecting the request once.
-    if(isVideoCallRequested){
-      //Cancelling the Request Popup
-      Get.back();
-    }
+    // if(isVideoCallRequested){
+    //   //Cancelling the Request Popup
+    //
+    //   //The below condition is must bcz iOS emit 2 times the delegate. so it navigates back to chat controller.
+    //   if(Get.isDialogOpen ?? false) {
+    //     Get.back();
+    //   }
+    // }
   }
 
   void showVideoSwitchPopup() {
@@ -521,7 +525,7 @@ class CallController extends GetxController {
             });
           },
           child: const Text("SWITCH"))
-    ]);
+    ], barrierDismissible: false);
   }
 
   void videoCallConversionRequest() {
@@ -531,7 +535,7 @@ class CallController extends GetxController {
           onPressed: () {
             isVideoCallRequested = false;
             Get.back();
-            Mirrorfly.cancelVideoCallSwitch().then((value) => {});
+            Mirrorfly.declineVideoCallSwitchRequest().then((value) => {});
           },
           child: const Text("DECLINE")),
       TextButton(
@@ -544,7 +548,7 @@ class CallController extends GetxController {
             });
           },
           child: const Text("ACCEPT"))
-    ]);
+    ], barrierDismissible: false);
   }
 
   void showWaitingPopup() {
@@ -554,16 +558,19 @@ class CallController extends GetxController {
     Helper.showAlert(message: Constants.videoSwitchRequestMessage, actions: [
       TextButton(
           onPressed: () {
-            Mirrorfly.cancelVideoCallSwitch().then((value) => Get.back());
+            isWaitingCanceled = true;
+            Get.back();
+            Mirrorfly.cancelVideoCallSwitch();
           },
           child: const Text("CANCEL"))
-    ]);
+    ], barrierDismissible: false);
 
     // Wait for 20 seconds or until canceled
     Future.delayed(const Duration(seconds: 20)).then((_) {
       debugPrint("waiting duration end");
       if (!isWaitingCanceled) {
-        Mirrorfly.cancelVideoCallSwitch().then((value) => Get.back());
+        Get.back();
+        Mirrorfly.cancelVideoCallSwitch();
         waitingCompleter.complete();
         // Get.back();
       }
@@ -571,8 +578,8 @@ class CallController extends GetxController {
   }
 
   void videoCallConversionAccepted() {
-    isWaitingCanceled = true;
     if (!waitingCompleter.isCompleted) {
+      isWaitingCanceled = true;
       waitingCompleter.complete();
       //To Close the Waiting Popup
       Get.back();
@@ -582,8 +589,10 @@ class CallController extends GetxController {
   }
 
   void videoCallConversionRejected() {
-    isWaitingCanceled = true;
+    toToast("Request Declined");
+
     if (!waitingCompleter.isCompleted) {
+      isWaitingCanceled = true;
       waitingCompleter.complete();
       //To Close the Waiting Popup
       Get.back();
