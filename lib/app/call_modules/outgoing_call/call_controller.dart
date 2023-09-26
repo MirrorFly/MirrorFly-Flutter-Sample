@@ -9,6 +9,7 @@ import 'package:mirror_fly_demo/app/model/call_user_list.dart';
 import 'package:mirrorfly_plugin/mirrorfly.dart';
 
 import '../../../main.dart';
+import '../../data/permissions.dart';
 import '../../data/session_management.dart';
 import '../../routes/app_pages.dart';
 
@@ -183,7 +184,7 @@ class CallController extends GetxController {
     if (callType.value != CallType.audio) {
       Mirrorfly.muteVideo(!videoMuted.value);
       videoMuted(!videoMuted.value);
-    } else if (callType.value == CallType.audio) {
+    } else if (callType.value == CallType.audio && Get.currentRoute == Routes.onGoingCallView) {
       showVideoSwitchPopup();
     }
   }
@@ -508,62 +509,78 @@ class CallController extends GetxController {
     // }
   }
 
-  void showVideoSwitchPopup() {
-    Helper.showAlert(message: Constants.videoSwitchMessage, actions: [
-      TextButton(
-          onPressed: () {
-            Get.back();
-          },
-          child: const Text("NO")),
-      TextButton(
-          onPressed: () {
-            Mirrorfly.requestVideoCallSwitch().then((value) {
-              if (value) {
-                Get.back();
-                showWaitingPopup();
-              }
-            });
-          },
-          child: const Text("SWITCH"))
-    ], barrierDismissible: false);
+  Future<void> showVideoSwitchPopup() async {
+    if (Platform.isAndroid ? await AppPermission.askVideoCallPermissions() : await AppPermission.askiOSVideoCallPermissions()) {
+      Helper.showAlert(
+          message: Constants.videoSwitchMessage,
+          actions: [
+            TextButton(
+                onPressed: () {
+                  Get.back();
+                },
+                child: const Text("NO")),
+            TextButton(
+                onPressed: () {
+                  Mirrorfly.requestVideoCallSwitch().then((value) {
+                    if (value) {
+                      Get.back();
+                      showWaitingPopup();
+                    }
+                  });
+                },
+                child: const Text("SWITCH"))
+          ],
+          barrierDismissible: false);
+    }else{
+      toToast("Video Permission Needed to switch the call");
+    }
   }
 
   void videoCallConversionRequest() {
     isVideoCallRequested = true;
-    Helper.showAlert(message: Constants.videoSwitchRequestMessage, actions: [
-      TextButton(
-          onPressed: () {
-            isVideoCallRequested = false;
-            Get.back();
-            Mirrorfly.declineVideoCallSwitchRequest().then((value) => {});
-          },
-          child: const Text("DECLINE")),
-      TextButton(
-          onPressed: () {
-            isVideoCallRequested = false;
-            Get.back();
-            Mirrorfly.acceptVideoCallSwitchRequest().then((value) {
-              videoMuted(false);
-              callType(CallType.video);
-            });
-          },
-          child: const Text("ACCEPT"))
-    ], barrierDismissible: false);
+    Helper.showAlert(
+        message: Constants.videoSwitchRequestMessage,
+        actions: [
+          TextButton(
+              onPressed: () {
+                isVideoCallRequested = false;
+                Get.back();
+                Mirrorfly.declineVideoCallSwitchRequest().then((value) => {});
+              },
+              child: const Text("DECLINE")),
+          TextButton(
+              onPressed: () async {
+                isVideoCallRequested = false;
+                Get.back();
+                if (Platform.isAndroid ? await AppPermission.askVideoCallPermissions() : await AppPermission.askiOSVideoCallPermissions()) {
+                  isVideoCallRequested = false;
+                  Mirrorfly.acceptVideoCallSwitchRequest().then((value) {
+                    videoMuted(false);
+                    callType(CallType.video);
+                  });
+                }
+              },
+              child: const Text("ACCEPT"))
+        ],
+        barrierDismissible: false);
   }
 
   void showWaitingPopup() {
     isWaitingCanceled = false;
     waitingCompleter = Completer<void>();
 
-    Helper.showAlert(message: Constants.videoSwitchRequestMessage, actions: [
-      TextButton(
-          onPressed: () {
-            isWaitingCanceled = true;
-            Get.back();
-            Mirrorfly.cancelVideoCallSwitch();
-          },
-          child: const Text("CANCEL"))
-    ], barrierDismissible: false);
+    Helper.showAlert(
+        message: Constants.videoSwitchRequestMessage,
+        actions: [
+          TextButton(
+              onPressed: () {
+                isWaitingCanceled = true;
+                Get.back();
+                Mirrorfly.cancelVideoCallSwitch();
+              },
+              child: const Text("CANCEL"))
+        ],
+        barrierDismissible: false);
 
     // Wait for 20 seconds or until canceled
     Future.delayed(const Duration(seconds: 20)).then((_) {
