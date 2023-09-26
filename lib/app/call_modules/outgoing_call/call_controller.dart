@@ -496,10 +496,6 @@ class CallController extends GetxController {
     callType(CallType.audio);
 
     videoMuted(true);
-    //***Need to check this route, if headset is attached
-    Mirrorfly.reRouteAudio();
-
-    Mirrorfly.changeCallType(switchType: CallType.audio);
 
     //***Added for iOS. Sometimes this gets triggered when the timeout occurs at remote Android user but only after Rejecting the request once.
     if(isVideoCallRequested){
@@ -545,8 +541,6 @@ class CallController extends GetxController {
             Mirrorfly.acceptVideoCallSwitchRequest().then((value) {
               videoMuted(false);
               callType(CallType.video);
-              //***Need to check this route, if headset is attached
-              // Mirrorfly.reRouteAudio();
             });
           },
           child: const Text("ACCEPT"))
@@ -584,8 +578,6 @@ class CallController extends GetxController {
       Get.back();
       videoMuted(false);
       callType(CallType.video);
-      //Change the Call Type
-      Mirrorfly.changeCallType(switchType: CallType.video);
     }
   }
 
