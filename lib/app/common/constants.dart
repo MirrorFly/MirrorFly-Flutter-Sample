@@ -735,6 +735,10 @@ class Constants {
   //Call Types
   static const audioCall = "audio";
   static const videoCall = "video";
+
+  static const videoSwitchMessage = "Are you sure you want to switch to Video Call";
+  static const videoSwitchRequestMessage = "Requesting to switch to Video Call";
+
 }
 
 Future<void> launchWeb(String url) async {
