@@ -354,6 +354,46 @@ abstract class BaseController {
           }
           break;
         }
+        case CallAction.changedToAudioCall:{
+          debugPrint("call action Video Call Switched to Audio Call");
+          // local user deny the call
+          if (Get.isRegistered<CallController>()) {
+            Get.find<CallController>().changedToAudioCall();
+          }
+          break;
+        }
+        case CallAction.videoCallConversionCancel:{
+          debugPrint("#Mirrorfly call videoCallConversionCancel");
+          // local user deny the call
+          if (Get.isRegistered<CallController>()) {
+            Get.find<CallController>().videoCallConversionCancel();
+          }
+          break;
+        }
+        case CallAction.videoCallConversionRequest:{
+          debugPrint("#Mirrorfly call videoCallConversionRequest");
+          // local user deny the call
+          if (Get.isRegistered<CallController>()) {
+            Get.find<CallController>().videoCallConversionRequest();
+          }
+          break;
+        }
+        case CallAction.videoCallConversionAccepted:{
+          debugPrint("#Mirrorfly call videoCallConversionAccepted");
+          // local user deny the call
+          if (Get.isRegistered<CallController>()) {
+            Get.find<CallController>().videoCallConversionAccepted();
+          }
+          break;
+        }
+        case CallAction.videoCallConversionRejected:{
+          debugPrint("#Mirrorfly call videoCallConversionRejected");
+          // local user deny the call
+          if (Get.isRegistered<CallController>()) {
+            Get.find<CallController>().videoCallConversionRejected();
+          }
+          break;
+        }
       }
     });
     Mirrorfly.onMuteStatusUpdated.listen((event) {
@@ -969,6 +1009,9 @@ abstract class BaseController {
   Timer? timer;
   void startTimer() {
     // if (timer == null) {
+    if(timer!= null){
+      timer?.cancel();
+    }
     timer = null;
       const oneSec = Duration(seconds: 1);
       var startTime = DateTime.now();

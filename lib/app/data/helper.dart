@@ -67,7 +67,7 @@ class Helper {
   static void showAlert({String? title,
     required String message,
     List<Widget>? actions,
-    Widget? content}) {
+    Widget? content, bool? barrierDismissible}) {
     Get.dialog(
       AlertDialog(
         title: title != null
@@ -79,16 +79,20 @@ class Helper {
         contentPadding: title != null
             ? const EdgeInsets.only(top: 15, right: 25, left: 25, bottom: 0)
             : const EdgeInsets.only(top: 0, right: 25, left: 25, bottom: 5),
-        content: content ??
-            Text(
-              message,
-              style: const TextStyle(
-                  color: textHintColor, fontWeight: FontWeight.normal),
-            ),
+        content: WillPopScope(
+          onWillPop: () async => Future.value(barrierDismissible),
+          child: content ??
+              Text(
+                message,
+                style: const TextStyle(
+                    color: textHintColor, fontWeight: FontWeight.normal),
+              ),
+        ),
         contentTextStyle:
         const TextStyle(color: textHintColor, fontWeight: FontWeight.w500),
         actions: actions,
       ),
+      barrierDismissible: barrierDismissible ?? true
     );
   }
 
