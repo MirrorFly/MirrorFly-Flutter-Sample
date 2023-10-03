@@ -545,10 +545,11 @@ class CallController extends GetxController {
     }
   }
 
-  void videoCallConversionRequest() {
+  void videoCallConversionRequest(String userJid) async {
+    var profile = await getProfileDetails(userJid);
     isVideoCallRequested = true;
     Helper.showAlert(
-        message: Constants.videoSwitchRequestMessage,
+        message: "${profile.getName()} ${Constants.videoSwitchRequestMessage}",
         actions: [
           TextButton(
               onPressed: () {
@@ -592,13 +593,15 @@ class CallController extends GetxController {
         barrierDismissible: false);
 
     // Wait for 20 seconds or until canceled
-    Future.delayed(const Duration(seconds: 20)).then((_) {
+    Future.delayed(const Duration(seconds: 20)).then((_) async {
       debugPrint("waiting duration end");
       if (!isWaitingCanceled) {
         Get.back();
         Mirrorfly.cancelVideoCallSwitch();
         waitingCompleter.complete();
         // Get.back();
+        var profile = await getProfileDetails(callList.first.userJid.checkNull());
+        toToast("No response from ${profile.getName()}");
       }
     });
   }

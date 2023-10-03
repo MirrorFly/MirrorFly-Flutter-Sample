@@ -738,6 +738,7 @@ class Constants {
 
   static const videoSwitchMessage = "Are you sure you want to switch to Video Call";
   static const videoSwitchRequestMessage = "Requesting to switch to Video Call";
+  static const videoSwitchRequestedMessage = "requesting to switch to Video Call";
 
 }
 

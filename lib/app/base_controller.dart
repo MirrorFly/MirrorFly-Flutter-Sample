@@ -374,7 +374,7 @@ abstract class BaseController {
           debugPrint("#Mirrorfly call videoCallConversionRequest");
           // local user deny the call
           if (Get.isRegistered<CallController>()) {
-            Get.find<CallController>().videoCallConversionRequest();
+            Get.find<CallController>().videoCallConversionRequest(userJid);
           }
           break;
         }
