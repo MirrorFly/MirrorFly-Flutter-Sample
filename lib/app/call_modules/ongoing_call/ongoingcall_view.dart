@@ -53,9 +53,12 @@ class OnGoingCallView extends GetView<CallController> {
                                     ? const Text(
                                         "${CallStatus.reconnecting}...",
                                         style: TextStyle(color: Colors.white),
-                                      )
+                                      ) : controller.callStatus.contains(CallStatus.onHold) ? const Text(
+                                  CallStatus.onHold,
+                                  style: TextStyle(color: Colors.white),
+                                )
                                     : const SizedBox.shrink(),
-                                controller.callStatus.contains(CallStatus.reconnecting)
+                                controller.callStatus.contains(CallStatus.reconnecting) || controller.callStatus.contains(CallStatus.onHold)
                                     ? const SizedBox(
                                         height: 10,
                                       )

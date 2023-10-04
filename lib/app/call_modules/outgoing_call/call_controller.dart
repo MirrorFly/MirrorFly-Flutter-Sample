@@ -337,6 +337,8 @@ class CallController extends GetxController {
 
   void onHold(String callMode, String userJid, String callType, String callStatus) {
     // this.callStatus(callStatus);
+    isCallTimerEnabled = false;
+
   }
 
   void connected(String callMode, String userJid, String callType, String callStatus) {
@@ -389,8 +391,10 @@ class CallController extends GetxController {
       case CallStatus.calling:
         displayStatus = CallStatus.calling;
         break;
-      case CallStatus.attended:
       case CallStatus.onHold:
+        displayStatus = CallStatus.onHold;
+        break;
+      case CallStatus.attended:
       case CallStatus.inviteCallTimeout:
         displayStatus = CallStatus.calling;
         break;
@@ -657,6 +661,10 @@ class CallController extends GetxController {
       //To Close the Waiting Popup
       closeDialog();
     }
+  }
+
+  void onResume(String callMode, String userJid, String callType, String callStatus) {
+    isCallTimerEnabled = true;
   }
 }
 

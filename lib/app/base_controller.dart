@@ -201,6 +201,12 @@ abstract class BaseController {
         case CallStatus.connecting:
           break;
         case CallStatus.onResume:
+          if (Get.isRegistered<CallController>()) {
+            Get.find<CallController>().onResume(
+                callMode, userJid, callType, callStatus);
+          }else{
+            debugPrint("#Mirrorfly call call controller not registered for onHold event");
+          }
           break;
         case CallStatus.userJoined:
           break;
