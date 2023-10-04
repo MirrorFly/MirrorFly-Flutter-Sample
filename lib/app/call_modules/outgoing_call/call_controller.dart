@@ -494,6 +494,9 @@ class CallController extends GetxController {
   }
 
   void changedToAudioCall() {
+    if(Get.isDialogOpen ?? false){
+      Navigator.of(Get.overlayContext!).pop();
+    }
     callType(CallType.audio);
 
     videoMuted(true);
