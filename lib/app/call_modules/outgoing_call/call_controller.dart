@@ -539,6 +539,15 @@ class CallController extends GetxController {
     }
   }
 
+  // when request was canceled from requester side
+  void videoCallConversionCancel(){
+    if (isVideoCallRequested) {
+      isVideoCallRequested = false;
+      //To Close the Request Popup
+      Get.back();
+    }
+  }
+
   void videoCallConversionRequest() {
     isVideoCallRequested = true;
     Helper.showAlert(
