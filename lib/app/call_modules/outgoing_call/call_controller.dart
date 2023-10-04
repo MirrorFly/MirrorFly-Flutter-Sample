@@ -45,11 +45,13 @@ class CallController extends GetxController {
   late Completer<void> waitingCompleter;
   bool isWaitingCanceled = false;
   bool isVideoCallRequested = false;
+  bool isCallTimerEnabled = false;
 
   @override
   Future<void> onInit() async {
     super.onInit();
     debugPrint("#Mirrorfly Call Controller onInit");
+    isCallTimerEnabled = true;
     if (Get.arguments != null) {
       userJID.value = Get.arguments?["userJid"];
       cameraSwitch(Get.arguments?["cameraSwitch"]);
@@ -204,8 +206,9 @@ class CallController extends GetxController {
   }
 
   void disconnectCall() {
-    BaseController baseController = ConcreteController();
-    baseController.stopTimer();
+    // BaseController baseController = ConcreteController();
+    // baseController.stopTimer();
+    isCallTimerEnabled = false;
     callTimer("Disconnected");
     if (callList.isNotEmpty) {
       callList.clear();
@@ -269,6 +272,7 @@ class CallController extends GetxController {
   }
 
   void callDisconnected(String callMode, String userJid, String callType) {
+    isCallTimerEnabled = false;
     debugPrint("#Mirrorfly call call disconnect called ${callList.length}");
     debugPrint("#Mirrorfly call call disconnect called $callList");
     if (callList.isEmpty) {
@@ -353,6 +357,7 @@ class CallController extends GetxController {
   }
 
   void declineCall() {
+    isCallTimerEnabled = false;
     Mirrorfly.declineCall().then((value) {
       callList.clear();
       if (Platform.isIOS) {
@@ -451,7 +456,9 @@ class CallController extends GetxController {
 
   void callDuration(String timer) {
     debugPrint("baseController callDuration Update");
-    callTimer(timer);
+    if (isCallTimerEnabled) {
+      callTimer(timer);
+    }
   }
 
   var speakingUsers = <SpeakingUsers>[].obs;
