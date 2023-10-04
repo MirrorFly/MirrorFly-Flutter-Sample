@@ -539,7 +539,7 @@ class CallController extends GetxController {
           ],
           barrierDismissible: false);
     }else{
-      toToast("Video Permission Needed to switch the call");
+      toToast("Camera Permission Needed to switch the call");
     }
   }
 
@@ -582,6 +582,8 @@ class CallController extends GetxController {
                     videoMuted(false);
                     callType(CallType.video);
                   });
+                }else{
+                  toToast("Camera Permission Needed to switch the call");
                 }
               },
               child: const Text("ACCEPT"))
