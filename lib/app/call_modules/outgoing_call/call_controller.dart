@@ -595,6 +595,9 @@ class CallController extends GetxController {
   }
 
   void videoCallConversionAccepted() {
+    if(Get.isDialogOpen ?? false){
+      Navigator.of(Get.overlayContext!).pop();
+    }
     if (!waitingCompleter.isCompleted) {
       isWaitingCanceled = true;
       waitingCompleter.complete();
