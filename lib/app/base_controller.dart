@@ -1043,6 +1043,10 @@ abstract class BaseController {
     // }
   }
   void stopTimer(){
+    debugPrint("baseController stopTimer");
+    if(timer == null){
+      debugPrint("baseController Timer is null");
+    }
     timer?.cancel();
     timer=null;
   }

@@ -9,6 +9,7 @@ import 'package:mirror_fly_demo/app/model/call_user_list.dart';
 import 'package:mirrorfly_plugin/mirrorfly.dart';
 
 import '../../../main.dart';
+import '../../base_controller.dart';
 import '../../data/permissions.dart';
 import '../../data/session_management.dart';
 import '../../routes/app_pages.dart';
@@ -203,6 +204,8 @@ class CallController extends GetxController {
   }
 
   void disconnectCall() {
+    BaseController baseController = ConcreteController();
+    baseController.stopTimer();
     callTimer("Disconnected");
     if (callList.isNotEmpty) {
       callList.clear();
@@ -447,6 +450,7 @@ class CallController extends GetxController {
   }
 
   void callDuration(String timer) {
+    debugPrint("baseController callDuration Update");
     callTimer(timer);
   }
 
@@ -652,4 +656,9 @@ class CallController extends GetxController {
       }
     }
   }
+}
+
+class ConcreteController extends BaseController {
+  // You can create concrete subclasses that extend BaseController.
+  // These subclasses can then be instantiated.
 }
