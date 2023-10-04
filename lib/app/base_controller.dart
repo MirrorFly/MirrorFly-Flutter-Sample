@@ -209,8 +209,13 @@ abstract class BaseController {
         case CallStatus.inviteCallTimeout:
           break;
         case CallStatus.attended:
+          debugPrint("onCallStatusUpdated Current Route ${Get.currentRoute}");
+          if (Get.currentRoute == Routes.callTimeOutView){
+            debugPrint("onCallStatusUpdated Inside Get.back");
+            Get.back();
+          }
           if(Get.currentRoute!=Routes.onGoingCallView) {
-            debugPrint("***opening cal page");
+            debugPrint("onCallStatusUpdated ***opening cal page");
             Get.toNamed(
                 Routes.onGoingCallView, arguments: { "userJid": userJid});
           }
