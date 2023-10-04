@@ -667,8 +667,3 @@ class CallController extends GetxController {
     isCallTimerEnabled = true;
   }
 }
-
-class ConcreteController extends BaseController {
-  // You can create concrete subclasses that extend BaseController.
-  // These subclasses can then be instantiated.
-}
