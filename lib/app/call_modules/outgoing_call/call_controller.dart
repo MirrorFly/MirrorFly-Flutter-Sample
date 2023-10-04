@@ -521,7 +521,7 @@ class CallController extends GetxController {
                 onPressed: () {
                   Get.back();
                 },
-                child: const Text("NO")),
+                child: const Text("CANCEL")),
             TextButton(
                 onPressed: () {
                   Mirrorfly.requestVideoCallSwitch().then((value) {
