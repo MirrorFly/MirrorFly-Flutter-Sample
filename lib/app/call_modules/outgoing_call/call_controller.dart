@@ -509,13 +509,16 @@ class CallController extends GetxController {
     // }
   }
 
+  var showingVideoSwitchPopup = false;
   Future<void> showVideoSwitchPopup() async {
     if (Platform.isAndroid ? await AppPermission.askVideoCallPermissions() : await AppPermission.askiOSVideoCallPermissions()) {
+      showingVideoSwitchPopup = true;
       Helper.showAlert(
           message: Constants.videoSwitchMessage,
           actions: [
             TextButton(
                 onPressed: () {
+                  showingVideoSwitchPopup = false;
                   Get.back();
                 },
                 child: const Text("CANCEL")),
@@ -523,6 +526,7 @@ class CallController extends GetxController {
                 onPressed: () {
                   Mirrorfly.requestVideoCallSwitch().then((value) {
                     if (value) {
+                      showingVideoSwitchPopup = false;
                       Get.back();
                       showWaitingPopup();
                     }
@@ -546,6 +550,9 @@ class CallController extends GetxController {
   }
 
   void videoCallConversionRequest(String userJid) async {
+    if(showingVideoSwitchPopup){
+      Get.back();
+    }
     var profile = await getProfileDetails(userJid);
     isVideoCallRequested = true;
     Helper.showAlert(
