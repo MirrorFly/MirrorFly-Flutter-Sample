@@ -153,7 +153,7 @@ class OnGoingCallView extends GetView<CallController> {
                                     profileSize: 50,
                                   ).setBorderRadius(const BorderRadius.all(Radius.circular(10))),
                                   Obx(() => controller.speakingUsers.isNotEmpty &&
-                                          !controller.audioLevel(controller.callList[0].userJid).isNegative
+                                          !controller.audioLevel(controller.callList[0].userJid).isNegative && !controller.muted.value
                                       ? Positioned(
                                           top: 8,
                                           right: 8,
