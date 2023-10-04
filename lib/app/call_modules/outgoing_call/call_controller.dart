@@ -545,13 +545,17 @@ class CallController extends GetxController {
     if (isVideoCallRequested) {
       isVideoCallRequested = false;
       //To Close the Request Popup
-      Get.back();
+      if (Get.isDialogOpen!) {
+        Get.back();
+      }
     }
   }
 
   void videoCallConversionRequest(String userJid) async {
     if(showingVideoSwitchPopup){
-      Get.back();
+      if (Get.isDialogOpen!) {
+        Get.back();
+      }
     }
     var profile = await getProfileDetails(userJid);
     isVideoCallRequested = true;
@@ -603,7 +607,9 @@ class CallController extends GetxController {
     Future.delayed(const Duration(seconds: 20)).then((_) async {
       debugPrint("waiting duration end");
       if (!isWaitingCanceled) {
-        Get.back();
+        if (Get.isDialogOpen!) {
+          Get.back();
+        }
         Mirrorfly.cancelVideoCallSwitch();
         waitingCompleter.complete();
         // Get.back();
@@ -618,7 +624,9 @@ class CallController extends GetxController {
       isWaitingCanceled = true;
       waitingCompleter.complete();
       //To Close the Waiting Popup
-      Get.back();
+      if (Get.isDialogOpen!) {
+        Get.back();
+      }
       videoMuted(false);
       callType(CallType.video);
     }
@@ -631,7 +639,9 @@ class CallController extends GetxController {
       isWaitingCanceled = true;
       waitingCompleter.complete();
       //To Close the Waiting Popup
-      Get.back();
+      if (Get.isDialogOpen!) {
+        Get.back();
+      }
     }
   }
 }
