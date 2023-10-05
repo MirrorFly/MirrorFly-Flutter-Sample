@@ -24,6 +24,7 @@ class GalleryPickerView extends GetView<GalleryPickerController> {
           children: [
             Expanded(
               child: FutureBuilder(
+                  future: null,
                 builder: (context, snapshot) {
                   return GalleryMediaPicker(
                     childAspectRatio: 1,
