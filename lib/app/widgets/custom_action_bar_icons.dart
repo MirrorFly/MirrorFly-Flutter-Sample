@@ -54,6 +54,8 @@ class _CustomActionBarIconsState extends State<CustomActionBarIcons> with Widget
         break;
       case AppLifecycleState.detached:
         break;
+      case AppLifecycleState.hidden:
+        break;
     }
     /*setState(() {
       _appLifecycleState = state;

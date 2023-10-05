@@ -44,11 +44,13 @@ class CallController extends GetxController {
   late Completer<void> waitingCompleter;
   bool isWaitingCanceled = false;
   bool isVideoCallRequested = false;
+  bool isCallTimerEnabled = false;
 
   @override
   Future<void> onInit() async {
     super.onInit();
     debugPrint("#Mirrorfly Call Controller onInit");
+    isCallTimerEnabled = true;
     if (Get.arguments != null) {
       userJID.value = Get.arguments?["userJid"];
       cameraSwitch(Get.arguments?["cameraSwitch"]);
@@ -203,6 +205,9 @@ class CallController extends GetxController {
   }
 
   void disconnectCall() {
+    // BaseController baseController = ConcreteController();
+    // baseController.stopTimer();
+    isCallTimerEnabled = false;
     callTimer("Disconnected");
     if (callList.isNotEmpty) {
       callList.clear();
@@ -266,6 +271,7 @@ class CallController extends GetxController {
   }
 
   void callDisconnected(String callMode, String userJid, String callType) {
+    isCallTimerEnabled = false;
     debugPrint("#Mirrorfly call call disconnect called ${callList.length}");
     debugPrint("#Mirrorfly call call disconnect called $callList");
     if (callList.isEmpty) {
@@ -330,6 +336,8 @@ class CallController extends GetxController {
 
   void onHold(String callMode, String userJid, String callType, String callStatus) {
     // this.callStatus(callStatus);
+    isCallTimerEnabled = false;
+
   }
 
   void connected(String callMode, String userJid, String callType, String callStatus) {
@@ -350,6 +358,7 @@ class CallController extends GetxController {
   }
 
   void declineCall() {
+    isCallTimerEnabled = false;
     Mirrorfly.declineCall().then((value) {
       callList.clear();
       if (Platform.isIOS) {
@@ -381,8 +390,10 @@ class CallController extends GetxController {
       case CallStatus.calling:
         displayStatus = CallStatus.calling;
         break;
-      case CallStatus.attended:
       case CallStatus.onHold:
+        displayStatus = CallStatus.onHold;
+        break;
+      case CallStatus.attended:
       case CallStatus.inviteCallTimeout:
         displayStatus = CallStatus.calling;
         break;
@@ -447,7 +458,10 @@ class CallController extends GetxController {
   }
 
   void callDuration(String timer) {
-    callTimer(timer);
+    debugPrint("baseController callDuration Update");
+    if (isCallTimerEnabled) {
+      callTimer(timer);
+    }
   }
 
   var speakingUsers = <SpeakingUsers>[].obs;
@@ -494,6 +508,9 @@ class CallController extends GetxController {
   }
 
   void changedToAudioCall() {
+    if(Get.isDialogOpen ?? false){
+      Navigator.of(Get.overlayContext!).pop();
+    }
     callType(CallType.audio);
 
     videoMuted(true);
@@ -508,22 +525,31 @@ class CallController extends GetxController {
     //   }
     // }
   }
+  void closeDialog(){
+    if (Get.isDialogOpen!) {
+      Get.back();
+    }
+  }
 
+  var showingVideoSwitchPopup = false;
   Future<void> showVideoSwitchPopup() async {
     if (Platform.isAndroid ? await AppPermission.askVideoCallPermissions() : await AppPermission.askiOSVideoCallPermissions()) {
+      showingVideoSwitchPopup = true;
       Helper.showAlert(
           message: Constants.videoSwitchMessage,
           actions: [
             TextButton(
                 onPressed: () {
-                  Get.back();
+                  showingVideoSwitchPopup = false;
+                  closeDialog();
                 },
                 child: const Text("CANCEL")),
             TextButton(
                 onPressed: () {
                   Mirrorfly.requestVideoCallSwitch().then((value) {
                     if (value) {
-                      Get.back();
+                      showingVideoSwitchPopup = false;
+                      closeDialog();
                       showWaitingPopup();
                     }
                   });
@@ -532,7 +558,7 @@ class CallController extends GetxController {
           ],
           barrierDismissible: false);
     }else{
-      toToast("Video Permission Needed to switch the call");
+      toToast("Camera Permission Needed to switch the call");
     }
   }
 
@@ -541,32 +567,38 @@ class CallController extends GetxController {
     if (isVideoCallRequested) {
       isVideoCallRequested = false;
       //To Close the Request Popup
-      Get.back();
+      closeDialog();
     }
   }
 
-  void videoCallConversionRequest() {
+  void videoCallConversionRequest(String userJid) async {
+    if(showingVideoSwitchPopup){
+      closeDialog();
+    }
+    var profile = await getProfileDetails(userJid);
     isVideoCallRequested = true;
     Helper.showAlert(
-        message: Constants.videoSwitchRequestMessage,
+        message: "${profile.getName()} ${Constants.videoSwitchRequestMessage}",
         actions: [
           TextButton(
               onPressed: () {
                 isVideoCallRequested = false;
-                Get.back();
+                closeDialog();
                 Mirrorfly.declineVideoCallSwitchRequest().then((value) => {});
               },
               child: const Text("DECLINE")),
           TextButton(
               onPressed: () async {
                 isVideoCallRequested = false;
-                Get.back();
+                closeDialog();
                 if (Platform.isAndroid ? await AppPermission.askVideoCallPermissions() : await AppPermission.askiOSVideoCallPermissions()) {
                   isVideoCallRequested = false;
                   Mirrorfly.acceptVideoCallSwitchRequest().then((value) {
                     videoMuted(false);
                     callType(CallType.video);
                   });
+                }else{
+                  toToast("Camera Permission Needed to switch the call");
                 }
               },
               child: const Text("ACCEPT"))
@@ -584,7 +616,7 @@ class CallController extends GetxController {
           TextButton(
               onPressed: () {
                 isWaitingCanceled = true;
-                Get.back();
+                closeDialog();
                 Mirrorfly.cancelVideoCallSwitch();
               },
               child: const Text("CANCEL"))
@@ -592,23 +624,28 @@ class CallController extends GetxController {
         barrierDismissible: false);
 
     // Wait for 20 seconds or until canceled
-    Future.delayed(const Duration(seconds: 20)).then((_) {
+    Future.delayed(const Duration(seconds: 20)).then((_) async {
       debugPrint("waiting duration end");
       if (!isWaitingCanceled) {
-        Get.back();
+        closeDialog();
         Mirrorfly.cancelVideoCallSwitch();
         waitingCompleter.complete();
         // Get.back();
+        var profile = await getProfileDetails(callList.first.userJid.checkNull());
+        toToast("No response from ${profile.getName()}");
       }
     });
   }
 
   void videoCallConversionAccepted() {
+    if(Get.isDialogOpen ?? false){
+      Navigator.of(Get.overlayContext!).pop();
+    }
     if (!waitingCompleter.isCompleted) {
       isWaitingCanceled = true;
       waitingCompleter.complete();
       //To Close the Waiting Popup
-      Get.back();
+      closeDialog();
       videoMuted(false);
       callType(CallType.video);
     }
@@ -621,7 +658,11 @@ class CallController extends GetxController {
       isWaitingCanceled = true;
       waitingCompleter.complete();
       //To Close the Waiting Popup
-      Get.back();
+      closeDialog();
     }
+  }
+
+  void onResume(String callMode, String userJid, String callType, String callStatus) {
+    isCallTimerEnabled = true;
   }
 }

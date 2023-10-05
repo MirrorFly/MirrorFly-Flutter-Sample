@@ -201,6 +201,12 @@ abstract class BaseController {
         case CallStatus.connecting:
           break;
         case CallStatus.onResume:
+          if (Get.isRegistered<CallController>()) {
+            Get.find<CallController>().onResume(
+                callMode, userJid, callType, callStatus);
+          }else{
+            debugPrint("#Mirrorfly call call controller not registered for onHold event");
+          }
           break;
         case CallStatus.userJoined:
           break;
@@ -209,8 +215,13 @@ abstract class BaseController {
         case CallStatus.inviteCallTimeout:
           break;
         case CallStatus.attended:
+          debugPrint("onCallStatusUpdated Current Route ${Get.currentRoute}");
+          if (Get.currentRoute == Routes.callTimeOutView){
+            debugPrint("onCallStatusUpdated Inside Get.back");
+            Get.back();
+          }
           if(Get.currentRoute!=Routes.onGoingCallView) {
-            debugPrint("***opening cal page");
+            debugPrint("onCallStatusUpdated ***opening cal page");
             Get.toNamed(
                 Routes.onGoingCallView, arguments: { "userJid": userJid});
           }
@@ -374,7 +385,7 @@ abstract class BaseController {
           debugPrint("#Mirrorfly call videoCallConversionRequest");
           // local user deny the call
           if (Get.isRegistered<CallController>()) {
-            Get.find<CallController>().videoCallConversionRequest();
+            Get.find<CallController>().videoCallConversionRequest(userJid);
           }
           break;
         }
@@ -1038,6 +1049,10 @@ abstract class BaseController {
     // }
   }
   void stopTimer(){
+    debugPrint("baseController stopTimer");
+    if(timer == null){
+      debugPrint("baseController Timer is null");
+    }
     timer?.cancel();
     timer=null;
   }

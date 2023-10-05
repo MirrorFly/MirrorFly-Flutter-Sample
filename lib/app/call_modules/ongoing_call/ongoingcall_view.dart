@@ -53,9 +53,12 @@ class OnGoingCallView extends GetView<CallController> {
                                     ? const Text(
                                         "${CallStatus.reconnecting}...",
                                         style: TextStyle(color: Colors.white),
-                                      )
+                                      ) : controller.callStatus.contains(CallStatus.onHold) ? const Text(
+                                  CallStatus.onHold,
+                                  style: TextStyle(color: Colors.white),
+                                )
                                     : const SizedBox.shrink(),
-                                controller.callStatus.contains(CallStatus.reconnecting)
+                                controller.callStatus.contains(CallStatus.reconnecting) || controller.callStatus.contains(CallStatus.onHold)
                                     ? const SizedBox(
                                         height: 10,
                                       )
@@ -153,7 +156,7 @@ class OnGoingCallView extends GetView<CallController> {
                                     profileSize: 50,
                                   ).setBorderRadius(const BorderRadius.all(Radius.circular(10))),
                                   Obx(() => controller.speakingUsers.isNotEmpty &&
-                                          !controller.audioLevel(controller.callList[0].userJid).isNegative
+                                          !controller.audioLevel(controller.callList[0].userJid).isNegative && !controller.muted.value
                                       ? Positioned(
                                           top: 8,
                                           right: 8,
