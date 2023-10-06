@@ -129,6 +129,7 @@ class ChatController extends FullLifeCycleController
   @override
   void onInit() async {
     super.onInit();
+    getAvailableFeatures();
     //await Mirrorfly.enableDisableBusyStatus(true);
     // var profileDetail = Get.arguments as Profile;
     // profile_.value = profileDetail;
@@ -233,7 +234,6 @@ class ChatController extends FullLifeCycleController
           .find<MainController>()
           .availableFeature
           .value);*/
-      getAvailableFeatures();
     // }
   }
   void getAvailableFeatures(){
@@ -3205,5 +3205,10 @@ class ChatController extends FullLifeCycleController
         LogMessage.d("getTopics error", onError);
       });
     }
+  }
+
+  @override
+  void onHidden() {
+
   }
 }

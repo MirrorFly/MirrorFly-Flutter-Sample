@@ -9,6 +9,7 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
 import 'package:mirror_fly_demo/app/common/main_controller.dart';
+import 'package:mirrorfly_plugin/logmessage.dart';
 import 'package:mirrorfly_plugin/mirrorflychat.dart';
 import 'package:mirror_fly_demo/app/data/session_management.dart';
 import 'package:mirror_fly_demo/app/routes/app_pages.dart';
@@ -894,11 +895,13 @@ String convertSecondToLastSeen(String seconds){
         double.parse(seconds).toInt());
     Duration diff = DateTime.now().difference(lastSeen);
 
+    LogMessage.d("getUserLastSeenTime", "diff ${diff.inDays}");
     if (int.parse(DateFormat('yyyy').format(lastSeen)) <
         int.parse(DateFormat('yyyy').format(DateTime.now()))) {
       return 'last seen on ${DateFormat('dd/mm/yyyy')}';
     } else if (diff.inDays > 1) {
-      return 'last seen on ${DateFormat('dd MMM').format(lastSeen)}';
+      var last = DateFormat('dd MMM').format(lastSeen);
+      return 'last seen on $last';
     } else if (diff.inDays == 1) {
       return 'last seen on Yesterday';
     } else

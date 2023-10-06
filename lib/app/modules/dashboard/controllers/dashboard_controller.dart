@@ -1491,4 +1491,9 @@ class DashboardController extends FullLifeCycleController
     topicId(topics[index].topicId);
     getRecentChatList();
   }
+
+  @override
+  void onHidden() {
+
+  }
 }

@@ -197,4 +197,9 @@ class BusyStatusController extends FullLifeCycleController with FullLifeCycleMix
       showEmoji(!showEmoji.value);
     });
   }
+
+  @override
+  void onHidden() {
+
+  }
 }

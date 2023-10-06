@@ -161,4 +161,9 @@ class MediaPreviewController extends FullLifeCycleController with FullLifeCycleM
     LogMessage.d("MediaPreview", "onAvailableFeaturesUpdated ${features.toJson()}");
     availableFeatures(features);
   }
+
+  @override
+  void onHidden() {
+
+  }
 }

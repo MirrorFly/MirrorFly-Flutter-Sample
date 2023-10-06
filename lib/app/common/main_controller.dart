@@ -371,4 +371,9 @@ class MainController extends FullLifeCycleController with BaseController, FullLi
   void onAvailableFeatures(AvailableFeatures features){
     availableFeature(features);
   }
+
+  @override
+  void onHidden() {
+
+  }
 }
