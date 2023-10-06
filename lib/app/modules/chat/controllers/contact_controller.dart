@@ -535,4 +535,9 @@ class ContactController extends FullLifeCycleController
   void unblockedThisUser(String jid) {
     userUpdatedHisProfile(jid);
   }
+
+  @override
+  void onHidden() {
+
+  }
 }

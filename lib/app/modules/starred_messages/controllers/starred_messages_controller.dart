@@ -727,5 +727,10 @@ class StarredMessagesController extends FullLifeCycleController with FullLifeCyc
     }
   }
 
+  @override
+  void onHidden() {
+
+  }
+
 
 }
