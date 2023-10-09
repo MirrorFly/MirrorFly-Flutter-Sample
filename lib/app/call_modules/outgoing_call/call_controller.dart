@@ -594,7 +594,7 @@ class CallController extends GetxController {
     var profile = await getProfileDetails(userJid);
     isVideoCallRequested = true;
     Helper.showAlert(
-        message: "${profile.getName()} ${Constants.videoSwitchRequestMessage}",
+        message: "${profile.getName()} ${Constants.videoSwitchRequestedMessage}",
         actions: [
           TextButton(
               onPressed: () {
