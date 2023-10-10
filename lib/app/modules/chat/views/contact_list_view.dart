@@ -266,6 +266,9 @@ class ContactListView extends GetView<ContactController> {
                                                 onChanged: (value) {
                                                   controller.onListItemPressed(item);
                                                 },
+                                                activeColor: Colors.green,
+                                                shape: RoundedRectangleBorder(
+                                                    borderRadius: BorderRadius.circular(2)),
                                               ),
                                             ),
                                           ],

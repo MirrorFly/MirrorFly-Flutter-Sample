@@ -578,12 +578,21 @@ class ContactController extends FullLifeCycleController
     }
   }
 
-  makeCall(){
-    Mirrorfly.makeGroupVoiceCall(jidList: selectedUsersJIDList).then((value) {
-      if (value) {
-        Get.toNamed(Routes.outGoingCallView,
-            arguments: {"userJid": "", "callType": CallType.audio});
+  makeCall() async {
+    if(selectedUsersJIDList.isNotEmpty) {
+      if (await AppUtils.isNetConnected()) {
+        if (await AppPermission.askAudioCallPermissions()) {
+          Get.back();
+          Mirrorfly.makeGroupVoiceCall(jidList: selectedUsersJIDList).then((value) {
+            if (value) {
+              Get.toNamed(Routes.outGoingCallView,
+                  arguments: {"userJid":selectedUsersJIDList,"callType": CallType.audio});
+            }
+          });
+        }
+      } else {
+        toToast(Constants.noInternetConnection);
       }
-    });
+    }
   }
 }
