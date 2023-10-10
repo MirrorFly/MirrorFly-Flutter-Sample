@@ -130,7 +130,10 @@ class _AnimatedFloatingActionState extends State<AnimatedFloatingAction>
            _translateButton.value * 2.0,
            0.0,
          ),
-         child: FloatingActionButton.small(heroTag:"videoCall",onPressed: widget.videoCallOnPressed,backgroundColor:buttonBgColor,child: SvgPicture.asset(
+         child: FloatingActionButton.small(heroTag:"videoCall",onPressed: (){
+           animate();
+           widget.videoCallOnPressed();
+         },backgroundColor:buttonBgColor,child: SvgPicture.asset(
            videoCallSmallIcon,
            width: 18,
            height: 18,
@@ -144,7 +147,10 @@ class _AnimatedFloatingActionState extends State<AnimatedFloatingAction>
            _translateButton.value,
            0.0,
          ),
-         child: FloatingActionButton.small(heroTag:"audioCall",onPressed: widget.audioCallOnPressed,backgroundColor:buttonBgColor,child: SvgPicture.asset(
+         child: FloatingActionButton.small(heroTag:"audioCall",onPressed: (){
+           animate();
+           widget.audioCallOnPressed();
+         },backgroundColor:buttonBgColor,child: SvgPicture.asset(
            audioCallSmallIcon,
            width: 18,
            height: 18,
