@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/call_modules/call_widgets.dart';
 import 'package:mirror_fly_demo/app/call_modules/outgoing_call/call_controller.dart';
 import 'package:mirror_fly_demo/app/call_modules/ripple_animation_view.dart';
+import 'package:mirror_fly_demo/app/common/widgets.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
 import 'package:mirrorfly_plugin/mirrorfly_view.dart';
 import 'package:mirrorfly_plugin/mirrorflychat.dart';
@@ -57,7 +58,7 @@ class OutGoingCallView extends GetView<CallController> {
                         return Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 30.0),
                           child: Text(
-                            controller.calleeNames.join(","),
+                            controller.calleeNames.length>3 ? "${controller.calleeNames.take(3).join(",")} and (+${controller.calleeNames.length - 3 })" : controller.calleeNames.join(","),
                             style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w500, fontSize: 18),
                             overflow: TextOverflow.ellipsis,
                           ),
@@ -74,7 +75,10 @@ class OutGoingCallView extends GetView<CallController> {
                           }),
                         ) : Row(
                           mainAxisAlignment: MainAxisAlignment.center,
-                          children: List.generate(controller.users.length, (index) => FutureBuilder(future: getProfileDetails(controller.users[index]!), builder: (ctx,snap){
+                          children: List.generate(controller.calleeNames.length > 3 ? 4 : controller.calleeNames.length, (index) => (index == 3) ? ProfileTextImage(
+                            text: "+${controller.calleeNames.length - 3}",
+                            radius: 45/2,
+                          ) : FutureBuilder(future: getProfileDetails(controller.users[index]!), builder: (ctx,snap){
                             return snap.hasData && snap.data!=null ? Padding(
                               padding: const EdgeInsets.only(right: 8.0),
                               child: buildProfileImage(snap.data!,size: 45),
