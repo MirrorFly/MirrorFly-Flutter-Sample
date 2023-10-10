@@ -34,35 +34,39 @@ class CallController extends GetxController {
   get isAudioCall => callType.value == CallType.audio;
   get isVideoCall => callType.value == CallType.video;
 
-  Rx<Profile> profile = Profile().obs;
+  // Rx<Profile> profile = Profile().obs;
   var calleeName = "".obs;
   var audioOutputType = "receiver".obs;
   var callStatus = CallStatus.calling.obs;
 
-  var userJID = "".obs;
+  // var userJID = <String>[].obs;
 
   late Completer<void> waitingCompleter;
   bool isWaitingCanceled = false;
   bool isVideoCallRequested = false;
   bool isCallTimerEnabled = false;
 
+  var users = <String?>[].obs;
   @override
   Future<void> onInit() async {
     super.onInit();
     debugPrint("#Mirrorfly Call Controller onInit");
     isCallTimerEnabled = true;
     if (Get.arguments != null) {
-      userJID.value = Get.arguments?["userJid"];
+      users.value = Get.arguments?["userJid"] as List<String?>;
       cameraSwitch(Get.arguments?["cameraSwitch"]);
     }
+    await outGoingUsers();
     // callType.value = Get.arguments["callType"];
-    if (userJID.value != "") {
-      debugPrint("#Mirrorfly Call UserJid $userJID");
+    if (users.isNotEmpty) {
+      debugPrint("#Mirrorfly Call UserJid $users");
       // var profile = await Mirrorfly.getUserProfile(userJid);
       // var data = profileDataFromJson(profile);
-      var data = await getProfileDetails(userJID.value);
-      profile(data);
-      calleeName(data.getName());
+      // if(users.length==1) {
+      //   var data = await getProfileDetails(users[0]);
+        // profile(data);
+        // calleeName(data.getName());
+      // }
     }
     audioDeviceChanged();
     if (Get.currentRoute == Routes.onGoingCallView) {
@@ -114,6 +118,24 @@ class CallController extends GetxController {
     });
   }
 
+  var calleeNames = <String>[].obs;
+  Future outGoingUsers() async {
+    debugPrint("outGoingUsers $users");
+    calleeNames();
+    if(users.length>1){
+      for (var value in users) {
+        if(value!=null) {
+          var data = await getProfileDetails(value);
+          calleeNames.add(data.getName());
+        }
+      }
+    }else{
+      if(users.isNotEmpty && users[0]!=null){
+        var data = await getProfileDetails(users[0]!);
+        calleeNames.add(data.getName());
+      }
+    }
+  }
   muteAudio() async {
     debugPrint("#Mirrorfly muteAudio ${muted.value}");
     await Mirrorfly.muteAudio(!muted.value).then((value) => debugPrint("#Mirrorfly Mute Audio Response $value"));
@@ -309,7 +331,7 @@ class CallController extends GetxController {
   }
 
   void remoteBusy(String callMode, String userJid, String callType, String callAction) {
-    declineCall();
+    disconnectOutgoingCall();
   }
 
   void localHangup(String callMode, String userJid, String callType, String callAction) {
@@ -354,16 +376,16 @@ class CallController extends GetxController {
     // Get.back();
     debugPrint("#Mirrorfly Call timeout callMode : $callMode -- userJid : $userJid -- callType $callType -- callStatus $callStatus");
     Get.offNamed(Routes.callTimeOutView,
-        arguments: {"callType": callType, "callMode": callMode, "userJid": userJID.value, "calleeName": calleeName.value});
+        arguments: {"callType": callType, "callMode": callMode, "userJid": users, "calleeName": calleeName.value});
   }
 
-  void declineCall() {
+  void disconnectOutgoingCall() {
     isCallTimerEnabled = false;
-    Mirrorfly.declineCall().then((value) {
+    Mirrorfly.disconnectCall().then((value) {
       callList.clear();
-      if (Platform.isIOS) {
+      //if (Platform.isIOS) {
         Get.back();
-      }
+      //}
       //Get.back();
     });
   }
@@ -444,7 +466,7 @@ class CallController extends GetxController {
       var data = await getProfileDetails(userJid);
       toToast(data.getName() + Constants.remoteEngagedToast);
     }
-    declineCall();
+    disconnectOutgoingCall();
   }
 
   void audioMuteStatusChanged(String muteEvent, String userJid) {

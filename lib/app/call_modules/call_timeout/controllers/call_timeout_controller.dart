@@ -41,7 +41,7 @@ class CallTimeoutController extends GetxController {
         if (await AppPermission.askAudioCallPermissions()) {
           Mirrorfly.makeVoiceCall(userJID.value).then((value) {
             Get.offNamed(
-                Routes.outGoingCallView, arguments: {"userJid": userJID.value});
+                Routes.outGoingCallView, arguments: {"userJid": [userJID.value]});
           });
         } else {
           debugPrint("permission not given");
@@ -53,7 +53,7 @@ class CallTimeoutController extends GetxController {
           Mirrorfly.makeVideoCall(userJID.value).then((value) {
             if (value) {
               Get.offNamed(
-                  Routes.outGoingCallView, arguments: {"userJid": userJID.value});
+                  Routes.outGoingCallView, arguments: {"userJid": [userJID.value]});
             }
           }).catchError((e) {
             debugPrint("#Mirrorfly Call $e");

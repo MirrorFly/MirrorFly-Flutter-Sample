@@ -3072,7 +3072,7 @@ class ChatController extends FullLifeCycleController
             debugPrint("#Mirrorfly Call userjid ${profile.jid}");
             setOnGoingUserGone();
             Get.toNamed(Routes.outGoingCallView,
-                arguments: {"userJid": profile.jid, "callType": CallType.audio})
+                arguments: {"userJid": [profile.jid], "callType": CallType.audio})
                 ?.then((value) => setOnGoingUserAvail());
           }
         }).catchError((e) {
@@ -3096,7 +3096,7 @@ class ChatController extends FullLifeCycleController
           if (value) {
             setOnGoingUserGone();
             Get.toNamed(Routes.outGoingCallView,
-                arguments: {"userJid": profile.jid, "callType": CallType.video})
+                arguments: {"userJid": [profile.jid], "callType": CallType.video})
                 ?.then((value) => setOnGoingUserAvail());
           }
         }).catchError((e) {

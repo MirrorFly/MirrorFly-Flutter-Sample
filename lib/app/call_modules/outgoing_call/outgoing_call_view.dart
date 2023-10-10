@@ -37,7 +37,6 @@ class OutGoingCallView extends GetView<CallController> {
                 ) :
                 const SizedBox.shrink();
               }),
-
               Column(
                 children: [
                   Expanded(child: Column(
@@ -55,16 +54,32 @@ class OutGoingCallView extends GetView<CallController> {
                         height: 16,
                       ),
                       Obx(() {
-                        return Text(
-                          controller.calleeName.value,
-                          style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w500, fontSize: 18),
-                          overflow: TextOverflow.ellipsis,
+                        return Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 30.0),
+                          child: Text(
+                            controller.calleeNames.join(","),
+                            style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w500, fontSize: 18),
+                            overflow: TextOverflow.ellipsis,
+                          ),
                         );
                       }),
+                      const SizedBox(
+                        height: 16,
+                      ),
                       Obx(() {
-                        return RipplesAnimation(
+                        return controller.calleeNames.length==1 ? RipplesAnimation(
                           onPressed: () {},
-                          child: buildProfileImage(controller.profile.value),
+                          child: FutureBuilder(future: getProfileDetails(controller.users[0]!), builder: (ctx,snap){
+                            return snap.hasData && snap.data!=null ? buildProfileImage(snap.data!) : const SizedBox.shrink();
+                          }),
+                        ) : Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: List.generate(controller.users.length, (index) => FutureBuilder(future: getProfileDetails(controller.users[index]!), builder: (ctx,snap){
+                            return snap.hasData && snap.data!=null ? Padding(
+                              padding: const EdgeInsets.only(right: 8.0),
+                              child: buildProfileImage(snap.data!,size: 45),
+                            ) : const SizedBox.shrink();
+                          })),
                         );
                       }),
                     ],
@@ -96,34 +111,23 @@ class OutGoingCallView extends GetView<CallController> {
                               muteInactive,
                             ),
                           ),
-                          controller.callType.value == CallType.video && !controller.videoMuted.value
-                              ? const SizedBox(width: 15)
-                              : const SizedBox.shrink(),
-
-                          controller.callType.value == CallType.video && !controller.videoMuted.value
-                              ? FloatingActionButton(
-                            heroTag: "switchCamera",
-                            elevation: 0,
-                            backgroundColor: controller.cameraSwitch.value ? Colors.white : Colors.white.withOpacity(0.3),
-                            onPressed: () => controller.switchCamera(),
-                            child: controller.cameraSwitch.value
-                                ? SvgPicture.asset(cameraSwitchActive)
-                                : SvgPicture.asset(cameraSwitchInactive),
-                          )
-                              : const SizedBox.shrink(),
-                          controller.callType.value == CallType.video && !controller.videoMuted.value
-                              ? const SizedBox(width: 15)
-                              : const SizedBox.shrink(),
-
+                          if(controller.callType.value == CallType.video && !controller.videoMuted.value)...[
+                             FloatingActionButton(
+                              heroTag: "switchCamera",
+                              elevation: 0,
+                              backgroundColor: controller.cameraSwitch.value ? Colors.white : Colors.white.withOpacity(0.3),
+                              onPressed: () => controller.switchCamera(),
+                              child: controller.cameraSwitch.value
+                                  ? SvgPicture.asset(cameraSwitchActive)
+                                  : SvgPicture.asset(cameraSwitchInactive),
+                            ),
+                          ],
                           FloatingActionButton(
                             heroTag: "video",
                             elevation: 0,
                             backgroundColor: controller.videoMuted.value ? Colors.white : Colors.white.withOpacity(0.3),
                             onPressed: () => controller.videoMute(),
                             child: controller.videoMuted.value ? SvgPicture.asset(videoInactive) : SvgPicture.asset(videoActive),
-                          ),
-                          const SizedBox(
-                            width: 15,
                           ),
                           FloatingActionButton(
                             heroTag: "speaker",
@@ -154,7 +158,7 @@ class OutGoingCallView extends GetView<CallController> {
                             shape: const StadiumBorder(),
                             backgroundColor: AppColors.endButton),
                         onPressed: () {
-                          controller.declineCall();
+                          controller.disconnectOutgoingCall();
                         },
                         child: SvgPicture.asset(
                           callEndButton,
