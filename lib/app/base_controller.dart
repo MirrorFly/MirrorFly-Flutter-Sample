@@ -223,7 +223,7 @@ abstract class BaseController {
           if(Get.currentRoute!=Routes.onGoingCallView) {
             debugPrint("onCallStatusUpdated ***opening cal page");
             Get.toNamed(
-                Routes.onGoingCallView, arguments: { "userJid": userJid});
+                Routes.onGoingCallView, arguments: { "userJid": [userJid]});
           }
           break;
 

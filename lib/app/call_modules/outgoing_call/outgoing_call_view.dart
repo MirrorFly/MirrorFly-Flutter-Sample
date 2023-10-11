@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
+import 'package:mirror_fly_demo/app/call_modules/call_utils.dart';
 import 'package:mirror_fly_demo/app/call_modules/call_widgets.dart';
 import 'package:mirror_fly_demo/app/call_modules/outgoing_call/call_controller.dart';
 import 'package:mirror_fly_demo/app/call_modules/ripple_animation_view.dart';
@@ -58,7 +59,7 @@ class OutGoingCallView extends GetView<CallController> {
                       Obx(() {
                         return Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 30.0),
-                          child: FutureBuilder(future:controller.getCallersName(controller.users),builder: (ctx,snap) {
+                          child: FutureBuilder(future:CallUtils.getCallersName(controller.users),builder: (ctx,snap) {
                             return snap.hasData && snap.data!=null ? Text(
                                 snap.data!, //controller.calleeNames.length>3 ? "${controller.calleeNames.take(3).join(",")} and (+${controller.calleeNames.length - 3 })" : controller.calleeNames.join(","),
                                 style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w500, fontSize: 18)
@@ -82,9 +83,11 @@ class OutGoingCallView extends GetView<CallController> {
                           (index == 3) ? ProfileTextImage(
                             text: "+${controller.users.length - 3}",
                             radius: 45 / 2,
+                            bgColor: Colors.white,
+                            fontColor: Colors.grey,
                           ) : FutureBuilder(future: getProfileDetails(controller.users[index]!), builder: (ctx, snap) {
                             return snap.hasData && snap.data != null ? Padding(
-                              padding: const EdgeInsets.only(right: 8.0),
+                              padding: const EdgeInsets.all(2.0),
                               child: buildProfileImage(snap.data!, size: 45),
                             ) : const SizedBox.shrink();
                           })),
