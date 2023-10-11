@@ -60,7 +60,7 @@ dependencies:
   share_plus: ^7.0.2
   flutter_inappwebview: ^5.7.2+3 # inapp webview
   flutter_local_notifications: ^15.1.1
-
+  tuple: ^2.0.2 # tuple for multiple return types
   open_file_plus: ^3.4.0
   is_lock_screen: ^2.0.0
   device_info_plus: ^8.1.0
