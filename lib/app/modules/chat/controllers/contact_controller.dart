@@ -28,17 +28,23 @@ class ContactController extends FullLifeCycleController
   var _first = true;
 
   var isForward = false.obs;
+  var isMakeCall = false.obs;
+  var callType = "".obs;
   var isCreateGroup = false.obs;
   var groupJid = "".obs;
 
   var topicId = "";
+  var getMaxCallUsersCount = 8;
   @override
   Future<void> onInit() async {
     super.onInit();
+    getMaxCallUsersCount = (await Mirrorfly.getMaxCallUsersCount()) ?? 8;
     debugPrint("Get.parameters['topicId'] ${Get.parameters['topicId']}");
     if(Get.parameters['topicId']!=null){
       topicId = Get.parameters['topicId'].toString();
     }
+    isMakeCall(Get.arguments["is_make_call"]);
+    callType(Get.arguments["call_type"]);
     isForward(Get.arguments["forward"]);
     if (isForward.value) {
       isCreateGroup(false);
@@ -107,7 +113,7 @@ class ContactController extends FullLifeCycleController
 
   bool get isMenuVisible => !_search.value && !isForward.value;
 
-  bool get isCheckBoxVisible => isCreateGroup.value || isForward.value;
+  bool get isCheckBoxVisible => isCreateGroup.value || isForward.value || isMakeCall.value;
 
   _scrollListener() {
     if (scrollController.hasClients) {
@@ -347,8 +353,16 @@ class ContactController extends FullLifeCycleController
         contactSelected(item);
       }
     } else {
-      mirrorFlyLog("Contact Profile", item.toJson().toString());
-      Get.toNamed(Routes.chat, arguments: item,parameters: {"topicId":topicId});
+      if(isMakeCall.value){
+        if (item.isBlocked.checkNull()) {
+          unBlock(item);
+        } else {
+          validateForCall(item);
+        }
+      }else {
+        mirrorFlyLog("Contact Profile", item.toJson().toString());
+        Get.toNamed(Routes.chat, arguments: item, parameters: {"topicId": topicId});
+      }
     }
   }
 
@@ -539,5 +553,46 @@ class ContactController extends FullLifeCycleController
   @override
   void onHidden() {
 
+  }
+
+  var groupCallMembersCount = 1.obs; //initially its 1 because me also added into call
+  void validateForCall(Profile item) {
+    if(isMakeCall.value){
+      if (selectedUsersList.contains(item)) {
+        selectedUsersList.remove(item);
+        selectedUsersJIDList.remove(item.jid);
+        //item.isSelected = false;
+        groupCallMembersCount(groupCallMembersCount.value - 1);
+      } else {
+        if(getMaxCallUsersCount > groupCallMembersCount.value) {
+          selectedUsersList.add(item);
+          selectedUsersJIDList.add(item.jid!);
+          groupCallMembersCount(groupCallMembersCount.value+1);
+        }else{
+          toToast(Constants.callMembersLimit.replaceFirst("%d", getMaxCallUsersCount.toString()));
+        }
+        //item.isSelected = true;
+      }
+      usersList.refresh();
+
+    }
+  }
+
+  makeCall() async {
+    if(selectedUsersJIDList.isNotEmpty) {
+      if (await AppUtils.isNetConnected()) {
+        if (await AppPermission.askAudioCallPermissions()) {
+          Get.back();
+          Mirrorfly.makeGroupVoiceCall(jidList: selectedUsersJIDList).then((value) {
+            if (value) {
+              Get.toNamed(Routes.outGoingCallView,
+                  arguments: {"userJid":selectedUsersJIDList,"callType": CallType.audio});
+            }
+          });
+        }
+      } else {
+        toToast(Constants.noInternetConnection);
+      }
+    }
   }
 }

@@ -75,6 +75,15 @@ class DashboardController extends FullLifeCycleController
   }*/
 
   TabController? tabController ;
+  RxInt currentTab = 0.obs;
+  // Number of tabs
+  static const tabsCount = 2;
+  static const initialIndex = 0;
+
+  // List with current scales for each tab's fab
+  // Initialize with 1.0 for initial opened tab, 0.0 for others
+  final tabScales =
+  List.generate(tabsCount, (index) => index == initialIndex ? 1.0 : 0.0).obs;
   @override
   void onInit() {
     tabController = TabController(length: 2, vsync: this);
@@ -85,6 +94,29 @@ class DashboardController extends FullLifeCycleController
         tabController?.animateTo(1);
       }
     }
+    tabController?.animation?.addListener(() {
+      LogMessage.d("DefaultTabController","${tabController?.index}");
+
+      // Current animation value. It ranges from 0 to (tabsCount - 1)
+      final animationValue = tabController?.animation!.value;
+      LogMessage.d("animationValue","$animationValue");
+      // Simple rounding gives us understanding of what tab is showing
+      final currentTabIndex = animationValue?.round();
+      LogMessage.d("currentTabIndex","$currentTabIndex");
+      currentTab(currentTabIndex);
+      // currentOffset equals 0 when tabs are not swiped
+      // currentOffset ranges from -0.5 to 0.5
+      final currentOffset = currentTabIndex! - animationValue!;
+      for (int i = 0; i < tabsCount; i++) {
+        if (i == currentTabIndex) {
+          // For current tab bringing currentOffset to range from 0.0 to 1.0
+          tabScales[i] = (0.5 - currentOffset.abs()) / 0.5;
+        } else {
+          // For other tabs setting scale to 0.0
+          tabScales[i] = 0.0;
+        }
+      }
+    });
     super.onInit();
   }
   @override
@@ -1320,10 +1352,10 @@ class DashboardController extends FullLifeCycleController
     });
   }
 
-  Future<void> gotoContacts() async {
+  Future<void> gotoContacts({bool forCalls = false,String callType = ""}) async {
     if (Mirrorfly.isTrialLicence) {
       Get.toNamed(Routes.contacts,
-          arguments: {"forward": false, "group": false, "groupJid": ""},parameters: {"topicId":topicId.value});
+          arguments: {"is_make_call": forCalls,"call_type":callType,},parameters: {"topicId":topicId.value});
     } else {
       var contactPermissionHandle = await AppPermission.checkPermission(
           Permission.contacts,
@@ -1331,7 +1363,7 @@ class DashboardController extends FullLifeCycleController
           Constants.contactSyncPermission);
       if (contactPermissionHandle) {
         Get.toNamed(Routes.contacts,
-            arguments: {"forward": false, "group": false, "groupJid": ""},parameters: {"topicId":topicId.value});
+            arguments: {"is_make_call": forCalls,"call_type":callType,},parameters: {"topicId":topicId.value});
       }
     }
   }

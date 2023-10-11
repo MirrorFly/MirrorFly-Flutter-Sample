@@ -8,25 +8,25 @@ import 'package:mirrorfly_plugin/mirrorfly_view.dart';
 import 'package:mirrorfly_plugin/mirrorflychat.dart';
 import 'package:mirrorfly_plugin/model/user_list_model.dart';
 
-Widget buildProfileImage(Profile item) {
+Widget buildProfileImage(Profile item, {double size = 105}) {
   return ImageNetwork(
     url: item.image.toString(),
-    width: 105,
-    height: 105,
+    width: size,
+    height: size,
     clipOval: true,
     errorWidget: item.isGroupProfile.checkNull()
         ? ClipOval(
-      child: Image.asset(
-        groupImg,
-        height: 48,
-        width: 48,
-        fit: BoxFit.cover,
-      ),
-    )
+            child: Image.asset(
+              groupImg,
+              height: 48,
+              width: 48,
+              fit: BoxFit.cover,
+            ),
+          )
         : ProfileTextImage(
-      text: item.getName(),
-      radius: 50,
-    ),
+            text: item.getName(),
+            radius: size/2,
+          ),
     isGroup: item.isGroupProfile.checkNull(),
     blocked: item.isBlockedMe.checkNull() || item.isAdminBlocked.checkNull(),
     unknown: (!item.isItSavedContact.checkNull() || item.isDeletedContact()),
@@ -78,7 +78,8 @@ class _SpeakingDotsState extends State<SpeakingDots> {
       Container(
         width: 4,
         height: 4,
-        decoration: BoxDecoration(color: Colors.white, shape: BoxShape.rectangle, borderRadius: BorderRadius.circular(10)),
+        decoration:
+            BoxDecoration(color: Colors.white, shape: BoxShape.rectangle, borderRadius: BorderRadius.circular(10)),
       ),
       const SizedBox(
         width: 2,
@@ -86,7 +87,8 @@ class _SpeakingDotsState extends State<SpeakingDots> {
       Container(
         width: 4,
         height: 4,
-        decoration: BoxDecoration(color: Colors.white, shape: BoxShape.rectangle, borderRadius: BorderRadius.circular(10)),
+        decoration:
+            BoxDecoration(color: Colors.white, shape: BoxShape.rectangle, borderRadius: BorderRadius.circular(10)),
       ),
       const SizedBox(
         width: 2,
@@ -94,7 +96,8 @@ class _SpeakingDotsState extends State<SpeakingDots> {
       Container(
         width: 4,
         height: 4,
-        decoration: BoxDecoration(color: Colors.white, shape: BoxShape.rectangle, borderRadius: BorderRadius.circular(10)),
+        decoration:
+            BoxDecoration(color: Colors.white, shape: BoxShape.rectangle, borderRadius: BorderRadius.circular(10)),
       ),
     ];
   }
@@ -104,7 +107,8 @@ class _SpeakingDotsState extends State<SpeakingDots> {
       Container(
         width: 4,
         height: 4,
-        decoration: BoxDecoration(color: Colors.white, shape: BoxShape.rectangle, borderRadius: BorderRadius.circular(10)),
+        decoration:
+            BoxDecoration(color: Colors.white, shape: BoxShape.rectangle, borderRadius: BorderRadius.circular(10)),
       ),
       const SizedBox(
         width: 2,
@@ -112,7 +116,8 @@ class _SpeakingDotsState extends State<SpeakingDots> {
       Container(
         width: 4,
         height: 8,
-        decoration: BoxDecoration(color: Colors.white, shape: BoxShape.rectangle, borderRadius: BorderRadius.circular(10)),
+        decoration:
+            BoxDecoration(color: Colors.white, shape: BoxShape.rectangle, borderRadius: BorderRadius.circular(10)),
       ),
       const SizedBox(
         width: 2,
@@ -120,7 +125,8 @@ class _SpeakingDotsState extends State<SpeakingDots> {
       Container(
         width: 4,
         height: 4,
-        decoration: BoxDecoration(color: Colors.white, shape: BoxShape.rectangle, borderRadius: BorderRadius.circular(10)),
+        decoration:
+            BoxDecoration(color: Colors.white, shape: BoxShape.rectangle, borderRadius: BorderRadius.circular(10)),
       ),
     ];
   }
@@ -130,7 +136,8 @@ class _SpeakingDotsState extends State<SpeakingDots> {
       Container(
         width: 4,
         height: 6,
-        decoration: BoxDecoration(color: Colors.white, shape: BoxShape.rectangle, borderRadius: BorderRadius.circular(10)),
+        decoration:
+            BoxDecoration(color: Colors.white, shape: BoxShape.rectangle, borderRadius: BorderRadius.circular(10)),
       ),
       const SizedBox(
         width: 2,
@@ -138,7 +145,8 @@ class _SpeakingDotsState extends State<SpeakingDots> {
       Container(
         width: 4,
         height: 10,
-        decoration: BoxDecoration(color: Colors.white, shape: BoxShape.rectangle, borderRadius: BorderRadius.circular(10)),
+        decoration:
+            BoxDecoration(color: Colors.white, shape: BoxShape.rectangle, borderRadius: BorderRadius.circular(10)),
       ),
       const SizedBox(
         width: 2,
@@ -146,7 +154,8 @@ class _SpeakingDotsState extends State<SpeakingDots> {
       Container(
         width: 4,
         height: 6,
-        decoration: BoxDecoration(color: Colors.white, shape: BoxShape.rectangle, borderRadius: BorderRadius.circular(10)),
+        decoration:
+            BoxDecoration(color: Colors.white, shape: BoxShape.rectangle, borderRadius: BorderRadius.circular(10)),
       ),
     ];
   }
@@ -156,7 +165,8 @@ class _SpeakingDotsState extends State<SpeakingDots> {
       Container(
         width: 4,
         height: 8,
-        decoration: BoxDecoration(color: Colors.white, shape: BoxShape.rectangle, borderRadius: BorderRadius.circular(10)),
+        decoration:
+            BoxDecoration(color: Colors.white, shape: BoxShape.rectangle, borderRadius: BorderRadius.circular(10)),
       ),
       const SizedBox(
         width: 2,
@@ -164,7 +174,8 @@ class _SpeakingDotsState extends State<SpeakingDots> {
       Container(
         width: 4,
         height: 12,
-        decoration: BoxDecoration(color: Colors.white, shape: BoxShape.rectangle, borderRadius: BorderRadius.circular(10)),
+        decoration:
+            BoxDecoration(color: Colors.white, shape: BoxShape.rectangle, borderRadius: BorderRadius.circular(10)),
       ),
       const SizedBox(
         width: 2,
@@ -172,7 +183,8 @@ class _SpeakingDotsState extends State<SpeakingDots> {
       Container(
         width: 4,
         height: 8,
-        decoration: BoxDecoration(color: Colors.white, shape: BoxShape.rectangle, borderRadius: BorderRadius.circular(10)),
+        decoration:
+            BoxDecoration(color: Colors.white, shape: BoxShape.rectangle, borderRadius: BorderRadius.circular(10)),
       ),
     ];
   }
@@ -182,7 +194,8 @@ class _SpeakingDotsState extends State<SpeakingDots> {
       Container(
         width: 4,
         height: 10,
-        decoration: BoxDecoration(color: Colors.white, shape: BoxShape.rectangle, borderRadius: BorderRadius.circular(10)),
+        decoration:
+            BoxDecoration(color: Colors.white, shape: BoxShape.rectangle, borderRadius: BorderRadius.circular(10)),
       ),
       const SizedBox(
         width: 2,
@@ -190,7 +203,8 @@ class _SpeakingDotsState extends State<SpeakingDots> {
       Container(
         width: 4,
         height: 12,
-        decoration: BoxDecoration(color: Colors.white, shape: BoxShape.rectangle, borderRadius: BorderRadius.circular(10)),
+        decoration:
+            BoxDecoration(color: Colors.white, shape: BoxShape.rectangle, borderRadius: BorderRadius.circular(10)),
       ),
       const SizedBox(
         width: 2,
@@ -198,7 +212,8 @@ class _SpeakingDotsState extends State<SpeakingDots> {
       Container(
         width: 4,
         height: 10,
-        decoration: BoxDecoration(color: Colors.white, shape: BoxShape.rectangle, borderRadius: BorderRadius.circular(10)),
+        decoration:
+            BoxDecoration(color: Colors.white, shape: BoxShape.rectangle, borderRadius: BorderRadius.circular(10)),
       ),
     ];
   }

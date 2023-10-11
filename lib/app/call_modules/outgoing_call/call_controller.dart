@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
+import 'package:mirror_fly_demo/app/data/apputils.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
 import 'package:mirror_fly_demo/app/model/call_user_list.dart';
 import 'package:mirrorfly_plugin/mirrorfly.dart';
@@ -34,35 +35,39 @@ class CallController extends GetxController {
   get isAudioCall => callType.value == CallType.audio;
   get isVideoCall => callType.value == CallType.video;
 
-  Rx<Profile> profile = Profile().obs;
+  // Rx<Profile> profile = Profile().obs;
   var calleeName = "".obs;
   var audioOutputType = "receiver".obs;
   var callStatus = CallStatus.calling.obs;
 
-  var userJID = "".obs;
+  // var userJID = <String>[].obs;
 
   late Completer<void> waitingCompleter;
   bool isWaitingCanceled = false;
   bool isVideoCallRequested = false;
   bool isCallTimerEnabled = false;
 
+  var users = <String?>[].obs;
   @override
   Future<void> onInit() async {
     super.onInit();
     debugPrint("#Mirrorfly Call Controller onInit");
     isCallTimerEnabled = true;
     if (Get.arguments != null) {
-      userJID.value = Get.arguments?["userJid"];
+      users.value = Get.arguments?["userJid"] as List<String?>;
       cameraSwitch(Get.arguments?["cameraSwitch"]);
     }
+    await outGoingUsers();
     // callType.value = Get.arguments["callType"];
-    if (userJID.value != "") {
-      debugPrint("#Mirrorfly Call UserJid $userJID");
+    if (users.isNotEmpty) {
+      debugPrint("#Mirrorfly Call UserJid $users");
       // var profile = await Mirrorfly.getUserProfile(userJid);
       // var data = profileDataFromJson(profile);
-      var data = await getProfileDetails(userJID.value);
-      profile(data);
-      calleeName(data.getName());
+      // if(users.length==1) {
+      //   var data = await getProfileDetails(users[0]);
+        // profile(data);
+        // calleeName(data.getName());
+      // }
     }
     audioDeviceChanged();
     if (Get.currentRoute == Routes.onGoingCallView) {
@@ -114,6 +119,56 @@ class CallController extends GetxController {
       getNames();
     });
   }
+
+  var calleeNames = <String>[].obs;
+  Future outGoingUsers() async {
+    debugPrint("outGoingUsers $users");
+    calleeNames();
+    if(users.length>1){
+      for (var value in users) {
+        if(value!=null) {
+          var data = await getProfileDetails(value);
+          calleeNames.add(data.getName());
+        }
+      }
+    }else{
+      if(users.isNotEmpty && users[0]!=null){
+        var data = await getProfileDetails(users[0]!);
+        calleeNames.add(data.getName());
+      }
+    }
+  }
+
+  Future<String> getCallersName(List<String?> callUsers) async {
+    var membersName = StringBuffer("");
+    var isMaxMemberNameNotReached = true;
+    for (var i = 0; i<callUsers.length;i++) {
+      if(callUsers[i]!=null) {
+        var pair = await AppUtils.getNameAndProfileDetails(callUsers[i]!);
+        if (i == 0) {
+          var actualMemberName = AppUtils.getActualMemberName(StringBuffer(pair.item1));
+          membersName = actualMemberName.item1;
+          isMaxMemberNameNotReached = actualMemberName.item2;
+        } else if (isMaxMemberNameNotReached && i == 1) {
+          membersName.write(", ${pair.item1}");
+          var actualMemberName = AppUtils.getActualMemberName(membersName);
+          membersName = actualMemberName.item1;
+          isMaxMemberNameNotReached = actualMemberName.item2;
+        } else if (isMaxMemberNameNotReached && i == 2) {
+          membersName.write(", ${pair.item1}");
+          var actualMemberName = AppUtils.getActualMemberName(membersName);
+          membersName = actualMemberName.item1;
+        } else {
+          membersName.write(" (+${(callUsers.length - i)})");
+          break;
+        }
+      }else{
+        break;
+      }
+    }
+    return membersName.toString();
+  }
+
 
   muteAudio() async {
     debugPrint("#Mirrorfly muteAudio ${muted.value}");
@@ -314,7 +369,12 @@ class CallController extends GetxController {
   }
 
   void remoteBusy(String callMode, String userJid, String callType, String callAction) {
-    declineCall();
+    disconnectOutgoingCall();
+  }
+
+  void remoteOtherBusy(String callMode, String userJid, String callType, String callAction) {
+    //remove the user from the list and update ui
+    users.remove(userJid);//out going call view
   }
 
   void localHangup(String callMode, String userJid, String callType, String callAction) {
@@ -371,16 +431,16 @@ class CallController extends GetxController {
     // Get.back();
     debugPrint("#Mirrorfly Call timeout callMode : $callMode -- userJid : $userJid -- callType $callType -- callStatus $callStatus");
     Get.offNamed(Routes.callTimeOutView,
-        arguments: {"callType": callType, "callMode": callMode, "userJid": userJID.value, "calleeName": calleeName.value});
+        arguments: {"callType": callType, "callMode": callMode, "userJid": users, "calleeName": calleeName.value});
   }
 
-  void declineCall() {
+  void disconnectOutgoingCall() {
     isCallTimerEnabled = false;
-    Mirrorfly.declineCall().then((value) {
+    Mirrorfly.disconnectCall().then((value) {
       callList.clear();
-      if (Platform.isIOS) {
+      //if (Platform.isIOS) {
         Get.back();
-      }
+      //}
       //Get.back();
     });
   }
@@ -461,7 +521,7 @@ class CallController extends GetxController {
       var data = await getProfileDetails(userJid);
       toToast(data.getName() + Constants.remoteEngagedToast);
     }
-    declineCall();
+    disconnectOutgoingCall();
   }
 
   void audioMuteStatusChanged(String muteEvent, String userJid) {
@@ -611,7 +671,7 @@ class CallController extends GetxController {
     var profile = await getProfileDetails(userJid);
     isVideoCallRequested = true;
     Helper.showAlert(
-        message: "${profile.getName()} ${Constants.videoSwitchRequestMessage}",
+        message: "${profile.getName()} ${Constants.videoSwitchRequestedMessage}",
         actions: [
           TextButton(
               onPressed: () {

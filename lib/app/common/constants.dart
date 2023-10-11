@@ -57,6 +57,9 @@ class AppColors{
   static const Color audioMutedIconBgColor = Color(0x80000000);
 }
 //call Assets
+const String plusIcon = 'assets/calls/plus_icon.svg';
+const String audioCallSmallIcon = 'assets/calls/audio_call_small_icon.svg';
+const String videoCallSmallIcon = 'assets/calls/video_call_small_icon.svg';
 const String callMutedIcon = 'assets/calls/call_muted_icon.svg';
 const String callEndButton = 'assets/calls/call_end_button.svg';
 const String speakerInactive = 'assets/calls/speaker_inactive.svg';
@@ -738,7 +741,9 @@ class Constants {
 
   static const videoSwitchMessage = "Are you sure you want to switch to Video Call?";
   static const videoSwitchRequestMessage = "Requesting to switch to Video Call";
-  static const videoSwitchRequestedMessage = "requesting to switch to Video Call";
+  static const videoSwitchRequestedMessage = "requesting to switch to video call";
+  static const callMembersLimit = "Maximum %d members allowed in call";
+  static const maxNameLength = 26;
 
 }
 

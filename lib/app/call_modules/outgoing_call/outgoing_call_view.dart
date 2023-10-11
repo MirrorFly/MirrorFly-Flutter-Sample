@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/call_modules/call_widgets.dart';
 import 'package:mirror_fly_demo/app/call_modules/outgoing_call/call_controller.dart';
 import 'package:mirror_fly_demo/app/call_modules/ripple_animation_view.dart';
+import 'package:mirror_fly_demo/app/common/widgets.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
 import 'package:mirrorfly_plugin/mirrorfly_view.dart';
 import 'package:mirrorfly_plugin/mirrorflychat.dart';
@@ -37,7 +38,6 @@ class OutGoingCallView extends GetView<CallController> {
                 ) :
                 const SizedBox.shrink();
               }),
-
               Column(
                 children: [
                   Expanded(child: Column(
@@ -48,23 +48,46 @@ class OutGoingCallView extends GetView<CallController> {
                       Obx(() {
                         return Text(
                           controller.callStatus.value,
-                          style: const TextStyle(color: AppColors.callerStatus, fontWeight: FontWeight.w100, fontSize: 14),
+                          style: const TextStyle(
+                              color: AppColors.callerStatus, fontWeight: FontWeight.w100, fontSize: 14),
                         );
                       }),
                       const SizedBox(
                         height: 16,
                       ),
                       Obx(() {
-                        return Text(
-                          controller.calleeName.value,
-                          style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w500, fontSize: 18),
-                          overflow: TextOverflow.ellipsis,
-                        );
-                      }),
+                        return Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 30.0),
+                          child: FutureBuilder(future:controller.getCallersName(controller.users),builder: (ctx,snap) {
+                            return snap.hasData && snap.data!=null ? Text(
+                                snap.data!, //controller.calleeNames.length>3 ? "${controller.calleeNames.take(3).join(",")} and (+${controller.calleeNames.length - 3 })" : controller.calleeNames.join(","),
+                                style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w500, fontSize: 18)
+                          ,
+                          overflow: TextOverflow.ellipsis,) : const SizedBox.shrink();
+                      }));}),
+                      const SizedBox(
+                        height: 16,
+                      ),
                       Obx(() {
-                        return RipplesAnimation(
+                        return controller.users.length == 1 ? RipplesAnimation(
                           onPressed: () {},
-                          child: buildProfileImage(controller.profile.value),
+                          child: FutureBuilder(future: getProfileDetails(controller.users[0]!), builder: (ctx, snap) {
+                            return snap.hasData && snap.data != null ? buildProfileImage(snap.data!) : const SizedBox
+                                .shrink();
+                          }),
+                        ) : Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: List.generate(
+                              controller.users.length > 3 ? 4 : controller.users.length, (index) =>
+                          (index == 3) ? ProfileTextImage(
+                            text: "+${controller.users.length - 3}",
+                            radius: 45 / 2,
+                          ) : FutureBuilder(future: getProfileDetails(controller.users[index]!), builder: (ctx, snap) {
+                            return snap.hasData && snap.data != null ? Padding(
+                              padding: const EdgeInsets.only(right: 8.0),
+                              child: buildProfileImage(snap.data!, size: 45),
+                            ) : const SizedBox.shrink();
+                          })),
                         );
                       }),
                     ],
@@ -96,40 +119,33 @@ class OutGoingCallView extends GetView<CallController> {
                               muteInactive,
                             ),
                           ),
-                          controller.callType.value == CallType.video && !controller.videoMuted.value
-                              ? const SizedBox(width: 15)
-                              : const SizedBox.shrink(),
-
-                          controller.callType.value == CallType.video && !controller.videoMuted.value
-                              ? FloatingActionButton(
-                            heroTag: "switchCamera",
-                            elevation: 0,
-                            backgroundColor: controller.cameraSwitch.value ? Colors.white : Colors.white.withOpacity(0.3),
-                            onPressed: () => controller.switchCamera(),
-                            child: controller.cameraSwitch.value
-                                ? SvgPicture.asset(cameraSwitchActive)
-                                : SvgPicture.asset(cameraSwitchInactive),
-                          )
-                              : const SizedBox.shrink(),
-                          controller.callType.value == CallType.video && !controller.videoMuted.value
-                              ? const SizedBox(width: 15)
-                              : const SizedBox.shrink(),
-
+                          if(controller.callType.value == CallType.video && !controller.videoMuted.value)...[
+                            FloatingActionButton(
+                              heroTag: "switchCamera",
+                              elevation: 0,
+                              backgroundColor: controller.cameraSwitch.value ? Colors.white : Colors.white.withOpacity(
+                                  0.3),
+                              onPressed: () => controller.switchCamera(),
+                              child: controller.cameraSwitch.value
+                                  ? SvgPicture.asset(cameraSwitchActive)
+                                  : SvgPicture.asset(cameraSwitchInactive),
+                            ),
+                          ],
                           FloatingActionButton(
                             heroTag: "video",
                             elevation: 0,
                             backgroundColor: controller.videoMuted.value ? Colors.white : Colors.white.withOpacity(0.3),
                             onPressed: () => controller.videoMute(),
-                            child: controller.videoMuted.value ? SvgPicture.asset(videoInactive) : SvgPicture.asset(videoActive),
-                          ),
-                          const SizedBox(
-                            width: 15,
+                            child: controller.videoMuted.value ? SvgPicture.asset(videoInactive) : SvgPicture.asset(
+                                videoActive),
                           ),
                           FloatingActionButton(
                             heroTag: "speaker",
                             elevation: 0,
                             backgroundColor:
-                            controller.audioOutputType.value == AudioDeviceType.receiver ? Colors.white.withOpacity(0.3) : Colors.white,
+                            controller.audioOutputType.value == AudioDeviceType.receiver
+                                ? Colors.white.withOpacity(0.3)
+                                : Colors.white,
                             onPressed: () => controller.changeSpeaker(),
                             child: controller.audioOutputType.value == AudioDeviceType.receiver
                                 ? SvgPicture.asset(speakerInactive)
@@ -154,7 +170,7 @@ class OutGoingCallView extends GetView<CallController> {
                             shape: const StadiumBorder(),
                             backgroundColor: AppColors.endButton),
                         onPressed: () {
-                          controller.declineCall();
+                          controller.disconnectOutgoingCall();
                         },
                         child: SvgPicture.asset(
                           callEndButton,
