@@ -115,7 +115,8 @@ class CallController extends GetxController {
 
     ever(callList, (callback) {
       debugPrint("#Mirrorfly call list is changed ******");
-      debugPrint("#Mirrorfly call list $callList");
+      debugPrint("#Mirrorfly call list ${callList.toJson()}");
+      getNames();
     });
   }
 
@@ -290,6 +291,8 @@ class CallController extends GetxController {
   }
 
   getNames() async {
+    //Need to check Call Mode and update the name for group call here
+
     callList.asMap().forEach((index, users) async {
       if (users.userJid == SessionManagement.getUserJID()) {
         callTitle("$callTitle You");
@@ -299,8 +302,10 @@ class CallController extends GetxController {
         var userName = data.data?.name;
         callTitle("$callTitle ${userName!}");
       }
-      if (index == 0) {
+      if (callList.length == 2 && index == 0) {
         callTitle("$callTitle and ");
+      }else if(callList.length > 2 && index < callList.length - 1){
+        callTitle("$callTitle ,");
       }
     });
   }
@@ -404,9 +409,21 @@ class CallController extends GetxController {
     // this.callStatus(callStatus);
     // getNames();
     // startTimer();
-    Future.delayed(const Duration(milliseconds: 500), () {
-      Get.offNamed(Routes.onGoingCallView, arguments: {"userJid": userJid, "cameraSwitch": cameraSwitch.value});
-    });
+    if(Get.currentRoute != Routes.onGoingCallView) {
+      Future.delayed(const Duration(milliseconds: 500), () {
+        Get.offNamed(Routes.onGoingCallView, arguments: {"userJid": userJid, "cameraSwitch": cameraSwitch.value});
+      });
+    }else{
+      debugPrint("#MirrorflyCall New User Added to List $userJid");
+      CallUserList callUserList = CallUserList(userJid: userJid, callStatus: callStatus, isAudioMuted: false);
+     if(callList.indexWhere((userList) => userList.userJid == userJid).isNegative) {
+       callList.add(callUserList);
+       debugPrint("#MirrorflyCall List value updated ${callList.length}");
+     }else{
+       debugPrint("#MirrorflyCall List value not updated due to jid $userJid is already in list ${callList.length}");
+     }
+
+    }
   }
 
   void timeout(String callMode, String userJid, String callType, String callStatus) {
@@ -526,15 +543,15 @@ class CallController extends GetxController {
 
   var speakingUsers = <SpeakingUsers>[].obs;
   void onUserSpeaking(String userJid, int audioLevel) {
-    LogMessage.d("speakingUsers", "${speakingUsers.length}");
+    // LogMessage.d("speakingUsers", "${speakingUsers.length}");
     var index = speakingUsers.indexWhere((element) => element.userJid.toString() == userJid.toString());
-    LogMessage.d("speakingUsers indexWhere", "$index");
+    // LogMessage.d("speakingUsers indexWhere", "$index");
     if (index.isNegative) {
       speakingUsers.add(SpeakingUsers(userJid: userJid, audioLevel: audioLevel.obs));
-      LogMessage.d("speakingUsers", "added");
+      // LogMessage.d("speakingUsers", "added");
     } else {
       speakingUsers[index].audioLevel(audioLevel);
-      LogMessage.d("speakingUsers", "updated");
+      // LogMessage.d("speakingUsers", "updated");
     }
   }
 

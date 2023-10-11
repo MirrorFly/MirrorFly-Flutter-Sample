@@ -427,7 +427,7 @@ abstract class BaseController {
 
     });
     Mirrorfly.onUserSpeaking.listen((event) {
-      mirrorFlyLog("onUserSpeaking", "$event");
+      // mirrorFlyLog("onUserSpeaking", "$event");
       var data = json.decode(event.toString());
       var audioLevel = data["audioLevel"];
       var userJid = data["userJid"];
@@ -436,7 +436,7 @@ abstract class BaseController {
       }
     });
     Mirrorfly.onUserStoppedSpeaking.listen((event) {
-      mirrorFlyLog("onUserSpeaking", "$event");
+      // mirrorFlyLog("onUserSpeaking", "$event");
       if(Get.isRegistered<CallController>()){
         Get.find<CallController>().onUserStoppedSpeaking(event.toString());
       }
