@@ -158,6 +158,15 @@ class ContactController extends FullLifeCycleController
     }
   }
 
+  clearSearch(){
+    searchQuery.clear();
+    _searchText = "";
+    lastInputValue('');
+    pageNum = 1;
+    usersList(mainUsersList);
+    scrollable(Mirrorfly.isTrialLicence);
+  }
+
   backFromSearch() {
     _search.value = false;
     searchQuery.clear();

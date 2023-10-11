@@ -71,7 +71,7 @@ class ContactListView extends GetView<ContactController> {
                 Visibility(
                   visible: controller.isClearVisible,
                   child: IconButton(
-                      onPressed: () => controller.backFromSearch(),
+                      onPressed: () => controller.clearSearch(),
                       icon: const Icon(Icons.clear)),
                 ),
                 Visibility(
