@@ -315,6 +315,13 @@ abstract class BaseController {
           }
           break;
         }
+        case CallAction.remoteOtherBusy:{// for group call users decline the call before attend
+          if(Get.isRegistered<CallController>()){
+            Get.find<CallController>().remoteOtherBusy(
+                callMode, userJid, callType, callAction);
+          }
+          break;
+        }
         //if we called on user B, the user B is decline the call then this will be triggered in Android
         case CallAction.remoteBusy:{
           //in Android, showing this user is busy toast inside SDK

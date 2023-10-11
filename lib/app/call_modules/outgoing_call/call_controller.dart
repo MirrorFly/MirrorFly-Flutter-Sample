@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
+import 'package:mirror_fly_demo/app/data/apputils.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
 import 'package:mirror_fly_demo/app/model/call_user_list.dart';
 import 'package:mirrorfly_plugin/mirrorfly.dart';
@@ -136,6 +137,38 @@ class CallController extends GetxController {
       }
     }
   }
+
+  Future<String> getCallersName(List<String?> callUsers) async {
+    var membersName = StringBuffer("");
+    var isMaxMemberNameNotReached = true;
+    for (var i = 0; i<callUsers.length;i++) {
+      if(callUsers[i]!=null) {
+        var pair = await AppUtils.getNameAndProfileDetails(callUsers[i]!);
+        if (i == 0) {
+          var actualMemberName = AppUtils.getActualMemberName(StringBuffer(pair.item1));
+          membersName = actualMemberName.item1;
+          isMaxMemberNameNotReached = actualMemberName.item2;
+        } else if (isMaxMemberNameNotReached && i == 1) {
+          membersName.write(", ${pair.item1}");
+          var actualMemberName = AppUtils.getActualMemberName(membersName);
+          membersName = actualMemberName.item1;
+          isMaxMemberNameNotReached = actualMemberName.item2;
+        } else if (isMaxMemberNameNotReached && i == 2) {
+          membersName.write(", ${pair.item1}");
+          var actualMemberName = AppUtils.getActualMemberName(membersName);
+          membersName = actualMemberName.item1;
+        } else {
+          membersName.write(" (+${(callUsers.length - i)})");
+          break;
+        }
+      }else{
+        break;
+      }
+    }
+    return membersName.toString();
+  }
+
+
   muteAudio() async {
     debugPrint("#Mirrorfly muteAudio ${muted.value}");
     await Mirrorfly.muteAudio(!muted.value).then((value) => debugPrint("#Mirrorfly Mute Audio Response $value"));
@@ -332,6 +365,11 @@ class CallController extends GetxController {
 
   void remoteBusy(String callMode, String userJid, String callType, String callAction) {
     disconnectOutgoingCall();
+  }
+
+  void remoteOtherBusy(String callMode, String userJid, String callType, String callAction) {
+    //remove the user from the list and update ui
+    users.remove(userJid);//out going call view
   }
 
   void localHangup(String callMode, String userJid, String callType, String callAction) {

@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
+import 'package:mirror_fly_demo/app/common/constants.dart';
+import 'package:mirror_fly_demo/app/data/helper.dart';
+import 'package:mirrorfly_plugin/mirrorflychat.dart';
+import 'package:tuple/tuple.dart';
 
 class AppUtils{
   AppUtils._();
@@ -26,5 +30,21 @@ class AppUtils{
         string = name;
       }
       return string;
+  }
+
+  static Tuple2<StringBuffer,bool> getActualMemberName(StringBuffer string){
+    return (string.length > Constants.maxNameLength) ?
+    Tuple2(
+      StringBuffer("${string.toString().substring(0, Constants.maxNameLength)}..."),
+      false
+    )
+    :
+    Tuple2(string, true);
+  }
+
+  static Future<Tuple2<String, Profile>> getNameAndProfileDetails(String jid) async {
+    var profileDetails = await getProfileDetails(jid);
+    var name = profileDetails.getName();
+    return Tuple2(name, profileDetails);
   }
 }
