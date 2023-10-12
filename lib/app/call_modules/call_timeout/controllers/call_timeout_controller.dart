@@ -18,13 +18,13 @@ class CallTimeoutController extends GetxController {
   var calleeName = ''.obs;
   // Rx<Profile> profile = Profile().obs;
 
-  var users = <String>[].obs;
+  var users = <String?>[].obs;
   @override
   Future<void> onInit() async {
     super.onInit();
     callType(Get.arguments["callType"]);
     callMode(Get.arguments["callMode"]);
-    users(Get.arguments["userJid"]);
+    users.value = (Get.arguments["userJid"] as List<String?>);
     calleeName(Get.arguments["calleeName"]);
     // var data = await getProfileDetails(userJID.value);
     // profile(data);
@@ -40,12 +40,14 @@ class CallTimeoutController extends GetxController {
       if(callType.value == Constants.audioCall) {
         if (await AppPermission.askAudioCallPermissions()) {
           if(users.length==1) {
-            Mirrorfly.makeVoiceCall(users.first).then((value) {
+            Mirrorfly.makeVoiceCall(users.first!).then((value) {
               Get.offNamed(
                   Routes.outGoingCallView, arguments: {"userJid": users});
             });
           }else{
-            Mirrorfly.makeGroupVoiceCall(jidList: users).then((value) {
+            var usersList = <String>[];
+            for (var element in users) {if(element!=null) { usersList.add(element);}}
+            Mirrorfly.makeGroupVoiceCall(jidList: usersList).then((value) {
               Get.offNamed(
                   Routes.outGoingCallView, arguments: {"userJid": users});
             });
@@ -58,7 +60,7 @@ class CallTimeoutController extends GetxController {
             ? await AppPermission.askVideoCallPermissions()
             : await AppPermission.askiOSVideoCallPermissions()) {
           if(users.length==1) {
-            Mirrorfly.makeVideoCall(users.first).then((value) {
+            Mirrorfly.makeVideoCall(users.first!).then((value) {
               if (value) {
                 Get.offNamed(
                     Routes.outGoingCallView, arguments: {"userJid": users});

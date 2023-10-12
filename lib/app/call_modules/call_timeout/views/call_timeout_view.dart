@@ -3,7 +3,6 @@ import 'package:flutter_svg/svg.dart';
 
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/call_modules/call_utils.dart';
-import 'package:mirror_fly_demo/app/call_modules/ripple_animation_view.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
 
 import '../../../common/constants.dart';
@@ -47,13 +46,10 @@ class CallTimeoutView extends GetView<CallTimeoutController> {
                       height: 16,
                     ),
                     Obx(() {
-                      return controller.users.length == 1 ? RipplesAnimation(
-                        onPressed: () {},
-                        child: FutureBuilder(future: getProfileDetails(controller.users[0]), builder: (ctx, snap) {
-                          return snap.hasData && snap.data != null ? buildProfileImage(snap.data!) : const SizedBox
-                              .shrink();
-                        }),
-                      ) : Row(
+                      return controller.users.length == 1 ? FutureBuilder(future: getProfileDetails(controller.users[0]!), builder: (ctx, snap) {
+                        return snap.hasData && snap.data != null ? buildProfileImage(snap.data!) : const SizedBox
+                            .shrink();
+                      }) : Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: List.generate(
                             controller.users.length > 3 ? 4 : controller.users.length, (index) =>
@@ -62,7 +58,7 @@ class CallTimeoutView extends GetView<CallTimeoutController> {
                           radius: 45 / 2,
                           bgColor: Colors.white,
                           fontColor: Colors.grey,
-                        ) : FutureBuilder(future: getProfileDetails(controller.users[index]), builder: (ctx, snap) {
+                        ) : FutureBuilder(future: getProfileDetails(controller.users[index]!), builder: (ctx, snap) {
                           return snap.hasData && snap.data != null ? Padding(
                             padding: const EdgeInsets.all(2.0),
                             child: buildProfileImage(snap.data!, size: 45),

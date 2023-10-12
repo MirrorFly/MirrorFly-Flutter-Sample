@@ -56,7 +56,7 @@ class CallController extends GetxController {
       users.value = Get.arguments?["userJid"] as List<String?>;
       cameraSwitch(Get.arguments?["cameraSwitch"]);
     }
-    await outGoingUsers();
+    // await outGoingUsers();
     // callType.value = Get.arguments["callType"];
     if (users.isNotEmpty) {
       debugPrint("#Mirrorfly Call UserJid $users");
