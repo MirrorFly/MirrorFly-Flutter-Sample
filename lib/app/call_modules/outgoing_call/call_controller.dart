@@ -47,10 +47,12 @@ class CallController extends GetxController {
   bool isCallTimerEnabled = false;
 
   var users = <String?>[].obs;
+  var groupId = ''.obs;
   @override
   Future<void> onInit() async {
     super.onInit();
     debugPrint("#Mirrorfly Call Controller onInit");
+    groupId(await Mirrorfly.getGroupId());
     isCallTimerEnabled = true;
     if (Get.arguments != null) {
       users.value = Get.arguments?["userJid"] as List<String?>;
@@ -261,22 +263,25 @@ class CallController extends GetxController {
 
   getNames() async {
     //Need to check Call Mode and update the name for group call here
-
-    callList.asMap().forEach((index, users) async {
-      if (users.userJid == SessionManagement.getUserJID()) {
-        callTitle("$callTitle You");
-      } else {
-        var profile = await Mirrorfly.getUserProfile(users.userJid!);
-        var data = profileDataFromJson(profile);
-        var userName = data.data?.name;
-        callTitle("$callTitle ${userName!}");
-      }
-      if (callList.length == 2 && index == 0) {
-        callTitle("$callTitle and ");
-      }else if(callList.length > 2 && index < callList.length - 1){
-        callTitle("$callTitle ,");
-      }
-    });
+    if(groupId.isEmpty) {
+      callList.asMap().forEach((index, users) async {
+        if (users.userJid == SessionManagement.getUserJID()) {
+          callTitle("$callTitle You");
+        } else {
+          var profile = await Mirrorfly.getUserProfile(users.userJid!);
+          var data = profileDataFromJson(profile);
+          var userName = data.data?.name;
+          callTitle("$callTitle ${userName!}");
+        }
+        if (callList.length == 2 && index == 0) {
+          callTitle("$callTitle and ");
+        } else if (callList.length > 2 && index < callList.length - 1) {
+          callTitle("$callTitle ,");
+        }
+      });
+    }else{
+      callTitle((await getProfileDetails(groupId.value)).getName());
+    }
   }
 
   Future<String> getNameOfJid(String jid) async {

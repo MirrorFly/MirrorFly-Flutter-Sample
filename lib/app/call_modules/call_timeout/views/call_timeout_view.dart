@@ -46,7 +46,10 @@ class CallTimeoutView extends GetView<CallTimeoutController> {
                       height: 16,
                     ),
                     Obx(() {
-                      return controller.users.length == 1 ? FutureBuilder(future: getProfileDetails(controller.users[0]!), builder: (ctx, snap) {
+                      return controller.groupId.isNotEmpty ? FutureBuilder(future: getProfileDetails(controller.groupId.value), builder: (ctx, snap) {
+                        return snap.hasData && snap.data != null ? buildProfileImage(snap.data!) : const SizedBox
+                            .shrink();
+                      }) : controller.users.length == 1 ? FutureBuilder(future: getProfileDetails(controller.users[0]!), builder: (ctx, snap) {
                         return snap.hasData && snap.data != null ? buildProfileImage(snap.data!) : const SizedBox
                             .shrink();
                       }) : Row(

@@ -19,9 +19,11 @@ class CallTimeoutController extends GetxController {
   // Rx<Profile> profile = Profile().obs;
 
   var users = <String?>[].obs;
+  var groupId = ''.obs;
   @override
   Future<void> onInit() async {
     super.onInit();
+    groupId(await Mirrorfly.getGroupId());
     callType(Get.arguments["callType"]);
     callMode(Get.arguments["callMode"]);
     users.value = (Get.arguments["userJid"] as List<String?>);

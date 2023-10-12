@@ -57,6 +57,16 @@ class OutGoingCallView extends GetView<CallController> {
                         height: 16,
                       ),
                       Obx(() {
+                        return controller.groupId.isNotEmpty ? Padding(
+                          padding: const EdgeInsets.only(left: 30.0,right: 30.0,bottom: 16.0),
+                          child: FutureBuilder(future:getProfileDetails(controller.groupId.value),builder: (ctx,snap) {
+                            return snap.hasData && snap.data!=null ? Text(
+                                snap.data!.getName(),
+                                style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w500, fontSize: 18)
+                          ,
+                          overflow: TextOverflow.ellipsis,) : const SizedBox.shrink();
+                      })): const SizedBox.shrink();}),
+                      Obx(() {
                         return Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 30.0),
                           child: FutureBuilder(future:CallUtils.getCallersName(controller.users),builder: (ctx,snap) {
@@ -70,7 +80,13 @@ class OutGoingCallView extends GetView<CallController> {
                         height: 16,
                       ),
                       Obx(() {
-                        return controller.users.length == 1 ? RipplesAnimation(
+                        return controller.groupId.isNotEmpty ? RipplesAnimation(
+                          onPressed: (){},
+                          child: FutureBuilder(future: getProfileDetails(controller.groupId.value), builder: (ctx, snap) {
+                            return snap.hasData && snap.data != null ? buildProfileImage(snap.data!) : const SizedBox
+                                .shrink();
+                          }),
+                        ) : controller.users.length == 1 ? RipplesAnimation(
                           onPressed: () {},
                           child: FutureBuilder(future: getProfileDetails(controller.users[0]!), builder: (ctx, snap) {
                             return snap.hasData && snap.data != null ? buildProfileImage(snap.data!) : const SizedBox
