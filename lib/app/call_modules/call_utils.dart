@@ -1,3 +1,6 @@
+import 'package:mirror_fly_demo/app/data/helper.dart';
+import 'package:mirror_fly_demo/app/data/session_management.dart';
+
 import '../data/apputils.dart';
 
 class CallUtils{
@@ -29,5 +32,13 @@ class CallUtils{
       }
     }
     return membersName.toString();
+  }
+
+  static Future<String> getNameOfJid(String jid) async {
+    if (jid == SessionManagement.getUserJID()) {
+      return "You";
+    }
+    var profile = await getProfileDetails(jid);
+    return profile.getName();
   }
 }

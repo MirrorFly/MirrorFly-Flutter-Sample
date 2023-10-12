@@ -211,6 +211,11 @@ abstract class BaseController {
         case CallStatus.userJoined:
           break;
         case CallStatus.userLeft:
+          //{"callStatus":"User_Left","userJid":"919789482015@xmpp-uikit-qa.contus.us","callType":"audio","callMode":"onetomany"}
+          if (Get.isRegistered<CallController>()) {
+            Get.find<CallController>().onUserLeft(
+                callMode, userJid, callType);
+          }
           break;
         case CallStatus.inviteCallTimeout:
           break;

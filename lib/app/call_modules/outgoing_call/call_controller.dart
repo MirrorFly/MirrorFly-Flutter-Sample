@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
@@ -13,7 +14,7 @@ import '../../data/permissions.dart';
 import '../../data/session_management.dart';
 import '../../routes/app_pages.dart';
 
-class CallController extends GetxController {
+class CallController extends GetxController with GetTickerProviderStateMixin {
   final RxBool isVisible = true.obs;
   final RxBool muted = false.obs;
   final RxBool speakerOff = true.obs;
@@ -51,6 +52,7 @@ class CallController extends GetxController {
   @override
   Future<void> onInit() async {
     super.onInit();
+    // SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersive);
     debugPrint("#Mirrorfly Call Controller onInit");
     groupId(await Mirrorfly.getGroupId());
     isCallTimerEnabled = true;
@@ -284,16 +286,9 @@ class CallController extends GetxController {
     }
   }
 
-  Future<String> getNameOfJid(String jid) async {
-    if (jid == SessionManagement.getUserJID()) {
-      return "You";
-    }
-    var profile = await getProfileDetails(jid);
-    return profile.getName();
-  }
-
   @override
   void dispose() {
+    // SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,overlays: SystemUiOverlay.values);
     LogMessage.d("callController", " callController dispose");
     super.dispose();
   }
@@ -737,5 +732,11 @@ class CallController extends GetxController {
 
   void onResume(String callMode, String userJid, String callType, String callStatus) {
     isCallTimerEnabled = true;
+  }
+
+  void onUserLeft(String callMode, String userJid, String callType) {
+    callList.removeWhere((element) => element.userJid == userJid);
+    users.removeWhere((element) => element == userJid);
+    speakingUsers.removeWhere((element) => element.userJid == userJid);
   }
 }
