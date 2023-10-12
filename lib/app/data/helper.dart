@@ -86,7 +86,7 @@ class Helper {
               Text(
                 message,
                 style: const TextStyle(
-                    color: textHintColor, fontWeight: FontWeight.normal),
+                    color: textHintColor, fontWeight: FontWeight.normal,fontSize: 18),
               ),
         ),
         contentTextStyle:

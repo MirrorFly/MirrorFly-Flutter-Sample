@@ -359,14 +359,12 @@ class CallController extends GetxController {
 
   void declineCall() {
     isCallTimerEnabled = false;
-    Mirrorfly.declineCall().then((value) {
+    Mirrorfly.disconnectCall().then((value) {
       callList.clear();
-      if (Platform.isIOS) {
-        Get.back();
-      }
-      //Get.back();
+      Get.back();
     });
   }
+
 
   void statusUpdate(String userJid, String callStatus) {
     if (callList.isEmpty) {
@@ -594,7 +592,7 @@ class CallController extends GetxController {
     var profile = await getProfileDetails(userJid);
     isVideoCallRequested = true;
     Helper.showAlert(
-        message: "${profile.getName()} ${Constants.videoSwitchRequestMessage}",
+        message: "${profile.getName()} ${Constants.videoSwitchRequestedMessage}",
         actions: [
           TextButton(
               onPressed: () {
