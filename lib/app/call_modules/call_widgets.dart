@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
+import 'package:mirror_fly_demo/app/call_modules/call_utils.dart';
 import 'package:mirror_fly_demo/app/call_modules/outgoing_call/call_controller.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
 import 'package:mirror_fly_demo/app/common/widgets.dart';
@@ -16,17 +18,17 @@ Widget buildProfileImage(Profile item, {double size = 105}) {
     clipOval: true,
     errorWidget: item.isGroupProfile.checkNull()
         ? ClipOval(
-            child: Image.asset(
-              groupImg,
-              height: 48,
-              width: 48,
-              fit: BoxFit.cover,
-            ),
-          )
+      child: Image.asset(
+        groupImg,
+        height: 48,
+        width: 48,
+        fit: BoxFit.cover,
+      ),
+    )
         : ProfileTextImage(
-            text: item.getName(),
-            radius: size/2,
-          ),
+      text: item.getName(),
+      radius: size / 2,
+    ),
     isGroup: item.isGroupProfile.checkNull(),
     blocked: item.isBlockedMe.checkNull() || item.isAdminBlocked.checkNull(),
     unknown: (!item.isItSavedContact.checkNull() || item.isDeletedContact()),
@@ -34,7 +36,8 @@ Widget buildProfileImage(Profile item, {double size = 105}) {
 }
 
 class SpeakingDots extends StatefulWidget {
-  const SpeakingDots({Key? key, required this.audioLevel, required this.bgColor}) : super(key: key);
+  const SpeakingDots({Key? key, required this.audioLevel, required this.bgColor, this.radius = 14}) : super(key: key);
+  final double radius;
   final int audioLevel;
   final Color bgColor;
 
@@ -45,9 +48,10 @@ class SpeakingDots extends StatefulWidget {
 class _SpeakingDotsState extends State<SpeakingDots> {
   @override
   Widget build(BuildContext context) {
+    debugPrint("widget.width * 0.4 ${14 * 0.90}");
     return CircleAvatar(
       backgroundColor: widget.bgColor,
-      radius: 13,
+      radius: widget.radius,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         mainAxisSize: MainAxisSize.min,
@@ -76,28 +80,31 @@ class _SpeakingDotsState extends State<SpeakingDots> {
   List<Widget> tooLowAudioLevel() {
     return [
       Container(
-        width: 4,
-        height: 4,
+        width: widget.radius * 0.30,
+        height: widget.radius * 0.30,
         decoration:
-            BoxDecoration(color: Colors.white, shape: BoxShape.rectangle, borderRadius: BorderRadius.circular(10)),
+        BoxDecoration(
+            color: Colors.white, shape: BoxShape.rectangle, borderRadius: BorderRadius.circular(widget.radius * 0.4)),
       ),
       const SizedBox(
         width: 2,
       ),
       Container(
-        width: 4,
-        height: 4,
+        width: widget.radius * 0.30,
+        height: widget.radius * 0.30,
         decoration:
-            BoxDecoration(color: Colors.white, shape: BoxShape.rectangle, borderRadius: BorderRadius.circular(10)),
+        BoxDecoration(
+            color: Colors.white, shape: BoxShape.rectangle, borderRadius: BorderRadius.circular(widget.radius * 0.4)),
       ),
       const SizedBox(
         width: 2,
       ),
       Container(
-        width: 4,
-        height: 4,
+        width: widget.radius * 0.30,
+        height: widget.radius * 0.30,
         decoration:
-            BoxDecoration(color: Colors.white, shape: BoxShape.rectangle, borderRadius: BorderRadius.circular(10)),
+        BoxDecoration(
+            color: Colors.white, shape: BoxShape.rectangle, borderRadius: BorderRadius.circular(widget.radius * 0.4)),
       ),
     ];
   }
@@ -105,28 +112,31 @@ class _SpeakingDotsState extends State<SpeakingDots> {
   List<Widget> lowAudioLevel() {
     return [
       Container(
-        width: 4,
-        height: 4,
+        width: widget.radius * 0.30,
+        height: widget.radius * 0.30,
         decoration:
-            BoxDecoration(color: Colors.white, shape: BoxShape.rectangle, borderRadius: BorderRadius.circular(10)),
+        BoxDecoration(
+            color: Colors.white, shape: BoxShape.rectangle, borderRadius: BorderRadius.circular(widget.radius * 0.4,)),
       ),
-      const SizedBox(
-        width: 2,
+      SizedBox(
+        width: widget.radius * 0.20,
       ),
       Container(
-        width: 4,
-        height: 8,
+        width: widget.radius * 0.30,
+        height: widget.radius * 0.70,
         decoration:
-            BoxDecoration(color: Colors.white, shape: BoxShape.rectangle, borderRadius: BorderRadius.circular(10)),
+        BoxDecoration(
+            color: Colors.white, shape: BoxShape.rectangle, borderRadius: BorderRadius.circular(widget.radius * 0.4)),
       ),
-      const SizedBox(
-        width: 2,
+      SizedBox(
+        width: widget.radius * 0.20,
       ),
       Container(
-        width: 4,
-        height: 4,
+        width: widget.radius * 0.30,
+        height: widget.radius * 0.30,
         decoration:
-            BoxDecoration(color: Colors.white, shape: BoxShape.rectangle, borderRadius: BorderRadius.circular(10)),
+        BoxDecoration(
+            color: Colors.white, shape: BoxShape.rectangle, borderRadius: BorderRadius.circular(widget.radius * 0.4)),
       ),
     ];
   }
@@ -134,28 +144,31 @@ class _SpeakingDotsState extends State<SpeakingDots> {
   List<Widget> mediumAudioLevel() {
     return [
       Container(
-        width: 4,
-        height: 6,
+        width: widget.radius * 0.30,
+        height: widget.radius * 0.50,
         decoration:
-            BoxDecoration(color: Colors.white, shape: BoxShape.rectangle, borderRadius: BorderRadius.circular(10)),
+        BoxDecoration(
+            color: Colors.white, shape: BoxShape.rectangle, borderRadius: BorderRadius.circular(widget.radius * 0.4)),
       ),
-      const SizedBox(
-        width: 2,
+      SizedBox(
+        width: widget.radius * 0.20,
       ),
       Container(
-        width: 4,
-        height: 10,
+        width: widget.radius * 0.30,
+        height: widget.radius * 0.90,
         decoration:
-            BoxDecoration(color: Colors.white, shape: BoxShape.rectangle, borderRadius: BorderRadius.circular(10)),
+        BoxDecoration(
+            color: Colors.white, shape: BoxShape.rectangle, borderRadius: BorderRadius.circular(widget.radius * 0.4)),
       ),
-      const SizedBox(
-        width: 2,
+      SizedBox(
+        width: widget.radius * 0.20,
       ),
       Container(
-        width: 4,
-        height: 6,
+        width: widget.radius * 0.30,
+        height: widget.radius * 0.50,
         decoration:
-            BoxDecoration(color: Colors.white, shape: BoxShape.rectangle, borderRadius: BorderRadius.circular(10)),
+        BoxDecoration(
+            color: Colors.white, shape: BoxShape.rectangle, borderRadius: BorderRadius.circular(widget.radius * 0.4)),
       ),
     ];
   }
@@ -163,28 +176,31 @@ class _SpeakingDotsState extends State<SpeakingDots> {
   List<Widget> highAudioLevel() {
     return [
       Container(
-        width: 4,
-        height: 8,
+        width: widget.radius * 0.30,
+        height: widget.radius * 0.70,
         decoration:
-            BoxDecoration(color: Colors.white, shape: BoxShape.rectangle, borderRadius: BorderRadius.circular(10)),
+        BoxDecoration(
+            color: Colors.white, shape: BoxShape.rectangle, borderRadius: BorderRadius.circular(widget.radius * 0.4)),
       ),
-      const SizedBox(
-        width: 2,
+      SizedBox(
+        width: widget.radius * 0.20,
       ),
       Container(
-        width: 4,
-        height: 12,
+        width: widget.radius * 0.30,
+        height: widget.radius * 0.90,
         decoration:
-            BoxDecoration(color: Colors.white, shape: BoxShape.rectangle, borderRadius: BorderRadius.circular(10)),
+        BoxDecoration(
+            color: Colors.white, shape: BoxShape.rectangle, borderRadius: BorderRadius.circular(widget.radius * 0.4)),
       ),
-      const SizedBox(
-        width: 2,
+      SizedBox(
+        width: widget.radius * 0.20,
       ),
       Container(
-        width: 4,
-        height: 8,
+        width: widget.radius * 0.30,
+        height: widget.radius * 0.70,
         decoration:
-            BoxDecoration(color: Colors.white, shape: BoxShape.rectangle, borderRadius: BorderRadius.circular(10)),
+        BoxDecoration(
+            color: Colors.white, shape: BoxShape.rectangle, borderRadius: BorderRadius.circular(widget.radius * 0.4)),
       ),
     ];
   }
@@ -192,28 +208,31 @@ class _SpeakingDotsState extends State<SpeakingDots> {
   List<Widget> peakAudioLevel() {
     return [
       Container(
-        width: 4,
-        height: 10,
+        width: widget.radius * 0.30,
+        height: widget.radius * 0.90,
         decoration:
-            BoxDecoration(color: Colors.white, shape: BoxShape.rectangle, borderRadius: BorderRadius.circular(10)),
+        BoxDecoration(
+            color: Colors.white, shape: BoxShape.rectangle, borderRadius: BorderRadius.circular(widget.radius * 0.4)),
       ),
-      const SizedBox(
-        width: 2,
+      SizedBox(
+        width: widget.radius * 0.20,
       ),
       Container(
-        width: 4,
-        height: 12,
+        width: widget.radius * 0.30,
+        height: widget.radius * 0.90,
         decoration:
-            BoxDecoration(color: Colors.white, shape: BoxShape.rectangle, borderRadius: BorderRadius.circular(10)),
+        BoxDecoration(
+            color: Colors.white, shape: BoxShape.rectangle, borderRadius: BorderRadius.circular(widget.radius * 0.4)),
       ),
-      const SizedBox(
-        width: 2,
+      SizedBox(
+        width: widget.radius * 0.20,
       ),
       Container(
-        width: 4,
-        height: 10,
+        width: widget.radius * 0.30,
+        height: widget.radius * 0.90,
         decoration:
-            BoxDecoration(color: Colors.white, shape: BoxShape.rectangle, borderRadius: BorderRadius.circular(10)),
+        BoxDecoration(
+            color: Colors.white, shape: BoxShape.rectangle, borderRadius: BorderRadius.circular(widget.radius * 0.4)),
       ),
     ];
   }
@@ -228,7 +247,7 @@ Widget buildCallItem(CallController controller) {
           itemCount: controller.callList.length,
           reverse: controller.callList.length <= 2 ? true : false,
           itemBuilder: (context, index) {
-            return index != 1 ? Container(
+            return controller.callList[index].userJid!=controller.pinnedUserJid.value ? Container(
                 height: 135,
                 width: 100,
                 margin: const EdgeInsets.only(left: 10),
@@ -239,23 +258,54 @@ Widget buildCallItem(CallController controller) {
                       viewBgColor: AppColors.callerTitleBackground,
                       profileSize: 50,
                     ).setBorderRadius(const BorderRadius.all(Radius.circular(10))),
-                    controller.speakingUsers.isNotEmpty && !controller
-                        .audioLevel(controller.callList[0].userJid)
-                        .isNegative && !controller.muted.value
-                        ? Positioned(
-                        top: 8,
+                    Obx(() {
+                      return Positioned(
+                        top: 0,
                         right: 8,
-                        child: SpeakingDots(
-                          audioLevel: controller.audioLevel(controller.callList[index].userJid),
-                          bgColor: const Color(0xff3abf87),
-                        ))
-                        : const SizedBox.shrink(),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            SizedBox(
+                              width: 20,
+                              child: CircleAvatar(
+                                backgroundColor: AppColors.audioMutedIconBgColor,
+                                child: SvgPicture.asset(unpinUser),
+                              ),
+                            ),
+                            if(controller.callList[index].isAudioMuted.value)...[
+                              Padding(
+                                padding: const EdgeInsets.only(left: 4.0),
+                                child: SizedBox(
+                                  width: 20,
+                                  child: CircleAvatar(
+                                    backgroundColor: AppColors.audioMutedIconBgColor,
+                                    child: SvgPicture.asset(callMutedIcon),
+                                  ),
+                                ),
+                              ),
+                            ],
+                            if(controller.speakingUsers.isNotEmpty && !controller
+                                .audioLevel(controller.callList[index].userJid)
+                                .isNegative && !controller.muted.value)...[
+                              Padding(
+                                padding: const EdgeInsets.only(top: 8.0, bottom: 8.0, left: 4.0),
+                                child: SpeakingDots(
+                                  radius: 9,
+                                  audioLevel: controller.audioLevel(controller.callList[index].userJid),
+                                  bgColor: AppColors.speakingBg,
+                                ),
+                              )
+                            ],
+                          ],),
+                      );
+                    }),
                     Positioned(
                       left: 8,
                       bottom: 8,
                       right: 8,
                       child: FutureBuilder<String>(
-                          future: controller.getNameOfJid(controller.callList[index].userJid.checkNull()),
+                          future: CallUtils.getNameOfJid(controller.callList[index].userJid.checkNull()),
                           builder: (context, snapshot) {
                             if (!snapshot.hasError && snapshot.data
                                 .checkNull()
@@ -272,7 +322,12 @@ Widget buildCallItem(CallController controller) {
                             }
                             return const SizedBox.shrink();
                           }),
-                    )
+                    ),
+                    /*Obx(() {
+                      return (controller.callList[index].callStatus==CallStatus.ringing) ?
+                      Container(color: AppColors.transBlack75, child: Center(
+                        child: Text(controller.callList[index].callStatus.toString(), style: const TextStyle(color: Colors.white),),),) : const SizedBox.shrink();
+                    })*/
                   ],
                 )) : const SizedBox.shrink();
           }
@@ -303,25 +358,56 @@ Widget buildCallItem(CallController controller) {
                     MirrorFlyView(
                       userJid: controller.callList[index].userJid ?? "",
                       viewBgColor: AppColors.callerTitleBackground,
-                      profileSize: 50,
+                      profileSize: 60,
                     ).setBorderRadius(const BorderRadius.all(Radius.circular(10))),
-                    controller.speakingUsers.isNotEmpty && !controller
-                        .audioLevel(controller.callList[0].userJid)
-                        .isNegative && !controller.muted.value
-                        ? Positioned(
-                        top: 8,
+                    Obx(() {
+                      return Positioned(
+                        top: 0,
                         right: 8,
-                        child: SpeakingDots(
-                          audioLevel: controller.audioLevel(controller.callList[index].userJid),
-                          bgColor: const Color(0xff3abf87),
-                        ))
-                        : const SizedBox.shrink(),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            SizedBox(
+                              width: 20,
+                              child: CircleAvatar(
+                                backgroundColor: AppColors.audioMutedIconBgColor,
+                                child: SvgPicture.asset(unpinUser),
+                              ),
+                            ),
+                            if(controller.callList[index].isAudioMuted.value)...[
+                              Padding(
+                                padding: const EdgeInsets.only(left: 4.0),
+                                child: SizedBox(
+                                  width: 20,
+                                  child: CircleAvatar(
+                                    backgroundColor: AppColors.audioMutedIconBgColor,
+                                    child: SvgPicture.asset(callMutedIcon),
+                                  ),
+                                ),
+                              ),
+                            ],
+                            if(controller.speakingUsers.isNotEmpty && !controller
+                                .audioLevel(controller.callList[index].userJid)
+                                .isNegative && !controller.muted.value)...[
+                              Padding(
+                                padding: const EdgeInsets.only(top: 8.0, bottom: 8.0, left: 4.0),
+                                child: SpeakingDots(
+                                  radius: 9,
+                                  audioLevel: controller.audioLevel(controller.callList[index].userJid),
+                                  bgColor: AppColors.speakingBg,
+                                ),
+                              )
+                            ],
+                          ],),
+                      );
+                    }),
                     Positioned(
                       left: 8,
                       bottom: 8,
                       right: 8,
                       child: FutureBuilder<String>(
-                          future: controller.getNameOfJid(controller.callList[index].userJid.checkNull()),
+                          future: CallUtils.getNameOfJid(controller.callList[index].userJid.checkNull()),
                           builder: (context, snapshot) {
                             if (!snapshot.hasError && snapshot.data
                                 .checkNull()
@@ -338,7 +424,12 @@ Widget buildCallItem(CallController controller) {
                             }
                             return const SizedBox.shrink();
                           }),
-                    )
+                    ),
+                    /*Obx(() {
+                      return (controller.callList[index].callStatus==CallStatus.ringing) ?
+                        Container(color: AppColors.transBlack75, child: Center(
+                        child: Text(controller.callList[index].callStatus.toString(),style: const TextStyle(color: Colors.white)),),) : const SizedBox.shrink();
+                    })*/
                   ],
                 ));
           },

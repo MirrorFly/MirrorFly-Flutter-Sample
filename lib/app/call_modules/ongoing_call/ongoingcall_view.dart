@@ -19,7 +19,7 @@ class OnGoingCallView extends GetView<CallController> {
         return Future.value(false);
       },
       child: Scaffold(
-        backgroundColor: AppColors.callerBackground,
+        backgroundColor: AppColors.callBg,
         body: SafeArea(
           child: Stack(
             fit: StackFit.expand,
@@ -30,9 +30,10 @@ class OnGoingCallView extends GetView<CallController> {
                   child: Stack(
                     children: [
                       Obx(() {
-                        return controller.callList.length > 1 && controller.layoutSwitch.value
+                        debugPrint("controller.pinnedUserJid ${controller.pinnedUserJid}");
+                        return controller.pinnedUserJid.value.isNotEmpty && controller.layoutSwitch.value
                             ? MirrorFlyView(
-                                    userJid: controller.callList[1].userJid ?? "",
+                                    userJid: controller.pinnedUserJid.value,
                                     alignProfilePictureCenter: false,
                                     showSpeakingRipple: controller.callType.value == CallType.audio,
                                     viewBgColor: AppColors.audioCallerBackground,
@@ -46,12 +47,12 @@ class OnGoingCallView extends GetView<CallController> {
                             child: Column(
                               mainAxisSize: MainAxisSize.min,
                               children: [
-                                controller.callStatus.contains(CallStatus.reconnecting)
+                                controller.callStatus.contains(CallStatus.reconnecting) && controller.layoutSwitch.value
                                     ? const Text(
                                         "${CallStatus.reconnecting}...",
                                         style: TextStyle(color: Colors.white),
                                       )
-                                    : controller.callStatus.contains(CallStatus.onHold)
+                                    : controller.callStatus.contains(CallStatus.onHold) && controller.layoutSwitch.value
                                         ? const Text(
                                             CallStatus.onHold,
                                             style: TextStyle(color: Colors.white),
@@ -62,7 +63,7 @@ class OnGoingCallView extends GetView<CallController> {
                                         height: 10,
                                       )
                                     : const SizedBox.shrink(),
-                                controller.callList.length > 1 && controller.callList[1].isAudioMuted.value
+                                controller.callList.length > 1 && controller.callList[1].isAudioMuted.value && controller.layoutSwitch.value
                                     ? CircleAvatar(
                                         backgroundColor: AppColors.audioMutedIconBgColor,
                                         child: SvgPicture.asset(callMutedIcon),
@@ -199,7 +200,7 @@ class OnGoingCallView extends GetView<CallController> {
     return Obx(() {
       return Column(
         children: [
-          InkWell(
+          /*InkWell(
             onTap: () {
               controller.showCallOptions();
             },
@@ -213,7 +214,7 @@ class OnGoingCallView extends GetView<CallController> {
           ),
           const SizedBox(
             height: 8,
-          ),
+          ),*/
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
