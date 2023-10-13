@@ -799,7 +799,8 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
     callList.removeWhere((element) => element.userJid == userJid);
     users.removeWhere((element) => element == userJid);
     speakingUsers.removeWhere((element) => element.userJid == userJid);
-    if(callList.length>1) {
+    debugPrint("removeUser ${callList.indexWhere((element) => element.userJid.toString() == userJid)}");
+    if(callList.length>1 && pinnedUserJid.value == userJid) {
       pinnedUserJid(callList[1].userJid);
     }
     callDisconnected(callMode, userJid, callType);

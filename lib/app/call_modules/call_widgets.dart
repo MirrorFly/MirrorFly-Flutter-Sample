@@ -247,6 +247,7 @@ Widget buildCallItem(CallController controller) {
           itemCount: controller.callList.length,
           reverse: controller.callList.length <= 2 ? true : false,
           itemBuilder: (context, index) {
+            debugPrint("ListBuilder ${controller.callList.length} userJid ${controller.callList[index].userJid} pinned ${controller.pinnedUserJid.value}");
             return controller.callList[index].userJid!=controller.pinnedUserJid.value ? Container(
                 height: 135,
                 width: 100,
