@@ -59,6 +59,7 @@ class AppColors{
   static const Color checkBoxChecked = Color(0xff30c076);
   static const Color callBg = Color(0xff0B111C);
   static const Color speakingBg = Color(0xff3abf87);
+  static const Color transBlack75 = Color(0xBF000000);
 }
 //call Assets
 const String plusIcon = 'assets/calls/plus_icon.svg';

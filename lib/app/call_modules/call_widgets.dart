@@ -247,7 +247,7 @@ Widget buildCallItem(CallController controller) {
           itemCount: controller.callList.length,
           reverse: controller.callList.length <= 2 ? true : false,
           itemBuilder: (context, index) {
-            return index != 1 ? Container(
+            return controller.callList[index].userJid!=controller.pinnedUserJid.value ? Container(
                 height: 135,
                 width: 100,
                 margin: const EdgeInsets.only(left: 10),
@@ -289,7 +289,7 @@ Widget buildCallItem(CallController controller) {
                                 .audioLevel(controller.callList[index].userJid)
                                 .isNegative && !controller.muted.value)...[
                               Padding(
-                                padding: const EdgeInsets.only(top: 8.0,bottom: 8.0,left: 4.0),
+                                padding: const EdgeInsets.only(top: 8.0, bottom: 8.0, left: 4.0),
                                 child: SpeakingDots(
                                   radius: 9,
                                   audioLevel: controller.audioLevel(controller.callList[index].userJid),
@@ -322,7 +322,12 @@ Widget buildCallItem(CallController controller) {
                             }
                             return const SizedBox.shrink();
                           }),
-                    )
+                    ),
+                    /*Obx(() {
+                      return (controller.callList[index].callStatus==CallStatus.ringing) ?
+                      Container(color: AppColors.transBlack75, child: Center(
+                        child: Text(controller.callList[index].callStatus.toString(), style: const TextStyle(color: Colors.white),),),) : const SizedBox.shrink();
+                    })*/
                   ],
                 )) : const SizedBox.shrink();
           }
@@ -386,7 +391,7 @@ Widget buildCallItem(CallController controller) {
                                 .audioLevel(controller.callList[index].userJid)
                                 .isNegative && !controller.muted.value)...[
                               Padding(
-                                padding: const EdgeInsets.only(top: 8.0,bottom: 8.0,left: 4.0),
+                                padding: const EdgeInsets.only(top: 8.0, bottom: 8.0, left: 4.0),
                                 child: SpeakingDots(
                                   radius: 9,
                                   audioLevel: controller.audioLevel(controller.callList[index].userJid),
@@ -419,7 +424,12 @@ Widget buildCallItem(CallController controller) {
                             }
                             return const SizedBox.shrink();
                           }),
-                    )
+                    ),
+                    /*Obx(() {
+                      return (controller.callList[index].callStatus==CallStatus.ringing) ?
+                        Container(color: AppColors.transBlack75, child: Center(
+                        child: Text(controller.callList[index].callStatus.toString(),style: const TextStyle(color: Colors.white)),),) : const SizedBox.shrink();
+                    })*/
                   ],
                 ));
           },

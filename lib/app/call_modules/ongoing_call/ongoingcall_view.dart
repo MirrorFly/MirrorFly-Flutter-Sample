@@ -30,9 +30,10 @@ class OnGoingCallView extends GetView<CallController> {
                   child: Stack(
                     children: [
                       Obx(() {
-                        return controller.callList.length > 1 && controller.layoutSwitch.value
+                        debugPrint("controller.pinnedUserJid ${controller.pinnedUserJid}");
+                        return controller.pinnedUserJid.value.isNotEmpty && controller.layoutSwitch.value
                             ? MirrorFlyView(
-                                    userJid: controller.callList[1].userJid ?? "",
+                                    userJid: controller.pinnedUserJid.value,
                                     alignProfilePictureCenter: false,
                                     showSpeakingRipple: controller.callType.value == CallType.audio,
                                     viewBgColor: AppColors.audioCallerBackground,
