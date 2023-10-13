@@ -89,6 +89,12 @@ const String callOptionsUpArrow = 'assets/calls/call_options_up_arrow.svg';
 const String callOptionsBottomBg = 'assets/calls/ic_group_user_info_layout.png';
 const String callOptionsToolbarBg = 'assets/calls/ic_call_header_overlay.png';
 
+//Call Participant assets
+const String participantMute = 'assets/calls/participant_mute.svg';
+const String participantUnMute = 'assets/calls/participant_unmute.svg';
+const String participantVideoEnabled = 'assets/calls/participant_video_enabled.svg';
+
+
 //Assets
 const String registerIcon = 'assets/logos/register_logo.svg';
 const String statusIcon = 'assets/logos/status.svg';

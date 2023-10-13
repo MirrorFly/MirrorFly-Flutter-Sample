@@ -140,7 +140,9 @@ class OnGoingCallView extends GetView<CallController> {
             ),
             const Spacer(),
             IconButton(
-              onPressed: () {},
+              onPressed: () {
+                controller.openParticipantScreen();
+              },
               icon: SvgPicture.asset(addUserCall),
             ),
             IconButton(

@@ -13,7 +13,7 @@ import '../../data/permissions.dart';
 import '../../data/session_management.dart';
 import '../../routes/app_pages.dart';
 
-class CallController extends GetxController {
+class CallController extends GetxController with GetTickerProviderStateMixin {
   final RxBool isVisible = true.obs;
   final RxBool muted = false.obs;
   final RxBool speakerOff = true.obs;
@@ -48,9 +48,13 @@ class CallController extends GetxController {
 
   var users = <String?>[].obs;
   var groupId = ''.obs;
+
+  TabController? tabController ;
+
   @override
   Future<void> onInit() async {
     super.onInit();
+    tabController = TabController(length: 2, vsync: this);
     debugPrint("#Mirrorfly Call Controller onInit");
     groupId(await Mirrorfly.getGroupId());
     isCallTimerEnabled = true;
@@ -263,6 +267,7 @@ class CallController extends GetxController {
 
   getNames() async {
     //Need to check Call Mode and update the name for group call here
+    callTitle('');
     if(groupId.isEmpty) {
       callList.asMap().forEach((index, users) async {
         if (users.userJid == SessionManagement.getUserJID()) {
@@ -371,6 +376,15 @@ class CallController extends GetxController {
 
   void ringing(String callMode, String userJid, String callType, String callStatus) {
     // this.callStatus(callStatus);
+    var index = callList.indexWhere((userList) => userList.userJid == userJid);
+    debugPrint("User List Index $index");
+    if(index.isNegative){
+      debugPrint("User List not Found, so adding the user to list");
+      CallUserList callUserList = CallUserList(userJid: userJid, callStatus: callStatus, isAudioMuted: false);
+      callList.add(callUserList);
+    }else{
+      callList[index].callStatus = callStatus;
+    }
   }
 
   void onHold(String callMode, String userJid, String callType, String callStatus) {
@@ -404,8 +418,12 @@ class CallController extends GetxController {
     // this.callStatus("Disconnected");
     // Get.back();
     debugPrint("#Mirrorfly Call timeout callMode : $callMode -- userJid : $userJid -- callType $callType -- callStatus $callStatus");
-    Get.offNamed(Routes.callTimeOutView,
-        arguments: {"callType": callType, "callMode": callMode, "userJid": users, "calleeName": calleeName.value});
+    if(callList.length <= 1) {
+      Get.offNamed(Routes.callTimeOutView,
+          arguments: {"callType": callType, "callMode": callMode, "userJid": users, "calleeName": calleeName.value});
+    }else{
+      debugPrint("#MirrorflyCall Call Timeout Route is not redirected due to other callers in available");
+    }
   }
 
   void disconnectOutgoingCall() {
@@ -509,7 +527,7 @@ class CallController extends GetxController {
   }
 
   void callDuration(String timer) {
-    debugPrint("baseController callDuration Update");
+    // debugPrint("baseController callDuration Update");
     if (isCallTimerEnabled) {
       callTimer(timer);
     }
@@ -737,5 +755,9 @@ class CallController extends GetxController {
 
   void onResume(String callMode, String userJid, String callType, String callStatus) {
     isCallTimerEnabled = true;
+  }
+
+  void openParticipantScreen() {
+    Get.toNamed(Routes.participants);
   }
 }

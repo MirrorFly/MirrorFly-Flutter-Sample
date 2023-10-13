@@ -220,7 +220,7 @@ abstract class BaseController {
             debugPrint("onCallStatusUpdated Inside Get.back");
             Get.back();
           }
-          if(Get.currentRoute!=Routes.onGoingCallView) {
+          if(Get.currentRoute != Routes.onGoingCallView && Get.currentRoute != Routes.participants) {
             debugPrint("onCallStatusUpdated ***opening cal page");
             Get.toNamed(
                 Routes.onGoingCallView, arguments: { "userJid": [userJid]});
@@ -228,10 +228,13 @@ abstract class BaseController {
           break;
 
         case CallStatus.disconnected:
-          stopTimer();
+
           if (Get.isRegistered<CallController>()) {
             Get.find<CallController>().callDisconnected(
                 callMode, userJid, callType);
+            if(Get.find<CallController>().callList.length <= 1){
+              stopTimer();
+            }
           }else{
             debugPrint("#Mirrorfly call call controller not registered for disconnect event");
           }
@@ -294,8 +297,6 @@ abstract class BaseController {
         default:
           debugPrint("onCall status updated error: $callStatus");
       }
-
-
     });
     Mirrorfly.onCallAction.listen((event) {
       // {"callAction":"REMOTE_HANGUP","userJid":""}
