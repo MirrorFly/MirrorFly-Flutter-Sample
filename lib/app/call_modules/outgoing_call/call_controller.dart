@@ -273,7 +273,13 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
               debugPrint("#Disconnect call controller back called");
               Get.back();
             });
-          } else {
+          }else if(Get.currentRoute == Routes.participants){
+            Get.back();
+            Future.delayed(const Duration(seconds: 1), () {
+              debugPrint("#Disconnect call controller back called");
+              Get.back();
+            });
+          }else{
             Get.back();
           }
         } else {
@@ -571,7 +577,7 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
   int audioLevel(userJid) {
     var index = speakingUsers.indexWhere((element) => element.userJid == userJid);
     var value = index.isNegative ? -1 : speakingUsers[speakingUsers.indexWhere((element) => element.userJid == userJid)].audioLevel.value;
-    debugPrint("speakingUsers Audio level $value");
+    // debugPrint("speakingUsers Audio level $value");
     return value;
   }
 

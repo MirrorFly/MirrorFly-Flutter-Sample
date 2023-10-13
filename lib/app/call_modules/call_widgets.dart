@@ -48,7 +48,7 @@ class SpeakingDots extends StatefulWidget {
 class _SpeakingDotsState extends State<SpeakingDots> {
   @override
   Widget build(BuildContext context) {
-    debugPrint("widget.width * 0.4 ${14 * 0.90}");
+    // debugPrint("widget.width * 0.4 ${14 * 0.90}");
     return CircleAvatar(
       backgroundColor: widget.bgColor,
       radius: widget.radius,

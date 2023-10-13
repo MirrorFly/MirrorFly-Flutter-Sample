@@ -60,6 +60,7 @@ class AppColors{
   static const Color callBg = Color(0xff0B111C);
   static const Color speakingBg = Color(0xff3abf87);
   static const Color transBlack75 = Color(0xBF000000);
+  static const Color participantUnMuteColor = Color(0xffe3e2e2);
 }
 //call Assets
 const String plusIcon = 'assets/calls/plus_icon.svg';
@@ -96,6 +97,7 @@ const String callOptionsToolbarBg = 'assets/calls/ic_call_header_overlay.png';
 const String participantMute = 'assets/calls/participant_mute.svg';
 const String participantUnMute = 'assets/calls/participant_unmute.svg';
 const String participantVideoEnabled = 'assets/calls/participant_video_enabled.svg';
+const String participantVideoDisabled = 'assets/calls/participant_video_disabled.svg';
 
 
 //Assets
