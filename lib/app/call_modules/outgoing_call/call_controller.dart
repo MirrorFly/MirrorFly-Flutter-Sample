@@ -442,8 +442,9 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
   }
 
   void timeout(String callMode, String userJid, String callType, String callStatus) {
-    this.callMode(callMode);
-    if(callMode==CallMode.oneToOne) {
+
+    if(callMode == CallMode.oneToOne && this.callMode.value == CallMode.oneToOne) {
+      this.callMode(callMode);
       debugPrint(
           "#Mirrorfly Call timeout callMode : $callMode -- userJid : $userJid -- callType $callType -- callStatus $callStatus");
       Get.offNamed(Routes.callTimeOutView,
