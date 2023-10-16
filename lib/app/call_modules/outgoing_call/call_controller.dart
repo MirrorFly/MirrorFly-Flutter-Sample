@@ -406,10 +406,11 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
     debugPrint("User List Index $index");
     if(index.isNegative){
       debugPrint("User List not Found, so adding the user to list");
-      CallUserList callUserList = CallUserList(userJid: userJid, callStatus: callStatus, isAudioMuted: false);
-      callList.add(callUserList);
+      CallUserList callUserList = CallUserList(userJid: userJid, callStatus: RxString(callStatus), isAudioMuted: false);
+      callList.insert(callList.length - 1, callUserList);
+      // callList.add(callUserList);
     }else{
-      callList[index].callStatus = callStatus;
+      callList[index].callStatus?.value = callStatus;
     }
   }
 
@@ -430,13 +431,15 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
         Get.offNamed(Routes.onGoingCallView, arguments: {"userJid": [userJid], "cameraSwitch": cameraSwitch.value});
       });
     }else{
-      debugPrint("#MirrorflyCall New User Added to List $userJid");
-      CallUserList callUserList = CallUserList(userJid: userJid, callStatus: callStatus, isAudioMuted: false);
+      debugPrint("#MirrorflyCall user jid $userJid");
+      CallUserList callUserList = CallUserList(userJid: userJid, callStatus: RxString(callStatus), isAudioMuted: false);
      if(callList.indexWhere((userList) => userList.userJid == userJid).isNegative) {
-       callList.add(callUserList);
+       callList.insert(callList.length - 1, callUserList);
+       // callList.add(callUserList);
        debugPrint("#MirrorflyCall List value updated ${callList.length}");
      }else{
        debugPrint("#MirrorflyCall List value not updated due to jid $userJid is already in list ${callList.length}");
+
      }
 
     }
@@ -517,10 +520,12 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
     ///update the status of the user in call user list
     var indexOfItem = callList.indexWhere((element) => element.userJid == userJid);
 
+
     /// check the index is valid or not
     if (!indexOfItem.isNegative && callStatus != CallStatus.disconnected) {
+      debugPrint("indexOfItem of call status update $indexOfItem");
       /// update the current status of the user in the list
-      callList[indexOfItem].callStatus = (displayStatus);
+      callList[indexOfItem].callStatus?.value = (displayStatus);
     }
   }
 

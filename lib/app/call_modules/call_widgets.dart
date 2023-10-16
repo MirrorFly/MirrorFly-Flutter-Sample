@@ -309,7 +309,9 @@ Widget buildCallItem(CallController controller) {
                     ),
 
                     Obx(() {
-                      return (getTileCallStatus(controller.callList[index + 1].callStatus) != "" &&
+                      debugPrint("getTileCallStatus ${getTileCallStatus(controller.callList[index + 1].callStatus?.value)}");
+                      debugPrint("getUserJID ${controller.callList[index + 1].userJid != SessionManagement.getUserJID()}");
+                      return (getTileCallStatus(controller.callList[index + 1].callStatus?.value) != "" &&
                           controller.callList[index + 1].userJid != SessionManagement.getUserJID()) ? Container(
                         decoration: BoxDecoration(
                           color: Colors.black.withOpacity(0.5), // Adjust the color and opacity as needed
@@ -322,16 +324,17 @@ Widget buildCallItem(CallController controller) {
                             ),
                           ],
                         ),
-                        width: 100, // Adjust the width and height as needed
+                        width: 100,
                         height: 135,
                       ) : const SizedBox.shrink();
                     }),
                     Obx(() {
-                      return Center(
+                      return controller.callList.isNotEmpty ? (getTileCallStatus(controller.callList[index + 1].callStatus?.value) != "" &&
+                          controller.callList[index + 1].userJid != SessionManagement.getUserJID()) ? Center(
                           child: Text(
-                            getTileCallStatus(controller.callList[index + 1].callStatus),
+                            getTileCallStatus(controller.callList[index + 1].callStatus?.value),
                             style: const TextStyle(color: Colors.white),
-                          ));
+                          )): const SizedBox.shrink() : const SizedBox.shrink();
                     }),
                     /*Obx(() {
                       return (controller.callList[index].callStatus==CallStatus.ringing) ?
