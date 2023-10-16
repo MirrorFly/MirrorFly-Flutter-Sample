@@ -33,6 +33,7 @@ class OnGoingCallView extends GetView<CallController> {
                         debugPrint("controller.pinnedUserJid ${controller.pinnedUserJid}");
                         return controller.pinnedUserJid.value.isNotEmpty && controller.layoutSwitch.value
                             ? MirrorFlyView(
+                                    key: UniqueKey(),
                                     userJid: controller.pinnedUserJid.value,
                                     alignProfilePictureCenter: false,
                                     showSpeakingRipple: controller.callType.value == CallType.audio,

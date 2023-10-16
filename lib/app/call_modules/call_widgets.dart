@@ -244,11 +244,11 @@ Widget buildCallItem(CallController controller) {
       height: 135,
       child: ListView.builder(
           scrollDirection: Axis.horizontal,
-          itemCount: controller.callList.length,
+          itemCount: controller.callList.length - 1,
           reverse: controller.callList.length <= 2 ? true : false,
           itemBuilder: (context, index) {
             debugPrint("ListBuilder ${controller.callList.length} userJid ${controller.callList[index].userJid} pinned ${controller.pinnedUserJid.value}");
-            return controller.callList[index].userJid!=controller.pinnedUserJid.value ? Container(
+            return controller.callList[index + 1].userJid != controller.pinnedUserJid.value ? Container(
                 height: 135,
                 width: 100,
                 margin: const EdgeInsets.only(left: 10),
@@ -256,7 +256,7 @@ Widget buildCallItem(CallController controller) {
                   children: [
                     MirrorFlyView(
                       key: UniqueKey(),
-                      userJid: controller.callList[index].userJid ?? "",
+                      userJid: controller.callList[index + 1].userJid ?? "",
                       viewBgColor: AppColors.callerTitleBackground,
                       profileSize: 50,
                     ).setBorderRadius(const BorderRadius.all(Radius.circular(10))),
@@ -275,7 +275,7 @@ Widget buildCallItem(CallController controller) {
                                 child: SvgPicture.asset(unpinUser),
                               ),
                             ),
-                            if(controller.callList[index].isAudioMuted.value)...[
+                            if(controller.callList[index + 1].isAudioMuted.value)...[
                               Padding(
                                 padding: const EdgeInsets.only(left: 4.0),
                                 child: SizedBox(
@@ -288,13 +288,13 @@ Widget buildCallItem(CallController controller) {
                               ),
                             ],
                             if(controller.speakingUsers.isNotEmpty && !controller
-                                .audioLevel(controller.callList[index].userJid)
+                                .audioLevel(controller.callList[index + 1].userJid)
                                 .isNegative && !controller.muted.value)...[
                               Padding(
                                 padding: const EdgeInsets.only(top: 8.0, bottom: 8.0, left: 4.0),
                                 child: SpeakingDots(
                                   radius: 9,
-                                  audioLevel: controller.audioLevel(controller.callList[index].userJid),
+                                  audioLevel: controller.audioLevel(controller.callList[index + 1].userJid),
                                   bgColor: AppColors.speakingBg,
                                 ),
                               )
@@ -307,7 +307,7 @@ Widget buildCallItem(CallController controller) {
                       bottom: 8,
                       right: 8,
                       child: FutureBuilder<String>(
-                          future: CallUtils.getNameOfJid(controller.callList[index].userJid.checkNull()),
+                          future: CallUtils.getNameOfJid(controller.callList[index + 1].userJid.checkNull()),
                           builder: (context, snapshot) {
                             if (!snapshot.hasError && snapshot.data
                                 .checkNull()
