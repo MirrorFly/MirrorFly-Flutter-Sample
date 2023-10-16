@@ -21,8 +21,7 @@ class ParticipantsView extends GetView<CallController> {
         child: Builder(builder: (ctx) {
           return Scaffold(
               body: NestedScrollView(
-                  headerSliverBuilder:
-                      (BuildContext context, bool innerBoxIsScrolled) {
+                  headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
                     return [
                       SliverAppBar(
                         snap: false,
@@ -38,17 +37,12 @@ class ParticipantsView extends GetView<CallController> {
                             indicatorColor: buttonBgColor,
                             labelColor: buttonBgColor,
                             unselectedLabelColor: appbarTextColor,
-                            tabs: [
-                              tabItem(title: "PARTICIPANTS", count: "0"),
-                              tabItem(title: "ADD PARTICIPANTS", count: "0")
-                            ]
-                        ),
+                            tabs: [tabItem(title: "PARTICIPANTS", count: "0"), tabItem(title: "ADD PARTICIPANTS", count: "0")]),
                       ),
                     ];
                   },
                   body: TabBarView(controller: controller.tabController, children: [callParticipantsView(context), addParticipants(context)])));
-        }
-        ),
+        }),
       ),
     );
   }
@@ -70,10 +64,7 @@ class ParticipantsView extends GetView<CallController> {
               radius: 9,
               child: Text(
                 count.toString(),
-                style: const TextStyle(
-                    fontSize: 12,
-                    color: Colors.white,
-                    fontFamily: 'sf_ui'),
+                style: const TextStyle(fontSize: 12, color: Colors.white, fontFamily: 'sf_ui'),
               ),
             ),
           )
@@ -127,14 +118,24 @@ class ParticipantsView extends GetView<CallController> {
                   ),
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 10),
-                    child: SvgPicture.asset(participantMute),
+                    child: Obx(() {
+                      return controller.callList[index].isAudioMuted.value ? CircleAvatar(
+                          backgroundColor: AppColors.participantUnMuteColor,
+                          child: SvgPicture.asset(participantMute)) :
+                      CircleAvatar(
+                          backgroundColor: Colors.transparent,
+                          child: SvgPicture.asset(participantUnMute));
+                    }),
                   ),
-
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 20),
-                    child: SvgPicture.asset(participantVideoEnabled),
+                    child: Obx(() {
+                      return CircleAvatar(
+                          backgroundColor: controller.callList[index].isAudioMuted.value ? AppColors.participantUnMuteColor : Colors.transparent,
+                          child: SvgPicture.asset(
+                              controller.callList[index].isAudioMuted.value ? participantVideoDisabled : participantVideoEnabled));
+                    }),
                   ),
-
                 ],
               ),
             );
