@@ -442,6 +442,35 @@ Widget buildCallItem(CallController controller) {
                             return const SizedBox.shrink();
                           }),
                     ),
+
+                    Obx(() {
+                      debugPrint("getTileCallStatus ${getTileCallStatus(controller.callList[index].callStatus?.value)}");
+                      debugPrint("getUserJID ${controller.callList[index].userJid != SessionManagement.getUserJID()}");
+                      return (getTileCallStatus(controller.callList[index].callStatus?.value) != "" &&
+                          controller.callList[index].userJid != SessionManagement.getUserJID()) ? Positioned.fill(
+                            child: Container(
+                        decoration: BoxDecoration(
+                            color: Colors.black.withOpacity(0.5), // Adjust the color and opacity as needed
+                            borderRadius: BorderRadius.circular(10.0),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.3),
+                                blurRadius: 8,
+                                offset: const Offset(0, 3),
+                              ),
+                            ],
+                        ),
+                      ),
+                          ) : const SizedBox.shrink();
+                    }),
+                    Obx(() {
+                      return controller.callList.isNotEmpty ? (getTileCallStatus(controller.callList[index].callStatus?.value) != "" &&
+                          controller.callList[index].userJid != SessionManagement.getUserJID()) ? Center(
+                          child: Text(
+                            getTileCallStatus(controller.callList[index].callStatus?.value),
+                            style: const TextStyle(color: Colors.white),
+                          )): const SizedBox.shrink() : const SizedBox.shrink();
+                    }),
                     /*Obx(() {
                       return (controller.callList[index].callStatus==CallStatus.ringing) ?
                         Container(color: AppColors.transBlack75, child: Center(

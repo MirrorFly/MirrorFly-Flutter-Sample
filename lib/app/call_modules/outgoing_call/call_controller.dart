@@ -375,9 +375,22 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
     }
   }
 
-  void remoteBusy(String callMode, String userJid, String callType, String callAction) {
+  Future<void> remoteBusy(String callMode, String userJid, String callType, String callAction) async {
+    //in Android, showing this user is busy toast inside SDK
+    if (Platform.isIOS && callList.length > 2){
+      var data = await getProfileDetails(userJid);
+      toToast("${data.getName()} is Busy");
+    }else{
+      toToast("User is Busy");
+    }
+
     this.callMode(callMode);
-    disconnectOutgoingCall();
+    if(callList.length <= 2){
+      disconnectOutgoingCall();
+    }else{
+      removeUser(callMode, userJid, callType);
+    }
+
   }
 
   void remoteOtherBusy(String callMode, String userJid, String callType, String callAction) {
@@ -551,12 +564,17 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
     });
   }
 
-  Future<void> remoteEngaged(String userJid) async {
+  Future<void> remoteEngaged(String userJid, String callMode, String callType) async {
     if (Platform.isIOS) {
       var data = await getProfileDetails(userJid);
       toToast(data.getName() + Constants.remoteEngagedToast);
     }
-    disconnectOutgoingCall();
+    if(callList.length <= 2){
+      disconnectOutgoingCall();
+    }else{
+      removeUser(callMode, userJid, callType);
+    }
+    // disconnectOutgoingCall();
   }
 
   void audioMuteStatusChanged(String muteEvent, String userJid) {
