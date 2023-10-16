@@ -135,7 +135,7 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
     ever(callList, (callback) {
       debugPrint("#Mirrorfly call list is changed ******");
       debugPrint("#Mirrorfly call list ${callList.toJson()}");
-      getNames();
+      // getNames();
     });
   }
 
@@ -293,21 +293,30 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
     //Need to check Call Mode and update the name for group call here
     callTitle('');
     if(groupId.isEmpty) {
-      callList.asMap().forEach((index, users) async {
+      var userJids = <String>[];
+      for (var element in callList) {
+        if(element.userJid!=null && SessionManagement.getUserJID() != element.userJid) {
+          userJids.add(element.userJid!);
+        }};
+      LogMessage.d("callList", userJids.length);
+      var names = userJids.isNotEmpty ? await CallUtils.getCallersName(userJids) : "";
+      callTitle(names);
+      /*callList.asMap().forEach((index, users) async {
+        LogMessage.d("callList", "$index ${users.userJid}");
         if (users.userJid == SessionManagement.getUserJID()) {
-          callTitle("$callTitle You");
+          callTitle("${callTitle.value} You,");
         } else {
-          var profile = await Mirrorfly.getUserProfile(users.userJid!);
-          var data = profileDataFromJson(profile);
-          var userName = data.data?.name;
-          callTitle("$callTitle ${userName!}");
+          var profile = await getProfileDetails(users.userJid!);
+          var userName = profile.name;
+          callTitle("${callTitle.value} ${userName!}");
+          if (callList.length > 2 && index == 0) {
+            callTitle("${callTitle.value} and ");
+          } else if (callList.length > 2 && index < callList.length - 1) {
+            callTitle("${callTitle.value} ,");
+          }
         }
-        if (callList.length == 2 && index == 0) {
-          callTitle("$callTitle and ");
-        } else if (callList.length > 2 && index < callList.length - 1) {
-          callTitle("$callTitle ,");
-        }
-      });
+        LogMessage.d("callList", callTitle.value);
+      });*/
     }else{
       callTitle((await getProfileDetails(groupId.value)).getName());
     }
@@ -562,9 +571,9 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
 
   void callDuration(String timer) {
     // debugPrint("baseController callDuration Update");
-    if (isCallTimerEnabled) {
+    // if (isCallTimerEnabled) {
       callTimer(timer);
-    }
+    // }
   }
 
   var speakingUsers = <SpeakingUsers>[].obs;
@@ -811,5 +820,6 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
       pinnedUserJid(callList[0].userJid);
     }
     callDisconnected(callMode, userJid, callType);
+    getNames();
   }
 }
