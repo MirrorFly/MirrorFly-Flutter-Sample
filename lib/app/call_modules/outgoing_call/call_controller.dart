@@ -556,9 +556,9 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
 
   void callDuration(String timer) {
     // debugPrint("baseController callDuration Update");
-    if (isCallTimerEnabled) {
+    // if (isCallTimerEnabled) {
       callTimer(timer);
-    }
+    // }
   }
 
   var speakingUsers = <SpeakingUsers>[].obs;

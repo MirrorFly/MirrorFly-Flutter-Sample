@@ -3,7 +3,6 @@ import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/call_modules/call_widgets.dart';
 import 'package:mirror_fly_demo/app/call_modules/outgoing_call/call_controller.dart';
-import 'package:mirror_fly_demo/app/model/call_user_list.dart';
 import 'package:mirrorfly_plugin/mirrorfly_view.dart';
 import 'package:mirrorfly_plugin/mirrorflychat.dart';
 
@@ -57,19 +56,16 @@ class OnGoingCallView extends GetView<CallController> {
                                         ? const Text(
                                             CallStatus.onHold,
                                             style: TextStyle(color: Colors.white),
-                                          )
-                                        : const SizedBox.shrink(),
-                                controller.callStatus.contains(CallStatus.reconnecting) || controller.callStatus.contains(CallStatus.onHold)
-                                    ? const SizedBox(
+                                          ):  const SizedBox.shrink(),
+                                if (controller.callStatus.contains(CallStatus.reconnecting) || controller.callStatus.contains(CallStatus.onHold))...[
+                                    const SizedBox(
                                         height: 10,
-                                      )
-                                    : const SizedBox.shrink(),
-                                controller.callList.length > 1 && controller.callList[0].isAudioMuted.value && controller.layoutSwitch.value
-                                    ? CircleAvatar(
+                                      )],
+                                if(controller.callList.length > 1 && controller.callList[0].isAudioMuted.value && controller.layoutSwitch.value)...[
+                                    CircleAvatar(
                                         backgroundColor: AppColors.audioMutedIconBgColor,
                                         child: SvgPicture.asset(callMutedIcon),
-                                      )
-                                    : const SizedBox.shrink(),
+                                      )],
                               ],
                             ));
                       }),
@@ -151,7 +147,7 @@ class OnGoingCallView extends GetView<CallController> {
               onPressed: () {
                 controller.changeLayout();
               },
-              icon: SvgPicture.asset(moreMenu),
+              icon: SvgPicture.asset(gridIcon,color: Colors.white,),
             )
 
           ],
@@ -286,20 +282,5 @@ class OnGoingCallView extends GetView<CallController> {
         ],
       );
     });
-  }
-
-  Widget buildListViewHorizontal(List<CallUserList> users) {
-    return ListView.builder(
-        shrinkWrap: true,
-        physics: const AlwaysScrollableScrollPhysics(),
-        scrollDirection: Axis.horizontal,
-        itemCount: users.length,
-        itemBuilder: (cxt, index) {
-          return MirrorFlyView(
-            key: UniqueKey(),
-            userJid: users[index].userJid ?? "",
-            viewBgColor: Colors.blueGrey,
-          ).setBorderRadius(const BorderRadius.all(Radius.circular(10)));
-        });
   }
 }
