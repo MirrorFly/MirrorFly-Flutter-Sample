@@ -63,7 +63,7 @@ class OnGoingCallView extends GetView<CallController> {
                                         height: 10,
                                       )
                                     : const SizedBox.shrink(),
-                                controller.callList.length > 1 && controller.callList[1].isAudioMuted.value && controller.layoutSwitch.value
+                                controller.callList.length > 1 && controller.callList[0].isAudioMuted.value && controller.layoutSwitch.value
                                     ? CircleAvatar(
                                         backgroundColor: AppColors.audioMutedIconBgColor,
                                         child: SvgPicture.asset(callMutedIcon),
@@ -295,6 +295,7 @@ class OnGoingCallView extends GetView<CallController> {
         itemCount: users.length,
         itemBuilder: (cxt, index) {
           return MirrorFlyView(
+            key: UniqueKey(),
             userJid: users[index].userJid ?? "",
             viewBgColor: Colors.blueGrey,
           ).setBorderRadius(const BorderRadius.all(Radius.circular(10)));

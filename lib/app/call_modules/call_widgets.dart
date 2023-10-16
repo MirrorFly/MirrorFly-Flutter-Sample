@@ -255,6 +255,7 @@ Widget buildCallItem(CallController controller) {
                 child: Stack(
                   children: [
                     MirrorFlyView(
+                      key: UniqueKey(),
                       userJid: controller.callList[index].userJid ?? "",
                       viewBgColor: AppColors.callerTitleBackground,
                       profileSize: 50,

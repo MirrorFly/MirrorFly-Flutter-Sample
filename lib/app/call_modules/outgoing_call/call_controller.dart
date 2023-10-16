@@ -100,7 +100,7 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
           final callUserList = callUserListFromJson(value);
           callList(callUserList);
           if(callUserList.length>1) {
-            pinnedUserJid(callUserList[1].userJid);
+            pinnedUserJid(callUserList[0].userJid);
           }
           getNames();
         });
@@ -113,7 +113,7 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
           final callUserList = callUserListFromJson(value);
           callList(callUserList);
           if(callUserList.length>1) {
-            pinnedUserJid(callUserList[1].userJid);
+            pinnedUserJid(callUserList[0].userJid);
           }
           getNames();
         });
@@ -330,7 +330,7 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
     this.callMode(callMode);
     isCallTimerEnabled = false;
     debugPrint("#Mirrorfly call call disconnect called ${callList.length}");
-    debugPrint("#Mirrorfly call call disconnect called $callList");
+    debugPrint("#Mirrorfly call call disconnect called ${callList.toJson()}");
     if (callList.isEmpty) {
       debugPrint("call list is empty returning");
       return;
@@ -802,7 +802,7 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
     speakingUsers.removeWhere((element) => element.userJid == userJid);
     debugPrint("removeUser ${callList.indexWhere((element) => element.userJid.toString() == userJid)}");
     if(callList.length>1 && pinnedUserJid.value == userJid) {
-      pinnedUserJid(callList[1].userJid);
+      pinnedUserJid(callList[0].userJid);
     }
     callDisconnected(callMode, userJid, callType);
   }
