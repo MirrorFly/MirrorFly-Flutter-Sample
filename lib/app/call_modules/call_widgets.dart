@@ -6,6 +6,7 @@ import 'package:mirror_fly_demo/app/call_modules/outgoing_call/call_controller.d
 import 'package:mirror_fly_demo/app/common/constants.dart';
 import 'package:mirror_fly_demo/app/common/widgets.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
+import 'package:mirror_fly_demo/app/data/session_management.dart';
 import 'package:mirrorfly_plugin/mirrorfly_view.dart';
 import 'package:mirrorfly_plugin/mirrorflychat.dart';
 import 'package:mirrorfly_plugin/model/user_list_model.dart';
@@ -82,9 +83,7 @@ class _SpeakingDotsState extends State<SpeakingDots> {
       Container(
         width: widget.radius * 0.30,
         height: widget.radius * 0.30,
-        decoration:
-        BoxDecoration(
-            color: Colors.white, shape: BoxShape.rectangle, borderRadius: BorderRadius.circular(widget.radius * 0.4)),
+        decoration: BoxDecoration(color: Colors.white, shape: BoxShape.rectangle, borderRadius: BorderRadius.circular(widget.radius * 0.4)),
       ),
       const SizedBox(
         width: 2,
@@ -92,9 +91,7 @@ class _SpeakingDotsState extends State<SpeakingDots> {
       Container(
         width: widget.radius * 0.30,
         height: widget.radius * 0.30,
-        decoration:
-        BoxDecoration(
-            color: Colors.white, shape: BoxShape.rectangle, borderRadius: BorderRadius.circular(widget.radius * 0.4)),
+        decoration: BoxDecoration(color: Colors.white, shape: BoxShape.rectangle, borderRadius: BorderRadius.circular(widget.radius * 0.4)),
       ),
       const SizedBox(
         width: 2,
@@ -102,9 +99,7 @@ class _SpeakingDotsState extends State<SpeakingDots> {
       Container(
         width: widget.radius * 0.30,
         height: widget.radius * 0.30,
-        decoration:
-        BoxDecoration(
-            color: Colors.white, shape: BoxShape.rectangle, borderRadius: BorderRadius.circular(widget.radius * 0.4)),
+        decoration: BoxDecoration(color: Colors.white, shape: BoxShape.rectangle, borderRadius: BorderRadius.circular(widget.radius * 0.4)),
       ),
     ];
   }
@@ -114,9 +109,12 @@ class _SpeakingDotsState extends State<SpeakingDots> {
       Container(
         width: widget.radius * 0.30,
         height: widget.radius * 0.30,
-        decoration:
-        BoxDecoration(
-            color: Colors.white, shape: BoxShape.rectangle, borderRadius: BorderRadius.circular(widget.radius * 0.4,)),
+        decoration: BoxDecoration(
+            color: Colors.white,
+            shape: BoxShape.rectangle,
+            borderRadius: BorderRadius.circular(
+              widget.radius * 0.4,
+            )),
       ),
       SizedBox(
         width: widget.radius * 0.20,
@@ -124,9 +122,7 @@ class _SpeakingDotsState extends State<SpeakingDots> {
       Container(
         width: widget.radius * 0.30,
         height: widget.radius * 0.70,
-        decoration:
-        BoxDecoration(
-            color: Colors.white, shape: BoxShape.rectangle, borderRadius: BorderRadius.circular(widget.radius * 0.4)),
+        decoration: BoxDecoration(color: Colors.white, shape: BoxShape.rectangle, borderRadius: BorderRadius.circular(widget.radius * 0.4)),
       ),
       SizedBox(
         width: widget.radius * 0.20,
@@ -134,9 +130,7 @@ class _SpeakingDotsState extends State<SpeakingDots> {
       Container(
         width: widget.radius * 0.30,
         height: widget.radius * 0.30,
-        decoration:
-        BoxDecoration(
-            color: Colors.white, shape: BoxShape.rectangle, borderRadius: BorderRadius.circular(widget.radius * 0.4)),
+        decoration: BoxDecoration(color: Colors.white, shape: BoxShape.rectangle, borderRadius: BorderRadius.circular(widget.radius * 0.4)),
       ),
     ];
   }
@@ -146,9 +140,7 @@ class _SpeakingDotsState extends State<SpeakingDots> {
       Container(
         width: widget.radius * 0.30,
         height: widget.radius * 0.50,
-        decoration:
-        BoxDecoration(
-            color: Colors.white, shape: BoxShape.rectangle, borderRadius: BorderRadius.circular(widget.radius * 0.4)),
+        decoration: BoxDecoration(color: Colors.white, shape: BoxShape.rectangle, borderRadius: BorderRadius.circular(widget.radius * 0.4)),
       ),
       SizedBox(
         width: widget.radius * 0.20,
@@ -156,9 +148,7 @@ class _SpeakingDotsState extends State<SpeakingDots> {
       Container(
         width: widget.radius * 0.30,
         height: widget.radius * 0.90,
-        decoration:
-        BoxDecoration(
-            color: Colors.white, shape: BoxShape.rectangle, borderRadius: BorderRadius.circular(widget.radius * 0.4)),
+        decoration: BoxDecoration(color: Colors.white, shape: BoxShape.rectangle, borderRadius: BorderRadius.circular(widget.radius * 0.4)),
       ),
       SizedBox(
         width: widget.radius * 0.20,
@@ -166,9 +156,7 @@ class _SpeakingDotsState extends State<SpeakingDots> {
       Container(
         width: widget.radius * 0.30,
         height: widget.radius * 0.50,
-        decoration:
-        BoxDecoration(
-            color: Colors.white, shape: BoxShape.rectangle, borderRadius: BorderRadius.circular(widget.radius * 0.4)),
+        decoration: BoxDecoration(color: Colors.white, shape: BoxShape.rectangle, borderRadius: BorderRadius.circular(widget.radius * 0.4)),
       ),
     ];
   }
@@ -178,9 +166,7 @@ class _SpeakingDotsState extends State<SpeakingDots> {
       Container(
         width: widget.radius * 0.30,
         height: widget.radius * 0.70,
-        decoration:
-        BoxDecoration(
-            color: Colors.white, shape: BoxShape.rectangle, borderRadius: BorderRadius.circular(widget.radius * 0.4)),
+        decoration: BoxDecoration(color: Colors.white, shape: BoxShape.rectangle, borderRadius: BorderRadius.circular(widget.radius * 0.4)),
       ),
       SizedBox(
         width: widget.radius * 0.20,
@@ -188,9 +174,7 @@ class _SpeakingDotsState extends State<SpeakingDots> {
       Container(
         width: widget.radius * 0.30,
         height: widget.radius * 0.90,
-        decoration:
-        BoxDecoration(
-            color: Colors.white, shape: BoxShape.rectangle, borderRadius: BorderRadius.circular(widget.radius * 0.4)),
+        decoration: BoxDecoration(color: Colors.white, shape: BoxShape.rectangle, borderRadius: BorderRadius.circular(widget.radius * 0.4)),
       ),
       SizedBox(
         width: widget.radius * 0.20,
@@ -198,9 +182,7 @@ class _SpeakingDotsState extends State<SpeakingDots> {
       Container(
         width: widget.radius * 0.30,
         height: widget.radius * 0.70,
-        decoration:
-        BoxDecoration(
-            color: Colors.white, shape: BoxShape.rectangle, borderRadius: BorderRadius.circular(widget.radius * 0.4)),
+        decoration: BoxDecoration(color: Colors.white, shape: BoxShape.rectangle, borderRadius: BorderRadius.circular(widget.radius * 0.4)),
       ),
     ];
   }
@@ -210,9 +192,7 @@ class _SpeakingDotsState extends State<SpeakingDots> {
       Container(
         width: widget.radius * 0.30,
         height: widget.radius * 0.90,
-        decoration:
-        BoxDecoration(
-            color: Colors.white, shape: BoxShape.rectangle, borderRadius: BorderRadius.circular(widget.radius * 0.4)),
+        decoration: BoxDecoration(color: Colors.white, shape: BoxShape.rectangle, borderRadius: BorderRadius.circular(widget.radius * 0.4)),
       ),
       SizedBox(
         width: widget.radius * 0.20,
@@ -220,9 +200,7 @@ class _SpeakingDotsState extends State<SpeakingDots> {
       Container(
         width: widget.radius * 0.30,
         height: widget.radius * 0.90,
-        decoration:
-        BoxDecoration(
-            color: Colors.white, shape: BoxShape.rectangle, borderRadius: BorderRadius.circular(widget.radius * 0.4)),
+        decoration: BoxDecoration(color: Colors.white, shape: BoxShape.rectangle, borderRadius: BorderRadius.circular(widget.radius * 0.4)),
       ),
       SizedBox(
         width: widget.radius * 0.20,
@@ -230,9 +208,7 @@ class _SpeakingDotsState extends State<SpeakingDots> {
       Container(
         width: widget.radius * 0.30,
         height: widget.radius * 0.90,
-        decoration:
-        BoxDecoration(
-            color: Colors.white, shape: BoxShape.rectangle, borderRadius: BorderRadius.circular(widget.radius * 0.4)),
+        decoration: BoxDecoration(color: Colors.white, shape: BoxShape.rectangle, borderRadius: BorderRadius.circular(widget.radius * 0.4)),
       ),
     ];
   }
@@ -240,15 +216,18 @@ class _SpeakingDotsState extends State<SpeakingDots> {
 
 Widget buildCallItem(CallController controller) {
   return Obx(() {
-    return controller.layoutSwitch.value ? SizedBox(
+    return controller.layoutSwitch.value
+        ? SizedBox(
       height: 135,
       child: ListView.builder(
           scrollDirection: Axis.horizontal,
           itemCount: controller.callList.length - 1,
           reverse: controller.callList.length <= 2 ? true : false,
           itemBuilder: (context, index) {
-            debugPrint("ListBuilder ${controller.callList.length} userJid ${controller.callList[index].userJid} pinned ${controller.pinnedUserJid.value}");
-            return controller.callList[index + 1].userJid != controller.pinnedUserJid.value ? Container(
+            debugPrint(
+                "ListBuilder ${controller.callList.length} userJid ${controller.callList[index].userJid} pinned ${controller.pinnedUserJid.value}");
+            return controller.callList[index + 1].userJid != controller.pinnedUserJid.value
+                ? Container(
                 height: 135,
                 width: 100,
                 margin: const EdgeInsets.only(left: 10),
@@ -275,7 +254,7 @@ Widget buildCallItem(CallController controller) {
                                 child: SvgPicture.asset(unpinUser),
                               ),
                             ),
-                            if(controller.callList[index + 1].isAudioMuted.value)...[
+                            if (controller.callList[index + 1].isAudioMuted.value) ...[
                               Padding(
                                 padding: const EdgeInsets.only(left: 4.0),
                                 child: SizedBox(
@@ -287,9 +266,11 @@ Widget buildCallItem(CallController controller) {
                                 ),
                               ),
                             ],
-                            if(controller.speakingUsers.isNotEmpty && !controller
-                                .audioLevel(controller.callList[index + 1].userJid)
-                                .isNegative && !controller.muted.value)...[
+                            if (controller.speakingUsers.isNotEmpty &&
+                                !controller
+                                    .audioLevel(controller.callList[index + 1].userJid)
+                                    .isNegative &&
+                                !controller.muted.value) ...[
                               Padding(
                                 padding: const EdgeInsets.only(top: 8.0, bottom: 8.0, left: 4.0),
                                 child: SpeakingDots(
@@ -299,7 +280,8 @@ Widget buildCallItem(CallController controller) {
                                 ),
                               )
                             ],
-                          ],),
+                          ],
+                        ),
                       );
                     }),
                     Positioned(
@@ -325,24 +307,50 @@ Widget buildCallItem(CallController controller) {
                             return const SizedBox.shrink();
                           }),
                     ),
+
+                    Obx(() {
+                      return (getTileCallStatus(controller.callList[index + 1].callStatus) != "" &&
+                          controller.callList[index + 1].userJid != SessionManagement.getUserJID()) ? Container(
+                        decoration: BoxDecoration(
+                          color: Colors.black.withOpacity(0.5), // Adjust the color and opacity as needed
+                          borderRadius: BorderRadius.circular(10.0),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.3),
+                              blurRadius: 8,
+                              offset: const Offset(0, 3),
+                            ),
+                          ],
+                        ),
+                        width: 100, // Adjust the width and height as needed
+                        height: 135,
+                      ) : const SizedBox.shrink();
+                    }),
+                    Obx(() {
+                      return Center(
+                          child: Text(
+                            getTileCallStatus(controller.callList[index + 1].callStatus),
+                            style: const TextStyle(color: Colors.white),
+                          ));
+                    }),
                     /*Obx(() {
                       return (controller.callList[index].callStatus==CallStatus.ringing) ?
                       Container(color: AppColors.transBlack75, child: Center(
                         child: Text(controller.callList[index].callStatus.toString(), style: const TextStyle(color: Colors.white),),),) : const SizedBox.shrink();
                     })*/
                   ],
-                )) : const SizedBox.shrink();
-          }
-      ),
-    ) : Column(
+                ))
+                : const SizedBox.shrink();
+          }),
+    )
+        : Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         GridView.builder(
           scrollDirection: Axis.vertical,
           shrinkWrap: true,
-
-          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 2, // number of items in each row
+          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: controller.callList.length > 2 ? 2 : 1, // number of items in each row
             mainAxisSpacing: 8.0, // spacing between rows
             crossAxisSpacing: 2.0, // spacing between columns
           ),
@@ -358,6 +366,7 @@ Widget buildCallItem(CallController controller) {
                 child: Stack(
                   children: [
                     MirrorFlyView(
+                      key: UniqueKey(),
                       userJid: controller.callList[index].userJid ?? "",
                       viewBgColor: AppColors.callerTitleBackground,
                       profileSize: 60,
@@ -377,7 +386,7 @@ Widget buildCallItem(CallController controller) {
                                 child: SvgPicture.asset(unpinUser),
                               ),
                             ),
-                            if(controller.callList[index].isAudioMuted.value)...[
+                            if (controller.callList[index].isAudioMuted.value) ...[
                               Padding(
                                 padding: const EdgeInsets.only(left: 4.0),
                                 child: SizedBox(
@@ -389,9 +398,11 @@ Widget buildCallItem(CallController controller) {
                                 ),
                               ),
                             ],
-                            if(controller.speakingUsers.isNotEmpty && !controller
-                                .audioLevel(controller.callList[index].userJid)
-                                .isNegative && !controller.muted.value)...[
+                            if (controller.speakingUsers.isNotEmpty &&
+                                !controller
+                                    .audioLevel(controller.callList[index].userJid)
+                                    .isNegative &&
+                                !controller.muted.value) ...[
                               Padding(
                                 padding: const EdgeInsets.only(top: 8.0, bottom: 8.0, left: 4.0),
                                 child: SpeakingDots(
@@ -401,7 +412,8 @@ Widget buildCallItem(CallController controller) {
                                 ),
                               )
                             ],
-                          ],),
+                          ],
+                        ),
                       );
                     }),
                     Positioned(
@@ -439,4 +451,38 @@ Widget buildCallItem(CallController controller) {
       ],
     );
   });
+}
+
+String getTileCallStatus(String? callStatus) {
+  debugPrint("getTileCallStatus $callStatus");
+  switch (callStatus) {
+    case CallStatus.connected:
+    case CallStatus.callTimeout:
+    case CallStatus.disconnected:
+    case CallStatus.attended:
+    case CallStatus.inviteCallTimeout:
+    case CallStatus.onResume:
+    case CallStatus.userJoined:
+    case CallStatus.userLeft:
+    case CallStatus.reconnected:
+    case CallStatus.calling10s:
+    case CallStatus.callingAfter10s:
+      return '';
+    case CallStatus.connecting:
+      return "${CallStatus.connecting}…";
+    case CallStatus.ringing:
+      return "${CallStatus.ringing}…";
+
+    case CallStatus.calling:
+      return "Calling…";
+
+    case CallStatus.onHold:
+      return "${CallStatus.onHold}…";
+
+    case CallStatus.reconnecting:
+      return "Reconnecting…";
+
+    default:
+      return '';
+  }
 }
