@@ -328,7 +328,7 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
 
   void callDisconnected(String callMode, String userJid, String callType) {
     this.callMode(callMode);
-    isCallTimerEnabled = false;
+
     debugPrint("#Mirrorfly call call disconnect called ${callList.length}");
     debugPrint("#Mirrorfly call call disconnect called ${callList.toJson()}");
     if (callList.isEmpty) {
@@ -344,6 +344,7 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
       debugPrint("#Mirrorflycall participant jid is not in the list");
     }
     if (callList.length <= 1) {
+      isCallTimerEnabled = false;
       // if there is an single user in that call and if he [disconnected] no need to disconnect the call from our side Observed in Android
       if (Platform.isIOS || isGroupCall) {
         // in iOS needs to call disconnect.
@@ -415,7 +416,7 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
   void onHold(String callMode, String userJid, String callType, String callStatus) {
     this.callMode(callMode);
     // this.callStatus(callStatus);
-    isCallTimerEnabled = false;
+    // isCallTimerEnabled = false;
 
   }
 
@@ -783,7 +784,7 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
 
   void onResume(String callMode, String userJid, String callType, String callStatus) {
     this.callMode(callMode);
-    isCallTimerEnabled = true;
+    // isCallTimerEnabled = true;
   }
 
   void openParticipantScreen() {

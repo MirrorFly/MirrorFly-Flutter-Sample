@@ -3,7 +3,6 @@ import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/call_modules/call_widgets.dart';
 import 'package:mirror_fly_demo/app/call_modules/outgoing_call/call_controller.dart';
-import 'package:mirror_fly_demo/app/model/call_user_list.dart';
 import 'package:mirrorfly_plugin/mirrorfly_view.dart';
 import 'package:mirrorfly_plugin/mirrorflychat.dart';
 
@@ -288,18 +287,4 @@ class OnGoingCallView extends GetView<CallController> {
     });
   }
 
-  Widget buildListViewHorizontal(List<CallUserList> users) {
-    return ListView.builder(
-        shrinkWrap: true,
-        physics: const AlwaysScrollableScrollPhysics(),
-        scrollDirection: Axis.horizontal,
-        itemCount: users.length,
-        itemBuilder: (cxt, index) {
-          return MirrorFlyView(
-            key: UniqueKey(),
-            userJid: users[index].userJid ?? "",
-            viewBgColor: Colors.blueGrey,
-          ).setBorderRadius(const BorderRadius.all(Radius.circular(10)));
-        });
-  }
 }
