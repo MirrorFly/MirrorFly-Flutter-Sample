@@ -5,13 +5,15 @@ import '../data/apputils.dart';
 
 class CallUtils{
   static Future<String> getCallersName(List<String?> callUsers) async {
-    var membersName = StringBuffer("");
+    var membersName = StringBuffer();
+    membersName.write(callUsers.length <= 1 ? "You and " : "You, ");
     var isMaxMemberNameNotReached = true;
     for (var i = 0; i<callUsers.length;i++) {
       if(callUsers[i]!=null) {
         var pair = await AppUtils.getNameAndProfileDetails(callUsers[i]!);
         if (i == 0) {
-          var actualMemberName = AppUtils.getActualMemberName(StringBuffer(pair.item1));
+          membersName.write(pair.item1);
+          var actualMemberName = AppUtils.getActualMemberName(membersName);
           membersName = actualMemberName.item1;
           isMaxMemberNameNotReached = actualMemberName.item2;
         } else if (isMaxMemberNameNotReached && i == 1) {
