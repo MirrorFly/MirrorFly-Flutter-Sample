@@ -3,6 +3,8 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
+import 'package:mirror_fly_demo/app/modules/notification/notification_builder.dart';
+import 'package:mirrorfly_plugin/logmessage.dart';
 import 'package:mirrorfly_plugin/mirrorflychat.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
@@ -13,6 +15,7 @@ import 'package:intl/intl.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 import '../../../common/de_bouncer.dart';
+import '../../../common/main_controller.dart';
 import '../../../data/apputils.dart';
 import '../../../data/permissions.dart';
 import '../../../model/chat_message_model.dart';
@@ -20,6 +23,7 @@ import '../../../routes/app_pages.dart';
 
 class DashboardController extends FullLifeCycleController
     with FullLifeCycleMixin, GetTickerProviderStateMixin {
+  var availableFeatures = Get.find<MainController>().availableFeature;
   var chatLimit = 20;
   var recentChats = <RecentChatData>[].obs;
   var archivedChats = <RecentChatData>[].obs;
@@ -70,19 +74,44 @@ class DashboardController extends FullLifeCycleController
     historyScrollController.addListener(historyScrollListener);
   }*/
 
+  TabController? tabController ;
+  @override
+  void onInit() {
+    tabController = TabController(length: 2, vsync: this);
+    if(Get.parameters['fromMissedCall']!=null){
+      var fromMissedCall = Get.parameters['fromMissedCall'];
+      debugPrint("fromMissedCall $fromMissedCall");
+      if(fromMissedCall.toString()=="true") {
+        tabController?.animateTo(1);
+      }
+    }
+    super.onInit();
+  }
   @override
   void onReady(){
     super.onReady();
+    getAvailableFeatures();
+    debugPrint("DashboardController onReady");
+    createTopic();
     recentChats.bindStream(recentChats.stream);
     ever(recentChats, (callback) => unReadCount());
     archivedChats.bindStream(archivedChats.stream);
     ever(archivedChats, (callback) => archivedChatCount());
-    getRecentChatList();
+    if(!Constants.enableTopic) {
+      getRecentChatList();
+    }
     getArchivedChatsList();
     // checkArchiveSetting();
     userlistScrollController.addListener(_scrollListener);
     historyScrollController.addListener(historyScrollListener);
 
+  }
+  void getAvailableFeatures(){
+    Mirrorfly.getAvailableFeatures().then((features) {
+      debugPrint("getAvailableFeatures $features");
+      var featureAvailable = availableFeaturesFromJson(features);
+      availableFeatures(featureAvailable);
+    });
   }
 
   infoPage(Profile profile) {
@@ -123,7 +152,8 @@ class DashboardController extends FullLifeCycleController
 
   getRecentChatList() {
     recentChatPage = 1;
-    Mirrorfly.getRecentChatListHistory(firstSet: recentChatPage==1,limit: chatLimit).then((value) async {
+    var fetchFrom =  Constants.enableTopic ? Mirrorfly.getRecentChatListHistoryByTopic(firstSet: recentChatPage==1,limit: chatLimit,topicId: topicId.value) :  Mirrorfly.getRecentChatListHistory(firstSet: recentChatPage==1,limit: chatLimit);
+    fetchFrom.then((value) async {
       // String recentList = value.replaceAll('\n', '\\n');
       // debugPrint(recentList);
       mirrorFlyLog("getRecentChatListHistory", value);
@@ -138,6 +168,19 @@ class DashboardController extends FullLifeCycleController
       debugPrint("recent chat issue===> $error");
       recentChatLoading(false);
     });
+    /*mirrorFlyLog("", "recent chats");
+    Mirrorfly.getRecentChatList().then((value) async {
+      // String recentList = value.replaceAll('\n', '\\n');
+      // debugPrint(recentList);
+      var data = await compute(recentChatFromJson, value.toString());
+      //recentChats.clear();
+      recentChats(data.data!);
+      recentChats.refresh();
+      recentChatLoading(false);
+    }).catchError((error) {
+      debugPrint("recent chat issue===> $error");
+      recentChatLoading(false);
+    });*/
   }
 
   getArchivedChatsList() async {
@@ -154,7 +197,7 @@ class DashboardController extends FullLifeCycleController
 
   toChatPage(String jid) {
     if (jid.isNotEmpty) {
-      Get.toNamed(Routes.chat, parameters: {"chatJid":jid});
+      Get.toNamed(Routes.chat, parameters: {"chatJid":jid,"topicId":topicId.value});
       // Helper.progressLoading();
       /*getProfileDetails(jid).then((value) {
         if (value.jid != null) {
@@ -487,7 +530,7 @@ class DashboardController extends FullLifeCycleController
     var selected = recentChats.where((p0) => selectedChats.contains(p0.jid));
     for (var item in selected) {
       var isMember = await Mirrorfly.isMemberOfGroup(item.jid.checkNull(), null);
-      if ((item.getChatType() == Constants.typeGroupChat) && isMember!) {
+      if ((item.getChatType() == Constants.typeGroupChat) && isMember! && availableFeatures.value.isGroupChatAvailable.checkNull()) {
         delete(false);
         return;
         //return false;
@@ -778,6 +821,8 @@ class DashboardController extends FullLifeCycleController
       for (var element in selectedChatsPosition) {
         recentChats[element].isConversationUnRead = false;
         recentChats[element].unreadMessageCount = 0;
+        var jid = recentChats[element].jid;
+        NotificationBuilder.clearConversationOnNotification(jid.checkNull());
       }
       clearAllChatSelection();
       updateUnReadChatCount();
@@ -813,6 +858,10 @@ class DashboardController extends FullLifeCycleController
   }
 
   _itemDelete(int index) {
+    if(!availableFeatures.value.isDeleteChatAvailable.checkNull()){
+      Helper.showFeatureUnavailable();
+      return;
+    }
     var chatIndex = recentChats.indexWhere((element) =>
         selectedChats[index] == element.jid); //selectedChatsPosition[index];
     Helper.showAlert(
@@ -826,6 +875,10 @@ class DashboardController extends FullLifeCycleController
           TextButton(
               onPressed: () {
                 Get.back();
+                if(!availableFeatures.value.isDeleteChatAvailable.checkNull()){
+                  Helper.showFeatureUnavailable();
+                  return;
+                }
                 Mirrorfly.deleteRecentChat(selectedChats[index]).then((value) {
                   clearAllChatSelection();
                   recentChats.removeAt(chatIndex);
@@ -891,11 +944,11 @@ class DashboardController extends FullLifeCycleController
   }
 
   void markConversationReadNotifyUI(String jid){
-    mirrorFlyLog("setConversationAsRead", "setConversationAsRead");
     var index = recentChats.indexWhere((element) => element.jid==jid);
     if(!index.isNegative) {
       if (recentChats[index].isConversationUnRead.checkNull()) {
         recentChats[index].isConversationUnRead = false;
+        recentChats[index].unreadMessageCount = 0;
         recentChats.refresh();
       }
     }
@@ -1270,7 +1323,7 @@ class DashboardController extends FullLifeCycleController
   Future<void> gotoContacts() async {
     if (Mirrorfly.isTrialLicence) {
       Get.toNamed(Routes.contacts,
-          arguments: {"forward": false, "group": false, "groupJid": ""});
+          arguments: {"forward": false, "group": false, "groupJid": ""},parameters: {"topicId":topicId.value});
     } else {
       var contactPermissionHandle = await AppPermission.checkPermission(
           Permission.contacts,
@@ -1278,7 +1331,7 @@ class DashboardController extends FullLifeCycleController
           Constants.contactSyncPermission);
       if (contactPermissionHandle) {
         Get.toNamed(Routes.contacts,
-            arguments: {"forward": false, "group": false, "groupJid": ""});
+            arguments: {"forward": false, "group": false, "groupJid": ""},parameters: {"topicId":topicId.value});
       }
     }
   }
@@ -1366,7 +1419,8 @@ class DashboardController extends FullLifeCycleController
         recentChatPage++;
         isRecentHistoryLoading(true);
         debugPrint("calling page no $recentChatPage");
-        Mirrorfly.getRecentChatListHistory(firstSet: recentChatPage==1,limit: chatLimit).then((value) async {
+        var fetchFrom =  Constants.enableTopic ? Mirrorfly.getRecentChatListHistoryByTopic(firstSet: recentChatPage==1,limit: chatLimit,topicId: topicId.value) : Mirrorfly.getRecentChatListHistory(firstSet: recentChatPage==1,limit: chatLimit);
+        fetchFrom.then((value) async {
           debugPrint("getRecentChatListHistory next data $value");
           var data = await compute(recentChatFromJson, value.toString());
           recentChats.addAll(data.data!);
@@ -1378,9 +1432,63 @@ class DashboardController extends FullLifeCycleController
           isRecentHistoryLoading(false);
         });
       }
-
-
     }
 
+  }
+
+  var topicId = Constants.topicId.obs;
+  var topics = <Topics>[].obs;
+  void createTopic() async {
+    var topicId = Constants.topicId;
+    LogMessage.d("topicId", topicId);
+    if (topicId.isEmpty && Constants.enableTopic) {
+      await Mirrorfly.createTopic(
+          topicName: "Macbook Air", metaData: [TopicMetaData(key: "description", value: "Starting From ₹ 9720")]).then((
+          value) {
+        if (value != null) {
+          //SessionManagement.setString("topicId", value);
+        }
+      }).catchError((onError) {
+        LogMessage.d("createTopic error", onError);
+        //807, Topic name is required
+      });
+    } else if (Constants.enableTopic) {
+      // if(topicId.isNotEmpty) {
+      //c47cdeec-32a0-4abb-a318-ab60048df577,a8f8877b-52c0-47cc-83d1-6e0292876daa,b7ba6a95-56f4-4354-a40c-b9a03b0cf470
+      //Walkie Talkie,Macbook Pro,Macbook Air
+      await Mirrorfly.getTopics(topicIds: [
+        "c47cdeec-32a0-4abb-a318-ab60048df577",
+        "a8f8877b-52c0-47cc-83d1-6e0292876daa",
+        "b7ba6a95-56f4-4354-a40c-b9a03b0cf470"
+      ]).then((value) {
+        var topics = topicsFromJson(value.toString());
+        this.topics(topics);
+        //"a00251d7-d388-4f47-8672-553f8afc7e11","c640d387-8dfc-4252-b20a-d2901ebe3197","f5dc3456-cd2a-4e64-ad91-79373a867aa3","0075fe28-ec93-45c6-be3a-85004bf860a1","da757122-1a74-40ae-9c7d-0e4c2757e6bd","5d3788c1-78ef-4158-a92b-a48f092da0b9","4d83dfad-79a8-43fd-98b8-7eb8943dc8ca","0b290e7f-b05c-4859-a72d-100c48f73c8d","1ab018d1-1068-4988-8b28-fe1079e07ab2"
+        LogMessage.d("getTopics by Id", value);
+        LogMessage.d("getTopics [0] meta", "${topics[0].metaData}");
+        if (topics.isNotEmpty) {
+          if (topics[0].topicId != null) {
+            this.topicId(topics[0].topicId.checkNull());
+            getRecentChatList();
+          }
+        }
+      }).catchError((onError) {
+        LogMessage.d("getTopics error", onError);
+        //807 for topic Id Empty and invalid topic id
+      });
+      // }
+    }
+  }
+  void onAvailableFeaturesUpdated(AvailableFeatures features) {
+    LogMessage.d("DashboardView", "onAvailableFeaturesUpdated ${features.toJson()}");
+    availableFeatures(features);
+    if (selectedChats.isNotEmpty) {
+      menuValidationForItem();
+    }
+  }
+
+  void onTopicsTap(int index) {
+    topicId(topics[index].topicId);
+    getRecentChatList();
   }
 }

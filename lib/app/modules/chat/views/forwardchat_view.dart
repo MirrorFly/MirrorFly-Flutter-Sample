@@ -78,7 +78,7 @@ class ForwardChatView extends GetView<ForwardChatController> {
                                     item: item,onTap:() {
                                       //chat page
                                       controller.onItemSelect(item.jid.checkNull(),
-                                          getRecentName(item)/*item.profileName.checkNull()*/,item.isBlocked.checkNull());
+                                          getRecentName(item)/*item.profileName.checkNull()*/,item.isBlocked.checkNull(),item.isGroup.checkNull());
                                     },
                                     spanTxt: controller.searchQuery.text.toString(),
                                     isCheckBoxVisible: true,
@@ -86,7 +86,7 @@ class ForwardChatView extends GetView<ForwardChatController> {
                                     isChecked: controller.isChecked(item.jid.checkNull()),
                                     onchange: (value) {
                                       controller.onItemSelect(item.jid.checkNull(),
-                                          getRecentName(item)/*item.profileName.checkNull()*/,item.isBlocked.checkNull());
+                                          getRecentName(item)/*item.profileName.checkNull()*/,item.isBlocked.checkNull(),item.isGroup.checkNull());
                                     }),
                               );
                             }),
@@ -117,7 +117,7 @@ class ForwardChatView extends GetView<ForwardChatController> {
                                             onTap: () {
                                               controller.onItemSelect(
                                                   item.jid.checkNull(),
-                                                  getName(item)/*item.name.checkNull()*/,item.isBlocked.checkNull());
+                                                  getName(item)/*item.name.checkNull()*/,item.isBlocked.checkNull(),item.isGroupProfile.checkNull());
                                             },
                                             isCheckBoxVisible: true,
                                             isChecked: controller.isChecked(
@@ -125,7 +125,7 @@ class ForwardChatView extends GetView<ForwardChatController> {
                                             onchange: (value) {
                                               controller.onItemSelect(
                                                   item.jid.checkNull(),
-                                                  getName(item)/*item.name.checkNull()*/,item.isBlocked.checkNull());
+                                                  getName(item)/*item.name.checkNull()*/,item.isBlocked.checkNull(),item.isGroupProfile.checkNull());
                                             },
                                           blocked: item.isBlockedMe.checkNull() || item.isAdminBlocked.checkNull(),
                                           unknown: (!item.isItSavedContact.checkNull() || item.isDeletedContact()),),
@@ -177,13 +177,13 @@ class ForwardChatView extends GetView<ForwardChatController> {
                                         spantext: controller.searchQuery.text.toString(),
                                         onTap: () {
                                           controller.onItemSelect(item.jid.checkNull(),
-                                              getName(item)/*item.name.checkNull()*/,item.isBlocked.checkNull());
+                                              getName(item)/*item.name.checkNull()*/,item.isBlocked.checkNull(),item.isGroupProfile.checkNull());
                                         },
                                         isCheckBoxVisible: true,
                                         isChecked: controller.isChecked(item.jid.checkNull()),
                                         onchange: (value) {
                                           controller.onItemSelect(item.jid.checkNull(),
-                                              getName(item)/*item.name.checkNull()*/,item.isBlocked.checkNull());
+                                              getName(item)/*item.name.checkNull()*/,item.isBlocked.checkNull(),item.isGroupProfile.checkNull());
                                         },
                                       blocked: item.isBlockedMe.checkNull() || item.isAdminBlocked.checkNull(),
                                       unknown: (!item.isItSavedContact.checkNull() || item.isDeletedContact()),),

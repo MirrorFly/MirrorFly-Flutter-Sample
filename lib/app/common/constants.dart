@@ -42,6 +42,48 @@ const Color durationTextColor = Color(0xff455E93);
 const Color chatBgColor = Color(0xffD0D8EB);
 const Color previewTextColor = Color(0xff7f7f7f);
 
+class AppColors{
+  static const Color callerBackground = Color(0xff152134);
+  static const Color bottomCallOptionBackground = Color(0xff162337);
+  static const Color callOptionBackground = Color(0xff10294d);
+  static const Color callAgainButtonBackground = Color(0xff009f46);
+  static const Color audioCallBackground = Color(0xff0B111C);
+  static const Color audioCallerBackground = Color(0xff0D2852);
+  static const Color callerTitleBackground = Color(0xff151F32);
+  static const Color colorBlackTransparent = Color(0x80000000);
+  static const Color callerStatus = Color(0xffDEDEDE);
+  static const Color callerName = Color(0xffffffff);
+  static const Color endButton = Color(0xffff4d67);
+  static const Color audioMutedIconBgColor = Color(0x80000000);
+}
+//call Assets
+const String callMutedIcon = 'assets/calls/call_muted_icon.svg';
+const String callEndButton = 'assets/calls/call_end_button.svg';
+const String speakerInactive = 'assets/calls/speaker_inactive.svg';
+const String speakerActive = 'assets/calls/speaker_active.svg';
+const String speakerBluetooth = 'assets/calls/bluetooth.svg';
+const String speakerHeadset = 'assets/calls/head_set.svg';
+const String audioCallAgain = 'assets/calls/call_icon.svg';
+const String videoCallAgain = 'assets/calls/video_call.svg';
+const String callCancel = 'assets/calls/cancel_icon.svg';
+
+const String audioCallIcon = 'assets/calls/audiocall.svg';
+const String videoCallIcon = 'assets/calls/videocall.svg';
+
+const String videoInactive = 'assets/calls/video_inactive.svg';
+const String videoActive = 'assets/calls/video_active.svg';
+const String muteActive = 'assets/calls/mute_active.svg';
+const String muteInactive = 'assets/calls/mute_inactive.svg';
+const String addUserCall = 'assets/calls/ic_add_user.svg';
+const String audioMute = 'assets/calls/ic_audio_mute.svg';
+const String moreMenu = 'assets/calls/ic_call_more_menu.svg';
+const String unpinUser = 'assets/calls/ic_unpin_user.svg';
+const String cameraSwitchInactive = 'assets/calls/camera_switch_inactive.svg';
+const String cameraSwitchActive = 'assets/calls/camera_switch_active.svg';
+const String callOptionsUpArrow = 'assets/calls/call_options_up_arrow.svg';
+const String callOptionsBottomBg = 'assets/calls/ic_group_user_info_layout.png';
+const String callOptionsToolbarBg = 'assets/calls/ic_call_header_overlay.png';
+
 //Assets
 const String registerIcon = 'assets/logos/register_logo.svg';
 const String statusIcon = 'assets/logos/status.svg';
@@ -274,6 +316,8 @@ mirrorFlyLog(String tag, String msg) {
 }
 
 class Constants {
+  static const bool enableTopic = false;
+  static const String topicId = enableTopic ? "5d3788c1-78ef-4158-a92b-a48f092da0b9" : "";//Mirrorfly Topic id
   static const String package = 'com.mirrorfly.uikit_flutter';
   static const String webChatLogin = 'https://webchat-uikit-qa.contus.us/';
   static const String tag = 'Contus Fly';
@@ -594,6 +638,12 @@ class Constants {
   static const String audioPermission =
       "To send audio messages, allow MirrorFly access to your Microphone.";
 
+  static const String audioCallPermission =
+      "MirrorFly need the Microphone Permissions in order to call Family";
+
+  static const String videoCallPermission =
+      "MirrorFly need the Microphone and Camera Permissions in order to call Family";
+
   static const String contactPermissionDenied =
       "MirrorFly need the Contacts Permission in order to help you connect with friends and family, but they have been permanently denied. Please continue to app settings, select \"Permissions\", and enable \"Contacts\"";
   static const String locationPermissionDenied =
@@ -661,6 +711,35 @@ class Constants {
   static const pinAlert = pinExpiry-5;//in Days
   static const forgetPinOTPText ='Generate OTP to your registered mobile number';
   static const invalidPinOTPText ='Invalid PIN, Generate OTP to your registered mobile number';
+
+
+  //asked permission
+  static const locationPermissionAsked = "location_permission_asked_before";
+  static const contactPermissionAsked = "contact_permission_asked_before";
+  static const contactSavePermissionAsked = "contact_save_permission_asked_before";
+  static const storagePermissionAsked = "storage_permission_asked_before";
+  static const notificationPermissionAsked = "notification_permission_asked_before";
+
+  static const audioRecordPermissionAsked = "audio_record_permission_asked_before";
+  static const cameraPermissionAsked = "camera_permission_asked_before";
+  static const readPhoneStatePermissionAsked = "read_phone_state_asked_before";
+  static const bluetoothPermissionAsked = "bluetooth_permission_asked_before";
+
+  static const remoteEngagedToast = "is on another call";
+
+  //Call
+  static const unavailableTryAgain = "Unavailable, Try again later";
+  static const cancel = "Cancel";
+  static const callAgain = "Call Again";
+
+  //Call Types
+  static const audioCall = "audio";
+  static const videoCall = "video";
+
+  static const videoSwitchMessage = "Are you sure you want to switch to Video Call?";
+  static const videoSwitchRequestMessage = "Requesting to switch to Video Call";
+  static const videoSwitchRequestedMessage = "requesting to switch to Video Call";
+
 }
 
 Future<void> launchWeb(String url) async {

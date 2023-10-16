@@ -46,6 +46,7 @@ class ChatMessageModel {
     required this.contactChatMessage, //
     required this.mediaChatMessage, //
     required this.locationChatMessage, //
+    required this.topicId, //
   });
 
   String chatUserJid;
@@ -71,6 +72,7 @@ class ChatMessageModel {
   ContactChatMessage? contactChatMessage;
   MediaChatMessage? mediaChatMessage;
   LocationChatMessage? locationChatMessage;
+  String? topicId;
 
   var isSelected = false.obs;
 
@@ -135,6 +137,7 @@ class ChatMessageModel {
         locationChatMessage: json["locationChatMessage"] == null
             ? null
             : LocationChatMessage.fromJson(json["locationChatMessage"]),
+          topicId: Platform.isIOS ? json["topicID"] : json["topicId"]
       );
 
   Map<String, dynamic> toJson() => {
@@ -165,6 +168,7 @@ class ChatMessageModel {
             mediaChatMessage == null ? null : mediaChatMessage!.toJson(),
         "locationChatMessage":
             locationChatMessage == null ? null : locationChatMessage!.toJson(),
+        "topicId": topicId
       };
 }
 
