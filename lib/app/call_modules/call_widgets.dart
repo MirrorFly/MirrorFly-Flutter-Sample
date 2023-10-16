@@ -6,7 +6,6 @@ import 'package:mirror_fly_demo/app/call_modules/outgoing_call/call_controller.d
 import 'package:mirror_fly_demo/app/common/constants.dart';
 import 'package:mirror_fly_demo/app/common/widgets.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
-import 'package:mirror_fly_demo/app/data/session_management.dart';
 import 'package:mirrorfly_plugin/mirrorfly_view.dart';
 import 'package:mirrorfly_plugin/mirrorflychat.dart';
 import 'package:mirrorfly_plugin/model/user_list_model.dart';
@@ -308,7 +307,7 @@ Widget buildCallItem(CallController controller) {
                           }),
                     ),
 
-                    Obx(() {
+                    /*Obx(() {
                       return (getTileCallStatus(controller.callList[index + 1].callStatus) != "" &&
                           controller.callList[index + 1].userJid != SessionManagement.getUserJID()) ? Container(
                         decoration: BoxDecoration(
@@ -332,7 +331,7 @@ Widget buildCallItem(CallController controller) {
                             getTileCallStatus(controller.callList[index + 1].callStatus),
                             style: const TextStyle(color: Colors.white),
                           ));
-                    }),
+                    }),*/
                     /*Obx(() {
                       return (controller.callList[index].callStatus==CallStatus.ringing) ?
                       Container(color: AppColors.transBlack75, child: Center(
