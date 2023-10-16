@@ -340,9 +340,8 @@ Widget buildCallItem(CallController controller) {
         GridView.builder(
           scrollDirection: Axis.vertical,
           shrinkWrap: true,
-
-          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 2, // number of items in each row
+          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: controller.callList.length > 2 ? 2 : 1, // number of items in each row
             mainAxisSpacing: 8.0, // spacing between rows
             crossAxisSpacing: 2.0, // spacing between columns
           ),
@@ -358,6 +357,7 @@ Widget buildCallItem(CallController controller) {
                 child: Stack(
                   children: [
                     MirrorFlyView(
+                      key: UniqueKey(),
                       userJid: controller.callList[index].userJid ?? "",
                       viewBgColor: AppColors.callerTitleBackground,
                       profileSize: 60,
