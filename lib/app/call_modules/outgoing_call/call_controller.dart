@@ -567,7 +567,9 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
       var data = await getProfileDetails(userJid);
       toToast(data.getName() + Constants.remoteEngagedToast);
     }
-    if(callList.length <= 2){
+    debugPrint("***call list length ${callList.length}");
+
+    if(callList.length < 2){
       disconnectOutgoingCall();
     }else{
       removeUser(callMode, userJid, callType);
