@@ -297,7 +297,7 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
       for (var element in callList) {
         if(element.userJid!=null && SessionManagement.getUserJID() != element.userJid) {
           userJids.add(element.userJid!);
-        }};
+        }}
       LogMessage.d("callList", userJids.length);
       var names = userJids.isNotEmpty ? await CallUtils.getCallersName(userJids) : "";
       callTitle(names);
