@@ -748,6 +748,7 @@ class Constants {
   static const unavailableTryAgain = "Unavailable, Try again later";
   static const cancel = "Cancel";
   static const callAgain = "Call Again";
+  static const callTimeoutMessage = "Seems like no one attended the call";
 
   //Call Types
   static const audioCall = "audio";
