@@ -12,7 +12,7 @@ String callUserListToJson(List<CallUserList> data) => json.encode(List<dynamic>.
 
 class CallUserList {
   String? userJid;
-  String? callStatus;
+  RxString? callStatus = ''.obs;
   RxBool isAudioMuted = RxBool(false);
 
   CallUserList({
@@ -23,7 +23,7 @@ class CallUserList {
 
   factory CallUserList.fromJson(Map<String, dynamic> json) => CallUserList(
     userJid: json["userJid"],
-    callStatus: json["callStatus"],
+    callStatus: RxString(json["callStatus"]),
     isAudioMuted: json["isAudioMuted"] ?? false,
   );
 

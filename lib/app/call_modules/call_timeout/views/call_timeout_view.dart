@@ -2,8 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
 import 'package:get/get.dart';
+import 'package:mirror_fly_demo/app/call_modules/call_utils.dart';
+import 'package:mirror_fly_demo/app/data/helper.dart';
 
 import '../../../common/constants.dart';
+import '../../../common/widgets.dart';
 import '../../call_widgets.dart';
 import '../controllers/call_timeout_controller.dart';
 
@@ -30,12 +33,41 @@ class CallTimeoutView extends GetView<CallTimeoutController> {
                         fontSize: 14, color: AppColors.callerStatus),),
                     const SizedBox(height: 16,),
                     Obx(() {
-                      return Text(controller.calleeName.value,
-                        style: const TextStyle(fontSize: 18, color: Colors.white),);
-                    }),
-                    const SizedBox(height: 13,),
+                      return Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 30.0),
+                          child: FutureBuilder(future:CallUtils.getCallersName(controller.users),builder: (ctx,snap) {
+                            return snap.hasData && snap.data!=null ? Text(
+                              snap.data!, //controller.calleeNames.length>3 ? "${controller.calleeNames.take(3).join(",")} and (+${controller.calleeNames.length - 3 })" : controller.calleeNames.join(","),
+                              style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w500, fontSize: 18)
+                              ,
+                              overflow: TextOverflow.ellipsis,) : const SizedBox.shrink();
+                          }));}),
+                    const SizedBox(
+                      height: 16,
+                    ),
                     Obx(() {
-                      return buildProfileImage(controller.profile.value);
+                      return controller.groupId.isNotEmpty ? FutureBuilder(future: getProfileDetails(controller.groupId.value), builder: (ctx, snap) {
+                        return snap.hasData && snap.data != null ? buildProfileImage(snap.data!) : const SizedBox
+                            .shrink();
+                      }) : controller.users.length == 1 ? FutureBuilder(future: getProfileDetails(controller.users[0]!), builder: (ctx, snap) {
+                        return snap.hasData && snap.data != null ? buildProfileImage(snap.data!) : const SizedBox
+                            .shrink();
+                      }) : Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: List.generate(
+                            controller.users.length > 3 ? 4 : controller.users.length, (index) =>
+                        (index == 3) ? ProfileTextImage(
+                          text: "+${controller.users.length - 3}",
+                          radius: 45 / 2,
+                          bgColor: Colors.white,
+                          fontColor: Colors.grey,
+                        ) : FutureBuilder(future: getProfileDetails(controller.users[index]!), builder: (ctx, snap) {
+                          return snap.hasData && snap.data != null ? Padding(
+                            padding: const EdgeInsets.all(2.0),
+                            child: buildProfileImage(snap.data!, size: 45),
+                          ) : const SizedBox.shrink();
+                        })),
+                      );
                     }),
                     /*ClipOval(
                       child: Image.asset(

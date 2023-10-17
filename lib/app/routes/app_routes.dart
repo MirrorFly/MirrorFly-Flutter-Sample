@@ -52,6 +52,7 @@ abstract class Routes {
   static const outGoingCallView = _Paths.outGoingCallView;
   static const onGoingCallView = _Paths.onGoingCallView;
   static const callTimeOutView = _Paths.callTimeOutView;
+  static const participants = _Paths.participants;
 }
 
 abstract class _Paths {
@@ -106,4 +107,5 @@ abstract class _Paths {
   static const outGoingCallView = '/outGoingCallView';
   static const onGoingCallView = '/onGoingCallView';
   static const callTimeOutView = '/call-timeout';
+  static const participants = '/participants';
 }

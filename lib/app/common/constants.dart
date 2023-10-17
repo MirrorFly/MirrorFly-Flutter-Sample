@@ -55,8 +55,17 @@ class AppColors{
   static const Color callerName = Color(0xffffffff);
   static const Color endButton = Color(0xffff4d67);
   static const Color audioMutedIconBgColor = Color(0x80000000);
+  static const Color checkBoxBorder = Color(0xffbdbdbd);
+  static const Color checkBoxChecked = Color(0xff30c076);
+  static const Color callBg = Color(0xff0B111C);
+  static const Color speakingBg = Color(0xff3abf87);
+  static const Color transBlack75 = Color(0xBF000000);
+  static const Color participantUnMuteColor = Color(0xffe3e2e2);
 }
 //call Assets
+const String plusIcon = 'assets/calls/plus_icon.svg';
+const String audioCallSmallIcon = 'assets/calls/audio_call_small_icon.svg';
+const String videoCallSmallIcon = 'assets/calls/video_call_small_icon.svg';
 const String callMutedIcon = 'assets/calls/call_muted_icon.svg';
 const String callEndButton = 'assets/calls/call_end_button.svg';
 const String speakerInactive = 'assets/calls/speaker_inactive.svg';
@@ -66,6 +75,7 @@ const String speakerHeadset = 'assets/calls/head_set.svg';
 const String audioCallAgain = 'assets/calls/call_icon.svg';
 const String videoCallAgain = 'assets/calls/video_call.svg';
 const String callCancel = 'assets/calls/cancel_icon.svg';
+const String gridIcon = 'assets/calls/grid_icon.svg';
 
 const String audioCallIcon = 'assets/calls/audiocall.svg';
 const String videoCallIcon = 'assets/calls/videocall.svg';
@@ -83,6 +93,13 @@ const String cameraSwitchActive = 'assets/calls/camera_switch_active.svg';
 const String callOptionsUpArrow = 'assets/calls/call_options_up_arrow.svg';
 const String callOptionsBottomBg = 'assets/calls/ic_group_user_info_layout.png';
 const String callOptionsToolbarBg = 'assets/calls/ic_call_header_overlay.png';
+
+//Call Participant assets
+const String participantMute = 'assets/calls/participant_mute.svg';
+const String participantUnMute = 'assets/calls/participant_unmute.svg';
+const String participantVideoEnabled = 'assets/calls/participant_video_enabled.svg';
+const String participantVideoDisabled = 'assets/calls/participant_video_disabled.svg';
+
 
 //Assets
 const String registerIcon = 'assets/logos/register_logo.svg';
@@ -739,6 +756,8 @@ class Constants {
   static const videoSwitchMessage = "Are you sure you want to switch to Video Call?";
   static const videoSwitchRequestMessage = "Requesting to switch to Video Call";
   static const videoSwitchRequestedMessage = "requesting to switch to video call";
+  static const callMembersLimit = "Maximum %d members allowed in call";
+  static const maxNameLength = 26;
 
 }
 
