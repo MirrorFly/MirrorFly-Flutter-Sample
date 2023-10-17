@@ -568,7 +568,7 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
       toToast(data.getName() + Constants.remoteEngagedToast);
     }
     debugPrint("***call list length ${callList.length}");
-
+//The below condition (<= 2) -> (<2) is changed for Group call, to maintain the call to continue if there is a 2 users in call
     if(callList.length < 2){
       disconnectOutgoingCall();
     }else{
