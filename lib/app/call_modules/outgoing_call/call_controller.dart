@@ -352,7 +352,7 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
     } else {
       debugPrint("#Mirrorflycall participant jid is not in the list");
     }
-    if (callList.length <= 1) {
+    if (callList.length <= 1 || userJid == SessionManagement.getUserJID()) {
       isCallTimerEnabled = false;
       // if there is an single user in that call and if he [disconnected] no need to disconnect the call from our side Observed in Android
       if (Platform.isIOS || isGroupCall) {
