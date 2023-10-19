@@ -71,6 +71,14 @@ class OnGoingCallView extends GetView<CallController> {
                       }),
                     ],
                   )),
+              InkWell(
+                splashColor: Colors.transparent,
+                highlightColor: Colors.transparent,
+                onTap: () {
+                  debugPrint("InkWell");
+                  controller.isVisible(!controller.isVisible.value);
+                },
+              ),
               Obx(() {
                 return controller.callList.length >= 2
                     ? AnimatedPositioned(
@@ -87,14 +95,7 @@ class OnGoingCallView extends GetView<CallController> {
                       )
                     : const SizedBox.shrink();
               }),
-              InkWell(
-                splashColor: Colors.transparent,
-                highlightColor: Colors.transparent,
-                onTap: () {
-                  debugPrint("InkWell");
-                  controller.isVisible(!controller.isVisible.value);
-                },
-              ),
+
               Obx(() {
                 return AnimatedPositioned(
                   duration: const Duration(milliseconds: 500),
