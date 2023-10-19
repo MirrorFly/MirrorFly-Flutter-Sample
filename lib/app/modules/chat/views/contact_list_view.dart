@@ -168,10 +168,10 @@ class ContactListView extends GetView<ContactController> {
                             child: Padding(
                               padding: EdgeInsets.all(16.0),
                               child: CircularProgressIndicator(),
-                            ))
-                            : Column(
+                            )) : const SizedBox.shrink(),
+                            Column(
                           children: [
-                            Expanded(
+                            controller.isPageLoading.value ? Expanded(child: Container()) : Expanded(
                               child: ListView.builder(
                                   itemCount: controller.scrollable.value
                                       ? controller.usersList.length + 1
