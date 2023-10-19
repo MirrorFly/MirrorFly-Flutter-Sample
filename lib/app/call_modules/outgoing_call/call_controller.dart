@@ -731,7 +731,7 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
                 isVideoCallRequested = false;
                 inComingRequest = false;
                 closeDialog();
-                Mirrorfly.declineVideoCallSwitchRequest().then((value) => {});
+                Mirrorfly.declineVideoCallSwitchRequest();
               },
               child: const Text("DECLINE")),
           TextButton(
@@ -745,7 +745,10 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
                     callType(CallType.video);
                   });
                 }else{
-                  toToast("Camera Permission Needed to switch the call");
+                  Future.delayed(const Duration(milliseconds:500 ),(){
+                    toToast("Camera Permission Needed to switch the call");
+                  });
+                  Mirrorfly.declineVideoCallSwitchRequest();
                 }
               },
               child: const Text("ACCEPT"))
