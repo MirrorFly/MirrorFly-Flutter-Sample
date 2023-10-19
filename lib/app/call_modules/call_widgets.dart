@@ -9,7 +9,6 @@ import 'package:mirror_fly_demo/app/data/helper.dart';
 import 'package:mirror_fly_demo/app/data/session_management.dart';
 import 'package:mirrorfly_plugin/mirrorfly_view.dart';
 import 'package:mirrorfly_plugin/mirrorflychat.dart';
-import 'package:mirrorfly_plugin/model/user_list_model.dart';
 
 Widget buildProfileImage(Profile item, {double size = 105}) {
   return ImageNetwork(
@@ -221,6 +220,7 @@ Widget buildCallItem(CallController controller) {
       height: 135,
       child: ListView.builder(
           scrollDirection: Axis.horizontal,
+                physics: const AlwaysScrollableScrollPhysics(),
           itemCount: controller.callList.length - 1,
           reverse: controller.callList.length <= 2 ? true : false,
           itemBuilder: (context, index) {
@@ -266,20 +266,24 @@ Widget buildCallItem(CallController controller) {
                                 ),
                               ),
                             ],
-                            if (controller.speakingUsers.isNotEmpty &&
-                                !controller
-                                    .audioLevel(controller.callList[index + 1].userJid)
-                                    .isNegative &&
-                                !controller.muted.value) ...[
-                              Padding(
+                            AnimatedCrossFade(
+                              firstCurve:Curves.fastOutSlowIn,
+                              alignment:Alignment.center,
+                              duration: const Duration(milliseconds: 300),
+                              firstChild: Padding(
                                 padding: const EdgeInsets.only(top: 8.0, bottom: 8.0, left: 4.0),
                                 child: SpeakingDots(
                                   radius: 9,
                                   audioLevel: controller.audioLevel(controller.callList[index + 1].userJid),
                                   bgColor: AppColors.speakingBg,
                                 ),
-                              )
-                            ],
+                              ),
+                              secondChild: const SizedBox.shrink(),
+                              crossFadeState: (controller.speakingUsers.isNotEmpty &&
+                                  !controller
+                                      .audioLevel(controller.callList[index + 1].userJid)
+                                      .isNegative) ? CrossFadeState.showFirst : CrossFadeState.showSecond
+                            )
                           ],
                         ),
                       );
@@ -307,7 +311,6 @@ Widget buildCallItem(CallController controller) {
                             return const SizedBox.shrink();
                           }),
                     ),
-
                     Obx(() {
                       debugPrint("getTileCallStatus ${getTileCallStatus(controller.callList[index + 1].callStatus?.value)}");
                       debugPrint("getUserJID ${controller.callList[index + 1].userJid != SessionManagement.getUserJID()}");
@@ -401,20 +404,24 @@ Widget buildCallItem(CallController controller) {
                                 ),
                               ),
                             ],
-                            if (controller.speakingUsers.isNotEmpty &&
-                                !controller
-                                    .audioLevel(controller.callList[index].userJid)
-                                    .isNegative &&
-                                !controller.muted.value) ...[
-                              Padding(
-                                padding: const EdgeInsets.only(top: 8.0, bottom: 8.0, left: 4.0),
-                                child: SpeakingDots(
-                                  radius: 9,
-                                  audioLevel: controller.audioLevel(controller.callList[index].userJid),
-                                  bgColor: AppColors.speakingBg,
+                            AnimatedCrossFade(
+                                firstCurve:Curves.fastOutSlowIn,
+                                alignment:Alignment.center,
+                                duration: const Duration(milliseconds: 300),
+                                firstChild: Padding(
+                                  padding: const EdgeInsets.only(top: 8.0, bottom: 8.0, left: 4.0),
+                                  child: SpeakingDots(
+                                    radius: 9,
+                                    audioLevel: controller.audioLevel(controller.callList[index].userJid),
+                                    bgColor: AppColors.speakingBg,
+                                  ),
                                 ),
-                              )
-                            ],
+                                secondChild: const SizedBox.shrink(),
+                                crossFadeState: (controller.speakingUsers.isNotEmpty &&
+                                    !controller
+                                        .audioLevel(controller.callList[index].userJid)
+                                        .isNegative) ? CrossFadeState.showFirst : CrossFadeState.showSecond
+                            )
                           ],
                         ),
                       );
@@ -442,7 +449,6 @@ Widget buildCallItem(CallController controller) {
                             return const SizedBox.shrink();
                           }),
                     ),
-
                     Obx(() {
                       debugPrint("getTileCallStatus ${getTileCallStatus(controller.callList[index].callStatus?.value)}");
                       debugPrint("getUserJID ${controller.callList[index].userJid != SessionManagement.getUserJID()}");

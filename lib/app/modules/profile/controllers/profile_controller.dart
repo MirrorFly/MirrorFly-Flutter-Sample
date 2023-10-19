@@ -160,11 +160,14 @@ class ProfileController extends GetxController {
   }
 
   updateProfileImage(String path, {bool update = false}) async {
+    debugPrint("Profile Controller updateProfileImage path $path");
     if(await AppUtils.isNetConnected()) {
       loading.value = true;
+      debugPrint("Profile Controller showing loader");
 
       // if(checkFileUploadSize(path, Constants.mImage)) {
         showLoader();
+      debugPrint("Profile Controller updateMyProfileImage");
         Mirrorfly.updateMyProfileImage(path).then((value) {
           mirrorFlyLog("updateMyProfileImage", value);
           loading.value = false;
@@ -364,14 +367,17 @@ class ProfileController extends GetxController {
         Get.to(CropImage(
           imageFile: File(photo.path),
         ))?.then((value) {
+          debugPrint("Profile Controller Got Image from Crop Image $value");
           value as MemoryImage;
           imageBytes = value.bytes;
           var name = "${DateTime.now().millisecondsSinceEpoch}.jpg";
           writeImageTemp(value.bytes, name).then((value) {
             if (from == Routes.login) {
+              debugPrint("Profile Controller from login");
               imagePath(value.path);
               changed(true);
             } else {
+              debugPrint("Profile Controller not from login");
               imagePath(value.path);
               // changed(true);
               updateProfileImage(value.path, update: false);

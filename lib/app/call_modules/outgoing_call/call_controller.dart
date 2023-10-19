@@ -352,7 +352,7 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
     } else {
       debugPrint("#Mirrorflycall participant jid is not in the list");
     }
-    if (callList.length <= 1) {
+    if (callList.length <= 1 || userJid == SessionManagement.getUserJID()) {
       isCallTimerEnabled = false;
       // if there is an single user in that call and if he [disconnected] no need to disconnect the call from our side Observed in Android
       if (Platform.isIOS || isGroupCall) {
@@ -377,11 +377,13 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
 
   Future<void> remoteBusy(String callMode, String userJid, String callType, String callAction) async {
     //in Android, showing this user is busy toast inside SDK
-    if (Platform.isIOS && callList.length > 2){
-      var data = await getProfileDetails(userJid);
-      toToast("${data.getName()} is Busy");
-    }else{
-      toToast("User is Busy");
+    if(Platform.isIOS) {
+      if (callList.length > 2) {
+        var data = await getProfileDetails(userJid);
+        toToast("${data.getName()} is Busy");
+      } else {
+        toToast("User is Busy");
+      }
     }
 
     this.callMode(callMode);
@@ -393,10 +395,11 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
 
   }
 
-  void remoteOtherBusy(String callMode, String userJid, String callType, String callAction) {
-    this.callMode(callMode);
+  Future<void> remoteOtherBusy(String callMode, String userJid, String callType, String callAction) async {
+    // this.callMode(callMode);
     //remove the user from the list and update ui
-    users.remove(userJid);//out going call view
+    // users.remove(userJid);//out going call view
+    remoteBusy(callMode, userJid, callType, callAction);
   }
 
   void localHangup(String callMode, String userJid, String callType, String callAction) {
@@ -567,7 +570,9 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
       var data = await getProfileDetails(userJid);
       toToast(data.getName() + Constants.remoteEngagedToast);
     }
-    if(callList.length <= 2){
+    debugPrint("***call list length ${callList.length}");
+//The below condition (<= 2) -> (<2) is changed for Group call, to maintain the call to continue if there is a 2 users in call
+    if(callList.length < 2){
       disconnectOutgoingCall();
     }else{
       removeUser(callMode, userJid, callType);
@@ -729,7 +734,7 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
                 isVideoCallRequested = false;
                 inComingRequest = false;
                 closeDialog();
-                Mirrorfly.declineVideoCallSwitchRequest().then((value) => {});
+                Mirrorfly.declineVideoCallSwitchRequest();
               },
               child: const Text("DECLINE")),
           TextButton(
@@ -743,7 +748,10 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
                     callType(CallType.video);
                   });
                 }else{
-                  toToast("Camera Permission Needed to switch the call");
+                  Future.delayed(const Duration(milliseconds:500 ),(){
+                    toToast("Camera Permission Needed to switch the call");
+                  });
+                  Mirrorfly.declineVideoCallSwitchRequest();
                 }
               },
               child: const Text("ACCEPT"))

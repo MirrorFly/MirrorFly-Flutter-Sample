@@ -35,13 +35,15 @@ class CallTimeoutView extends GetView<CallTimeoutController> {
                     Obx(() {
                       return Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 30.0),
-                          child: FutureBuilder(future:CallUtils.getCallersName(controller.users),builder: (ctx,snap) {
-                            return snap.hasData && snap.data!=null ? Text(
-                              snap.data!, //controller.calleeNames.length>3 ? "${controller.calleeNames.take(3).join(",")} and (+${controller.calleeNames.length - 3 })" : controller.calleeNames.join(","),
+                          child: FutureBuilder(future: CallUtils.getCallersName(controller.users), builder: (ctx, snap) {
+                            return snap.hasData && snap.data != null ? Text(
+                              snap.data!,
+                              //controller.calleeNames.length>3 ? "${controller.calleeNames.take(3).join(",")} and (+${controller.calleeNames.length - 3 })" : controller.calleeNames.join(","),
                               style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w500, fontSize: 18)
                               ,
                               overflow: TextOverflow.ellipsis,) : const SizedBox.shrink();
-                          }));}),
+                          }));
+                    }),
                     const SizedBox(
                       height: 16,
                     ),
@@ -93,47 +95,61 @@ class CallTimeoutView extends GetView<CallTimeoutController> {
                       .width,
                   child: Padding(
                     padding: const EdgeInsets.symmetric(vertical: 20.0, horizontal: 40),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        GestureDetector(
-                          onTap: () => controller.cancelCallTimeout(),
-                          child: Column(
+                    child: Obx(() {
+                      return Column(
+                        children: [
+                          if(controller.users.length > 1) ...[const Text(Constants.callTimeoutMessage, style: TextStyle(color: Colors.white),),],
+                          if(controller.users.length > 1) ...[const SizedBox(height: 20,),],
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              FloatingActionButton(
-                                heroTag: "cancelTimeout",
-                                elevation: 0,
-                                backgroundColor: Colors.white,
-                                onPressed: () { controller.cancelCallTimeout(); },
-                                child: SvgPicture.asset(callCancel),
+                              GestureDetector(
+                                onTap: () => controller.cancelCallTimeout(),
+                                child: Column(
+                                  children: [
+                                    FloatingActionButton(
+                                      heroTag: "cancelTimeout",
+                                      elevation: 0,
+                                      backgroundColor: Colors.white,
+                                      onPressed: () {
+                                        controller.cancelCallTimeout();
+                                      },
+                                      child: SvgPicture.asset(callCancel),
+                                    ),
+                                    const SizedBox(height: 13,),
+                                    const Text(Constants.cancel, style: TextStyle(
+                                        fontSize: 12, color: Colors.white))
+                                  ],
+                                ),
                               ),
-                              const SizedBox(height: 13,),
-                              const Text(Constants.cancel, style: TextStyle(
-                                  fontSize: 12, color: Colors.white))
+                              GestureDetector(
+                                onTap: () => controller.callAgain(),
+                                child: Column(
+                                  children: [
+                                    Obx(() {
+                                      return FloatingActionButton(
+                                        heroTag: "callAgain",
+                                        elevation: 0,
+                                        backgroundColor: AppColors.callAgainButtonBackground,
+                                        onPressed: () {
+                                          controller.callAgain();
+                                        },
+                                        child: controller.callType.value == Constants.audioCall ?
+                                        SvgPicture.asset(audioCallAgain) : SvgPicture
+                                            .asset(videoCallAgain),
+                                      );
+                                    }),
+                                    const SizedBox(height: 13,),
+                                    const Text(Constants.callAgain, style: TextStyle(
+                                        fontSize: 12, color: Colors.white))
+                                  ],
+                                ),
+                              )
                             ],
                           ),
-                        ),
-                        GestureDetector(
-                          onTap: () => controller.callAgain(),
-                          child: Column(
-                            children: [
-                              FloatingActionButton(
-                                heroTag: "callAgain",
-                                elevation: 0,
-                                backgroundColor: AppColors.callAgainButtonBackground,
-                                onPressed: () { controller.callAgain(); },
-                                child: controller.callType.value == Constants.audioCall ?
-                                SvgPicture.asset(audioCallAgain) : SvgPicture
-                                    .asset(videoCallAgain),
-                              ),
-                              const SizedBox(height: 13,),
-                              const Text(Constants.callAgain, style: TextStyle(
-                                  fontSize: 12, color: Colors.white))
-                            ],
-                          ),
-                        )
-                      ],
-                    ),
+                        ],
+                      );
+                    }),
                   ),
                 ),
               )

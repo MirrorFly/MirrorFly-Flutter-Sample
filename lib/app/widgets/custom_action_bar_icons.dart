@@ -133,7 +133,10 @@ class _CustomActionBarIconsState extends State<CustomActionBarIcons> with Widget
                   for (CustomAction customAction in overflow)
                     PopupMenuItem(
                       value: customAction.keyValue,
-                      onTap: customAction.onItemClick,
+                      onTap: () {
+                        _context=null;
+                        customAction.onItemClick();
+                      },
                       child: customAction.overflowWidget,
                     )
                 ];
