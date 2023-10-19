@@ -19,17 +19,17 @@ Widget buildProfileImage(Profile item, {double size = 105}) {
     clipOval: true,
     errorWidget: item.isGroupProfile.checkNull()
         ? ClipOval(
-      child: Image.asset(
-        groupImg,
-        height: 48,
-        width: 48,
-        fit: BoxFit.cover,
-      ),
-    )
+            child: Image.asset(
+              groupImg,
+              height: 48,
+              width: 48,
+              fit: BoxFit.cover,
+            ),
+          )
         : ProfileTextImage(
-      text: item.getName(),
-      radius: size / 2,
-    ),
+            text: item.getName(),
+            radius: size / 2,
+          ),
     isGroup: item.isGroupProfile.checkNull(),
     blocked: item.isBlockedMe.checkNull() || item.isAdminBlocked.checkNull(),
     unknown: (!item.isItSavedContact.checkNull() || item.isDeletedContact()),
@@ -218,270 +218,273 @@ Widget buildCallItem(CallController controller) {
   return Obx(() {
     return controller.layoutSwitch.value
         ? SizedBox(
-      height: 135,
-      child: ListView.builder(
-          scrollDirection: Axis.horizontal,
-          itemCount: controller.callList.length - 1,
-          reverse: controller.callList.length <= 2 ? true : false,
-          itemBuilder: (context, index) {
-            debugPrint(
-                "ListBuilder ${controller.callList.length} userJid ${controller.callList[index].userJid} pinned ${controller.pinnedUserJid.value}");
-            return controller.callList[index + 1].userJid != controller.pinnedUserJid.value
-                ? Container(
-                height: 135,
-                width: 100,
-                margin: const EdgeInsets.only(left: 10),
-                child: Stack(
-                  children: [
-                    MirrorFlyView(
-                      key: UniqueKey(),
-                      userJid: controller.callList[index + 1].userJid ?? "",
-                      viewBgColor: AppColors.callerTitleBackground,
-                      profileSize: 50,
-                    ).setBorderRadius(const BorderRadius.all(Radius.circular(10))),
-                    Obx(() {
-                      return Positioned(
-                        top: 0,
-                        right: 8,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            SizedBox(
-                              width: 20,
-                              child: CircleAvatar(
-                                backgroundColor: AppColors.audioMutedIconBgColor,
-                                child: SvgPicture.asset(unpinUser),
-                              ),
-                            ),
-                            if (controller.callList[index + 1].isAudioMuted.value) ...[
-                              Padding(
-                                padding: const EdgeInsets.only(left: 4.0),
-                                child: SizedBox(
-                                  width: 20,
-                                  child: CircleAvatar(
-                                    backgroundColor: AppColors.audioMutedIconBgColor,
-                                    child: SvgPicture.asset(callMutedIcon),
+            height: 135,
+            child: ListView.builder(
+                scrollDirection: Axis.horizontal,
+                physics: const AlwaysScrollableScrollPhysics(),
+                itemCount: controller.callList.length - 1,
+                reverse: controller.callList.length <= 2 ? true : false,
+                itemBuilder: (context, index) {
+                  debugPrint(
+                      "ListBuilder ${controller.callList.length} userJid ${controller.callList[index].userJid} pinned ${controller.pinnedUserJid.value}");
+                  return controller.callList[index + 1].userJid != controller.pinnedUserJid.value
+                      ? Container(
+                          height: 135,
+                          width: 100,
+                          margin: const EdgeInsets.only(left: 10),
+                          child: Stack(
+                            children: [
+                              MirrorFlyView(
+                                key: UniqueKey(),
+                                userJid: controller.callList[index + 1].userJid ?? "",
+                                viewBgColor: AppColors.callerTitleBackground,
+                                profileSize: 50,
+                              ).setBorderRadius(const BorderRadius.all(Radius.circular(10))),
+                              Obx(() {
+                                return Positioned(
+                                  top: 0,
+                                  right: 8,
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    crossAxisAlignment: CrossAxisAlignment.center,
+                                    children: [
+                                      SizedBox(
+                                        width: 20,
+                                        child: CircleAvatar(
+                                          backgroundColor: AppColors.audioMutedIconBgColor,
+                                          child: SvgPicture.asset(unpinUser),
+                                        ),
+                                      ),
+                                      if (controller.callList[index + 1].isAudioMuted.value) ...[
+                                        Padding(
+                                          padding: const EdgeInsets.only(left: 4.0),
+                                          child: SizedBox(
+                                            width: 20,
+                                            child: CircleAvatar(
+                                              backgroundColor: AppColors.audioMutedIconBgColor,
+                                              child: SvgPicture.asset(callMutedIcon),
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                      if (controller.speakingUsers.isNotEmpty &&
+                                          !controller.audioLevel(controller.callList[index + 1].userJid).isNegative &&
+                                          !controller.muted.value) ...[
+                                        Padding(
+                                          padding: const EdgeInsets.only(top: 8.0, bottom: 8.0, left: 4.0),
+                                          child: SpeakingDots(
+                                            radius: 9,
+                                            audioLevel: controller.audioLevel(controller.callList[index + 1].userJid),
+                                            bgColor: AppColors.speakingBg,
+                                          ),
+                                        )
+                                      ],
+                                    ],
                                   ),
-                                ),
+                                );
+                              }),
+                              Positioned(
+                                left: 8,
+                                bottom: 8,
+                                right: 8,
+                                child: FutureBuilder<String>(
+                                    future: CallUtils.getNameOfJid(controller.callList[index + 1].userJid.checkNull()),
+                                    builder: (context, snapshot) {
+                                      if (!snapshot.hasError && snapshot.data.checkNull().isNotEmpty) {
+                                        return Text(
+                                          snapshot.data.checkNull(),
+                                          style: const TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 14,
+                                          ),
+                                          overflow: TextOverflow.ellipsis,
+                                          maxLines: 1,
+                                        );
+                                      }
+                                      return const SizedBox.shrink();
+                                    }),
                               ),
-                            ],
-                            if (controller.speakingUsers.isNotEmpty &&
-                                !controller
-                                    .audioLevel(controller.callList[index + 1].userJid)
-                                    .isNegative &&
-                                !controller.muted.value) ...[
-                              Padding(
-                                padding: const EdgeInsets.only(top: 8.0, bottom: 8.0, left: 4.0),
-                                child: SpeakingDots(
-                                  radius: 9,
-                                  audioLevel: controller.audioLevel(controller.callList[index + 1].userJid),
-                                  bgColor: AppColors.speakingBg,
-                                ),
-                              )
-                            ],
-                          ],
-                        ),
-                      );
-                    }),
-                    Positioned(
-                      left: 8,
-                      bottom: 8,
-                      right: 8,
-                      child: FutureBuilder<String>(
-                          future: CallUtils.getNameOfJid(controller.callList[index + 1].userJid.checkNull()),
-                          builder: (context, snapshot) {
-                            if (!snapshot.hasError && snapshot.data
-                                .checkNull()
-                                .isNotEmpty) {
-                              return Text(
-                                snapshot.data.checkNull(),
-                                style: const TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 14,
-                                ),
-                                overflow: TextOverflow.ellipsis,
-                                maxLines: 1,
-                              );
-                            }
-                            return const SizedBox.shrink();
-                          }),
-                    ),
-
-                    Obx(() {
-                      debugPrint("getTileCallStatus ${getTileCallStatus(controller.callList[index + 1].callStatus?.value)}");
-                      debugPrint("getUserJID ${controller.callList[index + 1].userJid != SessionManagement.getUserJID()}");
-                      return (getTileCallStatus(controller.callList[index + 1].callStatus?.value) != "" &&
-                          controller.callList[index + 1].userJid != SessionManagement.getUserJID()) ? Container(
-                        decoration: BoxDecoration(
-                          color: Colors.black.withOpacity(0.5), // Adjust the color and opacity as needed
-                          borderRadius: BorderRadius.circular(10.0),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withOpacity(0.3),
-                              blurRadius: 8,
-                              offset: const Offset(0, 3),
-                            ),
-                          ],
-                        ),
-                        width: 100,
-                        height: 135,
-                      ) : const SizedBox.shrink();
-                    }),
-                    Obx(() {
-                      return controller.callList.isNotEmpty ? (getTileCallStatus(controller.callList[index + 1].callStatus?.value) != "" &&
-                          controller.callList[index + 1].userJid != SessionManagement.getUserJID()) ? Center(
-                          child: Text(
-                            getTileCallStatus(controller.callList[index + 1].callStatus?.value),
-                            style: const TextStyle(color: Colors.white),
-                          )): const SizedBox.shrink() : const SizedBox.shrink();
-                    }),
-                    /*Obx(() {
+                              Obx(() {
+                                debugPrint("getTileCallStatus ${getTileCallStatus(controller.callList[index + 1].callStatus?.value)}");
+                                debugPrint("getUserJID ${controller.callList[index + 1].userJid != SessionManagement.getUserJID()}");
+                                return (getTileCallStatus(controller.callList[index + 1].callStatus?.value) != "" &&
+                                        controller.callList[index + 1].userJid != SessionManagement.getUserJID())
+                                    ? Container(
+                                        decoration: BoxDecoration(
+                                          color: Colors.black.withOpacity(0.5), // Adjust the color and opacity as needed
+                                          borderRadius: BorderRadius.circular(10.0),
+                                          boxShadow: [
+                                            BoxShadow(
+                                              color: Colors.black.withOpacity(0.3),
+                                              blurRadius: 8,
+                                              offset: const Offset(0, 3),
+                                            ),
+                                          ],
+                                        ),
+                                        width: 100,
+                                        height: 135,
+                                      )
+                                    : const SizedBox.shrink();
+                              }),
+                              Obx(() {
+                                return controller.callList.isNotEmpty
+                                    ? (getTileCallStatus(controller.callList[index + 1].callStatus?.value) != "" &&
+                                            controller.callList[index + 1].userJid != SessionManagement.getUserJID())
+                                        ? Center(
+                                            child: Text(
+                                            getTileCallStatus(controller.callList[index + 1].callStatus?.value),
+                                            style: const TextStyle(color: Colors.white),
+                                          ))
+                                        : const SizedBox.shrink()
+                                    : const SizedBox.shrink();
+                              }),
+                              /*Obx(() {
                       return (controller.callList[index].callStatus==CallStatus.ringing) ?
                       Container(color: AppColors.transBlack75, child: Center(
                         child: Text(controller.callList[index].callStatus.toString(), style: const TextStyle(color: Colors.white),),),) : const SizedBox.shrink();
                     })*/
-                  ],
-                ))
-                : const SizedBox.shrink();
-          }),
-    )
+                            ],
+                          ))
+                      : const SizedBox.shrink();
+                }),
+          )
         : Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        GridView.builder(
-          scrollDirection: Axis.vertical,
-          shrinkWrap: true,
-          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: controller.callList.length > 2 ? 2 : 1, // number of items in each row
-            mainAxisSpacing: 8.0, // spacing between rows
-            crossAxisSpacing: 2.0, // spacing between columns
-          ),
-          padding: const EdgeInsets.all(8.0),
-          // padding around the grid
-          itemCount: controller.callList.length,
-          // total number of items
-          itemBuilder: (context, index) {
-            return Container(
-                height: 160,
-                width: 160,
-                margin: const EdgeInsets.only(left: 10),
-                child: Stack(
-                  children: [
-                    MirrorFlyView(
-                      key: UniqueKey(),
-                      userJid: controller.callList[index].userJid ?? "",
-                      viewBgColor: AppColors.callerTitleBackground,
-                      profileSize: 60,
-                    ).setBorderRadius(const BorderRadius.all(Radius.circular(10))),
-                    Obx(() {
-                      return Positioned(
-                        top: 0,
-                        right: 8,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            SizedBox(
-                              width: 20,
-                              child: CircleAvatar(
-                                backgroundColor: AppColors.audioMutedIconBgColor,
-                                child: SvgPicture.asset(unpinUser),
-                              ),
-                            ),
-                            if (controller.callList[index].isAudioMuted.value) ...[
-                              Padding(
-                                padding: const EdgeInsets.only(left: 4.0),
-                                child: SizedBox(
-                                  width: 20,
-                                  child: CircleAvatar(
-                                    backgroundColor: AppColors.audioMutedIconBgColor,
-                                    child: SvgPicture.asset(callMutedIcon),
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              GridView.builder(
+                scrollDirection: Axis.vertical,
+                shrinkWrap: true,
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: controller.callList.length > 2 ? 2 : 1, // number of items in each row
+                  mainAxisSpacing: 8.0, // spacing between rows
+                  crossAxisSpacing: 2.0, // spacing between columns
+                ),
+                padding: const EdgeInsets.all(8.0),
+                // padding around the grid
+                itemCount: controller.callList.length,
+                // total number of items
+                itemBuilder: (context, index) {
+                  return Container(
+                      height: 160,
+                      width: 160,
+                      margin: const EdgeInsets.only(left: 10),
+                      child: Stack(
+                        children: [
+                          MirrorFlyView(
+                            key: UniqueKey(),
+                            userJid: controller.callList[index].userJid ?? "",
+                            viewBgColor: AppColors.callerTitleBackground,
+                            profileSize: 60,
+                          ).setBorderRadius(const BorderRadius.all(Radius.circular(10))),
+                          Obx(() {
+                            return Positioned(
+                              top: 0,
+                              right: 8,
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  SizedBox(
+                                    width: 20,
+                                    child: CircleAvatar(
+                                      backgroundColor: AppColors.audioMutedIconBgColor,
+                                      child: SvgPicture.asset(unpinUser),
+                                    ),
                                   ),
-                                ),
+                                  if (controller.callList[index].isAudioMuted.value) ...[
+                                    Padding(
+                                      padding: const EdgeInsets.only(left: 4.0),
+                                      child: SizedBox(
+                                        width: 20,
+                                        child: CircleAvatar(
+                                          backgroundColor: AppColors.audioMutedIconBgColor,
+                                          child: SvgPicture.asset(callMutedIcon),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                  if (controller.speakingUsers.isNotEmpty &&
+                                      !controller.audioLevel(controller.callList[index].userJid).isNegative &&
+                                      !controller.muted.value) ...[
+                                    Padding(
+                                      padding: const EdgeInsets.only(top: 8.0, bottom: 8.0, left: 4.0),
+                                      child: SpeakingDots(
+                                        radius: 9,
+                                        audioLevel: controller.audioLevel(controller.callList[index].userJid),
+                                        bgColor: AppColors.speakingBg,
+                                      ),
+                                    )
+                                  ],
+                                ],
                               ),
-                            ],
-                            if (controller.speakingUsers.isNotEmpty &&
-                                !controller
-                                    .audioLevel(controller.callList[index].userJid)
-                                    .isNegative &&
-                                !controller.muted.value) ...[
-                              Padding(
-                                padding: const EdgeInsets.only(top: 8.0, bottom: 8.0, left: 4.0),
-                                child: SpeakingDots(
-                                  radius: 9,
-                                  audioLevel: controller.audioLevel(controller.callList[index].userJid),
-                                  bgColor: AppColors.speakingBg,
-                                ),
-                              )
-                            ],
-                          ],
-                        ),
-                      );
-                    }),
-                    Positioned(
-                      left: 8,
-                      bottom: 8,
-                      right: 8,
-                      child: FutureBuilder<String>(
-                          future: CallUtils.getNameOfJid(controller.callList[index].userJid.checkNull()),
-                          builder: (context, snapshot) {
-                            if (!snapshot.hasError && snapshot.data
-                                .checkNull()
-                                .isNotEmpty) {
-                              return Text(
-                                snapshot.data.checkNull(),
-                                style: const TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 14,
-                                ),
-                                overflow: TextOverflow.ellipsis,
-                                maxLines: 1,
-                              );
-                            }
-                            return const SizedBox.shrink();
+                            );
                           }),
-                    ),
-
-                    Obx(() {
-                      debugPrint("getTileCallStatus ${getTileCallStatus(controller.callList[index].callStatus?.value)}");
-                      debugPrint("getUserJID ${controller.callList[index].userJid != SessionManagement.getUserJID()}");
-                      return (getTileCallStatus(controller.callList[index].callStatus?.value) != "" &&
-                          controller.callList[index].userJid != SessionManagement.getUserJID()) ? Positioned.fill(
-                            child: Container(
-                        decoration: BoxDecoration(
-                            color: Colors.black.withOpacity(0.5), // Adjust the color and opacity as needed
-                            borderRadius: BorderRadius.circular(10.0),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withOpacity(0.3),
-                                blurRadius: 8,
-                                offset: const Offset(0, 3),
-                              ),
-                            ],
-                        ),
-                      ),
-                          ) : const SizedBox.shrink();
-                    }),
-                    Obx(() {
-                      return controller.callList.isNotEmpty ? (getTileCallStatus(controller.callList[index].callStatus?.value) != "" &&
-                          controller.callList[index].userJid != SessionManagement.getUserJID()) ? Center(
-                          child: Text(
-                            getTileCallStatus(controller.callList[index].callStatus?.value),
-                            style: const TextStyle(color: Colors.white),
-                          )): const SizedBox.shrink() : const SizedBox.shrink();
-                    }),
-                    /*Obx(() {
+                          Positioned(
+                            left: 8,
+                            bottom: 8,
+                            right: 8,
+                            child: FutureBuilder<String>(
+                                future: CallUtils.getNameOfJid(controller.callList[index].userJid.checkNull()),
+                                builder: (context, snapshot) {
+                                  if (!snapshot.hasError && snapshot.data.checkNull().isNotEmpty) {
+                                    return Text(
+                                      snapshot.data.checkNull(),
+                                      style: const TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 14,
+                                      ),
+                                      overflow: TextOverflow.ellipsis,
+                                      maxLines: 1,
+                                    );
+                                  }
+                                  return const SizedBox.shrink();
+                                }),
+                          ),
+                          Obx(() {
+                            debugPrint("getTileCallStatus ${getTileCallStatus(controller.callList[index].callStatus?.value)}");
+                            debugPrint("getUserJID ${controller.callList[index].userJid != SessionManagement.getUserJID()}");
+                            return (getTileCallStatus(controller.callList[index].callStatus?.value) != "" &&
+                                    controller.callList[index].userJid != SessionManagement.getUserJID())
+                                ? Positioned.fill(
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                        color: Colors.black.withOpacity(0.5), // Adjust the color and opacity as needed
+                                        borderRadius: BorderRadius.circular(10.0),
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color: Colors.black.withOpacity(0.3),
+                                            blurRadius: 8,
+                                            offset: const Offset(0, 3),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  )
+                                : const SizedBox.shrink();
+                          }),
+                          Obx(() {
+                            return controller.callList.isNotEmpty
+                                ? (getTileCallStatus(controller.callList[index].callStatus?.value) != "" &&
+                                        controller.callList[index].userJid != SessionManagement.getUserJID())
+                                    ? Center(
+                                        child: Text(
+                                        getTileCallStatus(controller.callList[index].callStatus?.value),
+                                        style: const TextStyle(color: Colors.white),
+                                      ))
+                                    : const SizedBox.shrink()
+                                : const SizedBox.shrink();
+                          }),
+                          /*Obx(() {
                       return (controller.callList[index].callStatus==CallStatus.ringing) ?
                         Container(color: AppColors.transBlack75, child: Center(
                         child: Text(controller.callList[index].callStatus.toString(),style: const TextStyle(color: Colors.white)),),) : const SizedBox.shrink();
                     })*/
-                  ],
-                ));
-          },
-        ),
-      ],
-    );
+                        ],
+                      ));
+                },
+              ),
+            ],
+          );
   });
 }
 
