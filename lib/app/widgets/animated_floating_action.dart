@@ -70,7 +70,7 @@ class _AnimatedFloatingActionState extends State<AnimatedFloatingAction>
     if (!isOpened) {
       _animationController.forward();
     } else {
-      _animationController.reverse();
+      _animationController.reset();
     }
     isOpened = !isOpened;
   }
