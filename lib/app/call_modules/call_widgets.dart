@@ -220,6 +220,7 @@ Widget buildCallItem(CallController controller) {
       height: 135,
       child: ListView.builder(
           scrollDirection: Axis.horizontal,
+                physics: const AlwaysScrollableScrollPhysics(),
           itemCount: controller.callList.length - 1,
           reverse: controller.callList.length <= 2 ? true : false,
           itemBuilder: (context, index) {
@@ -310,7 +311,6 @@ Widget buildCallItem(CallController controller) {
                             return const SizedBox.shrink();
                           }),
                     ),
-
                     Obx(() {
                       debugPrint("getTileCallStatus ${getTileCallStatus(controller.callList[index + 1].callStatus?.value)}");
                       debugPrint("getUserJID ${controller.callList[index + 1].userJid != SessionManagement.getUserJID()}");
@@ -449,7 +449,6 @@ Widget buildCallItem(CallController controller) {
                             return const SizedBox.shrink();
                           }),
                     ),
-
                     Obx(() {
                       debugPrint("getTileCallStatus ${getTileCallStatus(controller.callList[index].callStatus?.value)}");
                       debugPrint("getUserJID ${controller.callList[index].userJid != SessionManagement.getUserJID()}");
