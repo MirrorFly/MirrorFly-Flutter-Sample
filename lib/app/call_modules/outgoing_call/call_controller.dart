@@ -337,7 +337,10 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
 
   void callDisconnected(String callMode, String userJid, String callType) {
     this.callMode(callMode);
-
+    if(Get.currentRoute==Routes.outGoingCallView){
+      Get.back();
+      return;
+    }
     debugPrint("#Mirrorfly call call disconnect called ${callList.length}");
     debugPrint("#Mirrorfly call call disconnect called ${callList.toJson()}");
     if (callList.isEmpty) {
