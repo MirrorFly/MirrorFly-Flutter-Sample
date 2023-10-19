@@ -95,13 +95,16 @@ class OutGoingCallView extends GetView<CallController> {
                         ) : Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: List.generate(
-                              controller.users.length > 3 ? 4 : controller.users.length, (index) =>
-                          (index == 3) ? ProfileTextImage(
-                            text: "+${controller.users.length - 3}",
-                            radius: 45 / 2,
-                            bgColor: Colors.white,
-                            fontColor: Colors.grey,
-                          ) : FutureBuilder(future: getProfileDetails(controller.users[index]!), builder: (ctx, snap) {
+                              controller.users.length+1 > 3 ? 4 : controller.users.length+1, (index) =>
+                          (index == 3) ? Padding(
+                            padding: const EdgeInsets.all(2.0),
+                            child: ProfileTextImage(
+                              text: "+${(controller.users.length+1) - 3}",
+                              radius: 45 / 2,
+                              bgColor: Colors.white,
+                              fontColor: Colors.grey,
+                            ),
+                          ) : FutureBuilder(future: getProfileDetails(index==0 ? SessionManagement.getUserJID().checkNull() : controller.users[index-1]!), builder: (ctx, snap) {
                             return snap.hasData && snap.data != null ? Padding(
                               padding: const EdgeInsets.all(2.0),
                               child: buildProfileImage(snap.data!, size: 45),
