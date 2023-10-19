@@ -377,11 +377,13 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
 
   Future<void> remoteBusy(String callMode, String userJid, String callType, String callAction) async {
     //in Android, showing this user is busy toast inside SDK
-    if (Platform.isIOS && callList.length > 2){
-      var data = await getProfileDetails(userJid);
-      toToast("${data.getName()} is Busy");
-    }else{
-      toToast("User is Busy");
+    if(Platform.isIOS) {
+      if (callList.length > 2) {
+        var data = await getProfileDetails(userJid);
+        toToast("${data.getName()} is Busy");
+      } else {
+        toToast("User is Busy");
+      }
     }
 
     this.callMode(callMode);
@@ -393,10 +395,11 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
 
   }
 
-  void remoteOtherBusy(String callMode, String userJid, String callType, String callAction) {
-    this.callMode(callMode);
+  Future<void> remoteOtherBusy(String callMode, String userJid, String callType, String callAction) async {
+    // this.callMode(callMode);
     //remove the user from the list and update ui
-    users.remove(userJid);//out going call view
+    // users.remove(userJid);//out going call view
+    remoteBusy(callMode, userJid, callType, callAction);
   }
 
   void localHangup(String callMode, String userJid, String callType, String callAction) {
