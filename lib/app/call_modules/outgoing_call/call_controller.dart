@@ -61,6 +61,7 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
   @override
   Future<void> onInit() async {
     super.onInit();
+
     tabController = TabController(length: 2, vsync: this);
     // SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersive);
     debugPrint("#Mirrorfly Call Controller onInit");
@@ -157,7 +158,6 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
       }
     }
   }
-
 
   muteAudio() async {
     debugPrint("#Mirrorfly muteAudio ${muted.value}");
@@ -338,7 +338,10 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
   void callDisconnected(String callMode, String userJid, String callType) {
     this.callMode(callMode);
     if(Get.currentRoute==Routes.outGoingCallView){
-      Get.back();
+      // This if condition is added for the group call remote busy - call action
+      if(callList.length < 2){
+        Get.back();
+      }
       return;
     }
     debugPrint("#Mirrorfly call call disconnect called ${callList.length}");
@@ -390,7 +393,8 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
     }
 
     this.callMode(callMode);
-    if(callList.length <= 2){
+    debugPrint("onCallAction CallList Length ${callList.length}");
+    if(callList.length < 2){
       disconnectOutgoingCall();
     }else{
       removeUser(callMode, userJid, callType);
