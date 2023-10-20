@@ -21,6 +21,18 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
   final RxBool cameraSwitch = false.obs;
   final RxBool videoMuted = false.obs;
   final RxBool layoutSwitch = true.obs;
+  final RxDouble swapViewHeight = 135.0.obs;
+
+  late RxDouble publisherHeight = 0.0.obs;
+  late RxDouble publisherWidth = 0.0.obs;
+
+  RxDouble subscriberHeight = 135.0.obs;
+  RxDouble subscriberWidth = 100.0.obs;
+
+  final RxBool isSwapped = false.obs;
+
+
+
 
   var callTimer = '00:00'.obs;
 
@@ -61,6 +73,7 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
   @override
   Future<void> onInit() async {
     super.onInit();
+
     tabController = TabController(length: 2, vsync: this);
     // SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersive);
     debugPrint("#Mirrorfly Call Controller onInit");
@@ -157,7 +170,6 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
       }
     }
   }
-
 
   muteAudio() async {
     debugPrint("#Mirrorfly muteAudio ${muted.value}");
@@ -338,7 +350,10 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
   void callDisconnected(String callMode, String userJid, String callType) {
     this.callMode(callMode);
     if(Get.currentRoute==Routes.outGoingCallView){
-      Get.back();
+      // This if condition is added for the group call remote busy - call action
+      if(callList.length < 2){
+        Get.back();
+      }
       return;
     }
     debugPrint("#Mirrorfly call call disconnect called ${callList.length}");
@@ -390,7 +405,8 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
     }
 
     this.callMode(callMode);
-    if(callList.length <= 2){
+    debugPrint("onCallAction CallList Length ${callList.length}");
+    if(callList.length < 2){
       disconnectOutgoingCall();
     }else{
       removeUser(callMode, userJid, callType);
@@ -848,5 +864,6 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
     }
     callDisconnected(callMode, userJid, callType);
     getNames();
+
   }
 }
