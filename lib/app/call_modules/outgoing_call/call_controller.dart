@@ -21,6 +21,18 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
   final RxBool cameraSwitch = false.obs;
   final RxBool videoMuted = false.obs;
   final RxBool layoutSwitch = true.obs;
+  final RxDouble swapViewHeight = 135.0.obs;
+
+  late RxDouble publisherHeight = 0.0.obs;
+  late RxDouble publisherWidth = 0.0.obs;
+
+  RxDouble subscriberHeight = 135.0.obs;
+  RxDouble subscriberWidth = 100.0.obs;
+
+  final RxBool isSwapped = false.obs;
+
+
+
 
   var callTimer = '00:00'.obs;
 
@@ -852,5 +864,6 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
     }
     callDisconnected(callMode, userJid, callType);
     getNames();
+
   }
 }
