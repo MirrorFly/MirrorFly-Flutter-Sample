@@ -47,7 +47,7 @@ class OnGoingCallView extends GetView<CallController> {
                             child: Column(
                               mainAxisSize: MainAxisSize.min,
                               children: [
-                                controller.callStatus.contains(CallStatus.reconnecting) && controller.layoutSwitch.value
+                                /*(controller.callStatus.contains(CallStatus.reconnecting) || controller.callStatus.contains(CallStatus.ringing)) && controller.layoutSwitch.value
                                     ? const Text(
                                         "${CallStatus.reconnecting}...",
                                         style: TextStyle(color: Colors.white),
@@ -56,16 +56,26 @@ class OnGoingCallView extends GetView<CallController> {
                                         ? const Text(
                                             CallStatus.onHold,
                                             style: TextStyle(color: Colors.white),
-                                          ):  const SizedBox.shrink(),
-                                if (controller.callStatus.contains(CallStatus.reconnecting) || controller.callStatus.contains(CallStatus.onHold))...[
-                                    const SizedBox(
-                                        height: 10,
-                                      )],
-                                if(controller.callList.length > 1 && controller.callList[0].isAudioMuted.value && controller.layoutSwitch.value)...[
-                                    CircleAvatar(
-                                        backgroundColor: AppColors.audioMutedIconBgColor,
-                                        child: SvgPicture.asset(callMutedIcon),
-                                      )],
+                                          ):  const SizedBox.shrink(),*/
+                                if (controller.callList.length > 1 &&
+                                    getTileCallStatus(controller.callList[0].callStatus?.value).isNotEmpty &&
+                                    controller.layoutSwitch.value) ...[
+                                  Text(
+                                    getTileCallStatus(controller.callList[0].callStatus?.value),
+                                    style: const TextStyle(color: Colors.white),
+                                  ),
+                                  const SizedBox(
+                                    height: 10,
+                                  )
+                                ],
+                                if (controller.callList.length > 1 &&
+                                    controller.callList[0].isAudioMuted.value &&
+                                    controller.layoutSwitch.value) ...[
+                                  CircleAvatar(
+                                    backgroundColor: AppColors.audioMutedIconBgColor,
+                                    child: SvgPicture.asset(callMutedIcon),
+                                  )
+                                ],
                               ],
                             ));
                       }),
@@ -86,8 +96,16 @@ class OnGoingCallView extends GetView<CallController> {
                         curve: Curves.easeInOut,
                         left: 0,
                         right: 10,
-                        bottom: controller.layoutSwitch.value ? controller.isVisible.value ? 200 : 0 : null,
-                        top: controller.layoutSwitch.value ? 0 : controller.isVisible.value ? 60: 0,
+                        bottom: controller.layoutSwitch.value
+                            ? controller.isVisible.value
+                                ? 200
+                                : 0
+                            : null,
+                        top: controller.layoutSwitch.value
+                            ? 0
+                            : controller.isVisible.value
+                                ? 60
+                                : 0,
                         child: Align(
                           alignment: Alignment.bottomRight,
                           child: buildCallItem(controller),
@@ -95,7 +113,6 @@ class OnGoingCallView extends GetView<CallController> {
                       )
                     : const SizedBox.shrink();
               }),
-
               Obx(() {
                 return AnimatedPositioned(
                   duration: const Duration(milliseconds: 500),
@@ -148,9 +165,11 @@ class OnGoingCallView extends GetView<CallController> {
               onPressed: () {
                 controller.changeLayout();
               },
-              icon: SvgPicture.asset(gridIcon,color: Colors.white,),
+              icon: SvgPicture.asset(
+                gridIcon,
+                color: Colors.white,
+              ),
             )
-
           ],
         ),
         Center(
@@ -236,10 +255,14 @@ class OnGoingCallView extends GetView<CallController> {
                       elevation: 0,
                       backgroundColor: controller.cameraSwitch.value ? Colors.white : Colors.white.withOpacity(0.3),
                       onPressed: () => controller.switchCamera(),
-                      child: controller.cameraSwitch.value ? SvgPicture.asset(cameraSwitchActive) : SvgPicture.asset(cameraSwitchInactive),
+                      child: controller.cameraSwitch.value
+                          ? SvgPicture.asset(cameraSwitchActive)
+                          : SvgPicture.asset(cameraSwitchInactive),
                     )
                   : const SizedBox.shrink(),
-              controller.callType.value == CallType.video && !controller.videoMuted.value ? SizedBox(width: rightSideWidth) : const SizedBox.shrink(),
+              controller.callType.value == CallType.video && !controller.videoMuted.value
+                  ? SizedBox(width: rightSideWidth)
+                  : const SizedBox.shrink(),
               FloatingActionButton(
                 heroTag: "videoMute",
                 elevation: 0,
@@ -253,7 +276,9 @@ class OnGoingCallView extends GetView<CallController> {
               FloatingActionButton(
                 heroTag: "speaker",
                 elevation: 0,
-                backgroundColor: controller.audioOutputType.value == AudioDeviceType.receiver ? Colors.white.withOpacity(0.3) : Colors.white,
+                backgroundColor: controller.audioOutputType.value == AudioDeviceType.receiver
+                    ? Colors.white.withOpacity(0.3)
+                    : Colors.white,
                 onPressed: () => controller.changeSpeaker(),
                 child: controller.audioOutputType.value == AudioDeviceType.receiver
                     ? SvgPicture.asset(speakerInactive)
@@ -271,7 +296,10 @@ class OnGoingCallView extends GetView<CallController> {
             padding: const EdgeInsets.only(bottom: 10.0, top: 20.0),
             child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                    padding: EdgeInsets.zero, maximumSize: const Size(200, 50), shape: const StadiumBorder(), backgroundColor: AppColors.endButton),
+                    padding: EdgeInsets.zero,
+                    maximumSize: const Size(200, 50),
+                    shape: const StadiumBorder(),
+                    backgroundColor: AppColors.endButton),
                 onPressed: () {
                   controller.disconnectCall();
                 },

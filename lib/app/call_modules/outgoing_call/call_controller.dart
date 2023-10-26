@@ -395,14 +395,14 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
 
   Future<void> remoteBusy(String callMode, String userJid, String callType, String callAction) async {
     //in Android, showing this user is busy toast inside SDK
-    if(Platform.isIOS) {
+    // if(Platform.isIOS) {
       if (callList.length > 2) {
         var data = await getProfileDetails(userJid);
         toToast("${data.getName()} is Busy");
       } else {
         toToast("User is Busy");
       }
-    }
+    // }
 
     this.callMode(callMode);
     debugPrint("onCallAction CallList Length ${callList.length}");
@@ -557,7 +557,9 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
         displayStatus = '';
         break;
     }
-    this.callStatus(displayStatus);
+    if(pinnedUserJid.value==userJid) {
+      this.callStatus(displayStatus);
+    }
 
     ///update the status of the user in call user list
     var indexOfItem = callList.indexWhere((element) => element.userJid == userJid);
@@ -585,10 +587,10 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
   }
 
   Future<void> remoteEngaged(String userJid, String callMode, String callType) async {
-    if (Platform.isIOS) {
+    // if (Platform.isIOS) {
       var data = await getProfileDetails(userJid);
       toToast(data.getName() + Constants.remoteEngagedToast);
-    }
+    // }
     debugPrint("***call list length ${callList.length}");
 //The below condition (<= 2) -> (<2) is changed for Group call, to maintain the call to continue if there is a 2 users in call
     if(callList.length < 2){
