@@ -142,6 +142,17 @@ class OnGoingCallView extends GetView<CallController> {
                   child: buildToolbar(context),
                 );
               }),
+              Positioned(
+                left: 0,
+                top: 0,
+                child: IconButton(
+                  onPressed: () {},
+                  icon: const Icon(
+                    Icons.keyboard_arrow_down,
+                    color: Colors.white,
+                  ),
+                ),
+              ),
             ],
           ),
         ),
@@ -155,13 +166,6 @@ class OnGoingCallView extends GetView<CallController> {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            IconButton(
-              onPressed: () {},
-              icon: const Icon(
-                Icons.keyboard_arrow_down,
-                color: Colors.white,
-              ),
-            ),
             const Spacer(),
             IconButton(
               onPressed: () {
