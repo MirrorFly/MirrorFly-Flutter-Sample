@@ -37,7 +37,9 @@ class OnGoingCallView extends GetView<CallController> {
                                     alignProfilePictureCenter: false,
                                     showSpeakingRipple: controller.callType.value == CallType.audio,
                                     viewBgColor: AppColors.audioCallerBackground,
-                                    profileSize: 100)
+                                    profileSize: 100,onClick: (){
+                          controller.isVisible(!controller.isVisible.value);
+                        },)
                                 .setBorderRadius(const BorderRadius.all(Radius.circular(10)))
                             : const SizedBox.shrink();
                       }),
@@ -81,14 +83,14 @@ class OnGoingCallView extends GetView<CallController> {
                       }),
                     ],
                   )),
-              InkWell(
-                splashColor: Colors.transparent,
-                highlightColor: Colors.transparent,
-                onTap: () {
-                  debugPrint("InkWell");
-                  controller.isVisible(!controller.isVisible.value);
-                },
-              ),
+              // InkWell(
+              //   splashColor: Colors.transparent,
+              //   highlightColor: Colors.transparent,
+              //   onTap: () {
+              //     debugPrint("InkWell");
+              //     controller.isVisible(!controller.isVisible.value);
+              //   },
+              // ),
               Obx(() {
                 return controller.callList.length >= 2
                     ? AnimatedPositioned(
@@ -108,10 +110,16 @@ class OnGoingCallView extends GetView<CallController> {
                                 : 0,
                         child: Align(
                           alignment: Alignment.bottomRight,
-                          child: buildCallItem(controller),
+                          child: controller.layoutSwitch.value
+                              ? buildListItem(controller)
+                              : const SizedBox.shrink(),
                         ),
                       )
                     : const SizedBox.shrink();
+              }),
+              Obx(() {
+                return !controller.layoutSwitch.value
+                 ? buildGridItem(controller) : const SizedBox.shrink();
               }),
               Obx(() {
                 return AnimatedPositioned(
