@@ -3,6 +3,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/call_modules/call_widgets.dart';
 import 'package:mirror_fly_demo/app/call_modules/outgoing_call/call_controller.dart';
+import 'package:mirror_fly_demo/app/data/helper.dart';
 import 'package:mirrorfly_plugin/mirrorfly_view.dart';
 import 'package:mirrorfly_plugin/mirrorflychat.dart';
 
@@ -38,7 +39,9 @@ class OnGoingCallView extends GetView<CallController> {
                                     showSpeakingRipple: controller.callType.value == CallType.audio,
                                     viewBgColor: AppColors.audioCallerBackground,
                                     profileSize: 100,onClick: (){
-                          controller.isVisible(!controller.isVisible.value);
+                                      if(controller.callType.value==CallType.video) {
+                                        controller.isVisible(!controller.isVisible.value);
+                                      }
                         },)
                                 .setBorderRadius(const BorderRadius.all(Radius.circular(10)))
                             : const SizedBox.shrink();
@@ -60,10 +63,10 @@ class OnGoingCallView extends GetView<CallController> {
                                             style: TextStyle(color: Colors.white),
                                           ):  const SizedBox.shrink(),*/
                                 if (controller.callList.length > 1 &&
-                                    getTileCallStatus(controller.callList[0].callStatus?.value).isNotEmpty &&
+                                    getTileCallStatus(controller.callList[0].callStatus?.value,controller.callList[0].userJid.checkNull()).isNotEmpty &&
                                     controller.layoutSwitch.value) ...[
                                   Text(
-                                    getTileCallStatus(controller.callList[0].callStatus?.value),
+                                    getTileCallStatus(controller.callList[0].callStatus?.value,controller.callList[0].userJid.checkNull()),
                                     style: const TextStyle(color: Colors.white),
                                   ),
                                   const SizedBox(

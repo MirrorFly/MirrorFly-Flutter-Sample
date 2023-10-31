@@ -292,7 +292,7 @@ Widget buildListItem(CallController controller) {
                                             ),
                                           ),
                                           secondChild: const SizedBox.shrink(),
-                                          crossFadeState: (controller.speakingUsers.isNotEmpty &&
+                                          crossFadeState: (controller.speakingUsers.isNotEmpty && !controller.callList[index+1].isAudioMuted.value &&
                                                   !controller
                                                       .audioLevel(controller.callList[index + 1].userJid)
                                                       .isNegative)
@@ -325,11 +325,8 @@ Widget buildListItem(CallController controller) {
                               ),
                               Obx(() {
                                 debugPrint(
-                                    "getTileCallStatus ${getTileCallStatus(controller.callList[index + 1].callStatus?.value)}");
-                                debugPrint(
-                                    "getUserJID ${controller.callList[index + 1].userJid != SessionManagement.getUserJID()}");
-                                return (getTileCallStatus(controller.callList[index + 1].callStatus?.value) != "" &&
-                                        controller.callList[index + 1].userJid != SessionManagement.getUserJID())
+                                    "getUserJID ${controller.callList[index + 1].userJid} ${controller.callList[index + 1].callStatus} current user ${controller.callList[index + 1].userJid == SessionManagement.getUserJID()}");
+                                return (getTileCallStatus(controller.callList[index + 1].callStatus?.value,controller.callList[index + 1].userJid.checkNull()).isNotEmpty)
                                     ? Container(
                                         decoration: BoxDecoration(
                                           color:
@@ -345,10 +342,15 @@ Widget buildListItem(CallController controller) {
                                         ),
                                         width: 100,
                                         height: 135,
+                                  child: Center(
+                                      child: Text(
+                                        getTileCallStatus(controller.callList[index + 1].callStatus?.value,controller.callList[index + 1].userJid.checkNull()),
+                                        style: const TextStyle(color: Colors.white),
+                                      )),
                                       )
                                     : const SizedBox.shrink();
                               }),
-                              Obx(() {
+                              /*Obx(() {
                                 return controller.callList.isNotEmpty
                                     ? (getTileCallStatus(controller.callList[index + 1].callStatus?.value) != "" &&
                                             controller.callList[index + 1].userJid != SessionManagement.getUserJID())
@@ -359,12 +361,7 @@ Widget buildListItem(CallController controller) {
                                           ))
                                         : const SizedBox.shrink()
                                     : const SizedBox.shrink();
-                              }),
-                              /*Obx(() {
-                      return (controller.callList[index].callStatus==CallStatus.ringing) ?
-                      Container(color: AppColors.transBlack75, child: Center(
-                        child: Text(controller.callList[index].callStatus.toString(), style: const TextStyle(color: Colors.white),),),) : const SizedBox.shrink();
-                    })*/
+                              }),*/
                             ],
                           ))
                       : const SizedBox.shrink();
@@ -398,7 +395,9 @@ Widget buildGridItem(CallController controller){
                 viewBgColor: AppColors.callerTitleBackground,
                 profileSize: 60,
                 onClick: (){
-                  controller.isVisible(!controller.isVisible.value);
+                  if(controller.callType.value==CallType.video) {
+                    controller.isVisible(!controller.isVisible.value);
+                  }
                 },
               ).setBorderRadius(const BorderRadius.all(Radius.circular(10))),
               Obx(() {
@@ -441,7 +440,7 @@ Widget buildGridItem(CallController controller){
                             ),
                           ),
                           secondChild: const SizedBox.shrink(),
-                          crossFadeState: (controller.speakingUsers.isNotEmpty &&
+                          crossFadeState: (controller.speakingUsers.isNotEmpty && !controller.callList[index].isAudioMuted.value &&
                               !controller.audioLevel(controller.callList[index].userJid).isNegative)
                               ? CrossFadeState.showFirst
                               : CrossFadeState.showSecond)
@@ -472,11 +471,8 @@ Widget buildGridItem(CallController controller){
               ),
               Obx(() {
                 debugPrint(
-                    "getTileCallStatus ${getTileCallStatus(controller.callList[index].callStatus?.value)}");
-                debugPrint(
                     "getUserJID ${controller.callList[index].userJid != SessionManagement.getUserJID()}");
-                return (getTileCallStatus(controller.callList[index].callStatus?.value) != "" &&
-                    controller.callList[index].userJid != SessionManagement.getUserJID())
+                return (getTileCallStatus(controller.callList[index].callStatus?.value,controller.callList[index].userJid.checkNull()).isNotEmpty)
                     ? Positioned.fill(
                   child: Container(
                     decoration: BoxDecoration(
@@ -496,11 +492,11 @@ Widget buildGridItem(CallController controller){
               }),
               Obx(() {
                 return controller.callList.isNotEmpty
-                    ? (getTileCallStatus(controller.callList[index].callStatus?.value) != "" &&
+                    ? (getTileCallStatus(controller.callList[index].callStatus?.value,controller.callList[index].userJid.checkNull()) != "" &&
                     controller.callList[index].userJid != SessionManagement.getUserJID())
                     ? Center(
                     child: Text(
-                      getTileCallStatus(controller.callList[index].callStatus?.value),
+                      getTileCallStatus(controller.callList[index].callStatus?.value,controller.callList[index].userJid.checkNull()),
                       style: const TextStyle(color: Colors.white),
                     ))
                     : const SizedBox.shrink()
@@ -517,7 +513,7 @@ Widget buildGridItem(CallController controller){
   );
 }
 
-String getTileCallStatus(String? callStatus) {
+String getTileCallStatus(String? callStatus,String userjid) {
   debugPrint("getTileCallStatus $callStatus");
   switch (callStatus) {
     case CallStatus.connected:
@@ -533,19 +529,15 @@ String getTileCallStatus(String? callStatus) {
     case CallStatus.callingAfter10s:
       return '';
     case CallStatus.connecting:
-      return "${CallStatus.connecting}…";
+      return userjid == SessionManagement.getUserJID() ? "" : "${CallStatus.connecting}…";
     case CallStatus.ringing:
-      return "${CallStatus.ringing}…";
-
+      return userjid == SessionManagement.getUserJID() ? "" : "${CallStatus.ringing}…";
     case CallStatus.calling:
-      return "Calling…";
-
+      return userjid == SessionManagement.getUserJID() ? "" : "Calling…";
     case CallStatus.onHold:
       return "${CallStatus.onHold}…";
-
     case CallStatus.reconnecting:
       return "Reconnecting…";
-
     default:
       return '';
   }

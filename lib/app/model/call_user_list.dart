@@ -29,7 +29,7 @@ class CallUserList {
 
   Map<String, dynamic> toJson() => {
     "userJid": userJid,
-    "callStatus": callStatus,
+    "callStatus": callStatus?.value,
     "isAudioMuted": isAudioMuted.value,
   };
 }

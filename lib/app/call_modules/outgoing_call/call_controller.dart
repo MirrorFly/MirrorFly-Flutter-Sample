@@ -147,7 +147,7 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
 
     ever(callList, (callback) {
       debugPrint("#Mirrorfly call list is changed ******");
-      debugPrint("#Mirrorfly call list ${callList.toJson()}");
+      debugPrint("#Mirrorfly call list ${callUserListToJson(callList)}");
       // getNames();
     });
   }
@@ -496,7 +496,12 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
       Get.offNamed(Routes.callTimeOutView,
           arguments: {"callType": callType, "callMode": callMode, "userJid": users, "calleeName": calleeName.value});
     }else{
-      removeUser(callMode, userJid, callType);
+      var userJids = userJid.split(",");
+      debugPrint("#Mirrorfly Call timeout userJids $userJids");
+      for (var jid in userJids) {
+        debugPrint("removeUser userJid $jid");
+        removeUser(callMode, jid.toString().trim(), callType);
+      }
     }
   }
 
@@ -560,16 +565,16 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
     if(pinnedUserJid.value==userJid) {
       this.callStatus(displayStatus);
     }
+    if(Routes.onGoingCallView==Get.currentRoute) {
+      ///update the status of the user in call user list
+      var indexOfItem = callList.indexWhere((element) => element.userJid == userJid);
+      /// check the index is valid or not
+      if (!indexOfItem.isNegative && callStatus != CallStatus.disconnected) {
+        debugPrint("indexOfItem of call status update $indexOfItem");
 
-    ///update the status of the user in call user list
-    var indexOfItem = callList.indexWhere((element) => element.userJid == userJid);
-
-
-    /// check the index is valid or not
-    if (!indexOfItem.isNegative && callStatus != CallStatus.disconnected) {
-      debugPrint("indexOfItem of call status update $indexOfItem");
-      /// update the current status of the user in the list
-      callList[indexOfItem].callStatus?.value = (displayStatus);
+        /// update the current status of the user in the list
+        callList[indexOfItem].callStatus?.value = (callStatus);
+      }
     }
   }
 
@@ -859,9 +864,15 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
     removeUser(callMode, userJid, callType);
   }
   void removeUser(String callMode, String userJid, String callType){
-    callList.removeWhere((element) => element.userJid == userJid);
+    debugPrint("before removeUser ${callList.length}");
+    debugPrint("before removeUser index ${callList.indexWhere((element) => element.userJid == userJid)}");
+    callList.removeWhere((element){
+      debugPrint("removeUser callStatus ${element.callStatus}");
+      return element.userJid == userJid;
+    });
     users.removeWhere((element) => element == userJid);
     speakingUsers.removeWhere((element) => element.userJid == userJid);
+    debugPrint("after removeUser ${callList.length}");
     debugPrint("removeUser ${callList.indexWhere((element) => element.userJid.toString() == userJid)}");
     if(callList.length>1 && pinnedUserJid.value == userJid) {
       pinnedUserJid(callList[0].userJid);
