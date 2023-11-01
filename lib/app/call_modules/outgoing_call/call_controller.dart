@@ -253,7 +253,10 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
   }
 
   switchCamera() async {
-    // cameraSwitch(!cameraSwitch.value);
+    //The below code is commented. The Camera switch not worked in iOS so uncommented and Nested in Platform Check
+    if(Platform.isIOS) {
+      cameraSwitch(!cameraSwitch.value);
+    }
     await Mirrorfly.switchCamera();
   }
 
