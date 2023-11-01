@@ -40,9 +40,7 @@ class CallTimeoutController extends GetxController {
     // Get.offNamed(Routes.outGoingCallView, arguments: {"userJid": userJID.value});
     if (await AppUtils.isNetConnected()) {
       if(callType.value == Constants.audioCall) {
-        if (Platform.isAndroid
-            ? await AppPermission.askVideoCallPermissions()
-            : await AppPermission.askiOSVideoCallPermissions()) {
+        if (await AppPermission.askAudioCallPermissions()) {
           if(users.length==1) {
             Mirrorfly.makeVoiceCall(users.first!).then((value) {
               Get.offNamed(
@@ -71,6 +69,13 @@ class CallTimeoutController extends GetxController {
               }
             }).catchError((e) {
               debugPrint("#Mirrorfly Call $e");
+            });
+          }else{
+            var usersList = <String>[];
+            for (var element in users) {if(element!=null) { usersList.add(element);}}
+            Mirrorfly.makeGroupVideoCall(jidList: usersList).then((value) {
+              Get.offNamed(
+                  Routes.outGoingCallView, arguments: {"userJid": users});
             });
           }
         } else {
