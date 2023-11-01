@@ -384,7 +384,7 @@ Widget buildGridItem(CallController controller){
         crossAxisCount: controller.callList.length > 2 ? 2 : 1, // number of items in each row
         mainAxisSpacing: 4.0, // spacing between rows
         crossAxisSpacing: 2.0, // spacing between columns
-        childAspectRatio: controller.callList.length == 2 ? 1.5 : 1.0
+        childAspectRatio: controller.callList.length == 2 ? 1.23 : 1.0
       ),
       padding: const EdgeInsets.all(8.0),
       // padding around the grid
