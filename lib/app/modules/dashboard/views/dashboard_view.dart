@@ -6,6 +6,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:focus_detector/focus_detector.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/call_modules/call_logs/call_log_model.dart';
+import 'package:mirror_fly_demo/app/call_modules/call_utils.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
 import 'package:mirror_fly_demo/app/modules/dashboard/widgets.dart';
@@ -896,96 +897,158 @@ class DashboardView extends GetView<DashboardController> {
     return ListView.builder(
         controller: controller.callLogScrollController,
         shrinkWrap: true,
-        physics: const AlwaysScrollableScrollPhysics(),
+        physics: const ClampingScrollPhysics(),
         itemCount: callLogList.length,
         itemBuilder: (context, index) {
           var item = callLogList[index];
-          return FutureBuilder(
-              future: item.callMode == "onetoone" ? getProfileDetails(item.callState == 1 ? item.toUser! : item.fromUser!) : getProfileDetails(item.groupId!),
-              builder: (context, snap) {
-                return snap.hasData && snap.data != null
-                    ? ListTile(
-                        leading: ImageNetwork(
-                          url: snap.data!.image!,
-                          width: 48,
-                          height: 48,
-                          clipOval: true,
-                          //errorWidget: Container(),
-                          errorWidget: getName(snap.data!) //item.nickName
-                                  .checkNull()
-                                  .isNotEmpty
-                              ? ProfileTextImage(text: getName(snap.data!))
-                              : const Icon(
-                                  Icons.person,
-                                  color: Colors.white,
-                                ),
-                          isGroup: false,
-                          blocked: false,
-                          unknown: false,
-                        ),
-                        // leading: CachedNetworkImage(imageUrl: snap.data!.image!,),
-                        title: Text(snap.data!.name!),
-                        subtitle: SizedBox(
-                            child: Row(
-                          children: [
-                            item.callState == 0
-                                ? SvgPicture.asset(
-                                    "assets/calls/ic_arrow_down_red.svg",
-                                    color: Colors.red,
-                                  )
-                                : item.callState == 1
-                                    ? SvgPicture.asset(
-                                        "assets/calls/ic_arrow_up_green.svg",
-                                        color: Colors.green,
-                                      )
-                                    : SvgPicture.asset(
-                                        "assets/calls/ic_arrow_down_green.svg",
-                                        color: Colors.green,
-                                      ),
-                            const SizedBox(
-                              width: 5,
+          if (index >= callLogList.length && callLogList.isNotEmpty) {
+            return const Center(child: CircularProgressIndicator());
+          } else if (callLogList.isNotEmpty) {
+            if (item.callMode == "onetoone") {
+              return FutureBuilder(
+                  future: getProfileDetails(item.callState == 1 ? item.toUser! : item.fromUser!),
+                  builder: (context, snap) {
+                    return snap.hasData && snap.data != null
+                        ? ListTile(
+                            leading: ImageNetwork(
+                              url: snap.data!.image!,
+                              width: 48,
+                              height: 48,
+                              clipOval: true,
+                              errorWidget: getName(snap.data!) //item.nickName
+                                      .checkNull()
+                                      .isNotEmpty
+                                  ? ProfileTextImage(text: getName(snap.data!))
+                                  : const Icon(
+                                      Icons.person,
+                                      color: Colors.white,
+                                    ),
+                              isGroup: false,
+                              blocked: false,
+                              unknown: false,
                             ),
-                            Text("${getCallLogDateFromTimestamp(item.callTime!, "dd-MMM")}  ${getChatTime(context, item.callTime)}"),
-                          ],
-                        )),
+                            title: Text(snap.data!.name!),
+                            subtitle: SizedBox(
+                              child: callLogTime(
+                                  "${getCallLogDateFromTimestamp(item.callTime!, "dd-MMM")}  ${getChatTime(context, item.callTime)}", item.callState),
+                              //     child: Row(
+                              //   children: [
+                              //     item.callState == 0
+                              //         ? SvgPicture.asset(
+                              //             "assets/calls/ic_arrow_down_red.svg",
+                              //             color: Colors.red,
+                              //           )
+                              //         : item.callState == 1
+                              //             ? SvgPicture.asset(
+                              //                 "assets/calls/ic_arrow_up_green.svg",
+                              //                 color: Colors.green,
+                              //               )
+                              //             : SvgPicture.asset(
+                              //                 "assets/calls/ic_arrow_down_green.svg",
+                              //                 color: Colors.green,
+                              //               ),
+                              //     const SizedBox(
+                              //       width: 5,
+                              //     ),
+                              //     Text("${getCallLogDateFromTimestamp(item.callTime!, "dd-MMM")}  ${getChatTime(context, item.callTime)}"),
+                              //   ],
+                              // )
+                            ),
+                            trailing: SizedBox(
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  // Text(controller.fetchCallLogTime(item.callTime!).toString()),
+                                  const SizedBox(
+                                    width: 10,
+                                  ),
+                                  // Text(Mirrorfly.getCallLogDuration(1, 1)),
+                                  FutureBuilder(
+                                      future: controller.fetchCallDuration(item.startTime, item.endTime),
+                                      builder: (context, snap) {
+                                        if (snap.hasData) {
+                                          return Text(snap.data);
+                                        } else
+                                          return SizedBox.shrink();
+                                      }),
+                                  const SizedBox(
+                                    width: 8,
+                                  ),
+
+                                  // Text(controller.fetchCallDuration() as String),
+                                  callIcon(item.callType, item),
+                                  // item.callType!.toLowerCase() == "video"
+                                  //     ? InkWell(
+                                  //         onTap: () {
+                                  //           controller.makeVideoCall(item.callState == 0
+                                  //               ? item.fromUser
+                                  //               : item.callState == 2
+                                  //                   ? item.fromUser
+                                  //                   : item.toUser);
+                                  //         },
+                                  //         child: SvgPicture.asset(
+                                  //           videoCallIcon,
+                                  //           color: Colors.grey,
+                                  //         ),
+                                  //       )
+                                  //     : InkWell(
+                                  //         onTap: () {
+                                  //           controller.makeVoiceCall(item.callState == 0
+                                  //               ? item.fromUser
+                                  //               : item.callState == 2
+                                  //                   ? item.fromUser
+                                  //                   : item.toUser);
+                                  //         },
+                                  //         child: SvgPicture.asset(
+                                  //           audioCallIcon,
+                                  //           color: Colors.grey,
+                                  //         ),
+                                  //       ),
+                                ],
+                              ),
+                            ),
+                          )
+                        : const SizedBox();
+                  });
+            } else {
+              return FutureBuilder(
+                  //  future: CallUtils.getCallersName(item.userList!),
+                  future: controller.fetchCallLogNames(item.fromUser!, item.userList!),
+                  builder: (context, snap) {
+                    if (snap.hasData) {
+                      return ListTile(
+                        leading: ClipOval(
+                          child: Image.asset(
+                            groupImg,
+                            height: 48,
+                            width: 48,
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                        title: Text(snap.data),
+                        subtitle: SizedBox(
+                          child: callLogTime(
+                              "${getCallLogDateFromTimestamp(item.callTime!, "dd-MMM")}  ${getChatTime(context, item.callTime)}", item.callState),
+                        ),
                         trailing: SizedBox(
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.end,
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              // Text(controller.fetchCallLogTime(item.callTime!).toString()),
-                              const SizedBox(
-                                width: 10,
-                              ),
-                              item.callType!.toLowerCase() == "video"
-                                  ? InkWell(
-                                      onTap: () {
-                                        controller.makeVideoCall(item.callState == 0 ? item.fromUser : item.toUser);
-                                      },
-                                      child: SvgPicture.asset(
-                                        videoCallIcon,
-                                        color: Colors.grey,
-                                      ),
-                                    )
-                                  : InkWell(
-                                      onTap: () {
-                                        controller.makeVoiceCall(item.callState == 0 ? item.fromUser : item.toUser);
-                                      },
-                                      child: SvgPicture.asset(
-                                        audioCallIcon,
-                                        color: Colors.grey,
-                                      ),
-                                    ),
+                              callIcon(item.callType, item),
                             ],
                           ),
                         ),
-                      )
-                    : const SizedBox.shrink();
-                // return ListItem(
-                //   title: Text(getProfileDetails(item.fromUser)),
-                //
-                // );
-              });
+                      );
+                    } else {
+                      return SizedBox.shrink();
+                    }
+                  });
+            }
+          } else {
+            return const SizedBox.shrink();
+          }
         });
   }
 
@@ -1015,5 +1078,34 @@ class DashboardView extends GetView<DashboardController> {
         ],
       ),
     );
+  }
+
+  Widget callIcon(String? callType, CallLogData item) {
+    return callType!.toLowerCase() == "video"
+        ? IconButton(
+            onPressed: () {
+              controller.makeVideoCall(item.callState == 0
+                  ? item.fromUser
+                  : item.callState == 2
+                      ? item.fromUser
+                      : item.toUser);
+            },
+            icon: SvgPicture.asset(
+              videoCallIcon,
+              color: Colors.grey,
+            ),
+          )
+        : IconButton(
+            onPressed: () {
+              controller.makeVoiceCall(item.callState == 0
+                  ? item.fromUser
+                  : item.callState == 2
+                      ? item.fromUser
+                      : item.toUser);
+            },
+            icon: SvgPicture.asset(
+              audioCallIcon,
+              color: Colors.grey,
+            ));
   }
 }
