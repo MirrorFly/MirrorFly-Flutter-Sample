@@ -40,7 +40,9 @@ class CallTimeoutController extends GetxController {
     // Get.offNamed(Routes.outGoingCallView, arguments: {"userJid": userJID.value});
     if (await AppUtils.isNetConnected()) {
       if(callType.value == Constants.audioCall) {
-        if (await AppPermission.askAudioCallPermissions()) {
+        if (Platform.isAndroid
+            ? await AppPermission.askVideoCallPermissions()
+            : await AppPermission.askiOSVideoCallPermissions()) {
           if(users.length==1) {
             Mirrorfly.makeVoiceCall(users.first!).then((value) {
               Get.offNamed(
