@@ -1,8 +1,10 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
+import 'package:mirror_fly_demo/app/call_modules/call_logs/call_log_model.dart';
 import 'package:mirror_fly_demo/app/modules/notification/notification_builder.dart';
 import 'package:mirrorfly_plugin/logmessage.dart';
 import 'package:mirrorfly_plugin/mirrorflychat.dart';
@@ -117,6 +119,9 @@ class DashboardController extends FullLifeCycleController
         }
       }
     });
+    Mirrorfly.getCallLogListener();
+    fetchCallLogList();
+    callLogScrollController.addListener(_callLogScrollListener);
     super.onInit();
   }
   @override
@@ -1074,9 +1079,25 @@ class DashboardController extends FullLifeCycleController
   set userList(List<Profile> value) => _userList.value = value;
 
   List<Profile> get userList => _userList;
+  var callLogScrollController = ScrollController();
+  var isCallLogPageLoading = false.obs;
+  final _callLogList = <CallLogData>[].obs;
+  int callLogPageNum = 0;
+  set callLogList(List<CallLogData> value) => _callLogList.value = value;
 
+  List<CallLogData> get callLogList => _callLogList;
 
-
+  _callLogScrollListener() {
+    if (callLogScrollController.hasClients) {
+      if (callLogScrollController.position.extentAfter <= 0 &&
+          isCallLogPageLoading.value == false) {
+        if (scrollable.value) {
+          //isPageLoading.value = true;
+          fetchCallLogList();
+        }
+      }
+    }
+  }
 
   onChange(String inputValue) {
     if (search.text.trim().isNotEmpty) {
@@ -1325,6 +1346,7 @@ class DashboardController extends FullLifeCycleController
       }
     }
     checkContactSyncPermission();
+    fetchCallLogList();
   }
 
   void getProfileDetail(context, RecentChatData chatItem, int index) {
@@ -1528,4 +1550,67 @@ class DashboardController extends FullLifeCycleController
   void onHidden() {
 
   }
+
+  Future<dynamic> fetchCallLogList() async {
+    callLogPageNum = callLogPageNum + 1;
+    var res1 = await Mirrorfly.getCallLogsList(callLogPageNum);
+    var list = callLogListFromJson(res1);
+    _callLogList.addAll(list.data!);
+    LogMessage.d("callLogPageNum: ", "$callLogPageNum _callLogList ${_callLogList.length}");
+    return res1;
+  }
+
+  void makeVideoCall(String? fromUser) async {
+    //closeKeyBoard();
+    if (await AppUtils.isNetConnected()) {
+      if (Platform.isAndroid
+          ? await AppPermission.askVideoCallPermissions()
+          : await AppPermission.askiOSVideoCallPermissions()) {
+        Mirrorfly.makeVideoCall(fromUser.checkNull()).then((value) {
+          if (value) {
+            //setOnGoingUserGone();
+            Get.toNamed(Routes.outGoingCallView,
+                arguments: {"userJid": [fromUser], "callType": CallType.video})
+                ?.then((value) => setOnGoingUserAvail());
+          }
+        }).catchError((e) {
+          debugPrint("#Mirrorfly Call $e");
+        });
+      } else {
+        LogMessage.d("askVideoCallPermissions", "false");
+      }
+    } else {
+      toToast(Constants.noInternetConnection);
+    }
+  }
+
+  void setOnGoingUserAvail() {
+    debugPrint("setOnGoingUserAvail");
+  }
+
+  void makeVoiceCall(String? toUser) async {
+    debugPrint("#FLY CALL VOICE CALL CALLING");
+    // closeKeyBoard();
+    if (await AppUtils.isNetConnected()) {
+      if (await AppPermission.askAudioCallPermissions()) {
+        Mirrorfly.makeVoiceCall(toUser.checkNull()).then((value) {
+          if (value) {
+            debugPrint("#Mirrorfly Call userjid ${toUser}");
+          //  setOnGoingUserGone();
+            Get.toNamed(Routes.outGoingCallView,
+                arguments: {"userJid": [toUser], "callType": CallType.audio})
+                ?.then((value) => setOnGoingUserAvail());
+          }
+        }).catchError((e) {
+          debugPrint("#Mirrorfly Call $e");
+        });
+      } else {
+        debugPrint("permission not given");
+      }
+    } else {
+      toToast(Constants.noInternetConnection);
+    }
+  }
+
+
 }
