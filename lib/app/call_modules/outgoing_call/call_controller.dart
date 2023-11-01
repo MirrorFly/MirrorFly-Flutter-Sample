@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/call_modules/call_utils.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
@@ -73,7 +74,7 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
   @override
   Future<void> onInit() async {
     super.onInit();
-
+    enterFullScreen();
     tabController = TabController(length: 2, vsync: this);
     // SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersive);
     debugPrint("#Mirrorfly Call Controller onInit");
@@ -336,6 +337,7 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
 
   @override
   void dispose() {
+    exitFullScreen();
     // SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,overlays: SystemUiOverlay.values);
     LogMessage.d("callController", " callController dispose");
     super.dispose();
@@ -880,5 +882,13 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
     callDisconnected(callMode, userJid, callType);
     getNames();
 
+  }
+
+  void enterFullScreen() {
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersive);
+  }
+
+  void exitFullScreen() {
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: SystemUiOverlay.values);
   }
 }
