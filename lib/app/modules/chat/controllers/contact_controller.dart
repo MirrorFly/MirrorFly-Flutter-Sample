@@ -590,7 +590,7 @@ class ContactController extends FullLifeCycleController
   makeCall() async {
     if(selectedUsersJIDList.isNotEmpty) {
       if (await AppUtils.isNetConnected()) {
-        if(callType==CallType.audio) {
+        if(callType.value==CallType.audio) {
           if (await AppPermission.askAudioCallPermissions()) {
             Get.back();
             Mirrorfly.makeGroupVoiceCall(jidList: selectedUsersJIDList).then((value) {
@@ -600,7 +600,7 @@ class ContactController extends FullLifeCycleController
               }
             });
           }
-        }else if(callType==CallType.video){
+        }else if(callType.value==CallType.video){
           if (await AppPermission.askVideoCallPermissions()) {
             Get.back();
             Mirrorfly.makeGroupVideoCall(jidList: selectedUsersJIDList).then((value) {
