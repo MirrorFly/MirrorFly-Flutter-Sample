@@ -228,8 +228,11 @@ class _SpeakingDotsState extends State<SpeakingDots> {
 }
 
 Widget buildListItem(CallController controller) {
+  var callListLength = controller.callList.length;
+  debugPrint("callListLength --> $callListLength");
   return SizedBox(
             height: 135,
+            width: double.infinity,
             child: ListView.builder(
                 scrollDirection: Axis.horizontal,
                 physics: const AlwaysScrollableScrollPhysics(),
