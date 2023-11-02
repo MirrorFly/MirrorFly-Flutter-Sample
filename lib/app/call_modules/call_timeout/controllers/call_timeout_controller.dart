@@ -70,6 +70,13 @@ class CallTimeoutController extends GetxController {
             }).catchError((e) {
               debugPrint("#Mirrorfly Call $e");
             });
+          }else{
+            var usersList = <String>[];
+            for (var element in users) {if(element!=null) { usersList.add(element);}}
+            Mirrorfly.makeGroupVideoCall(jidList: usersList).then((value) {
+              Get.offNamed(
+                  Routes.outGoingCallView, arguments: {"userJid": users});
+            });
           }
         } else {
           LogMessage.d("askVideoCallPermissions", "false");
