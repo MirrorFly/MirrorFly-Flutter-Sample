@@ -1029,3 +1029,14 @@ bool isYesterday(int convertedTime) {
   return yesterday.day == calendar.day && yesterday.month == calendar.month && yesterday.year == calendar.year;
 }
 
+String getCallLogDuration(int startTime, int endTime) {
+  var millis = endTime - startTime;
+  var duration = Duration(microseconds: millis);
+
+  if (millis == 0) {
+    return "";
+  } else {
+    var seconds = ((duration.inSeconds % 60)).toStringAsFixed(0).padLeft(2, '0');
+    return '${(duration.inMinutes).toStringAsFixed(0).padLeft(2, '0')}:$seconds';
+  }
+}

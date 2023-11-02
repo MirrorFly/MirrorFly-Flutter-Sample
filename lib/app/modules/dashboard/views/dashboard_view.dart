@@ -904,7 +904,7 @@ class DashboardView extends GetView<DashboardController> {
           if (index >= callLogList.length && callLogList.isNotEmpty) {
             return const Center(child: CircularProgressIndicator());
           } else if (callLogList.isNotEmpty) {
-            if (item.callMode == "onetoone") {
+            if (item.callMode == CallMode.oneToOne) {
               return FutureBuilder(
                   future: getProfileDetails(item.callState == 1 ? item.toUser! : item.fromUser!),
                   builder: (context, snap) {
@@ -931,80 +931,17 @@ class DashboardView extends GetView<DashboardController> {
                             subtitle: SizedBox(
                               child: callLogTime(
                                   "${getCallLogDateFromTimestamp(item.callTime!, "dd-MMM")}  ${getChatTime(context, item.callTime)}", item.callState),
-                              //     child: Row(
-                              //   children: [
-                              //     item.callState == 0
-                              //         ? SvgPicture.asset(
-                              //             "assets/calls/ic_arrow_down_red.svg",
-                              //             color: Colors.red,
-                              //           )
-                              //         : item.callState == 1
-                              //             ? SvgPicture.asset(
-                              //                 "assets/calls/ic_arrow_up_green.svg",
-                              //                 color: Colors.green,
-                              //               )
-                              //             : SvgPicture.asset(
-                              //                 "assets/calls/ic_arrow_down_green.svg",
-                              //                 color: Colors.green,
-                              //               ),
-                              //     const SizedBox(
-                              //       width: 5,
-                              //     ),
-                              //     Text("${getCallLogDateFromTimestamp(item.callTime!, "dd-MMM")}  ${getChatTime(context, item.callTime)}"),
-                              //   ],
-                              // )
                             ),
                             trailing: SizedBox(
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.end,
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
-                                  // Text(controller.fetchCallLogTime(item.callTime!).toString()),
-                                  const SizedBox(
-                                    width: 10,
-                                  ),
-                                  // Text(Mirrorfly.getCallLogDuration(1, 1)),
-                                  FutureBuilder(
-                                      future: controller.fetchCallDuration(item.startTime, item.endTime),
-                                      builder: (context, snap) {
-                                        if (snap.hasData) {
-                                          return Text(snap.data);
-                                        } else
-                                          return SizedBox.shrink();
-                                      }),
+                                  Text(getCallLogDuration(item.startTime!, item.endTime!)),
                                   const SizedBox(
                                     width: 8,
                                   ),
-
-                                  // Text(controller.fetchCallDuration() as String),
-                                  callIcon(item.callType, item),
-                                  // item.callType!.toLowerCase() == "video"
-                                  //     ? InkWell(
-                                  //         onTap: () {
-                                  //           controller.makeVideoCall(item.callState == 0
-                                  //               ? item.fromUser
-                                  //               : item.callState == 2
-                                  //                   ? item.fromUser
-                                  //                   : item.toUser);
-                                  //         },
-                                  //         child: SvgPicture.asset(
-                                  //           videoCallIcon,
-                                  //           color: Colors.grey,
-                                  //         ),
-                                  //       )
-                                  //     : InkWell(
-                                  //         onTap: () {
-                                  //           controller.makeVoiceCall(item.callState == 0
-                                  //               ? item.fromUser
-                                  //               : item.callState == 2
-                                  //                   ? item.fromUser
-                                  //                   : item.toUser);
-                                  //         },
-                                  //         child: SvgPicture.asset(
-                                  //           audioCallIcon,
-                                  //           color: Colors.grey,
-                                  //         ),
-                                  //       ),
+                                  callIcon(item.callType, item, item.callMode, []),
                                 ],
                               ),
                             ),
@@ -1013,7 +950,6 @@ class DashboardView extends GetView<DashboardController> {
                   });
             } else {
               return FutureBuilder(
-                  //  future: CallUtils.getCallersName(item.userList!),
                   future: controller.fetchCallLogNames(item.fromUser!, item.userList!),
                   builder: (context, snap) {
                     if (snap.hasData) {
@@ -1036,7 +972,11 @@ class DashboardView extends GetView<DashboardController> {
                             mainAxisAlignment: MainAxisAlignment.end,
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              callIcon(item.callType, item),
+                              Text(getCallLogDuration(item.startTime!, item.endTime!)),
+                              const SizedBox(
+                                width: 8,
+                              ),
+                              callIcon(item.callType, item, item.callMode, item.userList),
                             ],
                           ),
                         ),
@@ -1080,15 +1020,17 @@ class DashboardView extends GetView<DashboardController> {
     );
   }
 
-  Widget callIcon(String? callType, CallLogData item) {
-    return callType!.toLowerCase() == "video"
+  Widget callIcon(String? callType, CallLogData item, String? callMode, List<String>? userList) {
+    return callType!.toLowerCase() == CallType.video
         ? IconButton(
             onPressed: () {
-              controller.makeVideoCall(item.callState == 0
-                  ? item.fromUser
-                  : item.callState == 2
+              callMode == CallMode.oneToOne
+                  ? controller.makeVideoCall(item.callState == 0
                       ? item.fromUser
-                      : item.toUser);
+                      : item.callState == 2
+                          ? item.fromUser
+                          : item.toUser)
+                  : controller.makeCall(userList,callType);
             },
             icon: SvgPicture.asset(
               videoCallIcon,
@@ -1097,11 +1039,13 @@ class DashboardView extends GetView<DashboardController> {
           )
         : IconButton(
             onPressed: () {
-              controller.makeVoiceCall(item.callState == 0
-                  ? item.fromUser
-                  : item.callState == 2
+              callMode == CallMode.oneToOne
+                  ? controller.makeVoiceCall(item.callState == 0
                       ? item.fromUser
-                      : item.toUser);
+                      : item.callState == 2
+                          ? item.fromUser
+                          : item.toUser)
+                  : controller.makeCall(userList,callType);
             },
             icon: SvgPicture.asset(
               audioCallIcon,

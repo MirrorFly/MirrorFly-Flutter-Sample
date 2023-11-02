@@ -1506,15 +1506,11 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
     var res = await Mirrorfly.getCallLogsList(callLogPageNum);
     var list = callLogListFromJson(res);
     _callLogList.addAll(list.data!);
-    LogMessage.d("callLogPageNum: ", "list ${list.data![0].startTime}");
-    LogMessage.d("callLogPageNum: ", "list ${list.data![0].endTime}");
-    LogMessage.d("callLogPageNum: ", "$callLogPageNum _callLogList ${_callLogList.length}");
     return res;
   }
 
   fetchCallLogListener() async {
     var res = await Mirrorfly.getCallLogListener();
-    LogMessage.d("fetchCallLogListener: res", "$res");
     if (res.toString() == "updated") {
       _callLogList.clear();
       callLogList.clear();
@@ -1583,6 +1579,34 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
       }
     } else {
       toToast(Constants.noInternetConnection);
+    }
+  }
+
+  makeCall(List<String>? userList, String callType) async {
+    if (userList!.isNotEmpty) {
+      if (await AppUtils.isNetConnected()) {
+        if (callType == CallType.video) {
+          if (await AppPermission.askVideoCallPermissions()) {
+            Get.back();
+            Mirrorfly.makeGroupVideoCall(jidList: userList).then((value) {
+              if (value) {
+                Get.toNamed(Routes.outGoingCallView, arguments: {"userJid": userList, "callType": CallType.video});
+              }
+            });
+          }
+        } else {
+          if (await AppPermission.askAudioCallPermissions()) {
+            Get.back();
+            Mirrorfly.makeGroupVoiceCall(jidList: userList).then((value) {
+              if (value) {
+                Get.toNamed(Routes.outGoingCallView, arguments: {"userJid": userList, "callType": CallType.audio});
+              }
+            });
+          }
+        }
+      } else {
+        toToast(Constants.noInternetConnection);
+      }
     }
   }
 }
