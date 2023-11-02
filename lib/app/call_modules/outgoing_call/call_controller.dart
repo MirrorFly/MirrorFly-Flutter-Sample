@@ -372,6 +372,10 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
     }
     if (callList.length <= 1 || userJid == SessionManagement.getUserJID()) {
       isCallTimerEnabled = false;
+      //if user is in the participants screen all users end the call then we should close call pages
+      if(Get.currentRoute==Routes.participants){
+        Get.back();
+      }
       // if there is an single user in that call and if he [disconnected] no need to disconnect the call from our side Observed in Android
       if (Platform.isIOS) {
         // in iOS needs to call disconnect.
