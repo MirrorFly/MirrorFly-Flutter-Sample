@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:mirrorfly_plugin/flychat.dart';
 import 'package:mirrorfly_plugin/logmessage.dart';
@@ -96,10 +95,10 @@ class CallTimeoutController extends GetxController {
   }
 
   void enterFullScreen() {
-    SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersive);
+    // SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersive);
   }
 
   void exitFullScreen() {
-    SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: SystemUiOverlay.values);
+    // SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: SystemUiOverlay.values);
   }
 }

@@ -466,7 +466,7 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
     debugPrint("User List Index $index");
     if(index.isNegative){
       debugPrint("User List not Found, so adding the user to list");
-      CallUserList callUserList = CallUserList(userJid: userJid, callStatus: RxString(callStatus), isAudioMuted: false);
+      CallUserList callUserList = CallUserList(userJid: userJid, callStatus: RxString(callStatus), isAudioMuted: false,isVideoMuted: false);
       callList.insert(callList.length - 1, callUserList);
       // callList.add(callUserList);
     }else{
@@ -494,7 +494,7 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
       });
     }else{
       debugPrint("#MirrorflyCall user jid $userJid");
-      CallUserList callUserList = CallUserList(userJid: userJid, callStatus: RxString(callStatus), isAudioMuted: false);
+      CallUserList callUserList = CallUserList(userJid: userJid, callStatus: RxString(callStatus), isAudioMuted: false,isVideoMuted: false);
      if(callList.indexWhere((userList) => userList.userJid == userJid).isNegative) {
        callList.insert(callList.length - 1, callUserList);
        // callList.add(callUserList);
@@ -632,6 +632,16 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
       callList[callUserIndex].isAudioMuted(muteEvent == MuteStatus.remoteAudioMute);
     } else {
       debugPrint("#Mirrorfly call User Not Found in list to mute the status");
+    }
+  }
+
+  void videoMuteStatusChanged(String muteEvent, String userJid) {
+    var callUserIndex = callList.indexWhere((element) => element.userJid == userJid);
+    if (!callUserIndex.isNegative) {
+      debugPrint("index $callUserIndex");
+      callList[callUserIndex].isVideoMuted(muteEvent == MuteStatus.remoteVideoMute);
+    } else {
+      debugPrint("#Mirrorfly call User Not Found in list to video mute the status");
     }
   }
 
@@ -904,10 +914,10 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
   }
 
   void enterFullScreen() {
-    SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersive);
+    //SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersive);
   }
 
   void exitFullScreen() {
-    SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: SystemUiOverlay.values);
+    // SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: SystemUiOverlay.values);
   }
 }
