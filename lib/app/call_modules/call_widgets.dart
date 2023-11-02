@@ -231,6 +231,7 @@ Widget buildListItem(CallController controller) {
   return SizedBox(
             height: 135,
             child: ListView.builder(
+              padding: const EdgeInsets.symmetric(horizontal: 10),
                 scrollDirection: Axis.horizontal,
                 physics: const AlwaysScrollableScrollPhysics(),
                 itemCount: controller.callList.length - 1,
@@ -370,146 +371,145 @@ Widget buildListItem(CallController controller) {
 }
 
 Widget buildGridItem(CallController controller){
-  return GridView.builder(
-    scrollDirection: Axis.vertical,
-    shrinkWrap: true,
-    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-      crossAxisCount: controller.callList.length > 2 ? 2 : 1, // number of items in each row
-      mainAxisSpacing: 8.0, // spacing between rows
-      crossAxisSpacing: 2.0, // spacing between columns
-    ),
-    padding: const EdgeInsets.all(8.0),
-    // padding around the grid
-    itemCount: controller.callList.length,
-    // total number of items
-    itemBuilder: (context, index) {
-      return Container(
-          height: 160,
-          width: 160,
-          margin: const EdgeInsets.only(left: 10),
-          child: Stack(
-            children: [
-              MirrorFlyView(
-                key: UniqueKey(),
-                userJid: controller.callList[index].userJid ?? "",
-                viewBgColor: AppColors.callerTitleBackground,
-                profileSize: 60,
-                onClick: (){
-                  if(controller.callType.value==CallType.video) {
-                    controller.isVisible(!controller.isVisible.value);
-                  }
-                },
-              ).setBorderRadius(const BorderRadius.all(Radius.circular(10))),
-              Obx(() {
-                return Positioned(
-                  top: 0,
-                  right: 8,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      SizedBox(
-                        width: 20,
-                        child: CircleAvatar(
-                          backgroundColor: AppColors.audioMutedIconBgColor,
-                          child: SvgPicture.asset(unpinUser),
+  return GestureDetector(
+    onTap: (){
+      if(controller.callType.value==CallType.video) {
+        controller.isVisible(!controller.isVisible.value);
+      }
+    },
+    child: GridView.builder(
+      scrollDirection: Axis.vertical,
+      shrinkWrap: true,
+      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: controller.callList.length > 2 ? 2 : 1, // number of items in each row
+        mainAxisSpacing: 4.0, // spacing between rows
+        crossAxisSpacing: 2.0, // spacing between columns
+        childAspectRatio: controller.callList.length == 2 ? 1.23 : 1.0
+      ),
+      padding: const EdgeInsets.all(8.0),
+      // padding around the grid
+      itemCount: controller.callList.length,
+      // total number of items
+      itemBuilder: (context, index) {
+        return Stack(
+          children: [
+            MirrorFlyView(
+              key: UniqueKey(),
+              userJid: controller.callList[index].userJid ?? "",
+              viewBgColor: AppColors.callerTitleBackground,
+              profileSize: 60,
+            ).setBorderRadius(const BorderRadius.all(Radius.circular(10))),
+            Obx(() {
+              return Positioned(
+                top: 0,
+                right: 8,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    SizedBox(
+                      width: 20,
+                      child: CircleAvatar(
+                        backgroundColor: AppColors.audioMutedIconBgColor,
+                        child: SvgPicture.asset(unpinUser),
+                      ),
+                    ),
+                    if (controller.callList[index].isAudioMuted.value) ...[
+                      Padding(
+                        padding: const EdgeInsets.only(left: 4.0),
+                        child: SizedBox(
+                          width: 20,
+                          child: CircleAvatar(
+                            backgroundColor: AppColors.audioMutedIconBgColor,
+                            child: SvgPicture.asset(callMutedIcon),
+                          ),
                         ),
                       ),
-                      if (controller.callList[index].isAudioMuted.value) ...[
-                        Padding(
-                          padding: const EdgeInsets.only(left: 4.0),
-                          child: SizedBox(
-                            width: 20,
-                            child: CircleAvatar(
-                              backgroundColor: AppColors.audioMutedIconBgColor,
-                              child: SvgPicture.asset(callMutedIcon),
-                            ),
+                    ],
+                    AnimatedCrossFade(
+                        firstCurve: Curves.fastOutSlowIn,
+                        alignment: Alignment.center,
+                        duration: const Duration(milliseconds: 300),
+                        firstChild: Padding(
+                          padding: const EdgeInsets.only(top: 8.0, bottom: 8.0, left: 4.0),
+                          child: SpeakingDots(
+                            radius: 9,
+                            audioLevel: controller.audioLevel(controller.callList[index].userJid),
+                            bgColor: AppColors.speakingBg,
                           ),
                         ),
-                      ],
-                      AnimatedCrossFade(
-                          firstCurve: Curves.fastOutSlowIn,
-                          alignment: Alignment.center,
-                          duration: const Duration(milliseconds: 300),
-                          firstChild: Padding(
-                            padding: const EdgeInsets.only(top: 8.0, bottom: 8.0, left: 4.0),
-                            child: SpeakingDots(
-                              radius: 9,
-                              audioLevel: controller.audioLevel(controller.callList[index].userJid),
-                              bgColor: AppColors.speakingBg,
-                            ),
-                          ),
-                          secondChild: const SizedBox.shrink(),
-                          crossFadeState: (controller.speakingUsers.isNotEmpty && !controller.callList[index].isAudioMuted.value &&
-                              !controller.audioLevel(controller.callList[index].userJid).isNegative)
-                              ? CrossFadeState.showFirst
-                              : CrossFadeState.showSecond)
+                        secondChild: const SizedBox.shrink(),
+                        crossFadeState: (controller.speakingUsers.isNotEmpty && !controller.callList[index].isAudioMuted.value &&
+                            !controller.audioLevel(controller.callList[index].userJid).isNegative)
+                            ? CrossFadeState.showFirst
+                            : CrossFadeState.showSecond)
+                  ],
+                ),
+              );
+            }),
+            Positioned(
+              left: 8,
+              bottom: 8,
+              right: 8,
+              child: FutureBuilder<String>(
+                  future: CallUtils.getNameOfJid(controller.callList[index].userJid.checkNull()),
+                  builder: (context, snapshot) {
+                    if (!snapshot.hasError && snapshot.data.checkNull().isNotEmpty) {
+                      return Text(
+                        snapshot.data.checkNull(),
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 14,
+                        ),
+                        overflow: TextOverflow.ellipsis,
+                        maxLines: 1,
+                      );
+                    }
+                    return const SizedBox.shrink();
+                  }),
+            ),
+            Obx(() {
+              debugPrint(
+                  "getUserJID ${controller.callList[index].userJid != SessionManagement.getUserJID()}");
+              return (getTileCallStatus(controller.callList[index].callStatus?.value,controller.callList[index].userJid.checkNull()).isNotEmpty)
+                  ? Positioned.fill(
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Colors.black.withOpacity(0.5), // Adjust the color and opacity as needed
+                    borderRadius: BorderRadius.circular(10.0),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.3),
+                        blurRadius: 8,
+                        offset: const Offset(0, 3),
+                      ),
                     ],
                   ),
-                );
-              }),
-              Positioned(
-                left: 8,
-                bottom: 8,
-                right: 8,
-                child: FutureBuilder<String>(
-                    future: CallUtils.getNameOfJid(controller.callList[index].userJid.checkNull()),
-                    builder: (context, snapshot) {
-                      if (!snapshot.hasError && snapshot.data.checkNull().isNotEmpty) {
-                        return Text(
-                          snapshot.data.checkNull(),
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 14,
-                          ),
-                          overflow: TextOverflow.ellipsis,
-                          maxLines: 1,
-                        );
-                      }
-                      return const SizedBox.shrink();
-                    }),
-              ),
-              Obx(() {
-                debugPrint(
-                    "getUserJID ${controller.callList[index].userJid != SessionManagement.getUserJID()}");
-                return (getTileCallStatus(controller.callList[index].callStatus?.value,controller.callList[index].userJid.checkNull()).isNotEmpty)
-                    ? Positioned.fill(
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: Colors.black.withOpacity(0.5), // Adjust the color and opacity as needed
-                      borderRadius: BorderRadius.circular(10.0),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.3),
-                          blurRadius: 8,
-                          offset: const Offset(0, 3),
-                        ),
-                      ],
-                    ),
-                  ),
-                )
-                    : const SizedBox.shrink();
-              }),
-              Obx(() {
-                return controller.callList.isNotEmpty
-                    ? (getTileCallStatus(controller.callList[index].callStatus?.value,controller.callList[index].userJid.checkNull()) != "" &&
-                    controller.callList[index].userJid != SessionManagement.getUserJID())
-                    ? Center(
-                    child: Text(
-                      getTileCallStatus(controller.callList[index].callStatus?.value,controller.callList[index].userJid.checkNull()),
-                      style: const TextStyle(color: Colors.white),
-                    ))
-                    : const SizedBox.shrink()
-                    : const SizedBox.shrink();
-              }),
-              /*Obx(() {
-                  return (controller.callList[index].callStatus==CallStatus.ringing) ?
-                    Container(color: AppColors.transBlack75, child: Center(
-                    child: Text(controller.callList[index].callStatus.toString(),style: const TextStyle(color: Colors.white)),),) : const SizedBox.shrink();
-                })*/
-            ],
-          ));
-    },
+                ),
+              )
+                  : const SizedBox.shrink();
+            }),
+            Obx(() {
+              return controller.callList.isNotEmpty
+                  ? (getTileCallStatus(controller.callList[index].callStatus?.value,controller.callList[index].userJid.checkNull()) != "" &&
+                  controller.callList[index].userJid != SessionManagement.getUserJID())
+                  ? Center(
+                  child: Text(
+                    getTileCallStatus(controller.callList[index].callStatus?.value,controller.callList[index].userJid.checkNull()),
+                    style: const TextStyle(color: Colors.white),
+                  ))
+                  : const SizedBox.shrink()
+                  : const SizedBox.shrink();
+            }),
+            /*Obx(() {
+                return (controller.callList[index].callStatus==CallStatus.ringing) ?
+                  Container(color: AppColors.transBlack75, child: Center(
+                  child: Text(controller.callList[index].callStatus.toString(),style: const TextStyle(color: Colors.white)),),) : const SizedBox.shrink();
+              })*/
+          ],
+        );
+      },
+    ),
   );
 }
 
