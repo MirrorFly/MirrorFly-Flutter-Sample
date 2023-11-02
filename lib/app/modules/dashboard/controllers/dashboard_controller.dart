@@ -1500,7 +1500,7 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
   @override
   void onHidden() {}
 
-  Future<dynamic> fetchCallLogList() async {
+  Future<void> fetchCallLogList() async {
     callLogPageNum = callLogPageNum + 1;
     Mirrorfly.getCallLogsList(callLogPageNum).then((value) {
       if (value != null) {
