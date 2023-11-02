@@ -46,8 +46,8 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
   var pinnedUserJid = ''.obs;
 
   var callMode = "".obs;
-  get isOneToOneCall => callMode.value == CallMode.oneToOne;
-  get isGroupCall => callMode.value == CallMode.groupCall;
+  get isOneToOneCall => callList.length==2;//callMode.value == CallMode.oneToOne;
+  get isGroupCall => callList.length>2;//callMode.value == CallMode.groupCall;
 
   var callType = "".obs;
   get isAudioCall => callType.value == CallType.audio;
@@ -244,11 +244,15 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
   }
 
   videoMute() {
+    debugPrint("isOneToOneCall : $isOneToOneCall");
     if (callType.value != CallType.audio) {
       Mirrorfly.muteVideo(!videoMuted.value);
       videoMuted(!videoMuted.value);
-    } else if (callType.value == CallType.audio && Get.currentRoute == Routes.onGoingCallView) {
+    } else if (callType.value == CallType.audio && isOneToOneCall && Get.currentRoute == Routes.onGoingCallView) {
       showVideoSwitchPopup();
+    } else if (isGroupCall) {
+      Mirrorfly.muteVideo(!videoMuted.value);
+      videoMuted(!videoMuted.value);
     }
   }
 
@@ -349,6 +353,7 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
 
   void callDisconnected(String callMode, String userJid, String callType) {
     this.callMode(callMode);
+    this.callType(callType);
     if(Get.currentRoute==Routes.outGoingCallView){
       // This if condition is added for the group call remote busy - call action
       if(callList.length < 2){
@@ -409,6 +414,7 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
     // }
 
     this.callMode(callMode);
+      this.callType(callType);
     debugPrint("onCallAction CallList Length ${callList.length}");
     if(callList.length < 2){
       disconnectOutgoingCall();
@@ -432,6 +438,7 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
 
   void remoteHangup(String callMode, String userJid, String callType, String callAction) {
     this.callMode(callMode);
+    this.callType(callType);
     // if(callList.isNotEmpty) {
     //   disconnectCall();
     // }
@@ -439,16 +446,19 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
 
   void calling(String callMode, String userJid, String callType, String callStatus) {
     this.callMode(callMode);
+    this.callType(callType);
     // this.callStatus(callStatus);
   }
 
   void reconnected(String callMode, String userJid, String callType, String callStatus) {
     this.callMode(callMode);
+    this.callType(callType);
     // this.callStatus(callStatus);
   }
 
   void ringing(String callMode, String userJid, String callType, String callStatus) {
     this.callMode(callMode);
+    this.callType(callType);
     // this.callStatus(callStatus);
     var index = callList.indexWhere((userList) => userList.userJid == userJid);
     debugPrint("User List Index $index");
@@ -464,6 +474,7 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
 
   void onHold(String callMode, String userJid, String callType, String callStatus) {
     this.callMode(callMode);
+    this.callType(callType);
     // this.callStatus(callStatus);
     // isCallTimerEnabled = false;
 
@@ -471,6 +482,7 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
 
   void connected(String callMode, String userJid, String callType, String callStatus) {
     this.callMode(callMode);
+    this.callType(callType);
     // this.callStatus(callStatus);
     // getNames();
     // startTimer();
@@ -495,6 +507,7 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
 
   void timeout(String callMode, String userJid, String callType, String callStatus) {
     this.callMode(callMode);
+    this.callType(callType);
     debugPrint("#Mirrorfly Call timeout callMode : $callMode -- userJid : $userJid -- callType $callType -- callStatus $callStatus");
     if(Get.currentRoute==Routes.outGoingCallView) {
       Get.offNamed(Routes.callTimeOutView,
@@ -853,6 +866,7 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
   }
 
   void onResume(String callMode, String userJid, String callType, String callStatus) {
+    this.callType(callType);
     this.callMode(callMode);
     // isCallTimerEnabled = true;
   }
@@ -868,6 +882,7 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
     removeUser(callMode, userJid, callType);
   }
   void removeUser(String callMode, String userJid, String callType){
+    this.callType(callType);
     debugPrint("before removeUser ${callList.length}");
     debugPrint("before removeUser index ${callList.indexWhere((element) => element.userJid == userJid)}");
     callList.removeWhere((element){
