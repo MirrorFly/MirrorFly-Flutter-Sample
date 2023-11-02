@@ -1,17 +1,13 @@
-import 'dart:ffi';
 
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:focus_detector/focus_detector.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/call_modules/call_logs/call_log_model.dart';
-import 'package:mirror_fly_demo/app/call_modules/call_utils.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
 import 'package:mirror_fly_demo/app/modules/dashboard/widgets.dart';
 import 'package:mirror_fly_demo/app/widgets/animated_floating_action.dart';
-import 'package:mirrorfly_plugin/logmessage.dart';
 import 'package:mirrorfly_plugin/mirrorflychat.dart';
 
 import '../../../common/app_theme.dart';
@@ -982,7 +978,7 @@ class DashboardView extends GetView<DashboardController> {
                         ),
                       );
                     } else {
-                      return SizedBox.shrink();
+                      return const SizedBox.shrink();
                     }
                   });
             }

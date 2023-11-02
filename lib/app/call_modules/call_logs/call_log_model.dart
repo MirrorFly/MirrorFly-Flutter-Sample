@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:io';
 
 CallLogModel callLogListFromJson(String str) => CallLogModel.fromJson(json.decode(str));
 
@@ -14,13 +13,13 @@ class CallLogModel {
     if (json['data'] != null) {
       data = <CallLogData>[];
       json['data'].forEach((v) {
-        data!.add(new CallLogData.fromJson(v));
+        data!.add( CallLogData.fromJson(v));
       });
     }
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
+    final Map<String, dynamic> data =  <String, dynamic>{};
     if (this.data != null) {
       data['data'] = this.data!.map((v) => v.toJson()).toList();
     }
@@ -37,7 +36,6 @@ class CallLogData {
   int? endTime;
   String? fromUser;
   String? groupId;
-  List<Null>? inviteUserList;
   bool? isCarbonAnswered;
   bool? isDeleted;
   bool? isDisplay;
@@ -58,7 +56,6 @@ class CallLogData {
         this.endTime,
         this.fromUser,
         this.groupId,
-        this.inviteUserList,
         this.isCarbonAnswered,
         this.isDeleted,
         this.isDisplay,
@@ -92,25 +89,25 @@ class CallLogData {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['callMode'] = this.callMode;
-    data['callState'] = this.callState;
-    data['callTime'] = this.callTime;
-    data['callType'] = this.callType;
-    data['callerDevice'] = this.callerDevice;
-    data['endTime'] = this.endTime;
-    data['fromUser'] = this.fromUser;
-    data['groupId'] = this.groupId;
-    data['isCarbonAnswered'] = this.isCarbonAnswered;
-    data['isDeleted'] = this.isDeleted;
-    data['isDisplay'] = this.isDisplay;
-    data['isSync'] = this.isSync;
-    data['roomId'] = this.roomId;
-    data['rowId'] = this.rowId;
-    data['sessionStatus'] = this.sessionStatus;
-    data['startTime'] = this.startTime;
-    data['toUser'] = this.toUser;
-    data['userList'] = this.userList;
+    final Map<String, dynamic> data =  <String, dynamic>{};
+    data['callMode'] = callMode;
+    data['callState'] = callState;
+    data['callTime'] = callTime;
+    data['callType'] = callType;
+    data['callerDevice'] = callerDevice;
+    data['endTime'] = endTime;
+    data['fromUser'] = fromUser;
+    data['groupId'] = groupId;
+    data['isCarbonAnswered'] = isCarbonAnswered;
+    data['isDeleted'] = isDeleted;
+    data['isDisplay'] = isDisplay;
+    data['isSync'] = isSync;
+    data['roomId'] = roomId;
+    data['rowId'] = rowId;
+    data['sessionStatus'] = sessionStatus;
+    data['startTime'] = startTime;
+    data['toUser'] = toUser;
+    data['userList'] = userList;
     return data;
   }
 }

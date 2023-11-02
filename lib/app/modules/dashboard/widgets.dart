@@ -518,9 +518,6 @@ onTapForSpantext(String e) {
 }
 
 Widget callLogTime(String time, int? callState) {
-  TextStyle underlineStyle = const TextStyle(decoration: TextDecoration.underline, fontSize: 14, color: Colors.blueAccent);
-  TextStyle normalStyle = const TextStyle(fontSize: 14, color: textHintColor);
-  var prevValue = "";
   return Row(
     children: [
       callState == 0
@@ -543,9 +540,4 @@ Widget callLogTime(String time, int? callState) {
       Text(time),
     ],
   );
-  // return Text.rich(
-  //   customTextSpan(time, prevValue, normalStyle, underlineStyle),
-  //   maxLines: maxLines,
-  //   overflow: maxLines==null ? null : TextOverflow.ellipsis,
-  // );
 }

@@ -1501,12 +1501,17 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
   void onHidden() {}
 
   Future<dynamic> fetchCallLogList() async {
-    await Mirrorfly.getCallLogDuration(1, 1);
     callLogPageNum = callLogPageNum + 1;
-    var res = await Mirrorfly.getCallLogsList(callLogPageNum);
-    var list = callLogListFromJson(res);
-    _callLogList.addAll(list.data!);
-    return res;
+    Mirrorfly.getCallLogsList(callLogPageNum).then((value) {
+      if (value != null) {
+        var list = callLogListFromJson(value);
+        if (list.data != null) {
+          _callLogList.addAll(list.data!);
+        }
+      }
+    }).catchError((error) {
+      debugPrint("issue===> $error");
+    });
   }
 
   fetchCallLogListener() async {
