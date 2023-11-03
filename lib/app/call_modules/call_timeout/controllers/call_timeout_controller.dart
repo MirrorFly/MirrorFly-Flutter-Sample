@@ -23,6 +23,7 @@ class CallTimeoutController extends GetxController {
   @override
   Future<void> onInit() async {
     super.onInit();
+    enterFullScreen();
     groupId(await Mirrorfly.getGroupId());
     callType(Get.arguments["callType"]);
     callMode(Get.arguments["callMode"]);
@@ -30,6 +31,12 @@ class CallTimeoutController extends GetxController {
     calleeName(Get.arguments["calleeName"]);
     // var data = await getProfileDetails(userJID.value);
     // profile(data);
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    exitFullScreen();
   }
 
   void cancelCallTimeout() {
@@ -85,5 +92,13 @@ class CallTimeoutController extends GetxController {
     } else {
       toToast(Constants.noInternetConnection);
     }
+  }
+
+  void enterFullScreen() {
+    // SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersive);
+  }
+
+  void exitFullScreen() {
+    // SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: SystemUiOverlay.values);
   }
 }

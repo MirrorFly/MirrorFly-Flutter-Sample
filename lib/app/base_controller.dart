@@ -426,6 +426,9 @@ abstract class BaseController {
         if(muteEvent == MuteStatus.remoteAudioMute || muteEvent == MuteStatus.remoteAudioUnMute) {
           Get.find<CallController>().audioMuteStatusChanged(muteEvent, userJid);
         }
+        if(muteEvent == MuteStatus.remoteVideoMute || muteEvent == MuteStatus.remoteVideoUnMute) {
+          Get.find<CallController>().videoMuteStatusChanged(muteEvent, userJid);
+        }
       }
 
     });
