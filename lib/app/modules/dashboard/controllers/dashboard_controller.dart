@@ -119,7 +119,6 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
         }
       }
     });
-    fetchCallLogListener();
     fetchCallLogList();
     callLogScrollController.addListener(_callLogScrollListener);
     super.onInit();
@@ -1514,27 +1513,6 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
     });
   }
 
-  fetchCallLogListener() async {
-    var res = await Mirrorfly.getCallLogListener();
-    if (res.toString() == "updated") {
-      _callLogList.clear();
-      callLogList.clear();
-      var res = await Mirrorfly.getCallLogsList(1);
-      var list = callLogListFromJson(res);
-      _callLogList.addAll(list.data!);
-    } else {}
-  }
-
-  Future fetchCallDuration(int? startTime, int? endTime) async {
-    var res = await Mirrorfly.getCallLogDuration(startTime!, endTime!);
-    return res;
-  }
-
-  Future fetchCallLogNames(String toUser, List<String> callUsers) async {
-    var res = await Mirrorfly.getCallLogUserNames(toUser, callUsers);
-    return res;
-  }
-
   void makeVideoCall(String? fromUser) async {
     //closeKeyBoard();
     if (await AppUtils.isNetConnected()) {
@@ -1612,6 +1590,18 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
       } else {
         toToast(Constants.noInternetConnection);
       }
+    }
+  }
+
+  void onCallLogUpdate(value) async{
+    if (value) {
+      _callLogList.clear();
+      callLogList.clear();
+      var res = await Mirrorfly.getCallLogsList(1);
+      var list = callLogListFromJson(res);
+      _callLogList.addAll(list.data!);
+    } else {
+      debugPrint("onCallLogUpdate : Failed");
     }
   }
 }

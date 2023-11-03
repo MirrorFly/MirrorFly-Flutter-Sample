@@ -1,9 +1,9 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:focus_detector/focus_detector.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/call_modules/call_logs/call_log_model.dart';
+import 'package:mirror_fly_demo/app/call_modules/call_utils.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
 import 'package:mirror_fly_demo/app/modules/dashboard/widgets.dart';
@@ -946,7 +946,7 @@ class DashboardView extends GetView<DashboardController> {
                   });
             } else {
               return FutureBuilder(
-                  future: controller.fetchCallLogNames(item.fromUser!, item.userList!),
+                  future: CallUtils.getCallLogUserNames(item.userList!),
                   builder: (context, snap) {
                     if (snap.hasData) {
                       return ListTile(
@@ -958,7 +958,7 @@ class DashboardView extends GetView<DashboardController> {
                             fit: BoxFit.cover,
                           ),
                         ),
-                        title: Text(snap.data),
+                        title: Text(snap.data!),
                         subtitle: SizedBox(
                           child: callLogTime(
                               "${getCallLogDateFromTimestamp(item.callTime!, "dd-MMM")}  ${getChatTime(context, item.callTime)}", item.callState),
@@ -1026,7 +1026,7 @@ class DashboardView extends GetView<DashboardController> {
                       : item.callState == 2
                           ? item.fromUser
                           : item.toUser)
-                  : controller.makeCall(userList,callType);
+                  : controller.makeCall(userList, callType);
             },
             icon: SvgPicture.asset(
               videoCallIcon,
@@ -1041,7 +1041,7 @@ class DashboardView extends GetView<DashboardController> {
                       : item.callState == 2
                           ? item.fromUser
                           : item.toUser)
-                  : controller.makeCall(userList,callType);
+                  : controller.makeCall(userList, callType);
             },
             icon: SvgPicture.asset(
               audioCallIcon,
