@@ -1547,7 +1547,7 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
       if (await AppPermission.askAudioCallPermissions()) {
         Mirrorfly.makeVoiceCall(toUser.checkNull()).then((value) {
           if (value) {
-            debugPrint("#Mirrorfly Call userjid ${toUser}");
+            debugPrint("#Mirrorfly Call userjid $toUser");
             //  setOnGoingUserGone();
             Get.toNamed(Routes.outGoingCallView, arguments: {
               "userJid": [toUser],
