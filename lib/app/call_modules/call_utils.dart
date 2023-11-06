@@ -48,8 +48,6 @@ class CallUtils {
 
   static Future<String> getCallLogUserNames(List<String?> callUsers, CallLogData item) async {
 
-    LogMessage.d("MissedCallUser: callUsers.length", " "  + callUsers.length.toString() + " callState : "+ item.callState.toString());
-
     var membersName = StringBuffer();
     var isMaxMemberNameNotReached = true;
 

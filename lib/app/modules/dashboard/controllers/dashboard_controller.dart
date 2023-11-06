@@ -1519,7 +1519,7 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
       if (Platform.isAndroid ? await AppPermission.askVideoCallPermissions() : await AppPermission.askiOSVideoCallPermissions()) {
         if ((await Mirrorfly.isOnGoingCall()).checkNull()) {
           debugPrint("#Mirrorfly Call You are on another call");
-          toToast(Constants.msg_ongoing_call_alert);
+          toToast(Constants.msgOngoingCallAlert);
         } else {
           Mirrorfly.makeVideoCall(fromUser.checkNull()).then((value) {
             if (value) {
@@ -1552,7 +1552,7 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
       if (await AppPermission.askAudioCallPermissions()) {
         if ((await Mirrorfly.isOnGoingCall()).checkNull()) {
           debugPrint("#Mirrorfly Call You are on another call");
-          toToast(Constants.msg_ongoing_call_alert);
+          toToast(Constants.msgOngoingCallAlert);
         } else {
           Mirrorfly.makeVoiceCall(toUser.checkNull()).then((value) {
             if (value) {
@@ -1583,7 +1583,7 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
             Get.back();
             if ((await Mirrorfly.isOnGoingCall()).checkNull()) {
               debugPrint("#Mirrorfly Call You are on another call");
-              toToast(Constants.msg_ongoing_call_alert);
+              toToast(Constants.msgOngoingCallAlert);
             } else {
               Mirrorfly.makeGroupVideoCall(jidList: userList).then((value) {
                 if (value) {
@@ -1597,7 +1597,7 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
             Get.back();
             if ((await Mirrorfly.isOnGoingCall()).checkNull()) {
               debugPrint("#Mirrorfly Call You are on another call");
-              toToast(Constants.msg_ongoing_call_alert);
+              toToast(Constants.msgOngoingCallAlert);
             } else {
               Mirrorfly.makeGroupVoiceCall(jidList: userList).then((value) {
                 if (value) {
