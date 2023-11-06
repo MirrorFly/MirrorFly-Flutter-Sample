@@ -1,15 +1,17 @@
+import 'package:mirror_fly_demo/app/call_modules/call_logs/call_log_model.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
 import 'package:mirror_fly_demo/app/data/session_management.dart';
+import 'package:mirrorfly_plugin/logmessage.dart';
 
 import '../data/apputils.dart';
 
-class CallUtils{
+class CallUtils {
   static Future<String> getCallersName(List<String?> callUsers) async {
     var membersName = StringBuffer();
     membersName.write(callUsers.length <= 1 ? "You and " : "You, ");
     var isMaxMemberNameNotReached = true;
-    for (var i = 0; i<callUsers.length;i++) {
-      if(callUsers[i]!=null) {
+    for (var i = 0; i < callUsers.length; i++) {
+      if (callUsers[i] != null) {
         var pair = await AppUtils.getNameAndProfileDetails(callUsers[i]!);
         if (i == 0) {
           membersName.write(pair.item1);
@@ -29,7 +31,7 @@ class CallUtils{
           membersName.write(" (+${(callUsers.length - i)})");
           break;
         }
-      }else{
+      } else {
         break;
       }
     }
@@ -44,11 +46,20 @@ class CallUtils{
     return profile.getName();
   }
 
-  static Future<String> getCallLogUserNames(List<String?> callUsers) async {
+  static Future<String> getCallLogUserNames(List<String?> callUsers, CallLogData item) async {
+
+    LogMessage.d("MissedCallUser: callUsers.length", " "  + callUsers.length.toString() + " callState : "+ item.callState.toString());
+
     var membersName = StringBuffer();
     var isMaxMemberNameNotReached = true;
-    for (var i = 0; i<callUsers.length;i++) {
-      if(callUsers[i]!=null) {
+
+    if (item.callState == 0 || item.callState == 2) {
+      var pair = await AppUtils.getNameAndProfileDetails(item.fromUser!);
+      membersName.write("${pair.item1}, ");
+    }
+
+    for (var i = 0; i < callUsers.length; i++) {
+      if (callUsers[i] != null) {
         var pair = await AppUtils.getNameAndProfileDetails(callUsers[i]!);
         if (i == 0) {
           membersName.write(pair.item1);
@@ -68,7 +79,7 @@ class CallUtils{
           membersName.write(" (+${(callUsers.length - i)})");
           break;
         }
-      }else{
+      } else {
         break;
       }
     }

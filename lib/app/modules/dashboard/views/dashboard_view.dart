@@ -946,7 +946,7 @@ class DashboardView extends GetView<DashboardController> {
                   });
             } else {
               return FutureBuilder(
-                  future: CallUtils.getCallLogUserNames(item.userList!),
+                  future: CallUtils.getCallLogUserNames(item.userList!, item),
                   builder: (context, snap) {
                     if (snap.hasData) {
                       return ListTile(
@@ -1017,6 +1017,9 @@ class DashboardView extends GetView<DashboardController> {
   }
 
   Widget callIcon(String? callType, CallLogData item, String? callMode, List<String>? userList) {
+    if (item.callState == 0 || item.callState == 2) {
+      userList!.add(item.fromUser!);
+    }
     return callType!.toLowerCase() == CallType.video
         ? IconButton(
             onPressed: () {
