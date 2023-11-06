@@ -567,7 +567,7 @@ class ContactController extends FullLifeCycleController
   var groupCallMembersCount = 1.obs; //initially its 1 because me also added into call
   void validateForCall(Profile item) {
     if(isMakeCall.value){
-      if (selectedUsersList.contains(item)) {
+      if (selectedUsersJIDList.contains(item.jid)) {
         selectedUsersList.remove(item);
         selectedUsersJIDList.remove(item.jid);
         //item.isSelected = false;

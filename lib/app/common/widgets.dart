@@ -137,7 +137,7 @@ class ImageNetwork extends GetView<MainController> {
     } else {*/
     return Obx(
       () => CachedNetworkImage(
-        imageUrl: url.isURL ? url : controller.uploadEndpoint + url,
+        imageUrl: url.startsWith("http") ? url : controller.uploadEndpoint + url,
         fit: BoxFit.fill,
         width: width,
         height: height,
@@ -174,7 +174,7 @@ class ImageNetwork extends GetView<MainController> {
         },
         errorWidget: (context, link, error) {
           if(url.isNotEmpty) {
-            // mirrorFlyLog("image error", "$error link : $link token : ${controller.authToken.value}");
+            // mirrorFlyLog("image error", "$error link : $link token : ${controller.authToken.value} ${url.isURL}");
             if (error.toString().contains("401") && url.isNotEmpty) {
               // controller.getAuthToken();
               _deleteImageFromCache(url);

@@ -99,7 +99,7 @@ class ParticipantsView extends GetView<CallController> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         FutureBuilder(
-                            future: CallUtils.getCallersName([controller.callList[index].userJid.checkNull()]),
+                            future: CallUtils.getNameOfJid(controller.callList[index].userJid.checkNull()),
                             builder: (ctx, snap) {
                               return snap.hasData && snap.data != null
                                   ? Text(
@@ -131,9 +131,9 @@ class ParticipantsView extends GetView<CallController> {
                     padding: const EdgeInsets.symmetric(horizontal: 20),
                     child: Obx(() {
                       return CircleAvatar(
-                          backgroundColor: controller.callList[index].isAudioMuted.value ? AppColors.participantUnMuteColor : Colors.transparent,
+                          backgroundColor: controller.callList[index].isVideoMuted.value ? AppColors.participantUnMuteColor : Colors.transparent,
                           child: SvgPicture.asset(
-                              controller.callList[index].isAudioMuted.value ? participantVideoDisabled : participantVideoEnabled));
+                              controller.callList[index].isVideoMuted.value ? participantVideoDisabled : participantVideoEnabled));
                     }),
                   ),
                 ],

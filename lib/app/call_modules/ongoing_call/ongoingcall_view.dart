@@ -63,10 +63,12 @@ class OnGoingCallView extends GetView<CallController> {
                                             style: TextStyle(color: Colors.white),
                                           ):  const SizedBox.shrink(),*/
                                 if (controller.callList.length > 1 &&
-                                    getTileCallStatus(controller.callList[0].callStatus?.value,controller.callList[0].userJid.checkNull()).isNotEmpty &&
+                                    getTileCallStatus(controller.callList[0].callStatus?.value,
+                                        controller.callList[0].userJid.checkNull()).isNotEmpty &&
                                     controller.layoutSwitch.value) ...[
                                   Text(
-                                    getTileCallStatus(controller.callList[0].callStatus?.value,controller.callList[0].userJid.checkNull()),
+                                    getTileCallStatus(controller.callList[0].callStatus?.value,
+                                        controller.callList[0].userJid.checkNull()),
                                     style: const TextStyle(color: Colors.white),
                                   ),
                                   const SizedBox(
@@ -86,49 +88,43 @@ class OnGoingCallView extends GetView<CallController> {
                       }),
                     ],
                   )),
-              // InkWell(
-              //   splashColor: Colors.transparent,
-              //   highlightColor: Colors.transparent,
-              //   onTap: () {
-              //     debugPrint("InkWell");
-              //     controller.isVisible(!controller.isVisible.value);
-              //   },
-              // ),
-              Obx(() {
-                return controller.callList.length >= 2
-                    ? AnimatedPositioned(
-                        duration: const Duration(milliseconds: 500),
-                        curve: Curves.easeInOut,
-                        left: 0,
-                        right: 10,
-                        bottom: controller.layoutSwitch.value
-                            ? controller.isVisible.value
-                                ? 200
-                                : 0
-                            : null,
-                        top: controller.layoutSwitch.value
-                            ? 0
-                            : controller.isVisible.value
-                                ? 60
-                                : 0,
-                        child: Align(
-                          alignment: Alignment.bottomRight,
-                          child: controller.layoutSwitch.value
-                              ? buildListItem(controller)
-                              : const SizedBox.shrink(),
-                        ),
-                      )
-                    : const SizedBox.shrink();
-              }),
-              Obx(() {
-                return !controller.layoutSwitch.value
-                 ? buildGridItem(controller) : const SizedBox.shrink();
-              }),
+              Column(
+                children: [
+                  Obx(() {
+                    return AnimatedSize(duration: const Duration(milliseconds: 500),
+                      curve: Curves.easeInOut, child: SizedBox(height: controller.isVisible.value ? 60 : 0.0,),);
+                  }),
+                  Obx(() {
+                    return !controller.layoutSwitch.value
+                        ? Expanded(child: buildGridItem(controller)) : const SizedBox.shrink();
+                  }),
+                ],
+              ),
+              Column(
+                mainAxisAlignment: MainAxisAlignment.end,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                    Obx(() {
+                      return(controller.callList.length >= 2) ?
+                       Align(
+                        alignment: Alignment.bottomRight,
+                        child: controller.layoutSwitch.value
+                            ? buildListItem(controller)
+                            : const SizedBox.shrink(),
+                      ) : const SizedBox.shrink();
+                    }),
+                  const SizedBox(height: 15,),
+                  Obx(() {
+                    return AnimatedSize(duration: const Duration(milliseconds: 500),
+                      curve: Curves.easeInOut, child: SizedBox(height: controller.isVisible.value ? 135 : 0.0,),);
+                  })
+                ],
+              ),
               Obx(() {
                 return AnimatedPositioned(
                   duration: const Duration(milliseconds: 500),
                   curve: Curves.easeInOut,
-                  bottom: controller.isVisible.value ? 0.0 : -200,
+                  bottom: controller.isVisible.value ? 0.0 : -140,
                   left: 0.0,
                   right: 0.0,
                   child: buildCallOptions(),
@@ -257,23 +253,23 @@ class OnGoingCallView extends GetView<CallController> {
                 onPressed: () => controller.muteAudio(),
                 child: controller.muted.value
                     ? SvgPicture.asset(
-                        muteActive,
-                      )
+                  muteActive,
+                )
                     : SvgPicture.asset(
-                        muteInactive,
-                      ),
+                  muteInactive,
+                ),
               ),
               SizedBox(width: rightSideWidth),
               controller.callType.value == CallType.video && !controller.videoMuted.value
                   ? FloatingActionButton(
-                      heroTag: "switchCamera",
-                      elevation: 0,
-                      backgroundColor: controller.cameraSwitch.value ? Colors.white : Colors.white.withOpacity(0.3),
-                      onPressed: () => controller.switchCamera(),
-                      child: controller.cameraSwitch.value
-                          ? SvgPicture.asset(cameraSwitchActive)
-                          : SvgPicture.asset(cameraSwitchInactive),
-                    )
+                heroTag: "switchCamera",
+                elevation: 0,
+                backgroundColor: controller.cameraSwitch.value ? Colors.white : Colors.white.withOpacity(0.3),
+                onPressed: () => controller.switchCamera(),
+                child: controller.cameraSwitch.value
+                    ? SvgPicture.asset(cameraSwitchActive)
+                    : SvgPicture.asset(cameraSwitchInactive),
+              )
                   : const SizedBox.shrink(),
               controller.callType.value == CallType.video && !controller.videoMuted.value
                   ? SizedBox(width: rightSideWidth)
@@ -298,12 +294,12 @@ class OnGoingCallView extends GetView<CallController> {
                 child: controller.audioOutputType.value == AudioDeviceType.receiver
                     ? SvgPicture.asset(speakerInactive)
                     : controller.audioOutputType.value == AudioDeviceType.speaker
-                        ? SvgPicture.asset(speakerActive)
-                        : controller.audioOutputType.value == AudioDeviceType.bluetooth
-                            ? SvgPicture.asset(speakerBluetooth)
-                            : controller.audioOutputType.value == AudioDeviceType.headset
-                                ? SvgPicture.asset(speakerHeadset)
-                                : SvgPicture.asset(speakerActive),
+                    ? SvgPicture.asset(speakerActive)
+                    : controller.audioOutputType.value == AudioDeviceType.bluetooth
+                    ? SvgPicture.asset(speakerBluetooth)
+                    : controller.audioOutputType.value == AudioDeviceType.headset
+                    ? SvgPicture.asset(speakerHeadset)
+                    : SvgPicture.asset(speakerActive),
               ),
             ],
           ),

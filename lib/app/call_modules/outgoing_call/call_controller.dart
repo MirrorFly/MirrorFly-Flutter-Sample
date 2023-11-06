@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/call_modules/call_utils.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
@@ -46,8 +47,8 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
   var pinnedUserJid = ''.obs;
 
   var callMode = "".obs;
-  get isOneToOneCall => callMode.value == CallMode.oneToOne;
-  get isGroupCall => callMode.value == CallMode.groupCall;
+  get isOneToOneCall => callList.length==2;//callMode.value == CallMode.oneToOne;
+  get isGroupCall => callList.length>2;//callMode.value == CallMode.groupCall;
 
   var callType = "".obs;
   get isAudioCall => callType.value == CallType.audio;
@@ -73,7 +74,7 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
   @override
   Future<void> onInit() async {
     super.onInit();
-
+    enterFullScreen();
     tabController = TabController(length: 2, vsync: this);
     // SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersive);
     debugPrint("#Mirrorfly Call Controller onInit");
@@ -244,11 +245,15 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
   }
 
   videoMute() {
+    debugPrint("isOneToOneCall : $isOneToOneCall");
     if (callType.value != CallType.audio) {
       Mirrorfly.muteVideo(!videoMuted.value);
       videoMuted(!videoMuted.value);
-    } else if (callType.value == CallType.audio && Get.currentRoute == Routes.onGoingCallView) {
+    } else if (callType.value == CallType.audio && isOneToOneCall && Get.currentRoute == Routes.onGoingCallView) {
       showVideoSwitchPopup();
+    } else if (isGroupCall) {
+      Mirrorfly.muteVideo(!videoMuted.value);
+      videoMuted(!videoMuted.value);
     }
   }
 
@@ -336,6 +341,7 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
 
   @override
   void dispose() {
+    exitFullScreen();
     // SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,overlays: SystemUiOverlay.values);
     LogMessage.d("callController", " callController dispose");
     super.dispose();
@@ -349,6 +355,7 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
 
   void callDisconnected(String callMode, String userJid, String callType) {
     this.callMode(callMode);
+    this.callType(callType);
     if(Get.currentRoute==Routes.outGoingCallView){
       // This if condition is added for the group call remote busy - call action
       if(callList.length < 2){
@@ -372,6 +379,10 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
     }
     if (callList.length <= 1 || userJid == SessionManagement.getUserJID()) {
       isCallTimerEnabled = false;
+      //if user is in the participants screen all users end the call then we should close call pages
+      if(Get.currentRoute==Routes.participants){
+        Get.back();
+      }
       // if there is an single user in that call and if he [disconnected] no need to disconnect the call from our side Observed in Android
       if (Platform.isIOS) {
         // in iOS needs to call disconnect.
@@ -405,6 +416,7 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
     // }
 
     this.callMode(callMode);
+      this.callType(callType);
     debugPrint("onCallAction CallList Length ${callList.length}");
     if(callList.length < 2){
       disconnectOutgoingCall();
@@ -428,6 +440,7 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
 
   void remoteHangup(String callMode, String userJid, String callType, String callAction) {
     this.callMode(callMode);
+    this.callType(callType);
     // if(callList.isNotEmpty) {
     //   disconnectCall();
     // }
@@ -435,22 +448,25 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
 
   void calling(String callMode, String userJid, String callType, String callStatus) {
     this.callMode(callMode);
+    this.callType(callType);
     // this.callStatus(callStatus);
   }
 
   void reconnected(String callMode, String userJid, String callType, String callStatus) {
     this.callMode(callMode);
+    this.callType(callType);
     // this.callStatus(callStatus);
   }
 
   void ringing(String callMode, String userJid, String callType, String callStatus) {
     this.callMode(callMode);
+    this.callType(callType);
     // this.callStatus(callStatus);
     var index = callList.indexWhere((userList) => userList.userJid == userJid);
     debugPrint("User List Index $index");
     if(index.isNegative){
       debugPrint("User List not Found, so adding the user to list");
-      CallUserList callUserList = CallUserList(userJid: userJid, callStatus: RxString(callStatus), isAudioMuted: false);
+      CallUserList callUserList = CallUserList(userJid: userJid, callStatus: RxString(callStatus), isAudioMuted: false,isVideoMuted: false);
       callList.insert(callList.length - 1, callUserList);
       // callList.add(callUserList);
     }else{
@@ -460,6 +476,7 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
 
   void onHold(String callMode, String userJid, String callType, String callStatus) {
     this.callMode(callMode);
+    this.callType(callType);
     // this.callStatus(callStatus);
     // isCallTimerEnabled = false;
 
@@ -467,6 +484,7 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
 
   void connected(String callMode, String userJid, String callType, String callStatus) {
     this.callMode(callMode);
+    this.callType(callType);
     // this.callStatus(callStatus);
     // getNames();
     // startTimer();
@@ -476,7 +494,7 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
       });
     }else{
       debugPrint("#MirrorflyCall user jid $userJid");
-      CallUserList callUserList = CallUserList(userJid: userJid, callStatus: RxString(callStatus), isAudioMuted: false);
+      CallUserList callUserList = CallUserList(userJid: userJid, callStatus: RxString(callStatus), isAudioMuted: false,isVideoMuted: false);
      if(callList.indexWhere((userList) => userList.userJid == userJid).isNegative) {
        callList.insert(callList.length - 1, callUserList);
        // callList.add(callUserList);
@@ -491,6 +509,7 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
 
   void timeout(String callMode, String userJid, String callType, String callStatus) {
     this.callMode(callMode);
+    this.callType(callType);
     debugPrint("#Mirrorfly Call timeout callMode : $callMode -- userJid : $userJid -- callType $callType -- callStatus $callStatus");
     if(Get.currentRoute==Routes.outGoingCallView) {
       Get.offNamed(Routes.callTimeOutView,
@@ -613,6 +632,16 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
       callList[callUserIndex].isAudioMuted(muteEvent == MuteStatus.remoteAudioMute);
     } else {
       debugPrint("#Mirrorfly call User Not Found in list to mute the status");
+    }
+  }
+
+  void videoMuteStatusChanged(String muteEvent, String userJid) {
+    var callUserIndex = callList.indexWhere((element) => element.userJid == userJid);
+    if (!callUserIndex.isNegative) {
+      debugPrint("index $callUserIndex");
+      callList[callUserIndex].isVideoMuted(muteEvent == MuteStatus.remoteVideoMute);
+    } else {
+      debugPrint("#Mirrorfly call User Not Found in list to video mute the status");
     }
   }
 
@@ -849,6 +878,7 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
   }
 
   void onResume(String callMode, String userJid, String callType, String callStatus) {
+    this.callType(callType);
     this.callMode(callMode);
     // isCallTimerEnabled = true;
   }
@@ -864,6 +894,7 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
     removeUser(callMode, userJid, callType);
   }
   void removeUser(String callMode, String userJid, String callType){
+    this.callType(callType);
     debugPrint("before removeUser ${callList.length}");
     debugPrint("before removeUser index ${callList.indexWhere((element) => element.userJid == userJid)}");
     callList.removeWhere((element){
@@ -880,5 +911,13 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
     callDisconnected(callMode, userJid, callType);
     getNames();
 
+  }
+
+  void enterFullScreen() {
+    //SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersive);
+  }
+
+  void exitFullScreen() {
+    // SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: SystemUiOverlay.values);
   }
 }

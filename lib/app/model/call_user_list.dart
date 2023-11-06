@@ -14,23 +14,27 @@ class CallUserList {
   String? userJid;
   RxString? callStatus = ''.obs;
   RxBool isAudioMuted = RxBool(false);
+  RxBool isVideoMuted = RxBool(false);
 
   CallUserList({
     this.userJid,
     this.callStatus,
     required bool isAudioMuted,
+    required bool isVideoMuted,
   }) : isAudioMuted = RxBool(isAudioMuted);
 
   factory CallUserList.fromJson(Map<String, dynamic> json) => CallUserList(
     userJid: json["userJid"],
     callStatus: RxString(json["callStatus"]),
     isAudioMuted: json["isAudioMuted"] ?? false,
+    isVideoMuted: json["isVideoMuted"] ?? false,
   );
 
   Map<String, dynamic> toJson() => {
     "userJid": userJid,
     "callStatus": callStatus?.value,
     "isAudioMuted": isAudioMuted.value,
+    "isVideoMuted": isVideoMuted.value,
   };
 }
 
