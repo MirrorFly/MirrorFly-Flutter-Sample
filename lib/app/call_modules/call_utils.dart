@@ -1,7 +1,6 @@
 import 'package:mirror_fly_demo/app/call_modules/call_logs/call_log_model.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
 import 'package:mirror_fly_demo/app/data/session_management.dart';
-import 'package:mirrorfly_plugin/logmessage.dart';
 
 import '../data/apputils.dart';
 
