@@ -1517,17 +1517,22 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
     //closeKeyBoard();
     if (await AppUtils.isNetConnected()) {
       if (Platform.isAndroid ? await AppPermission.askVideoCallPermissions() : await AppPermission.askiOSVideoCallPermissions()) {
-        Mirrorfly.makeVideoCall(fromUser.checkNull()).then((value) {
-          if (value) {
-            //setOnGoingUserGone();
-            Get.toNamed(Routes.outGoingCallView, arguments: {
-              "userJid": [fromUser],
-              "callType": CallType.video
-            })?.then((value) => setOnGoingUserAvail());
-          }
-        }).catchError((e) {
-          debugPrint("#Mirrorfly Call $e");
-        });
+        if ((await Mirrorfly.isOnGoingCall()).checkNull()) {
+          debugPrint("#Mirrorfly Call You are on another call");
+          toToast(Constants.msgOngoingCallAlert);
+        } else {
+          Mirrorfly.makeVideoCall(fromUser.checkNull()).then((value) {
+            if (value) {
+              //setOnGoingUserGone();
+              Get.toNamed(Routes.outGoingCallView, arguments: {
+                "userJid": [fromUser],
+                "callType": CallType.video
+              })?.then((value) => setOnGoingUserAvail());
+            }
+          }).catchError((e) {
+            debugPrint("#Mirrorfly Call $e");
+          });
+        }
       } else {
         LogMessage.d("askVideoCallPermissions", "false");
       }
@@ -1545,18 +1550,23 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
     // closeKeyBoard();
     if (await AppUtils.isNetConnected()) {
       if (await AppPermission.askAudioCallPermissions()) {
-        Mirrorfly.makeVoiceCall(toUser.checkNull()).then((value) {
-          if (value) {
-            debugPrint("#Mirrorfly Call userjid $toUser");
-            //  setOnGoingUserGone();
-            Get.toNamed(Routes.outGoingCallView, arguments: {
-              "userJid": [toUser],
-              "callType": CallType.audio
-            })?.then((value) => setOnGoingUserAvail());
-          }
-        }).catchError((e) {
-          debugPrint("#Mirrorfly Call $e");
-        });
+        if ((await Mirrorfly.isOnGoingCall()).checkNull()) {
+          debugPrint("#Mirrorfly Call You are on another call");
+          toToast(Constants.msgOngoingCallAlert);
+        } else {
+          Mirrorfly.makeVoiceCall(toUser.checkNull()).then((value) {
+            if (value) {
+              debugPrint("#Mirrorfly Call userjid $toUser");
+              //  setOnGoingUserGone();
+              Get.toNamed(Routes.outGoingCallView, arguments: {
+                "userJid": [toUser],
+                "callType": CallType.audio
+              })?.then((value) => setOnGoingUserAvail());
+            }
+          }).catchError((e) {
+            debugPrint("#Mirrorfly Call $e");
+          });
+        }
       } else {
         debugPrint("permission not given");
       }
@@ -1571,20 +1581,30 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
         if (callType == CallType.video) {
           if (await AppPermission.askVideoCallPermissions()) {
             Get.back();
-            Mirrorfly.makeGroupVideoCall(jidList: userList).then((value) {
-              if (value) {
-                Get.toNamed(Routes.outGoingCallView, arguments: {"userJid": userList, "callType": CallType.video});
-              }
-            });
+            if ((await Mirrorfly.isOnGoingCall()).checkNull()) {
+              debugPrint("#Mirrorfly Call You are on another call");
+              toToast(Constants.msgOngoingCallAlert);
+            } else {
+              Mirrorfly.makeGroupVideoCall(jidList: userList).then((value) {
+                if (value) {
+                  Get.toNamed(Routes.outGoingCallView, arguments: {"userJid": userList, "callType": CallType.video});
+                }
+              });
+            }
           }
         } else {
           if (await AppPermission.askAudioCallPermissions()) {
             Get.back();
-            Mirrorfly.makeGroupVoiceCall(jidList: userList).then((value) {
-              if (value) {
-                Get.toNamed(Routes.outGoingCallView, arguments: {"userJid": userList, "callType": CallType.audio});
-              }
-            });
+            if ((await Mirrorfly.isOnGoingCall()).checkNull()) {
+              debugPrint("#Mirrorfly Call You are on another call");
+              toToast(Constants.msgOngoingCallAlert);
+            } else {
+              Mirrorfly.makeGroupVoiceCall(jidList: userList).then((value) {
+                if (value) {
+                  Get.toNamed(Routes.outGoingCallView, arguments: {"userJid": userList, "callType": CallType.audio});
+                }
+              });
+            }
           }
         }
       } else {
@@ -1593,7 +1613,7 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
     }
   }
 
-  void onCallLogUpdate(value) async{
+  void onCallLogUpdate(value) async {
     if (value) {
       _callLogList.clear();
       callLogList.clear();
