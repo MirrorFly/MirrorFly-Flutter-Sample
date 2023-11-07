@@ -447,6 +447,16 @@ abstract class BaseController {
     });
 
     Mirrorfly.onAvailableFeaturesUpdated.listen(onAvailableFeaturesUpdated);
+
+    Mirrorfly.onCallLogsUpdated.listen(onCallLogsUpdated);
+
+  }
+
+  void onCallLogsUpdated(value){
+    LogMessage.d("onCallLogUpdated", value);
+    if (Get.isRegistered<DashboardController>()) {
+      Get.find<DashboardController>().onCallLogUpdate(value);
+    }
   }
 
   void onAvailableFeaturesUpdated(dynamic value){
