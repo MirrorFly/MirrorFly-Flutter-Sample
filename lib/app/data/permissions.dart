@@ -124,18 +124,19 @@ class AppPermission {
     final bluetoothConnect = await Permission.bluetoothConnect.status; //BLUETOOTH_CONNECT
     final notification = await Permission.notification.status; //BLUETOOTH_CONNECT
     var permissions = <Permission>[];
-    if(!microphone.isGranted && !SessionManagement.getBool(Constants.audioRecordPermissionAsked)){
+    if(!microphone.isGranted || (await Permission.microphone.shouldShowRequestRationale)/*&& !SessionManagement.getBool(Constants.audioRecordPermissionAsked)*/){
       permissions.add(Permission.microphone);
     }
-    if(!phone.isGranted && !SessionManagement.getBool(Constants.readPhoneStatePermissionAsked) && Platform.isAndroid){
+    if(!phone.isGranted || (await Permission.phone.shouldShowRequestRationale)/*&& !SessionManagement.getBool(Constants.readPhoneStatePermissionAsked)*/ && Platform.isAndroid){
       permissions.add(Permission.phone);
     }
-    if(!bluetoothConnect.isGranted && !SessionManagement.getBool(Constants.bluetoothPermissionAsked) && Platform.isAndroid){
+    if(!bluetoothConnect.isGranted || (await Permission.bluetoothConnect.shouldShowRequestRationale)/*&& !SessionManagement.getBool(Constants.bluetoothPermissionAsked)*/ && Platform.isAndroid){
       permissions.add(Permission.bluetoothConnect);
     }
-    if(!notification.isGranted && !SessionManagement.getBool(Constants.notificationPermissionAsked) && Platform.isAndroid){
+    if(!notification.isGranted || (await Permission.notification.shouldShowRequestRationale)/*&& !SessionManagement.getBool(Constants.notificationPermissionAsked)*/ && Platform.isAndroid){
       permissions.add(Permission.notification);
     }
+    LogMessage.d("microphone isPermanentlyDenied", microphone.isPermanentlyDenied);
     LogMessage.d("microphone", microphone.isGranted);
     LogMessage.d("phone", phone.isGranted);
     LogMessage.d("bluetoothConnect", bluetoothConnect.isGranted);
@@ -152,14 +153,16 @@ class AppPermission {
       LogMessage.d("SessionManagement.getBool(Constants.audioRecordPermissionAsked) audio", (SessionManagement.getBool(Constants.audioRecordPermissionAsked)));
       LogMessage.d("permissions audio", (permissions.toString()));
       var alreadyAsked = (SessionManagement.getBool(Constants.audioRecordPermissionAsked)
-          && SessionManagement.getBool(Constants.readPhoneStatePermissionAsked) &&
-          SessionManagement.getBool(Constants.bluetoothPermissionAsked) &&
+          || SessionManagement.getBool(Constants.readPhoneStatePermissionAsked) ||
+          SessionManagement.getBool(Constants.bluetoothPermissionAsked) ||
           SessionManagement.getBool(Constants.notificationPermissionAsked));
       LogMessage.d("alreadyAsked audio", alreadyAsked);
 
       if (shouldShowRequestRationale) {
+        LogMessage.d("shouldShowRequestRationale", shouldShowRequestRationale);
         return requestAudioCallPermissions(permissions: permissions,showFromRational: true);
       } else if (alreadyAsked) {
+        LogMessage.d("alreadyAsked", alreadyAsked);
         var popupValue = await customPermissionDialog(
             icon: audioPermission,
             content: getPermissionAlertMessage("audio_call"));
@@ -194,24 +197,25 @@ class AppPermission {
         icon: audioPermission,
         content: Constants.audioCallPermission);
     if (deniedPopupValue) {
+      LogMessage.d("deniedPopupValue", deniedPopupValue);
       var newp = await permissions.request();
       PermissionStatus? microphone_ = newp[Permission.microphone];
       PermissionStatus? phone_ = newp[Permission.phone];
       PermissionStatus? bluetoothConnect_ = newp[Permission.bluetoothConnect];
       PermissionStatus? notification_ = newp[Permission.notification];
-      if(microphone_!=null && microphone_.isPermanentlyDenied) {
+      if(microphone_!=null ) {
         LogMessage.d("microphone_", microphone_.isPermanentlyDenied);
         SessionManagement.setBool(Constants.audioRecordPermissionAsked, true);
       }
-      if(phone_!=null && phone_.isPermanentlyDenied) {
+      if(phone_!=null ) {
         LogMessage.d("phone_", phone_.isPermanentlyDenied);
         SessionManagement.setBool(Constants.readPhoneStatePermissionAsked, true);
       }
-      if(bluetoothConnect_!=null && bluetoothConnect_.isPermanentlyDenied) {
+      if(bluetoothConnect_!=null ) {
         LogMessage.d("bluetoothConnect_", bluetoothConnect_.isPermanentlyDenied);
         SessionManagement.setBool(Constants.bluetoothPermissionAsked, true);
       }
-      if(notification_!=null && notification_.isPermanentlyDenied) {
+      if(notification_!=null ) {
         LogMessage.d("notification_", notification_.isPermanentlyDenied);
         SessionManagement.setBool(Constants.notificationPermissionAsked, true);
       }
@@ -229,19 +233,19 @@ class AppPermission {
     final camera = await Permission.camera.status; //CAMERA
     final notification = await Permission.notification.status; //CAMERA
     var permissions = <Permission>[];
-    if(!camera.isGranted && !SessionManagement.getBool(Constants.cameraPermissionAsked)){
+    if(!camera.isGranted || (await Permission.camera.shouldShowRequestRationale)/*&& !SessionManagement.getBool(Constants.cameraPermissionAsked)*/){
       permissions.add(Permission.camera);
     }
-    if(!microphone.isGranted && !SessionManagement.getBool(Constants.audioRecordPermissionAsked)){
+    if(!microphone.isGranted || (await Permission.microphone.shouldShowRequestRationale)/*&& !SessionManagement.getBool(Constants.audioRecordPermissionAsked)*/){
       permissions.add(Permission.microphone);
     }
-    if(!phone.isGranted && !SessionManagement.getBool(Constants.readPhoneStatePermissionAsked)){
+    if(!phone.isGranted || (await Permission.phone.shouldShowRequestRationale)/*&& !SessionManagement.getBool(Constants.readPhoneStatePermissionAsked)*/){
       permissions.add(Permission.phone);
     }
-    if(!bluetoothConnect.isGranted && !SessionManagement.getBool(Constants.bluetoothPermissionAsked)){
+    if(!bluetoothConnect.isGranted || (await Permission.bluetoothConnect.shouldShowRequestRationale)/*&& !SessionManagement.getBool(Constants.bluetoothPermissionAsked)*/){
       permissions.add(Permission.bluetoothConnect);
     }
-    if(!notification.isGranted && !SessionManagement.getBool(Constants.notificationPermissionAsked)){
+    if(!notification.isGranted || (await Permission.notification.shouldShowRequestRationale)/*&& !SessionManagement.getBool(Constants.notificationPermissionAsked)*/){
       permissions.add(Permission.notification);
     }
     if ((microphone != PermissionStatus.granted) || (phone != PermissionStatus.granted) || (camera != PermissionStatus.granted) || (bluetoothConnect != PermissionStatus.granted) || (notification != PermissionStatus.granted)) {
@@ -252,10 +256,10 @@ class AppPermission {
           (await Permission.notification.shouldShowRequestRationale));
       LogMessage.d("shouldShowRequestRationale video", shouldShowRequestRationale);
       LogMessage.d("SessionManagement.getBool(Constants.cameraPermissionAsked) video", SessionManagement.getBool(Constants.cameraPermissionAsked));
-      var alreadyAsked = (SessionManagement.getBool(Constants.cameraPermissionAsked) &&
+      var alreadyAsked = (SessionManagement.getBool(Constants.cameraPermissionAsked) ||
           SessionManagement.getBool(Constants.audioRecordPermissionAsked)
-          && SessionManagement.getBool(Constants.readPhoneStatePermissionAsked) &&
-          SessionManagement.getBool(Constants.bluetoothPermissionAsked) &&
+          || SessionManagement.getBool(Constants.readPhoneStatePermissionAsked) ||
+          SessionManagement.getBool(Constants.bluetoothPermissionAsked) ||
           SessionManagement.getBool(Constants.notificationPermissionAsked));
       LogMessage.d("alreadyAsked video", alreadyAsked);
       if (shouldShowRequestRationale) {
@@ -301,19 +305,19 @@ class AppPermission {
       PermissionStatus? camera_ = newp[Permission.camera];
       PermissionStatus? bluetoothConnect_ = newp[Permission.bluetoothConnect];
       PermissionStatus? notification_ = newp[Permission.notification];
-      if(camera_!=null && camera_.isPermanentlyDenied) {
+      if(camera_!=null /*&& camera_.isPermanentlyDenied*/) {
         SessionManagement.setBool(Constants.cameraPermissionAsked, true);
       }
-      if(microphone_!=null &&microphone_.isPermanentlyDenied) {
+      if(microphone_!=null /*&&microphone_.isPermanentlyDenied*/) {
         SessionManagement.setBool(Constants.audioRecordPermissionAsked, true);
       }
-      if(phone_!=null && phone_.isPermanentlyDenied) {
+      if(phone_!=null /*&& phone_.isPermanentlyDenied*/) {
         SessionManagement.setBool(Constants.readPhoneStatePermissionAsked, true);
       }
-      if(bluetoothConnect_!=null &&bluetoothConnect_.isPermanentlyDenied) {
+      if(bluetoothConnect_!=null /*&&bluetoothConnect_.isPermanentlyDenied*/) {
         SessionManagement.setBool(Constants.bluetoothPermissionAsked, true);
       }
-      if(notification_!=null &&notification_.isPermanentlyDenied) {
+      if(notification_!=null /*&&notification_.isPermanentlyDenied*/) {
         SessionManagement.setBool(Constants.notificationPermissionAsked, true);
       }
       return (camera_?.isGranted ?? true) && (microphone_?.isGranted ?? true) && (phone_?.isGranted ?? true) && (bluetoothConnect_?.isGranted ?? true) && (notification_?.isGranted ?? true);
@@ -370,6 +374,7 @@ class AppPermission {
   static Future<PermissionStatus> requestPermission(Permission permission) async {
     var status1 = await permission.status;
     mirrorFlyLog('status', status1.toString());
+    savePermissionAsked(permission);
     if (status1 == PermissionStatus.denied &&
         status1 != PermissionStatus.permanentlyDenied) {
       mirrorFlyLog('permission.request', status1.toString());
@@ -385,28 +390,15 @@ class AppPermission {
     if (status == PermissionStatus.granted) {
       debugPrint("permission granted opening");
       return true;
-    } else if (status == PermissionStatus.permanentlyDenied) {
-      mirrorFlyLog('permanentlyDenied', 'permission');
-      savePermanentlyDenied(permission);
-      var deniedPopupValue = await customPermissionDialog(
-          icon: permissionIcon,
-          content: getPermissionAlertMessage(
-              permission.toString().replaceAll("Permission.", "")));
-      if (deniedPopupValue) {
-        openAppSettings();
-        return false;
-      } else {
-        return false;
-      }
-    } else {
+    } else if(await permission.shouldShowRequestRationale) {
       mirrorFlyLog('denied', 'permission');
       var popupValue = await customPermissionDialog(
           icon: permissionIcon, content: permissionContent);
       if (popupValue) {
         // return AppPermission.requestPermission(permission);/*.then((value) {
         var newp = await AppPermission.requestPermission(permission);
-        if(newp.isPermanentlyDenied) {
-          savePermanentlyDenied(permission);
+        /*if(newp.isPermanentlyDenied) {
+          // savePermissionAsked(permission);
           var deniedPopupValue = await customPermissionDialog(
               icon: permissionIcon,
               content: getPermissionAlertMessage(
@@ -419,7 +411,19 @@ class AppPermission {
           }
         }else{
           return newp.isGranted;
-        }
+        }*/
+        return newp.isGranted;
+      } else {
+        return false;
+      }
+    }else{
+      var deniedPopupValue = await customPermissionDialog(
+          icon: permissionIcon,
+          content: getPermissionAlertMessage(
+              permission.toString().replaceAll("Permission.", "")));
+      if (deniedPopupValue) {
+        openAppSettings();
+        return false;
       } else {
         return false;
       }
@@ -571,7 +575,7 @@ class AppPermission {
     ));
   }
 
-  static void savePermanentlyDenied(Permission permission) {
+  static void savePermissionAsked(Permission permission) {
     if(permission == Permission.camera){
       SessionManagement.setBool(Constants.cameraPermissionAsked, true);
     }else if(permission == Permission.microphone){
