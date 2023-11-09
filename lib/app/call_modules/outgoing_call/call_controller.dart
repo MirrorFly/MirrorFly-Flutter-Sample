@@ -47,8 +47,8 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
   var pinnedUserJid = ''.obs;
 
   var callMode = "".obs;
-  get isOneToOneCall => callList.length==2;//callMode.value == CallMode.oneToOne;
-  get isGroupCall => callList.length>2;//callMode.value == CallMode.groupCall;
+  get isOneToOneCall => callList.length <= 2;//callMode.value == CallMode.oneToOne;
+  get isGroupCall => callList.length > 2;//callMode.value == CallMode.groupCall;
 
   var callType = "".obs;
   get isAudioCall => callType.value == CallType.audio;
@@ -126,7 +126,7 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
           // callList.clear();
           final callUserList = callUserListFromJson(value);
           callList(callUserList);
-          if(callUserList.length>1) {
+          if(callUserList.length > 1) {
             pinnedUserJid(callUserList[0].userJid);
           }
           getNames();
@@ -584,8 +584,14 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
         displayStatus = '';
         break;
     }
-    if(pinnedUserJid.value==userJid) {
+    if(pinnedUserJid.value == userJid && isGroupCall) {
       this.callStatus(displayStatus);
+    }else if (isOneToOneCall){
+      this.callStatus(displayStatus);
+    }else{
+      debugPrint("isOneToOneCall $isOneToOneCall");
+      debugPrint("isGroupCall $isGroupCall");
+      debugPrint("Status is not updated");
     }
     if(Routes.onGoingCallView==Get.currentRoute) {
       ///update the status of the user in call user list
