@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
 import 'package:get/get.dart';
+import 'package:mirror_fly_demo/app/call_modules/participants/add_participants_controller.dart';
 
 import '../../common/app_theme.dart';
 import '../../common/constants.dart';
@@ -144,6 +145,10 @@ class ParticipantsView extends GetView<CallController> {
   }
 
   Widget addParticipants(BuildContext context) {
-    return const SizedBox();
+    return GetX<AddParticipantsController>(
+        init: AddParticipantsController(),
+        builder: (_) {
+          return Container();
+        });
   }
 }
