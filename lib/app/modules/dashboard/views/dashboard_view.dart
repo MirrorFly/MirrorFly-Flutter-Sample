@@ -81,7 +81,7 @@ class DashboardView extends GetView<DashboardController> {
                                   : controller.isSearching.value
                                       ? TextField(
                                           focusNode: controller.searchFocusNode,
-                                          onChanged: (text) => controller.onChange(text),
+                                          onChanged: (text) => controller.onChange(text, controller.currentTab.value),
                                           controller: controller.search,
                                           autofocus: true,
                                           decoration: const InputDecoration(hintText: "Search...", border: InputBorder.none),
@@ -881,6 +881,7 @@ class DashboardView extends GetView<DashboardController> {
   Stack callsView(BuildContext context) {
     return Stack(
       children: [
+
         Obx(
           () => controller.callLogList.isEmpty ? emptyCalls(context) : callLogView(context, controller.callLogList),
         )
