@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:get/get.dart';
@@ -565,7 +567,7 @@ class ContactController extends FullLifeCycleController with FullLifeCycleMixin 
   makeCall() async {
     if (selectedUsersJIDList.isNotEmpty) {
       if (await AppUtils.isNetConnected()) {
-        if (callType.value == CallType.audio) {
+        if(callType.value == CallType.audio) {
           if (await AppPermission.askAudioCallPermissions()) {
             Get.back();
             if (selectedUsersJIDList.length == 1) {
@@ -582,8 +584,10 @@ class ContactController extends FullLifeCycleController with FullLifeCycleMixin 
               });
             }
           }
-        } else if (callType.value == CallType.video) {
-          if (await AppPermission.askVideoCallPermissions()) {
+        }else if(callType.value == CallType.video){
+          if (Platform.isAndroid
+              ? await AppPermission.askVideoCallPermissions()
+              : await AppPermission.askiOSVideoCallPermissions()) {
             Get.back();
             if (selectedUsersJIDList.length == 1) {
               Mirrorfly.makeVideoCall(selectedUsersJIDList[0]).then((value) {

@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:mirror_fly_demo/app/call_modules/call_timeout/controllers/call_timeout_controller.dart';
 import 'package:mirror_fly_demo/app/call_modules/outgoing_call/call_controller.dart';
 import 'package:mirror_fly_demo/app/modules/media_preview/controllers/media_preview_controller.dart';
 import 'package:mirrorfly_plugin/logmessage.dart';
@@ -280,7 +281,9 @@ abstract class BaseController {
           }
           break;
         case CallStatus.connected:
-          startTimer();
+          if(timer == null) {
+            startTimer();
+          }
           if (Get.isRegistered<CallController>()) {
             Get.find<CallController>().connected(
                 callMode, userJid, callType, callStatus);
@@ -857,6 +860,12 @@ abstract class BaseController {
     }
     if (Get.isRegistered<GroupInfoController>()) {
       Get.find<GroupInfoController>().userUpdatedHisProfile(jid);
+    }
+    if (Get.isRegistered<CallController>()) {
+      Get.find<CallController>().userUpdatedHisProfile(jid);
+    }
+    if (Get.isRegistered<CallTimeoutController>()) {
+      Get.find<CallTimeoutController>().userUpdatedHisProfile(jid);
     }
   }
 
