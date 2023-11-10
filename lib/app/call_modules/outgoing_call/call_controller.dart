@@ -45,6 +45,7 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
   var callTitle = "".obs;
 
   var pinnedUserJid = ''.obs;
+  var pinnedUser = CallUserList(isAudioMuted: false, isVideoMuted: false).obs;
 
   var callMode = "".obs;
   get isOneToOneCall => callList.length <= 2;//callMode.value == CallMode.oneToOne;
@@ -114,7 +115,10 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
           final callUserList = callUserListFromJson(value);
           callList(callUserList);
           if(callUserList.length>1) {
-            pinnedUserJid(callUserList[0].userJid);
+            // pinnedUserJid(callUserList[0].userJid);
+            CallUserList firstAttendedCallUser = callUserList.firstWhere((callUser) => callUser.callStatus?.value == CallStatus.attended || callUser.callStatus?.value == CallStatus.connected, orElse: () => callUserList[0]);
+            pinnedUserJid(firstAttendedCallUser.userJid);
+            pinnedUser(firstAttendedCallUser);
           }
           getNames();
         });
@@ -127,7 +131,10 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
           final callUserList = callUserListFromJson(value);
           callList(callUserList);
           if(callUserList.length > 1) {
-            pinnedUserJid(callUserList[0].userJid);
+            // pinnedUserJid(callUserList[0].userJid);
+            CallUserList firstAttendedCallUser = callUserList.firstWhere((callUser) => callUser.callStatus?.value == CallStatus.attended || callUser.callStatus?.value == CallStatus.connected, orElse: () => callUserList[0]);
+            pinnedUserJid(firstAttendedCallUser.userJid);
+            pinnedUser(firstAttendedCallUser);
           }
           getNames();
         });
