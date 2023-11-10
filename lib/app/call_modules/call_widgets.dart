@@ -244,7 +244,7 @@ Widget buildListItem(CallController controller) {
           debugPrint(
               "ListBuilder ${controller.callList.length} userJid ${controller.callList[index]
                   .userJid} pinned ${controller.pinnedUserJid.value}");
-          return controller.callList[index].userJid != controller.pinnedUserJid.value
+          return controller.callList[index].userJid!.value != controller.pinnedUserJid.value
               ? Container(
               height: 135,
               width: 100,
@@ -340,7 +340,7 @@ Widget buildListItem(CallController controller) {
                   Obx(() {
                     debugPrint(
                         "getUserJID ${controller.callList[index].userJid} ${controller.callList[index]
-                            .callStatus} current user ${controller.callList[index].userJid ==
+                            .callStatus} current user ${controller.callList[index].userJid!.value ==
                             SessionManagement.getUserJID()}");
                     return (getTileCallStatus(
                         controller.callList[index].callStatus?.value,
@@ -498,7 +498,7 @@ Widget buildGridItem(CallController controller) {
             Obx(() {
               debugPrint(
                   "getUserJID ${controller.callList[index].userJid} ${controller.callList[index]
-                      .callStatus} current user ${controller.callList[index].userJid ==
+                      .callStatus} current user ${controller.callList[index].userJid!.value ==
                       SessionManagement.getUserJID()}");
               return (getTileCallStatus(
                   controller.callList[index].callStatus?.value, controller.callList[index].userJid!.value.checkNull())
