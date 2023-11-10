@@ -83,14 +83,14 @@ class ParticipantsView extends GetView<CallController> {
           physics: const AlwaysScrollableScrollPhysics(),
           itemBuilder: (context, index) {
             debugPrint("call list length ${controller.callList.length}");
-            return SessionManagement.getUserJID() == controller.callList[index].userJid.checkNull()
+            return SessionManagement.getUserJID() == controller.callList[index].userJid!.value.checkNull()
                 ? const SizedBox.shrink()
                 : Padding(
                     padding: const EdgeInsets.all(10.0),
                     child: Row(
                       children: [
                         FutureBuilder(
-                            future: getProfileDetails(controller.callList[index].userJid.checkNull()),
+                            future: getProfileDetails(controller.callList[index].userJid!.value.checkNull()),
                             builder: (ctx, snap) {
                               return snap.hasData && snap.data != null ? buildProfileImage(snap.data!, size: 48) : const SizedBox.shrink();
                             }),
@@ -102,7 +102,7 @@ class ParticipantsView extends GetView<CallController> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               FutureBuilder(
-                                  future: CallUtils.getNameOfJid(controller.callList[index].userJid.checkNull()),
+                                  future: CallUtils.getNameOfJid(controller.callList[index].userJid!.value.checkNull()),
                                   builder: (ctx, snap) {
                                     return snap.hasData && snap.data != null
                                         ? Text(

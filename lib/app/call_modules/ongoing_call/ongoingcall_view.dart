@@ -39,9 +39,9 @@ class OnGoingCallView extends GetView<CallController> {
                                     showSpeakingRipple: controller.callType.value == CallType.audio,
                                     viewBgColor: AppColors.audioCallerBackground,
                                     profileSize: 100,onClick: (){
-                                      if(controller.callType.value==CallType.video) {
+                                      // if(controller.callType.value==CallType.video) {
                                         controller.isVisible(!controller.isVisible.value);
-                                      }
+                                      // }
                         },)
                                 .setBorderRadius(const BorderRadius.all(Radius.circular(10)))
                             : const SizedBox.shrink();
@@ -64,11 +64,11 @@ class OnGoingCallView extends GetView<CallController> {
                                           ):  const SizedBox.shrink(),*/
                                 if (controller.callList.length > 1 &&
                                     getTileCallStatus(controller.pinnedUser.value.callStatus?.value,
-                                        controller.pinnedUser.value.userJid.checkNull()).isNotEmpty &&
+                                        controller.pinnedUser.value.userJid!.value.checkNull()).isNotEmpty &&
                                     controller.layoutSwitch.value) ...[
                                   Text(
                                     getTileCallStatus(controller.pinnedUser.value.callStatus?.value,
-                                        controller.pinnedUser.value.userJid.checkNull()),
+                                        controller.pinnedUser.value.userJid!.value.checkNull()),
                                     style: const TextStyle(color: Colors.white),
                                   ),
                                   const SizedBox(

@@ -117,7 +117,7 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
           if(callUserList.length>1) {
             // pinnedUserJid(callUserList[0].userJid);
             CallUserList firstAttendedCallUser = callUserList.firstWhere((callUser) => callUser.callStatus?.value == CallStatus.attended || callUser.callStatus?.value == CallStatus.connected, orElse: () => callUserList[0]);
-            pinnedUserJid(firstAttendedCallUser.userJid);
+            pinnedUserJid(firstAttendedCallUser.userJid!.value);
             pinnedUser(firstAttendedCallUser);
           }
           getNames();
@@ -133,7 +133,7 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
           if(callUserList.length > 1) {
             // pinnedUserJid(callUserList[0].userJid);
             CallUserList firstAttendedCallUser = callUserList.firstWhere((callUser) => callUser.callStatus?.value == CallStatus.attended || callUser.callStatus?.value == CallStatus.connected, orElse: () => callUserList[0]);
-            pinnedUserJid(firstAttendedCallUser.userJid);
+            pinnedUserJid(firstAttendedCallUser.userJid!.value);
             pinnedUser(firstAttendedCallUser);
           }
           getNames();
@@ -323,7 +323,7 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
       var userJids = <String>[];
       for (var element in callList) {
         if(element.userJid!=null && SessionManagement.getUserJID() != element.userJid) {
-          userJids.add(element.userJid!);
+          userJids.add(element.userJid!.value);
         }}
       LogMessage.d("callList", userJids.length);
       var names = userJids.isNotEmpty ? await CallUtils.getCallersName(userJids) : "";
@@ -476,7 +476,7 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
     debugPrint("User List Index $index");
     if(index.isNegative){
       debugPrint("User List not Found, so adding the user to list");
-      CallUserList callUserList = CallUserList(userJid: userJid, callStatus: RxString(callStatus), isAudioMuted: false,isVideoMuted: false);
+      CallUserList callUserList = CallUserList(userJid: userJid.obs, callStatus: RxString(callStatus), isAudioMuted: false,isVideoMuted: false);
       callList.insert(callList.length - 1, callUserList);
       // callList.add(callUserList);
     }else{
@@ -504,7 +504,7 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
       });
     }else{
       debugPrint("#MirrorflyCall user jid $userJid");
-      CallUserList callUserList = CallUserList(userJid: userJid, callStatus: RxString(callStatus), isAudioMuted: false,isVideoMuted: false);
+      CallUserList callUserList = CallUserList(userJid: userJid.obs, callStatus: RxString(callStatus), isAudioMuted: false,isVideoMuted: false);
      if(callList.indexWhere((userList) => userList.userJid == userJid).isNegative) {
        callList.insert(callList.length - 1, callUserList);
        // callList.add(callUserList);
@@ -859,7 +859,7 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
         Mirrorfly.cancelVideoCallSwitch();
         waitingCompleter.complete();
         // Get.back();
-        var profile = await getProfileDetails(callList.first.userJid.checkNull());
+        var profile = await getProfileDetails(callList.first.userJid!.value.checkNull());
         toToast("No response from ${profile.getName()}");
       }
     });
@@ -922,11 +922,31 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
     debugPrint("after removeUser ${callList.length}");
     debugPrint("removeUser ${callList.indexWhere((element) => element.userJid.toString() == userJid)}");
     if(callList.length>1 && pinnedUserJid.value == userJid) {
-      pinnedUserJid(callList[0].userJid);
+      pinnedUserJid(callList[0].userJid!.value);
     }
     callDisconnected(callMode, userJid, callType);
     getNames();
 
+  }
+
+  void userUpdatedHisProfile(String jid){
+    updateProfile(jid);
+  }
+  Future<void> updateProfile(String jid) async {
+    if (jid.isNotEmpty) {
+      var callListIndex = callList.indexWhere((element) => element.userJid == jid);
+      var usersIndex = users.indexWhere((element) => element == jid);
+      if(!usersIndex.isNegative){
+        users[usersIndex]=("");
+        users[usersIndex]=(jid);
+      }
+      if (!callListIndex.isNegative) {
+        callList[callListIndex].userJid!("");
+        callList[callListIndex].userJid!(jid);
+        // callList.refresh();
+        getNames();
+      }
+    }
   }
 
   void enterFullScreen() {
