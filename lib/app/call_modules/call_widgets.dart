@@ -256,6 +256,10 @@ Widget buildListItem(CallController controller) {
                     userJid: controller.callList[index].userJid?.value ?? "",
                     viewBgColor: AppColors.callerTitleBackground,
                     profileSize: 50,
+                    onClick: (){
+                      //swap View
+                      controller.swap(index);
+                    },
                   ).setBorderRadius(const BorderRadius.all(Radius.circular(10))),
                   Obx(() {
                     return Positioned(
@@ -292,7 +296,7 @@ Widget buildListItem(CallController controller) {
                                 padding: const EdgeInsets.only(top: 8.0, bottom: 8.0, left: 4.0),
                                 child: SpeakingDots(
                                   radius: 9,
-                                  audioLevel: controller.audioLevel(controller.callList[index].userJid),
+                                  audioLevel: controller.audioLevel(controller.callList[index].userJid!.value),
                                   bgColor: AppColors.speakingBg,
                                 ),
                               ),
@@ -300,7 +304,7 @@ Widget buildListItem(CallController controller) {
                               crossFadeState: (controller.speakingUsers.isNotEmpty &&
                                   !controller.callList[index].isAudioMuted.value &&
                                   !controller
-                                      .audioLevel(controller.callList[index].userJid)
+                                      .audioLevel(controller.callList[index].userJid!.value)
                                       .isNegative)
                                   ? CrossFadeState.showFirst
                                   : CrossFadeState.showSecond)
@@ -449,7 +453,7 @@ Widget buildGridItem(CallController controller) {
                           padding: const EdgeInsets.only(top: 8.0, bottom: 8.0, left: 4.0),
                           child: SpeakingDots(
                             radius: 9,
-                            audioLevel: controller.audioLevel(controller.callList[index].userJid),
+                            audioLevel: controller.audioLevel(controller.callList[index].userJid!.value),
                             bgColor: AppColors.speakingBg,
                           ),
                         ),
@@ -457,7 +461,7 @@ Widget buildGridItem(CallController controller) {
                         crossFadeState: (controller.speakingUsers.isNotEmpty && !controller.callList[index].isAudioMuted
                             .value &&
                             !controller
-                                .audioLevel(controller.callList[index].userJid)
+                                .audioLevel(controller.callList[index].userJid!.value)
                                 .isNegative)
                             ? CrossFadeState.showFirst
                             : CrossFadeState.showSecond)

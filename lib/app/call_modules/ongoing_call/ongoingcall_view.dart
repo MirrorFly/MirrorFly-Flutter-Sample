@@ -63,12 +63,12 @@ class OnGoingCallView extends GetView<CallController> {
                                             style: TextStyle(color: Colors.white),
                                           ):  const SizedBox.shrink(),*/
                                 if (controller.callList.length > 1 &&
-                                    getTileCallStatus(controller.pinnedUser.value.callStatus?.value,
-                                        controller.pinnedUser.value.userJid!.value.checkNull()).isNotEmpty &&
+                                    getTileCallStatus(controller.callList.firstWhere((y) => y.userJid==controller.pinnedUserJid.value).callStatus?.value,
+                                        controller.pinnedUserJid.value.checkNull()).isNotEmpty &&
                                     controller.layoutSwitch.value) ...[
                                   Text(
-                                    getTileCallStatus(controller.pinnedUser.value.callStatus?.value,
-                                        controller.pinnedUser.value.userJid!.value.checkNull()),
+                                    getTileCallStatus(controller.callList.firstWhere((y) => y.userJid==controller.pinnedUserJid.value).callStatus?.value,
+                                        controller.pinnedUserJid.value.checkNull()),
                                     style: const TextStyle(color: Colors.white),
                                   ),
                                   const SizedBox(
@@ -76,7 +76,7 @@ class OnGoingCallView extends GetView<CallController> {
                                   )
                                 ],
                                 if (controller.callList.length > 1 &&
-                                    controller.pinnedUser.value.isAudioMuted.value &&
+                                    controller.callList.firstWhere((y) => y.userJid==controller.pinnedUserJid.value).isAudioMuted.value &&
                                     controller.layoutSwitch.value) ...[
                                   CircleAvatar(
                                     backgroundColor: AppColors.audioMutedIconBgColor,

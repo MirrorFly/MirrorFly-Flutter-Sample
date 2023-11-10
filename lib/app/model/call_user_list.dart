@@ -43,3 +43,11 @@ class SpeakingUsers{
   RxInt audioLevel = RxInt(0);
   SpeakingUsers({required this.userJid,required this.audioLevel});
 }
+
+extension SwappableList<E> on List<E> {
+  void swap(int first, int second) {
+    final temp = this[first];
+    this[first] = this[second];
+    this[second] = temp;
+  }
+}

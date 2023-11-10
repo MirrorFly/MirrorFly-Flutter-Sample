@@ -684,9 +684,9 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
     }
   }
 
-  int audioLevel(userJid) {
+  int audioLevel(String userJid) {
     var index = speakingUsers.indexWhere((element) => element.userJid == userJid);
-    var value = index.isNegative ? -1 : speakingUsers[speakingUsers.indexWhere((element) => element.userJid == userJid)].audioLevel.value;
+    var value = index.isNegative ? -1 : speakingUsers[index].audioLevel.value;
     // debugPrint("speakingUsers Audio level $value");
     return value;
   }
@@ -696,7 +696,7 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
     Future.delayed(const Duration(milliseconds: 300), () {
       var index = speakingUsers.indexWhere((element) => element.userJid == userJid);
       if (!index.isNegative) {
-        speakingUsers.removeAt(index);
+        speakingUsers[index].audioLevel(-1);
       }
     });
   }
@@ -956,4 +956,15 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
   void exitFullScreen() {
     // SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: SystemUiOverlay.values);
   }
+
+  void swap(int index) {
+    if(isOneToOneCall && isVideoCall && !videoMuted.value){
+      var itemToReplace = callList.indexWhere((y) => y.userJid!.value==pinnedUserJid.value);
+      var itemToRemove = callList[index];
+      var userJid = itemToRemove.userJid?.value;
+      pinnedUserJid(userJid);
+      callList.swap(index, itemToReplace);
+    }
+  }
+
 }
