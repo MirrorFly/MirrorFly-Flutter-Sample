@@ -63,12 +63,12 @@ class OnGoingCallView extends GetView<CallController> {
                                             style: TextStyle(color: Colors.white),
                                           ):  const SizedBox.shrink(),*/
                                 if (controller.callList.length > 1 &&
-                                    getTileCallStatus(controller.callList[0].callStatus?.value,
-                                        controller.callList[0].userJid.checkNull()).isNotEmpty &&
+                                    getTileCallStatus(controller.pinnedUser.value.callStatus?.value,
+                                        controller.pinnedUser.value.userJid.checkNull()).isNotEmpty &&
                                     controller.layoutSwitch.value) ...[
                                   Text(
-                                    getTileCallStatus(controller.callList[0].callStatus?.value,
-                                        controller.callList[0].userJid.checkNull()),
+                                    getTileCallStatus(controller.pinnedUser.value.callStatus?.value,
+                                        controller.pinnedUser.value.userJid.checkNull()),
                                     style: const TextStyle(color: Colors.white),
                                   ),
                                   const SizedBox(
@@ -76,7 +76,7 @@ class OnGoingCallView extends GetView<CallController> {
                                   )
                                 ],
                                 if (controller.callList.length > 1 &&
-                                    controller.callList[0].isAudioMuted.value &&
+                                    controller.pinnedUser.value.isAudioMuted.value &&
                                     controller.layoutSwitch.value) ...[
                                   CircleAvatar(
                                     backgroundColor: AppColors.audioMutedIconBgColor,

@@ -280,7 +280,9 @@ abstract class BaseController {
           }
           break;
         case CallStatus.connected:
-          startTimer();
+          if(timer == null) {
+            startTimer();
+          }
           if (Get.isRegistered<CallController>()) {
             Get.find<CallController>().connected(
                 callMode, userJid, callType, callStatus);

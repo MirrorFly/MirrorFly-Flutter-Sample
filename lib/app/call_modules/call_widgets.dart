@@ -228,19 +228,22 @@ class _SpeakingDotsState extends State<SpeakingDots> {
 }
 
 Widget buildListItem(CallController controller) {
+  var callListLength = controller.callList.length;
+  debugPrint("callListLength --> $callListLength");
   return SizedBox(
             height: 135,
+            width: double.infinity,
             child: ListView.builder(
               padding: const EdgeInsets.symmetric(horizontal: 10),
                 scrollDirection: Axis.horizontal,
                 physics: const AlwaysScrollableScrollPhysics(),
-                itemCount: controller.callList.length - 1,
+                itemCount: controller.callList.length,
                 reverse: controller.callList.length <= 2 ? true : false,
                 shrinkWrap: true,
                 itemBuilder: (context, index) {
                   debugPrint(
                       "ListBuilder ${controller.callList.length} userJid ${controller.callList[index].userJid} pinned ${controller.pinnedUserJid.value}");
-                  return controller.callList[index + 1].userJid != controller.pinnedUserJid.value
+                  return controller.callList[index].userJid != controller.pinnedUserJid.value
                       ? Container(
                           height: 135,
                           width: 100,
@@ -249,7 +252,7 @@ Widget buildListItem(CallController controller) {
                             children: [
                               MirrorFlyView(
                                 key: UniqueKey(),
-                                userJid: controller.callList[index + 1].userJid ?? "",
+                                userJid: controller.callList[index].userJid ?? "",
                                 viewBgColor: AppColors.callerTitleBackground,
                                 profileSize: 50,
                               ).setBorderRadius(const BorderRadius.all(Radius.circular(10))),
@@ -268,7 +271,7 @@ Widget buildListItem(CallController controller) {
                                           child: SvgPicture.asset(unpinUser),
                                         ),
                                       ),
-                                      if (controller.callList[index + 1].isAudioMuted.value) ...[
+                                      if (controller.callList[index].isAudioMuted.value) ...[
                                         Padding(
                                           padding: const EdgeInsets.only(left: 4.0),
                                           child: SizedBox(
@@ -288,14 +291,14 @@ Widget buildListItem(CallController controller) {
                                             padding: const EdgeInsets.only(top: 8.0, bottom: 8.0, left: 4.0),
                                             child: SpeakingDots(
                                               radius: 9,
-                                              audioLevel: controller.audioLevel(controller.callList[index + 1].userJid),
+                                              audioLevel: controller.audioLevel(controller.callList[index].userJid),
                                               bgColor: AppColors.speakingBg,
                                             ),
                                           ),
                                           secondChild: const SizedBox.shrink(),
-                                          crossFadeState: (controller.speakingUsers.isNotEmpty && !controller.callList[index+1].isAudioMuted.value &&
+                                          crossFadeState: (controller.speakingUsers.isNotEmpty && !controller.callList[index].isAudioMuted.value &&
                                                   !controller
-                                                      .audioLevel(controller.callList[index + 1].userJid)
+                                                      .audioLevel(controller.callList[index].userJid)
                                                       .isNegative)
                                               ? CrossFadeState.showFirst
                                               : CrossFadeState.showSecond)
@@ -308,7 +311,7 @@ Widget buildListItem(CallController controller) {
                                 bottom: 8,
                                 right: 8,
                                 child: FutureBuilder<String>(
-                                    future: CallUtils.getNameOfJid(controller.callList[index + 1].userJid.checkNull()),
+                                    future: CallUtils.getNameOfJid(controller.callList[index].userJid.checkNull()),
                                     builder: (context, snapshot) {
                                       if (!snapshot.hasError && snapshot.data.checkNull().isNotEmpty) {
                                         return Text(
@@ -326,8 +329,8 @@ Widget buildListItem(CallController controller) {
                               ),
                               Obx(() {
                                 debugPrint(
-                                    "getUserJID ${controller.callList[index + 1].userJid} ${controller.callList[index + 1].callStatus} current user ${controller.callList[index + 1].userJid == SessionManagement.getUserJID()}");
-                                return (getTileCallStatus(controller.callList[index + 1].callStatus?.value,controller.callList[index + 1].userJid.checkNull()).isNotEmpty)
+                                    "getUserJID ${controller.callList[index].userJid} ${controller.callList[index].callStatus} current user ${controller.callList[index].userJid == SessionManagement.getUserJID()}");
+                                return (getTileCallStatus(controller.callList[index].callStatus?.value,controller.callList[index].userJid.checkNull()).isNotEmpty)
                                     ? Container(
                                         decoration: BoxDecoration(
                                           color:
@@ -345,7 +348,7 @@ Widget buildListItem(CallController controller) {
                                         height: 135,
                                   child: Center(
                                       child: Text(
-                                        getTileCallStatus(controller.callList[index + 1].callStatus?.value,controller.callList[index + 1].userJid.checkNull()),
+                                        getTileCallStatus(controller.callList[index].callStatus?.value,controller.callList[index].userJid.checkNull()),
                                         style: const TextStyle(color: Colors.white),
                                       )),
                                       )
