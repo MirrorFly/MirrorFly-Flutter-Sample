@@ -887,6 +887,19 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
     Get.toNamed(Routes.participants);
   }
 
+  void onUserInvite(String callMode, String userJid, String callType) {
+    addParticipants(callMode, userJid, callType, CallStatus.calling);
+  }
+
+  void onUserJoined(String callMode, String userJid, String callType,String callStatus) {
+    addParticipants(callMode, userJid, callType, callStatus);
+  }
+
+  void addParticipants(String callMode, String userJid, String callType,String callStatus){
+    LogMessage.d("addParticipants", userJid);
+    callList.add(CallUserList(userJid: userJid,isAudioMuted: false, isVideoMuted: false,callStatus: callStatus.obs));
+    users.add(userJid);
+  }
   void onUserLeft(String callMode, String userJid, String callType) {
     if(callList.length>2) {
       CallUtils.getNameOfJid(userJid).then((value) => toToast("$value Left"));
@@ -919,5 +932,19 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
 
   void exitFullScreen() {
     // SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: SystemUiOverlay.values);
+  }
+
+  var selected = false.obs;
+  var isSearching = false.obs;
+  var searchFocusNode = FocusNode();
+  var search = TextEditingController();
+  onChange(String str){
+
+  }
+  clearAllChatSelection(){
+
+  }
+  getBackFromSearch(){
+
   }
 }

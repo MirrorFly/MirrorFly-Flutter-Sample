@@ -99,6 +99,7 @@ const String participantMute = 'assets/calls/participant_mute.svg';
 const String participantUnMute = 'assets/calls/participant_unmute.svg';
 const String participantVideoEnabled = 'assets/calls/participant_video_enabled.svg';
 const String participantVideoDisabled = 'assets/calls/participant_video_disabled.svg';
+const String addParticipantsInCall = 'assets/calls/add_user_in_call.svg';
 
 
 //Assets
@@ -760,6 +761,7 @@ class Constants {
   static const callMembersLimit = "Maximum %d members allowed in call";
   static const maxNameLength = 26;
   static const msgOngoingCallAlert = "You are already on another call";
+  static const addParticipantsToCall = "Add participant to the call";
 
 }
 

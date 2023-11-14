@@ -5,6 +5,7 @@ import '../call_modules/call_timeout/views/call_timeout_view.dart';
 import '../call_modules/ongoing_call/ongoingcall_view.dart';
 import '../call_modules/outgoing_call/outgoing_call_binding.dart';
 import '../call_modules/outgoing_call/outgoing_call_view.dart';
+import '../call_modules/participants/ParticipantsBinding.dart';
 import '../call_modules/participants/participants_view.dart';
 import '../modules/admin_blocked/adminblockedview.dart';
 import '../modules/archived_chats/archived_chat_list_binding.dart';
@@ -346,7 +347,7 @@ class AppPages {
     GetPage(
       name: _Paths.participants,
       page: () => const ParticipantsView(),
-      binding: OutGoingCallBinding(),
+      binding: ParticipantsBinding(),
     ),
   ];
 }
