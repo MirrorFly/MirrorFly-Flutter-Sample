@@ -888,17 +888,24 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
   }
 
   void onUserInvite(String callMode, String userJid, String callType) {
-    addParticipants(callMode, userJid, callType, CallStatus.calling);
+    addParticipants(callMode, userJid, callType);
   }
 
   void onUserJoined(String callMode, String userJid, String callType,String callStatus) {
-    addParticipants(callMode, userJid, callType, callStatus);
+    // addParticipants(callMode, userJid, callType);
   }
 
-  void addParticipants(String callMode, String userJid, String callType,String callStatus){
-    LogMessage.d("addParticipants", userJid);
-    callList.add(CallUserList(userJid: userJid,isAudioMuted: false, isVideoMuted: false,callStatus: callStatus.obs));
-    users.add(userJid);
+  void addParticipants(String callMode, String userJid, String callType){
+    Mirrorfly.getInvitedUsersList().then((value) {
+      LogMessage.d("addParticipants", value);
+      if(value.isNotEmpty){
+        var userJids = value;
+        for (var jid in userJids) {
+          callList.add(CallUserList(userJid: jid,isAudioMuted: false, isVideoMuted: false,callStatus: CallStatus.calling.obs));
+          users.add(jid);
+        };
+      }
+    });
   }
   void onUserLeft(String callMode, String userJid, String callType) {
     if(callList.length>2) {
