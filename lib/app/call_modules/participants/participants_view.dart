@@ -28,14 +28,16 @@ class ParticipantsView extends GetView<AddParticipantsController> {
                         return SliverAppBar(
                           snap: false,
                           pinned: true,
-                          leading: controller.isSearching.value
-                              ? IconButton(
+                          leading:IconButton(
                             icon: const Icon(Icons.arrow_back, color: iconColor),
                             onPressed: () {
-                              controller.getBackFromSearch();
+                              if(controller.isSearching.value) {
+                                controller.getBackFromSearch();
+                              }else{
+                                Get.back();
+                              }
                             },
-                          )
-                              : null,
+                          ),
                           title: controller.isSearching.value
                               ? TextField(
                             focusNode: controller.searchFocusNode,
@@ -55,21 +57,24 @@ class ParticipantsView extends GetView<AddParticipantsController> {
                                 tabItem(title: "ADD PARTICIPANTS", count: "0")
                               ]),
                           actions: [
-                            IconButton(
-                              onPressed: () {
-                                if(controller.isSearching.value){
-                                  controller.clearSearch();
-                                }else {
-                                  controller.onSearchPressed();
-                                }
-                              },
-                              icon: !controller.isSearching.value ?SvgPicture.asset(
-                                searchIcon,
-                                width: 18,
-                                height: 18,
-                                fit: BoxFit.contain,
-                              ) : const Icon(Icons.clear),
-                              tooltip: 'Search',
+                            Visibility(
+                              visible:controller.currentTab.value==1,
+                              child: IconButton(
+                                onPressed: () {
+                                  if(controller.isSearching.value){
+                                    controller.clearSearch();
+                                  }else {
+                                    controller.onSearchPressed();
+                                  }
+                                },
+                                icon: !controller.isSearching.value ?SvgPicture.asset(
+                                  searchIcon,
+                                  width: 18,
+                                  height: 18,
+                                  fit: BoxFit.contain,
+                                ) : const Icon(Icons.clear),
+                                tooltip: 'Search',
+                              ),
                             ),
                           ],
                         );

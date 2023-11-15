@@ -23,6 +23,7 @@ class AddParticipantsController extends GetxController with GetTickerProviderSta
   var selectedUsersList = List<Profile>.empty(growable: true).obs;
   var selectedUsersJIDList = List<String>.empty(growable: true).obs;
 
+  var currentTab = 0.obs;
   bool get isCheckBoxVisible => true;
   TabController? tabController ;
   var getMaxCallUsersCount = 8;
@@ -42,16 +43,19 @@ class AddParticipantsController extends GetxController with GetTickerProviderSta
       // Simple rounding gives us understanding of what tab is showing
       final currentTabIndex = animationValue?.round();
       LogMessage.d("currentTabIndex", "$currentTabIndex");
-      // currentTab(currentTabIndex);
+      currentTab(currentTabIndex);
+      if(currentTabIndex==0) {
+        getBackFromSearch();
+      }
       // currentOffset equals 0 when tabs are not swiped
       // currentOffset ranges from -0.5 to 0.5
       // final currentOffset = currentTabIndex! - animationValue!;
       // for (int i = 0; i < tabsCount; i++) {
       //   if (i == currentTabIndex) {
-      //     // For current tab bringing currentOffset to range from 0.0 to 1.0
+      // //     // For current tab bringing currentOffset to range from 0.0 to 1.0
       //     tabScales[i] = (0.5 - currentOffset.abs()) / 0.5;
       //   } else {
-      //     // For other tabs setting scale to 0.0
+      // //     // For other tabs setting scale to 0.0
       //     tabScales[i] = 0.0;
       //   }
       // }
@@ -110,17 +114,22 @@ class AddParticipantsController extends GetxController with GetTickerProviderSta
     scrollable(Mirrorfly.isTrialLicence);
   }
   getBackFromSearch(){
-    isSearching.value = false;
-    searchQuery.clear();
-    _searchText = "";
-    lastInputValue('');
-    //if(!_IsSearching){
-    //isPageLoading.value=true;
-    pageNum = 1;
-    //fetchUsers(true);
-    //}
-    usersList(mainUsersList);
-    scrollable(Mirrorfly.isTrialLicence);
+    if(isSearching.value) {
+      isSearching(false);
+      searchQuery.clear();
+      _searchText = "";
+      lastInputValue('');
+      //if(!_IsSearching){
+      //isPageLoading.value=true;
+      pageNum = 1;
+      //fetchUsers(true);
+      //}
+      usersList(mainUsersList);
+      scrollable(Mirrorfly.isTrialLicence);
+      selectedUsersJIDList.clear();
+      selectedUsersList.clear();
+      groupCallMembersCount(0);
+    }
   }
 
   _scrollListener() {
