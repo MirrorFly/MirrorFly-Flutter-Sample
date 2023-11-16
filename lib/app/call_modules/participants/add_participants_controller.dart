@@ -272,7 +272,7 @@ class AddParticipantsController extends GetxController with GetTickerProviderSta
     }
     var callConnectedUserList = <String>[];
     for (var value1 in callList) {
-      callConnectedUserList.add(value1.userJid.checkNull());
+      callConnectedUserList.add(value1.userJid?.value ?? '');
     }
     if (await AppUtils.isNetConnected() || !Mirrorfly.isTrialLicence) {
       var future = (Mirrorfly.isTrialLicence)

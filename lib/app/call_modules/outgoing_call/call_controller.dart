@@ -916,12 +916,12 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
       if(value.isNotEmpty){
         var userJids = value;
         for (var jid in userJids) {
-          if(callList.indexWhere((element) => element.userJid==jid).isNegative) {
+          if(callList.indexWhere((element) => element.userJid?.value == jid).isNegative) {
             callList.insert(callList.length - 1, CallUserList(
-                userJid: jid, isAudioMuted: false, isVideoMuted: false, callStatus: CallStatus.calling.obs));
+                userJid: jid.obs, isAudioMuted: false, isVideoMuted: false, callStatus: CallStatus.calling.obs));
             users.insert(users.length - 1, jid);
           }
-        };
+        }
       }
     });
   }
