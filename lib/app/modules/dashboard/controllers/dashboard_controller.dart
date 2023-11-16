@@ -5,6 +5,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:mirror_fly_demo/app/call_modules/call_logs/call_log_model.dart';
+import 'package:mirror_fly_demo/app/call_modules/call_utils.dart';
 import 'package:mirror_fly_demo/app/modules/notification/notification_builder.dart';
 import 'package:mirrorfly_plugin/logmessage.dart';
 import 'package:mirrorfly_plugin/mirrorflychat.dart';
@@ -119,8 +120,7 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
         }
       }
     });
-    fetchCallLogList();
-    callLogScrollController.addListener(_callLogScrollListener);
+
     super.onInit();
   }
 
@@ -141,7 +141,11 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
     // checkArchiveSetting();
     userlistScrollController.addListener(_scrollListener);
     historyScrollController.addListener(historyScrollListener);
+    fetchCallLogList();
+    callLogScrollController.addListener(_callLogScrollListener);
   }
+
+
 
   void getAvailableFeatures() {
     Mirrorfly.getAvailableFeatures().then((features) {
@@ -1053,31 +1057,35 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
     }
   }
 
-  onChange(String inputValue) {
-    if (search.text.trim().isNotEmpty) {
-      clearVisible(true);
-    } else {
-      clearVisible(false);
-      recentChats.refresh();
-    }
-    if (lastInputValue != search.text.trim()) {
-      lastInputValue = search.text.trim();
-      searchLoading(true);
-      // frmRecentChatList.clear();
-      recentSearchList.clear();
+  onChange(String inputValue, [int? value]) {
+    if (value == 0) {
       if (search.text.trim().isNotEmpty) {
-        deBouncer.run(() {
-          pageNum = 1;
-          fetchRecentChatList();
-          fetchMessageList();
-          filterUserList();
-        });
+        clearVisible(true);
       } else {
-        mirrorFlyLog("empty", "empty");
-        // frmRecentChatList.addAll(recentChats);
+        clearVisible(false);
+        recentChats.refresh();
       }
+      if (lastInputValue != search.text.trim()) {
+        lastInputValue = search.text.trim();
+        searchLoading(true);
+        // frmRecentChatList.clear();
+        recentSearchList.clear();
+        if (search.text.trim().isNotEmpty) {
+          deBouncer.run(() {
+            pageNum = 1;
+            fetchRecentChatList();
+            fetchMessageList();
+            filterUserList();
+          });
+        } else {
+          mirrorFlyLog("empty", "empty");
+          // frmRecentChatList.addAll(recentChats);
+        }
+      }
+      update();
+    } else {
+      filteredCallLog(search.text.trim());
     }
-    update();
   }
 
   onClearPressed() {
@@ -1500,6 +1508,7 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
   void onHidden() {}
 
   Future<void> fetchCallLogList() async {
+    debugPrint("fetchCallLogList ===> Called");
     callLogPageNum = callLogPageNum + 1;
     Mirrorfly.getCallLogsList(callLogPageNum).then((value) {
       if (value != null) {
@@ -1622,6 +1631,58 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
       _callLogList.addAll(list.data!);
     } else {
       debugPrint("onCallLogUpdate : Failed");
+    }
+  }
+
+  void filteredCallLog(String searchKey) async {
+    List<CallLogData> callLogs = [];
+    List<CallLogData> callLogsWithNickName = [];
+
+    var res = await Mirrorfly.filteredCallLog();
+    if (res != null) {
+      _callLogList.clear();
+      callLogList.clear();
+
+      var data = {"data": json.decode(res)};
+      var list = callLogListFromJson(json.encode(data));
+      callLogs.addAll(list.data!);
+
+      for (var callLog in callLogs) {
+        callLogsWithNickName.add(await setProfile(getEndUserJid(callLog), callLog));
+      }
+      callLogs.clear();
+      var searchKeyWithoutSpace = searchKey.toLowerCase();
+      for (var callLog in callLogsWithNickName) {
+          if (callLog.nickName!.toLowerCase().contains(searchKeyWithoutSpace.toLowerCase())) {
+            callLogs.add(callLog);
+          }
+      }
+      _callLogList.addAll(callLogs);
+    } else {
+      debugPrint("filteredCallLog : Failed");
+    }
+  }
+
+  String getEndUserJid(CallLogData callLog) {
+    if (callLog.groupId!.isNotEmpty) {
+      return callLog.groupId!;
+    } else if (callLog.callState == 0 || callLog.callState == 2) {
+      return callLog.fromUser!;
+    } else {
+      return callLog.toUser!;
+    }
+  }
+
+  Future<CallLogData> setProfile(String endUserJid, CallLogData callLog) async {
+    if (callLog.callMode == CallMode.groupCall) {
+        var name = await CallUtils.getCallLogUserNames(callLog.userList!, callLog);
+        callLog.nickName = name;
+        return callLog;
+    } else {
+      var res = await Mirrorfly.getProfileDetails(endUserJid);
+      var str = Profile.fromJson(json.decode(res.toString()));
+      callLog.nickName = getName(str);
+      return callLog;
     }
   }
 }

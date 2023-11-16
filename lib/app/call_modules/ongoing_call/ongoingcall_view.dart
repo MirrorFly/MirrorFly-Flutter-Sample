@@ -39,9 +39,9 @@ class OnGoingCallView extends GetView<CallController> {
                                     showSpeakingRipple: controller.callType.value == CallType.audio,
                                     viewBgColor: AppColors.audioCallerBackground,
                                     profileSize: 100,onClick: (){
-                                      if(controller.callType.value==CallType.video) {
+                                      // if(controller.callType.value==CallType.video) {
                                         controller.isVisible(!controller.isVisible.value);
-                                      }
+                                      // }
                         },)
                                 .setBorderRadius(const BorderRadius.all(Radius.circular(10)))
                             : const SizedBox.shrink();
@@ -63,12 +63,12 @@ class OnGoingCallView extends GetView<CallController> {
                                             style: TextStyle(color: Colors.white),
                                           ):  const SizedBox.shrink(),*/
                                 if (controller.callList.length > 1 &&
-                                    getTileCallStatus(controller.pinnedUser.value.callStatus?.value,
-                                        controller.pinnedUser.value.userJid.checkNull()).isNotEmpty &&
+                                    getTileCallStatus(controller.callList.firstWhere((y) => y.userJid!.value==controller.pinnedUserJid.value).callStatus?.value,
+                                        controller.pinnedUserJid.value.checkNull()).isNotEmpty &&
                                     controller.layoutSwitch.value) ...[
                                   Text(
-                                    getTileCallStatus(controller.pinnedUser.value.callStatus?.value,
-                                        controller.pinnedUser.value.userJid.checkNull()),
+                                    getTileCallStatus(controller.callList.firstWhere((y) => y.userJid!.value==controller.pinnedUserJid.value).callStatus?.value,
+                                        controller.pinnedUserJid.value.checkNull()),
                                     style: const TextStyle(color: Colors.white),
                                   ),
                                   const SizedBox(
@@ -76,7 +76,7 @@ class OnGoingCallView extends GetView<CallController> {
                                   )
                                 ],
                                 if (controller.callList.length > 1 &&
-                                    controller.pinnedUser.value.isAudioMuted.value &&
+                                    controller.callList.firstWhere((y) => y.userJid!.value==controller.pinnedUserJid.value).isAudioMuted.value &&
                                     controller.layoutSwitch.value) ...[
                                   CircleAvatar(
                                     backgroundColor: AppColors.audioMutedIconBgColor,
@@ -104,15 +104,15 @@ class OnGoingCallView extends GetView<CallController> {
                 mainAxisAlignment: MainAxisAlignment.end,
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                    Obx(() {
-                      return(controller.callList.length >= 2) ?
-                       Align(
-                        alignment: Alignment.bottomRight,
-                        child: controller.layoutSwitch.value
-                            ? buildListItem(controller)
-                            : const SizedBox.shrink(),
-                      ) : const SizedBox.shrink();
-                    }),
+                  Obx(() {
+                    return (controller.callList.length >= 2) ?
+                    Align(
+                      alignment: Alignment.bottomRight,
+                      child: controller.layoutSwitch.value
+                          ? buildListItem(controller)
+                          : const SizedBox.shrink(),
+                    ) : const SizedBox.shrink();
+                  }),
                   const SizedBox(height: 15,),
                   Obx(() {
                     return AnimatedSize(duration: const Duration(milliseconds: 500),

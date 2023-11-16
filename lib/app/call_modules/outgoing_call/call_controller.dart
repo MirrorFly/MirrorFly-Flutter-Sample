@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/call_modules/call_utils.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
@@ -117,7 +116,7 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
           if(callUserList.length>1) {
             // pinnedUserJid(callUserList[0].userJid);
             CallUserList firstAttendedCallUser = callUserList.firstWhere((callUser) => callUser.callStatus?.value == CallStatus.attended || callUser.callStatus?.value == CallStatus.connected, orElse: () => callUserList[0]);
-            pinnedUserJid(firstAttendedCallUser.userJid);
+            pinnedUserJid(firstAttendedCallUser.userJid!.value);
             pinnedUser(firstAttendedCallUser);
           }
           getNames();
@@ -133,7 +132,7 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
           if(callUserList.length > 1) {
             // pinnedUserJid(callUserList[0].userJid);
             CallUserList firstAttendedCallUser = callUserList.firstWhere((callUser) => callUser.callStatus?.value == CallStatus.attended || callUser.callStatus?.value == CallStatus.connected, orElse: () => callUserList[0]);
-            pinnedUserJid(firstAttendedCallUser.userJid);
+            pinnedUserJid(firstAttendedCallUser.userJid!.value);
             pinnedUser(firstAttendedCallUser);
           }
           getNames();
@@ -183,7 +182,7 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
     debugPrint("#Mirrorfly muteAudio ${muted.value}");
     await Mirrorfly.muteAudio(!muted.value).then((value) => debugPrint("#Mirrorfly Mute Audio Response $value"));
     muted(!muted.value);
-    var callUserIndex = callList.indexWhere((element) => element.userJid == SessionManagement.getUserJID());
+    var callUserIndex = callList.indexWhere((element) => element.userJid!.value == SessionManagement.getUserJID());
     if(!callUserIndex.isNegative) {
       callList[callUserIndex].isAudioMuted(muted.value);
     }
@@ -322,11 +321,11 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
     if(groupId.isEmpty) {
       var userJids = <String>[];
       for (var element in callList) {
-        if(element.userJid!=null && SessionManagement.getUserJID() != element.userJid) {
-          userJids.add(element.userJid!);
+        if(element.userJid!=null && SessionManagement.getUserJID() != element.userJid!.value) {
+          userJids.add(element.userJid!.value);
         }}
       LogMessage.d("callList", userJids.length);
-      var names = userJids.isNotEmpty ? await CallUtils.getCallersName(userJids) : "";
+      var names = userJids.isNotEmpty ? await CallUtils.getCallersName(userJids,true) : "";
       callTitle(names);
       /*callList.asMap().forEach((index, users) async {
         LogMessage.d("callList", "$index ${users.userJid}");
@@ -380,7 +379,7 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
       return;
     }
     debugPrint("call list is not empty");
-    var index = callList.indexWhere((user) => user.userJid == userJid);
+    var index = callList.indexWhere((user) => user.userJid!.value == userJid);
     debugPrint("#Mirrorfly call disconnected user Index $index ${Get.currentRoute}");
     if (!index.isNegative) {
       callList.removeAt(index);
@@ -472,11 +471,11 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
     this.callMode(callMode);
     this.callType(callType);
     // this.callStatus(callStatus);
-    var index = callList.indexWhere((userList) => userList.userJid == userJid);
+    var index = callList.indexWhere((userList) => userList.userJid!.value == userJid);
     debugPrint("User List Index $index");
     if(index.isNegative){
       debugPrint("User List not Found, so adding the user to list");
-      CallUserList callUserList = CallUserList(userJid: userJid, callStatus: RxString(callStatus), isAudioMuted: false,isVideoMuted: false);
+      CallUserList callUserList = CallUserList(userJid: userJid.obs, callStatus: RxString(callStatus), isAudioMuted: false,isVideoMuted: false);
       callList.insert(callList.length - 1, callUserList);
       // callList.add(callUserList);
     }else{
@@ -504,8 +503,8 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
       });
     }else{
       debugPrint("#MirrorflyCall user jid $userJid");
-      CallUserList callUserList = CallUserList(userJid: userJid, callStatus: RxString(callStatus), isAudioMuted: false,isVideoMuted: false);
-     if(callList.indexWhere((userList) => userList.userJid == userJid).isNegative) {
+      CallUserList callUserList = CallUserList(userJid: userJid.obs, callStatus: RxString(callStatus), isAudioMuted: false,isVideoMuted: false);
+     if(callList.indexWhere((userList) => userList.userJid!.value == userJid).isNegative) {
        callList.insert(callList.length - 1, callUserList);
        // callList.add(callUserList);
        debugPrint("#MirrorflyCall List value updated ${callList.length}");
@@ -602,7 +601,7 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
     }
     if(Routes.onGoingCallView==Get.currentRoute) {
       ///update the status of the user in call user list
-      var indexOfItem = callList.indexWhere((element) => element.userJid == userJid);
+      var indexOfItem = callList.indexWhere((element) => element.userJid!.value == userJid);
       /// check the index is valid or not
       if (!indexOfItem.isNegative && callStatus != CallStatus.disconnected) {
         debugPrint("indexOfItem of call status update $indexOfItem");
@@ -642,7 +641,7 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
   }
 
   void audioMuteStatusChanged(String muteEvent, String userJid) {
-    var callUserIndex = callList.indexWhere((element) => element.userJid == userJid);
+    var callUserIndex = callList.indexWhere((element) => element.userJid!.value == userJid);
     if (!callUserIndex.isNegative) {
       debugPrint("index $callUserIndex");
       callList[callUserIndex].isAudioMuted(muteEvent == MuteStatus.remoteAudioMute);
@@ -652,7 +651,7 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
   }
 
   void videoMuteStatusChanged(String muteEvent, String userJid) {
-    var callUserIndex = callList.indexWhere((element) => element.userJid == userJid);
+    var callUserIndex = callList.indexWhere((element) => element.userJid!.value == userJid);
     if (!callUserIndex.isNegative) {
       debugPrint("index $callUserIndex");
       callList[callUserIndex].isVideoMuted(muteEvent == MuteStatus.remoteVideoMute);
@@ -684,9 +683,9 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
     }
   }
 
-  int audioLevel(userJid) {
+  int audioLevel(String userJid) {
     var index = speakingUsers.indexWhere((element) => element.userJid == userJid);
-    var value = index.isNegative ? -1 : speakingUsers[speakingUsers.indexWhere((element) => element.userJid == userJid)].audioLevel.value;
+    var value = index.isNegative ? -1 : speakingUsers[index].audioLevel.value;
     // debugPrint("speakingUsers Audio level $value");
     return value;
   }
@@ -696,7 +695,7 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
     Future.delayed(const Duration(milliseconds: 300), () {
       var index = speakingUsers.indexWhere((element) => element.userJid == userJid);
       if (!index.isNegative) {
-        speakingUsers.removeAt(index);
+        speakingUsers[index].audioLevel(-1);
       }
     });
   }
@@ -859,7 +858,7 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
         Mirrorfly.cancelVideoCallSwitch();
         waitingCompleter.complete();
         // Get.back();
-        var profile = await getProfileDetails(callList.first.userJid.checkNull());
+        var profile = await getProfileDetails(callList.first.userJid!.value.checkNull());
         toToast("No response from ${profile.getName()}");
       }
     });
@@ -903,6 +902,29 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
     Get.toNamed(Routes.participants);
   }
 
+  void onUserInvite(String callMode, String userJid, String callType) {
+    addParticipants(callMode, userJid, callType);
+  }
+
+  void onUserJoined(String callMode, String userJid, String callType,String callStatus) {
+    // addParticipants(callMode, userJid, callType);
+  }
+
+  void addParticipants(String callMode, String userJid, String callType){
+    Mirrorfly.getInvitedUsersList().then((value) {
+      LogMessage.d("addParticipants", value);
+      if(value.isNotEmpty){
+        var userJids = value;
+        for (var jid in userJids) {
+          if(callList.indexWhere((element) => element.userJid?.value == jid).isNegative) {
+            callList.insert(callList.length - 1, CallUserList(
+                userJid: jid.obs, isAudioMuted: false, isVideoMuted: false, callStatus: CallStatus.calling.obs));
+            users.insert(users.length - 1, jid);
+          }
+        }
+      }
+    });
+  }
   void onUserLeft(String callMode, String userJid, String callType) {
     if(callList.length>2) {
       CallUtils.getNameOfJid(userJid).then((value) => toToast("$value Left"));
@@ -912,21 +934,41 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
   void removeUser(String callMode, String userJid, String callType){
     this.callType(callType);
     debugPrint("before removeUser ${callList.length}");
-    debugPrint("before removeUser index ${callList.indexWhere((element) => element.userJid == userJid)}");
+    debugPrint("before removeUser index ${callList.indexWhere((element) => element.userJid!.value == userJid)}");
     callList.removeWhere((element){
       debugPrint("removeUser callStatus ${element.callStatus}");
-      return element.userJid == userJid;
+      return element.userJid!.value == userJid;
     });
     users.removeWhere((element) => element == userJid);
     speakingUsers.removeWhere((element) => element.userJid == userJid);
     debugPrint("after removeUser ${callList.length}");
     debugPrint("removeUser ${callList.indexWhere((element) => element.userJid.toString() == userJid)}");
     if(callList.length>1 && pinnedUserJid.value == userJid) {
-      pinnedUserJid(callList[0].userJid);
+      pinnedUserJid(callList[0].userJid!.value);
     }
     callDisconnected(callMode, userJid, callType);
     getNames();
 
+  }
+
+  void userUpdatedHisProfile(String jid){
+    updateProfile(jid);
+  }
+  Future<void> updateProfile(String jid) async {
+    if (jid.isNotEmpty) {
+      var callListIndex = callList.indexWhere((element) => element.userJid!.value == jid);
+      var usersIndex = users.indexWhere((element) => element == jid);
+      if(!usersIndex.isNegative){
+        users[usersIndex]=("");
+        users[usersIndex]=(jid);
+      }
+      if (!callListIndex.isNegative) {
+        callList[callListIndex].userJid!("");
+        callList[callListIndex].userJid!(jid);
+        // callList.refresh();
+        getNames();
+      }
+    }
   }
 
   void enterFullScreen() {
@@ -936,4 +978,15 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
   void exitFullScreen() {
     // SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: SystemUiOverlay.values);
   }
+
+  void swap(int index) {
+    if(isOneToOneCall && isVideoCall && !videoMuted.value){
+      var itemToReplace = callList.indexWhere((y) => y.userJid!.value==pinnedUserJid.value);
+      var itemToRemove = callList[index];
+      var userJid = itemToRemove.userJid?.value;
+      pinnedUserJid(userJid);
+      callList.swap(index, itemToReplace);
+    }
+  }
+
 }
