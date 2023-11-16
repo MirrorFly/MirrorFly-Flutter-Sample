@@ -4,6 +4,10 @@ CallLogModel callLogListFromJson(String str) => CallLogModel.fromJson(json.decod
 
 String callLogListToJson(CallLogModel data) => json.encode(data.toJson());
 
+CallLogData callLogDataListFromJson(String str) => CallLogData.fromJson(json.decode(str));
+
+String callLogDataListToJson(CallLogData data) => json.encode(data.toJson());
+
 class CallLogModel {
   List<CallLogData>? data;
 
@@ -46,6 +50,7 @@ class CallLogData {
   int? startTime;
   String? toUser;
   List<String>? userList;
+  String? nickName;
 
   CallLogData(
       {this.callMode,
@@ -65,7 +70,7 @@ class CallLogData {
         this.sessionStatus,
         this.startTime,
         this.toUser,
-        this.userList});
+        this.userList,this.nickName});
 
   CallLogData.fromJson(Map<String, dynamic> json) {
     callMode = json['callMode'];
@@ -86,6 +91,7 @@ class CallLogData {
     startTime = json['startTime'];
     toUser = json['toUser'];
     userList = json['userList'].cast<String>();
+    nickName = json['nickName'];
   }
 
   Map<String, dynamic> toJson() {
@@ -108,6 +114,7 @@ class CallLogData {
     data['startTime'] = startTime;
     data['toUser'] = toUser;
     data['userList'] = userList;
+    data['nickName'] = nickName;
     return data;
   }
 }

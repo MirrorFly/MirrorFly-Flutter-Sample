@@ -758,7 +758,7 @@ class Constants {
   static const videoSwitchMessage = "Are you sure you want to switch to Video Call?";
   static const videoSwitchRequestMessage = "Requesting to switch to Video Call";
   static const videoSwitchRequestedMessage = "requesting to switch to video call";
-  static const callMembersLimit = "Maximum %d members allowed in call";
+  static const callMembersLimit = "Maximum %d members allowed in a call";
   static const callMembersLimit6 = "You can only select %d participants";
   static const maxNameLength = 26;
   static const msgOngoingCallAlert = "You are already on another call";

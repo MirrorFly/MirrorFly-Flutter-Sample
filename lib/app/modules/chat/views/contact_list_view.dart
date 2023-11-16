@@ -315,7 +315,7 @@ class ContactListView extends GetView<ContactController> {
                                     child: Center(
                                       child: Row(
                                         mainAxisAlignment: MainAxisAlignment.center,
-                                        crossAxisAlignment: CrossAxisAlignment.end,
+                                        // crossAxisAlignment: CrossAxisAlignment.end,
                                         children: [
                                           SvgPicture.asset(
                                             controller.callType.value == CallType.audio

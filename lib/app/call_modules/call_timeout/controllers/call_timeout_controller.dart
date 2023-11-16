@@ -94,6 +94,19 @@ class CallTimeoutController extends GetxController {
     }
   }
 
+  void userUpdatedHisProfile(String jid){
+    updateProfile(jid);
+  }
+  Future<void> updateProfile(String jid) async {
+    if (jid.isNotEmpty) {
+      var callListIndex = users.indexWhere((element) => element == jid);
+      if (!callListIndex.isNegative) {
+        users[callListIndex] = jid;
+        users.refresh();
+      }
+    }
+  }
+
   void enterFullScreen() {
     // SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersive);
   }
