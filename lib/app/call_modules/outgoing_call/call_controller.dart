@@ -325,7 +325,7 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
           userJids.add(element.userJid!.value);
         }}
       LogMessage.d("callList", userJids.length);
-      var names = userJids.isNotEmpty ? await CallUtils.getCallersName(userJids) : "";
+      var names = userJids.isNotEmpty ? await CallUtils.getCallersName(userJids,true) : "";
       callTitle(names);
       /*callList.asMap().forEach((index, users) async {
         LogMessage.d("callList", "$index ${users.userJid}");
