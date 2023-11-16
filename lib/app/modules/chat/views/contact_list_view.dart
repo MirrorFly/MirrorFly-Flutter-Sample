@@ -2,11 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
-import 'package:mirror_fly_demo/app/data/helper.dart';
 import 'package:mirror_fly_demo/app/modules/chat/controllers/contact_controller.dart';
 import 'package:mirrorfly_plugin/mirrorfly.dart';
 
-import '../../../common/widgets.dart';
 import '../../../routes/app_pages.dart';
 import '../../../widgets/custom_action_bar_icons.dart';
 import '../../dashboard/widgets.dart';
@@ -186,114 +184,17 @@ class ContactListView extends GetView<ContactController> {
                                           child: CircularProgressIndicator());
                                     } else if (controller.usersList.isNotEmpty) {
                                       var item = controller.usersList[index];
-                                      return Opacity(
-                                        opacity: item.isBlocked.checkNull() ? 0.3 : 1.0,
-                                        child: InkWell(
-                                          child: Row(
-                                            children: [
-                                              InkWell(
-                                                child: Container(
-                                                    margin: const EdgeInsets.only(
-                                                        left: 19.0,
-                                                        top: 10,
-                                                        bottom: 10,
-                                                        right: 10),
-                                                    width: 50,
-                                                    height: 50,
-                                                    decoration: BoxDecoration(
-                                                      color: item.image
-                                                          .checkNull()
-                                                          .isEmpty
-                                                          ? iconBgColor
-                                                          : buttonBgColor,
-                                                      shape: BoxShape.circle,
-                                                    ),
-                                                    child: ImageNetwork(
-                                                      url: item.image.toString(),
-                                                      width: 48,
-                                                      height: 48,
-                                                      clipOval: true,
-                                                      errorWidget: getName(item) //item.nickName
-                                                          .checkNull()
-                                                          .isNotEmpty
-                                                          ? ProfileTextImage(
-                                                        text:
-                                                        getName(item) /*item.nickName.checkNull().isEmpty
-                                                                      ? item.mobileNumber
-                                                                          .checkNull()
-                                                                      : item.nickName.checkNull()*/,
-                                                      )
-                                                          : const Icon(
-                                                        Icons.person,
-                                                        color: Colors.white,
-                                                      ),
-                                                      blocked: item.isBlockedMe.checkNull() ||
-                                                          item.isAdminBlocked.checkNull(),
-                                                      unknown: (!item.isItSavedContact.checkNull() ||
-                                                          item.isDeletedContact()),
-                                                      isGroup: item.isGroupProfile.checkNull(),
-                                                    )),
-                                                onTap: () {
-                                                  controller.showProfilePopup(item.obs);
-                                                },
-                                              ),
-                                              Expanded(
-                                                child: Column(
-                                                  crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                                  children: [
-                                                    controller.searchQuery.text.isEmpty ?
-                                                    Text(
-                                                      getName(item),
-                                                      style: Theme
-                                                          .of(context)
-                                                          .textTheme
-                                                          .titleMedium,
-                                                      maxLines: 1,
-                                                      overflow: TextOverflow.ellipsis,
-                                                    ) :
-                                                    spannableText(
-                                                        getName(item),
-                                                        //item.profileName.checkNull(),
-                                                        controller.searchQuery.text,
-                                                        const TextStyle(fontSize: 16.0, fontWeight: FontWeight.w700, fontFamily: 'sf_ui', color: textHintColor)),
-                                                    // Text(
-                                                    //   item.mobileNumber.toString(),
-                                                    //   style: Theme.of(context)
-                                                    //       .textTheme
-                                                    //       .titleSmall,
-                                                    // )
-                                                    Text(
-                                                      item.status.toString(),
-                                                      style: Theme
-                                                          .of(context)
-                                                          .textTheme
-                                                          .titleSmall,
-                                                    )
-                                                  ],
-                                                ),
-                                              ),
-                                              Visibility(
-                                                visible: controller.isCheckBoxVisible,
-                                                child: Checkbox(
-                                                  value: controller.selectedUsersJIDList
-                                                      .contains(item.jid),
-                                                  onChanged: (value) {
-                                                    controller.onListItemPressed(item);
-                                                  },
-                                                  activeColor: AppColors.checkBoxChecked,
-                                                  shape: RoundedRectangleBorder(
-                                                      borderRadius: BorderRadius.circular(2),
-                                                  side: const BorderSide(color: AppColors.checkBoxBorder)),
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                          onTap: () {
-                                            controller.onListItemPressed(item);
-                                          },
-                                        ),
-                                      );
+                                      return ContactItem(item: item,onAvatarClick: (){
+                                        controller.showProfilePopup(item.obs);
+                                      },
+                                        spanTxt: controller.searchQuery.text,
+                                        isCheckBoxVisible: controller.isCheckBoxVisible,
+                                        checkValue: controller.selectedUsersJIDList.contains(item.jid),
+                                        onCheckBoxChange: (value){
+                                          controller.onListItemPressed(item);
+                                        },onListItemPressed: (){
+                                          controller.onListItemPressed(item);
+                                        },);
                                     } else {
                                       return const SizedBox();
                                     }
