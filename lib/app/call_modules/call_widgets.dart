@@ -398,6 +398,11 @@ Widget buildGridItem(CallController controller){
               userJid: controller.callList[index].userJid ?? "",
               viewBgColor: AppColors.callerTitleBackground,
               profileSize: 60,
+              onClick: (){
+                // if(controller.callType.value==CallType.video) {
+                  controller.isVisible(!controller.isVisible.value);
+                // }
+              }
             ).setBorderRadius(const BorderRadius.all(Radius.circular(10))),
             Obx(() {
               return Positioned(

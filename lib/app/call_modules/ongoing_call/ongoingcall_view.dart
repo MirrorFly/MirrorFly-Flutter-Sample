@@ -25,25 +25,32 @@ class OnGoingCallView extends GetView<CallController> {
             fit: StackFit.expand,
             children: [
               SizedBox(
-                  width: MediaQuery.of(context).size.width,
-                  height: MediaQuery.of(context).size.height,
+                  width: MediaQuery
+                      .of(context)
+                      .size
+                      .width,
+                  height: MediaQuery
+                      .of(context)
+                      .size
+                      .height,
                   child: Stack(
                     children: [
                       Obx(() {
                         debugPrint("controller.pinnedUserJid ${controller.pinnedUserJid}");
                         return controller.pinnedUserJid.value.isNotEmpty && controller.layoutSwitch.value
                             ? MirrorFlyView(
-                                    key: UniqueKey(),
-                                    userJid: controller.pinnedUserJid.value,
-                                    alignProfilePictureCenter: false,
-                                    showSpeakingRipple: controller.callType.value == CallType.audio,
-                                    viewBgColor: AppColors.audioCallerBackground,
-                                    profileSize: 100,onClick: (){
-                                      if(controller.callType.value==CallType.video) {
-                                        controller.isVisible(!controller.isVisible.value);
-                                      }
-                        },)
-                                .setBorderRadius(const BorderRadius.all(Radius.circular(10)))
+                          key: UniqueKey(),
+                          userJid: controller.pinnedUserJid.value,
+                          alignProfilePictureCenter: false,
+                          showSpeakingRipple: controller.callType.value == CallType.audio,
+                          viewBgColor: AppColors.audioCallerBackground,
+                          profileSize: 100,
+                          onClick: () {
+                            // if(controller.callType.value==CallType.video) {
+                            controller.isVisible(!controller.isVisible.value);
+                            // }
+                          },)
+                            .setBorderRadius(const BorderRadius.all(Radius.circular(10)))
                             : const SizedBox.shrink();
                       }),
                       Obx(() {
@@ -104,15 +111,15 @@ class OnGoingCallView extends GetView<CallController> {
                 mainAxisAlignment: MainAxisAlignment.end,
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                    Obx(() {
-                      return(controller.callList.length >= 2) ?
-                       Align(
-                        alignment: Alignment.bottomRight,
-                        child: controller.layoutSwitch.value
-                            ? buildListItem(controller)
-                            : const SizedBox.shrink(),
-                      ) : const SizedBox.shrink();
-                    }),
+                  Obx(() {
+                    return (controller.callList.length >= 2) ?
+                    Align(
+                      alignment: Alignment.bottomRight,
+                      child: controller.layoutSwitch.value
+                          ? buildListItem(controller)
+                          : const SizedBox.shrink(),
+                    ) : const SizedBox.shrink();
+                  }),
                   const SizedBox(height: 15,),
                   Obx(() {
                     return AnimatedSize(duration: const Duration(milliseconds: 500),

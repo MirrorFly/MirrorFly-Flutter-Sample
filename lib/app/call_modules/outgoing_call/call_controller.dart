@@ -901,8 +901,11 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
       if(value.isNotEmpty){
         var userJids = value;
         for (var jid in userJids) {
-          callList.add(CallUserList(userJid: jid,isAudioMuted: false, isVideoMuted: false,callStatus: CallStatus.calling.obs));
-          users.add(jid);
+          if(callList.indexWhere((element) => element.userJid==jid).isNegative) {
+            callList.insert(callList.length - 1, CallUserList(
+                userJid: jid, isAudioMuted: false, isVideoMuted: false, callStatus: CallStatus.calling.obs));
+            users.insert(users.length - 1, jid);
+          }
         };
       }
     });

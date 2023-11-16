@@ -8,6 +8,7 @@ import '../../common/app_theme.dart';
 import '../../common/constants.dart';
 import '../../common/widgets.dart';
 import '../../data/helper.dart';
+import '../../modules/dashboard/widgets.dart';
 import '../call_utils.dart';
 import '../call_widgets.dart';
 
@@ -277,6 +278,7 @@ class ParticipantsView extends GetView<AddParticipantsController> {
                                     crossAxisAlignment:
                                     CrossAxisAlignment.start,
                                     children: [
+                                      controller.searchQuery.text.isEmpty ?
                                       Text(
                                         getName(item),
                                         style: Theme
@@ -285,7 +287,12 @@ class ParticipantsView extends GetView<AddParticipantsController> {
                                             .titleMedium,
                                         maxLines: 1,
                                         overflow: TextOverflow.ellipsis,
-                                      ),
+                                      ) :
+                                      spannableText(
+                                          getName(item),
+                                          //item.profileName.checkNull(),
+                                          controller.searchQuery.text,
+                                          const TextStyle(fontSize: 16.0, fontWeight: FontWeight.w700, fontFamily: 'sf_ui', color: textHintColor)),
                                       // Text(
                                       //   item.mobileNumber.toString(),
                                       //   style: Theme.of(context)

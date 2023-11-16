@@ -189,10 +189,14 @@ class AddParticipantsController extends GetxController with GetTickerProviderSta
       //item.isSelected = false;
       groupCallMembersCount(groupCallMembersCount.value - 1);
     } else {
-      if(getMaxCallUsersCount > (groupCallMembersCount.value+callList.length)) {
-        selectedUsersList.add(item);
-        selectedUsersJIDList.add(item.jid!);
-        groupCallMembersCount(groupCallMembersCount.value + 1);
+      if(callList.length!=8) {
+        if (getMaxCallUsersCount > (groupCallMembersCount.value + callList.length)) {
+          selectedUsersList.add(item);
+          selectedUsersJIDList.add(item.jid!);
+          groupCallMembersCount(groupCallMembersCount.value + 1);
+        } else {
+          toToast(Constants.callMembersLimit6.replaceFirst("%d", (selectedUsersList.length).toString()));
+        }
       }else{
         toToast(Constants.callMembersLimit.replaceFirst("%d", getMaxCallUsersCount.toString()));
       }

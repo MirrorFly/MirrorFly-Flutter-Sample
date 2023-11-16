@@ -9,6 +9,7 @@ import 'package:mirrorfly_plugin/mirrorfly.dart';
 import '../../../common/widgets.dart';
 import '../../../routes/app_pages.dart';
 import '../../../widgets/custom_action_bar_icons.dart';
+import '../../dashboard/widgets.dart';
 
 class ContactListView extends GetView<ContactController> {
   const ContactListView({Key? key}) : super(key: key);
@@ -241,6 +242,7 @@ class ContactListView extends GetView<ContactController> {
                                                   crossAxisAlignment:
                                                   CrossAxisAlignment.start,
                                                   children: [
+                                                    controller.searchQuery.text.isEmpty ?
                                                     Text(
                                                       getName(item),
                                                       style: Theme
@@ -249,7 +251,12 @@ class ContactListView extends GetView<ContactController> {
                                                           .titleMedium,
                                                       maxLines: 1,
                                                       overflow: TextOverflow.ellipsis,
-                                                    ),
+                                                    ) :
+                                                    spannableText(
+                                                        getName(item),
+                                                        //item.profileName.checkNull(),
+                                                        controller.searchQuery.text,
+                                                        const TextStyle(fontSize: 16.0, fontWeight: FontWeight.w700, fontFamily: 'sf_ui', color: textHintColor)),
                                                     // Text(
                                                     //   item.mobileNumber.toString(),
                                                     //   style: Theme.of(context)
