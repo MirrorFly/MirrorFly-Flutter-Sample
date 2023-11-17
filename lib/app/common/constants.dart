@@ -99,6 +99,7 @@ const String participantMute = 'assets/calls/participant_mute.svg';
 const String participantUnMute = 'assets/calls/participant_unmute.svg';
 const String participantVideoEnabled = 'assets/calls/participant_video_enabled.svg';
 const String participantVideoDisabled = 'assets/calls/participant_video_disabled.svg';
+const String addParticipantsInCall = 'assets/calls/add_user_in_call.svg';
 
 
 //Assets
@@ -757,9 +758,11 @@ class Constants {
   static const videoSwitchMessage = "Are you sure you want to switch to Video Call?";
   static const videoSwitchRequestMessage = "Requesting to switch to Video Call";
   static const videoSwitchRequestedMessage = "requesting to switch to video call";
-  static const callMembersLimit = "Maximum %d members allowed in call";
+  static const callMembersLimit = "Maximum %d members allowed in a call";
+  static const callMembersLimit6 = "You can only select %d participants";
   static const maxNameLength = 26;
   static const msgOngoingCallAlert = "You are already on another call";
+  static const addParticipantsToCall = "Add participant to the call";
 
 }
 
