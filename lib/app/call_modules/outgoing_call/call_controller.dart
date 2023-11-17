@@ -325,7 +325,7 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
           userJids.add(element.userJid!.value);
         }}
       LogMessage.d("callList", userJids.length);
-      var names = userJids.isNotEmpty ? await CallUtils.getCallersName(userJids) : "";
+      var names = userJids.isNotEmpty ? await CallUtils.getCallersName(userJids,true) : "";
       callTitle(names);
       /*callList.asMap().forEach((index, users) async {
         LogMessage.d("callList", "$index ${users.userJid}");
@@ -902,6 +902,29 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
     Get.toNamed(Routes.participants);
   }
 
+  void onUserInvite(String callMode, String userJid, String callType) {
+    addParticipants(callMode, userJid, callType);
+  }
+
+  void onUserJoined(String callMode, String userJid, String callType,String callStatus) {
+    // addParticipants(callMode, userJid, callType);
+  }
+
+  void addParticipants(String callMode, String userJid, String callType){
+    Mirrorfly.getInvitedUsersList().then((value) {
+      LogMessage.d("addParticipants", value);
+      if(value.isNotEmpty){
+        var userJids = value;
+        for (var jid in userJids) {
+          if(callList.indexWhere((element) => element.userJid?.value == jid).isNegative) {
+            callList.insert(callList.length - 1, CallUserList(
+                userJid: jid.obs, isAudioMuted: false, isVideoMuted: false, callStatus: CallStatus.calling.obs));
+            users.insert(users.length - 1, jid);
+          }
+        }
+      }
+    });
+  }
   void onUserLeft(String callMode, String userJid, String callType) {
     if(callList.length>2) {
       CallUtils.getNameOfJid(userJid).then((value) => toToast("$value Left"));

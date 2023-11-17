@@ -35,7 +35,7 @@ class CallTimeoutView extends GetView<CallTimeoutController> {
                     Obx(() {
                       return Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 30.0),
-                          child: FutureBuilder(future: CallUtils.getCallersName(controller.users), builder: (ctx, snap) {
+                          child: FutureBuilder(future: CallUtils.getCallersName(controller.users,controller.users.length==1), builder: (ctx, snap) {
                             return snap.hasData && snap.data != null ? Text(
                               snap.data!,
                               //controller.calleeNames.length>3 ? "${controller.calleeNames.take(3).join(",")} and (+${controller.calleeNames.length - 3 })" : controller.calleeNames.join(","),

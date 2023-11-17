@@ -104,15 +104,15 @@ class OnGoingCallView extends GetView<CallController> {
                 mainAxisAlignment: MainAxisAlignment.end,
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                    Obx(() {
-                      return(controller.callList.length >= 2) ?
-                       Align(
-                        alignment: Alignment.bottomRight,
-                        child: controller.layoutSwitch.value
-                            ? buildListItem(controller)
-                            : const SizedBox.shrink(),
-                      ) : const SizedBox.shrink();
-                    }),
+                  Obx(() {
+                    return (controller.callList.length >= 2) ?
+                    Align(
+                      alignment: Alignment.bottomRight,
+                      child: controller.layoutSwitch.value
+                          ? buildListItem(controller)
+                          : const SizedBox.shrink(),
+                    ) : const SizedBox.shrink();
+                  }),
                   const SizedBox(height: 15,),
                   Obx(() {
                     return AnimatedSize(duration: const Duration(milliseconds: 500),

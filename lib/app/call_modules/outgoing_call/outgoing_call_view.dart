@@ -69,7 +69,7 @@ class OutGoingCallView extends GetView<CallController> {
                       Obx(() {
                         return Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 30.0),
-                          child: FutureBuilder(future:CallUtils.getCallersName(controller.users),builder: (ctx,snap) {
+                          child: FutureBuilder(future:CallUtils.getCallersName(controller.users,controller.users.length==1),builder: (ctx,snap) {
                             return snap.hasData && snap.data!=null ? Text(
                                 snap.data!, //controller.calleeNames.length>3 ? "${controller.calleeNames.take(3).join(",")} and (+${controller.calleeNames.length - 3 })" : controller.calleeNames.join(","),
                                 style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w500, fontSize: 18)
@@ -95,16 +95,16 @@ class OutGoingCallView extends GetView<CallController> {
                         ) : Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: List.generate(
-                              controller.users.length+1 > 3 ? 4 : controller.users.length+1, (index) =>
+                              controller.users.length > 3 ? 4 : controller.users.length, (index) =>
                           (index == 3) ? Padding(
                             padding: const EdgeInsets.all(2.0),
                             child: ProfileTextImage(
-                              text: "+${(controller.users.length+1) - 3}",
+                              text: "+${(controller.users.length) - 3}",
                               radius: 45 / 2,
                               bgColor: Colors.white,
                               fontColor: Colors.grey,
                             ),
-                          ) : FutureBuilder(future: getProfileDetails(index==0 ? SessionManagement.getUserJID().checkNull() : controller.users[index-1]!), builder: (ctx, snap) {
+                          ) : FutureBuilder(future: getProfileDetails(controller.users[index]!), builder: (ctx, snap) {
                             return snap.hasData && snap.data != null ? Padding(
                               padding: const EdgeInsets.all(2.0),
                               child: buildProfileImage(snap.data!, size: 45),

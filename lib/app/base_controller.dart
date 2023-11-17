@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:mirror_fly_demo/app/call_modules/call_timeout/controllers/call_timeout_controller.dart';
 import 'package:mirror_fly_demo/app/call_modules/outgoing_call/call_controller.dart';
+import 'package:mirror_fly_demo/app/call_modules/participants/add_participants_controller.dart';
 import 'package:mirror_fly_demo/app/modules/media_preview/controllers/media_preview_controller.dart';
 import 'package:mirrorfly_plugin/logmessage.dart';
 import 'package:mirrorfly_plugin/mirrorflychat.dart';
@@ -209,6 +210,10 @@ abstract class BaseController {
           }
           break;
         case CallStatus.userJoined:
+          if (Get.isRegistered<CallController>()) {
+            Get.find<CallController>().onUserJoined(
+                callMode, userJid, callType,callStatus);
+          }
           break;
         case CallStatus.userLeft:
           //{"callStatus":"User_Left","userJid":"919789482015@xmpp-uikit-qa.contus.us","callType":"audio","callMode":"onetomany"}
@@ -323,6 +328,12 @@ abstract class BaseController {
           }
           break;
         }
+        case CallAction.inviteUsers:
+          if (Get.isRegistered<CallController>()) {
+            Get.find<CallController>().onUserInvite(
+                callMode, userJid, callType);
+          }
+          break;
         case CallAction.remoteOtherBusy:{// for group call users decline the call before attend
           if(Get.isRegistered<CallController>()){
             Get.find<CallController>().remoteOtherBusy(
@@ -733,6 +744,9 @@ abstract class BaseController {
     if (Get.isRegistered<ContactController>()) {
       Get.find<ContactController>().onContactSyncComplete(result);
     }
+    if (Get.isRegistered<AddParticipantsController>()) {
+      Get.find<AddParticipantsController>().onContactSyncComplete(result);
+    }
     if (Get.isRegistered<ForwardChatController>()) {
       Get.find<ForwardChatController>().onContactSyncComplete(result);
     }
@@ -762,6 +776,9 @@ abstract class BaseController {
     if (Get.isRegistered<ContactController>()) {
       Get.find<ContactController>().unblockedThisUser(jid);
     }
+    if (Get.isRegistered<AddParticipantsController>()) {
+      Get.find<AddParticipantsController>().unblockedThisUser(jid);
+    }
   }
 
   void userBlockedMe(String jid) {
@@ -777,6 +794,9 @@ abstract class BaseController {
     }
     if (Get.isRegistered<ContactController>()) {
       Get.find<ContactController>().userBlockedMe(jid);
+    }
+    if (Get.isRegistered<AddParticipantsController>()) {
+      Get.find<AddParticipantsController>().userBlockedMe(jid);
     }
   }
 
@@ -801,6 +821,9 @@ abstract class BaseController {
     }
     if (Get.isRegistered<ContactController>()) {
       Get.find<ContactController>().userDeletedHisProfile(jid.toString());
+    }
+    if (Get.isRegistered<AddParticipantsController>()) {
+      Get.find<AddParticipantsController>().userDeletedHisProfile(jid.toString());
     }
     if (Get.isRegistered<BlockedListController>()) {
       Get.find<BlockedListController>().userDeletedHisProfile(jid.toString());
@@ -848,6 +871,9 @@ abstract class BaseController {
     }*/
     if (Get.isRegistered<ContactController>()) {
       Get.find<ContactController>().userUpdatedHisProfile(jid);
+    }
+    if (Get.isRegistered<AddParticipantsController>()) {
+      Get.find<AddParticipantsController>().userUpdatedHisProfile(jid);
     }
     if (Get.isRegistered<ChatInfoController>()) {
       Get.find<ChatInfoController>().userUpdatedHisProfile(jid);
@@ -1059,6 +1085,10 @@ abstract class BaseController {
       timer = Timer.periodic(
         oneSec,
             (Timer timer) {
+          final hrDur = DateTime
+              .now()
+              .difference(startTime)
+              .inHours;
           final minDur = DateTime
               .now()
               .difference(startTime)
@@ -1067,9 +1097,10 @@ abstract class BaseController {
               .now()
               .difference(startTime)
               .inSeconds % 60;
-          String min = minDur < 10 ? "0$minDur" : minDur.toString();
-          String sec = secDur < 10 ? "0$secDur" : secDur.toString();
-          var time = "$min:$sec";
+          final hours = hrDur.remainder(24).toStringAsFixed(0).padLeft(2, '0');
+          final minutes = minDur.remainder(60).toStringAsFixed(0).padLeft(2, '0');
+          final seconds = secDur.remainder(60).toStringAsFixed(0).padLeft(2, '0');
+          var time =  '${hours!="00" ? '$hours:' : ''}$minutes:$seconds';
           // LogMessage.d("callTimer", time);
           if (Get.isRegistered<CallController>()) {
             Get.find<CallController>().callDuration(time);
