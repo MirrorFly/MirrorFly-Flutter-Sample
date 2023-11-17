@@ -57,7 +57,7 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
   // Rx<Profile> profile = Profile().obs;
   var calleeName = "".obs;
   var audioOutputType = "receiver".obs;
-  var callStatus = "".obs;
+  var callStatus = CallStatus.calling.obs;
 
   // var userJID = <String>[].obs;
 
