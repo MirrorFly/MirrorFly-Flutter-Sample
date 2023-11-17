@@ -467,7 +467,7 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
     // this.callStatus(callStatus);
   }
 
-  void ringing(String callMode, String userJid, String callType, String callStatus) {
+  Future<void> ringing(String callMode, String userJid, String callType, String callStatus) async {
     this.callMode(callMode);
     this.callType(callType);
     // this.callStatus(callStatus);
@@ -475,7 +475,7 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
     debugPrint("User List Index $index");
     if(index.isNegative){
       debugPrint("User List not Found, so adding the user to list");
-      CallUserList callUserList = CallUserList(userJid: userJid.obs, callStatus: RxString(callStatus), isAudioMuted: false,isVideoMuted: false);
+      CallUserList callUserList = CallUserList(userJid: userJid.obs, callStatus: RxString(callStatus), isAudioMuted: (await Mirrorfly.isUserAudioMuted(userJid)).checkNull(), isVideoMuted: (await Mirrorfly.isUserVideoMuted(userJid)).checkNull(),);
       callList.insert(callList.length - 1, callUserList);
       // callList.add(callUserList);
     }else{
@@ -491,7 +491,7 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
 
   }
 
-  void connected(String callMode, String userJid, String callType, String callStatus) {
+  Future<void> connected(String callMode, String userJid, String callType, String callStatus) async {
     this.callMode(callMode);
     this.callType(callType);
     // this.callStatus(callStatus);
@@ -503,7 +503,7 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
       });
     }else{
       debugPrint("#MirrorflyCall user jid $userJid");
-      CallUserList callUserList = CallUserList(userJid: userJid.obs, callStatus: RxString(callStatus), isAudioMuted: false,isVideoMuted: false);
+      CallUserList callUserList = CallUserList(userJid: userJid.obs, callStatus: RxString(callStatus), isAudioMuted: (await Mirrorfly.isUserAudioMuted(userJid)).checkNull(), isVideoMuted: (await Mirrorfly.isUserVideoMuted(userJid)).checkNull(),);
      if(callList.indexWhere((userList) => userList.userJid!.value == userJid).isNegative) {
        callList.insert(callList.length - 1, callUserList);
        // callList.add(callUserList);
@@ -911,14 +911,14 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
   }
 
   void addParticipants(String callMode, String userJid, String callType){
-    Mirrorfly.getInvitedUsersList().then((value) {
+    Mirrorfly.getInvitedUsersList().then((value) async {
       LogMessage.d("addParticipants", value);
       if(value.isNotEmpty){
         var userJids = value;
         for (var jid in userJids) {
           if(callList.indexWhere((element) => element.userJid?.value == jid).isNegative) {
             callList.insert(callList.length - 1, CallUserList(
-                userJid: jid.obs, isAudioMuted: false, isVideoMuted: false, callStatus: CallStatus.calling.obs));
+                userJid: jid.obs, isAudioMuted: (await Mirrorfly.isUserAudioMuted(jid)).checkNull(), isVideoMuted: (await Mirrorfly.isUserVideoMuted(jid)).checkNull(), callStatus: CallStatus.calling.obs));
             users.insert(users.length - 1, jid);
           }
         }
