@@ -141,11 +141,10 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
     // checkArchiveSetting();
     userlistScrollController.addListener(_scrollListener);
     historyScrollController.addListener(historyScrollListener);
+    callLogPageNum = 0;
     fetchCallLogList();
     callLogScrollController.addListener(_callLogScrollListener);
   }
-
-
 
   void getAvailableFeatures() {
     Mirrorfly.getAvailableFeatures().then((features) {
@@ -1084,6 +1083,11 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
       }
       update();
     } else {
+      if (search.text.trim().isNotEmpty) {
+        clearVisible(true);
+      } else {
+        clearVisible(false);
+      }
       filteredCallLog(search.text.trim());
     }
   }
@@ -1095,6 +1099,10 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
     search.clear();
     clearVisible(false);
     // frmRecentChatList(recentChats);
+    _callLogList.clear();
+    callLogList.clear();
+    callLogPageNum = 0;
+    fetchCallLogList();
   }
 
   var pageNum = 1;
@@ -1508,7 +1516,7 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
   void onHidden() {}
 
   Future<void> fetchCallLogList() async {
-    debugPrint("fetchCallLogList ===> Called");
+    debugPrint("fetchCallLogList ===> Called $callLogPageNum");
     callLogPageNum = callLogPageNum + 1;
     Mirrorfly.getCallLogsList(callLogPageNum).then((value) {
       if (value != null) {
@@ -1653,9 +1661,9 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
       callLogs.clear();
       var searchKeyWithoutSpace = searchKey.toLowerCase();
       for (var callLog in callLogsWithNickName) {
-          if (callLog.nickName!.toLowerCase().contains(searchKeyWithoutSpace.toLowerCase())) {
-            callLogs.add(callLog);
-          }
+        if (callLog.nickName!.toLowerCase().contains(searchKeyWithoutSpace.toLowerCase())) {
+          callLogs.add(callLog);
+        }
       }
       _callLogList.addAll(callLogs);
     } else {
@@ -1664,20 +1672,22 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
   }
 
   String getEndUserJid(CallLogData callLog) {
-    if (callLog.groupId!.isNotEmpty) {
+    if (callLog.callMode == CallMode.groupCall) {
       return callLog.groupId!;
-    } else if (callLog.callState == 0 || callLog.callState == 2) {
-      return callLog.fromUser!;
     } else {
-      return callLog.toUser!;
+      if (callLog.callState == 0 || callLog.callState == 2) {
+        return callLog.fromUser!;
+      } else {
+        return callLog.toUser!;
+      }
     }
   }
 
   Future<CallLogData> setProfile(String endUserJid, CallLogData callLog) async {
     if (callLog.callMode == CallMode.groupCall) {
-        var name = await CallUtils.getCallLogUserNames(callLog.userList!, callLog);
-        callLog.nickName = name;
-        return callLog;
+      var name = await CallUtils.getCallLogUserNames(callLog.userList!, callLog);
+      callLog.nickName = name;
+      return callLog;
     } else {
       var res = await Mirrorfly.getProfileDetails(endUserJid);
       var str = Profile.fromJson(json.decode(res.toString()));

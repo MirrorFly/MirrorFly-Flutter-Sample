@@ -557,7 +557,6 @@ bool equalsWithToday(DateTime srcDate, String day) {
 var calendar = DateTime.now();
 
 String getChatTime(BuildContext context, int? epochTime) {
-  // debugPrint("epochTime--> $epochTime");
   if (epochTime == null) return "";
   if (epochTime == 0) return "";
   var convertedTime = epochTime;
@@ -1033,7 +1032,7 @@ String getCallLogDuration(int startTime, int endTime) {
   var millis = endTime - startTime;
   var duration = Duration(microseconds: millis);
 
-  if (millis == 0) {
+  if (startTime == 0 || endTime == 0 || millis == 0) {
     return "";
   } else {
     var seconds = ((duration.inSeconds % 60)).toStringAsFixed(0).padLeft(2, '0');
