@@ -1000,7 +1000,7 @@ class DashboardView extends GetView<DashboardController> {
             width: 200,
           ),
           Text(
-            'No call log history found',
+            'No results found',
             textAlign: TextAlign.center,
             style: Theme.of(context).textTheme.titleMedium,
           ),
