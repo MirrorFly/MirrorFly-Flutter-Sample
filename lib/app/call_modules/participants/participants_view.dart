@@ -97,7 +97,7 @@ class ParticipantsView extends GetView<AddParticipantsController> {
         children: [
           Text(
             title,
-            style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 15),
+            style: const TextStyle(fontWeight: FontWeight.w700),
           ),
           count != "0"
               ? Padding(

@@ -57,7 +57,7 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
   // Rx<Profile> profile = Profile().obs;
   var calleeName = "".obs;
   var audioOutputType = "receiver".obs;
-  var callStatus = CallStatus.calling.obs;
+  var callStatus = "".obs;
 
   // var userJID = <String>[].obs;
 
@@ -296,13 +296,13 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
           if (Get.currentRoute == Routes.onGoingCallView) {
             debugPrint("#Disconnect current route is ongoing call view");
             Future.delayed(const Duration(seconds: 1), () {
-              debugPrint("#Disconnect call controller back called");
+              debugPrint("#Disconnect call controller back called from Ongoing Screen");
               Get.back();
             });
           }else if(Get.currentRoute == Routes.participants){
             Get.back();
             Future.delayed(const Duration(seconds: 1), () {
-              debugPrint("#Disconnect call controller back called");
+              debugPrint("#Disconnect call controller back called from Participant Screen");
               Get.back();
             });
           }else{
@@ -476,8 +476,11 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
     if(index.isNegative){
       debugPrint("User List not Found, so adding the user to list");
       CallUserList callUserList = CallUserList(userJid: userJid.obs, callStatus: RxString(callStatus), isAudioMuted: false,isVideoMuted: false);
-      callList.insert(callList.length - 1, callUserList);
-      // callList.add(callUserList);
+      if(callList.length > 1) {
+        callList.insert(callList.length - 1, callUserList);
+      }else {
+        callList.add(callUserList);
+      }
     }else{
       callList[index].callStatus?.value = callStatus;
     }
@@ -491,7 +494,7 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
 
   }
 
-  void connected(String callMode, String userJid, String callType, String callStatus) {
+  Future<void> connected(String callMode, String userJid, String callType, String callStatus) async {
     this.callMode(callMode);
     this.callType(callType);
     // this.callStatus(callStatus);
@@ -501,6 +504,9 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
       Future.delayed(const Duration(milliseconds: 500), () {
         Get.offNamed(Routes.onGoingCallView, arguments: {"userJid": [userJid], "cameraSwitch": cameraSwitch.value});
       });
+    }else if(Get.currentRoute == Routes.participants){
+      var data = await getProfileDetails(userJid);
+      toToast("${data.getName()} joined the Call");
     }else{
       debugPrint("#MirrorflyCall user jid $userJid");
       CallUserList callUserList = CallUserList(userJid: userJid.obs, callStatus: RxString(callStatus), isAudioMuted: false,isVideoMuted: false);
