@@ -163,12 +163,15 @@ class PushNotifications {
       debugPrint('#Mirrorfly Notification -> User granted permission');
       getToken();
       initInfo();
+      SessionManagement.setBool(Constants.notificationPermissionAsked, true);
     } else if (settings.authorizationStatus == AuthorizationStatus.provisional) {
       debugPrint('#Mirrorfly Notification -> User granted provisional permission');
       getToken();
       initInfo();
+      SessionManagement.setBool(Constants.notificationPermissionAsked, true);
     } else {
       debugPrint('User declined or has not accepted permission');
+      SessionManagement.setBool(Constants.notificationPermissionAsked, true);
     }
   }
 
