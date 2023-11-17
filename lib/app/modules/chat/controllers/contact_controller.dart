@@ -573,7 +573,7 @@ class ContactController extends FullLifeCycleController with FullLifeCycleMixin 
             if (selectedUsersJIDList.length == 1) {
               Mirrorfly.makeVoiceCall(selectedUsersJIDList[0]).then((value) {
                 if (value) {
-                  Get.toNamed(Routes.outGoingCallView, arguments: {"userJid": selectedUsersJIDList[0], "callType": CallType.audio});
+                  Get.toNamed(Routes.outGoingCallView, arguments: {"userJid": [selectedUsersJIDList[0]], "callType": CallType.audio});
                 }
               });
             } else {
@@ -592,8 +592,9 @@ class ContactController extends FullLifeCycleController with FullLifeCycleMixin 
             if (selectedUsersJIDList.length == 1) {
               Mirrorfly.makeVideoCall(selectedUsersJIDList[0]).then((value) {
                 if (value) {
-                  Get.toNamed(Routes.outGoingCallView, arguments: {"userJid": selectedUsersJIDList[0], "callType": CallType.audio});
+                  Get.toNamed(Routes.outGoingCallView, arguments: {"userJid": [selectedUsersJIDList[0]], "callType": CallType.audio});
                 }
+
               });
             } else {
               Mirrorfly.makeGroupVideoCall(jidList: selectedUsersJIDList).then((value) {
