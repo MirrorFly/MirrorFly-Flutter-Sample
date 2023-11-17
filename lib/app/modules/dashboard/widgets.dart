@@ -553,6 +553,8 @@ class ContactItem extends StatelessWidget {
   final Function()? onListItemPressed;
   @override
   Widget build(BuildContext context) {
+    // LogMessage.d("Contact item", item.toJson());
+    // LogMessage.d("Contact item name", getName(item));
       return Opacity(
         opacity: item.isBlocked.checkNull() ? 0.3 : 1.0,
         child: InkWell(
@@ -587,10 +589,7 @@ class ContactItem extends StatelessWidget {
                           .isNotEmpty
                           ? ProfileTextImage(
                         text:
-                        getName(item) /*item.nickName.checkNull().isEmpty
-                                                                    ? item.mobileNumber
-                                                                        .checkNull()
-                                                                    : item.nickName.checkNull()*/,
+                        getName(item)
                       )
                           : const Icon(
                         Icons.person,
@@ -621,7 +620,7 @@ class ContactItem extends StatelessWidget {
                     spannableText(
                         getName(item),
                         //item.profileName.checkNull(),
-                        spanTxt,
+                        spanTxt.trim(),
                         const TextStyle(fontSize: 16.0, fontWeight: FontWeight.w700, fontFamily: 'sf_ui', color: textHintColor)),
                     Text(
                       item.status.toString(),
@@ -629,6 +628,8 @@ class ContactItem extends StatelessWidget {
                           .of(context)
                           .textTheme
                           .titleSmall,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                     )
                   ],
                 ),
