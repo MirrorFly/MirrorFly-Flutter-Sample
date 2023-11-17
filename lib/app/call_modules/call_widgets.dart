@@ -344,7 +344,7 @@ Widget buildListItem(CallController controller) {
                             SessionManagement.getUserJID()}");
                     return (getTileCallStatus(
                         controller.callList[index].callStatus?.value,
-                        controller.callList[index].userJid!.value.checkNull())
+                        controller.callList[index].userJid!.value.checkNull(), controller.isOneToOneCall)
                         .isNotEmpty)
                         ? Container(
                       decoration: BoxDecoration(
@@ -364,7 +364,7 @@ Widget buildListItem(CallController controller) {
                       child: Center(
                           child: Text(
                             getTileCallStatus(controller.callList[index].callStatus?.value,
-                                controller.callList[index].userJid!.value.checkNull()),
+                                controller.callList[index].userJid!.value.checkNull(), controller.isOneToOneCall),
                             style: const TextStyle(color: Colors.white),
                           )),
                     )
@@ -506,7 +506,7 @@ Widget buildGridItem(CallController controller) {
                       .callStatus} current user ${controller.callList[index].userJid!.value ==
                       SessionManagement.getUserJID()}");
               return (getTileCallStatus(
-                  controller.callList[index].callStatus?.value, controller.callList[index].userJid!.value.checkNull())
+                  controller.callList[index].callStatus?.value, controller.callList[index].userJid!.value.checkNull(), controller.isOneToOneCall)
                   .isNotEmpty)
                   ? Positioned.fill(
                 child: Container(
@@ -525,7 +525,7 @@ Widget buildGridItem(CallController controller) {
                   child: Center(
                       child: Text(
                         getTileCallStatus(controller.callList[index].callStatus?.value,
-                            controller.callList[index].userJid!.value.checkNull()),
+                            controller.callList[index].userJid!.value.checkNull(), controller.isOneToOneCall),
                         style: const TextStyle(color: Colors.white),
                       )),
                 ),
@@ -544,8 +544,8 @@ Widget buildGridItem(CallController controller) {
   );
 }
 
-String getTileCallStatus(String? callStatus, String userjid) {
-  debugPrint("getTileCallStatus $callStatus");
+String getTileCallStatus(String? callStatus, String userjid, bool isOnetoOneCall) {
+  debugPrint("getTileCallStatus $callStatus isOnetoOneCall $isOnetoOneCall");
   switch (callStatus) {
     case CallStatus.connected:
     case CallStatus.callTimeout:
@@ -564,7 +564,7 @@ String getTileCallStatus(String? callStatus, String userjid) {
     case CallStatus.ringing:
       return userjid == SessionManagement.getUserJID() ? "" : "${CallStatus.ringing}…";
     case CallStatus.calling:
-      return userjid == SessionManagement.getUserJID() ? "" : "Calling…";
+      return userjid == SessionManagement.getUserJID() ? "" : isOnetoOneCall ? "" : "Calling…";
     case CallStatus.onHold:
       return "${CallStatus.onHold}…";
     case CallStatus.reconnecting:

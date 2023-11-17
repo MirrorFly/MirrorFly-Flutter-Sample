@@ -64,11 +64,11 @@ class OnGoingCallView extends GetView<CallController> {
                                           ):  const SizedBox.shrink(),*/
                                 if (controller.callList.length > 1 &&
                                     getTileCallStatus(controller.callList.firstWhere((y) => y.userJid!.value==controller.pinnedUserJid.value).callStatus?.value,
-                                        controller.pinnedUserJid.value.checkNull()).isNotEmpty &&
+                                        controller.pinnedUserJid.value.checkNull(), controller.isOneToOneCall).isNotEmpty &&
                                     controller.layoutSwitch.value) ...[
                                   Text(
                                     getTileCallStatus(controller.callList.firstWhere((y) => y.userJid!.value==controller.pinnedUserJid.value).callStatus?.value,
-                                        controller.pinnedUserJid.value.checkNull()),
+                                        controller.pinnedUserJid.value.checkNull(), controller.isOneToOneCall),
                                     style: const TextStyle(color: Colors.white),
                                   ),
                                   const SizedBox(

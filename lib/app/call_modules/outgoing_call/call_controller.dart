@@ -555,8 +555,10 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
       debugPrint("skipping statusUpdate as list is empty");
       return;
     }
+
     debugPrint("statusUpdate $callStatus");
-    var displayStatus = CallStatus.calling;
+    // var displayStatus = CallStatus.calling;
+    var displayStatus = "";
     switch (callStatus) {
       case CallStatus.connected:
         displayStatus = CallStatus.connected;
@@ -576,8 +578,9 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
         displayStatus = CallStatus.onHold;
         break;
       case CallStatus.attended:
+        break;
       case CallStatus.inviteCallTimeout:
-        displayStatus = CallStatus.calling;
+        displayStatus = CallStatus.callTimeout;
         break;
       case CallStatus.reconnecting:
         displayStatus = "Reconnecting…";
@@ -588,6 +591,8 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
       case CallStatus.userJoined:
       case CallStatus.userLeft:
       case CallStatus.reconnected:
+        displayStatus = '';
+        break;
       case CallStatus.calling10s:
       case CallStatus.callingAfter10s:
         displayStatus = callStatus;
