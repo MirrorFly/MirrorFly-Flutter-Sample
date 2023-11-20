@@ -127,6 +127,7 @@ class AddParticipantsController extends GetxController with GetTickerProviderSta
       usersList(mainUsersList);
       scrollable(Mirrorfly.isTrialLicence);
       selectedUsersJIDList.clear();
+      debugPrint("Clearing the selectedUsersList");
       selectedUsersList.clear();
       groupCallMembersCount(0);
     }
@@ -186,18 +187,18 @@ class AddParticipantsController extends GetxController with GetTickerProviderSta
 
   contactSelected(Profile item) {
     if (selectedUsersJIDList.contains(item.jid)) {
-      selectedUsersList.remove(item);
+      selectedUsersList.removeWhere((user) => user.jid == item.jid);
       selectedUsersJIDList.remove(item.jid);
       //item.isSelected = false;
       groupCallMembersCount(groupCallMembersCount.value - 1);
     } else {
       if(callList.length!=8) {
-        if (getMaxCallUsersCount > (groupCallMembersCount.value + callList.length)) {
+        if (getMaxCallUsersCount > (selectedUsersList.length + callList.length)) {
           selectedUsersList.add(item);
           selectedUsersJIDList.add(item.jid!);
           groupCallMembersCount(groupCallMembersCount.value + 1);
         } else {
-          toToast(Constants.callMembersLimit6.replaceFirst("%d", (selectedUsersList.length).toString()));
+          toToast(Constants.callMembersLimit6.replaceFirst("%d", (groupCallMembersCount.value).toString()));
         }
       }else{
         toToast(Constants.callMembersLimit.replaceFirst("%d", getMaxCallUsersCount.toString()));
