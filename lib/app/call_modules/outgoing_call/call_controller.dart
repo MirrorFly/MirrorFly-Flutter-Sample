@@ -296,13 +296,13 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
           if (Get.currentRoute == Routes.onGoingCallView) {
             debugPrint("#Disconnect current route is ongoing call view");
             Future.delayed(const Duration(seconds: 1), () {
-              debugPrint("#Disconnect call controller back called");
+              debugPrint("#Disconnect call controller back called from Ongoing Screen");
               Get.back();
             });
           }else if(Get.currentRoute == Routes.participants){
             Get.back();
             Future.delayed(const Duration(seconds: 1), () {
-              debugPrint("#Disconnect call controller back called");
+              debugPrint("#Disconnect call controller back called from Participant Screen");
               Get.back();
             });
           }else{
@@ -467,7 +467,7 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
     // this.callStatus(callStatus);
   }
 
-  void ringing(String callMode, String userJid, String callType, String callStatus) {
+  Future<void> ringing(String callMode, String userJid, String callType, String callStatus) async {
     this.callMode(callMode);
     this.callType(callType);
     // this.callStatus(callStatus);
@@ -475,9 +475,12 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
     debugPrint("User List Index $index");
     if(index.isNegative){
       debugPrint("User List not Found, so adding the user to list");
-      CallUserList callUserList = CallUserList(userJid: userJid.obs, callStatus: RxString(callStatus), isAudioMuted: false,isVideoMuted: false);
-      callList.insert(callList.length - 1, callUserList);
-      // callList.add(callUserList);
+      CallUserList callUserList = CallUserList(userJid: userJid.obs, callStatus: RxString(callStatus), isAudioMuted: (await Mirrorfly.isUserAudioMuted(userJid)).checkNull(), isVideoMuted: (await Mirrorfly.isUserVideoMuted(userJid)).checkNull(),);
+      if(callList.length > 1) {
+        callList.insert(callList.length - 1, callUserList);
+      }else {
+        callList.add(callUserList);
+      }
     }else{
       callList[index].callStatus?.value = callStatus;
     }
@@ -491,7 +494,7 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
 
   }
 
-  void connected(String callMode, String userJid, String callType, String callStatus) {
+  Future<void> connected(String callMode, String userJid, String callType, String callStatus) async {
     this.callMode(callMode);
     this.callType(callType);
     // this.callStatus(callStatus);
@@ -501,9 +504,12 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
       Future.delayed(const Duration(milliseconds: 500), () {
         Get.offNamed(Routes.onGoingCallView, arguments: {"userJid": [userJid], "cameraSwitch": cameraSwitch.value});
       });
+    }else if(Get.currentRoute == Routes.participants){
+      var data = await getProfileDetails(userJid);
+      toToast("${data.getName()} joined the Call");
     }else{
       debugPrint("#MirrorflyCall user jid $userJid");
-      CallUserList callUserList = CallUserList(userJid: userJid.obs, callStatus: RxString(callStatus), isAudioMuted: false,isVideoMuted: false);
+      CallUserList callUserList = CallUserList(userJid: userJid.obs, callStatus: RxString(callStatus), isAudioMuted: (await Mirrorfly.isUserAudioMuted(userJid)).checkNull(), isVideoMuted: (await Mirrorfly.isUserVideoMuted(userJid)).checkNull(),);
      if(callList.indexWhere((userList) => userList.userJid!.value == userJid).isNegative) {
        callList.insert(callList.length - 1, callUserList);
        // callList.add(callUserList);
@@ -549,8 +555,10 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
       debugPrint("skipping statusUpdate as list is empty");
       return;
     }
+
     debugPrint("statusUpdate $callStatus");
-    var displayStatus = CallStatus.calling;
+    // var displayStatus = CallStatus.calling;
+    var displayStatus = "";
     switch (callStatus) {
       case CallStatus.connected:
         displayStatus = CallStatus.connected;
@@ -570,8 +578,9 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
         displayStatus = CallStatus.onHold;
         break;
       case CallStatus.attended:
+        break;
       case CallStatus.inviteCallTimeout:
-        displayStatus = CallStatus.calling;
+        displayStatus = CallStatus.callTimeout;
         break;
       case CallStatus.reconnecting:
         displayStatus = "Reconnecting…";
@@ -582,6 +591,8 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
       case CallStatus.userJoined:
       case CallStatus.userLeft:
       case CallStatus.reconnected:
+        displayStatus = '';
+        break;
       case CallStatus.calling10s:
       case CallStatus.callingAfter10s:
         displayStatus = callStatus;
@@ -604,7 +615,7 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
       var indexOfItem = callList.indexWhere((element) => element.userJid!.value == userJid);
       /// check the index is valid or not
       if (!indexOfItem.isNegative && callStatus != CallStatus.disconnected) {
-        debugPrint("indexOfItem of call status update $indexOfItem");
+        debugPrint("indexOfItem of call status update $indexOfItem $callStatus");
 
         /// update the current status of the user in the list
         callList[indexOfItem].callStatus?.value = (callStatus);
@@ -911,14 +922,14 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
   }
 
   void addParticipants(String callMode, String userJid, String callType){
-    Mirrorfly.getInvitedUsersList().then((value) {
+    Mirrorfly.getInvitedUsersList().then((value) async {
       LogMessage.d("addParticipants", value);
       if(value.isNotEmpty){
         var userJids = value;
         for (var jid in userJids) {
           if(callList.indexWhere((element) => element.userJid?.value == jid).isNegative) {
             callList.insert(callList.length - 1, CallUserList(
-                userJid: jid.obs, isAudioMuted: false, isVideoMuted: false, callStatus: CallStatus.calling.obs));
+                userJid: jid.obs, isAudioMuted: (await Mirrorfly.isUserAudioMuted(jid)).checkNull(), isVideoMuted: (await Mirrorfly.isUserVideoMuted(jid)).checkNull(), callStatus: CallStatus.calling.obs));
             users.insert(users.length - 1, jid);
           }
         }

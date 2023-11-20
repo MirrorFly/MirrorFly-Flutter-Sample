@@ -21,7 +21,7 @@ class CallUserList {
     this.callStatus,
     required bool isAudioMuted,
     required bool isVideoMuted,
-  }) : isAudioMuted = RxBool(isAudioMuted);
+  }) : isAudioMuted = RxBool(isAudioMuted),isVideoMuted = RxBool(isVideoMuted);
 
   factory CallUserList.fromJson(Map<String, dynamic> json) => CallUserList(
     userJid: RxString(json["userJid"]),
