@@ -500,7 +500,7 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
     // this.callStatus(callStatus);
     // getNames();
     // startTimer();
-    if(Get.currentRoute != Routes.onGoingCallView) {
+    if(Get.currentRoute != Routes.onGoingCallView && Get.currentRoute != Routes.participants) {
       Future.delayed(const Duration(milliseconds: 500), () {
         Get.offNamed(Routes.onGoingCallView, arguments: {"userJid": [userJid], "cameraSwitch": cameraSwitch.value});
       });
