@@ -931,6 +931,7 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
             callList.insert(callList.length - 1, CallUserList(
                 userJid: jid.obs, isAudioMuted: (await Mirrorfly.isUserAudioMuted(jid)).checkNull(), isVideoMuted: (await Mirrorfly.isUserVideoMuted(jid)).checkNull(), callStatus: CallStatus.calling.obs));
             users.insert(users.length - 1, jid);
+            getNames();
           }
         }
       }
