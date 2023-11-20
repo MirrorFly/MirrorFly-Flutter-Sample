@@ -120,6 +120,8 @@ class ContactController extends FullLifeCycleController with FullLifeCycleMixin 
       if (scrollController.position.extentAfter <= 0 && isPageLoading.value == false) {
         if (scrollable.value) {
           //isPageLoading.value = true;
+          LogMessage.d("usersList.length ${usersList.length} ~/ 20", (usersList.length ~/ 20));
+          pageNum = (usersList.length ~/ 20)+1;
           fetchUsers(false);
         }
       }
@@ -212,7 +214,7 @@ class ContactController extends FullLifeCycleController with FullLifeCycleMixin 
           if (fromSearch) {
             if (Mirrorfly.isTrialLicence) {
               usersList(list);
-              pageNum = pageNum + 1;
+              // if(usersList.length==20) pageNum += 1;
               scrollable.value = list.length == 20;
             } else {
               var userlist = mainUsersList.where((p0) => getName(p0).toString().toLowerCase().contains(_searchText.trim().toLowerCase()));
@@ -227,7 +229,7 @@ class ContactController extends FullLifeCycleController with FullLifeCycleMixin 
           } else {
             if (Mirrorfly.isTrialLicence) {
               usersList.addAll(list);
-              pageNum = pageNum + 1;
+              // if(usersList.length==20) pageNum += 1;
               scrollable.value = list.length == 20;
             } else {
               usersList(list);
@@ -254,7 +256,7 @@ class ContactController extends FullLifeCycleController with FullLifeCycleMixin 
           if (fromSearch) {
             if (Mirrorfly.isTrialLicence) {
               usersList(list);
-              pageNum = pageNum + 1;
+              // if(usersList.length==20) pageNum += 1;
               scrollable.value = list.length == 20;
             } else {
               var userlist = mainUsersList.where((p0) => getName(p0).toString().toLowerCase().contains(_searchText.trim().toLowerCase()));
@@ -269,7 +271,7 @@ class ContactController extends FullLifeCycleController with FullLifeCycleMixin 
           } else {
             if (Mirrorfly.isTrialLicence) {
               usersList.addAll(list);
-              pageNum = pageNum + 1;
+              // if(usersList.length==20) pageNum += 1;
               scrollable.value = list.length == 20;
             } else {
               usersList(list);

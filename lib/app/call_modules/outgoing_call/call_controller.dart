@@ -615,7 +615,7 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
       var indexOfItem = callList.indexWhere((element) => element.userJid!.value == userJid);
       /// check the index is valid or not
       if (!indexOfItem.isNegative && callStatus != CallStatus.disconnected) {
-        debugPrint("indexOfItem of call status update $indexOfItem");
+        debugPrint("indexOfItem of call status update $indexOfItem $callStatus");
 
         /// update the current status of the user in the list
         callList[indexOfItem].callStatus?.value = (callStatus);

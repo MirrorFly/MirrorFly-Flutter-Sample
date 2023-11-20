@@ -134,7 +134,7 @@ class OnGoingCallView extends GetView<CallController> {
                 return AnimatedPositioned(
                   duration: const Duration(milliseconds: 500),
                   curve: Curves.easeInOut,
-                  top: controller.isVisible.value ? 0.0 : -72,
+                  top: controller.isVisible.value ? null : -72,
                   left: 0.0,
                   right: 0.0,
                   height: 72,
@@ -145,6 +145,7 @@ class OnGoingCallView extends GetView<CallController> {
                 left: 0,
                 top: 0,
                 child: IconButton(
+                  splashRadius: 24,
                   onPressed: () {},
                   icon: const Icon(
                     Icons.keyboard_arrow_down,
@@ -162,27 +163,6 @@ class OnGoingCallView extends GetView<CallController> {
   Widget buildToolbar(BuildContext context) {
     return Stack(
       children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            const Spacer(),
-            IconButton(
-              onPressed: () {
-                controller.openParticipantScreen();
-              },
-              icon: SvgPicture.asset(addUserCall),
-            ),
-            IconButton(
-              onPressed: () {
-                controller.changeLayout();
-              },
-              icon: SvgPicture.asset(
-                gridIcon,
-                color: Colors.white,
-              ),
-            )
-          ],
-        ),
         Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -217,6 +197,29 @@ class OnGoingCallView extends GetView<CallController> {
               }),
             ],
           ),
+        ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            const Spacer(),
+            IconButton(
+              splashRadius: 24,
+              onPressed: () {
+                controller.openParticipantScreen();
+              },
+              icon: SvgPicture.asset(addUserCall),
+            ),
+            IconButton(
+              splashRadius: 24,
+              onPressed: () {
+                controller.changeLayout();
+              },
+              icon: SvgPicture.asset(
+                gridIcon,
+                color: Colors.white,
+              ),
+            )
+          ],
         )
       ],
     );
