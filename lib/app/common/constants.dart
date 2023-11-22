@@ -764,6 +764,18 @@ class Constants {
   static const msgOngoingCallAlert = "You are already on another call";
   static const addParticipantsToCall = "Add participant to the call";
 
+
+  static const String cameraPermissionName = "Camera";
+  static const String microphonePermissionName = "Microphone";
+  static const String bluetoothPermissionName = "Nearby devices";
+  static const String notificationPermissionName = "Notifications";
+  static const String phonePermissionName = "Phone";
+  static const String callPermission =
+      "MirrorFly need the %d Permissions in order to call Family";
+  static const String callPermissionDenied =
+      "MirrorFly need the %d Permissions in order to call Family, but they have been permanently denied. Please continue to app settings, select \"Permissions\", and enable %d.";
+
+
 }
 
 Future<void> launchWeb(String url) async {
