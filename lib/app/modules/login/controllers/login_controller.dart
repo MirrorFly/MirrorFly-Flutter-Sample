@@ -10,6 +10,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
+import 'package:mirror_fly_demo/app/data/permissions.dart';
 import 'package:otp_text_field/otp_field.dart';
 
 import '../../../common/constants.dart';
@@ -308,6 +309,9 @@ class LoginController extends GetxController {
       }
       if(mobileNumber.text.length < 10){
         toToast("Please enter valid mobile number");
+        return;
+      }
+      if(!(await AppPermission.askNotificationPermission())){
         return;
       }
       // if(mobileNumber.text.length > 9) {

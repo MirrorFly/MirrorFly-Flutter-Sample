@@ -118,6 +118,60 @@ class AppPermission {
     }
   }
 
+  static Future<bool> askNotificationPermission() async {
+    if(!Platform.isAndroid){
+      return true;
+    }
+    var permissions = <Permission>[];
+    final notification = await Permission.notification.status; //NOTIFICATION
+    if(!notification.isGranted || (await Permission.notification.shouldShowRequestRationale)/*&& !SessionManagement.getBool(Constants.notificationPermissionAsked)*/ && Platform.isAndroid){
+      permissions.add(Permission.notification);
+    }
+    LogMessage.d("notification", notification.isGranted);
+    if (!notification.isGranted) {
+      var shouldShowRequestRationale = ((await Permission.notification.shouldShowRequestRationale));
+      LogMessage.d("shouldShowRequestRationale notification", shouldShowRequestRationale);
+      LogMessage.d("SessionManagement.getBool(Constants.notificationPermissionAsked) notification", (SessionManagement.getBool(Constants.notificationPermissionAsked)));
+      var alreadyAsked = (SessionManagement.getBool(Constants.notificationPermissionAsked));
+      LogMessage.d("alreadyAsked notification", alreadyAsked);
+      var permissionName = getPermissionDisplayName(permissions);
+      LogMessage.d("permissionName", permissionName);
+      var dialogContent = Constants.notificationPermission;
+      var dialogContent2 = Constants.notificationPermissionDenied;
+      if (shouldShowRequestRationale) {
+        LogMessage.d("shouldShowRequestRationale", shouldShowRequestRationale);
+        return requestAudioCallPermissions(content:dialogContent,permissions: permissions,showFromRational: true);
+      } else if (alreadyAsked) {
+        LogMessage.d("alreadyAsked", alreadyAsked);
+        var popupValue = await customPermissionDialog(
+            icon: notificationPermissionIcon,
+            content: dialogContent2);//getPermissionAlertMessage("audio_call"));
+        if (popupValue) {
+          openAppSettings();
+          return false;
+        } else {
+          return false;
+        }
+      } else {
+        if(permissions.isNotEmpty) {
+          return requestAudioCallPermissions(content:dialogContent,permissions: permissions);
+        }else{
+          var popupValue = await customPermissionDialog(
+              icon: notificationPermissionIcon,
+              content: dialogContent2);//getPermissionAlertMessage("audio_call"));
+          if (popupValue) {
+            openAppSettings();
+            return false;
+          } else {
+            return false;
+          }
+        }
+      }
+    }else{
+      return true;
+    }
+  }
+
   static Future<bool> askAudioCallPermissions() async {
     final microphone = await Permission.microphone.status; //RECORD_AUDIO
     final phone = await Permission.phone.status; //READ_PHONE_STATE
@@ -590,6 +644,8 @@ class AppPermission {
       SessionManagement.setBool(Constants.readPhoneStatePermissionAsked, true);
     }else if(permission == Permission.bluetoothConnect){
       SessionManagement.setBool(Constants.bluetoothPermissionAsked, true);
+    }else if(permission == Permission.notification){
+      SessionManagement.setBool(Constants.notificationPermissionAsked, true);
     }
   }
 

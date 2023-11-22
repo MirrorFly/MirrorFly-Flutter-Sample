@@ -116,6 +116,7 @@ const String rightArrowIcon = 'assets/logos/forward_arrow.svg';
 const String chatIcon = 'assets/logos/chat.svg';
 const String staredMsgIcon = 'assets/logos/stared message.svg';
 const String notificationIcon = 'assets/logos/Notifications.svg';
+const String notificationPermissionIcon = 'assets/logos/notification_icon.svg';
 const String tickRound = 'assets/logos/tick_round.svg';
 const String tickRoundBlue = 'assets/logos/tick_round_blue.svg';
 const String blockedIcon = 'assets/logos/blocked_contacts.svg';
@@ -770,6 +771,10 @@ class Constants {
   static const String bluetoothPermissionName = "Nearby devices";
   static const String notificationPermissionName = "Notifications";
   static const String phonePermissionName = "Phone";
+  static const String notificationPermission =
+      "MirrorFly need the Notifications Permissions in order to Post Notifications";
+  static const String notificationPermissionDenied =
+      "MirrorFly need the Notifications Permissions in order to Post Notifications, but they have been permanently denied. Please continue to app settings, select \"Permissions\", and enable \"Notifications\".";
   static const String callPermission =
       "MirrorFly need the %d Permissions in order to call Family";
   static const String callPermissionDenied =
