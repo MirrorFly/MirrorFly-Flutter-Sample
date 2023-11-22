@@ -901,7 +901,7 @@ class DashboardView extends GetView<DashboardController> {
           if (index >= callLogList.length && callLogList.isNotEmpty) {
             return const Center(child: CircularProgressIndicator());
           } else if (callLogList.isNotEmpty) {
-            if (item.callMode == CallMode.oneToOne) {
+            if (item.callMode == CallMode.oneToOne && item.userList == null || item.userList!.length < 2) {
               return FutureBuilder(
                   future: getProfileDetails(item.callState == 1 ? item.toUser! : item.fromUser!),
                   builder: (context, snap) {
@@ -1000,17 +1000,9 @@ class DashboardView extends GetView<DashboardController> {
             width: 200,
           ),
           Text(
-            'No results found',
+            'No Call Logs Found',
             textAlign: TextAlign.center,
             style: Theme.of(context).textTheme.titleMedium,
-          ),
-          const SizedBox(
-            height: 8,
-          ),
-          Text(
-            'Any new calls will appear here',
-            textAlign: TextAlign.center,
-            style: Theme.of(context).textTheme.titleSmall,
           ),
         ],
       ),
