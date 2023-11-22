@@ -1085,10 +1085,11 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
     } else {
       if (search.text.trim().isNotEmpty) {
         clearVisible(true);
+        filteredCallLog(search.text.trim());
       } else {
         clearVisible(false);
       }
-      filteredCallLog(search.text.trim());
+
     }
   }
 
