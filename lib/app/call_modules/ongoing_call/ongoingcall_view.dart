@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
+import 'package:mirror_fly_demo/app/call_modules/call_utils.dart';
 import 'package:mirror_fly_demo/app/call_modules/call_widgets.dart';
 import 'package:mirror_fly_demo/app/call_modules/outgoing_call/call_controller.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
@@ -8,6 +9,7 @@ import 'package:mirrorfly_plugin/mirrorfly_view.dart';
 import 'package:mirrorfly_plugin/mirrorflychat.dart';
 
 import '../../common/constants.dart';
+import '../../data/session_management.dart';
 
 class OnGoingCallView extends GetView<CallController> {
   const OnGoingCallView({super.key});
@@ -33,17 +35,18 @@ class OnGoingCallView extends GetView<CallController> {
                         debugPrint("controller.pinnedUserJid ${controller.pinnedUserJid}");
                         return controller.pinnedUserJid.value.isNotEmpty && controller.layoutSwitch.value
                             ? MirrorFlyView(
-                                    key: UniqueKey(),
-                                    userJid: controller.pinnedUserJid.value,
-                                    alignProfilePictureCenter: false,
-                                    showSpeakingRipple: controller.callType.value == CallType.audio,
-                                    viewBgColor: AppColors.audioCallerBackground,
-                                    profileSize: 100,onClick: (){
-                                      // if(controller.callType.value==CallType.video) {
-                                        controller.isVisible(!controller.isVisible.value);
-                                      // }
-                        },)
-                                .setBorderRadius(const BorderRadius.all(Radius.circular(10)))
+                                key: UniqueKey(),
+                                userJid: controller.pinnedUserJid.value,
+                                alignProfilePictureCenter: false,
+                                showSpeakingRipple: controller.callType.value == CallType.audio,
+                                viewBgColor: AppColors.audioCallerBackground,
+                                profileSize: 100,
+                                onClick: () {
+                                  // if(controller.callType.value==CallType.video) {
+                                  controller.isVisible(!controller.isVisible.value);
+                                  // }
+                                },
+                              ).setBorderRadius(const BorderRadius.all(Radius.circular(10)))
                             : const SizedBox.shrink();
                       }),
                       Obx(() {
@@ -63,12 +66,23 @@ class OnGoingCallView extends GetView<CallController> {
                                             style: TextStyle(color: Colors.white),
                                           ):  const SizedBox.shrink(),*/
                                 if (controller.callList.length > 1 &&
-                                    getTileCallStatus(controller.callList.firstWhere((y) => y.userJid!.value==controller.pinnedUserJid.value).callStatus?.value,
-                                        controller.pinnedUserJid.value.checkNull(), controller.isOneToOneCall).isNotEmpty &&
+                                    getTileCallStatus(
+                                            controller.callList
+                                                .firstWhere((y) => y.userJid!.value == controller.pinnedUserJid.value)
+                                                .callStatus
+                                                ?.value,
+                                            controller.pinnedUserJid.value.checkNull(),
+                                            controller.isOneToOneCall)
+                                        .isNotEmpty &&
                                     controller.layoutSwitch.value) ...[
                                   Text(
-                                    getTileCallStatus(controller.callList.firstWhere((y) => y.userJid!.value==controller.pinnedUserJid.value).callStatus?.value,
-                                        controller.pinnedUserJid.value.checkNull(), controller.isOneToOneCall),
+                                    getTileCallStatus(
+                                        controller.callList
+                                            .firstWhere((y) => y.userJid!.value == controller.pinnedUserJid.value)
+                                            .callStatus
+                                            ?.value,
+                                        controller.pinnedUserJid.value.checkNull(),
+                                        controller.isOneToOneCall),
                                     style: const TextStyle(color: Colors.white),
                                   ),
                                   const SizedBox(
@@ -76,7 +90,10 @@ class OnGoingCallView extends GetView<CallController> {
                                   )
                                 ],
                                 if (controller.callList.length > 1 &&
-                                    controller.callList.firstWhere((y) => y.userJid!.value==controller.pinnedUserJid.value).isAudioMuted.value &&
+                                    controller.callList
+                                        .firstWhere((y) => y.userJid!.value == controller.pinnedUserJid.value)
+                                        .isAudioMuted
+                                        .value &&
                                     controller.layoutSwitch.value) ...[
                                   CircleAvatar(
                                     backgroundColor: AppColors.audioMutedIconBgColor,
@@ -91,12 +108,18 @@ class OnGoingCallView extends GetView<CallController> {
               Column(
                 children: [
                   Obx(() {
-                    return AnimatedSize(duration: const Duration(milliseconds: 500),
-                      curve: Curves.easeInOut, child: SizedBox(height: controller.isVisible.value ? 60 : 0.0,),);
+                    return AnimatedSize(
+                      duration: const Duration(milliseconds: 500),
+                      curve: Curves.easeInOut,
+                      child: SizedBox(
+                        height: controller.isVisible.value ? 60 : 0.0,
+                      ),
+                    );
                   }),
                   Obx(() {
                     return !controller.layoutSwitch.value
-                        ? Expanded(child: buildGridItem(controller)) : const SizedBox.shrink();
+                        ? Expanded(child: buildGridItem(controller))
+                        : const SizedBox.shrink();
                   }),
                 ],
               ),
@@ -105,18 +128,24 @@ class OnGoingCallView extends GetView<CallController> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Obx(() {
-                    return (controller.callList.length >= 2) ?
-                    Align(
-                      alignment: Alignment.bottomRight,
-                      child: controller.layoutSwitch.value
-                          ? buildListItem(controller)
-                          : const SizedBox.shrink(),
-                    ) : const SizedBox.shrink();
+                    return (controller.callList.length >= 2)
+                        ? Align(
+                            alignment: Alignment.bottomRight,
+                            child: controller.layoutSwitch.value ? buildListItem(controller) : const SizedBox.shrink(),
+                          )
+                        : const SizedBox.shrink();
                   }),
-                  const SizedBox(height: 15,),
+                  const SizedBox(
+                    height: 15,
+                  ),
                   Obx(() {
-                    return AnimatedSize(duration: const Duration(milliseconds: 500),
-                      curve: Curves.easeInOut, child: SizedBox(height: controller.isVisible.value ? 135 : 0.0,),);
+                    return AnimatedSize(
+                      duration: const Duration(milliseconds: 500),
+                      curve: Curves.easeInOut,
+                      child: SizedBox(
+                        height: controller.isVisible.value ? 135 : 0.0,
+                      ),
+                    );
                   })
                 ],
               ),
@@ -167,21 +196,29 @@ class OnGoingCallView extends GetView<CallController> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Obx(() {
-                return SizedBox(
-                  width: 200,
-                  child: Text(
-                    controller.callTitle.value,
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.w500,
-                      fontSize: 12.0,
-                    ),
-                    textAlign: TextAlign.center,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                );
-              }),
+              FutureBuilder(
+                  future: controller.groupId.isEmpty
+                      ? CallUtils.getCallersName(
+                          List<String>.from(controller.callList
+                              .where((p0) => p0.userJid != null && SessionManagement.getUserJID() != p0.userJid!.value)
+                              .map((e) => e.userJid!.value)),
+                          true)
+                      : CallUtils.getNameOfJid(controller.groupId.value),
+                  builder: (ctx, data) {
+                    return data.data.checkNull().isEmpty ? const SizedBox.shrink() : SizedBox(
+                      width: 200,
+                      child: Text(
+                        data.data.checkNull(),
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.w500,
+                          fontSize: 12.0,
+                        ),
+                        textAlign: TextAlign.center,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    );
+                  }),
               const SizedBox(
                 height: 8,
               ),
@@ -256,23 +293,23 @@ class OnGoingCallView extends GetView<CallController> {
                 onPressed: () => controller.muteAudio(),
                 child: controller.muted.value
                     ? SvgPicture.asset(
-                  muteActive,
-                )
+                        muteActive,
+                      )
                     : SvgPicture.asset(
-                  muteInactive,
-                ),
+                        muteInactive,
+                      ),
               ),
               SizedBox(width: rightSideWidth),
               controller.callType.value == CallType.video && !controller.videoMuted.value
                   ? FloatingActionButton(
-                heroTag: "switchCamera",
-                elevation: 0,
-                backgroundColor: controller.cameraSwitch.value ? Colors.white : Colors.white.withOpacity(0.3),
-                onPressed: () => controller.switchCamera(),
-                child: controller.cameraSwitch.value
-                    ? SvgPicture.asset(cameraSwitchActive)
-                    : SvgPicture.asset(cameraSwitchInactive),
-              )
+                      heroTag: "switchCamera",
+                      elevation: 0,
+                      backgroundColor: controller.cameraSwitch.value ? Colors.white : Colors.white.withOpacity(0.3),
+                      onPressed: () => controller.switchCamera(),
+                      child: controller.cameraSwitch.value
+                          ? SvgPicture.asset(cameraSwitchActive)
+                          : SvgPicture.asset(cameraSwitchInactive),
+                    )
                   : const SizedBox.shrink(),
               controller.callType.value == CallType.video && !controller.videoMuted.value
                   ? SizedBox(width: rightSideWidth)
@@ -297,12 +334,12 @@ class OnGoingCallView extends GetView<CallController> {
                 child: controller.audioOutputType.value == AudioDeviceType.receiver
                     ? SvgPicture.asset(speakerInactive)
                     : controller.audioOutputType.value == AudioDeviceType.speaker
-                    ? SvgPicture.asset(speakerActive)
-                    : controller.audioOutputType.value == AudioDeviceType.bluetooth
-                    ? SvgPicture.asset(speakerBluetooth)
-                    : controller.audioOutputType.value == AudioDeviceType.headset
-                    ? SvgPicture.asset(speakerHeadset)
-                    : SvgPicture.asset(speakerActive),
+                        ? SvgPicture.asset(speakerActive)
+                        : controller.audioOutputType.value == AudioDeviceType.bluetooth
+                            ? SvgPicture.asset(speakerBluetooth)
+                            : controller.audioOutputType.value == AudioDeviceType.headset
+                                ? SvgPicture.asset(speakerHeadset)
+                                : SvgPicture.asset(speakerActive),
               ),
             ],
           ),

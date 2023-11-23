@@ -119,7 +119,7 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
             pinnedUserJid(firstAttendedCallUser.userJid!.value);
             pinnedUser(firstAttendedCallUser);
           }
-          getNames();
+          // getNames();
         });
       } else {
         debugPrint("#Mirrorfly Call Direction outgoing");
@@ -135,7 +135,7 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
             pinnedUserJid(firstAttendedCallUser.userJid!.value);
             pinnedUser(firstAttendedCallUser);
           }
-          getNames();
+          // getNames();
         });
       }
     });
@@ -155,7 +155,6 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
     ever(callList, (callback) {
       debugPrint("#Mirrorfly call list is changed ******");
       debugPrint("#Mirrorfly call list ${callUserListToJson(callList)}");
-      // getNames();
     });
   }
 
@@ -315,19 +314,21 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
     });
   }
 
-  getNames() async {
+  /*Future<void> getNames() async {
     //Need to check Call Mode and update the name for group call here
     callTitle('');
     if(groupId.isEmpty) {
-      var userJids = <String>[];
-      for (var element in callList) {
-        if(element.userJid!=null && SessionManagement.getUserJID() != element.userJid!.value) {
-          userJids.add(element.userJid!.value);
-        }}
-      LogMessage.d("callList", userJids.length);
+      var userJids = List<String>.from(callList.where((p0) => p0.userJid!=null && SessionManagement.getUserJID() != p0.userJid!.value).map((e) => e.userJid!.value));//<String>[];
+      // for (var element in callList) {
+      //   if(element.userJid!=null && SessionManagement.getUserJID() != element.userJid!.value) {
+      //     userJids.add(element.userJid!.value);
+      //   }}
+      LogMessage.d("callList users", userJids);
       var names = userJids.isNotEmpty ? await CallUtils.getCallersName(userJids,true) : "";
+      LogMessage.d("callList users names", names);
       callTitle(names);
-      /*callList.asMap().forEach((index, users) async {
+      callTitle.refresh();
+      *//*callList.asMap().forEach((index, users) async {
         LogMessage.d("callList", "$index ${users.userJid}");
         if (users.userJid == SessionManagement.getUserJID()) {
           callTitle("${callTitle.value} You,");
@@ -342,11 +343,11 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
           }
         }
         LogMessage.d("callList", callTitle.value);
-      });*/
+      });*//*
     }else{
       callTitle((await getProfileDetails(groupId.value)).getName());
     }
-  }
+  }*/
 
   @override
   void dispose() {
@@ -498,9 +499,8 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
     this.callMode(callMode);
     this.callType(callType);
     // this.callStatus(callStatus);
-    // getNames();
     // startTimer();
-    if(Get.currentRoute != Routes.onGoingCallView) {
+    if(Get.currentRoute != Routes.onGoingCallView && Get.currentRoute != Routes.participants) {
       Future.delayed(const Duration(milliseconds: 500), () {
         Get.offNamed(Routes.onGoingCallView, arguments: {"userJid": [userJid], "cameraSwitch": cameraSwitch.value});
       });
@@ -931,6 +931,7 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
             callList.insert(callList.length - 1, CallUserList(
                 userJid: jid.obs, isAudioMuted: (await Mirrorfly.isUserAudioMuted(jid)).checkNull(), isVideoMuted: (await Mirrorfly.isUserVideoMuted(jid)).checkNull(), callStatus: CallStatus.calling.obs));
             users.insert(users.length - 1, jid);
+            // getNames();
           }
         }
       }
@@ -958,7 +959,7 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
       pinnedUserJid(callList[0].userJid!.value);
     }
     callDisconnected(callMode, userJid, callType);
-    getNames();
+    // getNames();
 
   }
 
@@ -977,7 +978,7 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
         callList[callListIndex].userJid!("");
         callList[callListIndex].userJid!(jid);
         // callList.refresh();
-        getNames();
+        // getNames();
       }
     }
   }

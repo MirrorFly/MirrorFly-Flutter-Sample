@@ -1,16 +1,23 @@
 import 'package:mirror_fly_demo/app/call_modules/call_logs/call_log_model.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
 import 'package:mirror_fly_demo/app/data/session_management.dart';
+import 'package:mirrorfly_plugin/mirrorfly.dart';
 
+import '../common/constants.dart';
 import '../data/apputils.dart';
 
 class CallUtils {
   static Future<String> getCallersName(List<String?> callUsers,[bool addYou = false]) async {
+    LogMessage.d("getCallersName callUsers", callUsers);
+    if(callUsers.isEmpty){
+      return "";
+    }
     var membersName = StringBuffer();
     if(addYou) {
       membersName.write(callUsers.length <= 1 ? "You and " : "You, ");
     }
     var isMaxMemberNameNotReached = true;
+    var spaceAvailable = true;
     for (var i = 0; i < callUsers.length; i++) {
       if (callUsers[i] != null) {
         var pair = await AppUtils.getNameAndProfileDetails(callUsers[i]!);
@@ -19,23 +26,31 @@ class CallUtils {
           var actualMemberName = AppUtils.getActualMemberName(membersName);
           membersName = actualMemberName.item1;
           isMaxMemberNameNotReached = actualMemberName.item2;
-        } else if (isMaxMemberNameNotReached && i == 1) {
+          spaceAvailable = membersName.length < Constants.maxNameLength;
+          // LogMessage.d("getCallersName $i", "pair.item1 : ${pair.item1} actualMemberName : $membersName isMaxMemberNameNotReached : $isMaxMemberNameNotReached spaceAvailable : $spaceAvailable");
+        } else if (spaceAvailable && isMaxMemberNameNotReached && spaceAvailable && i == 1) {
           membersName.write(", ${pair.item1}");
           var actualMemberName = AppUtils.getActualMemberName(membersName);
           membersName = actualMemberName.item1;
           isMaxMemberNameNotReached = actualMemberName.item2;
-        } else if (isMaxMemberNameNotReached && i == 2) {
+          spaceAvailable = membersName.length < Constants.maxNameLength;
+          // LogMessage.d("getCallersName $i", "pair.item1 : ${pair.item1} actualMemberName : $membersName isMaxMemberNameNotReached : $isMaxMemberNameNotReached spaceAvailable : $spaceAvailable");
+        } else if (spaceAvailable && isMaxMemberNameNotReached && spaceAvailable && i == 2) {
           membersName.write(", ${pair.item1}");
           var actualMemberName = AppUtils.getActualMemberName(membersName);
           membersName = actualMemberName.item1;
+          spaceAvailable = membersName.length < Constants.maxNameLength;
+          // LogMessage.d("getCallersName $i", "pair.item1 : ${pair.item1} actualMemberName : $membersName isMaxMemberNameNotReached : $isMaxMemberNameNotReached spaceAvailable : $spaceAvailable");
         } else {
           membersName.write(" (+${(callUsers.length - i)})");
+          // LogMessage.d("getCallersName $i else", "pair.item1 : ${pair.item1} actualMemberName : $membersName isMaxMemberNameNotReached : $isMaxMemberNameNotReached spaceAvailable : $spaceAvailable");
           break;
         }
       } else {
         break;
       }
     }
+    LogMessage.d("getCallersName membersName", membersName);
     return membersName.toString();
 
   }
