@@ -1,4 +1,3 @@
-import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -65,9 +64,7 @@ class CallTimeoutController extends GetxController {
           debugPrint("permission not given");
         }
       }else{
-        if (Platform.isAndroid
-            ? await AppPermission.askVideoCallPermissions()
-            : await AppPermission.askiOSVideoCallPermissions()) {
+        if (await AppPermission.askVideoCallPermissions()) {
           if(users.length==1) {
             Mirrorfly.makeVideoCall(users.first!).then((value) {
               if (value) {

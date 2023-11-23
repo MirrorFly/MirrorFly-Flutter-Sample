@@ -751,7 +751,7 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
   var outGoingRequest = false;
   var inComingRequest = false;
   Future<void> showVideoSwitchPopup() async {
-    if (Platform.isAndroid ? await AppPermission.askVideoCallPermissions() : await AppPermission.askiOSVideoCallPermissions()) {
+    if (await AppPermission.askVideoCallPermissions()) {
       showingVideoSwitchPopup = true;
       Helper.showAlert(
           message: Constants.videoSwitchMessage,
@@ -823,7 +823,7 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
           TextButton(
               onPressed: () async {
                 closeDialog();
-                if (Platform.isAndroid ? await AppPermission.askVideoCallPermissions() : await AppPermission.askiOSVideoCallPermissions()) {
+                if (await AppPermission.askVideoCallPermissions()) {
                   isVideoCallRequested = false;
                   inComingRequest = false;
                   Mirrorfly.acceptVideoCallSwitchRequest().then((value) {
