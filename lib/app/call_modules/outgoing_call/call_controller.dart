@@ -249,16 +249,18 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
     // }
   }
 
-  videoMute() {
+  videoMute() async {
     debugPrint("isOneToOneCall : $isOneToOneCall");
-    if (callType.value != CallType.audio) {
-      Mirrorfly.muteVideo(!videoMuted.value);
-      videoMuted(!videoMuted.value);
-    } else if (callType.value == CallType.audio && isOneToOneCall && Get.currentRoute == Routes.onGoingCallView) {
-      showVideoSwitchPopup();
-    } else if (isGroupCall) {
-      Mirrorfly.muteVideo(!videoMuted.value);
-      videoMuted(!videoMuted.value);
+    if (await AppPermission.askVideoCallPermissions()) {
+      if (callType.value != CallType.audio) {
+        Mirrorfly.muteVideo(!videoMuted.value);
+        videoMuted(!videoMuted.value);
+      } else if (callType.value == CallType.audio && isOneToOneCall && Get.currentRoute == Routes.onGoingCallView) {
+        showVideoSwitchPopup();
+      } else if (isGroupCall) {
+        Mirrorfly.muteVideo(!videoMuted.value);
+        videoMuted(!videoMuted.value);
+      }
     }
   }
 
