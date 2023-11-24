@@ -238,10 +238,11 @@ abstract class BaseController {
           break;
 
         case CallStatus.disconnected:
-
           if (Get.isRegistered<CallController>()) {
-            Get.find<CallController>().callDisconnected(
-                callMode, userJid, callType);
+            /*Get.find<CallController>().callDisconnected(
+                callMode, userJid, callType);*///commenting because when call disconnected we no need to check anything
+            //after disconnect received then local hangup received in call action
+            Get.find<CallController>().callDisconnectedStatus();
             if(Get.find<CallController>().callList.length <= 1){
               stopTimer();
             }
