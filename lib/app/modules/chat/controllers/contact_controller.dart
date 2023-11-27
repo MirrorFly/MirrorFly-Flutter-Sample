@@ -567,35 +567,33 @@ class ContactController extends FullLifeCycleController with FullLifeCycleMixin 
       if (await AppUtils.isNetConnected()) {
         if(callType.value == CallType.audio) {
           if (await AppPermission.askAudioCallPermissions()) {
-            Get.back();
             if (selectedUsersJIDList.length == 1) {
               Mirrorfly.makeVoiceCall(selectedUsersJIDList[0]).then((value) {
                 if (value) {
-                  Get.toNamed(Routes.outGoingCallView, arguments: {"userJid": [selectedUsersJIDList[0]], "callType": CallType.audio});
+                  Get.offNamed(Routes.outGoingCallView, arguments: {"userJid": [selectedUsersJIDList[0]], "callType": CallType.audio});
                 }
               });
             } else {
               Mirrorfly.makeGroupVoiceCall(jidList: selectedUsersJIDList).then((value) {
                 if (value) {
-                  Get.toNamed(Routes.outGoingCallView, arguments: {"userJid": selectedUsersJIDList, "callType": CallType.audio});
+                  Get.offNamed(Routes.outGoingCallView, arguments: {"userJid": selectedUsersJIDList, "callType": CallType.audio});
                 }
               });
             }
           }
         }else if(callType.value == CallType.video){
           if (await AppPermission.askVideoCallPermissions()) {
-            Get.back();
             if (selectedUsersJIDList.length == 1) {
               Mirrorfly.makeVideoCall(selectedUsersJIDList[0]).then((value) {
                 if (value) {
-                  Get.toNamed(Routes.outGoingCallView, arguments: {"userJid": [selectedUsersJIDList[0]], "callType": CallType.video});
+                  Get.offNamed(Routes.outGoingCallView, arguments: {"userJid": [selectedUsersJIDList[0]], "callType": CallType.video});
                 }
 
               });
             } else {
               Mirrorfly.makeGroupVideoCall(jidList: selectedUsersJIDList).then((value) {
                 if (value) {
-                  Get.toNamed(Routes.outGoingCallView, arguments: {"userJid": selectedUsersJIDList, "callType": CallType.video});
+                  Get.offNamed(Routes.outGoingCallView, arguments: {"userJid": selectedUsersJIDList, "callType": CallType.video});
                 }
               });
             }
