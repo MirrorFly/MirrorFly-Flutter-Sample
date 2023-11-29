@@ -415,8 +415,6 @@ class ArchivedChatListController extends GetxController {
             Get.back();
             toChatPage(chatItem.jid.checkNull());
           },
-          callTap: () {},
-          videoTap: () {},
           infoTap: () {
             Get.back();
             infoPage(value);

@@ -9,6 +9,7 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
 import 'package:mirror_fly_demo/app/common/main_controller.dart';
+import 'package:mirror_fly_demo/app/data/permissions.dart';
 import 'package:mirrorfly_plugin/logmessage.dart';
 import 'package:mirrorfly_plugin/mirrorflychat.dart';
 import 'package:mirror_fly_demo/app/data/session_management.dart';
@@ -845,8 +846,8 @@ String getDisplayImage(RecentChatData recentChat) {
 void showQuickProfilePopup(
     {required context,
     required Function() chatTap,
-    required Function() callTap,
-    required Function() videoTap,
+    Function()? callTap,
+    Function()? videoTap,
     required Function() infoTap,
     required Rx<Profile> profile}) {
   Get.dialog(
@@ -931,7 +932,10 @@ void showQuickProfilePopup(
                     !profile.value.isGroupProfile.checkNull()
                         ? Expanded(
                             child: InkWell(
-                              onTap: callTap,
+                              onTap: (){
+                                Get.back();
+                                makeVoiceCall(profile.value.jid.checkNull());
+                              },
                               child: SvgPicture.asset(
                                 quickCall,
                                 fit: BoxFit.contain,
@@ -942,7 +946,10 @@ void showQuickProfilePopup(
                     !profile.value.isGroupProfile.checkNull()
                         ? Expanded(
                             child: InkWell(
-                              onTap: videoTap,
+                              onTap: (){
+                                Get.back();
+                                makeVideoCall(profile.value.jid.checkNull());
+                              },
                               child: SvgPicture.asset(
                                 quickVideo,
                                 fit: BoxFit.contain,
@@ -968,6 +975,52 @@ void showQuickProfilePopup(
       );
     }),
   );
+}
+
+makeVoiceCall(String toUser) async {
+  if (await AppUtils.isNetConnected()) {
+    if (await AppPermission.askAudioCallPermissions()) {
+      if ((await Mirrorfly.isOnGoingCall()).checkNull()) {
+        debugPrint("#Mirrorfly Call You are on another call");
+        toToast(Constants.msgOngoingCallAlert);
+      } else {
+        Mirrorfly.makeVoiceCall(toUser.checkNull()).then((value) {
+          if (value) {
+            Get.toNamed(Routes.outGoingCallView, arguments: {"userJid": [toUser], "callType": CallType.audio});
+          }
+        }).catchError((e) {
+          debugPrint("#Mirrorfly Call $e");
+        });
+      }
+    } else {
+      debugPrint("permission not given");
+    }
+  } else {
+    toToast(Constants.noInternetConnection);
+  }
+}
+
+makeVideoCall(String toUser) async {
+  if (await AppUtils.isNetConnected()) {
+    if (await AppPermission.askVideoCallPermissions()) {
+      if ((await Mirrorfly.isOnGoingCall()).checkNull()) {
+        debugPrint("#Mirrorfly Call You are on another call");
+        toToast(Constants.msgOngoingCallAlert);
+      } else {
+        Mirrorfly.makeVideoCall(toUser.checkNull()).then((value) {
+          if (value) {
+            Get.toNamed(Routes.outGoingCallView, arguments: {"userJid": [toUser], "callType": CallType.video});
+          }
+        }).catchError((e) {
+          debugPrint("#Mirrorfly Call $e");
+        });
+      }
+    } else {
+      LogMessage.d("askVideoCallPermissions", "false");
+    }
+  } else {
+    toToast(Constants.noInternetConnection);
+  }
 }
 
 String getDocAsset(String filename) {

@@ -249,16 +249,18 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
     // }
   }
 
-  videoMute() {
+  videoMute() async {
     debugPrint("isOneToOneCall : $isOneToOneCall");
-    if (callType.value != CallType.audio) {
-      Mirrorfly.muteVideo(!videoMuted.value);
-      videoMuted(!videoMuted.value);
-    } else if (callType.value == CallType.audio && isOneToOneCall && Get.currentRoute == Routes.onGoingCallView) {
-      showVideoSwitchPopup();
-    } else if (isGroupCall) {
-      Mirrorfly.muteVideo(!videoMuted.value);
-      videoMuted(!videoMuted.value);
+    if (await AppPermission.askVideoCallPermissions()) {
+      if (callType.value != CallType.audio) {
+        Mirrorfly.muteVideo(!videoMuted.value);
+        videoMuted(!videoMuted.value);
+      } else if (callType.value == CallType.audio && isOneToOneCall && Get.currentRoute == Routes.onGoingCallView) {
+        showVideoSwitchPopup();
+      } else if (isGroupCall) {
+        Mirrorfly.muteVideo(!videoMuted.value);
+        videoMuted(!videoMuted.value);
+      }
     }
   }
 
@@ -363,7 +365,7 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
     super.onClose();
   }
 
-  void callDisconnected(String callMode, String userJid, String callType) {
+  void userDisconnection(String callMode, String userJid, String callType) {
     this.callMode(callMode);
     this.callType(callType);
     if(Get.currentRoute==Routes.outGoingCallView){
@@ -374,7 +376,7 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
       return;
     }
     debugPrint("#Mirrorfly call call disconnect called ${callList.length}");
-    debugPrint("#Mirrorfly call call disconnect called ${callList.toJson()}");
+    debugPrint("#Mirrorfly call call disconnect called ${callUserListToJson(callList)}");
     if (callList.isEmpty) {
       debugPrint("call list is empty returning");
       return;
@@ -387,6 +389,7 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
     } else {
       debugPrint("#Mirrorflycall participant jid is not in the list");
     }
+    debugPrint("#Mirrorfly call call disconnect called after user removed ${callList.length}");
     if (callList.length <= 1 || userJid == SessionManagement.getUserJID()) {
       isCallTimerEnabled = false;
       //if user is in the participants screen all users end the call then we should close call pages
@@ -412,6 +415,17 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
         }
       }
     }
+  }
+
+  callDisconnectedStatus(){
+    callList.clear();
+    callTimer("Disconnected");
+    if(Get.currentRoute==Routes.participants){
+      Get.back();
+    }
+    Future.delayed(const Duration(seconds: 1), () {
+      Get.back();
+    });
   }
 
   Future<void> remoteBusy(String callMode, String userJid, String callType, String callAction) async {
@@ -445,7 +459,7 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
 
   void localHangup(String callMode, String userJid, String callType, String callAction) {
     this.callMode(callMode);
-    callDisconnected(callMode, userJid, callType);
+    userDisconnection(callMode, userJid, callType);
   }
 
   void remoteHangup(String callMode, String userJid, String callType, String callAction) {
@@ -751,7 +765,7 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
   var outGoingRequest = false;
   var inComingRequest = false;
   Future<void> showVideoSwitchPopup() async {
-    if (Platform.isAndroid ? await AppPermission.askVideoCallPermissions() : await AppPermission.askiOSVideoCallPermissions()) {
+    if (await AppPermission.askVideoCallPermissions()) {
       showingVideoSwitchPopup = true;
       Helper.showAlert(
           message: Constants.videoSwitchMessage,
@@ -823,7 +837,7 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
           TextButton(
               onPressed: () async {
                 closeDialog();
-                if (Platform.isAndroid ? await AppPermission.askVideoCallPermissions() : await AppPermission.askiOSVideoCallPermissions()) {
+                if (await AppPermission.askVideoCallPermissions()) {
                   isVideoCallRequested = false;
                   inComingRequest = false;
                   Mirrorfly.acceptVideoCallSwitchRequest().then((value) {
@@ -958,7 +972,7 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
     if(callList.length>1 && pinnedUserJid.value == userJid) {
       pinnedUserJid(callList[0].userJid!.value);
     }
-    callDisconnected(callMode, userJid, callType);
+    userDisconnection(callMode, userJid, callType);
     // getNames();
 
   }

@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -1534,7 +1533,7 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
   void makeVideoCall(String? fromUser) async {
     //closeKeyBoard();
     if (await AppUtils.isNetConnected()) {
-      if (Platform.isAndroid ? await AppPermission.askVideoCallPermissions() : await AppPermission.askiOSVideoCallPermissions()) {
+      if (await AppPermission.askVideoCallPermissions()) {
         if ((await Mirrorfly.isOnGoingCall()).checkNull()) {
           debugPrint("#Mirrorfly Call You are on another call");
           toToast(Constants.msgOngoingCallAlert);

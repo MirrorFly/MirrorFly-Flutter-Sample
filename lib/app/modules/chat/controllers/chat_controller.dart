@@ -3089,9 +3089,7 @@ class ChatController extends FullLifeCycleController
   void makeVideoCall() async {
     closeKeyBoard();
     if (await AppUtils.isNetConnected()) {
-      if (Platform.isAndroid
-          ? await AppPermission.askVideoCallPermissions()
-          : await AppPermission.askiOSVideoCallPermissions()) {
+      if (await AppPermission.askVideoCallPermissions()) {
         Mirrorfly.makeVideoCall(profile.jid.checkNull()).then((value) {
           if (value) {
             setOnGoingUserGone();
