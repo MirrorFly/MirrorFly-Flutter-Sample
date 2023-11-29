@@ -15,9 +15,7 @@
     <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION"/>
 
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
-    <!-- Request legacy Bluetooth permissions on older devices. -->
-    <uses-permission android:name="android.permission.BLUETOOTH"
-        android:maxSdkVersion="30" />
+
     <!-- android 13 permission-->
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
@@ -25,9 +23,11 @@
     <uses-permission android:name="android.permission.READ_MEDIA_VIDEO" />
 
     <uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT" />
-    <!-- Needed only if your app communicates with already-paired Bluetooth
-        devices. -->
-    <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
+
+    <uses-permission android:name="android.permission.BLUETOOTH"/><!-- Request legacy Bluetooth permissions on older devices. -->
+    <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" /><!-- Needed only if your app communicates with already-paired Bluetooth devices. -->
+    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" /><!--AudioManager#startBluetoothSco() requires MODIFY_AUDIO_SETTINGS permission.-->
+
    <application
         android:label="@string/app_name"
         android:requestLegacyExternalStorage="true"
