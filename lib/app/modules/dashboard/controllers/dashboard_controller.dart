@@ -86,6 +86,17 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
   // Initialize with 1.0 for initial opened tab, 0.0 for others
   final tabScales = List.generate(tabsCount, (index) => index == initialIndex ? 1.0 : 0.0).obs;
 
+  var isLastPage = false.obs;
+  late int pageNumber;
+  var error = false.obs;
+  var loading = true.obs;
+  late int _numberOfPostsPerRequest;
+  var total_pages = 0;
+
+  var selectedLog = false.obs;
+  var selectedCallLogs = <String>[].obs;
+  var selectedCallLogsPosition = <int>[].obs;
+
   @override
   void onInit() {
     tabController = TabController(length: 2, vsync: this);
@@ -119,7 +130,8 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
         }
       }
     });
-
+    pageNumber = 1;
+    _numberOfPostsPerRequest = 20;
     super.onInit();
   }
 
@@ -1516,17 +1528,25 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
   void onHidden() {}
 
   Future<void> fetchCallLogList() async {
-    debugPrint("fetchCallLogList ===> Called $callLogPageNum");
     callLogPageNum = callLogPageNum + 1;
-    Mirrorfly.getCallLogsList(callLogPageNum).then((value) {
+    debugPrint("fetchCallLogList ===> Called $callLogPageNum");
+    Mirrorfly.getCallLogsList(pageNumber).then((value) {
       if (value != null) {
         var list = callLogListFromJson(value);
+        total_pages = list.totalPages!;
+        debugPrint("fetchCallLogList ===> total_pages $total_pages");
+        debugPrint("fetchCallLogList ===> pageNumber $pageNumber");
         if (list.data != null) {
           _callLogList.addAll(list.data!);
+          isLastPage.value = _callLogList.length < _numberOfPostsPerRequest;
+          loading.value = false;
+          pageNumber = pageNumber + 1;
         }
       }
     }).catchError((error) {
       debugPrint("issue===> $error");
+      loading.value = false;
+      //error = true;
     });
   }
 
@@ -1695,4 +1715,26 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
       return callLog;
     }
   }
+
+  selectOrRemoveCallLogFromList(int index) {
+    if (selectedLog.isTrue) {
+      if (selectedCallLogs.contains(callLogList[index].roomId)) {
+        selectedCallLogs.remove(callLogList[index].roomId.checkNull());
+        selectedCallLogsPosition.remove(index);
+      } else {
+        selectedCallLogs.add(callLogList[index].roomId.checkNull());
+        selectedCallLogsPosition.add(index);
+      }
+    }
+    debugPrint("selectedCallLogs ${selectedCallLogs.length}" );
+    if (selectedCallLogs.isEmpty) {
+      // clearAllChatSelection();
+    } else {
+      delete(true);
+      //  menuValidationForItem();
+    }
+  }
+
+  isLogSelected(int index) => selectedCallLogs.contains(callLogList[index].roomId);
+
 }
