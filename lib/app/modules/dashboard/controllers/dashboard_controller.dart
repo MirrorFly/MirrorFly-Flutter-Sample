@@ -1646,7 +1646,7 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
     List<CallLogData> callLogs = [];
     List<CallLogData> callLogsWithNickName = [];
 
-    var res = await Mirrorfly.filteredCallLog();
+    var res = await Mirrorfly.getLocalCallLogs();
     if (res != null) {
       _callLogList.clear();
       callLogList.clear();
