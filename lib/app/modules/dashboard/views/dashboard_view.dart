@@ -905,13 +905,11 @@ class DashboardView extends GetView<DashboardController> {
     }
     return ListView.builder(
         controller: controller.callLogScrollController,
-        // itemCount: callLogList.length + (controller.isLastPage.value ? 0 : 1),
+        // itemCount: callLogList.length + (controller.isLastPage.value ? 1 : 0),
         itemCount: callLogList.length,
         itemBuilder: (context, index) {
-          debugPrint("callLogList isLastPage ${controller.isLastPage.value}");
           var item = callLogList[index];
-          if (index == callLogList.length -1) {
-
+          if (index == callLogList.length ) {
             if (controller.error.value) {
               return const Center(child: Text("Error"));
             } else {
@@ -1070,7 +1068,7 @@ class DashboardView extends GetView<DashboardController> {
     if (item.callState == 0 || item.callState == 2) {
       localUserList.addAll(item.userList!);
       localUserList.add(item.fromUser!);
-    }else{
+    } else {
       localUserList.addAll(item.userList!);
     }
     return callType!.toLowerCase() == CallType.video

@@ -90,8 +90,7 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
   late int pageNumber;
   var error = false.obs;
   var loading = true.obs;
-  late int _numberOfPostsPerRequest;
-  var total_pages = 0;
+  var totalPages = 0;
 
   var selectedLog = false.obs;
   var selectedCallLogs = <String>[].obs;
@@ -131,7 +130,6 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
       }
     });
     pageNumber = 1;
-    _numberOfPostsPerRequest = 20;
     super.onInit();
   }
 
@@ -1535,12 +1533,11 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
     Mirrorfly.getCallLogsList(pageNumber).then((value) {
       if (value != null) {
         var list = callLogListFromJson(value);
-        total_pages = list.totalPages!;
-        debugPrint("fetchCallLogList ===> total_pages $total_pages");
-        debugPrint("fetchCallLogList ===> pageNumber $pageNumber");
+        totalPages = list.totalPages!;
+        debugPrint("fetchCallLogList ===> total_pages $totalPages pageNumber $pageNumber list.data!.length ${list.data!.length} ");
         if (list.data != null) {
           _callLogList.addAll(list.data!);
-          isLastPage.value = _callLogList.length < _numberOfPostsPerRequest;
+          isLastPage.value = list.data!.isEmpty;
           loading.value = false;
           pageNumber = pageNumber + 1;
         }
@@ -1548,7 +1545,6 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
     }).catchError((error) {
       debugPrint("issue===> $error");
       loading.value = false;
-      //error = true;
     });
   }
 
@@ -1744,9 +1740,9 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
     if (delete.value) {
       clearVisible(false);
     } else {
-      if(isSearching.value){
+      if (isSearching.value) {
         clearVisible(true);
-      }else{
+      } else {
         clearVisible(false);
       }
     }
@@ -1773,7 +1769,7 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
       TextButton(
           onPressed: () {
             Get.back();
-            Mirrorfly.deleteCallLog(selectedCallLogs,false).then((value) {
+            Mirrorfly.deleteCallLog(selectedCallLogs, false).then((value) {
               if (value) {
                 callLogList.removeAt(logIndex);
                 delete(false);
@@ -1798,7 +1794,7 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
       TextButton(
           onPressed: () async {
             Get.back();
-            Mirrorfly.deleteCallLog(selectedCallLogs,false).then((value) {
+            Mirrorfly.deleteCallLog(selectedCallLogs, false).then((value) {
               debugPrint("deleteCallLog ${value.toString()}");
               if (value) {
                 for (var logItem in selectedCallLogs) {
