@@ -908,9 +908,10 @@ class DashboardView extends GetView<DashboardController> {
         // itemCount: callLogList.length + (controller.isLastPage.value ? 0 : 1),
         itemCount: callLogList.length,
         itemBuilder: (context, index) {
+          debugPrint("callLogList isLastPage ${controller.isLastPage.value}");
           var item = callLogList[index];
+          if (index == callLogList.length -1) {
 
-          if (index == callLogList.length) {
             if (controller.error.value) {
               return const Center(child: Text("Error"));
             } else {

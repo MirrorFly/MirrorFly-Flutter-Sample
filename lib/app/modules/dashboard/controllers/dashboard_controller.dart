@@ -1773,7 +1773,7 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
       TextButton(
           onPressed: () {
             Get.back();
-            Mirrorfly.deleteCallLog(selectedCallLogs).then((value) {
+            Mirrorfly.deleteCallLog(selectedCallLogs,false).then((value) {
               if (value) {
                 callLogList.removeAt(logIndex);
                 delete(false);
@@ -1798,7 +1798,7 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
       TextButton(
           onPressed: () async {
             Get.back();
-            Mirrorfly.deleteCallLog(selectedCallLogs).then((value) {
+            Mirrorfly.deleteCallLog(selectedCallLogs,false).then((value) {
               debugPrint("deleteCallLog ${value.toString()}");
               if (value) {
                 for (var logItem in selectedCallLogs) {
