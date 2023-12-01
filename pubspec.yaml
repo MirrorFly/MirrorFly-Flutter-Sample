@@ -1,5 +1,5 @@
 name: mirror_fly_demo
-version: 2.6.1+62
+version: 2.6.1+63
 build_release_date: Nov 2023
 publish_to: none
 description: A MirrorFly Flutter Sample Application.
@@ -19,7 +19,7 @@ dependencies:
   intl: ^0.17.0 #datetime
   package_info_plus: ^4.0.2 #package info
   image_picker: ^0.8.6
-  permission_handler: ^10.4.3
+  permission_handler: ^11.0.1
 #  emoji_picker_flutter: ^1.4.0
   emoji_picker_flutter: 1.6.1
   image_cropping: ^0.0.13 #crop image
