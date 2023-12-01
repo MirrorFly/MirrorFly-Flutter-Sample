@@ -24,6 +24,7 @@
 
     <uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT" />
 
+    <uses-permission android:name="android.permission.WAKE_LOCK" /><!--Need for enable or disable Proximity sensor -->
     <uses-permission android:name="android.permission.BLUETOOTH"/><!-- Request legacy Bluetooth permissions on older devices. -->
     <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" /><!-- Needed only if your app communicates with already-paired Bluetooth devices. -->
     <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" /><!--AudioManager#startBluetoothSco() requires MODIFY_AUDIO_SETTINGS permission.-->
