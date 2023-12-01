@@ -91,7 +91,7 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
   var error = false.obs;
   var loading = true.obs;
   late int _numberOfPostsPerRequest;
-  var total_pages = 0;
+  var totalPages = 0;
 
   var selectedLog = false.obs;
   var selectedCallLogs = <String>[].obs;
@@ -1535,8 +1535,8 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
     Mirrorfly.getCallLogsList(pageNumber).then((value) {
       if (value != null) {
         var list = callLogListFromJson(value);
-        total_pages = list.totalPages!;
-        debugPrint("fetchCallLogList ===> total_pages $total_pages");
+        totalPages = list.totalPages!;
+        debugPrint("fetchCallLogList ===> total_pages $totalPages");
         debugPrint("fetchCallLogList ===> pageNumber $pageNumber");
         if (list.data != null) {
           _callLogList.addAll(list.data!);
