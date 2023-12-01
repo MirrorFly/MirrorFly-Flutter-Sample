@@ -537,7 +537,7 @@ Widget callLogTime(String time, int? callState) {
       const SizedBox(
         width: 5,
       ),
-      Text(time),
+      Text(time, style: const TextStyle(color: Colors.black),),
     ],
   );
 }

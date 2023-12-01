@@ -10,6 +10,7 @@ String callLogDataListToJson(CallLogData data) => json.encode(data.toJson());
 
 class CallLogModel {
   List<CallLogData>? data;
+  int? totalPages;
 
   CallLogModel({this.data});
 
@@ -20,6 +21,7 @@ class CallLogModel {
         data!.add( CallLogData.fromJson(v));
       });
     }
+    totalPages = json['total_pages'];
   }
 
   Map<String, dynamic> toJson() {
@@ -27,6 +29,7 @@ class CallLogModel {
     if (this.data != null) {
       data['data'] = this.data!.map((v) => v.toJson()).toList();
     }
+    data['total_pages'] = totalPages;
     return data;
   }
 }

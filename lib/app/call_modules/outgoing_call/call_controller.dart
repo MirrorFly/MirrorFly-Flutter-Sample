@@ -368,14 +368,15 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
   void userDisconnection(String callMode, String userJid, String callType) {
     this.callMode(callMode);
     this.callType(callType);
-    if(Get.currentRoute==Routes.outGoingCallView){
+    debugPrint("Current Route ${Get.currentRoute}");
+    if(Get.currentRoute == Routes.outGoingCallView){
       // This if condition is added for the group call remote busy - call action
       if(callList.length < 2){
         Get.back();
       }
       return;
     }
-    debugPrint("#Mirrorfly call call disconnect called ${callList.length}");
+    debugPrint("#Mirrorfly call call disconnect called ${callList.length} userJid to remove $userJid");
     debugPrint("#Mirrorfly call call disconnect called ${callUserListToJson(callList)}");
     if (callList.isEmpty) {
       debugPrint("call list is empty returning");
@@ -385,19 +386,22 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
     var index = callList.indexWhere((user) => user.userJid!.value == userJid);
     debugPrint("#Mirrorfly call disconnected user Index $index ${Get.currentRoute}");
     if (!index.isNegative) {
-      callList.removeAt(index);
+      // callList.removeAt(index);
+      callList.removeWhere((callUser) => callUser.userJid?.value == userJid);
     } else {
       debugPrint("#Mirrorflycall participant jid is not in the list");
     }
     debugPrint("#Mirrorfly call call disconnect called after user removed ${callList.length}");
     if (callList.length <= 1 || userJid == SessionManagement.getUserJID()) {
+      debugPrint("Entering Call Disconnection Loop");
       isCallTimerEnabled = false;
       //if user is in the participants screen all users end the call then we should close call pages
-      if(Get.currentRoute==Routes.participants){
+      if(Get.currentRoute == Routes.participants){
         Get.back();
       }
       // if there is an single user in that call and if he [disconnected] no need to disconnect the call from our side Observed in Android
       if (Platform.isIOS) {
+        debugPrint("Calling Disconnection call in iOS");
         // in iOS needs to call disconnect.
         disconnectCall();
       } else {
@@ -418,6 +422,7 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
   }
 
   callDisconnectedStatus(){
+    debugPrint("callDisconnectedStatus is called");
     callList.clear();
     callTimer("Disconnected");
     if(Get.currentRoute==Routes.participants){
