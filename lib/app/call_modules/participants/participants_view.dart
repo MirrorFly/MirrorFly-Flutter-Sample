@@ -91,7 +91,7 @@ class ParticipantsView extends GetView<AddParticipantsController> {
 
   Widget tabItem({required String title, required String count}) {
     return Padding(
-      padding: const EdgeInsets.all(12.0),
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [

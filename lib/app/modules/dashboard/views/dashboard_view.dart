@@ -77,7 +77,9 @@ class DashboardView extends GetView<DashboardController> {
                                         )
                                       : null,
                               title: controller.selected.value
-                                  ? Text((controller.selectedChats.length).toString())
+                                  ? controller.currentTab.value == 0
+                                      ? Text((controller.selectedChats.length).toString())
+                                      : Text((controller.selectedCallLogs.length).toString())
                                   : controller.isSearching.value
                                       ? TextField(
                                           focusNode: controller.searchFocusNode,
@@ -125,7 +127,7 @@ class DashboardView extends GetView<DashboardController> {
                                       CustomAction(
                                         visibleWidget: IconButton(
                                           onPressed: () {
-                                            controller.deleteChats();
+                                            controller.currentTab.value == 0 ? controller.deleteChats() : controller.deleteCallLog();
                                           },
                                           icon: SvgPicture.asset(delete),
                                           tooltip: 'Delete',
@@ -881,7 +883,6 @@ class DashboardView extends GetView<DashboardController> {
   Stack callsView(BuildContext context) {
     return Stack(
       children: [
-
         Obx(
           () => controller.callLogList.isEmpty ? emptyCalls(context) : callLogView(context, controller.callLogList),
         )
@@ -891,101 +892,154 @@ class DashboardView extends GetView<DashboardController> {
   }
 
   Widget callLogView(BuildContext context, List<CallLogData> callLogList) {
+    if (callLogList.isEmpty) {
+      if (controller.loading.value) {
+        return const Center(
+            child: Padding(
+          padding: EdgeInsets.all(8),
+          child: CircularProgressIndicator(),
+        ));
+      } else if (controller.error.value) {
+        return const Center(child: Text("Error"));
+      }
+    }
     return ListView.builder(
         controller: controller.callLogScrollController,
-        shrinkWrap: true,
-        physics: const ClampingScrollPhysics(),
+        // itemCount: callLogList.length + (controller.isLastPage.value ? 1 : 0),
         itemCount: callLogList.length,
         itemBuilder: (context, index) {
           var item = callLogList[index];
-          if (index >= callLogList.length && callLogList.isNotEmpty) {
-            return const Center(child: CircularProgressIndicator());
-          } else if (callLogList.isNotEmpty) {
-            if (item.callMode == CallMode.oneToOne && item.userList == null || item.userList!.length < 2) {
-              return FutureBuilder(
-                  future: getProfileDetails(item.callState == 1 ? item.toUser! : item.fromUser!),
-                  builder: (context, snap) {
-                    return snap.hasData && snap.data != null
-                        ? ListTile(
-                            leading: ImageNetwork(
-                              url: snap.data!.image!,
-                              width: 48,
-                              height: 48,
-                              clipOval: true,
-                              errorWidget: getName(snap.data!) //item.nickName
-                                      .checkNull()
-                                      .isNotEmpty
-                                  ? ProfileTextImage(text: getName(snap.data!))
-                                  : const Icon(
-                                      Icons.person,
-                                      color: Colors.white,
-                                    ),
-                              isGroup: false,
-                              blocked: false,
-                              unknown: false,
-                            ),
-                            title: Text(snap.data!.name!),
-                            subtitle: SizedBox(
-                              child: callLogTime(
-                                  "${getCallLogDateFromTimestamp(item.callTime!, "dd-MMM")}  ${getChatTime(context, item.callTime)}", item.callState),
-                            ),
-                            trailing: SizedBox(
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.end,
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Text(getCallLogDuration(item.startTime!, item.endTime!)),
-                                  const SizedBox(
-                                    width: 8,
-                                  ),
-                                  callIcon(item.callType, item, item.callMode, []),
-                                ],
-                              ),
-                            ),
-                          )
-                        : const SizedBox();
-                  });
+          if (index == callLogList.length ) {
+            if (controller.error.value) {
+              return const Center(child: Text("Error"));
             } else {
-              return FutureBuilder(
-                  future: CallUtils.getCallLogUserNames(item.userList!, item),
-                  builder: (context, snap) {
-                    if (snap.hasData) {
-                      return ListTile(
-                        leading: ClipOval(
-                          child: Image.asset(
-                            groupImg,
-                            height: 48,
-                            width: 48,
-                            fit: BoxFit.cover,
-                          ),
-                        ),
-                        title: Text(snap.data!),
-                        subtitle: SizedBox(
-                          child: callLogTime(
-                              "${getCallLogDateFromTimestamp(item.callTime!, "dd-MMM")}  ${getChatTime(context, item.callTime)}", item.callState),
-                        ),
-                        trailing: SizedBox(
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Text(getCallLogDuration(item.startTime!, item.endTime!)),
-                              const SizedBox(
-                                width: 8,
-                              ),
-                              callIcon(item.callType, item, item.callMode, item.userList),
-                            ],
-                          ),
-                        ),
-                      );
-                    } else {
-                      return const SizedBox.shrink();
-                    }
-                  });
+              return const Center(
+                  child: Padding(
+                padding: EdgeInsets.all(8),
+                child: CircularProgressIndicator(),
+              ));
             }
-          } else {
-            return const SizedBox.shrink();
           }
+          return item.callMode == CallMode.oneToOne && (item.userList == null || item.userList!.length < 2)
+              ? Obx(() => ListTile(
+                    leading: FutureBuilder(
+                        future: getProfileDetails(item.callState == 1 ? item.toUser! : item.fromUser!),
+                        builder: (context, snap) {
+                          return snap.hasData && snap.data != null
+                              ? ImageNetwork(
+                                  url: snap.data!.image!,
+                                  width: 48,
+                                  height: 48,
+                                  clipOval: true,
+                                  errorWidget: getName(snap.data!) //item.nickName
+                                          .checkNull()
+                                          .isNotEmpty
+                                      ? ProfileTextImage(text: getName(snap.data!))
+                                      : const Icon(
+                                          Icons.person,
+                                          color: Colors.white,
+                                        ),
+                                  isGroup: false,
+                                  blocked: false,
+                                  unknown: false,
+                                )
+                              : const SizedBox.shrink();
+                        }),
+                    title: FutureBuilder(
+                        future: getProfileDetails(item.callState == 1 ? item.toUser! : item.fromUser!),
+                        builder: (context, snap) {
+                          return snap.hasData && snap.data != null
+                              ? Text(
+                                  snap.data!.name!,
+                                  style: const TextStyle(color: Colors.black),
+                                )
+                              : const SizedBox.shrink();
+                        }),
+                    subtitle: SizedBox(
+                      child: callLogTime(
+                          "${getCallLogDateFromTimestamp(item.callTime!, "dd-MMM")}  ${getChatTime(context, item.callTime)}", item.callState),
+                    ),
+                    trailing: SizedBox(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                            getCallLogDuration(item.startTime!, item.endTime!),
+                            style: const TextStyle(color: Colors.black),
+                          ),
+                          const SizedBox(
+                            width: 8,
+                          ),
+                          callIcon(item.callType, item, item.callMode, []),
+                        ],
+                      ),
+                    ),
+                    selectedTileColor: controller.isLogSelected(index) ? Colors.grey[400] : null,
+                    selected: controller.isLogSelected(index),
+                    onLongPress: () {
+                      controller.selectedLog(true);
+                      controller.selectOrRemoveCallLogFromList(index);
+                    },
+                    onTap: () {
+                      if (controller.selectedLog.value) {
+                        controller.selectOrRemoveCallLogFromList(index);
+                      }
+                    },
+                  ))
+              : Obx(() => ListTile(
+                    leading: ClipOval(
+                      child: Image.asset(
+                        groupImg,
+                        height: 48,
+                        width: 48,
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                    title: FutureBuilder(
+                        future: CallUtils.getCallLogUserNames(item.userList!, item),
+                        builder: (context, snap) {
+                          if (snap.hasData) {
+                            return Text(
+                              snap.data!,
+                              style: const TextStyle(color: Colors.black),
+                            );
+                          } else {
+                            return const SizedBox.shrink();
+                          }
+                        }),
+                    subtitle: SizedBox(
+                      child: callLogTime(
+                          "${getCallLogDateFromTimestamp(item.callTime!, "dd-MMM")}  ${getChatTime(context, item.callTime)}", item.callState),
+                    ),
+                    trailing: SizedBox(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                            getCallLogDuration(item.startTime!, item.endTime!),
+                            style: const TextStyle(color: Colors.black),
+                          ),
+                          const SizedBox(
+                            width: 8,
+                          ),
+                          callIcon(item.callType, item, item.callMode, item.userList),
+                        ],
+                      ),
+                    ),
+                    selectedTileColor: controller.isLogSelected(index) ? Colors.grey[400] : null,
+                    selected: controller.isLogSelected(index),
+                    onLongPress: () {
+                      controller.selectedLog(true);
+                      controller.selectOrRemoveCallLogFromList(index);
+                    },
+                    onTap: () {
+                      if (controller.selectedLog.value) {
+                        controller.selectOrRemoveCallLogFromList(index);
+                      }
+                    },
+                  ));
         });
   }
 
@@ -1010,8 +1064,12 @@ class DashboardView extends GetView<DashboardController> {
   }
 
   Widget callIcon(String? callType, CallLogData item, String? callMode, List<String>? userList) {
+    List<String>? localUserList = [];
     if (item.callState == 0 || item.callState == 2) {
-      userList!.add(item.fromUser!);
+      localUserList.addAll(item.userList!);
+      localUserList.add(item.fromUser!);
+    } else {
+      localUserList.addAll(item.userList!);
     }
     return callType!.toLowerCase() == CallType.video
         ? IconButton(
@@ -1022,7 +1080,7 @@ class DashboardView extends GetView<DashboardController> {
                       : item.callState == 2
                           ? item.fromUser
                           : item.toUser)
-                  : controller.makeCall(userList, callType);
+                  : controller.makeCall(localUserList, callType);
             },
             icon: SvgPicture.asset(
               videoCallIcon,
@@ -1037,7 +1095,7 @@ class DashboardView extends GetView<DashboardController> {
                       : item.callState == 2
                           ? item.fromUser
                           : item.toUser)
-                  : controller.makeCall(userList, callType);
+                  : controller.makeCall(localUserList, callType);
             },
             icon: SvgPicture.asset(
               audioCallIcon,
