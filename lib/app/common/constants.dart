@@ -41,6 +41,7 @@ const Color playIconColor = Color(0xff7285B5);
 const Color durationTextColor = Color(0xff455E93);
 const Color chatBgColor = Color(0xffD0D8EB);
 const Color previewTextColor = Color(0xff7f7f7f);
+const Color callsSubText = Color(0Xff737373);
 
 class AppColors{
   static const Color callerBackground = Color(0xff152134);
@@ -749,6 +750,7 @@ class Constants {
   //Call
   static const unavailableTryAgain = "Unavailable, Try again later";
   static const cancel = "Cancel";
+  static const ok = "OK";
   static const callAgain = "Call Again";
   static const callTimeoutMessage = "Seems like no one attended the call";
 

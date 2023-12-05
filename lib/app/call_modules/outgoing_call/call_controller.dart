@@ -549,8 +549,9 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
   void timeout(String callMode, String userJid, String callType, String callStatus) {
     this.callMode(callMode);
     this.callType(callType);
-    debugPrint("#Mirrorfly Call timeout callMode : $callMode -- userJid : $userJid -- callType $callType -- callStatus $callStatus");
+    debugPrint("#Mirrorfly Call timeout callMode : $callMode -- userJid : $userJid -- callType $callType -- callStatus $callStatus -- current route ${Get.currentRoute}");
     if(Get.currentRoute==Routes.outGoingCallView) {
+      debugPrint("#Mirrorfly Call navigating to Call Timeout");
       Get.offNamed(Routes.callTimeOutView,
           arguments: {"callType": callType, "callMode": callMode, "userJid": users, "calleeName": calleeName.value});
     }else{
