@@ -1054,9 +1054,15 @@ class DashboardView extends GetView<DashboardController> {
             width: 200,
           ),
           Text(
-            'No Call Logs Found',
+            'No Call log history found',
             textAlign: TextAlign.center,
             style: Theme.of(context).textTheme.titleMedium,
+          ),
+          const SizedBox(height: 10,),
+          const Text(
+            'Any new Calls will appear here',
+            textAlign: TextAlign.center,
+            style: TextStyle(color: callsSubText),
           ),
         ],
       ),

@@ -114,7 +114,7 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
       LogMessage.d("animationValue", "$animationValue");
       // Simple rounding gives us understanding of what tab is showing
       final currentTabIndex = animationValue?.round();
-      LogMessage.d("currentTabIndex", "$currentTabIndex");
+      LogMessage.d("currentTabIndex animation listener", "$currentTabIndex");
       currentTab(currentTabIndex);
       // currentOffset equals 0 when tabs are not swiped
       // currentOffset ranges from -0.5 to 0.5
@@ -128,6 +128,11 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
           tabScales[i] = 0.0;
         }
       }
+    });
+    //The above animation listener is called multiple time till the animation gets over, this listener is called minimal time when compared to above
+    tabController?.addListener(() {
+      LogMessage.d("currentTabIndex default listener", "$currentTab");
+      clearAllChatSelection();
     });
     pageNumber = 1;
     super.onInit();
@@ -520,6 +525,12 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
   }
 
   clearAllChatSelection() {
+    debugPrint("clear selection $currentTab");
+    //Need to check the Codes below if condition for Calls tab, whether it is required or not
+    if(currentTab.value == 1){
+      selectedCallLogs.clear();
+      selectedCallLogsPosition.clear();
+    }
     selected(false);
     selectedChats.clear();
     selectedChatsPosition.clear();
@@ -1765,7 +1776,7 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
           onPressed: () {
             Get.back();
           },
-          child: const Text("No")),
+          child: Text(Constants.cancel.toUpperCase())),
       TextButton(
           onPressed: () {
             Get.back();
@@ -1780,8 +1791,8 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
               }
             });
           },
-          child: const Text("Yes")),
-    ]);
+          child: const Text(Constants.ok)),
+    ], barrierDismissible: true);
   }
 
   itemsDeleteCallLog() {
