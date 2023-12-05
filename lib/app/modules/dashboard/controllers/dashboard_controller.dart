@@ -1801,7 +1801,7 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
           onPressed: () {
             Get.back();
           },
-          child: const Text("No")),
+          child: Text(Constants.cancel.toUpperCase())),
       TextButton(
           onPressed: () async {
             Get.back();
@@ -1820,7 +1820,7 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
               }
             });
           },
-          child: const Text("Yes")),
-    ]);
+          child: const Text(Constants.ok)),
+    ], barrierDismissible: true);
   }
 }
