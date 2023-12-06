@@ -526,8 +526,9 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
         Get.offNamed(Routes.onGoingCallView, arguments: {"userJid": [userJid], "cameraSwitch": cameraSwitch.value});
       });
     }else if(Get.currentRoute == Routes.participants){
-      var data = await getProfileDetails(userJid);
-      toToast("${data.getName()} joined the Call");
+      //commenting this for when user reconnected then toast is displayed so no need to display
+      // var data = await getProfileDetails(userJid);
+      // toToast("${data.getName()} joined the Call");
     }else{
       var isAudioMuted = (await Mirrorfly.isUserAudioMuted(userJid)).checkNull();
       var isVideoMuted = (await Mirrorfly.isUserVideoMuted(userJid)).checkNull();
