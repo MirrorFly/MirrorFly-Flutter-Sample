@@ -110,7 +110,7 @@ class RecentChatItem extends StatelessWidget {
             children: [
               item.isLastMessageSentByMe.checkNull() && !isForwardMessage && !item.isLastMessageRecalledByUser.checkNull()
                   ? (item.lastMessageType == Constants.msgTypeText && item.lastMessageContent.checkNull().isNotEmpty ||
-                          item.lastMessageType != Constants.msgTypeText)
+                          item.lastMessageType != Constants.msgTypeText) && typingUserid.isEmpty
                       ? buildMessageIndicator()
                       : const SizedBox()
                   : const SizedBox(),

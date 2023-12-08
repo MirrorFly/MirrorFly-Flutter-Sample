@@ -218,15 +218,15 @@ class ChatController extends FullLifeCycleController
     });
 
     messageController.addListener(() {
-      mirrorFlyLog("typing", "typing..");
+      // mirrorFlyLog("typing", "typing..");
 
-      sendUserTypingStatus();
+      /*sendUserTypingStatus();
       debugPrint('User is typing');
       deBouncer.cancel();
       deBouncer.run(() {
         debugPrint("DeBouncer");
         sendUserTypingGoneStatus();
-      });
+      });*/
     });
 
     // if (Get.isRegistered<MainController>()) {
@@ -1177,11 +1177,19 @@ class ChatController extends FullLifeCycleController
   }
 
   void isTyping([String? typingText]) {
+    mirrorFlyLog("isTyping", typingText.toString());
     messageController.text
         .trim()
         .isNotEmpty
         ? isUserTyping(true)
         : isUserTyping(false);
+    sendUserTypingStatus();
+    debugPrint('User is typing');
+    deBouncer.cancel();
+    deBouncer.run(() {
+      debugPrint("DeBouncer");
+      sendUserTypingGoneStatus();
+    });
   }
 
   clearChatHistory(bool isStarredExcluded) {
