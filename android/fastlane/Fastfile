@@ -15,7 +15,7 @@ platform :android do
   appID_UAT = "1:719522206274:android:df54ba1969d80aeba2d3db"
 
   # DEV Release Notes
-  change_Log = "bug fixes"
+  change_Log = "multiple device login"
 
 
   desc "Upload dev version to distributes in firebase"
