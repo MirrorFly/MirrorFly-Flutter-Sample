@@ -1044,7 +1044,7 @@ class DashboardView extends GetView<DashboardController> {
   }
 
   Widget emptyCalls(BuildContext context) {
-    return Center(
+    return !controller.callLogSearchLoading.value ? Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -1066,7 +1066,7 @@ class DashboardView extends GetView<DashboardController> {
           ),
         ],
       ),
-    );
+    ): const Center(child: CircularProgressIndicator());
   }
 
   Widget callIcon(String? callType, CallLogData item, String? callMode, List<String>? userList) {

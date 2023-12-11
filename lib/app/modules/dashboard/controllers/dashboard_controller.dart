@@ -1103,11 +1103,12 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
       update();
     } else {
       if (search.text.trim().isNotEmpty) {
-        mirrorFlyLog("onChange", "search.text.trim().isNotEmpty inputValue $inputValue");
-        clearVisible(true);
-        filteredCallLog(search.text.trim());
+        callLogSearchLoading(true);
+        deBouncer.run(() {
+          clearVisible(true);
+          filteredCallLog(search.text.trim());
+        });
       } else {
-        mirrorFlyLog("onChange", "search.text.trim().isEmpty inputValue $inputValue");
         clearVisible(false);
         pageNumber = 1;
         _callLogList.clear();
@@ -1133,6 +1134,7 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
   var pageNum = 1;
   var searching = false;
   var searchLoading = false.obs;
+  var callLogSearchLoading = false.obs;
 
   Future<void> filterUserList() async {
     if (await AppUtils.isNetConnected()) {
@@ -1695,6 +1697,7 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
         }
       }
       _callLogList.addAll(callLogs);
+      callLogSearchLoading(false);
     } else {
       debugPrint("filteredCallLog : Failed");
     }
