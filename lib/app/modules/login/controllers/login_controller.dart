@@ -309,8 +309,8 @@ class LoginController extends GetxController {
       // if(mobileNumber.text.length > 9) {
       showLoading();
       var userIdentifier = countryCode!.replaceAll('+', '') + mobileNumber.text;
-      Mirrorfly.registerUser(countryCode!.replaceAll('+', '') + mobileNumber.text, isForceRegister,
-              fcmToken: SessionManagement.getToken().checkNull())
+      Mirrorfly.registerUser(countryCode!.replaceAll('+', '') + mobileNumber.text,
+              fcmToken: SessionManagement.getToken().checkNull(), isForceRegister : isForceRegister)
           .then((value) {
 
         if (value.contains("data")) {
