@@ -312,6 +312,7 @@ class LoginController extends GetxController {
       Mirrorfly.registerUser(countryCode!.replaceAll('+', '') + mobileNumber.text, isForceRegister,
               fcmToken: SessionManagement.getToken().checkNull())
           .then((value) {
+
         if (value.contains("data")) {
           var userData = registerModelFromJson(value); //message
           SessionManagement.setLogin(userData.data!.username!.isNotEmpty);
