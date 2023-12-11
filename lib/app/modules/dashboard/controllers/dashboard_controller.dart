@@ -530,6 +530,7 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
     if(currentTab.value == 1){
       selectedCallLogs.clear();
       selectedCallLogsPosition.clear();
+      selectedLog(false);
     }
     selected(false);
     selectedChats.clear();

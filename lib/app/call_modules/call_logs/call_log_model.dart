@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 CallLogModel callLogListFromJson(String str) => CallLogModel.fromJson(json.decode(str));
 
@@ -77,7 +78,7 @@ class CallLogData {
 
   CallLogData.fromJson(Map<String, dynamic> json) {
     callMode = json['callMode'];
-    callState = json['callState'];
+    callState = Platform.isAndroid ? json['callState'] : getCallState(stateValue: json['callState']);
     callTime = json['callTime'];
     callType = json['callType'];
     callerDevice = json['callerDevice'];
@@ -119,5 +120,14 @@ class CallLogData {
     data['userList'] = userList;
     data['nickName'] = nickName;
     return data;
+  }
+
+  int getCallState({required String stateValue}) {
+    switch(stateValue){
+      case "MissedCall": return 2;
+      case "OutgoingCall": return 1;
+      case "IncomingCall": return 0;
+      default: return 1;
+    }
   }
 }
