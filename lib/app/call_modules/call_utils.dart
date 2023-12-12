@@ -1,7 +1,7 @@
-import 'package:mirror_fly_demo/app/call_modules/call_logs/call_log_model.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
 import 'package:mirror_fly_demo/app/data/session_management.dart';
 import 'package:mirrorfly_plugin/mirrorfly.dart';
+import 'package:mirrorfly_plugin/model/call_log_model.dart';
 
 import '../common/constants.dart';
 import '../data/apputils.dart';
@@ -68,10 +68,10 @@ class CallUtils {
     var membersName = StringBuffer();
     var isMaxMemberNameNotReached = true;
 
-    if (item.callState == 0 || item.callState == 2) {
-      var pair = await AppUtils.getNameAndProfileDetails(item.fromUser!);
-      membersName.write("${pair.item1}, ");
-    }
+    // if (item.callState == CallState.missedCall || item.callState == CallState.incomingCall) {
+    //   var pair = await AppUtils.getNameAndProfileDetails(item.fromUser!);
+    //   membersName.write("${pair.item1}, ");
+    // }
 
     for (var i = 0; i < callUsers.length; i++) {
       if (callUsers[i] != null) {

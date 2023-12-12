@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:focus_detector/focus_detector.dart';
 import 'package:get/get.dart';
-import 'package:mirror_fly_demo/app/call_modules/call_logs/call_log_model.dart';
 import 'package:mirror_fly_demo/app/call_modules/call_utils.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
 import 'package:mirror_fly_demo/app/modules/dashboard/widgets.dart';
 import 'package:mirror_fly_demo/app/widgets/animated_floating_action.dart';
 import 'package:mirrorfly_plugin/mirrorflychat.dart';
+import 'package:mirrorfly_plugin/model/call_log_model.dart';
 
 import '../../../common/app_theme.dart';
 import '../../../common/widgets.dart';
@@ -1044,7 +1044,7 @@ class DashboardView extends GetView<DashboardController> {
   }
 
   Widget emptyCalls(BuildContext context) {
-    return Center(
+    return !controller.callLogSearchLoading.value ? Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -1066,12 +1066,12 @@ class DashboardView extends GetView<DashboardController> {
           ),
         ],
       ),
-    );
+    ): const Center(child: CircularProgressIndicator());
   }
 
   Widget callIcon(String? callType, CallLogData item, String? callMode, List<String>? userList) {
     List<String>? localUserList = [];
-    if (item.callState == 0 || item.callState == 2) {
+    if (item.callState == CallState.missedCall || item.callState == CallState.incomingCall) {
       localUserList.addAll(item.userList!);
       localUserList.add(item.fromUser!);
     } else {
@@ -1081,9 +1081,9 @@ class DashboardView extends GetView<DashboardController> {
         ? IconButton(
             onPressed: () {
               callMode == CallMode.oneToOne
-                  ? controller.makeVideoCall(item.callState == 0
+                  ? controller.makeVideoCall(item.callState == CallState.missedCall
                       ? item.fromUser
-                      : item.callState == 2
+                      : item.callState == CallState.incomingCall
                           ? item.fromUser
                           : item.toUser)
                   : controller.makeCall(localUserList, callType);
@@ -1096,9 +1096,9 @@ class DashboardView extends GetView<DashboardController> {
         : IconButton(
             onPressed: () {
               callMode == CallMode.oneToOne
-                  ? controller.makeVoiceCall(item.callState == 0
+                  ? controller.makeVoiceCall(item.callState == CallState.missedCall
                       ? item.fromUser
-                      : item.callState == 2
+                      : item.callState == CallState.incomingCall
                           ? item.fromUser
                           : item.toUser)
                   : controller.makeCall(localUserList, callType);
