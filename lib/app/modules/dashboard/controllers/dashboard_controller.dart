@@ -211,7 +211,7 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
       // String recentList = value.replaceAll('\n', '\\n');
       // debugPrint(recentList);
       mirrorFlyLog("getRecentChatListHistory", value);
-      var data = await compute(recentChatFromJson, value.toString());
+      var data = recentChatFromJson(value.toString());//await compute(recentChatFromJson, value.toString());
       recentChats.clear();
       recentChats(data.data!);
       recentChats.refresh();
@@ -1469,7 +1469,7 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
             : Mirrorfly.getRecentChatListHistory(firstSet: recentChatPage == 1, limit: chatLimit);
         fetchFrom.then((value) async {
           debugPrint("getRecentChatListHistory next data $value");
-          var data = await compute(recentChatFromJson, value.toString());
+          var data = recentChatFromJson(value.toString());//await compute(recentChatFromJson, value.toString());
           recentChats.addAll(data.data!);
           recentChats.refresh();
           isRecentHistoryLoading(false);
