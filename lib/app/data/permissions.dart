@@ -178,16 +178,16 @@ class AppPermission {
     final bluetoothConnect = await Permission.bluetoothConnect.status; //BLUETOOTH_CONNECT
     final notification = await Permission.notification.status; //NOTIFICATION
     var permissions = <Permission>[];
-    if(!phone.isGranted || (await Permission.phone.shouldShowRequestRationale)/*&& !SessionManagement.getBool(Constants.readPhoneStatePermissionAsked)*/ && Platform.isAndroid){
+    if(Platform.isAndroid && (!phone.isGranted || (await Permission.phone.shouldShowRequestRationale)/*&& !SessionManagement.getBool(Constants.readPhoneStatePermissionAsked)*/)){
       permissions.add(Permission.phone);
     }
     if(!microphone.isGranted || (await Permission.microphone.shouldShowRequestRationale)/*&& !SessionManagement.getBool(Constants.audioRecordPermissionAsked)*/){
       permissions.add(Permission.microphone);
     }
-    if(!bluetoothConnect.isGranted || (await Permission.bluetoothConnect.shouldShowRequestRationale)/*&& !SessionManagement.getBool(Constants.bluetoothPermissionAsked)*/ && Platform.isAndroid){
+    if(Platform.isAndroid && (!bluetoothConnect.isGranted || (await Permission.bluetoothConnect.shouldShowRequestRationale)/*&& !SessionManagement.getBool(Constants.bluetoothPermissionAsked)*/)){
       permissions.add(Permission.bluetoothConnect);
     }
-    if(!notification.isGranted || (await Permission.notification.shouldShowRequestRationale)/*&& !SessionManagement.getBool(Constants.notificationPermissionAsked)*/ && Platform.isAndroid){
+    if(Platform.isAndroid && (!notification.isGranted || (await Permission.notification.shouldShowRequestRationale)/*&& !SessionManagement.getBool(Constants.notificationPermissionAsked)*/)){
       permissions.add(Permission.notification);
     }
     LogMessage.d("phone", phone.isGranted);
@@ -207,9 +207,9 @@ class AppPermission {
       LogMessage.d("SessionManagement.getBool(Constants.audioRecordPermissionAsked) audio", (SessionManagement.getBool(Constants.audioRecordPermissionAsked)));
       LogMessage.d("permissions audio", (permissions.toString()));
       var alreadyAsked = (SessionManagement.getBool(Constants.audioRecordPermissionAsked)
-          || SessionManagement.getBool(Constants.readPhoneStatePermissionAsked) ||
-          SessionManagement.getBool(Constants.bluetoothPermissionAsked) ||
-          SessionManagement.getBool(Constants.notificationPermissionAsked));
+          || (Platform.isAndroid && SessionManagement.getBool(Constants.readPhoneStatePermissionAsked)) ||
+          (Platform.isAndroid && SessionManagement.getBool(Constants.bluetoothPermissionAsked)) ||
+          (Platform.isAndroid && SessionManagement.getBool(Constants.notificationPermissionAsked)));
       LogMessage.d("alreadyAsked audio", alreadyAsked);
       var permissionName = getPermissionDisplayName(permissions);
       LogMessage.d("permissionName", permissionName);

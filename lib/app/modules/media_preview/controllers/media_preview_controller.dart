@@ -6,7 +6,6 @@ import 'package:flutter/scheduler.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:mirrorfly_plugin/mirrorfly.dart';
 import 'package:get/get.dart';
-import 'package:mirrorfly_plugin/model/available_features.dart';
 
 import '../../../common/constants.dart';
 import '../../../common/main_controller.dart';

@@ -110,7 +110,7 @@ class RecentChatItem extends StatelessWidget {
             children: [
               item.isLastMessageSentByMe.checkNull() && !isForwardMessage && !item.isLastMessageRecalledByUser.checkNull()
                   ? (item.lastMessageType == Constants.msgTypeText && item.lastMessageContent.checkNull().isNotEmpty ||
-                          item.lastMessageType != Constants.msgTypeText)
+                          item.lastMessageType != Constants.msgTypeText) && typingUserid.isEmpty
                       ? buildMessageIndicator()
                       : const SizedBox()
                   : const SizedBox(),
@@ -284,13 +284,13 @@ class RecentChatItem extends StatelessWidget {
         ));
   }
 
-  FutureBuilder<Profile> buildTypingUser() {
-    return FutureBuilder(
+  Widget buildTypingUser() {
+    return typingUserid.checkNull().isEmpty ? const SizedBox( height: 15,) : FutureBuilder(
         future: getProfileDetails(typingUserid.checkNull()),
         builder: (context, data) {
-          if (data.hasData) {
+          if (data.hasData && data.data!=null) {
             return Text(
-              "${getName(data.data!).checkNull()} typing...",
+              getTypingUser(data.data!),
               //"${data.data!.name.checkNull()} typing...",
               style: typingstyle,
               maxLines: 1,
@@ -298,9 +298,17 @@ class RecentChatItem extends StatelessWidget {
             );
           } else {
             mirrorFlyLog("hasError", data.error.toString());
-            return const SizedBox();
+            return const SizedBox( height: 15,);
           }
         });
+  }
+
+  String getTypingUser(Profile profile){
+    if(profile.isGroupProfile.checkNull()){
+      return "${profile.getName().checkNull()} typing...";
+    }else{
+      return "typing...";
+    }
   }
 
   FutureBuilder<ChatMessageModel> buildLastMessageItem() {
@@ -355,7 +363,7 @@ class RecentChatItem extends StatelessWidget {
               ],
             );
           }
-          return const SizedBox();
+          return const SizedBox( height: 15,);
         });
   }
 
@@ -537,7 +545,7 @@ Widget callLogTime(String time, int? callState) {
       const SizedBox(
         width: 5,
       ),
-      Text(time),
+      Text(time, style: const TextStyle(color: Colors.black),),
     ],
   );
 }

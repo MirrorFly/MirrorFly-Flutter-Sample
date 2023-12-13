@@ -378,7 +378,7 @@ extension MemberProfileParsing on MemberProfileDetails {
 Future<Profile> getProfileDetails(String jid) async {
   var value = await Mirrorfly.getProfileDetails(jid.checkNull());
   // profileDataFromJson(value);
-  debugPrint("getProfileDetails--> $value");
+  // debugPrint("getProfileDetails--> $value");
   // var profile = await compute(profiledata, value.toString());
   var profile = Profile.fromJson(json.decode(value.toString()));
   return profile;
@@ -387,7 +387,7 @@ Future<Profile> getProfileDetails(String jid) async {
 Future<ChatMessageModel> getMessageOfId(String mid) async {
   var value = await Mirrorfly.getMessageOfId(mid.checkNull());
   // debugPrint("message--> $value");
-  var chatMessage = await compute(sendMessageModelFromJson, value.toString());
+  var chatMessage = sendMessageModelFromJson(value.toString());//await compute(sendMessageModelFromJson, value.toString());
   return chatMessage;
 }
 

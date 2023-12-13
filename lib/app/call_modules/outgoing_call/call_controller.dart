@@ -368,14 +368,15 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
   void userDisconnection(String callMode, String userJid, String callType) {
     this.callMode(callMode);
     this.callType(callType);
-    if(Get.currentRoute==Routes.outGoingCallView){
+    debugPrint("Current Route ${Get.currentRoute}");
+    if(Get.currentRoute == Routes.outGoingCallView){
       // This if condition is added for the group call remote busy - call action
       if(callList.length < 2){
         Get.back();
       }
       return;
     }
-    debugPrint("#Mirrorfly call call disconnect called ${callList.length}");
+    debugPrint("#Mirrorfly call call disconnect called ${callList.length} userJid to remove $userJid");
     debugPrint("#Mirrorfly call call disconnect called ${callUserListToJson(callList)}");
     if (callList.isEmpty) {
       debugPrint("call list is empty returning");
@@ -385,19 +386,22 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
     var index = callList.indexWhere((user) => user.userJid!.value == userJid);
     debugPrint("#Mirrorfly call disconnected user Index $index ${Get.currentRoute}");
     if (!index.isNegative) {
-      callList.removeAt(index);
+      // callList.removeAt(index);
+      callList.removeWhere((callUser) => callUser.userJid?.value == userJid);
     } else {
       debugPrint("#Mirrorflycall participant jid is not in the list");
     }
     debugPrint("#Mirrorfly call call disconnect called after user removed ${callList.length}");
     if (callList.length <= 1 || userJid == SessionManagement.getUserJID()) {
+      debugPrint("Entering Call Disconnection Loop");
       isCallTimerEnabled = false;
       //if user is in the participants screen all users end the call then we should close call pages
-      if(Get.currentRoute==Routes.participants){
+      if(Get.currentRoute == Routes.participants){
         Get.back();
       }
       // if there is an single user in that call and if he [disconnected] no need to disconnect the call from our side Observed in Android
       if (Platform.isIOS) {
+        debugPrint("Calling Disconnection call in iOS");
         // in iOS needs to call disconnect.
         disconnectCall();
       } else {
@@ -418,6 +422,7 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
   }
 
   callDisconnectedStatus(){
+    debugPrint("callDisconnectedStatus is called");
     callList.clear();
     callTimer("Disconnected");
     if(Get.currentRoute==Routes.participants){
@@ -486,11 +491,13 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
     this.callMode(callMode);
     this.callType(callType);
     // this.callStatus(callStatus);
+    var isAudioMuted = (await Mirrorfly.isUserAudioMuted(userJid)).checkNull();
+    var isVideoMuted = (await Mirrorfly.isUserVideoMuted(userJid)).checkNull();
     var index = callList.indexWhere((userList) => userList.userJid!.value == userJid);
     debugPrint("User List Index $index");
     if(index.isNegative){
       debugPrint("User List not Found, so adding the user to list");
-      CallUserList callUserList = CallUserList(userJid: userJid.obs, callStatus: RxString(callStatus), isAudioMuted: (await Mirrorfly.isUserAudioMuted(userJid)).checkNull(), isVideoMuted: (await Mirrorfly.isUserVideoMuted(userJid)).checkNull(),);
+      CallUserList callUserList = CallUserList(userJid: userJid.obs, callStatus: RxString(callStatus), isAudioMuted: isAudioMuted, isVideoMuted: isVideoMuted,);
       if(callList.length > 1) {
         callList.insert(callList.length - 1, callUserList);
       }else {
@@ -519,12 +526,16 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
         Get.offNamed(Routes.onGoingCallView, arguments: {"userJid": [userJid], "cameraSwitch": cameraSwitch.value});
       });
     }else if(Get.currentRoute == Routes.participants){
-      var data = await getProfileDetails(userJid);
-      toToast("${data.getName()} joined the Call");
+      //commenting this for when user reconnected then toast is displayed so no need to display
+      // var data = await getProfileDetails(userJid);
+      // toToast("${data.getName()} joined the Call");
     }else{
+      var isAudioMuted = (await Mirrorfly.isUserAudioMuted(userJid)).checkNull();
+      var isVideoMuted = (await Mirrorfly.isUserVideoMuted(userJid)).checkNull();
+      var indexValid = callList.indexWhere((element) => element.userJid?.value == userJid);
       debugPrint("#MirrorflyCall user jid $userJid");
-      CallUserList callUserList = CallUserList(userJid: userJid.obs, callStatus: RxString(callStatus), isAudioMuted: (await Mirrorfly.isUserAudioMuted(userJid)).checkNull(), isVideoMuted: (await Mirrorfly.isUserVideoMuted(userJid)).checkNull(),);
-     if(callList.indexWhere((userList) => userList.userJid!.value == userJid).isNegative) {
+      CallUserList callUserList = CallUserList(userJid: userJid.obs, callStatus: RxString(callStatus), isAudioMuted: isAudioMuted, isVideoMuted: isVideoMuted,);
+     if(indexValid.isNegative) {
        callList.insert(callList.length - 1, callUserList);
        // callList.add(callUserList);
        debugPrint("#MirrorflyCall List value updated ${callList.length}");
@@ -539,8 +550,9 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
   void timeout(String callMode, String userJid, String callType, String callStatus) {
     this.callMode(callMode);
     this.callType(callType);
-    debugPrint("#Mirrorfly Call timeout callMode : $callMode -- userJid : $userJid -- callType $callType -- callStatus $callStatus");
+    debugPrint("#Mirrorfly Call timeout callMode : $callMode -- userJid : $userJid -- callType $callType -- callStatus $callStatus -- current route ${Get.currentRoute}");
     if(Get.currentRoute==Routes.outGoingCallView) {
+      debugPrint("#Mirrorfly Call navigating to Call Timeout");
       Get.offNamed(Routes.callTimeOutView,
           arguments: {"callType": callType, "callMode": callMode, "userJid": users, "calleeName": calleeName.value});
     }else{
@@ -937,15 +949,21 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
 
   void addParticipants(String callMode, String userJid, String callType){
     Mirrorfly.getInvitedUsersList().then((value) async {
-      LogMessage.d("addParticipants", value);
+      LogMessage.d("callController", " getInvitedUsersList $value");
       if(value.isNotEmpty){
         var userJids = value;
         for (var jid in userJids) {
-          if(callList.indexWhere((element) => element.userJid?.value == jid).isNegative) {
+          LogMessage.d("callController", "before ${callUserListToJson(callList)}");
+          var isAudioMuted = (await Mirrorfly.isUserAudioMuted(jid)).checkNull();
+          var isVideoMuted = (await Mirrorfly.isUserVideoMuted(jid)).checkNull();
+          var indexValid = callList.indexWhere((element) => element.userJid?.value == jid);
+          LogMessage.d("callController", "indexValid : $indexValid jid : $jid");
+          if(indexValid.isNegative) {
             callList.insert(callList.length - 1, CallUserList(
-                userJid: jid.obs, isAudioMuted: (await Mirrorfly.isUserAudioMuted(jid)).checkNull(), isVideoMuted: (await Mirrorfly.isUserVideoMuted(jid)).checkNull(), callStatus: CallStatus.calling.obs));
+                userJid: jid.obs, isAudioMuted: isAudioMuted, isVideoMuted: isVideoMuted, callStatus: CallStatus.calling.obs));
             users.insert(users.length - 1, jid);
             // getNames();
+            LogMessage.d("callController", "after ${callUserListToJson(callList)}");
           }
         }
       }

@@ -1,5 +1,5 @@
 name: mirror_fly_demo
-version: 2.5.8+61
+version: 2.6.2+70
 build_release_date: Nov 2023
 publish_to: none
 description: A MirrorFly Flutter Sample Application.
@@ -19,7 +19,7 @@ dependencies:
   intl: ^0.17.0 #datetime
   package_info_plus: ^4.0.2 #package info
   image_picker: ^0.8.6
-  permission_handler: ^10.4.3
+  permission_handler: ^11.0.1
 #  emoji_picker_flutter: ^1.4.0
   emoji_picker_flutter: 1.6.1
   image_cropping: ^0.0.13 #crop image
@@ -36,10 +36,10 @@ dependencies:
   geocoding: ^2.0.5 #geocoder for address
   focus_detector: ^2.0.1 #focus detector
   record: ^3.0.0
-  swipe_to: ^1.0.2
+  swipe_to: ^1.0.4
   flutter_keyboard_visibility: ^5.4.0
   keyboard_dismisser: ^3.0.0
-  scrollable_positioned_list: ^0.3.5 #scrollable position
+  scrollable_positioned_list: ^0.3.8 #scrollable position
   otp_text_field: ^1.1.3 #otp field
   firebase_core: ^2.15.1 #firebase core
   firebase_auth: ^4.7.3 #firebas authentication

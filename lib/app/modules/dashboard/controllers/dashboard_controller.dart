@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
-import 'package:mirror_fly_demo/app/call_modules/call_logs/call_log_model.dart';
 import 'package:mirror_fly_demo/app/call_modules/call_utils.dart';
 import 'package:mirror_fly_demo/app/modules/notification/notification_builder.dart';
 import 'package:mirrorfly_plugin/logmessage.dart';
@@ -14,6 +13,7 @@ import 'package:mirror_fly_demo/app/data/helper.dart';
 import 'package:mirror_fly_demo/app/data/session_management.dart';
 
 import 'package:intl/intl.dart';
+import 'package:mirrorfly_plugin/model/call_log_model.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 import '../../../common/de_bouncer.dart';
@@ -86,6 +86,16 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
   // Initialize with 1.0 for initial opened tab, 0.0 for others
   final tabScales = List.generate(tabsCount, (index) => index == initialIndex ? 1.0 : 0.0).obs;
 
+  var isLastPage = false.obs;
+  late int pageNumber;
+  var error = false.obs;
+  var loading = true.obs;
+  var totalPages = 0;
+
+  var selectedLog = false.obs;
+  var selectedCallLogs = <String>[].obs;
+  var selectedCallLogsPosition = <int>[].obs;
+
   @override
   void onInit() {
     tabController = TabController(length: 2, vsync: this);
@@ -104,7 +114,7 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
       LogMessage.d("animationValue", "$animationValue");
       // Simple rounding gives us understanding of what tab is showing
       final currentTabIndex = animationValue?.round();
-      LogMessage.d("currentTabIndex", "$currentTabIndex");
+      LogMessage.d("currentTabIndex animation listener", "$currentTabIndex");
       currentTab(currentTabIndex);
       // currentOffset equals 0 when tabs are not swiped
       // currentOffset ranges from -0.5 to 0.5
@@ -119,7 +129,12 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
         }
       }
     });
-
+    //The above animation listener is called multiple time till the animation gets over, this listener is called minimal time when compared to above
+    tabController?.addListener(() {
+      LogMessage.d("currentTabIndex default listener", "$currentTab");
+      clearAllChatSelection();
+    });
+    pageNumber = 1;
     super.onInit();
   }
 
@@ -140,7 +155,6 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
     // checkArchiveSetting();
     userlistScrollController.addListener(_scrollListener);
     historyScrollController.addListener(historyScrollListener);
-    callLogPageNum = 0;
     fetchCallLogList();
     callLogScrollController.addListener(_callLogScrollListener);
   }
@@ -197,7 +211,7 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
       // String recentList = value.replaceAll('\n', '\\n');
       // debugPrint(recentList);
       mirrorFlyLog("getRecentChatListHistory", value);
-      var data = await compute(recentChatFromJson, value.toString());
+      var data = recentChatFromJson(value.toString());//await compute(recentChatFromJson, value.toString());
       recentChats.clear();
       recentChats(data.data!);
       recentChats.refresh();
@@ -511,6 +525,12 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
   }
 
   clearAllChatSelection() {
+    debugPrint("clear selection $currentTab");
+    //Need to check the Codes below if condition for Calls tab, whether it is required or not
+    if(currentTab.value == 1){
+      selectedCallLogs.clear();
+      selectedCallLogsPosition.clear();
+    }
     selected(false);
     selectedChats.clear();
     selectedChatsPosition.clear();
@@ -1038,7 +1058,6 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
   var callLogScrollController = ScrollController();
   var isCallLogPageLoading = false.obs;
   final _callLogList = <CallLogData>[].obs;
-  int callLogPageNum = 0;
 
   set callLogList(List<CallLogData> value) => _callLogList.value = value;
 
@@ -1056,6 +1075,7 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
   }
 
   onChange(String inputValue, [int? value]) {
+    mirrorFlyLog("onChange", "inputValue $inputValue");
     if (value == 0) {
       if (search.text.trim().isNotEmpty) {
         clearVisible(true);
@@ -1083,12 +1103,18 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
       update();
     } else {
       if (search.text.trim().isNotEmpty) {
-        clearVisible(true);
-        filteredCallLog(search.text.trim());
+        callLogSearchLoading(true);
+        deBouncer.run(() {
+          clearVisible(true);
+          filteredCallLog(search.text.trim());
+        });
       } else {
         clearVisible(false);
+        pageNumber = 1;
+        _callLogList.clear();
+        callLogList.clear();
+        fetchCallLogList();
       }
-
     }
   }
 
@@ -1101,13 +1127,14 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
     // frmRecentChatList(recentChats);
     _callLogList.clear();
     callLogList.clear();
-    callLogPageNum = 0;
+    pageNumber = 1;
     fetchCallLogList();
   }
 
   var pageNum = 1;
   var searching = false;
   var searchLoading = false.obs;
+  var callLogSearchLoading = false.obs;
 
   Future<void> filterUserList() async {
     if (await AppUtils.isNetConnected()) {
@@ -1444,7 +1471,7 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
             : Mirrorfly.getRecentChatListHistory(firstSet: recentChatPage == 1, limit: chatLimit);
         fetchFrom.then((value) async {
           debugPrint("getRecentChatListHistory next data $value");
-          var data = await compute(recentChatFromJson, value.toString());
+          var data = recentChatFromJson(value.toString());//await compute(recentChatFromJson, value.toString());
           recentChats.addAll(data.data!);
           recentChats.refresh();
           isRecentHistoryLoading(false);
@@ -1516,17 +1543,21 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
   void onHidden() {}
 
   Future<void> fetchCallLogList() async {
-    debugPrint("fetchCallLogList ===> Called $callLogPageNum");
-    callLogPageNum = callLogPageNum + 1;
-    Mirrorfly.getCallLogsList(callLogPageNum).then((value) {
+    Mirrorfly.getCallLogsList(pageNumber).then((value) {
       if (value != null) {
         var list = callLogListFromJson(value);
+        totalPages = list.totalPages!;
+        debugPrint("fetchCallLogList ===> total_pages $totalPages pageNumber $pageNumber list.data!.length ${list.data!.length} ");
         if (list.data != null) {
           _callLogList.addAll(list.data!);
+          isLastPage.value = list.data!.isEmpty;
+          loading.value = false;
+          pageNumber = pageNumber + 1;
         }
       }
     }).catchError((error) {
       debugPrint("issue===> $error");
+      loading.value = false;
     });
   }
 
@@ -1646,7 +1677,7 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
     List<CallLogData> callLogs = [];
     List<CallLogData> callLogsWithNickName = [];
 
-    var res = await Mirrorfly.filteredCallLog();
+    var res = await Mirrorfly.getLocalCallLogs();
     if (res != null) {
       _callLogList.clear();
       callLogList.clear();
@@ -1666,6 +1697,7 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
         }
       }
       _callLogList.addAll(callLogs);
+      callLogSearchLoading(false);
     } else {
       debugPrint("filteredCallLog : Failed");
     }
@@ -1673,7 +1705,11 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
 
   String getEndUserJid(CallLogData callLog) {
     if (callLog.callMode == CallMode.groupCall) {
-      return callLog.groupId!;
+      if (callLog.groupId == null) {
+        return "";
+      } else {
+        return callLog.groupId!;
+      }
     } else {
       if (callLog.callState == 0 || callLog.callState == 2) {
         return callLog.fromUser!;
@@ -1694,5 +1730,100 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
       callLog.nickName = getName(str);
       return callLog;
     }
+  }
+
+  selectOrRemoveCallLogFromList(int index) {
+    if (selectedLog.isTrue) {
+      if (selectedCallLogs.contains(callLogList[index].roomId)) {
+        selectedCallLogs.remove(callLogList[index].roomId.checkNull());
+        selectedCallLogsPosition.remove(index);
+      } else {
+        selectedCallLogs.add(callLogList[index].roomId.checkNull());
+        selectedCallLogsPosition.add(index);
+      }
+    }
+    if (selectedCallLogs.isEmpty) {
+      // clearAllChatSelection();
+      delete(false);
+      selected(false);
+      selectedLog(false);
+    } else {
+      delete(true);
+      selected(true);
+    }
+    if (delete.value) {
+      clearVisible(false);
+    } else {
+      if (isSearching.value) {
+        clearVisible(true);
+      } else {
+        clearVisible(false);
+      }
+    }
+  }
+
+  isLogSelected(int index) => selectedCallLogs.contains(callLogList[index].roomId);
+
+  deleteCallLog() {
+    if (selectedCallLogs.length == 1) {
+      _itemDeleteCallLog(0);
+    } else {
+      itemsDeleteCallLog();
+    }
+  }
+
+  _itemDeleteCallLog(int index) {
+    var logIndex = callLogList.indexWhere((element) => selectedCallLogs[index] == element.roomId); //selectedChatsPosition[index];
+    Helper.showAlert(message: "Do you want to delete a call log?", actions: [
+      TextButton(
+          onPressed: () {
+            Get.back();
+          },
+          child: Text(Constants.cancel.toUpperCase())),
+      TextButton(
+          onPressed: () {
+            Get.back();
+            Mirrorfly.deleteCallLog(selectedCallLogs, false).then((value) {
+              if (value) {
+                callLogList.removeAt(logIndex);
+                delete(false);
+                selected(false);
+                selectedCallLogs.clear();
+              } else {
+                toToast("Error in call log delete");
+              }
+            });
+          },
+          child: const Text(Constants.ok)),
+    ], barrierDismissible: true);
+  }
+
+  itemsDeleteCallLog() {
+    Helper.showAlert(message: "Do you want to delete the selected call logs?", actions: [
+      TextButton(
+          onPressed: () {
+            Get.back();
+          },
+          child: Text(Constants.cancel.toUpperCase())),
+      TextButton(
+          onPressed: () async {
+            Get.back();
+            Mirrorfly.deleteCallLog(selectedCallLogs, false).then((value) {
+              debugPrint("deleteCallLog ${value.toString()}");
+              if (value) {
+                for (var logItem in selectedCallLogs) {
+                  var chatIndex = callLogList.indexWhere((element) => logItem == element.roomId);
+                  callLogList.removeAt(chatIndex);
+                }
+                delete(false);
+                selected(false);
+                selectedCallLogs.clear();
+              } else {
+                toToast("Error in call log delete");
+              }
+            });
+          },
+          child: const Text(Constants.ok)),
+    ], barrierDismissible: true);
   }
 }
