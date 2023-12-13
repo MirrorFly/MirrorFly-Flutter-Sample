@@ -1269,7 +1269,7 @@ class ChatView extends GetView<ChatController> {
                 ),
                 overflowWidget: const Text("Video Call"),
                 showAsAction: controller.availableFeatures.value.isOneToOneCallAvailable.checkNull() ? controller
-                    .profile.isGroupProfile.checkNull() ? ShowAsAction.gone : ShowAsAction.always : ShowAsAction.gone,
+                    .profile.isGroupProfile.checkNull() && controller.availableFeatures.value.isGroupCallAvailable.checkNull() ? ShowAsAction.always : ShowAsAction.gone : ShowAsAction.gone,
                 keyValue: 'Video Call',
                 onItemClick: () {
                   controller.makeVideoCall();
@@ -1284,7 +1284,7 @@ class ChatView extends GetView<ChatController> {
                 ),
                 overflowWidget: const Text("Call"),
                 showAsAction: controller.availableFeatures.value.isOneToOneCallAvailable.checkNull() ? controller
-                    .profile.isGroupProfile.checkNull() ? ShowAsAction.gone : ShowAsAction.always : ShowAsAction.gone,
+                    .profile.isGroupProfile.checkNull() && controller.availableFeatures.value.isGroupCallAvailable.checkNull() ? ShowAsAction.always : ShowAsAction.gone : ShowAsAction.gone,
                 keyValue: 'Audio Call',
                 onItemClick: () {
                   controller.makeVoiceCall();
