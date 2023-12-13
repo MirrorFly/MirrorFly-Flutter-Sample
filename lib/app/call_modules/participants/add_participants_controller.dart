@@ -13,6 +13,7 @@ import '../../data/session_management.dart';
 
 class AddParticipantsController extends GetxController with GetTickerProviderStateMixin {
   var callList = Get.find<CallController>().callList;//List<CallUserList>.empty(growable: true).obs;
+  var groupId = Get.find<CallController>().groupId;
 
   ScrollController scrollController = ScrollController();
   var pageNum = 1;
@@ -60,11 +61,15 @@ class AddParticipantsController extends GetxController with GetTickerProviderSta
       //   }
       // }
     });
-    if (await AppUtils.isNetConnected() || !Mirrorfly.isTrialLicence) {
-      isPageLoading(true);
-      fetchUsers(false);
-    } else {
-      toToast(Constants.noInternetConnection);
+    if(groupId.isEmpty) {
+      if (await AppUtils.isNetConnected() || !Mirrorfly.isTrialLicence) {
+        isPageLoading(true);
+        fetchUsers(false);
+      } else {
+        toToast(Constants.noInternetConnection);
+      }
+    }else{
+      getGroupMembers();
     }
   }
 
@@ -95,14 +100,23 @@ class AddParticipantsController extends GetxController with GetTickerProviderSta
         _searchText = searchQuery.text.trim();
         pageNum = 1;
       }
-      if (Mirrorfly.isTrialLicence) {
-        deBouncer.run(() {
+      if(groupId.isEmpty) {
+        if (Mirrorfly.isTrialLicence) {
+          deBouncer.run(() {
+            fetchUsers(true);
+          });
+        } else {
           fetchUsers(true);
-        });
-      } else {
-        fetchUsers(true);
+        }
+      }else{
+        filterGroupMembers();
       }
     }
+  }
+
+  void filterGroupMembers() {
+    var filteredList = mainUsersList.where((item) => item.getName().toLowerCase().contains(_searchText.trim())).toList();
+    usersList(filteredList);
   }
 
   clearSearch(){
@@ -388,6 +402,21 @@ class AddParticipantsController extends GetxController with GetTickerProviderSta
       });
     } else {
       toToast(Constants.noInternetConnection);
+    }
+  }
+
+  void getGroupMembers() {
+    if(groupId.isNotEmpty) {
+      Mirrorfly.getGroupMembersList(groupId.value.checkNull(), null).then((value) {
+        mirrorFlyLog("getGroupMembersList", value);
+        if (value != null) {
+          var list = profileFromJson(value);
+          var callConnectedUserList = List<String>.from(callList.map((element) => element.userJid));
+          var filteredList = getFilteredList(callConnectedUserList, list);
+          mainUsersList(filteredList);
+          usersList(filteredList);
+        }
+      });
     }
   }
 

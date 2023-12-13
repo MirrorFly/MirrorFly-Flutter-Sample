@@ -3067,17 +3067,21 @@ class ChatController extends FullLifeCycleController
     closeKeyBoard();
     if (await AppUtils.isNetConnected()) {
       if (await AppPermission.askAudioCallPermissions()) {
-        Mirrorfly.makeVoiceCall(profile.jid.checkNull()).then((value) {
-          if (value) {
-            debugPrint("#Mirrorfly Call userjid ${profile.jid}");
-            setOnGoingUserGone();
-            Get.toNamed(Routes.outGoingCallView,
-                arguments: {"userJid": [profile.jid], "callType": CallType.audio})
-                ?.then((value) => setOnGoingUserAvail());
-          }
-        }).catchError((e) {
-          debugPrint("#Mirrorfly Call $e");
-        });
+        if(profile.isGroupProfile.checkNull()) {
+          Get.toNamed(Routes.groupParticipants,arguments: {"groupId": profile.jid, "callType": CallType.audio});
+        }else{
+          Mirrorfly.makeVoiceCall(profile.jid.checkNull()).then((value) {
+            if (value) {
+              debugPrint("#Mirrorfly Call userjid ${profile.jid}");
+              setOnGoingUserGone();
+              Get.toNamed(Routes.outGoingCallView,
+                  arguments: {"userJid": [profile.jid], "callType": CallType.audio})
+                  ?.then((value) => setOnGoingUserAvail());
+            }
+          }).catchError((e) {
+            debugPrint("#Mirrorfly Call $e");
+          });
+        }
       } else {
         debugPrint("permission not given");
       }
@@ -3090,16 +3094,20 @@ class ChatController extends FullLifeCycleController
     closeKeyBoard();
     if (await AppUtils.isNetConnected()) {
       if (await AppPermission.askVideoCallPermissions()) {
-        Mirrorfly.makeVideoCall(profile.jid.checkNull()).then((value) {
-          if (value) {
-            setOnGoingUserGone();
-            Get.toNamed(Routes.outGoingCallView,
-                arguments: {"userJid": [profile.jid], "callType": CallType.video})
-                ?.then((value) => setOnGoingUserAvail());
-          }
-        }).catchError((e) {
-          debugPrint("#Mirrorfly Call $e");
-        });
+        if(profile.isGroupProfile.checkNull()) {
+          Get.toNamed(Routes.groupParticipants,arguments: {"groupId": profile.jid, "callType": CallType.video});
+        }else {
+          Mirrorfly.makeVideoCall(profile.jid.checkNull()).then((value) {
+            if (value) {
+              setOnGoingUserGone();
+              Get.toNamed(Routes.outGoingCallView,
+                  arguments: {"userJid": [profile.jid], "callType": CallType.video})
+                  ?.then((value) => setOnGoingUserAvail());
+            }
+          }).catchError((e) {
+            debugPrint("#Mirrorfly Call $e");
+          });
+        }
       } else {
         LogMessage.d("askVideoCallPermissions", "false");
       }
