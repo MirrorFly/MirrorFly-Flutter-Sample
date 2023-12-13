@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
-import 'package:mirror_fly_demo/app/call_modules/call_logs/call_log_model.dart';
 import 'package:mirror_fly_demo/app/call_modules/call_utils.dart';
 import 'package:mirror_fly_demo/app/modules/notification/notification_builder.dart';
 import 'package:mirrorfly_plugin/logmessage.dart';
@@ -14,6 +13,7 @@ import 'package:mirror_fly_demo/app/data/helper.dart';
 import 'package:mirror_fly_demo/app/data/session_management.dart';
 
 import 'package:intl/intl.dart';
+import 'package:mirrorfly_plugin/model/call_log_model.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 import '../../../common/de_bouncer.dart';
@@ -1103,11 +1103,12 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
       update();
     } else {
       if (search.text.trim().isNotEmpty) {
-        mirrorFlyLog("onChange", "search.text.trim().isNotEmpty inputValue $inputValue");
-        clearVisible(true);
-        filteredCallLog(search.text.trim());
+        callLogSearchLoading(true);
+        deBouncer.run(() {
+          clearVisible(true);
+          filteredCallLog(search.text.trim());
+        });
       } else {
-        mirrorFlyLog("onChange", "search.text.trim().isEmpty inputValue $inputValue");
         clearVisible(false);
         pageNumber = 1;
         _callLogList.clear();
@@ -1133,6 +1134,7 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
   var pageNum = 1;
   var searching = false;
   var searchLoading = false.obs;
+  var callLogSearchLoading = false.obs;
 
   Future<void> filterUserList() async {
     if (await AppUtils.isNetConnected()) {
@@ -1695,6 +1697,7 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
         }
       }
       _callLogList.addAll(callLogs);
+      callLogSearchLoading(false);
     } else {
       debugPrint("filteredCallLog : Failed");
     }
