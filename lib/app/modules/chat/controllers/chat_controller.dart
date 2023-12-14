@@ -126,6 +126,8 @@ class ChatController extends FullLifeCycleController
   var availableFeatures = AvailableFeatures().obs;
   RxList<AttachmentIcon> availableAttachments = <AttachmentIcon>[].obs;
 
+  bool get isAudioCallAvailable => profile.isGroupProfile.checkNull() ? availableFeatures.value.isGroupCallAvailable.checkNull() : availableFeatures.value.isOneToOneCallAvailable.checkNull();
+  bool get isVideoCallAvailable => profile.isGroupProfile.checkNull() ? availableFeatures.value.isGroupCallAvailable.checkNull() : availableFeatures.value.isOneToOneCallAvailable.checkNull();
   @override
   void onInit() async {
     super.onInit();

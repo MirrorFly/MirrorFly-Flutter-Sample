@@ -1268,8 +1268,7 @@ class ChatView extends GetView<ChatController> {
                   icon: SvgPicture.asset(videoCallIcon),
                 ),
                 overflowWidget: const Text("Video Call"),
-                showAsAction: controller.availableFeatures.value.isOneToOneCallAvailable.checkNull() ? controller
-                    .profile.isGroupProfile.checkNull() && controller.availableFeatures.value.isGroupCallAvailable.checkNull() ? ShowAsAction.always : ShowAsAction.gone : ShowAsAction.gone,
+                showAsAction: controller.isVideoCallAvailable ? ShowAsAction.always : ShowAsAction.gone ,
                 keyValue: 'Video Call',
                 onItemClick: () {
                   controller.makeVideoCall();
@@ -1283,8 +1282,7 @@ class ChatView extends GetView<ChatController> {
                   icon: SvgPicture.asset(audioCallIcon),
                 ),
                 overflowWidget: const Text("Call"),
-                showAsAction: controller.availableFeatures.value.isOneToOneCallAvailable.checkNull() ? controller
-                    .profile.isGroupProfile.checkNull() && controller.availableFeatures.value.isGroupCallAvailable.checkNull() ? ShowAsAction.always : ShowAsAction.gone : ShowAsAction.gone,
+                showAsAction: controller.isAudioCallAvailable ? ShowAsAction.always : ShowAsAction.gone ,
                 keyValue: 'Audio Call',
                 onItemClick: () {
                   controller.makeVoiceCall();
