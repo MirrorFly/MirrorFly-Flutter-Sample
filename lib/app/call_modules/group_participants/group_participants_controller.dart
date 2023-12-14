@@ -7,6 +7,7 @@ import 'package:mirror_fly_demo/app/data/helper.dart';
 import 'package:mirror_fly_demo/app/data/permissions.dart';
 import 'package:mirror_fly_demo/app/data/session_management.dart';
 import 'package:mirror_fly_demo/app/routes/app_pages.dart';
+import 'package:mirrorfly_plugin/logmessage.dart';
 import 'package:mirrorfly_plugin/mirrorflychat.dart';
 
 class GroupParticipantsController extends GetxController {
@@ -23,7 +24,7 @@ class GroupParticipantsController extends GetxController {
     super.onInit();
     getMaxCallUsersCount = (await Mirrorfly.getMaxCallUsersCount()) ?? 8;
     groupId(Get.arguments["groupId"]);
-    callType(Get.arguments["call_type"]);
+    callType(Get.arguments["callType"]);
     getGroupMembers();
   }
 
@@ -228,6 +229,8 @@ class GroupParticipantsController extends GetxController {
       } else {
         toToast(Constants.noInternetConnection);
       }
+    }else{
+      LogMessage.d("makeCall", selectedUsersJIDList);
     }
   }
 
