@@ -70,6 +70,7 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
   var groupId = ''.obs;
 
   TabController? tabController ;
+  var getMaxCallUsersCount = 8;
 
   @override
   Future<void> onInit() async {
@@ -958,7 +959,7 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
           var isVideoMuted = (await Mirrorfly.isUserVideoMuted(jid)).checkNull();
           var indexValid = callList.indexWhere((element) => element.userJid?.value == jid);
           LogMessage.d("callController", "indexValid : $indexValid jid : $jid");
-          if(indexValid.isNegative) {
+          if(indexValid.isNegative && callList.length != getMaxCallUsersCount) {
             callList.insert(callList.length - 1, CallUserList(
                 userJid: jid.obs, isAudioMuted: isAudioMuted, isVideoMuted: isVideoMuted, callStatus: CallStatus.calling.obs));
             users.insert(users.length - 1, jid);
