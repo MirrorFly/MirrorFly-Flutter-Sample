@@ -411,7 +411,7 @@ extension ProfileParesing on Profile {
   bool isEmailContact() => !isGroupProfile.checkNull() && isGroupInOfflineMode.checkNull(); // for email contact isGroupInOfflineMode will be true
 
   String getName() {
-    if (Mirrorfly.isTrialLicence) {
+    if (!Constants.enableContactSync) {
       /*return item.name.toString().checkNull().isEmpty
         ? item.nickName.toString()
         : item.name.toString();*/
@@ -691,7 +691,7 @@ Future<RecentChatData?> getRecentChatOfJid(String jid) async {
 }
 
 String getName(Profile item) {
-  if (Mirrorfly.isTrialLicence) {
+  if (!Constants.enableContactSync) {
     /*return item.name.toString().checkNull().isEmpty
         ? item.nickName.toString()
         : item.name.toString();*/
@@ -729,7 +729,7 @@ String getName(Profile item) {
 }
 
 String getRecentName(RecentChatData item) {
-  if (Mirrorfly.isTrialLicence) {
+  if (!Constants.enableContactSync) {
     /*return item.name.toString().checkNull().isEmpty
         ? item.nickName.toString()
         : item.name.toString();*/
@@ -755,7 +755,7 @@ String getRecentName(RecentChatData item) {
 }
 
 String getMemberName(Member item) {
-  if (Mirrorfly.isTrialLicence) {
+  if (!Constants.enableContactSync) {
     /*return item.name.toString().checkNull().isEmpty
         ? item.nickName.toString()
         : item.name.toString();*/
@@ -903,7 +903,7 @@ void showQuickProfilePopup(
                         child: Text(
                           profile.value.isGroupProfile!
                               ? profile.value.name.checkNull()
-                              : Mirrorfly.isTrialLicence
+                              : !Constants.enableContactSync
                                   ? profile.value.mobileNumber.checkNull()
                                   : profile.value.nickName.checkNull(),
                           style: const TextStyle(color: Colors.white),

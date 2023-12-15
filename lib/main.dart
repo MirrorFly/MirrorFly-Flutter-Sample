@@ -159,7 +159,7 @@ String getInitialRoute() {
             .getChatJid()
             .checkNull()
             .isEmpty) {
-          if(!Mirrorfly.isTrialLicence) {
+          if(Constants.enableContactSync) {
               // mirrorFlyLog("nonChatUsers", nonChatUsers.toString());
               mirrorFlyLog("SessionManagement.isContactSyncDone()", SessionManagement.isContactSyncDone().toString());
               if (!SessionManagement.isContactSyncDone() /*|| nonChatUsers.isEmpty*/) {

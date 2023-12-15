@@ -280,7 +280,7 @@ class ChatView extends GetView<ChatController> {
                       ),
                     );
                   }),
-                  if (!controller.isTrail)
+                  if (Constants.enableContactSync)
                     Obx(() {
                       return !controller.profile.isItSavedContact.checkNull()
                           ? Row(

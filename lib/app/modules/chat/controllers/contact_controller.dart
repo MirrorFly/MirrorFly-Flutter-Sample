@@ -16,7 +16,7 @@ class ContactController extends FullLifeCycleController with FullLifeCycleMixin 
   ScrollController scrollController = ScrollController();
   var pageNum = 1;
   var isPageLoading = false.obs;
-  var scrollable = Mirrorfly.isTrialLicence.obs;
+  var scrollable = (!Constants.enableContactSync).obs;
   var usersList = <Profile>[].obs;
   var mainUsersList = List<Profile>.empty(growable: true).obs;
   var selectedUsersList = List<Profile>.empty(growable: true).obs;
@@ -55,7 +55,7 @@ class ContactController extends FullLifeCycleController with FullLifeCycleMixin 
     }
     scrollController.addListener(_scrollListener);
     //searchQuery.addListener(_searchListener);
-    if (await AppUtils.isNetConnected() || !Mirrorfly.isTrialLicence) {
+    if (await AppUtils.isNetConnected() || Constants.enableContactSync) {
       isPageLoading(true);
       fetchUsers(false);
     } else {
@@ -63,7 +63,7 @@ class ContactController extends FullLifeCycleController with FullLifeCycleMixin 
     }
     //Mirrorfly.syncContacts(true);
     //Mirrorfly.getRegisteredUsers(true).then((value) => mirrorFlyLog("registeredUsers", value.toString()));
-    progressSpinner(!Mirrorfly.isTrialLicence && await Mirrorfly.contactSyncStateValue());
+    progressSpinner(Constants.enableContactSync && await Mirrorfly.contactSyncStateValue());
   }
 
   void userUpdatedHisProfile(String jid) {
@@ -147,7 +147,7 @@ class ContactController extends FullLifeCycleController with FullLifeCycleMixin 
         _searchText = searchQuery.text.trim();
         pageNum = 1;
       }
-      if (Mirrorfly.isTrialLicence) {
+      if (!Constants.enableContactSync) {
         deBouncer.run(() {
           fetchUsers(true);
         });
@@ -163,7 +163,7 @@ class ContactController extends FullLifeCycleController with FullLifeCycleMixin 
     lastInputValue('');
     pageNum = 1;
     usersList(mainUsersList);
-    scrollable(Mirrorfly.isTrialLicence);
+    scrollable(!Constants.enableContactSync);
   }
 
   backFromSearch() {
@@ -177,19 +177,19 @@ class ContactController extends FullLifeCycleController with FullLifeCycleMixin 
     //fetchUsers(true);
     //}
     usersList(mainUsersList);
-    scrollable(Mirrorfly.isTrialLicence);
+    scrollable(!Constants.enableContactSync);
   }
 
   fetchUsers(bool fromSearch, {bool server = false}) async {
-    if (!Mirrorfly.isTrialLicence) {
+    if (Constants.enableContactSync) {
       var granted = await Permission.contacts.isGranted;
       if (!granted) {
         isPageLoading(false);
         return;
       }
     }
-    if (await AppUtils.isNetConnected() || !Mirrorfly.isTrialLicence) {
-      var future = (Mirrorfly.isTrialLicence) ? Mirrorfly.getUserList(pageNum, _searchText) : Mirrorfly.getRegisteredUsers(false);
+    if (await AppUtils.isNetConnected() || Constants.enableContactSync) {
+      var future = (!Constants.enableContactSync) ? Mirrorfly.getUserList(pageNum, _searchText) : Mirrorfly.getRegisteredUsers(false);
       future.then((data) async {
         //Mirrorfly.getUserList(pageNum, _searchText).then((data) async {
         mirrorFlyLog("userlist", data);
@@ -210,7 +210,7 @@ class ContactController extends FullLifeCycleController with FullLifeCycleMixin 
             mainUsersList(list);
           }
           if (fromSearch) {
-            if (Mirrorfly.isTrialLicence) {
+            if (!Constants.enableContactSync) {
               usersList(list);
               // if(usersList.length==20) pageNum += 1;
               scrollable.value = list.length == 20;
@@ -225,7 +225,7 @@ class ContactController extends FullLifeCycleController with FullLifeCycleMixin 
                 }*/
             }
           } else {
-            if (Mirrorfly.isTrialLicence) {
+            if (!Constants.enableContactSync) {
               usersList.addAll(list);
               // if(usersList.length==20) pageNum += 1;
               scrollable.value = list.length == 20;
@@ -238,7 +238,7 @@ class ContactController extends FullLifeCycleController with FullLifeCycleMixin 
           usersList.refresh();
         } else {
           list.addAll(item.data!);
-          if (!Mirrorfly.isTrialLicence && fromSearch) {
+          if (Constants.enableContactSync && fromSearch) {
             var userlist = mainUsersList.where((p0) => getName(p0).toString().toLowerCase().contains(_searchText.trim().toLowerCase()));
             usersList(userlist.toList());
             /*for (var userDetail in mainUsersList) {
@@ -252,7 +252,7 @@ class ContactController extends FullLifeCycleController with FullLifeCycleMixin 
             mainUsersList(list);
           }
           if (fromSearch) {
-            if (Mirrorfly.isTrialLicence) {
+            if (!Constants.enableContactSync) {
               usersList(list);
               // if(usersList.length==20) pageNum += 1;
               scrollable.value = list.length == 20;
@@ -267,7 +267,7 @@ class ContactController extends FullLifeCycleController with FullLifeCycleMixin 
                 }*/
             }
           } else {
-            if (Mirrorfly.isTrialLicence) {
+            if (!Constants.enableContactSync) {
               usersList.addAll(list);
               // if(usersList.length==20) pageNum += 1;
               scrollable.value = list.length == 20;
@@ -429,7 +429,7 @@ class ContactController extends FullLifeCycleController with FullLifeCycleMixin 
   var progressSpinner = false.obs;
 
   refreshContacts(bool isNetworkToastNeeded) async {
-    if (!Mirrorfly.isTrialLicence) {
+    if (Constants.enableContactSync) {
       mirrorFlyLog('Contact Sync', "[Contact Sync] refreshContacts()");
       if (await AppUtils.isNetConnected()) {
         if (!await Mirrorfly.contactSyncStateValue()) {
@@ -485,7 +485,7 @@ class ContactController extends FullLifeCycleController with FullLifeCycleMixin 
 
   @override
   Future<void> onResumed() async {
-    if (!Mirrorfly.isTrialLicence) {
+    if (Constants.enableContactSync) {
       var status = await Permission.contacts.isGranted;
       if (status) {
         refreshContacts(false);

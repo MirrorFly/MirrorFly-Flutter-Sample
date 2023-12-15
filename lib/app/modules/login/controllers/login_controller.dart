@@ -206,7 +206,7 @@ class LoginController extends GetxController {
     showLoading();
     try {
       await _auth.signInWithCredential(credential).then((value) {
-        if (Mirrorfly.isTrialLicence) {
+        if (!Constants.enableContactSync) {
           sendTokenToServer(); // for Mirrorfly user list purpose verify the user
         } else {
           validateDeviceToken('');
