@@ -427,7 +427,7 @@ extension ProfileParesing on Profile {
         return getMobileNumberFromJid(jid.checkNull());
       } else {
         mirrorFlyLog('nickName', nickName.toString());
-        return nickName.checkNull();
+        return name.checkNull().isEmpty ? nickName.checkNull() : name.checkNull();
       }
     }
   }
@@ -709,7 +709,7 @@ String getName(Profile item) {
       return item.mobileNumber.checkNull().isNotEmpty ? item.mobileNumber.checkNull() : getMobileNumberFromJid(item.jid.checkNull());
     } else {
       mirrorFlyLog('nickName', item.nickName.toString());
-      return item.nickName.checkNull();
+      return item.name.checkNull().isEmpty ? item.nickName.checkNull() : item.name.checkNull();
     }
     /*var status = true;
     if(status) {
