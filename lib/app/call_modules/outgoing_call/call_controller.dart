@@ -956,7 +956,6 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
     if(!isWaitingCanceled){
       isWaitingCanceled = true;
       outGoingRequest = false;
-      Mirrorfly.cancelVideoCallSwitch();
     }
     if(inComingRequest) {
       isVideoCallRequested = false;
@@ -992,7 +991,7 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
     });
   }
   void onUserLeft(String callMode, String userJid, String callType) {
-    if(callList.length>2 && !callList.indexWhere((element) => element.userJid.toString() == userJid.toString()).isNegative) {
+    if(callList.length>2 && !callList.indexWhere((element) => element.userJid.toString() == userJid.toString()).isNegative) { //#FLUTTER-1300
       CallUtils.getNameOfJid(userJid).then((value) => toToast("$value Left"));
     }
     removeUser(callMode, userJid, callType);
