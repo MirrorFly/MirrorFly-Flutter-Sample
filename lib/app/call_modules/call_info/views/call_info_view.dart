@@ -48,7 +48,7 @@ class CallInfoView extends GetView<CallInfoController> {
                         ),
                       ),
                       title: FutureBuilder(
-                          future: CallUtils.getCallLogUserNames(controller.callLogData.userList!, controller.callLogData!),
+                          future: CallUtils.getCallLogUserNames(controller.callLogData.userList!, controller.callLogData),
                           builder: (context, snap) {
                             if (snap.hasData) {
                               return Text(
