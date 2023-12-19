@@ -1,4 +1,6 @@
 import 'package:get/get.dart';
+import 'package:mirror_fly_demo/app/call_modules/call_info/bindings/call_info_binding.dart';
+import 'package:mirror_fly_demo/app/call_modules/call_info/views/call_info_view.dart';
 import 'package:mirror_fly_demo/app/call_modules/group_participants/group_participants_binding.dart';
 import 'package:mirror_fly_demo/app/call_modules/group_participants/group_participants_view.dart';
 
@@ -355,6 +357,11 @@ class AppPages {
       name: _Paths.groupParticipants,
       page: () => const GroupParticipantsView(),
       binding: GroupParticipantsBinding(),
+    ),
+    GetPage(
+      name: _Paths.callInfo,
+      page: () => const CallInfoView(),
+      binding: CallInfoBinding(),
     ),
   ];
 }

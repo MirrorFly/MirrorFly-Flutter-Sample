@@ -283,6 +283,14 @@ class DashboardView extends GetView<DashboardController> {
                                         },
                                       ),
                                       CustomAction(
+                                        visibleWidget: const Icon(Icons.web),
+                                        overflowWidget: const Text("Clear call log"),
+                                        showAsAction:
+                                        controller.selected.value || controller.isSearching.value || controller.currentTab.value == 0 ? ShowAsAction.gone : ShowAsAction.never,
+                                        keyValue: 'Clear call log',
+                                        onItemClick: () => controller.clearCallLog(),
+                                      ),
+                                      CustomAction(
                                         visibleWidget: const Icon(Icons.settings),
                                         overflowWidget: const Text("Settings"),
                                         showAsAction:
@@ -299,7 +307,7 @@ class DashboardView extends GetView<DashboardController> {
                                             controller.selected.value || controller.isSearching.value ? ShowAsAction.gone : ShowAsAction.never,
                                         keyValue: 'Web',
                                         onItemClick: () => controller.webLogin(),
-                                      )
+                                      ),
                                     ]),
                               ],
                             );
@@ -909,7 +917,7 @@ class DashboardView extends GetView<DashboardController> {
         itemCount: callLogList.length,
         itemBuilder: (context, index) {
           var item = callLogList[index];
-          if (index == callLogList.length ) {
+          if (index == callLogList.length) {
             if (controller.error.value) {
               return const Center(child: Text("Error"));
             } else {
@@ -984,6 +992,8 @@ class DashboardView extends GetView<DashboardController> {
                     onTap: () {
                       if (controller.selectedLog.value) {
                         controller.selectOrRemoveCallLogFromList(index);
+                      }else{
+                        controller.toChatPage(item.callState == CallState.outgoingCall ? item.toUser! : item.fromUser!);
                       }
                     },
                   ))
@@ -1037,6 +1047,8 @@ class DashboardView extends GetView<DashboardController> {
                     onTap: () {
                       if (controller.selectedLog.value) {
                         controller.selectOrRemoveCallLogFromList(index);
+                      } else {
+                        controller.toCallInfo(item);
                       }
                     },
                   ));
@@ -1044,29 +1056,33 @@ class DashboardView extends GetView<DashboardController> {
   }
 
   Widget emptyCalls(BuildContext context) {
-    return !controller.callLogSearchLoading.value ? Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Image.asset(
-            noCallImage,
-            width: 200,
-          ),
-          Text(
-            'No Call log history found',
-            textAlign: TextAlign.center,
-            style: Theme.of(context).textTheme.titleMedium,
-          ),
-          const SizedBox(height: 10,),
-          const Text(
-            'Any new Calls will appear here',
-            textAlign: TextAlign.center,
-            style: TextStyle(color: callsSubText),
-          ),
-        ],
-      ),
-    ): const Center(child: CircularProgressIndicator());
+    return !controller.callLogSearchLoading.value
+        ? Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Image.asset(
+                  noCallImage,
+                  width: 200,
+                ),
+                Text(
+                  'No Call log history found',
+                  textAlign: TextAlign.center,
+                  style: Theme.of(context).textTheme.titleMedium,
+                ),
+                const SizedBox(
+                  height: 10,
+                ),
+                const Text(
+                  'Any new Calls will appear here',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(color: callsSubText),
+                ),
+              ],
+            ),
+          )
+        : const Center(child: CircularProgressIndicator());
   }
 
   Widget callIcon(String? callType, CallLogData item, String? callMode, List<String>? userList) {
