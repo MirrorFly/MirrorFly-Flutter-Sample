@@ -349,7 +349,7 @@ extension MemberParsing on Member {
   String getUsername() {
     var value = Mirrorfly.getProfileDetails(jid.checkNull());
     var str = Profile.fromJson(json.decode(value.toString()));
-    return getName(str); //str.name.checkNull();
+    return str.getName(); //str.name.checkNull();
   }
 
   Future<Profile> getProfileDetails() async {
@@ -411,11 +411,13 @@ extension ProfileParesing on Profile {
   bool isEmailContact() => !isGroupProfile.checkNull() && isGroupInOfflineMode.checkNull(); // for email contact isGroupInOfflineMode will be true
 
   String getName() {
-    if (Mirrorfly.isTrialLicence) {
+    if (!Constants.enableContactSync) {
       /*return item.name.toString().checkNull().isEmpty
         ? item.nickName.toString()
         : item.name.toString();*/
-      return name.checkNull().isEmpty ? nickName.checkNull() : name.checkNull();
+      return name.checkNull().isEmpty
+          ? (nickName.checkNull().isEmpty ? getMobileNumberFromJid(jid.checkNull()) : nickName.checkNull())
+          : name.checkNull();
     } else {
       if (jid.checkNull() == SessionManagement.getUserJID()) {
         return Constants.you;
@@ -427,7 +429,9 @@ extension ProfileParesing on Profile {
         return getMobileNumberFromJid(jid.checkNull());
       } else {
         mirrorFlyLog('nickName', nickName.toString());
-        return nickName.checkNull();
+        return nickName.checkNull().isEmpty
+            ? (name.checkNull().isEmpty ? getMobileNumberFromJid(jid.checkNull()) : name.checkNull())
+            : nickName.checkNull();//#FLUTTER-1300
       }
     }
   }
@@ -691,7 +695,7 @@ Future<RecentChatData?> getRecentChatOfJid(String jid) async {
 }
 
 String getName(Profile item) {
-  if (Mirrorfly.isTrialLicence) {
+  if (!Constants.enableContactSync) {
     /*return item.name.toString().checkNull().isEmpty
         ? item.nickName.toString()
         : item.name.toString();*/
@@ -702,14 +706,16 @@ String getName(Profile item) {
     if (item.jid.checkNull() == SessionManagement.getUserJID()) {
       return Constants.you;
     } else if (item.isDeletedContact()) {
-      mirrorFlyLog('isDeletedContact', item.isDeletedContact().toString());
+      mirrorFlyLog("getName",'isDeletedContact ${item.isDeletedContact()}');
       return Constants.deletedUser;
     } else if (item.isUnknownContact() || item.nickName.checkNull().isEmpty) {
-      mirrorFlyLog('isUnknownContact', item.isUnknownContact().toString());
+      mirrorFlyLog("getName",'isUnknownContact ${item.isUnknownContact()}');
       return item.mobileNumber.checkNull().isNotEmpty ? item.mobileNumber.checkNull() : getMobileNumberFromJid(item.jid.checkNull());
     } else {
-      mirrorFlyLog('nickName', item.nickName.toString());
-      return item.nickName.checkNull();
+      mirrorFlyLog("getName",'nickName ${item.nickName} name ${item.name}');
+      return item.nickName.checkNull().isEmpty
+          ? (item.name.checkNull().isEmpty ? getMobileNumberFromJid(item.jid.checkNull()) : item.name.checkNull())
+          : item.nickName.checkNull();//#FLUTTER-1300
     }
     /*var status = true;
     if(status) {
@@ -729,7 +735,7 @@ String getName(Profile item) {
 }
 
 String getRecentName(RecentChatData item) {
-  if (Mirrorfly.isTrialLicence) {
+  if (!Constants.enableContactSync) {
     /*return item.name.toString().checkNull().isEmpty
         ? item.nickName.toString()
         : item.name.toString();*/
@@ -755,7 +761,7 @@ String getRecentName(RecentChatData item) {
 }
 
 String getMemberName(Member item) {
-  if (Mirrorfly.isTrialLicence) {
+  if (!Constants.enableContactSync) {
     /*return item.name.toString().checkNull().isEmpty
         ? item.nickName.toString()
         : item.name.toString();*/
@@ -903,7 +909,7 @@ void showQuickProfilePopup(
                         child: Text(
                           profile.value.isGroupProfile!
                               ? profile.value.name.checkNull()
-                              : Mirrorfly.isTrialLicence
+                              : !Constants.enableContactSync
                                   ? profile.value.mobileNumber.checkNull()
                                   : profile.value.nickName.checkNull(),
                           style: const TextStyle(color: Colors.white),

@@ -70,6 +70,7 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
   var groupId = ''.obs;
 
   TabController? tabController ;
+  var getMaxCallUsersCount = 8;
 
   @override
   Future<void> onInit() async {
@@ -391,7 +392,7 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
     } else {
       debugPrint("#Mirrorflycall participant jid is not in the list");
     }
-    debugPrint("#Mirrorfly call call disconnect called after user removed ${callList.length}");
+    // debugPrint("#Mirrorfly call call disconnect called after user removed ${callList.length}");
     if (callList.length <= 1 || userJid == SessionManagement.getUserJID()) {
       debugPrint("Entering Call Disconnection Loop");
       isCallTimerEnabled = false;
@@ -791,14 +792,18 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
                 child: const Text("CANCEL")),
             TextButton(
                 onPressed: () {
-                  outGoingRequest = true;
-                  Mirrorfly.requestVideoCallSwitch().then((value) {
-                    if (value) {
-                      showingVideoSwitchPopup = false;
-                      closeDialog();
-                      showWaitingPopup();
-                    }
-                  });
+                  if(callType.value == CallType.audio && isOneToOneCall && Get.currentRoute == Routes.onGoingCallView) {
+                    outGoingRequest = true;
+                    Mirrorfly.requestVideoCallSwitch().then((value) {
+                      if (value) {
+                        showingVideoSwitchPopup = false;
+                        closeDialog();
+                        showWaitingPopup();
+                      }
+                    });
+                  }else{
+                    closeDialog();
+                  }
                 },
                 child: const Text("SWITCH"))
           ],
@@ -940,7 +945,23 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
   }
 
   void onUserInvite(String callMode, String userJid, String callType) {
+    closeVideoConversationAvailable();
     addParticipants(callMode, userJid, callType);
+  }
+
+  void closeVideoConversationAvailable(){
+    if(inComingRequest || outGoingRequest || showingVideoSwitchPopup){
+      closeDialog();
+    }
+    if(!isWaitingCanceled){
+      isWaitingCanceled = true;
+      outGoingRequest = false;
+    }
+    if(inComingRequest) {
+      isVideoCallRequested = false;
+      inComingRequest = false;
+    }
+    videoCallConversionCancel();
   }
 
   void onUserJoined(String callMode, String userJid, String callType,String callStatus) {
@@ -958,7 +979,7 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
           var isVideoMuted = (await Mirrorfly.isUserVideoMuted(jid)).checkNull();
           var indexValid = callList.indexWhere((element) => element.userJid?.value == jid);
           LogMessage.d("callController", "indexValid : $indexValid jid : $jid");
-          if(indexValid.isNegative) {
+          if(indexValid.isNegative && callList.length != getMaxCallUsersCount) {
             callList.insert(callList.length - 1, CallUserList(
                 userJid: jid.obs, isAudioMuted: isAudioMuted, isVideoMuted: isVideoMuted, callStatus: CallStatus.calling.obs));
             users.insert(users.length - 1, jid);
@@ -970,7 +991,7 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
     });
   }
   void onUserLeft(String callMode, String userJid, String callType) {
-    if(callList.length>2) {
+    if(callList.length>2 && !callList.indexWhere((element) => element.userJid.toString() == userJid.toString()).isNegative) { //#FLUTTER-1300
       CallUtils.getNameOfJid(userJid).then((value) => toToast("$value Left"));
     }
     removeUser(callMode, userJid, callType);

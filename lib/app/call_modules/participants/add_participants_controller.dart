@@ -13,11 +13,12 @@ import '../../data/session_management.dart';
 
 class AddParticipantsController extends GetxController with GetTickerProviderStateMixin {
   var callList = Get.find<CallController>().callList;//List<CallUserList>.empty(growable: true).obs;
+  var groupId = Get.find<CallController>().groupId;
 
   ScrollController scrollController = ScrollController();
   var pageNum = 1;
   var isPageLoading = false.obs;
-  var scrollable = Mirrorfly.isTrialLicence.obs;
+  var scrollable = (!Constants.enableContactSync).obs;
   var usersList = <Profile>[].obs;
   var mainUsersList = List<Profile>.empty(growable: true).obs;
   var selectedUsersList = List<Profile>.empty(growable: true).obs;
@@ -60,11 +61,15 @@ class AddParticipantsController extends GetxController with GetTickerProviderSta
       //   }
       // }
     });
-    if (await AppUtils.isNetConnected() || !Mirrorfly.isTrialLicence) {
-      isPageLoading(true);
-      fetchUsers(false);
-    } else {
-      toToast(Constants.noInternetConnection);
+    if(groupId.isEmpty) {
+      if (await AppUtils.isNetConnected() || Constants.enableContactSync) {
+        isPageLoading(true);
+        fetchUsers(false);
+      } else {
+        toToast(Constants.noInternetConnection);
+      }
+    }else{
+      getGroupMembers();
     }
   }
 
@@ -95,14 +100,23 @@ class AddParticipantsController extends GetxController with GetTickerProviderSta
         _searchText = searchQuery.text.trim();
         pageNum = 1;
       }
-      if (Mirrorfly.isTrialLicence) {
-        deBouncer.run(() {
+      if(groupId.isEmpty) {
+        if (!Constants.enableContactSync) {
+          deBouncer.run(() {
+            fetchUsers(true);
+          });
+        } else {
           fetchUsers(true);
-        });
-      } else {
-        fetchUsers(true);
+        }
+      }else{
+        filterGroupMembers();
       }
     }
+  }
+
+  void filterGroupMembers() {
+    var filteredList = mainUsersList.where((item) => item.getName().toLowerCase().contains(_searchText.trim())).toList();
+    usersList(filteredList);
   }
 
   clearSearch(){
@@ -111,7 +125,7 @@ class AddParticipantsController extends GetxController with GetTickerProviderSta
     lastInputValue('');
     pageNum = 1;
     usersList(mainUsersList);
-    scrollable(Mirrorfly.isTrialLicence);
+    scrollable(!Constants.enableContactSync);
   }
   getBackFromSearch(){
     if(isSearching.value) {
@@ -125,7 +139,7 @@ class AddParticipantsController extends GetxController with GetTickerProviderSta
       //fetchUsers(true);
       //}
       usersList(mainUsersList);
-      scrollable(Mirrorfly.isTrialLicence);
+      scrollable(!Constants.enableContactSync);
       selectedUsersJIDList.clear();
       debugPrint("Clearing the selectedUsersList");
       selectedUsersList.clear();
@@ -186,26 +200,30 @@ class AddParticipantsController extends GetxController with GetTickerProviderSta
   }
 
   contactSelected(Profile item) {
-    if (selectedUsersJIDList.contains(item.jid)) {
-      selectedUsersList.removeWhere((user) => user.jid == item.jid);
-      selectedUsersJIDList.remove(item.jid);
-      //item.isSelected = false;
-      groupCallMembersCount(groupCallMembersCount.value - 1);
-    } else {
-      if(callList.length!=8) {
-        if (getMaxCallUsersCount > (selectedUsersList.length + callList.length)) {
-          selectedUsersList.add(item);
-          selectedUsersJIDList.add(item.jid!);
-          groupCallMembersCount(groupCallMembersCount.value + 1);
+    if(callList.indexWhere((element) => element.userJid.toString()==item.jid.toString()).isNegative) {
+      if (selectedUsersJIDList.contains(item.jid)) {
+        selectedUsersList.removeWhere((user) => user.jid == item.jid);
+        selectedUsersJIDList.remove(item.jid);
+        //item.isSelected = false;
+        groupCallMembersCount(groupCallMembersCount.value - 1);
+      } else {
+        if (callList.length != getMaxCallUsersCount) {
+          if (getMaxCallUsersCount > (selectedUsersList.length + callList.length)) {
+            selectedUsersList.add(item);
+            selectedUsersJIDList.add(item.jid!);
+            groupCallMembersCount(groupCallMembersCount.value + 1);
+          } else {
+            toToast(Constants.callMembersLimit6.replaceFirst("%d", (groupCallMembersCount.value).toString()));
+          }
         } else {
-          toToast(Constants.callMembersLimit6.replaceFirst("%d", (groupCallMembersCount.value).toString()));
+          toToast(Constants.callMembersLimit.replaceFirst("%d", getMaxCallUsersCount.toString()));
         }
-      }else{
-        toToast(Constants.callMembersLimit.replaceFirst("%d", getMaxCallUsersCount.toString()));
+        //item.isSelected = true;
       }
-      //item.isSelected = true;
+      usersList.refresh();
+    }else{
+      toToast("User Already Added");
     }
-    usersList.refresh();
   }
 
   void onContactSyncComplete(bool result) {
@@ -249,15 +267,38 @@ class AddParticipantsController extends GetxController with GetTickerProviderSta
     }
   }
 
+  void onUserInvite(String callMode, String userJid, String callType) {
+    removeSelectedPartcipants();
+  }
+
+  void removeSelectedPartcipants(){
+    Mirrorfly.getInvitedUsersList().then((value) async {
+      LogMessage.d("callController", " getInvitedUsersList $value");
+      if(value.isNotEmpty){
+        var userJids = value;
+        for (var jid in userJids) {
+          selectedUsersList.removeWhere((user) =>user.jid==jid);
+          selectedUsersJIDList.remove(jid);
+        }
+        usersList.refresh();
+        groupCallMembersCount(selectedUsersJIDList.length);
+      }
+    });
+  }
+
   var groupCallMembersCount = 0.obs;
   var callType = CallType.audio.obs;
   makeCall() async {
     if(selectedUsersJIDList.isNotEmpty) {
-      if (await AppUtils.isNetConnected()) {
-        Mirrorfly.inviteUsersToOngoingCall(jidList: selectedUsersJIDList);
-        Get.back();
-      } else {
-        toToast(Constants.noInternetConnection);
+      if(callList.length!=getMaxCallUsersCount) {
+        if (await AppUtils.isNetConnected()) {
+          Mirrorfly.inviteUsersToOngoingCall(jidList: selectedUsersJIDList);
+          Get.back();
+        } else {
+          toToast(Constants.noInternetConnection);
+        }
+      }else{
+        toToast(Constants.callMembersLimit.replaceFirst("%d", getMaxCallUsersCount.toString()));
       }
     }
   }
@@ -266,7 +307,7 @@ class AddParticipantsController extends GetxController with GetTickerProviderSta
   var _first = true;
   var groupJid = "".obs;
   fetchUsers(bool fromSearch,{bool server=false}) async {
-    if(!Mirrorfly.isTrialLicence){
+    if(Constants.enableContactSync){
       var granted = await Permission.contacts.isGranted;
       if(!granted){
         isPageLoading(false);
@@ -277,8 +318,8 @@ class AddParticipantsController extends GetxController with GetTickerProviderSta
     for (var value1 in callList) {
       callConnectedUserList.add(value1.userJid?.value ?? '');
     }
-    if (await AppUtils.isNetConnected() || !Mirrorfly.isTrialLicence) {
-      var future = (Mirrorfly.isTrialLicence)
+    if (await AppUtils.isNetConnected() || Constants.enableContactSync) {
+      var future = (!Constants.enableContactSync)
           ? Mirrorfly.getUserList(pageNum, _searchText)
           : Mirrorfly.getRegisteredUsers(false);
       future.then((data) async {
@@ -304,7 +345,7 @@ class AddParticipantsController extends GetxController with GetTickerProviderSta
             mainUsersList(list);
           }
           if (fromSearch) {
-            if (Mirrorfly.isTrialLicence) {
+            if (!Constants.enableContactSync) {
               usersList(list);
               // if(usersList.length==20) pageNum += 1;
               scrollable.value = list.length == 20;
@@ -322,7 +363,7 @@ class AddParticipantsController extends GetxController with GetTickerProviderSta
                 }*/
             }
           } else {
-            if (Mirrorfly.isTrialLicence) {
+            if (!Constants.enableContactSync) {
               usersList.addAll(list);
               // if(usersList.length==20) pageNum += 1;
               scrollable.value = list.length == 20;
@@ -335,7 +376,7 @@ class AddParticipantsController extends GetxController with GetTickerProviderSta
           usersList.refresh();
         } else {
           list.addAll(items);
-          if (!Mirrorfly.isTrialLicence && fromSearch) {
+          if (Constants.enableContactSync && fromSearch) {
             var userlist = mainUsersList.where((p0) => getName(p0)
                 .toString()
                 .toLowerCase()
@@ -352,7 +393,7 @@ class AddParticipantsController extends GetxController with GetTickerProviderSta
             mainUsersList(list);
           }
           if (fromSearch) {
-            if (Mirrorfly.isTrialLicence) {
+            if (!Constants.enableContactSync) {
               usersList(list);
               // if(usersList.length==20) pageNum += 1;
               scrollable.value = list.length == 20;
@@ -370,7 +411,7 @@ class AddParticipantsController extends GetxController with GetTickerProviderSta
                 }*/
             }
           } else {
-            if (Mirrorfly.isTrialLicence) {
+            if (!Constants.enableContactSync) {
               usersList.addAll(list);
               // if(usersList.length==20) pageNum += 1;
               scrollable.value = list.length == 20;
@@ -388,6 +429,21 @@ class AddParticipantsController extends GetxController with GetTickerProviderSta
       });
     } else {
       toToast(Constants.noInternetConnection);
+    }
+  }
+
+  void getGroupMembers() {
+    if(groupId.isNotEmpty) {
+      Mirrorfly.getGroupMembersList(groupId.value.checkNull(), null).then((value) {
+        mirrorFlyLog("getGroupMembersList", value);
+        if (value != null) {
+          var list = profileFromJson(value);
+          var callConnectedUserList = List<String>.from(callList.map((element) => element.userJid));
+          var filteredList = getFilteredList(callConnectedUserList, list);
+          mainUsersList(filteredList);
+          usersList(filteredList);
+        }
+      });
     }
   }
 

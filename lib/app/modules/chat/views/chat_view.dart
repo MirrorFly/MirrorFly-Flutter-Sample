@@ -280,7 +280,7 @@ class ChatView extends GetView<ChatController> {
                       ),
                     );
                   }),
-                  if (!controller.isTrail)
+                  if (Constants.enableContactSync)
                     Obx(() {
                       return !controller.profile.isItSavedContact.checkNull()
                           ? Row(
@@ -1268,8 +1268,7 @@ class ChatView extends GetView<ChatController> {
                   icon: SvgPicture.asset(videoCallIcon),
                 ),
                 overflowWidget: const Text("Video Call"),
-                showAsAction: controller.availableFeatures.value.isOneToOneCallAvailable.checkNull() ? controller
-                    .profile.isGroupProfile.checkNull() ? ShowAsAction.gone : ShowAsAction.always : ShowAsAction.gone,
+                showAsAction: controller.isVideoCallAvailable ? ShowAsAction.always : ShowAsAction.gone ,
                 keyValue: 'Video Call',
                 onItemClick: () {
                   controller.makeVideoCall();
@@ -1283,8 +1282,7 @@ class ChatView extends GetView<ChatController> {
                   icon: SvgPicture.asset(audioCallIcon),
                 ),
                 overflowWidget: const Text("Call"),
-                showAsAction: controller.availableFeatures.value.isOneToOneCallAvailable.checkNull() ? controller
-                    .profile.isGroupProfile.checkNull() ? ShowAsAction.gone : ShowAsAction.always : ShowAsAction.gone,
+                showAsAction: controller.isAudioCallAvailable ? ShowAsAction.always : ShowAsAction.gone ,
                 keyValue: 'Audio Call',
                 onItemClick: () {
                   controller.makeVoiceCall();

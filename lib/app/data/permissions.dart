@@ -206,9 +206,9 @@ class AppPermission {
       LogMessage.d("shouldShowRequestRationale audio", shouldShowRequestRationale);
       LogMessage.d("SessionManagement.getBool(Constants.audioRecordPermissionAsked) audio", (SessionManagement.getBool(Constants.audioRecordPermissionAsked)));
       LogMessage.d("permissions audio", (permissions.toString()));
-      var alreadyAsked = (SessionManagement.getBool(Constants.audioRecordPermissionAsked)
+      var alreadyAsked = ((SessionManagement.getBool(Constants.audioRecordPermissionAsked)
           || (Platform.isAndroid && SessionManagement.getBool(Constants.readPhoneStatePermissionAsked)) ||
-          (Platform.isAndroid && SessionManagement.getBool(Constants.bluetoothPermissionAsked)) ||
+          (Platform.isAndroid && SessionManagement.getBool(Constants.bluetoothPermissionAsked))) &&
           (Platform.isAndroid && SessionManagement.getBool(Constants.notificationPermissionAsked)));
       LogMessage.d("alreadyAsked audio", alreadyAsked);
       var permissionName = getPermissionDisplayName(permissions);
@@ -321,10 +321,10 @@ class AppPermission {
         LogMessage.d("shouldShowRequestRationale video", shouldShowRequestRationale);
         LogMessage.d("SessionManagement.getBool(Constants.cameraPermissionAsked) video",
             SessionManagement.getBool(Constants.cameraPermissionAsked));
-        var alreadyAsked = (SessionManagement.getBool(Constants.cameraPermissionAsked) ||
+        var alreadyAsked = ((SessionManagement.getBool(Constants.cameraPermissionAsked) ||
             SessionManagement.getBool(Constants.audioRecordPermissionAsked)
             || SessionManagement.getBool(Constants.readPhoneStatePermissionAsked) ||
-            SessionManagement.getBool(Constants.bluetoothPermissionAsked) ||
+            SessionManagement.getBool(Constants.bluetoothPermissionAsked)) &&
             SessionManagement.getBool(Constants.notificationPermissionAsked));
         LogMessage.d("alreadyAsked video", alreadyAsked);
         var permissionName = getPermissionDisplayName(permissions);

@@ -291,7 +291,7 @@ class MainController extends FullLifeCycleController with BaseController, FullLi
     mirrorFlyLog('mainController', 'onResumed');
     NotificationBuilder.cancelNotifications();
     checkShouldShowPin();
-    if(!Mirrorfly.isTrialLicence) {
+    if(Constants.enableContactSync) {
       syncContacts();
     }
   }
@@ -320,7 +320,7 @@ class MainController extends FullLifeCycleController with BaseController, FullLi
   void networkDisconnected() {}
 
   void networkConnected() {
-    if(!Mirrorfly.isTrialLicence) {
+    if(Constants.enableContactSync) {
       syncContacts();
     }
   }

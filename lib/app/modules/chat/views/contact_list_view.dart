@@ -123,7 +123,7 @@ class ContactListView extends GetView<ContactController> {
                               controller.refreshContacts(true);
                             },
                           ),
-                          showAsAction: (!Mirrorfly.isTrialLicence && !controller.progressSpinner.value) ? ShowAsAction
+                          showAsAction: (Constants.enableContactSync && !controller.progressSpinner.value) ? ShowAsAction
                               .never : ShowAsAction.gone,
                           keyValue: 'Refresh',
                           onItemClick: () {

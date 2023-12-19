@@ -114,7 +114,7 @@ class ChatController extends FullLifeCycleController
   String? nJid;
   String? starredChatMessageId;
 
-  bool get isTrail => Mirrorfly.isTrialLicence;
+  bool get isTrail => !Constants.enableContactSync;
 
   var loadPreviousData = false.obs;
   var loadNextData = false.obs;
@@ -126,6 +126,8 @@ class ChatController extends FullLifeCycleController
   var availableFeatures = AvailableFeatures().obs;
   RxList<AttachmentIcon> availableAttachments = <AttachmentIcon>[].obs;
 
+  bool get isAudioCallAvailable => profile.isGroupProfile.checkNull() ? availableFeatures.value.isGroupCallAvailable.checkNull() : availableFeatures.value.isOneToOneCallAvailable.checkNull();
+  bool get isVideoCallAvailable => profile.isGroupProfile.checkNull() ? availableFeatures.value.isGroupCallAvailable.checkNull() : availableFeatures.value.isOneToOneCallAvailable.checkNull();
   @override
   void onInit() async {
     super.onInit();
@@ -3004,7 +3006,7 @@ class ChatController extends FullLifeCycleController
       Mirrorfly.addContact(parse["international"], userName).then((value) {
         if (value ?? false) {
           toToast("Contact Saved");
-          if (!Mirrorfly.isTrialLicence) {
+          if (Constants.enableContactSync) {
             syncContacts();
           }
         }
@@ -3075,17 +3077,21 @@ class ChatController extends FullLifeCycleController
     closeKeyBoard();
     if (await AppUtils.isNetConnected()) {
       if (await AppPermission.askAudioCallPermissions()) {
-        Mirrorfly.makeVoiceCall(profile.jid.checkNull()).then((value) {
-          if (value) {
-            debugPrint("#Mirrorfly Call userjid ${profile.jid}");
-            setOnGoingUserGone();
-            Get.toNamed(Routes.outGoingCallView,
-                arguments: {"userJid": [profile.jid], "callType": CallType.audio})
-                ?.then((value) => setOnGoingUserAvail());
-          }
-        }).catchError((e) {
-          debugPrint("#Mirrorfly Call $e");
-        });
+        if(profile.isGroupProfile.checkNull()) {
+          Get.toNamed(Routes.groupParticipants,arguments: {"groupId": profile.jid, "callType": CallType.audio});
+        }else{
+          Mirrorfly.makeVoiceCall(profile.jid.checkNull()).then((value) {
+            if (value) {
+              debugPrint("#Mirrorfly Call userjid ${profile.jid}");
+              setOnGoingUserGone();
+              Get.toNamed(Routes.outGoingCallView,
+                  arguments: {"userJid": [profile.jid], "callType": CallType.audio})
+                  ?.then((value) => setOnGoingUserAvail());
+            }
+          }).catchError((e) {
+            debugPrint("#Mirrorfly Call $e");
+          });
+        }
       } else {
         debugPrint("permission not given");
       }
@@ -3098,16 +3104,20 @@ class ChatController extends FullLifeCycleController
     closeKeyBoard();
     if (await AppUtils.isNetConnected()) {
       if (await AppPermission.askVideoCallPermissions()) {
-        Mirrorfly.makeVideoCall(profile.jid.checkNull()).then((value) {
-          if (value) {
-            setOnGoingUserGone();
-            Get.toNamed(Routes.outGoingCallView,
-                arguments: {"userJid": [profile.jid], "callType": CallType.video})
-                ?.then((value) => setOnGoingUserAvail());
-          }
-        }).catchError((e) {
-          debugPrint("#Mirrorfly Call $e");
-        });
+        if(profile.isGroupProfile.checkNull()) {
+          Get.toNamed(Routes.groupParticipants,arguments: {"groupId": profile.jid, "callType": CallType.video});
+        }else {
+          Mirrorfly.makeVideoCall(profile.jid.checkNull()).then((value) {
+            if (value) {
+              setOnGoingUserGone();
+              Get.toNamed(Routes.outGoingCallView,
+                  arguments: {"userJid": [profile.jid], "callType": CallType.video})
+                  ?.then((value) => setOnGoingUserAvail());
+            }
+          }).catchError((e) {
+            debugPrint("#Mirrorfly Call $e");
+          });
+        }
       } else {
         LogMessage.d("askVideoCallPermissions", "false");
       }

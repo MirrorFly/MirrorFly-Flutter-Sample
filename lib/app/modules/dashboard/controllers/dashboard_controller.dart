@@ -1048,7 +1048,7 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
   RxBool clearVisible = false.obs;
   final _mainuserList = <Profile>[];
   var userlistScrollController = ScrollController();
-  var scrollable = Mirrorfly.isTrialLicence.obs;
+  var scrollable = (!Constants.enableContactSync).obs;
   var isPageLoading = false.obs;
   final _userList = <Profile>[].obs;
 
@@ -1139,13 +1139,13 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
   Future<void> filterUserList() async {
     if (await AppUtils.isNetConnected()) {
       searching = true;
-      var future = (Mirrorfly.isTrialLicence) ? Mirrorfly.getUserList(pageNum, search.text.trim().toString()) : Mirrorfly.getRegisteredUsers(true);
+      var future = (!Constants.enableContactSync) ? Mirrorfly.getUserList(pageNum, search.text.trim().toString()) : Mirrorfly.getRegisteredUsers(true);
       future.then((value) {
         // Mirrorfly.getUserList(pageNum, search.text.trim().toString()).then((value) {
         if (value != null) {
           var list = userListFromJson(value);
           if (list.data != null) {
-            if (Mirrorfly.isTrialLicence) {
+            if (!Constants.enableContactSync) {
               scrollable(list.data!.length == 20);
 
               list.data!.removeWhere((element) {
@@ -1363,7 +1363,7 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
   }
 
   Future<void> gotoContacts({bool forCalls = false, String callType = ""}) async {
-    if (Mirrorfly.isTrialLicence) {
+    if (!Constants.enableContactSync) {
       Get.toNamed(Routes.contacts, arguments: {
         "is_make_call": forCalls,
         "call_type": callType,

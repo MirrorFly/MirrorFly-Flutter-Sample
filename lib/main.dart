@@ -59,12 +59,12 @@ Future<void> main() async {
     }
 
   }
-  Mirrorfly.init(
-      baseUrl: 'https://api-uikit-qa.contus.us/api/v1/',
+  var initSDK = await Mirrorfly.initializeSDK(
       licenseKey: 'ckIjaccWBoMNvxdbql8LJ2dmKqT5bp',//ckIjaccWBoMNvxdbql8LJ2dmKqT5bp//2sdgNtr3sFBSM3bYRa7RKDPEiB38Xo
       iOSContainerID: 'group.com.mirrorfly.flutter',//group.com.mirrorfly.flutter
       chatHistoryEnable: true,
       enableDebugLog: true);
+  LogMessage.d("initSDK", initSDK);
   final GoogleMapsFlutterPlatform mapsImplementation =
       GoogleMapsFlutterPlatform.instance;
   if (mapsImplementation is GoogleMapsFlutterAndroid) {
@@ -159,7 +159,7 @@ String getInitialRoute() {
             .getChatJid()
             .checkNull()
             .isEmpty) {
-          if(!Mirrorfly.isTrialLicence) {
+          if(Constants.enableContactSync) {
               // mirrorFlyLog("nonChatUsers", nonChatUsers.toString());
               mirrorFlyLog("SessionManagement.isContactSyncDone()", SessionManagement.isContactSyncDone().toString());
               if (!SessionManagement.isContactSyncDone() /*|| nonChatUsers.isEmpty*/) {

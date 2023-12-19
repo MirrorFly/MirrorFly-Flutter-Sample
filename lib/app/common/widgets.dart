@@ -7,7 +7,6 @@ import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
 
 import 'package:mirror_fly_demo/app/modules/dashboard/widgets.dart';
-import 'package:mirrorfly_plugin/mirrorfly.dart';
 import 'constants.dart';
 import 'main_controller.dart';
 
@@ -151,7 +150,7 @@ class ImageNetwork extends GetView<MainController> {
             );
           },*/
         placeholder: (context, string) {
-          if(!(blocked || (unknown && !Mirrorfly.isTrialLicence))){
+          if(!(blocked || (unknown && Constants.enableContactSync))){
             if(errorWidget !=null){
               return errorWidget!;
             }
@@ -183,7 +182,7 @@ class ImageNetwork extends GetView<MainController> {
           // debugPrint("image blocked--> $blocked");
           // debugPrint("image unknown--> $unknown");
 
-          if(!(blocked || (unknown && !Mirrorfly.isTrialLicence))){
+          if(!(blocked || (unknown && Constants.enableContactSync))){
             if(errorWidget !=null){
               return errorWidget!;
             }
@@ -207,7 +206,7 @@ class ImageNetwork extends GetView<MainController> {
         imageBuilder: (context, provider) {
           return clipOval
               ? ClipOval(
-                  child: !(blocked || (unknown && !Mirrorfly.isTrialLicence)) ? Image(
+                  child: !(blocked || (unknown && Constants.enableContactSync)) ? Image(
                   image: provider,
                   fit: BoxFit.fill,
                 ) : Image.asset(
@@ -218,7 +217,7 @@ class ImageNetwork extends GetView<MainController> {
                   ),)
               : InkWell(
                   onTap: onTap,
-                  child: !(blocked || (unknown && !Mirrorfly.isTrialLicence)) ? Image(
+                  child: !(blocked || (unknown && Constants.enableContactSync)) ? Image(
                     image: provider,
                     fit: BoxFit.fill,
                   ) : Image.asset(
