@@ -200,26 +200,30 @@ class AddParticipantsController extends GetxController with GetTickerProviderSta
   }
 
   contactSelected(Profile item) {
-    if (selectedUsersJIDList.contains(item.jid)) {
-      selectedUsersList.removeWhere((user) => user.jid == item.jid);
-      selectedUsersJIDList.remove(item.jid);
-      //item.isSelected = false;
-      groupCallMembersCount(groupCallMembersCount.value - 1);
-    } else {
-      if(callList.length!=8) {
-        if (getMaxCallUsersCount > (selectedUsersList.length + callList.length)) {
-          selectedUsersList.add(item);
-          selectedUsersJIDList.add(item.jid!);
-          groupCallMembersCount(groupCallMembersCount.value + 1);
+    if(callList.indexWhere((element) => element.userJid.toString()==item.jid.toString()).isNegative) {
+      if (selectedUsersJIDList.contains(item.jid)) {
+        selectedUsersList.removeWhere((user) => user.jid == item.jid);
+        selectedUsersJIDList.remove(item.jid);
+        //item.isSelected = false;
+        groupCallMembersCount(groupCallMembersCount.value - 1);
+      } else {
+        if (callList.length != getMaxCallUsersCount) {
+          if (getMaxCallUsersCount > (selectedUsersList.length + callList.length)) {
+            selectedUsersList.add(item);
+            selectedUsersJIDList.add(item.jid!);
+            groupCallMembersCount(groupCallMembersCount.value + 1);
+          } else {
+            toToast(Constants.callMembersLimit6.replaceFirst("%d", (groupCallMembersCount.value).toString()));
+          }
         } else {
-          toToast(Constants.callMembersLimit6.replaceFirst("%d", (groupCallMembersCount.value).toString()));
+          toToast(Constants.callMembersLimit.replaceFirst("%d", getMaxCallUsersCount.toString()));
         }
-      }else{
-        toToast(Constants.callMembersLimit.replaceFirst("%d", getMaxCallUsersCount.toString()));
+        //item.isSelected = true;
       }
-      //item.isSelected = true;
+      usersList.refresh();
+    }else{
+      toToast("User Already Added");
     }
-    usersList.refresh();
   }
 
   void onContactSyncComplete(bool result) {
@@ -263,15 +267,38 @@ class AddParticipantsController extends GetxController with GetTickerProviderSta
     }
   }
 
+  void onUserInvite(String callMode, String userJid, String callType) {
+    removeSelectedPartcipants();
+  }
+
+  void removeSelectedPartcipants(){
+    Mirrorfly.getInvitedUsersList().then((value) async {
+      LogMessage.d("callController", " getInvitedUsersList $value");
+      if(value.isNotEmpty){
+        var userJids = value;
+        for (var jid in userJids) {
+          selectedUsersList.removeWhere((user) =>user.jid==jid);
+          selectedUsersJIDList.remove(jid);
+        }
+        usersList.refresh();
+        groupCallMembersCount(selectedUsersJIDList.length);
+      }
+    });
+  }
+
   var groupCallMembersCount = 0.obs;
   var callType = CallType.audio.obs;
   makeCall() async {
     if(selectedUsersJIDList.isNotEmpty) {
-      if (await AppUtils.isNetConnected()) {
-        Mirrorfly.inviteUsersToOngoingCall(jidList: selectedUsersJIDList);
-        Get.back();
-      } else {
-        toToast(Constants.noInternetConnection);
+      if(callList.length!=getMaxCallUsersCount) {
+        if (await AppUtils.isNetConnected()) {
+          Mirrorfly.inviteUsersToOngoingCall(jidList: selectedUsersJIDList);
+          Get.back();
+        } else {
+          toToast(Constants.noInternetConnection);
+        }
+      }else{
+        toToast(Constants.callMembersLimit.replaceFirst("%d", getMaxCallUsersCount.toString()));
       }
     }
   }

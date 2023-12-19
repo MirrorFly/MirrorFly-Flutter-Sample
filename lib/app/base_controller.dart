@@ -342,6 +342,10 @@ abstract class BaseController {
             Get.find<CallController>().onUserInvite(
                 callMode, userJid, callType);
           }
+          if (Get.isRegistered<AddParticipantsController>()) {
+            Get.find<AddParticipantsController>().onUserInvite(
+                callMode, userJid, callType);
+          }
           break;
         case CallAction.remoteOtherBusy:{// for group call users decline the call before attend
           if(Get.isRegistered<CallController>()){
