@@ -100,7 +100,7 @@ class DashboardView extends GetView<DashboardController> {
                                           Obx(() {
                                             return tabItem(title: "CHATS", count: controller.unreadCountString);
                                           }),
-                                          tabItem(title: "CALLS", count: "0")
+                                          tabItem(title: "CALLS", count: controller.unreadCallCountString)
                                         ]),
                               actions: [
                                 CustomActionBarIcons(
@@ -285,8 +285,9 @@ class DashboardView extends GetView<DashboardController> {
                                       CustomAction(
                                         visibleWidget: const Icon(Icons.web),
                                         overflowWidget: const Text("Clear call log"),
-                                        showAsAction:
-                                        controller.selected.value || controller.isSearching.value || controller.currentTab.value == 0 ? ShowAsAction.gone : ShowAsAction.never,
+                                        showAsAction: controller.selected.value || controller.isSearching.value || controller.currentTab.value == 0
+                                            ? ShowAsAction.gone
+                                            : ShowAsAction.never,
                                         keyValue: 'Clear call log',
                                         onItemClick: () => controller.clearCallLog(),
                                       ),
@@ -992,7 +993,7 @@ class DashboardView extends GetView<DashboardController> {
                     onTap: () {
                       if (controller.selectedLog.value) {
                         controller.selectOrRemoveCallLogFromList(index);
-                      }else{
+                      } else {
                         controller.toChatPage(item.callState == CallState.outgoingCall ? item.toUser! : item.fromUser!);
                       }
                     },
@@ -1006,18 +1007,31 @@ class DashboardView extends GetView<DashboardController> {
                         fit: BoxFit.cover,
                       ),
                     ),
-                    title: FutureBuilder(
-                        future: CallUtils.getCallLogUserNames(item.userList!, item),
-                        builder: (context, snap) {
-                          if (snap.hasData) {
-                            return Text(
-                              snap.data!,
-                              style: const TextStyle(color: Colors.black),
-                            );
-                          } else {
-                            return const SizedBox.shrink();
-                          }
-                        }),
+                    title: item.groupId!.isEmpty
+                        ? FutureBuilder(
+                            future: CallUtils.getCallLogUserNames(item.userList!, item),
+                            builder: (context, snap) {
+                              if (snap.hasData) {
+                                return Text(
+                                  snap.data!,
+                                  style: const TextStyle(color: Colors.black),
+                                );
+                              } else {
+                                return const SizedBox.shrink();
+                              }
+                            })
+                        : FutureBuilder(
+                            future: getProfileDetails(item.groupId!),
+                            builder: (context, snap) {
+                              if (snap.hasData) {
+                                return Text(
+                                  snap.data!.name!,
+                                  style: const TextStyle(color: Colors.black),
+                                );
+                              } else {
+                                return const SizedBox.shrink();
+                              }
+                            }),
                     subtitle: SizedBox(
                       child: callLogTime(
                           "${getCallLogDateFromTimestamp(item.callTime!, "dd-MMM")}  ${getChatTime(context, item.callTime)}", item.callState),
@@ -1089,7 +1103,9 @@ class DashboardView extends GetView<DashboardController> {
     List<String>? localUserList = [];
     if (item.callState == CallState.missedCall || item.callState == CallState.incomingCall) {
       localUserList.addAll(item.userList!);
-      localUserList.add(item.fromUser!);
+      if(!item.userList!.contains(item.fromUser)){
+        localUserList.add(item.fromUser!);
+      }
     } else {
       localUserList.addAll(item.userList!);
     }
@@ -1102,7 +1118,7 @@ class DashboardView extends GetView<DashboardController> {
                       : item.callState == CallState.incomingCall
                           ? item.fromUser
                           : item.toUser)
-                  : controller.makeCall(localUserList, callType);
+                  : controller.makeCall(localUserList, callType, item);
             },
             icon: SvgPicture.asset(
               videoCallIcon,
@@ -1117,7 +1133,7 @@ class DashboardView extends GetView<DashboardController> {
                       : item.callState == CallState.incomingCall
                           ? item.fromUser
                           : item.toUser)
-                  : controller.makeCall(localUserList, callType);
+                  : controller.makeCall(localUserList, callType, item);
             },
             icon: SvgPicture.asset(
               audioCallIcon,

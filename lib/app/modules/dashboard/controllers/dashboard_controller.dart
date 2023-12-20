@@ -96,6 +96,16 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
   var selectedCallLogs = <String>[].obs;
   var selectedCallLogsPosition = <int>[].obs;
 
+  //final _unreadCallCount = 0.obs;
+
+  //String get unreadCallCountString => returnFormattedCount(_unreadCallCount.value);
+
+  //set unreadCount(int val) => _unreadCount.value = val;
+
+  var unreadCallCount = Get.find<MainController>().unreadCallCount;
+
+  String get unreadCallCountString => returnFormattedCount(unreadCallCount.value);
+
   @override
   void onInit() {
     tabController = TabController(length: 2, vsync: this);
@@ -133,10 +143,27 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
     tabController?.addListener(() {
       LogMessage.d("currentTabIndex default listener", "$currentTab");
       clearAllChatSelection();
+      if (currentTab.value == 1) {
+        markAllUnreadMissedCallsAsRead();
+      }
     });
     pageNumber = 1;
     super.onInit();
   }
+
+  markAllUnreadMissedCallsAsRead() async {
+    if (unreadCallCount.value > 0) {
+      var result = await Mirrorfly.markAllUnreadMissedCallsAsRead();
+      debugPrint("(markAllUnreadMissedCallsAsRead result $result");
+      unreadCallCount(0);
+    }
+  }
+
+  // unreadMissedCallCount() async {
+  //   var unreadMissedCallCount = await Mirrorfly.getUnreadMissedCallCount();
+  //   _unreadCallCount.value = unreadMissedCallCount!;
+  //   debugPrint("unreadMissedCallCount $unreadMissedCallCount");
+  // }
 
   @override
   void onReady() {
@@ -1624,7 +1651,7 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
     }
   }
 
-  makeCall(List<String>? userList, String callType) async {
+  makeCall(List<String>? userList, String callType, CallLogData item) async {
     if (userList!.isNotEmpty) {
       if (await AppUtils.isNetConnected()) {
         if (callType == CallType.video) {
@@ -1634,7 +1661,8 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
               debugPrint("#Mirrorfly Call You are on another call");
               toToast(Constants.msgOngoingCallAlert);
             } else {
-              Mirrorfly.makeGroupVideoCall(jidList: userList).then((value) {
+              Mirrorfly.makeGroupVideoCall(groupJid: item.groupId != null || item.groupId!.isNotEmpty ? item.groupId! : "", jidList: userList)
+                  .then((value) {
                 if (value) {
                   Get.toNamed(Routes.outGoingCallView, arguments: {"userJid": userList, "callType": CallType.video});
                 }
@@ -1648,7 +1676,8 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
               debugPrint("#Mirrorfly Call You are on another call");
               toToast(Constants.msgOngoingCallAlert);
             } else {
-              Mirrorfly.makeGroupVoiceCall(jidList: userList).then((value) {
+              Mirrorfly.makeGroupVoiceCall(groupJid: item.groupId != null || item.groupId!.isNotEmpty ? item.groupId! : "", jidList: userList)
+                  .then((value) {
                 if (value) {
                   Get.toNamed(Routes.outGoingCallView, arguments: {"userJid": userList, "callType": CallType.audio});
                 }

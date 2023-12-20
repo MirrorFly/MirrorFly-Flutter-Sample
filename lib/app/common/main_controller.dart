@@ -41,6 +41,8 @@ class MainController extends FullLifeCycleController with BaseController, FullLi
 
   var availableFeature = AvailableFeatures().obs;
 
+  final unreadCallCount = 0.obs;
+
   @override
   Future<void> onInit() async {
     super.onInit();
@@ -71,6 +73,7 @@ class MainController extends FullLifeCycleController with BaseController, FullLi
     _requestPermissions();
     // _configureDidReceiveLocalNotificationSubject();
     _configureSelectNotificationSubject();
+    unreadMissedCallCount();
   }
 
 
@@ -294,6 +297,7 @@ class MainController extends FullLifeCycleController with BaseController, FullLi
     if(Constants.enableContactSync) {
       syncContacts();
     }
+    unreadMissedCallCount();
   }
 
   void syncContacts() async {
@@ -374,5 +378,11 @@ class MainController extends FullLifeCycleController with BaseController, FullLi
   @override
   void onHidden() {
 
+  }
+
+  unreadMissedCallCount() async {
+    var unreadMissedCallCount = await Mirrorfly.getUnreadMissedCallCount();
+    unreadCallCount.value = unreadMissedCallCount!;
+    debugPrint("unreadMissedCallCount $unreadMissedCallCount");
   }
 }

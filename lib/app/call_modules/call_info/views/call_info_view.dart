@@ -47,18 +47,31 @@ class CallInfoView extends GetView<CallInfoController> {
                           fit: BoxFit.cover,
                         ),
                       ),
-                      title: FutureBuilder(
-                          future: CallUtils.getCallLogUserNames(controller.callLogData.userList!, controller.callLogData),
-                          builder: (context, snap) {
-                            if (snap.hasData) {
-                              return Text(
-                                snap.data!,
-                                style: const TextStyle(color: Colors.black),
-                              );
-                            } else {
-                              return const SizedBox.shrink();
-                            }
-                          }),
+                      title: controller.callLogData.groupId!.isEmpty
+                          ? FutureBuilder(
+                              future: CallUtils.getCallLogUserNames(controller.callLogData.userList!, controller.callLogData),
+                              builder: (context, snap) {
+                                if (snap.hasData) {
+                                  return Text(
+                                    snap.data!,
+                                    style: const TextStyle(color: Colors.black),
+                                  );
+                                } else {
+                                  return const SizedBox.shrink();
+                                }
+                              })
+                          : FutureBuilder(
+                              future: getProfileDetails(controller.callLogData.groupId!),
+                              builder: (context, snap) {
+                                if (snap.hasData) {
+                                  return Text(
+                                    snap.data!.name!,
+                                    style: const TextStyle(color: Colors.black),
+                                  );
+                                } else {
+                                  return const SizedBox.shrink();
+                                }
+                              }),
                       subtitle: SizedBox(
                         child: callLogTime(
                             "${getCallLogDateFromTimestamp(controller.callLogData.callTime!, "dd-MMM")}  ${getChatTime(context, controller.callLogData.callTime)}",
@@ -105,7 +118,7 @@ class CallInfoView extends GetView<CallInfoController> {
                                       width: 48,
                                       height: 48,
                                       clipOval: true,
-                                      errorWidget: getName(snap.data!) //item.nickName
+                                      errorWidget: getName(snap.data!)
                                               .checkNull()
                                               .isNotEmpty
                                           ? ProfileTextImage(text: getName(snap.data!))
@@ -143,14 +156,16 @@ class CallInfoView extends GetView<CallInfoController> {
     List<String>? localUserList = [];
     if (item.callState == CallState.missedCall || item.callState == CallState.incomingCall) {
       localUserList.addAll(item.userList!);
-      localUserList.add(item.fromUser!);
+      if(!item.userList!.contains(item.fromUser)){
+        localUserList.add(item.fromUser!);
+      }
     } else {
       localUserList.addAll(item.userList!);
     }
     return callType!.toLowerCase() == CallType.video
         ? IconButton(
             onPressed: () {
-              controller.makeCall(localUserList, callType);
+              controller.makeCall(localUserList, callType, item);
             },
             icon: SvgPicture.asset(
               videoCallIcon,
@@ -159,7 +174,7 @@ class CallInfoView extends GetView<CallInfoController> {
           )
         : IconButton(
             onPressed: () {
-              controller.makeCall(localUserList, callType);
+              controller.makeCall(localUserList, callType,item);
             },
             icon: SvgPicture.asset(
               audioCallIcon,
