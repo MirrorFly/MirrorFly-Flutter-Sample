@@ -53,7 +53,8 @@ dependencies:
   video_player: ^2.6.1
   internet_connection_checker: ^1.0.0+1 # connectivity check
   provider: ^6.0.3
-  photo_manager: ^2.8.1
+  #photo_manager: ^2.8.1
+  photo_manager: ^3.0.0-dev.5
   oktoast: ^3.3.1
   #  google_cloud_translation: ^0.0.3 # Google Translator
   share_plus: ^7.0.2
