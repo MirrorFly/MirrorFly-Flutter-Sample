@@ -1661,7 +1661,7 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
               debugPrint("#Mirrorfly Call You are on another call");
               toToast(Constants.msgOngoingCallAlert);
             } else {
-              Mirrorfly.makeGroupVideoCall(groupJid: item.groupId != null || item.groupId!.isNotEmpty ? item.groupId! : "", jidList: userList)
+              Mirrorfly.makeGroupVideoCall(groupJid: item.groupId.checkNull().isNotEmpty ? item.groupId! : "", jidList: userList)
                   .then((value) {
                 if (value) {
                   Get.toNamed(Routes.outGoingCallView, arguments: {"userJid": userList, "callType": CallType.video});
@@ -1676,7 +1676,7 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
               debugPrint("#Mirrorfly Call You are on another call");
               toToast(Constants.msgOngoingCallAlert);
             } else {
-              Mirrorfly.makeGroupVoiceCall(groupJid: item.groupId != null || item.groupId!.isNotEmpty ? item.groupId! : "", jidList: userList)
+              Mirrorfly.makeGroupVoiceCall(groupJid: item.groupId.checkNull().isNotEmpty ? item.groupId! : "", jidList: userList)
                   .then((value) {
                 if (value) {
                   Get.toNamed(Routes.outGoingCallView, arguments: {"userJid": userList, "callType": CallType.audio});

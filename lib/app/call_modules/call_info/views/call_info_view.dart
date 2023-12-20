@@ -47,7 +47,7 @@ class CallInfoView extends GetView<CallInfoController> {
                           fit: BoxFit.cover,
                         ),
                       ),
-                      title: controller.callLogData.groupId!.isEmpty
+                      title: controller.callLogData.groupId!.checkNull().isEmpty
                           ? FutureBuilder(
                               future: CallUtils.getCallLogUserNames(controller.callLogData.userList!, controller.callLogData),
                               builder: (context, snap) {
@@ -195,7 +195,7 @@ class CallInfoView extends GetView<CallInfoController> {
       ),
       items: <PopupMenuEntry>[
         const PopupMenuItem(
-          value: 'item1',
+          value: 0,
           child: Text('Remove from call log'),
         ),
       ],

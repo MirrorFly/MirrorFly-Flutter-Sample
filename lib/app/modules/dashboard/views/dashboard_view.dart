@@ -1007,7 +1007,7 @@ class DashboardView extends GetView<DashboardController> {
                         fit: BoxFit.cover,
                       ),
                     ),
-                    title: item.groupId!.isEmpty
+                    title: item.groupId!.checkNull().isEmpty
                         ? FutureBuilder(
                             future: CallUtils.getCallLogUserNames(item.userList!, item),
                             builder: (context, snap) {
