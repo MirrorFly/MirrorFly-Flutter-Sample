@@ -1,5 +1,6 @@
 // ignore_for_file: deprecated_member_use
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'dart:ui' as ui;
 
@@ -18,28 +19,30 @@ class DecodeImage extends ImageProvider<DecodeImage> {
     this.index = 0,
   });
 
-  @override
-  ImageStreamCompleter load(DecodeImage key, DecoderCallback decode) {
-    return MultiFrameImageStreamCompleter(
-      codec: _loadAsync(key, decode),
-      scale: key.scale,
-    );
-  }
-
-  Future<ui.Codec> _loadAsync(DecodeImage key, DecoderCallback decode) async {
-    assert(key == this);
-
-    final coverEntity =
-        (await key.entity.getAssetListRange(start: index, end: index + 1))[0];
-
-    final bytes = await coverEntity
-        .thumbnailDataWithSize(ThumbnailSize(thumbSize, thumbSize));
-
-    return decode(bytes!);
-  }
+  //Commented this for https://github.com/fluttercandies/flutter_photo_manager/issues/1021
+  //Once Stable Version is releases will update here
+  // @override
+  // ImageStreamCompleter load(DecodeImage key, DecoderCallback decode ) {
+  //   return MultiFrameImageStreamCompleter(
+  //     codec: _loadAsync(key, decode),
+  //     scale: key.scale,
+  //   );
+  // }
+  //
+  // Future<ui.Codec> _loadAsync(DecodeImage key, DecoderCallback decode) async {
+  //   assert(key == this);
+  //
+  //   final coverEntity =
+  //       (await key.entity.getAssetListRange(start: index, end: index + 1))[0];
+  //
+  //   final bytes = await coverEntity
+  //       .thumbnailDataWithSize(ThumbnailSize(thumbSize, thumbSize));
+  //
+  //   return decode(bytes!);
+  // }
 
   @override
   Future<DecodeImage> obtainKey(ImageConfiguration configuration) async {
-    return this;
+    return SynchronousFuture<DecodeImage>(this);
   }
 }

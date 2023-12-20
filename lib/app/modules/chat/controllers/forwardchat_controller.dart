@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
@@ -6,6 +7,7 @@ import 'package:mirrorfly_plugin/mirrorfly.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 import '../../../common/de_bouncer.dart';
+import '../../../common/main_controller.dart';
 import '../../../data/apputils.dart';
 
 class ForwardChatController extends GetxController {
@@ -254,7 +256,15 @@ class ForwardChatController extends GetxController {
 
   bool isChecked(String jid) => selectedJids.contains(jid);
 
-  void onItemSelect(String jid, String name,bool isBlocked){
+  Future<void> onItemSelect(String jid, String name,bool isBlocked,bool isGroup) async {
+    if(isGroup.checkNull() && !availableFeatures.value.isGroupChatAvailable.checkNull()){
+      Helper.showFeatureUnavailable();
+      return;
+    }
+    if(isGroup.checkNull() && !(await Mirrorfly.isMemberOfGroup(jid, null)).checkNull()){
+      toToast("You're no longer a participant in this group");
+      return;
+    }
     if(isBlocked.checkNull()){
       unBlock(jid,name);
     }else{
@@ -361,6 +371,12 @@ class ForwardChatController extends GetxController {
                 Get.back(result: value);
               }
             });
+          }).catchError((onError){
+            onError as PlatformException;
+            if(onError.message!=null) {
+              toToast(onError.message!);
+              Get.back(result: null);
+            }
           });
         }
       } else {
@@ -461,5 +477,11 @@ class ForwardChatController extends GetxController {
 
   void userDeletedHisProfile(String jid) {
     userUpdatedHisProfile(jid);
+  }
+
+  var availableFeatures = Get.find<MainController>().availableFeature;
+  void onAvailableFeaturesUpdated(AvailableFeatures features) {
+    LogMessage.d("Forward", "onAvailableFeaturesUpdated ${features.toJson()}");
+    availableFeatures(features);
   }
 }
