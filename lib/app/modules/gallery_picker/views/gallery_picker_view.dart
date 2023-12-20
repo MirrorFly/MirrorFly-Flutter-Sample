@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:get/get.dart';
+import 'package:mirror_fly_demo/app/modules/gallery_picker/src/data/models/gallery_params_model.dart';
 
 import '../../../routes/app_pages.dart';
 import '../controllers/gallery_picker_controller.dart';
@@ -27,6 +28,8 @@ class GalleryPickerView extends GetView<GalleryPickerController> {
                   future: null,
                 builder: (context, snapshot) {
                   return GalleryMediaPicker(
+                    mediaPickerParams: MediaPickerParamsModel(
+                      appBarHeight: 60,
                     childAspectRatio: 1,
                     crossAxisCount: 3,
                     thumbnailQuality: 200,
@@ -35,14 +38,9 @@ class GalleryPickerView extends GetView<GalleryPickerController> {
                     gridViewBackgroundColor: Colors.grey,
                     imageBackgroundColor: Colors.black,
                     maxPickImages: controller.maxPickImages,
-                    appBarHeight: 60,
                     selectedBackgroundColor: Colors.black,
                     selectedCheckColor: Colors.black87,
                     selectedCheckBackgroundColor: Colors.white10,
-                    pathList: (paths) {
-                      debugPrint("file selected");
-                      controller.addFile(paths);
-                    },
                     appBarLeadingWidget: Align(
                       alignment: Alignment.bottomRight,
                       child: Padding(
@@ -97,6 +95,11 @@ class GalleryPickerView extends GetView<GalleryPickerController> {
                         ),
                       ),
                     ),
+                    ),
+                    pathList: (paths) {
+                      debugPrint("file selected");
+                      controller.addFile(paths);
+                    },
                   );
                 }
               ),

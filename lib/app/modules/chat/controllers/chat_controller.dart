@@ -2439,11 +2439,15 @@ class ChatController extends FullLifeCycleController
       try {
         // imagePicker();
         setOnGoingUserGone();
-        Get.toNamed(Routes.galleryPicker, arguments: {
-          "userName": getName(profile),
-          'profile': profile,
-          'caption': messageController.text.trim()
-        })?.then((value) => setOnGoingUserAvail());
+        //Image Picker Will not work as the Photo Manager is been upgraded for latest flutter version.
+        //Will update this once the https://github.com/fluttercandies/flutter_photo_manager/issues/1021 is resolved
+        //Kindly use your image picker to pick the Images.
+
+        // Get.toNamed(Routes.galleryPicker, arguments: {
+        //   "userName": getName(profile),
+        //   'profile': profile,
+        //   'caption': messageController.text.trim()
+        // })?.then((value) => setOnGoingUserAvail());
       } catch (e) {
         debugPrint(e.toString());
       }
