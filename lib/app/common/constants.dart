@@ -42,6 +42,7 @@ const Color durationTextColor = Color(0xff455E93);
 const Color chatBgColor = Color(0xffD0D8EB);
 const Color previewTextColor = Color(0xff7f7f7f);
 const Color callsSubText = Color(0Xff737373);
+const Color notificationAlertBg = Color(0xffEFF4FD);
 
 class AppColors{
   static const Color callerBackground = Color(0xff152134);
@@ -266,6 +267,7 @@ const String settingsPermission = "assets/logos/settings_permission.svg";
 const String locationPinPermission = "assets/logos/location_pin_permission.svg";
 const String recordAudioVideoPermission =
     "assets/logos/record_audio_video_permission.svg";
+const String notificationAlertPermission = 'assets/calls/ic_notification_alert.svg';
 
 const String icAdminBlocked = "assets/logos/ic_admin_blocked.svg";
 const String icExpand = "assets/logos/ic_expand.svg";
@@ -774,10 +776,8 @@ class Constants {
   static const String bluetoothPermissionName = "Nearby devices";
   static const String notificationPermissionName = "Notifications";
   static const String phonePermissionName = "Phone";
-  static const String notificationPermission =
-      "MirrorFly need the Notifications Permissions in order to Post Notifications";
-  static const String notificationPermissionDenied =
-      "MirrorFly need the Notifications Permissions in order to Post Notifications, but they have been permanently denied. Please continue to app settings, select \"Permissions\", and enable \"Notifications\".";
+  static const String notificationPermissionTitle = "Turn on notification for MirrorFly";
+  static const String notificationPermissionMessage = "Allow MirrorFly to send you notifications to stay \nconnected with friends and family.\n\n Please continue to app Settings > select Permission > enable Notification.\n";
   static const String callPermission =
       "MirrorFly need the %d Permissions in order to call Family";
   static const String callPermissionDenied =
