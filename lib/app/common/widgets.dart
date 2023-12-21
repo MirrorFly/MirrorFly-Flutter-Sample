@@ -5,6 +5,7 @@ import 'package:emoji_picker_flutter/emoji_picker_flutter.dart' as emoji;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
+import 'package:mirror_fly_demo/app/model/reply_hash_map.dart';
 
 import 'package:mirror_fly_demo/app/modules/dashboard/widgets.dart';
 import 'constants.dart';
@@ -176,7 +177,7 @@ class ImageNetwork extends GetView<MainController> {
             // mirrorFlyLog("image error", "$error link : $link token : ${controller.authToken.value} ${url.isURL}");
             if (error.toString().contains("401") && url.isNotEmpty) {
               // controller.getAuthToken();
-              _deleteImageFromCache(url);
+              _deleteImageFromCache(url,"$error : token : ${controller.authToken.value}");
             }
           }
           // debugPrint("image blocked--> $blocked");
@@ -237,11 +238,16 @@ class ImageNetwork extends GetView<MainController> {
     return isGroup ? groupImg : profileImg;
   }
 
-  void _deleteImageFromCache(String url) {
+  void _deleteImageFromCache(String url,String error) {
     /*cache.DefaultCacheManager manager = cache.DefaultCacheManager();
     manager.emptyCache();*/
     CachedNetworkImage.evictFromCache(url, cacheKey: url)
-        .then((value) => controller.getAuthToken());
+        .then((value) {
+          if(ReplyHashMap.getRefreshCount(url)<2) {
+            ReplyHashMap.addRefreshToken(url,error);
+            controller.getAuthToken();
+          }
+        });
     /*cache.DefaultCacheManager().removeFile(url).then((value) {
       mirrorFlyLog('File removed', "");
       controller.getAuthToken();
