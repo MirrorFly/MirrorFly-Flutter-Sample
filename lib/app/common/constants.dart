@@ -42,6 +42,7 @@ const Color durationTextColor = Color(0xff455E93);
 const Color chatBgColor = Color(0xffD0D8EB);
 const Color previewTextColor = Color(0xff7f7f7f);
 const Color callsSubText = Color(0Xff737373);
+const Color notificationAlertBg = Color(0xffEFF4FD);
 
 class AppColors{
   static const Color callerBackground = Color(0xff152134);
@@ -266,6 +267,7 @@ const String settingsPermission = "assets/logos/settings_permission.svg";
 const String locationPinPermission = "assets/logos/location_pin_permission.svg";
 const String recordAudioVideoPermission =
     "assets/logos/record_audio_video_permission.svg";
+const String notificationAlertPermission = 'assets/calls/ic_notification_alert.svg';
 
 const String icAdminBlocked = "assets/logos/ic_admin_blocked.svg";
 const String icExpand = "assets/logos/ic_expand.svg";
@@ -336,6 +338,7 @@ mirrorFlyLog(String tag, String msg) {
 }
 
 class Constants {
+  static const bool enableContactSync = false;
   static const bool enableTopic = false;
   static const String topicId = enableTopic ? "5d3788c1-78ef-4158-a92b-a48f092da0b9" : "";//Mirrorfly Topic id
   static const String package = 'com.mirrorfly.uikit_flutter';
@@ -347,7 +350,7 @@ class Constants {
   static const String applicationLink = "https://app.contusfly.contus.com";
   static const String smsContent =
       "Hey, MirrorFly is a real time chat, Audio and Video call solution for B2B and B2C.\n Download the app from this URL: https://app.mirrorfly.com";
-
+  static const String maximumLoginReached = "You have reached the maximum device limit, If you want to continue one of your device will logged out . Do you want to continue?";
   static const String rosterJid = "roster_jid";
   static const String isLiveUser = "is_live_user";
   static const String ifBlockedMe = "ifBlockedMe";
@@ -773,16 +776,24 @@ class Constants {
   static const String bluetoothPermissionName = "Nearby devices";
   static const String notificationPermissionName = "Notifications";
   static const String phonePermissionName = "Phone";
-  static const String notificationPermission =
-      "MirrorFly need the Notifications Permissions in order to Post Notifications";
-  static const String notificationPermissionDenied =
-      "MirrorFly need the Notifications Permissions in order to Post Notifications, but they have been permanently denied. Please continue to app settings, select \"Permissions\", and enable \"Notifications\".";
+  static const String notificationPermissionTitle = "Turn on notification for MirrorFly";
+  static const String notificationPermissionMessage = "Allow MirrorFly to send you notifications to stay \nconnected with friends and family.\n\n Please continue to app Settings > select Permission > enable Notification.\n";
   static const String callPermission =
       "MirrorFly need the %d Permissions in order to call Family";
   static const String callPermissionDenied =
       "MirrorFly need the %d Permissions in order to call Family, but they have been permanently denied. Please continue to app settings, select \"Permissions\", and enable %d.";
 
 
+  static const String deleteCallLog = "Do you want to delete a call log?";
+  static const String deleteSelectedCallLog = "Do you want to delete the selected call logs?";
+  static const String deleteAllCallLog = "Do you want to clear your entire call log?";
+  static const String noCallLogs = "No Call log history found";
+  static const String noCallLogsMessage = "Any new Calls will appear here";
+  static const String noChats = "No new messages";
+  static const String noChatsMessage = "Any new messages will appear here";
+  static const String noDataFound = "No data found";
+  static const String removeFromCallLog = "Remove from call log";
+  static const String callInfo = "Call Info";
 }
 
 Future<void> launchWeb(String url) async {

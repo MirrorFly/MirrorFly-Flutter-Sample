@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:focus_detector/focus_detector.dart';
 import 'package:get/get.dart';
-import 'package:mirror_fly_demo/app/call_modules/call_logs/call_log_model.dart';
 import 'package:mirror_fly_demo/app/call_modules/call_utils.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
 import 'package:mirror_fly_demo/app/modules/dashboard/widgets.dart';
 import 'package:mirror_fly_demo/app/widgets/animated_floating_action.dart';
 import 'package:mirrorfly_plugin/mirrorflychat.dart';
+import 'package:mirrorfly_plugin/model/call_log_model.dart';
 
 import '../../../common/app_theme.dart';
 import '../../../common/widgets.dart';
@@ -100,7 +100,7 @@ class DashboardView extends GetView<DashboardController> {
                                           Obx(() {
                                             return tabItem(title: "CHATS", count: controller.unreadCountString);
                                           }),
-                                          tabItem(title: "CALLS", count: "0")
+                                          tabItem(title: "CALLS", count: controller.unreadCallCountString)
                                         ]),
                               actions: [
                                 CustomActionBarIcons(
@@ -283,6 +283,15 @@ class DashboardView extends GetView<DashboardController> {
                                         },
                                       ),
                                       CustomAction(
+                                        visibleWidget: const Icon(Icons.web),
+                                        overflowWidget: const Text("Clear call log"),
+                                        showAsAction: controller.selected.value || controller.isSearching.value || controller.currentTab.value == 0
+                                            ? ShowAsAction.gone
+                                            : ShowAsAction.never,
+                                        keyValue: 'Clear call log',
+                                        onItemClick: () => controller.clearCallLog(),
+                                      ),
+                                      CustomAction(
                                         visibleWidget: const Icon(Icons.settings),
                                         overflowWidget: const Text("Settings"),
                                         showAsAction:
@@ -299,7 +308,7 @@ class DashboardView extends GetView<DashboardController> {
                                             controller.selected.value || controller.isSearching.value ? ShowAsAction.gone : ShowAsAction.never,
                                         keyValue: 'Web',
                                         onItemClick: () => controller.webLogin(),
-                                      )
+                                      ),
                                     ]),
                               ],
                             );
@@ -643,7 +652,7 @@ class DashboardView extends GetView<DashboardController> {
                   child: const Center(
                     child: Padding(
                       padding: EdgeInsets.all(16.0),
-                      child: Text("No data found"),
+                      child: Text(Constants.noDataFound),
                     ),
                   ))
             ],
@@ -863,7 +872,7 @@ class DashboardView extends GetView<DashboardController> {
             width: 200,
           ),
           Text(
-            'No new messages',
+            Constants.noChats,
             textAlign: TextAlign.center,
             style: Theme.of(context).textTheme.titleMedium,
           ),
@@ -871,7 +880,7 @@ class DashboardView extends GetView<DashboardController> {
             height: 8,
           ),
           Text(
-            'Any new messages will appear here',
+            Constants.noChatsMessage,
             textAlign: TextAlign.center,
             style: Theme.of(context).textTheme.titleSmall,
           ),
@@ -909,7 +918,7 @@ class DashboardView extends GetView<DashboardController> {
         itemCount: callLogList.length,
         itemBuilder: (context, index) {
           var item = callLogList[index];
-          if (index == callLogList.length ) {
+          if (index == callLogList.length) {
             if (controller.error.value) {
               return const Center(child: Text("Error"));
             } else {
@@ -984,6 +993,8 @@ class DashboardView extends GetView<DashboardController> {
                     onTap: () {
                       if (controller.selectedLog.value) {
                         controller.selectOrRemoveCallLogFromList(index);
+                      } else {
+                        controller.toChatPage(item.callState == CallState.outgoingCall ? item.toUser! : item.fromUser!);
                       }
                     },
                   ))
@@ -996,18 +1007,31 @@ class DashboardView extends GetView<DashboardController> {
                         fit: BoxFit.cover,
                       ),
                     ),
-                    title: FutureBuilder(
-                        future: CallUtils.getCallLogUserNames(item.userList!, item),
-                        builder: (context, snap) {
-                          if (snap.hasData) {
-                            return Text(
-                              snap.data!,
-                              style: const TextStyle(color: Colors.black),
-                            );
-                          } else {
-                            return const SizedBox.shrink();
-                          }
-                        }),
+                    title: item.groupId!.checkNull().isEmpty
+                        ? FutureBuilder(
+                            future: CallUtils.getCallLogUserNames(item.userList!, item),
+                            builder: (context, snap) {
+                              if (snap.hasData) {
+                                return Text(
+                                  snap.data!,
+                                  style: const TextStyle(color: Colors.black),
+                                );
+                              } else {
+                                return const SizedBox.shrink();
+                              }
+                            })
+                        : FutureBuilder(
+                            future: getProfileDetails(item.groupId!),
+                            builder: (context, snap) {
+                              if (snap.hasData) {
+                                return Text(
+                                  snap.data!.name!,
+                                  style: const TextStyle(color: Colors.black),
+                                );
+                              } else {
+                                return const SizedBox.shrink();
+                              }
+                            }),
                     subtitle: SizedBox(
                       child: callLogTime(
                           "${getCallLogDateFromTimestamp(item.callTime!, "dd-MMM")}  ${getChatTime(context, item.callTime)}", item.callState),
@@ -1037,6 +1061,8 @@ class DashboardView extends GetView<DashboardController> {
                     onTap: () {
                       if (controller.selectedLog.value) {
                         controller.selectOrRemoveCallLogFromList(index);
+                      } else {
+                        controller.toCallInfo(item);
                       }
                     },
                   ));
@@ -1044,36 +1070,42 @@ class DashboardView extends GetView<DashboardController> {
   }
 
   Widget emptyCalls(BuildContext context) {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Image.asset(
-            noCallImage,
-            width: 200,
-          ),
-          Text(
-            'No Call log history found',
-            textAlign: TextAlign.center,
-            style: Theme.of(context).textTheme.titleMedium,
-          ),
-          const SizedBox(height: 10,),
-          const Text(
-            'Any new Calls will appear here',
-            textAlign: TextAlign.center,
-            style: TextStyle(color: callsSubText),
-          ),
-        ],
-      ),
-    );
+    return !controller.callLogSearchLoading.value
+        ? Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Image.asset(
+                  noCallImage,
+                  width: 200,
+                ),
+                Text(
+                  Constants.noCallLogs,
+                  textAlign: TextAlign.center,
+                  style: Theme.of(context).textTheme.titleMedium,
+                ),
+                const SizedBox(
+                  height: 10,
+                ),
+                const Text(
+                  Constants.noCallLogsMessage,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(color: callsSubText),
+                ),
+              ],
+            ),
+          )
+        : const Center(child: CircularProgressIndicator());
   }
 
   Widget callIcon(String? callType, CallLogData item, String? callMode, List<String>? userList) {
     List<String>? localUserList = [];
-    if (item.callState == 0 || item.callState == 2) {
+    if (item.callState == CallState.missedCall || item.callState == CallState.incomingCall) {
       localUserList.addAll(item.userList!);
-      localUserList.add(item.fromUser!);
+      if(!item.userList!.contains(item.fromUser)){
+        localUserList.add(item.fromUser!);
+      }
     } else {
       localUserList.addAll(item.userList!);
     }
@@ -1081,12 +1113,12 @@ class DashboardView extends GetView<DashboardController> {
         ? IconButton(
             onPressed: () {
               callMode == CallMode.oneToOne
-                  ? controller.makeVideoCall(item.callState == 0
+                  ? controller.makeVideoCall(item.callState == CallState.missedCall
                       ? item.fromUser
-                      : item.callState == 2
+                      : item.callState == CallState.incomingCall
                           ? item.fromUser
                           : item.toUser)
-                  : controller.makeCall(localUserList, callType);
+                  : controller.makeCall(localUserList, callType, item);
             },
             icon: SvgPicture.asset(
               videoCallIcon,
@@ -1096,12 +1128,12 @@ class DashboardView extends GetView<DashboardController> {
         : IconButton(
             onPressed: () {
               callMode == CallMode.oneToOne
-                  ? controller.makeVoiceCall(item.callState == 0
+                  ? controller.makeVoiceCall(item.callState == CallState.missedCall
                       ? item.fromUser
-                      : item.callState == 2
+                      : item.callState == CallState.incomingCall
                           ? item.fromUser
                           : item.toUser)
-                  : controller.makeCall(localUserList, callType);
+                  : controller.makeCall(localUserList, callType, item);
             },
             icon: SvgPicture.asset(
               audioCallIcon,

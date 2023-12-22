@@ -5,9 +5,9 @@ import 'package:emoji_picker_flutter/emoji_picker_flutter.dart' as emoji;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
+import 'package:mirror_fly_demo/app/model/reply_hash_map.dart';
 
 import 'package:mirror_fly_demo/app/modules/dashboard/widgets.dart';
-import 'package:mirrorfly_plugin/mirrorfly.dart';
 import 'constants.dart';
 import 'main_controller.dart';
 
@@ -151,7 +151,7 @@ class ImageNetwork extends GetView<MainController> {
             );
           },*/
         placeholder: (context, string) {
-          if(!(blocked || (unknown && !Mirrorfly.isTrialLicence))){
+          if(!(blocked || (unknown && Constants.enableContactSync))){
             if(errorWidget !=null){
               return errorWidget!;
             }
@@ -177,13 +177,13 @@ class ImageNetwork extends GetView<MainController> {
             // mirrorFlyLog("image error", "$error link : $link token : ${controller.authToken.value} ${url.isURL}");
             if (error.toString().contains("401") && url.isNotEmpty) {
               // controller.getAuthToken();
-              _deleteImageFromCache(url);
+              _deleteImageFromCache(url,"$error : token : ${controller.authToken.value}");
             }
           }
           // debugPrint("image blocked--> $blocked");
           // debugPrint("image unknown--> $unknown");
 
-          if(!(blocked || (unknown && !Mirrorfly.isTrialLicence))){
+          if(!(blocked || (unknown && Constants.enableContactSync))){
             if(errorWidget !=null){
               return errorWidget!;
             }
@@ -207,7 +207,7 @@ class ImageNetwork extends GetView<MainController> {
         imageBuilder: (context, provider) {
           return clipOval
               ? ClipOval(
-                  child: !(blocked || (unknown && !Mirrorfly.isTrialLicence)) ? Image(
+                  child: !(blocked || (unknown && Constants.enableContactSync)) ? Image(
                   image: provider,
                   fit: BoxFit.fill,
                 ) : Image.asset(
@@ -218,7 +218,7 @@ class ImageNetwork extends GetView<MainController> {
                   ),)
               : InkWell(
                   onTap: onTap,
-                  child: !(blocked || (unknown && !Mirrorfly.isTrialLicence)) ? Image(
+                  child: !(blocked || (unknown && Constants.enableContactSync)) ? Image(
                     image: provider,
                     fit: BoxFit.fill,
                   ) : Image.asset(
@@ -238,11 +238,16 @@ class ImageNetwork extends GetView<MainController> {
     return isGroup ? groupImg : profileImg;
   }
 
-  void _deleteImageFromCache(String url) {
+  void _deleteImageFromCache(String url,String error) {
     /*cache.DefaultCacheManager manager = cache.DefaultCacheManager();
     manager.emptyCache();*/
     CachedNetworkImage.evictFromCache(url, cacheKey: url)
-        .then((value) => controller.getAuthToken());
+        .then((value) {
+          if(ReplyHashMap.getRefreshCount(url)<2) {
+            ReplyHashMap.addRefreshToken(url,error);
+            controller.getAuthToken();
+          }
+        });
     /*cache.DefaultCacheManager().removeFile(url).then((value) {
       mirrorFlyLog('File removed', "");
       controller.getAuthToken();

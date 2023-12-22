@@ -131,7 +131,7 @@ class ProfileController extends GetxController {
                     SessionManagement.setCurrentUser(userProfileData);
                     if (from == Routes.login) {
                       // Mirrorfly.isTrailLicence().then((trail){
-                        if(Mirrorfly.isTrialLicence) {
+                        if(!Constants.enableContactSync) {
                           Get.offNamed(Routes.dashboard);
                         }else{
                           Get.offNamed(Routes.contactSync);

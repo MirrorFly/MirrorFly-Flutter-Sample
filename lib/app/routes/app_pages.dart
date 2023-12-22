@@ -1,4 +1,8 @@
 import 'package:get/get.dart';
+import 'package:mirror_fly_demo/app/call_modules/call_info/bindings/call_info_binding.dart';
+import 'package:mirror_fly_demo/app/call_modules/call_info/views/call_info_view.dart';
+import 'package:mirror_fly_demo/app/call_modules/group_participants/group_participants_binding.dart';
+import 'package:mirror_fly_demo/app/call_modules/group_participants/group_participants_view.dart';
 
 import '../call_modules/call_timeout/bindings/call_timeout_binding.dart';
 import '../call_modules/call_timeout/views/call_timeout_view.dart';
@@ -348,6 +352,16 @@ class AppPages {
       name: _Paths.participants,
       page: () => const ParticipantsView(),
       binding: ParticipantsBinding(),
+    ),
+    GetPage(
+      name: _Paths.groupParticipants,
+      page: () => const GroupParticipantsView(),
+      binding: GroupParticipantsBinding(),
+    ),
+    GetPage(
+      name: _Paths.callInfo,
+      page: () => const CallInfoView(),
+      binding: CallInfoBinding(),
     ),
   ];
 }
