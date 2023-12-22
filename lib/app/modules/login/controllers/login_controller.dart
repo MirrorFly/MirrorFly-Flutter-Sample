@@ -337,7 +337,7 @@ class LoginController extends GetxController {
           Get.offAllNamed(Routes.adminBlocked);
         } else if (error.code == "405") {
           debugPrint("issue 405 ===> $error");
-          sessionExpiredDialogShow(error.message);
+          sessionExpiredDialogShow(Constants.maximumLoginReached);
         } else {
           debugPrint("issue else code ===> ${error.code}");
           debugPrint("issue else ===> $error");

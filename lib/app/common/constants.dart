@@ -350,7 +350,7 @@ class Constants {
   static const String applicationLink = "https://app.contusfly.contus.com";
   static const String smsContent =
       "Hey, MirrorFly is a real time chat, Audio and Video call solution for B2B and B2C.\n Download the app from this URL: https://app.mirrorfly.com";
-
+  static const String maximumLoginReached = "You have reached the maximum device limit, If you want to continue one of your device will logged out . Do you want to continue?";
   static const String rosterJid = "roster_jid";
   static const String isLiveUser = "is_live_user";
   static const String ifBlockedMe = "ifBlockedMe";
