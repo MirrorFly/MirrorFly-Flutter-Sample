@@ -784,6 +784,16 @@ class Constants {
       "MirrorFly need the %d Permissions in order to call Family, but they have been permanently denied. Please continue to app settings, select \"Permissions\", and enable %d.";
 
 
+  static const String deleteCallLog = "Do you want to delete a call log?";
+  static const String deleteSelectedCallLog = "Do you want to delete the selected call logs?";
+  static const String deleteAllCallLog = "Do you want to clear your entire call log?";
+  static const String noCallLogs = "No Call log history found";
+  static const String noCallLogsMessage = "Any new Calls will appear here";
+  static const String noChats = "No new messages";
+  static const String noChatsMessage = "Any new messages will appear here";
+  static const String noDataFound = "No data found";
+  static const String removeFromCallLog = "Remove from call log";
+  static const String callInfo = "Call Info";
 }
 
 Future<void> launchWeb(String url) async {

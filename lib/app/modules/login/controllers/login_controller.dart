@@ -332,7 +332,7 @@ class LoginController extends GetxController {
         debugPrint("issue===> $error");
         debugPrint(error.message);
         hideLoading();
-        if (error.code == 403) {
+        if (error.code == "403") {
           debugPrint("issue 403 ===> $error");
           Get.offAllNamed(Routes.adminBlocked);
         } else if (error.code == "405") {
