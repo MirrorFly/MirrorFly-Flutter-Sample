@@ -652,7 +652,7 @@ class DashboardView extends GetView<DashboardController> {
                   child: const Center(
                     child: Padding(
                       padding: EdgeInsets.all(16.0),
-                      child: Text("No data found"),
+                      child: Text(Constants.noDataFound),
                     ),
                   ))
             ],
@@ -872,7 +872,7 @@ class DashboardView extends GetView<DashboardController> {
             width: 200,
           ),
           Text(
-            'No new messages',
+            Constants.noChats,
             textAlign: TextAlign.center,
             style: Theme.of(context).textTheme.titleMedium,
           ),
@@ -880,7 +880,7 @@ class DashboardView extends GetView<DashboardController> {
             height: 8,
           ),
           Text(
-            'Any new messages will appear here',
+            Constants.noChatsMessage,
             textAlign: TextAlign.center,
             style: Theme.of(context).textTheme.titleSmall,
           ),
@@ -1081,7 +1081,7 @@ class DashboardView extends GetView<DashboardController> {
                   width: 200,
                 ),
                 Text(
-                  'No Call log history found',
+                  Constants.noCallLogs,
                   textAlign: TextAlign.center,
                   style: Theme.of(context).textTheme.titleMedium,
                 ),
@@ -1089,7 +1089,7 @@ class DashboardView extends GetView<DashboardController> {
                   height: 10,
                 ),
                 const Text(
-                  'Any new Calls will appear here',
+                  Constants.noCallLogsMessage,
                   textAlign: TextAlign.center,
                   style: TextStyle(color: callsSubText),
                 ),

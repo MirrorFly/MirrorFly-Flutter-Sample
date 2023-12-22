@@ -1805,7 +1805,7 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
   _itemDeleteCallLog(int index) {
     var logIndex = callLogList.indexWhere((element) => selectedCallLogs[index] == element.roomId); //selectedChatsPosition[index];
     Helper.showAlert(
-        message: "Do you want to delete a call log?",
+        message: Constants.deleteCallLog,
         actions: [
           TextButton(
               onPressed: () {
@@ -1833,7 +1833,7 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
 
   itemsDeleteCallLog() {
     Helper.showAlert(
-        message: "Do you want to delete the selected call logs?",
+        message: Constants.deleteSelectedCallLog,
         actions: [
           TextButton(
               onPressed: () {
@@ -1865,7 +1865,7 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
 
   clearCallLog() {
     Helper.showAlert(
-        message: "Do you want to clear your entire call log?",
+        message: Constants.deleteAllCallLog,
         actions: [
           TextButton(
               onPressed: () {

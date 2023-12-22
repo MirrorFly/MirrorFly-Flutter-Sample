@@ -20,7 +20,7 @@ class CallInfoView extends GetView<CallInfoController> {
       appBar: AppBar(
         centerTitle: true,
         title: const Text(
-          "Call Info",
+          Constants.callInfo,
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
         actions: [
@@ -196,7 +196,7 @@ class CallInfoView extends GetView<CallInfoController> {
       items: <PopupMenuEntry>[
         const PopupMenuItem(
           value: 0,
-          child: Text('Remove from call log'),
+          child: Text(Constants.removeFromCallLog),
         ),
       ],
     ).then((value) {

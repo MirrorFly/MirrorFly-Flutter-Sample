@@ -119,32 +119,26 @@ class AppPermission {
   }
 
   static Future<bool> askNotificationPermission() async {
-    if(!Platform.isAndroid){
-      return true;
-    }
     var permissions = <Permission>[];
     final notification = await Permission.notification.status; //NOTIFICATION
-    if(!notification.isGranted || (await Permission.notification.shouldShowRequestRationale)/*&& !SessionManagement.getBool(Constants.notificationPermissionAsked)*/ && Platform.isAndroid){
+    if(!notification.isGranted || (Platform.isAndroid && await Permission.notification.shouldShowRequestRationale)){
       permissions.add(Permission.notification);
     }
     LogMessage.d("notification", notification.isGranted);
     if (!notification.isGranted) {
-      var shouldShowRequestRationale = ((await Permission.notification.shouldShowRequestRationale));
+      var shouldShowRequestRationale = (Platform.isAndroid && (await Permission.notification.shouldShowRequestRationale));
       LogMessage.d("shouldShowRequestRationale notification", shouldShowRequestRationale);
       LogMessage.d("SessionManagement.getBool(Constants.notificationPermissionAsked) notification", (SessionManagement.getBool(Constants.notificationPermissionAsked)));
       var alreadyAsked = (SessionManagement.getBool(Constants.notificationPermissionAsked));
       LogMessage.d("alreadyAsked notification", alreadyAsked);
-      var permissionName = getPermissionDisplayName(permissions);
-      LogMessage.d("permissionName", permissionName);
-      var dialogContent = Constants.notificationPermission;
-      var dialogContent2 = Constants.notificationPermissionDenied;
+      var dialogContent2 = Constants.notificationPermissionMessage;
       if (shouldShowRequestRationale) {
         LogMessage.d("shouldShowRequestRationale", shouldShowRequestRationale);
-        return requestAudioCallPermissions(content:dialogContent,permissions: permissions,showFromRational: true);
+        return requestNotificationPermissions(icon: notificationAlertPermission,title:Constants.notificationPermissionTitle,message:Constants.notificationPermissionMessage,permissions: permissions,showFromRational: true);
       } else if (alreadyAsked) {
         LogMessage.d("alreadyAsked", alreadyAsked);
         var popupValue = await customPermissionDialog(
-            icon: notificationPermissionIcon,
+            icon: notificationAlertPermission,
             content: dialogContent2);//getPermissionAlertMessage("audio_call"));
         if (popupValue) {
           openAppSettings();
@@ -154,10 +148,10 @@ class AppPermission {
         }
       } else {
         if(permissions.isNotEmpty) {
-          return requestAudioCallPermissions(content:dialogContent,permissions: permissions);
+          return requestNotificationPermissions(icon: notificationAlertPermission,title:Constants.notificationPermissionTitle,message:Constants.notificationPermissionMessage,permissions: permissions,showFromRational: true);
         }else{
           var popupValue = await customPermissionDialog(
-              icon: notificationPermissionIcon,
+              icon: notificationAlertPermission,
               content: dialogContent2);//getPermissionAlertMessage("audio_call"));
           if (popupValue) {
             openAppSettings();
@@ -169,6 +163,22 @@ class AppPermission {
       }
     }else{
       return true;
+    }
+  }
+
+  static Future<bool> requestNotificationPermissions({required String icon,required String title,required String message,required List<Permission> permissions,bool showFromRational = false}) async {
+    var deniedPopupValue = await notificationPermissionDialog(icon: icon,title: title,message: message);//Constants.audioCallPermission);
+    if (deniedPopupValue) {
+      LogMessage.d("deniedPopupValue", deniedPopupValue);
+      var newp = await permissions.request();
+      PermissionStatus? notification_ = newp[Permission.notification];
+      if(notification_!=null ) {
+        LogMessage.d("notification_", notification_.isPermanentlyDenied);
+        SessionManagement.setBool(Constants.notificationPermissionAsked, true);
+      }
+      return (notification_?.isGranted ?? true);
+    }else{
+      return false;
     }
   }
 
@@ -544,6 +554,69 @@ class AppPermission {
           },
           child: const Text("OK")),
     ]);
+  }
+
+  static Future<bool> notificationPermissionDialog({required String icon,required String title, required String message}) async {
+    return await Get.dialog(AlertDialog(
+      contentPadding: EdgeInsets.zero,
+      content: WillPopScope(
+        onWillPop: (){
+          Get.back(result: false);
+          return Future.value(false);
+        },
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              padding: const EdgeInsets.symmetric(vertical: 35.0),
+              child: Center(child: CircleAvatar(backgroundColor: buttonBgColor,radius: 30,child: SvgPicture.asset(notificationAlertPermission),)),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Text(
+                title,
+                style: const TextStyle(fontSize: 14, color: textHintColor),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Text(
+                message,
+                textAlign: TextAlign.center,
+                style: const TextStyle(fontSize: 14, color: textColor,),
+              ),
+            ),
+            Container(
+              color:notificationAlertBg,
+              padding: const EdgeInsets.symmetric(horizontal: 8),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  TextButton(
+                      onPressed: () {
+                        Get.back(result: false);
+                        // notNowBtn();
+                      },
+                      child: const Text(
+                        "NOT NOW",
+                        style: TextStyle(color: buttonBgColor,fontSize: 14,fontWeight: FontWeight.w800,),
+                      )),
+                  TextButton(
+                      onPressed: () {
+                        Get.back(result: true);
+                        // continueBtn();
+                      },
+                      child: const Text(
+                          "TURN ON",
+                          style: TextStyle(color: buttonBgColor,fontSize: 14,fontWeight: FontWeight.w800,fontFamily: 'sf_ui',)
+                      ))
+                ],
+              ),
+            )
+          ],
+        ),
+      ),
+    ));
   }
 
   static Future<bool> mirrorFlyPermissionDialog(
