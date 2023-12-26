@@ -303,7 +303,7 @@ class LoginController extends GetxController {
         toToast("Please enter valid mobile number");
         return;
       }
-      if (!(await AppPermission.askNotificationPermission())) {
+      if (Platform.isAndroid && !(await AppPermission.askNotificationPermission())) {
         return;
       }
       // if(mobileNumber.text.length > 9) {
