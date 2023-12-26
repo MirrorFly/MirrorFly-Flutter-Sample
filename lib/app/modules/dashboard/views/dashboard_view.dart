@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:focus_detector/focus_detector.dart';
 import 'package:get/get.dart';
+import 'package:mirror_fly_demo/app/call_modules/call_highlighted_text.dart';
 import 'package:mirror_fly_demo/app/call_modules/call_utils.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
@@ -289,7 +290,8 @@ class DashboardView extends GetView<DashboardController> {
                                             ? ShowAsAction.gone
                                             : ShowAsAction.never,
                                         keyValue: 'Clear call log',
-                                        onItemClick: () => controller.clearCallLog(),
+                                        onItemClick: () =>
+                                            controller.callLogList.isNotEmpty ? controller.clearCallLog() : toToast(Constants.noCallLog),
                                       ),
                                       CustomAction(
                                         visibleWidget: const Icon(Icons.settings),
@@ -914,7 +916,6 @@ class DashboardView extends GetView<DashboardController> {
     }
     return ListView.builder(
         controller: controller.callLogScrollController,
-        // itemCount: callLogList.length + (controller.isLastPage.value ? 1 : 0),
         itemCount: callLogList.length,
         itemBuilder: (context, index) {
           var item = callLogList[index];
@@ -957,12 +958,14 @@ class DashboardView extends GetView<DashboardController> {
                     title: FutureBuilder(
                         future: getProfileDetails(item.callState == 1 ? item.toUser! : item.fromUser!),
                         builder: (context, snap) {
-                          return snap.hasData && snap.data != null
-                              ? Text(
-                                  snap.data!.name!,
-                                  style: const TextStyle(color: Colors.black),
-                                )
-                              : const SizedBox.shrink();
+                          return snap.hasData && snap.data != null && controller.search.text.isNotEmpty
+                              ? CallHighlightedText(content: snap.data!.name!, searchString: controller.search.text)
+                              : snap.hasData && snap.data != null && controller.search.text.isEmpty
+                                  ? Text(
+                                      snap.data!.name!,
+                                      style: const TextStyle(color: Colors.black),
+                                    )
+                                  : const SizedBox.shrink();
                         }),
                     subtitle: SizedBox(
                       child: callLogTime(
@@ -999,23 +1002,49 @@ class DashboardView extends GetView<DashboardController> {
                     },
                   ))
               : Obx(() => ListTile(
-                    leading: ClipOval(
-                      child: Image.asset(
-                        groupImg,
-                        height: 48,
-                        width: 48,
-                        fit: BoxFit.cover,
-                      ),
-                    ),
+                    leading: item.groupId!.checkNull().isEmpty
+                        ? ClipOval(
+                            child: Image.asset(
+                              groupImg,
+                              height: 48,
+                              width: 48,
+                              fit: BoxFit.cover,
+                            ),
+                          )
+                        : FutureBuilder(
+                            future: getProfileDetails(item.groupId!),
+                            builder: (context, snap) {
+                              return snap.hasData && snap.data != null
+                                  ? ImageNetwork(
+                                      url: snap.data!.image!,
+                                      width: 48,
+                                      height: 48,
+                                      clipOval: true,
+                                      errorWidget: getName(snap.data!) //item.nickName
+                                              .checkNull()
+                                              .isNotEmpty
+                                          ? ProfileTextImage(text: getName(snap.data!))
+                                          : const Icon(
+                                              Icons.person,
+                                              color: Colors.white,
+                                            ),
+                                      isGroup: false,
+                                      blocked: false,
+                                      unknown: false,
+                                    )
+                                  : const SizedBox.shrink();
+                            }),
                     title: item.groupId!.checkNull().isEmpty
                         ? FutureBuilder(
                             future: CallUtils.getCallLogUserNames(item.userList!, item),
                             builder: (context, snap) {
                               if (snap.hasData) {
-                                return Text(
-                                  snap.data!,
-                                  style: const TextStyle(color: Colors.black),
-                                );
+                                return controller.search.text.isNotEmpty
+                                    ? CallHighlightedText(content: snap.data!, searchString: controller.search.text)
+                                    : Text(
+                                        snap.data!,
+                                        style: const TextStyle(color: Colors.black),
+                                      );
                               } else {
                                 return const SizedBox.shrink();
                               }
@@ -1024,10 +1053,12 @@ class DashboardView extends GetView<DashboardController> {
                             future: getProfileDetails(item.groupId!),
                             builder: (context, snap) {
                               if (snap.hasData) {
-                                return Text(
-                                  snap.data!.name!,
-                                  style: const TextStyle(color: Colors.black),
-                                );
+                                return controller.search.text.isNotEmpty
+                                    ? CallHighlightedText(content: snap.data!.name!, searchString: controller.search.text)
+                                    : Text(
+                                        snap.data!.name!,
+                                        style: const TextStyle(color: Colors.black),
+                                      );
                               } else {
                                 return const SizedBox.shrink();
                               }
@@ -1103,7 +1134,7 @@ class DashboardView extends GetView<DashboardController> {
     List<String>? localUserList = [];
     if (item.callState == CallState.missedCall || item.callState == CallState.incomingCall) {
       localUserList.addAll(item.userList!);
-      if(!item.userList!.contains(item.fromUser)){
+      if (!item.userList!.contains(item.fromUser)) {
         localUserList.add(item.fromUser!);
       }
     } else {
