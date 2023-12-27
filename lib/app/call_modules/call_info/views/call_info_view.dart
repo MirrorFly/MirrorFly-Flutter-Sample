@@ -60,7 +60,14 @@ class CallInfoView extends GetView<CallInfoController> {
                               errorWidget: getName(snap.data!) //item.nickName
                                   .checkNull()
                                   .isNotEmpty
-                                  ? ProfileTextImage(text: getName(snap.data!))
+                                  ? ClipOval(
+                                child: Image.asset(
+                                  groupImg,
+                                  height: 48,
+                                  width: 48,
+                                  fit: BoxFit.cover,
+                                ),
+                              )
                                   : const Icon(
                                 Icons.person,
                                 color: Colors.white,
