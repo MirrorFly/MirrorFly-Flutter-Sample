@@ -7,7 +7,6 @@ import 'package:mirror_fly_demo/app/data/helper.dart';
 import 'package:mirror_fly_demo/app/call_modules/call_info/controllers/call_info_controller.dart';
 import 'package:mirrorfly_plugin/model/call_constants.dart';
 import 'package:mirrorfly_plugin/model/call_log_model.dart';
-
 import '../../../modules/dashboard/widgets.dart';
 import '../../call_utils.dart';
 
@@ -41,43 +40,36 @@ class CallInfoView extends GetView<CallInfoController> {
                 Obx(() => ListTile(
                       leading: controller.callLogData.groupId!.checkNull().isEmpty
                           ? ClipOval(
-                        child: Image.asset(
-                          groupImg,
-                          height: 48,
-                          width: 48,
-                          fit: BoxFit.cover,
-                        ),
-                      )
-                          : FutureBuilder(
-                          future: getProfileDetails(controller.callLogData.groupId!),
-                          builder: (context, snap) {
-                            return snap.hasData && snap.data != null
-                                ? ImageNetwork(
-                              url: snap.data!.image!,
-                              width: 48,
-                              height: 48,
-                              clipOval: true,
-                              errorWidget: getName(snap.data!) //item.nickName
-                                  .checkNull()
-                                  .isNotEmpty
-                                  ? ClipOval(
-                                child: Image.asset(
-                                  groupImg,
-                                  height: 48,
-                                  width: 48,
-                                  fit: BoxFit.cover,
-                                ),
-                              )
-                                  : const Icon(
-                                Icons.person,
-                                color: Colors.white,
+                              child: Image.asset(
+                                groupImg,
+                                height: 48,
+                                width: 48,
+                                fit: BoxFit.cover,
                               ),
-                              isGroup: false,
-                              blocked: false,
-                              unknown: false,
                             )
-                                : const SizedBox.shrink();
-                          }),
+                          : FutureBuilder(
+                              future: getProfileDetails(controller.callLogData.groupId!),
+                              builder: (context, snap) {
+                                return snap.hasData && snap.data != null
+                                    ? ImageNetwork(
+                                        url: snap.data!.image!,
+                                        width: 48,
+                                        height: 48,
+                                        clipOval: true,
+                                        errorWidget: ClipOval(
+                                          child: Image.asset(
+                                            groupImg,
+                                            height: 48,
+                                            width: 48,
+                                            fit: BoxFit.cover,
+                                          ),
+                                        ),
+                                        isGroup: false,
+                                        blocked: false,
+                                        unknown: false,
+                                      )
+                                    : const SizedBox.shrink();
+                              }),
                       title: controller.callLogData.groupId!.checkNull().isEmpty
                           ? FutureBuilder(
                               future: CallUtils.getCallLogUserNames(controller.callLogData.userList!, controller.callLogData),
@@ -149,9 +141,7 @@ class CallInfoView extends GetView<CallInfoController> {
                                       width: 48,
                                       height: 48,
                                       clipOval: true,
-                                      errorWidget: getName(snap.data!)
-                                              .checkNull()
-                                              .isNotEmpty
+                                      errorWidget: getName(snap.data!).checkNull().isNotEmpty
                                           ? ProfileTextImage(text: getName(snap.data!))
                                           : const Icon(
                                               Icons.person,
@@ -187,7 +177,7 @@ class CallInfoView extends GetView<CallInfoController> {
     List<String>? localUserList = [];
     if (item.callState == CallState.missedCall || item.callState == CallState.incomingCall) {
       localUserList.addAll(item.userList!);
-      if(!item.userList!.contains(item.fromUser)){
+      if (!item.userList!.contains(item.fromUser)) {
         localUserList.add(item.fromUser!);
       }
     } else {
@@ -205,7 +195,7 @@ class CallInfoView extends GetView<CallInfoController> {
           )
         : IconButton(
             onPressed: () {
-              controller.makeCall(localUserList, callType,item);
+              controller.makeCall(localUserList, callType, item);
             },
             icon: SvgPicture.asset(
               audioCallIcon,

@@ -1020,21 +1020,14 @@ class DashboardView extends GetView<DashboardController> {
                                       width: 48,
                                       height: 48,
                                       clipOval: true,
-                                      errorWidget: getName(snap.data!) //item.nickName
-                                              .checkNull()
-                                              .isNotEmpty
-                                          ? ClipOval(
-                                              child: Image.asset(
-                                                groupImg,
-                                                height: 48,
-                                                width: 48,
-                                                fit: BoxFit.cover,
-                                              ),
-                                            )
-                                          : const Icon(
-                                              Icons.person,
-                                              color: Colors.white,
-                                            ),
+                                      errorWidget: ClipOval(
+                                        child: Image.asset(
+                                          groupImg,
+                                          height: 48,
+                                          width: 48,
+                                          fit: BoxFit.cover,
+                                        ),
+                                      ),
                                       isGroup: false,
                                       blocked: false,
                                       unknown: false,
