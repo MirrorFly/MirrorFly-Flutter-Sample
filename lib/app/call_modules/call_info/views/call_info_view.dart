@@ -68,7 +68,14 @@ class CallInfoView extends GetView<CallInfoController> {
                                         blocked: false,
                                         unknown: false,
                                       )
-                                    : const SizedBox.shrink();
+                                    : ClipOval(
+                                        child: Image.asset(
+                                          groupImg,
+                                          height: 48,
+                                          width: 48,
+                                          fit: BoxFit.cover,
+                                        ),
+                                      );
                               }),
                       title: controller.callLogData.groupId!.checkNull().isEmpty
                           ? FutureBuilder(

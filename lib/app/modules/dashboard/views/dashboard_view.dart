@@ -1032,7 +1032,14 @@ class DashboardView extends GetView<DashboardController> {
                                       blocked: false,
                                       unknown: false,
                                     )
-                                  : const SizedBox.shrink();
+                                  : ClipOval(
+                                      child: Image.asset(
+                                        groupImg,
+                                        height: 48,
+                                        width: 48,
+                                        fit: BoxFit.cover,
+                                      ),
+                                    );
                             }),
                     title: item.groupId!.checkNull().isEmpty
                         ? FutureBuilder(
