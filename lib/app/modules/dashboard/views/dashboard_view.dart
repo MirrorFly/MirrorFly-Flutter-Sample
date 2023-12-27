@@ -959,7 +959,7 @@ class DashboardView extends GetView<DashboardController> {
                         future: getProfileDetails(item.callState == 1 ? item.toUser! : item.fromUser!),
                         builder: (context, snap) {
                           return snap.hasData && snap.data != null && controller.search.text.isNotEmpty
-                              ? CallHighlightedText(content: snap.data!.name!, searchString: controller.search.text)
+                              ? CallHighlightedText(content: snap.data!.name!, searchString: controller.search.text.trim())
                               : snap.hasData && snap.data != null && controller.search.text.isEmpty
                                   ? Text(
                                       snap.data!.name!,
@@ -1020,19 +1020,26 @@ class DashboardView extends GetView<DashboardController> {
                                       width: 48,
                                       height: 48,
                                       clipOval: true,
-                                      errorWidget: getName(snap.data!) //item.nickName
-                                              .checkNull()
-                                              .isNotEmpty
-                                          ? ProfileTextImage(text: getName(snap.data!))
-                                          : const Icon(
-                                              Icons.person,
-                                              color: Colors.white,
-                                            ),
+                                      errorWidget: ClipOval(
+                                        child: Image.asset(
+                                          groupImg,
+                                          height: 48,
+                                          width: 48,
+                                          fit: BoxFit.cover,
+                                        ),
+                                      ),
                                       isGroup: false,
                                       blocked: false,
                                       unknown: false,
                                     )
-                                  : const SizedBox.shrink();
+                                  : ClipOval(
+                                      child: Image.asset(
+                                        groupImg,
+                                        height: 48,
+                                        width: 48,
+                                        fit: BoxFit.cover,
+                                      ),
+                                    );
                             }),
                     title: item.groupId!.checkNull().isEmpty
                         ? FutureBuilder(
@@ -1040,7 +1047,7 @@ class DashboardView extends GetView<DashboardController> {
                             builder: (context, snap) {
                               if (snap.hasData) {
                                 return controller.search.text.isNotEmpty
-                                    ? CallHighlightedText(content: snap.data!, searchString: controller.search.text)
+                                    ? CallHighlightedText(content: snap.data!, searchString: controller.search.text.trim())
                                     : Text(
                                         snap.data!,
                                         style: const TextStyle(color: Colors.black),
@@ -1054,7 +1061,7 @@ class DashboardView extends GetView<DashboardController> {
                             builder: (context, snap) {
                               if (snap.hasData) {
                                 return controller.search.text.isNotEmpty
-                                    ? CallHighlightedText(content: snap.data!.name!, searchString: controller.search.text)
+                                    ? CallHighlightedText(content: snap.data!.name!, searchString: controller.search.text.trim())
                                     : Text(
                                         snap.data!.name!,
                                         style: const TextStyle(color: Colors.black),
