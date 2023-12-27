@@ -794,6 +794,11 @@ class Constants {
   static const String noDataFound = "No data found";
   static const String removeFromCallLog = "Remove from call log";
   static const String callInfo = "Call Info";
+
+  //Call Log
+  static const String noCallLog = "No Call Log";
+  static const String noCallLogHistoryFound = "No Call log history found";
+  static const String anyNewCallsWillAppearHere = "Any new Calls will appear here";
 }
 
 Future<void> launchWeb(String url) async {

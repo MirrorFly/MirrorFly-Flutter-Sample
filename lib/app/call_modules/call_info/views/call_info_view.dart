@@ -39,14 +39,38 @@ class CallInfoView extends GetView<CallInfoController> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 Obx(() => ListTile(
-                      leading: ClipOval(
+                      leading: controller.callLogData.groupId!.checkNull().isEmpty
+                          ? ClipOval(
                         child: Image.asset(
                           groupImg,
                           height: 48,
                           width: 48,
                           fit: BoxFit.cover,
                         ),
-                      ),
+                      )
+                          : FutureBuilder(
+                          future: getProfileDetails(controller.callLogData.groupId!),
+                          builder: (context, snap) {
+                            return snap.hasData && snap.data != null
+                                ? ImageNetwork(
+                              url: snap.data!.image!,
+                              width: 48,
+                              height: 48,
+                              clipOval: true,
+                              errorWidget: getName(snap.data!) //item.nickName
+                                  .checkNull()
+                                  .isNotEmpty
+                                  ? ProfileTextImage(text: getName(snap.data!))
+                                  : const Icon(
+                                Icons.person,
+                                color: Colors.white,
+                              ),
+                              isGroup: false,
+                              blocked: false,
+                              unknown: false,
+                            )
+                                : const SizedBox.shrink();
+                          }),
                       title: controller.callLogData.groupId!.checkNull().isEmpty
                           ? FutureBuilder(
                               future: CallUtils.getCallLogUserNames(controller.callLogData.userList!, controller.callLogData),
