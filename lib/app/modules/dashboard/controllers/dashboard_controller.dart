@@ -1736,7 +1736,7 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
 
   String getEndUserJid(CallLogData callLog) {
     if (callLog.callMode == CallMode.groupCall) {
-      if (callLog.groupId == null) {
+      if (callLog.groupId.checkNull().isEmpty) {
         return "";
       } else {
         return callLog.groupId!;
@@ -1752,9 +1752,16 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
 
   Future<CallLogData> setProfile(String endUserJid, CallLogData callLog) async {
     if (callLog.callMode == CallMode.groupCall) {
-      var name = await CallUtils.getCallLogUserNames(callLog.userList!, callLog);
-      callLog.nickName = name;
-      return callLog;
+      if(callLog.groupId.checkNull().isEmpty){
+        var name = await CallUtils.getCallLogUserNames(callLog.userList!, callLog);
+        callLog.nickName = name;
+        return callLog;
+      }else{
+        var res = await Mirrorfly.getProfileDetails(callLog.groupId!);
+        var str = Profile.fromJson(json.decode(res.toString()));
+        callLog.nickName = getName(str);
+        return callLog;
+      }
     } else {
       var res = await Mirrorfly.getProfileDetails(endUserJid);
       var str = Profile.fromJson(json.decode(res.toString()));
