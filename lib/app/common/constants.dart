@@ -159,6 +159,8 @@ const String pin = 'assets/logos/pin.svg';
 const String unpin = 'assets/logos/unpin.svg';
 
 // const String audioImg = 'assets/logos/audio.svg';
+const String audioRecordIcon = 'assets/logos/audio_record_icon.svg';
+const String sendIcon = 'assets/logos/send.svg';
 const String audioImg = 'assets/logos/headset_img.svg';
 const String headsetImg = 'assets/logos/headset_white.svg';
 const String documentImg = 'assets/logos/document_icon.svg';

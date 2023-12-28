@@ -311,6 +311,16 @@ class RecentChatItem extends StatelessWidget {
     }
   }
 
+  checkSenderShouldShow(ChatMessageModel chat){
+    if(item.isGroup.checkNull()){
+      if(!chat.isMessageSentByMe.checkNull()){
+        return (chat.messageType != Constants.mNotification || chat.messageTextContent == " added you") ||
+            (forMessageTypeString(chat.messageType, content: chat.messageTextContent.checkNull()).checkNull().isNotEmpty);
+      }
+    }
+    return false;
+  }
+
   FutureBuilder<ChatMessageModel> buildLastMessageItem() {
     return FutureBuilder(
         future: getMessageOfId(item.lastMessageId.checkNull()),
@@ -319,11 +329,7 @@ class RecentChatItem extends StatelessWidget {
             var chat = data.data!;
             return Row(
               children: [
-                (item.isGroup.checkNull() &&
-                            !chat.isMessageSentByMe.checkNull() &&
-                            (chat.messageType != Constants.mNotification || chat.messageTextContent == " added you") ||
-                        (item.isGroup.checkNull() &&
-                            (forMessageTypeString(chat.messageType, content: chat.messageTextContent.checkNull()).checkNull().isNotEmpty)))
+                checkSenderShouldShow(chat)
                     ? Flexible(
                         child: Text(
                           "${chat.senderUserName.checkNull()}:",

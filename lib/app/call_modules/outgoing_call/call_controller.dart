@@ -101,11 +101,7 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
     if (Get.currentRoute == Routes.onGoingCallView) {
       //startTimer();
     }
-    Mirrorfly.getAllAvailableAudioInput().then((value) {
-      final availableList = audioDevicesFromJson(value);
-      availableAudioList(availableList);
-      debugPrint("${Constants.tag} flutter getAllAvailableAudioInput $availableList");
-    });
+    getAudioDevices();
     await Mirrorfly.getCallDirection().then((value) async {
       debugPrint("#Mirrorfly Call Direction $value");
       if (value == "Incoming") {
