@@ -194,7 +194,7 @@ class ChatView extends GetView<ChatController> {
                                                   right: 8.0,
                                                   bottom: 8),
                                               child: SvgPicture.asset(
-                                                  'assets/logos/send.svg'),
+                                                  sendIcon),
                                             ))
                                             : const SizedBox.shrink();
                                       }),
