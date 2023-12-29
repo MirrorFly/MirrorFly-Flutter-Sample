@@ -1092,13 +1092,21 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
   List<CallLogData> get callLogList => _callLogList;
 
   _callLogScrollListener() {
-    if (callLogScrollController.hasClients) {
-      if (callLogScrollController.position.extentAfter <= 0 && isCallLogPageLoading.value == false) {
-        if (scrollable.value) {
-          //isPageLoading.value = true;
-          fetchCallLogList();
-        }
-      }
+    // if (callLogScrollController.hasClients) {
+    //   if (callLogScrollController.position.extentAfter <= 0 && isCallLogPageLoading.value == false) {
+    //     if (scrollable.value) {
+    //       //isPageLoading.value = true;
+    //       print("getCallLogsList fetchCallLogList calling");
+    //       fetchCallLogList();
+    //     }
+    //   }
+    // }
+    if (callLogScrollController.hasClients && callLogScrollController.position.pixels == callLogScrollController.position.maxScrollExtent) {
+      print("getCallLogsList fetchCallLogList calling");
+
+      callLogScrollController.removeListener(_scrollListener);
+
+      fetchCallLogList();
     }
   }
 
@@ -1283,6 +1291,7 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
   }
 
   Future<void> getUsers() async {
+    print("getUsers calling $pageNum");
     if (await AppUtils.isNetConnected()) {
       searching = true;
       Mirrorfly.getUserList(pageNum, search.text.trim().toString()).then((value) {
@@ -1576,7 +1585,7 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
       if (value != null) {
         var list = callLogListFromJson(value);
         totalPages = list.totalPages!;
-        debugPrint("fetchCallLogList ===> total_pages $totalPages pageNumber $pageNumber list.data!.length ${list.data!.length} ");
+        print("getCallLogsList fetchCallLogList ===> total_pages $totalPages pageNumber $pageNumber list.data!.length ${list.data!.length} ");
         if (list.data != null) {
           _callLogList.addAll(list.data!);
           isLastPage.value = list.data!.isEmpty;
