@@ -1101,8 +1101,15 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
     //     }
     //   }
     // }
-    if (callLogScrollController.hasClients && callLogScrollController.position.pixels == callLogScrollController.position.maxScrollExtent) {
-      print("getCallLogsList fetchCallLogList calling");
+    // print("getCallLogsList fetchCallLogList pixels ${callLogScrollController.position.pixels}");
+    // print("getCallLogsList fetchCallLogList maxScrollExtent ${callLogScrollController.position.maxScrollExtent}");
+    // print("getCallLogsList fetchCallLogList hasClients ${callLogScrollController.position.extentAfter <= 0}");
+
+    // if (callLogScrollController.hasClients && callLogScrollController.position.pixels == callLogScrollController.position.maxScrollExtent) {
+    if (callLogScrollController.hasClients &&
+        callLogScrollController.position.extentAfter <= 0 &&
+        callLogScrollController.position.pixels == callLogScrollController.position.maxScrollExtent) {
+    print("getCallLogsList fetchCallLogList calling");
 
       callLogScrollController.removeListener(_scrollListener);
 
