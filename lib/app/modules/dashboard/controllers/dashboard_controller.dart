@@ -1722,8 +1722,7 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
       _callLogList.clear();
       callLogList.clear();
 
-      var data = {"data": json.decode(res)};
-      var list = callLogListFromJson(json.encode(data));
+      var list = callLogListFromJson(res);
       callLogs.addAll(list.data!);
 
       for (var callLog in callLogs) {
