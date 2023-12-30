@@ -1710,10 +1710,10 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
 
   void onCallLogUpdate(value) async {
     if (value) {
-      _callLogList.clear();
-      callLogList.clear();
       var res = await Mirrorfly.getCallLogsList(1);
       var list = callLogListFromJson(res);
+      _callLogList.clear();
+      callLogList.clear();
       _callLogList.addAll(list.data!);
     } else {
       debugPrint("onCallLogUpdate : Failed");
