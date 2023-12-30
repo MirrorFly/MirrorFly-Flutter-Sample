@@ -1109,7 +1109,7 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
     if (callLogScrollController.hasClients &&
         callLogScrollController.position.extentAfter <= 0 &&
         callLogScrollController.position.pixels == callLogScrollController.position.maxScrollExtent) {
-    print("getCallLogsList fetchCallLogList calling");
+    // print("getCallLogsList fetchCallLogList calling");
 
       callLogScrollController.removeListener(_scrollListener);
 
@@ -1298,7 +1298,7 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
   }
 
   Future<void> getUsers() async {
-    print("getUsers calling $pageNum");
+    // print("getUsers calling $pageNum");
     if (await AppUtils.isNetConnected()) {
       searching = true;
       Mirrorfly.getUserList(pageNum, search.text.trim().toString()).then((value) {
@@ -1592,7 +1592,7 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
       if (value != null) {
         var list = callLogListFromJson(value);
         totalPages = list.totalPages!;
-        print("getCallLogsList fetchCallLogList ===> total_pages $totalPages pageNumber $pageNumber list.data!.length ${list.data!.length} ");
+        // print("getCallLogsList fetchCallLogList ===> total_pages $totalPages pageNumber $pageNumber list.data!.length ${list.data!.length} ");
         if (list.data != null) {
           _callLogList.addAll(list.data!);
           isLastPage.value = list.data!.isEmpty;
@@ -1717,7 +1717,7 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
       _callLogList.addAll(list.data!);
 
       var unreadMissedCallCount = await Mirrorfly.getUnreadMissedCallCount();
-      print("unreadMissedCallCount from sdk $unreadMissedCallCount");
+      // print("unreadMissedCallCount from sdk $unreadMissedCallCount");
       unreadCallCount.value = unreadMissedCallCount ?? 0;
 
     } else {
