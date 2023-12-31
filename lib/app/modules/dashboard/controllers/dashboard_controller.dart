@@ -1145,14 +1145,13 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
       }
       update();
     } else {
+      clearVisible(search.text.isNotEmpty);
       if (search.text.trim().isNotEmpty) {
         callLogSearchLoading(true);
         deBouncer.run(() {
-          clearVisible(true);
           filteredCallLog(search.text.trim());
         });
       } else {
-        clearVisible(false);
         pageNumber = 1;
         _callLogList.clear();
         callLogList.clear();
