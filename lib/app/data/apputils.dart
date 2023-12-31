@@ -33,9 +33,10 @@ class AppUtils{
   }
 
   static Tuple2<StringBuffer,bool> getActualMemberName(StringBuffer string){
-    return (string.length > Constants.maxNameLength) ?
+    // LogMessage.d("getActualMemberName","${string} string length ${string.length} characters ${string.toString().characters.length}");
+    return (string.toString().characters.length > Constants.maxNameLength) ?
     Tuple2(
-      StringBuffer("${string.toString().substring(0, Constants.maxNameLength)}..."),
+      StringBuffer("${string.toString().characters.take(Constants.maxNameLength)}..."),
       false
     )
     :
