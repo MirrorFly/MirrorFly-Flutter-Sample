@@ -1710,11 +1710,15 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
 
   void onCallLogUpdate(value) async {
     if (value) {
-      var res = await Mirrorfly.getLocalCallLogs();
-      var list = callLogListFromJson(res);
-      _callLogList.clear();
-      callLogList.clear();
-      _callLogList.addAll(list.data!);
+      if(search.text.trim().isNotEmpty){
+        filteredCallLog(search.text.trim());
+      }else {
+        var res = await Mirrorfly.getLocalCallLogs();
+        var list = callLogListFromJson(res);
+        _callLogList.clear();
+        callLogList.clear();
+        _callLogList.addAll(list.data!);
+      }
 
       var unreadMissedCallCount = await Mirrorfly.getUnreadMissedCallCount();
       // print("unreadMissedCallCount from sdk $unreadMissedCallCount");
