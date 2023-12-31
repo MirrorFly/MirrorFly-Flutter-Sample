@@ -23,7 +23,7 @@ class CallTimeoutController extends GetxController {
   Future<void> onInit() async {
     super.onInit();
     enterFullScreen();
-    groupId(await Mirrorfly.getGroupId());
+    groupId(await Mirrorfly.getCallGroupJid());
     callType(Get.arguments["callType"]);
     callMode(Get.arguments["callMode"]);
     users.value = (Get.arguments["userJid"] as List<String?>);

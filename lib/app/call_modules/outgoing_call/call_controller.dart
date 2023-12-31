@@ -79,7 +79,7 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
     tabController = TabController(length: 2, vsync: this);
     // SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersive);
     debugPrint("#Mirrorfly Call Controller onInit");
-    groupId(await Mirrorfly.getGroupId());
+    groupId(await Mirrorfly.getCallGroupJid());
     isCallTimerEnabled = true;
     if (Get.arguments != null) {
       users.value = Get.arguments?["userJid"] as List<String?>;
