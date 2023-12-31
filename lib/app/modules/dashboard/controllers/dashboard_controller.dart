@@ -1,6 +1,5 @@
 import 'dart:convert';
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:mirror_fly_demo/app/call_modules/call_utils.dart';
@@ -1109,7 +1108,7 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
     if (callLogScrollController.hasClients &&
         callLogScrollController.position.extentAfter <= 0 &&
         callLogScrollController.position.pixels == callLogScrollController.position.maxScrollExtent) {
-    // print("getCallLogsList fetchCallLogList calling");
+      // print("getCallLogsList fetchCallLogList calling");
 
       callLogScrollController.removeListener(_scrollListener);
 
@@ -1677,8 +1676,7 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
               debugPrint("#Mirrorfly Call You are on another call");
               toToast(Constants.msgOngoingCallAlert);
             } else {
-              Mirrorfly.makeGroupVideoCall(groupJid: item.groupId.checkNull().isNotEmpty ? item.groupId! : "", jidList: userList)
-                  .then((value) {
+              Mirrorfly.makeGroupVideoCall(groupJid: item.groupId.checkNull().isNotEmpty ? item.groupId! : "", jidList: userList).then((value) {
                 if (value) {
                   Get.toNamed(Routes.outGoingCallView, arguments: {"userJid": userList, "callType": CallType.video});
                 }
@@ -1692,8 +1690,7 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
               debugPrint("#Mirrorfly Call You are on another call");
               toToast(Constants.msgOngoingCallAlert);
             } else {
-              Mirrorfly.makeGroupVoiceCall(groupJid: item.groupId.checkNull().isNotEmpty ? item.groupId! : "", jidList: userList)
-                  .then((value) {
+              Mirrorfly.makeGroupVoiceCall(groupJid: item.groupId.checkNull().isNotEmpty ? item.groupId! : "", jidList: userList).then((value) {
                 if (value) {
                   Get.toNamed(Routes.outGoingCallView, arguments: {"userJid": userList, "callType": CallType.audio});
                 }
@@ -1709,9 +1706,9 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
 
   void onCallLogUpdate(value) async {
     if (value) {
-      if(search.text.trim().isNotEmpty){
+      if (search.text.trim().isNotEmpty) {
         filteredCallLog(search.text.trim());
-      }else {
+      } else {
         var res = await Mirrorfly.getLocalCallLogs();
         var list = callLogListFromJson(res);
         _callLogList.clear();
@@ -1722,39 +1719,42 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
       var unreadMissedCallCount = await Mirrorfly.getUnreadMissedCallCount();
       // print("unreadMissedCallCount from sdk $unreadMissedCallCount");
       unreadCallCount.value = unreadMissedCallCount ?? 0;
-
     } else {
       debugPrint("onCallLogUpdate : Failed");
     }
   }
 
   void filteredCallLog(String searchKey) async {
-    List<CallLogData> callLogs = [];
-    List<CallLogData> callLogsWithNickName = [];
 
-    var res = await Mirrorfly.getLocalCallLogs();
-    if (res != null) {
-      _callLogList.clear();
-      callLogList.clear();
 
-      var list = callLogListFromJson(res);
-      callLogs.addAll(list.data!);
+    Mirrorfly.getLocalCallLogs().then((callLogsResponse) async {
 
-      for (var callLog in callLogs) {
-        callLogsWithNickName.add(await setProfile(getEndUserJid(callLog), callLog));
-      }
-      callLogs.clear();
-      var searchKeyWithoutSpace = searchKey.toLowerCase();
-      for (var callLog in callLogsWithNickName) {
-        if (callLog.nickName!.toLowerCase().contains(searchKeyWithoutSpace.toLowerCase())) {
-          callLogs.add(callLog);
+      List<CallLogData> callLogs = [];
+      List<CallLogData> callLogsWithNickName = [];
+
+      if (callLogsResponse != null) {
+        _callLogList.clear();
+        callLogList.clear();
+
+        var list = callLogListFromJson(callLogsResponse);
+
+
+        for (var callLog in list.data ?? []) {
+          callLogsWithNickName.add(await setProfile(getEndUserJid(callLog), callLog));
         }
+
+        var searchKeyWithoutSpace = searchKey.toLowerCase();
+        for (var callLog in callLogsWithNickName) {
+          if (callLog.nickName!.toLowerCase().contains(searchKeyWithoutSpace.toLowerCase())) {
+            callLogs.add(callLog);
+          }
+        }
+        _callLogList(callLogs);
+        callLogSearchLoading(false);
+      } else {
+        debugPrint("filteredCallLog : Failed");
       }
-      _callLogList.addAll(callLogs);
-      callLogSearchLoading(false);
-    } else {
-      debugPrint("filteredCallLog : Failed");
-    }
+    });
   }
 
   String getEndUserJid(CallLogData callLog) {
@@ -1775,11 +1775,11 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
 
   Future<CallLogData> setProfile(String endUserJid, CallLogData callLog) async {
     if (callLog.callMode == CallMode.groupCall) {
-      if(callLog.groupId.checkNull().isEmpty){
+      if (callLog.groupId.checkNull().isEmpty) {
         var name = await CallUtils.getCallLogUserNames(callLog.userList!, callLog);
         callLog.nickName = name;
         return callLog;
-      }else{
+      } else {
         var res = await Mirrorfly.getProfileDetails(callLog.groupId!);
         var str = Profile.fromJson(json.decode(res.toString()));
         callLog.nickName = getName(str);
