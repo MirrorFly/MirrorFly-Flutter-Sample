@@ -662,8 +662,8 @@ class ChatController extends FullLifeCycleController
     });
   }
 
-  void _loadPreviousMessages() {
-    loadNextData(true);
+  Future<void> _loadPreviousMessages() async {
+    loadNextData(await Mirrorfly.hasPreviousMessages());
     Mirrorfly.loadPreviousMessages().then((value) {
       if (value == "" || value == null) {
         debugPrint("Chat List is Empty");
@@ -691,8 +691,12 @@ class ChatController extends FullLifeCycleController
     });
   }
 
-  void _loadNextMessages([bool showLoading = true]) {
-    loadPreviousData(showLoading);
+  Future<void> _loadNextMessages([bool showLoading = true]) async {
+    if(showLoading) {
+      loadPreviousData(await Mirrorfly.hasNextMessages());
+    }else{
+      loadPreviousData(showLoading);
+    }
     Mirrorfly.loadNextMessages().then((value) {
       if (value == "" || value == null) {
         debugPrint("Chat List is Empty");
