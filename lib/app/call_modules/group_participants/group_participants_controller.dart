@@ -7,7 +7,6 @@ import 'package:mirror_fly_demo/app/data/helper.dart';
 import 'package:mirror_fly_demo/app/data/permissions.dart';
 import 'package:mirror_fly_demo/app/data/session_management.dart';
 import 'package:mirror_fly_demo/app/routes/app_pages.dart';
-import 'package:mirrorfly_plugin/logmessage.dart';
 import 'package:mirrorfly_plugin/mirrorflychat.dart';
 
 class GroupParticipantsController extends GetxController {

@@ -20,7 +20,6 @@ import 'package:mirror_fly_demo/app/common/main_controller.dart';
 import 'package:mirror_fly_demo/app/data/session_management.dart';
 import 'package:mirror_fly_demo/app/data/permissions.dart';
 import 'package:mirror_fly_demo/app/modules/notification/notification_builder.dart';
-import 'package:mirrorfly_plugin/logmessage.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
