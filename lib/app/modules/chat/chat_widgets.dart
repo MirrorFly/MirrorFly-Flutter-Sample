@@ -2018,13 +2018,31 @@ Widget getImageOverlay(ChatMessageModel chatMessage,
         : chatMessage.mediaChatMessage!.mediaDownloadStatus) {
       case Constants.mediaDownloaded:
       case Constants.mediaUploaded:
+        if(!checkFile(chatMessage.mediaChatMessage!.mediaLocalStoragePath.checkNull())){
+          return InkWell(
+            child: downloadView(
+                chatMessage.mediaChatMessage!.mediaFileSize,
+                chatMessage.messageType.toUpperCase()),
+            onTap: () {
+              downloadMedia(chatMessage.messageId);
+            },
+          );
+        }else{
+          return const SizedBox.shrink();
+        }
       case Constants.mediaDownloadedNotAvailable:
       case Constants.mediaUploadedNotAvailable:
-        return const SizedBox.shrink();
+        return InkWell(
+          child: downloadView(
+              chatMessage.mediaChatMessage!.mediaFileSize,
+              chatMessage.messageType.toUpperCase()),
+          onTap: () {
+            downloadMedia(chatMessage.messageId);
+          },
+        );
       case Constants.mediaNotDownloaded:
         return InkWell(
           child: downloadView(
-              chatMessage.mediaChatMessage!.mediaDownloadStatus,
               chatMessage.mediaChatMessage!.mediaFileSize,
               chatMessage.messageType.toUpperCase()),
           onTap: () {
@@ -2119,7 +2137,7 @@ void downloadMedia(String messageId) async {
   }
 }
 
-Widget downloadView(int mediaDownloadStatus, int mediaFileSize, String messageType) {
+Widget downloadView(int mediaFileSize, String messageType) {
   return Padding(
     padding: const EdgeInsets.symmetric(horizontal: 8.0),
     child: messageType == 'AUDIO' || messageType == 'DOCUMENT'
