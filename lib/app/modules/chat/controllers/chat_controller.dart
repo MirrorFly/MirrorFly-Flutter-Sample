@@ -115,8 +115,8 @@ class ChatController extends FullLifeCycleController
 
   bool get isTrail => !Constants.enableContactSync;
 
-  var loadPreviousData = false.obs;
-  var loadNextData = false.obs;
+  var showLoadingNext = false.obs;
+  var showLoadingPrevious = false.obs;
   
 
   final deBouncer = DeBouncer(milliseconds: 1000);
@@ -639,8 +639,8 @@ class ChatController extends FullLifeCycleController
         .then((value) {
       value
           ? Mirrorfly.loadMessages().then((value) {
-        loadPreviousData(false);
-        loadNextData(false);
+        showLoadingNext(false);
+        showLoadingPrevious(false);
         if (value == "" || value == null) {
           debugPrint("Chat List is Empty");
         } else {
@@ -662,7 +662,7 @@ class ChatController extends FullLifeCycleController
   }
 
   Future<void> _loadPreviousMessages() async {
-    loadNextData(await Mirrorfly.hasPreviousMessages());
+    showLoadingPrevious(await Mirrorfly.hasPreviousMessages());
     Mirrorfly.loadPreviousMessages().then((value) {
       if (value == "" || value == null) {
         debugPrint("Chat List is Empty");
@@ -684,17 +684,17 @@ class ChatController extends FullLifeCycleController
           debugPrint("chatHistory parsing error--> $error");
         }
       }
-      loadNextData(false);
+      showLoadingPrevious(false);
     }).catchError((e) {
-      loadNextData(false);
+      showLoadingPrevious(false);
     });
   }
 
   Future<void> _loadNextMessages([bool showLoading = true]) async {
     if(showLoading) {
-      loadPreviousData(await Mirrorfly.hasNextMessages());
+      showLoadingNext(await Mirrorfly.hasNextMessages());
     }else{
-      loadPreviousData(showLoading);
+      showLoadingNext(showLoading);
     }
     Mirrorfly.loadNextMessages().then((value) {
       if (value == "" || value == null) {
@@ -711,9 +711,9 @@ class ChatController extends FullLifeCycleController
           debugPrint("chatHistory parsing error--> $error");
         }
       }
-      loadPreviousData(false);
+      showLoadingNext(false);
     }).catchError((e) {
-      loadPreviousData(false);
+      showLoadingNext(false);
     });
   }
 
@@ -2783,8 +2783,8 @@ class ChatController extends FullLifeCycleController
 
   void getMessageFromServerAndNavigateToMessage(ChatMessageModel chatMessage, int? index) {
     Mirrorfly.loadMessages().then((value) {
-      loadPreviousData(false);
-      loadNextData(false);
+      showLoadingNext(false);
+      showLoadingPrevious(false);
       if (value == "" || value == null) {
         debugPrint("Chat List is Empty");
       } else {
@@ -3137,23 +3137,19 @@ class ChatController extends FullLifeCycleController
       debugPrint("reached length ${itemPositions.first.itemLeadingEdge}");
       debugPrint("reached firstItemIndex $firstVisibleItemIndex");
       debugPrint("reached itemPositions.length ${itemPositions.length}");
-      debugPrint(
-          "reached bottom check ${firstVisibleItemIndex + itemPositions.length >= chatList.length}");
 
       ///This is the top constraint changing to bottom constraint and calling nextMessages bcz reversing the list view in display
       if (firstVisibleItemIndex <= 1 &&
           itemPositions.first.itemLeadingEdge <= 0) {
-        // Scrolled to the top
-        debugPrint("reached Top yes load next messages");
+        // Scrolled to the Bottom
+        debugPrint("reached Bottom yes load next messages");
         _loadNextMessages();
-        // _loadPreviousMessages();
         ///This is the bottom constraint changing to Top constraint and calling prevMessages bcz reversing the list view in display
       } else if (firstVisibleItemIndex + itemPositions.length >=
           chatList.length) {
-        // Scrolled to the bottom
-        // _loadNextMessages();
+        // Scrolled to the Top
         _loadPreviousMessages();
-        debugPrint("reached Bottom yes load previous msgs");
+        debugPrint("reached Top yes load previous msgs");
       }
     }
   }
