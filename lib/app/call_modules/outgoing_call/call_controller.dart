@@ -79,7 +79,7 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
     tabController = TabController(length: 2, vsync: this);
     // SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersive);
     debugPrint("#Mirrorfly Call Controller onInit");
-    groupId(await Mirrorfly.getGroupId());
+    groupId(await Mirrorfly.getCallGroupJid());
     isCallTimerEnabled = true;
     if (Get.arguments != null) {
       users.value = Get.arguments?["userJid"] as List<String?>;
@@ -396,24 +396,18 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
       if(Get.currentRoute == Routes.participants){
         Get.back();
       }
-      // if there is an single user in that call and if he [disconnected] no need to disconnect the call from our side Observed in Android
-      if (Platform.isIOS) {
-        debugPrint("Calling Disconnection call in iOS");
-        // in iOS needs to call disconnect.
-        disconnectCall();
-      } else {
-        if (Get.previousRoute.isNotEmpty) {
-          if (Get.currentRoute == Routes.onGoingCallView) {
-            callTimer("Disconnected");
-            Future.delayed(const Duration(seconds: 1), () {
-              Get.back();
-            });
-          } else {
+
+      if (Get.previousRoute.isNotEmpty) {
+        if (Get.currentRoute == Routes.onGoingCallView) {
+          callTimer("Disconnected");
+          Future.delayed(const Duration(seconds: 1), () {
             Get.back();
-          }
+          });
         } else {
-          Get.offNamed(getInitialRoute());
+          Get.back();
         }
+      } else {
+        Get.offNamed(getInitialRoute());
       }
     }
   }
@@ -431,18 +425,16 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
   }
 
   Future<void> remoteBusy(String callMode, String userJid, String callType, String callAction) async {
-    //in Android, showing this user is busy toast inside SDK
-    // if(Platform.isIOS) {
+
       if (callList.length > 2) {
         var data = await getProfileDetails(userJid);
         toToast("${data.getName()} is Busy");
       } else {
         toToast("User is Busy");
       }
-    // }
 
     this.callMode(callMode);
-      this.callType(callType);
+    this.callType(callType);
     debugPrint("onCallAction CallList Length ${callList.length}");
     if(callList.length < 2){
       disconnectOutgoingCall();
@@ -566,10 +558,9 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
     isCallTimerEnabled = false;
     Mirrorfly.disconnectCall().then((value) {
       callList.clear();
-      //if (Platform.isIOS) {
+
         Get.back();
-      //}
-      //Get.back();
+
     });
   }
 
@@ -660,10 +651,10 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
   }
 
   Future<void> remoteEngaged(String userJid, String callMode, String callType) async {
-    // if (Platform.isIOS) {
-      var data = await getProfileDetails(userJid);
-      toToast(data.getName() + Constants.remoteEngagedToast);
-    // }
+
+    var data = await getProfileDetails(userJid);
+    toToast(data.getName() + Constants.remoteEngagedToast);
+
     debugPrint("***call list length ${callList.length}");
 //The below condition (<= 2) -> (<2) is changed for Group call, to maintain the call to continue if there is a 2 users in call
     if(callList.length < 2){
@@ -671,7 +662,6 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
     }else{
       removeUser(callMode, userJid, callType);
     }
-    // disconnectOutgoingCall();
   }
 
   void audioMuteStatusChanged(String muteEvent, String userJid) {

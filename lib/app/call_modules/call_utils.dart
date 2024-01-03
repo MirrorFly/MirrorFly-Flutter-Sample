@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
 import 'package:mirror_fly_demo/app/data/session_management.dart';
 import 'package:mirrorfly_plugin/mirrorfly.dart';
@@ -26,20 +27,20 @@ class CallUtils {
           var actualMemberName = AppUtils.getActualMemberName(membersName);
           membersName = actualMemberName.item1;
           isMaxMemberNameNotReached = actualMemberName.item2;
-          spaceAvailable = membersName.length < Constants.maxNameLength;
+          spaceAvailable = membersName.toString().characters.length < Constants.maxNameLength;
           // LogMessage.d("getCallersName $i", "pair.item1 : ${pair.item1} actualMemberName : $membersName isMaxMemberNameNotReached : $isMaxMemberNameNotReached spaceAvailable : $spaceAvailable");
-        } else if (spaceAvailable && isMaxMemberNameNotReached && spaceAvailable && i == 1) {
+        } else if (spaceAvailable && isMaxMemberNameNotReached && i == 1) {
           membersName.write(", ${pair.item1}");
           var actualMemberName = AppUtils.getActualMemberName(membersName);
           membersName = actualMemberName.item1;
           isMaxMemberNameNotReached = actualMemberName.item2;
-          spaceAvailable = membersName.length < Constants.maxNameLength;
+          spaceAvailable = membersName.toString().characters.length < Constants.maxNameLength;
           // LogMessage.d("getCallersName $i", "pair.item1 : ${pair.item1} actualMemberName : $membersName isMaxMemberNameNotReached : $isMaxMemberNameNotReached spaceAvailable : $spaceAvailable");
-        } else if (spaceAvailable && isMaxMemberNameNotReached && spaceAvailable && i == 2) {
+        } else if (spaceAvailable && isMaxMemberNameNotReached && i == 2) {
           membersName.write(", ${pair.item1}");
           var actualMemberName = AppUtils.getActualMemberName(membersName);
           membersName = actualMemberName.item1;
-          spaceAvailable = membersName.length < Constants.maxNameLength;
+          spaceAvailable = membersName.toString().characters.length < Constants.maxNameLength;
           // LogMessage.d("getCallersName $i", "pair.item1 : ${pair.item1} actualMemberName : $membersName isMaxMemberNameNotReached : $isMaxMemberNameNotReached spaceAvailable : $spaceAvailable");
         } else {
           membersName.write(" (+${(callUsers.length - i)})");
@@ -67,7 +68,7 @@ class CallUtils {
 
     var membersName = StringBuffer();
     var isMaxMemberNameNotReached = true;
-
+    var spaceAvailable = true;
     // if (item.callState == CallState.missedCall || item.callState == CallState.incomingCall) {
     //   var pair = await AppUtils.getNameAndProfileDetails(item.fromUser!);
     //   membersName.write("${pair.item1}, ");
@@ -81,17 +82,24 @@ class CallUtils {
           var actualMemberName = AppUtils.getActualMemberName(membersName);
           membersName = actualMemberName.item1;
           isMaxMemberNameNotReached = actualMemberName.item2;
-        } else if (isMaxMemberNameNotReached && i == 1) {
+          spaceAvailable = membersName.toString().characters.length < Constants.maxNameLength;
+          // LogMessage.d("getCallLogUserNames $i", "pair.item1 : ${pair.item1} actualMemberName : $membersName isMaxMemberNameNotReached : $isMaxMemberNameNotReached spaceAvailable : $spaceAvailable");
+        } else if (spaceAvailable && isMaxMemberNameNotReached && i == 1) {
           membersName.write(", ${pair.item1}");
           var actualMemberName = AppUtils.getActualMemberName(membersName);
           membersName = actualMemberName.item1;
           isMaxMemberNameNotReached = actualMemberName.item2;
-        } else if (isMaxMemberNameNotReached && i == 2) {
+          spaceAvailable = membersName.toString().characters.length < Constants.maxNameLength;
+          // LogMessage.d("getCallLogUserNames $i", "pair.item1 : ${pair.item1} actualMemberName : $membersName isMaxMemberNameNotReached : $isMaxMemberNameNotReached spaceAvailable : $spaceAvailable");
+        } else if (spaceAvailable && isMaxMemberNameNotReached && i == 2) {
           membersName.write(", ${pair.item1}");
           var actualMemberName = AppUtils.getActualMemberName(membersName);
           membersName = actualMemberName.item1;
+          spaceAvailable = membersName.toString().characters.length < Constants.maxNameLength;
+          // LogMessage.d("getCallLogUserNames $i", "pair.item1 : ${pair.item1} actualMemberName : $membersName isMaxMemberNameNotReached : $isMaxMemberNameNotReached spaceAvailable : $spaceAvailable");
         } else {
           membersName.write(" (+${(callUsers.length - i)})");
+          // LogMessage.d("getCallLogUserNames $i else", "pair.item1 : ${pair.item1} actualMemberName : $membersName isMaxMemberNameNotReached : $isMaxMemberNameNotReached spaceAvailable : $spaceAvailable");
           break;
         }
       } else {

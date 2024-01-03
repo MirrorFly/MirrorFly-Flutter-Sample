@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -9,7 +8,6 @@ import 'package:mirror_fly_demo/app/call_modules/call_timeout/controllers/call_t
 import 'package:mirror_fly_demo/app/call_modules/outgoing_call/call_controller.dart';
 import 'package:mirror_fly_demo/app/call_modules/participants/add_participants_controller.dart';
 import 'package:mirror_fly_demo/app/modules/media_preview/controllers/media_preview_controller.dart';
-import 'package:mirrorfly_plugin/logmessage.dart';
 import 'package:mirrorfly_plugin/mirrorflychat.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
@@ -242,14 +240,10 @@ abstract class BaseController {
           if (Get.isRegistered<CallController>()) {
             /*Get.find<CallController>().callDisconnected(
                 callMode, userJid, callType);*///commenting because when call disconnected we no need to check anything
-            //after disconnect received then local hangup received in call action
+
             debugPrint("Call List length base controller ${Get.find<CallController>().callList.length}");
-            if(Platform.isIOS && Get.find<CallController>().callList.length > 1){
-              Get.find<CallController>().removeUser(
-                  callMode, userJid, callType);
-            }else {
-              Get.find<CallController>().callDisconnectedStatus();
-            }
+
+            Get.find<CallController>().callDisconnectedStatus();
 
             if(Get.find<CallController>().callList.length <= 1){
               stopTimer();

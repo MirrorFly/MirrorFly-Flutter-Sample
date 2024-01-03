@@ -2,7 +2,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mirrorfly_plugin/flychat.dart';
-import 'package:mirrorfly_plugin/logmessage.dart';
 import 'package:mirrorfly_plugin/mirrorflychat.dart';
 
 import '../../../common/constants.dart';
@@ -23,7 +22,7 @@ class CallTimeoutController extends GetxController {
   Future<void> onInit() async {
     super.onInit();
     enterFullScreen();
-    groupId(await Mirrorfly.getGroupId());
+    groupId(await Mirrorfly.getCallGroupJid());
     callType(Get.arguments["callType"]);
     callMode(Get.arguments["callMode"]);
     users.value = (Get.arguments["userJid"] as List<String?>);

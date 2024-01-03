@@ -1,4 +1,4 @@
-import 'package:mirrorfly_plugin/logmessage.dart';
+import 'package:mirrorfly_plugin/mirrorflychat.dart';
 import 'package:tuple/tuple.dart';
 
 class ReplyHashMap{
