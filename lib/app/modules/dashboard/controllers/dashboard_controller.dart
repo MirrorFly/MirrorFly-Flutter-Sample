@@ -149,7 +149,7 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
     pageNumber = 1;
 
     Mirrorfly.syncCallLogs().then((isSuccess){
-      print("#MirrorflyCall syncCallLogs isSuccess $isSuccess");
+      debugPrint("#MirrorflyCall syncCallLogs isSuccess $isSuccess");
     });
     super.onInit();
   }
