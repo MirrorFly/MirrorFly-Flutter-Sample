@@ -9,6 +9,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:mirror_fly_demo/app/common/main_controller.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
 import 'package:mirror_fly_demo/app/data/permissions.dart';
 import 'package:otp_text_field/otp_field.dart';
@@ -318,6 +319,10 @@ class LoginController extends GetxController {
           SessionManagement.setLogin(userData.data!.username!.isNotEmpty);
           SessionManagement.setUser(userData.data!);
           SessionManagement.setUserIdentifier(userIdentifier);
+          SessionManagement.setAuthToken(userData.data!.token.checkNull());
+          if(Get.isRegistered<MainController>()){
+            Get.find<MainController>().authToken(userData.data!.token.checkNull());
+          }
           // Mirrorfly.setNotificationSound(true);
           // SessionManagement.setNotificationSound(true);
           // userData.data.

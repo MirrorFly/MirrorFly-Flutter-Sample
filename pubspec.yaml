@@ -1,6 +1,6 @@
 name: mirror_fly_demo
-version: 2.6.8+79
-build_release_date: Nov 2023
+version: 2.6.8+80
+build_release_date: Jan 2024
 publish_to: none
 description: A MirrorFly Flutter Sample Application.
 environment: 
@@ -13,7 +13,7 @@ dependencies:
     sdk: flutter
   shared_preferences: ^2.1.0
   flutter_svg: ^1.1.5
-  cached_network_image: ^3.2.2
+  cached_network_image: ^3.3.1
   file_picker: ^5.2.0+1 #file picker
   fluttertoast: ^8.0.7 #toast
   intl: ^0.17.0 #datetime
@@ -54,8 +54,8 @@ dependencies:
   video_player: ^2.6.1
   internet_connection_checker: ^1.0.0+1 # connectivity check
   provider: ^6.0.3
-#  photo_manager: ^2.6.0
-  photo_manager: ^3.0.0-dev.5
+  photo_manager: ^2.8.1
+  #photo_manager: ^3.0.0-dev.5
   oktoast: ^3.3.1
 #  google_cloud_translation: ^0.0.3 # Google Translator
   share_plus: ^7.0.2

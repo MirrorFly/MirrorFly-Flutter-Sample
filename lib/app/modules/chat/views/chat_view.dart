@@ -631,7 +631,7 @@ class ChatView extends GetView<ChatController> {
               children: [
                 Obx(() {
                   return Visibility(
-                      visible: (controller.loadNextData.value && pos == chatList.length - 1),
+                      visible: (controller.showLoadingPrevious.value && pos == chatList.length - 1),
                       //|| (controller.loadPreviousData.value && pos==chatList.length-1) ,
                       child: const Center(
                           child: CircularProgressIndicator()
@@ -824,7 +824,7 @@ class ChatView extends GetView<ChatController> {
                     chatMessage: chatList[index].messageTextContent),
                 Obx(() {
                   return Visibility(
-                      visible: (controller.loadPreviousData.value && pos == 0),
+                      visible: (controller.showLoadingNext.value && pos == 0),
                       child: const Center(
                         child: CircularProgressIndicator(),
                       ));
