@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
@@ -11,6 +10,7 @@ import 'package:mirror_fly_demo/app/routes/app_pages.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
 
 import '../../../common/crop_image.dart';
+import '../../../data/permissions.dart';
 
 class GroupCreationController extends GetxController {
   var imagePath = "".obs;
@@ -69,23 +69,27 @@ class GroupCreationController extends GetxController {
 
 
   Future imagePick(BuildContext context) async {
-    FilePickerResult? result = await FilePicker.platform
-        .pickFiles(allowMultiple: false, type: FileType.image);
-    if (result != null) {
-      // isImageSelected.value = true;
-      Get.to(CropImage(
-        imageFile: File(result.files.single.path!),
-      ))?.then((value) {
-        value as MemoryImage;
-        // imageBytes = value.bytes;
-        var name ="${DateTime.now().millisecondsSinceEpoch}.jpg";
-        writeImageTemp(value.bytes, name).then((value) {
-          imagePath(value.path);
+    if(await AppPermission.getStoragePermission()) {
+      FilePickerResult? result = await FilePicker.platform
+          .pickFiles(allowMultiple: false, type: FileType.image);
+      if (result != null) {
+        // isImageSelected.value = true;
+        Get.to(CropImage(
+          imageFile: File(result.files.single.path!),
+        ))?.then((value) {
+          value as MemoryImage;
+          // imageBytes = value.bytes;
+          var name = "${DateTime
+              .now()
+              .millisecondsSinceEpoch}.jpg";
+          writeImageTemp(value.bytes, name).then((value) {
+            imagePath(value.path);
+          });
         });
-      });
-    } else {
-      // User canceled the picker
-      // isImageSelected.value = false;
+      } else {
+        // User canceled the picker
+        // isImageSelected.value = false;
+      }
     }
   }
 

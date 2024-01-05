@@ -177,4 +177,9 @@ class StatusListController extends FullLifeCycleController with FullLifeCycleMix
           child: const Text("Yes")),
     ]);
   }
+
+  @override
+  void onHidden() {
+
+  }
 }

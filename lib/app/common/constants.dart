@@ -41,6 +41,68 @@ const Color playIconColor = Color(0xff7285B5);
 const Color durationTextColor = Color(0xff455E93);
 const Color chatBgColor = Color(0xffD0D8EB);
 const Color previewTextColor = Color(0xff7f7f7f);
+const Color callsSubText = Color(0Xff737373);
+const Color notificationAlertBg = Color(0xffEFF4FD);
+
+class AppColors{
+  static const Color callerBackground = Color(0xff152134);
+  static const Color bottomCallOptionBackground = Color(0xff162337);
+  static const Color callOptionBackground = Color(0xff10294d);
+  static const Color callAgainButtonBackground = Color(0xff009f46);
+  static const Color audioCallBackground = Color(0xff0B111C);
+  static const Color audioCallerBackground = Color(0xff0D2852);
+  static const Color callerTitleBackground = Color(0xff151F32);
+  static const Color colorBlackTransparent = Color(0x80000000);
+  static const Color callerStatus = Color(0xffDEDEDE);
+  static const Color callerName = Color(0xffffffff);
+  static const Color endButton = Color(0xffff4d67);
+  static const Color audioMutedIconBgColor = Color(0x80000000);
+  static const Color checkBoxBorder = Color(0xffbdbdbd);
+  static const Color checkBoxChecked = Color(0xff30c076);
+  static const Color callBg = Color(0xff0B111C);
+  static const Color speakingBg = Color(0xff3abf87);
+  static const Color transBlack75 = Color(0xBF000000);
+  static const Color participantUnMuteColor = Color(0xffe3e2e2);
+}
+//call Assets
+const String plusIcon = 'assets/calls/plus_icon.svg';
+const String audioCallSmallIcon = 'assets/calls/audio_call_small_icon.svg';
+const String videoCallSmallIcon = 'assets/calls/video_call_small_icon.svg';
+const String callMutedIcon = 'assets/calls/call_muted_icon.svg';
+const String callEndButton = 'assets/calls/call_end_button.svg';
+const String speakerInactive = 'assets/calls/speaker_inactive.svg';
+const String speakerActive = 'assets/calls/speaker_active.svg';
+const String speakerBluetooth = 'assets/calls/bluetooth.svg';
+const String speakerHeadset = 'assets/calls/head_set.svg';
+const String audioCallAgain = 'assets/calls/call_icon.svg';
+const String videoCallAgain = 'assets/calls/video_call.svg';
+const String callCancel = 'assets/calls/cancel_icon.svg';
+const String gridIcon = 'assets/calls/grid_icon.svg';
+
+const String audioCallIcon = 'assets/calls/audiocall.svg';
+const String videoCallIcon = 'assets/calls/videocall.svg';
+
+const String videoInactive = 'assets/calls/video_inactive.svg';
+const String videoActive = 'assets/calls/video_active.svg';
+const String muteActive = 'assets/calls/mute_active.svg';
+const String muteInactive = 'assets/calls/mute_inactive.svg';
+const String addUserCall = 'assets/calls/ic_add_user.svg';
+const String audioMute = 'assets/calls/ic_audio_mute.svg';
+const String moreMenu = 'assets/calls/ic_call_more_menu.svg';
+const String unpinUser = 'assets/calls/ic_unpin_user.svg';
+const String cameraSwitchInactive = 'assets/calls/camera_switch_inactive.svg';
+const String cameraSwitchActive = 'assets/calls/camera_switch_active.svg';
+const String callOptionsUpArrow = 'assets/calls/call_options_up_arrow.svg';
+const String callOptionsBottomBg = 'assets/calls/ic_group_user_info_layout.png';
+const String callOptionsToolbarBg = 'assets/calls/ic_call_header_overlay.png';
+
+//Call Participant assets
+const String participantMute = 'assets/calls/participant_mute.svg';
+const String participantUnMute = 'assets/calls/participant_unmute.svg';
+const String participantVideoEnabled = 'assets/calls/participant_video_enabled.svg';
+const String participantVideoDisabled = 'assets/calls/participant_video_disabled.svg';
+const String addParticipantsInCall = 'assets/calls/add_user_in_call.svg';
+
 
 //Assets
 const String registerIcon = 'assets/logos/register_logo.svg';
@@ -56,6 +118,7 @@ const String rightArrowIcon = 'assets/logos/forward_arrow.svg';
 const String chatIcon = 'assets/logos/chat.svg';
 const String staredMsgIcon = 'assets/logos/stared message.svg';
 const String notificationIcon = 'assets/logos/Notifications.svg';
+const String notificationPermissionIcon = 'assets/logos/notification_icon.svg';
 const String tickRound = 'assets/logos/tick_round.svg';
 const String tickRoundBlue = 'assets/logos/tick_round_blue.svg';
 const String blockedIcon = 'assets/logos/blocked_contacts.svg';
@@ -96,6 +159,8 @@ const String pin = 'assets/logos/pin.svg';
 const String unpin = 'assets/logos/unpin.svg';
 
 // const String audioImg = 'assets/logos/audio.svg';
+const String audioRecordIcon = 'assets/logos/audio_record_icon.svg';
+const String sendIcon = 'assets/logos/send.svg';
 const String audioImg = 'assets/logos/headset_img.svg';
 const String headsetImg = 'assets/logos/headset_white.svg';
 const String documentImg = 'assets/logos/document_icon.svg';
@@ -204,6 +269,7 @@ const String settingsPermission = "assets/logos/settings_permission.svg";
 const String locationPinPermission = "assets/logos/location_pin_permission.svg";
 const String recordAudioVideoPermission =
     "assets/logos/record_audio_video_permission.svg";
+const String notificationAlertPermission = 'assets/calls/ic_notification_alert.svg';
 
 const String icAdminBlocked = "assets/logos/ic_admin_blocked.svg";
 const String icExpand = "assets/logos/ic_expand.svg";
@@ -274,17 +340,19 @@ mirrorFlyLog(String tag, String msg) {
 }
 
 class Constants {
+  static const bool enableContactSync = false;
+  static const bool enableTopic = false;
+  static const String topicId = enableTopic ? "5d3788c1-78ef-4158-a92b-a48f092da0b9" : "";//Mirrorfly Topic id
   static const String package = 'com.mirrorfly.uikit_flutter';
   static const String webChatLogin = 'https://webchat-uikit-qa.contus.us/';
   static const String tag = 'Contus Fly';
-  static const String googleMapKey = "AIzaSyBaKkrQnLT4nacpKblIE5d4QK6GpaX5luQ";
   static const String googleMapPackageName = "com.google.android.apps.maps";
   static const String packageName = "com.contus.flycommons.";
 
   static const String applicationLink = "https://app.contusfly.contus.com";
   static const String smsContent =
       "Hey, MirrorFly is a real time chat, Audio and Video call solution for B2B and B2C.\n Download the app from this URL: https://app.mirrorfly.com";
-
+  static const String maximumLoginReached = "You have reached the maximum device limit, If you want to continue one of your device will logged out . Do you want to continue?";
   static const String rosterJid = "roster_jid";
   static const String isLiveUser = "is_live_user";
   static const String ifBlockedMe = "ifBlockedMe";
@@ -595,6 +663,12 @@ class Constants {
   static const String audioPermission =
       "To send audio messages, allow MirrorFly access to your Microphone.";
 
+  static const String audioCallPermission =
+      "MirrorFly need the Microphone Permissions in order to call Family";
+
+  static const String videoCallPermission =
+      "MirrorFly need the Microphone and Camera Permissions in order to call Family";
+
   static const String contactPermissionDenied =
       "MirrorFly need the Contacts Permission in order to help you connect with friends and family, but they have been permanently denied. Please continue to app settings, select \"Permissions\", and enable \"Contacts\"";
   static const String locationPermissionDenied =
@@ -626,8 +700,6 @@ class Constants {
       "Choose Translation Language";
   static const String googleTranslationLanguageDoubleTap =
       "Double Tap the received messages to translate";
-  static const String googleTranslateKey =
-      "AIzaSyCdwzAZR6tx8KB-2dMn0KzSI1V0LpsYdH0";
 
   static const String editBusyStatus = "Edit Busy Status Message";
   static const String yourBusyStatus = "Your Busy Status";
@@ -664,6 +736,71 @@ class Constants {
   static const pinAlert = pinExpiry-5;//in Days
   static const forgetPinOTPText ='Generate OTP to your registered mobile number';
   static const invalidPinOTPText ='Invalid PIN, Generate OTP to your registered mobile number';
+
+
+  //asked permission
+  static const locationPermissionAsked = "location_permission_asked_before";
+  static const contactPermissionAsked = "contact_permission_asked_before";
+  static const contactSavePermissionAsked = "contact_save_permission_asked_before";
+  static const storagePermissionAsked = "storage_permission_asked_before";
+  static const notificationPermissionAsked = "notification_permission_asked_before";
+
+  static const audioRecordPermissionAsked = "audio_record_permission_asked_before";
+  static const cameraPermissionAsked = "camera_permission_asked_before";
+  static const readPhoneStatePermissionAsked = "read_phone_state_asked_before";
+  static const bluetoothPermissionAsked = "bluetooth_permission_asked_before";
+
+  static const remoteEngagedToast = " is on another call";
+
+  //Call
+  static const unavailableTryAgain = "Unavailable, Try again later";
+  static const cancel = "Cancel";
+  static const ok = "OK";
+  static const callAgain = "Call Again";
+  static const callTimeoutMessage = "Seems like no one attended the call";
+
+  //Call Types
+  static const audioCall = "audio";
+  static const videoCall = "video";
+
+  static const videoSwitchMessage = "Are you sure you want to switch to Video Call?";
+  static const videoSwitchRequestMessage = "Requesting to switch to Video Call";
+  static const videoSwitchRequestedMessage = "requesting to switch to video call";
+  static const callMembersLimit = "Maximum %d members allowed in a call";
+  static const callMembersLimit6 = "You can only select %d participants";
+  static const maxNameLength = 26;
+  static const msgOngoingCallAlert = "You are already on another call";
+  static const addParticipantsToCall = "Add participant to the call";
+
+
+  static const String cameraPermissionName = "Camera";
+  static const String microphonePermissionName = "Microphone";
+  static const String bluetoothPermissionName = "Nearby devices";
+  static const String notificationPermissionName = "Notifications";
+  static const String phonePermissionName = "Phone";
+  static const String notificationPermissionTitle = "Turn on notification for MirrorFly";
+  static const String notificationPermissionMessage = "Allow MirrorFly to send you notifications to stay \nconnected with friends and family.\n\n Please continue to app Settings > select Permission > enable Notification.\n";
+  static const String callPermission =
+      "MirrorFly need the %d Permissions in order to call Family";
+  static const String callPermissionDenied =
+      "MirrorFly need the %d Permissions in order to call Family, but they have been permanently denied. Please continue to app settings, select \"Permissions\", and enable %d.";
+
+
+  static const String deleteCallLog = "Do you want to delete a call log?";
+  static const String deleteSelectedCallLog = "Do you want to delete the selected call logs?";
+  static const String deleteAllCallLog = "Do you want to clear your entire call log?";
+  static const String noCallLogs = "No Call log history found";
+  static const String noCallLogsMessage = "Any new Calls will appear here";
+  static const String noChats = "No new messages";
+  static const String noChatsMessage = "Any new messages will appear here";
+  static const String noDataFound = "No data found";
+  static const String removeFromCallLog = "Remove from call log";
+  static const String callInfo = "Call Info";
+
+  //Call Log
+  static const String noCallLog = "No Call Log";
+  static const String noCallLogHistoryFound = "No Call log history found";
+  static const String anyNewCallsWillAppearHere = "Any new Calls will appear here";
 }
 
 Future<void> launchWeb(String url) async {

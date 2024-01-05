@@ -15,10 +15,20 @@
     <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION"/>
 
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
+
     <!-- android 13 permission-->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
     <uses-permission android:name="android.permission.READ_MEDIA_AUDIO" />
     <uses-permission android:name="android.permission.READ_MEDIA_VIDEO" />
+
+    <uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT" />
+
+    <uses-permission android:name="android.permission.WAKE_LOCK" /><!--Need for enable or disable Proximity sensor -->
+    <uses-permission android:name="android.permission.BLUETOOTH"/><!-- Request legacy Bluetooth permissions on older devices. -->
+    <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" /><!-- Needed only if your app communicates with already-paired Bluetooth devices. -->
+    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" /><!--AudioManager#startBluetoothSco() requires MODIFY_AUDIO_SETTINGS permission.-->
+
    <application
         android:label="@string/app_name"
         android:requestLegacyExternalStorage="true"
@@ -28,10 +38,12 @@
             android:exported="true"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
+            android:allowBackup="false"
             android:theme="@style/LaunchTheme"
             android:configChanges="orientation|keyboardHidden|keyboard|screenSize|smallestScreenSize|locale|layoutDirection|fontScale|screenLayout|density|uiMode"
             android:hardwareAccelerated="true"
             android:windowSoftInputMode="adjustResize"
+            tools:overrideLibrary="io.github.ponnamkarthik.toast.fluttertoast"
             tools:ignore="LockedOrientationActivity">
             <!-- Specifies an Android theme to apply to this Activity as soon as
                  the Android process has started. This theme is visible to the user
@@ -55,11 +67,27 @@
         <meta-data
             android:name="flutterEmbedding"
             android:value="2" />
-       <meta-data android:name="com.google.android.geo.API_KEY"
-           android:value="AIzaSyCfG5u1-XDZhWD8vOZGK5hTKyqsVOjHSSM"/>
+       <!--<meta-data android:name="com.google.android.geo.API_KEY"
+           android:value="AIzaSyCfG5u1-XDZhWD8vOZGK5hTKyqsVOjHSSM"/>-->
+       <meta-data
+           android:name="com.google.android.geo.API_KEY"
+           android:value="AIzaSyCe4m08a3eMvInU8LBxAjAyEIyG-Kj_Ayw" />
+
+       <meta-data
+           android:name="com.google.android.geo.API_THUMP_KEY"
+           android:value="AIzaSyBaKkrQnLT4nacpKblIE5d4QK6GpaX5luQ" />
+       <meta-data
+           android:name="com.google.android.geo.API_TRANSLATE_KEY"
+           android:value="AIzaSyCdwzAZR6tx8KB-2dMn0KzSI1V0LpsYdH0" />
        <meta-data
            android:name="io.flutter.app.android.SplashScreenUntilFirstFrame"
            android:value="true" />
+       <meta-data
+           android:name="com.google.firebase.messaging.default_notification_icon"
+           android:resource="@drawable/ic_notification" />
+       <meta-data
+           android:name="com.google.firebase.messaging.default_notification_color"
+           android:resource="@color/colorAccent" />
        <provider
            android:name="androidx.core.content.FileProvider"
            android:authorities="${applicationId}.fileProvider"
