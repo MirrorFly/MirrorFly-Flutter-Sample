@@ -13,11 +13,7 @@ class GalleryPickerView extends GetView<GalleryPickerController> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Row(
-          children: [
-            Text('Send to ${controller.userName}'),
-          ],
-        ),
+        title: Text('Send to ${controller.userName}'),
         centerTitle: true,
       ),
       body: WillPopScope(
@@ -28,6 +24,7 @@ class GalleryPickerView extends GetView<GalleryPickerController> {
           children: [
             Expanded(
               child: FutureBuilder(
+                  future: null,
                 builder: (context, snapshot) {
                   return GalleryMediaPicker(
                     childAspectRatio: 1,

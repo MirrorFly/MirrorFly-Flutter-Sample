@@ -46,6 +46,7 @@ class ChatMessageModel {
     required this.contactChatMessage, //
     required this.mediaChatMessage, //
     required this.locationChatMessage, //
+    required this.topicId, //
   });
 
   String chatUserJid;
@@ -71,6 +72,7 @@ class ChatMessageModel {
   ContactChatMessage? contactChatMessage;
   MediaChatMessage? mediaChatMessage;
   LocationChatMessage? locationChatMessage;
+  String? topicId;
 
   var isSelected = false.obs;
 
@@ -107,13 +109,13 @@ class ChatMessageModel {
         messageSentTime: json["messageSentTime"].toInt(),
         messageStatus: Platform.isAndroid
             ? (json["messageStatus"]["status"]).toString().obs
-            : json["messageStatus"] == "acknowledge"
+            : json["messageStatus"] == 2
                 ? "A".obs
-                : json["messageStatus"] == "delivered"
+                : json["messageStatus"] == 3
                     ? "D".obs
-                    : json["messageStatus"] == "seen"
+                    : json["messageStatus"] == 4
                         ? "S".obs
-                        : json["messageStatus"] == "received"
+                        : json["messageStatus"] == 5
                             ? "R".obs
                             : "N".obs, //"N" for "sent" in iOS
         messageTextContent: json["messageTextContent"].toString(),
@@ -135,6 +137,7 @@ class ChatMessageModel {
         locationChatMessage: json["locationChatMessage"] == null
             ? null
             : LocationChatMessage.fromJson(json["locationChatMessage"]),
+          topicId: Platform.isIOS ? json["topicID"] : json["topicId"]
       );
 
   Map<String, dynamic> toJson() => {
@@ -143,15 +146,15 @@ class ChatMessageModel {
         "isItCarbonMessage": isItCarbonMessage,
         "isItSavedContact": isItSavedContact,
         "isMessageDeleted": isMessageDeleted,
-        "isMessageRecalled": isMessageRecalled,
+        "isMessageRecalled": isMessageRecalled.value,
         "isMessageSentByMe": isMessageSentByMe,
-        "isMessageStarred": isMessageStarred,
+        "isMessageStarred": isMessageStarred.value,
         "isThisAReplyMessage": isThisAReplyMessage,
         "messageChatType": messageChatType,
         "messageCustomField": messageCustomField,
         "messageId": messageId,
         "messageSentTime": messageSentTime,
-        "messageStatus": messageStatus,
+        "messageStatus": messageStatus.value,
         "messageTextContent": messageTextContent,
         "messageType": messageType,
         "replyParentChatMessage":
@@ -165,6 +168,7 @@ class ChatMessageModel {
             mediaChatMessage == null ? null : mediaChatMessage!.toJson(),
         "locationChatMessage":
             locationChatMessage == null ? null : locationChatMessage!.toJson(),
+        "topicId": topicId
       };
 }
 
@@ -277,17 +281,29 @@ class MediaChatMessage {
                 ? true
                 : false,
         mediaCaptionText: json["mediaCaptionText"] ?? "",
-        mediaDownloadStatus: json["mediaDownloadStatus"] == "not_downloaded"
-            ? 5
-            : json["mediaDownloadStatus"] == "downloading"
-                ? 3
-                : json["mediaDownloadStatus"] == "downloaded"
-                    ? 4
-                    : json["mediaDownloadStatus"] == "not_available"
-                        ? 6
-                        : json["mediaDownloadStatus"] == "failed"
-                            ? 401
-                            : json["mediaDownloadStatus"],
+        mediaDownloadStatus: Platform.isIOS
+            ? json["mediaDownloadStatus"] == 4
+                ? 5
+                : json["mediaDownloadStatus"] == 5
+                    ? 3
+                    : json["mediaDownloadStatus"] == 6
+                        ? 4
+                        : json["mediaDownloadStatus"] == 7
+                            ? 6
+                            : json["mediaDownloadStatus"] == 9
+                                ? 401
+                                : json["mediaDownloadStatus"]
+            : json["mediaDownloadStatus"] == "not_downloaded"
+                ? 5
+                : json["mediaDownloadStatus"] == "downloading"
+                    ? 3
+                    : json["mediaDownloadStatus"] == "downloaded"
+                        ? 4
+                        : json["mediaDownloadStatus"] == "not_available"
+                            ? 6
+                            : json["mediaDownloadStatus"] == "failed"
+                                ? 401
+                                : json["mediaDownloadStatus"],
         mediaDuration: json["mediaDuration"],
         mediaFileHeight: json["mediaFileHeight"] ?? 0,
         mediaFileName: json["mediaFileName"],
@@ -300,24 +316,31 @@ class MediaChatMessage {
                 : json["mediaFileType"].toString().toUpperCase(),
         mediaFileWidth: json["mediaFileWidth"] ?? 0,
         mediaLocalStoragePath: json["mediaLocalStoragePath"],
-        mediaProgressStatus: int.parse(json["mediaProgressStatus"].toString()).obs,
+        mediaProgressStatus:
+            int.parse(json["mediaProgressStatus"].toString()).obs,
         mediaThumbImage: json["mediaThumbImage"]
             .toString()
             .replaceAll("\\\\n", "\\n")
             .replaceAll("\\n", "\n")
             .replaceAll("\n", "")
             .replaceAll(" ", ""),
-        mediaUploadStatus: json["mediaUploadStatus"] == "not_uploaded"
-            ? 0
-            : json["mediaUploadStatus"] == "uploading"
-                ? 1
-                : json["mediaUploadStatus"] == "uploaded"
-                    ? 2
-                    : json["mediaUploadStatus"] == "not_available"
-                        ? 7
-                        : json["mediaUploadStatus"] == "failed"
-                            ? 401
-                            : json["mediaUploadStatus"],
+        mediaUploadStatus: Platform.isIOS
+            ? json["mediaUploadStatus"] == 3
+                ? 7
+                : json["mediaUploadStatus"] == 8
+                    ? 401
+                    : json["mediaUploadStatus"]
+            : json["mediaUploadStatus"] == "not_uploaded"
+                ? 0
+                : json["mediaUploadStatus"] == "uploading"
+                    ? 1
+                    : json["mediaUploadStatus"] == "uploaded"
+                        ? 2
+                        : json["mediaUploadStatus"] == "not_available"
+                            ? 7
+                            : json["mediaUploadStatus"] == "failed"
+                                ? 401
+                                : json["mediaUploadStatus"],
         messageId: json["messageId"],
         messageType: Platform.isAndroid
             ? json["messageType"]
@@ -339,7 +362,7 @@ class MediaChatMessage {
         "mediaFileType": mediaFileType,
         "mediaFileWidth": mediaFileWidth,
         "mediaLocalStoragePath": mediaLocalStoragePath,
-        "mediaProgressStatus": mediaProgressStatus,
+        "mediaProgressStatus": mediaProgressStatus.value,
         "mediaThumbImage": mediaThumbImage,
         "mediaUploadStatus": mediaUploadStatus,
         "messageId": messageId,

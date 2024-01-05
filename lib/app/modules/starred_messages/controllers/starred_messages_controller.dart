@@ -319,7 +319,7 @@ class StarredMessagesController extends FullLifeCycleController with FullLifeCyc
 
   copyTextMessages() {
     Clipboard.setData(
-        ClipboardData(text: selectedChatList[0].messageTextContent));
+        ClipboardData(text: selectedChatList[0].messageTextContent ?? ""));
     clearChatSelection(selectedChatList[0]);
     toToast("1 Text Copied Successfully to the clipboard");
   }
@@ -683,7 +683,7 @@ class StarredMessagesController extends FullLifeCycleController with FullLifeCyc
   }
 
   navigateMessage(ChatMessageModel starredChat) {
-    Get.toNamed(Routes.chat,parameters: {'isFromStarred':'true',"userJid":starredChat.chatUserJid,"messageId":starredChat.messageId});
+    Get.toNamed(Routes.chat,parameters: {'isFromStarred':'true',"userJid":starredChat.chatUserJid,"messageId":starredChat.messageId,"topicId":starredChat.topicId.checkNull()});
   }
 
   void share() {
@@ -725,6 +725,11 @@ class StarredMessagesController extends FullLifeCycleController with FullLifeCyc
         }
       }
     }
+  }
+
+  @override
+  void onHidden() {
+
   }
 
 

@@ -47,6 +47,15 @@ abstract class Routes {
   static const dataUsageSetting = _Paths.dataUsageSetting;
   static const contactSync = _Paths.contactSync;
   static const viewAllMediaPreview = _Paths.viewAllMediaPreview;
+
+  //call
+  static const outGoingCallView = _Paths.outGoingCallView;
+  static const onGoingCallView = _Paths.onGoingCallView;
+  static const callTimeOutView = _Paths.callTimeOutView;
+  static const participants = _Paths.participants;
+  static const groupParticipants = _Paths.groupParticipants;
+  static const callInfo = _Paths.callInfo;
+
 }
 
 abstract class _Paths {
@@ -96,4 +105,13 @@ abstract class _Paths {
   static const dataUsageSetting = '/data_usage_setting';
   static const contactSync = '/contact_sync';
   static const viewAllMediaPreview = '/view-all-media-preview';
+
+  //call
+  static const outGoingCallView = '/outGoingCallView';
+  static const onGoingCallView = '/onGoingCallView';
+  static const callTimeOutView = '/call-timeout';
+  static const participants = '/participants';
+  static const groupParticipants = '/groupParticipants';
+  static const callInfo = '/call-info';
+
 }

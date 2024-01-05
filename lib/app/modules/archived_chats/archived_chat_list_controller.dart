@@ -127,14 +127,15 @@ class ArchivedChatListController extends GetxController {
 
   toChatPage(String jid) {
     if (jid.isNotEmpty) {
+      Get.toNamed(Routes.chat, parameters: {"chatJid":jid});
       // Helper.progressLoading();
-      getProfileDetails(jid).then((value) {
+      /*getProfileDetails(jid).then((value) {
         if (value.jid != null) {
           Helper.hideLoading();
           var profile = value;//profiledata(value.toString());
           Get.toNamed(Routes.chat, arguments: profile);
         }
-      });
+      });*/
       // SessionManagement.setChatJid(jid);
       // Get.toNamed(Routes.chat);
     }
@@ -414,8 +415,6 @@ class ArchivedChatListController extends GetxController {
             Get.back();
             toChatPage(chatItem.jid.checkNull());
           },
-          callTap: () {},
-          videoTap: () {},
           infoTap: () {
             Get.back();
             infoPage(value);
