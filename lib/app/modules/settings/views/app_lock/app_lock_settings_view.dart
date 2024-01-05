@@ -35,11 +35,11 @@ class AppLockSettingsView extends GetView<AppLockController> {
                 on: controller.bioEnabled,
                 onToggle: (value) => controller.enableBio()),
             const SizedBox(height: 8,),
-            Padding(
-              padding: const EdgeInsets.all(16.0),
+            const Padding(
+              padding: EdgeInsets.all(16.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                children: const [
+                children: [
                   Text(
                     "If App Lock enabled, the app will be locked automatically after 32 sec when it is not in use.",
                     style: TextStyle(color: textColor),),

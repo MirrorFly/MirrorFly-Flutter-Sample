@@ -126,8 +126,9 @@ getReplyMessage(String messageType,
         children: [
           Helper.forMessageTypeIcon(Constants.mText),
           // Text(messageTextContent!),
-          Expanded(child: Text(messageTextContent!, maxLines: 1,overflow: TextOverflow.ellipsis)),
-
+          Expanded(
+              child: Text(messageTextContent!,
+                  maxLines: 1, overflow: TextOverflow.ellipsis)),
         ],
       );
     case Constants.mImage:
@@ -215,8 +216,12 @@ getReplyMessage(String messageType,
           const SizedBox(
             width: 5,
           ),
-          Flexible(child: Text(
-            mediaFileName!, overflow: TextOverflow.ellipsis, maxLines: 1,)),
+          Flexible(
+              child: Text(
+                mediaFileName!,
+                overflow: TextOverflow.ellipsis,
+                maxLines: 1,
+              )),
         ],
       );
     default:
@@ -238,8 +243,9 @@ getReplyImageHolder(BuildContext context,
     isReply = true;
   }
   switch (isReply
-      ? mediaChatMessage == null ? "LOCATION" : mediaChatMessage.messageType
-      .checkNull().toUpperCase()
+      ? mediaChatMessage == null
+      ? "LOCATION"
+      : mediaChatMessage.messageType.checkNull().toUpperCase()
       : chatMessageModel.messageType.checkNull().toUpperCase()) {
     case Constants.mImage:
       debugPrint("reply header--> IMAGE");
@@ -261,7 +267,8 @@ getReplyImageHolder(BuildContext context,
       return getLocationImage(
           isReply ? locationChatMessage : chatMessageModel.locationChatMessage,
           size,
-          size, isSelected: true);
+          size,
+          isSelected: true);
     case Constants.mVideo:
       return ClipRRect(
         borderRadius: const BorderRadius.only(
@@ -277,16 +284,17 @@ getReplyImageHolder(BuildContext context,
     case Constants.mDocument:
       debugPrint("isNotChatItem--> $isNotChatItem");
       debugPrint("Document --> $isReply");
-      debugPrint("Document --> ${isReply
-          ? mediaChatMessage!.mediaFileName
-          : chatMessageModel.mediaChatMessage!.mediaFileName}");
+      debugPrint(
+          "Document --> ${isReply ? mediaChatMessage!.mediaFileName : chatMessageModel.mediaChatMessage!
+              .mediaFileName}");
       return isNotChatItem
           ? SizedBox(height: size)
           : Container(
           width: size,
           height: size,
           decoration: const BoxDecoration(
-            borderRadius: BorderRadius.only(topRight: Radius.circular(10),
+            borderRadius: BorderRadius.only(
+                topRight: Radius.circular(10),
                 bottomRight: Radius.circular(10)),
             color: Colors.white,
           ),
@@ -326,6 +334,20 @@ getReplyImageHolder(BuildContext context,
         height: size,
       );
   }
+}
+
+Widget messageNotAvailableWidget(ChatMessageModel chatMessage) {
+  return Container(
+    padding: const EdgeInsets.all(12),
+    margin: const EdgeInsets.all(2),
+    decoration: BoxDecoration(
+      borderRadius: const BorderRadius.all(Radius.circular(10)),
+      color: chatMessage.isMessageSentByMe
+          ? chatReplyContainerColor
+          : chatReplySenderColor,
+    ),
+    child: const Text("The Original Message is not Available", maxLines: 2, overflow: TextOverflow.ellipsis,),
+  );
 }
 
 class ReplyMessageHeader extends StatelessWidget {
@@ -380,8 +402,7 @@ class ReplyMessageHeader extends StatelessWidget {
   }
 }
 
-Image imageFromBase64String(String base64String, BuildContext context,
-    double? width, double? height) {
+Image imageFromBase64String(String base64String, BuildContext context, double? width, double? height) {
   var decodedBase64 = base64String.replaceAll("\n", "");
   Uint8List image = const Base64Decoder().convert(decodedBase64);
   return Image.memory(
@@ -398,16 +419,15 @@ Image imageFromBase64String(String base64String, BuildContext context,
   );
 }
 
-Widget getLocationImage(LocationChatMessage? locationChatMessage, double width,
-    double height,
+Widget getLocationImage(LocationChatMessage? locationChatMessage, double width, double height,
     {bool isSelected = false}) {
   return InkWell(
       onTap: isSelected
           ? null
           : () async {
         String googleUrl =
-            'https://www.google.com/maps/search/?api=1&query=${locationChatMessage!
-            .latitude}, ${locationChatMessage.longitude}';
+            'https://www.google.com/maps/search/?api=1&query=${locationChatMessage!.latitude}, ${locationChatMessage
+            .longitude}';
         if (await canLaunchUrl(Uri.parse(googleUrl))) {
           await launchUrl(Uri.parse(googleUrl));
         } else {
@@ -461,8 +481,7 @@ class SenderHeader extends StatelessWidget {
     return previousMessage != null && checkIsNotNotification(previousMessage);
   }
 
-  ChatMessageModel? getPreviousMessage(List<ChatMessageModel> messageList,
-      int position) {
+  ChatMessageModel? getPreviousMessage(List<ChatMessageModel> messageList, int position) {
     return (position > 0) ? messageList[position + 1] : null;
   }
 
@@ -496,8 +515,7 @@ class SenderHeader extends StatelessWidget {
 }
 
 class LocationMessageView extends StatelessWidget {
-  const LocationMessageView(
-      {Key? key, required this.chatMessage, required this.isSelected})
+  const LocationMessageView({Key? key, required this.chatMessage, required this.isSelected})
       : super(key: key);
   final ChatMessageModel chatMessage;
   final bool isSelected;
@@ -525,8 +543,10 @@ class LocationMessageView extends StatelessWidget {
                 const SizedBox(
                   width: 5,
                 ),
-                getMessageIndicator(chatMessage.messageStatus.value,
-                    chatMessage.isMessageSentByMe, chatMessage.messageType,
+                getMessageIndicator(
+                    chatMessage.messageStatus.value,
+                    chatMessage.isMessageSentByMe,
+                    chatMessage.messageType,
                     chatMessage.isMessageRecalled.value),
                 const SizedBox(
                   width: 4,
@@ -635,6 +655,9 @@ class _AudioMessageViewState extends State<AudioMessageView>
       case AppLifecycleState.detached:
         debugPrint('appLifeCycleState detached');
         break;
+      case AppLifecycleState.hidden:
+        debugPrint('appLifeCycleState hidden');
+        break;
     }
   }
 
@@ -665,8 +688,7 @@ class _AudioMessageViewState extends State<AudioMessageView>
         "currentPos--> ${double.parse(
             widget.chatMessage.mediaChatMessage!.currentPos.toString())}");*/
     debugPrint(
-        "max duration--> ${double.parse(
-            widget.chatMessage.mediaChatMessage!.mediaDuration.toString())}");
+        "max duration--> ${double.parse(widget.chatMessage.mediaChatMessage!.mediaDuration.toString())}");
     return Container(
       decoration: BoxDecoration(
         border: Border.all(
@@ -1074,8 +1096,10 @@ class ContactMessageView extends StatelessWidget {
                 const SizedBox(
                   width: 5,
                 ),
-                getMessageIndicator(chatMessage.messageStatus.value,
-                    chatMessage.isMessageSentByMe, chatMessage.messageType,
+                getMessageIndicator(
+                    chatMessage.messageStatus.value,
+                    chatMessage.isMessageSentByMe,
+                    chatMessage.messageType,
                     chatMessage.isMessageRecalled.value),
                 const SizedBox(
                   width: 4,
@@ -1107,8 +1131,7 @@ class ContactMessageView extends StatelessWidget {
   Future<String?> getUserJid(ContactChatMessage contactChatMessage) async {
     for (int i = 0; i < contactChatMessage.contactPhoneNumbers.length; i++) {
       debugPrint(
-          "contactChatMessage.isChatAppUser[i]--> ${contactChatMessage
-              .isChatAppUser[i]}");
+          "contactChatMessage.isChatAppUser[i]--> ${contactChatMessage.isChatAppUser[i]}");
       if (contactChatMessage.isChatAppUser[i]) {
         return await Mirrorfly.getJidFromPhoneNumber(
             contactChatMessage.contactPhoneNumbers[i],
@@ -1220,15 +1243,13 @@ class ContactMessageView extends StatelessWidget {
 }
 
 class DocumentMessageView extends StatelessWidget {
-  const DocumentMessageView(
-      {Key? key, required this.chatMessage, this.search = ""})
+  const DocumentMessageView({Key? key, required this.chatMessage, this.search = ""})
       : super(key: key);
   final ChatMessageModel chatMessage;
   final String search;
 
   onDocumentClick() {
-    openDocument(
-        chatMessage.mediaChatMessage!.mediaLocalStoragePath);
+    openDocument(chatMessage.mediaChatMessage!.mediaLocalStoragePath);
   }
 
   @override
@@ -1277,9 +1298,13 @@ class DocumentMessageView extends StatelessWidget {
                   ),
                   Expanded(
                     child: search.isEmpty
-                        ? Text(chatMessage.mediaChatMessage!.mediaFileName,
+                        ? Text(
+                      chatMessage.mediaChatMessage!.mediaFileName,
                       style: const TextStyle(
-                        fontSize: 12,), maxLines: 2,) /*textMessageSpannableText(
+                        fontSize: 12,
+                      ),
+                      maxLines: 2,
+                    ) /*textMessageSpannableText(
                             chatMessage.mediaChatMessage!.mediaFileName
                                 .checkNull(),
                             maxLines: 2,
@@ -1328,8 +1353,10 @@ class DocumentMessageView extends StatelessWidget {
                   const SizedBox(
                     width: 5,
                   ),
-                  getMessageIndicator(chatMessage.messageStatus.value,
-                      chatMessage.isMessageSentByMe, chatMessage.messageType,
+                  getMessageIndicator(
+                      chatMessage.messageStatus.value,
+                      chatMessage.isMessageSentByMe,
+                      chatMessage.messageType,
                       chatMessage.isMessageRecalled.value),
                   const SizedBox(
                     width: 4,
@@ -1468,7 +1495,8 @@ class VideoMessageView extends StatelessWidget {
                     getMessageIndicator(
                         chatMessage.messageStatus.value,
                         chatMessage.isMessageSentByMe,
-                        chatMessage.messageType, chatMessage.isMessageRecalled.value),
+                        chatMessage.messageType,
+                        chatMessage.isMessageRecalled.value),
                     const SizedBox(
                       width: 4,
                     ),
@@ -1541,26 +1569,26 @@ class ImageMessageView extends StatelessWidget {
                   ? Positioned(
                 bottom: 8,
                 right: 10,
-                child: Stack(
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
                   children: [
-                    SvgPicture.asset(mediaBg),
-                    Row(
-                      mainAxisSize: MainAxisSize.min,
+                    chatMessage.isMessageStarred.value
+                        ? SvgPicture.asset(starSmallIcon)
+                        : const SizedBox.shrink(),
+                    const SizedBox(
+                      width: 5,
+                    ),
+                    getMessageIndicator(
+                        chatMessage.messageStatus.value,
+                        chatMessage.isMessageSentByMe,
+                        chatMessage.messageType,
+                        chatMessage.isMessageRecalled.value),
+                    const SizedBox(
+                      width: 4,
+                    ),
+                    Stack(
                       children: [
-                        chatMessage.isMessageStarred.value
-                            ? SvgPicture.asset(starSmallIcon)
-                            : const SizedBox.shrink(),
-                        const SizedBox(
-                          width: 5,
-                        ),
-                        getMessageIndicator(
-                            chatMessage.messageStatus.value,
-                            chatMessage.isMessageSentByMe,
-                            chatMessage.messageType,
-                            chatMessage.isMessageRecalled.value),
-                        const SizedBox(
-                          width: 4,
-                        ),
+                        // Image.asset(cornerShadow,width: 40,height: 20,fit: BoxFit.fitHeight,),
                         Text(
                           getChatTime(context,
                               chatMessage.messageSentTime.toInt()),
@@ -1613,7 +1641,9 @@ class ImageMessageView extends StatelessWidget {
             image: FileImage(File(mediaLocalStoragePath)),
             loadingBuilder: (context, child, loadingProgress) {
               if (loadingProgress == null) {
-                return FutureBuilder(builder: (context, d) {
+                return FutureBuilder(
+                  future: null,
+                    builder: (context, d) {
                   return child;
                 });
               }
@@ -1660,8 +1690,10 @@ Widget setCaptionMessage(MediaChatMessage mediaMessage,
             const SizedBox(
               width: 5,
             ),
-            getMessageIndicator(chatMessage.messageStatus.value,
-                chatMessage.isMessageSentByMe, chatMessage.messageType,
+            getMessageIndicator(
+                chatMessage.messageStatus.value,
+                chatMessage.isMessageSentByMe,
+                chatMessage.messageType,
                 chatMessage.isMessageRecalled.value),
             const SizedBox(
               width: 5,
@@ -1837,8 +1869,10 @@ class TextMessageView extends StatelessWidget {
               const SizedBox(
                 width: 5,
               ),
-              getMessageIndicator(chatMessage.messageStatus.value,
-                  chatMessage.isMessageSentByMe, chatMessage.messageType,
+              getMessageIndicator(
+                  chatMessage.messageStatus.value,
+                  chatMessage.isMessageSentByMe,
+                  chatMessage.messageType,
                   chatMessage.isMessageRecalled.value),
               const SizedBox(
                 width: 5,
@@ -1914,19 +1948,22 @@ class RecalledMessageView extends StatelessWidget {
   }
 }
 
-getMessageIndicator(String? messageStatus, bool isSender, String messageType,
-    bool isRecalled) {
+getMessageIndicator(String? messageStatus, bool isSender, String messageType, bool isRecalled) {
   // debugPrint("Message Status ==>");
   // debugPrint("Message Status ==> $messageStatus");
-  if (isSender && !isRecalled) {
-    if (messageStatus == 'A') {
-      return SvgPicture.asset(acknowledgedIcon);
-    } else if (messageStatus == 'D') {
-      return SvgPicture.asset(deliveredIcon);
-    } else if (messageStatus == 'S') {
-      return SvgPicture.asset(seenIcon);
-    } else if (messageStatus == 'N') {
-      return SvgPicture.asset(unSendIcon);
+  if (messageType.toUpperCase() != Constants.mNotification) {
+    if (isSender && !isRecalled) {
+      if (messageStatus == 'A') {
+        return SvgPicture.asset(acknowledgedIcon);
+      } else if (messageStatus == 'D') {
+        return SvgPicture.asset(deliveredIcon);
+      } else if (messageStatus == 'S') {
+        return SvgPicture.asset(seenIcon);
+      } else if (messageStatus == 'N') {
+        return SvgPicture.asset(unSendIcon);
+      } else {
+        return const SizedBox.shrink();
+      }
     } else {
       return const SizedBox.shrink();
     }
@@ -1980,13 +2017,31 @@ Widget getImageOverlay(ChatMessageModel chatMessage,
         : chatMessage.mediaChatMessage!.mediaDownloadStatus) {
       case Constants.mediaDownloaded:
       case Constants.mediaUploaded:
+        if(!checkFile(chatMessage.mediaChatMessage!.mediaLocalStoragePath.checkNull())){
+          return InkWell(
+            child: downloadView(
+                chatMessage.mediaChatMessage!.mediaFileSize,
+                chatMessage.messageType.toUpperCase()),
+            onTap: () {
+              downloadMedia(chatMessage.messageId);
+            },
+          );
+        }else{
+          return const SizedBox.shrink();
+        }
       case Constants.mediaDownloadedNotAvailable:
       case Constants.mediaUploadedNotAvailable:
-        return const SizedBox.shrink();
+        return InkWell(
+          child: downloadView(
+              chatMessage.mediaChatMessage!.mediaFileSize,
+              chatMessage.messageType.toUpperCase()),
+          onTap: () {
+            downloadMedia(chatMessage.messageId);
+          },
+        );
       case Constants.mediaNotDownloaded:
         return InkWell(
           child: downloadView(
-              chatMessage.mediaChatMessage!.mediaDownloadStatus,
               chatMessage.mediaChatMessage!.mediaFileSize,
               chatMessage.messageType.toUpperCase()),
           onTap: () {
@@ -2005,14 +2060,12 @@ Widget getImageOverlay(ChatMessageModel chatMessage,
 
       case Constants.mediaDownloading:
       case Constants.mediaUploading:
-        return InkWell(
-            onTap: () {
-              cancelMediaUploadOrDownload(chatMessage.messageId);
-            },
-            child: Obx(() {
-              return downloadingOrUploadingView(chatMessage.messageType,
-                  chatMessage.mediaChatMessage!.mediaProgressStatus.value);
-            }));
+        return InkWell(onTap: () {
+          cancelMediaUploadOrDownload(chatMessage.messageId);
+        }, child: Obx(() {
+          return downloadingOrUploadingView(chatMessage.messageType,
+              chatMessage.mediaChatMessage!.mediaProgressStatus.value);
+        }));
       default:
         return const SizedBox.shrink();
     }
@@ -2083,8 +2136,7 @@ void downloadMedia(String messageId) async {
   }
 }
 
-Widget downloadView(int mediaDownloadStatus, int mediaFileSize,
-    String messageType) {
+Widget downloadView(int mediaFileSize, String messageType) {
   return Padding(
     padding: const EdgeInsets.symmetric(horizontal: 8.0),
     child: messageType == 'AUDIO' || messageType == 'DOCUMENT'
@@ -2203,6 +2255,8 @@ downloadingOrUploadingView(String messageType, int progress) {
 
 class AttachmentsSheetView extends StatelessWidget {
   const AttachmentsSheetView({Key? key,
+    required this.availableFeatures,
+    required this.attachments,
     required this.onDocument,
     required this.onCamera,
     required this.onGallery,
@@ -2210,6 +2264,8 @@ class AttachmentsSheetView extends StatelessWidget {
     required this.onContact,
     required this.onLocation})
       : super(key: key);
+  final Rx<AvailableFeatures> availableFeatures;
+  final RxList<AttachmentIcon> attachments;
   final Function() onDocument;
   final Function() onCamera;
   final Function() onGallery;
@@ -2217,40 +2273,79 @@ class AttachmentsSheetView extends StatelessWidget {
   final Function() onContact;
   final Function() onLocation;
 
+
   @override
   Widget build(BuildContext context) {
+    LogMessage.d("attachments",attachments.length);
+    // final attachments = [AttachmentIcon(documentImg, "Document", onDocument),AttachmentIcon(cameraImg, "Camera", onCamera),AttachmentIcon(galleryImg, "Gallery", onGallery),AttachmentIcon(audioImg, "Audio", onAudio),AttachmentIcon(contactImg, "Contact", onContact),AttachmentIcon(locationImg, "Location", onLocation)];
     return Card(
       color: bottomSheetColor,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-      child: Padding(
+      child: Container(
+        height: 250,
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 20),
-        child: Column(
+        child: Obx(() {
+          return GridView.builder(gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 3,
+              childAspectRatio: 1
+          ),
+              itemCount: attachments.length,
+              shrinkWrap: true,
+              itemBuilder: (BuildContext ctx, index) {
+                LogMessage.d("attachments", attachments[index].text);
+                return iconCreation(
+                    attachments[index].iconPath, attachments[index].text,
+                    (attachments[index].text == "Document") ? onDocument :
+                    (attachments[index].text == "Camera") ? onCamera :
+                    (attachments[index].text == "Gallery") ? onGallery :
+                    (attachments[index].text == "Audio") ? onAudio :
+                    (attachments[index].text == "Contact") ? onContact :
+                    (attachments[index].text == "Location") ? onLocation : (){});
+              });
+        }),
+        /*Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                iconCreation(documentImg, "Document", onDocument),
-                iconCreation(cameraImg, "Camera", onCamera),
-                iconCreation(galleryImg, "Gallery", onGallery),
-              ],
-            ),
+            Obx(() {
+              return Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  availableFeatures.value.isDocumentAttachmentAvailable.checkNull() ? iconCreation(
+                      documentImg, "Document", onDocument) : const SizedBox.shrink(),
+                  (availableFeatures.value.isImageAttachmentAvailable.checkNull() ||
+                      availableFeatures.value.isVideoAttachmentAvailable.checkNull()) ? iconCreation(
+                      cameraImg, "Camera", onCamera) : const SizedBox.shrink(),
+                  (availableFeatures.value.isImageAttachmentAvailable.checkNull() ||
+                      availableFeatures.value.isVideoAttachmentAvailable.checkNull()) ? iconCreation(
+                      galleryImg, "Gallery", onGallery) : const SizedBox.shrink(),
+                ],
+              );
+            }),
             const SizedBox(
               height: 35,
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                iconCreation(audioImg, "Audio", onAudio),
-                iconCreation(contactImg, "Contact", onContact),
-                iconCreation(locationImg, "Location", onLocation),
+                availableFeatures.value.isAudioAttachmentAvailable.checkNull() ? iconCreation(
+                    audioImg, "Audio", onAudio) : const SizedBox.shrink(),
+                availableFeatures.value.isContactAttachmentAvailable.checkNull() ? iconCreation(
+                    contactImg, "Contact", onContact) : const SizedBox.shrink(),
+                availableFeatures.value.isLocationAttachmentAvailable.checkNull() ? iconCreation(
+                    locationImg, "Location", onLocation) : const SizedBox.shrink(),
               ],
             ),
           ],
-        ),
+        ),*/
       ),
     );
   }
+}
+
+class AttachmentIcon {
+  String iconPath;
+  String text;
+
+  AttachmentIcon(this.iconPath, this.text);
 }
 
 Widget iconCreation(String iconPath, String text, VoidCallback onTap) {

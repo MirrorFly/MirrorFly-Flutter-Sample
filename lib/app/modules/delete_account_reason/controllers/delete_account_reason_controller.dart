@@ -91,4 +91,9 @@ class DeleteAccountReasonController extends FullLifeCycleController
       }
     }
   }
+
+  @override
+  void onHidden() {
+
+  }
 }

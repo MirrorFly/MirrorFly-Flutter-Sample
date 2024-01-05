@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -8,7 +9,9 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:mirror_fly_demo/app/common/main_controller.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
+import 'package:mirror_fly_demo/app/data/permissions.dart';
 import 'package:otp_text_field/otp_field.dart';
 
 import '../../../common/constants.dart';
@@ -20,8 +23,7 @@ import '../../../routes/app_pages.dart';
 class LoginController extends GetxController {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   var india = CountryData(name: "India", dialCode: "+91", code: "IN");
-  var selectedCountry =
-      CountryData(name: "India", dialCode: "+91", code: "IN").obs;
+  var selectedCountry = CountryData(name: "India", dialCode: "+91", code: "IN").obs;
   TextEditingController mobileNumber = TextEditingController();
   OtpFieldController otpController = OtpFieldController();
 
@@ -29,10 +31,13 @@ class LoginController extends GetxController {
   Duration myDuration = const Duration(seconds: 31);
 
   String? get countryCode => selectedCountry.value.dialCode;
+
   String? get regionCode => selectedCountry.value.code;
   var verificationId = "";
   int? resendingToken;
   Rx<bool> timeout = false.obs;
+
+  bool isForceRegister = false;
 
   var seconds = 0.obs;
 
@@ -53,8 +58,7 @@ class LoginController extends GetxController {
   }
 
   void startTimer() {
-    countdownTimer =
-        Timer.periodic(const Duration(seconds: 1), (_) => setCountDown());
+    countdownTimer = Timer.periodic(const Duration(seconds: 1), (_) => setCountDown());
   }
 
   void setCountDown() {
@@ -68,6 +72,7 @@ class LoginController extends GetxController {
       debugPrint(seconds.value.toString());
     }
   }
+
   /*@override
   void onReady() {
     super.onReady();
@@ -94,15 +99,15 @@ class LoginController extends GetxController {
   }
 
   setUserJID(String username) {
-    Mirrorfly.getAllGroups(true);
+    if (!Mirrorfly.isChatHistoryEnabled && Platform.isAndroid) {
+      debugPrint("recentChatList Calling getAllGroups");
+      Mirrorfly.getAllGroups(true); // chat history enabled so this no longer need
+    }
     Mirrorfly.getJid(username).then((value) {
       if (value != null) {
         SessionManagement.setUserJID(value);
         Helper.hideLoading();
-        Get.offAllNamed(Routes.profile, arguments: {
-          "mobile": mobileNumber.text.toString(),
-          "from": Routes.login
-        });
+        Get.offAllNamed(Routes.profile, arguments: {"mobile": mobileNumber.text.toString(), "from": Routes.login});
       }
     }).catchError((error) {
       debugPrint(error.message);
@@ -110,13 +115,11 @@ class LoginController extends GetxController {
   }
 
   Future<void> phoneAuth() async {
-    if(await AppUtils.isNetConnected()) {
+    if (await AppUtils.isNetConnected()) {
       showLoading();
       if (kIsWeb) {
-        final confirmationResult =
-        await _auth.signInWithPhoneNumber(mobileNumber.text);
-        final smsCode =
-        otpController.toString(); //await getSmsCodeFromUser(context);
+        final confirmationResult = await _auth.signInWithPhoneNumber(mobileNumber.text);
+        final smsCode = otpController.toString(); //await getSmsCodeFromUser(context);
 
         await confirmationResult.confirm(smsCode);
       } else {
@@ -160,12 +163,12 @@ class LoginController extends GetxController {
           },
         );
       }
-    }else{
+    } else {
       toToast(Constants.noInternetConnection);
     }
   }
 
-  resend(){
+  resend() {
     timeout(false);
     phoneAuth();
   }
@@ -173,8 +176,7 @@ class LoginController extends GetxController {
   Future<void> verifyOTP() async {
     if (await AppUtils.isNetConnected()) {
       if (smsCode.length == 6) {
-        PhoneAuthCredential credential = PhoneAuthProvider.credential(
-            verificationId: verificationId, smsCode: smsCode);
+        PhoneAuthCredential credential = PhoneAuthProvider.credential(verificationId: verificationId, smsCode: smsCode);
         // Sign the user in (or link) with the credential
         debugPrint("Verification ID $verificationId");
         debugPrint("smsCode $smsCode");
@@ -189,14 +191,10 @@ class LoginController extends GetxController {
 
   _onVerificationCompleted(PhoneAuthCredential credential) async {
     timeout(true);
-    mirrorFlyLog(
-        "verificationCompleted providerId", credential.providerId.toString());
-    mirrorFlyLog("verificationCompleted signInMethod",
-        credential.signInMethod.toString());
-    mirrorFlyLog("verificationCompleted verificationId",
-        credential.verificationId.toString());
-    mirrorFlyLog(
-        "verificationCompleted smsCode", credential.smsCode.toString());
+    mirrorFlyLog("verificationCompleted providerId", credential.providerId.toString());
+    mirrorFlyLog("verificationCompleted signInMethod", credential.signInMethod.toString());
+    mirrorFlyLog("verificationCompleted verificationId", credential.verificationId.toString());
+    mirrorFlyLog("verificationCompleted smsCode", credential.smsCode.toString());
     mirrorFlyLog("verificationCompleted token", credential.token.toString());
     // need otp so i can autofill in a text box
     if (credential.smsCode != null) {
@@ -209,9 +207,9 @@ class LoginController extends GetxController {
     showLoading();
     try {
       await _auth.signInWithCredential(credential).then((value) {
-        if(Mirrorfly.isTrialLicence) {
+        if (!Constants.enableContactSync) {
           sendTokenToServer(); // for Mirrorfly user list purpose verify the user
-        }else{
+        } else {
           validateDeviceToken('');
           //registerAccount();//for get registered user purpose
         }
@@ -233,7 +231,7 @@ class LoginController extends GetxController {
     var mUser = FirebaseAuth.instance.currentUser;
     if (mUser != null) {
       await mUser.getIdToken(true).then((value) {
-        verifyTokenWithServer(value);
+        verifyTokenWithServer(value!);
       }).catchError((er) {
         mirrorFlyLog("sendTokenToServer", er.toString());
         hideLoading();
@@ -244,7 +242,7 @@ class LoginController extends GetxController {
   }
 
   verifyTokenWithServer(String token) async {
-    if(await AppUtils.isNetConnected()) {
+    if (await AppUtils.isNetConnected()) {
       var userName = (countryCode!.replaceAll('+', '') + mobileNumber.text.toString()).replaceAll("+", "");
       //make api call
       Mirrorfly.verifyToken(userName, token).then((value) {
@@ -258,13 +256,13 @@ class LoginController extends GetxController {
         debugPrint(error.message);
         hideLoading();
       });
-    }else{
+    } else {
       toToast(Constants.noInternetConnection);
     }
   }
 
   validateDeviceToken(String deviceToken) async {
-    if(await AppUtils.isNetConnected()) {
+    if (await AppUtils.isNetConnected()) {
       var firebaseToken = SessionManagement.getToken().checkNull();
       if (firebaseToken.isEmpty) {
         FirebaseMessaging.instance.getToken().then((value) {
@@ -281,7 +279,7 @@ class LoginController extends GetxController {
       } else {
         navigateToUserRegisterMethod(deviceToken, firebaseToken);
       }
-    }else{
+    } else {
       toToast(Constants.noInternetConnection);
     }
     // navigateToUserRegisterMethod(deviceToken, firebaseToken);
@@ -298,55 +296,71 @@ class LoginController extends GetxController {
 
   registerAccount() async {
     if (await AppUtils.isNetConnected()) {
-      if(mobileNumber.text.length < 5){
+      if (mobileNumber.text.length < 5) {
         toToast("Mobile number too short");
         return;
       }
-      if(mobileNumber.text.length < 10){
+      if (mobileNumber.text.length < 10) {
         toToast("Please enter valid mobile number");
         return;
       }
-      // if(mobileNumber.text.length > 9) {
-        showLoading();
-        Mirrorfly.registerUser(
-            countryCode!.replaceAll('+', '') + mobileNumber.text, token: SessionManagement.getToken().checkNull())
-            .then((value) {
-          if (value.contains("data")) {
-            var userData = registerModelFromJson(value); //message
-            SessionManagement.setLogin(userData.data!.username!.isNotEmpty);
-            SessionManagement.setUser(userData.data!);
-            // Mirrorfly.setNotificationSound(true);
-            // SessionManagement.setNotificationSound(true);
-            // userData.data.
-            enableArchive();
-            Mirrorfly.setRegionCode(regionCode ?? 'IN');
-
-            ///if its not set then error comes in contact sync delete from phonebook.
-            SessionManagement.setCountryCode((countryCode ?? "").replaceAll('+', ''));
-            setUserJID(userData.data!.username!);
-          }
-        }).catchError((error) {
-          debugPrint("issue===> $error");
-          debugPrint(error.message);
-          hideLoading();
-          if (error.code == 403) {
-            Get.offAllNamed(Routes.adminBlocked);
-          } else {
-            toToast(error.message);
-          }
-        });
-      }else{
-        toToast("Mobile Number too short");
+      if (!(await AppPermission.askNotificationPermission())) {
+        return;
       }
+      // if(mobileNumber.text.length > 9) {
+      showLoading();
+      var userIdentifier = countryCode!.replaceAll('+', '') + mobileNumber.text;
+      Mirrorfly.registerUser(countryCode!.replaceAll('+', '') + mobileNumber.text,
+              fcmToken: SessionManagement.getToken().checkNull(), isForceRegister : isForceRegister)
+          .then((value) {
+
+        if (value.contains("data")) {
+          var userData = registerModelFromJson(value); //message
+          SessionManagement.setLogin(userData.data!.username!.isNotEmpty);
+          SessionManagement.setUser(userData.data!);
+          SessionManagement.setUserIdentifier(userIdentifier);
+          SessionManagement.setAuthToken(userData.data!.token.checkNull());
+          if(Get.isRegistered<MainController>()){
+            Get.find<MainController>().authToken(userData.data!.token.checkNull());
+          }
+          // Mirrorfly.setNotificationSound(true);
+          // SessionManagement.setNotificationSound(true);
+          // userData.data.
+          enableArchive();
+          Mirrorfly.setRegionCode(regionCode ?? 'IN');
+
+          ///if its not set then error comes in contact sync delete from phonebook.
+          SessionManagement.setCountryCode((countryCode ?? "").replaceAll('+', ''));
+          setUserJID(userData.data!.username!);
+        }
+      }).catchError((error) {
+        debugPrint("issue===> $error");
+        debugPrint(error.message);
+        hideLoading();
+        if (error.code == "403") {
+          debugPrint("issue 403 ===> $error");
+          Get.offAllNamed(Routes.adminBlocked);
+        } else if (error.code == "405") {
+          debugPrint("issue 405 ===> $error");
+          sessionExpiredDialogShow(Constants.maximumLoginReached);
+        } else {
+          debugPrint("issue else code ===> ${error.code}");
+          debugPrint("issue else ===> $error");
+          toToast(error.message);
+        }
+      });
+    } else {
+      toToast(Constants.noInternetConnection);
+    }
     // } else {
     //   toToast(Constants.noInternetConnection);
     // }
   }
 
-  void enableArchive() async{
-    if(await AppUtils.isNetConnected()) {
+  void enableArchive() async {
+    if (await AppUtils.isNetConnected()) {
       Mirrorfly.enableDisableArchivedSettings(true);
-    }else{
+    } else {
       toToast(Constants.noInternetConnection);
     }
   }
@@ -359,23 +373,43 @@ class LoginController extends GetxController {
     verifyVisible(false);
     mirrorFlyLog("showUserAccountDeviceStatus", "Already Login");
     //PlatformRepo.logout();
-    Helper.showAlert(
-        message:
-            "You have logged-in another device. Do you want to continue here?",
-        actions: [
-          TextButton(
-              onPressed: () {
-                Get.back();
-                gotoLogin();
-              },
-              child: const Text("NO")),
-          TextButton(
-              onPressed: () {
-                Get.back();
-                registerAccount();
-              },
-              child: const Text("YES")),
-        ]);
+    Helper.showAlert(message: "You have logged-in another device. Do you want to continue here?", actions: [
+      TextButton(
+          onPressed: () {
+            Get.back();
+            gotoLogin();
+          },
+          child: const Text("NO")),
+      TextButton(
+          onPressed: () {
+            Get.back();
+            registerAccount();
+          },
+          child: const Text("YES")),
+    ]);
+  }
+
+  sessionExpiredDialogShow(message) {
+    //Already Logged Popup
+    hideLoading();
+    verifyVisible(false);
+    mirrorFlyLog("sessionExpiredDialogShow", "Already Login");
+    //PlatformRepo.logout();
+    Helper.showAlert(message: message.toString(), actions: [
+      TextButton(
+          onPressed: () {
+            Get.back();
+            isForceRegister = false;
+          },
+          child: const Text("Cancel")),
+      TextButton(
+          onPressed: () {
+            Get.back();
+            isForceRegister = true;
+            registerUser();
+          },
+          child: const Text("Continue")),
+    ]);
   }
 
   gotoLogin() {

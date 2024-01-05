@@ -808,4 +808,9 @@ class AppLockController extends FullLifeCycleController
       verifyOTP();
     }
   }
+
+  @override
+  void onHidden() {
+
+  }
 }

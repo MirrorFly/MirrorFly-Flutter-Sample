@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
@@ -6,6 +7,7 @@ import 'package:mirrorfly_plugin/mirrorfly.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 import '../../../common/de_bouncer.dart';
+import '../../../common/main_controller.dart';
 import '../../../data/apputils.dart';
 
 class ForwardChatController extends GetxController {
@@ -18,22 +20,22 @@ class ForwardChatController extends GetxController {
 
   set recentChats(List<RecentChatData> value) => _recentChats.value = value;
 
-  List<RecentChatData> get recentChats => _recentChats.value.take(3).toList();
+  List<RecentChatData> get recentChats => _recentChats.take(3).toList();
 
   final _groupList = <Profile>[].obs;
 
   set groupList(List<Profile> value) => _groupList.value = value;
 
-  List<Profile> get groupList => _groupList.value.take(6).toList();
+  List<Profile> get groupList => _groupList.take(6).toList();
 
   var userlistScrollController = ScrollController();
-  var scrollable = Mirrorfly.isTrialLicence.obs;
+  var scrollable = (!Constants.enableContactSync).obs;
   var isPageLoading = false.obs;
   final _userList = <Profile>[].obs;
 
   set userList(List<Profile> value) => _userList.value = value;
 
-  List<Profile> get userList => _userList.value;
+  List<Profile> get userList => _userList;
 
   final _search = false.obs;
 
@@ -156,7 +158,7 @@ class ForwardChatController extends GetxController {
     if (await AppUtils.isNetConnected()) {
       if(!bottom)contactLoading(true);
       searching = true;
-      var future = (Mirrorfly.isTrialLicence)
+      var future = (!Constants.enableContactSync)
           ? Mirrorfly.getUserList(pageNum, searchQuery.text.trim().toString())
           : Mirrorfly.getRegisteredUsers(false);
       future
@@ -168,7 +170,7 @@ class ForwardChatController extends GetxController {
             if (_mainuserList.isEmpty) {
               _mainuserList.addAll(list.data!);
             }
-            _userList.value.addAll(list.data!);
+            _userList.addAll(list.data!);
             _userList.refresh();
           }
         }
@@ -221,7 +223,7 @@ class ForwardChatController extends GetxController {
       _userList.clear();
       searching = true;
       searchLoading(true);
-      var future = (Mirrorfly.isTrialLicence)
+      var future = (!Constants.enableContactSync)
           ? Mirrorfly.getUserList(pageNum, searchQuery.text.trim().toString())
           : Mirrorfly.getRegisteredUsers(false);
       future
@@ -230,8 +232,8 @@ class ForwardChatController extends GetxController {
         if (value != null) {
           var list = userListFromJson(value);
           if (list.data != null) {
-            scrollable((list.data!.length == 20 && Mirrorfly.isTrialLicence));
-            if(Mirrorfly.isTrialLicence) {
+            scrollable((list.data!.length == 20 && !Constants.enableContactSync));
+            if(!Constants.enableContactSync) {
               _userList(list.data);
             }else{
               _userList(list.data!.where((element) => element.nickName.checkNull().toLowerCase().contains(searchQuery.text.trim().toString().toLowerCase())).toList());
@@ -252,9 +254,17 @@ class ForwardChatController extends GetxController {
     }
   }
 
-  bool isChecked(String jid) => selectedJids.value.contains(jid);
+  bool isChecked(String jid) => selectedJids.contains(jid);
 
-  void onItemSelect(String jid, String name,bool isBlocked){
+  Future<void> onItemSelect(String jid, String name,bool isBlocked,bool isGroup) async {
+    if(isGroup.checkNull() && !availableFeatures.value.isGroupChatAvailable.checkNull()){
+      Helper.showFeatureUnavailable();
+      return;
+    }
+    if(isGroup.checkNull() && !(await Mirrorfly.isMemberOfGroup(jid, null)).checkNull()){
+      toToast("You're no longer a participant in this group");
+      return;
+    }
     if(isBlocked.checkNull()){
       unBlock(jid,name);
     }else{
@@ -294,13 +304,13 @@ class ForwardChatController extends GetxController {
   }
 
   void onItemClicked(String jid, String name) {
-    if (selectedJids.value.contains(jid)) {
-      selectedJids.value.removeAt(selectedJids.indexOf(jid));
-      selectedNames.value.removeAt(selectedNames.indexOf(name));
+    if (selectedJids.contains(jid)) {
+      selectedJids.removeAt(selectedJids.indexOf(jid));
+      selectedNames.removeAt(selectedNames.indexOf(name));
     } else {
-      if (selectedJids.value.length < 5) {
-        selectedJids.value.add(jid);
-        selectedNames.value.add(name);
+      if (selectedJids.length < 5) {
+        selectedJids.add(jid);
+        selectedNames.add(name);
       } else {
         toToast("You can only forward with upto 5 users or groups");
       }
@@ -339,7 +349,7 @@ class ForwardChatController extends GetxController {
     pageNum = 1;
     searchQuery.clear();
     _isSearchVisible(true);
-    scrollable((_mainuserList.length == 20 && Mirrorfly.isTrialLicence));
+    scrollable((_mainuserList.length == 20 && !Constants.enableContactSync));
     _recentChats(_mainrecentChats);
     _groupList(_maingroupList);
     _userList(_mainuserList);
@@ -349,18 +359,24 @@ class ForwardChatController extends GetxController {
     if (await AppUtils.isNetConnected()) {
       var busyStatus = await Mirrorfly.isBusyStatusEnabled();
       if (!busyStatus.checkNull()) {
-        if (forwardMessageIds.isNotEmpty && selectedJids.value.isNotEmpty) {
+        if (forwardMessageIds.isNotEmpty && selectedJids.isNotEmpty) {
           Mirrorfly.forwardMessagesToMultipleUsers(
-                  forwardMessageIds, selectedJids.value)
+                  forwardMessageIds, selectedJids)
               .then((values) {
             // debugPrint("to chat profile ==> ${selectedUsersList[0].toJson().toString()}");
-            getProfileDetails(selectedJids.value.last)
+            getProfileDetails(selectedJids.last)
                 .then((value) {
               if (value.jid != null) {
                 // var str = profiledata(value.toString());
                 Get.back(result: value);
               }
             });
+          }).catchError((onError){
+            onError as PlatformException;
+            if(onError.message!=null) {
+              toToast(onError.message!);
+              Get.back(result: null);
+            }
           });
         }
       } else {
@@ -461,5 +477,11 @@ class ForwardChatController extends GetxController {
 
   void userDeletedHisProfile(String jid) {
     userUpdatedHisProfile(jid);
+  }
+
+  var availableFeatures = Get.find<MainController>().availableFeature;
+  void onAvailableFeaturesUpdated(AvailableFeatures features) {
+    LogMessage.d("Forward", "onAvailableFeaturesUpdated ${features.toJson()}");
+    availableFeatures(features);
   }
 }

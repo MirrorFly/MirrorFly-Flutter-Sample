@@ -176,4 +176,9 @@ with FullLifeCycleMixin {
     // SessionManagement.setNotificationUri(value)
     //     .then((value) => getRingtoneName());
   }
+
+  @override
+  void onHidden() {
+
+  }
 }

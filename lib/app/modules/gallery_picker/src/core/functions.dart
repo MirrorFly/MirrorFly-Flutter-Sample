@@ -85,12 +85,20 @@ class GalleryFunctions {
     }*/
   }
 
+  static var i =0 ;
   static _refreshPathList(setState, GalleryMediaPickerController provider) {
     PhotoManager.getAssetPathList(type: RequestType.common).then((pathList) {
       /// don't delete setState
-      setState(() {
-        provider.resetPathList(pathList);
-      });
+      if(pathList.isNotEmpty) {
+        setState(() {
+          provider.resetPathList(pathList);
+        });
+      }else{
+        if(i<=1) {
+          i++;
+          _refreshPathList(setState, provider);
+        }
+      }
     });
   }
 
