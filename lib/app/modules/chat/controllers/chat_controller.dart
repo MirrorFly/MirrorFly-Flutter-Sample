@@ -591,16 +591,6 @@ class ChatController extends FullLifeCycleController
     }
   }
 
-  String getTime(int? timestamp) {
-    DateTime now = DateTime.now();
-    final DateTime date1 = timestamp == null
-        ? now
-        : DateTime.fromMillisecondsSinceEpoch(timestamp);
-    String formattedDate = DateFormat('hh:mm a').format(date1); //yyyy-MM-dd –
-    // var fm1 = DateFormat('hh:mm a').parse(formattedDate, true);
-    return formattedDate;
-  }
-
   String getChatTime(BuildContext context, int? epochTime) {
     if (epochTime == null) return "";
     if (epochTime == 0) return "";
@@ -2178,7 +2168,7 @@ class ChatController extends FullLifeCycleController
     }
   }
 
-  void onMessageStatusUpdated(ChatMessageModel chatMessageModel) {
+  Future<void> onMessageStatusUpdated(ChatMessageModel chatMessageModel) async {
     if (chatMessageModel.chatUserJid == profile.jid) {
       final index = chatList.indexWhere(
               (message) => message.messageId == chatMessageModel.messageId);
@@ -2192,7 +2182,11 @@ class ChatController extends FullLifeCycleController
         chatList.refresh();
       } else {
         debugPrint("messageID--> Inserting the value");
-        _loadNextMessages(false);
+        if(await Mirrorfly.hasNextMessages()) {
+          _loadNextMessages(false);
+        }else{
+          chatList.insert(0, chatMessageModel);
+        }
         unreadCount.value++;
         // scrollToBottom();
       }
