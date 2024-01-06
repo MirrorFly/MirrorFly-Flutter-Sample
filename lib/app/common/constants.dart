@@ -630,6 +630,7 @@ class Constants {
   static const String xlsx = "xlsx";
 
   //Message Types
+  static const String mAutoText = "AUTO_TEXT";
   static const String mText = "TEXT";
   static const String mImage = "IMAGE";
   static const String mAudio = "AUDIO";

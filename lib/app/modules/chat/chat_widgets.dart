@@ -1763,7 +1763,7 @@ class MessageContent extends StatelessWidget {
         chatMessage: chatMessage,
       );
     } else {
-      if (chatList[index].messageType.toUpperCase() == Constants.mText) {
+      if (chatList[index].messageType.toUpperCase() == Constants.mText || chatList[index].messageType.toUpperCase() == Constants.mAutoText) {
         return TextMessageView(
           chatMessage: chatMessage,
           search: search,
