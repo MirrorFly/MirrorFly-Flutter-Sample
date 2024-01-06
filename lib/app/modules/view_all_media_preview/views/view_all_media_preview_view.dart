@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
 import 'package:get/get.dart';
+import 'package:mirror_fly_demo/app/data/helper.dart';
 import 'package:photo_view/photo_view.dart';
 
 import '../../../common/constants.dart';
@@ -34,7 +35,7 @@ class ViewAllMediaPreviewView extends GetView<ViewAllMediaPreviewController> {
           controller: controller.pageViewController,
           onPageChanged: controller.onMediaPreviewPageChanged,
           children: [
-            ...controller.previewMediaList.map((data) {
+            ...controller.previewMediaList.where((p0) => p0.isMediaMessage() && checkFile(p0.mediaChatMessage!.mediaLocalStoragePath.checkNull())).map((data) {
               /// show image
               if (data.messageType.toLowerCase() == 'image') {
                 return Center(
