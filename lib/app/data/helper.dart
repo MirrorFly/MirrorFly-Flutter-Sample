@@ -814,20 +814,21 @@ String getMobileNumberFromJid(String jid) {
 String convertSecondToLastSeen(String seconds) {
   if (seconds.isNotEmpty) {
     if (seconds == "0") return "Online";
+    LogMessage.d("getUserLastSeenTime", "seconds $seconds");
     // var userLastSeenDate = DateTime.now().subtract(Duration(milliseconds: double.parse(seconds).toInt()));
-    DateTime lastSeen = DateTime.fromMillisecondsSinceEpoch(double.parse(seconds).toInt());
+    DateTime lastSeen = DateTime.fromMillisecondsSinceEpoch(int.parse(seconds),isUtc: true);
     Duration diff = DateTime.now().difference(lastSeen);
 
     LogMessage.d("getUserLastSeenTime", "diff ${diff.inDays}");
-    if (int.parse(DateFormat('yyyy').format(lastSeen)) < int.parse(DateFormat('yyyy').format(DateTime.now()))) {
-      return 'last seen on ${DateFormat('dd/mm/yyyy')}';
-    } else if (diff.inDays > 1) {
-      var last = DateFormat('dd MMM').format(lastSeen);
-      return 'last seen on $last';
+    if (diff.inDays == 0) {
+      return 'last seen at ${DateFormat('hh:mm a').format(lastSeen)}';
     } else if (diff.inDays == 1) {
       return 'last seen on Yesterday';
-    } else if (diff.inHours >= 1 || diff.inMinutes >= 1 || diff.inSeconds >= 1) {
-      return 'last seen at ${DateFormat('hh:mm a').format(lastSeen)}';
+    } else if (diff.inDays > 1 && diff.inDays < 365) {
+      var last = DateFormat('dd MMM').format(lastSeen);
+      return 'last seen on $last';
+    } else if (int.parse(DateFormat('yyyy').format(lastSeen)) < int.parse(DateFormat('yyyy').format(DateTime.now()))) {
+      return 'last seen on ${DateFormat('dd/mm/yyyy').format(lastSeen)}';
     } else {
       return 'Online';
     }
