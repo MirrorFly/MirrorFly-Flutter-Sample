@@ -257,17 +257,17 @@ class MediaChatMessage {
 
   bool isAudioRecorded;
   String mediaCaptionText;
-  int mediaDownloadStatus;
+  RxInt mediaDownloadStatus;
   int mediaDuration;
   int mediaFileHeight;
   String mediaFileName;
   int mediaFileSize;
   String mediaFileType;
   int mediaFileWidth;
-  String mediaLocalStoragePath;
+  RxString mediaLocalStoragePath;
   RxInt mediaProgressStatus;
   String mediaThumbImage;
-  int mediaUploadStatus;
+  RxInt mediaUploadStatus;
   String messageId;
   String messageType;
   bool isPlaying;
@@ -283,27 +283,27 @@ class MediaChatMessage {
         mediaCaptionText: json["mediaCaptionText"] ?? "",
         mediaDownloadStatus: Platform.isIOS
             ? json["mediaDownloadStatus"] == 4
-                ? 5
+                ? 5.obs
                 : json["mediaDownloadStatus"] == 5
-                    ? 3
+                    ? 3.obs
                     : json["mediaDownloadStatus"] == 6
-                        ? 4
+                        ? 4.obs
                         : json["mediaDownloadStatus"] == 7
-                            ? 6
+                            ? 6.obs
                             : json["mediaDownloadStatus"] == 9
-                                ? 401
-                                : json["mediaDownloadStatus"]
+                                ? 401.obs
+                                : int.parse(json["mediaDownloadStatus"].toString()).obs
             : json["mediaDownloadStatus"] == "not_downloaded"
-                ? 5
+                ? 5.obs
                 : json["mediaDownloadStatus"] == "downloading"
-                    ? 3
+                    ? 3.obs
                     : json["mediaDownloadStatus"] == "downloaded"
-                        ? 4
+                        ? 4.obs
                         : json["mediaDownloadStatus"] == "not_available"
-                            ? 6
+                            ? 6.obs
                             : json["mediaDownloadStatus"] == "failed"
-                                ? 401
-                                : json["mediaDownloadStatus"],
+                                ? 401.obs
+                                : int.parse(json["mediaDownloadStatus"].toString()).obs,
         mediaDuration: json["mediaDuration"],
         mediaFileHeight: json["mediaFileHeight"] ?? 0,
         mediaFileName: json["mediaFileName"],
@@ -315,7 +315,7 @@ class MediaChatMessage {
                 ? "DOCUMENT"
                 : json["mediaFileType"].toString().toUpperCase(),
         mediaFileWidth: json["mediaFileWidth"] ?? 0,
-        mediaLocalStoragePath: json["mediaLocalStoragePath"],
+        mediaLocalStoragePath: json["mediaLocalStoragePath"].toString().obs,
         mediaProgressStatus:
             int.parse(json["mediaProgressStatus"].toString()).obs,
         mediaThumbImage: json["mediaThumbImage"]
@@ -326,21 +326,21 @@ class MediaChatMessage {
             .replaceAll(" ", ""),
         mediaUploadStatus: Platform.isIOS
             ? json["mediaUploadStatus"] == 3
-                ? 7
+                ? 7.obs
                 : json["mediaUploadStatus"] == 8
-                    ? 401
-                    : json["mediaUploadStatus"]
+                    ? 401.obs
+                    : int.parse(json["mediaUploadStatus"].toString()).obs
             : json["mediaUploadStatus"] == "not_uploaded"
-                ? 0
+                ? 0.obs
                 : json["mediaUploadStatus"] == "uploading"
-                    ? 1
+                    ? 1.obs
                     : json["mediaUploadStatus"] == "uploaded"
-                        ? 2
+                        ? 2.obs
                         : json["mediaUploadStatus"] == "not_available"
-                            ? 7
+                            ? 7.obs
                             : json["mediaUploadStatus"] == "failed"
-                                ? 401
-                                : json["mediaUploadStatus"],
+                                ? 401.obs
+                                : int.parse(json["mediaUploadStatus"].toString()).obs,
         messageId: json["messageId"],
         messageType: Platform.isAndroid
             ? json["messageType"]
@@ -354,17 +354,17 @@ class MediaChatMessage {
   Map<String, dynamic> toJson() => {
         "isAudioRecorded": isAudioRecorded,
         "mediaCaptionText": mediaCaptionText,
-        "mediaDownloadStatus": mediaDownloadStatus,
+        "mediaDownloadStatus": mediaDownloadStatus.value,
         "mediaDuration": mediaDuration,
         "mediaFileHeight": mediaFileHeight,
         "mediaFileName": mediaFileName,
         "mediaFileSize": mediaFileSize,
         "mediaFileType": mediaFileType,
         "mediaFileWidth": mediaFileWidth,
-        "mediaLocalStoragePath": mediaLocalStoragePath,
+        "mediaLocalStoragePath": mediaLocalStoragePath.value,
         "mediaProgressStatus": mediaProgressStatus.value,
         "mediaThumbImage": mediaThumbImage,
-        "mediaUploadStatus": mediaUploadStatus,
+        "mediaUploadStatus": mediaUploadStatus.value,
         "messageId": messageId,
         "messageType": messageType,
         "isPlaying": isPlaying,
@@ -385,14 +385,14 @@ class MessageStatus {
     required this.status,
   });
 
-  String status;
+  RxString status;
 
   factory MessageStatus.fromJson(Map<String, dynamic> json) => MessageStatus(
-        status: json["status"],
+        status: json["status"].obs,
       );
 
   Map<String, dynamic> toJson() => {
-        "status": status,
+        "status": status.value,
       };
 }
 

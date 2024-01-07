@@ -335,7 +335,7 @@ class StarredMessagesController extends FullLifeCycleController with FullLifeCyc
           selectedChatList.any((element) =>
               !element.isMessageRecalled.value &&
               (element.isMediaMessage() &&
-                  element.mediaChatMessage!.mediaLocalStoragePath
+                  element.mediaChatMessage!.mediaLocalStoragePath.value
                       .checkNull()
                       .isNotEmpty))
     };
@@ -502,7 +502,7 @@ class StarredMessagesController extends FullLifeCycleController with FullLifeCyc
   validateForForwardMessage(){
     for (var value in selectedChatList) {
       if(value.isMediaMessage()) {
-        if ((value.isMediaDownloaded() || value.isMediaUploaded()) && value.mediaChatMessage!.mediaLocalStoragePath.checkNull().isNotEmpty) {
+        if ((value.isMediaDownloaded() || value.isMediaUploaded()) && value.mediaChatMessage!.mediaLocalStoragePath.value.checkNull().isNotEmpty) {
           canBeForward(true);
         } else {
           canBeForward(false);
@@ -518,7 +518,7 @@ class StarredMessagesController extends FullLifeCycleController with FullLifeCyc
   validateForShareMessage(){
     for (var value in selectedChatList) {
       if(value.isMediaMessage()) {
-        if ((value.isMediaDownloaded() || value.isMediaUploaded()) && checkFile(value.mediaChatMessage!.mediaLocalStoragePath.checkNull())) {
+        if ((value.isMediaDownloaded() || value.isMediaUploaded()) && checkFile(value.mediaChatMessage!.mediaLocalStoragePath.value.checkNull())) {
           canBeShare(true);
         } else {
           canBeShare(false);
@@ -690,8 +690,8 @@ class StarredMessagesController extends FullLifeCycleController with FullLifeCyc
     var mediaPaths = <XFile>[];
     for(var item in selectedChatList){
       if(item.isMediaMessage()){
-        if((item.isMediaDownloaded() || item.isMediaUploaded()) && item.mediaChatMessage!.mediaLocalStoragePath.checkNull().isNotEmpty){
-          mediaPaths.add(XFile(item.mediaChatMessage!.mediaLocalStoragePath.checkNull()));
+        if((item.isMediaDownloaded() || item.isMediaUploaded()) && item.mediaChatMessage!.mediaLocalStoragePath.value.checkNull().isNotEmpty){
+          mediaPaths.add(XFile(item.mediaChatMessage!.mediaLocalStoragePath.value.checkNull()));
         }
       }
     }

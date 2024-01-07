@@ -607,6 +607,7 @@ class Constants {
   static const int mediaDownloaded = 4;
   static const int mediaNotDownloaded = 5;
   static const int mediaDownloadedNotAvailable = 6;
+  static const int storageNotEnough = 8;
   static const int mediaNotUploaded = 0;
   static const int mediaUploading = 1;
   static const int mediaUploaded = 2;

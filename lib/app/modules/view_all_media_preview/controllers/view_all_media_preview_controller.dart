@@ -22,7 +22,7 @@ class ViewAllMediaPreviewController extends GetxController {
   }
 
   shareMedia() {
-    var mediaItem = previewMediaList.elementAt(index.value).mediaChatMessage!.mediaLocalStoragePath;
+    var mediaItem = previewMediaList.elementAt(index.value).mediaChatMessage!.mediaLocalStoragePath.value;
     Share.shareXFiles([XFile(mediaItem)]);
   }
 

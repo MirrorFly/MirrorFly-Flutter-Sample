@@ -1372,7 +1372,7 @@ class ChatController extends FullLifeCycleController
       !element.isMessageRecalled.value &&
           (element.isMediaMessage() &&
               element.mediaChatMessage!
-                  .mediaLocalStoragePath
+                  .mediaLocalStoragePath.value
                   .checkNull()
                   .isNotEmpty))
     };
@@ -2204,22 +2204,23 @@ class ChatController extends FullLifeCycleController
     }
   }
 
-  void onMediaStatusUpdated(chatMessageModel) {
+  void onMediaStatusUpdated(ChatMessageModel chatMessageModel) {
     if (chatMessageModel.chatUserJid == profile.jid) {
       final index = chatList.indexWhere(
               (message) => message.messageId == chatMessageModel.messageId);
       debugPrint("Media Status Update index of search $index");
       if (index != -1) {
         // chatMessageModel.isSelected=chatList[index].isSelected;
-        chatList[index] = chatMessageModel;
+        chatList[index].mediaChatMessage?.mediaLocalStoragePath(chatMessageModel.mediaChatMessage!.mediaLocalStoragePath.value);
+        chatList[index].mediaChatMessage?.mediaDownloadStatus(chatMessageModel.mediaChatMessage!.mediaDownloadStatus.value);
+        chatList[index].mediaChatMessage?.mediaUploadStatus(chatMessageModel.mediaChatMessage!.mediaUploadStatus.value);
       }
     }
     if (isSelected.value) {
       var selectedIndex = selectedChatList.indexWhere(
               (element) => chatMessageModel.messageId == element.messageId);
       if (!selectedIndex.isNegative) {
-        chatMessageModel.isSelected =
-        true; //selectedChatList[selectedIndex].isSelected;
+        chatMessageModel.isSelected(true); //selectedChatList[selectedIndex].isSelected;
         selectedChatList[selectedIndex] = chatMessageModel;
         selectedChatList.refresh();
         getMessageActions();
@@ -2668,7 +2669,7 @@ class ChatController extends FullLifeCycleController
     if (!canBeForwardedSet &&
         ((message.isMessageSentByMe && message.messageStatus.value == "N") ||
             (message.isMediaMessage() &&
-                !checkFile(message.mediaChatMessage!.mediaLocalStoragePath)))) {
+                !checkFile(message.mediaChatMessage!.mediaLocalStoragePath.value)))) {
       canBeForwarded(false);
       canBeForwardedSet = true;
     }
@@ -2676,14 +2677,14 @@ class ChatController extends FullLifeCycleController
     if (!canBeSharedSet &&
         (!message.isMediaMessage() ||
             (message.isMediaMessage() &&
-                !checkFile(message.mediaChatMessage!.mediaLocalStoragePath)))) {
+                !checkFile(message.mediaChatMessage!.mediaLocalStoragePath.value)))) {
       canBeShared(false);
       canBeSharedSet = true;
     }
     //Starred Validation
     if (!canBeStarredSet && message.isMessageStarred.value ||
         (message.isMediaMessage() &&
-            !checkFile(message.mediaChatMessage!.mediaLocalStoragePath))) {
+            !checkFile(message.mediaChatMessage!.mediaLocalStoragePath.value))) {
       canBeStarred(false);
       canBeStarredSet = true;
     }
@@ -2742,7 +2743,7 @@ class ChatController extends FullLifeCycleController
           message.messageStatus.value == "N" ||
           message.isMessageRecalled.value ||
           (message.isMediaMessage() &&
-              !checkFile(message.mediaChatMessage!.mediaLocalStoragePath))) {
+              !checkFile(message.mediaChatMessage!.mediaLocalStoragePath.value))) {
         canShowInfo(false);
       }
       //Report validation
@@ -2814,13 +2815,13 @@ class ChatController extends FullLifeCycleController
       if (item.isMediaMessage()) {
         if ((item.isMediaDownloaded() || item.isMediaUploaded()) &&
             item.mediaChatMessage!
-                .mediaLocalStoragePath
+                .mediaLocalStoragePath.value
                 .checkNull()
                 .isNotEmpty) {
           mediaPaths.add(
-              XFile(item.mediaChatMessage!.mediaLocalStoragePath.checkNull()));
+              XFile(item.mediaChatMessage!.mediaLocalStoragePath.value.checkNull()));
           debugPrint(
-              "mediaPaths ${item.mediaChatMessage!.mediaLocalStoragePath.checkNull()}");
+              "mediaPaths ${item.mediaChatMessage!.mediaLocalStoragePath.value.checkNull()}");
         }
       }
     }

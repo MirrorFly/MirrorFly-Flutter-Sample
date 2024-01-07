@@ -246,7 +246,7 @@ class ViewAllMediaController extends GetxController {
   Future<bool> isMediaAvailable(
       ChatMessageModel chatMessage, bool isMedia) async {
     var mediaExist = await isMediaExists(
-        chatMessage.mediaChatMessage!.mediaLocalStoragePath);
+        chatMessage.mediaChatMessage!.mediaLocalStoragePath.value);
     // debugPrint("mediaLocalStoragePath---> ${chatMessage.mediaChatMessage!.mediaLocalStoragePath}");
     // debugPrint("isMediaAvailable---> ${mediaExist.toString()}");
     return (!isMedia || mediaExist);
