@@ -2,7 +2,6 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
@@ -438,11 +437,11 @@ extension ProfileParesing on Profile {
 
 extension ChatmessageParsing on ChatMessageModel {
   bool isMediaDownloaded() {
-    return isMediaMessage() && (mediaChatMessage?.mediaDownloadStatus == Constants.mediaDownloaded);
+    return isMediaMessage() && (mediaChatMessage?.mediaDownloadStatus.value == Constants.mediaDownloaded);
   }
 
   bool isMediaUploaded() {
-    return isMediaMessage() && (mediaChatMessage?.mediaUploadStatus == Constants.mediaUploaded);
+    return isMediaMessage() && (mediaChatMessage?.mediaUploadStatus.value == Constants.mediaUploaded);
   }
 
   bool isMediaMessage() => (isAudioMessage() || isVideoMessage() || isImageMessage() || isFileMessage());

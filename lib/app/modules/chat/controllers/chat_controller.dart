@@ -2575,9 +2575,9 @@ class ChatController extends FullLifeCycleController
   bool forwardMessageVisibility(ChatMessageModel chat) {
     if (!chat.isMessageRecalled.value && !chat.isMessageDeleted) {
       if (chat.isMediaMessage()) {
-        if (chat.mediaChatMessage!.mediaDownloadStatus ==
+        if (chat.mediaChatMessage!.mediaDownloadStatus.value ==
             Constants.mediaDownloaded ||
-            chat.mediaChatMessage!.mediaUploadStatus ==
+            chat.mediaChatMessage!.mediaUploadStatus.value ==
                 Constants.mediaUploaded) {
           return true;
         }
