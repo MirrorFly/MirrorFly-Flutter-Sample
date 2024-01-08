@@ -314,7 +314,7 @@ class LoginController extends GetxController {
               fcmToken: SessionManagement.getToken().checkNull(), isForceRegister : isForceRegister)
           .then((value) {
 
-        if (value!=null) {
+        if (value.contains("data")) {
           var userData = registerModelFromJson(value); //message
           SessionManagement.setLogin(userData.data!.username!.isNotEmpty);
           SessionManagement.setUser(userData.data!);
