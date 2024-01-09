@@ -607,6 +607,7 @@ class Constants {
   static const int mediaDownloaded = 4;
   static const int mediaNotDownloaded = 5;
   static const int mediaDownloadedNotAvailable = 6;
+  static const int storageNotEnough = 8;
   static const int mediaNotUploaded = 0;
   static const int mediaUploading = 1;
   static const int mediaUploaded = 2;
@@ -630,6 +631,7 @@ class Constants {
   static const String xlsx = "xlsx";
 
   //Message Types
+  static const String mAutoText = "AUTO_TEXT";
   static const String mText = "TEXT";
   static const String mImage = "IMAGE";
   static const String mAudio = "AUDIO";

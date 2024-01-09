@@ -296,13 +296,6 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
     }
   }
 
-  String getTime(int? timestamp) {
-    DateTime now = DateTime.now();
-    final DateTime date1 = timestamp == null ? now : DateTime.fromMillisecondsSinceEpoch(timestamp);
-    String formattedDate = DateFormat('hh:mm a').format(date1); //yyyy-MM-dd –
-    return formattedDate;
-  }
-
   logout() {
     SessionManagement.clear();
     Get.offAllNamed(Routes.login);

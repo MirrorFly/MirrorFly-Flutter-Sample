@@ -25,6 +25,7 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:record/record.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:tuple/tuple.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../../common/constants.dart';
@@ -112,6 +113,7 @@ class ChatController extends FullLifeCycleController
 
   String? nJid;
   String? starredChatMessageId;
+  String unreadMessageTypeMessageId = "";
 
   bool get isTrail => !Constants.enableContactSync;
 
@@ -161,6 +163,8 @@ class ChatController extends FullLifeCycleController
     if (userJid.isEmpty) {
       var profileDetail = Get.arguments as Profile;
       profile_(profileDetail);
+      //make unreadMessageTypeMessageId
+      unreadMessageTypeMessageId = "M${profileDetail.jid}";
       checkAdminBlocked();
       ready();
       // initListeners();
@@ -168,6 +172,8 @@ class ChatController extends FullLifeCycleController
       getProfileDetails(userJid).then((value) {
         SessionManagement.setChatJid("");
         profile_(value);
+        //make unreadMessageTypeMessageId
+        unreadMessageTypeMessageId = "M${value.jid}";
         checkAdminBlocked();
         ready();
         // initListeners();
@@ -249,6 +255,7 @@ class ChatController extends FullLifeCycleController
 
   void ready() {
     debugPrint("Chat controller ready");
+    _loadMessages();
     cancelNotification();
     // debugPrint("isBlocked===> ${profile.isBlocked}");
     // debugPrint("profile detail===> ${profile.toJson().toString()}");
@@ -269,27 +276,12 @@ class ChatController extends FullLifeCycleController
         showEmoji(false);
       }
     });
-    /*keyboardSubscription =
-        keyboardVisibilityController.onChange.listen((bool visible) {
-          if (!visible) {
-            focusNode.canRequestFocus = false;
-          }
-        });*/
-    //scrollController.addListener(_scrollController);
-    /*scrollController.addListener(() {
-      if (scrollController.offset <= scrollController.position.minScrollExtent &&
-          !scrollController.position.outOfRange) {
-        showHideRedirectToLatest(false);
-      }else{
-        showHideRedirectToLatest(true);
-      }
-    });*/
     itemPositionsListener.itemPositions.addListener(() {
       debugPrint('scrolled : ${findTopFirstVisibleItemPosition()}');
       // j=findLastVisibleItemPosition();
     });
     newitemPositionsListener.itemPositions.addListener(() {
-      var pos = findLastVisibleItemPositionForChat();
+      var pos = lastVisiblePosition();
       if (pos >= 1) {
         showHideRedirectToLatest(true);
       } else {
@@ -299,9 +291,6 @@ class ChatController extends FullLifeCycleController
     });
 
     setOnGoingUserAvail();
-    // getChatHistory();
-    _loadMessages();
-    // compute(getChatHistory, profile.jid);
     debugPrint("==================");
     debugPrint(profile.image);
   }
@@ -591,16 +580,6 @@ class ChatController extends FullLifeCycleController
     }
   }
 
-  String getTime(int? timestamp) {
-    DateTime now = DateTime.now();
-    final DateTime date1 = timestamp == null
-        ? now
-        : DateTime.fromMillisecondsSinceEpoch(timestamp);
-    String formattedDate = DateFormat('hh:mm a').format(date1); //yyyy-MM-dd –
-    // var fm1 = DateFormat('hh:mm a').parse(formattedDate, true);
-    return formattedDate;
-  }
-
   String getChatTime(BuildContext context, int? epochTime) {
     if (epochTime == null) return "";
     if (epochTime == 0) return "";
@@ -635,7 +614,7 @@ class ChatController extends FullLifeCycleController
   void _loadMessages() {
     // getChatHistory();
     chatLoading(true);
-    Mirrorfly.initializeMessageList(userJid: profile.jid.checkNull(), limit: 25,topicId: topicId)
+    Mirrorfly.initializeMessageList(userJid: profile.jid.checkNull(), limit: 25,topicId: topicId)//message
         .then((value) {
       value
           ? Mirrorfly.loadMessages().then((value) {
@@ -649,6 +628,8 @@ class ChatController extends FullLifeCycleController
             chatMessageModelFromJson(value);
             chatList(chatMessageModel.reversed.toList());
             showStarredMessage();
+            sendReadReceipt(removeUnreadFromList: false);
+            // loadPrevORNextMessagesLoad();
           } catch (error) {
             debugPrint("chatHistory parsing error--> $error");
           }
@@ -690,7 +671,7 @@ class ChatController extends FullLifeCycleController
     });
   }
 
-  Future<void> _loadNextMessages([bool showLoading = true]) async {
+  Future<void> _loadNextMessages({bool showLoading = true,bool removeUnreadFromList = true}) async {
     if(showLoading) {
       showLoadingNext(await Mirrorfly.hasNextMessages());
     }else{
@@ -705,8 +686,9 @@ class ChatController extends FullLifeCycleController
           chatMessageModelFromJson(value);
           if (chatMessageModel.isNotEmpty) {
             chatList.insertAll(0, chatMessageModel.reversed.toList());
+            sendReadReceipt(removeUnreadFromList: removeUnreadFromList);
           }
-          showStarredMessage();
+            showStarredMessage();
         } catch (error) {
           debugPrint("chatHistory parsing error--> $error");
         }
@@ -883,11 +865,10 @@ class ChatController extends FullLifeCycleController
     }
   }
 
-  sendReadReceipt() {
+  sendReadReceipt({bool removeUnreadFromList = true}) {
+    LogMessage.d("ChatController", "sendReadReceipt");
     markConversationReadNotifyUI();
-    Mirrorfly.markAsReadDeleteUnreadSeparator(profile.jid!).then((value) {
-      debugPrint("Chat Read Receipt Response ==> $value");
-    });
+    handleUnreadMessageSeparator(remove: true,removeFromList: removeUnreadFromList);//lastVisiblePosition()==0
   }
 
   sendVideoMessage(String videoPath, String caption, String replyMessageID) async {
@@ -1382,7 +1363,7 @@ class ChatController extends FullLifeCycleController
       !element.isMessageRecalled.value &&
           (element.isMediaMessage() &&
               element.mediaChatMessage!
-                  .mediaLocalStoragePath
+                  .mediaLocalStoragePath.value
                   .checkNull()
                   .isNotEmpty))
     };
@@ -2161,14 +2142,12 @@ class ChatController extends FullLifeCycleController
 
   var unreadCount = 0.obs;
 
-  void onMessageReceived(chatMessageModel) {
+  void onMessageReceived(ChatMessageModel chatMessageModel) {
     mirrorFlyLog("chatController", "onMessageReceived");
 
     if (chatMessageModel.chatUserJid == profile.jid) {
-      removeUnreadSeparator();
-
-      chatList.insert(0, chatMessageModel);
-      unreadCount.value++;
+      // chatList.insert(0, chatMessageModel);
+      loadLastMessages(chatMessageModel);
       //scrollToBottom();
       // if (isLive) {
       if (SessionManagement.getCurrentChatJID() != "") {
@@ -2178,7 +2157,7 @@ class ChatController extends FullLifeCycleController
     }
   }
 
-  void onMessageStatusUpdated(ChatMessageModel chatMessageModel) {
+  Future<void> onMessageStatusUpdated(ChatMessageModel chatMessageModel) async {
     if (chatMessageModel.chatUserJid == profile.jid) {
       final index = chatList.indexWhere(
               (message) => message.messageId == chatMessageModel.messageId);
@@ -2190,11 +2169,6 @@ class ChatController extends FullLifeCycleController
         // chatMessageModel.isSelected=chatList[index].isSelected;
         chatList[index] = chatMessageModel;
         chatList.refresh();
-      } else {
-        debugPrint("messageID--> Inserting the value");
-        _loadNextMessages(false);
-        unreadCount.value++;
-        // scrollToBottom();
       }
     }
     if (isSelected.value) {
@@ -2210,22 +2184,23 @@ class ChatController extends FullLifeCycleController
     }
   }
 
-  void onMediaStatusUpdated(chatMessageModel) {
+  void onMediaStatusUpdated(ChatMessageModel chatMessageModel) {
     if (chatMessageModel.chatUserJid == profile.jid) {
       final index = chatList.indexWhere(
               (message) => message.messageId == chatMessageModel.messageId);
       debugPrint("Media Status Update index of search $index");
       if (index != -1) {
         // chatMessageModel.isSelected=chatList[index].isSelected;
-        chatList[index] = chatMessageModel;
+        chatList[index].mediaChatMessage?.mediaLocalStoragePath(chatMessageModel.mediaChatMessage!.mediaLocalStoragePath.value);
+        chatList[index].mediaChatMessage?.mediaDownloadStatus(chatMessageModel.mediaChatMessage!.mediaDownloadStatus.value);
+        chatList[index].mediaChatMessage?.mediaUploadStatus(chatMessageModel.mediaChatMessage!.mediaUploadStatus.value);
       }
     }
     if (isSelected.value) {
       var selectedIndex = selectedChatList.indexWhere(
               (element) => chatMessageModel.messageId == element.messageId);
       if (!selectedIndex.isNegative) {
-        chatMessageModel.isSelected =
-        true; //selectedChatList[selectedIndex].isSelected;
+        chatMessageModel.isSelected(true); //selectedChatList[selectedIndex].isSelected;
         selectedChatList[selectedIndex] = chatMessageModel;
         selectedChatList.refresh();
         getMessageActions();
@@ -2580,9 +2555,9 @@ class ChatController extends FullLifeCycleController
   bool forwardMessageVisibility(ChatMessageModel chat) {
     if (!chat.isMessageRecalled.value && !chat.isMessageDeleted) {
       if (chat.isMediaMessage()) {
-        if (chat.mediaChatMessage!.mediaDownloadStatus ==
+        if (chat.mediaChatMessage!.mediaDownloadStatus.value ==
             Constants.mediaDownloaded ||
-            chat.mediaChatMessage!.mediaUploadStatus ==
+            chat.mediaChatMessage!.mediaUploadStatus.value ==
                 Constants.mediaUploaded) {
           return true;
         }
@@ -2674,7 +2649,7 @@ class ChatController extends FullLifeCycleController
     if (!canBeForwardedSet &&
         ((message.isMessageSentByMe && message.messageStatus.value == "N") ||
             (message.isMediaMessage() &&
-                !checkFile(message.mediaChatMessage!.mediaLocalStoragePath)))) {
+                !checkFile(message.mediaChatMessage!.mediaLocalStoragePath.value)))) {
       canBeForwarded(false);
       canBeForwardedSet = true;
     }
@@ -2682,14 +2657,14 @@ class ChatController extends FullLifeCycleController
     if (!canBeSharedSet &&
         (!message.isMediaMessage() ||
             (message.isMediaMessage() &&
-                !checkFile(message.mediaChatMessage!.mediaLocalStoragePath)))) {
+                !checkFile(message.mediaChatMessage!.mediaLocalStoragePath.value)))) {
       canBeShared(false);
       canBeSharedSet = true;
     }
     //Starred Validation
     if (!canBeStarredSet && message.isMessageStarred.value ||
         (message.isMediaMessage() &&
-            !checkFile(message.mediaChatMessage!.mediaLocalStoragePath))) {
+            !checkFile(message.mediaChatMessage!.mediaLocalStoragePath.value))) {
       canBeStarred(false);
       canBeStarredSet = true;
     }
@@ -2748,7 +2723,7 @@ class ChatController extends FullLifeCycleController
           message.messageStatus.value == "N" ||
           message.isMessageRecalled.value ||
           (message.isMediaMessage() &&
-              !checkFile(message.mediaChatMessage!.mediaLocalStoragePath))) {
+              !checkFile(message.mediaChatMessage!.mediaLocalStoragePath.value))) {
         canShowInfo(false);
       }
       //Report validation
@@ -2820,13 +2795,13 @@ class ChatController extends FullLifeCycleController
       if (item.isMediaMessage()) {
         if ((item.isMediaDownloaded() || item.isMediaUploaded()) &&
             item.mediaChatMessage!
-                .mediaLocalStoragePath
+                .mediaLocalStoragePath.value
                 .checkNull()
                 .isNotEmpty) {
           mediaPaths.add(
-              XFile(item.mediaChatMessage!.mediaLocalStoragePath.checkNull()));
+              XFile(item.mediaChatMessage!.mediaLocalStoragePath.value.checkNull()));
           debugPrint(
-              "mediaPaths ${item.mediaChatMessage!.mediaLocalStoragePath.checkNull()}");
+              "mediaPaths ${item.mediaChatMessage!.mediaLocalStoragePath.value.checkNull()}");
         }
       }
     }
@@ -3136,20 +3111,31 @@ class ChatController extends FullLifeCycleController
 
       debugPrint("reached length ${itemPositions.first.itemLeadingEdge}");
       debugPrint("reached firstItemIndex $firstVisibleItemIndex");
+      debugPrint("reached chatList.length ${chatList.length}");
       debugPrint("reached itemPositions.length ${itemPositions.length}");
 
-      ///This is the top constraint changing to bottom constraint and calling nextMessages bcz reversing the list view in display
-      if (firstVisibleItemIndex <= 1 &&
-          itemPositions.first.itemLeadingEdge <= 0) {
-        // Scrolled to the Bottom
-        debugPrint("reached Bottom yes load next messages");
-        _loadNextMessages();
-        ///This is the bottom constraint changing to Top constraint and calling prevMessages bcz reversing the list view in display
-      } else if (firstVisibleItemIndex + itemPositions.length >=
-          chatList.length) {
-        // Scrolled to the Top
-        _loadPreviousMessages();
-        debugPrint("reached Top yes load previous msgs");
+      if(Platform.isIOS) {
+        ///This is the top constraint changing to bottom constraint and calling nextMessages bcz reversing the list view in display
+        if (firstVisibleItemIndex <= 1 &&
+            itemPositions.first.itemLeadingEdge <= 0) {
+          // Scrolled to the Bottom
+          debugPrint("reached Bottom yes load next messages");
+          _loadNextMessages();
+          ///This is the bottom constraint changing to Top constraint and calling prevMessages bcz reversing the list view in display
+        } else if (firstVisibleItemIndex + itemPositions.length >=
+            chatList.length) {
+          // Scrolled to the Top
+          _loadPreviousMessages();
+          debugPrint("reached Top yes load previous msgs");
+        }
+      }else if(Platform.isAndroid){
+        if(firstVisibleItemIndex==0){
+          debugPrint("reached Bottom yes load next messages");
+          _loadNextMessages();
+        }else if(firstVisibleItemIndex + itemPositions.length >= chatList.length){
+          debugPrint("reached Top yes load previous msgs");
+          _loadPreviousMessages();
+        }
       }
     }
   }
@@ -3167,7 +3153,6 @@ class ChatController extends FullLifeCycleController
     debugPrint("setOnGoingUserAvail");
     Mirrorfly.setOnGoingChatUser(profile.jid.checkNull());
     SessionManagement.setCurrentChatJID(profile.jid.checkNull());
-    sendReadReceipt();
     markConversationReadNotifyUI();
     cancelNotification();
   }
@@ -3176,8 +3161,10 @@ class ChatController extends FullLifeCycleController
     Get.find<MainController>().onMessageDeleteNotifyUI(chatUserJid);
   }
 
-  void updateLastMessage(dynamic chatMessageModel) {
-    Get.find<MainController>().onMessageStatusUpdated(chatMessageModel);
+  Future<void> updateLastMessage(dynamic value) async {
+    Get.find<MainController>().onMessageStatusUpdated(value);
+    ChatMessageModel chatMessageModel = sendMessageModelFromJson(value);
+    loadLastMessages(chatMessageModel);
   }
 
   void onAvailableFeaturesUpdated(AvailableFeatures features) {
@@ -3224,5 +3211,123 @@ class ChatController extends FullLifeCycleController
   @override
   void onHidden() {
 
+  }
+
+  void loadLastMessages(ChatMessageModel chatMessageModel) async{
+    if(await Mirrorfly.hasNextMessages()) {
+      _loadNextMessages(showLoading: false);
+    }else{
+      chatList.insert(0, chatMessageModel);
+      sendReadReceipt();
+    }
+  }
+
+  Future<void> loadPrevORNextMessagesLoad({bool? isReplyMessage}) async {
+    if(await Mirrorfly.hasNextMessages()) {
+      _loadNextMessages(showLoading: false,removeUnreadFromList: false);
+    }
+  }
+
+  void handleUnreadMessageSeparator({bool remove = true,bool removeFromList = false}){
+    var tuple3 = findIndexOfUnreadMessageType();
+    var isUnreadSeparatorIsAvailable = tuple3.item1;
+    var separatorPosition = tuple3.item2;
+    if (isUnreadSeparatorIsAvailable && chatList.isNotEmpty) {
+      if (remove) {
+        removeUnreadMessageSeparator(separatorPosition,removeFromList: removeFromList);
+      } else {
+        displayUnreadMessageSeparator(separatorPosition);
+      }
+    }
+  }
+
+  void displayUnreadMessageSeparator(int separatorPosition) {
+    var shouldNotCount = chatList.sublist(0 , separatorPosition + 1).where((it) => it.isMessageSentByMe).length;
+    LogMessage.e("displayUnreadMessageSeparator", "should not count--->$shouldNotCount");
+
+    var defaultUnreadCountResult = 0 + (separatorPosition);
+    var shouldNotCountResult = defaultUnreadCountResult - shouldNotCount;
+    LogMessage.e("displayUnreadMessageSeparator", "should Not Count Result--->$shouldNotCountResult");
+
+    var noOfItemsAfterUnreadMessageSeparator = shouldNotCountResult!=0 ? shouldNotCountResult : chatList.length - separatorPosition - 1;
+    if (noOfItemsAfterUnreadMessageSeparator != 0) {
+      unreadCount(noOfItemsAfterUnreadMessageSeparator);
+      var unreadMessageDetails = chatList[separatorPosition];
+      if (chatList[separatorPosition].messageId == unreadMessageTypeMessageId) {
+        unreadMessageDetails.messageTextContent = "$noOfItemsAfterUnreadMessageSeparator ${ (noOfItemsAfterUnreadMessageSeparator == 1) ? "UNREAD MESSAGE" : "UNREAD MESSAGES"}";
+        // chatAdapter.notifyItemChanged(separatorPosition);
+      }
+    } else {
+      handleUnreadMessageSeparator();
+    }
+  }
+
+  void removeUnreadMessageSeparator(int separatorPosition,{bool removeFromList = true}){
+    Mirrorfly.markAsReadDeleteUnreadSeparator(profile.jid.checkNull());
+    if(removeFromList) {
+      chatList.removeAt(separatorPosition);
+    }
+  }
+
+  Tuple3<bool,int,String> findIndexOfUnreadMessageType() {
+    LogMessage.d("TAG", "findIndexOfUnreadMessageType $unreadMessageTypeMessageId");
+    var position = getMessagePosition(unreadMessageTypeMessageId);
+    var message = Constants.emptyString;
+    var isUnreadSeparatorIsAvailable = false;
+    try {
+      if (position != -1) {
+        isUnreadSeparatorIsAvailable = true;
+        message = chatList[position].messageTextContent.checkNull();
+        // unReadMessageScrollPosition(position);
+      }
+      // if (position != -1 && lastVisiblePosition() == 0){
+        // listChats.scrollToPosition(position + 1);
+      // }
+
+      // if (position == -1 && lastVisiblePosition() == (chatList.length - 2)) {
+        // listChats.scrollToPosition(mainList.size - 1)
+      // }
+    } catch (e) {
+      LogMessage.e("TAG", e.toString());
+      return const Tuple3(false, 0, "");
+    }
+    LogMessage.d("findIndexOfUnreadMessageType", "$isUnreadSeparatorIsAvailable, $position, $message");
+    return Tuple3(isUnreadSeparatorIsAvailable, position, message);
+  }
+
+  int getMessagePosition(String messageId) => chatList.indexWhere((it) => it.messageId == messageId);
+
+  int lastVisiblePosition() {
+    final itemPositions = newitemPositionsListener.itemPositions.value;
+    final firstVisibleItemIndex = itemPositions.first.index;
+    LogMessage.d("lastVisiblePosition", "$firstVisibleItemIndex");
+    return firstVisibleItemIndex;
+  }
+
+  void unReadMessageScrollPosition(int position) {
+    try {
+      if(chatList.length > position){
+        var sublist= chatList.sublist(position, chatList.length);
+        if(sublist.length>3) {
+          scrollToPosition(position + 3);
+        } else {
+          scrollToPosition(position + 1);
+        }
+      } else {
+        scrollToPosition(position + 1);
+      }
+    } catch(e) {
+      LogMessage.e("TAG",e.toString());
+    }
+  }
+
+  void scrollToPosition(int position){
+    if (!position.isNegative) {
+      if (newScrollController.isAttached) {
+        newScrollController.scrollTo(
+            index: position,
+            duration: const Duration(milliseconds: 100));
+      }
+    }
   }
 }
