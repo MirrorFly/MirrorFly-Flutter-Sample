@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
 import 'package:get/get.dart';
+import 'package:mirror_fly_demo/app/data/helper.dart';
 import 'package:photo_view/photo_view.dart';
 
 import '../../../common/constants.dart';
@@ -34,13 +35,13 @@ class ViewAllMediaPreviewView extends GetView<ViewAllMediaPreviewController> {
           controller: controller.pageViewController,
           onPageChanged: controller.onMediaPreviewPageChanged,
           children: [
-            ...controller.previewMediaList.map((data) {
+            ...controller.previewMediaList.where((p0) => p0.isMediaMessage() && checkFile(p0.mediaChatMessage!.mediaLocalStoragePath.value.checkNull())).map((data) {
               /// show image
               if (data.messageType.toLowerCase() == 'image') {
                 return Center(
                   child: PhotoView(
                     imageProvider: FileImage(
-                        File(data.mediaChatMessage!.mediaLocalStoragePath)),
+                        File(data.mediaChatMessage!.mediaLocalStoragePath.value)),
                     // Contained = the smallest possible size to fit one dimension of the screen
                     minScale:
                     PhotoViewComputedScale.contained * 1,
@@ -81,7 +82,7 @@ class ViewAllMediaPreviewView extends GetView<ViewAllMediaPreviewController> {
                 //   ),
                 // );
                 return VideoPlayerWidget(
-                  videoPath: data.mediaChatMessage?.mediaLocalStoragePath ?? "", videoTitle: data.mediaChatMessage?.mediaFileName ?? "Video",
+                  videoPath: data.mediaChatMessage?.mediaLocalStoragePath.value ?? "", videoTitle: data.mediaChatMessage?.mediaFileName ?? "Video",
                 );
               }
             })

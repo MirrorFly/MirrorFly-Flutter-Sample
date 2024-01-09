@@ -131,7 +131,7 @@ class ViewAllMediaView extends GetView<ViewAllMediaController> {
                   ? videoItem(item)
                   : item.isImageMessage()
                       ? Image.file(
-                          File(item.mediaChatMessage!.mediaLocalStoragePath),
+                          File(item.mediaChatMessage!.mediaLocalStoragePath.value),
                           fit: BoxFit.cover,
                         )
                       : const SizedBox()),
@@ -139,7 +139,7 @@ class ViewAllMediaView extends GetView<ViewAllMediaController> {
         if (item.isImageMessage() || item.isVideoMessage()) {
           controller.openImage(gridIndex);
         } else if (item.isAudioMessage()) {
-          controller.openFile(item.mediaChatMessage!.mediaLocalStoragePath);
+          controller.openFile(item.mediaChatMessage!.mediaLocalStoragePath.value);
         }
       },
     );
@@ -207,7 +207,7 @@ class ViewAllMediaView extends GetView<ViewAllMediaController> {
                                   //item.mediaChatMessage!.mediaFileSize.readableFileSize(base1024: false),
                                   date: getDateFromTimestamp(
                                       item.messageSentTime.toInt(), "d/MM/yy"),
-                                  path: item.mediaChatMessage!.mediaLocalStoragePath)
+                                  path: item.mediaChatMessage!.mediaLocalStoragePath.value)
                               : linkTile(list[header]![listIndex]);
                         }),
                   ],

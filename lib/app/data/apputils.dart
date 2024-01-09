@@ -48,4 +48,11 @@ class AppUtils{
     var name = profileDetails.getName();
     return Tuple2(name, profileDetails);
   }
+
+  static Map getExceptionMap(String code,String message){
+    var map = {};
+    map["code"]=code;
+    map["message"]=message;
+    return map;
+  }
 }

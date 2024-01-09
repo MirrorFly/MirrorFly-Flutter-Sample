@@ -81,13 +81,21 @@ class ViewAllMediaController extends GetxController {
       if (value != null) {
         // mirrorFlyLog("getMediaMessages", value);
         var data = chatMessageModelFromJson(value);
-        previewMediaList.clear();
-        previewMediaList.addAll(data);
-        imageCount(previewMediaList.where((chatItem) => chatItem.isImageMessage()).toList().length);
-        videoCount(previewMediaList.where((chatItem) => chatItem.isVideoMessage()).toList().length);
-        audioCount(previewMediaList.where((chatItem) => chatItem.isAudioMessage()).toList().length);
+        // previewMediaList.clear();
+        previewMediaList(data);
         if (data.isNotEmpty) {
           _medialist(await getMapGroupedMediaList(data, true));
+          imageCount(0);
+          videoCount(0);
+          audioCount(0);
+          medialistdata.forEach((key,List<MessageItem> value){
+            var imgCount = value.where((MessageItem chatItem) => chatItem.chatMessage.isImageMessage()).toList().length;
+            imageCount(imageCount.value+imgCount);
+            var vidCount = value.where((MessageItem chatItem) => chatItem.chatMessage.isVideoMessage()).toList().length;
+            videoCount(videoCount.value+vidCount);
+            var adiCount = value.where((MessageItem chatItem) => chatItem.chatMessage.isAudioMessage()).toList().length;
+            audioCount(audioCount.value+adiCount);
+          });
           // debugPrint("_media list length--> ${_medialist.length}");
         }
       }
@@ -103,7 +111,7 @@ class ViewAllMediaController extends GetxController {
         documentCount(data.length);
         // mirrorFlyLog("getDocsMessagess",json.encode(data));
         if (data.isNotEmpty) {
-          _docslist(await getMapGroupedMediaList(data, false));
+          _docslist(await getMapGroupedMediaList(data, true));
         }
       }
     });
@@ -238,7 +246,7 @@ class ViewAllMediaController extends GetxController {
   Future<bool> isMediaAvailable(
       ChatMessageModel chatMessage, bool isMedia) async {
     var mediaExist = await isMediaExists(
-        chatMessage.mediaChatMessage!.mediaLocalStoragePath);
+        chatMessage.mediaChatMessage!.mediaLocalStoragePath.value);
     // debugPrint("mediaLocalStoragePath---> ${chatMessage.mediaChatMessage!.mediaLocalStoragePath}");
     // debugPrint("isMediaAvailable---> ${mediaExist.toString()}");
     return (!isMedia || mediaExist);

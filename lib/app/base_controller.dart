@@ -506,17 +506,6 @@ abstract class BaseController {
   void onMessageReceived(chatMessage) {
     mirrorFlyLog("flutter onMessageReceived", chatMessage.toString());
     ChatMessageModel chatMessageModel = sendMessageModelFromJson(chatMessage);
-    // debugPrint("")
-    if(SessionManagement.getCurrentChatJID() == chatMessageModel.chatUserJid.checkNull()){
-      debugPrint("Message Received user chat screen is in online");
-    }else{
-      var data = chatMessageFromJson(chatMessage.toString());
-      if(data.messageId!=null) {
-        // NotificationBuilder.createNotification(data);
-      }
-     // showLocalNotification(chatMessageModel);
-    }
-
     if (Get.isRegistered<ChatController>()) {
       // debugPrint("basecontroller ChatController registered");
       Get.find<ChatController>().onMessageReceived(chatMessageModel);
