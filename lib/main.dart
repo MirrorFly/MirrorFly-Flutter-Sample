@@ -59,12 +59,16 @@ Future<void> main() async {
     }
 
   }
-  var initSDK = await Mirrorfly.initializeSDK(
+  await Mirrorfly.initializeSDK(
       licenseKey: 'ckIjaccWBoMNvxdbql8LJ2dmKqT5bp',//ckIjaccWBoMNvxdbql8LJ2dmKqT5bp//2sdgNtr3sFBSM3bYRa7RKDPEiB38Xo
       iOSContainerID: 'group.com.mirrorfly.flutter',//group.com.mirrorfly.flutter
       chatHistoryEnable: true,
-      enableDebugLog: true);
-  LogMessage.d("initSDK", initSDK);
+      enableDebugLog: true).then((value) {
+    LogMessage.d("initSDK", value);
+  }).catchError((onError){
+    LogMessage.d("initSDK", onError);
+  });
+
   final GoogleMapsFlutterPlatform mapsImplementation =
       GoogleMapsFlutterPlatform.instance;
   if (mapsImplementation is GoogleMapsFlutterAndroid) {
