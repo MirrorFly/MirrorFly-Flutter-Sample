@@ -25,9 +25,9 @@ import '../modules/chatInfo/controllers/chat_info_controller.dart';
 import 'notification_service.dart';
 
 class MainController extends FullLifeCycleController with BaseController, FullLifeCycleMixin /*with FullLifeCycleMixin */ {
-  var authToken = "".obs;
+  var currentAuthToken = "".obs;
   var googleMapKey = "";
-  Rx<String> uploadEndpoint = "".obs;
+  Rx<String> mediaEndpoint = "".obs;
   var maxDuration = 100.obs;
   var currentPos = 0.obs;
   var isPlaying = false.obs;
@@ -59,9 +59,10 @@ class MainController extends FullLifeCycleController with BaseController, FullLi
     debugPrint("#Mirrorfly Notification -> Main Controller push init");
     PushNotifications.init();
     initListeners();
+    mediaEndpoint(SessionManagement.getMediaEndPoint().checkNull());
     getMediaEndpoint();
-    uploadEndpoint(SessionManagement.getMediaEndPoint().checkNull());
-    authToken(SessionManagement.getAuthToken().checkNull());
+    currentAuthToken(SessionManagement.getAuthToken().checkNull());
+    getCurrentAuthToken();
     //getAuthToken();
     startNetworkListen();
 
@@ -156,36 +157,29 @@ class MainController extends FullLifeCycleController with BaseController, FullLi
   }
 
   getMediaEndpoint() async {
-    if (SessionManagement.getMediaEndPoint().checkNull().isEmpty) {
-      Mirrorfly.mediaEndPoint().then((value) {
-        mirrorFlyLog("media_endpoint", value.toString());
-        if (value != null) {
-          if (value.isNotEmpty) {
-            uploadEndpoint(value);
-            SessionManagement.setMediaEndPoint(value);
-          } else {
-            uploadEndpoint(SessionManagement.getMediaEndPoint().checkNull());
-          }
+    await Mirrorfly.mediaEndPoint().then((value) {
+      mirrorFlyLog("media_endpoint", value.toString());
+      if (value != null) {
+        if (value.isNotEmpty) {
+          mediaEndpoint(value);
+          SessionManagement.setMediaEndPoint(value);
+        } else {
+          mediaEndpoint(SessionManagement.getMediaEndPoint().checkNull());
         }
-      });
-    }
+      }
+    });
   }
 
-  getAuthToken() async {
-    if (SessionManagement.getUsername().checkNull().isNotEmpty && SessionManagement.getPassword().checkNull().isNotEmpty) {
-      await Mirrorfly.refreshAndGetAuthToken().then((value) {
-        mirrorFlyLog("RetryAuth", value.toString());
-        if (value != null) {
-          if (value.isNotEmpty) {
-            authToken(value);
-            SessionManagement.setAuthToken(value);
-          } else {
-            authToken(SessionManagement.getAuthToken().checkNull());
-          }
-          update();
-        }
-      });
-    }
+  getCurrentAuthToken() async {
+    await Mirrorfly.getCurrentAuthToken().then((value) {
+      mirrorFlyLog("getCurrentAuthToken", value.toString());
+      if (value.isNotEmpty) {
+        currentAuthToken(value);
+        SessionManagement.setAuthToken(value);
+      } else {
+        currentAuthToken(SessionManagement.getAuthToken().checkNull());
+      }
+    });
   }
 
   handleAdminBlockedUser(String jid, bool status) {
