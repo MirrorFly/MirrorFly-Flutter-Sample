@@ -18,9 +18,9 @@ class AddParticipantsController extends GetxController with GetTickerProviderSta
   var pageNum = 1;
   var isPageLoading = false.obs;
   var scrollable = (!Constants.enableContactSync).obs;
-  var usersList = <Profile>[].obs;
-  var mainUsersList = List<Profile>.empty(growable: true).obs;
-  var selectedUsersList = List<Profile>.empty(growable: true).obs;
+  var usersList = <ProfileDetails>[].obs;
+  var mainUsersList = List<ProfileDetails>.empty(growable: true).obs;
+  var selectedUsersList = List<ProfileDetails>.empty(growable: true).obs;
   var selectedUsersJIDList = List<String>.empty(growable: true).obs;
 
   var currentTab = 0.obs;
@@ -160,7 +160,7 @@ class AddParticipantsController extends GetxController with GetTickerProviderSta
     }
   }
 
-  onListItemPressed(Profile item) {
+  onListItemPressed(ProfileDetails item) {
     if (item.isBlocked.checkNull()) {
       unBlock(item);
     } else {
@@ -168,7 +168,7 @@ class AddParticipantsController extends GetxController with GetTickerProviderSta
     }
   }
 
-  unBlock(Profile item) {
+  unBlock(ProfileDetails item) {
     Helper.showAlert(message: "Unblock ${getName(item)}?", actions: [
       TextButton(
           onPressed: () {
@@ -198,7 +198,7 @@ class AddParticipantsController extends GetxController with GetTickerProviderSta
     ]);
   }
 
-  contactSelected(Profile item) {
+  contactSelected(ProfileDetails item) {
     if(callList.indexWhere((element) => element.userJid.toString()==item.jid.toString()).isNegative) {
       if (selectedUsersJIDList.contains(item.jid)) {
         selectedUsersList.removeWhere((user) => user.jid == item.jid);
@@ -326,7 +326,7 @@ class AddParticipantsController extends GetxController with GetTickerProviderSta
         mirrorFlyLog("userlist", data);
         var item = userListFromJson(data);
         var items = getFilteredList(callConnectedUserList,item.data);
-        var list = <Profile>[];
+        var list = <ProfileDetails>[];
 
         if (groupJid.value.checkNull().isNotEmpty) {
           await Future.forEach(items, (it) async {
@@ -435,7 +435,7 @@ class AddParticipantsController extends GetxController with GetTickerProviderSta
     if(groupId.isNotEmpty) {
       Mirrorfly.getGroupMembersList(groupId.value.checkNull(), null).then((value) {
         mirrorFlyLog("getGroupMembersList", value);
-        if (value != null) {
+        if (value.isNotEmpty) {
           var list = profileFromJson(value);
           var callConnectedUserList = List<String>.from(callList.map((element) => element.userJid));
           var filteredList = getFilteredList(callConnectedUserList, list);
@@ -446,7 +446,7 @@ class AddParticipantsController extends GetxController with GetTickerProviderSta
     }
   }
 
-  List<Profile> getFilteredList(List<String> callConnectedUserList,List<Profile>? usersList){
+  List<ProfileDetails> getFilteredList(List<String> callConnectedUserList,List<ProfileDetails>? usersList){
     return (usersList?.where((element) => !callConnectedUserList.contains(element.jid) && element.jid!= SessionManagement.getUserJID()).toList()) ?? [];
   }
 }

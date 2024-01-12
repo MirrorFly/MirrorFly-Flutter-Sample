@@ -79,9 +79,9 @@ class ChatController extends FullLifeCycleController
   FocusNode searchfocusNode = FocusNode();
 
   var calendar = DateTime.now();
-  var profile_ = Profile().obs;
+  var profile_ = ProfileDetails().obs;
 
-  Profile get profile => profile_.value;
+  ProfileDetails get profile => profile_.value;
   var base64img = ''.obs;
   var imagePath = ''.obs;
   var filePath = ''.obs;
@@ -161,7 +161,7 @@ class ChatController extends FullLifeCycleController
       LogMessage.d("chatJid", userJid);
     }
     if (userJid.isEmpty) {
-      var profileDetail = Get.arguments as Profile;
+      var profileDetail = Get.arguments as ProfileDetails;
       profile_(profileDetail);
       //make unreadMessageTypeMessageId
       unreadMessageTypeMessageId = "M${profileDetail.jid}";
@@ -447,7 +447,7 @@ class ChatController extends FullLifeCycleController
 
   MessageObject? messageObject;
 
-  sendMessage(Profile profile) async {
+  sendMessage(ProfileDetails profile) async {
     removeUnreadSeparator();
     var busyStatus = !profile.isGroupProfile.checkNull()
         ? await Mirrorfly.isBusyStatusEnabled()
@@ -544,7 +544,7 @@ class ChatController extends FullLifeCycleController
   }
 
   sendLocationMessage(
-      Profile profile, double latitude, double longitude) async {
+      ProfileDetails profile, double latitude, double longitude) async {
     if(!availableFeatures.value.isLocationAttachmentAvailable.checkNull()){
       Helper.showFeatureUnavailable();
       return;
@@ -1478,7 +1478,7 @@ class ChatController extends FullLifeCycleController
                     .then((value) {
                   debugPrint(value.toString());
                   //Helper.hideLoading();
-                  if (value != null && value) {
+                  if (value) {
                     // removeChatList(selectedChatList);//
                     for (var chatList in selectedChatList) {
                       chatList.isMessageRecalled(true);
@@ -1597,7 +1597,7 @@ class ChatController extends FullLifeCycleController
                     Get.back();
                     Helper.showLoading(message: "Blocking User");
                     Mirrorfly.blockUser(profile.jid!).then((value) {
-                      debugPrint(value);
+                      debugPrint("$value");
                       profile.isBlocked = true;
                       isBlocked(true);
                       profile_.refresh();
@@ -1960,7 +1960,7 @@ class ChatController extends FullLifeCycleController
       })?.then((value) {
         if (value != null) {
           debugPrint(
-              "result of forward ==> ${(value as Profile).toJson().toString()}");
+              "result of forward ==> ${(value as ProfileDetails).toJson().toString()}");
           profile_.value = value;
           isBlocked(profile.isBlocked);
         }
@@ -2105,7 +2105,7 @@ class ChatController extends FullLifeCycleController
     if (profile.isGroupProfile ?? false) {
       Get.toNamed(Routes.groupInfo, arguments: profile)?.then((value) {
         if (value != null) {
-          profile_(value as Profile);
+          profile_(value as ProfileDetails);
           isBlocked(profile.isBlocked);
           debugPrint("value--> ${profile.isGroupProfile}");
         }
@@ -2278,7 +2278,7 @@ class ChatController extends FullLifeCycleController
         debugPrint("value--> show group list");
         if (typingList.isNotEmpty) {
           userPresenceStatus(
-              "${Member(jid: typingList.last).getUsername()} typing...");
+              "${ProfileDetails(jid: typingList.last).getUsername()} typing...");
           //"${Member(jid: typingList.last).getUsername()} typing...");
         } else {
           getParticipantsNameAsCsv(profile.jid.checkNull());
@@ -2309,7 +2309,7 @@ class ChatController extends FullLifeCycleController
 
   getParticipantsNameAsCsv(String jid) {
     Mirrorfly.getGroupMembersList(jid, false).then((value) {
-      if (value != null) {
+      if (value.isNotEmpty) {
         var str = <String>[];
         mirrorFlyLog("getGroupMembersList-->", value);
         var groupsMembersProfileList = memberFromJson(value);
@@ -2583,7 +2583,7 @@ class ChatController extends FullLifeCycleController
     })?.then((value) {
       if (value != null) {
         debugPrint(
-            "result of forward ==> ${(value as Profile).toJson().toString()}");
+            "result of forward ==> ${(value as ProfileDetails).toJson().toString()}");
         profile_.value = value;
         isBlocked(profile.isBlocked);
       }

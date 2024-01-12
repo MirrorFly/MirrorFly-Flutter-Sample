@@ -76,10 +76,10 @@ class StatusListController extends FullLifeCycleController with FullLifeCycleMix
             .then((value) {
           selectedStatus.value = addStatusController.text.trim().toString();
           addStatusController.text = addStatusController.text.trim().toString();
-          var data = json.decode(value.toString());
+          // var data = json.decode(value.toString());
           toToast('Status update successfully');
           Helper.hideLoading();
-          if (data['status']) {
+          if (value.checkNull()) {
             getStatusList();
           }
         }).catchError((er) {

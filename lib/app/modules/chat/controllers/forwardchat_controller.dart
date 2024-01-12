@@ -13,8 +13,8 @@ import '../../../data/apputils.dart';
 class ForwardChatController extends GetxController {
   //main list
   final _mainrecentChats = <RecentChatData>[];
-  final _maingroupList = <Profile>[];
-  final _mainuserList = <Profile>[];
+  final _maingroupList = <ProfileDetails>[];
+  final _mainuserList = <ProfileDetails>[];
 
   final _recentChats = <RecentChatData>[].obs;
 
@@ -22,20 +22,20 @@ class ForwardChatController extends GetxController {
 
   List<RecentChatData> get recentChats => _recentChats.take(3).toList();
 
-  final _groupList = <Profile>[].obs;
+  final _groupList = <ProfileDetails>[].obs;
 
-  set groupList(List<Profile> value) => _groupList.value = value;
+  set groupList(List<ProfileDetails> value) => _groupList.value = value;
 
-  List<Profile> get groupList => _groupList.take(6).toList();
+  List<ProfileDetails> get groupList => _groupList.take(6).toList();
 
   var userlistScrollController = ScrollController();
   var scrollable = (!Constants.enableContactSync).obs;
   var isPageLoading = false.obs;
-  final _userList = <Profile>[].obs;
+  final _userList = <ProfileDetails>[].obs;
 
-  set userList(List<Profile> value) => _userList.value = value;
+  set userList(List<ProfileDetails> value) => _userList.value = value;
 
-  List<Profile> get userList => _userList;
+  List<ProfileDetails> get userList => _userList;
 
   final _search = false.obs;
 
@@ -164,7 +164,7 @@ class ForwardChatController extends GetxController {
       future
       // Mirrorfly.getUserList(pageNum, searchQuery.text.trim().toString())
           .then((value) {
-        if (value != null) {
+        if (value.isNotEmpty) {
           var list = userListFromJson(value);
           if (list.data != null) {
             if (_mainuserList.isEmpty) {
@@ -229,7 +229,7 @@ class ForwardChatController extends GetxController {
       future
       // Mirrorfly.getUserList(pageNum, searchQuery.text.trim().toString())
           .then((value) {
-        if (value != null) {
+        if (value.isNotEmpty) {
           var list = userListFromJson(value);
           if (list.data != null) {
             scrollable((list.data!.length == 20 && !Constants.enableContactSync));
@@ -392,7 +392,7 @@ class ForwardChatController extends GetxController {
   Future<String> getParticipantsNameAsCsv(String jid) async {
     var groupParticipantsName = "";
     await Mirrorfly.getGroupMembersList(jid, false).then((value) {
-      if (value != null) {
+      if (value.isNotEmpty) {
         var str = <String>[];
         var groupsMembersProfileList = memberFromJson(value);
         for (var it in groupsMembersProfileList) {

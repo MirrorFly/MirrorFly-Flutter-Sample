@@ -143,21 +143,21 @@ class MessageInfoController extends GetxController {
     }*/
   }
 
-  var messageDeliveredList = <DeliveredParticipantList>[].obs;
-  var messageReadList = <DeliveredParticipantList>[].obs;
+  var messageDeliveredList = <ParticipantList>[].obs;
+  var messageReadList = <ParticipantList>[].obs;
   var statusCount = 0.obs;
-  String chatDate(BuildContext cxt,DeliveredParticipantList item) => getChatTime(cxt, int.parse(item.time.checkNull()));
+  String chatDate(BuildContext cxt,ParticipantList item) => getChatTime(cxt, int.parse(item.time.checkNull()));
   getMessageStatus(String messageId) async {
     var delivered = await Mirrorfly.getGroupMessageDeliveredToList(messageId, jid);
     mirrorFlyLog("deliveredResp", delivered);
-    var item = MessageDeliveredStatus.fromJson(json.decode(delivered), "delivered");
-    statusCount(item.totalParticipatCount!);
+    var item = messageStatusDetailFromJson(delivered);
+    statusCount(item.totalParticipantCount!);
     messageDeliveredList(item.participantList);
 
 
     var read = await Mirrorfly.getGroupMessageReadByList(messageId, jid);
     mirrorFlyLog("readResp", read);
-    var readItem = MessageDeliveredStatus.fromJson(json.decode(read), "read");
+    var readItem = messageStatusDetailFromJson(read);
     messageReadList(readItem.participantList);
   }
 

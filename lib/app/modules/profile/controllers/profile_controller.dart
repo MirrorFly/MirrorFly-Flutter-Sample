@@ -111,7 +111,7 @@ class ProfileController extends GetxController {
                 userImgUrl.value.isEmpty ? null : userImgUrl.value
             )
                 .then((value) {
-              mirrorFlyLog("updateMyProfile", value);
+              mirrorFlyLog("updateMyProfile", value.toString());
               loading.value = false;
               hideLoader();
               if (value != null) {
@@ -230,43 +230,51 @@ class ProfileController extends GetxController {
         loading.value = true;
         Mirrorfly.getUserProfile(jid,await AppUtils.isNetConnected()).then((value) {
           debugPrint("profile--> $value");
-          insertDefaultStatusToUser();
-          loading.value = false;
-          var data = profileDataFromJson(value);
-          if (data.status != null && data.status!) {
-            if (data.data != null) {
-              profileName.text = data.data!.name ?? "";
-              if (data.data!.mobileNumber.checkNull().isNotEmpty) {
-                //if (from.value != Routes.login) {
-                validMobileNumber(data.data!.mobileNumber.checkNull()).then((valid) {
-                  // if(valid) profileMobile.text = data.data!.mobileNumber.checkNull();
-                  mobileEditAccess(!valid);
-                });
-              }else {
-                var userIdentifier = SessionManagement.getUserIdentifier();
-                validMobileNumber(userIdentifier).then((value) => mobileEditAccess(value));
-                // mobileEditAccess(true);
-              }
+          if(value!=null) {
+            insertDefaultStatusToUser();
+            loading.value = false;
+            var data = profileDataFromJson(value);
+            if (data.status != null && data.status!) {
+              if (data.data != null) {
+                profileName.text = data.data!.name ?? "";
+                if (data.data!
+                    .mobileNumber
+                    .checkNull()
+                    .isNotEmpty) {
+                  //if (from.value != Routes.login) {
+                  validMobileNumber(data.data!.mobileNumber.checkNull()).then((valid) {
+                    // if(valid) profileMobile.text = data.data!.mobileNumber.checkNull();
+                    mobileEditAccess(!valid);
+                  });
+                } else {
+                  var userIdentifier = SessionManagement.getUserIdentifier();
+                  validMobileNumber(userIdentifier).then((value) => mobileEditAccess(value));
+                  // mobileEditAccess(true);
+                }
 
-              profileEmail.text = data.data!.email ?? "";
-              profileStatus.value = data.data!.status.checkNull().isNotEmpty ? data.data!.status.checkNull() : "I am in Mirror Fly";
-              userImgUrl.value = data.data!.image ?? "";//SessionManagement.getUserImage() ?? "";
-              SessionManagement.setUserImage(Constants.emptyString);
-              changed((from == Routes.login));
-              name(data.data!.name.toString());
-              var userProfileData = ProData(
-                  email: profileEmail.text.toString(),
-                  image: userImgUrl.value,
-                  mobileNumber: data.data!.mobileNumber.checkNull(),
-                  nickName: profileName.text,
-                  name: profileName.text,
-                  status: profileStatus.value);
-              SessionManagement.setCurrentUser(userProfileData);
-              update();
+                profileEmail.text = data.data!.email ?? "";
+                profileStatus.value = data.data!
+                    .status
+                    .checkNull()
+                    .isNotEmpty ? data.data!.status.checkNull() : "I am in Mirror Fly";
+                userImgUrl.value = data.data!.image ?? ""; //SessionManagement.getUserImage() ?? "";
+                SessionManagement.setUserImage(Constants.emptyString);
+                changed((from == Routes.login));
+                name(data.data!.name.toString());
+                var userProfileData = ProData(
+                    email: profileEmail.text.toString(),
+                    image: userImgUrl.value,
+                    mobileNumber: data.data!.mobileNumber.checkNull(),
+                    nickName: profileName.text,
+                    name: profileName.text,
+                    status: profileStatus.value);
+                SessionManagement.setCurrentUser(userProfileData);
+                update();
+              }
+            } else {
+              debugPrint("Unable to load Profile data");
+              toToast("Unable to Connect to Server. Please login Again");
             }
-          } else {
-            debugPrint("Unable to load Profile data");
-            toToast("Unable to Connect to Server. Please login Again");
           }
         }).catchError((onError) {
           loading.value = false;

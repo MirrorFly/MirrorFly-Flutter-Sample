@@ -17,9 +17,9 @@ class ContactController extends FullLifeCycleController with FullLifeCycleMixin 
   var pageNum = 1;
   var isPageLoading = false.obs;
   var scrollable = (!Constants.enableContactSync).obs;
-  var usersList = <Profile>[].obs;
-  var mainUsersList = List<Profile>.empty(growable: true).obs;
-  var selectedUsersList = List<Profile>.empty(growable: true).obs;
+  var usersList = <ProfileDetails>[].obs;
+  var mainUsersList = List<ProfileDetails>.empty(growable: true).obs;
+  var selectedUsersList = List<ProfileDetails>.empty(growable: true).obs;
   var selectedUsersJIDList = List<String>.empty(growable: true).obs;
   var forwardMessageIds = List<String>.empty(growable: true).obs;
   final TextEditingController searchQuery = TextEditingController();
@@ -194,7 +194,7 @@ class ContactController extends FullLifeCycleController with FullLifeCycleMixin 
         //Mirrorfly.getUserList(pageNum, _searchText).then((data) async {
         mirrorFlyLog("userlist", data);
         var item = userListFromJson(data);
-        var list = <Profile>[];
+        var list = <ProfileDetails>[];
 
         if (groupJid.value.checkNull().isNotEmpty) {
           await Future.forEach(item.data!, (it) async {
@@ -288,8 +288,8 @@ class ContactController extends FullLifeCycleController with FullLifeCycleMixin 
     }
   }
 
-  Future<List<Profile>> removeGroupMembers(List<Profile> items) async {
-    var list = <Profile>[];
+  Future<List<ProfileDetails>> removeGroupMembers(List<ProfileDetails> items) async {
+    var list = <ProfileDetails>[];
     for (var it in items) {
       var value = await Mirrorfly.isMemberOfGroup(groupJid.value.checkNull(), it.jid.checkNull());
       mirrorFlyLog("item", value.toString());
@@ -312,7 +312,7 @@ class ContactController extends FullLifeCycleController with FullLifeCycleMixin 
     return "";
   }
 
-  contactSelected(Profile item) {
+  contactSelected(ProfileDetails item) {
     if (selectedUsersList.contains(item)) {
       selectedUsersList.remove(item);
       selectedUsersJIDList.remove(item.jid);
@@ -336,7 +336,7 @@ class ContactController extends FullLifeCycleController with FullLifeCycleMixin 
     }
   }
 
-  onListItemPressed(Profile item) {
+  onListItemPressed(ProfileDetails item) {
     if (isForward.value || isCreateGroup.value) {
       if (item.isBlocked.checkNull()) {
         unBlock(item);
@@ -357,7 +357,7 @@ class ContactController extends FullLifeCycleController with FullLifeCycleMixin 
     }
   }
 
-  unBlock(Profile item) {
+  unBlock(ProfileDetails item) {
     Helper.showAlert(message: "Unblock ${getName(item)}?", actions: [
       TextButton(
           onPressed: () {
@@ -510,7 +510,7 @@ class ContactController extends FullLifeCycleController with FullLifeCycleMixin 
     userUpdatedHisProfile(jid);
   }
 
-  showProfilePopup(Rx<Profile> profile) {
+  showProfilePopup(Rx<ProfileDetails> profile) {
     showQuickProfilePopup(
         context: Get.context,
         // chatItem: chatItem,
@@ -541,7 +541,7 @@ class ContactController extends FullLifeCycleController with FullLifeCycleMixin 
   void onHidden() {}
 
   var groupCallMembersCount = 1.obs; //initially its 1 because me also added into call
-  void validateForCall(Profile item) {
+  void validateForCall(ProfileDetails item) {
     if (isMakeCall.value) {
       if (selectedUsersJIDList.contains(item.jid)) {
         selectedUsersList.remove(item);

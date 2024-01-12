@@ -43,7 +43,7 @@ class AppUtils{
     Tuple2(string, true);
   }
 
-  static Future<Tuple2<String, Profile>> getNameAndProfileDetails(String jid) async {
+  static Future<Tuple2<String, ProfileDetails>> getNameAndProfileDetails(String jid) async {
     var profileDetails = await getProfileDetails(jid);
     var name = profileDetails.getName();
     return Tuple2(name, profileDetails);

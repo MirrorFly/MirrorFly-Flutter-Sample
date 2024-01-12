@@ -10,9 +10,9 @@ import '../../../../data/apputils.dart';
 
 
 class BlockedListController extends GetxController {
-  final _blockedUsers = <Member>[].obs;
+  final _blockedUsers = <ProfileDetails>[].obs;
   set blockedUsers(value) => _blockedUsers.value = value;
-  List<Member> get blockedUsers => _blockedUsers;
+  List<ProfileDetails> get blockedUsers => _blockedUsers;
 
   @override
   void onInit(){
@@ -50,7 +50,7 @@ class BlockedListController extends GetxController {
     }
 
   }
-  unBlock(Member item){
+  unBlock(ProfileDetails item){
     Helper.showAlert(message: "Unblock ${getMemberName(item)}?", actions: [
       TextButton(
           onPressed: () {

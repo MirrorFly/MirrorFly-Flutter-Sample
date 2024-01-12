@@ -18,7 +18,7 @@ import '../views/name_change_view.dart';
 class GroupInfoController extends GetxController {
   var availableFeatures = Get.find<MainController>().availableFeature;
   ScrollController scrollController = ScrollController();
-  var groupMembers = <Profile>[].obs;
+  var groupMembers = <ProfileDetails>[].obs;
   final _mute = false.obs;
   set mute(value) => _mute.value=value;
   bool get mute => _mute.value;
@@ -31,9 +31,9 @@ class GroupInfoController extends GetxController {
   set isMemberOfGroup(value) => _isMemberOfGroup.value = value;
   bool get isMemberOfGroup => availableFeatures.value.isGroupChatAvailable.checkNull() && _isMemberOfGroup.value;
 
-  var profile_ = Profile().obs;
+  var profile_ = ProfileDetails().obs;
   //set profile(value) => _profile.value = value;
-  Profile get profile => profile_.value;
+  ProfileDetails get profile => profile_.value;
 
   final _isSliverAppBarExpanded = true.obs;
   set isSliverAppBarExpanded(value) => _isSliverAppBarExpanded.value = value;
@@ -42,7 +42,7 @@ class GroupInfoController extends GetxController {
   @override
   void onInit(){
     super.onInit();
-    profile_((Get.arguments as Profile));
+    profile_((Get.arguments as ProfileDetails));
     _mute(profile.isMuted!);
     scrollController.addListener(_scrollListener);
     getGroupMembers(false);
@@ -191,7 +191,7 @@ class GroupInfoController extends GetxController {
   getGroupMembers(bool? server){
     Mirrorfly.getGroupMembersList(profile.jid.checkNull(),server).then((value) {
       mirrorFlyLog("getGroupMembersList", value);
-      if(value!=null){
+      if(value.isNotEmpty){
         var list = profileFromJson(value);
         groupMembers.value=(list);
         groupMembers.refresh();

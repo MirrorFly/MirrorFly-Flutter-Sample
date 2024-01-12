@@ -31,9 +31,9 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
   var selectedChatsPosition = <int>[].obs;
   var selected = false.obs;
 
-  var profile_ = Profile().obs;
+  var profile_ = ProfileDetails().obs;
 
-  Profile get profile => profile_.value;
+  ProfileDetails get profile => profile_.value;
 
   //action icon visibles
   var archive = false.obs;
@@ -192,7 +192,7 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
     });
   }
 
-  infoPage(Profile profile) {
+  infoPage(ProfileDetails profile) {
     if (profile.isGroupProfile ?? false) {
       Get.toNamed(Routes.groupInfo, arguments: profile)?.then((value) {
         if (value != null) {
@@ -217,7 +217,7 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
   Future<RecentChatData?> getRecentChatOfJid(String jid) async {
     var value = await Mirrorfly.getRecentChatOf(jid);
     // mirrorFlyLog("chat", value.toString());
-    if (value != null) {
+    if (value.isNotEmpty) {
       var data = RecentChatData.fromJson(json.decode(value));
       return data;
     } else {
@@ -1065,15 +1065,15 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
   var searchFocusNode = FocusNode();
   String lastInputValue = "";
   RxBool clearVisible = false.obs;
-  final _mainuserList = <Profile>[];
+  final _mainuserList = <ProfileDetails>[];
   var userlistScrollController = ScrollController();
   var scrollable = (!Constants.enableContactSync).obs;
   var isPageLoading = false.obs;
-  final _userList = <Profile>[].obs;
+  final _userList = <ProfileDetails>[].obs;
 
-  set userList(List<Profile> value) => _userList.value = value;
+  set userList(List<ProfileDetails> value) => _userList.value = value;
 
-  List<Profile> get userList => _userList;
+  List<ProfileDetails> get userList => _userList;
   var callLogScrollController = ScrollController();
   var isCallLogPageLoading = false.obs;
   final _callLogList = <CallLogData>[].obs;
@@ -1176,7 +1176,7 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
           (!Constants.enableContactSync) ? Mirrorfly.getUserList(pageNum, search.text.trim().toString()) : Mirrorfly.getRegisteredUsers(true);
       future.then((value) {
         // Mirrorfly.getUserList(pageNum, search.text.trim().toString()).then((value) {
-        if (value != null) {
+        if (value.isNotEmpty) {
           var list = userListFromJson(value);
           if (list.data != null) {
             if (!Constants.enableContactSync) {
@@ -1254,13 +1254,13 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
     });
   }
 
-  Future<Map<Profile?, ChatMessageModel?>?> getProfileAndMessage(String jid, String mid) async {
+  Future<Map<ProfileDetails?, ChatMessageModel?>?> getProfileAndMessage(String jid, String mid) async {
     var value = await getProfileDetails(jid); //Mirrorfly.getProfileLocal(jid, false);
     var value2 = await Mirrorfly.getMessageOfId(mid);
     if (value.jid != null && value2 != null) {
       var data = value; //profileDataFromJson(value);
       var data2 = sendMessageModelFromJson(value2);
-      var map = <Profile?, ChatMessageModel?>{}; //{0,searchMessageItem};
+      var map = <ProfileDetails?, ChatMessageModel?>{}; //{0,searchMessageItem};
       map.putIfAbsent(data, () => data2);
       return map;
     }
@@ -1292,7 +1292,7 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
     if (await AppUtils.isNetConnected()) {
       searching = true;
       Mirrorfly.getUserList(pageNum, search.text.trim().toString()).then((value) {
-        if (value != null) {
+        if (value.isNotEmpty) {
           var list = userListFromJson(value);
           if (list.data != null) {
             if (_mainuserList.isEmpty) {
@@ -1724,7 +1724,7 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
       List<CallLogData> callLogs = [];
       List<CallLogData> callLogsWithNickName = [];
 
-      if (callLogsResponse != null) {
+      if (callLogsResponse.isNotEmpty) {
         _callLogList.clear();
         callLogList.clear();
 
@@ -1773,13 +1773,13 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
         return callLog;
       } else {
         var res = await Mirrorfly.getProfileDetails(callLog.groupId!);
-        var str = Profile.fromJson(json.decode(res.toString()));
+        var str = ProfileDetails.fromJson(json.decode(res.toString()));
         callLog.nickName = getName(str);
         return callLog;
       }
     } else {
       var res = await Mirrorfly.getProfileDetails(endUserJid);
-      var str = Profile.fromJson(json.decode(res.toString()));
+      var str = ProfileDetails.fromJson(json.decode(res.toString()));
       callLog.nickName = getName(str);
       return callLog;
     }

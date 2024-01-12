@@ -17,7 +17,7 @@ import '../../gallery_picker/src/data/models/picked_asset_model.dart';
 class MediaPreviewController extends FullLifeCycleController with FullLifeCycleMixin {
 
   var userName = Get.arguments['userName'];
-  var profile = Get.arguments['profile'] as Profile;
+  var profile = Get.arguments['profile'] as ProfileDetails;
 
   TextEditingController caption = TextEditingController();
 

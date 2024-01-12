@@ -42,7 +42,7 @@ class StarredMessageHeader extends StatelessWidget {
     );
   }
 
-  Future<Profile> getProfile() async {
+  Future<ProfileDetails> getProfile() async {
     /*var value = await Mirrorfly.getProfileDetails(chatList.chatUserJid);
     return Profile.fromJson(json.decode(value.toString()));*/
     return await getProfileDetails(chatList.chatUserJid);
@@ -172,7 +172,7 @@ class StarredMessageHeader extends StatelessWidget {
     );
   }
 
-  getProfileImage(Profile userProfile) {
+  getProfileImage(ProfileDetails userProfile) {
     if (userProfile.image.checkNull().isNotEmpty) {
       return ImageNetwork(
         url: userProfile.image.checkNull(),

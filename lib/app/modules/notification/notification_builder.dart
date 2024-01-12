@@ -70,7 +70,7 @@ class NotificationBuilder {
   static displayMessageNotification(
       int notificationId,
       int messageId,
-      Profile profileDetails,
+      ProfileDetails profileDetails,
       String lastMessageContent,
       int lastMessageTime,
       String senderChatJID,bool autoCancel,String topicId) async {
