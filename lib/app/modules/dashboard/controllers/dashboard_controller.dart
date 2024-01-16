@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:mirror_fly_demo/app/call_modules/call_utils.dart';
 import 'package:mirror_fly_demo/app/modules/notification/notification_builder.dart';
+import 'package:mirrorfly_plugin/internal_models/callback.dart';
 import 'package:mirrorfly_plugin/mirrorflychat.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
@@ -229,24 +230,24 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
 
   getRecentChatList() {
     recentChatPage = 1;
-    var fetchFrom = Constants.enableTopic
-        ? Mirrorfly.getRecentChatListHistoryByTopic(firstSet: recentChatPage == 1, limit: chatLimit, topicId: topicId.value)
-        : Mirrorfly.getRecentChatListHistory(firstSet: recentChatPage == 1, limit: chatLimit);
-    fetchFrom.then((value) async {
-      // String recentList = value.replaceAll('\n', '\\n');
-      // debugPrint(recentList);
-      mirrorFlyLog("getRecentChatListHistory", value);
-      var data = recentChatFromJson(value.toString()); //await compute(recentChatFromJson, value.toString());
-      recentChats.clear();
-      recentChats(data.data!);
-      recentChats.refresh();
-      isRecentHistoryLoading(false);
-      recentChatLoading(false);
-      getArchivedChatsList();
-    }).catchError((error) {
-      debugPrint("recent chat issue===> $error");
-      recentChatLoading(false);
-    });
+    var callback = FlyCallback()..onResponse = (FlyResponse response){
+      if(response.isSuccess && response.data.isNotEmpty){
+        mirrorFlyLog("getRecentChatListHistory", response.data);
+        var data = recentChatFromJson(response.data); //await compute(recentChatFromJson, value.toString());
+        recentChats.clear();
+        recentChats(data.data!);
+        recentChats.refresh();
+        isRecentHistoryLoading(false);
+        recentChatLoading(false);
+        getArchivedChatsList();
+      }else{
+        debugPrint("recent chat issue===> ${response.exception}");
+        recentChatLoading(false);
+      }
+    };
+    Constants.enableTopic
+        ? Mirrorfly.getRecentChatListHistoryByTopic(firstSet: recentChatPage == 1, limit: chatLimit, topicId: topicId.value,callback: callback)
+        : Mirrorfly.getRecentChatListHistory(firstSet: recentChatPage == 1, limit: chatLimit,callback: callback);
     /*mirrorFlyLog("", "recent chats");
     Mirrorfly.getRecentChatList().then((value) async {
       // String recentList = value.replaceAll('\n', '\\n');
@@ -376,13 +377,16 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
     getRecentChatOfJid(jid).then((recent) {
       final index = recentChats.indexWhere((chat) => chat.jid == jid);
       debugPrint("dashboard index--> $index");
+      LogMessage.d("updateRecentChat",index);
       if (recent != null) {
         if (!recent.isChatArchived.checkNull()) {
           if (index.isNegative) {
+            LogMessage.d("updateRecentChat","New Insert");
             recentChats.insert(0, recent);
           } else {
             var lastPinnedChat = recentChats.lastIndexWhere((element) => element.isChatPinned!);
             var nxtIndex = lastPinnedChat.isNegative ? 0 : (lastPinnedChat + 1);
+            LogMessage.d("updateRecentChat","next Index $nxtIndex");
             if (recentChats[index].isChatPinned!) {
               recentChats.removeAt(index);
               recentChats.insert(index, recent);
@@ -393,12 +397,14 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
             }
           }
         } else {
+          LogMessage.d("updateRecentChat","Archived $index");
           if (!index.isNegative) {
             recentChats.removeAt(index);
           }
         }
         checkArchiveList(recent);
       } else {
+        LogMessage.d("updateRecentChat","recent chat null insert index $index");
         if (!index.isNegative) {
           recentChats.removeAt(index);
         }
@@ -1501,20 +1507,21 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
         recentChatPage++;
         isRecentHistoryLoading(true);
         debugPrint("calling page no $recentChatPage");
-        var fetchFrom = Constants.enableTopic
-            ? Mirrorfly.getRecentChatListHistoryByTopic(firstSet: recentChatPage == 1, limit: chatLimit, topicId: topicId.value)
-            : Mirrorfly.getRecentChatListHistory(firstSet: recentChatPage == 1, limit: chatLimit);
-        fetchFrom.then((value) async {
-          debugPrint("getRecentChatListHistory next data $value");
-          var data = recentChatFromJson(value.toString()); //await compute(recentChatFromJson, value.toString());
-          recentChats.addAll(data.data!);
-          recentChats.refresh();
-          isRecentHistoryLoading(false);
-          getArchivedChatsList();
-        }).catchError((error) {
-          debugPrint("recent chat issue===> $error");
-          isRecentHistoryLoading(false);
-        });
+        var callback = FlyCallback()..onResponse = (FlyResponse response){
+          if(response.isSuccess && response.data.isNotEmpty){
+            debugPrint("getRecentChatListHistory next data ${response.data}");
+            var data = recentChatFromJson(response.data); //await compute(recentChatFromJson, value.toString());
+            recentChats.addAll(data.data!);
+            recentChats.refresh();
+            isRecentHistoryLoading(false);
+            getArchivedChatsList();
+          }else{
+            debugPrint("recent chat issue===> ${response.exception}");
+            isRecentHistoryLoading(false);
+          }
+        };
+        Constants.enableTopic ? Mirrorfly.getRecentChatListHistoryByTopic(firstSet: recentChatPage == 1, limit: chatLimit, topicId: topicId.value,callback: callback)
+            : Mirrorfly.getRecentChatListHistory(firstSet: recentChatPage == 1, limit: chatLimit,callback: callback);
       }
     }
   }

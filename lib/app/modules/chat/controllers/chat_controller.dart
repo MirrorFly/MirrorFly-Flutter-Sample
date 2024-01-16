@@ -20,6 +20,7 @@ import 'package:mirror_fly_demo/app/common/main_controller.dart';
 import 'package:mirror_fly_demo/app/data/session_management.dart';
 import 'package:mirror_fly_demo/app/data/permissions.dart';
 import 'package:mirror_fly_demo/app/modules/notification/notification_builder.dart';
+import 'package:mirrorfly_plugin/internal_models/callback.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
@@ -616,57 +617,43 @@ class ChatController extends FullLifeCycleController
     chatLoading(true);
     Mirrorfly.initializeMessageList(userJid: profile.jid.checkNull(), limit: 25,topicId: topicId)//message
         .then((value) {
-      value
-          ? Mirrorfly.loadMessages().then((value) {
-        showLoadingNext(false);
-        showLoadingPrevious(false);
-        if (value == "" || value == null) {
-          debugPrint("Chat List is Empty");
-        } else {
-          try {
-            List<ChatMessageModel> chatMessageModel =
-            chatMessageModelFromJson(value);
+      if(value) {
+        Mirrorfly.loadMessages(FlyCallback()..onResponse = (FlyResponse response){
+          showLoadingNext(false);
+          showLoadingPrevious(false);
+          if(response.isSuccess && response.data.isNotEmpty){
+            List<ChatMessageModel> chatMessageModel = chatMessageModelFromJson(response.data);
             chatList(chatMessageModel.reversed.toList());
             showStarredMessage();
             sendReadReceipt(removeUnreadFromList: false);
             // loadPrevORNextMessagesLoad();
-          } catch (error) {
-            debugPrint("chatHistory parsing error--> $error");
           }
-        }
+          chatLoading(false);
+        });
+      }else{
         chatLoading(false);
-      }).catchError((e) {
-        chatLoading(false);
-      })
-          : toToast("Chat History Not Initialized");
+        toToast("Chat History Not Initialized");
+      }
     });
   }
 
   Future<void> _loadPreviousMessages() async {
     showLoadingPrevious(await Mirrorfly.hasPreviousMessages());
-    Mirrorfly.loadPreviousMessages().then((value) {
-      if (value == "" || value == null) {
-        debugPrint("Chat List is Empty");
-      } else {
-        try {
-          var chatMessageModel =
-              List<ChatMessageModel>.empty(growable: true).obs;
-          chatMessageModel.addAll(chatMessageModelFromJson(value));
-          if (chatMessageModel
-              .toList()
-              .isNotEmpty) {
-            chatList.insertAll(
-                chatList.length, chatMessageModel.reversed.toList());
-          } else {
-            debugPrint("chat list is empty");
-          }
-          showStarredMessage();
-        } catch (error) {
-          debugPrint("chatHistory parsing error--> $error");
+    Mirrorfly.loadPreviousMessages(FlyCallback()..onResponse = (FlyResponse response){
+      if(response.isSuccess && response.data.isNotEmpty){
+        var chatMessageModel =
+            List<ChatMessageModel>.empty(growable: true).obs;
+        chatMessageModel.addAll(chatMessageModelFromJson(response.data));
+        if (chatMessageModel
+            .toList()
+            .isNotEmpty) {
+          chatList.insertAll(
+              chatList.length, chatMessageModel.reversed.toList());
+        } else {
+          debugPrint("chat list is empty");
         }
+        showStarredMessage();
       }
-      showLoadingPrevious(false);
-    }).catchError((e) {
       showLoadingPrevious(false);
     });
   }
@@ -677,24 +664,16 @@ class ChatController extends FullLifeCycleController
     }else{
       showLoadingNext(showLoading);
     }
-    Mirrorfly.loadNextMessages().then((value) {
-      if (value == "" || value == null) {
-        debugPrint("Chat List is Empty");
-      } else {
-        try {
-          List<ChatMessageModel> chatMessageModel =
-          chatMessageModelFromJson(value);
-          if (chatMessageModel.isNotEmpty) {
-            chatList.insertAll(0, chatMessageModel.reversed.toList());
-            sendReadReceipt(removeUnreadFromList: removeUnreadFromList);
-          }
-            showStarredMessage();
-        } catch (error) {
-          debugPrint("chatHistory parsing error--> $error");
+    Mirrorfly.loadNextMessages(FlyCallback()..onResponse = (FlyResponse response){
+      if(response.isSuccess && response.data.isNotEmpty){
+        List<ChatMessageModel> chatMessageModel =
+        chatMessageModelFromJson(response.data);
+        if (chatMessageModel.isNotEmpty) {
+          chatList.insertAll(0, chatMessageModel.reversed.toList());
+          sendReadReceipt(removeUnreadFromList: removeUnreadFromList);
         }
+        showStarredMessage();
       }
-      showLoadingNext(false);
-    }).catchError((e) {
       showLoadingNext(false);
     });
   }
@@ -2757,26 +2736,25 @@ class ChatController extends FullLifeCycleController
   }
 
   void getMessageFromServerAndNavigateToMessage(ChatMessageModel chatMessage, int? index) {
-    Mirrorfly.loadMessages().then((value) {
+    Mirrorfly.loadMessages(FlyCallback()..onResponse = (FlyResponse response){
       showLoadingNext(false);
       showLoadingPrevious(false);
-      if (value == "" || value == null) {
-        debugPrint("Chat List is Empty");
-      } else {
-        try {
-          chatList.clear();
-          List<ChatMessageModel> chatMessageModel =
-          chatMessageModelFromJson(value);
-          chatList(chatMessageModel.reversed.toList());
-          navigateToMessage(chatMessage, index: index);
-        } catch (error) {
-          debugPrint("chatHistory parsing error--> $error");
-        }
+      if(response.isSuccess && response.data.isNotEmpty){
+        chatList.clear();
+        List<ChatMessageModel> chatMessageModel =
+        chatMessageModelFromJson(response.data);
+        chatList(chatMessageModel.reversed.toList());
+        navigateToMessage(chatMessage, index: index);
+        chatLoading(false);
+      }else{
+        chatLoading(false);
       }
-      chatLoading(false);
+    });
+     /*   .then((value) {
+
     }).catchError((e) {
       chatLoading(false);
-    });
+    });*/
   }
 
   int findLastVisibleItemPositionForChat() {
