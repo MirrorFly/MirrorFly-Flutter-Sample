@@ -2555,10 +2555,10 @@ class ChatController extends FullLifeCycleController
   bool forwardMessageVisibility(ChatMessageModel chat) {
     if (!chat.isMessageRecalled.value && !chat.isMessageDeleted) {
       if (chat.isMediaMessage()) {
-        if (chat.mediaChatMessage!.mediaDownloadStatus.value ==
+        if ((chat.mediaChatMessage!.mediaDownloadStatus.value ==
             Constants.mediaDownloaded ||
             chat.mediaChatMessage!.mediaUploadStatus.value ==
-                Constants.mediaUploaded) {
+                Constants.mediaUploaded) &&(checkFile(chat.mediaChatMessage!.mediaLocalStoragePath.value.checkNull()))) {
           return true;
         }
       } else {
