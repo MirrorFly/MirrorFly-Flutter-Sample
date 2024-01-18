@@ -110,7 +110,7 @@ class ProfileController extends GetxController {
                 unformatted,
                 profileStatus.value.toString(),
                 userImgUrl.value.isEmpty ? null : userImgUrl.value,
-              FlyCallback()..onResponse = (FlyResponse response){
+              flyCallback: (FlyResponse response){
                 loading.value = false;
                 hideLoader();
                 if (response.isSuccess) {
@@ -204,7 +204,7 @@ class ProfileController extends GetxController {
       // if(checkFileUploadSize(path, Constants.mImage)) {
         showLoader();
       debugPrint("Profile Controller updateMyProfileImage");
-        Mirrorfly.updateMyProfileImage(path,FlyCallback()..onResponse = (FlyResponse response){
+        Mirrorfly.updateMyProfileImage(path,flyCallback: (FlyResponse response){
           if(response.isSuccess) {
             mirrorFlyLog("updateMyProfileImage", response.data);
             loading.value = false;
@@ -282,7 +282,7 @@ class ProfileController extends GetxController {
       if (jid.isNotEmpty) {
         mirrorFlyLog("jid.isNotEmpty", jid.isNotEmpty.toString());
         loading.value = true;
-        Mirrorfly.getUserProfile(jid,fetchFromServer: await AppUtils.isNetConnected(),callback: FlyCallback()..onResponse=(FlyResponse response){
+        Mirrorfly.getUserProfile(jid,fetchFromServer: await AppUtils.isNetConnected(),flyCallback:(FlyResponse response){
           if(response.isSuccess) {
             insertDefaultStatusToUser();
             loading.value = false;

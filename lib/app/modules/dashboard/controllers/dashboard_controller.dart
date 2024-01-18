@@ -230,7 +230,7 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
 
   getRecentChatList() {
     recentChatPage = 1;
-    var callback = FlyCallback()..onResponse = (FlyResponse response){
+    callback(FlyResponse response){
       if(response.isSuccess && response.data.isNotEmpty){
         mirrorFlyLog("getRecentChatListHistory", response.data);
         var data = recentChatFromJson(response.data); //await compute(recentChatFromJson, value.toString());
@@ -244,10 +244,10 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
         debugPrint("recent chat issue===> ${response.exception}");
         recentChatLoading(false);
       }
-    };
+    }
     Constants.enableTopic
-        ? Mirrorfly.getRecentChatListHistoryByTopic(firstSet: recentChatPage == 1, limit: chatLimit, topicId: topicId.value,callback: callback)
-        : Mirrorfly.getRecentChatListHistory(firstSet: recentChatPage == 1, limit: chatLimit,callback: callback);
+        ? Mirrorfly.getRecentChatListHistoryByTopic(firstSet: recentChatPage == 1, limit: chatLimit, topicId: topicId.value,flyCallback: callback)
+        : Mirrorfly.getRecentChatListHistory(firstSet: recentChatPage == 1, limit: chatLimit,flyCallback: callback);
     /*mirrorFlyLog("", "recent chats");
     Mirrorfly.getRecentChatList().then((value) async {
       // String recentList = value.replaceAll('\n', '\\n');
@@ -1178,9 +1178,41 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
   Future<void> filterUserList() async {
     if (await AppUtils.isNetConnected()) {
       searching = true;
-      var future =
-          (!Constants.enableContactSync) ? Mirrorfly.getUserList(pageNum, search.text.trim().toString()) : Mirrorfly.getRegisteredUsers(true);
-      future.then((value) {
+      callback(FlyResponse response){
+        if(response.isSuccess){
+          if (response.data.isNotEmpty) {
+            var list = userListFromJson(response.data);
+            if (list.data != null) {
+              if (!Constants.enableContactSync) {
+                scrollable(list.data!.length == 20);
+
+                list.data!.removeWhere((element) {
+                  debugPrint(
+                      "filter chat list--> ${!filteredRecentChatList.indexWhere((recentChatItem) => recentChatItem.jid == element.jid.checkNull()).isNegative}");
+                  return !filteredRecentChatList.indexWhere((recentChatItem) => recentChatItem.jid == element.jid.checkNull()).isNegative;
+                });
+                _userList(list.data);
+              } else {
+                _userList(list.data!
+                    .where((element) =>
+                (element.nickName.checkNull().toLowerCase().contains(search.text.trim().toString().toLowerCase())) &&
+                    !filteredRecentChatList.indexWhere((recentChatItem) => recentChatItem.jid != element.jid.checkNull()).isNegative)
+                    .toList());
+                // scrollable(false);
+              }
+            } else {
+              scrollable(false);
+            }
+          }
+          searching = false;
+          searchLoading(false);
+        }else{
+          searching = false;
+          searchLoading(false);
+        }
+      }
+      (!Constants.enableContactSync) ? Mirrorfly.getUserList(pageNum, search.text.trim().toString(),flyCallback:callback) : Mirrorfly.getRegisteredUsers(true,flyCallback:callback);
+      /*future.then((value) {
         // Mirrorfly.getUserList(pageNum, search.text.trim().toString()).then((value) {
         if (value.isNotEmpty) {
           var list = userListFromJson(value);
@@ -1212,7 +1244,7 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
         debugPrint("issue===> $error");
         searching = false;
         searchLoading(false);
-      });
+      });*/
     } else {
       toToast(Constants.noInternetConnection);
     }
@@ -1297,7 +1329,28 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
     // print("getUsers calling $pageNum");
     if (await AppUtils.isNetConnected()) {
       searching = true;
-      Mirrorfly.getUserList(pageNum, search.text.trim().toString()).then((value) {
+
+      Mirrorfly.getUserList(pageNum, search.text.trim().toString(),flyCallback: (FlyResponse response){
+        if(response.isSuccess){
+          if (response.data.isNotEmpty) {
+            var list = userListFromJson(response.data);
+            if (list.data != null) {
+              if (_mainuserList.isEmpty) {
+                _mainuserList.addAll(list.data!);
+              }
+              scrollable(list.data!.length == 20);
+              _userList.addAll(list.data!);
+              _userList.refresh();
+            } else {
+              scrollable(false);
+            }
+          }
+          searching = false;
+        }else{
+          searching = false;
+        }
+      });
+      /*then((value) {
         if (value.isNotEmpty) {
           var list = userListFromJson(value);
           if (list.data != null) {
@@ -1315,7 +1368,7 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
       }).catchError((error) {
         debugPrint("issue===> $error");
         searching = false;
-      });
+      });*/
     } else {
       toToast(Constants.noInternetConnection);
     }
@@ -1507,7 +1560,7 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
         recentChatPage++;
         isRecentHistoryLoading(true);
         debugPrint("calling page no $recentChatPage");
-        var callback = FlyCallback()..onResponse = (FlyResponse response){
+        callback(FlyResponse response){
           if(response.isSuccess && response.data.isNotEmpty){
             debugPrint("getRecentChatListHistory next data ${response.data}");
             var data = recentChatFromJson(response.data); //await compute(recentChatFromJson, value.toString());
@@ -1519,9 +1572,9 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
             debugPrint("recent chat issue===> ${response.exception}");
             isRecentHistoryLoading(false);
           }
-        };
-        Constants.enableTopic ? Mirrorfly.getRecentChatListHistoryByTopic(firstSet: recentChatPage == 1, limit: chatLimit, topicId: topicId.value,callback: callback)
-            : Mirrorfly.getRecentChatListHistory(firstSet: recentChatPage == 1, limit: chatLimit,callback: callback);
+        }
+        Constants.enableTopic ? Mirrorfly.getRecentChatListHistoryByTopic(firstSet: recentChatPage == 1, limit: chatLimit, topicId: topicId.value,flyCallback: callback)
+            : Mirrorfly.getRecentChatListHistory(firstSet: recentChatPage == 1, limit: chatLimit,flyCallback: callback);
       }
     }
   }

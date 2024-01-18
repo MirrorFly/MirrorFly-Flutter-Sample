@@ -314,8 +314,7 @@ class LoginController extends GetxController {
       Mirrorfly.registerUser(countryCode!.replaceAll('+', '') + mobileNumber.text,
           fcmToken: SessionManagement.getToken().checkNull(),
           isForceRegister: isForceRegister,
-          callback: FlyCallback()
-            ..onResponse = (FlyResponse response) {
+          flyCallback: (FlyResponse response) {
               if (response.isSuccess) {
                 if (response.data.isNotEmpty) {
                   var userData = registerModelFromJson(response.data); //message

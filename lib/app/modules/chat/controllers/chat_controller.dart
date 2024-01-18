@@ -618,7 +618,7 @@ class ChatController extends FullLifeCycleController
     Mirrorfly.initializeMessageList(userJid: profile.jid.checkNull(), limit: 25,topicId: topicId)//message
         .then((value) {
       if(value) {
-        Mirrorfly.loadMessages(FlyCallback()..onResponse = (FlyResponse response){
+        Mirrorfly.loadMessages(flyCallback:  (FlyResponse response){
           showLoadingNext(false);
           showLoadingPrevious(false);
           if(response.isSuccess && response.data.isNotEmpty){
@@ -639,7 +639,7 @@ class ChatController extends FullLifeCycleController
 
   Future<void> _loadPreviousMessages() async {
     showLoadingPrevious(await Mirrorfly.hasPreviousMessages());
-    Mirrorfly.loadPreviousMessages(FlyCallback()..onResponse = (FlyResponse response){
+    Mirrorfly.loadPreviousMessages(flyCallback:  (FlyResponse response){
       if(response.isSuccess && response.data.isNotEmpty){
         var chatMessageModel =
             List<ChatMessageModel>.empty(growable: true).obs;
@@ -664,7 +664,7 @@ class ChatController extends FullLifeCycleController
     }else{
       showLoadingNext(showLoading);
     }
-    Mirrorfly.loadNextMessages(FlyCallback()..onResponse = (FlyResponse response){
+    Mirrorfly.loadNextMessages(flyCallback:  (FlyResponse response){
       if(response.isSuccess && response.data.isNotEmpty){
         List<ChatMessageModel> chatMessageModel =
         chatMessageModelFromJson(response.data);
@@ -2736,7 +2736,7 @@ class ChatController extends FullLifeCycleController
   }
 
   void getMessageFromServerAndNavigateToMessage(ChatMessageModel chatMessage, int? index) {
-    Mirrorfly.loadMessages(FlyCallback()..onResponse = (FlyResponse response){
+    Mirrorfly.loadMessages(flyCallback:  (FlyResponse response){
       showLoadingNext(false);
       showLoadingPrevious(false);
       if(response.isSuccess && response.data.isNotEmpty){

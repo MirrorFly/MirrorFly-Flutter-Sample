@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
+import 'package:mirrorfly_plugin/internal_models/callback.dart';
 import 'package:mirrorfly_plugin/mirrorfly.dart';
 import 'package:permission_handler/permission_handler.dart';
 
@@ -158,10 +159,29 @@ class ForwardChatController extends GetxController {
     if (await AppUtils.isNetConnected()) {
       if(!bottom)contactLoading(true);
       searching = true;
-      var future = (!Constants.enableContactSync)
-          ? Mirrorfly.getUserList(pageNum, searchQuery.text.trim().toString())
-          : Mirrorfly.getRegisteredUsers(false);
-      future
+      callback (FlyResponse response){
+        if(response.isSuccess){
+          if (response.data.isNotEmpty) {
+            var list = userListFromJson(response.data);
+            if (list.data != null) {
+              if (_mainuserList.isEmpty) {
+                _mainuserList.addAll(list.data!);
+              }
+              _userList.addAll(list.data!);
+              _userList.refresh();
+            }
+          }
+          searching = false;
+          contactLoading(false);
+        }else{
+          searching = false;
+          contactLoading(false);
+        }
+      }
+      (!Constants.enableContactSync)
+          ? Mirrorfly.getUserList(pageNum, searchQuery.text.trim().toString(),flyCallback: callback)
+          : Mirrorfly.getRegisteredUsers(false,flyCallback: callback);
+      /*future
       // Mirrorfly.getUserList(pageNum, searchQuery.text.trim().toString())
           .then((value) {
         if (value.isNotEmpty) {
@@ -180,7 +200,7 @@ class ForwardChatController extends GetxController {
         debugPrint("issue===> $error");
         searching = false;
         contactLoading(false);
-      });
+      });*/
     } else {
       toToast(Constants.noInternetConnection);
     }
@@ -223,10 +243,32 @@ class ForwardChatController extends GetxController {
       _userList.clear();
       searching = true;
       searchLoading(true);
-      var future = (!Constants.enableContactSync)
-          ? Mirrorfly.getUserList(pageNum, searchQuery.text.trim().toString())
-          : Mirrorfly.getRegisteredUsers(false);
-      future
+      callback(FlyResponse response){
+        if(response.isSuccess){
+          if (response.data.isNotEmpty) {
+            var list = userListFromJson(response.data);
+            if (list.data != null) {
+              scrollable((list.data!.length == 20 && !Constants.enableContactSync));
+              if(!Constants.enableContactSync) {
+                _userList(list.data);
+              }else{
+                _userList(list.data!.where((element) => element.nickName.checkNull().toLowerCase().contains(searchQuery.text.trim().toString().toLowerCase())).toList());
+              }
+            } else {
+              scrollable(false);
+            }
+          }
+          searching = false;
+          searchLoading(false);
+        }else{
+          searching = false;
+          searchLoading(false);
+        }
+      }
+      (!Constants.enableContactSync)
+          ? Mirrorfly.getUserList(pageNum, searchQuery.text.trim().toString(),flyCallback: callback)
+          : Mirrorfly.getRegisteredUsers(false,flyCallback: callback);
+      /*future
       // Mirrorfly.getUserList(pageNum, searchQuery.text.trim().toString())
           .then((value) {
         if (value.isNotEmpty) {
@@ -248,7 +290,7 @@ class ForwardChatController extends GetxController {
         debugPrint("issue===> $error");
         searching = false;
         searchLoading(false);
-      });
+      });*/
     } else {
       toToast(Constants.noInternetConnection);
     }
