@@ -493,6 +493,32 @@ extension RecentChatParsing on RecentChatData {
   }
 
   bool isEmailContact() => !isGroup.checkNull() && isGroupInOfflineMode.checkNull(); // for email contact isGroupInOfflineMode will be true
+
+  String getName() {
+    if (!Constants.enableContactSync) {
+      /*return item.name.toString().checkNull().isEmpty
+        ? item.nickName.toString()
+        : item.name.toString();*/
+      return profileName.checkNull().isEmpty
+          ? nickName.checkNull().isNotEmpty
+          ? nickName.checkNull()
+          : getMobileNumberFromJid(jid.checkNull())
+          : profileName.checkNull();
+    } else {
+      if (jid.checkNull() == SessionManagement.getUserJID()) {
+        return Constants.you;
+      } else if (isDeletedContact()) {
+        mirrorFlyLog('isDeletedContact', isDeletedContact().toString());
+        return Constants.deletedUser;
+      } else if (isUnknownContact() || nickName.checkNull().isEmpty) {
+        mirrorFlyLog('isUnknownContact', jid.toString());
+        return getMobileNumberFromJid(jid.checkNull());
+      } else {
+        mirrorFlyLog('nickName', nickName.toString());
+        return nickName.checkNull();
+      }
+    }
+  }
 }
 
 String returnFormattedCount(int count) {

@@ -914,7 +914,7 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
       return;
     }
     var chatIndex = recentChats.indexWhere((element) => selectedChats[index] == element.jid); //selectedChatsPosition[index];
-    Helper.showAlert(message: "Delete chat with \"${recentChats[chatIndex].profileName}\"?", actions: [
+    Helper.showAlert(message: "Delete chat with \"${recentChats[chatIndex].getName()}\"?", actions: [
       TextButton(
           onPressed: () {
             Get.back();
@@ -1257,7 +1257,7 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
       var js = json.decode(value);
       var recentChatListWithArchived = List<RecentChatData>.from(js.map((x) => RecentChatData.fromJson(x)));
       for (var recentChat in recentChatListWithArchived) {
-        if (recentChat.profileName != null && recentChat.profileName!.toLowerCase().contains(search.text.trim().toString().toLowerCase()) == true) {
+        if (recentChat.profileName != null && recentChat.getName().toLowerCase().contains(search.text.trim().toString().toLowerCase()) == true) {
           recentChatList.add(recentChat);
         }
       }
