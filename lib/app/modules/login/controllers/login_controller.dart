@@ -12,7 +12,7 @@ import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/common/main_controller.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
 import 'package:mirror_fly_demo/app/data/permissions.dart';
-import 'package:mirrorfly_plugin/internal_models/callback.dart';
+
 import 'package:otp_text_field/otp_field.dart';
 
 import '../../../common/constants.dart';

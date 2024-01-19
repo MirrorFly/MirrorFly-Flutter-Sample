@@ -20,7 +20,7 @@ import 'package:mirror_fly_demo/app/common/main_controller.dart';
 import 'package:mirror_fly_demo/app/data/session_management.dart';
 import 'package:mirror_fly_demo/app/data/permissions.dart';
 import 'package:mirror_fly_demo/app/modules/notification/notification_builder.dart';
-import 'package:mirrorfly_plugin/internal_models/callback.dart';
+
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
@@ -622,6 +622,7 @@ class ChatController extends FullLifeCycleController
           showLoadingNext(false);
           showLoadingPrevious(false);
           if(response.isSuccess && response.data.isNotEmpty){
+            LogMessage.d("loadMessages", response.data);
             List<ChatMessageModel> chatMessageModel = chatMessageModelFromJson(response.data);
             chatList(chatMessageModel.reversed.toList());
             showStarredMessage();
@@ -2740,6 +2741,7 @@ class ChatController extends FullLifeCycleController
       showLoadingNext(false);
       showLoadingPrevious(false);
       if(response.isSuccess && response.data.isNotEmpty){
+        LogMessage.d("loadMessages", response.data);
         chatList.clear();
         List<ChatMessageModel> chatMessageModel =
         chatMessageModelFromJson(response.data);
