@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
+
 import 'package:mirrorfly_plugin/mirrorfly.dart';
 import 'package:permission_handler/permission_handler.dart';
 
@@ -13,8 +14,8 @@ import '../../../data/apputils.dart';
 class ForwardChatController extends GetxController {
   //main list
   final _mainrecentChats = <RecentChatData>[];
-  final _maingroupList = <Profile>[];
-  final _mainuserList = <Profile>[];
+  final _maingroupList = <ProfileDetails>[];
+  final _mainuserList = <ProfileDetails>[];
 
   final _recentChats = <RecentChatData>[].obs;
 
@@ -22,20 +23,20 @@ class ForwardChatController extends GetxController {
 
   List<RecentChatData> get recentChats => _recentChats.take(3).toList();
 
-  final _groupList = <Profile>[].obs;
+  final _groupList = <ProfileDetails>[].obs;
 
-  set groupList(List<Profile> value) => _groupList.value = value;
+  set groupList(List<ProfileDetails> value) => _groupList.value = value;
 
-  List<Profile> get groupList => _groupList.take(6).toList();
+  List<ProfileDetails> get groupList => _groupList.take(6).toList();
 
   var userlistScrollController = ScrollController();
   var scrollable = (!Constants.enableContactSync).obs;
   var isPageLoading = false.obs;
-  final _userList = <Profile>[].obs;
+  final _userList = <ProfileDetails>[].obs;
 
-  set userList(List<Profile> value) => _userList.value = value;
+  set userList(List<ProfileDetails> value) => _userList.value = value;
 
-  List<Profile> get userList => _userList;
+  List<ProfileDetails> get userList => _userList;
 
   final _search = false.obs;
 
@@ -158,13 +159,32 @@ class ForwardChatController extends GetxController {
     if (await AppUtils.isNetConnected()) {
       if(!bottom)contactLoading(true);
       searching = true;
-      var future = (!Constants.enableContactSync)
-          ? Mirrorfly.getUserList(pageNum, searchQuery.text.trim().toString())
-          : Mirrorfly.getRegisteredUsers(false);
-      future
+      callback (FlyResponse response){
+        if(response.isSuccess){
+          if (response.data.isNotEmpty) {
+            var list = userListFromJson(response.data);
+            if (list.data != null) {
+              if (_mainuserList.isEmpty) {
+                _mainuserList.addAll(list.data!);
+              }
+              _userList.addAll(list.data!);
+              _userList.refresh();
+            }
+          }
+          searching = false;
+          contactLoading(false);
+        }else{
+          searching = false;
+          contactLoading(false);
+        }
+      }
+      (!Constants.enableContactSync)
+          ? Mirrorfly.getUserList(pageNum, searchQuery.text.trim().toString(),flyCallback: callback)
+          : Mirrorfly.getRegisteredUsers(false,flyCallback: callback);
+      /*future
       // Mirrorfly.getUserList(pageNum, searchQuery.text.trim().toString())
           .then((value) {
-        if (value != null) {
+        if (value.isNotEmpty) {
           var list = userListFromJson(value);
           if (list.data != null) {
             if (_mainuserList.isEmpty) {
@@ -180,7 +200,7 @@ class ForwardChatController extends GetxController {
         debugPrint("issue===> $error");
         searching = false;
         contactLoading(false);
-      });
+      });*/
     } else {
       toToast(Constants.noInternetConnection);
     }
@@ -223,13 +243,35 @@ class ForwardChatController extends GetxController {
       _userList.clear();
       searching = true;
       searchLoading(true);
-      var future = (!Constants.enableContactSync)
-          ? Mirrorfly.getUserList(pageNum, searchQuery.text.trim().toString())
-          : Mirrorfly.getRegisteredUsers(false);
-      future
+      callback(FlyResponse response){
+        if(response.isSuccess){
+          if (response.data.isNotEmpty) {
+            var list = userListFromJson(response.data);
+            if (list.data != null) {
+              scrollable((list.data!.length == 20 && !Constants.enableContactSync));
+              if(!Constants.enableContactSync) {
+                _userList(list.data);
+              }else{
+                _userList(list.data!.where((element) => element.nickName.checkNull().toLowerCase().contains(searchQuery.text.trim().toString().toLowerCase())).toList());
+              }
+            } else {
+              scrollable(false);
+            }
+          }
+          searching = false;
+          searchLoading(false);
+        }else{
+          searching = false;
+          searchLoading(false);
+        }
+      }
+      (!Constants.enableContactSync)
+          ? Mirrorfly.getUserList(pageNum, searchQuery.text.trim().toString(),flyCallback: callback)
+          : Mirrorfly.getRegisteredUsers(false,flyCallback: callback);
+      /*future
       // Mirrorfly.getUserList(pageNum, searchQuery.text.trim().toString())
           .then((value) {
-        if (value != null) {
+        if (value.isNotEmpty) {
           var list = userListFromJson(value);
           if (list.data != null) {
             scrollable((list.data!.length == 20 && !Constants.enableContactSync));
@@ -248,7 +290,7 @@ class ForwardChatController extends GetxController {
         debugPrint("issue===> $error");
         searching = false;
         searchLoading(false);
-      });
+      });*/
     } else {
       toToast(Constants.noInternetConnection);
     }
@@ -392,7 +434,7 @@ class ForwardChatController extends GetxController {
   Future<String> getParticipantsNameAsCsv(String jid) async {
     var groupParticipantsName = "";
     await Mirrorfly.getGroupMembersList(jid, false).then((value) {
-      if (value != null) {
+      if (value.isNotEmpty) {
         var str = <String>[];
         var groupsMembersProfileList = memberFromJson(value);
         for (var it in groupsMembersProfileList) {

@@ -3,6 +3,7 @@ import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
+
 import 'package:mirrorfly_plugin/mirrorfly.dart';
 import 'package:mirror_fly_demo/app/data/session_management.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -17,9 +18,9 @@ class ContactController extends FullLifeCycleController with FullLifeCycleMixin 
   var pageNum = 1;
   var isPageLoading = false.obs;
   var scrollable = (!Constants.enableContactSync).obs;
-  var usersList = <Profile>[].obs;
-  var mainUsersList = List<Profile>.empty(growable: true).obs;
-  var selectedUsersList = List<Profile>.empty(growable: true).obs;
+  var usersList = <ProfileDetails>[].obs;
+  var mainUsersList = List<ProfileDetails>.empty(growable: true).obs;
+  var selectedUsersList = List<ProfileDetails>.empty(growable: true).obs;
   var selectedUsersJIDList = List<String>.empty(growable: true).obs;
   var forwardMessageIds = List<String>.empty(growable: true).obs;
   final TextEditingController searchQuery = TextEditingController();
@@ -189,12 +190,106 @@ class ContactController extends FullLifeCycleController with FullLifeCycleMixin 
       }
     }
     if (await AppUtils.isNetConnected() || Constants.enableContactSync) {
-      var future = (!Constants.enableContactSync) ? Mirrorfly.getUserList(pageNum, _searchText) : Mirrorfly.getRegisteredUsers(false);
-      future.then((data) async {
+      callback(FlyResponse response) async {
+        if(response.isSuccess&& response.data.isNotEmpty){
+          var data = response.data;
+          mirrorFlyLog("userlist", data);
+          var item = userListFromJson(data);
+          var list = <ProfileDetails>[];
+
+          if (groupJid.value.checkNull().isNotEmpty) {
+            await Future.forEach(item.data!, (it) async {
+              await Mirrorfly.isMemberOfGroup(groupJid.value.checkNull(), it.jid.checkNull()).then((value) {
+                mirrorFlyLog("item", value.toString());
+                if (value == null || !value) {
+                  list.add(it);
+                }
+              });
+            });
+            if (_first) {
+              _first = false;
+              mainUsersList(list);
+            }
+            if (fromSearch) {
+              if (!Constants.enableContactSync) {
+                usersList(list);
+                // if(usersList.length==20) pageNum += 1;
+                scrollable.value = list.length == 20;
+              } else {
+                var userlist = mainUsersList.where((p0) => getName(p0).toString().toLowerCase().contains(_searchText.trim().toLowerCase()));
+                usersList(userlist.toList());
+                scrollable(false);
+                /*for (var userDetail in mainUsersList) {
+                  if (userDetail.name.toString().toLowerCase().contains(_searchText.trim().toLowerCase())) {
+                    usersList.add(userDetail);
+                  }
+                }*/
+              }
+            } else {
+              if (!Constants.enableContactSync) {
+                usersList.addAll(list);
+                // if(usersList.length==20) pageNum += 1;
+                scrollable.value = list.length == 20;
+              } else {
+                usersList(list);
+                scrollable(false);
+              }
+            }
+            isPageLoading.value = false;
+            usersList.refresh();
+          } else {
+            list.addAll(item.data!);
+            if (Constants.enableContactSync && fromSearch) {
+              var userlist = mainUsersList.where((p0) => getName(p0).toString().toLowerCase().contains(_searchText.trim().toLowerCase()));
+              usersList(userlist.toList());
+              /*for (var userDetail in mainUsersList) {
+              if (userDetail.name.toString().toLowerCase().contains(_searchText.trim().toLowerCase())) {
+                usersList.add(userDetail);
+              }
+            }*/
+            }
+            if (_first) {
+              _first = false;
+              mainUsersList(list);
+            }
+            if (fromSearch) {
+              if (!Constants.enableContactSync) {
+                usersList(list);
+                // if(usersList.length==20) pageNum += 1;
+                scrollable.value = list.length == 20;
+              } else {
+                var userlist = mainUsersList.where((p0) => getName(p0).toString().toLowerCase().contains(_searchText.trim().toLowerCase()));
+                usersList(userlist.toList());
+                scrollable(false);
+                /*for (var userDetail in mainUsersList) {
+                  if (userDetail.name.toString().toLowerCase().contains(_searchText.trim().toLowerCase())) {
+                    usersList.add(userDetail);
+                  }
+                }*/
+              }
+            } else {
+              if (!Constants.enableContactSync) {
+                usersList.addAll(list);
+                // if(usersList.length==20) pageNum += 1;
+                scrollable.value = list.length == 20;
+              } else {
+                usersList(list);
+                scrollable(false);
+              }
+            }
+            isPageLoading.value = false;
+            usersList.refresh();
+          }
+        }else{
+          toToast(response.exception!.message.toString());
+        }
+      }
+      (!Constants.enableContactSync) ? Mirrorfly.getUserList(pageNum, _searchText,flyCallback: callback) : Mirrorfly.getRegisteredUsers(false,flyCallback: callback);
+      /*future.then((data) async {
         //Mirrorfly.getUserList(pageNum, _searchText).then((data) async {
         mirrorFlyLog("userlist", data);
         var item = userListFromJson(data);
-        var list = <Profile>[];
+        var list = <ProfileDetails>[];
 
         if (groupJid.value.checkNull().isNotEmpty) {
           await Future.forEach(item.data!, (it) async {
@@ -282,14 +377,14 @@ class ContactController extends FullLifeCycleController with FullLifeCycleMixin 
       }).catchError((error) {
         debugPrint("Get User list error--> $error");
         toToast(error.toString());
-      });
+      });*/
     } else {
       toToast(Constants.noInternetConnection);
     }
   }
 
-  Future<List<Profile>> removeGroupMembers(List<Profile> items) async {
-    var list = <Profile>[];
+  Future<List<ProfileDetails>> removeGroupMembers(List<ProfileDetails> items) async {
+    var list = <ProfileDetails>[];
     for (var it in items) {
       var value = await Mirrorfly.isMemberOfGroup(groupJid.value.checkNull(), it.jid.checkNull());
       mirrorFlyLog("item", value.toString());
@@ -312,7 +407,7 @@ class ContactController extends FullLifeCycleController with FullLifeCycleMixin 
     return "";
   }
 
-  contactSelected(Profile item) {
+  contactSelected(ProfileDetails item) {
     if (selectedUsersList.contains(item)) {
       selectedUsersList.remove(item);
       selectedUsersJIDList.remove(item.jid);
@@ -336,7 +431,7 @@ class ContactController extends FullLifeCycleController with FullLifeCycleMixin 
     }
   }
 
-  onListItemPressed(Profile item) {
+  onListItemPressed(ProfileDetails item) {
     if (isForward.value || isCreateGroup.value) {
       if (item.isBlocked.checkNull()) {
         unBlock(item);
@@ -357,7 +452,7 @@ class ContactController extends FullLifeCycleController with FullLifeCycleMixin 
     }
   }
 
-  unBlock(Profile item) {
+  unBlock(ProfileDetails item) {
     Helper.showAlert(message: "Unblock ${getName(item)}?", actions: [
       TextButton(
           onPressed: () {
@@ -510,7 +605,7 @@ class ContactController extends FullLifeCycleController with FullLifeCycleMixin 
     userUpdatedHisProfile(jid);
   }
 
-  showProfilePopup(Rx<Profile> profile) {
+  showProfilePopup(Rx<ProfileDetails> profile) {
     showQuickProfilePopup(
         context: Get.context,
         // chatItem: chatItem,
@@ -541,7 +636,7 @@ class ContactController extends FullLifeCycleController with FullLifeCycleMixin 
   void onHidden() {}
 
   var groupCallMembersCount = 1.obs; //initially its 1 because me also added into call
-  void validateForCall(Profile item) {
+  void validateForCall(ProfileDetails item) {
     if (isMakeCall.value) {
       if (selectedUsersJIDList.contains(item.jid)) {
         selectedUsersList.remove(item);

@@ -12,6 +12,7 @@ import 'package:mirror_fly_demo/app/data/session_management.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
 import 'package:mirror_fly_demo/app/routes/app_pages.dart';
 
+
 import '../../../common/crop_image.dart';
 import 'package:mirrorfly_plugin/mirrorfly.dart';
 
@@ -108,10 +109,45 @@ class ProfileController extends GetxController {
                 profileEmail.text.toString(),
                 unformatted,
                 profileStatus.value.toString(),
-                userImgUrl.value.isEmpty ? null : userImgUrl.value
-            )
-                .then((value) {
-              mirrorFlyLog("updateMyProfile", value);
+                userImgUrl.value.isEmpty ? null : userImgUrl.value,
+              flyCallback: (FlyResponse response){
+                loading.value = false;
+                hideLoader();
+                if (response.isSuccess) {
+                  mirrorFlyLog("updateMyProfile", response.data.toString());
+                  var data = profileUpdateFromJson(response.data);
+                  if (data.status != null) {
+                    toToast(frmImage ? 'Removed profile image successfully' : data.message.toString());
+                    if (data.status!) {
+                      changed(false);
+                      var userProfileData = ProData(
+                          email: profileEmail.text.toString(),
+                          image: userImgUrl.value,
+                          mobileNumber: unformatted,
+                          nickName: profileName.text,
+                          name: profileName.text,
+                          status: profileStatus.value);
+                      SessionManagement.setCurrentUser(userProfileData);
+                      if (from == Routes.login) {
+                        // Mirrorfly.isTrailLicence().then((trail){
+                        if(!Constants.enableContactSync) {
+                          Get.offNamed(Routes.dashboard);
+                        }else{
+                          Get.offNamed(Routes.contactSync);
+                        }
+                        // });
+                      }
+                    }
+                  }
+                } else {
+                  toToast("Unable to update profile");
+                  loading.value = false;
+                  hideLoader();
+                }
+              }
+            );
+            /*    .then((value) {
+              mirrorFlyLog("updateMyProfile", value.toString());
               loading.value = false;
               hideLoader();
               if (value != null) {
@@ -148,7 +184,7 @@ class ProfileController extends GetxController {
               hideLoader();
               debugPrint("issue===> $error");
               toToast(error.toString());
-            });
+            });*/
           } else {
             loading(false);
             hideLoader();
@@ -168,7 +204,25 @@ class ProfileController extends GetxController {
       // if(checkFileUploadSize(path, Constants.mImage)) {
         showLoader();
       debugPrint("Profile Controller updateMyProfileImage");
-        Mirrorfly.updateMyProfileImage(path).then((value) {
+        Mirrorfly.updateMyProfileImage(path,flyCallback: (FlyResponse response){
+          if(response.isSuccess) {
+            mirrorFlyLog("updateMyProfileImage", response.data);
+            loading.value = false;
+            var data = json.decode(response.data);
+            imagePath.value = Constants.emptyString;
+            userImgUrl.value = data['data']['image'];
+            SessionManagement.setUserImage(data['data']['image'].toString());
+            hideLoader();
+            if (update) {
+              save();
+            }
+          }else{
+            debugPrint("Profile Update on error--> ${response.exception.toString()}");
+            loading.value = false;
+            hideLoader();
+          }
+        });
+            /*.then((value) {
           mirrorFlyLog("updateMyProfileImage", value);
           loading.value = false;
           var data = json.decode(value);
@@ -183,7 +237,7 @@ class ProfileController extends GetxController {
           debugPrint("Profile Update on error--> ${onError.toString()}");
           loading.value = false;
           hideLoader();
-        });
+        });*/
       // }else{
       //   toToast("Image Size exceeds 10MB");
       // }
@@ -228,50 +282,109 @@ class ProfileController extends GetxController {
       if (jid.isNotEmpty) {
         mirrorFlyLog("jid.isNotEmpty", jid.isNotEmpty.toString());
         loading.value = true;
-        Mirrorfly.getUserProfile(jid,await AppUtils.isNetConnected()).then((value) {
-          debugPrint("profile--> $value");
-          insertDefaultStatusToUser();
-          loading.value = false;
-          var data = profileDataFromJson(value);
-          if (data.status != null && data.status!) {
-            if (data.data != null) {
-              profileName.text = data.data!.name ?? "";
-              if (data.data!.mobileNumber.checkNull().isNotEmpty) {
-                //if (from.value != Routes.login) {
-                validMobileNumber(data.data!.mobileNumber.checkNull()).then((valid) {
-                  // if(valid) profileMobile.text = data.data!.mobileNumber.checkNull();
-                  mobileEditAccess(!valid);
-                });
-              }else {
-                var userIdentifier = SessionManagement.getUserIdentifier();
-                validMobileNumber(userIdentifier).then((value) => mobileEditAccess(value));
-                // mobileEditAccess(true);
-              }
+        Mirrorfly.getUserProfile(jid,fetchFromServer: await AppUtils.isNetConnected(),flyCallback:(FlyResponse response){
+          if(response.isSuccess) {
+            insertDefaultStatusToUser();
+            loading.value = false;
+            var data = profileDataFromJson(response.data);
+            if (data.status != null && data.status!) {
+              if (data.data != null) {
+                profileName.text = data.data!.name ?? "";
+                if (data.data!
+                    .mobileNumber
+                    .checkNull()
+                    .isNotEmpty) {
+                  //if (from.value != Routes.login) {
+                  validMobileNumber(data.data!.mobileNumber.checkNull()).then((valid) {
+                    // if(valid) profileMobile.text = data.data!.mobileNumber.checkNull();
+                    mobileEditAccess(!valid);
+                  });
+                } else {
+                  var userIdentifier = SessionManagement.getUserIdentifier();
+                  validMobileNumber(userIdentifier).then((value) => mobileEditAccess(value));
+                  // mobileEditAccess(true);
+                }
 
-              profileEmail.text = data.data!.email ?? "";
-              profileStatus.value = data.data!.status.checkNull().isNotEmpty ? data.data!.status.checkNull() : "I am in Mirror Fly";
-              userImgUrl.value = data.data!.image ?? "";//SessionManagement.getUserImage() ?? "";
-              SessionManagement.setUserImage(Constants.emptyString);
-              changed((from == Routes.login));
-              name(data.data!.name.toString());
-              var userProfileData = ProData(
-                  email: profileEmail.text.toString(),
-                  image: userImgUrl.value,
-                  mobileNumber: data.data!.mobileNumber.checkNull(),
-                  nickName: profileName.text,
-                  name: profileName.text,
-                  status: profileStatus.value);
-              SessionManagement.setCurrentUser(userProfileData);
-              update();
+                profileEmail.text = data.data!.email ?? "";
+                profileStatus.value = data.data!
+                    .status
+                    .checkNull()
+                    .isNotEmpty ? data.data!.status.checkNull() : "I am in Mirror Fly";
+                userImgUrl.value = data.data!.image ?? ""; //SessionManagement.getUserImage() ?? "";
+                SessionManagement.setUserImage(Constants.emptyString);
+                changed((from == Routes.login));
+                name(data.data!.name.toString());
+                var userProfileData = ProData(
+                    email: profileEmail.text.toString(),
+                    image: userImgUrl.value,
+                    mobileNumber: data.data!.mobileNumber.checkNull(),
+                    nickName: profileName.text,
+                    name: profileName.text,
+                    status: profileStatus.value);
+                SessionManagement.setCurrentUser(userProfileData);
+                update();
+              }
+            } else {
+              debugPrint("Unable to load Profile data");
+              toToast("Unable to Connect to Server. Please login Again");
             }
-          } else {
-            debugPrint("Unable to load Profile data");
-            toToast("Unable to Connect to Server. Please login Again");
+          }else{
+            loading.value = false;
+            toToast("Unable to load profile data, please login again");
+          }
+        });
+            /*.then((value) {
+          debugPrint("profile--> $value");
+          if(value!=null) {
+            insertDefaultStatusToUser();
+            loading.value = false;
+            var data = profileDataFromJson(value);
+            if (data.status != null && data.status!) {
+              if (data.data != null) {
+                profileName.text = data.data!.name ?? "";
+                if (data.data!
+                    .mobileNumber
+                    .checkNull()
+                    .isNotEmpty) {
+                  //if (from.value != Routes.login) {
+                  validMobileNumber(data.data!.mobileNumber.checkNull()).then((valid) {
+                    // if(valid) profileMobile.text = data.data!.mobileNumber.checkNull();
+                    mobileEditAccess(!valid);
+                  });
+                } else {
+                  var userIdentifier = SessionManagement.getUserIdentifier();
+                  validMobileNumber(userIdentifier).then((value) => mobileEditAccess(value));
+                  // mobileEditAccess(true);
+                }
+
+                profileEmail.text = data.data!.email ?? "";
+                profileStatus.value = data.data!
+                    .status
+                    .checkNull()
+                    .isNotEmpty ? data.data!.status.checkNull() : "I am in Mirror Fly";
+                userImgUrl.value = data.data!.image ?? ""; //SessionManagement.getUserImage() ?? "";
+                SessionManagement.setUserImage(Constants.emptyString);
+                changed((from == Routes.login));
+                name(data.data!.name.toString());
+                var userProfileData = ProData(
+                    email: profileEmail.text.toString(),
+                    image: userImgUrl.value,
+                    mobileNumber: data.data!.mobileNumber.checkNull(),
+                    nickName: profileName.text,
+                    name: profileName.text,
+                    status: profileStatus.value);
+                SessionManagement.setCurrentUser(userProfileData);
+                update();
+              }
+            } else {
+              debugPrint("Unable to load Profile data");
+              toToast("Unable to Connect to Server. Please login Again");
+            }
           }
         }).catchError((onError) {
           loading.value = false;
           toToast("Unable to load profile data, please login again");
-        });
+        });*/
       }
    /* }else{
       toToast(Constants.noInternetConnection);

@@ -210,7 +210,7 @@ class ArchivedChatListController extends GetxController {
   Future<RecentChatData?> getRecentChatOfJid(String jid) async {
     var value = await Mirrorfly.getRecentChatOf(jid);
     mirrorFlyLog("chat", value.toString());
-    if (value != null) {
+    if (value.isNotEmpty) {
       var data = recentChatDataFromJson(value);
       return data;
     } else {
@@ -403,7 +403,7 @@ class ArchivedChatListController extends GetxController {
     userUpdatedHisProfile(jid);
     updateProfile(jid);
   }
-  var profile_ = Profile().obs;
+  var profile_ = ProfileDetails().obs;
   void getProfileDetail(context, RecentChatData chatItem, int index) {
     getProfileDetails(chatItem.jid.checkNull()).then((value) {
       profile_(value);
@@ -430,7 +430,7 @@ class ArchivedChatListController extends GetxController {
       });
     }
   }
-  infoPage(Profile profile) {
+  infoPage(ProfileDetails profile) {
     if (profile.isGroupProfile ?? false) {
       Get.toNamed(Routes.groupInfo, arguments: profile)?.then((value) {
         if (value != null) {

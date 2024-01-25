@@ -160,7 +160,7 @@ class RecentChatItem extends StatelessWidget {
     return Visibility(
       visible: !isCheckBoxVisible,
       child: Text(
-        getRecentChatTime(context, item.lastMessageTime.toInt()),
+        getRecentChatTime(context, item.lastMessageTime),
         textAlign: TextAlign.end,
         style: TextStyle(
             fontSize: 12.0,
@@ -303,7 +303,7 @@ class RecentChatItem extends StatelessWidget {
         });
   }
 
-  String getTypingUser(Profile profile){
+  String getTypingUser(ProfileDetails profile){
     if(profile.isGroupProfile.checkNull()){
       return "${profile.getName().checkNull()} typing...";
     }else{
@@ -405,7 +405,7 @@ class RecentChatItem extends StatelessWidget {
   Future<String> getParticipantsNameAsCsv(String jid) {
     var groupParticipantsName = ''.obs;
     return Mirrorfly.getGroupMembersList(jid, false).then((value) {
-      if (value != null) {
+      if (value.isNotEmpty) {
         var str = <String>[];
         var groupsMembersProfileList = memberFromJson(value);
         for (var it in groupsMembersProfileList) {
@@ -558,7 +558,7 @@ Widget callLogTime(String time, int? callState) {
 
 class ContactItem extends StatelessWidget {
   const ContactItem({Key? key,required this.item, this.onAvatarClick,this.spanTxt = "", this.isCheckBoxVisible = false, required this.checkValue, required this.onCheckBoxChange, this.onListItemPressed,}) : super(key: key);
-  final Profile item;
+  final ProfileDetails item;
   final Function()? onAvatarClick;
   final String spanTxt;
   final bool isCheckBoxVisible;

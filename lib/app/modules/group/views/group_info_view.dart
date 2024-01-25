@@ -277,7 +277,7 @@ class GroupInfoView extends GetView<GroupInfoController> {
     );
   }
 
-  showOptions(Profile item) {
+  showOptions(ProfileDetails item) {
     Helper.showButtonAlert(actions: [
       ListTile(
           title: const Text("Start Chat", style: TextStyle(fontWeight: FontWeight.normal, fontSize: 16),), onTap: () {

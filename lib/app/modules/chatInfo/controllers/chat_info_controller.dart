@@ -7,8 +7,8 @@ import 'package:mirrorfly_plugin/mirrorfly.dart';
 import '../../../routes/app_pages.dart';
 
 class ChatInfoController extends GetxController {
-  var profile_ = Profile().obs;
-  Profile get profile => profile_.value;
+  var profile_ = ProfileDetails().obs;
+  ProfileDetails get profile => profile_.value;
   var mute = false.obs;
   var nameController = TextEditingController();
 
@@ -25,7 +25,7 @@ class ChatInfoController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    profile_((Get.arguments as Profile));
+    profile_((Get.arguments as ProfileDetails));
     mute(profile.isMuted!);
     scrollController.addListener(_scrollListener);
     nameController.text = profile.nickName.checkNull();

@@ -339,20 +339,20 @@ extension BooleanParsing on bool? {
   }
 }
 
-extension MemberParsing on Member {
+/*extension MemberParsing on ProfileDetails {
   bool isDeletedContact() {
     return contactType == "deleted_contact";
   }
 
   String getUsername() {
     var value = Mirrorfly.getProfileDetails(jid.checkNull());
-    var str = Profile.fromJson(json.decode(value.toString()));
+    var str = ProfileDetails.fromJson(json.decode(value.toString()));
     return str.getName(); //str.name.checkNull();
   }
 
-  Future<Profile> getProfileDetails() async {
+  Future<ProfileDetails> getProfileDetails() async {
     var value = await Mirrorfly.getProfileDetails(jid.checkNull());
-    var str = Profile.fromJson(json.decode(value.toString()));
+    var str = ProfileDetails.fromJson(json.decode(value.toString()));
     return str;
   }
 
@@ -365,20 +365,20 @@ extension MemberParsing on Member {
   }
 
   bool isEmailContact() => !isGroupProfile.checkNull() && isGroupInOfflineMode.checkNull(); // for email contact isGroupInOfflineMode will be true
-}
+}*/
 
-extension MemberProfileParsing on MemberProfileDetails {
+/*extension MemberProfileParsing on MemberProfileDetails {
   bool isDeletedContact() {
     return contactType == "deleted_contact";
   }
-}
+}*/
 
-Future<Profile> getProfileDetails(String jid) async {
+Future<ProfileDetails> getProfileDetails(String jid) async {
   var value = await Mirrorfly.getProfileDetails(jid.checkNull());
   // profileDataFromJson(value);
   // debugPrint("getProfileDetails--> $value");
   // var profile = await compute(profiledata, value.toString());
-  var profile = Profile.fromJson(json.decode(value.toString()));
+  var profile = ProfileDetails.fromJson(json.decode(value.toString()));
   return profile;
 }
 
@@ -389,7 +389,19 @@ Future<ChatMessageModel> getMessageOfId(String mid) async {
   return chatMessage;
 }
 
-extension ProfileParesing on Profile {
+extension ProfileParesing on ProfileDetails {
+  String getUsername() {
+    var value = Mirrorfly.getProfileDetails(jid.checkNull());
+    var str = ProfileDetails.fromJson(json.decode(value.toString()));
+    return str.getName(); //str.name.checkNull();
+  }
+
+  Future<ProfileDetails> getProfileDetails() async {
+    var value = await Mirrorfly.getProfileDetails(jid.checkNull());
+    var str = ProfileDetails.fromJson(json.decode(value.toString()));
+    return str;
+  }
+
   bool isDeletedContact() {
     return contactType == "deleted_contact";
   }
@@ -481,6 +493,32 @@ extension RecentChatParsing on RecentChatData {
   }
 
   bool isEmailContact() => !isGroup.checkNull() && isGroupInOfflineMode.checkNull(); // for email contact isGroupInOfflineMode will be true
+
+  String getName() {
+    if (!Constants.enableContactSync) {
+      /*return item.name.toString().checkNull().isEmpty
+        ? item.nickName.toString()
+        : item.name.toString();*/
+      return profileName.checkNull().isEmpty
+          ? nickName.checkNull().isNotEmpty
+          ? nickName.checkNull()
+          : getMobileNumberFromJid(jid.checkNull())
+          : profileName.checkNull();
+    } else {
+      if (jid.checkNull() == SessionManagement.getUserJID()) {
+        return Constants.you;
+      } else if (isDeletedContact()) {
+        mirrorFlyLog('isDeletedContact', isDeletedContact().toString());
+        return Constants.deletedUser;
+      } else if (isUnknownContact() || nickName.checkNull().isEmpty) {
+        mirrorFlyLog('isUnknownContact', jid.toString());
+        return getMobileNumberFromJid(jid.checkNull());
+      } else {
+        mirrorFlyLog('nickName', nickName.toString());
+        return nickName.checkNull();
+      }
+    }
+  }
 }
 
 String returnFormattedCount(int count) {
@@ -684,7 +722,7 @@ class Triple {
 Future<RecentChatData?> getRecentChatOfJid(String jid) async {
   var value = await Mirrorfly.getRecentChatOf(jid);
   mirrorFlyLog("chat", value.toString());
-  if (value != null) {
+  if (value.isNotEmpty) {
     var data = recentChatDataFromJson(value);
     return data;
   } else {
@@ -692,7 +730,7 @@ Future<RecentChatData?> getRecentChatOfJid(String jid) async {
   }
 }
 
-String getName(Profile item) {
+String getName(ProfileDetails item) {
   if (!Constants.enableContactSync) {
     /*return item.name.toString().checkNull().isEmpty
         ? item.nickName.toString()
@@ -758,7 +796,7 @@ String getRecentName(RecentChatData item) {
   }
 }
 
-String getMemberName(Member item) {
+String getMemberName(ProfileDetails item) {
   if (!Constants.enableContactSync) {
     /*return item.name.toString().checkNull().isEmpty
         ? item.nickName.toString()
@@ -854,7 +892,7 @@ void showQuickProfilePopup(
     Function()? callTap,
     Function()? videoTap,
     required Function() infoTap,
-    required Rx<Profile> profile}) {
+    required Rx<ProfileDetails> profile}) {
   Get.dialog(
     Obx(() {
       return Dialog(

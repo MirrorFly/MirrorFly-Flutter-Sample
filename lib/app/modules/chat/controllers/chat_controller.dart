@@ -20,6 +20,7 @@ import 'package:mirror_fly_demo/app/common/main_controller.dart';
 import 'package:mirror_fly_demo/app/data/session_management.dart';
 import 'package:mirror_fly_demo/app/data/permissions.dart';
 import 'package:mirror_fly_demo/app/modules/notification/notification_builder.dart';
+
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
@@ -79,9 +80,9 @@ class ChatController extends FullLifeCycleController
   FocusNode searchfocusNode = FocusNode();
 
   var calendar = DateTime.now();
-  var profile_ = Profile().obs;
+  var profile_ = ProfileDetails().obs;
 
-  Profile get profile => profile_.value;
+  ProfileDetails get profile => profile_.value;
   var base64img = ''.obs;
   var imagePath = ''.obs;
   var filePath = ''.obs;
@@ -161,7 +162,7 @@ class ChatController extends FullLifeCycleController
       LogMessage.d("chatJid", userJid);
     }
     if (userJid.isEmpty) {
-      var profileDetail = Get.arguments as Profile;
+      var profileDetail = Get.arguments as ProfileDetails;
       profile_(profileDetail);
       //make unreadMessageTypeMessageId
       unreadMessageTypeMessageId = "M${profileDetail.jid}";
@@ -447,7 +448,7 @@ class ChatController extends FullLifeCycleController
 
   MessageObject? messageObject;
 
-  sendMessage(Profile profile) async {
+  sendMessage(ProfileDetails profile) async {
     removeUnreadSeparator();
     var busyStatus = !profile.isGroupProfile.checkNull()
         ? await Mirrorfly.isBusyStatusEnabled()
@@ -544,7 +545,7 @@ class ChatController extends FullLifeCycleController
   }
 
   sendLocationMessage(
-      Profile profile, double latitude, double longitude) async {
+      ProfileDetails profile, double latitude, double longitude) async {
     if(!availableFeatures.value.isLocationAttachmentAvailable.checkNull()){
       Helper.showFeatureUnavailable();
       return;
@@ -616,57 +617,44 @@ class ChatController extends FullLifeCycleController
     chatLoading(true);
     Mirrorfly.initializeMessageList(userJid: profile.jid.checkNull(), limit: 25,topicId: topicId)//message
         .then((value) {
-      value
-          ? Mirrorfly.loadMessages().then((value) {
-        showLoadingNext(false);
-        showLoadingPrevious(false);
-        if (value == "" || value == null) {
-          debugPrint("Chat List is Empty");
-        } else {
-          try {
-            List<ChatMessageModel> chatMessageModel =
-            chatMessageModelFromJson(value);
+      if(value) {
+        Mirrorfly.loadMessages(flyCallback:  (FlyResponse response){
+          showLoadingNext(false);
+          showLoadingPrevious(false);
+          if(response.isSuccess && response.data.isNotEmpty){
+            LogMessage.d("loadMessages", response.data);
+            List<ChatMessageModel> chatMessageModel = chatMessageModelFromJson(response.data);
             chatList(chatMessageModel.reversed.toList());
             showStarredMessage();
             sendReadReceipt(removeUnreadFromList: false);
             // loadPrevORNextMessagesLoad();
-          } catch (error) {
-            debugPrint("chatHistory parsing error--> $error");
           }
-        }
+          chatLoading(false);
+        });
+      }else{
         chatLoading(false);
-      }).catchError((e) {
-        chatLoading(false);
-      })
-          : toToast("Chat History Not Initialized");
+        toToast("Chat History Not Initialized");
+      }
     });
   }
 
   Future<void> _loadPreviousMessages() async {
     showLoadingPrevious(await Mirrorfly.hasPreviousMessages());
-    Mirrorfly.loadPreviousMessages().then((value) {
-      if (value == "" || value == null) {
-        debugPrint("Chat List is Empty");
-      } else {
-        try {
-          var chatMessageModel =
-              List<ChatMessageModel>.empty(growable: true).obs;
-          chatMessageModel.addAll(chatMessageModelFromJson(value));
-          if (chatMessageModel
-              .toList()
-              .isNotEmpty) {
-            chatList.insertAll(
-                chatList.length, chatMessageModel.reversed.toList());
-          } else {
-            debugPrint("chat list is empty");
-          }
-          showStarredMessage();
-        } catch (error) {
-          debugPrint("chatHistory parsing error--> $error");
+    Mirrorfly.loadPreviousMessages(flyCallback:  (FlyResponse response){
+      if(response.isSuccess && response.data.isNotEmpty){
+        var chatMessageModel =
+            List<ChatMessageModel>.empty(growable: true).obs;
+        chatMessageModel.addAll(chatMessageModelFromJson(response.data));
+        if (chatMessageModel
+            .toList()
+            .isNotEmpty) {
+          chatList.insertAll(
+              chatList.length, chatMessageModel.reversed.toList());
+        } else {
+          debugPrint("chat list is empty");
         }
+        showStarredMessage();
       }
-      showLoadingPrevious(false);
-    }).catchError((e) {
       showLoadingPrevious(false);
     });
   }
@@ -677,24 +665,16 @@ class ChatController extends FullLifeCycleController
     }else{
       showLoadingNext(showLoading);
     }
-    Mirrorfly.loadNextMessages().then((value) {
-      if (value == "" || value == null) {
-        debugPrint("Chat List is Empty");
-      } else {
-        try {
-          List<ChatMessageModel> chatMessageModel =
-          chatMessageModelFromJson(value);
-          if (chatMessageModel.isNotEmpty) {
-            chatList.insertAll(0, chatMessageModel.reversed.toList());
-            sendReadReceipt(removeUnreadFromList: removeUnreadFromList);
-          }
-            showStarredMessage();
-        } catch (error) {
-          debugPrint("chatHistory parsing error--> $error");
+    Mirrorfly.loadNextMessages(flyCallback:  (FlyResponse response){
+      if(response.isSuccess && response.data.isNotEmpty){
+        List<ChatMessageModel> chatMessageModel =
+        chatMessageModelFromJson(response.data);
+        if (chatMessageModel.isNotEmpty) {
+          chatList.insertAll(0, chatMessageModel.reversed.toList());
+          sendReadReceipt(removeUnreadFromList: removeUnreadFromList);
         }
+        showStarredMessage();
       }
-      showLoadingNext(false);
-    }).catchError((e) {
       showLoadingNext(false);
     });
   }
@@ -1478,7 +1458,7 @@ class ChatController extends FullLifeCycleController
                     .then((value) {
                   debugPrint(value.toString());
                   //Helper.hideLoading();
-                  if (value != null && value) {
+                  if (value) {
                     // removeChatList(selectedChatList);//
                     for (var chatList in selectedChatList) {
                       chatList.isMessageRecalled(true);
@@ -1597,7 +1577,7 @@ class ChatController extends FullLifeCycleController
                     Get.back();
                     Helper.showLoading(message: "Blocking User");
                     Mirrorfly.blockUser(profile.jid!).then((value) {
-                      debugPrint(value);
+                      debugPrint("$value");
                       profile.isBlocked = true;
                       isBlocked(true);
                       profile_.refresh();
@@ -1960,7 +1940,7 @@ class ChatController extends FullLifeCycleController
       })?.then((value) {
         if (value != null) {
           debugPrint(
-              "result of forward ==> ${(value as Profile).toJson().toString()}");
+              "result of forward ==> ${(value as ProfileDetails).toJson().toString()}");
           profile_.value = value;
           isBlocked(profile.isBlocked);
         }
@@ -2105,7 +2085,7 @@ class ChatController extends FullLifeCycleController
     if (profile.isGroupProfile ?? false) {
       Get.toNamed(Routes.groupInfo, arguments: profile)?.then((value) {
         if (value != null) {
-          profile_(value as Profile);
+          profile_(value as ProfileDetails);
           isBlocked(profile.isBlocked);
           debugPrint("value--> ${profile.isGroupProfile}");
         }
@@ -2278,7 +2258,7 @@ class ChatController extends FullLifeCycleController
         debugPrint("value--> show group list");
         if (typingList.isNotEmpty) {
           userPresenceStatus(
-              "${Member(jid: typingList.last).getUsername()} typing...");
+              "${ProfileDetails(jid: typingList.last).getUsername()} typing...");
           //"${Member(jid: typingList.last).getUsername()} typing...");
         } else {
           getParticipantsNameAsCsv(profile.jid.checkNull());
@@ -2309,7 +2289,7 @@ class ChatController extends FullLifeCycleController
 
   getParticipantsNameAsCsv(String jid) {
     Mirrorfly.getGroupMembersList(jid, false).then((value) {
-      if (value != null) {
+      if (value.isNotEmpty) {
         var str = <String>[];
         mirrorFlyLog("getGroupMembersList-->", value);
         var groupsMembersProfileList = memberFromJson(value);
@@ -2555,10 +2535,10 @@ class ChatController extends FullLifeCycleController
   bool forwardMessageVisibility(ChatMessageModel chat) {
     if (!chat.isMessageRecalled.value && !chat.isMessageDeleted) {
       if (chat.isMediaMessage()) {
-        if (chat.mediaChatMessage!.mediaDownloadStatus.value ==
+        if ((chat.mediaChatMessage!.mediaDownloadStatus.value ==
             Constants.mediaDownloaded ||
             chat.mediaChatMessage!.mediaUploadStatus.value ==
-                Constants.mediaUploaded) {
+                Constants.mediaUploaded) &&(checkFile(chat.mediaChatMessage!.mediaLocalStoragePath.value.checkNull()))) {
           return true;
         }
       } else {
@@ -2583,7 +2563,7 @@ class ChatController extends FullLifeCycleController
     })?.then((value) {
       if (value != null) {
         debugPrint(
-            "result of forward ==> ${(value as Profile).toJson().toString()}");
+            "result of forward ==> ${(value as ProfileDetails).toJson().toString()}");
         profile_.value = value;
         isBlocked(profile.isBlocked);
       }
@@ -2757,26 +2737,26 @@ class ChatController extends FullLifeCycleController
   }
 
   void getMessageFromServerAndNavigateToMessage(ChatMessageModel chatMessage, int? index) {
-    Mirrorfly.loadMessages().then((value) {
+    Mirrorfly.loadMessages(flyCallback:  (FlyResponse response){
       showLoadingNext(false);
       showLoadingPrevious(false);
-      if (value == "" || value == null) {
-        debugPrint("Chat List is Empty");
-      } else {
-        try {
-          chatList.clear();
-          List<ChatMessageModel> chatMessageModel =
-          chatMessageModelFromJson(value);
-          chatList(chatMessageModel.reversed.toList());
-          navigateToMessage(chatMessage, index: index);
-        } catch (error) {
-          debugPrint("chatHistory parsing error--> $error");
-        }
+      if(response.isSuccess && response.data.isNotEmpty){
+        LogMessage.d("loadMessages", response.data);
+        chatList.clear();
+        List<ChatMessageModel> chatMessageModel =
+        chatMessageModelFromJson(response.data);
+        chatList(chatMessageModel.reversed.toList());
+        navigateToMessage(chatMessage, index: index);
+        chatLoading(false);
+      }else{
+        chatLoading(false);
       }
-      chatLoading(false);
+    });
+     /*   .then((value) {
+
     }).catchError((e) {
       chatLoading(false);
-    });
+    });*/
   }
 
   int findLastVisibleItemPositionForChat() {
