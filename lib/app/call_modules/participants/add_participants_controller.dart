@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/call_modules/outgoing_call/call_controller.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
+
 import 'package:mirrorfly_plugin/mirrorflychat.dart';
 import 'package:permission_handler/permission_handler.dart';
 
@@ -18,9 +19,9 @@ class AddParticipantsController extends GetxController with GetTickerProviderSta
   var pageNum = 1;
   var isPageLoading = false.obs;
   var scrollable = (!Constants.enableContactSync).obs;
-  var usersList = <Profile>[].obs;
-  var mainUsersList = List<Profile>.empty(growable: true).obs;
-  var selectedUsersList = List<Profile>.empty(growable: true).obs;
+  var usersList = <ProfileDetails>[].obs;
+  var mainUsersList = List<ProfileDetails>.empty(growable: true).obs;
+  var selectedUsersList = List<ProfileDetails>.empty(growable: true).obs;
   var selectedUsersJIDList = List<String>.empty(growable: true).obs;
 
   var currentTab = 0.obs;
@@ -160,7 +161,7 @@ class AddParticipantsController extends GetxController with GetTickerProviderSta
     }
   }
 
-  onListItemPressed(Profile item) {
+  onListItemPressed(ProfileDetails item) {
     if (item.isBlocked.checkNull()) {
       unBlock(item);
     } else {
@@ -168,7 +169,7 @@ class AddParticipantsController extends GetxController with GetTickerProviderSta
     }
   }
 
-  unBlock(Profile item) {
+  unBlock(ProfileDetails item) {
     Helper.showAlert(message: "Unblock ${getName(item)}?", actions: [
       TextButton(
           onPressed: () {
@@ -198,7 +199,7 @@ class AddParticipantsController extends GetxController with GetTickerProviderSta
     ]);
   }
 
-  contactSelected(Profile item) {
+  contactSelected(ProfileDetails item) {
     if(callList.indexWhere((element) => element.userJid.toString()==item.jid.toString()).isNegative) {
       if (selectedUsersJIDList.contains(item.jid)) {
         selectedUsersList.removeWhere((user) => user.jid == item.jid);
@@ -318,15 +319,121 @@ class AddParticipantsController extends GetxController with GetTickerProviderSta
       callConnectedUserList.add(value1.userJid?.value ?? '');
     }
     if (await AppUtils.isNetConnected() || Constants.enableContactSync) {
-      var future = (!Constants.enableContactSync)
-          ? Mirrorfly.getUserList(pageNum, _searchText)
-          : Mirrorfly.getRegisteredUsers(false);
-      future.then((data) async {
+      callback (FlyResponse response) async {
+        if(response.isSuccess && response.data.isNotEmpty){
+          var data = response.data;
+          mirrorFlyLog("userlist", data);
+          var item = userListFromJson(data);
+          var items = getFilteredList(callConnectedUserList,item.data);
+          var list = <ProfileDetails>[];
+
+          if (groupJid.value.checkNull().isNotEmpty) {
+            await Future.forEach(items, (it) async {
+              await Mirrorfly.isMemberOfGroup(
+                  groupJid.value.checkNull(), it.jid.checkNull())
+                  .then((value) {
+                mirrorFlyLog("item", value.toString());
+                if (value == null || !value) {
+                  list.add(it);
+                }
+              });
+            });
+            if (_first) {
+              _first = false;
+              mainUsersList(list);
+            }
+            if (fromSearch) {
+              if (!Constants.enableContactSync) {
+                usersList(list);
+                // if(usersList.length==20) pageNum += 1;
+                scrollable.value = list.length == 20;
+              } else {
+                var userlist = mainUsersList.where((p0) => getName(p0)
+                    .toString()
+                    .toLowerCase()
+                    .contains(_searchText.trim().toLowerCase()));
+                usersList(userlist.toList());
+                scrollable(false);
+                /*for (var userDetail in mainUsersList) {
+                  if (userDetail.name.toString().toLowerCase().contains(_searchText.trim().toLowerCase())) {
+                    usersList.add(userDetail);
+                  }
+                }*/
+              }
+            } else {
+              if (!Constants.enableContactSync) {
+                usersList.addAll(list);
+                // if(usersList.length==20) pageNum += 1;
+                scrollable.value = list.length == 20;
+              } else {
+                usersList(list);
+                scrollable(false);
+              }
+            }
+            isPageLoading.value = false;
+            usersList.refresh();
+          } else {
+            list.addAll(items);
+            if (Constants.enableContactSync && fromSearch) {
+              var userlist = mainUsersList.where((p0) => getName(p0)
+                  .toString()
+                  .toLowerCase()
+                  .contains(_searchText.trim().toLowerCase()));
+              usersList(userlist.toList());
+              /*for (var userDetail in mainUsersList) {
+              if (userDetail.name.toString().toLowerCase().contains(_searchText.trim().toLowerCase())) {
+                usersList.add(userDetail);
+              }
+            }*/
+            }
+            if (_first) {
+              _first = false;
+              mainUsersList(list);
+            }
+            if (fromSearch) {
+              if (!Constants.enableContactSync) {
+                usersList(list);
+                // if(usersList.length==20) pageNum += 1;
+                scrollable.value = list.length == 20;
+              } else {
+                var userlist = mainUsersList.where((p0) => getName(p0)
+                    .toString()
+                    .toLowerCase()
+                    .contains(_searchText.trim().toLowerCase()));
+                usersList(userlist.toList());
+                scrollable(false);
+                /*for (var userDetail in mainUsersList) {
+                  if (userDetail.name.toString().toLowerCase().contains(_searchText.trim().toLowerCase())) {
+                    usersList.add(userDetail);
+                  }
+                }*/
+              }
+            } else {
+              if (!Constants.enableContactSync) {
+                usersList.addAll(list);
+                // if(usersList.length==20) pageNum += 1;
+                scrollable.value = list.length == 20;
+              } else {
+                usersList(list);
+                scrollable(false);
+              }
+            }
+            isPageLoading.value = false;
+            usersList.refresh();
+          }
+        }else{
+          toToast(response.exception!.message.toString());
+        }
+      }
+      (!Constants.enableContactSync)
+          ? Mirrorfly.getUserList(pageNum, _searchText,flyCallback: callback)
+          : Mirrorfly.getRegisteredUsers(false,flyCallback: callback);
+      /*future.then((data) async {
         //Mirrorfly.getUserList(pageNum, _searchText).then((data) async {
         mirrorFlyLog("userlist", data);
         var item = userListFromJson(data);
         var items = getFilteredList(callConnectedUserList,item.data);
-        var list = <Profile>[];
+        var list = <ProfileDetails>[];
 
         if (groupJid.value.checkNull().isNotEmpty) {
           await Future.forEach(items, (it) async {
@@ -355,11 +462,11 @@ class AddParticipantsController extends GetxController with GetTickerProviderSta
                   .contains(_searchText.trim().toLowerCase()));
               usersList(userlist.toList());
               scrollable(false);
-              /*for (var userDetail in mainUsersList) {
+              *//*for (var userDetail in mainUsersList) {
                   if (userDetail.name.toString().toLowerCase().contains(_searchText.trim().toLowerCase())) {
                     usersList.add(userDetail);
                   }
-                }*/
+                }*//*
             }
           } else {
             if (!Constants.enableContactSync) {
@@ -381,11 +488,11 @@ class AddParticipantsController extends GetxController with GetTickerProviderSta
                 .toLowerCase()
                 .contains(_searchText.trim().toLowerCase()));
             usersList(userlist.toList());
-            /*for (var userDetail in mainUsersList) {
+            *//*for (var userDetail in mainUsersList) {
               if (userDetail.name.toString().toLowerCase().contains(_searchText.trim().toLowerCase())) {
                 usersList.add(userDetail);
               }
-            }*/
+            }*//*
           }
           if (_first) {
             _first = false;
@@ -403,11 +510,11 @@ class AddParticipantsController extends GetxController with GetTickerProviderSta
                   .contains(_searchText.trim().toLowerCase()));
               usersList(userlist.toList());
               scrollable(false);
-              /*for (var userDetail in mainUsersList) {
+              *//*for (var userDetail in mainUsersList) {
                   if (userDetail.name.toString().toLowerCase().contains(_searchText.trim().toLowerCase())) {
                     usersList.add(userDetail);
                   }
-                }*/
+                }*//*
             }
           } else {
             if (!Constants.enableContactSync) {
@@ -425,7 +532,7 @@ class AddParticipantsController extends GetxController with GetTickerProviderSta
       }).catchError((error) {
         debugPrint("Get User list error--> $error");
         toToast(error.toString());
-      });
+      });*/
     } else {
       toToast(Constants.noInternetConnection);
     }
@@ -435,7 +542,7 @@ class AddParticipantsController extends GetxController with GetTickerProviderSta
     if(groupId.isNotEmpty) {
       Mirrorfly.getGroupMembersList(groupId.value.checkNull(), null).then((value) {
         mirrorFlyLog("getGroupMembersList", value);
-        if (value != null) {
+        if (value.isNotEmpty) {
           var list = profileFromJson(value);
           var callConnectedUserList = List<String>.from(callList.map((element) => element.userJid));
           var filteredList = getFilteredList(callConnectedUserList, list);
@@ -446,7 +553,7 @@ class AddParticipantsController extends GetxController with GetTickerProviderSta
     }
   }
 
-  List<Profile> getFilteredList(List<String> callConnectedUserList,List<Profile>? usersList){
+  List<ProfileDetails> getFilteredList(List<String> callConnectedUserList,List<ProfileDetails>? usersList){
     return (usersList?.where((element) => !callConnectedUserList.contains(element.jid) && element.jid!= SessionManagement.getUserJID()).toList()) ?? [];
   }
 }

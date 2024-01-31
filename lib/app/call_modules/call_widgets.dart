@@ -10,7 +10,7 @@ import 'package:mirror_fly_demo/app/data/session_management.dart';
 import 'package:mirrorfly_plugin/mirrorfly_view.dart';
 import 'package:mirrorfly_plugin/mirrorflychat.dart';
 
-Widget buildProfileImage(Profile item, {double size = 105}) {
+Widget buildProfileImage(ProfileDetails item, {double size = 105}) {
   return ImageNetwork(
     url: item.image.toString(),
     width: size,

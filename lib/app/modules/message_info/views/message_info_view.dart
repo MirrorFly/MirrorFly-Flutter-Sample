@@ -106,7 +106,7 @@ class MessageInfoView extends GetView<MessageInfoController> {
                   itemCount: controller.messageDeliveredList.length,
                   itemBuilder: (cxt, index) {
                     var member = controller.messageDeliveredList[index]
-                        .memberProfileDetails!;
+                        .profileDetails!;
                     return memberItem(name: member.name.checkNull(),
                         image: member.image.checkNull(),
                         status: controller.chatDate(context, controller.messageDeliveredList[index]),
@@ -139,7 +139,7 @@ class MessageInfoView extends GetView<MessageInfoController> {
                   itemCount: controller.messageReadList.length,
                   itemBuilder: (cxt, index) {
                     var member = controller.messageReadList[index]
-                        .memberProfileDetails!;
+                        .profileDetails!;
                     return memberItem(name: member.name.checkNull(),
                         image: member.image.checkNull(),
                         status: controller.chatDate(context,

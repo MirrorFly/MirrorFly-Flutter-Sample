@@ -12,6 +12,7 @@ import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/common/main_controller.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
 import 'package:mirror_fly_demo/app/data/permissions.dart';
+
 import 'package:otp_text_field/otp_field.dart';
 
 import '../../../common/constants.dart';
@@ -311,44 +312,45 @@ class LoginController extends GetxController {
       showLoading();
       var userIdentifier = countryCode!.replaceAll('+', '') + mobileNumber.text;
       Mirrorfly.registerUser(countryCode!.replaceAll('+', '') + mobileNumber.text,
-              fcmToken: SessionManagement.getToken().checkNull(), isForceRegister : isForceRegister)
-          .then((value) {
+          fcmToken: SessionManagement.getToken().checkNull(),
+          isForceRegister: isForceRegister,
+          flyCallback: (FlyResponse response) {
+              if (response.isSuccess) {
+                if (response.data.isNotEmpty) {
+                  var userData = registerModelFromJson(response.data); //message
+                  SessionManagement.setLogin(userData.data!.username!.isNotEmpty);
+                  SessionManagement.setUser(userData.data!);
+                  SessionManagement.setUserIdentifier(userIdentifier);
+                  SessionManagement.setAuthToken(userData.data!.token.checkNull());
+                  if (Get.isRegistered<MainController>()) {
+                    Get.find<MainController>().currentAuthToken(userData.data!.token.checkNull());
+                  }
+                  // Mirrorfly.setNotificationSound(true);
+                  // SessionManagement.setNotificationSound(true);
+                  // userData.data.
+                  enableArchive();
+                  Mirrorfly.setRegionCode(regionCode ?? 'IN');
 
-        if (value.contains("data")) {
-          var userData = registerModelFromJson(value); //message
-          SessionManagement.setLogin(userData.data!.username!.isNotEmpty);
-          SessionManagement.setUser(userData.data!);
-          SessionManagement.setUserIdentifier(userIdentifier);
-          SessionManagement.setAuthToken(userData.data!.token.checkNull());
-          if(Get.isRegistered<MainController>()){
-            Get.find<MainController>().authToken(userData.data!.token.checkNull());
-          }
-          // Mirrorfly.setNotificationSound(true);
-          // SessionManagement.setNotificationSound(true);
-          // userData.data.
-          enableArchive();
-          Mirrorfly.setRegionCode(regionCode ?? 'IN');
-
-          ///if its not set then error comes in contact sync delete from phonebook.
-          SessionManagement.setCountryCode((countryCode ?? "").replaceAll('+', ''));
-          setUserJID(userData.data!.username!);
-        }
-      }).catchError((error) {
-        debugPrint("issue===> $error");
-        debugPrint(error.message);
-        hideLoading();
-        if (error.code == "403") {
-          debugPrint("issue 403 ===> $error");
-          Get.offAllNamed(Routes.adminBlocked);
-        } else if (error.code == "405") {
-          debugPrint("issue 405 ===> $error");
-          sessionExpiredDialogShow(Constants.maximumLoginReached);
-        } else {
-          debugPrint("issue else code ===> ${error.code}");
-          debugPrint("issue else ===> $error");
-          toToast(error.message);
-        }
-      });
+                  ///if its not set then error comes in contact sync delete from phonebook.
+                  SessionManagement.setCountryCode((countryCode ?? "").replaceAll('+', ''));
+                  setUserJID(userData.data!.username!);
+                }
+              } else {
+                debugPrint("issue===> ${response.exception?.message.toString()}");
+                hideLoading();
+                if (response.exception?.code == "403") {
+                  debugPrint("issue 403 ===> ${response.exception?.message }");
+                  Get.offAllNamed(Routes.adminBlocked);
+                } else if (response.exception?.code  == "405") {
+                  debugPrint("issue 405 ===> ${response.exception?.message }");
+                  sessionExpiredDialogShow(Constants.maximumLoginReached);
+                } else {
+                  debugPrint("issue else code ===> ${response.exception?.code }");
+                  debugPrint("issue else ===> ${response.exception?.message }");
+                  toToast(response.exception!.message.toString());
+                }
+              }
+            });
     } else {
       toToast(Constants.noInternetConnection);
     }

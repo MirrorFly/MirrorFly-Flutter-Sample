@@ -10,9 +10,9 @@ import 'package:mirror_fly_demo/app/routes/app_pages.dart';
 import 'package:mirrorfly_plugin/mirrorflychat.dart';
 
 class GroupParticipantsController extends GetxController {
-  var usersList = <Profile>[].obs;
-  var mainUserList = <Profile>[].obs;
-  var selectedUsersList = List<Profile>.empty(growable: true).obs;
+  var usersList = <ProfileDetails>[].obs;
+  var mainUserList = <ProfileDetails>[].obs;
+  var selectedUsersList = List<ProfileDetails>.empty(growable: true).obs;
   var selectedUsersJIDList = List<String>.empty(growable: true).obs;
 
 
@@ -36,7 +36,7 @@ class GroupParticipantsController extends GetxController {
   void getGroupMembers() {
     Mirrorfly.getGroupMembersList(groupId.value.checkNull(), false).then((value) {
       mirrorFlyLog("getGroupMembersList", value);
-      if (value != null) {
+      if (value.isNotEmpty) {
         var list = profileFromJson(value);
         var withoutMe = list.where((element) => element.jid != SessionManagement.getUserJID()).toList();
         mainUserList(withoutMe);
@@ -104,7 +104,7 @@ class GroupParticipantsController extends GetxController {
 
   //Search End Here
 
-  showProfilePopup(Rx<Profile> profile) {
+  showProfilePopup(Rx<ProfileDetails> profile) {
     showQuickProfilePopup(
         context: Get.context,
         // chatItem: chatItem,
@@ -123,7 +123,7 @@ class GroupParticipantsController extends GetxController {
         profile: profile);
   }
 
-  onListItemPressed(Profile item) {
+  onListItemPressed(ProfileDetails item) {
     if (item.isBlocked.checkNull()) {
       unBlock(item);
     } else {
@@ -131,7 +131,7 @@ class GroupParticipantsController extends GetxController {
     }
   }
 
-  unBlock(Profile item) {
+  unBlock(ProfileDetails item) {
     Helper.showAlert(message: "Unblock ${getName(item)}?", actions: [
       TextButton(
           onPressed: () {
@@ -186,7 +186,7 @@ class GroupParticipantsController extends GetxController {
   //Call Functions Start Here
   var getMaxCallUsersCount = 8;
   var groupCallMembersCount = 1.obs; //initially its 1 because me also added into call
-  void validateForCall(Profile item) {
+  void validateForCall(ProfileDetails item) {
     if (selectedUsersJIDList.contains(item.jid)) {
       selectedUsersList.remove(item);
       selectedUsersJIDList.remove(item.jid);

@@ -1,3 +1,4 @@
+
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
@@ -12,11 +13,11 @@ class DecodeImage extends ImageProvider<DecodeImage> {
   final int index;
 
   const DecodeImage(
-      this.entity, {
-        this.scale = 1.0,
-        this.thumbSize = 120,
-        this.index = 0,
-      });
+    this.entity, {
+    this.scale = 1.0,
+    this.thumbSize = 120,
+    this.index = 0,
+  });
 
   @override
   ImageStreamCompleter loadImage(DecodeImage key, ImageDecoderCallback decode) {
@@ -33,7 +34,7 @@ class DecodeImage extends ImageProvider<DecodeImage> {
     assert(key == this);
 
     final coverEntity =
-    (await key.entity.getAssetListRange(start: index, end: index + 1))[0];
+        (await key.entity.getAssetListRange(start: index, end: index + 1))[0];
 
     final bytes = await coverEntity
         .thumbnailDataWithSize(ThumbnailSize(thumbSize, thumbSize));
