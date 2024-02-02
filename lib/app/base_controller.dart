@@ -95,7 +95,7 @@ abstract class BaseController {
       LogMessage.d("showOrUpdateOrCancelNotification",event);
       var data  = json.decode(event.toString());
       var jid = data["jid"];
-      var chatMessage = chatMessageFromJson(data["chatMessage"]);
+      var chatMessage = sendMessageModelFromJson(data["chatMessage"]);
       showOrUpdateOrCancelNotification(jid,chatMessage);
     });
     Mirrorfly.onGroupDeletedLocally.listen(onGroupDeletedLocally);
@@ -539,17 +539,6 @@ abstract class BaseController {
 
   void onMessageStatusUpdated(event) {
     ChatMessageModel chatMessageModel = sendMessageModelFromJson(event);
-
-    if(SessionManagement.getCurrentChatJID() == chatMessageModel.chatUserJid.checkNull()){
-      debugPrint("Message Status updated user chat screen is in online");
-    }else{
-        var data = chatMessageFromJson(event.toString());
-        if(data.isMessageRecalled.checkNull()) {
-          // NotificationBuilder.createNotification(data);
-        }
-        // showLocalNotification(chatMessageModel);
-    }
-
     if (Get.isRegistered<ChatController>()) {
       Get.find<ChatController>().onMessageStatusUpdated(chatMessageModel);
     }
@@ -679,7 +668,7 @@ abstract class BaseController {
       var data = chatMessageFromJson(event.toString());
       debugPrint("notificationMadeByME ${notificationMadeByME(data)}");
       //checked own notification for (if group notification made by me like group member add,remove)
-      if(data.messageId!=null && !notificationMadeByME(data)) {
+      if(data.messageId.isNotEmpty && !notificationMadeByME(data)) {
         // NotificationBuilder.createNotification(data);
       }
       // showLocalNotification(chatMessageModel);
@@ -695,7 +684,7 @@ abstract class BaseController {
     }
   }
 
-  Future<void> showOrUpdateOrCancelNotification(String jid, ChatMessage chatMesssage) async {
+  Future<void> showOrUpdateOrCancelNotification(String jid, ChatMessageModel chatMesssage) async {
     if(SessionManagement.getCurrentChatJID() == chatMesssage.chatUserJid.checkNull()){
       return;
     }
@@ -703,7 +692,7 @@ abstract class BaseController {
     if (profileDetails.isMuted == true) {
       return;
     }
-    if(chatMesssage.messageId!=null) {
+    if(chatMesssage.messageId.isNotEmpty) {
       NotificationBuilder.createNotification(chatMesssage);
     }
   }
