@@ -165,7 +165,11 @@ class ChatController extends FullLifeCycleController
       var profileDetail = Get.arguments as ProfileDetails;
       profile_(profileDetail);
       //make unreadMessageTypeMessageId
-      unreadMessageTypeMessageId = "M${profileDetail.jid}";
+      if(Platform.isAndroid){
+        unreadMessageTypeMessageId = "M${profileDetail.jid}";
+      }else if(Platform.isIOS){
+        unreadMessageTypeMessageId = "M_${getMobileNumberFromJid(profileDetail.jid.checkNull())}";
+      }
       checkAdminBlocked();
       ready();
       // initListeners();
@@ -174,7 +178,11 @@ class ChatController extends FullLifeCycleController
         SessionManagement.setChatJid("");
         profile_(value);
         //make unreadMessageTypeMessageId
-        unreadMessageTypeMessageId = "M${value.jid}";
+        if(Platform.isAndroid){
+          unreadMessageTypeMessageId = "M${value.jid}";
+        }else if(Platform.isIOS){
+          unreadMessageTypeMessageId = "M_${getMobileNumberFromJid(value.jid.checkNull())}";
+        }
         checkAdminBlocked();
         ready();
         // initListeners();
