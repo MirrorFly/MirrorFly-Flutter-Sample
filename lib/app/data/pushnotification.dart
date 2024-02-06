@@ -9,11 +9,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/data/session_management.dart';
-import 'package:mirrorfly_plugin/mirrorfly.dart';
+import 'package:mirrorfly_plugin/mirrorflychat.dart';
+import 'package:mirror_fly_demo/app/model/chat_message_model.dart';
 
 import '../common/constants.dart';
 import '../common/notification_service.dart';
-import '../model/notification_message_model.dart';
 import '../modules/notification/notification_builder.dart';
 import '../routes/app_pages.dart';
 
@@ -190,8 +190,8 @@ class PushNotifications {
       WidgetsFlutterBinding.ensureInitialized();
       await Mirrorfly.handleReceivedMessage(notificationData).then((value) async {
         mirrorFlyLog("#Mirrorfly Notification -> notification message", value.toString());
-        var data = chatMessageFromJson(value.toString());
-        if(data.messageId!=null) {
+        var data = sendMessageModelFromJson(value.toString());
+        if(data.messageId.isNotEmpty) {
           NotificationBuilder.createNotification(data,autoCancel: false);
         }
       });

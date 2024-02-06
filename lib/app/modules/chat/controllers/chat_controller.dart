@@ -469,7 +469,8 @@ class ChatController extends FullLifeCycleController
       }
       isReplying(false);
       if (messageController.text.trim().isNotEmpty) {
-        Mirrorfly.sendTextMessage(messageController.text.trim(),
+        //old method is deprecated Instead of use below new method
+        /*Mirrorfly.sendTextMessage(messageController.text.trim(),
             profile.jid.toString(),replyMessageId,topicId: topicId)
             .then((value) {
           mirrorFlyLog("text message", value);
@@ -484,6 +485,20 @@ class ChatController extends FullLifeCycleController
           // chatList.insert(0, chatMessageModel);
           scrollToBottom();
           updateLastMessage(value);
+        });*/
+        Mirrorfly.sendMessage(messageParams: MessageParams(toJid: profile.jid.checkNull(),
+            messageType: MessageType.text,replyMessageId: replyMessageId,topicId: topicId,
+            textMessage: TextMessageParams(messageText: messageController.text.trim())), flyCallback: (response){
+          if(response.isSuccess){
+            mirrorFlyLog("text message", response.data);
+            messageController.text = "";
+            isUserTyping(false);
+            clearMessage();
+            scrollToBottom();
+            updateLastMessage(response.data);
+          }else{
+            LogMessage.d("sendMessage", response.exception?.message);
+          }
         });
       }
     } else {
@@ -567,8 +582,8 @@ class ChatController extends FullLifeCycleController
         replyMessageId = replyChatMessage.messageId;
       }
       isReplying(false);
-
-      Mirrorfly.sendLocationMessage(
+      //old method is deprecated Instead of use below new method
+      /*Mirrorfly.sendLocationMessage(
           profile.jid.toString(), latitude, longitude, replyMessageId,topicId: topicId)
           .then((value) {
         mirrorFlyLog("Location_msg", value.toString());
@@ -576,6 +591,17 @@ class ChatController extends FullLifeCycleController
         // chatList.insert(0, chatMessageModel);
         scrollToBottom();
         updateLastMessage(value);
+      });*/
+      Mirrorfly.sendMessage(messageParams: MessageParams(toJid: profile.jid.checkNull(),
+          messageType: MessageType.location,replyMessageId: replyMessageId,topicId: topicId,
+          locationMessage: LocationMessageParams(latitude: latitude, longitude: longitude)), flyCallback: (response){
+        if(response.isSuccess){
+          mirrorFlyLog("Location_msg", response.data.toString());
+          scrollToBottom();
+          updateLastMessage(response.data);
+        }else{
+          LogMessage.d("sendMessage", response.exception?.message);
+        }
       });
     } else {
       //show busy status popup
@@ -796,7 +822,8 @@ class ChatController extends FullLifeCycleController
       }
       isReplying(false);
       if (File(path!).existsSync()) {
-        return Mirrorfly.sendImageMessage(
+        //old method is deprecated Instead of use below new method
+        /*return Mirrorfly.sendImageMessage(
             profile.jid!, path, caption, replyMessageID,topicId: topicId)
             .then((value) {
           clearMessage();
@@ -805,6 +832,20 @@ class ChatController extends FullLifeCycleController
           scrollToBottom();
           updateLastMessage(value);
           return chatMessageModel;
+        });*/
+        return Mirrorfly.sendMessage(messageParams: MessageParams(toJid: profile.jid.checkNull(),
+            messageType: MessageType.image,replyMessageId: replyMessageID,topicId: topicId,
+            fileMessage: FileMessageParams(file: File(path),caption: caption)), flyCallback: (response){
+          if(response.isSuccess){
+            clearMessage();
+            ChatMessageModel chatMessageModel = sendMessageModelFromJson(response.data);
+            // chatList.insert(0, chatMessageModel);
+            scrollToBottom();
+            updateLastMessage(response.data);
+            return chatMessageModel;
+          }else{
+            LogMessage.d("sendMessage", response.exception?.message);
+          }
         });
       } else {
         debugPrint("file not found for upload");
@@ -873,7 +914,8 @@ class ChatController extends FullLifeCycleController
       }
       isReplying(false);
       Platform.isIOS ? Helper.showLoading(message: "Compressing Video") : null;
-      return Mirrorfly.sendVideoMessage(
+      //old method is deprecated Instead of use below new method
+      /*return Mirrorfly.sendVideoMessage(
           profile.jid!, videoPath, caption, replyMessageID,topicId: topicId)
           .then((value) {
         clearMessage();
@@ -883,6 +925,21 @@ class ChatController extends FullLifeCycleController
         scrollToBottom();
         updateLastMessage(value);
         return chatMessageModel;
+      });*/
+      return Mirrorfly.sendMessage(messageParams: MessageParams(toJid: profile.jid.checkNull(),
+          messageType: MessageType.video,replyMessageId: replyMessageID,topicId: topicId,
+          fileMessage: FileMessageParams(file: File(videoPath),caption: caption)), flyCallback: (response){
+        if(response.isSuccess){
+          clearMessage();
+          Platform.isIOS ? Helper.hideLoading() : null;
+          ChatMessageModel chatMessageModel = sendMessageModelFromJson(response.data);
+          // chatList.insert(0, chatMessageModel);
+          scrollToBottom();
+          updateLastMessage(response.data);
+          return chatMessageModel;
+        }else{
+          LogMessage.d("sendMessage", response.exception?.message);
+        }
       });
     } else {
       //show busy status popup
@@ -992,7 +1049,8 @@ class ChatController extends FullLifeCycleController
         replyMessageId = replyChatMessage.messageId;
       }
       isReplying(false);
-      return Mirrorfly.sendContactMessage(
+      //old method is deprecated Instead of use below new method
+      /*return Mirrorfly.sendContactMessage(
           contactList, profile.jid!, contactName, replyMessageId,topicId: topicId)
           .then((value) {
         debugPrint("response--> $value");
@@ -1001,6 +1059,16 @@ class ChatController extends FullLifeCycleController
         scrollToBottom();
         updateLastMessage(value);
         return chatMessageModel;
+      });*/
+      return Mirrorfly.sendMessage(messageParams: MessageParams(toJid: profile.jid.checkNull(),
+          messageType: MessageType.contact,replyMessageId: replyMessageId,topicId: topicId,contactMessage: ContactMessageParams(name: contactName, numbers: contactList)), flyCallback: (response){
+        if(response.isSuccess){
+          debugPrint("response--> ${response.data}");
+          scrollToBottom();
+          updateLastMessage(response.data);
+        }else{
+          LogMessage.d("sendMessage", response.exception?.message);
+        }
       });
     } else {
       //show busy status popup
@@ -1027,13 +1095,24 @@ class ChatController extends FullLifeCycleController
         replyMessageId = replyChatMessage.messageId;
       }
       isReplying(false);
-      Mirrorfly.sendDocumentMessage(profile.jid!, documentPath, replyMessageId,topicId: topicId)
+      //old method is deprecated Instead of use below new method
+      /*Mirrorfly.sendDocumentMessage(profile.jid!, documentPath, replyMessageId,topicId: topicId)
           .then((value) {
         ChatMessageModel chatMessageModel = sendMessageModelFromJson(value);
         // chatList.insert(0, chatMessageModel);
         scrollToBottom();
         updateLastMessage(value);
         return chatMessageModel;
+      });*/
+      Mirrorfly.sendMessage(messageParams: MessageParams(toJid: profile.jid.checkNull(),
+          messageType: MessageType.document,replyMessageId: replyMessageId,topicId: topicId,
+          fileMessage: FileMessageParams(file: File(documentPath))), flyCallback: (response){
+        if(response.isSuccess){
+          scrollToBottom();
+          updateLastMessage(response.data);
+        }else{
+          LogMessage.d("sendMessage", response.exception?.message);
+        }
       });
     } else {
       //show busy status popup
@@ -1127,7 +1206,8 @@ class ChatController extends FullLifeCycleController
 
       isUserTyping(false);
       isReplying(false);
-      Mirrorfly.sendAudioMessage(
+      //old method is deprecated Instead of use below new method
+      /*Mirrorfly.sendAudioMessage(
           profile.jid!, filePath, isRecorded, duration, replyMessageId,topicId: topicId)
           .then((value) {
         mirrorFlyLog("Audio Message sent", value);
@@ -1136,6 +1216,17 @@ class ChatController extends FullLifeCycleController
         scrollToBottom();
         updateLastMessage(value);
         return chatMessageModel;
+      });*/
+      Mirrorfly.sendMessage(messageParams: MessageParams(toJid: profile.jid.checkNull(),
+          messageType: isRecorded ? MessageType.audioRecorded : MessageType.audio,replyMessageId: replyMessageId,topicId: topicId,
+          fileMessage: FileMessageParams(file: File(filePath))), flyCallback: (response){
+        if(response.isSuccess){
+          mirrorFlyLog("Audio Message sent", response.data);
+          scrollToBottom();
+          updateLastMessage(response.data);
+        }else{
+          LogMessage.d("sendMessage", response.exception?.message);
+        }
       });
     } else {
       //show busy status popup
@@ -3150,9 +3241,9 @@ class ChatController extends FullLifeCycleController
   }
 
   Future<void> updateLastMessage(dynamic value) async {
-    Get.find<MainController>().onMessageStatusUpdated(value);
     ChatMessageModel chatMessageModel = sendMessageModelFromJson(value);
     loadLastMessages(chatMessageModel);
+    Get.find<MainController>().onMessageStatusUpdated(value);
   }
 
   void onAvailableFeaturesUpdated(AvailableFeatures features) {
