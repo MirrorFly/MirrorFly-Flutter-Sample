@@ -486,9 +486,9 @@ class ChatController extends FullLifeCycleController
           scrollToBottom();
           updateLastMessage(value);
         });*/
-        Mirrorfly.sendMessage(messageParams: MessageParams(toJid: profile.jid.checkNull(),
-            messageType: MessageType.text,replyMessageId: replyMessageId,topicId: topicId,
-            textMessage: TextMessageParams(messageText: messageController.text.trim())), flyCallback: (response){
+        Mirrorfly.sendMessage(messageParams: MessageParams.text(toJid: profile.jid.checkNull(),
+            replyMessageId: replyMessageId,topicId: topicId,
+            textMessageParams: TextMessageParams(messageText: messageController.text.trim())), flyCallback: (response){
           if(response.isSuccess){
             mirrorFlyLog("text message", response.data);
             messageController.text = "";
@@ -592,9 +592,8 @@ class ChatController extends FullLifeCycleController
         scrollToBottom();
         updateLastMessage(value);
       });*/
-      Mirrorfly.sendMessage(messageParams: MessageParams(toJid: profile.jid.checkNull(),
-          messageType: MessageType.location,replyMessageId: replyMessageId,topicId: topicId,
-          locationMessage: LocationMessageParams(latitude: latitude, longitude: longitude)), flyCallback: (response){
+      Mirrorfly.sendMessage(messageParams: MessageParams.location(toJid: profile.jid.checkNull(),replyMessageId: replyMessageId,topicId: topicId,
+          locationMessageParams: LocationMessageParams(latitude: latitude, longitude: longitude)), flyCallback: (response){
         if(response.isSuccess){
           mirrorFlyLog("Location_msg", response.data.toString());
           scrollToBottom();
@@ -833,9 +832,9 @@ class ChatController extends FullLifeCycleController
           updateLastMessage(value);
           return chatMessageModel;
         });*/
-        return Mirrorfly.sendMessage(messageParams: MessageParams(toJid: profile.jid.checkNull(),
-            messageType: MessageType.image,replyMessageId: replyMessageID,topicId: topicId,
-            fileMessage: FileMessageParams(file: File(path),caption: caption)), flyCallback: (response){
+        return Mirrorfly.sendMessage(messageParams: MessageParams.image(toJid: profile.jid.checkNull(),
+            replyMessageId: replyMessageID,topicId: topicId,
+            fileMessageParams: FileMessageParams(file: File(path),caption: caption)), flyCallback: (response){
           if(response.isSuccess){
             clearMessage();
             ChatMessageModel chatMessageModel = sendMessageModelFromJson(response.data);
@@ -926,9 +925,9 @@ class ChatController extends FullLifeCycleController
         updateLastMessage(value);
         return chatMessageModel;
       });*/
-      return Mirrorfly.sendMessage(messageParams: MessageParams(toJid: profile.jid.checkNull(),
-          messageType: MessageType.video,replyMessageId: replyMessageID,topicId: topicId,
-          fileMessage: FileMessageParams(file: File(videoPath),caption: caption)), flyCallback: (response){
+      return Mirrorfly.sendMessage(messageParams: MessageParams.video(toJid: profile.jid.checkNull(),
+          replyMessageId: replyMessageID,topicId: topicId,
+          fileMessageParams: FileMessageParams(file: File(videoPath),caption: caption)), flyCallback: (response){
         if(response.isSuccess){
           clearMessage();
           Platform.isIOS ? Helper.hideLoading() : null;
@@ -1060,8 +1059,8 @@ class ChatController extends FullLifeCycleController
         updateLastMessage(value);
         return chatMessageModel;
       });*/
-      return Mirrorfly.sendMessage(messageParams: MessageParams(toJid: profile.jid.checkNull(),
-          messageType: MessageType.contact,replyMessageId: replyMessageId,topicId: topicId,contactMessage: ContactMessageParams(name: contactName, numbers: contactList)), flyCallback: (response){
+      return Mirrorfly.sendMessage(messageParams: MessageParams.contact(toJid: profile.jid.checkNull(),
+          replyMessageId: replyMessageId,topicId: topicId,contactMessageParams: ContactMessageParams(name: contactName, numbers: contactList)), flyCallback: (response){
         if(response.isSuccess){
           debugPrint("response--> ${response.data}");
           scrollToBottom();
@@ -1104,9 +1103,9 @@ class ChatController extends FullLifeCycleController
         updateLastMessage(value);
         return chatMessageModel;
       });*/
-      Mirrorfly.sendMessage(messageParams: MessageParams(toJid: profile.jid.checkNull(),
-          messageType: MessageType.document,replyMessageId: replyMessageId,topicId: topicId,
-          fileMessage: FileMessageParams(file: File(documentPath))), flyCallback: (response){
+      Mirrorfly.sendMessage(messageParams: MessageParams.document(toJid: profile.jid.checkNull(),
+          replyMessageId: replyMessageId,topicId: topicId,
+          fileMessageParams: FileMessageParams(file: File(documentPath))), flyCallback: (response){
         if(response.isSuccess){
           scrollToBottom();
           updateLastMessage(response.data);
@@ -1217,9 +1216,9 @@ class ChatController extends FullLifeCycleController
         updateLastMessage(value);
         return chatMessageModel;
       });*/
-      Mirrorfly.sendMessage(messageParams: MessageParams(toJid: profile.jid.checkNull(),
-          messageType: isRecorded ? MessageType.audioRecorded : MessageType.audio,replyMessageId: replyMessageId,topicId: topicId,
-          fileMessage: FileMessageParams(file: File(filePath))), flyCallback: (response){
+      Mirrorfly.sendMessage(messageParams: MessageParams.audio(toJid: profile.jid.checkNull(),
+          isRecorded: isRecorded,replyMessageId: replyMessageId,topicId: topicId,
+          fileMessageParams: FileMessageParams(file: File(filePath))), flyCallback: (response){
         if(response.isSuccess){
           mirrorFlyLog("Audio Message sent", response.data);
           scrollToBottom();
