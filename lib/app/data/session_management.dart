@@ -15,12 +15,13 @@ class SessionManagement {
   //   }
   // }
   static Future onInit() async {
-    try {
+    _preferences = await SharedPreferences.getInstance();
+    /*try {
       _preferences = await SharedPreferences.getInstance();
     }catch(e){
       SharedPreferences.setMockInitialValues({});
       _preferences = await SharedPreferences.getInstance();
-    }
+    }*/
     SessionManagement.setCurrentChatJID("");
   }
 
