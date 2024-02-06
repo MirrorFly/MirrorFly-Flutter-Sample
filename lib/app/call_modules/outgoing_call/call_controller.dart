@@ -289,28 +289,32 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
       debugPrint("#Disconnect call disconnect value $value");
       if (value.checkNull()) {
         debugPrint("#Disconnect call disconnect list size ${callList.length}");
-        if (Get.previousRoute.isNotEmpty) {
-          debugPrint("#Disconnect previous route is not empty");
-          if (Get.currentRoute == Routes.onGoingCallView) {
-            debugPrint("#Disconnect current route is ongoing call view");
-            Future.delayed(const Duration(seconds: 1), () {
-              debugPrint("#Disconnect call controller back called from Ongoing Screen");
-              Get.back();
-            });
-          }else if(Get.currentRoute == Routes.participants){
-            Get.back();
-            Future.delayed(const Duration(seconds: 1), () {
-              debugPrint("#Disconnect call controller back called from Participant Screen");
-              Get.back();
-            });
-          }else{
-            Get.back();
-          }
-        } else {
-          Get.offNamed(getInitialRoute());
-        }
+        backCalledFromDisconnect();
       }
     });
+  }
+
+  void backCalledFromDisconnect(){
+    if (Get.previousRoute.isNotEmpty) {
+      debugPrint("#Disconnect previous route is not empty");
+      if (Get.currentRoute == Routes.onGoingCallView) {
+        debugPrint("#Disconnect current route is ongoing call view");
+        Future.delayed(const Duration(seconds: 1), () {
+          debugPrint("#Disconnect call controller back called from Ongoing Screen");
+          Get.back();
+        });
+      }else if(Get.currentRoute == Routes.participants){
+        Get.back();
+        Future.delayed(const Duration(seconds: 1), () {
+          debugPrint("#Disconnect call controller back called from Participant Screen");
+          Get.back();
+        });
+      }else{
+        Get.back();
+      }
+    } else {
+      Get.offNamed(getInitialRoute());
+    }
   }
 
   /*Future<void> getNames() async {
@@ -416,12 +420,7 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
     debugPrint("callDisconnectedStatus is called");
     callList.clear();
     callTimer("Disconnected");
-    if(Get.currentRoute==Routes.participants){
-      Get.back();
-    }
-    Future.delayed(const Duration(seconds: 1), () {
-      Get.back();
-    });
+    backCalledFromDisconnect();
   }
 
   Future<void> remoteBusy(String callMode, String userJid, String callType, String callAction) async {
