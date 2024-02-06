@@ -4,7 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:mirror_fly_demo/app/data/helper.dart';
+import 'package:mirror_fly_demo/app/common/extensions.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -545,10 +545,10 @@ class Constants {
   static const String privacyPolicy =
       "https://www.mirrorfly.com/privacy-policy.php";
 
-  static const maxAudioFileSize = 30;
-  static const maxVideoFileSize = 30;
-  static const maxImageFileSize = 10;
-  static const maxDocFileSize = 20;
+  static const maxAudioFileSize = 2 * 1024;//30;
+  static const maxVideoFileSize = 2 * 1024;//30;
+  static const maxImageFileSize = 2 * 1024;//10;
+  static const maxDocFileSize = 2 * 1024;//20;
 
   static const List<String> defaultStatusList = [
     "Available",

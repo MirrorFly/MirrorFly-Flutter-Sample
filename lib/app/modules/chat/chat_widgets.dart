@@ -10,7 +10,7 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:mirror_fly_demo/app/common/widgets.dart';
 import 'package:url_launcher/url_launcher.dart';
-
+import 'package:mirror_fly_demo/app/common/extensions.dart';
 import '../../common/constants.dart';
 import '../../data/apputils.dart';
 import '../../data/helper.dart';

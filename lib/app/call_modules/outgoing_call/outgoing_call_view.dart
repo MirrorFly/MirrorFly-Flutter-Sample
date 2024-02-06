@@ -9,6 +9,7 @@ import 'package:mirror_fly_demo/app/common/widgets.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
 import 'package:mirrorfly_plugin/mirrorfly_view.dart';
 import 'package:mirrorfly_plugin/mirrorflychat.dart';
+import 'package:mirror_fly_demo/app/common/extensions.dart';
 
 import '../../common/constants.dart';
 import '../../data/session_management.dart';

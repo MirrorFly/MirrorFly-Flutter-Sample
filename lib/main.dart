@@ -8,6 +8,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:mirror_fly_demo/app/modules/chat/controllers/chat_controller.dart';
 import 'package:mirror_fly_demo/app/modules/notification/notification_builder.dart';
 import 'package:mirrorfly_plugin/mirrorfly.dart';
 
@@ -15,7 +16,7 @@ import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/common/app_theme.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
 import 'package:mirror_fly_demo/app/common/main_controller.dart';
-import 'package:mirror_fly_demo/app/data/helper.dart';
+import 'package:mirror_fly_demo/app/common/extensions.dart';
 import 'package:mirror_fly_demo/app/data/pushnotification.dart';
 import 'package:mirror_fly_demo/app/modules/dashboard/bindings/dashboard_binding.dart';
 import 'package:mirror_fly_demo/app/modules/login/bindings/login_binding.dart';
@@ -68,9 +69,7 @@ Future<void> main() async {
   //check app opened from notification
   notificationAppLaunchDetails = await flutterLocalNotificationsPlugin.getNotificationAppLaunchDetails();
 
-  //check is on going call
-  isOnGoingCall = (await Mirrorfly.isOnGoingCall()).checkNull();
-  fromMissedCall = (await Mirrorfly.appLaunchedFromMissedCall()).checkNull();
+
   if (shouldUseFirebaseEmulator) {
     await FirebaseAuth.instance.useAuthEmulator('localhost', 5050);
   }
@@ -81,12 +80,16 @@ Future<void> main() async {
       iOSContainerID: 'group.com.mirrorfly.flutter',//group.com.mirrorfly.flutter
       chatHistoryEnable: true,
       enableDebugLog: true,
-      flyCallback: (response){
+      messageEventsListener: MyMessageListener(),
+      flyCallback: (response) async {
         if(response.isSuccess){
           LogMessage.d("onSuccess", response.message);
         }else{
           LogMessage.d("onFailure", response.exception?.message.toString());
         }
+        //check is on going call
+        isOnGoingCall = (await Mirrorfly.isOnGoingCall()).checkNull();
+        fromMissedCall = (await Mirrorfly.appLaunchedFromMissedCall()).checkNull();
         runApp(const MyApp());
       }
   );

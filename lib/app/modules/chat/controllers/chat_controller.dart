@@ -20,7 +20,7 @@ import 'package:mirror_fly_demo/app/common/main_controller.dart';
 import 'package:mirror_fly_demo/app/data/session_management.dart';
 import 'package:mirror_fly_demo/app/data/permissions.dart';
 import 'package:mirror_fly_demo/app/modules/notification/notification_builder.dart';
-
+import 'package:mirror_fly_demo/app/common/extensions.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
@@ -3409,3 +3409,50 @@ class ChatController extends FullLifeCycleController
     }
   }
 }
+
+class MyMessageListener implements MessageEventsListener {
+
+
+  @override
+  void onMessageStatusUpdated(String messageId) {
+    LogMessage.d("MyMessageListener", messageId);
+    // Implement your logic for handling message status updates
+  }
+
+  @override
+  void onUpdateUnStarAllMessages() {
+    // Implement your logic for updating unstarred messages
+  }
+
+
+
+  @override
+  void onUploadDownloadProgressChanged(String messageId, int progressPercentage) {
+    // Implement your logic for handling progress changes
+  }
+
+  @override
+  void onMessagesClearedOrDeleted(List<String> messageIds, String jid) {
+    // Implement your logic for handling cleared or deleted messages
+  }
+
+
+
+  @override
+  void updateArchiveUnArchiveChats(String? toUser, bool archiveStatus) {
+    // Implement your logic for updating archive/unarchive chats
+  }
+
+  @override
+  void updateArchivedSettings(bool archivedSettingsStatus) {
+    // Implement your logic for updating archived settings
+  }
+
+  @override
+  void onUpdateBusyStatus(bool status, String? message) {
+    // Implement your logic for updating busy status
+  }
+
+
+}
+
