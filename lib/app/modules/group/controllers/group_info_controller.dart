@@ -193,6 +193,7 @@ class GroupInfoController extends GetxController {
       mirrorFlyLog("getGroupMembersList", value);
       if(value.isNotEmpty){
         var list = profileFromJson(value);
+        list.sort((a, b) => (a.jid==SessionManagement.getUserJID()) ? 1 : (b.jid==SessionManagement.getUserJID()) ? -1 : 0);
         groupMembers.value=(list);
         groupMembers.refresh();
       }

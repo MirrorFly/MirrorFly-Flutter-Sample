@@ -219,7 +219,7 @@ class GroupInfoView extends GetView<GroupInfoController> {
                     itemBuilder: (context, index) {
                       var item = controller.groupMembers[index];
                       return memberItem(
-                        name: getName(item).checkNull(),
+                        name: item.getName().checkNull(),
                         image: item.image.checkNull(),
                         isAdmin: item.isGroupAdmin,
                         status: item.status.checkNull(),

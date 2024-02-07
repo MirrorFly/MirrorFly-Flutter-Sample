@@ -428,6 +428,9 @@ extension ProfileParesing on ProfileDetails {
 
   String getName() {
     if (!Constants.enableContactSync) {
+      if (jid.checkNull() == SessionManagement.getUserJID()) {
+        return Constants.you;
+      }
       /*return item.name.toString().checkNull().isEmpty
         ? item.nickName.toString()
         : item.name.toString();*/
