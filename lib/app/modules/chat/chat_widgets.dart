@@ -2566,6 +2566,9 @@ bool isDateChanged(int position, List<ChatMessageModel> mChatData) {
 }
 
 String? groupedDateMessage(int index, List<ChatMessageModel> chatList) {
+  if(index.isNegative){
+    return null;
+  }
   if (index == chatList.length - 1) {
     return addDateHeaderMessage(chatList.last);
   } else {
