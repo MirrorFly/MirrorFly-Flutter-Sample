@@ -2133,8 +2133,8 @@ class ChatController extends FullLifeCycleController
     _audioTimer?.cancel();
     _audioTimer = null;
     await Record().stop().then((filePath) async {
-      if (File(filePath!).existsSync()) {
-        recordedAudioPath = filePath;
+      if (AppUtils.isMediaExists(filePath)) {
+        recordedAudioPath = filePath.checkNull();
       } else {
         debugPrint("File Not Found For Audio");
       }
@@ -2272,6 +2272,11 @@ class ChatController extends FullLifeCycleController
         chatList[index].mediaChatMessage?.mediaLocalStoragePath(chatMessageModel.mediaChatMessage!.mediaLocalStoragePath.value);
         chatList[index].mediaChatMessage?.mediaDownloadStatus(chatMessageModel.mediaChatMessage!.mediaDownloadStatus.value);
         chatList[index].mediaChatMessage?.mediaUploadStatus(chatMessageModel.mediaChatMessage!.mediaUploadStatus.value);
+        if (chatList[index].mediaChatMessage!.mediaUploadStatus.value == MediaUploadStatus.mediaUploadedNotAvailable.value) {
+          toToast(Constants.mediaDoesNotExist);
+        } else if (chatList[index].mediaChatMessage!.mediaDownloadStatus.value == MediaDownloadStatus.storageNotEnough.value) {
+          toToast(Constants.insufficientMemoryError);
+        }
       }
     }
     if (isSelected.value) {

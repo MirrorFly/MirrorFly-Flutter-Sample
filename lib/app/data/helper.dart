@@ -407,7 +407,7 @@ checkIosFile(String mediaLocalStoragePath) async {
 
 openDocument(String mediaLocalStoragePath) async {
   // if (await askStoragePermission()) {
-  if (mediaLocalStoragePath.isNotEmpty) {
+  if (AppUtils.isMediaExists(mediaLocalStoragePath)) {
     final result = await OpenFile.open(mediaLocalStoragePath);
     debugPrint(result.message);
     if (result.message.contains("file does not exist")) {
@@ -428,6 +428,7 @@ openDocument(String mediaLocalStoragePath) async {
       );
     });*/
   } else {
+    toToast(Constants.mediaDoesNotExist);
     debugPrint("media does not exist");
   }
   // }

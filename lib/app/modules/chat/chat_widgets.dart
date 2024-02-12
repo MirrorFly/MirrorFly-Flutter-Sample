@@ -2001,7 +2001,7 @@ Widget getImageOverlay(ChatMessageModel chatMessage,
   // debugPrint(
   //     "getImageOverlay ${(checkFile(chatMessage.mediaChatMessage!.mediaLocalStoragePath) && chatMessage.messageStatus != 'N')}");
 
-  if (checkFile(chatMessage.mediaChatMessage!.mediaLocalStoragePath.value) &&
+  if (AppUtils.isMediaExists(chatMessage.mediaChatMessage!.mediaLocalStoragePath.value) &&
       chatMessage.messageStatus.value != 'N') {
     if (chatMessage.messageType.toUpperCase() == 'VIDEO') {
       return FloatingActionButton.small(
@@ -2033,18 +2033,30 @@ Widget getImageOverlay(ChatMessageModel chatMessage,
   } else {
     var status = 0;
     if(chatMessage.isMessageSentByMe){
-      if(chatMessage.mediaChatMessage!.mediaLocalStoragePath.value.checkNull().isNotEmpty){
-        if(!checkFile(chatMessage.mediaChatMessage!.mediaLocalStoragePath.value.checkNull())){
-          status = chatMessage.mediaChatMessage!.mediaDownloadStatus.value;
-        }else{
+      if(chatMessage.mediaChatMessage!.mediaUploadStatus.value == Constants.mediaUploading || chatMessage.mediaChatMessage!.mediaDownloadStatus.value == Constants.mediaDownloading ){
+        status = Constants.mediaUploading;
+      }else {
+        if (chatMessage.mediaChatMessage!
+            .mediaLocalStoragePath.value
+            .checkNull()
+            .isNotEmpty) {
+          if (!AppUtils.isMediaExists(chatMessage.mediaChatMessage!.mediaLocalStoragePath.value.checkNull())) {
+            if (chatMessage.mediaChatMessage!.mediaUploadStatus.value == Constants.mediaUploaded) {
+              status = Constants.mediaNotDownloaded; // for uploaded and deleted in local
+            } else {
+              status = -1;
+            }
+          } else {
+            status = chatMessage.mediaChatMessage!.mediaUploadStatus.value;
+          }
+        } else {
           status = chatMessage.mediaChatMessage!.mediaUploadStatus.value;
         }
-      }else{
-        status = chatMessage.mediaChatMessage!.mediaUploadStatus.value;
       }
     }else{
       status = chatMessage.mediaChatMessage!.mediaDownloadStatus.value;
     }
+    debugPrint("mediaStatus : $status  messageId ${chatMessage.messageId}");
     // debugPrint(
     //     "overlay status-->${chatMessage.isMessageSentByMe ? chatMessage.mediaChatMessage!.mediaUploadStatus : chatMessage.mediaChatMessage!.mediaDownloadStatus}");
     switch (status) {
@@ -2100,7 +2112,7 @@ Widget getImageOverlay(ChatMessageModel chatMessage,
           );
         });
       default:
-        return const SizedBox.shrink();
+        return const SizedBox(width: 8,);
     }
   }
 }
@@ -2215,8 +2227,8 @@ Widget downloadView(int mediaFileSize, String messageType) {
 }
 
 downloadingOrUploadingView(String messageType, int progress) {
-  // debugPrint('downloadingOrUploadingView progress $progress');
-  if (messageType == "AUDIO" || messageType == "DOCUMENT") {
+  debugPrint('downloadingOrUploadingView progress $progress');
+  if (messageType == MessageType.audio.value || messageType == MessageType.document.value) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 8.0),
       child: Container(
