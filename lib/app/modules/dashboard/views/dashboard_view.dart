@@ -537,7 +537,7 @@ class DashboardView extends GetView<DashboardController> {
                           )
                         : ListView.builder(
                             padding: EdgeInsets.zero,
-                            physics: const AlwaysScrollableScrollPhysics(),
+                            physics: const BouncingScrollPhysics(),
                             itemCount: controller.recentChats.length + 2,
                             shrinkWrap: true,
                             controller: controller.historyScrollController,
