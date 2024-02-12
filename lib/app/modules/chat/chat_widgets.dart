@@ -699,7 +699,7 @@ class _AudioMessageViewState extends State<AudioMessageView>
         borderRadius: const BorderRadius.all(Radius.circular(10)),
         color: Colors.transparent,
       ),
-      width: screenWidth * 0.60,
+      width: screenWidth * 0.70,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -711,7 +711,7 @@ class _AudioMessageViewState extends State<AudioMessageView>
                   ? chatReplyContainerColor
                   : chatReplySenderColor,
             ),
-            padding: const EdgeInsets.all(15),
+            padding: const EdgeInsets.all(5),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
@@ -721,8 +721,8 @@ class _AudioMessageViewState extends State<AudioMessageView>
                   children: [
                     SvgPicture.asset(
                       audioMicBg,
-                      width: 28,
-                      height: 28,
+                      width: 32,
+                      height: 32,
                       fit: BoxFit.contain,
                     ),
                     SvgPicture.asset(
@@ -733,6 +733,8 @@ class _AudioMessageViewState extends State<AudioMessageView>
                 )
                     : SvgPicture.asset(
                   musicIcon,
+                  width: 32,
+                  height: 32,
                   fit: BoxFit.contain,
                 ),
                 Obx(() {
@@ -1627,6 +1629,7 @@ class ImageMessageView extends StatelessWidget {
 
   getImage(RxString mediaLocalStoragePath, String mediaThumbImage,
       BuildContext context, String mediaFileName, bool isSelected) {
+    debugPrint("getImage mediaLocalStoragePath : $mediaLocalStoragePath");
     var screenHeight = MediaQuery
         .of(context)
         .size
@@ -1657,6 +1660,17 @@ class ImageMessageView extends StatelessWidget {
                       });
                 }
                 return const Center(child: CircularProgressIndicator());
+              },
+              frameBuilder: (cxt,child,frame,wasSynchronouslyLoaded){
+                debugPrint("getImage frameBuilder : frame : $frame ,wasSynchronouslyLoaded :$wasSynchronouslyLoaded");
+                return child;
+              },
+              errorBuilder: (cxt,obj,strace){
+                debugPrint("getImage errorBuilder : obj : $obj ,strace :$strace");
+                return Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text("$obj"),
+                );
               },
               width: screenWidth * 0.60,
               height: screenHeight * 0.4,
@@ -2002,16 +2016,15 @@ Widget getImageOverlay(ChatMessageModel chatMessage,
       return InkWell(
         onTap: onAudio,
         child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: chatMessage.mediaChatMessage!.isPlaying
-              ? SvgPicture.asset(
-            pauseIcon,
-            height: 17,
-          ) //const Icon(Icons.pause)
-              : SvgPicture.asset(
-            playIcon,
-            height: 17,
-          ),
+          padding: const EdgeInsets.symmetric(horizontal: 8.0),
+          child: Container(
+              height: 30,
+              width: 30,
+              padding: const EdgeInsets.all(7),
+              child: SvgPicture.asset(
+                chatMessage.mediaChatMessage!.isPlaying ? pauseIcon : playIcon,
+                height: 17,
+              ))
         ),
       ); //const Icon(Icons.play_arrow_sharp);
     } else {
@@ -2097,15 +2110,18 @@ uploadView(int mediaFileSize, String messageType) {
     padding: const EdgeInsets.symmetric(horizontal: 8.0),
     child: messageType == 'AUDIO' || messageType == 'DOCUMENT'
         ? Container(
+      height: 30,
+      width: 30,
         decoration: BoxDecoration(
             border: Border.all(color: borderColor),
             borderRadius: BorderRadius.circular(3)),
-        padding: const EdgeInsets.all(5),
+        padding: const EdgeInsets.all(7),
         child: SvgPicture.asset(
           uploadIcon,
           color: playIconColor,
         ))
         : Container(
+        height: 35,
         width: 80,
         decoration: const BoxDecoration(
           borderRadius: BorderRadius.all(Radius.circular(5)),
@@ -2161,15 +2177,18 @@ Widget downloadView(int mediaFileSize, String messageType) {
     padding: const EdgeInsets.symmetric(horizontal: 8.0),
     child: messageType == 'AUDIO' || messageType == 'DOCUMENT'
         ? Container(
+      height: 30,
+        width: 30,
         decoration: BoxDecoration(
             border: Border.all(color: borderColor),
             borderRadius: BorderRadius.circular(3)),
-        padding: const EdgeInsets.all(5),
+        padding: const EdgeInsets.all(7),
         child: SvgPicture.asset(
           downloadIcon,
           color: playIconColor,
         ))
         : Container(
+      height: 35,
         width: 80,
         decoration: BoxDecoration(
           border: Border.all(
@@ -2225,7 +2244,7 @@ downloadingOrUploadingView(String messageType, int progress) {
                     height: 2,
                     child: LinearProgressIndicator(
                       valueColor: const AlwaysStoppedAnimation<Color>(
-                        playIconColor,
+                        progressColor,
                       ),
                       value: progress == 0 || progress == 100
                           ? null
@@ -2239,8 +2258,8 @@ downloadingOrUploadingView(String messageType, int progress) {
     );
   } else {
     return Container(
-        height: 30,
-        width: 70,
+        height: 35,
+        width: 80,
         decoration: const BoxDecoration(
           borderRadius: BorderRadius.all(Radius.circular(4)),
           color: Colors.black45,

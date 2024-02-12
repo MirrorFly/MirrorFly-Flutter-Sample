@@ -38,6 +38,7 @@ const Color chatBorderColor = Color(0XffDDE3E5);
 const Color chatTimeColor = Color(0Xff959595);
 const Color borderColor = Color(0xffAFB8D0);
 const Color playIconColor = Color(0xff7285B5);
+const Color progressColor = Color(0xff8C97B3);
 const Color durationTextColor = Color(0xff455E93);
 const Color chatBgColor = Color(0xffD0D8EB);
 const Color previewTextColor = Color(0xff7f7f7f);
