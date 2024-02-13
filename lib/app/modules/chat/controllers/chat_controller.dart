@@ -1126,7 +1126,7 @@ class ChatController extends FullLifeCycleController
 
   pickAudio() async {
     setOnGoingUserGone();
-    if (Platform.isIOS || Platform.isAndroid) {
+    if (Platform.isIOS) {
       FilePickerResult? result = await FilePicker.platform.pickFiles(
         type: FileType.custom,
         allowedExtensions: [
