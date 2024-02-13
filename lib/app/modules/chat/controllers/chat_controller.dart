@@ -1126,7 +1126,7 @@ class ChatController extends FullLifeCycleController
 
   pickAudio() async {
     setOnGoingUserGone();
-    if (Platform.isIOS) {
+    if (Platform.isIOS || Platform.isAndroid) {
       FilePickerResult? result = await FilePicker.platform.pickFiles(
         type: FileType.custom,
         allowedExtensions: [
@@ -2737,10 +2737,8 @@ class ChatController extends FullLifeCycleController
       canBeForwardedSet = true;
     }
     //Share Validation
-    if (!canBeSharedSet &&
-        (!message.isMediaMessage() ||
-            (message.isMediaMessage() &&
-                !checkFile(message.mediaChatMessage!.mediaLocalStoragePath.value)))) {
+    if (!canBeSharedSet && (!message.isMediaMessage() || (message.isMediaMessage() &&
+                !AppUtils.isMediaExists(message.mediaChatMessage!.mediaLocalStoragePath.value)))) {
       canBeShared(false);
       canBeSharedSet = true;
     }
@@ -2876,11 +2874,8 @@ class ChatController extends FullLifeCycleController
     var mediaPaths = <XFile>[];
     for (var item in selectedChatList) {
       if (item.isMediaMessage()) {
-        if ((item.isMediaDownloaded() || item.isMediaUploaded()) &&
-            item.mediaChatMessage!
-                .mediaLocalStoragePath.value
-                .checkNull()
-                .isNotEmpty) {
+        if (AppUtils.isMediaExists(item.mediaChatMessage!
+            .mediaLocalStoragePath.value)) {
           mediaPaths.add(
               XFile(item.mediaChatMessage!.mediaLocalStoragePath.value.checkNull()));
           debugPrint(
@@ -3314,6 +3309,7 @@ class ChatController extends FullLifeCycleController
   void handleUnreadMessageSeparator({bool remove = true,bool removeFromList = false}){
     var tuple3 = findIndexOfUnreadMessageType();
     var isUnreadSeparatorIsAvailable = tuple3.item1;
+    LogMessage.d("isUnreadSeparatorIsAvailable", isUnreadSeparatorIsAvailable);
     var separatorPosition = tuple3.item2;
     if (isUnreadSeparatorIsAvailable && chatList.isNotEmpty) {
       if (remove) {
