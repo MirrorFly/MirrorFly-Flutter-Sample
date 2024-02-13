@@ -1994,15 +1994,14 @@ getMessageIndicator(String? messageStatus, bool isSender, String messageType, bo
 
 Widget getImageOverlay(ChatMessageModel chatMessage,
     {Function()? onAudio, Function()? onVideo, int? progress}) {
-  debugPrint("getImageOverlay");
+  debugPrint("getImageOverlay media exists ${AppUtils.isMediaExists(chatMessage.mediaChatMessage!.mediaLocalStoragePath.value)}");
   // debugPrint(
   //     "getImageOverlay checkFile ${checkFile(chatMessage.mediaChatMessage!.mediaLocalStoragePath)}");
   // debugPrint("getImageOverlay messageStatus ${chatMessage.messageStatus}");
   // debugPrint(
   //     "getImageOverlay ${(checkFile(chatMessage.mediaChatMessage!.mediaLocalStoragePath) && chatMessage.messageStatus != 'N')}");
 
-  if (AppUtils.isMediaExists(chatMessage.mediaChatMessage!.mediaLocalStoragePath.value) &&
-      chatMessage.messageStatus.value != 'N') {
+  if (AppUtils.isMediaExists(chatMessage.mediaChatMessage!.mediaLocalStoragePath.value) && (chatMessage.isMediaDownloaded() || chatMessage.isMediaUploaded())) {
     if (chatMessage.messageType.toUpperCase() == 'VIDEO') {
       return FloatingActionButton.small(
         onPressed: onVideo,
@@ -2062,7 +2061,7 @@ Widget getImageOverlay(ChatMessageModel chatMessage,
     switch (status) {
       case Constants.mediaDownloaded:
       case Constants.mediaUploaded:
-        if (!checkFile(chatMessage.mediaChatMessage!.mediaLocalStoragePath.value.checkNull())) {
+        if (!AppUtils.isMediaExists(chatMessage.mediaChatMessage!.mediaLocalStoragePath.value.checkNull())) {
           return InkWell(
             child: downloadView(
                 chatMessage.mediaChatMessage!.mediaFileSize,
