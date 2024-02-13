@@ -277,6 +277,7 @@ class GroupInfoController extends GetxController {
         }
       }).catchError((error) {
         Helper.hideLoading();
+        toToast(Constants.errorTryAgain);
       });
     }else{
       toToast(Constants.noInternetConnection);
@@ -311,6 +312,7 @@ class GroupInfoController extends GetxController {
                 }
               }).catchError((error) {
                 Helper.hideLoading();
+                toToast(Constants.errorTryAgain);
               });
             }else{
               toToast(Constants.noInternetConnection);

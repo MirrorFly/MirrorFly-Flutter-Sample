@@ -622,6 +622,7 @@ class Constants {
 
   static const String mediaDoesNotExist = "Sorry. Media file isn\'t available in your internal storage";
   static const String insufficientMemoryError = "Not enough storage space on your device. Please free up space in your phone\'s memory.";
+  static const String errorTryAgain = "Error Occurred, Please try again";
   // static GlobalKey<AnimatedListState> audioListKey =
   // GlobalKey<AnimatedListState>();
 
