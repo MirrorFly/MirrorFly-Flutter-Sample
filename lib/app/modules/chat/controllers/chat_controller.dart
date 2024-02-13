@@ -3310,7 +3310,10 @@ class ChatController extends FullLifeCycleController
     var tuple3 = findIndexOfUnreadMessageType();
     var isUnreadSeparatorIsAvailable = tuple3.item1;
     var separatorPosition = tuple3.item2;
-    if (isUnreadSeparatorIsAvailable && chatList.isNotEmpty) {
+    debugPrint("handleUnreadMessageSeparator isUnreadSeparatorIsAvailable $isUnreadSeparatorIsAvailable");
+    //Commenting this line due to group notification received and the numbers is added in recent chat and inside there is no separator so mark as read is not called.
+    // if (isUnreadSeparatorIsAvailable && chatList.isNotEmpty) {
+    if (isUnreadSeparatorIsAvailable || chatList.isNotEmpty) {
       if (remove) {
         removeUnreadMessageSeparator(separatorPosition,removeFromList: removeFromList);
       } else {

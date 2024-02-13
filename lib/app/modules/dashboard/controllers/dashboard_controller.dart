@@ -1548,14 +1548,19 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
   }*/
 
   historyScrollListener() {
-    // mirrorFlyLog("historyScrollListener", historyScrollController.position.extentAfter.toString());
+    mirrorFlyLog("historyScrollListener", historyScrollController.position.extentAfter.toString());
     // scrollController.position.pixels >=
     //     scrollController.position.maxScrollExtent - 200 //uncomment for data to be populated before certain items
-    if (historyScrollController.position.extentAfter <= 0.0) {
-      // User has reached the bottom of the list
-      // Show loading screen and load more data
-      // loadMoreData();
+    // if (historyScrollController.position.extentAfter <= 0.0) {
+    //   // User has reached the bottom of the list
+    //   // Show loading screen and load more data
+    //   // loadMoreData();
+    //
+    // }
+    if (historyScrollController.position.pixels == historyScrollController.position.maxScrollExtent) {
+      debugPrint("historyScrollController reached bottom");
       debugPrint("load next set of data");
+      debugPrint("isRecentHistoryLoading $isRecentHistoryLoading");
       if (!isRecentHistoryLoading.value) {
         recentChatPage++;
         isRecentHistoryLoading(true);
@@ -1577,6 +1582,12 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
             : Mirrorfly.getRecentChatListHistory(firstSet: recentChatPage == 1, limit: chatLimit,flyCallback: callback);
       }
     }
+    if (historyScrollController.position.pixels == historyScrollController.position.minScrollExtent) {
+      debugPrint("historyScrollController reached top");
+    }
+
+
+
   }
 
   var topicId = Constants.topicId.obs;
