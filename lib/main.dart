@@ -8,7 +8,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:mirror_fly_demo/app/modules/chat/controllers/chat_controller.dart';
 import 'package:mirror_fly_demo/app/modules/notification/notification_builder.dart';
 import 'package:mirrorfly_plugin/mirrorfly.dart';
 
@@ -80,7 +79,6 @@ Future<void> main() async {
       iOSContainerID: 'group.com.mirrorfly.flutter',//group.com.mirrorfly.flutter
       chatHistoryEnable: true,
       enableDebugLog: true,
-      messageEventsListener: MyMessageListener(),
       flyCallback: (response) async {
         if(response.isSuccess){
           LogMessage.d("onSuccess", response.message);
