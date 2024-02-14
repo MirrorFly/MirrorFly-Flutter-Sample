@@ -1513,6 +1513,11 @@ class ChatController extends FullLifeCycleController
           TextButton(
               onPressed: () {
                 Get.back();
+              },
+              child: const Text("CANCEL")),
+          TextButton(
+              onPressed: () {
+                Get.back();
                 if(!availableFeatures.value.isDeleteMessageAvailable.checkNull()){
                   Helper.showFeatureUnavailable();
                   return;
@@ -1537,11 +1542,6 @@ class ChatController extends FullLifeCycleController
                 selectedChatList.clear();
               },
               child: const Text("DELETE FOR ME")),
-          TextButton(
-              onPressed: () {
-                Get.back();
-              },
-              child: const Text("CANCEL")),
           isRecallAvailable
               ? TextButton(
               onPressed: () {
