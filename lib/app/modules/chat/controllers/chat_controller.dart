@@ -3242,7 +3242,9 @@ class ChatController extends FullLifeCycleController
   Future<void> updateLastMessage(dynamic value) async {
     ChatMessageModel chatMessageModel = sendMessageModelFromJson(value);
     loadLastMessages(chatMessageModel);
-    Get.find<MainController>().onMessageStatusUpdated(value);
+    // Commenting this below line, bcz after sending the message we are calling next message to load the newly sent message and
+    // the status gets updated in the event listener's in Base Controller. So no need to update the status here.
+    // Get.find<MainController>().onMessageStatusUpdated(value);
   }
 
   void onAvailableFeaturesUpdated(AvailableFeatures features) {
@@ -3294,10 +3296,14 @@ class ChatController extends FullLifeCycleController
   void loadLastMessages(ChatMessageModel chatMessageModel) async{
     if(await Mirrorfly.hasNextMessages()) {
       _loadNextMessages(showLoading: false);
-    }else{
+    }
+    //Commenting the below line, bcz when sending the contact message in for loop the hasNextMessage will fail from 2nd cases in loop.
+    // so extra message is inserted in the list.
+    /*else{
+      print("loadLastMessages inserting");
       chatList.insert(0, chatMessageModel);
       sendReadReceipt();
-    }
+    }*/
   }
 
   Future<void> loadPrevORNextMessagesLoad({bool? isReplyMessage}) async {
