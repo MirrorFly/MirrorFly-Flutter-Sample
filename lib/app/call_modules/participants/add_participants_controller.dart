@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/call_modules/outgoing_call/call_controller.dart';
+import 'package:mirror_fly_demo/app/common/main_controller.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
 import 'package:mirror_fly_demo/app/common/extensions.dart';
 
@@ -13,7 +14,7 @@ import '../../data/apputils.dart';
 import '../../data/session_management.dart';
 
 class AddParticipantsController extends GetxController with GetTickerProviderStateMixin {
-  var callList = Get.find<CallController>().callList;//List<CallUserList>.empty(growable: true).obs;
+  var callList = Get.find<CallController>().callList; //List<CallUserList>.empty(growable: true).obs;
   var groupId = Get.find<CallController>().groupId;
 
   ScrollController scrollController = ScrollController();
@@ -27,7 +28,7 @@ class AddParticipantsController extends GetxController with GetTickerProviderSta
 
   var currentTab = 0.obs;
   bool get isCheckBoxVisible => true;
-  TabController? tabController ;
+  TabController? tabController;
   var getMaxCallUsersCount = 8;
   @override
   Future<void> onInit() async {
@@ -46,7 +47,7 @@ class AddParticipantsController extends GetxController with GetTickerProviderSta
       final currentTabIndex = animationValue?.round();
       LogMessage.d("currentTabIndex", "$currentTabIndex");
       currentTab(currentTabIndex);
-      if(currentTabIndex==0) {
+      if (currentTabIndex == 0) {
         getBackFromSearch();
       }
       // currentOffset equals 0 when tabs are not swiped
@@ -62,14 +63,14 @@ class AddParticipantsController extends GetxController with GetTickerProviderSta
       //   }
       // }
     });
-    if(groupId.isEmpty) {
+    if (groupId.isEmpty) {
       if (await AppUtils.isNetConnected() || Constants.enableContactSync) {
         isPageLoading(true);
         fetchUsers(false);
       } else {
         toToast(Constants.noInternetConnection);
       }
-    }else{
+    } else {
       getGroupMembers();
     }
   }
@@ -101,7 +102,7 @@ class AddParticipantsController extends GetxController with GetTickerProviderSta
         _searchText = searchQuery.text.trim();
         pageNum = 1;
       }
-      if(groupId.isEmpty) {
+      if (groupId.isEmpty) {
         if (!Constants.enableContactSync) {
           deBouncer.run(() {
             fetchUsers(true);
@@ -109,18 +110,19 @@ class AddParticipantsController extends GetxController with GetTickerProviderSta
         } else {
           fetchUsers(true);
         }
-      }else{
+      } else {
         filterGroupMembers();
       }
     }
   }
 
   void filterGroupMembers() {
-    var filteredList = mainUsersList.where((item) => item.getName().toLowerCase().contains(_searchText.trim())).toList();
+    var filteredList =
+        mainUsersList.where((item) => item.getName().toLowerCase().contains(_searchText.trim())).toList();
     usersList(filteredList);
   }
 
-  clearSearch(){
+  clearSearch() {
     searchQuery.clear();
     _searchText = "";
     lastInputValue('');
@@ -128,8 +130,9 @@ class AddParticipantsController extends GetxController with GetTickerProviderSta
     usersList(mainUsersList);
     scrollable(!Constants.enableContactSync);
   }
-  getBackFromSearch(){
-    if(isSearching.value) {
+
+  getBackFromSearch() {
+    if (isSearching.value) {
       isSearching(false);
       searchQuery.clear();
       _searchText = "";
@@ -150,12 +153,11 @@ class AddParticipantsController extends GetxController with GetTickerProviderSta
 
   _scrollListener() {
     if (scrollController.hasClients) {
-      if (scrollController.position.extentAfter <= 0 &&
-          isPageLoading.value == false) {
+      if (scrollController.position.extentAfter <= 0 && isPageLoading.value == false) {
         if (scrollable.value) {
           //isPageLoading.value = true;
           LogMessage.d("usersList.length ${usersList.length} ~/ 20", (usersList.length ~/ 20));
-          pageNum = (usersList.length ~/ 20)+1;
+          pageNum = (usersList.length ~/ 20) + 1;
           fetchUsers(false);
         }
       }
@@ -201,7 +203,7 @@ class AddParticipantsController extends GetxController with GetTickerProviderSta
   }
 
   contactSelected(ProfileDetails item) {
-    if(callList.indexWhere((element) => element.userJid.toString()==item.jid.toString()).isNegative) {
+    if (callList.indexWhere((element) => element.userJid.toString() == item.jid.toString()).isNegative) {
       if (selectedUsersJIDList.contains(item.jid)) {
         selectedUsersList.removeWhere((user) => user.jid == item.jid);
         selectedUsersJIDList.remove(item.jid);
@@ -222,7 +224,7 @@ class AddParticipantsController extends GetxController with GetTickerProviderSta
         //item.isSelected = true;
       }
       usersList.refresh();
-    }else{
+    } else {
       toToast("User Already Added");
     }
   }
@@ -230,7 +232,7 @@ class AddParticipantsController extends GetxController with GetTickerProviderSta
   void onContactSyncComplete(bool result) {
     // progressSpinner(false);
     _first = true;
-    fetchUsers(_searchText.isNotEmpty,server: result);
+    fetchUsers(_searchText.isNotEmpty, server: result);
   }
 
   void userDeletedHisProfile(String jid) {
@@ -253,8 +255,7 @@ class AddParticipantsController extends GetxController with GetTickerProviderSta
     if (jid.isNotEmpty) {
       getProfileDetails(jid).then((value) {
         var userListIndex = usersList.indexWhere((element) => element.jid == jid);
-        var mainListIndex =
-        mainUsersList.indexWhere((element) => element.jid == jid);
+        var mainListIndex = mainUsersList.indexWhere((element) => element.jid == jid);
         mirrorFlyLog('value.isBlockedMe', value.isBlockedMe.toString());
         if (!userListIndex.isNegative) {
           usersList[userListIndex] = value;
@@ -272,13 +273,13 @@ class AddParticipantsController extends GetxController with GetTickerProviderSta
     removeSelectedPartcipants();
   }
 
-  void removeSelectedPartcipants(){
+  void removeSelectedPartcipants() {
     Mirrorfly.getInvitedUsersList().then((value) async {
       LogMessage.d("callController", " getInvitedUsersList $value");
-      if(value.isNotEmpty){
+      if (value.isNotEmpty) {
         var userJids = value;
         for (var jid in userJids) {
-          selectedUsersList.removeWhere((user) =>user.jid==jid);
+          selectedUsersList.removeWhere((user) => user.jid == jid);
           selectedUsersJIDList.remove(jid);
         }
         usersList.refresh();
@@ -290,27 +291,36 @@ class AddParticipantsController extends GetxController with GetTickerProviderSta
   var groupCallMembersCount = 0.obs;
   var callType = CallType.audio.obs;
   makeCall() async {
-    if(selectedUsersJIDList.isNotEmpty) {
-      if(callList.length!=getMaxCallUsersCount) {
-        if (await AppUtils.isNetConnected()) {
-          Mirrorfly.inviteUsersToOngoingCall(jidList: selectedUsersJIDList);
-          Get.back();
-        } else {
-          toToast(Constants.noInternetConnection);
-        }
-      }else{
-        toToast(Constants.callMembersLimit.replaceFirst("%d", getMaxCallUsersCount.toString()));
+    if (selectedUsersJIDList.isEmpty) {
+      return;
+    }
+    if (!availableFeatures.value.isGroupCallAvailable.checkNull()) {
+      Helper.showFeatureUnavailable();
+      return;
+    }
+    if (!(await AppUtils.isNetConnected())) {
+      toToast(Constants.noInternetConnection);
+      return;
+    }
+    if (callList.length != getMaxCallUsersCount) {
+      if (await AppUtils.isNetConnected()) {
+        Mirrorfly.inviteUsersToOngoingCall(jidList: selectedUsersJIDList);
+        Get.back();
+      } else {
+        toToast(Constants.noInternetConnection);
       }
+    } else {
+      toToast(Constants.callMembersLimit.replaceFirst("%d", getMaxCallUsersCount.toString()));
     }
   }
 
   var _searchText = "";
   var _first = true;
   var groupJid = "".obs;
-  fetchUsers(bool fromSearch,{bool server=false}) async {
-    if(Constants.enableContactSync){
+  fetchUsers(bool fromSearch, {bool server = false}) async {
+    if (Constants.enableContactSync) {
       var granted = await Permission.contacts.isGranted;
-      if(!granted){
+      if (!granted) {
         isPageLoading(false);
         return;
       }
@@ -320,19 +330,17 @@ class AddParticipantsController extends GetxController with GetTickerProviderSta
       callConnectedUserList.add(value1.userJid?.value ?? '');
     }
     if (await AppUtils.isNetConnected() || Constants.enableContactSync) {
-      callback (FlyResponse response) async {
-        if(response.isSuccess && response.data.isNotEmpty){
+      callback(FlyResponse response) async {
+        if (response.isSuccess && response.data.isNotEmpty) {
           var data = response.data;
           mirrorFlyLog("userlist", data);
           var item = userListFromJson(data);
-          var items = getFilteredList(callConnectedUserList,item.data);
+          var items = getFilteredList(callConnectedUserList, item.data);
           var list = <ProfileDetails>[];
 
           if (groupJid.value.checkNull().isNotEmpty) {
             await Future.forEach(items, (it) async {
-              await Mirrorfly.isMemberOfGroup(
-                  groupJid.value.checkNull(), it.jid.checkNull())
-                  .then((value) {
+              await Mirrorfly.isMemberOfGroup(groupJid.value.checkNull(), it.jid.checkNull()).then((value) {
                 mirrorFlyLog("item", value.toString());
                 if (value == null || !value) {
                   list.add(it);
@@ -349,10 +357,8 @@ class AddParticipantsController extends GetxController with GetTickerProviderSta
                 // if(usersList.length==20) pageNum += 1;
                 scrollable.value = list.length == 20;
               } else {
-                var userlist = mainUsersList.where((p0) => getName(p0)
-                    .toString()
-                    .toLowerCase()
-                    .contains(_searchText.trim().toLowerCase()));
+                var userlist = mainUsersList
+                    .where((p0) => getName(p0).toString().toLowerCase().contains(_searchText.trim().toLowerCase()));
                 usersList(userlist.toList());
                 scrollable(false);
                 /*for (var userDetail in mainUsersList) {
@@ -376,10 +382,8 @@ class AddParticipantsController extends GetxController with GetTickerProviderSta
           } else {
             list.addAll(items);
             if (Constants.enableContactSync && fromSearch) {
-              var userlist = mainUsersList.where((p0) => getName(p0)
-                  .toString()
-                  .toLowerCase()
-                  .contains(_searchText.trim().toLowerCase()));
+              var userlist = mainUsersList
+                  .where((p0) => getName(p0).toString().toLowerCase().contains(_searchText.trim().toLowerCase()));
               usersList(userlist.toList());
               /*for (var userDetail in mainUsersList) {
               if (userDetail.name.toString().toLowerCase().contains(_searchText.trim().toLowerCase())) {
@@ -397,10 +401,8 @@ class AddParticipantsController extends GetxController with GetTickerProviderSta
                 // if(usersList.length==20) pageNum += 1;
                 scrollable.value = list.length == 20;
               } else {
-                var userlist = mainUsersList.where((p0) => getName(p0)
-                    .toString()
-                    .toLowerCase()
-                    .contains(_searchText.trim().toLowerCase()));
+                var userlist = mainUsersList
+                    .where((p0) => getName(p0).toString().toLowerCase().contains(_searchText.trim().toLowerCase()));
                 usersList(userlist.toList());
                 scrollable(false);
                 /*for (var userDetail in mainUsersList) {
@@ -422,13 +424,14 @@ class AddParticipantsController extends GetxController with GetTickerProviderSta
             isPageLoading.value = false;
             usersList.refresh();
           }
-        }else{
+        } else {
           toToast(response.exception!.message.toString());
         }
       }
+
       (!Constants.enableContactSync)
-          ? Mirrorfly.getUserList(pageNum, _searchText,flyCallback: callback)
-          : Mirrorfly.getRegisteredUsers(false,flyCallback: callback);
+          ? Mirrorfly.getUserList(pageNum, _searchText, flyCallback: callback)
+          : Mirrorfly.getRegisteredUsers(false, flyCallback: callback);
       /*future.then((data) async {
         //Mirrorfly.getUserList(pageNum, _searchText).then((data) async {
         mirrorFlyLog("userlist", data);
@@ -463,11 +466,11 @@ class AddParticipantsController extends GetxController with GetTickerProviderSta
                   .contains(_searchText.trim().toLowerCase()));
               usersList(userlist.toList());
               scrollable(false);
-              *//*for (var userDetail in mainUsersList) {
+              */ /*for (var userDetail in mainUsersList) {
                   if (userDetail.name.toString().toLowerCase().contains(_searchText.trim().toLowerCase())) {
                     usersList.add(userDetail);
                   }
-                }*//*
+                }*/ /*
             }
           } else {
             if (!Constants.enableContactSync) {
@@ -489,11 +492,11 @@ class AddParticipantsController extends GetxController with GetTickerProviderSta
                 .toLowerCase()
                 .contains(_searchText.trim().toLowerCase()));
             usersList(userlist.toList());
-            *//*for (var userDetail in mainUsersList) {
+            */ /*for (var userDetail in mainUsersList) {
               if (userDetail.name.toString().toLowerCase().contains(_searchText.trim().toLowerCase())) {
                 usersList.add(userDetail);
               }
-            }*//*
+            }*/ /*
           }
           if (_first) {
             _first = false;
@@ -511,11 +514,11 @@ class AddParticipantsController extends GetxController with GetTickerProviderSta
                   .contains(_searchText.trim().toLowerCase()));
               usersList(userlist.toList());
               scrollable(false);
-              *//*for (var userDetail in mainUsersList) {
+              */ /*for (var userDetail in mainUsersList) {
                   if (userDetail.name.toString().toLowerCase().contains(_searchText.trim().toLowerCase())) {
                     usersList.add(userDetail);
                   }
-                }*//*
+                }*/ /*
             }
           } else {
             if (!Constants.enableContactSync) {
@@ -540,7 +543,7 @@ class AddParticipantsController extends GetxController with GetTickerProviderSta
   }
 
   void getGroupMembers() {
-    if(groupId.isNotEmpty) {
+    if (groupId.isNotEmpty) {
       Mirrorfly.getGroupMembersList(groupId.value.checkNull(), null).then((value) {
         mirrorFlyLog("getGroupMembersList", value);
         if (value.isNotEmpty) {
@@ -554,7 +557,17 @@ class AddParticipantsController extends GetxController with GetTickerProviderSta
     }
   }
 
-  List<ProfileDetails> getFilteredList(List<String> callConnectedUserList,List<ProfileDetails>? usersList){
-    return (usersList?.where((element) => !callConnectedUserList.contains(element.jid) && element.jid!= SessionManagement.getUserJID()).toList()) ?? [];
+  List<ProfileDetails> getFilteredList(List<String> callConnectedUserList, List<ProfileDetails>? usersList) {
+    return (usersList
+            ?.where((element) =>
+                !callConnectedUserList.contains(element.jid) && element.jid != SessionManagement.getUserJID())
+            .toList()) ??
+        [];
+  }
+
+  var availableFeatures = Get.find<MainController>().availableFeature;
+  void onAvailableFeaturesUpdated(AvailableFeatures features) {
+    LogMessage.d("GroupParticipants", "onAvailableFeaturesUpdated ${features.toJson()}");
+    availableFeatures(features);
   }
 }

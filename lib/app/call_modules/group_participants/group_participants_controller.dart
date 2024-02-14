@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/common/extensions.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
 import 'package:mirror_fly_demo/app/common/de_bouncer.dart';
+import 'package:mirror_fly_demo/app/common/main_controller.dart';
 import 'package:mirror_fly_demo/app/data/apputils.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
 import 'package:mirror_fly_demo/app/data/permissions.dart';
@@ -15,7 +16,6 @@ class GroupParticipantsController extends GetxController {
   var mainUserList = <ProfileDetails>[].obs;
   var selectedUsersList = List<ProfileDetails>.empty(growable: true).obs;
   var selectedUsersJIDList = List<String>.empty(growable: true).obs;
-
 
   var groupId = "".obs;
   var callType = "".obs;
@@ -47,7 +47,8 @@ class GroupParticipantsController extends GetxController {
   }
 
   //Search Start Here
-  bool get isClearVisible => _search.value && lastInputValue.value.isNotEmpty /*&& !isForward.value && isCreateGroup.value*/;
+  bool get isClearVisible =>
+      _search.value && lastInputValue.value.isNotEmpty /*&& !isForward.value && isCreateGroup.value*/;
   bool get isSearchVisible => !_search.value;
   FocusNode searchFocus = FocusNode();
 
@@ -121,7 +122,8 @@ class GroupParticipantsController extends GetxController {
             Get.toNamed(Routes.chatInfo, arguments: profile.value);
           }
         },
-        profile: profile);
+        profile: profile,
+        availableFeatures: availableFeatures);
   }
 
   onListItemPressed(ProfileDetails item) {
@@ -205,34 +207,47 @@ class GroupParticipantsController extends GetxController {
   }
 
   makeCall() async {
-    if (selectedUsersJIDList.isNotEmpty) {
-      if (await AppUtils.isNetConnected()) {
-        if (callType.value == CallType.audio) {
-          if (await AppPermission.askAudioCallPermissions()) {
-            Mirrorfly.makeGroupVoiceCall(groupJid: groupId.value, jidList: selectedUsersJIDList).then((value) {
-              if (value) {
-                Get.offNamed(Routes.outGoingCallView,
-                    arguments: {"userJid": selectedUsersJIDList, "callType": CallType.audio});
-              }
-            });
+    if (selectedUsersJIDList.isEmpty) {
+      return;
+    }
+    if (!availableFeatures.value.isGroupCallAvailable.checkNull()) {
+      Helper.showFeatureUnavailable();
+      return;
+    }
+    if ((await Mirrorfly.isOnGoingCall()).checkNull()) {
+      debugPrint("#Mirrorfly Call You are on another call");
+      toToast(Constants.msgOngoingCallAlert);
+      return;
+    }
+    if (!(await AppUtils.isNetConnected())) {
+      toToast(Constants.noInternetConnection);
+      return;
+    }
+    if (callType.value == CallType.audio) {
+      if (await AppPermission.askAudioCallPermissions()) {
+        Mirrorfly.makeGroupVoiceCall(groupJid: groupId.value, jidList: selectedUsersJIDList).then((value) {
+          if (value) {
+            Get.offNamed(Routes.outGoingCallView,
+                arguments: {"userJid": selectedUsersJIDList, "callType": CallType.audio});
           }
-        } else if (callType.value == CallType.video) {
-          if (await AppPermission.askVideoCallPermissions()) {
-            Mirrorfly.makeGroupVideoCall(groupJid: groupId.value, jidList: selectedUsersJIDList).then((value) {
-              if (value) {
-                Get.offNamed(Routes.outGoingCallView,
-                    arguments: {"userJid": selectedUsersJIDList, "callType": CallType.video});
-              }
-            });
-          }
-        }
-      } else {
-        toToast(Constants.noInternetConnection);
+        });
       }
-    }else{
-      LogMessage.d("makeCall", selectedUsersJIDList);
+    } else if (callType.value == CallType.video) {
+      if (await AppPermission.askVideoCallPermissions()) {
+        Mirrorfly.makeGroupVideoCall(groupJid: groupId.value, jidList: selectedUsersJIDList).then((value) {
+          if (value) {
+            Get.offNamed(Routes.outGoingCallView,
+                arguments: {"userJid": selectedUsersJIDList, "callType": CallType.video});
+          }
+        });
+      }
     }
   }
 
   //Call Functions End Here
+  var availableFeatures = Get.find<MainController>().availableFeature;
+  void onAvailableFeaturesUpdated(AvailableFeatures features) {
+    LogMessage.d("GroupParticipants", "onAvailableFeaturesUpdated ${features.toJson()}");
+    availableFeatures(features);
+  }
 }
