@@ -711,7 +711,7 @@ class _AudioMessageViewState extends State<AudioMessageView>
                   ? chatReplyContainerColor
                   : chatReplySenderColor,
             ),
-            padding: const EdgeInsets.all(5),
+            padding: const EdgeInsets.all(8),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
@@ -2033,7 +2033,7 @@ Widget getImageOverlay(ChatMessageModel chatMessage,
     var status = 0;
     if(chatMessage.isMessageSentByMe){
       if(chatMessage.mediaChatMessage!.mediaUploadStatus.value == Constants.mediaUploading || chatMessage.mediaChatMessage!.mediaDownloadStatus.value == Constants.mediaDownloading ){
-        status = Constants.mediaUploading;
+        status = (chatMessage.mediaChatMessage!.mediaUploadStatus.value == Constants.mediaUploading) ? Constants.mediaUploading : Constants.mediaDownloading;
       }else {
         if (chatMessage.mediaChatMessage!
             .mediaLocalStoragePath.value
