@@ -2268,16 +2268,10 @@ class ChatController extends FullLifeCycleController
               (message) => message.messageId == chatMessageModel.messageId);
       debugPrint("Media Status Update index of search $index");
       if (index != -1) {
-        LogMessage.d("Media Status Updated",chatMessageModel.toJson());
         // chatMessageModel.isSelected=chatList[index].isSelected;
         chatList[index].mediaChatMessage?.mediaLocalStoragePath(chatMessageModel.mediaChatMessage!.mediaLocalStoragePath.value);
         chatList[index].mediaChatMessage?.mediaDownloadStatus(chatMessageModel.mediaChatMessage!.mediaDownloadStatus.value);
         chatList[index].mediaChatMessage?.mediaUploadStatus(chatMessageModel.mediaChatMessage!.mediaUploadStatus.value);
-        if (chatList[index].mediaChatMessage!.mediaUploadStatus.value == MediaUploadStatus.mediaUploadedNotAvailable.value) {
-          toToast(Constants.mediaDoesNotExist);
-        } else if (chatList[index].mediaChatMessage!.mediaDownloadStatus.value == MediaDownloadStatus.storageNotEnough.value) {
-          toToast(Constants.insufficientMemoryError);
-        }
         debugPrint("After Media Status Updated ${chatList[index].mediaChatMessage?.mediaLocalStoragePath} ${chatList[index].mediaChatMessage?.mediaDownloadStatus} ${chatList[index].mediaChatMessage?.mediaUploadStatus}");
       }
     }

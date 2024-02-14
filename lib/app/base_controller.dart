@@ -574,7 +574,7 @@ abstract class BaseController {
 
   void onMediaStatusUpdated(event) {
     ChatMessageModel chatMessageModel = sendMessageModelFromJson(event);
-
+    LogMessage.d("Media Status Updated",chatMessageModel.toJson());
     if (Get.isRegistered<ChatController>()) {
       Get.find<ChatController>().onMediaStatusUpdated(chatMessageModel);
     }
@@ -586,6 +586,11 @@ abstract class BaseController {
         chatMessageModel.isMediaMessage() &&
         (chatMessageModel.isMediaUploaded() || chatMessageModel.isMediaDownloaded())) {
       Get.find<ViewAllMediaController>().onMediaStatusUpdated(chatMessageModel);
+    }
+    if (chatMessageModel.mediaChatMessage!.mediaUploadStatus.value == MediaUploadStatus.mediaUploadedNotAvailable.value) {
+      toToast(Constants.mediaDoesNotExist);
+    } else if (chatMessageModel.mediaChatMessage!.mediaDownloadStatus.value == MediaDownloadStatus.storageNotEnough.value) {
+      toToast(Constants.insufficientMemoryError);
     }
   }
 
