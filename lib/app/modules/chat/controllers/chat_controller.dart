@@ -3195,7 +3195,7 @@ class ChatController extends FullLifeCycleController
       if(Platform.isIOS) {
         ///This is the top constraint changing to bottom constraint and calling nextMessages bcz reversing the list view in display
         if (firstVisibleItemIndex <= 1 &&
-            itemPositions.first.itemLeadingEdge <= 0) {
+            double.parse(itemPositions.first.itemLeadingEdge.toStringAsFixed(1)) <= 0) {
           // Scrolled to the Bottom
           debugPrint("reached Bottom yes load next messages");
           _loadNextMessages();

@@ -469,31 +469,16 @@ class AppPermission {
   static Future<bool> checkPermission(Permission permission,
       String permissionIcon, String permissionContent) async {
     var status = await permission.status;
+    debugPrint("checkPermission $permission status $status");
     if (status == PermissionStatus.granted) {
       debugPrint("permission granted opening");
       return true;
-    } else if(await permission.shouldShowRequestRationale) {
+    } else if(status == PermissionStatus.denied || (Platform.isAndroid && await permission.shouldShowRequestRationale)) {
       mirrorFlyLog('denied', 'permission');
       var popupValue = await customPermissionDialog(
           icon: permissionIcon, content: permissionContent);
       if (popupValue) {
-        // return AppPermission.requestPermission(permission);/*.then((value) {
         var newp = await AppPermission.requestPermission(permission);
-        /*if(newp.isPermanentlyDenied) {
-          // savePermissionAsked(permission);
-          var deniedPopupValue = await customPermissionDialog(
-              icon: permissionIcon,
-              content: getPermissionAlertMessage(
-                  permission.toString().replaceAll("Permission.", "")));
-          if (deniedPopupValue) {
-            openAppSettings();
-            return false;
-          } else {
-            return false;
-          }
-        }else{
-          return newp.isGranted;
-        }*/
         return newp.isGranted;
       } else {
         return false;

@@ -147,6 +147,10 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
       }
     });
     pageNumber = 1;
+
+    Mirrorfly.syncCallLogs().then((isSuccess){
+      debugPrint("#MirrorflyCall syncCallLogs isSuccess $isSuccess");
+    });
     super.onInit();
   }
 
