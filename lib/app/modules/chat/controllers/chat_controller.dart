@@ -3348,7 +3348,7 @@ class ChatController extends FullLifeCycleController
 
   void removeUnreadMessageSeparator(int separatorPosition,{bool removeFromList = true}){
     Mirrorfly.markAsReadDeleteUnreadSeparator(profile.jid.checkNull());
-    if(removeFromList) {
+    if(removeFromList && !separatorPosition.isNegative) {
       chatList.removeAt(separatorPosition);
     }
   }
@@ -3383,9 +3383,15 @@ class ChatController extends FullLifeCycleController
 
   int lastVisiblePosition() {
     final itemPositions = newitemPositionsListener.itemPositions.value;
-    final firstVisibleItemIndex = itemPositions.first.index;
-    LogMessage.d("lastVisiblePosition", "$firstVisibleItemIndex");
-    return firstVisibleItemIndex;
+    if(itemPositions.isNotEmpty) {
+      final firstVisibleItemIndex = itemPositions.first.index;
+      LogMessage.d("lastVisiblePosition", "$firstVisibleItemIndex");
+      return firstVisibleItemIndex;
+    }else{
+      // Handle the case when the list is empty
+      LogMessage.d("lastVisiblePosition", "List is empty");
+      return -1;
+    }
   }
 
   void unReadMessageScrollPosition(int position) {
