@@ -8,7 +8,7 @@ import 'package:mirror_fly_demo/app/common/widgets.dart';
 import 'package:mirror_fly_demo/app/data/session_management.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
 import 'package:mirror_fly_demo/app/modules/group/controllers/group_info_controller.dart';
-
+import 'package:mirror_fly_demo/app/common/extensions.dart';
 import '../../../common/constants.dart';
 import '../../../routes/app_pages.dart';
 import 'package:mirrorfly_plugin/mirrorfly.dart';
@@ -219,7 +219,7 @@ class GroupInfoView extends GetView<GroupInfoController> {
                     itemBuilder: (context, index) {
                       var item = controller.groupMembers[index];
                       return memberItem(
-                        name: getName(item).checkNull(),
+                        name: item.getName().checkNull(),
                         image: item.image.checkNull(),
                         isAdmin: item.isGroupAdmin,
                         status: item.status.checkNull(),

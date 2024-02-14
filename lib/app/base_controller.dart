@@ -10,6 +10,7 @@ import 'package:mirror_fly_demo/app/call_modules/participants/add_participants_c
 import 'package:mirror_fly_demo/app/modules/media_preview/controllers/media_preview_controller.dart';
 import 'package:mirrorfly_plugin/mirrorflychat.dart';
 import 'package:get/get.dart';
+import 'package:mirror_fly_demo/app/common/extensions.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
 import 'package:mirror_fly_demo/app/data/session_management.dart';

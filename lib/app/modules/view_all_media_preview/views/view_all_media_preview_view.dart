@@ -3,7 +3,7 @@ import 'dart:io';
 // import 'package:better_video_player/better_video_player.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-
+import 'package:mirror_fly_demo/app/common/extensions.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
 import 'package:photo_view/photo_view.dart';

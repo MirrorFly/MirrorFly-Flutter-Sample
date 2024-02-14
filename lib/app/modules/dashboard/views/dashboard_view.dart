@@ -10,7 +10,7 @@ import 'package:mirror_fly_demo/app/modules/dashboard/widgets.dart';
 import 'package:mirror_fly_demo/app/widgets/animated_floating_action.dart';
 import 'package:mirrorfly_plugin/mirrorflychat.dart';
 import 'package:mirrorfly_plugin/model/call_log_model.dart';
-
+import 'package:mirror_fly_demo/app/common/extensions.dart';
 import '../../../common/app_theme.dart';
 import '../../../common/widgets.dart';
 import '../../../routes/app_pages.dart';
@@ -537,7 +537,7 @@ class DashboardView extends GetView<DashboardController> {
                           )
                         : ListView.builder(
                             padding: EdgeInsets.zero,
-                            physics: const AlwaysScrollableScrollPhysics(),
+                            physics: const BouncingScrollPhysics(),
                             itemCount: controller.recentChats.length + 2,
                             shrinkWrap: true,
                             controller: controller.historyScrollController,

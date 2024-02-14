@@ -8,7 +8,7 @@ import 'package:mirror_fly_demo/app/common/constants.dart';
 import 'package:mirror_fly_demo/app/common/main_controller.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
 import 'package:mirrorfly_plugin/mirrorfly.dart';
-
+import 'package:mirror_fly_demo/app/common/extensions.dart';
 import '../../../common/crop_image.dart';
 import '../../../data/apputils.dart';
 import '../../../data/session_management.dart';
@@ -193,6 +193,7 @@ class GroupInfoController extends GetxController {
       mirrorFlyLog("getGroupMembersList", value);
       if(value.isNotEmpty){
         var list = profileFromJson(value);
+        list.sort((a, b) => (a.jid==SessionManagement.getUserJID()) ? 1 : (b.jid==SessionManagement.getUserJID()) ? -1 : 0);
         groupMembers.value=(list);
         groupMembers.refresh();
       }
@@ -276,6 +277,7 @@ class GroupInfoController extends GetxController {
         }
       }).catchError((error) {
         Helper.hideLoading();
+        toToast(Constants.errorTryAgain);
       });
     }else{
       toToast(Constants.noInternetConnection);
@@ -310,6 +312,7 @@ class GroupInfoController extends GetxController {
                 }
               }).catchError((error) {
                 Helper.hideLoading();
+                toToast(Constants.errorTryAgain);
               });
             }else{
               toToast(Constants.noInternetConnection);

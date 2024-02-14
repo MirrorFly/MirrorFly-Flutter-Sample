@@ -20,7 +20,7 @@ import 'package:mirror_fly_demo/app/common/main_controller.dart';
 import 'package:mirror_fly_demo/app/data/session_management.dart';
 import 'package:mirror_fly_demo/app/data/permissions.dart';
 import 'package:mirror_fly_demo/app/modules/notification/notification_builder.dart';
-
+import 'package:mirror_fly_demo/app/common/extensions.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
@@ -2133,8 +2133,8 @@ class ChatController extends FullLifeCycleController
     _audioTimer?.cancel();
     _audioTimer = null;
     await Record().stop().then((filePath) async {
-      if (File(filePath!).existsSync()) {
-        recordedAudioPath = filePath;
+      if (AppUtils.isMediaExists(filePath)) {
+        recordedAudioPath = filePath.checkNull();
       } else {
         debugPrint("File Not Found For Audio");
       }
@@ -2272,6 +2272,11 @@ class ChatController extends FullLifeCycleController
         chatList[index].mediaChatMessage?.mediaLocalStoragePath(chatMessageModel.mediaChatMessage!.mediaLocalStoragePath.value);
         chatList[index].mediaChatMessage?.mediaDownloadStatus(chatMessageModel.mediaChatMessage!.mediaDownloadStatus.value);
         chatList[index].mediaChatMessage?.mediaUploadStatus(chatMessageModel.mediaChatMessage!.mediaUploadStatus.value);
+        if (chatList[index].mediaChatMessage!.mediaUploadStatus.value == MediaUploadStatus.mediaUploadedNotAvailable.value) {
+          toToast(Constants.mediaDoesNotExist);
+        } else if (chatList[index].mediaChatMessage!.mediaDownloadStatus.value == MediaDownloadStatus.storageNotEnough.value) {
+          toToast(Constants.insufficientMemoryError);
+        }
       }
     }
     if (isSelected.value) {
@@ -2732,10 +2737,8 @@ class ChatController extends FullLifeCycleController
       canBeForwardedSet = true;
     }
     //Share Validation
-    if (!canBeSharedSet &&
-        (!message.isMediaMessage() ||
-            (message.isMediaMessage() &&
-                !checkFile(message.mediaChatMessage!.mediaLocalStoragePath.value)))) {
+    if (!canBeSharedSet && (!message.isMediaMessage() || (message.isMediaMessage() &&
+                !AppUtils.isMediaExists(message.mediaChatMessage!.mediaLocalStoragePath.value)))) {
       canBeShared(false);
       canBeSharedSet = true;
     }
@@ -2871,11 +2874,8 @@ class ChatController extends FullLifeCycleController
     var mediaPaths = <XFile>[];
     for (var item in selectedChatList) {
       if (item.isMediaMessage()) {
-        if ((item.isMediaDownloaded() || item.isMediaUploaded()) &&
-            item.mediaChatMessage!
-                .mediaLocalStoragePath.value
-                .checkNull()
-                .isNotEmpty) {
+        if (AppUtils.isMediaExists(item.mediaChatMessage!
+            .mediaLocalStoragePath.value)) {
           mediaPaths.add(
               XFile(item.mediaChatMessage!.mediaLocalStoragePath.value.checkNull()));
           debugPrint(
@@ -3309,6 +3309,7 @@ class ChatController extends FullLifeCycleController
   void handleUnreadMessageSeparator({bool remove = true,bool removeFromList = false}){
     var tuple3 = findIndexOfUnreadMessageType();
     var isUnreadSeparatorIsAvailable = tuple3.item1;
+    LogMessage.d("isUnreadSeparatorIsAvailable", isUnreadSeparatorIsAvailable);
     var separatorPosition = tuple3.item2;
     debugPrint("handleUnreadMessageSeparator isUnreadSeparatorIsAvailable $isUnreadSeparatorIsAvailable");
     //Commenting this line due to group notification received and the numbers is added in recent chat and inside there is no separator so mark as read is not called.
@@ -3412,3 +3413,50 @@ class ChatController extends FullLifeCycleController
     }
   }
 }
+
+class MyMessageListener implements MessageEventsListener {
+
+
+  @override
+  void onMessageStatusUpdated(String messageId) {
+    LogMessage.d("MyMessageListener", messageId);
+    // Implement your logic for handling message status updates
+  }
+
+  @override
+  void onUpdateUnStarAllMessages() {
+    // Implement your logic for updating unstarred messages
+  }
+
+
+
+  @override
+  void onUploadDownloadProgressChanged(String messageId, int progressPercentage) {
+    // Implement your logic for handling progress changes
+  }
+
+  @override
+  void onMessagesClearedOrDeleted(List<String> messageIds, String jid) {
+    // Implement your logic for handling cleared or deleted messages
+  }
+
+
+
+  @override
+  void updateArchiveUnArchiveChats(String? toUser, bool archiveStatus) {
+    // Implement your logic for updating archive/unarchive chats
+  }
+
+  @override
+  void updateArchivedSettings(bool archivedSettingsStatus) {
+    // Implement your logic for updating archived settings
+  }
+
+  @override
+  void onUpdateBusyStatus(bool status, String? message) {
+    // Implement your logic for updating busy status
+  }
+
+
+}
+

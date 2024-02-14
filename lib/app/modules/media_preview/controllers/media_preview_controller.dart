@@ -5,6 +5,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:mirrorfly_plugin/mirrorfly.dart';
+import 'package:mirror_fly_demo/app/common/extensions.dart';
 import 'package:get/get.dart';
 
 import '../../../common/constants.dart';

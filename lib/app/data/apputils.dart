@@ -1,7 +1,11 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
+import 'package:mirror_fly_demo/app/common/extensions.dart';
+import 'package:mirror_fly_demo/app/model/chat_message_model.dart';
 import 'package:mirrorfly_plugin/mirrorflychat.dart';
 import 'package:tuple/tuple.dart';
 
@@ -54,5 +58,39 @@ class AppUtils{
     map["code"]=code;
     map["message"]=message;
     return map;
+  }
+
+  static String returnEmptyStringIfNull(dynamic value) {
+    return value ?? '';
+  }
+
+  static bool isMediaFileAvailable(MessageType msgType, ChatMessageModel message) {
+    bool mediaExist = false;
+    if (msgType == MessageType.audio ||
+        msgType == MessageType.video ||
+        msgType == MessageType.image ||
+        msgType == MessageType.document) {
+      final downloadedMediaValue = returnEmptyStringIfNull(
+          message.mediaChatMessage?.mediaDownloadStatus);
+      final uploadedMediaValue = returnEmptyStringIfNull(
+          message.mediaChatMessage?.mediaUploadStatus);
+      if (MediaDownloadStatus.mediaDownloaded.value.toString() == downloadedMediaValue ||
+          MediaUploadStatus.mediaUploaded.value.toString() == uploadedMediaValue) {
+        mediaExist = true;
+      }
+    }
+    return mediaExist;
+  }
+
+  static bool isMediaFileNotAvailable(bool isMediaFileAvailable, ChatMessageModel message) {
+    return !isMediaFileAvailable && message.isMediaMessage();
+  }
+
+  static bool isMediaExists(String? filePath) {
+    if(filePath == null || filePath.isEmpty) {
+      return false;
+    }
+    File file = File(filePath);
+    return file.existsSync();
   }
 }
