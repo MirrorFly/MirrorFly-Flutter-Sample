@@ -2272,11 +2272,7 @@ class ChatController extends FullLifeCycleController
         chatList[index].mediaChatMessage?.mediaLocalStoragePath(chatMessageModel.mediaChatMessage!.mediaLocalStoragePath.value);
         chatList[index].mediaChatMessage?.mediaDownloadStatus(chatMessageModel.mediaChatMessage!.mediaDownloadStatus.value);
         chatList[index].mediaChatMessage?.mediaUploadStatus(chatMessageModel.mediaChatMessage!.mediaUploadStatus.value);
-        if (chatList[index].mediaChatMessage!.mediaUploadStatus.value == MediaUploadStatus.mediaUploadedNotAvailable.value) {
-          toToast(Constants.mediaDoesNotExist);
-        } else if (chatList[index].mediaChatMessage!.mediaDownloadStatus.value == MediaDownloadStatus.storageNotEnough.value) {
-          toToast(Constants.insufficientMemoryError);
-        }
+        debugPrint("After Media Status Updated ${chatList[index].mediaChatMessage?.mediaLocalStoragePath} ${chatList[index].mediaChatMessage?.mediaDownloadStatus} ${chatList[index].mediaChatMessage?.mediaUploadStatus}");
       }
     }
     if (isSelected.value) {
@@ -3418,51 +3414,5 @@ class ChatController extends FullLifeCycleController
       }
     }
   }
-}
-
-class MyMessageListener implements MessageEventsListener {
-
-
-  @override
-  void onMessageStatusUpdated(String messageId) {
-    LogMessage.d("MyMessageListener", messageId);
-    // Implement your logic for handling message status updates
-  }
-
-  @override
-  void onUpdateUnStarAllMessages() {
-    // Implement your logic for updating unstarred messages
-  }
-
-
-
-  @override
-  void onUploadDownloadProgressChanged(String messageId, int progressPercentage) {
-    // Implement your logic for handling progress changes
-  }
-
-  @override
-  void onMessagesClearedOrDeleted(List<String> messageIds, String jid) {
-    // Implement your logic for handling cleared or deleted messages
-  }
-
-
-
-  @override
-  void updateArchiveUnArchiveChats(String? toUser, bool archiveStatus) {
-    // Implement your logic for updating archive/unarchive chats
-  }
-
-  @override
-  void updateArchivedSettings(bool archivedSettingsStatus) {
-    // Implement your logic for updating archived settings
-  }
-
-  @override
-  void onUpdateBusyStatus(bool status, String? message) {
-    // Implement your logic for updating busy status
-  }
-
-
 }
 

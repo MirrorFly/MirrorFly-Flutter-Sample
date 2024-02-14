@@ -671,6 +671,7 @@ class ChatView extends GetView<ChatController> {
                     },
                     onTap: () {
                       debugPrint("On Tap");
+                      FocusManager.instance.primaryFocus?.unfocus();
                       if (controller.isSelected.value) {
                         controller.isSelected.value
                             ? controller.selectedChatList
