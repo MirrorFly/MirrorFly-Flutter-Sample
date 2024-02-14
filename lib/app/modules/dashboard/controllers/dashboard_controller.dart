@@ -381,7 +381,7 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
     getRecentChatOfJid(jid).then((recent) {
       final index = recentChats.indexWhere((chat) => chat.jid == jid);
       debugPrint("dashboard index--> $index");
-      LogMessage.d("updateRecentChat", index);
+      LogMessage.d("updateRecentChat",recent?.toJson());
       if (recent != null) {
         if (!recent.isChatArchived.checkNull()) {
           if (index.isNegative) {
@@ -1595,6 +1595,7 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
           if (response.isSuccess && response.data.isNotEmpty) {
             debugPrint("getRecentChatListHistory next data ${response.data}");
             var data = recentChatFromJson(response.data); //await compute(recentChatFromJson, value.toString());
+            LogMessage.d("getRecentChatListHistory", data.toJson());
             recentChats.addAll(data.data!);
             recentChats.refresh();
             isRecentHistoryLoading(false);
