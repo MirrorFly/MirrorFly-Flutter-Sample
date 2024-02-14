@@ -140,17 +140,10 @@ class Helper {
 
   static String durationToString(Duration duration) {
     debugPrint("duration conversion $duration");
-    /*final mm = (duration.inMinutes % 60).toString().padLeft(2, '0');
-    final ss = (duration.inSeconds % 60).toString().padLeft(2, '0');
-    return '$mm:$ss';*/
-    //return (duration.inSeconds % 60).toString().padLeft(2, '0');
-    /*return (duration.inMilliseconds /60)
-        .toStringAsFixed(2)
-        .replaceFirst('.', ':')
-        .padLeft(5, '0');*/
+    String hours = (duration.inHours == 00) ? "" : "${duration.inHours.toStringAsFixed(0).padLeft(2, '0')}:"; // Get hours
+    int minutes = duration.inMinutes % 60; // Get minutes
     var seconds = ((duration.inSeconds % 60)).toStringAsFixed(0).padLeft(2, '0');
-    // debugPrint("return ")
-    return '${(duration.inMinutes).toStringAsFixed(0).padLeft(2, '0')}:$seconds';
+    return '$hours${minutes.toStringAsFixed(0).padLeft(2, '0')}:$seconds';
   }
 
   static String getMapImageUri(double latitude, double longitude) {
