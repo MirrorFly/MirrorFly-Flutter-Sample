@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import 'package:mirror_fly_demo/app/data/helper.dart';
+import 'package:mirror_fly_demo/app/common/extensions.dart';
 import 'package:mirror_fly_demo/app/modules/group/controllers/group_creation_controller.dart';
 
 import '../../../common/constants.dart';

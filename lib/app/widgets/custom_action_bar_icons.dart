@@ -64,7 +64,7 @@ class _CustomActionBarIconsState extends State<CustomActionBarIcons> with Widget
 
   @override
   Widget build(BuildContext context) {
-    LogMessage.d("CustomActionBarIcons", "build");
+    // LogMessage.d("CustomActionBarIcons", "build");
     widget.actions.sort(); // items with ShowAsAction.NEVER are placed at the end
 
     List<CustomAction> visible = widget.actions

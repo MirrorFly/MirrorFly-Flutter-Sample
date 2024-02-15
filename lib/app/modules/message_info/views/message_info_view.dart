@@ -3,8 +3,7 @@ import 'package:flutter_svg/svg.dart';
 
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/common/widgets.dart';
-import 'package:mirror_fly_demo/app/data/helper.dart';
-
+import 'package:mirror_fly_demo/app/common/extensions.dart';
 import '../../../common/constants.dart';
 import '../../chat/chat_widgets.dart';
 

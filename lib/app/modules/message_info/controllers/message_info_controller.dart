@@ -4,12 +4,11 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
-
+import 'package:mirror_fly_demo/app/common/extensions.dart';
 import 'package:mirrorfly_plugin/mirrorflychat.dart';
 import 'package:mirror_fly_demo/app/modules/chat/controllers/chat_controller.dart';
 
 import '../../../common/constants.dart';
-import '../../../data/helper.dart';
 import '../../../data/permissions.dart';
 import '../../../model/chat_message_model.dart';
 

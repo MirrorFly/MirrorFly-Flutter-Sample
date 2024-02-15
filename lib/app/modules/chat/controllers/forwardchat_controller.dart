@@ -3,7 +3,8 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
-
+import 'package:mirror_fly_demo/app/common/extensions.dart';
+import 'package:mirror_fly_demo/app/routes/app_pages.dart';
 import 'package:mirrorfly_plugin/mirrorfly.dart';
 import 'package:permission_handler/permission_handler.dart';
 
@@ -409,8 +410,11 @@ class ForwardChatController extends GetxController {
             getProfileDetails(selectedJids.last)
                 .then((value) {
               if (value.jid != null) {
-                // var str = profiledata(value.toString());
-                Get.back(result: value);
+                // Get.back(result: value);
+                Get.offNamedUntil(Routes.chat,arguments: value, (route){
+                  LogMessage.d("offNamedUntil",route.settings.name);
+                  return route.settings.name.toString().startsWith(Routes.dashboard);
+                });
               }
             });
           }).catchError((onError){

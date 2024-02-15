@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:mirror_fly_demo/app/common/extensions.dart';
 import 'package:mirrorfly_plugin/mirrorflychat.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
 import 'package:share_plus/share_plus.dart';
@@ -91,8 +92,9 @@ class StarredMessagesController extends FullLifeCycleController with FullLifeCyc
     final index = starredChatList.indexWhere(
             (message) => message.messageId == chatMessageModel.messageId);
     if (!index.isNegative) {
-      starredChatList[index] = chatMessageModel;
-      starredChatList.refresh();
+      starredChatList[index].mediaChatMessage?.mediaLocalStoragePath(chatMessageModel.mediaChatMessage!.mediaLocalStoragePath.value);
+      starredChatList[index].mediaChatMessage?.mediaDownloadStatus(chatMessageModel.mediaChatMessage!.mediaDownloadStatus.value);
+      starredChatList[index].mediaChatMessage?.mediaUploadStatus(chatMessageModel.mediaChatMessage!.mediaUploadStatus.value);
     }
 
     if (isSelected.value) {

@@ -15,7 +15,7 @@ import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/common/app_theme.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
 import 'package:mirror_fly_demo/app/common/main_controller.dart';
-import 'package:mirror_fly_demo/app/data/helper.dart';
+import 'package:mirror_fly_demo/app/common/extensions.dart';
 import 'package:mirror_fly_demo/app/data/pushnotification.dart';
 import 'package:mirror_fly_demo/app/modules/dashboard/bindings/dashboard_binding.dart';
 import 'package:mirror_fly_demo/app/modules/login/bindings/login_binding.dart';
@@ -59,19 +59,6 @@ Future<void> main() async {
     }
 
   }
-  Mirrorfly.initializeSDK(
-      licenseKey: 'ckIjaccWBoMNvxdbql8LJ2dmKqT5bp',//ckIjaccWBoMNvxdbql8LJ2dmKqT5bp//2sdgNtr3sFBSM3bYRa7RKDPEiB38Xo
-      iOSContainerID: 'group.com.mirrorfly.flutter',//group.com.mirrorfly.flutter
-      chatHistoryEnable: true,
-      enableDebugLog: true,
-      flyCallback: (response){
-        if(response.isSuccess){
-          LogMessage.d("onSuccess", response.message);
-        }else{
-          LogMessage.d("onFailure", response.exception?.message.toString());
-        }
-      }
-  );
 
   final GoogleMapsFlutterPlatform mapsImplementation =
       GoogleMapsFlutterPlatform.instance;
@@ -81,15 +68,30 @@ Future<void> main() async {
   //check app opened from notification
   notificationAppLaunchDetails = await flutterLocalNotificationsPlugin.getNotificationAppLaunchDetails();
 
-  //check is on going call
-  isOnGoingCall = (await Mirrorfly.isOnGoingCall()).checkNull();
-  fromMissedCall = (await Mirrorfly.appLaunchedFromMissedCall()).checkNull();
+
   if (shouldUseFirebaseEmulator) {
     await FirebaseAuth.instance.useAuthEmulator('localhost', 5050);
   }
   await SessionManagement.onInit();
   // Get.put<MainController>(MainController());
-  runApp(const MyApp());
+  Mirrorfly.initializeSDK(
+      licenseKey: 'ckIjaccWBoMNvxdbql8LJ2dmKqT5bp',//ckIjaccWBoMNvxdbql8LJ2dmKqT5bp//2sdgNtr3sFBSM3bYRa7RKDPEiB38Xo
+      iOSContainerID: 'group.com.mirrorfly.flutter',//group.com.mirrorfly.flutter
+      chatHistoryEnable: true,
+      enableDebugLog: true,
+      flyCallback: (response) async {
+        if(response.isSuccess){
+          LogMessage.d("onSuccess", response.message);
+        }else{
+          LogMessage.d("onFailure", response.exception?.message.toString());
+        }
+        //check is on going call
+        isOnGoingCall = (await Mirrorfly.isOnGoingCall()).checkNull();
+        fromMissedCall = (await Mirrorfly.appLaunchedFromMissedCall()).checkNull();
+        runApp(const MyApp());
+      }
+  );
+
 }
 
 class MyApp extends StatefulWidget{

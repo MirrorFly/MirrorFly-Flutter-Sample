@@ -10,7 +10,7 @@ import 'package:get/get.dart';
 import 'package:marquee/marquee.dart';
 import 'package:mirror_fly_demo/app/common/widgets.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
-
+import 'package:mirror_fly_demo/app/common/extensions.dart';
 import 'package:mirror_fly_demo/app/routes/app_pages.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:swipe_to/swipe_to.dart';
@@ -671,6 +671,7 @@ class ChatView extends GetView<ChatController> {
                     },
                     onTap: () {
                       debugPrint("On Tap");
+                      FocusManager.instance.primaryFocus?.unfocus();
                       if (controller.isSelected.value) {
                         controller.isSelected.value
                             ? controller.selectedChatList

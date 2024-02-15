@@ -20,7 +20,7 @@ import 'package:mirror_fly_demo/app/common/main_controller.dart';
 import 'package:mirror_fly_demo/app/data/session_management.dart';
 import 'package:mirror_fly_demo/app/data/permissions.dart';
 import 'package:mirror_fly_demo/app/modules/notification/notification_builder.dart';
-
+import 'package:mirror_fly_demo/app/common/extensions.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
@@ -165,7 +165,11 @@ class ChatController extends FullLifeCycleController
       var profileDetail = Get.arguments as ProfileDetails;
       profile_(profileDetail);
       //make unreadMessageTypeMessageId
-      unreadMessageTypeMessageId = "M${profileDetail.jid}";
+      if(Platform.isAndroid){
+        unreadMessageTypeMessageId = "M${profileDetail.jid}";
+      }else if(Platform.isIOS){
+        unreadMessageTypeMessageId = "M_${getMobileNumberFromJid(profileDetail.jid.checkNull())}";
+      }
       checkAdminBlocked();
       ready();
       // initListeners();
@@ -174,7 +178,11 @@ class ChatController extends FullLifeCycleController
         SessionManagement.setChatJid("");
         profile_(value);
         //make unreadMessageTypeMessageId
-        unreadMessageTypeMessageId = "M${value.jid}";
+        if(Platform.isAndroid){
+          unreadMessageTypeMessageId = "M${value.jid}";
+        }else if(Platform.isIOS){
+          unreadMessageTypeMessageId = "M_${getMobileNumberFromJid(value.jid.checkNull())}";
+        }
         checkAdminBlocked();
         ready();
         // initListeners();
@@ -461,7 +469,8 @@ class ChatController extends FullLifeCycleController
       }
       isReplying(false);
       if (messageController.text.trim().isNotEmpty) {
-        Mirrorfly.sendTextMessage(messageController.text.trim(),
+        //old method is deprecated Instead of use below new method
+        /*Mirrorfly.sendTextMessage(messageController.text.trim(),
             profile.jid.toString(),replyMessageId,topicId: topicId)
             .then((value) {
           mirrorFlyLog("text message", value);
@@ -476,6 +485,20 @@ class ChatController extends FullLifeCycleController
           // chatList.insert(0, chatMessageModel);
           scrollToBottom();
           updateLastMessage(value);
+        });*/
+        Mirrorfly.sendMessage(messageParams: MessageParams.text(toJid: profile.jid.checkNull(),
+            replyMessageId: replyMessageId,topicId: topicId,
+            textMessageParams: TextMessageParams(messageText: messageController.text.trim())), flyCallback: (response){
+          if(response.isSuccess){
+            mirrorFlyLog("text message", response.data);
+            messageController.text = "";
+            isUserTyping(false);
+            clearMessage();
+            scrollToBottom();
+            updateLastMessage(response.data);
+          }else{
+            LogMessage.d("sendMessage", response.exception?.message);
+          }
         });
       }
     } else {
@@ -559,8 +582,8 @@ class ChatController extends FullLifeCycleController
         replyMessageId = replyChatMessage.messageId;
       }
       isReplying(false);
-
-      Mirrorfly.sendLocationMessage(
+      //old method is deprecated Instead of use below new method
+      /*Mirrorfly.sendLocationMessage(
           profile.jid.toString(), latitude, longitude, replyMessageId,topicId: topicId)
           .then((value) {
         mirrorFlyLog("Location_msg", value.toString());
@@ -568,6 +591,16 @@ class ChatController extends FullLifeCycleController
         // chatList.insert(0, chatMessageModel);
         scrollToBottom();
         updateLastMessage(value);
+      });*/
+      Mirrorfly.sendMessage(messageParams: MessageParams.location(toJid: profile.jid.checkNull(),replyMessageId: replyMessageId,topicId: topicId,
+          locationMessageParams: LocationMessageParams(latitude: latitude, longitude: longitude)), flyCallback: (response){
+        if(response.isSuccess){
+          mirrorFlyLog("Location_msg", response.data.toString());
+          scrollToBottom();
+          updateLastMessage(response.data);
+        }else{
+          LogMessage.d("sendMessage", response.exception?.message);
+        }
       });
     } else {
       //show busy status popup
@@ -788,7 +821,8 @@ class ChatController extends FullLifeCycleController
       }
       isReplying(false);
       if (File(path!).existsSync()) {
-        return Mirrorfly.sendImageMessage(
+        //old method is deprecated Instead of use below new method
+        /*return Mirrorfly.sendImageMessage(
             profile.jid!, path, caption, replyMessageID,topicId: topicId)
             .then((value) {
           clearMessage();
@@ -797,6 +831,20 @@ class ChatController extends FullLifeCycleController
           scrollToBottom();
           updateLastMessage(value);
           return chatMessageModel;
+        });*/
+        return Mirrorfly.sendMessage(messageParams: MessageParams.image(toJid: profile.jid.checkNull(),
+            replyMessageId: replyMessageID,topicId: topicId,
+            fileMessageParams: FileMessageParams(file: File(path),caption: caption)), flyCallback: (response){
+          if(response.isSuccess){
+            clearMessage();
+            ChatMessageModel chatMessageModel = sendMessageModelFromJson(response.data);
+            // chatList.insert(0, chatMessageModel);
+            scrollToBottom();
+            updateLastMessage(response.data);
+            return chatMessageModel;
+          }else{
+            LogMessage.d("sendMessage", response.exception?.message);
+          }
         });
       } else {
         debugPrint("file not found for upload");
@@ -865,7 +913,8 @@ class ChatController extends FullLifeCycleController
       }
       isReplying(false);
       Platform.isIOS ? Helper.showLoading(message: "Compressing Video") : null;
-      return Mirrorfly.sendVideoMessage(
+      //old method is deprecated Instead of use below new method
+      /*return Mirrorfly.sendVideoMessage(
           profile.jid!, videoPath, caption, replyMessageID,topicId: topicId)
           .then((value) {
         clearMessage();
@@ -875,6 +924,21 @@ class ChatController extends FullLifeCycleController
         scrollToBottom();
         updateLastMessage(value);
         return chatMessageModel;
+      });*/
+      return Mirrorfly.sendMessage(messageParams: MessageParams.video(toJid: profile.jid.checkNull(),
+          replyMessageId: replyMessageID,topicId: topicId,
+          fileMessageParams: FileMessageParams(file: File(videoPath),caption: caption)), flyCallback: (response){
+        if(response.isSuccess){
+          clearMessage();
+          Platform.isIOS ? Helper.hideLoading() : null;
+          ChatMessageModel chatMessageModel = sendMessageModelFromJson(response.data);
+          // chatList.insert(0, chatMessageModel);
+          scrollToBottom();
+          updateLastMessage(response.data);
+          return chatMessageModel;
+        }else{
+          LogMessage.d("sendMessage", response.exception?.message);
+        }
       });
     } else {
       //show busy status popup
@@ -984,7 +1048,8 @@ class ChatController extends FullLifeCycleController
         replyMessageId = replyChatMessage.messageId;
       }
       isReplying(false);
-      return Mirrorfly.sendContactMessage(
+      //old method is deprecated Instead of use below new method
+      /*return Mirrorfly.sendContactMessage(
           contactList, profile.jid!, contactName, replyMessageId,topicId: topicId)
           .then((value) {
         debugPrint("response--> $value");
@@ -993,6 +1058,16 @@ class ChatController extends FullLifeCycleController
         scrollToBottom();
         updateLastMessage(value);
         return chatMessageModel;
+      });*/
+      return Mirrorfly.sendMessage(messageParams: MessageParams.contact(toJid: profile.jid.checkNull(),
+          replyMessageId: replyMessageId,topicId: topicId,contactMessageParams: ContactMessageParams(name: contactName, numbers: contactList)), flyCallback: (response){
+        if(response.isSuccess){
+          debugPrint("response--> ${response.data}");
+          scrollToBottom();
+          updateLastMessage(response.data);
+        }else{
+          LogMessage.d("sendMessage", response.exception?.message);
+        }
       });
     } else {
       //show busy status popup
@@ -1019,13 +1094,24 @@ class ChatController extends FullLifeCycleController
         replyMessageId = replyChatMessage.messageId;
       }
       isReplying(false);
-      Mirrorfly.sendDocumentMessage(profile.jid!, documentPath, replyMessageId,topicId: topicId)
+      //old method is deprecated Instead of use below new method
+      /*Mirrorfly.sendDocumentMessage(profile.jid!, documentPath, replyMessageId,topicId: topicId)
           .then((value) {
         ChatMessageModel chatMessageModel = sendMessageModelFromJson(value);
         // chatList.insert(0, chatMessageModel);
         scrollToBottom();
         updateLastMessage(value);
         return chatMessageModel;
+      });*/
+      Mirrorfly.sendMessage(messageParams: MessageParams.document(toJid: profile.jid.checkNull(),
+          replyMessageId: replyMessageId,topicId: topicId,
+          fileMessageParams: FileMessageParams(file: File(documentPath))), flyCallback: (response){
+        if(response.isSuccess){
+          scrollToBottom();
+          updateLastMessage(response.data);
+        }else{
+          LogMessage.d("sendMessage", response.exception?.message);
+        }
       });
     } else {
       //show busy status popup
@@ -1119,7 +1205,8 @@ class ChatController extends FullLifeCycleController
 
       isUserTyping(false);
       isReplying(false);
-      Mirrorfly.sendAudioMessage(
+      //old method is deprecated Instead of use below new method
+      /*Mirrorfly.sendAudioMessage(
           profile.jid!, filePath, isRecorded, duration, replyMessageId,topicId: topicId)
           .then((value) {
         mirrorFlyLog("Audio Message sent", value);
@@ -1128,6 +1215,17 @@ class ChatController extends FullLifeCycleController
         scrollToBottom();
         updateLastMessage(value);
         return chatMessageModel;
+      });*/
+      Mirrorfly.sendMessage(messageParams: MessageParams.audio(toJid: profile.jid.checkNull(),
+          isRecorded: isRecorded,replyMessageId: replyMessageId,topicId: topicId,
+          fileMessageParams: FileMessageParams(file: File(filePath))), flyCallback: (response){
+        if(response.isSuccess){
+          mirrorFlyLog("Audio Message sent", response.data);
+          scrollToBottom();
+          updateLastMessage(response.data);
+        }else{
+          LogMessage.d("sendMessage", response.exception?.message);
+        }
       });
     } else {
       //show busy status popup
@@ -1415,6 +1513,11 @@ class ChatController extends FullLifeCycleController
           TextButton(
               onPressed: () {
                 Get.back();
+              },
+              child: const Text("CANCEL")),
+          TextButton(
+              onPressed: () {
+                Get.back();
                 if(!availableFeatures.value.isDeleteMessageAvailable.checkNull()){
                   Helper.showFeatureUnavailable();
                   return;
@@ -1439,11 +1542,6 @@ class ChatController extends FullLifeCycleController
                 selectedChatList.clear();
               },
               child: const Text("DELETE FOR ME")),
-          TextButton(
-              onPressed: () {
-                Get.back();
-              },
-              child: const Text("CANCEL")),
           isRecallAvailable
               ? TextButton(
               onPressed: () {
@@ -2035,8 +2133,8 @@ class ChatController extends FullLifeCycleController
     _audioTimer?.cancel();
     _audioTimer = null;
     await Record().stop().then((filePath) async {
-      if (File(filePath!).existsSync()) {
-        recordedAudioPath = filePath;
+      if (AppUtils.isMediaExists(filePath)) {
+        recordedAudioPath = filePath.checkNull();
       } else {
         debugPrint("File Not Found For Audio");
       }
@@ -2174,6 +2272,7 @@ class ChatController extends FullLifeCycleController
         chatList[index].mediaChatMessage?.mediaLocalStoragePath(chatMessageModel.mediaChatMessage!.mediaLocalStoragePath.value);
         chatList[index].mediaChatMessage?.mediaDownloadStatus(chatMessageModel.mediaChatMessage!.mediaDownloadStatus.value);
         chatList[index].mediaChatMessage?.mediaUploadStatus(chatMessageModel.mediaChatMessage!.mediaUploadStatus.value);
+        debugPrint("After Media Status Updated ${chatList[index].mediaChatMessage?.mediaLocalStoragePath} ${chatList[index].mediaChatMessage?.mediaDownloadStatus} ${chatList[index].mediaChatMessage?.mediaUploadStatus}");
       }
     }
     if (isSelected.value) {
@@ -2634,10 +2733,8 @@ class ChatController extends FullLifeCycleController
       canBeForwardedSet = true;
     }
     //Share Validation
-    if (!canBeSharedSet &&
-        (!message.isMediaMessage() ||
-            (message.isMediaMessage() &&
-                !checkFile(message.mediaChatMessage!.mediaLocalStoragePath.value)))) {
+    if (!canBeSharedSet && (!message.isMediaMessage() || (message.isMediaMessage() &&
+                !AppUtils.isMediaExists(message.mediaChatMessage!.mediaLocalStoragePath.value)))) {
       canBeShared(false);
       canBeSharedSet = true;
     }
@@ -2773,11 +2870,8 @@ class ChatController extends FullLifeCycleController
     var mediaPaths = <XFile>[];
     for (var item in selectedChatList) {
       if (item.isMediaMessage()) {
-        if ((item.isMediaDownloaded() || item.isMediaUploaded()) &&
-            item.mediaChatMessage!
-                .mediaLocalStoragePath.value
-                .checkNull()
-                .isNotEmpty) {
+        if (AppUtils.isMediaExists(item.mediaChatMessage!
+            .mediaLocalStoragePath.value)) {
           mediaPaths.add(
               XFile(item.mediaChatMessage!.mediaLocalStoragePath.value.checkNull()));
           debugPrint(
@@ -3097,7 +3191,7 @@ class ChatController extends FullLifeCycleController
       if(Platform.isIOS) {
         ///This is the top constraint changing to bottom constraint and calling nextMessages bcz reversing the list view in display
         if (firstVisibleItemIndex <= 1 &&
-            itemPositions.first.itemLeadingEdge <= 0) {
+            double.parse(itemPositions.first.itemLeadingEdge.toStringAsFixed(1)) <= 0) {
           // Scrolled to the Bottom
           debugPrint("reached Bottom yes load next messages");
           _loadNextMessages();
@@ -3142,9 +3236,11 @@ class ChatController extends FullLifeCycleController
   }
 
   Future<void> updateLastMessage(dynamic value) async {
-    Get.find<MainController>().onMessageStatusUpdated(value);
     ChatMessageModel chatMessageModel = sendMessageModelFromJson(value);
     loadLastMessages(chatMessageModel);
+    // Commenting this below line, bcz after sending the message we are calling next message to load the newly sent message and
+    // the status gets updated in the event listener's in Base Controller. So no need to update the status here.
+    // Get.find<MainController>().onMessageStatusUpdated(value);
   }
 
   void onAvailableFeaturesUpdated(AvailableFeatures features) {
@@ -3196,10 +3292,14 @@ class ChatController extends FullLifeCycleController
   void loadLastMessages(ChatMessageModel chatMessageModel) async{
     if(await Mirrorfly.hasNextMessages()) {
       _loadNextMessages(showLoading: false);
-    }else{
+    }
+    //Commenting the below line, bcz when sending the contact message in for loop the hasNextMessage will fail from 2nd cases in loop.
+    // so extra message is inserted in the list.
+    /*else{
+      print("loadLastMessages inserting");
       chatList.insert(0, chatMessageModel);
       sendReadReceipt();
-    }
+    }*/
   }
 
   Future<void> loadPrevORNextMessagesLoad({bool? isReplyMessage}) async {
@@ -3211,8 +3311,12 @@ class ChatController extends FullLifeCycleController
   void handleUnreadMessageSeparator({bool remove = true,bool removeFromList = false}){
     var tuple3 = findIndexOfUnreadMessageType();
     var isUnreadSeparatorIsAvailable = tuple3.item1;
+    LogMessage.d("isUnreadSeparatorIsAvailable", isUnreadSeparatorIsAvailable);
     var separatorPosition = tuple3.item2;
-    if (isUnreadSeparatorIsAvailable && chatList.isNotEmpty) {
+    debugPrint("handleUnreadMessageSeparator isUnreadSeparatorIsAvailable $isUnreadSeparatorIsAvailable");
+    //Commenting this line due to group notification received and the numbers is added in recent chat and inside there is no separator so mark as read is not called.
+    // if (isUnreadSeparatorIsAvailable && chatList.isNotEmpty) {
+    if (isUnreadSeparatorIsAvailable || chatList.isNotEmpty) {
       if (remove) {
         removeUnreadMessageSeparator(separatorPosition,removeFromList: removeFromList);
       } else {
@@ -3244,7 +3348,7 @@ class ChatController extends FullLifeCycleController
 
   void removeUnreadMessageSeparator(int separatorPosition,{bool removeFromList = true}){
     Mirrorfly.markAsReadDeleteUnreadSeparator(profile.jid.checkNull());
-    if(removeFromList) {
+    if(removeFromList && !separatorPosition.isNegative) {
       chatList.removeAt(separatorPosition);
     }
   }
@@ -3279,9 +3383,15 @@ class ChatController extends FullLifeCycleController
 
   int lastVisiblePosition() {
     final itemPositions = newitemPositionsListener.itemPositions.value;
-    final firstVisibleItemIndex = itemPositions.first.index;
-    LogMessage.d("lastVisiblePosition", "$firstVisibleItemIndex");
-    return firstVisibleItemIndex;
+    if(itemPositions.isNotEmpty) {
+      final firstVisibleItemIndex = itemPositions.first.index;
+      LogMessage.d("lastVisiblePosition", "$firstVisibleItemIndex");
+      return firstVisibleItemIndex;
+    }else{
+      // Handle the case when the list is empty
+      LogMessage.d("lastVisiblePosition", "List is empty");
+      return -1;
+    }
   }
 
   void unReadMessageScrollPosition(int position) {
@@ -3311,3 +3421,4 @@ class ChatController extends FullLifeCycleController
     }
   }
 }
+

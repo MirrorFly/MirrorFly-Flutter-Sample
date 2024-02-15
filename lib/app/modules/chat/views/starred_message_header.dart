@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
 import 'package:mirrorfly_plugin/mirrorflychat.dart';
-
+import 'package:mirror_fly_demo/app/common/extensions.dart';
 import '../../../common/constants.dart';
 import '../../../common/widgets.dart';
 import '../../../model/chat_message_model.dart';

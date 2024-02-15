@@ -10,7 +10,7 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:mirror_fly_demo/app/common/widgets.dart';
 import 'package:url_launcher/url_launcher.dart';
-
+import 'package:mirror_fly_demo/app/common/extensions.dart';
 import '../../common/constants.dart';
 import '../../data/apputils.dart';
 import '../../data/helper.dart';
@@ -699,7 +699,7 @@ class _AudioMessageViewState extends State<AudioMessageView>
         borderRadius: const BorderRadius.all(Radius.circular(10)),
         color: Colors.transparent,
       ),
-      width: screenWidth * 0.60,
+      width: screenWidth * 0.70,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -711,7 +711,7 @@ class _AudioMessageViewState extends State<AudioMessageView>
                   ? chatReplyContainerColor
                   : chatReplySenderColor,
             ),
-            padding: const EdgeInsets.all(15),
+            padding: const EdgeInsets.all(8),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
@@ -721,8 +721,8 @@ class _AudioMessageViewState extends State<AudioMessageView>
                   children: [
                     SvgPicture.asset(
                       audioMicBg,
-                      width: 28,
-                      height: 28,
+                      width: 32,
+                      height: 32,
                       fit: BoxFit.contain,
                     ),
                     SvgPicture.asset(
@@ -733,6 +733,8 @@ class _AudioMessageViewState extends State<AudioMessageView>
                 )
                     : SvgPicture.asset(
                   musicIcon,
+                  width: 32,
+                  height: 32,
                   fit: BoxFit.contain,
                 ),
                 Obx(() {
@@ -1627,6 +1629,7 @@ class ImageMessageView extends StatelessWidget {
 
   getImage(RxString mediaLocalStoragePath, String mediaThumbImage,
       BuildContext context, String mediaFileName, bool isSelected) {
+    debugPrint("getImage mediaLocalStoragePath : $mediaLocalStoragePath");
     var screenHeight = MediaQuery
         .of(context)
         .size
@@ -1657,6 +1660,17 @@ class ImageMessageView extends StatelessWidget {
                       });
                 }
                 return const Center(child: CircularProgressIndicator());
+              },
+              frameBuilder: (cxt,child,frame,wasSynchronouslyLoaded){
+                debugPrint("getImage frameBuilder : frame : $frame ,wasSynchronouslyLoaded :$wasSynchronouslyLoaded");
+                return child;
+              },
+              errorBuilder: (cxt,obj,strace){
+                debugPrint("getImage errorBuilder : obj : $obj ,strace :$strace");
+                return Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text("$obj"),
+                );
               },
               width: screenWidth * 0.60,
               height: screenHeight * 0.4,
@@ -1980,15 +1994,14 @@ getMessageIndicator(String? messageStatus, bool isSender, String messageType, bo
 
 Widget getImageOverlay(ChatMessageModel chatMessage,
     {Function()? onAudio, Function()? onVideo, int? progress}) {
-  debugPrint("getImageOverlay");
+  debugPrint("getImageOverlay media exists ${AppUtils.isMediaExists(chatMessage.mediaChatMessage!.mediaLocalStoragePath.value)}");
   // debugPrint(
   //     "getImageOverlay checkFile ${checkFile(chatMessage.mediaChatMessage!.mediaLocalStoragePath)}");
   // debugPrint("getImageOverlay messageStatus ${chatMessage.messageStatus}");
   // debugPrint(
   //     "getImageOverlay ${(checkFile(chatMessage.mediaChatMessage!.mediaLocalStoragePath) && chatMessage.messageStatus != 'N')}");
 
-  if (checkFile(chatMessage.mediaChatMessage!.mediaLocalStoragePath.value) &&
-      chatMessage.messageStatus.value != 'N') {
+  if (AppUtils.isMediaExists(chatMessage.mediaChatMessage!.mediaLocalStoragePath.value) && (chatMessage.isMediaDownloaded() || chatMessage.isMediaUploaded())) {
     if (chatMessage.messageType.toUpperCase() == 'VIDEO') {
       return FloatingActionButton.small(
         onPressed: onVideo,
@@ -2002,16 +2015,15 @@ Widget getImageOverlay(ChatMessageModel chatMessage,
       return InkWell(
         onTap: onAudio,
         child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: chatMessage.mediaChatMessage!.isPlaying
-              ? SvgPicture.asset(
-            pauseIcon,
-            height: 17,
-          ) //const Icon(Icons.pause)
-              : SvgPicture.asset(
-            playIcon,
-            height: 17,
-          ),
+          padding: const EdgeInsets.symmetric(horizontal: 8.0),
+          child: Container(
+              height: 30,
+              width: 30,
+              padding: const EdgeInsets.all(7),
+              child: SvgPicture.asset(
+                chatMessage.mediaChatMessage!.isPlaying ? pauseIcon : playIcon,
+                height: 17,
+              ))
         ),
       ); //const Icon(Icons.play_arrow_sharp);
     } else {
@@ -2020,24 +2032,36 @@ Widget getImageOverlay(ChatMessageModel chatMessage,
   } else {
     var status = 0;
     if(chatMessage.isMessageSentByMe){
-      if(chatMessage.mediaChatMessage!.mediaLocalStoragePath.value.checkNull().isNotEmpty){
-        if(!checkFile(chatMessage.mediaChatMessage!.mediaLocalStoragePath.value.checkNull())){
-          status = chatMessage.mediaChatMessage!.mediaDownloadStatus.value;
-        }else{
+      if(chatMessage.mediaChatMessage!.mediaUploadStatus.value == Constants.mediaUploading || chatMessage.mediaChatMessage!.mediaDownloadStatus.value == Constants.mediaDownloading ){
+        status = (chatMessage.mediaChatMessage!.mediaUploadStatus.value == Constants.mediaUploading) ? Constants.mediaUploading : Constants.mediaDownloading;
+      }else {
+        if (chatMessage.mediaChatMessage!
+            .mediaLocalStoragePath.value
+            .checkNull()
+            .isNotEmpty) {
+          if (!AppUtils.isMediaExists(chatMessage.mediaChatMessage!.mediaLocalStoragePath.value.checkNull())) {
+            if (chatMessage.mediaChatMessage!.mediaUploadStatus.value == Constants.mediaUploaded) {
+              status = Constants.mediaNotDownloaded; // for uploaded and deleted in local
+            } else {
+              status = -1;
+            }
+          } else {
+            status = chatMessage.mediaChatMessage!.mediaUploadStatus.value;
+          }
+        } else {
           status = chatMessage.mediaChatMessage!.mediaUploadStatus.value;
         }
-      }else{
-        status = chatMessage.mediaChatMessage!.mediaUploadStatus.value;
       }
     }else{
       status = chatMessage.mediaChatMessage!.mediaDownloadStatus.value;
     }
+    debugPrint("mediaStatus : $status  messageId ${chatMessage.messageId}");
     // debugPrint(
     //     "overlay status-->${chatMessage.isMessageSentByMe ? chatMessage.mediaChatMessage!.mediaUploadStatus : chatMessage.mediaChatMessage!.mediaDownloadStatus}");
     switch (status) {
       case Constants.mediaDownloaded:
       case Constants.mediaUploaded:
-        if (!checkFile(chatMessage.mediaChatMessage!.mediaLocalStoragePath.value.checkNull())) {
+        if (!AppUtils.isMediaExists(chatMessage.mediaChatMessage!.mediaLocalStoragePath.value.checkNull())) {
           return InkWell(
             child: downloadView(
                 chatMessage.mediaChatMessage!.mediaFileSize,
@@ -2087,7 +2111,7 @@ Widget getImageOverlay(ChatMessageModel chatMessage,
           );
         });
       default:
-        return const SizedBox.shrink();
+        return const SizedBox(width: 8,);
     }
   }
 }
@@ -2097,15 +2121,18 @@ uploadView(int mediaFileSize, String messageType) {
     padding: const EdgeInsets.symmetric(horizontal: 8.0),
     child: messageType == 'AUDIO' || messageType == 'DOCUMENT'
         ? Container(
+      height: 30,
+      width: 30,
         decoration: BoxDecoration(
             border: Border.all(color: borderColor),
             borderRadius: BorderRadius.circular(3)),
-        padding: const EdgeInsets.all(5),
+        padding: const EdgeInsets.all(7),
         child: SvgPicture.asset(
           uploadIcon,
           color: playIconColor,
         ))
         : Container(
+        height: 35,
         width: 80,
         decoration: const BoxDecoration(
           borderRadius: BorderRadius.all(Radius.circular(5)),
@@ -2161,15 +2188,18 @@ Widget downloadView(int mediaFileSize, String messageType) {
     padding: const EdgeInsets.symmetric(horizontal: 8.0),
     child: messageType == 'AUDIO' || messageType == 'DOCUMENT'
         ? Container(
+      height: 30,
+        width: 30,
         decoration: BoxDecoration(
             border: Border.all(color: borderColor),
             borderRadius: BorderRadius.circular(3)),
-        padding: const EdgeInsets.all(5),
+        padding: const EdgeInsets.all(7),
         child: SvgPicture.asset(
           downloadIcon,
           color: playIconColor,
         ))
         : Container(
+      height: 35,
         width: 80,
         decoration: BoxDecoration(
           border: Border.all(
@@ -2196,8 +2226,8 @@ Widget downloadView(int mediaFileSize, String messageType) {
 }
 
 downloadingOrUploadingView(String messageType, int progress) {
-  // debugPrint('downloadingOrUploadingView progress $progress');
-  if (messageType == "AUDIO" || messageType == "DOCUMENT") {
+  debugPrint('downloadingOrUploadingView progress $progress');
+  if (messageType == MessageType.audio.value || messageType == MessageType.document.value) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 8.0),
       child: Container(
@@ -2225,7 +2255,7 @@ downloadingOrUploadingView(String messageType, int progress) {
                     height: 2,
                     child: LinearProgressIndicator(
                       valueColor: const AlwaysStoppedAnimation<Color>(
-                        playIconColor,
+                        progressColor,
                       ),
                       value: progress == 0 || progress == 100
                           ? null
@@ -2239,8 +2269,8 @@ downloadingOrUploadingView(String messageType, int progress) {
     );
   } else {
     return Container(
-        height: 30,
-        width: 70,
+        height: 35,
+        width: 80,
         decoration: const BoxDecoration(
           borderRadius: BorderRadius.all(Radius.circular(4)),
           color: Colors.black45,
@@ -2566,6 +2596,9 @@ bool isDateChanged(int position, List<ChatMessageModel> mChatData) {
 }
 
 String? groupedDateMessage(int index, List<ChatMessageModel> chatList) {
+  if(index.isNegative){
+    return null;
+  }
   if (index == chatList.length - 1) {
     return addDateHeaderMessage(chatList.last);
   } else {

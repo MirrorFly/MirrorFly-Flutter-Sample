@@ -4,7 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:mirror_fly_demo/app/data/helper.dart';
+import 'package:mirror_fly_demo/app/common/extensions.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -38,6 +38,7 @@ const Color chatBorderColor = Color(0XffDDE3E5);
 const Color chatTimeColor = Color(0Xff959595);
 const Color borderColor = Color(0xffAFB8D0);
 const Color playIconColor = Color(0xff7285B5);
+const Color progressColor = Color(0xff8C97B3);
 const Color durationTextColor = Color(0xff455E93);
 const Color chatBgColor = Color(0xffD0D8EB);
 const Color previewTextColor = Color(0xff7f7f7f);
@@ -545,10 +546,15 @@ class Constants {
   static const String privacyPolicy =
       "https://www.mirrorfly.com/privacy-policy.php";
 
-  static const maxAudioFileSize = 30;
-  static const maxVideoFileSize = 30;
-  static const maxImageFileSize = 10;
-  static const maxDocFileSize = 20;
+  static const maxAudioFileSize = 2 * 1024;//30;
+  static const maxVideoFileSize = 2 * 1024;//30;
+  static const maxImageFileSize = 2 * 1024;//10;
+  static const maxDocFileSize = 2 * 1024;//20;
+
+  static const mobileImageMaxWidth = 250;
+  static const mobileImageMinWidth = 210;
+  static const mobileImageMaxHeight = 320;
+  static const mobileImageMinHeight = 80;
 
   static const List<String> defaultStatusList = [
     "Available",
@@ -619,6 +625,9 @@ class Constants {
   static const double borderRadius = 27;
   static const double defaultPadding = 8;
 
+  static const String mediaDoesNotExist = "Sorry. Media file isn\'t available in your internal storage";
+  static const String insufficientMemoryError = "Not enough storage space on your device. Please free up space in your phone\'s memory.";
+  static const String errorTryAgain = "Error Occurred, Please try again";
   // static GlobalKey<AnimatedListState> audioListKey =
   // GlobalKey<AnimatedListState>();
 

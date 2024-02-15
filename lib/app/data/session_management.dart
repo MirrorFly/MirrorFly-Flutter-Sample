@@ -1,5 +1,5 @@
 import 'package:mirrorfly_plugin/mirrorfly.dart';
-import 'package:mirror_fly_demo/app/data/helper.dart';
+import 'package:mirror_fly_demo/app/common/extensions.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../common/constants.dart';
@@ -15,12 +15,13 @@ class SessionManagement {
   //   }
   // }
   static Future onInit() async {
-    try {
+    _preferences = await SharedPreferences.getInstance();
+    /*try {
       _preferences = await SharedPreferences.getInstance();
     }catch(e){
       SharedPreferences.setMockInitialValues({});
       _preferences = await SharedPreferences.getInstance();
-    }
+    }*/
     SessionManagement.setCurrentChatJID("");
   }
 
