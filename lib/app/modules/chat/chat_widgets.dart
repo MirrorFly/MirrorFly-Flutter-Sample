@@ -2043,7 +2043,8 @@ Widget getImageOverlay(ChatMessageModel chatMessage,
             if (chatMessage.mediaChatMessage!.mediaUploadStatus.value == Constants.mediaUploaded) {
               status = Constants.mediaNotDownloaded; // for uploaded and deleted in local
             } else {
-              status = -1;
+              // status = -1;
+              status = Constants.mediaNotDownloaded;
             }
           } else {
             status = chatMessage.mediaChatMessage!.mediaUploadStatus.value;

@@ -1,7 +1,6 @@
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:mirrorfly_plugin/flychat.dart';
 import 'package:mirrorfly_plugin/mirrorflychat.dart';
 
 import '../../../common/constants.dart';

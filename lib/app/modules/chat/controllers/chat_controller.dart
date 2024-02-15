@@ -486,7 +486,7 @@ class ChatController extends FullLifeCycleController
           scrollToBottom();
           updateLastMessage(value);
         });*/
-        Mirrorfly.sendMessage(messageParams: MessageParams.text(toJid: profile.jid.checkNull(),
+        Mirrorfly.sendMessage(messageParams: MessageParams.Text(toJid: profile.jid.checkNull(),
             replyMessageId: replyMessageId,topicId: topicId,
             textMessageParams: TextMessageParams(messageText: messageController.text.trim())), flyCallback: (response){
           if(response.isSuccess){
@@ -592,7 +592,7 @@ class ChatController extends FullLifeCycleController
         scrollToBottom();
         updateLastMessage(value);
       });*/
-      Mirrorfly.sendMessage(messageParams: MessageParams.location(toJid: profile.jid.checkNull(),replyMessageId: replyMessageId,topicId: topicId,
+      Mirrorfly.sendMessage(messageParams: MessageParams.Location(toJid: profile.jid.checkNull(),replyMessageId: replyMessageId,topicId: topicId,
           locationMessageParams: LocationMessageParams(latitude: latitude, longitude: longitude)), flyCallback: (response){
         if(response.isSuccess){
           mirrorFlyLog("Location_msg", response.data.toString());
@@ -832,7 +832,7 @@ class ChatController extends FullLifeCycleController
           updateLastMessage(value);
           return chatMessageModel;
         });*/
-        return Mirrorfly.sendMessage(messageParams: MessageParams.image(toJid: profile.jid.checkNull(),
+        return Mirrorfly.sendMessage(messageParams: MessageParams.Image(toJid: profile.jid.checkNull(),
             replyMessageId: replyMessageID,topicId: topicId,
             fileMessageParams: FileMessageParams(file: File(path),caption: caption)), flyCallback: (response){
           if(response.isSuccess){
@@ -925,7 +925,7 @@ class ChatController extends FullLifeCycleController
         updateLastMessage(value);
         return chatMessageModel;
       });*/
-      return Mirrorfly.sendMessage(messageParams: MessageParams.video(toJid: profile.jid.checkNull(),
+      return Mirrorfly.sendMessage(messageParams: MessageParams.Video(toJid: profile.jid.checkNull(),
           replyMessageId: replyMessageID,topicId: topicId,
           fileMessageParams: FileMessageParams(file: File(videoPath),caption: caption)), flyCallback: (response){
         if(response.isSuccess){
@@ -1059,7 +1059,7 @@ class ChatController extends FullLifeCycleController
         updateLastMessage(value);
         return chatMessageModel;
       });*/
-      return Mirrorfly.sendMessage(messageParams: MessageParams.contact(toJid: profile.jid.checkNull(),
+      return Mirrorfly.sendMessage(messageParams: MessageParams.Contact(toJid: profile.jid.checkNull(),
           replyMessageId: replyMessageId,topicId: topicId,contactMessageParams: ContactMessageParams(name: contactName, numbers: contactList)), flyCallback: (response){
         if(response.isSuccess){
           debugPrint("response--> ${response.data}");
@@ -1103,7 +1103,7 @@ class ChatController extends FullLifeCycleController
         updateLastMessage(value);
         return chatMessageModel;
       });*/
-      Mirrorfly.sendMessage(messageParams: MessageParams.document(toJid: profile.jid.checkNull(),
+      Mirrorfly.sendMessage(messageParams: MessageParams.Document(toJid: profile.jid.checkNull(),
           replyMessageId: replyMessageId,topicId: topicId,
           fileMessageParams: FileMessageParams(file: File(documentPath))), flyCallback: (response){
         if(response.isSuccess){
@@ -1216,7 +1216,7 @@ class ChatController extends FullLifeCycleController
         updateLastMessage(value);
         return chatMessageModel;
       });*/
-      Mirrorfly.sendMessage(messageParams: MessageParams.audio(toJid: profile.jid.checkNull(),
+      Mirrorfly.sendMessage(messageParams: MessageParams.Audio(toJid: profile.jid.checkNull(),
           isRecorded: isRecorded,replyMessageId: replyMessageId,topicId: topicId,
           fileMessageParams: FileMessageParams(file: File(filePath))), flyCallback: (response){
         if(response.isSuccess){
