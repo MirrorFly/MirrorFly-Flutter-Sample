@@ -242,9 +242,10 @@ class LoginController extends GetxController {
 
   verifyTokenWithServer(String token) async {
     if (await AppUtils.isNetConnected()) {
-      var userName = (countryCode!.replaceAll('+', '') + mobileNumber.text.toString()).replaceAll("+", "");
+      // var userName = (countryCode!.replaceAll('+', '') + mobileNumber.text.toString()).replaceAll("+", "");
       //make api call
-      Mirrorfly.verifyToken(userName, token).then((value) {
+      //verifyToken not available iOS so commented it
+      /*Mirrorfly.verifyToken(userName, token).then((value) {
         if (value != null) {
           validateDeviceToken(value);
         } else {
@@ -254,7 +255,7 @@ class LoginController extends GetxController {
         debugPrint("issue===> $error");
         debugPrint(error.message);
         hideLoading();
-      });
+      });*/
     } else {
       toToast(Constants.noInternetConnection);
     }
