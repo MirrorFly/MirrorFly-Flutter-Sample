@@ -13,6 +13,7 @@ import '../../../common/crop_image.dart';
 import '../../../data/apputils.dart';
 import '../../../data/session_management.dart';
 import '../../../routes/app_pages.dart';
+import '../../dashboard/controllers/dashboard_controller.dart';
 import '../views/name_change_view.dart';
 
 class GroupInfoController extends GetxController {
@@ -176,12 +177,13 @@ class GroupInfoController extends GetxController {
       }
     });
   }
-  onToggleChange(bool value){
+  onToggleChange(bool value) async {
     if (isMemberOfGroup) {
       if (muteable.value) {
         mirrorFlyLog("change", value.toString());
         _mute(value);
         Mirrorfly.updateChatMuteStatus(jid:profile.jid.checkNull(), muteStatus: value);
+        notifyDashboardUI();
       }
     }else{
       toToast("You're no longer a participant in this group");
@@ -568,5 +570,10 @@ class GroupInfoController extends GetxController {
     availableFeatures(features);
     _isMemberOfGroup.refresh();
     // loadGroupExistence();
+  }
+  void notifyDashboardUI(){
+    if(Get.isRegistered<DashboardController>()){
+      Get.find<DashboardController>().chatMuteChangesNotifyUI(profile.jid.checkNull());
+    }
   }
 }

@@ -572,6 +572,12 @@ abstract class BaseController {
     }
   }
 
+  void chatMuteChangesNotifyUI(String jid) {
+    if (Get.isRegistered<DashboardController>()) {
+      Get.find<DashboardController>().chatMuteChangesNotifyUI(jid);
+    }
+  }
+
   void onMediaStatusUpdated(event) {
     ChatMessageModel chatMessageModel = sendMessageModelFromJson(event);
     LogMessage.d("Media Status Updated",chatMessageModel.toJson());
@@ -954,8 +960,8 @@ abstract class BaseController {
 
   Future<void> showLocalNotification(ChatMessageModel chatMessageModel) async {
     debugPrint("showing local notification");
-    var isUserMuted = await Mirrorfly.isMuted(chatMessageModel.chatUserJid);
-    var isUserUnArchived = await Mirrorfly.isUserUnArchived(chatMessageModel.chatUserJid);
+    var isUserMuted = await Mirrorfly.isChatMuted(jid: chatMessageModel.chatUserJid);
+    var isUserUnArchived = await Mirrorfly.isChatUnArchived(jid: chatMessageModel.chatUserJid);
     var isArchivedSettingsEnabled = await Mirrorfly.isArchivedSettingsEnabled();
 
     var archiveSettings = isArchivedSettingsEnabled.checkNull() ? isUserUnArchived.checkNull() : true;

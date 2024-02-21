@@ -1016,6 +1016,18 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
     }
   }
 
+  Future<void> chatMuteChangesNotifyUI(String jid) async {
+    var index = recentChats.indexWhere((element) => element.jid == jid);
+    if (!index.isNegative) {
+      var isMuted = await Mirrorfly.isChatMuted(jid: jid);
+      LogMessage.d("chatMuteChangesNotifyUI", "isMuted : $isMuted");
+      recentChats[index].isMuted = isMuted;
+      recentChats.refresh();
+    }else{
+      LogMessage.d("chatMuteChangesNotifyUI", "chat not available in the list");
+    }
+  }
+
   void onGroupProfileUpdated(groupJid) {
     mirrorFlyLog("super", groupJid.toString());
     updateRecentChat(groupJid);

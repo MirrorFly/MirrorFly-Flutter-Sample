@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
 import 'package:mirror_fly_demo/app/common/extensions.dart';
+import 'package:mirror_fly_demo/app/modules/dashboard/controllers/dashboard_controller.dart';
 import '../../../common/constants.dart';
 import 'package:mirrorfly_plugin/mirrorfly.dart';
 import '../../../routes/app_pages.dart';
@@ -55,11 +56,12 @@ class ChatInfoController extends GetxController {
 
   }
 
-  onToggleChange(bool value) {
+  onToggleChange(bool value) async {
     if(muteable.value) {
       mirrorFlyLog("change", value.toString());
       mute(value);
       Mirrorfly.updateChatMuteStatus(jid: profile.jid.checkNull(), muteStatus: value);
+      notifyDashboardUI();
     }
   }
 
@@ -159,5 +161,11 @@ class ChatInfoController extends GetxController {
 
   void userBlockedMe(String jid) {
     userUpdatedHisProfile(jid);
+  }
+
+  void notifyDashboardUI(){
+    if(Get.isRegistered<DashboardController>()){
+      Get.find<DashboardController>().chatMuteChangesNotifyUI(profile.jid.checkNull());
+    }
   }
 }
