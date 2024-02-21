@@ -689,6 +689,7 @@ class ChatController extends FullLifeCycleController
           debugPrint("chat list is empty");
         }
         showStarredMessage();
+        sendReadReceipt();
       }
       showLoadingPrevious(false);
     });
