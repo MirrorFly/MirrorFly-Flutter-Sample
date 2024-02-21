@@ -103,13 +103,10 @@ class ProfileController extends GetxController {
             debugPrint("parse-----> $formattedNumber");
             var unformatted = formattedNumber['national_number'];//profileMobile.text.replaceAll(" ", "").replaceAll("+", "");
             // var unformatted = profileMobile.text;
-            Mirrorfly
-                .updateMyProfile(
-                profileName.text.toString(),
-                profileEmail.text.toString(),
-                unformatted,
-                profileStatus.value.toString(),
-                userImgUrl.value.isEmpty ? null : userImgUrl.value,
+            Mirrorfly.updateMyProfile(name: profileName.text.toString(), email: profileEmail.text.toString(),
+                mobile: unformatted,
+                status: profileStatus.value.toString(),
+                image: userImgUrl.value.isEmpty ? null : userImgUrl.value,
               flyCallback: (FlyResponse response){
                 loading.value = false;
                 hideLoader();
@@ -204,7 +201,7 @@ class ProfileController extends GetxController {
       // if(checkFileUploadSize(path, Constants.mImage)) {
         showLoader();
       debugPrint("Profile Controller updateMyProfileImage");
-        Mirrorfly.updateMyProfileImage(path,flyCallback: (FlyResponse response){
+        Mirrorfly.updateMyProfileImage(image: path,flyCallback: (FlyResponse response){
           if(response.isSuccess) {
             mirrorFlyLog("updateMyProfileImage", response.data);
             loading.value = false;
@@ -251,10 +248,10 @@ class ProfileController extends GetxController {
     if(await AppUtils.isNetConnected()) {
       showLoader();
       loading.value = true;
-      Mirrorfly.removeProfileImage().then((value) {
+      Mirrorfly.removeProfileImage(flyCallBack: (response){
         loading.value = false;
         hideLoader();
-        if (value != null) {
+        if (response.isSuccess) {
           SessionManagement.setUserImage(Constants.emptyString);
           isImageSelected.value = false;
           isUserProfileRemoved.value = true;
@@ -266,9 +263,6 @@ class ProfileController extends GetxController {
           }
           update();
         }
-      }).catchError((onError) {
-        loading.value = false;
-        hideLoader();
       });
     }else{
       toToast(Constants.noInternetConnection);
@@ -282,7 +276,7 @@ class ProfileController extends GetxController {
       if (jid.isNotEmpty) {
         mirrorFlyLog("jid.isNotEmpty", jid.isNotEmpty.toString());
         loading.value = true;
-        Mirrorfly.getUserProfile(jid,fetchFromServer: await AppUtils.isNetConnected(),flyCallback:(FlyResponse response){
+        Mirrorfly.getUserProfile(jid: jid,fetchFromServer: await AppUtils.isNetConnected(),flyCallback:(FlyResponse response){
           if(response.isSuccess) {
             insertDefaultStatusToUser();
             loading.value = false;
@@ -411,7 +405,7 @@ class ProfileController extends GetxController {
                 }
               }
               if (isStatusNotExist) {
-                Mirrorfly.insertDefaultStatus(statusValue);
+                Mirrorfly.insertDefaultStatus(status: statusValue);
               }
             }
           }else{
@@ -563,7 +557,7 @@ class ProfileController extends GetxController {
     var defaultStatus = Constants.defaultStatusList;
 
     for (var statusValue in defaultStatus) {
-      Mirrorfly.insertDefaultStatus(statusValue);
+      Mirrorfly.insertDefaultStatus(status: statusValue);
 
     }
     // Mirrorfly.getDefaultNotificationUri().then((value) {
@@ -579,7 +573,7 @@ class ProfileController extends GetxController {
     SessionManagement.convSound(true);
     SessionManagement.muteAll(false);
 
-    Mirrorfly.getDefaultNotificationUri().then((value) {
+    /*Mirrorfly.getDefaultNotificationUri().then((value) {
       debugPrint("getDefaultNotificationUri--> $value");
       if (value != null) {
         // Mirrorfly.setNotificationUri(value);
@@ -588,6 +582,6 @@ class ProfileController extends GetxController {
         Mirrorfly.setDefaultNotificationSound();
         SessionManagement.setNotificationSound(true);
       }
-    });
+    });*/
   }
 }

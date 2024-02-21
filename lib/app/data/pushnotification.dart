@@ -71,7 +71,9 @@ class PushNotifications {
         mirrorFlyLog("firebase_token", value);
         debugPrint("#Mirrorfly Notification -> firebase_token_1 $value");
         SessionManagement.setToken(value);
-        Mirrorfly.updateFcmToken(value).then((value) => LogMessage.d("updateFcmToken", value));
+        Mirrorfly.updateFcmToken(firebaseToken: value, flyCallBack: (FlyResponse response) {
+          LogMessage.d("updateFcmToken", response.isSuccess);
+        });
       }
     }).catchError((er){
       mirrorFlyLog("FirebaseMessaging", er.toString());
@@ -80,7 +82,9 @@ class PushNotifications {
         .listen((fcmToken) {
       mirrorFlyLog("onTokenRefresh", fcmToken.toString());
       SessionManagement.setToken(fcmToken);
-      Mirrorfly.updateFcmToken(fcmToken).then((value) => LogMessage.d("updateFcmToken", value));
+      Mirrorfly.updateFcmToken(firebaseToken: fcmToken, flyCallBack: (FlyResponse response) {
+        LogMessage.d("updateFcmToken", response.isSuccess);
+      });
     }).onError((err) {
       // Error getting token.
       mirrorFlyLog("onTokenRefresh", err.toString());
@@ -181,18 +185,20 @@ class PushNotifications {
 
   }
 
-  static void showNotification(RemoteMessage remoteMessage) async {
+  static void showNotification(RemoteMessage remoteMessage) {
     var notificationData = remoteMessage.data;
     if(!remoteMessage.data.containsKey("message_id")){
       notificationData["message_id"]=remoteMessage.messageId;
     }
     if(notificationData.isNotEmpty && Platform.isAndroid) {
       WidgetsFlutterBinding.ensureInitialized();
-      await Mirrorfly.handleReceivedMessage(notificationData).then((value) async {
-        mirrorFlyLog("#Mirrorfly Notification -> notification message", value.toString());
-        var data = sendMessageModelFromJson(value.toString());
-        if(data.messageId.isNotEmpty) {
-          NotificationBuilder.createNotification(data,autoCancel: false);
+      Mirrorfly.handleReceivedMessage(notificationData: notificationData, flyCallBack: (FlyResponse response) {
+          mirrorFlyLog("#Mirrorfly Notification -> notification message", response.toString());
+        if(response.isSuccess && response.hasData){
+          var data = sendMessageModelFromJson(response.data);
+          if(data.messageId.isNotEmpty) {
+            NotificationBuilder.createNotification(data,autoCancel: false);
+          }
         }
       });
     }

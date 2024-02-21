@@ -10,6 +10,7 @@ import 'package:is_lock_screen/is_lock_screen.dart';
 import 'package:mirror_fly_demo/app/base_controller.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
+import 'package:mirror_fly_demo/app/data/apputils.dart';
 import 'package:mirror_fly_demo/app/data/pushnotification.dart';
 import 'package:mirror_fly_demo/app/data/session_management.dart';
 import 'package:mirror_fly_demo/app/common/extensions.dart';
@@ -20,6 +21,7 @@ import 'package:mirror_fly_demo/app/modules/notification/notification_builder.da
 import 'package:mirror_fly_demo/app/routes/app_pages.dart';
 
 import 'package:mirrorfly_plugin/mirrorfly.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 import '../modules/chatInfo/controllers/chat_info_controller.dart';
 import 'notification_service.dart';
@@ -271,24 +273,24 @@ class MainController extends FullLifeCycleController with BaseController, FullLi
   }
 
   void syncContacts() async {
-    /*if(await Permission.contacts.isGranted) {
+    if(await Permission.contacts.isGranted) {
       if (await AppUtils.isNetConnected() &&
           !await Mirrorfly.contactSyncStateValue()) {
         final permission = await Permission.contacts.status;
         if (permission == PermissionStatus.granted) {
           if(SessionManagement.getLogin()) {
-            Mirrorfly.syncContacts(!SessionManagement.isInitialContactSyncDone());
+            Mirrorfly.syncContacts(isFirstTime: !SessionManagement.isInitialContactSyncDone(), flyCallBack: (_) {});
           }
         }
       }
     }else{
       if(SessionManagement.isInitialContactSyncDone()) {
-        Mirrorfly.revokeContactSync().then((value) {
+        Mirrorfly.revokeContactSync(flyCallBack: (FlyResponse response) {
           onContactSyncComplete(true);
-          mirrorFlyLog("checkContactPermission isSuccess", value.toString());
+          mirrorFlyLog("checkContactPermission isSuccess", response.isSuccess.toString());
         });
       }
-    }*/
+    }
   }
 
   void networkDisconnected() {}

@@ -53,15 +53,21 @@ class StatusListController extends FullLifeCycleController with FullLifeCycleMix
     debugPrint("updating item details--> $statusId");
     if(await AppUtils.isNetConnected()) {
       Helper.showLoading();
-      Mirrorfly.setMyProfileStatus(statusText!, statusId!).then((value){
-        selectedStatus.value= statusText;
-        addStatusController.text= statusText;
-        var data = json.decode(value.toString());
-        toToast('Status update successfully');
-        Helper.hideLoading();
-        if(data['status']) {
-          getStatusList();
+      Mirrorfly.setMyProfileStatus(status: statusText!, statusId: statusId!,flyCallBack: (response){
+        if(response.isSuccess) {
+          selectedStatus.value = statusText;
+          addStatusController.text = statusText;
+          var data = json.decode(response.data);
+          toToast('Status update successfully');
+          if(data['status']) {
+            getStatusList();
+          }
+        }else{
+          toToast(response.exception!.message.toString());
         }
+        Helper.hideLoading();
+      }).then((value){
+
       }).catchError((er){
         toToast(er);
       });
@@ -73,7 +79,7 @@ class StatusListController extends FullLifeCycleController with FullLifeCycleMix
   insertStatus() async{
     if(await AppUtils.isNetConnected()){
       Helper.showLoading();
-        Mirrorfly.insertNewProfileStatus(addStatusController.text.trim().toString())
+        Mirrorfly.insertNewProfileStatus(status: addStatusController.text.trim().toString())
             .then((value) {
           selectedStatus.value = addStatusController.text.trim().toString();
           addStatusController.text = addStatusController.text.trim().toString();
@@ -163,7 +169,7 @@ class StatusListController extends FullLifeCycleController with FullLifeCycleMix
             if (await AppUtils.isNetConnected()) {
               Get.back();
               Helper.showLoading(message: "Deleting Status");
-              Mirrorfly.deleteProfileStatus(item.id!, item.status!, item.isCurrentStatus!)
+              Mirrorfly.deleteProfileStatus(id: item.id!, status: item.status!, isCurrentStatus: item.isCurrentStatus!)
                   .then((value) {
                 statusList.remove(item);
                 Helper.hideLoading();

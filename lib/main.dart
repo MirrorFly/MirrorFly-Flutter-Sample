@@ -83,7 +83,7 @@ Future<void> main() async {
         if(response.isSuccess){
           LogMessage.d("onSuccess", response.message);
         }else{
-          LogMessage.d("onFailure", response.exception?.message.toString());
+          LogMessage.d("onFailure", response.errorMessage.toString());
         }
         //check is on going call
         isOnGoingCall = (await Mirrorfly.isOnGoingCall()).checkNull();

@@ -34,7 +34,7 @@ class ChatInfoController extends GetxController {
   }
 
   muteAble() async {
-    muteable(await Mirrorfly.isUserUnArchived(profile.jid.checkNull()));
+    muteable(await Mirrorfly.isChatUnArchived(jid: profile.jid.checkNull()));
   }
 
   _scrollListener() {
@@ -59,17 +59,19 @@ class ChatInfoController extends GetxController {
     if(muteable.value) {
       mirrorFlyLog("change", value.toString());
       mute(value);
-      Mirrorfly.updateChatMuteStatus(profile.jid.checkNull(), value);
+      Mirrorfly.updateChatMuteStatus(jid: profile.jid.checkNull(), muteStatus: value);
     }
   }
 
   getUserLastSeen(){
     if(!profile.isBlockedMe.checkNull() || !profile.isAdminBlocked.checkNull()) {
-      Mirrorfly.getUserLastSeenTime(profile.jid.toString()).then((value) {
-        var lastSeen = convertSecondToLastSeen(value!);
-        userPresenceStatus(lastSeen.toString());
-      }).catchError((er) {
-        userPresenceStatus("");
+      Mirrorfly.getUserLastSeenTime(jid: profile.jid.toString(), flyCallBack: (FlyResponse response) {
+        if(response.isSuccess && response.hasData) {
+          var lastSeen = convertSecondToLastSeen(response.data);
+          userPresenceStatus(lastSeen.toString());
+        }else{
+          userPresenceStatus("");
+        }
       });
     }else{
       userPresenceStatus("");
@@ -120,18 +122,12 @@ class ChatInfoController extends GetxController {
                   Get.back();
                   // Helper.showLoading(message: "Reporting User");
                   Mirrorfly
-                      .reportUserOrMessages(profile.jid!, "chat")
-                      .then((value) {
-                    // Helper.hideLoading();
-                    if(value.checkNull()){
+                      .reportUserOrMessages(jid: profile.jid!, type: "chat", flyCallBack: (FlyResponse response) {
+                    if(response.isSuccess){
                       toToast("Report sent");
                     }else{
                       toToast("There are no messages available");
                     }
-
-                    // debugPrint(value.toString());
-                  }).catchError((onError) {
-                    debugPrint(onError.toString());
                   });
                 },
                 child: const Text("REPORT")),

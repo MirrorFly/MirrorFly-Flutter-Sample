@@ -100,9 +100,9 @@ class LoginController extends GetxController {
   setUserJID(String username) {
     if (!Mirrorfly.isChatHistoryEnabled && Platform.isAndroid) {
       debugPrint("recentChatList Calling getAllGroups");
-      Mirrorfly.getAllGroups(true); // chat history enabled so this no longer need
+      Mirrorfly.getAllGroups(fetchFromServer: true,flyCallBack: (_){}); // chat history enabled so this no longer need
     }
-    Mirrorfly.getJid(username).then((value) {
+    Mirrorfly.getJid(username: username).then((value) {
       if (value != null) {
         SessionManagement.setUserJID(value);
         Helper.hideLoading();
@@ -309,12 +309,12 @@ class LoginController extends GetxController {
       // if(mobileNumber.text.length > 9) {
       showLoading();
       var userIdentifier = countryCode!.replaceAll('+', '') + mobileNumber.text;
-      Mirrorfly.registerUser(countryCode!.replaceAll('+', '') + mobileNumber.text,
+      Mirrorfly.login(userIdentifier: countryCode!.replaceAll('+', '') + mobileNumber.text,
           fcmToken: SessionManagement.getToken().checkNull(),
           isForceRegister: isForceRegister,
           flyCallback: (FlyResponse response) {
               if (response.isSuccess) {
-                if (response.data.isNotEmpty) {
+                if (response.hasData) {
                   var userData = registerModelFromJson(response.data); //message
                   SessionManagement.setLogin(userData.data!.username!.isNotEmpty);
                   SessionManagement.setUser(userData.data!);
@@ -327,24 +327,24 @@ class LoginController extends GetxController {
                   // SessionManagement.setNotificationSound(true);
                   // userData.data.
                   enableArchive();
-                  Mirrorfly.setRegionCode(regionCode ?? 'IN');
+                  Mirrorfly.setRegionCode(regionCode:regionCode ?? 'IN');
 
                   ///if its not set then error comes in contact sync delete from phonebook.
                   SessionManagement.setCountryCode((countryCode ?? "").replaceAll('+', ''));
                   setUserJID(userData.data!.username!);
                 }
               } else {
-                debugPrint("issue===> ${response.exception?.message.toString()}");
+                debugPrint("issue===> ${response.errorMessage.toString()}");
                 hideLoading();
                 if (response.exception?.code == "403") {
-                  debugPrint("issue 403 ===> ${response.exception?.message }");
+                  debugPrint("issue 403 ===> ${response.errorMessage }");
                   Get.offAllNamed(Routes.adminBlocked);
                 } else if (response.exception?.code  == "405") {
-                  debugPrint("issue 405 ===> ${response.exception?.message }");
+                  debugPrint("issue 405 ===> ${response.errorMessage }");
                   sessionExpiredDialogShow(Constants.maximumLoginReached);
                 } else {
                   debugPrint("issue else code ===> ${response.exception?.code }");
-                  debugPrint("issue else ===> ${response.exception?.message }");
+                  debugPrint("issue else ===> ${response.errorMessage }");
                   toToast(response.exception!.message.toString());
                 }
               }
@@ -359,7 +359,7 @@ class LoginController extends GetxController {
 
   void enableArchive() async {
     if (await AppUtils.isNetConnected()) {
-      Mirrorfly.enableDisableArchivedSettings(true);
+      Mirrorfly.enableDisableArchivedSettings(enable: true,flyCallBack: (_){});
     } else {
       toToast(Constants.noInternetConnection);
     }

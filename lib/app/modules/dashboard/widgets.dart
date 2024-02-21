@@ -402,12 +402,12 @@ class RecentChatItem extends StatelessWidget {
     );
   }
 
-  Future<String> getParticipantsNameAsCsv(String jid) {
+  Future<String> getParticipantsNameAsCsv(String jid) async {
     var groupParticipantsName = ''.obs;
-    return Mirrorfly.getGroupMembersList(jid, false).then((value) {
-      if (value.isNotEmpty) {
+    await Mirrorfly.getGroupMembersList(jid:jid, fetchFromServer: false, flyCallBack: (FlyResponse response) {
+      if (response.isSuccess && response.hasData) {
         var str = <String>[];
-        var groupsMembersProfileList = memberFromJson(value);
+        var groupsMembersProfileList = memberFromJson(response.data);
         for (var it in groupsMembersProfileList) {
           if (it.jid.checkNull() != SessionManagement.getUserJID().checkNull()) {
             str.add(it.name.checkNull());
@@ -417,7 +417,7 @@ class RecentChatItem extends StatelessWidget {
       }
       return groupParticipantsName.value;
     });
-    // return groupParticipantsName.value;
+    return groupParticipantsName.value;
   }
 
   String setRecalledMessageText(bool isFromSender) {
