@@ -138,6 +138,7 @@ class RecentChatItem extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.only(right: 16.0, left: 8, top: 5),
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.end,
         children: [
           buildRecentChatTime(context),
           Visibility(
@@ -149,7 +150,7 @@ class RecentChatItem extends StatelessWidget {
           ),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [buildArchivedIconVisibility(), buildMuteIconVisibility(), buildArchivedTextVisibility()],
+            children: [buildPinIconVisibility(), buildMuteIconVisibility(), buildArchivedTextVisibility()],
           )
         ],
       ),
@@ -274,7 +275,7 @@ class RecentChatItem extends StatelessWidget {
         ));
   }
 
-  Visibility buildArchivedIconVisibility() {
+  Visibility buildPinIconVisibility() {
     return Visibility(
         visible: !item.isChatArchived! && item.isChatPinned! && !isForwardMessage,
         child: SvgPicture.asset(
