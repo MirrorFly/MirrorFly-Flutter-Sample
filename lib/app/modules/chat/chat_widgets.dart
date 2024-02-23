@@ -467,9 +467,9 @@ class SenderHeader extends StatelessWidget {
       }
       var currentSenderJid = currentMessage.senderUserJid.checkNull();
       var previousSenderJid = previousMessage.senderUserJid.checkNull();
-      debugPrint("currentSenderJid  : $currentSenderJid");
-      debugPrint("previousSenderJid : $previousSenderJid");
-      debugPrint("isSenderChanged : ${previousSenderJid != currentSenderJid}");
+      // debugPrint("currentSenderJid  : $currentSenderJid");
+      // debugPrint("previousSenderJid : $previousSenderJid");
+      // debugPrint("isSenderChanged : ${previousSenderJid != currentSenderJid}");
       return previousSenderJid != currentSenderJid;
     } else {
       return false;

@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_app_badger/flutter_app_badger.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get/get.dart';
 import 'package:is_lock_screen/is_lock_screen.dart';
@@ -75,6 +76,7 @@ class MainController extends FullLifeCycleController with BaseController, FullLi
     // _configureDidReceiveLocalNotificationSubject();
     _configureSelectNotificationSubject();
     unreadMissedCallCount();
+    _removeBadge();
   }
 
   Future<void> _isAndroidPermissionGranted() async {
@@ -253,6 +255,10 @@ class MainController extends FullLifeCycleController with BaseController, FullLi
 
   @override
   void onPaused() async {
+    var unReadMessageCount = await Mirrorfly.getUnreadMessageCountExceptMutedChat();
+
+    debugPrint('mainController unReadMessageCount onPaused ${unReadMessageCount.toString()}');
+    _setBadgeCount(unReadMessageCount ?? 0);
     mirrorFlyLog('mainController', 'onPaused');
     fromLockScreen = await isLockScreen() ?? false;
     mirrorFlyLog('isLockScreen', '$fromLockScreen');
@@ -355,5 +361,13 @@ class MainController extends FullLifeCycleController with BaseController, FullLi
     var unreadMissedCallCount = await Mirrorfly.getUnreadMissedCallCount();
     unreadCallCount.value = unreadMissedCallCount ?? 0;
     debugPrint("unreadMissedCallCount $unreadMissedCallCount");
+  }
+
+  void _setBadgeCount(int count) {
+    FlutterAppBadger.updateBadgeCount(count);
+  }
+
+  void _removeBadge() {
+    FlutterAppBadger.removeBadge();
   }
 }

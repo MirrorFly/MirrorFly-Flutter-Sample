@@ -380,7 +380,7 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
     }
   }
 
-  updateRecentChat(String jid) {
+  updateRecentChat({required String jid, bool changePosition = true}) {
     //updateArchiveRecentChat(jid);
     getRecentChatOfJid(jid).then((recent) {
       final index = recentChats.indexWhere((chat) => chat.jid == jid);
@@ -395,7 +395,7 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
             var lastPinnedChat = recentChats.lastIndexWhere((element) => element.isChatPinned!);
             var nxtIndex = lastPinnedChat.isNegative ? 0 : (lastPinnedChat + 1);
             LogMessage.d("updateRecentChat", "next Index $nxtIndex");
-            if (recentChats[index].isChatPinned!) {
+            if (recentChats[index].isChatPinned! || !changePosition) {
               recentChats.removeAt(index);
               recentChats.insert(index, recent);
             } else {
@@ -481,17 +481,17 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
       }
     });
   }
-
-  Future<ChatMessageModel?> getMessageOfId(String mid) async {
+// Commented this bcz this is not used any where
+  /*Future<ChatMessageModel?> getMessageOfId(String mid) async {
     var value = await Mirrorfly.getMessageOfId(mid);
-    // mirrorFlyLog("getMessageOfId recent", value.toString());
+    mirrorFlyLog("getMessageOfId recent", value.toString());
     if (value != null) {
       var data = ChatMessageModel.fromJson(json.decode(value.toString()));
       return data;
     } else {
       return null;
     }
-  }
+  }*/
 
   webLogin() {
     if (SessionManagement.getWebLogin()) {
@@ -862,6 +862,7 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
 
   _itemMute(int index) {
     Mirrorfly.updateChatMuteStatus(selectedChats[index], true);
+    debugPrint("updateChatMuteStatus result");
     var chatIndex =
         recentChats.indexWhere((element) => selectedChats[index] == element.jid); //selectedChatsPosition[index];
     recentChats[chatIndex].isMuted = (true);
@@ -990,7 +991,7 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
   void onMessageReceived(chatMessageModel) {
     mirrorFlyLog("dashboard controller", "onMessageReceived");
 
-    updateRecentChat(chatMessageModel.chatUserJid);
+    updateRecentChat(jid: chatMessageModel.chatUserJid);
   }
 
   void onMessageStatusUpdated(ChatMessageModel chatMessageModel) {
@@ -1001,7 +1002,7 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
       recentChats[index].lastMessageStatus = chatMessageModel.messageStatus.value;
       recentChats.refresh();
     } else {
-      updateRecentChat(chatMessageModel.chatUserJid);
+      updateRecentChat(jid: chatMessageModel.chatUserJid);
     }
   }
 
@@ -1018,15 +1019,15 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
 
   void onGroupProfileUpdated(groupJid) {
     mirrorFlyLog("super", groupJid.toString());
-    updateRecentChat(groupJid);
+    updateRecentChat(jid: groupJid);
   }
 
   void onDeleteGroup(groupJid) {
-    updateRecentChat(groupJid);
+    updateRecentChat(jid: groupJid);
   }
 
   void onGroupDeletedLocally(groupJid) {
-    updateRecentChat(groupJid);
+    updateRecentChat(jid: groupJid);
   }
 
   var typingAndGoneStatus = <Triple>[].obs;
@@ -1583,7 +1584,7 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
   }*/
 
   historyScrollListener() {
-    mirrorFlyLog("historyScrollListener", historyScrollController.position.extentAfter.toString());
+    // mirrorFlyLog("historyScrollListener", historyScrollController.position.extentAfter.toString());
     // scrollController.position.pixels >=
     //     scrollController.position.maxScrollExtent - 200 //uncomment for data to be populated before certain items
     // if (historyScrollController.position.extentAfter <= 0.0) {

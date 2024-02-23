@@ -535,9 +535,9 @@ abstract class BaseController {
     }
   }
 
-  void onMessageDeleteNotifyUI(String chatJid) {
+  void onMessageDeleteNotifyUI({required String chatJid, bool changePosition = true}) {
     if (Get.isRegistered<DashboardController>()) {
-      Get.find<DashboardController>().updateRecentChat(chatJid);
+      Get.find<DashboardController>().updateRecentChat(jid: chatJid, changePosition: changePosition);
     }
   }
 

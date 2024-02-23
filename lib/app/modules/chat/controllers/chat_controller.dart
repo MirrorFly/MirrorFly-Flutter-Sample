@@ -1269,8 +1269,7 @@ class ChatController extends FullLifeCycleController
             ? chatList.removeWhere((p0) => p0.isMessageStarred.value == false)
             : chatList.clear();
         cancelReplyMessage();
-        // chatList.refresh();
-        onMessageDeleteNotifyUI(profile.jid.checkNull());
+        onMessageDeleteNotifyUI(chatJid: profile.jid.checkNull(), changePosition: false);
       }
     });
   }
@@ -1530,7 +1529,7 @@ class ChatController extends FullLifeCycleController
                 isSelected(false);
                 selectedChatList.clear();*/
 
-                  onMessageDeleteNotifyUI(chatJid);
+                  onMessageDeleteNotifyUI(chatJid : chatJid);
                 });
                 removeChatList(selectedChatList);
                 isSelected(false);
@@ -1564,7 +1563,7 @@ class ChatController extends FullLifeCycleController
                       // this.chatList.refresh();
                       if (selectedChatList.last.messageId ==
                           chatList.messageId) {
-                        onMessageDeleteNotifyUI(chatList.chatUserJid);
+                        onMessageDeleteNotifyUI(chatJid: chatList.chatUserJid);
                       }
                     }
                   }
@@ -1575,7 +1574,7 @@ class ChatController extends FullLifeCycleController
                       // this.chatList.refresh();
                       if (selectedChatList.last.messageId ==
                           chatList.messageId) {
-                        onMessageDeleteNotifyUI(chatList.chatUserJid);
+                        onMessageDeleteNotifyUI(chatJid: chatList.chatUserJid);
                       }
                     }
                   }
@@ -3231,8 +3230,8 @@ class ChatController extends FullLifeCycleController
     cancelNotification();
   }
 
-  void onMessageDeleteNotifyUI(String chatUserJid) {
-    Get.find<MainController>().onMessageDeleteNotifyUI(chatUserJid);
+  void onMessageDeleteNotifyUI({required String chatJid, bool changePosition = true}) {
+    Get.find<MainController>().onMessageDeleteNotifyUI(chatJid: chatJid, changePosition: changePosition);
   }
 
   Future<void> updateLastMessage(dynamic value) async {
