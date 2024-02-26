@@ -326,6 +326,7 @@ class RecentChatItem extends StatelessWidget {
     return FutureBuilder(
         future: getMessageOfId(item.lastMessageId.checkNull()),
         builder: (context, data) {
+          //LogMessage.d("getMessageOfId future", "${item.lastMessageId.checkNull()} : ${data.data?.messageId}");
           if (data.hasData && data.data != null && !data.hasError) {
             var chat = data.data!;
             return Row(

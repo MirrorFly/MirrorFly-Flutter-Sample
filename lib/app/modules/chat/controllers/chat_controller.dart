@@ -597,7 +597,7 @@ class ChatController extends FullLifeCycleController
       Mirrorfly.sendMessage(messageParams: MessageParams.location(toJid: profile.jid.checkNull(),replyMessageId: replyMessageId,topicId: topicId,
           locationMessageParams: LocationMessageParams(latitude: latitude, longitude: longitude)), flyCallback: (response){
         if(response.isSuccess){
-          mirrorFlyLog("Location_msg", response.data.toString());
+          mirrorFlyLog("location message", response.data.toString());
           scrollToBottom();
           updateLastMessage(response.data);
         }else{
@@ -839,6 +839,7 @@ class ChatController extends FullLifeCycleController
             replyMessageId: replyMessageID,topicId: topicId,
             fileMessageParams: FileMessageParams(file: File(path),caption: caption)), flyCallback: (response){
           if(response.isSuccess){
+            mirrorFlyLog("image message", response.data.toString());
             clearMessage();
             ChatMessageModel chatMessageModel = sendMessageModelFromJson(response.data);
             // chatList.insert(0, chatMessageModel);
@@ -932,6 +933,7 @@ class ChatController extends FullLifeCycleController
           replyMessageId: replyMessageID,topicId: topicId,
           fileMessageParams: FileMessageParams(file: File(videoPath),caption: caption)), flyCallback: (response){
         if(response.isSuccess){
+          mirrorFlyLog("video message", response.data.toString());
           clearMessage();
           Platform.isIOS ? Helper.hideLoading() : null;
           ChatMessageModel chatMessageModel = sendMessageModelFromJson(response.data);
@@ -1065,6 +1067,7 @@ class ChatController extends FullLifeCycleController
       return Mirrorfly.sendMessage(messageParams: MessageParams.contact(toJid: profile.jid.checkNull(),
           replyMessageId: replyMessageId,topicId: topicId,contactMessageParams: ContactMessageParams(name: contactName, numbers: contactList)), flyCallback: (response){
         if(response.isSuccess){
+          mirrorFlyLog("contact message", response.data.toString());
           debugPrint("response--> ${response.data}");
           scrollToBottom();
           updateLastMessage(response.data);
@@ -1110,6 +1113,7 @@ class ChatController extends FullLifeCycleController
           replyMessageId: replyMessageId,topicId: topicId,
           fileMessageParams: FileMessageParams(file: File(documentPath))), flyCallback: (response){
         if(response.isSuccess){
+          mirrorFlyLog("document message", response.data.toString());
           scrollToBottom();
           updateLastMessage(response.data);
         }else{
@@ -1223,7 +1227,7 @@ class ChatController extends FullLifeCycleController
           isRecorded: isRecorded,replyMessageId: replyMessageId,topicId: topicId,
           fileMessageParams: FileMessageParams(file: File(filePath))), flyCallback: (response){
         if(response.isSuccess){
-          mirrorFlyLog("Audio Message sent", response.data);
+          mirrorFlyLog("audio Message", response.data);
           scrollToBottom();
           updateLastMessage(response.data);
         }else{

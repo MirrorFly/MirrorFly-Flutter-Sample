@@ -295,7 +295,7 @@ Future<ProfileDetails> getProfileDetails(String jid) async {
 
 Future<ChatMessageModel> getMessageOfId(String mid) async {
   var value = await Mirrorfly.getMessageOfId(messageId: mid.checkNull());
-  // debugPrint("message--> $value");
+  //LogMessage.d("getMessageOfId", "$value");
   var chatMessage =
       sendMessageModelFromJson(value.toString()); //await compute(sendMessageModelFromJson, value.toString());
   return chatMessage;

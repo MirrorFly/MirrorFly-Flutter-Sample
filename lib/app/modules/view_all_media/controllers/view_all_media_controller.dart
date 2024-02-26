@@ -79,7 +79,7 @@ class ViewAllMediaController extends GetxController {
   getMediaMessages() {
     Mirrorfly.getMediaMessages(jid: jid).then((value) async {
       if (value != null) {
-        // mirrorFlyLog("getMediaMessages", value);
+        LogMessage.d("getMediaMessages", value);
         var data = chatMessageModelFromJson(value);
         // previewMediaList.clear();
         previewMediaList(data);
@@ -106,7 +106,7 @@ class ViewAllMediaController extends GetxController {
   getDocsMessages() {
     Mirrorfly.getDocsMessages(jid: jid).then((value) async {
       if (value != null) {
-        mirrorFlyLog("get doc before json",value);
+        LogMessage.d("getDocsMessages",value);
         var data = chatMessageModelFromJson(value);
         documentCount(data.length);
         // mirrorFlyLog("getDocsMessagess",json.encode(data));
@@ -121,6 +121,7 @@ class ViewAllMediaController extends GetxController {
   getLinkMessages() {
     Mirrorfly.getLinkMessages(jid: jid).then((value) async {
       if (value != null) {
+        LogMessage.d("getLinkMessages", value);
         var data = chatMessageModelFromJson(value);
         linkCount(data.length);
         if (data.isNotEmpty) {
