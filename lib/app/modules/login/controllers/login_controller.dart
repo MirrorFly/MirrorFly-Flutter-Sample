@@ -320,6 +320,7 @@ class LoginController extends GetxController {
                   SessionManagement.setLogin(userData.data!.username!.isNotEmpty);
                   SessionManagement.setUser(userData.data!);
                   SessionManagement.setUserIdentifier(userIdentifier);
+                  SessionManagement.setAdminBlocked(false);
                   SessionManagement.setAuthToken(userData.data!.token.checkNull());
                   if (Get.isRegistered<MainController>()) {
                     Get.find<MainController>().currentAuthToken(userData.data!.token.checkNull());
