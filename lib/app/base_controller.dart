@@ -147,7 +147,7 @@ abstract class BaseController {
     Mirrorfly.connectionFailed.listen(connectionFailed);
     Mirrorfly.connectionSuccess.listen(connectionSuccess);
     Mirrorfly.onWebChatPasswordChanged.listen(onWebChatPasswordChanged);
-    Mirrorfly.setTypingStatus.listen((event) {
+    Mirrorfly.typingStatus.listen((event) {
       var data = json.decode(event.toString());
       mirrorFlyLog("setTypingStatus", data.toString());
       var singleOrgroupJid = data["singleOrgroupJid"];
@@ -155,8 +155,8 @@ abstract class BaseController {
       var typingStatus = data["status"];
       setTypingStatus(singleOrgroupJid, userJid, typingStatus);
     });
-    Mirrorfly.onChatTypingStatus.listen(onChatTypingStatus);
-    Mirrorfly.onGroupTypingStatus.listen(onGroupTypingStatus);
+    // Mirrorfly.onChatTypingStatus.listen(onChatTypingStatus);
+    // Mirrorfly.onGroupTypingStatus.listen(onGroupTypingStatus);
     Mirrorfly.onFailure.listen(onFailure);
     Mirrorfly.onProgressChanged.listen(onProgressChanged);
     Mirrorfly.onSuccess.listen(onSuccess);

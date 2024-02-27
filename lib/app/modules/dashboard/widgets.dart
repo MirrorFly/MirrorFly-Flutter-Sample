@@ -291,7 +291,7 @@ class RecentChatItem extends StatelessWidget {
         builder: (context, data) {
           if (data.hasData && data.data!=null) {
             return Text(
-              getTypingUser(data.data!),
+              getTypingUser(data.data!,item.isGroup),
               //"${data.data!.name.checkNull()} typing...",
               style: typingstyle,
               maxLines: 1,
@@ -304,8 +304,8 @@ class RecentChatItem extends StatelessWidget {
         });
   }
 
-  String getTypingUser(ProfileDetails profile){
-    if(profile.isGroupProfile.checkNull()){
+  String getTypingUser(ProfileDetails profile,bool? isGroup){
+    if(isGroup.checkNull()){
       return "${profile.getName().checkNull()} typing...";
     }else{
       return "typing...";
