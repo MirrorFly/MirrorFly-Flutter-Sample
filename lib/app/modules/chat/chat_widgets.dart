@@ -622,14 +622,45 @@ class _AudioMessageViewState extends State<AudioMessageView>
         .currentPos
         .toDouble()
         .obs;
-    player.onPlayerCompletion.listen((event) {
+    // player.onPlayerCompletion.listen((event) {
+    //   isPlaying(false);
+    //   currentPos(0);
+    //   widget.chatMessage.mediaChatMessage!.currentPos = 0;
+    //   player.stop();
+    // });
+    //
+    // player.onAudioPositionChanged.listen((Duration p) {
+    //   mirrorFlyLog('p.inMilliseconds', p.inMilliseconds.toString());
+    //   widget.chatMessage.mediaChatMessage!.currentPos = p.inMilliseconds;
+    //   currentPos(p.inMilliseconds.toDouble());
+    //   currentPos.refresh();
+    // });
+    player.onPlayerStateChanged.listen(
+          (it) {
+        switch (it) {
+          case PlayerState.playing:
+            isPlaying(true);
+            break;
+          case PlayerState.stopped:
+            isPlaying(false);
+            break;
+          case PlayerState.paused:
+            isPlaying(false);
+            break;
+          case PlayerState.completed:
+            break;
+          default:
+            break;
+        }
+      },
+    );
+    player.onPlayerComplete.listen((event) {
       isPlaying(false);
       currentPos(0);
       widget.chatMessage.mediaChatMessage!.currentPos = 0;
       player.stop();
     });
-
-    player.onAudioPositionChanged.listen((Duration p) {
+    player.onPositionChanged.listen((Duration  p) {
       mirrorFlyLog('p.inMilliseconds', p.inMilliseconds.toString());
       widget.chatMessage.mediaChatMessage!.currentPos = p.inMilliseconds;
       currentPos(p.inMilliseconds.toDouble());
@@ -906,24 +937,30 @@ class _AudioMessageViewState extends State<AudioMessageView>
                   return InkWell(
                     onTap: () async {
                       if (!isPlaying.value) {
-                        int result = await player.play(
-                            chatMessage.mediaChatMessage!.mediaLocalStoragePath.value,
-                            position: Duration(
-                                milliseconds:
-                                chatMessage.mediaChatMessage!.currentPos),
-                            isLocal: true);
-                        if (result == 1) {
-                          isPlaying(true);
-                        } else {
-                          mirrorFlyLog("", "Error while playing audio.");
-                        }
+                        // int result = await player.play(
+                        //     chatMessage.mediaChatMessage!.mediaLocalStoragePath.value,
+                        //     position: Duration(
+                        //         milliseconds:
+                        //         chatMessage.mediaChatMessage!.currentPos),
+                        //     isLocal: true);
+                        // if (result == 1) {
+                        //   isPlaying(true);
+                        // } else {
+                        //   mirrorFlyLog("", "Error while playing audio.");
+                        // }
+                        await player.play(DeviceFileSource(chatMessage.mediaChatMessage!.mediaLocalStoragePath.value),position: Duration(
+                            milliseconds:
+                            chatMessage.mediaChatMessage!.currentPos));
+                        isPlaying(true);
                       } else {
-                        int result = await player.pause();
-                        if (result == 1) {
-                          isPlaying(false);
-                        } else {
-                          mirrorFlyLog("", "Error on pause audio.");
-                        }
+                        // int result = await player.pause();
+                        // if (result == 1) {
+                        //   isPlaying(false);
+                        // } else {
+                        //   mirrorFlyLog("", "Error on pause audio.");
+                        // }
+                        await player.pause();
+                        isPlaying(false);
                       }
                     },
                     child: Padding(
@@ -2501,7 +2538,7 @@ Widget chatSpannedText(String text, String spannableText, TextStyle? style,
   }
 }*/
 
-class AudioMessagePlayerController extends GetxController {
+/*class AudioMessagePlayerController extends GetxController {
   final _obj = ''.obs;
 
   set obj(value) => _obj.value = value;
@@ -2569,7 +2606,7 @@ class AudioMessagePlayerController extends GetxController {
       }
     }
   }
-}
+}*/
 
 /// Checks the current header id with previous header id
 /// @param position Position of the current item

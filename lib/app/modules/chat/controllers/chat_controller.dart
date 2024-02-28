@@ -1144,7 +1144,9 @@ class ChatController extends FullLifeCycleController
         debugPrint(result.files.first.extension);
         if (checkFileUploadSize(result.files.single.path!, Constants.mAudio)) {
           AudioPlayer player = AudioPlayer();
-          player.setUrl(result.files.single.path!);
+          // player.setUrl(result.files.single.path!);
+          player.setSourceDeviceFile(
+              result.files.single.path ?? Constants.emptyString);
           player.onDurationChanged.listen((Duration duration) {
             mirrorFlyLog("", 'max duration: ${duration.inMilliseconds}');
             Future.delayed(const Duration(seconds: 1), () {
@@ -1166,7 +1168,8 @@ class ChatController extends FullLifeCycleController
         if (value != null) {
           if (checkFileUploadSize(value, Constants.mAudio)) {
             AudioPlayer player = AudioPlayer();
-            player.setUrl(value);
+            // player.setUrl(value);
+            player.setSourceDeviceFile(value);
             player.onDurationChanged.listen((Duration duration) {
               mirrorFlyLog("", 'max duration: ${duration.inMilliseconds}');
               Future.delayed(const Duration(seconds: 1), () {
