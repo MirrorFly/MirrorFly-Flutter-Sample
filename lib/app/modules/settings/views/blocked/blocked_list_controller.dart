@@ -17,20 +17,19 @@ class BlockedListController extends GetxController {
   @override
   void onInit(){
     super.onInit();
-    getUsersIBlocked(false);
+    getUsersIBlocked();
   }
 
-  getUsersIBlocked(bool server){
-    Mirrorfly.getUsersIBlocked(fetchFromServer: server, flyCallBack: (FlyResponse response) {
+  getUsersIBlocked([bool? server]) async {
+    Mirrorfly.getUsersIBlocked(fetchFromServer: server ?? await AppUtils.isNetConnected(), flyCallBack: (FlyResponse response) {
       if(response.isSuccess && response.hasData){
-        var list = memberFromJson(response.data);
+        LogMessage.d("getUsersIBlocked", response.toString());
+        var list = profileFromJson(response.data);
         list.sort((a, b) => getMemberName(a).checkNull().toString().toLowerCase().compareTo(getMemberName(b).checkNull().toString().toLowerCase()));
         _blockedUsers(list);
       }else{
         _blockedUsers.clear();
       }
-    }).then((value){
-
     });
   }
   void userUpdatedHisProfile(String jid) {
