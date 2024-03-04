@@ -125,7 +125,11 @@ abstract class BaseController {
       var jid = data["jid"];
       userCameOnline(jid);
     });
-    Mirrorfly.userDeletedHisProfile.listen(userDeletedHisProfile);
+    Mirrorfly.userDeletedHisProfile.listen((event){
+      var data = json.decode(event.toString());
+      var jid = data["jid"];
+      userDeletedHisProfile(jid);
+    });
     Mirrorfly.userProfileFetched.listen(userProfileFetched);
     Mirrorfly.userUnBlockedMe.listen(userUnBlockedMe);
     Mirrorfly.userUpdatedHisProfile.listen((event) {
