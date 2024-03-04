@@ -46,14 +46,14 @@ class CallTimeoutController extends GetxController {
       if(callType.value == Constants.audioCall) {
         if (await AppPermission.askAudioCallPermissions()) {
           if(users.length==1) {
-            Mirrorfly.makeVoiceCall(users.first!).then((value) {
+            Mirrorfly.makeVoiceCall(toUserJid: users.first!, flyCallBack: (FlyResponse response) {
               Get.offNamed(
                   Routes.outGoingCallView, arguments: {"userJid": users});
             });
           }else{
             var usersList = <String>[];
             for (var element in users) {if(element!=null) { usersList.add(element);}}
-            Mirrorfly.makeGroupVoiceCall(jidList: usersList).then((value) {
+            Mirrorfly.makeGroupVoiceCall(toUserJidList: usersList, flyCallBack: (FlyResponse response) {
               Get.offNamed(
                   Routes.outGoingCallView, arguments: {"userJid": users});
             });
@@ -64,18 +64,16 @@ class CallTimeoutController extends GetxController {
       }else{
         if (await AppPermission.askVideoCallPermissions()) {
           if(users.length==1) {
-            Mirrorfly.makeVideoCall(users.first!).then((value) {
-              if (value) {
+            Mirrorfly.makeVideoCall(toUserJid: users.first!, flyCallBack: (FlyResponse response) {
+              if (response.isSuccess) {
                 Get.offNamed(
                     Routes.outGoingCallView, arguments: {"userJid": users});
               }
-            }).catchError((e) {
-              debugPrint("#Mirrorfly Call $e");
             });
           }else{
             var usersList = <String>[];
             for (var element in users) {if(element!=null) { usersList.add(element);}}
-            Mirrorfly.makeGroupVideoCall(jidList: usersList).then((value) {
+            Mirrorfly.makeGroupVideoCall(toUserJidList: usersList, flyCallBack: (FlyResponse response) {
               Get.offNamed(
                   Routes.outGoingCallView, arguments: {"userJid": users});
             });

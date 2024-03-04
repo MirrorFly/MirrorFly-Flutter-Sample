@@ -31,8 +31,8 @@ class CallInfoController extends GetxController{
               debugPrint("#Mirrorfly Call You are on another call");
               toToast(Constants.msgOngoingCallAlert);
             } else {
-              Mirrorfly.makeGroupVideoCall(groupJid: item.groupId.checkNull().isNotEmpty ? item.groupId! : "", jidList: userList).then((value) {
-                if (value) {
+              Mirrorfly.makeGroupVideoCall(groupJid: item.groupId.checkNull().isNotEmpty ? item.groupId! : "", toUserJidList: userList, flyCallBack: (FlyResponse response) {
+                if (response.isSuccess) {
                   Get.toNamed(Routes.outGoingCallView, arguments: {"userJid": userList, "callType": CallType.video});
                 }
               });
@@ -45,8 +45,8 @@ class CallInfoController extends GetxController{
               debugPrint("#Mirrorfly Call You are on another call");
               toToast(Constants.msgOngoingCallAlert);
             } else {
-              Mirrorfly.makeGroupVoiceCall(groupJid: item.groupId.checkNull().isNotEmpty ? item.groupId! : "", jidList: userList).then((value) {
-                if (value) {
+              Mirrorfly.makeGroupVoiceCall(groupJid: item.groupId.checkNull().isNotEmpty ? item.groupId! : "", toUserJidList: userList, flyCallBack: (FlyResponse response) {
+                if (response.isSuccess) {
                   Get.toNamed(Routes.outGoingCallView, arguments: {"userJid": userList, "callType": CallType.audio});
                 }
               });
@@ -71,8 +71,8 @@ class CallInfoController extends GetxController{
           TextButton(
               onPressed: () {
                 Get.back();
-                Mirrorfly.deleteCallLog(selectedCallLogs, false).then((value) {
-                  if (value) {
+                Mirrorfly.deleteCallLog(jidList: selectedCallLogs, isClearAll: false, flyCallBack: (FlyResponse response) {
+                  if (response.isSuccess) {
                     Get.back(result: true);
                   } else {
                     toToast("Error in call log delete");

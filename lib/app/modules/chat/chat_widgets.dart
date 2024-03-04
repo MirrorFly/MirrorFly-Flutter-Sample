@@ -1174,9 +1174,8 @@ class ContactMessageView extends StatelessWidget {
       debugPrint(
           "contactChatMessage.isChatAppUser[i]--> ${contactChatMessage.isChatAppUser[i]}");
       if (contactChatMessage.isChatAppUser[i]) {
-        return await Mirrorfly.getJidFromPhoneNumber(
-            contactChatMessage.contactPhoneNumbers[i],
-            (SessionManagement.getCountryCode() ?? "").replaceAll('+', ''));
+        return await Mirrorfly.getJidFromPhoneNumber(mobileNumber: contactChatMessage.contactPhoneNumbers[i],
+            countryCode: (SessionManagement.getCountryCode() ?? "").replaceAll('+', ''));
       }
     }
     return '';
@@ -2194,12 +2193,12 @@ uploadView(int mediaFileSize, String messageType) {
 }
 
 void cancelMediaUploadOrDownload(String messageId) {
-  Mirrorfly.cancelMediaUploadOrDownload(messageId);
+  Mirrorfly.cancelMediaUploadOrDownload(messageId: messageId);
 }
 
 void uploadMedia(String messageId) async {
   if (await AppUtils.isNetConnected()) {
-    Mirrorfly.uploadMedia(messageId);
+    Mirrorfly.uploadMedia(messageId: messageId);
   } else {
     toToast(Constants.noInternetConnection);
   }
@@ -2212,7 +2211,7 @@ void downloadMedia(String messageId) async {
     var permission = await AppPermission.getStoragePermission();
     if (permission) {
       debugPrint("media permission granted");
-      Mirrorfly.downloadMedia(messageId);
+      Mirrorfly.downloadMedia(messageId: messageId);
     } else {
       debugPrint("storage permission not granted");
     }

@@ -21,14 +21,16 @@ class BlockedListController extends GetxController {
   }
 
   getUsersIBlocked(bool server){
-    Mirrorfly.getUsersIBlocked(server).then((value){
-      if(value!=null && value != ""){
-        var list = memberFromJson(value);
+    Mirrorfly.getUsersIBlocked(fetchFromServer: server, flyCallBack: (FlyResponse response) {
+      if(response.isSuccess && response.hasData){
+        var list = memberFromJson(response.data);
         list.sort((a, b) => getMemberName(a).checkNull().toString().toLowerCase().compareTo(getMemberName(b).checkNull().toString().toLowerCase()));
         _blockedUsers(list);
       }else{
         _blockedUsers.clear();
       }
+    }).then((value){
+
     });
   }
   void userUpdatedHisProfile(String jid) {
@@ -62,16 +64,13 @@ class BlockedListController extends GetxController {
             if(await AppUtils.isNetConnected()) {
               Get.back();
               Helper.progressLoading();
-              Mirrorfly.unblockUser(item.jid.checkNull()).then((value) {
+              Mirrorfly.unblockUser(userJid: item.jid.checkNull(), flyCallBack: (FlyResponse response) {
                 Helper.hideLoading();
-                if(value!=null && value) {
+                if(response.isSuccess) {
                   toToast("${getMemberName(item)} has been Unblocked");
                   getUsersIBlocked(false);
                 }
-              }).catchError((error) {
-                Helper.hideLoading();
-                debugPrint(error);
-              });
+              },);
             }else{
               toToast(Constants.noInternetConnection);
             }

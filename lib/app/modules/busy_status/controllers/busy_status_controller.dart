@@ -104,7 +104,7 @@ class BusyStatusController extends FullLifeCycleController with FullLifeCycleMix
       }
     }
 
-    Mirrorfly.insertBusyStatus(newBusyStatus).then((value) {
+    Mirrorfly.insertBusyStatus(busyStatus: newBusyStatus).then((value) {
       busyStatus(newBusyStatus);
       setCurrentStatus(newBusyStatus);
     });
@@ -125,8 +125,8 @@ class BusyStatusController extends FullLifeCycleController with FullLifeCycleMix
   }
 
   void setCurrentStatus(String status) {
-    Mirrorfly.setMyBusyStatus(status).then((value) {
-      debugPrint("status value $value");
+    Mirrorfly.setMyBusyStatus(busyStatus: status, flyCallBack: (FlyResponse response) {
+      debugPrint("status value $response");
       var settingController = Get.find<ChatSettingsController>();
       settingController.busyStatus(status);
       getMyBusyStatusList();
@@ -145,8 +145,8 @@ class BusyStatusController extends FullLifeCycleController with FullLifeCycleMix
             if (await AppUtils.isNetConnected()) {
               Get.back();
               Helper.showLoading(message: "Deleting Busy Status");
-              Mirrorfly.deleteBusyStatus(
-                  item.id!, item.status!, item.isCurrentStatus!)
+              Mirrorfly.deleteBusyStatus(id:
+                  item.id!, status: item.status!, isCurrentStatus: item.isCurrentStatus!)
                   .then((value) {
                     busyStatusList.remove(item);
                 Helper.hideLoading();

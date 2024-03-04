@@ -61,13 +61,13 @@ extension RecentChatParsing on RecentChatData {
 
 extension ProfileParesing on ProfileDetails {
   String getUsername() {
-    var value = Mirrorfly.getProfileDetails(jid.checkNull());
+    var value = Mirrorfly.getProfileDetails(jid: jid.checkNull());
     var str = ProfileDetails.fromJson(json.decode(value.toString()));
     return str.getName(); //str.name.checkNull();
   }
 
   Future<ProfileDetails> getProfileDetails() async {
-    var value = await Mirrorfly.getProfileDetails(jid.checkNull());
+    var value = await Mirrorfly.getProfileDetails(jid: jid.checkNull());
     var str = ProfileDetails.fromJson(json.decode(value.toString()));
     return str;
   }

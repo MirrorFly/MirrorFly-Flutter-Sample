@@ -551,6 +551,11 @@ class Constants {
   static const maxImageFileSize = 2 * 1024;//10;
   static const maxDocFileSize = 2 * 1024;//20;
 
+  static const mobileImageMaxWidth = 250;
+  static const mobileImageMinWidth = 210;
+  static const mobileImageMaxHeight = 320;
+  static const mobileImageMinHeight = 80;
+
   static const List<String> defaultStatusList = [
     "Available",
     "Sleeping...",

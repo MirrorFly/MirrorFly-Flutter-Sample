@@ -270,10 +270,13 @@ class StarredMessagesController extends FullLifeCycleController with FullLifeCyc
           TextButton(
               onPressed: () async {
                 Get.back();
-                await Mirrorfly.enableDisableBusyStatus(false);
-                if (function != null) {
-                  function();
-                }
+                await Mirrorfly.enableDisableBusyStatus(enable: false, flyCallBack: (FlyResponse response) {
+                  if(response.isSuccess) {
+                    if (function != null) {
+                      function();
+                    }
+                  }
+                });
               },
               child: const Text("Yes")),
         ]);
@@ -306,13 +309,10 @@ class StarredMessagesController extends FullLifeCycleController with FullLifeCyc
 
   favouriteMessage() {
     for (var item in selectedChatList) {
-      Mirrorfly.updateFavouriteStatus(
-          item.messageId, item.chatUserJid, !item.isMessageStarred.value, item.messageChatType);
-      starredChatList
-          .removeWhere((element) => item.messageId == element.messageId);
+      Mirrorfly.updateFavouriteStatus(messageId: item.messageId,chatUserJid: item.chatUserJid,isFavourite: !item.isMessageStarred.value,chatType: item.messageChatType, flyCallBack: (FlyResponse response) {});
+      starredChatList.removeWhere((element) => item.messageId == element.messageId);
       if(isSearch.value){
-        searchedStarredMessageList
-            .removeWhere((element) => item.messageId == element.messageId);
+        searchedStarredMessageList.removeWhere((element) => item.messageId == element.messageId);
       }
     }
     selectedChatList.clear();
@@ -403,21 +403,20 @@ class StarredMessagesController extends FullLifeCycleController with FullLifeCyc
           TextButton(
               onPressed: () {
                 Get.back();
-                for (var item in selectedChatList) {
-                  Mirrorfly.deleteMessagesForMe(
-                      item.chatUserJid,
-                      item.messageChatType,
-                      [item.messageId],
-                      isMediaDelete.value);
-                  starredChatList.removeWhere(
-                      (element) => item.messageId == element.messageId);
-                  if(isSearch.value){
-                    searchedStarredMessageList
-                        .removeWhere((element) => item.messageId == element.messageId);
-                  }
-                }
-                isSelected(false);
-                selectedChatList.clear();
+                var messageIds = selectedChatList.map((item) => item.messageId).toList();
+                Mirrorfly.deleteMessagesForMe(jid: selectedChatList[0].chatUserJid,
+                    chatType: selectedChatList[0].messageChatType, messageIds: messageIds,
+                      isMediaDelete: isMediaDelete.value, flyCallBack: (FlyResponse response) {
+                      for (var item in messageIds) {
+                        starredChatList.removeWhere((element) => item == element.messageId);
+                        if(isSearch.value){
+                          searchedStarredMessageList
+                              .removeWhere((element) => item == element.messageId);
+                        }
+                      }
+                      isSelected(false);
+                      selectedChatList.clear();
+                    });
               },
               child: const Text("DELETE FOR ME")),
           /*isRecallAvailable

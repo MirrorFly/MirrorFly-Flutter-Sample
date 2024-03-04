@@ -1,6 +1,6 @@
 name: mirror_fly_demo
-version: 2.6.8+82
-build_release_date: Jan 2024
+version: 2.6.8+83
+build_release_date: Feb 2024
 publish_to: none
 description: A MirrorFly Flutter Sample Application.
 environment: 
@@ -67,7 +67,7 @@ dependencies:
   is_lock_screen: ^2.0.0
   device_info_plus: ^8.1.0
   http: ^0.13.4 #http
-  #  mirrorfly_plugin: ^0.0.2
+#  mirrorfly_plugin: ^0.0.13
   mirrorfly_plugin:
     path: p078-mirrorfly-flutter-plugin
 

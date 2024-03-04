@@ -285,7 +285,7 @@ String getDateFromTimestamp(int convertedTime, String format) {
 }
 
 Future<ProfileDetails> getProfileDetails(String jid) async {
-  var value = await Mirrorfly.getProfileDetails(jid.checkNull());
+  var value = await Mirrorfly.getProfileDetails(jid: jid.checkNull());
   // profileDataFromJson(value);
   // debugPrint("getProfileDetails--> $value");
   // var profile = await compute(profiledata, value.toString());
@@ -294,7 +294,7 @@ Future<ProfileDetails> getProfileDetails(String jid) async {
 }
 
 Future<ChatMessageModel> getMessageOfId(String mid) async {
-  var value = await Mirrorfly.getMessageOfId(mid.checkNull());
+  var value = await Mirrorfly.getMessageOfId(messageId: mid.checkNull());
   // debugPrint("message--> $value");
   var chatMessage =
       sendMessageModelFromJson(value.toString()); //await compute(sendMessageModelFromJson, value.toString());
@@ -397,10 +397,6 @@ bool checkFile(String mediaLocalStoragePath) {
   return mediaLocalStoragePath.isNotEmpty && File(mediaLocalStoragePath).existsSync();
 }
 
-checkIosFile(String mediaLocalStoragePath) async {
-  var isExists = await Mirrorfly.iOSFileExist(mediaLocalStoragePath);
-  return isExists;
-}
 
 openDocument(String mediaLocalStoragePath) async {
   // if (await askStoragePermission()) {
@@ -505,7 +501,7 @@ class Triple {
 }
 
 Future<RecentChatData?> getRecentChatOfJid(String jid) async {
-  var value = await Mirrorfly.getRecentChatOf(jid);
+  var value = await Mirrorfly.getRecentChatOf(jid: jid);
   mirrorFlyLog("chat", value.toString());
   if (value.isNotEmpty) {
     var data = recentChatDataFromJson(value);
@@ -834,15 +830,13 @@ makeVoiceCall(String toUser, Rx<AvailableFeatures> availableFeatures) async {
     return;
   }
   if (await AppPermission.askAudioCallPermissions()) {
-    Mirrorfly.makeVoiceCall(toUser.checkNull()).then((value) {
-      if (value) {
+    Mirrorfly.makeVoiceCall(toUserJid: toUser.checkNull(), flyCallBack: (FlyResponse response) {
+      if (response.isSuccess) {
         Get.toNamed(Routes.outGoingCallView, arguments: {
           "userJid": [toUser],
           "callType": CallType.audio
         });
       }
-    }).catchError((e) {
-      debugPrint("#Mirrorfly Call $e");
     });
   } else {
     debugPrint("permission not given");
@@ -856,15 +850,13 @@ makeVideoCall(String toUser, Rx<AvailableFeatures> availableFeatures) async {
         debugPrint("#Mirrorfly Call You are on another call");
         toToast(Constants.msgOngoingCallAlert);
       } else {
-        Mirrorfly.makeVideoCall(toUser.checkNull()).then((value) {
-          if (value) {
+        Mirrorfly.makeVideoCall(toUserJid: toUser.checkNull(), flyCallBack: (FlyResponse response) {
+          if (response.isSuccess) {
             Get.toNamed(Routes.outGoingCallView, arguments: {
               "userJid": [toUser],
               "callType": CallType.video
             });
           }
-        }).catchError((e) {
-          debugPrint("#Mirrorfly Call $e");
         });
       }
     } else {

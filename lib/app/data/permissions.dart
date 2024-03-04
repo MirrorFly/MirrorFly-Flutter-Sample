@@ -483,6 +483,32 @@ class AppPermission {
       } else {
         return false;
       }
+    }else if(status == PermissionStatus.denied){
+      mirrorFlyLog('denied', 'permission');
+      var popupValue = await customPermissionDialog(
+          icon: permissionIcon, content: permissionContent);
+      if (popupValue) {
+        // return AppPermission.requestPermission(permission);/*.then((value) {
+        var newp = await AppPermission.requestPermission(permission);
+        /*if(newp.isPermanentlyDenied) {
+          // savePermissionAsked(permission);
+          var deniedPopupValue = await customPermissionDialog(
+              icon: permissionIcon,
+              content: getPermissionAlertMessage(
+                  permission.toString().replaceAll("Permission.", "")));
+          if (deniedPopupValue) {
+            openAppSettings();
+            return false;
+          } else {
+            return false;
+          }
+        }else{
+          return newp.isGranted;
+        }*/
+        return newp.isGranted;
+      } else {
+        return false;
+      }
     }else{
       var deniedPopupValue = await customPermissionDialog(
           icon: permissionIcon,
