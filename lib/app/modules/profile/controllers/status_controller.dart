@@ -37,6 +37,7 @@ class StatusListController extends FullLifeCycleController with FullLifeCycleMix
   getStatusList(){
     loading.value=true;
     Mirrorfly.getProfileStatusList().then((value){
+      LogMessage.d("myStatusList", value);
       loading.value=false;
       if(value!=null){
         statusList.clear();
@@ -55,6 +56,7 @@ class StatusListController extends FullLifeCycleController with FullLifeCycleMix
       Helper.showLoading();
       Mirrorfly.setMyProfileStatus(status: statusText!, statusId: statusId!,flyCallBack: (response){
         if(response.isSuccess) {
+          LogMessage.d("setMyProfileStatus flutter", response.toString());
           selectedStatus.value = statusText;
           addStatusController.text = statusText;
           var data = json.decode(response.data);

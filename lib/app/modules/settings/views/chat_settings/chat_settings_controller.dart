@@ -148,7 +148,7 @@ class ChatSettingsController extends GetxController {
   void getMyBusyStatus() {
     Mirrorfly.getMyBusyStatus().then((value) {
       var userBusyStatus = json.decode(value);
-      debugPrint("Busy Status ${userBusyStatus["status"]}");
+      debugPrint("Busy Status $userBusyStatus");
       // var busyStatus = userBusyStatus["status"];
       // if(busyStatus)
       busyStatus(userBusyStatus["status"]);

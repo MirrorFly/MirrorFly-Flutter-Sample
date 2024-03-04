@@ -133,6 +133,7 @@ class ForwardChatController extends GetxController {
   void getAllGroups() {
     Mirrorfly.getAllGroups(flyCallBack: (FlyResponse response) {
       if (response.isSuccess && response.hasData) {
+        LogMessage.d("getAllGroups", response);
         var list = profileFromJson(response.data);
         if (_maingroupList.isEmpty) {
           _maingroupList.addAll(list);

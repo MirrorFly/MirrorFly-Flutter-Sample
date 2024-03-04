@@ -1298,7 +1298,8 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
     await Mirrorfly.getRecentChatListIncludingArchived().then((value) {
       var recentChatList = <RecentChatData>[];
       var js = json.decode(value);
-      var recentChatListWithArchived = List<RecentChatData>.from(js.map((x) => RecentChatData.fromJson(x)));
+      LogMessage.d("getRecentChatListIncludingArchived", js);
+      var recentChatListWithArchived = recentChatDataListFromJson(value.toString());//List<RecentChatData>.from(js.map((x) => RecentChatData.fromJson(x)));
       for (var recentChat in recentChatListWithArchived) {
         if (recentChat.profileName != null &&
             recentChat.getName().toLowerCase().contains(search.text.trim().toString().toLowerCase()) == true) {
