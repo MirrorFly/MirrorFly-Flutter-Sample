@@ -626,7 +626,7 @@ class ChatView extends GetView<ChatController> {
           reverse: true,
           itemBuilder: (context, pos) {
             var index = pos;
-            return Column(
+            return !index.isNegative && index <= chatList.length ? Column(
               mainAxisSize: MainAxisSize.min,
               children: [
                 Obx(() {
@@ -831,7 +831,7 @@ class ChatView extends GetView<ChatController> {
                       ));
                 }),
               ],
-            );
+            ) : const SizedBox.shrink();
           },
         ),
       ),
