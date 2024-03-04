@@ -706,7 +706,11 @@ class ChatController extends FullLifeCycleController
         List<ChatMessageModel> chatMessageModel =
         chatMessageModelFromJson(response.data);
         if (chatMessageModel.isNotEmpty) {
-          chatList.insertAll(0, chatMessageModel.reversed.toList());
+          if(chatList.isNotEmpty) {
+            chatList.insertAll(0, chatMessageModel.reversed.toList());
+          }else {
+            chatList(chatMessageModel.reversed.toList());
+          }
           sendReadReceipt(removeUnreadFromList: removeUnreadFromList);
         }
         showStarredMessage();
@@ -2175,6 +2179,7 @@ class ChatController extends FullLifeCycleController
           profile_(value as ProfileDetails);
           isBlocked(profile.isBlocked);
           debugPrint("value--> ${profile.isGroupProfile}");
+          _loadNextMessages(showLoading: false);
         }
         checkAdminBlocked();
         memberOfGroup();
