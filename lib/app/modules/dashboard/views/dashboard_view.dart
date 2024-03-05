@@ -1002,7 +1002,7 @@ class DashboardView extends GetView<DashboardController> {
                     },
                   ))
               : Obx(() => ListTile(
-                    leading: item.groupId!.checkNull().isEmpty
+                    leading: item.groupId.checkNull().isEmpty
                         ? ClipOval(
                             child: Image.asset(
                               groupImg,
@@ -1041,7 +1041,7 @@ class DashboardView extends GetView<DashboardController> {
                                       ),
                                     );
                             }),
-                    title: item.groupId!.checkNull().isEmpty
+                    title: item.groupId.checkNull().isEmpty
                         ? FutureBuilder(
                             future: CallUtils.getCallLogUserNames(item.userList!, item),
                             builder: (context, snap) {
