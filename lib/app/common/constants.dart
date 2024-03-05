@@ -812,6 +812,9 @@ class Constants {
   static const String noCallLog = "No Call Log";
   static const String noCallLogHistoryFound = "No Call log history found";
   static const String anyNewCallsWillAppearHere = "Any new Calls will appear here";
+
+  static const String profileImageRemoveFailed = "Error while removing profile image";
+  static const String profileImageUpdateFailed = "Error while updating profile image";
 }
 
 Future<void> launchWeb(String url) async {

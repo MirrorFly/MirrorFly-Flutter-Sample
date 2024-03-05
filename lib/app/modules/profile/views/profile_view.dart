@@ -68,6 +68,11 @@ class ProfileView extends GetView<ProfileController> {
                                     debugPrint(
                                         "controller.userImgUrl.value ${controller
                                             .userImgUrl.value}");
+                                    debugPrint(
+                                        "controller.imagePath.value ${controller.imagePath.value}");
+                                    debugPrint(
+                                        "controller.profile name ${controller.profileName.text}");
+
                                     return InkWell(
                                       child: controller.imagePath.value
                                           .isNotEmpty
@@ -80,7 +85,13 @@ class ProfileView extends GetView<ProfileController> {
                                               fit: BoxFit.fill,
                                             ),
                                           ))
-                                          : ImageNetwork(
+                                          : controller.userImgUrl.value.isEmpty && controller.name.value.isNotEmpty ? ProfileTextImage(
+                                        fontSize: 40,
+                                        bgColor: buttonBgColor,
+                                        text: controller.name.value
+                                            .checkNull(),
+                                        radius: 75,
+                                      ) : ImageNetwork(
                                         url: controller.userImgUrl.value
                                             .checkNull(),
                                         width: 150,
@@ -157,6 +168,7 @@ class ProfileView extends GetView<ProfileController> {
                         return SizedBox(
                           width: controller.name.isNotEmpty ? null : 80,
                           child: TextField(
+                            cursorColor: buttonBgColor,
                             focusNode: controller.userNameFocus,
                             autofocus: false,
                             onChanged: (value) => controller.nameChanges(value),
@@ -184,6 +196,7 @@ class ProfileView extends GetView<ProfileController> {
                           fontWeight: FontWeight.w600, fontSize: 14),
                     ),
                     TextField(
+                      cursorColor: buttonBgColor,
                       keyboardType: TextInputType.emailAddress,
                       focusNode: controller.emailFocus,
                       onChanged: (value) => controller.onEmailChange(value),
@@ -208,6 +221,7 @@ class ProfileView extends GetView<ProfileController> {
                     ),
                     Obx(() {
                       return TextField(
+                        cursorColor: buttonBgColor,
                         controller: controller.profileMobile,
                         onChanged: (value) => controller.onMobileChange(value),
                         enabled: controller.mobileEditAccess.value,
@@ -256,15 +270,17 @@ class ProfileView extends GetView<ProfileController> {
                           },
                         )),
                     const AppDivider(
-                      padding: EdgeInsets.only(bottom: 16),
+                      padding: EdgeInsets.only(bottom: 26),
                     ),
+
                     Center(
                       child: Obx(
                             () =>
                             ElevatedButton(
                               style: ElevatedButton.styleFrom(
+                                  backgroundColor: buttonBgColor,
                                   padding: const EdgeInsets.symmetric(
-                                      horizontal: 40, vertical: 15),
+                                      horizontal: 55, vertical: 15),
                                   textStyle: const TextStyle(fontSize: 14),
                                   shape: const StadiumBorder()),
                               onPressed: controller.loading.value
@@ -284,7 +300,7 @@ class ProfileView extends GetView<ProfileController> {
                                     ? 'Update & Continue'
                                     : 'Save',
                                 style: const TextStyle(
-                                    fontWeight: FontWeight.w600),
+                                    fontWeight: FontWeight.w600, color: Colors.white),
                               ),
                             ),
                       ),
@@ -305,6 +321,7 @@ class ProfileView extends GetView<ProfileController> {
         builder: (builder) {
           return SafeArea(
             child: SizedBox(
+              width: MediaQuery.of(context).size.width,
               child: Card(
                 shape: const RoundedRectangleBorder(
                     borderRadius: BorderRadius.only(

@@ -234,6 +234,7 @@ class RecentChatItem extends StatelessWidget {
     return Positioned(
         right: 0,
         child: CircleAvatar(
+          backgroundColor: buttonBgColor,
           radius: 9,
           child: Text(
             returnFormattedCount(item.unreadMessageCount!) != "0" ? returnFormattedCount(item.unreadMessageCount!) : "",

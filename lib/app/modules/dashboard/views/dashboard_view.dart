@@ -418,10 +418,11 @@ class DashboardView extends GetView<DashboardController>{
             title,
             style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 15),
           ),
-          count != "0"
+          int.parse(count) > 0
               ? Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 4.0),
                   child: CircleAvatar(
+                    backgroundColor: buttonBgColor,
                     radius: 9,
                     child: Text(
                       count.toString(),

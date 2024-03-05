@@ -96,6 +96,7 @@ class LoginView extends GetView<LoginController> {
                               ),
                               Flexible(
                                 child: TextField(
+                                  cursorColor: buttonBgColor,
                                   controller: controller.mobileNumber,
                                   keyboardType: TextInputType.phone,
                                   inputFormatters: <TextInputFormatter>[
@@ -130,7 +131,7 @@ class LoginView extends GetView<LoginController> {
                         },
                         child: const Text(
                           'Continue',
-                          style: TextStyle(fontWeight: FontWeight.w600),
+                          style: TextStyle(fontWeight: FontWeight.w600, color: Colors.white),
                         ),
                       ),
                       const SizedBox(
