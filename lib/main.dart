@@ -152,7 +152,9 @@ String getInitialRoute() {
     return AppPages.onGoingCall;
   }else if(didNotificationLaunchApp){
     notificationAppLaunchDetails = null;
-    return "${AppPages.chat}?jid=${didNotificationLaunchResponse.checkNull()}&from_notification=$didNotificationLaunchApp";
+    var chatJid = didNotificationLaunchResponse !=null ? didNotificationLaunchResponse.checkNull().split(",")[0] : "";
+    var topicId = didNotificationLaunchResponse !=null ? didNotificationLaunchResponse.checkNull().split(",")[1] : "";
+    return "${AppPages.chat}?jid=$chatJid&from_notification=$didNotificationLaunchApp&topicId=$topicId";
   }
   if(!SessionManagement.adminBlocked()) {
     if (SessionManagement.getLogin()) {

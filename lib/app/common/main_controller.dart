@@ -123,12 +123,12 @@ class MainController extends FullLifeCycleController with BaseController, FullLi
       // await Navigator.of(context).push(MaterialPageRoute<void>(
       //   builder: (BuildContext context) => SecondPage(payload),
       // ));
-      debugPrint("#Mirrorfly Notification -> opening chat page--> $payload ${Get.currentRoute}");
+      LogMessage.d("#Mirrorfly Notification -> opening chat page--> ","$payload ${Get.currentRoute}");
       if (payload != null && payload.isNotEmpty && payload.toString() != "124") {
         var chatJid = payload.checkNull().split(",")[0];
         var topicId = payload.checkNull().split(",")[1];
         if (Get.isRegistered<ChatController>()) {
-          debugPrint("#Mirrorfly Notification -> already chat page");
+          LogMessage.d("#Mirrorfly Notification ->","already chat page");
           if (Get.currentRoute == Routes.forwardChat ||
               Get.currentRoute == Routes.chatInfo ||
               Get.currentRoute == Routes.groupInfo ||

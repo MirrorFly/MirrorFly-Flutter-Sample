@@ -174,7 +174,8 @@ class ChatController extends FullLifeCycleController
       ready();
       // initListeners();
     } else {
-      getProfileDetails(userJid).then((value) {
+      await getProfileDetails(userJid).then((value) {
+        LogMessage.d("chatController getProfileDetails", value.toJson());
         SessionManagement.setChatJid("");
         profile_(value);
         //make unreadMessageTypeMessageId
@@ -647,12 +648,14 @@ class ChatController extends FullLifeCycleController
 
   RxBool chatLoading = false.obs;
 
+  var initializedMessageList = false;
   void _loadMessages() {
     // getChatHistory();
     chatLoading(true);
     Mirrorfly.initializeMessageList(userJid: profile.jid.checkNull(), limit: 25,topicId: topicId)//message
         .then((value) {
       if(value) {
+        initializedMessageList = true;
         Mirrorfly.loadMessages(flyCallback:  (FlyResponse response){
           showLoadingNext(false);
           showLoadingPrevious(false);
@@ -667,6 +670,7 @@ class ChatController extends FullLifeCycleController
           chatLoading(false);
         });
       }else{
+        initializedMessageList = false;
         chatLoading(false);
         toToast("Chat History Not Initialized");
       }
@@ -2899,8 +2903,11 @@ class ChatController extends FullLifeCycleController
     setChatStatus();
     getAvailableFeatures();
 
-    /// we loading next messages instead of load message because the new messages received will be available in load next message
-    _loadNextMessages();
+    //to avoid calling without initializedMessageList
+    if(initializedMessageList) {
+      /// we loading next messages instead of load message because the new messages received will be available in load next message
+      _loadNextMessages();
+    }
     if (!KeyboardVisibilityController().isVisible) {
       if (focusNode.hasFocus) {
         focusNode.unfocus();
