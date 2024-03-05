@@ -367,7 +367,7 @@ class ProfileView extends GetView<ProfileController> {
                               style: TextStyle(
                                   color: textColor, fontWeight: FontWeight
                                   .bold))),
-                      controller.userImgUrl.value.isNotEmpty
+                      controller.userImgUrl.value.isNotEmpty || controller.imagePath.value.isNotEmpty
                           ? TextButton(
                           onPressed: () {
                             Get.back();

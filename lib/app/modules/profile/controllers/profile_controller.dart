@@ -138,8 +138,6 @@ class ProfileController extends GetxController {
                   }
                 } else {
                   toToast("Unable to update profile");
-                  loading.value = false;
-                  hideLoader();
                 }
               }
             );
@@ -246,29 +244,33 @@ class ProfileController extends GetxController {
   }
 
   removeProfileImage() async {
-    if(await AppUtils.isNetConnected()) {
-      showLoader();
-      loading.value = true;
-      Mirrorfly.removeProfileImage(flyCallBack: (response){
-        loading.value = false;
-        hideLoader();
-        if (response.isSuccess) {
-          SessionManagement.setUserImage(Constants.emptyString);
-          isImageSelected.value = false;
-          isUserProfileRemoved.value = true;
-          userImgUrl(Constants.emptyString);
-          if (from == Routes.login) {
-            changed(true);
+    if(userImgUrl.value.isNotEmpty) {
+      if (await AppUtils.isNetConnected()) {
+        showLoader();
+        loading.value = true;
+        Mirrorfly.removeProfileImage(flyCallBack: (response) {
+          loading.value = false;
+          hideLoader();
+          if (response.isSuccess) {
+            SessionManagement.setUserImage(Constants.emptyString);
+            isImageSelected.value = false;
+            isUserProfileRemoved.value = true;
+            userImgUrl(Constants.emptyString);
+            if (from == Routes.login) {
+              changed(true);
+            } else {
+              // save(frmImage: true);
+            }
+            update();
           } else {
-            // save(frmImage: true);
+            toToast(Constants.profileImageRemoveFailed);
           }
-          update();
-        }else{
-          toToast(Constants.profileImageRemoveFailed);
-        }
-      });
+        });
+      } else {
+        toToast(Constants.noInternetConnection);
+      }
     }else{
-      toToast(Constants.noInternetConnection);
+      imagePath("");
     }
   }
 
