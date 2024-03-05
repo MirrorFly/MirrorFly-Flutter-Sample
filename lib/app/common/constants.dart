@@ -625,8 +625,8 @@ class Constants {
   static const double borderRadius = 27;
   static const double defaultPadding = 8;
 
-  static const String mediaDoesNotExist = "Sorry. Media file isn\'t available in your internal storage";
-  static const String insufficientMemoryError = "Not enough storage space on your device. Please free up space in your phone\'s memory.";
+  static const String mediaDoesNotExist = "Sorry. Media file isn't available in your internal storage";
+  static const String insufficientMemoryError = "Not enough storage space on your device. Please free up space in your phone's memory.";
   static const String errorTryAgain = "Error Occurred, Please try again";
   // static GlobalKey<AnimatedListState> audioListKey =
   // GlobalKey<AnimatedListState>();
@@ -812,6 +812,9 @@ class Constants {
   static const String noCallLog = "No Call Log";
   static const String noCallLogHistoryFound = "No Call log history found";
   static const String anyNewCallsWillAppearHere = "Any new Calls will appear here";
+
+  static const String profileImageRemoveFailed = "Error while removing profile image";
+  static const String profileImageUpdateFailed = "Error while updating profile image";
 }
 
 Future<void> launchWeb(String url) async {

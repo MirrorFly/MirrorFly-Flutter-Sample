@@ -1155,7 +1155,9 @@ class ChatController extends FullLifeCycleController
         debugPrint(result.files.first.extension);
         if (checkFileUploadSize(result.files.single.path!, Constants.mAudio)) {
           AudioPlayer player = AudioPlayer();
-          player.setUrl(result.files.single.path!);
+          // player.setUrl(result.files.single.path!);
+          player.setSourceDeviceFile(
+              result.files.single.path ?? Constants.emptyString);
           player.onDurationChanged.listen((Duration duration) {
             mirrorFlyLog("", 'max duration: ${duration.inMilliseconds}');
             Future.delayed(const Duration(seconds: 1), () {
@@ -1177,7 +1179,8 @@ class ChatController extends FullLifeCycleController
         if (value != null) {
           if (checkFileUploadSize(value, Constants.mAudio)) {
             AudioPlayer player = AudioPlayer();
-            player.setUrl(value);
+            // player.setUrl(value);
+            player.setSourceDeviceFile(value);
             player.onDurationChanged.listen((Duration duration) {
               mirrorFlyLog("", 'max duration: ${duration.inMilliseconds}');
               Future.delayed(const Duration(seconds: 1), () {
@@ -1279,8 +1282,7 @@ class ChatController extends FullLifeCycleController
             ? chatList.removeWhere((p0) => p0.isMessageStarred.value == false)
             : chatList.clear();
         cancelReplyMessage();
-        // chatList.refresh();
-        onMessageDeleteNotifyUI(profile.jid.checkNull());
+        onMessageDeleteNotifyUI(chatJid: profile.jid.checkNull(), changePosition: false);
       }
     });
   }
@@ -1536,7 +1538,7 @@ class ChatController extends FullLifeCycleController
                         }
                         isSelected(false);
                         selectedChatList.clear();*/
-                      onMessageDeleteNotifyUI(chatJid);
+                      onMessageDeleteNotifyUI(chatJid : chatJid);
                     });
                 removeChatList(selectedChatList);
                 isSelected(false);
@@ -1564,7 +1566,7 @@ class ChatController extends FullLifeCycleController
                           // this.chatList.refresh();
                           if (selectedChatList.last.messageId ==
                               chatList.messageId) {
-                            onMessageDeleteNotifyUI(chatList.chatUserJid);
+                            onMessageDeleteNotifyUI(chatJid: chatList.chatUserJid);
                           }
                         }
                       }else{
@@ -1574,7 +1576,8 @@ class ChatController extends FullLifeCycleController
                           // this.chatList.refresh();
                           if (selectedChatList.last.messageId ==
                               chatList.messageId) {
-                            onMessageDeleteNotifyUI(chatList.chatUserJid);
+                            onMessageDeleteNotifyUI(chatJid: chatList.chatUserJid);
+
                           }
                         }*/
                       }
@@ -3224,8 +3227,8 @@ class ChatController extends FullLifeCycleController
     cancelNotification();
   }
 
-  void onMessageDeleteNotifyUI(String chatUserJid) {
-    Get.find<MainController>().onMessageDeleteNotifyUI(chatUserJid);
+  void onMessageDeleteNotifyUI({required String chatJid, bool changePosition = true}) {
+    Get.find<MainController>().onMessageDeleteNotifyUI(chatJid: chatJid, changePosition: changePosition);
   }
 
   Future<void> updateLastMessage(dynamic value) async {

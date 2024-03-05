@@ -1,6 +1,6 @@
 name: mirror_fly_demo
-version: 2.6.8+83
-build_release_date: Feb 2024
+version: 2.7.1+83
+build_release_date: Mar 2024
 publish_to: none
 description: A MirrorFly Flutter Sample Application.
 environment: 
@@ -29,7 +29,8 @@ dependencies:
   url_launcher: ^6.1.6 #url Launcher
   custom_image_crop: ^0.0.4 #crop image
   photo_view: ^0.14.0
-  audioplayers: ^0.20.1
+#  audioplayers: ^0.20.1
+  audioplayers: ^5.2.1
   contacts_service: ^0.6.3
   google_maps_flutter: ^2.5.3 #google map
   geolocator: ^9.0.2 #geolocator
@@ -54,7 +55,8 @@ dependencies:
   video_player: ^2.6.1
   internet_connection_checker: ^1.0.0+1 # connectivity check
   provider: ^6.0.3
-  photo_manager: ^2.8.1
+#  photo_manager: ^2.8.1
+  photo_manager: ^3.0.0-dev.5
   oktoast: ^3.3.1
 #  google_cloud_translation: ^0.0.3 # Google Translator
   share_plus: ^7.0.2
@@ -70,6 +72,7 @@ dependencies:
     path: p078-mirrorfly-flutter-plugin
 
   flutter_libphonenumber: ^2.1.5
+  flutter_app_badger: ^1.5.0
 
 
 dev_dependencies: 

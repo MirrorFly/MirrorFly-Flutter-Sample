@@ -214,6 +214,7 @@ class ProfileController extends GetxController {
               save();
             }
           }else{
+            toToast(Constants.profileImageUpdateFailed);
             debugPrint("Profile Update on error--> ${response.exception.toString()}");
             loading.value = false;
             hideLoader();
@@ -259,9 +260,11 @@ class ProfileController extends GetxController {
           if (from == Routes.login) {
             changed(true);
           } else {
-            save(frmImage: true);
+            // save(frmImage: true);
           }
           update();
+        }else{
+          toToast(Constants.profileImageRemoveFailed);
         }
       });
     }else{

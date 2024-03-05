@@ -18,13 +18,14 @@ import '../../../widgets/custom_action_bar_icons.dart';
 import '../../chat/chat_widgets.dart';
 import '../../dashboard/controllers/dashboard_controller.dart';
 
-class DashboardView extends GetView<DashboardController> {
+class DashboardView extends GetView<DashboardController>{
   const DashboardView({Key? key}) : super(key: key);
 
   //final themeController = Get.put(DashboardController());
 
   @override
   Widget build(BuildContext context) {
+    // Mirrorfly.setEventListener(this);
     return FocusDetector(
       onFocusGained: () {
         debugPrint('onFocusGained');
@@ -421,6 +422,7 @@ class DashboardView extends GetView<DashboardController> {
               ? Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 4.0),
                   child: CircleAvatar(
+                    backgroundColor: buttonBgColor,
                     radius: 9,
                     child: Text(
                       count.toString(),
@@ -1178,4 +1180,14 @@ class DashboardView extends GetView<DashboardController> {
               color: Colors.grey,
             ));
   }
+
+  // @override
+  // void onMessageReceivedEvent(String message) {
+  //   debugPrint("onMessageReceivedEvent $message");
+  // }
+  //
+  // @override
+  // void onMessageStatusUpdatedEvent(status) {
+  //
+  // }
 }

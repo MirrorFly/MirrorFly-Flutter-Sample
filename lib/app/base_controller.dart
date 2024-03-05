@@ -146,10 +146,7 @@ abstract class BaseController {
     Mirrorfly.usersWhoBlockedMeListFetched.listen(usersWhoBlockedMeListFetched);
     Mirrorfly.onConnected.listen(onConnected);
     Mirrorfly.onDisconnected.listen(onDisconnected);
-    // Mirrorfly.onConnectionNotAuthorized.listen(onConnectionNotAuthorized);
-    // Mirrorfly.onConnectionFailed.listen(onConnectionFailed);
-    Mirrorfly.connectionFailed.listen(connectionFailed);
-    Mirrorfly.connectionSuccess.listen(connectionSuccess);
+    Mirrorfly.onConnectionFailed.listen(onConnectionFailed);
     Mirrorfly.onWebChatPasswordChanged.listen(onWebChatPasswordChanged);
     Mirrorfly.typingStatus.listen((event) {
       var data = json.decode(event.toString());
@@ -161,9 +158,10 @@ abstract class BaseController {
     });
     // Mirrorfly.onChatTypingStatus.listen(onChatTypingStatus);
     // Mirrorfly.onGroupTypingStatus.listen(onGroupTypingStatus);
-    Mirrorfly.onFailure.listen(onFailure);
+    // Removed due Backup not implemented
+    /*Mirrorfly.onFailure.listen(onFailure);
     Mirrorfly.onProgressChanged.listen(onProgressChanged);
-    Mirrorfly.onSuccess.listen(onSuccess);
+    Mirrorfly.onSuccess.listen(onSuccess);*/
     Mirrorfly.onLoggedOut.listen(onLogout);
 
     Mirrorfly.onMissedCall.listen((event){
@@ -539,9 +537,9 @@ abstract class BaseController {
     }
   }
 
-  void onMessageDeleteNotifyUI(String chatJid) {
+  void onMessageDeleteNotifyUI({required String chatJid, bool changePosition = true}) {
     if (Get.isRegistered<DashboardController>()) {
-      Get.find<DashboardController>().updateRecentChat(chatJid);
+      Get.find<DashboardController>().updateRecentChat(jid: chatJid, changePosition: changePosition);
     }
   }
 
@@ -932,7 +930,7 @@ abstract class BaseController {
   }
 
   // void onConnectionNotAuthorized(result) {}
-  // void onConnectionFailed(result) {}
+  void onConnectionFailed(result) {}
 
   void connectionFailed(result) {}
 

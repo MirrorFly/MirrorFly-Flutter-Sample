@@ -33,7 +33,7 @@ class Helper {
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                const CircularProgressIndicator(),
+                const CircularProgressIndicator(color: buttonBgColor,),
                 const SizedBox(width: 16),
                 Text(message ?? 'Loading...'),
               ],
