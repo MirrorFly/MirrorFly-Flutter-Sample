@@ -15,7 +15,7 @@ import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/common/app_theme.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
 import 'package:mirror_fly_demo/app/common/main_controller.dart';
-import 'package:mirror_fly_demo/app/data/helper.dart';
+import 'package:mirror_fly_demo/app/common/extensions.dart';
 import 'package:mirror_fly_demo/app/data/pushnotification.dart';
 import 'package:mirror_fly_demo/app/modules/dashboard/bindings/dashboard_binding.dart';
 import 'package:mirror_fly_demo/app/modules/login/bindings/login_binding.dart';
@@ -59,10 +59,7 @@ Future<void> main() async {
     }
 
   }
-  Mirrorfly.init(
-      baseUrl: 'https://api-preprod-sandbox.mirrorfly.com/api/v1/',
-      licenseKey: 'Your License Key Here',
-      iOSContainerID: 'group.com.mirrorfly.flutter');
+
   final GoogleMapsFlutterPlatform mapsImplementation =
       GoogleMapsFlutterPlatform.instance;
   if (mapsImplementation is GoogleMapsFlutterAndroid) {
@@ -71,15 +68,29 @@ Future<void> main() async {
   //check app opened from notification
   notificationAppLaunchDetails = await flutterLocalNotificationsPlugin.getNotificationAppLaunchDetails();
 
-  //check is on going call
-  isOnGoingCall = (await Mirrorfly.isOnGoingCall()).checkNull();
-  // fromMissedCall = (await Mirrorfly.appLaunchedFromMissedCall()).checkNull();
+
   if (shouldUseFirebaseEmulator) {
     await FirebaseAuth.instance.useAuthEmulator('localhost', 5050);
   }
   await SessionManagement.onInit();
   // Get.put<MainController>(MainController());
-  runApp(const MyApp());
+  Mirrorfly.initializeSDK(
+      licenseKey: 'Your_License_Key_Here',
+      iOSContainerID: 'group.com.mirrorfly.flutter',
+      chatHistoryEnable: true,
+      flyCallback: (response) async {
+        if(response.isSuccess){
+          LogMessage.d("onSuccess", response.message);
+        }else{
+          LogMessage.d("onFailure", response.errorMessage.toString());
+        }
+        //check is on going call
+        isOnGoingCall = (await Mirrorfly.isOnGoingCall()).checkNull();
+        fromMissedCall = (await Mirrorfly.appLaunchedFromMissedCall()).checkNull();
+        runApp(const MyApp());
+      }
+  );
+
 }
 
 class MyApp extends StatefulWidget{
@@ -139,7 +150,9 @@ String getInitialRoute() {
     return AppPages.onGoingCall;
   }else if(didNotificationLaunchApp){
     notificationAppLaunchDetails = null;
-    return "${AppPages.chat}?jid=${didNotificationLaunchResponse.checkNull()}&from_notification=$didNotificationLaunchApp";
+    var chatJid = didNotificationLaunchResponse !=null ? didNotificationLaunchResponse.checkNull().split(",")[0] : "";
+    var topicId = didNotificationLaunchResponse !=null ? didNotificationLaunchResponse.checkNull().split(",")[1] : "";
+    return "${AppPages.chat}?jid=$chatJid&from_notification=$didNotificationLaunchApp&topicId=$topicId";
   }
   if(!SessionManagement.adminBlocked()) {
     if (SessionManagement.getLogin()) {
@@ -156,7 +169,7 @@ String getInitialRoute() {
             .getChatJid()
             .checkNull()
             .isEmpty) {
-          if(!Mirrorfly.isTrialLicence) {
+          if(Constants.enableContactSync) {
               // mirrorFlyLog("nonChatUsers", nonChatUsers.toString());
               mirrorFlyLog("SessionManagement.isContactSyncDone()", SessionManagement.isContactSyncDone().toString());
               if (!SessionManagement.isContactSyncDone() /*|| nonChatUsers.isEmpty*/) {

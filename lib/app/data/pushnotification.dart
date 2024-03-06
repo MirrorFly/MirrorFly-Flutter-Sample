@@ -9,11 +9,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/data/session_management.dart';
-import 'package:mirrorfly_plugin/mirrorfly.dart';
+import 'package:mirrorfly_plugin/mirrorflychat.dart';
+import 'package:mirror_fly_demo/app/model/chat_message_model.dart';
 
 import '../common/constants.dart';
 import '../common/notification_service.dart';
-import '../model/notification_message_model.dart';
 import '../modules/notification/notification_builder.dart';
 import '../routes/app_pages.dart';
 
@@ -71,7 +71,9 @@ class PushNotifications {
         mirrorFlyLog("firebase_token", value);
         debugPrint("#Mirrorfly Notification -> firebase_token_1 $value");
         SessionManagement.setToken(value);
-        Mirrorfly.updateFcmToken(value).then((value) => LogMessage.d("updateFcmToken", value));
+        Mirrorfly.updateFcmToken(firebaseToken: value, flyCallBack: (FlyResponse response) {
+          LogMessage.d("updateFcmToken", response.isSuccess);
+        });
       }
     }).catchError((er){
       mirrorFlyLog("FirebaseMessaging", er.toString());
@@ -80,7 +82,9 @@ class PushNotifications {
         .listen((fcmToken) {
       mirrorFlyLog("onTokenRefresh", fcmToken.toString());
       SessionManagement.setToken(fcmToken);
-      Mirrorfly.updateFcmToken(fcmToken).then((value) => LogMessage.d("updateFcmToken", value));
+      Mirrorfly.updateFcmToken(firebaseToken: fcmToken, flyCallBack: (FlyResponse response) {
+        LogMessage.d("updateFcmToken", response.isSuccess);
+      });
     }).onError((err) {
       // Error getting token.
       mirrorFlyLog("onTokenRefresh", err.toString());
@@ -163,12 +167,15 @@ class PushNotifications {
       debugPrint('#Mirrorfly Notification -> User granted permission');
       getToken();
       initInfo();
+      SessionManagement.setBool(Constants.notificationPermissionAsked, true);
     } else if (settings.authorizationStatus == AuthorizationStatus.provisional) {
       debugPrint('#Mirrorfly Notification -> User granted provisional permission');
       getToken();
       initInfo();
+      SessionManagement.setBool(Constants.notificationPermissionAsked, true);
     } else {
       debugPrint('User declined or has not accepted permission');
+      SessionManagement.setBool(Constants.notificationPermissionAsked, true);
     }
   }
 
@@ -178,18 +185,20 @@ class PushNotifications {
 
   }
 
-  static void showNotification(RemoteMessage remoteMessage) async {
+  static void showNotification(RemoteMessage remoteMessage) {
     var notificationData = remoteMessage.data;
     if(!remoteMessage.data.containsKey("message_id")){
       notificationData["message_id"]=remoteMessage.messageId;
     }
     if(notificationData.isNotEmpty && Platform.isAndroid) {
       WidgetsFlutterBinding.ensureInitialized();
-      await Mirrorfly.handleReceivedMessage(notificationData).then((value) async {
-        mirrorFlyLog("#Mirrorfly Notification -> notification message", value.toString());
-        var data = chatMessageFromJson(value.toString());
-        if(data.messageId!=null) {
-          NotificationBuilder.createNotification(data,autoCancel: false);
+      Mirrorfly.handleReceivedMessage(notificationData: notificationData, flyCallBack: (FlyResponse response) {
+          mirrorFlyLog("#Mirrorfly Notification -> notification message", response.toString());
+        if(response.isSuccess && response.hasData){
+          var data = sendMessageModelFromJson(response.data);
+          if(data.messageId.isNotEmpty) {
+            NotificationBuilder.createNotification(data,autoCancel: false);
+          }
         }
       });
     }

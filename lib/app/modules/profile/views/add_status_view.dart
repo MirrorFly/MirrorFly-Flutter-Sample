@@ -139,9 +139,9 @@ class AddStatusView extends GetView<StatusListController> {
     return Obx(() {
       if (controller.showEmoji.value) {
         return EmojiLayout(
-            textController: controller.addStatusController,
-            onBackspacePressed: () => controller.onChanged(),
-            onEmojiSelected: (cat, emoji) => controller.onChanged());
+            textController: TextEditingController(),//controller.addStatusController,
+            onBackspacePressed: () => controller.onEmojiBackPressed(),
+            onEmojiSelected: (cat, emoji) => controller.onEmojiSelected(emoji));
       } else {
         return const SizedBox.shrink();
       }

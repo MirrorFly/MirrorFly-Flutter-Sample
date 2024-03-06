@@ -2,13 +2,14 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
+import 'package:mirror_fly_demo/app/common/extensions.dart';
 import 'package:mirror_fly_demo/app/common/main_controller.dart';
+import 'package:mirror_fly_demo/app/data/permissions.dart';
 import 'package:mirrorfly_plugin/mirrorflychat.dart';
 import 'package:mirror_fly_demo/app/data/session_management.dart';
 import 'package:mirror_fly_demo/app/routes/app_pages.dart';
@@ -32,7 +33,7 @@ class Helper {
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                const CircularProgressIndicator(),
+                const CircularProgressIndicator(color: buttonBgColor,),
                 const SizedBox(width: 16),
                 Text(message ?? 'Loading...'),
               ],
@@ -64,36 +65,31 @@ class Helper {
         barrierColor: Colors.transparent);
   }
 
-  static void showAlert({String? title,
-    required String message,
-    List<Widget>? actions,
-    Widget? content, bool? barrierDismissible}) {
+  static void showAlert(
+      {String? title, required String message, List<Widget>? actions, Widget? content, bool? barrierDismissible}) {
     Get.dialog(
-      AlertDialog(
-        title: title != null
-            ? Text(
-          title,
-          style: const TextStyle(fontSize: 17),
-        )
-            : const SizedBox.shrink(),
-        contentPadding: title != null
-            ? const EdgeInsets.only(top: 15, right: 25, left: 25, bottom: 0)
-            : const EdgeInsets.only(top: 0, right: 25, left: 25, bottom: 5),
-        content: WillPopScope(
-          onWillPop: () async => Future.value(barrierDismissible),
-          child: content ??
-              Text(
-                message,
-                style: const TextStyle(
-                    color: textHintColor, fontWeight: FontWeight.normal),
-              ),
+        AlertDialog(
+          title: title != null
+              ? Text(
+                  title,
+                  style: const TextStyle(fontSize: 17),
+                )
+              : const SizedBox.shrink(),
+          contentPadding: title != null
+              ? const EdgeInsets.only(top: 15, right: 25, left: 25, bottom: 0)
+              : const EdgeInsets.only(top: 0, right: 25, left: 25, bottom: 5),
+          content: WillPopScope(
+            onWillPop: () async => Future.value(barrierDismissible),
+            child: content ??
+                Text(
+                  message,
+                  style: const TextStyle(color: textHintColor, fontWeight: FontWeight.normal, fontSize: 18),
+                ),
+          ),
+          contentTextStyle: const TextStyle(color: textHintColor, fontWeight: FontWeight.w500),
+          actions: actions,
         ),
-        contentTextStyle:
-        const TextStyle(color: textHintColor, fontWeight: FontWeight.w500),
-        actions: actions,
-      ),
-      barrierDismissible: barrierDismissible ?? true
-    );
+        barrierDismissible: barrierDismissible ?? true);
   }
 
   static void showVerticalButtonAlert(List<Widget> actions) {
@@ -102,7 +98,8 @@ class Helper {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
-          children: actions,),
+          children: actions,
+        ),
       ),
     );
   }
@@ -124,7 +121,7 @@ class Helper {
     }
   }
 
-  static void showFeatureUnavailable(){
+  static void showFeatureUnavailable() {
     Helper.showAlert(message: "Feature unavailable for your plan", actions: [
       TextButton(
           onPressed: () {
@@ -143,22 +140,14 @@ class Helper {
 
   static String durationToString(Duration duration) {
     debugPrint("duration conversion $duration");
-    /*final mm = (duration.inMinutes % 60).toString().padLeft(2, '0');
-    final ss = (duration.inSeconds % 60).toString().padLeft(2, '0');
-    return '$mm:$ss';*/
-    //return (duration.inSeconds % 60).toString().padLeft(2, '0');
-    /*return (duration.inMilliseconds /60)
-        .toStringAsFixed(2)
-        .replaceFirst('.', ':')
-        .padLeft(5, '0');*/
-    var seconds = ((duration.inSeconds % 60)).toStringAsFixed(0).padLeft(2,'0');
-    // debugPrint("return ")
-    return '${(duration.inMinutes).toStringAsFixed(0).padLeft(2,'0')}:$seconds';
-
+    String hours = (duration.inHours == 00) ? "" : "${duration.inHours.toStringAsFixed(0).padLeft(2, '0')}:"; // Get hours
+    int minutes = duration.inMinutes % 60; // Get minutes
+    var seconds = ((duration.inSeconds % 60)).toStringAsFixed(0).padLeft(2, '0');
+    return '$hours${minutes.toStringAsFixed(0).padLeft(2, '0')}:$seconds';
   }
 
   static String getMapImageUri(double latitude, double longitude) {
-    var googleMapKey =  Get.find<MainController>().googleMapKey;//Env.googleMapKey;//Constants.googleMapKey;
+    var googleMapKey = Get.find<MainController>().googleMapKey; //Env.googleMapKey;//Constants.googleMapKey;
     return ("https://maps.googleapis.com/maps/api/staticmap?center=$latitude,$longitude&zoom=13&size=300x200&markers=color:red|$latitude,$longitude&key=$googleMapKey");
   }
 
@@ -170,8 +159,7 @@ class Helper {
     return colorsArray[(rand).abs()];
   }
 
-  static Widget forMessageTypeIcon(String? messageType,
-      [bool isAudioRecorded = false]) {
+  static Widget forMessageTypeIcon(String? messageType, [bool isAudioRecorded = false]) {
     mirrorFlyLog("iconfor", messageType.toString());
     switch (messageType?.toUpperCase()) {
       case Constants.mImage:
@@ -253,6 +241,7 @@ bool checkFileUploadSize(String path, String mediaType) {
   debugPrint("file size --> $sizeInBytes");
   double sizeInMb = sizeInBytes / (1024 * 1024);
   debugPrint("sizeInBytes $sizeInMb");
+  debugPrint("Constants.maxImageFileSize ${Constants.maxImageFileSize}");
 
   // debugPrint(getFileSizeText(sizeInBytes.toString()));
 
@@ -273,14 +262,11 @@ String getFileSizeText(String fileSizeInBytes) {
   var fileSizeBuilder = "";
   var fileSize = int.parse(fileSizeInBytes);
   if (fileSize > 1073741824) {
-    fileSizeBuilder =
-        (getRoundedFileSize(fileSize / 1073741824)).toString() + (" ") + ("GB");
+    fileSizeBuilder = (getRoundedFileSize(fileSize / 1073741824)).toString() + (" ") + ("GB");
   } else if (fileSize > 1048576) {
-    fileSizeBuilder =
-        (getRoundedFileSize(fileSize / 1048576)).toString() + (" ") + ("MB");
+    fileSizeBuilder = (getRoundedFileSize(fileSize / 1048576)).toString() + (" ") + ("MB");
   } else if (fileSize > 1024) {
-    fileSizeBuilder =
-        (getRoundedFileSize(fileSize / 1024)).toString() + (" ") + ("KB");
+    fileSizeBuilder = (getRoundedFileSize(fileSize / 1024)).toString() + (" ") + ("KB");
   } else {
     fileSizeBuilder = (fileSizeInBytes).toString() + (" ") + ("bytes");
   }
@@ -292,253 +278,43 @@ double getRoundedFileSize(double unscaledValue) {
   return unscaledValue.roundToDouble();
 }
 
-extension FileFormatter on num {
-  String readableFileSize({bool base1024 = true}) {
-    final base = base1024 ? 1024 : 1000;
-    if (this <= 0) return "0";
-    final units = ["bytes", "KB", "MB", "GB", "TB"];
-    int digitGroups = (log(this) / log(base)).round();
-    return "${NumberFormat("#,##0.#").format(
-        this / pow(base, digitGroups))} ${units[digitGroups]}";
-  }
-}
 
 String getDateFromTimestamp(int convertedTime, String format) {
   var calendar = DateTime.fromMicrosecondsSinceEpoch(convertedTime);
   return DateFormat(format).format(calendar);
 }
 
-extension StringParsing on String? {
-  //check null
-  String checkNull() {
-    return this ?? "";
-  }
-
-  bool toBool(){
-    return this != null ? this!.toLowerCase() == "true" : false;
-  }
-
-  int checkIndexes(String searchedKey) {
-    var i = -1;
-    if (i == -1 || i < searchedKey.length) {
-      while (this!.contains(searchedKey, i + 1)) {
-        i = this!.indexOf(searchedKey, i + 1);
-
-        if (i == 0 ||
-            (i > 0 &&
-                (RegExp("[^A-Za-z0-9 ]").hasMatch(this!.split("")[i]) ||
-                    this!.split("")[i] == " "))) {
-          return i;
-        }
-        i++;
-      }
-    }
-    return -1;
-  }
-
-  bool startsWithTextInWords(String text) {
-    return !this!.toLowerCase().contains(text.toLowerCase())
-        ? false
-        : this!.toLowerCase().startsWith(text.toLowerCase());
-    //checkIndexes(text)>-1;
-    /*return when {
-      this.indexOf(text, ignoreCase = true) <= -1 -> false
-      else -> return this.checkIndexes(text) > -1
-    }*/
-  }
-}
-
-extension BooleanParsing on bool? {
-  //check null
-  bool checkNull() {
-    return this ?? false;
-  }
-}
-
-extension MemberParsing on Member {
-  bool isDeletedContact() {
-    return contactType == "deleted_contact";
-  }
-
-  String getUsername() {
-    var value = Mirrorfly.getProfileDetails(jid.checkNull());
-    var str = Profile.fromJson(json.decode(value.toString()));
-    return getName(str); //str.name.checkNull();
-  }
-
-  Future<Profile> getProfileDetails() async {
-    var value = await Mirrorfly.getProfileDetails(jid.checkNull());
-    var str = Profile.fromJson(json.decode(value.toString()));
-    return str;
-  }
-
-  bool isItSavedContact() {
-    return contactType == 'live_contact';
-  }
-
-  bool isUnknownContact() {
-    return !isDeletedContact() && !isItSavedContact() &&
-        !isGroupProfile.checkNull();
-  }
-
-  bool isEmailContact() =>
-      !isGroupProfile.checkNull() && isGroupInOfflineMode
-          .checkNull(); // for email contact isGroupInOfflineMode will be true
-}
-
-extension MemberProfileParsing on MemberProfileDetails {
-  bool isDeletedContact() {
-    return contactType == "deleted_contact";
-  }
-}
-
-Future<Profile> getProfileDetails(String jid) async {
-  var value = await Mirrorfly.getProfileDetails(jid.checkNull());
+Future<ProfileDetails> getProfileDetails(String jid) async {
+  var value = await Mirrorfly.getProfileDetails(jid: jid.checkNull());
   // profileDataFromJson(value);
-  debugPrint("getProfileDetails--> $value");
+  // debugPrint("getProfileDetails--> $value");
   // var profile = await compute(profiledata, value.toString());
-  var profile = Profile.fromJson(json.decode(value.toString()));
+  var profile = ProfileDetails.fromJson(json.decode(value.toString()));
   return profile;
 }
 
 Future<ChatMessageModel> getMessageOfId(String mid) async {
-  var value = await Mirrorfly.getMessageOfId(mid.checkNull());
-  // debugPrint("message--> $value");
-  var chatMessage = await compute(sendMessageModelFromJson, value.toString());
+  var value = await Mirrorfly.getMessageOfId(messageId: mid.checkNull());
+  //LogMessage.d("getMessageOfId", "$value");
+  var chatMessage =
+      sendMessageModelFromJson(value.toString()); //await compute(sendMessageModelFromJson, value.toString());
   return chatMessage;
 }
 
-extension ProfileParesing on Profile {
-  bool isDeletedContact() {
-    return contactType == "deleted_contact";
-  }
 
-  String getChatType() {
-    return (isGroupProfile ?? false)
-        ? Constants.typeGroupChat
-        : Constants.typeChat;
-  }
-
-  bool isItSavedContact() {
-    return contactType == 'live_contact';
-  }
-
-  bool isUnknownContact() {
-    return !isDeletedContact() && !isItSavedContact() &&
-        !isGroupProfile.checkNull();
-  }
-
-  bool isEmailContact() =>
-      !isGroupProfile.checkNull() && isGroupInOfflineMode
-          .checkNull(); // for email contact isGroupInOfflineMode will be true
-
-  String getName(){
-    if (Mirrorfly.isTrialLicence) {
-      /*return item.name.toString().checkNull().isEmpty
-        ? item.nickName.toString()
-        : item.name.toString();*/
-      return name
-          .checkNull()
-          .isEmpty
-          ? nickName.checkNull()
-          : name.checkNull();
-    } else {
-      if (jid.checkNull() == SessionManagement.getUserJID()) {
-        return Constants.you;
-      } else if (isDeletedContact()) {
-        mirrorFlyLog('isDeletedContact', isDeletedContact().toString());
-        return Constants.deletedUser;
-      } else if (isUnknownContact() || nickName
-          .checkNull()
-          .isEmpty) {
-        mirrorFlyLog('isUnknownContact', jid.toString());
-        return getMobileNumberFromJid(jid.checkNull());
-      } else {
-        mirrorFlyLog('nickName', nickName.toString());
-        return nickName.checkNull();
-      }
-    }
-  }
-
-}
-
-extension ChatmessageParsing on ChatMessageModel {
-  bool isMediaDownloaded() {
-    return isMediaMessage() &&
-        (mediaChatMessage?.mediaDownloadStatus == Constants.mediaDownloaded);
-  }
-
-  bool isMediaUploaded() {
-    return isMediaMessage() &&
-        (mediaChatMessage?.mediaUploadStatus == Constants.mediaUploaded);
-  }
-
-  bool isMediaMessage() =>
-      (isAudioMessage() ||
-          isVideoMessage() ||
-          isImageMessage() ||
-          isFileMessage());
-
-  bool isTextMessage() => messageType == Constants.mText;
-
-  bool isAudioMessage() => messageType == Constants.mAudio;
-
-  bool isImageMessage() => messageType == Constants.mImage;
-
-  bool isVideoMessage() => messageType == Constants.mVideo;
-
-  bool isFileMessage() => messageType == Constants.mDocument;
-
-
-
-  bool isNotificationMessage() =>
-      messageType.toUpperCase() == Constants.mNotification;
-}
-
-extension RecentChatParsing on RecentChatData {
-  String getChatType() {
-    return (isGroup.checkNull())
-        ? Constants.typeGroupChat
-        : (isBroadCast.checkNull())
-        ? Constants.typeBroadcastChat
-        : Constants.typeChat;
-  }
-
-  bool isDeletedContact() {
-    return contactType == "deleted_contact";
-  }
-
-  bool isItSavedContact() {
-    return contactType == 'live_contact';
-  }
-
-  bool isUnknownContact() {
-    return !isDeletedContact() && !isItSavedContact() && !isGroup.checkNull();
-  }
-
-  bool isEmailContact() =>
-      !isGroup.checkNull() && isGroupInOfflineMode
-          .checkNull(); // for email contact isGroupInOfflineMode will be true
-}
 
 String returnFormattedCount(int count) {
   return (count > 99) ? "99+" : count.toString();
 }
 
-InkWell listItem({Widget? leading,
-  required Widget title,
-  Widget? trailing,
-  required Function() onTap}) {
+InkWell listItem({Widget? leading, required Widget title, Widget? trailing, required Function() onTap}) {
   return InkWell(
     onTap: onTap,
     child: Padding(
       padding: const EdgeInsets.all(16.0),
       child: Row(
         children: [
-          leading != null
-              ? Padding(
-              padding: const EdgeInsets.only(right: 16.0), child: leading)
-              : const SizedBox(),
+          leading != null ? Padding(padding: const EdgeInsets.only(right: 16.0), child: leading) : const SizedBox(),
           Expanded(
             child: title,
           ),
@@ -554,11 +330,8 @@ String getRecentChatTime(BuildContext context, int? epochTime) {
   if (epochTime == 0) return "";
   var convertedTime = epochTime; // / 1000;
   //messageDate.time = convertedTime
-  var hourTime = manipulateMessageTime(
-      context, DateTime.fromMicrosecondsSinceEpoch(convertedTime));
-  var currentYear = DateTime
-      .now()
-      .year;
+  var hourTime = manipulateMessageTime(context, DateTime.fromMicrosecondsSinceEpoch(convertedTime));
+  var currentYear = DateTime.now().year;
   var calendar = DateTime.fromMicrosecondsSinceEpoch(convertedTime);
   var time = (currentYear == calendar.year)
       ? DateFormat("dd-MMM").format(calendar)
@@ -566,14 +339,12 @@ String getRecentChatTime(BuildContext context, int? epochTime) {
   return (equalsWithYesterday(calendar, Constants.today))
       ? hourTime
       : (equalsWithYesterday(calendar, Constants.yesterday))
-      ? Constants.yesterdayUpper
-      : time;
+          ? Constants.yesterdayUpper
+          : time;
 }
 
 String manipulateMessageTime(BuildContext context, DateTime messageDate) {
-  var format = MediaQuery
-      .of(context)
-      .alwaysUse24HourFormat ? 24 : 12;
+  var format = MediaQuery.of(context).alwaysUse24HourFormat ? 24 : 12;
   calendar = messageDate;
   var hours = calendar.hour; //calendar[Calendar.HOUR]
   var dateHourFormat = setDateHourFormat(format, hours);
@@ -583,24 +354,19 @@ String manipulateMessageTime(BuildContext context, DateTime messageDate) {
 String setDateHourFormat(int format, int hours) {
   var dateHourFormat = (format == 12)
       ? (hours < 10)
-      ? "hh:mm aa"
-      : "h:mm aa"
+          ? "hh:mm aa"
+          : "h:mm aa"
       : (hours < 10)
-      ? "HH:mm"
-      : "H:mm";
+          ? "HH:mm"
+          : "H:mm";
   return dateHourFormat;
 }
 
 bool equalsWithYesterday(DateTime srcDate, String day) {
   if (day == Constants.yesterday) {
     var messageDate = DateFormat('yyyy/MM/dd').format(srcDate);
-    var yesterdayDate = DateFormat('yyyy/MM/dd').format(DateTime.now().subtract(
-        const Duration(
-            days: 1,
-            hours: 0,
-            minutes: 0,
-            seconds: 0,
-            milliseconds: 0)));
+    var yesterdayDate = DateFormat('yyyy/MM/dd')
+        .format(DateTime.now().subtract(const Duration(days: 1, hours: 0, minutes: 0, seconds: 0, milliseconds: 0)));
     return yesterdayDate == messageDate;
   } else {
     return equalsWithToday(srcDate, day);
@@ -616,37 +382,30 @@ bool equalsWithToday(DateTime srcDate, String day) {
 var calendar = DateTime.now();
 
 String getChatTime(BuildContext context, int? epochTime) {
-  // debugPrint("epochTime--> $epochTime");
   if (epochTime == null) return "";
   if (epochTime == 0) return "";
   var convertedTime = epochTime;
   // var convertedTime = Platform.isAndroid ? epochTime : epochTime * 1000; // / 1000;
   // debugPrint("epoch convertedTime---> $convertedTime");
-  var hourTime = manipulateMessageTime(
-      context, DateTime.fromMicrosecondsSinceEpoch(convertedTime));
+  var hourTime = manipulateMessageTime(context, DateTime.fromMicrosecondsSinceEpoch(convertedTime));
   // calendar = DateTime.fromMicrosecondsSinceEpoch(convertedTime);
   //debugPrint('hourTime $hourTime');
   return hourTime;
 }
 
 bool checkFile(String mediaLocalStoragePath) {
-  return mediaLocalStoragePath.isNotEmpty &&
-      File(mediaLocalStoragePath).existsSync();
+  return mediaLocalStoragePath.isNotEmpty && File(mediaLocalStoragePath).existsSync();
 }
 
-checkIosFile(String mediaLocalStoragePath) async {
-  var isExists = await Mirrorfly.iOSFileExist(mediaLocalStoragePath);
-  return isExists;
-}
 
 openDocument(String mediaLocalStoragePath) async {
   // if (await askStoragePermission()) {
-  if (mediaLocalStoragePath.isNotEmpty) {
+  if (AppUtils.isMediaExists(mediaLocalStoragePath)) {
     final result = await OpenFile.open(mediaLocalStoragePath);
     debugPrint(result.message);
-    if(result.message.contains("file does not exist")){
+    if (result.message.contains("file does not exist")) {
       toToast("The Selected file Doesn't Exist or Unable to Open");
-    }else if(result.message.contains('No APP found to open this file')){
+    } else if (result.message.contains('No APP found to open this file')) {
       toToast('you may not have proper app to view this content');
     }
 
@@ -661,8 +420,8 @@ openDocument(String mediaLocalStoragePath) async {
         ),
       );
     });*/
-
   } else {
+    toToast(Constants.mediaDoesNotExist);
     debugPrint("media does not exist");
   }
   // }
@@ -742,9 +501,9 @@ class Triple {
 }
 
 Future<RecentChatData?> getRecentChatOfJid(String jid) async {
-  var value = await Mirrorfly.getRecentChatOf(jid);
+  var value = await Mirrorfly.getRecentChatOf(jid: jid);
   mirrorFlyLog("chat", value.toString());
-  if (value != null) {
+  if (value.isNotEmpty) {
     var data = recentChatDataFromJson(value);
     return data;
   } else {
@@ -752,34 +511,30 @@ Future<RecentChatData?> getRecentChatOfJid(String jid) async {
   }
 }
 
-String getName(Profile item) {
-  if (Mirrorfly.isTrialLicence) {
+String getName(ProfileDetails item) {
+  if (!Constants.enableContactSync) {
     /*return item.name.toString().checkNull().isEmpty
         ? item.nickName.toString()
         : item.name.toString();*/
-    return item.name
-        .checkNull()
-        .isEmpty
-        ? (item.nickName
-        .checkNull()
-        .isEmpty
-        ? getMobileNumberFromJid(item.jid.checkNull())
-        : item.nickName.checkNull())
+    return item.name.checkNull().isEmpty
+        ? (item.nickName.checkNull().isEmpty ? getMobileNumberFromJid(item.jid.checkNull()) : item.nickName.checkNull())
         : item.name.checkNull();
   } else {
     if (item.jid.checkNull() == SessionManagement.getUserJID()) {
       return Constants.you;
     } else if (item.isDeletedContact()) {
-      mirrorFlyLog('isDeletedContact', item.isDeletedContact().toString());
+      mirrorFlyLog("getName", 'isDeletedContact ${item.isDeletedContact()}');
       return Constants.deletedUser;
-    } else if (item.isUnknownContact() || item.nickName
-        .checkNull()
-        .isEmpty) {
-      mirrorFlyLog('isUnknownContact', item.isUnknownContact().toString());
-      return item.mobileNumber.checkNull().isNotEmpty ? item.mobileNumber.checkNull() : getMobileNumberFromJid(item.jid.checkNull());
+    } else if (item.isUnknownContact() || item.nickName.checkNull().isEmpty) {
+      mirrorFlyLog("getName", 'isUnknownContact ${item.isUnknownContact()}');
+      return item.mobileNumber.checkNull().isNotEmpty
+          ? item.mobileNumber.checkNull()
+          : getMobileNumberFromJid(item.jid.checkNull());
     } else {
-      mirrorFlyLog('nickName', item.nickName.toString());
-      return item.nickName.checkNull();
+      mirrorFlyLog("getName", 'nickName ${item.nickName} name ${item.name}');
+      return item.nickName.checkNull().isEmpty
+          ? (item.name.checkNull().isEmpty ? getMobileNumberFromJid(item.jid.checkNull()) : item.name.checkNull())
+          : item.nickName.checkNull(); //#FLUTTER-1300
     }
     /*var status = true;
     if(status) {
@@ -799,14 +554,14 @@ String getName(Profile item) {
 }
 
 String getRecentName(RecentChatData item) {
-  if (Mirrorfly.isTrialLicence) {
+  if (!Constants.enableContactSync) {
     /*return item.name.toString().checkNull().isEmpty
         ? item.nickName.toString()
         : item.name.toString();*/
-    return item.profileName
-        .checkNull()
-        .isEmpty
-        ? item.nickName.checkNull().isNotEmpty ? item.nickName.checkNull() : getMobileNumberFromJid(item.jid.checkNull())
+    return item.profileName.checkNull().isEmpty
+        ? item.nickName.checkNull().isNotEmpty
+            ? item.nickName.checkNull()
+            : getMobileNumberFromJid(item.jid.checkNull())
         : item.profileName.checkNull();
   } else {
     if (item.jid.checkNull() == SessionManagement.getUserJID()) {
@@ -814,9 +569,7 @@ String getRecentName(RecentChatData item) {
     } else if (item.isDeletedContact()) {
       mirrorFlyLog('isDeletedContact', item.isDeletedContact().toString());
       return Constants.deletedUser;
-    } else if (item.isUnknownContact() || item.nickName
-        .checkNull()
-        .isEmpty) {
+    } else if (item.isUnknownContact() || item.nickName.checkNull().isEmpty) {
       mirrorFlyLog('isUnknownContact', item.jid.toString());
       return getMobileNumberFromJid(item.jid.checkNull());
     } else {
@@ -826,19 +579,13 @@ String getRecentName(RecentChatData item) {
   }
 }
 
-String getMemberName(Member item) {
-  if (Mirrorfly.isTrialLicence) {
+String getMemberName(ProfileDetails item) {
+  if (!Constants.enableContactSync) {
     /*return item.name.toString().checkNull().isEmpty
         ? item.nickName.toString()
         : item.name.toString();*/
-    return item.name
-        .checkNull()
-        .isEmpty
-        ? (item.nickName
-        .checkNull()
-        .isEmpty
-        ? getMobileNumberFromJid(item.jid.checkNull())
-        : item.nickName.checkNull())
+    return item.name.checkNull().isEmpty
+        ? (item.nickName.checkNull().isEmpty ? getMobileNumberFromJid(item.jid.checkNull()) : item.nickName.checkNull())
         : item.name.checkNull();
   } else {
     if (item.jid.checkNull() == SessionManagement.getUserJID()) {
@@ -846,11 +593,11 @@ String getMemberName(Member item) {
     } else if (item.isDeletedContact()) {
       mirrorFlyLog('isDeletedContact', item.isDeletedContact().toString());
       return Constants.deletedUser;
-    } else if (item.isUnknownContact() || item.nickName
-        .checkNull()
-        .isEmpty) {
+    } else if (item.isUnknownContact() || item.nickName.checkNull().isEmpty) {
       mirrorFlyLog('isUnknownContact', item.isUnknownContact().toString());
-      return item.mobileNumber.checkNull().isNotEmpty ? item.mobileNumber.checkNull() : getMobileNumberFromJid(item.jid.checkNull());
+      return item.mobileNumber.checkNull().isNotEmpty
+          ? item.mobileNumber.checkNull()
+          : getMobileNumberFromJid(item.jid.checkNull());
     } else {
       mirrorFlyLog('nickName', item.nickName.toString());
       return item.nickName.checkNull();
@@ -873,11 +620,12 @@ String getMemberName(Member item) {
 }
 
 bool isValidPhoneNumber(String s) {
-if (s.length > 13 || s.length < 6) return false;
-return hasMatch(s, r'^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\s\./0-9]*$');
+  if (s.length > 13 || s.length < 6) return false;
+  return hasMatch(s, r'^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\s\./0-9]*$');
 }
+
 bool hasMatch(String? value, String pattern) {
-return (value == null) ? false : RegExp(pattern).hasMatch(value);
+  return (value == null) ? false : RegExp(pattern).hasMatch(value);
 }
 
 String getMobileNumberFromJid(String jid) {
@@ -885,60 +633,63 @@ String getMobileNumberFromJid(String jid) {
   return str[0];
 }
 
-String convertSecondToLastSeen(String seconds){
-
-  if(seconds.isNotEmpty) {
-    if(seconds=="0") return "Online";
+String convertSecondToLastSeen(String seconds) {
+  if (seconds.isNotEmpty) {
+    if (seconds == "0") return "Online";
+    LogMessage.d("getUserLastSeenTime", "seconds $seconds");
     // var userLastSeenDate = DateTime.now().subtract(Duration(milliseconds: double.parse(seconds).toInt()));
-    DateTime lastSeen = DateTime.fromMillisecondsSinceEpoch(
-        double.parse(seconds).toInt());
+    DateTime lastSeen = DateTime.fromMillisecondsSinceEpoch(int.parse(seconds), isUtc: true);
     Duration diff = DateTime.now().difference(lastSeen);
 
-    if (int.parse(DateFormat('yyyy').format(lastSeen)) <
-        int.parse(DateFormat('yyyy').format(DateTime.now()))) {
-      return 'last seen on ${DateFormat('dd/mm/yyyy')}';
-    } else if (diff.inDays > 1) {
-      return 'last seen on ${DateFormat('dd MMM').format(lastSeen)}';
+    LogMessage.d("getUserLastSeenTime", "diff ${diff.inDays}");
+    if (diff.inDays == 0) {
+      return 'last seen at ${DateFormat('hh:mm a').format(lastSeen)}';
     } else if (diff.inDays == 1) {
       return 'last seen on Yesterday';
-    } else
-    if (diff.inHours >= 1 || diff.inMinutes >= 1 || diff.inSeconds >= 1) {
-      return 'last seen at ${DateFormat('hh:mm a').format(lastSeen)}';
+    } else if (diff.inDays > 1 && diff.inDays < 365) {
+      var last = DateFormat('dd MMM').format(lastSeen);
+      return 'last seen on $last';
+    } else if (int.parse(DateFormat('yyyy').format(lastSeen)) < int.parse(DateFormat('yyyy').format(DateTime.now()))) {
+      return 'last seen on ${DateFormat('dd/mm/yyyy').format(lastSeen)}';
     } else {
       return 'Online';
     }
-  }else{
+  } else {
     return "";
   }
 }
 
 String getDisplayImage(RecentChatData recentChat) {
   var imageUrl = recentChat.profileImage ?? Constants.emptyString;
-  if (recentChat.isBlockedMe.checkNull() ||
-      recentChat.isAdminBlocked.checkNull()) {
+  if (recentChat.isBlockedMe.checkNull() || recentChat.isAdminBlocked.checkNull()) {
     imageUrl = Constants.emptyString;
     //drawable = CustomDrawable(context).getDefaultDrawable(recentChat)
-  } else if (!recentChat.isItSavedContact.checkNull() ||
-      recentChat.isDeletedContact()) {
+  } else if (!recentChat.isItSavedContact.checkNull() || recentChat.isDeletedContact()) {
     imageUrl = recentChat.profileImage ?? Constants.emptyString;
     // drawable = CustomDrawable(context).getDefaultDrawable(recentChat)
   }
   return imageUrl;
 }
 
-void showQuickProfilePopup({required context, required Function() chatTap,
-  required Function() callTap, required Function() videoTap, required Function() infoTap, required Rx<
-      Profile> profile}) {
+void showQuickProfilePopup(
+    {required context,
+    required Function() chatTap,
+    Function()? callTap,
+    Function()? videoTap,
+    required Function() infoTap,
+    required Rx<ProfileDetails> profile,
+    required Rx<AvailableFeatures> availableFeatures}) {
+  var isAudioCallAvailable =
+      profile.value.isGroupProfile.checkNull() ? false : availableFeatures.value.isOneToOneCallAvailable.checkNull();
+  var isVideoCallAvailable =
+      profile.value.isGroupProfile.checkNull() ? false : availableFeatures.value.isOneToOneCallAvailable.checkNull();
+
   Get.dialog(
     Obx(() {
       return Dialog(
-        shape: const RoundedRectangleBorder(
-            borderRadius: BorderRadius.all(Radius.circular(20.0))),
+        shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(20.0))),
         child: SizedBox(
-          width: MediaQuery
-              .of(context)
-              .size
-              .width * 0.7,
+          width: MediaQuery.of(context).size.width * 0.7,
           height: 300,
           child: Column(
             children: [
@@ -947,10 +698,10 @@ void showQuickProfilePopup({required context, required Function() chatTap,
                   onTap: () {
                     mirrorFlyLog('image click', 'true');
                     debugPrint("quick profile click--> ${profile.toJson().toString()}");
-                    if (profile.value.image!.isNotEmpty && !(profile.value
-                        .isBlockedMe.checkNull() || profile.value.isAdminBlocked
-                        .checkNull()) && !(//!profile.value.isItSavedContact.checkNull() || //This is commented because Android side received as true and iOS side false
-                        profile.value.isDeletedContact())) {
+                    if (profile.value.image!.isNotEmpty &&
+                        !(profile.value.isBlockedMe.checkNull() || profile.value.isAdminBlocked.checkNull()) &&
+                        !( //!profile.value.isItSavedContact.checkNull() || //This is commented because Android side received as true and iOS side false
+                            profile.value.isDeletedContact())) {
                       Get.back();
                       Get.toNamed(Routes.imageView, arguments: {
                         'imageName': getName(profile.value),
@@ -962,48 +713,37 @@ void showQuickProfilePopup({required context, required Function() chatTap,
                     fit: StackFit.expand,
                     children: [
                       ClipRRect(
-                          borderRadius: const BorderRadius.only(
-                              topLeft: Radius.circular(20),
-                              topRight: Radius.circular(20)),
+                          borderRadius:
+                              const BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)),
                           child: ImageNetwork(
                             url: profile.value.image.toString(),
-                            width: MediaQuery
-                                .of(context)
-                                .size
-                                .width * 0.7,
+                            width: MediaQuery.of(context).size.width * 0.7,
                             height: 250,
                             clipOval: false,
                             errorWidget: profile.value.isGroupProfile!
                                 ? Image.asset(
-                              groupImg,
-                              height: 250,
-                              width: MediaQuery
-                                  .of(context)
-                                  .size
-                                  .width * 0.72,
-                              fit: BoxFit.cover,
-                            )
+                                    groupImg,
+                                    height: 250,
+                                    width: MediaQuery.of(context).size.width * 0.72,
+                                    fit: BoxFit.cover,
+                                  )
                                 : ProfileTextImage(
-                              text: getName(profile.value),
-                              fontSize: 75,
-                              radius: 0,
-                            ),
+                                    text: getName(profile.value),
+                                    fontSize: 75,
+                                    radius: 0,
+                                  ),
                             isGroup: profile.value.isGroupProfile.checkNull(),
-                            blocked: profile.value.isBlockedMe.checkNull() ||
-                                profile.value.isAdminBlocked.checkNull(),
-                            unknown: (!profile.value.isItSavedContact
-                                .checkNull() ||
-                                profile.value.isDeletedContact()),
-                          )
-                      ),
+                            blocked: profile.value.isBlockedMe.checkNull() || profile.value.isAdminBlocked.checkNull(),
+                            unknown: (!profile.value.isItSavedContact.checkNull() || profile.value.isDeletedContact()),
+                          )),
                       Padding(
-                        padding:
-                        const EdgeInsets.symmetric(
-                            vertical: 10.0, horizontal: 20),
+                        padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 20),
                         child: Text(
                           profile.value.isGroupProfile!
                               ? profile.value.name.checkNull()
-                              : Mirrorfly.isTrialLicence ? profile.value.mobileNumber.checkNull() : profile.value.nickName.checkNull(),
+                              : !Constants.enableContactSync
+                                  ? profile.value.mobileNumber.checkNull()
+                                  : profile.value.nickName.checkNull(),
                           style: const TextStyle(color: Colors.white),
                         ),
                       ),
@@ -1027,27 +767,37 @@ void showQuickProfilePopup({required context, required Function() chatTap,
                         ),
                       ),
                     ),
-                    !profile.value.isGroupProfile.checkNull() ? Expanded(
-                      child: InkWell(
-                        onTap: callTap,
-                        child: SvgPicture.asset(
-                          quickCall,
-                          fit: BoxFit.contain,
-                        ),
-                      ),
-                    ) : const SizedBox.shrink(),
-                    !profile.value.isGroupProfile.checkNull() ? Expanded(
-                      child: InkWell(
-                        onTap: videoTap,
-                        child: SvgPicture.asset(
-                          quickVideo,
-                          fit: BoxFit.contain,
-                        ),
-                      ),
-                    ) : const SizedBox.shrink(),
-
+                    isAudioCallAvailable
+                        ? Expanded(
+                            child: InkWell(
+                              onTap: () {
+                                Get.back();
+                                makeVoiceCall(profile.value.jid.checkNull(), availableFeatures);
+                              },
+                              child: SvgPicture.asset(
+                                quickCall,
+                                fit: BoxFit.contain,
+                              ),
+                            ),
+                          )
+                        : const SizedBox.shrink(),
+                    isVideoCallAvailable
+                        ? Expanded(
+                            child: InkWell(
+                              onTap: () {
+                                Get.back();
+                                makeVideoCall(profile.value.jid.checkNull(), availableFeatures);
+                              },
+                              child: SvgPicture.asset(
+                                quickVideo,
+                                fit: BoxFit.contain,
+                              ),
+                            ),
+                          )
+                        : const SizedBox.shrink(),
                     Expanded(
-                      child: InkWell(onTap: infoTap,
+                      child: InkWell(
+                        onTap: infoTap,
                         child: SvgPicture.asset(
                           quickInfo,
                           fit: BoxFit.contain,
@@ -1065,12 +815,63 @@ void showQuickProfilePopup({required context, required Function() chatTap,
   );
 }
 
+makeVoiceCall(String toUser, Rx<AvailableFeatures> availableFeatures) async {
+  if (!availableFeatures.value.isOneToOneCallAvailable.checkNull()) {
+    Helper.showFeatureUnavailable();
+    return;
+  }
+  if ((await Mirrorfly.isOnGoingCall()).checkNull()) {
+    debugPrint("#Mirrorfly Call You are on another call");
+    toToast(Constants.msgOngoingCallAlert);
+    return;
+  }
+  if (!(await AppUtils.isNetConnected())) {
+    toToast(Constants.noInternetConnection);
+    return;
+  }
+  if (await AppPermission.askAudioCallPermissions()) {
+    Mirrorfly.makeVoiceCall(toUserJid: toUser.checkNull(), flyCallBack: (FlyResponse response) {
+      if (response.isSuccess) {
+        Get.toNamed(Routes.outGoingCallView, arguments: {
+          "userJid": [toUser],
+          "callType": CallType.audio
+        });
+      }
+    });
+  } else {
+    debugPrint("permission not given");
+  }
+}
+
+makeVideoCall(String toUser, Rx<AvailableFeatures> availableFeatures) async {
+  if (await AppUtils.isNetConnected()) {
+    if (await AppPermission.askVideoCallPermissions()) {
+      if ((await Mirrorfly.isOnGoingCall()).checkNull()) {
+        debugPrint("#Mirrorfly Call You are on another call");
+        toToast(Constants.msgOngoingCallAlert);
+      } else {
+        Mirrorfly.makeVideoCall(toUserJid: toUser.checkNull(), flyCallBack: (FlyResponse response) {
+          if (response.isSuccess) {
+            Get.toNamed(Routes.outGoingCallView, arguments: {
+              "userJid": [toUser],
+              "callType": CallType.video
+            });
+          }
+        });
+      }
+    } else {
+      LogMessage.d("askVideoCallPermissions", "false");
+    }
+  } else {
+    toToast(Constants.noInternetConnection);
+  }
+}
+
 String getDocAsset(String filename) {
   if (filename.isEmpty || !filename.contains(".")) {
     return "";
   }
-  debugPrint("helper document--> ${filename.toLowerCase().substring(
-      filename.lastIndexOf(".") + 1)}");
+  debugPrint("helper document--> ${filename.toLowerCase().substring(filename.lastIndexOf(".") + 1)}");
   switch (filename.toLowerCase().substring(filename.lastIndexOf(".") + 1)) {
     case "csv":
       return csvImage;
@@ -1098,5 +899,40 @@ String getDocAsset(String filename) {
       return apkImage;
     default:
       return "";
+  }
+}
+
+String getCallLogDateFromTimestamp(int convertedTime, String format) {
+  var calendar = DateTime.fromMicrosecondsSinceEpoch(convertedTime);
+  if (isToday(convertedTime)) {
+    return "Today";
+  } else if (isYesterday(convertedTime)) {
+    return "Yesterday";
+  } else {
+    return DateFormat(format).format(calendar);
+  }
+}
+
+bool isToday(int convertedTime) {
+  var calendar = DateTime.fromMicrosecondsSinceEpoch(convertedTime);
+  final now = DateTime.now();
+  return now.day == calendar.day && now.month == calendar.month && now.year == calendar.year;
+}
+
+bool isYesterday(int convertedTime) {
+  var calendar = DateTime.fromMicrosecondsSinceEpoch(convertedTime);
+  final yesterday = DateTime.now().subtract(const Duration(days: 1));
+  return yesterday.day == calendar.day && yesterday.month == calendar.month && yesterday.year == calendar.year;
+}
+
+String getCallLogDuration(int startTime, int endTime) {
+  var millis = endTime - startTime;
+  var duration = Duration(microseconds: millis);
+
+  if (startTime == 0 || endTime == 0 || millis == 0) {
+    return "";
+  } else {
+    var seconds = ((duration.inSeconds % 60)).toStringAsFixed(0).padLeft(2, '0');
+    return '${(duration.inMinutes).toStringAsFixed(0).padLeft(2, '0')}:$seconds';
   }
 }

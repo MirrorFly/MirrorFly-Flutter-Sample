@@ -10,7 +10,7 @@ import 'package:get/get.dart';
 import 'package:marquee/marquee.dart';
 import 'package:mirror_fly_demo/app/common/widgets.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
-
+import 'package:mirror_fly_demo/app/common/extensions.dart';
 import 'package:mirror_fly_demo/app/routes/app_pages.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:swipe_to/swipe_to.dart';
@@ -194,7 +194,7 @@ class ChatView extends GetView<ChatController> {
                                                   right: 8.0,
                                                   bottom: 8),
                                               child: SvgPicture.asset(
-                                                  'assets/logos/send.svg'),
+                                                  sendIcon),
                                             ))
                                             : const SizedBox.shrink();
                                       }),
@@ -280,7 +280,7 @@ class ChatView extends GetView<ChatController> {
                       ),
                     );
                   }),
-                  if (!controller.isTrail)
+                  if (Constants.enableContactSync)
                     Obx(() {
                       return !controller.profile.isItSavedContact.checkNull()
                           ? Row(
@@ -626,12 +626,12 @@ class ChatView extends GetView<ChatController> {
           reverse: true,
           itemBuilder: (context, pos) {
             var index = pos;
-            return Column(
+            return !index.isNegative && index <= chatList.length ? Column(
               mainAxisSize: MainAxisSize.min,
               children: [
                 Obx(() {
                   return Visibility(
-                      visible: (controller.loadNextData.value && pos == chatList.length - 1),
+                      visible: (controller.showLoadingPrevious.value && pos == chatList.length - 1),
                       //|| (controller.loadPreviousData.value && pos==chatList.length-1) ,
                       child: const Center(
                           child: CircularProgressIndicator()
@@ -645,7 +645,7 @@ class ChatView extends GetView<ChatController> {
                     Constants.mNotification)
                     ? SwipeTo(
                   key: ValueKey(chatList[index].messageId),
-                  onRightSwipe: (DragUpdateDetails dragUpdateDetails) {
+                  onRightSwipe: (DragUpdateDetails dragUpdateDetails){
                     if (!chatList[index].isMessageRecalled.value &&
                         !chatList[index].isMessageDeleted &&
                         chatList[index]
@@ -671,6 +671,7 @@ class ChatView extends GetView<ChatController> {
                     },
                     onTap: () {
                       debugPrint("On Tap");
+                      FocusManager.instance.primaryFocus?.unfocus();
                       if (controller.isSelected.value) {
                         controller.isSelected.value
                             ? controller.selectedChatList
@@ -824,13 +825,13 @@ class ChatView extends GetView<ChatController> {
                     chatMessage: chatList[index].messageTextContent),
                 Obx(() {
                   return Visibility(
-                      visible: (controller.loadPreviousData.value && pos == 0),
+                      visible: (controller.showLoadingNext.value && pos == 0),
                       child: const Center(
                         child: CircularProgressIndicator(),
                       ));
                 }),
               ],
-            );
+            ) : const SizedBox.shrink();
           },
         ),
       ),
@@ -1268,8 +1269,7 @@ class ChatView extends GetView<ChatController> {
                   icon: SvgPicture.asset(videoCallIcon),
                 ),
                 overflowWidget: const Text("Video Call"),
-                showAsAction: controller.availableFeatures.value.isOneToOneCallAvailable.checkNull() ? controller
-                    .profile.isGroupProfile.checkNull() ? ShowAsAction.gone : ShowAsAction.always : ShowAsAction.gone,
+                showAsAction: controller.isVideoCallAvailable ? ShowAsAction.always : ShowAsAction.gone ,
                 keyValue: 'Video Call',
                 onItemClick: () {
                   controller.makeVideoCall();
@@ -1283,8 +1283,7 @@ class ChatView extends GetView<ChatController> {
                   icon: SvgPicture.asset(audioCallIcon),
                 ),
                 overflowWidget: const Text("Call"),
-                showAsAction: controller.availableFeatures.value.isOneToOneCallAvailable.checkNull() ? controller
-                    .profile.isGroupProfile.checkNull() ? ShowAsAction.gone : ShowAsAction.always : ShowAsAction.gone,
+                showAsAction: controller.isAudioCallAvailable ? ShowAsAction.always : ShowAsAction.gone ,
                 keyValue: 'Audio Call',
                 onItemClick: () {
                   controller.makeVoiceCall();

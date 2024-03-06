@@ -42,6 +42,8 @@ class _CropImageState extends State<CropImage> {
               padding: const EdgeInsets.all(20.0),
               child: CustomImageCrop(
                 cropController: controller,
+                canMove: false,
+                forceInsideCropArea: true,
                 shape: CustomCropShape.Square,
                 image: FileImage(widget.imageFile),
               ),

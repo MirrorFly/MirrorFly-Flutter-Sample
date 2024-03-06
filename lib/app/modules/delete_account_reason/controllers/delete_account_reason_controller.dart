@@ -51,19 +51,21 @@ class DeleteAccountReasonController extends FullLifeCycleController
        Helper.showLoading(message: "Deleting Account");
       debugPrint("on DeleteAccount");
       SessionManagement.setLogin(false);
-      Mirrorfly.deleteAccount(reasonValue.value, feedback.text).then((value) {
-        debugPrint('DeleteAccount $value');
-        Future.delayed(const Duration(milliseconds: 500), ()
-        {
-          Helper.hideLoading();
-          SessionManagement.clear()
-              .then((value) => Get.offAllNamed(Routes.login));
-          toToast('Your MirrorFly account has been deleted');
-        });
+      Mirrorfly.deleteAccount(reason: reasonValue.value, feedback: feedback.text, flyCallBack: (FlyResponse response) {
+        debugPrint('DeleteAccount $response');
+        if(response.isSuccess) {
+          Future.delayed(const Duration(milliseconds: 500), () {
+            Helper.hideLoading();
+            SessionManagement.clear()
+                .then((value) => Get.offAllNamed(Routes.login));
+            toToast('Your MirrorFly account has been deleted');
+          });
+        }else{
+          SessionManagement.setLogin(true);
+          toToast("Unable to delete the account");
+        }
       }).catchError((error) {
         Helper.hideLoading();
-        SessionManagement.setLogin(true);
-        toToast("Unable to delete the account");
       });
       // });
     } else {
@@ -90,5 +92,10 @@ class DeleteAccountReasonController extends FullLifeCycleController
         });
       }
     }
+  }
+
+  @override
+  void onHidden() {
+
   }
 }

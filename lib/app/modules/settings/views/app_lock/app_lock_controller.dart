@@ -12,6 +12,7 @@ import 'package:mirror_fly_demo/main.dart';
 import 'package:otp_text_field/otp_field.dart';
 import 'package:otp_text_field/otp_field_style.dart';
 import 'package:otp_text_field/style.dart';
+import 'package:mirror_fly_demo/app/common/extensions.dart';
 
 import '../../../../data/apputils.dart';
 import '../../../../routes/app_pages.dart';
@@ -391,9 +392,9 @@ class AppLockController extends FullLifeCycleController
     var lastSession = SessionManagement.appLastSession();
     var lastPinChangedAt = SessionManagement.lastPinChangedAt();
     var sessionDifference = DateTime.now()
-        .difference(DateTime.fromMillisecondsSinceEpoch(lastSession));
+        .difference(DateTime.fromMillisecondsSinceEpoch(lastSession,isUtc: true));
     var lockSessionDifference = DateTime.now()
-        .difference(DateTime.fromMillisecondsSinceEpoch(lastPinChangedAt));
+        .difference(DateTime.fromMillisecondsSinceEpoch(lastPinChangedAt,isUtc: true));
     debugPrint('sessionDifference seconds ${sessionDifference.inSeconds}');
     debugPrint('lockSessionDifference days ${lockSessionDifference.inDays}');
     if (Constants.pinAlert <= lockSessionDifference.inDays &&
@@ -807,5 +808,10 @@ class AppLockController extends FullLifeCycleController
       otpController.set(credential.smsCode!.split(""));
       verifyOTP();
     }
+  }
+
+  @override
+  void onHidden() {
+
   }
 }

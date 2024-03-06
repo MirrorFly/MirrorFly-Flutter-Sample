@@ -4,13 +4,17 @@ If you're looking for the fastest way in action with CONTUS TECH [MirrorFly Plug
 
 ## Configuration
 
-Replace the `licence key` , `ios Container ID` with yours in `main.dart` file.
+Replace the `licence key`  with yours in `main.dart` file. to run before.
 
 ```dart
-  Mirrorfly.init(
-      baseUrl: 'https://api-preprod-sandbox.mirrorfly.com/api/v1/',
-      licenseKey: 'Please enter your License key',
-      iOSContainerID: 'Please enter your Container ID') //Container ID should be same as App Groups 
+  Mirrorfly.initializeSDK(
+    licenseKey: 'Your_License_Key_Here',
+    iOSContainerID: 'group.com.mirrorfly.flutter', //Container ID should be same as App Groups 
+    chatHistoryEnable: true,
+    flyCallback: (response) async {
+        
+    }
+);
 ```
 ## Google Services
 

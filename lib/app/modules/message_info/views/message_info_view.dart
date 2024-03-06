@@ -3,8 +3,7 @@ import 'package:flutter_svg/svg.dart';
 
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/common/widgets.dart';
-import 'package:mirror_fly_demo/app/data/helper.dart';
-
+import 'package:mirror_fly_demo/app/common/extensions.dart';
 import '../../../common/constants.dart';
 import '../../chat/chat_widgets.dart';
 
@@ -106,7 +105,7 @@ class MessageInfoView extends GetView<MessageInfoController> {
                   itemCount: controller.messageDeliveredList.length,
                   itemBuilder: (cxt, index) {
                     var member = controller.messageDeliveredList[index]
-                        .memberProfileDetails!;
+                        .profileDetails!;
                     return memberItem(name: member.name.checkNull(),
                         image: member.image.checkNull(),
                         status: controller.chatDate(context, controller.messageDeliveredList[index]),
@@ -139,7 +138,7 @@ class MessageInfoView extends GetView<MessageInfoController> {
                   itemCount: controller.messageReadList.length,
                   itemBuilder: (cxt, index) {
                     var member = controller.messageReadList[index]
-                        .memberProfileDetails!;
+                        .profileDetails!;
                     return memberItem(name: member.name.checkNull(),
                         image: member.image.checkNull(),
                         status: controller.chatDate(context,

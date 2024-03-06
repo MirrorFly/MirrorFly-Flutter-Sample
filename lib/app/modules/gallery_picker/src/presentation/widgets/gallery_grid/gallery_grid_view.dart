@@ -10,8 +10,8 @@ class GalleryGridView extends StatefulWidget {
   /// asset album
   final AssetPathEntity? path;
 
-  // /// load if scrolling is false
-  // final bool loadWhenScrolling;
+  /// load if scrolling is false
+  final bool loadWhenScrolling;
 
   /// on tap thumbnail
   final OnAssetItemClick? onAssetItemClick;
@@ -19,48 +19,60 @@ class GalleryGridView extends StatefulWidget {
   /// picker data provider
   final GalleryMediaPickerController provider;
 
-  // /// gallery gridview crossAxisCount
-  // final int crossAxisCount;
-  //
-  // /// gallery gridview aspect ratio
-  // final double childAspectRatio;
-  //
-  // /// gridView background color
-  // final Color gridViewBackgroundColor;
-  //
-  // /// gridView Padding
-  // final EdgeInsets? padding;
-  //
-  // /// gridView physics
-  // final ScrollPhysics? gridViewPhysics;
-  //
-  // /// gridView controller
-  // final ScrollController? gridViewController;
-  //
-  // /// selected background color
-  // final Color selectedBackgroundColor;
-  //
-  // /// selected check color
-  // final Color selectedCheckColor;
-  //
-  // /// selected Check Background Color
-  // final Color selectedCheckBackgroundColor;
-  //
-  // /// background image color
-  // final Color imageBackgroundColor;
-  //
-  // /// thumbnail box fit
-  // final BoxFit thumbnailBoxFix;
-  //
-  // /// image quality thumbnail
-  // final int? thumbnailQuality;
+  /// gallery gridview crossAxisCount
+  final int crossAxisCount;
+
+  /// gallery gridview aspect ratio
+  final double childAspectRatio;
+
+  /// gridView background color
+  final Color gridViewBackgroundColor;
+
+  /// gridView Padding
+  final EdgeInsets? padding;
+
+  /// gridView physics
+  final ScrollPhysics? gridViewPhysics;
+
+  /// gridView controller
+  final ScrollController? gridViewController;
+
+  /// selected background color
+  final Color selectedBackgroundColor;
+
+  /// selected check color
+  final Color selectedCheckColor;
+
+  /// selected Check Background Color
+  final Color selectedCheckBackgroundColor;
+
+  /// background image color
+  final Color imageBackgroundColor;
+
+  /// thumbnail box fit
+  final BoxFit thumbnailBoxFix;
+
+  /// image quality thumbnail
+  final int? thumbnailQuality;
 
   const GalleryGridView(
       {Key? key,
       required this.path,
       required this.provider,
       this.onAssetItemClick,
-      })
+      this.loadWhenScrolling = false,
+      this.childAspectRatio = 0.5,
+      this.gridViewBackgroundColor = Colors.white,
+      this.crossAxisCount = 3,
+      this.padding,
+      this.gridViewController,
+      this.gridViewPhysics,
+      this.selectedBackgroundColor = Colors.black,
+      this.selectedCheckColor = Colors.white,
+      this.imageBackgroundColor = Colors.white,
+      this.thumbnailBoxFix = BoxFit.cover,
+      this.selectedCheckBackgroundColor = Colors.white,
+      this.thumbnailQuality = 200})
       : super(key: key);
 
   @override
@@ -95,19 +107,19 @@ class GalleryGridViewState extends State<GalleryGridView> {
             child: AnimatedBuilder(
               animation: widget.provider.assetCountNotifier,
               builder: (_, __) => Container(
-                color: widget.provider.paramsModel.gridViewBackgroundColor,
+                color: widget.gridViewBackgroundColor,
                 child: widget.provider.assetCount > 0
                     ? GridView.builder(
                         key: ValueKey(widget.path),
                         shrinkWrap: true,
-                        padding: widget.provider.paramsModel.gridPadding ?? const EdgeInsets.all(0),
+                        padding: widget.padding ?? const EdgeInsets.all(0),
                         physics:
-                            widget.provider.paramsModel.gridViewPhysics ?? const ScrollPhysics(),
+                            widget.gridViewPhysics ?? const ScrollPhysics(),
                         controller:
-                            widget.provider.paramsModel.gridViewController ?? ScrollController(),
+                            widget.gridViewController ?? ScrollController(),
                         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                          childAspectRatio: widget.provider.paramsModel.childAspectRatio,
-                          crossAxisCount: widget.provider.paramsModel.crossAxisCount,
+                          childAspectRatio: widget.childAspectRatio,
+                          crossAxisCount: widget.crossAxisCount,
                           mainAxisSpacing: 2.5,
                           crossAxisSpacing: 2.5,
                         ),
@@ -140,20 +152,12 @@ class GalleryGridViewState extends State<GalleryGridView> {
       /// on tap thumbnail
       onTap: () async {
         var asset = cacheMap[index];
-        // if (asset == null) {
-        //   asset = (await widget.path!
-        //       .getAssetListRange(start: index, end: index + 1))[0];
-        //   cacheMap[index] = asset;
-        // }
-        // widget.onAssetItemClick?.call(asset, index);
-        if (asset != null &&
-            asset.type != AssetType.audio &&
-            asset.type != AssetType.other) {
+        if (asset == null) {
           asset = (await widget.path!
               .getAssetListRange(start: index, end: index + 1))[0];
           cacheMap[index] = asset;
-          widget.onAssetItemClick?.call(asset, index);
         }
+        widget.onAssetItemClick?.call(asset, index);
       },
 
       /// render thumbnail
@@ -170,6 +174,12 @@ class GalleryGridViewState extends State<GalleryGridView> {
         asset: asset,
         provider: provider,
         index: index,
+        thumbnailQuality: widget.thumbnailQuality!,
+        selectedBackgroundColor: widget.selectedBackgroundColor,
+        selectedCheckColor: widget.selectedCheckColor,
+        imageBackgroundColor: widget.imageBackgroundColor,
+        thumbnailBoxFix: widget.thumbnailBoxFix,
+        selectedCheckBackgroundColor: widget.selectedCheckBackgroundColor,
       );
     } else {
       /// read the assets from selected album
@@ -180,7 +190,7 @@ class GalleryGridViewState extends State<GalleryGridView> {
             return Container(
               width: double.infinity,
               height: double.infinity,
-              color: widget.provider.paramsModel.gridViewBackgroundColor,
+              color: widget.gridViewBackgroundColor,
             );
           }
           final asset = snapshot.data![0];
@@ -191,6 +201,12 @@ class GalleryGridViewState extends State<GalleryGridView> {
             asset: asset,
             index: index,
             provider: provider,
+            thumbnailQuality: widget.thumbnailQuality!,
+            selectedBackgroundColor: widget.selectedBackgroundColor,
+            selectedCheckColor: widget.selectedCheckColor,
+            imageBackgroundColor: widget.imageBackgroundColor,
+            thumbnailBoxFix: widget.thumbnailBoxFix,
+            selectedCheckBackgroundColor: widget.selectedCheckBackgroundColor,
           );
         },
       );
@@ -218,16 +234,5 @@ class GalleryGridViewState extends State<GalleryGridView> {
         setState(() {});
       }
     }
-  }
-  @override
-  bool operator == (Object other) {
-    if (identical(this, other)) {
-      return true;
-    }
-    if (other.runtimeType != runtimeType) {
-      return false;
-    }
-
-    return other != this;
   }
 }

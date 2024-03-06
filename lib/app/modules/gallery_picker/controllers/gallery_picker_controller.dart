@@ -9,7 +9,7 @@ class GalleryPickerController extends GetxController {
   var pickedFile = <PickedAssetModel>[].obs;
   var userName = Get.arguments['userName'];
   var textMessage = Get.arguments['caption'];
-  var profile = Get.arguments['profile'] as Profile;
+  var profile = Get.arguments['profile'] as ProfileDetails;
   var maxPickImages = 10;
 
   @override

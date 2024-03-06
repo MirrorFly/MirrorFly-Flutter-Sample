@@ -2,8 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:keyboard_dismisser/keyboard_dismisser.dart';
-import 'package:mirrorfly_plugin/logmessage.dart';
-
+import 'package:mirrorfly_plugin/mirrorflychat.dart';
 import '../common/constants.dart';
 
 class CustomActionBarIcons extends StatefulWidget {
@@ -65,7 +64,7 @@ class _CustomActionBarIconsState extends State<CustomActionBarIcons> with Widget
 
   @override
   Widget build(BuildContext context) {
-    LogMessage.d("CustomActionBarIcons", "build");
+    // LogMessage.d("CustomActionBarIcons", "build");
     widget.actions.sort(); // items with ShowAsAction.NEVER are placed at the end
 
     List<CustomAction> visible = widget.actions
@@ -133,7 +132,10 @@ class _CustomActionBarIconsState extends State<CustomActionBarIcons> with Widget
                   for (CustomAction customAction in overflow)
                     PopupMenuItem(
                       value: customAction.keyValue,
-                      onTap: customAction.onItemClick,
+                      onTap: () {
+                        _context=null;
+                        customAction.onItemClick();
+                      },
                       child: customAction.overflowWidget,
                     )
                 ];

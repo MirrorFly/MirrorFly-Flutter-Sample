@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-
+import 'package:mirror_fly_demo/app/common/extensions.dart';
 import '../../../common/constants.dart';
 import '../../../data/apputils.dart';
 import '../../../data/session_management.dart';
@@ -31,11 +31,11 @@ class DeleteAccountController extends GetxController {
       }
       mirrorFlyLog("SessionManagement.getMobileNumber()", SessionManagement.getMobileNumber().toString().trim());
       mirrorFlyLog("SessionManagement.getCountryCode()", SessionManagement.getCountryCode().toString());
-      mirrorFlyLog("Mirrorfly.isTrialLicence", Mirrorfly.isTrialLicence.toString());
+      mirrorFlyLog("!Constants.enableContactSync", Constants.enableContactSync.toString());
       mirrorFlyLog("countryCode", countryCode.toString());
       var mobileNumberWithCountryCode = '${countryCode?.replaceAll('+', '')}${mobileNumber.text.trim()}';
       mirrorFlyLog("mobileNumberWithCountryCode", mobileNumberWithCountryCode);
-      if(Mirrorfly.isTrialLicence) {
+      if(!Constants.enableContactSync) {
         if ((mobileNumber.text.trim() != SessionManagement.getMobileNumber() && mobileNumberWithCountryCode != SessionManagement.getMobileNumber()) ||
             SessionManagement.getCountryCode()?.replaceAll('+', '') !=
                 countryCode?.replaceAll('+', '')) {

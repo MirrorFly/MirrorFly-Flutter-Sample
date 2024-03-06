@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
-
+import 'package:mirror_fly_demo/app/common/extensions.dart';
+import 'package:mirror_fly_demo/app/modules/dashboard/controllers/dashboard_controller.dart';
 import '../../../common/constants.dart';
 import 'package:mirrorfly_plugin/mirrorfly.dart';
 import '../../../routes/app_pages.dart';
 
 class ChatInfoController extends GetxController {
-  var profile_ = Profile().obs;
-  Profile get profile => profile_.value;
+  var profile_ = ProfileDetails().obs;
+  ProfileDetails get profile => profile_.value;
   var mute = false.obs;
   var nameController = TextEditingController();
 
@@ -25,7 +26,7 @@ class ChatInfoController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    profile_((Get.arguments as Profile));
+    profile_((Get.arguments as ProfileDetails));
     mute(profile.isMuted!);
     scrollController.addListener(_scrollListener);
     nameController.text = profile.nickName.checkNull();
@@ -34,7 +35,7 @@ class ChatInfoController extends GetxController {
   }
 
   muteAble() async {
-    muteable(await Mirrorfly.isUserUnArchived(profile.jid.checkNull()));
+    muteable(await Mirrorfly.isChatUnArchived(jid: profile.jid.checkNull()));
   }
 
   _scrollListener() {
@@ -55,21 +56,25 @@ class ChatInfoController extends GetxController {
 
   }
 
-  onToggleChange(bool value) {
+  onToggleChange(bool value) async {
     if(muteable.value) {
       mirrorFlyLog("change", value.toString());
       mute(value);
-      Mirrorfly.updateChatMuteStatus(profile.jid.checkNull(), value);
+      Mirrorfly.updateChatMuteStatus(jid: profile.jid.checkNull(), muteStatus: value);
+      notifyDashboardUI();
     }
   }
 
   getUserLastSeen(){
     if(!profile.isBlockedMe.checkNull() || !profile.isAdminBlocked.checkNull()) {
-      Mirrorfly.getUserLastSeenTime(profile.jid.toString()).then((value) {
-        var lastSeen = convertSecondToLastSeen(value!);
-        userPresenceStatus(lastSeen.toString());
-      }).catchError((er) {
-        userPresenceStatus("");
+      Mirrorfly.getUserLastSeenTime(jid: profile.jid.toString(), flyCallBack: (FlyResponse response) {
+        if(response.isSuccess && response.hasData) {
+          LogMessage.d("getUserLastSeenTime", response);
+          var lastSeen = convertSecondToLastSeen(response.data);
+          userPresenceStatus(lastSeen.toString());
+        }else{
+          userPresenceStatus("");
+        }
       });
     }else{
       userPresenceStatus("");
@@ -120,18 +125,12 @@ class ChatInfoController extends GetxController {
                   Get.back();
                   // Helper.showLoading(message: "Reporting User");
                   Mirrorfly
-                      .reportUserOrMessages(profile.jid!, "chat")
-                      .then((value) {
-                    // Helper.hideLoading();
-                    if(value.checkNull()){
+                      .reportUserOrMessages(jid: profile.jid!, type: "chat", flyCallBack: (FlyResponse response) {
+                    if(response.isSuccess){
                       toToast("Report sent");
                     }else{
                       toToast("There are no messages available");
                     }
-
-                    // debugPrint(value.toString());
-                  }).catchError((onError) {
-                    debugPrint(onError.toString());
                   });
                 },
                 child: const Text("REPORT")),
@@ -163,5 +162,11 @@ class ChatInfoController extends GetxController {
 
   void userBlockedMe(String jid) {
     userUpdatedHisProfile(jid);
+  }
+
+  void notifyDashboardUI(){
+    if(Get.isRegistered<DashboardController>()){
+      Get.find<DashboardController>().chatMuteChangesNotifyUI(profile.jid.checkNull());
+    }
   }
 }

@@ -1,7 +1,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-
+import 'package:mirror_fly_demo/app/common/extensions.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
 import 'package:mirrorfly_plugin/mirrorfly.dart';
@@ -10,20 +10,21 @@ import '../../../../data/apputils.dart';
 
 
 class BlockedListController extends GetxController {
-  final _blockedUsers = <Member>[].obs;
+  final _blockedUsers = <ProfileDetails>[].obs;
   set blockedUsers(value) => _blockedUsers.value = value;
-  List<Member> get blockedUsers => _blockedUsers;
+  List<ProfileDetails> get blockedUsers => _blockedUsers;
 
   @override
   void onInit(){
     super.onInit();
-    getUsersIBlocked(false);
+    getUsersIBlocked();
   }
 
-  getUsersIBlocked(bool server){
-    Mirrorfly.getUsersIBlocked(server).then((value){
-      if(value!=null && value != ""){
-        var list = memberFromJson(value);
+  getUsersIBlocked([bool? server]) async {
+    Mirrorfly.getUsersIBlocked(fetchFromServer: server ?? await AppUtils.isNetConnected(), flyCallBack: (FlyResponse response) {
+      if(response.isSuccess && response.hasData){
+        LogMessage.d("getUsersIBlocked", response.toString());
+        var list = profileFromJson(response.data);
         list.sort((a, b) => getMemberName(a).checkNull().toString().toLowerCase().compareTo(getMemberName(b).checkNull().toString().toLowerCase()));
         _blockedUsers(list);
       }else{
@@ -50,7 +51,7 @@ class BlockedListController extends GetxController {
     }
 
   }
-  unBlock(Member item){
+  unBlock(ProfileDetails item){
     Helper.showAlert(message: "Unblock ${getMemberName(item)}?", actions: [
       TextButton(
           onPressed: () {
@@ -62,16 +63,13 @@ class BlockedListController extends GetxController {
             if(await AppUtils.isNetConnected()) {
               Get.back();
               Helper.progressLoading();
-              Mirrorfly.unblockUser(item.jid.checkNull()).then((value) {
+              Mirrorfly.unblockUser(userJid: item.jid.checkNull(), flyCallBack: (FlyResponse response) {
                 Helper.hideLoading();
-                if(value!=null && value) {
+                if(response.isSuccess) {
                   toToast("${getMemberName(item)} has been Unblocked");
                   getUsersIBlocked(false);
                 }
-              }).catchError((error) {
-                Helper.hideLoading();
-                debugPrint(error);
-              });
+              },);
             }else{
               toToast(Constants.noInternetConnection);
             }

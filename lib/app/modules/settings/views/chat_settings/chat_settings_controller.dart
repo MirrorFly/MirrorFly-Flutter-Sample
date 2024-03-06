@@ -48,14 +48,17 @@ class ChatSettingsController extends GetxController {
 
   Future<void> getLastSeenSettingsEnabled() async {
     // boolean lastSeenStatus = FlyCore.isHideLastSeenEnabled();
-    await Mirrorfly.isHideLastSeenEnabled().then((value) => lastSeenPreference(value));
+    await Mirrorfly.isLastSeenVisible().then((value) => lastSeenPreference(value));
   }
 
 
   void enableArchive() async{
     if(await AppUtils.isNetConnected()) {
-      Mirrorfly.enableDisableArchivedSettings(!archiveEnabled);
-      _archiveEnabled(!archiveEnabled);
+      Mirrorfly.enableDisableArchivedSettings(enable: !archiveEnabled, flyCallBack: (FlyResponse response) {
+        if(response.isSuccess){
+          _archiveEnabled(!archiveEnabled);
+        }
+      });
     }else{
       toToast(Constants.noInternetConnection);
     }
@@ -65,7 +68,7 @@ class ChatSettingsController extends GetxController {
     var permission = await AppPermission.getStoragePermission();
     if (permission) {
       var enable = !_autoDownloadEnabled.value;//SessionManagement.isAutoDownloadEnable();
-        Mirrorfly.setMediaAutoDownload(enable);
+        Mirrorfly.setMediaAutoDownload(enable: enable);
         _autoDownloadEnabled(enable);
     }
   }
@@ -107,13 +110,14 @@ class ChatSettingsController extends GetxController {
 
   Future<void> clearAllConv() async {
     if (await AppUtils.isNetConnected()) {
-      var result = await Mirrorfly.clearAllConversation();
-      if(result.checkNull()){
-        clearAllConvRecentChatUI();
-        toToast('All your conversation are cleared');
-      }else{
-        toToast('Server error, kindly try again later');
-      }
+     Mirrorfly.clearAllConversation(flyCallBack: (FlyResponse response) {
+        if(response.isSuccess){
+          clearAllConvRecentChatUI();
+          toToast('All your conversation are cleared');
+        }else{
+          toToast('Server error, kindly try again later');
+        }
+     });
     } else {
       toToast(Constants.noInternetConnection);
     }
@@ -121,9 +125,9 @@ class ChatSettingsController extends GetxController {
 
   lastSeenEnableDisable() async{
     if(await AppUtils.isNetConnected()) {
-      Mirrorfly.enableDisableHideLastSeen(!lastSeenPreference.value).then((value) {
-        debugPrint("enableDisableHideLastSeen--> $value");
-        if(value != null && value) {
+      Mirrorfly.setLastSeenVisibility(enable: !lastSeenPreference.value, flyCallBack: (FlyResponse response) {
+        debugPrint("enableDisableHideLastSeen--> $response");
+        if(response.isSuccess) {
           lastSeenPreference(!lastSeenPreference.value);
         }
       });
@@ -132,17 +136,19 @@ class ChatSettingsController extends GetxController {
     }
   }
 
-  busyStatusEnable() async {
+  busyStatusEnable() {
     bool busyStatusVal = !busyStatusPreference.value;
     debugPrint("busy_status_val ${busyStatusVal.toString()}");
     busyStatusPreference(busyStatusVal);
-    await Mirrorfly.enableDisableBusyStatus(busyStatusVal).then((value) => getMyBusyStatus());
+    Mirrorfly.enableDisableBusyStatus(enable: busyStatusVal, flyCallBack: (FlyResponse response) {
+      getMyBusyStatus();
+    });
   }
 
   void getMyBusyStatus() {
     Mirrorfly.getMyBusyStatus().then((value) {
       var userBusyStatus = json.decode(value);
-      debugPrint("Busy Status ${userBusyStatus["status"]}");
+      debugPrint("Busy Status $userBusyStatus");
       // var busyStatus = userBusyStatus["status"];
       // if(busyStatus)
       busyStatus(userBusyStatus["status"]);

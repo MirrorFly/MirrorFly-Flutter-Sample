@@ -5,8 +5,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:mirrorfly_plugin/mirrorfly.dart';
+import 'package:mirror_fly_demo/app/common/extensions.dart';
 import 'package:get/get.dart';
-import 'package:mirrorfly_plugin/model/available_features.dart';
 
 import '../../../common/constants.dart';
 import '../../../common/main_controller.dart';
@@ -18,7 +18,7 @@ import '../../gallery_picker/src/data/models/picked_asset_model.dart';
 class MediaPreviewController extends FullLifeCycleController with FullLifeCycleMixin {
 
   var userName = Get.arguments['userName'];
-  var profile = Get.arguments['profile'] as Profile;
+  var profile = Get.arguments['profile'] as ProfileDetails;
 
   TextEditingController caption = TextEditingController();
 
@@ -160,5 +160,10 @@ class MediaPreviewController extends FullLifeCycleController with FullLifeCycleM
   void onAvailableFeaturesUpdated(AvailableFeatures features) {
     LogMessage.d("MediaPreview", "onAvailableFeaturesUpdated ${features.toJson()}");
     availableFeatures(features);
+  }
+
+  @override
+  void onHidden() {
+
   }
 }
