@@ -18,10 +18,13 @@ class StatusListView extends GetView<StatusListController> {
         automaticallyImplyLeading: true,
         title: const Text('Status'),
       ),
-      body: WillPopScope(
-        onWillPop: () {
-          Get.back(result: controller.selectedStatus.value);
-          return Future.value(false);
+      body: PopScope(
+        canPop: false,
+        onPopInvoked: (didPop){
+          if (didPop) {
+            return;
+          }
+          controller.onBackPressed(controller.selectedStatus.value);
         },
         child: Container(
           padding: const EdgeInsets.all(
