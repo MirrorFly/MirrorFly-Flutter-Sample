@@ -44,7 +44,7 @@ class NameChangeView extends GetView<GroupInfoController> {
                               style:
                                   const TextStyle(fontSize: 20, fontWeight: FontWeight.normal,overflow: TextOverflow.visible),
                               onChanged: (_) => controller.onChanged(),
-                              maxLength: 121,
+                              maxLength: 25,
                               maxLines: 1,
                               controller: controller.nameController,
                               decoration: const InputDecoration(border: InputBorder.none,counterText:"" ),
@@ -63,15 +63,11 @@ class NameChangeView extends GetView<GroupInfoController> {
                               )),
                           IconButton(
                               onPressed: () {
-                                if (!controller.showEmoji.value) {
-                                  FocusScope.of(context).unfocus();
-                                  controller.focusNode.canRequestFocus = false;
-                                }
-                                Future.delayed(const Duration(milliseconds: 500), () {
-                                  controller.showEmoji(!controller.showEmoji.value);
-                                });
+                                controller.showHideEmoji(context);
                               },
-                              icon: SvgPicture.asset(smileIcon))
+                              icon: controller.showEmoji.value ? const Icon(
+                                Icons.keyboard, color: iconColor,) : SvgPicture.asset(
+                                smileIcon, width: 18, height: 18,))
                         ],
                       ),
                       const Divider(height: 1, color: dividerColor, thickness: 1,),
@@ -127,8 +123,9 @@ class NameChangeView extends GetView<GroupInfoController> {
     return Obx(() {
       if (controller.showEmoji.value) {
         return EmojiLayout(
-          textController: controller.nameController,
-            onEmojiSelected : (cat, emoji)=>controller.onChanged()
+          textController: TextEditingController(),
+          onEmojiSelected : (cat, emoji)=>controller.onEmojiSelected(emoji),
+          onBackspacePressed: () => controller.onEmojiBackPressed(),
         );
       } else {
         return const SizedBox.shrink();
