@@ -650,7 +650,7 @@ String convertSecondToLastSeen(String seconds) {
       var last = DateFormat('dd MMM').format(lastSeen);
       return 'last seen on $last';
     } else if (int.parse(DateFormat('yyyy').format(lastSeen)) < int.parse(DateFormat('yyyy').format(DateTime.now()))) {
-      return 'last seen on ${DateFormat('dd/mm/yyyy').format(lastSeen)}';
+      return 'last seen on ${DateFormat('dd/MM/yyyy').format(lastSeen)}';
     } else {
       return 'Online';
     }
