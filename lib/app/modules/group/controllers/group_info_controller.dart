@@ -641,4 +641,13 @@ class GroupInfoController extends GetxController {
       Get.find<DashboardController>().chatMuteChangesNotifyUI(profile.jid.checkNull());
     }
   }
+
+  onBackPressed() {
+    if (showEmoji.value) {
+      showEmoji(false);
+    } else {
+      nameController.text = profile.nickName.checkNull();
+      Get.back();
+    }
+  }
 }

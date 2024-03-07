@@ -17,14 +17,13 @@ class NameChangeView extends GetView<GroupInfoController> {
         automaticallyImplyLeading: true,
         title: const Text('Enter New Name'),
       ),
-      body: WillPopScope(
-        onWillPop: () {
-          if (controller.showEmoji.value) {
-            controller.showEmoji(false);
-          } else {
-            Get.back();
+      body: PopScope(
+        canPop: false,
+        onPopInvoked: (didPop){
+          if (didPop) {
+            return;
           }
-          return Future.value(false);
+          controller.onBackPressed();
         },
         child: SafeArea(
           child: Column(
