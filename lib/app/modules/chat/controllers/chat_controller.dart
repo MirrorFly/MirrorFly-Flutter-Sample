@@ -314,7 +314,8 @@ class ChatController extends FullLifeCycleController
           curve: Curves.linear,
         );
       }*/
-      if (newScrollController.isAttached) {
+      if (newScrollController.isAttached && lastVisiblePosition() >= 1) {
+        LogMessage.d("newScrollController", "scrollToBottom");
         newScrollController.scrollTo(
             index: 0,
             duration: const Duration(milliseconds: 100),
@@ -332,6 +333,7 @@ class ChatController extends FullLifeCycleController
         curve: Curves.linear,
       );
     }*/
+    LogMessage.d("newScrollController", "scrollToEnd");
     newScrollController.jumpTo(index: 0);
     showHideRedirectToLatest(false);
   }
@@ -2821,6 +2823,7 @@ class ChatController extends FullLifeCycleController
     var chatIndex = index ??
         chatList.indexWhere((element) => element.messageId == messageID);
     if (!chatIndex.isNegative) {
+      LogMessage.d("newScrollController", "navigateToMessage");
       newScrollController.scrollTo(
           index: chatIndex, duration: const Duration(milliseconds: 10));
       Future.delayed(const Duration(milliseconds: 15), () {
@@ -3421,6 +3424,7 @@ class ChatController extends FullLifeCycleController
   void scrollToPosition(int position){
     if (!position.isNegative) {
       if (newScrollController.isAttached) {
+        LogMessage.d("newScrollController", "scrollToPosition");
         newScrollController.scrollTo(
             index: position,
             duration: const Duration(milliseconds: 100));

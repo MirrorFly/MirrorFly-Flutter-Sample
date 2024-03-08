@@ -12,6 +12,7 @@ import 'package:mirror_fly_demo/app/common/widgets.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
 import 'package:mirror_fly_demo/app/common/extensions.dart';
 import 'package:mirror_fly_demo/app/routes/app_pages.dart';
+import 'package:mirrorfly_plugin/logmessage.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:swipe_to/swipe_to.dart';
 
@@ -626,7 +627,7 @@ class ChatView extends GetView<ChatController> {
           reverse: true,
           itemBuilder: (context, pos) {
             var index = pos;
-            return !index.isNegative && index <= chatList.length ? Column(
+            return Column(
               mainAxisSize: MainAxisSize.min,
               children: [
                 Obx(() {
@@ -831,7 +832,7 @@ class ChatView extends GetView<ChatController> {
                       ));
                 }),
               ],
-            ) : const SizedBox.shrink();
+            );
           },
         ),
       ),
