@@ -209,20 +209,6 @@ class GroupCreationController extends GetxController {
           style: TextStyle(color: textBlackColor, fontSize: 14),
         ),
       ),
-
-
-      /*TextButton(
-          onPressed: () {
-            Get.back();
-            imagePick(Get.context!);
-          },
-          child: const Text("Choose from Gallery",style: TextStyle(color: Colors.black),)),
-      TextButton(
-          onPressed: () async{
-            Get.back();
-            camera();
-          },
-          child: const Text("Take Photo",style: TextStyle(color: Colors.black))),*/
     ]);
   }
 }
