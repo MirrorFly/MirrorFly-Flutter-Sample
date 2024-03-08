@@ -651,7 +651,7 @@ String convertSecondToLastSeen(String seconds) {
     if (seconds == "0") return "Online";
     LogMessage.d("getUserLastSeenTime", "seconds $seconds");
     // var userLastSeenDate = DateTime.now().subtract(Duration(milliseconds: double.parse(seconds).toInt()));
-    DateTime lastSeen = DateTime.fromMillisecondsSinceEpoch(int.parse(seconds), isUtc: true);
+    DateTime lastSeen = DateTime.fromMillisecondsSinceEpoch(int.parse(seconds), isUtc: false);
     Duration diff = DateTime.now().difference(lastSeen);
 
     LogMessage.d("getUserLastSeenTime", "diff ${diff.inDays}");
