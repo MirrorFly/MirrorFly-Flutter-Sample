@@ -185,7 +185,33 @@ class GroupCreationController extends GetxController {
 
   void choosePhoto() {
     Helper.showVerticalButtonAlert([
-      TextButton(
+      ListTile(
+        dense: true,
+        contentPadding: const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
+        onTap: () {
+          Get.back();
+          imagePick(Get.context!);
+        },
+        title: const Text(
+          "Choose from Gallery",
+          style: TextStyle(color: textBlackColor, fontSize: 14),
+        ),
+      ),
+      ListTile(
+        dense: true,
+        contentPadding: const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
+        onTap: () {
+          Get.back();
+          camera();
+        },
+        title: const Text(
+          "Take Photo",
+          style: TextStyle(color: textBlackColor, fontSize: 14),
+        ),
+      ),
+
+
+      /*TextButton(
           onPressed: () {
             Get.back();
             imagePick(Get.context!);
@@ -196,7 +222,7 @@ class GroupCreationController extends GetxController {
             Get.back();
             camera();
           },
-          child: const Text("Take Photo",style: TextStyle(color: Colors.black))),
+          child: const Text("Take Photo",style: TextStyle(color: Colors.black))),*/
     ]);
   }
 }
