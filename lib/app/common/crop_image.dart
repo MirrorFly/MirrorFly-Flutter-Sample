@@ -44,7 +44,7 @@ class _CropImageState extends State<CropImage> {
                 cropController: controller,
                 canMove: true,
                 forceInsideCropArea: true,
-                shape: CustomCropShape.Circle,
+                shape: CustomCropShape.Square,
                 image: FileImage(widget.imageFile),
               ),
               /*child: Crop.file(
