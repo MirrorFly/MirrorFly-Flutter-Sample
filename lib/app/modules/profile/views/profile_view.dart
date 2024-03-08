@@ -295,7 +295,7 @@ class ProfileView extends GetView<ProfileController> {
                       ListTile(
                         dense: true,
                         contentPadding: EdgeInsets.zero,
-                        onTap: () async {
+                        onTap: () {
                           Get.back();
                           controller.camera();
                         },
@@ -307,7 +307,7 @@ class ProfileView extends GetView<ProfileController> {
                       ListTile(
                         dense: true,
                         contentPadding: EdgeInsets.zero,
-                        onTap: () async {
+                        onTap: () {
                           Get.back();
                           controller.imagePicker(context);
                         },
@@ -320,7 +320,7 @@ class ProfileView extends GetView<ProfileController> {
                           ? ListTile(
                               dense: true,
                               contentPadding: EdgeInsets.zero,
-                              onTap: () async {
+                              onTap: () {
                                 Get.back();
                                 Helper.showAlert(message: "Are you sure you want to remove the photo?", actions: [
                                   TextButton(
