@@ -22,16 +22,20 @@ class StarredMessagesView extends GetView<StarredMessagesController> {
       onFocusGained: () {
         controller.getFavouriteMessages();
       },
-      child: WillPopScope(
-        onWillPop: () {
+      child: PopScope(
+        canPop: false,
+        onPopInvoked: (didPop) {
+          if (didPop) {
+            return;
+          }
           if (controller.isSelected.value) {
             controller.clearAllChatSelection();
-            return Future.value(false);
+            return;
           }else if(controller.isSearch.value){
             controller.clearSearch();
-            return Future.value(false);
+            return;
           }
-          return Future.value(true);
+          Get.back();
         },
         child: Scaffold(
           appBar: getAppBar(),

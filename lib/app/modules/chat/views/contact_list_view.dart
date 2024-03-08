@@ -14,13 +14,17 @@ class ContactListView extends GetView<ContactController> {
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: (){
+    return PopScope(
+      canPop: false,
+      onPopInvoked: (didPop) {
+        if (didPop) {
+          return;
+        }
         if(controller.search) {
           controller.backFromSearch();
-          return Future.value(false);
+          return;
         }
-        return Future.value(true);
+        Get.back();
       },
       child: Obx(
             () =>

@@ -16,10 +16,13 @@ class ChatSearchView extends GetView<ChatController> {
   Widget build(BuildContext context) {
     controller.screenHeight = MediaQuery.of(context).size.height;
     controller.screenWidth = MediaQuery.of(context).size.width;
-    return WillPopScope(
-      onWillPop: () {
+    return PopScope(
+      canPop: true,
+      onPopInvoked: (didPop) {
         controller.searchInit();
-        return Future.value(true);
+        if (didPop) {
+          return;
+        }
       },
       child: Scaffold(
         appBar: AppBar(

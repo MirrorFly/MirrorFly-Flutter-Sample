@@ -890,12 +890,14 @@ class _AudioMessageViewState extends State<AudioMessageView>
     }*/
     Get.dialog(
       Dialog(
-        child: WillPopScope(
-          onWillPop: () {
-            // currentPos(0);
+        child: PopScope(
+          canPop: true,
+          onPopInvoked: (didPop) {
             isPlaying(false);
             player.stop();
-            return Future.value(true);
+            if (didPop) {
+              return;
+            }
           },
           child: Container(
             decoration: BoxDecoration(

@@ -17,13 +17,17 @@ class ArchivedChatListView extends GetView<ArchivedChatListController> {
       onFocusGained: () {
         controller.getArchivedChatsList();
       },
-      child: WillPopScope(
-        onWillPop: () {
+      child: PopScope(
+        canPop: false,
+        onPopInvoked: (didPop) {
+          if (didPop) {
+            return;
+          }
           if (controller.selected.value) {
             controller.clearAllChatSelection();
-            return Future.value(false);
+            return;
           }
-          return Future.value(true);
+          Get.back();
         },
         child: Obx(() {
           return Scaffold(
