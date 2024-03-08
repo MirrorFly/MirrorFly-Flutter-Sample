@@ -16,14 +16,17 @@ class AddStatusView extends GetView<StatusListController> {
         automaticallyImplyLeading: true,
         title: const Text('Add New Status'),
       ),
-      body: WillPopScope(
-        onWillPop: () {
+      body: PopScope(
+        canPop: false,
+        onPopInvoked: (didPop) {
+          if (didPop) {
+            return;
+          }
           if (controller.showEmoji.value) {
             controller.showEmoji(false);
           } else {
-            Get.back();
+            controller.onBackPressed();
           }
-          return Future.value(false);
         },
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -95,7 +98,7 @@ class AddStatusView extends GetView<StatusListController> {
             Row(children: [
               Expanded(
                 child: ElevatedButton(
-                  onPressed: () => Get.back(),
+                  onPressed: () => controller.onBackPressed(),
                   style: ElevatedButton.styleFrom(
                       backgroundColor: MaterialStateColor.resolveWith(
                               (states) => Colors.white),

@@ -82,7 +82,7 @@ class StatusListController extends FullLifeCycleController with FullLifeCycleMix
   void onInit() {
     super.onInit();
     selectedStatus.value = Get.arguments['status'];
-    addStatusController.text=selectedStatus.value;
+    addStatusController.text= selectedStatus.value;
     onChanged();
     getStatusList();
     onChanged();
@@ -243,5 +243,16 @@ class StatusListController extends FullLifeCycleController with FullLifeCycleMix
   @override
   void onHidden() {
 
+  }
+
+  onBackPressed([String? result]) {
+    debugPrint("result $result");
+    showEmoji(false);
+    addStatusController.text = selectedStatus.value;
+    if(result != null){
+      Get.back(result: result);
+    }else {
+      Get.back();
+    }
   }
 }

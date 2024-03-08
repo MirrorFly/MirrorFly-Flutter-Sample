@@ -632,7 +632,7 @@ class DashboardView extends GetView<DashboardController>{
                 visible: controller.filteredRecentChatList.isNotEmpty,
                 child: searchHeader(Constants.typeSearchRecent, controller.filteredRecentChatList.length.toString(), context),
               ),
-              recentChatListView(),
+              recentChatSearchListView(),
               Visibility(
                 visible: controller.chatMessages.isNotEmpty,
                 child: searchHeader(Constants.typeSearchMessage, controller.chatMessages.length.toString(), context),
@@ -844,7 +844,7 @@ class DashboardView extends GetView<DashboardController>{
         });
   }
 
-  ListView recentChatListView() {
+  ListView recentChatSearchListView() {
     return ListView.builder(
         itemCount: controller.filteredRecentChatList.length,
         shrinkWrap: true,

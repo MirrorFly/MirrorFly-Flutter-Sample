@@ -71,8 +71,8 @@ abstract class BaseController {
     });
     Mirrorfly.onFetchingGroupMembersCompleted
         .listen(onFetchingGroupMembersCompleted);
-    Mirrorfly.onDeleteGroup.listen(onDeleteGroup);
-    Mirrorfly.onFetchingGroupListCompleted.listen(onFetchingGroupListCompleted);
+    // Mirrorfly.onDeleteGroup.listen(onDeleteGroup);
+    // Mirrorfly.onFetchingGroupListCompleted.listen(onFetchingGroupListCompleted);
     Mirrorfly.onMemberMadeAsAdmin.listen((event){
       if(event!=null){
         var data = json.decode(event.toString());
@@ -470,6 +470,8 @@ abstract class BaseController {
     Mirrorfly.onAvailableFeaturesUpdated.listen(onAvailableFeaturesUpdated);
 
     Mirrorfly.onCallLogsUpdated.listen(onCallLogsUpdated);
+
+    Mirrorfly.onCallLogsCleared.listen((event) {});
   }
 
   void onCallLogsUpdated(value) {
@@ -662,7 +664,7 @@ abstract class BaseController {
     }
   }
 
-  void onFetchingGroupListCompleted(noOfGroups) {}
+  // void onFetchingGroupListCompleted(noOfGroups) {}
 
   void onMemberMadeAsAdmin(
       {required String groupJid, required String newAdminMemberJid, required String madeByMemberJid}) {
@@ -712,16 +714,16 @@ abstract class BaseController {
     }
   }
 
-  Future<void> showOrUpdateOrCancelNotification(String jid, ChatMessageModel chatMesssage) async {
-    if (SessionManagement.getCurrentChatJID() == chatMesssage.chatUserJid.checkNull()) {
+  Future<void> showOrUpdateOrCancelNotification(String jid, ChatMessageModel chatMessage) async {
+    if (SessionManagement.getCurrentChatJID() == chatMessage.chatUserJid.checkNull()) {
       return;
     }
     var profileDetails = await getProfileDetails(jid);
     if (profileDetails.isMuted == true) {
       return;
     }
-    if(chatMesssage.messageId.isNotEmpty) {
-      NotificationBuilder.createNotification(chatMesssage);
+    if(chatMessage.messageId.isNotEmpty) {
+      NotificationBuilder.createNotification(chatMessage);
     }
   }
 
