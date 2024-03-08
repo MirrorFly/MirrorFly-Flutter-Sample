@@ -12,7 +12,6 @@ import 'package:mirror_fly_demo/app/common/widgets.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
 import 'package:mirror_fly_demo/app/common/extensions.dart';
 import 'package:mirror_fly_demo/app/routes/app_pages.dart';
-import 'package:mirrorfly_plugin/logmessage.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:swipe_to/swipe_to.dart';
 
@@ -49,8 +48,12 @@ class ChatView extends GetView<ChatController> {
                 fit: BoxFit.cover,
               ),
             ),
-            child: WillPopScope(
-              onWillPop: () {
+            child: PopScope(
+              canPop: false,
+              onPopInvoked: (didPop) {
+                if (didPop) {
+                  return;
+                }
                 mirrorFlyLog("viewInsets",
                     MediaQuery
                         .of(context)
@@ -68,13 +71,12 @@ class ChatView extends GetView<ChatController> {
                 } else if (controller.nJid != null) {
                   // controller.saveUnsentMessage();
                   Get.offAllNamed(Routes.dashboard);
-                  return Future.value(true);
+                  Get.back();
                 } else if (controller.isSelected.value) {
                   controller.clearAllChatSelection();
                 } else {
-                  return Future.value(true);
+                  Get.back();
                 }
-                return Future.value(false);
               },
               child: Stack(
                 children: [
