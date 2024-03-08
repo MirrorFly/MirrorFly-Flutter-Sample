@@ -24,9 +24,12 @@ class Helper {
   static void showLoading({String? message, bool dismiss = false}) {
     Get.dialog(
       Dialog(
-        child: WillPopScope(
-          onWillPop: () async {
-            return Future.value(dismiss);
+        child: PopScope(
+          canPop: dismiss,
+          onPopInvoked: (didPop) {
+            if (didPop) {
+              return;
+            }
           },
           child: Padding(
             padding: const EdgeInsets.all(16.0),
@@ -50,8 +53,13 @@ class Helper {
         AlertDialog(
           elevation: 0,
           backgroundColor: Colors.transparent,
-          content: WillPopScope(
-            onWillPop: () async => Future.value(dismiss),
+          content: PopScope(
+              canPop: dismiss,
+              onPopInvoked: (didPop) {
+                if (didPop) {
+                  return;
+                }
+              },
             child: const SizedBox(
               width: 60,
               height: 60,
@@ -78,8 +86,13 @@ class Helper {
           contentPadding: title != null
               ? const EdgeInsets.only(top: 15, right: 25, left: 25, bottom: 0)
               : const EdgeInsets.only(top: 0, right: 25, left: 25, bottom: 5),
-          content: WillPopScope(
-            onWillPop: () async => Future.value(barrierDismissible),
+          content: PopScope(
+              canPop: barrierDismissible ?? true,
+              onPopInvoked: (didPop) {
+                if (didPop) {
+                  return;
+                }
+                },
             child: content ??
                 Text(
                   message,
