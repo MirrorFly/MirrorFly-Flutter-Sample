@@ -61,7 +61,7 @@ class AdminBlockedView extends GetView {
                   },
                   child: const Text(
                     'Ok',
-                    style: TextStyle(fontWeight: FontWeight.w600),
+                    style: TextStyle(fontWeight: FontWeight.w600,color: Colors.white),
                   ),
                 ),
               ),
