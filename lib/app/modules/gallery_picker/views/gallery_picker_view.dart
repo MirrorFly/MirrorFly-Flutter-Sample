@@ -23,6 +23,7 @@ class GalleryPickerView extends GetView<GalleryPickerController> {
                 future: null,
               builder: (context, snapshot) {
                 return GalleryMediaPicker(
+                  provider: controller.provider,
                   childAspectRatio: 1,
                   crossAxisCount: 3,
                   thumbnailQuality: 200,
@@ -54,7 +55,7 @@ class GalleryPickerView extends GetView<GalleryPickerController> {
                           const SizedBox(width: 20,),
                           GestureDetector(
                             onTap: () async {
-                              List<String> mediaPath = [];
+                              // List<String> mediaPath = [];
                               // media.pickedFile.map((p) {
                               //   setState(() {
                               //     mediaPath.add(p.path);
@@ -75,7 +76,7 @@ class GalleryPickerView extends GetView<GalleryPickerController> {
                               } else {
                                 Get.back();
                               }
-                              mediaPath.clear();
+                              // mediaPath.clear();
                             },
                             child: Container(
                                 height: 30,
