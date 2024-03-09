@@ -65,8 +65,8 @@ class ChatController extends FullLifeCycleController
   var timerInit = "00:00".obs;
   DateTime? startTime;
 
-  double screenHeight = 0.0;
-  double screenWidth = 0.0;
+  // double screenHeight = 0.0;
+  // double screenWidth = 0.0;
 
   // AudioPlayer player = AudioPlayer();
 
@@ -648,12 +648,11 @@ class ChatController extends FullLifeCycleController
     return dateHourFormat;
   }
 
-  RxBool chatLoading = false.obs;
+  RxBool chatLoading = true.obs;
 
   var initializedMessageList = false;
   void _loadMessages() {
     // getChatHistory();
-    chatLoading(true);
     Mirrorfly.initializeMessageList(userJid: profile.jid.checkNull(), limit: 25,topicId: topicId)//message
         .then((value) {
       if(value) {
