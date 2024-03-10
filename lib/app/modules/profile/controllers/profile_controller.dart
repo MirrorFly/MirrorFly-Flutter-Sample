@@ -50,7 +50,7 @@ class ProfileController extends GetxController {
     if (Get.arguments != null) {
       // from(Get.arguments["from"]);
       if (from == Routes.login) {
-        profileMobile.text = Get.arguments['mobile'] ?? "";
+        profileMobile.text = Get.arguments['mobile'] ?? SessionManagement.getMobileNumber();
       }
     } else {
       profileMobile.text = "";
