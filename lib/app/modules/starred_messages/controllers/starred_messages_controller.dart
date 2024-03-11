@@ -266,7 +266,7 @@ class StarredMessagesController extends FullLifeCycleController with FullLifeCyc
               onPressed: () {
                 Get.back();
               },
-              child: const Text("No")),
+              child: const Text("No",style: TextStyle(color: buttonBgColor))),
           TextButton(
               onPressed: () async {
                 Get.back();
@@ -278,7 +278,7 @@ class StarredMessagesController extends FullLifeCycleController with FullLifeCyc
                   }
                 });
               },
-              child: const Text("Yes")),
+              child: const Text("Yes",style: TextStyle(color: buttonBgColor))),
         ]);
   }
 
@@ -399,7 +399,7 @@ class StarredMessagesController extends FullLifeCycleController with FullLifeCyc
               onPressed: () {
                 Get.back();
               },
-              child: const Text("CANCEL")),
+              child: const Text("CANCEL",style: TextStyle(color: buttonBgColor))),
           TextButton(
               onPressed: () {
                 Get.back();
@@ -418,7 +418,7 @@ class StarredMessagesController extends FullLifeCycleController with FullLifeCyc
                       selectedChatList.clear();
                     });
               },
-              child: const Text("DELETE FOR ME")),
+              child: const Text("DELETE FOR ME",style: TextStyle(color: buttonBgColor))),
           /*isRecallAvailable
               ? TextButton(
               onPressed: () {

@@ -34,13 +34,13 @@ class DeleteAccountReasonController extends FullLifeCycleController
               onPressed: () {
                 Get.back();
               },
-              child: const Text("CANCEL")),
+              child: const Text("CANCEL",style: TextStyle(color: buttonBgColor))),
           TextButton(
               onPressed: () async {
                 // Get.back();
                 deleteUserAccount();
               },
-              child: const Text("OK")),
+              child: const Text("OK",style: TextStyle(color: buttonBgColor))),
         ]);
   }
 

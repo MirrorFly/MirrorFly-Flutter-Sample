@@ -133,12 +133,12 @@ class ChatInfoController extends GetxController {
                     }
                   });
                 },
-                child: const Text("REPORT")),
+                child: const Text("REPORT",style: TextStyle(color: buttonBgColor))),
             TextButton(
                 onPressed: () {
                   Get.back();
                 },
-                child: const Text("CANCEL")),
+                child: const Text("CANCEL",style: TextStyle(color: buttonBgColor))),
           ]);
     });
   }

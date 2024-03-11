@@ -77,6 +77,7 @@ class Helper {
       {String? title, required String message, List<Widget>? actions, Widget? content, bool? barrierDismissible}) {
     Get.dialog(
         AlertDialog(
+          backgroundColor: Colors.white,
           title: title != null
               ? Text(
                   title,
@@ -120,6 +121,7 @@ class Helper {
   static void showButtonAlert({List<Widget>? actions}) {
     Get.dialog(
       AlertDialog(
+        backgroundColor: Colors.white,
         actions: actions,
       ),
     );

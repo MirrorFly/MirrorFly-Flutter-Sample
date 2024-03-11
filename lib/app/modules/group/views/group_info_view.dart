@@ -284,13 +284,13 @@ class GroupInfoView extends GetView<GroupInfoController> {
                           onPressed: () {
                             Get.back();
                           },
-                          child: const Text("NO")),
+                          child: const Text("NO",style: TextStyle(color: buttonBgColor))),
                       TextButton(
                           onPressed: () {
                             Get.back();
                             controller.removeUser(item.jid.checkNull());
                           },
-                          child: const Text("YES")),
+                          child: const Text("YES",style: TextStyle(color: buttonBgColor))),
                     ]);
                   },
                   visualDensity: const VisualDensity(horizontal: 0, vertical: -3)));
@@ -314,13 +314,13 @@ class GroupInfoView extends GetView<GroupInfoController> {
                           onPressed: () {
                             Get.back();
                           },
-                          child: const Text("NO")),
+                          child: const Text("NO",style: TextStyle(color: buttonBgColor))),
                       TextButton(
                           onPressed: () {
                             Get.back();
                             controller.makeAdmin(item.jid.checkNull());
                           },
-                          child: const Text("YES")),
+                          child: const Text("YES",style: TextStyle(color: buttonBgColor))),
                     ]);
                   },
                   visualDensity: const VisualDensity(horizontal: 0, vertical: -3)));
