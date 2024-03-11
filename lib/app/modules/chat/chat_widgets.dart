@@ -402,19 +402,14 @@ class ReplyMessageHeader extends StatelessWidget {
   }
 }
 
-Image imageFromBase64String(String base64String, BuildContext context, double? width, double? height) {
-  var decodedBase64 = base64String.replaceAll("\n", "");
-  Uint8List image = const Base64Decoder().convert(decodedBase64);
+Widget imageFromBase64String(String base64String, BuildContext context, double? width, double? height) {
+  LogMessage.d("imageFromBase64String", "final");
+  final decodedBase64 = base64String.replaceAll("\n", "");
+  final Uint8List image = const Base64Decoder().convert(decodedBase64);
   return Image.memory(
     image,
-    width: width ?? MediaQuery
-        .of(context)
-        .size
-        .width * 0.60,
-    height: height ?? MediaQuery
-        .of(context)
-        .size
-        .height * 0.4,
+    width: width ?? Get.width * 0.60,
+    height: height ?? Get.height * 0.4,
     fit: BoxFit.cover,
   );
 }
@@ -890,12 +885,14 @@ class _AudioMessageViewState extends State<AudioMessageView>
     }*/
     Get.dialog(
       Dialog(
-        child: WillPopScope(
-          onWillPop: () {
-            // currentPos(0);
+        child: PopScope(
+          canPop: true,
+          onPopInvoked: (didPop) {
             isPlaying(false);
             player.stop();
-            return Future.value(true);
+            if (didPop) {
+              return;
+            }
           },
           child: Container(
             decoration: BoxDecoration(
@@ -1471,13 +1468,8 @@ class VideoMessageView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var mediaMessage = chatMessage.mediaChatMessage!;
-    // var screenHeight = MediaQuery.of(context).size.height;
-    var screenWidth = MediaQuery
-        .of(context)
-        .size
-        .width;
     return Container(
-      width: screenWidth * 0.60,
+      width: Get.width * 0.60,
       padding: const EdgeInsets.all(2.0),
       child: Column(
         children: [
@@ -1583,14 +1575,10 @@ class ImageMessageView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    LogMessage.d("ImageMessageView", "build ${chatMessage.messageId}");
     var mediaMessage = chatMessage.mediaChatMessage!;
-    // var screenHeight = MediaQuery.of(context).size.height;
-    var screenWidth = MediaQuery
-        .of(context)
-        .size
-        .width;
     return Container(
-      width: screenWidth * 0.60,
+      width: Get.width * 0.60,
       padding: const EdgeInsets.all(2.0),
       child: Column(
         children: [
@@ -1666,14 +1654,6 @@ class ImageMessageView extends StatelessWidget {
   getImage(RxString mediaLocalStoragePath, String mediaThumbImage,
       BuildContext context, String mediaFileName, bool isSelected) {
     debugPrint("getImage mediaLocalStoragePath : $mediaLocalStoragePath");
-    var screenHeight = MediaQuery
-        .of(context)
-        .size
-        .height;
-    var screenWidth = MediaQuery
-        .of(context)
-        .size
-        .width;
     if (checkFile(mediaLocalStoragePath.value)) {
       return InkWell(
           onTap: isSelected
@@ -1708,8 +1688,8 @@ class ImageMessageView extends StatelessWidget {
                   child: Text("$obj"),
                 );
               },
-              width: screenWidth * 0.60,
-              height: screenHeight * 0.4,
+              width: Get.width * 0.60,
+              height: Get.height * 0.4,
               fit: BoxFit.cover,
             );
           })
@@ -1810,6 +1790,7 @@ class MessageContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    LogMessage.d("MessageContent", "build ${chatList[index].messageId}");
     var chatMessage = chatList[index];
     //mirrorFlyLog("message==>", json.encode(chatMessage));
     // debugPrint("Message Type===> ${chatMessage.messageType}");

@@ -119,7 +119,7 @@ class ContactusView extends StatelessWidget {
                     },
                     child: const Text(
                       'Send',
-                      style: TextStyle(fontWeight: FontWeight.w600),
+                      style: TextStyle(fontWeight: FontWeight.w600,color: Colors.white),
                     ),
                   ),
                 ),

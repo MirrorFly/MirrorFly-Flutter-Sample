@@ -6,6 +6,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:mirror_fly_demo/app/common/extensions.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
+import 'package:mirrorfly_plugin/mirrorfly.dart';
 import 'package:photo_view/photo_view.dart';
 
 import '../../../common/constants.dart';
@@ -62,7 +63,7 @@ class ViewAllMediaPreviewView extends GetView<ViewAllMediaPreviewController> {
               }
 
               /// show video
-              else {
+              else if(data.messageType == MessageType.video.value){
                 // return AspectRatio(
                 //   aspectRatio: 2,
                 //   child: BetterVideoPlayer(
@@ -83,6 +84,26 @@ class ViewAllMediaPreviewView extends GetView<ViewAllMediaPreviewController> {
                 // );
                 return VideoPlayerWidget(
                   videoPath: data.mediaChatMessage?.mediaLocalStoragePath.value ?? "", videoTitle: data.mediaChatMessage?.mediaFileName ?? "Video",
+                );
+              }else{
+                return Container(
+                  color: const Color(0xff97A5C7),
+                  child: Stack(
+                    alignment: Alignment.center,
+                    children: [
+                      SvgPicture.asset(data.mediaChatMessage!.isAudioRecorded.checkNull() ? audioMic1 : headsetImg,height: 150,width: 150,),
+                      FloatingActionButton.small(
+                        onPressed: (){
+                          openDocument(data.mediaChatMessage!.mediaLocalStoragePath.value.checkNull());
+                        },
+                        backgroundColor: Colors.white,
+                        child: const Icon(
+                          Icons.play_arrow_rounded,
+                          color: buttonBgColor,
+                        ),
+                      )
+                    ],
+                  ),
                 );
               }
             })

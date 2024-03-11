@@ -84,10 +84,13 @@ class MediaPreviewView extends GetView<MediaPreviewController> {
             })
           ],
         ),
-        body: WillPopScope(
-          onWillPop: () {
+        body: PopScope(
+          canPop: false,
+          onPopInvoked: (didPop) {
+            if (didPop) {
+              return;
+            }
             Get.back(result: "back");
-            return Future.value(false);
           },
           child: SafeArea(
             child: Container(

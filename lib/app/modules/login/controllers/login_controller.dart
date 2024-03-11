@@ -10,7 +10,8 @@ import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/common/main_controller.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
 import 'package:mirror_fly_demo/app/data/permissions.dart';
-
+import 'package:flutter_libphonenumber/flutter_libphonenumber.dart'
+as lib_phone_number;
 import 'package:otp_text_field/otp_field.dart';
 
 import '../../../common/constants.dart';
@@ -88,12 +89,30 @@ class LoginController extends GetxController {
     countdownTimer!.cancel();
   }
 
-  void registerUser() {
+  Future<void> registerUser() async {
     if (mobileNumber.text.isEmpty) {
       toToast("Please Enter Mobile Number");
     } else {
-      // phoneAuth();
-      registerAccount();
+      if(await validMobileNumber(selectedCountry.value.dialCode!,mobileNumber.text)) {
+        // phoneAuth();
+        registerAccount();
+      }else{
+        toToast("Please Enter Valid Mobile Number");
+      }
+    }
+  }
+
+  Future<bool> validMobileNumber(String dialCode,String mobileNumber) async {
+    try {
+      LogMessage.d("validMobileNumber",
+          "dialCode : $dialCode, mobileNumber : $mobileNumber");
+      lib_phone_number.init();
+      var parse = await lib_phone_number.parse(dialCode+mobileNumber);
+      LogMessage.d("validMobileNumber", "parse : $parse");;
+      return true;
+    }catch(e){
+      LogMessage.e("validMobileNumber", "error : $e");
+      return false;
     }
   }
 

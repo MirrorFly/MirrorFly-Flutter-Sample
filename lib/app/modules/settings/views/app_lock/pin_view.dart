@@ -14,10 +14,13 @@ class PinView extends GetView<AppLockController> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
-        child: WillPopScope(
-          onWillPop: (){
+        child: PopScope(
+          canPop: false,
+          onPopInvoked: (didPop) {
+            if (didPop) {
+              return;
+            }
             SystemNavigator.pop();
-            return Future.value(false);
           },
           child: Stack(
             children: [

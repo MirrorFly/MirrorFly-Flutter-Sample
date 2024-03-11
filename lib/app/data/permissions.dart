@@ -619,10 +619,13 @@ class AppPermission {
   static Future<bool> notificationPermissionDialog({required String icon,required String title, required String message}) async {
     return await Get.dialog(AlertDialog(
       contentPadding: EdgeInsets.zero,
-      content: WillPopScope(
-        onWillPop: (){
+      content: PopScope(
+        canPop: false,
+        onPopInvoked: (didPop) {
+          if (didPop) {
+            return;
+          }
           Get.back(result: false);
-          return Future.value(false);
         },
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -684,10 +687,14 @@ class AppPermission {
       required String content}) async {
     return await Get.dialog(AlertDialog(
       contentPadding: EdgeInsets.zero,
-      content: WillPopScope(
-        onWillPop: () {
+      content: PopScope(
+        canPop: false,
+        onPopInvoked: (didPop) {
+          if (didPop) {
+            return;
+          }
           Get.back(result: false);
-          return Future.value(false); },
+        },
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -734,10 +741,13 @@ class AppPermission {
       required String content}) async {
     return await Get.dialog(AlertDialog(
       contentPadding: EdgeInsets.zero,
-      content: WillPopScope(
-        onWillPop: () {
+      content: PopScope(
+        canPop: false,
+        onPopInvoked: (didPop) {
+          if (didPop) {
+            return;
+          }
           Get.back(result: false);
-          return Future.value(true);
         },
         child: Column(
           mainAxisSize: MainAxisSize.min,

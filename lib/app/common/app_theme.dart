@@ -3,6 +3,7 @@ import 'constants.dart';
 
 class MirrorFlyAppTheme {
   static ThemeData theme = ThemeData(
+    floatingActionButtonTheme: const FloatingActionButtonThemeData(shape: CircleBorder(),),
     appBarTheme: const AppBarTheme(
         color: appBarColor,
         iconTheme: IconThemeData(color: iconColor),

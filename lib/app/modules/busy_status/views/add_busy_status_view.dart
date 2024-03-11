@@ -16,14 +16,17 @@ class AddBusyStatusView extends GetView<BusyStatusController> {
         automaticallyImplyLeading: true,
         title: const Text('Add Busy Status'),
       ),
-      body: WillPopScope(
-        onWillPop: () {
+      body: PopScope(
+        canPop: false,
+        onPopInvoked: (didPop) {
+          if (didPop) {
+            return;
+          }
           if (controller.showEmoji.value) {
             controller.showEmoji(false);
           } else {
             Get.back();
           }
-          return Future.value(false);
         },
         child: SafeArea(
           child: Column(

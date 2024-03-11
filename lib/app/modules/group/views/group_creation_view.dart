@@ -27,14 +27,17 @@ class GroupCreationView extends GetView<GroupCreationController> {
                 "NEXT", style: TextStyle(color: Colors.black),)),
         ],
       ),
-      body: WillPopScope(
-        onWillPop: () {
+      body: PopScope(
+        canPop: false,
+        onPopInvoked: (didPop) {
+          if (didPop) {
+            return;
+          }
           if (controller.showEmoji.value) {
             controller.showEmoji(false);
           } else {
             Get.back();
           }
-          return Future.value(false);
         },
         child: SafeArea(
           child: Column(
