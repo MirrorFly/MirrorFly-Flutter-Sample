@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:mirror_fly_demo/app/common/extensions.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -26,6 +27,8 @@ class LoginController extends GetxController {
   var selectedCountry = CountryData(name: "India", dialCode: "+91", code: "IN").obs;
   TextEditingController mobileNumber = TextEditingController();
   OtpFieldController otpController = OtpFieldController();
+
+  FocusNode focusNode = FocusNode();
 
   Timer? countdownTimer;
   Duration myDuration = const Duration(seconds: 31);
