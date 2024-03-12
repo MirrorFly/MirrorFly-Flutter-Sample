@@ -1314,8 +1314,8 @@
 				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CODE_SIGN_ENTITLEMENTS = NotificationExtension/NotificationExtension.entitlements;
-				CODE_SIGN_IDENTITY = "iPhone Developer: Balasubramaniyam Kandaswamy (HSBG5S6ZV9)";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Balasubramaniyam Kandaswamy (HSBG5S6ZV9)";
+				CODE_SIGN_IDENTITY = "Apple Development: Balasubramaniyam Kandaswamy (HSBG5S6ZV9)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "Apple Development: Balasubramaniyam Kandaswamy (HSBG5S6ZV9)";
 				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = "";
