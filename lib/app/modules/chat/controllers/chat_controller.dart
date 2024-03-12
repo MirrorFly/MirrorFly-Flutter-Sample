@@ -2188,7 +2188,10 @@ class ChatController extends FullLifeCycleController
           profile_(value as ProfileDetails);
           isBlocked(profile.isBlocked);
           debugPrint("value--> ${profile.isGroupProfile}");
-          _loadNextMessages(showLoading: false);
+          // _loadNextMessages(showLoading: false);
+          chatList.clear();
+          _loadMessages();
+
         }
         checkAdminBlocked();
         memberOfGroup();
