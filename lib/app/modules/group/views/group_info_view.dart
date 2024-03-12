@@ -297,7 +297,7 @@ class GroupInfoView extends GetView<GroupInfoController> {
         }),
         Obx(() {
           return Visibility(
-              visible: (!item.isGroupAdmin! && controller.isAdmin && controller.availableFeatures.value.isGroupChatAvailable.checkNull()),
+              visible: (controller.isAdmin && controller.availableFeatures.value.isGroupChatAvailable.checkNull() && !item.isGroupAdmin!),
               child: ListTile(
                   title: const Text(
                     "Make Admin",
