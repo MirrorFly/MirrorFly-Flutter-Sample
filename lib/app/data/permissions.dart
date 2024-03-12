@@ -612,7 +612,7 @@ class AppPermission {
             Get.back();
             openAppSettings();
           },
-          child: const Text("OK")),
+          child: const Text("OK",style: TextStyle(color: buttonBgColor))),
     ]);
   }
 

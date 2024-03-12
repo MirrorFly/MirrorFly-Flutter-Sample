@@ -4,6 +4,7 @@ import 'dart:io';
 
 import 'package:audioplayers/audioplayers.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -522,7 +523,7 @@ class ChatController extends FullLifeCycleController
               onPressed: () {
                 Get.back();
               },
-              child: const Text("No")),
+              child: const Text("No",style: TextStyle(color: buttonBgColor))),
           TextButton(
               onPressed: () async {
                 Get.back();
@@ -534,7 +535,7 @@ class ChatController extends FullLifeCycleController
                   }
                 });
               },
-              child: const Text("Yes")),
+              child: const Text("Yes",style: TextStyle(color: buttonBgColor))),
         ]);
   }
 
@@ -1416,12 +1417,12 @@ class ChatController extends FullLifeCycleController
                     toToast(Constants.noInternetConnection);
                   }
                 },
-                child: const Text("REPORT")),
+                child: const Text("REPORT",style: TextStyle(color: buttonBgColor))),
             TextButton(
                 onPressed: () {
                   Get.back();
                 },
-                child: const Text("CANCEL")),
+                child: const Text("CANCEL",style: TextStyle(color: buttonBgColor))),
           ]);
     });
   }
@@ -1524,7 +1525,7 @@ class ChatController extends FullLifeCycleController
               onPressed: () {
                 Get.back();
               },
-              child: const Text("CANCEL")),
+              child: const Text("CANCEL",style: TextStyle(color: buttonBgColor))),
           TextButton(
               onPressed: () {
                 Get.back();
@@ -1549,7 +1550,7 @@ class ChatController extends FullLifeCycleController
                 isSelected(false);
                 selectedChatList.clear();
               },
-              child: const Text("DELETE FOR ME")),
+              child: const Text("DELETE FOR ME",style: TextStyle(color: buttonBgColor))),
           isRecallAvailable
               ? TextButton(
               onPressed: () {
@@ -1590,7 +1591,7 @@ class ChatController extends FullLifeCycleController
                       selectedChatList.clear();
                     });
               },
-              child: const Text("DELETE FOR EVERYONE"))
+              child: const Text("DELETE FOR EVERYONE",style: TextStyle(color: buttonBgColor)))
               : const SizedBox.shrink(),
         ]);
   }
@@ -1674,7 +1675,7 @@ class ChatController extends FullLifeCycleController
                 onPressed: () {
                   Get.back();
                 },
-                child: const Text("CANCEL")),
+                child: const Text("CANCEL",style: TextStyle(color: buttonBgColor))),
             TextButton(
                 onPressed: () async {
                   if (await AppUtils.isNetConnected()) {
@@ -1693,7 +1694,7 @@ class ChatController extends FullLifeCycleController
                     toToast(Constants.noInternetConnection);
                   }
                 },
-                child: const Text("BLOCK")),
+                child: const Text("BLOCK",style: TextStyle(color: buttonBgColor))),
           ]);
     });
   }
@@ -1717,13 +1718,13 @@ class ChatController extends FullLifeCycleController
                       Get.back();
                       clearChatHistory(false);
                     },
-                    child: const Text("CLEAR ALL")),
+                    child: const Text("CLEAR ALL",style: TextStyle(color: buttonBgColor))),
               ),
               TextButton(
                   onPressed: () {
                     Get.back();
                   },
-                  child: const Text("CANCEL")),
+                  child: const Text("CANCEL",style: TextStyle(color: buttonBgColor))),
               Visibility(
                 visible: starred.isNegative,
                 child: TextButton(
@@ -1731,7 +1732,7 @@ class ChatController extends FullLifeCycleController
                       Get.back();
                       clearChatHistory(false);
                     },
-                    child: const Text("CLEAR")),
+                    child: const Text("CLEAR",style: TextStyle(color: buttonBgColor))),
               ),
               Visibility(
                 visible: !starred.isNegative,
@@ -1740,7 +1741,7 @@ class ChatController extends FullLifeCycleController
                       Get.back();
                       clearChatHistory(true);
                     },
-                    child: const Text("CLEAR EXCEPT STARRED")),
+                    child: const Text("CLEAR EXCEPT STARRED",style: TextStyle(color: buttonBgColor))),
               ),
             ]);
       });
@@ -1756,7 +1757,7 @@ class ChatController extends FullLifeCycleController
             onPressed: () {
               Get.back();
             },
-            child: const Text("CANCEL")),
+            child: const Text("CANCEL",style: TextStyle(color: buttonBgColor))),
         TextButton(
             onPressed: () async {
               if (await AppUtils.isNetConnected()) {
@@ -1774,7 +1775,7 @@ class ChatController extends FullLifeCycleController
                 toToast(Constants.noInternetConnection);
               }
             },
-            child: const Text("UNBLOCK")),
+            child: const Text("UNBLOCK",style: TextStyle(color: buttonBgColor))),
       ]);
     });
   }

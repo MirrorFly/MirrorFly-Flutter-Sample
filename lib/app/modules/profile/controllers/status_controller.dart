@@ -218,7 +218,7 @@ class StatusListController extends FullLifeCycleController with FullLifeCycleMix
           onPressed: () {
             Get.back();
           },
-          child: const Text("No")),
+          child: const Text("No",style: TextStyle(color: buttonBgColor))),
       TextButton(
           onPressed: () async {
             if (await AppUtils.isNetConnected()) {
@@ -236,7 +236,7 @@ class StatusListController extends FullLifeCycleController with FullLifeCycleMix
               toToast(Constants.noInternetConnection);
             }
           },
-          child: const Text("Yes")),
+          child: const Text("Yes",style: TextStyle(color: buttonBgColor))),
     ]);
   }
 

@@ -456,7 +456,7 @@ class ContactController extends FullLifeCycleController with FullLifeCycleMixin 
           onPressed: () {
             Get.back();
           },
-          child: const Text("NO")),
+          child: const Text("NO",style: TextStyle(color: buttonBgColor))),
       TextButton(
           onPressed: () async {
             if (await AppUtils.isNetConnected()) {
@@ -478,7 +478,7 @@ class ContactController extends FullLifeCycleController with FullLifeCycleMixin 
               toToast(Constants.noInternetConnection);
             }
           },
-          child: const Text("YES")),
+          child: const Text("YES",style: TextStyle(color: buttonBgColor))),
     ]);
   }
 

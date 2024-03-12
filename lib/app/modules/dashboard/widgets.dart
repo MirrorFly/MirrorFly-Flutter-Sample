@@ -58,6 +58,7 @@ class RecentChatItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    LogMessage.d("RecentChatItem", "build ${item.jid}");
     return Container(
       color: isSelected ? Colors.black12 : Colors.transparent,
       child: Row(
@@ -90,6 +91,7 @@ class RecentChatItem extends StatelessWidget {
   }
 
   Expanded buildRecentChatMessageDetails() {
+    LogMessage.d("RecentChatItem", " buildRecentChatMessageDetails build ${item.jid}");
     return Expanded(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

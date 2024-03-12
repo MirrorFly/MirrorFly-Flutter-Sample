@@ -213,7 +213,7 @@ class GroupInfoController extends GetxController {
           onPressed: () {
             Get.back();
           },
-          child: const Text("CANCEL")),
+          child: const Text("CANCEL",style: TextStyle(color: buttonBgColor))),
       TextButton(
           onPressed: () {
             Get.back();
@@ -227,7 +227,7 @@ class GroupInfoController extends GetxController {
               }
             });
           },
-          child: const Text("REPORT")),
+          child: const Text("REPORT",style: TextStyle(color: buttonBgColor))),
     ]);
   }
   exitOrDeleteGroup(){
@@ -249,13 +249,13 @@ class GroupInfoController extends GetxController {
           onPressed: () {
             Get.back();
           },
-          child: const Text("CANCEL")),
+          child: const Text("CANCEL",style: TextStyle(color: buttonBgColor))),
       TextButton(
           onPressed: () {
             Get.back();
             exitFromGroup();
           },
-          child: const Text("LEAVE")),
+          child: const Text("LEAVE",style: TextStyle(color: buttonBgColor))),
     ]);
   }
   var leavedGroup = false.obs;
@@ -293,7 +293,7 @@ class GroupInfoController extends GetxController {
           onPressed: () {
             Get.back();
           },
-          child: const Text("CANCEL")),
+          child: const Text("CANCEL",style: TextStyle(color: buttonBgColor))),
       TextButton(
           onPressed: () async {
             if(await AppUtils.isNetConnected()) {
@@ -316,7 +316,7 @@ class GroupInfoController extends GetxController {
             }
 
           },
-          child: const Text("DELETE")),
+          child: const Text("DELETE",style: TextStyle(color: buttonBgColor))),
     ]);
   }
 
@@ -409,13 +409,13 @@ class GroupInfoController extends GetxController {
           onPressed: () {
             Get.back();
           },
-          child: const Text("CANCEL")),
+          child: const Text("CANCEL",style: TextStyle(color: buttonBgColor))),
       TextButton(
           onPressed: () {
             Get.back();
             revokeAccessForProfileImage();
           },
-          child: const Text("REMOVE")),
+          child: const Text("REMOVE",style: TextStyle(color: buttonBgColor))),
     ]);
   }
 

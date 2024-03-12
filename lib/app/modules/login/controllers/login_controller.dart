@@ -400,13 +400,13 @@ class LoginController extends GetxController {
             Get.back();
             gotoLogin();
           },
-          child: const Text("NO")),
+          child: const Text("NO",style: TextStyle(color: buttonBgColor))),
       TextButton(
           onPressed: () {
             Get.back();
             registerAccount();
           },
-          child: const Text("YES")),
+          child: const Text("YES",style: TextStyle(color: buttonBgColor))),
     ]);
   }
 
@@ -422,14 +422,14 @@ class LoginController extends GetxController {
             Get.back();
             isForceRegister = false;
           },
-          child: const Text("Cancel")),
+          child: const Text("Cancel",style: TextStyle(color: buttonBgColor))),
       TextButton(
           onPressed: () {
             Get.back();
             isForceRegister = true;
             registerUser();
           },
-          child: const Text("Continue")),
+          child: const Text("Continue",style: TextStyle(color: buttonBgColor))),
     ]);
   }
 

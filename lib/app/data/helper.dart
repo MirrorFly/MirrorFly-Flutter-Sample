@@ -77,6 +77,7 @@ class Helper {
       {String? title, required String message, List<Widget>? actions, Widget? content, bool? barrierDismissible}) {
     Get.dialog(
         AlertDialog(
+          backgroundColor: Colors.white,
           title: title != null
               ? Text(
                   title,

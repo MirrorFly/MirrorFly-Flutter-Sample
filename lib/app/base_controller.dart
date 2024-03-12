@@ -947,6 +947,9 @@ abstract class BaseController {
     if (Get.isRegistered<DashboardController>()) {
       Get.find<DashboardController>().setTypingStatus(singleOrgroupJid, userId, typingStatus);
     }
+    if (Get.isRegistered<MyController>()) {
+      Get.find<MyController>().setTypingStatus(singleOrgroupJid, userId, typingStatus);
+    }
     if (Get.isRegistered<ArchivedChatListController>()) {
       Get.find<ArchivedChatListController>().setTypingStatus(singleOrgroupJid, userId, typingStatus);
     }

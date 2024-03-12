@@ -327,13 +327,13 @@ class ProfileView extends GetView<ProfileController> {
                                       onPressed: () {
                                         Get.back();
                                       },
-                                      child: const Text("CANCEL")),
+                                      child: const Text("CANCEL",style: TextStyle(color: buttonBgColor))),
                                   TextButton(
                                       onPressed: () {
                                         Get.back();
                                         controller.removeProfileImage();
                                       },
-                                      child: const Text("REMOVE"))
+                                      child: const Text("REMOVE",style: TextStyle(color: buttonBgColor)))
                                 ]);
                               },
                               title: const Text(
