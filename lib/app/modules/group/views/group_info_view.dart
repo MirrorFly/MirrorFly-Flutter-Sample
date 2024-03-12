@@ -78,7 +78,7 @@ class GroupInfoView extends GetView<GroupInfoController> {
                             child: IconButton(
                               icon: SvgPicture.asset(
                                 edit,
-                                color: Colors.white,
+                                colorFilter: const ColorFilter.mode(Colors.white, BlendMode.srcIn),
                                 width: 16.0,
                                 height: 16.0,
                               ),
@@ -131,7 +131,7 @@ class GroupInfoView extends GetView<GroupInfoController> {
                     child: IconButton(
                       icon: SvgPicture.asset(
                         imageEdit,
-                        color: controller.isSliverAppBarExpanded ? Colors.white : Colors.black,
+                        colorFilter: ColorFilter.mode(controller.isSliverAppBarExpanded ? Colors.white : Colors.black, BlendMode.srcIn),
                       ),
                       tooltip: 'Image edit',
                       onPressed: () {
