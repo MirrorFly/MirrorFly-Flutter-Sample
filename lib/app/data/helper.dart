@@ -118,11 +118,16 @@ class Helper {
     );
   }
 
-  static void showButtonAlert({List<Widget>? actions}) {
+  static void showButtonAlert({required List<Widget> actions}) {
     Get.dialog(
-      AlertDialog(
-        backgroundColor: Colors.white,
-        actions: actions,
+      Dialog(
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: actions,
+          ),
+        ),
       ),
     );
   }
