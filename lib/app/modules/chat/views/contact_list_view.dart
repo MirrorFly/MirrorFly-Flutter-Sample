@@ -97,26 +97,24 @@ class ContactListView extends GetView<ContactController> {
                   Visibility(
                     visible: controller.isSearchVisible,
                     child: CustomActionBarIcons(
-                      availableWidth: MediaQuery
-                          .of(context)
-                          .size
-                          .width /
+                      availableWidth: Get.width /
                           2, // half the screen width
                       actionWidth: 48,
                       actions: [
-                        CustomAction(
-                          visibleWidget: IconButton(
-                              onPressed: () {}, icon: const Icon(Icons.settings)),
-                          overflowWidget: InkWell(
-                            child: const Text("Settings"),
-                            onTap: () => Get.toNamed(Routes.settings),
-                          ),
-                          showAsAction: ShowAsAction.never,
-                          keyValue: 'Settings',
-                          onItemClick: () {
-                            Get.toNamed(Routes.settings);
-                          },
-                        ),
+                        //mani said to comment this bcz this option seems not necessary for this screen
+                        // CustomAction(
+                        //   visibleWidget: IconButton(
+                        //       onPressed: () {}, icon: const Icon(Icons.settings)),
+                        //   overflowWidget: InkWell(
+                        //     child: const Text("Settings"),
+                        //     onTap: () => Get.toNamed(Routes.settings),
+                        //   ),
+                        //   showAsAction: ShowAsAction.never,
+                        //   keyValue: 'Settings',
+                        //   onItemClick: () {
+                        //     Get.toNamed(Routes.settings);
+                        //   },
+                        // ),
                         CustomAction(
                           visibleWidget: IconButton(
                               onPressed: () {}, icon: const Icon(Icons.refresh)),
