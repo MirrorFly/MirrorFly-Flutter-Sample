@@ -4,7 +4,6 @@ import 'dart:io';
 
 import 'package:audioplayers/audioplayers.dart';
 import 'package:file_picker/file_picker.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -3436,30 +3435,3 @@ class ChatController extends FullLifeCycleController
     }
   }
 }
-
-/*
-extension ScrollControllerExtension on ScrollController {
-  void scrollTo({required int index, required Duration duration, Curve? curve}) {
-    var offset = getOffset(GlobalKey(debugLabel: "CHATITEM_$index"));
-    LogMessage.d("ScrollTo", offset);
-    animateTo(
-      offset,
-      duration: duration,
-      curve: Curves.linear,
-    );
-  }
-
-  void jumpsTo({required double index}){
-    jumpTo(index);
-  }
-
-  double getOffset(GlobalKey key){
-    final box = key.currentContext?.findRenderObject() as RenderBox;
-    final boxHeight = box.size.height;
-    Offset boxPosition = box.localToGlobal(Offset.zero);
-    double boxY = (boxPosition.dy - boxHeight / 2);
-    return boxY;
-  }
-
-  bool get isAttached => hasClients;
-}*/
