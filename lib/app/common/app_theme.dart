@@ -14,6 +14,7 @@ class MirrorFlyAppTheme {
             fontFamily: 'sf_ui')),
     hintColor: Colors.black26,
     fontFamily: 'sf_ui',
+    progressIndicatorTheme: const ProgressIndicatorThemeData(color: buttonBgColor),
     dialogTheme: const DialogTheme(shape: RoundedRectangleBorder(
       borderRadius: BorderRadius.all(Radius.circular(5.0)),
     ),),
