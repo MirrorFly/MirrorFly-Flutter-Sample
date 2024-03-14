@@ -93,7 +93,7 @@ class ChatView extends GetView<ChatController> {
                             ? const Center(
                                 child: CircularProgressIndicator(),
                               )
-                            : ChatListView(chatController: controller, chatList: controller.chatList);
+                            : chatListView(controller.chatList);
                       })),
                       Align(
                         alignment: Alignment.bottomCenter,
@@ -604,7 +604,236 @@ class ChatView extends GetView<ChatController> {
     });
   }
 
-
+  Widget chatListView(List<ChatMessageModel> chatList) {
+    return Align(
+      alignment: Alignment.bottomCenter,
+      child: NotificationListener<ScrollNotification>(
+        onNotification: (notification) {
+          if (notification is ScrollEndNotification) {
+            controller.loadNextChatHistory();
+          }
+          return false;
+        },
+        child: ScrollablePositionedList.separated(
+          separatorBuilder: (context,index){
+            var string = groupedDateMessage(index, chatList);//Date Labels
+            return string != null
+                ? NotificationMessageView(
+                chatMessage: string) : const Offstage();
+          },
+          itemScrollController: controller.newScrollController,
+          itemPositionsListener: controller.newitemPositionsListener,
+          itemCount: chatList.length,
+          shrinkWrap: true,
+          reverse: true,
+          itemBuilder: (context, pos) {
+            final index = pos;
+            LogMessage.d("ScrollablePositionedList", "build $index ${chatList[index].messageId}");
+            return Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Obx(() {
+                  return Visibility(
+                      visible: (controller.showLoadingPrevious.value && index == chatList.length - 1),
+                      //|| (controller.loadPreviousData.value && pos==chatList.length-1) ,
+                      child: const Center(
+                          child: CircularProgressIndicator()
+                      ));
+                }),
+                (chatList[index].messageType.toUpperCase() !=
+                    Constants.mNotification)
+                    ? SwipeTo(
+                  key: ValueKey(chatList[index].messageId),
+                  onRightSwipe: (DragUpdateDetails dragUpdateDetails){
+                    if (!chatList[index].isMessageRecalled.value &&
+                        !chatList[index].isMessageDeleted &&
+                        chatList[index]
+                            .messageStatus
+                            .value
+                            .checkNull()
+                            .toString() !=
+                            "N") {
+                      controller
+                          .handleReplyChatMessage(chatList[index]);
+                    }
+                  },
+                  animationDuration: const Duration(milliseconds: 300),
+                  offsetDx: 0.2,
+                  child: GestureDetector(
+                    onLongPress: () {
+                      debugPrint("LongPressed");
+                      FocusManager.instance.primaryFocus?.unfocus();
+                      if (!controller.isSelected.value) {
+                        controller.isSelected(true);
+                        controller.addChatSelection(chatList[index]);
+                      }
+                    },
+                    onTap: () {
+                      debugPrint("On Tap");
+                      FocusManager.instance.primaryFocus?.unfocus();
+                      if (controller.isSelected.value) {
+                        controller.isSelected.value
+                            ? controller.selectedChatList
+                            .contains(chatList[index])
+                            ? controller
+                            .clearChatSelection(chatList[index])
+                            : controller
+                            .addChatSelection(chatList[index])
+                            : null;
+                        controller.getMessageActions();
+                      } else {
+                        var replyChat =
+                            chatList[index].replyParentChatMessage;
+                        if (replyChat != null) {
+                          debugPrint("reply tap ");
+                          var chat = chatList.indexWhere((element) =>
+                          element.messageId == replyChat.messageId);
+                          if (!chat.isNegative) {
+                            controller.navigateToMessage(chatList[chat],
+                                index: chat);
+                          }
+                        }
+                      }
+                    },
+                    onDoubleTap: () {
+                      controller.translateMessage(index);
+                    },
+                    child: Obx(() {
+                      LogMessage.d("Container", "build ${chatList[index].messageId}");
+                      return Container(
+                        key: Key(chatList[index].messageId),
+                        color: chatList[index].isSelected.value
+                            ? chatReplyContainerColor
+                            : Colors.transparent,
+                        margin: const EdgeInsets.only(
+                            left: 14, right: 14, top: 5, bottom: 10),
+                        child: Align(
+                          alignment: (chatList[index].isMessageSentByMe
+                              ? Alignment.bottomRight
+                              : Alignment.bottomLeft),
+                          child: Row(
+                            crossAxisAlignment:
+                            CrossAxisAlignment.center,
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Visibility(
+                                visible: chatList[index]
+                                    .isMessageSentByMe &&
+                                    controller.forwardMessageVisibility(
+                                        chatList[index]),
+                                child: IconButton(
+                                    onPressed: () {
+                                      controller.forwardSingleMessage(
+                                          chatList[index].messageId);
+                                    },
+                                    icon:
+                                    SvgPicture.asset(forwardMedia)),
+                              ),
+                              Container(
+                                constraints: BoxConstraints(
+                                    maxWidth:Get.width * 0.75),
+                                decoration: BoxDecoration(
+                                    borderRadius: chatList[index]
+                                        .isMessageSentByMe
+                                        ? const BorderRadius.only(
+                                        topLeft:
+                                        Radius.circular(10),
+                                        topRight:
+                                        Radius.circular(10),
+                                        bottomLeft:
+                                        Radius.circular(10))
+                                        : const BorderRadius.only(
+                                        topLeft:
+                                        Radius.circular(10),
+                                        topRight:
+                                        Radius.circular(10),
+                                        bottomRight:
+                                        Radius.circular(10)),
+                                    color: (chatList[index]
+                                        .isMessageSentByMe
+                                        ? chatSentBgColor
+                                        : Colors.white),
+                                    border: chatList[index]
+                                        .isMessageSentByMe
+                                        ? Border.all(
+                                        color: chatSentBgColor)
+                                        : Border.all(
+                                        color: chatBorderColor)),
+                                child: Column(
+                                  crossAxisAlignment:
+                                  CrossAxisAlignment.start,
+                                  children: [
+                                    SenderHeader(
+                                        isGroupProfile: controller
+                                            .profile.isGroupProfile,
+                                        chatList: chatList,
+                                        index: index),
+                                    chatList[index].isThisAReplyMessage ? chatList[index].replyParentChatMessage == null
+                                        ? messageNotAvailableWidget(chatList[index])
+                                        : ReplyMessageHeader(
+                                        chatMessage:
+                                        chatList[index]) : const SizedBox.shrink(),
+                                    MessageContent(
+                                        chatList: chatList,
+                                        index: index,
+                                        onPlayAudio: () {
+                                          if (controller
+                                              .isAudioRecording
+                                              .value ==
+                                              Constants
+                                                  .audioRecording) {
+                                            controller
+                                                .stopRecording();
+                                          }
+                                          controller.playAudio(
+                                              chatList[index]);
+                                        },
+                                        onSeekbarChange:
+                                            (double value) {
+                                          controller.onSeekbarChange(
+                                              value, chatList[index]);
+                                        },
+                                        isSelected: controller
+                                            .isSelected.value)
+                                  ],
+                                ),
+                              ),
+                              Visibility(
+                                visible: !chatList[index]
+                                    .isMessageSentByMe &&
+                                    controller.forwardMessageVisibility(
+                                        chatList[index]),
+                                child: IconButton(
+                                    onPressed: () {
+                                      controller.forwardSingleMessage(
+                                          chatList[index].messageId);
+                                    },
+                                    icon:
+                                    SvgPicture.asset(forwardMedia)),
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
+                    }),
+                  ),
+                )
+                    : NotificationMessageView(
+                    chatMessage: chatList[index].messageTextContent),
+                Obx(() {
+                  return Visibility(
+                      visible: (controller.showLoadingNext.value && index == 0),
+                      child: const Center(
+                        child: CircularProgressIndicator(),
+                      ));
+                }),
+              ],
+            );
+          },
+        ),
+      ),
+    );
+  }
 
   selectedAppBar() {
     return AppBar(
