@@ -48,18 +48,10 @@ class ChatView extends GetView<ChatController> {
                 if (didPop) {
                   return;
                 }
-                mirrorFlyLog("viewInsets",
-                    MediaQuery
-                        .of(context)
-                        .viewInsets
-                        .bottom
-                        .toString());
+                mirrorFlyLog("viewInsets", MediaQuery.of(context).viewInsets.bottom.toString());
                 if (controller.showEmoji.value) {
                   controller.showEmoji(false);
-                } else if (MediaQuery
-                    .of(context)
-                    .viewInsets
-                    .bottom > 0.0) {
+                } else if (MediaQuery.of(context).viewInsets.bottom > 0.0) {
                   //FocusManager.instance.primaryFocus?.unfocus();
                   controller.focusNode.unfocus();
                 } else if (controller.nJid != null) {
@@ -82,11 +74,14 @@ class ChatView extends GetView<ChatController> {
                             child: Container(
                                 width: Get.width,
                                 decoration: const BoxDecoration(
-                                  color:Color(0xffff9f00),
-                                    borderRadius: BorderRadius.only(bottomLeft:Radius.circular(8),bottomRight:Radius.circular(8)),
+                                  color: Color(0xffff9f00),
+                                  borderRadius: BorderRadius.only(bottomLeft: Radius.circular(8), bottomRight: Radius.circular(8)),
                                 ),
                                 padding: const EdgeInsets.all(2),
-                                child: Text(controller.topic.value.topicName.checkNull(),textAlign: TextAlign.center,)));
+                                child: Text(
+                                  controller.topic.value.topicName.checkNull(),
+                                  textAlign: TextAlign.center,
+                                )));
                       }),
                       Expanded(child: Obx(() {
                         return controller.chatLoading.value
@@ -103,137 +98,94 @@ class ChatView extends GetView<ChatController> {
                             child: controller.isBlocked.value
                                 ? userBlocked()
                                 : controller.isMemberOfGroup
-                                ? Column(
-                              mainAxisAlignment:
-                              MainAxisAlignment.end,
-                              children: [
-                                Obx(() {
-                                  if (controller.isReplying.value) {
-                                    return ReplyingMessageHeader(
-                                      chatMessage:
-                                      controller.replyChatMessage,
-                                      onCancel: () =>
-                                          controller
-                                              .cancelReplyMessage(),
-                                      onClick: () {
-                                        controller.navigateToMessage(
-                                            controller
-                                                .replyChatMessage);
-                                      },
-                                    );
-                                  } else {
-                                    return const SizedBox.shrink();
-                                  }
-                                }),
-                                const Divider(
-                                  height: 1,
-                                  thickness: 0.29,
-                                  color: textBlackColor,
-                                ),
-                                const SizedBox(
-                                  height: 10,
-                                ),
-                                IntrinsicHeight(
-                                  child: Row(
-                                    crossAxisAlignment:
-                                    CrossAxisAlignment.stretch,
-                                    children: [
-                                      Flexible(
-                                        child: Container(
-                                          padding:
-                                          const EdgeInsets.only(
-                                              left: 10),
-                                          margin:
-                                          const EdgeInsets.only(
-                                              left: 10,
-                                              right: 10,
-                                              bottom: 10),
-                                          width: double.infinity,
-                                          decoration: BoxDecoration(
-                                            border: Border.all(
-                                              color: textColor,
-                                            ),
-                                            borderRadius:
-                                            const BorderRadius
-                                                .all(
-                                                Radius.circular(
-                                                    40)),
-                                            color: Colors.white,
-                                          ),
-                                          child: Obx(() {
-                                            return messageTypingView(
-                                                context);
+                                    ? Column(
+                                        mainAxisAlignment: MainAxisAlignment.end,
+                                        children: [
+                                          Obx(() {
+                                            if (controller.isReplying.value) {
+                                              return ReplyingMessageHeader(
+                                                chatMessage: controller.replyChatMessage,
+                                                onCancel: () => controller.cancelReplyMessage(),
+                                                onClick: () {
+                                                  controller.navigateToMessage(controller.replyChatMessage);
+                                                },
+                                              );
+                                            } else {
+                                              return const SizedBox.shrink();
+                                            }
                                           }),
-                                        ),
-                                      ),
-                                      Obx(() {
-                                        return controller
-                                            .isUserTyping.value
-                                            ? InkWell(
-                                            onTap: () {
-                                              controller
-                                                  .isAudioRecording
-                                                  .value ==
-                                                  Constants
-                                                      .audioRecordDone
-                                                  ? controller
-                                                  .sendRecordedAudioMessage()
-                                                  : controller
-                                                  .sendMessage(
-                                                  controller
-                                                      .profile);
-                                            },
-                                            child: Padding(
-                                              padding:
-                                              const EdgeInsets
-                                                  .only(
-                                                  left: 8.0,
-                                                  right: 8.0,
-                                                  bottom: 8),
-                                              child: SvgPicture.asset(
-                                                  sendIcon),
-                                            ))
-                                            : const SizedBox.shrink();
-                                      }),
-                                      Obx(() {
-                                        return controller
-                                            .isAudioRecording
-                                            .value ==
-                                            Constants
-                                                .audioRecording
-                                            ? InkWell(
-                                            onTap: () {
-                                              controller
-                                                  .stopRecording();
-                                            },
-                                            child: const Padding(
-                                              padding:
-                                              EdgeInsets.only(
-                                                  bottom:
-                                                  8.0),
-                                              child:
-                                              LottieAnimation(
-                                                lottieJson:
-                                                audioJson1,
-                                                showRepeat: true,
-                                                width: 54,
-                                                height: 54,
-                                              ),
-                                            ))
-                                            : const SizedBox.shrink();
-                                      }),
-                                      const SizedBox(
-                                        width: 5,
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                emojiLayout(),
-                              ],
-                            )
-                                : !controller.availableFeatures.value.isGroupChatAvailable.checkNull()
-                                ? featureNotAvailable()
-                                : userNoLonger(),
+                                          const Divider(
+                                            height: 1,
+                                            thickness: 0.29,
+                                            color: textBlackColor,
+                                          ),
+                                          const SizedBox(
+                                            height: 10,
+                                          ),
+                                          IntrinsicHeight(
+                                            child: Row(
+                                              crossAxisAlignment: CrossAxisAlignment.stretch,
+                                              children: [
+                                                Flexible(
+                                                  child: Container(
+                                                    padding: const EdgeInsets.only(left: 10),
+                                                    margin: const EdgeInsets.only(left: 10, right: 10, bottom: 10),
+                                                    width: double.infinity,
+                                                    decoration: BoxDecoration(
+                                                      border: Border.all(
+                                                        color: textColor,
+                                                      ),
+                                                      borderRadius: const BorderRadius.all(Radius.circular(40)),
+                                                      color: Colors.white,
+                                                    ),
+                                                    child: Obx(() {
+                                                      return messageTypingView(context);
+                                                    }),
+                                                  ),
+                                                ),
+                                                Obx(() {
+                                                  return controller.isUserTyping.value
+                                                      ? InkWell(
+                                                          onTap: () {
+                                                            controller.isAudioRecording.value == Constants.audioRecordDone
+                                                                ? controller.sendRecordedAudioMessage()
+                                                                : controller.sendMessage(controller.profile);
+                                                          },
+                                                          child: Padding(
+                                                            padding: const EdgeInsets.only(left: 8.0, right: 8.0, bottom: 8),
+                                                            child: SvgPicture.asset(sendIcon),
+                                                          ))
+                                                      : const SizedBox.shrink();
+                                                }),
+                                                Obx(() {
+                                                  return controller.isAudioRecording.value == Constants.audioRecording
+                                                      ? InkWell(
+                                                          onTap: () {
+                                                            controller.stopRecording();
+                                                          },
+                                                          child: const Padding(
+                                                            padding: EdgeInsets.only(bottom: 8.0),
+                                                            child: LottieAnimation(
+                                                              lottieJson: audioJson1,
+                                                              showRepeat: true,
+                                                              width: 54,
+                                                              height: 54,
+                                                            ),
+                                                          ))
+                                                      : const SizedBox.shrink();
+                                                }),
+                                                const SizedBox(
+                                                  width: 5,
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                          emojiLayout(),
+                                        ],
+                                      )
+                                    : !controller.availableFeatures.value.isGroupChatAvailable.checkNull()
+                                        ? featureNotAvailable()
+                                        : userNoLonger(),
                           );
                         }),
                       ),
@@ -250,16 +202,12 @@ class ChatView extends GetView<ChatController> {
                           children: [
                             controller.unreadCount.value != 0
                                 ? CircleAvatar(
-                              radius: 8,
-                              child: Text(
-                                returnFormattedCount(
-                                    controller.unreadCount.value),
-                                style: const TextStyle(
-                                    fontSize: 9,
-                                    color: Colors.white,
-                                    fontFamily: 'sf_ui'),
-                              ),
-                            )
+                                    radius: 8,
+                                    child: Text(
+                                      returnFormattedCount(controller.unreadCount.value),
+                                      style: const TextStyle(fontSize: 9, color: Colors.white, fontFamily: 'sf_ui'),
+                                    ),
+                                  )
                                 : const SizedBox.shrink(),
                             IconButton(
                               icon: Image.asset(
@@ -277,41 +225,37 @@ class ChatView extends GetView<ChatController> {
                       ),
                     );
                   }),
-                  if (Constants.enableContactSync)...[
+                  if (Constants.enableContactSync) ...[
                     Obx(() {
                       return !controller.profile.isItSavedContact.checkNull()
                           ? Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          const SizedBox(
-                            width: 8,
-                          ),
-                          buttonNotSavedContact(
-                              text: 'Add',
-                              onClick: () {
-                                controller.saveContact();
-                              }),
-                          const SizedBox(
-                            width: 8,
-                          ),
-                          buttonNotSavedContact(
-                              text:
-                              controller.profile.isBlocked.checkNull()
-                                  ? 'UnBlock'
-                                  : 'Block',
-                              onClick: () {
-                                if (controller.profile.isBlocked
-                                    .checkNull()) {
-                                  controller.unBlockUser();
-                                } else {
-                                  controller.blockUser();
-                                }
-                              }),
-                          const SizedBox(
-                            width: 8,
-                          ),
-                        ],
-                      )
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                const SizedBox(
+                                  width: 8,
+                                ),
+                                buttonNotSavedContact(
+                                    text: 'Add',
+                                    onClick: () {
+                                      controller.saveContact();
+                                    }),
+                                const SizedBox(
+                                  width: 8,
+                                ),
+                                buttonNotSavedContact(
+                                    text: controller.profile.isBlocked.checkNull() ? 'UnBlock' : 'Block',
+                                    onClick: () {
+                                      if (controller.profile.isBlocked.checkNull()) {
+                                        controller.unBlockUser();
+                                      } else {
+                                        controller.blockUser();
+                                      }
+                                    }),
+                                const SizedBox(
+                                  width: 8,
+                                ),
+                              ],
+                            )
                           : const SizedBox.shrink();
                     })
                   ],
@@ -322,8 +266,7 @@ class ChatView extends GetView<ChatController> {
         ));
   }
 
-  Widget buttonNotSavedContact({required String text, required Function()? onClick}) =>
-      Expanded(
+  Widget buttonNotSavedContact({required String text, required Function()? onClick}) => Expanded(
         child: InkWell(
           onTap: onClick,
           child: Container(
@@ -341,125 +284,114 @@ class ChatView extends GetView<ChatController> {
   messageTypingView(BuildContext context) {
     return Row(
       children: <Widget>[
-        controller.isAudioRecording.value == Constants.audioRecording ||
-            controller.isAudioRecording.value == Constants.audioRecordDone
-            ? Text(controller.timerInit.value,
-            style: const TextStyle(color: buttonBgColor))
+        controller.isAudioRecording.value == Constants.audioRecording || controller.isAudioRecording.value == Constants.audioRecordDone
+            ? Text(controller.timerInit.value, style: const TextStyle(color: buttonBgColor))
             : const SizedBox.shrink(),
         controller.isAudioRecording.value == Constants.audioRecordInitial
             ? InkWell(
-            onTap: () {
-              controller.showHideEmoji(context);
-            },
-            child: controller.showEmoji.value
-                ? const Icon(
-              Icons.keyboard,
-              color: iconColor,
-            )
-                : SvgPicture.asset(smileIcon))
+                onTap: () {
+                  controller.showHideEmoji(context);
+                },
+                child: controller.showEmoji.value
+                    ? const Icon(
+                        Icons.keyboard,
+                        color: iconColor,
+                      )
+                    : SvgPicture.asset(smileIcon))
             : const SizedBox.shrink(),
         controller.isAudioRecording.value == Constants.audioRecordDelete
             ? const Padding(
-          padding: EdgeInsets.all(13.0),
-          child: LottieAnimation(
-            lottieJson: deleteDustbin,
-            showRepeat: false,
-            width: 25,
-            height: 25,
-          ),
-        )
+                padding: EdgeInsets.all(13.0),
+                child: LottieAnimation(
+                  lottieJson: deleteDustbin,
+                  showRepeat: false,
+                  width: 25,
+                  height: 25,
+                ),
+              )
             : const SizedBox.shrink(),
         const SizedBox(
           width: 10,
         ),
         controller.isAudioRecording.value == Constants.audioRecording
             ? Expanded(
-          child: Dismissible(
-            key: UniqueKey(),
-            dismissThresholds: const {
-              DismissDirection.endToStart: 0.1,
-            },
-            confirmDismiss: (DismissDirection direction) async {
-              if (direction == DismissDirection.endToStart) {
-                controller.cancelRecording();
-                return true;
-              }
-              return false;
-            },
-            onUpdate: (details) {
-              mirrorFlyLog("dismiss", details.progress.toString());
-              if (details.progress > 0.5) {
-                controller.cancelRecording();
-              }
-            },
-            direction: DismissDirection.endToStart,
-            child: const Padding(
-              padding: EdgeInsets.only(right: 15.0),
-              child: SizedBox(
-                  height: 50,
-                  child: Align(
-                      alignment: Alignment.centerRight,
-                      child: Text('< Slide to Cancel',
-                          textAlign: TextAlign.end))),
-            ),
-          ),
-        )
+                child: Dismissible(
+                  key: UniqueKey(),
+                  dismissThresholds: const {
+                    DismissDirection.endToStart: 0.1,
+                  },
+                  confirmDismiss: (DismissDirection direction) async {
+                    if (direction == DismissDirection.endToStart) {
+                      controller.cancelRecording();
+                      return true;
+                    }
+                    return false;
+                  },
+                  onUpdate: (details) {
+                    mirrorFlyLog("dismiss", details.progress.toString());
+                    if (details.progress > 0.5) {
+                      controller.cancelRecording();
+                    }
+                  },
+                  direction: DismissDirection.endToStart,
+                  child: const Padding(
+                    padding: EdgeInsets.only(right: 15.0),
+                    child: SizedBox(
+                        height: 50, child: Align(alignment: Alignment.centerRight, child: Text('< Slide to Cancel', textAlign: TextAlign.end))),
+                  ),
+                ),
+              )
             : const SizedBox.shrink(),
         controller.isAudioRecording.value == Constants.audioRecordDone
             ? Expanded(
-          child: InkWell(
-            onTap: () {
-              controller.deleteRecording();
-            },
-            child: const Padding(
-              padding: EdgeInsets.all(17.0),
-              child: Text(
-                'Cancel',
-                textAlign: TextAlign.end,
-                style: TextStyle(color: Colors.red),
-              ),
-            ),
-          ),
-        )
+                child: InkWell(
+                  onTap: () {
+                    controller.deleteRecording();
+                  },
+                  child: const Padding(
+                    padding: EdgeInsets.all(17.0),
+                    child: Text(
+                      'Cancel',
+                      textAlign: TextAlign.end,
+                      style: TextStyle(color: Colors.red),
+                    ),
+                  ),
+                ),
+              )
             : const SizedBox.shrink(),
         controller.isAudioRecording.value == Constants.audioRecordInitial
             ? Expanded(
-          child: TextField(
-            onChanged: (text) {
-              controller.isTyping(text);
-            },
-            style: const TextStyle(fontWeight: FontWeight.w400),
-            keyboardType: TextInputType.multiline,
-            minLines: 1,
-            maxLines: 5,
-            enabled: controller.isAudioRecording.value ==
-                Constants.audioRecordInitial
-                ? true
-                : false,
-            controller: controller.messageController,
-            focusNode: controller.focusNode,
-            decoration: const InputDecoration(
-                hintText: "Start Typing...", border: InputBorder.none),
-          ),
-        )
+                child: TextField(
+                  onChanged: (text) {
+                    controller.isTyping(text);
+                  },
+                  style: const TextStyle(fontWeight: FontWeight.w400),
+                  keyboardType: TextInputType.multiline,
+                  minLines: 1,
+                  maxLines: 5,
+                  enabled: controller.isAudioRecording.value == Constants.audioRecordInitial ? true : false,
+                  controller: controller.messageController,
+                  focusNode: controller.focusNode,
+                  decoration: const InputDecoration(hintText: "Start Typing...", border: InputBorder.none),
+                ),
+              )
+            : const SizedBox.shrink(),
+        (controller.isAudioRecording.value == Constants.audioRecordInitial && controller.availableFeatures.value.isAttachmentAvailable.checkNull())
+            ? IconButton(
+                onPressed: () {
+                  controller.showAttachmentsView(context);
+                },
+                icon: SvgPicture.asset('assets/logos/attach.svg'),
+              )
             : const SizedBox.shrink(),
         (controller.isAudioRecording.value == Constants.audioRecordInitial &&
-            controller.availableFeatures.value.isAttachmentAvailable.checkNull())
+                controller.availableFeatures.value.isAudioAttachmentAvailable.checkNull())
             ? IconButton(
-          onPressed: () {
-            controller.showAttachmentsView(context);
-          },
-          icon: SvgPicture.asset('assets/logos/attach.svg'),
-        )
-            : const SizedBox.shrink(),
-        (controller.isAudioRecording.value == Constants.audioRecordInitial &&
-            controller.availableFeatures.value.isAudioAttachmentAvailable.checkNull())
-            ? IconButton(
-          onPressed: () {
-            controller.startRecording();
-          },
-          icon: SvgPicture.asset('assets/logos/mic.svg'),
-        )
+                onPressed: () {
+                  controller.startRecording();
+                },
+                icon: SvgPicture.asset('assets/logos/mic.svg'),
+              )
             : const SizedBox.shrink(),
         const SizedBox(
           width: 5,
@@ -505,8 +437,7 @@ class ChatView extends GetView<ChatController> {
               InkWell(
                 child: const Text(
                   'UNBLOCK',
-                  style: TextStyle(
-                      decoration: TextDecoration.underline, color: Colors.blue),
+                  style: TextStyle(decoration: TextDecoration.underline, color: Colors.blue),
                 ),
                 onTap: () => controller.unBlockUser(),
               ),
@@ -603,8 +534,6 @@ class ChatView extends GetView<ChatController> {
       }
     });
   }
-
-
 
   selectedAppBar() {
     return AppBar(
@@ -874,19 +803,16 @@ class ChatView extends GetView<ChatController> {
                 Obx(() {
                   return controller.groupParticipantsName.isNotEmpty
                       ? SizedBox(
-                      width: Get.width * 0.90,
-                      height: 15,
-                      child: Marquee(
-                          text:
-                          "${controller.groupParticipantsName}       ",
-                          style: const TextStyle(fontSize: 12)))
+                          width: Get.width * 0.90,
+                          height: 15,
+                          child: Marquee(text: "${controller.groupParticipantsName}       ", style: const TextStyle(fontSize: 12)))
                       : controller.subtitle.isNotEmpty
-                      ? Text(
-                    controller.subtitle,
-                    style: const TextStyle(fontSize: 12),
-                    overflow: TextOverflow.fade,
-                  )
-                      : const SizedBox();
+                          ? Text(
+                              controller.subtitle,
+                              style: const TextStyle(fontSize: 12),
+                              overflow: TextOverflow.fade,
+                            )
+                          : const SizedBox();
                 })
               ],
             ),

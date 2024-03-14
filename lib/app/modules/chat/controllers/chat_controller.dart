@@ -4,6 +4,7 @@ import 'dart:io';
 
 import 'package:audioplayers/audioplayers.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -2641,7 +2642,7 @@ class ChatController extends FullLifeCycleController
   }
 
   bool forwardMessageVisibility(ChatMessageModel chat) {
-    if (!chat.isMessageRecalled.value && !chat.isMessageDeleted) {
+    if (chat.isMessageSentByMe && !chat.isMessageRecalled.value && !chat.isMessageDeleted) {
       if (chat.isMediaMessage()) {
         if ((chat.mediaChatMessage!.mediaDownloadStatus.value ==
             Constants.mediaDownloaded ||
