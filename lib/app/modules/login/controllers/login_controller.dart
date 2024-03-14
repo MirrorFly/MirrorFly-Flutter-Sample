@@ -3,7 +3,6 @@ import 'dart:io';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:mirror_fly_demo/app/common/extensions.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -111,7 +110,7 @@ class LoginController extends GetxController {
           "dialCode : $dialCode, mobileNumber : $mobileNumber");
       lib_phone_number.init();
       var parse = await lib_phone_number.parse(dialCode+mobileNumber);
-      LogMessage.d("validMobileNumber", "parse : $parse");;
+      LogMessage.d("validMobileNumber", "parse : $parse");
       return true;
     }catch(e){
       LogMessage.e("validMobileNumber", "error : $e");

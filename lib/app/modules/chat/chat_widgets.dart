@@ -322,7 +322,7 @@ getReplyImageHolder(BuildContext context,
                   ? mAudioRecordIcon
                   : mAudioIcon,
               fit: BoxFit.contain,
-              color: Colors.white,
+              colorFilter: const ColorFilter.mode(Colors.white, BlendMode.srcIn),
               height: 18,
             ),
           ),
@@ -1497,7 +1497,7 @@ class VideoMessageView extends StatelessWidget {
                     SvgPicture.asset(
                       mVideoIcon,
                       fit: BoxFit.contain,
-                      color: Colors.white,
+                      colorFilter: const ColorFilter.mode(Colors.white, BlendMode.srcIn),
                     ),
                     const SizedBox(
                       width: 5,
@@ -2148,7 +2148,7 @@ uploadView(int mediaFileSize, String messageType) {
         padding: const EdgeInsets.all(7),
         child: SvgPicture.asset(
           uploadIcon,
-          color: playIconColor,
+          colorFilter: const ColorFilter.mode(playIconColor, BlendMode.srcIn),
         ))
         : Container(
         height: 35,
@@ -2215,7 +2215,7 @@ Widget downloadView(int mediaFileSize, String messageType) {
         padding: const EdgeInsets.all(7),
         child: SvgPicture.asset(
           downloadIcon,
-          color: playIconColor,
+          colorFilter: const ColorFilter.mode(playIconColor, BlendMode.srcIn),
         ))
         : Container(
       height: 35,
@@ -2266,7 +2266,7 @@ downloadingOrUploadingView(String messageType, int progress) {
                 SvgPicture.asset(
                   downloading,
                   fit: BoxFit.contain,
-                  color: playIconColor,
+                  colorFilter: const ColorFilter.mode(playIconColor, BlendMode.srcIn),
                 ),
                 Align(
                   alignment: Alignment.bottomCenter,

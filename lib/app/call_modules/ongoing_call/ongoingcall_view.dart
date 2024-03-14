@@ -256,7 +256,7 @@ class OnGoingCallView extends GetView<CallController> {
               },
               icon: SvgPicture.asset(
                 gridIcon,
-                color: Colors.white,
+                colorFilter: const ColorFilter.mode(Colors.white, BlendMode.srcIn),
               ),
             )
           ],
