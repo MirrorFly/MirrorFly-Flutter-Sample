@@ -1,15 +1,12 @@
-import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
-
+import 'package:mirror_fly_demo/app/common/extensions.dart';
 import 'package:mirrorfly_plugin/mirrorflychat.dart';
 import 'package:mirror_fly_demo/app/modules/chat/controllers/chat_controller.dart';
 
-import '../../../common/constants.dart';
-import '../../../data/helper.dart';
 import '../../../data/permissions.dart';
 import '../../../model/chat_message_model.dart';
 
@@ -75,7 +72,7 @@ class MessageInfoController extends GetxController {
   downloadMedia(String messageId) async {
     var permission = await AppPermission.getStoragePermission();
     if (permission) {
-      Mirrorfly.downloadMedia(messageId);
+      Mirrorfly.downloadMedia(messageId: messageId);
     }
   }
   /*@override
@@ -143,22 +140,29 @@ class MessageInfoController extends GetxController {
     }*/
   }
 
-  var messageDeliveredList = <DeliveredParticipantList>[].obs;
-  var messageReadList = <DeliveredParticipantList>[].obs;
+  var messageDeliveredList = <ParticipantList>[].obs;
+  var messageReadList = <ParticipantList>[].obs;
   var statusCount = 0.obs;
-  String chatDate(BuildContext cxt,DeliveredParticipantList item) => getChatTime(cxt, int.parse(item.time.checkNull()));
+  String chatDate(BuildContext cxt,ParticipantList item) => getChatTime(cxt, int.parse(item.time.checkNull()));
   getMessageStatus(String messageId) async {
-    var delivered = await Mirrorfly.getGroupMessageDeliveredToList(messageId, jid);
-    mirrorFlyLog("deliveredResp", delivered);
-    var item = MessageDeliveredStatus.fromJson(json.decode(delivered), "delivered");
-    statusCount(item.totalParticipatCount!);
-    messageDeliveredList(item.participantList);
+    Mirrorfly.getGroupMessageDeliveredRecipients(messageId: messageId, groupJid: jid, flyCallBack: (FlyResponse response) {
+      LogMessage.d("deliveredResp", response.data);
+      if(response.hasData) {
+        var item = messageStatusDetailFromJson(response.data);
+        statusCount(item.totalParticipantCount!);
+        messageDeliveredList(item.participantList);
+      }
+    });
 
 
-    var read = await Mirrorfly.getGroupMessageReadByList(messageId, jid);
-    mirrorFlyLog("readResp", read);
-    var readItem = MessageDeliveredStatus.fromJson(json.decode(read), "read");
-    messageReadList(readItem.participantList);
+
+    Mirrorfly.getGroupMessageSeenRecipients(messageId: messageId, groupJid: jid, flyCallBack: (FlyResponse response) {
+      LogMessage.d("readResp", response.data);
+      if(response.hasData) {
+        var readItem = messageStatusDetailFromJson(response.data);
+        messageReadList(readItem.participantList);
+      }
+    });
   }
 
   var visibleDeliveredList = false.obs;
@@ -190,10 +194,11 @@ class MessageInfoController extends GetxController {
   
   getStatusOfMessage(String messageId){
     if(!isGroupProfile) {
-      Mirrorfly.getMessageStatusOfASingleChatMessage(messageId).then((value) {
-        var response = json.decode(value);
-        readTime(response["seenTime"]);
-        deliveredTime(response["deliveredTime"]);
+      Mirrorfly.getMessageStatusOf(messageId: messageId).then((value) {
+        LogMessage.d("getMessageStatusOf", value);
+        var chatMessageStatusDetail = chatMessageStatusDetailFromJson(value);
+        readTime(chatMessageStatusDetail.seenTime);
+        deliveredTime(chatMessageStatusDetail.deliveredTime);
       });
     }else{
       getMessageStatus(messageId);

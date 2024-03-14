@@ -10,8 +10,9 @@ import 'package:get/get.dart';
 import 'package:marquee/marquee.dart';
 import 'package:mirror_fly_demo/app/common/widgets.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
-
+import 'package:mirror_fly_demo/app/common/extensions.dart';
 import 'package:mirror_fly_demo/app/routes/app_pages.dart';
+import 'package:mirrorfly_plugin/logmessage.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:swipe_to/swipe_to.dart';
 
@@ -21,35 +22,32 @@ import '../../../widgets/custom_action_bar_icons.dart';
 import '../../../widgets/lottie_animation.dart';
 import '../chat_widgets.dart';
 import '../controllers/chat_controller.dart';
+import 'chat_list_view.dart';
 
 class ChatView extends GetView<ChatController> {
   const ChatView({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    controller.screenHeight = MediaQuery
-        .of(context)
-        .size
-        .height;
-    controller.screenWidth = MediaQuery
-        .of(context)
-        .size
-        .width;
-
+    LogMessage.d("chatview build", "${Get.height}");
     return Scaffold(
         appBar: getAppBar(),
         body: SafeArea(
           child: Container(
-            width: controller.screenWidth,
-            height: controller.screenHeight,
+            width: Get.width,
+            height: Get.height,
             decoration: const BoxDecoration(
               image: DecorationImage(
                 image: AssetImage("assets/logos/chat_bg.png"),
                 fit: BoxFit.cover,
               ),
             ),
-            child: WillPopScope(
-              onWillPop: () {
+            child: PopScope(
+              canPop: false,
+              onPopInvoked: (didPop) {
+                if (didPop) {
+                  return;
+                }
                 mirrorFlyLog("viewInsets",
                     MediaQuery
                         .of(context)
@@ -67,13 +65,12 @@ class ChatView extends GetView<ChatController> {
                 } else if (controller.nJid != null) {
                   // controller.saveUnsentMessage();
                   Get.offAllNamed(Routes.dashboard);
-                  return Future.value(true);
+                  Get.back();
                 } else if (controller.isSelected.value) {
                   controller.clearAllChatSelection();
                 } else {
-                  return Future.value(true);
+                  Get.back();
                 }
-                return Future.value(false);
               },
               child: Stack(
                 children: [
@@ -194,7 +191,7 @@ class ChatView extends GetView<ChatController> {
                                                   right: 8.0,
                                                   bottom: 8),
                                               child: SvgPicture.asset(
-                                                  'assets/logos/send.svg'),
+                                                  sendIcon),
                                             ))
                                             : const SizedBox.shrink();
                                       }),
@@ -280,7 +277,7 @@ class ChatView extends GetView<ChatController> {
                       ),
                     );
                   }),
-                  if (!controller.isTrail)
+                  if (Constants.enableContactSync)...[
                     Obx(() {
                       return !controller.profile.isItSavedContact.checkNull()
                           ? Row(
@@ -317,8 +314,7 @@ class ChatView extends GetView<ChatController> {
                       )
                           : const SizedBox.shrink();
                     })
-                  else
-                    const SizedBox.shrink(),
+                  ],
                 ],
               ),
             ),
@@ -618,34 +614,37 @@ class ChatView extends GetView<ChatController> {
           }
           return false;
         },
-        child: ScrollablePositionedList.builder(
+        child: ScrollablePositionedList.separated(
+          separatorBuilder: (context,index){
+            var string = groupedDateMessage(index, chatList);//Date Labels
+            return string != null
+                ? NotificationMessageView(
+                chatMessage: string) : const Offstage();
+          },
           itemScrollController: controller.newScrollController,
           itemPositionsListener: controller.newitemPositionsListener,
           itemCount: chatList.length,
           shrinkWrap: true,
           reverse: true,
           itemBuilder: (context, pos) {
-            var index = pos;
+            final index = pos;
+            LogMessage.d("ScrollablePositionedList", "build $index ${chatList[index].messageId}");
             return Column(
               mainAxisSize: MainAxisSize.min,
               children: [
                 Obx(() {
                   return Visibility(
-                      visible: (controller.loadNextData.value && pos == chatList.length - 1),
+                      visible: (controller.showLoadingPrevious.value && index == chatList.length - 1),
                       //|| (controller.loadPreviousData.value && pos==chatList.length-1) ,
                       child: const Center(
                           child: CircularProgressIndicator()
                       ));
                 }),
-                groupedDateMessage(index, chatList) != null
-                    ? NotificationMessageView(
-                    chatMessage: groupedDateMessage(index, chatList))
-                    : const SizedBox.shrink(),
                 (chatList[index].messageType.toUpperCase() !=
                     Constants.mNotification)
                     ? SwipeTo(
                   key: ValueKey(chatList[index].messageId),
-                  onRightSwipe: (DragUpdateDetails dragUpdateDetails) {
+                  onRightSwipe: (DragUpdateDetails dragUpdateDetails){
                     if (!chatList[index].isMessageRecalled.value &&
                         !chatList[index].isMessageDeleted &&
                         chatList[index]
@@ -671,6 +670,7 @@ class ChatView extends GetView<ChatController> {
                     },
                     onTap: () {
                       debugPrint("On Tap");
+                      FocusManager.instance.primaryFocus?.unfocus();
                       if (controller.isSelected.value) {
                         controller.isSelected.value
                             ? controller.selectedChatList
@@ -699,6 +699,7 @@ class ChatView extends GetView<ChatController> {
                       controller.translateMessage(index);
                     },
                     child: Obx(() {
+                      LogMessage.d("Container", "build ${chatList[index].messageId}");
                       return Container(
                         key: Key(chatList[index].messageId),
                         color: chatList[index].isSelected.value
@@ -730,8 +731,7 @@ class ChatView extends GetView<ChatController> {
                               ),
                               Container(
                                 constraints: BoxConstraints(
-                                    maxWidth:
-                                    controller.screenWidth * 0.75),
+                                    maxWidth:Get.width * 0.75),
                                 decoration: BoxDecoration(
                                     borderRadius: chatList[index]
                                         .isMessageSentByMe
@@ -773,30 +773,28 @@ class ChatView extends GetView<ChatController> {
                                         : ReplyMessageHeader(
                                         chatMessage:
                                         chatList[index]) : const SizedBox.shrink(),
-                                    Obx(() {
-                                      return MessageContent(
-                                          chatList: chatList,
-                                          index: index,
-                                          onPlayAudio: () {
-                                            if (controller
-                                                .isAudioRecording
-                                                .value ==
-                                                Constants
-                                                    .audioRecording) {
-                                              controller
-                                                  .stopRecording();
-                                            }
-                                            controller.playAudio(
-                                                chatList[index]);
-                                          },
-                                          onSeekbarChange:
-                                              (double value) {
-                                            controller.onSeekbarChange(
-                                                value, chatList[index]);
-                                          },
-                                          isSelected: controller
-                                              .isSelected.value);
-                                    })
+                                    MessageContent(
+                                        chatList: chatList,
+                                        index: index,
+                                        onPlayAudio: () {
+                                          if (controller
+                                              .isAudioRecording
+                                              .value ==
+                                              Constants
+                                                  .audioRecording) {
+                                            controller
+                                                .stopRecording();
+                                          }
+                                          controller.playAudio(
+                                              chatList[index]);
+                                        },
+                                        onSeekbarChange:
+                                            (double value) {
+                                          controller.onSeekbarChange(
+                                              value, chatList[index]);
+                                        },
+                                        isSelected: controller
+                                            .isSelected.value)
                                   ],
                                 ),
                               ),
@@ -824,7 +822,7 @@ class ChatView extends GetView<ChatController> {
                     chatMessage: chatList[index].messageTextContent),
                 Obx(() {
                   return Visibility(
-                      visible: (controller.loadPreviousData.value && pos == 0),
+                      visible: (controller.showLoadingNext.value && index == 0),
                       child: const Center(
                         child: CircularProgressIndicator(),
                       ));
@@ -850,31 +848,27 @@ class ChatView extends GetView<ChatController> {
       title: Text(controller.selectedChatList.length.toString()),
       actions: [
         CustomActionBarIcons(
-            availableWidth: controller.screenWidth / 2, // half the screen width
+            availableWidth: Get.width / 2, // half the screen width
             actionWidth: 48, // default for IconButtons
             actions: [
               // controller.getOptionStatus('Reply')
               CustomAction(
                 visibleWidget: IconButton(
                   onPressed: () {
-                    controller
-                        .handleReplyChatMessage(controller.selectedChatList[0]);
-                    controller
-                        .clearChatSelection(controller.selectedChatList[0]);
+                    controller.handleReplyChatMessage(controller.selectedChatList[0]);
+                    controller.clearChatSelection(controller.selectedChatList[0]);
                   },
                   icon: SvgPicture.asset(replyIcon),
                   tooltip: 'Reply',
                 ),
                 overflowWidget: const Text("Reply"),
-                showAsAction: (controller.canBeReplied.value &&
-                    controller.availableFeatures.value.isClearChatAvailable.checkNull())
+                showAsAction: (controller.canBeReplied.value && controller.availableFeatures.value.isClearChatAvailable.checkNull())
                     ? ShowAsAction.always
                     : ShowAsAction.gone,
                 keyValue: 'Reply',
                 onItemClick: () {
                   controller.closeKeyBoard();
-                  controller
-                      .handleReplyChatMessage(controller.selectedChatList[0]);
+                  controller.handleReplyChatMessage(controller.selectedChatList[0]);
                   controller.clearChatSelection(controller.selectedChatList[0]);
                 },
               ),
@@ -887,9 +881,7 @@ class ChatView extends GetView<ChatController> {
                   tooltip: 'Forward',
                 ),
                 overflowWidget: const Text("Forward"),
-                showAsAction: controller.canBeForwarded.value
-                    ? ShowAsAction.always
-                    : ShowAsAction.gone,
+                showAsAction: controller.canBeForwarded.value ? ShowAsAction.always : ShowAsAction.gone,
                 keyValue: 'Forward',
                 onItemClick: () {
                   controller.closeKeyBoard();
@@ -910,9 +902,7 @@ class ChatView extends GetView<ChatController> {
                   tooltip: 'Favourite',
                 ),
                 overflowWidget: const Text("Favourite"),
-                showAsAction: controller.canBeStarred.value
-                    ? ShowAsAction.always
-                    : ShowAsAction.gone,
+                showAsAction: controller.canBeStarred.value ? ShowAsAction.always : ShowAsAction.gone,
                 keyValue: 'favourite',
                 onItemClick: () {
                   controller.closeKeyBoard();
@@ -930,9 +920,7 @@ class ChatView extends GetView<ChatController> {
                   tooltip: 'unFavourite',
                 ),
                 overflowWidget: const Text("unFavourite"),
-                showAsAction: controller.canBeUnStarred.value
-                    ? ShowAsAction.always
-                    : ShowAsAction.gone,
+                showAsAction: controller.canBeUnStarred.value ? ShowAsAction.always : ShowAsAction.gone,
                 keyValue: 'favourite',
                 onItemClick: () {
                   controller.closeKeyBoard();
@@ -948,8 +936,7 @@ class ChatView extends GetView<ChatController> {
                   tooltip: 'Delete',
                 ),
                 overflowWidget: const Text("Delete"),
-                showAsAction: controller.availableFeatures.value.isDeleteMessageAvailable.checkNull() ? ShowAsAction
-                    .always : ShowAsAction.gone,
+                showAsAction: controller.availableFeatures.value.isDeleteMessageAvailable.checkNull() ? ShowAsAction.always : ShowAsAction.gone,
                 keyValue: 'Delete',
                 onItemClick: () {
                   controller.closeKeyBoard();
@@ -966,9 +953,7 @@ class ChatView extends GetView<ChatController> {
                     },
                     icon: const Icon(Icons.report_problem_rounded)),
                 overflowWidget: const Text("Report"),
-                showAsAction: controller.canShowReport.value
-                    ? ShowAsAction.never
-                    : ShowAsAction.gone,
+                showAsAction: controller.canShowReport.value ? ShowAsAction.never : ShowAsAction.gone,
                 keyValue: 'Report',
                 onItemClick: () {
                   controller.closeKeyBoard();
@@ -993,9 +978,7 @@ class ChatView extends GetView<ChatController> {
                   tooltip: 'Copy',
                 ),
                 overflowWidget: const Text("Copy"),
-                showAsAction: controller.canBeCopied.value
-                    ? ShowAsAction.never
-                    : ShowAsAction.gone,
+                showAsAction: controller.canBeCopied.value ? ShowAsAction.never : ShowAsAction.gone,
                 keyValue: 'Copy',
                 onItemClick: () {
                   controller.closeKeyBoard();
@@ -1018,9 +1001,7 @@ class ChatView extends GetView<ChatController> {
                   tooltip: 'Message Info',
                 ),
                 overflowWidget: const Text("Message Info"),
-                showAsAction: controller.canShowInfo.value
-                    ? ShowAsAction.never
-                    : ShowAsAction.gone,
+                showAsAction: controller.canShowInfo.value ? ShowAsAction.never : ShowAsAction.gone,
                 keyValue: 'MessageInfo',
                 onItemClick: () {
                   controller.closeKeyBoard();
@@ -1037,9 +1018,7 @@ class ChatView extends GetView<ChatController> {
                   tooltip: 'Share',
                 ),
                 overflowWidget: const Text("Share"),
-                showAsAction: controller.canBeShared.value
-                    ? ShowAsAction.never
-                    : ShowAsAction.gone,
+                showAsAction: controller.canBeShared.value ? ShowAsAction.never : ShowAsAction.gone,
                 keyValue: 'Share',
                 onItemClick: () {
                   controller.closeKeyBoard();
@@ -1084,32 +1063,30 @@ class ChatView extends GetView<ChatController> {
                 isGroup: controller.profile.isGroupProfile.checkNull(),
                 errorWidget: controller.profile.isGroupProfile ?? false
                     ? ClipOval(
-                  child: Image.asset(
-                    groupImg,
-                    height: 35,
-                    width: 35,
-                    fit: BoxFit.cover,
-                  ),
-                )
+                        child: Image.asset(
+                          groupImg,
+                          height: 35,
+                          width: 35,
+                          fit: BoxFit.cover,
+                        ),
+                      )
                     : ProfileTextImage(
-                  text: getName(controller.profile),
-                  /*controller.profile.name.checkNull().isEmpty
+                        text: getName(controller.profile),
+                        /*controller.profile.name.checkNull().isEmpty
                             ? controller.profile.nickName.checkNull().isEmpty
                                 ? controller.profile.mobileNumber.checkNull()
                                 : controller.profile.nickName.checkNull()
                             : controller.profile.name.checkNull(),*/
-                  radius: 18,
-                ),
-                blocked: controller.profile.isBlockedMe.checkNull() ||
-                    controller.profile.isAdminBlocked.checkNull(),
-                unknown: (!controller.profile.isItSavedContact.checkNull() ||
-                    controller.profile.isDeletedContact()),
+                        radius: 18,
+                      ),
+                blocked: controller.profile.isBlockedMe.checkNull() || controller.profile.isAdminBlocked.checkNull(),
+                unknown: (!controller.profile.isItSavedContact.checkNull() || controller.profile.isDeletedContact()),
               ),
             ],
           ),
         ),
         title: SizedBox(
-          width: (controller.screenWidth) / 1.9,
+          width: (Get.width) / 1.9,
           child: InkWell(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -1126,7 +1103,7 @@ class ChatView extends GetView<ChatController> {
                 Obx(() {
                   return controller.groupParticipantsName.isNotEmpty
                       ? SizedBox(
-                      width: (controller.screenWidth) * 0.90,
+                      width: Get.width * 0.90,
                       height: 15,
                       child: Marquee(
                           text:
@@ -1143,22 +1120,19 @@ class ChatView extends GetView<ChatController> {
               ],
             ),
             onTap: () {
-              mirrorFlyLog("title clicked",
-                  controller.profile.isGroupProfile.toString());
+              mirrorFlyLog("title clicked", controller.profile.isGroupProfile.toString());
               controller.infoPage();
             },
           ),
         ),
         actions: [
           CustomActionBarIcons(
-            availableWidth: controller.screenWidth / 2, // half the screen width
+            availableWidth: Get.width / 2, // half the screen width
             actionWidth: 48, // default for IconButtons
             actions: [
               CustomAction(
                 overflowWidget: const Text("Clear Chat"),
-                showAsAction: controller.availableFeatures.value.isClearChatAvailable.checkNull()
-                    ? ShowAsAction.never
-                    : ShowAsAction.gone,
+                showAsAction: controller.availableFeatures.value.isClearChatAvailable.checkNull() ? ShowAsAction.never : ShowAsAction.gone,
                 keyValue: 'Clear Chat',
                 onItemClick: () {
                   controller.closeKeyBoard();
@@ -1183,39 +1157,37 @@ class ChatView extends GetView<ChatController> {
               ),
               controller.isBlocked.value
                   ? CustomAction(
-                visibleWidget: IconButton(
-                  onPressed: () {
-                    // Get.back();
-                    controller.unBlockUser();
-                  },
-                  icon: const Icon(Icons.block),
-                ),
-                overflowWidget: const Text("Unblock"),
-                showAsAction: ShowAsAction.never,
-                keyValue: 'Unblock',
-                onItemClick: () {
-                  debugPrint('onItemClick unblock');
-                  controller.unBlockUser();
-                },
-              )
+                      visibleWidget: IconButton(
+                        onPressed: () {
+                          // Get.back();
+                          controller.unBlockUser();
+                        },
+                        icon: const Icon(Icons.block),
+                      ),
+                      overflowWidget: const Text("Unblock"),
+                      showAsAction: ShowAsAction.never,
+                      keyValue: 'Unblock',
+                      onItemClick: () {
+                        debugPrint('onItemClick unblock');
+                        controller.unBlockUser();
+                      },
+                    )
                   : CustomAction(
-                visibleWidget: IconButton(
-                  onPressed: () {
-                    // Get.back();
-                    controller.blockUser();
-                  },
-                  icon: const Icon(Icons.block),
-                ),
-                overflowWidget: const Text("Block"),
-                showAsAction: controller.profile.isGroupProfile ?? false
-                    ? ShowAsAction.gone
-                    : ShowAsAction.never,
-                keyValue: 'Block',
-                onItemClick: () {
-                  controller.closeKeyBoard();
-                  controller.blockUser();
-                },
-              ),
+                      visibleWidget: IconButton(
+                        onPressed: () {
+                          // Get.back();
+                          controller.blockUser();
+                        },
+                        icon: const Icon(Icons.block),
+                      ),
+                      overflowWidget: const Text("Block"),
+                      showAsAction: controller.profile.isGroupProfile ?? false ? ShowAsAction.gone : ShowAsAction.never,
+                      keyValue: 'Block',
+                      onItemClick: () {
+                        controller.closeKeyBoard();
+                        controller.blockUser();
+                      },
+                    ),
               CustomAction(
                 visibleWidget: IconButton(
                   onPressed: () {},
@@ -1268,8 +1240,7 @@ class ChatView extends GetView<ChatController> {
                   icon: SvgPicture.asset(videoCallIcon),
                 ),
                 overflowWidget: const Text("Video Call"),
-                showAsAction: controller.availableFeatures.value.isOneToOneCallAvailable.checkNull() ? controller
-                    .profile.isGroupProfile.checkNull() ? ShowAsAction.gone : ShowAsAction.always : ShowAsAction.gone,
+                showAsAction: controller.isVideoCallAvailable ? ShowAsAction.always : ShowAsAction.gone,
                 keyValue: 'Video Call',
                 onItemClick: () {
                   controller.makeVideoCall();
@@ -1283,8 +1254,7 @@ class ChatView extends GetView<ChatController> {
                   icon: SvgPicture.asset(audioCallIcon),
                 ),
                 overflowWidget: const Text("Call"),
-                showAsAction: controller.availableFeatures.value.isOneToOneCallAvailable.checkNull() ? controller
-                    .profile.isGroupProfile.checkNull() ? ShowAsAction.gone : ShowAsAction.always : ShowAsAction.gone,
+                showAsAction: controller.isAudioCallAvailable ? ShowAsAction.always : ShowAsAction.gone,
                 keyValue: 'Audio Call',
                 onItemClick: () {
                   controller.makeVoiceCall();

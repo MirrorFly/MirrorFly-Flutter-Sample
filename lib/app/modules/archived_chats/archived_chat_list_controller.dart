@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:mirror_fly_demo/app/common/main_controller.dart';
+import 'package:mirror_fly_demo/app/data/session_management.dart';
 import 'package:mirrorfly_plugin/mirrorflychat.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
 import 'package:mirror_fly_demo/app/modules/dashboard/controllers/dashboard_controller.dart';
-
+import 'package:mirror_fly_demo/app/common/extensions.dart';
 import '../../data/apputils.dart';
 import '../../data/helper.dart';
 import '../../model/chat_message_model.dart';
@@ -11,33 +13,31 @@ import '../../routes/app_pages.dart';
 
 class ArchivedChatListController extends GetxController {
   DashboardController dashboardController = Get.find<DashboardController>();
-  RxList<RecentChatData> archivedChats =
-      Get.find<DashboardController>().archivedChats;
+  RxList<RecentChatData> archivedChats = Get.find<DashboardController>().archivedChats;
 
   //RxList<RecentChatData> archivedChats = <RecentChatData>[].obs;
 
   @override
-  void onInit(){
+  void onInit() {
     super.onInit();
     //archivedChats(dashboardController.archivedChats);
     getArchivedSettingsEnabled();
   }
+
   final archiveEnabled = true.obs;
   Future<void> getArchivedSettingsEnabled() async {
     await Mirrorfly.isArchivedSettingsEnabled().then((value) => archiveEnabled(value));
   }
 
   getArchivedChatsList() async {
-    await Mirrorfly.getArchivedChatList().then((value) {
-      mirrorFlyLog("archived response", value.toString());
-      if(value != null) {
-        var data = recentChatFromJson(value);
+    await Mirrorfly.getArchivedChatList(flyCallBack: (FlyResponse response) {
+      mirrorFlyLog("archived response", response.toString());
+      if (response.isSuccess && response.hasData) {
+        var data = recentChatFromJson(response.data);
         archivedChats(data.data!);
-      }else{
+      } else {
         debugPrint("Archive list is empty");
       }
-    }).catchError((error) {
-      debugPrint("issue===> $error");
     });
   }
 
@@ -67,11 +67,10 @@ class ArchivedChatListController extends GetxController {
   menuValidationForItem() {
     // delete(false);
     if (selectedChats.length == 1) {
-      var item = archivedChats
-          .firstWhere((element) => selectedChats.first == element.jid);
+      var item = archivedChats.firstWhere((element) => selectedChats.first == element.jid);
       // delete(Constants.typeGroupChat != item.getChatType());
       menuValidationForDeleteIcon();
-      if ((Constants.typeBroadcastChat != item.getChatType()&& !archiveEnabled.value)) {
+      if ((Constants.typeBroadcastChat != item.getChatType() && !archiveEnabled.value)) {
         unMute(item.isMuted!);
         mute(!item.isMuted!);
         // shortcut(true);
@@ -83,7 +82,7 @@ class ArchivedChatListController extends GetxController {
       }
     } else {
       menuValidationForDeleteIcon();
-      if(!archiveEnabled.value) {
+      if (!archiveEnabled.value) {
         menuValidationForMuteUnMuteIcon();
       }
     }
@@ -99,8 +98,7 @@ class ArchivedChatListController extends GetxController {
   var typingAndGoneStatus = <Triple>[].obs;
 
   String typingUser(String jid) {
-    var index =
-        typingAndGoneStatus.indexWhere((it) => it.singleOrgroupJid == jid);
+    var index = typingAndGoneStatus.indexWhere((it) => it.singleOrgroupJid == jid);
     if (index.isNegative) {
       return "";
     } else {
@@ -110,10 +108,8 @@ class ArchivedChatListController extends GetxController {
     }
   }
 
-  void setTypingStatus(
-      String singleOrgroupJid, String userId, String typingStatus) {
-    var index = typingAndGoneStatus.indexWhere(
-        (it) => it.singleOrgroupJid == singleOrgroupJid && it.userId == userId);
+  void setTypingStatus(String singleOrgroupJid, String userId, String typingStatus) {
+    var index = typingAndGoneStatus.indexWhere((it) => it.singleOrgroupJid == singleOrgroupJid && it.userId == userId);
     if (typingStatus.toLowerCase() == Constants.composing) {
       if (index.isNegative) {
         typingAndGoneStatus.insert(0, Triple(singleOrgroupJid, userId, true));
@@ -127,7 +123,7 @@ class ArchivedChatListController extends GetxController {
 
   toChatPage(String jid) {
     if (jid.isNotEmpty) {
-      Get.toNamed(Routes.chat, parameters: {"chatJid":jid});
+      Get.toNamed(Routes.chat, parameters: {"chatJid": jid});
       // Helper.progressLoading();
       /*getProfileDetails(jid).then((value) {
         if (value.jid != null) {
@@ -142,9 +138,9 @@ class ArchivedChatListController extends GetxController {
   }
 
   _itemUnArchive(int index) {
-    Mirrorfly.updateArchiveUnArchiveChat(selectedChats[index], false);
-    var chatIndex = archivedChats.indexWhere((element) =>
-        selectedChats[index] == element.jid); //selectedChatsPosition[index];
+    Mirrorfly.setChatArchived(jid: selectedChats[index], isArchived: false, flyCallBack: (_) {  });
+    var chatIndex =
+        archivedChats.indexWhere((element) => selectedChats[index] == element.jid); //selectedChatsPosition[index];
     archivedChats[chatIndex].isChatArchived = (false);
     archivedChats.removeAt(chatIndex);
   }
@@ -172,8 +168,7 @@ class ArchivedChatListController extends GetxController {
   void checkArchiveList(RecentChatData recent) async {
     Mirrorfly.isArchivedSettingsEnabled().then((value) {
       if (value.checkNull()) {
-        var archiveIndex =
-            archivedChats.indexWhere((element) => recent.jid == element.jid);
+        var archiveIndex = archivedChats.indexWhere((element) => recent.jid == element.jid);
         mirrorFlyLog("checkArchiveList", "$archiveIndex");
         if (!archiveIndex.isNegative) {
           archivedChats.removeAt(archiveIndex);
@@ -184,8 +179,7 @@ class ArchivedChatListController extends GetxController {
           archivedChats.refresh();
         }
       } else {
-        var archiveIndex =
-            archivedChats.indexWhere((element) => recent.jid == element.jid);
+        var archiveIndex = archivedChats.indexWhere((element) => recent.jid == element.jid);
         if (!archiveIndex.isNegative) {
           archivedChats.removeAt(archiveIndex);
           /*var lastPinnedChat = dashboardController.recentChats.lastIndexWhere((element) =>
@@ -208,9 +202,9 @@ class ArchivedChatListController extends GetxController {
   }
 
   Future<RecentChatData?> getRecentChatOfJid(String jid) async {
-    var value = await Mirrorfly.getRecentChatOf(jid);
+    var value = await Mirrorfly.getRecentChatOf(jid: jid);
     mirrorFlyLog("chat", value.toString());
-    if (value != null) {
+    if (value.isNotEmpty) {
       var data = recentChatDataFromJson(value);
       return data;
     } else {
@@ -260,7 +254,7 @@ class ArchivedChatListController extends GetxController {
   menuValidationForDeleteIcon() async {
     var selected = archivedChats.where((p0) => selectedChats.contains(p0.jid));
     for (var item in selected) {
-      var isMember = await Mirrorfly.isMemberOfGroup(item.jid.checkNull(), null);
+      var isMember = await Mirrorfly.isMemberOfGroup(groupJid: item.jid.checkNull(), userJid: SessionManagement.getUserJID().checkNull());
       if ((item.getChatType() == Constants.typeGroupChat) && isMember!) {
         delete(false);
         return;
@@ -322,34 +316,31 @@ class ArchivedChatListController extends GetxController {
   }
 
   _itemMute(int index) {
-    Mirrorfly.updateChatMuteStatus(selectedChats[index], true);
-    var chatIndex = archivedChats.indexWhere((element) =>
-    selectedChats[index] == element.jid); //selectedChatsPosition[index];
+    Mirrorfly.updateChatMuteStatus(jid: selectedChats[index], muteStatus: true);
+    var chatIndex =
+        archivedChats.indexWhere((element) => selectedChats[index] == element.jid); //selectedChatsPosition[index];
     archivedChats[chatIndex].isMuted = (true);
   }
 
   _itemUnMute(int index) {
-    var chatIndex = archivedChats.indexWhere((element) =>
-    selectedChats[index] == element.jid); //selectedChatsPosition[index];
+    var chatIndex =
+        archivedChats.indexWhere((element) => selectedChats[index] == element.jid); //selectedChatsPosition[index];
     archivedChats[chatIndex].isMuted = (false);
-    Mirrorfly.updateChatMuteStatus(selectedChats[index], false);
+    Mirrorfly.updateChatMuteStatus(jid: selectedChats[index], muteStatus: false);
   }
 
   deleteChats() {
     String? profile = '';
-    profile = archivedChats
-        .firstWhere((element) => selectedChats.first == element.jid)
-        .profileName;
+    profile = archivedChats.firstWhere((element) => selectedChats.first == element.jid).profileName;
     Helper.showAlert(
-        title: selectedChats.length == 1
-            ? "Delete chat with $profile?"
-            : "Delete ${selectedChats.length} selected chats?",
+        title:
+            selectedChats.length == 1 ? "Delete chat with $profile?" : "Delete ${selectedChats.length} selected chats?",
         actions: [
           TextButton(
               onPressed: () {
                 Get.back();
               },
-              child: const Text("NO")),
+              child: const Text("NO",style: TextStyle(color: buttonBgColor))),
           TextButton(
               onPressed: () {
                 Get.back();
@@ -359,23 +350,23 @@ class ArchivedChatListController extends GetxController {
                   itemsDelete();
                 }
               },
-              child: const Text("YES")),
+              child: const Text("YES",style: TextStyle(color: buttonBgColor))),
         ],
         message: '');
   }
 
   _itemDelete(int index) {
-    var chatIndex = archivedChats.indexWhere((element) =>
-        selectedChats[index] == element.jid); //selectedChatsPosition[index];
+    var chatIndex =
+        archivedChats.indexWhere((element) => selectedChats[index] == element.jid); //selectedChatsPosition[index];
     archivedChats.removeAt(chatIndex);
-    Mirrorfly.deleteRecentChat(selectedChats[index]);
+    Mirrorfly.deleteRecentChats(jidList: [selectedChats[index]], flyCallBack: (_) {  });
     //Mirrorfly.updateArchiveUnArchiveChat(selectedChats[index], false);
     clearAllChatSelection();
   }
 
   itemsDelete() {
     // debugPrint('selectedChatsPosition : ${selectedChatsPosition.join(',')}');
-    Mirrorfly.deleteRecentChats(selectedChats);
+    Mirrorfly.deleteRecentChats(jidList: selectedChats, flyCallBack: (_) {});
     for (var element in selectedChats) {
       archivedChats.removeWhere((e) => e.jid == element);
     }
@@ -388,8 +379,8 @@ class ArchivedChatListController extends GetxController {
 
   Future<void> updateRecentChatAdapter(String jid) async {
     if (jid.isNotEmpty) {
-      var index = archivedChats.indexWhere((element) =>
-          element.jid == jid); // { it.jid ?: Constants.EMPTY_STRING == jid }
+      var index =
+          archivedChats.indexWhere((element) => element.jid == jid); // { it.jid ?: Constants.EMPTY_STRING == jid }
       if (!index.isNegative) {
         var recent = await getRecentChatOfJid(jid);
         if (recent != null) {
@@ -403,7 +394,8 @@ class ArchivedChatListController extends GetxController {
     userUpdatedHisProfile(jid);
     updateProfile(jid);
   }
-  var profile_ = Profile().obs;
+
+  var profile_ = ProfileDetails().obs;
   void getProfileDetail(context, RecentChatData chatItem, int index) {
     getProfileDetails(chatItem.jid.checkNull()).then((value) {
       profile_(value);
@@ -415,24 +407,25 @@ class ArchivedChatListController extends GetxController {
             Get.back();
             toChatPage(chatItem.jid.checkNull());
           },
-          callTap: () {},
-          videoTap: () {},
           infoTap: () {
             Get.back();
             infoPage(value);
           },
-          profile: profile_);
+          profile: profile_,
+          availableFeatures: availableFeatures);
     });
   }
-  void updateProfile(String jid){
-    if(profile_.value.jid != null && profile_.value.jid.toString()==jid.toString()) {
+
+  void updateProfile(String jid) {
+    if (profile_.value.jid != null && profile_.value.jid.toString() == jid.toString()) {
       getProfileDetails(jid).then((value) {
         debugPrint("get profile detail archived $value");
         profile_(value);
       });
     }
   }
-  infoPage(Profile profile) {
+
+  infoPage(ProfileDetails profile) {
     if (profile.isGroupProfile ?? false) {
       Get.toNamed(Routes.groupInfo, arguments: profile)?.then((value) {
         if (value != null) {
@@ -448,5 +441,11 @@ class ArchivedChatListController extends GetxController {
     } else {
       Get.toNamed(Routes.chatInfo, arguments: profile)?.then((value) {});
     }
+  }
+
+  var availableFeatures = Get.find<MainController>().availableFeature;
+  void onAvailableFeaturesUpdated(AvailableFeatures features) {
+    LogMessage.d("ArchivedChat", "onAvailableFeaturesUpdated ${features.toJson()}");
+    availableFeatures(features);
   }
 }

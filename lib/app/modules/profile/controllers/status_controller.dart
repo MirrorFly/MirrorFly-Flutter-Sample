@@ -1,8 +1,10 @@
 import 'dart:convert';
 
+import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:get/get.dart';
+import 'package:mirror_fly_demo/app/common/extensions.dart';
 
 import '../../../common/constants.dart';
 import '../../../data/apputils.dart';
@@ -24,11 +26,63 @@ class StatusListController extends FullLifeCycleController with FullLifeCycleMix
     count(139 - addStatusController.text.characters.length);
   }
 
+  onEmojiBackPressed(){
+    var text = addStatusController.text;
+    var cursorPosition = addStatusController.selection.base.offset;
+
+    // If cursor is not set, then place it at the end of the textfield
+    if (cursorPosition < 0) {
+      addStatusController.selection = TextSelection(
+        baseOffset: addStatusController.text.length,
+        extentOffset: addStatusController.text.length,
+      );
+      cursorPosition = addStatusController.selection.base.offset;
+    }
+
+    if (cursorPosition >= 0) {
+      final selection = addStatusController.value.selection;
+      final newTextBeforeCursor =
+      selection.textBefore(text).characters.skipLast(1).toString();
+      LogMessage.d("newTextBeforeCursor", newTextBeforeCursor);
+      addStatusController
+        ..text = newTextBeforeCursor + selection.textAfter(text)
+        ..selection = TextSelection.fromPosition(
+            TextPosition(offset: newTextBeforeCursor.length));
+    }
+    count((139 - addStatusController.text.characters.length));
+  }
+
+  onEmojiSelected(Emoji emoji){
+    if(addStatusController.text.characters.length < 139){
+      final controller = addStatusController;
+      final text = controller.text;
+      final selection = controller.selection;
+      final cursorPosition = controller.selection.base.offset;
+
+      if (cursorPosition < 0) {
+        controller.text += emoji.emoji;
+        // widget.onEmojiSelected?.call(category, emoji);
+        return;
+      }
+
+      final newText =
+      text.replaceRange(selection.start, selection.end, emoji.emoji);
+      final emojiLength = emoji.emoji.length;
+      controller
+        ..text = newText
+        ..selection = selection.copyWith(
+          baseOffset: selection.start + emojiLength,
+          extentOffset: selection.start + emojiLength,
+        );
+    }
+    count((139 - addStatusController.text.characters.length));
+  }
+
   @override
   void onInit() {
     super.onInit();
     selectedStatus.value = Get.arguments['status'];
-    addStatusController.text=selectedStatus.value;
+    addStatusController.text= selectedStatus.value;
     onChanged();
     getStatusList();
     onChanged();
@@ -36,6 +90,7 @@ class StatusListController extends FullLifeCycleController with FullLifeCycleMix
   getStatusList(){
     loading.value=true;
     Mirrorfly.getProfileStatusList().then((value){
+      LogMessage.d("myStatusList", value);
       loading.value=false;
       if(value!=null){
         statusList.clear();
@@ -52,15 +107,22 @@ class StatusListController extends FullLifeCycleController with FullLifeCycleMix
     debugPrint("updating item details--> $statusId");
     if(await AppUtils.isNetConnected()) {
       Helper.showLoading();
-      Mirrorfly.setMyProfileStatus(statusText!, statusId!).then((value){
-        selectedStatus.value= statusText;
-        addStatusController.text= statusText;
-        var data = json.decode(value.toString());
-        toToast('Status update successfully');
-        Helper.hideLoading();
-        if(data['status']) {
-          getStatusList();
+      Mirrorfly.setMyProfileStatus(status: statusText!, statusId: statusId!,flyCallBack: (response){
+        if(response.isSuccess) {
+          LogMessage.d("setMyProfileStatus flutter", response.toString());
+          selectedStatus.value = statusText;
+          addStatusController.text = statusText;
+          var data = json.decode(response.data);
+          toToast('Status update successfully');
+          if(data['status']) {
+            getStatusList();
+          }
+        }else{
+          toToast(response.exception!.message.toString());
         }
+        Helper.hideLoading();
+      }).then((value){
+
       }).catchError((er){
         toToast(er);
       });
@@ -72,14 +134,14 @@ class StatusListController extends FullLifeCycleController with FullLifeCycleMix
   insertStatus() async{
     if(await AppUtils.isNetConnected()){
       Helper.showLoading();
-        Mirrorfly.insertNewProfileStatus(addStatusController.text.trim().toString())
+        Mirrorfly.insertNewProfileStatus(status: addStatusController.text.trim().toString())
             .then((value) {
           selectedStatus.value = addStatusController.text.trim().toString();
           addStatusController.text = addStatusController.text.trim().toString();
-          var data = json.decode(value.toString());
+          // var data = json.decode(value.toString());
           toToast('Status update successfully');
           Helper.hideLoading();
-          if (data['status']) {
+          if (value.checkNull()) {
             getStatusList();
           }
         }).catchError((er) {
@@ -156,13 +218,13 @@ class StatusListController extends FullLifeCycleController with FullLifeCycleMix
           onPressed: () {
             Get.back();
           },
-          child: const Text("No")),
+          child: const Text("No",style: TextStyle(color: buttonBgColor))),
       TextButton(
           onPressed: () async {
             if (await AppUtils.isNetConnected()) {
               Get.back();
               Helper.showLoading(message: "Deleting Status");
-              Mirrorfly.deleteProfileStatus(item.id!, item.status!, item.isCurrentStatus!)
+              Mirrorfly.deleteProfileStatus(id: item.id!, status: item.status!, isCurrentStatus: item.isCurrentStatus!)
                   .then((value) {
                 statusList.remove(item);
                 Helper.hideLoading();
@@ -174,7 +236,23 @@ class StatusListController extends FullLifeCycleController with FullLifeCycleMix
               toToast(Constants.noInternetConnection);
             }
           },
-          child: const Text("Yes")),
+          child: const Text("Yes",style: TextStyle(color: buttonBgColor))),
     ]);
+  }
+
+  @override
+  void onHidden() {
+
+  }
+
+  onBackPressed([String? result]) {
+    debugPrint("result $result");
+    showEmoji(false);
+    addStatusController.text = selectedStatus.value;
+    if(result != null){
+      Get.back(result: result);
+    }else {
+      Get.back();
+    }
   }
 }

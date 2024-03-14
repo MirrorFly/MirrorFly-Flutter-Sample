@@ -146,7 +146,7 @@ class DeleteAccountView extends GetView<DeleteAccountController> {
                     },
                     child: const Text(
                       'Continue',
-                      style: TextStyle(fontWeight: FontWeight.w600),
+                      style: TextStyle(fontWeight: FontWeight.w600,color: Colors.white),
                     ),
                   ),
                 ),

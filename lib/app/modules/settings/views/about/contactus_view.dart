@@ -105,14 +105,12 @@ class ContactusView extends StatelessWidget {
                     onPressed: () {
                       if(title.text.trim().isNotEmpty&&description.text.trim().isNotEmpty) {
                         Helper.progressLoading();
-                        Mirrorfly.sendContactUsInfo(title.text.trim(),description.text.trim()).then((value){
+                        Mirrorfly.sendContactUsInfo(title: title.text.trim(),description: description.text.trim(),flyCallBack: (response){
                           Helper.hideLoading();
-                          if(value!=null){
-                            if(value){
-                              toToast("Thank you for contacting us!");
-                              title.clear();
-                              description.clear();
-                            }
+                          if(response.isSuccess){
+                            toToast("Thank you for contacting us!");
+                            title.clear();
+                            description.clear();
                           }
                         });
                       }else{
@@ -121,7 +119,7 @@ class ContactusView extends StatelessWidget {
                     },
                     child: const Text(
                       'Send',
-                      style: TextStyle(fontWeight: FontWeight.w600),
+                      style: TextStyle(fontWeight: FontWeight.w600,color: Colors.white),
                     ),
                   ),
                 ),

@@ -56,12 +56,12 @@ class SettingsView extends GetView<SettingsController> {
                         onPressed: () {
                           Get.back();
                         },
-                        child: const Text("NO")),
+                        child: const Text("NO",style: TextStyle(color: buttonBgColor))),
                     TextButton(
                         onPressed: () {
                           controller.logout();
                         },
-                        child: const Text("YES"))
+                        child: const Text("YES",style: TextStyle(color: buttonBgColor)))
                   ]);
             }),
             Padding(

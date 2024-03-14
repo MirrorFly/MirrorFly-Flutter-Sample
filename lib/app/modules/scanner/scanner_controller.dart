@@ -2,7 +2,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
-import 'package:mirror_fly_demo/app/data/session_management.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 
@@ -54,7 +53,7 @@ class ScannerController extends GetxController {
     if (barcode != null) {
       if(await AppUtils.isNetConnected()) {
         controller!.pauseCamera();
-        Mirrorfly.loginWebChatViaQRCode(barcode).then((value) {
+        /*Mirrorfly.loginWebChatViaQRCode(barcode).then((value) {
           if (value != null) {
             SessionManagement.setWebChatLogin(value);
             Get.back();
@@ -63,7 +62,7 @@ class ScannerController extends GetxController {
           }
         }).catchError((er) {
           controller!.resumeCamera();
-        });
+        });*/
       }else{
         toToast(Constants.noInternetConnection);
       }
@@ -74,30 +73,30 @@ class ScannerController extends GetxController {
   logoutWebUser() async {
     if(await AppUtils.isNetConnected()) {
       Helper.progressLoading();
-      Mirrorfly.webLoginDetailsCleared();
+      /*Mirrorfly.webLoginDetailsCleared();
       Mirrorfly.logoutWebUser(loginQr).then((value) {
         Helper.hideLoading();
         if (value != null && value) {
           SessionManagement.setWebChatLogin(false);
           Get.back();
         }
-      });
+      });*/
     }else{
       toToast(Constants.noInternetConnection);
     }
   }
 
   webLoginDetailsCleared() {
-    Mirrorfly.webLoginDetailsCleared().then((value) {
+    /*Mirrorfly.webLoginDetailsCleared().then((value) {
       if (value != null && value) {
         //SessionManagement.setWebChatLogin(false);
       }
-    });
+    });*/
   }
 
   getWebLoginDetails() {
     loginQr.clear();
-    Mirrorfly.getWebLoginDetails().then((value) {
+    /*Mirrorfly.getWebLoginDetails().then((value) {
       if (value != null) {
         var list = webLoginFromJson(value);
         _webLogins(list);
@@ -105,7 +104,7 @@ class ScannerController extends GetxController {
           loginQr.add(element.qrUniqeToken);
         }
       }
-    });
+    });*/
   }
 
   getImageForBrowser(WebLogin item) {
@@ -130,7 +129,7 @@ class ScannerController extends GetxController {
   }
 
   addLogin() {
-    Mirrorfly.webLoginDetailsCleared();
+    // Mirrorfly.webLoginDetailsCleared();
     Get.toNamed(Routes.scanner)?.then((value) {
       getWebLoginDetails();
     });
@@ -142,13 +141,13 @@ class ScannerController extends GetxController {
           onPressed: () {
             Get.back();
           },
-          child: const Text("NO")),
+          child: const Text("NO",style: TextStyle(color: buttonBgColor))),
       TextButton(
           onPressed: () {
             Get.back();
             logoutWebUser();
           },
-          child: const Text("YES")),
+          child: const Text("YES",style: TextStyle(color: buttonBgColor))),
     ]);
   }
 }

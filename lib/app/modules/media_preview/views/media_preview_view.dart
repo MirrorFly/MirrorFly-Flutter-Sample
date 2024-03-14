@@ -6,7 +6,7 @@ import 'package:flutter_svg/svg.dart';
 
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
-import 'package:mirror_fly_demo/app/data/helper.dart';
+import 'package:mirror_fly_demo/app/common/extensions.dart';
 import 'package:photo_view/photo_view.dart';
 
 import '../../../common/widgets.dart';
@@ -84,10 +84,13 @@ class MediaPreviewView extends GetView<MediaPreviewController> {
             })
           ],
         ),
-        body: WillPopScope(
-          onWillPop: () {
+        body: PopScope(
+          canPop: false,
+          onPopInvoked: (didPop) {
+            if (didPop) {
+              return;
+            }
             Get.back(result: "back");
-            return Future.value(false);
           },
           child: SafeArea(
             child: Container(

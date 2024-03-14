@@ -20,7 +20,7 @@ import CallKit
 @UIApplicationMain
 @objc class AppDelegate: FlutterAppDelegate {
     
-    let googleApiKey = "AIzaSyDnjPEs86MRsnFfW1sVPKvMWjqQRnSa7Ts"
+    let googleApiKey = "Your_Googlr_API_KEY"
    
     var postNotificationdidEnterBackground : NotificationCenter? = nil
     

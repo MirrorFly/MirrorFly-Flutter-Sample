@@ -1,5 +1,6 @@
 import 'package:flutter/animation.dart';
 import 'package:flutter/material.dart';
+
 import 'package:mirrorfly_plugin/mirrorfly.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/routes/app_pages.dart';
@@ -57,7 +58,7 @@ class ContactSyncController extends GetxController
       if (contactPermissionHandle) {
         syncing(true);
         textContactSync('Contact sync is in process');
-        Mirrorfly.syncContacts(!SessionManagement.isInitialContactSyncDone());
+        Mirrorfly.syncContacts(isFirstTime: !SessionManagement.isInitialContactSyncDone(), flyCallBack: (_) {  });
         checkContactSync();
       } else {
         Get.offNamed(Routes.dashboard);
@@ -80,10 +81,14 @@ class ContactSyncController extends GetxController
 
   void onContactSyncComplete(bool result) {
     if(Get.currentRoute==Routes.contactSync) {
-      Mirrorfly.getRegisteredUsers(true).then((value) {
-        mirrorFlyLog("registeredUsers", value.toString());
+      Mirrorfly.getRegisteredUsers(fetchFromServer: true,flyCallback: (FlyResponse response){
+        mirrorFlyLog("registeredUsers", response.isSuccess.toString());
         navigateToDashboard();
       });
+      /*then((value) {
+        mirrorFlyLog("registeredUsers", value.toString());
+        navigateToDashboard();
+      });*/
     }
   }
 

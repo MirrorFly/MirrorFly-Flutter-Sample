@@ -9,39 +9,40 @@ class ThumbnailWidget extends StatelessWidget {
   /// asset entity
   final AssetEntity asset;
 
-  // /// image quality thumbnail
-  // final int thumbnailQuality;
-  //
-  // /// background image color
-  // final Color imageBackgroundColor;
-  //
-  // /// image provider
-  // final GalleryMediaPickerController provider;
-  //
-  // /// selected background color
-  // final Color selectedBackgroundColor;
-  //
-  // /// selected check color
-  // final Color selectedCheckColor;
-  //
-  // /// selected Check Background Color
-  // final Color selectedCheckBackgroundColor;
+  /// image quality thumbnail
+  final int thumbnailQuality;
 
-  /// thumbnail index
-  final int index;
+  /// background image color
+  final Color imageBackgroundColor;
 
   /// image provider
   final GalleryMediaPickerController provider;
 
-  // /// thumbnail box fit
-  // final BoxFit thumbnailBoxFix;
+  /// selected background color
+  final Color selectedBackgroundColor;
 
+  /// selected check color
+  final Color selectedCheckColor;
+
+  /// selected Check Background Color
+  final Color selectedCheckBackgroundColor;
+
+  final int index;
+
+  /// thumbnail box fit
+  final BoxFit thumbnailBoxFix;
   const ThumbnailWidget(
       {Key? key,
-        required this.index,
-        required this.asset,
-        required this.provider})
-        : super(key: key);
+      required this.asset,
+      required this.provider,
+      required this.index,
+      this.thumbnailQuality = 200,
+      this.imageBackgroundColor = Colors.white,
+      this.selectedBackgroundColor = Colors.white,
+      this.selectedCheckColor = Colors.white,
+      this.thumbnailBoxFix = BoxFit.cover,
+      this.selectedCheckBackgroundColor = Colors.white})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -50,35 +51,35 @@ class ThumbnailWidget extends StatelessWidget {
       children: [
         /// background gradient from image
         Container(
-          decoration: BoxDecoration(color: provider.paramsModel.imageBackgroundColor),
+          decoration: BoxDecoration(color: imageBackgroundColor),
         ),
 
         /// thumbnail image
-        if (asset.type == AssetType.image || asset.type == AssetType.video)
-          FutureBuilder<Uint8List?>(
-            future: asset.thumbnailData,
-            builder: (_, data) {
-              if (data.hasData) {
-                return SizedBox(
-                  width: double.infinity,
-                  height: double.infinity,
-                  child: Image(
-                    image: DecodeImage(
-                        provider.pathList[provider.pathList.indexOf(provider.currentAlbum!)],
-                        thumbSize: provider.paramsModel.thumbnailQuality,
-                        index: index),
-                    gaplessPlayback: true,
-                    fit: provider.paramsModel.thumbnailBoxFix,
-                    filterQuality: FilterQuality.high,
-                  ),
-                );
-              } else {
-                return Container(
-                  color: provider.paramsModel.imageBackgroundColor,
-                );
-              }
-            },
-          ),
+        FutureBuilder<Uint8List?>(
+          future: asset.thumbnailData,
+          builder: (_, data) {
+            if (data.hasData) {
+              return SizedBox(
+                width: double.infinity,
+                height: double.infinity,
+                child: Image(
+                  image: DecodeImage(
+                      provider.pathList[
+                          provider.pathList.indexOf(provider.currentAlbum!)],
+                      thumbSize: thumbnailQuality,
+                      index: index),
+                  gaplessPlayback: true,
+                  fit: thumbnailBoxFix,
+                  filterQuality: FilterQuality.high,
+                ),
+              );
+            } else {
+              return Container(
+                color: imageBackgroundColor,
+              );
+            }
+          },
+        ),
 
         /// selected image color mask
         AnimatedBuilder(
@@ -90,8 +91,7 @@ class ThumbnailWidget extends StatelessWidget {
                 duration: const Duration(milliseconds: 300),
                 decoration: BoxDecoration(
                   color: picked
-                      ? provider.paramsModel.selectedBackgroundColor
-                      .withOpacity(0.3)
+                      ? selectedBackgroundColor.withOpacity(0.3)
                       : Colors.transparent,
                 ),
               );
@@ -116,14 +116,14 @@ class ThumbnailWidget extends StatelessWidget {
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
                         color: picked
-                            ? provider.paramsModel.selectedCheckBackgroundColor.withOpacity(0.6)
+                            ? selectedCheckBackgroundColor.withOpacity(0.6)
                             : Colors.transparent,
                         border:
-                            Border.all(width: 1.5, color: provider.paramsModel.selectedCheckColor),
+                            Border.all(width: 1.5, color: selectedCheckColor),
                       ),
                       child: Icon(
                         Icons.check,
-                        color: provider.paramsModel.selectedCheckColor,
+                        color: selectedCheckColor,
                         size: 14,
                       ),
                     ),

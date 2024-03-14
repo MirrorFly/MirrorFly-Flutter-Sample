@@ -2,18 +2,9 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:photo_manager/photo_manager.dart';
 
-import '../../data/models/gallery_params_model.dart';
 import '../../data/models/picked_asset_model.dart';
 
 mixin PhotoDataController on ChangeNotifier {
-  /// save params model
-  MediaPickerParamsModel? _paramsModel;
-  MediaPickerParamsModel get paramsModel => _paramsModel!;
-  set paramsModel(MediaPickerParamsModel model) {
-    _paramsModel = model;
-    notifyListeners();
-  }
-
   /// current gallery album
   final currentAlbumNotifier = ValueNotifier<AssetPathEntity?>(null);
   AssetPathEntity? _current;
@@ -106,6 +97,14 @@ class GalleryMediaPickerController extends ChangeNotifier
         picked.add(entity);
       }
     }
+    pickedNotifier.value = picked;
+    pickedNotifier.notifyListeners();
+    notifyListeners();
+  }
+
+  void unPick(int index){
+    debugPrint("unPick $index");
+    picked.removeAt(index);
     pickedNotifier.value = picked;
     pickedNotifier.notifyListeners();
     notifyListeners();

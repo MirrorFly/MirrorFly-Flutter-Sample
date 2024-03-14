@@ -1,21 +1,27 @@
 import 'package:flutter/material.dart';
 import 'package:photo_manager/photo_manager.dart';
 
-import '../../../data/models/gallery_params_model.dart';
 import '../../pages/gallery_media_picker_controller.dart';
 
 class ChangePathWidget extends StatefulWidget {
   final GalleryMediaPickerController provider;
   final ValueSetter<AssetPathEntity> close;
 
-  /// params model
-  final MediaPickerParamsModel mediaPickerParams;
+  /// album background color
+  final Color albumBackGroundColor;
 
+  /// album text color
+  final Color albumTextColor;
+
+  /// album divider color
+  final Color albumDividerColor;
   const ChangePathWidget({
     Key? key,
     required this.provider,
     required this.close,
-    required this.mediaPickerParams
+    required this.albumBackGroundColor,
+    required this.albumDividerColor,
+    required this.albumTextColor,
   }) : super(key: key);
 
   @override
@@ -30,15 +36,15 @@ class ChangePathWidgetState extends State<ChangePathWidget> {
 
   @override
   void initState() {
+    super.initState();
     final index = provider.pathList.indexOf(provider.currentAlbum!);
     controller = ScrollController(initialScrollOffset: itemHeight * index);
-    super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
     return Material(
-      color: widget.mediaPickerParams.albumBackGroundColor,
+      color: widget.albumBackGroundColor,
       child: NotificationListener<OverscrollIndicatorNotification>(
         onNotification: (overscroll) {
           overscroll.disallowIndicator();
@@ -75,7 +81,7 @@ class ChangePathWidgetState extends State<ChangePathWidget> {
                 child: Text(
                   item.name,
                   overflow: TextOverflow.ellipsis,
-                  style: TextStyle(color: widget.mediaPickerParams.albumTextColor, fontSize: 18),
+                  style: TextStyle(color: widget.albumTextColor, fontSize: 18),
                 ),
               ),
             ),
@@ -89,7 +95,7 @@ class ChangePathWidgetState extends State<ChangePathWidget> {
             left: 1,
             child: IgnorePointer(
               child: Container(
-                color: widget.mediaPickerParams.albumDividerColor,
+                color: widget.albumDividerColor,
               ),
             ),
           ),

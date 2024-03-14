@@ -5,13 +5,12 @@ import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:mirrorfly_plugin/logmessage.dart';
 import 'package:mirrorfly_plugin/mirrorflychat.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:mirror_fly_demo/app/common/widgets.dart';
 import 'package:url_launcher/url_launcher.dart';
-
+import 'package:mirror_fly_demo/app/common/extensions.dart';
 import '../../common/constants.dart';
 import '../../data/apputils.dart';
 import '../../data/helper.dart';
@@ -403,20 +402,16 @@ class ReplyMessageHeader extends StatelessWidget {
   }
 }
 
-Image imageFromBase64String(String base64String, BuildContext context, double? width, double? height) {
-  var decodedBase64 = base64String.replaceAll("\n", "");
-  Uint8List image = const Base64Decoder().convert(decodedBase64);
+Widget imageFromBase64String(String base64String, BuildContext context, double? width, double? height) {
+  LogMessage.d("imageFromBase64String", "final");
+  final decodedBase64 = base64String.replaceAll("\n", "");
+  final Uint8List image = const Base64Decoder().convert(decodedBase64);
   return Image.memory(
     image,
-    width: width ?? MediaQuery
-        .of(context)
-        .size
-        .width * 0.60,
-    height: height ?? MediaQuery
-        .of(context)
-        .size
-        .height * 0.4,
+    width: width ?? Get.width * 0.60,
+    height: height ?? Get.height * 0.4,
     fit: BoxFit.cover,
+    gaplessPlayback: true,
   );
 }
 
@@ -468,9 +463,9 @@ class SenderHeader extends StatelessWidget {
       }
       var currentSenderJid = currentMessage.senderUserJid.checkNull();
       var previousSenderJid = previousMessage.senderUserJid.checkNull();
-      debugPrint("currentSenderJid  : $currentSenderJid");
-      debugPrint("previousSenderJid : $previousSenderJid");
-      debugPrint("isSenderChanged : ${previousSenderJid != currentSenderJid}");
+      // debugPrint("currentSenderJid  : $currentSenderJid");
+      // debugPrint("previousSenderJid : $previousSenderJid");
+      // debugPrint("isSenderChanged : ${previousSenderJid != currentSenderJid}");
       return previousSenderJid != currentSenderJid;
     } else {
       return false;
@@ -587,15 +582,15 @@ class _AudioMessageViewState extends State<AudioMessageView>
     with WidgetsBindingObserver {
   onAudioClick() {
     switch (widget.chatMessage.isMessageSentByMe
-        ? widget.chatMessage.mediaChatMessage?.mediaUploadStatus
-        : widget.chatMessage.mediaChatMessage?.mediaDownloadStatus) {
+        ? widget.chatMessage.mediaChatMessage?.mediaUploadStatus.value
+        : widget.chatMessage.mediaChatMessage?.mediaDownloadStatus.value) {
       case Constants.mediaDownloaded:
       case Constants.mediaUploaded:
         if (checkFile(
-            widget.chatMessage.mediaChatMessage!.mediaLocalStoragePath) &&
-            (widget.chatMessage.mediaChatMessage!.mediaDownloadStatus ==
+            widget.chatMessage.mediaChatMessage!.mediaLocalStoragePath.value) &&
+            (widget.chatMessage.mediaChatMessage!.mediaDownloadStatus.value ==
                 Constants.mediaDownloaded ||
-                widget.chatMessage.mediaChatMessage!.mediaDownloadStatus ==
+                widget.chatMessage.mediaChatMessage!.mediaDownloadStatus.value ==
                     Constants.mediaUploaded ||
                 widget.chatMessage.isMessageSentByMe)) {
           //playAudio(chatList, chatList.mediaChatMessage!.mediaLocalStoragePath);
@@ -623,14 +618,45 @@ class _AudioMessageViewState extends State<AudioMessageView>
         .currentPos
         .toDouble()
         .obs;
-    player.onPlayerCompletion.listen((event) {
+    // player.onPlayerCompletion.listen((event) {
+    //   isPlaying(false);
+    //   currentPos(0);
+    //   widget.chatMessage.mediaChatMessage!.currentPos = 0;
+    //   player.stop();
+    // });
+    //
+    // player.onAudioPositionChanged.listen((Duration p) {
+    //   mirrorFlyLog('p.inMilliseconds', p.inMilliseconds.toString());
+    //   widget.chatMessage.mediaChatMessage!.currentPos = p.inMilliseconds;
+    //   currentPos(p.inMilliseconds.toDouble());
+    //   currentPos.refresh();
+    // });
+    player.onPlayerStateChanged.listen(
+          (it) {
+        switch (it) {
+          case PlayerState.playing:
+            isPlaying(true);
+            break;
+          case PlayerState.stopped:
+            isPlaying(false);
+            break;
+          case PlayerState.paused:
+            isPlaying(false);
+            break;
+          case PlayerState.completed:
+            break;
+          default:
+            break;
+        }
+      },
+    );
+    player.onPlayerComplete.listen((event) {
       isPlaying(false);
       currentPos(0);
       widget.chatMessage.mediaChatMessage!.currentPos = 0;
       player.stop();
     });
-
-    player.onAudioPositionChanged.listen((Duration p) {
+    player.onPositionChanged.listen((Duration  p) {
       mirrorFlyLog('p.inMilliseconds', p.inMilliseconds.toString());
       widget.chatMessage.mediaChatMessage!.currentPos = p.inMilliseconds;
       currentPos(p.inMilliseconds.toDouble());
@@ -700,7 +726,7 @@ class _AudioMessageViewState extends State<AudioMessageView>
         borderRadius: const BorderRadius.all(Radius.circular(10)),
         color: Colors.transparent,
       ),
-      width: screenWidth * 0.60,
+      width: screenWidth * 0.70,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -712,7 +738,7 @@ class _AudioMessageViewState extends State<AudioMessageView>
                   ? chatReplyContainerColor
                   : chatReplySenderColor,
             ),
-            padding: const EdgeInsets.all(15),
+            padding: const EdgeInsets.all(8),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
@@ -722,8 +748,8 @@ class _AudioMessageViewState extends State<AudioMessageView>
                   children: [
                     SvgPicture.asset(
                       audioMicBg,
-                      width: 28,
-                      height: 28,
+                      width: 32,
+                      height: 32,
                       fit: BoxFit.contain,
                     ),
                     SvgPicture.asset(
@@ -734,11 +760,15 @@ class _AudioMessageViewState extends State<AudioMessageView>
                 )
                     : SvgPicture.asset(
                   musicIcon,
+                  width: 32,
+                  height: 32,
                   fit: BoxFit.contain,
                 ),
-                getImageOverlay(widget.chatMessage, onAudio: () {
-                  widget.onPlayAudio();
-                  playAudio(widget.chatMessage);
+                Obx(() {
+                  return getImageOverlay(widget.chatMessage, onAudio: () {
+                    widget.onPlayAudio();
+                    playAudio(widget.chatMessage);
+                  });
                 }), //widget.onPlayAudio),
                 Expanded(
                   child: Column(
@@ -856,12 +886,14 @@ class _AudioMessageViewState extends State<AudioMessageView>
     }*/
     Get.dialog(
       Dialog(
-        child: WillPopScope(
-          onWillPop: () {
-            // currentPos(0);
+        child: PopScope(
+          canPop: true,
+          onPopInvoked: (didPop) {
             isPlaying(false);
             player.stop();
-            return Future.value(true);
+            if (didPop) {
+              return;
+            }
           },
           child: Container(
             decoration: BoxDecoration(
@@ -903,24 +935,30 @@ class _AudioMessageViewState extends State<AudioMessageView>
                   return InkWell(
                     onTap: () async {
                       if (!isPlaying.value) {
-                        int result = await player.play(
-                            chatMessage.mediaChatMessage!.mediaLocalStoragePath,
-                            position: Duration(
-                                milliseconds:
-                                chatMessage.mediaChatMessage!.currentPos),
-                            isLocal: true);
-                        if (result == 1) {
-                          isPlaying(true);
-                        } else {
-                          mirrorFlyLog("", "Error while playing audio.");
-                        }
+                        // int result = await player.play(
+                        //     chatMessage.mediaChatMessage!.mediaLocalStoragePath.value,
+                        //     position: Duration(
+                        //         milliseconds:
+                        //         chatMessage.mediaChatMessage!.currentPos),
+                        //     isLocal: true);
+                        // if (result == 1) {
+                        //   isPlaying(true);
+                        // } else {
+                        //   mirrorFlyLog("", "Error while playing audio.");
+                        // }
+                        await player.play(DeviceFileSource(chatMessage.mediaChatMessage!.mediaLocalStoragePath.value),position: Duration(
+                            milliseconds:
+                            chatMessage.mediaChatMessage!.currentPos));
+                        isPlaying(true);
                       } else {
-                        int result = await player.pause();
-                        if (result == 1) {
-                          isPlaying(false);
-                        } else {
-                          mirrorFlyLog("", "Error on pause audio.");
-                        }
+                        // int result = await player.pause();
+                        // if (result == 1) {
+                        //   isPlaying(false);
+                        // } else {
+                        //   mirrorFlyLog("", "Error on pause audio.");
+                        // }
+                        await player.pause();
+                        isPlaying(false);
                       }
                     },
                     child: Padding(
@@ -1134,9 +1172,8 @@ class ContactMessageView extends StatelessWidget {
       debugPrint(
           "contactChatMessage.isChatAppUser[i]--> ${contactChatMessage.isChatAppUser[i]}");
       if (contactChatMessage.isChatAppUser[i]) {
-        return await Mirrorfly.getJidFromPhoneNumber(
-            contactChatMessage.contactPhoneNumbers[i],
-            (SessionManagement.getCountryCode() ?? "").replaceAll('+', ''));
+        return await Mirrorfly.getJidFromPhoneNumber(mobileNumber: contactChatMessage.contactPhoneNumbers[i],
+            countryCode: (SessionManagement.getCountryCode() ?? "").replaceAll('+', ''));
       }
     }
     return '';
@@ -1250,7 +1287,7 @@ class DocumentMessageView extends StatelessWidget {
   final String search;
 
   onDocumentClick() {
-    openDocument(chatMessage.mediaChatMessage!.mediaLocalStoragePath);
+    openDocument(chatMessage.mediaChatMessage!.mediaLocalStoragePath.value);
   }
 
   @override
@@ -1324,7 +1361,9 @@ class DocumentMessageView extends StatelessWidget {
                         style: const TextStyle(fontSize: 12,color: Colors.black,fontWeight: FontWeight.w400),
                   )*/
                   ),
-                  getImageOverlay(chatMessage),
+                  Obx(() {
+                    return getImageOverlay(chatMessage);
+                  }),
                 ],
               ),
             ),
@@ -1404,19 +1443,19 @@ class VideoMessageView extends StatelessWidget {
 
   onVideoClick() {
     switch (chatMessage.isMessageSentByMe
-        ? chatMessage.mediaChatMessage?.mediaUploadStatus
-        : chatMessage.mediaChatMessage?.mediaDownloadStatus) {
+        ? chatMessage.mediaChatMessage?.mediaUploadStatus.value
+        : chatMessage.mediaChatMessage?.mediaDownloadStatus.value) {
       case Constants.mediaDownloaded:
       case Constants.mediaUploaded:
         if (chatMessage.messageType.toUpperCase() == 'VIDEO') {
-          if (checkFile(chatMessage.mediaChatMessage!.mediaLocalStoragePath) &&
-              (chatMessage.mediaChatMessage!.mediaDownloadStatus ==
+          if (checkFile(chatMessage.mediaChatMessage!.mediaLocalStoragePath.value) &&
+              (chatMessage.mediaChatMessage!.mediaDownloadStatus.value ==
                   Constants.mediaDownloaded ||
-                  chatMessage.mediaChatMessage!.mediaDownloadStatus ==
+                  chatMessage.mediaChatMessage!.mediaDownloadStatus.value ==
                       Constants.mediaUploaded ||
                   chatMessage.isMessageSentByMe)) {
             Get.toNamed(Routes.videoPlay, arguments: {
-              "filePath": chatMessage.mediaChatMessage!.mediaLocalStoragePath,
+              "filePath": chatMessage.mediaChatMessage!.mediaLocalStoragePath.value,
             });
           } else {
             debugPrint("file is video but condition failed");
@@ -1430,13 +1469,8 @@ class VideoMessageView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var mediaMessage = chatMessage.mediaChatMessage!;
-    // var screenHeight = MediaQuery.of(context).size.height;
-    var screenWidth = MediaQuery
-        .of(context)
-        .size
-        .width;
     return Container(
-      width: screenWidth * 0.60,
+      width: Get.width * 0.60,
       padding: const EdgeInsets.all(2.0),
       child: Column(
         children: [
@@ -1476,8 +1510,10 @@ class VideoMessageView extends StatelessWidget {
                   ],
                 ),
               ),
-              getImageOverlay(chatMessage,
-                  onVideo: isSelected ? null : onVideoClick),
+              Obx(() {
+                return getImageOverlay(chatMessage,
+                    onVideo: isSelected ? null : onVideoClick);
+              }),
               mediaMessage.mediaCaptionText
                   .checkNull()
                   .isEmpty
@@ -1540,14 +1576,10 @@ class ImageMessageView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    LogMessage.d("ImageMessageView", "build ${chatMessage.messageId}");
     var mediaMessage = chatMessage.mediaChatMessage!;
-    // var screenHeight = MediaQuery.of(context).size.height;
-    var screenWidth = MediaQuery
-        .of(context)
-        .size
-        .width;
     return Container(
-      width: screenWidth * 0.60,
+      width: Get.width * 0.60,
       padding: const EdgeInsets.all(2.0),
       child: Column(
         children: [
@@ -1563,7 +1595,9 @@ class ImageMessageView extends StatelessWidget {
                     mediaMessage.mediaFileName,
                     isSelected),
               ),
-              getImageOverlay(chatMessage),
+              Obx(() {
+                return getImageOverlay(chatMessage);
+              }),
               mediaMessage.mediaCaptionText
                   .checkNull()
                   .isEmpty
@@ -1618,47 +1652,48 @@ class ImageMessageView extends StatelessWidget {
     );
   }
 
-  getImage(String mediaLocalStoragePath, String mediaThumbImage,
+  getImage(RxString mediaLocalStoragePath, String mediaThumbImage,
       BuildContext context, String mediaFileName, bool isSelected) {
-    var screenHeight = MediaQuery
-        .of(context)
-        .size
-        .height;
-    var screenWidth = MediaQuery
-        .of(context)
-        .size
-        .width;
-    if (checkFile(mediaLocalStoragePath)) {
+    debugPrint("getImage mediaLocalStoragePath : $mediaLocalStoragePath");
+    if (checkFile(mediaLocalStoragePath.value)) {
       return InkWell(
           onTap: isSelected
               ? null
               : () {
             Get.toNamed(Routes.imageView, arguments: {
               'imageName': mediaFileName,
-              'imagePath': mediaLocalStoragePath
+              'imagePath': mediaLocalStoragePath.value
             });
           },
-          child: Image(
-            image: FileImage(File(mediaLocalStoragePath)),
-            loadingBuilder: (context, child, loadingProgress) {
-              if (loadingProgress == null) {
-                return FutureBuilder(
-                  future: null,
-                    builder: (context, d) {
-                  return child;
-                });
-              }
-              return const Center(child: CircularProgressIndicator());
-            },
-            width: screenWidth * 0.60,
-            height: screenHeight * 0.4,
-            fit: BoxFit.cover,
-          ) /*Image.file(
-            File(mediaLocalStoragePath),
-            width: controller.screenWidth * 0.60,
-            height: controller.screenHeight * 0.4,
-            fit: BoxFit.cover,
-          )*/
+          child: Obx(() {
+            return Image(
+              image: FileImage(File(mediaLocalStoragePath.value)),
+              loadingBuilder: (context, child, loadingProgress) {
+                if (loadingProgress == null) {
+                  return FutureBuilder(
+                      future: null,
+                      builder: (context, d) {
+                        return child;
+                      });
+                }
+                return const Center(child: CircularProgressIndicator());
+              },
+              frameBuilder: (cxt,child,frame,wasSynchronouslyLoaded){
+                debugPrint("getImage frameBuilder : frame : $frame ,wasSynchronouslyLoaded :$wasSynchronouslyLoaded");
+                return child;
+              },
+              errorBuilder: (cxt,obj,strace){
+                debugPrint("getImage errorBuilder : obj : $obj ,strace :$strace");
+                return Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text("$obj"),
+                );
+              },
+              width: Get.width * 0.60,
+              height: Get.height * 0.4,
+              fit: BoxFit.cover,
+            );
+          })
       );
     } else {
       return imageFromBase64String(mediaThumbImage, context, null, null);
@@ -1756,6 +1791,7 @@ class MessageContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    LogMessage.d("MessageContent", "build ${chatList[index].messageId}");
     var chatMessage = chatList[index];
     //mirrorFlyLog("message==>", json.encode(chatMessage));
     // debugPrint("Message Type===> ${chatMessage.messageType}");
@@ -1764,7 +1800,8 @@ class MessageContent extends StatelessWidget {
         chatMessage: chatMessage,
       );
     } else {
-      if (chatList[index].messageType.toUpperCase() == Constants.mText) {
+      if (chatList[index].messageType.toUpperCase() == Constants.mText ||
+          chatList[index].messageType.toUpperCase() == Constants.mAutoText) {
         return TextMessageView(
           chatMessage: chatMessage,
           search: search,
@@ -1974,14 +2011,15 @@ getMessageIndicator(String? messageStatus, bool isSender, String messageType, bo
 }
 
 Widget getImageOverlay(ChatMessageModel chatMessage,
-    {Function()? onAudio, Function()? onVideo}) {
+    {Function()? onAudio, Function()? onVideo, int? progress}) {
+  debugPrint("getImageOverlay media exists ${AppUtils.isMediaExists(chatMessage.mediaChatMessage!.mediaLocalStoragePath.value)}");
   // debugPrint(
   //     "getImageOverlay checkFile ${checkFile(chatMessage.mediaChatMessage!.mediaLocalStoragePath)}");
   // debugPrint("getImageOverlay messageStatus ${chatMessage.messageStatus}");
   // debugPrint(
   //     "getImageOverlay ${(checkFile(chatMessage.mediaChatMessage!.mediaLocalStoragePath) && chatMessage.messageStatus != 'N')}");
-  if (checkFile(chatMessage.mediaChatMessage!.mediaLocalStoragePath) &&
-      chatMessage.messageStatus.value != 'N') {
+
+  if (AppUtils.isMediaExists(chatMessage.mediaChatMessage!.mediaLocalStoragePath.value) && (chatMessage.isMediaDownloaded() || chatMessage.isMediaUploaded())) {
     if (chatMessage.messageType.toUpperCase() == 'VIDEO') {
       return FloatingActionButton.small(
         onPressed: onVideo,
@@ -1995,36 +2033,78 @@ Widget getImageOverlay(ChatMessageModel chatMessage,
       return InkWell(
         onTap: onAudio,
         child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: chatMessage.mediaChatMessage!.isPlaying
-              ? SvgPicture.asset(
-            pauseIcon,
-            height: 17,
-          ) //const Icon(Icons.pause)
-              : SvgPicture.asset(
-            playIcon,
-            height: 17,
-          ),
+          padding: const EdgeInsets.symmetric(horizontal: 8.0),
+          child: Container(
+              height: 30,
+              width: 30,
+              padding: const EdgeInsets.all(7),
+              child: SvgPicture.asset(
+                chatMessage.mediaChatMessage!.isPlaying ? pauseIcon : playIcon,
+                height: 17,
+              ))
         ),
       ); //const Icon(Icons.play_arrow_sharp);
     } else {
       return const SizedBox.shrink();
     }
   } else {
+    var status = 0;
+    if(chatMessage.isMessageSentByMe){
+      if(chatMessage.mediaChatMessage!.mediaUploadStatus.value == Constants.mediaUploading || chatMessage.mediaChatMessage!.mediaDownloadStatus.value == Constants.mediaDownloading ){
+        status = (chatMessage.mediaChatMessage!.mediaUploadStatus.value == Constants.mediaUploading) ? Constants.mediaUploading : Constants.mediaDownloading;
+      }else {
+        if (chatMessage.mediaChatMessage!
+            .mediaLocalStoragePath.value
+            .checkNull()
+            .isNotEmpty) {
+          if (!AppUtils.isMediaExists(chatMessage.mediaChatMessage!.mediaLocalStoragePath.value.checkNull())) {
+            if (chatMessage.mediaChatMessage!.mediaUploadStatus.value == Constants.mediaUploaded) {
+              status = Constants.mediaNotDownloaded; // for uploaded and deleted in local
+            } else {
+              // status = -1;
+              status = Constants.mediaNotDownloaded;
+            }
+          } else {
+            status = chatMessage.mediaChatMessage!.mediaUploadStatus.value;
+          }
+        } else {
+          status = chatMessage.mediaChatMessage!.mediaUploadStatus.value;
+        }
+      }
+    }else{
+      status = chatMessage.mediaChatMessage!.mediaDownloadStatus.value;
+    }
+    debugPrint("mediaStatus : $status  messageId ${chatMessage.messageId}");
     // debugPrint(
     //     "overlay status-->${chatMessage.isMessageSentByMe ? chatMessage.mediaChatMessage!.mediaUploadStatus : chatMessage.mediaChatMessage!.mediaDownloadStatus}");
-    switch (chatMessage.isMessageSentByMe
-        ? chatMessage.mediaChatMessage!.mediaUploadStatus
-        : chatMessage.mediaChatMessage!.mediaDownloadStatus) {
+    switch (status) {
       case Constants.mediaDownloaded:
       case Constants.mediaUploaded:
+        if (!AppUtils.isMediaExists(chatMessage.mediaChatMessage!.mediaLocalStoragePath.value.checkNull())) {
+          return InkWell(
+            child: downloadView(
+                chatMessage.mediaChatMessage!.mediaFileSize,
+                chatMessage.messageType.toUpperCase()),
+            onTap: () {
+              downloadMedia(chatMessage.messageId);
+            },
+          );
+        } else {
+          return const SizedBox.shrink();
+        }
       case Constants.mediaDownloadedNotAvailable:
       case Constants.mediaUploadedNotAvailable:
-        return const SizedBox.shrink();
+        return InkWell(
+          child: downloadView(
+              chatMessage.mediaChatMessage!.mediaFileSize,
+              chatMessage.messageType.toUpperCase()),
+          onTap: () {
+            downloadMedia(chatMessage.messageId);
+          },
+        );
       case Constants.mediaNotDownloaded:
         return InkWell(
           child: downloadView(
-              chatMessage.mediaChatMessage!.mediaDownloadStatus,
               chatMessage.mediaChatMessage!.mediaFileSize,
               chatMessage.messageType.toUpperCase()),
           onTap: () {
@@ -2037,38 +2117,41 @@ Widget getImageOverlay(ChatMessageModel chatMessage,
               uploadMedia(chatMessage.messageId);
             },
             child: uploadView(
-                chatMessage.mediaChatMessage!.mediaDownloadStatus,
                 chatMessage.mediaChatMessage!.mediaFileSize,
                 chatMessage.messageType.toUpperCase()));
 
       case Constants.mediaDownloading:
       case Constants.mediaUploading:
-        return InkWell(onTap: () {
-          cancelMediaUploadOrDownload(chatMessage.messageId);
-        }, child: Obx(() {
-          return downloadingOrUploadingView(chatMessage.messageType,
-              chatMessage.mediaChatMessage!.mediaProgressStatus.value);
-        }));
+        return Obx(() {
+          return InkWell(onTap: () {
+            cancelMediaUploadOrDownload(chatMessage.messageId);
+          }, child: downloadingOrUploadingView(chatMessage.messageType,
+              chatMessage.mediaChatMessage!.mediaProgressStatus.value)
+          );
+        });
       default:
-        return const SizedBox.shrink();
+        return const SizedBox(width: 8,);
     }
   }
 }
 
-uploadView(int mediaDownloadStatus, int mediaFileSize, String messageType) {
+uploadView(int mediaFileSize, String messageType) {
   return Padding(
     padding: const EdgeInsets.symmetric(horizontal: 8.0),
     child: messageType == 'AUDIO' || messageType == 'DOCUMENT'
         ? Container(
+      height: 30,
+      width: 30,
         decoration: BoxDecoration(
             border: Border.all(color: borderColor),
             borderRadius: BorderRadius.circular(3)),
-        padding: const EdgeInsets.all(5),
+        padding: const EdgeInsets.all(7),
         child: SvgPicture.asset(
           uploadIcon,
           color: playIconColor,
         ))
         : Container(
+        height: 35,
         width: 80,
         decoration: const BoxDecoration(
           borderRadius: BorderRadius.all(Radius.circular(5)),
@@ -2092,12 +2175,12 @@ uploadView(int mediaDownloadStatus, int mediaFileSize, String messageType) {
 }
 
 void cancelMediaUploadOrDownload(String messageId) {
-  Mirrorfly.cancelMediaUploadOrDownload(messageId);
+  Mirrorfly.cancelMediaUploadOrDownload(messageId: messageId);
 }
 
 void uploadMedia(String messageId) async {
   if (await AppUtils.isNetConnected()) {
-    Mirrorfly.uploadMedia(messageId);
+    Mirrorfly.uploadMedia(messageId: messageId);
   } else {
     toToast(Constants.noInternetConnection);
   }
@@ -2110,7 +2193,7 @@ void downloadMedia(String messageId) async {
     var permission = await AppPermission.getStoragePermission();
     if (permission) {
       debugPrint("media permission granted");
-      Mirrorfly.downloadMedia(messageId);
+      Mirrorfly.downloadMedia(messageId: messageId);
     } else {
       debugPrint("storage permission not granted");
     }
@@ -2119,20 +2202,23 @@ void downloadMedia(String messageId) async {
   }
 }
 
-Widget downloadView(int mediaDownloadStatus, int mediaFileSize, String messageType) {
+Widget downloadView(int mediaFileSize, String messageType) {
   return Padding(
     padding: const EdgeInsets.symmetric(horizontal: 8.0),
     child: messageType == 'AUDIO' || messageType == 'DOCUMENT'
         ? Container(
+      height: 30,
+        width: 30,
         decoration: BoxDecoration(
             border: Border.all(color: borderColor),
             borderRadius: BorderRadius.circular(3)),
-        padding: const EdgeInsets.all(5),
+        padding: const EdgeInsets.all(7),
         child: SvgPicture.asset(
           downloadIcon,
           color: playIconColor,
         ))
         : Container(
+      height: 35,
         width: 80,
         decoration: BoxDecoration(
           border: Border.all(
@@ -2159,8 +2245,8 @@ Widget downloadView(int mediaDownloadStatus, int mediaFileSize, String messageTy
 }
 
 downloadingOrUploadingView(String messageType, int progress) {
-  // debugPrint('downloadingOrUploadingView progress $progress');
-  if (messageType == "AUDIO" || messageType == "DOCUMENT") {
+  debugPrint('downloadingOrUploadingView progress $progress');
+  if (messageType == MessageType.audio.value || messageType == MessageType.document.value) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 8.0),
       child: Container(
@@ -2188,7 +2274,7 @@ downloadingOrUploadingView(String messageType, int progress) {
                     height: 2,
                     child: LinearProgressIndicator(
                       valueColor: const AlwaysStoppedAnimation<Color>(
-                        playIconColor,
+                        progressColor,
                       ),
                       value: progress == 0 || progress == 100
                           ? null
@@ -2202,8 +2288,8 @@ downloadingOrUploadingView(String messageType, int progress) {
     );
   } else {
     return Container(
-        height: 30,
-        width: 70,
+        height: 35,
+        width: 80,
         decoration: const BoxDecoration(
           borderRadius: BorderRadius.all(Radius.circular(4)),
           color: Colors.black45,
@@ -2259,7 +2345,7 @@ class AttachmentsSheetView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    LogMessage.d("attachments",attachments.length);
+    LogMessage.d("attachments", attachments.length);
     // final attachments = [AttachmentIcon(documentImg, "Document", onDocument),AttachmentIcon(cameraImg, "Camera", onCamera),AttachmentIcon(galleryImg, "Gallery", onGallery),AttachmentIcon(audioImg, "Audio", onAudio),AttachmentIcon(contactImg, "Contact", onContact),AttachmentIcon(locationImg, "Location", onLocation)];
     return Card(
       color: bottomSheetColor,
@@ -2282,7 +2368,7 @@ class AttachmentsSheetView extends StatelessWidget {
                     (attachments[index].text == "Gallery") ? onGallery :
                     (attachments[index].text == "Audio") ? onAudio :
                     (attachments[index].text == "Contact") ? onContact :
-                    (attachments[index].text == "Location") ? onLocation : (){});
+                    (attachments[index].text == "Location") ? onLocation : () {});
               });
         }),
         /*Column(
@@ -2433,7 +2519,7 @@ Widget chatSpannedText(String text, String spannableText, TextStyle? style,
   }
 }*/
 
-class AudioMessagePlayerController extends GetxController {
+/*class AudioMessagePlayerController extends GetxController {
   final _obj = ''.obs;
 
   set obj(value) => _obj.value = value;
@@ -2476,7 +2562,7 @@ class AudioMessagePlayerController extends GetxController {
     }
     if (!playingChat!.mediaChatMessage!.isPlaying) {
       int result = await player.play(
-          playingChat!.mediaChatMessage!.mediaLocalStoragePath,
+          playingChat!.mediaChatMessage!.mediaLocalStoragePath.value,
           position:
           Duration(milliseconds: playingChat!.mediaChatMessage!.currentPos),
           isLocal: true);
@@ -2501,7 +2587,7 @@ class AudioMessagePlayerController extends GetxController {
       }
     }
   }
-}
+}*/
 
 /// Checks the current header id with previous header id
 /// @param position Position of the current item
@@ -2529,6 +2615,9 @@ bool isDateChanged(int position, List<ChatMessageModel> mChatData) {
 }
 
 String? groupedDateMessage(int index, List<ChatMessageModel> chatList) {
+  if(index.isNegative){
+    return null;
+  }
   if (index == chatList.length - 1) {
     return addDateHeaderMessage(chatList.last);
   } else {
@@ -2587,4 +2676,39 @@ String getMonthForInt(int num) {
     month = months[num];
   }
   return month;
+}
+
+
+class GetBoxOffset extends StatefulWidget {
+  final Widget child;
+  final Function(Offset offset) offset;
+
+  const GetBoxOffset({Key? key, required this.child, required this.offset}) : super(key: key);
+
+  @override
+  _GetBoxOffsetState createState() => _GetBoxOffsetState();
+}
+
+class _GetBoxOffsetState extends State<GetBoxOffset> {
+  GlobalKey widgetKey = GlobalKey();
+
+  Offset offset = const Offset(0.0, 0.0);
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final box = widgetKey.currentContext?.findRenderObject() as RenderBox;
+      offset = box.localToGlobal(Offset.zero);
+      widget.offset(offset);
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      key: widgetKey,
+      child: widget.child,
+    );
+  }
 }
