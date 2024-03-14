@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -212,7 +213,7 @@ class GroupInfoController extends GetxController {
           onPressed: () {
             Get.back();
           },
-          child: const Text("CANCEL")),
+          child: const Text("CANCEL",style: TextStyle(color: buttonBgColor))),
       TextButton(
           onPressed: () {
             Get.back();
@@ -226,7 +227,7 @@ class GroupInfoController extends GetxController {
               }
             });
           },
-          child: const Text("REPORT")),
+          child: const Text("REPORT",style: TextStyle(color: buttonBgColor))),
     ]);
   }
   exitOrDeleteGroup(){
@@ -248,13 +249,13 @@ class GroupInfoController extends GetxController {
           onPressed: () {
             Get.back();
           },
-          child: const Text("CANCEL")),
+          child: const Text("CANCEL",style: TextStyle(color: buttonBgColor))),
       TextButton(
           onPressed: () {
             Get.back();
             exitFromGroup();
           },
-          child: const Text("LEAVE")),
+          child: const Text("LEAVE",style: TextStyle(color: buttonBgColor))),
     ]);
   }
   var leavedGroup = false.obs;
@@ -292,7 +293,7 @@ class GroupInfoController extends GetxController {
           onPressed: () {
             Get.back();
           },
-          child: const Text("CANCEL")),
+          child: const Text("CANCEL",style: TextStyle(color: buttonBgColor))),
       TextButton(
           onPressed: () async {
             if(await AppUtils.isNetConnected()) {
@@ -315,7 +316,7 @@ class GroupInfoController extends GetxController {
             }
 
           },
-          child: const Text("DELETE")),
+          child: const Text("DELETE",style: TextStyle(color: buttonBgColor))),
     ]);
   }
 
@@ -408,13 +409,13 @@ class GroupInfoController extends GetxController {
           onPressed: () {
             Get.back();
           },
-          child: const Text("CANCEL")),
+          child: const Text("CANCEL",style: TextStyle(color: buttonBgColor))),
       TextButton(
           onPressed: () {
             Get.back();
             revokeAccessForProfileImage();
           },
-          child: const Text("REMOVE")),
+          child: const Text("REMOVE",style: TextStyle(color: buttonBgColor))),
     ]);
   }
 
@@ -549,6 +550,70 @@ class GroupInfoController extends GetxController {
     count.value = (25 - nameController.text.length);
   }
 
+  onEmojiBackPressed(){
+    var text = nameController.text;
+    var cursorPosition = nameController.selection.base.offset;
+
+    // If cursor is not set, then place it at the end of the textfield
+    if (cursorPosition < 0) {
+      nameController.selection = TextSelection(
+        baseOffset: nameController.text.length,
+        extentOffset: nameController.text.length,
+      );
+      cursorPosition = nameController.selection.base.offset;
+    }
+
+    if (cursorPosition >= 0) {
+      final selection = nameController.value.selection;
+      final newTextBeforeCursor =
+      selection.textBefore(text).characters.skipLast(1).toString();
+      LogMessage.d("newTextBeforeCursor", newTextBeforeCursor);
+      nameController
+        ..text = newTextBeforeCursor + selection.textAfter(text)
+        ..selection = TextSelection.fromPosition(
+            TextPosition(offset: newTextBeforeCursor.length));
+    }
+    count((25 - nameController.text.characters.length));
+  }
+
+  onEmojiSelected(Emoji emoji){
+    if(nameController.text.characters.length < 25){
+      final controller = nameController;
+      final text = controller.text;
+      final selection = controller.selection;
+      final cursorPosition = controller.selection.base.offset;
+
+      if (cursorPosition < 0) {
+        controller.text += emoji.emoji;
+        // widget.onEmojiSelected?.call(category, emoji);
+        return;
+      }
+
+      final newText =
+      text.replaceRange(selection.start, selection.end, emoji.emoji);
+      final emojiLength = emoji.emoji.length;
+      controller
+        ..text = newText
+        ..selection = selection.copyWith(
+          baseOffset: selection.start + emojiLength,
+          extentOffset: selection.start + emojiLength,
+        );
+    }
+    count((25 - nameController.text.characters.length));
+  }
+
+  showHideEmoji(BuildContext context){
+    if (!showEmoji.value) {
+      focusNode.unfocus();
+    }else{
+      focusNode.requestFocus();
+      return;
+    }
+    Future.delayed(const Duration(milliseconds: 500), () {
+      showEmoji(!showEmoji.value);
+    });
+  }
+
   void userDeletedHisProfile(String jid) {
     userUpdatedHisProfile(jid);
   }
@@ -574,6 +639,15 @@ class GroupInfoController extends GetxController {
   void notifyDashboardUI(){
     if(Get.isRegistered<DashboardController>()){
       Get.find<DashboardController>().chatMuteChangesNotifyUI(profile.jid.checkNull());
+    }
+  }
+
+  onBackPressed() {
+    if (showEmoji.value) {
+      showEmoji(false);
+    } else {
+      nameController.text = profile.nickName.checkNull();
+      Get.back();
     }
   }
 }

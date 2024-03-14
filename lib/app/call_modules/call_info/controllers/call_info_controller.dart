@@ -67,7 +67,7 @@ class CallInfoController extends GetxController{
               onPressed: () {
                 Get.back();
               },
-              child: Text(Constants.cancel.toUpperCase())),
+              child: Text(Constants.cancel.toUpperCase(),style: TextStyle(color: buttonBgColor))),
           TextButton(
               onPressed: () {
                 Get.back();
@@ -79,7 +79,7 @@ class CallInfoController extends GetxController{
                   }
                 });
               },
-              child: const Text(Constants.ok)),
+              child: const Text(Constants.ok,style: TextStyle(color: buttonBgColor))),
         ],
         barrierDismissible: true);
   }

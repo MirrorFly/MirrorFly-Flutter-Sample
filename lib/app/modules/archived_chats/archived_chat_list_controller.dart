@@ -340,7 +340,7 @@ class ArchivedChatListController extends GetxController {
               onPressed: () {
                 Get.back();
               },
-              child: const Text("NO")),
+              child: const Text("NO",style: TextStyle(color: buttonBgColor))),
           TextButton(
               onPressed: () {
                 Get.back();
@@ -350,7 +350,7 @@ class ArchivedChatListController extends GetxController {
                   itemsDelete();
                 }
               },
-              child: const Text("YES")),
+              child: const Text("YES",style: TextStyle(color: buttonBgColor))),
         ],
         message: '');
   }

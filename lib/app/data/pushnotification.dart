@@ -26,7 +26,7 @@ class PushNotifications {
 
     FirebaseMessaging.onMessage.listen((message){
       debugPrint('#Mirrorfly Notification -> Got a message whilst in the foreground!');
-      onMessage(message);
+      // onMessage(message);
     });
   }
   /// Create a [AndroidNotificationChannel] for heads up notifications

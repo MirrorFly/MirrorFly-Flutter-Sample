@@ -185,18 +185,30 @@ class GroupCreationController extends GetxController {
 
   void choosePhoto() {
     Helper.showVerticalButtonAlert([
-      TextButton(
-          onPressed: () {
-            Get.back();
-            imagePick(Get.context!);
-          },
-          child: const Text("Choose from Gallery",style: TextStyle(color: Colors.black),)),
-      TextButton(
-          onPressed: () async{
-            Get.back();
-            camera();
-          },
-          child: const Text("Take Photo",style: TextStyle(color: Colors.black))),
+      ListTile(
+        dense: true,
+        contentPadding: const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
+        onTap: () {
+          Get.back();
+          imagePick(Get.context!);
+        },
+        title: const Text(
+          "Choose from Gallery",
+          style: TextStyle(color: textBlackColor, fontSize: 14),
+        ),
+      ),
+      ListTile(
+        dense: true,
+        contentPadding: const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
+        onTap: () {
+          Get.back();
+          camera();
+        },
+        title: const Text(
+          "Take Photo",
+          style: TextStyle(color: textBlackColor, fontSize: 14),
+        ),
+      ),
     ]);
   }
 }

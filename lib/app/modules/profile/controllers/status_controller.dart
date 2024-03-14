@@ -82,7 +82,7 @@ class StatusListController extends FullLifeCycleController with FullLifeCycleMix
   void onInit() {
     super.onInit();
     selectedStatus.value = Get.arguments['status'];
-    addStatusController.text=selectedStatus.value;
+    addStatusController.text= selectedStatus.value;
     onChanged();
     getStatusList();
     onChanged();
@@ -218,7 +218,7 @@ class StatusListController extends FullLifeCycleController with FullLifeCycleMix
           onPressed: () {
             Get.back();
           },
-          child: const Text("No")),
+          child: const Text("No",style: TextStyle(color: buttonBgColor))),
       TextButton(
           onPressed: () async {
             if (await AppUtils.isNetConnected()) {
@@ -236,12 +236,23 @@ class StatusListController extends FullLifeCycleController with FullLifeCycleMix
               toToast(Constants.noInternetConnection);
             }
           },
-          child: const Text("Yes")),
+          child: const Text("Yes",style: TextStyle(color: buttonBgColor))),
     ]);
   }
 
   @override
   void onHidden() {
 
+  }
+
+  onBackPressed([String? result]) {
+    debugPrint("result $result");
+    showEmoji(false);
+    addStatusController.text = selectedStatus.value;
+    if(result != null){
+      Get.back(result: result);
+    }else {
+      Get.back();
+    }
   }
 }

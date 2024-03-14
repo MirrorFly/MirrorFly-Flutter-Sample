@@ -25,7 +25,7 @@ class DeleteAccountController extends GetxController {
               onPressed: () {
                 Get.back();
               },
-              child: const Text("Ok")),
+              child: const Text("Ok",style: TextStyle(color: buttonBgColor))),
         ]);
         return;
       }
@@ -46,7 +46,7 @@ class DeleteAccountController extends GetxController {
                     onPressed: () {
                       Get.back();
                     },
-                    child: const Text("Ok")),
+                    child: const Text("Ok",style: TextStyle(color: buttonBgColor))),
               ]);
           return;
         }

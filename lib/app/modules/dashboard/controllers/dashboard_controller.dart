@@ -935,7 +935,7 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
           onPressed: () {
             Get.back();
           },
-          child: const Text("No")),
+          child: const Text("No",style: TextStyle(color: buttonBgColor))),
       TextButton(
           onPressed: () {
             Get.back();
@@ -949,7 +949,7 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
               updateUnReadChatCount();
             });
           },
-          child: const Text("Yes")),
+          child: const Text("Yes",style: TextStyle(color: buttonBgColor))),
     ]);
   }
 
@@ -959,7 +959,7 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
           onPressed: () {
             Get.back();
           },
-          child: const Text("No")),
+          child: const Text("No",style: TextStyle(color: buttonBgColor))),
       TextButton(
           onPressed: () async {
             Get.back();
@@ -974,7 +974,7 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
               }
             });
           },
-          child: const Text("Yes")),
+          child: const Text("Yes",style: TextStyle(color: buttonBgColor))),
     ]);
   }
 
@@ -1955,7 +1955,7 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
               onPressed: () {
                 Get.back();
               },
-              child: Text(Constants.cancel.toUpperCase())),
+              child: Text(Constants.cancel.toUpperCase(),style: TextStyle(color: buttonBgColor))),
           TextButton(
               onPressed: () {
                 Get.back();
@@ -1970,7 +1970,7 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
                   }
                 });
               },
-              child: const Text(Constants.ok)),
+              child: const Text(Constants.ok,style: TextStyle(color: buttonBgColor))),
         ],
         barrierDismissible: true);
   }
@@ -1983,7 +1983,7 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
               onPressed: () {
                 Get.back();
               },
-              child: Text(Constants.cancel.toUpperCase())),
+              child: Text(Constants.cancel.toUpperCase(),style: TextStyle(color: buttonBgColor))),
           TextButton(
               onPressed: () async {
                 Get.back();
@@ -2002,7 +2002,7 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
                   }
                 });
               },
-              child: const Text(Constants.ok)),
+              child: const Text(Constants.ok,style: TextStyle(color: buttonBgColor))),
         ],
         barrierDismissible: true);
   }
@@ -2015,7 +2015,7 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
               onPressed: () {
                 Get.back();
               },
-              child: Text(Constants.cancel.toUpperCase())),
+              child: Text(Constants.cancel.toUpperCase(),style: TextStyle(color: buttonBgColor))),
           TextButton(
               onPressed: () {
                 Get.back();
@@ -2027,7 +2027,7 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
                   }
                 });
               },
-              child: const Text(Constants.ok)),
+              child: const Text(Constants.ok,style: TextStyle(color: buttonBgColor))),
         ],
         barrierDismissible: true);
   }
@@ -2037,6 +2037,37 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
     if (result != null) {
       var chatIndex = callLogList.indexWhere((element) => item.roomId == element.roomId);
       callLogList.removeAt(chatIndex);
+    }
+  }
+}
+
+class MyController extends GetxController {
+  var typingUserJid = <String>[].obs;
+  var typingAndGoneStatus = <Triple>[].obs;
+
+  String typingUser(String jid) {
+    var index = typingAndGoneStatus.indexWhere((it) => it.singleOrgroupJid == jid);
+    if (index.isNegative) {
+      return "";
+    } else {
+      return typingAndGoneStatus[index].userId.isNotEmpty
+          ? typingAndGoneStatus[index].userId
+          : typingAndGoneStatus[index].singleOrgroupJid;
+    }
+  }
+
+  void setTypingStatus(String singleOrgroupJid, String userId, String typingStatus) {
+    var index = typingAndGoneStatus.indexWhere((it) => it.singleOrgroupJid == singleOrgroupJid && it.userId == userId);
+    if (typingStatus.toLowerCase() == Constants.composing) {
+      if (index.isNegative) {
+        typingAndGoneStatus.insert(0, Triple(singleOrgroupJid, userId, true));
+        typingUserJid.insert(0, userId.isNotEmpty ? userId : singleOrgroupJid);
+      }
+    } else {
+      if (!index.isNegative) {
+        typingAndGoneStatus.removeAt(index);
+        typingUserJid.removeAt(index);
+      }
     }
   }
 }

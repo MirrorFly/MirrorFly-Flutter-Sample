@@ -4,6 +4,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
 import 'package:mirror_fly_demo/app/common/extensions.dart';
+import 'package:mirrorfly_plugin/event_handlers.dart';
 import '../../common/constants.dart';
 import '../../common/widgets.dart';
 import 'package:mirrorfly_plugin/mirrorflychat.dart';
@@ -58,7 +59,9 @@ class RecentChatItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    LogMessage.d("RecentChatItem", "build ${item.jid}");
     return Container(
+      key: ValueKey(item.jid),
       color: isSelected ? Colors.black12 : Colors.transparent,
       child: Row(
         children: [
@@ -90,6 +93,7 @@ class RecentChatItem extends StatelessWidget {
   }
 
   Expanded buildRecentChatMessageDetails() {
+    LogMessage.d("RecentChatItem", " buildRecentChatMessageDetails build ${item.jid}");
     return Expanded(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -110,7 +114,8 @@ class RecentChatItem extends StatelessWidget {
             children: [
               item.isLastMessageSentByMe.checkNull() && !isForwardMessage && !item.isLastMessageRecalledByUser.checkNull()
                   ? (item.lastMessageType == Constants.msgTypeText && item.lastMessageContent.checkNull().isNotEmpty ||
-                          item.lastMessageType != Constants.msgTypeText) && typingUserid.isEmpty
+                              item.lastMessageType != Constants.msgTypeText) &&
+                          typingUserid.isEmpty
                       ? buildMessageIndicator()
                       : const SizedBox()
                   : const SizedBox(),
@@ -287,35 +292,41 @@ class RecentChatItem extends StatelessWidget {
   }
 
   Widget buildTypingUser() {
-    return typingUserid.checkNull().isEmpty ? const SizedBox( height: 15,) : FutureBuilder(
-        future: getProfileDetails(typingUserid.checkNull()),
-        builder: (context, data) {
-          if (data.hasData && data.data!=null) {
-            return Text(
-              getTypingUser(data.data!,item.isGroup),
-              //"${data.data!.name.checkNull()} typing...",
-              style: typingstyle,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-            );
-          } else {
-            mirrorFlyLog("hasError", data.error.toString());
-            return const SizedBox( height: 15,);
-          }
-        });
+    return typingUserid.checkNull().isEmpty
+        ? const SizedBox(
+            height: 15,
+          )
+        : FutureBuilder(
+            future: getProfileDetails(typingUserid.checkNull()),
+            builder: (context, data) {
+              if (data.hasData && data.data != null) {
+                return Text(
+                  getTypingUser(data.data!, item.isGroup),
+                  //"${data.data!.name.checkNull()} typing...",
+                  style: typingstyle,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                );
+              } else {
+                mirrorFlyLog("hasError", data.error.toString());
+                return const SizedBox(
+                  height: 15,
+                );
+              }
+            });
   }
 
-  String getTypingUser(ProfileDetails profile,bool? isGroup){
-    if(isGroup.checkNull()){
+  String getTypingUser(ProfileDetails profile, bool? isGroup) {
+    if (isGroup.checkNull()) {
       return "${profile.getName().checkNull()} typing...";
-    }else{
+    } else {
       return "typing...";
     }
   }
 
-  checkSenderShouldShow(ChatMessageModel chat){
-    if(item.isGroup.checkNull()){
-      if(!chat.isMessageSentByMe.checkNull()){
+  checkSenderShouldShow(ChatMessageModel chat) {
+    if (item.isGroup.checkNull()) {
+      if (!chat.isMessageSentByMe.checkNull()) {
         return (chat.messageType != Constants.mNotification || chat.messageTextContent == " added you") ||
             (forMessageTypeString(chat.messageType, content: chat.messageTextContent.checkNull()).checkNull().isNotEmpty);
       }
@@ -324,10 +335,12 @@ class RecentChatItem extends StatelessWidget {
   }
 
   FutureBuilder<ChatMessageModel> buildLastMessageItem() {
+    LogMessage.d("buildLastMessageItem: ", item.jid);
     return FutureBuilder(
+      key: ValueKey(item.lastMessageId),
         future: getMessageOfId(item.lastMessageId.checkNull()),
         builder: (context, data) {
-          //LogMessage.d("getMessageOfId future", "${item.lastMessageId.checkNull()} : ${data.data?.messageId}");
+          LogMessage.d("getMessageOfId future", "${item.lastMessageId.checkNull()} : ${data.data?.messageId}");
           if (data.hasData && data.data != null && !data.hasError) {
             var chat = data.data!;
             return Row(
@@ -372,7 +385,9 @@ class RecentChatItem extends StatelessWidget {
               ],
             );
           }
-          return const SizedBox( height: 15,);
+          return const SizedBox(
+            height: 15,
+          );
         });
   }
 
@@ -407,19 +422,22 @@ class RecentChatItem extends StatelessWidget {
 
   Future<String> getParticipantsNameAsCsv(String jid) async {
     var groupParticipantsName = ''.obs;
-    await Mirrorfly.getGroupMembersList(jid:jid, fetchFromServer: false, flyCallBack: (FlyResponse response) {
-      if (response.isSuccess && response.hasData) {
-        var str = <String>[];
-        var groupsMembersProfileList = memberFromJson(response.data);
-        for (var it in groupsMembersProfileList) {
-          if (it.jid.checkNull() != SessionManagement.getUserJID().checkNull()) {
-            str.add(it.name.checkNull());
+    await Mirrorfly.getGroupMembersList(
+        jid: jid,
+        fetchFromServer: false,
+        flyCallBack: (FlyResponse response) {
+          if (response.isSuccess && response.hasData) {
+            var str = <String>[];
+            var groupsMembersProfileList = memberFromJson(response.data);
+            for (var it in groupsMembersProfileList) {
+              if (it.jid.checkNull() != SessionManagement.getUserJID().checkNull()) {
+                str.add(it.name.checkNull());
+              }
+            }
+            groupParticipantsName(str.join(","));
           }
-        }
-        groupParticipantsName(str.join(","));
-      }
-      return groupParticipantsName.value;
-    });
+          return groupParticipantsName.value;
+        });
     return groupParticipantsName.value;
   }
 
@@ -554,13 +572,25 @@ Widget callLogTime(String time, int? callState) {
       const SizedBox(
         width: 5,
       ),
-      Text(time, style: const TextStyle(color: Colors.black),),
+      Text(
+        time,
+        style: const TextStyle(color: Colors.black),
+      ),
     ],
   );
 }
 
 class ContactItem extends StatelessWidget {
-  const ContactItem({Key? key,required this.item, this.onAvatarClick,this.spanTxt = "", this.isCheckBoxVisible = false, required this.checkValue, required this.onCheckBoxChange, this.onListItemPressed,}) : super(key: key);
+  const ContactItem({
+    Key? key,
+    required this.item,
+    this.onAvatarClick,
+    this.spanTxt = "",
+    this.isCheckBoxVisible = false,
+    required this.checkValue,
+    required this.onCheckBoxChange,
+    this.onListItemPressed,
+  }) : super(key: key);
   final ProfileDetails item;
   final Function()? onAvatarClick;
   final String spanTxt;
@@ -572,107 +602,84 @@ class ContactItem extends StatelessWidget {
   Widget build(BuildContext context) {
     // LogMessage.d("Contact item", item.toJson());
     // LogMessage.d("Contact item name", getName(item));
-      return Opacity(
-        opacity: item.isBlocked.checkNull() ? 0.3 : 1.0,
-        child: InkWell(
-          onTap: onListItemPressed,
-          child: Row(
-            children: [
-              InkWell(
-                onTap: onAvatarClick,
-                child: Container(
-                    margin: const EdgeInsets.only(
-                        left: 19.0,
-                        top: 10,
-                        bottom: 10,
-                        right: 10),
-                    width: 50,
-                    height: 50,
-                    decoration: BoxDecoration(
-                      color: item.image
-                          .checkNull()
-                          .isEmpty
-                          ? iconBgColor
-                          : buttonBgColor,
-                      shape: BoxShape.circle,
-                    ),
-                    child: ImageNetwork(
-                      url: item.image.toString(),
-                      width: 48,
-                      height: 48,
-                      clipOval: true,
-                      errorWidget: getName(item) //item.nickName
-                          .checkNull()
-                          .isNotEmpty
-                          ? ProfileTextImage(
-                        text:
-                        getName(item)
-                      )
-                          : const Icon(
-                        Icons.person,
-                        color: Colors.white,
-                      ),
-                      blocked: item.isBlockedMe.checkNull() ||
-                          item.isAdminBlocked.checkNull(),
-                      unknown: (!item.isItSavedContact.checkNull() ||
-                          item.isDeletedContact()),
-                      isGroup: item.isGroupProfile.checkNull(),
-                    )),//controller.showProfilePopup(item.obs);
+    return Opacity(
+      opacity: item.isBlocked.checkNull() ? 0.3 : 1.0,
+      child: InkWell(
+        onTap: onListItemPressed,
+        child: Row(
+          children: [
+            InkWell(
+              onTap: onAvatarClick,
+              child: Container(
+                  margin: const EdgeInsets.only(left: 19.0, top: 10, bottom: 10, right: 10),
+                  width: 50,
+                  height: 50,
+                  decoration: BoxDecoration(
+                    color: item.image.checkNull().isEmpty ? iconBgColor : buttonBgColor,
+                    shape: BoxShape.circle,
+                  ),
+                  child: ImageNetwork(
+                    url: item.image.toString(),
+                    width: 48,
+                    height: 48,
+                    clipOval: true,
+                    errorWidget: getName(item) //item.nickName
+                            .checkNull()
+                            .isNotEmpty
+                        ? ProfileTextImage(text: getName(item))
+                        : const Icon(
+                            Icons.person,
+                            color: Colors.white,
+                          ),
+                    blocked: item.isBlockedMe.checkNull() || item.isAdminBlocked.checkNull(),
+                    unknown: (!item.isItSavedContact.checkNull() || item.isDeletedContact()),
+                    isGroup: item.isGroupProfile.checkNull(),
+                  )), //controller.showProfilePopup(item.obs);
+            ),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  spanTxt.isEmpty
+                      ? Text(
+                          getName(item),
+                          style: Theme.of(context).textTheme.titleMedium,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        )
+                      : spannableText(
+                          getName(item),
+                          //item.profileName.checkNull(),
+                          spanTxt.trim(),
+                          const TextStyle(fontSize: 16.0, fontWeight: FontWeight.w700, fontFamily: 'sf_ui', color: textHintColor)),
+                  Text(
+                    item.status.toString(),
+                    style: Theme.of(context).textTheme.titleSmall,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  )
+                ],
               ),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment:
-                  CrossAxisAlignment.start,
-                  children: [
-                    spanTxt.isEmpty ?
-                    Text(
-                      getName(item),
-                      style: Theme
-                          .of(context)
-                          .textTheme
-                          .titleMedium,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ) :
-                    spannableText(
-                        getName(item),
-                        //item.profileName.checkNull(),
-                        spanTxt.trim(),
-                        const TextStyle(fontSize: 16.0, fontWeight: FontWeight.w700, fontFamily: 'sf_ui', color: textHintColor)),
-                    Text(
-                      item.status.toString(),
-                      style: Theme
-                          .of(context)
-                          .textTheme
-                          .titleSmall,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    )
-                  ],
-                ),
+            ),
+            Visibility(
+              visible: isCheckBoxVisible,
+              child: Checkbox(
+                value: checkValue, //controller.selectedUsersJIDList.contains(item.jid),
+                onChanged: (value) {
+                  onCheckBoxChange(value);
+                  //controller.onListItemPressed(item);
+                },
+                activeColor: AppColors.checkBoxChecked,
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(2), side: const BorderSide(color: AppColors.checkBoxBorder)),
               ),
-              Visibility(
-                visible: isCheckBoxVisible,
-                child: Checkbox(
-                  value: checkValue,//controller.selectedUsersJIDList.contains(item.jid),
-                  onChanged: (value) {
-                    onCheckBoxChange(value);
-                    //controller.onListItemPressed(item);
-                  },
-                  activeColor: AppColors.checkBoxChecked,
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(2),
-                      side: const BorderSide(color: AppColors.checkBoxBorder)),
-                ),
-              ),
-            ],
-          ),
-          // onTap: () {
-          //   controller.onListItemPressed(item);
-          // },
+            ),
+          ],
         ),
-      );
-    }
-
+        // onTap: () {
+        //   controller.onListItemPressed(item);
+        // },
+      ),
+    );
+  }
 }
 

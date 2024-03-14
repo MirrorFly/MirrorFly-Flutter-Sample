@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:mirror_fly_demo/app/common/extensions.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -10,7 +11,8 @@ import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/common/main_controller.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
 import 'package:mirror_fly_demo/app/data/permissions.dart';
-
+import 'package:flutter_libphonenumber/flutter_libphonenumber.dart'
+as lib_phone_number;
 import 'package:otp_text_field/otp_field.dart';
 
 import '../../../common/constants.dart';
@@ -25,6 +27,8 @@ class LoginController extends GetxController {
   var selectedCountry = CountryData(name: "India", dialCode: "+91", code: "IN").obs;
   TextEditingController mobileNumber = TextEditingController();
   OtpFieldController otpController = OtpFieldController();
+
+  FocusNode focusNode = FocusNode();
 
   Timer? countdownTimer;
   Duration myDuration = const Duration(seconds: 31);
@@ -88,12 +92,30 @@ class LoginController extends GetxController {
     countdownTimer!.cancel();
   }
 
-  void registerUser() {
+  Future<void> registerUser() async {
     if (mobileNumber.text.isEmpty) {
       toToast("Please Enter Mobile Number");
     } else {
-      // phoneAuth();
-      registerAccount();
+      if(await validMobileNumber(selectedCountry.value.dialCode!,mobileNumber.text)) {
+        // phoneAuth();
+        registerAccount();
+      }else{
+        toToast("Please Enter Valid Mobile Number");
+      }
+    }
+  }
+
+  Future<bool> validMobileNumber(String dialCode,String mobileNumber) async {
+    try {
+      LogMessage.d("validMobileNumber",
+          "dialCode : $dialCode, mobileNumber : $mobileNumber");
+      lib_phone_number.init();
+      var parse = await lib_phone_number.parse(dialCode+mobileNumber);
+      LogMessage.d("validMobileNumber", "parse : $parse");;
+      return true;
+    }catch(e){
+      LogMessage.e("validMobileNumber", "error : $e");
+      return false;
     }
   }
 
@@ -381,13 +403,13 @@ class LoginController extends GetxController {
             Get.back();
             gotoLogin();
           },
-          child: const Text("NO")),
+          child: const Text("NO",style: TextStyle(color: buttonBgColor))),
       TextButton(
           onPressed: () {
             Get.back();
             registerAccount();
           },
-          child: const Text("YES")),
+          child: const Text("YES",style: TextStyle(color: buttonBgColor))),
     ]);
   }
 
@@ -403,14 +425,14 @@ class LoginController extends GetxController {
             Get.back();
             isForceRegister = false;
           },
-          child: const Text("Cancel")),
+          child: const Text("Cancel",style: TextStyle(color: buttonBgColor))),
       TextButton(
           onPressed: () {
             Get.back();
             isForceRegister = true;
             registerUser();
           },
-          child: const Text("Continue")),
+          child: const Text("Continue",style: TextStyle(color: buttonBgColor))),
     ]);
   }
 

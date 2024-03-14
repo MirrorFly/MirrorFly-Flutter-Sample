@@ -1,6 +1,8 @@
 import 'dart:convert';
 import 'dart:math';
 
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
@@ -195,4 +197,30 @@ extension BooleanParsing on bool? {
   bool checkNull() {
     return this ?? false;
   }
+}
+
+extension ScrollControllerExtension on ScrollController {
+  void scrollTo({required int index, required Duration duration, Curve? curve}) {
+    var offset = getOffset(GlobalKey(debugLabel: "CHATITEM_$index"));
+    LogMessage.d("ScrollTo", offset);
+    animateTo(
+      offset,
+      duration: duration,
+      curve: Curves.linear,
+    );
+  }
+
+  void jumpsTo({required double index}){
+    jumpTo(index);
+  }
+
+  double getOffset(GlobalKey key){
+    final box = key.currentContext?.findRenderObject() as RenderBox;
+    final boxHeight = box.size.height;
+    Offset boxPosition = box.localToGlobal(Offset.zero);
+    double boxY = (boxPosition.dy - boxHeight / 2);
+    return boxY;
+  }
+
+  bool get isAttached => hasClients;
 }

@@ -33,16 +33,19 @@ class DashboardView extends GetView<DashboardController>{
         controller.checkArchiveSetting();
         // controller.getRecentChatList();
       },
-      child: WillPopScope(
-        onWillPop: () {
+      child:Obx(() => PopScope(
+        canPop: !(controller.selected.value || controller.isSearching.value),
+        onPopInvoked: (didPop) {
+          if (didPop) {
+            return;
+          }
           if (controller.selected.value) {
             controller.clearAllChatSelection();
-            return Future.value(false);
+            return;
           } else if (controller.isSearching.value) {
             controller.getBackFromSearch();
-            return Future.value(false);
+            return;
           }
-          return Future.value(true);
         },
         child: CustomSafeArea(
           child: DefaultTabController(
@@ -328,7 +331,7 @@ class DashboardView extends GetView<DashboardController>{
           ),
         ),
       ),
-    );
+    ));
   }
 
   Widget? createScaledFab() {
@@ -629,7 +632,7 @@ class DashboardView extends GetView<DashboardController>{
                 visible: controller.filteredRecentChatList.isNotEmpty,
                 child: searchHeader(Constants.typeSearchRecent, controller.filteredRecentChatList.length.toString(), context),
               ),
-              recentChatListView(),
+              recentChatSearchListView(),
               Visibility(
                 visible: controller.chatMessages.isNotEmpty,
                 child: searchHeader(Constants.typeSearchMessage, controller.chatMessages.length.toString(), context),
@@ -841,7 +844,7 @@ class DashboardView extends GetView<DashboardController>{
         });
   }
 
-  ListView recentChatListView() {
+  ListView recentChatSearchListView() {
     return ListView.builder(
         itemCount: controller.filteredRecentChatList.length,
         shrinkWrap: true,

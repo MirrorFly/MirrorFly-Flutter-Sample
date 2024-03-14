@@ -24,9 +24,12 @@ class Helper {
   static void showLoading({String? message, bool dismiss = false}) {
     Get.dialog(
       Dialog(
-        child: WillPopScope(
-          onWillPop: () async {
-            return Future.value(dismiss);
+        child: PopScope(
+          canPop: dismiss,
+          onPopInvoked: (didPop) {
+            if (didPop) {
+              return;
+            }
           },
           child: Padding(
             padding: const EdgeInsets.all(16.0),
@@ -50,8 +53,13 @@ class Helper {
         AlertDialog(
           elevation: 0,
           backgroundColor: Colors.transparent,
-          content: WillPopScope(
-            onWillPop: () async => Future.value(dismiss),
+          content: PopScope(
+              canPop: dismiss,
+              onPopInvoked: (didPop) {
+                if (didPop) {
+                  return;
+                }
+              },
             child: const SizedBox(
               width: 60,
               height: 60,
@@ -69,6 +77,7 @@ class Helper {
       {String? title, required String message, List<Widget>? actions, Widget? content, bool? barrierDismissible}) {
     Get.dialog(
         AlertDialog(
+          backgroundColor: Colors.white,
           title: title != null
               ? Text(
                   title,
@@ -78,8 +87,13 @@ class Helper {
           contentPadding: title != null
               ? const EdgeInsets.only(top: 15, right: 25, left: 25, bottom: 0)
               : const EdgeInsets.only(top: 0, right: 25, left: 25, bottom: 5),
-          content: WillPopScope(
-            onWillPop: () async => Future.value(barrierDismissible),
+          content: PopScope(
+              canPop: barrierDismissible ?? true,
+              onPopInvoked: (didPop) {
+                if (didPop) {
+                  return;
+                }
+                },
             child: content ??
                 Text(
                   message,
@@ -104,10 +118,16 @@ class Helper {
     );
   }
 
-  static void showButtonAlert({List<Widget>? actions}) {
+  static void showButtonAlert({required List<Widget> actions}) {
     Get.dialog(
-      AlertDialog(
-        actions: actions,
+      Dialog(
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: actions,
+          ),
+        ),
       ),
     );
   }
@@ -638,7 +658,7 @@ String convertSecondToLastSeen(String seconds) {
     if (seconds == "0") return "Online";
     LogMessage.d("getUserLastSeenTime", "seconds $seconds");
     // var userLastSeenDate = DateTime.now().subtract(Duration(milliseconds: double.parse(seconds).toInt()));
-    DateTime lastSeen = DateTime.fromMillisecondsSinceEpoch(int.parse(seconds), isUtc: true);
+    DateTime lastSeen = DateTime.fromMillisecondsSinceEpoch(int.parse(seconds), isUtc: false);
     Duration diff = DateTime.now().difference(lastSeen);
 
     LogMessage.d("getUserLastSeenTime", "diff ${diff.inDays}");
@@ -650,7 +670,7 @@ String convertSecondToLastSeen(String seconds) {
       var last = DateFormat('dd MMM').format(lastSeen);
       return 'last seen on $last';
     } else if (int.parse(DateFormat('yyyy').format(lastSeen)) < int.parse(DateFormat('yyyy').format(DateTime.now()))) {
-      return 'last seen on ${DateFormat('dd/mm/yyyy').format(lastSeen)}';
+      return 'last seen on ${DateFormat('dd/MM/yyyy').format(lastSeen)}';
     } else {
       return 'Online';
     }

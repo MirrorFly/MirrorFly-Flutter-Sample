@@ -194,42 +194,37 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
     // if (availableAudioList.length > 2) {
     Get.dialog(
       Dialog(
-        child: WillPopScope(
-          onWillPop: () {
-            return Future.value(true);
-          },
-          child: Obx(() {
-            return ListView.builder(
-                shrinkWrap: true,
-                itemCount: availableAudioList.length,
-                itemBuilder: (context, index) {
-                  var audioItem = availableAudioList[index];
-                  debugPrint("audio item name ${audioItem.name}");
-                  return Obx(() {
-                    return ListTile(
-                      contentPadding: const EdgeInsets.only(left: 10),
-                      title: Text(audioItem.name ?? "", style: const TextStyle(fontSize: 14, fontWeight: FontWeight.normal)),
-                      trailing: audioItem.type == audioOutputType.value
-                          ? const Icon(
-                              Icons.check_outlined,
-                              color: Colors.green,
-                            )
-                          : const SizedBox.shrink(),
-                      onTap: () {
-                        if (audioOutputType.value != audioItem.type) {
-                          Get.back();
-                          debugPrint("selected audio item ${audioItem.type}");
-                          audioOutputType(audioItem.type);
-                          Mirrorfly.routeAudioTo(routeType: audioItem.type ?? "");
-                        } else {
-                          LogMessage.d("routeAudioOption", "clicked on same audio type selected");
-                        }
-                      },
-                    );
-                  });
+        child: Obx(() {
+          return ListView.builder(
+              shrinkWrap: true,
+              itemCount: availableAudioList.length,
+              itemBuilder: (context, index) {
+                var audioItem = availableAudioList[index];
+                debugPrint("audio item name ${audioItem.name}");
+                return Obx(() {
+                  return ListTile(
+                    contentPadding: const EdgeInsets.only(left: 10),
+                    title: Text(audioItem.name ?? "", style: const TextStyle(fontSize: 14, fontWeight: FontWeight.normal)),
+                    trailing: audioItem.type == audioOutputType.value
+                        ? const Icon(
+                            Icons.check_outlined,
+                            color: Colors.green,
+                          )
+                        : const SizedBox.shrink(),
+                    onTap: () {
+                      if (audioOutputType.value != audioItem.type) {
+                        Get.back();
+                        debugPrint("selected audio item ${audioItem.type}");
+                        audioOutputType(audioItem.type);
+                        Mirrorfly.routeAudioTo(routeType: audioItem.type ?? "");
+                      } else {
+                        LogMessage.d("routeAudioOption", "clicked on same audio type selected");
+                      }
+                    },
+                  );
                 });
-          }),
-        ),
+              });
+        }),
       ),
     );
     // }else{
@@ -777,7 +772,7 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
                   showingVideoSwitchPopup = false;
                   closeDialog();
                 },
-                child: const Text("CANCEL")),
+                child: const Text("CANCEL",style: TextStyle(color: buttonBgColor))),
             TextButton(
                 onPressed: () {
                   if(callType.value == CallType.audio && isOneToOneCall && Get.currentRoute == Routes.onGoingCallView) {
@@ -793,7 +788,7 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
                     closeDialog();
                   }
                 },
-                child: const Text("SWITCH"))
+                child: const Text("SWITCH",style: TextStyle(color: buttonBgColor)))
           ],
           barrierDismissible: false);
     }else{
@@ -838,7 +833,7 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
                 closeDialog();
                 Mirrorfly.declineVideoCallSwitchRequest();
               },
-              child: const Text("DECLINE")),
+              child: const Text("DECLINE",style: TextStyle(color: buttonBgColor))),
           TextButton(
               onPressed: () async {
                 closeDialog();
@@ -856,7 +851,7 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
                   Mirrorfly.declineVideoCallSwitchRequest();
                 }
               },
-              child: const Text("ACCEPT"))
+              child: const Text("ACCEPT",style: TextStyle(color: buttonBgColor)))
         ],
         barrierDismissible: false);
   }
@@ -875,7 +870,7 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
                 closeDialog();
                 Mirrorfly.cancelVideoCallSwitch();
               },
-              child: const Text("CANCEL"))
+              child: const Text("CANCEL",style: TextStyle(color: buttonBgColor)))
         ],
         barrierDismissible: false);
 

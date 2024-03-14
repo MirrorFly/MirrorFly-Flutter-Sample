@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:mirror_fly_demo/app/modules/gallery_picker/src/presentation/pages/gallery_media_picker_controller.dart';
 import 'package:mirrorfly_plugin/mirrorfly.dart';
 import 'package:get/get.dart';
 
 import '../src/data/models/picked_asset_model.dart';
 
 class GalleryPickerController extends GetxController {
-
+  var provider = GalleryMediaPickerController();
   var pickedFile = <PickedAssetModel>[].obs;
   var userName = Get.arguments['userName'];
   var textMessage = Get.arguments['caption'];
@@ -21,8 +22,8 @@ class GalleryPickerController extends GetxController {
 
 
    addFile(List<PickedAssetModel> paths) {
-     pickedFile.clear();
-     pickedFile.addAll(paths);
+     pickedFile(paths);
+     pickedFile.refresh();
    }
    // addFile(List<PickedAssetModel> paths) {
    //  debugPrint("list size--> ${paths.length}");

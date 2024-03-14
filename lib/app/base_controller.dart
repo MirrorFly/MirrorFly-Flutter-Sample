@@ -69,7 +69,10 @@ abstract class BaseController {
         onMemberRemovedFromGroup(groupJid: groupJid, removedMemberJid: removedMemberJid,removedByMemberJid: removedByMemberJid);
       }
     });
-    Mirrorfly.onFetchingGroupMembersCompleted.listen(onFetchingGroupMembersCompleted);
+    Mirrorfly.onFetchingGroupMembersCompleted
+        .listen(onFetchingGroupMembersCompleted);
+    // Mirrorfly.onDeleteGroup.listen(onDeleteGroup);
+    // Mirrorfly.onFetchingGroupListCompleted.listen(onFetchingGroupListCompleted);
     Mirrorfly.onMemberMadeAsAdmin.listen((event){
       if(event!=null){
         var data = json.decode(event.toString());
@@ -144,6 +147,7 @@ abstract class BaseController {
     Mirrorfly.onConnected.listen(onConnected);
     Mirrorfly.onDisconnected.listen(onDisconnected);
     Mirrorfly.onConnectionFailed.listen(onConnectionFailed);
+    Mirrorfly.onWebChatPasswordChanged.listen(onWebChatPasswordChanged);
     Mirrorfly.typingStatus.listen((event) {
       var data = json.decode(event.toString());
       mirrorFlyLog("setTypingStatus", data.toString());
@@ -152,6 +156,12 @@ abstract class BaseController {
       var typingStatus = data["status"];
       setTypingStatus(singleOrgroupJid, userJid, typingStatus);
     });
+    // Mirrorfly.onChatTypingStatus.listen(onChatTypingStatus);
+    // Mirrorfly.onGroupTypingStatus.listen(onGroupTypingStatus);
+    // Removed due Backup not implemented
+    /*Mirrorfly.onFailure.listen(onFailure);
+    Mirrorfly.onProgressChanged.listen(onProgressChanged);
+    Mirrorfly.onSuccess.listen(onSuccess);*/
     Mirrorfly.onLoggedOut.listen(onLogout);
 
     Mirrorfly.onMissedCall.listen((event){
@@ -460,6 +470,8 @@ abstract class BaseController {
     Mirrorfly.onAvailableFeaturesUpdated.listen(onAvailableFeaturesUpdated);
 
     Mirrorfly.onCallLogsUpdated.listen(onCallLogsUpdated);
+
+    Mirrorfly.onCallLogsCleared.listen((event) {});
   }
 
   void onCallLogsUpdated(value) {
@@ -652,7 +664,7 @@ abstract class BaseController {
     }
   }
 
-  void onFetchingGroupListCompleted(noOfGroups) {}
+  // void onFetchingGroupListCompleted(noOfGroups) {}
 
   void onMemberMadeAsAdmin(
       {required String groupJid, required String newAdminMemberJid, required String madeByMemberJid}) {
@@ -702,16 +714,16 @@ abstract class BaseController {
     }
   }
 
-  Future<void> showOrUpdateOrCancelNotification(String jid, ChatMessageModel chatMesssage) async {
-    if (SessionManagement.getCurrentChatJID() == chatMesssage.chatUserJid.checkNull()) {
+  Future<void> showOrUpdateOrCancelNotification(String jid, ChatMessageModel chatMessage) async {
+    if (SessionManagement.getCurrentChatJID() == chatMessage.chatUserJid.checkNull()) {
       return;
     }
     var profileDetails = await getProfileDetails(jid);
     if (profileDetails.isMuted == true) {
       return;
     }
-    if(chatMesssage.messageId.isNotEmpty) {
-      NotificationBuilder.createNotification(chatMesssage);
+    if(chatMessage.messageId.isNotEmpty) {
+      NotificationBuilder.createNotification(chatMessage);
     }
   }
 
@@ -934,6 +946,9 @@ abstract class BaseController {
     }
     if (Get.isRegistered<DashboardController>()) {
       Get.find<DashboardController>().setTypingStatus(singleOrgroupJid, userId, typingStatus);
+    }
+    if (Get.isRegistered<MyController>()) {
+      Get.find<MyController>().setTypingStatus(singleOrgroupJid, userId, typingStatus);
     }
     if (Get.isRegistered<ArchivedChatListController>()) {
       Get.find<ArchivedChatListController>().setTypingStatus(singleOrgroupJid, userId, typingStatus);

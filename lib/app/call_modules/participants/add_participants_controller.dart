@@ -178,7 +178,7 @@ class AddParticipantsController extends GetxController with GetTickerProviderSta
           onPressed: () {
             Get.back();
           },
-          child: const Text("NO")),
+          child: const Text("NO",style: TextStyle(color: buttonBgColor))),
       TextButton(
           onPressed: () async {
             if (await AppUtils.isNetConnected()) {

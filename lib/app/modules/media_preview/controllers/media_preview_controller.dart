@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
+import 'package:mirror_fly_demo/app/modules/gallery_picker/controllers/gallery_picker_controller.dart';
 import 'package:mirrorfly_plugin/mirrorfly.dart';
 import 'package:mirror_fly_demo/app/common/extensions.dart';
 import 'package:get/get.dart';
@@ -16,6 +17,7 @@ import '../../chat/controllers/chat_controller.dart';
 import '../../gallery_picker/src/data/models/picked_asset_model.dart';
 
 class MediaPreviewController extends FullLifeCycleController with FullLifeCycleMixin {
+  var provider = Get.find<GalleryPickerController>().provider;
 
   var userName = Get.arguments['userName'];
   var profile = Get.arguments['profile'] as ProfileDetails;
@@ -122,6 +124,7 @@ class MediaPreviewController extends FullLifeCycleController with FullLifeCycleM
   }
 
   void deleteMedia() {
+    provider.unPick(currentPageIndex.value);
     filePath.removeAt(currentPageIndex.value);
     captionMessage.removeAt(currentPageIndex.value);
     // captionMessage.refresh();
