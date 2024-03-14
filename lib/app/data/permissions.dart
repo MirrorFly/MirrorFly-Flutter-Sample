@@ -167,14 +167,31 @@ class AppPermission {
     }
   }
 
+  static Future<bool> notificationPlatformCheck(PermissionStatus permission) async {
+    if(Platform.isIOS){
+      if(SessionManagement.getBool(Constants.notificationPermissionAsked)){
+        return true;
+      }else{
+        return permission.isGranted;
+      }
+    } else if(Platform.isAndroid || await Permission.notification.shouldShowRequestRationale) {
+      return permission.isGranted;
+    }else{
+      return true;
+    }
+  }
+
   static Future<bool> askNotificationPermission() async {
     var permissions = <Permission>[];
     final notification = await Permission.notification.status; //NOTIFICATION
-    if(!notification.isGranted || (Platform.isAndroid && await Permission.notification.shouldShowRequestRationale)){
+    var platformCheck = await notificationPlatformCheck(notification);
+    if(!platformCheck ){
       permissions.add(Permission.notification);
     }
-    LogMessage.d("notification", notification.isGranted);
-    if (!notification.isGranted) {
+    debugPrint("askNotificationPermission asked ${SessionManagement.getBool(Constants.notificationPermissionAsked)}");
+    debugPrint("askNotificationPermission platformCheck $platformCheck");
+    debugPrint("askNotificationPermission ${notification.isGranted}");
+    if (!platformCheck) {
       var shouldShowRequestRationale = (Platform.isAndroid && (await Permission.notification.shouldShowRequestRationale));
       LogMessage.d("shouldShowRequestRationale notification", shouldShowRequestRationale);
       LogMessage.d("SessionManagement.getBool(Constants.notificationPermissionAsked) notification", (SessionManagement.getBool(Constants.notificationPermissionAsked)));
