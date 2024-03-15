@@ -132,68 +132,74 @@ class MediaPreviewView extends GetView<MediaPreviewController> {
                             )
 
                           /// selected media
-                          : PageView(
-                              controller: controller.pageViewController,
-                              onPageChanged: onMediaPreviewPageChanged,
-                              children: [
-                                ...controller.filePath.map((data) {
-                                  /// show image
-                                  if (data.type == 'image') {
-                                    return Center(
-                                        child: PhotoView(
-                                      imageProvider: FileImage(File(data.path!)),
-                                      // Contained = the smallest possible size to fit one dimension of the screen
-                                      minScale:
-                                          PhotoViewComputedScale.contained * 1,
-                                      // Covered = the smallest possible size to fit the whole screen
-                                      maxScale:
-                                          PhotoViewComputedScale.covered * 2,
-                                      enableRotation: true,
-                                      basePosition: Alignment.center,
-                                      // Set the background color to the "classic white"
-                                      backgroundDecoration: const BoxDecoration(
-                                          color: Colors.transparent),
-                                      loadingBuilder: (context, event) =>
-                                          const Center(
-                                        child: CircularProgressIndicator(),
-                                      ),
-                                    )
-                                        // PhotoView.customChild(
-                                        //   enablePanAlways: true,
-                                        //   maxScale: 2.0,
-                                        //   minScale: 1.0,
-                                        //   child: Image.file(File(data.path)),
-                                        // ),
-                                        );
-                                  }
+                          : GestureDetector(
+                        onTap: (){
+                          controller.captionFocusNode
+                              .unfocus();
+                        },
+                            child: PageView(
+                                controller: controller.pageViewController,
+                                onPageChanged: onMediaPreviewPageChanged,
+                                children: [
+                                  ...controller.filePath.map((data) {
+                                    /// show image
+                                    if (data.type == 'image') {
+                                      return Center(
+                                          child: PhotoView(
+                                        imageProvider: FileImage(File(data.path!)),
+                                        // Contained = the smallest possible size to fit one dimension of the screen
+                                        minScale:
+                                            PhotoViewComputedScale.contained * 1,
+                                        // Covered = the smallest possible size to fit the whole screen
+                                        maxScale:
+                                            PhotoViewComputedScale.covered * 2,
+                                        enableRotation: true,
+                                        basePosition: Alignment.center,
+                                        // Set the background color to the "classic white"
+                                        backgroundDecoration: const BoxDecoration(
+                                            color: Colors.transparent),
+                                        loadingBuilder: (context, event) =>
+                                            const Center(
+                                          child: CircularProgressIndicator(),
+                                        ),
+                                      )
+                                          // PhotoView.customChild(
+                                          //   enablePanAlways: true,
+                                          //   maxScale: 2.0,
+                                          //   minScale: 1.0,
+                                          //   child: Image.file(File(data.path)),
+                                          // ),
+                                          );
+                                    }
 
-                                  /// show video
-                                  else {
-                                    // return AspectRatio(
-                                    //   aspectRatio: 16.0 / 9.0,
-                                    //   child: BetterVideoPlayer(
-                                    //     configuration:
-                                    //         const BetterVideoPlayerConfiguration(
-                                    //       looping: false,
-                                    //       autoPlay: false,
-                                    //       allowedScreenSleep: false,
-                                    //       autoPlayWhenResume: false,
-                                    //     ),
-                                    //     controller:
-                                    //         BetterVideoPlayerController(),
-                                    //     dataSource: BetterVideoPlayerDataSource(
-                                    //       BetterVideoPlayerDataSourceType.file,
-                                    //       data.path!,
-                                    //     ),
-                                    //   ),
-                                    // );
-                                    return VideoPlayerWidget(
-                                      videoPath: data.path ?? "", videoTitle: data.title ?? "Video",
-                                    );
-                                  }
-                                })
-                              ],
-                            );
+                                    /// show video
+                                    else {
+                                      // return AspectRatio(
+                                      //   aspectRatio: 16.0 / 9.0,
+                                      //   child: BetterVideoPlayer(
+                                      //     configuration:
+                                      //         const BetterVideoPlayerConfiguration(
+                                      //       looping: false,
+                                      //       autoPlay: false,
+                                      //       allowedScreenSleep: false,
+                                      //       autoPlayWhenResume: false,
+                                      //     ),
+                                      //     controller:
+                                      //         BetterVideoPlayerController(),
+                                      //     dataSource: BetterVideoPlayerDataSource(
+                                      //       BetterVideoPlayerDataSourceType.file,
+                                      //       data.path!,
+                                      //     ),
+                                      //   ),
+                                      // );
+                                      return VideoPlayerWidget(
+                                        videoPath: data.path ?? "", videoTitle: data.title ?? "Video",
+                                      );
+                                    }
+                                  })
+                                ],
+                              ),
+                          );
                     }),
                   ),
                   Container(
