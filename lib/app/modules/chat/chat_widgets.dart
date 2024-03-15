@@ -2061,8 +2061,8 @@ Widget getImageOverlay(ChatMessageModel chatMessage,
             if (chatMessage.mediaChatMessage!.mediaUploadStatus.value == Constants.mediaUploaded) {
               status = Constants.mediaNotDownloaded; // for uploaded and deleted in local
             } else {
-              // status = -1;
-              status = Constants.mediaNotDownloaded;
+               status = -1;
+              //status = Constants.mediaNotDownloaded;
             }
           } else {
             status = chatMessage.mediaChatMessage!.mediaUploadStatus.value;
@@ -2116,10 +2116,7 @@ Widget getImageOverlay(ChatMessageModel chatMessage,
             onTap: () {
               uploadMedia(chatMessage.messageId);
             },
-            child: uploadView(
-                chatMessage.mediaChatMessage!.mediaFileSize,
-                chatMessage.messageType.toUpperCase()));
-
+            child: uploadView(chatMessage.messageType.toUpperCase()));
       case Constants.mediaDownloading:
       case Constants.mediaUploading:
         return Obx(() {
@@ -2130,12 +2127,16 @@ Widget getImageOverlay(ChatMessageModel chatMessage,
           );
         });
       default:
-        return const SizedBox(width: 8,);
+        return InkWell(
+            onTap: () {
+              toToast(Constants.mediaNotExist);
+            },
+            child: uploadView(chatMessage.messageType.toUpperCase()));
     }
   }
 }
 
-uploadView(int mediaFileSize, String messageType) {
+Widget uploadView(String messageType) {
   return Padding(
     padding: const EdgeInsets.symmetric(horizontal: 8.0),
     child: messageType == 'AUDIO' || messageType == 'DOCUMENT'
