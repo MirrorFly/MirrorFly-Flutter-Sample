@@ -2431,8 +2431,8 @@ class ChatController extends FullLifeCycleController
       return;
     }
     // if (await AppPermission.askFileCameraAudioPermission()) {
-    var cameraPermissionStatus = await AppPermission.checkPermission(
-        Permission.camera, cameraPermission, Constants.cameraPermission);
+    var cameraPermissionStatus = await AppPermission.checkAndRequestPermissions(permissions:
+        [Permission.camera,Permission.microphone], permissionIcon: cameraPermission, permissionContent: Constants.cameraPermission,permissionPermanentlyDeniedContent: Constants.cameraCapturePermanentlyDeniedContent);
     debugPrint("Camera Permission Status---> $cameraPermissionStatus");
     if (cameraPermissionStatus) {
       setOnGoingUserGone();

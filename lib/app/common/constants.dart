@@ -663,7 +663,7 @@ class Constants {
   static const String filePermission =
       "To send media, allow MirrorFly access to your device's photos,media, and files.";
   static const String cameraPermission =
-      "To capture photos and video, allow MirrorFly access to the camera and storage.";
+      "To capture photos and video, allow MirrorFly access to the camera and microphone.";
   static const String locationPermission =
       "MirrorFly needs access to your location in order to share your current location.";
   static const String contactPermission =
@@ -686,6 +686,8 @@ class Constants {
       "MirrorFly need the Location Permission in order to attach a location, but they have been permanently denied. Please continue to app settings, select \"Permissions\", and enable \"Location\".";
   static const String cameraPermissionDenied =
       "MirrorFly need the Camera and Storage Permission in order to capture photos and video, but they have been permanently denied. Please continue to app settings, select \"Permissions\", and enable \"Camera\" and \"Storage\".";
+  static const String cameraCapturePermanentlyDeniedContent =
+      "MirrorFly need the Camera and Microphone Permission in order to capture photos and video, but they have been permanently denied. Please continue to app settings, select \"Permissions\", and enable \"Camera\" and \"Microphone\".";
   static const String storagePermissionDenied =
       "MirrorFly need the Storage Permission in order to attach photos, media, and files, but they have been permanently denied. Please continue to app settings, select \"Permissions\", and enable \"Storage\".";
   static const String microPhonePermissionDenied =
