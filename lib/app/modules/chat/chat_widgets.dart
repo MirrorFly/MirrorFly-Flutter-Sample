@@ -2022,6 +2022,7 @@ Widget getImageOverlay(ChatMessageModel chatMessage,
   if (AppUtils.isMediaExists(chatMessage.mediaChatMessage!.mediaLocalStoragePath.value) && (chatMessage.isMediaDownloaded() || chatMessage.isMediaUploaded())) {
     if (chatMessage.messageType.toUpperCase() == 'VIDEO') {
       return FloatingActionButton.small(
+        heroTag: chatMessage.messageId,
         onPressed: onVideo,
         backgroundColor: Colors.white,
         child: const Icon(
