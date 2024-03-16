@@ -17,7 +17,6 @@ import '../../chat/controllers/chat_controller.dart';
 import '../../gallery_picker/src/data/models/picked_asset_model.dart';
 
 class MediaPreviewController extends FullLifeCycleController with FullLifeCycleMixin {
-  var provider = Get.find<GalleryPickerController>().provider;
 
   var userName = Get.arguments['userName'];
   var profile = Get.arguments['profile'] as ProfileDetails;
@@ -66,14 +65,14 @@ class MediaPreviewController extends FullLifeCycleController with FullLifeCycleM
     // count(139 - addStatusController.text.length);
   }
 
-  sendMedia() async {
+  void sendMedia() {
     debugPrint("send media");
     var previousRoute = Get.previousRoute;
     // if (await AppUtils.isNetConnected()) {
     var featureNotAvailable = false;
+    Platform.isIOS ? Helper.showLoading(message: "Compressing files") : Helper.progressLoading();
     try {
       int i = 0;
-      Platform.isIOS ? Helper.showLoading(message: "Compressing files") : null;
       for (var data in filePath) {
         /// show image
         debugPrint(data.type);
@@ -83,30 +82,20 @@ class MediaPreviewController extends FullLifeCycleController with FullLifeCycleM
             break;
           }
           debugPrint("sending image");
-          var response = await Get.find<ChatController>()
-              .sendImageMessage(data.path, captionMessage[i], "");
-          debugPrint("Preview View ==> $response");
-          if (response != null) {
-            debugPrint("Image send Success");
-          }
+          Get.find<ChatController>().sendImageMessage(data.path, captionMessage[i], "");
         } else if (data.type == 'video') {
           if(!availableFeatures.value.isVideoAttachmentAvailable.checkNull()){
             featureNotAvailable = true;
             break;
           }
           debugPrint("sending video");
-          var response = await Get.find<ChatController>()
-              .sendVideoMessage(data.path!, captionMessage[i], "");
-          debugPrint("Preview View ==> $response");
-          if (response != null) {
-            debugPrint("Video send Success");
-          }
+          Get.find<ChatController>().sendVideoMessage(data.path!, captionMessage[i], "");
         }
         i++;
       }
     } finally {
       debugPrint("finally $featureNotAvailable");
-      Platform.isIOS ? Helper.hideLoading() : null;
+      Helper.hideLoading();
       if(!featureNotAvailable) {
         if (previousRoute == Routes.galleryPicker) {
           Get.back();
@@ -116,15 +105,11 @@ class MediaPreviewController extends FullLifeCycleController with FullLifeCycleM
         Helper.showFeatureUnavailable();
       }
     }
-    // Get.back();
-    /*} else {
-      toToast(Constants.noInternetConnection);
-    }*/
-    // debugPrint("caption text-> $captionMessage");
   }
 
   void deleteMedia() {
     LogMessage.d("currentPageIndex : ",currentPageIndex);
+    var provider = Get.find<GalleryPickerController>().provider;
     provider.unPick(currentPageIndex.value);
     filePath.removeAt(currentPageIndex.value);
     captionMessage.removeAt(currentPageIndex.value);
