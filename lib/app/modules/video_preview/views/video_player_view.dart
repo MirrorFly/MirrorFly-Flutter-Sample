@@ -17,35 +17,9 @@ class VideoPlayerView extends GetView<VideoPlayController> {
         iconTheme: const IconThemeData(color: Colors.white),
       ),
       body: SafeArea(
-        child: Column(
-          children: [
-            // AspectRatio(
-            //   aspectRatio: 0.6,
-            //   child: BetterVideoPlayer(
-            //       configuration:
-            //       const BetterVideoPlayerConfiguration(
-            //         looping: false,
-            //         autoPlay: false,
-            //         allowedScreenSleep: false,
-            //         autoPlayWhenResume: false,
-            //       ),
-            //       controller:
-            //       BetterVideoPlayerController(),
-            //       dataSource: BetterVideoPlayerDataSource(
-            //         BetterVideoPlayerDataSourceType.file,
-            //         controller.videoPath.value,
-            //       ),
-            //     ),
-            // ),
-
-            AspectRatio(
-              aspectRatio: 0.6,
-              child: VideoPlayerWidget(
-                videoPath: controller.videoPath.value,
-                videoTitle: "Video",
-              ),
-            ),
-          ],
+        child: VideoPlayerWidget(
+          videoPath: controller.videoPath.value,
+          videoTitle: "Video",
         ),
       ),
     );
