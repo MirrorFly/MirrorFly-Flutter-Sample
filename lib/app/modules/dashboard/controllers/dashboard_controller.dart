@@ -390,13 +390,14 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
             LogMessage.d("updateRecentChat", "New Insert");
             recentChats.insert(0, recent);
           } else {
-            var lastPinnedChat = recentChats.lastIndexWhere((element) => element.isChatPinned!);
-            var nxtIndex = lastPinnedChat.isNegative ? 0 : (lastPinnedChat + 1);
-            LogMessage.d("updateRecentChat", "next Index $nxtIndex");
-            if (recentChats[index].isChatPinned! || !changePosition) {
-              recentChats.removeAt(index);
-              recentChats.insert(index, recent);
+            if (recentChats[index].isChatPinned.checkNull() || !changePosition) {
+              // recentChats.removeAt(index);
+              // recentChats.insert(index, recent);
+              recentChats.replaceRange(index, index+1, [recent]);
             } else {
+              var lastPinnedChat = recentChats.lastIndexWhere((element) => element.isChatPinned!);
+              var nxtIndex = lastPinnedChat.isNegative ? 0 : (lastPinnedChat + 1);
+              LogMessage.d("updateRecentChat", "next Index $nxtIndex");
               recentChats.removeAt(index);
               recentChats.insert(nxtIndex, recent);
               recentChats.refresh();
