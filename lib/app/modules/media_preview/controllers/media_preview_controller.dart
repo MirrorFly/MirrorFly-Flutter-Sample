@@ -124,12 +124,21 @@ class MediaPreviewController extends FullLifeCycleController with FullLifeCycleM
   }
 
   void deleteMedia() {
+    debugPrint("currentPageIndex : $currentPageIndex");
     provider.unPick(currentPageIndex.value);
     filePath.removeAt(currentPageIndex.value);
     captionMessage.removeAt(currentPageIndex.value);
+    if(currentPageIndex.value > 0) {
+      currentPageIndex(currentPageIndex.value - 1);
+      debugPrint("currentPageIndex.value.toDouble() ${currentPageIndex.value.toDouble()}");
+      pageViewController.animateToPage(currentPageIndex.value, duration: const Duration(milliseconds: 5), curve: Curves.easeInOut);
+      caption.text = captionMessage[currentPageIndex.value];
+    }else if (currentPageIndex.value == 0){
+      caption.text = captionMessage[currentPageIndex.value];
+    }
     // captionMessage.refresh();
     // filePath.refresh();
-    caption.text = captionMessage[currentPageIndex.value];
+    // caption.text = captionMessage[currentPageIndex.value - 1];
   }
 
   void onCaptionTyped(String value) {

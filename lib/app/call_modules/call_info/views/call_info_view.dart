@@ -198,7 +198,7 @@ class CallInfoView extends GetView<CallInfoController> {
             },
             icon: SvgPicture.asset(
               videoCallIcon,
-              color: Colors.grey,
+              colorFilter: const ColorFilter.mode(Colors.grey, BlendMode.srcIn),
             ),
           )
         : IconButton(
@@ -207,7 +207,7 @@ class CallInfoView extends GetView<CallInfoController> {
             },
             icon: SvgPicture.asset(
               audioCallIcon,
-              color: Colors.grey,
+              colorFilter: const ColorFilter.mode(Colors.grey, BlendMode.srcIn),
             ));
   }
 

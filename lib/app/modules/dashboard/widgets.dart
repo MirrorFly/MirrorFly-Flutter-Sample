@@ -4,7 +4,6 @@ import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
 import 'package:mirror_fly_demo/app/common/extensions.dart';
-import 'package:mirrorfly_plugin/event_handlers.dart';
 import '../../common/constants.dart';
 import '../../common/widgets.dart';
 import 'package:mirrorfly_plugin/mirrorflychat.dart';
@@ -337,7 +336,7 @@ class RecentChatItem extends StatelessWidget {
   FutureBuilder<ChatMessageModel> buildLastMessageItem() {
     LogMessage.d("buildLastMessageItem: ", item.jid);
     return FutureBuilder(
-      key: ValueKey(item.lastMessageId),
+        key: ValueKey(item.lastMessageId),
         future: getMessageOfId(item.lastMessageId.checkNull()),
         builder: (context, data) {
           LogMessage.d("getMessageOfId future", "${item.lastMessageId.checkNull()} : ${data.data?.messageId}");
@@ -558,16 +557,16 @@ Widget callLogTime(String time, int? callState) {
       callState == 0
           ? SvgPicture.asset(
               "assets/calls/ic_arrow_down_red.svg",
-              color: Colors.red,
+              colorFilter: const ColorFilter.mode(Colors.red, BlendMode.srcIn),
             )
           : callState == 1
               ? SvgPicture.asset(
                   "assets/calls/ic_arrow_up_green.svg",
-                  color: Colors.green,
+                  colorFilter: const ColorFilter.mode(Colors.green, BlendMode.srcIn),
                 )
               : SvgPicture.asset(
                   "assets/calls/ic_arrow_down_green.svg",
-                  color: Colors.green,
+                  colorFilter: const ColorFilter.mode(Colors.green, BlendMode.srcIn),
                 ),
       const SizedBox(
         width: 5,
@@ -682,4 +681,3 @@ class ContactItem extends StatelessWidget {
     );
   }
 }
-

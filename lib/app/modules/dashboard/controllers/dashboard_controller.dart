@@ -1955,7 +1955,7 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
               onPressed: () {
                 Get.back();
               },
-              child: Text(Constants.cancel.toUpperCase(),style: TextStyle(color: buttonBgColor))),
+              child: Text(Constants.cancel.toUpperCase(),style: const TextStyle(color: buttonBgColor))),
           TextButton(
               onPressed: () {
                 Get.back();
@@ -1983,7 +1983,7 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
               onPressed: () {
                 Get.back();
               },
-              child: Text(Constants.cancel.toUpperCase(),style: TextStyle(color: buttonBgColor))),
+              child: Text(Constants.cancel.toUpperCase(),style: const TextStyle(color: buttonBgColor))),
           TextButton(
               onPressed: () async {
                 Get.back();
@@ -2015,7 +2015,7 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
               onPressed: () {
                 Get.back();
               },
-              child: Text(Constants.cancel.toUpperCase(),style: TextStyle(color: buttonBgColor))),
+              child: Text(Constants.cancel.toUpperCase(),style: const TextStyle(color: buttonBgColor))),
           TextButton(
               onPressed: () {
                 Get.back();

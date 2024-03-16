@@ -862,7 +862,7 @@ Widget forMessageTypeIcon(String messageType,[MediaChatMessage? mediaChatMessage
       return SvgPicture.asset(
         mediaChatMessage != null ? mediaChatMessage.isAudioRecorded ? mAudioRecordIcon : mAudioIcon : mAudioIcon,
         fit: BoxFit.contain,
-        color: textColor,
+        colorFilter: const ColorFilter.mode(textColor, BlendMode.srcIn),
       );
     case Constants.mVideo:
       return SvgPicture.asset(

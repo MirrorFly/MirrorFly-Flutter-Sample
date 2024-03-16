@@ -382,7 +382,7 @@ class DashboardView extends GetView<DashboardController>{
           plusIcon,
           width: 24,
           height: 24,
-          color: Colors.white,
+          colorFilter: const ColorFilter.mode(Colors.white, BlendMode.srcIn),
           fit: BoxFit.contain,
         ),
         audioCallOnPressed: () {
@@ -1165,7 +1165,7 @@ class DashboardView extends GetView<DashboardController>{
             },
             icon: SvgPicture.asset(
               videoCallIcon,
-              color: Colors.grey,
+              colorFilter: const ColorFilter.mode(Colors.grey, BlendMode.srcIn),
             ),
           )
         : IconButton(
@@ -1180,7 +1180,7 @@ class DashboardView extends GetView<DashboardController>{
             },
             icon: SvgPicture.asset(
               audioCallIcon,
-              color: Colors.grey,
+              colorFilter: const ColorFilter.mode(Colors.grey, BlendMode.srcIn),
             ));
   }
 

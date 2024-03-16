@@ -322,7 +322,7 @@ getReplyImageHolder(BuildContext context,
                   ? mAudioRecordIcon
                   : mAudioIcon,
               fit: BoxFit.contain,
-              color: Colors.white,
+              colorFilter: const ColorFilter.mode(Colors.white, BlendMode.srcIn),
               height: 18,
             ),
           ),
@@ -1497,7 +1497,7 @@ class VideoMessageView extends StatelessWidget {
                     SvgPicture.asset(
                       mVideoIcon,
                       fit: BoxFit.contain,
-                      color: Colors.white,
+                      colorFilter: const ColorFilter.mode(Colors.white, BlendMode.srcIn),
                     ),
                     const SizedBox(
                       width: 5,
@@ -2149,7 +2149,7 @@ Widget uploadView(String messageType) {
         padding: const EdgeInsets.all(7),
         child: SvgPicture.asset(
           uploadIcon,
-          color: playIconColor,
+          colorFilter: const ColorFilter.mode(playIconColor, BlendMode.srcIn),
         ))
         : Container(
         height: 35,
@@ -2216,7 +2216,7 @@ Widget downloadView(int mediaFileSize, String messageType) {
         padding: const EdgeInsets.all(7),
         child: SvgPicture.asset(
           downloadIcon,
-          color: playIconColor,
+          colorFilter: const ColorFilter.mode(playIconColor, BlendMode.srcIn),
         ))
         : Container(
       height: 35,
@@ -2267,7 +2267,7 @@ downloadingOrUploadingView(String messageType, int progress) {
                 SvgPicture.asset(
                   downloading,
                   fit: BoxFit.contain,
-                  color: playIconColor,
+                  colorFilter: const ColorFilter.mode(playIconColor, BlendMode.srcIn),
                 ),
                 Align(
                   alignment: Alignment.bottomCenter,
@@ -2687,10 +2687,10 @@ class GetBoxOffset extends StatefulWidget {
   const GetBoxOffset({Key? key, required this.child, required this.offset}) : super(key: key);
 
   @override
-  _GetBoxOffsetState createState() => _GetBoxOffsetState();
+  GetBoxOffsetState createState() => GetBoxOffsetState();
 }
 
-class _GetBoxOffsetState extends State<GetBoxOffset> {
+class GetBoxOffsetState extends State<GetBoxOffset> {
   GlobalKey widgetKey = GlobalKey();
 
   Offset offset = const Offset(0.0, 0.0);
