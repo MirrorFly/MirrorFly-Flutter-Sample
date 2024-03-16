@@ -124,25 +124,29 @@ class MediaPreviewController extends FullLifeCycleController with FullLifeCycleM
   }
 
   void deleteMedia() {
-    debugPrint("currentPageIndex : $currentPageIndex");
+    LogMessage.d("currentPageIndex : ",currentPageIndex);
     provider.unPick(currentPageIndex.value);
     filePath.removeAt(currentPageIndex.value);
     captionMessage.removeAt(currentPageIndex.value);
     if(currentPageIndex.value > 0) {
       currentPageIndex(currentPageIndex.value - 1);
-      debugPrint("currentPageIndex.value.toDouble() ${currentPageIndex.value.toDouble()}");
+      LogMessage.d("currentPageIndex.value.toDouble()", currentPageIndex.value.toDouble());
       pageViewController.animateToPage(currentPageIndex.value, duration: const Duration(milliseconds: 5), curve: Curves.easeInOut);
       caption.text = captionMessage[currentPageIndex.value];
     }else if (currentPageIndex.value == 0){
       caption.text = captionMessage[currentPageIndex.value];
     }
-    // captionMessage.refresh();
-    // filePath.refresh();
-    // caption.text = captionMessage[currentPageIndex.value - 1];
+  }
+
+  void onMediaPreviewPageChanged(int value) {
+    LogMessage.d("onMediaPreviewPageChanged ",value.toString());
+    currentPageIndex(value);
+    caption.text = captionMessage[value];
+    captionFocusNode.unfocus();
   }
 
   void onCaptionTyped(String value) {
-    debugPrint("length--> ${captionMessage.length}");
+    LogMessage.d("onCaptionTyped ",captionMessage.length);
     captionMessage[currentPageIndex.value] = value;
   }
 

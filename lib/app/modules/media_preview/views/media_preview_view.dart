@@ -133,73 +133,52 @@ class MediaPreviewView extends GetView<MediaPreviewController> {
 
                           /// selected media
                           : GestureDetector(
-                        onTap: (){
-                          controller.captionFocusNode
-                              .unfocus();
-                        },
-                            child: PageView(
+                              onTap: () {
+                                controller.captionFocusNode.unfocus();
+                              },
+                              child: PageView(
                                 controller: controller.pageViewController,
-                                onPageChanged: onMediaPreviewPageChanged,
+                                onPageChanged:
+                                    controller.onMediaPreviewPageChanged,
                                 children: [
                                   ...controller.filePath.map((data) {
                                     /// show image
                                     if (data.type == 'image') {
                                       return Center(
                                           child: PhotoView(
-                                        imageProvider: FileImage(File(data.path!)),
+                                        imageProvider:
+                                            FileImage(File(data.path!)),
                                         // Contained = the smallest possible size to fit one dimension of the screen
                                         minScale:
-                                            PhotoViewComputedScale.contained * 1,
+                                            PhotoViewComputedScale.contained *
+                                                1,
                                         // Covered = the smallest possible size to fit the whole screen
                                         maxScale:
                                             PhotoViewComputedScale.covered * 2,
                                         enableRotation: true,
                                         basePosition: Alignment.center,
                                         // Set the background color to the "classic white"
-                                        backgroundDecoration: const BoxDecoration(
-                                            color: Colors.transparent),
+                                        backgroundDecoration:
+                                            const BoxDecoration(
+                                                color: Colors.transparent),
                                         loadingBuilder: (context, event) =>
                                             const Center(
                                           child: CircularProgressIndicator(),
                                         ),
-                                      )
-                                          // PhotoView.customChild(
-                                          //   enablePanAlways: true,
-                                          //   maxScale: 2.0,
-                                          //   minScale: 1.0,
-                                          //   child: Image.file(File(data.path)),
-                                          // ),
-                                          );
+                                      ));
                                     }
 
                                     /// show video
                                     else {
-                                      // return AspectRatio(
-                                      //   aspectRatio: 16.0 / 9.0,
-                                      //   child: BetterVideoPlayer(
-                                      //     configuration:
-                                      //         const BetterVideoPlayerConfiguration(
-                                      //       looping: false,
-                                      //       autoPlay: false,
-                                      //       allowedScreenSleep: false,
-                                      //       autoPlayWhenResume: false,
-                                      //     ),
-                                      //     controller:
-                                      //         BetterVideoPlayerController(),
-                                      //     dataSource: BetterVideoPlayerDataSource(
-                                      //       BetterVideoPlayerDataSourceType.file,
-                                      //       data.path!,
-                                      //     ),
-                                      //   ),
-                                      // );
                                       return VideoPlayerWidget(
-                                        videoPath: data.path ?? "", videoTitle: data.title ?? "Video",
+                                        videoPath: data.path ?? "",
+                                        videoTitle: data.title ?? "Video",
                                       );
                                     }
                                   })
                                 ],
                               ),
-                          );
+                            );
                     }),
                   ),
                   Container(
@@ -217,7 +196,8 @@ class MediaPreviewView extends GetView<MediaPreviewController> {
                                 children: [
                                   Obx(() {
                                     return controller.isFocused.value ||
-                                            controller.showEmoji.value || !controller.showAdd
+                                            controller.showEmoji.value ||
+                                            !controller.showAdd
                                         ? InkWell(
                                             onTap: () {
                                               if (!controller.showEmoji.value) {
@@ -233,7 +213,8 @@ class MediaPreviewView extends GetView<MediaPreviewController> {
                                             },
                                             child: SvgPicture.asset(
                                                 'assets/logos/smile.svg'))
-                                        : controller.filePath.length < 10 && controller.showAdd
+                                        : controller.filePath.length < 10 &&
+                                                controller.showAdd
                                             ? InkWell(
                                                 onTap: () {
                                                   Get.back();
@@ -284,19 +265,11 @@ class MediaPreviewView extends GetView<MediaPreviewController> {
                                   InkWell(
                                       onTap: () {
                                         controller.sendMedia();
-                                        // controller.sendMessage(controller.profile);
                                       },
                                       child: SvgPicture.asset(
                                           'assets/logos/img_send.svg')),
                                 ],
                               ),
-                              // SvgPicture.asset(
-                              //   rightArrow,
-                              //   width: 18,
-                              //   height: 18,
-                              //   fit: BoxFit.contain,
-                              //   color: Colors.white,
-                              // ),
                               Row(
                                 children: [
                                   const Icon(
@@ -387,20 +360,6 @@ class MediaPreviewView extends GetView<MediaPreviewController> {
             ),
           ),
         ));
-  }
-
-  void onMediaPreviewPageChanged(int value) {
-    debugPrint(value.toString());
-    // final deBouncer = DeBouncer(milliseconds: 200);
-    // deBouncer.run(() {
-    controller.currentPageIndex(value);
-    controller.caption.text = controller.captionMessage[value];
-    controller.captionFocusNode.unfocus();
-    // });
-    // Future.delayed(const Duration(milliseconds: 200), (){
-    //   controller.currentPageIndex(value);
-    //   controller.caption.text = controller.captionMessage[value];
-    // });
   }
 
   Widget emojiLayout() {
