@@ -4,6 +4,7 @@ import 'dart:math';
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:mirror_fly_demo/app/common/constants.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
 
 class CameraPickController extends GetxController with WidgetsBindingObserver  {
@@ -177,21 +178,37 @@ class CameraPickController extends GetxController with WidgetsBindingObserver  {
   Future<void> takePhoto(context) async {
     if(cameraInitialized.value) {
       Helper.showLoading();
-      XFile? file = await cameraController?.takePicture();
-      debugPrint("file : ${file?.path}");
-      Helper.hideLoading();
-      Get.back(result: file);
+      XFile? file;
+      try {
+        file = await cameraController?.takePicture();
+      }catch(e){
+        Helper.hideLoading();
+        toToast(Constants.insufficientMemoryError);
+      }finally{
+        debugPrint("file : ${file?.path}");
+        Helper.hideLoading();
+        Get.back(result: file);
+      }
     }
   }
 
   stopRecord()async{
     if(cameraInitialized.value) {
       //Helper.showLoading();
-      XFile? file = await stopVideoRecording();
-      debugPrint("file : ${file?.path}");
-      //Helper.hideLoading();
-      Get.back(result: file);
-      isRecording(false);
+      Helper.showLoading();
+      XFile? file;
+      try {
+       file = await stopVideoRecording();
+      }catch(e){
+        Helper.hideLoading();
+        toToast(Constants.insufficientMemoryError);
+      }finally{
+        debugPrint("file : ${file?.path}");
+        Helper.hideLoading();
+        Get.back(result: file);
+        isRecording(false);
+      }
+
     }
   }
 

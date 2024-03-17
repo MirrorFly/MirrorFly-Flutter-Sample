@@ -2069,6 +2069,7 @@ Widget getImageOverlay(ChatMessageModel chatMessage,
     switch (status) {
       case Constants.mediaDownloaded:
       case Constants.mediaUploaded:
+      case Constants.storageNotEnough:
         if (!AppUtils.isMediaExists(chatMessage.mediaChatMessage!.mediaLocalStoragePath.value.checkNull())) {
           return InkWell(
             child: downloadView(
