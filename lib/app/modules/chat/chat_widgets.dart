@@ -160,12 +160,12 @@ getReplyMessage(String messageType,
               mediaChatMessage != null
                   ? mediaChatMessage.isAudioRecorded
                   : true)
-              : const SizedBox.shrink(),
+              : const Offstage(),
           isReplying
               ? const SizedBox(
             width: 5,
           )
-              : const SizedBox.shrink(),
+              : const Offstage(),
           Text(
             Helper.durationToString(Duration(
                 milliseconds: mediaChatMessage != null
@@ -225,28 +225,27 @@ getReplyMessage(String messageType,
         ],
       );
     default:
-      return const SizedBox.shrink();
+      return const Offstage();
   }
 }
 
-// chatMessage.messageType.toUpperCase(),
-// chatMessage.mediaChatMessage?.mediaThumbImage,
-// chatMessage.locationChatMessage,
 getReplyImageHolder(BuildContext context,
     ChatMessageModel chatMessageModel,
     MediaChatMessage? mediaChatMessage,
     double size,
     bool isNotChatItem,
     LocationChatMessage? locationChatMessage) {
+  LogMessage.d("getReplyImageHolder", "chatMessageModel : ${chatMessageModel.toJson()}");
+  LogMessage.d("getReplyImageHolder", "mediaChatMessage : ${mediaChatMessage?.toJson()}");
+  LogMessage.d("getReplyImageHolder", "isNotChatItem : $isNotChatItem");
+  LogMessage.d("getReplyImageHolder", "locationChatMessage : ${locationChatMessage?.toJson()}");
   var isReply = false;
   if (mediaChatMessage != null || locationChatMessage != null) {
     isReply = true;
   }
-  switch (isReply
-      ? mediaChatMessage == null
-      ? "LOCATION"
-      : mediaChatMessage.messageType.checkNull().toUpperCase()
-      : chatMessageModel.messageType.checkNull().toUpperCase()) {
+  var condition = isReply ? (mediaChatMessage == null ? Constants.mLocation : mediaChatMessage.messageType) : chatMessageModel.replyParentChatMessage?.messageType;
+  LogMessage.d("getReplyImageHolder", "condition : $condition");
+  switch (condition) {
     case Constants.mImage:
       debugPrint("reply header--> IMAGE");
       return ClipRRect(
@@ -262,8 +261,6 @@ getReplyImageHolder(BuildContext context,
             size),
       );
     case Constants.mLocation:
-    // debugPrint("location mesg--> ${locationChatMessage?.toJson().toString()}");
-    // debugPrint("location mesg--> ${chatMessageModel.locationChatMessage?.toJson().toString()}");
       return getLocationImage(
           isReply ? locationChatMessage : chatMessageModel.locationChatMessage,
           size,
@@ -392,10 +389,10 @@ class ReplyMessageHeader extends StatelessWidget {
           getReplyImageHolder(
               context,
               chatMessage,
-              chatMessage.replyParentChatMessage!.mediaChatMessage,
+              chatMessage.replyParentChatMessage?.mediaChatMessage,
               55,
               false,
-              chatMessage.replyParentChatMessage!.locationChatMessage),
+              chatMessage.replyParentChatMessage?.locationChatMessage),
         ],
       ),
     );
@@ -535,7 +532,7 @@ class LocationMessageView extends StatelessWidget {
               children: [
                 chatMessage.isMessageStarred.value
                     ? SvgPicture.asset(starSmallIcon)
-                    : const SizedBox.shrink(),
+                    : const Offstage(),
                 const SizedBox(
                   width: 5,
                 ),
@@ -697,10 +694,7 @@ class _AudioMessageViewState extends State<AudioMessageView>
 
   @override
   Widget build(BuildContext context) {
-    var screenWidth = MediaQuery
-        .of(context)
-        .size
-        .width;
+    var screenWidth = Get.width;
     var currentPos =
     0.0; /*double.parse(widget.chatMessage
         .mediaChatMessage!.currentPos
@@ -726,7 +720,7 @@ class _AudioMessageViewState extends State<AudioMessageView>
         borderRadius: const BorderRadius.all(Radius.circular(10)),
         color: Colors.transparent,
       ),
-      width: screenWidth * 0.70,
+      width: screenWidth * 0.80,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -843,7 +837,7 @@ class _AudioMessageViewState extends State<AudioMessageView>
               children: [
                 widget.chatMessage.isMessageStarred.value
                     ? SvgPicture.asset(starSmallIcon)
-                    : const SizedBox.shrink(),
+                    : const Offstage(),
                 const SizedBox(
                   width: 5,
                 ),
@@ -1078,10 +1072,7 @@ class ContactMessageView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var screenWidth = MediaQuery
-        .of(context)
-        .size
-        .width;
+    var screenWidth = Get.width;
     return Container(
       decoration: BoxDecoration(
         borderRadius: const BorderRadius.all(Radius.circular(10)),
@@ -1131,7 +1122,7 @@ class ContactMessageView extends StatelessWidget {
               children: [
                 chatMessage.isMessageStarred.value
                     ? SvgPicture.asset(starSmallIcon)
-                    : const SizedBox.shrink(),
+                    : const Offstage(),
                 const SizedBox(
                   width: 5,
                 ),
@@ -1183,13 +1174,13 @@ class ContactMessageView extends StatelessWidget {
     // String? userJid;
     if (contactChatMessage == null ||
         contactChatMessage.contactPhoneNumbers.isEmpty) {
-      return const SizedBox.shrink();
+      return const Offstage();
     }
     return FutureBuilder(
         future: getUserJid(contactChatMessage),
         builder: (context, snapshot) {
           if (snapshot.hasError || !snapshot.hasData) {
-            return const SizedBox.shrink();
+            return const Offstage();
           }
           var userJid = snapshot.data;
           debugPrint("getJidOfContact--> $userJid");
@@ -1292,10 +1283,7 @@ class DocumentMessageView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var screenWidth = MediaQuery
-        .of(context)
-        .size
-        .width;
+    var screenWidth = Get.width;
     return InkWell(
       onTap: () {
         onDocumentClick();
@@ -1389,7 +1377,7 @@ class DocumentMessageView extends StatelessWidget {
                   const Spacer(),
                   chatMessage.isMessageStarred.value
                       ? SvgPicture.asset(starSmallIcon)
-                      : const SizedBox.shrink(),
+                      : const Offstage(),
                   const SizedBox(
                     width: 5,
                   ),
@@ -1525,7 +1513,7 @@ class VideoMessageView extends StatelessWidget {
                   children: [
                     chatMessage.isMessageStarred.value
                         ? SvgPicture.asset(starSmallIcon)
-                        : const SizedBox.shrink(),
+                        : const Offstage(),
                     const SizedBox(
                       width: 5,
                     ),
@@ -1609,7 +1597,7 @@ class ImageMessageView extends StatelessWidget {
                   children: [
                     chatMessage.isMessageStarred.value
                         ? SvgPicture.asset(starSmallIcon)
-                        : const SizedBox.shrink(),
+                        : const Offstage(),
                     const SizedBox(
                       width: 5,
                     ),
@@ -1722,7 +1710,7 @@ Widget setCaptionMessage(MediaChatMessage mediaMessage,
           children: [
             chatMessage.isMessageStarred.value
                 ? SvgPicture.asset(starSmallIcon)
-                : const SizedBox.shrink(),
+                : const Offstage(),
             const SizedBox(
               width: 5,
             ),
@@ -1813,7 +1801,7 @@ class MessageContent extends StatelessWidget {
       } else if (chatList[index].messageType.toUpperCase() ==
           Constants.mLocation) {
         if (chatList[index].locationChatMessage == null) {
-          return const SizedBox.shrink();
+          return const Offstage();
         }
         return LocationMessageView(
           chatMessage: chatMessage,
@@ -1822,7 +1810,7 @@ class MessageContent extends StatelessWidget {
       } else if (chatList[index].messageType.toUpperCase() ==
           Constants.mContact) {
         if (chatList[index].contactChatMessage == null) {
-          return const SizedBox.shrink();
+          return const Offstage();
         }
         return ContactMessageView(
           chatMessage: chatMessage,
@@ -1831,7 +1819,7 @@ class MessageContent extends StatelessWidget {
         );
       } else {
         if (chatList[index].mediaChatMessage == null) {
-          return const SizedBox.shrink();
+          return const Offstage();
         } else {
           if (chatList[index].messageType.toUpperCase() == Constants.mImage) {
             return ImageMessageView(
@@ -1859,7 +1847,7 @@ class MessageContent extends StatelessWidget {
               onSeekbarChange: onSeekbarChange,
             );
           } else {
-            return const SizedBox.shrink();
+            return const Offstage();
           }
         }
       }
@@ -1903,7 +1891,7 @@ class TextMessageView extends StatelessWidget {
             children: [
               chatMessage.isMessageStarred.value
                   ? SvgPicture.asset(starSmallIcon)
-                  : const SizedBox.shrink(),
+                  : const Offstage(),
               const SizedBox(
                 width: 5,
               ),
@@ -2000,13 +1988,13 @@ getMessageIndicator(String? messageStatus, bool isSender, String messageType, bo
       } else if (messageStatus == 'N') {
         return SvgPicture.asset(unSendIcon);
       } else {
-        return const SizedBox.shrink();
+        return const Offstage();
       }
     } else {
-      return const SizedBox.shrink();
+      return const Offstage();
     }
   } else {
-    return const SizedBox.shrink();
+    return const Offstage();
   }
 }
 
@@ -2046,7 +2034,7 @@ Widget getImageOverlay(ChatMessageModel chatMessage,
         ),
       ); //const Icon(Icons.play_arrow_sharp);
     } else {
-      return const SizedBox.shrink();
+      return const Offstage();
     }
   } else {
     var status = 0;
@@ -2091,7 +2079,7 @@ Widget getImageOverlay(ChatMessageModel chatMessage,
             },
           );
         } else {
-          return const SizedBox.shrink();
+          return const Offstage();
         }
       case Constants.mediaDownloadedNotAvailable:
       case Constants.mediaUploadedNotAvailable:
@@ -2381,13 +2369,13 @@ class AttachmentsSheetView extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   availableFeatures.value.isDocumentAttachmentAvailable.checkNull() ? iconCreation(
-                      documentImg, "Document", onDocument) : const SizedBox.shrink(),
+                      documentImg, "Document", onDocument) : const Offstage(),
                   (availableFeatures.value.isImageAttachmentAvailable.checkNull() ||
                       availableFeatures.value.isVideoAttachmentAvailable.checkNull()) ? iconCreation(
-                      cameraImg, "Camera", onCamera) : const SizedBox.shrink(),
+                      cameraImg, "Camera", onCamera) : const Offstage(),
                   (availableFeatures.value.isImageAttachmentAvailable.checkNull() ||
                       availableFeatures.value.isVideoAttachmentAvailable.checkNull()) ? iconCreation(
-                      galleryImg, "Gallery", onGallery) : const SizedBox.shrink(),
+                      galleryImg, "Gallery", onGallery) : const Offstage(),
                 ],
               );
             }),
@@ -2398,11 +2386,11 @@ class AttachmentsSheetView extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 availableFeatures.value.isAudioAttachmentAvailable.checkNull() ? iconCreation(
-                    audioImg, "Audio", onAudio) : const SizedBox.shrink(),
+                    audioImg, "Audio", onAudio) : const Offstage(),
                 availableFeatures.value.isContactAttachmentAvailable.checkNull() ? iconCreation(
-                    contactImg, "Contact", onContact) : const SizedBox.shrink(),
+                    contactImg, "Contact", onContact) : const Offstage(),
                 availableFeatures.value.isLocationAttachmentAvailable.checkNull() ? iconCreation(
-                    locationImg, "Location", onLocation) : const SizedBox.shrink(),
+                    locationImg, "Location", onLocation) : const Offstage(),
               ],
             ),
           ],
