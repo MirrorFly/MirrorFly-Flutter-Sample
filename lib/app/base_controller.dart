@@ -570,6 +570,15 @@ abstract class BaseController {
     }
   }
 
+  void onUpdateLastMessageUI(String chatJid){
+    if (Get.isRegistered<ArchivedChatListController>()) {
+      Get.find<ArchivedChatListController>().updateArchiveRecentChat(chatJid);
+    }
+    if (Get.isRegistered<DashboardController>()) {
+      Get.find<DashboardController>().updateRecentChat(jid: chatJid);
+    }
+  }
+
   void markConversationReadNotifyUI(String jid) {
     if (Get.isRegistered<DashboardController>()) {
       Get.find<DashboardController>().markConversationReadNotifyUI(jid);

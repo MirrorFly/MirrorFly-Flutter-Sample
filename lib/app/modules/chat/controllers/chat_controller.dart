@@ -3233,9 +3233,9 @@ class ChatController extends FullLifeCycleController
   Future<void> updateLastMessage(dynamic value) async {
     ChatMessageModel chatMessageModel = sendMessageModelFromJson(value);
     loadLastMessages(chatMessageModel);
-    // Commenting this below line, bcz after sending the message we are calling next message to load the newly sent message and
-    // the status gets updated in the event listener's in Base Controller. So no need to update the status here.
-    // Get.find<MainController>().onMessageStatusUpdated(value);
+    //below method is used when message is not sent and onMessageStatusUpdate listener will not trigger till the message status was updated so notify the ui in dashboard
+    Get.find<MainController>().onUpdateLastMessageUI(profile.jid.checkNull());
+
   }
 
   void onAvailableFeaturesUpdated(AvailableFeatures features) {
