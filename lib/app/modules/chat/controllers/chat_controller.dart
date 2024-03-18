@@ -2441,24 +2441,10 @@ class ChatController extends FullLifeCycleController
         if (photo != null) {
           mirrorFlyLog("photo", photo.name.toString());
           mirrorFlyLog("caption text sending-->", messageController.text);
-          /*if (photo.name.endsWith(".mp4")) {
-            Get.toNamed(Routes.videoPreview, arguments: {
-              "filePath": photo.path,
-              "userName": profile.name!,
-              "profile": profile,
-              "caption": messageController.text
-            });
-          } else {
-            Get.toNamed(Routes.imagePreview, arguments: {
-              "filePath": photo.path,
-              "userName": profile.name!,
-              "profile": profile,
-              "caption": messageController.text
-            });
-          }*/
           var file = PickedAssetModel(
             path: photo.path,
             type: !photo.name.endsWith(".mp4") ? "image" : "video",
+            file: File(photo.path)
           );
           Get.toNamed(Routes.mediaPreview, arguments: {
             "filePath": [file],

@@ -5,7 +5,9 @@ import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
+import 'package:mirror_fly_demo/app/data/apputils.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
+import 'package:mirrorfly_plugin/mirrorflychat.dart';
 
 class CameraPickController extends GetxController with WidgetsBindingObserver  {
   RxDouble scale = 1.0.obs;
@@ -142,6 +144,7 @@ class CameraPickController extends GetxController with WidgetsBindingObserver  {
       startTimer();
       isRecording(true);
     } on CameraException catch (e) {
+      LogMessage.d("startVideoRecording", "$e");
       _showCameraException(e);
       return;
     }
@@ -170,6 +173,7 @@ class CameraPickController extends GetxController with WidgetsBindingObserver  {
     try {
       return cameraController?.stopVideoRecording();
     } on CameraException catch (e) {
+      LogMessage.d("stopVideoRecording", "$e");
       _showCameraException(e);
       return null;
     }
@@ -182,8 +186,9 @@ class CameraPickController extends GetxController with WidgetsBindingObserver  {
       try {
         file = await cameraController?.takePicture();
       }catch(e){
+        LogMessage.d("takePhoto", "$e");
         Helper.hideLoading();
-        toToast(Constants.insufficientMemoryError);
+        toToast(Constants.insufficientMemoryError);//CameraException(IOError, Failed saving image)
       }finally{
         debugPrint("file : ${file?.path}");
         Helper.hideLoading();
@@ -200,10 +205,11 @@ class CameraPickController extends GetxController with WidgetsBindingObserver  {
       try {
        file = await stopVideoRecording();
       }catch(e){
+        LogMessage.d("stopRecord", "$e");
         Helper.hideLoading();
         toToast(Constants.insufficientMemoryError);
       }finally{
-        debugPrint("file : ${file?.path}");
+        // debugPrint("file : ${file?.path}, ${file?.length()},");
         Helper.hideLoading();
         Get.back(result: file);
         isRecording(false);

@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
+import 'package:mirrorfly_plugin/mirrorflychat.dart';
 import 'package:video_player/video_player.dart';
 
 class VideoPlayerWidget extends StatefulWidget {
@@ -41,6 +42,11 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
         _controller.setPlaybackSpeed(1.0);
 
       });
+    }).catchError((e){
+      LogMessage.d("initialize", "$e");
+      //PlatformException(VideoError, Video player had error com.google.android.exoplayer2.ExoPlaybackException: Source error, null, null)
+      toToast(Constants.errorVideoInitialize);
+      Navigator.pop(context);
     });
   }
 
