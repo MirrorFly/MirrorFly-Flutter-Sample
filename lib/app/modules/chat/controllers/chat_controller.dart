@@ -3230,7 +3230,7 @@ class ChatController extends FullLifeCycleController
     Get.find<MainController>().onMessageDeleteNotifyUI(chatJid: chatJid, changePosition: changePosition);
   }
 
-  Future<void> updateLastMessage(dynamic value) async {
+  void updateLastMessage(dynamic value) {
     ChatMessageModel chatMessageModel = sendMessageModelFromJson(value);
     loadLastMessages(chatMessageModel);
     //below method is used when message is not sent and onMessageStatusUpdate listener will not trigger till the message status was updated so notify the ui in dashboard

@@ -401,6 +401,7 @@ class ForwardChatController extends GetxController {
         if (forwardMessageIds.isNotEmpty && selectedJids.isNotEmpty) {
           Mirrorfly.forwardMessagesToMultipleUsers(messageIds: forwardMessageIds, userList: selectedJids, flyCallBack: (FlyResponse response) {
             // debugPrint("to chat profile ==> ${selectedUsersList[0].toJson().toString()}");
+            updateLastMessage(selectedJids);
             getProfileDetails(selectedJids.last)
                 .then((value) {
               if (value.jid != null) {
@@ -425,6 +426,13 @@ class ForwardChatController extends GetxController {
       }
     } else {
       toToast(Constants.noInternetConnection);
+    }
+  }
+
+  void updateLastMessage(List<String> chatJid){
+    //below method is used when message is not sent and onMessageStatusUpdate listener will not trigger till the message status was updated so notify the ui in dashboard
+    for (var element in chatJid) {
+      Get.find<MainController>().onUpdateLastMessageUI(element);
     }
   }
 
