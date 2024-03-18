@@ -63,21 +63,6 @@ class ForwardChatController extends GetxController {
     forwardMessageIds.addAll(messageIds);
     userlistScrollController.addListener(_scrollListener);
     getRecentChatList();
-    getAllGroups();
-    getUsers();
-
-    _recentChats.bindStream(_recentChats.stream);
-    ever(_recentChats, (callback) {
-      removeGroupItem();
-    });
-    _groupList.bindStream(_groupList.stream);
-    ever(_groupList, (callback) {
-      removeGroupItem();
-    });
-    _userList.bindStream(_userList.stream);
-    ever(_userList, (callback) {
-      removeUserItem();
-    });
   }
 
   removeGroupItem() {
@@ -120,13 +105,18 @@ class ForwardChatController extends GetxController {
 
   void getRecentChatList() {
     Mirrorfly.getRecentChatList(flyCallBack: (FlyResponse response) {
-      if(response.isSuccess && response.hasData){
+      if(response.isSuccess && response.hasData) {
         var data = recentChatFromJson(response.data);
-        if (_mainrecentChats.isEmpty) {
-          _mainrecentChats.addAll(data.data!);
+        if (data.data != null) {
+          if (_mainrecentChats.isEmpty) {
+            _mainrecentChats.addAll(data.data!);
+          }
+          var list = data.data!.take(3).toList();
+          _recentChats(list);
         }
-        _recentChats(data.data!);
       }
+      getAllGroups();
+      getUsers();
     });
   }
 
@@ -135,10 +125,12 @@ class ForwardChatController extends GetxController {
       if (response.isSuccess && response.hasData) {
         LogMessage.d("getAllGroups", response);
         var list = profileFromJson(response.data);
-        if (_maingroupList.isEmpty) {
-          _maingroupList.addAll(list);
+        for (var group in list) {
+          if(recentChats.indexWhere((element) => element.jid == group.jid).isNegative){
+            _maingroupList.add(group);
+            _groupList.add(group);
+          }
         }
-        _groupList(list);
       }
     });
   }
@@ -164,11 +156,17 @@ class ForwardChatController extends GetxController {
           if (response.hasData) {
             var list = userListFromJson(response.data);
             if (list.data != null) {
-              if (_mainuserList.isEmpty) {
+              for (var user in list.data!) {
+                if(recentChats.indexWhere((element) => element.jid == user.jid).isNegative){
+                  _mainuserList.add(user);
+                  _userList.add(user);
+                }
+              }
+              /*if (_mainuserList.isEmpty) {
                 _mainuserList.addAll(list.data!);
               }
               _userList.addAll(list.data!);
-              _userList.refresh();
+              _userList.refresh();*/
             }
           }
           searching = false;
@@ -212,16 +210,24 @@ class ForwardChatController extends GetxController {
 
   void filterRecentChat() {
     _recentChats.clear();
+    var y = 0;
     for (var recentChat in _mainrecentChats) {
       if (recentChat.profileName != null &&
           recentChat.profileName!
                   .toLowerCase()
                   .contains(searchQuery.text.trim().toString().toLowerCase()) ==
               true) {
-        _recentChats.add(recentChat);
-        _recentChats.refresh();
+        if(y<3) {// only add 3 items in recent chat list
+          _recentChats.add(recentChat);
+          _recentChats.refresh();
+          y++;
+        }else{
+          break;
+        }
       }
     }
+    filterGroupChat();
+    filterUserList();
   }
 
   void filterGroupChat() {
@@ -232,8 +238,11 @@ class ForwardChatController extends GetxController {
                   .toLowerCase()
                   .contains(searchQuery.text.trim().toString().toLowerCase()) ==
               true) {
-        _groupList.add(group);
-        _groupList.refresh();
+        // add only when group not available in recent chat list
+        if(_recentChats.indexWhere((element) => element.jid == group.jid).isNegative) {
+          _groupList.add(group);
+          _groupList.refresh();
+        }
       }
     }
   }
@@ -248,12 +257,20 @@ class ForwardChatController extends GetxController {
           if (response.hasData) {
             var list = userListFromJson(response.data);
             if (list.data != null) {
-              scrollable((list.data!.length == 20 && !Constants.enableContactSync));
-              if(!Constants.enableContactSync) {
-                _userList(list.data);
-              }else{
-                _userList(list.data!.where((element) => element.nickName.checkNull().toLowerCase().contains(searchQuery.text.trim().toString().toLowerCase())).toList());
-              }
+              list.data?.forEach((user) {
+                // add only when user not available in recent chat list
+                if(_recentChats.indexWhere((element) => element.jid == user.jid).isNegative) {
+                  if (!Constants.enableContactSync) {
+                    _userList.add(user);
+                  } else {
+                    var filter = user.nickName.checkNull().toLowerCase().contains(searchQuery.text.trim().toString().toLowerCase());
+                    if(filter) {
+                      _userList.add(user);
+                    }
+                  }
+                }
+              });
+              scrollable((_userList.length == 20 && !Constants.enableContactSync));
             } else {
               scrollable(false);
             }
@@ -372,8 +389,6 @@ class ForwardChatController extends GetxController {
         deBouncer.run(() {
           pageNum = 1;
           filterRecentChat();
-          filterGroupChat();
-          filterUserList();
         });
       } else {
         debugPrint("cleared");
@@ -389,7 +404,7 @@ class ForwardChatController extends GetxController {
     searchQuery.clear();
     _isSearchVisible(true);
     scrollable((_mainuserList.length == 20 && !Constants.enableContactSync));
-    _recentChats(_mainrecentChats);
+    _recentChats(_mainrecentChats.take(3).toList());
     _groupList(_maingroupList);
     _userList(_mainuserList);
   }
@@ -504,8 +519,6 @@ class ForwardChatController extends GetxController {
 
   void onContactSyncComplete(bool result) {
     getRecentChatList();
-    getAllGroups();
-    getUsers();
     if (searchQuery.text.toString().trim().isNotEmpty) {
       lastInputValue='';
       onSearch(searchQuery.text.toString());
