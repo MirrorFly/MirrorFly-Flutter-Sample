@@ -378,9 +378,9 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
     }
   }
 
-  updateRecentChat({required String jid, bool changePosition = true}) {
+  updateRecentChat({required String jid, bool changePosition = true}) async {
     //updateArchiveRecentChat(jid);
-    getRecentChatOfJid(jid).then((recent) {
+    await getRecentChatOfJid(jid).then((recent) {
       final index = recentChats.indexWhere((chat) => chat.jid == jid);
       debugPrint("dashboard index--> $index");
       LogMessage.d("updateRecentChat",recent?.toJson());
