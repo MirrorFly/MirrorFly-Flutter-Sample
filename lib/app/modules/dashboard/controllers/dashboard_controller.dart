@@ -1085,11 +1085,11 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
       var index =
           recentChats.indexWhere((element) => element.jid == jid); // { it.jid ?: Constants.EMPTY_STRING == jid }
       debugPrint("updateRecentChatAdapter $index");
-      var recent = await getRecentChatOfJid(jid);
-      debugPrint("updateRecentChatAdapter getRecentChatOfJid ${recent?.toJson().toString()}");
-      if (recent != null) {
-        if (!index.isNegative) {
-          recentChats[index] = recent;
+      if (!index.isNegative) {
+        var recent = await getRecentChatOfJid(jid);
+        debugPrint("updateRecentChatAdapter getRecentChatOfJid ${recent?.toJson().toString()}");
+        if (recent != null) {
+            recentChats[index] = recent;
         }
       }
     }
@@ -1425,18 +1425,12 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
   Future<void> updateRecentChatAdapterSearch(String jid) async {
     if (jid.isNotEmpty) {
       var filterIndex = filteredRecentChatList
-          .indexWhere((element) => element.jid == jid); // { it.jid ?: Constants.EMPTY_STRING == jid }
-      /*var frmIndex = frmRecentChatList.indexWhere((element) =>
-      element.jid ==
-          jid);*/ // { it.jid ?: Constants.EMPTY_STRING == jid }
-      var recent = await getRecentChatOfJid(jid);
-      if (recent != null) {
-        if (!filterIndex.isNegative) {
-          filteredRecentChatList[filterIndex] = recent;
+          .indexWhere((element) => element.jid == jid);
+      if (!filterIndex.isNegative) {
+        var recent = await getRecentChatOfJid(jid);
+        if (recent != null) {
+            filteredRecentChatList[filterIndex] = recent;
         }
-        /*if (!frmIndex.isNegative) {
-          frmRecentChatList[frmIndex] = recent;
-        }*/
       }
     }
   }
@@ -1446,13 +1440,13 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
     if (jid.isNotEmpty) {
       var userListIndex = _userList.indexWhere((element) => element.jid == jid);
       debugPrint("userListIndex $userListIndex");
-      getProfileDetails(jid).then((value) {
-        debugPrint("get profile detail dashboard $value");
-        profile_(value);
-        if (!userListIndex.isNegative) {
+      if (!userListIndex.isNegative) {
+        getProfileDetails(jid).then((value) {
+          debugPrint("get profile detail dashboard $value");
+          profile_(value);
           _userList[userListIndex] = value;
-        }
-      });
+        });
+      }
     }
   }
 
