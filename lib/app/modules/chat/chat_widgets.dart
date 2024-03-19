@@ -2181,7 +2181,7 @@ void downloadMedia(String messageId) async {
   debugPrint("media download click");
   debugPrint("media download click--> $messageId");
   if (await AppUtils.isNetConnected()) {
-    var permission = await AppPermission.getStoragePermission();
+    var permission = await AppPermission.getStoragePermission(permissionContent: Constants.writeStoragePermission,deniedContent: Constants.writeStoragePermissionDenied);
     if (permission) {
       debugPrint("media permission granted");
       Mirrorfly.downloadMedia(messageId: messageId);

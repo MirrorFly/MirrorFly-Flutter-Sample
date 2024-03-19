@@ -7,6 +7,7 @@ import 'package:mirror_fly_demo/app/common/extensions.dart';
 import 'package:mirrorfly_plugin/mirrorflychat.dart';
 import 'package:mirror_fly_demo/app/modules/chat/controllers/chat_controller.dart';
 
+import '../../../common/constants.dart';
 import '../../../data/permissions.dart';
 import '../../../model/chat_message_model.dart';
 
@@ -70,7 +71,7 @@ class MessageInfoController extends GetxController {
 
 
   downloadMedia(String messageId) async {
-    var permission = await AppPermission.getStoragePermission();
+    var permission = await AppPermission.getStoragePermission(permissionContent: Constants.writeStoragePermission,deniedContent: Constants.writeStoragePermissionDenied);
     if (permission) {
       Mirrorfly.downloadMedia(messageId: messageId);
     }
