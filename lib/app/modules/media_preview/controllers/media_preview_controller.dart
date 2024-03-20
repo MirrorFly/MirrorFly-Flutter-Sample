@@ -65,43 +65,44 @@ class MediaPreviewController extends FullLifeCycleController with FullLifeCycleM
     // count(139 - addStatusController.text.length);
   }
 
-  void sendMedia() {
+  Future<void> sendMedia() async {
     debugPrint("send media");
     var previousRoute = Get.previousRoute;
-    // if (await AppUtils.isNetConnected()) {
-    var featureNotAvailable = false;
     Platform.isIOS ? Helper.showLoading(message: "Compressing files") : Helper.progressLoading();
+    var featureNotAvailable = false;
     try {
       int i = 0;
-      for (var data in filePath) {
-        /// show image
+      await Future.forEach(filePath, (data) async {
         debugPrint(data.type);
+        /// show image
         if (data.type == 'image') {
-          if(!availableFeatures.value.isImageAttachmentAvailable.checkNull()){
-            featureNotAvailable=true;
-            break;
+          if (!availableFeatures.value.isImageAttachmentAvailable.checkNull()) {
+            featureNotAvailable = true;
+            return false;
           }
           debugPrint("sending image");
-          Get.find<ChatController>().sendImageMessage(data.path, captionMessage[i], "");
+          await Get.find<ChatController>().sendImageMessage(
+              data.path, captionMessage[i], "");
         } else if (data.type == 'video') {
-          if(!availableFeatures.value.isVideoAttachmentAvailable.checkNull()){
+          if (!availableFeatures.value.isVideoAttachmentAvailable.checkNull()) {
             featureNotAvailable = true;
-            break;
+            return false;
           }
           debugPrint("sending video");
-          Get.find<ChatController>().sendVideoMessage(data.path!, captionMessage[i], "");
+          await Get.find<ChatController>().sendVideoMessage(
+              data.path!, captionMessage[i], "");
         }
         i++;
-      }
-    } finally {
+      });
+    }finally {
       debugPrint("finally $featureNotAvailable");
       Helper.hideLoading();
-      if(!featureNotAvailable) {
+      if (!featureNotAvailable) {
         if (previousRoute == Routes.galleryPicker) {
           Get.back();
         }
         Get.back();
-      }else{
+      } else {
         Helper.showFeatureUnavailable();
       }
     }
