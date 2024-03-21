@@ -16,14 +16,17 @@ class AddBusyStatusView extends GetView<BusyStatusController> {
         automaticallyImplyLeading: true,
         title: const Text('Add Busy Status'),
       ),
-      body: WillPopScope(
-        onWillPop: () {
+      body: PopScope(
+        canPop: false,
+        onPopInvoked: (didPop) {
+          if (didPop) {
+            return;
+          }
           if (controller.showEmoji.value) {
             controller.showEmoji(false);
           } else {
             Get.back();
           }
-          return Future.value(false);
         },
         child: SafeArea(
           child: Column(
@@ -148,11 +151,11 @@ class AddBusyStatusView extends GetView<BusyStatusController> {
     return Obx(() {
       if (controller.showEmoji.value) {
         return EmojiLayout(
-            textController: controller.addStatusController,
+            textController: TextEditingController(),//controller.addStatusController,
             onBackspacePressed: () {
-              controller.onChanged();
+              controller.onEmojiBackPressed();
             },
-            onEmojiSelected: (cat, emoji) => controller.onChanged());
+            onEmojiSelected: (cat, emoji) => controller.onEmojiSelected(emoji));
       } else {
         return const SizedBox.shrink();
       }

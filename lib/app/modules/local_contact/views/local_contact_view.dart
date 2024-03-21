@@ -59,15 +59,19 @@ class LocalContactView extends GetView<LocalContactController> {
                   ),
           ],
         ),
-        body: WillPopScope(
-          onWillPop: () {
+        body: PopScope(
+          canPop: false,
+          onPopInvoked: (didPop) {
+            if (didPop) {
+              return;
+            }
             if (controller.search.value) {
               controller.searchTextController.text = "";
               controller.onSearchCancelled();
               controller.search.value = false;
-              return Future.value(false);
+              return;
             } else {
-              return Future.value(true);
+              Get.back();
             }
           },
           child: SafeArea(

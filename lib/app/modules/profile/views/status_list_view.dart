@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/common/widgets.dart';
-import 'package:mirror_fly_demo/app/data/helper.dart';
+import 'package:mirror_fly_demo/app/common/extensions.dart';
 import 'package:mirror_fly_demo/app/modules/profile/controllers/status_controller.dart';
 
 import '../../../common/constants.dart';
@@ -18,10 +18,13 @@ class StatusListView extends GetView<StatusListController> {
         automaticallyImplyLeading: true,
         title: const Text('Status'),
       ),
-      body: WillPopScope(
-        onWillPop: () {
-          Get.back(result: controller.selectedStatus.value);
-          return Future.value(false);
+      body: PopScope(
+        canPop: false,
+        onPopInvoked: (didPop){
+          if (didPop) {
+            return;
+          }
+          controller.onBackPressed(controller.selectedStatus.value);
         },
         child: Container(
           padding: const EdgeInsets.all(

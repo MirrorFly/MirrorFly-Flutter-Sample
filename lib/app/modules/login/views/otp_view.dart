@@ -109,7 +109,7 @@ class OtpView extends GetView<LoginController> {
                                   controller.verifyOTP();
                                 },
                                 child: const Text(
-                                  'Verify OTP',
+                                  'Verify OTP',style: TextStyle(color: Colors.white),
                                 ),
                               ),
                             );

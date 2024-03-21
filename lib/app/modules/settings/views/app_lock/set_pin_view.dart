@@ -81,7 +81,7 @@ class SetPinView extends GetView<AppLockController> {
                     controller.savePin();
                   },
                   child: const Text(
-                    'Save',
+                    'Save',style: TextStyle(color: Colors.white),
                   ),
                 ),
               ),

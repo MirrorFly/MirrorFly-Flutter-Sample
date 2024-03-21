@@ -5,7 +5,6 @@ import 'package:mirror_fly_demo/app/common/constants.dart';
 import 'package:mirror_fly_demo/app/modules/chat/controllers/contact_controller.dart';
 import 'package:mirrorfly_plugin/mirrorfly.dart';
 
-import '../../../routes/app_pages.dart';
 import '../../../widgets/custom_action_bar_icons.dart';
 import '../../dashboard/widgets.dart';
 
@@ -14,13 +13,17 @@ class ContactListView extends GetView<ContactController> {
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: (){
+    return PopScope(
+      canPop: false,
+      onPopInvoked: (didPop) {
+        if (didPop) {
+          return;
+        }
         if(controller.search) {
           controller.backFromSearch();
-          return Future.value(false);
+          return;
         }
-        return Future.value(true);
+        Get.back();
       },
       child: Obx(
             () =>
@@ -93,26 +96,24 @@ class ContactListView extends GetView<ContactController> {
                   Visibility(
                     visible: controller.isSearchVisible,
                     child: CustomActionBarIcons(
-                      availableWidth: MediaQuery
-                          .of(context)
-                          .size
-                          .width /
+                      availableWidth: Get.width /
                           2, // half the screen width
                       actionWidth: 48,
                       actions: [
-                        CustomAction(
-                          visibleWidget: IconButton(
-                              onPressed: () {}, icon: const Icon(Icons.settings)),
-                          overflowWidget: InkWell(
-                            child: const Text("Settings"),
-                            onTap: () => Get.toNamed(Routes.settings),
-                          ),
-                          showAsAction: ShowAsAction.never,
-                          keyValue: 'Settings',
-                          onItemClick: () {
-                            Get.toNamed(Routes.settings);
-                          },
-                        ),
+                        //mani said to comment this bcz this option seems not necessary for this screen
+                        // CustomAction(
+                        //   visibleWidget: IconButton(
+                        //       onPressed: () {}, icon: const Icon(Icons.settings)),
+                        //   overflowWidget: InkWell(
+                        //     child: const Text("Settings"),
+                        //     onTap: () => Get.toNamed(Routes.settings),
+                        //   ),
+                        //   showAsAction: ShowAsAction.never,
+                        //   keyValue: 'Settings',
+                        //   onItemClick: () {
+                        //     Get.toNamed(Routes.settings);
+                        //   },
+                        // ),
                         CustomAction(
                           visibleWidget: IconButton(
                               onPressed: () {}, icon: const Icon(Icons.refresh)),
