@@ -4,7 +4,9 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
+import 'package:mirror_fly_demo/app/modules/gallery_picker/controllers/gallery_picker_controller.dart';
 import 'package:mirrorfly_plugin/mirrorfly.dart';
+import 'package:mirror_fly_demo/app/common/extensions.dart';
 import 'package:get/get.dart';
 
 import '../../../common/constants.dart';
@@ -17,7 +19,7 @@ import '../../gallery_picker/src/data/models/picked_asset_model.dart';
 class MediaPreviewController extends FullLifeCycleController with FullLifeCycleMixin {
 
   var userName = Get.arguments['userName'];
-  var profile = Get.arguments['profile'] as Profile;
+  var profile = Get.arguments['profile'] as ProfileDetails;
 
   TextEditingController caption = TextEditingController();
 
@@ -63,73 +65,74 @@ class MediaPreviewController extends FullLifeCycleController with FullLifeCycleM
     // count(139 - addStatusController.text.length);
   }
 
-  sendMedia() async {
+  Future<void> sendMedia() async {
     debugPrint("send media");
     var previousRoute = Get.previousRoute;
-    // if (await AppUtils.isNetConnected()) {
+    Platform.isIOS ? Helper.showLoading(message: "Compressing files") : Helper.progressLoading();
     var featureNotAvailable = false;
     try {
       int i = 0;
-      Platform.isIOS ? Helper.showLoading(message: "Compressing files") : null;
-      for (var data in filePath) {
-        /// show image
+      await Future.forEach(filePath, (data) async {
         debugPrint(data.type);
+        /// show image
         if (data.type == 'image') {
-          if(!availableFeatures.value.isImageAttachmentAvailable.checkNull()){
-            featureNotAvailable=true;
-            break;
+          if (!availableFeatures.value.isImageAttachmentAvailable.checkNull()) {
+            featureNotAvailable = true;
+            return false;
           }
           debugPrint("sending image");
-          var response = await Get.find<ChatController>()
-              .sendImageMessage(data.path, captionMessage[i], "");
-          debugPrint("Preview View ==> $response");
-          if (response != null) {
-            debugPrint("Image send Success");
-          }
+          await Get.find<ChatController>().sendImageMessage(
+              data.path, captionMessage[i], "");
         } else if (data.type == 'video') {
-          if(!availableFeatures.value.isVideoAttachmentAvailable.checkNull()){
+          if (!availableFeatures.value.isVideoAttachmentAvailable.checkNull()) {
             featureNotAvailable = true;
-            break;
+            return false;
           }
           debugPrint("sending video");
-          var response = await Get.find<ChatController>()
-              .sendVideoMessage(data.path!, captionMessage[i], "");
-          debugPrint("Preview View ==> $response");
-          if (response != null) {
-            debugPrint("Video send Success");
-          }
+          await Get.find<ChatController>().sendVideoMessage(
+              data.path!, captionMessage[i], "");
         }
         i++;
-      }
-    } finally {
+      });
+    }finally {
       debugPrint("finally $featureNotAvailable");
-      Platform.isIOS ? Helper.hideLoading() : null;
-      if(!featureNotAvailable) {
+      Helper.hideLoading();
+      if (!featureNotAvailable) {
         if (previousRoute == Routes.galleryPicker) {
           Get.back();
         }
         Get.back();
-      }else{
+      } else {
         Helper.showFeatureUnavailable();
       }
     }
-    // Get.back();
-    /*} else {
-      toToast(Constants.noInternetConnection);
-    }*/
-    // debugPrint("caption text-> $captionMessage");
   }
 
   void deleteMedia() {
+    LogMessage.d("currentPageIndex : ",currentPageIndex);
+    var provider = Get.find<GalleryPickerController>().provider;
+    provider.unPick(currentPageIndex.value);
     filePath.removeAt(currentPageIndex.value);
     captionMessage.removeAt(currentPageIndex.value);
-    // captionMessage.refresh();
-    // filePath.refresh();
-    caption.text = captionMessage[currentPageIndex.value];
+    if(currentPageIndex.value > 0) {
+      currentPageIndex(currentPageIndex.value - 1);
+      LogMessage.d("currentPageIndex.value.toDouble()", currentPageIndex.value.toDouble());
+      pageViewController.animateToPage(currentPageIndex.value, duration: const Duration(milliseconds: 5), curve: Curves.easeInOut);
+      caption.text = captionMessage[currentPageIndex.value];
+    }else if (currentPageIndex.value == 0){
+      caption.text = captionMessage[currentPageIndex.value];
+    }
+  }
+
+  void onMediaPreviewPageChanged(int value) {
+    LogMessage.d("onMediaPreviewPageChanged ",value.toString());
+    currentPageIndex(value);
+    caption.text = captionMessage[value];
+    captionFocusNode.unfocus();
   }
 
   void onCaptionTyped(String value) {
-    debugPrint("length--> ${captionMessage.length}");
+    LogMessage.d("onCaptionTyped ",captionMessage.length);
     captionMessage[currentPageIndex.value] = value;
   }
 

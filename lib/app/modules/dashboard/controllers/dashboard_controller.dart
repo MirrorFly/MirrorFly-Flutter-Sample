@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:mirror_fly_demo/app/call_modules/call_utils.dart';
+import 'package:mirror_fly_demo/app/common/extensions.dart';
 import 'package:mirror_fly_demo/app/modules/notification/notification_builder.dart';
 import 'package:mirrorfly_plugin/mirrorflychat.dart';
 import 'package:get/get.dart';
@@ -31,9 +32,9 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
   var selectedChatsPosition = <int>[].obs;
   var selected = false.obs;
 
-  var profile_ = Profile().obs;
+  var profile_ = ProfileDetails().obs;
 
-  Profile get profile => profile_.value;
+  ProfileDetails get profile => profile_.value;
 
   //action icon visibles
   var archive = false.obs;
@@ -146,6 +147,10 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
       }
     });
     pageNumber = 1;
+
+    Mirrorfly.syncCallLogs().then((isSuccess){
+      debugPrint("#MirrorflyCall syncCallLogs isSuccess $isSuccess");
+    });
     super.onInit();
   }
 
@@ -192,7 +197,7 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
     });
   }
 
-  infoPage(Profile profile) {
+  infoPage(ProfileDetails profile) {
     if (profile.isGroupProfile ?? false) {
       Get.toNamed(Routes.groupInfo, arguments: profile)?.then((value) {
         if (value != null) {
@@ -215,9 +220,9 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
   }
 
   Future<RecentChatData?> getRecentChatOfJid(String jid) async {
-    var value = await Mirrorfly.getRecentChatOf(jid);
+    var value = await Mirrorfly.getRecentChatOf(jid:jid);
     // mirrorFlyLog("chat", value.toString());
-    if (value != null) {
+    if (value.isNotEmpty) {
       var data = RecentChatData.fromJson(json.decode(value));
       return data;
     } else {
@@ -229,24 +234,26 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
 
   getRecentChatList() {
     recentChatPage = 1;
-    var fetchFrom = Constants.enableTopic
-        ? Mirrorfly.getRecentChatListHistoryByTopic(firstSet: recentChatPage == 1, limit: chatLimit, topicId: topicId.value)
-        : Mirrorfly.getRecentChatListHistory(firstSet: recentChatPage == 1, limit: chatLimit);
-    fetchFrom.then((value) async {
-      // String recentList = value.replaceAll('\n', '\\n');
-      // debugPrint(recentList);
-      mirrorFlyLog("getRecentChatListHistory", value);
-      var data = recentChatFromJson(value.toString()); //await compute(recentChatFromJson, value.toString());
-      recentChats.clear();
-      recentChats(data.data!);
-      recentChats.refresh();
-      isRecentHistoryLoading(false);
-      recentChatLoading(false);
-      getArchivedChatsList();
-    }).catchError((error) {
-      debugPrint("recent chat issue===> $error");
-      recentChatLoading(false);
-    });
+    callback(FlyResponse response) {
+      if (response.isSuccess && response.hasData) {
+        mirrorFlyLog("getRecentChatListHistory", response.data);
+        var data = recentChatFromJson(response.data); //await compute(recentChatFromJson, value.toString());
+        recentChats.clear();
+        recentChats(data.data!);
+        recentChats.refresh();
+        isRecentHistoryLoading(false);
+        recentChatLoading(false);
+        getArchivedChatsList();
+      } else {
+        debugPrint("recent chat issue===> ${response.exception}");
+        recentChatLoading(false);
+      }
+    }
+
+    Constants.enableTopic
+        ? Mirrorfly.getRecentChatListHistoryByTopic(
+            firstSet: recentChatPage == 1, limit: chatLimit, topicId: topicId.value, flyCallback: callback)
+        : Mirrorfly.getRecentChatListHistory(firstSet: recentChatPage == 1, limit: chatLimit, flyCallback: callback);
     /*mirrorFlyLog("", "recent chats");
     Mirrorfly.getRecentChatList().then((value) async {
       // String recentList = value.replaceAll('\n', '\\n');
@@ -263,14 +270,12 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
   }
 
   getArchivedChatsList() async {
-    await Mirrorfly.getArchivedChatList().then((value) {
-      mirrorFlyLog("archived", value.toString());
-      if (value != null) {
-        var data = recentChatFromJson(value);
+    await Mirrorfly.getArchivedChatList(flyCallBack: (FlyResponse response) {
+      mirrorFlyLog("archived", response.toString());
+      if (response.isSuccess && response.hasData) {
+        var data = recentChatFromJson(response.data);
         archivedChats(data.data!);
       }
-    }).catchError((error) {
-      debugPrint("issue===> $error");
     });
   }
 
@@ -292,13 +297,6 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
     }
   }
 
-  String getTime(int? timestamp) {
-    DateTime now = DateTime.now();
-    final DateTime date1 = timestamp == null ? now : DateTime.fromMillisecondsSinceEpoch(timestamp);
-    String formattedDate = DateFormat('hh:mm a').format(date1); //yyyy-MM-dd –
-    return formattedDate;
-  }
-
   logout() {
     SessionManagement.clear();
     Get.offAllNamed(Routes.login);
@@ -312,7 +310,9 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
     var hourTime = manipulateMessageTime(context, DateTime.fromMicrosecondsSinceEpoch(convertedTime));
     var currentYear = DateTime.now().year;
     calendar = DateTime.fromMicrosecondsSinceEpoch(convertedTime);
-    var time = (currentYear == calendar.year) ? DateFormat("dd-MMM").format(calendar) : DateFormat("yyyy/MM/dd").format(calendar);
+    var time = (currentYear == calendar.year)
+        ? DateFormat("dd-MMM").format(calendar)
+        : DateFormat("yyyy/MM/dd").format(calendar);
     return (equalsWithYesterday(calendar, Constants.today))
         ? hourTime
         : (equalsWithYesterday(calendar, Constants.yesterday))
@@ -378,34 +378,40 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
     }
   }
 
-  updateRecentChat(String jid) {
+  updateRecentChat({required String jid, bool changePosition = true}) async {
     //updateArchiveRecentChat(jid);
-    getRecentChatOfJid(jid).then((recent) {
+    await getRecentChatOfJid(jid).then((recent) {
       final index = recentChats.indexWhere((chat) => chat.jid == jid);
       debugPrint("dashboard index--> $index");
+      LogMessage.d("updateRecentChat",recent?.toJson());
       if (recent != null) {
         if (!recent.isChatArchived.checkNull()) {
           if (index.isNegative) {
+            LogMessage.d("updateRecentChat", "New Insert");
             recentChats.insert(0, recent);
           } else {
-            var lastPinnedChat = recentChats.lastIndexWhere((element) => element.isChatPinned!);
-            var nxtIndex = lastPinnedChat.isNegative ? 0 : (lastPinnedChat + 1);
-            if (recentChats[index].isChatPinned!) {
-              recentChats.removeAt(index);
-              recentChats.insert(index, recent);
+            if (recentChats[index].isChatPinned.checkNull() || !changePosition) {
+              // recentChats.removeAt(index);
+              // recentChats.insert(index, recent);
+              recentChats.replaceRange(index, index+1, [recent]);
             } else {
+              var lastPinnedChat = recentChats.lastIndexWhere((element) => element.isChatPinned!);
+              var nxtIndex = lastPinnedChat.isNegative ? 0 : (lastPinnedChat + 1);
+              LogMessage.d("updateRecentChat", "next Index $nxtIndex");
               recentChats.removeAt(index);
               recentChats.insert(nxtIndex, recent);
               recentChats.refresh();
             }
           }
         } else {
+          LogMessage.d("updateRecentChat", "Archived $index");
           if (!index.isNegative) {
             recentChats.removeAt(index);
           }
         }
         checkArchiveList(recent);
       } else {
+        LogMessage.d("updateRecentChat", "recent chat null insert index $index");
         if (!index.isNegative) {
           recentChats.removeAt(index);
         }
@@ -474,9 +480,9 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
       }
     });
   }
-
-  Future<ChatMessageModel?> getMessageOfId(String mid) async {
-    var value = await Mirrorfly.getMessageOfId(mid);
+// Commented this bcz this is not used any where
+  /*Future<ChatMessageModel?> getMessageOfId(String mid) async {
+    var value = await Mirrorfly.getMessageOfId(messageId: mid);
     // mirrorFlyLog("getMessageOfId recent", value.toString());
     if (value != null) {
       var data = ChatMessageModel.fromJson(json.decode(value.toString()));
@@ -484,7 +490,7 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
     } else {
       return null;
     }
-  }
+  }*/
 
   webLogin() {
     if (SessionManagement.getWebLogin()) {
@@ -513,7 +519,8 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
   }
 
   chatInfo() {
-    var chatIndex = recentChats.indexWhere((element) => selectedChats.first == element.jid); //selectedChatsPosition[index];
+    var chatIndex =
+        recentChats.indexWhere((element) => selectedChats.first == element.jid); //selectedChatsPosition[index];
     var item = recentChats[chatIndex];
     Helper.progressLoading();
     clearAllChatSelection();
@@ -593,8 +600,10 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
   menuValidationForDeleteIcon() async {
     var selected = recentChats.where((p0) => selectedChats.contains(p0.jid));
     for (var item in selected) {
-      var isMember = await Mirrorfly.isMemberOfGroup(item.jid.checkNull(), null);
-      if ((item.getChatType() == Constants.typeGroupChat) && isMember! && availableFeatures.value.isGroupChatAvailable.checkNull()) {
+      var isMember = await Mirrorfly.isMemberOfGroup(groupJid: item.jid.checkNull(), userJid: SessionManagement.getUserJID().checkNull());
+      if ((item.getChatType() == Constants.typeGroupChat) &&
+          isMember! &&
+          availableFeatures.value.isGroupChatAvailable.checkNull()) {
         delete(false);
         return;
         //return false;
@@ -665,7 +674,7 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
       delete(Constants.typeGroupChat != item.getChatType());
       if (item.getChatType() == Constants.typeGroupChat) {
         mirrorFlyLog("isGroup", item.isGroup!.toString());
-        Mirrorfly.isMemberOfGroup(item.jid.checkNull(), null).then((value) => delete(!value!));
+        Mirrorfly.isMemberOfGroup(groupJid: item.jid.checkNull(),userJid: SessionManagement.getUserJID().checkNull()).then((value) => delete(!value!));
       }
     } else {
       info(false);
@@ -697,7 +706,8 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
       } else {
         selected(false);
         for (var index = 0; index < selectedChats.length; index++) {
-          var selectedChat = recentChats.indexWhere((p0) => p0.jid == selectedChats[index] && p0.isChatPinned.checkNull());
+          var selectedChat =
+              recentChats.indexWhere((p0) => p0.jid == selectedChats[index] && p0.isChatPinned.checkNull());
           if (selectedChat.isNegative) {
             mirrorFlyLog("pinChat", "$selectedChat selected chat is have to pinned");
             _itemPin(index);
@@ -825,8 +835,9 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
   }
 
   _itemPin(int index) {
-    Mirrorfly.updateRecentChatPinStatus(selectedChats[index], true);
-    var chatIndex = recentChats.indexWhere((element) => selectedChats[index] == element.jid); //selectedChatsPosition[index];
+    Mirrorfly.updateRecentChatPinStatus(jid: selectedChats[index], pinStatus: true);
+    var chatIndex =
+        recentChats.indexWhere((element) => selectedChats[index] == element.jid); //selectedChatsPosition[index];
     //recentChats[chatIndex].isChatPinned=(true);
     var change = recentChats[chatIndex];
     change.isChatPinned = true;
@@ -835,8 +846,9 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
   }
 
   _itemUnPin(int index) {
-    Mirrorfly.updateRecentChatPinStatus(selectedChats[index], false);
-    var chatIndex = recentChats.indexWhere((element) => selectedChats[index] == element.jid); //selectedChatsPosition[index];
+    Mirrorfly.updateRecentChatPinStatus(jid: selectedChats[index], pinStatus: false);
+    var chatIndex =
+        recentChats.indexWhere((element) => selectedChats[index] == element.jid); //selectedChatsPosition[index];
     //recentChats[chatIndex].isChatPinned=(false);
     var lastPinnedChat = recentChats.lastIndexWhere((element) => element.isChatPinned!);
     mirrorFlyLog("lastPinnedChat", lastPinnedChat.toString());
@@ -848,15 +860,17 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
   }
 
   _itemMute(int index) {
-    Mirrorfly.updateChatMuteStatus(selectedChats[index], true);
-    var chatIndex = recentChats.indexWhere((element) => selectedChats[index] == element.jid); //selectedChatsPosition[index];
+    Mirrorfly.updateChatMuteStatus(jid: selectedChats[index], muteStatus: true);
+    var chatIndex =
+        recentChats.indexWhere((element) => selectedChats[index] == element.jid); //selectedChatsPosition[index];
     recentChats[chatIndex].isMuted = (true);
   }
 
   _itemUnMute(int index) {
-    var chatIndex = recentChats.indexWhere((element) => selectedChats[index] == element.jid); //selectedChatsPosition[index];
+    var chatIndex =
+        recentChats.indexWhere((element) => selectedChats[index] == element.jid); //selectedChatsPosition[index];
     recentChats[chatIndex].isMuted = (false);
-    Mirrorfly.updateChatMuteStatus(selectedChats[index], false);
+    Mirrorfly.updateChatMuteStatus(jid: selectedChats[index], muteStatus: false);
   }
 
   /*_itemRead(int index){
@@ -869,7 +883,7 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
   itemsRead() async {
     if (await AppUtils.isNetConnected()) {
       selected(false);
-      Mirrorfly.markConversationAsRead(selectedChats);
+      Mirrorfly.markConversationAsRead(jidList: selectedChats);
       var count = selectedChatsPosition.length;
       for (var element in selectedChatsPosition) {
         recentChats[element].isConversationUnRead = false;
@@ -887,7 +901,7 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
 
   itemsUnRead() {
     selected(false);
-    Mirrorfly.markConversationAsUnread(selectedChats);
+    Mirrorfly.markConversationAsUnread(jidList: selectedChats);
     for (var element in selectedChatsPosition) {
       recentChats[element].isConversationUnRead = true;
     }
@@ -897,8 +911,9 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
   }
 
   _itemArchive(int index) {
-    Mirrorfly.updateArchiveUnArchiveChat(selectedChats[index], true);
-    var chatIndex = recentChats.indexWhere((element) => selectedChats[index] == element.jid); //selectedChatsPosition[index];
+    Mirrorfly.setChatArchived(jid: selectedChats[index], isArchived: true, flyCallBack: (_) {});
+    var chatIndex =
+        recentChats.indexWhere((element) => selectedChats[index] == element.jid); //selectedChatsPosition[index];
     recentChats[chatIndex].isChatArchived = (true);
     //getArchivedChatsList();
     if (archivedChats.isEmpty) {
@@ -914,13 +929,14 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
       Helper.showFeatureUnavailable();
       return;
     }
-    var chatIndex = recentChats.indexWhere((element) => selectedChats[index] == element.jid); //selectedChatsPosition[index];
-    Helper.showAlert(message: "Delete chat with \"${recentChats[chatIndex].profileName}\"?", actions: [
+    var chatIndex =
+        recentChats.indexWhere((element) => selectedChats[index] == element.jid); //selectedChatsPosition[index];
+    Helper.showAlert(message: "Delete chat with \"${recentChats[chatIndex].getName()}\"?", actions: [
       TextButton(
           onPressed: () {
             Get.back();
           },
-          child: const Text("No")),
+          child: const Text("No",style: TextStyle(color: buttonBgColor))),
       TextButton(
           onPressed: () {
             Get.back();
@@ -928,13 +944,13 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
               Helper.showFeatureUnavailable();
               return;
             }
-            Mirrorfly.deleteRecentChat(selectedChats[index]).then((value) {
+            Mirrorfly.deleteRecentChats(jidList: [selectedChats[index]], flyCallBack: (FlyResponse response) {
               clearAllChatSelection();
               recentChats.removeAt(chatIndex);
               updateUnReadChatCount();
             });
           },
-          child: const Text("Yes")),
+          child: const Text("Yes",style: TextStyle(color: buttonBgColor))),
     ]);
   }
 
@@ -944,20 +960,22 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
           onPressed: () {
             Get.back();
           },
-          child: const Text("No")),
+          child: const Text("No",style: TextStyle(color: buttonBgColor))),
       TextButton(
           onPressed: () async {
             Get.back();
-            Mirrorfly.deleteRecentChats(selectedChats).then((value) {
-              for (var chatItem in selectedChats) {
-                var chatIndex = recentChats.indexWhere((element) => chatItem == element.jid);
-                recentChats.removeAt(chatIndex);
+            Mirrorfly.deleteRecentChats(jidList: selectedChats, flyCallBack: (FlyResponse response) {
+              if(response.isSuccess) {
+                for (var chatItem in selectedChats) {
+                  var chatIndex = recentChats.indexWhere((element) => chatItem == element.jid);
+                  recentChats.removeAt(chatIndex);
+                }
+                updateUnReadChatCount();
+                clearAllChatSelection();
               }
-              updateUnReadChatCount();
-              clearAllChatSelection();
             });
           },
-          child: const Text("Yes")),
+          child: const Text("Yes",style: TextStyle(color: buttonBgColor))),
     ]);
   }
 
@@ -973,7 +991,7 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
   void onMessageReceived(chatMessageModel) {
     mirrorFlyLog("dashboard controller", "onMessageReceived");
 
-    updateRecentChat(chatMessageModel.chatUserJid);
+    updateRecentChat(jid: chatMessageModel.chatUserJid);
   }
 
   void onMessageStatusUpdated(ChatMessageModel chatMessageModel) {
@@ -984,7 +1002,7 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
       recentChats[index].lastMessageStatus = chatMessageModel.messageStatus.value;
       recentChats.refresh();
     } else {
-      updateRecentChat(chatMessageModel.chatUserJid);
+      updateRecentChat(jid: chatMessageModel.chatUserJid);
     }
   }
 
@@ -999,17 +1017,29 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
     }
   }
 
+  Future<void> chatMuteChangesNotifyUI(String jid) async {
+    var index = recentChats.indexWhere((element) => element.jid == jid);
+    if (!index.isNegative) {
+      var isMuted = await Mirrorfly.isChatMuted(jid: jid);
+      LogMessage.d("chatMuteChangesNotifyUI", "isMuted : $isMuted");
+      recentChats[index].isMuted = isMuted;
+      recentChats.refresh();
+    }else{
+      LogMessage.d("chatMuteChangesNotifyUI", "chat not available in the list");
+    }
+  }
+
   void onGroupProfileUpdated(groupJid) {
     mirrorFlyLog("super", groupJid.toString());
-    updateRecentChat(groupJid);
+    updateRecentChat(jid: groupJid);
   }
 
   void onDeleteGroup(groupJid) {
-    updateRecentChat(groupJid);
+    updateRecentChat(jid: groupJid);
   }
 
   void onGroupDeletedLocally(groupJid) {
-    updateRecentChat(groupJid);
+    updateRecentChat(jid: groupJid);
   }
 
   var typingAndGoneStatus = <Triple>[].obs;
@@ -1019,7 +1049,9 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
     if (index.isNegative) {
       return "";
     } else {
-      return typingAndGoneStatus[index].userId.isNotEmpty ? typingAndGoneStatus[index].userId : typingAndGoneStatus[index].singleOrgroupJid;
+      return typingAndGoneStatus[index].userId.isNotEmpty
+          ? typingAndGoneStatus[index].userId
+          : typingAndGoneStatus[index].singleOrgroupJid;
     }
   }
 
@@ -1050,13 +1082,14 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
 
   Future<void> updateRecentChatAdapter(String jid) async {
     if (jid.isNotEmpty) {
-      var index = recentChats.indexWhere((element) => element.jid == jid); // { it.jid ?: Constants.EMPTY_STRING == jid }
+      var index =
+          recentChats.indexWhere((element) => element.jid == jid); // { it.jid ?: Constants.EMPTY_STRING == jid }
       debugPrint("updateRecentChatAdapter $index");
-      var recent = await getRecentChatOfJid(jid);
-      debugPrint("updateRecentChatAdapter getRecentChatOfJid ${recent?.toJson().toString()}");
-      if (recent != null) {
-        if (!index.isNegative) {
-          recentChats[index] = recent;
+      if (!index.isNegative) {
+        var recent = await getRecentChatOfJid(jid);
+        debugPrint("updateRecentChatAdapter getRecentChatOfJid ${recent?.toJson().toString()}");
+        if (recent != null) {
+            recentChats[index] = recent;
         }
       }
     }
@@ -1072,15 +1105,15 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
   var searchFocusNode = FocusNode();
   String lastInputValue = "";
   RxBool clearVisible = false.obs;
-  final _mainuserList = <Profile>[];
+  final _mainuserList = <ProfileDetails>[];
   var userlistScrollController = ScrollController();
   var scrollable = (!Constants.enableContactSync).obs;
   var isPageLoading = false.obs;
-  final _userList = <Profile>[].obs;
+  final _userList = <ProfileDetails>[].obs;
 
-  set userList(List<Profile> value) => _userList.value = value;
+  set userList(List<ProfileDetails> value) => _userList.value = value;
 
-  List<Profile> get userList => _userList;
+  List<ProfileDetails> get userList => _userList;
   var callLogScrollController = ScrollController();
   var isCallLogPageLoading = false.obs;
   final _callLogList = <CallLogData>[].obs;
@@ -1179,11 +1212,53 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
   Future<void> filterUserList() async {
     if (await AppUtils.isNetConnected()) {
       searching = true;
-      var future =
-          (!Constants.enableContactSync) ? Mirrorfly.getUserList(pageNum, search.text.trim().toString()) : Mirrorfly.getRegisteredUsers(true);
-      future.then((value) {
+      callback(FlyResponse response) {
+        if (response.isSuccess) {
+          if (response.hasData) {
+            var list = userListFromJson(response.data);
+            if (list.data != null) {
+              if (!Constants.enableContactSync) {
+                scrollable(list.data!.length == 20);
+
+                list.data!.removeWhere((element) {
+                  debugPrint(
+                      "filter chat list--> ${!filteredRecentChatList.indexWhere((recentChatItem) => recentChatItem.jid == element.jid.checkNull()).isNegative}");
+                  return !filteredRecentChatList
+                      .indexWhere((recentChatItem) => recentChatItem.jid == element.jid.checkNull())
+                      .isNegative;
+                });
+                _userList(list.data);
+              } else {
+                _userList(list.data!
+                    .where((element) =>
+                        (element.nickName
+                            .checkNull()
+                            .toLowerCase()
+                            .contains(search.text.trim().toString().toLowerCase())) &&
+                        !filteredRecentChatList
+                            .indexWhere((recentChatItem) => recentChatItem.jid != element.jid.checkNull())
+                            .isNegative)
+                    .toList());
+                // scrollable(false);
+              }
+            } else {
+              scrollable(false);
+            }
+          }
+          searching = false;
+          searchLoading(false);
+        } else {
+          searching = false;
+          searchLoading(false);
+        }
+      }
+
+      (!Constants.enableContactSync)
+          ? Mirrorfly.getUserList(page: pageNum, search: search.text.trim().toString(), flyCallback: callback)
+          : Mirrorfly.getRegisteredUsers(fetchFromServer: true, flyCallback: callback);
+      /*future.then((value) {
         // Mirrorfly.getUserList(pageNum, search.text.trim().toString()).then((value) {
-        if (value != null) {
+        if (value.isNotEmpty) {
           var list = userListFromJson(value);
           if (list.data != null) {
             if (!Constants.enableContactSync) {
@@ -1213,7 +1288,7 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
         debugPrint("issue===> $error");
         searching = false;
         searchLoading(false);
-      });
+      });*/
     } else {
       toToast(Constants.noInternetConnection);
     }
@@ -1224,9 +1299,11 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
     await Mirrorfly.getRecentChatListIncludingArchived().then((value) {
       var recentChatList = <RecentChatData>[];
       var js = json.decode(value);
-      var recentChatListWithArchived = List<RecentChatData>.from(js.map((x) => RecentChatData.fromJson(x)));
+      LogMessage.d("getRecentChatListIncludingArchived", js);
+      var recentChatListWithArchived = recentChatDataListFromJson(value.toString());//List<RecentChatData>.from(js.map((x) => RecentChatData.fromJson(x)));
       for (var recentChat in recentChatListWithArchived) {
-        if (recentChat.profileName != null && recentChat.profileName!.toLowerCase().contains(search.text.trim().toString().toLowerCase()) == true) {
+        if (recentChat.profileName != null &&
+            recentChat.getName().toLowerCase().contains(search.text.trim().toString().toLowerCase()) == true) {
           recentChatList.add(recentChat);
         }
       }
@@ -1237,22 +1314,24 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
   }
 
   fetchMessageList() async {
-    await Mirrorfly.searchConversation(search.text.trim().toString()).then((value) {
-      mirrorFlyLog("flutter search", value);
-      var result = chatMessageModelFromJson(value);
-      chatMessages(result);
-      var mRecentSearchList = <Rx<RecentSearch>>[].obs;
-      // var i = 0.obs;
-      for (var message in result) {
-        var searchMessageItem = RecentSearch(
-                jid: message.chatUserJid,
-                mid: message.messageId,
-                searchType: Constants.typeSearchMessage,
-                chatType: message.messageChatType.toString(),
-                isSearch: true)
-            .obs;
-        mRecentSearchList.insert(0, searchMessageItem);
-        // i++;
+    await Mirrorfly.searchConversation(searchKey: search.text.trim().toString(), flyCallBack: (FlyResponse response) {
+      mirrorFlyLog("flutter search", response.toString());
+      if(response.isSuccess && response.hasData) {
+        var result = chatMessageModelFromJson(response.data);
+        chatMessages(result);
+        var mRecentSearchList = <Rx<RecentSearch>>[].obs;
+        // var i = 0.obs;
+        for (var message in result) {
+          var searchMessageItem = RecentSearch(
+              jid: message.chatUserJid,
+              mid: message.messageId,
+              searchType: Constants.typeSearchMessage,
+              chatType: message.messageChatType.toString(),
+              isSearch: true)
+              .obs;
+          mRecentSearchList.insert(0, searchMessageItem);
+          // i++;
+        }
       }
       /*var map = <Rx<int>, RxList<Rx<RecentSearch>>>{}; //{0,searchMessageItem};
       map.putIfAbsent(i, () => mRecentSearchList).obs;
@@ -1261,13 +1340,13 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
     });
   }
 
-  Future<Map<Profile?, ChatMessageModel?>?> getProfileAndMessage(String jid, String mid) async {
+  Future<Map<ProfileDetails?, ChatMessageModel?>?> getProfileAndMessage(String jid, String mid) async {
     var value = await getProfileDetails(jid); //Mirrorfly.getProfileLocal(jid, false);
-    var value2 = await Mirrorfly.getMessageOfId(mid);
+    var value2 = await Mirrorfly.getMessageOfId(messageId: mid);
     if (value.jid != null && value2 != null) {
       var data = value; //profileDataFromJson(value);
       var data2 = sendMessageModelFromJson(value2);
-      var map = <Profile?, ChatMessageModel?>{}; //{0,searchMessageItem};
+      var map = <ProfileDetails?, ChatMessageModel?>{}; //{0,searchMessageItem};
       map.putIfAbsent(data, () => data2);
       return map;
     }
@@ -1298,8 +1377,29 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
     // print("getUsers calling $pageNum");
     if (await AppUtils.isNetConnected()) {
       searching = true;
-      Mirrorfly.getUserList(pageNum, search.text.trim().toString()).then((value) {
-        if (value != null) {
+
+      Mirrorfly.getUserList(page: pageNum, search: search.text.trim().toString(), flyCallback: (FlyResponse response) {
+        if (response.isSuccess) {
+          if (response.hasData) {
+            var list = userListFromJson(response.data);
+            if (list.data != null) {
+              if (_mainuserList.isEmpty) {
+                _mainuserList.addAll(list.data!);
+              }
+              scrollable(list.data!.length == 20);
+              _userList.addAll(list.data!);
+              _userList.refresh();
+            } else {
+              scrollable(false);
+            }
+          }
+          searching = false;
+        } else {
+          searching = false;
+        }
+      });
+      /*then((value) {
+        if (value.isNotEmpty) {
           var list = userListFromJson(value);
           if (list.data != null) {
             if (_mainuserList.isEmpty) {
@@ -1316,7 +1416,7 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
       }).catchError((error) {
         debugPrint("issue===> $error");
         searching = false;
-      });
+      });*/
     } else {
       toToast(Constants.noInternetConnection);
     }
@@ -1324,18 +1424,13 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
 
   Future<void> updateRecentChatAdapterSearch(String jid) async {
     if (jid.isNotEmpty) {
-      var filterIndex = filteredRecentChatList.indexWhere((element) => element.jid == jid); // { it.jid ?: Constants.EMPTY_STRING == jid }
-      /*var frmIndex = frmRecentChatList.indexWhere((element) =>
-      element.jid ==
-          jid);*/ // { it.jid ?: Constants.EMPTY_STRING == jid }
-      var recent = await getRecentChatOfJid(jid);
-      if (recent != null) {
-        if (!filterIndex.isNegative) {
-          filteredRecentChatList[filterIndex] = recent;
+      var filterIndex = filteredRecentChatList
+          .indexWhere((element) => element.jid == jid);
+      if (!filterIndex.isNegative) {
+        var recent = await getRecentChatOfJid(jid);
+        if (recent != null) {
+            filteredRecentChatList[filterIndex] = recent;
         }
-        /*if (!frmIndex.isNegative) {
-          frmRecentChatList[frmIndex] = recent;
-        }*/
       }
     }
   }
@@ -1345,13 +1440,13 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
     if (jid.isNotEmpty) {
       var userListIndex = _userList.indexWhere((element) => element.jid == jid);
       debugPrint("userListIndex $userListIndex");
-      getProfileDetails(jid).then((value) {
-        debugPrint("get profile detail dashboard $value");
-        profile_(value);
-        if (!userListIndex.isNegative) {
+      if (!userListIndex.isNegative) {
+        getProfileDetails(jid).then((value) {
+          debugPrint("get profile detail dashboard $value");
+          profile_(value);
           _userList[userListIndex] = value;
-        }
-      });
+        });
+      }
     }
   }
 
@@ -1400,7 +1495,8 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
             Get.back();
             infoPage(value);
           },
-          profile: profile_);
+          profile: profile_,
+          availableFeatures: availableFeatures);
     });
   }
 
@@ -1413,7 +1509,8 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
         "topicId": topicId.value
       });
     } else {
-      var contactPermissionHandle = await AppPermission.checkPermission(Permission.contacts, contactPermission, Constants.contactSyncPermission);
+      var contactPermissionHandle =
+          await AppPermission.checkPermission(Permission.contacts, contactPermission, Constants.contactSyncPermission);
       if (contactPermissionHandle) {
         Get.toNamed(Routes.contacts, arguments: {
           "is_make_call": forCalls,
@@ -1499,31 +1596,48 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
     // mirrorFlyLog("historyScrollListener", historyScrollController.position.extentAfter.toString());
     // scrollController.position.pixels >=
     //     scrollController.position.maxScrollExtent - 200 //uncomment for data to be populated before certain items
-    if (historyScrollController.position.extentAfter <= 0.0) {
-      // User has reached the bottom of the list
-      // Show loading screen and load more data
-      // loadMoreData();
+    // if (historyScrollController.position.extentAfter <= 0.0) {
+    //   // User has reached the bottom of the list
+    //   // Show loading screen and load more data
+    //   // loadMoreData();
+    //
+    // }
+    if (historyScrollController.position.pixels == historyScrollController.position.maxScrollExtent) {
+      debugPrint("historyScrollController reached bottom");
       debugPrint("load next set of data");
+      debugPrint("isRecentHistoryLoading $isRecentHistoryLoading");
       if (!isRecentHistoryLoading.value) {
         recentChatPage++;
         isRecentHistoryLoading(true);
         debugPrint("calling page no $recentChatPage");
-        var fetchFrom = Constants.enableTopic
-            ? Mirrorfly.getRecentChatListHistoryByTopic(firstSet: recentChatPage == 1, limit: chatLimit, topicId: topicId.value)
-            : Mirrorfly.getRecentChatListHistory(firstSet: recentChatPage == 1, limit: chatLimit);
-        fetchFrom.then((value) async {
-          debugPrint("getRecentChatListHistory next data $value");
-          var data = recentChatFromJson(value.toString()); //await compute(recentChatFromJson, value.toString());
-          recentChats.addAll(data.data!);
-          recentChats.refresh();
-          isRecentHistoryLoading(false);
-          getArchivedChatsList();
-        }).catchError((error) {
-          debugPrint("recent chat issue===> $error");
-          isRecentHistoryLoading(false);
-        });
+        callback(FlyResponse response) {
+          if (response.isSuccess && response.hasData) {
+            debugPrint("getRecentChatListHistory next data ${response.data}");
+            var data = recentChatFromJson(response.data); //await compute(recentChatFromJson, value.toString());
+            LogMessage.d("getRecentChatListHistory", data.toJson());
+            recentChats.addAll(data.data!);
+            recentChats.refresh();
+            isRecentHistoryLoading(false);
+            getArchivedChatsList();
+          } else {
+            debugPrint("recent chat issue===> ${response.exception}");
+            isRecentHistoryLoading(false);
+          }
+        }
+
+        Constants.enableTopic
+            ? Mirrorfly.getRecentChatListHistoryByTopic(
+                firstSet: recentChatPage == 1, limit: chatLimit, topicId: topicId.value, flyCallback: callback)
+            : Mirrorfly.getRecentChatListHistory(
+                firstSet: recentChatPage == 1, limit: chatLimit, flyCallback: callback);
       }
     }
+    if (historyScrollController.position.pixels == historyScrollController.position.minScrollExtent) {
+      debugPrint("historyScrollController reached top");
+    }
+
+
+
   }
 
   var topicId = Constants.topicId.obs;
@@ -1533,36 +1647,35 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
     var topicId = Constants.topicId;
     LogMessage.d("topicId", topicId);
     if (topicId.isEmpty && Constants.enableTopic) {
-      await Mirrorfly.createTopic(topicName: "Macbook Air", metaData: [TopicMetaData(key: "description", value: "Starting From ₹ 9720")])
-          .then((value) {
-        if (value != null) {
+      await Mirrorfly.createTopic(
+          topicName: "Macbook Air",
+          metaData: [TopicMetaData(key: "description", value: "Starting From ₹ 9720")], flyCallBack: (FlyResponse response) {
+        if (response.isSuccess) {
           //SessionManagement.setString("topicId", value);
         }
-      }).catchError((onError) {
-        LogMessage.d("createTopic error", onError);
-        //807, Topic name is required
       });
     } else if (Constants.enableTopic) {
       // if(topicId.isNotEmpty) {
       //c47cdeec-32a0-4abb-a318-ab60048df577,a8f8877b-52c0-47cc-83d1-6e0292876daa,b7ba6a95-56f4-4354-a40c-b9a03b0cf470
       //Walkie Talkie,Macbook Pro,Macbook Air
-      await Mirrorfly.getTopics(
-              topicIds: ["c47cdeec-32a0-4abb-a318-ab60048df577", "a8f8877b-52c0-47cc-83d1-6e0292876daa", "b7ba6a95-56f4-4354-a40c-b9a03b0cf470"])
-          .then((value) {
-        var topics = topicsFromJson(value.toString());
-        this.topics(topics);
-        //"a00251d7-d388-4f47-8672-553f8afc7e11","c640d387-8dfc-4252-b20a-d2901ebe3197","f5dc3456-cd2a-4e64-ad91-79373a867aa3","0075fe28-ec93-45c6-be3a-85004bf860a1","da757122-1a74-40ae-9c7d-0e4c2757e6bd","5d3788c1-78ef-4158-a92b-a48f092da0b9","4d83dfad-79a8-43fd-98b8-7eb8943dc8ca","0b290e7f-b05c-4859-a72d-100c48f73c8d","1ab018d1-1068-4988-8b28-fe1079e07ab2"
-        LogMessage.d("getTopics by Id", value);
-        LogMessage.d("getTopics [0] meta", "${topics[0].metaData}");
-        if (topics.isNotEmpty) {
-          if (topics[0].topicId != null) {
-            this.topicId(topics[0].topicId.checkNull());
-            getRecentChatList();
+      await Mirrorfly.getTopics(topicIds: [
+        "c47cdeec-32a0-4abb-a318-ab60048df577",
+        "a8f8877b-52c0-47cc-83d1-6e0292876daa",
+        "b7ba6a95-56f4-4354-a40c-b9a03b0cf470"
+      ], flyCallBack: (FlyResponse response) {
+        if(response.isSuccess && response.hasData) {
+          var topics = topicsFromJson(response.data.toString());
+          this.topics(topics);
+          //"a00251d7-d388-4f47-8672-553f8afc7e11","c640d387-8dfc-4252-b20a-d2901ebe3197","f5dc3456-cd2a-4e64-ad91-79373a867aa3","0075fe28-ec93-45c6-be3a-85004bf860a1","da757122-1a74-40ae-9c7d-0e4c2757e6bd","5d3788c1-78ef-4158-a92b-a48f092da0b9","4d83dfad-79a8-43fd-98b8-7eb8943dc8ca","0b290e7f-b05c-4859-a72d-100c48f73c8d","1ab018d1-1068-4988-8b28-fe1079e07ab2"
+          LogMessage.d("getTopics by Id", response.data);
+          LogMessage.d("getTopics [0] meta", "${topics[0].metaData}");
+          if (topics.isNotEmpty) {
+            if (topics[0].topicId != null) {
+              this.topicId(topics[0].topicId.checkNull());
+              getRecentChatList();
+            }
           }
         }
-      }).catchError((onError) {
-        LogMessage.d("getTopics error", onError);
-        //807 for topic Id Empty and invalid topic id
       });
       // }
     }
@@ -1585,42 +1698,40 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
   void onHidden() {}
 
   Future<void> fetchCallLogList() async {
-    Mirrorfly.getCallLogsList(pageNumber).then((value) {
-      if (value != null) {
-        var list = callLogListFromJson(value);
+    Mirrorfly.getCallLogsList(currentPage: pageNumber, flyCallBack: (FlyResponse response) {
+      loading.value = false;
+      if (response.isSuccess && response.hasData) {
+        var list = callLogListFromJson(response.data);
         totalPages = list.totalPages!;
         // print("getCallLogsList fetchCallLogList ===> total_pages $totalPages pageNumber $pageNumber list.data!.length ${list.data!.length} ");
         if (list.data != null) {
           _callLogList.addAll(list.data!);
           isLastPage.value = list.data!.isEmpty;
-          loading.value = false;
           pageNumber = pageNumber + 1;
         }
       }
-    }).catchError((error) {
-      debugPrint("issue===> $error");
-      loading.value = false;
     });
   }
 
   void makeVideoCall(String? fromUser) async {
-    //closeKeyBoard();
+    if (!availableFeatures.value.isOneToOneCallAvailable.checkNull()) {
+      Helper.showFeatureUnavailable();
+      return;
+    }
     if (await AppUtils.isNetConnected()) {
       if (await AppPermission.askVideoCallPermissions()) {
         if ((await Mirrorfly.isOnGoingCall()).checkNull()) {
           debugPrint("#Mirrorfly Call You are on another call");
           toToast(Constants.msgOngoingCallAlert);
         } else {
-          Mirrorfly.makeVideoCall(fromUser.checkNull()).then((value) {
-            if (value) {
+          Mirrorfly.makeVideoCall(toUserJid: fromUser.checkNull(), flyCallBack: (FlyResponse response) {
+            if (response.isSuccess) {
               //setOnGoingUserGone();
               Get.toNamed(Routes.outGoingCallView, arguments: {
                 "userJid": [fromUser],
                 "callType": CallType.video
               })?.then((value) => setOnGoingUserAvail());
             }
-          }).catchError((e) {
-            debugPrint("#Mirrorfly Call $e");
           });
         }
       } else {
@@ -1637,68 +1748,69 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
 
   void makeVoiceCall(String? toUser) async {
     debugPrint("#FLY CALL VOICE CALL CALLING");
-    // closeKeyBoard();
-    if (await AppUtils.isNetConnected()) {
-      if (await AppPermission.askAudioCallPermissions()) {
-        if ((await Mirrorfly.isOnGoingCall()).checkNull()) {
-          debugPrint("#Mirrorfly Call You are on another call");
-          toToast(Constants.msgOngoingCallAlert);
-        } else {
-          Mirrorfly.makeVoiceCall(toUser.checkNull()).then((value) {
-            if (value) {
-              debugPrint("#Mirrorfly Call userjid $toUser");
-              //  setOnGoingUserGone();
-              Get.toNamed(Routes.outGoingCallView, arguments: {
-                "userJid": [toUser],
-                "callType": CallType.audio
-              })?.then((value) => setOnGoingUserAvail());
-            }
-          }).catchError((e) {
-            debugPrint("#Mirrorfly Call $e");
-          });
-        }
-      } else {
-        debugPrint("permission not given");
-      }
-    } else {
+    if (!availableFeatures.value.isOneToOneCallAvailable.checkNull()) {
+      Helper.showFeatureUnavailable();
+      return;
+    }
+    if ((await Mirrorfly.isOnGoingCall()).checkNull()) {
+      debugPrint("#Mirrorfly Call You are on another call");
+      toToast(Constants.msgOngoingCallAlert);
+      return;
+    }
+    if (!(await AppUtils.isNetConnected())) {
       toToast(Constants.noInternetConnection);
+      return;
+    }
+    if (await AppPermission.askAudioCallPermissions()) {
+      Mirrorfly.makeVoiceCall(toUserJid: toUser.checkNull(), flyCallBack: (FlyResponse response) {
+        if (response.isSuccess) {
+          debugPrint("#Mirrorfly Call userjid $toUser");
+          //  setOnGoingUserGone();
+          Get.toNamed(Routes.outGoingCallView, arguments: {
+            "userJid": [toUser],
+            "callType": CallType.audio
+          })?.then((value) => setOnGoingUserAvail());
+        }
+      });
+    } else {
+      debugPrint("permission not given");
     }
   }
 
   makeCall(List<String>? userList, String callType, CallLogData item) async {
-    if (userList!.isNotEmpty) {
-      if (await AppUtils.isNetConnected()) {
-        if (callType == CallType.video) {
-          if (await AppPermission.askVideoCallPermissions()) {
-            Get.back();
-            if ((await Mirrorfly.isOnGoingCall()).checkNull()) {
-              debugPrint("#Mirrorfly Call You are on another call");
-              toToast(Constants.msgOngoingCallAlert);
-            } else {
-              Mirrorfly.makeGroupVideoCall(groupJid: item.groupId.checkNull().isNotEmpty ? item.groupId! : "", jidList: userList).then((value) {
-                if (value) {
-                  Get.toNamed(Routes.outGoingCallView, arguments: {"userJid": userList, "callType": CallType.video});
-                }
-              });
-            }
+    if (userList == null || userList.isEmpty) {
+      return;
+    }
+    if ((await Mirrorfly.isOnGoingCall()).checkNull()) {
+      debugPrint("#Mirrorfly Call You are on another call");
+      toToast(Constants.msgOngoingCallAlert);
+      return;
+    }
+    if (!(await AppUtils.isNetConnected())) {
+      toToast(Constants.noInternetConnection);
+      return;
+    }
+    if (!availableFeatures.value.isGroupCallAvailable.checkNull()) {
+      Helper.showFeatureUnavailable();
+      return;
+    }
+    if (callType == CallType.video) {
+      if (await AppPermission.askVideoCallPermissions()) {
+        Get.back();
+        Mirrorfly.makeGroupVideoCall(groupJid: item.groupId.checkNull(), toUserJidList: userList, flyCallBack: (FlyResponse response) {
+          if (response.isSuccess) {
+            Get.toNamed(Routes.outGoingCallView, arguments: {"userJid": userList, "callType": CallType.video});
           }
-        } else {
-          if (await AppPermission.askAudioCallPermissions()) {
-            Get.back();
-            if ((await Mirrorfly.isOnGoingCall()).checkNull()) {
-              debugPrint("#Mirrorfly Call You are on another call");
-              toToast(Constants.msgOngoingCallAlert);
-            } else {
-              Mirrorfly.makeGroupVoiceCall(groupJid: item.groupId.checkNull().isNotEmpty ? item.groupId! : "", jidList: userList).then((value) {
-                if (value) {
-                  Get.toNamed(Routes.outGoingCallView, arguments: {"userJid": userList, "callType": CallType.audio});
-                }
-              });
-            }
+        });
+      }
+    } else {
+      if (await AppPermission.askAudioCallPermissions()) {
+        Get.back();
+        Mirrorfly.makeGroupVoiceCall(groupJid: item.groupId.checkNull(), toUserJidList: userList, flyCallBack: (FlyResponse response) {
+          if (response.isSuccess) {
+            Get.toNamed(Routes.outGoingCallView, arguments: {"userJid": userList, "callType": CallType.audio});
           }
-        }
-      } else {
-        toToast(Constants.noInternetConnection);
+        });
       }
     }
   }
@@ -1724,19 +1836,15 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
   }
 
   void filteredCallLog(String searchKey) async {
-
-
     Mirrorfly.getLocalCallLogs().then((callLogsResponse) async {
-
       List<CallLogData> callLogs = [];
       List<CallLogData> callLogsWithNickName = [];
 
-      if (callLogsResponse != null) {
+      if (callLogsResponse.isNotEmpty) {
         _callLogList.clear();
         callLogList.clear();
 
         var list = callLogListFromJson(callLogsResponse);
-
 
         for (var callLog in list.data ?? []) {
           callLogsWithNickName.add(await setProfile(getEndUserJid(callLog), callLog));
@@ -1779,14 +1887,14 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
         callLog.nickName = name;
         return callLog;
       } else {
-        var res = await Mirrorfly.getProfileDetails(callLog.groupId!);
-        var str = Profile.fromJson(json.decode(res.toString()));
+        var res = await Mirrorfly.getProfileDetails(jid: callLog.groupId!);
+        var str = ProfileDetails.fromJson(json.decode(res.toString()));
         callLog.nickName = getName(str);
         return callLog;
       }
     } else {
-      var res = await Mirrorfly.getProfileDetails(endUserJid);
-      var str = Profile.fromJson(json.decode(res.toString()));
+      var res = await Mirrorfly.getProfileDetails(jid: endUserJid);
+      var str = ProfileDetails.fromJson(json.decode(res.toString()));
       callLog.nickName = getName(str);
       return callLog;
     }
@@ -1833,7 +1941,8 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
   }
 
   _itemDeleteCallLog(int index) {
-    var logIndex = callLogList.indexWhere((element) => selectedCallLogs[index] == element.roomId); //selectedChatsPosition[index];
+    var logIndex =
+        callLogList.indexWhere((element) => selectedCallLogs[index] == element.roomId); //selectedChatsPosition[index];
     Helper.showAlert(
         message: Constants.deleteCallLog,
         actions: [
@@ -1841,12 +1950,12 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
               onPressed: () {
                 Get.back();
               },
-              child: Text(Constants.cancel.toUpperCase())),
+              child: Text(Constants.cancel.toUpperCase(),style: const TextStyle(color: buttonBgColor))),
           TextButton(
               onPressed: () {
                 Get.back();
-                Mirrorfly.deleteCallLog(selectedCallLogs, false).then((value) {
-                  if (value) {
+                Mirrorfly.deleteCallLog(jidList: selectedCallLogs, isClearAll: false, flyCallBack: (FlyResponse response) {
+                  if (response.isSuccess) {
                     callLogList.removeAt(logIndex);
                     delete(false);
                     selected(false);
@@ -1856,7 +1965,7 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
                   }
                 });
               },
-              child: const Text(Constants.ok)),
+              child: const Text(Constants.ok,style: TextStyle(color: buttonBgColor))),
         ],
         barrierDismissible: true);
   }
@@ -1869,13 +1978,13 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
               onPressed: () {
                 Get.back();
               },
-              child: Text(Constants.cancel.toUpperCase())),
+              child: Text(Constants.cancel.toUpperCase(),style: const TextStyle(color: buttonBgColor))),
           TextButton(
               onPressed: () async {
                 Get.back();
-                Mirrorfly.deleteCallLog(selectedCallLogs, false).then((value) {
-                  debugPrint("deleteCallLog ${value.toString()}");
-                  if (value) {
+                Mirrorfly.deleteCallLog(jidList: selectedCallLogs, isClearAll: false, flyCallBack: (FlyResponse response) {
+                  debugPrint("deleteCallLog ${response.toString()}");
+                  if (response.isSuccess) {
                     for (var logItem in selectedCallLogs) {
                       var chatIndex = callLogList.indexWhere((element) => logItem == element.roomId);
                       callLogList.removeAt(chatIndex);
@@ -1888,7 +1997,7 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
                   }
                 });
               },
-              child: const Text(Constants.ok)),
+              child: const Text(Constants.ok,style: TextStyle(color: buttonBgColor))),
         ],
         barrierDismissible: true);
   }
@@ -1901,19 +2010,19 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
               onPressed: () {
                 Get.back();
               },
-              child: Text(Constants.cancel.toUpperCase())),
+              child: Text(Constants.cancel.toUpperCase(),style: const TextStyle(color: buttonBgColor))),
           TextButton(
               onPressed: () {
                 Get.back();
-                Mirrorfly.deleteCallLog(selectedCallLogs, true).then((value) {
-                  if (value) {
+                Mirrorfly.deleteCallLog(jidList: selectedCallLogs, isClearAll: true, flyCallBack: (FlyResponse response) {
+                  if (response.isSuccess) {
                     callLogList.clear();
                   } else {
                     toToast("Error in call log clear");
                   }
                 });
               },
-              child: const Text(Constants.ok)),
+              child: const Text(Constants.ok,style: TextStyle(color: buttonBgColor))),
         ],
         barrierDismissible: true);
   }
@@ -1923,6 +2032,37 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
     if (result != null) {
       var chatIndex = callLogList.indexWhere((element) => item.roomId == element.roomId);
       callLogList.removeAt(chatIndex);
+    }
+  }
+}
+
+class MyController extends GetxController {
+  var typingUserJid = <String>[].obs;
+  var typingAndGoneStatus = <Triple>[].obs;
+
+  String typingUser(String jid) {
+    var index = typingAndGoneStatus.indexWhere((it) => it.singleOrgroupJid == jid);
+    if (index.isNegative) {
+      return "";
+    } else {
+      return typingAndGoneStatus[index].userId.isNotEmpty
+          ? typingAndGoneStatus[index].userId
+          : typingAndGoneStatus[index].singleOrgroupJid;
+    }
+  }
+
+  void setTypingStatus(String singleOrgroupJid, String userId, String typingStatus) {
+    var index = typingAndGoneStatus.indexWhere((it) => it.singleOrgroupJid == singleOrgroupJid && it.userId == userId);
+    if (typingStatus.toLowerCase() == Constants.composing) {
+      if (index.isNegative) {
+        typingAndGoneStatus.insert(0, Triple(singleOrgroupJid, userId, true));
+        typingUserJid.insert(0, userId.isNotEmpty ? userId : singleOrgroupJid);
+      }
+    } else {
+      if (!index.isNegative) {
+        typingAndGoneStatus.removeAt(index);
+        typingUserJid.removeAt(index);
+      }
     }
   }
 }

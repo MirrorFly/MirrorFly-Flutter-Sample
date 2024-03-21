@@ -1,6 +1,6 @@
 import 'package:mirror_fly_demo/app/common/constants.dart';
-import 'package:mirror_fly_demo/app/data/helper.dart';
-import 'package:mirror_fly_demo/app/model/notification_message_model.dart';
+import 'package:mirror_fly_demo/app/common/extensions.dart';
+import 'package:mirror_fly_demo/app/model/chat_message_model.dart';
 
 class NotificationUtils{
   static var deletedMessage = 'This message was deleted';
@@ -16,18 +16,18 @@ class NotificationUtils{
   * @param message Instance on ChatMessage in NotificationMessageModel
   * @return String Summary of the message
   * */
-  static String getMessageSummary(ChatMessage message){
+  static String getMessageSummary(ChatMessageModel message){
     if(Constants.mText == message.messageType || Constants.mNotification == message.messageType) {
-      if (message.isMessageRecalled.checkNull()) {
+      if (message.isMessageRecalled.value.checkNull()) {
         return deletedMessage;
       } else {
-        var lastMessageMentionContent = message.messageTextContent ?? '';
-        if(message.mentionedUsersIds!=null && message.mentionedUsersIds!.isNotEmpty){
+        var lastMessageMentionContent = message.messageTextContent.checkNull();
+        /*if(message.mentionedUsersIds!=null && message.mentionedUsersIds!.isNotEmpty){
           //need to work on mentions
-        }
+        }*/
         return lastMessageMentionContent;
       }
-    }else if(message.isMessageRecalled.checkNull()){
+    }else if(message.isMessageRecalled.value.checkNull()){
       return deletedMessage;
     }else{
       return getMediaMessageContent(message);
@@ -39,7 +39,7 @@ class NotificationUtils{
   * @param message Instance of ChatMessage in NotificationMessageModel
   * @return String media message content
   * */
-  static String getMediaMessageContent(ChatMessage message){
+  static String getMediaMessageContent(ChatMessageModel message){
     var contentBuilder = StringBuffer();
     switch(message.messageType){
       case Constants.mAudio:
@@ -69,9 +69,9 @@ class NotificationUtils{
   * @param message Instance of ChatMessage in NotificationMessageModel
   * @return String image or video media message caption
   * */
-  static String getMentionMediaCaptionTextFormat(ChatMessage message){
+  static String getMentionMediaCaptionTextFormat(ChatMessageModel message){
     var mediaCaption = (message.mediaChatMessage != null && message.mediaChatMessage?.mediaCaptionText !=null && message.mediaChatMessage!.mediaCaptionText.toString().isNotEmpty)
-        ? message.mediaChatMessage!.mediaCaptionText!.toString() : getMessageTypeText(message.messageType.toString().toUpperCase());
+        ? message.mediaChatMessage!.mediaCaptionText.toString() : getMessageTypeText(message.messageType.toString().toUpperCase());
     return mediaCaption;
   }
 

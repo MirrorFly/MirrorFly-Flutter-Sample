@@ -1,8 +1,9 @@
 
 import 'package:flutter/material.dart';
-import 'package:mirrorfly_plugin/mirrorfly.dart';
 import 'package:get/get.dart';
 import 'package:share_plus/share_plus.dart';
+
+import '../../../model/chat_message_model.dart';
 
 class ViewAllMediaPreviewController extends GetxController {
 
@@ -21,7 +22,7 @@ class ViewAllMediaPreviewController extends GetxController {
   }
 
   shareMedia() {
-    var mediaItem = previewMediaList.elementAt(index.value).mediaChatMessage!.mediaLocalStoragePath;
+    var mediaItem = previewMediaList.elementAt(index.value).mediaChatMessage!.mediaLocalStoragePath.value;
     Share.shareXFiles([XFile(mediaItem)]);
   }
 

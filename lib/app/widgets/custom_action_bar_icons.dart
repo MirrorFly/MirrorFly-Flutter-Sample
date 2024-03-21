@@ -64,7 +64,7 @@ class _CustomActionBarIconsState extends State<CustomActionBarIcons> with Widget
 
   @override
   Widget build(BuildContext context) {
-    LogMessage.d("CustomActionBarIcons", "build");
+    // LogMessage.d("CustomActionBarIcons", "build");
     widget.actions.sort(); // items with ShowAsAction.NEVER are placed at the end
 
     List<CustomAction> visible = widget.actions
@@ -114,6 +114,7 @@ class _CustomActionBarIconsState extends State<CustomActionBarIcons> with Widget
               .map((CustomAction customAction) => customAction.visibleWidget!),
           if (overflow.isNotEmpty)
             PopupMenuButton(
+              color: Colors.white,
               key: _menuKey,
               icon: SvgPicture.asset(moreIcon, width: 3.66, height: 16.31),
               onCanceled: (){

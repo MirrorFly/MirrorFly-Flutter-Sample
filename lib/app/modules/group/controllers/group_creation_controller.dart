@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -39,9 +40,62 @@ class GroupCreationController extends GetxController {
 
   onGroupNameChanged(){
     debugPrint("text changing");
-    debugPrint("length--> ${groupName.text.length}");
+    debugPrint("length--> ${groupName.text.characters.length}");
     _count((25 - groupName.text.characters.length));
   }
+
+  onEmojiBackPressed(){
+    var text = groupName.text;
+    var cursorPosition = groupName.selection.base.offset;
+
+    // If cursor is not set, then place it at the end of the textfield
+    if (cursorPosition < 0) {
+      groupName.selection = TextSelection(
+        baseOffset: groupName.text.length,
+        extentOffset: groupName.text.length,
+      );
+      cursorPosition = groupName.selection.base.offset;
+    }
+
+    if (cursorPosition >= 0) {
+      final selection = groupName.value.selection;
+      final newTextBeforeCursor =
+      selection.textBefore(text).characters.skipLast(1).toString();
+      LogMessage.d("newTextBeforeCursor", newTextBeforeCursor);
+      groupName
+        ..text = newTextBeforeCursor + selection.textAfter(text)
+        ..selection = TextSelection.fromPosition(
+            TextPosition(offset: newTextBeforeCursor.length));
+    }
+    _count((25 - groupName.text.characters.length));
+  }
+
+  onEmojiSelected(Emoji emoji){
+    if(groupName.text.characters.length < 25){
+      final controller = groupName;
+      final text = controller.text;
+      final selection = controller.selection;
+      final cursorPosition = controller.selection.base.offset;
+
+      if (cursorPosition < 0) {
+        controller.text += emoji.emoji;
+        // widget.onEmojiSelected?.call(category, emoji);
+        return;
+      }
+
+      final newText =
+      text.replaceRange(selection.start, selection.end, emoji.emoji);
+      final emojiLength = emoji.emoji.length;
+      controller
+        ..text = newText
+        ..selection = selection.copyWith(
+          baseOffset: selection.start + emojiLength,
+          extentOffset: selection.start + emojiLength,
+        );
+    }
+    _count((25 - groupName.text.characters.length));
+  }
+
   goToAddParticipantsPage(){
     if(groupName.text.trim().isNotEmpty) {
       //Get.toNamed(Routes.ADD_PARTICIPANTS);
@@ -120,9 +174,9 @@ class GroupCreationController extends GetxController {
     mirrorFlyLog("users", users.toString());
     mirrorFlyLog("group image", imagePath.value);
     Helper.showLoading();
-    Mirrorfly.createGroup(groupName.text.toString(),users,imagePath.value).then((value){
+    Mirrorfly.createGroup(groupName: groupName.text.toString(),userList: users,image: imagePath.value, flyCallBack: (FlyResponse response) {
       Helper.hideLoading();
-      if(value!=null) {
+      if(response.isSuccess) {
         Get.back();
         toToast('Group created Successfully');
       }
@@ -131,18 +185,30 @@ class GroupCreationController extends GetxController {
 
   void choosePhoto() {
     Helper.showVerticalButtonAlert([
-      TextButton(
-          onPressed: () {
-            Get.back();
-            imagePick(Get.context!);
-          },
-          child: const Text("Choose from Gallery",style: TextStyle(color: Colors.black),)),
-      TextButton(
-          onPressed: () async{
-            Get.back();
-            camera();
-          },
-          child: const Text("Take Photo",style: TextStyle(color: Colors.black))),
+      ListTile(
+        dense: true,
+        contentPadding: const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
+        onTap: () {
+          Get.back();
+          imagePick(Get.context!);
+        },
+        title: const Text(
+          "Choose from Gallery",
+          style: TextStyle(color: textBlackColor, fontSize: 14),
+        ),
+      ),
+      ListTile(
+        dense: true,
+        contentPadding: const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
+        onTap: () {
+          Get.back();
+          camera();
+        },
+        title: const Text(
+          "Take Photo",
+          style: TextStyle(color: textBlackColor, fontSize: 14),
+        ),
+      ),
     ]);
   }
 }

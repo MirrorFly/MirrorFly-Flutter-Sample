@@ -10,10 +10,14 @@ class AdminBlockedView extends GetView {
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: () {
+    return PopScope(
+      canPop: false,
+      onPopInvoked: (didPop) {
+        if (didPop) {
+          return;
+        }
         onFinish();
-        return Future.value(false);
+        return;
       },
       child: SafeArea(child: Container(
         color: Colors.white,
@@ -57,7 +61,7 @@ class AdminBlockedView extends GetView {
                   },
                   child: const Text(
                     'Ok',
-                    style: TextStyle(fontWeight: FontWeight.w600),
+                    style: TextStyle(fontWeight: FontWeight.w600,color: Colors.white),
                   ),
                 ),
               ),

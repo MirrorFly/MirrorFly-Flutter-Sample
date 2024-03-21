@@ -2,8 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:focus_detector/focus_detector.dart';
 import 'package:get/get.dart';
-import 'package:mirror_fly_demo/app/data/helper.dart';
-
+import 'package:mirror_fly_demo/app/common/extensions.dart';
 import '../../common/constants.dart';
 import '../../widgets/custom_action_bar_icons.dart';
 import '../dashboard/widgets.dart';
@@ -18,13 +17,17 @@ class ArchivedChatListView extends GetView<ArchivedChatListController> {
       onFocusGained: () {
         controller.getArchivedChatsList();
       },
-      child: WillPopScope(
-        onWillPop: () {
+      child: PopScope(
+        canPop: false,
+        onPopInvoked: (didPop) {
+          if (didPop) {
+            return;
+          }
           if (controller.selected.value) {
             controller.clearAllChatSelection();
-            return Future.value(false);
+            return;
           }
-          return Future.value(true);
+          Get.back();
         },
         child: Obx(() {
           return Scaffold(

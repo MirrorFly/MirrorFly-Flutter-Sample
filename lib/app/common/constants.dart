@@ -4,7 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:mirror_fly_demo/app/data/helper.dart';
+import 'package:mirror_fly_demo/app/common/extensions.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -38,6 +38,7 @@ const Color chatBorderColor = Color(0XffDDE3E5);
 const Color chatTimeColor = Color(0Xff959595);
 const Color borderColor = Color(0xffAFB8D0);
 const Color playIconColor = Color(0xff7285B5);
+const Color progressColor = Color(0xff8C97B3);
 const Color durationTextColor = Color(0xff455E93);
 const Color chatBgColor = Color(0xffD0D8EB);
 const Color previewTextColor = Color(0xff7f7f7f);
@@ -545,10 +546,15 @@ class Constants {
   static const String privacyPolicy =
       "https://www.mirrorfly.com/privacy-policy.php";
 
-  static const maxAudioFileSize = 30;
-  static const maxVideoFileSize = 30;
-  static const maxImageFileSize = 10;
-  static const maxDocFileSize = 20;
+  static const maxAudioFileSize = 2 * 1024;//30;
+  static const maxVideoFileSize = 2 * 1024;//30;
+  static const maxImageFileSize = 2 * 1024;//10;
+  static const maxDocFileSize = 2 * 1024;//20;
+
+  static const mobileImageMaxWidth = 250;
+  static const mobileImageMinWidth = 210;
+  static const mobileImageMaxHeight = 320;
+  static const mobileImageMinHeight = 80;
 
   static const List<String> defaultStatusList = [
     "Available",
@@ -607,6 +613,7 @@ class Constants {
   static const int mediaDownloaded = 4;
   static const int mediaNotDownloaded = 5;
   static const int mediaDownloadedNotAvailable = 6;
+  static const int storageNotEnough = 8;
   static const int mediaNotUploaded = 0;
   static const int mediaUploading = 1;
   static const int mediaUploaded = 2;
@@ -618,6 +625,11 @@ class Constants {
   static const double borderRadius = 27;
   static const double defaultPadding = 8;
 
+  static const String mediaDoesNotExist = "Sorry. Media file isn't available in your internal storage";
+  static const String mediaNotExist = "Sorry, media isn't available";
+  static const String insufficientMemoryError = "Not enough storage space on your device. Please free up space in your phone's memory.";
+  static const String errorTryAgain = "Error Occurred, Please try again";
+  static const String errorVideoInitialize = "Error Occurred during video initialize";
   // static GlobalKey<AnimatedListState> audioListKey =
   // GlobalKey<AnimatedListState>();
 
@@ -630,6 +642,7 @@ class Constants {
   static const String xlsx = "xlsx";
 
   //Message Types
+  static const String mAutoText = "AUTO_TEXT";
   static const String mText = "TEXT";
   static const String mImage = "IMAGE";
   static const String mAudio = "AUDIO";
@@ -649,10 +662,12 @@ class Constants {
   //Permission dialog contents
   static const String settingPermission =
       "You will not receive notifications while the app is in background if you disable these permissions";
+  static const String writeStoragePermission =
+      "To download media, allow MirrorFly access to your device's storage.";
   static const String filePermission =
       "To send media, allow MirrorFly access to your device's photos,media, and files.";
   static const String cameraPermission =
-      "To capture photos and video, allow MirrorFly access to the camera and storage.";
+      "To capture photos and video, allow MirrorFly access to the camera and microphone.";
   static const String locationPermission =
       "MirrorFly needs access to your location in order to share your current location.";
   static const String contactPermission =
@@ -675,6 +690,10 @@ class Constants {
       "MirrorFly need the Location Permission in order to attach a location, but they have been permanently denied. Please continue to app settings, select \"Permissions\", and enable \"Location\".";
   static const String cameraPermissionDenied =
       "MirrorFly need the Camera and Storage Permission in order to capture photos and video, but they have been permanently denied. Please continue to app settings, select \"Permissions\", and enable \"Camera\" and \"Storage\".";
+  static const String cameraCapturePermanentlyDeniedContent =
+      "MirrorFly need the Camera and Microphone Permission in order to capture photos and video, but they have been permanently denied. Please continue to app settings, select \"Permissions\", and enable \"Camera\" and \"Microphone\".";
+  static const String writeStoragePermissionDenied =
+      "MirrorFly need the Storage Permission in order to download photos, media, and files, but they have been permanently denied. Please continue to app settings, select \"Permissions\", and enable \"Storage\".";
   static const String storagePermissionDenied =
       "MirrorFly need the Storage Permission in order to attach photos, media, and files, but they have been permanently denied. Please continue to app settings, select \"Permissions\", and enable \"Storage\".";
   static const String microPhonePermissionDenied =
@@ -801,6 +820,9 @@ class Constants {
   static const String noCallLog = "No Call Log";
   static const String noCallLogHistoryFound = "No Call log history found";
   static const String anyNewCallsWillAppearHere = "Any new Calls will appear here";
+
+  static const String profileImageRemoveFailed = "Error while removing profile image";
+  static const String profileImageUpdateFailed = "Error while updating profile image";
 }
 
 Future<void> launchWeb(String url) async {
@@ -845,7 +867,7 @@ Widget forMessageTypeIcon(String messageType,[MediaChatMessage? mediaChatMessage
       return SvgPicture.asset(
         mediaChatMessage != null ? mediaChatMessage.isAudioRecorded ? mAudioRecordIcon : mAudioIcon : mAudioIcon,
         fit: BoxFit.contain,
-        color: textColor,
+        colorFilter: const ColorFilter.mode(textColor, BlendMode.srcIn),
       );
     case Constants.mVideo:
       return SvgPicture.asset(
