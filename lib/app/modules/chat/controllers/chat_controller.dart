@@ -881,8 +881,8 @@ class ChatController extends FullLifeCycleController
       Helper.showFeatureUnavailable();
       return;
     }
-    var permission = await AppPermission.getStoragePermission();
-    if (permission) {
+    // var permission = await AppPermission.getStoragePermission();
+    // if (permission) {
       setOnGoingUserGone();
       FilePickerResult? result = await FilePicker.platform.pickFiles(
         allowMultiple: false,
@@ -905,7 +905,7 @@ class ChatController extends FullLifeCycleController
         // User canceled the picker
         setOnGoingUserAvail();
       }
-    }
+    // }
   }
 
   sendReadReceipt({bool removeUnreadFromList = true}) {
@@ -1185,6 +1185,8 @@ class ChatController extends FullLifeCycleController
         setOnGoingUserAvail();
       }
     } else {
+      ///sometimes FilePicker's path not receiving with its file extension in Android
+      ///so we are adding this below method internally
       await Mirrorfly.openAudioFilePicker().then((value) {
         if (value != null) {
           if (checkFileUploadSize(value, Constants.mAudio)) {
@@ -2483,10 +2485,12 @@ class ChatController extends FullLifeCycleController
       Helper.showFeatureUnavailable();
       return;
     }
-    var permission = await AppPermission.getStoragePermission();
+    var permissions = await AppPermission.getGalleryAccessPermissions();
+    var permission = await AppPermission.checkAndRequestPermissions(permissions: permissions,
+        permissionIcon: filePermission, permissionContent: Constants.filePermission,
+        permissionPermanentlyDeniedContent: Constants.storagePermissionDenied);
     if (permission) {
       try {
-        // imagePicker();
         setOnGoingUserGone();
         Get.toNamed(Routes.galleryPicker, arguments: {
           "userName": getName(profile),
@@ -2504,13 +2508,12 @@ class ChatController extends FullLifeCycleController
       Helper.showFeatureUnavailable();
       return;
     }
-    // if (await askContactsPermission()) {
-    if (await AppPermission.checkPermission(
-        Permission.contacts, contactPermission, Constants.contactPermission)) {
+    var permission = await AppPermission.checkAndRequestPermissions(permissions:
+    [Permission.contacts], permissionIcon: contactPermission, permissionContent:
+    Constants.contactPermission, permissionPermanentlyDeniedContent: Constants.contactPermissionDenied);
+    if (permission) {
       setOnGoingUserGone();
       Get.toNamed(Routes.localContact)?.then((value) => setOnGoingUserAvail());
-    } else {
-      // AppPermission.permissionDeniedDialog(content: "Permission is permanently denied. Please enable Contact permission from settings");
     }
   }
 
@@ -2546,8 +2549,8 @@ class ChatController extends FullLifeCycleController
       return;
     }
     if (await AppUtils.isNetConnected()) {
-      if (await AppPermission.checkPermission(Permission.location,
-          locationPinPermission, Constants.locationPermission)) {
+      var permission = await AppPermission.checkAndRequestPermissions(permissions: [Permission.location], permissionIcon: locationPinPermission, permissionContent: Constants.locationPermission, permissionPermanentlyDeniedContent: Constants.locationPermissionDenied);
+      if (permission) {
         setOnGoingUserGone();
         Get.toNamed(Routes.locationSent)?.then((value) {
           if (value != null) {

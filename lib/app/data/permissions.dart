@@ -775,6 +775,29 @@ class AppPermission {
     return false;
   }
 
+  static Future<List<Permission>> getGalleryAccessPermissions() async {
+    var permissions = <Permission>[];
+    var sdkVersion = 0;
+    if (Platform.isAndroid) {
+      var sdk = await DeviceInfoPlugin().androidInfo;
+      sdkVersion = sdk.version.sdkInt;
+    } else {
+      sdkVersion = 0;
+    }
+    if (Platform.isIOS) {
+      permissions.addAll([Permission.photos,Permission.storage,Permission.mediaLibrary]);
+    }else if (sdkVersion < 33 && Platform.isAndroid) {
+      permissions.add(Permission.storage);
+    } else{
+      ///[Permission.photos] for Android 33+ gallery access
+      ///[Permission.videos] for Android 33+ gallery access
+      ///[Permission.mediaLibrary] for iOS gallery access
+      permissions.addAll([Permission.photos, Permission.videos,Permission.videos]);
+    }
+    LogMessage.d("getGalleryAccessPermissions", permissions.join(","));
+    return permissions;
+  }
+
   static String getPermissionAlertMessage(String permission) {
     var permissionAlertMessage = "";
     var permissionName = permission;
