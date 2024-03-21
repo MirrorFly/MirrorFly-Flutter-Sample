@@ -213,8 +213,8 @@ class ChatController extends FullLifeCycleController
       //chatList.refresh();
     });
 
-    chatList.bindStream(chatList.stream);
-    ever(chatList, (callback) {});
+    // chatList.bindStream(chatList.stream);
+    // ever(chatList, (callback) {});
     isUserTyping.bindStream(isUserTyping.stream);
     ever(isUserTyping, (callback) {
       mirrorFlyLog("typing ", callback.toString());
@@ -742,64 +742,6 @@ class ChatController extends FullLifeCycleController
       getUnsentReplyMessage();
     });
   }
-
-  getChatHistory() {
-    chatLoading(true);
-    Mirrorfly.getMessagesOfJid(jid: profile.jid.checkNull()).then((value) {
-      // debugPrint("=====chat=====");
-      // debugPrint("history--> $value");
-
-      if (value == "" || value == null) {
-        debugPrint("Chat List is Empty");
-      } else {
-        // debugPrint("parsing the value");
-        try {
-          // mirrorFlyLog("chat parsed history before", value);
-          List<ChatMessageModel> chatMessageModel =
-          chatMessageModelFromJson(value);
-          // mirrorFlyLog("chat parsed history", chatMessageModelToJson(chatMessageModel));
-          chatList(chatMessageModel.reversed.toList());
-          Future.delayed(const Duration(milliseconds: 200), () {
-            if (starredChatMessageId != null) {
-              debugPrint('starredChatMessageId $starredChatMessageId');
-              var chat = chatList.indexWhere(
-                      (element) => element.messageId == starredChatMessageId);
-              debugPrint('chat $chat');
-              if (!chat.isNegative) {
-                navigateToMessage(chatList[chat]);
-                starredChatMessageId = null;
-              } else {
-                toToast('Message not found');
-              }
-            }
-            getUnsentReplyMessage();
-          });
-          /*for (var index =0;index<=chatMessageModel.reversed.toList().length;index++) {
-          debugPrint("isDateChanged ${isDateChanged(index,chatMessageModel.reversed.toList())}");
-
-        }*/
-        } catch (error) {
-          debugPrint("chatHistory parsing error--> $error");
-        }
-      }
-      chatLoading(false);
-    }).catchError((e) {
-      chatLoading(false);
-    });
-  }
-
-  /*getMedia(String mid) {
-    return Mirrorfly.getMessageOfId(mid).then((value) {
-      CheckModel chatMessageModel = checkModelFromJson(value);
-      String thumbImage = chatMessageModel.mediaChatMessage.mediaThumbImage;
-      thumbImage = thumbImage.replaceAll("\n", "");
-      return thumbImage;
-    });
-
-    // return imageFromBase64String(chatMessageModel.mediaChatMessage!.mediaThumbImage!);
-    // // return media;
-    // return base64Decode(chatMessageModel.mediaChatMessage.mediaThumbImage);
-  }*/
 
   Image imageFromBase64String(String base64String, BuildContext context,
       double? width, double? height) {

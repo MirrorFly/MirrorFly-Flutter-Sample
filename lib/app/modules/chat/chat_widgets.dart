@@ -1,10 +1,10 @@
 import 'dart:convert';
-import 'dart:io';
 
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:mirror_fly_demo/app/modules/chat/widgets/image_message_view.dart';
 import 'package:mirrorfly_plugin/mirrorflychat.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
@@ -405,6 +405,7 @@ Widget imageFromBase64String(String base64String, BuildContext context, double? 
   final Uint8List image = const Base64Decoder().convert(decodedBase64);
   return Image.memory(
     image,
+    key: ValueKey<String>(base64String),
     width: width ?? Get.width * 0.60,
     height: height ?? Get.height * 0.4,
     fit: BoxFit.cover,
@@ -1552,7 +1553,7 @@ class VideoMessageView extends StatelessWidget {
   }
 }
 
-class ImageMessageView extends StatelessWidget {
+/*class ImageMessageView extends StatelessWidget {
   const ImageMessageView({Key? key,
     required this.chatMessage,
     this.search = "",
@@ -1687,7 +1688,7 @@ class ImageMessageView extends StatelessWidget {
       return imageFromBase64String(mediaThumbImage, context, null, null);
     }
   }
-}
+}*/
 
 Widget setCaptionMessage(MediaChatMessage mediaMessage,
     ChatMessageModel chatMessage, BuildContext context,
