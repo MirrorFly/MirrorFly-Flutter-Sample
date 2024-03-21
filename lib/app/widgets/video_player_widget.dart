@@ -20,7 +20,7 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
   late VideoPlayerController _controller;
   late Future<void> _initializeVideoPlayerFuture;
   bool _isPlaying = false;
-  bool isStoped = false;
+  bool isStopped = false;
   double _sliderValue = 0.0;
 
   @override
@@ -31,7 +31,7 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
         setState(() {
           _sliderValue =
               _controller.value.position.inSeconds.toDouble();
-          isStoped = _controller.value.isCompleted;
+          isStopped = _controller.value.isCompleted;
         });
       });
     _initializeVideoPlayerFuture = _controller.initialize().then((_) {
@@ -142,7 +142,7 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
               onPressed: _playPause,
               backgroundColor: buttonBgColor,
               child: Icon(
-                !_isPlaying || isStoped ? Icons.play_arrow : Icons.pause,
+                !_isPlaying || isStopped ? Icons.play_arrow : Icons.pause,
                 color: Colors.white,
               ),
             ),

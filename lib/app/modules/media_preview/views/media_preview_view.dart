@@ -349,7 +349,7 @@ class MediaPreviewView extends GetView<MediaPreviewController> {
                                         );
                                       }),
                                 )
-                              : const SizedBox.shrink();
+                              : const Offstage();
                         }),
                         emojiLayout(),
                       ],

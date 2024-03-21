@@ -21,7 +21,7 @@ class AppPermission {
     return permission.index==2 || permission.index==3;
   }*/
 
-  static Future<bool> getStoragePermission() async {
+  static Future<bool> getStoragePermission({String? permissionContent, String? deniedContent}) async {
     var sdkVersion = 0;
     if (Platform.isAndroid) {
       var sdk = await DeviceInfoPlugin().androidInfo;
@@ -35,7 +35,7 @@ class AppPermission {
           permission != PermissionStatus.permanentlyDenied) {
         const newPermission = Permission.storage;
         var deniedPopupValue = await mirrorFlyPermissionDialog(
-            icon: filePermission, content: Constants.filePermission);
+            icon: filePermission, content: permissionContent ?? Constants.filePermission);
         if (deniedPopupValue) {
           var newp = await newPermission.request();
           if (newp.isGranted) {
@@ -43,7 +43,7 @@ class AppPermission {
           } else {
             var popupValue = await customPermissionDialog(
                 icon: filePermission,
-                content: getPermissionAlertMessage("storage"));
+                content: deniedContent ?? getPermissionAlertMessage("storage"));
             if (popupValue) {
               openAppSettings();
               return false;
@@ -72,7 +72,7 @@ class AppPermission {
               storage != PermissionStatus.permanentlyDenied)) {
         mirrorFlyLog("showing mirrorfly popup", "");
         var deniedPopupValue = await mirrorFlyPermissionDialog(
-            icon: filePermission, content: Constants.filePermission);
+            icon: filePermission, content: permissionContent ?? Constants.filePermission);
         if (deniedPopupValue) {
           var newp = await newPermission.request();
           PermissionStatus? photo = newp[Permission.photos];
@@ -84,7 +84,7 @@ class AppPermission {
               storage!.isPermanentlyDenied) {
             var popupValue = await customPermissionDialog(
                 icon: filePermission,
-                content: getPermissionAlertMessage("storage"));
+                content: deniedContent ?? getPermissionAlertMessage("storage"));
             if (popupValue) {
               openAppSettings();
               return false;

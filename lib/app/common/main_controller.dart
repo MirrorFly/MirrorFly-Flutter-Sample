@@ -245,23 +245,22 @@ class MainController extends FullLifeCycleController with BaseController, FullLi
 
   @override
   void onDetached() {
-    mirrorFlyLog('mainController', 'onDetached');
+    mirrorFlyLog('LifeCycle', 'onDetached');
   }
 
   @override
   void onInactive() {
-    mirrorFlyLog('mainController', 'onInactive');
+    mirrorFlyLog('LifeCycle', 'onInactive');
   }
 
   bool fromLockScreen = false;
 
   @override
   void onPaused() async {
+    mirrorFlyLog('LifeCycle', 'onPaused');
     var unReadMessageCount = await Mirrorfly.getUnreadMessageCountExceptMutedChat();
-
     debugPrint('mainController unReadMessageCount onPaused ${unReadMessageCount.toString()}');
     _setBadgeCount(unReadMessageCount ?? 0);
-    mirrorFlyLog('mainController', 'onPaused');
     fromLockScreen = await isLockScreen() ?? false;
     mirrorFlyLog('isLockScreen', '$fromLockScreen');
     SessionManagement.setAppSessionNow();
@@ -269,7 +268,7 @@ class MainController extends FullLifeCycleController with BaseController, FullLi
 
   @override
   void onResumed() {
-    mirrorFlyLog('mainController', 'onResumed');
+    mirrorFlyLog('LifeCycle', 'onResumed');
     NotificationBuilder.cancelNotifications();
     checkShouldShowPin();
     if (Constants.enableContactSync) {
@@ -357,7 +356,9 @@ class MainController extends FullLifeCycleController with BaseController, FullLi
   }
 
   @override
-  void onHidden() {}
+  void onHidden() {
+    mirrorFlyLog('LifeCycle', 'onHidden');
+  }
 
   unreadMissedCallCount() async {
     var unreadMissedCallCount = await Mirrorfly.getUnreadMissedCallCount();
