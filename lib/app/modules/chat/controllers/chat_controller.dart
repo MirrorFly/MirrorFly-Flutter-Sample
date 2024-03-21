@@ -2105,28 +2105,29 @@ class ChatController extends FullLifeCycleController
         ? await Mirrorfly.isBusyStatusEnabled()
         : false;
     if (!busyStatus.checkNull()) {
-      var permission = await AppPermission.getStoragePermission();
-      if (permission) {
-        if (await Record().hasPermission()) {
-          record = Record();
-          timerInit("00:00");
-          isAudioRecording(Constants.audioRecording);
-          startTimer();
-          await record.start(
-            path:
-            "$audioSavePath/audio_${DateTime
-                .now()
-                .millisecondsSinceEpoch}.m4a",
-            encoder: AudioEncoder.AAC,
-            bitRate: 128000,
-            samplingRate: 44100,
-          );
-          Future.delayed(const Duration(seconds: 300), () {
-            if (isAudioRecording.value == Constants.audioRecording) {
-              stopRecording();
-            }
-          });
-        }
+      // var permission = await AppPermission.getStoragePermission();
+      var microPhonePermissionStatus = await AppPermission.checkAndRequestPermissions(permissions:
+      [Permission.microphone], permissionIcon: audioPermission, permissionContent: Constants.audioPermission,permissionPermanentlyDeniedContent: Constants.microPhonePermissionDenied);
+      debugPrint("microPhone Permission Status---> $microPhonePermissionStatus");
+      if (microPhonePermissionStatus) {
+        record = Record();
+        timerInit("00:00");
+        isAudioRecording(Constants.audioRecording);
+        startTimer();
+        await record.start(
+          path:
+          "$audioSavePath/audio_${DateTime
+              .now()
+              .millisecondsSinceEpoch}.m4a",
+          encoder: AudioEncoder.AAC,
+          bitRate: 128000,
+          samplingRate: 44100,
+        );
+        Future.delayed(const Duration(seconds: 300), () {
+          if (isAudioRecording.value == Constants.audioRecording) {
+            stopRecording();
+          }
+        });
       }
     } else {
       //show busy status popup
@@ -2464,25 +2465,7 @@ class ChatController extends FullLifeCycleController
         }
       });
     }
-    /*final XFile? photo = await _picker.pickImage(source: ImageSource.camera);
-    if (photo != null) {
-      Get.toNamed(Routes.imagePreview,
-          arguments: {"filePath": photo.path, "userName": profile.name!});
-    }*/
   }
-
-  // Future<bool> askMicrophonePermission() async {
-  //   final permission = await AppPermission.getAudioPermission();
-  //   switch (permission) {
-  //     case PermissionStatus.granted:
-  //       return true;
-  //     case PermissionStatus.permanentlyDenied:
-  //       return false;
-  //     default:
-  //       debugPrint("Contact Permission default");
-  //       return false;
-  //   }
-  // }
 
   onAudioClick() async {
     if(!availableFeatures.value.isAudioAttachmentAvailable.checkNull()){

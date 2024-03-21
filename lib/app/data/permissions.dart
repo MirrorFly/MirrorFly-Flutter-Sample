@@ -708,19 +708,18 @@ class AppPermission {
             icon: permissionIcon, content: permissionContent);
         if (popupValue) {
           var afterAskRationale = await permissions.request();
-          var hasDeniedPermissionAfterAsk = afterAskRationale.values
+          var hasGrantedPermissionAfterAsk = afterAskRationale.values
               .toList()
-              .where((element) => element.isDenied)
-              .isNotEmpty;
+              .where((element) => element.isGranted);
           LogMessage.d("checkAndRequestPermissions",
-              "rationale hasDeniedPermissionAfterAsk : $hasDeniedPermissionAfterAsk hasPermanentlyDeniedPermission : $hasPermanentlyDeniedPermission");
+              "rationale hasGrantedPermissionAfterAsk : $hasGrantedPermissionAfterAsk hasPermanentlyDeniedPermission : $hasPermanentlyDeniedPermission");
           if (hasPermanentlyDeniedPermission) {
             return await showPermanentlyDeniedPopup(
                 permissions: permissions,
                 permissionIcon: permissionIcon,
                 permissionPermanentlyDeniedContent: permissionPermanentlyDeniedContent);
           } else {
-            return hasDeniedPermissionAfterAsk;
+            return (hasGrantedPermissionAfterAsk.length == permissions.length);
           }
         }
         return popupValue;
@@ -730,12 +729,11 @@ class AppPermission {
             icon: permissionIcon, content: permissionContent);
         if (popupValue) {
           var afterAsk = await permissions.request();
-          var hasDeniedPermissionAfterAsk = afterAsk.values
+          var hasGrantedPermissionAfterAsk = afterAsk.values
               .toList()
-              .where((element) => element.isDenied)
-              .isNotEmpty;
+              .where((element) => element.isGranted);
           LogMessage.d("checkAndRequestPermissions",
-              "hasDeniedPermissionAfterAsk : $hasDeniedPermissionAfterAsk hasPermanentlyDeniedPermission : $hasPermanentlyDeniedPermission");
+              "hasGrantedPermissionAfterAsk : $hasGrantedPermissionAfterAsk hasPermanentlyDeniedPermission : $hasPermanentlyDeniedPermission");
           if (hasPermanentlyDeniedPermission) {
             return await showPermanentlyDeniedPopup(
                 permissions: permissions,
@@ -743,7 +741,7 @@ class AppPermission {
                 permissionPermanentlyDeniedContent:
                     permissionPermanentlyDeniedContent);
           } else {
-            return hasDeniedPermissionAfterAsk;
+            return (hasGrantedPermissionAfterAsk.length == permissions.length);
           }
         } else {
           //user clicked not now in popup
