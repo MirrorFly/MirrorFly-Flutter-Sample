@@ -858,6 +858,7 @@ class ChatController extends FullLifeCycleController
             return chatMessageModel;
           }else{
             LogMessage.d("sendMessage", response.errorMessage);
+            showError(response.exception);
           }
         });
       } else {
@@ -953,6 +954,8 @@ class ChatController extends FullLifeCycleController
           return chatMessageModel;
         }else{
           LogMessage.d("sendMessage", response.errorMessage);
+          //PlatformException(500, Not enough storage space on your device. Please free up space in your phone's memory. ErrorCode => 808, com.mirrorflysdk.flycommons.exception.FlyException: Not enough storage space on your device. Please free up space in your phone's memory. ErrorCode => 808
+          showError(response.exception);
         }
       });
     } else {
@@ -1128,6 +1131,7 @@ class ChatController extends FullLifeCycleController
           updateLastMessage(response.data);
         }else{
           LogMessage.d("sendMessage", response.errorMessage);
+          showError(response.exception);
         }
       });
     } else {
@@ -1245,6 +1249,7 @@ class ChatController extends FullLifeCycleController
           updateLastMessage(response.data);
         }else{
           LogMessage.d("sendMessage", response.errorMessage);
+          showError(response.exception);
         }
       });
     } else {
@@ -2879,9 +2884,11 @@ class ChatController extends FullLifeCycleController
     Share.shareXFiles(mediaPaths);
   }
 
+  var hasPaused = false;
   @override
   void onPaused() {
-    mirrorFlyLog("chat controller LifeCycle", "onPaused");
+    mirrorFlyLog("LifeCycle", "chat onPaused");
+    hasPaused = true;
     setOnGoingUserGone();
     playerPause();
     saveUnsentMessage();
@@ -2890,31 +2897,36 @@ class ChatController extends FullLifeCycleController
 
   @override
   void onResumed() {
-    mirrorFlyLog("LifeCycle", "onResumed");
-    cancelNotification();
-    setChatStatus();
-    getAvailableFeatures();
+    mirrorFlyLog("LifeCycle", "chat onResumed");
+    ///when notification drawer was dragged then app goes inactive,when closes the drawer its trigger onResume
+    ///so that this checking hasPaused added, this will invoke only when app is opened from background state.
+    if(hasPaused) {
+      hasPaused = false;
+      cancelNotification();
+      setChatStatus();
+      getAvailableFeatures();
 
-    //to avoid calling without initializedMessageList
-    if(initializedMessageList) {
-      /// we loading next messages instead of load message because the new messages received will be available in load next message
-      _loadNextMessages();
-    }
-    if (!KeyboardVisibilityController().isVisible) {
-      if (focusNode.hasFocus) {
-        focusNode.unfocus();
-        Future.delayed(const Duration(milliseconds: 100), () {
-          focusNode.requestFocus();
-        });
+      //to avoid calling without initializedMessageList
+      if (initializedMessageList) {
+        /// we loading next messages instead of load message because the new messages received will be available in load next message
+        _loadNextMessages();
       }
-      if (searchfocusNode.hasFocus) {
-        searchfocusNode.unfocus();
-        Future.delayed(const Duration(milliseconds: 100), () {
-          searchfocusNode.requestFocus();
-        });
+      if (!KeyboardVisibilityController().isVisible) {
+        if (focusNode.hasFocus) {
+          focusNode.unfocus();
+          Future.delayed(const Duration(milliseconds: 100), () {
+            focusNode.requestFocus();
+          });
+        }
+        if (searchfocusNode.hasFocus) {
+          searchfocusNode.unfocus();
+          Future.delayed(const Duration(milliseconds: 100), () {
+            searchfocusNode.requestFocus();
+          });
+        }
       }
+      setOnGoingUserAvail();
     }
-    setOnGoingUserAvail();
   }
 
   void markConversationReadNotifyUI() {
@@ -2927,12 +2939,12 @@ class ChatController extends FullLifeCycleController
 
   @override
   void onDetached() {
-    mirrorFlyLog("LifeCycle", "onDetached");
+    mirrorFlyLog("LifeCycle", "chat onDetached");
   }
 
   @override
   void onInactive() {
-    mirrorFlyLog("LifeCycle", "onInactive");
+    mirrorFlyLog("LifeCycle", "chat onInactive");
   }
 
   void userUpdatedHisProfile(String jid) {
@@ -3285,7 +3297,7 @@ class ChatController extends FullLifeCycleController
 
   @override
   void onHidden() {
-
+    mirrorFlyLog('LifeCycle', 'chat onHidden');
   }
 
   void loadLastMessages(ChatMessageModel chatMessageModel) async{
@@ -3418,6 +3430,14 @@ class ChatController extends FullLifeCycleController
             index: position,
             duration: const Duration(milliseconds: 100));
       }
+    }
+  }
+
+  void showError(FlyException? response){
+    if(response!=null && response.message != null) {
+      var errorMessage = response.message!.contains(" ErrorCode =>") ? response
+          .message!.split(" ErrorCode =>")[0] : response.message!;
+      toToast(errorMessage);
     }
   }
 }

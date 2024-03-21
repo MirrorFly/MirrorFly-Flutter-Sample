@@ -44,7 +44,7 @@ class Helper {
           ),
         ),
       ),
-      barrierDismissible: false,
+      barrierDismissible: dismiss,
     );
   }
 
