@@ -13,10 +13,10 @@ class AnimatedFloatingAction extends StatefulWidget {
   const AnimatedFloatingAction({super.key, required this.tooltip, required this.icon, required this.audioCallOnPressed, required this.videoCallOnPressed});
 
   @override
-  _AnimatedFloatingActionState createState() => _AnimatedFloatingActionState();
+  AnimatedFloatingActionState createState() => AnimatedFloatingActionState();
 }
 
-class _AnimatedFloatingActionState extends State<AnimatedFloatingAction>
+class AnimatedFloatingActionState extends State<AnimatedFloatingAction>
     with SingleTickerProviderStateMixin {
   bool isOpened = false;
   late AnimationController _animationController;
@@ -137,7 +137,7 @@ class _AnimatedFloatingActionState extends State<AnimatedFloatingAction>
            videoCallSmallIcon,
            width: 18,
            height: 18,
-           color: Colors.white,
+           colorFilter: const ColorFilter.mode(Colors.white, BlendMode.srcIn),
            fit: BoxFit.contain,
          ),),
        ),
@@ -154,7 +154,7 @@ class _AnimatedFloatingActionState extends State<AnimatedFloatingAction>
            audioCallSmallIcon,
            width: 18,
            height: 18,
-           color: Colors.white,
+           colorFilter: const ColorFilter.mode(Colors.white, BlendMode.srcIn),
            fit: BoxFit.contain,
          ),),
        ),

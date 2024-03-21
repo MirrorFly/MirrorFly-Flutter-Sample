@@ -7,6 +7,7 @@ import 'package:mirror_fly_demo/app/routes/app_pages.dart';
 import 'package:mirrorfly_plugin/model/call_log_model.dart';
 import 'package:mirrorfly_plugin/mirrorflychat.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
+import 'package:mirror_fly_demo/app/common/extensions.dart';
 
 
 class CallInfoController extends GetxController{
@@ -30,8 +31,8 @@ class CallInfoController extends GetxController{
               debugPrint("#Mirrorfly Call You are on another call");
               toToast(Constants.msgOngoingCallAlert);
             } else {
-              Mirrorfly.makeGroupVideoCall(groupJid: item.groupId.checkNull().isNotEmpty ? item.groupId! : "", jidList: userList).then((value) {
-                if (value) {
+              Mirrorfly.makeGroupVideoCall(groupJid: item.groupId.checkNull().isNotEmpty ? item.groupId! : "", toUserJidList: userList, flyCallBack: (FlyResponse response) {
+                if (response.isSuccess) {
                   Get.toNamed(Routes.outGoingCallView, arguments: {"userJid": userList, "callType": CallType.video});
                 }
               });
@@ -44,8 +45,8 @@ class CallInfoController extends GetxController{
               debugPrint("#Mirrorfly Call You are on another call");
               toToast(Constants.msgOngoingCallAlert);
             } else {
-              Mirrorfly.makeGroupVoiceCall(groupJid: item.groupId.checkNull().isNotEmpty ? item.groupId! : "", jidList: userList).then((value) {
-                if (value) {
+              Mirrorfly.makeGroupVoiceCall(groupJid: item.groupId.checkNull().isNotEmpty ? item.groupId! : "", toUserJidList: userList, flyCallBack: (FlyResponse response) {
+                if (response.isSuccess) {
                   Get.toNamed(Routes.outGoingCallView, arguments: {"userJid": userList, "callType": CallType.audio});
                 }
               });
@@ -66,19 +67,19 @@ class CallInfoController extends GetxController{
               onPressed: () {
                 Get.back();
               },
-              child: Text(Constants.cancel.toUpperCase())),
+              child: Text(Constants.cancel.toUpperCase(),style: const TextStyle(color: buttonBgColor))),
           TextButton(
               onPressed: () {
                 Get.back();
-                Mirrorfly.deleteCallLog(selectedCallLogs, false).then((value) {
-                  if (value) {
+                Mirrorfly.deleteCallLog(jidList: selectedCallLogs, isClearAll: false, flyCallBack: (FlyResponse response) {
+                  if (response.isSuccess) {
                     Get.back(result: true);
                   } else {
                     toToast("Error in call log delete");
                   }
                 });
               },
-              child: const Text(Constants.ok)),
+              child: const Text(Constants.ok,style: TextStyle(color: buttonBgColor))),
         ],
         barrierDismissible: true);
   }

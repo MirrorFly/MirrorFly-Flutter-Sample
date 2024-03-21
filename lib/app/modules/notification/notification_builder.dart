@@ -7,11 +7,13 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
 import 'package:mirror_fly_demo/app/data/session_management.dart';
 import 'package:mirror_fly_demo/app/modules/notification/notification_utils.dart';
+import 'package:mirror_fly_demo/app/model/chat_message_model.dart';
+import 'package:mirror_fly_demo/app/common/extensions.dart';
 import 'package:mirrorfly_plugin/mirrorflychat.dart';
+
 
 import '../../common/notification_service.dart';
 import '../../data/helper.dart';
-import '../../model/notification_message_model.dart';
 
 class NotificationBuilder {
   NotificationBuilder._();
@@ -23,14 +25,14 @@ class NotificationBuilder {
 
   /// * Create notification when new chat message received
   /// * @parameter message Instance of ChatMessage in NotificationMessageModel
-  static createNotification(ChatMessage message,{autoCancel = true}) async {
+  static createNotification(ChatMessageModel message,{autoCancel = true}) async {
     int lastMessageTime = 0;
     var chatJid = message.chatUserJid;
     var lastMessageContent = StringBuffer();
     var notificationId = chatJid.hashCode;
     var messageId = message.messageId.hashCode;
     var topicId = message.topicId;
-    var profileDetails = await getProfileDetails(chatJid!);
+    var profileDetails = await getProfileDetails(chatJid);
     if (profileDetails.isMuted == true) {
       return;
     }
@@ -38,7 +40,7 @@ class NotificationBuilder {
     debugPrint("inside if notification");
     lastMessageContent.write(NotificationUtils.getMessageSummary(message));
     lastMessageTime = (message.messageSentTime.toString().length > 13)
-        ? (message.messageSentTime / 1000).toInt()
+        ? message.messageSentTime ~/ 1000
         : message.messageSentTime;
     await displayMessageNotification(
         notificationId,
@@ -46,7 +48,7 @@ class NotificationBuilder {
         profileDetails,
         lastMessageContent.toString(),
         lastMessageTime,
-        message.senderUserJid!,autoCancel,topicId.checkNull());
+        message.senderUserJid,autoCancel,topicId.checkNull());
 
   }
 
@@ -70,7 +72,7 @@ class NotificationBuilder {
   static displayMessageNotification(
       int notificationId,
       int messageId,
-      Profile profileDetails,
+      ProfileDetails profileDetails,
       String lastMessageContent,
       int lastMessageTime,
       String senderChatJID,bool autoCancel,String topicId) async {

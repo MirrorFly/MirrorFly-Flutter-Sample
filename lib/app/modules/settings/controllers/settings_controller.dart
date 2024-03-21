@@ -5,6 +5,7 @@ import 'package:mirror_fly_demo/app/data/helper.dart';
 import 'package:mirrorfly_plugin/mirrorfly.dart';
 import 'package:mirror_fly_demo/app/routes/app_pages.dart';
 import 'package:yaml/yaml.dart';
+import 'package:mirror_fly_demo/app/common/extensions.dart';
 
 import '../../../common/constants.dart';
 import '../../../data/apputils.dart';
@@ -47,20 +48,20 @@ class SettingsController extends GetxController {
   logoutFromSDK() async {
     if (await AppUtils.isNetConnected()) {
       Helper.progressLoading();
-      Mirrorfly.logoutOfChatSDK().then((value) {
+      Mirrorfly.logoutOfChatSDK(flyCallBack: (response){
         Helper.hideLoading();
-        if (value) {
+        if (response.isSuccess) {
           clearAllPreferences();
         } else {
           Get.snackbar("Logout", "Logout Failed");
         }
-      }).catchError((er) {
+      })/*.catchError((er) {
         Helper.hideLoading();
         SessionManagement.clear().then((value) {
           // SessionManagement.setToken(token);
           Get.offAllNamed(Routes.login);
         });
-      });
+      })*/;
     } else {
       toToast(Constants.noInternetConnection);
     }

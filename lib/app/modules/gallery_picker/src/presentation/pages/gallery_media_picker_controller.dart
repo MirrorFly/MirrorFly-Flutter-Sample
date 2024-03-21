@@ -102,6 +102,14 @@ class GalleryMediaPickerController extends ChangeNotifier
     notifyListeners();
   }
 
+  void unPick(int index){
+    debugPrint("unPick $index");
+    picked.removeAt(index);
+    pickedNotifier.value = picked;
+    pickedNotifier.notifyListeners();
+    notifyListeners();
+  }
+
   /// metadata map
   final pickedFileNotifier = ValueNotifier<List<PickedAssetModel>>([]);
   List<PickedAssetModel> pickedFile = [];

@@ -7,6 +7,7 @@ import 'package:mirror_fly_demo/app/data/helper.dart';
 import 'package:mirror_fly_demo/app/call_modules/call_info/controllers/call_info_controller.dart';
 import 'package:mirrorfly_plugin/model/call_constants.dart';
 import 'package:mirrorfly_plugin/model/call_log_model.dart';
+import 'package:mirror_fly_demo/app/common/extensions.dart';
 import '../../../modules/dashboard/widgets.dart';
 import '../../call_utils.dart';
 
@@ -197,7 +198,7 @@ class CallInfoView extends GetView<CallInfoController> {
             },
             icon: SvgPicture.asset(
               videoCallIcon,
-              color: Colors.grey,
+              colorFilter: const ColorFilter.mode(Colors.grey, BlendMode.srcIn),
             ),
           )
         : IconButton(
@@ -206,7 +207,7 @@ class CallInfoView extends GetView<CallInfoController> {
             },
             icon: SvgPicture.asset(
               audioCallIcon,
-              color: Colors.grey,
+              colorFilter: const ColorFilter.mode(Colors.grey, BlendMode.srcIn),
             ));
   }
 

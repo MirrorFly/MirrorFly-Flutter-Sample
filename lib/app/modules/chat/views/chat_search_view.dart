@@ -14,12 +14,13 @@ class ChatSearchView extends GetView<ChatController> {
 
   @override
   Widget build(BuildContext context) {
-    controller.screenHeight = MediaQuery.of(context).size.height;
-    controller.screenWidth = MediaQuery.of(context).size.width;
-    return WillPopScope(
-      onWillPop: () {
+    return PopScope(
+      canPop: true,
+      onPopInvoked: (didPop) {
         controller.searchInit();
-        return Future.value(true);
+        if (didPop) {
+          return;
+        }
       },
       child: Scaffold(
         appBar: AppBar(
@@ -103,7 +104,7 @@ class ChatSearchView extends GetView<ChatController> {
                           ),
                           Container(
                             constraints: BoxConstraints(
-                                maxWidth: controller.screenWidth * 0.75),
+                                maxWidth: Get.width * 0.75),
                             decoration: BoxDecoration(
                                 borderRadius: chatList[index].isMessageSentByMe
                                     ? const BorderRadius.only(

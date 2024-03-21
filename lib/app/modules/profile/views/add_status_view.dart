@@ -16,14 +16,17 @@ class AddStatusView extends GetView<StatusListController> {
         automaticallyImplyLeading: true,
         title: const Text('Add New Status'),
       ),
-      body: WillPopScope(
-        onWillPop: () {
+      body: PopScope(
+        canPop: false,
+        onPopInvoked: (didPop) {
+          if (didPop) {
+            return;
+          }
           if (controller.showEmoji.value) {
             controller.showEmoji(false);
           } else {
-            Get.back();
+            controller.onBackPressed();
           }
-          return Future.value(false);
         },
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -95,7 +98,7 @@ class AddStatusView extends GetView<StatusListController> {
             Row(children: [
               Expanded(
                 child: ElevatedButton(
-                  onPressed: () => Get.back(),
+                  onPressed: () => controller.onBackPressed(),
                   style: ElevatedButton.styleFrom(
                       backgroundColor: MaterialStateColor.resolveWith(
                               (states) => Colors.white),
@@ -139,9 +142,9 @@ class AddStatusView extends GetView<StatusListController> {
     return Obx(() {
       if (controller.showEmoji.value) {
         return EmojiLayout(
-            textController: controller.addStatusController,
-            onBackspacePressed: () => controller.onChanged(),
-            onEmojiSelected: (cat, emoji) => controller.onChanged());
+            textController: TextEditingController(),//controller.addStatusController,
+            onBackspacePressed: () => controller.onEmojiBackPressed(),
+            onEmojiSelected: (cat, emoji) => controller.onEmojiSelected(emoji));
       } else {
         return const SizedBox.shrink();
       }

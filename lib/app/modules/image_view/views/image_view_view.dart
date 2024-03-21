@@ -42,7 +42,7 @@ class ImageViewView extends GetView<ImageViewController> {
                   ? PhotoView(
                       imageProvider: CachedNetworkImageProvider(
                           controller.imageUrl.value,
-                          headers: {"Authorization": main.authToken.value}),
+                          headers: {"Authorization": main.currentAuthToken.value}),
                       // Contained = the smallest possible size to fit one dimension of the screen
                       minScale: PhotoViewComputedScale.contained * 0.8,
                       // Covered = the smallest possible size to fit the whole screen

@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
 import 'package:mirrorfly_plugin/mirrorflychat.dart';
-
+import 'package:mirror_fly_demo/app/common/extensions.dart';
 import '../../../common/constants.dart';
 import '../../../common/widgets.dart';
 import '../../../model/chat_message_model.dart';
@@ -42,7 +42,7 @@ class StarredMessageHeader extends StatelessWidget {
     );
   }
 
-  Future<Profile> getProfile() async {
+  Future<ProfileDetails> getProfile() async {
     /*var value = await Mirrorfly.getProfileDetails(chatList.chatUserJid);
     return Profile.fromJson(json.decode(value.toString()));*/
     return await getProfileDetails(chatList.chatUserJid);
@@ -172,7 +172,7 @@ class StarredMessageHeader extends StatelessWidget {
     );
   }
 
-  getProfileImage(Profile userProfile) {
+  getProfileImage(ProfileDetails userProfile) {
     if (userProfile.image.checkNull().isNotEmpty) {
       return ImageNetwork(
         url: userProfile.image.checkNull(),

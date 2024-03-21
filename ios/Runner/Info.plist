@@ -81,6 +81,8 @@
 	<string>We need this permission to share your photos and videos to your friends from your photo library within MirrorFly</string>
 	<key>PHPhotoLibraryPreventAutomaticLimitedAccessAlert</key>
 	<true/>
+    <key>NSAppleMusicUsageDescription</key>
+    <string>We need access to Apple Music to share your music to your friends within MirrorFly.</string>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
 	<key>UIBackgroundModes</key>

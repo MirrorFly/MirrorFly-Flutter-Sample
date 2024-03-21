@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:mirror_fly_demo/app/common/extensions.dart';
 import 'package:mirrorfly_plugin/mirrorflychat.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
 import 'package:share_plus/share_plus.dart';
@@ -91,8 +92,9 @@ class StarredMessagesController extends FullLifeCycleController with FullLifeCyc
     final index = starredChatList.indexWhere(
             (message) => message.messageId == chatMessageModel.messageId);
     if (!index.isNegative) {
-      starredChatList[index] = chatMessageModel;
-      starredChatList.refresh();
+      starredChatList[index].mediaChatMessage?.mediaLocalStoragePath(chatMessageModel.mediaChatMessage!.mediaLocalStoragePath.value);
+      starredChatList[index].mediaChatMessage?.mediaDownloadStatus(chatMessageModel.mediaChatMessage!.mediaDownloadStatus.value);
+      starredChatList[index].mediaChatMessage?.mediaUploadStatus(chatMessageModel.mediaChatMessage!.mediaUploadStatus.value);
     }
 
     if (isSelected.value) {
@@ -264,16 +266,19 @@ class StarredMessagesController extends FullLifeCycleController with FullLifeCyc
               onPressed: () {
                 Get.back();
               },
-              child: const Text("No")),
+              child: const Text("No",style: TextStyle(color: buttonBgColor))),
           TextButton(
               onPressed: () async {
                 Get.back();
-                await Mirrorfly.enableDisableBusyStatus(false);
-                if (function != null) {
-                  function();
-                }
+                await Mirrorfly.enableDisableBusyStatus(enable: false, flyCallBack: (FlyResponse response) {
+                  if(response.isSuccess) {
+                    if (function != null) {
+                      function();
+                    }
+                  }
+                });
               },
-              child: const Text("Yes")),
+              child: const Text("Yes",style: TextStyle(color: buttonBgColor))),
         ]);
   }
 
@@ -295,7 +300,7 @@ class StarredMessagesController extends FullLifeCycleController with FullLifeCyc
       })?.then((value) {
         if (value != null) {
           debugPrint(
-              "result of forward ==> ${(value as Profile).toJson().toString()}");
+              "result of forward ==> ${(value as ProfileDetails).toJson().toString()}");
           Get.toNamed(Routes.chat, arguments: value);
         }
       });
@@ -304,13 +309,10 @@ class StarredMessagesController extends FullLifeCycleController with FullLifeCyc
 
   favouriteMessage() {
     for (var item in selectedChatList) {
-      Mirrorfly.updateFavouriteStatus(
-          item.messageId, item.chatUserJid, !item.isMessageStarred.value, item.messageChatType);
-      starredChatList
-          .removeWhere((element) => item.messageId == element.messageId);
+      Mirrorfly.updateFavouriteStatus(messageId: item.messageId,chatUserJid: item.chatUserJid,isFavourite: !item.isMessageStarred.value,chatType: item.messageChatType, flyCallBack: (FlyResponse response) {});
+      starredChatList.removeWhere((element) => item.messageId == element.messageId);
       if(isSearch.value){
-        searchedStarredMessageList
-            .removeWhere((element) => item.messageId == element.messageId);
+        searchedStarredMessageList.removeWhere((element) => item.messageId == element.messageId);
       }
     }
     selectedChatList.clear();
@@ -335,7 +337,7 @@ class StarredMessagesController extends FullLifeCycleController with FullLifeCyc
           selectedChatList.any((element) =>
               !element.isMessageRecalled.value &&
               (element.isMediaMessage() &&
-                  element.mediaChatMessage!.mediaLocalStoragePath
+                  element.mediaChatMessage!.mediaLocalStoragePath.value
                       .checkNull()
                       .isNotEmpty))
     };
@@ -397,27 +399,26 @@ class StarredMessagesController extends FullLifeCycleController with FullLifeCyc
               onPressed: () {
                 Get.back();
               },
-              child: const Text("CANCEL")),
+              child: const Text("CANCEL",style: TextStyle(color: buttonBgColor))),
           TextButton(
               onPressed: () {
                 Get.back();
-                for (var item in selectedChatList) {
-                  Mirrorfly.deleteMessagesForMe(
-                      item.chatUserJid,
-                      item.messageChatType,
-                      [item.messageId],
-                      isMediaDelete.value);
-                  starredChatList.removeWhere(
-                      (element) => item.messageId == element.messageId);
-                  if(isSearch.value){
-                    searchedStarredMessageList
-                        .removeWhere((element) => item.messageId == element.messageId);
-                  }
-                }
-                isSelected(false);
-                selectedChatList.clear();
+                var messageIds = selectedChatList.map((item) => item.messageId).toList();
+                Mirrorfly.deleteMessagesForMe(jid: selectedChatList[0].chatUserJid,
+                    chatType: selectedChatList[0].messageChatType, messageIds: messageIds,
+                      isMediaDelete: isMediaDelete.value, flyCallBack: (FlyResponse response) {
+                      for (var item in messageIds) {
+                        starredChatList.removeWhere((element) => item == element.messageId);
+                        if(isSearch.value){
+                          searchedStarredMessageList
+                              .removeWhere((element) => item == element.messageId);
+                        }
+                      }
+                      isSelected(false);
+                      selectedChatList.clear();
+                    });
               },
-              child: const Text("DELETE FOR ME")),
+              child: const Text("DELETE FOR ME",style: TextStyle(color: buttonBgColor))),
           /*isRecallAvailable
               ? TextButton(
               onPressed: () {
@@ -502,7 +503,7 @@ class StarredMessagesController extends FullLifeCycleController with FullLifeCyc
   validateForForwardMessage(){
     for (var value in selectedChatList) {
       if(value.isMediaMessage()) {
-        if ((value.isMediaDownloaded() || value.isMediaUploaded()) && value.mediaChatMessage!.mediaLocalStoragePath.checkNull().isNotEmpty) {
+        if ((value.isMediaDownloaded() || value.isMediaUploaded()) && value.mediaChatMessage!.mediaLocalStoragePath.value.checkNull().isNotEmpty) {
           canBeForward(true);
         } else {
           canBeForward(false);
@@ -518,7 +519,7 @@ class StarredMessagesController extends FullLifeCycleController with FullLifeCyc
   validateForShareMessage(){
     for (var value in selectedChatList) {
       if(value.isMediaMessage()) {
-        if ((value.isMediaDownloaded() || value.isMediaUploaded()) && checkFile(value.mediaChatMessage!.mediaLocalStoragePath.checkNull())) {
+        if ((value.isMediaDownloaded() || value.isMediaUploaded()) && checkFile(value.mediaChatMessage!.mediaLocalStoragePath.value.checkNull())) {
           canBeShare(true);
         } else {
           canBeShare(false);
@@ -690,8 +691,8 @@ class StarredMessagesController extends FullLifeCycleController with FullLifeCyc
     var mediaPaths = <XFile>[];
     for(var item in selectedChatList){
       if(item.isMediaMessage()){
-        if((item.isMediaDownloaded() || item.isMediaUploaded()) && item.mediaChatMessage!.mediaLocalStoragePath.checkNull().isNotEmpty){
-          mediaPaths.add(XFile(item.mediaChatMessage!.mediaLocalStoragePath.checkNull()));
+        if((item.isMediaDownloaded() || item.isMediaUploaded()) && item.mediaChatMessage!.mediaLocalStoragePath.value.checkNull().isNotEmpty){
+          mediaPaths.add(XFile(item.mediaChatMessage!.mediaLocalStoragePath.value.checkNull()));
         }
       }
     }

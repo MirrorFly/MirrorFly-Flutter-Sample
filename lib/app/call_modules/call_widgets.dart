@@ -5,12 +5,12 @@ import 'package:mirror_fly_demo/app/call_modules/call_utils.dart';
 import 'package:mirror_fly_demo/app/call_modules/outgoing_call/call_controller.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
 import 'package:mirror_fly_demo/app/common/widgets.dart';
-import 'package:mirror_fly_demo/app/data/helper.dart';
+import 'package:mirror_fly_demo/app/common/extensions.dart';
 import 'package:mirror_fly_demo/app/data/session_management.dart';
 import 'package:mirrorfly_plugin/mirrorfly_view.dart';
 import 'package:mirrorfly_plugin/mirrorflychat.dart';
 
-Widget buildProfileImage(Profile item, {double size = 105}) {
+Widget buildProfileImage(ProfileDetails item, {double size = 105}) {
   return ImageNetwork(
     url: item.image.toString(),
     width: size,
@@ -269,13 +269,13 @@ Widget buildListItem(CallController controller) {
                         mainAxisAlignment: MainAxisAlignment.center,
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          SizedBox(
-                            width: 20,
-                            child: CircleAvatar(
-                              backgroundColor: AppColors.audioMutedIconBgColor,
-                              child: SvgPicture.asset(unpinUser),
-                            ),
-                          ),
+                          // SizedBox(
+                          //   width: 20,
+                          //   child: CircleAvatar(
+                          //     backgroundColor: AppColors.audioMutedIconBgColor,
+                          //     child: SvgPicture.asset(unpinUser),
+                          //   ),
+                          // ),
                           if (controller.callList[index].isAudioMuted.value) ...[
                             Padding(
                               padding: const EdgeInsets.only(left: 4.0),
@@ -431,13 +431,13 @@ Widget buildGridItem(CallController controller) {
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    SizedBox(
-                      width: 20,
-                      child: CircleAvatar(
-                        backgroundColor: AppColors.audioMutedIconBgColor,
-                        child: SvgPicture.asset(unpinUser),
-                      ),
-                    ),
+                    // SizedBox(
+                    //   width: 20,
+                    //   child: CircleAvatar(
+                    //     backgroundColor: AppColors.audioMutedIconBgColor,
+                    //     child: SvgPicture.asset(unpinUser),
+                    //   ),
+                    // ),
                     if (controller.callList[index].isAudioMuted.value) ...[
                       Padding(
                         padding: const EdgeInsets.only(left: 4.0),
