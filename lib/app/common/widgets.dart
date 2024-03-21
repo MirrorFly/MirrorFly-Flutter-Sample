@@ -250,7 +250,9 @@ class ImageNetwork extends GetView<MainController> {
             .getPassword()
             .checkNull()
             .isNotEmpty) {
-          token = (await Mirrorfly.refreshAndGetAuthToken()) ?? controller.currentAuthToken.value;
+          await Mirrorfly.refreshAndGetAuthToken(flyCallBack: (response) {
+            token = response.data;
+          });
         }
         LogMessage.d("ImageNetwork", "refreshAndGetAuthToken retryCount $count");
       } else {

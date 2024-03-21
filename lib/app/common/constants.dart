@@ -625,9 +625,11 @@ class Constants {
   static const double borderRadius = 27;
   static const double defaultPadding = 8;
 
-  static const String mediaDoesNotExist = "Sorry. Media file isn\'t available in your internal storage";
-  static const String insufficientMemoryError = "Not enough storage space on your device. Please free up space in your phone\'s memory.";
+  static const String mediaDoesNotExist = "Sorry. Media file isn't available in your internal storage";
+  static const String mediaNotExist = "Sorry, media isn't available";
+  static const String insufficientMemoryError = "Not enough storage space on your device. Please free up space in your phone's memory.";
   static const String errorTryAgain = "Error Occurred, Please try again";
+  static const String errorVideoInitialize = "Error Occurred during video initialize";
   // static GlobalKey<AnimatedListState> audioListKey =
   // GlobalKey<AnimatedListState>();
 
@@ -660,10 +662,12 @@ class Constants {
   //Permission dialog contents
   static const String settingPermission =
       "You will not receive notifications while the app is in background if you disable these permissions";
+  static const String writeStoragePermission =
+      "To download media, allow MirrorFly access to your device's storage.";
   static const String filePermission =
       "To send media, allow MirrorFly access to your device's photos,media, and files.";
   static const String cameraPermission =
-      "To capture photos and video, allow MirrorFly access to the camera and storage.";
+      "To capture photos and video, allow MirrorFly access to the camera and microphone.";
   static const String locationPermission =
       "MirrorFly needs access to your location in order to share your current location.";
   static const String contactPermission =
@@ -686,6 +690,10 @@ class Constants {
       "MirrorFly need the Location Permission in order to attach a location, but they have been permanently denied. Please continue to app settings, select \"Permissions\", and enable \"Location\".";
   static const String cameraPermissionDenied =
       "MirrorFly need the Camera and Storage Permission in order to capture photos and video, but they have been permanently denied. Please continue to app settings, select \"Permissions\", and enable \"Camera\" and \"Storage\".";
+  static const String cameraCapturePermanentlyDeniedContent =
+      "MirrorFly need the Camera and Microphone Permission in order to capture photos and video, but they have been permanently denied. Please continue to app settings, select \"Permissions\", and enable \"Camera\" and \"Microphone\".";
+  static const String writeStoragePermissionDenied =
+      "MirrorFly need the Storage Permission in order to download photos, media, and files, but they have been permanently denied. Please continue to app settings, select \"Permissions\", and enable \"Storage\".";
   static const String storagePermissionDenied =
       "MirrorFly need the Storage Permission in order to attach photos, media, and files, but they have been permanently denied. Please continue to app settings, select \"Permissions\", and enable \"Storage\".";
   static const String microPhonePermissionDenied =
@@ -812,6 +820,9 @@ class Constants {
   static const String noCallLog = "No Call Log";
   static const String noCallLogHistoryFound = "No Call log history found";
   static const String anyNewCallsWillAppearHere = "Any new Calls will appear here";
+
+  static const String profileImageRemoveFailed = "Error while removing profile image";
+  static const String profileImageUpdateFailed = "Error while updating profile image";
 }
 
 Future<void> launchWeb(String url) async {
@@ -856,7 +867,7 @@ Widget forMessageTypeIcon(String messageType,[MediaChatMessage? mediaChatMessage
       return SvgPicture.asset(
         mediaChatMessage != null ? mediaChatMessage.isAudioRecorded ? mAudioRecordIcon : mAudioIcon : mAudioIcon,
         fit: BoxFit.contain,
-        color: textColor,
+        colorFilter: const ColorFilter.mode(textColor, BlendMode.srcIn),
       );
     case Constants.mVideo:
       return SvgPicture.asset(

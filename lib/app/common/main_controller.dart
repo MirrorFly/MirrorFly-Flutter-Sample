@@ -4,12 +4,14 @@ import 'dart:io';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_app_badger/flutter_app_badger.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get/get.dart';
 import 'package:is_lock_screen/is_lock_screen.dart';
 import 'package:mirror_fly_demo/app/base_controller.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
+import 'package:mirror_fly_demo/app/data/apputils.dart';
 import 'package:mirror_fly_demo/app/data/pushnotification.dart';
 import 'package:mirror_fly_demo/app/data/session_management.dart';
 import 'package:mirror_fly_demo/app/common/extensions.dart';
@@ -20,6 +22,7 @@ import 'package:mirror_fly_demo/app/modules/notification/notification_builder.da
 import 'package:mirror_fly_demo/app/routes/app_pages.dart';
 
 import 'package:mirrorfly_plugin/mirrorfly.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 import '../modules/chatInfo/controllers/chat_info_controller.dart';
 import 'notification_service.dart';
@@ -75,6 +78,7 @@ class MainController extends FullLifeCycleController with BaseController, FullLi
     // _configureDidReceiveLocalNotificationSubject();
     _configureSelectNotificationSubject();
     unreadMissedCallCount();
+    _removeBadge();
   }
 
   Future<void> _isAndroidPermissionGranted() async {
@@ -119,12 +123,12 @@ class MainController extends FullLifeCycleController with BaseController, FullLi
       // await Navigator.of(context).push(MaterialPageRoute<void>(
       //   builder: (BuildContext context) => SecondPage(payload),
       // ));
-      debugPrint("#Mirrorfly Notification -> opening chat page--> $payload ${Get.currentRoute}");
+      LogMessage.d("#Mirrorfly Notification -> opening chat page--> ","$payload ${Get.currentRoute}");
       if (payload != null && payload.isNotEmpty && payload.toString() != "124") {
         var chatJid = payload.checkNull().split(",")[0];
         var topicId = payload.checkNull().split(",")[1];
         if (Get.isRegistered<ChatController>()) {
-          debugPrint("#Mirrorfly Notification -> already chat page");
+          LogMessage.d("#Mirrorfly Notification ->","already chat page");
           if (Get.currentRoute == Routes.forwardChat ||
               Get.currentRoute == Routes.chatInfo ||
               Get.currentRoute == Routes.groupInfo ||
@@ -241,19 +245,22 @@ class MainController extends FullLifeCycleController with BaseController, FullLi
 
   @override
   void onDetached() {
-    mirrorFlyLog('mainController', 'onDetached');
+    mirrorFlyLog('LifeCycle', 'onDetached');
   }
 
   @override
   void onInactive() {
-    mirrorFlyLog('mainController', 'onInactive');
+    mirrorFlyLog('LifeCycle', 'onInactive');
   }
 
   bool fromLockScreen = false;
 
   @override
   void onPaused() async {
-    mirrorFlyLog('mainController', 'onPaused');
+    mirrorFlyLog('LifeCycle', 'onPaused');
+    var unReadMessageCount = await Mirrorfly.getUnreadMessageCountExceptMutedChat();
+    debugPrint('mainController unReadMessageCount onPaused ${unReadMessageCount.toString()}');
+    _setBadgeCount(unReadMessageCount ?? 0);
     fromLockScreen = await isLockScreen() ?? false;
     mirrorFlyLog('isLockScreen', '$fromLockScreen');
     SessionManagement.setAppSessionNow();
@@ -261,7 +268,7 @@ class MainController extends FullLifeCycleController with BaseController, FullLi
 
   @override
   void onResumed() {
-    mirrorFlyLog('mainController', 'onResumed');
+    mirrorFlyLog('LifeCycle', 'onResumed');
     NotificationBuilder.cancelNotifications();
     checkShouldShowPin();
     if (Constants.enableContactSync) {
@@ -271,24 +278,24 @@ class MainController extends FullLifeCycleController with BaseController, FullLi
   }
 
   void syncContacts() async {
-    /*if(await Permission.contacts.isGranted) {
+    if(await Permission.contacts.isGranted) {
       if (await AppUtils.isNetConnected() &&
           !await Mirrorfly.contactSyncStateValue()) {
         final permission = await Permission.contacts.status;
         if (permission == PermissionStatus.granted) {
           if(SessionManagement.getLogin()) {
-            Mirrorfly.syncContacts(!SessionManagement.isInitialContactSyncDone());
+            Mirrorfly.syncContacts(isFirstTime: !SessionManagement.isInitialContactSyncDone(), flyCallBack: (_) {});
           }
         }
       }
     }else{
       if(SessionManagement.isInitialContactSyncDone()) {
-        Mirrorfly.revokeContactSync().then((value) {
+        Mirrorfly.revokeContactSync(flyCallBack: (FlyResponse response) {
           onContactSyncComplete(true);
-          mirrorFlyLog("checkContactPermission isSuccess", value.toString());
+          mirrorFlyLog("checkContactPermission isSuccess", response.isSuccess.toString());
         });
       }
-    }*/
+    }
   }
 
   void networkDisconnected() {}
@@ -349,11 +356,21 @@ class MainController extends FullLifeCycleController with BaseController, FullLi
   }
 
   @override
-  void onHidden() {}
+  void onHidden() {
+    mirrorFlyLog('LifeCycle', 'onHidden');
+  }
 
   unreadMissedCallCount() async {
     var unreadMissedCallCount = await Mirrorfly.getUnreadMissedCallCount();
     unreadCallCount.value = unreadMissedCallCount ?? 0;
     debugPrint("unreadMissedCallCount $unreadMissedCallCount");
+  }
+
+  void _setBadgeCount(int count) {
+    FlutterAppBadger.updateBadgeCount(count);
+  }
+
+  void _removeBadge() {
+    FlutterAppBadger.removeBadge();
   }
 }

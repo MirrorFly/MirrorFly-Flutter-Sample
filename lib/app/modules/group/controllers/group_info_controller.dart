@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -13,6 +14,7 @@ import '../../../common/crop_image.dart';
 import '../../../data/apputils.dart';
 import '../../../data/session_management.dart';
 import '../../../routes/app_pages.dart';
+import '../../dashboard/controllers/dashboard_controller.dart';
 import '../views/name_change_view.dart';
 
 class GroupInfoController extends GetxController {
@@ -46,16 +48,16 @@ class GroupInfoController extends GetxController {
     _mute(profile.isMuted!);
     scrollController.addListener(_scrollListener);
     getGroupMembers(false);
-    if(availableFeatures.value.isGroupChatAvailable.checkNull()){
-      getGroupMembers(null);
-    }
+    // if(availableFeatures.value.isGroupChatAvailable.checkNull()){
+      // getGroupMembers(null);
+    // }
     groupAdmin();
     memberOfGroup();
     muteAble();
     nameController.text=profile.nickName.checkNull();
   }
   muteAble() async {
-    muteable(await Mirrorfly.isUserUnArchived(profile.jid.checkNull()));
+    muteable(await Mirrorfly.isChatUnArchived(jid: profile.jid.checkNull()));
   }
 
   void onGroupProfileUpdated(String groupJid) {
@@ -163,25 +165,26 @@ class GroupInfoController extends GetxController {
     }
   }
   groupAdmin(){
-    Mirrorfly.isAdmin(SessionManagement.getUserJID()! ,profile.jid.checkNull()).then((bool? value){
+    Mirrorfly.isGroupAdmin(userJid: SessionManagement.getUserJID()! ,groupJid: profile.jid.checkNull()).then((bool? value){
       if(value!=null){
         _isAdmin(value);
       }
     });
   }
   memberOfGroup(){
-    Mirrorfly.isMemberOfGroup(profile.jid.checkNull(),SessionManagement.getUserJID()).then((bool? value){
+    Mirrorfly.isMemberOfGroup(groupJid:profile.jid.checkNull(),userJid: SessionManagement.getUserJID().checkNull()).then((bool? value){
       if(value!=null){
         _isMemberOfGroup(value);
       }
     });
   }
-  onToggleChange(bool value){
+  onToggleChange(bool value) async {
     if (isMemberOfGroup) {
       if (muteable.value) {
         mirrorFlyLog("change", value.toString());
         _mute(value);
-        Mirrorfly.updateChatMuteStatus(profile.jid.checkNull(), value);
+        Mirrorfly.updateChatMuteStatus(jid:profile.jid.checkNull(), muteStatus: value);
+        notifyDashboardUI();
       }
     }else{
       toToast("You're no longer a participant in this group");
@@ -189,10 +192,10 @@ class GroupInfoController extends GetxController {
   }
 
   getGroupMembers(bool? server){
-    Mirrorfly.getGroupMembersList(profile.jid.checkNull(),server).then((value) {
-      mirrorFlyLog("getGroupMembersList", value);
-      if(value.isNotEmpty){
-        var list = profileFromJson(value);
+    Mirrorfly.getGroupMembersList(jid: profile.jid.checkNull(),fetchFromServer: server, flyCallBack: (FlyResponse response) {
+      mirrorFlyLog("getGroupMembersList", response.data);
+      if(response.isSuccess && response.hasData){
+        var list = profileFromJson(response.data);
         list.sort((a, b) => (a.jid==SessionManagement.getUserJID()) ? 1 : (b.jid==SessionManagement.getUserJID()) ? -1 : 0);
         groupMembers.value=(list);
         groupMembers.refresh();
@@ -210,25 +213,21 @@ class GroupInfoController extends GetxController {
           onPressed: () {
             Get.back();
           },
-          child: const Text("CANCEL")),
+          child: const Text("CANCEL",style: TextStyle(color: buttonBgColor))),
       TextButton(
           onPressed: () {
             Get.back();
             Helper.progressLoading();
-            Mirrorfly.reportUserOrMessages(profile.jid.checkNull(),Constants.typeGroupChat, "").then((value) {
+            Mirrorfly.reportUserOrMessages(jid: profile.jid.checkNull(),type: Constants.typeGroupChat, messageId: "", flyCallBack: (FlyResponse response) {
               Helper.hideLoading();
-              if(value!=null){
-                if(value){
-                  toToast("Report sent");
-                }else{
-                  toToast("There are no messages available");
-                }
+              if(response.isSuccess){
+                toToast("Report sent");
+              }else{
+                toToast("There are no messages available");
               }
-            }).catchError((error) {
-              Helper.hideLoading();
             });
           },
-          child: const Text("REPORT")),
+          child: const Text("REPORT",style: TextStyle(color: buttonBgColor))),
     ]);
   }
   exitOrDeleteGroup(){
@@ -250,13 +249,13 @@ class GroupInfoController extends GetxController {
           onPressed: () {
             Get.back();
           },
-          child: const Text("CANCEL")),
+          child: const Text("CANCEL",style: TextStyle(color: buttonBgColor))),
       TextButton(
           onPressed: () {
             Get.back();
             exitFromGroup();
           },
-          child: const Text("LEAVE")),
+          child: const Text("LEAVE",style: TextStyle(color: buttonBgColor))),
     ]);
   }
   var leavedGroup = false.obs;
@@ -267,14 +266,15 @@ class GroupInfoController extends GetxController {
     }
     if(await AppUtils.isNetConnected()) {
       Helper.progressLoading();
-      Mirrorfly.leaveFromGroup(SessionManagement.getUserJID() ,profile.jid.checkNull()).then((value) {
+      Mirrorfly.leaveFromGroup(userJid: SessionManagement.getUserJID().checkNull() ,groupJid: profile.jid.checkNull(), flyCallBack: (FlyResponse response) {
         Helper.hideLoading();
-        if(value!=null){
-          if(value){
-            _isMemberOfGroup(!value);
-            leavedGroup(value);
-          }
+        if(response.isSuccess){
+          _isMemberOfGroup(!response.isSuccess);
+          leavedGroup(response.isSuccess);
         }
+      }).then((value) {
+        Helper.hideLoading();
+
       }).catchError((error) {
         Helper.hideLoading();
         toToast(Constants.errorTryAgain);
@@ -293,7 +293,7 @@ class GroupInfoController extends GetxController {
           onPressed: () {
             Get.back();
           },
-          child: const Text("CANCEL")),
+          child: const Text("CANCEL",style: TextStyle(color: buttonBgColor))),
       TextButton(
           onPressed: () async {
             if(await AppUtils.isNetConnected()) {
@@ -303,23 +303,20 @@ class GroupInfoController extends GetxController {
                 return;
               }
               Helper.progressLoading();
-              Mirrorfly.deleteGroup(profile.jid.checkNull()).then((value) {
+              Mirrorfly.deleteGroup(jid: profile.jid.checkNull(), flyCallBack: (FlyResponse response) {
                 Helper.hideLoading();
-                if(value!=null){
-                  if(value){
-                    Get.offAllNamed(Routes.dashboard);
-                  }
+                if(response.isSuccess){
+                  Get.offAllNamed(Routes.dashboard);
+                }else{
+                  toToast(Constants.errorTryAgain);
                 }
-              }).catchError((error) {
-                Helper.hideLoading();
-                toToast(Constants.errorTryAgain);
               });
             }else{
               toToast(Constants.noInternetConnection);
             }
 
           },
-          child: const Text("DELETE")),
+          child: const Text("DELETE",style: TextStyle(color: buttonBgColor))),
     ]);
   }
 
@@ -381,13 +378,11 @@ class GroupInfoController extends GetxController {
       return;
     }
     showLoader();
-    Mirrorfly.updateGroupProfileImage(profile.jid.checkNull(),path).then((bool? value){
+    Mirrorfly.updateGroupProfileImage(jid:profile.jid.checkNull(),file: path, flyCallBack: (FlyResponse response) {
       hideLoader();
-      if(value!=null){
-        if(value){
-          profile_.value.image=path;
-          profile_.refresh();
-        }
+      if(response.isSuccess){
+        profile_.value.image=path;
+        profile_.refresh();
       }
     });
   }
@@ -398,14 +393,12 @@ class GroupInfoController extends GetxController {
       return;
     }
     showLoader();
-    Mirrorfly.updateGroupName(profile.jid.checkNull(),name).then((bool? value){
+    Mirrorfly.updateGroupName(jid: profile.jid.checkNull(),name: name, flyCallBack: (FlyResponse response) {
       hideLoader();
-      if(value!=null){
-        if(value){
-          profile_.value.name = name;
-          profile_.value.nickName = name;
-          profile_.refresh();
-        }
+      if(response.isSuccess){
+        profile_.value.name = name;
+        profile_.value.nickName = name;
+        profile_.refresh();
       }
     });
   }
@@ -416,13 +409,13 @@ class GroupInfoController extends GetxController {
           onPressed: () {
             Get.back();
           },
-          child: const Text("CANCEL")),
+          child: const Text("CANCEL",style: TextStyle(color: buttonBgColor))),
       TextButton(
           onPressed: () {
             Get.back();
             revokeAccessForProfileImage();
           },
-          child: const Text("REMOVE")),
+          child: const Text("REMOVE",style: TextStyle(color: buttonBgColor))),
     ]);
   }
 
@@ -433,16 +426,12 @@ class GroupInfoController extends GetxController {
     }
     if(await AppUtils.isNetConnected()) {
       showLoader();
-      Mirrorfly.removeGroupProfileImage(profile.jid.checkNull()).then((bool? value) {
+      Mirrorfly.removeGroupProfileImage(jid: profile.jid.checkNull(), flyCallBack: (FlyResponse response) {
         hideLoader();
-        if (value != null) {
-          if(value){
-            profile_.value.image=Constants.emptyString;
-            profile_.refresh();
-          }
+        if (response.isSuccess) {
+          profile_.value.image=Constants.emptyString;
+          profile_.refresh();
         }
-      }).catchError((onError) {
-        hideLoader();
       });
     }else{
       toToast(Constants.noInternetConnection);
@@ -471,9 +460,9 @@ class GroupInfoController extends GetxController {
   addUsers(dynamic value)async{
     if(await AppUtils.isNetConnected()) {
       showLoader();
-      Mirrorfly.addUsersToGroup(profile.jid.checkNull(),value as List<String>).then((value){
+      Mirrorfly.addUsersToGroup(jid: profile.jid.checkNull(),userList: value as List<String>, flyCallBack: (FlyResponse response) {
         hideLoader();
-        if(value!=null && value){
+        if(response.isSuccess){
           //getGroupMembers(false);
         }else{
           toToast("Error while adding Members in this group");
@@ -496,9 +485,9 @@ class GroupInfoController extends GetxController {
     if(isMemberOfGroup){
       if(await AppUtils.isNetConnected()) {
         showLoader();
-        Mirrorfly.removeMemberFromGroup(profile.jid.checkNull(), userJid).then((value){
+        Mirrorfly.removeMemberFromGroup(groupJid: profile.jid.checkNull(), userJid: userJid, flyCallBack: (FlyResponse response) {
           hideLoader();
-          if(value!=null && value){
+          if(response.isSuccess){
             //getGroupMembers(false);
           }else{
             toToast("Error while Removing this member");
@@ -520,9 +509,9 @@ class GroupInfoController extends GetxController {
     if(isMemberOfGroup){
       if(await AppUtils.isNetConnected()) {
         showLoader();
-        Mirrorfly.makeAdmin(profile.jid.checkNull(), userJid).then((value){
+        Mirrorfly.makeAdmin(groupJid: profile.jid.checkNull(),userJid: userJid, flyCallBack: (FlyResponse response) {
           hideLoader();
-          if(value!=null && value){
+          if(response.isSuccess){
             //getGroupMembers(false);
           }else{
             toToast("Error while make admin this member");
@@ -561,6 +550,70 @@ class GroupInfoController extends GetxController {
     count.value = (25 - nameController.text.length);
   }
 
+  onEmojiBackPressed(){
+    var text = nameController.text;
+    var cursorPosition = nameController.selection.base.offset;
+
+    // If cursor is not set, then place it at the end of the textfield
+    if (cursorPosition < 0) {
+      nameController.selection = TextSelection(
+        baseOffset: nameController.text.length,
+        extentOffset: nameController.text.length,
+      );
+      cursorPosition = nameController.selection.base.offset;
+    }
+
+    if (cursorPosition >= 0) {
+      final selection = nameController.value.selection;
+      final newTextBeforeCursor =
+      selection.textBefore(text).characters.skipLast(1).toString();
+      LogMessage.d("newTextBeforeCursor", newTextBeforeCursor);
+      nameController
+        ..text = newTextBeforeCursor + selection.textAfter(text)
+        ..selection = TextSelection.fromPosition(
+            TextPosition(offset: newTextBeforeCursor.length));
+    }
+    count((25 - nameController.text.characters.length));
+  }
+
+  onEmojiSelected(Emoji emoji){
+    if(nameController.text.characters.length < 25){
+      final controller = nameController;
+      final text = controller.text;
+      final selection = controller.selection;
+      final cursorPosition = controller.selection.base.offset;
+
+      if (cursorPosition < 0) {
+        controller.text += emoji.emoji;
+        // widget.onEmojiSelected?.call(category, emoji);
+        return;
+      }
+
+      final newText =
+      text.replaceRange(selection.start, selection.end, emoji.emoji);
+      final emojiLength = emoji.emoji.length;
+      controller
+        ..text = newText
+        ..selection = selection.copyWith(
+          baseOffset: selection.start + emojiLength,
+          extentOffset: selection.start + emojiLength,
+        );
+    }
+    count((25 - nameController.text.characters.length));
+  }
+
+  showHideEmoji(BuildContext context){
+    if (!showEmoji.value) {
+      focusNode.unfocus();
+    }else{
+      focusNode.requestFocus();
+      return;
+    }
+    Future.delayed(const Duration(milliseconds: 500), () {
+      showEmoji(!showEmoji.value);
+    });
+  }
+
   void userDeletedHisProfile(String jid) {
     userUpdatedHisProfile(jid);
   }
@@ -582,5 +635,19 @@ class GroupInfoController extends GetxController {
     availableFeatures(features);
     _isMemberOfGroup.refresh();
     // loadGroupExistence();
+  }
+  void notifyDashboardUI(){
+    if(Get.isRegistered<DashboardController>()){
+      Get.find<DashboardController>().chatMuteChangesNotifyUI(profile.jid.checkNull());
+    }
+  }
+
+  onBackPressed() {
+    if (showEmoji.value) {
+      showEmoji(false);
+    } else {
+      nameController.text = profile.nickName.checkNull();
+      Get.back();
+    }
   }
 }

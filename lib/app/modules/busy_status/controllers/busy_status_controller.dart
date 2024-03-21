@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:mirrorfly_plugin/mirrorfly.dart';
 import 'package:get/get.dart';
@@ -23,6 +24,58 @@ class BusyStatusController extends FullLifeCycleController with FullLifeCycleMix
 
   onChanged() {
     count(139 - addStatusController.text.characters.length);
+  }
+
+  onEmojiBackPressed(){
+    var text = addStatusController.text;
+    var cursorPosition = addStatusController.selection.base.offset;
+
+    // If cursor is not set, then place it at the end of the textfield
+    if (cursorPosition < 0) {
+      addStatusController.selection = TextSelection(
+        baseOffset: addStatusController.text.length,
+        extentOffset: addStatusController.text.length,
+      );
+      cursorPosition = addStatusController.selection.base.offset;
+    }
+
+    if (cursorPosition >= 0) {
+      final selection = addStatusController.value.selection;
+      final newTextBeforeCursor =
+      selection.textBefore(text).characters.skipLast(1).toString();
+      LogMessage.d("newTextBeforeCursor", newTextBeforeCursor);
+      addStatusController
+        ..text = newTextBeforeCursor + selection.textAfter(text)
+        ..selection = TextSelection.fromPosition(
+            TextPosition(offset: newTextBeforeCursor.length));
+    }
+    count((139 - addStatusController.text.characters.length));
+  }
+
+  onEmojiSelected(Emoji emoji){
+    if(addStatusController.text.characters.length < 139){
+      final controller = addStatusController;
+      final text = controller.text;
+      final selection = controller.selection;
+      final cursorPosition = controller.selection.base.offset;
+
+      if (cursorPosition < 0) {
+        controller.text += emoji.emoji;
+        // widget.onEmojiSelected?.call(category, emoji);
+        return;
+      }
+
+      final newText =
+      text.replaceRange(selection.start, selection.end, emoji.emoji);
+      final emojiLength = emoji.emoji.length;
+      controller
+        ..text = newText
+        ..selection = selection.copyWith(
+          baseOffset: selection.start + emojiLength,
+          extentOffset: selection.start + emojiLength,
+        );
+    }
+    count((139 - addStatusController.text.characters.length));
   }
 
   @override
@@ -104,7 +157,7 @@ class BusyStatusController extends FullLifeCycleController with FullLifeCycleMix
       }
     }
 
-    Mirrorfly.insertBusyStatus(newBusyStatus).then((value) {
+    Mirrorfly.insertBusyStatus(busyStatus: newBusyStatus).then((value) {
       busyStatus(newBusyStatus);
       setCurrentStatus(newBusyStatus);
     });
@@ -125,8 +178,8 @@ class BusyStatusController extends FullLifeCycleController with FullLifeCycleMix
   }
 
   void setCurrentStatus(String status) {
-    Mirrorfly.setMyBusyStatus(status).then((value) {
-      debugPrint("status value $value");
+    Mirrorfly.setMyBusyStatus(busyStatus: status, flyCallBack: (FlyResponse response) {
+      debugPrint("status value $response");
       var settingController = Get.find<ChatSettingsController>();
       settingController.busyStatus(status);
       getMyBusyStatusList();
@@ -139,14 +192,14 @@ class BusyStatusController extends FullLifeCycleController with FullLifeCycleMix
           onPressed: () {
             Get.back();
           },
-          child: const Text("No")),
+          child: const Text("No",style: TextStyle(color: buttonBgColor))),
       TextButton(
           onPressed: () async {
             if (await AppUtils.isNetConnected()) {
               Get.back();
               Helper.showLoading(message: "Deleting Busy Status");
-              Mirrorfly.deleteBusyStatus(
-                  item.id!, item.status!, item.isCurrentStatus!)
+              Mirrorfly.deleteBusyStatus(id:
+                  item.id!, status: item.status!, isCurrentStatus: item.isCurrentStatus!)
                   .then((value) {
                     busyStatusList.remove(item);
                 Helper.hideLoading();
@@ -158,7 +211,7 @@ class BusyStatusController extends FullLifeCycleController with FullLifeCycleMix
               toToast(Constants.noInternetConnection);
             }
           },
-          child: const Text("Yes")),
+          child: const Text("Yes",style: TextStyle(color: buttonBgColor))),
     ]);
   }
 

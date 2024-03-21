@@ -35,10 +35,10 @@ class GroupParticipantsController extends GetxController {
   }
 
   void getGroupMembers() {
-    Mirrorfly.getGroupMembersList(groupId.value.checkNull(), false).then((value) {
-      mirrorFlyLog("getGroupMembersList", value);
-      if (value.isNotEmpty) {
-        var list = profileFromJson(value);
+    Mirrorfly.getGroupMembersList(jid: groupId.value.checkNull(), fetchFromServer: false, flyCallBack: (FlyResponse response) {
+      mirrorFlyLog("getGroupMembersList", response.toString());
+      if (response.isSuccess &&response.hasData) {
+        var list = profileFromJson(response.data);
         var withoutMe = list.where((element) => element.jid != SessionManagement.getUserJID()).toList();
         mainUserList(withoutMe);
         usersList(withoutMe);
@@ -140,27 +140,24 @@ class GroupParticipantsController extends GetxController {
           onPressed: () {
             Get.back();
           },
-          child: const Text("NO")),
+          child: const Text("NO",style: TextStyle(color: buttonBgColor))),
       TextButton(
           onPressed: () async {
             if (await AppUtils.isNetConnected()) {
               Get.back();
               Helper.progressLoading();
-              Mirrorfly.unblockUser(item.jid.checkNull()).then((value) {
+              Mirrorfly.unblockUser(userJid: item.jid.checkNull(), flyCallBack: (FlyResponse response) {
                 Helper.hideLoading();
-                if (value != null && value) {
+                if (response.isSuccess && response.hasData) {
                   toToast("${getName(item)} has been Unblocked");
                   userUpdatedHisProfile(item.jid.checkNull());
                 }
-              }).catchError((error) {
-                Helper.hideLoading();
-                debugPrint(error);
               });
             } else {
               toToast(Constants.noInternetConnection);
             }
           },
-          child: const Text("YES")),
+          child: const Text("YES",style: TextStyle(color: buttonBgColor))),
     ]);
   }
 
@@ -225,8 +222,8 @@ class GroupParticipantsController extends GetxController {
     }
     if (callType.value == CallType.audio) {
       if (await AppPermission.askAudioCallPermissions()) {
-        Mirrorfly.makeGroupVoiceCall(groupJid: groupId.value, jidList: selectedUsersJIDList).then((value) {
-          if (value) {
+        Mirrorfly.makeGroupVoiceCall(groupJid: groupId.value, toUserJidList: selectedUsersJIDList, flyCallBack: (FlyResponse response) {
+          if (response.isSuccess) {
             Get.offNamed(Routes.outGoingCallView,
                 arguments: {"userJid": selectedUsersJIDList, "callType": CallType.audio});
           }
@@ -234,8 +231,8 @@ class GroupParticipantsController extends GetxController {
       }
     } else if (callType.value == CallType.video) {
       if (await AppPermission.askVideoCallPermissions()) {
-        Mirrorfly.makeGroupVideoCall(groupJid: groupId.value, jidList: selectedUsersJIDList).then((value) {
-          if (value) {
+        Mirrorfly.makeGroupVideoCall(groupJid: groupId.value, toUserJidList: selectedUsersJIDList, flyCallBack: (FlyResponse response) {
+          if (response.isSuccess) {
             Get.offNamed(Routes.outGoingCallView,
                 arguments: {"userJid": selectedUsersJIDList, "callType": CallType.video});
           }

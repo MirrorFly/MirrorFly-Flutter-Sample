@@ -40,7 +40,7 @@ class NotificationBuilder {
     debugPrint("inside if notification");
     lastMessageContent.write(NotificationUtils.getMessageSummary(message));
     lastMessageTime = (message.messageSentTime.toString().length > 13)
-        ? (message.messageSentTime / 1000).toInt()
+        ? message.messageSentTime ~/ 1000
         : message.messageSentTime;
     await displayMessageNotification(
         notificationId,

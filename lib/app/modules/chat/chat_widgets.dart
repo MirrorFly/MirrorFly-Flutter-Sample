@@ -1,10 +1,10 @@
 import 'dart:convert';
-import 'dart:io';
 
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:mirror_fly_demo/app/modules/chat/widgets/image_message_view.dart';
 import 'package:mirrorfly_plugin/mirrorflychat.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
@@ -160,12 +160,12 @@ getReplyMessage(String messageType,
               mediaChatMessage != null
                   ? mediaChatMessage.isAudioRecorded
                   : true)
-              : const SizedBox.shrink(),
+              : const Offstage(),
           isReplying
               ? const SizedBox(
             width: 5,
           )
-              : const SizedBox.shrink(),
+              : const Offstage(),
           Text(
             Helper.durationToString(Duration(
                 milliseconds: mediaChatMessage != null
@@ -225,28 +225,27 @@ getReplyMessage(String messageType,
         ],
       );
     default:
-      return const SizedBox.shrink();
+      return const Offstage();
   }
 }
 
-// chatMessage.messageType.toUpperCase(),
-// chatMessage.mediaChatMessage?.mediaThumbImage,
-// chatMessage.locationChatMessage,
 getReplyImageHolder(BuildContext context,
     ChatMessageModel chatMessageModel,
     MediaChatMessage? mediaChatMessage,
     double size,
     bool isNotChatItem,
     LocationChatMessage? locationChatMessage) {
+  // LogMessage.d("getReplyImageHolder", "chatMessageModel : ${chatMessageModel.toJson()}");
+  // LogMessage.d("getReplyImageHolder", "mediaChatMessage : ${mediaChatMessage?.toJson()}");
+  // LogMessage.d("getReplyImageHolder", "isNotChatItem : $isNotChatItem");
+  // LogMessage.d("getReplyImageHolder", "locationChatMessage : ${locationChatMessage?.toJson()}");
   var isReply = false;
   if (mediaChatMessage != null || locationChatMessage != null) {
     isReply = true;
   }
-  switch (isReply
-      ? mediaChatMessage == null
-      ? "LOCATION"
-      : mediaChatMessage.messageType.checkNull().toUpperCase()
-      : chatMessageModel.messageType.checkNull().toUpperCase()) {
+  var condition = isReply ? (mediaChatMessage == null ? Constants.mLocation : mediaChatMessage.messageType) : chatMessageModel.replyParentChatMessage?.messageType;
+  LogMessage.d("getReplyImageHolder", "condition : $condition");
+  switch (condition) {
     case Constants.mImage:
       debugPrint("reply header--> IMAGE");
       return ClipRRect(
@@ -262,8 +261,6 @@ getReplyImageHolder(BuildContext context,
             size),
       );
     case Constants.mLocation:
-    // debugPrint("location mesg--> ${locationChatMessage?.toJson().toString()}");
-    // debugPrint("location mesg--> ${chatMessageModel.locationChatMessage?.toJson().toString()}");
       return getLocationImage(
           isReply ? locationChatMessage : chatMessageModel.locationChatMessage,
           size,
@@ -322,7 +319,7 @@ getReplyImageHolder(BuildContext context,
                   ? mAudioRecordIcon
                   : mAudioIcon,
               fit: BoxFit.contain,
-              color: Colors.white,
+              colorFilter: const ColorFilter.mode(Colors.white, BlendMode.srcIn),
               height: 18,
             ),
           ),
@@ -392,30 +389,27 @@ class ReplyMessageHeader extends StatelessWidget {
           getReplyImageHolder(
               context,
               chatMessage,
-              chatMessage.replyParentChatMessage!.mediaChatMessage,
+              chatMessage.replyParentChatMessage?.mediaChatMessage,
               55,
               false,
-              chatMessage.replyParentChatMessage!.locationChatMessage),
+              chatMessage.replyParentChatMessage?.locationChatMessage),
         ],
       ),
     );
   }
 }
 
-Image imageFromBase64String(String base64String, BuildContext context, double? width, double? height) {
-  var decodedBase64 = base64String.replaceAll("\n", "");
-  Uint8List image = const Base64Decoder().convert(decodedBase64);
+Widget imageFromBase64String(String base64String, BuildContext context, double? width, double? height) {
+  LogMessage.d("imageFromBase64String", "final");
+  final decodedBase64 = base64String.replaceAll("\n", "");
+  final Uint8List image = const Base64Decoder().convert(decodedBase64);
   return Image.memory(
     image,
-    width: width ?? MediaQuery
-        .of(context)
-        .size
-        .width * 0.60,
-    height: height ?? MediaQuery
-        .of(context)
-        .size
-        .height * 0.4,
+    key: ValueKey<String>(base64String),
+    width: width ?? Get.width * 0.60,
+    height: height ?? Get.height * 0.4,
     fit: BoxFit.cover,
+    gaplessPlayback: true,
   );
 }
 
@@ -467,9 +461,9 @@ class SenderHeader extends StatelessWidget {
       }
       var currentSenderJid = currentMessage.senderUserJid.checkNull();
       var previousSenderJid = previousMessage.senderUserJid.checkNull();
-      debugPrint("currentSenderJid  : $currentSenderJid");
-      debugPrint("previousSenderJid : $previousSenderJid");
-      debugPrint("isSenderChanged : ${previousSenderJid != currentSenderJid}");
+      // debugPrint("currentSenderJid  : $currentSenderJid");
+      // debugPrint("previousSenderJid : $previousSenderJid");
+      // debugPrint("isSenderChanged : ${previousSenderJid != currentSenderJid}");
       return previousSenderJid != currentSenderJid;
     } else {
       return false;
@@ -539,7 +533,7 @@ class LocationMessageView extends StatelessWidget {
               children: [
                 chatMessage.isMessageStarred.value
                     ? SvgPicture.asset(starSmallIcon)
-                    : const SizedBox.shrink(),
+                    : const Offstage(),
                 const SizedBox(
                   width: 5,
                 ),
@@ -622,14 +616,45 @@ class _AudioMessageViewState extends State<AudioMessageView>
         .currentPos
         .toDouble()
         .obs;
-    player.onPlayerCompletion.listen((event) {
+    // player.onPlayerCompletion.listen((event) {
+    //   isPlaying(false);
+    //   currentPos(0);
+    //   widget.chatMessage.mediaChatMessage!.currentPos = 0;
+    //   player.stop();
+    // });
+    //
+    // player.onAudioPositionChanged.listen((Duration p) {
+    //   mirrorFlyLog('p.inMilliseconds', p.inMilliseconds.toString());
+    //   widget.chatMessage.mediaChatMessage!.currentPos = p.inMilliseconds;
+    //   currentPos(p.inMilliseconds.toDouble());
+    //   currentPos.refresh();
+    // });
+    player.onPlayerStateChanged.listen(
+          (it) {
+        switch (it) {
+          case PlayerState.playing:
+            isPlaying(true);
+            break;
+          case PlayerState.stopped:
+            isPlaying(false);
+            break;
+          case PlayerState.paused:
+            isPlaying(false);
+            break;
+          case PlayerState.completed:
+            break;
+          default:
+            break;
+        }
+      },
+    );
+    player.onPlayerComplete.listen((event) {
       isPlaying(false);
       currentPos(0);
       widget.chatMessage.mediaChatMessage!.currentPos = 0;
       player.stop();
     });
-
-    player.onAudioPositionChanged.listen((Duration p) {
+    player.onPositionChanged.listen((Duration  p) {
       mirrorFlyLog('p.inMilliseconds', p.inMilliseconds.toString());
       widget.chatMessage.mediaChatMessage!.currentPos = p.inMilliseconds;
       currentPos(p.inMilliseconds.toDouble());
@@ -670,10 +695,7 @@ class _AudioMessageViewState extends State<AudioMessageView>
 
   @override
   Widget build(BuildContext context) {
-    var screenWidth = MediaQuery
-        .of(context)
-        .size
-        .width;
+    var screenWidth = Get.width;
     var currentPos =
     0.0; /*double.parse(widget.chatMessage
         .mediaChatMessage!.currentPos
@@ -699,7 +721,7 @@ class _AudioMessageViewState extends State<AudioMessageView>
         borderRadius: const BorderRadius.all(Radius.circular(10)),
         color: Colors.transparent,
       ),
-      width: screenWidth * 0.70,
+      width: screenWidth * 0.80,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -816,7 +838,7 @@ class _AudioMessageViewState extends State<AudioMessageView>
               children: [
                 widget.chatMessage.isMessageStarred.value
                     ? SvgPicture.asset(starSmallIcon)
-                    : const SizedBox.shrink(),
+                    : const Offstage(),
                 const SizedBox(
                   width: 5,
                 ),
@@ -859,12 +881,14 @@ class _AudioMessageViewState extends State<AudioMessageView>
     }*/
     Get.dialog(
       Dialog(
-        child: WillPopScope(
-          onWillPop: () {
-            // currentPos(0);
+        child: PopScope(
+          canPop: true,
+          onPopInvoked: (didPop) {
             isPlaying(false);
             player.stop();
-            return Future.value(true);
+            if (didPop) {
+              return;
+            }
           },
           child: Container(
             decoration: BoxDecoration(
@@ -906,24 +930,30 @@ class _AudioMessageViewState extends State<AudioMessageView>
                   return InkWell(
                     onTap: () async {
                       if (!isPlaying.value) {
-                        int result = await player.play(
-                            chatMessage.mediaChatMessage!.mediaLocalStoragePath.value,
-                            position: Duration(
-                                milliseconds:
-                                chatMessage.mediaChatMessage!.currentPos),
-                            isLocal: true);
-                        if (result == 1) {
-                          isPlaying(true);
-                        } else {
-                          mirrorFlyLog("", "Error while playing audio.");
-                        }
+                        // int result = await player.play(
+                        //     chatMessage.mediaChatMessage!.mediaLocalStoragePath.value,
+                        //     position: Duration(
+                        //         milliseconds:
+                        //         chatMessage.mediaChatMessage!.currentPos),
+                        //     isLocal: true);
+                        // if (result == 1) {
+                        //   isPlaying(true);
+                        // } else {
+                        //   mirrorFlyLog("", "Error while playing audio.");
+                        // }
+                        await player.play(DeviceFileSource(chatMessage.mediaChatMessage!.mediaLocalStoragePath.value),position: Duration(
+                            milliseconds:
+                            chatMessage.mediaChatMessage!.currentPos));
+                        isPlaying(true);
                       } else {
-                        int result = await player.pause();
-                        if (result == 1) {
-                          isPlaying(false);
-                        } else {
-                          mirrorFlyLog("", "Error on pause audio.");
-                        }
+                        // int result = await player.pause();
+                        // if (result == 1) {
+                        //   isPlaying(false);
+                        // } else {
+                        //   mirrorFlyLog("", "Error on pause audio.");
+                        // }
+                        await player.pause();
+                        isPlaying(false);
                       }
                     },
                     child: Padding(
@@ -1043,10 +1073,7 @@ class ContactMessageView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var screenWidth = MediaQuery
-        .of(context)
-        .size
-        .width;
+    var screenWidth = Get.width;
     return Container(
       decoration: BoxDecoration(
         borderRadius: const BorderRadius.all(Radius.circular(10)),
@@ -1096,7 +1123,7 @@ class ContactMessageView extends StatelessWidget {
               children: [
                 chatMessage.isMessageStarred.value
                     ? SvgPicture.asset(starSmallIcon)
-                    : const SizedBox.shrink(),
+                    : const Offstage(),
                 const SizedBox(
                   width: 5,
                 ),
@@ -1137,9 +1164,8 @@ class ContactMessageView extends StatelessWidget {
       debugPrint(
           "contactChatMessage.isChatAppUser[i]--> ${contactChatMessage.isChatAppUser[i]}");
       if (contactChatMessage.isChatAppUser[i]) {
-        return await Mirrorfly.getJidFromPhoneNumber(
-            contactChatMessage.contactPhoneNumbers[i],
-            (SessionManagement.getCountryCode() ?? "").replaceAll('+', ''));
+        return await Mirrorfly.getJidFromPhoneNumber(mobileNumber: contactChatMessage.contactPhoneNumbers[i],
+            countryCode: (SessionManagement.getCountryCode() ?? "").replaceAll('+', ''));
       }
     }
     return '';
@@ -1149,13 +1175,13 @@ class ContactMessageView extends StatelessWidget {
     // String? userJid;
     if (contactChatMessage == null ||
         contactChatMessage.contactPhoneNumbers.isEmpty) {
-      return const SizedBox.shrink();
+      return const Offstage();
     }
     return FutureBuilder(
         future: getUserJid(contactChatMessage),
         builder: (context, snapshot) {
           if (snapshot.hasError || !snapshot.hasData) {
-            return const SizedBox.shrink();
+            return const Offstage();
           }
           var userJid = snapshot.data;
           debugPrint("getJidOfContact--> $userJid");
@@ -1258,10 +1284,7 @@ class DocumentMessageView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var screenWidth = MediaQuery
-        .of(context)
-        .size
-        .width;
+    var screenWidth = Get.width;
     return InkWell(
       onTap: () {
         onDocumentClick();
@@ -1355,7 +1378,7 @@ class DocumentMessageView extends StatelessWidget {
                   const Spacer(),
                   chatMessage.isMessageStarred.value
                       ? SvgPicture.asset(starSmallIcon)
-                      : const SizedBox.shrink(),
+                      : const Offstage(),
                   const SizedBox(
                     width: 5,
                   ),
@@ -1435,13 +1458,8 @@ class VideoMessageView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var mediaMessage = chatMessage.mediaChatMessage!;
-    // var screenHeight = MediaQuery.of(context).size.height;
-    var screenWidth = MediaQuery
-        .of(context)
-        .size
-        .width;
     return Container(
-      width: screenWidth * 0.60,
+      width: Get.width * 0.60,
       padding: const EdgeInsets.all(2.0),
       child: Column(
         children: [
@@ -1468,7 +1486,7 @@ class VideoMessageView extends StatelessWidget {
                     SvgPicture.asset(
                       mVideoIcon,
                       fit: BoxFit.contain,
-                      color: Colors.white,
+                      colorFilter: const ColorFilter.mode(Colors.white, BlendMode.srcIn),
                     ),
                     const SizedBox(
                       width: 5,
@@ -1496,7 +1514,7 @@ class VideoMessageView extends StatelessWidget {
                   children: [
                     chatMessage.isMessageStarred.value
                         ? SvgPicture.asset(starSmallIcon)
-                        : const SizedBox.shrink(),
+                        : const Offstage(),
                     const SizedBox(
                       width: 5,
                     ),
@@ -1535,7 +1553,7 @@ class VideoMessageView extends StatelessWidget {
   }
 }
 
-class ImageMessageView extends StatelessWidget {
+/*class ImageMessageView extends StatelessWidget {
   const ImageMessageView({Key? key,
     required this.chatMessage,
     this.search = "",
@@ -1547,14 +1565,10 @@ class ImageMessageView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    LogMessage.d("ImageMessageView", "build ${chatMessage.messageId}");
     var mediaMessage = chatMessage.mediaChatMessage!;
-    // var screenHeight = MediaQuery.of(context).size.height;
-    var screenWidth = MediaQuery
-        .of(context)
-        .size
-        .width;
     return Container(
-      width: screenWidth * 0.60,
+      width: Get.width * 0.60,
       padding: const EdgeInsets.all(2.0),
       child: Column(
         children: [
@@ -1584,7 +1598,7 @@ class ImageMessageView extends StatelessWidget {
                   children: [
                     chatMessage.isMessageStarred.value
                         ? SvgPicture.asset(starSmallIcon)
-                        : const SizedBox.shrink(),
+                        : const Offstage(),
                     const SizedBox(
                       width: 5,
                     ),
@@ -1630,14 +1644,6 @@ class ImageMessageView extends StatelessWidget {
   getImage(RxString mediaLocalStoragePath, String mediaThumbImage,
       BuildContext context, String mediaFileName, bool isSelected) {
     debugPrint("getImage mediaLocalStoragePath : $mediaLocalStoragePath");
-    var screenHeight = MediaQuery
-        .of(context)
-        .size
-        .height;
-    var screenWidth = MediaQuery
-        .of(context)
-        .size
-        .width;
     if (checkFile(mediaLocalStoragePath.value)) {
       return InkWell(
           onTap: isSelected
@@ -1672,8 +1678,8 @@ class ImageMessageView extends StatelessWidget {
                   child: Text("$obj"),
                 );
               },
-              width: screenWidth * 0.60,
-              height: screenHeight * 0.4,
+              width: Get.width * 0.60,
+              height: Get.height * 0.4,
               fit: BoxFit.cover,
             );
           })
@@ -1682,7 +1688,7 @@ class ImageMessageView extends StatelessWidget {
       return imageFromBase64String(mediaThumbImage, context, null, null);
     }
   }
-}
+}*/
 
 Widget setCaptionMessage(MediaChatMessage mediaMessage,
     ChatMessageModel chatMessage, BuildContext context,
@@ -1705,7 +1711,7 @@ Widget setCaptionMessage(MediaChatMessage mediaMessage,
           children: [
             chatMessage.isMessageStarred.value
                 ? SvgPicture.asset(starSmallIcon)
-                : const SizedBox.shrink(),
+                : const Offstage(),
             const SizedBox(
               width: 5,
             ),
@@ -1774,6 +1780,7 @@ class MessageContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    LogMessage.d("MessageContent", "build ${chatList[index].messageId}");
     var chatMessage = chatList[index];
     //mirrorFlyLog("message==>", json.encode(chatMessage));
     // debugPrint("Message Type===> ${chatMessage.messageType}");
@@ -1795,7 +1802,7 @@ class MessageContent extends StatelessWidget {
       } else if (chatList[index].messageType.toUpperCase() ==
           Constants.mLocation) {
         if (chatList[index].locationChatMessage == null) {
-          return const SizedBox.shrink();
+          return const Offstage();
         }
         return LocationMessageView(
           chatMessage: chatMessage,
@@ -1804,7 +1811,7 @@ class MessageContent extends StatelessWidget {
       } else if (chatList[index].messageType.toUpperCase() ==
           Constants.mContact) {
         if (chatList[index].contactChatMessage == null) {
-          return const SizedBox.shrink();
+          return const Offstage();
         }
         return ContactMessageView(
           chatMessage: chatMessage,
@@ -1813,7 +1820,7 @@ class MessageContent extends StatelessWidget {
         );
       } else {
         if (chatList[index].mediaChatMessage == null) {
-          return const SizedBox.shrink();
+          return const Offstage();
         } else {
           if (chatList[index].messageType.toUpperCase() == Constants.mImage) {
             return ImageMessageView(
@@ -1841,7 +1848,7 @@ class MessageContent extends StatelessWidget {
               onSeekbarChange: onSeekbarChange,
             );
           } else {
-            return const SizedBox.shrink();
+            return const Offstage();
           }
         }
       }
@@ -1885,7 +1892,7 @@ class TextMessageView extends StatelessWidget {
             children: [
               chatMessage.isMessageStarred.value
                   ? SvgPicture.asset(starSmallIcon)
-                  : const SizedBox.shrink(),
+                  : const Offstage(),
               const SizedBox(
                 width: 5,
               ),
@@ -1982,13 +1989,13 @@ getMessageIndicator(String? messageStatus, bool isSender, String messageType, bo
       } else if (messageStatus == 'N') {
         return SvgPicture.asset(unSendIcon);
       } else {
-        return const SizedBox.shrink();
+        return const Offstage();
       }
     } else {
-      return const SizedBox.shrink();
+      return const Offstage();
     }
   } else {
-    return const SizedBox.shrink();
+    return const Offstage();
   }
 }
 
@@ -2004,6 +2011,7 @@ Widget getImageOverlay(ChatMessageModel chatMessage,
   if (AppUtils.isMediaExists(chatMessage.mediaChatMessage!.mediaLocalStoragePath.value) && (chatMessage.isMediaDownloaded() || chatMessage.isMediaUploaded())) {
     if (chatMessage.messageType.toUpperCase() == 'VIDEO') {
       return FloatingActionButton.small(
+        heroTag: chatMessage.messageId,
         onPressed: onVideo,
         backgroundColor: Colors.white,
         child: const Icon(
@@ -2027,7 +2035,7 @@ Widget getImageOverlay(ChatMessageModel chatMessage,
         ),
       ); //const Icon(Icons.play_arrow_sharp);
     } else {
-      return const SizedBox.shrink();
+      return const Offstage();
     }
   } else {
     var status = 0;
@@ -2043,7 +2051,8 @@ Widget getImageOverlay(ChatMessageModel chatMessage,
             if (chatMessage.mediaChatMessage!.mediaUploadStatus.value == Constants.mediaUploaded) {
               status = Constants.mediaNotDownloaded; // for uploaded and deleted in local
             } else {
-              status = -1;
+               status = -1;
+              //status = Constants.mediaNotDownloaded;
             }
           } else {
             status = chatMessage.mediaChatMessage!.mediaUploadStatus.value;
@@ -2061,6 +2070,7 @@ Widget getImageOverlay(ChatMessageModel chatMessage,
     switch (status) {
       case Constants.mediaDownloaded:
       case Constants.mediaUploaded:
+      case Constants.storageNotEnough:
         if (!AppUtils.isMediaExists(chatMessage.mediaChatMessage!.mediaLocalStoragePath.value.checkNull())) {
           return InkWell(
             child: downloadView(
@@ -2071,7 +2081,7 @@ Widget getImageOverlay(ChatMessageModel chatMessage,
             },
           );
         } else {
-          return const SizedBox.shrink();
+          return const Offstage();
         }
       case Constants.mediaDownloadedNotAvailable:
       case Constants.mediaUploadedNotAvailable:
@@ -2097,10 +2107,7 @@ Widget getImageOverlay(ChatMessageModel chatMessage,
             onTap: () {
               uploadMedia(chatMessage.messageId);
             },
-            child: uploadView(
-                chatMessage.mediaChatMessage!.mediaFileSize,
-                chatMessage.messageType.toUpperCase()));
-
+            child: uploadView(chatMessage.messageType.toUpperCase()));
       case Constants.mediaDownloading:
       case Constants.mediaUploading:
         return Obx(() {
@@ -2111,12 +2118,16 @@ Widget getImageOverlay(ChatMessageModel chatMessage,
           );
         });
       default:
-        return const SizedBox(width: 8,);
+        return InkWell(
+            onTap: () {
+              toToast(Constants.mediaNotExist);
+            },
+            child: uploadView(chatMessage.messageType.toUpperCase()));
     }
   }
 }
 
-uploadView(int mediaFileSize, String messageType) {
+Widget uploadView(String messageType) {
   return Padding(
     padding: const EdgeInsets.symmetric(horizontal: 8.0),
     child: messageType == 'AUDIO' || messageType == 'DOCUMENT'
@@ -2129,7 +2140,7 @@ uploadView(int mediaFileSize, String messageType) {
         padding: const EdgeInsets.all(7),
         child: SvgPicture.asset(
           uploadIcon,
-          color: playIconColor,
+          colorFilter: const ColorFilter.mode(playIconColor, BlendMode.srcIn),
         ))
         : Container(
         height: 35,
@@ -2156,12 +2167,12 @@ uploadView(int mediaFileSize, String messageType) {
 }
 
 void cancelMediaUploadOrDownload(String messageId) {
-  Mirrorfly.cancelMediaUploadOrDownload(messageId);
+  Mirrorfly.cancelMediaUploadOrDownload(messageId: messageId);
 }
 
 void uploadMedia(String messageId) async {
   if (await AppUtils.isNetConnected()) {
-    Mirrorfly.uploadMedia(messageId);
+    Mirrorfly.uploadMedia(messageId: messageId);
   } else {
     toToast(Constants.noInternetConnection);
   }
@@ -2171,10 +2182,10 @@ void downloadMedia(String messageId) async {
   debugPrint("media download click");
   debugPrint("media download click--> $messageId");
   if (await AppUtils.isNetConnected()) {
-    var permission = await AppPermission.getStoragePermission();
+    var permission = await AppPermission.getStoragePermission(permissionContent: Constants.writeStoragePermission,deniedContent: Constants.writeStoragePermissionDenied);
     if (permission) {
       debugPrint("media permission granted");
-      Mirrorfly.downloadMedia(messageId);
+      Mirrorfly.downloadMedia(messageId: messageId);
     } else {
       debugPrint("storage permission not granted");
     }
@@ -2196,7 +2207,7 @@ Widget downloadView(int mediaFileSize, String messageType) {
         padding: const EdgeInsets.all(7),
         child: SvgPicture.asset(
           downloadIcon,
-          color: playIconColor,
+          colorFilter: const ColorFilter.mode(playIconColor, BlendMode.srcIn),
         ))
         : Container(
       height: 35,
@@ -2247,7 +2258,7 @@ downloadingOrUploadingView(String messageType, int progress) {
                 SvgPicture.asset(
                   downloading,
                   fit: BoxFit.contain,
-                  color: playIconColor,
+                  colorFilter: const ColorFilter.mode(playIconColor, BlendMode.srcIn),
                 ),
                 Align(
                   alignment: Alignment.bottomCenter,
@@ -2360,13 +2371,13 @@ class AttachmentsSheetView extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   availableFeatures.value.isDocumentAttachmentAvailable.checkNull() ? iconCreation(
-                      documentImg, "Document", onDocument) : const SizedBox.shrink(),
+                      documentImg, "Document", onDocument) : const Offstage(),
                   (availableFeatures.value.isImageAttachmentAvailable.checkNull() ||
                       availableFeatures.value.isVideoAttachmentAvailable.checkNull()) ? iconCreation(
-                      cameraImg, "Camera", onCamera) : const SizedBox.shrink(),
+                      cameraImg, "Camera", onCamera) : const Offstage(),
                   (availableFeatures.value.isImageAttachmentAvailable.checkNull() ||
                       availableFeatures.value.isVideoAttachmentAvailable.checkNull()) ? iconCreation(
-                      galleryImg, "Gallery", onGallery) : const SizedBox.shrink(),
+                      galleryImg, "Gallery", onGallery) : const Offstage(),
                 ],
               );
             }),
@@ -2377,11 +2388,11 @@ class AttachmentsSheetView extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 availableFeatures.value.isAudioAttachmentAvailable.checkNull() ? iconCreation(
-                    audioImg, "Audio", onAudio) : const SizedBox.shrink(),
+                    audioImg, "Audio", onAudio) : const Offstage(),
                 availableFeatures.value.isContactAttachmentAvailable.checkNull() ? iconCreation(
-                    contactImg, "Contact", onContact) : const SizedBox.shrink(),
+                    contactImg, "Contact", onContact) : const Offstage(),
                 availableFeatures.value.isLocationAttachmentAvailable.checkNull() ? iconCreation(
-                    locationImg, "Location", onLocation) : const SizedBox.shrink(),
+                    locationImg, "Location", onLocation) : const Offstage(),
               ],
             ),
           ],
@@ -2500,7 +2511,7 @@ Widget chatSpannedText(String text, String spannableText, TextStyle? style,
   }
 }*/
 
-class AudioMessagePlayerController extends GetxController {
+/*class AudioMessagePlayerController extends GetxController {
   final _obj = ''.obs;
 
   set obj(value) => _obj.value = value;
@@ -2568,7 +2579,7 @@ class AudioMessagePlayerController extends GetxController {
       }
     }
   }
-}
+}*/
 
 /// Checks the current header id with previous header id
 /// @param position Position of the current item
@@ -2657,4 +2668,39 @@ String getMonthForInt(int num) {
     month = months[num];
   }
   return month;
+}
+
+
+class GetBoxOffset extends StatefulWidget {
+  final Widget child;
+  final Function(Offset offset) offset;
+
+  const GetBoxOffset({Key? key, required this.child, required this.offset}) : super(key: key);
+
+  @override
+  GetBoxOffsetState createState() => GetBoxOffsetState();
+}
+
+class GetBoxOffsetState extends State<GetBoxOffset> {
+  GlobalKey widgetKey = GlobalKey();
+
+  Offset offset = const Offset(0.0, 0.0);
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final box = widgetKey.currentContext?.findRenderObject() as RenderBox;
+      offset = box.localToGlobal(Offset.zero);
+      widget.offset(offset);
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      key: widgetKey,
+      child: widget.child,
+    );
+  }
 }

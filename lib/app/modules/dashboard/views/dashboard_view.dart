@@ -18,13 +18,14 @@ import '../../../widgets/custom_action_bar_icons.dart';
 import '../../chat/chat_widgets.dart';
 import '../../dashboard/controllers/dashboard_controller.dart';
 
-class DashboardView extends GetView<DashboardController> {
+class DashboardView extends GetView<DashboardController>{
   const DashboardView({Key? key}) : super(key: key);
 
   //final themeController = Get.put(DashboardController());
 
   @override
   Widget build(BuildContext context) {
+    // Mirrorfly.setEventListener(this);
     return FocusDetector(
       onFocusGained: () {
         debugPrint('onFocusGained');
@@ -32,16 +33,19 @@ class DashboardView extends GetView<DashboardController> {
         controller.checkArchiveSetting();
         // controller.getRecentChatList();
       },
-      child: WillPopScope(
-        onWillPop: () {
+      child:Obx(() => PopScope(
+        canPop: !(controller.selected.value || controller.isSearching.value),
+        onPopInvoked: (didPop) {
+          if (didPop) {
+            return;
+          }
           if (controller.selected.value) {
             controller.clearAllChatSelection();
-            return Future.value(false);
+            return;
           } else if (controller.isSearching.value) {
             controller.getBackFromSearch();
-            return Future.value(false);
+            return;
           }
-          return Future.value(true);
         },
         child: CustomSafeArea(
           child: DefaultTabController(
@@ -327,7 +331,7 @@ class DashboardView extends GetView<DashboardController> {
           ),
         ),
       ),
-    );
+    ));
   }
 
   Widget? createScaledFab() {
@@ -378,7 +382,7 @@ class DashboardView extends GetView<DashboardController> {
           plusIcon,
           width: 24,
           height: 24,
-          color: Colors.white,
+          colorFilter: const ColorFilter.mode(Colors.white, BlendMode.srcIn),
           fit: BoxFit.contain,
         ),
         audioCallOnPressed: () {
@@ -417,10 +421,11 @@ class DashboardView extends GetView<DashboardController> {
             title,
             style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 15),
           ),
-          count != "0"
+          int.parse(count) > 0
               ? Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 4.0),
                   child: CircleAvatar(
+                    backgroundColor: buttonBgColor,
                     radius: 9,
                     child: Text(
                       count.toString(),
@@ -627,7 +632,7 @@ class DashboardView extends GetView<DashboardController> {
                 visible: controller.filteredRecentChatList.isNotEmpty,
                 child: searchHeader(Constants.typeSearchRecent, controller.filteredRecentChatList.length.toString(), context),
               ),
-              recentChatListView(),
+              recentChatSearchListView(),
               Visibility(
                 visible: controller.chatMessages.isNotEmpty,
                 child: searchHeader(Constants.typeSearchMessage, controller.chatMessages.length.toString(), context),
@@ -839,7 +844,7 @@ class DashboardView extends GetView<DashboardController> {
         });
   }
 
-  ListView recentChatListView() {
+  ListView recentChatSearchListView() {
     return ListView.builder(
         itemCount: controller.filteredRecentChatList.length,
         shrinkWrap: true,
@@ -1002,7 +1007,7 @@ class DashboardView extends GetView<DashboardController> {
                     },
                   ))
               : Obx(() => ListTile(
-                    leading: item.groupId!.checkNull().isEmpty
+                    leading: item.groupId.checkNull().isEmpty
                         ? ClipOval(
                             child: Image.asset(
                               groupImg,
@@ -1041,7 +1046,7 @@ class DashboardView extends GetView<DashboardController> {
                                       ),
                                     );
                             }),
-                    title: item.groupId!.checkNull().isEmpty
+                    title: item.groupId.checkNull().isEmpty
                         ? FutureBuilder(
                             future: CallUtils.getCallLogUserNames(item.userList!, item),
                             builder: (context, snap) {
@@ -1160,7 +1165,7 @@ class DashboardView extends GetView<DashboardController> {
             },
             icon: SvgPicture.asset(
               videoCallIcon,
-              color: Colors.grey,
+              colorFilter: const ColorFilter.mode(Colors.grey, BlendMode.srcIn),
             ),
           )
         : IconButton(
@@ -1175,7 +1180,17 @@ class DashboardView extends GetView<DashboardController> {
             },
             icon: SvgPicture.asset(
               audioCallIcon,
-              color: Colors.grey,
+              colorFilter: const ColorFilter.mode(Colors.grey, BlendMode.srcIn),
             ));
   }
+
+  // @override
+  // void onMessageReceivedEvent(String message) {
+  //   debugPrint("onMessageReceivedEvent $message");
+  // }
+  //
+  // @override
+  // void onMessageStatusUpdatedEvent(status) {
+  //
+  // }
 }

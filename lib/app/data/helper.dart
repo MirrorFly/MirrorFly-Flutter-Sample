@@ -24,16 +24,19 @@ class Helper {
   static void showLoading({String? message, bool dismiss = false}) {
     Get.dialog(
       Dialog(
-        child: WillPopScope(
-          onWillPop: () async {
-            return Future.value(dismiss);
+        child: PopScope(
+          canPop: dismiss,
+          onPopInvoked: (didPop) {
+            if (didPop) {
+              return;
+            }
           },
           child: Padding(
             padding: const EdgeInsets.all(16.0),
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                const CircularProgressIndicator(),
+                const CircularProgressIndicator(color: buttonBgColor,),
                 const SizedBox(width: 16),
                 Text(message ?? 'Loading...'),
               ],
@@ -41,7 +44,7 @@ class Helper {
           ),
         ),
       ),
-      barrierDismissible: false,
+      barrierDismissible: dismiss,
     );
   }
 
@@ -50,8 +53,13 @@ class Helper {
         AlertDialog(
           elevation: 0,
           backgroundColor: Colors.transparent,
-          content: WillPopScope(
-            onWillPop: () async => Future.value(dismiss),
+          content: PopScope(
+              canPop: dismiss,
+              onPopInvoked: (didPop) {
+                if (didPop) {
+                  return;
+                }
+              },
             child: const SizedBox(
               width: 60,
               height: 60,
@@ -69,6 +77,7 @@ class Helper {
       {String? title, required String message, List<Widget>? actions, Widget? content, bool? barrierDismissible}) {
     Get.dialog(
         AlertDialog(
+          backgroundColor: Colors.white,
           title: title != null
               ? Text(
                   title,
@@ -78,8 +87,13 @@ class Helper {
           contentPadding: title != null
               ? const EdgeInsets.only(top: 15, right: 25, left: 25, bottom: 0)
               : const EdgeInsets.only(top: 0, right: 25, left: 25, bottom: 5),
-          content: WillPopScope(
-            onWillPop: () async => Future.value(barrierDismissible),
+          content: PopScope(
+              canPop: barrierDismissible ?? true,
+              onPopInvoked: (didPop) {
+                if (didPop) {
+                  return;
+                }
+                },
             child: content ??
                 Text(
                   message,
@@ -104,10 +118,16 @@ class Helper {
     );
   }
 
-  static void showButtonAlert({List<Widget>? actions}) {
+  static void showButtonAlert({required List<Widget> actions}) {
     Get.dialog(
-      AlertDialog(
-        actions: actions,
+      Dialog(
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: actions,
+          ),
+        ),
       ),
     );
   }
@@ -166,43 +186,43 @@ class Helper {
         return SvgPicture.asset(
           mImageIcon,
           fit: BoxFit.contain,
-          color: playIconColor,
+          colorFilter: const ColorFilter.mode(playIconColor, BlendMode.srcIn),
         );
       case Constants.mAudio:
         return SvgPicture.asset(
           isAudioRecorded ? mAudioRecordIcon : mAudioIcon,
           fit: BoxFit.contain,
-          color: playIconColor,
+          colorFilter: const ColorFilter.mode(playIconColor, BlendMode.srcIn),
         );
       case Constants.mVideo:
         return SvgPicture.asset(
           mVideoIcon,
           fit: BoxFit.contain,
-          color: playIconColor,
+          colorFilter: const ColorFilter.mode(playIconColor, BlendMode.srcIn),
         );
       case Constants.mDocument:
         return SvgPicture.asset(
           mDocumentIcon,
           fit: BoxFit.contain,
-          color: playIconColor,
+          colorFilter: const ColorFilter.mode(playIconColor, BlendMode.srcIn),
         );
       case Constants.mFile:
         return SvgPicture.asset(
           mDocumentIcon,
           fit: BoxFit.contain,
-          color: playIconColor,
+          colorFilter: const ColorFilter.mode(playIconColor, BlendMode.srcIn),
         );
       case Constants.mContact:
         return SvgPicture.asset(
           mContactIcon,
           fit: BoxFit.contain,
-          color: playIconColor,
+          colorFilter: const ColorFilter.mode(playIconColor, BlendMode.srcIn),
         );
       case Constants.mLocation:
         return SvgPicture.asset(
           mLocationIcon,
           fit: BoxFit.contain,
-          color: playIconColor,
+          colorFilter: const ColorFilter.mode(playIconColor, BlendMode.srcIn),
         );
       default:
         return const SizedBox.shrink();
@@ -285,7 +305,7 @@ String getDateFromTimestamp(int convertedTime, String format) {
 }
 
 Future<ProfileDetails> getProfileDetails(String jid) async {
-  var value = await Mirrorfly.getProfileDetails(jid.checkNull());
+  var value = await Mirrorfly.getProfileDetails(jid: jid.checkNull());
   // profileDataFromJson(value);
   // debugPrint("getProfileDetails--> $value");
   // var profile = await compute(profiledata, value.toString());
@@ -294,8 +314,8 @@ Future<ProfileDetails> getProfileDetails(String jid) async {
 }
 
 Future<ChatMessageModel> getMessageOfId(String mid) async {
-  var value = await Mirrorfly.getMessageOfId(mid.checkNull());
-  // debugPrint("message--> $value");
+  var value = await Mirrorfly.getMessageOfId(messageId: mid.checkNull());
+  //LogMessage.d("getMessageOfId", "$value");
   var chatMessage =
       sendMessageModelFromJson(value.toString()); //await compute(sendMessageModelFromJson, value.toString());
   return chatMessage;
@@ -397,10 +417,6 @@ bool checkFile(String mediaLocalStoragePath) {
   return mediaLocalStoragePath.isNotEmpty && File(mediaLocalStoragePath).existsSync();
 }
 
-checkIosFile(String mediaLocalStoragePath) async {
-  var isExists = await Mirrorfly.iOSFileExist(mediaLocalStoragePath);
-  return isExists;
-}
 
 openDocument(String mediaLocalStoragePath) async {
   // if (await askStoragePermission()) {
@@ -505,7 +521,7 @@ class Triple {
 }
 
 Future<RecentChatData?> getRecentChatOfJid(String jid) async {
-  var value = await Mirrorfly.getRecentChatOf(jid);
+  var value = await Mirrorfly.getRecentChatOf(jid: jid);
   mirrorFlyLog("chat", value.toString());
   if (value.isNotEmpty) {
     var data = recentChatDataFromJson(value);
@@ -642,7 +658,7 @@ String convertSecondToLastSeen(String seconds) {
     if (seconds == "0") return "Online";
     LogMessage.d("getUserLastSeenTime", "seconds $seconds");
     // var userLastSeenDate = DateTime.now().subtract(Duration(milliseconds: double.parse(seconds).toInt()));
-    DateTime lastSeen = DateTime.fromMillisecondsSinceEpoch(int.parse(seconds), isUtc: true);
+    DateTime lastSeen = DateTime.fromMillisecondsSinceEpoch(int.parse(seconds), isUtc: false);
     Duration diff = DateTime.now().difference(lastSeen);
 
     LogMessage.d("getUserLastSeenTime", "diff ${diff.inDays}");
@@ -654,7 +670,7 @@ String convertSecondToLastSeen(String seconds) {
       var last = DateFormat('dd MMM').format(lastSeen);
       return 'last seen on $last';
     } else if (int.parse(DateFormat('yyyy').format(lastSeen)) < int.parse(DateFormat('yyyy').format(DateTime.now()))) {
-      return 'last seen on ${DateFormat('dd/mm/yyyy').format(lastSeen)}';
+      return 'last seen on ${DateFormat('dd/MM/yyyy').format(lastSeen)}';
     } else {
       return 'Online';
     }
@@ -834,15 +850,13 @@ makeVoiceCall(String toUser, Rx<AvailableFeatures> availableFeatures) async {
     return;
   }
   if (await AppPermission.askAudioCallPermissions()) {
-    Mirrorfly.makeVoiceCall(toUser.checkNull()).then((value) {
-      if (value) {
+    Mirrorfly.makeVoiceCall(toUserJid: toUser.checkNull(), flyCallBack: (FlyResponse response) {
+      if (response.isSuccess) {
         Get.toNamed(Routes.outGoingCallView, arguments: {
           "userJid": [toUser],
           "callType": CallType.audio
         });
       }
-    }).catchError((e) {
-      debugPrint("#Mirrorfly Call $e");
     });
   } else {
     debugPrint("permission not given");
@@ -856,15 +870,13 @@ makeVideoCall(String toUser, Rx<AvailableFeatures> availableFeatures) async {
         debugPrint("#Mirrorfly Call You are on another call");
         toToast(Constants.msgOngoingCallAlert);
       } else {
-        Mirrorfly.makeVideoCall(toUser.checkNull()).then((value) {
-          if (value) {
+        Mirrorfly.makeVideoCall(toUserJid: toUser.checkNull(), flyCallBack: (FlyResponse response) {
+          if (response.isSuccess) {
             Get.toNamed(Routes.outGoingCallView, arguments: {
               "userJid": [toUser],
               "callType": CallType.video
             });
           }
-        }).catchError((e) {
-          debugPrint("#Mirrorfly Call $e");
         });
       }
     } else {

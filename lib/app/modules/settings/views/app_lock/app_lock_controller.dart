@@ -99,7 +99,7 @@ class AppLockController extends FullLifeCycleController
                   fromBio = true;
                   enablePin();
                 },
-                child: const Text("OK")),
+                child: const Text("OK",style: TextStyle(color: buttonBgColor))),
           ]);
     }
   }
@@ -455,8 +455,12 @@ class AppLockController extends FullLifeCycleController
 
   void showExpiredDialog() {
     Get.dialog(
-        WillPopScope(
-          onWillPop: () async => false,
+        PopScope(
+            canPop: false,
+            onPopInvoked: (didPop) {
+              if (didPop) {
+                return;
+              }},
           child: AlertDialog(
             titlePadding: const EdgeInsets.only(top: 20.0, right: 20, left: 20),
             contentPadding: EdgeInsets.zero,
@@ -554,8 +558,12 @@ class AppLockController extends FullLifeCycleController
                     topRight: Radius.circular(30))),
             onClosing: () {},
             builder: (builder) {
-              return WillPopScope(
-                onWillPop: () async => false,
+              return PopScope(
+                  canPop: false,
+                  onPopInvoked: (didPop) {
+                    if (didPop) {
+                      return;
+                    }},
                 child: SafeArea(
                   child: Padding(
                     padding: EdgeInsets.only(

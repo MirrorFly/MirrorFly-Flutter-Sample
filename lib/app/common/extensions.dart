@@ -1,12 +1,15 @@
 import 'dart:convert';
 import 'dart:math';
 
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
 import 'package:mirror_fly_demo/app/data/session_management.dart';
 import 'package:mirror_fly_demo/app/model/chat_message_model.dart';
 import 'package:mirrorfly_plugin/mirrorflychat.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 extension RecentChatParsing on RecentChatData {
   String getChatType() {
@@ -61,13 +64,13 @@ extension RecentChatParsing on RecentChatData {
 
 extension ProfileParesing on ProfileDetails {
   String getUsername() {
-    var value = Mirrorfly.getProfileDetails(jid.checkNull());
+    var value = Mirrorfly.getProfileDetails(jid: jid.checkNull());
     var str = ProfileDetails.fromJson(json.decode(value.toString()));
     return str.getName(); //str.name.checkNull();
   }
 
   Future<ProfileDetails> getProfileDetails() async {
-    var value = await Mirrorfly.getProfileDetails(jid.checkNull());
+    var value = await Mirrorfly.getProfileDetails(jid: jid.checkNull());
     var str = ProfileDetails.fromJson(json.decode(value.toString()));
     return str;
   }
@@ -195,4 +198,91 @@ extension BooleanParsing on bool? {
   bool checkNull() {
     return this ?? false;
   }
+}
+
+extension ScrollControllerExtension on ScrollController {
+  void scrollTo({required int index, required Duration duration, Curve? curve}) {
+    var offset = getOffset(GlobalKey(debugLabel: "CHATITEM_$index"));
+    LogMessage.d("ScrollTo", offset);
+    animateTo(
+      offset,
+      duration: duration,
+      curve: Curves.linear,
+    );
+  }
+
+  void jumpsTo({required double index}){
+    jumpTo(index);
+  }
+
+  double getOffset(GlobalKey key){
+    final box = key.currentContext?.findRenderObject() as RenderBox;
+    final boxHeight = box.size.height;
+    Offset boxPosition = box.localToGlobal(Offset.zero);
+    double boxY = (boxPosition.dy - boxHeight / 2);
+    return boxY;
+  }
+
+  bool get isAttached => hasClients;
+}
+
+/// this an extension of List of [Permission]
+extension PermissionExtension on List<Permission>{
+  /// This [status] is used to Check and returns Map of [PermissionStatus].
+  Future<Map<String,PermissionStatus>> status() async {
+    var permissionStatusList = <String,PermissionStatus>{};
+    await Future.forEach(this, (Permission permission) async {
+      var status = await permission.status;
+      permissionStatusList.putIfAbsent(permission.toString(), () => status);
+    });
+    return permissionStatusList;
+  }
+
+  /// This [permanentlyDeniedPermissions] is used to Check and returns Map of [PermissionStatus.permanentlyDenied].
+  Future<Map<String,PermissionStatus>> permanentlyDeniedPermissions() async {
+    var permissionStatusList = <String,PermissionStatus>{};
+    await Future.forEach(this, (Permission permission) async {
+      var status = await permission.status;
+      if(status == PermissionStatus.permanentlyDenied) {
+        permissionStatusList.putIfAbsent(permission.toString(), () => status);
+      }
+    });
+    return permissionStatusList;
+  }
+
+  /// This [deniedPermissions] is used to Check and returns Map of [PermissionStatus.denied].
+  Future<Map<String,PermissionStatus>> deniedPermissions() async {
+    var permissionStatusList = <String,PermissionStatus>{};
+    await Future.forEach(this, (Permission permission) async {
+      var status = await permission.status;
+      if(status == PermissionStatus.denied) {
+        permissionStatusList.putIfAbsent(permission.toString(), () => status);
+      }
+    });
+    return permissionStatusList;
+  }
+
+  /// This [grantedPermissions] is used to Check and returns Map of [PermissionStatus.granted].
+  Future<Map<String,PermissionStatus>> grantedPermissions() async {
+    var permissionStatusList = <String,PermissionStatus>{};
+    await Future.forEach(this, (Permission permission) async {
+      var status = await permission.status;
+      if(status == PermissionStatus.granted) {
+        permissionStatusList.putIfAbsent(permission.toString(), () => status);
+      }
+    });
+    return permissionStatusList;
+  }
+
+  /// This [shouldShowRationale] is used to Check available rationale and returns List of [bool].
+  Future<List<bool>> shouldShowRationale() async {
+    var permissionStatusList = <bool>[];
+    await Future.forEach(this, (Permission permission) async {
+      var show = await permission.shouldShowRequestRationale;
+      LogMessage.d("shouldShowRationale", "${permission.toString()} : $show");
+      permissionStatusList.add(show);
+    });
+    return permissionStatusList;
+  }
+
 }

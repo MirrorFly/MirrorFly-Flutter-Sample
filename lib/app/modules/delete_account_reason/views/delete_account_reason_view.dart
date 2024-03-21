@@ -91,7 +91,7 @@ class DeleteAccountReasonView extends GetView<DeleteAccountReasonController> {
                               },
                               child: const Text(
                                 'Delete My Account',
-                                style: TextStyle(fontWeight: FontWeight.w600),
+                                style: TextStyle(fontWeight: FontWeight.w600,color: Colors.white),
                               ),
                             ),
                           );

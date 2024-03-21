@@ -16,9 +16,12 @@ class OnGoingCallView extends GetView<CallController> {
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: () {
-        return Future.value(false);
+    return PopScope(
+      canPop: false,
+      onPopInvoked: (didPop) {
+        if (didPop) {
+          return;
+        }
       },
       child: Scaffold(
         backgroundColor: AppColors.callBg,
@@ -253,7 +256,7 @@ class OnGoingCallView extends GetView<CallController> {
               },
               icon: SvgPicture.asset(
                 gridIcon,
-                color: Colors.white,
+                colorFilter: const ColorFilter.mode(Colors.white, BlendMode.srcIn),
               ),
             )
           ],

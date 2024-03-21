@@ -10,7 +10,8 @@ import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/common/main_controller.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
 import 'package:mirror_fly_demo/app/data/permissions.dart';
-
+import 'package:flutter_libphonenumber/flutter_libphonenumber.dart'
+as lib_phone_number;
 import 'package:otp_text_field/otp_field.dart';
 
 import '../../../common/constants.dart';
@@ -25,6 +26,8 @@ class LoginController extends GetxController {
   var selectedCountry = CountryData(name: "India", dialCode: "+91", code: "IN").obs;
   TextEditingController mobileNumber = TextEditingController();
   OtpFieldController otpController = OtpFieldController();
+
+  FocusNode focusNode = FocusNode();
 
   Timer? countdownTimer;
   Duration myDuration = const Duration(seconds: 31);
@@ -88,21 +91,39 @@ class LoginController extends GetxController {
     countdownTimer!.cancel();
   }
 
-  void registerUser() {
+  Future<void> registerUser() async {
     if (mobileNumber.text.isEmpty) {
       toToast("Please Enter Mobile Number");
     } else {
-      // phoneAuth();
-      registerAccount();
+      if(await validMobileNumber(selectedCountry.value.dialCode!,mobileNumber.text)) {
+        // phoneAuth();
+        registerAccount();
+      }else{
+        toToast("Please Enter Valid Mobile Number");
+      }
+    }
+  }
+
+  Future<bool> validMobileNumber(String dialCode,String mobileNumber) async {
+    try {
+      LogMessage.d("validMobileNumber",
+          "dialCode : $dialCode, mobileNumber : $mobileNumber");
+      lib_phone_number.init();
+      var parse = await lib_phone_number.parse(dialCode+mobileNumber);
+      LogMessage.d("validMobileNumber", "parse : $parse");
+      return true;
+    }catch(e){
+      LogMessage.e("validMobileNumber", "error : $e");
+      return false;
     }
   }
 
   setUserJID(String username) {
     if (!Mirrorfly.isChatHistoryEnabled && Platform.isAndroid) {
       debugPrint("recentChatList Calling getAllGroups");
-      Mirrorfly.getAllGroups(true); // chat history enabled so this no longer need
+      Mirrorfly.getAllGroups(fetchFromServer: true,flyCallBack: (_){}); // chat history enabled so this no longer need
     }
-    Mirrorfly.getJid(username).then((value) {
+    Mirrorfly.getJid(username: username).then((value) {
       if (value != null) {
         SessionManagement.setUserJID(value);
         Helper.hideLoading();
@@ -242,9 +263,10 @@ class LoginController extends GetxController {
 
   verifyTokenWithServer(String token) async {
     if (await AppUtils.isNetConnected()) {
-      var userName = (countryCode!.replaceAll('+', '') + mobileNumber.text.toString()).replaceAll("+", "");
+      // var userName = (countryCode!.replaceAll('+', '') + mobileNumber.text.toString()).replaceAll("+", "");
       //make api call
-      Mirrorfly.verifyToken(userName, token).then((value) {
+      //verifyToken not available iOS so commented it
+      /*Mirrorfly.verifyToken(userName, token).then((value) {
         if (value != null) {
           validateDeviceToken(value);
         } else {
@@ -254,7 +276,7 @@ class LoginController extends GetxController {
         debugPrint("issue===> $error");
         debugPrint(error.message);
         hideLoading();
-      });
+      });*/
     } else {
       toToast(Constants.noInternetConnection);
     }
@@ -309,16 +331,17 @@ class LoginController extends GetxController {
       // if(mobileNumber.text.length > 9) {
       showLoading();
       var userIdentifier = countryCode!.replaceAll('+', '') + mobileNumber.text;
-      Mirrorfly.registerUser(countryCode!.replaceAll('+', '') + mobileNumber.text,
+      Mirrorfly.login(userIdentifier: countryCode!.replaceAll('+', '') + mobileNumber.text,
           fcmToken: SessionManagement.getToken().checkNull(),
           isForceRegister: isForceRegister,
           flyCallback: (FlyResponse response) {
               if (response.isSuccess) {
-                if (response.data.isNotEmpty) {
+                if (response.hasData) {
                   var userData = registerModelFromJson(response.data); //message
                   SessionManagement.setLogin(userData.data!.username!.isNotEmpty);
                   SessionManagement.setUser(userData.data!);
                   SessionManagement.setUserIdentifier(userIdentifier);
+                  SessionManagement.setAdminBlocked(false);
                   SessionManagement.setAuthToken(userData.data!.token.checkNull());
                   if (Get.isRegistered<MainController>()) {
                     Get.find<MainController>().currentAuthToken(userData.data!.token.checkNull());
@@ -327,24 +350,24 @@ class LoginController extends GetxController {
                   // SessionManagement.setNotificationSound(true);
                   // userData.data.
                   enableArchive();
-                  Mirrorfly.setRegionCode(regionCode ?? 'IN');
+                  Mirrorfly.setRegionCode(regionCode:regionCode ?? 'IN');
 
                   ///if its not set then error comes in contact sync delete from phonebook.
                   SessionManagement.setCountryCode((countryCode ?? "").replaceAll('+', ''));
                   setUserJID(userData.data!.username!);
                 }
               } else {
-                debugPrint("issue===> ${response.exception?.message.toString()}");
+                debugPrint("issue===> ${response.errorMessage.toString()}");
                 hideLoading();
                 if (response.exception?.code == "403") {
-                  debugPrint("issue 403 ===> ${response.exception?.message }");
+                  debugPrint("issue 403 ===> ${response.errorMessage }");
                   Get.offAllNamed(Routes.adminBlocked);
                 } else if (response.exception?.code  == "405") {
-                  debugPrint("issue 405 ===> ${response.exception?.message }");
+                  debugPrint("issue 405 ===> ${response.errorMessage }");
                   sessionExpiredDialogShow(Constants.maximumLoginReached);
                 } else {
                   debugPrint("issue else code ===> ${response.exception?.code }");
-                  debugPrint("issue else ===> ${response.exception?.message }");
+                  debugPrint("issue else ===> ${response.errorMessage }");
                   toToast(response.exception!.message.toString());
                 }
               }
@@ -359,7 +382,7 @@ class LoginController extends GetxController {
 
   void enableArchive() async {
     if (await AppUtils.isNetConnected()) {
-      Mirrorfly.enableDisableArchivedSettings(true);
+      Mirrorfly.enableDisableArchivedSettings(enable: true,flyCallBack: (_){});
     } else {
       toToast(Constants.noInternetConnection);
     }
@@ -379,13 +402,13 @@ class LoginController extends GetxController {
             Get.back();
             gotoLogin();
           },
-          child: const Text("NO")),
+          child: const Text("NO",style: TextStyle(color: buttonBgColor))),
       TextButton(
           onPressed: () {
             Get.back();
             registerAccount();
           },
-          child: const Text("YES")),
+          child: const Text("YES",style: TextStyle(color: buttonBgColor))),
     ]);
   }
 
@@ -401,14 +424,14 @@ class LoginController extends GetxController {
             Get.back();
             isForceRegister = false;
           },
-          child: const Text("Cancel")),
+          child: const Text("Cancel",style: TextStyle(color: buttonBgColor))),
       TextButton(
           onPressed: () {
             Get.back();
             isForceRegister = true;
             registerUser();
           },
-          child: const Text("Continue")),
+          child: const Text("Continue",style: TextStyle(color: buttonBgColor))),
     ]);
   }
 

@@ -177,7 +177,9 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
 
   muteAudio() async {
     debugPrint("#Mirrorfly muteAudio ${muted.value}");
-    await Mirrorfly.muteAudio(!muted.value).then((value) => debugPrint("#Mirrorfly Mute Audio Response $value"));
+    await Mirrorfly.muteAudio(status: !muted.value, flyCallBack: (FlyResponse response) {
+      debugPrint("#Mirrorfly Mute Audio Response ${response.isSuccess}.");
+    });
     muted(!muted.value);
     var callUserIndex = callList.indexWhere((element) => element.userJid!.value == SessionManagement.getUserJID());
     if(!callUserIndex.isNegative) {
@@ -192,42 +194,37 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
     // if (availableAudioList.length > 2) {
     Get.dialog(
       Dialog(
-        child: WillPopScope(
-          onWillPop: () {
-            return Future.value(true);
-          },
-          child: Obx(() {
-            return ListView.builder(
-                shrinkWrap: true,
-                itemCount: availableAudioList.length,
-                itemBuilder: (context, index) {
-                  var audioItem = availableAudioList[index];
-                  debugPrint("audio item name ${audioItem.name}");
-                  return Obx(() {
-                    return ListTile(
-                      contentPadding: const EdgeInsets.only(left: 10),
-                      title: Text(audioItem.name ?? "", style: const TextStyle(fontSize: 14, fontWeight: FontWeight.normal)),
-                      trailing: audioItem.type == audioOutputType.value
-                          ? const Icon(
-                              Icons.check_outlined,
-                              color: Colors.green,
-                            )
-                          : const SizedBox.shrink(),
-                      onTap: () {
-                        if (audioOutputType.value != audioItem.type) {
-                          Get.back();
-                          debugPrint("selected audio item ${audioItem.type}");
-                          audioOutputType(audioItem.type);
-                          Mirrorfly.routeAudioTo(routeType: audioItem.type ?? "");
-                        } else {
-                          LogMessage.d("routeAudioOption", "clicked on same audio type selected");
-                        }
-                      },
-                    );
-                  });
+        child: Obx(() {
+          return ListView.builder(
+              shrinkWrap: true,
+              itemCount: availableAudioList.length,
+              itemBuilder: (context, index) {
+                var audioItem = availableAudioList[index];
+                debugPrint("audio item name ${audioItem.name}");
+                return Obx(() {
+                  return ListTile(
+                    contentPadding: const EdgeInsets.only(left: 10),
+                    title: Text(audioItem.name ?? "", style: const TextStyle(fontSize: 14, fontWeight: FontWeight.normal)),
+                    trailing: audioItem.type == audioOutputType.value
+                        ? const Icon(
+                            Icons.check_outlined,
+                            color: Colors.green,
+                          )
+                        : const SizedBox.shrink(),
+                    onTap: () {
+                      if (audioOutputType.value != audioItem.type) {
+                        Get.back();
+                        debugPrint("selected audio item ${audioItem.type}");
+                        audioOutputType(audioItem.type);
+                        Mirrorfly.routeAudioTo(routeType: audioItem.type ?? "");
+                      } else {
+                        LogMessage.d("routeAudioOption", "clicked on same audio type selected");
+                      }
+                    },
+                  );
                 });
-          }),
-        ),
+              });
+        }),
       ),
     );
     // }else{
@@ -251,12 +248,12 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
     debugPrint("isOneToOneCall : $isOneToOneCall");
     if (await AppPermission.askVideoCallPermissions()) {
       if (callType.value != CallType.audio) {
-        Mirrorfly.muteVideo(!videoMuted.value);
+        Mirrorfly.muteVideo(status: !videoMuted.value, flyCallBack: (_) {  });
         videoMuted(!videoMuted.value);
       } else if (callType.value == CallType.audio && isOneToOneCall && Get.currentRoute == Routes.onGoingCallView) {
         showVideoSwitchPopup();
       } else if (isGroupCall) {
-        Mirrorfly.muteVideo(!videoMuted.value);
+        Mirrorfly.muteVideo(status: !videoMuted.value, flyCallBack: (_) {  },);
         videoMuted(!videoMuted.value);
       }
     }
@@ -286,9 +283,9 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
     if (callList.isNotEmpty) {
       callList.clear();
     }
-    Mirrorfly.disconnectCall().then((value) {
-      debugPrint("#Disconnect call disconnect value $value");
-      if (value.checkNull()) {
+    Mirrorfly.disconnectCall(flyCallBack: (FlyResponse response) {
+      debugPrint("#Disconnect call disconnect value ${response.isSuccess}");
+      if (response.isSuccess) {
         debugPrint("#Disconnect call disconnect list size ${callList.length}");
         backCalledFromDisconnect();
       }
@@ -480,8 +477,8 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
     this.callMode(callMode);
     this.callType(callType);
     // this.callStatus(callStatus);
-    var isAudioMuted = (await Mirrorfly.isUserAudioMuted(userJid)).checkNull();
-    var isVideoMuted = (await Mirrorfly.isUserVideoMuted(userJid)).checkNull();
+    var isAudioMuted = (await Mirrorfly.isUserAudioMuted(userJid: userJid)).checkNull();
+    var isVideoMuted = (await Mirrorfly.isUserVideoMuted(userJid: userJid)).checkNull();
     var index = callList.indexWhere((userList) => userList.userJid!.value == userJid);
     debugPrint("User List Index $index");
     if(index.isNegative){
@@ -519,8 +516,8 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
       // var data = await getProfileDetails(userJid);
       // toToast("${data.getName()} joined the Call");
     }else{
-      var isAudioMuted = (await Mirrorfly.isUserAudioMuted(userJid)).checkNull();
-      var isVideoMuted = (await Mirrorfly.isUserVideoMuted(userJid)).checkNull();
+      var isAudioMuted = (await Mirrorfly.isUserAudioMuted(userJid: userJid)).checkNull();
+      var isVideoMuted = (await Mirrorfly.isUserVideoMuted(userJid: userJid)).checkNull();
       var indexValid = callList.indexWhere((element) => element.userJid?.value == userJid);
       debugPrint("#MirrorflyCall user jid $userJid");
       CallUserList callUserList = CallUserList(userJid: userJid.obs, callStatus: RxString(callStatus), isAudioMuted: isAudioMuted, isVideoMuted: isVideoMuted,);
@@ -556,11 +553,11 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
 
   void disconnectOutgoingCall() {
     isCallTimerEnabled = false;
-    Mirrorfly.disconnectCall().then((value) {
-      callList.clear();
-
+    Mirrorfly.disconnectCall(flyCallBack: (FlyResponse response) {
+      if(response.isSuccess) {
+        callList.clear();
         Get.back();
-
+      }
     });
   }
 
@@ -775,7 +772,7 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
                   showingVideoSwitchPopup = false;
                   closeDialog();
                 },
-                child: const Text("CANCEL")),
+                child: const Text("CANCEL",style: TextStyle(color: buttonBgColor))),
             TextButton(
                 onPressed: () {
                   if(callType.value == CallType.audio && isOneToOneCall && Get.currentRoute == Routes.onGoingCallView) {
@@ -791,7 +788,7 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
                     closeDialog();
                   }
                 },
-                child: const Text("SWITCH"))
+                child: const Text("SWITCH",style: TextStyle(color: buttonBgColor)))
           ],
           barrierDismissible: false);
     }else{
@@ -836,7 +833,7 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
                 closeDialog();
                 Mirrorfly.declineVideoCallSwitchRequest();
               },
-              child: const Text("DECLINE")),
+              child: const Text("DECLINE",style: TextStyle(color: buttonBgColor))),
           TextButton(
               onPressed: () async {
                 closeDialog();
@@ -854,7 +851,7 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
                   Mirrorfly.declineVideoCallSwitchRequest();
                 }
               },
-              child: const Text("ACCEPT"))
+              child: const Text("ACCEPT",style: TextStyle(color: buttonBgColor)))
         ],
         barrierDismissible: false);
   }
@@ -873,7 +870,7 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
                 closeDialog();
                 Mirrorfly.cancelVideoCallSwitch();
               },
-              child: const Text("CANCEL"))
+              child: const Text("CANCEL",style: TextStyle(color: buttonBgColor)))
         ],
         barrierDismissible: false);
 
@@ -961,8 +958,8 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
         var userJids = value;
         for (var jid in userJids) {
           LogMessage.d("callController", "before ${callUserListToJson(callList)}");
-          var isAudioMuted = (await Mirrorfly.isUserAudioMuted(jid)).checkNull();
-          var isVideoMuted = (await Mirrorfly.isUserVideoMuted(jid)).checkNull();
+          var isAudioMuted = (await Mirrorfly.isUserAudioMuted(userJid: jid)).checkNull();
+          var isVideoMuted = (await Mirrorfly.isUserVideoMuted(userJid: jid)).checkNull();
           var indexValid = callList.indexWhere((element) => element.userJid?.value == jid);
           LogMessage.d("callController", "indexValid : $indexValid jid : $jid");
           if(indexValid.isNegative && callList.length != getMaxCallUsersCount) {

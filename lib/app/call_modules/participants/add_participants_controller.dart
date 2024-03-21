@@ -178,21 +178,18 @@ class AddParticipantsController extends GetxController with GetTickerProviderSta
           onPressed: () {
             Get.back();
           },
-          child: const Text("NO")),
+          child: const Text("NO",style: TextStyle(color: buttonBgColor))),
       TextButton(
           onPressed: () async {
             if (await AppUtils.isNetConnected()) {
               Get.back();
               Helper.progressLoading();
-              Mirrorfly.unblockUser(item.jid.checkNull()).then((value) {
+              Mirrorfly.unblockUser(userJid: item.jid.checkNull(), flyCallBack: (FlyResponse response) {
                 Helper.hideLoading();
-                if (value != null && value) {
+                if (response.isSuccess && response.hasData) {
                   toToast("${getName(item)} has been Unblocked");
                   userUpdatedHisProfile(item.jid.checkNull());
                 }
-              }).catchError((error) {
-                Helper.hideLoading();
-                debugPrint(error);
               });
             } else {
               toToast(Constants.noInternetConnection);
@@ -331,7 +328,7 @@ class AddParticipantsController extends GetxController with GetTickerProviderSta
     }
     if (await AppUtils.isNetConnected() || Constants.enableContactSync) {
       callback(FlyResponse response) async {
-        if (response.isSuccess && response.data.isNotEmpty) {
+        if (response.isSuccess && response.hasData) {
           var data = response.data;
           mirrorFlyLog("userlist", data);
           var item = userListFromJson(data);
@@ -340,7 +337,7 @@ class AddParticipantsController extends GetxController with GetTickerProviderSta
 
           if (groupJid.value.checkNull().isNotEmpty) {
             await Future.forEach(items, (it) async {
-              await Mirrorfly.isMemberOfGroup(groupJid.value.checkNull(), it.jid.checkNull()).then((value) {
+              await Mirrorfly.isMemberOfGroup(groupJid: groupJid.value.checkNull(), userJid: it.jid.checkNull()).then((value) {
                 mirrorFlyLog("item", value.toString());
                 if (value == null || !value) {
                   list.add(it);
@@ -430,8 +427,8 @@ class AddParticipantsController extends GetxController with GetTickerProviderSta
       }
 
       (!Constants.enableContactSync)
-          ? Mirrorfly.getUserList(pageNum, _searchText, flyCallback: callback)
-          : Mirrorfly.getRegisteredUsers(false, flyCallback: callback);
+          ? Mirrorfly.getUserList(page: pageNum, search: _searchText, flyCallback: callback)
+          : Mirrorfly.getRegisteredUsers(fetchFromServer: false, flyCallback: callback);
       /*future.then((data) async {
         //Mirrorfly.getUserList(pageNum, _searchText).then((data) async {
         mirrorFlyLog("userlist", data);
@@ -544,10 +541,10 @@ class AddParticipantsController extends GetxController with GetTickerProviderSta
 
   void getGroupMembers() {
     if (groupId.isNotEmpty) {
-      Mirrorfly.getGroupMembersList(groupId.value.checkNull(), null).then((value) {
-        mirrorFlyLog("getGroupMembersList", value);
-        if (value.isNotEmpty) {
-          var list = profileFromJson(value);
+      Mirrorfly.getGroupMembersList(jid: groupId.value.checkNull(), flyCallBack: (FlyResponse response) {
+        mirrorFlyLog("getGroupMembersList", response.toString());
+        if (response.isSuccess && response.hasData) {
+          var list = profileFromJson(response.data);
           var callConnectedUserList = List<String>.from(callList.map((element) => element.userJid));
           var filteredList = getFilteredList(callConnectedUserList, list);
           mainUsersList(filteredList);
