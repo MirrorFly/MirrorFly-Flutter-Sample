@@ -45,10 +45,10 @@ class _ImageMessageViewState extends State<ImageMessageView> {
                       mediaMessage.mediaLocalStoragePath, mediaMessage.mediaThumbImage, context, mediaMessage.mediaFileName, widget.isSelected);
                 }),
               ),
-              /*Obx(() {
+              Obx(() {
                 LogMessage.d("ImageMessageView", "getImageOverlay ${widget.chatMessage.messageId}");
                 return getImageOverlay(widget.chatMessage);
-              }),*/
+              }),
               mediaMessage.mediaCaptionText.checkNull().isEmpty
                   ? Positioned(
                       bottom: 8,

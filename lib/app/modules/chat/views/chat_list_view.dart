@@ -53,136 +53,136 @@ class _ChatListViewState extends State<ChatListView> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Obx(() {
-                    return Visibility(
-                        visible: (widget.chatController.showLoadingPrevious.value && index == widget.chatList.length - 1),
-                        //|| (controller.loadPreviousData.value && pos==chatList.length-1) ,
-                        child: const Center(child: CircularProgressIndicator()));
+                    LogMessage.d("ScrollablePositionedList inside AutomaticKeepAlive", "build $index");
+                    return widget.chatController.showLoadingPrevious.value && index == widget.chatList.length - 1
+                        ? const Center(child: CircularProgressIndicator())
+                        : const Offstage();
                   }),
                   (widget.chatList[index].messageType.toUpperCase() != Constants.mNotification)
                       ? SwipeTo(
-                    onRightSwipe: (DragUpdateDetails dragUpdateDetails) {
-                      if (!widget.chatList[index].isMessageRecalled.value &&
-                          !widget.chatList[index].isMessageDeleted &&
-                          widget.chatList[index].messageStatus.value.checkNull().toString() != "N") {
-                        widget.chatController.handleReplyChatMessage(widget.chatList[index]);
-                      }
-                    },
-                    animationDuration: const Duration(milliseconds: 300),
-                    offsetDx: 0.2,
-                    child: GestureDetector(
-                      onLongPress: () {
-                        debugPrint("LongPressed");
-                        FocusManager.instance.primaryFocus?.unfocus();
-                        if (!widget.chatController.isSelected.value) {
-                          widget.chatController.isSelected(true);
-                          widget.chatController.addChatSelection(widget.chatList[index]);
-                        }
-                      },
-                      onTap: () {
-                        debugPrint("On Tap");
-                        FocusManager.instance.primaryFocus?.unfocus();
-                        if (widget.chatController.isSelected.value) {
-                          widget.chatController.isSelected.value
-                              ? widget.chatController.selectedChatList.contains(widget.chatList[index])
-                              ? widget.chatController.clearChatSelection(widget.chatList[index])
-                              : widget.chatController.addChatSelection(widget.chatList[index])
-                              : null;
-                          widget.chatController.getMessageActions();
-                        } else {
-                          var replyChat = widget.chatList[index].replyParentChatMessage;
-                          if (replyChat != null) {
-                            debugPrint("reply tap ");
-                            var chat = widget.chatList.indexWhere((element) => element.messageId == replyChat.messageId);
-                            if (!chat.isNegative) {
-                              widget.chatController.navigateToMessage(widget.chatList[chat], index: chat);
+                          onRightSwipe: (DragUpdateDetails dragUpdateDetails) {
+                            if (!widget.chatList[index].isMessageRecalled.value &&
+                                !widget.chatList[index].isMessageDeleted &&
+                                widget.chatList[index].messageStatus.value.checkNull().toString() != "N") {
+                              widget.chatController.handleReplyChatMessage(widget.chatList[index]);
                             }
-                          }
-                        }
-                      },
-                      onDoubleTap: () {
-                        widget.chatController.translateMessage(index);
-                      },
-                      child: Obx(() {
-                        LogMessage.d("Container", "build ${widget.chatList[index].messageId}");
-                        return Container(
-                          key: ValueKey(widget.chatList[index].messageId),
-                          color: widget.chatList[index].isSelected.value ? chatReplyContainerColor : Colors.transparent,
-                          margin: const EdgeInsets.only(left: 14, right: 14, top: 5, bottom: 10),
-                          child: Align(
-                            alignment: (widget.chatList[index].isMessageSentByMe ? Alignment.bottomRight : Alignment.bottomLeft),
-                            child: Row(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Visibility(
-                                  visible: widget.chatController.forwardMessageVisibility(widget.chatList[index]),
-                                  child: IconButton(
-                                      onPressed: () {
-                                        widget.chatController.forwardSingleMessage(widget.chatList[index].messageId);
-                                      },
-                                      icon: SvgPicture.asset(forwardMedia)),
-                                ),
-                                Container(
-                                  constraints: BoxConstraints(maxWidth: Get.width * 0.75),
-                                  decoration: BoxDecoration(
-                                      borderRadius: const BorderRadius.only(
-                                          topLeft: Radius.circular(10), topRight: Radius.circular(10), bottomLeft: Radius.circular(10)),
-                                      color: (widget.chatList[index].isMessageSentByMe ? chatSentBgColor : Colors.white),
-                                      border: widget.chatList[index].isMessageSentByMe
-                                          ? Border.all(color: chatSentBgColor)
-                                          : Border.all(color: chatBorderColor)),
-                                  child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                          },
+                          animationDuration: const Duration(milliseconds: 300),
+                          offsetDx: 0.2,
+                          child: GestureDetector(
+                            onLongPress: () {
+                              debugPrint("LongPressed");
+                              FocusManager.instance.primaryFocus?.unfocus();
+                              if (!widget.chatController.isSelected.value) {
+                                widget.chatController.isSelected(true);
+                                widget.chatController.addChatSelection(widget.chatList[index]);
+                              }
+                            },
+                            onTap: () {
+                              debugPrint("On Tap");
+                              FocusManager.instance.primaryFocus?.unfocus();
+                              if (widget.chatController.isSelected.value) {
+                                widget.chatController.isSelected.value
+                                    ? widget.chatController.selectedChatList.contains(widget.chatList[index])
+                                        ? widget.chatController.clearChatSelection(widget.chatList[index])
+                                        : widget.chatController.addChatSelection(widget.chatList[index])
+                                    : null;
+                                widget.chatController.getMessageActions();
+                              } else {
+                                var replyChat = widget.chatList[index].replyParentChatMessage;
+                                if (replyChat != null) {
+                                  debugPrint("reply tap ");
+                                  var chat = widget.chatList.indexWhere((element) => element.messageId == replyChat.messageId);
+                                  if (!chat.isNegative) {
+                                    widget.chatController.navigateToMessage(widget.chatList[chat], index: chat);
+                                  }
+                                }
+                              }
+                            },
+                            onDoubleTap: () {
+                              widget.chatController.translateMessage(index);
+                            },
+                            child: Obx(() {
+                              LogMessage.d("Container", "build ${widget.chatList[index].messageId}");
+                              return Container(
+                                key: ValueKey(widget.chatList[index].messageId),
+                                color: widget.chatList[index].isSelected.value ? chatReplyContainerColor : Colors.transparent,
+                                margin: const EdgeInsets.only(left: 14, right: 14, top: 5, bottom: 10),
+                                child: Align(
+                                  alignment: (widget.chatList[index].isMessageSentByMe ? Alignment.bottomRight : Alignment.bottomLeft),
+                                  child: Row(
+                                    crossAxisAlignment: CrossAxisAlignment.center,
+                                    mainAxisSize: MainAxisSize.min,
                                     children: [
-                                      if (widget.chatController.profile.isGroupProfile.checkNull()) ...[
-                                        SenderHeader(
-                                            isGroupProfile: widget.chatController.profile.isGroupProfile,
-                                            chatList: widget.chatList,
-                                            index: index),
+                                      Visibility(
+                                        visible: widget.chatController.forwardMessageVisibility(widget.chatList[index]),
+                                        child: IconButton(
+                                            onPressed: () {
+                                              widget.chatController.forwardSingleMessage(widget.chatList[index].messageId);
+                                            },
+                                            icon: SvgPicture.asset(forwardMedia)),
+                                      ),
+                                      Container(
+                                        constraints: BoxConstraints(maxWidth: Get.width * 0.75),
+                                        decoration: BoxDecoration(
+                                            borderRadius: const BorderRadius.only(
+                                                topLeft: Radius.circular(10), topRight: Radius.circular(10), bottomLeft: Radius.circular(10)),
+                                            color: (widget.chatList[index].isMessageSentByMe ? chatSentBgColor : Colors.white),
+                                            border: widget.chatList[index].isMessageSentByMe
+                                                ? Border.all(color: chatSentBgColor)
+                                                : Border.all(color: chatBorderColor)),
+                                        child: Column(
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          children: [
+                                            if (widget.chatController.profile.isGroupProfile.checkNull()) ...[
+                                              SenderHeader(
+                                                  isGroupProfile: widget.chatController.profile.isGroupProfile,
+                                                  chatList: widget.chatList,
+                                                  index: index),
+                                            ],
+                                            widget.chatList[index].isThisAReplyMessage
+                                                ? widget.chatList[index].replyParentChatMessage == null
+                                                    ? messageNotAvailableWidget(widget.chatList[index])
+                                                    : ReplyMessageHeader(chatMessage: widget.chatList[index])
+                                                : const SizedBox.shrink(),
+                                            MessageContent(
+                                                chatList: widget.chatList,
+                                                index: index,
+                                                onPlayAudio: () {
+                                                  if (widget.chatController.isAudioRecording.value == Constants.audioRecording) {
+                                                    widget.chatController.stopRecording();
+                                                  }
+                                                  widget.chatController.playAudio(widget.chatList[index]);
+                                                },
+                                                onSeekbarChange: (double value) {
+                                                  widget.chatController.onSeekbarChange(value, widget.chatList[index]);
+                                                },
+                                                isSelected: widget.chatController.isSelected.value)
+                                          ],
+                                        ),
+                                      ),
+                                      if (!widget.chatList[index].isMessageSentByMe &&
+                                          widget.chatController.forwardMessageVisibility(widget.chatList[index])) ...[
+                                        IconButton(
+                                            onPressed: () {
+                                              widget.chatController.forwardSingleMessage(widget.chatList[index].messageId);
+                                            },
+                                            icon: SvgPicture.asset(forwardMedia))
                                       ],
-                                      widget.chatList[index].isThisAReplyMessage
-                                          ? widget.chatList[index].replyParentChatMessage == null
-                                          ? messageNotAvailableWidget(widget.chatList[index])
-                                          : ReplyMessageHeader(chatMessage: widget.chatList[index])
-                                          : const SizedBox.shrink(),
-                                      MessageContent(
-                                          chatList: widget.chatList,
-                                          index: index,
-                                          onPlayAudio: () {
-                                            if (widget.chatController.isAudioRecording.value == Constants.audioRecording) {
-                                              widget.chatController.stopRecording();
-                                            }
-                                            widget.chatController.playAudio(widget.chatList[index]);
-                                          },
-                                          onSeekbarChange: (double value) {
-                                            widget.chatController.onSeekbarChange(value, widget.chatList[index]);
-                                          },
-                                          isSelected: widget.chatController.isSelected.value)
                                     ],
                                   ),
                                 ),
-                                if (!widget.chatList[index].isMessageSentByMe &&
-                                    widget.chatController.forwardMessageVisibility(widget.chatList[index])) ...[
-                                  IconButton(
-                                      onPressed: () {
-                                        widget.chatController.forwardSingleMessage(widget.chatList[index].messageId);
-                                      },
-                                      icon: SvgPicture.asset(forwardMedia))
-                                ],
-                              ],
-                            ),
+                              );
+                            }),
                           ),
-                        );
-                      }),
-                    ),
-                  )
+                        )
                       : NotificationMessageView(chatMessage: widget.chatList[index].messageTextContent),
                   Obx(() {
-                    return Visibility(
-                        visible: (widget.chatController.showLoadingNext.value && index == 0),
-                        child: const Center(
-                          child: CircularProgressIndicator(),
-                        ));
+                    return widget.chatController.showLoadingNext.value && index == 0
+                        ? const Center(
+                            child: CircularProgressIndicator(),
+                          )
+                        : const Offstage();
                   }),
                 ],
               );
@@ -192,11 +192,9 @@ class _ChatListViewState extends State<ChatListView> {
       ),
     );
   }
-
-/*  @override
-  bool get wantKeepAlive => true;*/
+  //
+  // @override
+  // bool get wantKeepAlive => true;
 }
 
-// Widget chatListView(List<ChatMessageModel> chatList) {
-//
-// }
+

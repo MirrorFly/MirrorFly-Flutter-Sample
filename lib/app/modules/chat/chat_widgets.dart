@@ -235,10 +235,10 @@ getReplyImageHolder(BuildContext context,
     double size,
     bool isNotChatItem,
     LocationChatMessage? locationChatMessage) {
-  LogMessage.d("getReplyImageHolder", "chatMessageModel : ${chatMessageModel.toJson()}");
-  LogMessage.d("getReplyImageHolder", "mediaChatMessage : ${mediaChatMessage?.toJson()}");
-  LogMessage.d("getReplyImageHolder", "isNotChatItem : $isNotChatItem");
-  LogMessage.d("getReplyImageHolder", "locationChatMessage : ${locationChatMessage?.toJson()}");
+  // LogMessage.d("getReplyImageHolder", "chatMessageModel : ${chatMessageModel.toJson()}");
+  // LogMessage.d("getReplyImageHolder", "mediaChatMessage : ${mediaChatMessage?.toJson()}");
+  // LogMessage.d("getReplyImageHolder", "isNotChatItem : $isNotChatItem");
+  // LogMessage.d("getReplyImageHolder", "locationChatMessage : ${locationChatMessage?.toJson()}");
   var isReply = false;
   if (mediaChatMessage != null || locationChatMessage != null) {
     isReply = true;
