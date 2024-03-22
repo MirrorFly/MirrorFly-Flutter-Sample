@@ -654,7 +654,7 @@ class ChatController extends FullLifeCycleController
   var initializedMessageList = false;
   void _loadMessages() {
     // getChatHistory();
-    Mirrorfly.initializeMessageList(userJid: profile.jid.checkNull(), limit: 25,topicId: topicId)//message
+    Mirrorfly.initializeMessageList(userJid: profile.jid.checkNull(), limit: 25,topicId: topicId,messageId: starredChatMessageId,exclude: starredChatMessageId == null)//message
         .then((value) {
       if(value) {
         initializedMessageList = true;
