@@ -556,6 +556,31 @@ class Constants {
   static const mobileImageMaxHeight = 320;
   static const mobileImageMinHeight = 80;
 
+  static const mediaMaxLimitRestriction = 'File size is too large. Try uploading file size below %d MB';
+  static const mediaSizeError = 'File size is too large. Try uploading file size below';
+  static const supportedFormats = [
+      "jpg",
+      "jpeg",
+      "png",
+      "mp3",
+      "wav",
+      "aac",
+      "mpeg",
+      "mp4",
+      "doc",
+      "docx",
+      "pdf",
+      "xls",
+      "xlsx",
+      "txt",
+      "csv",
+      "ppt",
+      "zip",
+      "rar",
+      "pptx",
+      "acc"
+  ];
+
   static const List<String> defaultStatusList = [
     "Available",
     "Sleeping...",

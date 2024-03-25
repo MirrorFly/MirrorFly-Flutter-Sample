@@ -898,7 +898,7 @@ class ChatController extends FullLifeCycleController
             sendDocumentMessage(filePath.value, "");
           });
         } else {
-          toToast("File Size should not exceed ${Constants.maxDocFileSize} MB");
+          toToast(Constants.mediaMaxLimitRestriction.replaceAll("%d", "${Constants.maxDocFileSize}"));
         }
         setOnGoingUserAvail();
       } else {
@@ -1177,7 +1177,7 @@ class ChatController extends FullLifeCycleController
             });
           });
         } else {
-          toToast("File Size should not exceed ${Constants.maxAudioFileSize} MB");
+          toToast(Constants.mediaMaxLimitRestriction.replaceAll("%d", "${Constants.maxAudioFileSize}"));
         }
         setOnGoingUserAvail();
       } else {
@@ -1202,7 +1202,7 @@ class ChatController extends FullLifeCycleController
               });
             });
           } else {
-            toToast("File Size should not exceed ${Constants.maxAudioFileSize} MB");
+            toToast(Constants.mediaMaxLimitRestriction.replaceAll("%d", "${Constants.maxAudioFileSize}"));
           }
         } else {
           setOnGoingUserAvail();
