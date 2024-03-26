@@ -47,7 +47,7 @@ Specify your API key in the AppDelegate.swift and info.plist
 
 ## Getting Help
 
-Check out the Official MirrorFly [Flutter docs](https://www.mirrorfly.com/docs/chat/flutter_plugin/quick-start/) and MirrorFly [Developer Portal](https://www.mirrorfly.com/docs/) for tutorials and videos. If you need any help in resolving any issues or have questions, Drop a mail to (integration@contus.in).
+Check out the Official MirrorFly [Flutter docs](https://www.mirrorfly.com/docs/chat/flutter-plugin/v1/quick-start/) and MirrorFly [Developer Portal](https://www.mirrorfly.com/docs/) for tutorials and videos. If you need any help in resolving any issues or have questions, Drop a mail to (integration@contus.in).
 
 
 
