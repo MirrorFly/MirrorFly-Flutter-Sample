@@ -652,6 +652,8 @@ class Constants {
   static const String mDocument = "DOCUMENT";
   static const String mFile = "FILE";
   static const String mNotification = "NOTIFICATION";
+  static const String mEditText = "EDIT_TEXT";
+  static const String mEditCaption = "EDIT_CAPTION";
 
   //Audio Recording Types
   static const String audioRecording = "AUDIO_RECORDING";
