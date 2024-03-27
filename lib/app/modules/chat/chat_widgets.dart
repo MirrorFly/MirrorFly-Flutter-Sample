@@ -2120,7 +2120,7 @@ Widget getImageOverlay(ChatMessageModel chatMessage,
       default:
         return InkWell(
             onTap: () {
-              toToast(Constants.mediaNotExist);
+              toToast(Constants.mediaDoesNotExist);
             },
             child: uploadView(chatMessage.messageType.toUpperCase()));
     }
