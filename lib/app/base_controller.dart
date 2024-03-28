@@ -156,6 +156,7 @@ abstract class BaseController {
       var typingStatus = data["status"];
       setTypingStatus(singleOrgroupJid, userJid, typingStatus);
     });
+    Mirrorfly.onMessageEdited.listen(onMessageEdited);
     // Mirrorfly.onChatTypingStatus.listen(onChatTypingStatus);
     // Mirrorfly.onGroupTypingStatus.listen(onGroupTypingStatus);
     // Removed due Backup not implemented
@@ -1138,5 +1139,18 @@ abstract class BaseController {
     }
     timer?.cancel();
     timer = null;
+  }
+
+  void onMessageEdited(editedChatMessage) {
+    ChatMessageModel chatMessageModel = sendMessageModelFromJson(editedChatMessage);
+    if (Get.isRegistered<ChatController>()) {
+      Get.find<ChatController>().onMessageEdited(chatMessageModel);
+    }
+    if (Get.isRegistered<DashboardController>()) {
+      Get.find<DashboardController>().onMessageEdited(chatMessageModel);
+    }
+    if (Get.isRegistered<ArchivedChatListController>()) {
+      Get.find<ArchivedChatListController>().onMessageEdited(chatMessageModel);
+    }
   }
 }

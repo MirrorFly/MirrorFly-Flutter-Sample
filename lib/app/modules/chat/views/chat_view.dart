@@ -175,7 +175,7 @@ class ChatView extends GetView<ChatController> {
                                               ],
                                             ),
                                           ),
-                                          controller.emojiLayout(),
+                                          controller.emojiLayout(textEditingController: controller.messageController, sendTypingStatus: true),
                                         ],
                                       )
                                     : !controller.availableFeatures.value.isGroupChatAvailable.checkNull()

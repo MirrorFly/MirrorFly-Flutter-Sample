@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/common/extensions.dart';
-import 'package:mirrorfly_plugin/logmessage.dart';
 
 import '../../../common/constants.dart';
 import '../../../data/helper.dart';
@@ -27,7 +26,7 @@ class _ImageMessageViewState extends State<ImageMessageView> {
   @override
   Widget build(BuildContext context) {
     // super.build(context);
-    LogMessage.d("ImageMessageView", "build ${widget.chatMessage.toJson()}");
+    // LogMessage.d("ImageMessageView", "build ${widget.chatMessage.toJson()}");
     var mediaMessage = widget.chatMessage.mediaChatMessage!;
     return Container(
       key: ValueKey(widget.chatMessage.messageId),
@@ -46,7 +45,7 @@ class _ImageMessageViewState extends State<ImageMessageView> {
                 }),
               ),
               Obx(() {
-                LogMessage.d("ImageMessageView", "getImageOverlay ${widget.chatMessage.messageId}");
+                // LogMessage.d("ImageMessageView", "getImageOverlay ${widget.chatMessage.messageId}");
                 return getImageOverlay(widget.chatMessage);
               }),
               mediaMessage.mediaCaptionText.checkNull().isEmpty

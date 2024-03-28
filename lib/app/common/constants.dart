@@ -556,6 +556,8 @@ class Constants {
   static const mobileImageMaxHeight = 320;
   static const mobileImageMinHeight = 80;
 
+  static const editMessageTimeLimit = 15; // in Minutes
+
   static const mediaMaxLimitRestriction = 'File size is too large. Try uploading file size below %d MB';
   static const mediaSizeError = 'File size is too large. Try uploading file size below';
   static const supportedFormats = [
@@ -677,8 +679,6 @@ class Constants {
   static const String mDocument = "DOCUMENT";
   static const String mFile = "FILE";
   static const String mNotification = "NOTIFICATION";
-  static const String mEditText = "EDIT_TEXT";
-  static const String mEditCaption = "EDIT_CAPTION";
 
   //Audio Recording Types
   static const String audioRecording = "AUDIO_RECORDING";

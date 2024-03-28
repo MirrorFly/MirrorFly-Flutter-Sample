@@ -1723,6 +1723,12 @@ Widget setCaptionMessage(MediaChatMessage mediaMessage,
             const SizedBox(
               width: 5,
             ),
+
+            if (chatMessage.isMessageEdited.value) ... [
+              const Text('Edited', style: TextStyle(
+                  fontSize: 11)),
+              const SizedBox(width: 5,),
+            ],
             Text(
               getChatTime(context, chatMessage.messageSentTime.toInt()),
               style: TextStyle(
@@ -1868,27 +1874,36 @@ class TextMessageView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(10.0),
-      child: Row(
-        mainAxisSize: chatMessage.replyParentChatMessage == null
-            ? MainAxisSize.min
-            : MainAxisSize.max,
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      padding: const EdgeInsets.fromLTRB(10, 10, 10, 10),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
-          Flexible(
-            child: search.isEmpty
-                ? textMessageSpannableText(chatMessage.messageTextContent ?? "")
-                : chatSpannedText(
-              chatMessage.messageTextContent ?? "",
-              search,
-              const TextStyle(fontSize: 14, color: textHintColor),
-            ),
-          ),
-          const SizedBox(
-            width: 10,
+          Row(
+            mainAxisSize: chatMessage.replyParentChatMessage == null
+                ? MainAxisSize.min
+                : MainAxisSize.max,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              Flexible(
+                child: search.isEmpty
+                    ? textMessageSpannableText(chatMessage.messageTextContent ?? "")
+                    : chatSpannedText(
+                  chatMessage.messageTextContent ?? "",
+                  search,
+                  const TextStyle(fontSize: 14, color: textHintColor),
+                ),
+              ),
+              const SizedBox(width: 60,),
+            ],
           ),
           Row(
+            mainAxisSize: chatMessage.replyParentChatMessage == null
+                ? MainAxisSize.min
+                : MainAxisSize.max,
+            mainAxisAlignment: MainAxisAlignment.end,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               chatMessage.isMessageStarred.value
                   ? SvgPicture.asset(starSmallIcon)
@@ -1904,10 +1919,15 @@ class TextMessageView extends StatelessWidget {
               const SizedBox(
                 width: 5,
               ),
+              if (chatMessage.isMessageEdited.value) ... [
+                const Text('Edited', style: TextStyle(
+                    fontSize: 11)),
+                const SizedBox(width: 5,),
+              ],
               Text(
                 getChatTime(context, chatMessage.messageSentTime.toInt()),
                 style: TextStyle(
-                    fontSize: 12,
+                    fontSize: 11,
                     color: chatMessage.isMessageSentByMe
                         ? durationTextColor
                         : textHintColor),

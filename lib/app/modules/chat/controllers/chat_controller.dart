@@ -32,6 +32,7 @@ import 'package:tuple/tuple.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../../common/constants.dart';
+import '../../../common/widgets.dart';
 import '../../../data/apputils.dart';
 import '../../../data/helper.dart';
 import '../../../model/chat_message_model.dart';
@@ -564,7 +565,6 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
                       function();
                     }
                   }
-
                 });
           },
           child: const Text("UNBLOCK", style: TextStyle(color: buttonBgColor))),
@@ -2151,7 +2151,7 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
         // Helper.hideLoading();
         // chatMessageModel.isSelected=chatList[index].isSelected;
         chatList[index] = chatMessageModel;
-        chatList.refresh();
+        // chatList.refresh();
       }
     }
     if (isSelected.value) {
@@ -2696,7 +2696,7 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
     var now = DateTime.now();
 
     // Calculate the time 15 minutes ago
-    var fifteenMinutesAgo = now.subtract(const Duration(minutes: 15));
+    var fifteenMinutesAgo = now.subtract(const Duration(minutes: Constants.editMessageTimeLimit));
 
     //
     // Convert the epoch time (in microseconds since epoch) to a DateTime
@@ -3309,7 +3309,7 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
 
   void showError(FlyException? response) {
     if (response != null && response.message != null) {
-      var errorMessage = response.message!.contains(" ErrorCode =>") ? response.message!.split(" ErrorCode =>")[0] : response.message!;
+      var errorMessage = response.message!.contains(" ErrorCode =>") ? response.message!.split(" ErrorCode =>")[0] : "${response.message!} Reason: ${response.throwable}";
       toToast(errorMessage);
     }
   }
@@ -3333,56 +3333,63 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
     Get.bottomSheet(
       EditMessageScreen(chatItem: chatItem, chatController: this),
       ignoreSafeArea: false,
+      enableDrag: false,
       isScrollControlled: true, // Important for full screen
     );
   }
 
-  Widget emojiLayout() {
+  Widget emojiLayout({required TextEditingController textEditingController, required bool sendTypingStatus}) {
     return Obx(() {
       if (showEmoji.value) {
-        return SizedBox(
-          height: 250,
-          child: emoji.EmojiPicker(
-            onBackspacePressed: () {
-              isTyping();
-              // Do something when the user taps the backspace button (optional)
-            },
-            onEmojiSelected: (cat, emoji) {
-              isTyping();
-            },
-            textEditingController: messageController,
-            config: emoji.Config(
-              columns: 7,
-              emojiSizeMax: 32 * (Platform.isIOS ? 1.30 : 1.0),
-              verticalSpacing: 0,
-              horizontalSpacing: 0,
-              gridPadding: EdgeInsets.zero,
-              initCategory: emoji.Category.RECENT,
-              bgColor: const Color(0xFFF2F2F2),
-              indicatorColor: Colors.blue,
-              iconColor: Colors.grey,
-              iconColorSelected: Colors.blue,
-              backspaceColor: Colors.blue,
-              skinToneDialogBgColor: Colors.white,
-              skinToneIndicatorColor: Colors.grey,
-              enableSkinTones: true,
-              // showRecentsTab: true,
-              recentsLimit: 28,
-              tabIndicatorAnimDuration: kTabScrollDuration,
-              categoryIcons: const emoji.CategoryIcons(),
-              buttonMode: emoji.ButtonMode.CUPERTINO,
-            ),
-          ),
-        );
+        return EmojiLayout(
+            textController: textEditingController,//controller.addStatusController,
+            onBackspacePressed: () => sendTypingStatus ? isTyping() : editMessageText(textEditingController.text),
+            onEmojiSelected: (cat, emoji) => sendTypingStatus ? isTyping() : editMessageText(textEditingController.text));
       } else {
         return const SizedBox.shrink();
       }
     });
   }
 
-  void updateSentMessage({required String messageId}) {
-    Mirrorfly.editTextMessage(editMessageParams: EditMessageParams(messageId: messageId, editedTextContent: editMessageController.text.trim()), flyCallback:  (FlyResponse response){
-      debugPrint("Edit Message ==> $response");
-    });
+  void updateSentMessage({required String messageId, required String type}) {
+    if (type == Constants.mText) {
+      Mirrorfly.editTextMessage(editMessageParams: EditMessageParams(messageId: messageId, editedTextContent: editMessageController.text.trim()),
+          flyCallback: (FlyResponse response) {
+            debugPrint("Edit Message ==> $response");
+            if (response.isSuccess) {
+              Get.back();
+            }
+          });
+    }else if (type == Constants.mImage || type ==  Constants.mVideo){
+      Mirrorfly.editMediaCaption(editMessageParams: EditMessageParams(messageId: messageId, editedTextContent: editMessageController.text.trim()),
+          flyCallback: (FlyResponse response) {
+            debugPrint("Edit Media Caption ==> $response");
+            if (response.isSuccess) {
+              Get.back();
+            }
+          });
+    }
+  }
+
+  void onMessageEdited(ChatMessageModel editedChatMessage) {
+    if (editedChatMessage.chatUserJid == profile.jid) {
+      final index = chatList.indexWhere((message) => message.messageId == editedChatMessage.messageId);
+      debugPrint("ChatScreen Edit Message Update index of search $index");
+      debugPrint("messageID--> $index  ${editedChatMessage.messageId}");
+      if (!index.isNegative) {
+        debugPrint("messageID--> replacing the value");
+        chatList[index] = editedChatMessage;
+        // chatList.refresh();
+      }
+    }
+    if (isSelected.value) {
+      var selectedIndex = selectedChatList.indexWhere((message) => editedChatMessage.messageId == message.messageId);
+      if (!selectedIndex.isNegative) {
+        editedChatMessage.isSelected(true);
+        selectedChatList[selectedIndex] = editedChatMessage;
+        selectedChatList.refresh();
+        getMessageActions();
+      }
+    }
   }
 }
