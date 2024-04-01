@@ -42,7 +42,7 @@ class _EditMessageScreenState extends State<EditMessageScreen> {
   }
   @override
   Widget build(BuildContext context) {
-    var messageToEdit = widget.chatItem.messageType == Constants.mText ? widget.chatItem.messageTextContent : widget.chatItem.mediaChatMessage?.mediaCaptionText;
+    var messageToEdit = (widget.chatItem.messageType == Constants.mText || widget.chatItem.messageType == Constants.mAutoText) ? widget.chatItem.messageTextContent : widget.chatItem.mediaChatMessage?.mediaCaptionText;
     widget.chatController.editMessageController.text = messageToEdit ?? "";
     widget.chatController.editMessageText(messageToEdit);
     return Container(
