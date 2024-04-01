@@ -2676,10 +2676,10 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
         canShowReport(true);
       }
       //Edit Message Validation
-      if (message.isMessageSentByMe &&
+      if (message.isMessageSentByMe && !profile.isAdminBlocked.checkNull() &&
           isWithinLast15Minutes(message.messageSentTime) &&
-          message.messageStatus.value != 'N' &&
-          (message.messageType == Constants.mText ||
+          message.messageStatus.value != 'N' && (profile.isGroupProfile.checkNull() ? isMemberOfGroup : true) &&
+          (message.messageType == Constants.mText || message.messageType == Constants.mAutoText ||
               (message.messageType == Constants.mImage && message.mediaChatMessage!.mediaCaptionText.isNotEmpty) ||
               (message.messageType == Constants.mVideo && message.mediaChatMessage!.mediaCaptionText.isNotEmpty))) {
         canEditMessage(true);
