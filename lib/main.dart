@@ -4,7 +4,6 @@ import 'dart:io';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -39,15 +38,19 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   SessionManagement.onInit();
   debugPrint("#Mirrorfly Notification -> Handling a background message: ${message.messageId}");
   if (Platform.isAndroid) {
+    Mirrorfly.onMissedCall.listen((event) {
+      LogMessage.d("onMissedCall Background", event);
+    });
     PushNotifications.onMessage(message);
   }
 }
-bool shouldUseFirebaseEmulator = false;
 //check app opened from notification
 NotificationAppLaunchDetails? notificationAppLaunchDetails;
+
+MirrorflyNotificationAppLaunchDetails? appLaunchDetails;
+
 //check is on going call
 bool isOnGoingCall = false;
-bool fromMissedCall = false;
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   debugPrint("#Mirrorfly Notification main function init");
@@ -69,9 +72,7 @@ Future<void> main() async {
   notificationAppLaunchDetails = await flutterLocalNotificationsPlugin.getNotificationAppLaunchDetails();
 
 
-  if (shouldUseFirebaseEmulator) {
-    await FirebaseAuth.instance.useAuthEmulator('localhost', 5050);
-  }
+
   await SessionManagement.onInit();
   // Get.put<MainController>(MainController());
   Mirrorfly.initializeSDK(
@@ -87,7 +88,7 @@ Future<void> main() async {
         }
         //check is on going call
         isOnGoingCall = (await Mirrorfly.isOnGoingCall()).checkNull();
-        fromMissedCall = (await Mirrorfly.appLaunchedFromMissedCall()).checkNull();
+        appLaunchDetails = await Mirrorfly.getAppLaunchedDetails();
         runApp(const MyApp());
       }
   );
@@ -145,16 +146,32 @@ Bindings? getBinding(){
 String getInitialRoute() {
   var didNotificationLaunchApp = notificationAppLaunchDetails?.didNotificationLaunchApp ?? false;
   var didNotificationLaunchResponse = notificationAppLaunchDetails?.notificationResponse?.payload;
+  var didMissedCallNotificationLaunchApp = appLaunchDetails?.didMissedCallNotificationLaunchApp ?? false;
+  var didMediaProgressNotificationLaunchApp = appLaunchDetails?.didMediaProgressNotificationLaunchApp ?? false;
+  debugPrint("didMissedCallNotificationLaunchApp $didMissedCallNotificationLaunchApp");
+  debugPrint("didMediaProgressNotificationLaunchApp $didMediaProgressNotificationLaunchApp");
   debugPrint("didNotificationLaunchApp $didNotificationLaunchApp");
   debugPrint("didNotificationLaunchResponse $didNotificationLaunchResponse");
   if(isOnGoingCall){
     isOnGoingCall=false;
     return AppPages.onGoingCall;
-  }else if(didNotificationLaunchApp){
-    notificationAppLaunchDetails = null;
-    var chatJid = didNotificationLaunchResponse !=null ? didNotificationLaunchResponse.checkNull().split(",")[0] : "";
-    var topicId = didNotificationLaunchResponse !=null ? didNotificationLaunchResponse.checkNull().split(",")[1] : "";
-    return "${AppPages.chat}?jid=$chatJid&from_notification=$didNotificationLaunchApp&topicId=$topicId";
+  }else if(didNotificationLaunchApp || didMediaProgressNotificationLaunchApp){
+    if(didNotificationLaunchApp) {
+      notificationAppLaunchDetails = null;
+      var chatJid = didNotificationLaunchResponse != null
+          ? didNotificationLaunchResponse.checkNull().split(",")[0]
+          : "";
+      var topicId = didNotificationLaunchResponse != null
+          ? didNotificationLaunchResponse.checkNull().split(",")[1]
+          : "";
+      return "${AppPages
+          .chat}?jid=$chatJid&from_notification=$didNotificationLaunchApp&topicId=$topicId";
+    }else{
+      var chatJid = appLaunchDetails?.mediaProgressChatJid ??  "";
+      appLaunchDetails = null;
+      return "${AppPages
+          .chat}?jid=$chatJid&from_notification=$didMediaProgressNotificationLaunchApp";
+    }
   }
   if(!SessionManagement.adminBlocked()) {
     if (SessionManagement.getLogin()) {
@@ -177,7 +194,7 @@ String getInitialRoute() {
               if (!SessionManagement.isContactSyncDone() /*|| nonChatUsers.isEmpty*/) {
                 return AppPages.contactSync;
               }else{
-                return "${AppPages.dashboard}?fromMissedCall=$fromMissedCall";
+                return "${AppPages.dashboard}?fromMissedCall=$didMissedCallNotificationLaunchApp";
               }
           }else{
             mirrorFlyLog("login", "${SessionManagement
@@ -185,7 +202,7 @@ String getInitialRoute() {
                 .checkNull()
                 .isEmpty}");
             mirrorFlyLog("SessionManagement.getLogin()", "${SessionManagement.getLogin()}");
-            return "${AppPages.dashboard}?fromMissedCall=$fromMissedCall";
+            return "${AppPages.dashboard}?fromMissedCall=$didMissedCallNotificationLaunchApp";
           }
         } else {
           return "${AppPages.chat}?jid=${SessionManagement.getChatJid()

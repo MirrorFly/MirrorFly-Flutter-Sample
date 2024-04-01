@@ -249,7 +249,7 @@ class _GalleryMediaPickerState extends State<GalleryMediaPicker> {
                                   widget.pathList!(widget.provider.pickedFile);
                                 });
                               }else{
-                                toToast("File Size should not exceed ${asset.typeInt == 1 ? Constants.maxImageFileSize : Constants.maxVideoFileSize} MB");
+                                toToast(Constants.mediaMaxLimitRestriction.replaceAll("%d", "${asset.typeInt == 1 ? Constants.maxImageFileSize : Constants.maxVideoFileSize}"));
                               }
                             },
                           ),
