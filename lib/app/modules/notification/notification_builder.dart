@@ -253,7 +253,6 @@ class NotificationBuilder {
 
   //Call Notification
   static var unReadCallCount = 0;
-  static var callNotificationId = 124;
   static createCallNotification(String title,String messageContent) async {
     unReadCallCount += 1;
     unReadCallCount += await getTotalUnReadCount();
@@ -283,8 +282,8 @@ class NotificationBuilder {
         ?.createNotificationChannel(channel);
 
     await flutterLocalNotificationsPlugin.show(
-        callNotificationId, title, messageContent, notificationDetails,
-        payload: "$callNotificationId");
+       Constants.callNotificationId, title, messageContent, notificationDetails,
+        payload: "${Constants.callNotificationId}");
   }
 
   static AndroidNotificationChannel buildCallNotificationChannel(){

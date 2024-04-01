@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_svg/svg.dart';
@@ -63,16 +64,17 @@ class _EditMessageScreenState extends State<EditMessageScreen> {
             ),
           ),
           Expanded(
-            child: ListView(
-              shrinkWrap: true,
-              reverse: true,
-                children: [
-                  InkWell(
-                    onTap: (){
-                      textFocusNode.unfocus();
-                      // widget.chatController.showHideEmoji(Get.context!);
-                  },
-                    child: Align(
+            child: InkWell(
+              splashColor: Colors.transparent,
+              onTap: (){
+                textFocusNode.unfocus();
+                // widget.chatController.showHideEmoji(Get.context!);
+              },
+              child: ListView(
+                shrinkWrap: true,
+                reverse: true,
+                  children: [
+                    Align(
                       alignment: Alignment.bottomRight,
                       child: Container(
                         key: ValueKey(widget.chatItem.messageId),
@@ -101,9 +103,9 @@ class _EditMessageScreenState extends State<EditMessageScreen> {
                         ),
                       ),
                     ),
-                  ),
-                  // widget.chatController.emojiLayout(textEditingController: widget.chatController.editMessageController)
-                ],
+                    // widget.chatController.emojiLayout(textEditingController: widget.chatController.editMessageController)
+                  ],
+              ),
             ),
           ),
           Align(
@@ -169,7 +171,7 @@ class _EditMessageScreenState extends State<EditMessageScreen> {
                           return widget.chatController.editMessageText.value.trim() != messageToEdit && widget.chatController.editMessageText.value.trim().isNotEmpty
                               ? InkWell(
                               onTap: () {
-                                widget.chatController.updateSentMessage(messageId: widget.chatItem.messageId, type: widget.chatItem.messageType);
+                                widget.chatController.updateSentMessage(chatItem: widget.chatItem);
                               },
                               child: Padding(
                                 padding: const EdgeInsets.only(left: 8.0, right: 8.0, bottom: 8),

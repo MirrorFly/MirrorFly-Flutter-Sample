@@ -805,6 +805,8 @@ class Constants {
   static const callAgain = "Call Again";
   static const callTimeoutMessage = "Seems like no one attended the call";
 
+  static const callNotificationId = 124;
+
   //Call Types
   static const audioCall = "audio";
   static const videoCall = "video";

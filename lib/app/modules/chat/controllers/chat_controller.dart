@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:audioplayers/audioplayers.dart';
-import 'package:emoji_picker_flutter/emoji_picker_flutter.dart' as emoji;
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -2687,6 +2686,8 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
       } else {
         canEditMessage(false);
       }
+    }else{
+      canEditMessage(false);
     }
   }
 
@@ -3351,23 +3352,43 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
     });
   }
 
-  void updateSentMessage({required String messageId, required String type}) {
-    if (type == Constants.mText) {
-      Mirrorfly.editTextMessage(editMessageParams: EditMessageParams(messageId: messageId, editedTextContent: editMessageController.text.trim()),
-          flyCallback: (FlyResponse response) {
-            debugPrint("Edit Message ==> $response");
-            if (response.isSuccess) {
-              Get.back();
-            }
-          });
-    }else if (type == Constants.mImage || type ==  Constants.mVideo){
-      Mirrorfly.editMediaCaption(editMessageParams: EditMessageParams(messageId: messageId, editedTextContent: editMessageController.text.trim()),
-          flyCallback: (FlyResponse response) {
-            debugPrint("Edit Media Caption ==> $response");
-            if (response.isSuccess) {
-              Get.back();
-            }
-          });
+  void updateSentMessage({required ChatMessageModel chatItem}) {
+    if (isWithinLast15Minutes(chatItem.messageSentTime)) {
+      if (chatItem.messageType == Constants.mText) {
+        Mirrorfly.editTextMessage(
+            editMessageParams: EditMessageParams(messageId: chatItem.messageId, editedTextContent: editMessageController.text.trim()),
+            flyCallback: (FlyResponse response) {
+              debugPrint("Edit Message ==> $response");
+              if (response.isSuccess) {
+                Get.back();
+                ChatMessageModel editMessage = sendMessageModelFromJson(response.data);
+                final index = chatList.indexWhere((message) => message.messageId == editMessage.messageId);
+                debugPrint("Edit Message Status Update index of search $index");
+                debugPrint("messageID--> $index  ${editMessage.messageId}");
+                if (!index.isNegative) {
+                  chatList[index] = editMessage;
+                }
+              }
+            });
+      } else if (chatItem.messageType == Constants.mImage || chatItem.messageType == Constants.mVideo) {
+        Mirrorfly.editMediaCaption(
+            editMessageParams: EditMessageParams(messageId: chatItem.messageId, editedTextContent: editMessageController.text.trim()),
+            flyCallback: (FlyResponse response) {
+              debugPrint("Edit Media Caption ==> $response");
+              if (response.isSuccess) {
+                Get.back();
+                ChatMessageModel editMessage = sendMessageModelFromJson(response.data);
+                final index = chatList.indexWhere((message) => message.messageId == editMessage.messageId);
+                debugPrint("Edit Message Status Update index of search $index");
+                debugPrint("messageID--> $index  ${editMessage.messageId}");
+                if (!index.isNegative) {
+                  chatList[index] = editMessage;
+                }
+              }
+            });
+      }
+    }else{
+      toToast("Unable to Edit the message");
     }
   }
 

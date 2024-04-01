@@ -147,7 +147,7 @@ abstract class BaseController {
     Mirrorfly.onConnected.listen(onConnected);
     Mirrorfly.onDisconnected.listen(onDisconnected);
     Mirrorfly.onConnectionFailed.listen(onConnectionFailed);
-    Mirrorfly.onWebChatPasswordChanged.listen(onWebChatPasswordChanged);
+    // Mirrorfly.onWebChatPasswordChanged.listen(onWebChatPasswordChanged);
     Mirrorfly.typingStatus.listen((event) {
       var data = json.decode(event.toString());
       mirrorFlyLog("setTypingStatus", data.toString());
