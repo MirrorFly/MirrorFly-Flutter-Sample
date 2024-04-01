@@ -139,6 +139,9 @@ class MainController extends FullLifeCycleController with BaseController, FullLi
             LogMessage.d("#Mirrorfly Notification -> previously app opened from notification", "so we have to maintain that");
             Get.offAllNamed("${AppPages.chat}?jid=$chatJid&from_notification=true&topicId=$topicId");
           } else {
+            if(Get.isOverlaysOpen){
+              Get.back();
+            }
             Get.offNamed(Routes.chat, parameters: {"chatJid": chatJid, "topicId": topicId});
           }
         } else {
