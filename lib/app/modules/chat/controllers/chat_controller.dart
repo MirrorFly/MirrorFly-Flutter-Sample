@@ -1240,7 +1240,7 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
     }
     Mirrorfly.clearChat(
         jid: profile.jid!,
-        chatType: "chat",
+        chatType: profile.isGroupProfile.checkNull() ? "groupchat" : "chat",
         clearExceptStarred: isStarredExcluded,
         flyCallBack: (FlyResponse response) {
           if (response.isSuccess) {
