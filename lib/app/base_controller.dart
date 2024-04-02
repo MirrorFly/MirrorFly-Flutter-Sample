@@ -1146,6 +1146,9 @@ abstract class BaseController {
     if (Get.isRegistered<ChatController>()) {
       Get.find<ChatController>().onMessageEdited(chatMessageModel);
     }
+    if (Get.isRegistered<MessageInfoController>()) {
+      Get.find<MessageInfoController>().onMessageEdited(chatMessageModel);
+    }
     if (Get.isRegistered<DashboardController>()) {
       Get.find<DashboardController>().onMessageEdited(chatMessageModel);
     }
