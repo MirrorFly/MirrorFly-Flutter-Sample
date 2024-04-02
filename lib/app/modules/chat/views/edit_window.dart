@@ -22,6 +22,7 @@ class _EditMessageScreenState extends State<EditMessageScreen> {
   @override
   void initState() {
     super.initState();
+    widget.chatController.setOnGoingUserGone();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       textFocusNode.requestFocus();
     });
@@ -36,6 +37,7 @@ class _EditMessageScreenState extends State<EditMessageScreen> {
 
   @override
   void dispose() {
+    widget.chatController.setOnGoingUserAvail();
     // Dispose the focus node when the widget is removed from the widget tree
     textFocusNode.dispose();
     super.dispose();
