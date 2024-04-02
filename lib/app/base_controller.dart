@@ -1155,5 +1155,8 @@ abstract class BaseController {
     if (Get.isRegistered<ArchivedChatListController>()) {
       Get.find<ArchivedChatListController>().onMessageEdited(chatMessageModel);
     }
+    if (Get.isRegistered<StarredMessagesController>()) {
+      Get.find<StarredMessagesController>().onMessageEdited(chatMessageModel);
+    }
   }
 }
