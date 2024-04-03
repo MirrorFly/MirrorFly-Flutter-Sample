@@ -192,6 +192,12 @@ class MessageInfoController extends GetxController {
       getStatusOfMessage(chatMessageModel.messageId);
     }
   }
+
+  void onMessageEdited(ChatMessageModel editedChatMessage) {
+    if(editedChatMessage.messageId == chatMessage[0].messageId){
+      chatMessage[0]=editedChatMessage;
+    }
+  }
   
   getStatusOfMessage(String messageId){
     if(!isGroupProfile) {

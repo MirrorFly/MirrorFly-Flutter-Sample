@@ -556,6 +556,8 @@ class Constants {
   static const mobileImageMaxHeight = 320;
   static const mobileImageMinHeight = 80;
 
+  static const editMessageTimeLimit = 15; // in Minutes
+
   static const mediaMaxLimitRestriction = 'File size is too large. Try uploading file size below %d MB';
   static const mediaSizeError = 'File size is too large. Try uploading file size below';
   static const supportedFormats = [
@@ -802,6 +804,8 @@ class Constants {
   static const ok = "OK";
   static const callAgain = "Call Again";
   static const callTimeoutMessage = "Seems like no one attended the call";
+
+  static const callNotificationId = 124;
 
   //Call Types
   static const audioCall = "audio";

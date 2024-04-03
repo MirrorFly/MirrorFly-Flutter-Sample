@@ -5,6 +5,7 @@
 import 'dart:convert';
 
 import 'package:get/get.dart';
+import 'package:get/get_rx/get_rx.dart';
 import 'package:mirror_fly_demo/app/common/extensions.dart';
 
 List<ChatMessageModel> chatMessageModelFromJson(String str) =>
@@ -37,6 +38,7 @@ class ChatMessageModel {
     required this.messageId,
     required this.messageSentTime,
     required this.messageStatus,
+    required this.isMessageEdited,
     required this.messageTextContent,
     required this.messageType,
     required this.replyParentChatMessage,
@@ -64,6 +66,7 @@ class ChatMessageModel {
   String messageId;
   int messageSentTime;
   RxString messageStatus;
+  RxBool isMessageEdited;
   String? messageTextContent;
   String messageType;
   ReplyParentChatMessage? replyParentChatMessage;
@@ -94,6 +97,7 @@ class ChatMessageModel {
           messageId: json["messageId"],
           messageSentTime: json["messageSentTime"],
           messageStatus: json["messageStatus"].toString().obs,
+          isMessageEdited: json["isMessageEdited"].toString().toBool().obs,
           messageTextContent: json["messageTextContent"],
           messageType: json["messageType"],
           replyParentChatMessage: json["replyParentChatMessage"] == null
@@ -129,6 +133,7 @@ class ChatMessageModel {
         "messageId": messageId,
         "messageSentTime": messageSentTime,
         "messageStatus": messageStatus.value,
+        "isMessageEdited": isMessageEdited.value,
         "messageTextContent": messageTextContent,
         "messageType": messageType,
         "replyParentChatMessage":

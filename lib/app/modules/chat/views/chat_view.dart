@@ -1,6 +1,4 @@
-import 'dart:io';
 
-import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
@@ -177,7 +175,7 @@ class ChatView extends GetView<ChatController> {
                                               ],
                                             ),
                                           ),
-                                          emojiLayout(),
+                                          controller.emojiLayout(textEditingController: controller.messageController, sendTypingStatus: true),
                                         ],
                                       )
                                     : !controller.availableFeatures.value.isGroupChatAvailable.checkNull()
@@ -489,49 +487,6 @@ class ChatView extends GetView<ChatController> {
     );
   }
 
-  Widget emojiLayout() {
-    return Obx(() {
-      if (controller.showEmoji.value) {
-        return SizedBox(
-          height: 250,
-          child: EmojiPicker(
-            onBackspacePressed: () {
-              controller.isTyping();
-              // Do something when the user taps the backspace button (optional)
-            },
-            onEmojiSelected: (cat, emoji) {
-              controller.isTyping();
-            },
-            textEditingController: controller.messageController,
-            config: Config(
-              columns: 7,
-              emojiSizeMax: 32 * (Platform.isIOS ? 1.30 : 1.0),
-              verticalSpacing: 0,
-              horizontalSpacing: 0,
-              gridPadding: EdgeInsets.zero,
-              initCategory: Category.RECENT,
-              bgColor: const Color(0xFFF2F2F2),
-              indicatorColor: Colors.blue,
-              iconColor: Colors.grey,
-              iconColorSelected: Colors.blue,
-              backspaceColor: Colors.blue,
-              skinToneDialogBgColor: Colors.white,
-              skinToneIndicatorColor: Colors.grey,
-              enableSkinTones: true,
-              // showRecentsTab: true,
-              recentsLimit: 28,
-              tabIndicatorAnimDuration: kTabScrollDuration,
-              categoryIcons: const CategoryIcons(),
-              buttonMode: ButtonMode.CUPERTINO,
-            ),
-          ),
-        );
-      } else {
-        return const SizedBox.shrink();
-      }
-    });
-  }
-
   selectedAppBar() {
     return AppBar(
       // leadingWidth: 25,
@@ -720,6 +675,20 @@ class ChatView extends GetView<ChatController> {
                 onItemClick: () {
                   controller.closeKeyBoard();
                   controller.share();
+                },
+              ),
+              CustomAction(
+                visibleWidget: IconButton(
+                  onPressed: () {},
+                  icon: SvgPicture.asset(shareIcon),
+                  tooltip: 'Edit Message',
+                ),
+                overflowWidget: const Text("Edit Message"),
+                showAsAction: controller.canEditMessage.value ? ShowAsAction.never : ShowAsAction.gone,
+                keyValue: 'Edit Message',
+                onItemClick: () {
+                  controller.closeKeyBoard();
+                  controller.editMessage();
                 },
               ),
             ]),

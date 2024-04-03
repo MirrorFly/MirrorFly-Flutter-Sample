@@ -2034,6 +2034,17 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
       callLogList.removeAt(chatIndex);
     }
   }
+
+  void onMessageEdited(ChatMessageModel editedChatMessage) {
+    final index = recentChats.indexWhere((message) => message.lastMessageId == editedChatMessage.messageId);
+    debugPrint("Message Status Update index of search $index");
+    if (!index.isNegative) {
+      recentChats[index].lastMessageContent = editedChatMessage.messageTextContent;
+      recentChats.refresh();
+    } else {
+      updateRecentChat(jid: editedChatMessage.chatUserJid);
+    }
+  }
 }
 
 class MyController extends GetxController {

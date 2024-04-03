@@ -124,7 +124,7 @@ class MainController extends FullLifeCycleController with BaseController, FullLi
       //   builder: (BuildContext context) => SecondPage(payload),
       // ));
       LogMessage.d("#Mirrorfly Notification -> opening chat page--> ","$payload ${Get.currentRoute}");
-      if (payload != null && payload.isNotEmpty && payload.toString() != "124") {
+      if (payload != null && payload.isNotEmpty && payload.toString() != Constants.callNotificationId.toString()) {
         var chatJid = payload.checkNull().split(",")[0];
         var topicId = payload.checkNull().split(",")[1];
         if (Get.isRegistered<ChatController>()) {
@@ -139,6 +139,9 @@ class MainController extends FullLifeCycleController with BaseController, FullLi
             LogMessage.d("#Mirrorfly Notification -> previously app opened from notification", "so we have to maintain that");
             Get.offAllNamed("${AppPages.chat}?jid=$chatJid&from_notification=true&topicId=$topicId");
           } else {
+            if(Get.isOverlaysOpen){
+              Get.back();
+            }
             Get.offNamed(Routes.chat, parameters: {"chatJid": chatJid, "topicId": topicId});
           }
         } else {

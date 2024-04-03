@@ -81,10 +81,19 @@ class StarredMessagesController extends FullLifeCycleController with FullLifeCyc
   void onMessageStatusUpdated(chatMessageModel) {
     final index = starredChatList.indexWhere(
             (message) => message.messageId == chatMessageModel.messageId);
-    debugPrint("Message Status Update index of search $index");
+    debugPrint("Message Status Update index of $index");
     if (!index.isNegative) {
       starredChatList[index].messageStatus = chatMessageModel.messageStatus;
       starredChatList.refresh();
+    }
+  }
+
+  void onMessageEdited(ChatMessageModel editedChatMessage) {
+    final index = starredChatList.indexWhere(
+            (message) => message.messageId == editedChatMessage.messageId);
+    debugPrint("Message Edit Update index of $index");
+    if (!index.isNegative) {
+      starredChatList[index] = editedChatMessage;
     }
   }
 

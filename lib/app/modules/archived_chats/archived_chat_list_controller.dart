@@ -448,4 +448,8 @@ class ArchivedChatListController extends GetxController {
     LogMessage.d("ArchivedChat", "onAvailableFeaturesUpdated ${features.toJson()}");
     availableFeatures(features);
   }
+
+  void onMessageEdited(ChatMessageModel editedChatMessage) {
+    updateArchiveRecentChat(editedChatMessage.chatUserJid);
+  }
 }

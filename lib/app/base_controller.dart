@@ -147,7 +147,7 @@ abstract class BaseController {
     Mirrorfly.onConnected.listen(onConnected);
     Mirrorfly.onDisconnected.listen(onDisconnected);
     Mirrorfly.onConnectionFailed.listen(onConnectionFailed);
-    Mirrorfly.onWebChatPasswordChanged.listen(onWebChatPasswordChanged);
+    // Mirrorfly.onWebChatPasswordChanged.listen(onWebChatPasswordChanged);
     Mirrorfly.typingStatus.listen((event) {
       var data = json.decode(event.toString());
       mirrorFlyLog("setTypingStatus", data.toString());
@@ -156,6 +156,7 @@ abstract class BaseController {
       var typingStatus = data["status"];
       setTypingStatus(singleOrgroupJid, userJid, typingStatus);
     });
+    Mirrorfly.onMessageEdited.listen(onMessageEdited);
     // Mirrorfly.onChatTypingStatus.listen(onChatTypingStatus);
     // Mirrorfly.onGroupTypingStatus.listen(onGroupTypingStatus);
     // Removed due Backup not implemented
@@ -724,7 +725,7 @@ abstract class BaseController {
   }
 
   Future<void> showOrUpdateOrCancelNotification(String jid, ChatMessageModel chatMessage) async {
-    if (SessionManagement.getCurrentChatJID() == chatMessage.chatUserJid.checkNull()) {
+    if (SessionManagement.getCurrentChatJID() == chatMessage.chatUserJid.checkNull() && chatMessage.isMessageEdited.value.checkNull()) {
       return;
     }
     var profileDetails = await getProfileDetails(jid);
@@ -1138,5 +1139,24 @@ abstract class BaseController {
     }
     timer?.cancel();
     timer = null;
+  }
+
+  void onMessageEdited(editedChatMessage) {
+    ChatMessageModel chatMessageModel = sendMessageModelFromJson(editedChatMessage);
+    if (Get.isRegistered<ChatController>()) {
+      Get.find<ChatController>().onMessageEdited(chatMessageModel);
+    }
+    if (Get.isRegistered<MessageInfoController>()) {
+      Get.find<MessageInfoController>().onMessageEdited(chatMessageModel);
+    }
+    if (Get.isRegistered<DashboardController>()) {
+      Get.find<DashboardController>().onMessageEdited(chatMessageModel);
+    }
+    if (Get.isRegistered<ArchivedChatListController>()) {
+      Get.find<ArchivedChatListController>().onMessageEdited(chatMessageModel);
+    }
+    if (Get.isRegistered<StarredMessagesController>()) {
+      Get.find<StarredMessagesController>().onMessageEdited(chatMessageModel);
+    }
   }
 }
