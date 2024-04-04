@@ -212,7 +212,7 @@ class MediaPreviewView extends GetView<MediaPreviewController> {
                                               });
                                             },
                                             child: SvgPicture.asset(
-                                                'assets/logos/smile.svg'))
+                                                'assets/logos/smile.svg', colorFilter: const ColorFilter.mode(Colors.white, BlendMode.srcIn),))
                                         : controller.filePath.length < 10 &&
                                                 controller.showAdd
                                             ? InkWell(
