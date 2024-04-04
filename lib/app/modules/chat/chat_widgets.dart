@@ -2029,6 +2029,7 @@ Widget getImageOverlay(ChatMessageModel chatMessage,
   //     "getImageOverlay ${(checkFile(chatMessage.mediaChatMessage!.mediaLocalStoragePath) && chatMessage.messageStatus != 'N')}");
 
   if (AppUtils.isMediaExists(chatMessage.mediaChatMessage!.mediaLocalStoragePath.value) && (!chatMessage.isMediaDownloading() && !chatMessage.isMediaUploading())) {
+  if (AppUtils.isMediaExists(chatMessage.mediaChatMessage!.mediaLocalStoragePath.value) && (!chatMessage.isMediaDownloading() && !chatMessage.isMediaUploading() && !chatMessage.isUploadFailed())) {
     if (chatMessage.messageType.toUpperCase() == 'VIDEO') {
       return FloatingActionButton.small(
         heroTag: chatMessage.messageId,
@@ -2125,6 +2126,7 @@ Widget getImageOverlay(ChatMessageModel chatMessage,
       case Constants.mediaNotUploaded:
         return InkWell(
             onTap: () {
+              debugPrint("upload Media ==> ${chatMessage.messageId}");
               uploadMedia(chatMessage.messageId);
             },
             child: uploadView(chatMessage.messageType.toUpperCase()));

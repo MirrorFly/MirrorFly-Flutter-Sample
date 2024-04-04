@@ -646,8 +646,10 @@ class Constants {
   static const int mediaUploaded = 2;
   static const int mediaUploadedNotAvailable = 7;
 
+  //need to cross check the media download case with Android
   static const int mediaDownloadFailed = 401;
-  static const int mediaUploadFailed = 401;
+  //Removing it because android they don't have media upload failed. so we have handle it as mediaNotUploaded in internal Models
+  // static const int mediaUploadFailed = 401;
 
   static const double borderRadius = 27;
   static const double defaultPadding = 8;

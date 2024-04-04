@@ -139,6 +139,9 @@ extension ChatmessageParsing on ChatMessageModel {
   bool isMediaUploading() {
     return isMediaMessage() && (mediaChatMessage?.mediaUploadStatus.value == Constants.mediaUploading);
   }
+  bool isUploadFailed() {
+    return isMediaMessage() && (mediaChatMessage?.mediaUploadStatus.value == Constants.mediaNotUploaded);
+  }
 
   bool isMediaMessage() => (isAudioMessage() || isVideoMessage() || isImageMessage() || isFileMessage());
 
