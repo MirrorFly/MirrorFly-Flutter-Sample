@@ -92,7 +92,8 @@ class MediaPreviewView extends GetView<MediaPreviewController> {
             }
             Get.back(result: "back");
           },
-          child: SafeArea(
+          child: GestureDetector(
+            onTap: () => controller.hideKeyBoard(),
             child: Container(
               height: MediaQuery.of(context).size.height,
               color: Colors.black,
@@ -184,91 +185,92 @@ class MediaPreviewView extends GetView<MediaPreviewController> {
                   Container(
                     color: Colors.black38,
                     width: MediaQuery.of(context).size.width,
-                    padding:
-                        const EdgeInsets.symmetric(vertical: 5, horizontal: 15),
                     child: Column(
                       children: [
                         IntrinsicHeight(
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Row(
-                                children: [
-                                  Obx(() {
-                                    return controller.isFocused.value ||
-                                            controller.showEmoji.value ||
-                                            !controller.showAdd
-                                        ? InkWell(
-                                            onTap: () {
-                                              if (!controller.showEmoji.value) {
-                                                controller.captionFocusNode
-                                                    .unfocus();
-                                              }
-                                              Future.delayed(
-                                                  const Duration(
-                                                      milliseconds: 100), () {
-                                                controller.showEmoji(!controller
-                                                    .showEmoji.value);
-                                              });
-                                            },
-                                            child: SvgPicture.asset(
-                                                'assets/logos/smile.svg', colorFilter: const ColorFilter.mode(Colors.white, BlendMode.srcIn),))
-                                        : controller.filePath.length < 10 &&
-                                                controller.showAdd
-                                            ? InkWell(
-                                                onTap: () {
-                                                  Get.back();
-                                                },
-                                                child: SvgPicture.asset(
-                                                    previewAddImg),
-                                              )
-                                            : const SizedBox.shrink();
-                                  }),
-                                  const SizedBox(
-                                    width: 5,
-                                  ),
-                                  Container(
-                                    color: previewTextColor,
-                                    width: 1,
-                                    height: 25,
-                                    margin: const EdgeInsets.symmetric(
-                                        horizontal: 5),
-                                  ),
-                                  const SizedBox(
-                                    width: 5,
-                                  ),
-                                  Expanded(
-                                    child: Focus(
-                                      onFocusChange: (isFocus) =>
-                                          controller.isFocused(isFocus),
-                                      child: TextFormField(
-                                        focusNode: controller.captionFocusNode,
-                                        controller: controller.caption,
-                                        onChanged: controller.onCaptionTyped,
-                                        style: const TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 15,
-                                        ),
-                                        maxLines: 6,
-                                        minLines: 1,
-                                        decoration: const InputDecoration(
-                                          border: InputBorder.none,
-                                          hintText: "Add Caption...",
-                                          hintStyle: TextStyle(
-                                            color: previewTextColor,
+                              Padding(
+                                padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 15),
+                                child: Row(
+                                  children: [
+                                    Obx(() {
+                                      return controller.isFocused.value ||
+                                              controller.showEmoji.value ||
+                                              !controller.showAdd
+                                          ? InkWell(
+                                              onTap: () {
+                                                if (!controller.showEmoji.value) {
+                                                  controller.captionFocusNode
+                                                      .unfocus();
+                                                }
+                                                Future.delayed(
+                                                    const Duration(
+                                                        milliseconds: 100), () {
+                                                  controller.showEmoji(!controller
+                                                      .showEmoji.value);
+                                                });
+                                              },
+                                              child: SvgPicture.asset(
+                                                  'assets/logos/smile.svg', colorFilter: const ColorFilter.mode(Colors.white, BlendMode.srcIn),))
+                                          : controller.filePath.length < 10 &&
+                                                  controller.showAdd
+                                              ? InkWell(
+                                                  onTap: () {
+                                                    Get.back();
+                                                  },
+                                                  child: SvgPicture.asset(
+                                                      previewAddImg),
+                                                )
+                                              : const SizedBox.shrink();
+                                    }),
+                                    const SizedBox(
+                                      width: 5,
+                                    ),
+                                    Container(
+                                      color: previewTextColor,
+                                      width: 1,
+                                      height: 25,
+                                      margin: const EdgeInsets.symmetric(
+                                          horizontal: 5),
+                                    ),
+                                    const SizedBox(
+                                      width: 5,
+                                    ),
+                                    Expanded(
+                                      child: Focus(
+                                        onFocusChange: (isFocus) =>
+                                            controller.isFocused(isFocus),
+                                        child: TextFormField(
+                                          focusNode: controller.captionFocusNode,
+                                          controller: controller.caption,
+                                          onChanged: controller.onCaptionTyped,
+                                          style: const TextStyle(
+                                            color: Colors.white,
                                             fontSize: 15,
+                                          ),
+                                          maxLines: 6,
+                                          minLines: 1,
+                                          decoration: const InputDecoration(
+                                            border: InputBorder.none,
+                                            hintText: "Add Caption...",
+                                            hintStyle: TextStyle(
+                                              color: previewTextColor,
+                                              fontSize: 15,
+                                            ),
                                           ),
                                         ),
                                       ),
                                     ),
-                                  ),
-                                  InkWell(
-                                      onTap: () {
-                                        controller.sendMedia();
-                                      },
-                                      child: SvgPicture.asset(
-                                          'assets/logos/img_send.svg')),
-                                ],
+                                    InkWell(
+                                        onTap: () {
+                                          controller.sendMedia();
+                                        },
+                                        child: SvgPicture.asset(
+                                            'assets/logos/img_send.svg')),
+                                  ],
+                                ),
                               ),
                               Row(
                                 children: [

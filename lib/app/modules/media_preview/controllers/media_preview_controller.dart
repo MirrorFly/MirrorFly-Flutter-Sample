@@ -171,4 +171,8 @@ class MediaPreviewController extends FullLifeCycleController with FullLifeCycleM
   void onHidden() {
 
   }
+
+  hideKeyBoard() {
+    // FocusManager.instance.primaryFocus!.unfocus();
+  }
 }
