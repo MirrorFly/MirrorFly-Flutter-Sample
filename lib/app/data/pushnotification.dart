@@ -115,22 +115,27 @@ class PushNotifications {
     debugPrint("#Mirrorfly Notification setupInteractedMessage $initialMessage");
     // If the message also contains a data property with a "type" of "chat",
     // navigate to a chat screen
+
+    //This below method will called, when clicking the notification popup in the screen itself during the message received. Not from the notification tray
     if (initialMessage != null) {
       debugPrint("#Mirrorfly Notification setupInteractedMessage message opened from notification click terminated");
       // onMessage(initialMessage);
       debugPrint("#Mirrorfly Notification message received for ${initialMessage.data["to_user"]}");
       debugPrint("#Mirrorfly Notification message received for ${initialMessage.data}");
       Get.offAllNamed("${AppPages.chat}?jid=${initialMessage.data["from_user"]}&from_notification=true");
+      return;
     }else{
       debugPrint("#Mirrorfly Notification setupInteractedMessage else");
     }
 
     // Also handle any interaction when the app is in the background via a
     // Stream listener
+
+    //This method will called, when the notification popup is clicked from the notification tray.
     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message){
       debugPrint("#Mirrorfly Notification message opened from notification click background");
       Get.offAllNamed("${AppPages.chat}?jid=${message.data["from_user"]}&from_notification=true");
-
+      return;
     });
   }
 

@@ -107,7 +107,7 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     super.initState();
-    Future.delayed(const Duration(milliseconds: 1000)).then((value) {
+    Future.delayed(const Duration(seconds: 1)).then((value) {
       PushNotifications.setupInteractedMessage();
     });
 
