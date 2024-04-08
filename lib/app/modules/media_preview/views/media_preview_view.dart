@@ -147,8 +147,7 @@ class MediaPreviewView extends GetView<MediaPreviewController> {
                                     if (data.type == 'image') {
                                       return Center(
                                           child: PhotoView(
-                                        imageProvider:
-                                            FileImage(File(data.path!)),
+                                        imageProvider: FileImage(File(data.path!)),
                                         // Contained = the smallest possible size to fit one dimension of the screen
                                         minScale:
                                             PhotoViewComputedScale.contained *
@@ -166,6 +165,9 @@ class MediaPreviewView extends GetView<MediaPreviewController> {
                                             const Center(
                                           child: CircularProgressIndicator(),
                                         ),
+                                        errorBuilder: (ct,ob, trace){
+                                          return Image.memory(data.thumbnail!);
+                                        },
                                       ));
                                     }
 
