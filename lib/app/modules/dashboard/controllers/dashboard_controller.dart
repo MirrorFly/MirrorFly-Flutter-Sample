@@ -14,6 +14,7 @@ import 'package:mirror_fly_demo/app/data/session_management.dart';
 import 'package:intl/intl.dart';
 import 'package:mirrorfly_plugin/model/call_log_model.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:queue/queue.dart';
 
 import '../../../common/de_bouncer.dart';
 import '../../../common/main_controller.dart';
@@ -378,46 +379,46 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
     }
   }
 
-  updateRecentChat({required String jid, bool changePosition = true}) async {
+  Future<bool> updateRecentChat({required String jid, bool changePosition = true, bool newInsertable = true}) async {
     //updateArchiveRecentChat(jid);
-    await getRecentChatOfJid(jid).then((recent) {
-      final index = recentChats.indexWhere((chat) => chat.jid == jid);
-      debugPrint("dashboard index--> $index");
-      LogMessage.d("updateRecentChat",recent?.toJson());
-      if (recent != null) {
-        if (!recent.isChatArchived.checkNull()) {
-          if (index.isNegative) {
-            LogMessage.d("updateRecentChat", "New Insert");
-            recentChats.insert(0, recent);
-          } else {
-            if (recentChats[index].isChatPinned.checkNull() || !changePosition) {
-              // recentChats.removeAt(index);
-              // recentChats.insert(index, recent);
-              recentChats.replaceRange(index, index+1, [recent]);
-            } else {
-              var lastPinnedChat = recentChats.lastIndexWhere((element) => element.isChatPinned!);
-              var nxtIndex = lastPinnedChat.isNegative ? 0 : (lastPinnedChat + 1);
-              LogMessage.d("updateRecentChat", "next Index $nxtIndex");
-              recentChats.removeAt(index);
-              recentChats.insert(nxtIndex, recent);
-              recentChats.refresh();
-            }
-          }
+    var recent = await getRecentChatOfJid(jid);
+    final index = recentChats.indexWhere((chat) => chat.jid == jid);
+    debugPrint("dashboard index--> $index");
+    LogMessage.d("updateRecentChat",recent?.toJson());
+    if (recent != null) {
+      if (!recent.isChatArchived.checkNull()) {
+        if (index.isNegative && newInsertable) {
+          LogMessage.d("updateRecentChat", "New Insert");
+          recentChats.insert(0, recent);
         } else {
-          LogMessage.d("updateRecentChat", "Archived $index");
-          if (!index.isNegative) {
+          if (recentChats[index].isChatPinned.checkNull() || !changePosition) {
+            // recentChats.removeAt(index);
+            // recentChats.insert(index, recent);
+            recentChats.replaceRange(index, index+1, [recent]);
+          } else {
+            var lastPinnedChat = recentChats.lastIndexWhere((element) => element.isChatPinned!);
+            var nxtIndex = lastPinnedChat.isNegative ? 0 : (lastPinnedChat + 1);
+            LogMessage.d("updateRecentChat", "next Index $nxtIndex");
             recentChats.removeAt(index);
+            recentChats.insert(nxtIndex, recent);
+            recentChats.refresh();
           }
         }
-        checkArchiveList(recent);
       } else {
-        LogMessage.d("updateRecentChat", "recent chat null insert index $index");
+        LogMessage.d("updateRecentChat", "Archived $index");
         if (!index.isNegative) {
           recentChats.removeAt(index);
         }
       }
-      recentChats.refresh();
-    });
+      checkArchiveList(recent);
+    } else {
+      LogMessage.d("updateRecentChat", "recent chat null insert index $index");
+      if (!index.isNegative) {
+        recentChats.removeAt(index);
+      }
+    }
+    recentChats.refresh();
+    return true;
   }
 
   updateArchiveRecentChat(String jid) {
@@ -988,13 +989,17 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
     unReadCount();
   }
 
-  void onMessageReceived(chatMessageModel) {
+  final onMessageStatusUpdatedQueue = Queue();
+  final onMessageReceivedQueue = Queue();
+
+  Future<void> onMessageReceived(chatMessageModel) async {
     mirrorFlyLog("dashboard controller", "onMessageReceived");
 
-    updateRecentChat(jid: chatMessageModel.chatUserJid);
+    await onMessageReceivedQueue.add(()=>updateRecentChat(jid: chatMessageModel.chatUserJid));
   }
 
-  void onMessageStatusUpdated(ChatMessageModel chatMessageModel) {
+
+  Future<void> onMessageStatusUpdated(ChatMessageModel chatMessageModel) async {
     final index = recentChats.indexWhere((message) => message.lastMessageId == chatMessageModel.messageId);
     debugPrint("Message Status Update index of search $index");
     if (!index.isNegative) {
@@ -1002,8 +1007,16 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
       recentChats[index].lastMessageStatus = chatMessageModel.messageStatus.value;
       recentChats.refresh();
     } else {
-      updateRecentChat(jid: chatMessageModel.chatUserJid);
+      //Queue up a future and await its result
+      await onMessageStatusUpdatedQueue.add(()=>updateRecentChat(jid: chatMessageModel.chatUserJid,newInsertable: false));
     }
+  }
+
+  @override
+  void dispose() {
+    onMessageReceivedQueue.dispose();
+    onMessageStatusUpdatedQueue.dispose();
+    super.dispose();
   }
 
   void markConversationReadNotifyUI(String jid) {
