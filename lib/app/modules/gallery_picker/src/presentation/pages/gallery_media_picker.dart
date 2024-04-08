@@ -7,7 +7,6 @@ import 'package:oktoast/oktoast.dart';
 import 'package:photo_manager/photo_manager.dart';
 
 import '../../../../../common/constants.dart';
-import '../../../../../common/de_bouncer.dart';
 import '../../../../../data/helper.dart';
 import '../../core/functions.dart';
 import '../../data/models/picked_asset_model.dart';
@@ -222,47 +221,35 @@ class _GalleryMediaPickerState extends State<GalleryMediaPicker> {
                               widget.provider.removeEntity(asset);
                             },
                             onAssetItemClick: (asset, index) async {
-                              // File? file = await asset.file;
-                              // if(checkFileUploadSize(file!.path, asset.typeInt == 1 ? Constants.mImage : Constants.mVideo)) {
-                              //   debugPrint("item processed1 ${DateTime.now()}");
+                              File? file = await asset.file;
+                              if(checkFileUploadSize(file!.path, asset.typeInt == 1 ? Constants.mImage : Constants.mVideo)) {
+                                debugPrint("item processed1 ${DateTime.now()} ${file.lengthSync()}");
                                 widget.provider.pickEntity(asset);
-                                // widget.pathList!(widget.provider.pickedFile);
-                                // debugPrint("item processed2 ${DateTime.now()}");
-                                // Helper.hideLoading();
-                                // debugPrint("item size ${asset.duration}");
-
-                                /*GalleryFunctions.getFile(asset)
-                                    .then((value) async {
-                                  debugPrint("item processed3 ${DateTime.now()}");
-                                  /// add metadata to map list
-                                  widget.provider.pickPath(PickedAssetModel(
-                                    id: asset.id,
-                                    path: value,
-                                    type: asset.typeInt == 1
-                                        ? 'image'
-                                        : 'video',
-                                    videoDuration: asset.videoDuration,
-                                    createDateTime: asset.createDateTime,
-                                    latitude: asset.latitude,
-                                    longitude: asset.longitude,
-                                    thumbnail: await asset.thumbnailData,
-                                    height: asset.height,
-                                    width: asset.width,
-                                    orientationHeight: asset.orientatedHeight,
-                                    orientationWidth: asset.orientatedWidth,
-                                    orientationSize: asset.orientatedSize,
-                                    file: await asset.file,
-                                    modifiedDateTime: asset.modifiedDateTime,
-                                    title: asset.title,
-                                    size: asset.size,
-                                  ));
+                                widget.provider.pickPath(PickedAssetModel(
+                                  id: asset.id,
+                                  path: file.path,
+                                  type: asset.typeInt == 1
+                                      ? 'image'
+                                      : 'video',
+                                  videoDuration: asset.videoDuration,
+                                  createDateTime: asset.createDateTime,
+                                  latitude: asset.latitude,
+                                  longitude: asset.longitude,
+                                  thumbnail: await asset.thumbnailData,
+                                  height: asset.height,
+                                  width: asset.width,
+                                  orientationHeight: asset.orientatedHeight,
+                                  orientationWidth: asset.orientatedWidth,
+                                  orientationSize: asset.orientatedSize,
+                                  file: await asset.file,
+                                  modifiedDateTime: asset.modifiedDateTime,
+                                  title: asset.title,
+                                  size: asset.size,
+                                ));
                                   widget.pathList!(widget.provider.pickedFile);
-                                  debugPrint("item processed4 ${DateTime.now()}");
-                                  // Helper.hideLoading();
-                                });*/
-                              // }else{
-                              //   toToast(Constants.mediaMaxLimitRestriction.replaceAll("%d", "${asset.typeInt == 1 ? Constants.maxImageFileSize : Constants.maxVideoFileSize}"));
-                              // }
+                              }else{
+                                toToast(Constants.mediaMaxLimitRestriction.replaceAll("%d", "${asset.typeInt == 1 ? Constants.maxImageFileSize : Constants.maxVideoFileSize}"));
+                              }
                             },
                           ),
                         )
