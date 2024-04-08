@@ -63,6 +63,9 @@ class MediaPreviewController extends FullLifeCycleController with FullLifeCycleM
   }
   onChanged() {
     // count(139 - addStatusController.text.length);
+
+    //Adding the below code, to send the emoji in caption text
+    captionMessage[currentPageIndex.value] = caption.text.toString();
   }
 
   Future<void> sendMedia() async {
@@ -167,5 +170,9 @@ class MediaPreviewController extends FullLifeCycleController with FullLifeCycleM
   @override
   void onHidden() {
 
+  }
+
+  hideKeyBoard() {
+    // FocusManager.instance.primaryFocus!.unfocus();
   }
 }

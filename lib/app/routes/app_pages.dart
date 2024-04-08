@@ -1,11 +1,11 @@
 import 'package:get/get.dart';
-import 'package:mirror_fly_demo/app/call_modules/call_info/bindings/call_info_binding.dart';
-import 'package:mirror_fly_demo/app/call_modules/call_info/views/call_info_view.dart';
-import 'package:mirror_fly_demo/app/call_modules/group_participants/group_participants_binding.dart';
-import 'package:mirror_fly_demo/app/call_modules/group_participants/group_participants_view.dart';
 
+import '../call_modules/call_info/bindings/call_info_binding.dart';
+import '../call_modules/call_info/views/call_info_view.dart';
 import '../call_modules/call_timeout/bindings/call_timeout_binding.dart';
 import '../call_modules/call_timeout/views/call_timeout_view.dart';
+import '../call_modules/group_participants/group_participants_binding.dart';
+import '../call_modules/group_participants/group_participants_view.dart';
 import '../call_modules/ongoing_call/ongoingcall_view.dart';
 import '../call_modules/outgoing_call/outgoing_call_binding.dart';
 import '../call_modules/outgoing_call/outgoing_call_view.dart';

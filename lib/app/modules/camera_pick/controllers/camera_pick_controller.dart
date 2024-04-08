@@ -46,7 +46,7 @@ class CameraPickController extends GetxController with WidgetsBindingObserver  {
     super.dispose();
   }
   var min = 1.0;
-  var max = 8.0;
+  var max = 5.0;
   var pointers =0;
   Future<void> initCamera() async {
     cameras = await availableCameras();
@@ -54,9 +54,11 @@ class CameraPickController extends GetxController with WidgetsBindingObserver  {
     cameraController?.initialize().then((value)async {
       cameraInitialized(true);
       min = (await cameraController?.getMinZoomLevel())!;
-      max = (await cameraController?.getMaxZoomLevel())!;
-      debugPrint("min : $min");
-      debugPrint("max : $max");
+      var maxZoom = (await cameraController?.getMaxZoomLevel())!;
+      //Setting this max zoom, due to iOS devices are stuck when capturing stating - CameraException(setFocusPointFailed, Device does not have focus point capabilities)
+      max = maxZoom * 0.35;
+      debugPrint("zoom min : $min");
+      debugPrint("zoom max : $max");
     });
 
   }

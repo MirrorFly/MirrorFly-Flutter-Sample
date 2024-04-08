@@ -128,7 +128,6 @@ class GalleryMediaPicker extends StatefulWidget {
 class _GalleryMediaPickerState extends State<GalleryMediaPicker> {
   /// create object of PickerDataProvider
   // final GalleryMediaPickerController provider = GalleryMediaPickerController();
-
   @override
   void initState() {
     _getPermission();
@@ -218,36 +217,36 @@ class _GalleryMediaPickerState extends State<GalleryMediaPicker> {
                             thumbnailBoxFix: widget.thumbnailBoxFix,
                             selectedCheckBackgroundColor:
                                 widget.selectedCheckBackgroundColor,
+                            onAssetRemove: (asset, index) {
+                              widget.provider.removeEntity(asset);
+                            },
                             onAssetItemClick: (asset, index) async {
                               File? file = await asset.file;
                               if(checkFileUploadSize(file!.path, asset.typeInt == 1 ? Constants.mImage : Constants.mVideo)) {
+                                debugPrint("item processed1 ${DateTime.now()} ${file.lengthSync()}");
                                 widget.provider.pickEntity(asset);
-                                GalleryFunctions.getFile(asset)
-                                    .then((value) async {
-                                  /// add metadata to map list
-                                  widget.provider.pickPath(PickedAssetModel(
-                                    id: asset.id,
-                                    path: value,
-                                    type: asset.typeInt == 1
-                                        ? 'image'
-                                        : 'video',
-                                    videoDuration: asset.videoDuration,
-                                    createDateTime: asset.createDateTime,
-                                    latitude: asset.latitude,
-                                    longitude: asset.longitude,
-                                    thumbnail: await asset.thumbnailData,
-                                    height: asset.height,
-                                    width: asset.width,
-                                    orientationHeight: asset.orientatedHeight,
-                                    orientationWidth: asset.orientatedWidth,
-                                    orientationSize: asset.orientatedSize,
-                                    file: await asset.file,
-                                    modifiedDateTime: asset.modifiedDateTime,
-                                    title: asset.title,
-                                    size: asset.size,
-                                  ));
+                                widget.provider.pickPath(PickedAssetModel(
+                                  id: asset.id,
+                                  path: file.path,
+                                  type: asset.typeInt == 1
+                                      ? 'image'
+                                      : 'video',
+                                  videoDuration: asset.videoDuration,
+                                  createDateTime: asset.createDateTime,
+                                  latitude: asset.latitude,
+                                  longitude: asset.longitude,
+                                  thumbnail: await asset.thumbnailData,
+                                  height: asset.height,
+                                  width: asset.width,
+                                  orientationHeight: asset.orientatedHeight,
+                                  orientationWidth: asset.orientatedWidth,
+                                  orientationSize: asset.orientatedSize,
+                                  file: await asset.file,
+                                  modifiedDateTime: asset.modifiedDateTime,
+                                  title: asset.title,
+                                  size: asset.size,
+                                ));
                                   widget.pathList!(widget.provider.pickedFile);
-                                });
                               }else{
                                 toToast(Constants.mediaMaxLimitRestriction.replaceAll("%d", "${asset.typeInt == 1 ? Constants.maxImageFileSize : Constants.maxVideoFileSize}"));
                               }

@@ -410,6 +410,8 @@ Widget imageFromBase64String(String base64String, BuildContext context, double? 
     height: height ?? Get.height * 0.4,
     fit: BoxFit.cover,
     gaplessPlayback: true,
+    cacheHeight: (height ?? Get.height * 0.4).toInt(),
+    cacheWidth:  (width ?? Get.width * 0.60).toInt(),
   );
 }
 
@@ -2028,7 +2030,12 @@ Widget getImageOverlay(ChatMessageModel chatMessage,
   // debugPrint(
   //     "getImageOverlay ${(checkFile(chatMessage.mediaChatMessage!.mediaLocalStoragePath) && chatMessage.messageStatus != 'N')}");
 
-  if (AppUtils.isMediaExists(chatMessage.mediaChatMessage!.mediaLocalStoragePath.value) && (!chatMessage.isMediaDownloading() && !chatMessage.isMediaUploading())) {
+  debugPrint("isMediaDownloading ${chatMessage.isMediaDownloading()}");
+  debugPrint("isMediaUploading ${chatMessage.isMediaUploading()}");
+
+  debugPrint("#Media upload status ${chatMessage.mediaChatMessage!.mediaUploadStatus.value}");
+  debugPrint("#Media download status ${chatMessage.mediaChatMessage!.mediaDownloadStatus.value}");
+  if (AppUtils.isMediaExists(chatMessage.mediaChatMessage!.mediaLocalStoragePath.value) && (!chatMessage.isMediaDownloading() && !chatMessage.isMediaUploading() && !chatMessage.isUploadFailed())) {
     if (chatMessage.messageType.toUpperCase() == 'VIDEO') {
       return FloatingActionButton.small(
         heroTag: chatMessage.messageId,
@@ -2125,6 +2132,7 @@ Widget getImageOverlay(ChatMessageModel chatMessage,
       case Constants.mediaNotUploaded:
         return InkWell(
             onTap: () {
+              debugPrint("upload Media ==> ${chatMessage.messageId}");
               uploadMedia(chatMessage.messageId);
             },
             child: uploadView(chatMessage.messageType.toUpperCase()));
