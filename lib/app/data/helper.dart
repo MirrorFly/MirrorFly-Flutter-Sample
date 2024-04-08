@@ -254,6 +254,28 @@ class Helper {
     return "${str[0].toUpperCase()}${str.substring(1).toLowerCase()}";
   }
 }
+Future<bool> getFileSizeInMb(String path, String mediaType) async {
+  try {
+    var file = File(path);
+    int sizeInBytes = await file.length();
+    double sizeInMb = sizeInBytes / (1024 * 1024);
+
+    if (mediaType == Constants.mImage && sizeInMb <= Constants.maxImageFileSize) {
+      return true;
+    } else if (mediaType == Constants.mAudio && sizeInMb <= Constants.maxAudioFileSize) {
+      return true;
+    } else if (mediaType == Constants.mVideo && sizeInMb <= Constants.maxVideoFileSize) {
+      return true;
+    } else if (mediaType == Constants.mDocument && sizeInMb <= Constants.maxDocFileSize) {
+      return true;
+    } else {
+      return false;
+    }
+  }catch(e){
+    debugPrint("File Size Calculation Error $e");
+    return false;
+  }
+}
 
 bool checkFileUploadSize(String path, String mediaType) {
   var file = File(path);

@@ -2028,7 +2028,11 @@ Widget getImageOverlay(ChatMessageModel chatMessage,
   // debugPrint(
   //     "getImageOverlay ${(checkFile(chatMessage.mediaChatMessage!.mediaLocalStoragePath) && chatMessage.messageStatus != 'N')}");
 
-  if (AppUtils.isMediaExists(chatMessage.mediaChatMessage!.mediaLocalStoragePath.value) && (!chatMessage.isMediaDownloading() && !chatMessage.isMediaUploading())) {
+  debugPrint("isMediaDownloading ${chatMessage.isMediaDownloading()}");
+  debugPrint("isMediaUploading ${chatMessage.isMediaUploading()}");
+
+  debugPrint("#Media upload status ${chatMessage.mediaChatMessage!.mediaUploadStatus.value}");
+  debugPrint("#Media download status ${chatMessage.mediaChatMessage!.mediaDownloadStatus.value}");
   if (AppUtils.isMediaExists(chatMessage.mediaChatMessage!.mediaLocalStoragePath.value) && (!chatMessage.isMediaDownloading() && !chatMessage.isMediaUploading() && !chatMessage.isUploadFailed())) {
     if (chatMessage.messageType.toUpperCase() == 'VIDEO') {
       return FloatingActionButton.small(
