@@ -271,13 +271,9 @@ class GroupInfoController extends GetxController {
         if(response.isSuccess){
           _isMemberOfGroup(!response.isSuccess);
           leavedGroup(response.isSuccess);
+        }else{
+          toToast(Constants.errorTryAgain);
         }
-      }).then((value) {
-        Helper.hideLoading();
-
-      }).catchError((error) {
-        Helper.hideLoading();
-        toToast(Constants.errorTryAgain);
       });
     }else{
       toToast(Constants.noInternetConnection);

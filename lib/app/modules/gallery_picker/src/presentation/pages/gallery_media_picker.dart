@@ -21,7 +21,7 @@ class GalleryMediaPicker extends StatefulWidget {
   /// picker mode
   final bool singlePick;
 
-  /// picker mode
+  /// picker provider
   final GalleryMediaPickerController provider;
 
   /// return all selected paths

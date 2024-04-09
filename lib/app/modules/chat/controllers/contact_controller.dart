@@ -468,11 +468,6 @@ class ContactController extends FullLifeCycleController with FullLifeCycleMixin 
                   toToast("${getName(item)} has been Unblocked");
                   userUpdatedHisProfile(item.jid.checkNull());
                 }
-              }).then((value) {
-
-              }).catchError((error) {
-                Helper.hideLoading();
-                debugPrint(error);
               });
             } else {
               toToast(Constants.noInternetConnection);
@@ -659,7 +654,7 @@ class ContactController extends FullLifeCycleController with FullLifeCycleMixin 
     }
   }
 
-  makeCall() async {
+  void makeCall() async {
     if (selectedUsersJIDList.isEmpty) {
       return;
     }

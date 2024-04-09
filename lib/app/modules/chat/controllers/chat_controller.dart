@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:convert';
 import 'dart:io';
 
 import 'package:audioplayers/audioplayers.dart';
@@ -28,7 +27,6 @@ import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:record/record.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:tuple/tuple.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 import '../../../common/constants.dart';
 import '../../../common/widgets.dart';
@@ -647,34 +645,6 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
     }
   }
 
-  String getChatTime(BuildContext context, int? epochTime) {
-    if (epochTime == null) return "";
-    if (epochTime == 0) return "";
-    var convertedTime = epochTime;
-    var hourTime = manipulateMessageTime(context, DateTime.fromMicrosecondsSinceEpoch(convertedTime));
-    calendar = DateTime.fromMicrosecondsSinceEpoch(convertedTime);
-    return hourTime;
-  }
-
-  String manipulateMessageTime(BuildContext context, DateTime messageDate) {
-    var format = MediaQuery.of(context).alwaysUse24HourFormat ? 24 : 12;
-    var hours = calendar.hour; //calendar[Calendar.HOUR]
-    calendar = messageDate;
-    var dateHourFormat = setDateHourFormat(format, hours);
-    return DateFormat(dateHourFormat).format(messageDate);
-  }
-
-  String setDateHourFormat(int format, int hours) {
-    var dateHourFormat = (format == 12)
-        ? (hours < 10)
-            ? "hh:mm aa"
-            : "h:mm aa"
-        : (hours < 10)
-            ? "HH:mm"
-            : "H:mm";
-    return dateHourFormat;
-  }
-
   RxBool chatLoading = true.obs;
 
   var initializedMessageList = false;
@@ -762,17 +732,6 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
       }
       getUnsentReplyMessage();
     });
-  }
-
-  Image imageFromBase64String(String base64String, BuildContext context, double? width, double? height) {
-    var decodedBase64 = base64String.replaceAll("\n", "");
-    Uint8List image = const Base64Decoder().convert(decodedBase64);
-    return Image.memory(
-      image,
-      width: width ?? MediaQuery.of(context).size.width * 0.60,
-      height: height ?? MediaQuery.of(context).size.height * 0.4,
-      fit: BoxFit.cover,
-    );
   }
 
   sendImageMessage(String? path, String? caption, String? replyMessageID) async {
@@ -1601,24 +1560,6 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
     // chatList.refresh();
   }
 
-  Widget getLocationImage(LocationChatMessage? locationChatMessage, double width, double height) {
-    return InkWell(
-        onTap: () async {
-          String googleUrl = 'https://www.google.com/maps/search/?api=1&query=${locationChatMessage.latitude}, ${locationChatMessage.longitude}';
-          if (await canLaunchUrl(Uri.parse(googleUrl))) {
-            await launchUrl(Uri.parse(googleUrl));
-          } else {
-            throw 'Could not open the map.';
-          }
-        },
-        child: Image.network(
-          Helper.getMapImageUri(locationChatMessage!.latitude, locationChatMessage.longitude),
-          fit: BoxFit.fill,
-          width: width,
-          height: height,
-        ));
-  }
-
   blockUser() {
     Future.delayed(const Duration(milliseconds: 100), () async {
       Helper.showAlert(message: "Are you sure you want to Block ${getName(profile)}?", actions: [
@@ -2129,14 +2070,17 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
     mirrorFlyLog("chatController", "onMessageReceived");
 
     if (chatMessageModel.chatUserJid == profile.jid) {
-      // chatList.insert(0, chatMessageModel);
-      loadLastMessages(chatMessageModel);
-      //scrollToBottom();
-      // if (isLive) {
-      if (SessionManagement.getCurrentChatJID() != "") {
-        setOnGoingUserAvail();
+      removeUnreadSeparator();
+      final index = chatList.indexWhere((message) => message.messageId == chatMessageModel.messageId);
+      debugPrint("message received index $index");
+      if (index.isNegative) {
+        chatList.insert(0, chatMessageModel);
+        unreadCount.value++;
+        //scrollToBottom();
+        if(SessionManagement.getCurrentChatJID() != Constants.emptyString){
+          setOnGoingUserAvail();
+        }
       }
-      // }
     }
   }
 
@@ -2401,32 +2345,6 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
     }
   }
 
-  // Future<bool> askLocationPermission() async {
-  //   final permission = await AppPermission.getLocationPermission();
-  //   debugPrint("Permission$permission");
-  //   switch (permission) {
-  //     case PermissionStatus.granted:
-  //       return true;
-  //     case PermissionStatus.permanentlyDenied:
-  //       Helper.showAlert(
-  //           message:
-  //               "Permission is permanently denied. Please enable location permission from settings",
-  //           title: "Permission Denied",
-  //           actions: [
-  //             TextButton(
-  //                 onPressed: () {
-  //                   Get.back();
-  //                 },
-  //                 child: const Text("OK")),
-  //           ]);
-  //
-  //       return false;
-  //     default:
-  //       debugPrint("Location Permission default");
-  //       return false;
-  //   }
-  // }
-
   onLocationClick() async {
     if (!availableFeatures.value.isLocationAttachmentAvailable.checkNull()) {
       Helper.showFeatureUnavailable();
@@ -2466,19 +2384,6 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
       }
     }
   }
-
-  /*@override
-  void onAdminBlockedUser(String jid, bool status) {
-    super.onAdminBlockedUser(jid, status);
-    mirrorFlyLog("chat onAdminBlockedUser", "$jid, $status");
-    Get.find<MainController>().handleAdminBlockedUser(jid, status);
-  }*/
-
-  /*makeVoiceCall(){
-    Mirrorfly.makeVoiceCall(profile.jid.checkNull()).then((value){
-      mirrorFlyLog("makeVoiceCall", value.toString());
-    });
-  }*/
 
   Future<void> translateMessage(int index) async {
     /*if (SessionManagement.isGoogleTranslationEnable()) {
