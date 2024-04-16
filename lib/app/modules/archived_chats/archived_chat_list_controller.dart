@@ -6,7 +6,6 @@ import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
 import 'package:mirror_fly_demo/app/modules/dashboard/controllers/dashboard_controller.dart';
 import 'package:mirror_fly_demo/app/common/extensions.dart';
-import 'package:queue/queue.dart';
 import '../../data/apputils.dart';
 import '../../data/helper.dart';
 import '../../model/chat_message_model.dart';
@@ -193,24 +192,16 @@ class ArchivedChatListController extends GetxController {
     });
   }
 
-  final onMessageReceivedQueue = Queue();
-  final onMessageStatusUpdatedQueue = Queue();
 
   Future<void> onMessageReceived(ChatMessageModel chatMessage) async {
-    await onMessageReceivedQueue.add(() => updateArchiveRecentChat(chatMessage.chatUserJid));
+    updateArchiveRecentChat(chatMessage.chatUserJid);
   }
 
   Future<void> onMessageStatusUpdated(ChatMessageModel chatMessageModel) async {
     // mirrorFlyLog("MESSAGE STATUS UPDATED", event);
-    await onMessageStatusUpdatedQueue.add(() => updateArchiveRecentChat(chatMessageModel.chatUserJid));
+    updateArchiveRecentChat(chatMessageModel.chatUserJid);
   }
 
-  @override
-  void dispose() {
-    onMessageReceivedQueue.dispose();
-    onMessageStatusUpdatedQueue.dispose();
-    super.dispose();
-  }
 
   Future<RecentChatData?> getRecentChatOfJid(String jid) async {
     var value = await Mirrorfly.getRecentChatOf(jid: jid);
@@ -373,7 +364,9 @@ class ArchivedChatListController extends GetxController {
       if (!index.isNegative) {
         var recent = await getRecentChatOfJid(jid);
         if (recent != null) {
-          archivedChats[index] = recent;
+          var updateIndex =
+          archivedChats.indexWhere((element) => element.jid == jid);
+          archivedChats[updateIndex] = recent;
         }
       }
     }

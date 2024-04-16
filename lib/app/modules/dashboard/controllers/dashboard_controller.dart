@@ -14,7 +14,6 @@ import 'package:mirror_fly_demo/app/data/session_management.dart';
 import 'package:intl/intl.dart';
 import 'package:mirrorfly_plugin/model/call_log_model.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:queue/queue.dart';
 
 import '../../../common/de_bouncer.dart';
 import '../../../common/main_controller.dart';
@@ -379,7 +378,7 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
     }
   }
 
-  Future<bool> updateRecentChat({required String jid, bool changePosition = true, bool newInsertable = true}) async {
+  Future<bool> updateRecentChat({required String jid, bool changePosition = true, bool newInsertable = false}) async {
     //updateArchiveRecentChat(jid);
     var recent = await getRecentChatOfJid(jid);
     final index = recentChats.indexWhere((chat) => chat.jid == jid);
@@ -401,7 +400,7 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
             LogMessage.d("updateRecentChat", "next Index $nxtIndex");
             recentChats.removeAt(index);
             recentChats.insert(nxtIndex, recent);
-            recentChats.refresh();
+            // recentChats.refresh();
           }
         }
       } else {
@@ -989,13 +988,11 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
     unReadCount();
   }
 
-  final onMessageStatusUpdatedQueue = Queue();
-  final onMessageReceivedQueue = Queue();
 
   Future<void> onMessageReceived(chatMessageModel) async {
     mirrorFlyLog("dashboard controller", "onMessageReceived");
 
-    await onMessageReceivedQueue.add(()=>updateRecentChat(jid: chatMessageModel.chatUserJid));
+   updateRecentChat(jid: chatMessageModel.chatUserJid,newInsertable: true);
   }
 
 
@@ -1007,17 +1004,10 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
       recentChats[index].lastMessageStatus = chatMessageModel.messageStatus.value;
       recentChats.refresh();
     } else {
-      //Queue up a future and await its result
-      await onMessageStatusUpdatedQueue.add(()=>updateRecentChat(jid: chatMessageModel.chatUserJid,newInsertable: false));
+      updateRecentChat(jid: chatMessageModel.chatUserJid);
     }
   }
 
-  @override
-  void dispose() {
-    onMessageReceivedQueue.dispose();
-    onMessageStatusUpdatedQueue.dispose();
-    super.dispose();
-  }
 
   void markConversationReadNotifyUI(String jid) {
     var index = recentChats.indexWhere((element) => element.jid == jid);
@@ -1095,14 +1085,14 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
 
   Future<void> updateRecentChatAdapter(String jid) async {
     if (jid.isNotEmpty) {
-      var index =
-          recentChats.indexWhere((element) => element.jid == jid); // { it.jid ?: Constants.EMPTY_STRING == jid }
+      var index = recentChats.indexWhere((element) => element.jid == jid); // { it.jid ?: Constants.EMPTY_STRING == jid }
       debugPrint("updateRecentChatAdapter $index");
       if (!index.isNegative) {
         var recent = await getRecentChatOfJid(jid);
+        var updatedIndex = recentChats.indexWhere((element) => element.jid == jid); // { it.jid ?: Constants.EMPTY_STRING == jid }
         debugPrint("updateRecentChatAdapter getRecentChatOfJid ${recent?.toJson().toString()}");
         if (recent != null) {
-            recentChats[index] = recent;
+            recentChats[updatedIndex] = recent;
         }
       }
     }
@@ -1442,7 +1432,9 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
       if (!filterIndex.isNegative) {
         var recent = await getRecentChatOfJid(jid);
         if (recent != null) {
-            filteredRecentChatList[filterIndex] = recent;
+          var updateIndex = filteredRecentChatList
+              .indexWhere((element) => element.jid == jid);
+            filteredRecentChatList[updateIndex] = recent;
         }
       }
     }
@@ -1457,7 +1449,8 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
         getProfileDetails(jid).then((value) {
           debugPrint("get profile detail dashboard $value");
           profile_(value);
-          _userList[userListIndex] = value;
+          var updateIndex = _userList.indexWhere((element) => element.jid == jid);
+          _userList[updateIndex] = value;
         });
       }
     }
