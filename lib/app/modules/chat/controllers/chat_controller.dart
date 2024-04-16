@@ -496,7 +496,7 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
                 mirrorFlyLog("text message", response.data);
                 messageController.text = "";
                 isUserTyping(false);
-                clearMessage();
+                // clearMessage();
                 scrollToBottom();
                 updateLastMessage(response.data);
               } else {
@@ -767,7 +767,7 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
             flyCallback: (response) {
               if (response.isSuccess) {
                 mirrorFlyLog("image message", response.data.toString());
-                clearMessage();
+                // clearMessage();
                 ChatMessageModel chatMessageModel = sendMessageModelFromJson(response.data);
                 // chatList.insert(0, chatMessageModel);
                 scrollToBottom();
@@ -863,7 +863,7 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
           flyCallback: (response) {
             if (response.isSuccess) {
               mirrorFlyLog("video message", response.data.toString());
-              clearMessage();
+              // clearMessage();
               Platform.isIOS ? Helper.hideLoading() : null;
               ChatMessageModel chatMessageModel = sendMessageModelFromJson(response.data);
               // chatList.insert(0, chatMessageModel);
@@ -3023,6 +3023,7 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
   }
 
   void updateLastMessage(dynamic value) {
+    clearMessage();
     ChatMessageModel chatMessageModel = sendMessageModelFromJson(value);
     loadLastMessages(chatMessageModel);
     //below method is used when message is not sent and onMessageStatusUpdate listener will not trigger till the message status was updated so notify the ui in dashboard
