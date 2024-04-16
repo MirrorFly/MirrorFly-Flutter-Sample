@@ -2411,7 +2411,7 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
   }
 
   bool forwardMessageVisibility(ChatMessageModel chat) {
-    if (chat.isMessageSentByMe && !chat.isMessageRecalled.value && !chat.isMessageDeleted) {
+    if (!chat.isMessageRecalled.value && !chat.isMessageDeleted) {
       if (chat.isMediaMessage()) {
         if ((chat.mediaChatMessage!.mediaDownloadStatus.value == Constants.mediaDownloaded ||
                 chat.mediaChatMessage!.mediaUploadStatus.value == Constants.mediaUploaded) &&

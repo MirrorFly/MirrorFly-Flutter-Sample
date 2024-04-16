@@ -115,7 +115,7 @@ class _ChatListViewState extends State<ChatListView> {
                                     mainAxisSize: MainAxisSize.min,
                                     children: [
                                       Visibility(
-                                        visible: widget.chatController.forwardMessageVisibility(widget.chatList[index]),
+                                        visible: widget.chatList[index].isMessageSentByMe && widget.chatController.forwardMessageVisibility(widget.chatList[index]),
                                         child: IconButton(
                                             onPressed: () {
                                               widget.chatController.forwardSingleMessage(widget.chatList[index].messageId);
