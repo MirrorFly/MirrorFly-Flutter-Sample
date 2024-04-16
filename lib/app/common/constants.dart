@@ -519,7 +519,6 @@ class Constants {
 
   static const String yesterday = "yesterday";
   static const String today = "today";
-  static const String yesterdayUpper = "YESTERDAY";
   static const bool isMobileLogin = true;
   static const String baseUrl = "com.contus.flycommons.base_url";
   static const String apiKey = "com.contus.flycommons.api_key";

@@ -56,11 +56,11 @@ class MediaPreviewView extends GetView<MediaPreviewController> {
                           ),
                         )
                       : ProfileTextImage(
-                          text: controller.profile.name.checkNull().isEmpty
+                          text: controller.profile.getName(),/*controller.profile.name.checkNull().isEmpty
                               ? controller.profile.nickName.checkNull().isEmpty
                                   ? controller.profile.mobileNumber.checkNull()
                                   : controller.profile.nickName.checkNull()
-                              : controller.profile.name.checkNull(),
+                              : controller.profile.name.checkNull(),*/
                           radius: 18,
                         ),
                   isGroup: controller.profile.isGroupProfile.checkNull(),

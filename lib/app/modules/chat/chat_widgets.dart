@@ -54,7 +54,7 @@ class ReplyingMessageHeader extends StatelessWidget {
                     Padding(
                       padding: const EdgeInsets.only(top: 15.0, left: 15.0),
                       child: getReplyTitle(chatMessage.isMessageSentByMe,
-                          chatMessage.senderUserName),
+                          chatMessage.senderUserName.checkNull().isNotEmpty ? chatMessage.senderUserName : chatMessage.senderNickName),
                     ),
                     const SizedBox(height: 8),
                     Padding(

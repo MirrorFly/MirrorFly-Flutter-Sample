@@ -1,9 +1,6 @@
-import 'dart:io';
 
 import 'package:flutter/material.dart';
-import '../../../../../../common/constants.dart';
 import '../../../../../../common/de_bouncer.dart';
-import '../../../../../../data/helper.dart';
 import 'thumbnail_widget.dart';
 import 'package:photo_manager/photo_manager.dart';
 

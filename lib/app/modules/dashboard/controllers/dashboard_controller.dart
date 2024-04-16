@@ -316,7 +316,7 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
     return (equalsWithYesterday(calendar, Constants.today))
         ? hourTime
         : (equalsWithYesterday(calendar, Constants.yesterday))
-            ? Constants.yesterdayUpper
+            ? Constants.yesterday.toUpperCase()
             : time;
   }
 
@@ -378,6 +378,9 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
     }
   }
 
+
+  // Archive chat
+  // Pin chat
   updateRecentChat({required String jid, bool changePosition = true}) async {
     //updateArchiveRecentChat(jid);
     await getRecentChatOfJid(jid).then((recent) {

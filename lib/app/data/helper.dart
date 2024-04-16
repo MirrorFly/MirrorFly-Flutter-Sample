@@ -381,7 +381,7 @@ String getRecentChatTime(BuildContext context, int? epochTime) {
   return (equalsWithYesterday(calendar, Constants.today))
       ? hourTime
       : (equalsWithYesterday(calendar, Constants.yesterday))
-          ? Constants.yesterdayUpper
+          ? Constants.yesterday.toUpperCase()
           : time;
 }
 

@@ -15,12 +15,6 @@ import 'helper.dart';
 class AppPermission {
   AppPermission._();
 
-  /*static Future<bool> getLocationPermission() async{
-    var permission = await Geolocator.requestPermission();
-    mirrorFlyLog(permission.name, permission.index.toString());
-    return permission.index==2 || permission.index==3;
-  }*/
-
   static Future<bool> getStoragePermission({String? permissionContent, String? deniedContent}) async {
     var sdkVersion = 0;
     if (Platform.isAndroid) {
@@ -785,14 +779,13 @@ class AppPermission {
       sdkVersion = 0;
     }
     if (Platform.isIOS) {
-      permissions.addAll([Permission.photos,Permission.storage,Permission.mediaLibrary]);
+      permissions.addAll([Permission.photos,Permission.storage]);
     }else if (sdkVersion < 33 && Platform.isAndroid) {
       permissions.add(Permission.storage);
     } else{
       ///[Permission.photos] for Android 33+ gallery access
       ///[Permission.videos] for Android 33+ gallery access
-      ///[Permission.mediaLibrary] for iOS gallery access
-      permissions.addAll([Permission.photos, Permission.videos,Permission.videos]);
+      permissions.addAll([Permission.photos, Permission.videos]);
     }
     LogMessage.d("getGalleryAccessPermissions", permissions.join(","));
     return permissions;

@@ -52,8 +52,8 @@ class RecentChatItem extends StatelessWidget {
   final bool isSelected;
   final String typingUserid;
 
-  final titlestyle = const TextStyle(fontSize: 16.0, fontWeight: FontWeight.w700, fontFamily: 'sf_ui', color: textHintColor);
-  final typingstyle = const TextStyle(fontSize: 14.0, fontWeight: FontWeight.w600, fontFamily: 'sf_ui', color: buttonBgColor);
+  final titleStyle = const TextStyle(fontSize: 16.0, fontWeight: FontWeight.w700, fontFamily: 'sf_ui', color: textHintColor);
+  final typingStyle = const TextStyle(fontSize: 14.0, fontWeight: FontWeight.w600, fontFamily: 'sf_ui', color: buttonBgColor);
   final bool archiveEnabled;
 
   @override
@@ -100,7 +100,7 @@ class RecentChatItem extends StatelessWidget {
           spanTxt.isEmpty
               ? Text(
                   getRecentName(item),
-                  style: titlestyle,
+                  style: titleStyle,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 )
@@ -108,7 +108,7 @@ class RecentChatItem extends StatelessWidget {
                   getRecentName(item),
                   //item.profileName.checkNull(),
                   spanTxt,
-                  titlestyle),
+                  titleStyle),
           Row(
             children: [
               item.isLastMessageSentByMe.checkNull() && !isForwardMessage && !item.isLastMessageRecalledByUser.checkNull()
@@ -184,12 +184,7 @@ class RecentChatItem extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.only(right: 8.0),
       child: getMessageIndicator(item.lastMessageStatus.checkNull(), item.isLastMessageSentByMe.checkNull(), item.lastMessageType.checkNull(),
-          item.isLastMessageRecalledByUser.checkNull())
-      /*CircleAvatar(
-        radius: 4,
-        backgroundColor: Colors.green,
-      )*/
-      ,
+          item.isLastMessageRecalledByUser.checkNull()),
     );
   }
 
@@ -302,7 +297,7 @@ class RecentChatItem extends StatelessWidget {
                 return Text(
                   getTypingUser(data.data!, item.isGroup),
                   //"${data.data!.name.checkNull()} typing...",
-                  style: typingstyle,
+                  style: typingStyle,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 );
@@ -525,13 +520,13 @@ TextSpan customTextSpan(String message, String prevValue, TextStyle? normalStyle
           style: spannableTextType(e) == "text" ? normalStyle : underlineStyle,
           recognizer: TapGestureRecognizer()
             ..onTap = () {
-              onTapForSpantext(e);
+              onTapForSpanText(e);
             });
     }).toList(),
   );
 }
 
-onTapForSpantext(String e) {
+onTapForSpanText(String e) {
   var stringType = spannableTextType(e);
   debugPrint("Text span click");
   if (stringType == "website") {

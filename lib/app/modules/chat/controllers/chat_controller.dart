@@ -3273,7 +3273,7 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
     final itemPositions = newitemPositionsListener.itemPositions.value;
     if (itemPositions.isNotEmpty) {
       final firstVisibleItemIndex = itemPositions.first.index;
-      LogMessage.d("lastVisiblePosition", "$firstVisibleItemIndex");
+      // LogMessage.d("lastVisiblePosition", "$firstVisibleItemIndex");
       return firstVisibleItemIndex;
     } else {
       // Handle the case when the list is empty

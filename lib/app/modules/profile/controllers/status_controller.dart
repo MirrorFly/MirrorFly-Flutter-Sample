@@ -83,7 +83,7 @@ class StatusListController extends FullLifeCycleController with FullLifeCycleMix
     super.onInit();
     selectedStatus.value = Get.arguments['status'];
     addStatusController.text= selectedStatus.value;
-    onChanged();
+    // onChanged();
     getStatusList();
     onChanged();
   }
