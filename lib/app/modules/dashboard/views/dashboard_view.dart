@@ -836,7 +836,7 @@ class DashboardView extends GetView<DashboardController> {
                     },
                   );
                 } else if (snap.hasError) {
-                  mirrorFlyLog("snap error", snap.error.toString());
+                  LogMessage.d("snap error", snap.error.toString());
                 }
                 return const SizedBox();
               });

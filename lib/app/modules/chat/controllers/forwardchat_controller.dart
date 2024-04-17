@@ -95,7 +95,7 @@ class ForwardChatController extends GetxController {
           isPageLoading.value == false) {
         if (scrollable.value && !searching) {
           //isPageLoading.value = true;
-          mirrorFlyLog("scroll", "end");
+          LogMessage.d("scroll", "end");
           pageNum++;
           getUsers(bottom: true);
         }
@@ -381,7 +381,7 @@ class ForwardChatController extends GetxController {
   String lastInputValue = "";
 
   void onSearch(String search) {
-    mirrorFlyLog("search", "onSearch");
+    LogMessage.d("search", "onSearch");
     if (lastInputValue != searchQuery.text.toString().trim()) {
       lastInputValue = searchQuery.text.toString().trim();
       if (searchQuery.text.toString().trim().isNotEmpty) {

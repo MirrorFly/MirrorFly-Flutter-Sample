@@ -36,7 +36,7 @@ class GroupParticipantsController extends GetxController {
 
   void getGroupMembers() {
     Mirrorfly.getGroupMembersList(jid: groupId.value.checkNull(), fetchFromServer: false, flyCallBack: (FlyResponse response) {
-      mirrorFlyLog("getGroupMembersList", response.toString());
+      LogMessage.d("getGroupMembersList", response.toString());
       if (response.isSuccess &&response.hasData) {
         var list = profileFromJson(response.data);
         var withoutMe = list.where((element) => element.jid != SessionManagement.getUserJID()).toList();
@@ -170,7 +170,7 @@ class GroupParticipantsController extends GetxController {
       getProfileDetails(jid).then((value) {
         var userListIndex = usersList.indexWhere((element) => element.jid == jid);
         var mainUserListIndex = mainUserList.indexWhere((element) => element.jid == jid);
-        mirrorFlyLog('value.isBlockedMe', value.isBlockedMe.toString());
+        LogMessage.d('value.isBlockedMe', value.isBlockedMe.toString());
         if (!userListIndex.isNegative) {
           usersList[userListIndex] = value;
           usersList.refresh();

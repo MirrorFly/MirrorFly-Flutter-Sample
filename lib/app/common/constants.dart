@@ -1,6 +1,5 @@
 import 'dart:io';
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -328,16 +327,6 @@ toToast(String text) {
   //     animationDuration: const Duration(seconds: 1),
   //   ),
   // );
-}
-
-mirrorFlyLog(String tag, String msg) {
-  if (kDebugMode) {
-    // print("MirrorFly : $tag ==> $msg");
-    final pattern = RegExp('.{1,800}'); // 800 is the size of each chunk
-    pattern
-        .allMatches(msg)
-        .forEach((match) => debugPrint("MirrorFly : $tag==>${match.group(0)}"));
-  }
 }
 
 class Constants {
@@ -930,7 +919,7 @@ Widget forMessageTypeIcon(String messageType,[MediaChatMessage? mediaChatMessage
 }
 
 String? forMessageTypeString(String messageType, {String? content}) {
-  // mirrorFlyLog("Recent Chat content", content.toString());
+  // LogMessage.d("Recent Chat content", content.toString());
   switch (messageType.toUpperCase()) {
     case Constants.mImage:
       return content.checkNull().isNotEmpty ? content : "Image";

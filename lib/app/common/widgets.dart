@@ -116,8 +116,8 @@ class ImageNetwork extends GetView<MainController> {
 
   @override
   Widget build(BuildContext context) {
-    // mirrorFlyLog("MirrorFly Auth", authToken.value);
-    // mirrorFlyLog("Image URL", url);
+    // LogMessage.d("MirrorFly Auth", authToken.value);
+    // LogMessage.d("Image URL", url);
     return Obx(() {
       return CachedNetworkImage(
         key: UniqueKey(),
@@ -151,7 +151,7 @@ class ImageNetwork extends GetView<MainController> {
         },
         errorWidget: (context, link, error) {
           if (getImageUrl().isNotEmpty) {
-            mirrorFlyLog("ImageNetwork", "$error link : $link token : ${controller.currentAuthToken.value} ${url.isURL}");
+            LogMessage.d("ImageNetwork", "$error link : $link token : ${controller.currentAuthToken.value} ${url.isURL}");
             if (error.toString().contains("401")) {
               CachedNetworkImage.evictFromCache(url, cacheKey: url)
                   .then((value) {

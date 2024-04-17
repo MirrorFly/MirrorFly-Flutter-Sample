@@ -82,11 +82,11 @@ class ContactSyncController extends GetxController
   void onContactSyncComplete(bool result) {
     if(Get.currentRoute==Routes.contactSync) {
       Mirrorfly.getRegisteredUsers(fetchFromServer: true,flyCallback: (FlyResponse response){
-        mirrorFlyLog("registeredUsers", response.isSuccess.toString());
+        LogMessage.d("registeredUsers", response.isSuccess.toString());
         navigateToDashboard();
       });
       /*then((value) {
-        mirrorFlyLog("registeredUsers", value.toString());
+        LogMessage.d("registeredUsers", value.toString());
         navigateToDashboard();
       });*/
     }
@@ -98,7 +98,7 @@ class ContactSyncController extends GetxController
   }
 
   Future<void> networkConnected() async {
-    mirrorFlyLog('networkConnected', 'contactSync');
+    LogMessage.d('networkConnected', 'contactSync');
     textContactSync('');
     if(!await Mirrorfly.contactSyncStateValue()){
       openContactPermission();

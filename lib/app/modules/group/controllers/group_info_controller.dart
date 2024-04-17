@@ -63,7 +63,7 @@ class GroupInfoController extends GetxController {
   void onGroupProfileUpdated(String groupJid) {
     if (groupJid.checkNull().isNotEmpty) {
       if (profile.jid.checkNull() == groupJid.toString()) {
-        mirrorFlyLog("group info", groupJid.toString());
+        LogMessage.d("group info", groupJid.toString());
         getProfileDetails(profile.jid.checkNull()).then((value) {
           if (value.jid != null) {
             var member = value;//Profile.fromJson(json.decode(value.toString()));
@@ -181,7 +181,7 @@ class GroupInfoController extends GetxController {
   onToggleChange(bool value) async {
     if (isMemberOfGroup) {
       if (muteable.value) {
-        mirrorFlyLog("change", value.toString());
+        LogMessage.d("change", value.toString());
         _mute(value);
         Mirrorfly.updateChatMuteStatus(jid:profile.jid.checkNull(), muteStatus: value);
         notifyDashboardUI();
@@ -193,7 +193,7 @@ class GroupInfoController extends GetxController {
 
   getGroupMembers(bool? server){
     Mirrorfly.getGroupMembersList(jid: profile.jid.checkNull(),fetchFromServer: server, flyCallBack: (FlyResponse response) {
-      mirrorFlyLog("getGroupMembersList", response.data);
+      LogMessage.d("getGroupMembersList", response.data);
       if(response.isSuccess && response.hasData){
         var list = profileFromJson(response.data);
         list.sort((a, b) => (a.jid==SessionManagement.getUserJID()) ? 1 : (b.jid==SessionManagement.getUserJID()) ? -1 : 0);

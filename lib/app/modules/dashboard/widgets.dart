@@ -302,7 +302,7 @@ class RecentChatItem extends StatelessWidget {
                   overflow: TextOverflow.ellipsis,
                 );
               } else {
-                mirrorFlyLog("hasError", data.error.toString());
+                LogMessage.d("hasError", data.error.toString());
                 return const SizedBox(
                   height: 15,
                 );
@@ -447,9 +447,9 @@ Widget spannableText(String text, String spannableText, TextStyle? style) {
     var startText = text.substring(0, startIndex);
     var colorText = text.substring(startIndex, endIndex);
     var endText = text.substring(endIndex, text.length);
-    //mirrorFlyLog("startText", startText);
-    //mirrorFlyLog("endText", endText);
-    //mirrorFlyLog("colorText", colorText);
+    //LogMessage.d("startText", startText);
+    //LogMessage.d("endText", endText);
+    //LogMessage.d("colorText", colorText);
     return Text.rich(
       TextSpan(
           text: startText,

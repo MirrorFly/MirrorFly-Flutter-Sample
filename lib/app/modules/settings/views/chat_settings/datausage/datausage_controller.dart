@@ -67,8 +67,8 @@ class DataUsageController extends GetxController{
   setAutoDownloadWifiDocument(bool value) => _autoDownloadWifiDocument(value);
 
   void onClick(String from, String type){
-    mirrorFlyLog("from", from);
-    mirrorFlyLog("type", type);
+    LogMessage.d("from", from);
+    LogMessage.d("type", type);
     if(from==mobile) {
       switch (type) {
         case Constants.photo:

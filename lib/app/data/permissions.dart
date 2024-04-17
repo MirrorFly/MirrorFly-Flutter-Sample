@@ -64,7 +64,7 @@ class AppPermission {
               photos != PermissionStatus.permanentlyDenied) ||
           (storage != PermissionStatus.granted &&
               storage != PermissionStatus.permanentlyDenied)) {
-        mirrorFlyLog("showing mirrorfly popup", "");
+        LogMessage.d("showing mirrorfly popup", "");
         var deniedPopupValue = await mirrorFlyPermissionDialog(
             icon: filePermission, content: permissionContent ?? Constants.filePermission);
         if (deniedPopupValue) {
@@ -92,7 +92,7 @@ class AppPermission {
           return false; //PermissionStatus.denied;
         }
       } else {
-        mirrorFlyLog("showing mirrorfly popup",
+        LogMessage.d("showing mirrorfly popup",
             "${photos.isGranted} ${storage.isGranted}");
         return (photos.isGranted && storage.isGranted);
         // ? photos
@@ -120,7 +120,7 @@ class AppPermission {
             videos != PermissionStatus.permanentlyDenied) ||
         (mediaLibrary != PermissionStatus.granted &&
             mediaLibrary != PermissionStatus.permanentlyDenied)) {
-      mirrorFlyLog("showing mirrorfly popup", "");
+      LogMessage.d("showing mirrorfly popup", "");
       var deniedPopupValue = await mirrorFlyPermissionDialog(
           icon: filePermission, content: Constants.filePermission);
       if (deniedPopupValue) {
@@ -150,7 +150,7 @@ class AppPermission {
         return false; //PermissionStatus.denied;
       }
     } else {
-      mirrorFlyLog("showing mirrorfly popup",
+      LogMessage.d("showing mirrorfly popup",
           "${photos.isGranted} ${videos.isGranted} ${mediaLibrary.isGranted}");
       return (photos.isGranted && videos.isGranted && mediaLibrary.isGranted);
       // ? photos
@@ -598,11 +598,11 @@ class AppPermission {
   static Future<PermissionStatus> requestPermission(
       Permission permission) async {
     var status1 = await permission.status;
-    mirrorFlyLog('status', status1.toString());
+    LogMessage.d('status', status1.toString());
     savePermissionAsked(permission);
     if (status1 == PermissionStatus.denied &&
         status1 != PermissionStatus.permanentlyDenied) {
-      mirrorFlyLog('permission.request', status1.toString());
+      LogMessage.d('permission.request', status1.toString());
       final status = await permission.request();
       return status;
     }
@@ -618,7 +618,7 @@ class AppPermission {
       return true;
     } else if (status == PermissionStatus.denied ||
         (Platform.isAndroid && await permission.shouldShowRequestRationale)) {
-      mirrorFlyLog('denied', 'permission');
+      LogMessage.d('denied', 'permission');
       var popupValue = await customPermissionDialog(
           icon: permissionIcon, content: permissionContent);
       if (popupValue) {
@@ -628,7 +628,7 @@ class AppPermission {
         return false;
       }
     } else if (status == PermissionStatus.denied) {
-      mirrorFlyLog('denied', 'permission');
+      LogMessage.d('denied', 'permission');
       var popupValue = await customPermissionDialog(
           icon: permissionIcon, content: permissionContent);
       if (popupValue) {

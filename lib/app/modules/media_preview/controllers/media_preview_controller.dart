@@ -9,7 +9,6 @@ import 'package:mirrorfly_plugin/mirrorfly.dart';
 import 'package:mirror_fly_demo/app/common/extensions.dart';
 import 'package:get/get.dart';
 
-import '../../../common/constants.dart';
 import '../../../common/main_controller.dart';
 import '../../../data/helper.dart';
 import '../../../routes/app_pages.dart';
@@ -144,7 +143,7 @@ class MediaPreviewController extends FullLifeCycleController with FullLifeCycleM
 
   @override
   void onResumed() {
-    mirrorFlyLog("LifeCycle", "onResumed");
+    LogMessage.d("LifeCycle", "onResumed");
     if(!KeyboardVisibilityController().isVisible) {
       if (captionFocusNode.hasFocus) {
         captionFocusNode.unfocus();

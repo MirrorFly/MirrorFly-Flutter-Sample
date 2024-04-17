@@ -64,7 +64,7 @@ class ContactController extends FullLifeCycleController with FullLifeCycleMixin 
       toToast(Constants.noInternetConnection);
     }
     //Mirrorfly.syncContacts(true);
-    //Mirrorfly.getRegisteredUsers(true).then((value) => mirrorFlyLog("registeredUsers", value.toString()));
+    //Mirrorfly.getRegisteredUsers(true).then((value) => LogMessage.d("registeredUsers", value.toString()));
     progressSpinner(Constants.enableContactSync && await Mirrorfly.contactSyncStateValue());
   }
 
@@ -77,7 +77,7 @@ class ContactController extends FullLifeCycleController with FullLifeCycleMixin 
       getProfileDetails(jid).then((value) {
         var userListIndex = usersList.indexWhere((element) => element.jid == jid);
         var mainListIndex = mainUsersList.indexWhere((element) => element.jid == jid);
-        mirrorFlyLog('value.isBlockedMe', value.isBlockedMe.toString());
+        LogMessage.d('value.isBlockedMe', value.isBlockedMe.toString());
         if (!userListIndex.isNegative) {
           usersList[userListIndex] = value;
           usersList.refresh();
@@ -195,14 +195,14 @@ class ContactController extends FullLifeCycleController with FullLifeCycleMixin 
       callback(FlyResponse response) async {
         if (response.isSuccess && response.hasData) {
           var data = response.data;
-          mirrorFlyLog("userlist", data);
+          LogMessage.d("userlist", data);
           var item = userListFromJson(data);
           var list = <ProfileDetails>[];
 
           if (groupJid.value.checkNull().isNotEmpty) {
             await Future.forEach(item.data!, (it) async {
               await Mirrorfly.isMemberOfGroup(groupJid: groupJid.value.checkNull(), userJid: it.jid.checkNull()).then((value) {
-                mirrorFlyLog("item", value.toString());
+                LogMessage.d("item", value.toString());
                 if (value == null || !value) {
                   list.add(it);
                 }
@@ -295,14 +295,14 @@ class ContactController extends FullLifeCycleController with FullLifeCycleMixin 
           : Mirrorfly.getRegisteredUsers(fetchFromServer: false, flyCallback: callback);
       /*future.then((data) async {
         //Mirrorfly.getUserList(pageNum, _searchText).then((data) async {
-        mirrorFlyLog("userlist", data);
+        LogMessage.d("userlist", data);
         var item = userListFromJson(data);
         var list = <ProfileDetails>[];
 
         if (groupJid.value.checkNull().isNotEmpty) {
           await Future.forEach(item.data!, (it) async {
             await Mirrorfly.isMemberOfGroup(groupJid.value.checkNull(), it.jid.checkNull()).then((value) {
-              mirrorFlyLog("item", value.toString());
+              LogMessage.d("item", value.toString());
               if (value == null || !value) {
                 list.add(it);
               }
@@ -395,7 +395,7 @@ class ContactController extends FullLifeCycleController with FullLifeCycleMixin 
     var list = <ProfileDetails>[];
     for (var it in items) {
       var value = await Mirrorfly.isMemberOfGroup(groupJid: groupJid.value.checkNull(),userJid: it.jid.checkNull());
-      mirrorFlyLog("item", value.toString());
+      LogMessage.d("item", value.toString());
       if (value == null || !value) {
         list.add(it);
       }
@@ -444,7 +444,7 @@ class ContactController extends FullLifeCycleController with FullLifeCycleMixin 
           validateForCall(item);
         }
       } else {
-        mirrorFlyLog("Contact Profile", item.toJson().toString());
+        LogMessage.d("Contact Profile", item.toJson().toString());
         Get.toNamed(Routes.chat, arguments: item, parameters: {"topicId": topicId});
       }
     }
@@ -525,7 +525,7 @@ class ContactController extends FullLifeCycleController with FullLifeCycleMixin 
 
   refreshContacts(bool isNetworkToastNeeded) async {
     if (Constants.enableContactSync) {
-      mirrorFlyLog('Contact Sync', "[Contact Sync] refreshContacts()");
+      LogMessage.d('Contact Sync', "[Contact Sync] refreshContacts()");
       if (await AppUtils.isNetConnected()) {
         if (!await Mirrorfly.contactSyncStateValue()) {
           var contactPermissionHandle = await AppPermission.checkPermission(
@@ -551,7 +551,7 @@ class ContactController extends FullLifeCycleController with FullLifeCycleMixin 
       }*/
         } else {
           progressSpinner(true);
-          mirrorFlyLog('Contact Sync', "[Contact Sync] Contact syncing is already in progress");
+          LogMessage.d('Contact Sync', "[Contact Sync] Contact syncing is already in progress");
         }
       } else {
         if (isNetworkToastNeeded) {

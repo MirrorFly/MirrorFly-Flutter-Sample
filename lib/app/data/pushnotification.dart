@@ -68,7 +68,7 @@ class PushNotifications {
   static void getToken(){
     FirebaseMessaging.instance.getToken().then((value) {
       if(value!=null) {
-        mirrorFlyLog("firebase_token", value);
+        LogMessage.d("firebase_token", value);
         debugPrint("#Mirrorfly Notification -> firebase_token_1 $value");
         SessionManagement.setToken(value);
         Mirrorfly.updateFcmToken(firebaseToken: value, flyCallBack: (FlyResponse response) {
@@ -76,18 +76,18 @@ class PushNotifications {
         });
       }
     }).catchError((er){
-      mirrorFlyLog("FirebaseMessaging", er.toString());
+      LogMessage.d("FirebaseMessaging", er.toString());
     });
     FirebaseMessaging.instance.onTokenRefresh
         .listen((fcmToken) {
-      mirrorFlyLog("onTokenRefresh", fcmToken.toString());
+      LogMessage.d("onTokenRefresh", fcmToken.toString());
       SessionManagement.setToken(fcmToken);
       Mirrorfly.updateFcmToken(firebaseToken: fcmToken, flyCallBack: (FlyResponse response) {
         LogMessage.d("updateFcmToken", response.isSuccess);
       });
     }).onError((err) {
       // Error getting token.
-      mirrorFlyLog("onTokenRefresh", err.toString());
+      LogMessage.d("onTokenRefresh", err.toString());
     });
   }
   static void initInfo(){
@@ -96,13 +96,13 @@ class PushNotifications {
     var iosInitialize = const DarwinInitializationSettings();
     var initalizationSettings = InitializationSettings(android: androidInitialize,iOS: iosInitialize);
     flutterLocalNotificationsPlugin.initialize(initalizationSettings,onDidReceiveNotificationResponse: (NotificationResponse response){
-      mirrorFlyLog("notificationresposne", response.payload.toString());
+      LogMessage.d("notificationresposne", response.payload.toString());
       try {
         if (response.payload != null && response.payload!.isNotEmpty) {
           //on notification click
         }
       }catch(e){
-        mirrorFlyLog("error", e.toString());
+        LogMessage.d("error", e.toString());
         return;
       }
     });*/
@@ -198,7 +198,7 @@ class PushNotifications {
     if(notificationData.isNotEmpty && Platform.isAndroid) {
       WidgetsFlutterBinding.ensureInitialized();
       Mirrorfly.handleReceivedMessage(notificationData: notificationData, flyCallBack: (FlyResponse response) {
-          mirrorFlyLog("#Mirrorfly Notification -> notification message", response.toString());
+          LogMessage.d("#Mirrorfly Notification -> notification message", response.toString());
         if(response.isSuccess && response.hasData){
           var data = sendMessageModelFromJson(response.data);
           if(data.messageId.isNotEmpty) {

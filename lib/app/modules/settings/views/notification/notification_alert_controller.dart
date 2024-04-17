@@ -67,7 +67,7 @@ with FullLifeCycleMixin {
 
   getRingtoneName() {
     // var uri = SessionManagement.getNotificationUri();
-    // mirrorFlyLog("uri", uri.toString());
+    // LogMessage.d("uri", uri.toString());
     /*Mirrorfly.getRingtoneName().then((value) {
       var jsonNotification = json.decode(value!);
       if (jsonNotification != null) {

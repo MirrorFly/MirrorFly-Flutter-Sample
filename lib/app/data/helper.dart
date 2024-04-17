@@ -180,7 +180,7 @@ class Helper {
   }
 
   static Widget forMessageTypeIcon(String? messageType, [bool isAudioRecorded = false]) {
-    mirrorFlyLog("iconfor", messageType.toString());
+    LogMessage.d("iconfor", messageType.toString());
     switch (messageType?.toUpperCase()) {
       case Constants.mImage:
         return SvgPicture.asset(
@@ -544,7 +544,7 @@ class Triple {
 
 Future<RecentChatData?> getRecentChatOfJid(String jid) async {
   var value = await Mirrorfly.getRecentChatOf(jid: jid);
-  mirrorFlyLog("chat", value.toString());
+  LogMessage.d("chat", value.toString());
   if (value.isNotEmpty) {
     var data = recentChatDataFromJson(value);
     return data;
@@ -565,15 +565,15 @@ String getName(ProfileDetails item) {
     if (item.jid.checkNull() == SessionManagement.getUserJID()) {
       return Constants.you;
     } else if (item.isDeletedContact()) {
-      mirrorFlyLog("getName", 'isDeletedContact ${item.isDeletedContact()}');
+      LogMessage.d("getName", 'isDeletedContact ${item.isDeletedContact()}');
       return Constants.deletedUser;
     } else if (item.isUnknownContact() || item.nickName.checkNull().isEmpty) {
-      mirrorFlyLog("getName", 'isUnknownContact ${item.isUnknownContact()}');
+      LogMessage.d("getName", 'isUnknownContact ${item.isUnknownContact()}');
       return item.mobileNumber.checkNull().isNotEmpty
           ? item.mobileNumber.checkNull()
           : getMobileNumberFromJid(item.jid.checkNull());
     } else {
-      mirrorFlyLog("getName", 'nickName ${item.nickName} name ${item.name}');
+      LogMessage.d("getName", 'nickName ${item.nickName} name ${item.name}');
       return item.nickName.checkNull().isEmpty
           ? (item.name.checkNull().isEmpty ? getMobileNumberFromJid(item.jid.checkNull()) : item.name.checkNull())
           : item.nickName.checkNull(); //#FLUTTER-1300
@@ -609,13 +609,13 @@ String getRecentName(RecentChatData item) {
     if (item.jid.checkNull() == SessionManagement.getUserJID()) {
       return Constants.you;
     } else if (item.isDeletedContact()) {
-      mirrorFlyLog('isDeletedContact', item.isDeletedContact().toString());
+      LogMessage.d('isDeletedContact', item.isDeletedContact().toString());
       return Constants.deletedUser;
     } else if (item.isUnknownContact() || item.nickName.checkNull().isEmpty) {
-      mirrorFlyLog('isUnknownContact', item.jid.toString());
+      LogMessage.d('isUnknownContact', item.jid.toString());
       return getMobileNumberFromJid(item.jid.checkNull());
     } else {
-      mirrorFlyLog('nickName', item.nickName.toString());
+      LogMessage.d('nickName', item.nickName.toString());
       return item.nickName.checkNull();
     }
   }
@@ -633,15 +633,15 @@ String getMemberName(ProfileDetails item) {
     if (item.jid.checkNull() == SessionManagement.getUserJID()) {
       return Constants.you;
     } else if (item.isDeletedContact()) {
-      mirrorFlyLog('isDeletedContact', item.isDeletedContact().toString());
+      LogMessage.d('isDeletedContact', item.isDeletedContact().toString());
       return Constants.deletedUser;
     } else if (item.isUnknownContact() || item.nickName.checkNull().isEmpty) {
-      mirrorFlyLog('isUnknownContact', item.isUnknownContact().toString());
+      LogMessage.d('isUnknownContact', item.isUnknownContact().toString());
       return item.mobileNumber.checkNull().isNotEmpty
           ? item.mobileNumber.checkNull()
           : getMobileNumberFromJid(item.jid.checkNull());
     } else {
-      mirrorFlyLog('nickName', item.nickName.toString());
+      LogMessage.d('nickName', item.nickName.toString());
       return item.nickName.checkNull();
     }
     /*var status = true;
@@ -738,7 +738,7 @@ void showQuickProfilePopup(
               Expanded(
                 child: InkWell(
                   onTap: () {
-                    mirrorFlyLog('image click', 'true');
+                    LogMessage.d('image click', 'true');
                     debugPrint("quick profile click--> ${profile.toJson().toString()}");
                     if (profile.value.image!.isNotEmpty &&
                         !(profile.value.isBlockedMe.checkNull() || profile.value.isAdminBlocked.checkNull()) &&

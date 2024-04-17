@@ -150,7 +150,7 @@ abstract class BaseController {
     // Mirrorfly.onWebChatPasswordChanged.listen(onWebChatPasswordChanged);
     Mirrorfly.typingStatus.listen((event) {
       var data = json.decode(event.toString());
-      mirrorFlyLog("setTypingStatus", data.toString());
+      LogMessage.d("setTypingStatus", data.toString());
       var singleOrgroupJid = data["singleOrgroupJid"];
       var userJid = data["userJid"];
       var typingStatus = data["status"];
@@ -309,7 +309,7 @@ abstract class BaseController {
     });
     Mirrorfly.onCallAction.listen((event) {
       // {"callAction":"REMOTE_HANGUP","userJid":""}
-      mirrorFlyLog("onCallAction", "$event");
+      LogMessage.d("onCallAction", "$event");
       var actionReceived = jsonDecode(event);
       var callAction = actionReceived["callAction"].toString();
       var userJid = actionReceived["userJid"].toString();
@@ -439,7 +439,7 @@ abstract class BaseController {
       }
     });
     Mirrorfly.onMuteStatusUpdated.listen((event) {
-      mirrorFlyLog("onMuteStatusUpdated", "$event");
+      LogMessage.d("onMuteStatusUpdated", "$event");
       var muteStatus = jsonDecode(event);
       var muteEvent = muteStatus["muteEvent"].toString();
       var userJid = muteStatus["userJid"].toString();
@@ -453,7 +453,7 @@ abstract class BaseController {
       }
     });
     Mirrorfly.onUserSpeaking.listen((event) {
-      // mirrorFlyLog("onUserSpeaking", "$event");
+      // LogMessage.d("onUserSpeaking", "$event");
       var data = json.decode(event.toString());
       var audioLevel = data["audioLevel"];
       var userJid = data["userJid"];
@@ -462,7 +462,7 @@ abstract class BaseController {
       }
     });
     Mirrorfly.onUserStoppedSpeaking.listen((event) {
-      // mirrorFlyLog("onUserSpeaking", "$event");
+      // LogMessage.d("onUserSpeaking", "$event");
       if (Get.isRegistered<CallController>()) {
         Get.find<CallController>().onUserStoppedSpeaking(event.toString());
       }
@@ -518,7 +518,7 @@ abstract class BaseController {
   }
 
   void onMessageReceived(chatMessage) {
-    mirrorFlyLog("flutter onMessageReceived", chatMessage.toString());
+    LogMessage.d("flutter onMessageReceived", chatMessage.toString());
     ChatMessageModel chatMessageModel = sendMessageModelFromJson(chatMessage);
     if (Get.isRegistered<ChatController>()) {
       // debugPrint("basecontroller ChatController registered");
@@ -628,7 +628,7 @@ abstract class BaseController {
   void onNewGroupCreated(groupJid) {}
 
   void onGroupProfileUpdated(groupJid) {
-    mirrorFlyLog("flutter GroupProfileUpdated", groupJid.toString());
+    LogMessage.d("flutter GroupProfileUpdated", groupJid.toString());
     if (Get.isRegistered<ChatController>()) {
       Get.find<ChatController>().onGroupProfileUpdated(groupJid);
     }
@@ -759,7 +759,7 @@ abstract class BaseController {
   }
 
   void onContactSyncComplete(dynamic result) {
-    mirrorFlyLog("onContactSyncComplete", result.toString());
+    LogMessage.d("onContactSyncComplete", result.toString());
     // Mirrorfly.getRegisteredUsers(true);
     if (result as bool) {
       SessionManagement.setInitialContactSync(true);
@@ -786,11 +786,11 @@ abstract class BaseController {
     if (Get.isRegistered<ChatInfoController>()) {
       Get.find<ChatInfoController>().onContactSyncComplete(result);
     }
-    //Mirrorfly.getRegisteredUsers(true).then((value) => mirrorFlyLog("registeredUsers", value.toString()));
+    //Mirrorfly.getRegisteredUsers(true).then((value) => LogMessage.d("registeredUsers", value.toString()));
   }
 
   void unblockedThisUser(String jid) {
-    mirrorFlyLog("unblockedThisUser", jid.toString());
+    LogMessage.d("unblockedThisUser", jid.toString());
     if (Get.isRegistered<ChatController>()) {
       Get.find<ChatController>().unblockedThisUser(jid);
     }
@@ -809,7 +809,7 @@ abstract class BaseController {
   }
 
   void userBlockedMe(String jid) {
-    mirrorFlyLog('userBlockedMe', jid.toString());
+    LogMessage.d('userBlockedMe', jid.toString());
     if (Get.isRegistered<ChatController>()) {
       Get.find<ChatController>().userBlockedMe(jid);
     }
@@ -872,14 +872,14 @@ abstract class BaseController {
   void userProfileFetched(result) {}
 
   void userUnBlockedMe(result) {
-    mirrorFlyLog("userUnBlockedMe", result);
+    LogMessage.d("userUnBlockedMe", result);
     var data = json.decode(result.toString());
     var jid = data["jid"];
     unblockedThisUser(jid);
   }
 
   void userUpdatedHisProfile(String jid) {
-    mirrorFlyLog("userUpdatedHisProfile", jid.toString());
+    LogMessage.d("userUpdatedHisProfile", jid.toString());
 
     if (Get.isRegistered<ChatController>()) {
       Get.find<ChatController>().userUpdatedHisProfile(jid);
@@ -938,7 +938,7 @@ abstract class BaseController {
   void onConnected(result) {}
 
   void onDisconnected(result) {
-    mirrorFlyLog('onDisconnected', result.toString());
+    LogMessage.d('onDisconnected', result.toString());
   }
 
   // void onConnectionNotAuthorized(result) {}
@@ -1075,7 +1075,7 @@ abstract class BaseController {
   }
 
   void onLogout(isLogout) {
-    mirrorFlyLog('Get.currentRoute', Get.currentRoute);
+    LogMessage.d('Get.currentRoute', Get.currentRoute);
     if (isLogout && Get.currentRoute != Routes.login && SessionManagement.getLogin()) {
       var token = SessionManagement.getToken().checkNull();
       SessionManagement.clear().then((value) {

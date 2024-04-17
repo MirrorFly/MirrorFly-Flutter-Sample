@@ -49,7 +49,7 @@ class ScannerController extends GetxController {
   }
 
   loginWebChatViaQRCode(String? barcode) async {
-    mirrorFlyLog("barcode", barcode.toString());
+    LogMessage.d("barcode", barcode.toString());
     if (barcode != null) {
       if(await AppUtils.isNetConnected()) {
         controller!.pauseCamera();

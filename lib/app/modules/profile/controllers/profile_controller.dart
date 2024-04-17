@@ -46,7 +46,7 @@ class ProfileController extends GetxController {
   Future<void> onInit() async {
     super.onInit();
     userImgUrl.value = SessionManagement.getUserImage() ?? "";
-    mirrorFlyLog("auth : ", SessionManagement.getAuthToken().toString());
+    LogMessage.d("auth : ", SessionManagement.getAuthToken().toString());
     if (Get.arguments != null) {
       // from(Get.arguments["from"]);
       if (from == Routes.login) {
@@ -111,7 +111,7 @@ class ProfileController extends GetxController {
                 loading.value = false;
                 hideLoader();
                 if (response.isSuccess) {
-                  mirrorFlyLog("updateMyProfile", response.data.toString());
+                  LogMessage.d("updateMyProfile", response.data.toString());
                   var data = profileUpdateFromJson(response.data);
                   if (data.status != null) {
                     toToast(frmImage ? 'Removed profile image successfully' : data.message.toString());
@@ -142,7 +142,7 @@ class ProfileController extends GetxController {
               }
             );
             /*    .then((value) {
-              mirrorFlyLog("updateMyProfile", value.toString());
+              LogMessage.d("updateMyProfile", value.toString());
               loading.value = false;
               hideLoader();
               if (value != null) {
@@ -201,7 +201,7 @@ class ProfileController extends GetxController {
       debugPrint("Profile Controller updateMyProfileImage");
         Mirrorfly.updateMyProfileImage(image: path,flyCallback: (FlyResponse response){
           if(response.isSuccess) {
-            mirrorFlyLog("updateMyProfileImage", response.data);
+            LogMessage.d("updateMyProfileImage", response.data);
             loading.value = false;
             var data = json.decode(response.data);
             imagePath.value = Constants.emptyString;
@@ -219,7 +219,7 @@ class ProfileController extends GetxController {
           }
         });
             /*.then((value) {
-          mirrorFlyLog("updateMyProfileImage", value);
+          LogMessage.d("updateMyProfileImage", value);
           loading.value = false;
           var data = json.decode(value);
           imagePath.value = Constants.emptyString;
@@ -277,9 +277,9 @@ class ProfileController extends GetxController {
   getProfile() async {
     //if(await AppUtils.isNetConnected()) {
       var jid = SessionManagement.getUserJID().checkNull();
-      mirrorFlyLog("jid", jid);
+      LogMessage.d("jid", jid);
       if (jid.isNotEmpty) {
-        mirrorFlyLog("jid.isNotEmpty", jid.isNotEmpty.toString());
+        LogMessage.d("jid.isNotEmpty", jid.isNotEmpty.toString());
         loading.value = true;
         Mirrorfly.getUserProfile(jid: jid,fetchFromServer: await AppUtils.isNetConnected(),flyCallback:(FlyResponse response){
           if(response.isSuccess) {
@@ -395,7 +395,7 @@ class ProfileController extends GetxController {
   static void insertDefaultStatusToUser() async{
     try {
       await Mirrorfly.getProfileStatusList().then((value) {
-        mirrorFlyLog("status list", "$value");
+        LogMessage.d("status list", "$value");
         if (value != null) {
           var profileStatus = statusDataFromJson(value.toString());
           if (profileStatus.isNotEmpty) {
@@ -534,7 +534,7 @@ class ProfileController extends GetxController {
   Future<bool> validMobileNumber(String text)async{
     var coded = text;
     if(!text.startsWith(SessionManagement.getCountryCode().checkNull().replaceAll("+", "").toString())){
-      mirrorFlyLog("SessionManagement.getCountryCode()", SessionManagement.getCountryCode().toString());
+      LogMessage.d("SessionManagement.getCountryCode()", SessionManagement.getCountryCode().toString());
       coded = SessionManagement.getCountryCode().checkNull()+text;
     }
     var m = coded.contains("+") ? coded : "+$coded";

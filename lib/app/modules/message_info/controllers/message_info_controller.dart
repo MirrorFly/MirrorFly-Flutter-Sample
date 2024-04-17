@@ -97,7 +97,7 @@ class MessageInfoController extends GetxController {
       if (result == 1) {
         playingChat!.mediaChatMessage!.isPlaying=true;
       } else {
-        mirrorFlyLog("", "Error while playing audio.");
+        LogMessage.d("", "Error while playing audio.");
       }
     } else if (!playingChat!.mediaChatMessage!.isPlaying) {
       int result = await player.resume();
@@ -105,7 +105,7 @@ class MessageInfoController extends GetxController {
         playingChat!.mediaChatMessage!.isPlaying=true;
         this.chatMessage.refresh();
       } else {
-        mirrorFlyLog("", "Error on resume audio.");
+        LogMessage.d("", "Error on resume audio.");
       }
     } else {
       int result = await player.pause();
@@ -113,7 +113,7 @@ class MessageInfoController extends GetxController {
         playingChat!.mediaChatMessage!.isPlaying=false;
         this.chatMessage.refresh();
       } else {
-        mirrorFlyLog("", "Error on pause audio.");
+        LogMessage.d("", "Error on pause audio.");
       }
     }*/
   }
@@ -185,7 +185,7 @@ class MessageInfoController extends GetxController {
   }
 
   void onMessageStatusUpdated(ChatMessageModel chatMessageModel){
-    // mirrorFlyLog("MESSAGE STATUS UPDATED on Info", chatMessageModel.messageId);
+    // LogMessage.d("MESSAGE STATUS UPDATED on Info", chatMessageModel.messageId);
     if(chatMessageModel.messageId == chatMessage[0].messageId){
       chatMessage[0]=chatMessageModel;
       chatMessage.refresh();

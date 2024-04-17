@@ -56,7 +56,7 @@ class MainController extends FullLifeCycleController with BaseController, FullLi
     });*/
     Mirrorfly.getValueFromManifestOrInfoPlist(androidManifestKey: "com.google.android.geo.API_THUMP_KEY", iOSPlistKey: "API_THUMP_KEY").then((value) {
       googleMapKey = value;
-      mirrorFlyLog("com.google.android.geo.API_THUMP_KEY", googleMapKey);
+      LogMessage.d("com.google.android.geo.API_THUMP_KEY", googleMapKey);
     });
     //presentPinPage();
     debugPrint("#Mirrorfly Notification -> Main Controller push init");
@@ -165,7 +165,7 @@ class MainController extends FullLifeCycleController with BaseController, FullLi
 
   getMediaEndpoint() async {
     await Mirrorfly.mediaEndPoint().then((value) {
-      mirrorFlyLog("media_endpoint", value.toString());
+      LogMessage.d("media_endpoint", value.toString());
       if (value != null) {
         if (value.isNotEmpty) {
           mediaEndpoint(value);
@@ -179,7 +179,7 @@ class MainController extends FullLifeCycleController with BaseController, FullLi
 
   getCurrentAuthToken() async {
     await Mirrorfly.getCurrentAuthToken().then((value) {
-      mirrorFlyLog("getCurrentAuthToken", value.toString());
+      LogMessage.d("getCurrentAuthToken", value.toString());
       if (value.isNotEmpty) {
         currentAuthToken(value);
         SessionManagement.setAuthToken(value);
@@ -210,7 +210,7 @@ class MainController extends FullLifeCycleController with BaseController, FullLi
       (InternetConnectionStatus status) {
         switch (status) {
           case InternetConnectionStatus.connected:
-            mirrorFlyLog("network", 'Data connection is available.');
+            LogMessage.d("network", 'Data connection is available.');
             networkConnected();
             if (Get.isRegistered<ChatController>()) {
               Get.find<ChatController>().networkConnected();
@@ -223,7 +223,7 @@ class MainController extends FullLifeCycleController with BaseController, FullLi
             }
             break;
           case InternetConnectionStatus.disconnected:
-            mirrorFlyLog("network", 'You are disconnected from the internet.');
+            LogMessage.d("network", 'You are disconnected from the internet.');
             networkDisconnected();
             if (Get.isRegistered<ChatController>()) {
               Get.find<ChatController>().networkDisconnected();
@@ -248,30 +248,30 @@ class MainController extends FullLifeCycleController with BaseController, FullLi
 
   @override
   void onDetached() {
-    mirrorFlyLog('LifeCycle', 'onDetached');
+    LogMessage.d('LifeCycle', 'onDetached');
   }
 
   @override
   void onInactive() {
-    mirrorFlyLog('LifeCycle', 'onInactive');
+    LogMessage.d('LifeCycle', 'onInactive');
   }
 
   bool fromLockScreen = false;
 
   @override
   void onPaused() async {
-    mirrorFlyLog('LifeCycle', 'onPaused');
+    LogMessage.d('LifeCycle', 'onPaused');
     var unReadMessageCount = await Mirrorfly.getUnreadMessageCountExceptMutedChat();
     debugPrint('mainController unReadMessageCount onPaused ${unReadMessageCount.toString()}');
     _setBadgeCount(unReadMessageCount ?? 0);
     fromLockScreen = await isLockScreen() ?? false;
-    mirrorFlyLog('isLockScreen', '$fromLockScreen');
+    LogMessage.d('isLockScreen', '$fromLockScreen');
     SessionManagement.setAppSessionNow();
   }
 
   @override
   void onResumed() {
-    mirrorFlyLog('LifeCycle', 'onResumed');
+    LogMessage.d('LifeCycle', 'onResumed');
     NotificationBuilder.cancelNotifications();
     checkShouldShowPin();
     if (Constants.enableContactSync) {
@@ -295,7 +295,7 @@ class MainController extends FullLifeCycleController with BaseController, FullLi
       if(SessionManagement.isInitialContactSyncDone()) {
         Mirrorfly.revokeContactSync(flyCallBack: (FlyResponse response) {
           onContactSyncComplete(true);
-          mirrorFlyLog("checkContactPermission isSuccess", response.isSuccess.toString());
+          LogMessage.d("checkContactPermission isSuccess", response.isSuccess.toString());
         });
       }
     }
@@ -360,7 +360,7 @@ class MainController extends FullLifeCycleController with BaseController, FullLi
 
   @override
   void onHidden() {
-    mirrorFlyLog('LifeCycle', 'onHidden');
+    LogMessage.d('LifeCycle', 'onHidden');
   }
 
   unreadMissedCallCount() async {
