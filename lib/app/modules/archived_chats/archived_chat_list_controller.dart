@@ -192,14 +192,16 @@ class ArchivedChatListController extends GetxController {
     });
   }
 
-  void onMessageReceived(ChatMessageModel chatMessage) {
+
+  Future<void> onMessageReceived(ChatMessageModel chatMessage) async {
     updateArchiveRecentChat(chatMessage.chatUserJid);
   }
 
-  void onMessageStatusUpdated(ChatMessageModel chatMessageModel) {
-    // LogMessage.d("MESSAGE STATUS UPDATED", event);
+  Future<void> onMessageStatusUpdated(ChatMessageModel chatMessageModel) async {
+    // mirrorFlyLog("MESSAGE STATUS UPDATED", event);
     updateArchiveRecentChat(chatMessageModel.chatUserJid);
   }
+
 
   Future<RecentChatData?> getRecentChatOfJid(String jid) async {
     var value = await Mirrorfly.getRecentChatOf(jid: jid);
@@ -212,41 +214,19 @@ class ArchivedChatListController extends GetxController {
     }
   }
 
-  updateArchiveRecentChat(String jid) {
+  Future<bool> updateArchiveRecentChat(String jid) async {
     LogMessage.d("checkArchiveList", jid);
-    getRecentChatOfJid(jid).then((recent) {
-      final index = archivedChats.indexWhere((chat) => chat.jid == jid);
-      if (recent != null) {
-        /*if(!recent.isChatArchived.checkNull()) {
-          if (index.isNegative) {
-            archivedChats.insert(0, recent);
-          } else {
-            var lastPinnedChat = archivedChats.lastIndexWhere((element) =>
-            element.isChatPinned!);
-            var nxtIndex = lastPinnedChat.isNegative ? 0 : (lastPinnedChat + 1);
-            if (archivedChats[index].isChatPinned!) {
-              archivedChats.removeAt(index);
-              archivedChats.insert(index, recent);
-            } else {
-              archivedChats.removeAt(index);
-              archivedChats.insert(nxtIndex, recent);
-              archivedChats.refresh();
-            }
-          }
-        }else{
-          if (!index.isNegative) {
-            archivedChats.removeAt(index);
-          }
-          checkArchiveList(recent);
-        }*/
-        checkArchiveList(recent);
-      } else {
-        if (!index.isNegative) {
-          archivedChats.removeAt(index);
-        }
+    var recent = await getRecentChatOfJid(jid);
+    final index = archivedChats.indexWhere((chat) => chat.jid == jid);
+    if (recent != null) {
+      checkArchiveList(recent);
+    } else {
+      if (!index.isNegative) {
+        archivedChats.removeAt(index);
       }
-      archivedChats.refresh();
-    });
+    }
+    archivedChats.refresh();
+    return true;
   }
 
   var delete = false.obs;
@@ -384,7 +364,9 @@ class ArchivedChatListController extends GetxController {
       if (!index.isNegative) {
         var recent = await getRecentChatOfJid(jid);
         if (recent != null) {
-          archivedChats[index] = recent;
+          var updateIndex =
+          archivedChats.indexWhere((element) => element.jid == jid);
+          archivedChats[updateIndex] = recent;
         }
       }
     }

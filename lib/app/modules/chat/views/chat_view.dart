@@ -737,7 +737,7 @@ class ChatView extends GetView<ChatController> {
                         ),
                       )
                     : ProfileTextImage(
-                        text: getName(controller.profile),
+                        text: controller.profile.getName(),
                         /*controller.profile.name.checkNull().isEmpty
                             ? controller.profile.nickName.checkNull().isEmpty
                                 ? controller.profile.mobileNumber.checkNull()
@@ -760,7 +760,7 @@ class ChatView extends GetView<ChatController> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  getName(controller.profile),
+                  controller.profile.getName(),
                   /*controller.profile.name.checkNull().isEmpty
                       ? controller.profile.nickName.checkNull()
                       : controller.profile.name.checkNull(),*/

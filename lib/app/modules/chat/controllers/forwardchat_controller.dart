@@ -414,23 +414,27 @@ class ForwardChatController extends GetxController {
       var busyStatus = await Mirrorfly.isBusyStatusEnabled();
       if (!busyStatus.checkNull()) {
         if (forwardMessageIds.isNotEmpty && selectedJids.isNotEmpty) {
-          Mirrorfly.forwardMessagesToMultipleUsers(messageIds: forwardMessageIds, userList: selectedJids, flyCallBack: (FlyResponse response) {
-            // debugPrint("to chat profile ==> ${selectedUsersList[0].toJson().toString()}");
-            updateLastMessage(selectedJids);
-            getProfileDetails(selectedJids.last)
-                .then((value) {
-              if (value.jid != null) {
-                // Get.back(result: value);
-                Get.offNamedUntil(Routes.chat,arguments: value, (route){
-                  LogMessage.d("offNamedUntil",route.settings.name);
-                  return route.settings.name.toString().startsWith(Routes.dashboard);
-                });
-              }else{
-                if(response.hasError) {
-                  toToast(response.errorMessage);
-                  Get.back(result: null);
+          Helper.showLoading(message: "Forward message");
+          Future.delayed(const Duration(milliseconds: 1000),() async {
+            await Mirrorfly.forwardMessagesToMultipleUsers(messageIds: forwardMessageIds, userList: selectedJids, flyCallBack: (FlyResponse response) {
+              // debugPrint("to chat profile ==> ${selectedUsersList[0].toJson().toString()}");
+              Helper.hideLoading();
+              updateLastMessage(selectedJids);
+              getProfileDetails(selectedJids.last)
+                  .then((value) {
+                if (value.jid != null) {
+                  // Get.back(result: value);
+                  Get.offNamedUntil(Routes.chat,arguments: value, (route){
+                    LogMessage.d("offNamedUntil",route.settings.name);
+                    return route.settings.name.toString().startsWith(Routes.dashboard);
+                  });
+                }else{
+                  if(response.hasError) {
+                    toToast(response.errorMessage);
+                    Get.back(result: null);
+                  }
                 }
-              }
+              });
             });
           });
         }

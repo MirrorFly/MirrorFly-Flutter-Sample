@@ -731,7 +731,7 @@ void showQuickProfilePopup(
       return Dialog(
         shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(20.0))),
         child: SizedBox(
-          width: MediaQuery.of(context).size.width * 0.7,
+          width: Get.width * 0.7,
           height: 300,
           child: Column(
             children: [

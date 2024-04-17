@@ -378,49 +378,46 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
     }
   }
 
-
-  // Archive chat
-  // Pin chat
-  updateRecentChat({required String jid, bool changePosition = true}) async {
+  Future<bool> updateRecentChat({required String jid, bool changePosition = true, bool newInsertable = false}) async {
     //updateArchiveRecentChat(jid);
-    await getRecentChatOfJid(jid).then((recent) {
-      final index = recentChats.indexWhere((chat) => chat.jid == jid);
-      debugPrint("dashboard index--> $index");
-      LogMessage.d("updateRecentChat",recent?.toJson());
-      if (recent != null) {
-        if (!recent.isChatArchived.checkNull()) {
-          if (index.isNegative) {
-            LogMessage.d("updateRecentChat", "New Insert");
-            recentChats.insert(0, recent);
-          } else {
-            if (recentChats[index].isChatPinned.checkNull() || !changePosition) {
-              // recentChats.removeAt(index);
-              // recentChats.insert(index, recent);
-              recentChats.replaceRange(index, index+1, [recent]);
-            } else {
-              var lastPinnedChat = recentChats.lastIndexWhere((element) => element.isChatPinned!);
-              var nxtIndex = lastPinnedChat.isNegative ? 0 : (lastPinnedChat + 1);
-              LogMessage.d("updateRecentChat", "next Index $nxtIndex");
-              recentChats.removeAt(index);
-              recentChats.insert(nxtIndex, recent);
-              recentChats.refresh();
-            }
-          }
+    var recent = await getRecentChatOfJid(jid);
+    final index = recentChats.indexWhere((chat) => chat.jid == jid);
+    debugPrint("dashboard index--> $index");
+    LogMessage.d("updateRecentChat",recent?.toJson());
+    if (recent != null) {
+      if (!recent.isChatArchived.checkNull()) {
+        if (index.isNegative && newInsertable) {
+          LogMessage.d("updateRecentChat", "New Insert");
+          recentChats.insert(0, recent);
         } else {
-          LogMessage.d("updateRecentChat", "Archived $index");
-          if (!index.isNegative) {
+          if (recentChats[index].isChatPinned.checkNull() || !changePosition) {
+            // recentChats.removeAt(index);
+            // recentChats.insert(index, recent);
+            recentChats.replaceRange(index, index+1, [recent]);
+          } else {
+            var lastPinnedChat = recentChats.lastIndexWhere((element) => element.isChatPinned!);
+            var nxtIndex = lastPinnedChat.isNegative ? 0 : (lastPinnedChat + 1);
+            LogMessage.d("updateRecentChat", "next Index $nxtIndex");
             recentChats.removeAt(index);
+            recentChats.insert(nxtIndex, recent);
+            // recentChats.refresh();
           }
         }
-        checkArchiveList(recent);
       } else {
-        LogMessage.d("updateRecentChat", "recent chat null insert index $index");
+        LogMessage.d("updateRecentChat", "Archived $index");
         if (!index.isNegative) {
           recentChats.removeAt(index);
         }
       }
-      recentChats.refresh();
-    });
+      checkArchiveList(recent);
+    } else {
+      LogMessage.d("updateRecentChat", "recent chat null insert index $index");
+      if (!index.isNegative) {
+        recentChats.removeAt(index);
+      }
+    }
+    recentChats.refresh();
+    return true;
   }
 
   updateArchiveRecentChat(String jid) {
@@ -991,13 +988,15 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
     unReadCount();
   }
 
-  void onMessageReceived(chatMessageModel) {
+
+  Future<void> onMessageReceived(chatMessageModel) async {
     LogMessage.d("dashboard controller", "onMessageReceived");
 
-    updateRecentChat(jid: chatMessageModel.chatUserJid);
+   updateRecentChat(jid: chatMessageModel.chatUserJid,newInsertable: true);
   }
 
-  void onMessageStatusUpdated(ChatMessageModel chatMessageModel) {
+
+  Future<void> onMessageStatusUpdated(ChatMessageModel chatMessageModel) async {
     final index = recentChats.indexWhere((message) => message.lastMessageId == chatMessageModel.messageId);
     debugPrint("Message Status Update index of search $index");
     if (!index.isNegative) {
@@ -1008,6 +1007,7 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
       updateRecentChat(jid: chatMessageModel.chatUserJid);
     }
   }
+
 
   void markConversationReadNotifyUI(String jid) {
     var index = recentChats.indexWhere((element) => element.jid == jid);
@@ -1085,14 +1085,14 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
 
   Future<void> updateRecentChatAdapter(String jid) async {
     if (jid.isNotEmpty) {
-      var index =
-          recentChats.indexWhere((element) => element.jid == jid); // { it.jid ?: Constants.EMPTY_STRING == jid }
+      var index = recentChats.indexWhere((element) => element.jid == jid); // { it.jid ?: Constants.EMPTY_STRING == jid }
       debugPrint("updateRecentChatAdapter $index");
       if (!index.isNegative) {
         var recent = await getRecentChatOfJid(jid);
+        var updatedIndex = recentChats.indexWhere((element) => element.jid == jid); // { it.jid ?: Constants.EMPTY_STRING == jid }
         debugPrint("updateRecentChatAdapter getRecentChatOfJid ${recent?.toJson().toString()}");
         if (recent != null) {
-            recentChats[index] = recent;
+            recentChats[updatedIndex] = recent;
         }
       }
     }
@@ -1432,7 +1432,9 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
       if (!filterIndex.isNegative) {
         var recent = await getRecentChatOfJid(jid);
         if (recent != null) {
-            filteredRecentChatList[filterIndex] = recent;
+          var updateIndex = filteredRecentChatList
+              .indexWhere((element) => element.jid == jid);
+            filteredRecentChatList[updateIndex] = recent;
         }
       }
     }
@@ -1447,7 +1449,8 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
         getProfileDetails(jid).then((value) {
           debugPrint("get profile detail dashboard $value");
           profile_(value);
-          _userList[userListIndex] = value;
+          var updateIndex = _userList.indexWhere((element) => element.jid == jid);
+          _userList[updateIndex] = value;
         });
       }
     }

@@ -410,6 +410,8 @@ Widget imageFromBase64String(String base64String, BuildContext context, double? 
     height: height ?? Get.height * 0.4,
     fit: BoxFit.cover,
     gaplessPlayback: true,
+    cacheHeight: (height ?? Get.height * 0.4).toInt(),
+    cacheWidth:  (width ?? Get.width * 0.60).toInt(),
   );
 }
 
