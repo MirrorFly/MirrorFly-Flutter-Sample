@@ -490,6 +490,7 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
                 toJid: profile.jid.checkNull(),
                 replyMessageId: replyMessageId,
                 topicId: topicId,
+                metaData: [MessageMetaData(key: "platform", value: "flutter")],
                 textMessageParams: TextMessageParams(messageText: messageController.text.trim())),
             flyCallback: (response) {
               if (response.isSuccess) {

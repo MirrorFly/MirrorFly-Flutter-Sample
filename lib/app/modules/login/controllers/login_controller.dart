@@ -334,6 +334,7 @@ class LoginController extends GetxController {
       Mirrorfly.login(userIdentifier: countryCode!.replaceAll('+', '') + mobileNumber.text,
           fcmToken: SessionManagement.getToken().checkNull(),
           isForceRegister: isForceRegister,
+          identifierMetaData: [IdentifierMetaData(key: "platform", value: "flutter")],
           flyCallback: (FlyResponse response) {
               if (response.isSuccess) {
                 if (response.hasData) {

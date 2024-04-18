@@ -1003,8 +1003,6 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
       // updateRecentChat(chatMessageModel.chatUserJid);
       recentChats[index].lastMessageStatus = chatMessageModel.messageStatus.value;
       recentChats.refresh();
-    } else {
-      updateRecentChat(jid: chatMessageModel.chatUserJid);
     }
   }
 
@@ -1526,6 +1524,7 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
         });
       }
     }
+
   }
 
   void onContactSyncComplete(bool result) {
