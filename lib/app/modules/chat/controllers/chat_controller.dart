@@ -136,6 +136,7 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
 
   RxString editMessageText = ''.obs;
 
+  List<MessageMetaData> messageMetaData = [];//[MessageMetaData(key: "platform", value: "flutter")];
   @override
   void onInit() async {
     super.onInit();
@@ -490,7 +491,7 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
                 toJid: profile.jid.checkNull(),
                 replyMessageId: replyMessageId,
                 topicId: topicId,
-                metaData: [MessageMetaData(key: "platform", value: "flutter")],
+                metaData: messageMetaData,
                 textMessageParams: TextMessageParams(messageText: messageController.text.trim())),
             flyCallback: (response) {
               if (response.isSuccess) {
@@ -624,6 +625,7 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
               toJid: profile.jid.checkNull(),
               replyMessageId: replyMessageId,
               topicId: topicId,
+              metaData: messageMetaData,
               locationMessageParams: LocationMessageParams(latitude: latitude, longitude: longitude)),
           flyCallback: (response) {
             if (response.isSuccess) {
@@ -652,7 +654,8 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
 
   void _loadMessages() {
     // getChatHistory();
-    Mirrorfly.initializeMessageList(userJid: profile.jid.checkNull(), limit: 25,topicId: topicId,messageId: starredChatMessageId,exclude: starredChatMessageId == null)//message
+    Mirrorfly.initializeMessageList(userJid: profile.jid.checkNull(), limit: 25,topicId: topicId,messageId: starredChatMessageId,exclude: starredChatMessageId == null,
+    metaDataMessageList: MetaDataMessageList(key: "platform", value: ["flutter"]))//message
         .then((value) {
       if (value) {
         initializedMessageList = true;
@@ -764,6 +767,7 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
                 toJid: profile.jid.checkNull(),
                 replyMessageId: replyMessageID,
                 topicId: topicId,
+                metaData: messageMetaData,
                 fileMessageParams: FileMessageParams(file: File(path), caption: caption)),
             flyCallback: (response) {
               if (response.isSuccess) {
@@ -860,6 +864,7 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
               toJid: profile.jid.checkNull(),
               replyMessageId: replyMessageID,
               topicId: topicId,
+              metaData: messageMetaData,
               fileMessageParams: FileMessageParams(file: File(videoPath), caption: caption)),
           flyCallback: (response) {
             if (response.isSuccess) {
@@ -998,6 +1003,7 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
               toJid: profile.jid.checkNull(),
               replyMessageId: replyMessageId,
               topicId: topicId,
+              metaData: messageMetaData,
               contactMessageParams: ContactMessageParams(name: contactName, numbers: contactList)),
           flyCallback: (response) {
             if (response.isSuccess) {
@@ -1046,6 +1052,7 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
               toJid: profile.jid.checkNull(),
               replyMessageId: replyMessageId,
               topicId: topicId,
+              metaData: messageMetaData,
               fileMessageParams: FileMessageParams(file: File(documentPath))),
           flyCallback: (response) {
             if (response.isSuccess) {
@@ -1157,6 +1164,7 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
               isRecorded: isRecorded,
               replyMessageId: replyMessageId,
               topicId: topicId,
+              metaData: messageMetaData,
               fileMessageParams: FileMessageParams(file: File(filePath))),
           flyCallback: (response) {
             if (response.isSuccess) {
@@ -1203,11 +1211,14 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
         chatType: profile.isGroupProfile.checkNull() ? "groupchat" : "chat",
         clearExceptStarred: isStarredExcluded,
         flyCallBack: (FlyResponse response) {
+          LogMessage.d("clearChat response", response.toString());
           if (response.isSuccess) {
             // var chatListrev = chatList.reversed;
             isStarredExcluded ? chatList.removeWhere((p0) => p0.isMessageStarred.value == false) : chatList.clear();
             cancelReplyMessage();
             onMessageDeleteNotifyUI(chatJid: profile.jid.checkNull(), changePosition: false);
+          }else{
+
           }
         });
   }

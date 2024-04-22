@@ -67,7 +67,7 @@ class ProfileController extends GetxController {
     }
     //profileStatus.value="I'm Mirror fly user";
     // await askStoragePermission();
-
+    // getMetaData();
   }
 
 
@@ -588,5 +588,14 @@ class ProfileController extends GetxController {
         SessionManagement.setNotificationSound(true);
       }
     });*/
+  }
+
+  void getMetaData(){
+    Mirrorfly.getMetaData(flyCallback: (FlyResponse response){
+      LogMessage.d("getMetaData", response.toString());
+    });
+    Mirrorfly.updateMetaData(identifierMetaDataList: [IdentifierMetaData(key: "platform", value: "flutter")],flyCallback: (FlyResponse response){
+      LogMessage.d("updateMetaData", response.toString());
+    });
   }
 }
