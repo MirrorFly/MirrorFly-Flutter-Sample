@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
+import 'package:mirror_fly_demo/app/common/constants.dart';
 import 'package:mirror_fly_demo/app/modules/gallery_picker/controllers/gallery_picker_controller.dart';
 import 'package:mirrorfly_plugin/mirrorfly.dart';
 import 'package:mirror_fly_demo/app/common/extensions.dart';
@@ -24,6 +25,8 @@ class MediaPreviewController extends FullLifeCycleController with FullLifeCycleM
 
   var filePath = <PickedAssetModel>[].obs;
 
+  var pickerType = Constants.camera.obs;
+
   var captionMessage = <String>[].obs;
   var textMessage = Get.arguments['caption'];
   var from = Get.arguments['from'];
@@ -43,7 +46,15 @@ class MediaPreviewController extends FullLifeCycleController with FullLifeCycleM
     super.onInit();
     SchedulerBinding.instance
         .addPostFrameCallback((_) {
-      filePath(Get.arguments['filePath']);
+      pickerType(Get.arguments['from']);
+      debugPrint("pickerType $pickerType");
+      // if(pickerType.value == Constants.gallery) {
+        debugPrint("pickerType inside gallery type");
+        filePath(Get.arguments['filePath']);
+      // }else{
+      //   debugPrint("pickerType inside camera type");
+      //   cameraFilePath(Get.arguments['filePath']);
+      // }
       var index = 0;
       for(var _ in filePath){
         if(index == 0 && textMessage != null){
@@ -100,12 +111,16 @@ class MediaPreviewController extends FullLifeCycleController with FullLifeCycleM
   Future<File?> getFile(int index) async {
     if (imageCache.containsKey(index)) {
       return imageCache[index];
-    } else {
+    } else if(pickerType.value == Constants.gallery){
+      debugPrint("getFile inside gallery file type");
       File? file = await filePath[index].asset?.file;
       if (file != null) {
         imageCache[index] = file;
       }
       return file;
+    }else{
+      debugPrint("getFile inside camera file type");
+      return filePath[index].file;
     }
   }
   onChanged() {
@@ -223,7 +238,4 @@ class MediaPreviewController extends FullLifeCycleController with FullLifeCycleM
     // FocusManager.instance.primaryFocus!.unfocus();
   }
 
-  Future<File?> getImageFilePath(PickedAssetModel data) async {
-    return data.asset?.file;
-  }
 }

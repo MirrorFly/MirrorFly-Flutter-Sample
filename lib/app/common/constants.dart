@@ -676,6 +676,11 @@ class Constants {
   static const String audioRecordDelete = "AUDIO_RECORDING_DELETE";
   static const String audioRecordInitial = "AUDIO_RECORDING_NOT_INITIALIZED";
 
+  //Picker Type
+  static const String camera = "camera_pick";
+  static const String gallery = "gallery_pick";
+
+
   //Permission dialog contents
   static const String settingPermission =
       "You will not receive notifications while the app is in background if you disable these permissions";

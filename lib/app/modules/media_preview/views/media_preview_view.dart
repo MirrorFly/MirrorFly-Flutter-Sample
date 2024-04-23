@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'dart:typed_data';
 
 // import 'package:better_video_player/better_video_player.dart';
 import 'package:flutter/material.dart';
@@ -12,7 +11,6 @@ import 'package:photo_view/photo_view.dart';
 
 import '../../../common/widgets.dart';
 import '../../../widgets/video_player_widget.dart';
-import '../../gallery_picker/src/core/decode_image.dart';
 import '../controllers/media_preview_controller.dart';
 
 class MediaPreviewView extends GetView<MediaPreviewController> {
@@ -144,107 +142,61 @@ class MediaPreviewView extends GetView<MediaPreviewController> {
                                 onPageChanged:
                                     controller.onMediaPreviewPageChanged,
                                 children: [
-                                  // ...controller.filePath.map((data) {
-                                  ...controller.filePath.asMap().entries.map((entry) {
-                                    int index = entry.key;
-                                    var data = entry.value;
-                                    /// show image
-                                    if (data.type == 'image') {
-                                      return controller.checkCacheFile(index) ? Center(
-                                        child: PhotoView(
-                                          imageProvider: FileImage(controller.getCacheFile(index)),
-                                          minScale: PhotoViewComputedScale.contained * 1,
-                                          maxScale: PhotoViewComputedScale.covered * 2,
-                                          enableRotation: true,
-                                          basePosition: Alignment.center,
-                                          backgroundDecoration: const BoxDecoration(color: Colors.transparent),
-                                          loadingBuilder: (context, event) => const Center(
-                                            child: CircularProgressIndicator(),
-                                          ),
-                                          // errorBuilder: (ct, ob, trace) {
-                                          //   return Image.memory(data.thumbnail!); // Ensure `data.thumbnail` is available or handle this case properly.
-                                          // },
-                                        ),
-                                      )
-                                          : FutureBuilder<File?>(
-                                        future: controller.getFile(index),
-                                        builder: (BuildContext context, AsyncSnapshot<File?> snapshot) {
-                                          if (snapshot.connectionState == ConnectionState.waiting) {
-                                            return const Center(child: CircularProgressIndicator());
-                                          } else if (snapshot.hasError) {
-                                            return const Text('Error loading image');
-                                          } else if (snapshot.hasData && snapshot.data != null) {
-                                            return Center(
-                                              child: PhotoView(
-                                                imageProvider: FileImage(snapshot.data!),
-                                                minScale: PhotoViewComputedScale.contained * 1,
-                                                maxScale: PhotoViewComputedScale.covered * 2,
-                                                enableRotation: true,
-                                                basePosition: Alignment.center,
-                                                backgroundDecoration: const BoxDecoration(color: Colors.transparent),
-                                                loadingBuilder: (context, event) => const Center(
-                                                  child: CircularProgressIndicator(),
-                                                ),
-                                                // errorBuilder: (ct, ob, trace) {
-                                                //   return Image.memory(data.thumbnail!); // Ensure `data.thumbnail` is available or handle this case properly.
-                                                // },
-                                              ),
-                                            );
-                                          } else {
-                                            return const Text('No data');
-                                          }
-                                        },
-                                      );
-                                      /*return Center(
+                                  if (controller.filePath.isNotEmpty)
+                                    // ...controller.filePath.map((data) {
+                                    ...controller.filePath.asMap().entries.map((entry) {
+                                      int index = entry.key;
+                                      var data = entry.value;
+                                      /// show image
+                                      if (data.type == 'image') {
+                                        return controller.checkCacheFile(index) ? Center(
+                                          child: imagePreview(controller.getCacheFile(index)),
+                                        )
+                                            : FutureBuilder<File?>(
+                                          future: controller.getFile(index),
+                                          builder: (BuildContext context, AsyncSnapshot<File?> snapshot) {
+                                            if (snapshot.connectionState == ConnectionState.waiting) {
+                                              return const Center(child: CircularProgressIndicator());
+                                            } else if (snapshot.hasError) {
+                                              return const Text('Error loading image');
+                                            } else if (snapshot.hasData && snapshot.data != null) {
+                                              return Center(
+                                                child: imagePreview(snapshot.data!),
+                                              );
+                                            } else {
+                                              return const Text('No data');
+                                            }
+                                          },
+                                        );
+                                      }
+                                      /// show video
+                                      else {
+                                        return FutureBuilder<File?>(
+                                          future: controller.getFile(index),
+                                          builder: (BuildContext context, AsyncSnapshot<File?> snapshot) {
+                                            if (snapshot.connectionState == ConnectionState.waiting) {
+                                              return const Center(child: CircularProgressIndicator());
+                                            } else if (snapshot.hasError) {
+                                              return const Text('Error loading image');
+                                            } else if (snapshot.hasData && snapshot.data != null) {
+                                              return VideoPlayerWidget(
+                                                videoPath: snapshot.data?.path ?? "",
+                                                videoTitle: data.title ?? "Video",
+                                              );
+                                            } else {
+                                              return const Text('No data');
+                                            }
+                                          },
+                                        );
 
-                                          child: PhotoView(
-                                        imageProvider: FileImage(controller.filePath[index].asset.file),
-                                        // Contained = the smallest possible size to fit one dimension of the screen
-                                        minScale:
-                                            PhotoViewComputedScale.contained *
-                                                1,
-                                        // Covered = the smallest possible size to fit the whole screen
-                                        maxScale:
-                                            PhotoViewComputedScale.covered * 2,
-                                        enableRotation: true,
-                                        basePosition: Alignment.center,
-                                        // Set the background color to the "classic white"
-                                        backgroundDecoration:
-                                            const BoxDecoration(
-                                                color: Colors.transparent),
-                                        loadingBuilder: (context, event) =>
-                                            const Center(
-                                          child: CircularProgressIndicator(),
-                                        ),
-                                        errorBuilder: (ct,ob, trace){
-                                          return Image.memory(data.thumbnail!);
-                                        },
-                                      ));*/
-                                    }
-
-                                    /// show video
-                                    else {
-
-                                      return FutureBuilder<File?>(
-                                        future: controller.getFile(index),
-                                        builder: (BuildContext context, AsyncSnapshot<File?> snapshot) {
-                                          if (snapshot.connectionState == ConnectionState.waiting) {
-                                            return const Center(child: CircularProgressIndicator());
-                                          } else if (snapshot.hasError) {
-                                            return const Text('Error loading image');
-                                          } else if (snapshot.hasData && snapshot.data != null) {
-                                            return VideoPlayerWidget(
-                                              videoPath: snapshot.data?.path ?? "",
-                                              videoTitle: data.title ?? "Video",
-                                            );
-                                          } else {
-                                            return const Text('No data');
-                                          }
-                                        },
-                                      );
-
-                                    }
-                                  })
+                                      }
+                                    })
+                                  else
+                                  ...[
+                                        () {
+                                      return const Center(child: Text("No data available"));
+                                    }()
+                                  ],
                                 ],
                               ),
                             );
@@ -442,5 +394,22 @@ class MediaPreviewView extends GetView<MediaPreviewController> {
         return const SizedBox.shrink();
       }
     });
+  }
+
+  Widget imagePreview(File file){
+    return PhotoView(
+      imageProvider: FileImage(file),
+      minScale: PhotoViewComputedScale.contained * 1,
+      maxScale: PhotoViewComputedScale.covered * 2,
+      enableRotation: true,
+      basePosition: Alignment.center,
+      backgroundDecoration: const BoxDecoration(color: Colors.transparent),
+      loadingBuilder: (context, event) => const Center(
+        child: CircularProgressIndicator(),
+      ),
+      // errorBuilder: (ct, ob, trace) {
+      //   return Image.memory(data.thumbnail!); // Ensure `data.thumbnail` is available or handle this case properly.
+      // },
+    );
   }
 }
