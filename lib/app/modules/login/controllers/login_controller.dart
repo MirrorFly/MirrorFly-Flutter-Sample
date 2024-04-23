@@ -369,7 +369,7 @@ class LoginController extends GetxController {
                 } else {
                   debugPrint("issue else code ===> ${response.exception?.code }");
                   debugPrint("issue else ===> ${response.errorMessage }");
-                  toToast(response.exception!.message.toString());
+                  toToast(getErrorDetails(response));
                 }
               }
             });

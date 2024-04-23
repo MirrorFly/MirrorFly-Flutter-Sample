@@ -42,7 +42,7 @@ class _ChatListViewState extends State<ChatListView> {
               return string != null ? NotificationMessageView(chatMessage: string) : const Offstage();
             },
             itemScrollController: widget.chatController.newScrollController,
-            itemPositionsListener: widget.chatController.newitemPositionsListener,
+            itemPositionsListener: widget.chatController.newItemPositionsListener,
             itemCount: widget.chatList.length,
             shrinkWrap: true,
             reverse: true,

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:mirror_fly_demo/app/modules/gallery_picker/src/presentation/pages/gallery_media_picker_controller.dart';
 import 'package:mirrorfly_plugin/mirrorfly.dart';
 import 'package:get/get.dart';
+import 'package:photo_manager/photo_manager.dart';
 
 import '../src/data/models/picked_asset_model.dart';
 

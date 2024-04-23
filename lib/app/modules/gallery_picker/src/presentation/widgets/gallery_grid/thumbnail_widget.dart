@@ -133,34 +133,6 @@ class ThumbnailWidget extends StatelessWidget {
                 }),
           ),
         ),
-        FutureBuilder(
-          future: asset.file,
-          builder: (ct, snap) {
-            if(snap.hasData) {
-              return Align(
-                alignment: Alignment.topLeft,
-                child: Padding(
-                  padding: const EdgeInsets.all(5),
-                  child: Text(
-                    getFileSizeText((snap.data!.lengthSync()).toString()),
-                    style: const TextStyle(
-                        color: Colors.white, fontSize: 8, shadows: [Shadow(
-                      offset: Offset(0, 0),
-                      blurRadius: 3.0,
-                      color: Color.fromARGB(255, 0, 0, 0),
-                    ),
-                      Shadow(
-                        offset: Offset(0, 0),
-                        blurRadius: 8.0,
-                        color: Color.fromARGB(125, 0, 0, 255),
-                      ),
-                    ]),),
-                ),
-              );
-            }
-            return const Offstage();
-          }
-        ),
 
         /// video duration widget
         if (asset.type == AssetType.video)

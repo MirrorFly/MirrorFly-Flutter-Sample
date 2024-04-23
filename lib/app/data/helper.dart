@@ -978,3 +978,11 @@ String getCallLogDuration(int startTime, int endTime) {
     return '${(duration.inMinutes).toStringAsFixed(0).padLeft(2, '0')}:$seconds';
   }
 }
+
+String getErrorDetails(FlyResponse response) {
+  if(Platform.isIOS){
+    return '${response.errorMessage}${response.errorDetails != null ? ", ${response.errorDetails}" : ""}';
+  }else{
+    return response.errorMessage;
+  }
+}

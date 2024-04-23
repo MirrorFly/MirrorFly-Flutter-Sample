@@ -35,6 +35,9 @@ class MediaPreviewController extends FullLifeCycleController with FullLifeCycleM
   FocusNode captionFocusNode = FocusNode();
   PageController pageViewController = PageController(initialPage: 0, keepPage: false);
 
+  final Map<int, File> imageCache = {};
+  final Map<int, File> imageCache1 = {};
+
   @override
   void onInit() {
     super.onInit();
@@ -50,7 +53,9 @@ class MediaPreviewController extends FullLifeCycleController with FullLifeCycleM
           captionMessage.add("");
         }
       }
+      // _loadFiles();
     });
+
     if(textMessage != null){
       caption.text = textMessage;
     }
@@ -59,6 +64,49 @@ class MediaPreviewController extends FullLifeCycleController with FullLifeCycleM
         showEmoji(false);
       }
     });
+  }
+
+  Future<void> _loadFiles() async {
+    int index = 0;
+    for (var pickedAssetModel in filePath) {
+      try {
+        File? file = await _getFileFromAsset(pickedAssetModel);
+        if (file != null) {
+          imageCache[index] = file;
+        }
+      } catch (e) {
+        debugPrint("Failed to load file: $e");
+      }
+      index++;
+    }
+  }
+  Future<File?> _getFileFromAsset(PickedAssetModel pickedAssetModel) async {
+    return await pickedAssetModel.asset?.file;
+  }
+
+  checkCacheFile(int index){
+    if (imageCache.containsKey(index)) {
+      debugPrint("returning true");
+      return true;
+    }
+    debugPrint("returning false");
+    return false;
+  }
+
+  getCacheFile(int index){
+    return imageCache[index];
+  }
+
+  Future<File?> getFile(int index) async {
+    if (imageCache.containsKey(index)) {
+      return imageCache[index];
+    } else {
+      File? file = await filePath[index].asset?.file;
+      if (file != null) {
+        imageCache[index] = file;
+      }
+      return file;
+    }
   }
   onChanged() {
     // count(139 - addStatusController.text.length);
@@ -75,7 +123,7 @@ class MediaPreviewController extends FullLifeCycleController with FullLifeCycleM
     try {
       int i = 0;
       await Future.forEach(filePath, (data) async {
-        debugPrint(data.type);
+        // debugPrint(data.type);
         /// show image
         if (data.type == 'image') {
           if (!availableFeatures.value.isImageAttachmentAvailable.checkNull()) {
@@ -84,7 +132,7 @@ class MediaPreviewController extends FullLifeCycleController with FullLifeCycleM
           }
           debugPrint("sending image");
           await Get.find<ChatController>().sendImageMessage(
-              data.path, captionMessage[i], "");
+              imageCache[i]?.path, captionMessage[i], "");
         } else if (data.type == 'video') {
           if (!availableFeatures.value.isVideoAttachmentAvailable.checkNull()) {
             featureNotAvailable = true;
@@ -92,7 +140,7 @@ class MediaPreviewController extends FullLifeCycleController with FullLifeCycleM
           }
           debugPrint("sending video");
           await Get.find<ChatController>().sendVideoMessage(
-              data.path!, captionMessage[i], "");
+              imageCache[i]!.path, captionMessage[i], "");
         }
         i++;
       });
@@ -173,5 +221,9 @@ class MediaPreviewController extends FullLifeCycleController with FullLifeCycleM
 
   hideKeyBoard() {
     // FocusManager.instance.primaryFocus!.unfocus();
+  }
+
+  Future<File?> getImageFilePath(PickedAssetModel data) async {
+    return data.asset?.file;
   }
 }

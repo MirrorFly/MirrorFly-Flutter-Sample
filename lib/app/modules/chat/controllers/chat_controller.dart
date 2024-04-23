@@ -3,7 +3,6 @@ import 'dart:io';
 
 import 'package:audioplayers/audioplayers.dart';
 import 'package:file_picker/file_picker.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
@@ -47,10 +46,8 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
   var chatList = List<ChatMessageModel>.empty(growable: true).obs;
   late AnimationController controller;
 
-  // ScrollController scrollController = ScrollController();
-
   ItemScrollController newScrollController = ItemScrollController();
-  ItemPositionsListener newitemPositionsListener = ItemPositionsListener.create();
+  ItemPositionsListener newItemPositionsListener = ItemPositionsListener.create();
   ItemScrollController searchScrollController = ItemScrollController();
 
   late ChatMessageModel replyChatMessage;
@@ -62,11 +59,6 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
   late Timer? _audioTimer;
   var timerInit = "00:00".obs;
   DateTime? startTime;
-
-  // double screenHeight = 0.0;
-  // double screenWidth = 0.0;
-
-  // AudioPlayer player = AudioPlayer();
 
   late String audioSavePath;
   late String recordedAudioPath;
@@ -97,10 +89,6 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
   var isBlocked = false.obs;
 
   var selectedChatList = List<ChatMessageModel>.empty(growable: true).obs;
-
-  // var keyboardVisibilityController = KeyboardVisibilityController();
-
-  // late StreamSubscription<bool> keyboardSubscription;
 
   final _isMemberOfGroup = false.obs;
 
@@ -136,7 +124,7 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
 
   RxString editMessageText = ''.obs;
 
-  List<MessageMetaData> messageMetaData = [];//[MessageMetaData(key: "platform", value: "flutter")];
+  List<MessageMetaData> messageMetaData = [MessageMetaData(key: "platform", value: "flutter")];
   @override
   void onInit() async {
     super.onInit();
@@ -196,21 +184,6 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
         // initListeners();
       });
     }
-    // LogMessage.d('savedContact', profile.isItSavedContact.toString());
-
-    /*player.onPlayerCompletion.listen((event) {
-      playingChat!.mediaChatMessage!.isPlaying = false;
-      playingChat!.mediaChatMessage!.currentPos = 0;
-      player.stop();
-      chatList.refresh();
-      playingChat = null;
-    });
-
-    player.onAudioPositionChanged.listen((Duration p) {
-      LogMessage.d('p.inMilliseconds', p.inMilliseconds.toString());
-      playingChat?.mediaChatMessage!.currentPos = (p.inMilliseconds);
-      chatList.refresh();
-    });*/
 
     setAudioPath();
 
@@ -298,7 +271,7 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
       debugPrint('scrolled : ${findTopFirstVisibleItemPosition()}');
       // j=findLastVisibleItemPosition();
     });
-    newitemPositionsListener.itemPositions.addListener(() {
+    newItemPositionsListener.itemPositions.addListener(() {
       var pos = lastVisiblePosition();
       if (pos >= 1) {
         showHideRedirectToLatest(true);
@@ -2673,7 +2646,7 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
             position.itemTrailingEdge < min.itemTrailingEdge ? position : min)
         .index;
     return r < chatList.length ? r + 1 : r;*/
-    return newitemPositionsListener.itemPositions.value.first.index - 1;
+    return newItemPositionsListener.itemPositions.value.first.index - 1;
   }
 
   void share() {
@@ -2978,7 +2951,7 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
   }
 
   void loadNextChatHistory() {
-    final itemPositions = newitemPositionsListener.itemPositions.value;
+    final itemPositions = newItemPositionsListener.itemPositions.value;
 
     if (itemPositions.isNotEmpty) {
       final firstVisibleItemIndex = itemPositions.first.index;
@@ -3188,7 +3161,7 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
   int getMessagePosition(String messageId) => chatList.indexWhere((it) => it.messageId == messageId);
 
   int lastVisiblePosition() {
-    final itemPositions = newitemPositionsListener.itemPositions.value;
+    final itemPositions = newItemPositionsListener.itemPositions.value;
     if (itemPositions.isNotEmpty) {
       final firstVisibleItemIndex = itemPositions.first.index;
       // LogMessage.d("lastVisiblePosition", "$firstVisibleItemIndex");
