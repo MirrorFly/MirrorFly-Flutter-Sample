@@ -703,7 +703,6 @@ class AppPermission {
         if (popupValue) {
           var afterAskRationale = await permissions.request();
           var hasGrantedPermissionAfterAsk = afterAskRationale.values
-              .toList()
               .where((element) => element.isGranted);
           LogMessage.d("checkAndRequestPermissions",
               "rationale hasGrantedPermissionAfterAsk : $hasGrantedPermissionAfterAsk hasPermanentlyDeniedPermission : $hasPermanentlyDeniedPermission");
@@ -713,7 +712,7 @@ class AppPermission {
                 permissionIcon: permissionIcon,
                 permissionPermanentlyDeniedContent: permissionPermanentlyDeniedContent);
           } else {
-            return (hasGrantedPermissionAfterAsk.length == permissions.length);
+            return (hasGrantedPermissionAfterAsk.length >= permissions.length);
           }
         }
         return popupValue;
@@ -724,7 +723,6 @@ class AppPermission {
         if (popupValue) {
           var afterAsk = await permissions.request();
           var hasGrantedPermissionAfterAsk = afterAsk.values
-              .toList()
               .where((element) => element.isGranted);
           LogMessage.d("checkAndRequestPermissions",
               "hasGrantedPermissionAfterAsk : $hasGrantedPermissionAfterAsk hasPermanentlyDeniedPermission : $hasPermanentlyDeniedPermission");
@@ -735,7 +733,7 @@ class AppPermission {
                 permissionPermanentlyDeniedContent:
                     permissionPermanentlyDeniedContent);
           } else {
-            return (hasGrantedPermissionAfterAsk.length == permissions.length);
+            return (hasGrantedPermissionAfterAsk.length >= permissions.length);
           }
         } else {
           //user clicked not now in popup
