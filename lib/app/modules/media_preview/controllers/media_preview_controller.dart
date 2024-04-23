@@ -120,6 +120,7 @@ class MediaPreviewController extends FullLifeCycleController with FullLifeCycleM
       return file;
     }else{
       debugPrint("getFile inside camera file type");
+      imageCache[index] = filePath[index].file!;
       return filePath[index].file;
     }
   }
