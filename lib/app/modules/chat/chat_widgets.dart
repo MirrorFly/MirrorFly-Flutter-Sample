@@ -2195,7 +2195,13 @@ Widget uploadView(String messageType) {
 }
 
 void cancelMediaUploadOrDownload(String messageId) {
-  Mirrorfly.cancelMediaUploadOrDownload(messageId: messageId);
+  AppUtils.isNetConnected().then((value) {
+    if(value){
+      Mirrorfly.cancelMediaUploadOrDownload(messageId: messageId);
+    } else {
+      toToast(Constants.noInternetConnection);
+    }
+  });
 }
 
 void uploadMedia(String messageId) async {
