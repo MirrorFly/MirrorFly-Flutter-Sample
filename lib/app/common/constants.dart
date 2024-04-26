@@ -544,6 +544,7 @@ class Constants {
   static const mobileImageMaxHeight = 320;
   static const mobileImageMinHeight = 80;
 
+  static const editMessage = "Edit Message";
   static const editMessageTimeLimit = 15; // in Minutes
 
   static const mediaMaxLimitRestriction = 'File size is too large. Try uploading file size below %d MB';
