@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
@@ -67,7 +68,7 @@ class ProfileController extends GetxController {
     }
     //profileStatus.value="I'm Mirror fly user";
     // await askStoragePermission();
-    // getMetaData();
+    getMetaData();
   }
 
 
@@ -590,12 +591,15 @@ class ProfileController extends GetxController {
     });*/
   }
 
+  //#metaData
   void getMetaData(){
     Mirrorfly.getMetaData(flyCallback: (FlyResponse response){
       LogMessage.d("getMetaData", response.toString());
+      var list = identifierMetaDataFromJson(response.data);
+      log(list.toJson());
     });
-    Mirrorfly.updateMetaData(identifierMetaDataList: [IdentifierMetaData(key: "platform", value: "flutter")],flyCallback: (FlyResponse response){
+    /*Mirrorfly.updateMetaData(identifierMetaDataList: [IdentifierMetaData(key: "platform", value: "flutter")],flyCallback: (FlyResponse response){
       LogMessage.d("updateMetaData", response.toString());
-    });
+    });*/
   }
 }

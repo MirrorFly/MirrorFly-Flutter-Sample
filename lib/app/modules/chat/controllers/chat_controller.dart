@@ -124,6 +124,7 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
 
   RxString editMessageText = ''.obs;
 
+  //#metaData
   List<MessageMetaData> messageMetaData = [MessageMetaData(key: "platform", value: "flutter")];
   @override
   void onInit() async {
@@ -464,7 +465,7 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
                 toJid: profile.jid.checkNull(),
                 replyMessageId: replyMessageId,
                 topicId: topicId,
-                metaData: messageMetaData,
+                metaData: messageMetaData,//#metaData
                 textMessageParams: TextMessageParams(messageText: messageController.text.trim())),
             flyCallback: (response) {
               if (response.isSuccess) {
@@ -598,7 +599,7 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
               toJid: profile.jid.checkNull(),
               replyMessageId: replyMessageId,
               topicId: topicId,
-              metaData: messageMetaData,
+              metaData: messageMetaData,//#metaData
               locationMessageParams: LocationMessageParams(latitude: latitude, longitude: longitude)),
           flyCallback: (response) {
             if (response.isSuccess) {
@@ -627,8 +628,7 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
 
   void _loadMessages() {
     // getChatHistory();
-    Mirrorfly.initializeMessageList(userJid: profile.jid.checkNull(), limit: 25,topicId: topicId,messageId: starredChatMessageId,exclude: starredChatMessageId == null,
-    metaDataMessageList: MetaDataMessageList(key: "platform", value: ["flutter"]))//message
+    Mirrorfly.initializeMessageList(userJid: profile.jid.checkNull(), limit: 25,topicId: topicId,messageId: starredChatMessageId,exclude: starredChatMessageId == null,)//message
         .then((value) {
       if (value) {
         initializedMessageList = true;
@@ -740,7 +740,7 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
                 toJid: profile.jid.checkNull(),
                 replyMessageId: replyMessageID,
                 topicId: topicId,
-                metaData: messageMetaData,
+                metaData: messageMetaData,//#metaData
                 fileMessageParams: FileMessageParams(file: File(path), caption: caption)),
             flyCallback: (response) {
               if (response.isSuccess) {
@@ -837,7 +837,7 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
               toJid: profile.jid.checkNull(),
               replyMessageId: replyMessageID,
               topicId: topicId,
-              metaData: messageMetaData,
+              metaData: messageMetaData,//#metaData
               fileMessageParams: FileMessageParams(file: File(videoPath), caption: caption)),
           flyCallback: (response) {
             if (response.isSuccess) {
@@ -976,7 +976,7 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
               toJid: profile.jid.checkNull(),
               replyMessageId: replyMessageId,
               topicId: topicId,
-              metaData: messageMetaData,
+              metaData: messageMetaData,//#metaData
               contactMessageParams: ContactMessageParams(name: contactName, numbers: contactList)),
           flyCallback: (response) {
             if (response.isSuccess) {
@@ -1025,7 +1025,7 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
               toJid: profile.jid.checkNull(),
               replyMessageId: replyMessageId,
               topicId: topicId,
-              metaData: messageMetaData,
+              metaData: messageMetaData,//#metaData
               fileMessageParams: FileMessageParams(file: File(documentPath))),
           flyCallback: (response) {
             if (response.isSuccess) {
@@ -1137,7 +1137,7 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
               isRecorded: isRecorded,
               replyMessageId: replyMessageId,
               topicId: topicId,
-              metaData: messageMetaData,
+              metaData: messageMetaData,//#metaData
               fileMessageParams: FileMessageParams(file: File(filePath))),
           flyCallback: (response) {
             if (response.isSuccess) {

@@ -291,7 +291,9 @@ class ContactController extends FullLifeCycleController with FullLifeCycleMixin 
       }
 
       (!Constants.enableContactSync)
-          ? Mirrorfly.getUserList(page: pageNum, search: _searchText,/*metaDataUserList: MetaDataUserList(key: "platform", value: ["flutter"]),*/ flyCallback: callback)
+          ? Mirrorfly.getUserList(page: pageNum, search: _searchText,
+          /*metaDataUserList: MetaDataUserList(key: "platform", value: ["flutter"]),*/ //#metaData
+          flyCallback: callback)
           : Mirrorfly.getRegisteredUsers(fetchFromServer: false, flyCallback: callback);
       /*future.then((data) async {
         //Mirrorfly.getUserList(pageNum, _searchText).then((data) async {
