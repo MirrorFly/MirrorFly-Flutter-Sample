@@ -3245,7 +3245,7 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
 
   void updateSentMessage({required ChatMessageModel chatItem}) {
     if (isWithinLast15Minutes(chatItem.messageSentTime)) {
-      if (chatItem.messageType == Constants.mText) {
+      if (chatItem.messageType == Constants.mText || chatItem.messageType == Constants.mAutoText) {
         Mirrorfly.editTextMessage(
             editMessageParams: EditMessageParams(messageId: chatItem.messageId, editedTextContent: editMessageController.text.trim()),
             flyCallback: (FlyResponse response) {
