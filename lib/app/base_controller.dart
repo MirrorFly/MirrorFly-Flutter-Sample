@@ -156,13 +156,10 @@ abstract class BaseController {
       var typingStatus = data["status"];
       setTypingStatus(singleOrgroupJid, userJid, typingStatus);
     });
+
+    //#editMessage
     Mirrorfly.onMessageEdited.listen(onMessageEdited);
-    // Mirrorfly.onChatTypingStatus.listen(onChatTypingStatus);
-    // Mirrorfly.onGroupTypingStatus.listen(onGroupTypingStatus);
-    // Removed due Backup not implemented
-    /*Mirrorfly.onFailure.listen(onFailure);
-    Mirrorfly.onProgressChanged.listen(onProgressChanged);
-    Mirrorfly.onSuccess.listen(onSuccess);*/
+
     Mirrorfly.onLoggedOut.listen(onLogout);
 
     Mirrorfly.onMissedCall.listen((event){
@@ -1141,6 +1138,7 @@ abstract class BaseController {
     timer = null;
   }
 
+  //#editMessage
   void onMessageEdited(editedChatMessage) {
     ChatMessageModel chatMessageModel = sendMessageModelFromJson(editedChatMessage);
     if (Get.isRegistered<ChatController>()) {

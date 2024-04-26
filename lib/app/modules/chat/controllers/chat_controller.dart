@@ -2581,6 +2581,7 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
     }
   }
 
+  //#editMessage
   bool isWithinLast15Minutes(int epochTime) {
     //Sample from iOS - 1711376486924000
     // Get the current time
@@ -3218,7 +3219,7 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
     }
   }
 
-
+//#editMessage
   showFullWindowDialog() {
     var chatItem = selectedChatList.first;
     clearAllChatSelection();
@@ -3243,6 +3244,7 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
     });
   }
 
+  //#editMessage
   void updateSentMessage({required ChatMessageModel chatItem}) {
     if (isWithinLast15Minutes(chatItem.messageSentTime)) {
       if (chatItem.messageType == Constants.mText || chatItem.messageType == Constants.mAutoText) {
@@ -3283,6 +3285,7 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
     }
   }
 
+  //#editMessage
   void onMessageEdited(ChatMessageModel editedChatMessage) {
     if (editedChatMessage.chatUserJid == profile.jid) {
       final index = chatList.indexWhere((message) => message.messageId == editedChatMessage.messageId);
