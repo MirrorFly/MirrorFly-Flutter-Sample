@@ -1,18 +1,16 @@
-import 'dart:convert';
 import 'dart:io';
-import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/common/extensions.dart';
-import 'package:mirror_fly_demo/app/modules/gallery_picker/src/core/decode_image.dart';
 
 import '../../../common/constants.dart';
 import '../../../data/helper.dart';
 import '../../../model/chat_message_model.dart';
 import '../../../routes/app_pages.dart';
 import '../chat_widgets.dart';
+import 'ImageCacheManager.dart';
 
 class ImageMessageView extends StatefulWidget {
   final ChatMessageModel chatMessage;
@@ -28,8 +26,6 @@ class ImageMessageView extends StatefulWidget {
 class _ImageMessageViewState extends State<ImageMessageView> {
   @override
   Widget build(BuildContext context) {
-    // super.build(context);
-    // LogMessage.d("ImageMessageView", "build ${widget.chatMessage.toJson()}");
     var mediaMessage = widget.chatMessage.mediaChatMessage!;
     return Container(
       key: ValueKey(widget.chatMessage.messageId),
@@ -133,34 +129,7 @@ getImage(RxString mediaLocalStoragePath, String mediaThumbImage, BuildContext co
           );
         }));
   } else {
-    // return Image(
-    //   image: DecodeImageNew(
-    //       mediaThumbImage,
-    //       thumbSize: 100),
-    //   gaplessPlayback: true,
-    //   fit: BoxFit.cover,
-    //   filterQuality: FilterQuality.high,
-    // );
     return ImageCacheManager.getImage(mediaThumbImage, messageId);
-    // return imageFromBase64String(mediaThumbImage, context, null, null);
-    // return ImageScreen(base64: mediaThumbImage);
-    // return NetworkImage(url)
-  }
-}
-
-class ImageCacheManager {
-  static final Map<String, Image> _cache = {};
-
-  static Image getImage(String base64String, String messageId) {
-    if (_cache.containsKey(messageId)) {
-      return _cache[messageId]!;
-    } else {
-      Uint8List bytes = base64Decode(base64String);
-      Image image = Image.memory(bytes, gaplessPlayback: true,  width: Get.width * 0.60,
-        height: Get.height * 0.4, fit: BoxFit.cover,);
-      _cache[messageId] = image;
-      return image;
-    }
   }
 }
 

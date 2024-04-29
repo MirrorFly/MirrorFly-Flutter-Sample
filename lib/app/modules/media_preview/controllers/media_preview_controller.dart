@@ -108,20 +108,41 @@ class MediaPreviewController extends FullLifeCycleController with FullLifeCycleM
     return imageCache[index];
   }
 
+  // Future<File?> getFile(int index) async {
+  //   if (imageCache.containsKey(index)) {
+  //     return imageCache[index];
+  //   } else if(pickerType.value == Constants.gallery){
+  //     debugPrint("getFile inside gallery file type");
+  //     File? file = await filePath[index].asset?.file;
+  //     if (file != null) {
+  //       imageCache[index] = file;
+  //     }
+  //     return file;
+  //   }else{
+  //     debugPrint("getFile inside camera file type");
+  //     imageCache[index] = filePath[index].file!;
+  //     return filePath[index].file;
+  //   }
+  // }
   Future<File?> getFile(int index) async {
     if (imageCache.containsKey(index)) {
       return imageCache[index];
-    } else if(pickerType.value == Constants.gallery){
-      debugPrint("getFile inside gallery file type");
-      File? file = await filePath[index].asset?.file;
-      if (file != null) {
-        imageCache[index] = file;
+    } else {
+      File? file;
+      try {
+        debugPrint("getFile attempt for index: $index");
+        if (pickerType.value == Constants.gallery) {
+          file = await filePath[index].asset?.file;
+        } else {
+          file = filePath[index].file;
+        }
+        if (file != null) {
+          imageCache[index] = file;
+        }
+      } catch (e) {
+        debugPrint("Error loading file for index $index: $e");
       }
       return file;
-    }else{
-      debugPrint("getFile inside camera file type");
-      imageCache[index] = filePath[index].file!;
-      return filePath[index].file;
     }
   }
   onChanged() {

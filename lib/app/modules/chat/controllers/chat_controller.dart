@@ -39,6 +39,7 @@ import 'package:mirrorfly_plugin/mirrorflychat.dart';
 
 import '../../gallery_picker/src/data/models/picked_asset_model.dart';
 import '../chat_widgets.dart';
+import '../widgets/ImageCacheManager.dart';
 
 class ChatController extends FullLifeCycleController with FullLifeCycleMixin, GetTickerProviderStateMixin {
   // final translator = Translation(apiKey: Constants.googleTranslateKey);
@@ -326,6 +327,7 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
     // isLive = false;
     // player.stop();
     // player.dispose();
+    ImageCacheManager.disposeCache();
     super.onClose();
   }
 
