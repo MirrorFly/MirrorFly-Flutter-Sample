@@ -12,7 +12,6 @@ import 'package:photo_view/photo_view.dart';
 import '../../../common/widgets.dart';
 import '../../../widgets/video_player_widget.dart';
 import '../controllers/media_preview_controller.dart';
-
 class MediaPreviewView extends GetView<MediaPreviewController> {
   const MediaPreviewView({Key? key}) : super(key: key);
 

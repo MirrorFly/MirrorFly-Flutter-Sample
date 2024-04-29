@@ -147,26 +147,7 @@ class ImageNetwork extends GetView<MainController> {
                     });
                   }
                 }
-                if (!(blocked || (unknown && Constants.enableContactSync))) {
-                  if (errorWidget != null) {
-                    return errorWidget!;
-                  }
-                }
-                return clipOval
-                    ? ClipOval(
-                        child: Image.asset(
-                          getSingleOrGroup(isGroup),
-                          height: height,
-                          width: width,
-                          fit: BoxFit.cover,
-                        ),
-                      )
-                    : Image.asset(
-                        getSingleOrGroup(isGroup),
-                        height: height,
-                        width: width,
-                        fit: BoxFit.cover,
-                      );
+                return imageErrorWidget();
               },
               imageBuilder: (context, provider) {
                 return clipOval
@@ -200,21 +181,7 @@ class ImageNetwork extends GetView<MainController> {
               },
             );
           })
-        : clipOval
-            ? ClipOval(
-                child: Image.asset(
-                  getSingleOrGroup(isGroup),
-                  height: height,
-                  width: width,
-                  fit: BoxFit.cover,
-                ),
-              )
-            : Image.asset(
-                getSingleOrGroup(isGroup),
-                height: height,
-                width: width,
-                fit: BoxFit.cover,
-              );
+        : imageErrorWidget();
   }
 
   String getImageUrl() {
@@ -227,6 +194,29 @@ class ImageNetwork extends GetView<MainController> {
       if (url.contains("/")) return "";
       return controller.mediaEndpoint + url;
     }
+  }
+
+  Widget imageErrorWidget() {
+    if (!(blocked || (unknown && Constants.enableContactSync))) {
+      if (errorWidget != null) {
+        return errorWidget!;
+      }
+    }
+    return clipOval
+        ? ClipOval(
+            child: Image.asset(
+              getSingleOrGroup(isGroup),
+              height: height,
+              width: width,
+              fit: BoxFit.cover,
+            ),
+          )
+        : Image.asset(
+            getSingleOrGroup(isGroup),
+            height: height,
+            width: width,
+            fit: BoxFit.cover,
+          );
   }
 
   Future<bool> isTokenExpired(String token) async {
