@@ -18,7 +18,7 @@ import '../../../common/constants.dart';
 import '../../../data/apputils.dart';
 import '../../../data/session_management.dart';
 import 'package:mirrorfly_plugin/mirrorfly.dart';
-import '../../../routes/app_pages.dart';
+import '../../../routes/route_settings.dart';
 
 class LoginController extends GetxController {
   final FirebaseAuth _auth = FirebaseAuth.instance;

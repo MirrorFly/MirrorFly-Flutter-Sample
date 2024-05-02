@@ -7,25 +7,23 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:mirror_fly_demo/app/modules/notification/notification_builder.dart';
 import 'package:mirrorfly_plugin/mirrorfly.dart';
 
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/common/app_theme.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
-import 'package:mirror_fly_demo/app/common/main_controller.dart';
 import 'package:mirror_fly_demo/app/common/extensions.dart';
 import 'package:mirror_fly_demo/app/data/pushnotification.dart';
 import 'package:mirror_fly_demo/app/modules/dashboard/bindings/dashboard_binding.dart';
 import 'package:mirror_fly_demo/app/modules/login/bindings/login_binding.dart';
 import 'app/common/notification_service.dart';
 import 'app/data/session_management.dart';
-import 'app/model/reply_hash_map.dart';
 import 'app/modules/profile/bindings/profile_binding.dart';
-import 'app/routes/app_pages.dart';
 
 import 'package:google_maps_flutter_android/google_maps_flutter_android.dart';
 import 'package:google_maps_flutter_platform_interface/google_maps_flutter_platform_interface.dart';
+
+import 'app/routes/route_settings.dart';
 
 
 @pragma('vm:entry-point')
@@ -108,17 +106,18 @@ class _MyAppState extends State<MyApp> {
   }
   @override
   Widget build(BuildContext context) {
-    return GetMaterialApp(
+    return MaterialApp(
       title: "MirrorFly",
       theme: MirrorFlyAppTheme.theme,
       debugShowCheckedModeBanner: false,
-      onInit: () {
-        ReplyHashMap.init();
-        NotificationBuilder.cancelNotifications();
-        Get.put<MainController>(MainController());
-      },
+      // onInit: () {
+      //   ReplyHashMap.init();
+      //   NotificationBuilder.cancelNotifications();
+      //   Get.put<MainController>(MainController());
+      // },
       initialRoute: SessionManagement.getEnablePin() ? Routes.pin : getInitialRoute(),
-      getPages: AppPages.routes,
+      onGenerateRoute: mirrorFlyRoute,
+      // getPages: AppPages.routes,
     );
   }
 }
@@ -145,7 +144,7 @@ String getInitialRoute() {
   debugPrint("didNotificationLaunchResponse $didNotificationLaunchResponse");
   if(isOnGoingCall){
     isOnGoingCall=false;
-    return AppPages.onGoingCall;
+    return Routes.onGoingCallView;
   }else if(didNotificationLaunchApp || didMediaProgressNotificationLaunchApp){
     if(didNotificationLaunchApp) {
       notificationAppLaunchDetails = null;
@@ -155,12 +154,12 @@ String getInitialRoute() {
       var topicId = didNotificationLaunchResponse != null
           ? didNotificationLaunchResponse.checkNull().split(",")[1]
           : "";
-      return "${AppPages
+      return "${Routes
           .chat}?jid=$chatJid&from_notification=$didNotificationLaunchApp&topicId=$topicId";
     }else{
       var chatJid = appLaunchDetails?.mediaProgressChatJid ??  "";
       appLaunchDetails = null;
-      return "${AppPages
+      return "${Routes
           .chat}?jid=$chatJid&from_notification=$didMediaProgressNotificationLaunchApp";
     }
   }
@@ -183,9 +182,9 @@ String getInitialRoute() {
               // LogMessage.d("nonChatUsers", nonChatUsers.toString());
               LogMessage.d("SessionManagement.isContactSyncDone()", SessionManagement.isContactSyncDone().toString());
               if (!SessionManagement.isContactSyncDone() /*|| nonChatUsers.isEmpty*/) {
-                return AppPages.contactSync;
+                return Routes.contactSync;
               }else{
-                return "${AppPages.dashboard}?fromMissedCall=$didMissedCallNotificationLaunchApp";
+                return "${Routes.dashboard}?fromMissedCall=$didMissedCallNotificationLaunchApp";
               }
           }else{
             LogMessage.d("login", "${SessionManagement
@@ -193,20 +192,20 @@ String getInitialRoute() {
                 .checkNull()
                 .isEmpty}");
             LogMessage.d("SessionManagement.getLogin()", "${SessionManagement.getLogin()}");
-            return "${AppPages.dashboard}?fromMissedCall=$didMissedCallNotificationLaunchApp";
+            return "${Routes.dashboard}?fromMissedCall=$didMissedCallNotificationLaunchApp";
           }
         } else {
-          return "${AppPages.chat}?jid=${SessionManagement.getChatJid()
+          return "${Routes.chat}?jid=${SessionManagement.getChatJid()
               .checkNull()}&from_notification=true";
         }
       } else {
-        return AppPages.profile;
+        return Routes.profile;
       }
     } else {
-      return AppPages.initial;
+      return Routes.login;
     }
   }else{
-    return AppPages.adminBlocked;
+    return Routes.adminBlocked;
   }
 }
 

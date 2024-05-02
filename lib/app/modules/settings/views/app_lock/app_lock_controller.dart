@@ -16,7 +16,7 @@ import 'package:otp_text_field/style.dart';
 import 'package:mirror_fly_demo/app/common/extensions.dart';
 
 import '../../../../data/apputils.dart';
-import '../../../../routes/app_pages.dart';
+import '../../../../routes/route_settings.dart';
 
 class AppLockController extends FullLifeCycleController
     with FullLifeCycleMixin,GetTickerProviderStateMixin {

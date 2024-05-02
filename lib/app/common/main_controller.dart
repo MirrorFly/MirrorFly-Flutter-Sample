@@ -19,12 +19,12 @@ import 'package:mirror_fly_demo/app/modules/chat/controllers/chat_controller.dar
 import 'package:mirror_fly_demo/app/modules/contact_sync/controllers/contact_sync_controller.dart';
 import 'package:mirror_fly_demo/app/modules/dashboard/controllers/dashboard_controller.dart';
 import 'package:mirror_fly_demo/app/modules/notification/notification_builder.dart';
-import 'package:mirror_fly_demo/app/routes/app_pages.dart';
 
 import 'package:mirrorfly_plugin/mirrorfly.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 import '../modules/chatInfo/controllers/chat_info_controller.dart';
+import '../routes/route_settings.dart';
 import 'notification_service.dart';
 
 class MainController extends FullLifeCycleController with BaseController, FullLifeCycleMixin /*with FullLifeCycleMixin */ {
@@ -137,7 +137,7 @@ class MainController extends FullLifeCycleController with BaseController, FullLi
           }
           if (Get.currentRoute.contains("from_notification=true")) {
             LogMessage.d("#Mirrorfly Notification -> previously app opened from notification", "so we have to maintain that");
-            Get.offAllNamed("${AppPages.chat}?jid=$chatJid&from_notification=true&topicId=$topicId");
+            Get.offAllNamed("${Routes.chat}?jid=$chatJid&from_notification=true&topicId=$topicId");
           } else {
             if(Get.isOverlaysOpen){
               Get.back();

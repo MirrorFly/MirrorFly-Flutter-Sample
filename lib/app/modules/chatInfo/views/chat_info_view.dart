@@ -7,7 +7,7 @@ import 'package:mirror_fly_demo/app/data/helper.dart';
 
 import '../../../common/constants.dart';
 import '../../../common/widgets.dart';
-import '../../../routes/app_pages.dart';
+import '../../../routes/route_settings.dart';
 import '../controllers/chat_info_controller.dart';
 
 class ChatInfoView extends GetView<ChatInfoController> {

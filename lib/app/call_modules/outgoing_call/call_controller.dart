@@ -13,7 +13,7 @@ import 'package:mirror_fly_demo/app/common/extensions.dart';
 import '../../../main.dart';
 import '../../data/permissions.dart';
 import '../../data/session_management.dart';
-import '../../routes/app_pages.dart';
+import '../../routes/route_settings.dart';
 
 class CallController extends GetxController with GetTickerProviderStateMixin {
   final RxBool isVisible = true.obs;

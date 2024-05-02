@@ -7,7 +7,7 @@ import 'package:mirrorfly_plugin/mirrorfly.dart';
 import '../../../data/apputils.dart';
 import '../../../data/session_management.dart';
 import '../../../data/helper.dart';
-import '../../../routes/app_pages.dart';
+import '../../../routes/route_settings.dart';
 
 class DeleteAccountReasonController extends FullLifeCycleController
     with FullLifeCycleMixin {

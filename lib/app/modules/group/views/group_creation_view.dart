@@ -8,7 +8,7 @@ import 'package:mirror_fly_demo/app/modules/group/controllers/group_creation_con
 
 import '../../../common/constants.dart';
 import '../../../common/widgets.dart';
-import '../../../routes/app_pages.dart';
+import '../../../routes/route_settings.dart';
 
 class GroupCreationView extends GetView<GroupCreationController> {
   const GroupCreationView({Key? key}) : super(key: key);

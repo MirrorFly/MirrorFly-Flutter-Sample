@@ -12,7 +12,7 @@ import 'package:share_plus/share_plus.dart';
 
 import '../../../common/constants.dart';
 import '../../../model/chat_message_model.dart';
-import '../../../routes/app_pages.dart';
+import '../../../routes/route_settings.dart';
 
 class StarredMessagesController extends FullLifeCycleController with FullLifeCycleMixin {
   var starredChatList = List<ChatMessageModel>.empty(growable: true).obs;

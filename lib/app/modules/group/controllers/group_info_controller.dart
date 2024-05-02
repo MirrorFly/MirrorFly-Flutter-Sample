@@ -13,7 +13,7 @@ import 'package:mirror_fly_demo/app/common/extensions.dart';
 import '../../../common/crop_image.dart';
 import '../../../data/apputils.dart';
 import '../../../data/session_management.dart';
-import '../../../routes/app_pages.dart';
+import '../../../routes/route_settings.dart';
 import '../../dashboard/controllers/dashboard_controller.dart';
 import '../views/name_change_view.dart';
 

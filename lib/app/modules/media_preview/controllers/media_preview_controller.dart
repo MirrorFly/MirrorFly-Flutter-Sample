@@ -12,7 +12,7 @@ import 'package:get/get.dart';
 
 import '../../../common/main_controller.dart';
 import '../../../data/helper.dart';
-import '../../../routes/app_pages.dart';
+import '../../../routes/route_settings.dart';
 import '../../chat/controllers/chat_controller.dart';
 import '../../gallery_picker/src/data/models/picked_asset_model.dart';
 

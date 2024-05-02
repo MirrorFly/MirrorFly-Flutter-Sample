@@ -8,7 +8,7 @@ import 'package:mirror_fly_demo/app/common/extensions.dart';
 import '../../../common/constants.dart';
 import '../../../data/helper.dart';
 import '../../../model/chat_message_model.dart';
-import '../../../routes/app_pages.dart';
+import '../../../routes/route_settings.dart';
 import '../chat_widgets.dart';
 import 'ImageCacheManager.dart';
 

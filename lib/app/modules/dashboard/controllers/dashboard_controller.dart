@@ -20,7 +20,7 @@ import '../../../common/main_controller.dart';
 import '../../../data/apputils.dart';
 import '../../../data/permissions.dart';
 import '../../../model/chat_message_model.dart';
-import '../../../routes/app_pages.dart';
+import '../../../routes/route_settings.dart';
 
 class DashboardController extends FullLifeCycleController with FullLifeCycleMixin, GetTickerProviderStateMixin {
   var availableFeatures = Get.find<MainController>().availableFeature;

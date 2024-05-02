@@ -12,7 +12,7 @@ import 'package:permission_handler/permission_handler.dart';
 import '../../../common/de_bouncer.dart';
 import '../../../data/apputils.dart';
 import '../../../data/permissions.dart';
-import '../../../routes/app_pages.dart';
+import '../../../routes/route_settings.dart';
 
 class ContactController extends FullLifeCycleController with FullLifeCycleMixin {
   ScrollController scrollController = ScrollController();
@@ -685,6 +685,8 @@ class ContactController extends FullLifeCycleController with FullLifeCycleMixin 
                 "userJid": [selectedUsersJIDList[0]],
                 "callType": CallType.audio
               });
+            }else{
+              Helper.showAlert(message: getErrorDetails(response));
             }
           });
         } else {

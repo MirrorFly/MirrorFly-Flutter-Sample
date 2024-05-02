@@ -33,7 +33,7 @@ import '../../../data/apputils.dart';
 import '../../../data/helper.dart';
 import '../../../model/chat_message_model.dart';
 import '../../../model/reply_hash_map.dart';
-import '../../../routes/app_pages.dart';
+import '../../../routes/route_settings.dart';
 
 import 'package:mirrorfly_plugin/mirrorflychat.dart';
 
@@ -2915,6 +2915,8 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
                     "userJid": [profile.jid],
                     "callType": CallType.audio
                   })?.then((value) => setOnGoingUserAvail());
+                }else{
+                  Helper.showAlert(message: getErrorDetails(response));
                 }
               });
         }

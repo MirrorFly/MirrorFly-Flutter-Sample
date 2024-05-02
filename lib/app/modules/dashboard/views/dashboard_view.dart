@@ -13,7 +13,7 @@ import 'package:mirrorfly_plugin/model/call_log_model.dart';
 import 'package:mirror_fly_demo/app/common/extensions.dart';
 import '../../../common/app_theme.dart';
 import '../../../common/widgets.dart';
-import '../../../routes/app_pages.dart';
+import '../../../routes/route_settings.dart';
 import '../../../widgets/custom_action_bar_icons.dart';
 import '../../chat/chat_widgets.dart';
 import '../../dashboard/controllers/dashboard_controller.dart';

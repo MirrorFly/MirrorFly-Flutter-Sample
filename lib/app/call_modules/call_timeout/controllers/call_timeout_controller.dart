@@ -6,7 +6,7 @@ import 'package:mirrorfly_plugin/mirrorflychat.dart';
 import '../../../common/constants.dart';
 import '../../../data/apputils.dart';
 import '../../../data/permissions.dart';
-import '../../../routes/app_pages.dart';
+import '../../../routes/route_settings.dart';
 
 class CallTimeoutController extends GetxController {
   var callType = ''.obs;

@@ -3,7 +3,7 @@ import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
 import 'package:mirror_fly_demo/app/data/apputils.dart';
 import 'package:mirror_fly_demo/app/data/permissions.dart';
-import 'package:mirror_fly_demo/app/routes/app_pages.dart';
+import '../../../routes/route_settings.dart';
 import 'package:mirrorfly_plugin/model/call_log_model.dart';
 import 'package:mirrorfly_plugin/mirrorflychat.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';

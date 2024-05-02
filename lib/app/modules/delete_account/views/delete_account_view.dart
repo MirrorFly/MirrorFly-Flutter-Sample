@@ -6,7 +6,7 @@ import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/common/widgets.dart';
 
 import '../../../common/constants.dart';
-import '../../../routes/app_pages.dart';
+import '../../../routes/route_settings.dart';
 import '../controllers/delete_account_controller.dart';
 
 class DeleteAccountView extends GetView<DeleteAccountController> {

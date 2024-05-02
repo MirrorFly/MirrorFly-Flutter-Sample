@@ -9,7 +9,7 @@ import 'package:mirror_fly_demo/app/common/extensions.dart';
 import '../../data/apputils.dart';
 import '../../data/helper.dart';
 import '../../model/chat_message_model.dart';
-import '../../routes/app_pages.dart';
+import '../../routes/route_settings.dart';
 
 class ArchivedChatListController extends GetxController {
   DashboardController dashboardController = Get.find<DashboardController>();
